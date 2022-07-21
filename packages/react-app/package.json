@@ -17,7 +17,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Frontend interface to interact with the backend",
+  "description": "Web application\nFrontend interface to interact with the backend",
   "main": "lib/index.js",
   "node_engine": {
     "node": ">=10.16.0"

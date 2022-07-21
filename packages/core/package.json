@@ -9,7 +9,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "The kernel of MoodleNet",
+  "description": "Core\nThe kernel of MoodleNet",
   "files": [
     "lib/",
     "src/",
