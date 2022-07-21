@@ -48,7 +48,7 @@ export const FormConfig: FC = () => {
             <div className="name">Api Secret</div>
             <InputTextField
               ref={apiSecretRef}
-              type={'text'}
+              type={'password'}
               placeholder={'Api Secret'}
               defaultValue={ctx.configs.google?.apiSecret}
               edit
