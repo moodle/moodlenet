@@ -49,6 +49,9 @@ export type BootCfg = {
 // function getEnv(rawExtEnv: RawExtEnv): Env {
 //   return rawExtEnv as any //implement checks
 // }
+process.on('uncaughtException', e => {
+  console.error(`***\n***\n***\nUNCAUGHT EXCEPTION:***\n***\n***\n`, e)
+})
 export default async function boot(cfg: BootCfg) {
   console.log('boot .... ', cfg)
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
