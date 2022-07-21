@@ -9,20 +9,26 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
+import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
 import { SearchPackagesResObject } from '../../types/data'
-import './styles.scss'
+import { mandatoryPackages } from '../fakeData'
+import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
+  isInstalling: boolean
   toggleIsInstalling(): unknown
   searchPackagesResObject: SearchPackagesResObject
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
-const TertiaryButton = lib.ui.components.atoms.TertiaryButton
-const PrimaryButton = lib.ui.components.atoms.PrimaryButton
-const Card = lib.ui.components.atoms.Card
+const { TertiaryButton, PrimaryButton, Card, Loading } = lib.ui.components.atoms
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPackagesResObject, onClickBackBtn }) => {
+const ExtensionInfo: FC<ExtensionInfoProps> = ({
+  isInstalling,
+  toggleIsInstalling,
+  searchPackagesResObject,
+  onClickBackBtn,
+}) => {
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
@@ -47,16 +53,16 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
   const isInstalled = !searchPackagesResObject.installPkgReq
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
-    // const promise = isInstalled
-    //   ? lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
-    //       installationFolder: searchPackagesResObject.installationFolder,
-    //     })
-    //   : lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
-    //       installPkgReq: searchPackagesResObject.installPkgReq,
-    //       deploy: true,
-    //     })
+    const promise = isInstalled
+      ? lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+          installationFolder: searchPackagesResObject.installationFolder,
+        })
+      : lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+          installPkgReq: searchPackagesResObject.installPkgReq,
+          deploy: true,
+        })
 
-    // promise.finally(toggleIsInstalling)
+    promise.finally(/* toggleIsInstalling */)
   }, [isInstalled, searchPackagesResObject.installPkgReq])
 
   type CodeBlockProps = {
@@ -90,10 +96,19 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {searchPackagesResObject.description}
+            {searchPackagesResObject.description.split('\n')[0]}
           </div>
-          <PrimaryButton className="install-btn" onClick={install_uninstall}>
-            {isInstalled ? 'Uninstall' : 'Install'}
+          <PrimaryButton
+            className={`install-btn ${isInstalling ? 'loading' : ''}`}
+            disabled={mandatoryPackages.includes(searchPackagesResObject.pkgName)}
+            onClick={install_uninstall}
+          >
+            <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
+              <Loading color="white" />
+            </div>
+            <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
+              {isInstalled ? 'Uninstall' : 'Install'}
+            </div>
           </PrimaryButton>
         </div>
 

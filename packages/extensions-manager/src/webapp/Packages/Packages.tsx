@@ -32,7 +32,11 @@ const Packages: FC<PackagesProps> = () => {
     () =>
       extinfoList.map(extInfo => {
         // const [extName, pkgScope] = splitPkgName(extInfo.packageInfo.packageJson.name)
-        const extName = extInfo.packageInfo.packageJson.moodlenet.displayName
+        const fullDescription = extInfo.packageInfo.packageJson.description
+        var [extName, description] = fullDescription ? fullDescription.split('\n') : ['', '']
+        extName = extName ? extName : ''
+        description = description ? description : ''
+        // const extName = extInfo.packageInfo.packageJson.moodlenet.displayName
         return (
           <div
             className="package"
@@ -64,7 +68,7 @@ const Packages: FC<PackagesProps> = () => {
                 {extName}
                 {/*pkgScope && `@ ${pkgScope}`*/}
               </div>
-              <div className="description">{extInfo.packageInfo.packageJson.description}</div>
+              <div className="description">{description}</div>
               {/* <div className="creator">{pkgScope}</div> */}
             </div>
             <PrimaryButton className="install-btn">Details</PrimaryButton>
