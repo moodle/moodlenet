@@ -1,6 +1,6 @@
 import { ExtInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, FC, PropsWithChildren, useEffect, useState } from 'react'
 import { ExtensionsManagerExt } from '..'
 import { SearchPackagesResObject, SearchPackagesResponse } from '../types/data'
 import * as SettingsEnabledExtComponents from './SettingsEnabledExt'
@@ -19,7 +19,7 @@ export type StateContextType = {
 
 export const StateContext = createContext<StateContextType>(null as any)
 
-const StateProvider = ({ children }: { children: any }) => {
+const StateProvider: FC<PropsWithChildren> = ({ children }) => {
   const [devMode, setDevMode] = useState(false)
   const [selectedExtConfig, setSelectedExtConfig] = useState<ExtInfo | null>(null)
   const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
