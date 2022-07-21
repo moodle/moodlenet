@@ -53,7 +53,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   const isInstalled = !searchPackagesResObject.installPkgReq
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
-    const promise = isInstalled
+    /* const promise =  */ isInstalled
       ? lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
           installationFolder: searchPackagesResObject.installationFolder,
         })
@@ -62,7 +62,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
           deploy: true,
         })
 
-    promise.finally(/* toggleIsInstalling */)
+    // promise.finally(toggleIsInstalling)
   }, [isInstalled, searchPackagesResObject.installPkgReq])
 
   type CodeBlockProps = {
