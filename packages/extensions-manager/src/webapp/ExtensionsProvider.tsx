@@ -1,7 +1,8 @@
 import { ExtInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import React, { createContext, useState } from 'react'
-import { SearchPackagesResObject } from '../types/data'
+import React, { createContext, FC, PropsWithChildren, useEffect, useState } from 'react'
+import { ExtensionsManagerExt } from '..'
+import { SearchPackagesResObject, SearchPackagesResponse } from '../types/data'
 import * as SettingsEnabledExtComponents from './SettingsEnabledExt'
 import * as SettingsInstallComponents from './SettingsInstall'
 
@@ -12,20 +13,41 @@ export type StateContextType = {
   setSelectedExtConfig: React.Dispatch<React.SetStateAction<ExtInfo | null>>
   selectedExtInfo: SearchPackagesResObject | null
   setSelectedExtInfo: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
+  searchPkgResp: SearchPackagesResponse | undefined
+  setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
 }
 
 export const StateContext = createContext<StateContextType>(null as any)
 
-const StateProvider = ({ children }: { children: any }) => {
+const StateProvider: FC<PropsWithChildren> = ({ children }) => {
   const [devMode, setDevMode] = useState(false)
   const [selectedExtConfig, setSelectedExtConfig] = useState<ExtInfo | null>(null)
   const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
+  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
   lib.settings.useRegisterSettingsItem(SettingsInstallComponents)
   lib.settings.useRegisterSettingsItem(SettingsEnabledExtComponents)
 
+  useEffect(() => {
+    lib.priHttp
+      .fetch<ExtensionsManagerExt>(
+        'moodlenet-extensions-manager',
+        '0.1.10',
+      )('searchPackages')({ searchText: 'moodlenet' })
+      .then(resp => setSearchPkgResp(resp))
+  }, [])
+
   return (
     <StateContext.Provider
-      value={{ devMode, setDevMode, selectedExtConfig, setSelectedExtConfig, selectedExtInfo, setSelectedExtInfo }}
+      value={{
+        devMode,
+        setDevMode,
+        selectedExtConfig,
+        setSelectedExtConfig,
+        selectedExtInfo,
+        setSelectedExtInfo,
+        searchPkgResp,
+        setSearchPkgResp,
+      }}
     >
       {children}
     </StateContext.Provider>

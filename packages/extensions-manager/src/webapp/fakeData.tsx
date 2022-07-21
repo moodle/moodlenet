@@ -17,6 +17,15 @@ export type Module = {
   mandatory?: boolean
 }
 
+export const mandatoryPackages = [
+  '@moodlenet/core',
+  '@moodlenet/authentication-manager',
+  '@moodlenet/extensions-manager',
+  '@moodlenet/http-server',
+  '@moodlenet/webapp',
+  '@moodlenet/react-app',
+]
+
 export const packagesFake: Package[] = [
   {
     name: 'Core',

@@ -10,7 +10,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Just an extension to make tests",
+  "description": "Test extension\nJust an extension to make tests",
   "readme": "",
   "files": [
     "lib/"

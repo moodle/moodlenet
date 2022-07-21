@@ -9,7 +9,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Manager for multiple authentication systems",
+  "description": "Authentication manager\nManager for multiple authentication systems",
   "files": [
     "lib/",
     "src/"

@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import rehypeRaw from 'rehype-raw'
+import { mandatoryPackages } from '../fakeData'
 import './ExtensionConfig.scss'
 
 export type ExtensionConfigProps = {
@@ -77,7 +78,7 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
           </div>
           <PrimaryButton
             className={`install-btn ${isInstalling ? 'loading' : ''}`}
-            disabled={extInfo.packageInfo.packageJson.moodlenet.displayName === 'Core'}
+            disabled={mandatoryPackages.includes(extInfo.packageInfo.packageJson.name)}
             onClick={uninstall}
           >
             <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
