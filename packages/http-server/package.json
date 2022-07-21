@@ -9,7 +9,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Main system HTTP server",
+  "description": "HTTP server\nMain system HTTP server",
   "files": [
     "lib/",
     "src/"

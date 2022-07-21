@@ -9,7 +9,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Use social authentication systems",
+  "description": "Passport Auth\nUse social authentication systems",
   "files": [
     "lib/",
     "src/"

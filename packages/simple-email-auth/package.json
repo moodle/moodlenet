@@ -9,7 +9,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Basic authentication using email and password",
+  "description": "Email authentication\nBasic authentication using email and password",
   "files": [
     "lib/",
     "src/"

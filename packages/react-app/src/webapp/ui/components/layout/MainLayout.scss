@@ -133,6 +133,8 @@ body {
   > .content {
     height: 100%;
     width: -webkit-fill-available;
+
+    padding: 0 0 80px;
     display: flex;
     flex-direction: column;
     align-items: center;

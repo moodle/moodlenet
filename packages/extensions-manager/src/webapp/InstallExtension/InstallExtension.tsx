@@ -1,15 +1,13 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { CoreExt } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
-import { ExtensionsManagerExt } from '../..'
-import { SearchPackagesResponse } from '../../types/data'
+import { FC, useCallback, useContext, useReducer, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
 import { DevModeBtn } from '../Extensions'
 import { StateContext } from '../ExtensionsProvider'
-import { getNumberFromString, getPastelColor, splitPkgName } from '../helpers/utilities'
+import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './InstallExtension.scss'
 
@@ -22,18 +20,8 @@ const { Card, PrimaryButton, InputTextField, Loading } = lib.ui.components.atoms
 const InstallExtension: FC<InstallExtensionProps> = () => {
   lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
 
-  const { selectedExtInfo, setSelectedExtInfo } = useContext(StateContext)
-  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
-  const { devMode } = useContext(StateContext)
+  const { selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(StateContext)
 
-  useEffect(() => {
-    lib.priHttp
-      .fetch<ExtensionsManagerExt>(
-        'moodlenet-extensions-manager',
-        '0.1.10',
-      )('searchPackages')({ searchText: 'moodlenet' })
-      .then(resp => setSearchPkgResp(resp))
-  }, [])
   const [localPathField, setLocalPathField] = useState('')
   const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
   const install = useCallback(() => {
@@ -47,6 +35,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
     })
     // .finally(toggleIsInstalling)
   }, [localPathField])
+
   return (
     <>
       {!selectedExtInfo && (
@@ -89,7 +78,10 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects.map(respObj => {
-                const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
+                // const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
+                var [extName, description] = respObj.description ? respObj.description.split('\n') : ['', '']
+                extName = extName ? extName : ''
+                description = description ? description : ''
                 return (
                   <div
                     className="package"
@@ -97,16 +89,13 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                     onClick={() => setSelectedExtInfo(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
                   >
                     {/* <PackageIcon /> */}
-                    <div className="logo" style={{ background: getPastelColor(getNumberFromString(pkgBaseName), 0.5) }}>
-                      <div className="letter">{pkgBaseName.substring(0, 1).toLocaleLowerCase()}</div>
-                      <div
-                        className="circle"
-                        style={{ background: getPastelColor(getNumberFromString(pkgBaseName)) }}
-                      />
+                    <div className="logo" style={{ background: getPastelColor(getNumberFromString(extName), 0.5) }}>
+                      <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
+                      <div className="circle" style={{ background: getPastelColor(getNumberFromString(extName)) }} />
                     </div>
                     <div className="info">
-                      <div className="title">{respObj.description}</div>
-                      <div className="details">{respObj.pkgName}</div>
+                      <div className="title">{extName}</div>
+                      <div className="details">{description}</div>
                     </div>
                     <PrimaryButton className="install-btn">Details</PrimaryButton>
                   </div>
@@ -118,6 +107,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       )}
       {selectedExtInfo && (
         <ExtensionInfo
+          isInstalling={isInstalling}
           toggleIsInstalling={toggleIsInstalling}
           searchPackagesResObject={selectedExtInfo}
           onClickBackBtn={() => setSelectedExtInfo(null)}
