@@ -1,12 +1,11 @@
 import type * as Core from '@moodlenet/core'
 import express, { Application } from 'express'
-import { Server } from 'http'
-import { makeExtPortsApp } from './ext-ports-app'
-import { PriMsgBaseUrl } from './types'
+import { createHttpServer } from './http-server'
+import { MountAppItem } from './types'
 export * from './types'
 
 interface Instance {
-  mount(_: { mountApp: Application; absMountPath?: string }): void
+  mount(_: { getApp(): Application; absMountPath?: string }): void
   express: typeof express
 }
 
@@ -20,54 +19,26 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
   enable(shell) {
     return {
       deploy(/* {  tearDown } */) {
-        const logger = console
-        // const logger = coreExt.sysLog.moodlenetSysLogLib(shell)
         const env = getEnv(shell.env)
-        const app = express().use(`/`, (_, __, next) => next())
+        const httpServer = createHttpServer({ port: env.port, shell })
 
-        let server: Server | undefined
-
-        if (env.port) {
-          restartServer(env.port)
-        } else {
-          logger.info(`No port defined in env, won't start HTTP server at startup`)
-        }
         return {
           inst({ depl }) {
             return {
-              mount({ mountApp, absMountPath }) {
+              mount({ getApp, absMountPath }) {
                 const { extName /* , version */ } = shell.lib.splitExtId(depl.extId)
                 const mountPath = absMountPath ?? `/_/${extName}`
                 console.log('MOUNT', { extName, mountPath, absMountPath })
-                app.use(mountPath, mountApp)
+                const mountAppItem: MountAppItem = { mountPath, getApp }
+                const unmount = httpServer.mountApp(mountAppItem)
+                depl.tearDown.add(() => {
+                  unmount()
+                })
               },
               express,
               // xlib,
             }
           },
-        }
-
-        async function stopServer() {
-          return new Promise<void>((resolve, reject) => {
-            if (!server) {
-              return resolve()
-            }
-            logger.info(`Stopping HTTP server`)
-            server.close(err => (err ? reject(err) : resolve()))
-          })
-        }
-        async function restartServer(port: number) {
-          await stopServer()
-          return new Promise<void>((resolve, reject) => {
-            logger.info(`Starting HTTP server on port ${port}`)
-            server = app.listen(port, function () {
-              arguments[0] ? reject(arguments[0]) : resolve()
-            })
-            const extPortsApp = makeExtPortsApp(shell)
-            const basePriMsgUrl: PriMsgBaseUrl = '/_/_'
-            app.use(basePriMsgUrl, extPortsApp)
-            logger.info(`HTTP listening on port ${port} :)`)
-          })
         }
       },
     }

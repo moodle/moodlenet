@@ -60,17 +60,20 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
       async deploy(/* { tearDown } */) {
         shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
-          const mountApp = express()
-          const staticWebApp = express.static(latestBuildFolder, { index: 'index.html' })
-          mountApp.use(staticWebApp)
-          mountApp.get(`*`, (req, res, next) => {
-            if (req.url.startsWith('/_/')) {
-              next()
-              return
-            }
-            res.sendFile(resolve(latestBuildFolder, 'index.html'))
-          })
-          mount({ mountApp, absMountPath: '/' })
+          mount({ getApp, absMountPath: '/' })
+          function getApp() {
+            const mountApp = express()
+            const staticWebApp = express.static(latestBuildFolder, { index: 'index.html' })
+            mountApp.use(staticWebApp)
+            mountApp.get(`*`, (req, res, next) => {
+              if (req.url.startsWith('/_/')) {
+                next()
+                return
+              }
+              res.sendFile(resolve(latestBuildFolder, 'index.html'))
+            })
+            return mountApp
+          }
         })
         await mkdir(tmpDir, { recursive: true })
         await mkdir(buildFolder, { recursive: true })
