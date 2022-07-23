@@ -12,7 +12,6 @@
         "react-app dev-build",
         "core dev-build",
         "arangodb dev-build",
-        "test-extension dev-build",
         "authentication-manager dev-build",
         "extensions-manager dev-build",
         "passport-auth dev-build",
@@ -98,15 +97,6 @@
       "group": "build",
       "label": "react-app dev-build"
       // "dependsOn": ["core dev-build", "http-server dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/test-extension/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "test-extension dev-build xx xy"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
     },
     {
       "type": "typescript",
