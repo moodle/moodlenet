@@ -31,9 +31,12 @@ const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = {
     })
     // by etto http://localhost:3000/_/moodlenet-passport-auth/auth/me/
     shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', inst => {
-      const app = inst.express()
-      prepareApp(shell, app)
-      inst.mount({ mountApp: app })
+      inst.mount({ getApp })
+      function getApp() {
+        const app = inst.express()
+        prepareApp(shell, app)
+        return app
+      }
     })
     shell.expose({
       'save/sub': { validate: () => ({ valid: true }) },

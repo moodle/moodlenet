@@ -8,6 +8,7 @@ import {
   SubcriptionVal,
   ValueData,
 } from '@moodlenet/core'
+import { Application } from 'express'
 
 export type PriMsgBaseUrl = `/_/_` //`^^
 
@@ -20,3 +21,5 @@ export type RawSubOpts<Def extends ExtDef, Path extends SubcriptionPaths<Def>> =
   req: SubcriptionReq<Def, Path>
   obsType: { msg: DataMessage<ValueData<SubcriptionVal<Def, Path>>> }
 }
+
+export type MountAppItem = { mountPath: string; getApp(): Application }

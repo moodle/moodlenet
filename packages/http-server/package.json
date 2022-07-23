@@ -19,7 +19,8 @@
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "body-parser": "^1.19.2",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "http-graceful-shutdown": "^3.1.7"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.0.1",
