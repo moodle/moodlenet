@@ -18,7 +18,7 @@ const App: FC = () => {
     // if (process.env.NODE_ENV === 'development') {
     //   return
     // }
-    priHttp.fetch<ReactAppExt>('moodlenet.react-app', '0.1.10')('webapp/updated')().then(reloadWebapp)
+    priHttp.fetch<ReactAppExt>('moodlenet.react-app', '0.1.10')('webapp/updated')().finally(reloadWebapp)
   }, [])
   return (
     <BrowserRouter>
