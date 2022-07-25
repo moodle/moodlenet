@@ -12,6 +12,7 @@ export type User = UserData & {}
 export type UserData = {
   id: UserId
   displayName: string
+  avatarUrl?: string
   providerId: ProviderId
   created: string
 }
