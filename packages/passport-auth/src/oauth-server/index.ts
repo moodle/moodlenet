@@ -43,6 +43,7 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
       } = await authSrv('moodlenet-authentication-manager@0.1.10::registerUser')({
         uid,
         displayName: req.user.oauth.profile.displayName,
+        avatarUrl: req.user.oauth.profile.photos?.[0]?.value,
       })
       if (!createUserRes.success) {
         res.redirect(`/moodlenet-passport-auth/login-fail?msg=couldn't create user`)

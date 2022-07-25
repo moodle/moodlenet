@@ -1,6 +1,7 @@
 import { Shell } from '@moodlenet/core'
 import { Passport } from 'passport'
 import passportGoogle from 'passport-google-oauth20'
+import { inspect } from 'util'
 import { PassportAuthExt } from '..'
 
 async function getPassport(shell: Shell<PassportAuthExt>) {
@@ -22,7 +23,8 @@ async function getPassport(shell: Shell<PassportAuthExt>) {
           scope: ['profile'],
         },
         (accessToken, refreshToken, profile, done) => {
-          // console.log('verifier ', { accessToken, refreshToken, profile })
+          console.log('verifier ', { accessToken, refreshToken })
+          console.log('profile ', inspect(profile, false, 10, true))
           done(null, { oauth: { type: 'google', accessToken, refreshToken, profile } })
         },
       ),
