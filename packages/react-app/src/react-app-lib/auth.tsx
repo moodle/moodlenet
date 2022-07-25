@@ -20,8 +20,8 @@ export type SignupItem = { def: SignupItemDef }
 export type AuthCtxT = {
   loginItems: LoginItem[]
   signupItems: SignupItem[]
-  registerLogin(loginItemDef: LoginItemDef): void
-  registerSignup(signupItemDef: SignupItemDef): void
+  registerLogin(loginItemDef: LoginItemDef): () => void
+  registerSignup(signupItemDef: SignupItemDef): () => void
   setSessionToken(
     sessionToken: SessionToken,
   ): Promise<{ success: true; clientSession: ClientSession } | { success: false; msg: string }>

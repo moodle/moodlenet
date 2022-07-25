@@ -20,7 +20,9 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
   const { clientSession, logout } = useContext(AuthCtx)
 
   const avatar = {
-    backgroundImage: 'url(https://moodle.net/static/media/default-avatar.2ccf3558.svg)',
+    backgroundImage: `url(${
+      clientSession?.user.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+    })`,
     // backgroundImage: 'url(' + defaultAvatar + ')',
     // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',

@@ -7,7 +7,7 @@ export * from './types'
 
 export type Topo = {
   registerUser: SubTopo<
-    { uid: string; displayName: string },
+    { uid: string; displayName: string; avatarUrl?: string },
     { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
   >
   getSessionToken: SubTopo<
@@ -42,13 +42,14 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
         shell.lib.pubAll<AuthenticationManagerExt>('moodlenet-authentication-manager@0.1.10', shell, {
           async registerUser({ msg }) {
             const { extName } = shell.lib.splitExtId(msg.source)
-            const { displayName, uid } = msg.data.req
+            const { displayName, uid, avatarUrl } = msg.data.req
             const user = await store.create({
               displayName,
               providerId: {
                 ext: extName,
                 uid,
               },
+              avatarUrl,
             })
             const sessionToken = await createSessionToken(user)
 
