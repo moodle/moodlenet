@@ -7,6 +7,7 @@
       "label": "dev-tasks",
       "dependsOrder": "parallel",
       "dependsOn": [
+        "test-extension dev-build",
         "dev-machine dev-build",
         "http-server dev-build",
         "react-app dev-build",
@@ -25,6 +26,15 @@
         "showReuseMessage": true,
         "clear": false
       }
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/test-extension/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "test-extension dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
