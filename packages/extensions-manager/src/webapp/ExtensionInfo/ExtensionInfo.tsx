@@ -100,6 +100,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
           </div>
           <PrimaryButton
             className={`install-btn ${isInstalling ? 'loading' : ''}`}
+            noHover={isInstalling}
             disabled={mandatoryPackages.includes(searchPackagesResObject.pkgName)}
             onClick={install_uninstall}
           >
