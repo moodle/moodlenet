@@ -80,6 +80,7 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
             className={`install-btn ${isInstalling ? 'loading' : ''}`}
             disabled={mandatoryPackages.includes(extInfo.packageInfo.packageJson.name)}
             onClick={uninstall}
+            noHover={isInstalling}
           >
             <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
               <Loading color="white" />
