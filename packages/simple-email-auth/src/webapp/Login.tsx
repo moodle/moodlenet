@@ -3,7 +3,7 @@ import lib from 'moodlenet-react-app-lib'
 import { FC, useContext, useState } from 'react'
 import { SimpleEmailAuthExt } from '..'
 
-const { InputTextField, PrimaryButton, TertiaryButton } = lib.ui.components.atoms
+const { InputTextField, PrimaryButton, TertiaryButton } = lib.ui.components
 export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => <PrimaryButton color="blue">Using email</PrimaryButton>

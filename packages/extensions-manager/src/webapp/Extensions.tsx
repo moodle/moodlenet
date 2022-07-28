@@ -12,7 +12,7 @@ import Packages from './Packages/Packages'
 // import Extensions, { ExtensionsProps } from './Extensions/Extensions'
 import './styles.scss'
 
-const Card = lib.ui.components.atoms.Card
+const Card = lib.ui.components.Card
 
 type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'InstallExtension'
 
@@ -46,7 +46,7 @@ export const Extensions: FC = () => {
   //   sectionProps,
   //   section = 'InstallExtension' /* , headerPageTemplateProps */,
   // }) => {
-  lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
+  lib.ui.components.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
   const stateContext = useContext(StateContext)
   const [currentSection, setCurrentSection] = useState('InstallExtension')
   const [currentContent, setCurrentContent] = useState<any>(null)
@@ -100,7 +100,7 @@ Extensions.displayName = 'ExtensionsPage'
 
 export default Extensions
 
-const Switch = lib.ui.components.atoms.Switch
+const Switch = lib.ui.components.Switch
 export const DevModeBtn: FC = () => {
   const { devMode, setDevMode } = useContext(StateContext)
   return (

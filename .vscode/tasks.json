@@ -20,7 +20,8 @@
         "email-service dev-build",
         "crypto dev-build",
         "content-graph dev-build",
-        "key-value-store dev-build"
+        "key-value-store dev-build",
+        "profile-page dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -137,24 +138,6 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "passport-auth dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/email-service/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "email-service dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/crypto/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "crypto dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]

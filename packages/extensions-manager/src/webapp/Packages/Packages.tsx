@@ -15,7 +15,7 @@ export type PackagesProps = {
   // menuItemPressed: boolean
 }
 
-const { Card, PrimaryButton } = lib.ui.components.atoms
+const { Card, PrimaryButton } = lib.ui.components
 
 const Packages: FC<PackagesProps> = () => {
   const [extinfoList, setExtInfoList] = useState<PackageInfo[]>([])

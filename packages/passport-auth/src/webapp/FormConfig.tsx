@@ -3,7 +3,7 @@ import React, { FC, useContext, useRef } from 'react'
 import { PassportConfigs } from '../store/types'
 import { PassportContext } from './MainProvider'
 
-const { Card, InputTextField, PrimaryButton } = lib.ui.components.atoms
+const { Card, InputTextField, PrimaryButton } = lib.ui.components
 
 export const FormConfig: FC = () => {
   const apiKeyRef = useRef<HTMLInputElement>(null)
