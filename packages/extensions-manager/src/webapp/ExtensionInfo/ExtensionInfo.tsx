@@ -21,7 +21,7 @@ export type ExtensionInfoProps = {
   searchPackagesResObject: SearchPackagesResObject
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
-const { TertiaryButton, PrimaryButton, Card, Loading } = lib.ui.components.atoms
+const { TertiaryButton, PrimaryButton, Card, Loading } = lib.ui.components
 
 const ExtensionInfo: FC<ExtensionInfoProps> = ({
   isInstalling,

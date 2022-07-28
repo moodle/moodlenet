@@ -54,5 +54,6 @@ export const defaultCorePackages = {
   'content-graph': '0.1.0',
   'extensions-manager': '0.1.0',
   'simple-email-auth': '0.1.0',
+  'profile-page': '0.0.1',
   // 'passport-auth': '0.1.0',
 }
