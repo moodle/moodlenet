@@ -20,6 +20,9 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       console.log(`moodlenet-profile-page: onExtInstance<ReactAppExt>`, inst)
       inst.setup({
+        ctxProvider: {
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
+        },
         routes: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
           rootPath: 'profile', // http://localhost:3000/profile

@@ -11,10 +11,6 @@
 // // import { ReactComponent as AddIcon } from '../../../../assets/icons/add.svg'
 import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-// import { FormikHandle } from '../../../../lib/formik'
-// import { useImageUrl } from '../../../../lib/useImageUrl'
-// import defaultAvatar from '../../../../static/img/default-avatar.svg'
-// import defaultBackgroud from '../../../../static/img/default-background.svg'
 // import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
 // import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 // import Loading from '../../../atoms/Loading/Loading'
@@ -26,6 +22,7 @@ import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useContext, useLayoutEffect, useRef, useState } from 'react'
+import { ProfileFormValues } from '../../types'
 import './ProfileCard.scss'
 
 const {
@@ -36,12 +33,10 @@ const {
   SecondaryButton,
   TertiaryButton,
   FloatingMenu,
-  icons,
+  Modal,
 } = lib.ui.components
-const SaveIcon = icons.Save
-const EditIcon = icons.Edit
-const ShareIcon = icons.Share
-const FlagIcon = icons.Flag
+// const { useImageUrl } = lib.ui.lib
+const { Save: SaveIcon, Edit: EditIcon, Share: ShareIcon, Flag: FlagIcon } = lib.ui.components.icons
 
 export type ProfileCardProps = {
   isOwner?: boolean
@@ -52,6 +47,7 @@ export type ProfileCardProps = {
   isFollowing?: boolean
   isEditing?: boolean
   isAuthenticated: boolean
+  editForm: ProfileFormValues
   // editForm: FormikHandle<ProfileFormValues>
   // toggleFollowForm: FormikHandle<{}>
   // requestApprovalForm: FormikHandle<{}>
@@ -77,7 +73,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   isAuthenticated,
   isEditing,
   isFollowing,
-  // editForm,
+  editForm,
   // toggleFollowForm,
   // approveUserForm,
   // requestApprovalForm,
@@ -90,14 +86,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   // setShowUrlCopiedAlert,
   // setIsReporting,
 }) => {
-  // const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
+  const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
-  // const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
+  const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
   const { clientSession } = useContext(lib.auth.AuthCtx)
 
-  console.log('USER DATA: ', clientSession?.user)
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
   }
@@ -127,17 +122,19 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   // const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
   // editForm.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
-  //TODO
   // const [backgroundUrl] = useImageUrl(
   //   editForm.values.backgroundImage,
-  //   defaultBackgroud
-  // )
-  // const background = {
-  //   backgroundImage: 'url(' + backgroundUrl + ')',
-  //   backgroundSize: 'cover',
-  // }
+  //   defaultBackgroud,
+  //   )
+  const backgroundUrl = typeof editForm.backgroundImage === 'string' ? editForm.backgroundImage : ''
+
+  const background = {
+    backgroundImage: 'url(' + backgroundUrl + ')',
+    backgroundSize: 'cover',
+  }
 
   // const [avatarUrl] = useImageUrl(editForm.values.avatarImage, defaultAvatar)
+  const avatarUrl = typeof editForm.avatarImage === 'string' ? editForm.avatarImage : ''
   const avatar = {
     backgroundImage:
       'url(' + clientSession?.user.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg' + ')',
@@ -168,33 +165,33 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 
   return (
     <div className="profile-card">
-      {/* {isShowingBackground && backgroundUrl && (
-          <Modal
-            className="image-modal"
-            closeButton={false}
-            onClose={() => setIsShowingBackground(false)}
-            style={{ maxWidth: '90%', maxHeight: '90%' }}
-          >
-            <img src={backgroundUrl} alt="Background" />
-          </Modal>
-        )}
-        {isShowingAvatar && avatarUrl && (
-          <Modal
-            className="image-modal"
-            closeButton={false}
-            onClose={() => setIsShowingAvatar(false)}
-            style={{ maxWidth: '90%', maxHeight: '90%' }}
-          >
-            <img src={avatarUrl} alt="Avatar" />
-          </Modal>
-        )} */}
+      {isShowingBackground && backgroundUrl && (
+        <Modal
+          className="image-modal"
+          closeButton={false}
+          onClose={() => setIsShowingBackground(false)}
+          style={{ maxWidth: '90%', maxHeight: '90%' }}
+        >
+          <img src={backgroundUrl} alt="Background" />
+        </Modal>
+      )}
+      {isShowingAvatar && avatarUrl && (
+        <Modal
+          className="image-modal"
+          closeButton={false}
+          onClose={() => setIsShowingAvatar(false)}
+          style={{ maxWidth: '90%', maxHeight: '90%' }}
+        >
+          <img src={avatarUrl} alt="Avatar" />
+        </Modal>
+      )}
       <div
         className="background"
-        // style={{
-        //   ...background,
-        //   pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
-        // }}
-        // onClick={() => !isEditing && setIsShowingBackground(true)}
+        style={{
+          ...background,
+          // pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+        }}
+        onClick={() => !isEditing && setIsShowingBackground(true)}
       >
         {isEditing && (
           <>
@@ -220,7 +217,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           ...avatar,
           // pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
         }}
-        // onClick={() => !isEditing && setIsShowingAvatar(true)}
+        onClick={() => !isEditing && setIsShowingAvatar(true)}
       >
         {isEditing && (
           <>
@@ -386,14 +383,21 @@ export const ProfileCard: FC<ProfileCardProps> = ({
                     <span>{editForm.values.location}</span>
                     )}  */}
               {/* {editForm.values.siteUrl && editForm.values.siteUrl !== '' && ( */}
-              <a
-                // href={editForm.values.siteUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {/* {editForm.values.siteUrl} */}
-              </a>
-              {/* )} */}
+              {editForm.displayName && (
+                <span>
+                  <span className="at-symbol">@</span>
+                  {editForm.displayName}
+                </span>
+              )}
+              {editForm.organizationName && editForm.organizationName !== '' && (
+                <span>{editForm.organizationName}</span>
+              )}
+              {editForm.location && editForm.location !== '' && <span>{editForm.location}</span>}
+              {editForm.siteUrl && editForm.siteUrl !== '' && (
+                <a href={editForm.siteUrl} target="_blank" rel="noreferrer">
+                  {editForm.siteUrl}
+                </a>
+              )}
             </div>
           )}
           {/* {profileCardErrorMessage && (

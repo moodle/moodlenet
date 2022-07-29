@@ -16,17 +16,31 @@ type HeaderProps = {}
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
   const setCtx = useContext(SettingsCtx)
+  // console.log({ addonCtx })
 
   const { clientSession, logout, isRoot } = useContext(AuthCtx)
+
   const avatarImageUrl = isRoot
     ? rootAvatar
     : clientSession?.user.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,
     // backgroundImage: 'url(' + defaultAvatar + ')',
     // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
+
+  const avatarMenuItems = [
+    <Link to="/settings">
+      <SettingsIcon />
+      Settings
+    </Link>,
+    <Link to="/" onClick={logout}>
+      <ExitToAppIcon />
+      Log out
+    </Link>,
+  ]
 
   return (
     <div className="header">
@@ -45,20 +59,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           {clientSession ? (
             <FloatingMenu
               className="avatar-menu"
-              menuContent={[
-                <Link to="/settings">
-                  <SettingsIcon />
-                  Settings
-                </Link>,
-                /*  <Link to="/extensions">
-                  <ExtensionIcon />
-                  Extensions
-                </Link>, */
-                <Link to="/" onClick={logout}>
-                  <ExitToAppIcon />
-                  Log out
-                </Link>,
-              ]}
+              menuContent={avatarMenuItems}
               hoverElement={
                 <div style={avatar} className="avatar" {...{ referrerPolicy: 'no-referrer' }} />
                 // <Link

@@ -22,11 +22,11 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
 
   const [currSettingsItem, chooseSettingsItem] = useState(baseSettingsItems[0]!)
   const settingsItems = useMemo(() => baseSettingsItems.concat(setCtx.settingsItems), [setCtx.settingsItems])
-  const ctxElement = (
-    <>
-      {setCtx.settingsItems.length > 1 && <>{/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}</>}
-    </>
-  )
+  // const ctxElement = (
+  //   <>
+  //     {setCtx.settingsItems.length > 1 && <>{/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}</>}
+  //   </>
+  // )
 
   return (
     <div className="settings-page">
@@ -51,8 +51,7 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
       </div>
       <div className="content">
         {currSettingsItem ? <currSettingsItem.def.Content /> : null}
-
-        {ctxElement}
+        {/* {ctxElement} */}
       </div>
     </div>
     // <div className="login-page">

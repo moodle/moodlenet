@@ -33,6 +33,7 @@
 // } from '../../templates/HeaderPageTemplate'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useState } from 'react'
+import { ProfileFormValues } from '../types'
 import { OverallCard, OverallCardProps } from './OverallCard/OverallCard'
 import { ProfileCard, ProfileCardProps } from './ProfileCard/ProfileCard'
 import './ProfilePage.scss'
@@ -68,6 +69,7 @@ export type ProfilePageProps = {
   // sendEmailForm?: FormikHandle<{ text: string }>
   // reportForm?: FormikHandle<{ comment: string }>
   // editForm: FormikHandle<ProfileFormValues>
+  editForm: ProfileFormValues
 }
 
 export const ProfilePage: FC<ProfilePageProps> = ({
@@ -83,7 +85,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({
   // showAccountApprovedSuccessAlert,
   // sendEmailForm,
   // reportForm,
-  // editForm,
+  editForm,
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
@@ -224,6 +226,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({
       <div className="content">
         <div className="main-column">
           <ProfileCard
+            editForm={editForm}
             {...profileCardProps}
             // editForm={editForm}
             isEditing={isEditing}
