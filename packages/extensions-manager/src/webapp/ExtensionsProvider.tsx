@@ -1,4 +1,4 @@
-import { ExtInfo } from '@moodlenet/core'
+import { PackageInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
 import React, { createContext, FC, PropsWithChildren, useEffect, useState } from 'react'
 import { ExtensionsManagerExt } from '..'
@@ -9,8 +9,8 @@ import * as SettingsInstallComponents from './SettingsInstall'
 export type StateContextType = {
   devMode: boolean
   setDevMode: React.Dispatch<React.SetStateAction<boolean>>
-  selectedExtConfig: ExtInfo | null
-  setSelectedExtConfig: React.Dispatch<React.SetStateAction<ExtInfo | null>>
+  selectedExtConfig: PackageInfo | null
+  setSelectedExtConfig: React.Dispatch<React.SetStateAction<PackageInfo | null>>
   selectedExtInfo: SearchPackagesResObject | null
   setSelectedExtInfo: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
   searchPkgResp: SearchPackagesResponse | undefined
@@ -21,7 +21,7 @@ export const StateContext = createContext<StateContextType>(null as any)
 
 const StateProvider: FC<PropsWithChildren> = ({ children }) => {
   const [devMode, setDevMode] = useState(false)
-  const [selectedExtConfig, setSelectedExtConfig] = useState<ExtInfo | null>(null)
+  const [selectedExtConfig, setSelectedExtConfig] = useState<PackageInfo | null>(null)
   const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
   const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
   lib.settings.useRegisterSettingsItem(SettingsInstallComponents)
@@ -30,8 +30,8 @@ const StateProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     lib.priHttp
       .fetch<ExtensionsManagerExt>(
-        'moodlenet-extensions-manager',
-        '0.1.10',
+        '@moodlenet/extensions-manager',
+        '0.1.0',
       )('searchPackages')({ searchText: 'moodlenet' })
       .then(resp => setSearchPkgResp(resp))
   }, [])

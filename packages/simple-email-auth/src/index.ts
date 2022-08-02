@@ -15,16 +15,15 @@ export type SimpleEmailAuthTopo = {
   >
 }
 
-export type SimpleEmailAuthExt = ExtDef<'moodlenet-simple-email-auth', '0.1.10', SimpleEmailAuthTopo>
+export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', SimpleEmailAuthTopo, void, void>
 
 const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
-  id: 'moodlenet-simple-email-auth@0.1.10',
-  displayName: 'Email authentication',
-  description: 'Basic authentication using an email and a password',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
-  enable(shell) {
-    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`moodlenet-simple-email-auth: onExtInstance<ReactAppExt>`, inst)
+  name: '@moodlenet/simple-email-auth',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
+  wireup(shell) {
+    shell.onExtInstance<ReactAppExt>('@moodlenet/react-app@0.1.0', inst => {
+      console.log(`@moodlenet/simple-email-auth: onExtInstance<ReactAppExt>`, inst)
       inst.setup({
         ctxProvider: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
@@ -38,7 +37,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
     return {
       deploy() {
         const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
-        shell.lib.pubAll<SimpleEmailAuthExt>('moodlenet-simple-email-auth@0.1.10', shell, {
+        shell.lib.pubAll<SimpleEmailAuthExt>('@moodlenet/simple-email-auth@0.1.0', shell, {
           async login({
             msg: {
               data: {
@@ -53,7 +52,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
             const {
               msg: { data: res },
             } = await shell.lib.fetch<AuthenticationManagerExt>(shell)(
-              'moodlenet-authentication-manager@0.1.10::getSessionToken',
+              '@moodlenet/authentication-manager@0.1.0::getSessionToken',
             )({ uid: user.id })
 
             if (!res.success) {
@@ -79,7 +78,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
             const {
               msg: { data: authRes },
             } = await shell.lib.fetch<AuthenticationManagerExt>(shell)(
-              'moodlenet-authentication-manager@0.1.10::registerUser',
+              '@moodlenet/authentication-manager@0.1.0::registerUser',
             )({ uid: user.id, displayName })
 
             if (!authRes.success) {
@@ -90,10 +89,10 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
             return { success: true }
           },
         })
-        return {}
+        return
       },
     }
   },
 }
 
-export default { exts: [ext] }
+export default ext

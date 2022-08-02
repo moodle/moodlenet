@@ -9,7 +9,7 @@ async function getPassport(shell: Shell<PassportAuthExt>) {
     msg: {
       data: { configs },
     },
-  } = await shell.lib.fetch<PassportAuthExt>(shell)('moodlenet-passport-auth@0.1.10::get')()
+  } = await shell.lib.fetch<PassportAuthExt>(shell)('@moodlenet/passport-auth@0.1.0::get')()
 
   const passport = new Passport()
   if (configs.google) {
@@ -19,7 +19,7 @@ async function getPassport(shell: Shell<PassportAuthExt>) {
         {
           clientID: configs.google.apiKey,
           clientSecret: configs.google.apiSecret,
-          callbackURL: '/_/moodlenet-passport-auth/oauth2/redirect/google',
+          callbackURL: '/_/@moodlenet/passport-auth/oauth2/redirect/google',
           scope: ['profile'],
         },
         (accessToken, refreshToken, profile, done) => {

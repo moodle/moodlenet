@@ -16,16 +16,23 @@ export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
     pushes msg
     */
 
-    const tokens = req.path.split('/').slice(2)
-    const extId = tokens.slice(0, 2).join('@') as Core.ExtId
-    const path = tokens.slice(2).join('/') as Core.TopoPath
-    console.log('Exposed Api call', extId, path, req.path)
+    const urlTokens = req.path.split('/').slice(2)
+    if (urlTokens.length < 2) {
+      return next()
+    }
+    const isScopedPkgName = urlTokens[0]?.[0] === '@'
+
+    const extName = urlTokens.slice(0, isScopedPkgName ? 2 : 1).join('/') as Core.ExtName
+    const extVersion = urlTokens[isScopedPkgName ? 2 : 1]! as Core.ExtVersion
+    const extId = `${extName}@${extVersion}` as Core.ExtId
+    const path = urlTokens.slice(isScopedPkgName ? 3 : 2).join('/') as Core.TopoPath
+    console.log('Exposed Api call', { extId, extName, extVersion, path, urlTokens, req_path: req.path })
     if (!(extId && path)) {
       return next()
     }
     const pointer = shell.lib.joinPointer(extId, path)
     const extDeployment = shell.getExt(extId)
-    console.log('Exposed Api pointer', { pointer, extDeployment: extDeployment?.extId })
+    console.log('Exposed Api pointer', { pointer, extDeployment: extDeployment?.deploymentShell.extId })
 
     if (!(pointer && extDeployment)) {
       return next()

@@ -25,14 +25,14 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
   app.get('/oauth2/redirect/:providerName', async (req, res) => {
     // console.log('***', req.params.providerName, inspect(req.user, false, 10, true))
     if (!req.user) {
-      res.redirect(`/moodlenet-passport-auth/login-fail?msg=couldn't authenticate`)
+      res.redirect(`/@moodlenet/passport-auth/login-fail?msg=couldn't authenticate`)
       return
     }
     const authSrv = shell.lib.fetch<AuthenticationManagerExt>(shell)
     const uid = getAuthMngUidByOauthResult(req.user.oauth)
     const {
       msg: { data: getTokenData },
-    } = await authSrv('moodlenet-authentication-manager@0.1.10::getSessionToken')({
+    } = await authSrv('@moodlenet/authentication-manager@0.1.0::getSessionToken')({
       uid,
     })
 
@@ -40,13 +40,13 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
     if (!getTokenData.success) {
       const {
         msg: { data: createUserRes },
-      } = await authSrv('moodlenet-authentication-manager@0.1.10::registerUser')({
+      } = await authSrv('@moodlenet/authentication-manager@0.1.0::registerUser')({
         uid,
         displayName: req.user.oauth.profile.displayName,
         avatarUrl: req.user.oauth.profile.photos?.[0]?.value,
       })
       if (!createUserRes.success) {
-        res.redirect(`/moodlenet-passport-auth/login-fail?msg=couldn't create user`)
+        res.redirect(`/@moodlenet/passport-auth/login-fail?msg=couldn't create user`)
         return
       }
       token = createUserRes.sessionToken
@@ -54,7 +54,7 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
       token = getTokenData.sessionToken
     }
 
-    res.redirect(`/moodlenet-passport-auth/login-success?token=${token}`)
+    res.redirect(`/@moodlenet/passport-auth/login-success?token=${token}`)
   })
 
   /* POST /logout

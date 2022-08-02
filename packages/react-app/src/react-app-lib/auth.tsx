@@ -29,7 +29,7 @@ export type AuthCtxT = {
   logout(): void
 }
 
-const srvFetch = priHttp.fetch<AuthenticationManagerExt>('moodlenet-authentication-manager', '0.1.10')
+const srvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
