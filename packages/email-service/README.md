@@ -1,0 +1,1 @@
+curl -d '{"paramIn1": "34"}' -H "Content-Type: application/json" -X POST http://localhost:8080/_/_/raw-sub/moodlenet-email-service/0.1.10/send
