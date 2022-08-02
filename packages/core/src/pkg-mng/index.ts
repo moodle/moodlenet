@@ -1,8 +1,9 @@
 import * as path from 'path'
 import rimraf from 'rimraf'
+import { Ext } from '../types'
 import { npmInstaller, symlinkInstaller } from './installers'
 import * as lib from './lib'
-import { InstalledPackageInfo, InstallPkgReq } from './types'
+import { InstallPkgReq, PkgInstallationId, PkgInstallationInfo } from './types'
 
 // const myDirInfo = installDirsInfo();
 
@@ -11,64 +12,51 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   return {
     install,
     uninstall,
-    getAllInstalledPackagesInfo,
-    getInstalledPackageInfo,
+    getAllPackagesInfo,
+    getPackageInfo,
+    getModule,
   }
 
-  async function uninstall({ installationFolder }: { installationFolder: string }) {
+  async function uninstall({ pkgInstallationId }: { pkgInstallationId: PkgInstallationId }) {
     return new Promise<void>((pResolve, pReject) =>
-      rimraf(getAbsInstallationFolder(installationFolder), { disableGlob: true }, err =>
+      rimraf(getAbsInstallationFolder(pkgInstallationId), { disableGlob: true }, err =>
         err ? pReject(err) : pResolve(),
       ),
     )
   }
+
   async function install(installPkgReq: InstallPkgReq, useFolderName?: string) {
-    const { installationFolder } = await (installPkgReq.type === 'npm'
+    const { pkgInstallationId } = await (installPkgReq.type === 'npm'
       ? npmInstaller({ installPkgReq, pkgsFolder, useFolderName })
       : symlinkInstaller({ installPkgReq, pkgsFolder, useFolderName }))
-    await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(installationFolder), info: { installPkgReq } })
-    const installedPackageInfo = await getInstalledPackageInfo({ installationFolder })
-
+    const info: PkgInstallationInfo = { installPkgReq, date: new Date().toISOString() }
+    await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(pkgInstallationId), info })
+    const installedPackageInfo = await getPackageInfo({ pkgInstallationId })
+    const module = await getModule({ pkgInstallationId })
+    try {
+      lib.assertValidPkgModule(module, installedPackageInfo)
+    } catch (err) {
+      await uninstall({ pkgInstallationId })
+      throw err
+    }
     return installedPackageInfo
-    // questa non funziona per le partizioni diverse su linux
-    // await rename(InstallationInfo.InstallationFolder, resolve(pkgsFolder, safeInstallationFolder))
-    // npm install
-    // create info.json { installPkgReq: installPkgReq } (type InstalledPkgInfo )
   }
 
-  async function getAllInstalledPackagesInfo(): Promise<InstalledPackageInfo[]> {
-    return lib.getAllInstalledPackagesInfo({ absFolder: pkgsFolder })
+  async function getModule({ pkgInstallationId }: { pkgInstallationId: PkgInstallationId }): Promise<Ext> {
+    const imported_module = require(getAbsInstallationFolder(pkgInstallationId))
+    const module = 'default' in imported_module ? imported_module.default : imported_module
+    return module
   }
 
-  async function getInstalledPackageInfo({
-    installationFolder,
-  }: {
-    installationFolder: string
-  }): Promise<InstalledPackageInfo> {
-    return lib.getInstalledPackageInfo({ absFolder: getAbsInstallationFolder(installationFolder) })
+  async function getPackageInfo({ pkgInstallationId }: { pkgInstallationId: PkgInstallationId }) {
+    return lib.getPackageInfo({ absFolder: getAbsInstallationFolder(pkgInstallationId) })
   }
 
-  function getAbsInstallationFolder(installationFolder: string) {
-    return path.resolve(pkgsFolder, installationFolder)
+  async function getAllPackagesInfo() {
+    return lib.getAllPackagesInfo({ absFolder: pkgsFolder })
+  }
+
+  function getAbsInstallationFolder(pkgInstallationId: PkgInstallationId) {
+    return path.resolve(pkgsFolder, pkgInstallationId)
   }
 }
-
-/*
-/pkgsFolder
-  __moodlenet__passpoprt-auth_sdh7a/
-    info.json
-    src/
-    lib/
-    package.json
-    node_modules/
-  __moodlenet__email-pass-auth_sdh7a/
-    info.json
-    src/
-    lib/
-    package.json
-    node_modules/
-*/
-
-/*******************************
-
-  * */

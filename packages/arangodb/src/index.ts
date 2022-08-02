@@ -5,13 +5,13 @@ interface Instance {
   ensureDB(): Promise<{ db: Database; created: boolean }>
 }
 
-export type MNArangoDBExt = Core.ExtDef<'moodlenet.arangodb', '0.1.10', {}, void, Instance>
+export type MNArangoDBExt = Core.ExtDef<'@moodlenet/arangodb', '0.1.0', {}, void, Instance>
 
 const ext: Core.Ext<MNArangoDBExt, [Core.CoreExt]> = {
-  id: 'moodlenet.arangodb@0.1.10',
-  displayName: 'arangodb',
-  requires: ['moodlenet-core@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
-  enable(shell) {
+  name: '@moodlenet/arangodb',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0'], //, '@moodlenet/sys-log@0.1.0'],
+  wireup(shell) {
     return {
       deploy(/* {  tearDown } */) {
         //const logger = console
@@ -19,10 +19,10 @@ const ext: Core.Ext<MNArangoDBExt, [Core.CoreExt]> = {
         const env = getEnv(shell.env)
         const sysDB = new Database({ ...env.config })
         return {
-          inst({ depl }) {
+          plug({ depl }) {
             return {
               async ensureDB() {
-                const { extName } = shell.lib.splitExtId(depl.extId)
+                const { extName } = shell.lib.splitExtId(depl.deploymentShell.extId)
                 const exists = (await sysDB.databases()).find(db => db.name === extName)
 
                 const db = exists ?? (await sysDB.database(extName))
@@ -36,7 +36,7 @@ const ext: Core.Ext<MNArangoDBExt, [Core.CoreExt]> = {
     }
   },
 }
-export default { exts: [ext] }
+export default ext
 
 type Env = {
   config: Config

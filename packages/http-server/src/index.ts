@@ -4,34 +4,33 @@ import { createHttpServer } from './http-server'
 import { MountAppItem } from './types'
 export * from './types'
 
-interface Instance {
+interface Plug {
   mount(_: { getApp(): Application; absMountPath?: string }): void
   express: typeof express
 }
 
-export type MNHttpServerExt = Core.ExtDef<'moodlenet-http-server', '0.1.10', {}, void, Instance>
+export type MNHttpServerExt = Core.ExtDef<'@moodlenet/http-server', '0.1.0', {}, void, Plug>
 
 const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
-  id: 'moodlenet-http-server@0.1.10',
-  displayName: 'HTTP server',
-  description: 'Client HTTP server for the frontend',
-  requires: ['moodlenet-core@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
-  enable(shell) {
+  name: '@moodlenet/http-server',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0'], //, '@moodlenet/sys-log@0.1.0'],
+  wireup(shell) {
     return {
       deploy(/* {  tearDown } */) {
         const env = getEnv(shell.env)
         const httpServer = createHttpServer({ port: env.port, shell })
 
         return {
-          inst({ depl }) {
+          plug({ depl }) {
             return {
               mount({ getApp, absMountPath }) {
-                const { extName /* , version */ } = shell.lib.splitExtId(depl.extId)
+                const { extName /* , version */ } = shell.lib.splitExtId(depl.deploymentShell.extId)
                 const mountPath = absMountPath ?? `/_/${extName}`
                 console.log('MOUNT', { extName, mountPath, absMountPath })
                 const mountAppItem: MountAppItem = { mountPath, getApp }
                 const unmount = httpServer.mountApp(mountAppItem)
-                depl.tearDown.add(() => {
+                depl.deploymentShell.tearDown.add(() => {
                   unmount()
                 })
               },
@@ -44,7 +43,7 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
     }
   },
 }
-export default { exts: [ext] }
+export default ext
 
 type Env = {
   port: number

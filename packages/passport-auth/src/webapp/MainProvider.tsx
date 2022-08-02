@@ -12,7 +12,7 @@ export type PassportContextT = {
   configs: PassportConfigs
   save(configs: PassportConfigs): Promise<void>
 }
-const passportSrv = lib.priHttp.fetch<PassportAuthExt>('moodlenet-passport-auth', '0.1.10')
+const passportSrv = lib.priHttp.fetch<PassportAuthExt>('@moodlenet/passport-auth', '0.1.0')
 export const PassportContext = createContext<PassportContextT>(null as any)
 export const MainProvider: ExtContextProviderComp = ({ children }) => {
   lib.auth.useRegisterLogin(loginComponents)

@@ -53,7 +53,7 @@ export const ListConfig: FC = () => {
     _list[foundIdx] = configVals
     lib.priHttp
       .fetch<any>(
-        'moodlenet-passport-auth',
+        '@moodlenet/passport-auth',
         '0.1.10',
       )('create')(configVals)
       .then((res: any) => {

@@ -16,7 +16,7 @@ export const getReadmeFromRepo = async (endpoint: string) => {
   } else if (endpoint.includes('#readme')) {
     endpoint = endpoint.replace('#readme', '/-/raw/master/README.md')
   }
-  const corsEndpoint = 'https://moodlenet-redirect.herokuapp.com/'.concat(endpoint)
+  const corsEndpoint = 'https://@moodlenet/redirect.herokuapp.com/'.concat(endpoint)
   const res = await fetch(corsEndpoint)
   return await res.text()
 }

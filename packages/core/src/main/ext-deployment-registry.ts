@@ -1,59 +1,64 @@
 import { isVerBWC, splitExtId } from '../core-lib/pointer'
-import type { ExtDef, ExtId, ExtName, RegDeployment } from '../types'
+import type { ExtId, ExtName, PkgInstallationId, RegItem } from '../types'
 
 export type ExtLocalDeploymentRegistry = ReturnType<typeof createLocalDeploymentRegistry>
 
 export const createLocalDeploymentRegistry = () => {
   const reg: {
-    [Name in ExtName]: RegDeployment
+    [Name in ExtName]: RegItem<any>
   } = {}
 
   return {
     get,
-    getByName,
+    getByPkgInstallationId,
     reg,
     unregister,
     assertDeployed,
     register,
+    getByExtId,
   }
 
-  function get(extId: ExtId) {
+  function get(extName: ExtName) {
+    return reg[extName]
+  }
+
+  function getByExtId(extId: ExtId) {
     const { extName, version } = splitExtId(extId)
-    const regDeployment = getByName(extName)
+    console.log({ extName, version })
+    const regDeployment = get(extName)
     if (!regDeployment) {
       return undefined
     }
-    const { version: deployedVersion } = splitExtId(regDeployment.extId)
+    const { version: deployedVersion } = splitExtId(regDeployment.deploymentShell.extId)
     const isCompat = isVerBWC(deployedVersion, version)
     return isCompat ? regDeployment : undefined
   }
 
-  function getByName(extName: ExtName) {
-    const regDeployment = reg[extName]
+  function getByPkgInstallationId(pkgInstallationId: PkgInstallationId) {
+    const regDeployment = Object.values(reg).find(({ pkgInfo: { id } }) => pkgInstallationId === id)
     return regDeployment
   }
-  function register<Def extends ExtDef>({ depl }: { depl: RegDeployment<Def> }) {
-    const { extName } = splitExtId(depl.extId)
-    const currDeployment = getByName(extName)
+
+  function register({ regDeployment }: { regDeployment: RegItem<any> }) {
+    const extName = regDeployment.ext.name
+    const currDeployment = get(extName)
     if (currDeployment) {
       throw new Error(
-        `can't deploy ${depl.extId} as ${currDeployment.extId} is already deployed since ${currDeployment.at}`,
+        `can't  deploy ${regDeployment.deploymentShell.extId} as ${currDeployment.deploymentShell.extId} is already deployed since ${currDeployment.at}`,
       )
     }
 
-    reg[extName] = depl as any
+    reg[extName] = regDeployment
   }
 
   function unregister(extName: ExtName) {
-    const currDeployment = getByName(extName)
-    // currDeployable?.$msg$.complete()
-    // currDeployable?.tearDown.unsubscribe()
+    const currDeployment = get(extName)
     delete reg[extName]
     return currDeployment
   }
 
   function assertDeployed(extId: ExtId) {
-    const currDeployment = get(extId)
+    const currDeployment = getByExtId(extId)
     if (!currDeployment) {
       throw new Error(`assertDeployed: extension matching [${extId}] not deployed`)
     }

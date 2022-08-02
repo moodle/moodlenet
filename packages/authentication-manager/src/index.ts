@@ -16,14 +16,13 @@ export type Topo = {
   >
   getClientSession: SubTopo<{ token: string }, { success: true; clientSession: ClientSession } | { success: false }>
 }
-export type AuthenticationManagerExt = ExtDef<'moodlenet-authentication-manager', '0.1.10', Topo>
+export type AuthenticationManagerExt = ExtDef<'@moodlenet/authentication-manager', '0.1.0', Topo, void, void>
 
 const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
-  id: 'moodlenet-authentication-manager@0.1.10',
-  displayName: 'Authenticator manager',
-  description: 'Manager for the multiple authentication systems',
-  requires: ['moodlenet-core@0.1.10'],
-  enable(shell) {
+  name: '@moodlenet/authentication-manager',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0'],
+  wireup(shell) {
     shell.expose({
       'getSessionToken/sub': {
         validate() {
@@ -39,7 +38,7 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
     return {
       deploy() {
         const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'users') })
-        shell.lib.pubAll<AuthenticationManagerExt>('moodlenet-authentication-manager@0.1.10', shell, {
+        shell.lib.pubAll<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0', shell, {
           async registerUser({ msg }) {
             const { extName } = shell.lib.splitExtId(msg.source)
             const { displayName, uid, avatarUrl } = msg.data.req
@@ -78,7 +77,9 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
             return { success: true, clientSession }
           },
         })
-        return {}
+
+        return
+
         async function createSessionToken(user: User): Promise<SessionToken> {
           const userData: UserData = user
           const sessionToken: SessionToken = JSON.stringify(userData)
@@ -101,4 +102,4 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
   },
 }
 
-export default { exts: [ext] }
+export default ext
