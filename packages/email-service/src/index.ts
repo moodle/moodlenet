@@ -16,7 +16,7 @@ export type EmailService = ExtDef<
 
 const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
   id: 'moodlenet-email-service@0.1.10',
-  displayName: 'test ext',
+  displayName: 'email service ext',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     // business logic, wire-up to the message system,
