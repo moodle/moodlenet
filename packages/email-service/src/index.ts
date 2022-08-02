@@ -31,7 +31,7 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
       inst.setup({
         routes: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-          rootPath: 'my-test', // http://localhost:3000/my-test
+          // rootPath: 'email-service', // http://localhost:3000/my-test
         },
       })
     })
