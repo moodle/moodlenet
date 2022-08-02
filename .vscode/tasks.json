@@ -17,7 +17,7 @@
         "extensions-manager dev-build",
         "passport-auth dev-build",
         "simple-email-auth dev-build",
-        "email-service"
+        "email-service dev-build"
       ],
       "presentation": {
         "echo": true,
