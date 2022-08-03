@@ -36,6 +36,8 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
         },
       })
     })
+
+    // qui prende solo post
     shell.expose({
       'login/sub': { validate: () => ({ valid: true }) },
       'signup/sub': { validate: () => ({ valid: true }) },
@@ -82,6 +84,8 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
               },
             },
           }) {
+
+            // manda un email, con link di ritorno, 
             const mUser = await store.getByEmail(email)
             if (mUser) {
               return { success: false, msg: 'email exists' }

@@ -30,6 +30,9 @@ const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = {
     })
     // by etto http://localhost:3000/_/@moodlenet/passport-auth/auth/me/
     shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', plug => {
+      // qui chiede al plugin di montare una route 
+      // get app ritorna express app 
+      // come dire , montami quesdta app sul route, con link ocon underscore , nome pluign ecc
       plug.mount({ getApp })
       function getApp() {
         const app = plug.express()
