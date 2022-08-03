@@ -1,30 +1,9 @@
 import assert from 'assert'
 import { readdir, readFile, writeFile } from 'fs/promises'
 import { basename, resolve } from 'path'
-import { InstalledPackageInfo, PackageInfo, PkgInstallationInfo, SafePackageJson } from './types'
+import { Ext } from '../types'
+import { PackageInfo, PkgInstallationInfo, SafePackageJson } from './types'
 
-export async function getAllInstalledPackagesInfo({
-  absFolder,
-}: {
-  absFolder: string
-}): Promise<InstalledPackageInfo[]> {
-  const pkgFolderNames = await getAllFoldersIn({ absFolder })
-  return Promise.all(pkgFolderNames.map(({ abs }) => getInstalledPackageInfo({ absFolder: abs })))
-}
-export async function getInstalledPackageInfo({ absFolder }: { absFolder: string }): Promise<InstalledPackageInfo> {
-  const pkgInfo = await getPackageInfo({ absFolder })
-  const mainModAbsPath = resolve(absFolder, pkgInfo.mainModPath ?? '')
-  //console.log({mainModAbsPath,absFolder, pkgInfo_mainModPath: pkgInfo.mainModPath})
-  const pkgMainMod = await import(mainModAbsPath)
-  const hasDefault = 'default' in pkgMainMod
-  const pkgExport = hasDefault ? pkgMainMod.default : pkgMainMod
-  const installInfo = await readInstallInfoFileName({ absFolder })
-  return {
-    ...pkgInfo,
-    pkgExport,
-    installationInfo: installInfo,
-  }
-}
 export async function getAllPackagesInfo({ absFolder }: { absFolder: string }): Promise<PackageInfo[]> {
   const pkgFolderNames = await getAllFoldersIn({ absFolder })
   return Promise.all(pkgFolderNames.map(({ abs }) => getPackageInfo({ absFolder: abs })))
@@ -42,18 +21,16 @@ export async function getPackageInfo({ absFolder }: { absFolder: string }): Prom
   const packageJson: SafePackageJson = JSON.parse(await readFile(resolve(absFolder, 'package.json'), 'utf-8'))
   assert(packageJson.name, 'package has no name')
   assert(packageJson.version, 'package has no version')
-  const pkgMainModule = packageJson.main
   const rootfilenames = await readdir(absFolder, { withFileTypes: true })
   const readmefile = rootfilenames.find(file => file.isFile() && file.name.toLowerCase().split('.').at(0) === 'readme')
   const readme = readmefile?.name ? await readFile(resolve(absFolder, readmefile.name), 'utf-8') : ''
   //const rootDirPosix = posix.normalize(absFolder)
+  const installationInfo = await readInstallInfoFileName({ absFolder })
   const packageInfo: PackageInfo = {
+    ...installationInfo,
     packageJson,
     readme,
-    installationFolder: basename(absFolder),
-    mainModPath: pkgMainModule,
-    //rootDir: absFolder,
-    //rootDirPosix,
+    id: basename(absFolder),
   }
   console.log({ packageInfo })
   return packageInfo
@@ -71,3 +48,23 @@ export async function writeInstallInfo({ absFolder, info }: { absFolder: string;
 }
 
 export const INSTALL_INFO_FILENAME = 'install-info.json'
+
+export function assertValidPkgModule(module: any, pkgInfo: PackageInfo): asserts module is Ext {
+  console.log({
+    module,
+    pkgInfo,
+  })
+  assert(!!module, `no module! ${module}`)
+  const { name: moduleName, version, requires, wireup, install, uninstall } = module
+  assert('string' === typeof moduleName, `invalid name type : ${typeof moduleName}`) // : ExtName<Def>
+  assert('string' === typeof version, `invalid version type : ${typeof version}`) // : ExtName<Def>
+  assert(Array.isArray(requires), `invalid requires type : ${typeof requires}`) // : { [Index in keyof Requires]: _Unsafe_ExtId<Requires[Index]> }
+  assert('function' === typeof wireup, `invalid wireup type : ${typeof wireup}`) // : ExtWireup<Def>
+  assert(['undefined', 'function'].includes(typeof install), `invalid install type : ${typeof install}`) // ?: ExtInstall<Def>
+  assert(['undefined', 'function'].includes(typeof uninstall), `invalid uninstall type : ${typeof uninstall}`) // ?: ExtUninstall<Def>
+  const validId = moduleName === pkgInfo.packageJson.name && version === pkgInfo.packageJson.version
+  assert(
+    validId,
+    `pkg module's [name, version] should be [${pkgInfo.packageJson.name},${pkgInfo.packageJson.version}] .. found [${moduleName},${version}]`,
+  )
+}

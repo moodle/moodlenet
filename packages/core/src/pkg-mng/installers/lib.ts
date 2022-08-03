@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { mkdir } from 'fs/promises'
 import { relative, resolve } from 'path'
+import { PkgInstallationId } from '../types'
 
 export function getRelInstallationFolder({
   absInstallationFolder,
@@ -22,9 +23,9 @@ export async function makeInstallationFolder({
   pkgsFolder: string
   useFolderName?: string
 }) {
-  const { absInstallationFolder, relInstallationFolder } = getInstallationFolder({ pkgId, pkgsFolder, useFolderName })
+  const { absInstallationFolder, pkgInstallationId } = getInstallationFolder({ pkgId, pkgsFolder, useFolderName })
   await mkdir(absInstallationFolder, { recursive: true })
-  return { relInstallationFolder, absInstallationFolder }
+  return { pkgInstallationId, absInstallationFolder }
 }
 
 export function getInstallationFolder({
@@ -36,14 +37,12 @@ export function getInstallationFolder({
   pkgsFolder: string
   useFolderName?: string
 }) {
-  const safeInstallationFolderName = useFolderName ?? getSafeInstallationFolderName(pkgId)
-  const absInstallationFolder = resolve(pkgsFolder, safeInstallationFolderName)
-  const relInstallationFolder = safeInstallationFolderName
-  // console.log({ absInstallationFolder, relInstallationFolder })
-  return { absInstallationFolder, relInstallationFolder }
+  const pkgInstallationId = useFolderName ?? getPkgInstallationId(pkgId)
+  const absInstallationFolder = resolve(pkgsFolder, pkgInstallationId)
+  return { absInstallationFolder, pkgInstallationId }
 }
 
-export function getSafeInstallationFolderName(pkgId: string) {
+export function getPkgInstallationId(pkgId: string): PkgInstallationId {
   const pkgNameScopeTuple = pkgId.split('/').reverse()
   console.log('split pkgNameScopeTuple xxx ', pkgNameScopeTuple)
   assert(
