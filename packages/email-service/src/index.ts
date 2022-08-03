@@ -30,14 +30,16 @@ export type EmailService = ExtDef<
   '0.1.0',
   {
     send: SubTopo<{ paramIn1: string }, SendResp>
-  }
+  },
+  void,
+  void
 >
 
 const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
   name: '@moodlenet/email-service',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  enable(shell) {
+  wireup(shell) {
     // come lo passo nel codice ?
     const mailer = getNodemailerSendEmailAdapter(configLocal)
     // business logic, wire-up to the message system,
@@ -47,7 +49,7 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
 
     // come lo passo
     // const mailer )getNodemailerSendEmailAdapter({smtp:'smtp:moodlenet.com'})
-    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
+    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', inst => {
       console.log(`moodlenet-email-service: onExtInstance<ReactAppExt>`, inst)
       inst.setup({
         routes: {
@@ -68,30 +70,7 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
       // code that allocate system resouces ( DB connections, listen to ports )
       // implement package's service messages
       deploy() {
-        shell.lib.pubAll<EmailService>('moodlenet-email-service@0.1.10', shell, {
-          /* _test: ({
-            msg: {
-              data: {
-                req: { paramIn2 },
-              },any
-            },
-          }) => { //returns ObservableInput<{ out2: number}> (from rxjs)
-           // return [{ out2: Number(paramIn2) }]
-           // return Promise.resolve({ out2: Number(paramIn2) })
-           // return shell.lib.rx.of({ out2: Number(paramIn2) })
-           return [{ out2: Number(paramIn2) }]
-          }, */
-          /*  async _test({
-            msg: {
-              data: {
-                req: { paramIn2 },
-              },
-            },
-          }) {
-            // call DB or call another service
-            // read fileasystem
-            return { out2: Number(paramIn2) }
-          }, */
+        shell.provide.services({
           async send(_) {
             const msg = {
               from: 'shukeenkel@gmail.com',

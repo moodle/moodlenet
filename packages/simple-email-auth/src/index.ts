@@ -24,7 +24,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
   requires: [
     '@moodlenet/core@0.1.0',
     '@moodlenet/react-app@0.1.0',
-    'moodlenet-email-service@0.1.10',
+    '@moodlenet/email-service@0.1.0',
     '@moodlenet/authentication-manager@0.1.0',
   ],
   wireup(shell) {
@@ -45,7 +45,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
         const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
 
         const authMng = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
-        const emailSrv = shell.access<EmailService>('moodlenet-email-service@0.1.10')
+        const emailSrv = shell.access<EmailService>('@moodlenet/email-service@0.1.0')
 
         shell.provide.services({
           async login({
