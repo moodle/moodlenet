@@ -1,16 +1,36 @@
-import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import type { ReactAppExt } from '@moodlenet/react-app'
-import { resolve } from 'path'
-import { getNodemailerSendEmailAdapter } from './emailSender/nodemailer/nodemailer'
+import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core';
+import type { ReactAppExt } from '@moodlenet/react-app';
+import { resolve } from 'path';
+import { getNodemailerSendEmailAdapter, SendResp } from './emailSender/nodemailer/nodemailer';
 
-// come lo passo nel codice ?
-const mailer = getNodemailerSendEmailAdapter({ smtp: 'smtp:moodlenet.com' })
+
+/* const stmpServer = sibTransport({
+  apiKey: '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',
+}) */
+
+const configLocal = {
+service: 'SendinBlue', // no need to set host or port etc.
+auth: {
+    user: 'shukeenkel@gmail.com',
+    pass: 'MTF0wXL7mrOVA4sQ'
+}
+}
+
+/*
+const configLocal = {
+   service: 'SendinBlue', // no need to set host or port etc.
+   auth: {
+       user: 'yourRegisteredEmailOnSendinblue@email.com',
+       pass: 'xxxxx!'
+   }
+}
+*/
 
 export type EmailService = ExtDef<
   'moodlenet-email-service',
   '0.1.10',
   {
-    send: SubTopo<{ paramIn1: string }, { out1: string }>
+    send: SubTopo<{ paramIn1: string }, SendResp>
   }
 >
 
@@ -19,6 +39,9 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
   displayName: 'email service ext',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
+
+// come lo passo nel codice ?
+    const mailer = getNodemailerSendEmailAdapter(configLocal)
     // business logic, wire-up to the message system,
     // other packages integration
     //   listen to messages -> send other messages
@@ -52,7 +75,7 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
             msg: {
               data: {
                 req: { paramIn2 },
-              },
+              },any
             },
           }) => { //returns ObservableInput<{ out2: number}> (from rxjs)
            // return [{ out2: Number(paramIn2) }]
@@ -72,11 +95,9 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
             return { out2: Number(paramIn2) }
           }, */
           async send(_) {
-            const resp = mailer({ from: 'me@me.it', to: 'to@to.it', body: '' })
-            if (!resp) {
-              console.log('emailSender error on send mail')
-            }
-            return resp.emailId
+            const msg = { from: 'shukeenkel@gmail.com', to:'ettorebevilacqua@gmail.com', subject:'subject text ', html:'<h3>Hy test</h3>' }
+            const resp = await mailer(msg)
+            return resp
           },
         })
         return {}
