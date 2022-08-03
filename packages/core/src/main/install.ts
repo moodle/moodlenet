@@ -13,7 +13,7 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
   const installationsPkgInfos = await Promise.all(installPkgReqs.map(_ => main.pkgMng.install(_)))
 
   const packages = installationsPkgInfos.reduce<SysInstalledPkgs>(
-    (_, { id }) => ({ ..._, [id]: { configs: {}, __INSTALL_PROCEDURE_TODO: true } }),
+    (_, { /* ext, */ pkgInfo }) => ({ ..._, [pkgInfo.id]: { configs: {} } }),
     {},
   )
   await main.writeSysConfig({

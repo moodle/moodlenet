@@ -8,7 +8,6 @@ export type SystemPaths = MainFolders & {
 }
 
 export type SysInstalledPkg = {
-  __INSTALL_PROCEDURE_TODO?: true
   configs: Record<string, ExtensionLocalConfig>
 }
 export type SysInstalledPkgs = {
