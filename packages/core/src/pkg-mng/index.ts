@@ -3,7 +3,7 @@ import rimraf from 'rimraf'
 import { Ext } from '../types'
 import { npmInstaller, symlinkInstaller } from './installers'
 import * as lib from './lib'
-import { InstallPkgReq, PkgInstallationId, PkgInstallationInfo } from './types'
+import { InstallPkgReq, PackageInfo, PkgInstallationId, PkgInstallationInfo } from './types'
 
 // const myDirInfo = installDirsInfo();
 
@@ -14,7 +14,7 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     uninstall,
     getAllPackagesInfo,
     getPackageInfo,
-    getModule,
+    getPkg,
   }
 
   async function uninstall({ pkgInstallationId }: { pkgInstallationId: PkgInstallationId }) {
@@ -31,21 +31,25 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
       : symlinkInstaller({ installPkgReq, pkgsFolder, useFolderName }))
     const info: PkgInstallationInfo = { installPkgReq, date: new Date().toISOString() }
     await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(pkgInstallationId), info })
-    const installedPackageInfo = await getPackageInfo({ pkgInstallationId })
-    const module = await getModule({ pkgInstallationId })
     try {
-      lib.assertValidPkgModule(module, installedPackageInfo)
+      const { ext, pkgInfo } = await getPkg({ pkgInstallationId })
+      return { ext, pkgInfo }
     } catch (err) {
       await uninstall({ pkgInstallationId })
       throw err
     }
-    return installedPackageInfo
   }
 
-  async function getModule({ pkgInstallationId }: { pkgInstallationId: PkgInstallationId }): Promise<Ext> {
+  async function getPkg({
+    pkgInstallationId,
+  }: {
+    pkgInstallationId: PkgInstallationId
+  }): Promise<{ ext: Ext; pkgInfo: PackageInfo }> {
     const imported_module = require(getAbsInstallationFolder(pkgInstallationId))
-    const module = 'default' in imported_module ? imported_module.default : imported_module
-    return module
+    const ext = 'default' in imported_module ? imported_module.default : imported_module
+    const pkgInfo = await getPackageInfo({ pkgInstallationId })
+    lib.assertValidPkgModule(ext, pkgInfo)
+    return { ext, pkgInfo }
   }
 
   async function getPackageInfo({ pkgInstallationId }: { pkgInstallationId: PkgInstallationId }) {

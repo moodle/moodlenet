@@ -137,7 +137,7 @@ const boot: Boot = async cfg => {
                 installPkgReq.fromFolder = resolve(main.sysPaths.pkgStorageFolder, installPkgReq.fromFolder)
               }
               console.log('installPkgReq ...', installPkgReq)
-              const pkgInfo = await main.pkgMng.install(installPkgReq)
+              const { pkgInfo } = await main.pkgMng.install(installPkgReq)
 
               const oldSysConfig = main.readSysConfig()
 
@@ -145,10 +145,10 @@ const boot: Boot = async cfg => {
                 ...oldSysConfig,
                 packages: {
                   ...oldSysConfig.packages,
-                  [pkgInfo.id]: { configs: {}, __INSTALL_PROCEDURE_TODO: true },
+                  [pkgInfo.id]: { configs: {} },
                 },
               })
-              await deployExtension({ pkgInstallationId: pkgInfo.id })
+              await deployExtension({ pkgInstallationId: pkgInfo.id, install: true })
 
               return { pkgInfo }
             },
@@ -238,25 +238,19 @@ const boot: Boot = async cfg => {
   type DeploymentBag = { regDeployment: RegItem<any> }
   async function deployExtension({
     pkgInstallationId,
+    install = false,
   }: {
+    install?: boolean
     pkgInstallationId: PkgInstallationId
   }): Promise<DeploymentBag> {
-    const pkgInfo = await main.pkgMng.getPackageInfo({ pkgInstallationId })
-    const { __INSTALL_PROCEDURE_TODO, env, proxyDeploy } = extPkgConfig(pkgInstallationId)
-
-    const ext = await main.pkgMng.getModule({ pkgInstallationId })
-
-    if (__INSTALL_PROCEDURE_TODO) {
-      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! REMOVE __INSTALL_PROCEDURE_TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    }
+    const { env, proxyDeploy } = extPkgConfig(pkgInstallationId)
+    const { ext, pkgInfo } = await main.pkgMng.getPkg({ pkgInstallationId })
     return deployModule({
       env: env?.env,
-      install: !!__INSTALL_PROCEDURE_TODO,
       ext,
       pkgInfo,
       proxyDeploy,
+      install,
     })
   }
   async function deployModule({
@@ -552,11 +546,11 @@ const boot: Boot = async cfg => {
   async function startup_deployAll() {
     const startPkgs = (
       await Promise.all(
-        Object.entries(main.readSysConfig().packages).map(async ([pkgInstallationId, { __INSTALL_PROCEDURE_TODO }]) => {
+        Object.keys(main.readSysConfig().packages).map(async pkgInstallationId => {
           const pkgInfo = await main.pkgMng.getPackageInfo({
             pkgInstallationId,
           })
-          return { pkgInfo, __INSTALL_PROCEDURE_TODO }
+          return { pkgInfo }
         }),
       )
     ).filter(({ pkgInfo }) => pkgInfo.packageJson.name !== coreExtName)
