@@ -16,18 +16,21 @@ export type SimpleEmailAuthTopo = {
   >
 }
 
-export type SimpleEmailAuthExt = ExtDef<'moodlenet-simple-email-auth', '0.1.10', SimpleEmailAuthTopo>
+export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', SimpleEmailAuthTopo, void, void>
 
-const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService]> = {
-  id: 'moodlenet-simple-email-auth@0.1.10',
-  displayName: 'Email authentication',
-  description: 'Basic authentication using an email and a password',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10', 'moodlenet-email-service@0.1.10'],
-  enable(shell) {
-    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`moodlenet-simple-email-auth: onExtInstance<ReactAppExt>`, inst)
-
-      inst.setup({
+const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, AuthenticationManagerExt]> = {
+  name: '@moodlenet/simple-email-auth',
+  version: '0.1.0',
+  requires: [
+    '@moodlenet/core@0.1.0',
+    '@moodlenet/react-app@0.1.0',
+    'moodlenet-email-service@0.1.10',
+    '@moodlenet/authentication-manager@0.1.0',
+  ],
+  wireup(shell) {
+    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
+      console.log(`@moodlenet/simple-email-auth: onExtInstance<ReactAppExt>`, plug)
+      plug.setup({
         ctxProvider: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
         },
@@ -40,7 +43,11 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService]> = {
     return {
       deploy() {
         const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
-        shell.lib.pubAll<SimpleEmailAuthExt>('moodlenet-simple-email-auth@0.1.10', shell, {
+
+        const authMng = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
+        const emailSrv = shell.access<EmailService>('moodlenet-email-service@0.1.10')
+
+        shell.provide.services({
           async login({
             msg: {
               data: {
@@ -48,17 +55,11 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService]> = {
               },
             },
           }) {
-
-
-            const aaa = await shell.lib.fetch<EmailService>(shell)(
-              'moodlenet-email-service@0.1.10::send',
-            )({ paramIn1:'aaa@aaa.com' })
-       console.log('xxxxx', aaa.msg.data);
-          /*  aaa.then((a)=>{
+            const aaa = await emailSrv.fetch('send')({ paramIn1: 'aaa@aaa.com' })
+            console.log('xxxxx', aaa.msg.data)
+            /*  aaa.then((a)=>{
               throw new Error('xxxxxx')
             }) */
-
-
 
             const user = await store.getByEmail(email)
             if (!user || user.password !== password) {
@@ -66,9 +67,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService]> = {
             }
             const {
               msg: { data: res },
-            } = await shell.lib.fetch<AuthenticationManagerExt>(shell)(
-              'moodlenet-authentication-manager@0.1.10::getSessionToken',
-            )({ uid: user.id })
+            } = await authMng.fetch('getSessionToken')({ uid: user.id })
 
             if (!res.success) {
               return { success: false }
@@ -92,9 +91,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService]> = {
 
             const {
               msg: { data: authRes },
-            } = await shell.lib.fetch<AuthenticationManagerExt>(shell)(
-              'moodlenet-authentication-manager@0.1.10::registerUser',
-            )({ uid: user.id, displayName })
+            } = await authMng.fetch('registerUser')({ uid: user.id, displayName })
 
             if (!authRes.success) {
               await store.delUser(user.id)
@@ -104,10 +101,11 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService]> = {
             return { success: true }
           },
         })
-        return {}
+
+        return
       },
     }
   },
 }
 
-export default { exts: [ext] }
+export default ext

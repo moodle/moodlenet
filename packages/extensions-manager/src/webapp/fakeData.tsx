@@ -31,7 +31,7 @@ export const packagesFake: Package[] = [
     name: 'Core',
     creator: 'Moodle',
     mandatory: true,
-    logo: '../../../../assets/logos/moodlenet-logo-small.svg',
+    logo: '../../../../assets/logos/@moodlenet/logo-small.svg',
     modules: [
       { name: 'Core', enabled: true, mandatory: true },
       { name: 'Main', enabled: true, mandatory: true },

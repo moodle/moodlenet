@@ -14,9 +14,8 @@ const Modules: FC<ModulesProps> = () => {
     if (!localPathField) {
       return
     }
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
-      deploy: true,
     })
   }, [localPathField])
   return (
@@ -38,7 +37,7 @@ const Modules: FC<ModulesProps> = () => {
               Install
             </PrimaryButton>
           </div>
-        </div>{' '}
+        </div>
       </Card>
     </div>
   )

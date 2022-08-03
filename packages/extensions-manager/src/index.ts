@@ -7,17 +7,22 @@ import { SearchPackagesResObject, SearchPackagesResponse } from './types/data'
 export type ExtensionsManagerExtTopo = {
   searchPackages: SubTopo<{ searchText: string; registry?: string }, SearchPackagesResponse>
 }
-export type ExtensionsManagerExt = ExtDef<'moodlenet-extensions-manager', '0.1.10', ExtensionsManagerExtTopo>
+export type ExtensionsManagerExt = ExtDef<
+  '@moodlenet/extensions-manager',
+  '0.1.0',
+  ExtensionsManagerExtTopo,
+  void,
+  void
+>
 
 const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
-  id: 'moodlenet-extensions-manager@0.1.10',
-  displayName: 'Extensions manager',
-  description: 'Manager for the application extensions',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
-  enable(shell) {
-    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`moodlenet-extensions-manager: onExtInstance<ReactAppExt>`, inst)
-      inst.setup({
+  name: '@moodlenet/extensions-manager',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
+  wireup(shell) {
+    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
+      console.log(`@moodlenet/extensions-manager: plugin<ReactAppExt>`, plug)
+      plug.setup({
         // routes: {
         //   moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsRoutes.tsx'),
         //   rootPath: 'extensions/',
@@ -36,7 +41,8 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
     })
     return {
       deploy() {
-        shell.lib.pubAll<ExtensionsManagerExt>('moodlenet-extensions-manager@0.1.10', shell, {
+        const coreAcccess = shell.access<CoreExt>('@moodlenet/core@0.1.0')
+        shell.provide.services({
           async searchPackages({
             msg: {
               data: {
@@ -49,7 +55,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
               searchRes,
               {
                 msg: {
-                  data: { extInfos: deployedList },
+                  data: { pkgInfos },
                 },
               } /* ,
               {
@@ -59,37 +65,36 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
               }, */,
             ] = await Promise.all([
               searchPackagesFromRegistry({ registry, searchText: `moodlenet ${searchText}` }),
-              shell.lib.fetch<CoreExt>(shell)('moodlenet-core@0.1.10::ext/listDeployed')(),
-              // shell.lib.fetch<CoreExt>(shell)('moodlenet-core@0.1.10::pkg/getInstalledPackages')(),
+              coreAcccess.fetch('ext/listDeployed')(),
+              // shell.lib.fetch<CoreExt>(shell)('@moodlenet/core@0.1.0::pkg/getInstalledPackages')(),
             ])
-            const objects = searchRes.objects.map<SearchPackagesResObject>(
+            const objects = searchRes.objects.map(
               ({ package: { name: pkgName, description, keywords, version, links } }) => {
                 // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
-                const installationFolder = deployedList
-                  .map(({ packageInfo }) => packageInfo)
-                  .find(packageInfo => packageInfo.packageJson.name === pkgName)?.installationFolder
+                const pkgInstallationId = pkgInfos
+                  //.map(({ packageInfo }) => packageInfo)
+                  .find(packageInfo => packageInfo.packageJson.name === pkgName)?.id
                 const installPkgReq: InstallPkgReq = {
                   type: 'npm',
                   registry,
                   pkgId: version ? `${pkgName}@${version}` : pkgName,
                 }
-                return {
+                const objects: SearchPackagesResObject = {
                   pkgName,
                   description: description ?? '',
                   keywords: keywords ?? [],
                   version,
                   registry,
                   homepage: links?.homepage,
-                  ...(installationFolder
-                    ? { installPkgReq: undefined, installationFolder }
-                    : { installationFolder: undefined, installPkgReq }),
+                  ...(pkgInstallationId ? { installed: true, pkgInstallationId } : { installed: false, installPkgReq }),
                 }
+                return objects
               },
             )
             return { objects }
           },
         })
-        return {}
+        return
       },
     }
   },
@@ -98,4 +103,4 @@ const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
 export const getRegistry = (_reg?: string | undefined) =>
   _reg ?? process.env.NPM_CONFIG_REGISTRY ?? DEFAULT_NPM_REGISTRY
 
-export default { exts: [ext] }
+export default ext

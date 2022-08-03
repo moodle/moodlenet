@@ -1,4 +1,4 @@
-import { InstallPkgReq } from '../types'
+import { InstallPkgReq, PkgInstallationId } from '../types'
 
 export type NpmInstallReq = _InstallPkgReq<'npm', { registry: string; pkgId: string }>
 export type SymlinkInstallReq = _InstallPkgReq<'symlink', { fromFolder: string }>
@@ -9,4 +9,4 @@ export type PkgInstaller<Req extends InstallPkgReq> = (_: {
   installPkgReq: Req
   pkgsFolder: string
   useFolderName?: string
-}) => Promise<{ installationFolder: string }>
+}) => Promise<{ pkgInstallationId: PkgInstallationId }>
