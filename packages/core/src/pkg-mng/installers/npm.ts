@@ -24,7 +24,7 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
   pkgsFolder,
   useFolderName,
 }) => {
-  const { absInstallationFolder, relInstallationFolder } = await makeInstallationFolder({
+  const { absInstallationFolder, pkgInstallationId } = await makeInstallationFolder({
     pkgsFolder,
     pkgId,
     useFolderName,
@@ -72,5 +72,5 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
     },
   )
   console.log({ pkgName, ...installRes })
-  return { installationFolder: relInstallationFolder }
+  return { pkgInstallationId }
 }

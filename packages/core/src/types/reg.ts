@@ -1,19 +1,18 @@
 import { Subject } from 'rxjs'
-import { InstalledPackageInfo } from '../pkg-mng/types'
-import type { Deploy, DeploymentShell, Ext, ExtDef, ExtDeployable, ExtDeployment, Shell } from './ext'
+import { PackageInfo } from '../pkg-mng/types'
+import type { Ext, ExtDef, ExtDeploy, ExtDeployable, ExtDeployment, Shell } from './ext'
 import { DataMessage } from './message'
 // export type PkgInfo = {
 //   name: string
 //   version: string
 // }
 
-export type RegDeployment<Def extends ExtDef = ExtDef> = Shell<Def> &
-  ExtDeployable<Def> &
-  DeploymentShell &
-  ExtDeployment<Def> & {
+export type RegItem<Def extends ExtDef = ExtDef> = ExtDeployment<Def> &
+  ExtDeployable<Def> & {
+    shell: Shell<Def>
     ext: Ext<Def>
     $msg$: Subject<DataMessage<any>>
     at: Date
-    installedPackageInfo: InstalledPackageInfo
-    deployedWith?: Deploy<Def>
+    pkgInfo: PackageInfo
+    deployer?: ExtDeploy<Def>
   }

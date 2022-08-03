@@ -1,19 +1,18 @@
-import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core';
-import type { ReactAppExt } from '@moodlenet/react-app';
-import { resolve } from 'path';
-import { getNodemailerSendEmailAdapter, SendResp } from './emailSender/nodemailer/nodemailer';
-
+import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import type { ReactAppExt } from '@moodlenet/react-app'
+import { resolve } from 'path'
+import { getNodemailerSendEmailAdapter, SendResp } from './emailSender/nodemailer/nodemailer'
 
 /* const stmpServer = sibTransport({
   apiKey: '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',
 }) */
 
 const configLocal = {
-service: 'SendinBlue', // no need to set host or port etc.
-auth: {
+  service: 'SendinBlue', // no need to set host or port etc.
+  auth: {
     user: 'shukeenkel@gmail.com',
-    pass: 'MTF0wXL7mrOVA4sQ'
-}
+    pass: 'MTF0wXL7mrOVA4sQ',
+  },
 }
 
 /*
@@ -27,20 +26,19 @@ const configLocal = {
 */
 
 export type EmailService = ExtDef<
-  'moodlenet-email-service',
-  '0.1.10',
+  '@moodlenet/email-service',
+  '0.1.0',
   {
     send: SubTopo<{ paramIn1: string }, SendResp>
   }
 >
 
 const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
-  id: 'moodlenet-email-service@0.1.10',
-  displayName: 'email service ext',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
+  name: '@moodlenet/email-service',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
   enable(shell) {
-
-// come lo passo nel codice ?
+    // come lo passo nel codice ?
     const mailer = getNodemailerSendEmailAdapter(configLocal)
     // business logic, wire-up to the message system,
     // other packages integration
@@ -95,7 +93,12 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
             return { out2: Number(paramIn2) }
           }, */
           async send(_) {
-            const msg = { from: 'shukeenkel@gmail.com', to:'ettorebevilacqua@gmail.com', subject:'subject text ', html:'<h3>Hy test</h3>' }
+            const msg = {
+              from: 'shukeenkel@gmail.com',
+              to: 'ettorebevilacqua@gmail.com',
+              subject: 'subject text ',
+              html: '<h3>Hy test</h3>',
+            }
             const resp = await mailer(msg)
             return resp
           },

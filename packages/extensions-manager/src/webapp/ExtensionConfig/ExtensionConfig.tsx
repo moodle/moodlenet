@@ -6,22 +6,23 @@ import { FC, ReactNode, ReactPortal, useCallback, useReducer } from 'react'
 import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { StateContext } from '../ExtensionsProvider'
-import { CoreExt, ExtInfo } from '@moodlenet/core'
+import { CoreExt, PackageInfo } from '@moodlenet/core'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import rehypeRaw from 'rehype-raw'
+import { extNameDescription } from '../../lib'
 import { mandatoryPackages } from '../fakeData'
 import './ExtensionConfig.scss'
 
 export type ExtensionConfigProps = {
-  extInfo: ExtInfo
+  pkgInfo: PackageInfo
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
 const { Card, PrimaryButton, TertiaryButton, Loading } = lib.ui.components.atoms
 
-const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) => {
+const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) => {
   // const stateContext = useContext(StateContext)
 
   const modulesList = null /* extension?.modules.map(
@@ -37,11 +38,11 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
   const uninstall = useCallback(() => {
     toggleIsInstalling()
 
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
-      installationFolder: extInfo.packageInfo.installationFolder,
+    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/uninstall')({
+      pkgInstallationId: pkgInfo.id,
     })
     // .finally(toggleIsInstalling)
-  }, [extInfo.packageInfo.installationFolder])
+  }, [pkgInfo.id])
 
   type CodeBlockProps = {
     node: any
@@ -65,7 +66,7 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
       )
     },
   }
-
+  const { /* description, */ displayName } = extNameDescription(pkgInfo.packageJson)
   return (
     <div className="extension-config">
       <Card className="header-card">
@@ -74,11 +75,11 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {extInfo.packageInfo.packageJson.moodlenet.displayName}
+            {displayName}
           </div>
           <PrimaryButton
             className={`install-btn ${isInstalling ? 'loading' : ''}`}
-            disabled={mandatoryPackages.includes(extInfo.packageInfo.packageJson.name)}
+            disabled={mandatoryPackages.includes(pkgInfo.packageJson.name)}
             onClick={uninstall}
             noHover={isInstalling}
           >
@@ -91,12 +92,12 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
           </PrimaryButton>
         </div>
 
-        <div>{extInfo.packageInfo.packageJson.description}</div>
+        <div>{pkgInfo.packageJson.description}</div>
       </Card>
-      {extInfo.packageInfo.readme && (
+      {pkgInfo.readme && (
         <Card>
           <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-            {extInfo.packageInfo.readme}
+            {pkgInfo.readme}
           </ReactMarkdown>
         </Card>
       )}

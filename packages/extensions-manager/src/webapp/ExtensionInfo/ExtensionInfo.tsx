@@ -50,20 +50,19 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   //       </div>
   //     ),
   // )
-  const isInstalled = !searchPackagesResObject.installPkgReq
+
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
-    /* const promise =  */ isInstalled
-      ? lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
-          installationFolder: searchPackagesResObject.installationFolder,
+    searchPackagesResObject.installed
+      ? lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/uninstall')({
+          pkgInstallationId: searchPackagesResObject.pkgInstallationId,
         })
-      : lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+      : lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
           installPkgReq: searchPackagesResObject.installPkgReq,
-          deploy: true,
         })
 
     // promise.finally(toggleIsInstalling)
-  }, [isInstalled, searchPackagesResObject.installPkgReq])
+  }, [searchPackagesResObject])
 
   type CodeBlockProps = {
     node: any
@@ -108,7 +107,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
               <Loading color="white" />
             </div>
             <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
-              {isInstalled ? 'Uninstall' : 'Install'}
+              {searchPackagesResObject.installed ? 'Uninstall' : 'Install'}
             </div>
           </PrimaryButton>
         </div>
