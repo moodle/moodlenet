@@ -29,7 +29,7 @@ export const createLocalDeploymentRegistry = () => {
     if (!regDeployment) {
       return undefined
     }
-    const { version: deployedVersion } = splitExtId(regDeployment.deploymentShell.extId)
+    const { version: deployedVersion } = splitExtId(regDeployment.shell.extId)
     const isCompat = isVerBWC(deployedVersion, version)
     return isCompat ? regDeployment : undefined
   }
@@ -44,7 +44,7 @@ export const createLocalDeploymentRegistry = () => {
     const currDeployment = get(extName)
     if (currDeployment) {
       throw new Error(
-        `can't  deploy ${regDeployment.deploymentShell.extId} as ${currDeployment.deploymentShell.extId} is already deployed since ${currDeployment.at}`,
+        `can't  deploy ${regDeployment.shell.extId} as ${currDeployment.shell.extId} is already deployed since ${currDeployment.at}`,
       )
     }
 

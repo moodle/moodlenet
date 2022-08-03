@@ -38,7 +38,7 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
     return {
       deploy() {
         const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'users') })
-        shell.lib.pubAll<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0', shell, {
+        shell.provide.services({
           async registerUser({ msg }) {
             const { extName } = shell.lib.splitExtId(msg.source)
             const { displayName, uid, avatarUrl } = msg.data.req

@@ -57,8 +57,8 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
     shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
     return {
       async deploy(/* { tearDown } */) {
-        shell.onExtInstance<MNHttpServerExt>('@moodlenet/http-server@0.1.0', (inst /* , depl */) => {
-          const { express, mount } = inst
+        shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', (plug /* , depl */) => {
+          const { express, mount } = plug
           mount({ getApp, absMountPath: '/' })
           function getApp() {
             const mountApp = express()
@@ -92,15 +92,15 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
 
         const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
         wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
-          shell.push('out')('@moodlenet/react-app@0.1.0')('webapp/recompiled')()
+          shell.emit('webapp/recompiled')()
         })
-        shell.lib.pubAll<ReactAppExt>('@moodlenet/react-app@0.1.0', shell, {
+        shell.provide.services({
           'webapp/updated'() {
             return shell.msg$.pipe(
-              shell.lib.rx.filter(msg =>
+              shell.rx.filter(msg =>
                 shell.lib.matchMessage<ReactAppExt>()(msg, '@moodlenet/react-app@0.1.0::webapp/recompiled'),
               ),
-              shell.lib.rx.map(() => void 0),
+              shell.rx.map(() => void 0),
             )
           },
         })
@@ -108,12 +108,12 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
           plug({ depl }) {
             return {
               setup(plugin) {
-                console.log('...setup', depl.deploymentShell.extId, plugin)
-                extPluginsMap[depl.deploymentShell.extId] = {
+                console.log('...setup', depl.shell.extId, plugin)
+                extPluginsMap[depl.shell.extId] = {
                   ...plugin,
                   extName: depl.ext.name,
                   extVersion: depl.ext.version,
-                  extId: depl.deploymentShell.extId,
+                  extId: depl.shell.extId,
                 }
                 // console.log({ '***': wp.compiler.options.resolve.alias })
                 if (plugin.addPackageAlias) {
@@ -125,7 +125,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
                 }
                 writeAliasModulesAndRecompile()
                 console.log({ aloiases: wp.compiler.options.resolve.alias })
-                depl.deploymentShell.tearDown.add(() => {
+                depl.shell.tearDown.add(() => {
                   console.log('removing react plugins')
                   if (plugin.addPackageAlias) {
                     const newAliases: any = {
@@ -134,7 +134,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
                     delete newAliases[plugin.addPackageAlias.name]
                     wp.compiler.options.resolve.alias = newAliases
                   }
-                  delete extPluginsMap[depl.deploymentShell.extId]
+                  delete extPluginsMap[depl.shell.extId]
                   writeAliasModulesAndRecompile()
                 })
               },

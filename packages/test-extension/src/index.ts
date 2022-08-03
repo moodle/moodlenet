@@ -23,9 +23,9 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
     //   listen to messages -> send other messages
     //    use other packages plugins (e.g add UI to react app, or add http-endpoint)
     console.log('I am test extension')
-    shell.onExtInstance<ReactAppExt>('@moodlenet/react-app@0.1.0', inst => {
-      console.log(`@moodlenet/test-extension: onExtInstance<ReactAppExt>`, inst)
-      inst.setup({
+    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
+      console.log(`@moodlenet/test-extension: plugin<ReactAppExt>`, plug)
+      plug.setup({
         routes: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
           rootPath: 'my-test', // http://localhost:3000/my-test
@@ -49,7 +49,7 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
       // code that allocate system resouces ( DB connections, listen to ports )
       // implement package's service messages
       deploy() {
-        shell.lib.pubAll<TestExt>('@moodlenet/test-extension@0.1.0', shell, {
+        shell.provide.services({
           /* _test: ({ 
             msg: {
               data: {
@@ -59,7 +59,7 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
           }) => { //returns ObservableInput<{ out2: number}> (from rxjs)
            // return [{ out2: Number(paramIn2) }]
            // return Promise.resolve({ out2: Number(paramIn2) })
-           // return shell.lib.rx.of({ out2: Number(paramIn2) })
+           // return shell.rx.of({ out2: Number(paramIn2) })
            return [{ out2: Number(paramIn2) }]
           }, */
           /*  async _test({
@@ -83,9 +83,9 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
             return [{ out2: Number(paramIn2) }, { out2: Number(paramIn2) + 1 }]
           },
           testSub(_) {
-            return shell.lib.rx.interval(500).pipe(
-              shell.lib.rx.take(5),
-              shell.lib.rx.map(n => ({ out1: `${_.msg.data.req.paramIn1}\n\n(${n})` })),
+            return shell.rx.interval(500).pipe(
+              shell.rx.take(5),
+              shell.rx.map(n => ({ out1: `${_.msg.data.req.paramIn1}\n\n(${n})` })),
             )
           },
         })

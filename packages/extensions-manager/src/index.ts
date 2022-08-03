@@ -20,9 +20,9 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
   wireup(shell) {
-    shell.onExtInstance<ReactAppExt>('@moodlenet/react-app@0.1.0', inst => {
-      console.log(`@moodlenet/extensions-manager: onExtInstance<ReactAppExt>`, inst)
-      inst.setup({
+    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
+      console.log(`@moodlenet/extensions-manager: plugin<ReactAppExt>`, plug)
+      plug.setup({
         // routes: {
         //   moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsRoutes.tsx'),
         //   rootPath: 'extensions/',
@@ -41,7 +41,8 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
     })
     return {
       deploy() {
-        shell.lib.pubAll<ExtensionsManagerExt>('@moodlenet/extensions-manager@0.1.0', shell, {
+        const coreAcccess = shell.access<CoreExt>('@moodlenet/core@0.1.0')
+        shell.provide.services({
           async searchPackages({
             msg: {
               data: {
@@ -64,7 +65,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
               }, */,
             ] = await Promise.all([
               searchPackagesFromRegistry({ registry, searchText: `moodlenet ${searchText}` }),
-              shell.lib.fetch<CoreExt>(shell)('@moodlenet/core@0.1.0::ext/listDeployed')(),
+              coreAcccess.fetch('ext/listDeployed')(),
               // shell.lib.fetch<CoreExt>(shell)('@moodlenet/core@0.1.0::pkg/getInstalledPackages')(),
             ])
             const objects = searchRes.objects.map(
