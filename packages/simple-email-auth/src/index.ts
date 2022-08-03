@@ -1,5 +1,6 @@
 import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import type { EmailService } from '@moodlenet/email-service'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 import userStore from './store'
@@ -17,14 +18,15 @@ export type SimpleEmailAuthTopo = {
 
 export type SimpleEmailAuthExt = ExtDef<'moodlenet-simple-email-auth', '0.1.10', SimpleEmailAuthTopo>
 
-const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
+const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService]> = {
   id: 'moodlenet-simple-email-auth@0.1.10',
   displayName: 'Email authentication',
   description: 'Basic authentication using an email and a password',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10', 'moodlenet-email-service@0.1.10'],
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       console.log(`moodlenet-simple-email-auth: onExtInstance<ReactAppExt>`, inst)
+
       inst.setup({
         ctxProvider: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
@@ -46,6 +48,18 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
               },
             },
           }) {
+
+
+            const aaa = await shell.lib.fetch<EmailService>(shell)(
+              'moodlenet-email-service@0.1.10::send',
+            )({ paramIn1:'aaa@aaa.com' })
+       console.log('xxxxx', aaa.msg.data);
+          /*  aaa.then((a)=>{
+              throw new Error('xxxxxx')
+            }) */
+
+
+
             const user = await store.getByEmail(email)
             if (!user || user.password !== password) {
               return { success: false }
