@@ -1,32 +1,23 @@
 import { PackageJson } from 'type-fest'
-import { PkgExport } from '../types'
 import { NpmInstallReq, SymlinkInstallReq } from './installers'
 export * from './installers/types'
 
 export type InstallPkgReq = NpmInstallReq | SymlinkInstallReq
 
+export type MoodlenetPkgManifest = {}
 export type SafePackageJson = PackageJson & { name: string; version: string; moodlenet: MoodlenetPkgManifest }
 
-export type MoodlenetPkgManifest = {
-  displayName: string
-  creator?: string
-}
+export type PkgInstallationId = string
 
 //info.json
 export type PkgInstallationInfo = {
+  date: string
   installPkgReq: InstallPkgReq
+  //  owner: ExtName ? PkgInstallationId ?
 }
 
-export type InstalledPackageInfo = PackageInfo & {
-  pkgExport: PkgExport
-  installationInfo: PkgInstallationInfo
-}
-
-export type PackageInfo = {
+export type PackageInfo = PkgInstallationInfo & {
+  id: PkgInstallationId
   packageJson: SafePackageJson
-  installationFolder: string
-  mainModPath: string | undefined
-  readme: string
-  //rootDir: string
-  //rootDirPosix: string
+  readme: string | undefined
 }

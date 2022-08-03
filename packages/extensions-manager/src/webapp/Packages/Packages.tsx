@@ -6,7 +6,8 @@ import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionConfig from '../ExtensionConfig/ExtensionConfig'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { CoreExt, ExtInfo } from '@moodlenet/core'
+import { CoreExt, PackageInfo } from '@moodlenet/core'
+import { extNameDescription } from '../../lib'
 import { StateContext } from '../ExtensionsProvider'
 import './styles.scss'
 
@@ -17,55 +18,49 @@ export type PackagesProps = {
 const { Card, PrimaryButton } = lib.ui.components.atoms
 
 const Packages: FC<PackagesProps> = () => {
-  const [extinfoList, setExtInfoList] = useState<ExtInfo[]>([])
+  const [extinfoList, setExtInfoList] = useState<PackageInfo[]>([])
   const { selectedExtConfig, setSelectedExtConfig } = useContext(StateContext)
 
   useEffect(() => {
     lib.priHttp
       .fetch<CoreExt>(
-        'moodlenet-core',
-        '0.1.10',
+        '@moodlenet/core',
+        '0.1.0',
       )('ext/listDeployed')()
-      .then(({ extInfos }) => setExtInfoList(extInfos))
+      .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
   }, [])
   const extInfosListElements = useMemo(
     () =>
-      extinfoList.map(extInfo => {
+      extinfoList.map(pkgInfo => {
         // const [extName, pkgScope] = splitPkgName(extInfo.packageInfo.packageJson.name)
-        const fullDescription = extInfo.packageInfo.packageJson.description
-        var [extName, description] = fullDescription ? fullDescription.split('\n') : ['', '']
-        extName = extName ? extName : ''
-        description = description ? description : ''
-        // const extName = extInfo.packageInfo.packageJson.moodlenet.displayName
+
+        var { displayName, description } = extNameDescription(pkgInfo.packageJson)
+        // const extName = extInfo.packageInfo.packageJson.@moodlenet/displayName
         return (
-          <div
-            className="package"
-            key={extInfo.packageInfo.installationFolder}
-            onClick={() => setSelectedExtConfig(extInfo)}
-          >
+          <div className="package" key={pkgInfo.id} onClick={() => setSelectedExtConfig(pkgInfo)}>
             {/* <PackageIcon /> */}
             <div
               className="logo"
               style={{
-                background: /* extName === 'moodlenet-core' ? '#fdb068' :  */ getPastelColor(
-                  getNumberFromString(extName),
+                background: /* extName === '@moodlenet/core' ? '#fdb068' :  */ getPastelColor(
+                  getNumberFromString(displayName),
                   0.5,
                 ),
               }}
             >
-              <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
+              <div className="letter">{displayName.substring(0, 1).toLocaleLowerCase()}</div>
               <div
                 className="circle"
                 style={{
-                  background: /* extName === 'moodlenet-core' ? '#f88012' :  */ getPastelColor(
-                    getNumberFromString(extName),
+                  background: /* extName === '@moodlenet/core' ? '#f88012' :  */ getPastelColor(
+                    getNumberFromString(displayName),
                   ),
                 }}
               />
             </div>
             <div className="info">
               <div className="title">
-                {extName}
+                {displayName}
                 {/*pkgScope && `@ ${pkgScope}`*/}
               </div>
               <div className="description">{description}</div>
@@ -89,7 +84,7 @@ const Packages: FC<PackagesProps> = () => {
         </div>
       )}
       {selectedExtConfig && (
-        <ExtensionConfig extInfo={selectedExtConfig} onClickBackBtn={() => setSelectedExtConfig(null)} />
+        <ExtensionConfig pkgInfo={selectedExtConfig} onClickBackBtn={() => setSelectedExtConfig(null)} />
       )}
     </>
   )

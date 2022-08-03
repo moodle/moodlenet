@@ -1,5 +1,4 @@
 import { DepGraph /* , DepGraphCycleError */ } from 'dependency-graph'
-import { areSameExtName, splitExtId } from '../core-lib/pointer'
 import type { DepGraphData, Ext, ExtDef } from '../types'
 
 // export function checkDepGraph(dg: DepGraph<DepGraphData>): CheckDepGraphRes {
@@ -35,11 +34,10 @@ import type { DepGraphData, Ext, ExtDef } from '../types'
 // }
 export function depGraphAddNodes<Def extends ExtDef>(dg: DepGraph<DepGraphData>, adds: Ext<Def>[]) {
   adds.forEach(ext => {
-    const { extName, version } = splitExtId(ext.id)
-    if (dg.hasNode(extName)) {
-      throw new Error(`depGraphAdd: found duplicated [${extName}]`)
+    if (dg.hasNode(ext.name)) {
+      throw new Error(`depGraphAdd: found duplicated [${ext.name}]`)
     }
-    dg.addNode(extName, { version, ext: ext as any })
+    dg.addNode(ext.name, { version: ext.version, ext: ext as any })
   })
 }
 // export function depGraphAddDeps(dg: DepGraph<DepGraphData>, adds: Ext[]) {
@@ -55,10 +53,9 @@ export function depGraphAddNodes<Def extends ExtDef>(dg: DepGraph<DepGraphData>,
 // //TODO: when removing a node should cascade remove all dependants, if the removing node is not going to be readded ( notice version check is performed later! )
 export function depGraphRm(dg: DepGraph<DepGraphData>, rms: Ext[], willAdd: Ext[]) {
   rms.forEach(ext => {
-    const shouldCascadeRemoveDependants = !willAdd.find(({ id }) => areSameExtName(id, ext.id))
+    const shouldCascadeRemoveDependants = !willAdd.find(({ name }) => name === ext.name)
     shouldCascadeRemoveDependants
-    const { extName } = splitExtId(ext.id)
-    dg.removeNode(extName)
+    dg.removeNode(ext.name)
   })
 }
 

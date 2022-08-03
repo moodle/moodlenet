@@ -26,10 +26,10 @@ export type ReactAppExtTopo = {
   }
 }
 export type ReactAppExt = ExtDef<
-  'moodlenet.react-app',
-  '0.1.10',
+  '@moodlenet/react-app',
+  '0.1.0',
   ReactAppExtTopo,
-  null,
+  void,
   {
     setup(_: ExtPluginDef): void
   }
@@ -50,16 +50,15 @@ const ExtContextProvidersModuleFile = {
   target: resolve(tmpDir, 'extContextProvidersModules.tsx'),
 }
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]> = {
-  id: 'moodlenet.react-app@0.1.10',
-  displayName: 'Web application',
-  description: 'Frontend interface to interact with the backend',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10', 'moodlenet-authentication-manager@0.1.10'],
-  enable(shell) {
+  name: '@moodlenet/react-app',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/http-server@0.1.0', '@moodlenet/authentication-manager@0.1.0'],
+  wireup(shell) {
     shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
     return {
       async deploy(/* { tearDown } */) {
-        shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
-          const { express, mount } = inst
+        shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', (plug /* , depl */) => {
+          const { express, mount } = plug
           mount({ getApp, absMountPath: '/' })
           function getApp() {
             const mountApp = express()
@@ -93,28 +92,28 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
 
         const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
         wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
-          shell.push('out')('moodlenet.react-app@0.1.10')('webapp/recompiled')()
+          shell.emit('webapp/recompiled')()
         })
-        shell.lib.pubAll<ReactAppExt>('moodlenet.react-app@0.1.10', shell, {
+        shell.provide.services({
           'webapp/updated'() {
             return shell.msg$.pipe(
-              shell.lib.rx.filter(msg =>
-                shell.lib.matchMessage<ReactAppExt>()(msg, 'moodlenet.react-app@0.1.10::webapp/recompiled'),
+              shell.rx.filter(msg =>
+                shell.lib.matchMessage<ReactAppExt>()(msg, '@moodlenet/react-app@0.1.0::webapp/recompiled'),
               ),
-              shell.lib.rx.map(() => void 0),
+              shell.rx.map(() => void 0),
             )
           },
         })
         return {
-          inst({ depl }) {
+          plug({ depl }) {
             return {
               setup(plugin) {
-                console.log('...setup', depl.extId, plugin)
-                extPluginsMap[depl.extId] = {
+                console.log('...setup', depl.shell.extId, plugin)
+                extPluginsMap[depl.shell.extId] = {
                   ...plugin,
-                  extName: depl.extName,
-                  extVersion: depl.extVersion,
-                  extId: depl.extId,
+                  extName: depl.ext.name,
+                  extVersion: depl.ext.version,
+                  extId: depl.shell.extId,
                 }
                 // console.log({ '***': wp.compiler.options.resolve.alias })
                 if (plugin.addPackageAlias) {
@@ -126,7 +125,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
                 }
                 writeAliasModulesAndRecompile()
                 console.log({ aloiases: wp.compiler.options.resolve.alias })
-                depl.tearDown.add(() => {
+                depl.shell.tearDown.add(() => {
                   console.log('removing react plugins')
                   if (plugin.addPackageAlias) {
                     const newAliases: any = {
@@ -135,7 +134,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
                     delete newAliases[plugin.addPackageAlias.name]
                     wp.compiler.options.resolve.alias = newAliases
                   }
-                  delete extPluginsMap[depl.extId]
+                  delete extPluginsMap[depl.shell.extId]
                   writeAliasModulesAndRecompile()
                 })
               },
@@ -166,4 +165,4 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
   },
 }
 
-export default { exts: [ext] }
+export default ext

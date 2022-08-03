@@ -1,5 +1,5 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { CoreExt, ExtInfo } from '@moodlenet/core'
+import { CoreExt, PackageInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
@@ -24,24 +24,23 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
 
   const [localPathField, setLocalPathField] = useState('')
   const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
-  const [extInfoList, setExtInfoList] = useState<ExtInfo[]>([])
+  const [extInfoList, setExtInfoList] = useState<PackageInfo[]>([])
 
   useEffect(() => {
     lib.priHttp
       .fetch<CoreExt>(
-        'moodlenet-core',
-        '0.1.10',
+        '@moodlenet/core',
+        '0.1.0',
       )('ext/listDeployed')()
-      .then(({ extInfos }) => setExtInfoList(extInfos))
+      .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
   }, [])
   const install = useCallback(() => {
     if (!localPathField) {
       return
     }
     toggleIsInstalling()
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
-      deploy: true,
     })
     // .finally(toggleIsInstalling)
   }, [localPathField])
@@ -89,9 +88,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects
-                .filter(
-                  respObj => !extInfoList.find(({ packageInfo }) => respObj.pkgName === packageInfo.packageJson.name),
-                )
+                .filter(respObj => !extInfoList.find(({ packageJson: { name } }) => respObj.pkgName === name))
                 .filter(
                   respObj =>
                     ![
