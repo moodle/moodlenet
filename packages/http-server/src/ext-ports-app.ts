@@ -32,7 +32,7 @@ export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
     }
     const pointer = shell.lib.joinPointer(extId, path)
     const extDeployment = shell.getExt(extId)
-    console.log('Exposed Api pointer', { pointer, extDeployment: extDeployment?.deploymentShell.extId })
+    console.log('Exposed Api pointer', { pointer, extDeployment: extDeployment?.shell.extId })
 
     if (!(pointer && extDeployment)) {
       return next()
@@ -43,7 +43,7 @@ export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
     try {
       console.log(`http sub ${pointer}`)
       const apiSub = shell.lib
-        .sub(shell)(pointer as never)(req.body, {
+        .sub(shell._raw)(pointer as never)(req.body, {
           primary: true,
         })
         // .subDemat(shell)(pointer as never)(req.body, {

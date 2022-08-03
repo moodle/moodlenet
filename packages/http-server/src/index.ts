@@ -25,12 +25,12 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
           plug({ depl }) {
             return {
               mount({ getApp, absMountPath }) {
-                const { extName /* , version */ } = shell.lib.splitExtId(depl.deploymentShell.extId)
+                const { extName /* , version */ } = shell.lib.splitExtId(depl.shell.extId)
                 const mountPath = absMountPath ?? `/_/${extName}`
                 console.log('MOUNT', { extName, mountPath, absMountPath })
                 const mountAppItem: MountAppItem = { mountPath, getApp }
                 const unmount = httpServer.mountApp(mountAppItem)
-                depl.deploymentShell.tearDown.add(() => {
+                depl.shell.tearDown.add(() => {
                   unmount()
                 })
               },

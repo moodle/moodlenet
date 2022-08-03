@@ -9,7 +9,7 @@ async function getPassport(shell: Shell<PassportAuthExt>) {
     msg: {
       data: { configs },
     },
-  } = await shell.lib.fetch<PassportAuthExt>(shell)('@moodlenet/passport-auth@0.1.0::get')()
+  } = await shell.me.fetch('get')()
 
   const passport = new Passport()
   if (configs.google) {

@@ -22,7 +22,7 @@ const ext: Core.Ext<MNArangoDBExt, [Core.CoreExt]> = {
           plug({ depl }) {
             return {
               async ensureDB() {
-                const { extName } = shell.lib.splitExtId(depl.deploymentShell.extId)
+                const { extName } = shell.lib.splitExtId(depl.shell.extId)
                 const exists = (await sysDB.databases()).find(db => db.name === extName)
 
                 const db = exists ?? (await sysDB.database(extName))

@@ -28,11 +28,11 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
       res.redirect(`/@moodlenet/passport-auth/login-fail?msg=couldn't authenticate`)
       return
     }
-    const authSrv = shell.lib.fetch<AuthenticationManagerExt>(shell)
+    const authSrv = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
     const uid = getAuthMngUidByOauthResult(req.user.oauth)
     const {
       msg: { data: getTokenData },
-    } = await authSrv('@moodlenet/authentication-manager@0.1.0::getSessionToken')({
+    } = await authSrv.fetch('getSessionToken')({
       uid,
     })
 
@@ -40,7 +40,7 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
     if (!getTokenData.success) {
       const {
         msg: { data: createUserRes },
-      } = await authSrv('@moodlenet/authentication-manager@0.1.0::registerUser')({
+      } = await authSrv.fetch('registerUser')({
         uid,
         displayName: req.user.oauth.profile.displayName,
         avatarUrl: req.user.oauth.profile.photos?.[0]?.value,

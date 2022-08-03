@@ -14,7 +14,6 @@ import type {
   CoreExt,
   DataMessage,
   DepGraphData,
-  DeploymentShell,
   ExposedPointerMap,
   Ext,
   ExtDef,
@@ -25,6 +24,7 @@ import type {
   PackageInfo,
   PkgInstallationId,
   PushOptions,
+  RawShell,
   RegItem,
   Shell,
 } from '../types'
@@ -63,7 +63,7 @@ const boot: Boot = async cfg => {
       console.log({ orderDepl })
       if (msg.bound === 'in') {
         const { extName: msgExtName } = splitExtId(splitPointer(msg.pointer).extId)
-        const destDeplIndex = orderDepl.findIndex(({ deploymentShell: { extId } }) => {
+        const destDeplIndex = orderDepl.findIndex(({ shell: { extId } }) => {
           const { extName: thisExtName } = splitExtId(extId)
           return thisExtName === msgExtName
         })
@@ -102,7 +102,7 @@ const boot: Boot = async cfg => {
             'pkg/getPkgStorageInfos/sub': assumeValid,
           })
 
-          shell.lib.pubAll<CoreExt>('@moodlenet/core@0.1.0', shell, {
+          shell.provide.services({
             async 'pkg/getInstalledPackages'() {
               const pkgInfos = await main.pkgMng.getAllPackagesInfo()
 
@@ -291,24 +291,17 @@ const boot: Boot = async cfg => {
     //   installedPackageInfo,
     // }
 
-    const tearDown = pipedMessages$.subscribe($msg$)
-
-    const deploymentShell: DeploymentShell = {
-      ...shell,
-      tearDown,
-    }
-
     assert(!proxyDeploy, `config.proxyDeploy not implemented`)
 
     const deployer = proxyDeploy ? extDeployable?.deploy : extDeployable?.deploy
 
-    const extDeployment = await (deployer ? deployer(deploymentShell) : void 0)
+    const extDeployment = await (deployer ? deployer(shell) : void 0)
 
     const regDeployment: RegItem<any> = {
       ...{ deployer, at: new Date(), ext: ext, $msg$, pkgInfo },
       ...(extDeployable ?? null),
       ...(extDeployment ?? null),
-      deploymentShell,
+      shell,
     }
     deployments.register({ regDeployment })
     console.log({ name: ext.name, coreExtName })
@@ -338,11 +331,12 @@ const boot: Boot = async cfg => {
     extId: ExtId
     $msg$: Subject<DataMessage<any>>
     env: unknown
-  }): Shell {
+  }): Shell<any> {
     const push = pushMsg(extId)
-    const getExt: Shell['getExt'] = deployments.getByExtId as any
+    const getExt: RawShell['getExt'] = deployments.getByExtId as any
+    const tearDown = pipedMessages$.subscribe($msg$)
 
-    const onExt: Shell['onExt'] = (extId, cb) => {
+    const onExt: RawShell['onExt'] = (extId, cb) => {
       const match = matchMessage<CoreExt>()
       // console.log('onExt', extId)
       // FIXME: beware that immediate_deployment stays in memoruy this way - fix it
@@ -379,7 +373,7 @@ const boot: Boot = async cfg => {
     //   assert(myRegDeployment, `${prefixErrMsg} my ${myDeployExtId} deployment is missing`)
     //   return myRegDeployment
     // }
-    const onExtInstance: Shell['onExtInstance'] = (onExtId, cb) => {
+    const onExtInstance: RawShell['onExtInstance'] = (onExtId, cb) => {
       let cleanup: void | (() => void) = undefined
       const subscription = onExt(onExtId, regDeployment => {
         // console.log('onExtInstance', extId, `[${regDeployment?.extId}]`)
@@ -395,7 +389,7 @@ const boot: Boot = async cfg => {
       return subscription
     }
 
-    const onExtDeployment: Shell['onExtDeployment'] = (extId, cb) => {
+    const onExtDeployment: RawShell['onExtDeployment'] = (extId, cb) => {
       let cleanup: void | (() => void) = undefined
       const subscription = onExt(extId, regDeployment => {
         if (!regDeployment) {
@@ -406,7 +400,7 @@ const boot: Boot = async cfg => {
       return subscription
     }
 
-    const libOf: Shell['libOf'] = ofExtId =>
+    const libOf: RawShell['libOf'] = ofExtId =>
       new Promise((resolve, reject) => {
         // const myRegDeployment = assertMyRegDeployment(`libOf(${ofExtId}), but`)
         const sub = onExtDeployment(extId, myRegDeployment => {
@@ -416,13 +410,14 @@ const boot: Boot = async cfg => {
         })
       })
 
-    const expose: Shell['expose'] = expPnt => {
+    const expose: RawShell['expose'] = expPnt => {
       console.log(`Expose `, pkgInfo.packageJson.name, expPnt)
       EXPOSED_POINTERS_REG[pkgInfo.packageJson.name] = expPnt
     }
 
-    const shell: Shell = {
+    const _rawShell: RawShell = {
       extId: extId,
+      tearDown,
       extName: pkgInfo.packageJson.name,
       extVersion: pkgInfo.packageJson.version,
       env,
@@ -441,19 +436,38 @@ const boot: Boot = async cfg => {
       expose,
       lib: CoreLib,
     }
-    return shell
+    return {
+      _raw: _rawShell,
+      tearDown: _rawShell.tearDown,
+      emit: _rawShell.emit,
+      msg$: _rawShell.msg$,
+      lib: _rawShell.lib,
+      env: _rawShell.env,
+      getExt: _rawShell.getExt,
+      rx: _rawShell.lib.rx,
+      expose: _rawShell.expose,
+      extId: _rawShell.extId,
+      extName: _rawShell.extName,
+      extVersion: _rawShell.extVersion,
+      plugin: _rawShell.onExtInstance,
+      access(targetExtId) {
+        return CoreLib.access(targetExtId, _rawShell)
+      },
+      me: CoreLib.access<any>(extId, _rawShell),
+      provide: CoreLib.provide(extId, _rawShell),
+    }
   }
 
   function undeployExtension(ext: Ext) {
     const regItem = deployments.unregister(ext.name)
     assert(regItem, `couldn't find deployment for ${ext.name}`)
     regItem.$msg$.complete()
-    regItem.deploymentShell.tearDown.unsubscribe()
+    regItem.shell.tearDown.unsubscribe()
     depGraphRm(depGraph, [ext], [])
     return regItem
   }
 
-  function pushMsg<Def extends ExtDef>(srcExtId: ExtId<Def>): Shell<Def>['push'] {
+  function pushMsg<Def extends ExtDef>(srcExtId: ExtId<Def>): RawShell<Def>['push'] {
     return bound => destExtId => path => (data, _opts) => {
       console.log('PUSH ---', { bound, destExtId, path, data, _opts }, '--- PUSH')
       const opts: PushOptions = {
@@ -491,7 +505,7 @@ const boot: Boot = async cfg => {
         parentMsgId,
         sub: opts.sub,
         // managedBy: null,
-        activeDest: destRegItem.deploymentShell.extId,
+        activeDest: destRegItem.shell.extId,
       }
 
       setTimeout(() => $MAIN_MSGS$.next(msg), 10) //FIXME: 😱 why ?
