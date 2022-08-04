@@ -21,7 +21,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
   name: '@moodlenet/simple-email-auth',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  wireup(shell) {
+  deploy(shell) {
     shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
       console.log(`@moodlenet/simple-email-auth: onExtInstance<ReactAppExt>`, plug)
       plug.setup({
@@ -34,61 +34,58 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
       'login/sub': { validate: () => ({ valid: true }) },
       'signup/sub': { validate: () => ({ valid: true }) },
     })
-    return {
-      deploy() {
-        const authMng = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
-        const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
-        shell.provide.services({
-          async login({
-            msg: {
-              data: {
-                req: { email, password },
-              },
-            },
-          }) {
-            const user = await store.getByEmail(email)
-            if (!user || user.password !== password) {
-              return { success: false }
-            }
-            const {
-              msg: { data: res },
-            } = await authMng.fetch('getSessionToken')({ uid: user.id })
 
-            if (!res.success) {
-              return { success: false }
-            }
-            const sessionToken = res.sessionToken
-            return { success: true, sessionToken }
+    const authMng = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
+    const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
+    shell.provide.services({
+      async login({
+        msg: {
+          data: {
+            req: { email, password },
           },
-          async signup({
-            msg: {
-              data: {
-                req: { email, password, displayName },
-              },
-            },
-          }) {
-            const mUser = await store.getByEmail(email)
-            if (mUser) {
-              return { success: false, msg: 'email exists' }
-            }
+        },
+      }) {
+        const user = await store.getByEmail(email)
+        if (!user || user.password !== password) {
+          return { success: false }
+        }
+        const {
+          msg: { data: res },
+        } = await authMng.fetch('getSessionToken')({ uid: user.id })
 
-            const user = await store.create({ email, password })
-
-            const {
-              msg: { data: authRes },
-            } = await authMng.fetch('registerUser')({ uid: user.id, displayName })
-
-            if (!authRes.success) {
-              await store.delUser(user.id)
-              return authRes
-            }
-
-            return { success: true }
-          },
-        })
-        return
+        if (!res.success) {
+          return { success: false }
+        }
+        const sessionToken = res.sessionToken
+        return { success: true, sessionToken }
       },
-    }
+      async signup({
+        msg: {
+          data: {
+            req: { email, password, displayName },
+          },
+        },
+      }) {
+        const mUser = await store.getByEmail(email)
+        if (mUser) {
+          return { success: false, msg: 'email exists' }
+        }
+
+        const user = await store.create({ email, password })
+
+        const {
+          msg: { data: authRes },
+        } = await authMng.fetch('registerUser')({ uid: user.id, displayName })
+
+        if (!authRes.success) {
+          await store.delUser(user.id)
+          return authRes
+        }
+
+        return { success: true }
+      },
+    })
+    return {}
   },
 }
 

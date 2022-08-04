@@ -16,7 +16,7 @@ const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = {
   name: '@moodlenet/passport-auth',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  wireup(shell) {
+  deploy(shell) {
     shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
       console.log(`@moodlenet/passport-auth: plugin<ReactAppExt>`, plug)
       plug.setup({
@@ -41,28 +41,25 @@ const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = {
       'save/sub': { validate: () => ({ valid: true }) },
       'get/sub': { validate: () => ({ valid: true }) },
     })
-    return {
-      deploy() {
-        const store = configApiKeyStore({ folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey') })
-        shell.provide.services({
-          async get() {
-            const configs = await store.read()
-            return { configs }
-          },
-          async save({
-            msg: {
-              data: {
-                req: { configs: configsPatch },
-              },
-            },
-          }) {
-            const configs = await store.patchConfigs(configsPatch)
-            return { configs }
-          },
-        })
-        return
+
+    const store = configApiKeyStore({ folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey') })
+    shell.provide.services({
+      async get() {
+        const configs = await store.read()
+        return { configs }
       },
-    }
+      async save({
+        msg: {
+          data: {
+            req: { configs: configsPatch },
+          },
+        },
+      }) {
+        const configs = await store.patchConfigs(configsPatch)
+        return { configs }
+      },
+    })
+    return {}
   },
 }
 
