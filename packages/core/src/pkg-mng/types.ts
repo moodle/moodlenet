@@ -9,15 +9,15 @@ export type SafePackageJson = PackageJson & { name: string; version: string; moo
 
 export type PkgInstallationId = string
 
-//info.json
+/* //info.json
 export type PkgInstallationInfo = {
   date: string
   installPkgReq: InstallPkgReq
   //  owner: ExtName ? PkgInstallationId ?
-}
+} */
 
-export type PackageInfo = PkgInstallationInfo & {
+export type PackageInfo = {
   id: PkgInstallationId
   packageJson: SafePackageJson
   readme: string | undefined
-}
+} /* & PkgInstallationInfo */
