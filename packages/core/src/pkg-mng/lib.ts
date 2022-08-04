@@ -1,8 +1,8 @@
 import assert from 'assert'
-import { readdir, readFile, writeFile } from 'fs/promises'
+import { readdir, readFile } from 'fs/promises'
 import { basename, resolve } from 'path'
 import { Ext } from '../types'
-import { PackageInfo, PkgInstallationInfo, SafePackageJson } from './types'
+import { PackageInfo, SafePackageJson } from './types'
 
 export async function getAllPackagesInfo({ absFolder }: { absFolder: string }): Promise<PackageInfo[]> {
   const pkgFolderNames = await getAllFoldersIn({ absFolder })
@@ -25,9 +25,9 @@ export async function getPackageInfo({ absFolder }: { absFolder: string }): Prom
   const readmefile = rootfilenames.find(file => file.isFile() && file.name.toLowerCase().split('.').at(0) === 'readme')
   const readme = readmefile?.name ? await readFile(resolve(absFolder, readmefile.name), 'utf-8') : ''
   //const rootDirPosix = posix.normalize(absFolder)
-  const installationInfo = await readInstallInfoFileName({ absFolder })
+  // const installationInfo = await readInstallInfoFileName({ absFolder })
   const packageInfo: PackageInfo = {
-    ...installationInfo,
+    // ...installationInfo,
     packageJson,
     readme,
     id: basename(absFolder),
@@ -36,6 +36,7 @@ export async function getPackageInfo({ absFolder }: { absFolder: string }): Prom
   return packageInfo
 }
 
+/* 
 export const installInfoFileName = ({ absFolder }: { absFolder: string }) => resolve(absFolder, INSTALL_INFO_FILENAME)
 
 export async function readInstallInfoFileName({ absFolder }: { absFolder: string }) {
@@ -48,6 +49,7 @@ export async function writeInstallInfo({ absFolder, info }: { absFolder: string;
 }
 
 export const INSTALL_INFO_FILENAME = 'install-info.json'
+*/
 
 export function assertValidPkgModule(module: any, pkgInfo: PackageInfo): asserts module is Ext {
   console.log({

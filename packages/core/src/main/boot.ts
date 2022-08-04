@@ -137,7 +137,7 @@ const boot: Boot = async cfg => {
                 installPkgReq.fromFolder = resolve(main.sysPaths.pkgStorageFolder, installPkgReq.fromFolder)
               }
               console.log('installPkgReq ...', installPkgReq)
-              const { pkgInfo } = await main.pkgMng.install(installPkgReq)
+              const { pkgInfo, date } = await main.pkgMng.install(installPkgReq)
 
               const oldSysConfig = main.readSysConfig()
 
@@ -145,7 +145,7 @@ const boot: Boot = async cfg => {
                 ...oldSysConfig,
                 packages: {
                   ...oldSysConfig.packages,
-                  [pkgInfo.id]: { configs: {} },
+                  [pkgInfo.id]: { configs: {}, date, installPkgReq },
                 },
               })
               await deployExtension({ pkgInstallationId: pkgInfo.id, install: true })
@@ -533,14 +533,16 @@ const boot: Boot = async cfg => {
   async function startup_ensureAllInstalled() {
     const allPackagesInfos = await main.pkgMng.getAllPackagesInfo()
     const allPackagesIds = allPackagesInfos.map(({ id }) => id)
+    const sysPackages = main.readSysConfig().packages
+    const pkgsToInstall = Object.entries(sysPackages)
+      .filter(([pkgInstallationId]) => !allPackagesIds.includes(pkgInstallationId))
+      .map(([pkgInstallationId, sysInstalledPkg]) => ({ pkgInstallationId, sysInstalledPkg }))
 
-    const toInstallIds = Object.keys(main.readSysConfig().packages).filter(
-      pkgInstallationId => !allPackagesIds.includes(pkgInstallationId),
+    await Promise.all(
+      pkgsToInstall.map(({ pkgInstallationId, sysInstalledPkg }) =>
+        main.pkgMng.install(sysInstalledPkg.installPkgReq, pkgInstallationId),
+      ),
     )
-
-    const toInstallPackagesInfos = allPackagesInfos.filter(({ id }) => toInstallIds.includes(id))
-
-    await Promise.all(toInstallPackagesInfos.map(({ id, installPkgReq }) => main.pkgMng.install(installPkgReq, id)))
   }
 
   async function startup_deployAll() {
