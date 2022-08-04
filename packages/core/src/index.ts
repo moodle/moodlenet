@@ -4,7 +4,7 @@ export * from './core-lib'
 export * from './main'
 export * from './types'
 
-export const coreExtDef: Omit<Ext<CoreExt>, 'wireup'> = {
+export const coreExtDef: Omit<Ext<CoreExt>, 'deploy'> = {
   name: coreExtName,
   version: coreExtVersion,
   requires: [],

@@ -39,7 +39,7 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
   name: '@moodlenet/email-service',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  wireup(shell) {
+  deploy(shell) {
     // come lo passo nel codice ?
     const mailer = getNodemailerSendEmailAdapter(configLocal)
     // business logic, wire-up to the message system,
@@ -66,25 +66,20 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
         },
       },
     })
-    return {
-      // code that allocate system resouces ( DB connections, listen to ports )
-      // implement package's service messages
-      deploy() {
-        shell.provide.services({
-          async send(_) {
-            const msg = {
-              from: 'shukeenkel@gmail.com',
-              to: 'ettorebevilacqua@gmail.com',
-              subject: 'subject text ',
-              html: '<h3>Hy test</h3>',
-            }
-            const resp = await mailer(msg)
-            return resp
-          },
-        })
-        return {}
+
+    shell.provide.services({
+      async send(_) {
+        const msg = {
+          from: 'shukeenkel@gmail.com',
+          to: 'ettorebevilacqua@gmail.com',
+          subject: 'subject text ',
+          html: '<h3>Hy test</h3>',
+        }
+        const resp = await mailer(msg)
+        return resp
       },
-    }
+    })
+    return {}
   },
 }
 

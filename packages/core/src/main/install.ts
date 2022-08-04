@@ -6,9 +6,10 @@ import { getMain } from './main'
 type InstallCfg = {
   mainFolders: MainFolders
   installPkgReqs?: InstallPkgReq[]
+  httpPort: number
 }
 
-export default async function install({ mainFolders, installPkgReqs = defaultInstallPkgReqs() }: InstallCfg) {
+export default async function install({ mainFolders, httpPort, installPkgReqs = defaultInstallPkgReqs() }: InstallCfg) {
   const main = await getMain({ mainFolders })
   const installationsPkgInfos = await Promise.all(
     installPkgReqs.map(installPkgReq =>
@@ -16,7 +17,10 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
     ),
   )
   const packages = installationsPkgInfos.reduce<SysInstalledPkgs>((_, { /* ext, */ pkgInfo, installPkgReq, date }) => {
-    const sysInstalledPkg: SysInstalledPkg = { configs: {}, date, installPkgReq }
+    const sysInstalledPkg: SysInstalledPkg = { env: {}, date, installPkgReq }
+    if (pkgInfo.packageJson.name === '@moodlenet/http-server') {
+      sysInstalledPkg.env[''] = { port: httpPort }
+    }
     return { ..._, [pkgInfo.id]: sysInstalledPkg }
   }, {})
   await main.writeSysConfig({

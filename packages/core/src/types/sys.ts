@@ -10,7 +10,7 @@ export type SystemPaths = MainFolders & {
 export type SysInstalledPkg = {
   date: string
   installPkgReq: InstallPkgReq
-  configs: Record<string, ExtensionLocalConfig>
+  env: { default?: ExtensionEnv } & Record<string, ExtensionEnv>
 }
 export type SysInstalledPkgs = {
   [id: PkgInstallationId]: SysInstalledPkg
@@ -19,13 +19,10 @@ export type SysConfig = {
   packages: SysInstalledPkgs
 }
 
-export type ExtensionLocalConfig = {
-  env?: any
-  proxyDeploy?: true
-}
-
 //  --  //
 
+export type ExtensionEnv = unknown
+export type EnvName = string
 export type PkgName = string
 export type PkgVersion = string
 export type NpmRegistry = string

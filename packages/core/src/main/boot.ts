@@ -10,7 +10,6 @@ import { depGraphAddNodes, depGraphRm } from '../dep-graph'
 import * as pkgMngLib from '../pkg-mng/lib'
 import type {
   Boot,
-  BootExt,
   CoreExt,
   DataMessage,
   DepGraphData,
@@ -60,7 +59,7 @@ const boot: Boot = async cfg => {
     // tap(msg => console.log('++++++msg', msg)),
     mergeMap(msg => {
       const orderDepl = depOrderDeployments()
-      console.log({ orderDepl })
+      console.log({ orderDepl: orderDepl.map(_ => _.ext.name) })
       if (msg.bound === 'in') {
         const { extName: msgExtName } = splitExtId(splitPointer(msg.pointer).extId)
         const destDeplIndex = orderDepl.findIndex(({ shell: { extId } }) => {
@@ -86,126 +85,118 @@ const boot: Boot = async cfg => {
 
   const coreExt: Ext<CoreExt> = {
     ...coreExtDef,
-    wireup: async shell => {
-      return {
-        async deploy(
-          {
-            /* , tearDown  */
-          },
-        ) {
-          const assumeValid = { validate: () => ({ valid: true }) }
-          shell.expose({
-            'ext/listDeployed/sub': assumeValid,
-            'pkg/install/sub': assumeValid,
-            'pkg/uninstall/sub': assumeValid,
-            // 'ext/deploy/sub': assumeValid,
-            'pkg/getPkgStorageInfos/sub': assumeValid,
-          })
+    deploy: async shell => {
+      const assumeValid = { validate: () => ({ valid: true }) }
+      shell.expose({
+        'ext/listDeployed/sub': assumeValid,
+        'pkg/install/sub': assumeValid,
+        'pkg/uninstall/sub': assumeValid,
+        // 'ext/deploy/sub': assumeValid,
+        'pkg/getPkgStorageInfos/sub': assumeValid,
+      })
 
-          shell.provide.services({
-            async 'pkg/getInstalledPackages'() {
-              const pkgInfos = await main.pkgMng.getAllPackagesInfo()
+      shell.provide.services({
+        async 'pkg/getInstalledPackages'() {
+          const pkgInfos = await main.pkgMng.getAllPackagesInfo()
 
-              return {
-                pkgInfos,
-              }
-            },
-            async 'pkg/getPkgStorageInfos'() {
-              if (!main.sysPaths.pkgStorageFolder) {
-                return { pkgInfos: [] }
-              }
-              const pkgInfos = await pkgMngLib.getAllPackagesInfo({ absFolder: main.sysPaths.pkgStorageFolder })
-              return { pkgInfos }
-            },
-            'ext/listDeployed'() {
-              // console.log({ deployments: deployments.reg })
-              const pkgInfos = Object.values(deployments.reg).map<PackageInfo>(({ pkgInfo }) => pkgInfo)
-              return [{ pkgInfos }]
-            },
-            async 'pkg/install'({
-              msg: {
-                data: {
-                  req: { installPkgReq },
-                },
-              },
-            }) {
-              if (installPkgReq.type === 'symlink') {
-                assert(
-                  !!main.sysPaths.pkgStorageFolder,
-                  `can't install symlink without a base package storage folder configured`,
-                )
-                installPkgReq.fromFolder = resolve(main.sysPaths.pkgStorageFolder, installPkgReq.fromFolder)
-              }
-              console.log('installPkgReq ...', installPkgReq)
-              const { pkgInfo, date } = await main.pkgMng.install(installPkgReq)
-
-              const oldSysConfig = main.readSysConfig()
-
-              main.writeSysConfig({
-                ...oldSysConfig,
-                packages: {
-                  ...oldSysConfig.packages,
-                  [pkgInfo.id]: { configs: {}, date, installPkgReq },
-                },
-              })
-              await deployExtension({ pkgInstallationId: pkgInfo.id, install: true })
-
-              return { pkgInfo }
-            },
-            async 'pkg/uninstall'({
-              msg: {
-                data: {
-                  req: { pkgInstallationId },
-                },
-              },
-            }) {
-              console.log('uninstallPkg...', pkgInstallationId)
-              // const installedPackageInfo = await main.pkgMng.getPackageInfo({
-              //   pkgInstallationId,
-              // })
-              const depl = deployments.getByPkgInstallationId(pkgInstallationId)
-              assert(depl, 'no deployment for ${installationFolder}')
-              undeployExtension(depl.ext)
-              await depl.ext.uninstall?.(depl)
-              await main.pkgMng.uninstall({ pkgInstallationId })
-
-              const oldSysConfig = main.readSysConfig()
-              const newPackages = { ...oldSysConfig.packages }
-              delete newPackages[pkgInstallationId]
-              main.writeSysConfig({
-                ...oldSysConfig,
-                packages: newPackages,
-              })
-
-              return
-            },
-            // async 'ext/deploy'({
-            //   msg: {
-            //     data: {
-            //       req: { installationFolder, extId },
-            //     },
-            //   },
-            // }) {
-            //   const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({
-            //     pkgInstallationId: installationFolder,
-            //   })
-            //   const ext = installedPackageInfo.pkgExport.exts.find(ext => ext.id === extId)
-            //   assert(ext, `Couldn't find extId:${extId} in packageId:${installationFolder}`)
-            //   await deployExtensions({
-            //     extBags: [{ installedPackageInfo, extId }],
-            //   })
-            //   const curr = main.readSysConfig()
-            //   main.writeSysConfig({
-            //     ...curr,
-            //     enabledPackages: [...curr.enabledPackages, { extId: ext.id, installationFolder }],
-            //   })
-
-            //   return
-            // },
-          })
-          return {}
+          return {
+            pkgInfos,
+          }
         },
-      }
+        async 'pkg/getPkgStorageInfos'() {
+          if (!main.sysPaths.pkgStorageFolder) {
+            return { pkgInfos: [] }
+          }
+          const pkgInfos = await pkgMngLib.getAllPackagesInfo({ absFolder: main.sysPaths.pkgStorageFolder })
+          return { pkgInfos }
+        },
+        'ext/listDeployed'() {
+          // console.log({ deployments: deployments.reg })
+          const pkgInfos = Object.values(deployments.reg).map<PackageInfo>(({ pkgInfo }) => pkgInfo)
+          return [{ pkgInfos }]
+        },
+        async 'pkg/install'({
+          msg: {
+            data: {
+              req: { installPkgReq },
+            },
+          },
+        }) {
+          if (installPkgReq.type === 'symlink') {
+            assert(
+              !!main.sysPaths.pkgStorageFolder,
+              `can't install symlink without a base package storage folder configured`,
+            )
+            installPkgReq.fromFolder = resolve(main.sysPaths.pkgStorageFolder, installPkgReq.fromFolder)
+          }
+          console.log('installPkgReq ...', installPkgReq)
+          const { pkgInfo, date } = await main.pkgMng.install(installPkgReq)
+
+          const oldSysConfig = main.readSysConfig()
+
+          main.writeSysConfig({
+            ...oldSysConfig,
+            packages: {
+              ...oldSysConfig.packages,
+              [pkgInfo.id]: { env: {}, date, installPkgReq },
+            },
+          })
+          await deployExtension({ pkgInstallationId: pkgInfo.id, install: true })
+
+          return { pkgInfo }
+        },
+        async 'pkg/uninstall'({
+          msg: {
+            data: {
+              req: { pkgInstallationId },
+            },
+          },
+        }) {
+          console.log('uninstallPkg...', pkgInstallationId)
+          // const installedPackageInfo = await main.pkgMng.getPackageInfo({
+          //   pkgInstallationId,
+          // })
+          const depl = deployments.getByPkgInstallationId(pkgInstallationId)
+          assert(depl, 'no deployment for ${installationFolder}')
+          undeployExtension(depl.ext)
+          await depl.ext.uninstall?.(depl)
+          await main.pkgMng.uninstall({ pkgInstallationId })
+
+          const oldSysConfig = main.readSysConfig()
+          const newPackages = { ...oldSysConfig.packages }
+          delete newPackages[pkgInstallationId]
+          main.writeSysConfig({
+            ...oldSysConfig,
+            packages: newPackages,
+          })
+
+          return
+        },
+        // async 'ext/deploy'({
+        //   msg: {
+        //     data: {
+        //       req: { installationFolder, extId },
+        //     },
+        //   },
+        // }) {
+        //   const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({
+        //     pkgInstallationId: installationFolder,
+        //   })
+        //   const ext = installedPackageInfo.pkgExport.exts.find(ext => ext.id === extId)
+        //   assert(ext, `Couldn't find extId:${extId} in packageId:${installationFolder}`)
+        //   await deployExtensions({
+        //     extBags: [{ installedPackageInfo, extId }],
+        //   })
+        //   const curr = main.readSysConfig()
+        //   main.writeSysConfig({
+        //     ...curr,
+        //     enabledPackages: [...curr.enabledPackages, { extId: ext.id, installationFolder }],
+        //   })
+
+        //   return
+        // },
+      })
+      return {}
     },
   }
   // depGraphAddNodes(_depGraph, [coreExt])
@@ -243,13 +234,12 @@ const boot: Boot = async cfg => {
     install?: boolean
     pkgInstallationId: PkgInstallationId
   }): Promise<DeploymentBag> {
-    const { env, proxyDeploy } = extPkgConfig(pkgInstallationId)
+    const env = pkgEnv(pkgInstallationId)
     const { ext, pkgInfo } = await main.pkgMng.getPkg({ pkgInstallationId })
     return deployModule({
-      env: env?.env,
+      env,
       ext,
       pkgInfo,
-      proxyDeploy,
       install,
     })
   }
@@ -258,9 +248,7 @@ const boot: Boot = async cfg => {
     install,
     pkgInfo,
     env,
-    proxyDeploy,
   }: {
-    proxyDeploy?: boolean
     env: unknown
     pkgInfo: PackageInfo
     ext: Ext<any>
@@ -274,7 +262,7 @@ const boot: Boot = async cfg => {
       await ext.install?.(shell)
     }
 
-    const extDeployable = await ext.wireup(shell)
+    const extDeployable = await ext.deploy(shell)
 
     // const deployableBag: DeployableBag = {
     //   extDeployable,
@@ -285,16 +273,9 @@ const boot: Boot = async cfg => {
     //   installedPackageInfo,
     // }
 
-    assert(!proxyDeploy, `config.proxyDeploy not implemented`)
-
-    const deployer = proxyDeploy ? extDeployable?.deploy : extDeployable?.deploy
-
-    const extDeployment = await (deployer ? deployer(shell) : void 0)
-
     const regDeployment: RegItem<any> = {
-      ...{ deployer, at: new Date(), ext: ext, $msg$, pkgInfo },
+      ...{ at: new Date(), ext: ext, $msg$, pkgInfo },
       ...(extDeployable ?? null),
-      ...(extDeployment ?? null),
       shell,
     }
     deployments.register({ regDeployment })
@@ -507,12 +488,12 @@ const boot: Boot = async cfg => {
     }
   }
 
-  function extPkgConfig(pkgInstallationId: PkgInstallationId) {
+  function pkgEnv(pkgInstallationId: PkgInstallationId) {
     const pkgSys = main.readSysConfig().packages[pkgInstallationId]
     assert(pkgSys, `could not find pkgSys for ${pkgInstallationId}`)
-    const mnDeplClass = process.env.MN_DEPL_CLASS ?? 'default'
-    const config = pkgSys.configs[mnDeplClass]
-    return { ...pkgSys, ...config }
+    const mnDeplClass = process.env.MN_DEPL_CLASS ?? ''
+    const env = pkgSys.env[mnDeplClass]
+    return env
   }
 
   function depOrderDeployments() {
@@ -563,10 +544,7 @@ const boot: Boot = async cfg => {
     return Promise.all(startPkgs.map(_ => deployExtension({ pkgInstallationId: _.pkgInfo.id })))
   }
 }
-const mainExt: BootExt = {
-  boot,
-}
-export default mainExt
+export default boot
 
 function newMsgId() {
   return Math.random().toString(36).substring(2)

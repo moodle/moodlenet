@@ -15,29 +15,25 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
   name: '@moodlenet/http-server',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0'], //, '@moodlenet/sys-log@0.1.0'],
-  wireup(shell) {
-    return {
-      deploy(/* {  tearDown } */) {
-        const env = getEnv(shell.env)
-        const httpServer = createHttpServer({ port: env.port, shell })
+  deploy(shell) {
+    const env = getEnv(shell.env)
+    const httpServer = createHttpServer({ port: env.port, shell })
 
+    return {
+      plug({ depl }) {
         return {
-          plug({ depl }) {
-            return {
-              mount({ getApp, absMountPath }) {
-                const { extName /* , version */ } = shell.lib.splitExtId(depl.shell.extId)
-                const mountPath = absMountPath ?? `/_/${extName}`
-                console.log('MOUNT', { extName, mountPath, absMountPath })
-                const mountAppItem: MountAppItem = { mountPath, getApp }
-                const unmount = httpServer.mountApp(mountAppItem)
-                depl.shell.tearDown.add(() => {
-                  unmount()
-                })
-              },
-              express,
-              // xlib,
-            }
+          mount({ getApp, absMountPath }) {
+            const { extName /* , version */ } = shell.lib.splitExtId(depl.shell.extId)
+            const mountPath = absMountPath ?? `/_/${extName}`
+            console.log('MOUNT', { extName, mountPath, absMountPath })
+            const mountAppItem: MountAppItem = { mountPath, getApp }
+            const unmount = httpServer.mountApp(mountAppItem)
+            depl.shell.tearDown.add(() => {
+              unmount()
+            })
           },
+          express,
+          // xlib,
         }
       },
     }
