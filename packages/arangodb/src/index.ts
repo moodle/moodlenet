@@ -11,25 +11,21 @@ const ext: Core.Ext<MNArangoDBExt, [Core.CoreExt]> = {
   name: '@moodlenet/arangodb',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0'], //, '@moodlenet/sys-log@0.1.0'],
-  wireup(shell) {
+  deploy(shell) {
+    //const logger = console
+    // const logger = coreExt.sysLog.moodlenetSysLogLib(shell)
+    const env = getEnv(shell.env)
+    const sysDB = new Database({ ...env.config })
     return {
-      deploy(/* {  tearDown } */) {
-        //const logger = console
-        // const logger = coreExt.sysLog.moodlenetSysLogLib(shell)
-        const env = getEnv(shell.env)
-        const sysDB = new Database({ ...env.config })
+      plug({ depl }) {
         return {
-          plug({ depl }) {
-            return {
-              async ensureDB() {
-                const { extName } = shell.lib.splitExtId(depl.shell.extId)
-                const exists = (await sysDB.databases()).find(db => db.name === extName)
+          async ensureDB() {
+            const { extName } = shell.lib.splitExtId(depl.shell.extId)
+            const exists = (await sysDB.databases()).find(db => db.name === extName)
 
-                const db = exists ?? (await sysDB.database(extName))
+            const db = exists ?? (await sysDB.database(extName))
 
-                return { db, created: !exists }
-              },
-            }
+            return { db, created: !exists }
           },
         }
       },

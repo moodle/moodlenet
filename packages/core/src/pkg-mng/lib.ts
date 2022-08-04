@@ -57,11 +57,11 @@ export function assertValidPkgModule(module: any, pkgInfo: PackageInfo): asserts
     pkgInfo,
   })
   assert(!!module, `no module! ${module}`)
-  const { name: moduleName, version, requires, wireup, install, uninstall } = module
+  const { name: moduleName, version, requires, deploy, install, uninstall } = module
   assert('string' === typeof moduleName, `invalid name type : ${typeof moduleName}`) // : ExtName<Def>
   assert('string' === typeof version, `invalid version type : ${typeof version}`) // : ExtName<Def>
   assert(Array.isArray(requires), `invalid requires type : ${typeof requires}`) // : { [Index in keyof Requires]: _Unsafe_ExtId<Requires[Index]> }
-  assert('function' === typeof wireup, `invalid wireup type : ${typeof wireup}`) // : ExtWireup<Def>
+  assert('function' === typeof deploy, `invalid deploy type : ${typeof deploy}`) // : ExtDeploy<Def>
   assert(['undefined', 'function'].includes(typeof install), `invalid install type : ${typeof install}`) // ?: ExtInstall<Def>
   assert(['undefined', 'function'].includes(typeof uninstall), `invalid uninstall type : ${typeof uninstall}`) // ?: ExtUninstall<Def>
   const validId = moduleName === pkgInfo.packageJson.name && version === pkgInfo.packageJson.version

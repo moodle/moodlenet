@@ -1,4 +1,4 @@
-import { install, InstallPkgReq, mainExt, MainFolders } from '@moodlenet/core'
+import { boot, install, InstallPkgReq, MainFolders } from '@moodlenet/core'
 import { defaultCorePackages } from '@moodlenet/core/lib/main/install'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path, { resolve } from 'path'
@@ -76,6 +76,7 @@ prompt.start()
     await install({
       mainFolders,
       installPkgReqs,
+      httpPort: 8080,
     })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
@@ -88,5 +89,5 @@ prompt.start()
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
 
-  mainExt.boot({ mainFolders, devMode: true })
+  boot({ mainFolders, devMode: true })
 })()

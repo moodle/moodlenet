@@ -1,4 +1,4 @@
-export { default as mainExt } from './boot'
+export { default as boot } from './boot'
 export * as env from './env'
 export * as index from './index'
 export { default as install } from './install'

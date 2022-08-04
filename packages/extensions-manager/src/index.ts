@@ -19,7 +19,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
   name: '@moodlenet/extensions-manager',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  wireup(shell) {
+  deploy(shell) {
     shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
       console.log(`@moodlenet/extensions-manager: plugin<ReactAppExt>`, plug)
       plug.setup({
@@ -39,64 +39,60 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
         },
       },
     })
-    return {
-      deploy() {
-        const coreAcccess = shell.access<CoreExt>('@moodlenet/core@0.1.0')
-        shell.provide.services({
-          async searchPackages({
+    const coreAcccess = shell.access<CoreExt>('@moodlenet/core@0.1.0')
+    shell.provide.services({
+      async searchPackages({
+        msg: {
+          data: {
+            req: { searchText, registry = getRegistry() },
+          },
+        },
+      }) {
+        console.log(`searchPackages in ${registry}`)
+        const [
+          searchRes,
+          {
             msg: {
-              data: {
-                req: { searchText, registry = getRegistry() },
-              },
+              data: { pkgInfos },
             },
-          }) {
-            console.log(`searchPackages in ${registry}`)
-            const [
-              searchRes,
-              {
-                msg: {
-                  data: { pkgInfos },
-                },
-              } /* ,
+          } /* ,
               {
                 msg: {
                   data: { pkgInfos: installedPackages },
                 },
               }, */,
-            ] = await Promise.all([
-              searchPackagesFromRegistry({ registry, searchText: `moodlenet ${searchText}` }),
-              coreAcccess.fetch('ext/listDeployed')(),
-              // shell.lib.fetch<CoreExt>(shell)('@moodlenet/core@0.1.0::pkg/getInstalledPackages')(),
-            ])
-            const objects = searchRes.objects.map(
-              ({ package: { name: pkgName, description, keywords, version, links } }) => {
-                // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
-                const pkgInstallationId = pkgInfos
-                  //.map(({ packageInfo }) => packageInfo)
-                  .find(packageInfo => packageInfo.packageJson.name === pkgName)?.id
-                const installPkgReq: InstallPkgReq = {
-                  type: 'npm',
-                  registry,
-                  pkgId: version ? `${pkgName}@${version}` : pkgName,
-                }
-                const objects: SearchPackagesResObject = {
-                  pkgName,
-                  description: description ?? '',
-                  keywords: keywords ?? [],
-                  version,
-                  registry,
-                  homepage: links?.homepage,
-                  ...(pkgInstallationId ? { installed: true, pkgInstallationId } : { installed: false, installPkgReq }),
-                }
-                return objects
-              },
-            )
-            return { objects }
+        ] = await Promise.all([
+          searchPackagesFromRegistry({ registry, searchText: `moodlenet ${searchText}` }),
+          coreAcccess.fetch('ext/listDeployed')(),
+          // shell.lib.fetch<CoreExt>(shell)('@moodlenet/core@0.1.0::pkg/getInstalledPackages')(),
+        ])
+        const objects = searchRes.objects.map(
+          ({ package: { name: pkgName, description, keywords, version, links } }) => {
+            // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
+            const pkgInstallationId = pkgInfos
+              //.map(({ packageInfo }) => packageInfo)
+              .find(packageInfo => packageInfo.packageJson.name === pkgName)?.id
+            const installPkgReq: InstallPkgReq = {
+              type: 'npm',
+              registry,
+              pkgId: version ? `${pkgName}@${version}` : pkgName,
+            }
+            const objects: SearchPackagesResObject = {
+              pkgName,
+              description: description ?? '',
+              keywords: keywords ?? [],
+              version,
+              registry,
+              homepage: links?.homepage,
+              ...(pkgInstallationId ? { installed: true, pkgInstallationId } : { installed: false, installPkgReq }),
+            }
+            return objects
           },
-        })
-        return
+        )
+        return { objects }
       },
-    }
+    })
+    return {}
   },
 }
 const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
