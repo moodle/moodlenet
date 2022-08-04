@@ -3,7 +3,7 @@ import rimraf from 'rimraf'
 import { Ext } from '../types'
 import { npmInstaller, symlinkInstaller } from './installers'
 import * as lib from './lib'
-import { InstallPkgReq, PackageInfo, PkgInstallationId, PkgInstallationInfo } from './types'
+import { InstallPkgReq, PackageInfo, PkgInstallationId } from './types'
 
 // const myDirInfo = installDirsInfo();
 
@@ -29,11 +29,14 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     const { pkgInstallationId } = await (installPkgReq.type === 'npm'
       ? npmInstaller({ installPkgReq, pkgsFolder, useFolderName })
       : symlinkInstaller({ installPkgReq, pkgsFolder, useFolderName }))
-    const info: PkgInstallationInfo = { installPkgReq, date: new Date().toISOString() }
-    await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(pkgInstallationId), info })
+    // const info: PkgInstallationInfo = { installPkgReq, date: new Date().toISOString() }
+    // console.log(`writeInstallInfo ${pkgInstallationId}`, info)
+    // await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(pkgInstallationId), info })
     try {
       const { ext, pkgInfo } = await getPkg({ pkgInstallationId })
-      return { ext, pkgInfo }
+      const date = new Date().toISOString()
+
+      return { ext, pkgInfo, date }
     } catch (err) {
       await uninstall({ pkgInstallationId })
       throw err
