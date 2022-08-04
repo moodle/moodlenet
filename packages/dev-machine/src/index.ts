@@ -76,6 +76,7 @@ prompt.start()
     await install({
       mainFolders,
       installPkgReqs,
+      httpPort: 8080,
     })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
