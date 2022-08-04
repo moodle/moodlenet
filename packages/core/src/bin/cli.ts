@@ -1,23 +1,52 @@
 #!/usr/bin/env node
 import { resolve } from 'path'
+import prompts from 'prompts'
 // import boot from '../main/boot'
+import yargs from 'yargs'
 import { MainFolders } from '../types/sys'
 import boot from './boot'
 import install from './install'
-const [cmd, _deploymentFolder, _systemFolder] = process.argv.slice(2)
-const deploymentFolder = _deploymentFolder ? resolve(process.cwd(), _deploymentFolder) : process.cwd()
-const systemFolder = _systemFolder ?? resolve(deploymentFolder, '_system')
+prompts.override(yargs.argv)
+;(async () => {
+  const {
+    operation,
+    'installation-folder': installation_folder,
+    'system-folder': system_folder,
+  } = await prompts([
+    {
+      type: 'select',
+      choices: [{ title: 'install' }, { title: 'boot' }],
+      name: 'operation',
+      message: `system folder?`,
+    },
+    {
+      type: 'text',
+      name: 'installation-folder',
+      message: `installation folder?`,
+      initial: process.cwd(),
+      format: installation_folder => resolve(process.cwd(), installation_folder ?? '.'),
+    },
+    {
+      type: 'text',
+      name: 'system-folder',
 
-const mainFolders: MainFolders = {
-  deploymentFolder,
-  systemFolder,
-}
-console.log({ _deploymentFolder, deploymentFolder, _systemFolder, systemFolder })
-console.log({ cmd, deploymentFolder })
-if (cmd === 'boot') {
-  boot({ mainFolders })
-} else if (cmd === 'install') {
-  install({ mainFolders })
-} else {
-  throw new Error(`no valid cmd:${cmd}`)
-}
+      message: `system folder?`,
+      initial: deploymentFolder => resolve(deploymentFolder, '_system'),
+      format: (system_folder, values) =>
+        system_folder ? resolve(process.cwd(), system_folder) : resolve(values['installation-folder'], '_system'),
+    },
+  ])
+
+  const mainFolders: MainFolders = {
+    deploymentFolder: installation_folder,
+    systemFolder: system_folder,
+  }
+  // console.log(operation, mainFolders, { installation_folder, system_folder })
+  if (operation === 'boot') {
+    boot({ mainFolders })
+  } else if (operation === 'install') {
+    install({ mainFolders })
+  } else {
+    throw new Error(`no valid operation:${operation}`)
+  }
+})()
