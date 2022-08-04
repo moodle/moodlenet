@@ -1,5 +1,5 @@
 import { InstallPkgReq } from '../pkg-mng/types'
-import { MainFolders, SysInstalledPkgs } from '../types/sys'
+import { MainFolders, SysInstalledPkg, SysInstalledPkgs } from '../types/sys'
 import { getRegistry } from './default-consts'
 import { getMain } from './main'
 
@@ -10,12 +10,15 @@ type InstallCfg = {
 
 export default async function install({ mainFolders, installPkgReqs = defaultInstallPkgReqs() }: InstallCfg) {
   const main = await getMain({ mainFolders })
-  const installationsPkgInfos = await Promise.all(installPkgReqs.map(_ => main.pkgMng.install(_)))
-
-  const packages = installationsPkgInfos.reduce<SysInstalledPkgs>(
-    (_, { /* ext, */ pkgInfo }) => ({ ..._, [pkgInfo.id]: { configs: {} } }),
-    {},
+  const installationsPkgInfos = await Promise.all(
+    installPkgReqs.map(installPkgReq =>
+      main.pkgMng.install(installPkgReq).then(installed => ({ installPkgReq, ...installed })),
+    ),
   )
+  const packages = installationsPkgInfos.reduce<SysInstalledPkgs>((_, { /* ext, */ pkgInfo, installPkgReq, date }) => {
+    const sysInstalledPkg: SysInstalledPkg = { configs: {}, date, installPkgReq }
+    return { ..._, [pkgInfo.id]: sysInstalledPkg }
+  }, {})
   await main.writeSysConfig({
     packages,
   })

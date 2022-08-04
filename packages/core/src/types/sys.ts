@@ -1,4 +1,4 @@
-import { PkgInstallationId } from '../pkg-mng/types'
+import { InstallPkgReq, PkgInstallationId } from '../pkg-mng/types'
 
 export type MainFolders = { systemFolder: string; deploymentFolder: string; pkgStorageFolder?: string }
 // SysConfig
@@ -8,6 +8,8 @@ export type SystemPaths = MainFolders & {
 }
 
 export type SysInstalledPkg = {
+  date: string
+  installPkgReq: InstallPkgReq
   configs: Record<string, ExtensionLocalConfig>
 }
 export type SysInstalledPkgs = {
