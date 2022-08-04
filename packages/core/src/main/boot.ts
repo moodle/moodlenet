@@ -10,7 +10,6 @@ import { depGraphAddNodes, depGraphRm } from '../dep-graph'
 import * as pkgMngLib from '../pkg-mng/lib'
 import type {
   Boot,
-  BootExt,
   CoreExt,
   DataMessage,
   DepGraphData,
@@ -545,10 +544,7 @@ const boot: Boot = async cfg => {
     return Promise.all(startPkgs.map(_ => deployExtension({ pkgInstallationId: _.pkgInfo.id })))
   }
 }
-const mainExt: BootExt = {
-  boot,
-}
-export default mainExt
+export default boot
 
 function newMsgId() {
   return Math.random().toString(36).substring(2)

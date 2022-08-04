@@ -35,7 +35,6 @@ export type BootCfg = {
   devMode: boolean
 }
 export type Boot = (cfg: BootCfg) => Promise<{ tearDown(): Promise<unknown> }>
-export type BootExt = { boot: Boot }
 
 export type ExtTopoDef<Def extends ExtTopo> = Def
 
