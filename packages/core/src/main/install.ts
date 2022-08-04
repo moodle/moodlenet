@@ -16,7 +16,7 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
     ),
   )
   const packages = installationsPkgInfos.reduce<SysInstalledPkgs>((_, { /* ext, */ pkgInfo, installPkgReq, date }) => {
-    const sysInstalledPkg: SysInstalledPkg = { configs: {}, date, installPkgReq }
+    const sysInstalledPkg: SysInstalledPkg = { env: {}, date, installPkgReq }
     return { ..._, [pkgInfo.id]: sysInstalledPkg }
   }, {})
   await main.writeSysConfig({
