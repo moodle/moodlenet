@@ -88,4 +88,4 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
   },
 }
 
-export default { exts: [ext] }
+export default ext
