@@ -70,6 +70,8 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   msg$: Observable<DataMessage<any>>
   emit: EmitMessage<Def>
   tearDown: Subscription
+  onExtInstalled: OnExtInstalled
+  onExtUninstalled: OnExtUninstalled
 }
 export interface RawShell<Def extends ExtDef = ExtDef> {
   msg$: Observable<DataMessage<any>>
@@ -86,6 +88,8 @@ export interface RawShell<Def extends ExtDef = ExtDef> {
   tearDown: Subscription
   onExtDeployment: OnExtDeployment
   onExtInstance: OnExtInstance
+  onExtInstalled: OnExtInstalled
+  onExtUninstalled: OnExtUninstalled
   onExt: OnExt
 
   expose: ExposePointers<Def>
@@ -114,6 +118,12 @@ export type OnExt = <Def extends ExtDef>(id: ExtId<Def>, cb: (depl: RegItem<Def>
 export type OnExtInstance = <Def extends ExtDef>(
   id: ExtId<Def>,
   cb: (inst: ExtPlug<Def> /* , depl: RegDeployment<Def> */) => void | (() => void),
+) => Subscription
+export type OnExtInstalled = (
+  cb: (_: { extName: ExtName<any>; extVersion: ExtVersion<any>; extId: ExtId<any> }) => void,
+) => Subscription
+export type OnExtUninstalled = (
+  cb: (_: { extName: ExtName<any>; extVersion: ExtVersion<any>; extId: ExtId<any> }) => void,
 ) => Subscription
 export type GetExt = <Def extends ExtDef>(id: ExtId<Def>) => RegItem<Def> | undefined
 export type GetExtLib = <Def extends ExtDef>(id: ExtId<Def>) => Promise<ExtPlug<Def> | void>
