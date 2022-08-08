@@ -1,5 +1,5 @@
+import type { MNArangoDBExt } from '@moodlenet/arangodb'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import { resolve } from 'path'
 import userStore from './store'
 import { User, UserData } from './store/types'
 import { ClientSession, SessionToken } from './types'
@@ -18,10 +18,20 @@ export type Topo = {
 }
 export type AuthenticationManagerExt = ExtDef<'@moodlenet/authentication-manager', '0.1.0', Topo, void, void>
 
-const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
+const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
   name: '@moodlenet/authentication-manager',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0'],
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0'],
+  install(shell) {
+    shell.plugin<MNArangoDBExt>('@moodlenet/arangodb@0.1.0', inst => {
+      inst.install().then(({ created, db }) => {
+        if (!created) {
+          return
+        }
+        db.createCollection('User')
+      })
+    })
+  },
   deploy(shell) {
     shell.expose({
       'getSessionToken/sub': {
@@ -36,7 +46,7 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
       },
     })
 
-    const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'users') })
+    const store = userStore({ shell })
     shell.provide.services({
       async registerUser({ msg }) {
         const { extName } = shell.lib.splitExtId(msg.source)
