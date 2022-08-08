@@ -20,6 +20,8 @@ export type CoreExt = ExtDef<
       // >
     }
     pkg: {
+      installed: Port<'out', { extId: ExtId }>
+      uninstalled: Port<'out', { extId: ExtId }>
       uninstall: SubTopo<{ pkgInstallationId: PkgInstallationId }, void>
       install: SubTopo<{ installPkgReq: InstallPkgReq }, { pkgInfo: PackageInfo }>
       getPkgStorageInfos: SubTopo<void, { pkgInfos: PackageInfo[] }>

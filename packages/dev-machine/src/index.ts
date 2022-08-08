@@ -77,6 +77,7 @@ prompt.start()
       mainFolders,
       installPkgReqs,
       httpPort: 8080,
+      arangoUrl: 'http://localhost:8529',
     })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
