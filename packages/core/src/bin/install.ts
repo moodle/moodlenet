@@ -7,13 +7,19 @@ import { MainFolders } from '../types'
 export default cli_install
 
 async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
-  const { 'http-port': httpPort } = await prompts([
+  const { 'http-port': httpPort, 'arango-url': arangoUrl } = await prompts([
     {
       type: 'number',
       initial: 8080,
       name: 'http-port',
       message: `http port?`,
     },
+    {
+      type: 'text',
+      initial: 'http://localhost:8529',
+      name: 'arango-url',
+      message: `arangodb url ?`,
+    },
   ])
-  return install({ mainFolders, httpPort })
+  return install({ mainFolders, httpPort, arangoUrl })
 }

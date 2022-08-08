@@ -7,9 +7,15 @@ type InstallCfg = {
   mainFolders: MainFolders
   installPkgReqs?: InstallPkgReq[]
   httpPort: number
+  arangoUrl: string
 }
 
-export default async function install({ mainFolders, httpPort, installPkgReqs = defaultInstallPkgReqs() }: InstallCfg) {
+export default async function install({
+  mainFolders,
+  httpPort,
+  arangoUrl,
+  installPkgReqs = defaultInstallPkgReqs(),
+}: InstallCfg) {
   const main = await getMain({ mainFolders })
   const installationsPkgInfos = await Promise.all(
     installPkgReqs.map(installPkgReq =>
@@ -18,15 +24,21 @@ export default async function install({ mainFolders, httpPort, installPkgReqs = 
   )
   const packages = installationsPkgInfos.reduce<SysInstalledPkgs>((_, { /* ext, */ pkgInfo, installPkgReq, date }) => {
     const sysInstalledPkg: SysInstalledPkg = { env: {}, date, installPkgReq }
-    if (pkgInfo.packageJson.name === '@moodlenet/http-server') {
-      sysInstalledPkg.env[''] = { port: httpPort }
-    }
+    sysInstalledPkg.env.default = defaultPkgConfig(pkgInfo.packageJson.name)
     return { ..._, [pkgInfo.id]: sysInstalledPkg }
   }, {})
   await main.writeSysConfig({
     packages,
+    __FIRST_RUN__: true,
   })
   return main
+  function defaultPkgConfig(pkgName: string) {
+    const defConfigs = {
+      '@moodlenet/http-server': { port: httpPort },
+      '@moodlenet/arangodb': { config: arangoUrl },
+    } as any
+    return defConfigs[pkgName]
+  }
 }
 
 function defaultInstallPkgReqs(): InstallPkgReq[] {
@@ -42,6 +54,7 @@ function defaultInstallPkgReqs(): InstallPkgReq[] {
 export const defaultCorePackages = {
   // 'core': '0.1.0',
   'http-server': '0.1.0',
+  'arangodb': '0.1.0',
   'react-app': '0.1.0',
   'authentication-manager': '0.1.0',
   'simple-email-auth': '0.1.0',

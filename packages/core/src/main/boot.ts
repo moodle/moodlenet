@@ -2,6 +2,7 @@ import assert from 'assert'
 import { DepGraph } from 'dependency-graph'
 import { resolve } from 'path'
 import { mergeMap, of, share, Subject } from 'rxjs'
+import { inspect } from 'util'
 import { coreExtDef } from '..'
 import * as CoreLib from '../core-lib'
 import { matchMessage } from '../core-lib/message'
@@ -48,7 +49,14 @@ const boot: Boot = async cfg => {
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
   // const _env = getEnv(extEnvVars['@moodlenet/core'])
   const main = getMain({ mainFolders: cfg.mainFolders })
-
+  const sysconfig = main.readSysConfig()
+  const { __FIRST_RUN__ } = sysconfig
+  if (__FIRST_RUN__) {
+    main.writeSysConfig({
+      ...sysconfig,
+      __FIRST_RUN__: undefined,
+    })
+  }
   await startup_ensureAllInstalled()
 
   const deployments = createLocalDeploymentRegistry()
@@ -141,7 +149,12 @@ const boot: Boot = async cfg => {
               [pkgInfo.id]: { env: {}, date, installPkgReq },
             },
           })
-          await deployExtension({ pkgInstallationId: pkgInfo.id, install: true })
+          const {
+            regDeployment: {
+              shell: { extId: installedExtId },
+            },
+          } = await deployExtension({ pkgInstallationId: pkgInfo.id, install: true })
+          shell.emit('pkg/installed')({ extId: installedExtId })
 
           return { pkgInfo }
         },
@@ -169,7 +182,7 @@ const boot: Boot = async cfg => {
             ...oldSysConfig,
             packages: newPackages,
           })
-
+          shell.emit('pkg/uninstalled')({ extId: depl.shell.extId })
           return
         },
         // async 'ext/deploy'({
@@ -310,7 +323,29 @@ const boot: Boot = async cfg => {
     const push = pushMsg(extId)
     const getExt: RawShell['getExt'] = deployments.getByExtId as any
     const tearDown = pipedMessages$.subscribe($msg$)
+    const onExtInstalled: RawShell['onExtInstalled'] = cb => {
+      const match = matchMessage<CoreExt>()
+      const subscription = pipedMessages$.subscribe(msg => {
+        if (!match(msg, '@moodlenet/core@0.1.0::pkg/installed')) {
+          return
+        }
 
+        const { extName, version } = splitExtId(msg.data.extId)
+        cb({ extId: msg.data.extId, extName, extVersion: version })
+      })
+      return subscription
+    }
+    const onExtUninstalled: RawShell['onExtUninstalled'] = cb => {
+      const match = matchMessage<CoreExt>()
+      const subscription = pipedMessages$.subscribe(msg => {
+        if (!match(msg, '@moodlenet/core@0.1.0::pkg/uninstalled')) {
+          return
+        }
+        const { extName, version } = splitExtId(msg.data.extId)
+        cb({ extId: msg.data.extId, extName, extVersion: version })
+      })
+      return subscription
+    }
     const onExt: RawShell['onExt'] = (extId, cb) => {
       const match = matchMessage<CoreExt>()
       // console.log('onExt', extId)
@@ -410,8 +445,12 @@ const boot: Boot = async cfg => {
       pkgInfo,
       expose,
       lib: CoreLib,
+      onExtInstalled,
+      onExtUninstalled,
     }
     return {
+      onExtInstalled,
+      onExtUninstalled,
       _raw: _rawShell,
       tearDown: _rawShell.tearDown,
       emit: _rawShell.emit,
@@ -444,7 +483,7 @@ const boot: Boot = async cfg => {
 
   function pushMsg<Def extends ExtDef>(srcExtId: ExtId<Def>): RawShell<Def>['push'] {
     return bound => destExtId => path => (data, _opts) => {
-      console.log('PUSH ---', { bound, destExtId, path, data, _opts }, '--- PUSH')
+      console.log('PUSH ---', inspect({ bound, destExtId, path, data, _opts }, false, 15, true), '--- PUSH')
       const opts: PushOptions = {
         parent: null,
         primary: false,
@@ -541,7 +580,7 @@ const boot: Boot = async cfg => {
       'startup_deployAll',
       startPkgs.map(_ => _.pkgInfo.packageJson.name),
     )
-    return Promise.all(startPkgs.map(_ => deployExtension({ pkgInstallationId: _.pkgInfo.id })))
+    return Promise.all(startPkgs.map(_ => deployExtension({ pkgInstallationId: _.pkgInfo.id, install: __FIRST_RUN__ })))
   }
 }
 export default boot

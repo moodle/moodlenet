@@ -16,6 +16,7 @@ export type SysInstalledPkgs = {
   [id: PkgInstallationId]: SysInstalledPkg
 }
 export type SysConfig = {
+  __FIRST_RUN__?: true
   packages: SysInstalledPkgs
 }
 
