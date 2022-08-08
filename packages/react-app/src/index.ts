@@ -88,7 +88,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
       [LibModuleFile.alias]: LibModuleFile.target,
     }
     console.log({ baseResolveAlias })
-
+// start webpack packages/react-app/src/webpackWatch.ts
     const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
     wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
       shell.emit('webapp/recompiled')()
