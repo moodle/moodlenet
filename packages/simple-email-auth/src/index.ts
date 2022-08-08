@@ -1,8 +1,10 @@
 import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { EmailService } from '@moodlenet/email-service'
+import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
+import { prepareApp } from './middleware/express/app'
 import userStore from './store'
 
 export type SimpleEmailAuthTopo = {
@@ -14,6 +16,10 @@ export type SimpleEmailAuthTopo = {
     { email: string; password: string; displayName: string },
     { success: true } | { success: false; msg: string }
   >
+  confirm: SubTopo<
+  { },
+  { success: true } | { success: false; msg: string }
+>
 }
 
 export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', SimpleEmailAuthTopo, void, void>
@@ -37,10 +43,24 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
       })
     })
 
+    shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', plug => {
+      // qui chiede al plugin di montare una route 
+      // get app ritorna express app 
+      // come dire , montami quesdta app sul route, con link ocon underscore , nome pluign ecc
+      plug.mount({ getApp })
+      function getApp() {
+        const app = plug.express()
+        prepareApp(shell, app)
+        return app
+      }
+    })
+
+
     // qui prende solo post
     shell.expose({
       'login/sub': { validate: () => ({ valid: true }) },
       'signup/sub': { validate: () => ({ valid: true }) },
+      'confirm/sub': { validate: () => ({ valid: true }) },
     })
 
     const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
@@ -56,8 +76,6 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
           },
         },
       }) {
-        const aaa = await emailSrv.fetch('send')({ paramIn1: 'aaa@aaa.com' })
-        console.log('xxxxx', aaa.msg.data)
         /*  aaa.then((a)=>{
               throw new Error('xxxxxx')
             }) */
@@ -83,13 +101,17 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
           },
         },
       }) {
-        // manda un email, con link di ritorno,
+        
         const mUser = await store.getByEmail(email)
         if (mUser) {
           return { success: false, msg: 'email exists' }
         }
 
         const user = await store.create({ email, password })
+
+          // manda un email, con link di ritorno,
+          const aaa = await emailSrv.fetch('send')({ paramIn1: 'aaa@aaa.com' })
+          console.log('xxxxx', aaa.msg.data)
 
         const {
           msg: { data: authRes },
@@ -102,6 +124,14 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
 
         return { success: true }
       },
+      async confirm({
+        msg: {
+        data: {
+          req: { },
+        },
+      },}){
+        return {success:true}
+      }
     })
 
     return {}
