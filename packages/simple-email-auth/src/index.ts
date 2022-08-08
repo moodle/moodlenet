@@ -50,6 +50,10 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
       plug.mount({ getApp })
       function getApp() {
         const app = plug.express()
+        app.get('pippo', ()=>{
+          return console.log()
+        }) // aggiungo 
+
         prepareApp(shell, app)
         return app
       }
@@ -57,16 +61,22 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, Authenti
 
 
     // qui prende solo post
+    // se arriva dal esterno , decide se lo faccio o no,
+    // qualsiasi chiamata tramite http o servizio simile expose è generico
+    // fa la validazione.
+
     shell.expose({
       'login/sub': { validate: () => ({ valid: true }) },
-      'signup/sub': { validate: () => ({ valid: true }) },
-      'confirm/sub': { validate: () => ({ valid: true }) },
+      'signup/sub': { validate: () => ({ valid: true }) }
     })
 
     const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
 
     const authMng = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
     const emailSrv = shell.access<EmailService>('@moodlenet/email-service@0.1.0')
+
+    const httpServer = shell.access<EmailService>('@moodlenet/http-server@0.1.0')
+ 
 
     shell.provide.services({
       async login({
