@@ -73,19 +73,13 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
             // read fileasystem
             return { out2: Number(paramIn2) }
           }, */
-          _test({
-            msg: {
-              data: {
-                req: { paramIn2 },
-              },
-            },
-          }) {
+          _test({ paramIn2 }) {
             return [{ out2: Number(paramIn2) }, { out2: Number(paramIn2) + 1 }]
           },
-          testSub(_) {
+          testSub({ paramIn1 }) {
             return shell.rx.interval(500).pipe(
               shell.rx.take(5),
-              shell.rx.map(n => ({ out1: `${_.msg.data.req.paramIn1}\n\n(${n})` })),
+              shell.rx.map(n => ({ out1: `${paramIn1}\n\n(${n})` })),
             )
           },
         })

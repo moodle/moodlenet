@@ -45,11 +45,7 @@ export function pub<Def extends ExtDef>(shell: Pick<RawShell<Def>, 'emit' | 'msg
           mergeMap(subReqMsg => {
             manageMsg(subReqMsg, shell.extId)
             try {
-              const valObs$ = from(
-                valObsProvider({
-                  msg: subReqMsg as any,
-                }),
-              )
+              const valObs$ = from(valObsProvider(subReqMsg.data.req, subReqMsg))
               if (!subReqMsg.sub) {
                 return EMPTY
               }
@@ -247,7 +243,7 @@ type D = ExtDef<
     b: SubTopo<'req b', 'res b'>
     a: SubTopo<'req a', 'res a'>
     s: {
-      g: Port<'in', 11>
+      g: Port<'in', 11>as any
       v: {
         l: Port<'out', string>
         a: SubTopo<'req s/v/a', 'res s/v/a'>
