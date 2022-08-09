@@ -44,4 +44,7 @@ export type ValOf<Topo> = Topo extends SubTopo<any, infer Val> ? Val : unknown
 export type ReqOf<Topo> = Topo extends SubTopo<infer Req, any> ? Req : unknown
 export type ProvidedValOf<Topo> = ObservableInput<ValOf<Topo>>
 
-export type ValObsProviderOf<Topo> = (_: { msg: DataMessage<SubReqData<ReqOf<Topo>>> }) => ProvidedValOf<Topo>
+export type ValObsProviderOf<Topo> = (
+  req: ReqOf<Topo>,
+  msg: DataMessage<SubReqData<ReqOf<Topo>>>,
+) => ProvidedValOf<Topo>

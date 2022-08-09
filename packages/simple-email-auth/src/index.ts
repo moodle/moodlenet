@@ -39,13 +39,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
 
         const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
         shell.provide.services({
-          async login({
-            msg: {
-              data: {
-                req: { email, password },
-              },
-            },
-          }) {
+          async login({ email, password }) {
             const user = await store.getByEmail(email)
             if (!user || user.password !== password) {
               return { success: false }
@@ -60,13 +54,7 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
             const sessionToken = res.sessionToken
             return { success: true, sessionToken }
           },
-          async signup({
-            msg: {
-              data: {
-                req: { email, password, displayName },
-              },
-            },
-          }) {
+          async signup({ email, password, displayName }) {
             const mUser = await store.getByEmail(email)
             if (mUser) {
               return { success: false, msg: 'email exists' }

@@ -46,9 +46,8 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
         const store = userStore({ shell })
 
         shell.provide.services({
-          async registerUser({ msg }) {
-            const { extName } = shell.lib.splitExtId(msg.source)
-            const { displayName, uid, avatarUrl } = msg.data.req
+          async registerUser({ displayName, uid, avatarUrl }, { source }) {
+            const { extName } = shell.lib.splitExtId(source)
             const user = await store.create({
               displayName,
               providerId: {
@@ -61,9 +60,8 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
 
             return { success: true, user, sessionToken }
           },
-          async getSessionToken({ msg }) {
-            const { extName } = shell.lib.splitExtId(msg.source)
-            const { uid } = msg.data.req
+          async getSessionToken({ uid }, { source }) {
+            const { extName } = shell.lib.splitExtId(source)
             const user = await store.getByProviderId({
               ext: extName,
               uid,
@@ -74,8 +72,7 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
             const sessionToken = await createSessionToken(user)
             return { success: true, sessionToken }
           },
-          async getClientSession({ msg }) {
-            const { token } = msg.data.req
+          async getClientSession({ token }) {
             const clientSession = await getClientSession(token)
             if (!clientSession) {
               return { success: false }
