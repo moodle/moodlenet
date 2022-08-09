@@ -1,7 +1,7 @@
 import { ExtContextProviderComp } from '@moodlenet/react-app'
 import lib from 'moodlenet-react-app-lib'
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
-import { PassportAuthExt } from '..'
+import { PassportAuthExtDef } from '..'
 import { PassportConfigs } from '../store/types'
 import * as loginComponents from './Login'
 import * as settingsComponents from './Settings'
@@ -12,7 +12,7 @@ export type PassportContextT = {
   configs: PassportConfigs
   save(configs: PassportConfigs): Promise<void>
 }
-const passportSrv = lib.priHttp.fetch<PassportAuthExt>('@moodlenet/passport-auth', '0.1.0')
+const passportSrv = lib.priHttp.fetch<PassportAuthExtDef>('@moodlenet/passport-auth', '0.1.0')
 export const PassportContext = createContext<PassportContextT>(null as any)
 export const MainProvider: ExtContextProviderComp = ({ children }) => {
   lib.auth.useRegisterLogin(loginComponents)

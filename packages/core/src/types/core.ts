@@ -6,6 +6,7 @@ import type { Port } from './topo'
 export type CoreExt = ExtDef<
   '@moodlenet/core',
   '0.1.0',
+  void,
   {
     ext: {
       deployed: Port<'out', { extId: ExtId }>
@@ -27,9 +28,7 @@ export type CoreExt = ExtDef<
       getPkgStorageInfos: SubTopo<void, { pkgInfos: PackageInfo[] }>
       getInstalledPackages: SubTopo<void, { pkgInfos: PackageInfo[] }>
     }
-  },
-  void,
-  void
+  }
 >
 
 // export type ExtInfo = {
