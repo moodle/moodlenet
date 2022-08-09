@@ -1,11 +1,9 @@
 // import csrf from 'csurf'
-import { Shell } from '@moodlenet/core'
 
-export function prepareApp(_: Shell<any>, app: any) {
+export function prepareApp(app: any) {
   // app.use(csrf())
-  app.get('/confirm', async (_:any, __:any) => {
-   console.log('email has confirm xxxxxxxxxxxxx')
+  app.get('/confirm', async (_: any, res: any) => {
+    console.log('email has confirm xxxxxxxxxxxxx')
+    res.send('bravo ciccio')
   })
-
-
 }

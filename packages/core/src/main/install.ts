@@ -57,8 +57,8 @@ export const defaultCorePackages = {
   'arangodb': '0.1.0',
   'authentication-manager': '0.1.0',
   'react-app': '0.1.0',
-  'simple-email-auth': '0.1.0',
   'extensions-manager': '0.1.0',
   'email-service': '0.1.0',
+  'simple-email-auth': '0.1.0',
   // 'passport-auth': '0.1.0',
 }

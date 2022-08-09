@@ -28,58 +28,61 @@ const configLocal = {
 export type EmailService = ExtDef<
   '@moodlenet/email-service',
   '0.1.0',
+  void,
   {
     send: SubTopo<{ paramIn1: string }, SendResp>
-  },
-  void,
-  void
+  }
 >
 
 const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
   name: '@moodlenet/email-service',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  deploy(shell) {
-    // come lo passo nel codice ?
-    const mailer = getNodemailerSendEmailAdapter(configLocal)
-    // business logic, wire-up to the message system,
-    // other packages integration
-    //   listen to messages -> send other messages
-    //    use other packages plugins (e.g add UI to react app, or add http-endpoint)
+  connect(shell) {
+    const [, reactApp] = shell.deps
 
-    // come lo passo
-    // const mailer )getNodemailerSendEmailAdapter({smtp:'smtp:moodlenet.com'})
-    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', inst => {
-      console.log(`moodlenet-email-service: onExtInstance<ReactAppExt>`, inst)
-      inst.setup({
-        routes: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-          // rootPath: 'email-service', // http://localhost:3000/my-test
-        },
-      })
-    })
-    shell.expose({
-      // http://localhost:8080/_/_/raw-sub/moodlenet-email-service/0.1.10/_test  body:{"paramIn2": "33"}
-      'send/sub': {
-        validate(/* data */) {
-          return { valid: true }
-        },
-      },
-    })
+    return {
+      deploy() {
+        // come lo passo nel codice ?
+        const mailer = getNodemailerSendEmailAdapter(configLocal)
+        // business logic, wire-up to the message system,
+        // other packages integration
+        //   listen to messages -> send other messages
+        //    use other packages plugins (e.g add UI to react app, or add http-endpoint)
 
-    shell.provide.services({
-      async send(_) {
-        const msg = {
-          from: 'shukeenkel@gmail.com',
-          to: 'ettorebevilacqua@gmail.com',
-          subject: 'subject text ',
-          html: '<h3>Hy test</h3>',
-        }
-        const resp = await mailer(msg)
-        return resp
+        // come lo passo
+        // const mailer )getNodemailerSendEmailAdapter({smtp:'smtp:moodlenet.com'})
+        reactApp.plug.setup({
+          routes: {
+            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+            // rootPath: 'email-service', // http://localhost:3000/my-test
+          },
+        })
+
+        shell.expose({
+          // http://localhost:8080/_/_/raw-sub/moodlenet-email-service/0.1.10/_test  body:{"paramIn2": "33"}
+          'send/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+        })
+
+        shell.provide.services({
+          async send(/* {paramIn1},msg */) {
+            const msg = {
+              from: 'shukeenkel@gmail.com',
+              to: 'ettorebevilacqua@gmail.com',
+              subject: 'subject text ',
+              html: '<h3>Hy test</h3>',
+            }
+            const resp = await mailer(msg)
+            return resp
+          },
+        })
+        return {}
       },
-    })
-    return {}
+    }
   },
 }
 
