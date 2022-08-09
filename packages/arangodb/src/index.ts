@@ -47,7 +47,7 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
                 const collectionNames = (await db.collections()).map(({ name }) => name)
                 await Promise.all(
                   defs
-                    .filter(({ name }) => collectionNames.includes(name))
+                    .filter(({ name }) => !collectionNames.includes(name))
                     .map(({ name }) => {
                       db.createCollection(name)
                     }),
