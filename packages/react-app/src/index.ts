@@ -28,11 +28,10 @@ export type ReactAppExtTopo = {
 export type ReactAppExt = ExtDef<
   '@moodlenet/react-app',
   '0.1.0',
-  ReactAppExtTopo,
-  void,
   {
     setup(_: ExtPluginDef): void
-  }
+  },
+  ReactAppExtTopo
 >
 const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
 
@@ -53,9 +52,13 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
   name: '@moodlenet/react-app',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/http-server@0.1.0', '@moodlenet/authentication-manager@0.1.0'],
-  async deploy(shell) {
-    shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
+  async connect(shell) {
+    const [, http /* , auth */] = shell.deps
+    return {
+      async deploy() {
+        shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
 
+<<<<<<< HEAD
     shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', (plug /* , depl */) => {
       const { express, mount } = plug
       mount({ getApp, absMountPath: '/' })
@@ -105,59 +108,110 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
     })
     return {
       plug({ depl }) {
+=======
+        http.plug.mount({ getApp, absMountPath: '/' })
+        function getApp() {
+          const mountApp = http.plug.express()
+          const staticWebApp = http.plug.express.static(latestBuildFolder, { index: 'index.html' })
+          mountApp.use(staticWebApp)
+          mountApp.get(`*`, (req, res, next) => {
+            if (req.url.startsWith('/_/')) {
+              next()
+              return
+            }
+            res.sendFile(resolve(latestBuildFolder, 'index.html'))
+          })
+          return mountApp
+        }
+
+        await mkdir(tmpDir, { recursive: true })
+        await mkdir(buildFolder, { recursive: true })
+        const extPluginsMap: ExtPluginsMap = {}
+        await writeAliasModules()
+        const baseResolveAlias: ResolveOptions['alias'] = {
+          'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
+          'react': resolve(__dirname, '..', 'node_modules', 'react'),
+          'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
+          'react-dom': resolve(__dirname, '..', 'node_modules', 'react-dom'),
+          [ExtRoutesModuleFile.alias]: ExtRoutesModuleFile.target,
+          [ExposeModuleFile.alias]: ExposeModuleFile.target,
+          [ExtContextProvidersModuleFile.alias]: ExtContextProvidersModuleFile.target,
+          [LibModuleFile.alias]: LibModuleFile.target,
+        }
+        console.log({ baseResolveAlias })
+
+        const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
+        wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
+          shell.emit('webapp/recompiled')()
+        })
+        shell.provide.services({
+          'webapp/updated'() {
+            return shell.msg$.pipe(
+              shell.rx.filter(msg =>
+                shell.lib.matchMessage<ReactAppExt>()(msg, '@moodlenet/react-app@0.1.0::webapp/recompiled'),
+              ),
+              shell.rx.map(() => void 0),
+            )
+          },
+        })
+>>>>>>> moodlenet3-dev
         return {
-          setup(plugin) {
-            console.log('...setup', depl.shell.extId, plugin)
-            extPluginsMap[depl.shell.extId] = {
-              ...plugin,
-              extName: depl.ext.name,
-              extVersion: depl.ext.version,
-              extId: depl.shell.extId,
-            }
-            // console.log({ '***': wp.compiler.options.resolve.alias })
-            if (plugin.addPackageAlias) {
-              const { loc, name } = plugin.addPackageAlias
-              wp.compiler.options.resolve.alias = {
-                ...wp.compiler.options.resolve.alias,
-                [name]: loc,
-              }
-            }
-            writeAliasModulesAndRecompile()
-            console.log({ aloiases: wp.compiler.options.resolve.alias })
-            depl.shell.tearDown.add(() => {
-              console.log('removing react plugins')
-              if (plugin.addPackageAlias) {
-                const newAliases: any = {
-                  ...wp.compiler.options.resolve.alias,
+          plug(dep) {
+            return {
+              setup(plugin) {
+                console.log('...setup', dep.shell.extId, plugin)
+                extPluginsMap[dep.shell.extId] = {
+                  ...plugin,
+                  extName: dep.shell.extName,
+                  extVersion: dep.shell.extVersion,
+                  extId: dep.shell.extId,
                 }
-                delete newAliases[plugin.addPackageAlias.name]
-                wp.compiler.options.resolve.alias = newAliases
-              }
-              delete extPluginsMap[depl.shell.extId]
-              writeAliasModulesAndRecompile()
-            })
+                // console.log({ '***': wp.compiler.options.resolve.alias })
+                if (plugin.addPackageAlias) {
+                  const { loc, name } = plugin.addPackageAlias
+                  wp.compiler.options.resolve.alias = {
+                    ...wp.compiler.options.resolve.alias,
+                    [name]: loc,
+                  }
+                }
+                writeAliasModulesAndRecompile()
+                console.log({ aloiases: wp.compiler.options.resolve.alias })
+                dep.shell.tearDown.add(() => {
+                  console.log('removing react plugins')
+                  if (plugin.addPackageAlias) {
+                    const newAliases: any = {
+                      ...wp.compiler.options.resolve.alias,
+                    }
+                    delete newAliases[plugin.addPackageAlias.name]
+                    wp.compiler.options.resolve.alias = newAliases
+                  }
+                  delete extPluginsMap[dep.shell.extId]
+                  writeAliasModulesAndRecompile()
+                })
+              },
+            }
           },
         }
-      },
-    }
-    async function writeAliasModulesAndRecompile() {
-      await writeAliasModules()
-      wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
-    }
-    function writeAliasModules() {
-      console.log('writeAliasModules!', extPluginsMap)
-      return Promise.all([
-        writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap })),
-        writeFile(ExposeModuleFile.target, generateExposedModule({ extPluginsMap })),
-        writeFile(ExtContextProvidersModuleFile.target, generateCtxProvidersModule({ extPluginsMap })),
-        writeFile(
-          LibModuleFile.target,
-          `
+        async function writeAliasModulesAndRecompile() {
+          await writeAliasModules()
+          wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
+        }
+        function writeAliasModules() {
+          console.log('writeAliasModules!', extPluginsMap)
+          return Promise.all([
+            writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap })),
+            writeFile(ExposeModuleFile.target, generateExposedModule({ extPluginsMap })),
+            writeFile(ExtContextProvidersModuleFile.target, generateCtxProvidersModule({ extPluginsMap })),
+            writeFile(
+              LibModuleFile.target,
+              `
             import lib from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'react-app-lib'))}'
             export default lib
           `,
-        ),
-      ])
+            ),
+          ])
+        }
+      },
     }
   },
 }

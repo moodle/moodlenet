@@ -13,20 +13,20 @@ export type ExtId<Def extends ExtDef = ExtDef> = `${ExtName<Def>}@${ExtVersion<D
 export type ExtName<Def extends ExtDef = ExtDef> = Def['name']
 export type ExtVersion<Def extends ExtDef = ExtDef> = Def['version']
 export type ExtPlug<Def extends ExtDef = ExtDef> = Def['plug']
-export type ExtLib<Def extends ExtDef = ExtDef> = Def['lib']
+// export type ExtLib<Def extends ExtDef = ExtDef> = Def['lib']
 export type ExtTopo<Def extends ExtDef = ExtDef> = Def['topo']
 
 export type ExtDef<
   Name extends string = string,
   Version extends string = string, //`${string}.${string}.${string}`,
-  ExtTopo extends Topo = Topo,
-  Lib extends any = unknown,
   Plug extends any = unknown,
+  ExtTopo extends Topo = Topo,
+  // Lib extends any = unknown,
 > = {
   name: Name
   version: Version
   topo: ExtTopo //& { '': Port<PortBinding, any> }
-  lib: Lib
+  // lib: Lib
   plug: Plug
 }
 
@@ -39,23 +39,34 @@ export type Boot = (cfg: BootCfg) => Promise<{ tearDown(): Promise<unknown> }>
 export type ExtTopoDef<Def extends ExtTopo> = Def
 
 type _Unsafe_ExtId<Def = ExtDef> = Def extends ExtDef ? ExtId<Def> : never
-export type Ext<Def extends ExtDef = ExtDef, Requires extends ExtDef[] = ExtDef[]> = {
+export type Ext<Def extends ExtDef = ExtDef, Requires extends Dependencies = Dependencies> = {
   name: ExtName<Def>
   version: ExtVersion<Def>
   requires: { [Index in keyof Requires]: _Unsafe_ExtId<Requires[Index]> }
-  install?: ExtInstall<Def>
-  uninstall?: ExtUninstall<Def>
-  deploy: ExtDeploy<Def>
+  connect: ExtConnect<Def, Requires>
 }
 
 export type RawExtEnv = any //Record<string, unknown> | undefined
 
-export interface Shell<Def extends ExtDef = ExtDef> {
+export type Deps<OfExt extends Ext> = OfExt extends Ext<any, infer Requires> ? DepsOf<Requires> : never
+export type DepsOf<Requires extends Dependencies = Dependencies> = {
+  [Index in keyof Requires]: Dep<Requires[Index]>
+}
+export type Dep<Def extends ExtDef = ExtDef> = {
+  plug: ExtPlug<Def>
+  access: Core.AccessPkg<Def>
+}
+type Dependencies = readonly ExtDef[]
+export type ExtShell<OfExt extends Ext<any, any>> = OfExt extends Ext<infer Def, infer Requires>
+  ? Shell<Def, Requires>
+  : Shell
+
+export interface Shell<Def extends ExtDef = ExtDef, Requires extends Dependencies = Dependencies> {
   _raw: RawShell
-  plugin: OnExtInstance
+  deps: DepsOf<Requires>
   expose: ExposePointers<Def>
-  me: Core.Access<Def>
-  access<DestDef extends ExtDef>(extId: ExtId<DestDef>): Core.Access<DestDef>
+  me: Core.AccessPkg<Def>
+  pkg<DestDef extends ExtDef>(extId: ExtId<DestDef>): Core.AccessPkg<DestDef>
   provide: Core.Provide<Def>
   // me: Me<Def>
   // access: Access //<DestDef extends ExtDef>(extId:ExtId<DestDef>): ReturnType<typeof Core.access<DestDef>>
@@ -70,10 +81,12 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   msg$: Observable<DataMessage<any>>
   emit: EmitMessage<Def>
   tearDown: Subscription
+  onExtInstalled: OnExtInstalled
+  onExtUninstalled: OnExtUninstalled
 }
 export interface RawShell<Def extends ExtDef = ExtDef> {
   msg$: Observable<DataMessage<any>>
-  libOf: GetExtLib
+  // libOf: GetExtLib
   getExt: GetExt
   push: PushMessage<Def>
   emit: EmitMessage<Def>
@@ -84,8 +97,10 @@ export interface RawShell<Def extends ExtDef = ExtDef> {
   extName: ExtName<Def>
   extVersion: ExtVersion<Def>
   tearDown: Subscription
-  onExtDeployment: OnExtDeployment
-  onExtInstance: OnExtInstance
+  // onExtDeployment: OnExtDeployment
+  // onExtInstance: OnExtInstance
+  onExtInstalled: OnExtInstalled
+  onExtUninstalled: OnExtUninstalled
   onExt: OnExt
 
   expose: ExposePointers<Def>
@@ -106,17 +121,23 @@ export type ExposedPointerMap<Def extends ExtDef = ExtDef> = {
   [path in PortPaths<Def, 'in'>]: ExposedPointer
 }
 
-export type OnExtDeployment = <Def extends ExtDef>(
-  id: ExtId<Def>,
-  cb: (depl: RegItem<Def>) => void | (() => void),
-) => Subscription
+// export type OnExtDeployment = <Def extends ExtDef>(
+//   id: ExtId<Def>,
+//   cb: (depl: RegItem<Def>) => void | (() => void),
+// ) => Subscription
 export type OnExt = <Def extends ExtDef>(id: ExtId<Def>, cb: (depl: RegItem<Def> | undefined) => void) => Subscription
-export type OnExtInstance = <Def extends ExtDef>(
-  id: ExtId<Def>,
-  cb: (inst: ExtPlug<Def> /* , depl: RegDeployment<Def> */) => void | (() => void),
+// export type OnExtInstance = <Def extends ExtDef>(
+//   id: ExtId<Def>,
+//   cb: (inst: ExtPlug<Def> /* , depl: RegDeployment<Def> */) => void | (() => void),
+// ) => Subscription
+export type OnExtInstalled = (
+  cb: (_: { extName: ExtName<any>; extVersion: ExtVersion<any>; extId: ExtId<any> }) => void,
+) => Subscription
+export type OnExtUninstalled = (
+  cb: (_: { extName: ExtName<any>; extVersion: ExtVersion<any>; extId: ExtId<any> }) => void,
 ) => Subscription
 export type GetExt = <Def extends ExtDef>(id: ExtId<Def>) => RegItem<Def> | undefined
-export type GetExtLib = <Def extends ExtDef>(id: ExtId<Def>) => Promise<ExtPlug<Def> | void>
+// export type GetExtLib = <Def extends ExtDef>(id: ExtId<Def>) => Promise<ExtPlug<Def> | void>
 export type EmitMessage<SrcDef extends ExtDef = ExtDef> = <Path extends PortPaths<SrcDef, 'out'>>(
   path: Path,
 ) => (data: PortPathData<SrcDef, Path, 'out'>, opts?: Partial<PushOptions>) => MessagePush<'out', SrcDef, SrcDef, Path>
@@ -144,18 +165,27 @@ export type PushOptions = {
 
 /* ^ ext life */
 type ValueOrPromise<Value> = Value | Promise<Value>
-export type ExtInstall<Def extends ExtDef = ExtDef> = (_: Shell<Def>) => ValueOrPromise<unknown>
-export type ExtUninstall<Def extends ExtDef = ExtDef> = (_: RegItem<Def>) => ValueOrPromise<unknown>
-export type ExtDeploy<Def extends ExtDef = ExtDef> = (_: Shell<Def>) => ValueOrPromise<ExtDeployment<Def>>
+export type ExtInstall = () => ValueOrPromise<unknown>
+export type ExtUninstall = () => ValueOrPromise<unknown>
+export type ExtDeploy<Def extends ExtDef = ExtDef> = () => ValueOrPromise<ExtDeployment<Def>>
+
+export type ExtConnection<Def extends ExtDef = ExtDef> = {
+  install?: ExtInstall
+  uninstall?: ExtUninstall
+  deploy: ExtDeploy<Def>
+}
+export type ExtConnect<Def extends ExtDef = ExtDef, Requires extends Dependencies = Dependencies> = (
+  _: Shell<Def, Requires>,
+) => ValueOrPromise<ExtConnection<Def>>
 
 export type MWFn = (msg: IMessage, index: number) => ObservableInput<IMessage>
 
-type _WithMaybeLib<Def extends ExtDef> = ExtLib<Def> extends undefined | null | void
-  ? { lib?(_: { depl: RegItem }): ExtLib<Def> }
-  : { lib(_: { depl: RegItem }): ExtLib<Def> }
+// type _WithMaybeLib<Def extends ExtDef> = ExtLib<Def> extends undefined | null | void
+//   ? { lib?(_: { depl: RegItem }): ExtLib<Def> }
+//   : { lib(_: { depl: RegItem }): ExtLib<Def> }
 type _WithMaybePlug<Def extends ExtDef> = ExtPlug<Def> extends undefined | null | void
-  ? { plug?(_: { depl: RegItem }): ExtPlug<Def> }
-  : { plug(_: { depl: RegItem }): ExtPlug<Def> }
+  ? void | { plug?(_: { shell: Shell }): ExtPlug<Def> }
+  : { plug(_: { shell: Shell }): ExtPlug<Def> }
 
-export type ExtDeployment<Def extends ExtDef = ExtDef> = { mw?: MWFn } & _WithMaybePlug<Def> & _WithMaybeLib<Def>
+export type ExtDeployment<Def extends ExtDef = ExtDef> = { mw?: MWFn } & _WithMaybePlug<Def> //& _WithMaybeLib<Def>
 /* $^  ext life */

@@ -16,135 +16,91 @@ export type SimpleEmailAuthTopo = {
     { email: string; password: string; displayName: string },
     { success: true } | { success: false; msg: string }
   >
-  confirm: SubTopo<
-  { },
-  { success: true } | { success: false; msg: string }
->
+  confirm: SubTopo<{}, { success: true } | { success: false; msg: string }>
 }
 
-export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', SimpleEmailAuthTopo, void, void>
+export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
 
-const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, EmailService, AuthenticationManagerExt]> = {
+const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExt]> = {
   name: '@moodlenet/simple-email-auth',
   version: '0.1.0',
   requires: [
     '@moodlenet/core@0.1.0',
     '@moodlenet/react-app@0.1.0',
-    '@moodlenet/email-service@0.1.0',
     '@moodlenet/authentication-manager@0.1.0',
+    '@moodlenet/email-service@0.1.0',
+    '@moodlenet/http-server@0.1.0',
   ],
-  deploy(shell) {
-    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
-      console.log(`@moodlenet/simple-email-auth: onExtInstance<ReactAppExt>`, plug)
-      plug.setup({
-        ctxProvider: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-        },
-      })
-    })
+  connect(shell) {
+    const [, reactApp, authMng, _emailSrv, http] = shell.deps
 
-    shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', plug => {
-      // qui chiede al plugin di montare una route 
-      // get app ritorna express app 
-      // come dire , montami quesdta app sul route, con link ocon underscore , nome pluign ecc
-      plug.mount({ getApp })
-      function getApp() {
-        const app = plug.express()
-        app.get('pippo', ()=>{
-          return console.log()
-        }) // aggiungo 
-
-        prepareApp(shell, app)
-        return app
-      }
-    })
-
-
-    // qui prende solo post
-    // se arriva dal esterno , decide se lo faccio o no,
-    // qualsiasi chiamata tramite http o servizio simile expose è generico
-    // fa la validazione.
-
-    shell.expose({
-      'login/sub': { validate: () => ({ valid: true }) },
-      'signup/sub': { validate: () => ({ valid: true }) }
-    })
-
-    const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
-
-    const authMng = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
-    const emailSrv = shell.access<EmailService>('@moodlenet/email-service@0.1.0')
-
-    const httpServer = shell.access<EmailService>('@moodlenet/http-server@0.1.0')
- 
-
-    shell.provide.services({
-      async login({
-        msg: {
-          data: {
-            req: { email, password },
+    return {
+      deploy() {
+        reactApp.plug.setup({
+          ctxProvider: {
+            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
           },
-        },
-      }) {
-        /*  aaa.then((a)=>{
-              throw new Error('xxxxxx')
-            }) */
+        })
 
-        const user = await store.getByEmail(email)
-        if (!user || user.password !== password) {
-          return { success: false }
-        }
-        const {
-          msg: { data: res },
-        } = await authMng.fetch('getSessionToken')({ uid: user.id })
+        http.plug.mount({ getApp })
+        function getApp() {
+          const app = http.plug.express()
+          app.get('pippo', () => {
+            return console.log()
+          }) // aggiungo
 
-        if (!res.success) {
-          return { success: false }
+          prepareApp(app)
+          return app
         }
-        const sessionToken = res.sessionToken
-        return { success: true, sessionToken }
-      },
-      async signup({
-        msg: {
-          data: {
-            req: { email, password, displayName },
+
+        shell.expose({
+          'login/sub': { validate: () => ({ valid: true }) },
+          'signup/sub': { validate: () => ({ valid: true }) },
+        })
+
+        const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
+        shell.provide.services({
+          async login({ email, password }) {
+            const user = await store.getByEmail(email)
+            if (!user || user.password !== password) {
+              return { success: false }
+            }
+            const {
+              msg: { data: res },
+            } = await authMng.access.fetch('getSessionToken')({ uid: user.id })
+
+            if (!res.success) {
+              return { success: false }
+            }
+            const sessionToken = res.sessionToken
+            return { success: true, sessionToken }
           },
-        },
-      }) {
-        
-        const mUser = await store.getByEmail(email)
-        if (mUser) {
-          return { success: false, msg: 'email exists' }
-        }
+          async signup({ email, password, displayName }) {
+            const mUser = await store.getByEmail(email)
+            if (mUser) {
+              return { success: false, msg: 'email exists' }
+            }
 
-        const user = await store.create({ email, password })
+            const user = await store.create({ email, password })
 
-          // manda un email, con link di ritorno,
-          const aaa = await emailSrv.fetch('send')({ paramIn1: 'aaa@aaa.com' })
-          console.log('xxxxx', aaa.msg.data)
+            const {
+              msg: { data: authRes },
+            } = await authMng.access.fetch('registerUser')({ uid: user.id, displayName })
 
-        const {
-          msg: { data: authRes },
-        } = await authMng.fetch('registerUser')({ uid: user.id, displayName })
+            if (!authRes.success) {
+              await store.delUser(user.id)
+              return authRes
+            }
 
-        if (!authRes.success) {
-          await store.delUser(user.id)
-          return authRes
-        }
-
-        return { success: true }
+            return { success: true }
+          },
+          async confirm({}) {
+            return { success: true }
+          },
+        })
+        return {}
       },
-      async confirm({
-        msg: {
-        data: {
-          req: { },
-        },
-      },}){
-        return {success:true}
-      }
-    })
-
-    return {}
+    }
   },
 }
 

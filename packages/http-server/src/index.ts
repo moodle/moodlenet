@@ -9,31 +9,36 @@ interface Plug {
   express: typeof express
 }
 
-export type MNHttpServerExt = Core.ExtDef<'@moodlenet/http-server', '0.1.0', {}, void, Plug>
+export type MNHttpServerExt = Core.ExtDef<'@moodlenet/http-server', '0.1.0', Plug, {}>
 
 const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
   name: '@moodlenet/http-server',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0'], //, '@moodlenet/sys-log@0.1.0'],
-  deploy(shell) {
-    const env = getEnv(shell.env)
-    const httpServer = createHttpServer({ port: env.port, shell })
-
+  connect(shell) {
     return {
-      plug({ depl }) {
+      deploy() {
+        const env = getEnv(shell.env)
+        const httpServer = createHttpServer({ port: env.port, shell })
+
         return {
-          mount({ getApp, absMountPath }) {
-            const { extName /* , version */ } = shell.lib.splitExtId(depl.shell.extId)
-            const mountPath = absMountPath ?? `/_/${extName}`
-            console.log('MOUNT', { extName, mountPath, absMountPath })
-            const mountAppItem: MountAppItem = { mountPath, getApp }
-            const unmount = httpServer.mountApp(mountAppItem)
-            depl.shell.tearDown.add(() => {
-              unmount()
-            })
+          plug(dep) {
+            // console.log({ ____________________: dep })
+            return {
+              mount({ getApp, absMountPath }) {
+                const { extName /* , version */ } = shell.lib.splitExtId(dep.shell.extId)
+                const mountPath = absMountPath ?? `/_/${extName}`
+                console.log('MOUNT', { extName, mountPath, absMountPath })
+                const mountAppItem: MountAppItem = { mountPath, getApp }
+                const unmount = httpServer.mountApp(mountAppItem)
+                dep.shell.tearDown.add(() => {
+                  unmount()
+                })
+              },
+              express,
+              // xlib,
+            }
           },
-          express,
-          // xlib,
         }
       },
     }
