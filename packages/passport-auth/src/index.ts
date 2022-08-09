@@ -1,4 +1,5 @@
-import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
+import type { CoreExt, Ext, ExtDef, Shell, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
@@ -10,56 +11,69 @@ export type PassportAuthTopo = {
   get: SubTopo<void, { configs: PassportConfigs }>
   save: SubTopo<{ configs: PassportConfigs }, { configs: PassportConfigs }>
 }
-export type PassportAuthExt = ExtDef<'@moodlenet/passport-auth', '0.1.0', PassportAuthTopo, void, void>
+export type PassportAuthExtDef = ExtDef<'@moodlenet/passport-auth', '0.1.0', void, PassportAuthTopo>
+export type PassportAuthExt = Ext<PassportAuthExtDef, [CoreExt, ReactAppExt, MNHttpServerExt, AuthenticationManagerExt]>
+type x = PassportAuthExt extends Ext<any, any> ? true : false
+type y = PassportAuthExt extends Ext<infer A, infer B> ? Shell<A, B> : false
+declare const y: y
 
-const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = {
+const x: x = true
+x
+const ext: PassportAuthExt = {
   name: '@moodlenet/passport-auth',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  deploy(shell) {
-    shell.plugin<ReactAppExt>('@moodlenet/react-app@0.1.0', plug => {
-      console.log(`@moodlenet/passport-auth: plugin<ReactAppExt>`, plug)
-      plug.setup({
-        routes: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
-        },
-        ctxProvider: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-        },
-      })
-    })
-    // by etto http://localhost:3000/_/@moodlenet/passport-auth/auth/me/
-    shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', plug => {
-      plug.mount({ getApp })
-      function getApp() {
-        const app = plug.express()
-        prepareApp(shell, app)
-        return app
-      }
-    })
-    shell.expose({
-      'save/sub': { validate: () => ({ valid: true }) },
-      'get/sub': { validate: () => ({ valid: true }) },
-    })
-
-    const store = configApiKeyStore({ folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey') })
-    shell.provide.services({
-      async get() {
-        const configs = await store.read()
-        return { configs }
-      },
-      async save({
-        msg: {
-          data: {
-            req: { configs: configsPatch },
+  requires: [
+    '@moodlenet/core@0.1.0',
+    '@moodlenet/react-app@0.1.0',
+    '@moodlenet/http-server@0.1.0',
+    '@moodlenet/authentication-manager@0.1.0',
+  ],
+  connect(shell) {
+    const [, reactApp, http] = shell.deps
+    return {
+      deploy() {
+        reactApp.plug.setup({
+          routes: {
+            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
           },
-        },
-      }) {
-        const configs = await store.patchConfigs(configsPatch)
-        return { configs }
+          ctxProvider: {
+            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
+          },
+        })
+
+        // by etto http://localhost:3000/_/@moodlenet/passport-auth/auth/me/
+        http.plug.mount({ getApp })
+        function getApp() {
+          const app = http.plug.express()
+          prepareApp(shell, app)
+          return app
+        }
+
+        shell.expose({
+          'save/sub': { validate: () => ({ valid: true }) },
+          'get/sub': { validate: () => ({ valid: true }) },
+        })
+
+        const store = configApiKeyStore({ folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey') })
+        shell.provide.services({
+          async get() {
+            const configs = await store.read()
+            return { configs }
+          },
+          async save({
+            msg: {
+              data: {
+                req: { configs: configsPatch },
+              },
+            },
+          }) {
+            const configs = await store.patchConfigs(configsPatch)
+            return { configs }
+          },
+        })
+        return {}
       },
-    })
-    return {}
+    }
   },
 }
 
