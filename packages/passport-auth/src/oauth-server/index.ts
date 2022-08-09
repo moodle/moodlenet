@@ -1,12 +1,12 @@
 // import csrf from 'csurf'
-import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
-import { Shell } from '@moodlenet/core'
+import { ExtShell } from '@moodlenet/core'
 import type { Express } from 'express'
 import { PassportAuthExt } from '..'
 import { getAuthMngUidByOauthResult } from './lib'
 import getPassport from './passport'
 
-export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
+export function prepareApp(shell: ExtShell<PassportAuthExt>, app: Express) {
+  const [, , , auth] = shell.deps
   // app.use(csrf())
   app.get('/login/federated/:providerName', async (req, res, next) => {
     const passport = await getPassport(shell)
@@ -28,11 +28,10 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
       res.redirect(`/@moodlenet/passport-auth/login-fail?msg=couldn't authenticate`)
       return
     }
-    const authSrv = shell.access<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
     const uid = getAuthMngUidByOauthResult(req.user.oauth)
     const {
       msg: { data: getTokenData },
-    } = await authSrv.fetch('getSessionToken')({
+    } = await auth.access.fetch('getSessionToken')({
       uid,
     })
 
@@ -40,7 +39,7 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
     if (!getTokenData.success) {
       const {
         msg: { data: createUserRes },
-      } = await authSrv.fetch('registerUser')({
+      } = await auth.access.fetch('registerUser')({
         uid,
         displayName: req.user.oauth.profile.displayName,
         avatarUrl: req.user.oauth.profile.photos?.[0]?.value,
