@@ -1,10 +1,10 @@
-import { Shell } from '@moodlenet/core'
+import { ExtShell } from '@moodlenet/core'
 import { Passport } from 'passport'
 import passportGoogle from 'passport-google-oauth20'
 import { inspect } from 'util'
 import { PassportAuthExt } from '..'
 
-async function getPassport(shell: Shell<PassportAuthExt>) {
+async function getPassport(shell: ExtShell<PassportAuthExt>) {
   const {
     msg: {
       data: { configs },
