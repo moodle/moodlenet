@@ -4,7 +4,7 @@ import { AuthenticationManagerExt } from '..'
 import { ProviderId, User, UserId } from './types'
 
 export default function userStore({ shell }: { shell: Shell<AuthenticationManagerExt> }) {
-  const query = shell.access<MNArangoDBExt>('@moodlenet/arangodb@0.1.0').fetch('query')
+  const query = shell.pkg<MNArangoDBExt>('@moodlenet/arangodb@0.1.0').fetch('query')
   return {
     // read,
     // patchUsers,
