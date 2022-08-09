@@ -57,58 +57,6 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
     return {
       async deploy() {
         shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
-
-<<<<<<< HEAD
-    shell.plugin<MNHttpServerExt>('@moodlenet/http-server@0.1.0', (plug /* , depl */) => {
-      const { express, mount } = plug
-      mount({ getApp, absMountPath: '/' })
-      function getApp() {
-        const mountApp = express()
-        const staticWebApp = express.static(latestBuildFolder, { index: 'index.html' })
-        mountApp.use(staticWebApp)
-        mountApp.get(`*`, (req, res, next) => {
-          if (req.url.startsWith('/_/')) {
-            next()
-            return
-          }
-          res.sendFile(resolve(latestBuildFolder, 'index.html'))
-        })
-        return mountApp
-      }
-    })
-    await mkdir(tmpDir, { recursive: true })
-    await mkdir(buildFolder, { recursive: true })
-    const extPluginsMap: ExtPluginsMap = {}
-    await writeAliasModules()
-    const baseResolveAlias: ResolveOptions['alias'] = {
-      'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
-      'react': resolve(__dirname, '..', 'node_modules', 'react'),
-      'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
-      'react-dom': resolve(__dirname, '..', 'node_modules', 'react-dom'),
-      [ExtRoutesModuleFile.alias]: ExtRoutesModuleFile.target,
-      [ExposeModuleFile.alias]: ExposeModuleFile.target,
-      [ExtContextProvidersModuleFile.alias]: ExtContextProvidersModuleFile.target,
-      [LibModuleFile.alias]: LibModuleFile.target,
-    }
-    console.log({ baseResolveAlias })
-// start webpack packages/react-app/src/webpackWatch.ts
-    const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
-    wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
-      shell.emit('webapp/recompiled')()
-    })
-    shell.provide.services({
-      'webapp/updated'() {
-        return shell.msg$.pipe(
-          shell.rx.filter(msg =>
-            shell.lib.matchMessage<ReactAppExt>()(msg, '@moodlenet/react-app@0.1.0::webapp/recompiled'),
-          ),
-          shell.rx.map(() => void 0),
-        )
-      },
-    })
-    return {
-      plug({ depl }) {
-=======
         http.plug.mount({ getApp, absMountPath: '/' })
         function getApp() {
           const mountApp = http.plug.express()
@@ -154,7 +102,6 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
             )
           },
         })
->>>>>>> moodlenet3-dev
         return {
           plug(dep) {
             return {
