@@ -14,7 +14,7 @@
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet arangodb adapter package",
+  "description": "Arango Database\nMoodlenet default database",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

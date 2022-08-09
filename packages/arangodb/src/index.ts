@@ -30,14 +30,7 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
           sysDB.dropDatabase(extDBName)
         })
         shell.provide.services({
-          async query({
-            msg: {
-              source,
-              data: {
-                req: { q, bindVars, opts },
-              },
-            },
-          }) {
+          async query({ q, bindVars, opts }, { source }) {
             const { extName } = shell.lib.splitExtId(source)
             const db = sysDB.database(getExtDBName(extName))
             const qcursor = await db.query(q, bindVars, opts)
@@ -51,7 +44,14 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
               arango,
               async createDocumentCollections(defs) {
                 const { db } = await ensureDB()
-                await Promise.all(defs.map(({ name }) => db.createCollection(name)))
+                const collectionNames = (await db.collections()).map(({ name }) => name)
+                await Promise.all(
+                  defs
+                    .filter(({ name }) => collectionNames.includes(name))
+                    .map(({ name }) => {
+                      db.createCollection(name)
+                    }),
+                )
                 return
               },
             }
