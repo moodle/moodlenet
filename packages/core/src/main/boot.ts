@@ -130,13 +130,7 @@ const boot: Boot = async cfg => {
               const pkgInfos = Object.values(deployments.reg).map<PackageInfo>(({ pkgInfo }) => pkgInfo)
               return [{ pkgInfos }]
             },
-            async 'pkg/install'({
-              msg: {
-                data: {
-                  req: { installPkgReq },
-                },
-              },
-            }) {
+            async 'pkg/install'({ installPkgReq }) {
               if (installPkgReq.type === 'symlink') {
                 assert(
                   !!main.sysPaths.pkgStorageFolder,
@@ -165,13 +159,7 @@ const boot: Boot = async cfg => {
 
               return { pkgInfo }
             },
-            async 'pkg/uninstall'({
-              msg: {
-                data: {
-                  req: { pkgInstallationId },
-                },
-              },
-            }) {
+            async 'pkg/uninstall'({ pkgInstallationId }) {
               console.log('uninstallPkg...', pkgInstallationId)
               // const installedPackageInfo = await main.pkgMng.getPackageInfo({
               //   pkgInstallationId,

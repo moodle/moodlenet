@@ -60,13 +60,7 @@ const ext: PassportAuthExt = {
             const configs = await store.read()
             return { configs }
           },
-          async save({
-            msg: {
-              data: {
-                req: { configs: configsPatch },
-              },
-            },
-          }) {
+          async save({ configs: configsPatch }) {
             const configs = await store.patchConfigs(configsPatch)
             return { configs }
           },
