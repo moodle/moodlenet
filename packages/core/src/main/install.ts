@@ -7,6 +7,7 @@ type InstallCfg = {
   mainFolders: MainFolders
   installPkgReqs?: InstallPkgReq[]
   httpPort: number
+  rootPassword: string
   arangoUrl: string
 }
 
@@ -14,6 +15,7 @@ export default async function install({
   mainFolders,
   httpPort,
   arangoUrl,
+  rootPassword,
   installPkgReqs = defaultInstallPkgReqs(),
 }: InstallCfg) {
   const main = await getMain({ mainFolders })
@@ -35,7 +37,8 @@ export default async function install({
   function defaultPkgConfig(pkgName: string) {
     const defConfigs = {
       '@moodlenet/http-server': { port: httpPort },
-      '@moodlenet/arangodb': { config: arangoUrl },
+      '@moodlenet/arangodb': { connectionCfg: arangoUrl },
+      '@moodlenet/authentication-manager': { rootPassword },
     } as any
     return defConfigs[pkgName]
   }
