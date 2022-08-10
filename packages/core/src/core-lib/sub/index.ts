@@ -159,7 +159,7 @@ export function dematMessage<T>() {
   })
 }
 
-export function fetch<Def extends ExtDef>(shell: Pick<RawShell, 'send' | 'msg$' | 'push'>) {
+export function fetch<Def extends ExtDef>(shell: Pick<RawShell<any>, 'send' | 'msg$' | 'push'>) {
   return <Path extends SubcriptionPaths<Def>>(pointer: Pointer<Def, Path>) =>
     (req: SubcriptionReq<Def, Path>, _opts?: Partial<PushOptions>) =>
       firstValueFrom(subDemat<Def>(shell)<Path>(pointer)(req, _opts))

@@ -57,7 +57,6 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
     return {
       async deploy() {
         shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
-
         http.plug.mount({ getApp, absMountPath: '/' })
         function getApp() {
           const mountApp = http.plug.express()
