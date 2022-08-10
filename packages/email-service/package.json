@@ -19,8 +19,8 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "nodemailer": "^6.6.1",
-    "nodemailer-sendinblue-v3-transport": "^1.0.1"
+    "@types/nodemailer": "^6.4.5",
+    "nodemailer": "^6.6.1"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.1.0",

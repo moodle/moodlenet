@@ -21,5 +21,14 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
       message: `arangodb url ?`,
     },
   ])
-  return install({ mainFolders, httpPort, arangoUrl })
+
+  return install({ mainFolders, defaultPkgEnv })
+
+  function defaultPkgEnv(pkgName: string) {
+    const defConfigs = {
+      '@moodlenet/http-server': { port: httpPort },
+      '@moodlenet/arangodb': { config: arangoUrl },
+    } as any
+    return defConfigs[pkgName]
+  }
 }
