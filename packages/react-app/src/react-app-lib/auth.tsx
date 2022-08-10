@@ -1,4 +1,10 @@
-import type { AuthenticationManagerExt, ClientSession, SessionToken } from '@moodlenet/authentication-manager'
+import type {
+  AuthenticationManagerExt,
+  ClientSession,
+  RootClientSession,
+  SessionToken,
+  UserClientSession,
+} from '@moodlenet/authentication-manager'
 import {
   ComponentType,
   createContext,
@@ -25,9 +31,17 @@ export type AuthCtxT = {
   setSessionToken(
     sessionToken: SessionToken,
   ): Promise<{ success: true; clientSession: ClientSession } | { success: false; msg: string }>
-  clientSession: ClientSession | null
   logout(): void
-}
+} & (
+  | {
+      isRoot: false
+      clientSession: UserClientSession | null
+    }
+  | {
+      isRoot: true
+      clientSession: RootClientSession
+    }
+)
 
 const srvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
 
@@ -116,7 +130,15 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }, [fetchClientSession])
 
   const ctx = useMemo<AuthCtxT>(() => {
-    return { registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken, logout }
+    return {
+      registerLogin,
+      loginItems,
+      signupItems,
+      registerSignup,
+      setSessionToken,
+      logout,
+      ...(clientSession?.root ? { isRoot: true, clientSession } : { isRoot: false, clientSession }),
+    }
   }, [registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken, logout])
 
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
