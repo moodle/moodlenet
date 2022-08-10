@@ -547,7 +547,7 @@ const boot: Boot = async cfg => {
   function pkgEnv(pkgInstallationId: PkgInstallationId) {
     const pkgSys = main.readSysConfig().packages[pkgInstallationId]
     assert(pkgSys, `could not find pkgSys for ${pkgInstallationId}`)
-    const mnDeplClass = process.env.MN_DEPL_CLASS ?? ''
+    const mnDeplClass = process.env.MN_DEPL_CLASS ?? 'default'
     const env = pkgSys.env[mnDeplClass]
     return env
   }
