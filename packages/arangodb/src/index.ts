@@ -1,16 +1,19 @@
-import type { CoreExt, Ext, ExtDef, ExtName, RawExtEnv, SubTopo } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef, ExtId, ExtName, RawExtEnv, SubTopo } from '@moodlenet/core'
 import * as arango from 'arangojs'
 import { Database } from 'arangojs'
 import { Config, Dict } from 'arangojs/connection'
 import { QueryOptions } from 'arangojs/database'
+type CollectionDef = { name: string }
 
+type QueryReq = { q: string; opts?: QueryOptions; bindVars?: Dict<any> }
+type QueryRes = { resultSet: any[] }
 interface Instance {
   arango: typeof arango
-  createDocumentCollections(_: { name: string }[]): Promise<void>
-  // install(): Promise<{ db: Database; created: boolean }>
+  // ensureDocumentCollections(_: CollectionDef[]): Promise<void>
 }
 type Routes = {
-  query: SubTopo<{ q: string; opts?: QueryOptions; bindVars?: Dict<any> }, { resultSet: any[] }>
+  ensureDocumentCollections: SubTopo<{ defs: CollectionDef[] }, void>
+  query: SubTopo<QueryReq, QueryRes>
 }
 export type MNArangoDBExt = ExtDef<'@moodlenet/arangodb', '0.1.0', Instance, Routes>
 
@@ -30,38 +33,56 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
           sysDB.dropDatabase(extDBName)
         })
         shell.provide.services({
-          async query({ q, bindVars, opts }, { source }) {
-            const { extName } = shell.lib.splitExtId(source)
-            const db = sysDB.database(getExtDBName(extName))
-            const qcursor = await db.query(q, bindVars, opts)
-            const resultSet = await qcursor.all()
-            return { resultSet }
+          async query(qReq, { source }) {
+            const helpers = getDBHelpers(source)
+            return helpers.query(qReq)
+          },
+          async ensureDocumentCollections({ defs }, { source }) {
+            const helpers = getDBHelpers(source)
+            await helpers.ensureDocumentCollections(defs)
           },
         })
         return {
-          plug({ shell }) {
+          plug(/* { shell } */) {
+            // const helpers = getDBHelpers(shell.extId)
             return {
               arango,
-              async createDocumentCollections(defs) {
-                const { db } = await ensureDB()
-                const collectionNames = (await db.collections()).map(({ name }) => name)
-                await Promise.all(
-                  defs
-                    .filter(({ name }) => !collectionNames.includes(name))
-                    .map(({ name }) => {
-                      db.createCollection(name)
-                    }),
-                )
-                return
-              },
-            }
-            async function ensureDB() {
-              const extDBName = getExtDBName(shell.extName)
-              const exists = (await sysDB.databases()).find(db => db.name === extDBName)
-              const db = exists ?? (await sysDB.createDatabase(extDBName))
-              return { created: !exists, db }
+              // async ensureDocumentCollections(defs) {
+              //   // TODO: remove ?
+              //   await helpers.ensureDocumentCollections(defs)
+              //   return
+              // },
             }
           },
+        }
+        function getDBHelpers(forExtId: ExtId) {
+          const { extName } = shell.lib.splitExtId(forExtId)
+          const extDBName = getExtDBName(extName)
+          return {
+            async ensureDocumentCollections(defs: CollectionDef[]) {
+              const { /* created, */ db } = await ensureDB()
+              const collectionNames = (await db.collections()).map(({ name }) => name)
+              await Promise.all(
+                defs
+                  .filter(({ name }) => !collectionNames.includes(name))
+                  .map(({ name }) => {
+                    db.createCollection(name)
+                  }),
+              )
+              return
+            },
+            async query({ q, bindVars, opts }: QueryReq): Promise<QueryRes> {
+              const db = sysDB.database(extDBName)
+              const qcursor = await db.query(q, bindVars, opts)
+              const resultSet = await qcursor.all()
+              return { resultSet }
+            },
+          }
+          async function ensureDB() {
+            const exists = (await sysDB.databases()).find(db => db.name === extDBName)
+            const db = exists ?? (await sysDB.createDatabase(extDBName))
+            return { created: !exists, db }
+          }
         }
       },
     }

@@ -525,7 +525,7 @@ const boot: Boot = async cfg => {
 
       const parentMsgId = opts.parent?.id
       // type DestDef = typeof destExtId extends ExtId<infer Def> ? Def : never
-      deployments.assertDeployed(srcExtId) // assert me deployed
+      // deployments.assertDeployed(srcExtId) // assert me deployed
 
       const msg: MessagePush /* <typeof bound, Def, DestDef, typeof path>  */ = {
         id: newMsgId(),
