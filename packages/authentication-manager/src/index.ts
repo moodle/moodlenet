@@ -17,17 +17,21 @@ export type Topo = {
 
 export type AuthenticationManagerExt = ExtDef<'@moodlenet/authentication-manager', '0.1.0', void, Topo>
 
-const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
+export type ExtAuthenticationManager = Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]>
+const ext: ExtAuthenticationManager = {
   name: '@moodlenet/authentication-manager',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0'],
-  connect(shell) {
+  async connect(shell) {
     const [, arangopkg] = shell.deps
     const env = getEnv(shell.env)
+
+    await arangopkg.access.fetch('ensureDocumentCollections')({ defs: [{ name: 'User' }] })
+
     return {
-      async install() {
-        await arangopkg.plug.createDocumentCollections([{ name: 'User' }])
-      },
+      // async install() {
+      //   await arangopkg.plug.ensureDocumentCollections([{ name: 'User' }])
+      // },
       deploy() {
         shell.expose({
           'getSessionToken/sub': {
