@@ -1,7 +1,7 @@
 import type { MNArangoDBExt } from '@moodlenet/arangodb'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import userStore from './store'
-import { User, UserData } from './store/types'
+import { User } from './store/types'
 import { ClientSession, SessionToken } from './types'
 export * from './types'
 
@@ -10,10 +10,8 @@ export type Topo = {
     { uid: string; displayName: string; avatarUrl?: string },
     { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
   >
-  getSessionToken: SubTopo<
-    { uid: string },
-    { success: true; sessionToken: SessionToken } | { success: false; msg: string }
-  >
+  getSessionToken: SubTopo<{ uid: string }, { success: true; sessionToken: SessionToken } | { success: false }>
+  getRootSessionToken: SubTopo<{ password: string }, { success: true; sessionToken: SessionToken } | { success: false }>
   getClientSession: SubTopo<{ token: string }, { success: true; clientSession: ClientSession } | { success: false }>
 }
 
@@ -25,6 +23,7 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0'],
   connect(shell) {
     const [, arangopkg] = shell.deps
+    const env = getEnv(shell.env)
     return {
       async install() {
         await arangopkg.plug.createDocumentCollections([{ name: 'User' }])
@@ -41,11 +40,26 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
               return { valid: true }
             },
           },
+          'getRootSessionToken/sub': {
+            validate() {
+              return { valid: true }
+            },
+          },
         })
 
         const store = userStore({ shell })
 
         shell.provide.services({
+          async getRootSessionToken({ password }) {
+            if (!(env.rootPassword && password)) {
+              return { success: false }
+            } else if (env.rootPassword === password) {
+              const sessionToken = await encryptClientSession({ root: true })
+              return { success: true, sessionToken }
+            } else {
+              return { success: false }
+            }
+          },
           async registerUser({ displayName, uid, avatarUrl }, { source }) {
             const { extName } = shell.lib.splitExtId(source)
             const user = await store.create({
@@ -56,24 +70,21 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
               },
               avatarUrl,
             })
-            const sessionToken = await createSessionToken(user)
+            const sessionToken = await encryptClientSession({ user })
 
             return { success: true, user, sessionToken }
           },
           async getSessionToken({ uid }, { source }) {
             const { extName } = shell.lib.splitExtId(source)
-            const user = await store.getByProviderId({
-              ext: extName,
-              uid,
-            })
+            const user = await store.getByProviderId({ ext: extName, uid })
             if (!user) {
               return { success: false, msg: 'cannot find user' }
             }
-            const sessionToken = await createSessionToken(user)
+            const sessionToken = await encryptClientSession({ user })
             return { success: true, sessionToken }
           },
           async getClientSession({ token }) {
-            const clientSession = await getClientSession(token)
+            const clientSession = await decryptClientSession(token)
             if (!clientSession) {
               return { success: false }
             }
@@ -84,18 +95,14 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
 
         return {}
 
-        async function createSessionToken(user: User): Promise<SessionToken> {
-          const userData: UserData = user
-          const sessionToken: SessionToken = JSON.stringify(userData)
+        async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
+          const sessionToken: SessionToken = JSON.stringify(clientSession)
 
           return sessionToken
         }
-        async function getClientSession(token: SessionToken): Promise<ClientSession | null> {
+        async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
           try {
-            const userData: UserData = JSON.parse(token)
-            const clientSession: ClientSession = {
-              user: userData,
-            }
+            const clientSession: ClientSession = JSON.parse(token)
             return clientSession
           } catch {
             return null
@@ -107,3 +114,11 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]> = {
 }
 
 export default ext
+
+export type Env = { rootPassword?: string }
+function getEnv(_: any): Env {
+  const rootPassword = typeof _?.rootPassword === 'string' ? String(_.rootPassword) : undefined
+  return {
+    rootPassword,
+  }
+}

@@ -24,7 +24,7 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
         //const logger = console
         // const logger = coreExt.sysLog.moodlenetSysLogLib(shell)
         const env = getEnv(shell.env)
-        const sysDB = new Database({ ...env.config })
+        const sysDB = new Database({ ...env.connectionCfg })
         shell.onExtUninstalled(({ extName }) => {
           const extDBName = getExtDBName(extName)
           sysDB.dropDatabase(extDBName)
@@ -74,7 +74,7 @@ function getExtDBName(extName: ExtName) {
 }
 
 type Env = {
-  config: Config
+  connectionCfg: Config
 }
 function getEnv(rawExtEnv: RawExtEnv): Env {
   //FIXME: implement checks
