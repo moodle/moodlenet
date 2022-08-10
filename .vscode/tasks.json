@@ -126,6 +126,15 @@
       "group": "build",
       "label": "email-service dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/jwt-service/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "jwt-service dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
 }
