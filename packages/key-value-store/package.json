@@ -1,15 +1,15 @@
 {
-  "name": "@moodlenet/authentication-manager",
+  "name": "@moodlenet/key-value-store",
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "moodlenet": {
     "creator": "MoodleNet",
-    "displayName": "Authentication manager"
+    "displayName": "Key value store"
   },
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Authentication manager\nManager for multiple authentication systems",
+  "description": "Key value store\nSimple key-value store for packages",
   "files": [
     "lib/",
     "src/"

@@ -5,7 +5,6 @@ import SESTransport from 'nodemailer/lib/ses-transport'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import StreamTransport from 'nodemailer/lib/stream-transport'
 import { EmailObj } from '../../types'
-// import { EmailSender } from '../types's
 
 export type SendResp =
   | {
@@ -17,8 +16,6 @@ export type SendResp =
       readonly error: string
     }
 
-// questo  è un factory , e
-// type Config = { smtp: string }
 export type MailerCfg =
   | string
   | SMTPTransport.Options
@@ -28,7 +25,7 @@ export type MailerCfg =
   | SESTransport.Options
 
 // export type SendOpts = {}
-export function send(emailObj: EmailObj, mailerCfg: MailerCfg /* , opts?: SendOpts */): Promise<SendResp> {
+export function send(mailerCfg: MailerCfg, emailObj: EmailObj /* , opts?: SendOpts */): Promise<SendResp> {
   return createTransport(mailerCfg)
     .sendMail(emailObj)
     .then(messageInfo => ({ success: true, messageInfo } as const))
