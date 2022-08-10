@@ -1,7 +1,10 @@
 import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import type { EmailService } from '@moodlenet/email-service'
+import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
+import { prepareApp } from './middleware/express/app'
 import userStore from './store'
 
 export type SimpleEmailAuthTopo = {
@@ -13,16 +16,23 @@ export type SimpleEmailAuthTopo = {
     { email: string; password: string; displayName: string },
     { success: true } | { success: false; msg: string }
   >
+  confirm: SubTopo<{}, { success: true } | { success: false; msg: string }>
 }
 
 export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
 
-const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerExt]> = {
+const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExt]> = {
   name: '@moodlenet/simple-email-auth',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/authentication-manager@0.1.0'],
+  requires: [
+    '@moodlenet/core@0.1.0',
+    '@moodlenet/react-app@0.1.0',
+    '@moodlenet/authentication-manager@0.1.0',
+    '@moodlenet/email-service@0.1.0',
+    '@moodlenet/http-server@0.1.0',
+  ],
   connect(shell) {
-    const [, reactApp, authMng] = shell.deps
+    const [, reactApp, authMng, _emailSrv, http] = shell.deps
 
     return {
       deploy() {
@@ -31,6 +41,17 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
             moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
           },
         })
+
+        http.plug.mount({ getApp })
+        function getApp() {
+          const app = http.plug.express()
+          app.get('pippo', () => {
+            return console.log()
+          }) // aggiungo
+
+          prepareApp(app)
+          return app
+        }
 
         shell.expose({
           'login/sub': { validate: () => ({ valid: true }) },
@@ -71,6 +92,9 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
               return authRes
             }
 
+            return { success: true }
+          },
+          async confirm({}) {
             return { success: true }
           },
         })

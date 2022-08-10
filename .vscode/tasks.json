@@ -16,7 +16,8 @@
         "authentication-manager dev-build",
         "extensions-manager dev-build",
         "passport-auth dev-build",
-        "simple-email-auth dev-build"
+        "simple-email-auth dev-build",
+        "email-service dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -115,6 +116,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "passport-auth dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/email-service/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "email-service dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]

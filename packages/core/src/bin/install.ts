@@ -30,5 +30,14 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
       message: `root password ?`,
     },
   ])
-  return install({ mainFolders, httpPort, arangoUrl, rootPassword })
+
+  return install({ mainFolders, defaultPkgEnv })
+
+  function defaultPkgEnv(pkgName: string) {
+    const defConfigs = {
+      '@moodlenet/http-server': { port: httpPort },
+      '@moodlenet/arangodb': { config: arangoUrl },
+    } as any
+    return defConfigs[pkgName]
+  }
 }
