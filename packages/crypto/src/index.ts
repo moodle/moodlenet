@@ -13,7 +13,7 @@ export type CryptoExt = ExtDef<
     signJwt: SubTopo<{ payload: any; signOpts?: SignOptions }, { jwt: string }>
     verifyJwt: SubTopo<{ jwt: string; verifyOpts?: VerifyOptions }, { payload: Jwt | JwtPayload | string }>
     encrypt: SubTopo<{ payload: string; enc?: BufferEncoding }, { encrypted: string }>
-    decrypt: SubTopo<{ encrypted: string; enc?: BufferEncoding }, { payload: string }>
+    decrypt: SubTopo<{ encrypted: string; enc?: BufferEncoding }, { valid: true; payload: string } | { valid: false }>
   }
 >
 type KVStoreTypes = {
@@ -51,21 +51,25 @@ const ext: Ext<CryptoExt, [CoreExt, KeyValueStoreExtDef]> = {
           },
           async decrypt({ encrypted, enc = DEFAULT_ENC }) {
             const { privateKey } = await getKeys()
-            const payload = crypto
-              .privateDecrypt(
-                {
-                  key: privateKey,
-                  // In order to decrypt the data, we need to specify the
-                  // same hashing function and padding scheme that we used to
-                  // encrypt the data in the previous step
-                  padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-                  oaepHash: 'sha256',
-                },
-                Buffer.from(encrypted, enc),
-              )
-              .toString()
+            try {
+              const payload = crypto
+                .privateDecrypt(
+                  {
+                    key: privateKey,
+                    // In order to decrypt the data, we need to specify the
+                    // same hashing function and padding scheme that we used to
+                    // encrypt the data in the previous step
+                    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                    oaepHash: 'sha256',
+                  },
+                  Buffer.from(encrypted, enc),
+                )
+                .toString()
 
-            return { payload }
+              return { valid: true, payload }
+            } catch {
+              return { valid: false }
+            }
           },
           async encrypt({ payload, enc = DEFAULT_ENC }) {
             const { publicKey } = await getKeys()

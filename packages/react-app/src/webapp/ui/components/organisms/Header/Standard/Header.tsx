@@ -61,7 +61,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
                 </Link>,
               ]}
               hoverElement={
-                <div style={avatar} className="avatar" {...{ referrerpolicy: 'no-referrer' }} />
+                <div style={avatar} className="avatar" {...{ referrerPolicy: 'no-referrer' }} />
                 // <Link
                 //   href={me.myProfileHref}
                 //   style={avatar}
