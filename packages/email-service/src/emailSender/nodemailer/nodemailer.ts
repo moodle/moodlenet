@@ -16,17 +16,24 @@ export type SendResp =
       readonly error: string
     }
 
-export type MailerCfg =
-  | string
-  | SMTPTransport.Options
-  | SendmailTransport.Options
-  | StreamTransport.Options
-  | JSONTransport.Options
-  | SESTransport.Options
+export type MailerCfg = {
+  defaultFrom: string
+  transport:
+    | string
+    | SMTPTransport.Options
+    | SendmailTransport.Options
+    | StreamTransport.Options
+    | JSONTransport.Options
+    | SESTransport.Options
+}
 
 // export type SendOpts = {}
-export function send(mailerCfg: MailerCfg, emailObj: EmailObj /* , opts?: SendOpts */): Promise<SendResp> {
-  return createTransport(mailerCfg)
+export function send(
+  transportCfg: MailerCfg['transport'],
+  emailObj: EmailObj /* , opts?: SendOpts */,
+): Promise<SendResp> {
+  console.log('sending email : ', transportCfg, emailObj)
+  return createTransport(transportCfg)
     .sendMail(emailObj)
     .then(messageInfo => ({ success: true, messageInfo } as const))
     .catch(err => ({ success: false, error: String(err) } as const))
