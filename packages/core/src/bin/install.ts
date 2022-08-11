@@ -37,6 +37,7 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
     const defConfigs = {
       '@moodlenet/http-server': { port: httpPort },
       '@moodlenet/arangodb': { config: arangoUrl },
+      '@moodlenet/authentication-manager': { rootPassword },
     } as any
     return defConfigs[pkgName]
   }
