@@ -1,57 +1,32 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
-import { getNodemailerSendEmailAdapter, SendResp } from './emailSender/nodemailer/nodemailer'
+import { MailerCfg, send, SendResp } from './emailSender/nodemailer/nodemailer'
+import { EmailObj } from './types'
 
-/* const stmpServer = sibTransport({
-  apiKey: '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',
-}) */
-
-const configLocal = {
-  service: 'SendinBlue', // no need to set host or port etc.
-  auth: {
-    user: 'shukeenkel@gmail.com',
-    pass: 'MTF0wXL7mrOVA4sQ',
-  },
-}
-
-/*
-const configLocal = {
-   service: 'SendinBlue', // no need to set host or port etc.
-   auth: {
-       user: 'yourRegisteredEmailOnSendinblue@email.com',
-       pass: 'xxxxx!'
-   }
-}
-*/
+export * from './types'
 
 export type EmailService = ExtDef<
   '@moodlenet/email-service',
   '0.1.0',
   void,
   {
-    send: SubTopo<{ paramIn1: string }, SendResp>
+    send: SubTopo<{ emailObj: EmailObj }, SendResp>
   }
 >
 
-const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
+const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
   name: '@moodlenet/email-service',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  connect(shell) {
-    const [, reactApp] = shell.deps
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/key-value-store@0.1.0'],
+  async connect(shell) {
+    const [, reactApp, kvStore] = shell.deps
+    const kvstore = await kvStore.plug.getStore<{ mailerCfg: MailerCfg }>()
 
+    // const env = getEnv(shell.env)
     return {
       deploy() {
-        // come lo passo nel codice ?
-        const mailer = getNodemailerSendEmailAdapter(configLocal)
-        // business logic, wire-up to the message system,
-        // other packages integration
-        //   listen to messages -> send other messages
-        //    use other packages plugins (e.g add UI to react app, or add http-endpoint)
-
-        // come lo passo
-        // const mailer )getNodemailerSendEmailAdapter({smtp:'smtp:moodlenet.com'})
         reactApp.plug.setup({
           routes: {
             moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
@@ -60,7 +35,6 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
         })
 
         shell.expose({
-          // http://localhost:8080/_/_/raw-sub/moodlenet-email-service/0.1.10/_test  body:{"paramIn2": "33"}
           'send/sub': {
             validate(/* data */) {
               return { valid: true }
@@ -69,21 +43,35 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt]> = {
         })
 
         shell.provide.services({
-          async send(/* {paramIn1},msg */) {
-            const msg = {
-              from: 'shukeenkel@gmail.com',
-              to: 'ettorebevilacqua@gmail.com',
-              subject: 'subject text ',
-              html: '<h3>Hy test</h3>',
-            }
-            const resp = await mailer(msg)
+          async send({ emailObj }) {
+            const { value: mailerConfig = { jsonTransport: true } } = await kvstore.get('mailerCfg', '')
+
+            const resp = await send(mailerConfig, defaultFrom(emailObj))
             return resp
           },
         })
         return {}
       },
     }
+    function defaultFrom(emailObj: EmailObj): EmailObj {
+      return {
+        from: undefined, //mailerCfg.defaultFrom,
+        ...emailObj,
+      }
+    }
   },
 }
 
 export default ext
+
+// type Env = {
+//   mailerCfg: MailerCfg
+//   defaultFrom?: string
+// }
+// function getEnv(_: any): Env {
+//   // mailerCfg:{jsonTransport}
+//   return {
+//     mailerCfg: _?.mailerCfg,
+//     defaultFrom: _?.defaultFrom,
+//   }
+// }

@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { isVerBWC, splitExtId } from '../core-lib/pointer'
 import type { ExtId, ExtName, PkgInstallationId, RegItem } from '../types'
 
@@ -59,9 +60,8 @@ export const createLocalDeploymentRegistry = () => {
 
   function assertDeployed(extId: ExtId) {
     const currDeployment = getByExtId(extId)
-    if (!currDeployment) {
-      throw new Error(`assertDeployed: extension matching [${extId}] not deployed`)
-    }
+    assert(currDeployment, `assertDeployed: extension matching [${extId}] not deployed`)
+
     return currDeployment
   }
 
