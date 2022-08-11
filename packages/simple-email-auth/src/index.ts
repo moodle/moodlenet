@@ -1,27 +1,29 @@
 import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import { CryptoExt } from '@moodlenet/crypto'
 import type { EmailService } from '@moodlenet/email-service'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
+import assert from 'assert'
 import { resolve } from 'path'
-import { prepareApp } from './middleware/express/app'
 import userStore from './store'
-
+type SignupReq = { email: string; password: string; displayName: string }
+type ConfirmEmailPayload = { req: SignupReq }
 export type SimpleEmailAuthTopo = {
   login: SubTopo<
     { email: string; password: string },
     { success: true; sessionToken: SessionToken } | { success: false }
   >
-  signup: SubTopo<
-    { email: string; password: string; displayName: string },
-    { success: true } | { success: false; msg: string }
-  >
-  confirm: SubTopo<{}, { success: true } | { success: false; msg: string }>
+  signup: SubTopo<SignupReq, { success: true } | { success: false; msg: string }>
+  confirm: SubTopo<{ token: string }, { success: true; sessionToken: SessionToken } | { success: false; msg: string }>
 }
 
 export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
 
-const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExt]> = {
+const ext: Ext<
+  SimpleEmailAuthExt,
+  [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExt, CryptoExt]
+> = {
   name: '@moodlenet/simple-email-auth',
   version: '0.1.0',
   requires: [
@@ -30,9 +32,10 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
     '@moodlenet/authentication-manager@0.1.0',
     '@moodlenet/email-service@0.1.0',
     '@moodlenet/http-server@0.1.0',
+    '@moodlenet/crypto@0.1.0',
   ],
   connect(shell) {
-    const [, reactApp, authMng, _emailSrv, http] = shell.deps
+    const [, reactApp, authMng, emailSrv, http, crypto] = shell.deps
 
     return {
       deploy() {
@@ -40,22 +43,16 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
           ctxProvider: {
             moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
           },
+          routes: {
+            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+          },
         })
 
-        http.plug.mount({ getApp })
-        function getApp() {
-          const app = http.plug.express()
-          app.get('pippo', () => {
-            return console.log()
-          }) // aggiungo
-
-          prepareApp(app)
-          return app
-        }
-
+        http.plug.mount({ getApp: getHttpApp })
         shell.expose({
           'login/sub': { validate: () => ({ valid: true }) },
           'signup/sub': { validate: () => ({ valid: true }) },
+          'confirm/sub': { validate: () => ({ valid: true }) },
         })
 
         const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
@@ -75,10 +72,42 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
             const sessionToken = res.sessionToken
             return { success: true, sessionToken }
           },
-          async signup({ email, password, displayName }) {
-            const mUser = await store.getByEmail(email)
+          async signup(req) {
+            const mUser = await store.getByEmail(req.email)
+
             if (mUser) {
               return { success: false, msg: 'email exists' }
+            }
+
+            const confirmEmailPayload: ConfirmEmailPayload = {
+              req,
+            }
+            const {
+              msg: {
+                data: { encrypted: confirmEmailToken },
+              },
+            } = await crypto.access.fetch('encrypt')({ payload: JSON.stringify(confirmEmailPayload) })
+            emailSrv.access.fetch('send')({
+              emailObj: {
+                to: req.email,
+                text: `hey ${req.displayName} confirm your email with /_/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+              },
+            })
+            return { success: true }
+          },
+          async confirm({ token }) {
+            const confirmEmailPayload = await getConfirmEmailPayload()
+            if (!confirmEmailPayload) {
+              return { success: false, msg: `invalid confirm token` }
+            }
+            const {
+              req: { displayName, email, password },
+            } = confirmEmailPayload
+
+            const mUser = await store.getByEmail(email)
+
+            if (mUser) {
+              return { success: false, msg: 'user registered' }
             }
 
             const user = await store.create({ email, password })
@@ -89,19 +118,52 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt, AuthenticationManagerE
 
             if (!authRes.success) {
               await store.delUser(user.id)
-              return authRes
+              const { msg, success } = authRes
+              return { msg, success }
             }
+            const { sessionToken } = authRes
+            return { success: true, sessionToken }
+            async function getConfirmEmailPayload() {
+              const {
+                msg: { data: decryptRes },
+              } = await crypto.access.fetch('decrypt')({ encrypted: token })
 
-            return { success: true }
-          },
-          async confirm({}) {
-            return { success: true }
+              try {
+                assert(decryptRes.valid)
+
+                const confirmEmailPayload = JSON.parse(decryptRes.payload)
+                assert(isConfirmEmailPayload(confirmEmailPayload))
+                return confirmEmailPayload
+              } catch {
+                return undefined
+              }
+            }
           },
         })
         return {}
+        function getHttpApp() {
+          const app = http.plug.express()
+          app.get('/confirm-email/:token', async (req, res) => {
+            const { token } = req.params
+            const {
+              msg: { data: confirmResp },
+            } = await shell.me.fetch('confirm')({ token })
+
+            if (!confirmResp.success) {
+              res.status(400).end(confirmResp.msg)
+              return
+            }
+            res.redirect(`/@moodlenet/simple-email-auth/confirm-email?sessionToken=${confirmResp.sessionToken}`)
+          })
+          return app
+        }
       },
     }
   },
 }
 
 export default ext
+function isConfirmEmailPayload(_: any): _ is ConfirmEmailPayload {
+  //FIXME: implement checks
+  return !!_
+}

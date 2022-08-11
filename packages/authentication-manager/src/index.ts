@@ -112,12 +112,11 @@ const ext: ExtAuthenticationManager = {
         async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
           try {
             const {
-              msg: {
-                data: { payload: decrypted },
-              },
+              msg: { data: decryptRes },
             } = await crypto.access.fetch('decrypt')({ encrypted: token })
-            const clientSession: ClientSession = JSON.parse(decrypted)
-            assert(isClientSession(clientSession), 'invalid client session token')
+            assert(decryptRes.valid)
+            const clientSession: ClientSession = JSON.parse(decryptRes.payload)
+            assert(isClientSession(clientSession))
             return clientSession
           } catch {
             return null
