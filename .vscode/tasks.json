@@ -18,6 +18,7 @@
         "passport-auth dev-build",
         "simple-email-auth dev-build",
         "email-service dev-build",
+        "crypto dev-build",
         "key-value-store dev-build"
       ],
       "presentation": {
@@ -139,11 +140,11 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/jwt-service/tsconfig.json",
+      "tsconfig": "packages/crypto/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "jwt-service dev-build"
+      "label": "crypto dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
