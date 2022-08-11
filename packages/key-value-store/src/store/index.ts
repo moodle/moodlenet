@@ -19,14 +19,14 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
   }
   async function get(type: string, key: string): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
-    const record = (await query({ q: `RETURN DOCUMENT(${COLLECTION_NAME}/${_key})` })).msg.data.resultSet[0]
-    return record?.value ?? undefined
+    const record = (await query({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` })).msg.data.resultSet[0]
+    return valObj(record)
   }
 
   async function set(type: string, key: string, value: any): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
-    const strval = JSON.stringify(value)
-    const oldDoc = (
+    const strval = JSON.stringify({ value, _key })
+    const oldRec = (
       await query({
         q: `UPSERT { _key:"${_key}" }
               INSERT ${strval}
@@ -36,17 +36,24 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
       })
     ).msg.data.resultSet[0]
 
-    return oldDoc?.value ?? undefined
+    return valObj(oldRec)
   }
 
   async function unset(type: string, key: string): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
     const oldDoc = (
       await query({
-        q: `REMOVE ${COLLECTION_NAME}/${_key} FROM ${COLLECTION_NAME} RETURN OLD`,
+        q: `REMOVE ${COLLECTION_NAME}/${_key}
+              FROM ${COLLECTION_NAME} 
+            RETURN OLD`,
       })
     ).msg.data.resultSet[0]
 
-    return oldDoc?.value ?? undefined
+    return valObj(oldDoc)
   }
+}
+
+type Record = null | { value?: any }
+function valObj(_: Record): ValueObj {
+  return { value: _?.value ?? undefined }
 }

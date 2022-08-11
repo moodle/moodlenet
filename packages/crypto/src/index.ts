@@ -1,66 +1,94 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import type { ReactAppExt } from '@moodlenet/react-app'
-import { resolve } from 'path'
-import { jswParse, signupToken } from './token.service'
-
-export type JwtServiceExt = ExtDef<
-  '@moodlenet/jwt-service',
+import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
+import assert from 'assert'
+import crypto from 'crypto'
+import JWT, { Jwt, JwtPayload, SignOptions, VerifyOptions } from 'jsonwebtoken'
+import keypair from 'keypair'
+const DEFAULT_ENC: BufferEncoding = 'base64url'
+export type CryptoExt = ExtDef<
+  '@moodlenet/crypto',
   '0.1.0',
   void,
   {
-    signupToken: SubTopo<{ user: any }, { jwt: string }>
-    verifyToken: SubTopo<{ token: string }, { decode: any }>
+    signJwt: SubTopo<{ payload: any; signOpts?: SignOptions }, { jwt: string }>
+    verifyJwt: SubTopo<{ jwt: string; verifyOpts?: VerifyOptions }, { payload: Jwt | JwtPayload | string }>
+    encrypt: SubTopo<{ payload: string; enc?: BufferEncoding }, { encrypted: string }>
+    decrypt: SubTopo<{ encrypted: string; enc?: BufferEncoding }, { payload: string }>
   }
 >
-
-const ext: Ext<JwtServiceExt, [CoreExt, ReactAppExt]> = {
-  name: '@moodlenet/jwt-service',
+type KVStoreTypes = {
+  keypairs: {
+    publicKey: string
+    privateKey: string
+  }
+}
+const ext: Ext<CryptoExt, [CoreExt, KeyValueStoreExtDef]> = {
+  name: '@moodlenet/crypto',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
-  connect(shell) {
-    const [, reactApp] = shell.deps
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/key-value-store@0.1.0'],
+  async connect(shell) {
+    const [, kvStorePkg] = shell.deps
+    const kvStore = await kvStorePkg.plug.getStore<KVStoreTypes>()
 
     return {
+      async install() {
+        const { public: publicKey, private: privateKey } = keypair({ bits: 4096 })
+        kvStore.set('keypairs', '', { privateKey, publicKey })
+      },
       deploy() {
-        // business logic, wire-up to the message system,
-        // other packages integration
-        //   listen to messages -> send other messages
-        //    use other packages plugins (e.g add UI to react app, or add http-endpoint)
-        console.log('I am jwt extension')
-        reactApp.plug.setup({
-          routes: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-            // rootPath: 'm', // http://localhost:3000/my-test
-          },
-        })
-
-        shell.expose({
-          // http://localhost:8080/_/_/raw-sub/@moodlenet/jwt-service/0.1.0/_test  body:{"paramIn2": "33"}
-          'signupToken/sub': {
-            validate(/* data */) {
-              return { valid: true }
-            },
-          },
-          'verifyToken/sub': {
-            validate(/* data */) {
-              return { valid: true }
-            },
-          },
-        })
-        // code that allocate system resouces ( DB connections, listen to ports )
-        // implement package's service messages
+        // shell.expose({})
 
         shell.provide.services({
-          async signupToken({ user }) {
-
-            const token = signupToken(user)
-            return {jwt:token}
+          async signJwt({ payload, signOpts }) {
+            const { privateKey } = await getKeys()
+            const jwt = JWT.sign(payload, privateKey, signOpts)
+            return { jwt }
           },
-          async verifyToken({ token }) {
-            return jswParse(token)
+          async verifyJwt({ jwt, verifyOpts }) {
+            const { publicKey } = await getKeys()
+            const payload = JWT.verify(jwt, publicKey, verifyOpts)
+            return { payload }
+          },
+          async decrypt({ encrypted, enc = DEFAULT_ENC }) {
+            const { privateKey } = await getKeys()
+            const payload = crypto
+              .privateDecrypt(
+                {
+                  key: privateKey,
+                  // In order to decrypt the data, we need to specify the
+                  // same hashing function and padding scheme that we used to
+                  // encrypt the data in the previous step
+                  padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                  oaepHash: 'sha256',
+                },
+                Buffer.from(encrypted, enc),
+              )
+              .toString()
+
+            return { payload }
+          },
+          async encrypt({ payload, enc = DEFAULT_ENC }) {
+            const { publicKey } = await getKeys()
+            const encrypted = crypto
+              .publicEncrypt(
+                {
+                  key: publicKey,
+                  padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                  oaepHash: 'sha256',
+                },
+                Buffer.from(payload),
+              )
+              .toString(enc)
+
+            return { encrypted }
           },
         })
         return {}
+        async function getKeys() {
+          const { value: pair } = await kvStore.get('keypairs', '')
+          assert(pair, 'No key-pair found !')
+          return pair
+        }
       },
     }
   },
