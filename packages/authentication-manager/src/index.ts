@@ -1,5 +1,7 @@
 import type { MNArangoDBExt } from '@moodlenet/arangodb'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import { CryptoExt } from '@moodlenet/crypto'
+import assert from 'assert'
 import userStore from './store'
 import { User } from './store/types'
 import { ClientSession, SessionToken } from './types'
@@ -17,13 +19,13 @@ export type Topo = {
 
 export type AuthenticationManagerExt = ExtDef<'@moodlenet/authentication-manager', '0.1.0', void, Topo>
 
-export type ExtAuthenticationManager = Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt]>
+export type ExtAuthenticationManager = Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt, CryptoExt]>
 const ext: ExtAuthenticationManager = {
   name: '@moodlenet/authentication-manager',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0'],
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0', '@moodlenet/crypto@0.1.0'],
   async connect(shell) {
-    const [, arangopkg] = shell.deps
+    const [, arangopkg, crypto] = shell.deps
     const env = getEnv(shell.env)
 
     await arangopkg.access.fetch('ensureDocumentCollections')({ defs: [{ name: 'User' }] })
@@ -100,13 +102,22 @@ const ext: ExtAuthenticationManager = {
         return {}
 
         async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
-          const sessionToken: SessionToken = JSON.stringify(clientSession)
-
+          const {
+            msg: {
+              data: { encrypted: sessionToken },
+            },
+          } = await crypto.access.fetch('encrypt')({ payload: JSON.stringify(clientSession) })
           return sessionToken
         }
         async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
           try {
-            const clientSession: ClientSession = JSON.parse(token)
+            const {
+              msg: {
+                data: { payload: decrypted },
+              },
+            } = await crypto.access.fetch('decrypt')({ encrypted: token })
+            const clientSession: ClientSession = JSON.parse(decrypted)
+            assert(isClientSession(clientSession), 'invalid client session token')
             return clientSession
           } catch {
             return null
@@ -116,8 +127,11 @@ const ext: ExtAuthenticationManager = {
     }
   },
 }
-
 export default ext
+function isClientSession(clientSession: any): clientSession is ClientSession {
+  // FIXME: implement checks
+  return !!clientSession
+}
 
 export type Env = { rootPassword?: string }
 function getEnv(_: any): Env {

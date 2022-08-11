@@ -94,6 +94,7 @@ prompt.start()
     const defConfigs = {
       '@moodlenet/http-server': { port: 8080 },
       '@moodlenet/arangodb': { config: 'http://localhost:8529' },
+      '@moodlenet/authentication-manager': { rootPassword: 'root' },
     } as any
     return defConfigs[pkgName]
   }

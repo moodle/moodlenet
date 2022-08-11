@@ -73,7 +73,17 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
             },
             async query({ q, bindVars, opts }: QueryReq): Promise<QueryRes> {
               const db = sysDB.database(extDBName)
-              const qcursor = await db.query(q, bindVars, opts)
+              const qcursor = await db.query(q, bindVars, opts).catch(e => {
+                const msg = 'arango query error'
+                const cause = {
+                  error: String(e),
+                  q,
+                  bindVars,
+                  opts,
+                }
+                console.error({ msg, cause })
+                throw new Error(msg, { cause })
+              })
               const resultSet = await qcursor.all()
               return { resultSet }
             },
