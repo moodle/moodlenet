@@ -44,20 +44,19 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
 
         shell.provide.services({
           async send({ emailObj }) {
-            const { value: mailerConfig = { jsonTransport: true } } = await kvstore.get('mailerCfg', '')
+            const { value: mailerCfg = { transport: { jsonTransport: true }, defaultFrom: 'noreply@moodle.net' } } =
+              await kvstore.get('mailerCfg', '')
 
-            const resp = await send(mailerConfig, defaultFrom(emailObj))
+            const resp = await send(mailerCfg.transport, {
+              from: mailerCfg.defaultFrom,
+              replyTo: mailerCfg.defaultFrom,
+              ...emailObj,
+            })
             return resp
           },
         })
         return {}
       },
-    }
-    function defaultFrom(emailObj: EmailObj): EmailObj {
-      return {
-        from: undefined, //mailerCfg.defaultFrom,
-        ...emailObj,
-      }
     }
   },
 }
