@@ -525,7 +525,7 @@ const boot: Boot = async cfg => {
 
       const parentMsgId = opts.parent?.id
       // type DestDef = typeof destExtId extends ExtId<infer Def> ? Def : never
-      deployments.assertDeployed(srcExtId) // assert me deployed
+      // deployments.assertDeployed(srcExtId) // assert me deployed
 
       const msg: MessagePush /* <typeof bound, Def, DestDef, typeof path>  */ = {
         id: newMsgId(),
@@ -547,7 +547,7 @@ const boot: Boot = async cfg => {
   function pkgEnv(pkgInstallationId: PkgInstallationId) {
     const pkgSys = main.readSysConfig().packages[pkgInstallationId]
     assert(pkgSys, `could not find pkgSys for ${pkgInstallationId}`)
-    const mnDeplClass = process.env.MN_DEPL_CLASS ?? ''
+    const mnDeplClass = process.env.MN_DEPL_CLASS ?? 'default'
     const env = pkgSys.env[mnDeplClass]
     return env
   }

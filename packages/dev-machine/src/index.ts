@@ -72,12 +72,10 @@ prompt.start()
         type: 'symlink',
         fromFolder,
       }))
-
     await install({
       mainFolders,
       installPkgReqs,
-      httpPort: 8080,
-      arangoUrl: 'http://localhost:8529',
+      defaultPkgEnv,
     })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
@@ -91,4 +89,12 @@ prompt.start()
   }
 
   boot({ mainFolders, devMode: true })
+
+  function defaultPkgEnv(pkgName: string) {
+    const defConfigs = {
+      '@moodlenet/http-server': { port: 8080 },
+      '@moodlenet/arangodb': { config: 'http://localhost:8529' },
+    } as any
+    return defConfigs[pkgName]
+  }
 })()

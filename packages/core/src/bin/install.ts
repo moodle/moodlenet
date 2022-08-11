@@ -7,7 +7,11 @@ import { MainFolders } from '../types'
 export default cli_install
 
 async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
-  const { 'http-port': httpPort, 'arango-url': arangoUrl } = await prompts([
+  const {
+    'http-port': httpPort,
+    'arango-url': arangoUrl,
+    'root-password': rootPassword,
+  } = await prompts([
     {
       type: 'number',
       initial: 8080,
@@ -20,6 +24,21 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
       name: 'arango-url',
       message: `arangodb url ?`,
     },
+    {
+      type: 'password',
+      name: 'root-password',
+      message: `root password ?`,
+    },
   ])
-  return install({ mainFolders, httpPort, arangoUrl })
+
+  return install({ mainFolders, defaultPkgEnv })
+
+  function defaultPkgEnv(pkgName: string) {
+    const defConfigs = {
+      '@moodlenet/http-server': { port: httpPort },
+      '@moodlenet/arangodb': { config: arangoUrl },
+      '@moodlenet/authentication-manager': { rootPassword },
+    } as any
+    return defConfigs[pkgName]
+  }
 }

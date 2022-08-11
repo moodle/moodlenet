@@ -1,4 +1,6 @@
-import { FC } from 'react'
+import { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
+import lib from 'moodlenet-react-app-lib'
+import { FC, useCallback, useContext, useState } from 'react'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
@@ -6,6 +8,7 @@ import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import { MainLayout } from '../../../layout'
 import './RootLogin.scss'
 
+const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
 export type RootLoginFormValues = { email: string; password: string }
 export type RootLoginProps = {}
 
@@ -17,6 +20,7 @@ export const RootLogin: FC<RootLoginProps> = () => {
   )
 }
 export const RootLoginBody: FC<RootLoginProps> = ({}) => {
+  const { setSessionToken } = useContext(lib.auth.AuthCtx)
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()
@@ -29,6 +33,19 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
   //   wrongCreds,
   //   isValid: form.isValid,
   // })
+  const [submitting, setSubmitting] = useState(false)
+  const [loginFailed, setLoginFailed] = useState(false)
+  const [rootPassword, setRootPassword] = useState('')
+  const rootLogin = useCallback(async () => {
+    setLoginFailed(false)
+    setSubmitting(true)
+    const res = await authSrv('getRootSessionToken')({ password: rootPassword })
+    if (res.success) {
+      setSessionToken(res.sessionToken)
+    }
+    setLoginFailed(!res.success)
+    setSubmitting(false)
+  }, [rootPassword])
 
   return (
     <div className="root-login-page">
@@ -45,8 +62,9 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
                 type="password"
                 name="password"
                 edit
+                disabled={submitting}
                 // value={form.values.password}
-                // onChange={form.handleChange}
+                onChange={({ target: { value } }) => setRootPassword(value)}
                 // error={shouldShowErrors && form.errors.password}
               />
               {/* {wrongCreds && (
@@ -60,14 +78,17 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
               <div className="content">
                 <div className="left">
                   <PrimaryButton
-                  // onClick={
-                  //   form.isSubmitting || form.isValidating
-                  //     ? undefined
-                  //     : form.submitForm
-                  // }
+                    disabled={submitting}
+                    onClick={rootLogin}
+                    // onClick={
+                    //   form.isSubmitting || form.isValidating
+                    //     ? undefined
+                    //     : form.submitForm
+                    // }
                   >
                     Log in
                   </PrimaryButton>
+                  {loginFailed ? <span>Login failed</span> : null}
                 </div>
                 {/* <div className="right" hidden>
                   <div className="icon">

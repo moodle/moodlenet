@@ -17,7 +17,8 @@
         "extensions-manager dev-build",
         "passport-auth dev-build",
         "simple-email-auth dev-build",
-        "email-service dev-build"
+        "email-service dev-build",
+        "key-value-store dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -35,6 +36,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "test-extension dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/key-value-store/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "key-value-store dev-build"
       // "dependsOn": ["core dev-build"]
     },
     {
