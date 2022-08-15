@@ -28,11 +28,6 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
   // }
 
   // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
-  // console.log({
-  //   submitCount: form.submitCount,
-  //   wrongCreds,
-  //   isValid: form.isValid,
-  // })
   const [submitting, setSubmitting] = useState(false)
   const [loginFailed, setLoginFailed] = useState(false)
   const [rootPassword, setRootPassword] = useState('')

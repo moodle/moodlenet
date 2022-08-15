@@ -15,7 +15,6 @@ export const symlinkInstaller: PkgInstaller<SymlinkInstallReq> = async ({
     pkgId,
     useFolderName,
   })
-  console.log('**', { pkgInstallationId, absInstallationFolder, fromFolder })
   await symlink(fromFolder, absInstallationFolder, 'dir')
   return { pkgInstallationId }
 }

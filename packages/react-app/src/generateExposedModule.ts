@@ -1,8 +1,6 @@
 import { ExtPluginsMap } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 export function generateExposedModule({ extPluginsMap }: { extPluginsMap: ExtPluginsMap }) {
-  console.log(`generate exposed.ts ..`)
-
   return `// - generated -
 const exp: Record<string, ExtExpose> = {
 ${Object.values(extPluginsMap)

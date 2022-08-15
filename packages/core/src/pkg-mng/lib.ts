@@ -32,7 +32,6 @@ export async function getPackageInfo({ absFolder }: { absFolder: string }): Prom
     readme,
     id: basename(absFolder),
   }
-  console.log({ packageInfo })
   return packageInfo
 }
 
@@ -52,10 +51,6 @@ export const INSTALL_INFO_FILENAME = 'install-info.json'
 */
 
 export function assertValidPkgModule(module: any, pkgInfo: PackageInfo): asserts module is Ext {
-  console.log({
-    module,
-    pkgInfo,
-  })
   assert(!!module, `no module! ${module}`)
   const { name: moduleName, version, requires, connect } = module
   assert('string' === typeof moduleName, `invalid name type : ${typeof moduleName}`) // : ExtName<Def>

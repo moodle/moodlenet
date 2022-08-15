@@ -25,12 +25,14 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
 
   async function set(type: string, key: string, value: any): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
-    const strval = JSON.stringify({ value, _key })
+    const strval = JSON.stringify(value)
     const oldRec = (
       await query({
-        q: `UPSERT { _key:"${_key}" }
-              INSERT ${strval}
-              UPDATE ${strval}
+        q: `let key = "${_key}"
+            let doc = { _key: key, value:${strval} }
+            UPSERT { _key: key }
+              INSERT doc
+              UPDATE doc
               IN ${COLLECTION_NAME} 
             RETURN OLD`,
       })

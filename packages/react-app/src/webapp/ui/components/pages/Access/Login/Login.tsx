@@ -25,11 +25,6 @@ export const LoginBody: FC<LoginProps> = ({}) => {
   // }
 
   // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
-  // console.log({
-  //   submitCount: form.submitCount,
-  //   wrongCreds,
-  //   isValid: form.isValid,
-  // })
 
   const defaultLoginItem = authCtx.loginItems[0]
   const [currLoginItem, chooseLoginItem] = useState(defaultLoginItem)
