@@ -1,3 +1,4 @@
+import { MNArangoDBExt } from '@moodlenet/arangodb'
 import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { CryptoExt } from '@moodlenet/crypto'
@@ -19,11 +20,12 @@ export type SimpleEmailAuthTopo = {
 }
 
 export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
-
-const ext: Ext<
+export type ExtSimpleEmailAuth = Ext<
   SimpleEmailAuthExt,
-  [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExt, CryptoExt]
-> = {
+  [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExt, CryptoExt, MNArangoDBExt]
+>
+
+const ext: ExtSimpleEmailAuth = {
   name: '@moodlenet/simple-email-auth',
   version: '0.1.0',
   requires: [
@@ -33,9 +35,11 @@ const ext: Ext<
     '@moodlenet/email-service@0.1.0',
     '@moodlenet/http-server@0.1.0',
     '@moodlenet/crypto@0.1.0',
+    '@moodlenet/arangodb@0.1.0',
   ],
-  connect(shell) {
-    const [, reactApp, authMng, emailSrv, http, crypto] = shell.deps
+  async connect(shell) {
+    let [, reactApp, authMng, emailSrv, http, crypto, arangopkg] = shell.deps
+    await arangopkg.access.fetch('ensureDocumentCollections')({ defs: [{ name: 'User' }] })
 
     return {
       deploy() {
@@ -55,7 +59,7 @@ const ext: Ext<
           'confirm/sub': { validate: () => ({ valid: true }) },
         })
 
-        const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'userStore') })
+        const store = userStore({ shell })
         shell.provide.services({
           async login({ email, password }) {
             const user = await store.getByEmail(email)
