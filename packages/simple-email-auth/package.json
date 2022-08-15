@@ -23,6 +23,7 @@
     "formik": "^2.2.9"
   },
   "devDependencies": {
+    "@moodlenet/arangodb": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/crypto": "^0.1.0",
