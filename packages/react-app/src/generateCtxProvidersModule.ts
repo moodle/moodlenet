@@ -1,8 +1,6 @@
 import { ExtPluginsMap } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 export function generateCtxProvidersModule({ extPluginsMap }: { extPluginsMap: ExtPluginsMap }) {
-  console.log(`generateCtxProvidersModule ..`)
-
   return `// - generated -
 const ctxProviders: Record<string, ExtContextProvider> = {
 ${Object.values(extPluginsMap)

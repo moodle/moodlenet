@@ -36,49 +36,30 @@ async function start({
   const isDevelopment = mode === 'development'
   const wp = webpack(overrideCfg(defaultConfig()), () => {
     // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
-    console.log(`WP CB`)
   })
 
   if (isDevelopment) {
     const wsConfig = wp.options.devServer!
     const server = new WebpackDevServer(wsConfig, wp)
-    server.startCallback(() => {
-      console.log(`Successfully started server on http://localhost:${wsConfig.port!} `)
-    })
+    server.startCallback(() => {})
   } else {
     wp.hooks.afterDone.tap('swap folders', async wpStats => {
       if (wpStats?.hasErrors()) {
         throw new Error(`Webpack build error: ${wpStats.toString()}`)
       }
-      console.log(`Webpack build done`)
       await new Promise<void>((resolve, reject) =>
         rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
       )
       await cp(buildFolder, latestBuildFolder, { recursive: true })
-      console.log(`done`)
     })
   }
-  wp.watch({}, () => console.log(`Webpack  watched`))
-  logConfig()
+  wp.watch({}, () => {
+    /* console.log(`Webpack  watched`) */
+  })
 
   return {
     compiler: wp,
     // reconfigExtAndAliases,
-  }
-
-  // function reconfigExtAndAliases() {
-  //   const { webpackAliases, extensionsDirectoryModule } = getExtensionsBag()
-  //   wp.options.resolve!.alias = {
-  //     ...baseResolveAlias,
-  //     ...webpackAliases,
-  //   }
-  //   virtualModules.writeModule(EXTENSIONS_MODULE, extensionsDirectoryModule)
-  //   logConfig()
-  //   console.log('virtualModules.writeModule', extensionsDirectoryModule)
-  //   wp.watching.invalidate(() => console.log('INVALIDATED'))
-  // }
-  function logConfig() {
-    console.log('wp aliases:', wp.options.resolve.alias)
   }
 
   function defaultConfig(): Configuration {

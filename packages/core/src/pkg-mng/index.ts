@@ -29,9 +29,6 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     const { pkgInstallationId } = await (installPkgReq.type === 'npm'
       ? npmInstaller({ installPkgReq, pkgsFolder, useFolderName })
       : symlinkInstaller({ installPkgReq, pkgsFolder, useFolderName }))
-    // const info: PkgInstallationInfo = { installPkgReq, date: new Date().toISOString() }
-    // console.log(`writeInstallInfo ${pkgInstallationId}`, info)
-    // await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(pkgInstallationId), info })
     try {
       const { ext, pkgInfo } = await getPkg({ pkgInstallationId })
       const date = new Date().toISOString()

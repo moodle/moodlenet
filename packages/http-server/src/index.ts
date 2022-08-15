@@ -23,12 +23,10 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
 
         return {
           plug(dep) {
-            // console.log({ ____________________: dep })
             return {
               mount({ getApp, absMountPath }) {
                 const { extName /* , version */ } = shell.lib.splitExtId(dep.shell.extId)
                 const mountPath = absMountPath ?? `/_/${extName}`
-                console.log('MOUNT', { extName, mountPath, absMountPath })
                 const mountAppItem: MountAppItem = { mountPath, getApp }
                 const unmount = httpServer.mountApp(mountAppItem)
                 dep.shell.tearDown.add(() => {
@@ -54,7 +52,6 @@ function getEnv(rawExtEnv: Core.RawExtEnv): Env {
     port: 8080,
     ...rawExtEnv,
   }
-  console.log({ httpServerEnv: env })
   //FIXME: implement checks ?
   return env
 }
