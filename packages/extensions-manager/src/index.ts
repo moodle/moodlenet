@@ -36,7 +36,6 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
         })
         shell.provide.services({
           async searchPackages({ searchText, registry = getRegistry() }) {
-            console.log(`searchPackages in ${registry}`)
             const [
               searchRes,
               {

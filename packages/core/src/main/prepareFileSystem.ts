@@ -22,7 +22,6 @@ export default function prepareFileSystem({ mainFolders }: { mainFolders: MainFo
     localPkgsFolder,
     pkgStorageFolder: mainFolders.pkgStorageFolder,
   }
-  console.log({ sysPaths })
   return { sysPaths }
 }
 export const SYS_CONFIG_FILE_NAME = 'sys-config.json'

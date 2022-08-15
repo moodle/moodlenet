@@ -203,6 +203,5 @@ export const getColorPalette = (hex: string) => {
     ...colorPalette,
     ...getGrayScale(pureTone),
   }
-  console.log(colorPalette)
   return colorPalette
 }

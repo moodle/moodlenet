@@ -23,7 +23,6 @@ export function prepareApp(shell: ExtShell<PassportAuthExt>, app: Express) {
   })
 
   app.get('/oauth2/redirect/:providerName', async (req, res) => {
-    // console.log('***', req.params.providerName, inspect(req.user, false, 10, true))
     if (!req.user) {
       res.redirect(`/@moodlenet/passport-auth/login-fail?msg=couldn't authenticate`)
       return
@@ -61,7 +60,9 @@ export function prepareApp(shell: ExtShell<PassportAuthExt>, app: Express) {
    * This route logs the user out.
    */
   app.post('/logout', function (req, res) {
-    req.logout({}, () => console.log('logout'))
+    req.logout({}, () => {
+      /* console.log('logout') */
+    })
     res.redirect('/')
   })
 }

@@ -25,7 +25,6 @@ export const createLocalDeploymentRegistry = () => {
 
   function getByExtId(extId: ExtId) {
     const { extName, version } = splitExtId(extId)
-    console.log({ extName, version })
     const regDeployment = get(extName)
     if (!regDeployment) {
       return undefined

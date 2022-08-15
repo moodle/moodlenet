@@ -25,7 +25,6 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
         // other packages integration
         //   listen to messages -> send other messages
         //    use other packages plugins (e.g add UI to react app, or add http-endpoint)
-        console.log('I am test extension')
         reactApp.plug.setup({
           routes: {
             moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),

@@ -17,7 +17,6 @@ export type MainLayoutProps = {
 const MainLayout: FC<MainLayoutProps> = ({ headerType, style, children }) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
-  // console.log({ routes })
 
   // const stateContext = useContext(StateContext)
 

@@ -41,7 +41,6 @@ prompts.override(yargs.argv)
     deploymentFolder: installation_folder,
     systemFolder: system_folder,
   }
-  // console.log(operation, mainFolders, { installation_folder, system_folder })
   if (operation === 'boot') {
     boot({ mainFolders })
   } else if (operation === 'install') {

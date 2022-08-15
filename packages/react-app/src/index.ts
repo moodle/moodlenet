@@ -86,7 +86,6 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
           [ExtContextProvidersModuleFile.alias]: ExtContextProvidersModuleFile.target,
           [LibModuleFile.alias]: LibModuleFile.target,
         }
-        console.log({ baseResolveAlias })
 
         const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
         wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
@@ -106,14 +105,12 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
           plug(dep) {
             return {
               setup(plugin) {
-                console.log('...setup', dep.shell.extId, plugin)
                 extPluginsMap[dep.shell.extId] = {
                   ...plugin,
                   extName: dep.shell.extName,
                   extVersion: dep.shell.extVersion,
                   extId: dep.shell.extId,
                 }
-                // console.log({ '***': wp.compiler.options.resolve.alias })
                 if (plugin.addPackageAlias) {
                   const { loc, name } = plugin.addPackageAlias
                   wp.compiler.options.resolve.alias = {
@@ -122,9 +119,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
                   }
                 }
                 writeAliasModulesAndRecompile()
-                console.log({ aloiases: wp.compiler.options.resolve.alias })
                 dep.shell.tearDown.add(() => {
-                  console.log('removing react plugins')
                   if (plugin.addPackageAlias) {
                     const newAliases: any = {
                       ...wp.compiler.options.resolve.alias,
@@ -141,10 +136,11 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
         }
         async function writeAliasModulesAndRecompile() {
           await writeAliasModules()
-          wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
+          wp.compiler.watching.invalidate(() => {
+            /* console.log('INVALIDATED') */
+          })
         }
         function writeAliasModules() {
-          console.log('writeAliasModules!', extPluginsMap)
           return Promise.all([
             writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap })),
             writeFile(ExposeModuleFile.target, generateExposedModule({ extPluginsMap })),

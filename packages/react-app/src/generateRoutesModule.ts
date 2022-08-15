@@ -1,8 +1,6 @@
 import { ExtPluginsMap } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 export function generateRoutesModule({ extPluginsMap }: { extPluginsMap: ExtPluginsMap }) {
-  console.log(`generate routes.ts ..`)
-
   return `// - generated -
 import { lazy } from 'react'
 const routes: ExtRoute[]= [
