@@ -28,7 +28,6 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
     </>
   )
 
-  console.log({ settingsItems: setCtx.settingsItems })
   return (
     <div className="settings-page">
       <div className="left-menu">

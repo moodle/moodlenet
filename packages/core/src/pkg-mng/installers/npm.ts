@@ -29,7 +29,6 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
     pkgId,
     useFolderName,
   })
-  console.log('getting tarGzUrl...', { registry, pkgId })
 
   const hasVersion = pkgId.lastIndexOf('@') > 0
 
@@ -37,15 +36,12 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
   const version = hasVersion ? pkgId.substring(pkgId.lastIndexOf('@') + 1) : undefined
 
   const pkg_meta_url = `${registry}/${pkgName}${version ? `/${version}` : ``}`
-  console.log({ pkg_meta_url, registry, pkgName, version })
   const { data: _vers_dist } = await axios.get<_Vers_Dist>(pkg_meta_url).catch(err => {
     console.error(err)
     throw err
   })
-  console.log('_vers_dist', _vers_dist)
   const dist = 'dist' in _vers_dist ? _vers_dist.dist : Object.values(_vers_dist.versions)[0]!.dist
   const tarGzUrl = dist.tarball
-  console.log('down lib', tarGzUrl)
   const useHttpLib = tarGzUrl.startsWith('https') ? https : http
   await new Promise((resolve, reject) => {
     useHttpLib.get(tarGzUrl, function (response) {
@@ -62,8 +58,7 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
   delete pkgJson.devDependencies
   delete pkgJson.peerDependencies
   await writeFile(pkgJsonFile, JSON.stringify(pkgJson, null, 2))
-  console.log('install deps')
-  const installRes = await execa(
+  /* const installRes =  */ await execa(
     'npm',
     ['install', /* '--registry', registry, */ '--legacy-peer-deps', '--omit', 'dev', '--omit', 'peer'],
     {
@@ -71,6 +66,5 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
       timeout: 600000,
     },
   )
-  console.log({ pkgName, ...installRes })
   return { pkgInstallationId }
 }

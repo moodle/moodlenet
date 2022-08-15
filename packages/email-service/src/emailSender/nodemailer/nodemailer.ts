@@ -32,7 +32,6 @@ export function send(
   transportCfg: MailerCfg['transport'],
   emailObj: EmailObj /* , opts?: SendOpts */,
 ): Promise<SendResp> {
-  console.log('sending email : ', transportCfg, emailObj)
   return createTransport(transportCfg)
     .sendMail(emailObj)
     .then(messageInfo => ({ success: true, messageInfo } as const))

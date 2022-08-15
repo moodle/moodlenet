@@ -21,14 +21,10 @@ export const subRaw =
 
         xhr.addEventListener('readystatechange', function () {
           if (this.readyState === 4) {
-            // console.log('HTTP SUB DONE', {
-            //   collectResponse: parsedOrString(`[${this.responseText.split('\n').filter(Boolean).join(',')}]`),
-            // })
           }
         })
         let last_index = 0
         xhr.addEventListener('progress', function () {
-          // console.log('HTTP SUB progress status:', xhr.status)
           const curr_index = xhr.responseText.length
           if (last_index == curr_index) return
           const s = xhr.responseText.substring(last_index, curr_index)
@@ -67,7 +63,6 @@ function parsedOrString(s: string) {
 export function dematMessage<T>() {
   return mergeMap<{ msg: DataMessage<ValueData<T>> }, ObservableInput<{ msg: DataMessage<T> }>>(({ msg }) => {
     const notif = msg.data.value
-    // console.log({ msg, notif, ________________________: '' })
     return typeof notif.kind !== 'string'
       ? (throwError(() => new TypeError('Invalid notification, missing "kind"')) as unknown as {
           msg: DataMessage<T>

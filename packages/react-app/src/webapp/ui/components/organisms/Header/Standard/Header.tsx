@@ -16,7 +16,6 @@ type HeaderProps = {}
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
   const setCtx = useContext(SettingsCtx)
-  // console.log({ addonCtx })
 
   const { clientSession, logout, isRoot } = useContext(AuthCtx)
   const avatarImageUrl = isRoot

@@ -40,7 +40,7 @@ export function pub<Def extends ExtDef>(shell: Pick<RawShell<Def>, 'emit' | 'msg
         .subscribe(teardownAndDelSUB)
       const manageMsgsSub = shell.msg$
         .pipe(
-          // tap(console.log),
+          // tap(),
           filter(msg => matchMessage<Def>()(msg, subP.subPointer as any)),
           mergeMap(subReqMsg => {
             manageMsg(subReqMsg, shell.extId)
@@ -72,6 +72,7 @@ export function pub<Def extends ExtDef>(shell: Pick<RawShell<Def>, 'emit' | 'msg
         )
         .subscribe(pubNotifValue => {
           const parentMsg: DataMessage<any> = (pubNotifValue as any)[PUB_SYM]
+          delete (pubNotifValue as any)[PUB_SYM]
           const valueSpl = splitPointer(subP.valuePointer)
           shell.emit(valueSpl.path as never)({ value: pubNotifValue }, { parent: parentMsg })
         })
@@ -91,7 +92,6 @@ export function pub<Def extends ExtDef>(shell: Pick<RawShell<Def>, 'emit' | 'msg
 
       function teardownAndDelSUB(id: string) {
         const teardown = SUBSCRIPTIONS[id]
-        // console.log({ teardownAndDelSUB: id, teardown, SUBSCRIPTIONS })
         delete SUBSCRIPTIONS[id]
         teardown?.()
       }
@@ -137,7 +137,6 @@ export function subDemat<Def extends ExtDef>(shell: Pick<RawShell, 'send' | 'msg
 export function dematMessage<T>() {
   return mergeMap<{ msg: DataMessage<ValueData<T>> }, { msg: DataMessage<T> }[]>(({ msg }) => {
     const notif = msg.data.value
-    // console.log({ msg, notif, ________________________: '' })
     return typeof notif.kind !== 'string'
       ? (throwError(() => new TypeError('Invalid notification, missing "kind"')) as unknown as {
           msg: DataMessage<T>
@@ -169,16 +168,13 @@ export function sub<Def extends ExtDef>(shell: Pick<RawShell, 'send' | 'msg$' | 
   return <Path extends SubcriptionPaths<Def>>(pointer: Pointer<Def, Path>) =>
     (req: SubcriptionReq<Def, Path>, _opts?: Partial<PushOptions>) =>
       new Observable(subscriber => {
-        console.log(`Core sub`, pointer, req)
         const mainSub = new Subscription()
         try {
           const subP = sub_pointers<Def, Path>(pointer)
           const reqSplitP = splitPointer(subP.subPointer)
           const reqMsg = shell.send<Def>(reqSplitP.extId)(reqSplitP.path as never)({ req }, { ..._opts, sub: true })
-          console.log(`Core sub sent reqMsg `, String(reqMsg))
           const subscriberSub = shell.msg$
             .pipe(
-              // tap(____ => console.log({ ____, reqMsg, valuePointer: subP.valuePointer })),
               filter(
                 (msg): msg is DataMessage<ValueData<any>> =>
                   msg.parentMsgId === reqMsg.id && isBWCSemanticallySamePointers(subP.valuePointer, msg.pointer),
@@ -208,111 +204,3 @@ function sub_pointers<Def extends ExtDef, Path extends SubcriptionPaths<Def>>(po
     // unsubOut: `${pointer}/unsubOut` as `${Pointer<Def, Path>}/unsubOut`,
   }
 }
-
-/*
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- *******************************  MAKING TYPING TESTS DOWN THERE  *****************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- **********************************************************************************************************
- */
-/*
-type D = ExtDef<
-  'xxxx',
-  '1.4.3',
-  {
-    d: Port<'in', string>
-    b: SubTopo<'req b', 'res b'>
-    a: SubTopo<'req a', 'res a'>
-    s: {
-      g: Port<'in', 11>as any
-      v: {
-        l: Port<'out', string>
-        a: SubTopo<'req s/v/a', 'res s/v/a'>
-      }
-      // a: FunTopo<C>
-    }
-  }
->
-declare const shell: RawShell<D>
-;async () => {
-  const g = sub<D>(shell)('xxxx@1.4.3::s/v/a')('req s/v/a').subscribe(_ => {})
-  const h = sub<D>(shell)('xxxx@1.4.3::a')('req a').subscribe(_ => {
-    _.msg.data.value.kind === 'N' && _.msg.data.value.value
-  })
-  const w = subDemat<D>(shell)('xxxx@1.4.3::a')('req a').subscribe(_ => {
-    _.msg.data
-  })
-  w
-  // sub<D>(shell)('xxxx@1.4.3::alpha/beta/gamma')(4).subscribe(_ => {})
-  // sub<D>(shell)('xxxx@1.4.3::/alpha/beta/gamma')(4).subscribe(_ => {})
-  // sub<D>(shell)('xxxx@1.4.3:/alpha/beta/gamma')(4).subscribe(_ => {})
-  // sub<D>(shell)('xxxx@1.4.3/alpha/beta/gamma')(4).subscribe(_ => {})
-  // sub<D>(shell)('/xxxx@1.4.3/alpha/beta/gamma')(4).subscribe(_ => {})
-  // sub<D>(shell)('/xxxx/1.4.3/alpha/beta/gamma')(4).subscribe(_ => {})
-
-  g
-  h
-  pub<D>(shell)('xxxx@1.4.3::a')(async _ => {
-    const o = await subPVal<D>(shell)('xxxx@1.4.3::a')('req a')
-    subDemat<D>(shell)('xxxx@1.4.3::a')('req a')
-      .pipe()
-      .subscribe(_ => {
-        _.msg.data
-      })
-
-    return o //[o, () => {}]
-    
-  // return [firstValueFrom(o), () => {}]
-  // return 8
-  // return o
-  // return [o]
-  // return lastValueFrom( o)
-  // return [6,8]
-  // return [Promise.resolve(8)]
- 
-  })
-  pubAll<D>('xxxx@1.4.3', shell, {
-    's/v/a': _a =>
-      sub<D>(shell)('xxxx@1.4.3::s/v/a')('req s/v/a').pipe(
-        dematMessage(),
-        map(_ => _.msg.data),
-      ),
-    'a': _a => {
-      _a.msg.data.req === 'req a'
-      // @ts-expect-error
-      _a.msg.data.req === 'req aa'
-      return sub<D>(shell)('xxxx@1.4.3::a')('req a').pipe(
-        dematMessage(),
-        map(_ => _.msg.data),
-      )
-    },
-    'b': _a =>
-      sub<D>(shell)('xxxx@1.4.3::b')(_a.msg.data.req).pipe(
-        dematMessage(),
-        map(_ => _.msg.data),
-      ),
-  })
-  // // const j: ExtsubTopoPaths<D> = 'a'
-  // // listen.port<D>(s)('xxxx@1.4.3::s.v.l', ({ message: { payload } }) => {})
-  // // listen.ext<D>(s, 'xxxx@1.4.3')('s.g', ({ message: { payload } }) => {})
-}
-*/
