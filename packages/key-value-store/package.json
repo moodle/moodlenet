@@ -24,7 +24,5 @@
     "typescript": "^4.7.2"
   },
   "scripts": {},
-  "dependencies": {
-    "@moodlenet/arangodb": "^0.1.0"
-  }
+  "dependencies": {}
 }
