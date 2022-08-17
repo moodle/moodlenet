@@ -6,8 +6,8 @@ digraph G {
   "@moodlenet/key-value-store";
   "@moodlenet/dev-machine" [ style = "dashed" ];
   "@moodlenet/email-service";
-  "@moodlenet/react-app";
   "@moodlenet/extensions-manager";
+  "@moodlenet/react-app";
   "@moodlenet/http-server";
   "@moodlenet/passport-auth";
   "@moodlenet/simple-email-auth";
@@ -21,7 +21,6 @@ digraph G {
   "@moodlenet/dev-machine" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/email-service" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/email-service" -> "@moodlenet/key-value-store" [ style = "dashed" ];
-  "@moodlenet/email-service" -> "@moodlenet/react-app" [ style = "dashed" ];
   "@moodlenet/extensions-manager" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/extensions-manager" -> "@moodlenet/react-app" [ style = "dashed" ];
   "@moodlenet/http-server" -> "@moodlenet/core" [ style = "dashed" ];
