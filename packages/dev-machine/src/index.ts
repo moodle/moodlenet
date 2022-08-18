@@ -72,10 +72,22 @@ prompt.start()
         type: 'symlink',
         fromFolder,
       }))
+    const customCfgName = (
+      await prompt
+        .get([
+          {
+            default: '',
+            type: 'string',
+            description: 'custom config',
+            name: 'customCfgName',
+          },
+        ])
+        .catch(() => process.exit())
+    ).customCfgName as string
     await install({
       mainFolders,
       installPkgReqs,
-      defaultPkgEnv,
+      defaultPkgEnv: getDefaultPkgEnv(customCfgName),
     })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
@@ -90,12 +102,25 @@ prompt.start()
 
   boot({ mainFolders, devMode: true })
 
-  function defaultPkgEnv(pkgName: string) {
-    const defConfigs = {
-      '@moodlenet/http-server': { port: 8080 },
-      '@moodlenet/arangodb': { config: 'http://localhost:8529' },
-      '@moodlenet/authentication-manager': { rootPassword: 'root' },
-    } as any
-    return defConfigs[pkgName]
+  function getDefaultPkgEnv(customCfgName: string) {
+    return (pkgName: string) => {
+      let customCfgFileStr = '{}'
+      try {
+        customCfgFileStr = readFileSync('./pkg-configs.json', 'utf-8')
+      } catch {}
+      let customCfg = {} as any
+      try {
+        customCfg = JSON.parse(customCfgFileStr)
+      } catch {
+        throw new Error('pkg-configs.json unparseable json')
+      }
+      const defConfigs = {
+        '@moodlenet/http-server': { port: 8080 },
+        '@moodlenet/arangodb': { config: 'http://localhost:8529' },
+        '@moodlenet/authentication-manager': { rootPassword: 'root' },
+        ...customCfg[customCfgName],
+      } as any
+      return defConfigs[pkgName]
+    }
   }
 })()
