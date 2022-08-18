@@ -1,4 +1,4 @@
 /lib
 /.machines/**/*
 !/.machines/.gitkeep
-/pkg-configs.json
+/pkg-envs.json
