@@ -17,9 +17,7 @@
         "extensions-manager dev-build",
         "passport-auth dev-build",
         "simple-email-auth dev-build",
-        "email-service dev-build",
-        "crypto dev-build",
-        "key-value-store dev-build"
+        "email-service dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -37,15 +35,6 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "test-extension dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/key-value-store/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "key-value-store dev-build"
       // "dependsOn": ["core dev-build"]
     },
     {
@@ -140,11 +129,11 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/crypto/tsconfig.json",
+      "tsconfig": "packages/organization-data/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "crypto dev-build"
+      "label": "organization-service dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
