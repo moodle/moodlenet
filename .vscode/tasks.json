@@ -71,15 +71,6 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/email-service/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "email-service dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
       "tsconfig": "packages/extensions-manager/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
@@ -175,6 +166,24 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "organization dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/email-service/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "email-service dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/organization-data/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "organization-service dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
