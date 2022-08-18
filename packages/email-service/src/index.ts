@@ -24,7 +24,7 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
     const [, reactApp, kvStore] = shell.deps
     const kvstore = await kvStore.plug.getStore<{ mailerCfg: MailerCfg }>()
 
-    // const env = getEnv(shell.env)
+    const env = getEnv(shell.env)
     return {
       deploy() {
         reactApp.plug.setup({
@@ -44,9 +44,11 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
 
         shell.provide.services({
           async send({ emailObj }) {
-            const { value: mailerCfg = { transport: { jsonTransport: true }, defaultFrom: 'noreply@moodle.net' } } =
-              await kvstore.get('mailerCfg', '')
-
+            const mailerCfg = env?.mailerCfg ?? (await kvstore.get('mailerCfg', '')).value
+            console.log({ mailerCfg })
+            if (!mailerCfg) {
+              throw new Error(`no mailerCfg defined in env or kvstore ! can't send email !`)
+            }
             const resp = await send(mailerCfg.transport, {
               from: mailerCfg.defaultFrom,
               replyTo: mailerCfg.defaultFrom,
@@ -63,14 +65,16 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
 
 export default ext
 
-// type Env = {
-//   mailerCfg: MailerCfg
-//   defaultFrom?: string
-// }
-// function getEnv(_: any): Env {
-//   // mailerCfg:{jsonTransport}
-//   return {
-//     mailerCfg: _?.mailerCfg,
-//     defaultFrom: _?.defaultFrom,
-//   }
-// }
+type Env =
+  | Partial<{
+      mailerCfg: MailerCfg
+    }>
+  | undefined
+function getEnv(_: any): Env {
+  // mailerCfg:{jsonTransport}
+  return _
+    ? {
+        mailerCfg: _.mailerCfg,
+      }
+    : undefined
+}

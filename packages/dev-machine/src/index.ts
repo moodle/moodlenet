@@ -105,56 +105,14 @@ prompt.start()
   writeFileSync(DEV_LOCK_FILE, '')
 
   async function getDefaultPkgEnv(customCfgName: string) {
-    let customCfg = {} as any
-    if (customCfgName) {
-      let customConfigMap = {} as any
-      let customCfgFileStr = '{}'
-      try {
-        customCfgFileStr = await readFile('./pkg-configs.json', { encoding: 'utf-8' })
-      } catch {
-        const msg = `can't read pkg-configs.json file`
-        console.error(msg)
-        process.exit()
-      }
-      try {
-        customConfigMap = JSON.parse(customCfgFileStr)
-      } catch {
-        const msg = 'pkg-configs.json unparseable json'
-        console.error(msg)
-        process.exit()
-      }
+    let customCfg: any = undefined
+    const customCfgFileStr = await readFile('./pkg-configs.json', { encoding: 'utf-8' }).catch(() => '{}')
+    try {
+      const customConfigMap = JSON.parse(customCfgFileStr)
       customCfg = customConfigMap[customCfgName]
-      if (typeof customCfg !== 'object') {
-        let customCfg = {} as any
-        if (customCfgName) {
-          let customConfigMap = {} as any
-          let customCfgFileStr = '{}'
-          try {
-            customCfgFileStr = await readFile('./pkg-configs.json', { encoding: 'utf-8' })
-          } catch {
-            const msg = `can't read pkg-configs.json file`
-            console.error(msg)
-            process.exit()
-          }
-          try {
-            customConfigMap = JSON.parse(customCfgFileStr)
-          } catch {
-            const msg = 'pkg-configs.json unparseable json'
-            console.error(msg)
-            process.exit()
-          }
-          customCfg = customConfigMap[customCfgName]
-          if (typeof customCfg !== 'object') {
-            const msg = `pkg-configs.json#${customCfgName} has no object value !`
-            console.error(msg)
-            process.exit()
-          }
-        }
-
-        const msg = `pkg-configs.json#${customCfgName} has no object value !`
-        console.error(msg)
-        process.exit()
-      }
+    } catch {
+      console.error('pkg-configs.json unparseable json')
+      process.exit()
     }
 
     return (pkgName: string) => {
@@ -162,8 +120,11 @@ prompt.start()
         '@moodlenet/http-server': { port: 8080 },
         '@moodlenet/arangodb': { config: 'http://localhost:8529' },
         '@moodlenet/authentication-manager': { rootPassword: 'root' },
+        '@moodlenet/email-service': {
+          mailerCfg: { transport: { jsonTransport: true }, defaultFrom: 'noreply@moodlenet.local' },
+        },
         ...customCfg,
-      } as any
+      }
       return defConfigs[pkgName]
     }
   }
