@@ -1,6 +1,7 @@
 import { boot, install, InstallPkgReq, MainFolders } from '@moodlenet/core'
 import { defaultCorePackages } from '@moodlenet/core/lib/main/install'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { readFile } from 'fs/promises'
 import path, { resolve } from 'path'
 import prompt from 'prompt'
 import { sync as rimrafSync } from 'rimraf'
@@ -20,8 +21,6 @@ const lastDeploymentFolderName = (() => {
   }
 })()
 const hasLock = existsSync(DEV_LOCK_FILE)
-
-writeFileSync(DEV_LOCK_FILE, '')
 
 prompt.start()
 ;(async () => {
@@ -65,6 +64,20 @@ prompt.start()
   console.log({ deploymentFolder })
   const deploymentFolderPathExists = existsSync(deploymentFolder)
   if (!deploymentFolderPathExists) {
+    const customCfgName = (
+      await prompt
+        .get([
+          {
+            default: '',
+            type: 'string',
+            description: 'custom config property ?',
+            name: 'customCfgName',
+          },
+        ])
+        .catch(() => process.exit())
+    ).customCfgName as string
+    const defaultPkgEnv = await getDefaultPkgEnv(customCfgName)
+
     mkdirSync(deploymentFolder, { recursive: true })
     const installPkgReqs = Object.keys(defaultCorePackages)
       .map(dirName => resolve(__dirname, '..', '..', dirName))
@@ -72,22 +85,10 @@ prompt.start()
         type: 'symlink',
         fromFolder,
       }))
-    const customCfgName = (
-      await prompt
-        .get([
-          {
-            default: '',
-            type: 'string',
-            description: 'custom config',
-            name: 'customCfgName',
-          },
-        ])
-        .catch(() => process.exit())
-    ).customCfgName as string
     await install({
       mainFolders,
       installPkgReqs,
-      defaultPkgEnv: getDefaultPkgEnv(customCfgName),
+      defaultPkgEnv,
     })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
@@ -100,25 +101,68 @@ prompt.start()
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
 
-  boot({ mainFolders, devMode: true })
+  await boot({ mainFolders, devMode: true })
+  writeFileSync(DEV_LOCK_FILE, '')
 
-  function getDefaultPkgEnv(customCfgName: string) {
-    return (pkgName: string) => {
+  async function getDefaultPkgEnv(customCfgName: string) {
+    let customCfg = {} as any
+    if (customCfgName) {
+      let customConfigMap = {} as any
       let customCfgFileStr = '{}'
       try {
-        customCfgFileStr = readFileSync('./pkg-configs.json', 'utf-8')
-      } catch {}
-      let customCfg = {} as any
-      try {
-        customCfg = JSON.parse(customCfgFileStr)
+        customCfgFileStr = await readFile('./pkg-configs.json', { encoding: 'utf-8' })
       } catch {
-        throw new Error('pkg-configs.json unparseable json')
+        const msg = `can't read pkg-configs.json file`
+        console.error(msg)
+        process.exit()
       }
+      try {
+        customConfigMap = JSON.parse(customCfgFileStr)
+      } catch {
+        const msg = 'pkg-configs.json unparseable json'
+        console.error(msg)
+        process.exit()
+      }
+      customCfg = customConfigMap[customCfgName]
+      if (typeof customCfg !== 'object') {
+        let customCfg = {} as any
+        if (customCfgName) {
+          let customConfigMap = {} as any
+          let customCfgFileStr = '{}'
+          try {
+            customCfgFileStr = await readFile('./pkg-configs.json', { encoding: 'utf-8' })
+          } catch {
+            const msg = `can't read pkg-configs.json file`
+            console.error(msg)
+            process.exit()
+          }
+          try {
+            customConfigMap = JSON.parse(customCfgFileStr)
+          } catch {
+            const msg = 'pkg-configs.json unparseable json'
+            console.error(msg)
+            process.exit()
+          }
+          customCfg = customConfigMap[customCfgName]
+          if (typeof customCfg !== 'object') {
+            const msg = `pkg-configs.json#${customCfgName} has no object value !`
+            console.error(msg)
+            process.exit()
+          }
+        }
+
+        const msg = `pkg-configs.json#${customCfgName} has no object value !`
+        console.error(msg)
+        process.exit()
+      }
+    }
+
+    return (pkgName: string) => {
       const defConfigs = {
         '@moodlenet/http-server': { port: 8080 },
         '@moodlenet/arangodb': { config: 'http://localhost:8529' },
         '@moodlenet/authentication-manager': { rootPassword: 'root' },
-        ...customCfg[customCfgName],
+        ...customCfg,
       } as any
       return defConfigs[pkgName]
     }
