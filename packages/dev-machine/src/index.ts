@@ -64,19 +64,19 @@ prompt.start()
   console.log({ deploymentFolder })
   const deploymentFolderPathExists = existsSync(deploymentFolder)
   if (!deploymentFolderPathExists) {
-    const customCfgName = (
+    const customEnvName = (
       await prompt
         .get([
           {
             default: '',
             type: 'string',
-            description: 'custom config property ?',
-            name: 'customCfgName',
+            description: 'custom env property ?',
+            name: 'customEnvName',
           },
         ])
         .catch(() => process.exit())
-    ).customCfgName as string
-    const defaultPkgEnv = await getDefaultPkgEnv(customCfgName)
+    ).customEnvName as string
+    const defaultPkgEnv = await getDefaultPkgEnv(customEnvName)
 
     mkdirSync(deploymentFolder, { recursive: true })
     const installPkgReqs = Object.keys(defaultCorePackages)
@@ -104,28 +104,28 @@ prompt.start()
   await boot({ mainFolders, devMode: true })
   writeFileSync(DEV_LOCK_FILE, '')
 
-  async function getDefaultPkgEnv(customCfgName: string) {
-    let customCfg: any = undefined
-    const customCfgFileStr = await readFile('./pkg-configs.json', { encoding: 'utf-8' }).catch(() => '{}')
+  async function getDefaultPkgEnv(customEnvName: string) {
+    let customEnv: any = undefined
+    const customPkgEnvFileStr = await readFile('./pkg-envs.json', { encoding: 'utf-8' }).catch(() => '{}')
     try {
-      const customConfigMap = JSON.parse(customCfgFileStr)
-      customCfg = customConfigMap[customCfgName]
+      const customEnvsMap = JSON.parse(customPkgEnvFileStr)
+      customEnv = customEnvsMap[customEnvName]
     } catch {
-      console.error('pkg-configs.json unparseable json')
+      console.error('pkg-envs.json unparseable json')
       process.exit()
     }
 
     return (pkgName: string) => {
-      const defConfigs = {
+      const defEnvs = {
         '@moodlenet/http-server': { port: 8080 },
         '@moodlenet/arangodb': { config: 'http://localhost:8529' },
         '@moodlenet/authentication-manager': { rootPassword: 'root' },
         '@moodlenet/email-service': {
           mailerCfg: { transport: { jsonTransport: true }, defaultFrom: 'noreply@moodlenet.local' },
         },
-        ...customCfg,
+        ...customEnv,
       }
-      return defConfigs[pkgName]
+      return defEnvs[pkgName]
     }
   }
 })()
