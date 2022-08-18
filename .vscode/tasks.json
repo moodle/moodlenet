@@ -179,11 +179,20 @@
     },
     {
       "type": "typescript",
+      "tsconfig": "packages/key-value-store/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "key-value-store dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
       "tsconfig": "packages/organization-data/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "organization-service dev-build"
+      "label": "organization-data dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
