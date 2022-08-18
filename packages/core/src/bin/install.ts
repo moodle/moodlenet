@@ -11,6 +11,7 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
     'http-port': httpPort,
     'arango-url': arangoUrl,
     'root-password': rootPassword,
+    'smtp-url': smtpUrl,
   } = await prompts([
     {
       type: 'number',
@@ -29,6 +30,11 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
       name: 'root-password',
       message: `root password ?`,
     },
+    {
+      type: 'text',
+      name: 'smtp-url',
+      message: `smtp url ?`,
+    },
   ])
 
   return install({ mainFolders, defaultPkgEnv })
@@ -38,6 +44,9 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
       '@moodlenet/http-server': { port: httpPort },
       '@moodlenet/arangodb': { config: arangoUrl },
       '@moodlenet/authentication-manager': { rootPassword },
+      '@moodlenet/email-service': {
+        mailerCfg: { transport: smtpUrl },
+      },
     } as any
     return defConfigs[pkgName]
   }
