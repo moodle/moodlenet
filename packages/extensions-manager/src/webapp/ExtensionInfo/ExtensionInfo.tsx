@@ -54,10 +54,10 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
     searchPackagesResObject.installed
-      ? lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/uninstall')({
+      ? lib.priHttp.fetch<CoreExt>('@moodlenet/core@0.1.0')('pkg/uninstall')({
           pkgInstallationId: searchPackagesResObject.pkgInstallationId,
         })
-      : lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
+      : lib.priHttp.fetch<CoreExt>('@moodlenet/core@0.1.0')('pkg/install')({
           installPkgReq: searchPackagesResObject.installPkgReq,
         })
 

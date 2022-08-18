@@ -14,7 +14,7 @@ const Modules: FC<ModulesProps> = () => {
     if (!localPathField) {
       return
     }
-    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
+    lib.priHttp.fetch<CoreExt>('@moodlenet/core@0.1.0')('pkg/install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
     })
   }, [localPathField])

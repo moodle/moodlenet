@@ -45,7 +45,7 @@ export type AuthCtxT = {
     }
 )
 
-const srvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
+const srvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
@@ -90,38 +90,32 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }, [])
   const [clientSession, setClientSession] = useState<ClientSession | null>(null)
 
-  const fetchClientSession = useCallback(
-    async (token: SessionToken) => {
-      const res = await srvFetch('getClientSession')({ token })
-      if (!res.success) {
-        writeSessionToken()
-        return { success: false, msg: 'invalid token' } as const
-      }
-      writeSessionToken(token)
+  const fetchClientSession = useCallback(async (token: SessionToken) => {
+    const [res] = await srvFetch('getClientSession')({ token })
+    if (!res.success) {
+      writeSessionToken()
+      return { success: false, msg: 'invalid token' } as const
+    }
+    writeSessionToken(token)
 
-      setClientSession(res.clientSession)
-      return {
-        success: true,
-        clientSession: res.clientSession,
-      } as const
-    },
-    [setClientSession],
-  )
+    setClientSession(res.clientSession)
+    return {
+      success: true,
+      clientSession: res.clientSession,
+    } as const
+  }, [])
 
   const logout = useCallback<AuthCtxT['logout']>(() => {
     setClientSession(null)
     writeSessionToken()
-  }, [setClientSession])
-  const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(
-    async token => {
-      const res = await fetchClientSession(token)
-      if (res.success) {
-        nav('/')
-      }
-      return res
-    },
-    [setClientSession],
-  )
+  }, [])
+  const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(async token => {
+    const res = await fetchClientSession(token)
+    if (res.success) {
+      nav('/')
+    }
+    return res
+  }, [])
 
   useEffect(() => {
     const storedSessionToken = readSessionToken()

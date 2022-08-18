@@ -12,7 +12,7 @@ export type PassportContextT = {
   configs: PassportConfigs
   save(configs: PassportConfigs): Promise<void>
 }
-const passportSrv = lib.priHttp.fetch<PassportAuthExtDef>('@moodlenet/passport-auth', '0.1.0')
+const passportSrv = lib.priHttp.fetch<PassportAuthExtDef>('@moodlenet/passport-auth@0.1.0')
 export const PassportContext = createContext<PassportContextT>(null as any)
 export const MainProvider: ExtContextProviderComp = ({ children }) => {
   lib.auth.useRegisterLogin(loginComponents)
@@ -20,11 +20,11 @@ export const MainProvider: ExtContextProviderComp = ({ children }) => {
   lib.settings.useRegisterSettingsItem(settingsComponents)
   const [configs, setConfig] = useState<PassportConfigs>({})
   useEffect(() => {
-    passportSrv('get')().then(({ configs }) => setConfig(configs))
+    passportSrv('get')().then(([{ configs }]) => setConfig(configs))
   }, [])
 
   const save = useCallback<PassportContextT['save']>(configs => {
-    return passportSrv('save')({ configs }).then(({ configs }) => setConfig(configs))
+    return passportSrv('save')({ configs }).then(([{ configs }]) => setConfig(configs))
   }, [])
 
   const ctx = useMemo<PassportContextT>(() => {

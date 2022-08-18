@@ -1,6 +1,6 @@
 import { PackageInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import React, { createContext, FC, PropsWithChildren, useEffect, useState } from 'react'
+import React, { createContext, FC, PropsWithChildren, useState } from 'react'
 import { ExtensionsManagerExt } from '..'
 import { SearchPackagesResObject, SearchPackagesResponse } from '../types/data'
 import * as SettingsEnabledExtComponents from './SettingsEnabledExt'
@@ -14,27 +14,20 @@ export type StateContextType = {
   selectedExtInfo: SearchPackagesResObject | null
   setSelectedExtInfo: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
   searchPkgResp: SearchPackagesResponse | undefined
-  setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
+  // setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
 }
 
 export const StateContext = createContext<StateContextType>(null as any)
-
+const useExtMngFetch = lib.priHttp.fetchHook<ExtensionsManagerExt>('@moodlenet/extensions-manager@0.1.0')
 const StateProvider: FC<PropsWithChildren> = ({ children }) => {
   const [devMode, setDevMode] = useState(false)
   const [selectedExtConfig, setSelectedExtConfig] = useState<PackageInfo | null>(null)
   const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
-  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
+  // const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
   lib.settings.useRegisterSettingsItem(SettingsInstallComponents)
   lib.settings.useRegisterSettingsItem(SettingsEnabledExtComponents)
 
-  useEffect(() => {
-    lib.priHttp
-      .fetch<ExtensionsManagerExt>(
-        '@moodlenet/extensions-manager',
-        '0.1.0',
-      )('searchPackages')({ searchText: 'moodlenet' })
-      .then(resp => setSearchPkgResp(resp))
-  }, [])
+  const { value: searchPkgResp } = useExtMngFetch('searchPackages', { searchText: 'moodlenet' })
 
   return (
     <StateContext.Provider
@@ -46,7 +39,6 @@ const StateProvider: FC<PropsWithChildren> = ({ children }) => {
         selectedExtInfo,
         setSelectedExtInfo,
         searchPkgResp,
-        setSearchPkgResp,
       }}
     >
       {children}

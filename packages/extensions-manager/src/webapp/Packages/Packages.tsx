@@ -23,11 +23,8 @@ const Packages: FC<PackagesProps> = () => {
 
   useEffect(() => {
     lib.priHttp
-      .fetch<CoreExt>(
-        '@moodlenet/core',
-        '0.1.0',
-      )('ext/listDeployed')()
-      .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
+      .fetch<CoreExt>('@moodlenet/core@0.1.0')('ext/listDeployed')()
+      .then(([{ pkgInfos }]) => setExtInfoList(pkgInfos))
   }, [])
   const extInfosListElements = useMemo(
     () =>

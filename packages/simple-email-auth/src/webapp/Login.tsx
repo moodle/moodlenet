@@ -1,29 +1,28 @@
 import { useFormik } from 'formik'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useContext, useState } from 'react'
+import { FC, useContext } from 'react'
 import { SimpleEmailAuthExt } from '..'
 
 const { InputTextField, PrimaryButton, TertiaryButton } = lib.ui.components.atoms
+const useMyLazy = lib.priHttp.lazyFetchHook<SimpleEmailAuthExt>('@moodlenet/simple-email-auth@0.1.0')
+
 export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => <PrimaryButton color="blue">Using email</PrimaryButton>
 export const Panel: FC = () => {
-  const [wrongCreds, setWrongCreds] = useState(false)
+  const loginLazy = useMyLazy('login')
+  const wrongCreds = !loginLazy.fetching && !loginLazy.value?.success
   const auth = useContext(lib.auth.AuthCtx)
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
-      setWrongCreds(false)
-      const res = await lib.priHttp.fetch<SimpleEmailAuthExt>('@moodlenet/simple-email-auth', '0.1.0')('login')({
+      const [res] = await loginLazy.fetch({
         email,
         password,
       })
-
       if (!res.success) {
-        setWrongCreds(true)
         return
       }
-      setWrongCreds(false)
       auth.setSessionToken(res.sessionToken)
     },
   })

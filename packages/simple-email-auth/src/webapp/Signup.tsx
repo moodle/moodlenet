@@ -15,7 +15,7 @@ export const Panel: FC = () => {
     initialValues: { email: '', password: '', displayName: '' },
     async onSubmit({ email, password, displayName }) {
       setErrMsg('')
-      const res = await lib.priHttp.fetch<SimpleEmailAuthExt>('@moodlenet/simple-email-auth', '0.1.0')('signup')({
+      const [res] = await lib.priHttp.fetch<SimpleEmailAuthExt>('@moodlenet/simple-email-auth@0.1.0')('signup')({
         displayName,
         email,
         password,

@@ -14,7 +14,7 @@ export const ext: ContentGraphStoreExt = {
     '@moodlenet/authentication-manager@0.1.0',
   ],
   async connect(shell) {
-    const [, arangoSrv, kvStore] = shell.deps
+    const [, arangoSrv, _kvStore] = shell.deps
     const libFor = await extLibForFactory(shell)
 
     shell.onExtUninstalled(async ({ extName }) => {

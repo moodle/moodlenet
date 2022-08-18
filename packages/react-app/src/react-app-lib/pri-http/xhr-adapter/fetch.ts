@@ -1,12 +1,13 @@
-import type { DataMessage, ExtDef, ExtName, ExtVersion, SubcriptionPaths, ValueData } from '@moodlenet/core'
+import type { DataMessage, ExtDef, ExtId, ExtName, ExtVersion, SubcriptionPaths, ValueData } from '@moodlenet/core'
 import type { RawSubOpts } from '@moodlenet/http-server'
 import { firstValueFrom, Observable, ObservableInput, throwError } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 export type Sub = typeof subRaw
 export const subRaw =
-  <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
+  <Def extends ExtDef>(extId: ExtId<Def>) =>
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
     type HttpSubType = RawSubOpts<Def, Path>
+    const [extName, extVersion] = extId.split('@') as [ExtName<Def>, ExtVersion<Def>]
     const httpPath: HttpSubType['path'] = `/_/_/raw-sub/${extName}/${extVersion}/${path}`
     const method: HttpSubType['method'] = `POST`
     return (req: HttpSubType['req'] /* , opts?: Opts */) =>
@@ -85,13 +86,14 @@ export function dematMessage<T>() {
 }
 
 export const fetch =
-  <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
+  <Def extends ExtDef>(extId: ExtId<Def>) =>
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
     type HttpSubType = RawSubOpts<Def, Path>
     return async (req: HttpSubType['req']) => {
-      const {
-        msg: { data },
-      } = await firstValueFrom(subRaw(extName, extVersion)(path)(req).pipe(dematMessage()))
-      return data
+      const resp = await firstValueFrom(subRaw<Def>(extId)(path)(req).pipe(dematMessage()))
+      return [resp.msg.data, resp] as const
     }
   }
+// subRaw<CoreExt>('@moodlenet/core@0.1.0')('ext/listDeployed')().subscribe(_=>{
+//   _.msg.data.value.kind==='N'&&_.msg.data.value.value.pkgInfos
+// })

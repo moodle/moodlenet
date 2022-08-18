@@ -8,7 +8,7 @@ import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import { MainLayout } from '../../../layout'
 import './RootLogin.scss'
 
-const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
+const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
 export type RootLoginFormValues = { email: string; password: string }
 export type RootLoginProps = {}
 
@@ -34,7 +34,7 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
   const rootLogin = useCallback(async () => {
     setLoginFailed(false)
     setSubmitting(true)
-    const res = await authSrv('getRootSessionToken')({ password: rootPassword })
+    const [res] = await authSrv('getRootSessionToken')({ password: rootPassword })
     if (res.success) {
       setSessionToken(res.sessionToken)
     }

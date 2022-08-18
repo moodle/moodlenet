@@ -38,7 +38,7 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) 
   const uninstall = useCallback(() => {
     toggleIsInstalling()
 
-    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/uninstall')({
+    lib.priHttp.fetch<CoreExt>('@moodlenet/core@0.1.0')('pkg/uninstall')({
       pkgInstallationId: pkgInfo.id,
     })
     // .finally(toggleIsInstalling)

@@ -28,18 +28,15 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
 
   useEffect(() => {
     lib.priHttp
-      .fetch<CoreExt>(
-        '@moodlenet/core',
-        '0.1.0',
-      )('ext/listDeployed')()
-      .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
+      .fetch<CoreExt>('@moodlenet/core@0.1.0')('ext/listDeployed')()
+      .then(([{ pkgInfos }]) => setExtInfoList(pkgInfos))
   }, [])
   const install = useCallback(() => {
     if (!localPathField) {
       return
     }
     toggleIsInstalling()
-    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
+    lib.priHttp.fetch<CoreExt>('@moodlenet/core@0.1.0')('pkg/install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
     })
     // .finally(toggleIsInstalling)
