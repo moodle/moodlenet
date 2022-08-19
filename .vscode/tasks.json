@@ -20,7 +20,7 @@
         "email-service dev-build",
         "crypto dev-build",
         "key-value-store dev-build",
-        "organization-data dev-build"
+        "organization dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -150,11 +150,11 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/organization-data/tsconfig.json",
+      "tsconfig": "packages/organization/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "organization-data dev-build"
+      "label": "organization dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
