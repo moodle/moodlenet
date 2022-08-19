@@ -62,7 +62,7 @@ export const getResourceTypeInfo = (
     case 'odp':
       return { typeName: t`Presentation`, typeColor: '#dfa600' }
     case 'mbz':
-      return { typeName: 'Moodle file', typeColor: '#f88012' }
+      return { typeName: 'Moodle course', typeColor: '#f88012' }
     case 'Web Page':
       return { typeName: t`Web page`, typeColor: '#C233C7' }
     default:
