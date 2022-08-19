@@ -17,7 +17,7 @@ export type SendResp =
     }
 
 export type MailerCfg = {
-  defaultFrom: string
+  defaultFrom?: string
   transport:
     | string
     | SMTPTransport.Options
