@@ -4,8 +4,10 @@ import {
 } from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { createElement, useCallback, useMemo } from 'react'
+import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
+import { getJustAssetRefUrl } from '../../../../../helpers/data'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
@@ -78,6 +80,8 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({
     session,
   ])
 
+  const { org: localOrg } = useLocalInstance()
+
   const categoryProps = useMemo<null | SubjectProps>(() => {
     if (!categoryData) {
       return null
@@ -105,6 +109,10 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({
         {},
         'header-page-template'
       ),
+      organization: {
+        name: localOrg.name,
+        smallLogo: getJustAssetRefUrl(localOrg.smallLogo),
+      },
       title: categoryData.name,
       collectionCardPropsList,
       isFollowing,
@@ -119,7 +127,14 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({
         'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
     }
     return props
-  }, [categoryData, isAuthenticated, myFollowEdgeId, toggleFollow])
+  }, [
+    categoryData,
+    isAuthenticated,
+    myFollowEdgeId,
+    localOrg.name,
+    localOrg.smallLogo,
+    toggleFollow,
+  ])
   if (!loading && !data?.node) {
     return createElement(Fallback, fallbackProps({ key: 'category-not-found' }))
   }

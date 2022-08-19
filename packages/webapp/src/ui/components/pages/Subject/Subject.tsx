@@ -1,5 +1,7 @@
 import { Trans } from '@lingui/macro'
+import { Helmet } from 'react-helmet'
 import { CP, withCtrl } from '../../../lib/ctrl'
+import { Organization } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
@@ -29,6 +31,7 @@ export type SubjectProps = {
   numCollections: number
   numResources: number
   isIscedSubject: boolean
+  organization: Pick<Organization, 'name' | 'smallLogo'>
   iscedLink?: string
   toggleFollow(): unknown
 }
@@ -46,10 +49,27 @@ export const Subject = withCtrl<SubjectProps>(
     numFollowers,
     numCollections,
     numResources,
+    organization,
     iscedLink,
   }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        <Helmet>
+          {/* <meta
+            property="og:description"
+            content={form.values.description?.slice(0, 300)}
+          /> */}
+        </Helmet>
+        <Helmet>
+          <meta property="og:title" content={title.slice(0, 90)} />
+          <meta
+            property="og:description"
+            content={organization.name?.slice(0, 300)}
+          />
+          <meta property="og:image" content={organization.smallLogo} />
+          <meta name="twitter:card" content="summary-large-image" />
+          <meta property="twitter:image" content={organization.smallLogo} />
+        </Helmet>
         <div className="subject">
           <div className="content">
             <div className="category-header">

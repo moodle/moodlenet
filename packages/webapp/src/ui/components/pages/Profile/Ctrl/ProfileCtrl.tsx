@@ -368,7 +368,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       reportForm,
       showAccountApprovedSuccessAlert: hasJustBeenApproved,
       sendEmailForm,
-      editForm: form,
+      form: form,
       displayName: profile.name,
     }
     return props

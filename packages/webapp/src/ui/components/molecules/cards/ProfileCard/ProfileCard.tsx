@@ -10,6 +10,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { Helmet } from 'react-helmet'
 // import { ReactComponent as AddIcon } from '../../../../assets/icons/add.svg'
 import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
@@ -37,7 +38,7 @@ export type ProfileCardProps = {
   isFollowing?: boolean
   isEditing?: boolean
   isAuthenticated: boolean
-  editForm: FormikHandle<ProfileFormValues>
+  form: FormikHandle<ProfileFormValues>
   toggleFollowForm: FormikHandle<{}>
   requestApprovalForm: FormikHandle<{}>
   approveUserForm: FormikHandle<{}>
@@ -63,7 +64,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     isAuthenticated,
     isEditing,
     isFollowing,
-    editForm,
+    form,
     toggleFollowForm,
     approveUserForm,
     requestApprovalForm,
@@ -77,7 +78,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     setIsReporting,
   }) => {
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
-    const shouldShowErrors = !!editForm.submitCount && !editForm.isValid
+    const shouldShowErrors = !!form.submitCount && !form.isValid
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
     const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
@@ -106,13 +107,13 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     }
 
     const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) =>
-      editForm.setFieldValue('backgroundImage', e.currentTarget.files?.item(0))
+      form.setFieldValue('backgroundImage', e.currentTarget.files?.item(0))
 
     const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
-      editForm.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
+      form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
     const [backgroundUrl] = useImageUrl(
-      editForm.values.backgroundImage,
+      form.values.backgroundImage,
       defaultBackgroud
     )
     const background = {
@@ -120,7 +121,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       backgroundSize: 'cover',
     }
 
-    const [avatarUrl] = useImageUrl(editForm.values.avatarImage, defaultAvatar)
+    const [avatarUrl] = useImageUrl(form.values.avatarImage, defaultAvatar)
     const avatar = {
       backgroundImage: 'url(' + avatarUrl + ')',
       backgroundSize: 'cover',
@@ -144,6 +145,19 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
 
     return (
       <div className="profile-card">
+        <Helmet>
+          <meta
+            property="og:title"
+            content={form.values.displayName?.slice(0, 90)}
+          />
+          <meta
+            property="og:description"
+            content={form.values.description?.slice(0, 300)}
+          />
+          {avatarUrl && <meta property="og:image" content={avatarUrl} />}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="twitter:image" content={avatarUrl} />
+        </Helmet>
         {isShowingBackground && backgroundUrl && (
           <Modal
             className="image-modal"
@@ -186,17 +200,17 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           style={{
             ...background,
             pointerEvents:
-              editForm.isSubmitting || !editForm.values.backgroundImage
+              form.isSubmitting || !form.values.backgroundImage
                 ? 'none'
                 : 'inherit',
             cursor:
-              editForm.isSubmitting || !editForm.values.backgroundImage
+              form.isSubmitting || !form.values.backgroundImage
                 ? 'auto'
                 : 'pointer',
           }}
           onClick={() =>
             !isEditing &&
-            editForm.values.backgroundImage &&
+            form.values.backgroundImage &&
             setIsShowingBackground(true)
           }
         />
@@ -206,18 +220,16 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           style={{
             ...avatar,
             pointerEvents:
-              editForm.isSubmitting || !editForm.values.avatarImage
+              form.isSubmitting || !form.values.avatarImage
                 ? 'auto'
                 : 'inherit',
             cursor:
-              editForm.isSubmitting || !editForm.values.avatarImage
+              form.isSubmitting || !form.values.avatarImage
                 ? 'auto'
                 : 'pointer',
           }}
           onClick={() =>
-            !isEditing &&
-            editForm.values.avatarImage &&
-            setIsShowingAvatar(true)
+            !isEditing && form.values.avatarImage && setIsShowingAvatar(true)
           }
         >
           {isEditing && (
@@ -243,13 +255,13 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <div className="edit-save">
               {isEditing ? (
                 <PrimaryButton
-                  className={`${editForm.isSubmitting ? 'loading' : ''}`}
+                  className={`${form.isSubmitting ? 'loading' : ''}`}
                   color="green"
                   onClick={() =>
-                    (!shouldShowErrors || editForm.isValid) && toggleIsEditing()
+                    (!shouldShowErrors || form.isValid) && toggleIsEditing()
                   }
                 >
-                  {editForm.isSubmitting ? (
+                  {form.isSubmitting ? (
                     <div className="loading">
                       <Loading color="white" />
                     </div>
@@ -272,22 +284,20 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               {isOwner && isEditing ? (
                 <InputTextField
                   className={`display-name underline ${
-                    editForm.isSubmitting ? 'no-edit' : ''
+                    form.isSubmitting ? 'no-edit' : ''
                   }`}
                   placeholder="Display name"
-                  value={editForm.values.displayName}
-                  onChange={editForm.handleChange}
+                  value={form.values.displayName}
+                  onChange={form.handleChange}
                   name="displayName"
                   displayMode={true}
                   edit={isEditing}
                   error={
-                    isEditing && shouldShowErrors && editForm.errors.displayName
+                    isEditing && shouldShowErrors && form.errors.displayName
                   }
                 />
               ) : (
-                <div className="display-name">
-                  {editForm.values.displayName}
-                </div>
+                <div className="display-name">{form.values.displayName}</div>
               )}
               {!isEditing && isOwner && isApproved && (
                 <abbr className={`approved-icon`} title={t`Approved`}>
@@ -317,47 +327,44 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   <InputTextField
                     className="underline"
                     placeholder="Location"
-                    value={editForm.values.location}
-                    onChange={editForm.handleChange}
+                    value={form.values.location}
+                    onChange={form.handleChange}
                     displayMode={true}
                     name="location"
                     edit={isEditing}
-                    disabled={editForm.isSubmitting}
+                    disabled={form.isSubmitting}
                     error={
-                      isEditing && shouldShowErrors && editForm.errors.location
+                      isEditing && shouldShowErrors && form.errors.location
                     }
                   />
                 </span>
                 <span>
                   <InputTextField
                     className="underline"
-                    value={editForm.values.siteUrl}
-                    onChange={editForm.handleChange}
+                    value={form.values.siteUrl}
+                    onChange={form.handleChange}
                     displayMode={true}
                     placeholder="Website"
                     name="siteUrl"
                     edit={isEditing}
-                    disabled={editForm.isSubmitting}
-                    error={
-                      isEditing && shouldShowErrors && editForm.errors.siteUrl
-                    }
+                    disabled={form.isSubmitting}
+                    error={isEditing && shouldShowErrors && form.errors.siteUrl}
                   />
                 </span>
               </div>
             ) : (
-              (editForm.values.location || editForm.values.siteUrl) && (
+              (form.values.location || form.values.siteUrl) && (
                 <div className="subtitle">
-                  {editForm.values.location &&
-                    editForm.values.location !== '' && (
-                      <span>{editForm.values.location}</span>
-                    )}
-                  {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
+                  {form.values.location && form.values.location !== '' && (
+                    <span>{form.values.location}</span>
+                  )}
+                  {form.values.siteUrl && form.values.siteUrl !== '' && (
                     <a
-                      href={editForm.values.siteUrl}
+                      href={form.values.siteUrl}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {editForm.values.siteUrl}
+                      {form.values.siteUrl}
                     </a>
                   )}
                 </div>
@@ -367,24 +374,22 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           {isOwner ? (
             <InputTextField
               textAreaAutoSize={true}
-              value={editForm.values.description}
-              onChange={editForm.handleChange}
+              value={form.values.description}
+              onChange={form.handleChange}
               textarea={true}
               displayMode={true}
               className={`description underline ${
-                editForm.isSubmitting ? 'no-edit' : ''
+                form.isSubmitting ? 'no-edit' : ''
               }`}
               placeholder="What should others know about you?"
               name="description"
               edit={isEditing}
-              error={
-                isEditing && shouldShowErrors && editForm.errors.description
-              }
+              error={isEditing && shouldShowErrors && form.errors.description}
             />
           ) : (
-            editForm.values.description &&
-            editForm.values.description !== '' && (
-              <div className="description">{editForm.values.description}</div>
+            form.values.description &&
+            form.values.description !== '' && (
+              <div className="description">{form.values.description}</div>
             )
           )}
           {isOwner && !isApproved && !isWaitingApproval && (
