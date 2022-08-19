@@ -42,7 +42,7 @@ export type ProfileProps = {
     | 'isEditing'
     | 'toggleIsEditing'
     | 'openSendMessage'
-    | 'editForm'
+    | 'form'
     | 'setShowUserIdCopiedAlert'
     | 'setShowUrlCopiedAlert'
     | 'setIsReporting'
@@ -57,7 +57,7 @@ export type ProfileProps = {
   showAccountApprovedSuccessAlert?: boolean
   sendEmailForm?: FormikHandle<{ text: string }>
   reportForm?: FormikHandle<{ comment: string }>
-  editForm: FormikHandle<ProfileFormValues>
+  form: FormikHandle<ProfileFormValues>
   isOwner?: boolean
 }
 
@@ -75,7 +75,7 @@ export const Profile = withCtrl<ProfileProps>(
     showAccountApprovedSuccessAlert,
     sendEmailForm,
     reportForm,
-    editForm,
+    form,
     isOwner,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -87,10 +87,10 @@ export const Profile = withCtrl<ProfileProps>(
     const [isReporting, setIsReporting] = useState<boolean>(false)
 
     const toggleIsEditing = () => {
-      if (isEditing && editForm.dirty) {
-        editForm.submitForm()
-        editForm.isValid && setIsEditing(false)
-      } else if (isEditing && !editForm.dirty) {
+      if (isEditing && form.dirty) {
+        form.submitForm()
+        form.isValid && setIsEditing(false)
+      } else if (isEditing && !form.dirty) {
         setIsEditing(false)
       } else if (!isEditing) {
         setIsEditing(true)
@@ -177,7 +177,7 @@ export const Profile = withCtrl<ProfileProps>(
             <Trans>Congratulations! Your account has been approved</Trans>
           </Snackbar>
         )}
-        {editForm.isSubmitting && (
+        {form.isSubmitting && (
           <Snackbar
             position="bottom"
             type="info"
@@ -225,7 +225,7 @@ export const Profile = withCtrl<ProfileProps>(
             <div className="main-column">
               <ProfileCard
                 {...profileCardProps}
-                editForm={editForm}
+                form={form}
                 isEditing={isEditing}
                 toggleIsEditing={toggleIsEditing}
                 setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}

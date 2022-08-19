@@ -43,6 +43,10 @@ export const SubjectStoryProps: SubjectProps = {
   numFollowers: 2387,
   numCollections: 43,
   numResources: 165,
+  organization: {
+    name: 'MoodleNet Central',
+    smallLogo: '/moodlenet-logo.svg',
+  },
   iscedLink:
     'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
   isIscedSubject: true,

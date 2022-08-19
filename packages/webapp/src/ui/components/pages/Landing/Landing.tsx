@@ -5,6 +5,7 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import StreamOutlinedIcon from '@mui/icons-material/StreamOutlined'
 import { useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import defaultBackgroud from '../../../static/img/default-landing-background.png'
@@ -38,7 +39,7 @@ export type LandingProps = {
   resourceCardPropsList: CP<ResourceCardProps>[]
   smallProfileCardPropsList: CP<SmallProfileCardProps>[]
   trendCardProps: TrendCardProps
-  organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
+  organization: Pick<Organization, 'name' | 'title' | 'subtitle' | 'smallLogo'>
   isAuthenticated: boolean
   loginHref: Href
   signUpHref: Href
@@ -83,6 +84,16 @@ export const Landing = withCtrl<LandingProps>(
         style={{ backgroundColor: 'white' }}
         hideSearchbox={isSearchboxInViewport}
       >
+        <Helmet>
+          <meta property="og:title" content={organization.name?.slice(0, 90)} />
+          <meta
+            property="og:description"
+            content={organization.title?.slice(0, 300)}
+          />
+          <meta property="og:image" content={organization.smallLogo} />
+          <meta name="twitter:card" content="summary-large-image" />
+          <meta property="twitter:image" content={organization.smallLogo} />
+        </Helmet>
         {!isAuthenticated && isCreatingContent && (
           <Modal
             className="create-content-modal"
