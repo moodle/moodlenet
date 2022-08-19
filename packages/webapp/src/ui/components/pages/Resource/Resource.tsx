@@ -11,6 +11,7 @@ import SaveIcon from '@material-ui/icons/Save'
 import FlagIcon from '@mui/icons-material/Flag'
 import ShareIcon from '@mui/icons-material/Share'
 import React, { useMemo, useRef, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { getBackupImage } from '../../../../helpers/utilities'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -643,6 +644,16 @@ export const Resource = withCtrl<ResourceProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        <Helmet>
+          <meta property="og:title" content={form.values.name?.slice(0, 90)} />
+          <meta
+            property="og:description"
+            content={form.values.description?.slice(0, 300)}
+          />
+          {imageUrl && <meta property="og:image" content={imageUrl} />}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="twitter:image" content={imageUrl} />
+        </Helmet>
         {showUrlCopiedAlert && (
           <Snackbar
             type="success"
