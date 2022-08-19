@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/macro'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import { FC } from 'react'
 import './styles.scss'
 
@@ -16,22 +17,21 @@ export const Footer: FC<
         <div className="center">
           <div className="extended">
             <Trans>
-              Should you encounter any bugs, glitches, lack of functionality or
-              other problems, please post in the{' '}
+              Find how to report bugs and propose new features in{' '}
               <a
                 href="https://moodle.org/mod/forum/view.php?id=8726"
                 target="_blank"
                 rel="noreferrer"
               >
-                MoodleNet community
-              </a>{' '}
-              or create an issue at{' '}
+                our community
+              </a>
+              . We would <FavoriteIcon className="love-icon" /> to get{' '}
               <a
-                href="https://tracker.moodle.org/secure/RapidBoard.jspa?projectKey=MDLNET&rapidView=167"
+                href="https://feedback.moodle.org/index.php?r=survey/index&sid=766627&lang=en"
                 target="_blank"
                 rel="noreferrer"
               >
-                MoodleNet Tracker
+                your feedback
               </a>
               .
             </Trans>
