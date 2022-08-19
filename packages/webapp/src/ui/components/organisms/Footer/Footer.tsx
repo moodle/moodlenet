@@ -25,7 +25,7 @@ export const Footer: FC<
               >
                 our community
               </a>
-              . We would <FavoriteIcon className="love-icon" /> to get{' '}
+              . We would love to get{' '}
               <a
                 href="https://feedback.moodle.org/index.php?r=survey/index&sid=766627&lang=en"
                 target="_blank"
@@ -33,7 +33,7 @@ export const Footer: FC<
               >
                 your feedback
               </a>
-              .
+              ! <FavoriteIcon titleAccess="love" className="love-icon" />
             </Trans>
           </div>
         </div>
