@@ -7,47 +7,35 @@ import { resolve } from 'path'
   apiKey: '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',
 }) */
 
-interface Organization {
-  name: string
-  title: string
-  subtitle: string
+type OrgAnag={
+  name: string;
+  title: string;
+  subtitle: string;
 }
 
-const configLocal = {
-  service: 'SendinBlue', // no need to set host or port etc.
-  auth: {
-    user: 'shukeenkel@gmail.com',
-    pass: 'MTF0wXL7mrOVA4sQ',
-  },
+type Organization = {
+  organization: OrgAnag
 }
-
-/*
-const configLocal = {
-   service: 'SendinBlue', // no need to set host or port etc.
-   auth: {
-       user: 'yourRegisteredEmailOnSendinblue@email.com',
-       pass: 'xxxxx!'
-   } 
-}
-*/
 
 export type OrganizationData = ExtDef<
   '@moodlenet/organization',
   '0.1.0',
   void,
   {
-    set: SubTopo<{ payload: Organization }, { valid: true } | { valid: false }>
+    set: SubTopo<{ payload: any }, { valid: true } | { valid: false }>
     get: SubTopo<{}, { valid: true; data: Organization } | { valid: false }>
   }
 >
+
+const data ={nome:'ss', title:'aaa', subtitle:'subtitle'}
 
 const ext: Ext<OrganizationData, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
   name: '@moodlenet/organization',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/key-value-store@0.1.0'],
   async connect(shell) {
-    const [, reactApp, kvStore] = shell.deps
-    const kvtore = await kvStore.plug.getStore<{ organitation: Organization }>()
+    const [, reactApp, kvStorePkg] = shell.deps
+    const kvStore = await kvStorePkg.plug.getStore<Organization>()
     return {
       deploy() {
         // come lo passo nel codice ?
@@ -81,9 +69,12 @@ const ext: Ext<OrganizationData, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = 
 
         shell.provide.services({
           async set({ payload }) {
-            kvStore.set('organization', '', { privateKey, publicKey })
-            return msg
+            return kvStore.set('organization', '', payload)
+        
           },
+          get: function (req: {}, msg: DataMessage<SubReqData<{}>, PortBinding, `${string}@${string}`, `${string}@${string}::${string}`>): ProvidedValOf<{ sub: Port<'in', SubReqData<{}>>; unsub: Port<'in', void>; value: Port<'out', ValueData<{ valid: true; data: Organization } | { valid: false }>> }> {
+            throw new Error('Function not implemented.')
+          }
         })
         return {}
       },
