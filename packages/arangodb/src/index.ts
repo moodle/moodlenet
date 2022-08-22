@@ -1,21 +1,12 @@
-import type { CoreExt, Ext, ExtDef, ExtId, ExtName, RawExtEnv, SubTopo } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtId, ExtName, RawExtEnv } from '@moodlenet/core'
 import * as arango from 'arangojs'
 import { Database } from 'arangojs'
-import { Config, Dict } from 'arangojs/connection'
-import { QueryOptions } from 'arangojs/database'
-type CollectionDef = { name: string }
+import { DocumentCollection } from 'arangojs/collection'
+import { Config } from 'arangojs/connection'
+import * as IndexeTypes from 'arangojs/indexes'
+import { Instance, MNArangoDBExt, QueryReq, QueryRes } from './types'
 
-type QueryReq = { q: string; opts?: QueryOptions; bindVars?: Dict<any> }
-type QueryRes = { resultSet: any[] }
-interface Instance {
-  arango: typeof arango
-  // ensureDocumentCollections(_: CollectionDef[]): Promise<void>
-}
-type Routes = {
-  ensureDocumentCollections: SubTopo<{ defs: CollectionDef[] }, void>
-  query: SubTopo<QueryReq, QueryRes>
-}
-export type MNArangoDBExt = ExtDef<'@moodlenet/arangodb', '0.1.0', Instance, Routes>
+export * from './types'
 
 const ext: Ext<MNArangoDBExt, [CoreExt]> = {
   name: '@moodlenet/arangodb',
@@ -28,48 +19,60 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
         // const logger = coreExt.sysLog.moodlenetSysLogLib(shell)
         const env = getEnv(shell.env)
         const sysDB = new Database({ ...env.connectionCfg })
+
         shell.onExtUninstalled(({ extName }) => {
           const extDBName = getExtDBName(extName)
           sysDB.dropDatabase(extDBName)
         })
         shell.provide.services({
           async query(qReq, { source }) {
-            const helpers = getDBHelpers(source)
-            return helpers.query(qReq)
+            const instance = instanceFor(source)
+            return instance.query(qReq)
           },
           async ensureDocumentCollections({ defs }, { source }) {
-            const helpers = getDBHelpers(source)
-            await helpers.ensureDocumentCollections(defs)
+            const instance = instanceFor(source)
+            await instance.ensureDocumentCollections({ defs })
+            return
           },
         })
+
         return {
-          plug(/* { shell } */) {
-            // const helpers = getDBHelpers(shell.extId)
-            return {
-              arango,
-              // async ensureDocumentCollections(defs) {
-              //   // TODO: remove ?
-              //   await helpers.ensureDocumentCollections(defs)
-              //   return
-              // },
-            }
-          },
+          plug: ({ shell }) => instanceFor(shell.extId),
         }
-        function getDBHelpers(forExtId: ExtId) {
+
+        /*
+         * impl
+         */
+        function instanceFor(forExtId: ExtId): Instance {
           const { extName } = shell.lib.splitExtId(forExtId)
           const extDBName = getExtDBName(extName)
-          return {
-            async ensureDocumentCollections(defs: CollectionDef[]) {
+          const instance: Instance = {
+            arango,
+            async ensureDocumentCollections({ defs }) {
               const { /* created, */ db } = await ensureDB()
-              const collectionNames = (await db.collections()).map(({ name }) => name)
-              await Promise.all(
-                defs
-                  .filter(({ name }) => !collectionNames.includes(name))
-                  .map(({ name }) => {
-                    db.createCollection(name)
-                  }),
+              const currentCollections = (await db.listCollections(true)).filter(
+                coll => coll.type === arango.CollectionType.DOCUMENT_COLLECTION,
               )
-              return
+              const _def_entries = Object.entries(defs)
+              const docCollections = await Promise.all(
+                _def_entries.map(async ([collectionName, [type, opts]]) => {
+                  const exists = !!currentCollections.find(coll => coll.name === collectionName)
+                  if (exists) {
+                    // if exists assume indexes are the same as first time,
+                    // expecting a dropIndexes and re-ensureIndexes during package upgrade
+                    return db.collection(collectionName) as DocumentCollection
+                  }
+                  const collection = await db.createCollection(collectionName, {
+                    type: arango.CollectionType.DOCUMENT_COLLECTION,
+                  })
+                  await Promise.all(indexes.map(indexDef => collection.ensureIndex(indexDef as any)))
+                  return collection
+                }),
+              )
+              const collectionsMap = docCollections.reduce<{
+                [collectionName in keyof typeof defs]: DocumentCollection<any>
+              }>((_res, collection) => ({ ..._res, [collection.name]: collection }), {} as any)
+              return collectionsMap
             },
             async query({ q, bindVars, opts }: QueryReq): Promise<QueryRes> {
               const db = sysDB.database(extDBName)
@@ -84,6 +87,7 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
               return { resultSet }
             },
           }
+          return instance
           async function ensureDB() {
             const exists = (await sysDB.databases()).find(db => db.name === extDBName)
             const db = exists ?? (await sysDB.createDatabase(extDBName))
@@ -110,3 +114,11 @@ function getEnv(rawExtEnv: RawExtEnv): Env {
   }
   return env
 }
+
+export type IndexDefType = { name: string } & (
+  | IndexeTypes.EnsurePersistentIndexOptions
+  | IndexeTypes.EnsureTtlIndexOptions
+  | IndexeTypes.EnsureZkdIndexOptions
+  | IndexeTypes.EnsureFulltextIndexOptions
+  | IndexeTypes.EnsureGeoIndexOptions
+)
