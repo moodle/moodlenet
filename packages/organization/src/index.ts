@@ -23,11 +23,11 @@ export type OrganizationData = ExtDef<
   void,
   {
     set: SubTopo<{ payload: any }, { valid: true } | { valid: false }>
-    get: SubTopo<{}, { valid: true; data: Organization } | { valid: false }>
+    get: SubTopo<{}, { valid: true; data: any } | { valid: false }>
   }
 >
 
-const data ={nome:'ss', title:'aaa', subtitle:'subtitle'}
+// const data ={nome:'ss', title:'aaa', subtitle:'subtitle'}
 
 const ext: Ext<OrganizationData, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
   name: '@moodlenet/organization',
@@ -69,12 +69,14 @@ const ext: Ext<OrganizationData, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = 
 
         shell.provide.services({
           async set({ payload }) {
-            return kvStore.set('organization', '', payload)
-        
+            const data =  await kvStore.set('organization', '', payload)
+            return {valid:(!data || !data.value ? false : true)}
           },
-          get: function (req: {}, msg: DataMessage<SubReqData<{}>, PortBinding, `${string}@${string}`, `${string}@${string}::${string}`>): ProvidedValOf<{ sub: Port<'in', SubReqData<{}>>; unsub: Port<'in', void>; value: Port<'out', ValueData<{ valid: true; data: Organization } | { valid: false }>> }> {
-            throw new Error('Function not implemented.')
-          }
+          async get() {
+            const data = await kvStore.get('organization', '')
+            if (!data || !data.value) return {valid:false}
+            return {valid:true, data:data.value}
+          },
         })
         return {}
       },
