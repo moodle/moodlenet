@@ -42,7 +42,7 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
   function defaultPkgEnv(pkgName: string) {
     const defConfigs = {
       '@moodlenet/http-server': { port: httpPort },
-      '@moodlenet/arangodb': { config: arangoUrl },
+      '@moodlenet/arangodb': { connectionCfg: { url: arangoUrl } },
       '@moodlenet/authentication-manager': { rootPassword },
       '@moodlenet/email-service': {
         mailerCfg: { transport: smtpUrl },
