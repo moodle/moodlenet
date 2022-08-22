@@ -184,8 +184,8 @@ export type MWFn = (msg: IMessage, index: number) => ObservableInput<IMessage>
 //   ? { lib?(_: { depl: RegItem }): ExtLib<Def> }
 //   : { lib(_: { depl: RegItem }): ExtLib<Def> }
 type _WithMaybePlug<Def extends ExtDef> = ExtPlug<Def> extends undefined | null | void
-  ? void | { plug?(_: { shell: Shell }): ExtPlug<Def> }
-  : { plug(_: { shell: Shell }): ExtPlug<Def> }
-
+  ? void | { plug?: PluginFn<Def> }
+  : { plug: PluginFn<Def> }
+export type PluginFn<Def extends ExtDef = ExtDef> = (_: { shell: Shell }) => ExtPlug<Def>
 export type ExtDeployment<Def extends ExtDef = ExtDef> = { mw?: MWFn } & _WithMaybePlug<Def> //& _WithMaybeLib<Def>
 /* $^  ext life */
