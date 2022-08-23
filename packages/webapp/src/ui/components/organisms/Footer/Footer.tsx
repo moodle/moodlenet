@@ -17,23 +17,24 @@ export const Footer: FC<
         <div className="center">
           <div className="extended">
             <Trans>
-              Find how to report bugs and propose new features in{' '}
-              <a
-                href="https://moodle.org/mod/forum/view.php?id=8726"
-                target="_blank"
-                rel="noreferrer"
-              >
-                our community
-              </a>
-              . We would love to get{' '}
+              We'd love to get{' '}
               <a
                 href="https://feedback.moodle.org/index.php?r=survey/index&sid=766627&lang=en"
                 target="_blank"
                 rel="noreferrer"
               >
-                your feedback
+                your feedback on MoodleNet
+              </a>{' '}
+              <FavoriteIcon titleAccess="love" className="love-icon" /> You can
+              suggest new features and report bugs in the{' '}
+              <a
+                href="https://moodle.org/mod/forum/view.php?id=8726"
+                target="_blank"
+                rel="noreferrer"
+              >
+                MoodleNet community
               </a>
-              ! <FavoriteIcon titleAccess="love" className="love-icon" />
+              .
             </Trans>
           </div>
         </div>
