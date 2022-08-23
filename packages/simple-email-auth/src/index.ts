@@ -39,7 +39,7 @@ const ext: ExtSimpleEmailAuth = {
   ],
   async connect(shell) {
     let [, reactApp, authMng, emailSrv, http, crypto, arangopkg] = shell.deps
-    await arangopkg.access.fetch('ensureDocumentCollections')({ defs: [{ name: 'User' }] })
+    await arangopkg.access.fetch('ensureCollections')({ defs: { User: { kind: 'node' } } })
 
     return {
       deploy() {

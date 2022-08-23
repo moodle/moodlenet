@@ -1,10 +1,9 @@
 import type { CoreExt, Ext, ExtId, ExtName, RawExtEnv } from '@moodlenet/core'
 import * as arango from 'arangojs'
 import { Database } from 'arangojs'
-import { DocumentCollection } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'
-import * as IndexeTypes from 'arangojs/indexes'
-import { Instance, MNArangoDBExt, QueryReq, QueryRes } from './types'
+import assert from 'assert'
+import { CollectionDef, CollectionHandle, Instance, MNArangoDBExt, QueryReq } from './types'
 
 export * from './types'
 
@@ -29,9 +28,9 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
             const instance = instanceFor(source)
             return instance.query(qReq)
           },
-          async ensureDocumentCollections({ defs }, { source }) {
+          async ensureCollections({ defs }, { source }) {
             const instance = instanceFor(source)
-            await instance.ensureDocumentCollections({ defs })
+            await instance.ensureCollections({ defs })
             return
           },
         })
@@ -48,33 +47,39 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
           const extDBName = getExtDBName(extName)
           const instance: Instance = {
             arango,
-            async ensureDocumentCollections({ defs }) {
+            async ensureCollections({ defs }) {
               const { /* created, */ db } = await ensureDB()
-              const currentCollections = (await db.listCollections(true)).filter(
-                coll => coll.type === arango.CollectionType.DOCUMENT_COLLECTION,
-              )
-              const _def_entries = Object.entries(defs)
-              const docCollections = await Promise.all(
-                _def_entries.map(async ([collectionName, [type, opts]]) => {
-                  const exists = !!currentCollections.find(coll => coll.name === collectionName)
-                  if (exists) {
-                    // if exists assume indexes are the same as first time,
-                    // expecting a dropIndexes and re-ensureIndexes during package upgrade
-                    return db.collection(collectionName) as DocumentCollection
+              const currentCollections = await db.listCollections(true)
+              const collections = await Promise.all(
+                Object.keys(defs).map(async collectionName => {
+                  const { kind, opts } = defs[collectionName]!
+                  const isEdge = kind === 'edge'
+                  const foundColl = currentCollections.find(coll => coll.name === collectionName)
+                  if (foundColl) {
+                    assert(
+                      (isEdge && foundColl.type === arango.CollectionType.EDGE_COLLECTION) ||
+                        (!isEdge && foundColl.type === arango.CollectionType.DOCUMENT_COLLECTION),
+                      `arango ensure collection type mismatch: found colleciton ${collectionName} of wrong kind (expected ${kind})`,
+                    )
+                    // if exists assume indexes are the same as first time, expecting a dropIndexes and re-ensureIndexes during package upgrade
+                    // FIXME: however, it would be great finding a dynamic solution : remove and add named indexes
+                    return db.collection(collectionName)
                   }
-                  const collection = await db.createCollection(collectionName, {
-                    type: arango.CollectionType.DOCUMENT_COLLECTION,
-                  })
-                  await Promise.all(indexes.map(indexDef => collection.ensureIndex(indexDef as any)))
+                  const collection = await (isEdge
+                    ? db.createEdgeCollection(collectionName, {})
+                    : db.createCollection(collectionName, {}))
+
+                  await Promise.all((opts?.indexes ?? []).map(indexDef => collection.ensureIndex(indexDef as any)))
                   return collection
                 }),
               )
-              const collectionsMap = docCollections.reduce<{
-                [collectionName in keyof typeof defs]: DocumentCollection<any>
-              }>((_res, collection) => ({ ..._res, [collection.name]: collection }), {} as any)
-              return collectionsMap
+              const collectionHandlesMap = collections.reduce((_res, collection) => {
+                const handle: CollectionHandle<CollectionDef<any>> = { collection }
+                return { ..._res, [handle.collection.name]: handle }
+              }, {} as any)
+              return collectionHandlesMap
             },
-            async query({ q, bindVars, opts }: QueryReq): Promise<QueryRes> {
+            async query({ q, bindVars, opts }: QueryReq) {
               const db = sysDB.database(extDBName)
               const qcursor = await db.query(q, bindVars, opts).catch(e => {
                 const msg = `arango query error: q:${q} bindVars:${JSON.stringify(bindVars)} opts:${JSON.stringify(
@@ -85,6 +90,24 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
               })
               const resultSet = await qcursor.all()
               return { resultSet }
+            },
+            async collections() {
+              const db = sysDB.database(extDBName)
+              const collectionsMeta = (await db.listCollections(true)).filter(
+                coll => coll.type === arango.CollectionType.DOCUMENT_COLLECTION,
+              )
+              return { collectionsMeta }
+            },
+
+            async dropCollection({ name }) {
+              const db = sysDB.database(extDBName)
+              return db
+                .collection(name)
+                .drop({ isSystem: false })
+                .then(
+                  _ => true,
+                  () => false,
+                )
             },
           }
           return instance
@@ -114,11 +137,3 @@ function getEnv(rawExtEnv: RawExtEnv): Env {
   }
   return env
 }
-
-export type IndexDefType = { name: string } & (
-  | IndexeTypes.EnsurePersistentIndexOptions
-  | IndexeTypes.EnsureTtlIndexOptions
-  | IndexeTypes.EnsureZkdIndexOptions
-  | IndexeTypes.EnsureFulltextIndexOptions
-  | IndexeTypes.EnsureGeoIndexOptions
-)
