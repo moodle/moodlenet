@@ -16,7 +16,7 @@ import {
   MonthTextOptionProps,
   TypeTextOptionProps,
   YearsProps,
-} from '../NewResource/ExtraDetails/storiesData'
+} from '../NewResource/FieldsData'
 import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,

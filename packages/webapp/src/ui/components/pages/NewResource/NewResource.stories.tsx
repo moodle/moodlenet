@@ -11,7 +11,7 @@ import {
   LanguagesTextOptionProps,
   LevelTextOptionProps,
   TypeTextOptionProps,
-} from './ExtraDetails/storiesData'
+} from './FieldsData'
 import { NewResource } from './NewResource'
 import { NewResourceFormValues } from './types'
 import {
