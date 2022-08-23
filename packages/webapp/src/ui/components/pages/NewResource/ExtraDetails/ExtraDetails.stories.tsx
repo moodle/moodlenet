@@ -1,11 +1,11 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
 import {
   LanguagesTextOptionProps,
   LevelTextOptionProps,
   TypeTextOptionProps,
-} from './storiesData'
+} from '../FieldsData'
+import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
 
 const meta: ComponentMeta<typeof ExtraDetails> = {
   title: 'Pages/Extra Details',
