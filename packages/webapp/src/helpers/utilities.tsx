@@ -108,3 +108,12 @@ export function useAutoImageAdded() {
   const set = (autoImageAdded: boolean) => ({ autoImageAdded })
   return { get, set }
 }
+
+export const getYearList = (startYear: number): string[] => {
+  const currentYear = new Date().getFullYear()
+  const years = []
+  while (startYear <= currentYear) {
+    years.push((startYear++).toString())
+  }
+  return years.reverse()
+}
