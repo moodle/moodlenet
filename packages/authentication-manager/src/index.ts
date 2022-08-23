@@ -28,11 +28,11 @@ const ext: ExtAuthenticationManager = {
     const [, arangopkg, crypto] = shell.deps
     const env = getEnv(shell.env)
 
-    await arangopkg.access.fetch('ensureDocumentCollections')({ defs: [{ name: 'User' }] })
+    await arangopkg.access.fetch('ensureCollections')({ defs: { User: { kind: 'node' } } })
 
     return {
       // async install() {
-      //   await arangopkg.plug.ensureDocumentCollections([{ name: 'User' }])
+      //   await arangopkg.plug.ensureCollections([{ name: 'User' }])
       // },
       deploy() {
         shell.expose({

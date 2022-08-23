@@ -6,7 +6,7 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
   const arangoSrv = consumerShell.pkg<MNArangoDBExt>('@moodlenet/arangodb@0.1.0')
   const query = arangoSrv.fetch('query')
 
-  await arangoSrv.fetch('ensureDocumentCollections')({ defs: [{ name: COLLECTION_NAME }] })
+  await arangoSrv.fetch('ensureCollections')({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
   const kvStore: KVStore<any> = {
     set,
     get,
