@@ -53,10 +53,7 @@ import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
 } from '../../templates/HeaderPageTemplate'
-import {
-  MonthTextOptionProps,
-  YearsProps,
-} from '../NewResource/ExtraDetails/storiesData'
+import { MonthTextOptionProps, YearsProps } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import {
   ContributorCard,

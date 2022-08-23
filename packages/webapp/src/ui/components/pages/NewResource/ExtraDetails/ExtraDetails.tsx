@@ -11,10 +11,9 @@ import {
 import Loading from '../../../atoms/Loading/Loading'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-import { yearList } from '../FieldsData'
+import { MonthTextOptionProps, YearsProps } from '../FieldsData'
 import { useNewResourcePageCtx } from '../NewResource'
 import { NewResourceFormValues } from '../types'
-import { MonthTextOptionProps } from './storiesData'
 import './styles.scss'
 
 export type ExtraDetailsProps = {
@@ -169,7 +168,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
                 )
               }
             >
-              {yearList.map((year) => (
+              {YearsProps.map((year) => (
                 <TextOption key={year} label={year} value={year} />
               ))}
             </Dropdown>
