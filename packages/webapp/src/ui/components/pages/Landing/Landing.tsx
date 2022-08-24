@@ -6,6 +6,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import StreamOutlinedIcon from '@mui/icons-material/StreamOutlined'
 import { useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { cleanMetaUrlTags } from '../../../../helpers/head'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import defaultBackgroud from '../../../static/img/default-landing-background.png'
@@ -85,6 +86,7 @@ export const Landing = withCtrl<LandingProps>(
         hideSearchbox={isSearchboxInViewport}
       >
         <Helmet>
+          {cleanMetaUrlTags()}
           <meta property="og:title" content={organization.name?.slice(0, 90)} />
           <meta
             property="og:description"
