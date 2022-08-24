@@ -8,16 +8,15 @@ import boot from './boot'
 import install from './install'
 prompts.override(yargs.argv)
 ;(async () => {
-  const {
-    operation,
-    'installation-folder': installation_folder,
-    'system-folder': system_folder,
-  } = await prompts([
+  const params = await prompts([
     {
       type: 'select',
-      choices: [{ title: 'install' }, { title: 'boot' }],
+      choices: [
+        { title: 'install', value: 'install' },
+        { title: 'boot', value: 'boot' },
+      ],
       name: 'operation',
-      message: `system folder?`,
+      message: `operation?`,
     },
     {
       type: 'text',
@@ -29,14 +28,13 @@ prompts.override(yargs.argv)
     {
       type: 'text',
       name: 'system-folder',
-
       message: `system folder?`,
       initial: deploymentFolder => resolve(deploymentFolder, '_system'),
       format: (system_folder, values) =>
         system_folder ? resolve(process.cwd(), system_folder) : resolve(values['installation-folder'], '_system'),
     },
   ])
-
+  const { operation, 'installation-folder': installation_folder, 'system-folder': system_folder } = params
   const mainFolders: MainFolders = {
     deploymentFolder: installation_folder,
     systemFolder: system_folder,
