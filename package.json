@@ -12,6 +12,7 @@
     "eslint": "^7.11.0",
     "husky": "^7.0.0",
     "lerna": "^5.0.0",
+    "lerna-dependency-graph": "^1.1.0",
     "rimraf": "^3.0.2",
     "shx": "^0.3.4",
     "typescript": "^4.6.3"
@@ -28,6 +29,7 @@
     "clean-bs": "yarn clean-dirs && yarn bs",
     "start": "lerna run start --parallel --stream",
     "test": "",
+    "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
     "pre-commit": "lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
     "prepare": "husky install"
   },
