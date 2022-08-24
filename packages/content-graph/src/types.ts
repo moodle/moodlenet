@@ -1,4 +1,16 @@
-import { CollectionDef, CollectionDefOpt, CollectionKind, CollectionOpts } from '@moodlenet/arangodb'
+import type {
+  CollectionDef,
+  CollectionDefOpt,
+  CollectionKind,
+  CollectionOpts,
+  MNArangoDBExt,
+} from '@moodlenet/arangodb'
+import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
+import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
+
+export type ContentGraphStoreExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib>
+
+export type ContentGraphStoreExt = Ext<ContentGraphStoreExtDef, [CoreExt, MNArangoDBExt, KeyValueStoreExtDef]>
 
 // type DateString = string
 type WithDate<T> = T //& { date: DateString }
@@ -44,13 +56,13 @@ export type GlyphID = `${string}/${string}`
 // declare const GLYPH_ID_SYMBOL: unique symbol
 // type GLYPH_ID_SYMBOL = typeof GLYPH_ID_SYMBOL
 
-export type GlyphIdentifier<Kind extends CollectionKind = CollectionKind, Type extends string = string> =
+export type GlyphIdentifier<Kind extends CollectionKind = CollectionKind, Typename extends string = string> =
   | GlyphID
   | ({
       _kind?: Kind
     } & (
       | {
-          _type: Type
+          _type: Typename
           _key: string
         }
       | {
@@ -58,14 +70,11 @@ export type GlyphIdentifier<Kind extends CollectionKind = CollectionKind, Type e
         }
     ))
 
-export type BaseGlyphMeta<GlyphDesc extends GlyphDescriptor> = GlyphDesc &
-  WithCreatorId & {
-    _key: string
-    _id: GlyphID
-  }
-export type WithCreatorId = {
-  _creatorId: GlyphID
+export type BaseGlyphMeta<GlyphDesc extends GlyphDescriptor> = GlyphDesc & /* WithCreatorId &  */ {
+  _key: string
+  _id: GlyphID
 }
+
 export type WithMaybeKey = { _key?: string }
 
 export type NodeGlyphMeta<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
@@ -98,23 +107,25 @@ export type NodeData<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor
 export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
   GlyphDesc[GLYPH_HANDLE_TYPE_SYMBOL] & NodeGlyphMeta<GlyphDesc>
 
+export type WithPerformerNodeIdentifier = { performerNode: GlyphIdentifier<'node'> }
+export type CreateNodeOpts = {} & WithPerformerNodeIdentifier
+export type CreateEdgeOpts = {} /* & WithPerformerIdentifier */
+
 export type Lib = {
   ensureGlyphs<Defs extends GlyphDefsMap>(_: { defs: GlyphDefOptMap<Defs> }): Promise<GlyphDescriptorsMap<Defs>>
   createNode<GlyphDesc extends GlyphDescriptor<'node'>>(
     glyphDesc: GlyphDesc,
     data: NodeData<GlyphDesc> & WithMaybeKey,
-    creatorId: GlyphIdentifier<'node'>,
-    opts?: {},
+    opts?: Partial<CreateNodeOpts>,
   ): Promise<{ node: NodeGlyph<GlyphDesc> }>
   createEdge<GlyphDesc extends GlyphDescriptor<'edge'>>(
     glyphDesc: GlyphDesc,
     data: EdgeData<GlyphDesc> & WithMaybeKey,
     linkId: EdgeLinkIdentifiers,
-    creatorId: GlyphIdentifier<'node'>,
-    opts?: Partial<{}>,
+    opts?: Partial<CreateEdgeOpts>,
   ): Promise<{ edge: EdgeGlyph<GlyphDesc> }>
 }
-/* 
+
 declare const lib: Lib
 ;async () => {
   type MyGDefMap = GlyphDefsMap<{
@@ -126,13 +137,12 @@ declare const lib: Lib
   const { EA, EB, NA, NB } = await lib.ensureGlyphs<MyGDefMap>({
     defs: { NA: { kind: 'node' }, NB: { kind: 'node' }, EA: { kind: 'edge' }, EB: { kind: 'edge' } },
   })
-  const na = await lib.createNode(NA, { na: '' }, '/')
-  const nb = await lib.createNode(NB, { nb: 1, _key: '11' }, '/')
+  const na = await lib.createNode(NA, { na: '' }, { performerNode: '/' })
+  const nb = await lib.createNode(NB, { nb: 1, _key: '11' }, { performerNode: { _type: '', _key: '' } })
   nb.node.nb.toExponential()
   na.node.na.charAt(1)
-  const ea = await lib.createEdge(EA, { ea: 0 }, { _from: na.node._id, _to: nb.node._id }, '/')
-  const eb = await lib.createEdge(EB, { eb: 'null ' }, { _from: na.node._id, _to: nb.node._id }, '/')
+  const ea = await lib.createEdge(EA, { ea: 0 }, { _from: na.node._id, _to: nb.node._id }, { performerNode: '/' })
+  const eb = await lib.createEdge(EB, { eb: 'null ' }, { _from: na.node._id, _to: nb.node._id }, { performerNode: '/' })
   eb.edge.eb.charAt(0)
   ea.edge.ea.toExponential()
 }
- */
