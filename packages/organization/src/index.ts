@@ -1,41 +1,40 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
 import type { ReactAppExt } from '@moodlenet/react-app'
+import assert from 'assert'
 import { resolve } from 'path'
 
 /* const stmpServer = sibTransport({
   apiKey: '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',
 }) */
 
-type OrgAnag={
-  name: string;
-  title: string;
-  subtitle: string;
+export type OrganizationData = {
+  instanceName:string;
+  landingTitle:string;
+  landingSubtitle:string;
 }
 
-type Organization = {
-  organization: OrgAnag
-}
+export type keyValueStoreData = { organizationData:OrganizationData }
 
-export type OrganizationData = ExtDef<
+export type OrganizationExtDef = ExtDef<
   '@moodlenet/organization',
   '0.1.0',
   void,
   {
-    set: SubTopo<{ payload: any }, { valid: true } | { valid: false }>
-    get: SubTopo<{}, { valid: true; data: any } | { valid: false }>
+    set: SubTopo<{ payload: OrganizationData }, { valid: true } | { valid: false }>
+    get: SubTopo<void, {data: OrganizationData }>
   }
 >
 
 // const data ={nome:'ss', title:'aaa', subtitle:'subtitle'}
 
-const ext: Ext<OrganizationData, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
+const ext: Ext<OrganizationExtDef, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
   name: '@moodlenet/organization',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/key-value-store@0.1.0'],
   async connect(shell) {
     const [, reactApp, kvStorePkg] = shell.deps
-    const kvStore = await kvStorePkg.plug.getStore<Organization>()
+    const kvStore = await kvStorePkg.plug.getStore<keyValueStoreData>()
     return {
       deploy() {
         // come lo passo nel codice ?
@@ -69,13 +68,13 @@ const ext: Ext<OrganizationData, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = 
 
         shell.provide.services({
           async set({ payload }) {
-            const data =  await kvStore.set('organization', '', payload)
+            const data =  await kvStore.set('organizationData', '', payload)
             return {valid:(!data || !data.value ? false : true)}
           },
           async get() {
-            const data = await kvStore.get('organization', '')
-            if (!data || !data.value) return {valid:false}
-            return {valid:true, data:data.value}
+            const data = await kvStore.get('organizationData', '')
+            assert(data.value, 'Organization should be valued')
+            return {data:data.value}
           },
         })
         return {}

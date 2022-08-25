@@ -1,16 +1,25 @@
+import { useFormik } from 'formik'
 import { FC, useContext } from 'react'
 import { Card, InputTextField, PrimaryButton } from '../../atoms'
 import { SettingsCtx } from './SettingsContext'
 
+export type OrganizationData = {
+  instanceName:string;
+  landingTitle:string;
+  landingSubtitle:string;
+}
+
 export const GeneralContent: FC = () => {
   const setCtx = useContext(SettingsCtx)
-  const save = ():void=>{
-    //setCtx
-    setCtx.setInstanceName(setCtx.instanceName)
-    setCtx.setLandingTitle(setCtx.landingTitle)
-    setCtx.setInstanceName(setCtx.landingSubtitle)
-    console.log('save data')
-  }
+
+  const form = useFormik<OrganizationData>({
+    initialValues: { instanceName: '', landingTitle: '', landingSubtitle: '' },
+    async onSubmit(data:any) {
+      setCtx.saveOrganization(data as OrganizationData)
+      console.log('save data')
+    },
+  })
+
   return (
     <>
       <Card>
@@ -18,20 +27,16 @@ export const GeneralContent: FC = () => {
         <div>Manage your preferences</div>
       </Card>
       <Card>
+      <form onSubmit={form.handleSubmit}>
         <div className="parameter">
-          <div>          <PrimaryButton
-            className={`install-btn`}
-            disabled={false}
-            onClick={save}
-          ></div>
+        <PrimaryButton type="submit">Save</PrimaryButton>
           <div className="name">Site name</div>
           <div className="actions">
             <InputTextField
               className="instance-name"
               placeholder="Give a name to your site"
-              value={setCtx.instanceName}
-              onChange={(t: any) => setCtx.setInstanceName(t.currentTarget.value)}
-              name="instance-name"
+              value={setCtx.organizationData.instanceName}
+              name="instanceName"
               edit
               // error={shouldShowErrors && editForm.errors.displayName}
             />
@@ -44,8 +49,7 @@ export const GeneralContent: FC = () => {
               textarea={true}
               className="landing-title"
               placeholder="Give a title to the landing page"
-              value={setCtx.landingTitle}
-              onChange={(t: any) => setCtx.setLandingTitle(t.currentTarget.value)}
+              value={setCtx.organizationData.landingTitle}
               name="landing-title"
               edit
               // error={shouldShowErrors && editForm.errors.displayName}
@@ -59,14 +63,14 @@ export const GeneralContent: FC = () => {
               textarea={true}
               className="landing-subtitle"
               placeholder="Give a subtitle to the landing page"
-              value={setCtx.landingSubtitle}
-              onChange={(t: any) => setCtx.setLandingSubtitle(t.currentTarget.value)}
+              value={setCtx.organizationData.landingSubtitle}
               name="landing-subtitle"
               edit
               // error={shouldShowErrors && editForm.errors.displayName}
             />
           </div>
         </div>
+        </form>
       </Card>
     </>
   )
