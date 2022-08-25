@@ -17,7 +17,6 @@ import {
   useProfilePageUserDataQuery,
 } from '../../../../pages/Profile/Ctrl/ProfileCtrl.gen'
 import { SmallProfileCardProps } from '../SmallProfileCard'
-const followersHref = href(mainPath.followers)
 
 export type SmallProfileCardCtrlArg = { id: ID }
 export const useSmallProfileCardCtrl: CtrlHook<
@@ -94,6 +93,7 @@ export const useSmallProfileCardCtrl: CtrlHook<
       ),
     [collections, resources]
   )
+
   const SmallProfileCardUIProps = useMemo<SmallProfileCardProps | null>(
     () =>
       profileNode
@@ -106,7 +106,9 @@ export const useSmallProfileCardCtrl: CtrlHook<
               resources: profileNode.resourcesCount,
               kudos,
               years: 0,
-              followersHref,
+              followersHref: href(
+                mainPath.followers({ nodeId: profileNode.id })
+              ),
             },
             avatarUrl: getMaybeAssetRefUrl(profileNode.avatar),
             organizationName: org.name,
