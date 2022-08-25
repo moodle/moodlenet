@@ -12,7 +12,6 @@ import FlagIcon from '@mui/icons-material/Flag'
 import ShareIcon from '@mui/icons-material/Share'
 import React, { useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { cleanMetaUrlTags } from '../../../../helpers/head'
 import { getBackupImage } from '../../../../helpers/utilities'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -643,7 +642,6 @@ export const Resource = withCtrl<ResourceProps>(
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <Helmet>
-          {cleanMetaUrlTags()}
           <meta property="og:title" content={form.values.name?.slice(0, 90)} />
           <meta
             property="og:description"

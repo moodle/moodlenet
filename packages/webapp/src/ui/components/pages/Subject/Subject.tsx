@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { Helmet } from 'react-helmet'
-import { cleanMetaUrlTags } from '../../../../helpers/head'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { Organization } from '../../../types'
 import Card from '../../atoms/Card/Card'
@@ -56,7 +55,6 @@ export const Subject = withCtrl<SubjectProps>(
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <Helmet>
-          {cleanMetaUrlTags()}
           <meta property="og:title" content={title.slice(0, 90)} />
           <meta
             property="og:description"
