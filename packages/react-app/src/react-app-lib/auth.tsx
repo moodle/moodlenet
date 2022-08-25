@@ -5,6 +5,8 @@ import type {
   SessionToken,
   UserClientSession,
 } from '@moodlenet/authentication-manager'
+import { SessionTokenCookieName } from '@moodlenet/http-server'
+import cookies from 'js-cookie'
 import {
   ComponentType,
   createContext,
@@ -92,7 +94,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     async (token: SessionToken) => {
       const res = await srvFetch('getClientSession')({ token })
       if (!res.success) {
-        writeSessionToken(null)
+        writeSessionToken()
         return { success: false, msg: 'invalid token' } as const
       }
       writeSessionToken(token)
@@ -108,7 +110,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const logout = useCallback<AuthCtxT['logout']>(() => {
     setClientSession(null)
-    writeSessionToken(null)
+    writeSessionToken()
   }, [setClientSession])
   const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(
     async token => {
@@ -144,9 +146,17 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
 }
 
-function readSessionToken(): SessionToken | null {
-  return localStorage.getItem('SESSION_TOKEN')
+const SESSION_TOKEN_COOKIE_NAME: SessionTokenCookieName = 'mn-session'
+function readSessionToken(): SessionToken | undefined {
+  return cookies.get(SESSION_TOKEN_COOKIE_NAME)
 }
-function writeSessionToken(token: SessionToken | null) {
-  token ? localStorage.setItem('SESSION_TOKEN', token) : localStorage.removeItem('SESSION_TOKEN')
+function writeSessionToken(token?: SessionToken | undefined) {
+  token ? cookies.set(SESSION_TOKEN_COOKIE_NAME, token) : cookies.remove(SESSION_TOKEN_COOKIE_NAME)
 }
+
+// function readSessionToken(): SessionToken | null {
+//   return localStorage.getItem('SESSION_TOKEN')
+// }
+// function writeSessionToken(token: SessionToken | null) {
+//   token ? localStorage.setItem('SESSION_TOKEN', token) : localStorage.removeItem('SESSION_TOKEN')
+// }
