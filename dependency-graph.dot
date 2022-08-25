@@ -3,6 +3,7 @@ digraph G {
   "@moodlenet/core";
   "@moodlenet/authentication-manager";
   "@moodlenet/crypto";
+  "@moodlenet/content-graph";
   "@moodlenet/key-value-store";
   "@moodlenet/dev-machine" [ style = "dashed" ];
   "@moodlenet/email-service";
@@ -16,6 +17,9 @@ digraph G {
   "@moodlenet/authentication-manager" -> "@moodlenet/arangodb" [ style = "dashed" ];
   "@moodlenet/authentication-manager" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/authentication-manager" -> "@moodlenet/crypto" [ style = "dashed" ];
+  "@moodlenet/content-graph" -> "@moodlenet/arangodb" [ style = "dashed" ];
+  "@moodlenet/content-graph" -> "@moodlenet/core" [ style = "dashed" ];
+  "@moodlenet/content-graph" -> "@moodlenet/key-value-store" [ style = "dashed" ];
   "@moodlenet/crypto" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/crypto" -> "@moodlenet/key-value-store" [ style = "dashed" ];
   "@moodlenet/dev-machine" -> "@moodlenet/core" [ style = "dashed" ];
