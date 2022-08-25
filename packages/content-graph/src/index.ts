@@ -6,7 +6,13 @@ export * from './types'
 export const ext: ContentGraphStoreExt = {
   name: '@moodlenet/content-graph',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0', '@moodlenet/key-value-store@0.1.0'],
+  requires: [
+    '@moodlenet/core@0.1.0',
+    '@moodlenet/arangodb@0.1.0',
+    '@moodlenet/key-value-store@0.1.0',
+    '@moodlenet/react-app@0.1.0',
+    '@moodlenet/authentication-manager@0.1.0',
+  ],
   async connect(shell) {
     const [, arangoSrv, kvStore] = shell.deps
     const libFor = await extLibForFactory(shell)
