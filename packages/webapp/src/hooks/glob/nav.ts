@@ -26,7 +26,13 @@ export const mainPath = {
   ),
   bookmarks: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
   following: webappPath<Routes.FollowingPage>('/following', {}),
-  followers: webappPath<Routes.FollowersPage>('/followers', {}),
+  followers: ({ nodeId }: { nodeId: string }) => {
+    const [__typename, slug] = nodeId.split('/') as [string, string]
+    return webappPath<Routes.FollowersPage>('/followers/:__typename/:slug', {
+      slug,
+      __typename,
+    })
+  },
   settings: webappPath<Routes.SettingsPage>('/settings', {}),
   cookiesPolicy: webappPath<Routes.CookiesPolicy>('/cookies-policy', {}),
   userAgreement: webappPath<Routes.UserAgreement>('/user-agreement', {}),
