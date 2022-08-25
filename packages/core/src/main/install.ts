@@ -53,5 +53,6 @@ export const defaultCorePackages = {
   'extensions-manager': '0.1.0',
   'email-service': '0.1.0',
   'simple-email-auth': '0.1.0',
+  'organization': '0.1.0',
   // 'passport-auth': '0.1.0',
 }

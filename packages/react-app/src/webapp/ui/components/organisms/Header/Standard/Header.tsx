@@ -33,7 +33,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
       <div className="content">
         <div className="left">
           <Link className="title" to={`/`}>
-            <span className="mn">{setCtx.instanceName}</span>
+            <span className="mn">{setCtx.organizationData.instanceName}</span>
             <span className="bar">|</span>
           </Link>
         </div>
