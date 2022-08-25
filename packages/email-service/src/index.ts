@@ -16,10 +16,15 @@ export type EmailService = ExtDef<
   }
 >
 
-const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef]> = {
+const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef, ReactAppExt]> = {
   name: '@moodlenet/email-service',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/key-value-store@0.1.0'],
+  requires: [
+    '@moodlenet/core@0.1.0',
+    '@moodlenet/react-app@0.1.0',
+    '@moodlenet/key-value-store@0.1.0',
+    '@moodlenet/react-app@0.1.0',
+  ],
   async connect(shell) {
     const [, reactApp, kvStore] = shell.deps
     const kvstore = await kvStore.plug.getStore<{ mailerCfg: MailerCfg }>()

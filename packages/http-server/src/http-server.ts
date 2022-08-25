@@ -1,13 +1,19 @@
-import type { Shell } from '@moodlenet/core'
+import type { ExtShell } from '@moodlenet/core'
+import cookieParser from 'cookie-parser'
 import express, { Application } from 'express'
 import type { Server } from 'http'
 import gracefulShutdown from 'http-graceful-shutdown'
-import type { MNHttpServerExt, MountAppItem, PriMsgBaseUrl } from '.'
+import type { MNHttpServerExt, MountAppItem, PriMsgBaseUrl, SessionTokenCookieName } from '.'
 import { makeExtPortsApp } from './ext-ports-app'
 
-type Cfg = { shell: Shell<MNHttpServerExt>; port: number }
+type Cfg = { shell: ExtShell<MNHttpServerExt>; port: number }
+
 const basePriMsgUrl: PriMsgBaseUrl = '/_/_'
+const SESSION_TOKEN_COOKIE_NAME: SessionTokenCookieName = 'mn-session'
+// const SESSION_TOKEN_HEADER_NAME: SessionTokenHeaderName = SESSION_TOKEN_COOKIE_NAME
+
 export function createHttpServer({ shell, port }: Cfg) {
+  const [, auth] = shell.deps
   const extPortsApp = makeExtPortsApp(shell)
 
   let server: Server
@@ -43,11 +49,25 @@ export function createHttpServer({ shell, port }: Cfg) {
     //   server.close(err => {
     //     console.info(`Stopped HTTP-lifecycle server with err:`, err)
     //     err ? reject(err) : resolve()
-    //   })
+    //   })req.cookies
     // })
   }
   function start() {
-    app = express().use(`/`, (_, __, next) => next())
+    app = express()
+      .use(cookieParser())
+      .use(`/`, async (req, __, next) => {
+        req.moodlenet = {}
+        const maybeSessionToken = req.cookies[SESSION_TOKEN_COOKIE_NAME]
+        if ('string' === typeof maybeSessionToken) {
+          const {
+            msg: { data: resp },
+          } = await auth.access.fetch('getClientSession')({ token: maybeSessionToken })
+          if (resp.success) {
+            req.moodlenet.clientSession = resp.clientSession
+          }
+        }
+        next()
+      })
     app.use(basePriMsgUrl, extPortsApp)
     mountedApps.forEach(({ getApp, mountPath }) => {
       app.use(mountPath, getApp())

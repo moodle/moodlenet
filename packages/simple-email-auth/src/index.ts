@@ -3,7 +3,7 @@ import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authenti
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { CryptoExt } from '@moodlenet/crypto'
 import type { EmailService } from '@moodlenet/email-service'
-import type { MNHttpServerExt } from '@moodlenet/http-server'
+import type { MNHttpServerExtDef } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import assert from 'assert'
 import { resolve } from 'path'
@@ -22,7 +22,7 @@ export type SimpleEmailAuthTopo = {
 export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
 export type ExtSimpleEmailAuth = Ext<
   SimpleEmailAuthExt,
-  [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExt, CryptoExt, MNArangoDBExt]
+  [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExtDef, CryptoExt, MNArangoDBExt]
 >
 
 const ext: ExtSimpleEmailAuth = {
