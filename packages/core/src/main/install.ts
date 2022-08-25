@@ -56,5 +56,6 @@ export const defaultCorePackages = {
   'organization': '0.1.0',
   'simple-email-auth': '0.1.0',
   'web-user': '0.1.0',
+  'organization': '0.1.0',
   // 'passport-auth': '0.1.0',
 }
