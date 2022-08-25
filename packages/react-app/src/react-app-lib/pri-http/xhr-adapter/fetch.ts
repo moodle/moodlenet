@@ -7,8 +7,13 @@ export const subRaw =
   <Def extends ExtDef>(extId: ExtId<Def>) =>
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
     type HttpSubType = RawSubOpts<Def, Path>
-    const [extName, extVersion] = extId.split('@') as [ExtName<Def>, ExtVersion<Def>]
-    const httpPath: HttpSubType['path'] = `/_/_/raw-sub/${extName}/${extVersion}/${path}`
+    const [extVersion, extName, scoped = false] = extId.split('@').reverse() as [
+      extVersion: ExtVersion<Def>,
+      extName: ExtName<Def>,
+      scoped?: '',
+    ]
+    const mAt = scoped === false ? '' : ('@' as '')
+    const httpPath: HttpSubType['path'] = `/_/_/raw-sub/${mAt}${extName}/${extVersion}/${path}`
     const method: HttpSubType['method'] = `POST`
     return (req: HttpSubType['req'] /* , opts?: Opts */) =>
       new Observable<HttpSubType['obsType']>(subscriber => {
