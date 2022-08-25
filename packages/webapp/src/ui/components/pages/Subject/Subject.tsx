@@ -55,12 +55,6 @@ export const Subject = withCtrl<SubjectProps>(
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <Helmet>
-          {/* <meta
-            property="og:description"
-            content={form.values.description?.slice(0, 300)}
-          /> */}
-        </Helmet>
-        <Helmet>
           <meta property="og:title" content={title.slice(0, 90)} />
           <meta
             property="og:description"
