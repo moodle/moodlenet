@@ -1,9 +1,16 @@
 import { FC, useContext } from 'react'
-import { Card, InputTextField } from '../../atoms'
+import { Card, InputTextField, PrimaryButton } from '../../atoms'
 import { SettingsCtx } from './SettingsContext'
 
 export const GeneralContent: FC = () => {
   const setCtx = useContext(SettingsCtx)
+  const save = ():void=>{
+    //setCtx
+    setCtx.setInstanceName(setCtx.instanceName)
+    setCtx.setLandingTitle(setCtx.landingTitle)
+    setCtx.setInstanceName(setCtx.landingSubtitle)
+    console.log('save data')
+  }
   return (
     <>
       <Card>
@@ -12,6 +19,11 @@ export const GeneralContent: FC = () => {
       </Card>
       <Card>
         <div className="parameter">
+          <div>          <PrimaryButton
+            className={`install-btn`}
+            disabled={false}
+            onClick={save}
+          ></div>
           <div className="name">Site name</div>
           <div className="actions">
             <InputTextField
