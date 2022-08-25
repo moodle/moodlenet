@@ -1,3 +1,4 @@
+import { ClientSession } from '@moodlenet/authentication-manager'
 import {
   DataMessage,
   ExtDef,
@@ -23,3 +24,17 @@ export type RawSubOpts<Def extends ExtDef, Path extends SubcriptionPaths<Def>> =
 }
 
 export type MountAppItem = { mountPath: string; getApp(): Application }
+
+export type SessionTokenCookieName = 'mn-session'
+// export type SessionTokenHeaderName = SessionTokenCookieName
+
+declare global {
+  namespace Express {
+    // Inject additional properties on express.Request
+    interface Request {
+      moodlenet: {
+        clientSession?: ClientSession | undefined
+      }
+    }
+  }
+}

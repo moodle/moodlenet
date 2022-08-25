@@ -1,7 +1,7 @@
 import type { Observable, ObservableInput, Subscription } from 'rxjs'
 import type * as Core from '../core-lib'
 import { PackageInfo } from '../pkg-mng/types'
-import type { DataMessage, IMessage, MessagePush } from './message'
+import type { DataMessage, IMessage, MessageMeta, MessagePush } from './message'
 import { RegItem } from './reg'
 import { MainFolders } from './sys'
 import type { PortBinding, PortPathData, PortPaths, Topo } from './topo'
@@ -160,6 +160,7 @@ export type PushOptions = {
   parent: DataMessage<any> | null
   primary: boolean
   sub: boolean
+  meta?: MessageMeta
 }
 /* $ shell fns */
 

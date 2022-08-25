@@ -5,12 +5,17 @@ import type {
   CollectionOpts,
   MNArangoDBExt,
 } from '@moodlenet/arangodb'
+import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
+import type { ReactAppExt } from '@moodlenet/react-app'
 
 export type ContentGraphStoreExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib>
 
-export type ContentGraphStoreExt = Ext<ContentGraphStoreExtDef, [CoreExt, MNArangoDBExt, KeyValueStoreExtDef]>
+export type ContentGraphStoreExt = Ext<
+  ContentGraphStoreExtDef,
+  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, ReactAppExt, AuthenticationManagerExt]
+>
 
 // type DateString = string
 type WithDate<T> = T //& { date: DateString }

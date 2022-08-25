@@ -1,6 +1,6 @@
 import { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import type { MNHttpServerExt } from '@moodlenet/http-server'
+import type { MNHttpServerExtDef } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 import { prepareApp } from './oauth-server'
@@ -12,7 +12,10 @@ export type PassportAuthTopo = {
   save: SubTopo<{ configs: PassportConfigs }, { configs: PassportConfigs }>
 }
 export type PassportAuthExtDef = ExtDef<'@moodlenet/passport-auth', '0.1.0', void, PassportAuthTopo>
-export type PassportAuthExt = Ext<PassportAuthExtDef, [CoreExt, ReactAppExt, MNHttpServerExt, AuthenticationManagerExt]>
+export type PassportAuthExt = Ext<
+  PassportAuthExtDef,
+  [CoreExt, ReactAppExt, MNHttpServerExtDef, AuthenticationManagerExt]
+>
 
 const ext: PassportAuthExt = {
   name: '@moodlenet/passport-auth',

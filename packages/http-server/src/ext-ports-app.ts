@@ -1,10 +1,10 @@
 import type * as Core from '@moodlenet/core'
 import { json } from 'body-parser'
 import express from 'express'
-import { MNHttpServerExt } from '.'
-import { RawSubPriMsgSubUrl } from './types'
+import type { MNHttpServerExt } from '.'
+import type { RawSubPriMsgSubUrl } from './types'
 
-export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
+export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
   const srvApp = express()
   srvApp.use(json())
   const rawSubPriMsgSubUrl: RawSubPriMsgSubUrl = 'raw-sub'
@@ -41,6 +41,7 @@ export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
       const apiSub = shell.lib
         .sub(shell._raw)(pointer as never)(req.body, {
           primary: true,
+          meta: { clientSession: req.moodlenet.clientSession },
         })
         // .subDemat(shell)(pointer as never)(req.body, {
         //   primary: true,
