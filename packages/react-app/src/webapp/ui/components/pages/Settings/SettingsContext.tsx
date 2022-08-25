@@ -1,5 +1,5 @@
-import { OrganizationExtDef } from '@moodlenet/organization';
-import lib from 'moodlenet-react-app-lib';
+import { OrganizationExtDef } from '@moodlenet/organization'
+import lib from 'moodlenet-react-app-lib'
 import {
   ComponentType,
   createContext,
@@ -10,14 +10,14 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState
-} from 'react';
-import { baseStyle, BaseStyleType } from '../../../styles/config';
+  useState,
+} from 'react'
+import { baseStyle, BaseStyleType } from '../../../styles/config'
 
 export type OrganizationData = {
-  instanceName:string;
-  landingTitle:string;
-  landingSubtitle:string;
+  instanceName: string
+  landingTitle: string
+  landingSubtitle: string
 }
 
 export type StyleType = BaseStyleType & CSSProperties
@@ -33,8 +33,8 @@ export type SetCtxT = {
   registerSettingsItem(settingsItemDef: SettingItemDef): void
   style: StyleType
   setStyle: React.Dispatch<React.SetStateAction<StyleType>>
-  saveOrganization: typeof _saveOrganization
-  organizationData:OrganizationData
+  saveOrganization(data: OrganizationData): unknown
+  organizationData: OrganizationData
 }
 
 export const SettingsCtx = createContext<SetCtxT>(null as any)
@@ -46,30 +46,28 @@ export function useRegisterSettingsItem({ Menu, Content }: SettingItemDef) {
   }, [registerSettingsItem, Menu, Content])
 }
 
-const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization', '0.1.0')
-const _saveOrganization = (data: OrganizationData) => {
-  organizationSrv('set')({paylodad:data} as any)
-}
-const getOrganization = () => organizationSrv('get')({})
-
-
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
+  const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization', '0.1.0')
+
   // const nav = useNavigate()
   // dentro a use effect prendo il valore
   const [style, setStyle] = useState<SetCtxT['style']>(StyleContextDefault)
-  const [dataOrg, setDataOrg] = useState<OrganizationData>({ instanceName: '', landingTitle: '', landingSubtitle: '' })
+  const [organizationData, setDataOrg] = useState<OrganizationData>({
+    instanceName: '',
+    landingTitle: '',
+    landingSubtitle: '',
+  })
 
-  const dataSetter = async () => {
-    const orgDataValue = await getOrganization()
-    orgDataValue.valid && setDataOrg(orgDataValue.data)
-  }
-  const saveOrganization = (data:OrganizationData)=>{
-    _saveOrganization(data)
-    setDataOrg(data)
-  }
+  const saveOrganization = useCallback(
+    (data: OrganizationData) => {
+      organizationSrv('set')({ payload: data })
+      setDataOrg(data)
+    },
+    [setDataOrg],
+  )
 
   useEffect(() => {
-    dataSetter()
+    organizationSrv('get')().then(({ data: orgData }) => setDataOrg(orgData))
   }, [])
 
   const [settingsItems, setLoginItems] = useState<SetCtxT['settingsItems']>([])
@@ -91,14 +89,9 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       registerSettingsItem: registerLogin,
       settingsItems,
       saveOrganization,
-      organizationData:dataOrg
+      organizationData,
     }
-  }, [
-    style,
-    setStyle,
-    registerLogin,
-    settingsItems
-  ])
+  }, [style, setStyle, registerLogin, settingsItems, organizationData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }

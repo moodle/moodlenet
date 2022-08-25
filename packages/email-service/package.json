@@ -9,7 +9,7 @@
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Test extension\nJust an extension to make tests",
+  "description": "Email service\na package to send emails",
   "readme": "",
   "files": [
     "lib/"
@@ -18,14 +18,13 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@types/nodemailer": "^6.4.5",
     "nodemailer": "^6.6.1"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/key-value-store": "^0.1.0",
     "@types/node": "^17.0.35",
-    "@types/nodemailer": "^6.4.4",
+    "@types/nodemailer": "^6.4.5",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
     "react-router-dom": "^6.3.0",

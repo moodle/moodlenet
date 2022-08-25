@@ -24,6 +24,9 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
   }
 
   async function set(type: string, key: string, value: any): Promise<ValueObj> {
+    if (value === void 0) {
+      return unset(type, key)
+    }
     const _key = fullKeyOf(type, key)
     const strval = JSON.stringify(value)
     const oldRec = (
