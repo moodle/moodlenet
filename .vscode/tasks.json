@@ -19,6 +19,7 @@
         "simple-email-auth dev-build",
         "email-service dev-build",
         "crypto dev-build",
+        "content-graph dev-build",
         "key-value-store dev-build"
       ],
       "presentation": {
@@ -29,6 +30,15 @@
         "showReuseMessage": true,
         "clear": false
       }
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/content-graph/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "content-graph dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
