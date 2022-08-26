@@ -52,6 +52,15 @@
     },
     {
       "type": "typescript",
+      "tsconfig": "packages/crypto/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "crypto dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
       "tsconfig": "packages/key-value-store/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
@@ -66,6 +75,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "simple-email-auth dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/email-service/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "email-service dev-build"
       // "dependsOn": ["core dev-build"]
     },
     {

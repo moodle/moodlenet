@@ -4,10 +4,10 @@ import { FC, useContext } from 'react'
 export const Text = 'Profile'
 export const Path = '/profile'
 export const Icon: FC = ({}) => {
-  const { clientSession } = useContext(lib.auth.AuthCtx)
+  const { clientSessionData } = useContext(lib.auth.AuthCtx)
   const avatar = {
     backgroundImage:
-      'url(' + clientSession?.user.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg' + ')',
+      'url(' + clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg' + ')',
     backgroundSize: 'cover',
   }
 
