@@ -1,67 +1,30 @@
-import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 
-export type TestExt = ExtDef<
-  'moodlenet-profile-page',
-  '0.1.10',
-  {
-    testSub: SubTopo<{ XX: string }, { a: string }>
-    _test: SubTopo<{ a: string }, { b: number }>
-  }
->
+export type TestExt = ExtDef<'@moodlenet/profile-page', '0.1.0', void>
 
 const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
-  id: 'moodlenet-profile-page@0.1.10',
-  displayName: 'test ext',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
-  enable(shell) {
-    console.log('I am test extension')
-    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`moodlenet-profile-page: onExtInstance<ReactAppExt>`, inst)
-      inst.setup({
-        ctxProvider: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-        },
-        routes: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-          rootPath: 'profile', // http://localhost:3000/profile
-        },
-      })
-    })
-    shell.expose({
-      '_test/sub': {
-        validate(/* data */) {
-          return { valid: true }
-        },
+  name: '@moodlenet/profile-page',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
+  async connect(shell) {
+    const [, reactApp] = shell.deps
+    reactApp.plug.setup({
+      ctxProvider: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
       },
-      'testSub/sub': {
-        validate(/* data */) {
-          return { valid: true }
-        },
+      routes: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+        rootPath: 'profile', // http://localhost:3000/profile
       },
     })
     return {
       deploy() {
-        shell.lib.pubAll<TestExt>('moodlenet-profile-page@0.1.10', shell, {
-          _test: ({
-            msg: {
-              data: {
-                req: { a },
-              },
-            },
-          }) => [{ b: Number(a) }],
-          testSub(_) {
-            return shell.lib.rx.interval(500).pipe(
-              shell.lib.rx.take(5),
-              shell.lib.rx.map(n => ({ a: `${_.msg.data.req.XX}\n\n(${n})` })),
-            )
-          },
-        })
         return {}
       },
     }
   },
 }
 
-export default { exts: [ext] }
+export default ext

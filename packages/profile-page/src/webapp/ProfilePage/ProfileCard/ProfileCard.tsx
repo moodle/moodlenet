@@ -91,7 +91,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-  const { clientSession } = useContext(lib.auth.AuthCtx)
+  const { clientSessionData: clientSession } = useContext(lib.auth.AuthCtx)
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
@@ -137,7 +137,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const avatarUrl = typeof editForm.avatarImage === 'string' ? editForm.avatarImage : ''
   const avatar = {
     backgroundImage:
-      'url(' + clientSession?.user.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg' + ')',
+      'url(' + clientSession?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg' + ')',
     backgroundSize: 'cover',
   }
 
@@ -271,7 +271,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
                 className="display-name underline"
                 placeholder="Display name"
                 // value={editForm.values.displayName}
-                value={clientSession?.user.displayName}
+                value={clientSession?.displayName}
                 // onChange={editForm.handleChange}
                 name="displayName"
                 displayMode={true}
@@ -284,7 +284,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             ) : (
               <div className="display-name">
                 {/* {editForm.values.displayName} */}
-                {clientSession?.user.displayName}
+                {clientSession?.displayName}
               </div>
             )}
             {!isEditing && isOwner && isApproved && (
