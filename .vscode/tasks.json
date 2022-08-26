@@ -133,6 +133,15 @@
     },
     {
       "type": "typescript",
+      "tsconfig": "packages/profile-page/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "profile-page dev-build"
+      // "dependsOn": ["core dev-build", "profile-page dev-build"]
+    },
+    {
+      "type": "typescript",
       "tsconfig": "packages/passport-auth/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
