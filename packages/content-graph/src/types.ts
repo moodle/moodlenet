@@ -5,16 +5,15 @@ import type {
   CollectionOpts,
   MNArangoDBExt,
 } from '@moodlenet/arangodb'
-import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
-import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
+import type { AuthenticationManagerExt, UserId } from '@moodlenet/authentication-manager'
+import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
-import type { ReactAppExt } from '@moodlenet/react-app'
 
-export type ContentGraphStoreExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib>
+export type ContentGraphExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib, Routes>
 
-export type ContentGraphStoreExt = Ext<
-  ContentGraphStoreExtDef,
-  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, ReactAppExt, AuthenticationManagerExt]
+export type ContentGraphExt = Ext<
+  ContentGraphExtDef,
+  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, AuthenticationManagerExt]
 >
 
 // type DateString = string
@@ -26,6 +25,7 @@ export type ContentGraphGlyphs = GlyphDefsMap<{
 }>
 
 export type GlyphDef<Kind extends CollectionKind = CollectionKind, Type extends {} = {}> = CollectionDef<Kind, Type>
+
 export type GlyphDefsMap<Defs extends Record<string, GlyphDef> = Record<string, GlyphDef>> = Defs
 
 export type GlyphOpts = { collection?: CollectionOpts }
@@ -35,7 +35,7 @@ export type GlyphDefOptMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
 }
 
 declare const GLYPH_HANDLE_TYPE_SYMBOL: unique symbol
-type GLYPH_HANDLE_TYPE_SYMBOL = typeof GLYPH_HANDLE_TYPE_SYMBOL
+type GLYPHDESCTYPE_SYMBOL = typeof GLYPH_HANDLE_TYPE_SYMBOL
 export type GlyphDescriptor<
   Kind extends CollectionKind = CollectionKind,
   Type extends {} = {},
@@ -103,18 +103,33 @@ export type EdgeGlyphMeta<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescr
   BaseGlyphMeta<GlyphDesc> & EdgeLinkType & EdgeLink
 
 export type EdgeData<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
-  GlyphDesc[GLYPH_HANDLE_TYPE_SYMBOL]
+  GlyphDesc[GLYPHDESCTYPE_SYMBOL]
 export type EdgeGlyph<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
-  GlyphDesc[GLYPH_HANDLE_TYPE_SYMBOL] & EdgeGlyphMeta<GlyphDesc>
+  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & EdgeGlyphMeta<GlyphDesc>
 
 export type NodeData<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
-  GlyphDesc[GLYPH_HANDLE_TYPE_SYMBOL]
+  GlyphDesc[GLYPHDESCTYPE_SYMBOL]
 export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
-  GlyphDesc[GLYPH_HANDLE_TYPE_SYMBOL] & NodeGlyphMeta<GlyphDesc>
+  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & NodeGlyphMeta<GlyphDesc>
+
+export type Glyph = NodeGlyph | EdgeGlyph
 
 export type WithPerformerNodeIdentifier = { performerNode: GlyphIdentifier<'node'> }
-export type CreateNodeOpts = {} & WithPerformerNodeIdentifier
+export type CreateNodeOpts = { authenticableBy: { userId: UserId } } & WithPerformerNodeIdentifier
 export type CreateEdgeOpts = {} /* & WithPerformerIdentifier */
+
+export type GlyphMeta = {}
+
+export type ContentGraphKVStore = {
+  userId2NodeAssoc: {
+    userId: UserId
+    nodeId: {
+      _type: string
+      _key: string
+      _id: GlyphID
+    }
+  }
+}
 
 export type Lib = {
   ensureGlyphs<Defs extends GlyphDefsMap>(_: { defs: GlyphDefOptMap<Defs> }): Promise<GlyphDescriptorsMap<Defs>>
@@ -122,15 +137,21 @@ export type Lib = {
     glyphDesc: GlyphDesc,
     data: NodeData<GlyphDesc> & WithMaybeKey,
     opts?: Partial<CreateNodeOpts>,
-  ): Promise<{ node: NodeGlyph<GlyphDesc> }>
+  ): Promise<{ node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }>
   createEdge<GlyphDesc extends GlyphDescriptor<'edge'>>(
     glyphDesc: GlyphDesc,
     data: EdgeData<GlyphDesc> & WithMaybeKey,
     linkId: EdgeLinkIdentifiers,
     opts?: Partial<CreateEdgeOpts>,
-  ): Promise<{ edge: EdgeGlyph<GlyphDesc> }>
+  ): Promise<{ edge: EdgeGlyph<GlyphDesc>; meta: GlyphMeta }>
+  getAuthenticatedNode(_: { userId: UserId }): Promise<undefined | { node: NodeGlyph; meta: GlyphMeta }>
 }
 
+export type Routes = {
+  getMyUserNode: SubTopo<void, undefined | { node: NodeGlyph }>
+}
+
+/* 
 declare const lib: Lib
 ;async () => {
   type MyGDefMap = GlyphDefsMap<{
@@ -151,3 +172,4 @@ declare const lib: Lib
   eb.edge.eb.charAt(0)
   ea.edge.ea.toExponential()
 }
+ */

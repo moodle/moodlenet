@@ -1,4 +1,3 @@
-import { ClientSession } from '@moodlenet/authentication-manager'
 import {
   DataMessage,
   ExtDef,
@@ -33,7 +32,7 @@ declare global {
     // Inject additional properties on express.Request
     interface Request {
       moodlenet: {
-        clientSession?: ClientSession | undefined
+        authToken?: string | undefined
       }
     }
   }

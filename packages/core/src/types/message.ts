@@ -31,7 +31,7 @@ export interface IMessage<
   sub: boolean
   managedBy?: ExtId
   activeDest: ExtId
-  meta?: MessageMeta
+  context: MessageContext
 }
 
-export type MessageMeta = {} | undefined
+export type MessageContext = Record<string, any>

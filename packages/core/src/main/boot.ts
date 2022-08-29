@@ -483,7 +483,7 @@ const boot: Boot = async cfg => {
         sub: opts.sub,
         // managedBy: null,
         activeDest: destRegItem.shell.extId,
-        meta: opts.meta,
+        context: opts.context || {},
       }
 
       setTimeout(() => $MAIN_MSGS$.next(msg), 10) //FIXME: 😱 why ?

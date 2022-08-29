@@ -62,19 +62,22 @@ const hasLock = existsSync(DEV_LOCK_FILE)
   // console.log({ customPkgEnvs: Object.keys(customPkgEnvs) })
   if (!deploymentFolderPathExists) {
     const customPkgEnvs = getCustomPkgEnvs()
-    const { customEnvName } = await prompts([
-      {
-        choices: Object.keys(customPkgEnvs).map<prompts.Choice>(title => ({
-          title: title,
-          value: title,
-          selected: title === 'default',
-        })),
-        type: 'select',
-        message: 'custom env property ?',
-        name: 'customEnvName',
-      },
-    ])
-    const defaultPkgEnv = await getDefaultPkgEnvFn(customPkgEnvs, customEnvName)
+
+    const { customEnvName } = customPkgEnvs
+      ? await prompts([
+          {
+            choices: Object.keys(customPkgEnvs).map<prompts.Choice>(title => ({
+              title: title,
+              value: title,
+              selected: title === 'default',
+            })),
+            type: 'select',
+            message: 'custom env property ?',
+            name: 'customEnvName',
+          },
+        ])
+      : { customEnvName: '' }
+    const defaultPkgEnv = await getDefaultPkgEnvFn(customPkgEnvs ?? {}, customEnvName)
     // console.log({ defaultPkgEnv })
 
     mkdirSync(deploymentFolder, { recursive: true })
@@ -113,7 +116,7 @@ const hasLock = existsSync(DEV_LOCK_FILE)
         process.exit()
       }
     } catch {
-      return {}
+      return null
     }
   }
 

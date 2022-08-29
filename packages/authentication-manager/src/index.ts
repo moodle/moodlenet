@@ -1,5 +1,5 @@
 import type { MNArangoDBExt } from '@moodlenet/arangodb'
-import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef, IMessage, MessageContext, SubTopo } from '@moodlenet/core'
 import { CryptoExt } from '@moodlenet/crypto'
 import assert from 'assert'
 import userStore from './store'
@@ -17,7 +17,12 @@ export type Topo = {
   getClientSession: SubTopo<{ token: string }, { success: true; clientSession: ClientSession } | { success: false }>
 }
 
-export type AuthenticationManagerExt = ExtDef<'@moodlenet/authentication-manager', '0.1.0', void, Topo>
+export type Lib = {
+  getMsgClientSession(_: { msg: IMessage }): Promise<ClientSession | undefined>
+  makeMsgClientSessionContext(_: { authToken: string }): Promise<MessageContext>
+}
+
+export type AuthenticationManagerExt = ExtDef<'@moodlenet/authentication-manager', '0.1.0', Lib, Topo>
 
 export type ExtAuthenticationManager = Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt, CryptoExt]>
 const ext: ExtAuthenticationManager = {
@@ -99,7 +104,27 @@ const ext: ExtAuthenticationManager = {
           },
         })
 
-        return {}
+        return {
+          plug(/* { shell: plugShell } */) {
+            const getMsgClientSession: Lib['getMsgClientSession'] = async ({ msg }) => {
+              return msg.context[`@moodlenet/authentication-manager`]?.clientSession
+            }
+            const makeMsgClientSessionContext: Lib['makeMsgClientSessionContext'] = async ({ authToken }) => {
+              const {
+                msg: { data },
+              } = await shell.me.fetch('getClientSession')({ token: authToken })
+              if (!data.success) {
+                return { context: {} }
+              }
+              const { clientSession } = data
+
+              return { '@moodlenet/authentication-manager': { clientSession } }
+            }
+            const lib: Lib = { getMsgClientSession, makeMsgClientSessionContext }
+
+            return lib
+          },
+        }
 
         async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
           const {

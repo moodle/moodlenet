@@ -5,6 +5,7 @@ import type { MNHttpServerExt } from '.'
 import type { RawSubPriMsgSubUrl } from './types'
 
 export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
+  const [, authSrv] = shell.deps
   const srvApp = express()
   srvApp.use(json())
   const rawSubPriMsgSubUrl: RawSubPriMsgSubUrl = 'raw-sub'
@@ -41,7 +42,9 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
       const apiSub = shell.lib
         .sub(shell._raw)(pointer as never)(req.body, {
           primary: true,
-          meta: { clientSession: req.moodlenet.clientSession },
+          context: req.moodlenet.authToken
+            ? await authSrv.plug.makeMsgClientSessionContext({ authToken: req.moodlenet.authToken })
+            : {},
         })
         // .subDemat(shell)(pointer as never)(req.body, {
         //   primary: true,
