@@ -1,15 +1,21 @@
+import { ContentGraphExtDef } from '@moodlenet/content-graph'
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
+import { Lib, ProfileGlyphs } from './types'
 
-export type TestExt = ExtDef<'@moodlenet/profile-page', '0.1.0', void>
+export type ProfileExtDef = ExtDef<'@moodlenet/profile-page', '0.1.0', Lib>
 
-const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
+const ext: Ext<ProfileExtDef, [CoreExt, ReactAppExt, ContentGraphExtDef]> = {
   name: '@moodlenet/profile-page',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/content-graph@0.1.0'],
   async connect(shell) {
-    const [, reactApp] = shell.deps
+    const [, reactApp, contentGraph] = shell.deps
+    const glyphDescriptors = await contentGraph.plug.ensureGlyphs<ProfileGlyphs>({
+      defs: { Profile: { kind: 'node' } },
+    })
+
     reactApp.plug.setup({
       ctxProvider: {
         moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
@@ -21,7 +27,13 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
     })
     return {
       deploy() {
-        return {}
+        return {
+          plug({ shell }) {
+            return {
+              glyphDescriptors,
+            }
+          },
+        }
       },
     }
   },

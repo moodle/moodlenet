@@ -1,19 +1,24 @@
 import { CollectionDefOpt, CollectionDefOptMap } from '@moodlenet/arangodb'
 import { ExtId, ExtShell } from '@moodlenet/core'
-import type { ContentGraphStoreExt } from './index'
+import { KVStore } from '@moodlenet/key-value-store'
+import assert from 'assert'
+import type { ContentGraphExt } from './index'
 import {
   ContentGraphGlyphs,
+  ContentGraphKVStore,
   EdgeGlyph,
+  Glyph,
   GlyphDescriptor,
   GlyphDescriptorsMap,
+  GlyphMeta,
   Lib,
   NodeGlyph,
   WithMaybeKey,
 } from './types'
 import { edgeLinkIdentifiers2edgeLink, getCollectionName, glyphIdentifier2glyphID } from './utils'
 
-export async function extLibForFactory(shell: ExtShell<ContentGraphStoreExt>) {
-  const [, arangoSrv /* , kvStore */] = shell.deps
+export async function extLibForFactory(shell: ExtShell<ContentGraphExt>, myKVStore: KVStore<ContentGraphKVStore>) {
+  const [, arangoSrv] = shell.deps
   const contentGraphGlyphs = await libFor(true).ensureGlyphs<ContentGraphGlyphs>({
     defs: {
       Created: { kind: 'edge' },
@@ -68,17 +73,33 @@ export async function extLibForFactory(shell: ExtShell<ContentGraphStoreExt>) {
     */
     const createNode: Lib['createNode'] = async (glyphDesc, data, opts = {}) => {
       type NodeCreateData = WithMaybeKey & Omit<NodeGlyph, '_id' | '_key'>
+      const authenticableByUserId = opts.authenticableBy?.userId
       const nodeCreateData: NodeCreateData = {
         ...data,
         ...glyphDesc,
+        _meta: {
+          // '@authenticableByUserId': authenticableByUserId,
+        },
       }
-      const q = `INSERT ${JSON.stringify(nodeCreateData)} INTO ${glyphDesc._type} RETURN NEW`
+      const q = `INSERT ${JSON.stringify(nodeCreateData)} INTO \`${glyphDesc._type}\` RETURN NEW`
       const node: NodeGlyph<typeof glyphDesc> = (await arangoSrv.plug.query({ q })).resultSet[0]
+      if (authenticableByUserId) {
+        await myKVStore.set('userId2NodeAssoc', authenticableByUserId, {
+          userId: authenticableByUserId,
+          nodeId: {
+            _id: node._id,
+            _key: node._key,
+            _type: node._type,
+          },
+        })
+      }
       if (opts.performerNode) {
         const _creatorId = glyphIdentifier2glyphID(opts.performerNode)
         await createEdge(contentGraphGlyphs.Created, {}, { _from: _creatorId, _to: node._id })
       }
-      return { node }
+
+      const { glyph, meta } = extractGlyphMeta(node)
+      return { node: glyph, meta }
     }
 
     /*
@@ -103,7 +124,7 @@ export async function extLibForFactory(shell: ExtShell<ContentGraphStoreExt>) {
         _toType,
       }
 
-      const q = `INSERT ${JSON.stringify(edgeCreateData)} INTO ${glyphDesc._type} RETURN NEW`
+      const q = `INSERT ${JSON.stringify(edgeCreateData)} INTO \`${glyphDesc._type}\` RETURN NEW`
       const edge: EdgeGlyph<typeof glyphDesc> = (await arangoSrv.plug.query({ q })).resultSet[0]
 
       // if (opts.performer) {
@@ -111,14 +132,34 @@ export async function extLibForFactory(shell: ExtShell<ContentGraphStoreExt>) {
       //   await createEdge(contentGraphGlyphs.Created, {}, { _from: _creatorId, _to: edge._id })
       // }
 
-      return { edge }
+      const { glyph, meta } = extractGlyphMeta(edge)
+      return { edge: glyph, meta }
     }
 
+    const getAuthenticatedNode: Lib['getAuthenticatedNode'] = async ({ userId }) => {
+      const { value } = await myKVStore.get('userId2NodeAssoc', userId)
+      if (!value) {
+        return undefined
+      }
+      const q = `RETURN DOCUMENT("${value.nodeId._id}")`
+      const node: NodeGlyph | undefined = (await arangoSrv.plug.query({ q })).resultSet[0]
+      assert(node, `Cant't find node for userId2NodeAssoc: ${JSON.stringify(value, null, 2)}`)
+      const { glyph, meta } = extractGlyphMeta(node)
+      return { node: glyph, meta }
+    }
     /**/
     return {
       ensureGlyphs,
       createNode,
       createEdge,
+      getAuthenticatedNode,
     }
   }
+}
+
+function extractGlyphMeta<G extends Glyph>(_glyph: G): { glyph: G; meta: GlyphMeta } {
+  const glyph: any = { ..._glyph }
+  const meta = glyph._meta
+  delete glyph._meta
+  return { glyph, meta }
 }
