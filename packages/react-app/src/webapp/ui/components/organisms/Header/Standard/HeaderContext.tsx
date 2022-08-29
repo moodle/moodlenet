@@ -10,18 +10,15 @@
 //   useMemo,
 //   useState,
 // } from 'react'
+
+// // }
+// export type AvatarMenuItem = { def: AvatarMenuItemDef }
 // export type AvatarMenuItemDef = {
 //   Text: string
 //   Icon: ComponentType | ReactNode
 //   Path?: string
 //   OnClick?: () => unknown
-
-import { ReactNode } from 'react'
-
 // }
-export type AvatarMenuItem = { def: AvatarMenuItemDef }
-export type AvatarMenuItemDef = { Text: string; Icon: ReactNode; Path?: string; OnClick?: () => unknown }
-// // export type AvatarMenuItem = { def: AvatarMenuItemDef }
 // export type HeaderCtxT = {
 //   avatarMenuItems: AvatarMenuItem[]
 //   registerAvatarMenuItem(avatarMenuItem: AvatarMenuItemDef): void
@@ -37,7 +34,7 @@ export type AvatarMenuItemDef = { Text: string; Icon: ReactNode; Path?: string; 
 // }
 
 // export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
-//   // const nav = useNavigate()
+//   //   // const nav = useNavigate()
 //   const [avatarMenuItems, setAvatarMenuItems] = useState<HeaderCtxT['avatarMenuItems']>([])
 //   const registerAvatarMenuItem = useCallback<HeaderCtxT['registerAvatarMenuItem']>(avatarMenuItemDef => {
 //     const avatarMenuItem: AvatarMenuItem = {
