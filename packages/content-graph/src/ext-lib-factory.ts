@@ -1,7 +1,6 @@
 import { CollectionDefOpt, CollectionDefOptMap } from '@moodlenet/arangodb'
 import { ExtId, ExtShell } from '@moodlenet/core'
 import { KVStore } from '@moodlenet/key-value-store'
-import assert from 'assert'
 import type { ContentGraphExt } from './index'
 import {
   ContentGraphGlyphs,
@@ -10,6 +9,8 @@ import {
   Glyph,
   GlyphDescriptor,
   GlyphDescriptorsMap,
+  GlyphID,
+  GlyphIdentifier,
   GlyphMeta,
   Lib,
   NodeGlyph,
@@ -142,8 +143,20 @@ export async function extLibForFactory(shell: ExtShell<ContentGraphExt>, myKVSto
         return undefined
       }
       const q = `RETURN DOCUMENT("${value.nodeId._id}")`
-      const node: NodeGlyph | undefined = (await arangoSrv.plug.query({ q })).resultSet[0]
-      assert(node, `Cant't find node for userId2NodeAssoc: ${JSON.stringify(value, null, 2)}`)
+      const node: NodeGlyph<any> | undefined = (await arangoSrv.plug.query({ q })).resultSet[0]
+      if (!node) {
+        return undefined
+      }
+      const { glyph, meta } = extractGlyphMeta(node)
+      return { node: glyph, meta }
+    }
+
+    const readNode: Lib['readNode'] = async ({ identifier }) => {
+      const q = `RETURN DOCUMENT("${idOf(identifier)}")`
+      const node: NodeGlyph<any> | undefined = (await arangoSrv.plug.query({ q })).resultSet[0]
+      if (!node) {
+        return undefined
+      }
       const { glyph, meta } = extractGlyphMeta(node)
       return { node: glyph, meta }
     }
@@ -153,6 +166,7 @@ export async function extLibForFactory(shell: ExtShell<ContentGraphExt>, myKVSto
       createNode,
       createEdge,
       getAuthenticatedNode,
+      readNode,
     }
   }
 }
@@ -162,4 +176,12 @@ function extractGlyphMeta<G extends Glyph>(_glyph: G): { glyph: G; meta: GlyphMe
   const meta = glyph._meta
   delete glyph._meta
   return { glyph, meta }
+}
+
+function idOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIdentif): GlyphID {
+  return typeof identifier === 'string'
+    ? identifier
+    : '_id' in identifier
+    ? identifier._id
+    : `${identifier._type}/${identifier._key}`
 }

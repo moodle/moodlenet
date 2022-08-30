@@ -1,6 +1,5 @@
 /// <reference path="../moodlenet-react-app-lib.d.ts" />
 import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
-import type { ContentGraphExtDef } from '@moodlenet/content-graph'
 import type { CoreExt, Ext, ExtDef, Port, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
 import { mkdir, writeFile } from 'fs/promises'
@@ -49,15 +48,10 @@ const ExtContextProvidersModuleFile = {
   alias: 'ext-context-providers-modules',
   target: resolve(tmpDir, 'extContextProvidersModules.tsx'),
 }
-const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExtDef, AuthenticationManagerExt, ContentGraphExtDef]> = {
+const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExtDef, AuthenticationManagerExt]> = {
   name: '@moodlenet/react-app',
   version: '0.1.0',
-  requires: [
-    '@moodlenet/core@0.1.0',
-    '@moodlenet/http-server@0.1.0',
-    '@moodlenet/authentication-manager@0.1.0',
-    '@moodlenet/content-graph@0.1.0',
-  ],
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/http-server@0.1.0', '@moodlenet/authentication-manager@0.1.0'],
   async connect(shell) {
     const [, http /* , auth */] = shell.deps
     return {
