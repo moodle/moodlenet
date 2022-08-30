@@ -1,7 +1,8 @@
 import lib from 'moodlenet-react-app-lib'
-import { FC, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ContentGraphExtDef, NodeGlyph } from '../types'
+import { ContentGraphContext } from './Lib'
 
 export const route = 'content/:_type/:_key'
 export const Component: FC = () => {
@@ -25,14 +26,19 @@ export const Component: FC = () => {
         setNode(res?.node)
       })
   }, [])
+  const { nodeHomePages } = useContext(ContentGraphContext)
+  const nodeHomePageDef = nodeHomePages.find(({ type }) => type === _type)
 
   return (
     <div>
-      <h2>NodeHomePage</h2>
+      <h2>Node Home Page</h2>
       <h3>
         {_type}/{_key}
       </h3>
+
       <pre>{JSON.stringify(node, null, 2)}</pre>
+      <hr />
+      {node && nodeHomePageDef && <nodeHomePageDef.Component node={node} />}
     </div>
   )
 }

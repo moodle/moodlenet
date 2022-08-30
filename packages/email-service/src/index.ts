@@ -27,18 +27,17 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef, ReactAp
   ],
   async connect(shell) {
     const [, reactApp, kvStore] = shell.deps
+    reactApp.plug.setup({
+      routes: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+        // rootPath: 'email-service', // http://localhost:3000/my-test
+      },
+    })
     const kvstore = await kvStore.plug.getStore<{ mailerCfg: MailerCfg }>()
 
     const env = getEnv(shell.env)
     return {
       deploy() {
-        reactApp.plug.setup({
-          routes: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-            // rootPath: 'email-service', // http://localhost:3000/my-test
-          },
-        })
-
         shell.expose({
           'send/sub': {
             validate(/* data */) {

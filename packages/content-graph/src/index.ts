@@ -21,6 +21,12 @@ export const ext: ContentGraphExt = {
         moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
         rootPath: '/',
       },
+      expose: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Lib.tsx'),
+      },
+      ctxProvider: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ContentGraphProvider.tsx'),
+      },
     })
     const kvStore = await kvStoreSrv.plug.getStore<ContentGraphKVStore>()
     const libFor = await extLibForFactory(shell, kvStore)
