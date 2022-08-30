@@ -7,7 +7,7 @@ import './styles.scss'
 
 export type ModulesProps = {}
 
-const { Card, InputTextField, PrimaryButton } = lib.ui.components.atoms
+const { Card, InputTextField, PrimaryButton } = lib.ui.components
 const Modules: FC<ModulesProps> = () => {
   const [localPathField, setLocalPathField] = useState('')
   const install = useCallback(() => {

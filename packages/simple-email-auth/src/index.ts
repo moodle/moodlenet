@@ -1,9 +1,11 @@
 import { MNArangoDBExt } from '@moodlenet/arangodb'
 import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
+import { ContentGraphExtDef } from '@moodlenet/content-graph'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { CryptoExt } from '@moodlenet/crypto'
 import type { EmailService } from '@moodlenet/email-service'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
+import { ProfileExtDef } from '@moodlenet/profile-page'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import assert from 'assert'
 import { resolve } from 'path'
@@ -22,7 +24,17 @@ export type SimpleEmailAuthTopo = {
 export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
 export type ExtSimpleEmailAuth = Ext<
   SimpleEmailAuthExt,
-  [CoreExt, ReactAppExt, AuthenticationManagerExt, EmailService, MNHttpServerExtDef, CryptoExt, MNArangoDBExt]
+  [
+    CoreExt,
+    ReactAppExt,
+    AuthenticationManagerExt,
+    EmailService,
+    MNHttpServerExtDef,
+    CryptoExt,
+    MNArangoDBExt,
+    ContentGraphExtDef,
+    ProfileExtDef,
+  ]
 >
 
 const ext: ExtSimpleEmailAuth = {
@@ -36,9 +48,11 @@ const ext: ExtSimpleEmailAuth = {
     '@moodlenet/http-server@0.1.0',
     '@moodlenet/crypto@0.1.0',
     '@moodlenet/arangodb@0.1.0',
+    '@moodlenet/content-graph@0.1.0',
+    '@moodlenet/profile-page@0.1.0',
   ],
   async connect(shell) {
-    let [, reactApp, authMng, emailSrv, http, crypto, arangopkg] = shell.deps
+    let [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
     await arangopkg.access.fetch('ensureCollections')({ defs: { User: { kind: 'node' } } })
 
     return {
@@ -125,6 +139,13 @@ const ext: ExtSimpleEmailAuth = {
               const { msg, success } = authRes
               return { msg, success }
             }
+
+            const profileNodeResp = await contentGraph.plug.createNode(
+              profile.plug.glyphDescriptors.Profile,
+              { title: displayName },
+              { authenticableBy: { userId: authRes.user.id } },
+            )
+
             const { sessionToken } = authRes
             return { success: true, sessionToken }
             async function getConfirmEmailPayload() {

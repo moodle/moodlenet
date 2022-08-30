@@ -15,10 +15,10 @@ export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
 
-const { Card, PrimaryButton, InputTextField, Loading } = lib.ui.components.atoms
+const { Card, PrimaryButton, InputTextField, Loading } = lib.ui.components
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
+  lib.ui.components.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
 
   const { selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(StateContext)
 

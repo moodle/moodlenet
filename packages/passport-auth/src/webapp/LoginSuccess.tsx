@@ -2,7 +2,7 @@ import lib from 'moodlenet-react-app-lib'
 import { FC, useContext } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
-const { MainLayout } = lib.ui.components.layout
+const { MainLayout } = lib.ui.components
 export const LoginSuccess: FC = () => {
   const auth = useContext(lib.auth.AuthCtx)
   const nav = useNavigate()
