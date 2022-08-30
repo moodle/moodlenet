@@ -61,9 +61,10 @@ export const useFollowersCtrl: CtrlHook<FollowersProps, { nodeId: string }> = ({
         subjectCardPropsList: null,
         setSortBy: null,
         setFilters: null,
+        peopleTitle: profileNode?.name,
       },
     }
     return props
-  }, [followers])
+  }, [followers, profileNode?.name])
   return [followersUIProps]
 }
