@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { extLibForFactory } from './ext-lib-factory'
 import type { ContentGraphExt, ContentGraphKVStore } from './types'
 import { getCollectionName } from './utils'
@@ -11,9 +12,16 @@ export const ext: ContentGraphExt = {
     '@moodlenet/arangodb@0.1.0',
     '@moodlenet/key-value-store@0.1.0',
     '@moodlenet/authentication-manager@0.1.0',
+    '@moodlenet/react-app@0.1.0',
   ],
   async connect(shell) {
-    const [, arangoSrv, kvStoreSrv, authSrv] = shell.deps
+    const [, arangoSrv, kvStoreSrv, authSrv, reactApp] = shell.deps
+    reactApp.plug.setup({
+      routes: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+        rootPath: '/',
+      },
+    })
     const kvStore = await kvStoreSrv.plug.getStore<ContentGraphKVStore>()
     const libFor = await extLibForFactory(shell, kvStore)
     const myLib = libFor(true)
@@ -34,9 +42,14 @@ export const ext: ContentGraphExt = {
               return { valid: true }
             },
           },
+          'read/node/sub': {
+            validate() {
+              return { valid: true }
+            },
+          },
         })
         shell.provide.services({
-          async getMyUserNode(_, msg) {
+          async 'getMyUserNode'(_, msg) {
             console.log('APAP', { msg })
             const clientSession = await authSrv.plug.getMsgClientSession({ msg })
             console.log('APAP', { clientSession })
@@ -48,6 +61,10 @@ export const ext: ContentGraphExt = {
               return
             }
             return { node: result.node }
+          },
+          async 'read/node'({ identifier }) {
+            const result = await myLib.readNode({ identifier })
+            return result && { node: result.node }
           },
         })
         return {

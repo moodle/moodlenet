@@ -9,6 +9,7 @@ import { Settings } from './ui/components/pages/Settings/Settings'
 // const A = lazy(() => import('./A'))
 
 const AppRouter = () => {
+  // console.log({ routes })
   return (
     <>
       <Routes>
