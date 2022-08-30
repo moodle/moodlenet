@@ -28,17 +28,16 @@ const ext: PassportAuthExt = {
   ],
   connect(shell) {
     const [, reactApp, http] = shell.deps
+    reactApp.plug.setup({
+      routes: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
+      },
+      ctxProvider: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
+      },
+    })
     return {
       deploy() {
-        reactApp.plug.setup({
-          routes: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
-          },
-          ctxProvider: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-          },
-        })
-
         // by etto http://localhost:3000/_/@moodlenet/passport-auth/auth/me/
         http.plug.mount({ getApp })
         function getApp() {

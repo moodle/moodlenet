@@ -8,7 +8,8 @@ import type {
 import type { AuthenticationManagerExt, UserId } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
-import type { ReactAppExt } from '@moodlenet/react-app'
+import type { ExtModule, ReactAppExt } from '@moodlenet/react-app'
+import { ContentGraphContextType } from './webapp/Lib'
 
 export type ContentGraphExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib, Routes>
 
@@ -158,6 +159,13 @@ export type Routes = {
     node: SubTopo<{ identifier: GlyphIdentifier<'node'> }, undefined | { node: NodeGlyph }>
   }
 }
+
+export type ContentGraphReactAppLib = ExtModule<
+  ContentGraphExtDef,
+  {
+    ContentGraphContext: React.Context<ContentGraphContextType>
+  }
+>
 
 /* 
 declare const lib: Lib

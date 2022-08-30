@@ -18,6 +18,12 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
   connect(shell) {
     const [, reactApp] = shell.deps
+    reactApp.plug.setup({
+      routes: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+        rootPath: 'my-test', // http://localhost:3000/my-test
+      },
+    })
 
     return {
       deploy() {
@@ -25,12 +31,6 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
         // other packages integration
         //   listen to messages -> send other messages
         //    use other packages plugins (e.g add UI to react app, or add http-endpoint)
-        reactApp.plug.setup({
-          routes: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-            rootPath: 'my-test', // http://localhost:3000/my-test
-          },
-        })
 
         shell.expose({
           // http://localhost:8080/_/_/raw-sub/@moodlenet/test-extension/0.1.0/_test  body:{"paramIn2": "33"}
