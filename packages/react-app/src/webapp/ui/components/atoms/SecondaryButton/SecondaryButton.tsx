@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react'
-import './styles.scss'
+import './SecondaryButton.scss'
 
 export type SecondaryButtonProps = {
   color?: 'black' | 'orange' | 'grey' | 'red' | 'light-grey' | 'dark-blue'

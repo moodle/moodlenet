@@ -1,0 +1,13 @@
+.report-modal {
+  > .modal {
+    > .content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      > .required {
+        font-size: 12px;
+        color: grey;
+      }
+    }
+  }
+}
