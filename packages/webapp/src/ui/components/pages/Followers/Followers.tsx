@@ -15,7 +15,7 @@ export const Followers = withCtrl<FollowersProps>(
   ({ headerPageTemplateProps, browserProps }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        <Browser {...browserProps} title={t`Followers`} peopleTitle={null} />
+        <Browser {...browserProps} title={t`Followers`} />
       </HeaderPageTemplate>
     )
   }
