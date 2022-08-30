@@ -8,12 +8,13 @@ import type {
 import type { AuthenticationManagerExt, UserId } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
+import type { ReactAppExt } from '@moodlenet/react-app'
 
 export type ContentGraphExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib, Routes>
 
 export type ContentGraphExt = Ext<
   ContentGraphExtDef,
-  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, AuthenticationManagerExt]
+  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, AuthenticationManagerExt, ReactAppExt]
 >
 
 // type DateString = string
@@ -75,10 +76,10 @@ export type GlyphIdentifier<Kind extends CollectionKind = CollectionKind, Typena
         }
     ))
 
-export type BaseGlyphMeta<GlyphDesc extends GlyphDescriptor> = GlyphDesc & /* WithCreatorId &  */ {
+export type BaseGlyphMeta<GlyphDesc extends GlyphDescriptor> = GlyphDesc & {
   _key: string
   _id: GlyphID
-}
+} /* & WithCreatorId &  */
 
 export type WithMaybeKey = { _key?: string }
 
@@ -145,10 +146,17 @@ export type Lib = {
     opts?: Partial<CreateEdgeOpts>,
   ): Promise<{ edge: EdgeGlyph<GlyphDesc>; meta: GlyphMeta }>
   getAuthenticatedNode(_: { userId: UserId }): Promise<undefined | { node: NodeGlyph; meta: GlyphMeta }>
+
+  readNode<GlyphDesc extends GlyphDescriptor<'node'>>(_: {
+    identifier: GlyphIdentifier<'node'>
+  }): Promise<undefined | { node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }>
 }
 
 export type Routes = {
   getMyUserNode: SubTopo<void, undefined | { node: NodeGlyph }>
+  read: {
+    node: SubTopo<{ identifier: GlyphIdentifier<'node'> }, undefined | { node: NodeGlyph }>
+  }
 }
 
 /* 
