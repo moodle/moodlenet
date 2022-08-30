@@ -1,48 +1,13 @@
-// import { t, Trans } from '@lingui/macro'
-// import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
-// import NoteAddIcon from '@material-ui/icons/NoteAdd'
-// import { FC, useState } from 'react'
-// import { Href, Link } from '../../../elements/link'
-// import { CP, withCtrl } from '../../../lib/ctrl'
-// import { FormikHandle } from '../../../lib/formik'
-// import { InputTextField } from '../../atoms/InputTextField/InputTextField'
-// import Modal from '../../atoms/Modal/Modal'
-// import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
-// import Snackbar from '../../atoms/Snackbar/Snackbar'
-// import {
-//   CollectionCard,
-//   CollectionCardProps,
-// } from '../../molecules/cards/CollectionCard/CollectionCard'
-// import { ListCard } from '../../molecules/cards/ListCard/ListCard'
-// import {
-//   OverallCard,
-//   OverallCardProps,
-// } from '../../molecules/cards/OverallCard/OverallCard'
-// import {
-//   ProfileCard,
-//   ProfileCardProps,
-// } from '../../molecules/cards/ProfileCard/ProfileCard'
-// import {
-//   ResourceCard,
-//   ResourceCardProps,
-// } from '../../molecules/cards/ResourceCard/ResourceCard'
-// import ReportModal from '../../molecules/modals/ReportModal/ReportModal'
-// import {
-//   HeaderPageTemplate,
-//   HeaderPageTemplateProps,
-// } from '../../templates/HeaderPageTemplate'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { ProfileFormValues } from '../types'
 import { OverallCard, OverallCardProps } from './OverallCard/OverallCard'
 import { ProfileCard, ProfileCardProps } from './ProfileCard/ProfileCard'
 import './ProfilePage.scss'
-// import { ProfileFormValues } from './types'
 
-const {
-  // PrimaryButton,
-  ListCard,
-} = lib.ui.components
+const { MainLayout, ListCard, PrimaryButton } = lib.ui.components
 
 export type ProfilePageProps = {
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
@@ -88,6 +53,8 @@ export const ProfilePage: FC<ProfilePageProps> = ({
   editForm,
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
+
+  const { clientSessionData } = useContext(lib.auth.AuthCtx)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   // const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
   // const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -99,30 +66,33 @@ export const ProfilePage: FC<ProfilePageProps> = ({
     setIsEditing(!isEditing)
   }
 
-  // const collectionList = (
-  //   <ListCard
-  //     className="collections"
-  //     title={`${/*  */`Collections curated by`} ${displayName}`}
-  //     content={collectionCardPropsList.map((collectionCardProps) => (
-  //       <CollectionCard {...collectionCardProps} isEditing={isEditing} />
-  //     ))}
-  //     actions={
-  //       profileCardProps.isOwner
-  //         ? {
-  //             element: (
-  //               <Link href={newCollectionHref}>
-  //                 <PrimaryButton className="action">
-  //                   <LibraryAddIcon />
-  //                   <Trans>New collection</Trans>
-  //                 </PrimaryButton>
-  //               </Link>
-  //             ),
-  //             position: 'end',
-  //           }
-  //         : undefined
-  //     }
-  //   ></ListCard>
-  // )
+  const collectionList = (
+    <ListCard
+      className="collections"
+      title={`${/*  */ `Collections curated by`} ${clientSessionData?.displayName}`}
+      // content={collectionCardPropsList.map((collectionCardProps) => (
+      //   <CollectionCard {...collectionCardProps} isEditing={isEditing} />
+      // ))}
+      content={[]}
+      actions={
+        profileCardProps.isOwner
+          ? {
+              element: (
+                // <Link href={newCollectionHref}>
+                <PrimaryButton className="action">
+                  <LibraryAddIcon />
+                  {/* <Trans> */}
+                  New collection
+                  {/* </Trans> */}
+                </PrimaryButton>
+                // </Link>
+              ),
+              position: 'end',
+            }
+          : undefined
+      }
+    />
+  )
 
   return (
     // <HeaderPageTemplate {...headerPageTemplateProps}>
@@ -222,59 +192,64 @@ export const ProfilePage: FC<ProfilePageProps> = ({
     //     setShowReportedAlert={setShowReportedAlert}
     //   />
     // )}
-    <div className="profile">
-      <div className="content">
-        <div className="main-column">
-          <ProfileCard
-            editForm={editForm}
-            {...profileCardProps}
-            // editForm={editForm}
-            isEditing={isEditing}
-            toggleIsEditing={toggleIsEditing}
-            // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
-            // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
-            // setIsReporting={setIsReporting}
-            openSendMessage={() => {}}
-            // openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
-          />
-          <ListCard
-            className="resources"
-            content={[]}
-            // content={resourceCardPropsList.map((resourcesCardProps) => {
-            //   return (
-            //     <ResourceCard
-            //       {...resourcesCardProps}
-            //       isEditing={isEditing}
-            //       orientation="horizontal"
-            //     />
-            //   )
-            // })}
-            // title={t`Latest resources`}
-            // actions={
-            //   profileCardProps.isOwner
-            //     ? {
-            //         element: (
-            //           <Link href={newResourceHref}>
-            //             <PrimaryButton className="action">
-            //               <NoteAddIcon />
-            //               <Trans>New resource</Trans>
-            //             </PrimaryButton>
-            //           </Link>
-            //         ),
-            //         position: 'end',
-            //       }
-            //     : undefined
-            // }
-          />
-          {/* {collectionList} */}
-        </div>
-        <div className="side-column">
-          <OverallCard {...overallCardProps} />
-          {/* {collectionList} */}
+    <MainLayout>
+      <div className="profile">
+        <div className="content">
+          <div className="main-column">
+            <ProfileCard
+              editForm={editForm}
+              {...profileCardProps}
+              // editForm={editForm}
+              isEditing={isEditing}
+              toggleIsEditing={toggleIsEditing}
+              // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
+              // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
+              // setIsReporting={setIsReporting}
+              openSendMessage={() => {}}
+              // openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
+            />
+            <ListCard
+              className="resources"
+              content={[]}
+              // content={resourceCardPropsList.map((resourcesCardProps) => {
+              //   return (
+              //     <ResourceCard
+              //       {...resourcesCardProps}
+              //       isEditing={isEditing}
+              //       orientation="horizontal"
+              //     />
+
+              //   )
+              // })}
+              title={/* t */ `Latest resources`}
+              actions={
+                profileCardProps.isOwner
+                  ? {
+                      element: (
+                        // <Link href={newResourceHref}>
+                        <PrimaryButton className="action">
+                          <NoteAddIcon />
+                          {/* <Trans> */}
+                          New resource
+                          {/* </Trans> */}
+                        </PrimaryButton>
+                        // </Link>
+                      ),
+                      position: 'end',
+                    }
+                  : undefined
+              }
+            />
+            {/* {collectionList} */}
+          </div>
+          <div className="side-column">
+            <OverallCard {...overallCardProps} />
+            {collectionList}
+          </div>
         </div>
       </div>
-    </div>
-    // </HeaderPageTemplate>
+      {/* </HeaderPageTemplate> */}
+    </MainLayout>
   )
 }
 ProfilePage.displayName = 'ProfilePage'

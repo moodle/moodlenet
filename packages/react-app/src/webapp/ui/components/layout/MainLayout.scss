@@ -1,4 +1,4 @@
-@import '../../styles/application';
+@import '../../styles/main.scss';
 
 html {
   width: 100%;
@@ -41,6 +41,7 @@ body {
       align-items: center;
       justify-content: space-between;
       > .left {
+        display: flex;
         > .title {
           line-height: 20px;
           font-size: 20px;
@@ -133,8 +134,7 @@ body {
   > .content {
     height: 100%;
     width: -webkit-fill-available;
-
-    padding: 0 0 80px;
+    padding: 0 100px 80px;
     display: flex;
     flex-direction: column;
     align-items: center;

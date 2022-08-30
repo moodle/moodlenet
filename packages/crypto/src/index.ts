@@ -32,7 +32,7 @@ const ext: Ext<CryptoExt, [CoreExt, KeyValueStoreExtDef]> = {
 
     return {
       async install() {
-        const { public: publicKey, private: privateKey } = keypair({ bits: 2048 })
+        const { public: publicKey, private: privateKey } = keypair({ bits: 4096 })
         kvStore.set('keypairs', '', { privateKey, publicKey })
       },
       deploy() {

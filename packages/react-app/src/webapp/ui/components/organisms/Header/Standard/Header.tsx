@@ -3,18 +3,20 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
+// import smallLogo from '../../../../assets/logos/moodlenet-logo-small.svg'
+// import logo from '../../../../assets/logos/moodlenet-logo.svg'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
-// import Switch from '../../atoms/Switch/Switch'
+// import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
 import { AddonCtx, AvatarMenuItem } from '../addons'
+import HeaderTitle from '../HeaderTitle/HeaderTitle'
 import './Header.scss'
 
 type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
-  const setCtx = useContext(SettingsCtx)
+  // const setCtx = useContext(SettingsCtx)
   const headerCtx = useContext(AddonCtx)
 
   const { clientSessionData, logout } = useContext(AuthCtx)
@@ -51,14 +53,20 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     return menuItems
   }, [headerCtx.avatarMenuItems])
 
+  // console.log('logo ', logo)
+  // console.log('smallLogo ', smallLogo)
+
   return (
     <div className="header">
       <div className="content">
         <div className="left">
-          <Link className="title" to={`/`}>
+          {/*<Link className="title" to={`/`}>
             <span className="mn">{setCtx.organizationData.instanceName}</span>
             <span className="bar">|</span>
-          </Link>
+          </Link> */}
+          <HeaderTitle
+          // logo={logo} smallLogo={smallLogo}
+          />
         </div>
         <div className="right">
           {addonCtx.rightComponents.flatMap(({ addon: { StdHeaderItems } }, index) => {
@@ -92,7 +100,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
                   </div>
                 )
               })}
-              hoverElement={<div style={avatar} className="avatar" {...{ referrerPolicy: 'no-referrer' }} />}
+              hoverElement={<div style={avatar} className="avatar" />}
             />
           ) : (
             // <span>

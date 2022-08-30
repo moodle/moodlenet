@@ -91,7 +91,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-  const { clientSessionData: clientSession } = useContext(lib.auth.AuthCtx)
+  const { clientSessionData } = useContext(lib.auth.AuthCtx)
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
@@ -134,10 +134,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   }
 
   // const [avatarUrl] = useImageUrl(editForm.values.avatarImage, defaultAvatar)
-  const avatarUrl = typeof editForm.avatarImage === 'string' ? editForm.avatarImage : ''
+  const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+
   const avatar = {
-    backgroundImage:
-      'url(' + clientSession?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg' + ')',
+    backgroundImage: `url(${avatarImageUrl})`,
+    // backgroundImage: 'url(' + defaultAvatar + ')',
+    // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
 
@@ -175,14 +177,14 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           <img src={backgroundUrl} alt="Background" />
         </Modal>
       )}
-      {isShowingAvatar && avatarUrl && (
+      {isShowingAvatar && clientSessionData?.avatarUrl && (
         <Modal
           className="image-modal"
           closeButton={false}
           onClose={() => setIsShowingAvatar(false)}
           style={{ maxWidth: '90%', maxHeight: '90%' }}
         >
-          <img src={avatarUrl} alt="Avatar" />
+          <img src={avatarImageUrl} alt="Avatar" />
         </Modal>
       )}
       <div
@@ -271,7 +273,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
                 className="display-name underline"
                 placeholder="Display name"
                 // value={editForm.values.displayName}
-                value={clientSession?.displayName}
+                value={clientSessionData?.displayName}
                 // onChange={editForm.handleChange}
                 name="displayName"
                 displayMode={true}
@@ -284,7 +286,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             ) : (
               <div className="display-name">
                 {/* {editForm.values.displayName} */}
-                {clientSession?.displayName}
+                {clientSessionData?.displayName}
               </div>
             )}
             {!isEditing && isOwner && isApproved && (
