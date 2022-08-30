@@ -21,7 +21,7 @@ import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useContext, useLayoutEffect, useRef, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useLayoutEffect, useRef, useState } from 'react'
 import { ProfileFormValues } from '../../types'
 import './ProfileCard.scss'
 
@@ -53,14 +53,14 @@ export type ProfileCardProps = {
   // requestApprovalForm: FormikHandle<{}>
   // approveUserForm: FormikHandle<{}>
   // unapproveUserForm: FormikHandle<{}>
-  // userId: string
+  userId: string
   profileUrl: string
   showAccountApprovedSuccessAlert?: boolean
   toggleIsEditing(): unknown
   openSendMessage(): unknown
-  // setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
-  // setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
-  // setIsReporting: Dispatch<SetStateAction<boolean>>
+  setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setIsReporting: Dispatch<SetStateAction<boolean>>
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -77,14 +77,14 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   // toggleFollowForm,
   // approveUserForm,
   // requestApprovalForm,
-  // userId,
-  // profileUrl,
+  userId,
+  profileUrl,
   // unapproveUserForm,
   openSendMessage,
   toggleIsEditing,
-  // setShowUserIdCopiedAlert,
-  // setShowUrlCopiedAlert,
-  // setIsReporting,
+  setShowUserIdCopiedAlert,
+  setShowUrlCopiedAlert,
+  setIsReporting,
 }) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
@@ -149,21 +149,21 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   //   backgroundSize: 'cover',
   // }
 
-  // const copyId = () => {
-  //   navigator.clipboard.writeText(userId)
-  //   setShowUserIdCopiedAlert(false)
-  //   setTimeout(() => {
-  //     setShowUserIdCopiedAlert(true)
-  //   }, 100)
-  // }
+  const copyId = () => {
+    navigator.clipboard.writeText(userId)
+    setShowUserIdCopiedAlert(false)
+    setTimeout(() => {
+      setShowUserIdCopiedAlert(true)
+    }, 100)
+  }
 
-  // const copyUrl = () => {
-  //   navigator.clipboard.writeText(profileUrl)
-  //   setShowUrlCopiedAlert(false)
-  //   setTimeout(() => {
-  //     setShowUrlCopiedAlert(true)
-  //   }, 100)
-  // }
+  const copyUrl = () => {
+    navigator.clipboard.writeText(profileUrl)
+    setShowUrlCopiedAlert(false)
+    setTimeout(() => {
+      setShowUrlCopiedAlert(true)
+    }, 100)
+  }
 
   return (
     <div className="profile-card">
@@ -296,7 +296,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             )}
             {!isEditing && isOwner && (
               <abbr className={`user-id`} title={/* t */ `Click to copy your ID to the clipboard`}>
-                <TertiaryButton className="copy-id" /* onClick={copyId} */>Copy ID</TertiaryButton>
+                <TertiaryButton className="copy-id" onClick={copyId}>
+                  Copy ID
+                </TertiaryButton>
               </abbr>
             )}
           </div>
@@ -524,19 +526,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           {isAuthenticated && !isOwner && (
             <FloatingMenu
               menuContent={[
-                <div
-                  tabIndex={0}
-                  // onClick={copyUrl}
-                >
+                <div tabIndex={0} onClick={copyUrl}>
                   <ShareIcon />
                   {/* <Trans> */}
                   Share
                   {/* </Trans> */}
                 </div>,
-                <div
-                  tabIndex={0}
-                  // onClick={() => setIsReporting(true)}
-                >
+                <div tabIndex={0} onClick={() => setIsReporting(true)}>
                   <FlagIcon />
                   {/* <Trans> */}
                   Report
