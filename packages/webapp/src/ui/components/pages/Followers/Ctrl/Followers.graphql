@@ -2,6 +2,7 @@ query followersPage($profileId: ID!) {
   node(id: $profileId) {
     ... on INode {
       id
+      name
       followers: _rel(
         type: Follows
         inverse: true
