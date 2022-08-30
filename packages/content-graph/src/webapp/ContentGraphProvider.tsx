@@ -1,19 +1,14 @@
-import { ComponentType, createContext, FC, PropsWithChildren, useCallback, useMemo } from 'react'
-import { GlyphDescriptor, NodeGlyph } from '../types'
-
-export type ContentGraphContextType = {
-  registerNodeHomePage<GlyphDesc extends GlyphDescriptor<'node'>>(_: {
-    component: ComponentType<{ node: NodeGlyph<GlyphDesc> }>
-  }): unknown
-}
-
-export const ContentGraphContext = createContext<ContentGraphContextType>(null as any)
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react'
+import { ContentGraphContext, ContentGraphContextType, NodeHomePageDef } from './Lib'
 
 const ContentGraphProvider: FC<PropsWithChildren> = ({ children }) => {
-  const registerNodeHomePage = useCallback<ContentGraphContextType['registerNodeHomePage']>(() => {}, [])
+  const [nodeHomePages, setNodeHomePages] = useState<NodeHomePageDef[]>([])
+  const registerNodeHomePage = useCallback<ContentGraphContextType['registerNodeHomePage']>(def => {
+    setNodeHomePages(current => [...current, def as any])
+  }, [])
 
   const ctx = useMemo<ContentGraphContextType>(() => {
-    return { registerNodeHomePage }
+    return { registerNodeHomePage, nodeHomePages }
   }, [registerNodeHomePage])
 
   return <ContentGraphContext.Provider value={ctx}>{children}</ContentGraphContext.Provider>

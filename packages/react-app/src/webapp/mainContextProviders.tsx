@@ -5,10 +5,9 @@ import * as header from './ui/components/organisms/Header'
 import * as set from './ui/components/pages/Settings/SettingsContext'
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const ctxProviderWrap = Object.values(extCtxProviders).reduce(
-    (_children, { Provider, extId }) => <Provider key={extId}>{_children}</Provider>,
-    <>{children}</>,
-  )
+  const ctxProviderWrap = Object.values(extCtxProviders)
+    .reverse()
+    .reduce((_children, { Provider, extId }) => <Provider key={extId}>{_children}</Provider>, <>{children}</>)
 
   return (
     <header.Provider>

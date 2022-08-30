@@ -52,20 +52,19 @@ const ext: ExtSimpleEmailAuth = {
     '@moodlenet/profile-page@0.1.0',
   ],
   async connect(shell) {
-    let [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
+    const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
+    reactApp.plug.setup({
+      ctxProvider: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
+      },
+      routes: {
+        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+      },
+    })
     await arangopkg.access.fetch('ensureCollections')({ defs: { User: { kind: 'node' } } })
 
     return {
       deploy() {
-        reactApp.plug.setup({
-          ctxProvider: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-          },
-          routes: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-          },
-        })
-
         http.plug.mount({ getApp: getHttpApp })
         shell.expose({
           'login/sub': { validate: () => ({ valid: true }) },
