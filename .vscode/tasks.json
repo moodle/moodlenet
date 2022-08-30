@@ -21,6 +21,7 @@
         "crypto dev-build",
         "content-graph dev-build",
         "key-value-store dev-build",
+        "organization dev-build",
         "profile-page dev-build"
       ],
       "presentation": {
@@ -57,15 +58,6 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "crypto dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/key-value-store/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "key-value-store dev-build"
       // "dependsOn": ["core dev-build"]
     },
     {
@@ -160,11 +152,29 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/passport-auth/tsconfig.json",
+      "tsconfig": "packages/email-service/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "passport-auth dev-build"
+      "label": "email-service dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/key-value-store/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "key-value-store dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/organization/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "organization dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]

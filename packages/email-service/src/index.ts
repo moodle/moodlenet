@@ -49,7 +49,7 @@ const ext: Ext<EmailService, [CoreExt, ReactAppExt, KeyValueStoreExtDef, ReactAp
         shell.provide.services({
           async send({ emailObj }) {
             const mailerCfg = env?.mailerCfg ?? (await kvstore.get('mailerCfg', '')).value
-            console.log({ mailerCfg })
+            // console.log({ mailerCfg })
             if (!mailerCfg) {
               throw new Error(`no mailerCfg defined in env or kvstore ! can't send email !`)
             }

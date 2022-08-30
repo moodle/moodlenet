@@ -1,3 +1,5 @@
+import { OrganizationExtDef } from '@moodlenet/organization'
+import lib from 'moodlenet-react-app-lib'
 import {
   ComponentType,
   createContext,
@@ -12,6 +14,12 @@ import {
 } from 'react'
 import { baseStyle, BaseStyleType } from '../../../styles/config'
 
+export type OrganizationData = {
+  instanceName: string
+  landingTitle: string
+  landingSubtitle: string
+}
+
 export type StyleType = BaseStyleType & CSSProperties
 
 export const StyleContextDefault = {
@@ -21,16 +29,12 @@ export const StyleContextDefault = {
 export type SettingItemDef = { Menu: ComponentType; Content: ComponentType }
 export type SettingItem = { def: SettingItemDef }
 export type SetCtxT = {
-  instanceName: string
-  setInstanceName: React.Dispatch<React.SetStateAction<string>>
-  landingTitle: string
-  setLandingTitle: React.Dispatch<React.SetStateAction<string>>
-  landingSubtitle: string
-  setLandingSubtitle: React.Dispatch<React.SetStateAction<string>>
   settingsItems: SettingItem[]
   registerSettingsItem(settingsItemDef: SettingItemDef): void
   style: StyleType
   setStyle: React.Dispatch<React.SetStateAction<StyleType>>
+  saveOrganization(data: OrganizationData): unknown
+  organizationData: OrganizationData
 }
 
 export const SettingsCtx = createContext<SetCtxT>(null as any)
@@ -43,16 +47,28 @@ export function useRegisterSettingsItem({ Menu, Content }: SettingItemDef) {
 }
 
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
-  // const nav = useNavigate()
+  const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization', '0.1.0')
 
+  // const nav = useNavigate()
+  // dentro a use effect prendo il valore
   const [style, setStyle] = useState<SetCtxT['style']>(StyleContextDefault)
-  const [instanceName, setInstanceName] = useState<SetCtxT['instanceName']>('MoodleNet')
-  const [landingTitle, setLandingTitle] = useState<SetCtxT['instanceName']>(
-    'Find, share and curate open educational resources',
+  const [organizationData, setDataOrg] = useState<OrganizationData>({
+    instanceName: '',
+    landingTitle: '',
+    landingSubtitle: '',
+  })
+
+  const saveOrganization = useCallback(
+    (data: OrganizationData) => {
+      organizationSrv('set')({ payload: data })
+      setDataOrg(data)
+    },
+    [setDataOrg],
   )
-  const [landingSubtitle, setLandingSubtitle] = useState<SetCtxT['instanceName']>(
-    'Search for resources, subjects, collections or people',
-  )
+
+  useEffect(() => {
+    organizationSrv('get')().then(({ data: orgData }) => setDataOrg(orgData))
+  }, [])
 
   const [settingsItems, setLoginItems] = useState<SetCtxT['settingsItems']>([])
   const registerLogin = useCallback<SetCtxT['registerSettingsItem']>(loginItemDef => {
@@ -68,29 +84,14 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const ctx = useMemo<SetCtxT>(() => {
     return {
-      instanceName,
-      setInstanceName,
-      landingTitle,
-      setLandingTitle,
-      landingSubtitle,
-      setLandingSubtitle,
       style,
       setStyle,
       registerSettingsItem: registerLogin,
       settingsItems,
+      saveOrganization,
+      organizationData,
     }
-  }, [
-    instanceName,
-    setInstanceName,
-    landingTitle,
-    setLandingTitle,
-    landingSubtitle,
-    setLandingSubtitle,
-    style,
-    setStyle,
-    registerLogin,
-    settingsItems,
-  ])
+  }, [style, setStyle, registerLogin, settingsItems, organizationData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }
