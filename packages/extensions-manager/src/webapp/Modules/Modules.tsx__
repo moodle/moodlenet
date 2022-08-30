@@ -8,8 +8,8 @@ import './styles.scss'
 
 export type ModulesProps = {}
 
-const Card = lib.ui.components.atoms.Card
-const Switch = lib.ui.components.atoms.Switch
+const Card = lib.ui.components.Card
+const Switch = lib.ui.components.Switch
 
 const Modules: FC<ModulesProps> = () => {
   const stateContext = useContext(StateContext)

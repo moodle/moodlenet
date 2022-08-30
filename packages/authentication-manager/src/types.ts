@@ -10,4 +10,5 @@ export type UserClientSession = {
 }
 export type RootClientSession = {
   root: true
+  user?: undefined
 }

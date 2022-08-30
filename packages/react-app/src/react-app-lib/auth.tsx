@@ -1,10 +1,4 @@
-import type {
-  AuthenticationManagerExt,
-  ClientSession,
-  RootClientSession,
-  SessionToken,
-  UserClientSession,
-} from '@moodlenet/authentication-manager'
+import type { AuthenticationManagerExt, ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
 import { SessionTokenCookieName } from '@moodlenet/http-server'
 import cookies from 'js-cookie'
 import {
@@ -19,8 +13,12 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
+import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 import priHttp from './pri-http'
 
+export type ClientSessionData =
+  | ({ isRoot: false } & UserData)
+  | ({ isRoot: true } & Pick<UserData, 'avatarUrl' | 'displayName'>)
 export type LoginItemDef = { Icon: ComponentType; Panel: ComponentType }
 export type LoginItem = { def: LoginItemDef }
 export type SignupItemDef = { Icon: ComponentType; Panel: ComponentType }
@@ -34,16 +32,8 @@ export type AuthCtxT = {
     sessionToken: SessionToken,
   ): Promise<{ success: true; clientSession: ClientSession } | { success: false; msg: string }>
   logout(): void
-} & (
-  | {
-      isRoot: false
-      clientSession: UserClientSession | null
-    }
-  | {
-      isRoot: true
-      clientSession: RootClientSession
-    }
-)
+  clientSessionData: ClientSessionData | null
+}
 
 const srvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
 
@@ -132,6 +122,15 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }, [fetchClientSession])
 
   const ctx = useMemo<AuthCtxT>(() => {
+    const clientSessionData: ClientSessionData | null = clientSession
+      ? clientSession.root
+        ? {
+            isRoot: true,
+            displayName: 'ROOT',
+            avatarUrl: rootAvatarUrl,
+          }
+        : { isRoot: false, ...clientSession.user }
+      : null
     return {
       registerLogin,
       loginItems,
@@ -139,7 +138,8 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       registerSignup,
       setSessionToken,
       logout,
-      ...(clientSession?.root ? { isRoot: true, clientSession } : { isRoot: false, clientSession }),
+      clientSessionData,
+      // ...(clientSession?.root ? { isRoot: true, clientSession } : { isRoot: false, clientSession }),
     }
   }, [registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken, logout])
 

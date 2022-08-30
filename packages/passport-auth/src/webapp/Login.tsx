@@ -3,7 +3,7 @@ import { FC, useContext } from 'react'
 import './Login.scss'
 import { PassportContext } from './MainProvider'
 
-const { SecondaryButton, PrimaryButton } = lib.ui.components.atoms
+const { SecondaryButton, PrimaryButton } = lib.ui.components
 export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => (

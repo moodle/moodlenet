@@ -51,15 +51,20 @@ export const INSTALL_INFO_FILENAME = 'install-info.json'
 */
 
 export function assertValidPkgModule(module: any, pkgInfo: PackageInfo): asserts module is Ext {
-  assert(!!module, `no module! ${module}`)
-  const { name: moduleName, version, requires, connect } = module
-  assert('string' === typeof moduleName, `invalid name type : ${typeof moduleName}`) // : ExtName<Def>
-  assert('string' === typeof version, `invalid version type : ${typeof version}`) // : ExtName<Def>
-  assert(Array.isArray(requires), `invalid requires type : ${typeof requires}`) // : { [Index in keyof Requires]: _Unsafe_ExtId<Requires[Index]> }
-  assert('function' === typeof connect, `invalid connect type : ${typeof connect}`) // : ExtDeploy<Def>
-  const validId = moduleName === pkgInfo.packageJson.name && version === pkgInfo.packageJson.version
-  assert(
-    validId,
-    `pkg module's [name, version] should be [${pkgInfo.packageJson.name},${pkgInfo.packageJson.version}] .. found [${moduleName},${version}]`,
-  )
+  try {
+    assert(!!module, `no module! ${module}`)
+    const { name: moduleName, version, requires, connect } = module
+    assert('string' === typeof moduleName, `invalid name type : ${typeof moduleName}`) // : ExtName<Def>
+    assert('string' === typeof version, `invalid version type : ${typeof version}`) // : ExtName<Def>
+    assert(Array.isArray(requires), `invalid requires type : ${typeof requires}`) // : { [Index in keyof Requires]: _Unsafe_ExtId<Requires[Index]> }
+    assert('function' === typeof connect, `invalid connect type : ${typeof connect}`) // : ExtDeploy<Def>
+    const validId = moduleName === pkgInfo.packageJson.name && version === pkgInfo.packageJson.version
+    assert(
+      validId,
+      `pkg module's [name, version] should be [${pkgInfo.packageJson.name},${pkgInfo.packageJson.version}] .. found [${moduleName},${version}]`,
+    )
+  } catch (e) {
+    console.error({ pkgInfo, module })
+    throw e
+  }
 }

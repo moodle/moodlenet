@@ -3,7 +3,6 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
-import rootAvatar from '../../../../../static/img/ROOT.png'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
 import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
@@ -16,17 +15,29 @@ type HeaderProps = {}
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
   const setCtx = useContext(SettingsCtx)
+  // console.log({ addonCtx })
 
-  const { clientSession, logout, isRoot } = useContext(AuthCtx)
-  const avatarImageUrl = isRoot
-    ? rootAvatar
-    : clientSession?.user.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+  const { clientSessionData, logout } = useContext(AuthCtx)
+
+  const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,
     // backgroundImage: 'url(' + defaultAvatar + ')',
     // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
+
+  const avatarMenuItems = [
+    <Link to="/settings">
+      <SettingsIcon />
+      Settings
+    </Link>,
+    <Link to="/" onClick={logout}>
+      <ExitToAppIcon />
+      Log out
+    </Link>,
+  ]
 
   return (
     <div className="header">
@@ -42,23 +53,10 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
             return (StdHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
           })}
 
-          {clientSession ? (
+          {clientSessionData ? (
             <FloatingMenu
               className="avatar-menu"
-              menuContent={[
-                <Link to="/settings">
-                  <SettingsIcon />
-                  Settings
-                </Link>,
-                /*  <Link to="/extensions">
-                  <ExtensionIcon />
-                  Extensions
-                </Link>, */
-                <Link to="/" onClick={logout}>
-                  <ExitToAppIcon />
-                  Log out
-                </Link>,
-              ]}
+              menuContent={avatarMenuItems}
               hoverElement={
                 <div style={avatar} className="avatar" {...{ referrerPolicy: 'no-referrer' }} />
                 // <Link

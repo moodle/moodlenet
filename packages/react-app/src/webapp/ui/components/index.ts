@@ -1,3 +1,4 @@
-export * as atoms from './atoms'
-export * as layout from './layout'
-export * as organism from './organisms'
+export * from './atoms'
+export * from './layout'
+export * from './molecules'
+export * from './organisms'

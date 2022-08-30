@@ -20,7 +20,7 @@ export type ExtensionConfigProps = {
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
-const { Card, PrimaryButton, TertiaryButton, Loading } = lib.ui.components.atoms
+const { Card, PrimaryButton, TertiaryButton, Loading } = lib.ui.components
 
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) => {
   // const stateContext = useContext(StateContext)

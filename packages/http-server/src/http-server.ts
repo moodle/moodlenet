@@ -13,7 +13,7 @@ const SESSION_TOKEN_COOKIE_NAME: SessionTokenCookieName = 'mn-session'
 // const SESSION_TOKEN_HEADER_NAME: SessionTokenHeaderName = SESSION_TOKEN_COOKIE_NAME
 
 export function createHttpServer({ shell, port }: Cfg) {
-  const [, auth] = shell.deps
+  // const [, auth] = shell.deps
   const extPortsApp = makeExtPortsApp(shell)
 
   let server: Server
@@ -57,15 +57,7 @@ export function createHttpServer({ shell, port }: Cfg) {
       .use(cookieParser())
       .use(`/`, async (req, __, next) => {
         req.moodlenet = {}
-        const maybeSessionToken = req.cookies[SESSION_TOKEN_COOKIE_NAME]
-        if ('string' === typeof maybeSessionToken) {
-          const {
-            msg: { data: resp },
-          } = await auth.access.fetch('getClientSession')({ token: maybeSessionToken })
-          if (resp.success) {
-            req.moodlenet.clientSession = resp.clientSession
-          }
-        }
+        req.moodlenet.authToken = req.cookies[SESSION_TOKEN_COOKIE_NAME]
         next()
       })
     app.use(basePriMsgUrl, extPortsApp)
