@@ -8,6 +8,7 @@ digraph G {
   "@moodlenet/react-app";
   "@moodlenet/dev-machine" [ style = "dashed" ];
   "@moodlenet/email-service";
+  "@moodlenet/react-app";
   "@moodlenet/extensions-manager";
   "@moodlenet/http-server";
   "@moodlenet/organization" [ style = "dashed" ];
@@ -49,6 +50,7 @@ digraph G {
   "@moodlenet/react-app" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/http-server" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/organization" [ style = "dashed" ];
+  "@moodlenet/react-app" -> "@moodlenet/content-graph" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/arangodb" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/authentication-manager" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/content-graph" [ style = "dashed" ];

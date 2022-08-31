@@ -24,19 +24,16 @@
     > .main-column {
       width: 65%;
       height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      > * {
+        width: auto;
+      }
 
       > .collections {
         display: none;
-      }
-
-      > :not(:last-child) {
-        margin-bottom: 16px;
-      }
-
-      > :first-child {
-        @media screen and (max-width: 450px) {
-          margin-bottom: 0;
-        }
       }
     }
 

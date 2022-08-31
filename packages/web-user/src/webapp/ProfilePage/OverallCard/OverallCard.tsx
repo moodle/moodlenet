@@ -53,14 +53,16 @@ export const OverallCard: FC<OverallCardProps> = ({
         </div>
       ) : (
         <div className="overall-container">
-          {/* <Link href={followersHref} className="data"> */}
-          {followers}
-          <span>
-            {/* <Trans> */}
-            Followers
-            {/* </Trans> */}
-          </span>
-          {/* </Link> */}
+          <div className="data">
+            {/* <Link href={followersHref} className="data"> */}
+            {followers}
+            <span>
+              {/* <Trans> */}
+              Followers
+              {/* </Trans> */}
+            </span>
+            {/* </Link> */}
+          </div>
           <div className="data">
             {kudos}
             <span>
