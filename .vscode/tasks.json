@@ -22,7 +22,7 @@
         "content-graph dev-build",
         "key-value-store dev-build",
         "organization dev-build",
-        "profile-page dev-build"
+        "web-user dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -143,12 +143,12 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/profile-page/tsconfig.json",
+      "tsconfig": "packages/web-user/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "profile-page dev-build"
-      // "dependsOn": ["core dev-build", "profile-page dev-build"]
+      "label": "web-user dev-build"
+      // "dependsOn": ["core dev-build", "web-user dev-build"]
     },
     {
       "type": "typescript",

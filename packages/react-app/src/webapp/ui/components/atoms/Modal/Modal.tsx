@@ -1,10 +1,10 @@
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import React, { ReactNode, useCallback, useEffect } from 'react'
+import React, { PropsWithChildren, ReactNode, useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import Card from '../Card/Card'
 import './Modal.scss'
 
-class Portal extends React.Component {
+class Portal extends React.Component<PropsWithChildren> {
   static el = (() => {
     const _el = document.createElement('div')
     _el.setAttribute('class', 'modal-portal')

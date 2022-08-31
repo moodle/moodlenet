@@ -4,10 +4,10 @@ import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 import { Lib, ProfileGlyphs } from './types'
 
-export type ProfileExtDef = ExtDef<'@moodlenet/profile-page', '0.1.0', Lib>
+export type ProfileExtDef = ExtDef<'@moodlenet/web-user', '0.1.0', Lib>
 
 const ext: Ext<ProfileExtDef, [CoreExt, ReactAppExt, ContentGraphExtDef]> = {
-  name: '@moodlenet/profile-page',
+  name: '@moodlenet/web-user',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/content-graph@0.1.0'],
   async connect(shell) {

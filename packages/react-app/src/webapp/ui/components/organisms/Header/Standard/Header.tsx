@@ -1,13 +1,13 @@
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
-// import smallLogo from '../../../../assets/logos/moodlenet-logo-small.svg'
-// import logo from '../../../../assets/logos/moodlenet-logo.svg'
+import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-// import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
 import { AddonCtx, AvatarMenuItem } from '../addons'
 import HeaderTitle from '../HeaderTitle/HeaderTitle'
 import './Header.scss'
@@ -73,6 +73,26 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
             return (StdHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
           })}
 
+          {clientSessionData && (
+            <FloatingMenu
+              className="add-menu"
+              menuContent={[
+                <Link /* href={newResourceHref} */ to="" tabIndex={0}>
+                  <NoteAddIcon />
+                  {/* <Trans> */}
+                  New resource
+                  {/* </Trans> */}
+                </Link>,
+                <Link /* href={newCollectionHref} */ to="" tabIndex={0}>
+                  <LibraryAddIcon />
+                  {/* <Trans> */}
+                  New collection
+                  {/* </Trans> */}
+                </Link>,
+              ]}
+              hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
+            />
+          )}
           {clientSessionData ? (
             <FloatingMenu
               className="avatar-menu"
