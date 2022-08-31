@@ -52,10 +52,10 @@ export const ListCard: FC<ListCardProps> = ({
   //   setMaxHeight(totalMaxHeight)
   // }, [elementCurr, setMaxHeight, className, contentDivCurr, maxRows])
 
-  console.log('############ ', className.toUpperCase())
-  console.log(contentDiv.current?.clientWidth)
-  console.log(minGrid)
-  console.log(contentDiv.current?.clientWidth && minGrid && contentDiv.current?.clientWidth / minGrid)
+  // console.log('############ ', className.toUpperCase())
+  // console.log(contentDiv.current?.clientWidth)
+  // console.log(minGrid)
+  // console.log(contentDiv.current?.clientWidth && minGrid && contentDiv.current?.clientWidth / minGrid)
 
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>

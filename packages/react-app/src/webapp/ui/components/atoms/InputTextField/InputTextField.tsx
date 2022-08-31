@@ -1,6 +1,6 @@
 import React, { forwardRef, ReactNode, useEffect, useState } from 'react'
 import { useForwardedRef } from '../../../lib/useForwardedRef'
-import './styles.scss'
+import './InputTextField.scss'
 
 export type InputTextFieldProps = {
   label?: string

@@ -1,23 +1,30 @@
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import SettingsIcon from '@material-ui/icons/Settings'
-import { FC, PropsWithChildren, useContext } from 'react'
+import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
+import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
-// import Switch from '../../atoms/Switch/Switch'
-import { AddonCtx } from '../addons'
+import { AddonCtx, AvatarMenuItem } from '../addons'
+import HeaderTitle from '../HeaderTitle/HeaderTitle'
 import './Header.scss'
 
 type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
-  const setCtx = useContext(SettingsCtx)
-  // console.log({ addonCtx })
+  // const setCtx = useContext(SettingsCtx)
+  const headerCtx = useContext(AddonCtx)
 
   const { clientSessionData, logout } = useContext(AuthCtx)
+
+  const baseAvatarMenuItems: AvatarMenuItem[] = [
+    { def: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
+    { def: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
+  ]
 
   const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
 
@@ -28,43 +35,92 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     backgroundSize: 'cover',
   }
 
-  const avatarMenuItems = [
-    <Link to="/settings">
-      <SettingsIcon />
-      Settings
-    </Link>,
-    <Link to="/" onClick={logout}>
-      <ExitToAppIcon />
-      Log out
-    </Link>,
-  ]
+  // const avatarMenuItems = baseAvatarMenuItems
+  const orderedAvatarMenuItems: AvatarMenuItem[] = []
+  const unorderedAvatarMenuItems: AvatarMenuItem[] = []
+  headerCtx.avatarMenuItems.map(menuItem => {
+    typeof menuItem.def.Position === 'number'
+      ? orderedAvatarMenuItems.push(menuItem)
+      : unorderedAvatarMenuItems.push(menuItem)
+  })
+
+  const avatarMenuItems = useMemo(() => {
+    const menuItems = baseAvatarMenuItems.concat(unorderedAvatarMenuItems)
+
+    orderedAvatarMenuItems.map(menuItem => {
+      return typeof menuItem.def.Position === 'number' && menuItems.splice(menuItem.def.Position, 0, menuItem)
+    })
+    return menuItems
+  }, [headerCtx.avatarMenuItems])
+
+  // console.log('logo ', logo)
+  // console.log('smallLogo ', smallLogo)
 
   return (
     <div className="header">
       <div className="content">
         <div className="left">
-          <Link className="title" to={`/`}>
+          {/*<Link className="title" to={`/`}>
             <span className="mn">{setCtx.organizationData.instanceName}</span>
             <span className="bar">|</span>
-          </Link>
+          </Link> */}
+          <HeaderTitle
+          // logo={logo} smallLogo={smallLogo}
+          />
         </div>
         <div className="right">
           {addonCtx.rightComponents.flatMap(({ addon: { StdHeaderItems } }, index) => {
             return (StdHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
           })}
 
+          {clientSessionData && (
+            <FloatingMenu
+              className="add-menu"
+              menuContent={[
+                <Link /* href={newResourceHref} */ to="" tabIndex={0}>
+                  <NoteAddIcon />
+                  {/* <Trans> */}
+                  New resource
+                  {/* </Trans> */}
+                </Link>,
+                <Link /* href={newCollectionHref} */ to="" tabIndex={0}>
+                  <LibraryAddIcon />
+                  {/* <Trans> */}
+                  New collection
+                  {/* </Trans> */}
+                </Link>,
+              ]}
+              hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
+            />
+          )}
           {clientSessionData ? (
             <FloatingMenu
               className="avatar-menu"
-              menuContent={avatarMenuItems}
-              hoverElement={
-                <div style={avatar} className="avatar" {...{ referrerPolicy: 'no-referrer' }} />
-                // <Link
-                //   href={me.myProfileHref}
-                //   style={avatar}
-                //   className="avatar"
-                // />
-              }
+              menuContent={avatarMenuItems.map((avatarMenuItem, index) => {
+                return avatarMenuItem.def.Path ? (
+                  <Link
+                    key={index}
+                    className={`avatar-menu-item ${avatarMenuItem.def.ClassName}`}
+                    to={avatarMenuItem.def.Path}
+                    onClick={avatarMenuItem.def.OnClick}
+                  >
+                    <>
+                      <avatarMenuItem.def.Icon /> {avatarMenuItem.def.Text}
+                    </>
+                  </Link>
+                ) : (
+                  <div
+                    key={index}
+                    className={`avatar-menu-item ${avatarMenuItem.def.ClassName}`}
+                    onClick={avatarMenuItem.def.OnClick}
+                  >
+                    <>
+                      <avatarMenuItem.def.Icon /> {avatarMenuItem.def.Text}
+                    </>
+                  </div>
+                )
+              })}
+              hoverElement={<div style={avatar} className="avatar" />}
             />
           ) : (
             // <span>

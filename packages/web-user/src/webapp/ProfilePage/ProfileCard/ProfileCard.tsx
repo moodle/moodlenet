@@ -21,7 +21,7 @@ import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useContext, useLayoutEffect, useRef, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useLayoutEffect, useRef, useState } from 'react'
 import { ProfileFormValues } from '../../types'
 import './ProfileCard.scss'
 
@@ -53,14 +53,14 @@ export type ProfileCardProps = {
   // requestApprovalForm: FormikHandle<{}>
   // approveUserForm: FormikHandle<{}>
   // unapproveUserForm: FormikHandle<{}>
-  // userId: string
+  userId: string
   profileUrl: string
   showAccountApprovedSuccessAlert?: boolean
   toggleIsEditing(): unknown
   openSendMessage(): unknown
-  // setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
-  // setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
-  // setIsReporting: Dispatch<SetStateAction<boolean>>
+  setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setIsReporting: Dispatch<SetStateAction<boolean>>
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -77,21 +77,21 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   // toggleFollowForm,
   // approveUserForm,
   // requestApprovalForm,
-  // userId,
-  // profileUrl,
+  userId,
+  profileUrl,
   // unapproveUserForm,
   openSendMessage,
   toggleIsEditing,
-  // setShowUserIdCopiedAlert,
-  // setShowUrlCopiedAlert,
-  // setIsReporting,
+  setShowUserIdCopiedAlert,
+  setShowUrlCopiedAlert,
+  setIsReporting,
 }) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-  const { clientSessionData: clientSession } = useContext(lib.auth.AuthCtx)
+  const { clientSessionData } = useContext(lib.auth.AuthCtx)
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
@@ -134,10 +134,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   }
 
   // const [avatarUrl] = useImageUrl(editForm.values.avatarImage, defaultAvatar)
-  const avatarUrl = typeof editForm.avatarImage === 'string' ? editForm.avatarImage : ''
+  const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+
   const avatar = {
-    backgroundImage:
-      'url(' + clientSession?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg' + ')',
+    backgroundImage: `url(${avatarImageUrl})`,
+    // backgroundImage: 'url(' + defaultAvatar + ')',
+    // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
 
@@ -147,21 +149,21 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   //   backgroundSize: 'cover',
   // }
 
-  // const copyId = () => {
-  //   navigator.clipboard.writeText(userId)
-  //   setShowUserIdCopiedAlert(false)
-  //   setTimeout(() => {
-  //     setShowUserIdCopiedAlert(true)
-  //   }, 100)
-  // }
+  const copyId = () => {
+    navigator.clipboard.writeText(userId)
+    setShowUserIdCopiedAlert(false)
+    setTimeout(() => {
+      setShowUserIdCopiedAlert(true)
+    }, 100)
+  }
 
-  // const copyUrl = () => {
-  //   navigator.clipboard.writeText(profileUrl)
-  //   setShowUrlCopiedAlert(false)
-  //   setTimeout(() => {
-  //     setShowUrlCopiedAlert(true)
-  //   }, 100)
-  // }
+  const copyUrl = () => {
+    navigator.clipboard.writeText(profileUrl)
+    setShowUrlCopiedAlert(false)
+    setTimeout(() => {
+      setShowUrlCopiedAlert(true)
+    }, 100)
+  }
 
   return (
     <div className="profile-card">
@@ -175,14 +177,14 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           <img src={backgroundUrl} alt="Background" />
         </Modal>
       )}
-      {isShowingAvatar && avatarUrl && (
+      {isShowingAvatar && clientSessionData?.avatarUrl && (
         <Modal
           className="image-modal"
           closeButton={false}
           onClose={() => setIsShowingAvatar(false)}
           style={{ maxWidth: '90%', maxHeight: '90%' }}
         >
-          <img src={avatarUrl} alt="Avatar" />
+          <img src={avatarImageUrl} alt="Avatar" />
         </Modal>
       )}
       <div
@@ -271,7 +273,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
                 className="display-name underline"
                 placeholder="Display name"
                 // value={editForm.values.displayName}
-                value={clientSession?.displayName}
+                value={clientSessionData?.displayName}
                 // onChange={editForm.handleChange}
                 name="displayName"
                 displayMode={true}
@@ -284,7 +286,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             ) : (
               <div className="display-name">
                 {/* {editForm.values.displayName} */}
-                {clientSession?.displayName}
+                {clientSessionData?.displayName}
               </div>
             )}
             {!isEditing && isOwner && isApproved && (
@@ -294,7 +296,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             )}
             {!isEditing && isOwner && (
               <abbr className={`user-id`} title={/* t */ `Click to copy your ID to the clipboard`}>
-                <TertiaryButton className="copy-id" /* onClick={copyId} */>Copy ID</TertiaryButton>
+                <TertiaryButton className="copy-id" onClick={copyId}>
+                  Copy ID
+                </TertiaryButton>
               </abbr>
             )}
           </div>
@@ -522,19 +526,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           {isAuthenticated && !isOwner && (
             <FloatingMenu
               menuContent={[
-                <div
-                  tabIndex={0}
-                  // onClick={copyUrl}
-                >
+                <div tabIndex={0} onClick={copyUrl}>
                   <ShareIcon />
                   {/* <Trans> */}
                   Share
                   {/* </Trans> */}
                 </div>,
-                <div
-                  tabIndex={0}
-                  // onClick={() => setIsReporting(true)}
-                >
+                <div tabIndex={0} onClick={() => setIsReporting(true)}>
                   <FlagIcon />
                   {/* <Trans> */}
                   Report

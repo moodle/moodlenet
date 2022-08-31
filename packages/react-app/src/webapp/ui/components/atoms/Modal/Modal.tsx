@@ -1,36 +1,57 @@
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import React, { FC, ReactNode, useCallback, useEffect } from 'react'
+import React, { PropsWithChildren, ReactNode, useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import Card from '../Card/Card'
 import './Modal.scss'
 
-export type PortalProps = {
-  className?: string
-  el?: string
-  children?: ReactNode
-}
-
-export const Portal: FC<PortalProps> = ({ className = 'modal-portal', el = 'div', children }) => {
-  const [container] = React.useState(() => {
-    // This will be executed only on the initial render
-    // https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
-    const _el = document.createElement(el)
-    _el.setAttribute('class', className)
+class Portal extends React.Component<PropsWithChildren> {
+  static el = (() => {
+    const _el = document.createElement('div')
+    _el.setAttribute('class', 'modal-portal')
     _el.style.display = 'none'
     document.body.prepend(_el)
     return _el
-  })
+  })()
+  componentDidMount() {
+    Portal.el.style.display = 'block'
+  }
 
-  React.useEffect(() => {
-    container.classList.add(className)
-    document.body.appendChild(container)
-    return () => {
-      document.body.removeChild(container)
-    }
-  }, [])
+  componentWillUnmount() {
+    Portal.el.style.display = 'none'
+  }
 
-  return ReactDOM.createPortal(children, container)
+  render() {
+    return ReactDOM.createPortal(this.props.children, Portal.el)
+  }
 }
+
+// export type PortalProps = {
+//   className?: string
+//   el?: string
+//   children?: ReactNode
+// }
+
+// export const Portal: FC<PortalProps> = ({ className = 'modal-portal', el = 'div', children }) => {
+//   const [container] = React.useState(() => {
+//     // This will be executed only on the initial render
+//     // https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
+//     const _el = document.createElement(el)
+//     _el.setAttribute('class', className)
+//     // _el.style.display = 'none'
+//     document.body.prepend(_el)
+//     return _el
+//   })
+
+//   React.useEffect(() => {
+//     container.classList.add(className)
+//     document.body.appendChild(container)
+//     return () => {
+//       document.body.removeChild(container)
+//     }
+//   }, [])
+
+//   return ReactDOM.createPortal(children, container)
+// }
 
 export type ModalProps = {
   title?: string

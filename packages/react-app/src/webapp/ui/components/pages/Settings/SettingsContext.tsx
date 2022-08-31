@@ -70,15 +70,15 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     organizationSrv('get')().then(({ data: orgData }) => setDataOrg(orgData))
   }, [])
 
-  const [settingsItems, setLoginItems] = useState<SetCtxT['settingsItems']>([])
-  const registerLogin = useCallback<SetCtxT['registerSettingsItem']>(loginItemDef => {
-    const loginItem: SettingItem = {
-      def: loginItemDef,
+  const [settingsItems, setSettingsItems] = useState<SetCtxT['settingsItems']>([])
+  const registerSettingsItem = useCallback<SetCtxT['registerSettingsItem']>(settingItemDef => {
+    const settingItem: SettingItem = {
+      def: settingItemDef,
     }
-    setLoginItems(items => [...items, loginItem])
+    setSettingsItems(items => [...items, settingItem])
     return remove
     function remove() {
-      setLoginItems(items => items.filter(_ => _ !== loginItem))
+      setSettingsItems(items => items.filter(_ => _ !== settingItem))
     }
   }, [])
 
@@ -86,12 +86,12 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     return {
       style,
       setStyle,
-      registerSettingsItem: registerLogin,
+      registerSettingsItem,
       settingsItems,
       saveOrganization,
       organizationData,
     }
-  }, [style, setStyle, registerLogin, settingsItems, organizationData])
+  }, [style, setStyle, registerSettingsItem, settingsItems, organizationData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }

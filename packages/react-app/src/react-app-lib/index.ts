@@ -1,6 +1,6 @@
 import * as types from '../types'
 import * as ui from '../webapp/ui'
-import * as header from '../webapp/ui/components/organisms/Header/Standard/HeaderContext'
+import * as header from '../webapp/ui/components/organisms/Header/addons'
 import * as settings from '../webapp/ui/components/pages/Settings/SettingsContext'
 import * as auth from './auth'
 import { getExposed } from './getExposed'
