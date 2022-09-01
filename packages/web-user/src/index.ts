@@ -29,7 +29,7 @@ const ext: Ext<ProfileExtDef, [CoreExt, ReactAppExt, ContentGraphExtDef]> = {
     return {
       deploy() {
         return {
-          plug({ shell }) {
+          plug({ }) {
             return {
               glyphDescriptors,
             }

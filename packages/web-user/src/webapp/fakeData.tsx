@@ -23,11 +23,21 @@ const editForm: ProfileFormValues = {
 
 const profileCardProps: ProfileCardProps = {
   isAuthenticated: true,
-  openSendMessage: () => {},
+  openSendMessage: () => { },
   profileUrl: 'alberto-curcella',
-  toggleIsEditing: () => {},
+  toggleIsEditing: () => { },
   editForm: editForm,
   isOwner: true,
+  userId: '',
+  setShowUserIdCopiedAlert: function (): void {
+    throw new Error('Function not implemented.')
+  },
+  setShowUrlCopiedAlert: function (): void {
+    throw new Error('Function not implemented.')
+  },
+  setIsReporting: function (): void {
+    throw new Error('Function not implemented.')
+  }
 }
 
 export const fakeProfilePageProps: ProfilePageProps = {
