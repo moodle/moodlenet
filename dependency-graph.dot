@@ -8,13 +8,12 @@ digraph G {
   "@moodlenet/react-app";
   "@moodlenet/dev-machine" [ style = "dashed" ];
   "@moodlenet/email-service";
-  "@moodlenet/react-app";
   "@moodlenet/extensions-manager";
   "@moodlenet/http-server";
-  "@moodlenet/organization" [ style = "dashed" ];
+  "@moodlenet/organization";
   "@moodlenet/passport-auth";
-  "@moodlenet/profile-page" [ style = "dashed" ];
   "@moodlenet/simple-email-auth";
+  "@moodlenet/web-user";
   "@moodlenet/test-extension" [ style = "dashed" ];
   "@moodlenet/arangodb" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/authentication-manager" -> "@moodlenet/arangodb" [ style = "dashed" ];
@@ -43,14 +42,10 @@ digraph G {
   "@moodlenet/passport-auth" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/passport-auth" -> "@moodlenet/http-server" [ style = "dashed" ];
   "@moodlenet/passport-auth" -> "@moodlenet/react-app" [ style = "dashed" ];
-  "@moodlenet/profile-page" -> "@moodlenet/content-graph" [ style = "dashed" ];
-  "@moodlenet/profile-page" -> "@moodlenet/core" [ style = "dashed" ];
-  "@moodlenet/profile-page" -> "@moodlenet/react-app" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/authentication-manager" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/http-server" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/organization" [ style = "dashed" ];
-  "@moodlenet/react-app" -> "@moodlenet/content-graph" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/arangodb" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/authentication-manager" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/content-graph" [ style = "dashed" ];
@@ -59,7 +54,10 @@ digraph G {
   "@moodlenet/simple-email-auth" -> "@moodlenet/email-service" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/http-server" [ style = "dashed" ];
   "@moodlenet/simple-email-auth" -> "@moodlenet/react-app" [ style = "dashed" ];
-  "@moodlenet/simple-email-auth" -> "@moodlenet/profile-page" [ style = "dashed" ];
+  "@moodlenet/simple-email-auth" -> "@moodlenet/web-user" [ style = "dashed" ];
   "@moodlenet/test-extension" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/test-extension" -> "@moodlenet/react-app" [ style = "dashed" ];
+  "@moodlenet/web-user" -> "@moodlenet/content-graph" [ style = "dashed" ];
+  "@moodlenet/web-user" -> "@moodlenet/core" [ style = "dashed" ];
+  "@moodlenet/web-user" -> "@moodlenet/react-app" [ style = "dashed" ];
 }
