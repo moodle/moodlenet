@@ -52,7 +52,7 @@ const ext: ExtSimpleEmailAuth = {
     '@moodlenet/web-user@0.1.0',
   ],
   async connect(shell) {
-    const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
+    const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, /* contentGraph, profile */] = shell.deps
     reactApp.plug.setup({
       ctxProvider: {
         moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
@@ -139,11 +139,11 @@ const ext: ExtSimpleEmailAuth = {
               return { msg, success }
             }
 
-            const profileNodeResp = await contentGraph.plug.createNode(
+          /*  const profileNodeResp = await contentGraph.plug.createNode(
               profile.plug.glyphDescriptors.Profile,
               { title: displayName },
               { authenticableBy: { userId: authRes.user.id } },
-            )
+            ) */
 
             const { sessionToken } = authRes
             return { success: true, sessionToken }
