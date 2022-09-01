@@ -5,7 +5,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import { MainLayout } from '../../../layout'
+import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout'
 import './RootLogin.scss'
 
 const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
@@ -14,9 +14,9 @@ export type RootLoginProps = {}
 
 export const RootLogin: FC<RootLoginProps> = () => {
   return (
-    <MainLayout headerType="minimalistic">
+    <SimpleLayout page="rootLogin">
       <RootLoginBody />
-    </MainLayout>
+    </SimpleLayout>
   )
 }
 export const RootLoginBody: FC<RootLoginProps> = ({}) => {
