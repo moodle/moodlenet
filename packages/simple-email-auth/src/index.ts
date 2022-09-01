@@ -5,8 +5,8 @@ import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { CryptoExt } from '@moodlenet/crypto'
 import type { EmailService } from '@moodlenet/email-service'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
-import { ProfileExtDef } from '@moodlenet/profile-page'
 import type { ReactAppExt } from '@moodlenet/react-app'
+import { ProfileExtDef } from '@moodlenet/web-user'
 import assert from 'assert'
 import { resolve } from 'path'
 import userStore from './store'
@@ -49,7 +49,7 @@ const ext: ExtSimpleEmailAuth = {
     '@moodlenet/crypto@0.1.0',
     '@moodlenet/arangodb@0.1.0',
     '@moodlenet/content-graph@0.1.0',
-    '@moodlenet/profile-page@0.1.0',
+    '@moodlenet/web-user@0.1.0',
   ],
   async connect(shell) {
     const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
