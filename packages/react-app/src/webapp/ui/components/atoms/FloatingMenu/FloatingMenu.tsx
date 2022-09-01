@@ -14,23 +14,31 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
   const hoverElementRef = useRef<HTMLDivElement>(null)
   const [isOnHover, setIsOnHover] = useState<Boolean>(false)
   const switchMenu = (e: KeyboardEvent<HTMLDivElement>) => {
-    ;['ArrowDown', 'ArrowUp'].includes(e.key) && setCurrentVisible(true)
+    ;['ArrowDown', 'ArrowUp'].includes(e.key) && expand()
     ;['Enter'].includes(e.key) && setCurrentVisible(!currentVisible)
   }
   const closeMenu = (e: KeyboardEvent<HTMLDivElement>) => {
-    ;['Tab'].includes(e.key) && e.shiftKey && setCurrentVisible(false)
+    ;['Tab', 'Enter'].includes(e.key) && e.shiftKey && close()
   }
   const closeMenuUp = (e: KeyboardEvent<HTMLDivElement>) => {
-    ;['ArrowUp'].includes(e.key) && setCurrentVisible(false)
-    ;['Tab'].includes(e.key) && e.shiftKey && setCurrentVisible(false)
+    ;['ArrowUp'].includes(e.key) && close()
+    ;['Tab'].includes(e.key) && e.shiftKey && close()
   }
   const closeMenuDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    ;['ArrowDown'].includes(e.key) && setCurrentVisible(false)
-    ;['Tab'].includes(e.key) && !e.shiftKey && setCurrentVisible(false)
+    ;['ArrowDown'].includes(e.key) && close()
+    ;['Tab'].includes(e.key) && !e.shiftKey && close()
   }
   const oneElementActions = (e: KeyboardEvent<HTMLDivElement>) => {
     closeMenuUp(e)
     closeMenuDown(e)
+  }
+
+  const expand = () => {
+    setCurrentVisible(true)
+  }
+
+  const close = () => {
+    setCurrentVisible(false)
   }
 
   const updatedMenuContent = menuContent.map((element, i) => {
@@ -48,7 +56,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
       )
     } else if (menuContent.length - 1 === i) {
       return (
-        <div key={i} tabIndex={i + 1} onKeyDown={closeMenuDown}>
+        <div key={i} tabIndex={i + 1} className="last element">
           {element}
         </div>
       )
@@ -61,9 +69,19 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
     }
   })
 
+  const handleBlur = (e: React.FocusEvent<HTMLDivElement, Element>) => {
+    const currentTarget = e.currentTarget
+
+    requestAnimationFrame(() => !currentTarget.contains(document.activeElement) && close())
+  }
+
+  useEffect(() => {
+    hoverElementRef?.current?.setAttribute('inert', '')
+  }, [hoverElementRef])
+
   useEffect(() => {
     const clickOutListener = () => {
-      currentVisible && setCurrentVisible(false)
+      currentVisible && close()
     }
     window.addEventListener('click', clickOutListener)
     return () => window.removeEventListener('click', clickOutListener)
@@ -72,18 +90,18 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
   return (
     <div
       className={`floating-menu ${className}`}
-      onClick={e => {
-        setCurrentVisible(!currentVisible)
-        e.stopPropagation()
-      }}
+      onClick={e => e.stopPropagation()}
+      onBlur={e => handleBlur(e)}
+      onFocus={expand}
+      tabIndex={0}
     >
       <div
         className="hover-element"
         ref={hoverElementRef}
         onKeyUp={switchMenu}
         onKeyDown={closeMenu}
-        onMouseEnter={() => hover && setCurrentVisible(true)}
-        onMouseLeave={() => hover && setCurrentVisible(false)}
+        onMouseEnter={() => hover && expand()}
+        onMouseLeave={() => hover && close()}
       >
         {hoverElement}
       </div>
