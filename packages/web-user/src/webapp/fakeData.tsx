@@ -11,7 +11,7 @@ const overallCardProps: OverallCardProps = {
 }
 
 const editForm: ProfileFormValues = {
-  displayName: '',
+  displayName: 'Alberto Curcella',
   description: '',
   avatarImage: 'https://moodle.net/assets/01F/T/N/3/X/3CGXZ0TQRN1EX27D7WY/01FTN3X3CGXZ0TQRN1EX27D7WY.jpg',
   backgroundImage:
@@ -23,21 +23,21 @@ const editForm: ProfileFormValues = {
 
 const profileCardProps: ProfileCardProps = {
   isAuthenticated: true,
-  openSendMessage: () => { },
+  openSendMessage: () => {},
   profileUrl: 'alberto-curcella',
-  toggleIsEditing: () => { },
+  toggleIsEditing: () => {},
   editForm: editForm,
   isOwner: true,
-  userId: '',
-  setShowUserIdCopiedAlert: function (): void {
+  userId: 'alberto-curcella-1234',
+  setShowUserIdCopiedAlert: (): void => {
     throw new Error('Function not implemented.')
   },
-  setShowUrlCopiedAlert: function (): void {
+  setShowUrlCopiedAlert: (): void => {
     throw new Error('Function not implemented.')
   },
-  setIsReporting: function (): void {
+  setIsReporting: (): void => {
     throw new Error('Function not implemented.')
-  }
+  },
 }
 
 export const fakeProfilePageProps: ProfilePageProps = {

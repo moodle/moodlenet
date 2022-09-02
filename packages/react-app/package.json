@@ -5,9 +5,9 @@
   "files": [
     "lib/",
     "src/",
-    "index.html",
+    "public/",
+    "public/favicon*",
     "_redirects",
-    "favicon.svg",
     "moodlenet-react-app-lib.d.ts"
   ],
   "moodlenet": {
@@ -76,6 +76,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "file-loader": "^6.2.0",
+    "formik": "^2.2.9",
     "html-webpack-plugin": "^5.5.0",
     "js-cookie": "^3.0.1",
     "less": "^4.1.2",
@@ -87,7 +88,6 @@
     "react-refresh-typescript": "^2.0.5",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
-    "formik": "^2.2.9",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
     "sass": "^1.52.1",
