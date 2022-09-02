@@ -3,7 +3,7 @@ import { CSSProperties, FC, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
 import Card from '../../../atoms/Card/Card'
-import { MainLayout } from '../../../layout'
+import { SimpleLayout } from '../../../layout'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
@@ -11,9 +11,9 @@ export type SignupProps = {}
 
 export const Signup: FC<SignupProps> = () => {
   return (
-    <MainLayout headerType="minimalistic" style={{ height: '100%' }}>
+    <SimpleLayout page="signup">
       <SignupBody />
-    </MainLayout>
+    </SimpleLayout>
   )
 }
 export const SignupBody: FC<SignupProps> = ({}) => {
@@ -30,7 +30,7 @@ export const SignupBody: FC<SignupProps> = ({}) => {
       {/* <div className={`signup-page ${requestSent ? 'success' : ''}`} onKeyDown={handleKeyDown}> */}
       <div className={`signup-content`}>
         {/* <div className={`signup-content ${requestSent ? 'success' : ''}`}> */}
-        <Card hover={true}>
+        <Card className="login-card" hover={true}>
           <Link to={`/login`}>
             Log in
             <CallMadeIcon />

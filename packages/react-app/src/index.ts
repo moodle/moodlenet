@@ -60,14 +60,14 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExtDef, AuthenticationManagerE
         http.plug.mount({ getApp, absMountPath: '/' })
         function getApp() {
           const mountApp = http.plug.express()
-          const staticWebApp = http.plug.express.static(latestBuildFolder, { index: 'index.html' })
+          const staticWebApp = http.plug.express.static(latestBuildFolder, { index: './public/index.html' })
           mountApp.use(staticWebApp)
           mountApp.get(`*`, (req, res, next) => {
             if (req.url.startsWith('/_/')) {
               next()
               return
             }
-            res.sendFile(resolve(latestBuildFolder, 'index.html'))
+            res.sendFile(resolve(latestBuildFolder, './public/index.html'))
           })
           return mountApp
         }
