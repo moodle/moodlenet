@@ -26,7 +26,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     { def: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
   ]
 
-  const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+  const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
 
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,

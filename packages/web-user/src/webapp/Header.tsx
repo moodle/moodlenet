@@ -8,8 +8,7 @@ export const Position = 0
 export const Icon: FC = ({}) => {
   const { clientSessionData } = useContext(lib.auth.AuthCtx)
   const avatar = {
-    backgroundImage:
-      'url(' + (clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg') + ')',
+    backgroundImage: 'url(' + clientSessionData?.userDisplay.avatarUrl + ')',
     backgroundSize: 'cover',
   }
 
