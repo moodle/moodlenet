@@ -256,8 +256,10 @@ async function start({
         isDevelopment && new ReactRefreshWebpackPlugin(),
         // new ForkTsCheckerWebpackPlugin(),
         new HtmlWebPackPlugin({
-          template: './index.html',
-          favicon: './favicon.svg',
+          template: './public/index.html',
+          inject: true,
+          favicon: './public/favicon.svg',
+          filename: 'index.html',
         }),
         new CompressionPlugin({
           test: /\.js(\?.*)?$/i,
