@@ -34,11 +34,11 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
   }
 
   const expand = () => {
-    setCurrentVisible(true)
+    !currentVisible && setCurrentVisible(true)
   }
 
   const close = () => {
-    setCurrentVisible(false)
+    currentVisible && setCurrentVisible(false)
   }
 
   const updatedMenuContent = menuContent.map((element, i) => {
@@ -75,24 +75,27 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
     requestAnimationFrame(() => !currentTarget.contains(document.activeElement) && close())
   }
 
+  const handleOnMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const currentTarget = e.currentTarget
+
+    requestAnimationFrame(() => {
+      if (!(currentTarget.contains(document.activeElement) && currentTarget !== document.activeElement)) {
+        currentVisible ? close() : expand()
+      }
+    })
+    e.stopPropagation()
+  }
+
   useEffect(() => {
     hoverElementRef?.current?.setAttribute('inert', '')
   }, [hoverElementRef])
 
-  useEffect(() => {
-    const clickOutListener = () => {
-      currentVisible && close()
-    }
-    window.addEventListener('click', clickOutListener)
-    return () => window.removeEventListener('click', clickOutListener)
-  }, [currentVisible])
-
   return (
     <div
       className={`floating-menu ${className}`}
-      onClick={e => e.stopPropagation()}
       onBlur={e => handleBlur(e)}
       onFocus={expand}
+      onMouseDown={e => handleOnMouseDown(e)}
       tabIndex={0}
     >
       <div
@@ -112,6 +115,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
         }}
         onMouseEnter={() => hover && setIsOnHover(true)}
         onMouseLeave={() => hover && setIsOnHover(false)}
+        onClick={close}
       >
         <Card className="content">{updatedMenuContent}</Card>
       </div>
