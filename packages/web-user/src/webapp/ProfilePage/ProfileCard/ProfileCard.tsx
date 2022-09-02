@@ -134,7 +134,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   }
 
   // const [avatarUrl] = useImageUrl(editForm.values.avatarImage, defaultAvatar)
-  const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+  const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
 
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,
@@ -177,7 +177,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           <img src={backgroundUrl} alt="Background" />
         </Modal>
       )}
-      {isShowingAvatar && clientSessionData?.avatarUrl && (
+      {isShowingAvatar && clientSessionData?.userDisplay.avatarUrl && (
         <Modal
           className="image-modal"
           closeButton={false}
@@ -273,7 +273,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
                 className="display-name underline"
                 placeholder="Display name"
                 // value={editForm.values.displayName}
-                value={clientSessionData?.displayName}
+                value={clientSessionData?.userDisplay.name}
                 // onChange={editForm.handleChange}
                 name="displayName"
                 displayMode={true}
@@ -286,7 +286,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             ) : (
               <div className="display-name">
                 {/* {editForm.values.displayName} */}
-                {clientSessionData?.displayName}
+                {clientSessionData?.userDisplay.name}
               </div>
             )}
             {!isEditing && isOwner && isApproved && (

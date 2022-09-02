@@ -8,14 +8,12 @@ import type {
 import type { AuthenticationManagerExt, UserId } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
-import type { ExtModule, ReactAppExt } from '@moodlenet/react-app'
-import { ContentGraphContextType } from './webapp/Lib'
 
 export type ContentGraphExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib, Routes>
 
 export type ContentGraphExt = Ext<
   ContentGraphExtDef,
-  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, AuthenticationManagerExt, ReactAppExt]
+  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, AuthenticationManagerExt]
 >
 
 // type DateString = string
@@ -84,6 +82,12 @@ export type BaseGlyphMeta<GlyphDesc extends GlyphDescriptor> = GlyphDesc & {
 
 export type WithMaybeKey = { _key?: string }
 
+export type ContentNode = {
+  title: string
+  description: string
+  //icon:Asset
+  //image:Asset
+}
 export type NodeGlyphMeta<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
   BaseGlyphMeta<GlyphDesc>
 
@@ -106,13 +110,13 @@ export type EdgeGlyphMeta<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescr
 
 export type EdgeData<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
   GlyphDesc[GLYPHDESCTYPE_SYMBOL]
-export type EdgeGlyph<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
-  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & EdgeGlyphMeta<GlyphDesc>
+export type EdgeGlyph<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> = EdgeData<GlyphDesc> &
+  EdgeGlyphMeta<GlyphDesc>
 
 export type NodeData<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
-  GlyphDesc[GLYPHDESCTYPE_SYMBOL]
-export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
-  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & NodeGlyphMeta<GlyphDesc>
+  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & ContentNode
+export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> = NodeData<GlyphDesc> &
+  NodeGlyphMeta<GlyphDesc>
 
 export type Glyph = NodeGlyph | EdgeGlyph
 
@@ -159,13 +163,6 @@ export type Routes = {
     node: SubTopo<{ identifier: GlyphIdentifier<'node'> }, undefined | { node: NodeGlyph }>
   }
 }
-
-export type ContentGraphReactAppLib = ExtModule<
-  ContentGraphExtDef,
-  {
-    ContentGraphContext: React.Context<ContentGraphContextType>
-  }
->
 
 /* 
 declare const lib: Lib
