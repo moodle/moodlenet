@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { extLibForFactory } from './ext-lib-factory'
 import type { ContentGraphExt, ContentGraphKVStore } from './types'
 import { getCollectionName } from './utils'
@@ -12,22 +11,9 @@ export const ext: ContentGraphExt = {
     '@moodlenet/arangodb@0.1.0',
     '@moodlenet/key-value-store@0.1.0',
     '@moodlenet/authentication-manager@0.1.0',
-    '@moodlenet/react-app@0.1.0',
   ],
   async connect(shell) {
-    const [, arangoSrv, kvStoreSrv, authSrv, reactApp] = shell.deps
-    reactApp.plug.setup({
-      routes: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-        rootPath: '/',
-      },
-      expose: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Lib.tsx'),
-      },
-      ctxProvider: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ContentGraphProvider.tsx'),
-      },
-    })
+    const [, arangoSrv, kvStoreSrv, authSrv] = shell.deps
     const kvStore = await kvStoreSrv.plug.getStore<ContentGraphKVStore>()
     const libFor = await extLibForFactory(shell, kvStore)
     const myLib = libFor(true)

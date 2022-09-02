@@ -2,6 +2,7 @@ import extCtxProviders from 'ext-context-providers-modules'
 import { FC, PropsWithChildren } from 'react'
 import * as auth from '../react-app-lib/auth'
 import * as header from './ui/components/organisms/Header'
+import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider'
 import * as set from './ui/components/pages/Settings/SettingsContext'
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
@@ -13,9 +14,11 @@ export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => 
     <header.Provider>
       <auth.Provider>
         <set.Provider>
-          {/* <I18nProvider i18n={i18n}> */}
-          {ctxProviderWrap}
-          {/* </I18nProvider> */}
+          <ContentGraphProvider>
+            {/* <I18nProvider i18n={i18n}> */}
+            {ctxProviderWrap}
+            {/* </I18nProvider> */}
+          </ContentGraphProvider>
         </set.Provider>
       </auth.Provider>
     </header.Provider>

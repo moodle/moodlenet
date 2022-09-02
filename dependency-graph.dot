@@ -5,9 +5,9 @@ digraph G {
   "@moodlenet/crypto";
   "@moodlenet/content-graph";
   "@moodlenet/key-value-store";
-  "@moodlenet/react-app";
   "@moodlenet/dev-machine" [ style = "dashed" ];
   "@moodlenet/email-service";
+  "@moodlenet/react-app";
   "@moodlenet/extensions-manager";
   "@moodlenet/http-server";
   "@moodlenet/organization";
@@ -23,7 +23,6 @@ digraph G {
   "@moodlenet/content-graph" -> "@moodlenet/authentication-manager" [ style = "dashed" ];
   "@moodlenet/content-graph" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/content-graph" -> "@moodlenet/key-value-store" [ style = "dashed" ];
-  "@moodlenet/content-graph" -> "@moodlenet/react-app" [ style = "dashed" ];
   "@moodlenet/crypto" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/crypto" -> "@moodlenet/key-value-store" [ style = "dashed" ];
   "@moodlenet/dev-machine" -> "@moodlenet/core" [ style = "dashed" ];
@@ -43,6 +42,7 @@ digraph G {
   "@moodlenet/passport-auth" -> "@moodlenet/http-server" [ style = "dashed" ];
   "@moodlenet/passport-auth" -> "@moodlenet/react-app" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/authentication-manager" [ style = "dashed" ];
+  "@moodlenet/react-app" -> "@moodlenet/content-graph" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/core" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/http-server" [ style = "dashed" ];
   "@moodlenet/react-app" -> "@moodlenet/organization" [ style = "dashed" ];

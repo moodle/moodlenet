@@ -71,15 +71,13 @@ const ext: ExtAuthenticationManager = {
               return { success: false }
             }
           },
-          async registerUser({ displayName, uid, avatarUrl }, { source }) {
+          async registerUser({ uid }, { source }) {
             const { extName } = shell.lib.splitExtId(source)
             const user = await store.create({
-              displayName,
               providerId: {
                 ext: extName,
                 uid,
               },
-              avatarUrl,
             })
             const sessionToken = await encryptClientSession({ user })
 
