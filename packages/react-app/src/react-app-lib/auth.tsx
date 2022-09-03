@@ -1,5 +1,5 @@
 import type { AuthenticationManagerExt, ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
-import { ContentGraphExtDef } from '@moodlenet/content-graph'
+import { ContentGraphExtDef, NodeGlyph } from '@moodlenet/content-graph'
 import { SessionTokenCookieName } from '@moodlenet/http-server'
 import cookies from 'js-cookie'
 import {
@@ -20,10 +20,12 @@ import priHttp from './pri-http'
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',
 //             avatarUrl: rootAvatarUrl,
-export type ClientSessionData<IsRoot extends boolean = boolean> = {
-  isRoot: IsRoot
+export type ClientSessionData = {
+  isRoot: boolean
   userDisplay: { name: string; avatarUrl: string }
-} & (IsRoot extends false ? { user: UserData } : {})
+  user: UserData
+  myUserNode: NodeGlyph
+}
 export type LoginItemDef = { Icon: ComponentType; Panel: ComponentType }
 export type LoginItem = { def: LoginItemDef }
 export type SignupItemDef = { Icon: ComponentType; Panel: ComponentType }
@@ -157,15 +159,17 @@ async function getClientSessionData(clientSession: ClientSession): Promise<Clien
     return {
       isRoot: true as true,
       userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
+      myUserNode: {} as any,
+      user: {} as any,
     }
   }
 
-  const myUserNode = await contentGraphSrvFetch('getMyUserNode')()
-  if (!myUserNode) {
+  const myUserNodeRes = await contentGraphSrvFetch('getMyUserNode')()
+  if (!myUserNodeRes) {
     throw new Error(`shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`)
   }
-
-  const { title /* ,icon, description*/ } = myUserNode.node
+  const { node: myUserNode } = myUserNodeRes
+  const { title /* ,icon, description*/ } = myUserNode
   const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
-  return { isRoot: false, user: clientSession.user, userDisplay: { name: title, avatarUrl } }
+  return { isRoot: false, user: clientSession.user, myUserNode, userDisplay: { name: title, avatarUrl } }
 }

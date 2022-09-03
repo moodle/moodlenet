@@ -1,6 +1,6 @@
 import { Route } from 'react-router-dom'
 import { fakeProfilePageProps } from './fakeData'
-import ProfilePage from './ProfilePage/ProfilePage'
+import ProfilePage from './ProfilePage/ProfilePage_orig_Bru'
 
 // export default () => {
 // const props = fakeProfilePageProps

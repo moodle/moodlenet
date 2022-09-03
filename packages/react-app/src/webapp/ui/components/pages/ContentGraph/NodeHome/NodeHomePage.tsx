@@ -27,18 +27,7 @@ export const Component: FC = () => {
       })
   }, [_type, _key])
   const { nodeHomePages } = useContext(ContentGraphContext)
-  const nodeHomePageDef = nodeHomePages.find(({ type }) => type === _type)
-
-  return (
-    <div>
-      <h2>Node Home Page</h2>
-      <h3>
-        {_type}/{_key}
-      </h3>
-
-      <pre>{JSON.stringify(node, null, 2)}</pre>
-      <hr />
-      {node && nodeHomePageDef && <nodeHomePageDef.Component node={node} />}
-    </div>
-  )
+  const nodeHomePageDef = nodeHomePages[_type]
+  console.log({ nodeHomePageDef, _type, node, nodeHomePages })
+  return node && nodeHomePageDef ? <nodeHomePageDef.Component node={node} /> : null
 }
