@@ -6,7 +6,7 @@ import { CryptoExt } from '@moodlenet/crypto'
 import type { EmailService } from '@moodlenet/email-service'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
-import { ProfileExtDef } from '@moodlenet/web-user'
+import { WebUserExtDef } from '@moodlenet/web-user'
 import assert from 'assert'
 import { resolve } from 'path'
 import userStore from './store'
@@ -33,7 +33,7 @@ export type ExtSimpleEmailAuth = Ext<
     CryptoExt,
     MNArangoDBExt,
     ContentGraphExtDef,
-    ProfileExtDef,
+    WebUserExtDef,
   ]
 >
 
