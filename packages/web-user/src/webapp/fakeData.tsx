@@ -1,6 +1,6 @@
 import { OverallCardProps } from './ProfilePage/OverallCard/OverallCard'
-import { ProfileCardProps } from './ProfilePage/ProfileCard/ProfileCard'
-import { ProfilePageProps } from './ProfilePage/ProfilePage'
+import { ProfileCardProps } from './ProfilePage/ProfileCard/ProfileCard_orig_Bru'
+import { ProfilePageProps } from './ProfilePage/ProfilePage_orig_Bru'
 import { ProfileFormValues } from './types'
 
 const overallCardProps: OverallCardProps = {
