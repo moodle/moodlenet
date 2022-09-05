@@ -10,9 +10,11 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useState
 } from 'react'
+import { AppearanceData, ReactAppExt } from '../../../../..'
 import { baseStyle, BaseStyleType } from '../../../styles/config'
+
 
 export type OrganizationData = {
   instanceName: string
@@ -34,7 +36,9 @@ export type SetCtxT = {
   style: StyleType
   setStyle: React.Dispatch<React.SetStateAction<StyleType>>
   saveOrganization(data: OrganizationData): unknown
-  organizationData: OrganizationData
+  organizationData: OrganizationData,
+  saveApparence(data: AppearanceData):unknown,
+  appearanceData:AppearanceData
 }
 
 export const SettingsCtx = createContext<SetCtxT>(null as any)
@@ -48,10 +52,13 @@ export function useRegisterSettingsItem({ Menu, Content }: SettingItemDef) {
 
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization', '0.1.0')
+  const reactAppSrv = lib.priHttp.fetch<ReactAppExt>('@moodlenet/react-app', '0.1.0')
+
 
   // const nav = useNavigate()
   // dentro a use effect prendo il valore
   const [style, setStyle] = useState<SetCtxT['style']>(StyleContextDefault)
+  const [appearanceData, setAppareanceData] = useState<AppearanceData>({color:''})
   const [organizationData, setDataOrg] = useState<OrganizationData>({
     instanceName: '',
     landingTitle: '',
@@ -66,8 +73,18 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     [setDataOrg],
   )
 
+
+  const saveApparence = useCallback(
+    (data: AppearanceData) => {
+      reactAppSrv('setApparence')({ payload: data })
+      setAppareanceData(data)
+    },
+    [setDataOrg],
+  )
+
   useEffect(() => {
     organizationSrv('get')().then(({ data: orgData }) => setDataOrg(orgData))
+    reactAppSrv('getApparence')().then(resp => setAppareanceData(resp.data))
   }, [])
 
   const [settingsItems, setSettingsItems] = useState<SetCtxT['settingsItems']>([])
@@ -90,8 +107,10 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       settingsItems,
       saveOrganization,
       organizationData,
+      saveApparence,
+      appearanceData
     }
-  }, [style, setStyle, registerSettingsItem, settingsItems, organizationData])
+  }, [style, setStyle, registerSettingsItem, settingsItems, organizationData, appearanceData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }
