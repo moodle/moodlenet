@@ -48,6 +48,8 @@ export const useFollowersCtrl: CtrlHook<FollowersProps, { nodeId: string }> = ({
         'header-page-template'
       ),
 
+      profileName: profileNode?.name,
+
       browserProps: {
         smallProfileCardPropsList: followers.map((profile) =>
           ctrlHook(
@@ -61,7 +63,7 @@ export const useFollowersCtrl: CtrlHook<FollowersProps, { nodeId: string }> = ({
         subjectCardPropsList: null,
         setSortBy: null,
         setFilters: null,
-        peopleTitle: profileNode?.name,
+        peopleTitle: null,
       },
     }
     return props
