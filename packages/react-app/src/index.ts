@@ -67,12 +67,29 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExtDef, AuthenticationManagerE
 
     return {
       async install() {
+        //
         await kvStore.set('appearanceData', '', {
           color: '#aaaaaa',
         })
       },
+
       async deploy() {
-        shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
+        shell.expose({
+          // http://localhost:8080/_/_/raw-sub/moodlenet-organization/0.1.10/_test  body:{"paramIn2": "33"}
+          'getApparence/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+          'setApparence/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+          'webapp/updated/sub': { validate: () => ({ valid: true }) }
+        })
+  
+       
         http.plug.mount({ getApp, absMountPath: '/' })
         function getApp() {
           const mountApp = http.plug.express()

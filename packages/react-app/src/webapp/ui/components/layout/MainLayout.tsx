@@ -1,5 +1,5 @@
 import { CSSProperties, FC, ReactNode, useContext } from 'react'
-import { baseMoodleColor, baseStyle } from '../../styles/config'
+import { baseStyle } from '../../styles/config'
 import { getColorPalette } from '../../styles/utilities'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import MinimalisticHeader from '../organisms/Header/Minimalistic/MinimalisticHeader'
@@ -28,7 +28,7 @@ const MainLayout: FC<MainLayoutProps> = ({ headerType, style, children }) => {
       style={{
         ...style,
         ...baseStyle(),
-        ...getColorPalette(baseMoodleColor),
+        ...getColorPalette(styleContext.appearanceData.color),
         ...styleContext.style,
       }}
     >

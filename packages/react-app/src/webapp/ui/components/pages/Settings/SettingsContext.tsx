@@ -84,7 +84,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   useEffect(() => {
     organizationSrv('get')().then(({ data: orgData }) => setDataOrg(orgData))
-    reactAppSrv('getApparence')().then(resp => setAppareanceData(resp.data))
+     reactAppSrv('getApparence')().then(resp => setAppareanceData(resp.data))
   }, [])
 
   const [settingsItems, setSettingsItems] = useState<SetCtxT['settingsItems']>([])
