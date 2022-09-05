@@ -18,7 +18,7 @@ export const Followers = withCtrl<FollowersProps>(
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <Browser
           {...browserProps}
-          title={t`${profileName}'s followers`}
+          title={`${profileName}${t`'s followers`}`}
           hideSortAndFilter
         />
       </HeaderPageTemplate>
