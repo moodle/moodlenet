@@ -46,3 +46,7 @@ export type ExtContextProviderDef = {
 export type ExtContextProviderComp = ComponentType<PropsWithChildren<{}>>
 
 export type ExtContextProvider = ExtInfo & { Provider: ExtContextProviderComp }
+
+export type AppearanceData = {
+  color:string
+}
