@@ -21,6 +21,7 @@ export const Appearance: FC<AppearanceProps> = (
   // const [compactLogo, setCompactLogo] = useState(true)
 
   const setColor = (color: string) => {
+    styleContext.saveApparence({color})
     styleContext.setStyle({
       ...styleContext.style,
       ...getColorPalette(color),

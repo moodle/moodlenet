@@ -2,6 +2,9 @@
 import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, Port, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
+import { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
+
+import assert from 'assert'
 import { mkdir, writeFile } from 'fs/promises'
 import { tmpdir } from 'os'
 import { resolve } from 'path'
@@ -9,7 +12,7 @@ import { ResolveOptions } from 'webpack'
 import { generateCtxProvidersModule } from './generateCtxProvidersModule'
 import { generateExposedModule } from './generateExposedModule'
 import { generateRoutesModule } from './generateRoutesModule'
-import { ExtPluginDef, ExtPluginsMap } from './types'
+import { AppearanceData, ExtPluginDef, ExtPluginsMap } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 import startWebpack from './webpackWatch'
 
@@ -23,7 +26,9 @@ export type ReactAppExtTopo = {
   webapp: {
     updated: SubTopo<void, void>
     recompiled: Port<'out', void>
-  }
+  },
+  setApparence: SubTopo<{ payload: AppearanceData }, { valid: true } | { valid: false }>
+  getApparence: SubTopo<void, { data: AppearanceData }>
 }
 export type ReactAppExt = ExtDef<
   '@moodlenet/react-app',
@@ -33,6 +38,9 @@ export type ReactAppExt = ExtDef<
   },
   ReactAppExtTopo
 >
+
+export type keyValueData = { appearanceData: AppearanceData }
+
 const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
 
 const LibModuleFile = { alias: 'moodlenet-react-app-lib', target: resolve(tmpDir, 'lib.ts') }
@@ -48,15 +56,40 @@ const ExtContextProvidersModuleFile = {
   alias: 'ext-context-providers-modules',
   target: resolve(tmpDir, 'extContextProvidersModules.tsx'),
 }
-const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExtDef, AuthenticationManagerExt]> = {
+const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExtDef, AuthenticationManagerExt, KeyValueStoreExtDef]> = {
   name: '@moodlenet/react-app',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/http-server@0.1.0', '@moodlenet/authentication-manager@0.1.0'],
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/http-server@0.1.0', '@moodlenet/authentication-manager@0.1.0', '@moodlenet/key-value-store@0.1.0'],
   async connect(shell) {
-    const [, http /* , auth */] = shell.deps
+    const [, http,, kvStorePkg] = shell.deps
+    const kvStore = await kvStorePkg.plug.getStore<keyValueData>()
+
+
     return {
+      async install() {
+        //
+        await kvStore.set('appearanceData', '', {
+          color: '#aaaaaa',
+        })
+      },
+
       async deploy() {
-        shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
+        shell.expose({
+          // http://localhost:8080/_/_/raw-sub/moodlenet-organization/0.1.10/_test  body:{"paramIn2": "33"}
+          'getApparence/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+          'setApparence/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+          'webapp/updated/sub': { validate: () => ({ valid: true }) }
+        })
+  
+       
         http.plug.mount({ getApp, absMountPath: '/' })
         function getApp() {
           const mountApp = http.plug.express()
@@ -99,6 +132,15 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExtDef, AuthenticationManagerE
               ),
               shell.rx.map(() => void 0),
             )
+          },
+          async setApparence(req) {
+            const data = await kvStore.set('appearanceData', '', req.payload)
+            return { valid: !data || !data.value ? false : true }
+          },
+          async getApparence() {
+            const data = await kvStore.get('appearanceData', '')
+            assert(data.value, 'Appearance should be valued')
+            return { data: data.value }
           },
         })
         return {
