@@ -21,7 +21,7 @@ async function cli_install({ mainFolders }: { mainFolders: MainFolders }) {
     },
     {
       type: 'text',
-      initial: 'http://localhost:8529',
+      initial: 'http://localhost:8530',
       name: 'arango-url',
       message: `arangodb url ?`,
     },

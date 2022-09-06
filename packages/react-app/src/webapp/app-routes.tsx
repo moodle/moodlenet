@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import { Login } from './ui/components/pages/Access/Login/Login'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin'
 import { Signup } from './ui/components/pages/Access/Signup/Signup'
+import * as nodeHomePage from './ui/components/pages/ContentGraph/NodeHome/NodeHomePage'
 import { Landing } from './ui/components/pages/Landing/Landing'
 import { Settings } from './ui/components/pages/Settings/Settings'
 
@@ -14,6 +15,7 @@ const AppRouter = () => {
     <>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path={nodeHomePage.route} element={<nodeHomePage.Component />} />
         <Route path="settings" element={<Settings />} />
         <Route path="login">
           <Route index element={<Login />} />

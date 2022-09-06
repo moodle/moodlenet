@@ -62,9 +62,9 @@ function _user(user: any): User | undefined {
     ? {
         id: user._key,
         created: user.created,
-        displayName: user.displayName,
         providerId: user.providerId,
-        avatarUrl: user.avatarUrl,
+        // displayName: user.displayName,
+        // avatarUrl: user.avatarUrl,
       }
     : undefined
 }
