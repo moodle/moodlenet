@@ -3,6 +3,7 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../context/Global/Session'
+import { getJustAssetRefUrl } from '../../../../../helpers/data'
 import { mainPath } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -104,6 +105,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
         name: localOrg.name,
         title: localOrg.subtitle,
         subtitle: localOrg.description,
+        smallLogo: getJustAssetRefUrl(localOrg.smallLogo),
       },
       trendCardProps: { tags: tags || [] },
       setSearchText,
@@ -122,6 +124,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
     [
       isAuthenticated,
       localOrg.name,
+      localOrg.smallLogo,
       localOrg.subtitle,
       localOrg.description,
       tags,
