@@ -1,6 +1,6 @@
 import { CSSProperties, FC, ReactNode, useContext } from 'react'
-import { baseStyle } from '../../styles/config'
-import { getColorPalette } from '../../styles/utilities'
+import { baseStyle } from '../../../styles/config'
+import { getColorPalette } from '../../../styles/utilities'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import StandardHeader from '../../organisms/Header/Standard/Header'
 import { SettingsCtx } from '../../pages/Settings/SettingsContext'
