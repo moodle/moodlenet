@@ -1,20 +1,20 @@
 import { CSSProperties, FC, ReactNode, useContext } from 'react'
-import { baseStyle } from '../../styles/config'
-import { getColorPalette } from '../../styles/utilities'
+import { baseMoodleColor, baseStyle } from '../../../styles/config'
+import { getColorPalette } from '../../../styles/utilities'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
-import MinimalisticHeader from '../organisms/Header/Minimalistic/MinimalisticHeader'
-import StandardHeader from '../organisms/Header/Standard/Header'
-import { SettingsCtx } from '../pages/Settings/SettingsContext'
-import './MainLayout.scss'
+import MinimalisticHeader from '../../organisms/Header/Minimalistic/MinimalisticHeader'
+import { SettingsCtx } from '../../pages/Settings/SettingsContext'
+import './SimpleLayout.scss'
 // import { StateContext } from './Providers'
 
-export type MainLayoutProps = {
-  headerType?: 'default' | 'minimalistic'
+export type SimpleLayoutProps = {
   style?: CSSProperties
+  contentStyle?: CSSProperties
+  page: 'login' | 'signup' | 'activation' | 'rootLogin'
   children?: ReactNode
 }
 
-const MainLayout: FC<MainLayoutProps> = ({ headerType, style, children }) => {
+const SimpleLayout: FC<SimpleLayoutProps> = ({ style, contentStyle, page, children }) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
 
@@ -24,16 +24,15 @@ const MainLayout: FC<MainLayoutProps> = ({ headerType, style, children }) => {
 
   return (
     <div
-      className="main-layout"
+      className="simple-layout"
       style={{
         ...style,
         ...baseStyle(),
-        ...getColorPalette(styleContext.appearanceData.color),
+        ...getColorPalette(baseMoodleColor),
         ...styleContext.style,
       }}
     >
-      {headerType === 'default' && <StandardHeader />}
-      {headerType === 'minimalistic' && <MinimalisticHeader />}
+      <MinimalisticHeader page={page} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
@@ -43,7 +42,7 @@ const MainLayout: FC<MainLayoutProps> = ({ headerType, style, children }) => {
             </div>
           ))}
       </div> */}
-      <div style={{}} className="content">
+      <div style={{ ...contentStyle }} className="content">
         {children}
         <div className="footer"></div>
       </div>
@@ -51,5 +50,5 @@ const MainLayout: FC<MainLayoutProps> = ({ headerType, style, children }) => {
   )
 }
 
-MainLayout.defaultProps = { headerType: 'default' }
-export default MainLayout
+SimpleLayout.defaultProps = {}
+export default SimpleLayout

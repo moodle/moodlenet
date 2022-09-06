@@ -6,7 +6,7 @@ import { CryptoExt } from '@moodlenet/crypto'
 import type { EmailService } from '@moodlenet/email-service'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
-import { ProfileExtDef } from '@moodlenet/web-user'
+import { WebUserExtDef } from '@moodlenet/web-user'
 import assert from 'assert'
 import { resolve } from 'path'
 import userStore from './store'
@@ -33,7 +33,7 @@ export type ExtSimpleEmailAuth = Ext<
     CryptoExt,
     MNArangoDBExt,
     ContentGraphExtDef,
-    ProfileExtDef,
+    WebUserExtDef,
   ]
 >
 
@@ -52,7 +52,7 @@ const ext: ExtSimpleEmailAuth = {
     '@moodlenet/web-user@0.1.0',
   ],
   async connect(shell) {
-    const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, /* contentGraph, profile */] = shell.deps
+    const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
     reactApp.plug.setup({
       ctxProvider: {
         moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
@@ -139,11 +139,11 @@ const ext: ExtSimpleEmailAuth = {
               return { msg, success }
             }
 
-          /*  const profileNodeResp = await contentGraph.plug.createNode(
+            /*  const profileNodeResp = */ await contentGraph.plug.createNode(
               profile.plug.glyphDescriptors.Profile,
-              { title: displayName },
+              { title: displayName, description: '' },
               { authenticableBy: { userId: authRes.user.id } },
-            ) */
+            )
 
             const { sessionToken } = authRes
             return { success: true, sessionToken }

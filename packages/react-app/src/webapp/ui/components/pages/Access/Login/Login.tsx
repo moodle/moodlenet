@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card'
-import { MainLayout } from '../../../layout'
+import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout'
 import './Login.scss'
 
 export type LoginProps = {}
 
 export const Login: FC<LoginProps> = () => {
   return (
-    <MainLayout headerType="minimalistic" style={{ height: '100%' }}>
+    <SimpleLayout page="login" style={{ height: '100%' }} contentStyle={{ padding: '0' }}>
       <LoginBody />
-    </MainLayout>
+    </SimpleLayout>
   )
 }
 export const LoginBody: FC<LoginProps> = ({}) => {

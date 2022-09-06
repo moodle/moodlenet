@@ -1,4 +1,5 @@
 import type { AuthenticationManagerExt, ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
+import { ContentGraphExtDef, NodeGlyph } from '@moodlenet/content-graph'
 import { SessionTokenCookieName } from '@moodlenet/http-server'
 import cookies from 'js-cookie'
 import {
@@ -16,9 +17,15 @@ import { useNavigate } from 'react-router-dom'
 import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 import priHttp from './pri-http'
 
-export type ClientSessionData =
-  | ({ isRoot: false } & UserData)
-  | ({ isRoot: true } & Pick<UserData, 'avatarUrl' | 'displayName'>)
+// import rootAvatarUrl from '../webapp/static/img/ROOT.png'
+// displayName: 'ROOT',
+//             avatarUrl: rootAvatarUrl,
+export type ClientSessionData = {
+  isRoot: boolean
+  userDisplay: { name: string; avatarUrl: string }
+  user: UserData
+  myUserNode: NodeGlyph
+}
 export type LoginItemDef = { Icon: ComponentType; Panel: ComponentType }
 export type LoginItem = { def: LoginItemDef }
 export type SignupItemDef = { Icon: ComponentType; Panel: ComponentType }
@@ -35,7 +42,8 @@ export type AuthCtxT = {
   clientSessionData: ClientSessionData | null
 }
 
-const srvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
+const authSrvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
+const contentGraphSrvFetch = priHttp.fetch<ContentGraphExtDef>('@moodlenet/content-graph', '0.1.0')
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
@@ -78,40 +86,34 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       setSignupItems(items => items.filter(_ => _ !== signupItem))
     }
   }, [])
-  const [clientSession, setClientSession] = useState<ClientSession | null>(null)
+  const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
-  const fetchClientSession = useCallback(
-    async (token: SessionToken) => {
-      const res = await srvFetch('getClientSession')({ token })
-      if (!res.success) {
-        writeSessionToken()
-        return { success: false, msg: 'invalid token' } as const
-      }
-      writeSessionToken(token)
-
-      setClientSession(res.clientSession)
-      return {
-        success: true,
-        clientSession: res.clientSession,
-      } as const
-    },
-    [setClientSession],
-  )
+  const fetchClientSession = useCallback(async (token: SessionToken) => {
+    const res = await authSrvFetch('getClientSession')({ token })
+    if (!res.success) {
+      writeSessionToken()
+      return { success: false, msg: 'invalid token' } as const
+    }
+    writeSessionToken(token)
+    const clientSessionData = await getClientSessionData(res.clientSession)
+    setClientSessionData(clientSessionData)
+    return {
+      success: true,
+      clientSession: res.clientSession,
+    } as const
+  }, [])
 
   const logout = useCallback<AuthCtxT['logout']>(() => {
-    setClientSession(null)
+    setClientSessionData(null)
     writeSessionToken()
-  }, [setClientSession])
-  const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(
-    async token => {
-      const res = await fetchClientSession(token)
-      if (res.success) {
-        nav('/')
-      }
-      return res
-    },
-    [setClientSession],
-  )
+  }, [setClientSessionData])
+  const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(async token => {
+    const res = await fetchClientSession(token)
+    if (res.success) {
+      nav('/')
+    }
+    return res
+  }, [])
 
   useEffect(() => {
     const storedSessionToken = readSessionToken()
@@ -122,15 +124,6 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }, [fetchClientSession])
 
   const ctx = useMemo<AuthCtxT>(() => {
-    const clientSessionData: ClientSessionData | null = clientSession
-      ? clientSession.root
-        ? {
-            isRoot: true,
-            displayName: 'ROOT',
-            avatarUrl: rootAvatarUrl,
-          }
-        : { isRoot: false, ...clientSession.user }
-      : null
     return {
       registerLogin,
       loginItems,
@@ -141,7 +134,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       clientSessionData,
       // ...(clientSession?.root ? { isRoot: true, clientSession } : { isRoot: false, clientSession }),
     }
-  }, [registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken, logout])
+  }, [registerLogin, loginItems, signupItems, registerSignup, clientSessionData, setSessionToken, logout])
 
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
 }
@@ -160,3 +153,23 @@ function writeSessionToken(token?: SessionToken | undefined) {
 // function writeSessionToken(token: SessionToken | null) {
 //   token ? localStorage.setItem('SESSION_TOKEN', token) : localStorage.removeItem('SESSION_TOKEN')
 // }
+
+async function getClientSessionData(clientSession: ClientSession): Promise<ClientSessionData> {
+  if (clientSession.root) {
+    return {
+      isRoot: true as true,
+      userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
+      myUserNode: {} as any,
+      user: {} as any,
+    }
+  }
+
+  const myUserNodeRes = await contentGraphSrvFetch('getMyUserNode')()
+  if (!myUserNodeRes) {
+    throw new Error(`shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`)
+  }
+  const { node: myUserNode } = myUserNodeRes
+  const { title /* ,icon, description*/ } = myUserNode
+  const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+  return { isRoot: false, user: clientSession.user, myUserNode, userDisplay: { name: title, avatarUrl } }
+}

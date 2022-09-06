@@ -1,4 +1,4 @@
-@import '../../styles/main.scss';
+@import '../../../styles/main.scss';
 
 html {
   width: 100%;
@@ -14,7 +14,7 @@ body {
 
 #root {
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
 }
 .main-layout {
   position: relative;

@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react'
-import './styles.scss'
+import './TertiaryButton.scss'
 
 export type TertiaryButtonProps = {
   className?: string

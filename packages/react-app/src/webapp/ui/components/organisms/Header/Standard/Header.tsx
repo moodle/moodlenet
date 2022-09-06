@@ -26,7 +26,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     { def: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
   ]
 
-  const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+  const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
 
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,
@@ -60,10 +60,6 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     <div className="header">
       <div className="content">
         <div className="left">
-          {/*<Link className="title" to={`/`}>
-            <span className="mn">{setCtx.organizationData.instanceName}</span>
-            <span className="bar">|</span>
-          </Link> */}
           <HeaderTitle
           // logo={logo} smallLogo={smallLogo}
           />
@@ -96,10 +92,10 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           {clientSessionData ? (
             <FloatingMenu
               className="avatar-menu"
-              menuContent={avatarMenuItems.map((avatarMenuItem, index) => {
+              menuContent={avatarMenuItems.map((avatarMenuItem, i) => {
                 return avatarMenuItem.def.Path ? (
                   <Link
-                    key={index}
+                    key={i}
                     className={`avatar-menu-item ${avatarMenuItem.def.ClassName}`}
                     to={avatarMenuItem.def.Path}
                     onClick={avatarMenuItem.def.OnClick}
@@ -110,7 +106,8 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
                   </Link>
                 ) : (
                   <div
-                    key={index}
+                    key={i}
+                    tabIndex={0}
                     className={`avatar-menu-item ${avatarMenuItem.def.ClassName}`}
                     onClick={avatarMenuItem.def.OnClick}
                   >
