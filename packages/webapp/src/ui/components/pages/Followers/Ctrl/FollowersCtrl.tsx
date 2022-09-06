@@ -3,29 +3,30 @@ import {
   narrowNodeType,
 } from '@moodlenet/common/dist/graphql/helpers'
 import { useEffect, useMemo } from 'react'
-import { useSession } from '../../../../../context/Global/Session'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useSmallProfileCardCtrl } from '../../../molecules/cards/SmallProfileCard/Ctrl/SmallProfileCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { FollowersProps } from '../Followers'
 import { useFollowersPageLazyQuery } from './Followers.gen'
 
-export const useFollowersCtrl: CtrlHook<FollowersProps, {}> = () => {
+export const useFollowersCtrl: CtrlHook<FollowersProps, { nodeId: string }> = ({
+  nodeId,
+}) => {
   // const [sortBy, setSortBy] = useState<GlobalFollowersSort>('Popularity')
-  const { session } = useSession()
+  // const { session } = useSession()
   const [queryFollowers, followersQ] = useFollowersPageLazyQuery({
     fetchPolicy: 'cache-and-network',
   })
   useEffect(() => {
-    if (!session?.profile.id) {
-      return
-    }
+    // if (!session?.profile.id) {
+    //   return
+    // }
     queryFollowers({
       variables: {
-        profileId: session.profile.id,
+        profileId: nodeId,
       },
     })
-  }, [queryFollowers, session?.profile.id])
+  }, [nodeId, queryFollowers])
 
   const profileNode = narrowNodeType(['Profile', 'Organization'])(
     followersQ.data?.node
@@ -47,6 +48,8 @@ export const useFollowersCtrl: CtrlHook<FollowersProps, {}> = () => {
         'header-page-template'
       ),
 
+      profileName: profileNode?.name,
+
       browserProps: {
         smallProfileCardPropsList: followers.map((profile) =>
           ctrlHook(
@@ -60,9 +63,10 @@ export const useFollowersCtrl: CtrlHook<FollowersProps, {}> = () => {
         subjectCardPropsList: null,
         setSortBy: null,
         setFilters: null,
+        peopleTitle: null,
       },
     }
     return props
-  }, [followers])
+  }, [followers, profileNode?.name])
   return [followersUIProps]
 }

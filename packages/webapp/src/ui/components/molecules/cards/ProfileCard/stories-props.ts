@@ -42,7 +42,7 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
 })
 
 export const useProfileCardStoryProps = (overrides?: {
-  editFormValues?: Partial<ProfileFormValues>
+  formValues?: Partial<ProfileFormValues>
   props?: Partial<ProfileCardProps>
 }): ProfileCardProps => {
   const person = people[randomIntFromInterval(0, 3)]
@@ -72,7 +72,7 @@ export const useProfileCardStoryProps = (overrides?: {
     }),
     toggleIsEditing: action('toogle Is Editing'),
     openSendMessage: action('open Send Message'),
-    editForm: useFormik<ProfileFormValues>({
+    form: useFormik<ProfileFormValues>({
       onSubmit: action('submit edit'),
       validationSchema,
       initialValues: {
@@ -84,7 +84,7 @@ export const useProfileCardStoryProps = (overrides?: {
         siteUrl: 'https://iuri.is/',
         avatarImage: person!.avatarUrl,
         backgroundImage: person!.backgroundUrl,
-        ...overrides?.editFormValues,
+        ...overrides?.formValues,
       },
     }),
     ...overrides?.props,

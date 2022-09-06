@@ -10,12 +10,17 @@ import './styles.scss'
 export type FollowersProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   browserProps: BrowserProps
+  profileName?: string
 }
 export const Followers = withCtrl<FollowersProps>(
-  ({ headerPageTemplateProps, browserProps }) => {
+  ({ headerPageTemplateProps, browserProps, profileName }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        <Browser {...browserProps} title={t`Followers`} peopleTitle={null} />
+        <Browser
+          {...browserProps}
+          title={`${profileName}${t`'s followers`}`}
+          hideSortAndFilter
+        />
       </HeaderPageTemplate>
     )
   }

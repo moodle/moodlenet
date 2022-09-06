@@ -38,7 +38,6 @@ import {
   useProfilePageUserDataQuery,
   useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
-const followersHref = href(mainPath.followers)
 
 const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
@@ -66,10 +65,7 @@ const validationSchema: SchemaOf<ProfileFormValues> = object({
   location: string().optional(),
   organizationName: string().min(3).max(160).optional(),
   siteUrl: string().url().optional(),
-  description: string()
-    .required(t`Please provide a description`)
-    .min(3)
-    .max(4096),
+  description: string().default('').max(4096),
 })
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
@@ -345,7 +341,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         resources: profile.resourcesCount,
         years: 1,
         kudos,
-        followersHref,
+        followersHref: href(mainPath.followers({ nodeId: profile.id })),
       },
       newCollectionHref,
       newResourceHref,
@@ -371,7 +367,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       reportForm,
       showAccountApprovedSuccessAlert: hasJustBeenApproved,
       sendEmailForm,
-      editForm: form,
+      form: form,
       displayName: profile.name,
     }
     return props

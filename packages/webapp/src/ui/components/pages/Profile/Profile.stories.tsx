@@ -50,7 +50,7 @@ export const useProfileStoryProps = (overrides?: {
   const isAuthenticated = overrides?.isAuthenticated ?? true
   const ProfileCardStoryProps = useProfileCardStoryProps({
     props: { isAuthenticated },
-    editFormValues: {
+    formValues: {
       ...overrides?.editFormValues,
       // avatarImage: null,
       // backgroundImage: null,
@@ -58,7 +58,7 @@ export const useProfileStoryProps = (overrides?: {
   })
 
   return {
-    editForm: ProfileCardStoryProps.editForm,
+    form: ProfileCardStoryProps.form,
     sendEmailForm: useFormik<{ text: string }>({
       initialValues: { text: '' },
       onSubmit: action('submit send Email Form'),

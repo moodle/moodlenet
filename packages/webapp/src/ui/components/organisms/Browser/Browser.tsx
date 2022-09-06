@@ -373,11 +373,7 @@ export const Browser = withCtrl<BrowserProps>(
                     peopleTitle !== null && (
                       <div className="card-header">
                         <div className="title">
-                          {peopleTitle ? (
-                            t`${peopleTitle}`
-                          ) : (
-                            <Trans>People</Trans>
-                          )}
+                          {peopleTitle ? peopleTitle : <Trans>People</Trans>}
                         </div>
                         {!seeAll && (
                           <SecondaryButton
