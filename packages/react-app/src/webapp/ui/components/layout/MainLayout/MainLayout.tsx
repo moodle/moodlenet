@@ -1,5 +1,5 @@
 import { CSSProperties, FC, ReactNode, useContext } from 'react'
-import { baseMoodleColor, baseStyle } from '../../../styles/config'
+import { baseStyle } from '../../../styles/config'
 import { getColorPalette } from '../../../styles/utilities'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import StandardHeader from '../../organisms/Header/Standard/Header'
@@ -27,7 +27,7 @@ const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children }) => {
       style={{
         ...style,
         ...baseStyle(),
-        ...getColorPalette(baseMoodleColor),
+        ...getColorPalette(styleContext.appearanceData.color),
         ...styleContext.style,
       }}
     >
