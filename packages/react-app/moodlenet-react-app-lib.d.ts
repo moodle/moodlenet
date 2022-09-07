@@ -16,7 +16,7 @@ declare module 'ext-context-providers-modules' {
   export default ctxProviders
 }
 
-declare module 'ext-exposed-modules' {
+declare module 'pkgs-main-modules' {
   const exp: Record<string, ExtExpose>
   export default exp
 }
