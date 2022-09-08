@@ -1,5 +1,4 @@
 import {
-  DataMessage,
   ExtDef,
   ExtName,
   ExtVersion,
@@ -19,9 +18,14 @@ export type RawSubOpts<Def extends ExtDef, Path extends SubcriptionPaths<Def>> =
   method: 'POST'
   path: `${RawSubPriMsgBaseUrl}/${ExtName<Def>}/${ExtVersion<Def>}/${Path}`
   req: SubcriptionReq<Def, Path>
-  obsType: { msg: DataMessage<ValueData<SubcriptionVal<Def, Path>>> }
+  obsType: ValueData<SubcriptionVal<Def, Path>>['value']
+  headers: RawSubOptsHeaders
 }
 
+export type RawSubOptsHeaders = {
+  'content-type': 'application/json'
+  'limit'?: number
+}
 export type MountAppItem = { mountPath: string; getApp(): Application }
 
 export type SessionTokenCookieName = 'mn-session'

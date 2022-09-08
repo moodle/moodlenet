@@ -37,7 +37,9 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
       return next()
     }
 
-    res.setHeader('Content-Type', 'application/stream+json')
+    const limitHeader = req.headers.limit
+    const takeLimit = limitHeader && typeof limitHeader === 'string' ? Math.floor(Number(req.headers.limit)) : Infinity
+    res.setHeader('content-type', 'application/stream+json')
     try {
       const apiSub = shell.lib
         .sub(shell._raw)(pointer as never)(req.body, {
@@ -46,6 +48,7 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
             ? await authSrv.plug.makeMsgClientSessionContext({ authToken: req.moodlenet.authToken })
             : {},
         })
+        .pipe(shell.rx.take(takeLimit))
         // .subDemat(shell)(pointer as never)(req.body, {
         //   primary: true,
         // })
@@ -54,7 +57,7 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
           //Core.ValValueOf<Core.SubTopo<any, any>>
           next({ msg }) {
             res.cork()
-            res.write(JSON.stringify({ msg }) + '\n')
+            res.write(JSON.stringify({ ...msg.data.value, hasValue: undefined }) + '\n')
             process.nextTick(() => res.uncork())
           },
           error(err) {

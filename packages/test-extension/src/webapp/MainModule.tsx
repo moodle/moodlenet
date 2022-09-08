@@ -11,7 +11,7 @@ const mainModule: WebappPluginMainModule<TestExt, { a: 1 }, [void, ReactAppPlugi
         '0.1.0',
       )('testSub')({ paramIn1: 'xxx' })
       .then(resp => {
-        console.log({ testSub: resp })
+        console.log('testSub resp', JSON.stringify(resp, null, 2))
       })
 
     return {
