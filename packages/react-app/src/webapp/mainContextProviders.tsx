@@ -1,9 +1,10 @@
-import extCtxProviders from 'ext-context-providers-modules'
 import { FC, PropsWithChildren } from 'react'
-import * as auth from '../react-app-lib/auth'
+import * as auth from './main-lib/auth'
 import * as header from './ui/components/organisms/Header'
 import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider'
 import * as set from './ui/components/pages/Settings/SettingsContext'
+
+const extCtxProviders: any[] = []
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
   const ctxProviderWrap = Object.values(extCtxProviders)

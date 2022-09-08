@@ -1,8 +1,8 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import type { ReactAppExt } from '@moodlenet/react-app'
+import type { ReactAppExtDef } from '@moodlenet/react-app'
 import { resolve } from 'path'
 
-export type TestExt = ExtDef<
+export type TestExtDef = ExtDef<
   '@moodlenet/test-extension',
   '0.1.0',
   void,
@@ -11,18 +11,15 @@ export type TestExt = ExtDef<
     _test: SubTopo<{ paramIn2: string }, { out2: number }>
   }
 >
-
-const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
+export type TestExt = Ext<TestExtDef, [CoreExt, ReactAppExtDef]>
+const ext: TestExt = {
   name: '@moodlenet/test-extension',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
   connect(shell) {
     const [, reactApp] = shell.deps
     reactApp.plug.setup({
-      routes: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-        rootPath: 'my-test', // http://localhost:3000/my-test
-      },
+      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
     })
 
     return {

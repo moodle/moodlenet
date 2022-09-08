@@ -1,7 +1,7 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import { CSSProperties, FC, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../../react-app-lib/auth'
+import { AuthCtx } from '../../../../../main-lib/auth'
 import Card from '../../../atoms/Card/Card'
 import { SimpleLayout } from '../../../layout'
 import './Signup.scss'

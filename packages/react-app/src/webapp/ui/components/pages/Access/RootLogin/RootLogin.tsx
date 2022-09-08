@@ -1,6 +1,6 @@
 import { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
-import lib from 'moodlenet-react-app-lib'
 import { FC, useCallback, useContext, useState } from 'react'
+import lib from '../../../../../main-lib'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
