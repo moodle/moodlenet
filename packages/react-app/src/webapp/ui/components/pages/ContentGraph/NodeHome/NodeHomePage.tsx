@@ -1,7 +1,7 @@
 import { ContentGraphExtDef, NodeGlyph } from '@moodlenet/content-graph'
-import lib from 'moodlenet-react-app-lib'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import lib from '../../../../../main-lib'
 import { ContentGraphContext } from '../ContentGraphProvider'
 
 export const route = 'content/:_type/:_key'

@@ -14,7 +14,7 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import rootAvatarUrl from '../webapp/static/img/ROOT.png'
+import rootAvatarUrl from '../static/img/ROOT.png'
 import priHttp from './pri-http'
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'

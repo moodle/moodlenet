@@ -61,8 +61,18 @@ export type ExtShell<OfExt extends Ext<any, any>> = OfExt extends Ext<infer Def,
   ? Shell<Def, Requires>
   : Shell
 
+export type FullRequires<Requires extends Dependencies> = {
+  [index in keyof Requires]: {
+    id: ExtId<Requires[index]>
+    name: ExtName<Requires[index]>
+    version: ExtVersion<Requires[index]>
+  }
+}
+
 export interface Shell<Def extends ExtDef = ExtDef, Requires extends Dependencies = Dependencies> {
   _raw: RawShell
+  // baseFolder: string
+  requires: FullRequires<Requires>
   deps: DepsOf<Requires>
   expose: ExposePointers<Def>
   me: Core.AccessPkg<Def>

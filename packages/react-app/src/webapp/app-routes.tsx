@@ -1,4 +1,3 @@
-import routes from 'ext-routes'
 import { Route, Routes } from 'react-router-dom'
 import { Login } from './ui/components/pages/Access/Login/Login'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin'
@@ -9,6 +8,7 @@ import { Settings } from './ui/components/pages/Settings/Settings'
 
 // const A = lazy(() => import('./A'))
 
+const routes: any[] = []
 const AppRouter = () => {
   // console.log({ routes })
   return (
