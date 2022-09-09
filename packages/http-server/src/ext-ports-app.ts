@@ -38,7 +38,8 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
     }
 
     const limitHeader = req.headers[MN_HTTP_PRI_SUB_LIMIT_HEADER]
-    const takeLimit = limitHeader && typeof limitHeader === 'string' ? Math.floor(Number(req.headers.limit)) : Infinity
+    const takeLimit = limitHeader && typeof limitHeader === 'string' ? Math.floor(Number(limitHeader)) : Infinity
+    console.log({ takeLimit, limitHeader })
     res.setHeader('content-type', 'application/stream+json')
     try {
       const apiSub = shell.lib

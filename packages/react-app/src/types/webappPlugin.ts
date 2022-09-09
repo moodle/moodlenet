@@ -20,11 +20,9 @@ export type WebPkgDeps<Requires extends WebappRequires<any>> = {
 export type WebappPluginItem = WebappPluginDef & { guestShell: Shell<any> }
 
 export type WebappRequires<Deps extends Dependencies> = {
-  [index in keyof Deps]: void | WebappPluginMainModule<
-    Ext<ExtDef<Deps[index]['name'], Deps[index]['version'], any, any>, any>,
-    any,
-    any
-  >
+  [index in keyof Deps]:
+    | never
+    | WebappPluginMainModule<Ext<ExtDef<Deps[index]['name'], Deps[index]['version'], any, any>, any>, any, any>
 }
 
 export type WebappPluginMainModule<

@@ -2,14 +2,12 @@ import { ReactAppPluginMainModule, WebappPluginMainModule } from '@moodlenet/rea
 
 import { TestExt } from '..'
 
-export type TestExtensionWebappPluginX = WebappPluginMainModule<TestExt, { a: 1 }, [ReactAppPluginMainModule, void]>
-export type TestExtensionWebappPlugin = WebappPluginMainModule<TestExt, { a: 1 }, [void, ReactAppPluginMainModule]>
+export type TestExtensionWebappPlugin = WebappPluginMainModule<TestExt, { a: 1 }, [never, ReactAppPluginMainModule]>
 
 const mainModule: TestExtensionWebappPlugin = {
   connect({ deps, http }) {
-    const [a, reactApp] = deps
+    const [, reactApp] = deps
     reactApp.ui
-    reactApp.uiasas
     http
       .fetch('testSub')({ paramIn1: 'xxx' })
       .then(resp => {
