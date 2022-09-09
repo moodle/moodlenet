@@ -1,7 +1,6 @@
-import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths, ValueData } from '@moodlenet/core'
+import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/core'
 import type { RawSubOpts } from '@moodlenet/http-server'
-import { firstValueFrom, Observable, ObservableInput } from 'rxjs'
-import { mergeMap } from 'rxjs/operators'
+import { firstValueFrom, Observable } from 'rxjs'
 
 export type Opts = {
   limit?: number
@@ -22,7 +21,7 @@ export const subRaw =
         xhr.open(method, httpPath)
         const headers: HttpSubType['headers'] = {
           'content-type': 'application/json',
-          'limit': opts?.limit,
+          'x-mn-http-pri-sub-limit': opts?.limit,
         }
         Object.entries(headers).forEach(([k, v]) => xhr.setRequestHeader(k, String(v)))
 
@@ -46,7 +45,19 @@ export const subRaw =
           s.split('\n')
             .filter(Boolean)
             .map(_ => JSON.parse(_))
-            .forEach(_ => subscriber.next(_))
+            .forEach(notif => {
+              if (!(notif && ['E', 'C', 'N'].includes(notif.kind))) {
+                const errMsg = `Invalid notification`
+                console.error(errMsg, { notif })
+                subscriber.error(new TypeError(errMsg, { cause: notif as any }))
+              } else if (notif.kind === 'E') {
+                subscriber.error(new Error(notif.error))
+              } else if (notif.kind === 'N') {
+                subscriber.next(notif.value)
+              } else {
+                subscriber.complete()
+              }
+            })
         })
 
         xhr.send(body)
@@ -65,26 +76,12 @@ function parsedOrString(s: string) {
   }
 }
 
-export function dematMessage<T>() {
-  return mergeMap<ValueData<T>['value'], ObservableInput<T>>(notif => {
-    if (!(['E', 'C', 'N'] as const).includes(notif.kind)) {
-      const errMsg = `Invalid notification, unknown "kind" ` + notif.kind
-      console.error(errMsg, { notif })
-      throw new TypeError(errMsg, { cause: notif as any })
-    }
-    if (notif.kind === 'E') {
-      throw new Error(notif.error)
-    }
-    return notif.kind === 'N' ? [notif.value] : []
-  })
-}
-
 export const fetch =
   <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
     type HttpSubType = RawSubOpts<Def, Path>
     return async (req: HttpSubType['req']) => {
-      const data = await firstValueFrom(subRaw(extName, extVersion)(path)(req, { limit: 1 }).pipe(dematMessage()))
+      const data = await firstValueFrom(subRaw(extName, extVersion)(path)(req, { limit: 1 }))
       return data
     }
   }

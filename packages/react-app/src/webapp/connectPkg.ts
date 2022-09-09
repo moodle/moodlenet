@@ -1,4 +1,4 @@
-import { Ext, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
+import { Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
 import { FullRequires } from '@moodlenet/core/src/types/ext'
 import { MainModuleObj, WebappPluginMainModule } from '../types'
 import mainLib from './main-lib'
@@ -9,15 +9,18 @@ type ConnectArg<MainModule extends WebappPluginMainModule<any, any>> = MainModul
   any
 >
   ? ForExt extends Ext<infer Def, infer Requires>
-    ? {
+    ? PluginInfo<Def> & {
         mainModule: MainModule
-        id: ExtId<Def>
-        name: ExtName<Def>
-        version: ExtVersion<Def>
         requires: FullRequires<Requires>
       }
     : never
   : never
+
+export type PluginInfo<Def extends ExtDef> = {
+  id: ExtId<Def>
+  name: ExtName<Def>
+  version: ExtVersion<Def>
+}
 
 const mainModuleObjs: Record<
   string,
@@ -42,6 +45,7 @@ const connectPkg = <MainModule extends WebappPluginMainModule<any, any>>(Connect
 
   const MainModuleObj = ConnectArg.mainModule.connect({
     deps,
+    _: ConnectArg.name,
   })
   // console.log('connectPkg, MainModuleObj:', MainModuleObj)
 

@@ -2,7 +2,7 @@ import type * as Core from '@moodlenet/core'
 import { json } from 'body-parser'
 import express from 'express'
 import type { MNHttpServerExt } from '.'
-import type { RawSubPriMsgSubUrl } from './types'
+import { MN_HTTP_PRI_SUB_LIMIT_HEADER, RawSubPriMsgSubUrl } from './types'
 
 export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
   const [, authSrv] = shell.deps
@@ -37,7 +37,7 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
       return next()
     }
 
-    const limitHeader = req.headers.limit
+    const limitHeader = req.headers[MN_HTTP_PRI_SUB_LIMIT_HEADER]
     const takeLimit = limitHeader && typeof limitHeader === 'string' ? Math.floor(Number(req.headers.limit)) : Infinity
     res.setHeader('content-type', 'application/stream+json')
     try {
