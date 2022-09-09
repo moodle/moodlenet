@@ -1,8 +1,7 @@
 import { Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
 import { FullRequires } from '@moodlenet/core/src/types/ext'
 import { MainModuleObj, WebappPluginMainModule } from '../types'
-import mainLib from './main-lib'
-import { ReactAppPluginMainModule } from './types'
+import { reactAppPluginMainModule } from './connect-react-app-lib'
 
 type ConnectArg<MainModule extends WebappPluginMainModule<any, any>> = MainModule extends WebappPluginMainModule<
   infer ForExt,
@@ -61,16 +60,6 @@ const connectPkg = <MainModule extends WebappPluginMainModule<any, any>>(Connect
     MainModuleObj,
     mainModuleObjs,
   })
-}
-
-const reactAppPluginMainModule: ReactAppPluginMainModule = {
-  connect() {
-    return {
-      pkgLibFor(/* { extId, extName, extVersion } */) {
-        return mainLib
-      },
-    }
-  },
 }
 
 connectPkg({
