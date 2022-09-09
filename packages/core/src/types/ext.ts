@@ -56,7 +56,7 @@ export type Dep<Def extends ExtDef = ExtDef> = {
   plug: ExtPlug<Def>
   access: Core.AccessPkg<Def>
 }
-type Dependencies = readonly ExtDef[]
+export type Dependencies = readonly ExtDef[]
 export type ExtShell<OfExt extends Ext<any, any>> = OfExt extends Ext<infer Def, infer Requires>
   ? Shell<Def, Requires>
   : Shell

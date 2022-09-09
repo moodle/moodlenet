@@ -2,9 +2,11 @@ import { Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
 import { FullRequires } from '@moodlenet/core/src/types/ext'
 import { MainModuleObj, WebappPluginMainModule } from '../types'
 import { reactAppPluginMainModule } from './connect-react-app-lib'
+import { priHttpFor } from './main-lib/pri-http'
 
-type ConnectArg<MainModule extends WebappPluginMainModule<any, any>> = MainModule extends WebappPluginMainModule<
+type ConnectArg<MainModule extends WebappPluginMainModule<any, any, any>> = MainModule extends WebappPluginMainModule<
   infer ForExt,
+  any,
   any
 >
   ? ForExt extends Ext<infer Def, infer Requires>
@@ -29,22 +31,27 @@ const mainModuleObjs: Record<
   }
 > = {}
 
-const connectPkg = <MainModule extends WebappPluginMainModule<any, any>>(ConnectArg: ConnectArg<MainModule>) => {
+const connectPkg = <MainModule extends WebappPluginMainModule<any, any, any>>(ConnectArg: ConnectArg<MainModule>) => {
   // console.log('connectPkg, ConnectArg:', ConnectArg)
-
+  const extId = ConnectArg.id
+  const extName = ConnectArg.name
+  const extVersion = ConnectArg.version
   const deps = ConnectArg.requires.map(depNames => {
     return mainModuleObjs[depNames.name]?.MainModuleObj.pkgLibFor?.({
-      extId: ConnectArg.id,
-      extName: ConnectArg.name,
-      extVersion: ConnectArg.version,
+      extId,
+      extName,
+      extVersion,
     })
   }) as never
 
   // console.log('connectPkg, deps:', deps)
-
+  const http = priHttpFor({ extId, extName, extVersion })
   const MainModuleObj = ConnectArg.mainModule.connect({
     deps,
-    _: ConnectArg.name,
+    extId,
+    extName,
+    extVersion,
+    http,
   })
   // console.log('connectPkg, MainModuleObj:', MainModuleObj)
 
@@ -63,7 +70,7 @@ const connectPkg = <MainModule extends WebappPluginMainModule<any, any>>(Connect
 }
 
 connectPkg({
-  mainModule: reactAppPluginMainModule,
+  mainModule: reactAppPluginMainModule as any,
   id: '@moodlenet/react-app@0.1.0',
   name: '@moodlenet/react-app',
   version: '0.1.0',

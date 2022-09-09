@@ -1,6 +1,16 @@
-import { ReactAppPluginMainModule, WebappPluginMainModule } from '@moodlenet/react-app'
+import { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
+import { ReactAppExtDef, ReactAppPluginMainModule, WebappPluginMainModule, WebPkgDeps } from '..'
 
-import { TestExt } from '..'
+export type TestExtDef = ExtDef<
+  '@moodlenet/test-extension',
+  '0.1.0',
+  void,
+  {
+    testSub: SubTopo<{ paramIn1: string }, { out1: string }>
+    _test: SubTopo<{ paramIn2: string }, { out2: number }>
+  }
+>
+export type TestExt = Ext<TestExtDef, [CoreExt, ReactAppExtDef]>
 
 export type TestExtensionWebappPluginX = WebappPluginMainModule<TestExt, { a: 1 }, [ReactAppPluginMainModule, void]>
 export type TestExtensionWebappPlugin = WebappPluginMainModule<TestExt, { a: 1 }, [void, ReactAppPluginMainModule]>
@@ -24,5 +34,5 @@ const mainModule: TestExtensionWebappPlugin = {
   },
 }
 
-export default mainModule
-//<Route index element={<TestExtPage />} />
+declare const x: WebPkgDeps<[void, ReactAppPluginMainModule]>
+const [a, b] = x
