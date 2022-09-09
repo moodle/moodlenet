@@ -1,6 +1,6 @@
 import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/core'
 import type { RawSubOpts } from '@moodlenet/http-server'
-import { firstValueFrom, Observable } from 'rxjs'
+import { EmptyError, firstValueFrom, Observable } from 'rxjs'
 
 export type Opts = {
   limit?: number
@@ -39,7 +39,7 @@ export const subRaw =
           if (xhr.status < 200 || xhr.status >= 400) {
             const error = parsedOrString(s)
             subscriber.error(error)
-            return console.error('HTTP SUB progress error:', error)
+            return //console.debug('HTTP SUB progress error:', error)
           }
 
           s.split('\n')
@@ -81,7 +81,9 @@ export const fetch =
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
     type HttpSubType = RawSubOpts<Def, Path>
     return async (req: HttpSubType['req']) => {
-      const data = await firstValueFrom(subRaw(extName, extVersion)(path)(req, { limit: 1 }))
+      const data = await firstValueFrom(subRaw(extName, extVersion)(path)(req, { limit: 1 })).catch(e => {
+        throw e instanceof EmptyError ? new Error('Empty response from server') : e
+      })
       return data
     }
   }

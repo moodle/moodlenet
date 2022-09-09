@@ -7,6 +7,8 @@ export type TestExtDef = ExtDef<
   '0.1.0',
   void,
   {
+    testErr: SubTopo<void, void>
+    testEmpty: SubTopo<void, void>
     testSub: SubTopo<{ paramIn1: string }, { out1: string }>
     _test: SubTopo<{ paramIn2: string }, { out2: number }>
   }
@@ -41,6 +43,16 @@ const ext: TestExt = {
               return { valid: true }
             },
           },
+          'testEmpty/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+          'testErr/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
         })
         // code that allocate system resouces ( DB connections, listen to ports )
         // implement package's service messages
@@ -71,6 +83,12 @@ const ext: TestExt = {
           }, */
           _test({ paramIn2 }) {
             return [{ out2: Number(paramIn2) }, { out2: Number(paramIn2) + 1 }]
+          },
+          testEmpty() {
+            return []
+          },
+          testErr() {
+            throw new Error('xxxx AHHAHA')
           },
           testSub({ paramIn1 }) {
             return shell.rx.interval(500).pipe(

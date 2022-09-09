@@ -1,6 +1,7 @@
 import type * as Core from '@moodlenet/core'
 import { json } from 'body-parser'
 import express from 'express'
+import { format } from 'util'
 import type { MNHttpServerExt } from '.'
 import { MN_HTTP_PRI_SUB_LIMIT_HEADER, RawSubPriMsgSubUrl } from './types'
 
@@ -39,7 +40,6 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
 
     const limitHeader = req.headers[MN_HTTP_PRI_SUB_LIMIT_HEADER]
     const takeLimit = limitHeader && typeof limitHeader === 'string' ? Math.floor(Number(limitHeader)) : Infinity
-    console.log({ takeLimit, limitHeader })
     res.setHeader('content-type', 'application/stream+json')
     try {
       const apiSub = shell.lib
@@ -49,7 +49,15 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
             ? await authSrv.plug.makeMsgClientSessionContext({ authToken: req.moodlenet.authToken })
             : {},
         })
-        .pipe(shell.rx.take(takeLimit))
+        .pipe(
+          shell.rx.take(takeLimit),
+          shell.rx.map(notif => {
+            if (notif.msg.data.value.kind === 'E') {
+              throw notif.msg.data.value.error
+            }
+            return notif
+          }),
+        )
         // .subDemat(shell)(pointer as never)(req.body, {
         //   primary: true,
         // })
@@ -58,12 +66,13 @@ export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
           //Core.ValValueOf<Core.SubTopo<any, any>>
           next({ msg }) {
             res.cork()
-            res.write(JSON.stringify({ ...msg.data.value, hasValue: undefined }) + '\n')
-            process.nextTick(() => res.uncork())
+            const msgNotif = msg.data.value
+
+            res.write(JSON.stringify({ ...msgNotif, hasValue: undefined }) + '\n', () => res.uncork())
           },
           error(err) {
             res.status(500)
-            res.end(String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
+            res.end(err instanceof Error ? format(err) : err) //(JSON.stringify({ msg: {}, val: String(err) }))
           },
           complete() {
             res.status(200).end()
