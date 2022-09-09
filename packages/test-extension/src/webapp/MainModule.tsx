@@ -2,9 +2,15 @@ import { WebappPluginMainModule } from '@moodlenet/react-app'
 import { ReactAppPluginMainModule } from '@moodlenet/react-app/src/webapp/types'
 import { TestExt, TestExtDef } from '..'
 
-const mainModule: WebappPluginMainModule<TestExt, { a: 1 }, [void, ReactAppPluginMainModule]> = {
+export type TestExtensionWebappPlugin = WebappPluginMainModule<
+  TestExt,
+  { a: 1 },
+  { '@moodlenet/react-app': ReactAppPluginMainModule }
+>
+
+const mainModule: TestExtensionWebappPlugin = {
   connect({ deps }) {
-    const [, reactApp] = deps
+    const { '@moodlenet/react-app': reactApp } = deps
     reactApp.priHttp
       .fetch<TestExtDef>(
         '@moodlenet/test-extension',

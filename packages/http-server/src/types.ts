@@ -1,12 +1,4 @@
-import {
-  ExtDef,
-  ExtName,
-  ExtVersion,
-  SubcriptionPaths,
-  SubcriptionReq,
-  SubcriptionVal,
-  ValueData,
-} from '@moodlenet/core'
+import { ExtDef, ExtName, ExtVersion, SubcriptionPaths, SubcriptionReq, SubcriptionVal } from '@moodlenet/core'
 import { Application } from 'express'
 
 export type PriMsgBaseUrl = `/_/_` //`^^
@@ -18,13 +10,14 @@ export type RawSubOpts<Def extends ExtDef, Path extends SubcriptionPaths<Def>> =
   method: 'POST'
   path: `${RawSubPriMsgBaseUrl}/${ExtName<Def>}/${ExtVersion<Def>}/${Path}`
   req: SubcriptionReq<Def, Path>
-  obsType: ValueData<SubcriptionVal<Def, Path>>['value']
+  obsType: SubcriptionVal<Def, Path>
   headers: RawSubOptsHeaders
 }
 
+export const MN_HTTP_PRI_SUB_LIMIT_HEADER = 'x-mn-http-pri-sub-limit'
 export type RawSubOptsHeaders = {
   'content-type': 'application/json'
-  'limit'?: number
+  [MN_HTTP_PRI_SUB_LIMIT_HEADER]?: number
 }
 export type MountAppItem = { mountPath: string; getApp(): Application }
 
