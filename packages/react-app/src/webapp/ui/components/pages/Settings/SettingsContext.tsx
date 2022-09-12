@@ -50,8 +50,8 @@ export function useRegisterSettingsItem({ Menu, Content }: SettingItemDef) {
 }
 
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization', '0.1.0')
-  const reactAppSrv = lib.priHttp.fetch<ReactAppExtDef>('@moodlenet/react-app', '0.1.0')
+  const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization@0.1.0')
+  const reactAppSrv = lib.priHttp.fetch<ReactAppExtDef>('@moodlenet/react-app@0.1.0')
 
   // const nav = useNavigate()
   // dentro a use effect prendo il valore

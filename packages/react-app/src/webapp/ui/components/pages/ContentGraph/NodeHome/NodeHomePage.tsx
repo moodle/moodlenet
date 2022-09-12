@@ -13,10 +13,7 @@ export const Component: FC = () => {
   const [node, setNode] = useState<NodeGlyph>()
   useEffect(() => {
     lib.priHttp
-      .fetch<ContentGraphExtDef>(
-        '@moodlenet/content-graph',
-        '0.1.0',
-      )('read/node')({
+      .fetch<ContentGraphExtDef>('@moodlenet/content-graph@0.1.0')('read/node')({
         identifier: {
           _type,
           _key,

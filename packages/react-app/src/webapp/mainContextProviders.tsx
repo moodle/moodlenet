@@ -1,15 +1,21 @@
+import { ExtId } from '@moodlenet/core'
 import { FC, PropsWithChildren } from 'react'
+import { PluginMainComponent } from '..'
 import * as auth from './main-lib/auth'
 import * as header from './ui/components/organisms/Header'
 import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider'
 import * as set from './ui/components/pages/Settings/SettingsContext'
 
-const extCtxProviders: any[] = []
+export const pluginMainModules: { MainComponent: PluginMainComponent; extId: ExtId }[] = []
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const ctxProviderWrap = Object.values(extCtxProviders)
+  console.log({ pluginMainModules })
+  const ctxProviderWrap = Object.values(pluginMainModules)
     .reverse()
-    .reduce((_children, { Provider, extId }) => <Provider key={extId}>{_children}</Provider>, <>{children}</>)
+    .reduce(
+      (_children, { MainComponent, extId }) => <MainComponent key={extId}>{_children}</MainComponent>,
+      <>{children}</>,
+    )
 
   return (
     <header.Provider>

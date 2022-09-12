@@ -3,6 +3,7 @@ import { FullRequires } from '@moodlenet/core/src/types/ext'
 import { MainModuleObj, WebappPluginMainModule } from '../types'
 import { reactAppPluginMainModule } from './connect-react-app-lib'
 import { priHttpFor } from './main-lib/pri-http'
+import { pluginMainModules } from './mainContextProviders'
 
 type ConnectArg<MainModule extends WebappPluginMainModule<any, any, any>> = MainModule extends WebappPluginMainModule<
   infer ForExt,
@@ -45,13 +46,14 @@ const connectPkg = <MainModule extends WebappPluginMainModule<any, any, any>>(Co
   }) as never
 
   // console.log('connectPkg, deps:', deps)
-  const http = priHttpFor({ extId, extName, extVersion })
+  const http = priHttpFor(extId)
   const MainModuleObj = ConnectArg.mainModule.connect({
     deps,
     extId,
     extName,
     extVersion,
     http,
+    pkgHttp: priHttpFor,
   })
   // console.log('connectPkg, MainModuleObj:', MainModuleObj)
 
@@ -59,7 +61,9 @@ const connectPkg = <MainModule extends WebappPluginMainModule<any, any, any>>(Co
     ConnectArg,
     MainModuleObj,
   }
-
+  if (MainModuleObj.MainComponent) {
+    pluginMainModules.push({ extId, MainComponent: MainModuleObj.MainComponent })
+  }
   // console.log('connectPkg, mainModuleObjs:', mainModuleObjs)
   console.log(`connected pkg ${ConnectArg.id}`, {
     ConnectArg,

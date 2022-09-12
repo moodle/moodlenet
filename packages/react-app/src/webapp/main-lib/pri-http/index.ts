@@ -1,28 +1,30 @@
-import { ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
-import { fetch, subRaw } from './xhr-adapter'
+import { ExtDef, ExtId } from '@moodlenet/core'
+import { fetch } from './xhr-adapter/fetch'
+import { fetchHook, lazyFetchHook } from './xhr-adapter/hooks'
+import { rawSub } from './xhr-adapter/raw-sub'
 
 export const priHttp = {
-  sub: subRaw,
+  sub: rawSub,
   fetch,
 }
 
-export function priHttpFor<Def extends ExtDef>({
-  //extId,
-  extName,
-  extVersion,
-}: {
+export function priHttpFor<Def extends ExtDef>(
   extId: ExtId<Def>
-  extName: ExtName<Def>
-  extVersion: ExtVersion<Def>
-}):PriHttpFor<Def> {
+): PriHttpFor<Def> {
   return {
-    subRaw: subRaw<Def>(extName, extVersion),
-    fetch: fetch<Def>(extName, extVersion),
+    subRaw: rawSub<Def>(extId),
+    fetch: fetch<Def>(extId),
+    useLazyFetch: lazyFetchHook<Def>(extId),
+    useFetch: fetchHook<Def>(extId),
   }
 }
 
-export type PriHttpFor<Def extends ExtDef>={
-  subRaw: ReturnType<typeof subRaw<Def>>
-  fetch: ReturnType<typeof fetch<Def>>
-}
 export default priHttp
+
+export type PriHttpFor<Def extends ExtDef> = {
+  subRaw: (ReturnType<typeof rawSub<Def>>)
+  fetch: (ReturnType<typeof fetch<Def>>)
+  useLazyFetch: (ReturnType<typeof lazyFetchHook<Def>>)
+  useFetch: (ReturnType<typeof fetchHook<Def>>)
+}
+

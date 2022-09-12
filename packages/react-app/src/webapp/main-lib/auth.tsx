@@ -42,8 +42,8 @@ export type AuthCtxT = {
   clientSessionData: ClientSessionData | null
 }
 
-const authSrvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
-const contentGraphSrvFetch = priHttp.fetch<ContentGraphExtDef>('@moodlenet/content-graph', '0.1.0')
+const authSrvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
+const contentGraphSrvFetch = priHttp.fetch<ContentGraphExtDef>('@moodlenet/content-graph@0.1.0')
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
