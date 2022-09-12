@@ -1,15 +1,16 @@
-import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/core'
+import type { ExtDef, ExtId, SubcriptionPaths } from '@moodlenet/core'
 import type { RawSubOpts } from '@moodlenet/http-server'
-import { EmptyError, firstValueFrom, Observable } from 'rxjs'
+import { Observable } from 'rxjs'
 
 export type Opts = {
   limit?: number
 }
-export type Sub = typeof subRaw
-export const subRaw =
-  <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
+export type Sub = typeof rawSub
+export const rawSub =
+  <Def extends ExtDef>(extId: ExtId<Def>) =>
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
     type HttpSubType = RawSubOpts<Def, Path>
+    const { extName, extVersion } = splitExtId(extId)
     const httpPath: HttpSubType['path'] = `/_/_/raw-sub/${extName}/${extVersion}/${path}`
     const method: HttpSubType['method'] = `POST`
     return (req: HttpSubType['req'], opts?: Opts) =>
@@ -76,14 +77,8 @@ function parsedOrString(s: string) {
   }
 }
 
-export const fetch =
-  <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
-  <Path extends SubcriptionPaths<Def>>(path: Path) => {
-    type HttpSubType = RawSubOpts<Def, Path>
-    return async (req: HttpSubType['req']) => {
-      const data = await firstValueFrom(subRaw(extName, extVersion)(path)(req, { limit: 1 })).catch(e => {
-        throw e instanceof EmptyError ? new Error('Empty response from server') : e
-      })
-      return data
-    }
-  }
+function splitExtId<Ext extends ExtDef>(extId: ExtId<Ext>) {
+  const [extVersion, extName, _scope_token] = extId.split('@').reverse() as [Ext['version'], Ext['name'], '@'?]
+  const scoped = 'string' === typeof _scope_token
+  return { extName: (scoped ? '@' : '') + extName, extVersion }
+}

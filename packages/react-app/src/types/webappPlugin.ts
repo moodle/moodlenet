@@ -1,7 +1,8 @@
 import type { Dependencies, Ext, ExtDef, ExtId, ExtName, ExtVersion, Shell } from '@moodlenet/core'
+import { ComponentType, PropsWithChildren } from 'react'
 import { ReactAppExt } from '..'
 import { ReactAppLib } from '../webapp/connect-react-app-lib'
-import { PriHttpFor } from '../webapp/main-lib/pri-http'
+import { priHttpFor, PriHttpFor } from '../webapp/main-lib/pri-http'
 
 export type WebappPluginDef = {
   mainModuleLoc: string
@@ -38,10 +39,13 @@ export type WebAppShell<ForExt extends Ext<any, any>> = ForExt extends Ext<infer
       extName: ExtName<Def>
       extVersion: ExtVersion<Def>
       http: PriHttpFor<Def>
+      pkgHttp: typeof priHttpFor
     }
   : never
 
-export type MainModuleObj<Lib> = {} & (Lib extends undefined
+export type MainModuleObj<Lib> = {
+  MainComponent?: PluginMainComponent
+} & (Lib extends undefined
   ? {
       pkgLibFor?: PkgLibFor<Lib>
     }
@@ -56,3 +60,5 @@ export type PkgLibFor<Lib> = <Def extends ExtDef>(_: {
 }) => Lib
 
 export type ReactAppPluginMainModule = WebappPluginMainModule<ReactAppExt, ReactAppLib, any>
+export type PluginMainComponent = ComponentType<PropsWithChildren<PluginMainComponentProps>>
+export type PluginMainComponentProps = {}

@@ -8,7 +8,7 @@ import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout'
 import './RootLogin.scss'
 
-const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager', '0.1.0')
+const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
 export type RootLoginFormValues = { email: string; password: string }
 export type RootLoginProps = {}
 
