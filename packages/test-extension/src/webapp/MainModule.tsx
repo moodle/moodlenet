@@ -13,10 +13,21 @@ export type TestExtensionWebappPlugin = WebappPluginMainModule<TestExt, { a: 1 }
 const mainModule: TestExtensionWebappPlugin = {
   connect({ deps, http, pkgHttp }) {
     const [, reactApp] = deps
-    reactApp.ui
 
-    http.fetch('testEmpty')().then(console.log.bind(null, 'testEmpty'), console.error.bind(null, 'testEmpty'))
-    http.fetch('testErr')().then(console.log.bind(null, 'testErr'), console.error.bind(null, 'testErr'))
+    reactApp.collectX.register({ a: 111 })
+
+    http
+      .fetch('testEmpty')()
+      .then(
+        _ => console.log('testEmpty', _),
+        _ => console.error('testEmpty', _),
+      )
+    http
+      .fetch('testErr')()
+      .then(
+        _ => console.log('testErr', _),
+        _ => console.error('testErr', _),
+      )
     const RAH = pkgHttp<ReactAppExtDef>('@moodlenet/react-app@0.1.0')
     RAH.fetch('getApparence')().then(_ => console.log('***', _))
 

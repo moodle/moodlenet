@@ -6,7 +6,7 @@ import * as settings from '../ui/components/pages/Settings/SettingsContext'
 import * as auth from './auth'
 import priHttp from './pri-http'
 
-export type MoodlenetLib = typeof lib
+export type MainLib = typeof lib
 
 const lib = {
   priHttp,

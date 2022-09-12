@@ -1,6 +1,6 @@
-import { Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
-import { FullRequires } from '@moodlenet/core/src/types/ext'
-import { MainModuleObj, WebappPluginMainModule } from '../types'
+import type { Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
+import type { FullRequires } from '@moodlenet/core/src/types/ext'
+import type { MainModuleObj, WebappPluginMainModule } from '../types'
 import { reactAppPluginMainModule } from './connect-react-app-lib'
 import { priHttpFor } from './main-lib/pri-http'
 import { pluginMainModules } from './mainContextProviders'
@@ -32,7 +32,9 @@ const mainModuleObjs: Record<
   }
 > = {}
 
-const connectPkg = <MainModule extends WebappPluginMainModule<any, any, any>>(ConnectArg: ConnectArg<MainModule>) => {
+export const connectPkg = <MainModule extends WebappPluginMainModule<any, any, any>>(
+  ConnectArg: ConnectArg<MainModule>,
+) => {
   // console.log('connectPkg, ConnectArg:', ConnectArg)
   const extId = ConnectArg.id
   const extName = ConnectArg.name
