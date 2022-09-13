@@ -1,32 +1,38 @@
 import { ExtId } from '@moodlenet/core'
-
-export type Registry<ItemType> = {
-  items: RegisteredItem<ItemType>[]
-}
+import { PkgIds } from '../..'
 
 export type RegisteredItem<ItemType> = {
   item: ItemType
-  extId: ExtId
-}
-export type Registrar<ItemType> = {
-  register(item: ItemType): void
+  pkg: PkgIds
 }
 
+export type Registrar<ItemType> = {
+  register: RegisterFn<ItemType>
+}
+
+export type RegisterFn<ItemType> = (item: ItemType) => void
+
 // export type CreateRegistryCfg<ItemType> = {}
-export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */) {
-  const byPkg: Record<ExtId, { item: ItemType }[]> = {}
-  const items: RegisteredItem<ItemType>[] = []
+export type Registry<ItemType> = {
+  byPkg: Record<ExtId, RegisteredItem<ItemType>[]>
+  entries: RegisteredItem<ItemType>[]
+  host: (_: { pkg: PkgIds }) => Registrar<ItemType>
+}
+export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */): Registry<ItemType> {
+  const byPkg: Registry<ItemType>['byPkg'] = {}
+  const entries: Registry<ItemType>['entries'] = []
   return {
     byPkg,
-    items,
+    entries,
     host,
   }
 
-  function host({ extId }: { extId: ExtId }): Registrar<ItemType> {
+  function host({ pkg }: { pkg: PkgIds }): Registrar<ItemType> {
     return { register }
     function register(item: ItemType) {
-      items.push({ item, extId })
-      ;(byPkg[extId] = byPkg[extId] ?? []).push({ item })
+      const regEntry: RegisteredItem<ItemType> = { pkg, item }
+      entries.push(regEntry)
+      ;(byPkg[pkg.id] = byPkg[pkg.id] ?? []).push(regEntry)
     }
   }
 }

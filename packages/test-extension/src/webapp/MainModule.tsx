@@ -5,16 +5,35 @@ import {
   WebappPluginMainModule,
 } from '@moodlenet/react-app'
 import { useRef } from 'react'
+import { Route } from 'react-router-dom'
 
 import { TestExt } from '..'
+import TestExtPage from './TestExtPage'
 
 export type TestExtensionWebappPlugin = WebappPluginMainModule<TestExt, { a: 1 }, [never, ReactAppPluginMainModule]>
 
+const routes = <Route path="my-page" element={<TestExtPage />} />
 const mainModule: TestExtensionWebappPlugin = {
   connect({ deps, http, pkgHttp }) {
     const [, reactApp] = deps
 
-    reactApp.collectX.register({ a: 111 })
+    reactApp.route.register({ routes, rootPath: 'ciccio' })
+    reactApp.route.register({ routes })
+    reactApp.header.rightComponent.register({ Component: () => <span>XXX</span> })
+    reactApp.header.avatarMenuItem.register({
+      Icon: () => <span>YY</span>,
+      Text: '3',
+      Position: 3,
+    })
+    reactApp.header.avatarMenuItem.register({
+      Icon: () => <span>YY</span>,
+      Text: 'no',
+    })
+    reactApp.header.avatarMenuItem.register({
+      Icon: () => <span>YY</span>,
+      Text: '1',
+      Position: 1,
+    })
 
     http
       .fetch('testEmpty')()
