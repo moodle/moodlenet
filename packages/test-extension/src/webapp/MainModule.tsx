@@ -17,20 +17,22 @@ const mainModule: TestExtensionWebappPlugin = {
   connect({ deps, http, pkgHttp }) {
     const [, reactApp] = deps
 
+    reactApp.settings.section.register({ Content: () => <h1>Body</h1>, Menu: () => <span>menu</span> })
+
     reactApp.route.register({ routes, rootPath: 'ciccio' })
     reactApp.route.register({ routes })
     reactApp.header.rightComponent.register({ Component: () => <span>XXX</span> })
     reactApp.header.avatarMenuItem.register({
-      Icon: () => <span>YY</span>,
+      Icon: () => <span>(3)</span>,
       Text: '3',
       Position: 3,
     })
     reactApp.header.avatarMenuItem.register({
-      Icon: () => <span>YY</span>,
+      Icon: () => <span>(no)</span>,
       Text: 'no',
     })
     reactApp.header.avatarMenuItem.register({
-      Icon: () => <span>YY</span>,
+      Icon: () => <span>(1)</span>,
       Text: '1',
       Position: 1,
     })
