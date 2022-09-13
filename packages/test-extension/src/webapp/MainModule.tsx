@@ -17,6 +17,9 @@ const mainModule: TestExtensionWebappPlugin = {
   connect({ deps, http, pkgHttp }) {
     const [, reactApp] = deps
 
+    reactApp.auth.login.register({ Panel: () => <h1>Login Panel1</h1>, Icon: () => <span>login icon1</span> })
+    reactApp.auth.login.register({ Panel: () => <h1>Login Panel2</h1>, Icon: () => <span>login icon2</span> })
+    reactApp.auth.login.register({ Panel: () => <h1>Login Panel3</h1>, Icon: () => <span>login icon3</span> })
     reactApp.settings.section.register({ Content: () => <h1>Body</h1>, Menu: () => <span>menu</span> })
 
     reactApp.route.register({ routes, rootPath: 'ciccio' })
