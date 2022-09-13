@@ -24,6 +24,19 @@ export type WebPkgDeps<Requires extends WebappRequires<any>> = {
 
 export type WebappPluginItem = WebappPluginDef & { guestShell: Shell<any> }
 
+export type WebAppShellOf<PlgMod> = PlgMod extends WebappPluginMainModule<
+  infer _OfExt,
+  // any,
+  infer _Lib,
+  infer _Requires
+>
+  ? Parameters<PlgMod['connect']>[0]
+  : never
+// ? // ? OfExt extends Ext<infer _Def, infer _Reqs>
+//   WebAppShell<OfExt, Requires>
+// : never
+//  : never
+
 export type WebappRequires<Deps extends Dependencies> = {
   [index in keyof Deps]:
     | never
@@ -37,7 +50,7 @@ export type WebappPluginMainModule<
     ? WebappRequires<Deps>
     : WebappRequires<Dependencies> = never,
 > = {
-  connect(_: { deps: WebPkgDeps<Requires> } & WebAppShell<ForExt>): MainModuleObj<Lib>
+  connect(_: WebAppShell<ForExt, Requires>): MainModuleObj<Lib>
 }
 
 export type PkgIds<Def extends ExtDef = ExtDef> = {
@@ -46,8 +59,12 @@ export type PkgIds<Def extends ExtDef = ExtDef> = {
   version: ExtVersion<Def>
 }
 
-export type WebAppShell<ForExt extends Ext<any, any>> = ForExt extends Ext<infer Def, infer _Reqs>
+export type WebAppShell<ForExt extends Ext<any, any>, Requires extends WebappRequires<any>> = ForExt extends Ext<
+  infer Def,
+  infer _Reqs
+>
   ? {
+      deps: WebPkgDeps<Requires>
       pkg: PkgIds<Def>
       http: PriHttpFor<Def>
       pkgHttp: typeof priHttpFor
