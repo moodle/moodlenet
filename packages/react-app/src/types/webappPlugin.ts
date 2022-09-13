@@ -5,7 +5,7 @@ import { RouteRegItem } from '../webapp/app-routes'
 import { MainLib } from '../webapp/main-lib'
 import { LoginItem, SignupItem } from '../webapp/main-lib/auth'
 import { priHttpFor, PriHttpFor } from '../webapp/main-lib/pri-http'
-import { RegGuest } from '../webapp/main-lib/registry'
+import { CreateRegistry, RegGuest } from '../webapp/main-lib/registry'
 import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from '../webapp/ui/components/organisms/Header'
 import { SettingsSectionItem } from '../webapp/ui/components/pages/Settings/SettingsContext'
 
@@ -69,6 +69,7 @@ export type WebAppShell<ForExt extends Ext<any, any>, Requires extends WebappReq
       pkg: PkgIds<Def>
       http: PriHttpFor<Def>
       pkgHttp: typeof priHttpFor
+      createRegistry: CreateRegistry
     }
   : never
 

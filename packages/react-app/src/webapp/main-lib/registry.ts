@@ -18,6 +18,8 @@ export type Registry<ItemType> = {
   entries: RegistryEntry<ItemType>[]
   host: (_: { pkg: PkgIds }) => RegGuest<ItemType>
 }
+
+export type CreateRegistry = typeof createRegistry
 export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */): Registry<ItemType> {
   const byPkg: Registry<ItemType>['byPkg'] = {}
   const entries: Registry<ItemType>['entries'] = []

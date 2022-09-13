@@ -3,6 +3,7 @@ import type { FullRequires } from '@moodlenet/core/src/types/ext'
 import type { MainModuleObj, PkgIds, WebappPluginMainModule } from '../types'
 import { reactAppPluginMainModule } from './connect-react-app-lib'
 import { priHttpFor } from './main-lib/pri-http'
+import { createRegistry } from './main-lib/registry'
 import { pluginMainModules } from './mainContextProviders'
 
 type ConnectArg<MainModule extends WebappPluginMainModule<any, any, any>> = MainModule extends WebappPluginMainModule<
@@ -54,6 +55,7 @@ export const connectPkg = <MainModule extends WebappPluginMainModule<any, any, a
     pkg,
     http,
     pkgHttp: priHttpFor,
+    createRegistry,
   })
   // console.log('connectPkg, MainModuleObj:', MainModuleObj)
 
