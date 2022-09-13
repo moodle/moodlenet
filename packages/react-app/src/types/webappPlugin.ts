@@ -3,6 +3,7 @@ import { ComponentType, PropsWithChildren } from 'react'
 import { ReactAppExt } from '..'
 import { RouteRegItem } from '../webapp/app-routes'
 import { MainLib } from '../webapp/main-lib'
+import { LoginItem, SignupItem } from '../webapp/main-lib/auth'
 import { priHttpFor, PriHttpFor } from '../webapp/main-lib/pri-http'
 import { RegGuest } from '../webapp/main-lib/registry'
 import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from '../webapp/ui/components/organisms/Header'
@@ -95,5 +96,10 @@ export type ReactAppLib = {
   }
   settings: {
     section: RegGuest<SettingsSectionItem>
+  }
+
+  auth: {
+    login: RegGuest<LoginItem>
+    signup: RegGuest<SignupItem>
   }
 } & MainLib

@@ -1,6 +1,8 @@
 import { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
 import { FC, useCallback, useContext, useState } from 'react'
-import lib from '../../../../../main-lib'
+import { MainContext } from '../../../../../connect-react-app-lib'
+// import lib from '../../../../../main-lib'
+import { AuthCtx } from '../../../../../main-lib/auth'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
@@ -8,7 +10,7 @@ import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout'
 import './RootLogin.scss'
 
-const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
+// const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
 export type RootLoginFormValues = { email: string; password: string }
 export type RootLoginProps = {}
 
@@ -20,7 +22,9 @@ export const RootLogin: FC<RootLoginProps> = () => {
   )
 }
 export const RootLoginBody: FC<RootLoginProps> = ({}) => {
-  const { setSessionToken } = useContext(lib.auth.AuthCtx)
+  const { setSessionToken } = useContext(AuthCtx)
+  const { shell } = useContext(MainContext)
+  const authHttp = shell.pkgHttp<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()
@@ -34,7 +38,7 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
   const rootLogin = useCallback(async () => {
     setLoginFailed(false)
     setSubmitting(true)
-    const res = await authSrv('getRootSessionToken')({ password: rootPassword })
+    const res = await authHttp.fetch('getRootSessionToken')({ password: rootPassword })
     if (res.success) {
       setSessionToken(res.sessionToken)
     }

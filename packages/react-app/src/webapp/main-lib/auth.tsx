@@ -2,17 +2,7 @@ import type { AuthenticationManagerExt, ClientSession, SessionToken, UserData } 
 import { ContentGraphExtDef, NodeGlyph } from '@moodlenet/content-graph'
 import { SessionTokenCookieName } from '@moodlenet/http-server'
 import cookies from 'js-cookie'
-import {
-  ComponentType,
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { ComponentType, createContext, FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import priHttp from './pri-http'
@@ -26,15 +16,9 @@ export type ClientSessionData = {
   user: UserData
   myUserNode: NodeGlyph
 }
-export type LoginItemDef = { Icon: ComponentType; Panel: ComponentType }
-export type LoginItem = { def: LoginItemDef }
-export type SignupItemDef = { Icon: ComponentType; Panel: ComponentType }
-export type SignupItem = { def: SignupItemDef }
+export type LoginItem = { Icon: ComponentType; Panel: ComponentType }
+export type SignupItem = { Icon: ComponentType; Panel: ComponentType }
 export type AuthCtxT = {
-  loginItems: LoginItem[]
-  signupItems: SignupItem[]
-  registerLogin(loginItemDef: LoginItemDef): () => void
-  registerSignup(signupItemDef: SignupItemDef): () => void
   setSessionToken(
     sessionToken: SessionToken,
   ): Promise<{ success: true; clientSession: ClientSession } | { success: false; msg: string }>
@@ -47,45 +31,8 @@ const contentGraphSrvFetch = priHttp.fetch<ContentGraphExtDef>('@moodlenet/conte
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
-export function useRegisterLogin({ Icon, Panel }: LoginItemDef) {
-  const registerLogin = useContext(AuthCtx).registerLogin
-  useEffect(() => {
-    return registerLogin({ Icon, Panel })
-  }, [registerLogin, Icon, Panel])
-}
-
-export function useRegisterSignup({ Icon, Panel }: SignupItemDef) {
-  const registerSignup = useContext(AuthCtx).registerSignup
-  useEffect(() => {
-    return registerSignup({ Icon, Panel })
-  }, [registerSignup, Icon, Panel])
-}
-
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const nav = useNavigate()
-  const [loginItems, setLoginItems] = useState<AuthCtxT['loginItems']>([])
-  const registerLogin = useCallback<AuthCtxT['registerLogin']>(loginItemDef => {
-    const loginItem: LoginItem = {
-      def: loginItemDef,
-    }
-    setLoginItems(items => [...items, loginItem])
-    return remove
-    function remove() {
-      setLoginItems(items => items.filter(_ => _ !== loginItem))
-    }
-  }, [])
-
-  const [signupItems, setSignupItems] = useState<AuthCtxT['signupItems']>([])
-  const registerSignup = useCallback<AuthCtxT['registerSignup']>(signupItemDef => {
-    const signupItem: SignupItem = {
-      def: signupItemDef,
-    }
-    setSignupItems(items => [...items, signupItem])
-    return remove
-    function remove() {
-      setSignupItems(items => items.filter(_ => _ !== signupItem))
-    }
-  }, [])
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
   const fetchClientSession = useCallback(async (token: SessionToken) => {
@@ -125,16 +72,12 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const ctx = useMemo<AuthCtxT>(() => {
     return {
-      registerLogin,
-      loginItems,
-      signupItems,
-      registerSignup,
       setSessionToken,
       logout,
       clientSessionData,
       // ...(clientSession?.root ? { isRoot: true, clientSession } : { isRoot: false, clientSession }),
     }
-  }, [registerLogin, loginItems, signupItems, registerSignup, clientSessionData, setSessionToken, logout])
+  }, [clientSessionData, setSessionToken, logout])
 
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
 }
