@@ -1,5 +1,5 @@
 import { createContext, useMemo } from 'react'
-import { PkgIds, ReactAppPluginMainModule } from '..'
+import { ReactAppPluginMainModule, WebAppShellOf } from '..'
 import { RouteRegItem } from './app-routes'
 import lib from './main-lib'
 import { createRegistry, Registry } from './main-lib/registry'
@@ -7,7 +7,7 @@ import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from './ui/c
 import { SettingsSectionItem } from './ui/components/pages/Settings/SettingsContext'
 
 export type MainContextT = {
-  pkg: PkgIds
+  shell: WebAppShellOf<ReactAppPluginMainModule>
   registries: {
     routes: Registry<RouteRegItem>
     header: {
@@ -22,7 +22,7 @@ export type MainContextT = {
 export const MainContext = createContext<MainContextT>(null as any)
 
 export const reactAppPluginMainModule: ReactAppPluginMainModule = {
-  connect({ pkg }) {
+  connect(shell) {
     const routes = createRegistry<RouteRegItem>()
     const avatarMenuItemsReg = createRegistry<HeaderAvatarMenuItemRegItem>()
     const rightComponentsReg = createRegistry<HeaderRightComponentRegItem>()
@@ -42,7 +42,7 @@ export const reactAppPluginMainModule: ReactAppPluginMainModule = {
                 sections: settingsSectionsReg,
               },
             },
-            pkg,
+            shell,
           }
         }, [])
         // console.log({ mainContext })

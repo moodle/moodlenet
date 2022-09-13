@@ -21,7 +21,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     registries: {
       header: { avatarMenuItems, rightComponents },
     },
-    pkg,
+    shell,
   } = useContext(MainContext)
 
   const { clientSessionData, logout } = useContext(AuthCtx)
@@ -37,8 +37,8 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
 
   const reoderedAvatarMenuItems = useMemo(() => {
     const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
-      { pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
-      { pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
+      { pkg: shell.pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
+      { pkg: shell.pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
     ]
     return baseItems.concat(
       avatarMenuItems.entries.sort((a, b) => (a.item.Position ?? Infinity) - (b.item.Position ?? Infinity) || 0),

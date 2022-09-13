@@ -22,7 +22,7 @@ export const Settings: FC<SettingsProps> = () => {
 export const SettingsBody: FC<SettingsProps> = ({}) => {
   // const setCtx = useContext(SettingsCtx)
   const {
-    pkg,
+    shell,
     registries: {
       settings: { sections },
     },
@@ -30,8 +30,8 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
 
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
-      { pkg, item: { Menu: () => <span>General</span>, Content: GeneralContent } },
-      { pkg, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
+      { pkg: shell.pkg, item: { Menu: () => <span>General</span>, Content: GeneralContent } },
+      { pkg: shell.pkg, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
       // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
     ]
     return baseSettingsItems.concat(sections.entries)
@@ -55,7 +55,7 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
 
             return (
               <div
-                key={`${pkg}:${index}`}
+                key={`${settingsEntry.pkg}:${index}`}
                 className={`section ${settingsEntry === currSettingsItem ? 'selected' : ''}`}
                 onClick={onClick}
               >
