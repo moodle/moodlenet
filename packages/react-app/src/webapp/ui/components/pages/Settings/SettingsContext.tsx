@@ -6,7 +6,6 @@ import {
   FC,
   PropsWithChildren,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -27,11 +26,12 @@ export const StyleContextDefault = {
   ...baseStyle(),
 }
 
-export type SettingItemDef = { Menu: ComponentType; Content: ComponentType }
-export type SettingItem = { def: SettingItemDef }
+export type SettingsSectionItem = {
+  Menu: ComponentType
+  Content: ComponentType
+}
+
 export type SetCtxT = {
-  settingsItems: SettingItem[]
-  registerSettingsItem(settingsItemDef: SettingItemDef): void
   style: StyleType
   setStyle: React.Dispatch<React.SetStateAction<StyleType>>
   saveOrganization(data: OrganizationData): unknown
@@ -41,13 +41,6 @@ export type SetCtxT = {
 }
 
 export const SettingsCtx = createContext<SetCtxT>(null as any)
-
-export function useRegisterSettingsItem({ Menu, Content }: SettingItemDef) {
-  const registerSettingsItem = useContext(SettingsCtx).registerSettingsItem
-  useEffect(() => {
-    return registerSettingsItem({ Menu, Content })
-  }, [registerSettingsItem, Menu, Content])
-}
 
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization@0.1.0')
@@ -84,30 +77,16 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     reactAppSrv('getApparence')().then(resp => setAppareanceData(resp.data))
   }, [])
 
-  const [settingsItems, setSettingsItems] = useState<SetCtxT['settingsItems']>([])
-  const registerSettingsItem = useCallback<SetCtxT['registerSettingsItem']>(settingItemDef => {
-    const settingItem: SettingItem = {
-      def: settingItemDef,
-    }
-    setSettingsItems(items => [...items, settingItem])
-    return remove
-    function remove() {
-      setSettingsItems(items => items.filter(_ => _ !== settingItem))
-    }
-  }, [])
-
   const ctx = useMemo<SetCtxT>(() => {
     return {
       style,
       setStyle,
-      registerSettingsItem,
-      settingsItems,
       saveOrganization,
       organizationData,
       saveApparence,
       appearanceData,
     }
-  }, [style, setStyle, registerSettingsItem, settingsItems, organizationData, appearanceData])
+  }, [style, setStyle, organizationData, appearanceData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }

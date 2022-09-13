@@ -4,6 +4,7 @@ import { RouteRegItem } from './app-routes'
 import lib from './main-lib'
 import { createRegistry, Registry } from './main-lib/registry'
 import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from './ui/components/organisms/Header'
+import { SettingsSectionItem } from './ui/components/pages/Settings/SettingsContext'
 
 export type MainContextT = {
   pkg: PkgIds
@@ -13,6 +14,9 @@ export type MainContextT = {
       avatarMenuItems: Registry<HeaderAvatarMenuItemRegItem>
       rightComponents: Registry<HeaderRightComponentRegItem>
     }
+    settings: {
+      sections: Registry<SettingsSectionItem>
+    }
   }
 }
 export const MainContext = createContext<MainContextT>(null as any)
@@ -20,8 +24,9 @@ export const MainContext = createContext<MainContextT>(null as any)
 export const reactAppPluginMainModule: ReactAppPluginMainModule = {
   connect({ pkg }) {
     const routes = createRegistry<RouteRegItem>()
-    const avatarMenuItems = createRegistry<HeaderAvatarMenuItemRegItem>()
-    const rightComponents = createRegistry<HeaderRightComponentRegItem>()
+    const avatarMenuItemsReg = createRegistry<HeaderAvatarMenuItemRegItem>()
+    const rightComponentsReg = createRegistry<HeaderRightComponentRegItem>()
+    const settingsSectionsReg = createRegistry<SettingsSectionItem>()
 
     return {
       MainComponent({ children }) {
@@ -29,10 +34,13 @@ export const reactAppPluginMainModule: ReactAppPluginMainModule = {
           return {
             registries: {
               header: {
-                avatarMenuItems,
-                rightComponents,
+                avatarMenuItems: avatarMenuItemsReg,
+                rightComponents: rightComponentsReg,
               },
               routes,
+              settings: {
+                sections: settingsSectionsReg,
+              },
             },
             pkg,
           }
@@ -42,14 +50,19 @@ export const reactAppPluginMainModule: ReactAppPluginMainModule = {
       },
       pkgLibFor({ pkg }) {
         const routeReg = routes.host({ pkg })
-        const avatarMenuItemReg = avatarMenuItems.host({ pkg })
-        const rightComponentReg = rightComponents.host({ pkg })
+        const avatarMenuItemGuest = avatarMenuItemsReg.host({ pkg })
+        const rightComponentGuest = rightComponentsReg.host({ pkg })
+        const settingsSectionsGuest = settingsSectionsReg.host({ pkg })
+
         return {
           ...lib,
           route: { ...routeReg },
           header: {
-            avatarMenuItem: { ...avatarMenuItemReg },
-            rightComponent: { ...rightComponentReg },
+            avatarMenuItem: { ...avatarMenuItemGuest },
+            rightComponent: { ...rightComponentGuest },
+          },
+          settings: {
+            section: { ...settingsSectionsGuest },
           },
         }
       },

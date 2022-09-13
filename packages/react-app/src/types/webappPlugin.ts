@@ -4,8 +4,9 @@ import { ReactAppExt } from '..'
 import { RouteRegItem } from '../webapp/app-routes'
 import { MainLib } from '../webapp/main-lib'
 import { priHttpFor, PriHttpFor } from '../webapp/main-lib/pri-http'
-import { Registrar } from '../webapp/main-lib/registry'
+import { RegGuest } from '../webapp/main-lib/registry'
 import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from '../webapp/ui/components/organisms/Header'
+import { SettingsSectionItem } from '../webapp/ui/components/pages/Settings/SettingsContext'
 
 export type WebappPluginDef = {
   mainModuleLoc: string
@@ -70,9 +71,12 @@ export type PluginMainComponentProps = {}
 
 export type ReactAppPluginMainModule = WebappPluginMainModule<ReactAppExt, ReactAppLib, any>
 export type ReactAppLib = {
-  route: Registrar<RouteRegItem>
+  route: RegGuest<RouteRegItem>
   header: {
-    avatarMenuItem: Registrar<HeaderAvatarMenuItemRegItem>
-    rightComponent: Registrar<HeaderRightComponentRegItem>
+    avatarMenuItem: RegGuest<HeaderAvatarMenuItemRegItem>
+    rightComponent: RegGuest<HeaderRightComponentRegItem>
+  }
+  settings: {
+    section: RegGuest<SettingsSectionItem>
   }
 } & MainLib

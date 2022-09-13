@@ -2,8 +2,10 @@
 import { FC, useContext, useMemo, useState } from 'react'
 import { Card } from '../../atoms'
 import { MainLayout } from '../../layout'
-import { SettingItem, SettingsCtx } from './SettingsContext'
+import { SettingsSectionItem } from './SettingsContext'
 // import { Link } from '../../../../elements/link'
+import { MainContext } from '../../../../connect-react-app-lib'
+import { RegistryEntry } from '../../../../main-lib/registry'
 import Appearance from './Appearance'
 import { GeneralContent } from './General'
 import './Settings.scss'
@@ -18,10 +20,24 @@ export const Settings: FC<SettingsProps> = () => {
   )
 }
 export const SettingsBody: FC<SettingsProps> = ({}) => {
-  const setCtx = useContext(SettingsCtx)
+  // const setCtx = useContext(SettingsCtx)
+  const {
+    pkg,
+    registries: {
+      settings: { sections },
+    },
+  } = useContext(MainContext)
 
-  const [currSettingsItem, chooseSettingsItem] = useState(baseSettingsItems[0]!)
-  const settingsItems = useMemo(() => baseSettingsItems.concat(setCtx.settingsItems), [setCtx.settingsItems])
+  const settingsItems = useMemo(() => {
+    const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
+      { pkg, item: { Menu: () => <span>General</span>, Content: GeneralContent } },
+      { pkg, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
+      // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
+    ]
+    return baseSettingsItems.concat(sections.entries)
+  }, [sections])
+
+  const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0]!)
   // const ctxElement = (
   //   <>
   //     {setCtx.settingsItems.length > 1 && <>{/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}</>}
@@ -32,25 +48,25 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
     <div className="settings-page">
       <div className="left-menu">
         <Card>
-          {settingsItems.map((settingsItem, index) => {
-            const isCurrent = settingsItem === currSettingsItem
+          {settingsItems.map((settingsEntry, index) => {
+            const isCurrent = settingsEntry === currSettingsItem
 
-            const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsItem)
+            const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsEntry)
 
             return (
               <div
-                key={index}
-                className={`section ${settingsItem === currSettingsItem ? 'selected' : ''}`}
+                key={`${pkg}:${index}`}
+                className={`section ${settingsEntry === currSettingsItem ? 'selected' : ''}`}
                 onClick={onClick}
               >
-                <settingsItem.def.Menu />
+                <settingsEntry.item.Menu />
               </div>
             )
           })}
         </Card>
       </div>
       <div className="content">
-        {currSettingsItem ? <currSettingsItem.def.Content /> : null}
+        {currSettingsItem ? <currSettingsItem.item.Content /> : null}
         {/* {ctxElement} */}
       </div>
     </div>
@@ -73,9 +89,3 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
 }
 
 Settings.displayName = 'SettingsPage'
-
-const baseSettingsItems: SettingItem[] = [
-  { def: { Menu: () => <span>General</span>, Content: GeneralContent } },
-  // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
-  { def: { Menu: () => <span>Appearance</span>, Content: Appearance } },
-]

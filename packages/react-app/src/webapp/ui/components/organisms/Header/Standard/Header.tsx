@@ -6,7 +6,7 @@ import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { MainContext } from '../../../../../connect-react-app-lib'
 import { AuthCtx } from '../../../../../main-lib/auth'
-import { RegisteredItem } from '../../../../../main-lib/registry'
+import { RegistryEntry } from '../../../../../main-lib/registry'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
@@ -36,7 +36,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
   }
 
   const reoderedAvatarMenuItems = useMemo(() => {
-    const baseItems: RegisteredItem<HeaderAvatarMenuItemRegItem>[] = [
+    const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
       { pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
       { pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
     ]
