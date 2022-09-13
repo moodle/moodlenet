@@ -1,19 +1,56 @@
-import { ReactAppPluginMainModule } from '..'
+import { createContext, useMemo } from 'react'
+import { PkgIds, ReactAppPluginMainModule } from '..'
+import { RouteRegItem } from './app-routes'
 import lib from './main-lib'
-import { createRegistry } from './main-lib/registry'
+import { createRegistry, Registry } from './main-lib/registry'
+import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from './ui/components/organisms/Header'
+
+export type MainContextT = {
+  pkg: PkgIds
+  registries: {
+    routes: Registry<RouteRegItem>
+    header: {
+      avatarMenuItems: Registry<HeaderAvatarMenuItemRegItem>
+      rightComponents: Registry<HeaderRightComponentRegItem>
+    }
+  }
+}
+export const MainContext = createContext<MainContextT>(null as any)
 
 export const reactAppPluginMainModule: ReactAppPluginMainModule = {
-  connect() {
-    const XReg = createRegistry<{ a: number }>()
+  connect({ pkg }) {
+    const routes = createRegistry<RouteRegItem>()
+    const avatarMenuItems = createRegistry<HeaderAvatarMenuItemRegItem>()
+    const rightComponents = createRegistry<HeaderRightComponentRegItem>()
+
     return {
       MainComponent({ children }) {
-        console.log({ XReg })
-        return <>{children}</>
+        const mainContext = useMemo<MainContextT>(() => {
+          return {
+            registries: {
+              header: {
+                avatarMenuItems,
+                rightComponents,
+              },
+              routes,
+            },
+            pkg,
+          }
+        }, [])
+        // console.log({ mainContext })
+        return <MainContext.Provider value={mainContext}>{children}</MainContext.Provider>
       },
-      pkgLibFor({ extId /* , extName, extVersion  */ }) {
+      pkgLibFor({ pkg }) {
+        const routeReg = routes.host({ pkg })
+        const avatarMenuItemReg = avatarMenuItems.host({ pkg })
+        const rightComponentReg = rightComponents.host({ pkg })
         return {
           ...lib,
-          collectX: XReg.host({ extId }),
+          route: { ...routeReg },
+          header: {
+            avatarMenuItem: { ...avatarMenuItemReg },
+            rightComponent: { ...rightComponentReg },
+          },
         }
       },
     }

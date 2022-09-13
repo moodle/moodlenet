@@ -1,4 +1,6 @@
+import { ReactElement, useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { MainContext } from './connect-react-app-lib'
 import { Login } from './ui/components/pages/Access/Login/Login'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin'
 import { Signup } from './ui/components/pages/Access/Signup/Signup'
@@ -7,9 +9,12 @@ import { Landing } from './ui/components/pages/Landing/Landing'
 import { Settings } from './ui/components/pages/Settings/Settings'
 
 // const A = lazy(() => import('./A'))
+export type RouteRegItem = { routes: ReactElement; rootPath?: string }
 
-const routes: any[] = []
 const AppRouter = () => {
+  const {
+    registries: { routes },
+  } = useContext(MainContext)
   // console.log({ routes })
   return (
     <>
@@ -30,10 +35,10 @@ const AppRouter = () => {
           <A />
       }
     /> */}
-        {routes.map(({ extId, extRoutingElement, extName, rootPath }) => {
+        {routes.entries.map(({ pkg, item: { routes, rootPath } }) => {
           return (
-            <Route path={rootPath ?? extName} key={`${extId}`} caseSensitive>
-              {extRoutingElement}
+            <Route path={rootPath ?? pkg.name} key={`${pkg.id}`} caseSensitive>
+              {routes}
             </Route>
           )
         })}

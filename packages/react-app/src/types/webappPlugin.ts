@@ -1,9 +1,11 @@
 import type { Dependencies, Ext, ExtDef, ExtId, ExtName, ExtVersion, Shell } from '@moodlenet/core'
 import { ComponentType, PropsWithChildren } from 'react'
 import { ReactAppExt } from '..'
+import { RouteRegItem } from '../webapp/app-routes'
 import { MainLib } from '../webapp/main-lib'
 import { priHttpFor, PriHttpFor } from '../webapp/main-lib/pri-http'
 import { Registrar } from '../webapp/main-lib/registry'
+import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from '../webapp/ui/components/organisms/Header'
 
 export type WebappPluginDef = {
   mainModuleLoc: string
@@ -36,11 +38,16 @@ export type WebappPluginMainModule<
 > = {
   connect(_: { deps: WebPkgDeps<Requires> } & WebAppShell<ForExt>): MainModuleObj<Lib>
 }
+
+export type PkgIds<Def extends ExtDef = ExtDef> = {
+  id: ExtId<Def>
+  name: ExtName<Def>
+  version: ExtVersion<Def>
+}
+
 export type WebAppShell<ForExt extends Ext<any, any>> = ForExt extends Ext<infer Def, infer _Reqs>
   ? {
-      extId: ExtId<Def>
-      extName: ExtName<Def>
-      extVersion: ExtVersion<Def>
+      pkg: PkgIds<Def>
       http: PriHttpFor<Def>
       pkgHttp: typeof priHttpFor
     }
@@ -56,16 +63,16 @@ export type MainModuleObj<Lib> = {
       pkgLibFor: PkgLibFor<Lib>
     })
 
-export type PkgLibFor<Lib> = <Def extends ExtDef>(_: {
-  extId: ExtId<Def>
-  extName: ExtName<Def>
-  extVersion: ExtVersion<Def>
-}) => Lib
+export type PkgLibFor<Lib> = <Def extends ExtDef>(_: { pkg: PkgIds<Def> }) => Lib
 
 export type PluginMainComponent = ComponentType<PropsWithChildren<PluginMainComponentProps>>
 export type PluginMainComponentProps = {}
 
 export type ReactAppPluginMainModule = WebappPluginMainModule<ReactAppExt, ReactAppLib, any>
 export type ReactAppLib = {
-  collectX: Registrar<{ a: number }>
+  route: Registrar<RouteRegItem>
+  header: {
+    avatarMenuItem: Registrar<HeaderAvatarMenuItemRegItem>
+    rightComponent: Registrar<HeaderRightComponentRegItem>
+  }
 } & MainLib
