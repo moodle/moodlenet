@@ -1,12 +1,12 @@
-import { MNArangoDBExt } from '@moodlenet/arangodb'
-import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
-import { ContentGraphExtDef } from '@moodlenet/content-graph'
+import type { MNArangoDBExt } from '@moodlenet/arangodb'
+import type { AuthenticationManagerExtDef, SessionToken } from '@moodlenet/authentication-manager'
+import type { ContentGraphExtDef } from '@moodlenet/content-graph'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import { CryptoExt } from '@moodlenet/crypto'
+import type { CryptoExt } from '@moodlenet/crypto'
 import type { EmailService } from '@moodlenet/email-service'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
-import type { ReactAppExt } from '@moodlenet/react-app'
-import { WebUserExtDef } from '@moodlenet/web-user'
+import type { ReactAppExtDef } from '@moodlenet/react-app'
+import type { WebUserExtDef } from '@moodlenet/web-user'
 import assert from 'assert'
 import { resolve } from 'path'
 import userStore from './store'
@@ -21,13 +21,13 @@ export type SimpleEmailAuthTopo = {
   confirm: SubTopo<{ token: string }, { success: true; sessionToken: SessionToken } | { success: false; msg: string }>
 }
 
-export type SimpleEmailAuthExt = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
-export type ExtSimpleEmailAuth = Ext<
-  SimpleEmailAuthExt,
+export type SimpleEmailAuthExtDef = ExtDef<'@moodlenet/simple-email-auth', '0.1.0', void, SimpleEmailAuthTopo>
+export type SimpleEmailAuthExt = Ext<
+  SimpleEmailAuthExtDef,
   [
     CoreExt,
-    ReactAppExt,
-    AuthenticationManagerExt,
+    ReactAppExtDef,
+    AuthenticationManagerExtDef,
     EmailService,
     MNHttpServerExtDef,
     CryptoExt,
@@ -37,7 +37,7 @@ export type ExtSimpleEmailAuth = Ext<
   ]
 >
 
-const ext: ExtSimpleEmailAuth = {
+const ext: SimpleEmailAuthExt = {
   name: '@moodlenet/simple-email-auth',
   version: '0.1.0',
   requires: [
@@ -54,12 +54,7 @@ const ext: ExtSimpleEmailAuth = {
   async connect(shell) {
     const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
     reactApp.plug.setup({
-      ctxProvider: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-      },
-      routes: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-      },
+      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
     })
     await arangopkg.access.fetch('ensureCollections')({ defs: { User: { kind: 'node' } } })
 

@@ -1,9 +1,13 @@
 import { PackageInfo } from '@moodlenet/core'
-import { ReactAppPluginMainModule, WebappPluginMainModule, WebAppShellOf } from '@moodlenet/react-app'
-import React, { createContext, FC, PropsWithChildren, useEffect, useState } from 'react'
+import {
+  PluginMainComponent,
+  ReactAppPluginMainModule,
+  WebappPluginMainModule,
+  WebAppShellOf,
+} from '@moodlenet/react-app'
+import React, { createContext, useEffect, useState } from 'react'
 import { ExtensionsManagerExt } from '..'
 import { SearchPackagesResObject, SearchPackagesResponse } from '../types/data'
-import { DevModeBtn } from './Extensions'
 import * as SettingsEnabledExtComponents from './SettingsEnabledExt'
 import * as SettingsInstallComponents from './SettingsInstall'
 
@@ -32,9 +36,8 @@ const mainModule: ExtensionsManagerExtWebappPlugin = {
     const [, reactApp] = shell.deps
     reactApp.settings.section.register(SettingsInstallComponents)
     reactApp.settings.section.register(SettingsEnabledExtComponents)
-    reactApp.header.rightComponent.register({ Component: DevModeBtn })
 
-    const StateProvider: FC<PropsWithChildren> = ({ children }) => {
+    const StateProvider: PluginMainComponent = ({ children }) => {
       const [devMode, setDevMode] = useState(false)
       const [selectedExtConfig, setSelectedExtConfig] = useState<PackageInfo | null>(null)
       const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)

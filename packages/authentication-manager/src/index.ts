@@ -22,10 +22,10 @@ export type Lib = {
   makeMsgClientSessionContext(_: { authToken: string }): Promise<MessageContext>
 }
 
-export type AuthenticationManagerExt = ExtDef<'@moodlenet/authentication-manager', '0.1.0', Lib, Topo>
+export type AuthenticationManagerExtDef = ExtDef<'@moodlenet/authentication-manager', '0.1.0', Lib, Topo>
 
-export type ExtAuthenticationManager = Ext<AuthenticationManagerExt, [CoreExt, MNArangoDBExt, CryptoExt]>
-const ext: ExtAuthenticationManager = {
+export type AuthenticationManagerExt = Ext<AuthenticationManagerExtDef, [CoreExt, MNArangoDBExt, CryptoExt]>
+const ext: AuthenticationManagerExt = {
   name: '@moodlenet/authentication-manager',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0', '@moodlenet/crypto@0.1.0'],

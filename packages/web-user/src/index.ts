@@ -1,12 +1,13 @@
 import { ContentGraphExtDef } from '@moodlenet/content-graph'
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
-import type { ReactAppExt } from '@moodlenet/react-app'
+import type { ReactAppExtDef } from '@moodlenet/react-app'
 import { resolve } from 'path'
 import { Lib, ProfileGlyphs } from './types'
 
 export type WebUserExtDef = ExtDef<'@moodlenet/web-user', '0.1.0', Lib>
 
-const ext: Ext<WebUserExtDef, [CoreExt, ReactAppExt, ContentGraphExtDef]> = {
+export type WebUserExt = Ext<WebUserExtDef, [CoreExt, ReactAppExtDef, ContentGraphExtDef]>
+const ext: WebUserExt = {
   name: '@moodlenet/web-user',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/content-graph@0.1.0'],
@@ -14,13 +15,11 @@ const ext: Ext<WebUserExtDef, [CoreExt, ReactAppExt, ContentGraphExtDef]> = {
     const [, reactApp, contentGraph] = shell.deps
 
     reactApp.plug.setup({
-      ctxProvider: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-      },
-      routes: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-        rootPath: 'profile', // http://localhost:3000/profile
-      },
+      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
+      // routes: {
+      //   moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
+      //   rootPath: 'profile', // http://localhost:3000/profile
+      // },
     })
 
     const glyphDescriptors = await contentGraph.plug.ensureGlyphs<ProfileGlyphs>({

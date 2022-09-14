@@ -1,10 +1,13 @@
-import lib from 'moodlenet-react-app-lib'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { MainContext } from './MainModule'
 
-const { MainLayout } = lib.ui.components
 export const ConfirmEmail: FC = () => {
-  const auth = useContext(lib.auth.AuthCtx)
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { MainLayout } = reactApp.ui.components
+  const auth = useContext(reactApp.AuthCtx)
+
   // const nav = useNavigate()
   const [params] = useSearchParams()
   const [errMsg, setErrMsg] = useState('')

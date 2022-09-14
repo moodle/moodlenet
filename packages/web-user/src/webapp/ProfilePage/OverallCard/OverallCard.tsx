@@ -1,12 +1,8 @@
 // import { t, Trans } from '@lingui/macro'
-import lib from 'moodlenet-react-app-lib'
-import { FC } from 'react'
+import { FC, useContext } from 'react'
+import { MainContext } from '../../MainModule'
 // import { Href, Link } from '../../../../elements/link'
 import './OverallCard.scss'
-
-const { Card, icons } = lib.ui.components
-
-const { Grade: GradeIcon, LibraryBooks: LibraryBooksIcon, PermIdentity: PermIdentityIcon } = icons
 
 export type OverallCardProps = {
   followers: number
@@ -28,6 +24,11 @@ export const OverallCard: FC<OverallCardProps> = ({
   showIcons,
   noCard,
 }) => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { Card, icons } = reactApp.ui.components
+  const { Grade: GradeIcon, LibraryBooks: LibraryBooksIcon, PermIdentity: PermIdentityIcon } = icons
+
   return (
     <Card className="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
       {showIcons ? (

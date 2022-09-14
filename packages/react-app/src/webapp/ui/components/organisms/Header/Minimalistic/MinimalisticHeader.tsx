@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { MainContext } from '../../../../../connect-react-app-lib'
+import { MainContext } from '../../../../../MainContext'
 import { PrimaryButton, SecondaryButton } from '../../../atoms'
 import HeaderTitle from '../HeaderTitle/HeaderTitle'
 import './MinimalisticHeader.scss'

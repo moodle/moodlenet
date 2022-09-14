@@ -20,10 +20,11 @@ export type ExtensionConfigProps = {
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
-const { Card, PrimaryButton, TertiaryButton, Loading } = lib.ui.components
-
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) => {
   const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { Card, PrimaryButton, TertiaryButton, Loading } = reactApp.ui.components
+
   const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
   // const stateContext = useContext(StateContext)
 

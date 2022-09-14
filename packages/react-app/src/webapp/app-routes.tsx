@@ -1,6 +1,6 @@
 import { ReactElement, useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { MainContext } from './connect-react-app-lib'
+import { MainContext } from './MainContext'
 import { Login } from './ui/components/pages/Access/Login/Login'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin'
 import { Signup } from './ui/components/pages/Access/Signup/Signup'

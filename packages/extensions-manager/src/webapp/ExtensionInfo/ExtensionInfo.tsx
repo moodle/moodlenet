@@ -20,7 +20,6 @@ export type ExtensionInfoProps = {
   searchPackagesResObject: SearchPackagesResObject
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
-const { TertiaryButton, PrimaryButton, Card, Loading } = lib.ui.components
 
 const ExtensionInfo: FC<ExtensionInfoProps> = ({
   isInstalling,
@@ -29,6 +28,8 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   onClickBackBtn,
 }) => {
   const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { TertiaryButton, PrimaryButton, Card, Loading } = reactApp.ui.components
   const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
   const [readme, setReadme] = useState('')
   useEffect(() => {

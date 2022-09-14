@@ -1,4 +1,9 @@
-import type { AuthenticationManagerExt, ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
+import type {
+  AuthenticationManagerExtDef,
+  ClientSession,
+  SessionToken,
+  UserData,
+} from '@moodlenet/authentication-manager'
 import { ContentGraphExtDef, NodeGlyph } from '@moodlenet/content-graph'
 import { SessionTokenCookieName } from '@moodlenet/http-server'
 import cookies from 'js-cookie'
@@ -26,7 +31,7 @@ export type AuthCtxT = {
   clientSessionData: ClientSessionData | null
 }
 
-const authSrvFetch = priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
+const authSrvFetch = priHttp.fetch<AuthenticationManagerExtDef>('@moodlenet/authentication-manager@0.1.0')
 const contentGraphSrvFetch = priHttp.fetch<ContentGraphExtDef>('@moodlenet/content-graph@0.1.0')
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)

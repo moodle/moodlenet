@@ -1,8 +1,8 @@
 import { ExtShell } from '@moodlenet/core'
-import { ExtAuthenticationManager } from '..'
+import { AuthenticationManagerExt } from '..'
 import { ProviderId, User, UserId } from './types'
 
-export default function userStore({ shell }: { shell: ExtShell<ExtAuthenticationManager> }) {
+export default function userStore({ shell }: { shell: ExtShell<AuthenticationManagerExt> }) {
   const [, arango] = shell.deps
   return {
     create,

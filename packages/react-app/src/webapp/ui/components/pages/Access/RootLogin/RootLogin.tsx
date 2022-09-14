@@ -1,6 +1,6 @@
-import { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
+import { AuthenticationManagerExtDef } from '@moodlenet/authentication-manager'
 import { FC, useCallback, useContext, useState } from 'react'
-import { MainContext } from '../../../../../connect-react-app-lib'
+import { MainContext } from '../../../../../MainContext'
 // import lib from '../../../../../main-lib'
 import { AuthCtx } from '../../../../../main-lib/auth'
 // import { Link } from '../../../../elements/link'
@@ -24,7 +24,7 @@ export const RootLogin: FC<RootLoginProps> = () => {
 export const RootLoginBody: FC<RootLoginProps> = ({}) => {
   const { setSessionToken } = useContext(AuthCtx)
   const { shell } = useContext(MainContext)
-  const authHttp = shell.pkgHttp<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
+  const authHttp = shell.pkgHttp<AuthenticationManagerExtDef>('@moodlenet/authentication-manager@0.1.0')
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()

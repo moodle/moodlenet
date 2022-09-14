@@ -1,7 +1,7 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import { CSSProperties, FC, useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MainContext } from '../../../../../connect-react-app-lib'
+import { MainContext } from '../../../../../MainContext'
 import Card from '../../../atoms/Card/Card'
 import { SimpleLayout } from '../../../layout'
 import './Signup.scss'

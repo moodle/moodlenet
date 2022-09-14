@@ -1,10 +1,8 @@
-import lib from 'moodlenet-react-app-lib'
-import { FC } from 'react'
+import { FC, useContext } from 'react'
+import { MainContext } from '../MainModule'
 import { OverallCard } from './OverallCard/OverallCard'
 import { ProfileCard } from './ProfileCard/ProfileCard'
 import './ProfilePage.scss'
-
-const { MainLayout /* , ListCard, PrimaryButton, Modal, Snackbar, ReportModal, InputTextField  */ } = lib.ui.components
 
 export type ProfilePageProps = {
   displayName: string
@@ -12,6 +10,10 @@ export type ProfilePageProps = {
 }
 
 export const ProfilePage: FC<ProfilePageProps> = ({ displayName, avatarUrl }) => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { MainLayout } = reactApp.ui.components
+
   return (
     <MainLayout>
       <div className="profile">
