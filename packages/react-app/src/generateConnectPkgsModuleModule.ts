@@ -32,5 +32,6 @@ connectPkg({
 `,
     )
     .join('')}
+console.log('\\n--------- all pkgs connected ---------\\n\\n')
 `
 }

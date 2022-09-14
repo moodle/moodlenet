@@ -3,24 +3,24 @@ import { ReactAppLib, ReactAppPluginMainModule, WebAppShellOf } from '..'
 import { RouteRegItem } from './app-routes'
 import lib from './main-lib'
 import { LoginItem, SignupItem } from './main-lib/auth'
-import { createRegistry, Registry } from './main-lib/registry'
+import { createRegistry, RegistryHandler } from './main-lib/registry'
 import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from './ui/components/organisms/Header'
 import { SettingsSectionItem } from './ui/components/pages/Settings/SettingsContext'
 
 export type MainContextT = {
   shell: WebAppShellOf<ReactAppPluginMainModule>
   registries: {
-    routes: Registry<RouteRegItem>
+    routes: RegistryHandler<RouteRegItem>
     header: {
-      avatarMenuItems: Registry<HeaderAvatarMenuItemRegItem>
-      rightComponents: Registry<HeaderRightComponentRegItem>
+      avatarMenuItems: RegistryHandler<HeaderAvatarMenuItemRegItem>
+      rightComponents: RegistryHandler<HeaderRightComponentRegItem>
     }
     settings: {
-      sections: Registry<SettingsSectionItem>
+      sections: RegistryHandler<SettingsSectionItem>
     }
     auth: {
-      login: Registry<LoginItem>
-      signup: Registry<SignupItem>
+      login: RegistryHandler<LoginItem>
+      signup: RegistryHandler<SignupItem>
     }
   }
 }
@@ -38,7 +38,7 @@ export const reactAppPluginMainModule: ReactAppPluginMainModule = {
     return {
       MainComponent({ children }) {
         const mainContext = useMemo<MainContextT>(() => {
-          return {
+          const ctx: MainContextT = {
             registries: {
               header: {
                 avatarMenuItems: avatarMenuItemsReg,
@@ -55,6 +55,7 @@ export const reactAppPluginMainModule: ReactAppPluginMainModule = {
             },
             shell,
           }
+          return ctx
         }, [])
         // console.log({ mainContext })
         return <MainContext.Provider value={mainContext}>{children}</MainContext.Provider>

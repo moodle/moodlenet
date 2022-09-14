@@ -1,7 +1,5 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
-import type { ReactAppExtDef } from '@moodlenet/react-app'
-import { resolve } from 'path'
 import { MailerCfg, send, SendResp } from './emailSender/nodemailer/nodemailer'
 import { EmailObj } from './types'
 
@@ -16,18 +14,13 @@ export type EmailService = ExtDef<
   }
 >
 
-const ext: Ext<EmailService, [CoreExt, ReactAppExtDef, KeyValueStoreExtDef]> = {
+const ext: Ext<EmailService, [CoreExt, KeyValueStoreExtDef]> = {
   name: '@moodlenet/email-service',
   version: '0.1.0',
-  requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0', '@moodlenet/key-value-store@0.1.0'],
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/key-value-store@0.1.0'],
   async connect(shell) {
-    const [, reactApp, kvStore] = shell.deps
-    reactApp.plug.setup({
-      routes: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
-        // rootPath: 'email-service', // http://localhost:3000/my-test
-      },
-    })
+    const [, kvStore] = shell.deps
+
     const kvstore = await kvStore.plug.getStore<{ mailerCfg: MailerCfg }>()
 
     const env = getEnv(shell.env)

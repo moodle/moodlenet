@@ -27,15 +27,15 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
       settings: { sections },
     },
   } = useContext(MainContext)
-
+  const { registry: sectionsReg } = sections.useRegistry()
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
       { pkg: shell.pkg, item: { Menu: () => <span>General</span>, Content: GeneralContent } },
       { pkg: shell.pkg, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
       // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
     ]
-    return baseSettingsItems.concat(sections.entries)
-  }, [sections])
+    return baseSettingsItems.concat(sectionsReg.entries)
+  }, [sectionsReg])
 
   const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0]!)
   // const ctxElement = (

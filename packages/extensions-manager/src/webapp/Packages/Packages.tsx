@@ -1,5 +1,4 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import lib from 'moodlenet-react-app-lib'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
@@ -8,7 +7,7 @@ import ExtensionConfig from '../ExtensionConfig/ExtensionConfig'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { CoreExt, PackageInfo } from '@moodlenet/core'
 import { extNameDescription } from '../../lib'
-import { StateContext } from '../ExtensionsProvider'
+import { MainContext } from '../MainModule'
 import './styles.scss'
 
 export type PackagesProps = {
@@ -19,14 +18,12 @@ const { Card, PrimaryButton } = lib.ui.components
 
 const Packages: FC<PackagesProps> = () => {
   const [extinfoList, setExtInfoList] = useState<PackageInfo[]>([])
-  const { selectedExtConfig, setSelectedExtConfig } = useContext(StateContext)
+  const { selectedExtConfig, setSelectedExtConfig, shell } = useContext(MainContext)
 
   useEffect(() => {
-    lib.priHttp
-      .fetch<CoreExt>(
-        '@moodlenet/core',
-        '0.1.0',
-      )('ext/listDeployed')()
+    shell
+      .pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
+      .fetch('ext/listDeployed')()
       .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
   }, [])
   const extInfosListElements = useMemo(

@@ -1,9 +1,9 @@
 import { FC, useContext } from 'react'
-import { StateContext } from './ExtensionsProvider'
+import { MainContext } from './MainModule'
 import Packages from './Packages/Packages'
 
 export const Menu: FC = () => {
-  const { setSelectedExtConfig } = useContext(StateContext)
+  const { setSelectedExtConfig } = useContext(MainContext)
   return <span onClick={() => setSelectedExtConfig(null)}>Manage extensions</span>
 }
 export const Content = Packages

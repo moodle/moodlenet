@@ -3,8 +3,9 @@ import {
   ReactAppExtDef,
   ReactAppPluginMainModule,
   WebappPluginMainModule,
+  WebAppShellOf,
 } from '@moodlenet/react-app'
-import { useRef } from 'react'
+import { createContext, useRef } from 'react'
 import { Route } from 'react-router-dom'
 
 import { TestExt } from '..'
@@ -13,8 +14,14 @@ import TestExtPage from './TestExtPage'
 export type TestExtensionWebappPlugin = WebappPluginMainModule<TestExt, { a: 1 }, [never, ReactAppPluginMainModule]>
 
 const routes = <Route path="my-page" element={<TestExtPage />} />
+
+type MainCtxT = {
+  shell: WebAppShellOf<TestExtensionWebappPlugin>
+}
+export const MainCtx = createContext<MainCtxT>(null as any)
 const mainModule: TestExtensionWebappPlugin = {
-  connect({ deps, http, pkgHttp }) {
+  connect(shell) {
+    const { deps, http, pkgHttp } = shell
     const [, reactApp] = deps
 
     reactApp.auth.login.register({ Panel: () => <h1>Login Panel1</h1>, Icon: () => <span>login icon1</span> })
@@ -55,11 +62,12 @@ const mainModule: TestExtensionWebappPlugin = {
     const RAH = pkgHttp<ReactAppExtDef>('@moodlenet/react-app@0.1.0')
     RAH.fetch('getApparence')().then(_ => console.log('***', _))
 
+    const ctx: MainCtxT = { shell }
     const MainComponent: PluginMainComponent = ({ children }) => {
       const ref = useRef<HTMLInputElement>(null)
       const { error, fetching, refresh, value } = http.useFetch('testSub', { paramIn1: ref.current?.value ?? '' })
       console.log({ error, fetching, refresh, value })
-      return <>{children}</>
+      return <MainCtx.Provider value={ctx}>{children}</MainCtx.Provider>
     }
     return {
       MainComponent,

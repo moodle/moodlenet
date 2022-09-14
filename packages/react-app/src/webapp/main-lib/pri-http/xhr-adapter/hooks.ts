@@ -36,7 +36,7 @@ export const fetchHook =
   <Path extends SubcriptionPaths<Def>>(path: Path, req: SubcriptionReq<Def, Path>) => {
     const { fetch, value, fetching, error } = lazyFetchHook<Def>(extId)<Path>(path)
     const reqStr = useMemo(() => JSON.stringify(req), [req])
-    console.log({ reqStr })
+    // console.log({ reqStr })
     const refresh = useCallback(() => {
       return fetch(JSON.parse(reqStr))
     }, [fetch, reqStr])

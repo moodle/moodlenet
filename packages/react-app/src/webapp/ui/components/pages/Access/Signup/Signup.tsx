@@ -21,9 +21,10 @@ export const SignupBody: FC<SignupProps> = ({}) => {
   //   !!form.submitCount && (!!signupErrorMessage || !form.isValid)
   const {
     registries: {
-      auth: { signup: signupRegs },
+      auth: { signup },
     },
   } = useContext(MainContext)
+  const { registry: signupRegs } = signup.useRegistry()
 
   const defaultSignupEntry = signupRegs.entries[0]
   const [currSignupEntry, chooseSignupEntry] = useState(defaultSignupEntry)

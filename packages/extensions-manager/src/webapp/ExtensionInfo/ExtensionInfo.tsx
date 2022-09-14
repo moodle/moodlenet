@@ -1,17 +1,17 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC, ReactNode, ReactPortal, useCallback, useEffect, useState } from 'react'
+import { FC, ReactNode, ReactPortal, useCallback, useContext, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // import { searchNpmExtensionInfo } from '../../../../../helpers/utilities'
 // import { withCtrl } from '../../../../lib/ctrl'
-import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
 import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
 import { SearchPackagesResObject } from '../../types/data'
 import { mandatoryPackages } from '../fakeData'
+import { MainContext } from '../MainModule'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
@@ -28,6 +28,8 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   searchPackagesResObject,
   onClickBackBtn,
 }) => {
+  const { shell } = useContext(MainContext)
+  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
@@ -53,10 +55,10 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
     searchPackagesResObject.installed
-      ? lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/uninstall')({
+      ? core.fetch('pkg/uninstall')({
           pkgInstallationId: searchPackagesResObject.pkgInstallationId,
         })
-      : lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
+      : core.fetch('pkg/install')({
           installPkgReq: searchPackagesResObject.installPkgReq,
         })
 
