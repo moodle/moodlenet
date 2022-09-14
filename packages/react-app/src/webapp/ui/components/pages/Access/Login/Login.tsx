@@ -19,9 +19,10 @@ export const Login: FC<LoginProps> = () => {
 export const LoginBody: FC<LoginProps> = ({}) => {
   const {
     registries: {
-      auth: { login: loginRegs },
+      auth: { login },
     },
   } = useContext(MainContext)
+  const { registry: loginRegs } = login.useRegistry()
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()

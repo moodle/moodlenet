@@ -15,6 +15,7 @@ const AppRouter = () => {
   const {
     registries: { routes },
   } = useContext(MainContext)
+  const { registry: routesRegistry } = routes.useRegistry()
   // console.log({ routes })
   return (
     <>
@@ -35,7 +36,7 @@ const AppRouter = () => {
           <A />
       }
     /> */}
-        {routes.entries.map(({ pkg, item: { routes, rootPath } }) => {
+        {routesRegistry.entries.map(({ pkg, item: { routes, rootPath } }) => {
           return (
             <Route path={rootPath ?? pkg.name} key={`${pkg.id}`} caseSensitive>
               {routes}

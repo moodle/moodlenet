@@ -18,11 +18,12 @@ type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const {
-    registries: {
-      header: { avatarMenuItems, rightComponents },
-    },
+    registries: { header },
     shell,
   } = useContext(MainContext)
+
+  const { registry: avatarMenuItems } = header.avatarMenuItems.useRegistry()
+  const { registry: rightComponents } = header.rightComponents.useRegistry()
 
   const { clientSessionData, logout } = useContext(AuthCtx)
 

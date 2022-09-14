@@ -15,6 +15,7 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ pa
       header: { rightComponents },
     },
   } = useContext(MainContext)
+  const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
   return (
     <div className="minimalistic-header">
       <div className="content">
@@ -24,7 +25,7 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ pa
           />
         </div>
         <div className="right">
-          {rightComponents.entries.flatMap(({ pkg, item: { Component } }, index) => {
+          {rightComponentsRegistry.entries.flatMap(({ pkg, item: { Component } }, index) => {
             return <Component key={`${pkg.id}:${index}`} />
           })}
           {page !== 'activation' ? (

@@ -75,7 +75,7 @@ export type WebAppShell<ForExt extends Ext<any, any>, Requires extends WebappReq
 
 export type MainModuleObj<Lib> = {
   MainComponent?: PluginMainComponent
-} & (Lib extends undefined
+} & (Lib extends undefined | void
   ? {
       pkgLibFor?: PkgLibFor<Lib>
     }

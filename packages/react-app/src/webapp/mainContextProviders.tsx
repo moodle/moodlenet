@@ -1,13 +1,14 @@
 import { FC, PropsWithChildren } from 'react'
 import { PkgIds, PluginMainComponent } from '..'
 import * as auth from './main-lib/auth'
+import { registriesProviders } from './main-lib/registry'
 import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider'
 import * as set from './ui/components/pages/Settings/SettingsContext'
 
 export const pluginMainModules: { MainComponent: PluginMainComponent; pkg: PkgIds }[] = []
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
-  console.log({ pluginMainModules })
+  // console.log({ pluginMainModules })
   const ctxProviderWrap = Object.values(pluginMainModules)
     .reverse()
     .reduce(
@@ -15,7 +16,7 @@ export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => 
       <>{children}</>,
     )
 
-  return (
+  const Main = (
     <auth.Provider>
       <set.Provider>
         <ContentGraphProvider>
@@ -26,4 +27,14 @@ export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => 
       </set.Provider>
     </auth.Provider>
   )
+
+  const registryProviderWrap = registriesProviders
+    //.reverse()
+    .reduce(
+      (_children, { Provider }, index) => <Provider key={`registriesProvider_${index}`}>{_children}</Provider>,
+      Main,
+    )
+
+  // console.log({ registriesProviders, registryProviderWrap })
+  return registryProviderWrap
 }

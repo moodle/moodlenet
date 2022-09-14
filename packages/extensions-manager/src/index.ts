@@ -7,9 +7,10 @@ import { SearchPackagesResObject, SearchPackagesResponse } from './types/data'
 export type ExtensionsManagerExtTopo = {
   searchPackages: SubTopo<{ searchText: string; registry?: string }, SearchPackagesResponse>
 }
-export type ExtensionsManagerExt = ExtDef<'@moodlenet/extensions-manager', '0.1.0', void, ExtensionsManagerExtTopo>
+export type ExtensionsManagerExtDef = ExtDef<'@moodlenet/extensions-manager', '0.1.0', void, ExtensionsManagerExtTopo>
 
-const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExtDef]> = {
+export type ExtensionsManagerExt = Ext<ExtensionsManagerExtDef, [CoreExt, ReactAppExtDef]>
+const ext: ExtensionsManagerExt = {
   name: '@moodlenet/extensions-manager',
   version: '0.1.0',
   requires: ['@moodlenet/core@0.1.0', '@moodlenet/react-app@0.1.0'],
@@ -18,13 +19,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExtDef]> = {
     return {
       deploy() {
         reactApp.plug.setup({
-          // routes: {
-          //   moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsRoutes.tsx'),
-          //   rootPath: 'extensions/',
-          // },
-          ctxProvider: {
-            moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsProvider.tsx'),
-          },
+          mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
         })
 
         shell.expose({
