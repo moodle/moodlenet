@@ -1,8 +1,8 @@
 import { ExtShell } from '@moodlenet/core'
-import { ExtSimpleEmailAuth } from '..'
+import { SimpleEmailAuthExt } from '..'
 import { Email, User, UserId } from './types'
 
-export default function userStore({ shell }: { shell: ExtShell<ExtSimpleEmailAuth> }) {
+export default function userStore({ shell }: { shell: ExtShell<SimpleEmailAuthExt> }) {
   const [, , , , , , arango] = shell.deps
   return {
     create,

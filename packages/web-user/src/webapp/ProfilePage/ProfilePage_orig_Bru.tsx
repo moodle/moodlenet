@@ -1,13 +1,11 @@
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
-import lib from 'moodlenet-react-app-lib'
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
+import { MainContext } from '../MainModule'
 import { ProfileFormValues } from '../types'
 import { OverallCard, OverallCardProps } from './OverallCard/OverallCard'
 import { ProfileCard, ProfileCardProps } from './ProfileCard/ProfileCard_orig_Bru'
 import './ProfilePage.scss'
-
-const { MainLayout, ListCard, PrimaryButton, Modal, Snackbar, ReportModal, InputTextField } = lib.ui.components
 
 export type ProfilePageProps = {
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
@@ -52,6 +50,10 @@ export const ProfilePage: FC<ProfilePageProps> = ({
   // reportForm,
   editForm,
 }) => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { MainLayout, ListCard, PrimaryButton, Modal, Snackbar, ReportModal, InputTextField } = reactApp.ui.components
+
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
   // const { clientSessionData } = useContext(lib.auth.AuthCtx)

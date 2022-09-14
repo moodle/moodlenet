@@ -1,30 +1,12 @@
-import { createContext, useMemo } from 'react'
-import { ReactAppLib, ReactAppPluginMainModule, WebAppShellOf } from '..'
-import { RouteRegItem } from './app-routes'
+import { useMemo } from 'react'
+import type { ReactAppLib, ReactAppPluginMainModule } from '..'
+import type { RouteRegItem } from './app-routes'
 import lib from './main-lib'
-import { LoginItem, SignupItem } from './main-lib/auth'
-import { createRegistry, RegistryHandler } from './main-lib/registry'
-import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from './ui/components/organisms/Header'
-import { SettingsSectionItem } from './ui/components/pages/Settings/SettingsContext'
-
-export type MainContextT = {
-  shell: WebAppShellOf<ReactAppPluginMainModule>
-  registries: {
-    routes: RegistryHandler<RouteRegItem>
-    header: {
-      avatarMenuItems: RegistryHandler<HeaderAvatarMenuItemRegItem>
-      rightComponents: RegistryHandler<HeaderRightComponentRegItem>
-    }
-    settings: {
-      sections: RegistryHandler<SettingsSectionItem>
-    }
-    auth: {
-      login: RegistryHandler<LoginItem>
-      signup: RegistryHandler<SignupItem>
-    }
-  }
-}
-export const MainContext = createContext<MainContextT>(null as any)
+import type { LoginItem, SignupItem } from './main-lib/auth'
+import { createRegistry } from './main-lib/registry'
+import { MainContext, MainContextT } from './MainContext'
+import type { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from './ui/components/organisms/Header'
+import type { SettingsSectionItem } from './ui/components/pages/Settings/SettingsContext'
 
 export const reactAppPluginMainModule: ReactAppPluginMainModule = {
   connect(shell) {

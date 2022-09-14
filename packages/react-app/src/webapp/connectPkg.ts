@@ -1,4 +1,4 @@
-import type { Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
+import type { Ext } from '@moodlenet/core'
 import type { FullRequires } from '@moodlenet/core/src/types/ext'
 import type { MainModuleObj, PkgIds, WebappPluginMainModule } from '../types'
 import { reactAppPluginMainModule } from './connect-react-app-lib'
@@ -12,18 +12,13 @@ type ConnectArg<MainModule extends WebappPluginMainModule<any, any, any>> = Main
   any
 >
   ? ForExt extends Ext<infer Def, infer Requires>
-    ? PluginInfo<Def> & {
+    ? {
+        pkg: PkgIds<Def>
         mainModule: MainModule
         requires: FullRequires<Requires>
       }
     : never
   : never
-
-export type PluginInfo<Def extends ExtDef> = {
-  id: ExtId<Def>
-  name: ExtName<Def>
-  version: ExtVersion<Def>
-}
 
 const mainModuleObjs: Record<
   string,
@@ -37,11 +32,8 @@ export const connectPkg = <MainModule extends WebappPluginMainModule<any, any, a
   ConnectArg: ConnectArg<MainModule>,
 ) => {
   // console.log('connectPkg, ConnectArg:', ConnectArg)
-  const pkg: PkgIds = {
-    id: ConnectArg.id,
-    name: ConnectArg.name,
-    version: ConnectArg.version,
-  }
+  const pkg: PkgIds = ConnectArg.pkg
+
   const deps = ConnectArg.requires.map(depNames => {
     return mainModuleObjs[depNames.name]?.MainModuleObj.pkgLibFor?.({
       pkg,
@@ -59,7 +51,7 @@ export const connectPkg = <MainModule extends WebappPluginMainModule<any, any, a
   })
   // console.log('connectPkg, MainModuleObj:', MainModuleObj)
 
-  mainModuleObjs[ConnectArg.name] = {
+  mainModuleObjs[pkg.name] = {
     ConnectArg,
     MainModuleObj,
   }
@@ -67,7 +59,7 @@ export const connectPkg = <MainModule extends WebappPluginMainModule<any, any, a
     pluginMainModules.push({ pkg, MainComponent: MainModuleObj.MainComponent })
   }
   // console.log('connectPkg, mainModuleObjs:', mainModuleObjs)
-  console.log(`connected pkg ${ConnectArg.id}`, {
+  console.log(`connected pkg ${pkg.id}`, {
     ConnectArg,
     deps,
     MainModuleObj,
@@ -77,9 +69,11 @@ export const connectPkg = <MainModule extends WebappPluginMainModule<any, any, a
 
 connectPkg({
   mainModule: reactAppPluginMainModule as any,
-  id: '@moodlenet/react-app@0.1.0',
-  name: '@moodlenet/react-app',
-  version: '0.1.0',
+  pkg: {
+    id: '@moodlenet/react-app@0.1.0',
+    name: '@moodlenet/react-app',
+    version: '0.1.0',
+  },
   requires: [] as any,
 })
 

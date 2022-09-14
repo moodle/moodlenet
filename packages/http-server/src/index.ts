@@ -1,4 +1,4 @@
-import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
+import type { AuthenticationManagerExtDef } from '@moodlenet/authentication-manager'
 import type * as Core from '@moodlenet/core'
 import express, { Application } from 'express'
 import { createHttpServer } from './http-server'
@@ -11,7 +11,7 @@ interface Plug {
 }
 
 export type MNHttpServerExtDef = Core.ExtDef<'@moodlenet/http-server', '0.1.0', Plug, {}>
-export type MNHttpServerExt = Core.Ext<MNHttpServerExtDef, [Core.CoreExt, AuthenticationManagerExt]>
+export type MNHttpServerExt = Core.Ext<MNHttpServerExtDef, [Core.CoreExt, AuthenticationManagerExtDef]>
 
 const ext: MNHttpServerExt = {
   name: '@moodlenet/http-server',

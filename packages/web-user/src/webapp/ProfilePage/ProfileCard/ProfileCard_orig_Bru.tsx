@@ -20,23 +20,12 @@ import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
 // import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
-import lib from 'moodlenet-react-app-lib'
 import { Dispatch, FC, SetStateAction, useContext, useLayoutEffect, useRef, useState } from 'react'
+import { MainContext } from '../../MainModule'
 import { ProfileFormValues } from '../../types'
 import './ProfileCard.scss'
 
-const {
-  //  Card
-  RoundButton,
-  PrimaryButton,
-  InputTextField,
-  SecondaryButton,
-  TertiaryButton,
-  FloatingMenu,
-  Modal,
-} = lib.ui.components
 // const { useImageUrl } = lib.ui.lib
-const { Save: SaveIcon, Edit: EditIcon, Share: ShareIcon, Flag: FlagIcon } = lib.ui.components.icons
 
 export type ProfileCardProps = {
   isOwner?: boolean
@@ -86,12 +75,18 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   setShowUrlCopiedAlert,
   setIsReporting,
 }) => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { RoundButton, PrimaryButton, InputTextField, SecondaryButton, TertiaryButton, FloatingMenu, Modal, icons } =
+    reactApp.ui.components
+  const { Save: SaveIcon, Edit: EditIcon, Share: ShareIcon, Flag: FlagIcon } = icons
+
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-  const { clientSessionData } = useContext(lib.auth.AuthCtx)
+  const { clientSessionData } = useContext(reactApp.AuthCtx)
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)

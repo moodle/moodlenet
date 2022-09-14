@@ -1,5 +1,5 @@
-/// <reference types="react-scripts/lib/react-app" />
-import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
+/// <reference path="../moodlenet-react-app-lib.d.ts" />
+import type { AuthenticationManagerExtDef } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, Port, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
 import { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
@@ -44,7 +44,7 @@ const connectPkgModulesFile = {
 }
 export type ReactAppExt = Ext<
   ReactAppExtDef,
-  [CoreExt, MNHttpServerExtDef, AuthenticationManagerExt, KeyValueStoreExtDef]
+  [CoreExt, MNHttpServerExtDef, AuthenticationManagerExtDef, KeyValueStoreExtDef]
 >
 const ext: ReactAppExt = {
   name: '@moodlenet/react-app',

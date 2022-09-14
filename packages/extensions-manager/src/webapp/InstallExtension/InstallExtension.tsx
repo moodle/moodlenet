@@ -1,5 +1,6 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { CoreExt, PackageInfo } from '@moodlenet/core'
+import { HeaderRightComponentRegItem } from '@moodlenet/react-app/lib/webapp/ui/components/organisms/Header'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
@@ -13,13 +14,14 @@ import './InstallExtension.scss'
 export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
-
-const { Card, PrimaryButton, InputTextField, Loading } = lib.ui.components
-
+const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  lib.ui.components.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
-
   const { shell, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
+
+  reactApp.header.rightComponent.useLocalRegister(DevModeBtnAddon)
+
   const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
 
   const [localPathField, setLocalPathField] = useState('')
@@ -36,7 +38,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       return
     }
     toggleIsInstalling()
-    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/install')({
+    core.fetch('pkg/install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
     })
     // .finally(toggleIsInstalling)

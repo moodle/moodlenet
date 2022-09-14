@@ -7,9 +7,11 @@ import './styles.scss'
 
 export type ModulesProps = {}
 
-const { Card, InputTextField, PrimaryButton } = lib.ui.components
 const Modules: FC<ModulesProps> = () => {
   const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { Card, InputTextField, PrimaryButton } = reactApp.ui.components
+
   const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
   const [localPathField, setLocalPathField] = useState('')
   const install = useCallback(() => {

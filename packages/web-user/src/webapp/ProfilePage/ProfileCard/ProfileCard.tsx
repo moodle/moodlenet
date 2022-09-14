@@ -9,22 +9,9 @@
 // import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
-import lib from 'moodlenet-react-app-lib'
-import { FC, useLayoutEffect, useState } from 'react'
+import { FC, useContext, useLayoutEffect, useState } from 'react'
+import { MainContext } from '../../MainModule'
 import './ProfileCard.scss'
-
-const {
-  //  Card
-  // RoundButton,avatarUrl
-  // PrimaryButton,
-  InputTextField,
-  // SecondaryButton,
-  // TertiaryButton,
-  // FloatingMenu,
-  Modal,
-} = lib.ui.components
-// const { useImageUrl } = lib.ui.lib
-// const { Save: SaveIcon, Edit: EditIcon, Share: ShareIcon, Flag: FlagIcon } = lib.ui.components.icons
 
 export type ProfileCardProps = {
   displayName: string
@@ -32,7 +19,12 @@ export type ProfileCardProps = {
   backgroundUrl?: string
 }
 
-export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl = lib.defaultAvatar, backgroundUrl }) => {
+export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl, backgroundUrl }) => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { InputTextField, Modal } = reactApp.ui.components
+  avatarUrl = avatarUrl ?? reactApp.defaultAvatar
+
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)

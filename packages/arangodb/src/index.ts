@@ -19,9 +19,12 @@ const ext: Ext<MNArangoDBExt, [CoreExt]> = {
         const env = getEnv(shell.env)
         const sysDB = new Database({ ...env.connectionCfg })
 
-        shell.onExtUninstalled(({ extName }) => {
+        shell.onExtUninstalled(async ({ extName }) => {
           const extDBName = getExtDBName(extName)
-          sysDB.dropDatabase(extDBName)
+          const exists = await sysDB.database(extDBName).exists()
+          if (exists) {
+            sysDB.dropDatabase(extDBName)
+          }
         })
         shell.provide.services({
           async query(qReq, { source }) {
