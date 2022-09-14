@@ -194,6 +194,15 @@
       "group": "build",
       "label": "organization dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/passport-auth/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "passport-auth dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
 }
