@@ -15,14 +15,15 @@ const TestExtPage: FC = () => {
   const ctx = useContext(MainCtx)
   const [, reactApp] = ctx.shell.deps
   reactApp.header.rightComponent.useLocalRegister(ComponentItem)
+  const Card = reactApp.ui.components.Card
 
   return (
     <reactApp.ui.components.MainLayout>
-      <div>
+      <Card>
         <h2>Test nice Extension</h2>
         <h3>...stuff</h3>
         <span>...more</span>
-      </div>
+      </Card>
     </reactApp.ui.components.MainLayout>
   )
 }
