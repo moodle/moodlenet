@@ -2,13 +2,14 @@ import { resolve } from 'path'
 import { WebappPluginItem } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 export function generateConnectPkgModulesModule({ extPlugins }: { extPlugins: WebappPluginItem[] }) {
-  const reversedExtPlugins = extPlugins.slice().reverse()
+  // const reversedExtPlugins = extPlugins.slice().reverse()
 
   return `// - generated ConnectPkgsModule for ${extPlugins.map(_ => _.guestShell.extId).join(',')} -
 
+  //@ts-ignore
   import connectPkg from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'webapp', 'connectPkg'))}'
 
-  ${reversedExtPlugins
+  ${extPlugins
     .map(
       (extPluginItem, index) => `
 import pkg_main_module_${index} from '${extPluginItem.mainModuleLoc}' // ${extPluginItem.guestShell.extId}
@@ -16,11 +17,14 @@ import pkg_main_module_${index} from '${extPluginItem.mainModuleLoc}' // ${extPl
     )
     .join('')}
 
-  ${reversedExtPlugins
+  ${extPlugins
     .map(
       (extPluginItem, index) => `
+
+
 // connect ${extPluginItem.guestShell.extId} (pkg_main_module_${index})
 connectPkg({
+  //@ts-ignore
   mainModule:pkg_main_module_${index},
   pkg:{
     id: '${extPluginItem.guestShell.extId}',
@@ -31,6 +35,7 @@ connectPkg({
     ${extPluginItem.guestShell.requires.map(_ => JSON.stringify(_, null, 2)).join(',\n')}
   ]
 })
+
 `,
     )
     .join('')}

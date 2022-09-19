@@ -4,7 +4,8 @@ import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
-import webpack, { Configuration, ResolveOptions } from 'webpack'
+import type { Configuration, ResolveOptions } from 'webpack'
+import webpack, { HotModuleReplacementPlugin } from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
@@ -13,13 +14,13 @@ const ReactRefreshTypeScript = require('react-refresh-typescript')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
 
-export default start
+export default startProdWp
 export type ExtensionsBag = {
   extensionsDirectoryModule: string
   webpackAliases: Record<string, string>
 }
-async function start({
-  overrideCfg = _ => _,
+export function startProdWp({
+  // overrideCfg = _ => _,
   buildFolder,
   latestBuildFolder,
   // virtualModules,
@@ -28,31 +29,22 @@ async function start({
   baseResolveAlias: ResolveOptions['alias']
   latestBuildFolder: string
   buildFolder: string
-  overrideCfg?: (_: Configuration) => Configuration
+  // overrideCfg?: (_: Configuration) => Configuration
   // virtualModules: VirtualModulesPlugin
 }) {
-  const mode: Configuration['mode'] =
-    process.env.NODE_ENV === 'test' ? 'none' : process.env.NODE_ENV ?? ('production' as any)
-  const isDevelopment = mode === 'development'
-  const wp = webpack(overrideCfg(defaultConfig()), () => {
-    // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
+  const wp = getWp({ baseResolveAlias, buildFolder, mode: 'prod' })
+  console.log({ baseResolveAlias, latestBuildFolder, buildFolder })
+
+  wp.hooks.afterDone.tap('swap folders', async wpStats => {
+    if (wpStats?.hasErrors()) {
+      throw new Error(`Webpack build error: ${wpStats.toString()}`)
+    }
+    await new Promise<void>((resolve, reject) =>
+      rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
+    )
+    await cp(buildFolder, latestBuildFolder, { recursive: true })
   })
 
-  if (isDevelopment) {
-    const wsConfig = wp.options.devServer!
-    const server = new WebpackDevServer(wsConfig, wp)
-    server.startCallback(() => {})
-  } else {
-    wp.hooks.afterDone.tap('swap folders', async wpStats => {
-      if (wpStats?.hasErrors()) {
-        throw new Error(`Webpack build error: ${wpStats.toString()}`)
-      }
-      await new Promise<void>((resolve, reject) =>
-        rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
-      )
-      await cp(buildFolder, latestBuildFolder, { recursive: true })
-    })
-  }
   wp.watch({}, () => {
     /* console.log(`Webpack  watched`) */
   })
@@ -61,217 +53,247 @@ async function start({
     compiler: wp,
     // reconfigExtAndAliases,
   }
+}
 
-  function defaultConfig(): Configuration {
-    return {
-      stats: isDevelopment ? 'normal' : 'errors-only',
-      mode,
-      entry: ['./src/webapp/index.tsx', ...(isDevelopment ? [require.resolve('react-refresh/runtime')] : [])],
-      devtool: isDevelopment ? 'inline-source-map' : undefined,
-      // devtool: 'source-map',
-      context: resolve(__dirname, '..'),
-      watch: true,
-      watchOptions: {
-        aggregateTimeout: 10,
-        followSymlinks: true,
+export function getWp(
+  cfg:
+    | {
+        mode: 'prod'
+        buildFolder: string
+        baseResolveAlias: ResolveOptions['alias']
+      }
+    | {
+        baseResolveAlias: ResolveOptions['alias']
+        mode: 'dev-server'
+        port: number
+        proxy: string
       },
-      devServer: isDevelopment
+) {
+  const isDevServer = cfg.mode === 'dev-server'
+  const mode: Configuration['mode'] = isDevServer ? 'development' : 'production'
+
+  const config: Configuration = {
+    stats: isDevServer ? 'normal' : 'errors-only',
+    mode,
+    entry: ['./src/webapp/index.tsx', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
+    devtool: isDevServer ? 'inline-source-map' : undefined,
+    // devtool: 'source-map',
+    context: resolve(__dirname, '..'),
+    watch: true,
+    watchOptions: {
+      aggregateTimeout: 10,
+      followSymlinks: true,
+    },
+    devServer: isDevServer
+      ? {
+          port: cfg.port,
+          open: true,
+          liveReload: true,
+          compress: true,
+          hot: true,
+          historyApiFallback: true, // For react router
+          static: {
+            serveIndex: true,
+            watch: true,
+            publicPath: '/',
+            // directory: buildFolder,
+          },
+          proxy: {
+            '/_/*': {
+              target: cfg.proxy,
+            },
+          },
+          client: {
+            overlay: {
+              errors: true,
+              warnings: false,
+            },
+          },
+        }
+      : undefined,
+    output: isDevServer
+      ? undefined
+      : {
+          clean: true,
+          path: cfg.buildFolder,
+          pathinfo: 'verbose',
+          publicPath: '/',
+          /*  ...(isDevelopment
         ? {
-            port: 3000,
-            open: false,
-            // liveReload: true,
-            // compress: true,
-            hot: true,
-            historyApiFallback: true, // For react router
-            static: {
-              serveIndex: true,
-              watch: true,
-              directory: buildFolder,
-            },
-            proxy: {
-              '/_/*': {
-                target: 'http://localhost:8080',
-              },
-            },
-            client: {
-              overlay: {
-                errors: true,
-                warnings: false,
-              },
-            },
+            filename: '[name].bundle.js',
+            chunkFilename: '[name].chunk.js',
           }
-        : undefined,
-      output: {
-        clean: true,
-        path: buildFolder,
-        pathinfo: 'verbose',
-        publicPath: '/',
-        /*  ...(isDevelopment
-          ? {
-              filename: '[name].bundle.js',
-              chunkFilename: '[name].chunk.js',
-            }
-          : { */
-        filename: `[name].[chunkhash].bundle.js`,
-        chunkFilename: `[name].[chunkhash].chunk.js`,
-        /*  }), */
-      },
-      resolve: {
-        cache: true,
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        //modules: [__dirname, 'node_modules'],
-        alias: baseResolveAlias,
-      },
-      optimization: {
-        moduleIds: 'deterministic',
-        runtimeChunk: 'single',
-        splitChunks: {
-          cacheGroups: {
-            vendors: {
-              test: /node_modules\/(?!antd\/).*/,
-              name: 'vendors',
-              chunks: 'all',
-            },
-            // This can be your own design library.
-            // antd: {
-            //   test: /node_modules\/(antd\/).*/,
-            //   name: 'antd',
-            //   chunks: 'all',
-            // },
-          },
+        : { */
+          filename: `[name].[chunkhash].bundle.js`,
+          chunkFilename: `[name].[chunkhash].chunk.js`,
+          /*  }), */
         },
-      },
+    resolve: {
       cache: true,
-      performance: {
-        hints: 'warning',
-        // Calculates sizes of gziped bundles.
-        assetFilter(assetFilename: string) {
-          return assetFilename.endsWith('.js.gz')
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      //modules: [__dirname, 'node_modules'],
+      alias: cfg.baseResolveAlias,
+    },
+    optimization: {
+      moduleIds: 'deterministic',
+      runtimeChunk: 'single',
+      splitChunks: {
+        cacheGroups: {
+          vendors: {
+            test: /node_modules\/(?!antd\/).*/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+          // This can be your own design library.
+          // antd: {
+          //   test: /node_modules\/(antd\/).*/,
+          //   name: 'antd',
+          //   chunks: 'all',
+          // },
         },
       },
-      module: {
-        rules: [
-          {
-            test: /\.css$/,
-            use: [
-              {
-                loader: 'style-loader',
-              },
-              {
-                loader: 'css-loader',
-              },
-            ],
-          },
-          {
-            test: /\.scss$/,
-            use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
-          },
-          {
-            test: /\.less$/,
-            use: [
-              {
-                loader: 'style-loader',
-              },
-              {
-                loader: 'css-loader',
-              },
-              {
-                loader: 'less-loader',
-              },
-            ],
-          },
-          {
-            test: /\.(png|jpg|gif)$/i,
-            use: [
-              {
-                loader: 'url-loader',
-                options: {
-                  limit: 10000,
-                },
-              },
-            ],
-          },
-          {
-            test: /\.svg$/,
-            use: [
-              {
-                loader: require.resolve('@svgr/webpack'),
-                options: {
-                  prettier: false,
-                  svgo: false,
-                  svgoConfig: {
-                    plugins: [{ removeViewBox: false }],
-                  },
-                  titleProp: true,
-                  ref: true,
-                },
-              },
-              {
-                loader: require.resolve('file-loader'),
-                options: {
-                  name: 'static/media/[name].[hash].[ext]',
-                },
-              },
-            ],
-            issuer: {
-              and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
-            },
-          },
-          {
-            test: /\.[jt]sx?$/,
-            exclude: /node_modules/,
-            use: [
-              ...(isDevelopment
-                ? [
-                    {
-                      loader: require.resolve('ts-loader'),
-                      options: {
-                        getCustomTransformers: () => ({
-                          before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
-                        }),
-                        transpileOnly: isDevelopment,
-                        // configFile: resolve(__dirname, '..', 'tsconfig.json'),
-                        compilerOptions: { sourceMap: true },
-                      },
-                    },
-                  ]
-                : []),
-              {
-                loader: require.resolve('babel-loader'),
-                options: {
-                  sourceType: 'unambiguous',
-                  presets: [
-                    require.resolve('@babel/preset-env'),
-                    require.resolve('@babel/preset-typescript'),
-                    [require.resolve('@babel/preset-react'), { development: isDevelopment, runtime: 'automatic' }],
-                  ],
-                  plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
-                },
-              },
-            ], //[isDevelopment ? 'reverse' : 'slice'](), //https://github.com/ezolenko/rollup-plugin-typescript2/issues/256#issuecomment-1126969565
-          },
-        ],
+    },
+    cache: true,
+    performance: {
+      hints: 'warning',
+      // Calculates sizes of gziped bundles.
+      assetFilter(assetFilename: string) {
+        return assetFilename.endsWith('.js.gz')
       },
-      plugins: [
-        isDevelopment && new ReactRefreshWebpackPlugin(),
-        // new ForkTsCheckerWebpackPlugin(),
-        new HtmlWebPackPlugin({
-          template: './public/index.html',
-          inject: true,
-          favicon: './public/favicon.svg',
-          filename: 'index.html',
-        }),
-        new CompressionPlugin({
-          test: /\.js(\?.*)?$/i,
-        }),
-        new CopyPlugin({
-          patterns: [{ from: './_redirects' }],
-        }),
-        // new BundleAnalyzerPlugin({
-        //   analyzerMode: 'json',
-        // }),
-        // virtualModules,
-      ].filter(Boolean),
-    }
+    },
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: 'style-loader',
+            },
+            {
+              loader: 'css-loader',
+            },
+          ],
+        },
+        {
+          test: /\.scss$/,
+          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+        },
+        {
+          test: /\.less$/,
+          use: [
+            {
+              loader: 'style-loader',
+            },
+            {
+              loader: 'css-loader',
+            },
+            {
+              loader: 'less-loader',
+            },
+          ],
+        },
+        {
+          test: /\.(png|jpg|gif)$/i,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 10000,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.svg$/,
+          use: [
+            {
+              loader: require.resolve('@svgr/webpack'),
+              options: {
+                prettier: false,
+                svgo: false,
+                svgoConfig: {
+                  plugins: [{ removeViewBox: false }],
+                },
+                titleProp: true,
+                ref: true,
+              },
+            },
+            {
+              loader: require.resolve('file-loader'),
+              options: {
+                name: 'static/media/[name].[hash].[ext]',
+              },
+            },
+          ],
+          issuer: {
+            and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+          },
+        },
+        {
+          test: /\.[jt]sx?$/,
+          exclude: /node_modules/,
+          use: [
+            ...(isDevServer
+              ? [
+                  {
+                    loader: require.resolve('ts-loader'),
+                    options: {
+                      getCustomTransformers: () => ({
+                        before: [isDevServer && ReactRefreshTypeScript()].filter(Boolean),
+                      }),
+                      transpileOnly: isDevServer,
+                      // configFile: resolve(__dirname, '..', 'tsconfig.json'),
+                      compilerOptions: { sourceMap: true },
+                    },
+                  },
+                ]
+              : []),
+            {
+              loader: require.resolve('babel-loader'),
+              options: {
+                sourceType: 'unambiguous',
+                presets: [
+                  require.resolve('@babel/preset-env'),
+                  require.resolve('@babel/preset-typescript'),
+                  [require.resolve('@babel/preset-react'), { development: isDevServer, runtime: 'automatic' }],
+                ],
+                plugins: [isDevServer && require.resolve('react-refresh/babel')].filter(Boolean),
+              },
+            },
+          ], //[isDevelopment ? 'reverse' : 'slice'](), //https://github.com/ezolenko/rollup-plugin-typescript2/issues/256#issuecomment-1126969565
+        },
+      ],
+    },
+    plugins: [
+      isDevServer && new ReactRefreshWebpackPlugin(),
+      isDevServer && new HotModuleReplacementPlugin(),
+      // new ForkTsCheckerWebpackPlugin(),
+      new HtmlWebPackPlugin({
+        template: './public/index.html',
+        inject: true,
+        favicon: './public/favicon.svg',
+        filename: 'index.html',
+        publicPath: '/',
+      }),
+      new CompressionPlugin({
+        test: /\.js(\?.*)?$/i,
+      }),
+      new CopyPlugin({
+        patterns: [{ from: './_redirects' }],
+      }),
+      // new BundleAnalyzerPlugin({
+      //   analyzerMode: 'json',
+      // }),
+      // virtualModules,
+    ].filter(Boolean),
   }
+  const wp = webpack(config, _err => {
+    // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
+  })
+
+  if (isDevServer) {
+    const server = new WebpackDevServer(config.devServer, wp)
+    server.startCallback(() => {})
+  }
+  return wp
 }

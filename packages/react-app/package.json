@@ -19,8 +19,14 @@
   ],
   "description": "Web application\nFrontend interface to interact with the backend",
   "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
   "node_engine": {
     "node": ">=10.16.0"
+  },
+  "scripts": {
+    "dev-server": "node lib/-dev-server.js"
   },
   "husky": {
     "hooks": {
@@ -41,8 +47,8 @@
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/http-server": "^0.1.0",
-    "@moodlenet/organization": "^0.1.0",
     "@moodlenet/key-value-store": "^0.1.0",
+    "@moodlenet/organization": "^0.1.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/jest": "^27.5.1",
     "@types/js-cookie": "^3.0.2",
@@ -76,6 +82,7 @@
     "babel-plugin-import": "^1.13.5",
     "compression-webpack-plugin": "^10.0.0",
     "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
     "file-loader": "^6.2.0",
     "formik": "^2.2.9",
