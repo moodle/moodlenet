@@ -1,9 +1,8 @@
-import lib from 'moodlenet-react-app-lib'
+import { PrimaryButton, SecondaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
 import { FC, useContext } from 'react'
 import './Login.scss'
-import { PassportContext } from './MainProvider'
+import { PassportContext } from './MainModule'
 
-const { SecondaryButton, PrimaryButton } = lib.ui.components
 export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => (

@@ -1,7 +1,9 @@
-import { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
+import { AuthenticationManagerExtDef } from '@moodlenet/authentication-manager'
+import type { ContentGraphExtDef } from '@moodlenet/content-graph'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExtDef } from '@moodlenet/http-server'
-import type { ReactAppExt } from '@moodlenet/react-app'
+import type { ReactAppExtDef } from '@moodlenet/react-app'
+import type { WebUserExtDef } from '@moodlenet/web-user'
 import { resolve } from 'path'
 import { prepareApp } from './oauth-server'
 import configApiKeyStore from './store'
@@ -14,7 +16,7 @@ export type PassportAuthTopo = {
 export type PassportAuthExtDef = ExtDef<'@moodlenet/passport-auth', '0.1.0', void, PassportAuthTopo>
 export type PassportAuthExt = Ext<
   PassportAuthExtDef,
-  [CoreExt, ReactAppExt, MNHttpServerExtDef, AuthenticationManagerExt]
+  [CoreExt, ReactAppExtDef, MNHttpServerExtDef, AuthenticationManagerExtDef, ContentGraphExtDef, WebUserExtDef]
 >
 
 const ext: PassportAuthExt = {
@@ -25,16 +27,13 @@ const ext: PassportAuthExt = {
     '@moodlenet/react-app@0.1.0',
     '@moodlenet/http-server@0.1.0',
     '@moodlenet/authentication-manager@0.1.0',
+    '@moodlenet/content-graph@0.1.0',
+    '@moodlenet/web-user@0.1.0',
   ],
   connect(shell) {
     const [, reactApp, http] = shell.deps
     reactApp.plug.setup({
-      routes: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
-      },
-      ctxProvider: {
-        moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
-      },
+      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
     })
     return {
       deploy() {

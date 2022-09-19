@@ -34,6 +34,7 @@ export const MainContext = createContext<MainContextType>(null as any)
 const mainModule: ExtensionsManagerExtWebappPlugin = {
   connect(shell) {
     const [, reactApp] = shell.deps
+
     reactApp.settings.section.register(SettingsInstallComponents)
     reactApp.settings.section.register(SettingsEnabledExtComponents)
 

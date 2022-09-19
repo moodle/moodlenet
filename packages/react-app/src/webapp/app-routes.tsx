@@ -16,7 +16,7 @@ const AppRouter = () => {
     registries: { routes },
   } = useContext(MainContext)
   const { registry: routesRegistry } = routes.useRegistry()
-  // console.log({ routes })
+  console.log({ routesRegistry })
   return (
     <>
       <Routes>
