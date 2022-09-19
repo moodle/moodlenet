@@ -35,6 +35,6 @@ export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => 
       Main,
     )
 
-  // console.log({ registriesProviders, registryProviderWrap })
+  console.log({ registriesProviders, registryProviderWrap })
   return registryProviderWrap
 }

@@ -26,6 +26,7 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
       settings: { sections },
     },
   } = useContext(MainContext)
+
   const { registry: sectionsReg } = sections.useRegistry()
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [

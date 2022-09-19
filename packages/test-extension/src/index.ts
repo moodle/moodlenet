@@ -21,7 +21,7 @@ const ext: TestExt = {
   connect(shell) {
     const [, reactApp] = shell.deps
     reactApp.plug.setup({
-      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
+      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule'),
     })
 
     return {
@@ -88,7 +88,7 @@ const ext: TestExt = {
             return []
           },
           testErr() {
-            throw new Error('xxxx AHHAHA')
+            throw new Error('xxxx AHssssssHAHA')
           },
           testSub({ paramIn1 }) {
             return shell.rx.interval(500).pipe(
