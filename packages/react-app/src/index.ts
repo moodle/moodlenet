@@ -6,7 +6,7 @@ import { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
 
 import assert from 'assert'
 import { mkdir, writeFile } from 'fs/promises'
-import { tmpdir } from 'os'
+// import { tmpdir } from 'os'
 import { resolve } from 'path'
 import { ResolveOptions } from 'webpack'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule'
@@ -16,6 +16,7 @@ import startWebpack from './webpackWatch'
 export * from './types'
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
+
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 
@@ -37,10 +38,11 @@ export type ReactAppExtDef = ExtDef<
 >
 
 export type keyValueData = { appearanceData: AppearanceData }
-const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
+// const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
 const connectPkgModulesFile = {
   alias: '_connect-moodlenet-pkg-modules_',
-  target: resolve(tmpDir, 'ConnectPkgModules.tsx'),
+  target: resolve(__dirname, '..', '_connect-moodlenet-pkg-modules_.ts'),
+  // target: resolve(tmpDir, 'ConnectPkgModules.tsx'),
 }
 export type ReactAppExt = Ext<
   ReactAppExtDef,
@@ -58,7 +60,7 @@ const ext: ReactAppExt = {
   async connect(shell) {
     const [, http, , kvStorePkg] = shell.deps
     const kvStore = await kvStorePkg.plug.getStore<keyValueData>()
-
+    // const env = getEnv(shell.env)
     return {
       async install() {
         //
@@ -93,26 +95,34 @@ const ext: ReactAppExt = {
               next()
               return
             }
-            res.sendFile(resolve(latestBuildFolder, './public/index.html'))
+            res.sendFile(resolve(latestBuildFolder, 'index.html'))
           })
           return mountApp
         }
 
-        await mkdir(tmpDir, { recursive: true })
+        // await mkdir(tmpDir, { recursive: true })
         await mkdir(buildFolder, { recursive: true })
         const extPlugins: WebappPluginItem[] = []
         const baseResolveAlias: ResolveOptions['alias'] = {
           'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
           'react': resolve(__dirname, '..', 'node_modules', 'react'),
           'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
+          '@moodlenet/react-app/src/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
+          '@moodlenet/react-app/lib/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
           'react-dom': resolve(__dirname, '..', 'node_modules', 'react-dom'),
           [connectPkgModulesFile.alias]: connectPkgModulesFile.target,
         }
-        await writeAliasModules()
-        const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
+        await writeGenerated()
+        const wp = startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
         wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
           shell.emit('webapp/recompiled')()
         })
+        // console.log({ ___: env })
+        // if (env._start_dev_server_) {
+        //   console.log('_start_dev_server_', env._start_dev_server_)
+        //   fork(resolve(__dirname, '-dev-server.js'), { stdio: 'inherit' })
+        // }
+
         shell.provide.services({
           'webapp/updated'() {
             return shell.msg$.pipe(
@@ -156,27 +166,32 @@ const ext: ReactAppExt = {
                 //   ...wp.compiler.options.resolve.alias,
                 //   [scopedLibModuleAliasName]: scopedLibFilename,
                 // }
-                await writeAliasModulesAndRecompile()
+                await writeGeneratedAndRecompile()
                 dep.shell.tearDown.add(async () => {
                   // await rm(scopedLibFilename)
                   // delete (wp.compiler.options.resolve.alias as any)[scopedLibModuleAliasName]
                   extPlugins.splice(extPlugins.indexOf(extPluginItem), 1)
-                  writeAliasModulesAndRecompile()
+                  writeGeneratedAndRecompile()
                 })
               },
             }
           },
         }
-        async function writeAliasModulesAndRecompile() {
-          await writeAliasModules()
+        async function writeGeneratedAndRecompile() {
+          await writeGenerated()
+          recompile()
+        }
+        function recompile() {
           wp.compiler.watching.invalidate(() => {
             /* console.log('INVALIDATED') */
           })
         }
-        function writeAliasModules() {
-          const connectPkgModulesModule = generateConnectPkgModulesModule({ extPlugins })
-          console.log('connectPkgModulesModule', connectPkgModulesModule)
-          return writeFile(connectPkgModulesFile.target, connectPkgModulesModule)
+        function writeGenerated() {
+          // console.log('connectPkgModulesModule', connectPkgModulesModule)
+          return Promise.all([
+            writeFile(connectPkgModulesFile.target, generateConnectPkgModulesModule({ extPlugins })),
+            writeFile(resolve(__dirname, '..', '_resolve-alias_.json'), JSON.stringify(baseResolveAlias, null, 4)),
+          ])
           // return Promise.all([
           // writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap: extPlugins })),
           // writeFile(ExposeModuleFile.target, generateExposedModule({ extPluginsMap: extPlugins })),
@@ -196,3 +211,16 @@ const ext: ReactAppExt = {
 }
 
 export default ext
+
+// type Env = {
+//   // _start_dev_server_?: {
+//   //   port: number
+//   //   proxy: string
+//   // }
+// }
+// function getEnv(_: any): Env {
+//   return {
+//     // _start_dev_server_: undefined,
+//     ..._,
+//   }
+// }

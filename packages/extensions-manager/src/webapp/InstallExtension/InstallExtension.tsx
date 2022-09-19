@@ -1,5 +1,6 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { CoreExt, PackageInfo } from '@moodlenet/core'
+import { Card, InputTextField, Loading, PrimaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
 import { HeaderRightComponentRegItem } from '@moodlenet/react-app/lib/webapp/ui/components/organisms/Header'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
@@ -18,7 +19,7 @@ const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 const InstallExtension: FC<InstallExtensionProps> = () => {
   const { shell, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
   const [, reactApp] = shell.deps
-  const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
+  // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
 
   reactApp.header.rightComponent.useLocalRegister(DevModeBtnAddon)
 

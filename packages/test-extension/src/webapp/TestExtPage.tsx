@@ -1,3 +1,4 @@
+import { Card } from '@moodlenet/react-app/lib/webapp/ui/components'
 import { FC, useContext, useEffect, useRef } from 'react'
 import { MainCtx } from './MainModule'
 
@@ -15,7 +16,7 @@ const TestExtPage: FC = () => {
   const ctx = useContext(MainCtx)
   const [, reactApp] = ctx.shell.deps
   reactApp.header.rightComponent.useLocalRegister(ComponentItem)
-  const Card = reactApp.ui.components.Card
+  // const Card = reactApp.ui.components.Card
 
   return (
     <reactApp.ui.components.MainLayout>

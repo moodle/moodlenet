@@ -1,9 +1,7 @@
-import lib from 'moodlenet-react-app-lib'
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
 import React, { FC, useContext, useRef } from 'react'
 import { PassportConfigs } from '../store/types'
-import { PassportContext } from './MainProvider'
-
-const { Card, InputTextField, PrimaryButton } = lib.ui.components
+import { PassportContext } from './MainModule'
 
 export const FormConfig: FC = () => {
   const apiKeyRef = useRef<HTMLInputElement>(null)

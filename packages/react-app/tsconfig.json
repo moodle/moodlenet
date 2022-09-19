@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   // "include": ["src/ui", "src/custom.d.ts"],
-  "exclude": ["lib/**/*", "build", "latest-build"],
+  "exclude": ["lib/**/*", "build", "latest-build", "_connect-moodlenet-pkg-modules_.ts"],
   "compilerOptions": {
     "sourceMap": true,
     "rootDir": "src",
