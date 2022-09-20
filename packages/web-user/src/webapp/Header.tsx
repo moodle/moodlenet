@@ -1,14 +1,16 @@
-import lib from 'moodlenet-react-app-lib'
 import { FC, useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { MainContext } from './MainModule'
 
-const {} = lib
 export const Text = 'Profile'
 // export const Path = '/profile'
 export const ClassName = 'profile'
 export const Position = 0
 export const Icon: FC = ({}) => {
-  const { clientSessionData } = useContext(lib.auth.AuthCtx)
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { clientSessionData } = useContext(reactApp.AuthCtx)
+
   if (!clientSessionData || clientSessionData.isRoot) {
     return null
   }

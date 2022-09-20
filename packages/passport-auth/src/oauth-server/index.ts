@@ -6,7 +6,7 @@ import { getAuthMngUidByOauthResult } from './lib'
 import getPassport from './passport'
 
 export function prepareApp(shell: ExtShell<PassportAuthExt>, app: Express) {
-  const [, , , auth] = shell.deps
+  const [, , , auth, contentGraph, profile] = shell.deps
   // app.use(csrf())
   app.get('/login/federated/:providerName', async (req, res, next) => {
     const passport = await getPassport(shell)
@@ -47,6 +47,11 @@ export function prepareApp(shell: ExtShell<PassportAuthExt>, app: Express) {
         res.redirect(`/@moodlenet/passport-auth/login-fail?msg=couldn't create user`)
         return
       }
+      /*  const profileNodeResp = */ await contentGraph.plug.createNode(
+        profile.plug.glyphDescriptors.Profile,
+        { title: req.user.oauth.profile.displayName, description: '' },
+        { authenticableBy: { userId: createUserRes.user.id } },
+      )
       token = createUserRes.sessionToken
     } else {
       token = getTokenData.sessionToken

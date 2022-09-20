@@ -1,21 +1,27 @@
 import { useFormik } from 'formik'
-import lib from 'moodlenet-react-app-lib'
-import { FC, useState } from 'react'
-import { SimpleEmailAuthExt } from '..'
+import { FC, useContext, useState } from 'react'
+import { MainContext } from './MainModule'
 import './Signup.scss'
 
-const { InputTextField, PrimaryButton, TertiaryButton, Snackbar } = lib.ui.components
 export type SignupFormValues = { email: string; password: string; displayName: string }
 
-export const Icon: FC = () => <PrimaryButton color="blue">Use email</PrimaryButton>
+export const Icon: FC = () => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { PrimaryButton } = reactApp.ui.components
+  return <PrimaryButton color="blue">Use email</PrimaryButton>
+}
 export const Panel: FC = () => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { InputTextField, PrimaryButton, TertiaryButton, Snackbar } = reactApp.ui.components
   const [emailSent, setEmailSent] = useState(false)
   const [errMsg, setErrMsg] = useState('')
   const form = useFormik<SignupFormValues>({
     initialValues: { email: '', password: '', displayName: '' },
     async onSubmit({ email, password, displayName }) {
       setErrMsg('')
-      const res = await lib.priHttp.fetch<SimpleEmailAuthExt>('@moodlenet/simple-email-auth', '0.1.0')('signup')({
+      const res = await shell.http.fetch('signup')({
         displayName,
         email,
         password,

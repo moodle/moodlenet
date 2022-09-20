@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { MainContext } from '../../../../../MainContext'
 import { PrimaryButton, SecondaryButton } from '../../../atoms'
-import { AddonCtx } from '../addons'
 import HeaderTitle from '../HeaderTitle/HeaderTitle'
 import './MinimalisticHeader.scss'
 
@@ -10,7 +10,12 @@ type MinimalisticHeaderProps = {
 }
 
 const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ page } /* { devMode, setDevMode } */) => {
-  const addonCtx = useContext(AddonCtx)
+  const {
+    registries: {
+      header: { rightComponents },
+    },
+  } = useContext(MainContext)
+  const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
   return (
     <div className="minimalistic-header">
       <div className="content">
@@ -20,8 +25,8 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ pa
           />
         </div>
         <div className="right">
-          {addonCtx.rightComponents.flatMap(({ addon: { MinHeaderItems } }, index) => {
-            return (MinHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
+          {rightComponentsRegistry.entries.flatMap(({ pkg, item: { Component } }, index) => {
+            return <Component key={`${pkg.id}:${index}`} />
           })}
           {page !== 'activation' ? (
             <div className="buttons">
