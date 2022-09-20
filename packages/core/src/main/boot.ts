@@ -391,6 +391,14 @@ const boot: Boot = async cfg => {
     }
 
     const shell: Shell = {
+      requires: ext.requires.map(extId => {
+        const { extName, version } = splitExtId(extId)
+        return {
+          id: extId,
+          name: extName,
+          version,
+        }
+      }),
       onExtInstalled,
       onExtUninstalled,
       _raw: _rawShell,

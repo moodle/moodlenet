@@ -1,9 +1,8 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC, ReactNode, ReactPortal, useCallback, useReducer } from 'react'
+import { FC, ReactNode, ReactPortal, useCallback, useContext, useReducer } from 'react'
 // import { searchNpmExtensionConfig } from '../../../../../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { StateContext } from '../ExtensionsProvider'
 import { CoreExt, PackageInfo } from '@moodlenet/core'
@@ -13,6 +12,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import rehypeRaw from 'rehype-raw'
 import { extNameDescription } from '../../lib'
 import { mandatoryPackages } from '../fakeData'
+import { MainContext } from '../MainModule'
 import './ExtensionConfig.scss'
 
 export type ExtensionConfigProps = {
@@ -20,9 +20,12 @@ export type ExtensionConfigProps = {
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
-const { Card, PrimaryButton, TertiaryButton, Loading } = lib.ui.components
-
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { Card, PrimaryButton, TertiaryButton, Loading } = reactApp.ui.components
+
+  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
   // const stateContext = useContext(StateContext)
 
   const modulesList = null /* extension?.modules.map(
@@ -38,7 +41,7 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) 
   const uninstall = useCallback(() => {
     toggleIsInstalling()
 
-    lib.priHttp.fetch<CoreExt>('@moodlenet/core', '0.1.0')('pkg/uninstall')({
+    core.fetch('pkg/uninstall')({
       pkgInstallationId: pkgInfo.id,
     })
     // .finally(toggleIsInstalling)

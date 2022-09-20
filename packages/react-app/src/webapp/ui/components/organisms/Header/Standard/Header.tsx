@@ -4,27 +4,28 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../../react-app-lib/auth'
+import { AuthCtx } from '../../../../../main-lib/auth'
+import { RegistryEntry } from '../../../../../main-lib/registry'
+import { MainContext } from '../../../../../MainContext'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-import { AddonCtx, AvatarMenuItem } from '../addons'
+import { HeaderAvatarMenuItemRegItem } from '../addons'
 import HeaderTitle from '../HeaderTitle/HeaderTitle'
 import './Header.scss'
 
 type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
-  const addonCtx = useContext(AddonCtx)
-  // const setCtx = useContext(SettingsCtx)
-  const headerCtx = useContext(AddonCtx)
+  const {
+    registries: { header },
+    shell,
+  } = useContext(MainContext)
+
+  const { registry: avatarMenuItems } = header.avatarMenuItems.useRegistry()
+  const { registry: rightComponents } = header.rightComponents.useRegistry()
 
   const { clientSessionData, logout } = useContext(AuthCtx)
-
-  const baseAvatarMenuItems: AvatarMenuItem[] = [
-    { def: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
-    { def: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
-  ]
 
   const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
 
@@ -35,23 +36,15 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     backgroundSize: 'cover',
   }
 
-  // const avatarMenuItems = baseAvatarMenuItems
-  const orderedAvatarMenuItems: AvatarMenuItem[] = []
-  const unorderedAvatarMenuItems: AvatarMenuItem[] = []
-  headerCtx.avatarMenuItems.map(menuItem => {
-    typeof menuItem.def.Position === 'number'
-      ? orderedAvatarMenuItems.push(menuItem)
-      : unorderedAvatarMenuItems.push(menuItem)
-  })
-
-  const avatarMenuItems = useMemo(() => {
-    const menuItems = baseAvatarMenuItems.concat(unorderedAvatarMenuItems)
-
-    orderedAvatarMenuItems.map(menuItem => {
-      return typeof menuItem.def.Position === 'number' && menuItems.splice(menuItem.def.Position, 0, menuItem)
-    })
-    return menuItems
-  }, [headerCtx.avatarMenuItems])
+  const reoderedAvatarMenuItems = useMemo(() => {
+    const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
+      { pkg: shell.pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
+      { pkg: shell.pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
+    ]
+    return baseItems.concat(
+      avatarMenuItems.entries.sort((a, b) => (a.item.Position ?? Infinity) - (b.item.Position ?? Infinity) || 0),
+    )
+  }, [avatarMenuItems.entries])
 
   // console.log('logo ', logo)
   // console.log('smallLogo ', smallLogo)
@@ -65,8 +58,8 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           />
         </div>
         <div className="right">
-          {addonCtx.rightComponents.flatMap(({ addon: { StdHeaderItems } }, index) => {
-            return (StdHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
+          {rightComponents.entries.flatMap(({ pkg, item: { Component } }, index) => {
+            return <Component key={`${pkg.id}:${index}`} />
           })}
 
           {clientSessionData && (
@@ -92,27 +85,27 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           {clientSessionData ? (
             <FloatingMenu
               className="avatar-menu"
-              menuContent={avatarMenuItems.map((avatarMenuItem, i) => {
-                return avatarMenuItem.def.Path ? (
+              menuContent={reoderedAvatarMenuItems.map((avatarMenuItem, i) => {
+                return avatarMenuItem.item.Path ? (
                   <Link
                     key={i}
-                    className={`avatar-menu-item ${avatarMenuItem.def.ClassName}`}
-                    to={avatarMenuItem.def.Path}
-                    onClick={avatarMenuItem.def.OnClick}
+                    className={`avatar-menu-item ${avatarMenuItem.item.ClassName}`}
+                    to={avatarMenuItem.item.Path}
+                    onClick={avatarMenuItem.item.OnClick}
                   >
                     <>
-                      <avatarMenuItem.def.Icon /> {avatarMenuItem.def.Text}
+                      <avatarMenuItem.item.Icon /> {avatarMenuItem.item.Text}
                     </>
                   </Link>
                 ) : (
                   <div
                     key={i}
                     tabIndex={0}
-                    className={`avatar-menu-item ${avatarMenuItem.def.ClassName}`}
-                    onClick={avatarMenuItem.def.OnClick}
+                    className={`avatar-menu-item ${avatarMenuItem.item.ClassName}`}
+                    onClick={avatarMenuItem.item.OnClick}
                   >
                     <>
-                      <avatarMenuItem.def.Icon /> {avatarMenuItem.def.Text}
+                      <avatarMenuItem.item.Icon /> {avatarMenuItem.item.Text}
                     </>
                   </div>
                 )

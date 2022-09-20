@@ -1,26 +1,40 @@
-import extCtxProviders from 'ext-context-providers-modules'
 import { FC, PropsWithChildren } from 'react'
-import * as auth from '../react-app-lib/auth'
-import * as header from './ui/components/organisms/Header'
+import { PkgIds, PluginMainComponent } from '..'
+import * as auth from './main-lib/auth'
+import { registriesProviders } from './main-lib/registry'
 import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider'
 import * as set from './ui/components/pages/Settings/SettingsContext'
 
-export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const ctxProviderWrap = Object.values(extCtxProviders)
-    .reverse()
-    .reduce((_children, { Provider, extId }) => <Provider key={extId}>{_children}</Provider>, <>{children}</>)
+export const pluginMainModules: { MainComponent: PluginMainComponent; pkg: PkgIds }[] = []
 
-  return (
-    <header.Provider>
-      <auth.Provider>
-        <set.Provider>
-          <ContentGraphProvider>
-            {/* <I18nProvider i18n={i18n}> */}
-            {ctxProviderWrap}
-            {/* </I18nProvider> */}
-          </ContentGraphProvider>
-        </set.Provider>
-      </auth.Provider>
-    </header.Provider>
+export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
+  // console.log({ pluginMainModules })
+  const ctxProviderWrap = Object.values(pluginMainModules)
+    .reverse()
+    .reduce(
+      (_children, { MainComponent, pkg }) => <MainComponent key={pkg.id}>{_children}</MainComponent>,
+      <>{children}</>,
+    )
+
+  const Main = (
+    <auth.Provider>
+      <set.Provider>
+        <ContentGraphProvider>
+          {/* <I18nProvider i18n={i18n}> */}
+          {ctxProviderWrap}
+          {/* </I18nProvider> */}
+        </ContentGraphProvider>
+      </set.Provider>
+    </auth.Provider>
   )
+
+  const registryProviderWrap = registriesProviders
+    //.reverse()
+    .reduce(
+      (_children, { Provider }, index) => <Provider key={`registriesProvider_${index}`}>{_children}</Provider>,
+      Main,
+    )
+
+  // console.log({ registriesProviders, registryProviderWrap })
+  return registryProviderWrap
 }
