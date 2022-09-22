@@ -6,5 +6,3 @@ const apis = {
   mamma,
 }
 export default apis
-
-// type x = ApiFnType<Apis, 'mamma/ciccio'>

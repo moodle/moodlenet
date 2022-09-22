@@ -1,4 +1,4 @@
-import { connect } from '@moodlenet/core/lib/pkg-shell.mjs'
+import { connect } from '@moodlenet/core'
 export const connection = await connect(import.meta, {})
 
 import('./doo.mjs')

@@ -1,4 +1,4 @@
-import { defApi } from '@moodlenet/core/lib/pkg-shell/apis.mjs'
+import { defApi } from '@moodlenet/core'
 import { inspect } from 'util'
 
 export const ciccio = defApi(
