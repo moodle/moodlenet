@@ -1,6 +1,5 @@
-import testExtension from '@moodlenet/test-extension'
+import { testExtensionApis } from './pkgApis.mjs'
 
-const x = testExtension.apis(import.meta)('mamma/ciccio')({ primary: true })
-const d = await x({ str: '0', x: { a: 33 } })
+const d = await testExtensionApis('mamma/ciccio')({ ctx: {} })({ str: '0', x: { a: 33 } })
 
 console.log({ d })
