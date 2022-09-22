@@ -1,5 +1,4 @@
 import { PackageInfo } from '../types.mjs'
-import type { Shell } from './connect.mjs'
 import type { TypeofPath, TypePaths } from './crawl-path.js'
 export type ArgsValidity =
   | boolean
@@ -9,7 +8,17 @@ export type ArgsValidity =
   | { valid: false; msg?: string }
 export type ArgsValidation = (...args: unknown[]) => ArgsValidity | Promise<ArgsValidity>
 
-export type PkgConnection = { shell: Shell<any>; apiDefs: ApiDefs }
+export type FlattenApiDefs<_ApiDefs extends ApiDefs> = Record<string, ApiDef<any>>
+
+export type PkgConnection<_ApiDefs extends ApiDefs> = {
+  pkgInfo: PackageInfo
+  apiDefs: _ApiDefs
+  flatApiDefs: FlattenApiDefs<_ApiDefs>
+}
+export type PkgRef<_ApiDefs extends ApiDefs> = {
+  pkgInfo: PackageInfo
+  // _?: _ApiDefs
+}
 
 export type ApiDef<_ApiFn extends ApiFn> = {
   api: CtxApiFn<_ApiFn>
