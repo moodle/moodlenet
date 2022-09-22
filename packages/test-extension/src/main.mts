@@ -1,4 +1,4 @@
-import { connect } from '@moodlenet/core/lib/pkg-shell.mjs'
+import { connect } from '@moodlenet/core'
 import apis from './apis.mjs'
 const connection = await connect(import.meta, apis)
 

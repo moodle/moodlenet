@@ -1,4 +1,5 @@
 export * from './pkg-mng/types.mjs'
+export * from './pkg-shell/types.mjs'
 import { InstallPkgReq, PkgIdentifier } from './pkg-mng/types.mjs'
 
 export type MainFolders = { systemFolder: string; deploymentFolder: string; pkgStorageFolder?: string }
