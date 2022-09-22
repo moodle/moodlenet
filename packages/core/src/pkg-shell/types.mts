@@ -46,21 +46,3 @@ export type ApiFnType<Defs extends ApiDefs, Path extends ApiDefPaths<Defs>> = Ty
       // ? ReturnType<Def['api']>
       never
   : never
-
-// const apiDefs = {
-//   a: {
-//     b: {
-//       api:(ctx)=>async <T,>(a: T, b: number) =>{
-//         return { a, b }
-//       },
-//       args(...args:unknown []) {
-//         return !!args
-//       },
-//     },
-//   },
-// }
-// declare const apis: Apis<typeof apiDefs>
-// declare const api: ApiType<typeof apiDefs, 'a/b'>
-
-// apis.a.b<{rrrr:number}>({rrrr:1},1).then(_=>{_.a.rrrr})
-// api<string>('1',1).then(_=>{_.a})
