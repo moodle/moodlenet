@@ -22,8 +22,8 @@
   "exports": {
     ".": "./lib/index.js"
   },
-  "node_engine": {
-    "node": ">=10.16.0"
+  "engines": {
+    "node": ">=14"
   },
   "scripts": {
     "dev-server": "node lib/-dev-server.js"

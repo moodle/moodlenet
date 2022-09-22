@@ -4,8 +4,8 @@
   "license": "AGPL-3.0",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
+  "dependencies": {},
   "devDependencies": {
-    "@octokit/core": "^3.5.1",
     "@types/rimraf": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
@@ -14,12 +14,11 @@
     "lerna": "^5.0.0",
     "lerna-dependency-graph": "^1.1.0",
     "rimraf": "^3.0.2",
-    "shx": "^0.3.4",
     "typescript": "^4.6.3"
   },
   "scripts": {
     "ibs": "husky install && yarn bs",
-    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
+    "bs": "lerna bootstrap --hoist --nohoist=babel-* --nohoist=*react*",
     "setup": "lerna run setup --parallel --stream",
     "start-dev": "lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
@@ -47,9 +46,5 @@
     "rules": {
       "@typescript-eslint/no-explicit-any": "warn"
     }
-  },
-  "dependencies": {
-    "csurf": "^1.11.0",
-    "vite": "^3.0.4"
   }
 }
