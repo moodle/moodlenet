@@ -1,6 +1,6 @@
 import { getRegistry } from '../pkg-mng/lib.mjs'
 import { InstallPkgReq } from '../pkg-mng/types.mjs'
-import { MainFolders, SysInstalledPkg } from '../types.mjs'
+import { InstallResp, MainFolders, SysInstalledPkg } from '../types.mjs'
 import { getSys } from './sys.mjs'
 
 type InstallCfg = {
@@ -16,11 +16,19 @@ export async function install({
 }: InstallCfg) {
   console.log('installing:', installPkgReqs)
   const sys = await getSys({ mainFolders })
+
   const installationsPkgInfos = await Promise.all(
-    installPkgReqs.map(installPkgReq =>
-      sys.pkgMng.install(installPkgReq).then(installed => ({ installPkgReq, ...installed })),
+    installPkgReqs.reduce<Promise<InstallResp>[]>(
+      (collect, installPkgReq) => [
+        Promise.resolve(collect[0]).then(() =>
+          sys.pkgMng.install(installPkgReq).then(installed => ({ installPkgReq, ...installed })),
+        ),
+        ...collect,
+      ],
+      [],
     ),
   )
+  console.log({ installationsPkgInfos })
   const packages = installationsPkgInfos.map<SysInstalledPkg>(({ sysInstalledPkg }) => ({
     ...sysInstalledPkg,
     env: {
@@ -51,7 +59,7 @@ function defaultInstallPkgReqs(): InstallPkgReq[] {
 
 export const defaultCorePackages = {
   // 'core': '0.1.0',
-  // 'arangodb': '0.1.0',
+  'arangodb': '0.1.0',
   // 'key-value-store': '0.1.0',
   // 'crypto': '0.1.0',
   // 'authentication-manager': '0.1.0',

@@ -23,7 +23,7 @@
     ".": "./lib/index.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "scripts": {
     "dev-server": "node lib/-dev-server.js"
