@@ -37,7 +37,7 @@ export function connect<_ApiDefs extends ApiDefs = {}>(
   }
 
   registerConnection(connection)
-  console.log(`connected pkg ${pkgInfo.pkgId.name}@${pkgInfo.pkgId.version}`)
+  console.log(`- connected pkg ${pkgInfo.pkgId.name}@${pkgInfo.pkgId.version} -\n`)
 
   const pkgRef: PkgRef<_ApiDefs> = {
     pkgInfo,
@@ -64,7 +64,9 @@ export function pkgApis<_ApiDefs extends ApiDefs>(caller_pkg_module_ref: PkgModu
         if (!argValidity.valid) {
           throw new TypeError(`invalid api params, msg: ${argValidity.msg ?? 'no details'}`)
         }
-        return apiDef.api({ ...ctx, caller: callerConnection.pkgInfo })(...args)
+        return apiDef.api({ ...ctx, caller: { pkgInfo: callerConnection.pkgInfo, moduleRef: caller_pkg_module_ref } })(
+          ...args,
+        )
       } as ApiFnType<_ApiDefs, Path>
     }
   }

@@ -1,12 +1,12 @@
-import { defApi, PkgModuleRef } from '@moodlenet/core'
+import { defApi } from '@moodlenet/core'
 import storeFactory from './store.mjs'
+import { KVSTypeMap } from './types.js'
 
 export default {
   getStore: defApi(
     ctx =>
-      async ({ consumerModuleRef }: { consumerModuleRef: PkgModuleRef }) => {
-        ctx.caller.pkgId
-        storeFactory({ consumerModuleRef })
+      async <TMap extends KVSTypeMap>() => {
+        return storeFactory<TMap>({ consumerModuleRef: ctx.caller.moduleRef })
       },
     () => true,
   ),

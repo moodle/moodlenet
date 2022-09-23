@@ -20,15 +20,15 @@ export async function install({
   const installationsPkgInfos = await Promise.all(
     installPkgReqs.reduce<Promise<InstallResp>[]>(
       (collect, installPkgReq) => [
+        ...collect,
         Promise.resolve(collect[0]).then(() =>
           sys.pkgMng.install(installPkgReq).then(installed => ({ installPkgReq, ...installed })),
         ),
-        ...collect,
       ],
       [],
     ),
   )
-  console.log({ installationsPkgInfos })
+  // console.log({ installationsPkgInfosc })
   const packages = installationsPkgInfos.map<SysInstalledPkg>(({ sysInstalledPkg }) => ({
     ...sysInstalledPkg,
     env: {
@@ -61,7 +61,7 @@ export const defaultCorePackages = {
   // 'core': '0.1.0',
   'arangodb': '0.1.0',
   'key-value-store': '0.1.0',
-  // 'crypto': '0.1.0',
+  'crypto': '0.1.0',
   // 'authentication-manager': '0.1.0',
   // 'http-server': '0.1.0',
   // 'organization': '0.1.0',
