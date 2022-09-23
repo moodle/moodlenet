@@ -27,7 +27,7 @@ export type ApiDef<_ApiFn extends ApiFn> = {
 
 export type PrimaryCallCtx = {}
 export type FloorApiCtx = { primary?: PrimaryCallCtx } & Record<string, any>
-export type ApiCtx = { caller: PackageInfo } & FloorApiCtx
+export type ApiCtx = { caller: { pkgInfo: PackageInfo; moduleRef: PkgModuleRef } } & FloorApiCtx
 export type CtxApiFn<_ApiFn extends ApiFn> = (ctx: ApiCtx) => _ApiFn
 export type ApiFn = (...args: any[]) => Promise<any>
 export type ApiDefs = {

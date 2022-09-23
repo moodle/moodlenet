@@ -14,9 +14,10 @@ export async function boot(cfg: BootCfg) {
   const sys = await getSys({ mainFolders: cfg.mainFolders })
   const sysconfig = sys.readSysConfig()
 
-  sysconfig.packages.reduce<Promise<void>>(async (prev, { pkgId }) => {
+  await sysconfig.packages.reduce<Promise<void>>(async (prev, { pkgId }) => {
     await prev
     await sys.pkgMng.getMain({ pkgId })
     return
   }, Promise.resolve())
+  console.log('\n------- all packages connected -------', '\n')
 }
