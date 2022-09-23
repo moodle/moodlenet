@@ -20,9 +20,9 @@ export async function decrypt({ encrypted, enc = DEFAULT_ENC }: DecryptArgs) {
       )
       .toString()
 
-    return { valid: true, payload }
+    return { valid: true, payload } as const
   } catch {
-    return { valid: false }
+    return { valid: false } as const
   }
 }
 
