@@ -6,6 +6,7 @@
   "engines": {
     "node": ">=16"
   },
+  "main": "lib/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Authentication manager"
@@ -18,7 +19,6 @@
     "lib/",
     "src/"
   ],
-  "main": "lib/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "optDependencies": {},

@@ -37,7 +37,7 @@ export function connect<_ApiDefs extends ApiDefs = {}>(
   }
 
   registerConnection(connection)
-  console.log(`- connected pkg ${pkgInfo.pkgId.name}@${pkgInfo.pkgId.version} -\n`)
+  console.log(`\n.... connecting pkg ${pkgInfo.pkgId.name}@${pkgInfo.pkgId.version}`)
 
   const pkgRef: PkgRef<_ApiDefs> = {
     pkgInfo,
@@ -49,7 +49,12 @@ export function pkgApis<_ApiDefs extends ApiDefs>(caller_pkg_module_ref: PkgModu
   const { pkgInfo: callerPkgInfo } = getModulePackageReferences(caller_pkg_module_ref)
 
   const callerConnection = getConnectionByPkgId(callerPkgInfo.pkgId)
-  assert(callerConnection, `cannot use apis() for non connected packages ${callerPkgInfo.pkgId.name}`)
+  assert(
+    callerConnection,
+    `cannot use apis() for non connected packages ${callerPkgInfo.pkgId.name}, caller:${getModulePackageFilename(
+      caller_pkg_module_ref,
+    )}`,
+  )
   const targetConnection = getConnectionByPkgId(targetPkgRef.pkgInfo.pkgId)
   assert(targetConnection, `cannot call apis() on non connected target ${callerConnection?.pkgInfo.pkgId.name}`)
 
@@ -103,8 +108,11 @@ function isApiDef(ctxApiEntry: ApiDefs | ApiDef<any> | undefined): ctxApiEntry i
   )
 }
 
+function getModulePackageFilename(pkg_module_ref: PkgModuleRef) {
+  return isNodeModule(pkg_module_ref) ? pkg_module_ref.id : fileURLToPath(pkg_module_ref.url)
+}
 function getModulePackageReferences(pkg_module_ref: PkgModuleRef) {
-  const moduleFilename = isNodeModule(pkg_module_ref) ? pkg_module_ref.id : fileURLToPath(pkg_module_ref.url)
+  const moduleFilename = getModulePackageFilename(pkg_module_ref)
 
   const moduleDir = dirname(moduleFilename)
   const pkgRootDir = packageDirectorySync({ cwd: moduleDir })

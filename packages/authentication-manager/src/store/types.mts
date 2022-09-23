@@ -1,9 +1,9 @@
-import { ExtName } from '@moodlenet/core'
+import { PkgName } from '@moodlenet/core'
 
 export type UserId = string
 
 export type ProviderId = {
-  ext: ExtName
+  pkgName: PkgName
   uid: string
 }
 

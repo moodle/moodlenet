@@ -1,5 +1,5 @@
-import { UserData } from './store/types'
-export * from './store/types'
+import { UserData } from './store/types.mjs'
+export * from './store/types.mjs'
 
 export type SessionToken = string
 
