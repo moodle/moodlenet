@@ -43,7 +43,7 @@ export type Apis<Defs extends ApiDefs> = {
       // ? ReturnType<Defs[k]['api']>
       never
 }
-
+export type PkgModuleRef = NodeModule | ImportMeta
 // export type ShellApi<S extends Shell, Path extends string>=1
 // export type ApiRef<Defs extends ApiDefs> = { defs: Defs; shell: Shell }
 
