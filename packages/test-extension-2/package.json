@@ -4,7 +4,7 @@
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "private": "true",
   "moodlenet": {
