@@ -1,19 +1,17 @@
 import execa from 'execa'
+import { readdir } from 'fs/promises'
 import * as path from 'path'
 import { resolve } from 'path'
 import { npmInstaller, symlinkInstaller } from './pkg-mng/installers.mjs'
 import * as lib from './pkg-mng/lib.mjs'
 import { InstallPkgReq, PkgIdentifier } from './pkg-mng/types.mjs'
-import { SysInstalledPkg } from './types.mjs'
+import { InstallResp, SysInstalledPkg } from './types.mjs'
 
 // const myDirInfo = installDirsInfo();
 
 export type PkgMngCfg = { pkgsFolder: string }
 export async function createPkgMng({ pkgsFolder }: PkgMngCfg) {
-  await execa('npm', ['-y', 'init'], {
-    cwd: pkgsFolder,
-    timeout: 600000,
-  })
+  await checkInitFolder()
 
   return {
     install,
@@ -29,7 +27,7 @@ export async function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     })
   }
 
-  async function install(installPkgReq: InstallPkgReq): Promise<{ sysInstalledPkg: SysInstalledPkg }> {
+  async function install(installPkgReq: InstallPkgReq): Promise<InstallResp> {
     const { pkgId } = await (installPkgReq.type === 'npm'
       ? npmInstaller({ installPkgReq, pkgsFolder })
       : symlinkInstaller({ installPkgReq, pkgsFolder }))
@@ -61,5 +59,23 @@ export async function createPkgMng({ pkgsFolder }: PkgMngCfg) {
 
   function getAbsInstallationFolder({ pkgId }: { pkgId: PkgIdentifier }) {
     return path.resolve(pkgsFolder, 'node_modules', ...pkgId.name.split('/'))
+  }
+  async function checkInitFolder() {
+    if (await isInitialized()) {
+      return
+    }
+    await execa('npm', ['-y', 'init'], {
+      cwd: pkgsFolder,
+      timeout: 600000,
+    })
+    async function isInitialized() {
+      const dir = await readdir(pkgsFolder, {
+        withFileTypes: true,
+      })
+      return (
+        !!dir.find(entry => entry.name === 'package.json' && entry.isFile()) &&
+        !!dir.find(entry => entry.name === 'node_modules' && entry.isDirectory())
+      )
+    }
   }
 }

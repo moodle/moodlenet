@@ -1,9 +1,8 @@
-import { ExtDef, SubTopo } from '@moodlenet/core'
 import * as arango from 'arangojs'
-import { CollectionMetadata, DocumentCollection, EdgeCollection } from 'arangojs/collection'
-import { Dict } from 'arangojs/connection'
-import { QueryOptions } from 'arangojs/database'
-import * as Indexes from 'arangojs/indexes'
+import { CollectionMetadata, DocumentCollection, EdgeCollection } from 'arangojs/collection.js'
+import { Dict } from 'arangojs/connection.js'
+import { QueryOptions } from 'arangojs/database.js'
+import * as Indexes from 'arangojs/indexes.js'
 
 export type CollectionKind = 'edge' | 'node'
 export type CollectionOpts = { indexes?: IndexDefType[] }
@@ -51,11 +50,6 @@ export interface Instance {
   query(_: QueryReq): Promise<QueryRes>
 }
 
-type Routes = {
-  ensureCollections: SubTopo<{ defs: CollectionDefOptMap }, void>
-  query: SubTopo<QueryReq, QueryRes>
-}
-export type MNArangoDBExt = ExtDef<'@moodlenet/arangodb', '0.1.0', Instance, Routes>
 export type IndexDefType = { name: string } & (
   | Indexes.EnsurePersistentIndexOptions
   | Indexes.EnsureTtlIndexOptions

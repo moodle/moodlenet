@@ -27,3 +27,5 @@ export type EnvName = string
 export type PkgName = string
 export type PkgVersion = string
 export type NpmRegistry = string
+
+export type InstallResp = { sysInstalledPkg: SysInstalledPkg }
