@@ -21,7 +21,9 @@ export type PackageInfo = {
   pkgRootDir: string
 }
 
+export type PkgName = string
+export type PkgVersion = string
 export type PkgIdentifier = {
-  name: string
-  version: string
+  name: PkgName
+  version: PkgVersion
 }
