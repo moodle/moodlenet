@@ -15,17 +15,18 @@ import {
   FlattenApiDefs,
   FloorApiCtx,
   PkgConnection,
+  PkgModuleRef,
   PkgRef,
 } from './types.mjs'
 
 const CONNECTION_SYMBOL: unique symbol = Symbol('CONNECTION_SYMBOL')
 
 export function connect<_ApiDefs extends ApiDefs = {}>(
-  meta_or_module: NodeModule | ImportMeta,
+  pkg_module_ref: PkgModuleRef,
   apiDefs: _ApiDefs,
 ): PkgRef<_ApiDefs> {
-  const { pkgInfo } = getModulePackageReferences(meta_or_module)
-  assert(!getConnectionByMetaOrModule(meta_or_module), `can't connect ${pkgInfo.pkgId.name} more than once !`)
+  const { pkgInfo } = getModulePackageReferences(pkg_module_ref)
+  assert(!getConnectionByMetaOrModule(pkg_module_ref), `can't connect ${pkgInfo.pkgId.name} more than once !`)
   const flatApiDefs = flattenApiDefs<_ApiDefs>(apiDefs)
   // console.log({ apisRefs: flattenApiDefs }, inspect(apiDefs))
 
@@ -44,11 +45,8 @@ export function connect<_ApiDefs extends ApiDefs = {}>(
   return pkgRef
 }
 
-export function pkgApis<_ApiDefs extends ApiDefs>(
-  caller_meta_or_module: NodeModule | ImportMeta,
-  targetPkgRef: PkgRef<_ApiDefs>,
-) {
-  const { pkgInfo: callerPkgInfo } = getModulePackageReferences(caller_meta_or_module)
+export function pkgApis<_ApiDefs extends ApiDefs>(caller_pkg_module_ref: PkgModuleRef, targetPkgRef: PkgRef<_ApiDefs>) {
+  const { pkgInfo: callerPkgInfo } = getModulePackageReferences(caller_pkg_module_ref)
 
   const callerConnection = getConnectionByPkgId(callerPkgInfo.pkgId)
   assert(callerConnection, `cannot use apis() for non connected packages ${callerPkgInfo.pkgId.name}`)
@@ -83,8 +81,8 @@ export function defApi<_ApiFn extends ApiFn>(api: CtxApiFn<_ApiFn>, argsValidati
 /*
  * util
  */
-function isNodeModule(meta_or_module: NodeModule | ImportMeta): meta_or_module is NodeModule {
-  return 'exports' in meta_or_module
+function isNodeModule(pkg_module_ref: PkgModuleRef): pkg_module_ref is NodeModule {
+  return 'exports' in pkg_module_ref
 }
 
 function flattenApiDefs<_ApiDefs extends ApiDefs>(apiDefs: _ApiDefs, subPath = ''): FlattenApiDefs<_ApiDefs> {
@@ -103,8 +101,8 @@ function isApiDef(ctxApiEntry: ApiDefs | ApiDef<any> | undefined): ctxApiEntry i
   )
 }
 
-function getModulePackageReferences(meta_or_module: NodeModule | ImportMeta) {
-  const moduleFilename = isNodeModule(meta_or_module) ? meta_or_module.id : fileURLToPath(meta_or_module.url)
+function getModulePackageReferences(pkg_module_ref: PkgModuleRef) {
+  const moduleFilename = isNodeModule(pkg_module_ref) ? pkg_module_ref.id : fileURLToPath(pkg_module_ref.url)
 
   const moduleDir = dirname(moduleFilename)
   const pkgRootDir = packageDirectorySync({ cwd: moduleDir })
@@ -121,10 +119,10 @@ const connections: Record<string, PkgConnection<any>> = {}
 function getConnectionByPkgId(pkgId: PkgIdentifier) {
   return connections[pkgId.name]
 }
-function getConnectionByMetaOrModule(meta_or_module: NodeModule | ImportMeta) {
+function getConnectionByMetaOrModule(pkg_module_ref: PkgModuleRef) {
   const {
     pkgInfo: { pkgId },
-  } = getModulePackageReferences(meta_or_module)
+  } = getModulePackageReferences(pkg_module_ref)
   return getConnectionByPkgId(pkgId)
 }
 function registerConnection(connection: PkgConnection<any>) {

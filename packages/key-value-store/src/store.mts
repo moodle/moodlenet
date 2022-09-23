@@ -1,12 +1,16 @@
-import { MNArangoDBExt } from '@moodlenet/arangodb'
-import { Shell } from '@moodlenet/core'
-import { KVStore, ValueObj } from '../types'
+import arangoPkgRef from '@moodlenet/arangodb'
+import { pkgApis, PkgModuleRef } from '@moodlenet/core'
+import { KVStore, ValueObj } from './types.js'
 export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
-export default async function storeFactory({ consumerShell }: { consumerShell: Shell }): Promise<KVStore<any>> {
-  const arangoSrv = consumerShell.pkg<MNArangoDBExt>('@moodlenet/arangodb@0.1.0')
-  const query = arangoSrv.fetch('query')
+export default async function storeFactory({
+  consumerModuleRef,
+}: {
+  consumerModuleRef: PkgModuleRef
+}): Promise<KVStore<any>> {
+  const arangoSrv = pkgApis(consumerModuleRef, arangoPkgRef)
+  const query = arangoSrv('query')({})
 
-  await arangoSrv.fetch('ensureCollections')({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
+  await arangoSrv('ensureCollections')({})({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
   const kvStore: KVStore<any> = {
     set,
     get,
@@ -19,7 +23,7 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
   }
   async function get(type: string, key: string): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
-    const record = (await query({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` })).msg.data.resultSet[0]
+    const record = (await query({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` })).resultSet[0]
     return valObj(record)
   }
 
@@ -39,7 +43,7 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
               IN ${COLLECTION_NAME} 
             RETURN OLD`,
       })
-    ).msg.data.resultSet[0]
+    ).resultSet[0]
 
     return valObj(oldRec)
   }
@@ -52,7 +56,7 @@ export default async function storeFactory({ consumerShell }: { consumerShell: S
               FROM ${COLLECTION_NAME} 
             RETURN OLD`,
       })
-    ).msg.data.resultSet[0]
+    ).resultSet[0]
 
     return valObj(oldDoc)
   }
