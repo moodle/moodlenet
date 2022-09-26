@@ -1,20 +1,5 @@
-import type {
-  CollectionDef,
-  CollectionDefOpt,
-  CollectionKind,
-  CollectionOpts,
-  MNArangoDBExt,
-} from '@moodlenet/arangodb'
-import type { AuthenticationManagerExtDef, UserId } from '@moodlenet/authentication-manager'
-import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import type { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
-
-export type ContentGraphExtDef = ExtDef<'@moodlenet/content-graph', '0.1.0', Lib, Routes>
-
-export type ContentGraphExt = Ext<
-  ContentGraphExtDef,
-  [CoreExt, MNArangoDBExt, KeyValueStoreExtDef, AuthenticationManagerExtDef]
->
+import type { CollectionDef, CollectionDefOpt, CollectionKind, CollectionOpts } from '@moodlenet/arangodb'
+import type { UserId } from '@moodlenet/authentication-manager'
 
 // type DateString = string
 type WithDate<T> = T //& { date: DateString }
@@ -136,53 +121,3 @@ export type ContentGraphKVStore = {
     }
   }
 }
-
-export type Lib = {
-  ensureGlyphs<Defs extends GlyphDefsMap>(_: { defs: GlyphDefOptMap<Defs> }): Promise<GlyphDescriptorsMap<Defs>>
-  createNode<GlyphDesc extends GlyphDescriptor<'node'>>(
-    glyphDesc: GlyphDesc,
-    data: NodeData<GlyphDesc> & WithMaybeKey,
-    opts?: Partial<CreateNodeOpts>,
-  ): Promise<{ node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }>
-  createEdge<GlyphDesc extends GlyphDescriptor<'edge'>>(
-    glyphDesc: GlyphDesc,
-    data: EdgeData<GlyphDesc> & WithMaybeKey,
-    linkId: EdgeLinkIdentifiers,
-    opts?: Partial<CreateEdgeOpts>,
-  ): Promise<{ edge: EdgeGlyph<GlyphDesc>; meta: GlyphMeta }>
-  getAuthenticatedNode(_: { userId: UserId }): Promise<undefined | { node: NodeGlyph; meta: GlyphMeta }>
-
-  readNode<GlyphDesc extends GlyphDescriptor<'node'>>(_: {
-    identifier: GlyphIdentifier<'node'>
-  }): Promise<undefined | { node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }>
-}
-
-export type Routes = {
-  getMyUserNode: SubTopo<void, undefined | { node: NodeGlyph }>
-  read: {
-    node: SubTopo<{ identifier: GlyphIdentifier<'node'> }, undefined | { node: NodeGlyph }>
-  }
-}
-
-/* 
-declare const lib: Lib
-;async () => {
-  type MyGDefMap = GlyphDefsMap<{
-    NA: { kind: 'node'; type: { na: string } }
-    NB: { kind: 'node'; type: { nb: number } }
-    EA: { kind: 'edge'; type: { ea: number } }
-    EB: { kind: 'edge'; type: { eb: string } }
-  }>
-  const { EA, EB, NA, NB } = await lib.ensureGlyphs<MyGDefMap>({
-    defs: { NA: { kind: 'node' }, NB: { kind: 'node' }, EA: { kind: 'edge' }, EB: { kind: 'edge' } },
-  })
-  const na = await lib.createNode(NA, { na: '' }, { performerNode: '/' })
-  const nb = await lib.createNode(NB, { nb: 1, _key: '11' }, { performerNode: { _type: '', _key: '' } })
-  nb.node.nb.toExponential()
-  na.node.na.charAt(1)
-  const ea = await lib.createEdge(EA, { ea: 0 }, { _from: na.node._id, _to: nb.node._id }, { performerNode: '/' })
-  const eb = await lib.createEdge(EB, { eb: 'null ' }, { _from: na.node._id, _to: nb.node._id }, { performerNode: '/' })
-  eb.edge.eb.charAt(0)
-  ea.edge.ea.toExponential()
-}
- */
