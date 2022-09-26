@@ -1,5 +1,5 @@
-import { sysDB } from '../main.mjs'
 import { QueryReq } from '../types.mjs'
+import { sysDB } from './db.mjs'
 
 export async function query(dbName: string, { q, bindVars, opts }: QueryReq) {
   const db = sysDB.database(dbName)

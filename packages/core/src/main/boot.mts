@@ -16,8 +16,9 @@ export async function boot(cfg: BootCfg) {
 
   await sysconfig.packages.reduce<Promise<void>>(async (prev, { pkgId }) => {
     await prev
+    console.log(`-- connecting  ${pkgId.name}@${pkgId.version} ... --`)
     await sys.pkgMng.getMain({ pkgId })
-    console.log(`-- connected pkg ${pkgId.name}@${pkgId.version} --\n`)
+    console.log(`-- CONNECTED ${pkgId.name}@${pkgId.version}  --\n`)
 
     return
   }, Promise.resolve())

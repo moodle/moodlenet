@@ -1,8 +1,7 @@
 import arangojs from 'arangojs/index.js'
 import assert from 'assert'
-import { sysDB } from '../main.mjs'
 import { CollectionDef, CollectionDefOptMap, CollectionHandle } from '../types.mjs'
-import { ensureDB } from './db.mjs'
+import { ensureDB, sysDB } from './db.mjs'
 
 export async function ensure(dbName: string, { defs }: { defs: CollectionDefOptMap }) {
   const { /* created, */ db } = await ensureDB(dbName)

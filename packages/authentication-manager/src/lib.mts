@@ -1,6 +1,7 @@
 import { ApiCtx, PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
-import { cryptoPkgApis, env } from './main.mjs'
+import { cryptoPkgApis } from './arangoPkgApis.mjs'
+import { env } from './init.mjs'
 import * as store from './store.mjs'
 import { ClientSession, SessionToken } from './types.mjs'
 
