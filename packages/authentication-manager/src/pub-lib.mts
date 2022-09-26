@@ -16,21 +16,21 @@ export async function getSessionToken({ uid, pkgId }: { uid: string; pkgId: PkgI
 export async function getClientSession({ token }: { token: string }) {
   const clientSession = await decryptClientSession(token)
   if (!clientSession) {
-    return { success: false }
+    return { success: false } as const
   }
 
-  return { success: true, clientSession }
+  return { success: true, clientSession } as const
 }
 
-export async function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }) {
+export function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }): ClientSession | undefined {
   return ctx[`@moodlenet/authentication-manager`]?.clientSession
 }
 
-export async function setApiCtxClientSession({ authToken, ctx }: { authToken: string | undefined; ctx: FloorApiCtx }) {
-  if (!authToken) {
+export async function setApiCtxClientSession({ token, ctx }: { token: string | undefined; ctx: FloorApiCtx }) {
+  if (!token) {
     return
   }
-  const data = await getClientSession({ token: authToken })
+  const data = await getClientSession({ token })
   if (!data.success) {
     return
   }
@@ -38,10 +38,12 @@ export async function setApiCtxClientSession({ authToken, ctx }: { authToken: st
 
   ctx['@moodlenet/authentication-manager'] = { clientSession }
 }
+
 export async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
   const { encrypted: sessionToken } = await cryptoPkgApis('std/encrypt')({})({ payload: JSON.stringify(clientSession) })
   return sessionToken
 }
+
 async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
     const decryptRes = await cryptoPkgApis('std/decrypt')({})({ encrypted: token })
