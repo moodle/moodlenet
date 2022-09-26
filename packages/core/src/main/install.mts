@@ -63,7 +63,7 @@ export const defaultCorePackages = {
   'key-value-store': '0.1.0',
   'crypto': '0.1.0',
   'authentication-manager': '0.1.0',
-  // 'http-server': '0.1.0',
+  'http-server': '0.1.0',
   // 'organization': '0.1.0',
   // 'content-graph': '0.1.0',
   // 'react-app': '0.1.0',

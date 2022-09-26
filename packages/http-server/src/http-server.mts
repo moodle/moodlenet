@@ -1,20 +1,15 @@
-import type { ExtShell } from '@moodlenet/core'
 import cookieParser from 'cookie-parser'
 import express, { Application } from 'express'
 import type { Server } from 'http'
 import gracefulShutdown from 'http-graceful-shutdown'
-import type { MNHttpServerExt, MountAppItem, PriMsgBaseUrl, SessionTokenCookieName } from '.'
-import { makeExtPortsApp } from './ext-ports-app'
+import { makeExtPortsApp } from './ext-ports-app/make.mjs'
+import { env } from './init.mjs'
+import type { MountAppItem, SessionTokenCookieName } from './types.mjs'
 
-type Cfg = { shell: ExtShell<MNHttpServerExt>; port: number }
-
-const basePriMsgUrl: PriMsgBaseUrl = '/_/_'
 const SESSION_TOKEN_COOKIE_NAME: SessionTokenCookieName = 'mn-session'
-// const SESSION_TOKEN_HEADER_NAME: SessionTokenHeaderName = SESSION_TOKEN_COOKIE_NAME
 
-export function createHttpServer({ shell, port }: Cfg) {
-  // const [, auth] = shell.deps
-  const extPortsApp = makeExtPortsApp(shell)
+export function createHttpServer() {
+  const extPortsApp = makeExtPortsApp()
 
   let server: Server
   let app: Application
@@ -30,7 +25,7 @@ export function createHttpServer({ shell, port }: Cfg) {
 
   function mountApp(mountItem: MountAppItem) {
     mountedApps = [...mountedApps, mountItem]
-    app.use(mountItem.mountPath, mountItem.getApp())
+    app.use(mountItem.mountPath, mountItem.mountAppArgs.getApp(express))
     return () => {
       mountedApps = mountedApps.filter(_ => _ !== mountItem)
       return restart()
@@ -60,17 +55,17 @@ export function createHttpServer({ shell, port }: Cfg) {
         req.moodlenet.authToken = req.cookies[SESSION_TOKEN_COOKIE_NAME]
         next()
       })
-    app.use(basePriMsgUrl, extPortsApp)
-    mountedApps.forEach(({ getApp, mountPath }) => {
-      app.use(mountPath, getApp())
+    app.use(extPortsApp)
+    mountedApps.forEach(({ mountAppArgs, mountPath }) => {
+      app.use(mountPath, mountAppArgs.getApp(express))
     })
     return new Promise<void>((resolve, reject) => {
-      console.info(`Starting HTTP-lifecycle server on port ${port}`)
-      server = app.listen(port, function () {
+      console.info(`Starting HTTP-lifecycle server on port ${env.port}`)
+      server = app.listen(env.port, function () {
         arguments[0] ? reject(arguments[0]) : resolve()
       })
       shutdownGracefully = gracefulShutdown(server, { development: false, forceExit: false, timeout: 1000 })
-      console.info(`HTTP-lifecycle listening on port ${port} :)`)
+      console.info(`HTTP-lifecycle listening on port ${env.port} :)`)
     })
   }
 }
