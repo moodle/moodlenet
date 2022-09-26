@@ -1,5 +1,6 @@
 import { defApi } from '@moodlenet/core'
-import { getClientSession, getRootSessionToken, getSessionToken, registerUser } from './lib.mjs'
+import { getRootSessionToken, registerUser } from './lib.mjs'
+import { getClientSession, getSessionToken } from './pub-lib.mjs'
 
 export default {
   registerUser: defApi(
