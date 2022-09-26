@@ -7,6 +7,7 @@ export const ciccio = defApi(
       return { success: true, x: _.x, str: _.str }
     },
   function validate(...args) {
+    // console.log(args)
     return !!args.length
   },
 )
