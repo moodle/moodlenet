@@ -1,9 +1,5 @@
 import assert from 'assert'
-import { dirname } from 'path'
-import { packageDirectorySync } from 'pkg-dir'
-import { fileURLToPath } from 'url'
-import { getPackageInfo } from '../pkg-mng/lib.mjs'
-import { PkgIdentifier } from '../types.mjs'
+import { API_DEF_SYMBOL, ensureRegisterPkg, getPkgEntryByPkgSym, registerPkgApis } from './connect/lib.mjs'
 import {
   ApiDef,
   ApiDefPaths,
@@ -12,55 +8,40 @@ import {
   ApiFnType,
   ArgsValidation,
   CtxApiFn,
-  FlattenApiDefs,
   FloorApiCtx,
-  PkgConnection,
+  PkgApisRef,
   PkgModuleRef,
-  PkgRef,
 } from './types.mjs'
 
-const CONNECTION_SYMBOL: unique symbol = Symbol('CONNECTION_SYMBOL')
-
-export function connect<_ApiDefs extends ApiDefs = {}>(
+export function pkgApis<_ApiDefs extends ApiDefs = {}>(
   pkg_module_ref: PkgModuleRef,
   apiDefs: _ApiDefs,
-): PkgRef<_ApiDefs> {
-  const { pkgInfo } = getModulePackageReferences(pkg_module_ref)
-  assert(!getConnectionByMetaOrModule(pkg_module_ref), `can't connect ${pkgInfo.pkgId.name} more than once !`)
-  const flatApiDefs = flattenApiDefs<_ApiDefs>(apiDefs)
-  // console.log({ apisRefs: flattenApiDefs }, inspect(apiDefs))
-
-  const connection: PkgConnection<_ApiDefs> = {
-    pkgInfo,
-    apiDefs,
-    flatApiDefs,
+): PkgApisRef<_ApiDefs> {
+  const { pkgSym } = registerPkgApis(pkg_module_ref, apiDefs)
+  return {
+    pkgSym,
   }
-
-  registerConnection(connection)
-  console.log(`\n.... connecting pkg ${pkgInfo.pkgId.name}@${pkgInfo.pkgId.version}`)
-
-  const pkgRef: PkgRef<_ApiDefs> = {
-    pkgInfo,
-  }
-  return pkgRef
 }
 
-export function pkgApis<_ApiDefs extends ApiDefs>(caller_pkg_module_ref: PkgModuleRef, targetPkgRef: PkgRef<_ApiDefs>) {
-  const { pkgInfo: callerPkgInfo } = getModulePackageReferences(caller_pkg_module_ref)
+export function useApis<_ApiDefs extends ApiDefs>(
+  caller_pkg_module_ref: PkgModuleRef,
+  targetPkgApisRef: PkgApisRef<_ApiDefs>,
+) {
+  const { pkgInfo: callerPkgInfo } = ensureRegisterPkg(caller_pkg_module_ref)
 
-  const callerConnection = getConnectionByPkgId(callerPkgInfo.pkgId)
-  assert(
-    callerConnection,
-    `cannot use apis() for non connected packages ${callerPkgInfo.pkgId.name}, caller:${getModulePackageFilename(
-      caller_pkg_module_ref,
-    )}`,
-  )
-  const targetConnection = getConnectionByPkgId(targetPkgRef.pkgInfo.pkgId)
-  assert(targetConnection, `cannot call apis() on non connected target ${callerConnection?.pkgInfo.pkgId.name}`)
+  // const callerConnection = getConnectionByPkgId(callerPkgInfo.pkgId)
+  // assert(
+  //   callerConnection,
+  //   `cannot use apis() for non connected packages ${callerPkgInfo.pkgId.name}, caller:${getPkgModuleFilename(
+  //     caller_pkg_module_ref,
+  //   )}`,
+  // )
+  const targetPkgEntry = getPkgEntryByPkgSym(targetPkgApisRef.pkgSym)
+  assert(targetPkgEntry, `cannot call apis() on non connected target ${targetPkgApisRef}`)
 
   return function locateApi<Path extends ApiDefPaths<_ApiDefs>>(path: Path) {
-    const apiDef = targetConnection.flatApiDefs[path]
-    assert(apiDef, `no apiDef in ${targetPkgRef.pkgInfo.pkgId.name}::${path}`)
+    const apiDef = targetPkgEntry.flatApiDefs[path]
+    assert(apiDef, `no apiDef in ${targetPkgEntry.pkgInfo.pkgId.name}::${path}`)
 
     return function setCallApiOpts({ ctx = {} }: { ctx?: FloorApiCtx }): ApiFnType<_ApiDefs, Path> {
       return async function callApi(...args: any[]) {
@@ -69,9 +50,7 @@ export function pkgApis<_ApiDefs extends ApiDefs>(caller_pkg_module_ref: PkgModu
         if (!argValidity.valid) {
           throw new TypeError(`invalid api params, msg: ${argValidity.msg ?? 'no details'}`)
         }
-        return apiDef.api({ ...ctx, caller: { pkgInfo: callerConnection.pkgInfo, moduleRef: caller_pkg_module_ref } })(
-          ...args,
-        )
+        return apiDef.api({ ...ctx, caller: { pkgInfo: callerPkgInfo, moduleRef: caller_pkg_module_ref } })(...args)
       } as ApiFnType<_ApiDefs, Path>
     }
   }
@@ -81,60 +60,6 @@ export function defApi<_ApiFn extends ApiFn>(api: CtxApiFn<_ApiFn>, argsValidati
   return {
     api,
     argsValidation,
-    ...{ [CONNECTION_SYMBOL]: CONNECTION_SYMBOL },
+    ...{ [API_DEF_SYMBOL]: API_DEF_SYMBOL },
   }
-}
-
-/*
- * util
- */
-function isNodeModule(pkg_module_ref: PkgModuleRef): pkg_module_ref is NodeModule {
-  return 'exports' in pkg_module_ref
-}
-
-function flattenApiDefs<_ApiDefs extends ApiDefs>(apiDefs: _ApiDefs, subPath = ''): FlattenApiDefs<_ApiDefs> {
-  return Object.entries(apiDefs).reduce((_, [key, val]) => {
-    return isApiDef(val) ? { ..._, [`${subPath}${key}`]: val } : { ..._, ...flattenApiDefs(val, `${key}/`) }
-  }, {})
-}
-
-function isApiDef(ctxApiEntry: ApiDefs | ApiDef<any> | undefined): ctxApiEntry is ApiDef<any> {
-  return (
-    !!ctxApiEntry && (ctxApiEntry as any)[CONNECTION_SYMBOL] === CONNECTION_SYMBOL
-    // 'api' in ctxApiEntry &&
-    // 'function' === typeof ctxApiEntry.api &&
-    // 'argsValidation' in ctxApiEntry &&
-    // 'function' === typeof ctxApiEntry.argsValidation &&
-  )
-}
-
-function getModulePackageFilename(pkg_module_ref: PkgModuleRef) {
-  return isNodeModule(pkg_module_ref) ? pkg_module_ref.id : fileURLToPath(pkg_module_ref.url)
-}
-function getModulePackageReferences(pkg_module_ref: PkgModuleRef) {
-  const moduleFilename = getModulePackageFilename(pkg_module_ref)
-
-  const moduleDir = dirname(moduleFilename)
-  const pkgRootDir = packageDirectorySync({ cwd: moduleDir })
-  assert(pkgRootDir, `no pkgRootDir found for ${moduleDir}`)
-  const pkgInfo = getPackageInfo({ pkgRootDir })
-
-  return { moduleFilename, moduleDir, pkgRootDir, pkgInfo }
-}
-/*
- * pkg Connections registry
- */
-const connections: Record<string, PkgConnection<any>> = {}
-
-function getConnectionByPkgId(pkgId: PkgIdentifier) {
-  return connections[pkgId.name]
-}
-function getConnectionByMetaOrModule(pkg_module_ref: PkgModuleRef) {
-  const {
-    pkgInfo: { pkgId },
-  } = getModulePackageReferences(pkg_module_ref)
-  return getConnectionByPkgId(pkgId)
-}
-function registerConnection(connection: PkgConnection<any>) {
-  connections[connection.pkgInfo.pkgId.name] = connection
 }

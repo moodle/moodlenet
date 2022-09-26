@@ -1,5 +1,5 @@
 import arangoPkgRef from '@moodlenet/arangodb'
-import { pkgApis, PkgModuleRef } from '@moodlenet/core'
+import { PkgModuleRef, useApis } from '@moodlenet/core'
 import { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 export default async function storeFactory<TMap extends KVSTypeMap>({
@@ -7,7 +7,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
 }: {
   consumerModuleRef: PkgModuleRef
 }): Promise<KVStore<TMap>> {
-  const arangoSrv = pkgApis(consumerModuleRef, arangoPkgRef)
+  const arangoSrv = useApis(consumerModuleRef, arangoPkgRef)
   const query = arangoSrv('query')({})
 
   await arangoSrv('ensureCollections')({})({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })

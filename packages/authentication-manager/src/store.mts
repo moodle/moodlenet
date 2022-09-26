@@ -1,4 +1,4 @@
-import { arangoPkgApis } from './main.mjs'
+import { arangoPkgApis } from './arangoPkgApis.mjs'
 import { ProviderId, User, UserId } from './store/types.mjs'
 
 export async function getByProviderId(pId: ProviderId): Promise<User | undefined> {

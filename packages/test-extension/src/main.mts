@@ -1,6 +1,6 @@
-import { connect } from '@moodlenet/core'
+import { pkgApis } from '@moodlenet/core'
 import apis from './apis.mjs'
-const connection = await connect(import.meta, apis)
+const connection = await pkgApis(import.meta, apis)
 
 export default connection
 

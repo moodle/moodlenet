@@ -8,16 +8,15 @@ export type ArgsValidity =
   | { valid: false; msg?: string }
 export type ArgsValidation = (...args: unknown[]) => ArgsValidity | Promise<ArgsValidity>
 
-export type FlattenApiDefs<_ApiDefs extends ApiDefs> = Record<string, ApiDef<any>>
+export type FlatApiDefs = Record<string, ApiDef<any>>
 
-export type PkgConnection<_ApiDefs extends ApiDefs> = {
+export type PkgEntry = {
   pkgInfo: PackageInfo
-  apiDefs: _ApiDefs
-  flatApiDefs: FlattenApiDefs<_ApiDefs>
+  apiDefs: ApiDefs
+  flatApiDefs: FlatApiDefs
 }
-export type PkgRef<_ApiDefs extends ApiDefs> = {
-  pkgInfo: PackageInfo
-  // _?: _ApiDefs
+export type PkgApisRef<_ApiDefs extends ApiDefs> = {
+  pkgSym: symbol
 }
 
 export type ApiDef<_ApiFn extends ApiFn> = {

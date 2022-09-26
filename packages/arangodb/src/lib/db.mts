@@ -1,6 +1,8 @@
 import { PkgIdentifier } from '@moodlenet/core'
-import { sysDB } from '../main.mjs'
+import { Database } from 'arangojs/database.js'
+import { env } from '../init.mjs'
 
+export const sysDB = new Database({ ...env.connectionCfg })
 export async function ensureDB(dbName: string) {
   const exists = (await sysDB.databases()).find(db => db.name === dbName)
   const db = exists ?? (await sysDB.createDatabase(dbName))
