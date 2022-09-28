@@ -32,7 +32,7 @@ const connectPkgModulesFile = {
   // target: resolve(tmpDir, 'ConnectPkgModules.tsx'),
 }
 
-httpSrvPkgApis('mount')({})({
+httpSrvPkgApis('mount')({
   getApp: function getApp(express) {
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './public/index.html' })

@@ -41,7 +41,7 @@ export function makeExtPortsApp() {
       return
     }
     const apis = useApis(import.meta, targetPkgApisRef)
-    apis(path)({ ctx: setApiCtxClientSession({ ctx: { primary: true }, token: req.moodlenet.authToken }) })(
+    apis(path, { ctx: setApiCtxClientSession({ ctx: { primary: true }, token: req.moodlenet.authToken }) })(
       ...(apiReqBody?.args ?? []),
     ).then(
       apiResponse => {

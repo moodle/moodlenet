@@ -34,6 +34,7 @@ export type ApiDefs = {
   [k: string]: ApiDef<any> | ApiDefs
 }
 
+export type CallApiOpts = { ctx?: FloorApiCtx }
 export type Apis<Defs extends ApiDefs> = {
   [k in keyof Defs]: Defs[k] extends ApiDefs
     ? Apis<Defs[k]>

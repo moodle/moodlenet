@@ -41,13 +41,13 @@ export async function setApiCtxClientSession({ token, ctx }: { token: string | u
 }
 
 export async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
-  const { encrypted: sessionToken } = await cryptoPkgApis('std/encrypt')({})({ payload: JSON.stringify(clientSession) })
+  const { encrypted: sessionToken } = await cryptoPkgApis('std/encrypt')({ payload: JSON.stringify(clientSession) })
   return sessionToken
 }
 
 async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
-    const decryptRes = await cryptoPkgApis('std/decrypt')({})({ encrypted: token })
+    const decryptRes = await cryptoPkgApis('std/decrypt')({ encrypted: token })
     assert(decryptRes.valid)
     const clientSession: ClientSession = JSON.parse(decryptRes.payload)
     assert(isClientSession(clientSession))
