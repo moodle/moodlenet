@@ -13,7 +13,7 @@ export type MainLayoutProps = {
   children?: ReactNode
 }
 
-const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children }) => {
+export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children }) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
 

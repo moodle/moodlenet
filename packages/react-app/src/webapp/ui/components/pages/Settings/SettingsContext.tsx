@@ -1,3 +1,4 @@
+import { OrganizationData } from '@moodlenet/organization'
 import {
   ComponentType,
   createContext,
@@ -14,12 +15,6 @@ import { AppearanceData } from '../../../../../types.mjs'
 import { MainContext } from '../../../../MainContext.js'
 // import lib from '../../../../main-lib'
 import { baseStyle, BaseStyleType } from '../../../styles/config.js'
-
-export type OrganizationData = {
-  instanceName: string
-  landingTitle: string
-  landingSubtitle: string
-}
 
 export type StyleType = BaseStyleType & CSSProperties
 

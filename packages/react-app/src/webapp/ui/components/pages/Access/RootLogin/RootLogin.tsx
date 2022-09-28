@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { MainContext } from '../../../../../MainContext.js'
 // import lib from '../../../../../main-lib'
-import { AuthCtx } from '../../../../../main-lib/auth.js'
+import { AuthCtx } from '../../../../../web-lib/auth.js'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card.js'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField.js'

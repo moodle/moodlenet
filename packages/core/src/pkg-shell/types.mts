@@ -17,6 +17,7 @@ export type PkgEntry = {
 }
 export type PkgConnection<_ApiDefs extends ApiDefs> = {
   pkgSym: symbol
+  pkgInfo: PackageInfo
   pkgId: PkgIdentifier
 }
 
