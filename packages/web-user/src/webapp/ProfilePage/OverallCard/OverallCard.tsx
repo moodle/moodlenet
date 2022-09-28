@@ -1,6 +1,7 @@
 // import { t, Trans } from '@lingui/macro'
-import { FC, useContext } from 'react'
-import { MainContext } from '../../MainModule'
+import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
+import { Card } from '@moodlenet/react-app/ui.mjs'
+import { FC } from 'react'
 // import { Href, Link } from '../../../../elements/link'
 import './OverallCard.scss'
 
@@ -24,30 +25,25 @@ export const OverallCard: FC<OverallCardProps> = ({
   showIcons,
   noCard,
 }) => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { Card, icons } = reactApp.ui.components
-  const { Grade: GradeIcon, LibraryBooks: LibraryBooksIcon, PermIdentity: PermIdentityIcon } = icons
-
   return (
     <Card className="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
       {showIcons ? (
         <div className="overall-container">
           <div className="data">
             <abbr title={/* t */ `Followers`}>
-              <PermIdentityIcon />
+              <PermIdentity />
             </abbr>
             {followers}
           </div>
           <div className="data">
             <abbr title={/* t */ `Kudos`}>
-              <GradeIcon />
+              <Grade />
             </abbr>
             {kudos}
           </div>
           <div className="data">
             <abbr title={/* t */ `Resources`}>
-              <LibraryBooksIcon />
+              <LibraryBooks />
             </abbr>
             {resources}
           </div>

@@ -1,3 +1,6 @@
+import type graphConn from '@moodlenet/content-graph'
+import { ReactAppMainComponentProps } from '../../../react-app/lib/types.mjs'
+
 export type Url = string
 export type Category = string
 export type Type = string
@@ -15,3 +18,6 @@ export type ProfileFormValues = {
   backgroundImage?: Url | File | null
   avatarImage?: Url | File | null
 }
+
+export type MyUsesPkgs = [typeof graphConn]
+export type MainContextT = ReactAppMainComponentProps<MyUsesPkgs> & {}
