@@ -7,4 +7,4 @@ import { ContentGraphKVStore } from './types.mjs'
 export const arangoApis = useApis(import.meta, arangoApiRef)
 export const authMngApis = useApis(import.meta, authMngApiRef)
 export const kvStoreApis = useApis(import.meta, kvsApiRef)
-export const kvStore = await kvStoreApis('getStore')({})<ContentGraphKVStore>()
+export const kvStore = await kvStoreApis('getStore')<ContentGraphKVStore>()

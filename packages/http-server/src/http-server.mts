@@ -24,7 +24,11 @@ export function createHttpServer() {
 
   function mountApp(mountItem: MountAppItem) {
     mountedApps = [...mountedApps, mountItem]
-    console.log(`http mountApp ${mountItem.mountAppArgs.mountOnAbsPath ?? mountItem.mountPath}`)
+    console.log(
+      `HTTP register mountApp ${mountItem.mountAppArgs.mountOnAbsPath ?? mountItem.mountPath} for ${
+        mountItem.pkgInfo.pkgId.name
+      }`,
+    )
     app.use(mountItem.mountPath, mountItem.mountAppArgs.getApp(express))
     restart()
     return () => {
@@ -57,8 +61,8 @@ export function createHttpServer() {
         next()
       })
     app.use(`${BASE_APIS_URL}/`, extPortsApp)
-    mountedApps.forEach(({ mountAppArgs, mountPath }) => {
-      console.log(`http mounting ${mountPath}`)
+    mountedApps.forEach(({ mountAppArgs, mountPath, pkgInfo }) => {
+      console.log(`http mounting ${mountPath} for ${pkgInfo.pkgId.name}`)
       app.use(mountPath, mountAppArgs.getApp(express))
     })
     return new Promise<void>((resolve, reject) => {

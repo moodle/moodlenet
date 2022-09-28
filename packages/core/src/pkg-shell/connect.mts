@@ -7,8 +7,8 @@ import {
   ApiFn,
   ApiFnType,
   ArgsValidation,
+  CallApiOpts,
   CtxApiFn,
-  FloorApiCtx,
   PkgConnection,
   PkgModuleRef,
 } from './types.mjs'
@@ -43,20 +43,21 @@ export function useApis<_ApiDefs extends ApiDefs>(
   const targetPkgEntry = getPkgEntryByPkgSym(targetPkgApisRef.pkgSym)
   assert(targetPkgEntry, `cannot call apis() on non connected target ${targetPkgApisRef}`)
 
-  return function locateApi<Path extends ApiDefPaths<_ApiDefs>>(path: Path) {
+  return function locateApi<Path extends ApiDefPaths<_ApiDefs>>(
+    path: Path,
+    opts: CallApiOpts = {},
+  ): ApiFnType<_ApiDefs, Path> {
     const apiDef = targetPkgEntry.flatApiDefs[path]
     assert(apiDef, `no apiDef in ${targetPkgEntry.pkgInfo.pkgId.name}::${path}`)
 
-    return function setCallApiOpts({ ctx = {} }: { ctx?: FloorApiCtx }): ApiFnType<_ApiDefs, Path> {
-      return async function callApi(...args: any[]) {
-        const _argValidity = await apiDef.argsValidation(...args)
-        const argValidity = 'boolean' === typeof _argValidity ? { valid: _argValidity, msg: undefined } : _argValidity
-        if (!argValidity.valid) {
-          throw new TypeError(`invalid api params, msg: ${argValidity.msg ?? 'no details'}`)
-        }
-        return apiDef.api({ ...ctx, caller: { pkgInfo: callerPkgInfo, moduleRef: caller_pkg_module_ref } })(...args)
-      } as ApiFnType<_ApiDefs, Path>
-    }
+    return async function callApi(...args: any[]) {
+      const _argValidity = await apiDef.argsValidation(...args)
+      const argValidity = 'boolean' === typeof _argValidity ? { valid: _argValidity, msg: undefined } : _argValidity
+      if (!argValidity.valid) {
+        throw new TypeError(`invalid api params, msg: ${argValidity.msg ?? 'no details'}`)
+      }
+      return apiDef.api({ ...opts.ctx, caller: { pkgInfo: callerPkgInfo, moduleRef: caller_pkg_module_ref } })(...args)
+    } as ApiFnType<_ApiDefs, Path>
   }
 }
 
