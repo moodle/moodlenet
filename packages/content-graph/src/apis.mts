@@ -1,7 +1,7 @@
 import { getApiCtxClientSession } from '@moodlenet/authentication-manager'
 import { defApi } from '@moodlenet/core'
-import { getAuthenticatedNode, readNode } from './lib.mjs'
-import { GlyphDescriptor, GlyphIdentifier } from './types.mjs'
+import { ensureGlyphs, getAuthenticatedNode, readNode } from './lib.mjs'
+import { GlyphDefOptMap, GlyphDefsMap, GlyphDescriptor, GlyphIdentifier } from './types.mjs'
 
 export default {
   getMyUserNode: defApi(
@@ -29,4 +29,14 @@ export default {
       () => true,
     ),
   },
+  ensureGlyphs: defApi(
+    ctx =>
+      async <Defs extends GlyphDefsMap>({ defs }: { defs: GlyphDefOptMap<Defs> }) => {
+        return ensureGlyphs({
+          defs,
+          pkgId: ctx.caller.pkgInfo.pkgId,
+        })
+      },
+    () => true,
+  ),
 }

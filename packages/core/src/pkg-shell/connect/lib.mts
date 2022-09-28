@@ -66,7 +66,7 @@ export function getPkgEntryByPkgSym(pkgSym: symbol) {
 }
 export function getPkgApisRefByPkgName(pkgName: PkgName): PkgConnection<any> | undefined {
   const pkgEntry = getPkgEntryByPkgName(pkgName)
-  return pkgEntry && { pkgSym: pkgEntry.pkgSym, pkgId: pkgEntry.pkgInfo.pkgId }
+  return pkgEntry && { pkgSym: pkgEntry.pkgSym, pkgInfo: pkgEntry.pkgInfo, pkgId: pkgEntry.pkgInfo.pkgId }
 }
 // export function getPkgSymbolPkgModuleRef(pkg_module_ref: PkgModuleRef) {
 //   const {

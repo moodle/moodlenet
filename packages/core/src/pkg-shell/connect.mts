@@ -17,13 +17,11 @@ export function connectPkg<_ApiDefs extends ApiDefs = {}>(
   pkg_module_ref: PkgModuleRef,
   apiDefs: _ApiDefs,
 ): PkgConnection<_ApiDefs> {
-  const {
-    pkgSym,
-    pkgInfo: { pkgId },
-  } = registerPkgApis(pkg_module_ref, apiDefs)
+  const { pkgSym, pkgInfo } = registerPkgApis(pkg_module_ref, apiDefs)
   return {
     pkgSym,
-    pkgId,
+    pkgInfo,
+    pkgId: pkgInfo.pkgId,
   }
 }
 
