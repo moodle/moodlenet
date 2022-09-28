@@ -1,9 +1,9 @@
-import CallMadeIcon from '@material-ui/icons/CallMade'
-import { CSSProperties, FC, useContext, useState } from 'react'
+import { CallMade as CallMadeIcon } from '@material-ui/icons'
+import { FC, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { MainContext } from '../../../../../MainContext'
-import Card from '../../../atoms/Card/Card'
-import { SimpleLayout } from '../../../layout'
+import { MainContext } from '../../../../../MainContext.js'
+import Card from '../../../atoms/Card/Card.js'
+import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
@@ -20,14 +20,14 @@ export const SignupBody: FC<SignupProps> = ({}) => {
   // const shouldShowErrors =
   //   !!form.submitCount && (!!signupErrorMessage || !form.isValid)
   const {
-    registries: {
-      auth: { signup },
-    },
+    // registries: {
+    //   auth: { signup },
+    // },
   } = useContext(MainContext)
-  const { registry: signupRegs } = signup.useRegistry()
+  // const { registry: signupRegs } = signup.useRegistry()
 
-  const defaultSignupEntry = signupRegs.entries[0]
-  const [currSignupEntry, chooseSignupEntry] = useState(defaultSignupEntry)
+  // const defaultSignupEntry = signupRegs.entries[0]
+  // const [currSignupEntry, chooseSignupEntry] = useState(defaultSignupEntry)
   //useEffect(() => chooseSignupItem(defaultSignupEntry), [defaultSignupEntry])
 
   return (
@@ -44,11 +44,11 @@ export const SignupBody: FC<SignupProps> = ({}) => {
         <Card className="signup-card">
           <div className="content">
             <div className="title">Sign up</div>
-            {currSignupEntry ? <currSignupEntry.item.Panel /> : <div>No Auth available</div>}
-            {signupRegs.entries.length > 1 && (
+            {/* {currSignupEntry ? <currSignupEntry.item.Panel /> : <div>No Auth available</div>} */}
+            {/* {signupRegs.entries.length > 1 && (
               <>
                 <div>
-                  {/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}
+                  {/ * <span style={{ float: 'left', marginRight: '10px' }}>use:</span> * /}
                   {signupRegs.entries.map((signupEntry, index) => {
                     const isCurrent = signupEntry === currSignupEntry
                     const css: CSSProperties = {
@@ -67,7 +67,7 @@ export const SignupBody: FC<SignupProps> = ({}) => {
                   })}
                 </div>
               </>
-            )}
+            )} */}
 
             {/* <div className="bottom">
               <div className="left"> */}

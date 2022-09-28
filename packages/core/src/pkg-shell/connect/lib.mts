@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 import { getPackageInfo } from '../../pkg-mng/lib.mjs'
 import { PkgName } from '../../pkg-mng/types.mjs'
 import { PackageInfo } from '../../types.mjs'
-import { ApiDef, ApiDefs, FlatApiDefs, PkgApisRef, PkgModuleRef } from '../types.mjs'
+import { ApiDef, ApiDefs, FlatApiDefs, PkgConnection, PkgModuleRef } from '../types.mjs'
 
 export const API_DEF_SYMBOL: unique symbol = Symbol('CONNECTION_SYMBOL')
 
@@ -64,9 +64,9 @@ export function getPkgEntryByPkgName(pkgName: PkgName) {
 export function getPkgEntryByPkgSym(pkgSym: symbol) {
   return PKG_ENTRIES.find(_ => _.pkgSym === pkgSym)
 }
-export function getPkgApisRefByPkgName(pkgName: PkgName): PkgApisRef<any> | undefined {
+export function getPkgApisRefByPkgName(pkgName: PkgName): PkgConnection<any> | undefined {
   const pkgEntry = getPkgEntryByPkgName(pkgName)
-  return pkgEntry && { pkgSym: pkgEntry.pkgSym }
+  return pkgEntry && { pkgSym: pkgEntry.pkgSym, pkgId: pkgEntry.pkgInfo.pkgId }
 }
 // export function getPkgSymbolPkgModuleRef(pkg_module_ref: PkgModuleRef) {
 //   const {

@@ -2,8 +2,10 @@ import { PkgIdentifier } from '@moodlenet/core'
 import { env } from './init.mjs'
 import { encryptClientSession } from './pub-lib.mjs'
 import * as store from './store.mjs'
+import { SessionToken } from './types.mjs'
 
-export async function getRootSessionToken({ password }: { password: string }) {
+type GetRootSessionTokenResp = { success: false } | { success: true; sessionToken: SessionToken }
+export async function getRootSessionToken({ password }: { password: string }): Promise<GetRootSessionTokenResp> {
   if (!(env.rootPassword && password)) {
     return { success: false }
   } else if (env.rootPassword === password) {

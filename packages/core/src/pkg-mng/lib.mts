@@ -35,7 +35,7 @@ export function getSafePackageJson({ pkgRootDir }: { pkgRootDir: string }): Safe
   return safePackageJson
 }
 export function getPackageIdIn({ pkgRootDir }: { pkgRootDir: string }): PkgIdentifier {
-  const safePackageJson: SafePackageJson = getSafePackageJson({ pkgRootDir: pkgRootDir })
+  const safePackageJson: SafePackageJson = getSafePackageJson({ pkgRootDir })
   return pkgIdOf({ safePackageJson })
 }
 export function pkgIdOf({ safePackageJson }: { safePackageJson: SafePackageJson }): PkgIdentifier {

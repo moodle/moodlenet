@@ -2,14 +2,16 @@ import { setApiCtxClientSession } from '@moodlenet/authentication-manager'
 import { getPkgApisRefByPkgName, PkgName, useApis } from '@moodlenet/core'
 import express, { json } from 'express'
 import { format } from 'util'
-import { BASE_APIS_URL } from './lib.mjs'
+import { HttpApiResponse } from '../types.mjs'
 
 // getPkgApisRefByPkgName
 
 export function makeExtPortsApp() {
   const srvApp = express()
   srvApp.use(json())
-  srvApp.post(`/${BASE_APIS_URL}/*`, async (req, res, next) => {
+  // srvApp.post(`${BASE_APIS_URL}/*`, async (req, res, next) => {
+  srvApp.post(`/*`, async (req, res, next) => {
+    // console.log({ url: req.url })
     /*
     gets ext name&ver 
     checks ext enabled and version match (core port)
@@ -17,7 +19,7 @@ export function makeExtPortsApp() {
     pushes msg
     */
 
-    const urlTokens = req.path.split('/').slice(2)
+    const urlTokens = req.path.split('/').slice(1)
     if (urlTokens.length < 2) {
       return next()
     }
@@ -43,7 +45,10 @@ export function makeExtPortsApp() {
       ...(apiReqBody?.args ?? []),
     ).then(
       apiResponse => {
-        res.status(200).send(apiResponse)
+        const httpApiResponse: HttpApiResponse = {
+          response: apiResponse,
+        }
+        res.status(200).send(httpApiResponse)
       },
       err => {
         res.status(500)

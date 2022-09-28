@@ -17,19 +17,17 @@ export async function install({
   console.log('installing:', installPkgReqs)
   const sys = await getSys({ mainFolders })
 
-  const installationsPkgInfos = await Promise.all(
-    installPkgReqs.reduce<Promise<InstallResp>[]>(
-      (collect, installPkgReq) => [
-        ...collect,
-        Promise.resolve(collect[0]).then(() =>
-          sys.pkgMng.install(installPkgReq).then(installed => ({ installPkgReq, ...installed })),
-        ),
-      ],
-      [],
-    ),
-  )
+  const installationsPkgInfosThunks = installPkgReqs.map(installPkgReq => () => {
+    console.log('installing...', { installPkgReq })
+    return sys.pkgMng.install(installPkgReq).then(installResp => ({ installPkgReq, installResp }))
+  })
+  const installationsPkgInfos: { installPkgReq: InstallPkgReq; installResp: InstallResp }[] = []
+  for (const installationsPkgInfosThunk of installationsPkgInfosThunks) {
+    installationsPkgInfos.push(await installationsPkgInfosThunk())
+  }
+
   // console.log({ installationsPkgInfosc })
-  const packages = installationsPkgInfos.map<SysInstalledPkg>(({ sysInstalledPkg }) => ({
+  const packages = installationsPkgInfos.map<SysInstalledPkg>(({ installResp: { sysInstalledPkg } }) => ({
     ...sysInstalledPkg,
     env: {
       default: defaultPkgEnv(sysInstalledPkg.pkgId.name),
@@ -66,7 +64,7 @@ export const defaultCorePackages = {
   'http-server': '0.1.0',
   'organization': '0.1.0',
   'content-graph': '0.1.0',
-  // 'react-app': '0.1.0',
+  'react-app': '0.1.0',
   // 'email-service': '0.1.0',
   // 'extensions-manager': '0.1.0',
   // 'web-user': '0.1.0',
