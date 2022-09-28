@@ -9,8 +9,8 @@
 // import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
-import { FC, useContext, useLayoutEffect, useState } from 'react'
-import { MainContext } from '../../MainModule'
+import { InputTextField, Modal } from '@moodlenet/react-app/ui.mjs'
+import { FC, useLayoutEffect, useState } from 'react'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {
@@ -20,11 +20,6 @@ export type ProfileCardProps = {
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl, backgroundUrl }) => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { InputTextField, Modal } = reactApp.ui.components
-  avatarUrl = avatarUrl ?? reactApp.defaultAvatar
-
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)

@@ -1,7 +1,7 @@
-import { OverallCardProps } from './ProfilePage/OverallCard/OverallCard'
-import { ProfileCardProps } from './ProfilePage/ProfileCard/ProfileCard_orig_Bru'
-import { ProfilePageProps } from './ProfilePage/ProfilePage_orig_Bru'
-import { ProfileFormValues } from './types'
+import { OverallCardProps } from './ProfilePage/OverallCard/OverallCard.js'
+import { ProfileCardProps } from './ProfilePage/ProfileCard/ProfileCard_orig_Bru.js'
+import { ProfilePageProps } from './ProfilePage/ProfilePage_orig_Bru.js'
+import { ProfileFormValues } from './types.mjs'
 
 const overallCardProps: OverallCardProps = {
   followers: 11,

@@ -20,11 +20,20 @@ import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
 // import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
+import { Edit, Flag, Save, Share } from '@material-ui/icons'
+import {
+  FloatingMenu,
+  InputTextField,
+  Modal,
+  PrimaryButton,
+  RoundButton,
+  SecondaryButton,
+  TertiaryButton,
+} from '@moodlenet/react-app/ui.mjs'
+import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
 import { Dispatch, FC, SetStateAction, useContext, useLayoutEffect, useRef, useState } from 'react'
-import { MainContext } from '../../MainModule'
-import { ProfileFormValues } from '../../types'
+import { ProfileFormValues } from '../../types.mjs'
 import './ProfileCard.scss'
-
 // const { useImageUrl } = lib.ui.lib
 
 export type ProfileCardProps = {
@@ -75,18 +84,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   setShowUrlCopiedAlert,
   setIsReporting,
 }) => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { RoundButton, PrimaryButton, InputTextField, SecondaryButton, TertiaryButton, FloatingMenu, Modal, icons } =
-    reactApp.ui.components
-  const { Save: SaveIcon, Edit: EditIcon, Share: ShareIcon, Flag: FlagIcon } = icons
-
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-  const { clientSessionData } = useContext(reactApp.AuthCtx)
+  const { clientSessionData } = useContext(AuthCtx)
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
@@ -248,12 +251,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
                       <Loading color="white" />
                     </div>
                   ) : ( */}
-                <SaveIcon />
+                <Save />
                 {/* )} */}
               </PrimaryButton>
             ) : (
               <SecondaryButton onClick={toggleIsEditing} color="orange">
-                <EditIcon />
+                <Edit />
               </SecondaryButton>
             )}
           </div>
@@ -522,13 +525,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             <FloatingMenu
               menuContent={[
                 <div tabIndex={0} onClick={copyUrl}>
-                  <ShareIcon />
+                  <Share />
                   {/* <Trans> */}
                   Share
                   {/* </Trans> */}
                 </div>,
                 <div tabIndex={0} onClick={() => setIsReporting(true)}>
-                  <FlagIcon />
+                  <Flag />
                   {/* <Trans> */}
                   Report
                   {/* </Trans> */}

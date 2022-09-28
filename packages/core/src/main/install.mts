@@ -66,7 +66,7 @@ export const defaultCorePackages = {
   'content-graph': '0.1.0',
   'email-service': '0.1.0',
   'react-app': '0.1.0',
-  // 'web-user': '0.1.0',
+  'web-user': '0.1.0',
   // 'extensions-manager': '0.1.0',
   // 'simple-email-auth': '0.1.0',
   'test-extension': '0.1.0',
