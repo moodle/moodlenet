@@ -54,7 +54,7 @@ const ext: SimpleEmailAuthExt = {
   async connect(shell) {
     const [, reactApp, authMng, emailSrv, http, crypto, arangopkg, contentGraph, profile] = shell.deps
     reactApp.plug.setup({
-      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
+      mainComponentLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
     })
     await arangopkg.access.fetch('ensureCollections')({ defs: { User: { kind: 'node' } } })
 

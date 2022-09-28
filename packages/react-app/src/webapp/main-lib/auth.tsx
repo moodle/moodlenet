@@ -1,16 +1,23 @@
-import type {
-  AuthenticationManagerExtDef,
-  ClientSession,
-  SessionToken,
-  UserData,
-} from '@moodlenet/authentication-manager'
-import { ContentGraphExtDef, NodeGlyph } from '@moodlenet/content-graph'
-import { SessionTokenCookieName } from '@moodlenet/http-server'
+import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
+import type graphPkgRef from '@moodlenet/content-graph'
+import type { NodeGlyph } from '@moodlenet/content-graph'
+import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib/ext-ports-app/pub-lib.mjs'
 import cookies from 'js-cookie'
-import { ComponentType, createContext, FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  ComponentType,
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useNavigate } from 'react-router-dom'
+import { UsePkgHandle } from '../../types.mjs'
+import { MainContext } from '../MainContext.js'
 import rootAvatarUrl from '../static/img/ROOT.png'
-import priHttp from './pri-http'
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',
@@ -31,23 +38,24 @@ export type AuthCtxT = {
   clientSessionData: ClientSessionData | null
 }
 
-const authSrvFetch = priHttp.fetch<AuthenticationManagerExtDef>('@moodlenet/authentication-manager@0.1.0')
-const contentGraphSrvFetch = priHttp.fetch<ContentGraphExtDef>('@moodlenet/content-graph@0.1.0')
-
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const nav = useNavigate()
+  const {
+    pkgs: [, , authApis, graphApis],
+  } = useContext(MainContext)
+
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
   const fetchClientSession = useCallback(async (token: SessionToken) => {
-    const res = await authSrvFetch('getClientSession')({ token })
+    const res = await authApis.call('getClientSession')({ token })
     if (!res.success) {
       writeSessionToken()
       return { success: false, msg: 'invalid token' } as const
     }
     writeSessionToken(token)
-    const clientSessionData = await getClientSessionData(res.clientSession)
+    const clientSessionData = await getClientSessionData(res.clientSession, graphApis)
     setClientSessionData(clientSessionData)
     return {
       success: true,
@@ -87,7 +95,6 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
 }
 
-const SESSION_TOKEN_COOKIE_NAME: SessionTokenCookieName = 'mn-session'
 function readSessionToken(): SessionToken | undefined {
   return cookies.get(SESSION_TOKEN_COOKIE_NAME)
 }
@@ -102,7 +109,10 @@ function writeSessionToken(token?: SessionToken | undefined) {
 //   token ? localStorage.setItem('SESSION_TOKEN', token) : localStorage.removeItem('SESSION_TOKEN')
 // }
 
-async function getClientSessionData(clientSession: ClientSession): Promise<ClientSessionData> {
+async function getClientSessionData(
+  clientSession: ClientSession,
+  graphApis: UsePkgHandle<typeof graphPkgRef>,
+): Promise<ClientSessionData> {
   if (clientSession.root) {
     return {
       isRoot: true as true,
@@ -112,7 +122,7 @@ async function getClientSessionData(clientSession: ClientSession): Promise<Clien
     }
   }
 
-  const myUserNodeRes = await contentGraphSrvFetch('getMyUserNode')()
+  const myUserNodeRes = await graphApis.call('getMyUserNode')()
   if (!myUserNodeRes) {
     throw new Error(`shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`)
   }

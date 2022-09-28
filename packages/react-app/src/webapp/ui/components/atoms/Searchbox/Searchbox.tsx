@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from 'react'
-import { elementFullyInViewPort } from '../../../../helpers/utilities'
+import { elementFullyInViewPort } from '../../../../helpers/utilities.js'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import './Searchbox.scss'
 

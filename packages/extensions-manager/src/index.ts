@@ -19,7 +19,7 @@ const ext: ExtensionsManagerExt = {
     return {
       deploy() {
         reactApp.plug.setup({
-          mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
+          mainComponentLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
         })
 
         shell.expose({

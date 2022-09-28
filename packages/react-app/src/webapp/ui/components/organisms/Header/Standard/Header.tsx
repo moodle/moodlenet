@@ -1,32 +1,29 @@
-import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
-import NoteAddIcon from '@material-ui/icons/NoteAdd'
-import SettingsIcon from '@material-ui/icons/Settings'
-import { FC, PropsWithChildren, useContext, useMemo } from 'react'
+import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@material-ui/icons'
+import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../main-lib/auth'
-import { RegistryEntry } from '../../../../../main-lib/registry'
-import { MainContext } from '../../../../../MainContext'
+import { AuthCtx } from '../../../../../main-lib/auth.js'
+// import { RegistryEntry } from '../../../../../main-lib/registry'
+import { MainContext } from '../../../../../MainContext.js'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
-import { PrimaryButton, TertiaryButton } from '../../../atoms'
-import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-import { HeaderAvatarMenuItemRegItem } from '../addons'
-import HeaderTitle from '../HeaderTitle/HeaderTitle'
+import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu.js'
+import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton.js'
+import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton.js'
+import HeaderTitle from '../HeaderTitle/HeaderTitle.js'
 import './Header.scss'
 
 type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const {
-    registries: { header },
-    shell,
+    // registries: { header },
+    // shell,
   } = useContext(MainContext)
 
-  const { registry: avatarMenuItems } = header.avatarMenuItems.useRegistry()
-  const { registry: rightComponents } = header.rightComponents.useRegistry()
+  // const { registry: avatarMenuItems } = header.avatarMenuItems.useRegistry()
+  // const { registry: rightComponents } = header.rightComponents.useRegistry()
 
   const { clientSessionData, logout } = useContext(AuthCtx)
-
+  logout
   const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
 
   const avatar = {
@@ -36,15 +33,15 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     backgroundSize: 'cover',
   }
 
-  const reoderedAvatarMenuItems = useMemo(() => {
-    const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
-      { pkg: shell.pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
-      { pkg: shell.pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
-    ]
-    return baseItems.concat(
-      avatarMenuItems.entries.sort((a, b) => (a.item.Position ?? Infinity) - (b.item.Position ?? Infinity) || 0),
-    )
-  }, [avatarMenuItems.entries])
+  // const reoderedAvatarMenuItems = useMemo(() => {
+  //   const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
+  //     { pkg: shell.pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
+  //     { pkg: shell.pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
+  //   ]
+  //   return baseItems.concat(
+  //     avatarMenuItems.entries.sort((a, b) => (a.item.Position ?? Infinity) - (b.item.Position ?? Infinity) || 0),
+  //   )
+  // }, [avatarMenuItems.entries])
 
   // console.log('logo ', logo)
   // console.log('smallLogo ', smallLogo)
@@ -58,9 +55,9 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           />
         </div>
         <div className="right">
-          {rightComponents.entries.flatMap(({ pkg, item: { Component } }, index) => {
+          {/* {rightComponents.entries.flatMap(({ pkg, item: { Component } }, index) => {
             return <Component key={`${pkg.id}:${index}`} />
-          })}
+          })} */}
 
           {clientSessionData && (
             <FloatingMenu
@@ -85,7 +82,8 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           {clientSessionData ? (
             <FloatingMenu
               className="avatar-menu"
-              menuContent={reoderedAvatarMenuItems.map((avatarMenuItem, i) => {
+              menuContent={
+                [] /* reoderedAvatarMenuItems.map((avatarMenuItem, i) => {
                 return avatarMenuItem.item.Path ? (
                   <Link
                     key={i}
@@ -109,7 +107,8 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
                     </>
                   </div>
                 )
-              })}
+              }) */
+              }
               hoverElement={<div style={avatar} className="avatar" />}
             />
           ) : (

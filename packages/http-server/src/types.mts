@@ -11,9 +11,6 @@ export type MountAppItem = {
   mountPath: string
 }
 
-export type SessionTokenCookieName = 'mn-session'
-// export type SessionTokenHeaderName = SessionTokenCookieName
-
 declare global {
   namespace Express {
     // Inject additional properties on express.Request
@@ -24,3 +21,5 @@ declare global {
     }
   }
 }
+
+export type HttpApiResponse = { response: any }

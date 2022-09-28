@@ -1,10 +1,12 @@
-import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined'
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
-import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined'
+import {
+  CheckCircleOutlineOutlined as CheckCircleOutlineOutlinedIcon,
+  CloseRounded as CloseRoundedIcon,
+  ErrorOutline as ErrorOutlineIcon,
+  InfoOutlined as InfoOutlinedIcon,
+  ReportProblemOutlined as ReportProblemOutlinedIcon,
+} from '@material-ui/icons'
 import React, { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react'
-import Card from '../Card/Card'
+import Card from '../Card/Card.js'
 import './styles.scss'
 
 export type SnackbarProps = {

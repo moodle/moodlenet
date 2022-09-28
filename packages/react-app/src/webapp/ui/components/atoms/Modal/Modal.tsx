@@ -1,7 +1,7 @@
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
+import { CloseRounded as CloseRoundedIcon } from '@material-ui/icons'
 import React, { PropsWithChildren, ReactNode, useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import Card from '../Card/Card'
+import Card from '../Card/Card.js'
 import './Modal.scss'
 
 class Portal extends React.Component<PropsWithChildren> {

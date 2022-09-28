@@ -1,1 +1,1 @@
-/// <reference types="react-scripts/lib/react-app" />
+/// <reference types="react-scripts" />

@@ -15,7 +15,7 @@ const ext: WebUserExt = {
     const [, reactApp, contentGraph] = shell.deps
 
     reactApp.plug.setup({
-      mainModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
+      mainComponentLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
       // routes: {
       //   moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'Router.tsx'),
       //   rootPath: 'profile', // http://localhost:3000/profile

@@ -7,11 +7,12 @@ export const symlinkInstaller: PkgInstaller<SymlinkInstallReq> = async ({
   pkgsFolder,
 }) => {
   const pkgId = await getPackageIdIn({ pkgRootDir: fromFolder })
-  // console.log(`installing floder file:${fromFolder}`)
+  console.log(`symlinkInstaller fromFolder:${fromFolder}`)
   await execa('npm', ['install', `file:${fromFolder}`], {
     cwd: pkgsFolder,
     timeout: 600000,
   })
+  console.log(`symlinkInstaller done fromFolder:${fromFolder}`)
 
   return { pkgId }
 }

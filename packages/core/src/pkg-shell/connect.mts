@@ -9,23 +9,27 @@ import {
   ArgsValidation,
   CtxApiFn,
   FloorApiCtx,
-  PkgApisRef,
+  PkgConnection,
   PkgModuleRef,
 } from './types.mjs'
 
 export function pkgApis<_ApiDefs extends ApiDefs = {}>(
   pkg_module_ref: PkgModuleRef,
   apiDefs: _ApiDefs,
-): PkgApisRef<_ApiDefs> {
-  const { pkgSym } = registerPkgApis(pkg_module_ref, apiDefs)
+): PkgConnection<_ApiDefs> {
+  const {
+    pkgSym,
+    pkgInfo: { pkgId },
+  } = registerPkgApis(pkg_module_ref, apiDefs)
   return {
     pkgSym,
+    pkgId,
   }
 }
 
 export function useApis<_ApiDefs extends ApiDefs>(
   caller_pkg_module_ref: PkgModuleRef,
-  targetPkgApisRef: PkgApisRef<_ApiDefs>,
+  targetPkgApisRef: PkgConnection<_ApiDefs>,
 ) {
   const { pkgInfo: callerPkgInfo } = ensureRegisterPkg(caller_pkg_module_ref)
 

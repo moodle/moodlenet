@@ -3,10 +3,9 @@ import express, { Application } from 'express'
 import type { Server } from 'http'
 import gracefulShutdown from 'http-graceful-shutdown'
 import { makeExtPortsApp } from './ext-ports-app/make.mjs'
+import { BASE_APIS_URL, SESSION_TOKEN_COOKIE_NAME } from './ext-ports-app/pub-lib.mjs'
 import { env } from './init.mjs'
-import type { MountAppItem, SessionTokenCookieName } from './types.mjs'
-
-const SESSION_TOKEN_COOKIE_NAME: SessionTokenCookieName = 'mn-session'
+import type { MountAppItem } from './types.mjs'
 
 export function createHttpServer() {
   const extPortsApp = makeExtPortsApp()
@@ -25,7 +24,9 @@ export function createHttpServer() {
 
   function mountApp(mountItem: MountAppItem) {
     mountedApps = [...mountedApps, mountItem]
+    console.log(`http mountApp ${mountItem.mountAppArgs.mountOnAbsPath ?? mountItem.mountPath}`)
     app.use(mountItem.mountPath, mountItem.mountAppArgs.getApp(express))
+    restart()
     return () => {
       mountedApps = mountedApps.filter(_ => _ !== mountItem)
       return restart()
@@ -55,8 +56,9 @@ export function createHttpServer() {
         req.moodlenet.authToken = req.cookies[SESSION_TOKEN_COOKIE_NAME]
         next()
       })
-    app.use(extPortsApp)
+    app.use(`${BASE_APIS_URL}/`, extPortsApp)
     mountedApps.forEach(({ mountAppArgs, mountPath }) => {
+      console.log(`http mounting ${mountPath}`)
       app.use(mountPath, mountAppArgs.getApp(express))
     })
     return new Promise<void>((resolve, reject) => {

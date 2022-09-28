@@ -1,7 +1,9 @@
-import CachedIcon from '@material-ui/icons/Cached'
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
-import EditIcon from '@material-ui/icons/Edit'
+import {
+  Cached as CachedIcon,
+  CloseRounded as CloseRoundedIcon,
+  DeleteOutline as DeleteOutlineIcon,
+  Edit as EditIcon,
+} from '@material-ui/icons'
 // import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 // import SearchIcon from '@mui/icons-material/Search'
 // import UploadIcon from '@mui/icons-material/Upload'

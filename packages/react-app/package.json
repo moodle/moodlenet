@@ -1,6 +1,12 @@
 {
   "name": "@moodlenet/react-app",
   "version": "0.1.0",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "main": "lib/main.mjs",
   "readme": "",
   "files": [
     "lib/",
@@ -18,15 +24,11 @@
     "moodlenetPackage"
   ],
   "description": "Web application\nFrontend interface to interact with the backend",
-  "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js"
   },
-  "engines": {
-    "node": ">=16"
-  },
   "scripts": {
-    "dev-server": "node lib/-dev-server.js"
+    "dev-server": "node lib/-dev-server.mjs"
   },
   "husky": {
     "hooks": {
@@ -41,7 +43,14 @@
     ]
   },
   "author": "",
-  "license": "ISC",
+  "peerDependencies": {
+    "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/content-graph": "^0.1.0",
+    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/http-server": "^0.1.0",
+    "@moodlenet/key-value-store": "^0.1.0",
+    "@moodlenet/organization": "^0.1.0"
+  },
   "devDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
@@ -72,6 +81,7 @@
   "dependencies": {
     "@babel/core": "^7.18.0",
     "@babel/plugin-proposal-class-properties": "^7.17.12",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
     "@babel/preset-env": "^7.18.0",
     "@babel/preset-react": "^7.17.12",
     "@material-ui/core": "^4.12.4",
@@ -97,6 +107,7 @@
     "react-refresh-typescript": "^2.0.5",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
+    "resolve-typescript-plugin": "^1.2.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
     "sass": "^1.52.1",
