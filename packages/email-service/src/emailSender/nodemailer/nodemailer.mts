@@ -4,7 +4,7 @@ import SendmailTransport from 'nodemailer/lib/sendmail-transport'
 import SESTransport from 'nodemailer/lib/ses-transport'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import StreamTransport from 'nodemailer/lib/stream-transport'
-import { EmailObj } from '../../types'
+import { EmailObj } from '../../types.mjs'
 
 export type SendResp =
   | {
@@ -28,7 +28,7 @@ export type MailerCfg = {
 }
 
 // export type SendOpts = {}
-export function send(
+export function sendEmail(
   transportCfg: MailerCfg['transport'],
   emailObj: EmailObj /* , opts?: SendOpts */,
 ): Promise<SendResp> {
