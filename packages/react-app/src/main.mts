@@ -1,7 +1,7 @@
 /// <reference path="../moodlenet-react-app-lib.d.ts" />
 import authConn from '@moodlenet/authentication-manager'
 import graphConn from '@moodlenet/content-graph'
-import { pkgApis } from '@moodlenet/core'
+import { connectPkg } from '@moodlenet/core'
 import organizationConn from '@moodlenet/organization'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
@@ -12,14 +12,13 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 // export * from './pub-lib.mjs'
 // export * from './types.mjs'
 
-const apisRef = await pkgApis(import.meta, apis)
+const connection = await connectPkg(import.meta, apis)
+export default connection
 
-const MyUsesPkgs: MyUsesPkgs = [apisRef, organizationConn, authConn, graphConn]
+const MyUsesPkgs: MyUsesPkgs = [connection, organizationConn, authConn, graphConn]
 await addWebappPluginItem({
-  guestPkgId: apisRef.pkgId,
+  guestPkgId: connection.pkgId,
   // mainComponentLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainComponent.tsx'),
   mainComponentLoc: resolve(__dirname, 'webapp', 'MainComponent.js'),
   usesPkgs: MyUsesPkgs,
 })
-
-export default apisRef
