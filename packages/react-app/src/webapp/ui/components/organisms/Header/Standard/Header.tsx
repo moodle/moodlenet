@@ -1,7 +1,7 @@
 import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@material-ui/icons'
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../main-lib/auth.js'
+import { AuthCtx } from '../../../../../web-lib/auth.js'
 // import { RegistryEntry } from '../../../../../main-lib/registry'
 import { MainContext } from '../../../../../MainContext.js'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'

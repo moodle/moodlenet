@@ -3,7 +3,7 @@ import type graphConn from '@moodlenet/content-graph'
 import type organizationConn from '@moodlenet/organization'
 import { createContext } from 'react'
 import reactAppConn from '../main.mjs'
-import { ReactAppMainComponentProps } from '../types.mjs'
+import { ReactAppMainComponentProps } from './web-lib.mjs'
 // import { RegistryHandler } from './main-lib/registry'
 
 export type MyUsesPkgs = [typeof reactAppConn, typeof organizationConn, typeof authConn, typeof graphConn]

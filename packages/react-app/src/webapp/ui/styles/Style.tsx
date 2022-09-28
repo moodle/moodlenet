@@ -6,7 +6,7 @@ export type StyleContextType = {
   setStyle: (style: BaseStyleType & CSSProperties) => unknown
 }
 
-export const StyleContextDefault = {
+const StyleContextDefault = {
   style: {
     ...baseStyle(),
   },

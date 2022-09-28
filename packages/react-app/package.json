@@ -25,7 +25,9 @@
   ],
   "description": "Web application\nFrontend interface to interact with the backend",
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/main.mjs",
+    "./ui.mjs": "./lib/webapp/ui.mjs",
+    "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
   },
   "scripts": {
     "dev-server": "node lib/-dev-server.mjs"

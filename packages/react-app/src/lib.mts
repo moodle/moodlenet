@@ -1,4 +1,4 @@
-import { PkgIdentifier } from '@moodlenet/core'
+import { PackageInfo } from '@moodlenet/core'
 import assert from 'assert'
 import { addWebappPluginItem } from './init.mjs'
 import { AppearanceData, WebappPluginDef, WebappPluginItem } from './types.mjs'
@@ -15,10 +15,10 @@ export async function getAppearance() {
   return { data: data.value }
 }
 
-export async function setup({ pkgId, pluginDef }: { pluginDef: WebappPluginDef; pkgId: PkgIdentifier }) {
+export async function setupPlugin({ pkgInfo, pluginDef }: { pluginDef: WebappPluginDef; pkgInfo: PackageInfo }) {
   const webappPluginItem: WebappPluginItem = {
     ...pluginDef,
-    guestPkgId: pkgId,
+    guestPkgInfo: pkgInfo,
   }
   addWebappPluginItem(webappPluginItem)
 }

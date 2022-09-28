@@ -1,13 +1,17 @@
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
+import { inspect } from 'util'
 import { WebappPluginItem } from './types.mjs'
 import { fixModuleLocForWebpackByOS } from './util.mjs'
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
+function ___dirname(import_meta_url: string) {
+  return fileURLToPath(new URL('.', import_meta_url))
+}
+const __dirname = ___dirname(import.meta.url)
 
 export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPluginItem[] }) {
   // const reversedExtPlugins = extPlugins.slice().reverse()
-
-  return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgId.name).join(',')} -
+  console.log(inspect({ plugins }, false, 5, true))
+  return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgInfo.pkgId.name).join(',')} -
 
   //@ts-ignore
   //import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
@@ -20,7 +24,10 @@ export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPl
   ${plugins
     .map(
       (pluginItem, index) => `
-import pkg_main_component_${index} from '${pluginItem.mainComponentLoc}' // ${pluginItem.guestPkgId.name}
+import pkg_main_component_${index} from '${resolve(
+        pluginItem.guestPkgInfo.pkgRootDir,
+        ...pluginItem.mainComponentLoc,
+      )}' // ${pluginItem.guestPkgInfo.pkgId.name}
     `,
     )
     .join('')}
@@ -30,12 +37,12 @@ import pkg_main_component_${index} from '${pluginItem.mainComponentLoc}' // ${pl
       (pluginItem, index) => `
 
 
-// connect ${pluginItem.guestPkgId.name} (pkg_main_component_${index})
+// connect ${pluginItem.guestPkgInfo.pkgId.name} (pkg_main_component_${index})
 pluginMainComponents.push({
   //@ts-ignore
   MainComponent:pkg_main_component_${index},
-  pkgId:${JSON.stringify(pluginItem.guestPkgId)},
-  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs.map(({ pkgId }) => ({ pkgId })))}
+  pkgId:${JSON.stringify(pluginItem.guestPkgInfo.pkgId)},
+  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs.map(({ pkgInfo: { pkgId } }) => ({ pkgId })))}
 })
 
 `,

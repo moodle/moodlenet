@@ -1,5 +1,5 @@
 import { defApi } from '@moodlenet/core'
-import { getAppearance, setAppearance, setup } from './lib.mjs'
+import { getAppearance, setAppearance, setupPlugin } from './lib.mjs'
 import { WebappPluginDef } from './types.mjs'
 import { AppearanceData } from './types/data.mjs'
 
@@ -17,9 +17,9 @@ export default {
       },
     () => true,
   ),
-  setup: defApi(
+  plugin: defApi(
     ctx => async (pluginDef: WebappPluginDef) => {
-      return await setup({ pluginDef, pkgId: ctx.caller.pkgInfo.pkgId })
+      return await setupPlugin({ pluginDef, pkgInfo: ctx.caller.pkgInfo })
     },
     () => true,
   ),

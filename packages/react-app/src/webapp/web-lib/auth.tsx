@@ -15,9 +15,9 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { UsePkgHandle } from '../../types.mjs'
 import { MainContext } from '../MainContext.js'
 import rootAvatarUrl from '../static/img/ROOT.png'
+import { UsePkgHandle } from '../web-lib.mjs'
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',

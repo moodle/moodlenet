@@ -50,7 +50,7 @@ httpSrvPkgApis('mount')({
 })
 
 // await mkdir(tmpDir, { recursive: true })
-const extPlugins: WebappPluginItem[] = []
+const pkgPlugins: WebappPluginItem[] = []
 const baseResolveAlias: ResolveOptions['alias'] = {
   'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
   'react': resolve(__dirname, '..', 'node_modules', 'react'),
@@ -95,7 +95,7 @@ function recompile() {
 function writeGenerated() {
   // console.log('connectPkgModulesModule', connectPkgModulesModule)
   return Promise.all([
-    writeFile(connectPkgModulesFile.target, generateConnectPkgModulesModule({ plugins: extPlugins })),
+    writeFile(connectPkgModulesFile.target, generateConnectPkgModulesModule({ plugins: pkgPlugins })),
     writeFile(resolve(__dirname, '..', '_resolve-alias_.json'), JSON.stringify(baseResolveAlias, null, 4)),
   ])
   // return Promise.all([
@@ -114,7 +114,7 @@ function writeGenerated() {
 
 export async function addWebappPluginItem(webappPluginItem: WebappPluginItem) {
   // console.log({ webappPluginItem })
-  extPlugins.push(webappPluginItem)
+  pkgPlugins.push(webappPluginItem)
   // const scopedLibFilename = resolve(tmpDir, `react-app-lib__${dep.shell.extName}.ts`)
   // const scopedReactAppLibString = generateReactAppLibScopedModule({
   //   deps: dep.shell.deps.map(_ => _.access._target),

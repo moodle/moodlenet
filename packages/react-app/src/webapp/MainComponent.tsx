@@ -1,6 +1,9 @@
 import { useMemo } from 'react'
-import { ReactAppMainComponent } from '../types.mjs'
 import { MainContext, MainContextT, MyUsesPkgs } from './MainContext.js'
+import { ContentGraphProvider } from './ui.mjs'
+import * as set from './ui/components/pages/Settings/SettingsContext.js'
+import { ReactAppMainComponent } from './web-lib.mjs'
+import * as auth from './web-lib/auth.js'
 
 // const routes = createRegistry<RouteRegItem>()
 // const avatarMenuItemsReg = createRegistry<HeaderAvatarMenuItemRegItem>()
@@ -20,6 +23,18 @@ const MainComponent: ReactAppMainComponent<MyUsesPkgs> = ({ pkgs, children }) =>
     return ctx
   }, [])
   // console.log({ mainContext })
-  return <MainContext.Provider value={mainContext}>{children}</MainContext.Provider>
+  return (
+    <MainContext.Provider value={mainContext}>
+      <auth.Provider>
+        <set.Provider>
+          <ContentGraphProvider>
+            {/* <I18nProvider i18n={i18n}> */}
+            {children}
+            {/* </I18nProvider> */}
+          </ContentGraphProvider>
+        </set.Provider>
+      </auth.Provider>
+    </MainContext.Provider>
+  )
 }
 export default MainComponent
