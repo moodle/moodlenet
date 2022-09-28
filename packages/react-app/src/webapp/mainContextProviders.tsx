@@ -1,40 +1,63 @@
-import { FC, PropsWithChildren } from 'react'
-import { PkgIds, PluginMainComponent } from '..'
-import * as auth from './main-lib/auth'
-import { registriesProviders } from './main-lib/registry'
-import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider'
-import * as set from './ui/components/pages/Settings/SettingsContext'
+import type { PkgConnection, PkgIdentifier } from '@moodlenet/core'
+import type { FC, PropsWithChildren } from 'react'
+import type { ReactAppMainComponent } from '../types.mjs'
+import * as auth from './main-lib/auth.js'
+import { pkgApis } from './main-lib/pri-http/xhr-adapter/callPkgApis.mjs'
+import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider.js'
+import * as set from './ui/components/pages/Settings/SettingsContext.js'
 
-export const pluginMainModules: { MainComponent: PluginMainComponent; pkg: PkgIds }[] = []
+export type PluginMainComponent = {
+  MainComponent: ReactAppMainComponent<any>
+  pkgId: PkgIdentifier
+  usesPkgs: PkgConnection<any>[]
+}
+export const pluginMainComponents: PluginMainComponent[] = []
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
-  // console.log({ pluginMainModules })
-  const ctxProviderWrap = Object.values(pluginMainModules)
+  const MyMainComponent = pluginMainComponents.slice().shift()!
+  const ctxProviderWrap = pluginMainComponents
+    .slice(1)
     .reverse()
-    .reduce(
-      (_children, { MainComponent, pkg }) => <MainComponent key={pkg.id}>{_children}</MainComponent>,
-      <>{children}</>,
-    )
+    .reduce((_children, { MainComponent: PluginMainComponent, usesPkgs, pkgId }) => {
+      return (
+        <PluginMainComponent
+          pkgs={usesPkgs.map(wpConn => ({
+            call: pkgApis(wpConn),
+          }))}
+          key={pkgId.name}
+        >
+          {_children}
+        </PluginMainComponent>
+      )
+    }, <>{children}</>)
+  // console.log({ MyMainComponent, pluginMainComponents, ctxProviderWrap })
 
   const Main = (
-    <auth.Provider>
-      <set.Provider>
-        <ContentGraphProvider>
-          {/* <I18nProvider i18n={i18n}> */}
-          {ctxProviderWrap}
-          {/* </I18nProvider> */}
-        </ContentGraphProvider>
-      </set.Provider>
-    </auth.Provider>
+    <MyMainComponent.MainComponent
+      pkgs={MyMainComponent.usesPkgs.map(wpConn => ({
+        call: pkgApis(wpConn),
+      }))}
+      key={MyMainComponent.pkgId.name}
+    >
+      <auth.Provider>
+        <set.Provider>
+          <ContentGraphProvider>
+            {/* <I18nProvider i18n={i18n}> */}
+            {ctxProviderWrap}
+            {/* </I18nProvider> */}
+          </ContentGraphProvider>
+        </set.Provider>
+      </auth.Provider>
+    </MyMainComponent.MainComponent>
   )
 
-  const registryProviderWrap = registriesProviders
-    //.reverse()
-    .reduce(
-      (_children, { Provider }, index) => <Provider key={`registriesProvider_${index}`}>{_children}</Provider>,
-      Main,
-    )
+  // const registryProviderWrap = registriesProviders
+  //   //.reverse()
+  //   .reduce(
+  //     (_children, { Provider }, index) => <Provider key={`registriesProvider_${index}`}>{_children}</Provider>,
+  //     Main,
+  //   )
+  // return registryProviderWrap
 
-  // console.log({ registriesProviders, registryProviderWrap })
-  return registryProviderWrap
+  return Main
 }

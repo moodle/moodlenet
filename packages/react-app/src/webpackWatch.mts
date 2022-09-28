@@ -2,14 +2,21 @@ import CompressionPlugin from 'compression-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
 import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
+import { createRequire } from 'module'
 import { resolve } from 'path'
+import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 import rimraf from 'rimraf'
+import { fileURLToPath } from 'url'
 import type { Configuration, ResolveOptions } from 'webpack'
-import webpack, { HotModuleReplacementPlugin } from 'webpack'
+import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const require = createRequire(import.meta.url)
+
+// const ResolveTypeScriptPlugin = require('resolve-typescript-plugin').default
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
-const ReactRefreshTypeScript = require('react-refresh-typescript')
+// const ReactRefreshTypeScript = require('react-refresh-typescript')
 // const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
@@ -33,7 +40,7 @@ export function startProdWp({
   // virtualModules: VirtualModulesPlugin
 }) {
   const wp = getWp({ baseResolveAlias, buildFolder, mode: 'prod' })
-  console.log({ baseResolveAlias, latestBuildFolder, buildFolder })
+  // console.log({ baseResolveAlias, latestBuildFolder, buildFolder })
 
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
@@ -75,8 +82,9 @@ export function getWp(
   const config: Configuration = {
     stats: isDevServer ? 'normal' : 'errors-only',
     mode,
-    entry: ['./src/webapp/index.tsx', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
-    devtool: isDevServer ? 'inline-source-map' : undefined,
+    // entry: ['./src/webapp/index.tsx', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
+    entry: ['./lib/webapp/index.js', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
+    devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,
     // devtool: 'source-map',
     context: resolve(__dirname, '..'),
     watch: true,
@@ -84,6 +92,10 @@ export function getWp(
       aggregateTimeout: 10,
       followSymlinks: true,
     },
+    // experiments: {
+    //     outputModule: true,
+    // },
+
     devServer: isDevServer
       ? {
           port: cfg.port,
@@ -99,7 +111,7 @@ export function getWp(
             // directory: buildFolder,
           },
           proxy: {
-            '/_/*': {
+            '/.apis/*': {
               target: cfg.proxy,
             },
           },
@@ -130,9 +142,14 @@ export function getWp(
         },
     resolve: {
       cache: true,
-      extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      extensions: ['.ts', '.mts', '.tsx', '.js', '.mjs', '.jsx'],
       //modules: [__dirname, 'node_modules'],
       alias: cfg.baseResolveAlias,
+      // fullySpecified: true,
+      plugins: [new ResolveTypeScriptPlugin({ includeNodeModules: true })],
+    },
+    experiments: {
+      topLevelAwait: true,
     },
     optimization: {
       moduleIds: 'deterministic',
@@ -176,7 +193,28 @@ export function getWp(
         },
         {
           test: /\.scss$/,
-          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+          use: [
+            { loader: 'style-loader' },
+            { loader: 'css-loader' },
+            {
+              loader: 'sass-loader' /* ,
+              options: {
+                additionalData: (content: any, loaderContext: any) => {
+                  console.log(inspect({ content, loaderContext }, false, 2, true))
+                  // More information about available properties https://webpack.js.org/api/loaders/
+                  // const { resourcePath, rootContext } = loaderContext;
+                  // const relativePath = path.relative(rootContext, resourcePath);
+
+                  // if (relativePath === "styles/foo.scss") {
+                  //   return "$value: 100px;" + content;
+                  // }
+
+                  // return "$value: 200px;" + content;
+                  return content
+                },
+              }, */,
+            },
+          ],
         },
         {
           test: /\.less$/,
@@ -235,17 +273,17 @@ export function getWp(
           use: [
             ...(isDevServer
               ? [
-                  {
-                    loader: require.resolve('ts-loader'),
-                    options: {
-                      getCustomTransformers: () => ({
-                        before: [isDevServer && ReactRefreshTypeScript()].filter(Boolean),
-                      }),
-                      transpileOnly: isDevServer,
-                      // configFile: resolve(__dirname, '..', 'tsconfig.json'),
-                      compilerOptions: { sourceMap: true },
-                    },
-                  },
+                  // {
+                  //   loader: require.resolve('ts-loader'),
+                  //   options: {
+                  //     getCustomTransformers: () => ({
+                  //       before: [isDevServer && ReactRefreshTypeScript()].filter(Boolean),
+                  //     }),
+                  //     transpileOnly: isDevServer,
+                  //     // configFile: resolve(__dirname, '..', 'tsconfig.json'),
+                  //     compilerOptions: { sourceMap: true },
+                  //   },
+                  // },
                 ]
               : []),
             {
@@ -254,7 +292,9 @@ export function getWp(
                 sourceType: 'unambiguous',
                 presets: [
                   require.resolve('@babel/preset-env'),
+                  require.resolve('@babel/preset-modules'),
                   require.resolve('@babel/preset-typescript'),
+                  // require.resolve('@babel/plugin-transform-modules-commonjs'),
                   [require.resolve('@babel/preset-react'), { development: isDevServer, runtime: 'automatic' }],
                 ],
                 plugins: [isDevServer && require.resolve('react-refresh/babel')].filter(Boolean),
@@ -265,8 +305,23 @@ export function getWp(
       ],
     },
     plugins: [
+      new webpack.NormalModuleReplacementPlugin(/^node:/, resource => {
+        // resource.request = resource.request.replace(/^node:/, '')
+        const url = resource.request
+        const newUrl = require.resolve(url.replace(/^node:/, '') + '/')
+        console.log({ url, newUrl })
+        resource.request = newUrl
+      }),
+      // new webpack.NormalModuleReplacementPlugin(/.mjs$/, resource => {
+      //   // resource.request = resource.request.replace(/^node:/, '')
+      //   const url = resource.request
+      //   // const newUrl = url.endsWith('.mjs') ? require.resolve(url.replace(/.mjs$/, '.mts')) : url
+      //   const newUrl = url.endsWith('.mjs') ? require.resolve(url.replace(/.mjs$/, '')) : url
+      //   console.log({ url, newUrl })
+      //   resource.request = newUrl
+      // }),
       isDevServer && new ReactRefreshWebpackPlugin(),
-      isDevServer && new HotModuleReplacementPlugin(),
+      isDevServer && new webpack.HotModuleReplacementPlugin(),
       // new ForkTsCheckerWebpackPlugin(),
       new HtmlWebPackPlugin({
         template: './public/index.html',

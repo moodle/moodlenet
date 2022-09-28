@@ -1,7 +1,9 @@
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect } from 'react'
-import { Card, InputTextField, PrimaryButton } from '../../atoms'
-import { SettingsCtx } from './SettingsContext'
+import { Card } from '../../atoms/Card/Card.js'
+import { InputTextField } from '../../atoms/InputTextField/InputTextField.js'
+import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton.js'
+import { SettingsCtx } from './SettingsContext.js'
 
 export type OrganizationData = {
   instanceName: string

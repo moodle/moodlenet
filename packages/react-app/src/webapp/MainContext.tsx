@@ -1,26 +1,27 @@
+import type authConn from '@moodlenet/authentication-manager'
+import type graphConn from '@moodlenet/content-graph'
+import type organizationConn from '@moodlenet/organization'
 import { createContext } from 'react'
-import { ReactAppPluginMainModule, WebAppShellOf } from '..'
-import { RouteRegItem } from './app-routes'
-import { LoginItem, SignupItem } from './main-lib/auth'
-import { RegistryHandler } from './main-lib/registry'
-import { HeaderAvatarMenuItemRegItem, HeaderRightComponentRegItem } from './ui/components/organisms/Header'
-import { SettingsSectionItem } from './ui/components/pages/Settings/SettingsContext'
+import reactAppConn from '../main.mjs'
+import { ReactAppMainComponentProps } from '../types.mjs'
+// import { RegistryHandler } from './main-lib/registry'
 
-export type MainContextT = {
-  shell: WebAppShellOf<ReactAppPluginMainModule>
-  registries: {
-    routes: RegistryHandler<RouteRegItem>
-    header: {
-      avatarMenuItems: RegistryHandler<HeaderAvatarMenuItemRegItem>
-      rightComponents: RegistryHandler<HeaderRightComponentRegItem>
-    }
-    settings: {
-      sections: RegistryHandler<SettingsSectionItem>
-    }
-    auth: {
-      login: RegistryHandler<LoginItem>
-      signup: RegistryHandler<SignupItem>
-    }
-  }
+export type MyUsesPkgs = [typeof reactAppConn, typeof organizationConn, typeof authConn, typeof graphConn]
+export type MainContextT = ReactAppMainComponentProps<MyUsesPkgs> & {
+  // shell: WebAppShellOf<ReactAppPluginMainModule>
+  // registries: {
+  //   routes: RegistryHandler<RouteRegItem>
+  //   header: {
+  //     avatarMenuItems: RegistryHandler<HeaderAvatarMenuItemRegItem>
+  //     rightComponents: RegistryHandler<HeaderRightComponentRegItem>
+  //   }
+  //   settings: {
+  //     sections: RegistryHandler<SettingsSectionItem>
+  //   }
+  //   auth: {
+  //     login: RegistryHandler<LoginItem>
+  //     signup: RegistryHandler<SignupItem>
+  //   }
+  // }
 }
 export const MainContext = createContext<MainContextT>(null as any)

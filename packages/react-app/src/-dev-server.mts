@@ -1,7 +1,9 @@
 import { watchFile } from 'fs'
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
-import { getWp } from './webpackWatch'
+import { fileURLToPath } from 'url'
+import { getWp } from './webpackWatch.mjs'
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 const port = Number(process.argv[2]) || 3000
 const proxy = process.argv[3] || 'http://localhost:8080'

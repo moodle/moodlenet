@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { BrowserRouter } from 'react-router-dom'
-import AppRoutes from './app-routes'
-import { ProvideMainContexts } from './mainContextProviders'
+import AppRoutes from './app-routes.js'
+import { ProvideMainContexts } from './mainContextProviders.js'
 
 // const reloadWebapp = (() => {
 //   let to = 0

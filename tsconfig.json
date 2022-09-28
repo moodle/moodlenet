@@ -13,12 +13,12 @@
     "esModuleInterop": true,
     // "module": "esnext",
     "skipLibCheck": true,
-    "moduleResolution": "NodeNext",
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "NodeNext"
+    "moduleResolution": "Node16",
+    "module": "Node16"
   }
 }

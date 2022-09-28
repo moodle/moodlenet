@@ -1,4 +1,4 @@
-import { PackageInfo } from '../types.mjs'
+import { PackageInfo, PkgIdentifier } from '../types.mjs'
 import type { TypeofPath, TypePaths } from './crawl-path.js'
 export type ArgsValidity =
   | boolean
@@ -15,8 +15,9 @@ export type PkgEntry = {
   apiDefs: ApiDefs
   flatApiDefs: FlatApiDefs
 }
-export type PkgApisRef<_ApiDefs extends ApiDefs> = {
+export type PkgConnection<_ApiDefs extends ApiDefs> = {
   pkgSym: symbol
+  pkgId: PkgIdentifier
 }
 
 export type ApiDef<_ApiFn extends ApiFn> = {

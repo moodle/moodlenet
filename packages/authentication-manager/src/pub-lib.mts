@@ -1,10 +1,11 @@
 import { ApiCtx, FloorApiCtx, PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
-import { cryptoPkgApis } from './arangoPkgApis.mjs'
 import * as store from './store.mjs'
 import { ClientSession, SessionToken } from './types.mjs'
+import { cryptoPkgApis } from './use-pkg-apis.mjs'
 
-export async function getSessionToken({ uid, pkgId }: { uid: string; pkgId: PkgIdentifier }) {
+type GetSessionResp = { success: false; msg: string } | { success: true; sessionToken: SessionToken }
+export async function getSessionToken({ uid, pkgId }: { uid: string; pkgId: PkgIdentifier }): Promise<GetSessionResp> {
   const user = await store.getByProviderId({ pkgName: pkgId.name, uid })
   if (!user) {
     return { success: false, msg: 'cannot find user' }

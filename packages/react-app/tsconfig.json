@@ -1,17 +1,8 @@
 {
   "extends": "../../tsconfig.json",
-  // "include": ["src/ui", "src/custom.d.ts"],
-  "exclude": ["lib/**/*", "build", "latest-build", "_connect-moodlenet-pkg-modules_.ts"],
+  "exclude": ["lib/**/*", "build", "latest-build", "_connect-moodlenet-pkg-modules_.mts"],
   "compilerOptions": {
-    "sourceMap": true,
     "rootDir": "src",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "target": "ES5",
-    "allowSyntheticDefaultImports": true,
-    "outDir": "lib",
-    "jsx": "react-jsx",
-    "allowJs": true
+    "outDir": "lib"
   }
 }
