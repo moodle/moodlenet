@@ -13,7 +13,7 @@ import {
   PkgModuleRef,
 } from './types.mjs'
 
-export function pkgApis<_ApiDefs extends ApiDefs = {}>(
+export function connectPkg<_ApiDefs extends ApiDefs = {}>(
   pkg_module_ref: PkgModuleRef,
   apiDefs: _ApiDefs,
 ): PkgConnection<_ApiDefs> {
