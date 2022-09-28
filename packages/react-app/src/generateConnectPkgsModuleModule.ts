@@ -7,12 +7,14 @@ export function generateConnectPkgModulesModule({ extPlugins }: { extPlugins: We
   return `// - generated ConnectPkgsModule for ${extPlugins.map(_ => _.guestShell.extId).join(',')} -
 
   //@ts-ignore
-  import connectPkg from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'webapp', 'connectPkg'))}'
+  import connectPkg from 'file:${fixModuleLocForWebpackByOS(
+    resolve(__dirname, '..', 'src', 'webapp', 'connectPkg.ts'),
+  )}'
 
   ${extPlugins
     .map(
       (extPluginItem, index) => `
-import pkg_main_module_${index} from '${extPluginItem.mainModuleLoc}' // ${extPluginItem.guestShell.extId}
+import pkg_main_module_${index} from 'file:${extPluginItem.mainModuleLoc}' // ${extPluginItem.guestShell.extId}
     `,
     )
     .join('')}
