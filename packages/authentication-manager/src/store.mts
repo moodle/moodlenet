@@ -3,7 +3,7 @@ import { arangoPkgApis } from './use-pkg-apis.mjs'
 
 export async function getByProviderId(pId: ProviderId): Promise<User | undefined> {
   const user = (
-    await arangoPkgApis('query')({})({
+    await arangoPkgApis('query')({
       q: `FOR u in User
               FILTER u.providerId == ${JSON.stringify(pId)}
               LIMIT 1
@@ -16,7 +16,7 @@ export async function getByProviderId(pId: ProviderId): Promise<User | undefined
 
 export async function getById(id: UserId): Promise<User | undefined> {
   const user = (
-    await arangoPkgApis('query')({})({
+    await arangoPkgApis('query')({
       q: `RETURN DOCUMENT('User/${id}')`,
     })
   ).resultSet[0]
@@ -26,7 +26,7 @@ export async function getById(id: UserId): Promise<User | undefined> {
 
 export async function delUser(id: UserId) {
   const user = (
-    await arangoPkgApis('query')({})({
+    await arangoPkgApis('query')({
       q: `REMOVE User/${id} FROM User
             RETURN OLD`,
     })
@@ -37,7 +37,7 @@ export async function delUser(id: UserId) {
 
 export async function create(newUser: Omit<User, 'id' | 'created'>): Promise<User> {
   const user = (
-    await arangoPkgApis('query')({})({
+    await arangoPkgApis('query')({
       q: `
         INSERT ${JSON.stringify(newUser)} INTO User
         RETURN $NEW`,

@@ -8,9 +8,9 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
   consumerModuleRef: PkgModuleRef
 }): Promise<KVStore<TMap>> {
   const arangoSrv = useApis(consumerModuleRef, arangoPkgRef)
-  const query = arangoSrv('query')({})
+  const query = arangoSrv('query')
 
-  await arangoSrv('ensureCollections')({})({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
+  await arangoSrv('ensureCollections')({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
   const kvStore: KVStore<any> = {
     set,
     get,
