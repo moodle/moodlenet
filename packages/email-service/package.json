@@ -2,6 +2,11 @@
   "name": "@moodlenet/email-service",
   "version": "0.1.0",
   "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "main": "lib/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Test extension"
@@ -14,11 +19,14 @@
   "files": [
     "lib/"
   ],
-  "main": "lib/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "nodemailer": "^6.6.1"
+  },
+  "peerDependencies": {
+    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/key-value-store": "^0.1.0"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.1.0",
