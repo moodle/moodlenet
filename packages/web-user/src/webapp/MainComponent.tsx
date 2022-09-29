@@ -1,4 +1,4 @@
-import { ReactAppMainComponent } from '@moodlenet/react-app'
+import { ReactAppMainComponent } from '@moodlenet/react-app/web-lib.mjs'
 import { createContext, useMemo } from 'react'
 import { MainContextT, MyUsesPkgs } from './types.mjs'
 
