@@ -1,6 +1,8 @@
 /// <reference path="../moodlenet-react-app-lib.d.ts" />
 
 import { mkdir, writeFile } from 'fs/promises'
+import { createRequire } from 'module'
+import { packageDirectorySync } from 'pkg-dir'
 // import { tmpdir } from 'os'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
@@ -13,6 +15,7 @@ import startWebpack from './webpackWatch.mjs'
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const require = createRequire(import.meta.url)
 
 const buildFolder = resolve(__dirname, '..', 'build')
 await mkdir(buildFolder, { recursive: true })
@@ -52,13 +55,12 @@ httpSrvPkgApis('mount')({
 // await mkdir(tmpDir, { recursive: true })
 const pkgPlugins: WebappPluginItem[] = []
 const baseResolveAlias: ResolveOptions['alias'] = {
-  'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
-  'react': resolve(__dirname, '..', 'node_modules', 'react'),
-  'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
+  'react': packageDirectorySync({ cwd: require.resolve('react') })!,
+  'react-router-dom': packageDirectorySync({ cwd: require.resolve('react-router-dom') })!,
+  'react-dom': packageDirectorySync({ cwd: require.resolve('react-dom') })!,
+  '@material-ui/icons': '@material-ui/icons/esm',
   // '@moodlenet/react-app/src/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
   // '@moodlenet/react-app/lib/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
-  'react-dom': resolve(__dirname, '..', 'node_modules', 'react-dom'),
-  '@material-ui/icons': '@material-ui/icons/esm',
 
   // '@moodlenet/authentication-manager/src/*': '@moodlenet/authentication-manager/src/*',
   // '@moodlenet/authentication-manager/lib/*': '@moodlenet/authentication-manager/src/*',

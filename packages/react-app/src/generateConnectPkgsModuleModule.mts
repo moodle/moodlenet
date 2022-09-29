@@ -1,6 +1,5 @@
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
-import { inspect } from 'util'
 import { WebappPluginItem } from './types.mjs'
 import { fixModuleLocForWebpackByOS } from './util.mjs'
 function ___dirname(import_meta_url: string) {
@@ -10,7 +9,7 @@ const __dirname = ___dirname(import.meta.url)
 
 export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPluginItem[] }) {
   // const reversedExtPlugins = extPlugins.slice().reverse()
-  console.log(inspect({ plugins }, false, 5, true))
+  // console.log(inspect({ plugins }, false, 5, true))
   return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgInfo.pkgId.name).join(',')} -
 
   //@ts-ignore
