@@ -1,4 +1,4 @@
-import type { MainFolders } from '../types.mjs'
+import type { BootCfg } from '../types.mjs'
 import { getSys } from './sys.mjs'
 
 process.on('error', err => {
@@ -6,21 +6,16 @@ process.on('error', err => {
   err instanceof Error && console.error(err.stack)
   process.exit()
 })
-export type BootCfg = {
-  mainFolders: MainFolders
-  devMode: boolean
-}
+
 export async function boot(cfg: BootCfg) {
   const sys = await getSys({ mainFolders: cfg.mainFolders })
   const sysconfig = sys.readSysConfig()
 
-  await sysconfig.packages.reduce<Promise<void>>(async (prev, { pkgId }) => {
-    await prev
+  for (const sysInstalledPkg of sysconfig.packages) {
+    const { pkgId } = sysInstalledPkg
     console.log(`-- connecting  ${pkgId.name}@${pkgId.version} ... --`)
     await sys.pkgMng.getMain({ pkgId })
     console.log(`-- CONNECTED ${pkgId.name}@${pkgId.version}  --\n`)
-
-    return
-  }, Promise.resolve())
+  }
   console.log('\n------- all packages connected -------', '\n')
 }

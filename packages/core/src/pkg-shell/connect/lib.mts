@@ -55,6 +55,10 @@ export type PkgEntry = {
 
 const PKG_ENTRIES: PkgEntry[] = []
 
+export function listEntries() {
+  return PKG_ENTRIES.slice()
+}
+
 export function getPkgEntryByPkgRootDir(pkgRootDir: string) {
   return PKG_ENTRIES.find(_ => _.pkgInfo.pkgRootDir === pkgRootDir)
 }

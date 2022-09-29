@@ -1,37 +1,33 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { CoreExt, PackageInfo } from '@moodlenet/core'
-import { Card, InputTextField, Loading, PrimaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
-import { HeaderRightComponentRegItem } from '@moodlenet/react-app/lib/webapp/ui/components/organisms/Header'
+import { Card, InputTextField, Loading, PrimaryButton } from '@moodlenet/react-app/ui.mjs'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
+import { DeployedPkgInfo } from '../../types.mjs'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
-import { DevModeBtn } from '../Extensions'
-import { getNumberFromString, getPastelColor } from '../helpers/utilities'
-import { MainContext } from '../MainModule'
+import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
+import { getNumberFromString, getPastelColor } from '../helpers/utilities.js'
+import { MainContext } from '../MainComponent.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './InstallExtension.scss'
 
 export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
-const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
+// const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  const { shell, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
-  const [, reactApp] = shell.deps
+  const { pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
+  const [myPkg] = pkgs
   // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
 
-  reactApp.header.rightComponent.useLocalRegister(DevModeBtnAddon)
-
-  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
+  // reactApp.header.rightComponent.useLocalRegister(DevModeBtnAddon)
 
   const [localPathField, setLocalPathField] = useState('')
   const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
-  const [extInfoList, setExtInfoList] = useState<PackageInfo[]>([])
+  const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
 
   useEffect(() => {
-    core
-      .fetch('ext/listDeployed')()
+    myPkg
+      .call('listDeployed')()
       .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
   }, [])
   const install = useCallback(() => {
@@ -39,7 +35,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       return
     }
     toggleIsInstalling()
-    core.fetch('pkg/install')({
+    myPkg.call('install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
     })
     // .finally(toggleIsInstalling)

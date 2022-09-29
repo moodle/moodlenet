@@ -105,7 +105,7 @@ const hasLock = existsSync(DEV_LOCK_FILE)
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
 
-  await boot({ mainFolders, devMode: true })
+  await boot({ mainFolders })
   writeFileSync(DEV_LOCK_FILE, '')
 
   function getCustomPkgEnvs(): any {
