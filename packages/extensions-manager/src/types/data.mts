@@ -1,4 +1,4 @@
-import { InstallPkgReq } from '@moodlenet/core'
+import { InstallPkgReq, PackageInfo, PkgIdentifier } from '@moodlenet/core'
 
 export type SearchPackagesResponse = { objects: SearchPackagesResObject[] }
 export type SearchPackagesResObject = {
@@ -10,7 +10,7 @@ export type SearchPackagesResObject = {
   homepage?: string
 } & (
   | {
-      pkgInstallationId: string
+      pkgId: PkgIdentifier
       installed: true
     }
   | {
@@ -18,3 +18,4 @@ export type SearchPackagesResObject = {
       installed: false
     }
 )
+export type DeployedPkgInfo = Pick<PackageInfo, 'packageJson' | 'pkgId' | 'readme'>

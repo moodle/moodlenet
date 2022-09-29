@@ -1,24 +1,21 @@
 import { FC, useCallback, useContext, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { CoreExt } from '@moodlenet/core'
-import { MainContext } from '../MainModule'
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/react-app/ui.mjs'
+import { MainContext } from '../MainComponent.js'
 import './styles.scss'
 
 export type ModulesProps = {}
 
 const Modules: FC<ModulesProps> = () => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { Card, InputTextField, PrimaryButton } = reactApp.ui.components
-
-  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
+  const { pkgs } = useContext(MainContext)
+  const [myPkg] = pkgs
   const [localPathField, setLocalPathField] = useState('')
   const install = useCallback(() => {
     if (!localPathField) {
       return
     }
-    core.fetch('pkg/install')({
+    myPkg.call('install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
     })
   }, [localPathField])

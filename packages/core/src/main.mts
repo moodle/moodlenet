@@ -1,5 +1,6 @@
+export * from './cfg.mjs'
 export * from './main/boot.mjs'
 export * from './main/install.mjs'
 export * from './pkg-shell/connect.mjs'
-export { getPkgApisRefByPkgName } from './pkg-shell/connect/lib.mjs'
+export { getPkgApisRefByPkgName, listEntries } from './pkg-shell/connect/lib.mjs'
 export * from './types.mjs'

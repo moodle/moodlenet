@@ -1,9 +1,18 @@
-import { SafePackageJson } from '@moodlenet/core'
+import { InstallPkgReq, listEntries, SafePackageJson } from '@moodlenet/core'
 import _axios from 'axios'
-import { SearchPackagesResponse } from './types/data.mjs'
+import { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from './types/data.mjs'
 import { SearchResponse } from './types/npmRegistry.mjs'
 
 const axios = _axios.default
+
+export async function listDeployed() {
+  const entries = await listEntries()
+  return entries.map<DeployedPkgInfo>(entry => ({
+    packageJson: entry.pkgInfo.packageJson,
+    pkgId: entry.pkgInfo.pkgId,
+    readme: entry.pkgInfo.readme,
+  }))
+}
 
 export async function searchPackages({
   searchText,
@@ -12,44 +21,33 @@ export async function searchPackages({
   searchText: string
   registry?: string
 }): Promise<SearchPackagesResponse> {
-  const [
-    searchRes,
-    {
-      msg: {
-        data: { pkgInfos },
-      },
-    } /* ,
-              {
-                msg: {
-                  data: { pkgInfos: installedPackages },
-                },
-              }, */,
-  ] = await Promise.all([
+  const [searchRes, pkgEntries] = await Promise.all([
     searchPackagesFromRegistry({ registry, searchText: `moodlenet ${searchText}` }),
-    core.access.fetch('ext/listDeployed')(),
-    // shell.lib.fetch<CoreExt>(shell)('@moodlenet/core@0.1.0::pkg/getInstalledPackages')(),
+    listEntries(),
   ])
-  const objects = searchRes.objects.map(({ package: { name: pkgName, description, keywords, version, links } }) => {
-    // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
-    const pkgInstallationId = pkgInfos
-      //.map(({ packageInfo }) => packageInfo)
-      .find(packageInfo => packageInfo.packageJson.name === pkgName)?.id
-    const installPkgReq: InstallPkgReq = {
-      type: 'npm',
-      registry,
-      pkgId: version ? `${pkgName}@${version}` : pkgName,
-    }
-    const objects: SearchPackagesResObject = {
-      pkgName,
-      description: description ?? '',
-      keywords: keywords ?? [],
-      version,
-      registry,
-      homepage: links?.homepage,
-      ...(pkgInstallationId ? { installed: true, pkgInstallationId } : { installed: false, installPkgReq }),
-    }
-    return objects
-  })
+  const objects = searchRes.objects.map(
+    ({ package: { name: pkgName, description, keywords, version = '*', links } }) => {
+      // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
+      const installedPkgIds = pkgEntries.map(pkgEntry => pkgEntry.pkgInfo.pkgId)
+      const installedPkgId = installedPkgIds.find(pkgId => pkgId.name === pkgName /* &&pkgId.version=== version  */)
+
+      const installPkgReq: InstallPkgReq = {
+        type: 'npm',
+        registry,
+        pkgId: { name: pkgName, version },
+      }
+      const objects: SearchPackagesResObject = {
+        pkgName,
+        description: description ?? '',
+        keywords: keywords ?? [],
+        version,
+        registry,
+        homepage: links?.homepage,
+        ...(installedPkgId ? { installed: true, pkgId: installedPkgId } : { installed: false, installPkgReq }),
+      }
+      return objects
+    },
+  )
   return { objects }
 }
 export async function searchPackagesFromRegistry({

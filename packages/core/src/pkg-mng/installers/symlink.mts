@@ -12,7 +12,7 @@ export const symlinkInstaller: PkgInstaller<SymlinkInstallReq> = async ({
     cwd: pkgsFolder,
     timeout: 600000,
   })
-  console.log(`symlinkInstaller done fromFolder:${fromFolder}`)
+  console.log(`symlinkInstaller done :${fromFolder}`)
 
   return { pkgId }
 }

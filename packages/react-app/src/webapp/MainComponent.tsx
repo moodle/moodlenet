@@ -12,7 +12,6 @@ import * as auth from './web-lib/auth.js'
 // const loginItemsReg = createRegistry<LoginItem>()
 // const signupItemsReg = createRegistry<SignupItem>()
 const MainComponent: ReactAppMainComponent<MyUsesPkgs> = ({ pkgs, children }) => {
-  // console.log({ ciccio: pkgs })
   // const [reactAppPkg, organizationPkg] = pkgs
   // reactAppPkg.call('getAppearance')().then(console.log)
   // organizationPkg.call('getOrgData')().then(console.log)

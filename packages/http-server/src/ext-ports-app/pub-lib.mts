@@ -19,6 +19,9 @@ export function getPkgApiFetchOpts(pkgId: PkgIdentifier, apiPath: string, args?:
   const url = `${BASE_APIS_URL}/${pkgId.name}/${pkgId.version}/${apiPath}`
   const requestInit: RequestInit = {
     method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
     body: JSON.stringify({ args }),
   }
   return { url, requestInit }
