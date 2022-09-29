@@ -49,6 +49,7 @@ export function makeExtPortsApp() {
         const httpApiResponse: HttpApiResponse = {
           response: apiResponse,
         }
+        res.header('Content-Type', 'application/json')
         res.status(200).send(httpApiResponse)
       })
       .catch(err => {

@@ -20,7 +20,8 @@ export function getPkgApiFetchOpts(pkgId: PkgIdentifier, apiPath: string, args?:
   const requestInit: RequestInit = {
     method: 'POST',
     headers: {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     body: JSON.stringify({ args }),
   }
