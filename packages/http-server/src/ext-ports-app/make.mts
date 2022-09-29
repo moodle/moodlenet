@@ -41,20 +41,20 @@ export function makeExtPortsApp() {
       return
     }
     const apis = useApis(import.meta, targetPkgApisRef)
-    apis(path, { ctx: setApiCtxClientSession({ ctx: { primary: true }, token: req.moodlenet.authToken }) })(
-      ...(apiReqBody?.args ?? []),
-    ).then(
-      apiResponse => {
+    const apiCtx = setApiCtxClientSession({ ctx: { primary: true }, token: req.moodlenet.authToken })
+    const apiFn = apis(path, { ctx: apiCtx })
+    const apiArgs = apiReqBody?.args ?? []
+    apiFn(...apiArgs)
+      .then(apiResponse => {
         const httpApiResponse: HttpApiResponse = {
           response: apiResponse,
         }
         res.status(200).send(httpApiResponse)
-      },
-      err => {
+      })
+      .catch(err => {
         res.status(500)
         res.end(err instanceof Error ? format(err) : err) //(JSON.stringify({ msg: {}, val: String(err) }))
-      },
-    )
+      })
   })
   srvApp.all(`*`, (_, res) => res.status(404).send(`service not available`))
   return srvApp

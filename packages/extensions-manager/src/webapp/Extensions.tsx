@@ -1,9 +1,10 @@
+import { Card, Switch } from '@moodlenet/react-app/ui.mjs'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
-import InstallExtension from './InstallExtension/InstallExtension'
-import { MainContext } from './MainModule'
+import InstallExtension from './InstallExtension/InstallExtension.js'
+import { MainContext } from './MainComponent.js'
 // import { ExtMngMainLayout } from './MainLayout.tsx__'
-import Modules, { ModulesProps } from './Modules/Modules'
-import Packages from './Packages/Packages'
+import Modules, { ModulesProps } from './Modules/Modules.js'
+import Packages from './Packages/Packages.js'
 // import {
 //   HeaderPageTemplate,
 //   HeaderPageTemplateProps,
@@ -44,8 +45,6 @@ export const Extensions: FC = () => {
   //   section = 'InstallExtension' /* , headerPageTemplateProps */,
   // }) => {
   const mainCtx = useContext(MainContext)
-  const [, reactApp] = mainCtx.shell.deps
-  const Card = reactApp.ui.components.Card
 
   const [currentSection, setCurrentSection] = useState('InstallExtension')
   const [currentContent, setCurrentContent] = useState<any>(null)
@@ -100,9 +99,7 @@ Extensions.displayName = 'ExtensionsPage'
 export default Extensions
 
 export const DevModeBtn: FC = () => {
-  const { devMode, setDevMode, shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const Switch = reactApp.ui.components.Switch
+  const { devMode, setDevMode } = useContext(MainContext)
 
   return (
     <div className="dev-mode">

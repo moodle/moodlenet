@@ -1,4 +1,4 @@
-import { default as graphConn } from '@moodlenet/content-graph'
+import graphConn from '@moodlenet/content-graph'
 import { ProfileGlyphs } from './types.mjs'
 import { graphConnPkgApis, reactAppPkgApis } from './use-pkg-apis.mjs'
 import { MyUsesPkgs } from './webapp/types.mjs'

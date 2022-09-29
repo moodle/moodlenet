@@ -29,3 +29,6 @@ export type PkgVersion = string
 export type NpmRegistry = string
 
 export type InstallResp = { sysInstalledPkg: SysInstalledPkg }
+export type BootCfg = {
+  mainFolders: MainFolders
+}
