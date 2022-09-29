@@ -47,7 +47,7 @@ function getConnect() {
   }
   const connect: Connect = {
     ..._connect,
-    pkgs: _connect.slice(),
+    pkgs: _connect.pkgs.slice(),
   }
   _connect.pkgs.length = 0
   _connect.pkgs = null
