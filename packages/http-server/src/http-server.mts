@@ -25,7 +25,7 @@ export function createHttpServer() {
   function mountApp(mountItem: MountAppItem) {
     mountedApps = [...mountedApps, mountItem]
     console.log(
-      `HTTP register mountApp ${mountItem.mountAppArgs.mountOnAbsPath ?? mountItem.mountPath} for ${
+      `HTTP: register mountApp ${mountItem.mountAppArgs.mountOnAbsPath ?? mountItem.mountPath} for ${
         mountItem.pkgInfo.pkgId.name
       }`,
     )
@@ -44,13 +44,7 @@ export function createHttpServer() {
 
   async function stop() {
     const err = await shutdownGracefully().catch(err => err)
-    console.info(`Stopped HTTP-lifecycle server with err:`, err)
-    //     return new Promise<void>((resolve, reject) => {
-    //   server.close(err => {
-    //     console.info(`Stopped HTTP-lifecycle server with err:`, err)
-    //     err ? reject(err) : resolve()
-    //   })req.cookies
-    // })
+    console.info(`HTTP: stopped with ${err ? 'error:' : 'no error'}`, err ?? '')
   }
   function start() {
     app = express()
@@ -62,16 +56,16 @@ export function createHttpServer() {
       })
     app.use(`${BASE_APIS_URL}/`, extPortsApp)
     mountedApps.forEach(({ mountAppArgs, mountPath, pkgInfo }) => {
-      console.log(`http mounting ${mountPath} for ${pkgInfo.pkgId.name}`)
+      console.log(`HTTP: mounting ${mountPath} for ${pkgInfo.pkgId.name}`)
       app.use(mountPath, mountAppArgs.getApp(express))
     })
     return new Promise<void>((resolve, reject) => {
-      console.info(`Starting HTTP-lifecycle server on port ${env.port}`)
+      console.info(`HTTP: starting server on port ${env.port}`)
       server = app.listen(env.port, function () {
         arguments[0] ? reject(arguments[0]) : resolve()
       })
       shutdownGracefully = gracefulShutdown(server, { development: false, forceExit: false, timeout: 1000 })
-      console.info(`HTTP-lifecycle listening on port ${env.port} :)`)
+      console.info(`HTTP: listening on port ${env.port} :)`)
     })
   }
 }

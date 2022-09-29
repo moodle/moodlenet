@@ -10,13 +10,14 @@ const __dirname = ___dirname(import.meta.url)
 export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPluginItem[] }) {
   return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgInfo.pkgId.name).join(',')} -
 
-  //@ts-ignore
-  //import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
+  // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
     resolve(__dirname, '..', 'src', 'webapp', 'mainContextProviders.tsx'),
   )}'
- import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
-   resolve(__dirname, '..', 'lib', 'webapp', 'mainContextProviders.js'),
- )}'
+  // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
+    resolve(__dirname, '..', 'lib', 'webapp', 'mainContextProviders.js'),
+  )}'
+
+ 
 
   ${plugins
     .map(
@@ -29,13 +30,18 @@ import pkg_main_component_${index} from '${resolve(
     )
     .join('')}
 
+    const pkgs = []
+    export default {
+      pkgs 
+    }
+
   ${plugins
     .map(
       (pluginItem, index) => `
 
 
 // connect ${pluginItem.guestPkgInfo.pkgId.name} (pkg_main_component_${index})
-pluginMainComponents.push({
+pkgs.push({
   //@ts-ignore
   MainComponent:pkg_main_component_${index},
   pkgId:${JSON.stringify(pluginItem.guestPkgInfo.pkgId)},
