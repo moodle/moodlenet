@@ -1,5 +1,5 @@
 import type graphConn from '@moodlenet/content-graph'
-import { ReactAppMainComponentProps } from '../../../react-app/lib/types.mjs'
+import { ReactAppMainComponentProps } from '@moodlenet/react-app/web-lib.mjs'
 
 export type Url = string
 export type Category = string
