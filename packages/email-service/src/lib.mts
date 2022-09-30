@@ -1,6 +1,6 @@
-import { sendEmail, SendResp } from './emailSender/nodemailer/nodemailer.mjs'
+import { sendEmail } from './emailSender/nodemailer/nodemailer.mjs'
 import { env } from './init.mjs'
-import type { EmailObj } from './types.mjs'
+import type { EmailObj, SendResp } from './types.mjs'
 import { kvStore } from './use-pkg-apis.mjs'
 
 export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendResp> {

@@ -1,7 +1,17 @@
 import { getApiCtxClientSession } from '@moodlenet/authentication-manager'
 import { defApi } from '@moodlenet/core'
-import { ensureGlyphs, getAuthenticatedNode, readNode } from './lib.mjs'
-import { GlyphDefOptMap, GlyphDefsMap, GlyphDescriptor, GlyphIdentifier } from './types.mjs'
+import { createNode, ensureGlyphs, getAuthenticatedNode, readNode } from './lib.mjs'
+import {
+  CreateNodeOpts,
+  GlyphDefOptMap,
+  GlyphDefsMap,
+  GlyphDescriptor,
+  GlyphIdentifier,
+  GlyphMeta,
+  NodeData,
+  NodeGlyph,
+  WithMaybeKey,
+} from './types.mjs'
 
 export default {
   getMyUserNode: defApi(
@@ -19,12 +29,24 @@ export default {
     },
     () => true,
   ),
-  read: {
-    node: defApi(
+  node: {
+    read: defApi(
       _ctx =>
         async <GlyphDesc extends GlyphDescriptor<'node'>>({ identifier }: { identifier: GlyphIdentifier<'node'> }) => {
           const result = await readNode<GlyphDesc>({ identifier })
           return result && { node: result.node }
+        },
+      () => true,
+    ),
+    create: defApi(
+      _ctx =>
+        async <GlyphDesc extends GlyphDescriptor<'node'>>(
+          glyphDesc: GlyphDesc,
+          data: NodeData<GlyphDesc> & WithMaybeKey,
+          opts: Partial<CreateNodeOpts> = {},
+        ): Promise<{ node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }> => {
+          const result = await createNode(glyphDesc, data, opts)
+          return result
         },
       () => true,
     ),

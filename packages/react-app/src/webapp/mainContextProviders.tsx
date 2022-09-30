@@ -1,6 +1,7 @@
-import type { PkgConnection, PkgIdentifier } from '@moodlenet/core'
+import type { PkgIdentifier } from '@moodlenet/core'
 import { FC, PropsWithChildren, useMemo } from 'react'
 import _connect from '_connect-moodlenet-pkg-modules_'
+import { WebPkgDepList } from './types/plugins.mjs'
 import { ReactAppMainComponent } from './web-lib.mjs'
 import { pkgApis } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
@@ -9,7 +10,7 @@ const connect = getConnect()
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
   const Main = useMemo(
     () =>
-      connect.pkgs.reverse().reduce((_children, { MainComponent: PluginMainComponent, usesPkgs, pkgId }) => {
+      connect.pkgs.reduce((_children, { MainComponent: PluginMainComponent, usesPkgs, pkgId }) => {
         return (
           <PluginMainComponent
             pkgs={usesPkgs.map(wpConn => ({
@@ -40,14 +41,14 @@ function getConnect() {
   type PluginMainComponentObject = {
     MainComponent: ReactAppMainComponent<any>
     pkgId: PkgIdentifier
-    usesPkgs: PkgConnection<any>[]
+    usesPkgs: WebPkgDepList
   }
   type Connect = {
     pkgs: PluginMainComponentObject[]
   }
   const connect: Connect = {
     ..._connect,
-    pkgs: _connect.pkgs.slice(),
+    pkgs: _connect.pkgs.slice().reverse(),
   }
   _connect.pkgs.length = 0
   _connect.pkgs = null

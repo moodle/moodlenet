@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { MainContext, MainContextT, MyUsesPkgs } from './MainContext.js'
+import { MainContext, MainContextT, WebPkgDeps } from './MainContext.js'
 import { ContentGraphProvider } from './ui.mjs'
 import * as set from './ui/components/pages/Settings/SettingsContext.js'
 import { ReactAppMainComponent } from './web-lib.mjs'
@@ -11,7 +11,7 @@ import * as auth from './web-lib/auth.js'
 // const settingsSectionsReg = createRegistry<SettingsSectionItem>()
 // const loginItemsReg = createRegistry<LoginItem>()
 // const signupItemsReg = createRegistry<SignupItem>()
-const MainComponent: ReactAppMainComponent<MyUsesPkgs> = ({ pkgs, children }) => {
+const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, children }) => {
   // const [reactAppPkg, organizationPkg] = pkgs
   // reactAppPkg.call('getAppearance')().then(console.log)
   // organizationPkg.call('getOrgData')().then(console.log)

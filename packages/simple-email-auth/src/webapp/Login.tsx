@@ -1,28 +1,25 @@
+import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
+import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
 import { useFormik } from 'formik'
 import { FC, useContext, useState } from 'react'
-import { MainContext } from './MainModule'
+import { MainContext } from './MainComponent.js'
 
 export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { PrimaryButton } = reactApp.ui.components
-
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 export const Panel: FC = () => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { InputTextField, PrimaryButton, TertiaryButton } = reactApp.ui.components
-  const auth = useContext(reactApp.AuthCtx)
+  const { pkgs } = useContext(MainContext)
+  const [authPkgApis] = pkgs
 
+  const auth = useContext(AuthCtx)
   const [wrongCreds, setWrongCreds] = useState(false)
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
       setWrongCreds(false)
-      const res = await shell.http.fetch('login')({
+      const res = await authPkgApis.call('login')({
         email,
         password,
       })

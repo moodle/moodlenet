@@ -3,6 +3,7 @@ import assert from 'assert'
 import { addWebappPluginItem } from './init.mjs'
 import { AppearanceData, WebappPluginDef, WebappPluginItem } from './types.mjs'
 import { kvStore } from './use-pkg-apis.mjs'
+import { WebPkgDepList } from './webapp/web-lib.mjs'
 
 export async function setAppearance({ appearanceData }: { appearanceData: AppearanceData }) {
   const data = await kvStore.set('appearanceData', '', appearanceData)
@@ -15,8 +16,14 @@ export async function getAppearance() {
   return { data: data.value }
 }
 
-export async function setupPlugin({ pkgInfo, pluginDef }: { pluginDef: WebappPluginDef; pkgInfo: PackageInfo }) {
-  const webappPluginItem: WebappPluginItem = {
+export async function setupPlugin<Deps extends WebPkgDepList = never>({
+  pkgInfo,
+  pluginDef,
+}: {
+  pluginDef: WebappPluginDef<Deps>
+  pkgInfo: PackageInfo
+}) {
+  const webappPluginItem: WebappPluginItem<Deps> = {
     ...pluginDef,
     guestPkgInfo: pkgInfo,
   }
