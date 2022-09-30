@@ -23,10 +23,11 @@ import { LocateApi } from '../../webapp/web-lib/pri-http/xhr-adapter/callPkgApis
 //   connect(_: WebAppShell<ForExt, Requires>): MainModuleObj<Lib>
 // }
 
-export type ReactAppMainComponent<UsesPkgs extends PkgConnection<any>[]> = ComponentType<
+export type WebPkgDepList = PkgConnection<any>[]
+export type ReactAppMainComponent<UsesPkgs extends WebPkgDepList> = ComponentType<
   PropsWithChildren<ReactAppMainComponentProps<UsesPkgs>>
 >
-export type ReactAppMainComponentProps<UsesPkgs extends PkgConnection<any>[]> = {
+export type ReactAppMainComponentProps<UsesPkgs extends WebPkgDepList> = {
   pkgs: {
     [Index in keyof UsesPkgs]: UsePkgHandle<UsesPkgs[Index]>
   }

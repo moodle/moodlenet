@@ -9,9 +9,9 @@ export type NewCollectionFormValues = {
   image?: string | File | null
 }
 
-export type MyUsesPkgs = [typeof myConn]
+export type WebPkgDeps = [typeof myConn]
 
-export type MainContextType = ReactAppMainComponentProps<MyUsesPkgs> & {
+export type MainContextType = ReactAppMainComponentProps<WebPkgDeps> & {
   devMode: boolean
   setDevMode: React.Dispatch<React.SetStateAction<boolean>>
   selectedExtConfig: DeployedPkgInfo | null

@@ -19,18 +19,18 @@ export type GlyphDefOptMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
   readonly [glyphName in keyof Defs]: GlyphDefOpt<Defs[glyphName]['kind']>
 }
 
-declare const GLYPH_HANDLE_TYPE_SYMBOL: unique symbol
-type GLYPHDESCTYPE_SYMBOL = typeof GLYPH_HANDLE_TYPE_SYMBOL
+// declare const GLYPH_HANDLE_TYPE_SYMBOL: unique symbol
+// export type GLYPHDESCTYPE_SYMBOL = typeof GLYPH_HANDLE_TYPE_SYMBOL
 export type GlyphDescriptor<
   Kind extends CollectionKind = CollectionKind,
-  Type extends {} = {},
+  _Type extends {} = {},
   // GlyphName extends string = string,
 > = {
   _type: string
   _kind: Kind
 
   // _pkg: { glyph: GlyphName; pkgName: ExtName /* ; version: ExtVersion  */ }
-  [GLYPH_HANDLE_TYPE_SYMBOL]?: Type
+  // [GLYPH_HANDLE_TYPE_SYMBOL]?: Type
 }
 
 export type GlyphDescriptorsMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
@@ -94,12 +94,14 @@ export type EdgeGlyphMeta<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescr
   BaseGlyphMeta<GlyphDesc> & EdgeLinkType & EdgeLink
 
 export type EdgeData<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
-  GlyphDesc[GLYPHDESCTYPE_SYMBOL]
+  GlyphDesc extends GlyphDescriptor<'edge', infer EdgeDataType> ? EdgeDataType : never
+/*  GlyphDesc[GLYPHDESCTYPE_SYMBOL]  */
 export type EdgeGlyph<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> = EdgeData<GlyphDesc> &
   EdgeGlyphMeta<GlyphDesc>
 
 export type NodeData<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
-  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & ContentNode
+  GlyphDesc extends GlyphDescriptor<'node', infer NodeDataType> ? NodeDataType & ContentNode : never
+/*  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & ContentNode */
 export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> = NodeData<GlyphDesc> &
   NodeGlyphMeta<GlyphDesc>
 

@@ -2,6 +2,11 @@
   "name": "@moodlenet/simple-email-auth",
   "version": "0.1.0",
   "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "main": "lib/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Email authentication"
@@ -14,13 +19,23 @@
     "lib/",
     "src/"
   ],
-  "main": "lib/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "formik": "^2.2.9"
+  },
+  "peerDependencies": {
+    "@moodlenet/arangodb": "^0.1.0",
+    "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/content-graph": "^0.1.0",
+    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/crypto": "^0.1.0",
+    "@moodlenet/email-service": "^0.1.0",
+    "@moodlenet/http-server": "^0.1.0",
+    "@moodlenet/react-app": "^0.1.0",
+    "@moodlenet/web-user": "^0.1.0"
   },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.1.0",

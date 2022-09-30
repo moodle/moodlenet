@@ -2,7 +2,7 @@ import { PkgIdentifier } from '@moodlenet/core'
 import { env } from './init.mjs'
 import { encryptClientSession } from './pub-lib.mjs'
 import * as store from './store.mjs'
-import { SessionToken } from './types.mjs'
+import { SessionToken, User } from './types.mjs'
 
 type GetRootSessionTokenResp = { success: false } | { success: true; sessionToken: SessionToken }
 export async function getRootSessionToken({ password }: { password: string }): Promise<GetRootSessionTokenResp> {
@@ -16,7 +16,13 @@ export async function getRootSessionToken({ password }: { password: string }): P
   }
 }
 
-export async function registerUser({ uid, pkgId }: { uid: string; pkgId: PkgIdentifier }) {
+export async function registerUser({
+  uid,
+  pkgId,
+}: {
+  uid: string
+  pkgId: PkgIdentifier
+}): Promise<{ success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }> {
   const user = await store.create({
     providerId: {
       pkgName: pkgId.name,

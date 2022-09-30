@@ -1,5 +1,6 @@
-import type graphConn from '@moodlenet/content-graph'
 import { ReactAppMainComponentProps } from '@moodlenet/react-app/web-lib.mjs'
+import type myConn from '../main.mjs'
+export type WebPkgDeps = [typeof myConn]
 
 export type Url = string
 export type Category = string
@@ -19,5 +20,4 @@ export type ProfileFormValues = {
   avatarImage?: Url | File | null
 }
 
-export type MyUsesPkgs = [typeof graphConn]
-export type MainContextT = ReactAppMainComponentProps<MyUsesPkgs> & {}
+export type MainContextT = ReactAppMainComponentProps<WebPkgDeps> & {}
