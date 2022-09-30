@@ -31,6 +31,10 @@
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^6.1.1"
   },
+  "peerDependencies": {
+    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/react-app": "^0.1.0"
+  },
   "devDependencies": {
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/react-app": "^0.1.0",
