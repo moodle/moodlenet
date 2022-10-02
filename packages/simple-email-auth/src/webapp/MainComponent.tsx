@@ -3,7 +3,7 @@ import { createContext, useMemo } from 'react'
 import { MainContextT, WebPkgDeps } from './types.mjs'
 
 export const MainContext = createContext<MainContextT>(null as any)
-const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, children }) => {
+const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   // reactApp.auth.login.register(loginComponents)
   // reactApp.auth.signup.register(signupComponents)
   // reactApp.settings.section.register(settingsComponents)
@@ -11,6 +11,7 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, children }) =>
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {
       pkgs,
+      pkgId,
     }
     return ctx
   }, [])

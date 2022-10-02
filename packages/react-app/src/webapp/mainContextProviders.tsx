@@ -1,7 +1,6 @@
-import type { PkgIdentifier } from '@moodlenet/core'
 import { FC, PropsWithChildren, useMemo } from 'react'
 import _connect from '_connect-moodlenet-pkg-modules_'
-import { WebPkgDepList } from './types/plugins.mjs'
+import { WebPkgDepList, WebPkgIdentifier } from './types/plugins.mjs'
 import { ReactAppMainComponent } from './web-lib.mjs'
 import { pkgApis } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
@@ -16,7 +15,8 @@ export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => 
             pkgs={usesPkgs.map(wpConn => ({
               call: pkgApis(wpConn),
             }))}
-            key={pkgId.name}
+            pkgId={pkgId}
+            key={`${pkgId.name}@${pkgId.version}`}
           >
             {_children}
           </PluginMainComponent>
@@ -40,7 +40,7 @@ export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => 
 function getConnect() {
   type PluginMainComponentObject = {
     MainComponent: ReactAppMainComponent<any>
-    pkgId: PkgIdentifier
+    pkgId: WebPkgIdentifier
     usesPkgs: WebPkgDepList
   }
   type Connect = {

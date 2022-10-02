@@ -45,8 +45,11 @@ import pkg_main_component_${index} from '${resolve(
 pkgs.push({
   //@ts-ignore
   MainComponent:pkg_main_component_${index},
-  pkgId:${JSON.stringify(pluginItem.guestPkgInfo.pkgId)},
-  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs.map(({ pkgInfo: { pkgId } }) => ({ pkgId })))}
+  pkgId:{
+    ...${JSON.stringify(pluginItem.guestPkgInfo.pkgId)},
+    pkgRef:Symbol('${pluginItem.guestPkgInfo.pkgId.name}')
+  },
+  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs.map(({ pkgId }) => ({ pkgId })))}
 })
 
 `,

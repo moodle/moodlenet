@@ -8,7 +8,7 @@ import type { MainContextType, WebPkgDeps } from './types.mjs'
 
 export const MainContext = createContext<MainContextType>(null as any)
 
-const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, children }) => {
+const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   const [devMode, setDevMode] = useState(false)
   const [selectedExtConfig, setSelectedExtConfig] = useState<DeployedPkgInfo | null>(null)
   const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
@@ -25,6 +25,7 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, children }) =>
     <MainContext.Provider
       value={{
         pkgs,
+        pkgId,
         devMode,
         setDevMode,
         selectedExtConfig,
