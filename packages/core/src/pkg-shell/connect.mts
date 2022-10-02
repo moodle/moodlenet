@@ -11,7 +11,7 @@ import {
   CtxApiFn,
   PkgConnection,
   PkgModuleRef,
-} from './types.mjs'
+} from './types/pkg.mjs'
 
 export function connectPkg<_ApiDefs extends ApiDefs = {}>(
   pkg_module_ref: PkgModuleRef,
@@ -20,8 +20,8 @@ export function connectPkg<_ApiDefs extends ApiDefs = {}>(
   const { pkgSym, pkgInfo } = registerPkgApis(pkg_module_ref, apiDefs)
   return {
     pkgSym,
-    pkgInfo,
-    pkgId: pkgInfo.pkgId,
+    pkgInfo, // REMOVE ME
+    pkgId: pkgInfo.pkgId, // keep the pkgSym in PkgIdentifier and return raw pkgId ( all done in registerPkgApis() )
   }
 }
 
