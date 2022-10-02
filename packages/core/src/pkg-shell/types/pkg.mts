@@ -16,7 +16,7 @@ export type PkgEntry = {
   flatApiDefs: FlatApiDefs
 }
 
-//TODO: will be removed, will become the PkgIdentifier(with sym) .. always available with myId(import.meta)
+//TODO: will be removed, will become the PkgIdentifier(with sym) .. always available with myPkgId(import.meta)
 export type PkgConnection<_ApiDefs extends ApiDefs> = {
   pkgSym: symbol
   pkgInfo: PackageInfo
