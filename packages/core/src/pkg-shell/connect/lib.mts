@@ -47,11 +47,11 @@ function getPkgModuleInfo(pkg_module_ref: PkgModuleRef) {
  * PkgRegistry
  */
 export type PkgEntry = {
-  pkgInfo: PackageInfo // PackageInfo  will remove pkgId
+  pkgInfo: PackageInfo // NOTE: PackageInfo  will remove pkgId
   // TODO: add pkgId here
   apiDefs: ApiDefs
   flatApiDefs: FlatApiDefs
-  pkgSym: symbol // keep the pkgSym in PkgIdentifier and return raw pkgId ( all done in registerPkgApis() )
+  pkgSym: symbol // NOTE: keep the pkgSym in PkgIdentifier and myId() return raw pkgId ( all done in registerPkgApis() )
 }
 
 const PKG_ENTRIES: PkgEntry[] = []

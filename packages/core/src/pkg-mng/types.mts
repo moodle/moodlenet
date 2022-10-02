@@ -15,7 +15,7 @@ export type PkgInstallationInfo = {
 } */
 
 export type PackageInfo = {
-  pkgId: PkgIdentifier // TODO: REMOVE this, the pkgId will be created and stored in registry, and returned on getConnection(import.meta)
+  pkgId: PkgIdentifier // TODO: REMOVE this, the pkgId will be created and stored in registry, and returned by myPkgId(import.meta) and by connectPkg
   packageJson: SafePackageJson
   readme: string | undefined
   pkgRootDir: string
