@@ -15,15 +15,17 @@ export type PkgInstallationInfo = {
 } */
 
 export type PackageInfo = {
-  pkgId: PkgIdentifier
+  pkgId: PkgIdentifier // TODO: REMOVE this, the pkgId will be created and stored in registry, and returned on getConnection(import.meta)
   packageJson: SafePackageJson
   readme: string | undefined
   pkgRootDir: string
 }
 
+// TODO: move following types in pkg-shell/connect/lib.mts
 export type PkgName = string
 export type PkgVersion = string
 export type PkgIdentifier = {
   name: PkgName
   version: PkgVersion
+  //TODO: add pkgSym here
 }

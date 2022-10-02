@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 import { getPackageInfo } from '../../pkg-mng/lib.mjs'
 import { PkgName } from '../../pkg-mng/types.mjs'
 import { PackageInfo } from '../../types.mjs'
-import { ApiDef, ApiDefs, FlatApiDefs, PkgConnection, PkgModuleRef } from '../types.mjs'
+import { ApiDef, ApiDefs, FlatApiDefs, PkgConnection, PkgModuleRef } from '../types/pkg.mjs'
 
 export const API_DEF_SYMBOL: unique symbol = Symbol('CONNECTION_SYMBOL')
 
@@ -47,10 +47,11 @@ function getPkgModuleInfo(pkg_module_ref: PkgModuleRef) {
  * PkgRegistry
  */
 export type PkgEntry = {
-  pkgInfo: PackageInfo
+  pkgInfo: PackageInfo // PackageInfo  will remove pkgId
+  // TODO: add pkgId here
   apiDefs: ApiDefs
   flatApiDefs: FlatApiDefs
-  pkgSym: symbol
+  pkgSym: symbol // keep the pkgSym in PkgIdentifier and return raw pkgId ( all done in registerPkgApis() )
 }
 
 const PKG_ENTRIES: PkgEntry[] = []
