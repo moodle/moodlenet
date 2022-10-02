@@ -11,13 +11,14 @@ import * as auth from './web-lib/auth.js'
 // const settingsSectionsReg = createRegistry<SettingsSectionItem>()
 // const loginItemsReg = createRegistry<LoginItem>()
 // const signupItemsReg = createRegistry<SignupItem>()
-const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, children }) => {
+const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   // const [reactAppPkg, organizationPkg] = pkgs
   // reactAppPkg.call('getAppearance')().then(console.log)
   // organizationPkg.call('getOrgData')().then(console.log)
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {
       pkgs,
+      pkgId,
     }
     return ctx
   }, [])
