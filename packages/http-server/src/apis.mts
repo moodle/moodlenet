@@ -8,7 +8,7 @@ export default {
       const mountAppItem: MountAppItem = {
         mountAppArgs,
         pkgId: ctx.caller.pkgId,
-        mountPath: mountAppArgs.mountOnAbsPath ?? ctx.caller.pkgId.name,
+        mountOnAbsPath: mountAppArgs.mountOnAbsPath,
       }
       const unmount = httpServer.mountApp(mountAppItem)
       // FIXME: on uninstall unmount()

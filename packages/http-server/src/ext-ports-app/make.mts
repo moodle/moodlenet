@@ -1,5 +1,5 @@
-import { setApiCtxClientSession } from '@moodlenet/authentication-manager'
-import { useApis } from '@moodlenet/core'
+import { setApiCtxClientSessionToken } from '@moodlenet/authentication-manager'
+import { FloorApiCtx, useApis } from '@moodlenet/core'
 import express, { json } from 'express'
 import { format } from 'util'
 import { HttpApiResponse } from '../types.mjs'
@@ -38,8 +38,10 @@ export function makeExtPortsApp() {
       res.sendStatus(400)
       return
     }
-    const apiCtx = setApiCtxClientSession({ ctx: { primary: true }, token: req.moodlenet.authToken })
-    const apiFn = apis(path, { ctx: apiCtx })
+    // console.log({ mmm: req.moodlenet })
+    const ctx: FloorApiCtx = { primary: true }
+    setApiCtxClientSessionToken({ ctx, token: req.moodlenet.authToken })
+    const apiFn = apis(path, { ctx })
     const apiArgs = apiReqBody?.args ?? []
     apiFn(...apiArgs)
       .then(apiResponse => {

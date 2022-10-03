@@ -1,4 +1,4 @@
-import { Card, Switch } from '@moodlenet/react-app/ui.mjs'
+import { Card, MainLayout } from '@moodlenet/react-app/ui.mjs'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import InstallExtension from './InstallExtension/InstallExtension.js'
 import { MainContext } from './MainComponent.js'
@@ -83,28 +83,17 @@ export const Extensions: FC = () => {
   }, [currentSection])
 
   return (
-    // <HeaderPageTemplate {...headerPageTemplateProps}>
-    <div className="extensions">
-      <div className="left-menu">
-        <Card>{menu}</Card>
+    <MainLayout>
+      <div className="extensions">
+        <div className="left-menu">
+          <Card>{menu}</Card>
+        </div>
+        <div className="content">{currentContent}</div>
       </div>
-      <div className="content">{currentContent}</div>
-    </div>
-    // </HeaderPageTemplate>
+    </MainLayout>
   )
 }
 
 Extensions.displayName = 'ExtensionsPage'
 
 export default Extensions
-
-export const DevModeBtn: FC = () => {
-  const { devMode, setDevMode } = useContext(MainContext)
-
-  return (
-    <div className="dev-mode">
-      <span className="label">Developer mode</span>
-      <Switch enabled={!!devMode} size="medium" onClick={() => setDevMode(p => !p)} />
-    </div>
-  )
-}

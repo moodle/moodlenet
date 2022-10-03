@@ -7,6 +7,7 @@ export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendRe
   const mailerCfg = env?.mailerCfg ?? (await kvStore.get('mailerCfg', '')).value
   // console.log({ mailerCfg })
   if (!mailerCfg) {
+    console.log(emailObj)
     throw new Error(`no mailerCfg defined in env or kvstore ! can't send email !`)
   }
   const resp = await sendEmail(mailerCfg.transport, {

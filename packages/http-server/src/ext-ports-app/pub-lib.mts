@@ -2,6 +2,7 @@ import type { PkgIdentifier } from '@moodlenet/core'
 export const SESSION_TOKEN_COOKIE_NAME = 'mn-session'
 
 export const BASE_APIS_URL = '/.apis'
+export const BASE_PKG_MOUNT_URL = '/.pkg'
 
 // export type RawSubOpts<Def extends ExtDef, Path extends SubcriptionPaths<Def>> = {
 //   method: 'POST'

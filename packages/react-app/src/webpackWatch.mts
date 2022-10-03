@@ -111,9 +111,11 @@ export function getWp(
             // directory: buildFolder,
           },
           proxy: {
-            '/.apis/*': {
-              target: cfg.proxy,
+            path: (pathname, _req) => {
+              // console.log({ pathname, test: /\/\..*/.test(pathname) })
+              return /\/\..*/.test(pathname)
             },
+            target: cfg.proxy,
           },
           client: {
             overlay: {
