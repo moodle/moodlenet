@@ -10,7 +10,7 @@
 //   },
 //   excludeStories: ['useProfileCardStoryProps'],
 //   decorators: [
-//     (Story) => (
+//     Story => (
 //       <div style={{ maxWidth: 500 }}>
 //         <Story />
 //       </div>

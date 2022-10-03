@@ -23,8 +23,13 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
   // const { registry: rightComponents } = header.rightComponents.useRegistry()
 
   const { clientSessionData, logout } = useContext(AuthCtx)
+<<<<<<< Updated upstream
   logout
   const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
+=======
+
+  const avatarImageUrl = clientSessionData?.avatarUrl ?? 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+>>>>>>> Stashed changes
 
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,
@@ -33,6 +38,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
     backgroundSize: 'cover',
   }
 
+<<<<<<< Updated upstream
   // const reoderedAvatarMenuItems = useMemo(() => {
   //   const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
   //     { pkg: shell.pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
@@ -42,6 +48,39 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
   //     avatarMenuItems.entries.sort((a, b) => (a.item.Position ?? Infinity) - (b.item.Position ?? Infinity) || 0),
   //   )
   // }, [avatarMenuItems.entries])
+=======
+<<<<<<< Updated upstream
+  const reoderedAvatarMenuItems = useMemo(() => {
+    const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
+      { pkg: shell.pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
+      { pkg: shell.pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
+    ]
+    return baseItems.concat(
+      avatarMenuItems.entries.sort((a, b) => (a.item.Position ?? Infinity) - (b.item.Position ?? Infinity) || 0),
+    )
+  }, [avatarMenuItems.entries])
+=======
+  // const avatarMenuItems = baseAvatarMenuItems
+  const orderedAvatarMenuItems: AvatarMenuItem[] = []
+  const unorderedAvatarMenuItems: AvatarMenuItem[] = []
+  headerCtx.avatarMenuItems.map(menuItem => {
+    typeof menuItem.def.Position === 'number'
+      ? orderedAvatarMenuItems.push(menuItem)
+      : unorderedAvatarMenuItems.push(menuItem)
+  })
+
+  const avatarMenuItems = useMemo(() => {
+    const menuItems = baseAvatarMenuItems.concat(unorderedAvatarMenuItems)
+
+    orderedAvatarMenuItems
+      .sort((a, b) => (a.def.Position && b.def.Position ? a.def.Position - b.def.Position : 0))
+      .map(menuItem => {
+        return typeof menuItem.def.Position === 'number' && menuItems.splice(menuItem.def.Position, 0, menuItem)
+      })
+    return menuItems
+  }, [headerCtx.avatarMenuItems])
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
   // console.log('logo ', logo)
   // console.log('smallLogo ', smallLogo)
