@@ -23,7 +23,8 @@
         "content-graph dev-build",
         "key-value-store dev-build",
         "organization dev-build",
-        "web-user dev-build"
+        "web-user dev-build",
+        "component-library dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -140,6 +141,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "react-app dev-build"
+      // "dependsOn": ["core dev-build", "http-server dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/component-library/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "component-library dev-build"
       // "dependsOn": ["core dev-build", "http-server dev-build"]
     },
     {

@@ -1,0 +1,14 @@
+{
+  "short_name": "MoodleNet",
+  "name": "MoodleNet",
+  "icons": [
+    {
+      "src": "google-touch-icon.png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "fullscreen",
+  "theme_color": "#f88012",
+  "background_color": "#ffffff"
+}
