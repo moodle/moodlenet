@@ -16,7 +16,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",
-    "@moodlenet/react-app": "^0.1.0",
     "@storybook/addon-actions": "^6.5.10",
     "@storybook/addon-essentials": "^6.5.10",
     "@storybook/addon-interactions": "^6.5.10",

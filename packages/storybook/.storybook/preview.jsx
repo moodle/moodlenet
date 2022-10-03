@@ -1,3 +1,5 @@
+import { baseStyle } from '../../react-app/lib/webapp/ui/styles/config.js'
+
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
   controls: {
@@ -7,8 +9,6 @@ export const parameters = {
     },
   },
 }
-
-const { baseStyle } = require('../../react-app/lib/webapp/ui/styles/config.js')
 
 export const decorators = [
   Story => (

@@ -1,5 +1,3 @@
-// const { PrimaryButtonStory } = lib.ui.components
-
 module.exports = {
   stories: [
     '../src/Card/Card.stories.tsx',
