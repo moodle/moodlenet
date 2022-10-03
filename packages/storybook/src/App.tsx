@@ -1,20 +1,13 @@
-import { useState } from 'react'
+import { FC, useState } from 'react'
+
 import './App.css'
 import reactLogo from './assets/react.svg'
 
-function App() {
+export const App: FC = () => {
   const [count, setCount] = useState(0)
 
   return (
-    <div
-      className="App"
-      style={{
-        // ...style,
-        ...baseStyle(),
-        // ...getColorPalette(baseMoodleColor),
-        // ...styleContext.style,
-      }}
-    >
+    <div className="App">
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />

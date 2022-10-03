@@ -2,10 +2,12 @@
 
 module.exports = {
   stories: [
+    '../src/Card/Card.stories.tsx',
+    '../../react-app/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',
     // PrimaryButtonStory,
     // '../src/**/*.stories.mdx',
     // '../src/**/*.stories.@(js|jsx|ts|tsx)',
-    '../../*/src/**/*.stories.@(js|jsx|ts|tsx)',
+    // '../../*/src/**/*.stories.@(js|jsx|ts|tsx)',
     // '../node_modules/@moodlenet/react-app/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',
     // '../../react-app/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',
     // '../../react-app/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',

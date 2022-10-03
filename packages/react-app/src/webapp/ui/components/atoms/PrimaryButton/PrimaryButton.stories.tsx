@@ -15,7 +15,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 // import { Button } from './Button'
-import PrimaryButton from './PrimaryButton'
+import PrimaryButton from './PrimaryButton.js'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
