@@ -1,16 +1,16 @@
-import type { ApiDefPaths, ApiFnType, PkgConnection } from '@moodlenet/core'
+import type { ApiDefPaths, ApiFnType, PkgIdentifier } from '@moodlenet/core'
 import type { HttpApiResponse } from '@moodlenet/http-server'
 import { getPkgApiFetchOpts } from '@moodlenet/http-server/lib/ext-ports-app/pub-lib.mjs'
 
 export type Opts = {}
 
-export function pkgApis<C extends PkgConnection<any>>(connection: C): LocateApi<C> {
+export function pkgApis<PkgId extends PkgIdentifier<any>>(pkgId: PkgId): LocateApi<PkgId> {
   const locateApi = (
     path: string,
     // { ctx = {} }: { ctx?: FloorApiCtx },
   ) => {
     const callApi: ApiFnType<any, any> = async (...args: any[]) => {
-      const { requestInit, url } = getPkgApiFetchOpts(connection.pkgId, path, args)
+      const { requestInit, url } = getPkgApiFetchOpts(pkgId, path, args)
       const response = await fetch(url, requestInit)
 
       if (response.status !== 200) {
@@ -21,10 +21,10 @@ export function pkgApis<C extends PkgConnection<any>>(connection: C): LocateApi<
     }
     return callApi
   }
-  return locateApi as LocateApi<C>
+  return locateApi as LocateApi<PkgId>
 }
 
-export type LocateApi<C extends PkgConnection<any>> = C extends PkgConnection<infer _ApiDefs>
+export type LocateApi<PkgId extends PkgIdentifier<any>> = PkgId extends PkgIdentifier<infer _ApiDefs>
   ? <Path extends ApiDefPaths<_ApiDefs>>(
       path: Path,
       // { ctx = {} }: { ctx?: FloorApiCtx },

@@ -9,7 +9,7 @@ export async function listDeployed() {
   const entries = await listEntries()
   return entries.map<DeployedPkgInfo>(entry => ({
     packageJson: entry.pkgInfo.packageJson,
-    pkgId: entry.pkgInfo.pkgId,
+    pkgId: entry.pkgId,
     readme: entry.pkgInfo.readme,
   }))
 }
@@ -28,7 +28,7 @@ export async function searchPackages({
   const objects = searchRes.objects.map(
     ({ package: { name: pkgName, description, keywords, version = '*', links } }) => {
       // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
-      const installedPkgIds = pkgEntries.map(pkgEntry => pkgEntry.pkgInfo.pkgId)
+      const installedPkgIds = pkgEntries.map(pkgEntry => pkgEntry.pkgId)
       const installedPkgId = installedPkgIds.find(pkgId => pkgId.name === pkgName /* &&pkgId.version=== version  */)
 
       const installPkgReq: InstallPkgReq = {

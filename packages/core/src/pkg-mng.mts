@@ -4,8 +4,9 @@ import * as path from 'path'
 import { resolve } from 'path'
 import { npmInstaller, symlinkInstaller } from './pkg-mng/installers.mjs'
 import * as lib from './pkg-mng/lib.mjs'
-import { InstallPkgReq, PkgIdentifier } from './pkg-mng/types.mjs'
-import { InstallResp, SysInstalledPkg } from './types.mjs'
+import { InstallPkgReq } from './pkg-mng/types.mjs'
+import { pkgIdByInfo } from './pkg-shell/connect/lib.mjs'
+import { InstallResp, PkgIdentifier, SysInstalledPkg } from './types.mjs'
 
 // const myDirInfo = installDirsInfo();
 
@@ -20,7 +21,7 @@ export async function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     getMain,
   }
 
-  async function uninstall({ pkgId }: { pkgId: PkgIdentifier }) {
+  async function uninstall({ pkgId }: { pkgId: PkgIdentifier<any> }) {
     /* const installRes =  */ await execa('npm', ['uninstall', `${pkgId.name}`], {
       cwd: pkgsFolder,
       timeout: 600000,
@@ -28,36 +29,31 @@ export async function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   }
 
   async function install(installPkgReq: InstallPkgReq): Promise<InstallResp> {
-    const { pkgId } = await (installPkgReq.type === 'npm'
+    const { pkgInfo } = await (installPkgReq.type === 'npm'
       ? npmInstaller({ installPkgReq, pkgsFolder })
       : symlinkInstaller({ installPkgReq, pkgsFolder }))
-    try {
-      const date = new Date().toISOString()
-      const sysInstalledPkg: SysInstalledPkg = {
-        date,
-        env: {},
-        installPkgReq,
-        pkgId,
-      }
-      return { sysInstalledPkg }
-    } catch (err) {
-      console.error('install error', err)
-      await uninstall({ pkgId })
-      throw err
+    const pkgId = pkgIdByInfo(pkgInfo)
+    const date = new Date().toISOString()
+    const sysInstalledPkg: SysInstalledPkg = {
+      date,
+      env: {},
+      installPkgReq,
+      pkgId,
     }
+    return { sysInstalledPkg }
   }
 
-  async function getMain({ pkgId }: { pkgId: PkgIdentifier }): Promise<{ main: any }> {
+  async function getMain({ pkgId }: { pkgId: PkgIdentifier<any> }): Promise<{ main: any }> {
     const { pkgRootDir: absFolder, packageJson } = await getPackageInfo({ pkgId })
     const absMainPath = resolve(absFolder, ...(packageJson.main?.split('/') ?? ['index.js']))
     const main = await import(absMainPath)
     return { main }
   }
-  async function getPackageInfo({ pkgId }: { pkgId: PkgIdentifier }) {
+  async function getPackageInfo({ pkgId }: { pkgId: PkgIdentifier<any> }) {
     return lib.getPackageInfo({ pkgRootDir: getAbsInstallationFolder({ pkgId }) })
   }
 
-  function getAbsInstallationFolder({ pkgId }: { pkgId: PkgIdentifier }) {
+  function getAbsInstallationFolder({ pkgId }: { pkgId: PkgIdentifier<any> }) {
     return path.resolve(pkgsFolder, 'node_modules', ...pkgId.name.split('/'))
   }
   async function checkInitFolder() {

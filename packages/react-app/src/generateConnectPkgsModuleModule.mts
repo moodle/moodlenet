@@ -9,7 +9,7 @@ function ___dirname(import_meta_url: string) {
 const __dirname = ___dirname(import.meta.url)
 
 export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPluginItem<WebPkgDepList>[] }) {
-  return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgInfo.pkgId.name).join(',')} -
+  return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgId.name).join(',')} -
 
   // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
     resolve(__dirname, '..', 'src', 'webapp', 'mainContextProviders.tsx'),
@@ -26,7 +26,7 @@ export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPl
 import pkg_main_component_${index} from '${resolve(
         pluginItem.guestPkgInfo.pkgRootDir,
         ...pluginItem.mainComponentLoc,
-      )}' // ${pluginItem.guestPkgInfo.pkgId.name}
+      )}' // ${pluginItem.guestPkgId.name}
     `,
     )
     .join('')}
@@ -41,15 +41,15 @@ import pkg_main_component_${index} from '${resolve(
       (pluginItem, index) => `
 
 
-// connect ${pluginItem.guestPkgInfo.pkgId.name} (pkg_main_component_${index})
+// connect ${pluginItem.guestPkgId.name} (pkg_main_component_${index})
 pkgs.push({
   //@ts-ignore
   MainComponent:pkg_main_component_${index},
   pkgId:{
-    ...${JSON.stringify(pluginItem.guestPkgInfo.pkgId)},
-    pkgRef:Symbol('${pluginItem.guestPkgInfo.pkgId.name}')
+    ...${JSON.stringify(pluginItem.guestPkgId)},
+    pkgRef:Symbol('${pluginItem.guestPkgId.name}')
   },
-  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs.map(({ pkgId }) => ({ pkgId })))}
+  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs)}
 })
 
 `,

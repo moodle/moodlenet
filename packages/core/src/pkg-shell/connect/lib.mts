@@ -3,9 +3,8 @@ import { dirname } from 'path'
 import { packageDirectorySync } from 'pkg-dir'
 import { fileURLToPath } from 'url'
 import { getPackageInfo } from '../../pkg-mng/lib.mjs'
-import { PkgName } from '../../pkg-mng/types.mjs'
-import { PackageInfo } from '../../types.mjs'
-import { ApiDef, ApiDefs, FlatApiDefs, PkgConnection, PkgModuleRef } from '../types/pkg.mjs'
+import { PackageInfo } from '../../pkg-mng/types.mjs'
+import { ApiDef, ApiDefs, FlatApiDefs, PkgEntry, PkgIdentifier, PkgModuleRef, PkgName } from '../types/pkg.mjs'
 
 export const API_DEF_SYMBOL: unique symbol = Symbol('CONNECTION_SYMBOL')
 
@@ -40,39 +39,30 @@ function getPkgModuleInfo(pkg_module_ref: PkgModuleRef) {
   assert(pkgRootDir, `no pkgRootDir found for ${moduleDir}`)
   const pkgInfo = getPackageInfo({ pkgRootDir })
 
-  return { moduleFilename, moduleDir, pkgRootDir, pkgInfo }
+  return { moduleFilename, moduleDir, pkgInfo }
 }
 
 /*
  * PkgRegistry
  */
-export type PkgEntry = {
-  pkgInfo: PackageInfo // NOTE: PackageInfo  will remove pkgId
-  // TODO: add pkgId here
-  apiDefs: ApiDefs
-  flatApiDefs: FlatApiDefs
-  pkgSym: symbol // NOTE: keep the pkgSym in PkgIdentifier and myId() return raw pkgId ( all done in registerPkgApis() )
-}
 
-const PKG_ENTRIES: PkgEntry[] = []
+const PKG_REG_ENTRIES: PkgEntry<any>[] = []
 
 export function listEntries() {
-  return PKG_ENTRIES.slice()
+  return PKG_REG_ENTRIES.slice()
 }
 
 export function getPkgEntryByPkgRootDir(pkgRootDir: string) {
-  return PKG_ENTRIES.find(_ => _.pkgInfo.pkgRootDir === pkgRootDir)
+  return PKG_REG_ENTRIES.find(_ => _.pkgInfo.pkgRootDir === pkgRootDir)
 }
-export function getPkgEntryByPkgName(pkgName: PkgName) {
-  return PKG_ENTRIES.find(_ => _.pkgInfo.pkgId.name === pkgName)
+export function getPkgRegEntryByPkgName(pkgName: PkgName) {
+  return PKG_REG_ENTRIES.find(_ => _.pkgId.name === pkgName)
 }
-export function getPkgEntryByPkgSym(pkgSym: symbol) {
-  return PKG_ENTRIES.find(_ => _.pkgSym === pkgSym)
-}
-export function getPkgApisRefByPkgName(pkgName: PkgName): PkgConnection<any> | undefined {
-  const pkgEntry = getPkgEntryByPkgName(pkgName)
-  return pkgEntry && { pkgSym: pkgEntry.pkgSym, pkgInfo: pkgEntry.pkgInfo, pkgId: pkgEntry.pkgInfo.pkgId }
-}
+
+// export function getPkgApiDefsByPkgName(pkgName: PkgName): Pick<PkgEntry<any>, 'apiDefs' | 'flatApiDefs'> | undefined {
+//   const pkgEntry = getPkgEntryByPkgName(pkgName)
+//   return pkgEntry && { apiDefs: pkgEntry.apiDefs, flatApiDefs: pkgEntry.flatApiDefs }
+// }
 // export function getPkgSymbolPkgModuleRef(pkg_module_ref: PkgModuleRef) {
 //   const {
 //     pkgInfo: { pkgId },
@@ -82,20 +72,39 @@ export function getPkgApisRefByPkgName(pkgName: PkgName): PkgConnection<any> | u
 
 export function ensureRegisterPkg(pkg_module_ref: PkgModuleRef) {
   const pkgModInfo = getPkgModuleInfo(pkg_module_ref)
-  const registered = getPkgEntryByPkgName(pkgModInfo.pkgInfo.pkgId.name)
+  const registered = getPkgRegEntryByPkgName(pkgModInfo.pkgInfo.packageJson.name)
   if (registered) {
     return registered
   }
-  const sym = Symbol(`PkgEntry[${pkgModInfo.pkgInfo.pkgId.name}]`)
-  const pkgEntry: PkgEntry = { pkgSym: sym, pkgInfo: pkgModInfo.pkgInfo, apiDefs: {}, flatApiDefs: {} }
+  const pkgId = pkgIdByInfo(pkgModInfo.pkgInfo)
+  Object.freeze(pkgId)
+  const pkgEntry: PkgEntry<any> = { pkgId, pkgInfo: pkgModInfo.pkgInfo, apiDefs: {}, flatApiDefs: {} }
   return registerPkg(pkgEntry)
 }
-function registerPkg(pkgEntry: PkgEntry) {
-  const pkgName = pkgEntry.pkgInfo.pkgId.name
-  assert(!getPkgEntryByPkgName(pkgName), `can't register ${pkgName} twice`)
+
+export function pkgIdByInfo(pkgInfo: PackageInfo): PkgIdentifier<any> {
+  const pkgId: PkgIdentifier<any> = {
+    name: pkgInfo.packageJson.name,
+    version: pkgInfo.packageJson.version,
+  }
+  return pkgId
+}
+
+export function pkgEntryByPkgId(pkgId: PkgIdentifier<any>): PkgEntry<any> | undefined {
+  const pkgEntry = getPkgRegEntryByPkgName(pkgId.name)
+  if (!pkgEntry) {
+    return undefined
+  }
+  //TODO:FIXME: add version check
+  return pkgEntry
+}
+
+function registerPkg(pkgEntry: PkgEntry<any>) {
+  const pkgName = pkgEntry.pkgId.name
+  assert(!getPkgRegEntryByPkgName(pkgName), `can't register ${pkgName} twice`)
   const pkgRootDir = pkgEntry.pkgInfo.pkgRootDir
   assert(!getPkgEntryByPkgRootDir(pkgRootDir), `can't register ${pkgRootDir} twice, with a different pkgName`)
-  PKG_ENTRIES.push(pkgEntry)
+  PKG_REG_ENTRIES.push(pkgEntry)
   return pkgEntry
 }
 export function registerPkgApis<_ApiDefs extends ApiDefs>(pkg_module_ref: PkgModuleRef, apiDefs: _ApiDefs) {

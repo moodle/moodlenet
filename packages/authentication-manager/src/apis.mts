@@ -6,7 +6,7 @@ export default {
   registerUser: defApi(
     ctx =>
       ({ uid }: { uid: string }) => {
-        return registerUser({ pkgId: ctx.caller.pkgInfo.pkgId, uid })
+        return registerUser({ pkgId: ctx.caller.pkgId, uid })
       },
     () => true,
   ),
@@ -14,7 +14,7 @@ export default {
   getSessionToken: defApi(
     ctx =>
       ({ uid }: { uid: string }) => {
-        return getSessionToken({ pkgId: ctx.caller.pkgInfo.pkgId, uid })
+        return getSessionToken({ pkgId: ctx.caller.pkgId, uid })
       },
     () => true,
   ),

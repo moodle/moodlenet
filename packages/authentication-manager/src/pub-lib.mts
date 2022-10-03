@@ -5,7 +5,13 @@ import { ClientSession, SessionToken } from './types.mjs'
 import { cryptoPkgApis } from './use-pkg-apis.mjs'
 
 type GetSessionResp = { success: false; msg: string } | { success: true; sessionToken: SessionToken }
-export async function getSessionToken({ uid, pkgId }: { uid: string; pkgId: PkgIdentifier }): Promise<GetSessionResp> {
+export async function getSessionToken({
+  uid,
+  pkgId,
+}: {
+  uid: string
+  pkgId: PkgIdentifier<any>
+}): Promise<GetSessionResp> {
   const user = await store.getByProviderId({ pkgName: pkgId.name, uid })
   if (!user) {
     return { success: false, msg: 'cannot find user' }
