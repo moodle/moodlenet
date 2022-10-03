@@ -35,7 +35,7 @@ export function useApis<_ApiDefs extends ApiDefs>(
   //   )}`,
   // )
   const targetPkgEntry = getPkgRegEntryByPkgName(targetPkgId.name)
-  assert(targetPkgEntry, `cannot call apis() on non connected target ${targetPkgId}`)
+  assert(targetPkgEntry, `cannot call apis() on non connected target ${targetPkgId.name}`)
 
   return function locateApi<Path extends ApiDefPaths<_ApiDefs>>(
     path: Path,

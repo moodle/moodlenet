@@ -29,21 +29,39 @@ export async function getClientSession({ token }: { token: string }) {
   return { success: true, clientSession } as const
 }
 
-export function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }): ClientSession | undefined {
-  return ctx[`@moodlenet/authentication-manager`]?.clientSession
-}
-
-export async function setApiCtxClientSession({ token, ctx }: { token: string | undefined; ctx: FloorApiCtx }) {
-  if (!token) {
-    return
+export async function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }): Promise<ClientSession | undefined> {
+  ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
+  const presentClientSession = ctx['@moodlenet/authentication-manager'].clientSession
+  if (presentClientSession) {
+    return presentClientSession
   }
+
+  const token = ctx['@moodlenet/authentication-manager']?.token
+  if (!token) {
+    return undefined
+  }
+
   const data = await getClientSession({ token })
+
   if (!data.success) {
     return
   }
   const { clientSession } = data
 
-  ctx['@moodlenet/authentication-manager'] = { clientSession }
+  ctx['@moodlenet/authentication-manager'].clientSession = clientSession
+
+  return clientSession
+}
+
+export async function setApiCtxClientSessionToken({ token, ctx }: { token: string | undefined; ctx: FloorApiCtx }) {
+  ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
+  if (!token) {
+    return
+  }
+
+  ctx['@moodlenet/authentication-manager'].token = token
+  // console.log({ token, ctx })
+  // console.log({ ctx })
 }
 
 export async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {

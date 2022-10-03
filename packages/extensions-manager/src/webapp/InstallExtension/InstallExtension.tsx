@@ -1,10 +1,19 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { Card, InputTextField, Loading, PrimaryButton } from '@moodlenet/react-app/ui.mjs'
+import {
+  Card,
+  HeaderRightComponentRegItem,
+  InputTextField,
+  Loading,
+  PrimaryButton,
+  Switch,
+} from '@moodlenet/react-app/ui.mjs'
+import { registries } from '@moodlenet/react-app/web-lib.mjs'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { DeployedPkgInfo } from '../../types.mjs'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
+// import { DevModeBtn } from '../Extensions.js'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities.js'
 import { MainContext } from '../MainComponent.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
@@ -13,13 +22,24 @@ import './InstallExtension.scss'
 export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
-// const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
+
+const DevModeBtn: FC = () => {
+  const { devMode, setDevMode } = useContext(MainContext)
+
+  return (
+    <div className="dev-mode">
+      <span className="label">Developer mode</span>
+      <Switch enabled={!!devMode} size="medium" onClick={() => setDevMode(p => !p)} />
+    </div>
+  )
+}
+const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  const { pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
+  const { pkgId, pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
   const [myPkg] = pkgs
   // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
 
-  // reactApp.header.rightComponent.useLocalRegister(DevModeBtnAddon)
+  registries.rightComponents.useRegister(pkgId, DevModeBtnAddon)
 
   const [localPathField, setLocalPathField] = useState('')
   const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)

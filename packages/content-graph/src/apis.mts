@@ -16,8 +16,8 @@ import {
 export default {
   getMyUserNode: defApi(
     ctx => async () => {
-      const clientSession = getApiCtxClientSession({ ctx })
-      // console.log('APAP', { clientSession })
+      const clientSession = await getApiCtxClientSession({ ctx })
+      // console.log('APAP', inspect({ clientSession, ctx }, false, 10, true))
       if (!clientSession?.user) {
         return
       }

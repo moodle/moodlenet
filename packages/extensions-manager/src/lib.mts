@@ -1,7 +1,8 @@
-import { InstallPkgReq, listEntries, SafePackageJson } from '@moodlenet/core'
+import type { InstallPkgReq } from '@moodlenet/core'
+import { listEntries } from '@moodlenet/core'
 import _axios from 'axios'
-import { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from './types/data.mjs'
-import { SearchResponse } from './types/npmRegistry.mjs'
+import type { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from './types/data.mjs'
+import type { SearchResponse } from './types/npmRegistry.mjs'
 
 const axios = _axios.default
 
@@ -76,11 +77,6 @@ keywords:moodlenetPackage
  */
 
 const ___ignore___mn2_pkgs = ['@moodlenet/webapp', '@moodlenet/common', '@moodlenet/backend', '@moodlenet/ce-platform']
-
-export function extNameDescription(pkgJson: SafePackageJson) {
-  const [displayName = '', description = ''] = (pkgJson.description ?? '').split('\n')
-  return { displayName, description }
-}
 
 const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
 export function getRegistry(_reg?: string | undefined) {

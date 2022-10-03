@@ -37,7 +37,7 @@ const connectPkgModulesFile = {
 }
 
 httpSrvPkgApis('mount')({
-  getApp: function getApp(express) {
+  getApp(express) {
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './public/index.html' })
     mountApp.use(staticWebApp)

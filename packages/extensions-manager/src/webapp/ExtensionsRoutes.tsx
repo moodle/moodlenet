@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Route } from 'react-router-dom'
-const Index = lazy(() => import('./Extensions'))
+const Index = lazy(() => import('./Extensions.js'))
 
 const ExtensionsRoutes = (
   <>
@@ -8,11 +8,14 @@ const ExtensionsRoutes = (
       index
       element={
         <Suspense fallback="loading...">
-          <Index sectionProps={{}} />
+          <Index />
         </Suspense>
       }
     />
   </>
 )
 
-export default ExtensionsRoutes
+export default {
+  rootPath: 'extensions',
+  routes: ExtensionsRoutes,
+}

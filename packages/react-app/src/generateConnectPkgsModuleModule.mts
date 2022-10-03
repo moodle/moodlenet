@@ -42,15 +42,12 @@ import pkg_main_component_${index} from '${resolve(
 
 
 // connect ${pluginItem.guestPkgId.name} (pkg_main_component_${index})
-pkgs.push({
-  //@ts-ignore
-  MainComponent:pkg_main_component_${index},
-  pkgId:{
-    ...${JSON.stringify(pluginItem.guestPkgId)},
-    pkgRef:Symbol('${pluginItem.guestPkgId.name}')
-  },
-  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs)}
-})
+  pkgs.push({
+    //@ts-ignore
+    MainComponent:pkg_main_component_${index},
+    pkgId:Object.freeze(${JSON.stringify(pluginItem.guestPkgId)}),
+    usesPkgs: ${JSON.stringify(pluginItem.usesPkgs)}
+  })
 
 `,
     )

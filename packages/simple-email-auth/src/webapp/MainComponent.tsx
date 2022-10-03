@@ -1,13 +1,17 @@
-import { ReactAppMainComponent } from '@moodlenet/react-app/web-lib.mjs'
+import { ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib.mjs'
 import { createContext, useMemo } from 'react'
+import * as loginComponents from './Login.js'
+import Router from './Router.js'
+import * as settingsComponents from './Settings.js'
+import * as signupComponents from './Signup.js'
 import { MainContextT, WebPkgDeps } from './types.mjs'
 
 export const MainContext = createContext<MainContextT>(null as any)
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
-  // reactApp.auth.login.register(loginComponents)
-  // reactApp.auth.signup.register(signupComponents)
-  // reactApp.settings.section.register(settingsComponents)
-  // reactApp.route.register({ routes: Router })
+  registries.loginItems.useRegister(pkgId, loginComponents)
+  registries.signupItems.useRegister(pkgId, signupComponents)
+  registries.settingsSections.useRegister(pkgId, settingsComponents)
+  registries.routes.useRegister(pkgId, Router)
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {
       pkgs,
