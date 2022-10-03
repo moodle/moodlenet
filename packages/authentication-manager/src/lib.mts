@@ -21,7 +21,7 @@ export async function registerUser({
   pkgId,
 }: {
   uid: string
-  pkgId: PkgIdentifier
+  pkgId: PkgIdentifier<any>
 }): Promise<{ success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }> {
   const user = await store.create({
     providerId: {

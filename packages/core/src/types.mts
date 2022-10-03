@@ -1,6 +1,7 @@
 export * from './pkg-mng/types.mjs'
 export * from './pkg-shell/types/pkg.mjs'
-import { InstallPkgReq, PkgIdentifier } from './pkg-mng/types.mjs'
+import { InstallPkgReq } from './pkg-mng/types.mjs'
+import { PkgIdentifier } from './types.mjs'
 
 export type MainFolders = { systemFolder: string; deploymentFolder: string; pkgStorageFolder?: string }
 // SysConfig
@@ -10,7 +11,7 @@ export type SystemPaths = MainFolders & {
 }
 
 export type SysInstalledPkg = {
-  pkgId: PkgIdentifier
+  pkgId: PkgIdentifier<any>
   date: string
   installPkgReq: InstallPkgReq
   env: { default?: ExtensionEnv } & Record<string, ExtensionEnv>

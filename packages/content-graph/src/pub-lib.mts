@@ -1,7 +1,7 @@
 import { PkgIdentifier } from '@moodlenet/core'
 import { EdgeLink, EdgeLinkIdentifiers, Glyph, GlyphID, GlyphIdentifier, GlyphMeta } from './types.mjs'
 
-export function getCollectionName(pkgId: PkgIdentifier | false, collectionBaseName: string) {
+export function getCollectionName(pkgId: PkgIdentifier<any> | false, collectionBaseName: string) {
   return !pkgId ? collectionBaseName : `${pkgId.name.replace('@', 'at__').replace('/', '__')}__${collectionBaseName}`
 }
 

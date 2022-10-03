@@ -1,5 +1,5 @@
 import type { Ext } from '@moodlenet/core'
-import type { FullRequires } from '@moodlenet/core/src/types/ext'
+import type { FullRequires } from '@moodlenet/core'
 import type { MainModuleObj, PkgIds, WebappPluginMainModule } from '../types'
 import { reactAppPluginMainModule } from './connect-react-app-lib'
 import { priHttpFor } from './main-lib/pri-http'

@@ -8,7 +8,7 @@ export default {
   ensureCollections: defApi(
     ctx =>
       async ({ defs }: { defs: CollectionDefOptMap }) => {
-        const dbName = getPkgDBName(ctx.caller.pkgInfo.pkgId)
+        const dbName = getPkgDBName(ctx.caller.pkgId)
         return ensure(dbName, { defs })
       },
     () => true,
@@ -16,7 +16,7 @@ export default {
   ),
   query: defApi(
     ctx => async (queryReq: QueryReq) => {
-      const dbName = getPkgDBName(ctx.caller.pkgInfo.pkgId)
+      const dbName = getPkgDBName(ctx.caller.pkgId)
       return query(dbName, queryReq)
     },
     () => true,

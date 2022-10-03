@@ -56,7 +56,7 @@ export default {
       async <Defs extends GlyphDefsMap>({ defs }: { defs: GlyphDefOptMap<Defs> }) => {
         return ensureGlyphs({
           defs,
-          pkgId: ctx.caller.pkgInfo.pkgId,
+          pkgId: ctx.caller.pkgId,
         })
       },
     () => true,

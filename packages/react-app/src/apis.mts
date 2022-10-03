@@ -21,7 +21,7 @@ export default {
   plugin: defApi(
     ctx =>
       async <Deps extends WebPkgDepList = never>(pluginDef: WebappPluginDef<Deps>) => {
-        return await setupPlugin({ pluginDef, pkgInfo: ctx.caller.pkgInfo })
+        return await setupPlugin({ pluginDef, pkgId: ctx.caller.pkgId })
       },
     () => true,
   ),

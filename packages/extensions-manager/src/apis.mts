@@ -22,7 +22,7 @@ export default {
   ),
   uninstall: defApi(
     _ctx =>
-      async ({ pkgId }: { pkgId: PkgIdentifier }): Promise<void> => {
+      async ({ pkgId }: { pkgId: PkgIdentifier<any> }): Promise<void> => {
         const _sys = await sys()
         await _sys.pkgMng.uninstall({ pkgId })
       },

@@ -1,4 +1,4 @@
-import { PackageInfo, PkgIdentifier } from '../../types.mjs'
+import { PackageInfo } from '../../types.mjs'
 import type { TypeofPath, TypePaths } from './crawl-path.js'
 export type ArgsValidity =
   | boolean
@@ -10,17 +10,11 @@ export type ArgsValidation = (...args: unknown[]) => ArgsValidity | Promise<Args
 
 export type FlatApiDefs = Record<string, ApiDef<any>>
 
-export type PkgEntry = {
+export type PkgEntry<_ApiDefs extends ApiDefs> = {
   pkgInfo: PackageInfo
-  apiDefs: ApiDefs
+  pkgId: PkgIdentifier<_ApiDefs>
+  apiDefs: _ApiDefs
   flatApiDefs: FlatApiDefs
-}
-
-//TODO: will be removed, will become the PkgIdentifier(with sym) .. always available with myPkgId(import.meta)
-export type PkgConnection<_ApiDefs extends ApiDefs> = {
-  pkgSym: symbol
-  pkgInfo: PackageInfo
-  pkgId: PkgIdentifier
 }
 
 export type ApiDef<_ApiFn extends ApiFn> = {
@@ -30,7 +24,7 @@ export type ApiDef<_ApiFn extends ApiFn> = {
 
 export type PrimaryCallCtx = {}
 export type FloorApiCtx = { primary?: PrimaryCallCtx } & Record<string, any>
-export type ApiCtx = { caller: { pkgInfo: PackageInfo; moduleRef: PkgModuleRef } } & FloorApiCtx
+export type ApiCtx = { caller: { pkgId: PkgIdentifier<any>; moduleRef: PkgModuleRef } } & FloorApiCtx
 export type CtxApiFn<_ApiFn extends ApiFn> = (ctx: ApiCtx) => _ApiFn
 export type ApiFn = (...args: any[]) => Promise<any>
 export type ApiDefs = {
@@ -59,3 +53,10 @@ export type ApiFnType<Defs extends ApiDefs, Path extends ApiDefPaths<Defs>> = Ty
       // ? ReturnType<Def['api']>
       never
   : never
+
+export type PkgName = string
+export type PkgVersion = string
+export type PkgIdentifier<_ApiDefs extends ApiDefs> = {
+  readonly name: PkgName
+  readonly version: PkgVersion
+}

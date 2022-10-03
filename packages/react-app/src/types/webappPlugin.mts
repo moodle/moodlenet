@@ -1,4 +1,4 @@
-import type { PackageInfo } from '@moodlenet/core'
+import type { PackageInfo, PkgIdentifier } from '@moodlenet/core'
 import { WebPkgDepList } from '../webapp/web-lib.mjs'
 
 export type WebappPluginDef<Deps extends WebPkgDepList = never> = {
@@ -19,4 +19,5 @@ export type WebappAddPackageAlias = {
 
 export type WebappPluginItem<Deps extends WebPkgDepList = never> = WebappPluginDef<Deps> & {
   guestPkgInfo: PackageInfo
+  guestPkgId: PkgIdentifier<any>
 }

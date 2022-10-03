@@ -9,6 +9,6 @@ export async function ensureDB(dbName: string) {
   return { created: !exists, db }
 }
 
-export function getPkgDBName({ name: pkgName }: PkgIdentifier) {
+export function getPkgDBName({ name: pkgName }: PkgIdentifier<any>) {
   return pkgName[0] === '@' ? pkgName.replace('@', 'at__').replace('/', '__') : pkgName
 }

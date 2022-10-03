@@ -1,4 +1,4 @@
-import { PackageInfo } from '@moodlenet/core'
+import { pkgEntryByPkgId, PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { addWebappPluginItem } from './init.mjs'
 import { AppearanceData, WebappPluginDef, WebappPluginItem } from './types.mjs'
@@ -17,15 +17,18 @@ export async function getAppearance() {
 }
 
 export async function setupPlugin<Deps extends WebPkgDepList = never>({
-  pkgInfo,
+  pkgId,
   pluginDef,
 }: {
   pluginDef: WebappPluginDef<Deps>
-  pkgInfo: PackageInfo
+  pkgId: PkgIdentifier<any>
 }) {
+  const guestPkgEntry = pkgEntryByPkgId(pkgId)
+  assert(guestPkgEntry, `can't setup plugin, no guestPkgEntry for ${pkgId.name}@${pkgId.version}`)
   const webappPluginItem: WebappPluginItem<Deps> = {
     ...pluginDef,
-    guestPkgInfo: pkgInfo,
+    guestPkgId: pkgId,
+    guestPkgInfo: guestPkgEntry.pkgInfo,
   }
   addWebappPluginItem(webappPluginItem)
 }
