@@ -1,4 +1,4 @@
-import { OrganizationExtDef } from '@moodlenet/organization'
+import { OrganizationData } from '@moodlenet/organization'
 import {
   ComponentType,
   createContext,
@@ -6,19 +6,15 @@ import {
   FC,
   PropsWithChildren,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
-import { AppearanceData, ReactAppExtDef } from '../../../../..'
-import lib from '../../../../main-lib'
-import { baseStyle, BaseStyleType } from '../../../styles/config'
-
-export type OrganizationData = {
-  instanceName: string
-  landingTitle: string
-  landingSubtitle: string
-}
+import { AppearanceData } from '../../../../../types.mjs'
+import { MainContext } from '../../../../MainContext.js'
+// import lib from '../../../../main-lib'
+import { baseStyle, BaseStyleType } from '../../../styles/config.js'
 
 export type StyleType = BaseStyleType & CSSProperties
 
@@ -36,17 +32,18 @@ export type SetCtxT = {
   setStyle: React.Dispatch<React.SetStateAction<StyleType>>
   saveOrganization(data: OrganizationData): unknown
   organizationData: OrganizationData
-  saveApparence(data: AppearanceData): unknown
+  saveAppearance(data: AppearanceData): unknown
   appearanceData: AppearanceData
 }
 
 export const SettingsCtx = createContext<SetCtxT>(null as any)
 
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization@0.1.0')
-  const reactAppSrv = lib.priHttp.fetch<ReactAppExtDef>('@moodlenet/react-app@0.1.0')
-
   // const nav = useNavigate()
+  const {
+    pkgs: [reactAppSrv, organizationSrv],
+  } = useContext(MainContext)
+
   // dentro a use effect prendo il valore
   const [style, setStyle] = useState<SetCtxT['style']>(StyleContextDefault)
   const [appearanceData, setAppareanceData] = useState<AppearanceData>({ color: '' })
@@ -58,23 +55,28 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const saveOrganization = useCallback(
     (data: OrganizationData) => {
-      organizationSrv('set')({ payload: data })
+      organizationSrv.call('setOrgData')({ orgData: data })
       setDataOrg(data)
     },
     [setDataOrg],
   )
 
-  const saveApparence = useCallback(
+  const saveAppearance = useCallback(
     (data: AppearanceData) => {
-      reactAppSrv('setApparence')({ payload: data })
+      reactAppSrv.call('setAppearance')({ appearanceData: data })
+
       setAppareanceData(data)
     },
     [setDataOrg],
   )
 
   useEffect(() => {
-    organizationSrv('get')().then(({ data: orgData }) => setDataOrg(orgData))
-    reactAppSrv('getApparence')().then(resp => setAppareanceData(resp.data))
+    organizationSrv
+      .call('getOrgData')()
+      .then(({ data: orgData }) => setDataOrg(orgData))
+    reactAppSrv
+      .call('getAppearance')()
+      .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
   }, [])
 
   const ctx = useMemo<SetCtxT>(() => {
@@ -83,7 +85,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       setStyle,
       saveOrganization,
       organizationData,
-      saveApparence,
+      saveAppearance,
       appearanceData,
     }
   }, [style, setStyle, organizationData, appearanceData])

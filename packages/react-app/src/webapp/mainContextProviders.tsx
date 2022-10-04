@@ -1,40 +1,57 @@
-import { FC, PropsWithChildren } from 'react'
-import { PkgIds, PluginMainComponent } from '..'
-import * as auth from './main-lib/auth'
-import { registriesProviders } from './main-lib/registry'
-import { ContentGraphProvider } from './ui/components/pages/ContentGraph/ContentGraphProvider'
-import * as set from './ui/components/pages/Settings/SettingsContext'
+import { PkgIdentifier } from '@moodlenet/core'
+import { FC, PropsWithChildren, useMemo } from 'react'
+import _connect from '_connect-moodlenet-pkg-modules_'
+import { WebPkgDepList } from './types/plugins.mjs'
+import { ReactAppMainComponent } from './web-lib.mjs'
+import { pkgApis } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
-export const pluginMainModules: { MainComponent: PluginMainComponent; pkg: PkgIds }[] = []
+const connect = getConnect()
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
-  // console.log({ pluginMainModules })
-  const ctxProviderWrap = Object.values(pluginMainModules)
-    .reverse()
-    .reduce(
-      (_children, { MainComponent, pkg }) => <MainComponent key={pkg.id}>{_children}</MainComponent>,
-      <>{children}</>,
-    )
-
-  const Main = (
-    <auth.Provider>
-      <set.Provider>
-        <ContentGraphProvider>
-          {/* <I18nProvider i18n={i18n}> */}
-          {ctxProviderWrap}
-          {/* </I18nProvider> */}
-        </ContentGraphProvider>
-      </set.Provider>
-    </auth.Provider>
+  const Main = useMemo(
+    () =>
+      connect.pkgs.reduce((_children, { MainComponent: PluginMainComponent, usesPkgs, pkgId }) => {
+        return (
+          <PluginMainComponent
+            pkgs={usesPkgs.map(wpConn => ({
+              call: pkgApis(wpConn),
+            }))}
+            pkgId={pkgId}
+            key={`${pkgId.name}@${pkgId.version}`}
+          >
+            {_children}
+          </PluginMainComponent>
+        )
+      }, <>{children}</>),
+    [children],
   )
+  // console.log({ MyMainComponent, pluginMainComponents, ctxProviderWrap })
 
-  const registryProviderWrap = registriesProviders
-    //.reverse()
-    .reduce(
-      (_children, { Provider }, index) => <Provider key={`registriesProvider_${index}`}>{_children}</Provider>,
-      Main,
-    )
+  // const registryProviderWrap = registriesProviders
+  //   //.reverse()
+  //   .reduce(
+  //     (_children, { Provider }, index) => <Provider key={`registriesProvider_${index}`}>{_children}</Provider>,
+  //     Main,
+  //   )
+  // return registryProviderWrap
 
-  // console.log({ registriesProviders, registryProviderWrap })
-  return registryProviderWrap
+  return Main
+}
+
+function getConnect() {
+  type PluginMainComponentObject = {
+    MainComponent: ReactAppMainComponent<any>
+    pkgId: PkgIdentifier<any>
+    usesPkgs: WebPkgDepList
+  }
+  type Connect = {
+    pkgs: PluginMainComponentObject[]
+  }
+  const connect: Connect = {
+    ..._connect,
+    pkgs: _connect.pkgs.slice().reverse(),
+  }
+  _connect.pkgs.length = 0
+  _connect.pkgs = null
+  return connect
 }

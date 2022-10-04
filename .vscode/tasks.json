@@ -8,6 +8,7 @@
       "dependsOrder": "parallel",
       "dependsOn": [
         "test-extension dev-build",
+        "test-extension-2 dev-build",
         "dev-machine dev-build",
         "http-server dev-build",
         "react-app dev-build",
@@ -49,6 +50,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "test-extension dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/test-extension-2/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "test-extension-2 dev-build"
       // "dependsOn": ["core dev-build"]
     },
     {

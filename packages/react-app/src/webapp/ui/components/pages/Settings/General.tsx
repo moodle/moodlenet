@@ -1,13 +1,10 @@
+import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect } from 'react'
-import { Card, InputTextField, PrimaryButton } from '../../atoms'
-import { SettingsCtx } from './SettingsContext'
-
-export type OrganizationData = {
-  instanceName: string
-  landingTitle: string
-  landingSubtitle: string
-}
+import { Card } from '../../atoms/Card/Card.js'
+import { InputTextField } from '../../atoms/InputTextField/InputTextField.js'
+import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton.js'
+import { SettingsCtx } from './SettingsContext.js'
 
 export const GeneralContent: FC = () => {
   const setCtx = useContext(SettingsCtx)

@@ -1,27 +1,24 @@
+import { InputTextField, PrimaryButton, Snackbar, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
 import { useFormik } from 'formik'
 import { FC, useContext, useState } from 'react'
-import { MainContext } from './MainModule'
+import { MainContext } from './MainComponent.js'
 import './Signup.scss'
 
 export type SignupFormValues = { email: string; password: string; displayName: string }
 
 export const Icon: FC = () => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { PrimaryButton } = reactApp.ui.components
   return <PrimaryButton color="blue">Use email</PrimaryButton>
 }
 export const Panel: FC = () => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { InputTextField, PrimaryButton, TertiaryButton, Snackbar } = reactApp.ui.components
+  const { pkgs } = useContext(MainContext)
+  const [myPkg] = pkgs
   const [emailSent, setEmailSent] = useState(false)
   const [errMsg, setErrMsg] = useState('')
   const form = useFormik<SignupFormValues>({
     initialValues: { email: '', password: '', displayName: '' },
     async onSubmit({ email, password, displayName }) {
       setErrMsg('')
-      const res = await shell.http.fetch('signup')({
+      const res = await myPkg.call('signup')({
         displayName,
         email,
         password,

@@ -1,5 +1,5 @@
 import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
-import Card from '../Card/Card'
+import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
 
 export type FloatingMenuProps = {

@@ -2,6 +2,10 @@
   "name": "@moodlenet/core",
   "version": "0.1.0",
   "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Core"
@@ -15,8 +19,8 @@
     "src/",
     "bin/"
   ],
-  "bin": "./lib/bin/cli.js",
-  "main": "lib/index.js",
+  "bin": "./lib/bin/cli.mjs",
+  "main": "lib/main.mjs",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
@@ -25,12 +29,13 @@
     "dotenv": "^16.0.0",
     "dotenv-expand": "^8.0.1",
     "execa": "^5.1.1",
-    "pkg-dir": "^5",
+    "pkg-dir": "^7.0.0",
     "prompts": "^2.4.2",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
     "semver": "^7.3.6",
-    "tar": "^6.1.11"
+    "tar": "^6.1.11",
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.35",

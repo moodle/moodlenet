@@ -1,7 +1,7 @@
-import { FC, useContext } from 'react'
-import { MainContext } from '../MainModule'
-import { OverallCard } from './OverallCard/OverallCard'
-import { ProfileCard } from './ProfileCard/ProfileCard'
+import { MainLayout } from '@moodlenet/react-app/ui.mjs'
+import { FC } from 'react'
+import { OverallCard } from './OverallCard/OverallCard.js'
+import { ProfileCard } from './ProfileCard/ProfileCard.js'
 import './ProfilePage.scss'
 
 export type ProfilePageProps = {
@@ -10,10 +10,6 @@ export type ProfilePageProps = {
 }
 
 export const ProfilePage: FC<ProfilePageProps> = ({ displayName, avatarUrl }) => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { MainLayout } = reactApp.ui.components
-
   return (
     <MainLayout>
       <div className="profile">

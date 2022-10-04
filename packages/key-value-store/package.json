@@ -2,6 +2,11 @@
   "name": "@moodlenet/key-value-store",
   "version": "0.1.0",
   "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "main": "lib/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Key value store"
@@ -14,9 +19,12 @@
     "lib/",
     "src/"
   ],
-  "main": "lib/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
+  "peerDependencies": {
+    "@moodlenet/arangodb": "^0.1.0",
+    "@moodlenet/core": "^0.1.0"
+  },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.1.0",
     "@moodlenet/core": "^0.1.0",

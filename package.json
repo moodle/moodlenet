@@ -4,11 +4,12 @@
   "license": "AGPL-3.0",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
+  "dependencies": {},
   "devDependencies": {
-    "@octokit/core": "^3.5.1",
     "@types/rimraf": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
+    "csurf": "^1.11.0",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -24,12 +25,11 @@
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
     "rimraf": "^3.0.2",
-    "shx": "^0.3.4",
-    "typescript": "^4.6.3"
+    "typescript": "^4.7.2"
   },
   "scripts": {
     "ibs": "husky install && yarn bs",
-    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
+    "bs": "lerna bootstrap",
     "setup": "lerna run setup --parallel --stream",
     "start-dev": "lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
@@ -65,8 +65,5 @@
   
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
-  },
-  "dependencies": {
-    "csurf": "^1.11.0"
   }
 }
