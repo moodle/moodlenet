@@ -1,8 +1,9 @@
 module.exports = {
   stories: [
-    '../src/Card/Card.stories.tsx',
-    '../../react-app/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',
-    // PrimaryButtonStory,
+    '../../component-library/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',
+    '../../component-library/src/webapp/ui/components/atoms/Card/Card.stories.tsx',
+    '../../web-user/src/webapp/ProfilePage/OverallCard/OverallCard.stories.tsx',
+    '../../component-library/src/webapp/ui/components/organisms/Header/HeaderTitle/HeaderTitle.stories.tsx',
     // '../src/**/*.stories.mdx',
     // '../src/**/*.stories.@(js|jsx|ts|tsx)',
     // '../../*/src/**/*.stories.@(js|jsx|ts|tsx)',

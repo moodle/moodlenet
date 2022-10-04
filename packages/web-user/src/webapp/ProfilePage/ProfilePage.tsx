@@ -1,4 +1,4 @@
-import { MainLayout } from '@moodlenet/react-app/ui.mjs'
+import { MainLayout } from '@moodlenet/component-library/ui.mjs'
 import { FC } from 'react'
 import { OverallCard } from './OverallCard/OverallCard.js'
 import { ProfileCard } from './ProfileCard/ProfileCard.js'

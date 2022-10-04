@@ -26,12 +26,14 @@
     "@material-ui/icons": "^4.11.3"
   },
   "peerDependencies": {
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/react-app": "^0.1.0"
   },
   "devDependencies": {
     "@lingui/macro": "^3.14.0",
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/react-app": "^0.1.0",

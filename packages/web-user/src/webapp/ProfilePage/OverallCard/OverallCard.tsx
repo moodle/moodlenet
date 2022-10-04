@@ -1,6 +1,6 @@
 // import { t, Trans } from '@lingui/macro'
 import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
-import { Card } from '@moodlenet/react-app/ui.mjs'
+import { Card } from '@moodlenet/component-library/ui.mjs'
 import { FC } from 'react'
 // import { Href, Link } from '../../../../elements/link'
 import './OverallCard.scss'
