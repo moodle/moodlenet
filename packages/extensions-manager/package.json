@@ -2,6 +2,11 @@
   "name": "@moodlenet/extensions-manager",
   "version": "0.1.0",
   "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "main": "lib/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Extensions manager"
@@ -14,7 +19,6 @@
     "lib/",
     "src/"
   ],
-  "main": "lib/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
@@ -26,6 +30,10 @@
     "react-markdown": "^8.0.3",
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^6.1.1"
+  },
+  "peerDependencies": {
+    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/react-app": "^0.1.0"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.1.0",

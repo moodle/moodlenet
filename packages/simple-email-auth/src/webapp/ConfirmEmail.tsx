@@ -1,12 +1,10 @@
+import { MainLayout } from '@moodlenet/react-app/ui.mjs'
+import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { MainContext } from './MainModule'
 
 export const ConfirmEmail: FC = () => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { MainLayout } = reactApp.ui.components
-  const auth = useContext(reactApp.AuthCtx)
+  const auth = useContext(AuthCtx)
 
   // const nav = useNavigate()
   const [params] = useSearchParams()

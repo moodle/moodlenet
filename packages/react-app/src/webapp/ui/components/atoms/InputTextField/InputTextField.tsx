@@ -1,5 +1,5 @@
 import React, { forwardRef, ReactNode, useEffect, useState } from 'react'
-import { useForwardedRef } from '../../../lib/useForwardedRef'
+import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
 import './InputTextField.scss'
 
 export type InputTextFieldProps = {

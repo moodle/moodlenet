@@ -1,13 +1,12 @@
-import { AuthenticationManagerExtDef } from '@moodlenet/authentication-manager'
 import { FC, useCallback, useContext, useState } from 'react'
-import { MainContext } from '../../../../../MainContext'
+import { MainContext } from '../../../../../MainContext.js'
 // import lib from '../../../../../main-lib'
-import { AuthCtx } from '../../../../../main-lib/auth'
+import { AuthCtx } from '../../../../../web-lib/auth.js'
 // import { Link } from '../../../../elements/link'
-import Card from '../../../atoms/Card/Card'
-import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout'
+import Card from '../../../atoms/Card/Card.js'
+import { InputTextField } from '../../../atoms/InputTextField/InputTextField.js'
+import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton.js'
+import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './RootLogin.scss'
 
 // const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
@@ -23,8 +22,10 @@ export const RootLogin: FC<RootLoginProps> = () => {
 }
 export const RootLoginBody: FC<RootLoginProps> = ({}) => {
   const { setSessionToken } = useContext(AuthCtx)
-  const { shell } = useContext(MainContext)
-  const authHttp = shell.pkgHttp<AuthenticationManagerExtDef>('@moodlenet/authentication-manager@0.1.0')
+  const {
+    pkgs: [, , authHttp],
+  } = useContext(MainContext)
+
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()
@@ -38,7 +39,7 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
   const rootLogin = useCallback(async () => {
     setLoginFailed(false)
     setSubmitting(true)
-    const res = await authHttp.fetch('getRootSessionToken')({ password: rootPassword })
+    const res = await authHttp.call('getRootSessionToken')({ password: rootPassword })
     if (res.success) {
       setSessionToken(res.sessionToken)
     }

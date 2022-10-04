@@ -1,4 +1,4 @@
 import { Route } from 'react-router-dom'
-import ConfirmEmail from './ConfirmEmail'
+import ConfirmEmail from './ConfirmEmail.js'
 
-export default <Route path="confirm-email" element={<ConfirmEmail />} />
+export default { routes: <Route path="confirm-email" element={<ConfirmEmail />} /> }

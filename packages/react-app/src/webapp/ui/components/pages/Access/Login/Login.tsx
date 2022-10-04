@@ -1,10 +1,10 @@
-import CallMadeIcon from '@material-ui/icons/CallMade'
-import { CSSProperties, FC, useContext, useState } from 'react'
+import { CallMade as CallMadeIcon } from '@material-ui/icons'
+import { CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MainContext } from '../../../../../MainContext'
+import { registries } from '../../../../../web-lib.mjs'
 // import { Link } from '../../../../elements/link'
-import Card from '../../../atoms/Card/Card'
-import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout'
+import Card from '../../../atoms/Card/Card.js'
+import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Login.scss'
 
 export type LoginProps = {}
@@ -17,12 +17,7 @@ export const Login: FC<LoginProps> = () => {
   )
 }
 export const LoginBody: FC<LoginProps> = ({}) => {
-  const {
-    registries: {
-      auth: { login },
-    },
-  } = useContext(MainContext)
-  const { registry: loginRegs } = login.useRegistry()
+  const { registry: loginRegs } = registries.loginItems.useRegistry()
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()
@@ -33,7 +28,7 @@ export const LoginBody: FC<LoginProps> = ({}) => {
 
   const defaultLoginEntry = loginRegs.entries[0]
   const [currLoginEntry, chooseLoginEntry] = useState(defaultLoginEntry)
-  //useEffect(() => chooseLoginEntry(defaultLoginEntry), [defaultLoginEntry])
+  useEffect(() => chooseLoginEntry(defaultLoginEntry), [defaultLoginEntry])
   return (
     <div className="login-page">
       <div className="content">

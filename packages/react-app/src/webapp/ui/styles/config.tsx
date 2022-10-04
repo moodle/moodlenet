@@ -1,4 +1,4 @@
-import { adjustColor, randomColor, setOpacity } from './utilities'
+import { adjustColor, randomColor, setOpacity } from './utilities.js'
 
 export const baseMoodleColor = '#F88012'
 export const primaryColor = 'var(--base-moodle-color)'

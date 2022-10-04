@@ -1,13 +1,14 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
+import { Card, PrimaryButton } from '@moodlenet/react-app/ui.mjs'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { getNumberFromString, getPastelColor } from '../helpers/utilities'
+import { getNumberFromString, getPastelColor } from '../helpers/utilities.js'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-import ExtensionConfig from '../ExtensionConfig/ExtensionConfig'
+import ExtensionConfig from '../ExtensionConfig/ExtensionConfig.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { CoreExt, PackageInfo } from '@moodlenet/core'
-import { extNameDescription } from '../../lib'
-import { MainContext } from '../MainModule'
+import { extNameDescription } from '../../common/lib.mjs'
+import { DeployedPkgInfo } from '../../types.mjs'
+import { MainContext } from '../MainComponent.js'
 import './styles.scss'
 
 export type PackagesProps = {
@@ -15,15 +16,13 @@ export type PackagesProps = {
 }
 
 const Packages: FC<PackagesProps> = () => {
-  const [extinfoList, setExtInfoList] = useState<PackageInfo[]>([])
-  const { shell, setSelectedExtConfig, selectedExtConfig } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { Card, PrimaryButton } = reactApp.ui.components
+  const [extinfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
+  const { pkgs, setSelectedExtConfig, selectedExtConfig } = useContext(MainContext)
+  const [myPkg] = pkgs
 
   useEffect(() => {
-    shell
-      .pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
-      .fetch('ext/listDeployed')()
+    myPkg
+      .call('listDeployed')()
       .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
   }, [])
   const extInfosListElements = useMemo(
@@ -34,7 +33,7 @@ const Packages: FC<PackagesProps> = () => {
         var { displayName, description } = extNameDescription(pkgInfo.packageJson)
         // const extName = extInfo.packageInfo.packageJson.@moodlenet/displayName
         return (
-          <div className="package" key={pkgInfo.id} onClick={() => setSelectedExtConfig(pkgInfo)}>
+          <div className="package" key={pkgInfo.pkgId.name} onClick={() => setSelectedExtConfig(pkgInfo)}>
             {/* <PackageIcon /> */}
             <div
               className="logo"

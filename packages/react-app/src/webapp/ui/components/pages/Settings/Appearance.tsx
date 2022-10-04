@@ -1,11 +1,12 @@
 // import { Trans } from '@lingui/macro'
 import { FC, useContext } from 'react'
-import { getColorPalette } from '../../../styles/utilities'
+import { getColorPalette } from '../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
-import { Card, InputTextField } from '../../atoms'
-import Colorpicker from '../../atoms/Colorpicker/Colorpicker'
+import Card from '../../atoms/Card/Card.js'
+import Colorpicker from '../../atoms/Colorpicker/Colorpicker.js'
+import InputTextField from '../../atoms/InputTextField/InputTextField.js'
 import './Appearance.scss'
-import { SettingsCtx } from './SettingsContext'
+import { SettingsCtx } from './SettingsContext.js'
 
 export type AppearanceProps = {
   // organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
@@ -21,7 +22,7 @@ export const Appearance: FC<AppearanceProps> = (
   // const [compactLogo, setCompactLogo] = useState(true)
 
   const setColor = (color: string) => {
-    styleContext.saveApparence({color})
+    styleContext.saveAppearance({ color })
     styleContext.setStyle({
       ...styleContext.style,
       ...getColorPalette(color),

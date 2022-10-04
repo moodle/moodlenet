@@ -1,32 +1,31 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material'
 import { FC, ReactNode, ReactPortal, useCallback, useContext, useReducer } from 'react'
 // import { searchNpmExtensionConfig } from '../../../../../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { StateContext } from '../ExtensionsProvider'
-import { CoreExt, PackageInfo } from '@moodlenet/core'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+// import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
+// import vscDarkPlus from 'react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus'
+// import vscDarkPlus from 'react-syntax-highlighter'
 import rehypeRaw from 'rehype-raw'
-import { extNameDescription } from '../../lib'
-import { mandatoryPackages } from '../fakeData'
-import { MainContext } from '../MainModule'
+import { extNameDescription } from '../../common/lib.mjs'
+import { DeployedPkgInfo } from '../../types.mjs'
+import { mandatoryPackages } from '../fakeData.js'
+import { MainContext } from '../MainComponent.js'
 import './ExtensionConfig.scss'
 
 export type ExtensionConfigProps = {
-  pkgInfo: PackageInfo
+  pkgInfo: DeployedPkgInfo
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { Card, PrimaryButton, TertiaryButton, Loading } = reactApp.ui.components
-
-  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
-  // const stateContext = useContext(StateContext)
+  const { pkgs } = useContext(MainContext)
+  const [myPkg] = pkgs
 
   const modulesList = null /* extension?.modules.map(
     (module: Module, i) =>
@@ -41,11 +40,11 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) 
   const uninstall = useCallback(() => {
     toggleIsInstalling()
 
-    core.fetch('pkg/uninstall')({
-      pkgInstallationId: pkgInfo.id,
+    myPkg.call('uninstall')({
+      pkgId: pkgInfo.pkgId,
     })
     // .finally(toggleIsInstalling)
-  }, [pkgInfo.id])
+  }, [pkgInfo.pkgId])
 
   type CodeBlockProps = {
     node: any
@@ -57,7 +56,7 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) 
     code({ node, inline, className, children, ...props }: CodeBlockProps) {
       const match = /language-(\w+)/.exec(className || '')
       return !inline && match ? (
-        <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="div" {...props}>
+        <SyntaxHighlighter /* style={vscDarkPlus} */ language={match[1]} PreTag="div" {...props}>
           {String(children).replace(/\n$/, '')}
         </SyntaxHighlighter>
       ) : (

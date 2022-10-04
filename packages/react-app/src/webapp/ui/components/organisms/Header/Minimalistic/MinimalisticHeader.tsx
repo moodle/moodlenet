@@ -1,8 +1,9 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { MainContext } from '../../../../../MainContext'
-import { PrimaryButton, SecondaryButton } from '../../../atoms'
-import HeaderTitle from '../HeaderTitle/HeaderTitle'
+import { MainContext } from '../../../../../MainContext.js'
+import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton.js'
+import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton.js'
+import HeaderTitle from '../HeaderTitle/HeaderTitle.js'
 import './MinimalisticHeader.scss'
 
 type MinimalisticHeaderProps = {
@@ -11,11 +12,11 @@ type MinimalisticHeaderProps = {
 
 const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ page } /* { devMode, setDevMode } */) => {
   const {
-    registries: {
-      header: { rightComponents },
-    },
+    // registries: {
+    //   header: { rightComponents },
+    // },
   } = useContext(MainContext)
-  const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
+  // const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
   return (
     <div className="minimalistic-header">
       <div className="content">
@@ -25,9 +26,9 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ pa
           />
         </div>
         <div className="right">
-          {rightComponentsRegistry.entries.flatMap(({ pkg, item: { Component } }, index) => {
+          {/* {rightComponentsRegistry.entries.flatMap(({ pkg, item: { Component } }, index) => {
             return <Component key={`${pkg.id}:${index}`} />
-          })}
+          })} */}
           {page !== 'activation' ? (
             <div className="buttons">
               {page !== 'signup' && (
