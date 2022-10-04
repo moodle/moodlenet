@@ -1,9 +1,9 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
-import { CSSProperties, FC, useContext, useEffect, useState } from 'react'
+import { CSSProperties, FC, useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../../react-app-lib/auth'
+import { MainContext } from '../../../../../MainContext'
 import Card from '../../../atoms/Card/Card'
-import { MainLayout } from '../../../layout'
+import { SimpleLayout } from '../../../layout'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
@@ -11,57 +11,63 @@ export type SignupProps = {}
 
 export const Signup: FC<SignupProps> = () => {
   return (
-    <MainLayout headerType="minimalistic">
+    <SimpleLayout page="signup">
       <SignupBody />
-    </MainLayout>
+    </SimpleLayout>
   )
 }
 export const SignupBody: FC<SignupProps> = ({}) => {
   // const shouldShowErrors =
   //   !!form.submitCount && (!!signupErrorMessage || !form.isValid)
+  const {
+    registries: {
+      auth: { signup },
+    },
+  } = useContext(MainContext)
+  const { registry: signupRegs } = signup.useRegistry()
 
-  const authCtx = useContext(AuthCtx)
-  const defaultSignupItem = authCtx.signupItems[0]
-  const [currSignupItem, chooseSignupItem] = useState(defaultSignupItem)
-  useEffect(() => chooseSignupItem(defaultSignupItem), [defaultSignupItem])
+  const defaultSignupEntry = signupRegs.entries[0]
+  const [currSignupEntry, chooseSignupEntry] = useState(defaultSignupEntry)
+  //useEffect(() => chooseSignupItem(defaultSignupEntry), [defaultSignupEntry])
 
   return (
     <div className={`signup-page`}>
       {/* <div className={`signup-page ${requestSent ? 'success' : ''}`} onKeyDown={handleKeyDown}> */}
       <div className={`signup-content`}>
         {/* <div className={`signup-content ${requestSent ? 'success' : ''}`}> */}
-        <Card hover={true}>
+        <Card className="login-card" hover={true}>
           <Link to={`/login`}>
             Log in
             <CallMadeIcon />
           </Link>
         </Card>
-        <Card>
+        <Card className="signup-card">
           <div className="content">
-            {authCtx.signupItems.length > 1 && (
+            <div className="title">Sign up</div>
+            {currSignupEntry ? <currSignupEntry.item.Panel /> : <div>No Auth available</div>}
+            {signupRegs.entries.length > 1 && (
               <>
                 <div>
-                  <span style={{ float: 'left', marginRight: '10px' }}>use:</span>
-                  {authCtx.signupItems.map((signupItem, index) => {
-                    const isCurrent = signupItem === currSignupItem
+                  {/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}
+                  {signupRegs.entries.map((signupEntry, index) => {
+                    const isCurrent = signupEntry === currSignupEntry
                     const css: CSSProperties = {
                       float: 'left',
                       cursor: isCurrent ? undefined : 'pointer',
                       fontWeight: isCurrent ? 'bold' : undefined,
+                      display: isCurrent ? 'none' : 'block',
                     }
-                    const onClick = isCurrent ? undefined : () => chooseSignupItem(signupItem)
+                    const onClick = isCurrent ? undefined : () => chooseSignupEntry(signupEntry)
 
                     return (
                       <div key={index} style={css} onClick={onClick}>
-                        <signupItem.def.Icon />
+                        <signupEntry.item.Icon />
                       </div>
                     )
                   })}
                 </div>
               </>
             )}
-            <div className="title">Sign up</div>
-            {currSignupItem ? <currSignupItem.def.Panel /> : <div>No Auth available</div>}
 
             {/* <div className="bottom">
               <div className="left"> */}

@@ -33,10 +33,11 @@
     > .card {
       height: 100%;
     }
-    > .card:first-child {
+    > .login-card {
       width: 525px;
       min-height: 340px;
       height: min-content;
+      min-width: 0;
 
       background-color: white;
       @media (max-width: 900px) {

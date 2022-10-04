@@ -19,3 +19,5 @@ export const elementFullyInViewPort = (
     left + width <= window.pageXOffset + window.innerWidth
   )
 }
+
+export const getRandomInt = (max: number): number => Math.floor(Math.random() * max)

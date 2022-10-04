@@ -1,8 +1,7 @@
-import lib from 'moodlenet-react-app-lib'
+import { MainLayout } from '@moodlenet/react-app/lib/webapp/ui/components'
 import { FC } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-const { MainLayout } = lib.ui.components.layout
 export const LoginFail: FC = () => {
   const [params] = useSearchParams()
   const msg = params.get('msg')

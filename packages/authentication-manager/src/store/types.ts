@@ -11,9 +11,10 @@ export type User = UserData & {}
 
 export type UserData = {
   id: UserId
-  displayName: string
   providerId: ProviderId
   created: string
+  // displayName: string
+  // avatarUrl?: string
 }
 
 export type Users = Record<UserId, User>

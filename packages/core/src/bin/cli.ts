@@ -1,35 +1,49 @@
 #!/usr/bin/env node
 import { resolve } from 'path'
+import prompts from 'prompts'
 // import boot from '../main/boot'
-import install from '../main/install'
-import { INSTALLED_PKGS_FOLDER_NAME, SYS_CONFIG_FILE_NAME } from '../main/prepareFileSystem'
+import yargs from 'yargs'
 import { MainFolders } from '../types/sys'
-const [cmd, _deploymentFolder, _systemFolder] = process.argv.slice(2)
-const deploymentFolder = _deploymentFolder ? resolve(process.cwd(), _deploymentFolder) : process.cwd()
-const systemFolder = _systemFolder ?? resolve(deploymentFolder, '_system')
-
-const mainFolders: MainFolders = {
-  deploymentFolder,
-  systemFolder,
-}
-console.log({ _deploymentFolder, deploymentFolder, _systemFolder, systemFolder })
-console.log({ cmd, deploymentFolder })
-if (cmd === 'boot') {
-  const DEV_MODE_VALUE = 'development'
-  const NODE_ENV = process.env.NODE_ENV ?? DEV_MODE_VALUE
-  const devMode = NODE_ENV === DEV_MODE_VALUE
-  const coreInstallationFolder = require(resolve(systemFolder, SYS_CONFIG_FILE_NAME)).core.installationFolder as string
-  const bootModule = require(resolve(
-    deploymentFolder,
-    INSTALLED_PKGS_FOLDER_NAME,
-    coreInstallationFolder,
-    'lib',
-    'main',
-    'boot.js',
-  ))
-  bootModule.default({ mainFolders: mainFolders, devMode: devMode })
-} else if (cmd === 'install') {
-  install({ mainFolders })
-} else {
-  throw new Error(`no valid cmd:${cmd}`)
-}
+import boot from './boot'
+import install from './install'
+prompts.override(yargs.argv)
+;(async () => {
+  const params = await prompts([
+    {
+      type: 'select',
+      choices: [
+        { title: 'install', value: 'install' },
+        { title: 'boot', value: 'boot' },
+      ],
+      name: 'operation',
+      message: `operation?`,
+    },
+    {
+      type: 'text',
+      name: 'installation-folder',
+      message: `installation folder?`,
+      initial: process.cwd(),
+      format: installation_folder => resolve(process.cwd(), installation_folder ?? '.'),
+    },
+    {
+      type: 'text',
+      name: 'system-folder',
+      message: `system folder?`,
+      initial: deploymentFolder => resolve(deploymentFolder, '_system'),
+      format: (system_folder, values) =>
+        system_folder ? resolve(process.cwd(), system_folder) : resolve(values['installation-folder'], '_system'),
+    },
+  ])
+  const { operation, 'installation-folder': installation_folder, 'system-folder': system_folder } = params
+  const mainFolders: MainFolders = {
+    deploymentFolder: installation_folder,
+    systemFolder: system_folder,
+  }
+  if (operation === 'boot') {
+    boot({ mainFolders })
+  } else if (operation === 'install') {
+    install({ mainFolders })
+  } else {
+    throw new Error(`no valid operation:${operation}`)
+  }
+})()

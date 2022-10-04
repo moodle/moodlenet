@@ -1,22 +1,25 @@
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
-import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { CoreExt } from '@moodlenet/core'
+import { MainContext } from '../MainModule'
 import './styles.scss'
 
 export type ModulesProps = {}
 
-const { Card, InputTextField, PrimaryButton } = lib.ui.components.atoms
 const Modules: FC<ModulesProps> = () => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { Card, InputTextField, PrimaryButton } = reactApp.ui.components
+
+  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
   const [localPathField, setLocalPathField] = useState('')
   const install = useCallback(() => {
     if (!localPathField) {
       return
     }
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+    core.fetch('pkg/install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
-      deploy: true,
     })
   }, [localPathField])
   return (
@@ -38,7 +41,7 @@ const Modules: FC<ModulesProps> = () => {
               Install
             </PrimaryButton>
           </div>
-        </div>{' '}
+        </div>
       </Card>
     </div>
   )

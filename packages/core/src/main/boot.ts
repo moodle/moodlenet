@@ -2,6 +2,7 @@ import assert from 'assert'
 import { DepGraph } from 'dependency-graph'
 import { resolve } from 'path'
 import { mergeMap, of, share, Subject } from 'rxjs'
+import { inspect } from 'util'
 import { coreExtDef } from '..'
 import * as CoreLib from '../core-lib'
 import { matchMessage } from '../core-lib/message'
@@ -9,52 +10,57 @@ import { isExtIdBWC, joinPointer, splitExtId, splitPointer } from '../core-lib/p
 import { depGraphAddNodes, depGraphRm } from '../dep-graph'
 import * as pkgMngLib from '../pkg-mng/lib'
 import type {
+  Boot,
   CoreExt,
   DataMessage,
   DepGraphData,
-  DeployableBag,
-  DeploymentBag,
-  DeploymentShell,
   ExposedPointerMap,
-  ExposePointers,
   Ext,
-  ExtBag,
   ExtDef,
   ExtId,
-  ExtInfo,
   ExtName,
   MessagePush,
   MWFn,
   PackageInfo,
-  PushMessage,
+  PkgInstallationId,
   PushOptions,
-  RegDeployment,
+  RawShell,
+  RegItem,
   Shell,
 } from '../types'
-import { MainFolders } from '../types/sys'
-import { ext2ExtInfo } from '../util/ext'
 import { createLocalDeploymentRegistry } from './ext-deployment-registry'
 import { getMain } from './main'
-import { coreExtId } from './pkgJson'
+import { coreExtName } from './pkgJson'
 
+process.on('error', err => {
+  console.error(err)
+  err instanceof Error && console.error(err.stack)
+  process.exit()
+})
 export type Core = Awaited<ReturnType<typeof boot>>
-export type BootCfg = {
-  mainFolders: MainFolders
-  devMode: boolean
-}
-// export const corePkgInfo: PkgInfo = { name: 'moodlenet-core', version: '0.1.10' }
+
+// export const corePkgInfo: PkgInfo = { name: '@moodlenet/core', version: '0.1.0' }
 
 // type Env = {tmp
 // }
 // function getEnv(rawExtEnv: RawExtEnv): Env {
 //   return rawExtEnv as any //implement checks
 // }
-export default async function boot(cfg: BootCfg) {
-  console.log('boot .... ', cfg)
+// process.on('uncaughtException', e => {
+//   console.error(`***\n***\n***\nUNCAUGHT EXCEPTION:***\n***\n***\n`, e)
+// })
+const boot: Boot = async cfg => {
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
-  // const _env = getEnv(extEnvVars['moodlenet-core'])
+  // const _env = getEnv(extEnvVars['@moodlenet/core'])
   const main = getMain({ mainFolders: cfg.mainFolders })
-
+  const sysconfig = main.readSysConfig()
+  const { __FIRST_RUN__ } = sysconfig
+  if (__FIRST_RUN__) {
+    main.writeSysConfig({
+      ...sysconfig,
+      __FIRST_RUN__: undefined,
+    })
+  }
   await startup_ensureAllInstalled()
 
   const deployments = createLocalDeploymentRegistry()
@@ -62,60 +68,47 @@ export default async function boot(cfg: BootCfg) {
   const depGraph = new DepGraph<DepGraphData>()
   const $MAIN_MSGS$ = new Subject<DataMessage<any>>()
   const pipedMessages$ = $MAIN_MSGS$.pipe(
-    // tap(msg => console.log('++++++msg', msg)),
     mergeMap(msg => {
       const orderDepl = depOrderDeployments()
-      // console.log({ orderDepl })
       if (msg.bound === 'in') {
         const { extName: msgExtName } = splitExtId(splitPointer(msg.pointer).extId)
-        const destDeplIndex = orderDepl.findIndex(({ extId }) => {
+        const destDeplIndex = orderDepl.findIndex(({ shell: { extId } }) => {
           const { extName: thisExtName } = splitExtId(extId)
           return thisExtName === msgExtName
         })
         if (destDeplIndex < 0) {
-          console.error({ msg, destDeplIndex })
+          console.error({ msg, destDeplIndex, msgExtName })
           throw new Error(`message pipe: can't find deployment for ext: ${msgExtName}`)
         }
         const destDepl = orderDepl.splice(destDeplIndex, 1)
         orderDepl.push(...destDepl)
       }
-      // console.log({ orderDepl: orderDepl.map(_ => _.ext.id), msg })
       return orderDepl
         .map(({ mw }) => mw)
         .filter((mw): mw is MWFn => !!mw)
         .reduce(($, mwFn) => $.pipe(mergeMap(mwFn)), of(msg))
     }),
-    // tap(msg => setImmediate(() => console.log('*******msg', msg))),
     share(),
   )
 
   const coreExt: Ext<CoreExt> = {
     ...coreExtDef,
-    enable: shell => {
+    connect: shell => {
       return {
-        deploy(
-          {
-            /* , tearDown  */
-          },
-        ) {
+        deploy: () => {
           const assumeValid = { validate: () => ({ valid: true }) }
           shell.expose({
             'ext/listDeployed/sub': assumeValid,
             'pkg/install/sub': assumeValid,
             'pkg/uninstall/sub': assumeValid,
-            'ext/deploy/sub': assumeValid,
+            // 'ext/deploy/sub': assumeValid,
             'pkg/getPkgStorageInfos/sub': assumeValid,
           })
 
-          shell.lib.pubAll<CoreExt>('moodlenet-core@0.1.10', shell, {
+          shell.provide.services({
             async 'pkg/getInstalledPackages'() {
-              const installedPkgInfos = await main.pkgMng.getAllInstalledPackagesInfo()
-              const pkgInfos = installedPkgInfos.map<PackageInfo>(_ => ({
-                installationFolder: _.installationFolder,
-                mainModPath: _.mainModPath,
-                packageJson: _.packageJson,
-                readme: _.readme,
-              }))
+              const pkgInfos = await main.pkgMng.getAllPackagesInfo()
+
               return {
                 pkgInfos,
               }
@@ -128,22 +121,10 @@ export default async function boot(cfg: BootCfg) {
               return { pkgInfos }
             },
             'ext/listDeployed'() {
-              // console.log({ deployments: deployments.reg })
-              const extInfos = Object.values(deployments.reg).map<ExtInfo>(({ ext, installedPackageInfo: pkgInfo }) =>
-                ext2ExtInfo({
-                  pkgInfo,
-                  ext,
-                }),
-              )
-              return [{ extInfos }]
+              const pkgInfos = Object.values(deployments.reg).map<PackageInfo>(({ pkgInfo }) => pkgInfo)
+              return [{ pkgInfos }]
             },
-            async 'pkg/install'({
-              msg: {
-                data: {
-                  req: { installPkgReq, deploy },
-                },
-              },
-            }) {
+            async 'pkg/install'({ installPkgReq }) {
               if (installPkgReq.type === 'symlink') {
                 assert(
                   !!main.sysPaths.pkgStorageFolder,
@@ -151,86 +132,69 @@ export default async function boot(cfg: BootCfg) {
                 )
                 installPkgReq.fromFolder = resolve(main.sysPaths.pkgStorageFolder, installPkgReq.fromFolder)
               }
-              console.log('installPkgReq ...', installPkgReq)
-              const installedPackageInfo = await main.pkgMng.install(installPkgReq)
-              const extInfos = installedPackageInfo.pkgExport.exts.map<ExtInfo>(ext =>
-                ext2ExtInfo({ ext, pkgInfo: installedPackageInfo }),
-              )
+              const { pkgInfo, date } = await main.pkgMng.install(installPkgReq)
 
-              const curr = main.getSysConfig()
+              const oldSysConfig = main.readSysConfig()
 
               main.writeSysConfig({
-                ...curr,
-                installedPackages: [
-                  ...curr.installedPackages,
-                  { installationFolder: installedPackageInfo.installationFolder, installPkgReq },
-                ],
-              })
-              if (deploy) {
-                const extId = installedPackageInfo.pkgExport.exts[0].id // @FIXME !!!
-                const extBag: ExtBag = { installedPackageInfo, extId }
-                console.log('*deploying installed', extBag)
-                await deployExtensions({
-                  extBags: [extBag],
-                })
-                const curr = main.getSysConfig()
-                main.writeSysConfig({
-                  ...curr,
-                  enabledExtensions: [
-                    ...curr.enabledExtensions,
-                    { extId, installationFolder: installedPackageInfo.installationFolder },
-                  ],
-                })
-              }
-              return { extInfos }
-            },
-            async 'pkg/uninstall'({
-              msg: {
-                data: {
-                  req: { installationFolder },
+                ...oldSysConfig,
+                packages: {
+                  ...oldSysConfig.packages,
+                  [pkgInfo.id]: { env: {}, date, installPkgReq },
                 },
-              },
-            }) {
-              console.log('uninstallPkg...', installationFolder)
-              const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({ installationFolder })
-              const depl = deployments.get(installedPackageInfo.pkgExport.exts[0].id)
+              })
+              const {
+                regDeployment: {
+                  shell: { extId: installedExtId },
+                },
+              } = await deployExtension({ pkgInstallationId: pkgInfo.id, install: true })
+              shell.emit('pkg/installed')({ extId: installedExtId })
+
+              return { pkgInfo }
+            },
+            async 'pkg/uninstall'({ pkgInstallationId }) {
+              // const installedPackageInfo = await main.pkgMng.getPackageInfo({
+              //   pkgInstallationId,
+              // })
+              const depl = deployments.getByPkgInstallationId(pkgInstallationId)
               assert(depl, 'no deployment for ${installationFolder}')
               undeployExtension(depl.ext)
-              await main.pkgMng.uninstall({ installationFolder })
+              await depl.uninstall?.()
+              await main.pkgMng.uninstall({ pkgInstallationId })
 
-              const curr = main.getSysConfig()
-
+              const oldSysConfig = main.readSysConfig()
+              const newPackages = { ...oldSysConfig.packages }
+              delete newPackages[pkgInstallationId]
               main.writeSysConfig({
-                ...curr,
-                installedPackages: curr.installedPackages.filter(pkg => pkg.installationFolder !== installationFolder),
-                enabledExtensions: curr.enabledExtensions.filter(
-                  pkg => !(pkg.installationFolder === installationFolder && pkg.extId === depl.extId),
-                ),
+                ...oldSysConfig,
+                packages: newPackages,
               })
-
+              shell.emit('pkg/uninstalled')({ extId: depl.shell.extId })
               return
             },
-            async 'ext/deploy'({
-              msg: {
-                data: {
-                  req: { installationFolder, extId },
-                },
-              },
-            }) {
-              const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({ installationFolder })
-              const ext = installedPackageInfo.pkgExport.exts.find(ext => ext.id === extId)
-              assert(ext, `Couldn't find extId:${extId} in packageId:${installationFolder}`)
-              await deployExtensions({
-                extBags: [{ installedPackageInfo, extId }],
-              })
-              const curr = main.getSysConfig()
-              main.writeSysConfig({
-                ...curr,
-                enabledExtensions: [...curr.enabledExtensions, { extId: ext.id, installationFolder }],
-              })
+            // async 'ext/deploy'({
+            //   msg: {
+            //     data: {
+            //       req: { installationFolder, extId },
+            //     },
+            //   },
+            // }) {
+            //   const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({
+            //     pkgInstallationId: installationFolder,
+            //   })
+            //   const ext = installedPackageInfo.pkgExport.exts.find(ext => ext.id === extId)
+            //   assert(ext, `Couldn't find extId:${extId} in packageId:${installationFolder}`)
+            //   await deployExtensions({
+            //     extBags: [{ installedPackageInfo, extId }],
+            //   })
+            //   const curr = main.readSysConfig()
+            //   main.writeSysConfig({
+            //     ...curr,
+            //     enabledPackages: [...curr.enabledPackages, { extId: ext.id, installationFolder }],
+            //   })
 
-              return
-            },
+            //   return
+            // },
           })
           return {}
         },
@@ -240,218 +204,259 @@ export default async function boot(cfg: BootCfg) {
   // depGraphAddNodes(_depGraph, [coreExt])
   // const pkgDiskInfo = pkgDiskInfoOf(__filename)
 
-  const KDeployment = (
-    await deployExtensions({
-      extBags: [
-        {
-          extId: coreExtId,
-          installedPackageInfo: {
-            ...(await main.pkgMng.getInstalledPackageInfo({ installationFolder: resolve(__dirname, '..', '..') })),
-            pkgExport: { exts: [coreExt as any] },
-          },
-        },
-      ],
-    })
-  )[0]!
+  /* const KDeployment =  */
+  const pkgInfo = await pkgMngLib.getPackageInfo({ absFolder: resolve(__dirname, '..', '..') })
+  await deployModule({ env: null, ext: coreExt, pkgInfo })
 
   await startup_deployAll()
 
   return {
-    coreExt,
-    KDeployment,
-    deployExtensions,
-    undeployExtension,
-    depOrderDeployments,
-    extEnv,
-    depGraph,
-    $MAIN_MSGS$,
-    pipedMessages$,
+    async tearDown() {
+      $MAIN_MSGS$.complete()
+    },
   }
 
-  async function deployExtensions({ extBags }: { extBags: ExtBag[] }): Promise<DeploymentBag[]> {
-    if (!extBags.length) {
-      return []
-    }
-    //FIXME: dependency ordered
-    const deployableBags = extBags.map<DeployableBag>(({ installedPackageInfo, extId: myDeployExtId, deployWith }) => {
-      const ext = installedPackageInfo.pkgExport.exts.find(({ id }) => myDeployExtId === id)
-      assert(ext, `couldn't find ${myDeployExtId} in ${installedPackageInfo.installationFolder}`)
-      console.log('deployExtension', myDeployExtId)
-      const deployExtIdSplit = splitExtId(myDeployExtId)
-      const env = extEnv(myDeployExtId)
-      const $msg$ = new Subject<DataMessage<any>>()
+  // return {
+  //   coreExt,
+  //   KDeployment,
+  //   deployExtension,
+  //   undeployExtension,
+  //   depOrderDeployments,
+  //   extPkgConfig,
+  //   depGraph,
+  //   $MAIN_MSGS$,
+  //   pipedMessages$,
+  // }
 
-      const push = pushMsg(myDeployExtId)
-      const getExt: Shell['getExt'] = deployments.get as any
-
-      const onExt: Shell['onExt'] = (extId, cb) => {
-        const match = matchMessage<CoreExt>()
-        // console.log('onExt', extId)
-        // FIXME: beware that immediate_deployment stays in memoruy this way - fix it
-        const immediate_deployment = getExt(extId)
-        if (immediate_deployment) {
-          setImmediate(() => {
-            // console.log('onExt::', extId, 'immediate')
-            cb(immediate_deployment as any)
-          })
-        }
-        const subscription = pipedMessages$.subscribe(msg => {
-          if (
-            !(
-              (match(msg, 'moodlenet-core@0.1.10::ext/deployed') ||
-                match(msg, 'moodlenet-core@0.1.10::ext/undeployed')) &&
-              isExtIdBWC(msg.data.extId, extId)
-            )
-          ) {
-            return
-          }
-
-          const def_deployment = getExt(extId)
-          if (immediate_deployment === def_deployment) {
-            return
-          }
-          // console.log('onExt::', extId, 'pipedMessages$', msg.pointer)
-          cb(getExt(extId))
-        })
-        return subscription
-      }
-
-      // function assertMyRegDeployment(prefixErrMsg: string) {
-      //   const myRegDeployment = deployments.get(myDeployExtId)
-      //   assert(myRegDeployment, `${prefixErrMsg} my ${myDeployExtId} deployment is missing`)
-      //   return myRegDeployment
-      // }
-      const onExtInstance: Shell['onExtInstance'] = (onExtId, cb) => {
-        let cleanup: void | (() => void) = undefined
-        const subscription = onExt(onExtId, regDeployment => {
-          // console.log('onExtInstance', extId, `[${regDeployment?.extId}]`)
-          // const myRegDeployment = assertMyRegDeployment(`onExtInstance(${onExtId}) subscription still receiving, but`)
-          const sub = onExtDeployment(myDeployExtId, myRegDeployment => {
-            sub.unsubscribe()
-            if (!regDeployment?.inst) {
-              return cleanup?.()
-            }
-            cleanup = cb(regDeployment.inst?.({ depl: myRegDeployment }) /* --- , regDeployment as any */)
-          })
-        })
-        return subscription
-      }
-
-      const onExtDeployment: Shell['onExtDeployment'] = (extId, cb) => {
-        let cleanup: void | (() => void) = undefined
-        const subscription = onExt(extId, regDeployment => {
-          if (!regDeployment) {
-            return cleanup?.()
-          }
-          cleanup = cb(regDeployment as any)
-        })
-        return subscription
-      }
-
-      const libOf: Shell['libOf'] = ofExtId =>
-        new Promise((resolve, reject) => {
-          // const myRegDeployment = assertMyRegDeployment(`libOf(${ofExtId}), but`)
-          const sub = onExtDeployment(myDeployExtId, myRegDeployment => {
-            sub.unsubscribe()
-            resolve(deployments.get(ofExtId)?.lib?.({ depl: myRegDeployment as any }))
-            return reject
-          })
-        })
-
-      const expose: ExposePointers = expPnt => {
-        console.log(`Expose `, deployExtIdSplit.extName, expPnt)
-        EXPOSED_POINTERS_REG[deployExtIdSplit.extName] = expPnt
-      }
-
-      const shell: Shell = {
-        extId: myDeployExtId,
-        extName: deployExtIdSplit.extName,
-        extVersion: deployExtIdSplit.version,
-        env,
-        msg$: $msg$.asObservable(),
-        // removing `as any` on `push` compiler crashes with "Error: Debug Failure. No error for last overload signature"
-        // ::: https://github.com/microsoft/TypeScript/issues/33133  ... related:https://github.com/microsoft/TypeScript/issues/37974
-        emit: path => (data, opts) => (push as any)('out')(myDeployExtId)(path)(data, opts),
-        send: destExtId => path => (data, opts) => (push as any)('in')(destExtId)(path)(data, opts),
-        push,
-        libOf,
-        onExtInstance,
-        onExtDeployment,
-        getExt,
-        onExt,
-        installedPackageInfo,
-        expose,
-        lib: CoreLib,
-      }
-
-      const extDeployable = ext.enable(shell)
-      const deployableBag: DeployableBag = {
-        extDeployable,
-        shell,
-        $msg$,
-        deployWith,
-        ext,
-        installedPackageInfo,
-      }
-      return deployableBag
+  type DeploymentBag = { regDeployment: RegItem<any> }
+  async function deployExtension({
+    pkgInstallationId,
+    install = false,
+  }: {
+    install?: boolean
+    pkgInstallationId: PkgInstallationId
+  }): Promise<DeploymentBag> {
+    const env = pkgEnv(pkgInstallationId)
+    const { ext, pkgInfo } = await main.pkgMng.getPkg({ pkgInstallationId })
+    return deployModule({
+      env,
+      ext,
+      pkgInfo,
+      install,
     })
-    const deploymentBagThunks = deployableBags.map<(collect: DeploymentBag[]) => Promise<DeploymentBag[]>>(
-      ({ shell, $msg$, extDeployable, deployWith, ext, installedPackageInfo }) =>
-        async collect => {
-          const extId = shell.extId
-          const tearDown = pipedMessages$.subscribe($msg$)
+  }
+  async function deployModule({
+    ext,
+    install,
+    pkgInfo,
+    env,
+  }: {
+    env: unknown
+    pkgInfo: PackageInfo
+    ext: Ext<any>
+    install?: boolean
+  }) {
+    const extId: ExtId = `${ext.name}@${ext.version}`
+    const $msg$ = new Subject<DataMessage<any>>()
+    const shell = getShell({ ext, extId, $msg$, env, pkgInfo })
+    const extConn = await ext.connect(shell)
 
-          const deploymentShell: DeploymentShell = {
-            tearDown,
-          }
-          const deployer = deployWith ?? extDeployable.deploy
+    if (install) {
+      await extConn.install?.()
+    }
 
-          const extDeployment = await deployer(deploymentShell, shell)
+    const extDeployable = await extConn.deploy()
 
-          const depl: RegDeployment = {
-            ...{ deployedWith: deployWith, at: new Date(), ext, $msg$, installedPackageInfo },
-            ...(deploymentShell as any),
-            ...shell,
-            ...extDeployment,
-            ...extDeployable,
-          }
+    // const deployableBag: DeployableBag = {
+    //   extDeployable,
+    //   shell,
+    //   $msg$,
+    //   deployWith,
+    //   ext: module,
+    //   installedPackageInfo,
+    // }
 
-          setImmediate(() => {
-            /* const msg = */ pushMsg<CoreExt>('moodlenet-core@0.1.10')('out')<CoreExt>('moodlenet-core@0.1.10')(
-              'ext/deployed',
-            )({
-              extId,
-            })
-            // console.log('ext/deployed msg', msg)
-          })
+    const regDeployment: RegItem<any> = {
+      ...extConn,
+      ...{ at: new Date(), ext: ext, $msg$, pkgInfo },
+      ...(extDeployable ?? null),
+      shell,
+    }
+    deployments.register({ regDeployment })
+    if (ext.name !== coreExtName) {
+      pushMsg<CoreExt>('@moodlenet/core@0.1.0')('out')<CoreExt>('@moodlenet/core@0.1.0')('ext/deployed')({
+        extId,
+      })
+    }
 
-          deployments.register({ depl })
-          depGraphAddNodes(depGraph, [ext])
-          return [
-            ...collect,
-            {
-              depl,
-            },
-          ]
+    depGraphAddNodes(depGraph, [ext])
+
+    return { regDeployment }
+  }
+
+  function getShell({
+    $msg$,
+    env,
+    ext,
+    extId,
+    pkgInfo,
+  }: {
+    ext: Ext
+    pkgInfo: PackageInfo
+    extId: ExtId
+    $msg$: Subject<DataMessage<any>>
+    env: unknown
+  }): Shell<any> {
+    const push = pushMsg(extId)
+    const getExt: RawShell['getExt'] = deployments.getByExtId as any
+    const tearDown = pipedMessages$.subscribe($msg$)
+    const onExtInstalled: RawShell['onExtInstalled'] = cb => {
+      const match = matchMessage<CoreExt>()
+      const subscription = pipedMessages$.subscribe(msg => {
+        if (!match(msg, '@moodlenet/core@0.1.0::pkg/installed')) {
+          return
+        }
+
+        const { extName, version } = splitExtId(msg.data.extId)
+        cb({ extId: msg.data.extId, extName, extVersion: version })
+      })
+      return subscription
+    }
+    const onExtUninstalled: RawShell['onExtUninstalled'] = cb => {
+      const match = matchMessage<CoreExt>()
+      const subscription = pipedMessages$.subscribe(msg => {
+        if (!match(msg, '@moodlenet/core@0.1.0::pkg/uninstalled')) {
+          return
+        }
+        const { extName, version } = splitExtId(msg.data.extId)
+        cb({ extId: msg.data.extId, extName, extVersion: version })
+      })
+      return subscription
+    }
+    const onExt: RawShell['onExt'] = (extId, cb) => {
+      const match = matchMessage<CoreExt>()
+      // FIXME: beware that immediate_deployment stays in memoruy this way - fix it
+      const immediate_deployment = getExt(extId)
+      if (immediate_deployment) {
+        setImmediate(() => {
+          cb(immediate_deployment as any)
+        })
+      }
+      const subscription = pipedMessages$.subscribe(msg => {
+        if (
+          !(
+            (match(msg, '@moodlenet/core@0.1.0::ext/deployed') ||
+              match(msg, '@moodlenet/core@0.1.0::ext/undeployed')) &&
+            isExtIdBWC(msg.data.extId, extId)
+          )
+        ) {
+          return
+        }
+
+        const def_deployment = getExt(extId)
+        if (immediate_deployment === def_deployment) {
+          return
+        }
+        cb(getExt(extId))
+      })
+      return subscription
+    }
+
+    const expose: RawShell['expose'] = expPnt => {
+      EXPOSED_POINTERS_REG[pkgInfo.packageJson.name] = expPnt
+    }
+
+    const _rawShell: RawShell = {
+      extId: extId,
+      tearDown,
+      extName: pkgInfo.packageJson.name,
+      extVersion: pkgInfo.packageJson.version,
+      env,
+      msg$: $msg$.asObservable(),
+      // removing `as any` on `push` compiler crashes with "Error: Debug Failure. No error for last overload signature"
+      // ::: https://github.com/microsoft/TypeScript/issues/33133  ... related:https://github.com/microsoft/TypeScript/issues/37974
+      emit: path => (data, opts) => (push as any)('out')(extId)(path)(data, opts),
+      send: destExtId => path => (data, opts) => (push as any)('in')(destExtId)(path)(data, opts),
+      push,
+      // libOf,
+      // onExtInstance,
+      // onExtDeployment,
+      getExt,
+      onExt,
+      pkgInfo,
+      expose,
+      lib: CoreLib,
+      onExtInstalled,
+      onExtUninstalled,
+    }
+
+    const shell: Shell = {
+      requires: ext.requires.map(extId => {
+        const { extName, version } = splitExtId(extId)
+        return {
+          id: extId,
+          name: extName,
+          version,
+        }
+      }),
+      onExtInstalled,
+      onExtUninstalled,
+      _raw: _rawShell,
+      tearDown: _rawShell.tearDown,
+      emit: _rawShell.emit,
+      msg$: _rawShell.msg$,
+      lib: _rawShell.lib,
+      env: _rawShell.env,
+      getExt: _rawShell.getExt,
+      rx: _rawShell.lib.rx,
+      expose: _rawShell.expose,
+      extId: _rawShell.extId,
+      extName: _rawShell.extName,
+      extVersion: _rawShell.extVersion,
+      // plugin: _rawShell.onExtInstance,
+      pkg(targetExtId) {
+        return CoreLib.access(targetExtId, _rawShell)
+      },
+      deps: [],
+      me: CoreLib.access<any>(extId, _rawShell),
+      provide: CoreLib.provide(extId, _rawShell),
+    }
+    shell.deps = ext.requires.reduce<Shell['deps']>((_deps, depExtId) => {
+      const depl = deployments.getByExtId(depExtId)
+      assert(depl, `deployment not found for ${depExtId} requiresd by ${_rawShell.extId}`)
+      return [
+        ..._deps,
+        {
+          access: CoreLib.access(depExtId, _rawShell),
+          plug: depl?.plug?.({ shell }),
         },
-    )
-    const deploymentBagsPr = deploymentBagThunks.reduce((prev, next) => _ => prev(_).then(next))([])
-    return deploymentBagsPr
+      ]
+    }, [])
+
+    return shell
   }
 
   function undeployExtension(ext: Ext) {
-    const { extName } = splitExtId(ext.id)
-    const deployment = deployments.unregister(extName)
-    assert(deployment, `couldn't find deployment for ${extName}`)
-    deployment.$msg$.complete()
-    deployment.tearDown.unsubscribe()
+    const regItem = deployments.unregister(ext.name)
+    assert(regItem, `couldn't find deployment for ${ext.name}`)
+    regItem.$msg$.complete()
+    regItem.shell.tearDown.unsubscribe()
     depGraphRm(depGraph, [ext], [])
-    return deployment
+    return regItem
   }
 
-  function pushMsg<Def extends ExtDef>(srcExtId: ExtId<Def>): PushMessage<Def> {
+  function pushMsg<Def extends ExtDef>(srcExtId: ExtId<Def>): RawShell<Def>['push'] {
     return bound => destExtId => path => (data, _opts) => {
-      console.log('PUSH ---', { bound, destExtId, path, data, _opts }, '--- PUSH')
+      console.log(
+        'PUSH ---\n',
+        inspect(
+          { bound, destExtId, path, data, parentMsgId: _opts?.parent?.id, _opts: { ..._opts, parent: undefined } },
+          false,
+          15,
+          true,
+        ),
+        '\n--- PUSH\n',
+      )
       const opts: PushOptions = {
         parent: null,
         primary: false,
@@ -459,12 +464,10 @@ export default async function boot(cfg: BootCfg) {
         ..._opts,
       }
       const pointer = joinPointer(destExtId, path)
-      const destRegDeployment = deployments.assertDeployed(destExtId)
-      // console.log({ EXPOSED_POINTERS_REG, destExtId, path })
+      const destRegItem = deployments.assertDeployed(destExtId)
       if (opts.primary) {
         const { extName: pushToExtName } = splitExtId(destExtId)
         const expPnt = EXPOSED_POINTERS_REG[pushToExtName]?.[path]
-        console.log({ EXPOSED_POINTERS_REG, pushToExtName, destExtId, path })
         if (!expPnt) {
           throw new Error(`pointer ${pointer} is not exposed to primaries`)
         }
@@ -476,7 +479,7 @@ export default async function boot(cfg: BootCfg) {
 
       const parentMsgId = opts.parent?.id
       // type DestDef = typeof destExtId extends ExtId<infer Def> ? Def : never
-      deployments.assertDeployed(srcExtId) // assert me deployed
+      // deployments.assertDeployed(srcExtId) // assert me deployed
 
       const msg: MessagePush /* <typeof bound, Def, DestDef, typeof path>  */ = {
         id: newMsgId(),
@@ -487,7 +490,8 @@ export default async function boot(cfg: BootCfg) {
         parentMsgId,
         sub: opts.sub,
         // managedBy: null,
-        activeDest: destRegDeployment.ext.id,
+        activeDest: destRegItem.shell.extId,
+        context: opts.context || {},
       }
 
       setTimeout(() => $MAIN_MSGS$.next(msg), 10) //FIXME: 😱 why ?
@@ -495,11 +499,12 @@ export default async function boot(cfg: BootCfg) {
     }
   }
 
-  function extEnv(extId: ExtId) {
-    //FIXME: should check version compat ?
-    const { extName /* , version  */ } = splitExtId(extId)
-    // console.log('extEnv', extId, extName, extEnvVars, extEnvVars[extName])
-    return main.getLocalDeplConfig().extensions[extName]?.config
+  function pkgEnv(pkgInstallationId: PkgInstallationId) {
+    const pkgSys = main.readSysConfig().packages[pkgInstallationId]
+    assert(pkgSys, `could not find pkgSys for ${pkgInstallationId}`)
+    const mnDeplClass = process.env.MN_DEPL_CLASS ?? 'default'
+    const env = pkgSys.env[mnDeplClass]
+    return env
   }
 
   function depOrderDeployments() {
@@ -507,98 +512,56 @@ export default async function boot(cfg: BootCfg) {
       .overallOrder()
       .reverse()
       .map(pushToExtName => {
-        const deployment = deployments.getByName(pushToExtName)
+        const deployment = deployments.get(pushToExtName)
         if (!deployment) {
           //TODO: WARN? THROW? IGNORE?
           return
         }
         return deployment
       })
-      .filter((_): _ is RegDeployment => !!_)
+      .filter((_): _ is RegItem => !!_)
   }
 
   async function startup_ensureAllInstalled() {
-    const allInstalledFolders = (await main.pkgMng.getAllInstalledPackagesInfo()).map(
-      ({ installationFolder }) => installationFolder,
-    )
-    const toInstallReq = main
-      .getSysConfig()
-      .installedPackages.filter(({ installationFolder }) => !allInstalledFolders.includes(installationFolder))
-      .map(({ installPkgReq, installationFolder }) => ({ installPkgReq, installationFolder }))
+    const allPackagesInfos = await main.pkgMng.getAllPackagesInfo()
+    const allPackagesIds = allPackagesInfos.map(({ id }) => id)
+    const sysPackages = main.readSysConfig().packages
+    const pkgsToInstall = Object.entries(sysPackages)
+      .filter(([pkgInstallationId]) => !allPackagesIds.includes(pkgInstallationId))
+      .map(([pkgInstallationId, sysInstalledPkg]) => ({ pkgInstallationId, sysInstalledPkg }))
 
     await Promise.all(
-      toInstallReq.map(({ installPkgReq, installationFolder }) =>
-        main.pkgMng.install(installPkgReq, installationFolder),
+      pkgsToInstall.map(({ pkgInstallationId, sysInstalledPkg }) =>
+        main.pkgMng.install(sysInstalledPkg.installPkgReq, pkgInstallationId),
       ),
     )
   }
 
   async function startup_deployAll() {
-    const extBags = await Promise.all(
-      main
-        .getSysConfig()
-        .enabledExtensions.filter(({ extId }) => extId !== coreExtId)
-        .map(async ({ extId, installationFolder }) => {
-          const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({ installationFolder })
-          return { extId, installedPackageInfo }
+    // !FIXME: sort by dep-graph
+    const startPkgs = (
+      await Promise.all(
+        Object.keys(main.readSysConfig().packages).map(async pkgInstallationId => {
+          const pkgInfo = await main.pkgMng.getPackageInfo({
+            pkgInstallationId,
+          })
+          return { pkgInfo }
         }),
+      )
+    ).filter(({ pkgInfo }) => pkgInfo.packageJson.name !== coreExtName)
+    console.log(
+      'startup_deployAll',
+      startPkgs.map(_ => _.pkgInfo.packageJson.name),
     )
+    await startPkgs
+      .map(_ => () => deployExtension({ pkgInstallationId: _.pkgInfo.id, install: __FIRST_RUN__ }))
+      .reduce((_, curr) => () => _().then(() => curr()))()
 
-    return deployExtensions({ extBags })
+    return
   }
 }
+export default boot
 
 function newMsgId() {
   return Math.random().toString(36).substring(2)
 }
-
-// async function configWatcher({ curr, prev, type }: ChangedConfigArg) {
-//   if (type === 'sys') {
-//     if (curr.__FIRST_INSTALL) {
-//       console.log(`sysConfig.__FIRST_INSTALL`)
-
-//       main.configs.writeSysConfig({
-//         ...curr,
-//         __FIRST_INSTALL: undefined,
-//       })
-//     }
-
-//     const deployEntries = Object.entries(curr.enabledExtensions)
-//       .filter(([extName]) => extName !== coreExtName)
-//       .filter(([extName]) => !prev || !(extName in prev.enabledExtensions))
-//     console.log({ deployEntries })
-
-//     const deployments = await deployExtensions({
-//       extBags: deployEntries.map<ExtBag>(([extName, sysEnabledExtDecl]) => {
-//         const { pkgDiskInfo, pkgExport } = main.main.pkgMng.extractPackage(sysEnabledExtDecl.pkg)
-//         const ext = pkgExport.exts.find(({ id }) => splitExtId(id).extName === extName)
-//         assert(ext, `could not find ext:${extName} in pkg:${sysEnabledExtDecl.pkg}`)
-//         return {
-//           ext,
-//           pkgInfo: pkgDiskInfo,
-//         }
-//       }),
-//     })
-//     console.log({ deployments })
-
-//     const installEntries = Object.entries(curr.installedPackages)
-//       .filter(([pkgName]) => pkgName !== pkgInfo.name)
-//       .filter(([pkgName]) => !prev || !(pkgName in prev.installedPackages))
-//     console.log({ installEntries })
-//     const extInfos = await Promise.all(
-//       installEntries.map(async ([pkgName, sysPkgDecl]) => {
-//         const { pkgDiskInfo, pkgExport } = await main.main.pkgMng.install({ ...sysPkgDecl, name: pkgName })
-//         const extInfos = pkgExport.exts.map<ExtInfo>(ext => ext2ExtInfo({ ext, pkgInfo: pkgDiskInfo }))
-//         return { extInfos }
-//       }),
-//     )
-
-//     console.log({ extInfosInstalll: extInfos })
-//     if (prev) {
-//       const undeployEntries = Object.entries(prev.enabledExtensions)
-//         .filter(([extName]) => extName !== coreExtName)
-//         .filter(([extName]) => !(extName in curr.enabledExtensions))
-//       console.log({ undeployEntries })
-//     }
-//   }
-// }

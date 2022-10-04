@@ -1,37 +1,46 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC, ReactNode, ReactPortal, useCallback, useEffect, useState } from 'react'
+import { FC, ReactNode, ReactPortal, useCallback, useContext, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // import { searchNpmExtensionInfo } from '../../../../../helpers/utilities'
-// import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
+// import { CoreExt } from '@moodlenet/core'
 import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
 import { SearchPackagesResObject } from '../../types/data'
-import './styles.scss'
+import { mandatoryPackages } from '../fakeData'
+import { MainContext } from '../MainModule'
+import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
+  isInstalling: boolean
+  toggleIsInstalling(): unknown
   searchPackagesResObject: SearchPackagesResObject
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
-const TertiaryButton = lib.ui.components.atoms.TertiaryButton
-const PrimaryButton = lib.ui.components.atoms.PrimaryButton
-const Card = lib.ui.components.atoms.Card
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClickBackBtn }) => {
+const ExtensionInfo: FC<ExtensionInfoProps> = ({
+  isInstalling,
+  toggleIsInstalling,
+  searchPackagesResObject,
+  onClickBackBtn,
+}) => {
+  const { shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const { TertiaryButton, PrimaryButton, Card, Loading } = reactApp.ui.components
+  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
-      `${searchPackagesResObject.registry}/${searchPackagesResObject.name}` /* ${
+      `${searchPackagesResObject.registry}/${searchPackagesResObject.pkgName}` /* ${
         searchPackagesResObject.version ? `/${searchPackagesResObject.version}` : ''
       }` */,
     )
       .then(_ => _.json())
       .then(({ readme }) => setReadme(readme))
-  }, [searchPackagesResObject.registry, searchPackagesResObject.name, searchPackagesResObject.version])
+  }, [searchPackagesResObject.registry, searchPackagesResObject.pkgName, searchPackagesResObject.version])
   // const stateContext = useContext(StateContext)
 
   // const modulesList = extension?.modules.map(
@@ -43,19 +52,20 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClic
   //       </div>
   //     ),
   // )
-  const isInstalled = !searchPackagesResObject.installPkgReq
+
   const install_uninstall = useCallback(() => {
-    if (isInstalled) {
-      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
-        installationFolder: searchPackagesResObject.installationFolder,
-      })
-    } else {
-      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
-        installPkgReq: searchPackagesResObject.installPkgReq,
-        deploy: true,
-      })
-    }
-  }, [isInstalled, searchPackagesResObject.installPkgReq])
+    toggleIsInstalling()
+    searchPackagesResObject.installed
+      ? core.fetch('pkg/uninstall')({
+          pkgInstallationId: searchPackagesResObject.pkgInstallationId,
+        })
+      : core.fetch('pkg/install')({
+          installPkgReq: searchPackagesResObject.installPkgReq,
+        })
+
+    // promise.finally(toggleIsInstalling)
+  }, [searchPackagesResObject])
+
   type CodeBlockProps = {
     node: any
     children: ReactNode & ReactNode[]
@@ -87,20 +97,32 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClic
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {searchPackagesResObject.name}
+            {searchPackagesResObject.description.split('\n')[0]}
           </div>
-          <PrimaryButton className="install-btn" onClick={install_uninstall}>
-            {isInstalled ? 'Uninstall' : 'Install'}
+          <PrimaryButton
+            className={`install-btn ${isInstalling ? 'loading' : ''}`}
+            noHover={isInstalling}
+            disabled={mandatoryPackages.includes(searchPackagesResObject.pkgName)}
+            onClick={install_uninstall}
+          >
+            <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
+              <Loading color="white" />
+            </div>
+            <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
+              {searchPackagesResObject.installed ? 'Uninstall' : 'Install'}
+            </div>
           </PrimaryButton>
         </div>
 
-        <div>{searchPackagesResObject.description}</div>
+        <div>{searchPackagesResObject.pkgName}</div>
       </Card>
-      <Card>
-        <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-          {readme}
-        </ReactMarkdown>
-      </Card>
+      {readme && (
+        <Card>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
+            {readme}
+          </ReactMarkdown>
+        </Card>
+      )}
     </div>
   )
 }

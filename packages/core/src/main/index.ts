@@ -1,5 +1,4 @@
 export { default as boot } from './boot'
-export * as defaulConsts from './default-consts'
 export * as env from './env'
 export * as index from './index'
 export { default as install } from './install'

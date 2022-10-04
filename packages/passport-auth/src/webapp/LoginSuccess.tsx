@@ -1,10 +1,13 @@
-import lib from 'moodlenet-react-app-lib'
+import { MainLayout } from '@moodlenet/react-app/lib/webapp/ui/components'
 import { FC, useContext } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { PassportContext } from './MainModule'
 
-const { MainLayout } = lib.ui.components.layout
 export const LoginSuccess: FC = () => {
-  const auth = useContext(lib.auth.AuthCtx)
+  const { shell } = useContext(PassportContext)
+  const [, reactApp] = shell.deps
+  const auth = useContext(reactApp.AuthCtx)
+
   const nav = useNavigate()
   const [params] = useSearchParams()
   const token = params.get('token')

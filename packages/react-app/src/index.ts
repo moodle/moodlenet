@@ -1,60 +1,94 @@
 /// <reference path="../moodlenet-react-app-lib.d.ts" />
-import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
-import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
-import type { MNHttpServerExt } from '@moodlenet/http-server'
+import type { AuthenticationManagerExtDef } from '@moodlenet/authentication-manager'
+import type { CoreExt, Ext, ExtDef, Port, SubTopo } from '@moodlenet/core'
+import type { MNHttpServerExtDef } from '@moodlenet/http-server'
+import { KeyValueStoreExtDef } from '@moodlenet/key-value-store'
+
+import assert from 'assert'
 import { mkdir, writeFile } from 'fs/promises'
-import { tmpdir } from 'os'
+// import { tmpdir } from 'os'
 import { resolve } from 'path'
 import { ResolveOptions } from 'webpack'
-import { generateCtxProvidersModule } from './generateCtxProvidersModule'
-import { generateExposedModule } from './generateExposedModule'
-import { generateRoutesModule } from './generateRoutesModule'
-import { ExtPluginDef, ExtPluginsMap } from './types'
-import { fixModuleLocForWebpackByOS } from './util'
+import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule'
+import { AppearanceData, WebappPluginDef, WebappPluginItem } from './types'
 import startWebpack from './webpackWatch'
 
 export * from './types'
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
+
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 
-export type ReactAppExt = ExtDef<
-  'moodlenet.react-app',
-  '0.1.10',
-  {},
-  null,
-  {
-    setup(_: ExtPluginDef): void
+export type ReactAppExtTopo = {
+  webapp: {
+    updated: SubTopo<void, void>
+    recompiled: Port<'out', void>
   }
+  setApparence: SubTopo<{ payload: AppearanceData }, { valid: true } | { valid: false }>
+  getApparence: SubTopo<void, { data: AppearanceData }>
+}
+export type ReactAppExtDef = ExtDef<
+  '@moodlenet/react-app',
+  '0.1.0',
+  {
+    setup(_: WebappPluginDef): void
+  },
+  ReactAppExtTopo
 >
-const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
 
-const LibModuleFile = { alias: 'moodlenet-react-app-lib', target: resolve(tmpDir, 'lib.ts') }
-const ExtRoutesModuleFile = {
-  alias: 'ext-routes',
-  target: resolve(tmpDir, 'ext-routes.ts'),
+export type keyValueData = { appearanceData: AppearanceData }
+// const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
+const connectPkgModulesFile = {
+  alias: '_connect-moodlenet-pkg-modules_',
+  target: resolve(__dirname, '..', '_connect-moodlenet-pkg-modules_.ts'),
+  // target: resolve(tmpDir, 'ConnectPkgModules.tsx'),
 }
-const ExposeModuleFile = {
-  alias: 'ext-exposed-modules',
-  target: resolve(tmpDir, 'exposedExtModules.ts'),
-}
-const ExtContextProvidersModuleFile = {
-  alias: 'ext-context-providers-modules',
-  target: resolve(tmpDir, 'extContextProvidersModules.tsx'),
-}
-const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]> = {
-  id: 'moodlenet.react-app@0.1.10',
-  displayName: 'Web application',
-  description: 'Frontend interface to interact with the backend',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10', 'moodlenet-authentication-manager@0.1.10'],
-  enable(shell) {
+export type ReactAppExt = Ext<
+  ReactAppExtDef,
+  [CoreExt, MNHttpServerExtDef, AuthenticationManagerExtDef, KeyValueStoreExtDef]
+>
+const ext: ReactAppExt = {
+  name: '@moodlenet/react-app',
+  version: '0.1.0',
+  requires: [
+    '@moodlenet/core@0.1.0',
+    '@moodlenet/http-server@0.1.0',
+    '@moodlenet/authentication-manager@0.1.0',
+    '@moodlenet/key-value-store@0.1.0',
+  ],
+  async connect(shell) {
+    const [, http, , kvStorePkg] = shell.deps
+    const kvStore = await kvStorePkg.plug.getStore<keyValueData>()
+    // const env = getEnv(shell.env)
     return {
-      async deploy(/* { tearDown } */) {
-        shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
-          const { express, mount } = inst
-          const mountApp = express()
-          const staticWebApp = express.static(latestBuildFolder, { index: 'index.html' })
+      async install() {
+        //
+        await kvStore.set('appearanceData', '', {
+          color: '#aaaaaa',
+        })
+      },
+
+      async deploy() {
+        shell.expose({
+          // http://localhost:8080/_/_/raw-sub/moodlenet-organization/0.1.10/_test  body:{"paramIn2": "33"}
+          'getApparence/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+          'setApparence/sub': {
+            validate(/* data */) {
+              return { valid: true }
+            },
+          },
+          'webapp/updated/sub': { validate: () => ({ valid: true }) },
+        })
+
+        http.plug.mount({ getApp, absMountPath: '/' })
+        function getApp() {
+          const mountApp = http.plug.express()
+          const staticWebApp = http.plug.express.static(latestBuildFolder, { index: './public/index.html' })
           mountApp.use(staticWebApp)
           mountApp.get(`*`, (req, res, next) => {
             if (req.url.startsWith('/_/')) {
@@ -63,83 +97,130 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
             }
             res.sendFile(resolve(latestBuildFolder, 'index.html'))
           })
-          mount({ mountApp, absMountPath: '/' })
-        })
-        await mkdir(tmpDir, { recursive: true })
+          return mountApp
+        }
+
+        // await mkdir(tmpDir, { recursive: true })
         await mkdir(buildFolder, { recursive: true })
-        const extPluginsMap: ExtPluginsMap = {}
-        await writeAliasModules()
+        const extPlugins: WebappPluginItem[] = []
         const baseResolveAlias: ResolveOptions['alias'] = {
           'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
           'react': resolve(__dirname, '..', 'node_modules', 'react'),
           'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
-          [ExtRoutesModuleFile.alias]: ExtRoutesModuleFile.target,
-          [ExposeModuleFile.alias]: ExposeModuleFile.target,
-          [ExtContextProvidersModuleFile.alias]: ExtContextProvidersModuleFile.target,
-          [LibModuleFile.alias]: LibModuleFile.target,
+          '@moodlenet/react-app/src/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
+          '@moodlenet/react-app/lib/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
+          'react-dom': resolve(__dirname, '..', 'node_modules', 'react-dom'),
+          [connectPkgModulesFile.alias]: connectPkgModulesFile.target,
         }
-        console.log({ baseResolveAlias })
+        await writeGenerated()
+        const wp = startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
+        wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
+          shell.emit('webapp/recompiled')()
+        })
+        // console.log({ ___: env })
+        // if (env._start_dev_server_) {
+        //   console.log('_start_dev_server_', env._start_dev_server_)
+        //   fork(resolve(__dirname, '-dev-server.js'), { stdio: 'inherit' })
+        // }
 
-        const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
+        shell.provide.services({
+          'webapp/updated'() {
+            return shell.msg$.pipe(
+              shell.rx.filter(msg =>
+                shell.lib.matchMessage<ReactAppExtDef>()(msg, '@moodlenet/react-app@0.1.0::webapp/recompiled'),
+              ),
+              shell.rx.map(() => void 0),
+            )
+          },
+          async 'setApparence'(req) {
+            const data = await kvStore.set('appearanceData', '', req.payload)
+            return { valid: !data || !data.value ? false : true }
+          },
+          async 'getApparence'() {
+            const data = await kvStore.get('appearanceData', '')
+            assert(data.value, 'Appearance should be valued')
+            return { data: data.value }
+          },
+        })
         return {
-          inst({ depl }) {
+          plug(dep) {
             return {
-              setup(plugin) {
-                console.log('...setup', depl.extId, plugin)
-                extPluginsMap[depl.extId] = {
+              async setup(plugin) {
+                const extPluginItem: WebappPluginItem = {
                   ...plugin,
-                  extName: depl.extName,
-                  extVersion: depl.extVersion,
-                  extId: depl.extId,
+                  guestShell: dep.shell,
                 }
-                // console.log({ '***': wp.compiler.options.resolve.alias })
-                if (plugin.addPackageAlias) {
-                  const { loc, name } = plugin.addPackageAlias
-                  wp.compiler.options.resolve.alias = {
-                    ...wp.compiler.options.resolve.alias,
-                    [name]: loc,
-                  }
-                }
-                writeAliasModulesAndRecompile()
-                console.log({ aloiases: wp.compiler.options.resolve.alias })
-                depl.tearDown.add(() => {
-                  console.log('removing react plugins')
-                  if (plugin.addPackageAlias) {
-                    const newAliases: any = {
-                      ...wp.compiler.options.resolve.alias,
-                    }
-                    delete newAliases[plugin.addPackageAlias.name]
-                    wp.compiler.options.resolve.alias = newAliases
-                  }
-                  delete extPluginsMap[depl.extId]
-                  writeAliasModulesAndRecompile()
+                extPlugins.push(extPluginItem)
+                // const scopedLibFilename = resolve(tmpDir, `react-app-lib__${dep.shell.extName}.ts`)
+                // const scopedReactAppLibString = generateReactAppLibScopedModule({
+                //   deps: dep.shell.deps.map(_ => _.access._target),
+                //   extId: dep.shell.extId,
+                //   extName: dep.shell.extName,
+                //   extVersion: dep.shell.extVersion,
+                //   pkgMainModulesFile: pkgMainModulesFile.target,
+                // })
+                // console.log({ scopedLibFilename, scopedReactAppLibString })
+                // await writeFile(scopedLibFilename, scopedReactAppLibString, { encoding: 'utf-8' })
+                // const scopedLibModuleAliasName = `${dep.shell.baseFolder}/node_modules`
+                // wp.compiler.options.resolve.alias = {
+                //   ...wp.compiler.options.resolve.alias,
+                //   [scopedLibModuleAliasName]: scopedLibFilename,
+                // }
+                await writeGeneratedAndRecompile()
+                dep.shell.tearDown.add(async () => {
+                  // await rm(scopedLibFilename)
+                  // delete (wp.compiler.options.resolve.alias as any)[scopedLibModuleAliasName]
+                  extPlugins.splice(extPlugins.indexOf(extPluginItem), 1)
+                  writeGeneratedAndRecompile()
                 })
               },
             }
           },
         }
-        async function writeAliasModulesAndRecompile() {
-          await writeAliasModules()
-          wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
+        async function writeGeneratedAndRecompile() {
+          await writeGenerated()
+          recompile()
         }
-        function writeAliasModules() {
-          console.log('writeAliasModules!', extPluginsMap)
+        function recompile() {
+          wp.compiler.watching.invalidate(() => {
+            /* console.log('INVALIDATED') */
+          })
+        }
+        function writeGenerated() {
+          // console.log('connectPkgModulesModule', connectPkgModulesModule)
           return Promise.all([
-            writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap })),
-            writeFile(ExposeModuleFile.target, generateExposedModule({ extPluginsMap })),
-            writeFile(ExtContextProvidersModuleFile.target, generateCtxProvidersModule({ extPluginsMap })),
-            writeFile(
-              LibModuleFile.target,
-              `
-            import lib from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'react-app-lib'))}'
-            export default lib
-          `,
-            ),
+            writeFile(connectPkgModulesFile.target, generateConnectPkgModulesModule({ extPlugins })),
+            writeFile(resolve(__dirname, '..', '_resolve-alias_.json'), JSON.stringify(baseResolveAlias, null, 4)),
           ])
+          // return Promise.all([
+          // writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap: extPlugins })),
+          // writeFile(ExposeModuleFile.target, generateExposedModule({ extPluginsMap: extPlugins })),
+          // writeFile(ExtContextProvidersModuleFile.target, generateCtxProvidersModule({ extPluginsMap: extPlugins })),
+          //   writeFile(
+          //     LibModuleFile.target,
+          //     `
+          //   import lib from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'react-app-lib'))}'
+          //   export default lib
+          // `,
+          //   ),
+          // ])
         }
       },
     }
   },
 }
 
-export default { exts: [ext] }
+export default ext
+
+// type Env = {
+//   // _start_dev_server_?: {
+//   //   port: number
+//   //   proxy: string
+//   // }
+// }
+// function getEnv(_: any): Env {
+//   return {
+//     // _start_dev_server_: undefined,
+//     ..._,
+//   }
+// }

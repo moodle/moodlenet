@@ -1,42 +1,33 @@
-import assert from 'assert'
 import { InstallPkgReq } from '../pkg-mng/types'
-import { MainFolders } from '../types/sys'
+import { MainFolders, SysInstalledPkg, SysInstalledPkgs } from '../types/sys'
+import { getRegistry } from './default-consts'
 import { getMain } from './main'
 
 type InstallCfg = {
   mainFolders: MainFolders
   installPkgReqs?: InstallPkgReq[]
+  defaultPkgEnv(pkgName: string): any
 }
 
-export default async function install({ mainFolders, installPkgReqs = defaultInstallPkgReqs() }: InstallCfg) {
+export default async function install({
+  mainFolders,
+  installPkgReqs = defaultInstallPkgReqs(),
+  defaultPkgEnv = () => undefined,
+}: InstallCfg) {
   const main = await getMain({ mainFolders })
-  const installations = await Promise.all(
-    installPkgReqs.map(async installPkgReq => {
-      const { installationFolder, pkgExport, packageJson } = await main.pkgMng.install(installPkgReq)
-      const firstExtId = pkgExport.exts[0].id
-      assert(firstExtId, `${installationFolder} has no exported ext!`)
-      return {
-        installedPackage: {
-          installPkgReq,
-          installationFolder,
-        },
-        enabledExtension: {
-          installationFolder,
-          extId: firstExtId,
-        },
-        core: packageJson.name === '@moodlenet/core',
-      }
-    }),
+  const installationsPkgInfos = await Promise.all(
+    installPkgReqs.map(installPkgReq =>
+      main.pkgMng.install(installPkgReq).then(installed => ({ installPkgReq, ...installed })),
+    ),
   )
-
-  await main.writeLocalDeplConfig({ extensions: {} })
-  const installedPackages = installations.map(({ installedPackage }) => installedPackage)
-  const enabledExtensions = installations.map(({ enabledExtension }) => enabledExtension)
-  const coreInst = installations.find(({ core }) => core)!
+  const packages = installationsPkgInfos.reduce<SysInstalledPkgs>((_, { /* ext, */ pkgInfo, installPkgReq, date }) => {
+    const sysInstalledPkg: SysInstalledPkg = { env: {}, date, installPkgReq }
+    sysInstalledPkg.env.default = defaultPkgEnv(pkgInfo.packageJson.name)
+    return { ..._, [pkgInfo.id]: sysInstalledPkg }
+  }, {})
   await main.writeSysConfig({
-    installedPackages,
-    enabledExtensions,
-    core: { installationFolder: coreInst.installedPackage.installationFolder },
+    packages,
+    __FIRST_RUN__: true,
   })
   return main
 }
@@ -46,16 +37,25 @@ function defaultInstallPkgReqs(): InstallPkgReq[] {
     return {
       type: 'npm',
       pkgId: `@moodlenet/${name}@${version}`,
+      registry: getRegistry(),
     }
   })
 }
 
 export const defaultCorePackages = {
-  'core': '0.0.1',
-  'http-server': '0.0.1',
-  'react-app': '0.0.1',
-  'authentication-manager': '0.0.1',
-  'simple-email-auth': '0.0.1',
-  'extensions-manager': '0.0.1',
-  // 'passport-auth': '0.0.1',
+  // 'core': '0.1.0',
+  'arangodb': '0.1.0',
+  'key-value-store': '0.1.0',
+  'crypto': '0.1.0',
+  'authentication-manager': '0.1.0',
+  'http-server': '0.1.0',
+  'organization': '0.1.0',
+  'content-graph': '0.1.0',
+  'react-app': '0.1.0',
+  'email-service': '0.1.0',
+  'extensions-manager': '0.1.0',
+  'web-user': '0.1.0',
+  'simple-email-auth': '0.1.0',
+  // 'test-extension': '0.1.0',
+  // 'passport-auth': '0.1.0',
 }

@@ -1,55 +1,56 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { CoreExt } from '@moodlenet/core'
-import lib from 'moodlenet-react-app-lib'
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
-import { ExtensionsManagerExt } from '../..'
-import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/data'
+import { CoreExt, PackageInfo } from '@moodlenet/core'
+import { Card, InputTextField, Loading, PrimaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
+import { HeaderRightComponentRegItem } from '@moodlenet/react-app/lib/webapp/ui/components/organisms/Header'
+import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
 import { DevModeBtn } from '../Extensions'
-import { StateContext } from '../ExtensionsProvider'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities'
+import { MainContext } from '../MainModule'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './InstallExtension.scss'
 
 export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
-
-const { Card, PrimaryButton, InputTextField } = lib.ui.components.atoms
-
+const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
+  const { shell, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
 
-  const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
-  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
-  const { devMode } = useContext(StateContext)
+  reactApp.header.rightComponent.useLocalRegister(DevModeBtnAddon)
+
+  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
+
+  const [localPathField, setLocalPathField] = useState('')
+  const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
+  const [extInfoList, setExtInfoList] = useState<PackageInfo[]>([])
 
   useEffect(() => {
-    lib.priHttp
-      .fetch<ExtensionsManagerExt>(
-        'moodlenet-extensions-manager',
-        '0.1.10',
-      )('searchPackages')({ searchText: 'moodlenet' })
-      .then(resp => setSearchPkgResp(resp))
+    core
+      .fetch('ext/listDeployed')()
+      .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
   }, [])
-  const [localPathField, setLocalPathField] = useState('')
   const install = useCallback(() => {
     if (!localPathField) {
       return
     }
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+    toggleIsInstalling()
+    core.fetch('pkg/install')({
       installPkgReq: { type: 'symlink', fromFolder: localPathField },
-      deploy: true,
     })
+    // .finally(toggleIsInstalling)
   }, [localPathField])
+
   return (
     <>
-      {!selectedPackage && (
+      {!selectedExtInfo && (
         <div className="search-extensions">
           <Card className="install">
-            <div className="title">Add extensions</div>
+            <div className="title">Install extensions</div>
           </Card>
           {devMode && (
             <Card>
@@ -66,8 +67,18 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                     edit
                     // error={shouldShowErrors && editForm.errors.displayName}
                   />
-                  <PrimaryButton disabled={localPathField === ''} onClick={install}>
-                    Install
+                  <PrimaryButton
+                    className={`${isInstalling ? 'loading' : ''}`}
+                    disabled={localPathField === ''}
+                    noHover={isInstalling}
+                    onClick={install}
+                  >
+                    <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
+                      <Loading color="white" />
+                    </div>
+                    <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
+                      Install
+                    </div>
                   </PrimaryButton>
                 </div>
               </div>
@@ -76,44 +87,61 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           <Card className="available-extensions">
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
-              {searchPkgResp?.objects.map(respObj => {
-                const name = respObj.name.split('/').reverse()[0]
-                return (
-                  <div
-                    className="package"
-                    key={respObj.name}
-                    onClick={() => setSelectedPackage(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
-                  >
-                    {/* <PackageIcon /> */}
-                    <div
-                      className="logo"
-                      style={{ background: getPastelColor(getNumberFromString(respObj.name), 0.5) }}
-                    >
-                      <div className="letter">
-                        {respObj.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
-                      </div>
-                      <div
-                        className="circle"
-                        style={{ background: getPastelColor(getNumberFromString(respObj.name)) }}
-                      />
-                    </div>
-                    <div className="info">
-                      <div className="title">
-                        {name} {/* v{respObj.version} */}
-                      </div>
-                      <div className="details">{respObj.description}</div>
-                    </div>
-                    <PrimaryButton className="install-btn">Details</PrimaryButton>
-                  </div>
+              {searchPkgResp?.objects
+                .filter(respObj => !extInfoList.find(({ packageJson: { name } }) => respObj.pkgName === name))
+                .filter(
+                  respObj =>
+                    ![
+                      '@moodlenet/webapp',
+                      '@moodlenet/common',
+                      '@moodlenet/backend',
+                      '@moodlenet/ce-platform',
+                      '@moodlenet/arangodb',
+                    ].includes(respObj.pkgName),
                 )
-              })}
+                .map(respObj => {
+                  // const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
+                  var [extName, description] = respObj.description ? respObj.description.split('\n') : ['', '']
+                  extName = extName ? extName : ''
+                  description = description ? description : ''
+                  return (
+                    <div
+                      className="package"
+                      key={respObj.pkgName}
+                      onClick={() =>
+                        setSelectedExtInfo(respObj)
+                      } /* onClick={() => setSelectedPackage(o.package.name)} */
+                    >
+                      {/* <PackageIcon /> */}
+                      <div className="logo" style={{ background: getPastelColor(getNumberFromString(extName), 0.5) }}>
+                        <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
+                        <div className="circle" style={{ background: getPastelColor(getNumberFromString(extName)) }} />
+                      </div>
+                      <div className="info">
+                        <div className="title">{extName}</div>
+                        <div className="details">{description}</div>
+                      </div>
+                      <PrimaryButton className="install-btn">Details</PrimaryButton>
+                    </div>
+                  )
+                })}
             </div>
           </Card>
         </div>
       )}
-      {selectedPackage && (
-        <ExtensionInfo searchPackagesResObject={selectedPackage} onClickBackBtn={() => setSelectedPackage(undefined)} />
+      {selectedExtInfo && (
+        <ExtensionInfo
+          isInstalling={isInstalling}
+          toggleIsInstalling={toggleIsInstalling}
+          searchPackagesResObject={selectedExtInfo}
+          onClickBackBtn={() => setSelectedExtInfo(null)}
+        />
       )}
+      {/* {isInstalling && (
+        <div style={{ position: 'fixed', top: '0', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.6)' }}>
+          <h1 style={{ textAlign: 'center', color: 'white' }}>Spinner !</h1>
+        </div>
+      )} */}
     </>
   )
 }

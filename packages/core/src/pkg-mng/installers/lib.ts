@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { mkdir } from 'fs/promises'
 import { relative, resolve } from 'path'
+import { PkgInstallationId } from '../types'
 
 export function getRelInstallationFolder({
   absInstallationFolder,
@@ -22,9 +23,9 @@ export async function makeInstallationFolder({
   pkgsFolder: string
   useFolderName?: string
 }) {
-  const { absInstallationFolder, relInstallationFolder } = getInstallationFolder({ pkgId, pkgsFolder, useFolderName })
+  const { absInstallationFolder, pkgInstallationId } = getInstallationFolder({ pkgId, pkgsFolder, useFolderName })
   await mkdir(absInstallationFolder, { recursive: true })
-  return { relInstallationFolder, absInstallationFolder }
+  return { pkgInstallationId, absInstallationFolder }
 }
 
 export function getInstallationFolder({
@@ -36,16 +37,13 @@ export function getInstallationFolder({
   pkgsFolder: string
   useFolderName?: string
 }) {
-  const safeInstallationFolderName = useFolderName ?? getSafeInstallationFolderName(pkgId)
-  const absInstallationFolder = resolve(pkgsFolder, safeInstallationFolderName)
-  const relInstallationFolder = safeInstallationFolderName
-  // console.log({ absInstallationFolder, relInstallationFolder })
-  return { absInstallationFolder, relInstallationFolder }
+  const pkgInstallationId = useFolderName ?? getPkgInstallationId(pkgId)
+  const absInstallationFolder = resolve(pkgsFolder, pkgInstallationId)
+  return { absInstallationFolder, pkgInstallationId }
 }
 
-export function getSafeInstallationFolderName(pkgId: string) {
+export function getPkgInstallationId(pkgId: string): PkgInstallationId {
   const pkgNameScopeTuple = pkgId.split('/').reverse()
-  console.log('split pkgNameScopeTuple xxx ', pkgNameScopeTuple)
   assert(
     pkgNameScopeTuple.length > 0 &&
       pkgNameScopeTuple.length < 3 &&
@@ -59,29 +57,3 @@ export function getSafeInstallationFolderName(pkgId: string) {
   const safeInstallationFolderName = `${safeName}__${uid}`
   return safeInstallationFolderName
 }
-
-/* 
-// imposta le folder sulla cartella riscrivibile
-export function installDirsInfo(): installDirsInfo {
-  const ignoreFolder = resolve(__dirname, '..', '..', '.ignore')
-  assert(existsSync(ignoreFolder))
-  const pkgMng = resolve(ignoreFolder, 'pkgmngfolder')
-  if (!existsSync(pkgMng)) {
-    mkdirSync(pkgMng)
-  }
-  const pkgMngTmp = resolve(pkgMng, 'tmp')
-  if (!existsSync(pkgMngTmp)) {
-    mkdirSync(pkgMngTmp)
-  }
-
-  if (existsSync(pkgMngTmp)) {
-    console.log('tmp folder exist', pkgMngTmp)
-  } else throw new Error('cant create folder ' + pkgMngTmp)
-  return { current: __dirname, pkgMng, pkgMngTmp }
-}
-export type installDirsInfo = {
-  current: string
-  pkgMng: string
-  pkgMngTmp: string
-}
- */

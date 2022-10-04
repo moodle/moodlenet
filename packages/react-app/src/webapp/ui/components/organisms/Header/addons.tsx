@@ -1,48 +1,11 @@
-import {
-  ComponentType,
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { ComponentType } from 'react'
 
-export type RightComponentAddonDef = { StdHeaderItems?: ComponentType[]; MinHeaderItems?: ComponentType[] }
-export type RightComponentAddon = { addon: RightComponentAddonDef }
-export type AddonCtxT = {
-  addRightComponent(_: RightComponentAddonDef): () => void
-  rightComponents: RightComponentAddon[]
-}
-export const AddonCtx = createContext<AddonCtxT>(null as any)
-export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const [rightComponents, setRightComponents] = useState<AddonCtxT['rightComponents']>([])
-  const addRightComponent: AddonCtxT['addRightComponent'] = useCallback(addon => {
-    // console.log('add RightComponent', addon)
-    const rightComponentAddon: RightComponentAddon = { addon }
-    setRightComponents(addons => addons.concat(rightComponentAddon))
-    return () => {
-      // console.log('rem RightComponent', addon)
-      setRightComponents(addons => addons.filter(_ => _ !== rightComponentAddon))
-    }
-  }, [])
-  const ctx = useMemo(() => {
-    const ctx: AddonCtxT = {
-      addRightComponent,
-      rightComponents,
-    }
-    return ctx
-  }, [addRightComponent, rightComponents])
-  // console.log({ rightComponents })
-
-  return <AddonCtx.Provider value={ctx}>{children}</AddonCtx.Provider>
-}
-
-export const useRightComponent = (rightCompDef: RightComponentAddonDef) => {
-  const { addRightComponent } = useContext(AddonCtx)
-  useEffect(() => {
-    return addRightComponent(rightCompDef)
-  }, [])
+export type HeaderRightComponentRegItem = { Component: ComponentType }
+export type HeaderAvatarMenuItemRegItem = {
+  Text: string
+  Icon: ComponentType
+  Path?: string
+  ClassName?: string
+  Position?: number
+  OnClick?: () => unknown
 }

@@ -1,5 +1,4 @@
-import { splitExtId } from '../core-lib'
-import { CoreExt, ExtId } from '../types'
+import { CoreExt, ExtName, ExtVersion } from '../types'
 
-export const coreExtId: ExtId<CoreExt> = 'moodlenet-core@0.1.10'
-export const { extName: coreExtName, version: coreVersion } = splitExtId(coreExtId)
+export const coreExtName: ExtName<CoreExt> = '@moodlenet/core'
+export const coreExtVersion: ExtVersion<CoreExt> = '0.1.0'

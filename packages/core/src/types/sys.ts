@@ -1,35 +1,29 @@
-import { InstallPkgReq } from '../pkg-mng/types'
-import { ExtId, ExtName } from './ext'
+import { InstallPkgReq, PkgInstallationId } from '../pkg-mng/types'
 
 export type MainFolders = { systemFolder: string; deploymentFolder: string; pkgStorageFolder?: string }
 // SysConfig
 export type SystemPaths = MainFolders & {
   sysConfigFile: string
-  localConfigFile: string
   localPkgsFolder: string
 }
+
+export type SysInstalledPkg = {
+  date: string
+  installPkgReq: InstallPkgReq
+  env: { default?: ExtensionEnv } & Record<string, ExtensionEnv>
+}
+export type SysInstalledPkgs = {
+  [id: PkgInstallationId]: SysInstalledPkg
+}
 export type SysConfig = {
-  installedPackages: { installationFolder: string; installPkgReq: InstallPkgReq }[]
-  enabledExtensions: { installationFolder: string; extId: ExtId }[]
-  core: { installationFolder: string }
-}
-
-export type ExtensionGlobalConfig = {
-  config?: any
-}
-
-export type LocalDeploymentConfig = {
-  extensions: Record<ExtName, ExtensionLocalConfig>
-}
-
-export type ExtensionLocalConfig = {
-  config?: any
-  deployWith?: DeployWithModule
+  __FIRST_RUN__?: true
+  packages: SysInstalledPkgs
 }
 
 //  --  //
 
-export type DeployWithModule = string
+export type ExtensionEnv = unknown
+export type EnvName = string
 export type PkgName = string
 export type PkgVersion = string
 export type NpmRegistry = string

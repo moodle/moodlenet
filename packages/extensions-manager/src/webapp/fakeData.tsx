@@ -17,12 +17,22 @@ export type Module = {
   mandatory?: boolean
 }
 
+export const mandatoryPackages = [
+  '@moodlenet/core',
+  '@moodlenet/authentication-manager',
+  '@moodlenet/extensions-manager',
+  '@moodlenet/http-server',
+  '@moodlenet/webapp',
+  '@moodlenet/react-app',
+  '@moodlenet/web-user',
+]
+
 export const packagesFake: Package[] = [
   {
     name: 'Core',
     creator: 'Moodle',
     mandatory: true,
-    logo: '../../../../assets/logos/moodlenet-logo-small.svg',
+    logo: '../../../../assets/logos/@moodlenet/logo-small.svg',
     modules: [
       { name: 'Core', enabled: true, mandatory: true },
       { name: 'Main', enabled: true, mandatory: true },

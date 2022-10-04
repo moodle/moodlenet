@@ -1,10 +1,12 @@
 import type * as Core from '@moodlenet/core'
 import { json } from 'body-parser'
 import express from 'express'
-import { MNHttpServerExt } from '.'
-import { RawSubPriMsgSubUrl } from './types'
+import { format } from 'util'
+import type { MNHttpServerExt } from '.'
+import { MN_HTTP_PRI_SUB_LIMIT_HEADER, RawSubPriMsgSubUrl } from './types'
 
-export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
+export function makeExtPortsApp(shell: Core.ExtShell<MNHttpServerExt>) {
+  const [, authSrv] = shell.deps
   const srvApp = express()
   srvApp.use(json())
   const rawSubPriMsgSubUrl: RawSubPriMsgSubUrl = 'raw-sub'
@@ -16,29 +18,46 @@ export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
     pushes msg
     */
 
-    const tokens = req.path.split('/').slice(2)
-    const extId = tokens.slice(0, 2).join('@') as Core.ExtId
-    const path = tokens.slice(2).join('/') as Core.TopoPath
-    console.log('Exposed Api call', extId, path, req.path)
+    const urlTokens = req.path.split('/').slice(2)
+    if (urlTokens.length < 2) {
+      return next()
+    }
+    const isScopedPkgName = urlTokens[0]?.[0] === '@'
+
+    const extName = urlTokens.slice(0, isScopedPkgName ? 2 : 1).join('/') as Core.ExtName
+    const extVersion = urlTokens[isScopedPkgName ? 2 : 1]! as Core.ExtVersion
+    const extId = `${extName}@${extVersion}` as Core.ExtId
+    const path = urlTokens.slice(isScopedPkgName ? 3 : 2).join('/') as Core.TopoPath
     if (!(extId && path)) {
       return next()
     }
     const pointer = shell.lib.joinPointer(extId, path)
     const extDeployment = shell.getExt(extId)
-    console.log('Exposed Api pointer', { pointer, extDeployment: extDeployment?.extId })
 
     if (!(pointer && extDeployment)) {
       return next()
     }
 
-    res.setHeader('Content-Type', 'application/stream+json')
-    console.log('*********body', req.body)
+    const limitHeader = req.headers[MN_HTTP_PRI_SUB_LIMIT_HEADER]
+    const takeLimit = limitHeader && typeof limitHeader === 'string' ? Math.floor(Number(limitHeader)) : Infinity
+    res.setHeader('content-type', 'application/stream+json')
     try {
-      console.log(`http sub ${pointer}`)
       const apiSub = shell.lib
-        .sub(shell)(pointer as never)(req.body, {
+        .sub(shell._raw)(pointer as never)(req.body, {
           primary: true,
+          context: req.moodlenet.authToken
+            ? await authSrv.plug.makeMsgClientSessionContext({ authToken: req.moodlenet.authToken })
+            : {},
         })
+        .pipe(
+          shell.rx.take(takeLimit),
+          shell.rx.map(notif => {
+            if (notif.msg.data.value.kind === 'E') {
+              throw notif.msg.data.value.error
+            }
+            return notif
+          }),
+        )
         // .subDemat(shell)(pointer as never)(req.body, {
         //   primary: true,
         // })
@@ -46,24 +65,21 @@ export function makeExtPortsApp(shell: Core.Shell<MNHttpServerExt>) {
         .subscribe({
           //Core.ValValueOf<Core.SubTopo<any, any>>
           next({ msg }) {
-            console.log('HTTP', { parMsgId: msg.parentMsgId, val: msg.data })
             res.cork()
-            res.write(JSON.stringify({ msg }) + '\n')
-            process.nextTick(() => res.uncork())
+            const msgNotif = msg.data.value
+
+            res.write(JSON.stringify({ ...msgNotif, hasValue: undefined }) + '\n', () => res.uncork())
           },
           error(err) {
-            console.log('HTTP err', { err })
             res.status(500)
-            res.end(String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
+            res.end(err instanceof Error ? format(err) : err) //(JSON.stringify({ msg: {}, val: String(err) }))
           },
           complete() {
-            console.log('HTTP complete')
             res.status(200).end()
           },
         })
       res.on('close', () => {
         // curl works , postman nope
-        console.log('HTTP RESPONSE CLOSED **********************************************', apiSub.closed)
         apiSub.unsubscribe()
       })
     } catch (err) {

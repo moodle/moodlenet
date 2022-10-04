@@ -14,13 +14,13 @@ export type DataMessage<
   Bound extends PortBinding = PortBinding,
   SourceId extends ExtId = ExtId,
   Point extends Pointer = Pointer,
->= IMessage<Data,Bound,SourceId,Point>
+> = IMessage<Data, Bound, SourceId, Point>
 
 export interface IMessage<
-  Data extends any=any,
-  Bound extends PortBinding =PortBinding ,
-  SourceId extends ExtId =ExtId ,
-  Point extends Pointer =Pointer ,
+  Data extends any = any,
+  Bound extends PortBinding = PortBinding,
+  SourceId extends ExtId = ExtId,
+  Point extends Pointer = Pointer,
 > {
   id: MsgID
   bound: Bound
@@ -31,4 +31,7 @@ export interface IMessage<
   sub: boolean
   managedBy?: ExtId
   activeDest: ExtId
+  context: MessageContext
 }
+
+export type MessageContext = Record<string, any>

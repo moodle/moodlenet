@@ -1,70 +1,116 @@
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import SettingsIcon from '@material-ui/icons/Settings'
-import { FC, PropsWithChildren, useContext } from 'react'
+import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../../react-app-lib/auth'
+import { AuthCtx } from '../../../../../main-lib/auth'
+import { RegistryEntry } from '../../../../../main-lib/registry'
+import { MainContext } from '../../../../../MainContext'
+import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
-// import Switch from '../../atoms/Switch/Switch'
-import { AddonCtx } from '../addons'
+import { HeaderAvatarMenuItemRegItem } from '../addons'
+import HeaderTitle from '../HeaderTitle/HeaderTitle'
 import './Header.scss'
 
 type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
-  const addonCtx = useContext(AddonCtx)
-  const setCtx = useContext(SettingsCtx)
-  // console.log({ addonCtx })
+  const {
+    registries: { header },
+    shell,
+  } = useContext(MainContext)
 
-  const { clientSession, logout } = useContext(AuthCtx)
+  const { registry: avatarMenuItems } = header.avatarMenuItems.useRegistry()
+  const { registry: rightComponents } = header.rightComponents.useRegistry()
+
+  const { clientSessionData, logout } = useContext(AuthCtx)
+
+  const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
 
   const avatar = {
-    backgroundImage: 'url(https://moodle.net/static/media/default-avatar.2ccf3558.svg)',
+    backgroundImage: `url(${avatarImageUrl})`,
     // backgroundImage: 'url(' + defaultAvatar + ')',
     // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
 
+  const reoderedAvatarMenuItems = useMemo(() => {
+    const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
+      { pkg: shell.pkg, item: { Text: 'Settings', Icon: () => <SettingsIcon />, Path: '/settings' } },
+      { pkg: shell.pkg, item: { Text: 'Log out', Icon: () => <ExitToAppIcon />, OnClick: logout } },
+    ]
+    return baseItems.concat(
+      avatarMenuItems.entries.sort((a, b) => (a.item.Position ?? Infinity) - (b.item.Position ?? Infinity) || 0),
+    )
+  }, [avatarMenuItems.entries])
+
+  // console.log('logo ', logo)
+  // console.log('smallLogo ', smallLogo)
+
   return (
     <div className="header">
       <div className="content">
         <div className="left">
-          <Link className="title" to={`/`}>
-            <span className="mn">{setCtx.instanceName}</span>
-            <span className="bar">|</span>
-          </Link>
+          <HeaderTitle
+          // logo={logo} smallLogo={smallLogo}
+          />
         </div>
         <div className="right">
-          {addonCtx.rightComponents.flatMap(({ addon: { StdHeaderItems } }, index) => {
-            return (StdHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
+          {rightComponents.entries.flatMap(({ pkg, item: { Component } }, index) => {
+            return <Component key={`${pkg.id}:${index}`} />
           })}
 
-          {clientSession ? (
+          {clientSessionData && (
             <FloatingMenu
-              className="avatar-menu"
+              className="add-menu"
               menuContent={[
-                <Link to="/settings">
-                  <SettingsIcon />
-                  Settings
+                <Link /* href={newResourceHref} */ to="" tabIndex={0}>
+                  <NoteAddIcon />
+                  {/* <Trans> */}
+                  New resource
+                  {/* </Trans> */}
                 </Link>,
-                /*  <Link to="/extensions">
-                  <ExtensionIcon />
-                  Extensions
-                </Link>, */
-                <Link to="/" onClick={logout}>
-                  <ExitToAppIcon />
-                  Log out
+                <Link /* href={newCollectionHref} */ to="" tabIndex={0}>
+                  <LibraryAddIcon />
+                  {/* <Trans> */}
+                  New collection
+                  {/* </Trans> */}
                 </Link>,
               ]}
-              hoverElement={
-                <div style={avatar} className="avatar" />
-                // <Link
-                //   href={me.myProfileHref}
-                //   style={avatar}
-                //   className="avatar"
-                // />
-              }
+              hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
+            />
+          )}
+          {clientSessionData ? (
+            <FloatingMenu
+              className="avatar-menu"
+              menuContent={reoderedAvatarMenuItems.map((avatarMenuItem, i) => {
+                return avatarMenuItem.item.Path ? (
+                  <Link
+                    key={i}
+                    className={`avatar-menu-item ${avatarMenuItem.item.ClassName}`}
+                    to={avatarMenuItem.item.Path}
+                    onClick={avatarMenuItem.item.OnClick}
+                  >
+                    <>
+                      <avatarMenuItem.item.Icon /> {avatarMenuItem.item.Text}
+                    </>
+                  </Link>
+                ) : (
+                  <div
+                    key={i}
+                    tabIndex={0}
+                    className={`avatar-menu-item ${avatarMenuItem.item.ClassName}`}
+                    onClick={avatarMenuItem.item.OnClick}
+                  >
+                    <>
+                      <avatarMenuItem.item.Icon /> {avatarMenuItem.item.Text}
+                    </>
+                  </div>
+                )
+              })}
+              hoverElement={<div style={avatar} className="avatar" />}
             />
           ) : (
             // <span>
