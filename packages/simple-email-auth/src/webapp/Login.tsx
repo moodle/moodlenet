@@ -4,7 +4,7 @@ import { MainContext } from './MainModule';
 
 export type LoginFormValues = { email: string; password: string }
 
-export const Icon: FC = ( ) => {
+export const Icon: FC = (   ) => {
   const { shell } = useContext(MainContext)
   const [, reactApp] = shell.deps
   const { PrimaryButton } = reactApp.ui.components
