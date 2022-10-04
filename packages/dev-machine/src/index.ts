@@ -124,7 +124,7 @@ const hasLock = existsSync(DEV_LOCK_FILE)
     return (pkgName: string) => {
       const defEnvs = {
         '@moodlenet/http-server': { port: 8080 },
-        '@moodlenet/arangodb': { connectionCfg: { url: 'http://localhost:8530' } },
+        '@moodlenet/arangodb': { connectionCfg: { url: 'http://localhost:8529' } },
         '@moodlenet/authentication-manager': { rootPassword: 'root' },
         '@moodlenet/email-service': {
           mailerCfg: { transport: { jsonTransport: true }, defaultFrom: 'noreply@moodlenet.local' },
