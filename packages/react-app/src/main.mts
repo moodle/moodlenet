@@ -4,8 +4,8 @@ import graphConn from '@moodlenet/content-graph'
 import { connectPkg } from '@moodlenet/core'
 import organizationConn from '@moodlenet/organization'
 import apis from './apis.mjs'
-import { addWebappPluginItem } from './init.mjs'
-import { MyUsesPkgs } from './webapp/MainContext.js'
+import { setupPlugin } from './lib.mjs'
+import { WebPkgDeps } from './webapp/MainContext.js'
 
 export * from './types.mjs'
 
@@ -14,13 +14,14 @@ export * from './types.mjs'
 // export * from './pub-lib.mjs'
 // export * from './types.mjs'
 
-const connection = await connectPkg(import.meta, apis)
-export default connection
+const pkgId = await connectPkg(import.meta, apis)
+export default pkgId
 
-const MyUsesPkgs: MyUsesPkgs = [connection, organizationConn, authConn, graphConn]
-await addWebappPluginItem({
-  guestPkgInfo: connection.pkgInfo,
-  // mainComponentLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainComponent.tsx'),
-  mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
-  usesPkgs: MyUsesPkgs,
+const WebPkgDeps: WebPkgDeps = [pkgId, organizationConn, authConn, graphConn]
+await setupPlugin<WebPkgDeps>({
+  pkgId,
+  pluginDef: {
+    mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
+    usesPkgs: WebPkgDeps,
+  },
 })

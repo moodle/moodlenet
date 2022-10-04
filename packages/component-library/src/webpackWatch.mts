@@ -111,9 +111,16 @@ export function getWp(
             // directory: buildFolder,
           },
           proxy: {
+<<<<<<< HEAD:packages/component-library/src/webpackWatch.mts
             '/.apis/*': {
               target: cfg.proxy,
+=======
+            path: (pathname, _req) => {
+              // console.log({ pathname, test: /\/\..*/.test(pathname) })
+              return /\/\..*/.test(pathname)
+>>>>>>> review_fw:packages/react-app/src/webpackWatch.mts
             },
+            target: cfg.proxy,
           },
           client: {
             overlay: {

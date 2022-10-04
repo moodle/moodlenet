@@ -21,6 +21,10 @@
   ],
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
+  "peerDependencies": {
+    "@moodlenet/arangodb": "^0.1.0",
+    "@moodlenet/core": "^0.1.0"
+  },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.1.0",
     "@moodlenet/core": "^0.1.0",

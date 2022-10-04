@@ -1,8 +1,9 @@
-import { PackageInfo } from '@moodlenet/core'
+import { pkgEntryByPkgId, PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { addWebappPluginItem } from './init.mjs'
 import { AppearanceData, WebappPluginDef, WebappPluginItem } from './types.mjs'
 import { kvStore } from './use-pkg-apis.mjs'
+import { WebPkgDepList } from './webapp/web-lib.mjs'
 
 export async function setAppearance({ appearanceData }: { appearanceData: AppearanceData }) {
   const data = await kvStore.set('appearanceData', '', appearanceData)
@@ -15,10 +16,19 @@ export async function getAppearance() {
   return { data: data.value }
 }
 
-export async function setupPlugin({ pkgInfo, pluginDef }: { pluginDef: WebappPluginDef; pkgInfo: PackageInfo }) {
-  const webappPluginItem: WebappPluginItem = {
+export async function setupPlugin<Deps extends WebPkgDepList = never>({
+  pkgId,
+  pluginDef,
+}: {
+  pluginDef: WebappPluginDef<Deps>
+  pkgId: PkgIdentifier<any>
+}) {
+  const guestPkgEntry = pkgEntryByPkgId(pkgId)
+  assert(guestPkgEntry, `can't setup plugin, no guestPkgEntry for ${pkgId.name}@${pkgId.version}`)
+  const webappPluginItem: WebappPluginItem<Deps> = {
     ...pluginDef,
-    guestPkgInfo: pkgInfo,
+    guestPkgId: pkgId,
+    guestPkgInfo: guestPkgEntry.pkgInfo,
   }
   addWebappPluginItem(webappPluginItem)
 }

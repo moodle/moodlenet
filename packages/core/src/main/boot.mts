@@ -1,5 +1,4 @@
-import type { BootCfg } from '../types.mjs'
-import { getSys } from './sys.mjs'
+import { sys } from '../cfg.mjs'
 
 process.on('error', err => {
   console.error(err)
@@ -7,14 +6,14 @@ process.on('error', err => {
   process.exit()
 })
 
-export async function boot(cfg: BootCfg) {
-  const sys = await getSys({ mainFolders: cfg.mainFolders })
-  const sysconfig = sys.readSysConfig()
+export async function boot() {
+  const _sys = await sys()
+  const sysconfig = _sys.readSysConfig()
 
   for (const sysInstalledPkg of sysconfig.packages) {
     const { pkgId } = sysInstalledPkg
     console.log(`-- connecting  ${pkgId.name}@${pkgId.version} ... --`)
-    await sys.pkgMng.getMain({ pkgId })
+    await _sys.pkgMng.getMain({ pkgId })
     console.log(`-- CONNECTED ${pkgId.name}@${pkgId.version}  --\n`)
   }
   console.log('\n------- all packages connected -------', '\n')

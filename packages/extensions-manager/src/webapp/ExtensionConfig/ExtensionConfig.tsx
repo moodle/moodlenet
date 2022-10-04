@@ -8,9 +8,11 @@ import { FC, ReactNode, ReactPortal, useCallback, useContext, useReducer } from 
 // import { StateContext } from '../ExtensionsProvider'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+// import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
+// import vscDarkPlus from 'react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus'
+// import vscDarkPlus from 'react-syntax-highlighter'
 import rehypeRaw from 'rehype-raw'
-import { extNameDescription } from '../../lib.mjs'
+import { extNameDescription } from '../../common/lib.mjs'
 import { DeployedPkgInfo } from '../../types.mjs'
 import { mandatoryPackages } from '../fakeData.js'
 import { MainContext } from '../MainComponent.js'
@@ -54,7 +56,7 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) 
     code({ node, inline, className, children, ...props }: CodeBlockProps) {
       const match = /language-(\w+)/.exec(className || '')
       return !inline && match ? (
-        <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="div" {...props}>
+        <SyntaxHighlighter /* style={vscDarkPlus} */ language={match[1]} PreTag="div" {...props}>
           {String(children).replace(/\n$/, '')}
         </SyntaxHighlighter>
       ) : (

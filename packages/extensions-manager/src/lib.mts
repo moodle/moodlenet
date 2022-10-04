@@ -1,7 +1,8 @@
-import { InstallPkgReq, listEntries, SafePackageJson } from '@moodlenet/core'
+import type { InstallPkgReq } from '@moodlenet/core'
+import { listEntries } from '@moodlenet/core'
 import _axios from 'axios'
-import { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from './types/data.mjs'
-import { SearchResponse } from './types/npmRegistry.mjs'
+import type { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from './types/data.mjs'
+import type { SearchResponse } from './types/npmRegistry.mjs'
 
 const axios = _axios.default
 
@@ -9,7 +10,7 @@ export async function listDeployed() {
   const entries = await listEntries()
   return entries.map<DeployedPkgInfo>(entry => ({
     packageJson: entry.pkgInfo.packageJson,
-    pkgId: entry.pkgInfo.pkgId,
+    pkgId: entry.pkgId,
     readme: entry.pkgInfo.readme,
   }))
 }
@@ -28,7 +29,7 @@ export async function searchPackages({
   const objects = searchRes.objects.map(
     ({ package: { name: pkgName, description, keywords, version = '*', links } }) => {
       // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
-      const installedPkgIds = pkgEntries.map(pkgEntry => pkgEntry.pkgInfo.pkgId)
+      const installedPkgIds = pkgEntries.map(pkgEntry => pkgEntry.pkgId)
       const installedPkgId = installedPkgIds.find(pkgId => pkgId.name === pkgName /* &&pkgId.version=== version  */)
 
       const installPkgReq: InstallPkgReq = {
@@ -76,11 +77,6 @@ keywords:moodlenetPackage
  */
 
 const ___ignore___mn2_pkgs = ['@moodlenet/webapp', '@moodlenet/common', '@moodlenet/backend', '@moodlenet/ce-platform']
-
-export function extNameDescription(pkgJson: SafePackageJson) {
-  const [displayName = '', description = ''] = (pkgJson.description ?? '').split('\n')
-  return { displayName, description }
-}
 
 const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
 export function getRegistry(_reg?: string | undefined) {

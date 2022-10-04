@@ -1,14 +1,14 @@
 import graphConn from '@moodlenet/content-graph'
 import { ProfileGlyphs } from './types.mjs'
-import { graphConnPkgApis, reactAppPkgApis } from './use-pkg-apis.mjs'
-import { MyUsesPkgs } from './webapp/types.mjs'
-export const WebAppUsesPkgs: MyUsesPkgs = [graphConn]
+import { graphPkgApis, reactAppPkgApis } from './use-pkg-apis.mjs'
+import { WebPkgDeps } from './webapp/types.mjs'
+export const WebAppUsesPkgs: WebPkgDeps = [graphConn]
 
-await reactAppPkgApis('plugin')({
+await reactAppPkgApis('plugin')<WebPkgDeps>({
   mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
   usesPkgs: WebAppUsesPkgs,
 })
 
-export const glyphDescriptors = await graphConnPkgApis('ensureGlyphs')<ProfileGlyphs>({
+export const glyphDescriptors = await graphPkgApis('ensureGlyphs')<ProfileGlyphs>({
   defs: { Profile: { kind: 'node' } },
 })

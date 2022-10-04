@@ -5,7 +5,13 @@ import { ClientSession, SessionToken } from './types.mjs'
 import { cryptoPkgApis } from './use-pkg-apis.mjs'
 
 type GetSessionResp = { success: false; msg: string } | { success: true; sessionToken: SessionToken }
-export async function getSessionToken({ uid, pkgId }: { uid: string; pkgId: PkgIdentifier }): Promise<GetSessionResp> {
+export async function getSessionToken({
+  uid,
+  pkgId,
+}: {
+  uid: string
+  pkgId: PkgIdentifier<any>
+}): Promise<GetSessionResp> {
   const user = await store.getByProviderId({ pkgName: pkgId.name, uid })
   if (!user) {
     return { success: false, msg: 'cannot find user' }
@@ -23,21 +29,39 @@ export async function getClientSession({ token }: { token: string }) {
   return { success: true, clientSession } as const
 }
 
-export function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }): ClientSession | undefined {
-  return ctx[`@moodlenet/authentication-manager`]?.clientSession
-}
-
-export async function setApiCtxClientSession({ token, ctx }: { token: string | undefined; ctx: FloorApiCtx }) {
-  if (!token) {
-    return
+export async function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }): Promise<ClientSession | undefined> {
+  ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
+  const presentClientSession = ctx['@moodlenet/authentication-manager'].clientSession
+  if (presentClientSession) {
+    return presentClientSession
   }
+
+  const token = ctx['@moodlenet/authentication-manager']?.token
+  if (!token) {
+    return undefined
+  }
+
   const data = await getClientSession({ token })
+
   if (!data.success) {
     return
   }
   const { clientSession } = data
 
-  ctx['@moodlenet/authentication-manager'] = { clientSession }
+  ctx['@moodlenet/authentication-manager'].clientSession = clientSession
+
+  return clientSession
+}
+
+export async function setApiCtxClientSessionToken({ token, ctx }: { token: string | undefined; ctx: FloorApiCtx }) {
+  ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
+  if (!token) {
+    return
+  }
+
+  ctx['@moodlenet/authentication-manager'].token = token
+  // console.log({ token, ctx })
+  // console.log({ ctx })
 }
 
 export async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {

@@ -1,4 +1,4 @@
-import { PackageInfo } from '@moodlenet/core'
+import { PkgIdentifier } from '@moodlenet/core'
 import { Application, default as _express } from 'express'
 
 export type MountAppArgs = {
@@ -7,8 +7,8 @@ export type MountAppArgs = {
 }
 export type MountAppItem = {
   mountAppArgs: MountAppArgs
-  pkgInfo: PackageInfo
-  mountPath: string
+  pkgId: PkgIdentifier<any>
+  mountOnAbsPath?: string
 }
 
 declare global {

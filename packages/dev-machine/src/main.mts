@@ -1,5 +1,6 @@
-import { boot, install, InstallPkgReq, MainFolders } from '@moodlenet/core/lib/main.mjs'
-import { defaultCorePackages } from '@moodlenet/core/lib/main/install.mjs'
+import { cfgResolver, InstallPkgReq, MainFolders } from '@moodlenet/core/lib/main.mjs'
+import { boot } from '@moodlenet/core/lib/main/boot.mjs'
+import { defaultCorePackages, install } from '@moodlenet/core/lib/main/install.mjs'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path, { resolve } from 'path'
 import prompts from 'prompts'
@@ -105,7 +106,8 @@ const hasLock = existsSync(DEV_LOCK_FILE)
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
 
-  await boot({ mainFolders })
+  cfgResolver.resolve({ mainFolders })
+  await boot()
   writeFileSync(DEV_LOCK_FILE, '')
 
   function getCustomPkgEnvs(): any {
@@ -126,7 +128,7 @@ const hasLock = existsSync(DEV_LOCK_FILE)
     return (pkgName: string) => {
       const defEnvs = {
         '@moodlenet/http-server': { port: 8080 },
-        '@moodlenet/arangodb': { connectionCfg: { url: 'http://localhost:8529' } },
+        '@moodlenet/arangodb': { connectionCfg: { url: 'http://localhost:8530' } },
         '@moodlenet/authentication-manager': { rootPassword: 'root' },
         '@moodlenet/email-service': {
           mailerCfg: { transport: { jsonTransport: true }, defaultFrom: 'noreply@moodlenet.local' },

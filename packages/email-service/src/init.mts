@@ -1,4 +1,4 @@
-import { MailerCfg } from './emailSender/nodemailer/nodemailer.mjs'
+import { MailerCfg } from './types.mjs'
 
 export const env = getEnv(null)
 

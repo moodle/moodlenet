@@ -10,6 +10,7 @@ import { ResolveOptions } from 'webpack'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
 import { WebappPluginItem } from './types.mjs'
 import { httpSrvPkgApis, kvStore } from './use-pkg-apis.mjs'
+import { WebPkgDepList } from './webapp/web-lib.mjs'
 import startWebpack from './webpackWatch.mjs'
 
 // const wpcfg = require('../webpack.config')
@@ -36,7 +37,7 @@ const connectPkgModulesFile = {
 }
 
 httpSrvPkgApis('mount')({
-  getApp: function getApp(express) {
+  getApp(express) {
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './public/index.html' })
     mountApp.use(staticWebApp)
@@ -53,7 +54,7 @@ httpSrvPkgApis('mount')({
 })
 
 // await mkdir(tmpDir, { recursive: true })
-const pkgPlugins: WebappPluginItem[] = []
+const pkgPlugins: WebappPluginItem<any>[] = []
 const baseResolveAlias: ResolveOptions['alias'] = {
   'react': packageDirectorySync({ cwd: require.resolve('react') })!,
   'react-router-dom': packageDirectorySync({ cwd: require.resolve('react-router-dom') })!,
@@ -114,7 +115,9 @@ function writeGenerated() {
   // ])
 }
 
-export async function addWebappPluginItem(webappPluginItem: WebappPluginItem) {
+export async function addWebappPluginItem<Deps extends WebPkgDepList = never>(
+  webappPluginItem: WebappPluginItem<Deps>,
+) {
   // console.log({ webappPluginItem })
   pkgPlugins.push(webappPluginItem)
   // const scopedLibFilename = resolve(tmpDir, `react-app-lib__${dep.shell.extName}.ts`)

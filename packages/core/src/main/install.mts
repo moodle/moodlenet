@@ -68,7 +68,7 @@ export const defaultCorePackages = {
   'react-app': '0.1.0',
   'web-user': '0.1.0',
   'extensions-manager': '0.1.0',
-  // 'simple-email-auth': '0.1.0',
+  'simple-email-auth': '0.1.0',
   // 'test-extension': '0.1.0',
   // 'test-extension-2': '0.1.0',
   // 'passport-auth': '0.1.0',

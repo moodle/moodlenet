@@ -2,13 +2,14 @@ import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { WebappPluginItem } from './types.mjs'
 import { fixModuleLocForWebpackByOS } from './util.mjs'
+import { WebPkgDepList } from './webapp/web-lib.mjs'
 function ___dirname(import_meta_url: string) {
   return fileURLToPath(new URL('.', import_meta_url))
 }
 const __dirname = ___dirname(import.meta.url)
 
-export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPluginItem[] }) {
-  return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgInfo.pkgId.name).join(',')} -
+export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPluginItem<WebPkgDepList>[] }) {
+  return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgId.name).join(',')} -
 
   // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
     resolve(__dirname, '..', 'src', 'webapp', 'mainContextProviders.tsx'),
@@ -25,7 +26,7 @@ export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPl
 import pkg_main_component_${index} from '${resolve(
         pluginItem.guestPkgInfo.pkgRootDir,
         ...pluginItem.mainComponentLoc,
-      )}' // ${pluginItem.guestPkgInfo.pkgId.name}
+      )}' // ${pluginItem.guestPkgId.name}
     `,
     )
     .join('')}
@@ -40,13 +41,13 @@ import pkg_main_component_${index} from '${resolve(
       (pluginItem, index) => `
 
 
-// connect ${pluginItem.guestPkgInfo.pkgId.name} (pkg_main_component_${index})
-pkgs.push({
-  //@ts-ignore
-  MainComponent:pkg_main_component_${index},
-  pkgId:${JSON.stringify(pluginItem.guestPkgInfo.pkgId)},
-  usesPkgs: ${JSON.stringify(pluginItem.usesPkgs.map(({ pkgInfo: { pkgId } }) => ({ pkgId })))}
-})
+// connect ${pluginItem.guestPkgId.name} (pkg_main_component_${index})
+  pkgs.push({
+    //@ts-ignore
+    MainComponent:pkg_main_component_${index},
+    pkgId:Object.freeze(${JSON.stringify(pluginItem.guestPkgId)}),
+    usesPkgs: ${JSON.stringify(pluginItem.usesPkgs)}
+  })
 
 `,
     )

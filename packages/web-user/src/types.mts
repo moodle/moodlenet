@@ -1,3 +1,4 @@
+import { UserId } from '@moodlenet/authentication-manager'
 import { GlyphDefsMap, GlyphDescriptorsMap } from '@moodlenet/content-graph'
 
 export type ProfileGlyphs = GlyphDefsMap<{
@@ -6,4 +7,9 @@ export type ProfileGlyphs = GlyphDefsMap<{
 
 export type Lib = {
   glyphDescriptors: GlyphDescriptorsMap<ProfileGlyphs>
+}
+
+export type CreateRequest = {
+  displayName: string
+  userId: UserId
 }

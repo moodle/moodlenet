@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { readdirSync, readFileSync } from 'fs'
 import { resolve } from 'path'
-import { PackageInfo, PkgIdentifier, SafePackageJson } from './types.mjs'
+import { PackageInfo, SafePackageJson } from './types.mjs'
 
 const infos: Record<string, PackageInfo> = {}
 export function getPackageInfo({ pkgRootDir }: { pkgRootDir: string }): PackageInfo {
@@ -20,9 +20,7 @@ export function getPackageInfo({ pkgRootDir }: { pkgRootDir: string }): PackageI
     // ...installationInfo,
     packageJson: safePackageJson,
     readme,
-    pkgId: pkgIdOf({
-      safePackageJson,
-    }),
+
     pkgRootDir,
   }
   infos[pkgRootDir] = packageInfo
@@ -33,16 +31,6 @@ export function getSafePackageJson({ pkgRootDir }: { pkgRootDir: string }): Safe
   assert(safePackageJson.name, 'package has no name')
   assert(safePackageJson.version, 'package has no version')
   return safePackageJson
-}
-export function getPackageIdIn({ pkgRootDir }: { pkgRootDir: string }): PkgIdentifier {
-  const safePackageJson: SafePackageJson = getSafePackageJson({ pkgRootDir })
-  return pkgIdOf({ safePackageJson })
-}
-export function pkgIdOf({ safePackageJson }: { safePackageJson: SafePackageJson }): PkgIdentifier {
-  return {
-    name: safePackageJson.name,
-    version: safePackageJson.version,
-  }
 }
 
 const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org'

@@ -3,7 +3,8 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material'
 import { FC, ReactNode, ReactPortal, useCallback, useContext, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+// import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
+// import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 // import { searchNpmExtensionInfo } from '../../../../../helpers/utilities'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
@@ -74,7 +75,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
     code({ node, inline, className, children, ...props }: CodeBlockProps) {
       const match = /language-(\w+)/.exec(className || '')
       return !inline && match ? (
-        <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="div" {...props}>
+        <SyntaxHighlighter /* style={vscDarkPlus} */ language={match[1]} PreTag="div" {...props}>
           {String(children).replace(/\n$/, '')}
         </SyntaxHighlighter>
       ) : (

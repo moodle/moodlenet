@@ -7,8 +7,8 @@ export default {
     ctx => async (mountAppArgs: MountAppArgs) => {
       const mountAppItem: MountAppItem = {
         mountAppArgs,
-        pkgInfo: ctx.caller.pkgInfo,
-        mountPath: mountAppArgs.mountOnAbsPath ?? ctx.caller.pkgInfo.pkgId.name,
+        pkgId: ctx.caller.pkgId,
+        mountOnAbsPath: mountAppArgs.mountOnAbsPath,
       }
       const unmount = httpServer.mountApp(mountAppItem)
       // FIXME: on uninstall unmount()

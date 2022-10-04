@@ -1,6 +1,7 @@
 import { ReactElement, useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { MainContext } from './MainContext.js'
+import { routes } from './registries.mjs'
 import { Login } from './ui/components/pages/Access/Login/Login.js'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin.js'
 import { Signup } from './ui/components/pages/Access/Signup/Signup.js'
@@ -15,7 +16,7 @@ const AppRouter = () => {
   const {
     // registries: { routes },
   } = useContext(MainContext)
-  // const { registry: routesRegistry } = routes.useRegistry()
+  const { registry: routesRegistry } = routes.useRegistry()
   // console.log({ routesRegistry })
   return (
     <>
@@ -36,13 +37,13 @@ const AppRouter = () => {
           <A />
       }
     /> */}
-        {/* {routesRegistry.entries.map(({ pkg, item: { routes, rootPath } }) => {
+        {routesRegistry.entries.map(({ pkgId, item: { routes, rootPath } }) => {
           return (
-            <Route path={rootPath ?? pkg.name} key={`${pkg.id}`} caseSensitive>
+            <Route path={rootPath ?? pkgId.name} key={`${pkgId.name}`} caseSensitive>
               {routes}
             </Route>
           )
-        })} */}
+        })}
       </Routes>
     </>
   )
