@@ -33,6 +33,7 @@
     margin-bottom: 120px;
     margin-right: calc((100vw - 525px) / 2);
     align-items: center;
+    gap: 30px;
 
     @media (max-width: 650px) {
       justify-content: center;
@@ -47,12 +48,12 @@
     > .card {
       height: 100%;
     }
-    > .card:last-child,
-    .card:only-child {
+    > .signup-card {
       width: 525px;
       height: min-content;
       min-height: 400px;
       background-color: #b6bacb;
+      min-width: 0;
 
       @media (max-width: 900px) {
         max-width: 525px;
@@ -60,7 +61,7 @@
       }
 
       > .content {
-        max-width: calc(100% - 165px);
+        width: 100%;
         flex-direction: column;
         justify-content: space-between;
         display: flex;
@@ -163,9 +164,6 @@
           }
           > a > .tertiary-button {
             color: white;
-            &:hover {
-              background-color: grey;
-            }
           }
           > .right {
             display: flex;
@@ -192,10 +190,9 @@
         }
       }
     }
-    > .card:first-child {
+    > .login-card {
       max-height: 340px;
       cursor: pointer;
-      margin-right: 30px;
       flex: 1;
       min-width: 185px;
       border-radius: 0 16px 16px 0;

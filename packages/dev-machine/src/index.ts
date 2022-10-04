@@ -2,7 +2,7 @@ import { boot, install, InstallPkgReq, MainFolders } from '@moodlenet/core'
 import { defaultCorePackages } from '@moodlenet/core/lib/main/install'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path, { resolve } from 'path'
-import prompt from 'prompt'
+import prompts from 'prompts'
 import { sync as rimrafSync } from 'rimraf'
 
 process.env.NODE_ENV = 'development'
@@ -21,9 +21,6 @@ const lastDeploymentFolderName = (() => {
 })()
 const hasLock = existsSync(DEV_LOCK_FILE)
 
-writeFileSync(DEV_LOCK_FILE, '')
-
-prompt.start()
 ;(async () => {
   // let __rest = false
   process.on('message', message => {
@@ -41,18 +38,16 @@ prompt.start()
   const deploymentFolderName =
     hasLock && lastDeploymentFolderName
       ? lastDeploymentFolderName
-      : ((
-          await prompt
-            .get([
-              {
-                default: lastDeploymentFolderName,
-                type: 'string',
-                description: 'deployment folder',
-                name: 'deploymentFolderName',
-              },
-            ])
-            .catch(() => process.exit())
-        ).deploymentFolderName as string)
+      : (
+          await prompts([
+            {
+              type: 'text',
+              initial: lastDeploymentFolderName,
+              message: 'deployment folder',
+              name: 'deploymentFolderName',
+            },
+          ])
+        ).deploymentFolderName
 
   const deploymentFolder = path.resolve(DEPLOYMENTS_FOLDER_BASE, deploymentFolderName)
   const systemFolder = resolve(deploymentFolder, '_system')
@@ -64,7 +59,27 @@ prompt.start()
   }
   console.log({ deploymentFolder })
   const deploymentFolderPathExists = existsSync(deploymentFolder)
+  // console.log({ customPkgEnvs: Object.keys(customPkgEnvs) })
   if (!deploymentFolderPathExists) {
+    const customPkgEnvs = getCustomPkgEnvs()
+
+    const { customEnvName } = customPkgEnvs
+      ? await prompts([
+          {
+            choices: Object.keys(customPkgEnvs).map<prompts.Choice>(title => ({
+              title: title,
+              value: title,
+              selected: title === 'default',
+            })),
+            type: 'select',
+            message: 'custom env property ?',
+            name: 'customEnvName',
+          },
+        ])
+      : { customEnvName: '' }
+    const defaultPkgEnv = await getDefaultPkgEnvFn(customPkgEnvs ?? {}, customEnvName)
+    // console.log({ defaultPkgEnv })
+
     mkdirSync(deploymentFolder, { recursive: true })
     const installPkgReqs = Object.keys(defaultCorePackages)
       .map(dirName => resolve(__dirname, '..', '..', dirName))
@@ -72,10 +87,10 @@ prompt.start()
         type: 'symlink',
         fromFolder,
       }))
-
     await install({
       mainFolders,
       installPkgReqs,
+      defaultPkgEnv,
     })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
@@ -88,5 +103,35 @@ prompt.start()
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
 
-  boot({ mainFolders, devMode: true })
+  await boot({ mainFolders, devMode: true })
+  writeFileSync(DEV_LOCK_FILE, '')
+
+  function getCustomPkgEnvs(): any {
+    try {
+      const customPkgEnvFileStr = readFileSync('./pkg-envs.json', { encoding: 'utf-8' })
+      try {
+        return JSON.parse(customPkgEnvFileStr)
+      } catch {
+        console.error('pkg-envs.json unparseable json')
+        process.exit()
+      }
+    } catch {
+      return null
+    }
+  }
+
+  async function getDefaultPkgEnvFn(pkgEnvs: any, customEnvName: string) {
+    return (pkgName: string) => {
+      const defEnvs = {
+        '@moodlenet/http-server': { port: 8080 },
+        '@moodlenet/arangodb': { connectionCfg: { url: 'http://localhost:8530' } },
+        '@moodlenet/authentication-manager': { rootPassword: 'root' },
+        '@moodlenet/email-service': {
+          mailerCfg: { transport: { jsonTransport: true }, defaultFrom: 'noreply@moodlenet.local' },
+        },
+        ...pkgEnvs?.[customEnvName],
+      }
+      return defEnvs[pkgName]
+    }
+  }
 })()

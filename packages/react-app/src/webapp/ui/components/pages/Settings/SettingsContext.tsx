@@ -1,3 +1,4 @@
+import { OrganizationExtDef } from '@moodlenet/organization'
 import {
   ComponentType,
   createContext,
@@ -5,12 +6,19 @@ import {
   FC,
   PropsWithChildren,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
+import { AppearanceData, ReactAppExtDef } from '../../../../..'
+import lib from '../../../../main-lib'
 import { baseStyle, BaseStyleType } from '../../../styles/config'
+
+export type OrganizationData = {
+  instanceName: string
+  landingTitle: string
+  landingSubtitle: string
+}
 
 export type StyleType = BaseStyleType & CSSProperties
 
@@ -18,79 +26,67 @@ export const StyleContextDefault = {
   ...baseStyle(),
 }
 
-export type SettingItemDef = { Menu: ComponentType; Content: ComponentType }
-export type SettingItem = { def: SettingItemDef }
+export type SettingsSectionItem = {
+  Menu: ComponentType
+  Content: ComponentType
+}
+
 export type SetCtxT = {
-  instanceName: string
-  setInstanceName: React.Dispatch<React.SetStateAction<string>>
-  landingTitle: string
-  setLandingTitle: React.Dispatch<React.SetStateAction<string>>
-  landingSubtitle: string
-  setLandingSubtitle: React.Dispatch<React.SetStateAction<string>>
-  settingsItems: SettingItem[]
-  registerSettingsItem(settingsItemDef: SettingItemDef): void
   style: StyleType
   setStyle: React.Dispatch<React.SetStateAction<StyleType>>
+  saveOrganization(data: OrganizationData): unknown
+  organizationData: OrganizationData
+  saveApparence(data: AppearanceData): unknown
+  appearanceData: AppearanceData
 }
 
 export const SettingsCtx = createContext<SetCtxT>(null as any)
 
-export function useRegisterSettingsItem({ Menu, Content }: SettingItemDef) {
-  const registerSettingsItem = useContext(SettingsCtx).registerSettingsItem
-  useEffect(() => {
-    return registerSettingsItem({ Menu, Content })
-  }, [registerSettingsItem, Menu, Content])
-}
-
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
+  const organizationSrv = lib.priHttp.fetch<OrganizationExtDef>('@moodlenet/organization@0.1.0')
+  const reactAppSrv = lib.priHttp.fetch<ReactAppExtDef>('@moodlenet/react-app@0.1.0')
+
   // const nav = useNavigate()
-
+  // dentro a use effect prendo il valore
   const [style, setStyle] = useState<SetCtxT['style']>(StyleContextDefault)
-  const [instanceName, setInstanceName] = useState<SetCtxT['instanceName']>('MoodleNet')
-  const [landingTitle, setLandingTitle] = useState<SetCtxT['instanceName']>(
-    'Find, share and curate open educational resources',
-  )
-  const [landingSubtitle, setLandingSubtitle] = useState<SetCtxT['instanceName']>(
-    'Search for resources, subjects, collections or people',
+  const [appearanceData, setAppareanceData] = useState<AppearanceData>({ color: '' })
+  const [organizationData, setDataOrg] = useState<OrganizationData>({
+    instanceName: '',
+    landingTitle: '',
+    landingSubtitle: '',
+  })
+
+  const saveOrganization = useCallback(
+    (data: OrganizationData) => {
+      organizationSrv('set')({ payload: data })
+      setDataOrg(data)
+    },
+    [setDataOrg],
   )
 
-  const [settingsItems, setLoginItems] = useState<SetCtxT['settingsItems']>([])
-  const registerLogin = useCallback<SetCtxT['registerSettingsItem']>(loginItemDef => {
-    const loginItem: SettingItem = {
-      def: loginItemDef,
-    }
-    setLoginItems(items => [...items, loginItem])
-    return remove
-    function remove() {
-      setLoginItems(items => items.filter(_ => _ !== loginItem))
-    }
+  const saveApparence = useCallback(
+    (data: AppearanceData) => {
+      reactAppSrv('setApparence')({ payload: data })
+      setAppareanceData(data)
+    },
+    [setDataOrg],
+  )
+
+  useEffect(() => {
+    organizationSrv('get')().then(({ data: orgData }) => setDataOrg(orgData))
+    reactAppSrv('getApparence')().then(resp => setAppareanceData(resp.data))
   }, [])
 
   const ctx = useMemo<SetCtxT>(() => {
     return {
-      instanceName,
-      setInstanceName,
-      landingTitle,
-      setLandingTitle,
-      landingSubtitle,
-      setLandingSubtitle,
       style,
       setStyle,
-      registerSettingsItem: registerLogin,
-      settingsItems,
+      saveOrganization,
+      organizationData,
+      saveApparence,
+      appearanceData,
     }
-  }, [
-    instanceName,
-    setInstanceName,
-    landingTitle,
-    setLandingTitle,
-    landingSubtitle,
-    setLandingSubtitle,
-    style,
-    setStyle,
-    registerLogin,
-    settingsItems,
-  ])
+  }, [style, setStyle, organizationData, appearanceData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }

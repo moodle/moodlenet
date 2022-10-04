@@ -1,0 +1,72 @@
+.extension-config {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  > .card {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 40px;
+    gap: 20px;
+
+    > .title {
+      font-size: 23px;
+      font-weight: bold;
+    }
+  }
+
+  > .header-card {
+    > .title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      > .title-and-back {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        > .back {
+          width: fit-content;
+          padding: 0 4px;
+          margin-left: -6px;
+        }
+      }
+      > .primary-button {
+        display: grid;
+        grid-template-columns: 1fr;
+        > div {
+          grid-row-start: 1;
+          grid-column-start: 1;
+
+          &.loading {
+            display: flex;
+            visibility: visible;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+
+        &.loading {
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  > .modules {
+    > .list {
+      min-height: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      > .module {
+        display: flex;
+        justify-content: space-between;
+        // cursor: pointer;
+        &:hover {
+          // opacity: 0.6;
+        }
+      }
+    }
+  }
+}

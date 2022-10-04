@@ -1,17 +1,20 @@
 {
   "name": "@moodlenet/simple-email-auth",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "simple-email-auth moodlenet",
-    "shortDesc": "a desc for simple-email-auth moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Email authentication"
   },
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Email authentication\nBasic authentication using email and password",
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet simple-email-auth package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
@@ -20,9 +23,16 @@
     "formik": "^2.2.9"
   },
   "devDependencies": {
-    "@moodlenet/authentication-manager": "^0.0.1",
-    "@moodlenet/core": "^0.0.1",
-    "@moodlenet/react-app": "^0.0.1",
+    "@moodlenet/arangodb": "^0.1.0",
+    "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/content-graph": "^0.1.0",
+    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/crypto": "^0.1.0",
+    "@moodlenet/email-service": "^0.1.0",
+    "@moodlenet/http-server": "^0.1.0",
+    "@moodlenet/react-app": "^0.1.0",
+    "@moodlenet/web-user": "^0.1.0",
+    "@types/express": "^4.17.13",
     "@types/node": "^17.0.35",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",

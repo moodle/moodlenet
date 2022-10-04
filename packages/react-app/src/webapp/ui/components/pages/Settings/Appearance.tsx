@@ -1,8 +1,8 @@
 // import { Trans } from '@lingui/macro'
-import { CSSProperties, FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { getColorPalette } from '../../../styles/utilities'
 // import { Organization } from '../../../../types'
-import { Card, InputTextField, PrimaryButton } from '../../atoms'
+import { Card, InputTextField } from '../../atoms'
 import Colorpicker from '../../atoms/Colorpicker/Colorpicker'
 import './Appearance.scss'
 import { SettingsCtx } from './SettingsContext'
@@ -21,6 +21,7 @@ export const Appearance: FC<AppearanceProps> = (
   // const [compactLogo, setCompactLogo] = useState(true)
 
   const setColor = (color: string) => {
+    styleContext.saveApparence({color})
     styleContext.setStyle({
       ...styleContext.style,
       ...getColorPalette(color),
@@ -28,25 +29,26 @@ export const Appearance: FC<AppearanceProps> = (
       // '--primary-background-color': setOpacity(color, 0.25),
     })
   }
-  const setStyle = (style: string) => {
-    // const result = sass.compileString(style)
-    styleContext.setStyle({
-      ...styleContext.style,
-      ...(style as CSSProperties),
-    })
-  }
+
+  // const setStyle = (style: string) => {
+  //   // const result = sass.compileString(style)
+  //   styleContext.setStyle({
+  //     ...styleContext.style,
+  //     ...(style as CSSProperties),
+  //   })
+  // }
 
   return (
-    <div className="appearance">
+    <>
       <Card className="appearance-header">
-        <h1>
+        <div className="title">
           Appearance
           {/* <Trans>Appearance</Trans> */}
-          <PrimaryButton>
+          {/* <PrimaryButton>
             Apply
-            {/* <Trans>Apply</Trans> */}
-          </PrimaryButton>
-        </h1>
+            <Trans>Apply</Trans>
+          </PrimaryButton> */}
+        </div>
         <div>
           Manage the look and feel of the platform
           {/* <Trans>Manage the look and feel of the platform</Trans> */}
@@ -90,11 +92,11 @@ export const Appearance: FC<AppearanceProps> = (
           )}
         </div>
       </Card> */}
-      <Card className="color">
-        <h2>
+      <Card className="color-card">
+        <div className="subtitle">
           Color
           {/* <Trans>Color</Trans> */}
-        </h2>
+        </div>
         <div>
           Define the primary color defining the whole color palette
           {/* <Trans>Define the primary color defining the whole color palette</Trans> */}
@@ -111,16 +113,14 @@ export const Appearance: FC<AppearanceProps> = (
           />
         </div>
       </Card>
-      <Card className="scss">
-        <h2>
+      <Card className="scss-card">
+        <div className="subtitle">
           SCSS
           {/* <Trans>SCSS</Trans> */}
-        </h2>
-        <div>
-          <InputTextField textarea={true} edit={true} onChange={c => setStyle(c.currentTarget.value)} />
         </div>
+        <InputTextField textarea={true} edit /* onChange={c => setStyle(c.currentTarget.value)} */ />
       </Card>
-    </div>
+    </>
   )
 }
 

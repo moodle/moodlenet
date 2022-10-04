@@ -1,11 +1,15 @@
 {
   "name": "@moodlenet/core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "core moodlenet",
-    "shortDesc": "a desc for core moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Core"
   },
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Core\nThe kernel of MoodleNet",
   "files": [
     "lib/",
     "src/",
@@ -13,15 +17,16 @@
   ],
   "bin": "./lib/bin/cli.js",
   "main": "lib/index.js",
-  "description": "moodlenet core package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
+    "axios": "^0.27.2",
     "dependency-graph": "^0.11.0",
     "dotenv": "^16.0.0",
     "dotenv-expand": "^8.0.1",
     "execa": "^5.1.1",
     "pkg-dir": "^5",
+    "prompts": "^2.4.2",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
     "semver": "^7.3.6",
@@ -29,7 +34,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.35",
-    "@types/prompt": "^1.1.2",
+    "@types/prompts": "^2.0.14",
     "@types/semver": "^7.3.9",
     "@types/tar": "^6.1.1",
     "@types/yargs": "^17.0.10",

@@ -10,12 +10,11 @@ export const symlinkInstaller: PkgInstaller<SymlinkInstallReq> = async ({
 }) => {
   const { packageJson } = await getPackageInfo({ absFolder: fromFolder })
   const pkgId = packageJson.name
-  const { absInstallationFolder, relInstallationFolder } = await getInstallationFolder({
+  const { absInstallationFolder, pkgInstallationId } = await getInstallationFolder({
     pkgsFolder,
     pkgId,
     useFolderName,
   })
-  console.log('**', { relInstallationFolder, absInstallationFolder, fromFolder })
   await symlink(fromFolder, absInstallationFolder, 'dir')
-  return { installationFolder: relInstallationFolder }
+  return { pkgInstallationId }
 }

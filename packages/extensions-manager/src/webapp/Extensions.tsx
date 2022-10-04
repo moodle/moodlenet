@@ -1,7 +1,6 @@
-import lib from 'moodlenet-react-app-lib'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { StateContext } from './ExtensionsProvider'
 import InstallExtension from './InstallExtension/InstallExtension'
+import { MainContext } from './MainModule'
 // import { ExtMngMainLayout } from './MainLayout.tsx__'
 import Modules, { ModulesProps } from './Modules/Modules'
 import Packages from './Packages/Packages'
@@ -11,8 +10,6 @@ import Packages from './Packages/Packages'
 // } from '../../templates/HeaderPageTemplate'
 // import Extensions, { ExtensionsProps } from './Extensions/Extensions'
 import './styles.scss'
-
-const Card = lib.ui.components.atoms.Card
 
 type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'InstallExtension'
 
@@ -46,8 +43,10 @@ export const Extensions: FC = () => {
   //   sectionProps,
   //   section = 'InstallExtension' /* , headerPageTemplateProps */,
   // }) => {
-  lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
-  const stateContext = useContext(StateContext)
+  const mainCtx = useContext(MainContext)
+  const [, reactApp] = mainCtx.shell.deps
+  const Card = reactApp.ui.components.Card
+
   const [currentSection, setCurrentSection] = useState('InstallExtension')
   const [currentContent, setCurrentContent] = useState<any>(null)
   // const [menuItemPressed, setMenuItemPressed] = useState<any>(false)
@@ -55,7 +54,7 @@ export const Extensions: FC = () => {
     () =>
       sections.map(
         (e, i) =>
-          (stateContext.devMode || e.name !== 'Modules') && (
+          (mainCtx.devMode || e.name !== 'Modules') && (
             <div
               key={i}
               className={`section ${e.name === currentSection ? 'selected' : ''}`}
@@ -70,7 +69,7 @@ export const Extensions: FC = () => {
             </div>
           ),
       ),
-    [stateContext.devMode, currentSection],
+    [mainCtx.devMode, currentSection],
   )
 
   useEffect(() => {
@@ -100,9 +99,11 @@ Extensions.displayName = 'ExtensionsPage'
 
 export default Extensions
 
-const Switch = lib.ui.components.atoms.Switch
 export const DevModeBtn: FC = () => {
-  const { devMode, setDevMode } = useContext(StateContext)
+  const { devMode, setDevMode, shell } = useContext(MainContext)
+  const [, reactApp] = shell.deps
+  const Switch = reactApp.ui.components.Switch
+
   return (
     <div className="dev-mode">
       <span className="label">Developer mode</span>

@@ -1,23 +1,28 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
-import { CSSProperties, FC, useContext, useEffect, useState } from 'react'
+import { CSSProperties, FC, useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../../react-app-lib/auth'
+import { MainContext } from '../../../../../MainContext'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card'
-import { MainLayout } from '../../../layout'
+import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout'
 import './Login.scss'
 
 export type LoginProps = {}
 
 export const Login: FC<LoginProps> = () => {
   return (
-    <MainLayout headerType="minimalistic">
+    <SimpleLayout page="login" style={{ height: '100%' }} contentStyle={{ padding: '0' }}>
       <LoginBody />
-    </MainLayout>
+    </SimpleLayout>
   )
 }
 export const LoginBody: FC<LoginProps> = ({}) => {
-  const authCtx = useContext(AuthCtx)
+  const {
+    registries: {
+      auth: { login },
+    },
+  } = useContext(MainContext)
+  const { registry: loginRegs } = login.useRegistry()
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()
@@ -25,38 +30,33 @@ export const LoginBody: FC<LoginProps> = ({}) => {
   // }
 
   // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
-  // console.log({
-  //   submitCount: form.submitCount,
-  //   wrongCreds,
-  //   isValid: form.isValid,
-  // })
 
-  const defaultLoginItem = authCtx.loginItems[0]
-  const [currLoginItem, chooseLoginItem] = useState(defaultLoginItem)
-  useEffect(() => chooseLoginItem(defaultLoginItem), [defaultLoginItem])
+  const defaultLoginEntry = loginRegs.entries[0]
+  const [currLoginEntry, chooseLoginEntry] = useState(defaultLoginEntry)
+  //useEffect(() => chooseLoginEntry(defaultLoginEntry), [defaultLoginEntry])
   return (
     <div className="login-page">
       <div className="content">
-        <Card>
+        <Card className="login-card">
           <div className="content">
             <div className="title">Log in</div>
-            {currLoginItem ? <currLoginItem.def.Panel /> : <div>No Auth available</div>}
-            {authCtx.loginItems.length > 1 && (
+            {currLoginEntry ? <currLoginEntry.item.Panel /> : <div>No Auth available</div>}
+            {loginRegs.entries.length > 1 && (
               <>
                 {/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}
-                {authCtx.loginItems.map((loginItem, index) => {
-                  const isCurrent = loginItem === currLoginItem
+                {loginRegs.entries.map((entry, index) => {
+                  const isCurrent = entry === currLoginEntry
                   const css: CSSProperties = {
                     float: 'left',
                     cursor: isCurrent ? undefined : 'pointer',
                     fontWeight: isCurrent ? 'bold' : undefined,
                     display: isCurrent ? 'none' : 'block',
                   }
-                  const onClick = isCurrent ? undefined : () => chooseLoginItem(loginItem)
+                  const onClick = isCurrent ? undefined : () => chooseLoginEntry(entry)
 
                   return (
                     <div key={index} style={css} onClick={onClick}>
-                      <loginItem.def.Icon />
+                      <entry.item.Icon />
                     </div>
                   )
                 })}

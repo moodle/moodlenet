@@ -1,24 +1,22 @@
-import lib from 'moodlenet-react-app-lib'
+import { PrimaryButton, SecondaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
 import { FC, useContext } from 'react'
 import './Login.scss'
-import { PassportContext } from './MainProvider'
+import { PassportContext } from './MainModule'
 
-const a = ''
-const { SecondaryButton } = lib.ui.components.atoms
 export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => (
   <span>
-         <SecondaryButton>Other methods</SecondaryButton>
+    <PrimaryButton color="blue">Other methods</PrimaryButton>
   </span>
 )
-export const Panel: FC = () =>               {
-  const { configFlags } = useContext(   PassportContext);
+export const Panel: FC = () => {
+  const { configFlags } = useContext(PassportContext)
 
   return (
     <>
       {configFlags.google && (
-        <a href="/_/moodlenet-passport-auth/login/federated/google">
+        <a href="/_/@moodlenet/passport-auth/login/federated/google">
           <SecondaryButton className="alternative-login-btn google" color="light-grey">
             <div className="icon">
               <img
@@ -32,10 +30,7 @@ export const Panel: FC = () =>               {
       )}
       <SecondaryButton className="alternative-login-btn facebook" color="light-grey">
         <div className="icon">
-          <img
-            alt="facebook login"
-            src="https://d35aaqx5ub95lt.cloudfront.net/images/facebook-blue.svg"
-          />
+          <img alt="facebook login" src="https://d35aaqx5ub95lt.cloudfront.net/images/facebook-blue.svg" />
         </div>
         <div className="title">Login using Facebook</div>
       </SecondaryButton>

@@ -36,10 +36,14 @@
     gap: 16px;
 
     > .card {
-      display: flex;
-      flex-direction: column;
       padding: 26px 40px;
-      gap: 20px;
+      &,
+      > form {
+        display: flex;
+        flex-direction: column;
+
+        gap: 20px;
+      }
 
       > .title {
         font-size: 23px;

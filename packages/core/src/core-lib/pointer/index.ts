@@ -6,8 +6,9 @@ export function baseSplitPointer<Ext extends ExtDef, Path extends AllPaths<Ext>>
   return { extId, path }
 }
 export function splitExtId<Ext extends ExtDef>(extId: ExtId<Ext>) {
-  const [extName, version] = extId.split('@') as [Ext['name'], Ext['version']]
-  return { extName, version }
+  const [version, extName, _scope_token] = extId.split('@').reverse() as [Ext['version'], Ext['name'], '@'?]
+  const scoped = 'string' === typeof _scope_token
+  return { extName: (scoped ? '@' : '') + extName, version }
 }
 
 export function splitPointer<Ext extends ExtDef, Path extends AllPaths<Ext>>(pointer: Pointer<Ext, Path>) {

@@ -1,8 +1,8 @@
 .floating-menu {
   position: relative;
+  cursor: pointer;
 
   > .hover-element {
-    cursor: pointer;
     position: relative;
     float: right;
     > * {
@@ -20,8 +20,7 @@
     width: max-content;
     display: flex;
     right: -40px;
-    padding-right: 32px;
-    padding-top: 6px;
+    margin: 6px 32px 0 0;
     z-index: 3;
 
     > .content {
@@ -34,7 +33,6 @@
       flex-wrap: wrap;
       > div > * {
         padding: 7px 15px;
-        cursor: pointer;
         text-decoration: inherit;
         color: inherit;
         font-size: 14px;

@@ -1,75 +1,99 @@
-import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import { resolve } from 'path'
+import type { MNArangoDBExt } from '@moodlenet/arangodb'
+import type { CoreExt, Ext, ExtDef, IMessage, MessageContext, SubTopo } from '@moodlenet/core'
+import { CryptoExt } from '@moodlenet/crypto'
+import assert from 'assert'
 import userStore from './store'
-import { User, UserData } from './store/types'
+import { User } from './store/types'
 import { ClientSession, SessionToken } from './types'
 export * from './types'
 
 export type Topo = {
   registerUser: SubTopo<
-    { uid: string; displayName: string },
+    { uid: string; displayName: string; avatarUrl?: string },
     { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
   >
-  getSessionToken: SubTopo<
-    { uid: string },
-    { success: true; sessionToken: SessionToken } | { success: false; msg: string }
-  >
+  getSessionToken: SubTopo<{ uid: string }, { success: true; sessionToken: SessionToken } | { success: false }>
+  getRootSessionToken: SubTopo<{ password: string }, { success: true; sessionToken: SessionToken } | { success: false }>
   getClientSession: SubTopo<{ token: string }, { success: true; clientSession: ClientSession } | { success: false }>
 }
-export type AuthenticationManagerExt = ExtDef<'moodlenet-authentication-manager', '0.1.10', Topo>
 
-const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
-  id: 'moodlenet-authentication-manager@0.1.10',
-  displayName: 'Authenticator manager',
-  description: 'Manager for the multiple authentication systems',
-  requires: ['moodlenet-core@0.1.10'],
-  enable(shell) {
-    shell.expose({
-      'getSessionToken/sub': {
-        validate() {
-          return { valid: true }
-        },
-      },
-      'getClientSession/sub': {
-        validate() {
-          return { valid: true }
-        },
-      },
-    })
+export type Lib = {
+  getMsgClientSession(_: { msg: IMessage }): Promise<ClientSession | undefined>
+  makeMsgClientSessionContext(_: { authToken: string }): Promise<MessageContext>
+}
+
+export type AuthenticationManagerExtDef = ExtDef<'@moodlenet/authentication-manager', '0.1.0', Lib, Topo>
+
+export type AuthenticationManagerExt = Ext<AuthenticationManagerExtDef, [CoreExt, MNArangoDBExt, CryptoExt]>
+const ext: AuthenticationManagerExt = {
+  name: '@moodlenet/authentication-manager',
+  version: '0.1.0',
+  requires: ['@moodlenet/core@0.1.0', '@moodlenet/arangodb@0.1.0', '@moodlenet/crypto@0.1.0'],
+  async connect(shell) {
+    const [, arangopkg, crypto] = shell.deps
+    const env = getEnv(shell.env)
+
+    await arangopkg.access.fetch('ensureCollections')({ defs: { User: { kind: 'node' } } })
+
     return {
+      // async install() {
+      //   await arangopkg.plug.ensureCollections([{ name: 'User' }])
+      // },
       deploy() {
-        const store = userStore({ folder: resolve(__dirname, '..', '.ignore', 'users') })
-        shell.lib.pubAll<AuthenticationManagerExt>('moodlenet-authentication-manager@0.1.10', shell, {
-          async registerUser({ msg }) {
-            const { extName } = shell.lib.splitExtId(msg.source)
-            const { displayName, uid } = msg.data.req
+        shell.expose({
+          'getSessionToken/sub': {
+            validate() {
+              return { valid: true }
+            },
+          },
+          'getClientSession/sub': {
+            validate() {
+              return { valid: true }
+            },
+          },
+          'getRootSessionToken/sub': {
+            validate() {
+              return { valid: true }
+            },
+          },
+        })
+
+        const store = userStore({ shell })
+
+        shell.provide.services({
+          async getRootSessionToken({ password }) {
+            if (!(env.rootPassword && password)) {
+              return { success: false }
+            } else if (env.rootPassword === password) {
+              const sessionToken = await encryptClientSession({ root: true })
+              return { success: true, sessionToken }
+            } else {
+              return { success: false }
+            }
+          },
+          async registerUser({ uid }, { source }) {
+            const { extName } = shell.lib.splitExtId(source)
             const user = await store.create({
-              displayName,
               providerId: {
                 ext: extName,
                 uid,
               },
             })
-            const sessionToken = await createSessionToken(user)
+            const sessionToken = await encryptClientSession({ user })
 
             return { success: true, user, sessionToken }
           },
-          async getSessionToken({ msg }) {
-            const { extName } = shell.lib.splitExtId(msg.source)
-            const { uid } = msg.data.req
-            const user = await store.getByProviderId({
-              ext: extName,
-              uid,
-            })
+          async getSessionToken({ uid }, { source }) {
+            const { extName } = shell.lib.splitExtId(source)
+            const user = await store.getByProviderId({ ext: extName, uid })
             if (!user) {
               return { success: false, msg: 'cannot find user' }
             }
-            const sessionToken = await createSessionToken(user)
+            const sessionToken = await encryptClientSession({ user })
             return { success: true, sessionToken }
           },
-          async getClientSession({ msg }) {
-            const { token } = msg.data.req
-            const clientSession = await getClientSession(token)
+          async getClientSession({ token }) {
+            const clientSession = await decryptClientSession(token)
             if (!clientSession) {
               return { success: false }
             }
@@ -77,19 +101,45 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
             return { success: true, clientSession }
           },
         })
-        return {}
-        async function createSessionToken(user: User): Promise<SessionToken> {
-          const userData: UserData = user
-          const sessionToken: SessionToken = JSON.stringify(userData)
 
+        return {
+          plug(/* { shell: plugShell } */) {
+            const getMsgClientSession: Lib['getMsgClientSession'] = async ({ msg }) => {
+              return msg.context[`@moodlenet/authentication-manager`]?.clientSession
+            }
+            const makeMsgClientSessionContext: Lib['makeMsgClientSessionContext'] = async ({ authToken }) => {
+              const {
+                msg: { data },
+              } = await shell.me.fetch('getClientSession')({ token: authToken })
+              if (!data.success) {
+                return { context: {} }
+              }
+              const { clientSession } = data
+
+              return { '@moodlenet/authentication-manager': { clientSession } }
+            }
+            const lib: Lib = { getMsgClientSession, makeMsgClientSessionContext }
+
+            return lib
+          },
+        }
+
+        async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
+          const {
+            msg: {
+              data: { encrypted: sessionToken },
+            },
+          } = await crypto.access.fetch('encrypt')({ payload: JSON.stringify(clientSession) })
           return sessionToken
         }
-        async function getClientSession(token: SessionToken): Promise<ClientSession | null> {
+        async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
           try {
-            const userData: UserData = JSON.parse(token)
-            const clientSession: ClientSession = {
-              user: userData,
-            }
+            const {
+              msg: { data: decryptRes },
+            } = await crypto.access.fetch('decrypt')({ encrypted: token })
+            assert(decryptRes.valid)
+            const clientSession: ClientSession = JSON.parse(decryptRes.payload)
+            assert(isClientSession(clientSession))
             return clientSession
           } catch {
             return null
@@ -99,5 +149,16 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
     }
   },
 }
+export default ext
+function isClientSession(clientSession: any): clientSession is ClientSession {
+  // FIXME: implement checks
+  return !!clientSession
+}
 
-export default { exts: [ext] }
+export type Env = { rootPassword?: string }
+function getEnv(_: any): Env {
+  const rootPassword = typeof _?.rootPassword === 'string' ? String(_.rootPassword) : undefined
+  return {
+    rootPassword,
+  }
+}

@@ -1,6 +1,7 @@
 .minimalistic-header {
   height: 60px;
   padding: 0 100px;
+  flex-shrink: 0;
   width: -webkit-fill-available;
   display: flex;
   justify-content: center;
@@ -13,69 +14,25 @@
     align-items: center;
     justify-content: space-between;
     > .left {
-      > .title {
-        line-height: 20px;
-        font-size: 20px;
-        font-family: 'Fredoka', sans-serif;
-        font-family: 'Press Start 2P';
-        text-decoration: none;
-        > .bar {
-          margin-left: -6px;
-          animation: blink 2s infinite linear;
-
-          @keyframes blink {
-            0% {
-              opacity: 1;
-              color: #f88012;
-            }
-            15% {
-              opacity: 0;
-            }
-            30% {
-              opacity: 1;
-              color: black;
-            }
-            50% {
-              opacity: 1;
-              color: black;
-            }
-            65% {
-              opacity: 0;
-            }
-            80% {
-              opacity: 1;
-              color: #f88012;
-            }
-            100% {
-              opacity: 1;
-              color: #f88012;
-            }
-          }
-        }
-
-        > .mn {
-          background: linear-gradient(
-            to right,
-            #f88012,
-            #f88012,
-            rgba(208, 222, 33, 1),
-            rgba(79, 220, 74, 1),
-            rgba(63, 218, 216, 1),
-            rgba(47, 201, 226, 1),
-            rgba(28, 127, 238, 1),
-            rgba(95, 21, 242, 1),
-            rgba(186, 12, 248, 1),
-            rgba(251, 7, 217, 1),
-            rgba(255, 0, 0, 1)
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-      }
     }
 
     > .right {
       display: flex;
+      > .buttons {
+        display: flex;
+        gap: 10px;
+
+        > a {
+          > .secondary-button:first-child {
+            display: none;
+          }
+          @media (max-width: 650px) {
+            > .secondary-button:first-child {
+              display: flex;
+            }
+          }
+        }
+      }
       > .dev-mode {
         display: flex;
         align-items: center;

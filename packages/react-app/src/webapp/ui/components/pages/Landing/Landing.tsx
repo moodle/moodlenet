@@ -63,9 +63,9 @@ export const LandingBody: FC<LandingProps> = (
     <div className="landing">
       <div className="landing-header" style={background}>
         <div className="landing-title">
-          <div className="title">{setCtx.landingTitle}</div>
+          <div className="title">{setCtx.organizationData.landingTitle}</div>
           {/* <div className="title">{organization.title}</div> */}
-          <div className="subtitle">{setCtx.landingSubtitle}</div>
+          <div className="subtitle">{setCtx.organizationData.landingSubtitle}</div>
           {/* <div className="subtitle">{organization.subtitle}</div> */}
         </div>
         {/* <Searchbox

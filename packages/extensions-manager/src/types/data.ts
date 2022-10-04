@@ -2,7 +2,7 @@ import { InstallPkgReq } from '@moodlenet/core'
 
 export type SearchPackagesResponse = { objects: SearchPackagesResObject[] }
 export type SearchPackagesResObject = {
-  name: string
+  pkgName: string
   description: string
   keywords: string[]
   version?: string
@@ -10,11 +10,11 @@ export type SearchPackagesResObject = {
   homepage?: string
 } & (
   | {
-      installationFolder: string
-      installPkgReq: undefined
+      pkgInstallationId: string
+      installed: true
     }
   | {
-      installationFolder: undefined
       installPkgReq: InstallPkgReq
+      installed: false
     }
 )
