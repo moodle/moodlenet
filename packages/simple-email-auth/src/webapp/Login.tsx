@@ -6,7 +6,7 @@ import { MainContext } from './MainComponent.js';
 
 export type LoginFormValues = { email: string; password: string }
 
-export const Icon: FC = (   ) => {
+export const Icon: FC = (     ) => {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 export const Panel: FC = () => {
