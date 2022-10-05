@@ -1,15 +1,15 @@
-import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs';
-import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs';
-import { useFormik } from 'formik';
-import { FC, useContext, useState } from 'react';
-import { MainContext } from './MainComponent.js';
+import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
+import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
+import { useFormik } from 'formik'
+import { FC, useContext, useState } from 'react'
+import { MainContext } from './MainComponent.js'
 
 export type LoginFormValues = { email: string; password: string }
 
-export const Icon: FC = (     ) => {
+export const Icon: FC = () => {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
-export const Panel: FC = (   ) => {
+export const Panel: FC = () => {
   const { pkgs } = useContext(MainContext)
   const [authPkgApis] = pkgs
 
