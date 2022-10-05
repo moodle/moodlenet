@@ -1,5 +1,5 @@
 {
-    "src/**/*.+(js,jsx,ts,tsx,json,css,scss,md)": [
-        "eslint"
+    "packages/**/src/**/*.+(js|mjs|jsx|ts|tsx|json|css|scssjs|jsx|ts|tsx|json|css|scss|md)": [
+        "eslint --fix"
     ]
 }

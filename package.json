@@ -40,7 +40,7 @@
     "start": "lerna run start --parallel --stream",
     "test": "",
     "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
-    "pre-commit": "formatter.sh && lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
+    "pre-commit": "lint-staged && lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
     "prepare": "husky install",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
