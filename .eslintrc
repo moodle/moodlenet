@@ -5,7 +5,6 @@
     "es6": true
   },
   "extends": [
-    // "plugin:react/recommended",
     // "airbnb",
     // "airbnb/hooks",
     //
@@ -13,8 +12,16 @@
     "plugin:prettier/recommended",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
     "plugin:react/jsx-runtime"
   ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -23,7 +30,8 @@
   "plugins": ["react", "prettier", "react-hooks", "@typescript-eslint"],
   "rules": {
     "no-mixed-spaces-and-tabs": ["off"],
-    "react/react-in-jsx-scope": 0,
+    // "react/react-in-jsx-scope": 0,
+    "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
     "no-console": 0,
     "react/state-in-constructor": 0,
@@ -37,6 +45,8 @@
         "extensions": [".js", ".jsx", ".tsx"]
       }
     ],
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
     "prettier/prettier": [
       "error",
       {

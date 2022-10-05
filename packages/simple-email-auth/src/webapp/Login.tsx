@@ -4,6 +4,15 @@ import { useFormik } from 'formik'
 import { FC, useContext, useState } from 'react'
 import { MainContext } from './MainComponent.js'
 
+/*** TEST  IS LINT REACT WORK --> this give error missing display name
+
+const Hello = React.memo(({ a }: { a: string }) => {
+  return <>{a}</>
+})
+
+ 
+ */
+
 export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => {
@@ -15,6 +24,7 @@ export const Panel: FC = () => {
 
   const auth = useContext(AuthCtx)
   const [wrongCreds, setWrongCreds] = useState(false)
+
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
