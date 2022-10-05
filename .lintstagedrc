@@ -1,5 +1,5 @@
 {
-    "packages/**/src/**/*.+(js|mjs|jsx|ts|tsx|json|css|scssjs|jsx|ts|tsx|json|css|scss|md)": [
+    "*.+(js|mjs|jsx|ts|mts|tsx|json|css|scssjs|jsx|ts|tsx|json|css|scss|md)": [
         "prettier --write --ignore-unknown",
         "eslint --fix"
     ]
