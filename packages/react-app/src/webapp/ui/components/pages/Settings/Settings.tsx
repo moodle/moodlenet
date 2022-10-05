@@ -1,13 +1,15 @@
 import { FC, useContext, useMemo, useState } from 'react'
-import { Card } from '../../atoms'
-import { MainLayout } from '../../layout'
-import { SettingsSectionItem } from './SettingsContext'
+import { Card } from '../../atoms/Card/Card.js'
+import MainLayout from '../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
-import { RegistryEntry } from '../../../../main-lib/registry'
-import { MainContext } from '../../../../MainContext'
-import Appearance from './Appearance'
-import { GeneralContent } from './General'
+// import { RegistryEntry } from '../../../../main-lib/registry'
+import { MainContext } from '../../../../MainContext.js'
+import { registries } from '../../../../web-lib.mjs'
+import { RegistryEntry } from '../../../../web-lib/registry.js'
+import Appearance from './Appearance.js'
+import { GeneralContent } from './General.js'
 import './Settings.scss'
+import { SettingsSectionItem } from './SettingsContext.js'
 
 export type SettingsProps = {}
 
@@ -19,18 +21,12 @@ export const Settings: FC<SettingsProps> = () => {
   )
 }
 export const SettingsBody: FC<SettingsProps> = ({}) => {
-  // const setCtx = useContext(SettingsCtx)
-  const {
-    shell,
-    registries: {
-      settings: { sections },
-    },
-  } = useContext(MainContext)
-  const { registry: sectionsReg } = sections.useRegistry()
+  const { pkgId } = useContext(MainContext)
+  const { registry: sectionsReg } = registries.settingsSections.useRegistry()
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
-      { pkg: shell.pkg, item: { Menu: () => <span>General</span>, Content: GeneralContent } },
-      { pkg: shell.pkg, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
+      { pkgId, item: { Menu: () => <span>General</span>, Content: GeneralContent } },
+      { pkgId, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
       // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
     ]
     return baseSettingsItems.concat(sectionsReg.entries)
@@ -47,14 +43,14 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
     <div className="settings-page">
       <div className="left-menu">
         <Card>
-          {settingsItems.map((settingsEntry, index) => {
+          {settingsItems.map(settingsEntry => {
             const isCurrent = settingsEntry === currSettingsItem
 
             const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsEntry)
 
             return (
               <div
-                key={`${settingsEntry.pkg}:${index}`}
+                key={`${settingsEntry.pkgId.name}@${settingsEntry.pkgId.version}`}
                 className={`section ${settingsEntry === currSettingsItem ? 'selected' : ''}`}
                 onClick={onClick}
               >

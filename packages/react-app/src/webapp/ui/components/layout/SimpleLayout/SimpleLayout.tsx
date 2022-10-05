@@ -1,9 +1,9 @@
 import { CSSProperties, FC, ReactNode, useContext } from 'react'
-import { baseMoodleColor, baseStyle } from '../../../styles/config'
-import { getColorPalette } from '../../../styles/utilities'
+import { baseMoodleColor, baseStyle } from '../../../styles/config.js'
+import { getColorPalette } from '../../../styles/utilities.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
-import MinimalisticHeader from '../../organisms/Header/Minimalistic/MinimalisticHeader'
-import { SettingsCtx } from '../../pages/Settings/SettingsContext'
+import MinimalisticHeader from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
+import { SettingsCtx } from '../../pages/Settings/SettingsContext.js'
 import './SimpleLayout.scss'
 // import { StateContext } from './Providers'
 

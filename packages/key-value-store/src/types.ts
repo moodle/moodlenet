@@ -5,4 +5,3 @@ export type KVStore<TMap extends KVSTypeMap> = {
   set<Type extends string & keyof TMap>(type: Type, key: string, val: TMap[Type]): Promise<ValueObj<TMap[Type]>>
   unset<Type extends string & keyof TMap>(type: Type, key: string): Promise<ValueObj<TMap[Type]>>
 }
-export type GetStore = <TMap extends KVSTypeMap>() => Promise<KVStore<TMap>>

@@ -1,9 +1,9 @@
 import { CSSProperties, FC, ReactNode, useContext } from 'react'
-import { baseStyle } from '../../../styles/config'
-import { getColorPalette } from '../../../styles/utilities'
+import { baseStyle } from '../../../styles/config.js'
+import { getColorPalette } from '../../../styles/utilities.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
-import StandardHeader from '../../organisms/Header/Standard/Header'
-import { SettingsCtx } from '../../pages/Settings/SettingsContext'
+import StandardHeader from '../../organisms/Header/Standard/Header.js'
+import { SettingsCtx } from '../../pages/Settings/SettingsContext.js'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
@@ -13,7 +13,7 @@ export type MainLayoutProps = {
   children?: ReactNode
 }
 
-const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children }) => {
+export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children }) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
 
