@@ -1,14 +1,18 @@
 {
   "name": "@moodlenet/dev-machine",
   "version": "3.0.0",
-  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "main": "lib/main.mjs",
   "private": true,
   "license": "AGPL-3.0",
   "description": "moodlenet dev-machine package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "scripts": {
-    "start-dev": "node-dev lib/index.js --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --graceful_ipc=\"Restarting dev\" --notify=false --enable-source-maps"
+    "start-dev": "node-dev lib/main.mjs --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --graceful_ipc=\"Restarting dev\" --notify=false --enable-source-maps"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.1.0",

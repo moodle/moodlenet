@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react'
-import { MainContext } from './MainModule'
-import Packages from './Packages/Packages'
+import { MainContext } from './MainComponent.js'
+import Packages from './Packages/Packages.js'
 
 export const Menu: FC = () => {
   const { setSelectedExtConfig } = useContext(MainContext)

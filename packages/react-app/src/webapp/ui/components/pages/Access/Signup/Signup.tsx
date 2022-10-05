@@ -1,9 +1,9 @@
-import CallMadeIcon from '@material-ui/icons/CallMade'
-import { CSSProperties, FC, useContext, useState } from 'react'
+import { CallMade as CallMadeIcon } from '@material-ui/icons'
+import { CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MainContext } from '../../../../../MainContext'
-import Card from '../../../atoms/Card/Card'
-import { SimpleLayout } from '../../../layout'
+import { registries } from '../../../../../web-lib.mjs'
+import Card from '../../../atoms/Card/Card.js'
+import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
@@ -19,16 +19,12 @@ export const Signup: FC<SignupProps> = () => {
 export const SignupBody: FC<SignupProps> = ({}) => {
   // const shouldShowErrors =
   //   !!form.submitCount && (!!signupErrorMessage || !form.isValid)
-  const {
-    registries: {
-      auth: { signup },
-    },
-  } = useContext(MainContext)
-  const { registry: signupRegs } = signup.useRegistry()
+
+  const { registry: signupRegs } = registries.signupItems.useRegistry()
 
   const defaultSignupEntry = signupRegs.entries[0]
   const [currSignupEntry, chooseSignupEntry] = useState(defaultSignupEntry)
-  //useEffect(() => chooseSignupItem(defaultSignupEntry), [defaultSignupEntry])
+  useEffect(() => chooseSignupEntry(defaultSignupEntry), [defaultSignupEntry])
 
   return (
     <div className={`signup-page`}>

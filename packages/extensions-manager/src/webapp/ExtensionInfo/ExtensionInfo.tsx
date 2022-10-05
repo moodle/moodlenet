@@ -1,17 +1,18 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material'
 import { FC, ReactNode, ReactPortal, useCallback, useContext, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+// import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
+// import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 // import { searchNpmExtensionInfo } from '../../../../../helpers/utilities'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
-import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
-import { SearchPackagesResObject } from '../../types/data'
-import { mandatoryPackages } from '../fakeData'
-import { MainContext } from '../MainModule'
+import { SearchPackagesResObject } from '../../types/data.mjs'
+import { mandatoryPackages } from '../fakeData.js'
+import { MainContext } from '../MainComponent.js'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
@@ -27,10 +28,8 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   searchPackagesResObject,
   onClickBackBtn,
 }) => {
-  const { shell } = useContext(MainContext)
-  const [, reactApp] = shell.deps
-  const { TertiaryButton, PrimaryButton, Card, Loading } = reactApp.ui.components
-  const core = shell.pkgHttp<CoreExt>('@moodlenet/core@0.1.0')
+  const { pkgs } = useContext(MainContext)
+  const [myPkg] = pkgs
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
@@ -56,10 +55,10 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
     searchPackagesResObject.installed
-      ? core.fetch('pkg/uninstall')({
-          pkgInstallationId: searchPackagesResObject.pkgInstallationId,
+      ? myPkg.call('uninstall')({
+          pkgId: searchPackagesResObject.pkgId,
         })
-      : core.fetch('pkg/install')({
+      : myPkg.call('install')({
           installPkgReq: searchPackagesResObject.installPkgReq,
         })
 
@@ -76,7 +75,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
     code({ node, inline, className, children, ...props }: CodeBlockProps) {
       const match = /language-(\w+)/.exec(className || '')
       return !inline && match ? (
-        <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="div" {...props}>
+        <SyntaxHighlighter /* style={vscDarkPlus} */ language={match[1]} PreTag="div" {...props}>
           {String(children).replace(/\n$/, '')}
         </SyntaxHighlighter>
       ) : (

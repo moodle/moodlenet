@@ -12,6 +12,13 @@
     "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
     "esModuleInterop": true,
     // "module": "esnext",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "moduleResolution": "Node16",
+    "module": "Node16"
   }
 }
