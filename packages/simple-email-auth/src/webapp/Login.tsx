@@ -9,7 +9,7 @@ export type LoginFormValues = { email: string; password: string }
 export const Icon: FC = (     ) => {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
-export const Panel: FC = ( ) => {
+export const Panel: FC = (   ) => {
   const { pkgs } = useContext(MainContext)
   const [authPkgApis] = pkgs
 
