@@ -4,11 +4,12 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 export const ConfirmEmail: FC = () => {
-  const auth = useContext(AuthCtx)
+  const { setSessionToken } = useContext(AuthCtx)
 
   // const nav = useNavigate()
   const [params] = useSearchParams()
   const [errMsg, setErrMsg] = useState('')
+
   useEffect(() => {
     const sessionToken = params.get('sessionToken')
     if (!sessionToken) {
@@ -16,12 +17,11 @@ export const ConfirmEmail: FC = () => {
       return
     }
 
-    auth
-      .setSessionToken(sessionToken)
+    setSessionToken(sessionToken)
       .then(res => (res.success ? '' : `couldn't authenticate`))
       .catch(e => String(e))
       .then(setErrMsg)
-  }, [])
+  }, [params, setSessionToken])
 
   return (
     <MainLayout>

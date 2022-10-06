@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import arangoPkgRef from '@moodlenet/arangodb'
 import authMngPkgRef from '@moodlenet/authentication-manager'
 import graphPkgRef from '@moodlenet/content-graph'
@@ -12,6 +13,9 @@ export const arangoPkgApis = useApis(import.meta, arangoPkgRef)
 export const cryptoPkgApis = useApis(import.meta, cryptoPkgRef)
 export const authMngPkgApis = useApis(import.meta, authMngPkgRef)
 export const graphPkgApis = useApis(import.meta, graphPkgRef)
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const emailSrvPkgApis = useApis(import.meta, emailSrvPkgRef)
 export const httpPkgApis = useApis(import.meta, httpPkgRef)
 export const reactAppPkgApis = useApis(import.meta, reactAppPkgRef)
