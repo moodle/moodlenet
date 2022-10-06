@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 // import { RegistryEntry } from '../../../../../main-lib/registry'
 // import { MainContext } from '../../../../../MainContext.js'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
+import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import { Organization } from '../../../../types.js'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu.js'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton.js'
@@ -25,7 +26,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = ({user, organization}) => {
   // const { registry: rightComponents } = header.rightComponents.useRegistry()
 
   // const { clientSessionData, logout } = useContext(AuthCtx)
-  const avatarImageUrl = user?.avatarUrl
+  const avatarImageUrl = user?.avatarUrl ?? defaultAvatar
 
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,

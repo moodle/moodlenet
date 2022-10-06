@@ -29,10 +29,10 @@ export const HeaderTitleOrganizationStoryProps: HeaderTitleProps = {
 
 const HeaderTitleStory: ComponentStory<typeof HeaderTitle> = args => <HeaderTitle {...args} />
 
-export const Default = HeaderTitleStory.bind({})
-Default.args = HeaderTitleStoryProps
+export const HeaderTitleDefault = HeaderTitleStory.bind({})
+HeaderTitleDefault.args = HeaderTitleStoryProps
 
-export const Organization = HeaderTitleStory.bind({})
-Organization.args = HeaderTitleOrganizationStoryProps
+export const HeaderTitleOrganization = HeaderTitleStory.bind({})
+HeaderTitleOrganization.args = HeaderTitleOrganizationStoryProps
 
 export default meta

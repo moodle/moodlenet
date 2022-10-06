@@ -1312,6 +1312,13 @@
   resolved "https://registry.npmjs.org/@gar/promisify/-/promisify-1.1.3.tgz"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
+"@honkhonk/vite-plugin-svgr@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@honkhonk/vite-plugin-svgr/-/vite-plugin-svgr-1.1.0.tgz#8af2c91f52e12798f795085f3cfad5bc4cda0f43"
+  integrity sha512-Z/KR54UolyaNRlbRWnrXb3C+2Xtl6ilHvD3ceoqTVV69OswtjSGZDefHHNK+SQUSBbYQo0lJO2jLgip0QBxL1A==
+  dependencies:
+    "@svgr/core" "^5.5.0"
+
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.9.5.tgz"
