@@ -23,7 +23,8 @@
         "content-graph dev-build",
         "key-value-store dev-build",
         "organization dev-build",
-        "web-user dev-build"
+        "web-user dev-build",
+        "oauth dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -212,6 +213,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "passport-auth dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/oauth/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "oauth dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]

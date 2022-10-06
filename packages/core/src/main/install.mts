@@ -27,12 +27,14 @@ export async function install({
   }
 
   // console.log({ installationsPkgInfosc })
-  const packages = installationsPkgInfos.map<SysInstalledPkg>(({ installResp: { sysInstalledPkg } }) => ({
-    ...sysInstalledPkg,
-    env: {
-      default: defaultPkgEnv(sysInstalledPkg.pkgId.name),
-    },
-  }))
+  const packages = installationsPkgInfos.map<SysInstalledPkg>(
+    ({ installResp: { sysInstalledPkg } }) => ({
+      ...sysInstalledPkg,
+      env: {
+        default: defaultPkgEnv(sysInstalledPkg.pkgId.name),
+      },
+    }),
+  )
 
   await sys.writeSysConfig({
     packages,
@@ -69,6 +71,7 @@ export const defaultCorePackages = {
   'web-user': '0.1.0',
   'extensions-manager': '0.1.0',
   'simple-email-auth': '0.1.0',
+  'oauth': '0.1.0',
   // 'test-extension': '0.1.0',
   // 'test-extension-2': '0.1.0',
   // 'passport-auth': '0.1.0',

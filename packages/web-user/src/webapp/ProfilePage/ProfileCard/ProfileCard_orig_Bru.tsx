@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 // import { t, Trans } from '@lingui/macro'
 // import FlagIcon from '@mui/icons-material/Flag'
 // import ShareIcon from '@mui/icons-material/Share'
@@ -289,7 +290,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             )}
             {!isEditing && isOwner && isApproved && (
               <abbr className={`approved-icon`} title={/* t */ `Approved`}>
-                <ApprovedIcon className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`} />
+                <ApprovedIcon
+                  className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`}
+                />
               </abbr>
             )}
             {!isEditing && isOwner && (
@@ -509,7 +512,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             </SecondaryButton>
           )}
           {!isOwner && (
-            <SecondaryButton color="grey" className={`message`} disabled={!isAuthenticated} onClick={openSendMessage}>
+            <SecondaryButton
+              color="grey"
+              className={`message`}
+              disabled={!isAuthenticated}
+              onClick={openSendMessage}
+            >
               {/* <Trans> */}
               Message
               {/* </Trans> */}
