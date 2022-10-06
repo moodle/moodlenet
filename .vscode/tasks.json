@@ -144,6 +144,15 @@
     },
     {
       "type": "typescript",
+      "tsconfig": "packages/component-library/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "component-library dev-build"
+      // "dependsOn": ["core dev-build", "http-server dev-build"]
+    },
+    {
+      "type": "typescript",
       "tsconfig": "packages/web-user/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],

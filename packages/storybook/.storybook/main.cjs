@@ -1,5 +1,6 @@
 module.exports = {
   stories: [
+    '../../component-library/src/webapp/ui/components/**/*.stories.tsx',
     '../../component-library/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',
     '../../component-library/src/webapp/ui/components/atoms/Card/Card.stories.tsx',
     '../../web-user/src/webapp/ProfilePage/OverallCard/OverallCard.stories.tsx',

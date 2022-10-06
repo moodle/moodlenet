@@ -1,5 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
+import smallLogo from '../../../../assets/logos/moodlenet-logo-small.svg'
+import logo from '../../../../assets/logos/moodlenet-logo.svg'
 import { HeaderTitle, HeaderTitleProps } from './HeaderTitle.js'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {
@@ -13,20 +15,16 @@ const meta: ComponentMeta<typeof HeaderTitle> = {
 
 export const HeaderTitleStoryProps: HeaderTitleProps = {
   //   homeHref: href('Landing/Logged In'),
-  organization: {
-    url: 'https://www.moodle.com/',
-    logo: '/moodlenet-logo.svg',
-    smallLogo: '/moodlenet-logo-small.svg',
-  },
+    url: '/',
+    logo: logo,
+    smallLogo: smallLogo,
 }
 
 export const HeaderTitleOrganizationStoryProps: HeaderTitleProps = {
   //   homeHref: href('Landing/Logged In'),
-  organization: {
     url: 'https://www.bfh.ch/',
     logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
     smallLogo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
-  },
 }
 
 const HeaderTitleStory: ComponentStory<typeof HeaderTitle> = args => <HeaderTitle {...args} />
