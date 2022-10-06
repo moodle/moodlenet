@@ -1,5 +1,9 @@
 @import '../../../styles/application.scss';
 
+a {
+  text-decoration: none;
+}
+
 .primary-button {
   display: flex;
   align-items: center;
