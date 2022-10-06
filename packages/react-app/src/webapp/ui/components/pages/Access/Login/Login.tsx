@@ -7,7 +7,7 @@ import Card from '../../../atoms/Card/Card.js'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Login.scss'
 
-export type LoginProps = Record<string, unknown>
+export type LoginProps = Record<string, never>
 
 export const Login: FC<LoginProps> = () => {
   return (
