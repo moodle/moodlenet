@@ -7,7 +7,7 @@ import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton.
 import HeaderTitle from '../HeaderTitle/HeaderTitle.js'
 import './MinimalisticHeader.scss'
 
-type MinimalisticHeaderProps = {
+export type MinimalisticHeaderProps = {
   page: 'login' | 'signup' | 'activation' | 'rootLogin'
   organization: Organization
 }

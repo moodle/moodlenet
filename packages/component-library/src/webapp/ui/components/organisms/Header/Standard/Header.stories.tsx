@@ -4,7 +4,7 @@ import { HeaderTitleOrganizationStoryProps, HeaderTitleStoryProps } from '../Hea
 import Header, { HeaderProps } from './Header.js'
 
 const meta: ComponentMeta<typeof Header> = {
-  title: 'Atoms/Header',
+  title: 'Organisms/Header',
   component: Header,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -25,10 +25,10 @@ export const HeaderOrganizationStoryProps: HeaderProps = {
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
 
-export const Default = HeaderStory.bind({})
-Default.args = HeaderStoryProps
+export const HeaderDefault = HeaderStory.bind({})
+HeaderDefault.args = HeaderStoryProps
 
-export const Organization = HeaderStory.bind({})
-Organization.args = HeaderOrganizationStoryProps
+export const HeaderOrganization = HeaderStory.bind({})
+HeaderOrganization.args = HeaderOrganizationStoryProps
 
 export default meta
