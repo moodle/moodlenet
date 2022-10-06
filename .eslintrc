@@ -13,8 +13,12 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:react/jsx-runtime"
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended"
   ],
+  "settings": {
+
+  },
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -33,6 +37,7 @@
     // "react/react-in-jsx-scope": 0,
     "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
     "no-console": 0,
     "react/state-in-constructor": 0,
     "indent": 0,
@@ -42,7 +47,7 @@
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [".js", ".jsx", ".tsx"]
+        "extensions": [".js", ".jsx", ".tsx", ".mts", ".ts"]
       }
     ],
     "react/jsx-uses-react": "error",

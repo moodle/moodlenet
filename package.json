@@ -4,12 +4,15 @@
   "license": "AGPL-3.0",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/plugin-syntax-flow": "^7.18.6",
+    "@babel/plugin-transform-react-jsx": "^7.19.0",
     "@types/rimraf": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
-    "csurf": "^1.11.0",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -20,6 +23,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "^8.0.0",
+    "husky-init": "^8.0.0",
     "lerna": "^5.0.0",
     "lerna-dependency-graph": "^1.1.0",
     "lint-staged": "^13.0.3",
@@ -28,7 +32,7 @@
     "typescript": "^4.7.2"
   },
   "scripts": {
-    "ibs": "husky install && yarn bs",
+    "init": "husky install && npx husky add .husky/pre-commit \"npm run pre-commit\"",
     "bs": "lerna bootstrap",
     "setup": "lerna run setup --parallel --stream",
     "start-dev": "lerna run start-dev --parallel --stream -- -- ",
@@ -40,30 +44,10 @@
     "start": "lerna run start --parallel --stream",
     "test": "",
     "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
-    "pre-commit": "lint-staged && lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
+    "pre-commit": "lint-staged",
     "prepare": "husky install",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
-    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
-    "xxx":"prettier  --loglevel debug  --write /home/etto/prj/moodle/moodlenet/packages/simple-email-auth/src/webapp/Login.tsx"
-  },
-  "eslintConfig": {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "ignorePatterns": "*.gen.*",
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "rules": {
-      "@typescript-eslint/no-explicit-any": "warn"
-    }
-  },
-  
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\""
   }
 }
