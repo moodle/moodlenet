@@ -32,18 +32,6 @@
   "scripts": {
     "dev-server": "node lib/-dev-server.mjs"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx}": [
-      "pretty-quick --staged",
-      "eslint",
-      "git add"
-    ]
-  },
   "author": "",
   "peerDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",
