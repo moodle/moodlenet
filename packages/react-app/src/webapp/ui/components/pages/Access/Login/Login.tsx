@@ -7,7 +7,7 @@ import Card from '../../../atoms/Card/Card.js'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Login.scss'
 
-export type LoginProps = {}
+export type LoginProps = Record<string, unknown>
 
 export const Login: FC<LoginProps> = () => {
   return (
@@ -16,7 +16,7 @@ export const Login: FC<LoginProps> = () => {
     </SimpleLayout>
   )
 }
-export const LoginBody: FC<LoginProps> = ({}) => {
+export const LoginBody: FC<LoginProps> = () => {
   const { registry: loginRegs } = registries.loginItems.useRegistry()
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
