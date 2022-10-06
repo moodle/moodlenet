@@ -28,7 +28,7 @@ export const LoginBody: FC<LoginProps> = ({}) => {
 
   const defaultLoginEntry = loginRegs.entries[0]
   const [currLoginEntry, chooseLoginEntry] = useState(defaultLoginEntry)
-  useEffect(() => chooseLoginEntry(defaultLoginEntry), [])
+  useEffect(() => chooseLoginEntry(defaultLoginEntry), [defaultLoginEntry])
   return (
     <div className="login-page">
       <div className="content">
