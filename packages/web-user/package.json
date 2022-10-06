@@ -28,6 +28,7 @@
   "peerDependencies": {
     "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/react-app": "^0.1.0"
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/react-app": "^0.1.0",
