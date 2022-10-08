@@ -1,8 +1,8 @@
 import { createHttpServer } from './http-server.mjs'
 
-export const env = getEnv({} /* shell.env */)
 export const httpServer = createHttpServer()
 
+export const env = getEnv({} /* shell.env */)
 type Env = {
   port: number
 }

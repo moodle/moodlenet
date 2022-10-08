@@ -32,7 +32,7 @@ export function makeExtPortsApp() {
       return next()
     }
 
-    const apis = useApis<any>(import.meta, { name: pkgName, version: pkgVersion })
+    const apis = await useApis<any>(import.meta, { name: pkgName, version: pkgVersion })
     const apiReqBody = req.body
     if (!isApiReqBody(apiReqBody)) {
       res.sendStatus(400)

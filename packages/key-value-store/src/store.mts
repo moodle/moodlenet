@@ -7,7 +7,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
 }: {
   consumerModuleRef: PkgModuleRef
 }): Promise<KVStore<TMap>> {
-  const arangoSrv = useApis(consumerModuleRef, arangoPkgRef)
+  const arangoSrv = await useApis(consumerModuleRef, arangoPkgRef)
   const query = arangoSrv('query')
 
   await arangoSrv('ensureCollections')({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
@@ -23,7 +23,8 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
   }
   async function get(type: string, key: string): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
-    const record = (await query({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` })).resultSet[0]
+    const record = (await query({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` }))
+      .resultSet[0]
     return valObj(record)
   }
 

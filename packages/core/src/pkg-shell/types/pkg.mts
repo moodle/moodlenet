@@ -22,9 +22,11 @@ export type ApiDef<_ApiFn extends ApiFn> = {
   argsValidation: ArgsValidation
 }
 
-export type PrimaryCallCtx = {}
+export type PrimaryCallCtx = true //Record<string, never>
 export type FloorApiCtx = { primary?: PrimaryCallCtx } & Record<string, any>
-export type ApiCtx = { caller: { pkgId: PkgIdentifier<any>; moduleRef: PkgModuleRef } } & FloorApiCtx
+export type ApiCtx = {
+  caller: { pkgId: PkgIdentifier<any>; moduleRef: PkgModuleRef }
+} & FloorApiCtx
 export type CtxApiFn<_ApiFn extends ApiFn> = (ctx: ApiCtx) => _ApiFn
 export type ApiFn = (...args: any[]) => Promise<any>
 export type ApiDefs = {
@@ -46,7 +48,10 @@ export type PkgModuleRef = NodeModule | ImportMeta
 // export type ApiRef<Defs extends ApiDefs> = { defs: Defs; shell: Shell }
 
 export type ApiDefPaths<Defs extends ApiDefs> = TypePaths<Defs, ApiDef<any>, ApiDef<any>>
-export type ApiFnType<Defs extends ApiDefs, Path extends ApiDefPaths<Defs>> = TypeofPath<Defs, Path> extends infer Def
+export type ApiFnType<Defs extends ApiDefs, Path extends ApiDefPaths<Defs>> = TypeofPath<
+  Defs,
+  Path
+> extends infer Def
   ? Def extends ApiDef<infer _ApiFn>
     ? _ApiFn
     : // ? Def extends ApiDef
