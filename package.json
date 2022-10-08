@@ -1,10 +1,15 @@
 {
-  "name": "moodlenet",
+  "name": "moodlenet-dev",
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
+    "moodlenet-dev": "file:"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=16"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
@@ -48,6 +53,8 @@
     "prepare": "husky install",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
-    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\""
+    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
+    "install-dev": "node bin/install.mjs",
+    "boot-dev": "node bin/boot.mjs"
   }
 }

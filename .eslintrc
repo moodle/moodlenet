@@ -2,6 +2,7 @@
   "root": true,
   "env": {
     "browser": true,
+    "node": true,
     "es6": true
   },
   "extends": [
@@ -16,9 +17,7 @@
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended"
   ],
-  "settings": {
-
-  },
+  "settings": {},
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -53,7 +52,7 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "prettier/prettier": [
-      "error",
+      "warn",
       {
         // "trailingComma": "es5",
         "singleQuote": true,

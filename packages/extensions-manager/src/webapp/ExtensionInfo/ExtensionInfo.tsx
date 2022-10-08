@@ -39,7 +39,11 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
     )
       .then(_ => _.json())
       .then(({ readme }) => setReadme(readme))
-  }, [searchPackagesResObject.registry, searchPackagesResObject.pkgName, searchPackagesResObject.version])
+  }, [
+    searchPackagesResObject.registry,
+    searchPackagesResObject.pkgName,
+    searchPackagesResObject.version,
+  ])
   // const stateContext = useContext(StateContext)
 
   // const modulesList = extension?.modules.map(
@@ -63,7 +67,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
         })
 
     // promise.finally(toggleIsInstalling)
-  }, [searchPackagesResObject])
+  }, [myPkg, searchPackagesResObject, toggleIsInstalling])
 
   type CodeBlockProps = {
     node: any
