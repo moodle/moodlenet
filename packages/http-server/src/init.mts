@@ -1,8 +1,8 @@
-import { createHttpServer } from './http-server.mjs'
-
-export const httpServer = createHttpServer()
+import { createHttpServer } from './http-server.mjs' //FIXME: circular dep
 
 export const env = getEnv({} /* shell.env */)
+export const httpServer = createHttpServer()
+
 type Env = {
   port: number
 }
