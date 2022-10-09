@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { PackageInfo } from '../pkg-mng/types.mjs'
-import { ApiDefs, PkgEntry, PkgIdentifier, PkgModuleRef, PkgName } from './types/pkg.mjs'
-import { getPkgModuleInfo, flattenApiDefs } from './lib.mjs'
+import { PkgConnectionDef, PkgEntry, PkgIdentifier, PkgModuleRef, PkgName } from './types/pkg.mjs'
+import { getPkgModuleInfo } from './lib.mjs'
 
 /*
  * PkgRegistry
@@ -37,10 +37,10 @@ export async function ensureRegisterPkg(pkg_module_ref: PkgModuleRef) {
   }
   const pkgId = pkgIdByInfo(pkgModInfo.pkgInfo)
   Object.freeze(pkgId)
-  const pkgEntry: PkgEntry<any> = {
+  const pkgEntry: PkgEntry<PkgConnectionDef> = {
     pkgId,
     pkgInfo: pkgModInfo.pkgInfo,
-    apiDefs: {},
+    pkgConnectionDef: { apis: {} },
     flatApiDefs: {},
   }
   return registerPkg(pkgEntry)
@@ -71,15 +71,5 @@ function registerPkg(pkgEntry: PkgEntry<any>) {
     `can't register ${pkgRootDir} twice, with a different pkgName`,
   )
   PKG_REG_ENTRIES.push(pkgEntry)
-  return pkgEntry
-}
-export async function registerPkgApis<_ApiDefs extends ApiDefs>(
-  pkg_module_ref: PkgModuleRef,
-  apiDefs: _ApiDefs,
-) {
-  const pkgEntry = await ensureRegisterPkg(pkg_module_ref)
-  const flatApiDefs = flattenApiDefs<_ApiDefs>(apiDefs)
-  pkgEntry.apiDefs = apiDefs
-  pkgEntry.flatApiDefs = flatApiDefs
   return pkgEntry
 }

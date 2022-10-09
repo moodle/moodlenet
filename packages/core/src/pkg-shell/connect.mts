@@ -1,30 +1,34 @@
 import assert from 'assert'
-import { API_DEF_SYMBOL } from './lib.mjs'
-import { ensureRegisterPkg, getPkgRegEntryByPkgName, registerPkgApis } from './registry.mjs'
+import { API_DEF_SYMBOL, flattenApiDefs } from './lib.mjs'
+import { ensureRegisterPkg, getPkgRegEntryByPkgName } from './registry.mjs'
 import {
   ApiDef,
   ApiDefPaths,
-  ApiDefs,
   ApiFn,
   ApiFnType,
   ArgsValidation,
   CallApiOpts,
   CtxApiFn,
+  PkgConnectionDef,
   PkgIdentifier,
   PkgModuleRef,
 } from './types/pkg.mjs'
 
-export async function connectPkg<_ApiDefs extends ApiDefs = Record<string, never>>(
+export async function connectPkg<PkgConnDef extends PkgConnectionDef>(
   pkg_module_ref: PkgModuleRef,
-  apiDefs: _ApiDefs,
-): Promise<PkgIdentifier<_ApiDefs>> {
-  const { pkgId } = await registerPkgApis(pkg_module_ref, apiDefs)
-  return pkgId
+  connDef: PkgConnDef,
+): Promise<PkgIdentifier<PkgConnDef>> {
+  const pkgEntry = await ensureRegisterPkg(pkg_module_ref)
+  const flatApiDefs = flattenApiDefs(connDef.apis)
+  pkgEntry.pkgConnectionDef = connDef
+  pkgEntry.flatApiDefs = flatApiDefs
+  console.log(`-- CONNECTED package ${pkgEntry.pkgId.name}@${pkgEntry.pkgId.version} --`)
+  return pkgEntry.pkgId
 }
 
-export async function useApis<_ApiDefs extends ApiDefs>(
+export async function pkgConnection<PkgConnDef extends PkgConnectionDef>(
   caller_pkg_module_ref: PkgModuleRef,
-  targetPkgId: PkgIdentifier<_ApiDefs>,
+  targetPkgId: PkgIdentifier<PkgConnDef>,
 ) {
   const callerPkgRegEntry = await ensureRegisterPkg(caller_pkg_module_ref)
 
@@ -38,10 +42,10 @@ export async function useApis<_ApiDefs extends ApiDefs>(
   const targetPkgEntry = getPkgRegEntryByPkgName(targetPkgId.name)
   assert(targetPkgEntry, `cannot call apis() on non connected target ${targetPkgId.name}`)
 
-  return function locateApi<Path extends ApiDefPaths<_ApiDefs>>(
+  const locateApi = <Path extends ApiDefPaths<PkgConnDef['apis']>>(
     path: Path,
     opts: CallApiOpts = {},
-  ): ApiFnType<_ApiDefs, Path> {
+  ): ApiFnType<PkgConnDef['apis'], Path> => {
     const apiDef = targetPkgEntry.flatApiDefs[path]
     assert(apiDef, `no apiDef in ${targetPkgEntry.pkgId.name}::${path}`)
 
@@ -56,7 +60,11 @@ export async function useApis<_ApiDefs extends ApiDefs>(
         ...opts.ctx,
         caller: { pkgId: callerPkgRegEntry.pkgId, moduleRef: caller_pkg_module_ref },
       })(...args)
-    } as ApiFnType<_ApiDefs, Path>
+    } as ApiFnType<PkgConnDef['apis'], Path>
+  }
+
+  return {
+    api: locateApi,
   }
 }
 

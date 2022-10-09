@@ -2,7 +2,7 @@ import { ApiCtx, FloorApiCtx, PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import * as store from './store.mjs'
 import { ClientSession, SessionToken } from './types.mjs'
-import { cryptoPkgApis } from './use-pkg-apis.mjs'
+import { cryptoPkg } from './use-pkg-apis.mjs'
 
 type GetSessionResp =
   | { success: false; msg: string }
@@ -77,7 +77,7 @@ export async function setApiCtxClientSessionToken({
 }
 
 export async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
-  const { encrypted: sessionToken } = await cryptoPkgApis('std/encrypt')({
+  const { encrypted: sessionToken } = await cryptoPkg.api('std/encrypt')({
     payload: JSON.stringify(clientSession),
   })
   return sessionToken
@@ -85,7 +85,7 @@ export async function encryptClientSession(clientSession: ClientSession): Promis
 
 async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
-    const decryptRes = await cryptoPkgApis('std/decrypt')({ encrypted: token })
+    const decryptRes = await cryptoPkg.api('std/decrypt')({ encrypted: token })
     assert(decryptRes.valid)
     const clientSession: ClientSession = JSON.parse(decryptRes.payload)
     assert(isClientSession(clientSession))

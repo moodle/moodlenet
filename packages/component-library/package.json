@@ -29,9 +29,7 @@
     "./ui.mjs": "./lib/webapp/ui.mjs",
     "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
   },
-  "scripts": {
-    "dev-server": "node lib/-dev-server.mjs"
-  },
+  "scripts": {},
   "author": "",
   "peerDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",

@@ -1,6 +1,6 @@
 import graphConn from '@moodlenet/content-graph'
-import { useApis } from '@moodlenet/core'
+import { pkgConnection } from '@moodlenet/core'
 import reactAppConn from '@moodlenet/react-app'
 
-export const reactAppPkgApis = await useApis(import.meta, reactAppConn)
-export const graphPkgApis = await useApis(import.meta, graphConn)
+export const reactAppPkg = await pkgConnection(import.meta, reactAppConn)
+export const graphPkg = await pkgConnection(import.meta, graphConn)

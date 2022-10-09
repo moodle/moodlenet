@@ -9,14 +9,18 @@ process.on('error', err => {
 })
 
 const systemPkgInfo = await getPackageInfoIn({ pkgRootDir: WORKING_DIR })
-const imports = Object.keys(systemPkgInfo.packageJson.dependencies ?? {}).map(async pkgName => {
-  const { pkgRootDir, packageJson } = await getPackageInfo({ pkgId: { name: pkgName } })
-  console.log(`-- connecting  ${pkgName} ... --`)
-  return import(resolve(pkgRootDir, packageJson.main ?? '')).then(() =>
-    console.log(`-- CONNECTED ${pkgName}  --\n`),
-  )
-})
+const imports = Object.entries(systemPkgInfo.packageJson.dependencies ?? {}).map(
+  async ([pkgName, pkgVersion]) => {
+    const { pkgRootDir, packageJson } = await getPackageInfo({
+      pkgId: { name: pkgName, version: pkgVersion },
+    })
+    console.log(`-- IMPORTING package ${pkgName}@${pkgVersion} ... --`)
+    return import(resolve(pkgRootDir, packageJson.main ?? '')).then(() =>
+      console.log(`-- IMPORTED package ${pkgName}@${pkgVersion} --`),
+    )
+  },
+)
 
 await Promise.all(imports)
 
-console.log('\n------- all packages connected -------', '\n')
+console.log('\n------- ALL PACKAGES IMPORTED -------', '\n')

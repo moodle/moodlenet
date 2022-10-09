@@ -1,5 +1,3 @@
-/// <reference path="../moodlenet-react-app-lib.d.ts" />
-
 import { mkdir, writeFile } from 'fs/promises'
 import { createRequire } from 'module'
 import { packageDirectorySync } from 'pkg-dir'
@@ -9,7 +7,7 @@ import { fileURLToPath } from 'url'
 import { ResolveOptions } from 'webpack'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
 import { WebappPluginItem } from './types.mjs'
-import { httpSrvPkgApis, kvStore } from './use-pkg-apis.mjs'
+import { httpSrvPkg, kvStore } from './use-pkg-apis.mjs'
 import { WebPkgDepList } from './webapp/web-lib.mjs'
 import startWebpack from './webpackWatch.mjs'
 
@@ -36,7 +34,7 @@ const connectPkgModulesFile = {
   // target: resolve(tmpDir, 'ConnectPkgModules.tsx'),
 }
 
-httpSrvPkgApis('mount')({
+httpSrvPkg.api('mount')({
   getApp(express) {
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './public/index.html' })
@@ -98,8 +96,14 @@ function recompile() {
 function writeGenerated() {
   // console.log('connectPkgModulesModule', connectPkgModulesModule)
   return Promise.all([
-    writeFile(connectPkgModulesFile.target, generateConnectPkgModulesModule({ plugins: pkgPlugins })),
-    writeFile(resolve(__dirname, '..', '_resolve-alias_.json'), JSON.stringify(baseResolveAlias, null, 4)),
+    writeFile(
+      connectPkgModulesFile.target,
+      generateConnectPkgModulesModule({ plugins: pkgPlugins }),
+    ),
+    writeFile(
+      resolve(__dirname, '..', '_resolve-alias_.json'),
+      JSON.stringify(baseResolveAlias, null, 4),
+    ),
   ])
   // return Promise.all([
   // writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap: extPlugins })),

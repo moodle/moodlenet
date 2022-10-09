@@ -1,7 +1,7 @@
 import arangoPkgRef from '@moodlenet/arangodb'
-import { useApis } from '@moodlenet/core'
+import { pkgConnection } from '@moodlenet/core'
 import cryptoPkgRef from '@moodlenet/crypto'
 
-export const arangoPkgApis = await useApis(import.meta, arangoPkgRef)
-export const cryptoPkgApis = await useApis(import.meta, cryptoPkgRef)
-await arangoPkgApis('ensureCollections')({ defs: { User: { kind: 'node' } } })
+export const arangoPkg = await pkgConnection(import.meta, arangoPkgRef)
+export const cryptoPkg = await pkgConnection(import.meta, cryptoPkgRef)
+await arangoPkg.api('ensureCollections')({ defs: { User: { kind: 'node' } } })

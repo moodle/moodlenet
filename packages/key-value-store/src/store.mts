@@ -1,5 +1,5 @@
 import arangoPkgRef from '@moodlenet/arangodb'
-import { PkgModuleRef, useApis } from '@moodlenet/core'
+import { PkgModuleRef, pkgConnection } from '@moodlenet/core'
 import { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 export default async function storeFactory<TMap extends KVSTypeMap>({
@@ -7,10 +7,9 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
 }: {
   consumerModuleRef: PkgModuleRef
 }): Promise<KVStore<TMap>> {
-  const arangoSrv = await useApis(consumerModuleRef, arangoPkgRef)
-  const query = arangoSrv('query')
+  const arangoSrv = await pkgConnection(consumerModuleRef, arangoPkgRef)
 
-  await arangoSrv('ensureCollections')({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
+  await arangoSrv.api('ensureCollections')({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
   const kvStore: KVStore<any> = {
     set,
     get,
@@ -23,8 +22,9 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
   }
   async function get(type: string, key: string): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
-    const record = (await query({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` }))
-      .resultSet[0]
+    const record = (
+      await arangoSrv.api('query')({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` })
+    ).resultSet[0]
     return valObj(record)
   }
 
@@ -35,7 +35,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
     const _key = fullKeyOf(type, key)
     const strval = JSON.stringify(value)
     const oldRec = (
-      await query({
+      await arangoSrv.api('query')({
         q: `let key = "${_key}"
             let doc = { _key: key, value:${strval} }
             UPSERT { _key: key }
@@ -52,7 +52,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>({
   async function unset(type: string, key: string): Promise<ValueObj> {
     const _key = fullKeyOf(type, key)
     const oldDoc = (
-      await query({
+      await arangoSrv.api('query')({
         q: `REMOVE ${COLLECTION_NAME}/${_key}
               FROM ${COLLECTION_NAME} 
             RETURN OLD`,

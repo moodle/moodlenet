@@ -1,4 +1,3 @@
-/// <reference path="../moodlenet-react-app-lib.d.ts" />
 import authConn from '@moodlenet/authentication-manager'
 import graphConn from '@moodlenet/content-graph'
 import { connectPkg } from '@moodlenet/core'
@@ -14,7 +13,7 @@ export * from './types.mjs'
 // export * from './pub-lib.mjs'
 // export * from './types.mjs'
 
-const pkgId = await connectPkg(import.meta, apis)
+const pkgId = await connectPkg(import.meta, { apis })
 export default pkgId
 
 const WebPkgDeps: WebPkgDeps = [pkgId, organizationConn, authConn, graphConn]

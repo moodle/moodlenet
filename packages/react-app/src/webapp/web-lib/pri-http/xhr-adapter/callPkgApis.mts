@@ -2,7 +2,7 @@ import type { ApiDefPaths, ApiFnType, PkgIdentifier } from '@moodlenet/core'
 import type { HttpApiResponse } from '@moodlenet/http-server'
 import { getPkgApiFetchOpts } from '@moodlenet/http-server/lib/ext-ports-app/pub-lib.mjs'
 
-export type Opts = {}
+export type Opts = Record<string, never>
 
 export function pkgApis<PkgId extends PkgIdentifier<any>>(pkgId: PkgId): LocateApi<PkgId> {
   const locateApi = (
@@ -24,9 +24,11 @@ export function pkgApis<PkgId extends PkgIdentifier<any>>(pkgId: PkgId): LocateA
   return locateApi as LocateApi<PkgId>
 }
 
-export type LocateApi<PkgId extends PkgIdentifier<any>> = PkgId extends PkgIdentifier<infer _ApiDefs>
-  ? <Path extends ApiDefPaths<_ApiDefs>>(
+export type LocateApi<PkgId extends PkgIdentifier<any>> = PkgId extends PkgIdentifier<
+  infer PkgConnDef
+>
+  ? <Path extends ApiDefPaths<PkgConnDef['apis']>>(
       path: Path,
       // { ctx = {} }: { ctx?: FloorApiCtx },
-    ) => ApiFnType<_ApiDefs, Path>
+    ) => ApiFnType<PkgConnDef['apis'], Path>
   : never
