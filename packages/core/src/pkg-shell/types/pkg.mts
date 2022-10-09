@@ -22,7 +22,7 @@ export type ApiDef<_ApiFn extends ApiFn> = {
   argsValidation: ArgsValidation
 }
 
-export type PrimaryCallCtx = true //Record<string, never>
+export type PrimaryCallCtx = boolean //Record<string, never>
 export type FloorApiCtx = { primary?: PrimaryCallCtx } & Record<string, any>
 export type ApiCtx = {
   caller: { pkgId: PkgIdentifier<any>; moduleRef: PkgModuleRef }

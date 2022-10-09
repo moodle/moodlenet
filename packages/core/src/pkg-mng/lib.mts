@@ -4,6 +4,27 @@ import { resolve } from 'path'
 import { WORKING_DIR } from '../main/env.mjs'
 import { PkgIdentifier } from '../types.mjs'
 import { PackageInfo, SafePackageJson } from './types.mjs'
+import execa from 'execa'
+import { InstallPkgReq } from './types.mjs'
+
+export async function uninstall({ pkgId }: { pkgId: PkgIdentifier<any> }) {
+  await execa('npm', ['uninstall', `${pkgId.name}`], {
+    cwd: WORKING_DIR,
+    timeout: 600000,
+  })
+}
+
+export async function install(installPkgReqs: InstallPkgReq[]) {
+  const installPkgsArgs = installPkgReqs.map(instReq =>
+    instReq.type === 'npm'
+      ? `${instReq.pkgId.name}@${instReq.pkgId.version}`
+      : `file:${instReq.fromFolder}`,
+  )
+  await execa('npm', ['install', '--registry', NPM_REGISTRY, ...installPkgsArgs], {
+    cwd: WORKING_DIR,
+    timeout: 600000,
+  })
+}
 
 const infos: Record<string, PackageInfo> = {}
 export async function getPackageInfo({

@@ -3,9 +3,9 @@ import execa from 'execa'
 import { mkdirSync } from 'fs'
 import { readdir } from 'fs/promises'
 import { resolve } from 'path'
-import { install } from '../pkg-mng.mjs'
 import { InstallPkgReq } from '../pkg-mng/types.mjs'
 import { getPkgModulePaths } from '../pkg-shell/lib.mjs'
+import { install } from '../pkg-mng/lib.mjs'
 import { IS_LOCAL_DEVELOPMENT, WORKING_DIR } from './env.mjs'
 
 export const defaultCorePackages = {
