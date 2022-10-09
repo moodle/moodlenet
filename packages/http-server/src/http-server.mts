@@ -3,7 +3,11 @@ import express, { Application } from 'express'
 import type { Server } from 'http'
 import gracefulShutdown from 'http-graceful-shutdown'
 import { makeExtPortsApp } from './ext-ports-app/make.mjs'
-import { BASE_APIS_URL, BASE_PKG_MOUNT_URL, SESSION_TOKEN_COOKIE_NAME } from './ext-ports-app/pub-lib.mjs'
+import {
+  BASE_APIS_URL,
+  BASE_PKG_MOUNT_URL,
+  SESSION_TOKEN_COOKIE_NAME,
+} from './ext-ports-app/pub-lib.mjs'
 import { env } from './init.mjs'
 import type { MountAppItem } from './types.mjs'
 
@@ -66,10 +70,12 @@ export function createHttpServer() {
     })
     return new Promise<void>((resolve, reject) => {
       console.info(`HTTP: starting server on port ${env.port}`)
-      server = app.listen(env.port, function () {
-        arguments[0] ? reject(arguments[0]) : resolve()
+      server = app.listen(env.port, (...args: any[]) => (args[0] ? reject(args[0]) : resolve()))
+      shutdownGracefully = gracefulShutdown(server, {
+        development: false,
+        forceExit: false,
+        timeout: 1000,
       })
-      shutdownGracefully = gracefulShutdown(server, { development: false, forceExit: false, timeout: 1000 })
       console.info(`HTTP: listening on port ${env.port} :)`)
     })
   }

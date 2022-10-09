@@ -1,20 +1,20 @@
 import { connectPkg } from '@moodlenet/core'
 import apis from './apis.mjs'
 import { confirm } from './lib.mjs'
-import { httpPkgApis, reactAppPkgApis } from './use-pkg-apis.mjs'
+import { httpPkg, reactAppPkg } from './use-pkg-apis.mjs'
 import { WebPkgDeps } from './webapp/types.mjs'
 
 export * from './types.mjs'
 
-const connection = await connectPkg(import.meta, apis)
+const connection = await connectPkg(import.meta, { apis })
 export default connection
 
-reactAppPkgApis('plugin')<WebPkgDeps>({
+reactAppPkg.api('plugin')<WebPkgDeps>({
   mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
   usesPkgs: [connection],
 })
 
-httpPkgApis('mount')({
+httpPkg.api('mount')({
   getApp: function getHttpApp(express) {
     const app = express()
     app.get('/confirm-email/:token', async (req, res) => {
@@ -25,7 +25,9 @@ httpPkgApis('mount')({
         res.status(400).end(confirmResp.msg)
         return
       }
-      res.redirect(`/@moodlenet/simple-email-auth/confirm-email?sessionToken=${confirmResp.sessionToken}`)
+      res.redirect(
+        `/@moodlenet/simple-email-auth/confirm-email?sessionToken=${confirmResp.sessionToken}`,
+      )
     })
     return app
   },

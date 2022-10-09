@@ -18,4 +18,6 @@ export type SearchPackagesResObject = {
       installed: false
     }
 )
-export type DeployedPkgInfo = Pick<PackageInfo, 'packageJson' | 'readme'> & { pkgId: PkgIdentifier<any> }
+export type DeployedPkgInfo = Pick<PackageInfo, 'packageJson' | 'readme'> & {
+  pkgId: PkgIdentifier<any>
+}

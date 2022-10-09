@@ -1,4 +1,5 @@
-export * from './cfg.mjs'
-export * from './connection.mjs'
+export { NPM_REGISTRY, install, uninstall } from './pkg-mng/lib.mjs'
+export * from './pkg-mng.mjs'
+export { listEntries, pkgEntryByPkgId } from './pkg-shell/registry.mjs'
 export * from './pkg-shell/connect.mjs'
 export * from './types.mjs'

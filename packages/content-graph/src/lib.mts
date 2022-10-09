@@ -25,7 +25,7 @@ import {
   NodeGlyph,
   WithMaybeKey,
 } from './types.mjs'
-import { arangoApis, kvStore } from './use-pkgs.mjs'
+import { arangoPkg, kvStore } from './use-pkgs.mjs'
 
 export const contentGraphGlyphs = await ensureGlyphs<ContentGraphGlyphs>({
   pkgId: false,
@@ -65,11 +65,14 @@ export async function ensureGlyphs<Defs extends GlyphDefsMap>({
     return { descriptor, opts, pkgGlyphName, fullGlyphName }
   })
 
-  const collectionsDefOptMap = allDefs.reduce((_coll_def_opt_map, { fullGlyphName: glyphName, opts }) => {
-    return { ..._coll_def_opt_map, [glyphName]: opts }
-  }, {} as CollectionDefOptMap)
+  const collectionsDefOptMap = allDefs.reduce(
+    (_coll_def_opt_map, { fullGlyphName: glyphName, opts }) => {
+      return { ..._coll_def_opt_map, [glyphName]: opts }
+    },
+    {} as CollectionDefOptMap,
+  )
 
-  /* const handles =  */ await arangoApis('ensureCollections')({ defs: collectionsDefOptMap })
+  /* const handles =  */ await arangoPkg.api('ensureCollections')({ defs: collectionsDefOptMap })
 
   const glyphDescriptorsMap = allDefs.reduce((_glyph_desc_map, { descriptor, pkgGlyphName }) => {
     return { ..._glyph_desc_map, [pkgGlyphName]: descriptor }
@@ -96,7 +99,7 @@ export async function createNode<GlyphDesc extends GlyphDescriptor<'node'>>(
     },
   }
   const q = `INSERT ${JSON.stringify(nodeCreateData)} INTO \`${glyphDesc._type}\` RETURN NEW`
-  const node: NodeGlyph<typeof glyphDesc> = (await arangoApis('query')({ q })).resultSet[0]
+  const node: NodeGlyph<typeof glyphDesc> = (await arangoPkg.api('query')({ q })).resultSet[0]
   if (authenticableByUserId) {
     await kvStore.set('userId2NodeAssoc', authenticableByUserId, {
       userId: authenticableByUserId,
@@ -144,7 +147,7 @@ export async function createEdge<GlyphDesc extends GlyphDescriptor<'edge'>>(
   }
 
   const q = `INSERT ${JSON.stringify(edgeCreateData)} INTO \`${glyphDesc._type}\` RETURN NEW`
-  const edge: EdgeGlyph<typeof glyphDesc> = (await arangoApis('query')({ q })).resultSet[0]
+  const edge: EdgeGlyph<typeof glyphDesc> = (await arangoPkg.api('query')({ q })).resultSet[0]
 
   // if (opts.performer) {
   //   const _creatorId = glyphIdentifier2glyphID(opts.performer)
@@ -165,7 +168,7 @@ export async function getAuthenticatedNode({
     return undefined
   }
   const q = `RETURN DOCUMENT("${value.nodeId._id}")`
-  const node: NodeGlyph<any> | undefined = (await arangoApis('query')({ q })).resultSet[0]
+  const node: NodeGlyph<any> | undefined = (await arangoPkg.api('query')({ q })).resultSet[0]
   if (!node) {
     return undefined
   }
@@ -179,7 +182,7 @@ export async function readNode<GlyphDesc extends GlyphDescriptor<'node'>>({
   identifier: GlyphIdentifier<'node'>
 }): Promise<undefined | { node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }> {
   const q = `RETURN DOCUMENT("${idOf(identifier)}")`
-  const node: NodeGlyph<any> | undefined = (await arangoApis('query')({ q })).resultSet[0]
+  const node: NodeGlyph<any> | undefined = (await arangoPkg.api('query')({ q })).resultSet[0]
   if (!node) {
     return undefined
   }

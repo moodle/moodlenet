@@ -1,6 +1,6 @@
-import { useApis } from '@moodlenet/core'
+import { pkgConnection } from '@moodlenet/core'
 import kvsConnection from '@moodlenet/key-value-store'
 import { KVStoreTypes } from './types.mjs'
 
-const kvStoreApis = useApis(import.meta, kvsConnection)
-export const kvStore = await kvStoreApis('getStore')<KVStoreTypes>()
+const kvStorePkg = await pkgConnection(import.meta, kvsConnection)
+export const kvStore = await kvStorePkg.api('getStore')<KVStoreTypes>()
