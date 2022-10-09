@@ -5,4 +5,4 @@ import { resolve } from 'path'
 process.env.NODE_ENV = 'development'
 process.env.MOODLENET_CORE_WORKING_DIR = resolve(process.cwd(), `.dev-machines`, process.argv[2])
 
-import('../packages/core/lib/main/boot.mjs')
+await import('../packages/core/lib/main/boot.mjs')
