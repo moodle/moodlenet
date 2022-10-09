@@ -4,9 +4,6 @@
   "license": "AGPL-3.0",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
-  "dependencies": {
-    "moodlenet-dev": "file:"
-  },
   "type": "module",
   "engines": {
     "node": ">=16"
@@ -32,6 +29,7 @@
     "lerna": "^5.0.0",
     "lerna-dependency-graph": "^1.1.0",
     "lint-staged": "^13.0.3",
+    "node-dev": "^7.4.3",
     "prettier": "2.7.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.2"
@@ -55,6 +53,7 @@
     "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
     "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
     "install-dev": "node bin/install.mjs",
-    "boot-dev": "node bin/boot.mjs"
+    "boot-dev": "node-dev bin/boot.mjs  --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
+    "dev-webapp": "lerna run dev-server"
   }
 }
