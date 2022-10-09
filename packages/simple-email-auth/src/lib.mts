@@ -2,7 +2,7 @@ import { SessionToken } from '@moodlenet/authentication-manager'
 import assert from 'assert'
 import * as store from './store.mjs'
 import { ConfirmEmailPayload, SignupReq } from './types.mjs'
-import { authMngPkgApis, cryptoPkgApis, emailSrvPkgApis, webUserPkgApis } from './use-pkg-apis.mjs'
+import { authMngPkg, cryptoPkg, emailSrvPkg, webUserPkg } from './use-pkg-apis.mjs'
 
 export async function login({
   email,
@@ -15,7 +15,7 @@ export async function login({
   if (!user || user.password !== password) {
     return { success: false }
   }
-  const res = await authMngPkgApis('getSessionToken')({ uid: user.id })
+  const res = await authMngPkg.api('getSessionToken')({ uid: user.id })
 
   if (!res.success) {
     return { success: false }
@@ -24,7 +24,9 @@ export async function login({
   return { success: true, sessionToken }
 }
 
-export async function signup(req: SignupReq): Promise<{ success: true } | { success: false; msg: string }> {
+export async function signup(
+  req: SignupReq,
+): Promise<{ success: true } | { success: false; msg: string }> {
   const mUser = await store.getByEmail(req.email)
 
   if (mUser) {
@@ -34,10 +36,10 @@ export async function signup(req: SignupReq): Promise<{ success: true } | { succ
   const confirmEmailPayload: ConfirmEmailPayload = {
     req,
   }
-  const { encrypted: confirmEmailToken } = await cryptoPkgApis('std/encrypt')({
+  const { encrypted: confirmEmailToken } = await cryptoPkg.api('std/encrypt')({
     payload: JSON.stringify(confirmEmailPayload),
   })
-  emailSrvPkgApis('send')({
+  emailSrvPkg.api('send')({
     emailObj: {
       to: req.email,
       text: `hey ${req.displayName} confirm your email with /_/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
@@ -67,7 +69,7 @@ export async function confirm({
 
   const user = await store.create({ email, password })
 
-  const authRes = await authMngPkgApis('registerUser')({ uid: user.id })
+  const authRes = await authMngPkg.api('registerUser')({ uid: user.id })
 
   if (!authRes.success) {
     await store.delUser(user.id)
@@ -75,7 +77,7 @@ export async function confirm({
     return { msg, success }
   }
 
-  await webUserPkgApis('createProfile')({
+  await webUserPkg.api('createProfile')({
     displayName,
     userId: authRes.user.id,
   })
@@ -84,7 +86,7 @@ export async function confirm({
   return { success: true, sessionToken }
 
   async function getConfirmEmailPayload() {
-    const decryptRes = await cryptoPkgApis('std/decrypt')({ encrypted: token })
+    const decryptRes = await cryptoPkg.api('std/decrypt')({ encrypted: token })
 
     try {
       assert(decryptRes.valid)

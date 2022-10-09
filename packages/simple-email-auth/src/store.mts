@@ -1,12 +1,13 @@
+import assert from 'assert'
 import { Email, User, UserId } from './store/types.mjs'
-import { arangoPkgApis } from './use-pkg-apis.mjs'
+import { arangoPkg } from './use-pkg-apis.mjs'
 
-await arangoPkgApis('ensureCollections')({ defs: { User: { kind: 'node' } } })
+await arangoPkg.api('ensureCollections')({ defs: { User: { kind: 'node' } } })
 
 export async function getByEmail(email: Email): Promise<User | undefined> {
   const {
     resultSet: [user],
-  } = await arangoPkgApis('query')({
+  } = await arangoPkg.api('query')({
     q: `FOR u in User
           FILTER u.email == '${email}'
           LIMIT 1
@@ -19,7 +20,7 @@ export async function getByEmail(email: Email): Promise<User | undefined> {
 export async function getById(id: UserId): Promise<User | undefined> {
   const {
     resultSet: [user],
-  } = await arangoPkgApis('query')({
+  } = await arangoPkg.api('query')({
     q: `RETURN DOCUMENT('User/${id}')`,
   })
 
@@ -29,31 +30,33 @@ export async function getById(id: UserId): Promise<User | undefined> {
 export async function delUser(id: UserId) {
   const {
     resultSet: [user],
-  } = await arangoPkgApis('query')({
+  } = await arangoPkg.api('query')({
     q: `REMOVE User/${id} FROM User
         RETURN OLD`,
   })
   return _user(user)
 }
 
-export async function create(newUser: Omit<User, 'id' | 'created'>): Promise<User> {
+export async function create(newUserData: Omit<User, 'id' | 'created'>): Promise<User> {
   const {
-    resultSet: [user],
-  } = await arangoPkgApis('query')({
+    resultSet: [newUser],
+  } = await arangoPkg.api('query')({
     q: `
-        INSERT ${JSON.stringify(newUser)} INTO User
+        INSERT ${JSON.stringify(newUserData)} INTO User
         RETURN NEW`,
   })
-  return _user(user)!
+  const user = _user(newUser)
+  assert(user)
+  return user
 }
 
-function _user(user: any): User | undefined {
-  return user
-    ? {
-        id: user._key,
-        created: user.created,
-        email: user.email,
-        password: user.password,
-      }
-    : undefined
+function _user(user: any): undefined | User {
+  return (
+    user ?? {
+      id: user._key,
+      created: user.created,
+      email: user.email,
+      password: user.password,
+    }
+  )
 }

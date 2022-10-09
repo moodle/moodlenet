@@ -1,4 +1,3 @@
-/// <reference path="../moodlenet-component-library-lib.d.ts" />
 import authConn from '@moodlenet/authentication-manager'
 import graphConn from '@moodlenet/content-graph'
 import { connectPkg } from '@moodlenet/core'
@@ -14,7 +13,7 @@ export * from './types.mjs'
 // export * from './pub-lib.mjs'
 // export * from './types.mjs'
 
-const connection = await connectPkg(import.meta, apis)
+const connection = await connectPkg(import.meta, { apis })
 export default connection
 
 const MyUsesPkgs: MyUsesPkgs = [connection, organizationConn, authConn, graphConn]

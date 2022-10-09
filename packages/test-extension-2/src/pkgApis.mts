@@ -1,4 +1,4 @@
-import { useApis } from '@moodlenet/core'
+import { pkgConnection } from '@moodlenet/core'
 import testExtension from '@moodlenet/test-extension'
 
-export const testExtensionApis = await useApis(import.meta, testExtension)
+export const testExtensionApis = await pkgConnection(import.meta, testExtension)

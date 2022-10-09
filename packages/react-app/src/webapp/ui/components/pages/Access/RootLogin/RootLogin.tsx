@@ -11,16 +11,15 @@ import './RootLogin.scss'
 
 // const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
 export type RootLoginFormValues = { email: string; password: string }
-export type RootLoginProps = {}
 
-export const RootLogin: FC<RootLoginProps> = () => {
+export const RootLogin: FC = () => {
   return (
     <SimpleLayout page="rootLogin">
       <RootLoginBody />
     </SimpleLayout>
   )
 }
-export const RootLoginBody: FC<RootLoginProps> = ({}) => {
+export const RootLoginBody: FC = () => {
   const { setSessionToken } = useContext(AuthCtx)
   const {
     pkgs: [, , authHttp],
@@ -45,7 +44,7 @@ export const RootLoginBody: FC<RootLoginProps> = ({}) => {
     }
     setLoginFailed(!res.success)
     setSubmitting(false)
-  }, [rootPassword])
+  }, [authHttp, rootPassword, setSessionToken])
 
   return (
     <div className="root-login-page">
