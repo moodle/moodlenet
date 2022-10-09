@@ -2,9 +2,11 @@ import { ApiCtx, FloorApiCtx, PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import * as store from './store.mjs'
 import { ClientSession, SessionToken } from './types.mjs'
-import { cryptoPkgApis } from './use-pkg-apis.mjs'
+import { cryptoPkg } from './use-pkg-apis.mjs'
 
-type GetSessionResp = { success: false; msg: string } | { success: true; sessionToken: SessionToken }
+type GetSessionResp =
+  | { success: false; msg: string }
+  | { success: true; sessionToken: SessionToken }
 export async function getSessionToken({
   uid,
   pkgId,
@@ -29,7 +31,11 @@ export async function getClientSession({ token }: { token: string }) {
   return { success: true, clientSession } as const
 }
 
-export async function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }): Promise<ClientSession | undefined> {
+export async function getApiCtxClientSession({
+  ctx,
+}: {
+  ctx: ApiCtx
+}): Promise<ClientSession | undefined> {
   ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
   const presentClientSession = ctx['@moodlenet/authentication-manager'].clientSession
   if (presentClientSession) {
@@ -53,7 +59,13 @@ export async function getApiCtxClientSession({ ctx }: { ctx: ApiCtx }): Promise<
   return clientSession
 }
 
-export async function setApiCtxClientSessionToken({ token, ctx }: { token: string | undefined; ctx: FloorApiCtx }) {
+export async function setApiCtxClientSessionToken({
+  token,
+  ctx,
+}: {
+  token: string | undefined
+  ctx: FloorApiCtx
+}) {
   ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
   if (!token) {
     return
@@ -65,13 +77,15 @@ export async function setApiCtxClientSessionToken({ token, ctx }: { token: strin
 }
 
 export async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
-  const { encrypted: sessionToken } = await cryptoPkgApis('std/encrypt')({ payload: JSON.stringify(clientSession) })
+  const { encrypted: sessionToken } = await cryptoPkg.api('std/encrypt')({
+    payload: JSON.stringify(clientSession),
+  })
   return sessionToken
 }
 
 async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
-    const decryptRes = await cryptoPkgApis('std/decrypt')({ encrypted: token })
+    const decryptRes = await cryptoPkg.api('std/decrypt')({ encrypted: token })
     assert(decryptRes.valid)
     const clientSession: ClientSession = JSON.parse(decryptRes.payload)
     assert(isClientSession(clientSession))

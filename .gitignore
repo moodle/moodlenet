@@ -12,6 +12,7 @@ build-storybook.log*
 .eslintcache
 
 .ignore*
+.dev-machines
 
 .env
 .env.*

@@ -1,4 +1,6 @@
-import { sys } from '../cfg.mjs'
+import { resolve } from 'path'
+import { getPackageInfo, getPackageInfoIn } from '../pkg-mng/lib.mjs'
+import { WORKING_DIR } from './env.mjs'
 
 process.on('error', err => {
   console.error(err)
@@ -6,15 +8,19 @@ process.on('error', err => {
   process.exit()
 })
 
-export async function boot() {
-  const _sys = await sys()
-  const sysconfig = _sys.readSysConfig()
+const systemPkgInfo = await getPackageInfoIn({ pkgRootDir: WORKING_DIR })
+const imports = Object.entries(systemPkgInfo.packageJson.dependencies ?? {}).map(
+  async ([pkgName, pkgVersion]) => {
+    const { pkgRootDir, packageJson } = await getPackageInfo({
+      pkgId: { name: pkgName, version: pkgVersion },
+    })
+    console.log(`-- IMPORTING package ${pkgName}@${pkgVersion} ... --`)
+    return import(resolve(pkgRootDir, packageJson.main ?? '')).then(() =>
+      console.log(`-- IMPORTED package ${pkgName}@${pkgVersion} --`),
+    )
+  },
+)
 
-  for (const sysInstalledPkg of sysconfig.packages) {
-    const { pkgId } = sysInstalledPkg
-    console.log(`-- connecting  ${pkgId.name}@${pkgId.version} ... --`)
-    await _sys.pkgMng.getMain({ pkgId })
-    console.log(`-- CONNECTED ${pkgId.name}@${pkgId.version}  --\n`)
-  }
-  console.log('\n------- all packages connected -------', '\n')
-}
+await Promise.all(imports)
+
+console.log('\n------- ALL PACKAGES IMPORTED -------', '\n')

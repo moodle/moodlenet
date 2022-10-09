@@ -1,5 +1,5 @@
 import { setApiCtxClientSessionToken } from '@moodlenet/authentication-manager'
-import { FloorApiCtx, useApis } from '@moodlenet/core'
+import { FloorApiCtx, pkgConnection } from '@moodlenet/core'
 import express, { json } from 'express'
 import { format } from 'util'
 import { HttpApiResponse } from '../types.mjs'
@@ -32,7 +32,7 @@ export function makeExtPortsApp() {
       return next()
     }
 
-    const apis = useApis<any>(import.meta, { name: pkgName, version: pkgVersion })
+    const pkgConn = await pkgConnection<any>(import.meta, { name: pkgName, version: pkgVersion })
     const apiReqBody = req.body
     if (!isApiReqBody(apiReqBody)) {
       res.sendStatus(400)
@@ -41,7 +41,7 @@ export function makeExtPortsApp() {
     // console.log({ mmm: req.moodlenet })
     const ctx: FloorApiCtx = { primary: true }
     setApiCtxClientSessionToken({ ctx, token: req.moodlenet.authToken })
-    const apiFn = apis(path, { ctx })
+    const apiFn = pkgConn.api(path, { ctx })
     const apiArgs = apiReqBody?.args ?? []
     apiFn(...apiArgs)
       .then(apiResponse => {
