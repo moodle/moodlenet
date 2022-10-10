@@ -1,6 +1,5 @@
 import { connectPkg } from '@moodlenet/core'
 import apis from './apis.mjs'
-import './init.mjs'
 export * from '@moodlenet/arangodb/lib/types.mjs'
 export * from './types.mjs'
 
