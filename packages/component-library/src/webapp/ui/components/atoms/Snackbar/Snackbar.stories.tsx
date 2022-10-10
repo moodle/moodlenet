@@ -11,8 +11,8 @@ const SnackbarStory: ComponentStory<typeof Snackbar> = (args) => (
   <Snackbar {...args} />
 )
 
-export const Default = SnackbarStory.bind({})
-Default.args = {
+export const SnackbarDefault = SnackbarStory.bind({})
+SnackbarDefault.args = {
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }
@@ -31,8 +31,8 @@ Warning.args = {
   children: <div>Snackbar Content</div>,
 }
 
-export const Error = SnackbarStory.bind({})
-Error.args = {
+export const SnackbarError = SnackbarStory.bind({})
+SnackbarError.args = {
   type: 'error',
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,

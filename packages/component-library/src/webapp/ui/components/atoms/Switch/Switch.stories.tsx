@@ -10,6 +10,6 @@ const SwitchStory: ComponentStory<typeof Switch> = () => (
   <Switch  enabled={false}/>
 )
 
-export const Default = SwitchStory.bind({})
+export const SwitchDefault = SwitchStory.bind({})
 
 export default meta

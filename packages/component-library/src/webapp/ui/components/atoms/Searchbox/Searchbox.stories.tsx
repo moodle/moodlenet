@@ -18,7 +18,7 @@ const SearchboxStory: ComponentStory<typeof Searchbox> = (args) => (
   <Searchbox {...args} />
 )
 
-export const Default = SearchboxStory.bind({})
-Default.args = SearchboxStoryProps
+export const SearchboxDefault = SearchboxStory.bind({})
+SearchboxDefault.args = SearchboxStoryProps
 
 export default meta

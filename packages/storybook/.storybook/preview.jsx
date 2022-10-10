@@ -1,5 +1,6 @@
 import { MemoryRouter } from 'react-router-dom'
-import { baseStyle } from '../../react-app/lib/webapp/ui/styles/config.js'
+import { baseStyle } from '../../component-library/lib/webapp/ui/styles/config.js'
+import { Wrapper } from '../src/Wrapper'
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -14,6 +15,7 @@ export const parameters = {
 export const decorators = [
   Story => (
     <MemoryRouter>
+    <Wrapper>
       <div
         style={{
           // ...style,
@@ -25,6 +27,7 @@ export const decorators = [
       >
         <Story />
       </div>
+    </Wrapper>
     </MemoryRouter>
   ),
 ]
