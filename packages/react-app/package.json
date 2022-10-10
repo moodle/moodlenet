@@ -30,8 +30,22 @@
     "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
   },
   "scripts": {
-    "src-assets-changed": "copyfiles -u 1 src/**/*.{scss,png,svg} lib",
+    "dev-assistant": "npm-watch copy-assets",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
     "dev-server": "node lib/-dev-server.mjs"
+  },
+  "watch": {
+    "copy-assets": {
+      "patterns": [
+        "src/**/*"
+      ],
+      "extensions": ".scss,.png,.svg,.json",
+      "ignore": "**/*.*ts*",
+      "legacyWatch": false,
+      "quite": false,
+      "delay": 300,
+      "runOnChangeOnly": false
+    }
   },
   "author": "",
   "peerDependencies": {

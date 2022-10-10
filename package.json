@@ -57,21 +57,7 @@
     "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
     "install-dev": "node bin/install.mjs",
     "boot-dev": "node-dev bin/boot.mjs  --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
-    "dev-webapp": "lerna run dev-server",
-    "watch-source-assets": "npm-watch src-assets-changed",
-    "src-assets-changed": "lerna run src-assets-changed --parallel --stream"
-  },
-  "watch": {
-    "src-assets-changed": {
-      "patterns": [
-        "packages/*/src/**/*"
-      ],
-      "extensions": ".scss,.png,.svg,.json",
-      "ignore": "**/*.*ts*",
-      "quiet": true,
-      "legacyWatch": false,
-      "delay": 300,
-      "runOnChangeOnly": false
-    }
+    "dev-webapp": "lerna run dev-server --stream --scope @moodlenet/react-app",
+    "dev-assistant": "lerna run dev-assistant --parallel --stream --"
   }
 }
