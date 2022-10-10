@@ -55,8 +55,8 @@
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
     "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
-    "install-dev": "node bin/install.mjs",
-    "boot-dev": "node-dev bin/boot.mjs  --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
+    "dev-install-be": "node bin/install.mjs",
+    "dev-backend": "node-dev bin/boot.mjs  --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
     "dev-webapp": "lerna run dev-server --stream --scope @moodlenet/react-app",
     "dev-assistant": "lerna run dev-assistant --parallel --stream --"
   }
