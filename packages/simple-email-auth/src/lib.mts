@@ -42,7 +42,7 @@ export async function signup(
   emailSrvPkg.api('send')({
     emailObj: {
       to: req.email,
-      text: `hey ${req.displayName} confirm your email with /_/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+      text: `hey ${req.displayName} confirm your email with /.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
     },
   })
   return { success: true }
