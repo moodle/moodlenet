@@ -9,8 +9,8 @@
 // import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
-import { InputTextField } from '@moodlenet/component-library/ui/components/atoms/InputTextField/InputTextField.js'
-import { Modal } from '@moodlenet/component-library/ui/components/atoms/Modal/Modal.js'
+// import { InputTextField } from '@moodlenet/component-library/ui/components/atoms/InputTextField/InputTextField.js'
+import { InputTextField, Modal } from '@moodlenet/component-library/ui.mjs'
 import { FC, useLayoutEffect, useState } from 'react'
 import './ProfileCard.scss'
 

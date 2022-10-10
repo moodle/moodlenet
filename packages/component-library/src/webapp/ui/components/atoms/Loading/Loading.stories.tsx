@@ -31,7 +31,7 @@ const LoadingStory: ComponentStory<typeof Loading> = (args) => (
   <Loading {...args}></Loading>
 )
 
-export const Default = LoadingStory.bind({})
-Default.args = LoadingStoryProps
+export const LoadingDefault = LoadingStory.bind({})
+LoadingDefault.args = LoadingStoryProps
 
 export default meta
