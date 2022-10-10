@@ -51,12 +51,12 @@ export async function create(newUserData: Omit<User, 'id' | 'created'>): Promise
 }
 
 function _user(user: any): undefined | User {
-  return (
-    user ?? {
-      id: user._key,
-      created: user.created,
-      email: user.email,
-      password: user.password,
-    }
-  )
+  return user
+    ? {
+        id: user._key,
+        created: user.created,
+        email: user.email,
+        password: user.password,
+      }
+    : undefined
 }

@@ -64,8 +64,9 @@ export function createHttpServer() {
         console.log(`HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
         app.use(`/${mountOnAbsPath}/`, pkgApp)
       } else {
-        console.log(`HTTP: mounting ${BASE_PKG_MOUNT_URL}/${pkgId.name}/ for ${pkgId.name}`)
-        pkgAppContainer.use(`/${pkgId.name}/`, pkgApp)
+        const pkgBaseRoute = `/${pkgId.name}`
+        console.log(`HTTP: mounting ${BASE_PKG_MOUNT_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)
+        pkgAppContainer.use(pkgBaseRoute, pkgApp)
       }
     })
     return new Promise<void>((resolve, reject) => {

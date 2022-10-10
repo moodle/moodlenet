@@ -52,6 +52,7 @@ export function makeExtPortsApp() {
         res.status(200).send(httpApiResponse)
       })
       .catch(err => {
+        console.error(err)
         res.status(500)
         res.end(err instanceof Error ? format(err) : err) //(JSON.stringify({ msg: {}, val: String(err) }))
       })
