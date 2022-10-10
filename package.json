@@ -15,6 +15,7 @@
     "@types/rimraf": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -30,8 +31,10 @@
     "lerna-dependency-graph": "^1.1.0",
     "lint-staged": "^13.0.3",
     "node-dev": "^7.4.3",
+    "npm-watch": "^0.11.0",
     "prettier": "2.7.1",
     "rimraf": "^3.0.2",
+    "run-script-os": "^1.1.6",
     "typescript": "^4.7.2"
   },
   "scripts": {
@@ -54,6 +57,21 @@
     "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
     "install-dev": "node bin/install.mjs",
     "boot-dev": "node-dev bin/boot.mjs  --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
-    "dev-webapp": "lerna run dev-server"
+    "dev-webapp": "lerna run dev-server",
+    "watch-source-assets": "npm-watch src-assets-changed",
+    "src-assets-changed": "lerna run src-assets-changed --parallel --stream"
+  },
+  "watch": {
+    "src-assets-changed": {
+      "patterns": [
+        "packages/*/src/**/*"
+      ],
+      "extensions": ".scss,.png,.svg,.json",
+      "ignore": "**/*.*ts*",
+      "quiet": true,
+      "legacyWatch": false,
+      "delay": 300,
+      "runOnChangeOnly": false
+    }
   }
 }
