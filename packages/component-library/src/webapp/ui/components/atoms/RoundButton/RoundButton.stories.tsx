@@ -10,6 +10,6 @@ const RoundButtonStory: ComponentStory<typeof RoundButton> = () => (
   <RoundButton />
 )
 
-export const Default = RoundButtonStory.bind({})
+export const RoundButtonDefault = RoundButtonStory.bind({})
 
 export default meta

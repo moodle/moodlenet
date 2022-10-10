@@ -10,6 +10,6 @@ const SecondaryButtonStory: ComponentStory<typeof SecondaryButton> = () => (
   <SecondaryButton>Secondary Button</SecondaryButton>
 )
 
-export const Default = SecondaryButtonStory.bind({})
+export const SecondaryButtonDefault = SecondaryButtonStory.bind({})
 
 export default meta

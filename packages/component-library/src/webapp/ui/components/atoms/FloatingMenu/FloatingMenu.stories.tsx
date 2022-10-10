@@ -42,7 +42,7 @@ const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = (args) => (
   </FloatingMenu>
 )
 
-export const Default = FloatingMenuStory.bind({})
-Default.args = FloatingMenuStoryProps
+export const FloatingMenuDefault = FloatingMenuStory.bind({})
+FloatingMenuDefault.args = FloatingMenuStoryProps
 
 export default meta
