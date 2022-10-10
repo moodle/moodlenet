@@ -6,7 +6,6 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
   "readme": "",
   "files": [
     "lib/",
@@ -24,12 +23,11 @@
     "moodlenetPackage"
   ],
   "description": "Web application\nFrontend interface to interact with the backend",
-  "exports": {
-    ".": "./lib/main.mjs",
-    "./ui.mjs": "./lib/webapp/ui.mjs",
-    "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
-  },
   "scripts": {},
+  "exports": {
+    "./ui/*": "./lib/ui/*"
+  },
+  "main": "./lib/main.mjs",
   "author": "",
   "peerDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",

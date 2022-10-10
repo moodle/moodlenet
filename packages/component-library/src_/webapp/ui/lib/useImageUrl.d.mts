@@ -1,0 +1,2 @@
+export declare const useImageUrl: (maybe_url_or_file: undefined | null | Blob | string, defaultUrl?: string | Blob | undefined) => readonly [string | undefined, boolean];
+//# sourceMappingURL=useImageUrl.d.mts.map
