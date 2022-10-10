@@ -30,6 +30,7 @@
     "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
   },
   "scripts": {
+    "src-assets-changed": "copyfiles -u 1 src/**/*.{scss,png,svg} lib",
     "dev-server": "node lib/-dev-server.mjs"
   },
   "author": "",
