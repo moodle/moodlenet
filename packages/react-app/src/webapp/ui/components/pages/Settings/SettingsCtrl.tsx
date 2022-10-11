@@ -13,6 +13,11 @@ import { SettingsSectionItem } from './SettingsContext.js'
 import { Settings, SettingsItem, SettingsProps } from './Settings.js'
 
 export const SettingsCtrl: FC = () => {
+  const settingsProps = useSettingsProps()
+  return <Settings {...settingsProps} />
+}
+
+export const useSettingsProps = (): SettingsProps => {
   const { pkgId } = useContext(MainContext)
   const { registry: sectionsReg } = registries.settingsSections.useRegistry()
   const settingsItems = useMemo(() => {
@@ -29,6 +34,11 @@ export const SettingsCtrl: FC = () => {
         Panel: Content,
       }))
   }, [pkgId, sectionsReg.entries])
-
-  return <Settings settingsItems={settingsItems} />
+  const settingsProps = useMemo<SettingsProps>(
+    () => ({
+      settingsItems,
+    }),
+    [settingsItems],
+  )
+  return settingsProps
 }
