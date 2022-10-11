@@ -29,7 +29,34 @@
     "./ui.mjs": "./lib/webapp/ui.mjs",
     "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
   },
-  "scripts": {},
+  "scripts": {
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-indexes",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
+    "create-indexes": "vgis src/**/index.mts"
+  },
+  "watch": {
+    "create-indexes": {
+      "patterns": [
+        "src/**/*"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "legacyWatch": false,
+      "quite": false,
+      "delay": 300,
+      "runOnChangeOnly": false
+    },
+    "copy-assets": {
+      "patterns": [
+        "src/**/*"
+      ],
+      "extensions": ".scss,.png,.svg,.json",
+      "ignore": "**/*.*ts*",
+      "legacyWatch": false,
+      "quite": false,
+      "delay": 300,
+      "runOnChangeOnly": false
+    }
+  },
   "author": "",
   "peerDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",

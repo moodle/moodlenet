@@ -7153,6 +7153,13 @@ validate-npm-package-name@^4.0.0:
   dependencies:
     builtins "^5.0.0"
 
+vscode-generate-index-standalone@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/vscode-generate-index-standalone/-/vscode-generate-index-standalone-1.6.0.tgz#ff7d17009e081b4e018dfac67121cf4c5b91cf8f"
+  integrity sha512-J8uLX0yuSYZuDv217XxsjOXLDApHCshRlWrYHEcdUmN0VO73Dqurg4Ff81eQJoy5y0SQ/L/EJwFzZwRAAhITmg==
+  optionalDependencies:
+    fsevents "~2.3.2"
+
 walk-up-path@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/walk-up-path/-/walk-up-path-1.0.0.tgz#d4745e893dd5fd0dbb58dd0a4c6a33d9c9fec53e"
