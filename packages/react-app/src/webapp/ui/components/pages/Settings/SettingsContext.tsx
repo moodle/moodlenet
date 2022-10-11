@@ -36,9 +36,10 @@ export type SetCtxT = {
   appearanceData: AppearanceData
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SettingsCtx = createContext<SetCtxT>(null as any)
 
-export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
+export const Provider: FC<PropsWithChildren> = ({ children }) => {
   // const nav = useNavigate()
   const {
     pkgs: [reactAppSrv, organizationSrv],
@@ -58,7 +59,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       organizationSrv.call('setOrgData')({ orgData: data })
       setDataOrg(data)
     },
-    [setDataOrg],
+    [organizationSrv],
   )
 
   const saveAppearance = useCallback(
@@ -67,7 +68,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
       setAppareanceData(data)
     },
-    [setDataOrg],
+    [reactAppSrv],
   )
 
   useEffect(() => {
@@ -77,7 +78,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     reactAppSrv
       .call('getAppearance')()
       .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
-  }, [])
+  }, [organizationSrv, reactAppSrv])
 
   const ctx = useMemo<SetCtxT>(() => {
     return {
@@ -88,7 +89,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       saveAppearance,
       appearanceData,
     }
-  }, [style, setStyle, organizationData, appearanceData])
+  }, [style, saveOrganization, organizationData, saveAppearance, appearanceData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }
