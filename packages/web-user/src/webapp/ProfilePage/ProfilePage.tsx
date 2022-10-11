@@ -7,18 +7,23 @@ import './ProfilePage.scss'
 export type ProfilePageProps = {
   displayName: string
   avatarUrl?: string
-  mainColumnContent?: ComponentType[]
+  mainColumnContent?: { Comp: ComponentType<{ callback(): void }>; key: string; callback(): void }[]
+  // mainColumnContent?: { Comp: ComponentType; key: string }[]
 }
 
-export const ProfilePage: FC<ProfilePageProps> = ({ displayName, avatarUrl, mainColumnContent }) => {
+export const ProfilePage: FC<ProfilePageProps> = ({
+  displayName,
+  avatarUrl,
+  mainColumnContent,
+}) => {
   return (
     <MainLayout>
       <div className="profile">
         <div className="content">
           <div className="main-column">
             <ProfileCard displayName={displayName} avatarUrl={avatarUrl} />
-            {mainColumnContent?.map((C, i) => {
-              return <C key={i} />
+            {mainColumnContent?.map(({ Comp, key, callback }) => {
+              return <Comp key={key} callback={callback} />
             })}
           </div>
           <div className="side-column">
