@@ -64,10 +64,7 @@
       ],
       "extensions": ".scss,.png,.svg,.json",
       "ignore": "**/*.*ts*",
-      "legacyWatch": false,
-      "quite": false,
-      "delay": 300,
-      "runOnChangeOnly": false
+      "delay": 300
     }
   }
 }
