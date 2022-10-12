@@ -17,3 +17,5 @@ build-storybook.log*
 .env
 .env.*
 install-info.json
+
+packages/**/lib/*
