@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Card, CardProps } from './Card.js'
 
 const meta: ComponentMeta<typeof Card> = {
