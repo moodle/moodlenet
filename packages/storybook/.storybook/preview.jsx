@@ -15,19 +15,19 @@ export const parameters = {
 export const decorators = [
   Story => (
     <MemoryRouter>
-    <Wrapper>
-      <div
-        style={{
-          // ...style,
-          font: 'inherit',
-          ...baseStyle(),
-          // ...getColorPalette(baseMoodleColor),
-          // ...styleContext.style,
-        }}
-      >
-        <Story />
-      </div>
-    </Wrapper>
+      <Wrapper>
+        <div
+          style={{
+            // ...style,
+            font: 'inherit',
+            ...baseStyle(),
+            // ...getColorPalette(baseMoodleColor),
+            // ...styleContext.style,
+          }}
+        >
+          <Story />
+        </div>
+      </Wrapper>
     </MemoryRouter>
   ),
 ]

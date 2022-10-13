@@ -1,8 +1,4 @@
-// @index(['./**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
-export * from './types.mjs'
-export * from './types/data.mjs'
-export * from './types/webappPlugin.mjs'
-export * from './util.mjs'
+// @index(['./webapp/ui/components/**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from './webapp/ui/components/atoms/Card/Card.js'
 export * from './webapp/ui/components/atoms/Colorpicker/Colorpicker.js'
 export * from './webapp/ui/components/atoms/FileUploader/FileUploader.js'
@@ -27,13 +23,4 @@ export * from './webapp/ui/components/organisms/Header/addons.js'
 export * from './webapp/ui/components/organisms/Header/HeaderTitle/HeaderTitle.js'
 export * from './webapp/ui/components/organisms/Header/Minimalistic/MinimalisticHeader.js'
 export * from './webapp/ui/components/organisms/Header/Standard/Header.js'
-export * from './webapp/ui/helpers/factories.js'
-export * from './webapp/ui/helpers/utilities.js'
-export * from './webapp/ui/lib/index.mjs'
-export * from './webapp/ui/lib/useForwardedRef.mjs'
-export * from './webapp/ui/lib/useImageUrl.mjs'
-export * from './webapp/ui/styles/config.js'
-export * from './webapp/ui/styles/Style.js'
-export * from './webapp/ui/styles/utilities.js'
-export * from './webapp/ui/types.js'
 // @endindex
