@@ -3,6 +3,7 @@ import defaultBackgroud from '../../../../static/img/default-landing-background.
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
 import MainLayout from '../../layout/MainLayout/MainLayout.js'
 import { SettingsCtx } from '../Settings/SettingsContext.js'
+import { PrimaryButton } from '@moodlenet/component-library'
 import './Landing.scss'
 
 export type LandingProps = {
@@ -30,45 +31,45 @@ export const Landing: FC<LandingProps> = () => {
     </MainLayout>
   )
 }
-export const LandingBody: FC<LandingProps> = (
+export const LandingBody: FC<LandingProps> = () =>
+  // {
+  //   // searchResourcesHref,
+  //   // searchAuthorsHref,
+  //   // searchCollectionsHref,
+  //   // headerPageTemplateProps,
+  //   // // trendCardProps,
+  //   // collectionCardPropsList,
+  //   // resourceCardPropsList,
+  //   // smallProfileCardPropsList,
+  //   // organization,
+  //   // isAuthenticated,
+  //   // loginHref,
+  //   // signUpHref,
+  //   // newResourceHref,
+  //   // newCollectionHref,
+  //   // setSearchText,
+  // },
   {
-    // searchResourcesHref,
-    // searchAuthorsHref,
-    // searchCollectionsHref,
-    // headerPageTemplateProps,
-    // // trendCardProps,
-    // collectionCardPropsList,
-    // resourceCardPropsList,
-    // smallProfileCardPropsList,
-    // organization,
-    // isAuthenticated,
-    // loginHref,
-    // signUpHref,
-    // newResourceHref,
-    // newCollectionHref,
-    // setSearchText,
-  },
-) => {
-  const setCtx = useContext(SettingsCtx)
-  // const [isSearchboxInViewport, setIsSearchboxInViewport] =
-  //   useState<boolean>(true)
-  // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
+    const setCtx = useContext(SettingsCtx)
+    // const [isSearchboxInViewport, setIsSearchboxInViewport] =
+    //   useState<boolean>(true)
+    // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
 
-  const background = {
-    backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackgroud + ')',
-    backgroundSize: 'cover',
-  }
+    const background = {
+      backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackgroud + ')',
+      backgroundSize: 'cover',
+    }
 
-  return (
-    <div className="landing">
-      <div className="landing-header" style={background}>
-        <div className="landing-title">
-          <div className="title">{setCtx.organizationData.landingTitle}</div>
-          {/* <div className="title">{organization.title}</div> */}
-          <div className="subtitle">{setCtx.organizationData.landingSubtitle}</div>
-          {/* <div className="subtitle">{organization.subtitle}</div> */}
-        </div>
-        {/* <Searchbox
+    return (
+      <div className="landing">
+        <div className="landing-header" style={background}>
+          <div className="landing-title">
+            <div className="title">{setCtx.organizationData.landingTitle}</div>
+            {/* <div className="title">{organization.title}</div> */}
+            <div className="subtitle">{setCtx.organizationData.landingSubtitle}</div>
+            {/* <div className="subtitle">{organization.subtitle}</div> */}
+          </div>
+          {/* <Searchbox
           // setSearchText={() => {
           //   return 'sdsf'
           // }}
@@ -79,16 +80,16 @@ export const LandingBody: FC<LandingProps> = (
           // setIsSearchboxInViewport={setIsSearchboxInViewport}
           marginTop={12}
         /> */}
-        <PrimaryButton
-          className="share-content"
-          color="blue"
-          onClick={() => alert('Nothing to see here, for the moment 🤫')}
-          // onClick={() => setIsCreatingContent(true)}
-        >
-          Share content
-        </PrimaryButton>
-      </div>
-      {/* <ListCard
+          <PrimaryButton
+            className="share-content"
+            color="blue"
+            onClick={() => alert('Nothing to see here, for the moment 🤫')}
+            // onClick={() => setIsCreatingContent(true)}
+          >
+            Share content
+          </PrimaryButton>
+        </div>
+        {/* <ListCard
             className="resources"
             content={resourceCardPropsList
               .slice(0, 10)
@@ -184,9 +185,9 @@ export const LandingBody: FC<LandingProps> = (
             maxHeight={267}
             // maxRows={1}
           /> */}
-      {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
-    </div>
-  )
-}
+        {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
+      </div>
+    )
+  }
 
 Landing.displayName = 'LandingPage'
