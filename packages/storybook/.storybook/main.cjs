@@ -1,7 +1,10 @@
-const react = require('@vitejs/plugin-react').default
+// const react = require('@vitejs/plugin-react').default
 const svgr = require('vite-plugin-svgr')
+const { default: tsconfigPaths } = require('vite-tsconfig-paths')
 const { mergeConfig } = require('vite')
+const { readdirSync } = require('fs')
 
+const packagesDirs = readdirSync('..').map(pkg_name => `../${pkg_name}`)
 
 module.exports = {
   stories: [
@@ -31,10 +34,7 @@ module.exports = {
   async viteFinal(config) {
     // Merge custom configuration into the default config
     return mergeConfig(config, {
-      plugins: [/* react(), */ svgr()],
-      // optimizeDeps: {
-      //   include: ['storybook-dark-mode'],
-      // },
+      plugins: [tsconfigPaths({ projects: packagesDirs }), svgr()],
     })
   },
 }
