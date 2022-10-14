@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from 'react'
 
 export const Ciccio: FC<PropsWithChildren> = ({ children }) => {
-  return <div>ciccio : {children}</div>
+  return <div style={{ padding: '24px 24px 0 24px' }}>Ciccio dice : {children}</div>
 }
