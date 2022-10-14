@@ -1,25 +1,26 @@
-import { CSSProperties, FC, ReactNode, useContext } from 'react'
+import { CSSProperties, FC, ReactNode } from 'react'
 import { baseStyle } from '../../../styles/config.js'
-import { getColorPalette } from '../../../styles/utilities.js'
 // import { StateContext } from '../../../../component-library-lib/devModeContextProvider'
+import { Organization } from '../../../types.js'
 import StandardHeader from '../../organisms/Header/Standard/Header.js'
-import { SettingsCtx } from '../../pages/Settings/SettingsContext.js'
+// import { SettingsCtx } from '../../pages/Settings/SettingsContext.js'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
 export type MainLayoutProps = {
+  organization: Organization
   style?: CSSProperties
   contentStyle?: CSSProperties
   children?: ReactNode
 }
 
-export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children }) => {
+export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, organization, children }) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
 
   // const stateContext = useContext(StateContext)
 
-  const styleContext = useContext(SettingsCtx)
+  // const styleContext = useContext(SettingsCtx)
 
   return (
     <div
@@ -27,11 +28,11 @@ export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children 
       style={{
         ...style,
         ...baseStyle(),
-        ...getColorPalette(styleContext.appearanceData.color),
-        ...styleContext.style,
+        // ...getColorPalette(styleContext.appearanceData.color),
+        // ...styleContext.style,
       }}
     >
-      <StandardHeader />
+      <StandardHeader organization={organization} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>

@@ -1,28 +1,31 @@
-import { FC, PropsWithChildren, useContext } from 'react'
+import { FC, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
-import { MainContext } from '../../../../../MainContext.js'
+// import { MainContext } from '../../../../../MainContext.js'
+import { Organization } from '../../../../types.js'
 import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton.js'
 import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton.js'
 import HeaderTitle from '../HeaderTitle/HeaderTitle.js'
 import './MinimalisticHeader.scss'
 
-type MinimalisticHeaderProps = {
+export type MinimalisticHeaderProps = {
   page: 'login' | 'signup' | 'activation' | 'rootLogin'
+  organization: Organization
 }
 
-const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ page } /* { devMode, setDevMode } */) => {
-  const {
+const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ page, organization } /* { devMode, setDevMode } */) => {
+  // const {
     // registries: {
     //   header: { rightComponents },
     // },
-  } = useContext(MainContext)
+  // } = useContext(MainContext)
   // const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
   return (
     <div className="minimalistic-header">
       <div className="content">
         <div className="left">
           <HeaderTitle
-          // logo={logo} smallLogo={smallLogo}
+                    logo={organization.logo} smallLogo={organization.smallLogo} url={organization.url}
+
           />
         </div>
         <div className="right">

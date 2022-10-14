@@ -1,8 +1,12 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": ["lib/**/*", "build", "latest-build", "_connect-moodlenet-pkg-modules_.mts"],
+  "exclude": ["lib"],
   "compilerOptions": {
+    "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "lib"
+    "outDir": "lib",
+    "paths": {
+      "ext-mng/*": ["../extensions-manager/lib/*"]
+    }
   }
 }
