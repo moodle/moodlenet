@@ -40,7 +40,7 @@ export type AuthCtxT = {
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
-export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
+export const Provider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
   const {
     pkgs: [, , authApis, graphApis],
@@ -48,32 +48,38 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
-  const fetchClientSession = useCallback(async (token: SessionToken) => {
-    const res = await authApis.call('getClientSession')({ token })
-    if (!res.success) {
-      writeSessionToken()
-      return { success: false, msg: 'invalid token' } as const
-    }
-    writeSessionToken(token)
-    const clientSessionData = await getClientSessionData(res.clientSession, graphApis)
-    setClientSessionData(clientSessionData)
-    return {
-      success: true,
-      clientSession: res.clientSession,
-    } as const
-  }, [])
+  const fetchClientSession = useCallback(
+    async (token: SessionToken) => {
+      const res = await authApis.call('getClientSession')({ token })
+      if (!res.success) {
+        writeSessionToken()
+        return { success: false, msg: 'invalid token' } as const
+      }
+      writeSessionToken(token)
+      const clientSessionData = await getClientSessionData(res.clientSession, graphApis)
+      setClientSessionData(clientSessionData)
+      return {
+        success: true,
+        clientSession: res.clientSession,
+      } as const
+    },
+    [authApis, graphApis],
+  )
 
   const logout = useCallback<AuthCtxT['logout']>(() => {
     setClientSessionData(null)
     writeSessionToken()
   }, [setClientSessionData])
-  const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(async token => {
-    const res = await fetchClientSession(token)
-    if (res.success) {
-      nav('/')
-    }
-    return res
-  }, [])
+  const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(
+    async token => {
+      const res = await fetchClientSession(token)
+      if (res.success) {
+        nav('/')
+      }
+      return res
+    },
+    [fetchClientSession, nav],
+  )
 
   useEffect(() => {
     const storedSessionToken = readSessionToken()
@@ -115,7 +121,7 @@ async function getClientSessionData(
 ): Promise<ClientSessionData> {
   if (clientSession.root) {
     return {
-      isRoot: true as true,
+      isRoot: true as const,
       userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
       myUserNode: {} as any,
       user: {} as any,
@@ -124,10 +130,17 @@ async function getClientSessionData(
 
   const myUserNodeRes = await graphApis.call('getMyUserNode')()
   if (!myUserNodeRes) {
-    throw new Error(`shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`)
+    throw new Error(
+      `shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`,
+    )
   }
   const { node: myUserNode } = myUserNodeRes
   const { title /* ,icon, description*/ } = myUserNode
   const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
-  return { isRoot: false, user: clientSession.user, myUserNode, userDisplay: { name: title, avatarUrl } }
+  return {
+    isRoot: false,
+    user: clientSession.user,
+    myUserNode,
+    userDisplay: { name: title, avatarUrl },
+  }
 }
