@@ -2,7 +2,11 @@
   "extends": "../../tsconfig.json",
   "exclude": ["lib"],
   "compilerOptions": {
+    "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "lib"
+    "outDir": "lib",
+    "paths": {
+      "ext-mng/*": ["../extensions-manager/lib/*"]
+    }
   }
 }

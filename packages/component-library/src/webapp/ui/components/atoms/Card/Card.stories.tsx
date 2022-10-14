@@ -1,4 +1,5 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Ciccio } from 'ext-mng/webapp/Ciccio.js'
 import { Card, CardProps } from './Card.js'
 
 const meta: ComponentMeta<typeof Card> = {
@@ -21,6 +22,9 @@ export const CardStoryProps: CardProps = {}
 
 const CardStory: ComponentStory<typeof Card> = args => (
   <Card {...args}>
+    <Ciccio>
+      <strong>hola</strong>
+    </Ciccio>
     <div style={{ padding: 24 }}>
       Diverse, vibrant, dynamic. The cornerstone values that define our amazing{' '}
       <span style={{ color: '#757575' }}>Cards</span>
