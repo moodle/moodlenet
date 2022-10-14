@@ -1,5 +1,5 @@
 import { MemoryRouter } from 'react-router-dom'
-import { baseStyle } from '../../component-library/lib/webapp/ui/styles/config.js'
+import { baseStyle } from '../../packages/component-library/lib/webapp/ui/styles/config.js'
 import { Wrapper } from '../src/Wrapper'
 
 export const parameters = {
