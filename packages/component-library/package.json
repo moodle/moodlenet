@@ -6,7 +6,6 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
   "readme": "",
   "files": [
     "lib/",
@@ -24,16 +23,26 @@
     "moodlenetPackage"
   ],
   "description": "Web application\nFrontend interface to interact with the backend",
+  "main": "./lib/components.mjs",
   "exports": {
-    ".": "./lib/main.mjs"
+    ".": "./lib/components.mjs"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets & npm-watch create-indexes",
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
-    "create-indexes": "vgis src/main.mts"
+    "create-components-index": "vgis src/components.mts",
+    "create-stories-index": "vgis src/stories.mts"
   },
   "watch": {
-    "create-indexes": {
+    "create-stories-index": {
+      "patterns": [
+        "src/stories.mts",
+        "src/**/*.stories.tsx"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "create-components-index": {
       "patterns": [
         "src/**/*"
       ],
@@ -50,12 +59,12 @@
     }
   },
   "author": "",
-  "peerDependencies": {},
   "devDependencies": {
     "@types/node": "^17.0.35",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
     "react-router-dom": "^6.3.0",
+    "react-scripts": "^5.0.1",
     "typescript": "^4.7.2"
   },
   "dependencies": {

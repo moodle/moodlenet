@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react'
 import defaultBackgroud from '../../../../static/img/default-landing-background.png'
-import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
+// import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
 import MainLayout from '../../layout/MainLayout/MainLayout.js'
 import { SettingsCtx } from '../Settings/SettingsContext.js'
 import { PrimaryButton } from '@moodlenet/component-library'

@@ -1,30 +1,32 @@
 import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@material-ui/icons'
-import { FC, PropsWithChildren, useContext } from 'react'
+import { FC, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
-import { AuthCtx } from '../../../../../web-lib/auth.js'
+// import { AuthCtx } from '../../../../../web-lib/auth.js'
 // import { RegistryEntry } from '../../../../../main-lib/registry'
-import { MainContext } from '../../../../../MainContext.js'
+// import { MainContext } from '../../../../../MainContext.js'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
+import defaultAvatar from '../../../../assets/img/default-avatar.svg'
+import { Organization } from '../../../../types.js'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu.js'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton.js'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton.js'
 import HeaderTitle from '../HeaderTitle/HeaderTitle.js'
 import './Header.scss'
 
-type HeaderProps = {}
+export type HeaderProps = {
+  user?: {
+    avatarUrl?: string
+    logout: () => void
+  }
+  organization: Organization
+}
 
-const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
-  const {
-    // registries: { header },
-    // shell,
-  } = useContext(MainContext)
-
+const Header: FC<PropsWithChildren<HeaderProps>> = ({user, organization}) => {
   // const { registry: avatarMenuItems } = header.avatarMenuItems.useRegistry()
   // const { registry: rightComponents } = header.rightComponents.useRegistry()
 
-  const { clientSessionData, logout } = useContext(AuthCtx)
-  logout
-  const avatarImageUrl = clientSessionData?.userDisplay.avatarUrl
+  // const { clientSessionData, logout } = useContext(AuthCtx)
+  const avatarImageUrl = user?.avatarUrl ?? defaultAvatar
 
   const avatar = {
     backgroundImage: `url(${avatarImageUrl})`,
@@ -51,7 +53,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
       <div className="content">
         <div className="left">
           <HeaderTitle
-          // logo={logo} smallLogo={smallLogo}
+          logo={organization.logo} smallLogo={organization.smallLogo} url={organization.url}
           />
         </div>
         <div className="right">
@@ -59,7 +61,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
             return <Component key={`${pkg.id}:${index}`} />
           })} */}
 
-          {clientSessionData && (
+          {user && (
             <FloatingMenu
               className="add-menu"
               menuContent={[
@@ -79,7 +81,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
               hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
             />
           )}
-          {clientSessionData ? (
+          {user ? (
             <FloatingMenu
               className="avatar-menu"
               menuContent={
