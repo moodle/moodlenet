@@ -5,15 +5,17 @@ const { mergeConfig } = require('vite')
 const { readdirSync } = require('fs')
 
 const path = require('path')
-const packagesDirs = readdirSync('..').map(pkg_name => path.resolve('..', pkg_name))
+const packagesDirs = readdirSync(path.join('..', 'packages')).map(pkg_name =>
+  path.join('..', 'packages', pkg_name),
+)
 
 module.exports = {
   stories: [
+    '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     //'../src/stories/*.stories.tsx',
-    // '/home/alec/MOODLENET/repo/moodlenet3/packages/storybook/src/stories/*CL*.stories.tsx',
-    // './src/stories/CL.stories.tsx',
     // '../../component-library/src/webapp/ui/components/atoms/Card/Card.stories.tsx',
-    '../../component-library/src/webapp/ui/components/**/*.stories.tsx',
+    // '../../component-library/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',
+    // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     // '../../web-user/src/webapp/**/*.stories.tsx',
     // '../../component-library/src/webapp/ui/components/organisms/Header/HeaderTitle/HeaderTitle.stories.tsx',
     // '../src/**/*.stories.mdx',
