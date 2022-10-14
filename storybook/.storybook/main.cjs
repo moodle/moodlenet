@@ -11,7 +11,8 @@ const packagesDirs = readdirSync(path.join('..', 'packages')).map(pkg_name =>
 
 module.exports = {
   stories: [
-    '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
+    '../../packages/component-library/lib/webapp/ui/components/**/*.stories.js',
+    // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     //'../src/stories/*.stories.tsx',
     // '../../component-library/src/webapp/ui/components/atoms/Card/Card.stories.tsx',
     // '../../component-library/src/webapp/ui/components/atoms/PrimaryButton/PrimaryButton.stories.tsx',

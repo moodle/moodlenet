@@ -1,5 +1,6 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { Ciccio } from 'ext-mng/webapp/Ciccio.js'
+import { Ciccio } from '../../../../../../../extensions-manager/lib/webapp/Ciccio.js'
+
 import { Card, CardProps } from './Card.js'
 
 const meta: ComponentMeta<typeof Card> = {
