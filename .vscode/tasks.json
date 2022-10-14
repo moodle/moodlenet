@@ -23,7 +23,8 @@
         "content-graph dev-build",
         "key-value-store dev-build",
         "organization dev-build",
-        "web-user dev-build"
+        "web-user dev-build",
+        "component-library dev-build"
       ],
       "presentation": {
         "echo": true,
