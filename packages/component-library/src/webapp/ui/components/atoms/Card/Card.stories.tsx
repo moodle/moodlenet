@@ -23,7 +23,7 @@ export const CardStoryProps: CardProps = {}
 const CardStory: ComponentStory<typeof Card> = args => (
   <Card {...args}>
     <Ciccio>
-      <strong>hola</strong>
+      <strong>Caqui!</strong>
     </Ciccio>
     <div style={{ padding: 24 }}>
       Diverse, vibrant, dynamic. The cornerstone values that define our amazing{' '}

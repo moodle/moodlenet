@@ -4,7 +4,8 @@ const { default: tsconfigPaths } = require('vite-tsconfig-paths')
 const { mergeConfig } = require('vite')
 const { readdirSync } = require('fs')
 
-const packagesDirs = readdirSync('..').map(pkg_name => `../${pkg_name}`)
+const path = require('path')
+const packagesDirs = readdirSync('..').map(pkg_name => path.resolve('..', pkg_name))
 
 module.exports = {
   stories: [
