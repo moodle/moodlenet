@@ -12,6 +12,8 @@
     "@babel/core": "^7.19.3",
     "@babel/plugin-syntax-flow": "^7.18.6",
     "@babel/plugin-transform-react-jsx": "^7.19.0",
+    "@storybook/addon-actions": "^6.5.12",
+    "@storybook/react": "^6.5.12",
     "@types/rimraf": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
