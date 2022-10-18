@@ -3,12 +3,23 @@
 html {
   font-family: 'Open Sans';
   height: 100%;
-}
 
-body {
-  height: 100%;
-  #root {
+  > body {
     height: 100%;
-    align-items: center;
+
+    > #root {
+      height: 100%;
+      align-items: center;
+
+      > .wrapper {
+        width: 100%;
+        > div {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+        }
+      }
+    }
   }
 }
