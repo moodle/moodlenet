@@ -1,4 +1,4 @@
-import { MainLayoutStoryProps } from '@moodlenet/react-app/stories'
+import { MainLayoutStoryProps } from '../../../../../../react-app/lib/webapp/ui/components/layout/MainLayout/MainLayout.stories.js'
 import { OverallCardStoryProps } from '../../molecules/OverallCard/OverallCard.stories.js'
 import { getProfileCardStoryProps } from '../../organisms/ProfileCard/stories-props.js'
 import { ProfileProps } from './Profile.js'
