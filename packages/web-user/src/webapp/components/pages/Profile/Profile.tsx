@@ -1,10 +1,11 @@
+import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui.mjs'
 import { ComponentType, FC } from 'react'
 import { OverallCard, OverallCardProps } from '../../molecules/OverallCard/OverallCard.js'
 import { ProfileCard, ProfileCardProps } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
 
 export type ProfileProps = {
-  // mainLayoutProps: MainLayoutProps
+  mainLayoutProps: MainLayoutProps
   overallCardProps: OverallCardProps
   profileCardProps: ProfileCardProps
   mainColumnContent?: { Comp: ComponentType<{ callback(): void }>; key: string; callback(): void }[]
@@ -12,27 +13,27 @@ export type ProfileProps = {
 }
 
 export const Profile: FC<ProfileProps> = ({
-  // mainLayoutProps,
+  mainLayoutProps,
   overallCardProps,
   profileCardProps,
   mainColumnContent,
 }) => {
   return (
-    // <MainLayout {...mainLayoutProps}>
-    <div className="profile">
-      <div className="content">
-        <div className="main-column">
-          <ProfileCard {...profileCardProps} />
-          {mainColumnContent?.map(({ Comp, key, callback }) => {
-            return <Comp key={key} callback={callback} />
-          })}
-        </div>
-        <div className="side-column">
-          <OverallCard {...overallCardProps} />
+    <MainLayout {...mainLayoutProps}>
+      <div className="profile">
+        <div className="content">
+          <div className="main-column">
+            <ProfileCard {...profileCardProps} />
+            {mainColumnContent?.map(({ Comp, key, callback }) => {
+              return <Comp key={key} callback={callback} />
+            })}
+          </div>
+          <div className="side-column">
+            <OverallCard {...overallCardProps} />
+          </div>
         </div>
       </div>
-    </div>
-    // </MainLayout>
+    </MainLayout>
   )
 }
 Profile.displayName = 'ProfilePage'
