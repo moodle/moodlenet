@@ -11,31 +11,41 @@
 // import { ProfileFormValues } from '../../../pages/Profile/types'
 // import { InputTextField } from '@moodlenet/component-library/ui/components/atoms/InputTextField/InputTextField.js'
 import { InputTextField, Modal } from '@moodlenet/component-library'
-import { FC, useLayoutEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {
   displayName: string
   avatarUrl?: string
   backgroundUrl?: string
+  location?: string
+  isAuthenticated: boolean
+  isEditing?: boolean
 }
 
-export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl, backgroundUrl }) => {
+export const ProfileCard: FC<ProfileCardProps> = ({
+  displayName,
+  avatarUrl,
+  backgroundUrl,
+  isEditing,
+  location,
+  isAuthenticated,
+}) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
-  // const shouldShowErrors = !!editForm.submitCount
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
-  const [_isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
+  // const shouldShowErrors = !!editForm.submitCount
+  // const [_isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-  const setIsShowingSmallCardHelper = () => {
-    setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
-  }
+  // const setIsShowingSmallCardHelper = () => {
+  //   setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
+  // }
 
-  useLayoutEffect(() => {
-    window.addEventListener('resize', setIsShowingSmallCardHelper)
-    return () => {
-      window.removeEventListener('resize', setIsShowingSmallCardHelper)
-    }
-  }, [])
+  // useLayoutEffect(() => {
+  //   window.addEventListener('resize', setIsShowingSmallCardHelper)
+  //   return () => {
+  //     window.removeEventListener('resize', setIsShowingSmallCardHelper)
+  //   }
+  // }, [])
 
   // const uploadBackgroundRef = useRef<HTMLInputElement>(null)
   // const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
@@ -48,6 +58,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl, back
   //   e.stopPropagation()
   //   uploadAvatarRef.current?.click()
   // }
+  console.log(isAuthenticated)
 
   const background = {
     backgroundImage: 'url(' + backgroundUrl + ')',
@@ -89,6 +100,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl, back
           ...background,
           // pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
         }}
+        onClick={() => !isEditing && setIsShowingBackground(true)}
       ></div>
       <div
         className="avatar"
@@ -96,6 +108,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl, back
           ...avatar,
           // pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
         }}
+        onClick={() => !isEditing && setIsShowingAvatar(true)}
       ></div>
       <div className="actions"></div>
 
@@ -109,26 +122,27 @@ export const ProfileCard: FC<ProfileCardProps> = ({ displayName, avatarUrl, back
           </div>
 
           <div className="subtitle">
-            {/* editForm.values.displayName && (
-                  <span>
-                    <span className="at-symbol">@</span>
-                    {editForm.values.displayName}
-                  </span>
-                )}
-                 {editForm.values.organizationName &&
-                  editForm.values.organizationName !== '' && (
-                    <span>{editForm.values.organizationName}</span>
-                  )} */}
-            {/* {editForm.values.location &&
-                   editForm.values.location !== '' && ( 
-                    <span>{editForm.values.location}</span>
-                    )}  */}
-            {/* {editForm.values.siteUrl && editForm.values.siteUrl !== '' && ( */}
+            {/* {editForm.values.displayName && (
+              <span>
+                <span className="at-symbol">@</span>
+                {editForm.values.displayName}
+              </span>
+            )}
 
-            <span>
-              <span className="at-symbol">@</span>
-              {displayName}
-            </span>
+            {editForm.values.organizationName && editForm.values.organizationName !== '' && (
+              <span>{editForm.values.organizationName}</span>
+            )} */}
+
+            <span>{location}</span>
+            {/* {editForm.values.location && editForm.values.location !== '' && (
+              <span>{editForm.values.location}</span>
+            )}
+
+            {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
+              <a href={editForm.values.siteUrl} target="_blank" rel="noreferrer">
+                {editForm.values.siteUrl}
+              </a> 
+            )}*/}
           </div>
         </div>
         <InputTextField

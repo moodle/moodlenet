@@ -9,7 +9,8 @@
 //   useState,
 // } from 'react'
 // // import { ReactComponent as AddIcon } from '../../../../assets/icons/add.svg'
-import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
+import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
+// import { ReactComponent as ApprovedIcon } from '../../assets/icons/approved.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
 // import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
@@ -29,10 +30,10 @@ import {
   RoundButton,
   SecondaryButton,
   TertiaryButton,
-} from '@moodlenet/react-app/ui.mjs'
+} from '@moodlenet/react-app'
 import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
 import { Dispatch, FC, SetStateAction, useContext, useLayoutEffect, useRef, useState } from 'react'
-import { ProfileFormValues } from '../../types.mjs'
+import { ProfileFormValues } from '../../../../types.mjs'
 import './ProfileCard.scss'
 // const { useImageUrl } = lib.ui.lib
 
@@ -289,7 +290,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             )}
             {!isEditing && isOwner && isApproved && (
               <abbr className={`approved-icon`} title={/* t */ `Approved`}>
-                <ApprovedIcon className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`} />
+                <ApprovedIcon
+                  className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`}
+                />
               </abbr>
             )}
             {!isEditing && isOwner && (
@@ -509,7 +512,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             </SecondaryButton>
           )}
           {!isOwner && (
-            <SecondaryButton color="grey" className={`message`} disabled={!isAuthenticated} onClick={openSendMessage}>
+            <SecondaryButton
+              color="grey"
+              className={`message`}
+              disabled={!isAuthenticated}
+              onClick={openSendMessage}
+            >
               {/* <Trans> */}
               Message
               {/* </Trans> */}
