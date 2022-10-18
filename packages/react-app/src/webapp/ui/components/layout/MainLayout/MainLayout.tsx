@@ -1,25 +1,28 @@
-import { CSSProperties, FC, ReactNode, useContext } from 'react'
+import { Header, HeaderProps } from '@moodlenet/component-library'
+import { CSSProperties, FC, ReactNode } from 'react'
 import { baseStyle } from '../../../styles/config.js'
-import { getColorPalette } from '../../../styles/utilities.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
-import StandardHeader from '../../organisms/Header/Standard/Header.js'
-import { SettingsCtx } from '../../pages/Settings/SettingsContext.js'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
 export type MainLayoutProps = {
+  headerProps: HeaderProps
   style?: CSSProperties
-  contentStyle?: CSSProperties
+  // contentStyle?: CSSProperties
   children?: ReactNode
 }
 
-export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children }) => {
+export const MainLayout: FC<MainLayoutProps> = ({
+  headerProps,
+  style,
+  /* contentStyle, */ children,
+}) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
 
   // const stateContext = useContext(StateContext)
 
-  const styleContext = useContext(SettingsCtx)
+  // const styleContext = useContext(SettingsCtx)
 
   return (
     <div
@@ -27,11 +30,12 @@ export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children 
       style={{
         ...style,
         ...baseStyle(),
-        ...getColorPalette(styleContext.appearanceData.color),
-        ...styleContext.style,
+        // TODO Send context to higher levels
+        // ...getColorPalette(styleContext.appearanceData.color),
+        // ...styleContext.style,
       }}
     >
-      <StandardHeader />
+      <Header {...headerProps} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
@@ -41,7 +45,14 @@ export const MainLayout: FC<MainLayoutProps> = ({ style, contentStyle, children 
             </div>
           ))}
       </div> */}
-      <div style={{ ...contentStyle }} className="content">
+      <div
+        style={
+          {
+            /* ...contentStyle */
+          }
+        }
+        className="content"
+      >
         {children}
         <div className="footer"></div>
       </div>

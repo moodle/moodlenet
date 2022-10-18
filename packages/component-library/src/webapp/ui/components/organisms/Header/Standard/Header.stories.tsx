@@ -1,6 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-import { HeaderTitleOrganizationStoryProps, HeaderTitleStoryProps } from '../HeaderTitle/HeaderTitle.stories.js'
+import {
+  HeaderTitleOrganizationStoryProps,
+  HeaderTitleStoryProps
+} from '../HeaderTitle/HeaderTitle.stories.js'
 import Header, { HeaderProps } from './Header.js'
 
 const meta: ComponentMeta<typeof Header> = {
@@ -14,13 +17,12 @@ const meta: ComponentMeta<typeof Header> = {
 
 export const HeaderStoryProps: HeaderProps = {
   //   homeHref: href('Landing/Logged In'),
-  organization: {...HeaderTitleStoryProps}
+  organization: { ...HeaderTitleStoryProps },
 }
 
 export const HeaderOrganizationStoryProps: HeaderProps = {
   //   homeHref: href('Landing/Logged In'),
-  organization: {...HeaderTitleOrganizationStoryProps}
-    
+  organization: { ...HeaderTitleOrganizationStoryProps },
 }
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />

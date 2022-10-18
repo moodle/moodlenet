@@ -1,3 +1,4 @@
+import { MainLayoutStories } from '@moodlenet/react-app/stories'
 import { OverallCardStoryProps } from '../../molecules/OverallCard/OverallCard.stories.js'
 import { getProfileCardStoryProps } from '../../organisms/ProfileCard/stories-props.js'
 import { ProfileProps } from './Profile.js'
@@ -26,7 +27,7 @@ export const getProfileStoryProps = (overrides?: {
   })
 
   return {
-    // mainLayoutProps: MainLayoutStoryProps,
+    mainLayoutProps: MainLayoutStories.MainLayoutStoryProps,
     overallCardProps: OverallCardStoryProps,
     profileCardProps: ProfileCardStoryProps,
     // editForm: ProfileCardStoryProps.editForm,

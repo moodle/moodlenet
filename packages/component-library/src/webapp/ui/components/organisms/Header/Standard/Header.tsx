@@ -1,4 +1,3 @@
-import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@material-ui/icons'
 import { FC, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 // import { AuthCtx } from '../../../../../web-lib/auth.js'
@@ -21,7 +20,7 @@ export type HeaderProps = {
   organization: Organization
 }
 
-const Header: FC<PropsWithChildren<HeaderProps>> = ({user, organization}) => {
+export const Header: FC<PropsWithChildren<HeaderProps>> = ({ user, organization }) => {
   // const { registry: avatarMenuItems } = header.avatarMenuItems.useRegistry()
   // const { registry: rightComponents } = header.rightComponents.useRegistry()
 
@@ -53,7 +52,9 @@ const Header: FC<PropsWithChildren<HeaderProps>> = ({user, organization}) => {
       <div className="content">
         <div className="left">
           <HeaderTitle
-          logo={organization.logo} smallLogo={organization.smallLogo} url={organization.url}
+            logo={organization.logo}
+            smallLogo={organization.smallLogo}
+            url={organization.url}
           />
         </div>
         <div className="right">
@@ -64,20 +65,22 @@ const Header: FC<PropsWithChildren<HeaderProps>> = ({user, organization}) => {
           {user && (
             <FloatingMenu
               className="add-menu"
-              menuContent={[
-                <Link /* href={newResourceHref} */ to="" tabIndex={0}>
-                  <NoteAddIcon />
-                  {/* <Trans> */}
-                  New resource
-                  {/* </Trans> */}
-                </Link>,
-                <Link /* href={newCollectionHref} */ to="" tabIndex={0}>
-                  <LibraryAddIcon />
-                  {/* <Trans> */}
-                  New collection
-                  {/* </Trans> */}
-                </Link>,
-              ]}
+              menuContent={
+                [
+                  // <Link /* href={newResourceHref} */ to="" tabIndex={0}>
+                  //   <NoteAddIcon />
+                  //   {/* <Trans> */}
+                  //   New resource
+                  //   {/* </Trans> */}
+                  // </Link>,
+                  // <Link /* href={newCollectionHref} */ to="" tabIndex={0}>
+                  //   <LibraryAddIcon />
+                  //   {/* <Trans> */}
+                  //   New collection
+                  //   {/* </Trans> */}
+                  // </Link>,
+                ]
+              }
               hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
             />
           )}
