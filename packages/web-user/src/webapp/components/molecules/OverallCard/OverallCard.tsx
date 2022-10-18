@@ -1,5 +1,6 @@
 // import { t, Trans } from '@lingui/macro'
 import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
+import { Card } from '@moodlenet/component-library'
 // import { Card } from '@moodlenet/react-app'
 import { FC } from 'react'
 // import { Href, Link } from '../../../../elements/link'
@@ -26,8 +27,7 @@ export const OverallCard: FC<OverallCardProps> = ({
   noCard,
 }) => {
   return (
-    <div className="overall-card" >
-    {/* <Card className="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}> */}
+    <Card className="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
       {showIcons ? (
         <div className="overall-container">
           <div className="data">
@@ -80,7 +80,7 @@ export const OverallCard: FC<OverallCardProps> = ({
         </div>
       )}
       {/*<div className="data">{props.years} years ago<span>Joined</span></div>*/}
-    </div>
+    </Card>
   )
 }
 
