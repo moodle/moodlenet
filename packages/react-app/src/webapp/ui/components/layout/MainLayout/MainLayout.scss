@@ -125,6 +125,7 @@ body {
       }
     }
   }
+
   > .side-menu {
     width: 160px;
     height: 100%;
@@ -148,12 +149,6 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    > .footer {
-      display: flex;
-      justify-content: center;
-      padding: 10px 0;
-    }
-
     @media (max-width: 450px) {
       background: white;
       padding: 0;
@@ -162,6 +157,15 @@ body {
     @media screen and (max-width: 675px) and (min-width: 450px) {
       padding: 0 25px;
     }
+    > * {
+      width: 100%;
+    }
+  }
+
+  > .footer {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
   }
 }
 

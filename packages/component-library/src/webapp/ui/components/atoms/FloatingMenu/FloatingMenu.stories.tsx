@@ -11,7 +11,7 @@ const meta: ComponentMeta<typeof FloatingMenu> = {
   },
   excludeStories: ['FloatingMenuStoryProps'],
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{ position: 'relative' }}>
         <Story />
       </div>
@@ -35,14 +35,14 @@ export const FloatingMenuStoryProps: FloatingMenuProps = {
   ],
 }
 
-const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = (args) => (
+const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = args => (
   <FloatingMenu {...args}>
     <div>This</div>
     <div>And that</div>
   </FloatingMenu>
 )
 
-export const FloatingMenuDefault = FloatingMenuStory.bind({})
-FloatingMenuDefault.args = FloatingMenuStoryProps
+export const Default = FloatingMenuStory.bind({})
+Default.args = FloatingMenuStoryProps
 
 export default meta

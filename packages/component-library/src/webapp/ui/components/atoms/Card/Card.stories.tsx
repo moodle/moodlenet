@@ -33,7 +33,7 @@ const CardStory: ComponentStory<typeof Card> = args => (
   </Card>
 )
 
-export const CardDefault = CardStory.bind({})
-CardDefault.args = CardStoryProps
+export const Default = CardStory.bind({})
+Default.args = CardStoryProps
 
 export default meta
