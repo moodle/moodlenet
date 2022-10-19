@@ -42,6 +42,7 @@ export const getProfileCardStoryProps = (overrides?: {
   return {
     displayName: person?.displayName ?? '',
     location: 'Australia',
+    siteUrl: 'https://iuri.is/',
     avatarUrl: person?.avatarUrl,
     backgroundUrl: person?.backgroundUrl,
     isAuthenticated: false,

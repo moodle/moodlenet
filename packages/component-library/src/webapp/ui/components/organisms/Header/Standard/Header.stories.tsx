@@ -1,10 +1,17 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import {
   HeaderTitleOrganizationStoryProps,
-  HeaderTitleStoryProps
+  HeaderTitleStoryProps,
 } from '../HeaderTitle/HeaderTitle.stories.js'
-import Header, { HeaderProps } from './Header.js'
+import Header, { HeaderProps, UserProps } from './Header.js'
+
+const user: UserProps = {
+  logout: action('logout'),
+  avatarUrl:
+    'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
+}
 
 const meta: ComponentMeta<typeof Header> = {
   title: 'Organisms/Header',
@@ -12,25 +19,42 @@ const meta: ComponentMeta<typeof Header> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['HeaderStoryProps', 'HeaderOrganizationStoryProps'],
+  excludeStories: [
+    'HeaderLoggedOutStoryProps',
+    'HeaderLoggedOutOrganizationStoryProps',
+    'HeaderLoggedInStoryProps',
+  ],
+  decorators: [
+    Story => (
+      <div style={{ alignItems: 'flex-start', width: '100%', height: '100%' }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
-export const HeaderStoryProps: HeaderProps = {
-  //   homeHref: href('Landing/Logged In'),
-  organization: { ...HeaderTitleStoryProps },
+export const HeaderLoggedOutStoryProps: HeaderProps = {
+  headerTitleProps: HeaderTitleStoryProps,
 }
 
-export const HeaderOrganizationStoryProps: HeaderProps = {
-  //   homeHref: href('Landing/Logged In'),
-  organization: { ...HeaderTitleOrganizationStoryProps },
+export const HeaderLoggedOutOrganizationStoryProps: HeaderProps = {
+  headerTitleProps: HeaderTitleOrganizationStoryProps,
+}
+
+export const HeaderLoggedInStoryProps: HeaderProps = {
+  headerTitleProps: HeaderTitleStoryProps,
+  user: user,
 }
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
 
-export const HeaderDefault = HeaderStory.bind({})
-HeaderDefault.args = HeaderStoryProps
+export const LoggedOut = HeaderStory.bind({})
+LoggedOut.args = HeaderLoggedOutStoryProps
 
-export const HeaderOrganization = HeaderStory.bind({})
-HeaderOrganization.args = HeaderOrganizationStoryProps
+export const OrganizationLoggedOut = HeaderStory.bind({})
+OrganizationLoggedOut.args = HeaderLoggedOutOrganizationStoryProps
+
+export const LoggedIn = HeaderStory.bind({})
+LoggedIn.args = HeaderLoggedInStoryProps
 
 export default meta

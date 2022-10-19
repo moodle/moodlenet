@@ -12,6 +12,7 @@ const packagesDirs = readdirSync(path.join('..', 'packages')).map(pkg_name =>
 module.exports = {
   stories: [
     '../../packages/component-library/lib/webapp/ui/components/**/*.stories.js',
+    '../../packages/react-app/lib/webapp/ui/components/**/*.stories.js',
     '../../packages/web-user/lib/webapp/components/**/*.stories.js',
     // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     //'../src/stories/*.stories.tsx',

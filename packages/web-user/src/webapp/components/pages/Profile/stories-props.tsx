@@ -27,7 +27,7 @@ export const getProfileStoryProps = (overrides?: {
   })
 
   return {
-    mainLayoutProps: MainLayoutStories.MainLayoutStoryProps,
+    mainLayoutProps: MainLayoutStories.MainLayoutLoggedInStoryProps,
     overallCardProps: OverallCardStoryProps,
     profileCardProps: ProfileCardStoryProps,
     // editForm: ProfileCardStoryProps.editForm,

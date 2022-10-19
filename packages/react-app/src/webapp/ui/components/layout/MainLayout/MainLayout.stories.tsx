@@ -1,8 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import {
-  HeaderOrganizationStoryProps,
-  HeaderStoryProps,
+  HeaderLoggedInStoryProps,
+  HeaderLoggedOutOrganizationStoryProps,
+  HeaderLoggedOutStoryProps,
 } from '../../../../../../../component-library/lib/webapp/ui/components/organisms/Header/Standard/Header.stories.js'
 import MainLayout, { MainLayoutProps } from './MainLayout.js'
 
@@ -12,27 +13,41 @@ const meta: ComponentMeta<typeof MainLayout> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['MainLayoutStoryProps', 'MainLayoutOrganizationStoryProps'],
+  excludeStories: [
+    'MainLayoutStory',
+    'MainLayoutLoggedOutStoryProps',
+    'MainLayoutOrganizationLoggedOutStoryProps',
+    'MainLayoutLoggedInStoryProps',
+  ],
 }
 
-export const MainLayoutStoryProps: MainLayoutProps = {
-  headerProps: HeaderStoryProps,
-  //   homeHref: href('Landing/Logged In'),
+export const MainLayoutLoggedOutStoryProps: MainLayoutProps = {
+  headerProps: HeaderLoggedOutStoryProps,
+  //   homeHrpef: href('Landing/Logged In'),
   // organization: { ...MainLayoutTitleStoryProps },
 }
 
-export const MainLayoutOrganizationStoryProps: MainLayoutProps = {
-  headerProps: HeaderOrganizationStoryProps,
+export const MainLayoutOrganizationLoggedOutStoryProps: MainLayoutProps = {
+  headerProps: HeaderLoggedOutOrganizationStoryProps,
+  //   homeHref: href('Landing/Logged In'),
+  // organization: { ...MainLayoutTitleOrganizationStoryProps },
+}
+
+export const MainLayoutLoggedInStoryProps: MainLayoutProps = {
+  headerProps: HeaderLoggedInStoryProps,
   //   homeHref: href('Landing/Logged In'),
   // organization: { ...MainLayoutTitleOrganizationStoryProps },
 }
 
 export const MainLayoutStory: ComponentStory<typeof MainLayout> = args => <MainLayout {...args} />
 
-export const MainLayoutDefault = MainLayoutStory.bind({})
-MainLayoutDefault.args = MainLayoutStoryProps
+export const LoggedOut = MainLayoutStory.bind({})
+LoggedOut.args = MainLayoutLoggedOutStoryProps
 
-export const MainLayoutOrganization = MainLayoutStory.bind({})
-MainLayoutOrganization.args = MainLayoutOrganizationStoryProps
+export const LoggedOutOrganization = MainLayoutStory.bind({})
+LoggedOutOrganization.args = MainLayoutOrganizationLoggedOutStoryProps
+
+export const LoggedIn = MainLayoutStory.bind({})
+LoggedIn.args = MainLayoutLoggedInStoryProps
 
 export default meta

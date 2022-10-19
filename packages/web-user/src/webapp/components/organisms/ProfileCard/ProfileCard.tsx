@@ -19,6 +19,7 @@ export type ProfileCardProps = {
   avatarUrl?: string
   backgroundUrl?: string
   location?: string
+  siteUrl?: string
   isAuthenticated: boolean
   isEditing?: boolean
 }
@@ -27,8 +28,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   displayName,
   avatarUrl,
   backgroundUrl,
-  isEditing,
   location,
+  siteUrl,
+  isEditing,
   isAuthenticated,
 }) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
@@ -136,13 +138,16 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             <span>{location}</span>
             {/* {editForm.values.location && editForm.values.location !== '' && (
               <span>{editForm.values.location}</span>
-            )}
-
-            {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
-              <a href={editForm.values.siteUrl} target="_blank" rel="noreferrer">
+              )}
+              
+              {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
+                <a href={editForm.values.siteUrl} target="_blank" rel="noreferrer">
                 {editForm.values.siteUrl}
-              </a> 
-            )}*/}
+                </a> 
+              )}*/}
+            <a href={siteUrl} target="_blank" rel="noreferrer">
+              {siteUrl}
+            </a>
           </div>
         </div>
         <InputTextField

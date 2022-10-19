@@ -7,12 +7,10 @@ const meta: ComponentMeta<typeof Snackbar> = {
   component: Snackbar,
 }
 
-const SnackbarStory: ComponentStory<typeof Snackbar> = (args) => (
-  <Snackbar {...args} />
-)
+const SnackbarStory: ComponentStory<typeof Snackbar> = args => <Snackbar {...args} />
 
-export const SnackbarDefault = SnackbarStory.bind({})
-SnackbarDefault.args = {
+export const Default = SnackbarStory.bind({})
+Default.args = {
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }
@@ -31,8 +29,8 @@ Warning.args = {
   children: <div>Snackbar Content</div>,
 }
 
-export const SnackbarError = SnackbarStory.bind({})
-SnackbarError.args = {
+export const Error = SnackbarStory.bind({})
+Error.args = {
   type: 'error',
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
