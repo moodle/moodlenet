@@ -8,6 +8,7 @@ import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.sv
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu.js'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton.js'
+import Searchbox from '../../../atoms/Searchbox/Searchbox.js'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton.js'
 import { HeaderAvatarMenuItemRegItem } from '../addons.js'
 import HeaderTitle, { HeaderTitleProps } from '../HeaderTitle/HeaderTitle.js'
@@ -40,11 +41,7 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({ user, headerTitlePr
 
   const profileMenuItem: HeaderAvatarMenuItemRegItem = {
     Text: 'Profile',
-    Icon: (
-      <div style={avatar} className="avatar">
-        Hey
-      </div>
-    ),
+    Icon: <div style={avatar} className="avatar" />,
     Path: '',
     ClassName: 'profile',
     Position: 0,
@@ -70,6 +67,9 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({ user, headerTitlePr
       <div className="content">
         <div className="left">
           <HeaderTitle logo={logo} smallLogo={smallLogo} url={url} />
+        </div>
+        <div className="center">
+          <Searchbox placeholder="Search for open education content" />
         </div>
         <div className="right">
           {/* {rightComponents.entries.flatMap(({ pkg, item: { Component } }, index) => {

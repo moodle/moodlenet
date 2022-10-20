@@ -1,15 +1,9 @@
-import { ComponentType, FC, useContext, useMemo, useState } from 'react'
-import { Card } from '../../atoms/Card/Card.js'
+import { ComponentType, FC, useState } from 'react'
 import MainLayout from '../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { MainContext } from '../../../../MainContext.js'
-import { registries } from '../../../../web-lib.mjs'
-import { RegistryEntry } from '../../../../web-lib/registry.js'
-import Appearance from './Appearance.js'
-import { GeneralContent } from './General.js'
+import { Card } from '@moodlenet/component-library'
 import './Settings.scss'
-import { SettingsSectionItem } from './SettingsContext.js'
 
 export type SettingsItem = { Panel: ComponentType; Menu: ComponentType; key: string }
 export type SettingsProps = {

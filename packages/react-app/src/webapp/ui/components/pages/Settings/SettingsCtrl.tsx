@@ -1,6 +1,4 @@
-import { FC, useContext, useMemo, useState } from 'react'
-import { Card } from '../../atoms/Card/Card.js'
-import MainLayout from '../../layout/MainLayout/MainLayout.js'
+import { FC, useContext, useMemo } from 'react'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { MainContext } from '../../../../MainContext.js'
@@ -8,9 +6,9 @@ import { registries } from '../../../../web-lib.mjs'
 import { RegistryEntry } from '../../../../web-lib/registry.js'
 import Appearance from './Appearance.js'
 import { GeneralContent } from './General.js'
+import { Settings, SettingsItem, SettingsProps } from './Settings.js'
 import './Settings.scss'
 import { SettingsSectionItem } from './SettingsContext.js'
-import { Settings, SettingsItem, SettingsProps } from './Settings.js'
 
 export const SettingsCtrl: FC = () => {
   const settingsProps = useSettingsProps()
