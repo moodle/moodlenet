@@ -19,6 +19,9 @@
     "lib/",
     "src/"
   ],
+  "exports": {
+    "./ui.mjs": "./lib/webapp/ui.mjs"
+  },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
