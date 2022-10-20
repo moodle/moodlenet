@@ -18,13 +18,13 @@ const meta: ComponentMeta<typeof MinimalisticHeader> = {
 export const MinimalisticHeaderStoryProps: MinimalisticHeaderProps = {
   //   homeHref: href('Landing/Logged In'),
   page: 'login',
-  organization: { ...HeaderTitleStoryProps },
+  headerTitleProps: HeaderTitleStoryProps,
 }
 
 export const MinimalisticHeaderOrganizationStoryProps: MinimalisticHeaderProps = {
   page: 'login',
   //   homeHref: href('Landing/Logged In'),
-  organization: { ...HeaderTitleOrganizationStoryProps },
+  headerTitleProps: HeaderTitleOrganizationStoryProps,
 }
 
 const MinimalisticHeaderStory: ComponentStory<typeof MinimalisticHeader> = args => (

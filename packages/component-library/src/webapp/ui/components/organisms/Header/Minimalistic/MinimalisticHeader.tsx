@@ -1,20 +1,21 @@
 import { FC, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 // import { MainContext } from '../../../../../MainContext.js'
-import { Organization } from '../../../../types.js'
 import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton.js'
 import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton.js'
-import HeaderTitle from '../HeaderTitle/HeaderTitle.js'
+import HeaderTitle, { HeaderTitleProps } from '../HeaderTitle/HeaderTitle.js'
 import './MinimalisticHeader.scss'
 
 export type MinimalisticHeaderProps = {
   page: 'login' | 'signup' | 'activation' | 'rootLogin'
-  organization: Organization
+  headerTitleProps: HeaderTitleProps
 }
 
 export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = (
-  { page, organization } /* { devMode, setDevMode } */,
+  { page, headerTitleProps } /* { devMode, setDevMode } */,
 ) => {
+  const { logo, smallLogo, url } = headerTitleProps
+  console.log('Logo ', logo)
   // const {
   // registries: {
   //   header: { rightComponents },
@@ -25,11 +26,7 @@ export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> 
     <div className="minimalistic-header">
       <div className="content">
         <div className="left">
-          <HeaderTitle
-            logo={organization.logo}
-            smallLogo={organization.smallLogo}
-            url={organization.url}
-          />
+          <HeaderTitle logo={logo} smallLogo={smallLogo} url={url} />
         </div>
         <div className="right">
           {/* {rightComponentsRegistry.entries.flatMap(({ pkg, item: { Component } }, index) => {
