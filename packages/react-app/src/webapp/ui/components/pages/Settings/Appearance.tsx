@@ -1,10 +1,8 @@
 // import { Trans } from '@lingui/macro'
+import { Card, Colorpicker, InputTextField } from '@moodlenet/component-library'
 import { FC, useContext } from 'react'
 import { getColorPalette } from '../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
-import Card from '../../atoms/Card/Card.js'
-import Colorpicker from '../../atoms/Colorpicker/Colorpicker.js'
-import InputTextField from '../../atoms/InputTextField/InputTextField.js'
 import './Appearance.scss'
 import { SettingsCtx } from './SettingsContext.js'
 
@@ -119,7 +117,10 @@ export const Appearance: FC<AppearanceProps> = (
           SCSS
           {/* <Trans>SCSS</Trans> */}
         </div>
-        <InputTextField textarea={true} edit /* onChange={c => setStyle(c.currentTarget.value)} */ />
+        <InputTextField
+          textarea={true}
+          edit /* onChange={c => setStyle(c.currentTarget.value)} */
+        />
       </Card>
     </>
   )

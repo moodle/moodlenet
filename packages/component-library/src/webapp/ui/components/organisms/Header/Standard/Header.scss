@@ -20,6 +20,12 @@
     > .left {
     }
 
+    > .center {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
     > .right {
       display: flex;
       gap: 6px;

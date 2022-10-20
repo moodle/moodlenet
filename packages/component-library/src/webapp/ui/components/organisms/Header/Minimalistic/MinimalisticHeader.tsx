@@ -12,11 +12,13 @@ export type MinimalisticHeaderProps = {
   organization: Organization
 }
 
-const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ page, organization } /* { devMode, setDevMode } */) => {
+export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = (
+  { page, organization } /* { devMode, setDevMode } */,
+) => {
   // const {
-    // registries: {
-    //   header: { rightComponents },
-    // },
+  // registries: {
+  //   header: { rightComponents },
+  // },
   // } = useContext(MainContext)
   // const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
   return (
@@ -24,8 +26,9 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ pa
       <div className="content">
         <div className="left">
           <HeaderTitle
-                    logo={organization.logo} smallLogo={organization.smallLogo} url={organization.url}
-
+            logo={organization.logo}
+            smallLogo={organization.smallLogo}
+            url={organization.url}
           />
         </div>
         <div className="right">
@@ -72,5 +75,3 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = ({ pa
     </div>
   )
 }
-
-export default MinimalisticHeader

@@ -1,11 +1,9 @@
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { FC, useCallback, useContext, useState } from 'react'
 import { MainContext } from '../../../../../MainContext.js'
 // import lib from '../../../../../main-lib'
 import { AuthCtx } from '../../../../../web-lib/auth.js'
 // import { Link } from '../../../../elements/link'
-import Card from '../../../atoms/Card/Card.js'
-import { InputTextField } from '../../../atoms/InputTextField/InputTextField.js'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton.js'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './RootLogin.scss'
 

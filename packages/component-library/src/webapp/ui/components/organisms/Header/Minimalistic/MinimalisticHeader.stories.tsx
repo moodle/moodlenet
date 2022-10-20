@@ -4,7 +4,7 @@ import {
   HeaderTitleStoryProps,
 } from '../HeaderTitle/HeaderTitle.stories.js'
 // import { href } from '../../../../elements/link'
-import MinimalisticHeader, { MinimalisticHeaderProps } from './MinimalisticHeader.js'
+import { MinimalisticHeader, MinimalisticHeaderProps } from './MinimalisticHeader.js'
 
 const meta: ComponentMeta<typeof MinimalisticHeader> = {
   title: 'Organisms/MinimalisticHeader',

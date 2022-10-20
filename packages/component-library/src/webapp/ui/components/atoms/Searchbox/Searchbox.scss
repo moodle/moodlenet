@@ -1,8 +1,9 @@
 .searchbox {
+  width: 100%;
+  max-width: 350px;
   border: 1px solid #dbdbdb;
   background-color: white;
   border-radius: 16px;
-  width: 300px;
   height: 40px;
   display: flex;
   justify-content: flex-start;

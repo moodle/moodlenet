@@ -1,9 +1,9 @@
 import { CallMade as CallMadeIcon } from '@material-ui/icons'
+import { Card } from '@moodlenet/component-library'
 import { CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { registries } from '../../../../../web-lib.mjs'
 // import { Link } from '../../../../elements/link'
-import Card from '../../../atoms/Card/Card.js'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Login.scss'
 
