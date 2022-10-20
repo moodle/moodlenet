@@ -1,5 +1,5 @@
 import { ComponentType, FC, useState } from 'react'
-import MainLayout from '../../layout/MainLayout/MainLayout.js'
+import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { Card } from '@moodlenet/component-library'
@@ -7,14 +7,15 @@ import './Settings.scss'
 
 export type SettingsItem = { Panel: ComponentType; Menu: ComponentType; key: string }
 export type SettingsProps = {
+  mainLayoutProps: MainLayoutProps
   settingsItems: SettingsItem[]
 }
 
-export const Settings: FC<SettingsProps> = ({ settingsItems }) => {
+export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) => {
   const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0])
 
   return (
-    <MainLayout>
+    <MainLayout {...mainLayoutProps}>
       <div className="settings-page">
         <div className="left-menu">
           <Card>
