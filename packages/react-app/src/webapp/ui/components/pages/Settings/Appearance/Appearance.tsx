@@ -1,20 +1,16 @@
 // import { Trans } from '@lingui/macro'
 import { Card, Colorpicker, InputTextField } from '@moodlenet/component-library'
 import { FC, useContext } from 'react'
-import { getColorPalette } from '../../../styles/utilities.js'
+import { getColorPalette } from '../../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
+import { SettingsCtx } from '../SettingsContext.js'
 import './Appearance.scss'
-import { SettingsCtx } from './SettingsContext.js'
 
 export type AppearanceProps = {
   // organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
 }
 
-export const Appearance: FC<AppearanceProps> = (
-  {
-    /* organization */
-  },
-) => {
+export const Appearance: FC<AppearanceProps> = (/* { organization } */) => {
   const styleContext = useContext(SettingsCtx)
   // const [logo, setLogo] = useState(true)
   // const [compactLogo, setCompactLogo] = useState(true)

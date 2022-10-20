@@ -2,7 +2,7 @@ import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-librar
 import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect } from 'react'
-import { SettingsCtx } from './SettingsContext.js'
+import { SettingsCtx } from '../SettingsContext.js'
 
 export const GeneralContent: FC = () => {
   const setCtx = useContext(SettingsCtx)
