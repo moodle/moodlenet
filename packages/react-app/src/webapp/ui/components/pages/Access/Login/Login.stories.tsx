@@ -1,8 +1,8 @@
 // import { t } from '@lingui/macro'
-import { FileUploader, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { MinimalisticHeaderStories } from '@moodlenet/component-library/stories'
 import { ComponentMeta } from '@storybook/react'
-import { FC, useEffect } from 'react'
+import { useEffect } from 'react'
+import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/lib/webapp/Login.js'
 import { Login, LoginProps } from './Login.js'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
@@ -23,10 +23,6 @@ const meta: ComponentMeta<typeof Login> = {
 //   password: string().required(t`Please provide a password`),
 // })
 
-const Cumino: FC = () => {
-  return <div>Yes!</div>
-}
-
 export const LoginStoryProps = (): // override?: {
 // props?: Partial<LoginProps>
 // formValues?: Partial<LoginFormValues>
@@ -35,8 +31,9 @@ export const LoginStoryProps = (): // override?: {
 LoginProps => {
   return {
     loginItems: [
-      { Icon: PrimaryButton, Panel: FileUploader },
-      { Icon: SecondaryButton, Panel: Cumino },
+      // { Icon: PrimaryButton, Panel: FileUploader },
+      { Icon: SimpleEmailAuth.Icon, Panel: SimpleEmailAuth.Panel },
+      // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
     headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
     // accessHeaderProps: AccessHeaderStoryProps,

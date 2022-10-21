@@ -36,6 +36,26 @@
       }
     },
     {
+      "group": "build",
+      "problemMatcher": [],
+      "label": "frontend-tasks",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "react-app dev-build",
+        "simple-email-auth dev-build",
+        "web-user dev-build",
+        "component-library dev-build"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
       "type": "typescript",
       "tsconfig": "packages/content-graph/tsconfig.json",
       "option": "watch",
