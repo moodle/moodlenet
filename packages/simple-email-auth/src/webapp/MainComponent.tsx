@@ -11,6 +11,7 @@ const loginItem = { Icon: LoginComponents.Icon, Panel: LoginPanelCtrl }
 
 export const MainContext = createContext<MainContextT>(null as any)
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
+  // registries.loginItems.useRegister(pkgId, loginComponents)
   registries.loginItems.useRegister(pkgId, loginItem)
   registries.signupItems.useRegister(pkgId, signupComponents)
   registries.settingsSections.useRegister(pkgId, settingsComponents)
