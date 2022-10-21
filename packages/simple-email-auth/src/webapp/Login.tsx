@@ -1,16 +1,12 @@
 import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
-import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
 import { useFormik } from 'formik'
-import { FC, useContext, useState } from 'react'
-import { MainContext } from './MainComponent.js'
+import { FC } from 'react'
 
 /*** TEST  IS LINT REACT WORK --> this give error missing display name
 
 const Hello = React.memo(({ a }: { a: string }) => {
   return <>{a}</>
 })
-
- 
  */
 
 export type LoginFormValues = { email: string; password: string }
@@ -18,16 +14,24 @@ export type LoginFormValues = { email: string; password: string }
 export const Icon: FC = () => {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
-export const Panel: FC = () => {
-  const { pkgs } = useContext(MainContext)
+
+export type PanelProps = {
+  login(email: string, password: string): void
+  wrongCreds: boolean
+}
+
+export const Panel: FC<PanelProps> = ({ login, wrongCreds }) => {
+  /* const { pkgs } = useContext(MainContext)
   const [authPkgApis] = pkgs
 
   const auth = useContext(AuthCtx)
   const [wrongCreds, setWrongCreds] = useState(false)
-
+*/
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
+      login(email, password)
+      /*
       setWrongCreds(false)
       const res = await authPkgApis.call('login')({
         email,
@@ -40,6 +44,7 @@ export const Panel: FC = () => {
       }
       setWrongCreds(false)
       auth.setSessionToken(res.sessionToken)
+      */
     },
   })
   const shouldShowErrors = !!form.submitCount
