@@ -1,4 +1,4 @@
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui.mjs'
+import { MainLayout, MainLayoutProps } from '@moodlenet/react-app'
 import { ComponentType, FC } from 'react'
 import { OverallCard, OverallCardProps } from '../../molecules/OverallCard/OverallCard.js'
 import { ProfileCard, ProfileCardProps } from '../../organisms/ProfileCard/ProfileCard.js'

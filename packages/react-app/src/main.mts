@@ -7,6 +7,7 @@ import { setupPlugin } from './lib.mjs'
 import { WebPkgDeps } from './webapp/MainContext.js'
 
 export * from './types.mjs'
+export * from './webapp/components.mjs'
 
 // import { fileURLToPath } from 'url'
 // const __dirname = fileURLToPath(new URL('.', import.meta.url))

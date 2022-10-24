@@ -1,4 +1,9 @@
-import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import {
+  Card,
+  InputTextField,
+  MinimalisticHeaderProps,
+  PrimaryButton,
+} from '@moodlenet/component-library'
 import { FC, useCallback, useContext, useState } from 'react'
 import { MainContext } from '../../../../../MainContext.js'
 // import lib from '../../../../../main-lib'
@@ -10,9 +15,13 @@ import './RootLogin.scss'
 // const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
 export type RootLoginFormValues = { email: string; password: string }
 
-export const RootLogin: FC = () => {
+export type RootLoginProps = {
+  headerProps: MinimalisticHeaderProps
+}
+
+export const RootLogin: FC<RootLoginProps> = ({ headerProps }) => {
   return (
-    <SimpleLayout page="rootLogin">
+    <SimpleLayout headerProps={headerProps} page="rootLogin">
       <RootLoginBody />
     </SimpleLayout>
   )

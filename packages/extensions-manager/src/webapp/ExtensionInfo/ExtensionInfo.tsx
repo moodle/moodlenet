@@ -1,4 +1,4 @@
-import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
+import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material'
 import { FC, ReactNode, ReactPortal, useCallback, useContext, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'

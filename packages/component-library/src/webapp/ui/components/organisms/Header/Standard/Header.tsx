@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren } from 'react'
+import { ComponentType, FC, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 // import { AuthCtx } from '../../../../../web-lib/auth.js'
 // import { RegistryEntry } from '../../../../../main-lib/registry'
@@ -14,8 +14,14 @@ import { HeaderAvatarMenuItemRegItem } from '../addons.js'
 import HeaderTitle, { HeaderTitleProps } from '../HeaderTitle/HeaderTitle.js'
 import './Header.scss'
 
+export type HeaderIconType = {
+  icon: ComponentType | string
+  href: string
+}
+
 export type UserProps = {
   avatarUrl?: string
+  avatarMenuItems: HeaderAvatarMenuItemRegItem[]
   logout: () => void
 }
 
@@ -29,6 +35,9 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({ user, headerTitlePr
   // const { registry: rightComponents } = header.rightComponents.useRegistry()
 
   // const { clientSessionData, logout } = useContext(AuthCtx)
+
+  console.log(user?.avatarMenuItems)
+
   const avatarImageUrl = user?.avatarUrl ?? defaultAvatar
   const { logo, smallLogo, url } = headerTitleProps
 
@@ -39,15 +48,15 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({ user, headerTitlePr
     backgroundSize: 'cover',
   }
 
-  const profileMenuItem: HeaderAvatarMenuItemRegItem = {
-    Text: 'Profile',
-    Icon: <div style={avatar} className="avatar" />,
-    Path: '',
-    ClassName: 'profile',
-    Position: 0,
-  }
+  // const profileMenuItem: HeaderAvatarMenuItemRegItem = {
+  //   Text: 'Profile',
+  //   Icon: <div style={avatar} className="avatar" />,
+  //   Path: '',
+  //   ClassName: 'profile',
+  //   Position: 0,
+  // }
 
-  const avatarMenuItems: HeaderAvatarMenuItemRegItem[] = [profileMenuItem]
+  // const avatarMenuItems: HeaderAvatarMenuItemRegItem[] = [profileMenuItem]
 
   // const reoderedAvatarMenuItems = useMemo(() => {
   //   const baseItems: RegistryEntry<HeaderAvatarMenuItemRegItem>[] = [
@@ -99,7 +108,7 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({ user, headerTitlePr
           {user ? (
             <FloatingMenu
               className="avatar-menu"
-              menuContent={avatarMenuItems.map((avatarMenuItem, i) => {
+              menuContent={user.avatarMenuItems.map((avatarMenuItem, i) => {
                 // reoderedAvatarMenuItems.map((avatarMenuItem, i) => {
                 return avatarMenuItem.Path ? (
                   <div></div>

@@ -1,6 +1,5 @@
-// @index(['./ui/**/*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+// @index(['./ui/components/**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from './ui/components/layout/MainLayout/MainLayout.js'
-export * from './ui/components/layout/MainLayout/MainLayout.stories.js'
 export * from './ui/components/layout/PageLayout.js'
 export * from './ui/components/layout/SimpleLayout/SimpleLayout.js'
 export * from './ui/components/pages/Access/Login/Login.js'
@@ -11,13 +10,8 @@ export * from './ui/components/pages/ContentGraph/Router.js'
 export * from './ui/components/pages/Landing/Landing.js'
 export * from './ui/components/pages/Settings/Appearance/Appearance.js'
 export * from './ui/components/pages/Settings/General/General.js'
+export * from './ui/components/pages/Settings/Header.js'
 export * from './ui/components/pages/Settings/Settings.js'
 export * from './ui/components/pages/Settings/SettingsContext.js'
 export * from './ui/components/pages/Settings/SettingsCtrl.js'
-export * from './ui/lib/index.mjs'
-export * from './ui/lib/useForwardedRef.mjs'
-export * from './ui/lib/useImageUrl.mjs'
-export * from './ui/styles/config.js'
-export * from './ui/styles/Style.js'
-export * from './ui/styles/utilities.js'
 // @endindex

@@ -3,7 +3,7 @@ import {
   HeaderRightComponentRegItem,
 } from '@moodlenet/component-library'
 import { RouteRegItem } from './app-routes.js'
-import { SettingsSectionItem } from './ui.mjs'
+import { SettingsSectionItem } from './components.mjs'
 import { LoginItem, SignupItem } from './web-lib.mjs'
 import { createRegistry } from './web-lib/registry.js'
 

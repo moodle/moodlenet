@@ -1,6 +1,8 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
+import * as HeaderSettingsProps from '../../../../../../../../react-app/lib/webapp/ui/components/pages/Settings/Header.js'
+import { HeaderProfileStoryProps } from '../../../../../../../../web-user/lib/webapp/Header.stories.js'
 import {
   HeaderTitleOrganizationStoryProps,
   HeaderTitleStoryProps,
@@ -11,6 +13,15 @@ const user: UserProps = {
   logout: action('logout'),
   avatarUrl:
     'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
+  avatarMenuItems: [
+    HeaderProfileStoryProps,
+    {
+      Icon: HeaderSettingsProps.Icon,
+      Text: HeaderSettingsProps.Text,
+      ClassName: HeaderSettingsProps.ClassName,
+      Position: HeaderSettingsProps.Position,
+    },
+  ],
 }
 
 const meta: ComponentMeta<typeof Header> = {
