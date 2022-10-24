@@ -45,14 +45,19 @@ const meta: ComponentMeta<typeof Header> = {
 }
 
 export const HeaderLoggedOutStoryProps: HeaderProps = {
+  leftItems: [],
+  centerItems: [],
+  rightItems: [],
   headerTitleProps: HeaderTitleStoryProps,
 }
 
 export const HeaderLoggedOutOrganizationStoryProps: HeaderProps = {
+  ...HeaderLoggedOutStoryProps,
   headerTitleProps: HeaderTitleOrganizationStoryProps,
 }
 
 export const HeaderLoggedInStoryProps: HeaderProps = {
+  ...HeaderLoggedOutStoryProps,
   headerTitleProps: HeaderTitleStoryProps,
   user: user,
 }
