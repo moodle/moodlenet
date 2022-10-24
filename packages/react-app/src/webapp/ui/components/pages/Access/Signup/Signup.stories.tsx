@@ -1,49 +1,46 @@
 // import { t } from '@lingui/macro'
-import { FileUploader, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { MinimalisticHeaderStories } from '@moodlenet/component-library/stories'
 import { ComponentMeta } from '@storybook/react'
-import { FC, useEffect } from 'react'
-import { Login, LoginProps } from './Login.js'
+import { useEffect } from 'react'
+import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/lib/webapp/Signup.js'
+import { Signup, SignupProps } from './Signup.js'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
 // import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
-// import { Login, LoginFormValues, LoginProps } from './Login'
+// import { Signup, SignupFormValues, SignupProps } from './Signup'
 
-const meta: ComponentMeta<typeof Login> = {
-  title: 'Pages/Access/Login',
-  component: Login,
-  excludeStories: ['LoginStoryProps', 'validationSchema'],
+const meta: ComponentMeta<typeof Signup> = {
+  title: 'Pages/Access/Signup',
+  component: Signup,
+  excludeStories: ['SignupStoryProps', 'validationSchema'],
   parameters: { layout: 'fullscreen' },
 }
 
-// const validationSchema: SchemaOf<LoginFormValues> = object({
+// const validationSchema: SchemaOf<SignupFormValues> = object({
 //   email: string()
 //     .required(t`Please provide your email address`)
 //     .email(t`Please provide a valid email address`),
 //   password: string().required(t`Please provide a password`),
 // })
 
-const Cumino: FC = () => {
-  return <div>Yes!</div>
-}
-
-export const LoginStoryProps = (): // override?: {
-// props?: Partial<LoginProps>
-// formValues?: Partial<LoginFormValues>
-// formConfig?: Partial<FormikConfig<LoginFormValues>>
+export const SignupStoryProps = (): // override?: {
+// props?: Partial<SignupProps>
+// formValues?: Partial<SignupFormValues>
+// formConfig?: Partial<FormikConfig<SignupFormValues>>
 // }
-LoginProps => {
+SignupProps => {
   return {
-    loginItems: [
-      { Icon: PrimaryButton, Panel: FileUploader },
-      { Icon: SecondaryButton, Panel: Cumino },
+    signupItems: [
+      { Icon: SimpleEmailAuth.Icon, Panel: SimpleEmailAuth.Panel },
+      // { Icon: PrimaryButton, Panel: FileUploader },
+      // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
     headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
     // accessHeaderProps: AccessHeaderStoryProps,
-    // form: useFormik<LoginFormValues>({
+    // form: useFormik<SignupFormValues>({
     //   validationSchema,
     //   initialValues: { email: '', password: '', ...override?.formValues },
-    //   onSubmit: action('submit login'),
+    //   onSubmit: action('submit Signup'),
     //   ...override?.formConfig,
     // }),
     // wrongCreds: false,
@@ -56,20 +53,20 @@ LoginProps => {
     // ...override?.props,
   }
 }
-// export const LoginStoryProps: LoginP = {
-//   page: 'login',
+// export const SignupStoryProps: SignupP = {
+//   page: 'Signup',
 //   headerProps: MinimalisticHeaderStoryProps,
 //   //   homeHrpef: href('Landing/Logged In'),
 //   // organization: { ...SimpleLayoutTitleStoryProps },
 // }
 
 export const Default = () => {
-  const props = LoginStoryProps()
-  return <Login {...props} />
+  const props = SignupStoryProps()
+  return <Signup {...props} />
 }
 
 export const Error = () => {
-  const props = LoginStoryProps()
+  const props = SignupStoryProps()
   // {
   // formConfig: {
   //   initialErrors: {
@@ -84,10 +81,10 @@ export const Error = () => {
     // props.form.submitForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return <Login {...props} />
+  return <Signup {...props} />
 }
 export const WrongCredentials = () => {
-  const props = LoginStoryProps()
+  const props = SignupStoryProps()
   //   {
   //   props: {
   //     wrongCreds: true,
@@ -97,7 +94,7 @@ export const WrongCredentials = () => {
     // props.form.submitForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return <Login {...props} />
+  return <Signup {...props} />
 }
 
 export default meta

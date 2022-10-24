@@ -6,7 +6,7 @@ import {
   Loading,
   PrimaryButton,
   Switch,
-} from '@moodlenet/react-app/ui.mjs'
+} from '@moodlenet/component-library'
 import { registries } from '@moodlenet/react-app/web-lib.mjs'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { DeployedPkgInfo } from '../../types.mjs'
@@ -35,7 +35,8 @@ const DevModeBtn: FC = () => {
 }
 const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  const { pkgId, pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } = useContext(MainContext)
+  const { pkgId, pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } =
+    useContext(MainContext)
   const [myPkg] = pkgs
   // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
 
@@ -89,10 +90,16 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                     noHover={isInstalling}
                     onClick={install}
                   >
-                    <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
+                    <div
+                      className="loading"
+                      style={{ visibility: isInstalling ? 'visible' : 'hidden' }}
+                    >
                       <Loading color="white" />
                     </div>
-                    <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
+                    <div
+                      className="label"
+                      style={{ visibility: isInstalling ? 'hidden' : 'visible' }}
+                    >
                       Install
                     </div>
                   </PrimaryButton>
@@ -104,7 +111,10 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects
-                .filter(respObj => !extInfoList.find(({ packageJson: { name } }) => respObj.pkgName === name))
+                .filter(
+                  respObj =>
+                    !extInfoList.find(({ packageJson: { name } }) => respObj.pkgName === name),
+                )
                 .filter(
                   respObj =>
                     ![
@@ -117,7 +127,9 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                 )
                 .map(respObj => {
                   // const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
-                  var [extName, description] = respObj.description ? respObj.description.split('\n') : ['', '']
+                  var [extName, description] = respObj.description
+                    ? respObj.description.split('\n')
+                    : ['', '']
                   extName = extName ? extName : ''
                   description = description ? description : ''
                   return (
@@ -129,9 +141,15 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                       } /* onClick={() => setSelectedPackage(o.package.name)} */
                     >
                       {/* <PackageIcon /> */}
-                      <div className="logo" style={{ background: getPastelColor(getNumberFromString(extName), 0.5) }}>
+                      <div
+                        className="logo"
+                        style={{ background: getPastelColor(getNumberFromString(extName), 0.5) }}
+                      >
                         <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
-                        <div className="circle" style={{ background: getPastelColor(getNumberFromString(extName)) }} />
+                        <div
+                          className="circle"
+                          style={{ background: getPastelColor(getNumberFromString(extName)) }}
+                        />
                       </div>
                       <div className="info">
                         <div className="title">{extName}</div>

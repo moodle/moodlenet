@@ -1,5 +1,5 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { Card, PrimaryButton } from '@moodlenet/react-app/ui.mjs'
+import { Card, PrimaryButton } from '@moodlenet/component-library'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities.js'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
@@ -33,7 +33,11 @@ const Packages: FC<PackagesProps> = () => {
         var { displayName, description } = extNameDescription(pkgInfo.packageJson)
         // const extName = extInfo.packageInfo.packageJson.@moodlenet/displayName
         return (
-          <div className="package" key={pkgInfo.pkgId.name} onClick={() => setSelectedExtConfig(pkgInfo)}>
+          <div
+            className="package"
+            key={pkgInfo.pkgId.name}
+            onClick={() => setSelectedExtConfig(pkgInfo)}
+          >
             {/* <PackageIcon /> */}
             <div
               className="logo"
@@ -80,7 +84,10 @@ const Packages: FC<PackagesProps> = () => {
         </div>
       )}
       {selectedExtConfig && (
-        <ExtensionConfig pkgInfo={selectedExtConfig} onClickBackBtn={() => setSelectedExtConfig(null)} />
+        <ExtensionConfig
+          pkgInfo={selectedExtConfig}
+          onClickBackBtn={() => setSelectedExtConfig(null)}
+        />
       )}
     </>
   )
