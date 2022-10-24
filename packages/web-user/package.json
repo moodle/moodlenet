@@ -33,6 +33,8 @@
     "@moodlenet/react-app": "^0.1.0"
   },
   "devDependencies": {
+    "yup": "^0.32.11",
+    "@lingui/macro": "^3.14.0",
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",

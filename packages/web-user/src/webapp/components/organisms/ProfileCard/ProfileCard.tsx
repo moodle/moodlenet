@@ -60,7 +60,6 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   //   e.stopPropagation()
   //   uploadAvatarRef.current?.click()
   // }
-  console.log(isAuthenticated)
 
   const background = {
     backgroundImage: 'url(' + backgroundUrl + ')',
