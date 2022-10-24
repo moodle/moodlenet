@@ -27,9 +27,9 @@ export type UserProps = {
 
 export type HeaderProps = {
   headerTitleProps: HeaderTitleProps
-  leftItems: ReactNode[]
-  centerItems: ReactNode[]
-  rightItems: ReactNode[]
+  leftItems?: ReactNode[]
+  centerItems?: ReactNode[]
+  rightItems?: ReactNode[]
   user?: UserProps
 }
 
@@ -127,17 +127,20 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({
 
   const { logo, smallLogo, url } = headerTitleProps
 
-  const updatedLeftItems = leftItems.concat([
+  const updatedLeftItems = (leftItems ?? []).concat([
     <HeaderTitle key="header-title" logo={logo} smallLogo={smallLogo} url={url} />,
   ])
-  const updatedCenterItems = centerItems.concat([
+
+  const updatedCenterItems = (centerItems ?? []).concat([
     <Searchbox key="searchbox" placeholder="Search for open education content" />,
   ])
-  const updatedRightItems = rightItems.concat([
+
+  const updatedRightItems = (rightItems ?? []).concat([
     user && addMenu,
     user && avatarMenu,
     !user && accessButtons,
   ])
+
   // const profileMenuItem: HeaderAvatarMenuItemRegItem = {
   //   Text: 'Profile',
   //   Icon: <div style={avatar} className="avatar" />,
