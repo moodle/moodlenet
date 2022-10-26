@@ -1,5 +1,5 @@
 import { MinimalisticHeaderProps } from '@moodlenet/component-library'
-import { SimpleLayout } from '@moodlenet/react-app'
+import { SimpleLayout } from '@moodlenet/react-app/ui.mjs'
 import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
