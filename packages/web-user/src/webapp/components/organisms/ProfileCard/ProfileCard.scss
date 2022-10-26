@@ -59,50 +59,46 @@
       }
     }
   }
-  > .actions {
-    width: auto;
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px 20px 0 0;
-    height: 42px;
-    > .edit-save {
-      width: 40px;
-      > *,
-      > * > * {
-        width: 100%;
-        > svg {
-          width: 18px;
-          height: 18px;
-        }
-      }
-      > .primary-button {
-        display: grid;
-        grid-template-columns: 1fr;
-        > div {
-          &.loading {
-            display: flex;
-            visibility: visible;
-            width: 100%;
-            align-items: center;
-            justify-content: center;
-          }
-        }
-
-        &.loading {
-          pointer-events: none;
-        }
-      }
-    }
-  }
-
-  > .info {
-    padding: 18px 40px 0 40px;
+  > .content {
+    padding: 0 40px 0 40px;
     display: flex;
     flex-direction: column;
     gap: 20px;
 
-    @media (max-width: 550px) {
-      padding-top: 5px;
+    > .actions {
+      width: auto;
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 20px 0 0;
+      height: 42px;
+      > .edit-save {
+        width: 40px;
+        > *,
+        > * > * {
+          width: 100%;
+          > svg {
+            width: 18px;
+            height: 18px;
+          }
+        }
+        > .primary-button {
+          display: grid;
+          grid-template-columns: 1fr;
+          > div {
+            &.loading {
+              display: flex;
+              visibility: visible;
+              width: 100%;
+              align-items: center;
+              justify-content: center;
+            }
+          }
+
+          &.loading {
+            pointer-events: none;
+          }
+        }
+      }
     }
 
     > .input-text-field,
@@ -135,6 +131,10 @@
         width: 100%;
         font-size: 22px;
         gap: 6px;
+
+        @media (max-width: 550px) {
+          margin-top: -14px;
+        }
 
         > .display-name {
           width: fit-content;

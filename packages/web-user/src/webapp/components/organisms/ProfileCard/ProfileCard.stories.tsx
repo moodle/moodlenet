@@ -33,15 +33,16 @@ export const LoggedIn = () => {
   return <ProfileCard {...props} />
 }
 
-// export const Owner = () => {
-//   const props = getProfileCardStoryProps({
-//     props: {
-//       showAccountApprovedSuccessAlert: true,
-//       isApproved: true,
-//     },
-//   })
-//   return <ProfileCard {...props} />
-// }
+export const Owner = () => {
+  const props = getProfileCardStoryProps({
+    props: {
+      isOwner: true,
+      // showAccountApprovedSuccessAlert: true,
+      // isApproved: true,
+    },
+  })
+  return <ProfileCard {...props} />
+}
 // export const Approved = () => {
 //   const props = getProfileCardStoryProps({
 //     props: {
