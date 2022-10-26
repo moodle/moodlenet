@@ -10,28 +10,58 @@
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
 // import { InputTextField } from '@moodlenet/component-library/ui/components/atoms/InputTextField/InputTextField.js'
-import { InputTextField, Modal } from '@moodlenet/component-library'
-import { FC, useState } from 'react'
+import { Edit, Save } from '@material-ui/icons'
+import {
+  InputTextField,
+  Modal,
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from '@moodlenet/component-library'
+import { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
+import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {
+  contentItems?: ReactNode[]
+  topItems?: ReactNode[]
+  titleItems?: ReactNode[]
+  subtitleItems?: ReactNode[]
   displayName: string
+  description: string
   avatarUrl?: string
   backgroundUrl?: string
   location?: string
   siteUrl?: string
   isAuthenticated: boolean
   isEditing?: boolean
+  isOwner?: boolean
+  isApproved?: boolean
+  userId: string
+  showAccountApprovedSuccessAlert?: boolean
+  setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
+  toggleIsEditing(): unknown
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
+  topItems,
+  titleItems,
+  subtitleItems,
+  contentItems,
   displayName,
+  description,
+  userId,
   avatarUrl,
   backgroundUrl,
   location,
   siteUrl,
   isEditing,
   isAuthenticated,
+  isOwner,
+  isApproved,
+  showAccountApprovedSuccessAlert,
+  setShowUserIdCopiedAlert,
+  toggleIsEditing,
 }) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
@@ -73,6 +103,115 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     backgroundSize: 'cover',
   }
 
+  const actions = isOwner && (
+    <div className="edit-save">
+      {isEditing ? (
+        <PrimaryButton
+          // className={`${editForm.isSubmitting ? 'loading' : ''}`}
+          color="green"
+          onClick={toggleIsEditing}
+        >
+          {/* {editForm.isSubmitting ? (
+            <div className="loading">
+              <Loading color="white" />
+            </div>
+          ) : ( */}
+          <Save />
+          {/* )} */}
+        </PrimaryButton>
+      ) : (
+        <SecondaryButton onClick={toggleIsEditing} color="orange">
+          <Edit />
+        </SecondaryButton>
+      )}
+    </div>
+  )
+
+  const title = (
+    <div className="display-name">
+      {/* {editForm.values.displayName} */}
+      {displayName}
+    </div>
+  )
+
+  const descriptionField = isEditing ? (
+    <InputTextField
+      textAreaAutoSize={true}
+      textarea={true}
+      displayMode={true}
+      className="underline"
+      placeholder="What should others know about you?"
+      name="description"
+    />
+  ) : (
+    <div className="description">{description}</div>
+  )
+
+  const approvedIcon = !isEditing && isOwner && isApproved && (
+    <abbr className={`approved-icon`} title={/* t */ `Approved`}>
+      <ApprovedIcon
+        className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`}
+      />
+    </abbr>
+  )
+
+  const copyId = () => {
+    navigator.clipboard.writeText(userId)
+    setShowUserIdCopiedAlert(false)
+    setTimeout(() => {
+      setShowUserIdCopiedAlert(true)
+    }, 100)
+  }
+
+  const copyIdButton = !isEditing && isOwner && (
+    <abbr className={`user-id`} title={/* t */ `Click to copy your ID to the clipboard`}>
+      <TertiaryButton className="copy-id" onClick={copyId}>
+        Copy ID
+      </TertiaryButton>
+    </abbr>
+  )
+
+  const updatedTopItems = <div className="actions">{(topItems ?? []).concat(actions)}</div>
+  const updatedTitleItems = (titleItems ?? []).concat([title, approvedIcon, copyIdButton])
+
+  const cardHeader = (
+    <div className="profile-card-header">
+      <div className="title">{updatedTitleItems}</div>
+
+      <div className="subtitle">
+        {/* {editForm.values.displayName && (
+          <span>
+        <span className="at-symbol">@</span>
+        {editForm.values.displayName}
+      </span>
+    )}
+
+    {editForm.values.organizationName && editForm.values.organizationName !== '' && (
+      <span>{editForm.values.organizationName}</span>
+    )} */}
+
+        <span>{location}</span>
+        {/* {editForm.values.location && editForm.values.location !== '' && (
+      <span>{editForm.values.location}</span>
+      )}
+      
+      {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
+        <a href={editForm.values.siteUrl} target="_blank" rel="noreferrer">
+        {editForm.values.siteUrl}
+        </a> 
+      )}*/}
+        <a href={siteUrl} target="_blank" rel="noreferrer">
+          {siteUrl}
+        </a>
+      </div>
+    </div>
+  )
+  const updatedContentItems = (subtitleItems ?? []).concat([
+    updatedTopItems,
+    cardHeader,
+    descriptionField,
+  ])
+
   return (
     <div className="profile-card">
       {isShowingBackground && backgroundUrl && (
@@ -111,53 +250,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         }}
         onClick={() => !isEditing && setIsShowingAvatar(true)}
       ></div>
-      <div className="actions"></div>
-
-      <div className="info">
-        <div className="profile-card-header">
-          <div className="title">
-            <div className="display-name">
-              {/* {editForm.values.displayName} */}
-              {displayName}
-            </div>
-          </div>
-
-          <div className="subtitle">
-            {/* {editForm.values.displayName && (
-              <span>
-                <span className="at-symbol">@</span>
-                {editForm.values.displayName}
-              </span>
-            )}
-
-            {editForm.values.organizationName && editForm.values.organizationName !== '' && (
-              <span>{editForm.values.organizationName}</span>
-            )} */}
-
-            <span>{location}</span>
-            {/* {editForm.values.location && editForm.values.location !== '' && (
-              <span>{editForm.values.location}</span>
-              )}
-              
-              {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
-                <a href={editForm.values.siteUrl} target="_blank" rel="noreferrer">
-                {editForm.values.siteUrl}
-                </a> 
-              )}*/}
-            <a href={siteUrl} target="_blank" rel="noreferrer">
-              {siteUrl}
-            </a>
-          </div>
-        </div>
-        <InputTextField
-          textAreaAutoSize={true}
-          textarea={true}
-          displayMode={true}
-          className="underline"
-          placeholder="What should others know about you?"
-          name="description"
-        />
-      </div>
+      <div className="content">{updatedContentItems}</div>
     </div>
   )
 }

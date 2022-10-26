@@ -85,29 +85,63 @@ export const LoggedIn: ProfileStory = () => {
 export const Owner: ProfileStory = () => {
   const props = getProfileStoryProps({
     props: {
-      profileCardProps: getProfileCardStoryProps(),
-      // { props: { isOwner: true } }
-      //   collectionCardPropsList: [
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //   ],
-      //   resourceCardPropsList: [
-      //     ResourceCardOwnerPrivateStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //     ResourceCardOwnerPrivateStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //   ],
+      profileCardProps: getProfileCardStoryProps(
+        { props: { isOwner: true } },
+
+        //   collectionCardPropsList: [
+        //     CollectionCardOwnerPrivateStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerPrivateStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //   ],
+        //   resourceCardPropsList: [
+        //     ResourceCardOwnerPrivateStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //     ResourceCardOwnerPrivateStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //   ],
+      ),
+    },
+  })
+  return <Profile {...props} />
+}
+export const Editting: ProfileStory = () => {
+  const props = getProfileStoryProps({
+    props: {
+      profileCardProps: getProfileCardStoryProps(
+        { props: { isOwner: true, isEditing: true } },
+
+        //   collectionCardPropsList: [
+        //     CollectionCardOwnerPrivateStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerPrivateStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //   ],
+        //   resourceCardPropsList: [
+        //     ResourceCardOwnerPrivateStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //     ResourceCardOwnerPrivateStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //   ],
+      ),
     },
   })
   return <Profile {...props} />
@@ -117,7 +151,7 @@ export const Approved: ProfileStory = () => {
   const props = getProfileStoryProps({
     props: {
       profileCardProps: getProfileCardStoryProps({
-        // props: { isOwner: true, isApproved: true },
+        props: { isOwner: true, isApproved: true },
       }),
       //   collectionCardPropsList: [
       //     CollectionCardOwnerPrivateStoryProps(

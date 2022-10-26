@@ -1,4 +1,5 @@
 // import { t } from '@lingui/macro'
+import { action } from '@storybook/addon-actions'
 import { mixed, object, SchemaOf, string } from 'yup'
 import { people } from '../../../helpers/factories.js'
 import { fileExceedsMaxUploadSize, randomIntFromInterval } from '../../../helpers/utilities.js'
@@ -41,14 +42,16 @@ export const getProfileCardStoryProps = (overrides?: {
   const person = people[randomIntFromInterval(0, 3)]
   return {
     displayName: person?.displayName ?? '',
+    description:
+      'Rainforest ecosystems advisor. Providing support on the foundation of new nature reserves and protected areas.',
     location: 'Australia',
     siteUrl: 'https://iuri.is/',
     avatarUrl: person?.avatarUrl,
     backgroundUrl: person?.backgroundUrl,
     isAuthenticated: false,
-    // isOwner: false,
-    // userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
-    // setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
+    isOwner: false,
+    userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
+    setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
     // setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
     // setIsReporting: action('setIsReporting'),
     // approveUserForm: useFormik({
@@ -68,7 +71,7 @@ export const getProfileCardStoryProps = (overrides?: {
     //   initialValues: {},
     //   onSubmit: action('request Approval'),
     // }),
-    // toggleIsEditing: action('toogle Is Editing'),
+    toggleIsEditing: action('toggle Is Editing'),
     // openSendMessage: action('open Send Message'),
     // editForm: useFormik<ProfileFormValues>({
     //   onSubmit: action('submit edit'),
