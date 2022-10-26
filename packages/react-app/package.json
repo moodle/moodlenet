@@ -47,8 +47,8 @@
   },
   "author": "",
   "peerDependencies": {
-    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/http-server": "^0.1.0",
@@ -56,8 +56,8 @@
     "@moodlenet/organization": "^0.1.0"
   },
   "devDependencies": {
-    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/http-server": "^0.1.0",
