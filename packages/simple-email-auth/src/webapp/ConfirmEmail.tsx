@@ -21,7 +21,7 @@ export const ConfirmEmail: FC = () => {
       .then(res => (res.success ? '' : `couldn't authenticate`))
       .catch(e => String(e))
       .then(setErrMsg)
-  }, [])
+  }, [auth, params])
 
   return (
     <MainLayout>
