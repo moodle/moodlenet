@@ -12,21 +12,23 @@
 // import { InputTextField } from '@moodlenet/component-library/ui/components/atoms/InputTextField/InputTextField.js'
 import { Edit, Save } from '@material-ui/icons'
 import {
+  AddonItem,
   InputTextField,
   Modal,
   PrimaryButton,
   SecondaryButton,
+  sortAddonItems,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {
-  contentItems?: ReactNode[]
-  topItems?: ReactNode[]
-  titleItems?: ReactNode[]
-  subtitleItems?: ReactNode[]
+  contentItems?: AddonItem[]
+  topItems?: AddonItem[]
+  titleItems?: AddonItem[]
+  subtitleItems?: AddonItem[]
   displayName: string
   description: string
   avatarUrl?: string
@@ -171,14 +173,27 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </abbr>
   )
 
-  const updatedTopItems = <div className="actions">{(topItems ?? []).concat(actions)}</div>
-  const updatedTitleItems = (titleItems ?? []).concat([title, approvedIcon, copyIdButton])
+  const updatedTopItems = (
+    <div className="actions">{sortAddonItems((topItems ?? []).concat(actions))}</div>
+  )
+  const updatedTitleItems = sortAddonItems(
+    (titleItems ?? []).concat([title, approvedIcon, copyIdButton]),
+  )
+  const updatedSubtitleItems = sortAddonItems(
+    (titleItems ?? []).concat([
+      <span key="location">{location}</span>,
+      <a href={siteUrl} target="_blank" rel="noreferrer" key="site-url">
+        {siteUrl}
+      </a>,
+    ]),
+  )
 
   const cardHeader = (
     <div className="profile-card-header">
       <div className="title">{updatedTitleItems}</div>
 
       <div className="subtitle">
+        {updatedSubtitleItems}
         {/* {editForm.values.displayName && (
           <span>
         <span className="at-symbol">@</span>
@@ -190,7 +205,6 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       <span>{editForm.values.organizationName}</span>
     )} */}
 
-        <span>{location}</span>
         {/* {editForm.values.location && editForm.values.location !== '' && (
       <span>{editForm.values.location}</span>
       )}
@@ -200,17 +214,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         {editForm.values.siteUrl}
         </a> 
       )}*/}
-        <a href={siteUrl} target="_blank" rel="noreferrer">
-          {siteUrl}
-        </a>
       </div>
     </div>
   )
-  const updatedContentItems = (subtitleItems ?? []).concat([
-    updatedTopItems,
-    cardHeader,
-    descriptionField,
-  ])
+  const updatedContentItems = sortAddonItems(
+    (contentItems ?? []).concat([updatedTopItems, cardHeader, descriptionField]),
+  )
 
   return (
     <div className="profile-card">

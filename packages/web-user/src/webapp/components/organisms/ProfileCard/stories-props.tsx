@@ -52,6 +52,7 @@ export const getProfileCardStoryProps = (overrides?: {
     isOwner: false,
     userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
     setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
+    contentItems: [],
     // setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
     // setIsReporting: action('setIsReporting'),
     // approveUserForm: useFormik({

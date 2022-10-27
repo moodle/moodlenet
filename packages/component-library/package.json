@@ -25,7 +25,7 @@
   "description": "Web application\nFrontend interface to interact with the backend",
   "main": "./lib/components.mjs",
   "exports": {
-    ".": "./lib/components.mjs",
+    ".": "./lib/ui.mjs",
     "./stories": "./lib/stories.mjs"
   },
   "scripts": {
