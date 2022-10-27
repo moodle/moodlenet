@@ -1,6 +1,6 @@
-import { HeaderIconType } from '@moodlenet/component-library'
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
+import { HeaderIconType } from '../../../component-library/lib/ui.mjs'
 
 export const Text = 'Profile'
 // export const Path = '/profile'

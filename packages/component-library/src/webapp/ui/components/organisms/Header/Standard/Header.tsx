@@ -165,9 +165,9 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({
     <div className="header">
       <div className="content">
         <div className="left">{updatedLeftItems}</div>
-        <div className="center">{updatedCenterItems.map(Item => Item)}</div>
+        <div className="center">{updatedCenterItems}</div>
         <div className="right">
-          {updatedRightItems.map(Item => Item)}
+          {updatedRightItems}
           {/* {rightComponents.entries.flatMap(({ pkg, item: { Component } }, index) => {
             return <Component key={`${pkg.id}:${index}`} />
           })} */}

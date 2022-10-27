@@ -1,4 +1,4 @@
-import { HeaderAvatarMenuItemRegItem } from '@moodlenet/component-library'
+import { HeaderAvatarMenuItemRegItem } from '../../../component-library/lib/ui.mjs'
 import { ClassName, Icon, Position, Text } from './Header.js'
 
 export const HeaderProfileStoryProps: HeaderAvatarMenuItemRegItem = {

@@ -44,7 +44,9 @@
         "react-app dev-build",
         "simple-email-auth dev-build",
         "web-user dev-build",
-        "component-library dev-build"
+        "component-library dev-build",
+        "dev-assistant",
+        "storybook"
       ],
       "presentation": {
         "echo": true,
@@ -243,6 +245,21 @@
       "group": "build",
       "label": "passport-auth dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "label": "dev-assistant",
+      "type": "shell",
+      "command": "yarn dev-assistant",
+      "group": "build"
+    },
+    {
+      "label": "storybook",
+      "type": "shell",
+      "command": "cd storybook && yarn run storybook",
+      "windows": {
+        "command": "cd storybook; yarn run storybook"
+      },
+      "group": "build"
     }
   ]
 }
