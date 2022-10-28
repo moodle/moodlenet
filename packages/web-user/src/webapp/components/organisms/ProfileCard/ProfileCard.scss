@@ -221,6 +221,7 @@
         @media (min-width: 450px) {
           &:not(.edit) > *:not(:first-child):before {
             content: '·';
+            padding-right: 6px;
           }
         }
 
@@ -238,10 +239,6 @@
                 color: #757575;
               }
             }
-          }
-
-          &:not(:first-child) {
-            gap: 6px;
           }
 
           > .at-symbol {

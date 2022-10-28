@@ -51,15 +51,19 @@ export const getProfileCardStoryProps = (overrides?: {
     isAuthenticated: false,
     isOwner: false,
     userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
-    setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
     contentItems: [],
-    // setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
+    bottomItems: [{ item: <div></div>, position: 2 }],
+    subtitleItems: [],
+
+    profileUrl: 'profile.url',
+    setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
+    setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
+    toggleIsEditing: action('toggle Is Editing'),
     // setIsReporting: action('setIsReporting'),
     // approveUserForm: useFormik({
     //   initialValues: {},
     //   onSubmit: action('approve User'),
     // }),
-    // profileUrl: 'profile.url',
     // unapproveUserForm: useFormik({
     //   initialValues: {},
     //   onSubmit: action('unapprove User'),
@@ -72,7 +76,6 @@ export const getProfileCardStoryProps = (overrides?: {
     //   initialValues: {},
     //   onSubmit: action('request Approval'),
     // }),
-    toggleIsEditing: action('toggle Is Editing'),
     // openSendMessage: action('open Send Message'),
     // editForm: useFormik<ProfileFormValues>({
     //   onSubmit: action('submit edit'),

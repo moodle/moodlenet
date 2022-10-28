@@ -10,9 +10,10 @@
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { ProfileFormValues } from '../../../pages/Profile/types'
 // import { InputTextField } from '@moodlenet/component-library/ui/components/atoms/InputTextField/InputTextField.js'
-import { Edit, Save } from '@material-ui/icons'
+import { Edit, Flag, Save, Share } from '@material-ui/icons'
 import {
   AddonItem,
+  FloatingMenu,
   InputTextField,
   Modal,
   PrimaryButton,
@@ -20,28 +21,35 @@ import {
   sortAddonItems,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {
+  displayName: string
+  description: string
+  userId: string
+  profileUrl: string
+  isAuthenticated: boolean
   contentItems?: AddonItem[]
   topItems?: AddonItem[]
   titleItems?: AddonItem[]
   subtitleItems?: AddonItem[]
-  displayName: string
-  description: string
+  bottomItems?: AddonItem[]
   avatarUrl?: string
   backgroundUrl?: string
   location?: string
   siteUrl?: string
-  isAuthenticated: boolean
   isEditing?: boolean
   isOwner?: boolean
+  isAdmin?: boolean
   isApproved?: boolean
-  userId: string
+  isFollowing?: boolean
+  isElegibleForApproval?: boolean
+  isWaitingApproval?: boolean
   showAccountApprovedSuccessAlert?: boolean
   setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
   toggleIsEditing(): unknown
 }
 
@@ -49,10 +57,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   topItems,
   titleItems,
   subtitleItems,
+  bottomItems,
   contentItems,
   displayName,
   description,
   userId,
+  profileUrl,
   avatarUrl,
   backgroundUrl,
   location,
@@ -60,26 +70,31 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   isEditing,
   isAuthenticated,
   isOwner,
+  isAdmin,
   isApproved,
+  isFollowing,
+  isElegibleForApproval,
+  isWaitingApproval,
   showAccountApprovedSuccessAlert,
   setShowUserIdCopiedAlert,
+  setShowUrlCopiedAlert,
   toggleIsEditing,
 }) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   // const shouldShowErrors = !!editForm.submitCount
-  // const [_isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
+  const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-  // const setIsShowingSmallCardHelper = () => {
-  //   setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
-  // }
+  const setIsShowingSmallCardHelper = () => {
+    setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
+  }
 
-  // useLayoutEffect(() => {
-  //   window.addEventListener('resize', setIsShowingSmallCardHelper)
-  //   return () => {
-  //     window.removeEventListener('resize', setIsShowingSmallCardHelper)
-  //   }
-  // }, [])
+  useLayoutEffect(() => {
+    window.addEventListener('resize', setIsShowingSmallCardHelper)
+    return () => {
+      window.removeEventListener('resize', setIsShowingSmallCardHelper)
+    }
+  }, [])
 
   // const uploadBackgroundRef = useRef<HTMLInputElement>(null)
   // const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
@@ -165,6 +180,14 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     }, 100)
   }
 
+  const copyUrl = () => {
+    navigator.clipboard.writeText(profileUrl)
+    setShowUrlCopiedAlert(false)
+    setTimeout(() => {
+      setShowUrlCopiedAlert(true)
+    }, 100)
+  }
+
   const copyIdButton = !isEditing && isOwner && (
     <abbr className={`user-id`} title={/* t */ `Click to copy your ID to the clipboard`}>
       <TertiaryButton className="copy-id" onClick={copyId}>
@@ -180,7 +203,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     (titleItems ?? []).concat([title, approvedIcon, copyIdButton]),
   )
   const updatedSubtitleItems = sortAddonItems(
-    (titleItems ?? []).concat([
+    (subtitleItems ?? []).concat([
       <span key="location">{location}</span>,
       <a href={siteUrl} target="_blank" rel="noreferrer" key="site-url">
         {siteUrl}
@@ -217,8 +240,143 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       </div>
     </div>
   )
+
+  const approvalInfo = isOwner && !isApproved && !isWaitingApproval && (
+    <div className="not-approved-warning">
+      {
+        isElegibleForApproval
+          ? // <Trans>
+            `We need to approve your account to make your content public.
+          Press the button below for account approval.`
+          : // </Trans>
+            // <Trans>
+            ` We need to approve your account to make your content public.
+          Upload 5 good-quality resources and click the button below for
+          account approval.`
+        // </Trans>
+      }
+    </div>
+  )
+
+  const bottomButtons = [
+    isOwner && !isApproved /* && !isWaitingApproval */ && (
+      <PrimaryButton
+        disabled={!isElegibleForApproval}
+        // onClick={requestApprovalForm.submitForm}
+      >
+        {/* <Trans> */}
+        Request approval
+        {/* </Trans> */}
+      </PrimaryButton>
+    ),
+    isOwner && isWaitingApproval && (
+      <SecondaryButton disabled={true}>
+        {/* <Trans> */}
+        Waiting for approval
+        {/* </Trans> */}
+      </SecondaryButton>
+    ),
+    isAdmin && !isApproved && (
+      <PrimaryButton /* onClick={approveUserForm.submitForm} */ color="green">
+        {/* <Trans> */}
+        Approve
+        {/* </Trans> */}
+      </PrimaryButton>
+    ),
+    isAdmin && isApproved && (
+      <SecondaryButton
+        // onClick={unapproveUserForm.submitForm}
+        color="red"
+      >
+        {/* <Trans> */}
+        Unapprove
+        {/* </Trans> */}
+      </SecondaryButton>
+    ),
+    !isOwner && !isFollowing && (
+      <PrimaryButton
+        disabled={!isAuthenticated}
+        // onClick={toggleFollowForm.submitForm}
+        className="following-button"
+      >
+        {/* <Trans> */}
+        Follow
+        {/* </Trans> */}
+      </PrimaryButton>
+    ),
+    !isOwner && isFollowing && (
+      <SecondaryButton
+        disabled={!isAuthenticated}
+        // onClick={toggleFollowForm.submitForm}
+        className="following-button"
+        color="orange"
+      >
+        {/* <Trans> */}
+        Following
+        {/* </Trans> */}
+      </SecondaryButton>
+    ),
+    !isOwner && (
+      <SecondaryButton
+        color="grey"
+        className={`message`}
+        disabled={!isAuthenticated}
+        // onClick={openSendMessage}
+      >
+        {/* <Trans> */}
+        Message
+        {/* </Trans> */}
+      </SecondaryButton>
+      // <TertiaryButton
+      //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+      //   onClick={openSendMessage}
+      // >
+      //   <MailOutlineIcon />
+      // </TertiaryButton>
+    ),
+    isAuthenticated && !isOwner && (
+      <FloatingMenu
+        menuContent={[
+          <div tabIndex={0} onClick={copyUrl} key="share">
+            <Share />
+            {/* <Trans> */}
+            Share
+            {/* </Trans> */}
+          </div>,
+          <div tabIndex={0} /* onClick={() => setIsReporting(true)} */ key="report">
+            <Flag />
+            {/* <Trans> */}
+            Report
+            {/* </Trans> */}
+          </div>,
+        ]}
+        hoverElement={
+          isShowingSmallCard ? (
+            <SecondaryButton color="grey" className={`more small`}>
+              <div className="three-dots">...</div>
+            </SecondaryButton>
+          ) : (
+            <SecondaryButton color="grey" className={`more big`}>
+              <div className="text">More</div>
+            </SecondaryButton>
+          )
+        }
+      />
+    ),
+  ]
+
+  const updatedBottomItems = (
+    <div className="buttons">{sortAddonItems((bottomItems ?? []).concat(bottomButtons))}</div>
+  )
+
   const updatedContentItems = sortAddonItems(
-    (contentItems ?? []).concat([updatedTopItems, cardHeader, descriptionField]),
+    (contentItems ?? []).concat([
+      updatedTopItems,
+      cardHeader,
+      descriptionField,
+      approvalInfo,
+      updatedBottomItems,
+    ]),
   )
 
   return (

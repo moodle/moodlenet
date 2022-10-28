@@ -57,7 +57,7 @@ export const addonItemToReactNodes = (items: AddonItem[]): ReactNode[] => {
 
 export const sortAddonItems = (items: AddonItem[]): ReactNode[] => {
   return addonItemToReactNodes(
-    positionAddonItems(items).sort(
+    positionAddonItems(items.filter(item => item !== null && item !== undefined)).sort(
       (a, b) =>
         (determineIfAddonPositionedItem(a) ? a.position : 0) -
         (determineIfAddonPositionedItem(b) ? b.position : 0),
