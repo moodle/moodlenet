@@ -58,7 +58,7 @@ export const getProfileStoryProps = (overrides?: {
     //   ResourceCardLoggedInStoryProps,
     //   ResourceCardLoggedInStoryProps,
     // ],
-    // displayName: 'Juanito',
+    displayName: 'Juanito Rodriguez',
     ...overrides?.props,
   }
 }

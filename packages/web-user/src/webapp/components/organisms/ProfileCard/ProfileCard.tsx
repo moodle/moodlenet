@@ -48,6 +48,7 @@ export type ProfileCardProps = {
   isElegibleForApproval?: boolean
   isWaitingApproval?: boolean
   showAccountApprovedSuccessAlert?: boolean
+  openSendMessage(): unknown
   setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
   setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
   toggleIsEditing(): unknown
@@ -76,6 +77,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   isElegibleForApproval,
   isWaitingApproval,
   showAccountApprovedSuccessAlert,
+  openSendMessage,
   setShowUserIdCopiedAlert,
   setShowUrlCopiedAlert,
   toggleIsEditing,
@@ -321,18 +323,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         color="grey"
         className={`message`}
         disabled={!isAuthenticated}
-        // onClick={openSendMessage}
+        onClick={openSendMessage}
       >
         {/* <Trans> */}
         Message
         {/* </Trans> */}
       </SecondaryButton>
-      // <TertiaryButton
-      //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
-      //   onClick={openSendMessage}
-      // >
-      //   <MailOutlineIcon />
-      // </TertiaryButton>
     ),
     isAuthenticated && !isOwner && (
       <FloatingMenu
