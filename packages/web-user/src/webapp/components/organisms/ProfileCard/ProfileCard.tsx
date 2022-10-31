@@ -51,6 +51,7 @@ export type ProfileCardProps = {
   openSendMessage(): unknown
   setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
   setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setIsReporting: Dispatch<SetStateAction<boolean>>
   toggleIsEditing(): unknown
 }
 
@@ -81,6 +82,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   setShowUserIdCopiedAlert,
   setShowUrlCopiedAlert,
   toggleIsEditing,
+  setIsReporting,
 }) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
@@ -339,7 +341,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             Share
             {/* </Trans> */}
           </div>,
-          <div tabIndex={0} /* onClick={() => setIsReporting(true)} */ key="report">
+          <div tabIndex={0} onClick={() => setIsReporting(true)} key="report">
             <Flag />
             {/* <Trans> */}
             Report
