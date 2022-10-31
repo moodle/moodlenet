@@ -52,7 +52,7 @@ export const getProfileCardStoryProps = (overrides?: {
     isOwner: false,
     userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
     contentItems: [],
-    bottomItems: [{ item: <div></div>, position: 2 }],
+    bottomItems: [],
     subtitleItems: [],
 
     profileUrl: 'profile.url',
@@ -76,7 +76,7 @@ export const getProfileCardStoryProps = (overrides?: {
     //   initialValues: {},
     //   onSubmit: action('request Approval'),
     // }),
-    // openSendMessage: action('open Send Message'),
+    openSendMessage: action('Open Send Message'),
     // editForm: useFormik<ProfileFormValues>({
     //   onSubmit: action('submit edit'),
     //   validationSchema,
