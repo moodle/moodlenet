@@ -1,5 +1,5 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { Ciccio } from '../../../../../../../extensions-manager/lib/webapp/Ciccio.js'
+// import { Ciccio } from '../../../../../../../extensions-manager/lib/webapp/Ciccio.js'
 
 import { Card, CardProps } from './Card.js'
 

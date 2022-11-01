@@ -39,12 +39,14 @@ export const positionAddonItems = (items: AddonItem[]): AddonItem[] => {
   return items.map((item, i) => (item.position ? item : { ...item, position: i }))
 }
 
-export const sortAddonItems = (items: AddonItem[]): AddonItem[] => {
-  return positionAddonItems(items.filter(item => item !== null && item !== undefined)).sort(
-    (a, b) => (a.position ?? 0) - (b.position ?? 0),
+export const sortAddonItems = (items: (AddonItem | false | undefined | null)[]): ReactNode[] => {
+  return addonItemsToReactNodes(
+    positionAddonItems(items.filter((item): item is AddonItem => !!item)).sort(
+      (a, b) => (a.position ?? 0) - (b.position ?? 0),
+    ),
   )
 }
 
-export const AddonItemsToReactNodes = (items: AddonItem[]): ReactNode[] => {
-  return items.map(({ Item, key }) => <Item key={key} />)
+export const addonItemsToReactNodes = (items: AddonItem[]): ReactNode[] => {
+  return items.map(({ Item }) => Item)
 }

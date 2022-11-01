@@ -126,33 +126,30 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     backgroundSize: 'cover',
   }
 
-  const editButton: AddonItem = canEdit && {
-    Item: () => {
-      return (
-        <div className="edit-save">
-          {isEditing ? (
-            <PrimaryButton
-              // className={`${editForm.isSubmitting ? 'loading' : ''}`}
-              color="green"
-              onClick={toggleIsEditing}
-            >
-              {/* {editForm.isSubmitting ? (
+  const editButton: AddonItem = {
+    Item: (
+      <div className="edit-save">
+        {isEditing ? (
+          <PrimaryButton
+            // className={`${editForm.isSubmitting ? 'loading' : ''}`}
+            color="green"
+            onClick={toggleIsEditing}
+          >
+            {/* {editForm.isSubmitting ? (
             <div className="loading">
               <Loading color="white" />
             </div>
           ) : ( */}
-              <Save />
-              {/* )} */}
-            </PrimaryButton>
-          ) : (
-            <SecondaryButton onClick={toggleIsEditing} color="orange">
-              <Edit />
-            </SecondaryButton>
-          )}
-        </div>
-      )
-    },
-    key: 'edit-save',
+            <Save />
+            {/* )} */}
+          </PrimaryButton>
+        ) : (
+          <SecondaryButton onClick={toggleIsEditing} color="orange">
+            <Edit />
+          </SecondaryButton>
+        )}
+      </div>
+    ),
   }
 
   // .filter((model): model is AddonItem => model !== undefined)
@@ -164,7 +161,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
   )
 
-  const descriptionField: AddonItem = isEditing ? (
+  const descriptionField = isEditing ? (
     <InputTextField
       textAreaAutoSize={true}
       textarea={true}
@@ -177,7 +174,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     <div className="description">{description}</div>
   )
 
-  const approvedIcon = !isEditing && isOwner && isApproved && (
+  const approvedIcon = (
     <abbr className={`approved-icon`} title={/* t */ `Approved`}>
       <ApprovedIcon
         className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`}
@@ -201,7 +198,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     }, 100)
   }
 
-  const copyIdButton = !isEditing && isOwner && (
+  const copyIdButton = (
     <abbr className={`user-id`} title={/* t */ `Click to copy your ID to the clipboard`}>
       <TertiaryButton className="copy-id" onClick={copyId}>
         Copy ID
@@ -210,17 +207,28 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   )
 
   const updatedTopItems = (
-    <div className="actions">{sortAddonItems((topItems ?? []).concat(actions))}</div>
+    <div className="actions">{sortAddonItems([canEdit && editButton].concat(topItems ?? []))}</div>
   )
   const updatedTitleItems = sortAddonItems(
-    (titleItems ?? []).concat([title, approvedIcon, copyIdButton]),
+    (titleItems ?? []).concat([
+      { Item: title },
+      ...(!isEditing && isOwner && isApproved ? [{ Item: approvedIcon }] : []),
+      ...(!isEditing && isOwner ? [{ Item: copyIdButton }] : []),
+    ]),
   )
   const updatedSubtitleItems = sortAddonItems(
     (subtitleItems ?? []).concat([
-      <span key="location">{location}</span>,
-      <a href={siteUrl} target="_blank" rel="noreferrer" key="site-url">
-        {siteUrl}
-      </a>,
+      {
+        Item: <span key="location">{location}</span>,
+      },
+
+      {
+        Item: (
+          <a key="site-url" href={siteUrl} target="_blank" rel="noreferrer">
+            {siteUrl}
+          </a>
+        ),
+      },
     ]),
   )
 
