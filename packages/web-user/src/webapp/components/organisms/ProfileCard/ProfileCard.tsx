@@ -42,6 +42,7 @@ export type ProfileCardProps = {
   siteUrl?: string
   isEditing?: boolean
   isOwner?: boolean
+  canEdit?: boolean
   isAdmin?: boolean
   isApproved?: boolean
   isFollowing?: boolean
@@ -72,6 +73,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   isEditing,
   isAuthenticated,
   isOwner,
+  canEdit,
   isAdmin,
   isApproved,
   isFollowing,
@@ -124,29 +126,36 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     backgroundSize: 'cover',
   }
 
-  const actions = isOwner && (
-    <div className="edit-save">
-      {isEditing ? (
-        <PrimaryButton
-          // className={`${editForm.isSubmitting ? 'loading' : ''}`}
-          color="green"
-          onClick={toggleIsEditing}
-        >
-          {/* {editForm.isSubmitting ? (
+  const editButton: AddonItem = canEdit && {
+    Item: () => {
+      return (
+        <div className="edit-save">
+          {isEditing ? (
+            <PrimaryButton
+              // className={`${editForm.isSubmitting ? 'loading' : ''}`}
+              color="green"
+              onClick={toggleIsEditing}
+            >
+              {/* {editForm.isSubmitting ? (
             <div className="loading">
               <Loading color="white" />
             </div>
           ) : ( */}
-          <Save />
-          {/* )} */}
-        </PrimaryButton>
-      ) : (
-        <SecondaryButton onClick={toggleIsEditing} color="orange">
-          <Edit />
-        </SecondaryButton>
-      )}
-    </div>
-  )
+              <Save />
+              {/* )} */}
+            </PrimaryButton>
+          ) : (
+            <SecondaryButton onClick={toggleIsEditing} color="orange">
+              <Edit />
+            </SecondaryButton>
+          )}
+        </div>
+      )
+    },
+    key: 'edit-save',
+  }
+
+  // .filter((model): model is AddonItem => model !== undefined)
 
   const title = (
     <div className="display-name">
@@ -155,7 +164,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
   )
 
-  const descriptionField = isEditing ? (
+  const descriptionField: AddonItem = isEditing ? (
     <InputTextField
       textAreaAutoSize={true}
       textarea={true}

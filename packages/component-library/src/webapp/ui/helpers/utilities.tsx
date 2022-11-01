@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { AddonItem, AddonPositionedItem } from '../types.js'
+import { AddonItem } from '../types.js'
 
 export const elementFullyInViewPort = (
   el: Element,
@@ -35,32 +35,16 @@ export const randomIntFromInterval = (min: number, max: number) => {
 export const fileExceedsMaxUploadSize = (size: number, max: number | null) =>
   max === null ? false : size > max
 
-export const determineIfAddonPositionedItem = (
-  toBeDetermined: AddonItem,
-): toBeDetermined is AddonPositionedItem => {
-  const toDetermine = (toBeDetermined as AddonPositionedItem).position
-  if (toDetermine || toDetermine === 0) {
-    return true
-  }
-  return false
+export const positionAddonItems = (items: AddonItem[]): AddonItem[] => {
+  return items.map((item, i) => (item.position ? item : { ...item, position: i }))
 }
 
-export const positionAddonItems = (items: AddonItem[]): AddonPositionedItem[] => {
-  return items.map((item, i) =>
-    determineIfAddonPositionedItem(item) ? item : { item: item, position: i },
+export const sortAddonItems = (items: AddonItem[]): AddonItem[] => {
+  return positionAddonItems(items.filter(item => item !== null && item !== undefined)).sort(
+    (a, b) => (a.position ?? 0) - (b.position ?? 0),
   )
 }
 
-export const addonItemToReactNodes = (items: AddonItem[]): ReactNode[] => {
-  return items.map(item => (determineIfAddonPositionedItem(item) ? item.item : item))
-}
-
-export const sortAddonItems = (items: AddonItem[]): ReactNode[] => {
-  return addonItemToReactNodes(
-    positionAddonItems(items.filter(item => item !== null && item !== undefined)).sort(
-      (a, b) =>
-        (determineIfAddonPositionedItem(a) ? a.position : 0) -
-        (determineIfAddonPositionedItem(b) ? b.position : 0),
-    ),
-  )
+export const AddonItemsToReactNodes = (items: AddonItem[]): ReactNode[] => {
+  return items.map(({ Item, key }) => <Item key={key} />)
 }
