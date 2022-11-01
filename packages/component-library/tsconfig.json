@@ -1,12 +1,8 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": ["lib"],
+  "exclude": ["node_modules", "lib"],
   "compilerOptions": {
-    "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "lib",
-    "paths": {
-      "ext-mng/*": ["../extensions-manager/lib/*"]
-    }
+    "outDir": "lib"
   }
 }
