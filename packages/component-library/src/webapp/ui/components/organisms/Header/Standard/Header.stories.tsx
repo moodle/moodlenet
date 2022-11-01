@@ -1,8 +1,8 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-import * as HeaderSettingsProps from '../../../../../../../../react-app/lib/webapp/ui/components/pages/Settings/Header.js'
-import { HeaderProfileStoryProps } from '../../../../../../../../web-user/lib/webapp/Header.stories.js'
+// import * as HeaderSettingsProps from '../../../../../../../../react-app/lib/webapp/ui/components/pages/Settings/Header.js'
+// import { HeaderProfileStoryProps } from '../../../../../../../../web-user/lib/webapp/Header.stories.js'
 import {
   HeaderTitleOrganizationStoryProps,
   HeaderTitleStoryProps,
