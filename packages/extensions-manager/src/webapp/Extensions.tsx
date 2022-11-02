@@ -1,4 +1,5 @@
-import { Card, MainLayout } from '@moodlenet/react-app/ui.mjs'
+import { Card, HeaderProps } from '@moodlenet/component-library'
+import { MainLayout } from '@moodlenet/react-app/ui'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import InstallExtension from './InstallExtension/InstallExtension.js'
 import { MainContext } from './MainComponent.js'
@@ -16,6 +17,7 @@ type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'Insta
 
 export type ExtensionsProps = {
   sectionProps: ModulesProps | ExtensionsProps
+  headerProps: HeaderProps
   section?: SectionNameType
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
 }
@@ -32,8 +34,7 @@ const sections: SectionType[] = [
   // { name: 'Modules', component: Modules, displayName: 'Modules' },
 ]
 
-const sectionProps = {}
-export const Extensions: FC = () => {
+export const Extensions: FC<ExtensionsProps> = ({ headerProps, sectionProps }) => {
   //   return (
   //     <ExtMngMainLayout>
   //       <ExtensionsBody sectionProps={sectionProps} />
@@ -80,10 +81,10 @@ export const Extensions: FC = () => {
         })
       : null
     setCurrentContent(content)
-  }, [currentSection])
+  }, [currentSection, sectionProps])
 
   return (
-    <MainLayout>
+    <MainLayout headerProps={headerProps}>
       <div className="extensions">
         <div className="left-menu">
           <Card>{menu}</Card>

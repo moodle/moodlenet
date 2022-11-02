@@ -25,7 +25,8 @@
   "description": "Web application\nFrontend interface to interact with the backend",
   "main": "./lib/components.mjs",
   "exports": {
-    ".": "./lib/components.mjs"
+    ".": "./lib/ui.mjs",
+    "./stories": "./lib/stories.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",

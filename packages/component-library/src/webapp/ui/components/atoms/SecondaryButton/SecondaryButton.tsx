@@ -21,7 +21,9 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
 }) => {
   return (
     <button
-      className={`secondary-button button ${className} ${color} hover-${onHoverColor} ${disabled ? 'disabled' : ''}`}
+      className={`secondary-button button ${className} ${color} hover-${onHoverColor} ${
+        disabled ? 'disabled' : ''
+      }`}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
       onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}

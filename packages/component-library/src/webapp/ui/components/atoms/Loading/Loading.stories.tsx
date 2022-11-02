@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof Loading> = {
   },
   excludeStories: ['LoadingStoryProps'],
   decorators: [
-    (Story) => (
+    Story => (
       <div
         style={{
           height: 100,
@@ -27,11 +27,9 @@ const meta: ComponentMeta<typeof Loading> = {
 
 export const LoadingStoryProps: LoadingProps = { color: 'orange', size: 40 }
 
-const LoadingStory: ComponentStory<typeof Loading> = (args) => (
-  <Loading {...args}></Loading>
-)
+const LoadingStory: ComponentStory<typeof Loading> = args => <Loading {...args}></Loading>
 
-export const LoadingDefault = LoadingStory.bind({})
-LoadingDefault.args = LoadingStoryProps
+export const Default = LoadingStory.bind({})
+Default.args = LoadingStoryProps
 
 export default meta
