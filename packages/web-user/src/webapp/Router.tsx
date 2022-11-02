@@ -1,6 +1,6 @@
 import { Route } from 'react-router-dom'
 import ProfilePage from './components/pages/Profile/Profile.js'
-import { getProfileStoryProps } from './components/pages/Profile/stories-props.js'
+// import { getProfileStoryProps } from './components/pages/Profile/stories-props.js'
 
 // export default () => {
 // const props = fakeProfilePageProps

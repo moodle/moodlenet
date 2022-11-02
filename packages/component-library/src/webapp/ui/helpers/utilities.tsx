@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import { AddonItem } from '../types.js'
+import { ReactElement } from 'react'
+import { AddonItem, AddonPositionedItem } from '../types.js'
 
 export const elementFullyInViewPort = (
   el: Element,
@@ -35,18 +35,39 @@ export const randomIntFromInterval = (min: number, max: number) => {
 export const fileExceedsMaxUploadSize = (size: number, max: number | null) =>
   max === null ? false : size > max
 
-export const positionAddonItems = (items: AddonItem[]): AddonItem[] => {
-  return items.map((item, i) => (item.position ? item : { ...item, position: i }))
+export const isAddonPositionedItem = (
+  toBeDetermined: AddonItem,
+): toBeDetermined is AddonPositionedItem => {
+  const toDetermine = (toBeDetermined as AddonPositionedItem).position
+  if (toDetermine || toDetermine === 0) {
+    return true
+  }
+  return false
 }
 
-export const sortAddonItems = (items: (AddonItem | false | undefined | null)[]): ReactNode[] => {
-  return addonItemsToReactNodes(
-    positionAddonItems(items.filter((item): item is AddonItem => !!item)).sort(
-      (a, b) => (a.position ?? 0) - (b.position ?? 0),
+export const isAddonItem = (
+  toBeDetermined: AddonItem | undefined | false | null,
+): toBeDetermined is AddonItem => {
+  const toDetermine = toBeDetermined as AddonItem
+  if (toDetermine || toDetermine === 0) {
+    return true
+  }
+  return false
+}
+
+export const positionAddonItems = (items: AddonItem[]): AddonPositionedItem[] => {
+  return items.map((item, i) => (isAddonPositionedItem(item) ? item : { Item: item, position: i }))
+}
+
+export const addonItemToReactElements = (items: AddonItem[]): ReactElement[] => {
+  return items.map(item => (isAddonPositionedItem(item) ? item.Item : item))
+}
+
+export const sortAddonItems = (items: (AddonItem | undefined | false | null)[]): ReactElement[] => {
+  return addonItemToReactElements(
+    positionAddonItems(items.filter(isAddonItem)).sort(
+      (a, b) =>
+        (isAddonPositionedItem(a) ? a.position : 0) - (isAddonPositionedItem(b) ? b.position : 0),
     ),
   )
-}
-
-export const addonItemsToReactNodes = (items: AddonItem[]): ReactNode[] => {
-  return items.map(({ Item }) => Item)
 }

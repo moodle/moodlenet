@@ -1,20 +1,17 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-// import * as HeaderSettingsProps from '../../../../../../../../react-app/lib/webapp/ui/components/pages/Settings/Header.js'
-// import { HeaderProfileStoryProps } from '../../../../../../../../web-user/lib/webapp/Header.stories.js'
-import {
-  HeaderTitleOrganizationStoryProps,
-  HeaderTitleStoryProps,
-} from '../HeaderTitle/HeaderTitle.stories.js'
-import Header, { HeaderProps, UserProps } from './Header.js'
+import { Header, HeaderProps, UserProps } from '@moodlenet/component-library'
+import { HeaderTitleStories } from '@moodlenet/component-library/stories'
+import * as HeaderSettingsProps from '@moodlenet/react-app/ui.mjs'
+import { HeaderStories } from '@moodlenet/web-user/stories'
 
 const user: UserProps = {
   logout: action('logout'),
   avatarUrl:
     'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
   avatarMenuItems: [
-    HeaderProfileStoryProps,
+    HeaderStories.HeaderProfileStoryProps,
     {
       Icon: HeaderSettingsProps.Icon,
       Text: HeaderSettingsProps.Text,
@@ -48,17 +45,17 @@ export const HeaderLoggedOutStoryProps: HeaderProps = {
   leftItems: [],
   centerItems: [],
   rightItems: [],
-  headerTitleProps: HeaderTitleStoryProps,
+  headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
 }
 
 export const HeaderLoggedOutOrganizationStoryProps: HeaderProps = {
   ...HeaderLoggedOutStoryProps,
-  headerTitleProps: HeaderTitleOrganizationStoryProps,
+  headerTitleProps: HeaderTitleStories.HeaderTitleOrganizationStoryProps,
 }
 
 export const HeaderLoggedInStoryProps: HeaderProps = {
   ...HeaderLoggedOutStoryProps,
-  headerTitleProps: HeaderTitleStoryProps,
+  headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
   user: user,
 }
 

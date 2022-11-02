@@ -255,9 +255,9 @@
     {
       "label": "storybook",
       "type": "shell",
-      "command": "cd storybook && yarn run storybook",
+      "command": "cd packages/storybook && yarn run storybook",
       "windows": {
-        "command": "cd storybook; yarn run storybook"
+        "command": "cd packages/storybook; yarn run storybook"
       },
       "group": "build"
     }

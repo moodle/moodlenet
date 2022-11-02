@@ -59,5 +59,9 @@
       "ignore": "**/*.*ts*",
       "delay": 300
     }
+  },
+  "exports": {
+    ".": "./lib/ui.mjs",
+    "./stories": "./lib/stories.mjs"
   }
 }

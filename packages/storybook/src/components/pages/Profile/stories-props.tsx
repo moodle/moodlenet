@@ -1,7 +1,5 @@
-import { MainLayoutStories } from '@moodlenet/react-app/stories'
-import { OverallCardStoryProps } from '../../molecules/OverallCard/OverallCard.stories.js'
-import { getProfileCardStoryProps } from '../../organisms/ProfileCard/stories-props.js'
-import { ProfileProps } from './Profile.js'
+import { getProfileCardStoryProps, ProfileProps } from '@moodlenet/web-user'
+import { OverallCardStories } from '@moodlenet/web-user/stories'
 
 // const editForm: ProfileFormValues = {
 //   displayName: 'Alberto Curcella',
@@ -15,6 +13,8 @@ import { ProfileProps } from './Profile.js'
 //   siteUrl: 'https://moodle.com',
 // }
 
+import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+
 export const getProfileStoryProps = (overrides?: {
   props?: Partial<ProfileProps>
   isAuthenticated?: boolean
@@ -27,8 +27,8 @@ export const getProfileStoryProps = (overrides?: {
   })
 
   return {
-    mainLayoutProps: MainLayoutStories.MainLayoutLoggedInStoryProps,
-    overallCardProps: OverallCardStoryProps,
+    mainLayoutProps: MainLayoutLoggedInStoryProps,
+    overallCardProps: OverallCardStories.OverallCardStoryProps,
     profileCardProps: ProfileCardStoryProps,
     // editForm: ProfileCardStoryProps.editForm,
     // sendEmailForm: useFormik<{ text: string }>({

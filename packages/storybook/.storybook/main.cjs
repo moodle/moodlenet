@@ -5,15 +5,14 @@ const { mergeConfig } = require('vite')
 const { readdirSync } = require('fs')
 
 const path = require('path')
-const packagesDirs = readdirSync(path.join('..')).map(pkg_name =>
-  path.join('..', pkg_name),
-)
+const packagesDirs = readdirSync(path.join('..')).map(pkg_name => path.join('..', pkg_name))
 
 module.exports = {
   stories: [
     '../../component-library/lib/webapp/ui/components/**/*.stories.js',
     '../../react-app/lib/webapp/ui/components/**/*.stories.js',
     '../../web-user/lib/webapp/components/**/*.stories.js',
+    '../src/components/**/*.stories.tsx',
     // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     //'../src/stories/*.stories.tsx',
     // '../../component-library/src/webapp/ui/components/atoms/Card/Card.stories.tsx',
@@ -21,7 +20,6 @@ module.exports = {
     // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     // '../../component-library/src/webapp/ui/components/organisms/Header/HeaderTitle/HeaderTitle.stories.tsx',
     // '../src/**/*.stories.mdx',
-    // '../src/**/*.stories.@(js|jsx|ts|tsx)',
     // '../../*/src/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [

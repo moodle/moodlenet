@@ -1,9 +1,10 @@
-import { ComponentType, FC, PropsWithChildren, ReactNode } from 'react'
+import { ComponentType, FC, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 // import { AuthCtx } from '../../../../../web-lib/auth.js'
 // import { RegistryEntry } from '../../../../../main-lib/registry'
 // import { MainContext } from '../../../../../MainContext.js'
 import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@material-ui/icons'
+import { AddonItem, sortAddonItems } from '../../../../../../ui.mjs'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu.js'
@@ -27,9 +28,9 @@ export type UserProps = {
 
 export type HeaderProps = {
   headerTitleProps: HeaderTitleProps
-  leftItems?: ReactNode[]
-  centerItems?: ReactNode[]
-  rightItems?: ReactNode[]
+  leftItems?: AddonItem[]
+  centerItems?: AddonItem[]
+  rightItems?: AddonItem[]
   user?: UserProps
 }
 
@@ -127,18 +128,21 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({
 
   const { logo, smallLogo, url } = headerTitleProps
 
-  const updatedLeftItems = (leftItems ?? []).concat([
+  const updatedLeftItems = sortAddonItems([
     <HeaderTitle key="header-title" logo={logo} smallLogo={smallLogo} url={url} />,
+    ...(leftItems ?? []),
   ])
 
-  const updatedCenterItems = (centerItems ?? []).concat([
+  const updatedCenterItems = sortAddonItems([
     <Searchbox key="searchbox" placeholder="Search for open education content" />,
+    ...(centerItems ?? []),
   ])
 
-  const updatedRightItems = (rightItems ?? []).concat([
+  const updatedRightItems = sortAddonItems([
     user && addMenu,
     user && avatarMenu,
     !user && accessButtons,
+    ...(rightItems ?? []),
   ])
 
   // const profileMenuItem: HeaderAvatarMenuItemRegItem = {
