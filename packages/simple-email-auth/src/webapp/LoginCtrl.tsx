@@ -3,6 +3,7 @@ import { FC, useCallback, useContext, useMemo, useState } from 'react'
 import { PanelProps } from './Login.js'
 import { MainContext } from './MainComponent.js'
 import * as LoginAddon from './Login.js'
+import { useFormik } from 'formik'
 
 // TODO : METTERE FORMIK qui
 
@@ -12,7 +13,7 @@ export const usePanelProps = (): PanelProps => {
   const [wrongCreds, setWrongCreds] = useState(false)
   const auth = useContext(AuthCtx)
 
-  const form = useFormik<LoginFormValues>({
+  const form = useFormik<LoginAddon.LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
       login(email, password)
@@ -52,12 +53,12 @@ export const usePanelProps = (): PanelProps => {
 
   const panelProps = useMemo<PanelProps>(() => {
     const props: PanelProps = {
-      login,
       wrongCreds,
+      form,
     }
 
     return props
-  }, [login, wrongCreds])
+  }, [form, wrongCreds])
 
   return panelProps
 }
