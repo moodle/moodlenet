@@ -1,4 +1,4 @@
-import { PrimaryButton, SecondaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
+import { PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { FC, useContext } from 'react'
 import './Login.scss'
 import { PassportContext } from './MainModule'
@@ -30,7 +30,10 @@ export const Panel: FC = () => {
       )}
       <SecondaryButton className="alternative-login-btn facebook" color="light-grey">
         <div className="icon">
-          <img alt="facebook login" src="https://d35aaqx5ub95lt.cloudfront.net/images/facebook-blue.svg" />
+          <img
+            alt="facebook login"
+            src="https://d35aaqx5ub95lt.cloudfront.net/images/facebook-blue.svg"
+          />
         </div>
         <div className="title">Login using Facebook</div>
       </SecondaryButton>

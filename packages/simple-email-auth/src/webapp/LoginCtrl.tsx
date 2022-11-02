@@ -1,4 +1,4 @@
-import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
+import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { PanelProps } from './Login.js'
 import { MainContext } from './MainComponent.js'

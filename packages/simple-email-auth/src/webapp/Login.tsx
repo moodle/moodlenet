@@ -1,8 +1,6 @@
-import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/react-app/ui.mjs'
-import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
+import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useContext, useState } from 'react'
-import { MainContext } from './MainComponent.js'
+import { FC } from 'react'
 
 /*** TEST  IS LINT REACT WORK --> this give error missing display name
 

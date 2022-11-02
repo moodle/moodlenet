@@ -3,7 +3,9 @@ export const adjustColor = (color: string, amount: number) => {
     '#' +
     color
       .replace(/^#/, '')
-      .replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2))
+      .replace(/../g, color =>
+        ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2),
+      )
   )
 }
 
@@ -180,10 +182,14 @@ export const getGrayScale = (color: HslType) => {
   const desaturatedColor = changeSaturation(color, 10)
   let grayScaleSet = {} as any
   for (let i = 14; i > 0; i--) {
-    grayScaleSet[`--color-light-gray-${i}`] = hslToHex(changeLightness(desaturatedColor, 54 + ratio * i))
+    grayScaleSet[`--color-light-gray-${i}`] = hslToHex(
+      changeLightness(desaturatedColor, 54 + ratio * i),
+    )
   }
   for (let i = 1; i < 14; i++) {
-    grayScaleSet[`--color-dark-gray-${i}`] = hslToHex(changeLightness(desaturatedColor, 46 - ratio * i))
+    grayScaleSet[`--color-dark-gray-${i}`] = hslToHex(
+      changeLightness(desaturatedColor, 46 - ratio * i),
+    )
   }
   return grayScaleSet
 }

@@ -10,6 +10,6 @@ const TertiaryButtonStory: ComponentStory<typeof TertiaryButton> = () => (
   <TertiaryButton>Tertiary Button</TertiaryButton>
 )
 
-export const TertiaryButtonDefault = TertiaryButtonStory.bind({})
+export const Default = TertiaryButtonStory.bind({})
 
 export default meta

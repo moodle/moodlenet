@@ -1,7 +1,10 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { HeaderTitleOrganizationStoryProps, HeaderTitleStoryProps } from '../HeaderTitle/HeaderTitle.stories.js'
+import {
+  HeaderTitleOrganizationStoryProps,
+  HeaderTitleStoryProps,
+} from '../HeaderTitle/HeaderTitle.stories.js'
 // import { href } from '../../../../elements/link'
-import MinimalisticHeader, { MinimalisticHeaderProps } from './MinimalisticHeader.js'
+import { MinimalisticHeader, MinimalisticHeaderProps } from './MinimalisticHeader.js'
 
 const meta: ComponentMeta<typeof MinimalisticHeader> = {
   title: 'Organisms/MinimalisticHeader',
@@ -15,22 +18,23 @@ const meta: ComponentMeta<typeof MinimalisticHeader> = {
 export const MinimalisticHeaderStoryProps: MinimalisticHeaderProps = {
   //   homeHref: href('Landing/Logged In'),
   page: 'login',
-  organization: {...HeaderTitleStoryProps}
+  headerTitleProps: HeaderTitleStoryProps,
 }
 
 export const MinimalisticHeaderOrganizationStoryProps: MinimalisticHeaderProps = {
   page: 'login',
   //   homeHref: href('Landing/Logged In'),
-  organization: {...HeaderTitleOrganizationStoryProps}
-    
+  headerTitleProps: HeaderTitleOrganizationStoryProps,
 }
 
-const MinimalisticHeaderStory: ComponentStory<typeof MinimalisticHeader> = args => <MinimalisticHeader {...args} />
+const MinimalisticHeaderStory: ComponentStory<typeof MinimalisticHeader> = args => (
+  <MinimalisticHeader {...args} />
+)
 
-export const MinimalisticHeaderDefault = MinimalisticHeaderStory.bind({})
-MinimalisticHeaderDefault.args = MinimalisticHeaderStoryProps
+export const Default = MinimalisticHeaderStory.bind({})
+Default.args = MinimalisticHeaderStoryProps
 
-export const MinimalisticHeaderOrganization = MinimalisticHeaderStory.bind({})
-MinimalisticHeaderOrganization.args = MinimalisticHeaderOrganizationStoryProps
+export const Organization = MinimalisticHeaderStory.bind({})
+Organization.args = MinimalisticHeaderOrganizationStoryProps
 
 export default meta

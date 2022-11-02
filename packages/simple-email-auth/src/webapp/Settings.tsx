@@ -1,5 +1,5 @@
 // import lib from 'moodlenet-react-app-lib'
-import { Card } from '@moodlenet/react-app/ui.mjs'
+import { Card } from '@moodlenet/component-library'
 import { FC } from 'react'
 import './Signup.scss'
 

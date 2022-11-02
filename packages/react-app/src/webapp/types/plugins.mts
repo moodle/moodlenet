@@ -1,6 +1,6 @@
 import { PkgIdentifier } from '@moodlenet/core'
 import { ComponentType, PropsWithChildren } from 'react'
-import { LocateApi } from '../../webapp/web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
+import { LocateApi } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
 // export type WebAppShellOf<PlgMod> = PlgMod extends WebappPluginMainModule<
 //   infer _OfExt,
