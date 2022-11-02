@@ -4,11 +4,34 @@ import { PanelProps } from './Login.js'
 import { MainContext } from './MainComponent.js'
 import * as LoginAddon from './Login.js'
 
+// TODO : METTERE FORMIK qui
+
 export const usePanelProps = (): PanelProps => {
   const { pkgs } = useContext(MainContext)
   const [authPkgApis] = pkgs
   const [wrongCreds, setWrongCreds] = useState(false)
   const auth = useContext(AuthCtx)
+
+  const form = useFormik<LoginFormValues>({
+    initialValues: { email: '', password: '' },
+    async onSubmit({ email, password }) {
+      login(email, password)
+      /*
+      setWrongCreds(false)
+      const res = await authPkgApis.call('login')({
+        email,
+        password,
+      })
+
+      if (!res.success) {
+        setWrongCreds(true)
+        return
+      }
+      setWrongCreds(false)
+      auth.setSessionToken(res.sessionToken)
+      */
+    },
+  })
 
   const login = useCallback(
     async (email: string, password: string) => {

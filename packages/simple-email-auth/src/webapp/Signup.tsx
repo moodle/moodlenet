@@ -5,38 +5,21 @@ import {
   TertiaryButton,
 } from '@moodlenet/react-app/ui.mjs'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import './Signup.scss'
 
 export type SignupFormValues = { email: string; password: string; displayName: string }
 
 export type SignupProps = {
-  signUp(formValue: SignupFormValues): Promise<{ success: true } | { success: false; msg: string }>
+  form: ReturnType<typeof useFormik<SignupFormValues>>
+  errMsg: string
+  emailSent: boolean
 }
 
 export const Icon: FC = () => {
   return <PrimaryButton color="blue">Use email</PrimaryButton>
 }
-export const Panel: FC<SignupProps> = ({ signUp }) => {
-  const [emailSent, setEmailSent] = useState(false)
-  const [errMsg, setErrMsg] = useState('')
-  const form = useFormik<SignupFormValues>({
-    initialValues: { email: '', password: '', displayName: '' },
-    async onSubmit({ email, password, displayName }) {
-      setErrMsg('')
-      const res = await signUp({
-        displayName,
-        email,
-        password,
-      })
-
-      if (!res.success) {
-        setErrMsg(res.msg)
-        return
-      }
-      setEmailSent(true)
-    },
-  })
+export const Panel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
   const disable = emailSent || form.isSubmitting
