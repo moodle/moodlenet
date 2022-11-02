@@ -1,12 +1,13 @@
-import { FC, useContext } from 'react'
-import defaultBackgroud from '../../../../static/img/default-landing-background.png'
+import { FC } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
-import MainLayout from '../../layout/MainLayout/MainLayout.js'
-import { SettingsCtx } from '../Settings/SettingsContext.js'
 import { PrimaryButton } from '@moodlenet/component-library'
+import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
 
 export type LandingProps = {
+  mainLayoutProps: MainLayoutProps
+  title: string
+  subtitle: string
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
   // collectionCardPropsList: CP<CollectionCardProps>[]
   // resourceCardPropsList: CP<ResourceCardProps>[]
@@ -24,14 +25,10 @@ export type LandingProps = {
   // searchAuthorsHref: Href
 }
 
-export const Landing: FC<LandingProps> = () => {
-  return (
-    <MainLayout style={{ height: '100%' }}>
-      <LandingBody />
-    </MainLayout>
-  )
-}
-export const LandingBody: FC<LandingProps> = () =>
+export const Landing: FC<LandingProps> = ({
+  mainLayoutProps,
+  title,
+  subtitle,
   // {
   //   // searchResourcesHref,
   //   // searchAuthorsHref,
@@ -48,28 +45,32 @@ export const LandingBody: FC<LandingProps> = () =>
   //   // newResourceHref,
   //   // newCollectionHref,
   //   // setSearchText,
-  // },
+}) => {
   {
-    const setCtx = useContext(SettingsCtx)
+    const defaultBackground = new URL(
+      '../../../assets/img/default-landing-background.png',
+      import.meta.url,
+    ).href
     // const [isSearchboxInViewport, setIsSearchboxInViewport] =
     //   useState<boolean>(true)
     // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
 
     const background = {
-      backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackgroud + ')',
+      backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackground + ')',
       backgroundSize: 'cover',
     }
 
     return (
-      <div className="landing">
-        <div className="landing-header" style={background}>
-          <div className="landing-title">
-            <div className="title">{setCtx.organizationData.landingTitle}</div>
-            {/* <div className="title">{organization.title}</div> */}
-            <div className="subtitle">{setCtx.organizationData.landingSubtitle}</div>
-            {/* <div className="subtitle">{organization.subtitle}</div> */}
-          </div>
-          {/* <Searchbox
+      <MainLayout {...mainLayoutProps} style={{ height: '100%' }}>
+        <div className="landing">
+          <div className="landing-header" style={background}>
+            <div className="landing-title">
+              <div className="title">{title}</div>
+              {/* <div className="title">{organization.title}</div> */}
+              <div className="subtitle">{subtitle}</div>
+              {/* <div className="subtitle">{organization.subtitle}</div> */}
+            </div>
+            {/* <Searchbox
           // setSearchText={() => {
           //   return 'sdsf'
           // }}
@@ -80,16 +81,16 @@ export const LandingBody: FC<LandingProps> = () =>
           // setIsSearchboxInViewport={setIsSearchboxInViewport}
           marginTop={12}
         /> */}
-          <PrimaryButton
-            className="share-content"
-            color="blue"
-            onClick={() => alert('Nothing to see here, for the moment 🤫')}
-            // onClick={() => setIsCreatingContent(true)}
-          >
-            Share content
-          </PrimaryButton>
-        </div>
-        {/* <ListCard
+            <PrimaryButton
+              className="share-content"
+              color="blue"
+              onClick={() => alert('Nothing to see here, for the moment 🤫')}
+              // onClick={() => setIsCreatingContent(true)}
+            >
+              Share content
+            </PrimaryButton>
+          </div>
+          {/* <ListCard
             className="resources"
             content={resourceCardPropsList
               .slice(0, 10)
@@ -128,12 +129,12 @@ export const LandingBody: FC<LandingProps> = () =>
               .map((collectionCardProps) => (
                 <CollectionCard {...collectionCardProps} />
               ))}
-            title={
+              title={
               <div className="card-header">
                 <div className="info">
                   <div className="title">
                     Featured collections
-                  </div>
+                    </div>
                   <div className="subtitle">
                     Great collections of curated resources
                   </div>
@@ -144,7 +145,7 @@ export const LandingBody: FC<LandingProps> = () =>
                       See more collections
                     </Link>
                     <ArrowForwardRoundedIcon />
-                  </SecondaryButton>
+                    </SecondaryButton>
                 }
               </div>
             }
@@ -173,8 +174,8 @@ export const LandingBody: FC<LandingProps> = () =>
                   <SecondaryButton className="more" color="dark-blue">
                     <Link href={searchAuthorsHref}>
                       See more authors
-                    </Link>
-                    <ArrowForwardRoundedIcon />
+                      </Link>
+                      <ArrowForwardRoundedIcon />
                   </SecondaryButton>
                 }
               </div>
@@ -185,9 +186,11 @@ export const LandingBody: FC<LandingProps> = () =>
             maxHeight={267}
             // maxRows={1}
           /> */}
-        {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
-      </div>
+          {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
+        </div>
+      </MainLayout>
     )
   }
+}
 
 Landing.displayName = 'LandingPage'

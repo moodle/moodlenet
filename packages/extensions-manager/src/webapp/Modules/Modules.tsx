@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { Card, InputTextField, PrimaryButton } from '@moodlenet/react-app/ui.mjs'
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { MainContext } from '../MainComponent.js'
 import './styles.scss'
 

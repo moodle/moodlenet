@@ -6,10 +6,8 @@ const meta: ComponentMeta<typeof RoundButton> = {
   component: RoundButton,
 }
 
-const RoundButtonStory: ComponentStory<typeof RoundButton> = () => (
-  <RoundButton />
-)
+const RoundButtonStory: ComponentStory<typeof RoundButton> = () => <RoundButton />
 
-export const RoundButtonDefault = RoundButtonStory.bind({})
+export const Default = RoundButtonStory.bind({})
 
 export default meta

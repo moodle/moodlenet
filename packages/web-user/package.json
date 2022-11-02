@@ -33,6 +33,8 @@
     "@moodlenet/react-app": "^0.1.0"
   },
   "devDependencies": {
+    "yup": "^0.32.11",
+    "@lingui/macro": "^3.14.0",
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
@@ -45,10 +47,18 @@
     "typescript": "^4.7.2"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets",
-    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib"
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
+    "create-components-index": "vgis src/ui.mts"
   },
   "watch": {
+    "create-components-index": {
+      "patterns": [
+        "src/webapp/**/*"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
     "copy-assets": {
       "patterns": [
         "src/**/*"
@@ -57,5 +67,10 @@
       "ignore": "**/*.*ts*",
       "delay": 300
     }
+  },
+  "exports": {
+    ".": "./lib/main.mjs",
+    "./ui": "./lib/ui.mjs",
+    "./stories": "./lib/stories.mjs"
   }
 }

@@ -9,16 +9,14 @@ const meta: ComponentMeta<typeof Searchbox> = {
 
 export const SearchboxStoryProps: SearchboxProps = {
   placeholder: 'Start type to search',
-  
-//   searchText: '',
-//   setSearchText: action('Search Text'),
+
+  //   searchText: '',
+  //   setSearchText: action('Search Text'),
 }
 
-const SearchboxStory: ComponentStory<typeof Searchbox> = (args) => (
-  <Searchbox {...args} />
-)
+const SearchboxStory: ComponentStory<typeof Searchbox> = args => <Searchbox {...args} />
 
-export const SearchboxDefault = SearchboxStory.bind({})
-SearchboxDefault.args = SearchboxStoryProps
+export const Default = SearchboxStory.bind({})
+Default.args = SearchboxStoryProps
 
 export default meta

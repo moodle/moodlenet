@@ -1,9 +1,14 @@
-import { MainLayout } from '@moodlenet/react-app/ui.mjs'
-import { AuthCtx } from '@moodlenet/react-app/web-lib.mjs'
+import { MinimalisticHeaderProps } from '@moodlenet/component-library'
+import { SimpleLayout } from '@moodlenet/react-app/ui'
+import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-export const ConfirmEmail: FC = () => {
+export type ConfirmEmailProps = {
+  headerProps: MinimalisticHeaderProps
+}
+
+export const ConfirmEmail: FC<ConfirmEmailProps> = ({ headerProps }) => {
   const auth = useContext(AuthCtx)
 
   // const nav = useNavigate()
@@ -24,9 +29,14 @@ export const ConfirmEmail: FC = () => {
   }, [])
 
   return (
-    <MainLayout>
+    <SimpleLayout
+      headerProps={headerProps}
+      page="signup"
+      style={{ height: '100%' }}
+      contentStyle={{ padding: '0' }}
+    >
       <span>{errMsg ? `Something went wrong: ${errMsg}` : 'validating...'}</span>
-    </MainLayout>
+    </SimpleLayout>
   )
 }
 

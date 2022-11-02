@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
+import { ContentGraphProvider } from './components.mjs'
 import { MainContext, MainContextT, WebPkgDeps } from './MainContext.js'
 import * as registries from './registries.mjs'
-import { ContentGraphProvider } from './ui.mjs'
 import * as set from './ui/components/pages/Settings/SettingsContext.js'
 import { ReactAppMainComponent } from './web-lib.mjs'
 import * as auth from './web-lib/auth.js'

@@ -7,13 +7,13 @@ const meta: ComponentMeta<typeof Colorpicker> = {
   excludeStories: ['ColorpickerUnselected', 'ColorpickerSelected'],
 }
 
-const ColorpickerStory: ComponentStory<typeof Colorpicker> = (args) => (
-  <Colorpicker {...args} style={{color: 'blue'}}/>
+const ColorpickerStory: ComponentStory<typeof Colorpicker> = args => (
+  <Colorpicker {...args} style={{ color: 'blue' }} />
 )
 
-export const ColorpickerDefault: ColorpickerProps = {}
+export const Default: ColorpickerProps = {}
 
 export const Selected = ColorpickerStory.bind({})
-Selected.args = ColorpickerDefault
+Selected.args = Default
 
 export default meta

@@ -26,8 +26,9 @@
   "description": "Web application\nFrontend interface to interact with the backend",
   "exports": {
     ".": "./lib/main.mjs",
-    "./ui.mjs": "./lib/webapp/ui.mjs",
-    "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
+    "./stories": "./lib/webapp/stories.mjs",
+    "./ui": "./lib/webapp/ui.mjs",
+    "./web-lib": "./lib/webapp/web-lib.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets",
@@ -46,8 +47,8 @@
   },
   "author": "",
   "peerDependencies": {
-    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/http-server": "^0.1.0",
@@ -55,8 +56,8 @@
     "@moodlenet/organization": "^0.1.0"
   },
   "devDependencies": {
-    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
+    "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/content-graph": "^0.1.0",
     "@moodlenet/core": "^0.1.0",
     "@moodlenet/http-server": "^0.1.0",
