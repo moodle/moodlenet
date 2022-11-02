@@ -16,37 +16,17 @@ export const Icon: FC = () => {
 }
 
 export type PanelProps = {
-  login(email: string, password: string): void
+  form: ReturnType<typeof useFormik<LoginFormValues>>
   wrongCreds: boolean
 }
 
-export const Panel: FC<PanelProps> = ({ login, wrongCreds }) => {
+export const Panel: FC<PanelProps> = ({ wrongCreds, form }) => {
   /* const { pkgs } = useContext(MainContext)
   const [authPkgApis] = pkgs
 
   const auth = useContext(AuthCtx)
   const [wrongCreds, setWrongCreds] = useState(false)
 */
-  const form = useFormik<LoginFormValues>({
-    initialValues: { email: '', password: '' },
-    async onSubmit({ email, password }) {
-      login(email, password)
-      /*
-      setWrongCreds(false)
-      const res = await authPkgApis.call('login')({
-        email,
-        password,
-      })
-
-      if (!res.success) {
-        setWrongCreds(true)
-        return
-      }
-      setWrongCreds(false)
-      auth.setSessionToken(res.sessionToken)
-      */
-    },
-  })
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
   const disable = form.isSubmitting
