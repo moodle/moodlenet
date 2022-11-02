@@ -1,11 +1,4 @@
-// @index(['./**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
-export * from './apis.mjs'
-export * from './init.mjs'
-export * from './lib.mjs'
-export * from './main.mjs'
-export * from './stories.mjs'
-export * from './types.mjs'
-export * from './use-pkg-apis.mjs'
+// @index(['webapp/**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from './webapp/components/molecules/OverallCard/OverallCard.js'
 export * from './webapp/components/organisms/ProfileCard/ProfileCard.js'
 export * from './webapp/components/organisms/ProfileCard/stories-props.js'

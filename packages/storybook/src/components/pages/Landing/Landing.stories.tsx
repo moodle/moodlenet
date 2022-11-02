@@ -1,4 +1,4 @@
-import { Landing, LandingProps } from '@moodlenet/react-app/ui.mjs'
+import { Landing, LandingProps } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   MainLayoutLoggedInStoryProps,

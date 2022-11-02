@@ -220,9 +220,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   )
   const updatedTitleItems = sortAddonItems([approvedIcon, copyIdButton, ...(titleItems ?? [])])
   const updatedSubtitleItems = sortAddonItems([
-    <span key="location" key="location">
-      {location}
-    </span>,
+    <span key="location">{location}</span>,
     <a key="site-url" href={siteUrl} target="_blank" rel="noreferrer">
       {siteUrl}
     </a>,

@@ -5,7 +5,7 @@ import {
   ReportModal,
   Snackbar,
 } from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui.mjs'
+import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { ComponentType, FC, useState } from 'react'
 import { OverallCard, OverallCardProps } from '../../molecules/OverallCard/OverallCard.js'
 import { ProfileCard, ProfileCardProps } from '../../organisms/ProfileCard/ProfileCard.js'

@@ -2,7 +2,7 @@
 import { MinimalisticHeaderStories } from '@moodlenet/component-library/stories'
 import { ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
-import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/lib/webapp/Signup.js'
+// import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/lib/webapp/Signup.js'
 import { Signup, SignupProps } from './Signup.js'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
@@ -31,7 +31,7 @@ export const SignupStoryProps = (): // override?: {
 SignupProps => {
   return {
     signupItems: [
-      { Icon: SimpleEmailAuth.Icon, Panel: SimpleEmailAuth.Panel },
+      // { Icon: SimpleEmailAuth.Icon, Panel: SimpleEmailAuth.Panel },
       // { Icon: PrimaryButton, Panel: FileUploader },
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],

@@ -19,7 +19,7 @@ export const useSettingsProps = (): SettingsProps => {
   const { pkgId } = useContext(MainContext)
   const { registry: sectionsReg } = registries.settingsSections.useRegistry()
   // TODO This mainLayoutProps is hardcoded, needs to be fixed
-  const mainLayoutProps = MainLayoutLoggedInStoryProps
+  const mainLayoutProps = null //MainLayoutLoggedInStoryProps
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
       { pkgId, item: { Menu: () => <span>General</span>, Content: GeneralContent } },

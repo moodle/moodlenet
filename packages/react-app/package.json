@@ -27,8 +27,8 @@
   "exports": {
     ".": "./lib/main.mjs",
     "./stories": "./lib/webapp/stories.mjs",
-    "./ui.mjs": "./lib/webapp/ui.mjs",
-    "./web-lib.mjs": "./lib/webapp/web-lib.mjs"
+    "./ui": "./lib/webapp/ui.mjs",
+    "./web-lib": "./lib/webapp/web-lib.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets",

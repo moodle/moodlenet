@@ -1,4 +1,4 @@
-import { getProfileCardStoryProps, Profile } from '@moodlenet/web-user'
+import { getProfileCardStoryProps, Profile } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { getProfileStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'

@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import { Header, HeaderProps, UserProps } from '@moodlenet/component-library'
 import { HeaderTitleStories } from '@moodlenet/component-library/stories'
-import * as HeaderSettingsProps from '@moodlenet/react-app/ui.mjs'
+import * as HeaderSettingsProps from '@moodlenet/react-app/ui'
 import { HeaderStories } from '@moodlenet/web-user/stories'
 
 const user: UserProps = {

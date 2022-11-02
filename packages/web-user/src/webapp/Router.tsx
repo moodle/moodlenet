@@ -16,6 +16,6 @@ import ProfilePage from './components/pages/Profile/Profile.js'
 // }
 
 export default (
-  <Route index element={<ProfilePage {...getProfileStoryProps()} />} />
+  <Route index element={<ProfilePage {...({} as any)} />} />
   // <Route path={fakeProfilePageProps.profileCardProps.profileUrl} element={<ProfilePage {...fakeProfilePageProps} />} />
 )
