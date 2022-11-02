@@ -54,12 +54,11 @@ export const getProfileCardStoryProps = (overrides?: {
     contentItems: [],
     bottomItems: [],
     subtitleItems: [],
-
     profileUrl: 'profile.url',
     setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
     setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
     toggleIsEditing: action('toggle Is Editing'),
-    // setIsReporting: action('setIsReporting'),
+    setIsReporting: action('setIsReporting'),
     // approveUserForm: useFormik({
     //   initialValues: {},
     //   onSubmit: action('approve User'),

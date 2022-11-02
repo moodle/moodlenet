@@ -7,7 +7,7 @@ import {
   PrimaryButton,
   Switch,
 } from '@moodlenet/component-library'
-import { registries } from '@moodlenet/react-app/web-lib.mjs'
+import { registries } from '@moodlenet/react-app/web-lib'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { DeployedPkgInfo } from '../../types.mjs'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'

@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", ".storybook/Wrapper.tsx"],
+
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "paths": {
     "@/*": ["src/*"]

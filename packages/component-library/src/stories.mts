@@ -15,5 +15,4 @@ export * as SwitchStories from './webapp/ui/components/atoms/Switch/Switch.stori
 export * as TertiaryButtonStories from './webapp/ui/components/atoms/TertiaryButton/TertiaryButton.stories.js'
 export * as HeaderTitleStories from './webapp/ui/components/organisms/Header/HeaderTitle/HeaderTitle.stories.js'
 export * as MinimalisticHeaderStories from './webapp/ui/components/organisms/Header/Minimalistic/MinimalisticHeader.stories.js'
-export * as HeaderStories from './webapp/ui/components/organisms/Header/Standard/Header.stories.js'
 // @endindex
