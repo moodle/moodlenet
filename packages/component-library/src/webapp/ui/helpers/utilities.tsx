@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactElement } from 'react'
 import { AddonItem, AddonPositionedItem } from '../types.js'
 
 export const elementFullyInViewPort = (
@@ -35,7 +35,7 @@ export const randomIntFromInterval = (min: number, max: number) => {
 export const fileExceedsMaxUploadSize = (size: number, max: number | null) =>
   max === null ? false : size > max
 
-export const determineIfAddonPositionedItem = (
+export const isAddonPositionedItem = (
   toBeDetermined: AddonItem,
 ): toBeDetermined is AddonPositionedItem => {
   const toDetermine = (toBeDetermined as AddonPositionedItem).position
@@ -45,22 +45,29 @@ export const determineIfAddonPositionedItem = (
   return false
 }
 
+export const isAddonItem = (
+  toBeDetermined: AddonItem | undefined | false | null,
+): toBeDetermined is AddonItem => {
+  const toDetermine = toBeDetermined as AddonItem
+  if (toDetermine || toDetermine === 0) {
+    return true
+  }
+  return false
+}
+
 export const positionAddonItems = (items: AddonItem[]): AddonPositionedItem[] => {
-  return items.map((item, i) =>
-    determineIfAddonPositionedItem(item) ? item : { item: item, position: i },
-  )
+  return items.map((item, i) => (isAddonPositionedItem(item) ? item : { Item: item, position: i }))
 }
 
-export const addonItemToReactNodes = (items: AddonItem[]): ReactNode[] => {
-  return items.map(item => (determineIfAddonPositionedItem(item) ? item.item : item))
+export const addonItemToReactElements = (items: AddonItem[]): ReactElement[] => {
+  return items.map(item => (isAddonPositionedItem(item) ? item.Item : item))
 }
 
-export const sortAddonItems = (items: AddonItem[]): ReactNode[] => {
-  return addonItemToReactNodes(
-    positionAddonItems(items.filter(item => item !== null && item !== undefined)).sort(
+export const sortAddonItems = (items: (AddonItem | undefined | false | null)[]): ReactElement[] => {
+  return addonItemToReactElements(
+    positionAddonItems(items.filter(isAddonItem)).sort(
       (a, b) =>
-        (determineIfAddonPositionedItem(a) ? a.position : 0) -
-        (determineIfAddonPositionedItem(b) ? b.position : 0),
+        (isAddonPositionedItem(a) ? a.position : 0) - (isAddonPositionedItem(b) ? b.position : 0),
     ),
   )
 }

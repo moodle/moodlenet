@@ -13,7 +13,7 @@ export type SimpleLayoutProps = {
   children?: ReactNode
 }
 
-const SimpleLayout: FC<SimpleLayoutProps> = ({
+export const SimpleLayout: FC<SimpleLayoutProps> = ({
   headerProps,
   style,
   contentStyle,

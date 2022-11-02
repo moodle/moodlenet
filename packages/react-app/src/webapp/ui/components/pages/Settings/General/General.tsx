@@ -7,10 +7,6 @@ import { SettingsCtx } from '../SettingsContext.js'
 export const GeneralContent: FC = () => {
   const setCtx = useContext(SettingsCtx)
 
-  useEffect(() => {
-    form.setValues(setCtx.organizationData)
-  }, [setCtx.organizationData])
-
   const form = useFormik<OrganizationData>({
     initialValues: setCtx.organizationData,
     async onSubmit(data) {
@@ -18,6 +14,9 @@ export const GeneralContent: FC = () => {
       // console.log('save data')
     },
   })
+  useEffect(() => {
+    form.setValues(setCtx.organizationData)
+  }, [form, setCtx.organizationData])
 
   return (
     <>

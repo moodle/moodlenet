@@ -1,6 +1,9 @@
+import { Settings, SettingsProps } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { MainLayoutStories } from '../../../../stories.mjs'
-import { Settings, SettingsProps } from './Settings.js'
+import {
+  MainLayoutLoggedInStoryProps,
+  MainLayoutLoggedOutStoryProps,
+} from '../../layout/MainLayout/MainLayout.stories.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Settings> = {
@@ -14,13 +17,13 @@ const meta: ComponentMeta<typeof Settings> = {
 }
 
 export const SettingsLoggedOutStoryProps: SettingsProps = {
-  mainLayoutProps: MainLayoutStories.MainLayoutLoggedOutStoryProps,
+  mainLayoutProps: MainLayoutLoggedOutStoryProps,
   settingsItems: [],
 }
 
 export const SettingsLoggedInStoryProps: SettingsProps = {
   ...SettingsLoggedOutStoryProps,
-  mainLayoutProps: MainLayoutStories.MainLayoutLoggedInStoryProps,
+  mainLayoutProps: MainLayoutLoggedInStoryProps,
 }
 
 type SettingsStory = ComponentStory<typeof Settings>

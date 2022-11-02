@@ -1,5 +1,6 @@
-import { FC, PropsWithChildren, ReactNode } from 'react'
+import { FC, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
+import { AddonItem, sortAddonItems } from '../../../../../../ui.mjs'
 // import { MainContext } from '../../../../../MainContext.js'
 import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton.js'
 import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton.js'
@@ -9,9 +10,9 @@ import './MinimalisticHeader.scss'
 export type MinimalisticHeaderProps = {
   page: 'login' | 'signup' | 'activation' | 'rootLogin'
   headerTitleProps: HeaderTitleProps
-  leftItems?: ReactNode[]
-  centerItems?: ReactNode[]
-  rightItems?: ReactNode[]
+  leftItems?: AddonItem[]
+  centerItems?: AddonItem[]
+  rightItems?: AddonItem[]
 }
 
 export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = (
@@ -51,11 +52,14 @@ export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> 
     </div>
   )
 
-  const updatedLeftItems = (leftItems ?? []).concat([
+  const updatedLeftItems = sortAddonItems([
     <HeaderTitle key="header-title" logo={logo} smallLogo={smallLogo} url={url} />,
+    ...(leftItems ?? []),
   ])
-  const updatedCenterItems = (centerItems ?? []).concat([])
-  const updatedRightItems = (rightItems ?? []).concat([rightButtons])
+
+  const updatedCenterItems = sortAddonItems([...(centerItems ?? [])])
+
+  const updatedRightItems = sortAddonItems([rightButtons, ...(rightItems ?? [])])
 
   // const {
   // registries: {

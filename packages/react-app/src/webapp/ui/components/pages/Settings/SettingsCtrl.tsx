@@ -4,7 +4,6 @@ import { FC, useContext, useMemo } from 'react'
 import { MainContext } from '../../../../MainContext.js'
 import { registries } from '../../../../web-lib.mjs'
 import { RegistryEntry } from '../../../../web-lib/registry.js'
-import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import Appearance from './Appearance/Appearance.js'
 import { GeneralContent } from './General/General.js'
 import { Settings, SettingsItem, SettingsProps } from './Settings.js'
@@ -20,7 +19,7 @@ export const useSettingsProps = (): SettingsProps => {
   const { pkgId } = useContext(MainContext)
   const { registry: sectionsReg } = registries.settingsSections.useRegistry()
   // TODO This mainLayoutProps is hardcoded, needs to be fixed
-  const mainLayoutProps = MainLayoutLoggedInStoryProps
+  const mainLayoutProps = null //MainLayoutLoggedInStoryProps
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
       { pkgId, item: { Menu: () => <span>General</span>, Content: GeneralContent } },

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactElement } from 'react'
 
 export type Organization = {
   logo: string
@@ -7,8 +7,8 @@ export type Organization = {
 }
 
 export type AddonPositionedItem = {
-  item: ReactNode
+  Item: ReactElement
   position: number
 }
 
-export type AddonItem = ReactNode | AddonPositionedItem
+export type AddonItem = ReactElement | AddonPositionedItem
