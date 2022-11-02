@@ -126,36 +126,35 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     backgroundSize: 'cover',
   }
 
-  const editButton: AddonItem = {
-    Item: (
-      <div className="edit-save">
-        {isEditing ? (
-          <PrimaryButton
-            // className={`${editForm.isSubmitting ? 'loading' : ''}`}
-            color="green"
-            onClick={toggleIsEditing}
-          >
-            {/* {editForm.isSubmitting ? (
+  const editButton = canEdit && (
+    <div className="edit-save">
+      {isEditing ? (
+        <PrimaryButton
+          // className={`${editForm.isSubmitting ? 'loading' : ''}`}
+          color="green"
+          onClick={toggleIsEditing}
+          key="save-button"
+        >
+          {/* {editForm.isSubmitting ? (
             <div className="loading">
               <Loading color="white" />
             </div>
           ) : ( */}
-            <Save />
-            {/* )} */}
-          </PrimaryButton>
-        ) : (
-          <SecondaryButton onClick={toggleIsEditing} color="orange">
-            <Edit />
-          </SecondaryButton>
-        )}
-      </div>
-    ),
-  }
+          <Save />
+          {/* )} */}
+        </PrimaryButton>
+      ) : (
+        <SecondaryButton onClick={toggleIsEditing} color="orange" key="edit-button">
+          <Edit />
+        </SecondaryButton>
+      )}
+    </div>
+  )
 
   // .filter((model): model is AddonItem => model !== undefined)
 
   const title = (
-    <div className="display-name">
+    <div className="display-name" key="display-name">
       {/* {editForm.values.displayName} */}
       {displayName}
     </div>
@@ -169,13 +168,16 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       className="underline"
       placeholder="What should others know about you?"
       name="description"
+      key="description"
     />
   ) : (
-    <div className="description">{description}</div>
+    <div className="description" key="description">
+      {description}
+    </div>
   )
 
-  const approvedIcon = (
-    <abbr className={`approved-icon`} title={/* t */ `Approved`}>
+  const approvedIcon = !isEditing && isOwner && isApproved && (
+    <abbr className={`approved-icon`} title={/* t */ `Approved`} key="approved-icon">
       <ApprovedIcon
         className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`}
       />
@@ -198,8 +200,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     }, 100)
   }
 
-  const copyIdButton = (
-    <abbr className={`user-id`} title={/* t */ `Click to copy your ID to the clipboard`}>
+  const copyIdButton = !isEditing && isOwner && (
+    <abbr
+      className={`user-id`}
+      title={/* t */ `Click to copy your ID to the clipboard`}
+      key="user-id"
+    >
       <TertiaryButton className="copy-id" onClick={copyId}>
         Copy ID
       </TertiaryButton>
@@ -207,33 +213,24 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   )
 
   const updatedTopItems = (
-    <div className="actions">{sortAddonItems([canEdit && editButton].concat(topItems ?? []))}</div>
+    <div className="top-items" key="tops-items">
+      {sortAddonItems([editButton, ...(topItems ?? [])])}
+    </div>
+    // <div className="actions">{sortAddonItems((topItems ?? []).concat([editButton]))}</div>
   )
-  const updatedTitleItems = sortAddonItems(
-    (titleItems ?? []).concat([
-      { Item: title },
-      ...(!isEditing && isOwner && isApproved ? [{ Item: approvedIcon }] : []),
-      ...(!isEditing && isOwner ? [{ Item: copyIdButton }] : []),
-    ]),
-  )
-  const updatedSubtitleItems = sortAddonItems(
-    (subtitleItems ?? []).concat([
-      {
-        Item: <span key="location">{location}</span>,
-      },
-
-      {
-        Item: (
-          <a key="site-url" href={siteUrl} target="_blank" rel="noreferrer">
-            {siteUrl}
-          </a>
-        ),
-      },
-    ]),
-  )
+  const updatedTitleItems = sortAddonItems([approvedIcon, copyIdButton, ...(titleItems ?? [])])
+  const updatedSubtitleItems = sortAddonItems([
+    <span key="location" key="location">
+      {location}
+    </span>,
+    <a key="site-url" href={siteUrl} target="_blank" rel="noreferrer">
+      {siteUrl}
+    </a>,
+    ...(subtitleItems ?? []),
+  ])
 
   const cardHeader = (
-    <div className="profile-card-header">
+    <div className="profile-card-header" key="card-header">
       <div className="title">{updatedTitleItems}</div>
 
       <div className="subtitle">
@@ -263,7 +260,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   )
 
   const approvalInfo = isOwner && !isApproved && !isWaitingApproval && (
-    <div className="not-approved-warning">
+    <div className="not-approved-warning" key="approva-info">
       {
         isElegibleForApproval
           ? // <Trans>
@@ -283,6 +280,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     isOwner && !isApproved /* && !isWaitingApproval */ && (
       <PrimaryButton
         disabled={!isElegibleForApproval}
+        key="request-approval-btn"
         // onClick={requestApprovalForm.submitForm}
       >
         {/* <Trans> */}
@@ -291,14 +289,14 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       </PrimaryButton>
     ),
     isOwner && isWaitingApproval && (
-      <SecondaryButton disabled={true}>
+      <SecondaryButton disabled={true} key="waiting-for-approval-btn">
         {/* <Trans> */}
         Waiting for approval
         {/* </Trans> */}
       </SecondaryButton>
     ),
     isAdmin && !isApproved && (
-      <PrimaryButton /* onClick={approveUserForm.submitForm} */ color="green">
+      <PrimaryButton /* onClick={approveUserForm.submitForm} */ color="green" key="approve-btn">
         {/* <Trans> */}
         Approve
         {/* </Trans> */}
@@ -308,6 +306,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       <SecondaryButton
         // onClick={unapproveUserForm.submitForm}
         color="red"
+        key="unapprove-btn"
       >
         {/* <Trans> */}
         Unapprove
@@ -319,6 +318,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         disabled={!isAuthenticated}
         // onClick={toggleFollowForm.submitForm}
         className="following-button"
+        key="follow-btn"
       >
         {/* <Trans> */}
         Follow
@@ -331,6 +331,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         // onClick={toggleFollowForm.submitForm}
         className="following-button"
         color="orange"
+        key="following-btn"
       >
         {/* <Trans> */}
         Following
@@ -343,6 +344,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         className={`message`}
         disabled={!isAuthenticated}
         onClick={openSendMessage}
+        key="message-btn"
       >
         {/* <Trans> */}
         Message
@@ -376,23 +378,25 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             </SecondaryButton>
           )
         }
+        key="more-btn"
       />
     ),
   ]
 
   const updatedBottomItems = (
-    <div className="buttons">{sortAddonItems((bottomItems ?? []).concat(bottomButtons))}</div>
+    <div className="buttons" key="buttons">
+      {sortAddonItems([...bottomButtons, ...(bottomItems ?? [])])}
+    </div>
   )
 
-  const updatedContentItems = sortAddonItems(
-    (contentItems ?? []).concat([
-      updatedTopItems,
-      cardHeader,
-      descriptionField,
-      approvalInfo,
-      updatedBottomItems,
-    ]),
-  )
+  const updatedContentItems = sortAddonItems([
+    updatedTopItems,
+    cardHeader,
+    descriptionField,
+    approvalInfo,
+    updatedBottomItems,
+    ...(contentItems ?? []),
+  ])
 
   return (
     <div className="profile-card">
@@ -402,6 +406,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           closeButton={false}
           onClose={() => setIsShowingBackground(false)}
           style={{ maxWidth: '90%', maxHeight: '90%' }}
+          key="image-modal"
         >
           <img src={backgroundUrl} alt="Background" />
         </Modal>
@@ -412,6 +417,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           closeButton={false}
           onClose={() => setIsShowingAvatar(false)}
           style={{ maxWidth: '90%', maxHeight: '90%' }}
+          key="image-modal"
         >
           <img src={avatarUrl} alt="Avatar" />
         </Modal>

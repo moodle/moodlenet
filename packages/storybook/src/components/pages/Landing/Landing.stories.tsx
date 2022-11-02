@@ -1,6 +1,9 @@
+import { Landing, LandingProps } from '@moodlenet/react-app/ui.mjs'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { MainLayoutStories } from '../../../../stories.mjs'
-import { Landing, LandingProps } from './Landing.js'
+import {
+  MainLayoutLoggedInStoryProps,
+  MainLayoutLoggedOutStoryProps,
+} from '../../layout/MainLayout/MainLayout.stories.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Landing> = {
@@ -14,14 +17,14 @@ const meta: ComponentMeta<typeof Landing> = {
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
-  mainLayoutProps: MainLayoutStories.MainLayoutLoggedOutStoryProps,
+  mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
 }
 
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
-  mainLayoutProps: MainLayoutStories.MainLayoutLoggedInStoryProps,
+  mainLayoutProps: MainLayoutLoggedInStoryProps,
 }
 
 type LandingStory = ComponentStory<typeof Landing>

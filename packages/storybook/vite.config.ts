@@ -1,9 +1,13 @@
 import react from '@vitejs/plugin-react'
-import svgr from 'vite-plugin-svgr'
 import { defineConfig } from 'vite'
+import svgr from 'vite-plugin-svgr'
 
-console.log('sono da vite config')
-process.exit()
+module.exports = {
+  root: 'src',
+  build: {
+    outDir: '../lib',
+  },
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({

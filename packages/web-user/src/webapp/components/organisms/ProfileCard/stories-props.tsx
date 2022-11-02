@@ -54,7 +54,6 @@ export const getProfileCardStoryProps = (overrides?: {
     contentItems: [],
     bottomItems: [],
     subtitleItems: [],
-
     profileUrl: 'profile.url',
     setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
     setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
