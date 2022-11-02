@@ -1,8 +1,7 @@
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
-import { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { PanelProps } from './Login.js'
-import { MainContext } from './MainComponent.js'
-import * as LoginAddon from './Login.js'
+import { useCallback, useContext, useMemo, useState } from 'react'
+import { PanelProps } from './LoginComponent.js'
+import { MainContext } from '../MainComponent.js'
 
 export const usePanelProps = (): PanelProps => {
   const { pkgs } = useContext(MainContext)
@@ -37,10 +36,4 @@ export const usePanelProps = (): PanelProps => {
   }, [login, wrongCreds])
 
   return panelProps
-}
-
-export const LoginPanelCtrl: FC = () => {
-  const panelProps = usePanelProps()
-
-  return <LoginAddon.Panel {...panelProps} />
 }

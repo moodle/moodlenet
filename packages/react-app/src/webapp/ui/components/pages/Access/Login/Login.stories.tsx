@@ -1,8 +1,9 @@
 // import { t } from '@lingui/macro'
+import { action } from '@storybook/addon-actions'
 import { MinimalisticHeaderStories } from '@moodlenet/component-library/stories'
 import { ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
-import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/lib/webapp/Login.js'
+import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/lib/webapp/Login/LoginComponent.js'
 import { Login, LoginProps } from './Login.js'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
@@ -34,7 +35,9 @@ LoginProps => {
       // { Icon: PrimaryButton, Panel: FileUploader },
       {
         Icon: SimpleEmailAuth.Icon,
-        Panel: () => <SimpleEmailAuth.Panel login={() => void 0} wrongCreds={false} />,
+        Panel: () => (
+          <SimpleEmailAuth.Panel login={action('clicked login button')} wrongCreds={false} />
+        ),
       },
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
