@@ -10,12 +10,11 @@ import ProfilePage from './ProfilePage/ProfilePage_orig_Bru.js'
 //   element={
 //     <Suspense fallback="loading...">
 //       <ProfilePage {...props} />
-//     </Suspense>
+//     </Suspense>s
 //   }/>
 // )
 // }
 
-export default (
-  <Route index element={<ProfilePage {...fakeProfilePageProps} />} />
-  // <Route path={fakeProfilePageProps.profileCardProps.profileUrl} element={<ProfilePage {...fakeProfilePageProps} />} />
-)
+// <Route path={fakeProfilePageProps.profileCardProps.profileUrl} element={<ProfilePage {...fakeProfilePageProps} />} />
+
+export default { routes: <Route index element={<ProfilePage {...fakeProfilePageProps} />} /> }
