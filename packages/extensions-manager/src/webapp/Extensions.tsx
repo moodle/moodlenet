@@ -1,5 +1,5 @@
 import { Card, HeaderProps } from '@moodlenet/component-library'
-import { MainLayout } from '@moodlenet/react-app/ui.mjs'
+import { MainLayout } from '@moodlenet/react-app/ui'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import InstallExtension from './InstallExtension/InstallExtension.js'
 import { MainContext } from './MainComponent.js'

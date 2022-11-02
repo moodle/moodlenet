@@ -32,7 +32,10 @@ LoginProps => {
   return {
     loginItems: [
       // { Icon: PrimaryButton, Panel: FileUploader },
-      { Icon: SimpleEmailAuth.Icon, Panel: SimpleEmailAuth.Panel },
+      {
+        Icon: SimpleEmailAuth.Icon,
+        Panel: () => <SimpleEmailAuth.Panel login={() => void 0} wrongCreds={false} />,
+      },
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
     headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,

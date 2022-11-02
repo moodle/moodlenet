@@ -1,4 +1,4 @@
-import { getProfileCardStoryProps, ProfileProps } from '@moodlenet/web-user'
+import { getProfileCardStoryProps, ProfileProps } from '@moodlenet/web-user/ui'
 import { OverallCardStories } from '@moodlenet/web-user/stories'
 
 // const editForm: ProfileFormValues = {
