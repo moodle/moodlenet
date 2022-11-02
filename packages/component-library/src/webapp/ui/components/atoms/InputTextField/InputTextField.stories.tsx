@@ -11,6 +11,7 @@ const meta: ComponentMeta<typeof InputTextField> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: [
+    'TransStory',
     'InputTextFieldStoryProps',
     'InputTextFieldErrorStoryProps',
     'TextAreaFieldStoryProps',
@@ -42,15 +43,11 @@ export const InputTextFieldErrorStoryProps: InputTextFieldProps = {
 export const InputButton: ComponentStory<typeof InputTextField> = () => (
   <InputTextField
     {...InputTextFieldStoryProps}
-    action={
-      <PrimaryButton onClick={action('Primary button click')}>
-        Add
-      </PrimaryButton>
-    }
+    action={<PrimaryButton onClick={action('Primary button click')}>Add</PrimaryButton>}
   />
 )
 
-const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (
+const InputTextFieldStory: ComponentStory<typeof InputTextField> = args => (
   <InputTextField {...args}></InputTextField>
 )
 

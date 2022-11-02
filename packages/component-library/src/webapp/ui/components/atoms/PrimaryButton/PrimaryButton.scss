@@ -19,7 +19,6 @@ a {
   border: none;
   background-color: var(--primary-color);
   white-space: nowrap;
-  cursor: pointer;
 
   &.green {
     background-color: #00bd7e;
@@ -45,9 +44,10 @@ a {
     color: #4d5156;
   }
 
-  &:hover {
+  &:hover:not(.disabled) {
     background-color: var(--primary-color-hover);
     box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
+    cursor: pointer;
 
     &.green {
       background-color: #04ce8a;

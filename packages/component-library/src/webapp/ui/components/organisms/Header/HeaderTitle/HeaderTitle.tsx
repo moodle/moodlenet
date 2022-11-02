@@ -8,13 +8,7 @@ export type HeaderTitleProps = {
   url: string
 }
 
-export const HeaderTitle: FC<HeaderTitleProps> = (
-  {
-    logo,
-    smallLogo,
-    url,
-  },
-) => {
+export const HeaderTitle: FC<HeaderTitleProps> = ({ logo, smallLogo, url }) => {
   return (
     <Link to={url} style={{ textDecoration: 'none' }}>
       <div className="header-title">

@@ -60,16 +60,24 @@ export type ModalProps = {
   className?: string
   closeButton?: boolean
   children?: ReactNode
-  onClose: () => void
+  onClose?: () => void
 }
 
 const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
-export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, className, closeButton, children }) => {
+export const Modal: React.FC<ModalProps> = ({
+  onClose,
+  title,
+  actions,
+  style,
+  className,
+  closeButton,
+  children,
+}) => {
   const handleonClose = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation()
-      onClose()
+      onClose && onClose()
     },
     [onClose],
   )
@@ -77,7 +85,7 @@ export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, cl
   useEffect(() => {
     const handleEvent = ({ key }: KeyboardEvent) => {
       if (key === 'Escape') {
-        onClose()
+        onClose && onClose()
       }
     }
     document.addEventListener('keyup', handleEvent)
@@ -86,7 +94,11 @@ export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, cl
   return (
     <Portal>
       <div className={`modal-container ${className}`} onMouseDown={handleonClose}>
-        <Card className={`modal`} onMouseDown={stopPropagation} style={{ ...style, ...(!children && { gap: '25px' }) }}>
+        <Card
+          className={`modal`}
+          onMouseDown={stopPropagation}
+          style={{ ...style, ...(!children && { gap: '25px' }) }}
+        >
           {(title || closeButton) && (
             <div className="modal-header">
               {title && <div className="title">{title}</div>}

@@ -7,10 +7,10 @@ const meta: ComponentMeta<typeof Modal> = {
   component: Modal,
 }
 
-const ModalStory: ComponentStory<typeof Modal> = (args) => <Modal {...args} />
+const ModalStory: ComponentStory<typeof Modal> = args => <Modal {...args} />
 
-export const ModalDefault = ModalStory.bind({})
-ModalDefault.args = {
+export const Default = ModalStory.bind({})
+Default.args = {
   onClose: action('close modal'),
   children: <h1>Modal Content</h1>,
 }
