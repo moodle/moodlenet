@@ -2,18 +2,20 @@ import { ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib.
 import { createContext, useEffect, useMemo } from 'react'
 import * as LoginComponents from './Login.js'
 import { LoginPanelCtrl } from './LoginCtrl.js'
+import { SignUpPanelCtrl } from './SignUpCtrl.js'
 import Router from './Router.js'
 import * as settingsComponents from './Settings.js'
 import * as signupComponents from './Signup.js'
 import { MainContextT, WebPkgDeps } from './types.mjs'
 
 const loginItem = { Icon: LoginComponents.Icon, Panel: LoginPanelCtrl }
+const signUpItem = { Icon: signupComponents.Icon, Panel: SignUpPanelCtrl }
 
 export const MainContext = createContext<MainContextT>(null as any)
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   // registries.loginItems.useRegister(pkgId, loginComponents)
   registries.loginItems.useRegister(pkgId, loginItem)
-  registries.signupItems.useRegister(pkgId, signupComponents)
+  registries.signupItems.useRegister(pkgId, signUpItem)
   registries.settingsSections.useRegister(pkgId, settingsComponents)
   registries.routes.useRegister(pkgId, Router)
 

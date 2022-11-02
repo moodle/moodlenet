@@ -1,35 +1,43 @@
-import { FC, useCallback, useContext, useMemo, useState } from 'react'
+import { FC, useContext, useMemo, useState } from 'react'
 import { SignupFormValues, SignupProps } from './Signup.js'
 import { MainContext } from './MainComponent.js'
 import * as SignUpAddon from './Signup.js'
+import { useFormik } from 'formik'
 
 export const usePanelProps = (): SignupProps => {
   const { pkgs } = useContext(MainContext)
   const [myPkg] = pkgs
 
-  const signUp = useCallback(
-    async ({
-      displayName,
-      email,
-      password,
-    }: SignupFormValues): Promise<{ success: true } | { success: false; msg: string }> => {
+  const [emailSent, setEmailSent] = useState(false)
+  const [errMsg, setErrMsg] = useState('')
+
+  const form = useFormik<SignupFormValues>({
+    initialValues: { email: '', password: '', displayName: '' },
+    async onSubmit({ email, password, displayName }) {
+      setErrMsg('')
       const res = await myPkg.call('signup')({
         displayName,
         email,
         password,
       })
-      return res
+
+      if (!res.success) {
+        setErrMsg(res.msg)
+        return
+      }
+      setEmailSent(true)
     },
-    [myPkg],
-  )
+  })
 
   const panelProps = useMemo<SignupProps>(() => {
     const props: SignupProps = {
-      signUp,
+      form,
+      errMsg,
+      emailSent,
     }
 
     return props
-  }, [signUp])
+  }, [emailSent, errMsg, form])
 
   return panelProps
 }
