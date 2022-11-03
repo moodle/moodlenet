@@ -1,6 +1,6 @@
-import { getProfileCardStoryProps, Profile } from '@moodlenet/web-user/ui'
+import { Profile, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { getProfileStoryProps } from './stories-props.js'
+import { useProfileStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Profile> = {
@@ -23,7 +23,7 @@ const meta: ComponentMeta<typeof Profile> = {
 type ProfileStory = ComponentStory<typeof Profile>
 
 export const LoggedOut: ProfileStory = () => {
-  const props = getProfileStoryProps()
+  const props = useProfileStoryProps()
   //     {
   //     isAuthenticated: false,
   //     props: {
@@ -71,9 +71,9 @@ export const LoggedOut: ProfileStory = () => {
 }
 
 export const LoggedIn: ProfileStory = () => {
-  const props = getProfileStoryProps({
+  const props = useProfileStoryProps({
     props: {
-      profileCardProps: getProfileCardStoryProps({
+      profileCardProps: useProfileCardStoryProps({
         props: { isAuthenticated: true },
       }),
     },
@@ -82,42 +82,10 @@ export const LoggedIn: ProfileStory = () => {
 }
 
 export const Owner: ProfileStory = () => {
-  const props = getProfileStoryProps({
+  const props = useProfileStoryProps({
     props: {
-      profileCardProps: getProfileCardStoryProps(
-        { props: { isOwner: true } },
-
-        //   collectionCardPropsList: [
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //   ],
-        //   resourceCardPropsList: [
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //   ],
-      ),
-    },
-  })
-  return <Profile {...props} />
-}
-export const Editting: ProfileStory = () => {
-  const props = getProfileStoryProps({
-    props: {
-      profileCardProps: getProfileCardStoryProps(
-        { props: { isOwner: true, isEditing: true } },
+      profileCardProps: useProfileCardStoryProps(
+        { props: { isOwner: true, canEdit: true, isApproved: true } },
 
         //   collectionCardPropsList: [
         //     CollectionCardOwnerPrivateStoryProps(
@@ -146,11 +114,11 @@ export const Editting: ProfileStory = () => {
   return <Profile {...props} />
 }
 
-export const Approved: ProfileStory = () => {
-  const props = getProfileStoryProps({
+export const Unapproved: ProfileStory = () => {
+  const props = useProfileStoryProps({
     props: {
-      profileCardProps: getProfileCardStoryProps({
-        props: { isOwner: true, isApproved: true },
+      profileCardProps: useProfileCardStoryProps({
+        props: { isOwner: true, isApproved: false },
       }),
       //   collectionCardPropsList: [
       //     CollectionCardOwnerPrivateStoryProps(
@@ -180,7 +148,7 @@ export const Approved: ProfileStory = () => {
 }
 
 export const Activated: ProfileStory = () => {
-  const props = getProfileStoryProps({
+  const props = useProfileStoryProps({
     // editFormValues: {
     //   description: '',
     //   location: '',
@@ -193,7 +161,7 @@ export const Activated: ProfileStory = () => {
     //   //   collectionCardPropsList: [],
     //   //   resourceCardPropsList: [],
     //   showAccountCreationSuccessAlert: true,
-    //   getProfileCardProps: usegetProfileCardStoryProps({
+    //   getProfileCardProps: useuseProfileCardStoryProps({
     //     props: {
     //       isAuthenticated: true,
     //       isOwner: true,
@@ -205,9 +173,9 @@ export const Activated: ProfileStory = () => {
 }
 
 export const Admin: ProfileStory = () => {
-  const props = getProfileStoryProps({
+  const props = useProfileStoryProps({
     // props: {
-    //   getProfileCardProps: usegetProfileCardStoryProps({
+    //   getProfileCardProps: useuseProfileCardStoryProps({
     //     props: {
     //       isAdmin: true,
     //       isAuthenticated: true,
