@@ -2,16 +2,15 @@ import { ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib'
 import * as SettingsEnabledExtComponents from './SettingsEnabledExt.js'
 import * as SettingsInstallComponents from './SettingsInstall.js'
 
-import { createContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type {
   DeployedPkgInfo,
   SearchPackagesResObject,
   SearchPackagesResponse,
 } from '../types/data.mjs'
 import ExtensionsRoutes from './ExtensionsRoutes.js'
-import type { MainContextType, WebPkgDeps } from './types.mjs'
-
-export const MainContext = createContext<MainContextType>(null as any)
+import type { WebPkgDeps } from './types.mjs'
+import { MainContext } from './MainContext.js'
 
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   registries.settingsSections.useRegister(pkgId, SettingsInstallComponents)

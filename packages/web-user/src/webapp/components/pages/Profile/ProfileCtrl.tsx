@@ -1,6 +1,6 @@
 import { FC, useCallback, useContext, useMemo, useState } from 'react'
 import ProfilePage, { ProfileProps } from './Profile.js'
-import { MainContext } from '../../../MainComponent.js'
+import { MainContext } from '../../../MainContext.js'
 
 type RespCall =
   | {

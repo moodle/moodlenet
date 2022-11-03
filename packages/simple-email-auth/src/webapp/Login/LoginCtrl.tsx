@@ -1,7 +1,7 @@
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo, useState } from 'react'
 import { LoginFormValues, LoginProps } from './Login.js'
-import { MainContext } from '../MainComponent.js'
+import { MainContext } from '../MainContext.js'
 import { useFormik } from 'formik'
 
 export const usePanelProps = (): LoginProps => {

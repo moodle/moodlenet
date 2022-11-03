@@ -15,7 +15,7 @@ import rehypeRaw from 'rehype-raw'
 import { extNameDescription } from '../../common/lib.mjs'
 import { DeployedPkgInfo } from '../../types.mjs'
 import { mandatoryPackages } from '../fakeData.js'
-import { MainContext } from '../MainComponent.js'
+import { MainContext } from '../MainContext.js'
 import './ExtensionConfig.scss'
 
 export type ExtensionConfigProps = {
