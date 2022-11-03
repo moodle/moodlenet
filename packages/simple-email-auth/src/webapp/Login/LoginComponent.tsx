@@ -7,8 +7,6 @@ import { FC } from 'react'
 const Hello = React.memo(({ a }: { a: string }) => {
   return <>{a}</>
 })
-
- 
  */
 
 export type LoginFormValues = { email: string; password: string }
@@ -18,17 +16,17 @@ export const Icon: FC = () => {
 }
 
 export type PanelProps = {
-  login(email: string, password: string): void
+  form: ReturnType<typeof useFormik<LoginFormValues>>
   wrongCreds: boolean
 }
-export const Panel: FC<PanelProps> = ({ login, wrongCreds }) => {
-  const form = useFormik<LoginFormValues>({
-    initialValues: { email: '', password: '' },
-    async onSubmit({ email, password }) {
-      login(email, password)
-    },
-  })
 
+export const Panel: FC<PanelProps> = ({ wrongCreds, form }) => {
+  /* const { pkgs } = useContext(MainContext)
+  const [authPkgApis] = pkgs
+
+  const auth = useContext(AuthCtx)
+  const [wrongCreds, setWrongCreds] = useState(false)
+*/
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
   const disable = form.isSubmitting

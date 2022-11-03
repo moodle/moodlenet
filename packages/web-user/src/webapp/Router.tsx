@@ -10,12 +10,12 @@ import ProfilePage from './components/pages/Profile/Profile.js'
 //   element={
 //     <Suspense fallback="loading...">
 //       <ProfilePage {...props} />
-//     </Suspense>
+//     </Suspense>s
 //   }/>
 // )
 // }
 
 export default (
-  <Route index element={<ProfilePage {...({} as any)} />} />
+  <Route index element={<ProfilePageCtrl />} />
   // <Route path={fakeProfilePageProps.profileCardProps.profileUrl} element={<ProfilePage {...fakeProfilePageProps} />} />
 )

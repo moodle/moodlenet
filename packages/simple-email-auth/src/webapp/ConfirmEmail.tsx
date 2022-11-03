@@ -26,7 +26,7 @@ export const ConfirmEmail: FC<ConfirmEmailProps> = ({ headerProps }) => {
       .then(res => (res.success ? '' : `couldn't authenticate`))
       .catch(e => String(e))
       .then(setErrMsg)
-  }, [])
+  }, [auth, params])
 
   return (
     <SimpleLayout

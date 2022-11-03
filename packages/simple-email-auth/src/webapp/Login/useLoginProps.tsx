@@ -1,7 +1,8 @@
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
-import { useCallback, useContext, useMemo, useState } from 'react'
-import { PanelProps } from './LoginComponent.js'
+import { useContext, useMemo, useState } from 'react'
+import { LoginFormValues, PanelProps } from './LoginComponent.js'
 import { MainContext } from '../MainComponent.js'
+import { useFormik } from 'formik'
 
 export const usePanelProps = (): PanelProps => {
   const { pkgs } = useContext(MainContext)
@@ -9,8 +10,9 @@ export const usePanelProps = (): PanelProps => {
   const [wrongCreds, setWrongCreds] = useState(false)
   const auth = useContext(AuthCtx)
 
-  const login = useCallback(
-    async (email: string, password: string) => {
+  const form = useFormik<LoginFormValues>({
+    initialValues: { email: '', password: '' },
+    async onSubmit({ email, password }) {
       const res = await authPkgApis.call('login')({
         email,
         password,
@@ -23,17 +25,16 @@ export const usePanelProps = (): PanelProps => {
       setWrongCreds(false)
       auth.setSessionToken(res.sessionToken)
     },
-    [auth, authPkgApis],
-  )
+  })
 
   const panelProps = useMemo<PanelProps>(() => {
     const props: PanelProps = {
-      login,
+      form,
       wrongCreds,
     }
 
     return props
-  }, [login, wrongCreds])
+  }, [form, wrongCreds])
 
   return panelProps
 }
