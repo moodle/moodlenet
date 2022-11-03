@@ -3,10 +3,7 @@ import { MinimalisticHeaderStories } from '@moodlenet/component-library/stories'
 import { ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
 import { Login, LoginProps } from '@moodlenet/react-app/ui'
-import {
-  LoginStoriesProps,
-  LoginComponent as SimpleEmailAuth,
-} from '@moodlenet/simple-email-auth/ui'
+import { LoginStoriesProps, Login as SimpleEmailAuth } from '@moodlenet/simple-email-auth/ui'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
 // import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'

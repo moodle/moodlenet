@@ -1,6 +1,6 @@
 import { ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib'
-import * as LoginComponents from './Login/LoginComponent.js'
-import { LoginPanelCtrl } from './Login/LoginCtrl.js'
+import * as LoginComponents from './Login/Login.js'
+import { LoginPanelCtrl } from './Login/LoginContainer.js'
 import { createContext, useEffect, useMemo, useRef } from 'react'
 import { SignUpPanelCtrl } from './SignUpCtrl.js'
 import Router from './Router.js'
