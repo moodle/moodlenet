@@ -1,5 +1,5 @@
 import { Route } from 'react-router-dom'
-import { ProfileCtrl } from './components/pages/Profile/ProfileCtrl.js'
+import { ProfileCtrl } from './components/pages/Profile/ProfileHooks.js'
 
 // export default () => {
 // const props = fakeProfilePageProps
