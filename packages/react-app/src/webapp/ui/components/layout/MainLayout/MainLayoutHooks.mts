@@ -1,4 +1,4 @@
-import { useHeaderProps } from '@moodlenet/component-library'
+import { useHeaderProps } from '../Headers/HeaderHooks.mjs'
 import { MainLayoutProps } from './MainLayout.js'
 
 export const useMainLayoutProps = (): MainLayoutProps => {
