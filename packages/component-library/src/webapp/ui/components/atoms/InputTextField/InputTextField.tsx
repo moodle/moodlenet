@@ -1,5 +1,4 @@
-import React, { forwardRef, ReactNode, useEffect, useState } from 'react'
-import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import './InputTextField.scss'
 
 export type InputTextFieldProps = {
@@ -19,38 +18,43 @@ export type InputTextFieldProps = {
     } & React.TextareaHTMLAttributes<HTMLTextAreaElement>)
 )
 
-export const InputTextField = forwardRef<
-  HTMLTextAreaElement | HTMLInputElement | null | undefined,
-  InputTextFieldProps
->((props, forwRef) => {
-  const { label, edit, displayMode, textAreaAutoSize, highlight, error, action, ...fieldProps } = props
+export const InputTextField: FC<InputTextFieldProps> = ({
+  label,
+  edit,
+  displayMode,
+  textAreaAutoSize,
+  highlight,
+  error,
+  action,
+  ...fieldProps
+}) => {
   const { disabled, hidden, /* value, */ className = '' } = fieldProps
   if ('value' in fieldProps) {
     fieldProps.value = fieldProps.value ?? ''
   }
-  const fieldElementRef = useForwardedRef(forwRef)
-  const fieldElem = fieldElementRef.current
+  const fieldElementRef = useRef<HTMLTextAreaElement>(null)
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
   const [currentError, setcurrentError] = useState<ReactNode>(undefined)
 
-  // const currTextAreaValue =
-  //   fieldElementRef.current && (value ?? fieldElementRef.current?.value)
   const currTextAreaValue = fieldElementRef.current?.value
 
   useEffect(() => {
+    const fieldElem = fieldElementRef.current
     if (!(textAreaAutoSize && fieldElem && fieldElem instanceof HTMLTextAreaElement)) {
       return
     }
     const fitTextArea = () => {
-      fieldElem.style.height = 'fit-content'
-      fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
+      if (fieldElem) {
+        fieldElem.style.height = 'fit-content'
+        fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
+      }
     }
     fitTextArea()
     fieldElem.addEventListener('input', fitTextArea)
     return () => {
       fieldElem.removeEventListener('input', fitTextArea)
     }
-  }, [textAreaAutoSize, currTextAreaValue, fieldElem])
+  }, [textAreaAutoSize, currTextAreaValue, fieldElementRef])
 
   useEffect(() => {
     if (error && !disabled) {
@@ -72,9 +76,9 @@ export const InputTextField = forwardRef<
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
         fieldProps.textarea ? ' textarea' : 'text'
-      } ${highlight || error ? ' highlight' : ''} ${!disabled && !errorLeaves && error ? 'enter-error' : ''} ${
-        !disabled && errorLeaves ? 'leave-error' : ''
-      }`}
+      } ${highlight || error ? ' highlight' : ''} ${
+        !disabled && !errorLeaves && error ? 'enter-error' : ''
+      } ${!disabled && errorLeaves ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
@@ -82,7 +86,7 @@ export const InputTextField = forwardRef<
       {fieldProps.textarea ? (
         <div className={`textarea-container ${displayMode && 'display-mode'} ${edit && 'editing'}`}>
           <textarea
-            ref={fieldElementRef as any}
+            ref={fieldElementRef}
             cols={40}
             rows={textAreaAutoSize ? 1 : 5}
             {..._removeTextAreaProp(fieldProps)}
@@ -97,7 +101,6 @@ export const InputTextField = forwardRef<
         <div className={`input-container ${displayMode && 'display-mode'} ${edit && 'editing'}`}>
           <input
             {..._removeTextAreaProp(fieldProps)}
-            ref={fieldElementRef as any}
             className={`${className} ${displayMode && 'display-mode'} ${edit && 'editing'}`}
             disabled={disabled || !edit}
           />
@@ -107,9 +110,11 @@ export const InputTextField = forwardRef<
       {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}
     </div>
   )
-})
+}
+
 const _removeTextAreaProp = (_ = {}) => {
-  const { textarea, ...rest } = _ as any
+  const { ...rest } = _
   return rest
 }
+
 export default InputTextField

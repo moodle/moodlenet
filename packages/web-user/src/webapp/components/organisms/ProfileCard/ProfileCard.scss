@@ -64,13 +64,14 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding-top: 10px;
 
     > .top-items {
       width: auto;
       display: flex;
       justify-content: flex-end;
-      padding: 10px 20px 0 0;
-      height: 42px;
+      margin-right: -20px;
+
       > .edit-save {
         width: 40px;
         > *,
@@ -245,6 +246,13 @@
             margin-right: 2px;
           }
         }
+
+        &.edit > * {
+          width: 100%;
+          > * {
+            width: 100%;
+          }
+        }
       }
 
       > .error {
@@ -262,9 +270,10 @@
     }
 
     > .description,
-    .description > .input-container > textarea {
+    .description > .textarea-container {
       font-size: 14px;
       line-height: 20px;
+      min-height: initial;
     }
 
     > .not-approved-warning {

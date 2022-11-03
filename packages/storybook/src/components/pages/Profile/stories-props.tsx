@@ -1,5 +1,5 @@
-import { getProfileCardStoryProps, ProfileProps } from '@moodlenet/web-user/ui'
 import { OverallCardStories } from '@moodlenet/web-user/stories'
+import { ProfileProps, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
 
 // const editForm: ProfileFormValues = {
 //   displayName: 'Alberto Curcella',
@@ -15,18 +15,19 @@ import { OverallCardStories } from '@moodlenet/web-user/stories'
 
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
-export const getProfileStoryProps = (overrides?: {
+export const useProfileStoryProps = (overrides?: {
   props?: Partial<ProfileProps>
   isAuthenticated?: boolean
   // editFormValues?: Partial<ProfileFormValues>
 }): ProfileProps => {
-  //   const isAuthenticated = overrides?.isAuthenticated ?? true
-  const ProfileCardStoryProps = getProfileCardStoryProps({
-    // props: { isAuthenticated },
+  const isAuthenticated = overrides?.isAuthenticated ?? true
+  const ProfileCardStoryProps = useProfileCardStoryProps({
+    props: { isAuthenticated },
     // editFormValues: overrides?.editFormValues,
   })
 
   return {
+    displayName: 'Juanito',
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     overallCardProps: OverallCardStories.OverallCardStoryProps,
     profileCardProps: ProfileCardStoryProps,
@@ -49,6 +50,7 @@ export const getProfileStoryProps = (overrides?: {
     //     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     //   },
     // },
+    // overallCardProps: OverallCardStoryProps,
     // collectionCardPropsList: [
     //   CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
     //   CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
@@ -58,7 +60,6 @@ export const getProfileStoryProps = (overrides?: {
     //   ResourceCardLoggedInStoryProps,
     //   ResourceCardLoggedInStoryProps,
     // ],
-    displayName: 'Juanito Rodriguez',
     ...overrides?.props,
   }
 }

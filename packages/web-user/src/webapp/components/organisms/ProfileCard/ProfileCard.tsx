@@ -1,15 +1,3 @@
-// import { t, Trans } from '@lingui/macro'
-// import { withCtrl } from '../../../../lib/ctrl'
-// import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-// import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
-// import Loading from '../../../atoms/Loading/Loading'
-// import Modal from '../../../atoms/Modal/Modal'
-// import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-// import RoundButton from '../../../atoms/RoundButton/RoundButton'
-// import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-// import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
-// import { ProfileFormValues } from '../../../pages/Profile/types'
-// import { InputTextField } from '@moodlenet/component-library/ui/components/atoms/InputTextField/InputTextField.js'
 import { Edit, Flag, Save, Share } from '@material-ui/icons'
 import {
   AddonItem,
@@ -17,17 +5,22 @@ import {
   InputTextField,
   Modal,
   PrimaryButton,
+  RoundButton,
   SecondaryButton,
   sortAddonItems,
   TertiaryButton,
+  useImageUrl,
 } from '@moodlenet/component-library'
-import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
+import { useFormik } from 'formik'
+import { Dispatch, FC, SetStateAction, useLayoutEffect, useRef, useState } from 'react'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
+import defaultAvatar from '../../../assets/img/default-avatar.svg'
+import defaultBackgroud from '../../../assets/img/default-background.svg'
+import { ProfileFormValues } from '../../../types.mjs'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {
-  displayName: string
-  description: string
+  form: ReturnType<typeof useFormik<ProfileFormValues>>
   userId: string
   profileUrl: string
   isAuthenticated: boolean
@@ -36,10 +29,6 @@ export type ProfileCardProps = {
   titleItems?: AddonItem[]
   subtitleItems?: AddonItem[]
   bottomItems?: AddonItem[]
-  avatarUrl?: string
-  backgroundUrl?: string
-  location?: string
-  siteUrl?: string
   isEditing?: boolean
   isOwner?: boolean
   canEdit?: boolean
@@ -57,19 +46,14 @@ export type ProfileCardProps = {
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
+  form,
   topItems,
   titleItems,
   subtitleItems,
   bottomItems,
   contentItems,
-  displayName,
-  description,
   userId,
   profileUrl,
-  avatarUrl,
-  backgroundUrl,
-  location,
-  siteUrl,
   isEditing,
   isAuthenticated,
   isOwner,
@@ -88,7 +72,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 }) => {
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
-  // const shouldShowErrors = !!editForm.submitCount
+  const shouldShowErrors = !!form.submitCount
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
   const setIsShowingSmallCardHelper = () => {
@@ -102,27 +86,33 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     }
   }, [])
 
-  // const uploadBackgroundRef = useRef<HTMLInputElement>(null)
-  // const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
-  //   e.stopPropagation()
-  //   uploadBackgroundRef.current?.click()
-  // }
+  const uploadBackgroundRef = useRef<HTMLInputElement>(null)
+  const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    uploadBackgroundRef.current?.click()
+  }
 
-  // const uploadAvatarRef = useRef<HTMLInputElement>(null)
-  // const selectAvatar = (e: React.MouseEvent<HTMLElement>) => {
-  //   e.stopPropagation()
-  //   uploadAvatarRef.current?.click()
-  // }
+  const uploadAvatarRef = useRef<HTMLInputElement>(null)
+  const selectAvatar = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    uploadAvatarRef.current?.click()
+  }
 
+  const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) =>
+    form.setFieldValue('backgroundImage', e.currentTarget.files?.item(0))
+
+  const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
+    form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
+
+  const [backgroundUrl] = useImageUrl(form.values.backgroundImage, defaultBackgroud)
   const background = {
     backgroundImage: 'url(' + backgroundUrl + ')',
     backgroundSize: 'cover',
   }
 
+  const [avatarUrl] = useImageUrl(form.values.avatarImage, defaultAvatar)
   const avatar = {
-    backgroundImage: `url(${avatarUrl})`,
-    // backgroundImage: 'url(' + defaultAvatar + ')',
-    // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
+    backgroundImage: 'url(' + avatarUrl + ')',
     backgroundSize: 'cover',
   }
 
@@ -130,12 +120,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     <div className="edit-save">
       {isEditing ? (
         <PrimaryButton
-          // className={`${editForm.isSubmitting ? 'loading' : ''}`}
+          // className={`${form.isSubmitting ? 'loading' : ''}`}
           color="green"
           onClick={toggleIsEditing}
           key="save-button"
         >
-          {/* {editForm.isSubmitting ? (
+          {/* {form.isSubmitting ? (
             <div className="loading">
               <Loading color="white" />
             </div>
@@ -151,28 +141,43 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
   )
 
-  // .filter((model): model is AddonItem => model !== undefined)
-
-  /* const title = (
+  const title = isEditing ? (
+    <InputTextField
+      className="display-name underline"
+      placeholder={/* t */ `Display name`}
+      value={form.values.displayName}
+      onChange={form.handleChange}
+      name="displayName"
+      key="display-name"
+      displayMode={true}
+      edit={isEditing}
+      disabled={form.isSubmitting}
+      error={isEditing && shouldShowErrors && form.errors.displayName}
+    />
+  ) : (
     <div className="display-name" key="display-name">
-      {/* {editForm.values.displayName} * /}
-      {displayName}
+      {form.values.displayName}
     </div>
   )
-*/
+
   const descriptionField = isEditing ? (
     <InputTextField
       textAreaAutoSize={true}
+      value={form.values.description}
+      onChange={form.handleChange}
       textarea={true}
       displayMode={true}
-      className="underline"
-      placeholder="What should others know about you?"
-      name="description"
+      placeholder={/* t */ `What should others know about you?`}
+      className="description"
       key="description"
+      name="description"
+      edit={isEditing}
+      disabled={form.isSubmitting}
+      error={isEditing && shouldShowErrors && form.errors.description}
     />
   ) : (
     <div className="description" key="description">
-      {description}
+      {form.values.description}
     </div>
   )
 
@@ -218,42 +223,55 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
     // <div className="actions">{sortAddonItems((topItems ?? []).concat([editButton]))}</div>
   )
-  const updatedTitleItems = sortAddonItems([approvedIcon, copyIdButton, ...(titleItems ?? [])])
-  const updatedSubtitleItems = sortAddonItems([
-    <span key="location">{location}</span>,
-    <a key="site-url" href={siteUrl} target="_blank" rel="noreferrer">
-      {siteUrl}
-    </a>,
-    ...(subtitleItems ?? []),
+  const updatedTitleItems = sortAddonItems([
+    title,
+    approvedIcon,
+    copyIdButton,
+    ...(titleItems ?? []),
   ])
+
+  const baseSubtitleItems = isEditing
+    ? [
+        <span key="edit-location">
+          <InputTextField
+            className="underline"
+            placeholder="Location"
+            value={form.values.location}
+            onChange={form.handleChange}
+            displayMode={true}
+            name="location"
+            edit={isEditing}
+            disabled={form.isSubmitting}
+            error={isEditing && shouldShowErrors && form.errors.location}
+          />
+        </span>,
+        <span key="edit-site-url">
+          <InputTextField
+            className="underline"
+            value={form.values.siteUrl}
+            onChange={form.handleChange}
+            displayMode={true}
+            placeholder="Website"
+            name="siteUrl"
+            edit={isEditing}
+            disabled={form.isSubmitting}
+            error={isEditing && shouldShowErrors && form.errors.siteUrl}
+          />
+        </span>,
+      ]
+    : [
+        <span key="location">{form.values.location}</span>,
+        <a key="site-url" href={form.values.siteUrl} target="_blank" rel="noreferrer">
+          {form.values.siteUrl}
+        </a>,
+      ]
+  const updatedSubtitleItems = sortAddonItems([...baseSubtitleItems, ...(subtitleItems ?? [])])
 
   const cardHeader = (
     <div className="profile-card-header" key="card-header">
       <div className="title">{updatedTitleItems}</div>
 
-      <div className="subtitle">
-        {updatedSubtitleItems}
-        {/* {editForm.values.displayName && (
-          <span>
-        <span className="at-symbol">@</span>
-        {editForm.values.displayName}
-      </span>
-    )}
-
-    {editForm.values.organizationName && editForm.values.organizationName !== '' && (
-      <span>{editForm.values.organizationName}</span>
-    )} */}
-
-        {/* {editForm.values.location && editForm.values.location !== '' && (
-      <span>{editForm.values.location}</span>
-      )}
-      
-      {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
-        <a href={editForm.values.siteUrl} target="_blank" rel="noreferrer">
-        {editForm.values.siteUrl}
-        </a> 
-      )}*/}
-      </div>
+      <div className={`subtitle ${isEditing ? 'edit' : ''}`}>{updatedSubtitleItems}</div>
     </div>
   )
 
@@ -381,6 +399,42 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     ),
   ]
 
+  const editAvatarButton = isEditing && (
+    <>
+      <input
+        ref={uploadAvatarRef}
+        type="file"
+        accept=".jpg,.jpeg,.png,.gif"
+        onChange={uploadAvatar}
+        hidden
+      />
+      <RoundButton
+        className="change-avatar-button"
+        type="edit"
+        abbrTitle={/* t */ `Edit profile picture`}
+        onClick={selectAvatar}
+      />
+    </>
+  )
+
+  const editBackgroundButton = isEditing && (
+    <>
+      <input
+        ref={uploadBackgroundRef}
+        type="file"
+        accept=".jpg,.jpeg,.png,.gif"
+        onChange={uploadBackground}
+        hidden
+      />
+      <RoundButton
+        className="change-background-button"
+        type="edit"
+        abbrTitle={/* t */ `Edit background`}
+        onClick={selectBackground}
+      />
+    </>
+  )
+
   const updatedBottomItems = (
     <div className="buttons" key="buttons">
       {sortAddonItems([...bottomButtons, ...(bottomItems ?? [])])}
@@ -424,18 +478,22 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         className="background"
         style={{
           ...background,
-          // pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+          // pointerEvents: form.isSubmitting ? 'none' : 'inherit',
         }}
         onClick={() => !isEditing && setIsShowingBackground(true)}
-      ></div>
+      >
+        {editBackgroundButton}
+      </div>
       <div
         className="avatar"
         style={{
           ...avatar,
-          // pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+          // pointerEvents: form.isSubmitting ? 'none' : 'inherit',
         }}
         onClick={() => !isEditing && setIsShowingAvatar(true)}
-      ></div>
+      >
+        {editAvatarButton}
+      </div>
       <div className="content">{updatedContentItems}</div>
     </div>
   )
