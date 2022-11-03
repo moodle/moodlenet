@@ -6,7 +6,7 @@ import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin.js'
 import { Signup } from './ui/components/pages/Access/Signup/Signup.js'
 // import * as nodeHomePage from './ui/components/pages/ContentGraph/NodeHome/___NodeHomePage.tsx__'
 import { Landing } from './ui/components/pages/Landing/Landing.js'
-import { SettingsCtrl } from './ui/components/pages/Settings/SettingsCtrl.js'
+import { SettingsCtrl } from './ui/components/pages/Settings/SettingsHooks.js'
 
 // const A = lazy(() => import('./A'))
 export type RouteRegItem = { routes: ReactElement; rootPath?: string }

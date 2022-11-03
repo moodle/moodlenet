@@ -1,5 +1,5 @@
 import { HeaderProps } from '@moodlenet/component-library'
-import { useHeaderTitleProps } from './HeaderTitleCtrl.js'
+import { useHeaderTitleProps } from './HeaderTitleHooks.js'
 
 export const useHeaderProps = (): HeaderProps => {
   // usa i server
