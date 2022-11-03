@@ -8,7 +8,7 @@ import ExtensionConfig from '../ExtensionConfig/ExtensionConfig.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { extNameDescription } from '../../common/lib.mjs'
 import { DeployedPkgInfo } from '../../types.mjs'
-import { MainContext } from '../MainComponent.js'
+import { MainContext } from '../MainContext.js'
 import './styles.scss'
 
 export type PackagesProps = {
@@ -30,7 +30,7 @@ const Packages: FC<PackagesProps> = () => {
       extinfoList.map(pkgInfo => {
         // const [extName, pkgScope] = splitPkgName(extInfo.packageInfo.packageJson.name)
 
-        var { displayName, description } = extNameDescription(pkgInfo.packageJson)
+        const { displayName, description } = extNameDescription(pkgInfo.packageJson)
         // const extName = extInfo.packageInfo.packageJson.@moodlenet/displayName
         return (
           <div

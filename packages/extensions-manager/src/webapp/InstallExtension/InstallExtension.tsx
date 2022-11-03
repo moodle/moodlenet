@@ -15,7 +15,7 @@ import { DeployedPkgInfo } from '../../types.mjs'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
 // import { DevModeBtn } from '../Extensions.js'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities.js'
-import { MainContext } from '../MainComponent.js'
+import { MainContext } from '../MainContext.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './InstallExtension.scss'
 

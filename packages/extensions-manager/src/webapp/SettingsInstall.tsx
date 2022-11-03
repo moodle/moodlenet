@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react'
 import InstallExtension from './InstallExtension/InstallExtension.js'
-import { MainContext } from './MainComponent.js'
+import { MainContext } from './MainContext.js'
 
 export const Menu: FC = () => {
   const { setSelectedExtInfo } = useContext(MainContext)

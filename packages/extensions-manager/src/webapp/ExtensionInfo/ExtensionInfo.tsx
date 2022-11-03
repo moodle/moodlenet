@@ -12,7 +12,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 import rehypeRaw from 'rehype-raw'
 import { SearchPackagesResObject } from '../../types/data.mjs'
 import { mandatoryPackages } from '../fakeData.js'
-import { MainContext } from '../MainComponent.js'
+import { MainContext } from '../MainContext.js'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {

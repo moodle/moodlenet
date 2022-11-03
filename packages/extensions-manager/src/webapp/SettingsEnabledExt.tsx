@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react'
-import { MainContext } from './MainComponent.js'
+import { MainContext } from './MainContext.js'
 import Packages from './Packages/Packages.js'
 
 export const Menu: FC = () => {
