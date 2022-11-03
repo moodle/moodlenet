@@ -61,7 +61,11 @@ export const Panel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
         <button id="signup-button" type="submit" style={{ display: 'none' }} />
       </form>
       <div className="bottom">
-        <PrimaryButton /* onClick={canSubmit ? form.submitForm : undefined} */>
+        <PrimaryButton
+          onClick={
+            canSubmit ? () => form.handleSubmit() : undefined
+          } /* onClick={canSubmit ? form.submitForm : undefined} */
+        >
           Sign up
         </PrimaryButton>
         {/* <Link href={userAgreementHref} target="__blank"> */}

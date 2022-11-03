@@ -15,12 +15,12 @@ export const Icon: FC = () => {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
-export type PanelProps = {
+export type LoginProps = {
   form: ReturnType<typeof useFormik<LoginFormValues>>
   wrongCreds: boolean
 }
 
-export const Panel: FC<PanelProps> = ({ wrongCreds, form }) => {
+export const Panel: FC<LoginProps> = ({ wrongCreds, form }) => {
   /* const { pkgs } = useContext(MainContext)
   const [authPkgApis] = pkgs
 
