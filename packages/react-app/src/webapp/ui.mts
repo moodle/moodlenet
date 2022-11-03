@@ -1,5 +1,9 @@
 // @index(['./ui/components/**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+export * from './ui/components/layout/Headers/HeaderCtrl.mjs'
+export * from './ui/components/layout/Headers/HeaderTitleCtrl.js'
 export * from './ui/components/layout/MainLayout/MainLayout.js'
+export * from './ui/components/layout/MainLayout/MainLayoutContainer.js'
+export * from './ui/components/layout/MainLayout/MainLayoutCtrl.mjs'
 export * from './ui/components/layout/PageLayout.js'
 export * from './ui/components/layout/SimpleLayout/SimpleLayout.js'
 export * from './ui/components/pages/Access/Login/Login.js'

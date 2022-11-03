@@ -1,6 +1,7 @@
 import { FC, useCallback, useContext, useMemo, useState } from 'react'
 import ProfilePage, { ProfileProps } from './Profile.js'
 import { MainContext } from '../../../MainContext.js'
+import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 
 type RespCall =
   | {
@@ -24,8 +25,14 @@ export const useProfileProps = (): ProfileProps => {
     !(res as RespCall).success && setErrMsg(res.msg)
   }, [profileApi])
 
+  const mainLayoutProps = useMainLayoutProps()
+
   const panelProps = useMemo<ProfileProps>(() => {
-    const props: ProfileProps = {}
+    const props: ProfileProps = {
+      // displayName,
+      // profileCardProps,
+      mainLayoutProps,
+    }
     return props
   }, [])
 
