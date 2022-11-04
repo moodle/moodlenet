@@ -52,6 +52,8 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
     instanceName: '',
     landingTitle: '',
     landingSubtitle: '',
+    smallLogo: '',
+    logo: '',
   })
 
   const saveOrganization = useCallback(

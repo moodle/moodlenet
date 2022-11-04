@@ -13,7 +13,7 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
       pkgId,
     }
     return ctx
-  }, [])
+  }, [pkgId, pkgs])
   // console.log({ mainContext })
   return (
     <registries.loginItems.Provider>
