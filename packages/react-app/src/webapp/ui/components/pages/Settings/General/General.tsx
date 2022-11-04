@@ -1,9 +1,8 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
-import 'General.scss'
+import './General.scss'
 import { FC } from 'react'
-
 
 export type GeneralProps = {
   form: ReturnType<typeof useFormik<OrganizationData>>
@@ -36,8 +35,8 @@ export const General: FC<GeneralProps> = ({ form }) => {
         <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
           <div className="top-items">
             <PrimaryButton className="save-btn" type="submit">
-            Save
-          </PrimaryButton>
+              Save
+            </PrimaryButton>
           </div>
           <div className="parameter">
             <div className="name">Site name</div>
