@@ -1,9 +1,6 @@
 import { Settings, SettingsProps } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import {
-  MainLayoutLoggedInStoryProps,
-  MainLayoutLoggedOutStoryProps,
-} from '../../layout/MainLayout/MainLayout.stories.js'
+import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Settings> = {
@@ -13,31 +10,19 @@ const meta: ComponentMeta<typeof Settings> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['SettingsLoggedOutStoryProps', 'SettingsLoggedInStoryProps'],
+  excludeStories: ['SettingsDefaultStoryProps'],
 }
 
-export const SettingsLoggedOutStoryProps: SettingsProps = {
-  mainLayoutProps: MainLayoutLoggedOutStoryProps,
+export const SettingsDefaultStoryProps: SettingsProps = {
   settingsItems: [],
-}
-
-export const SettingsLoggedInStoryProps: SettingsProps = {
-  ...SettingsLoggedOutStoryProps,
   mainLayoutProps: MainLayoutLoggedInStoryProps,
 }
 
 type SettingsStory = ComponentStory<typeof Settings>
 
-export const LoggedOut: SettingsStory = () => {
+export const Default: SettingsStory = () => {
   const props = {
-    ...SettingsLoggedOutStoryProps,
-  }
-  return <Settings {...props} />
-}
-
-export const LoggedIn: SettingsStory = () => {
-  const props = {
-    ...SettingsLoggedInStoryProps,
+    ...SettingsDefaultStoryProps,
   }
   return <Settings {...props} />
 }

@@ -1,5 +1,6 @@
 import { Profile, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useProfileStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
@@ -23,9 +24,15 @@ const meta: ComponentMeta<typeof Profile> = {
 type ProfileStory = ComponentStory<typeof Profile>
 
 export const LoggedOut: ProfileStory = () => {
-  const props = useProfileStoryProps()
+  const props = useProfileStoryProps({
+    props: {
+      mainLayoutProps: MainLayoutLoggedOutStoryProps,
+      profileCardProps: useProfileCardStoryProps({
+        props: { isAuthenticated: false },
+      }),
+    },
+  })
   //     {
-  //     isAuthenticated: false,
   //     props: {
   //       headerPageTemplateProps: {
   //         isAuthenticated: false,
