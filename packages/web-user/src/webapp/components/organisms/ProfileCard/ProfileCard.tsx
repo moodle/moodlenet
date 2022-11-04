@@ -217,11 +217,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </abbr>
   )
 
-  const updatedTopItems = (
+  const sortedTopItems = sortAddonItems([editButton, ...(topItems ?? [])])
+
+  const updatedTopItems = sortedTopItems.length > 0 && (
     <div className="top-items" key="tops-items">
-      {sortAddonItems([editButton, ...(topItems ?? [])])}
+      {sortedTopItems}
     </div>
-    // <div className="actions">{sortAddonItems((topItems ?? []).concat([editButton]))}</div>
   )
   const updatedTitleItems = sortAddonItems([
     title,
