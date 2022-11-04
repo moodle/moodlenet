@@ -1,33 +1,45 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
-import { FC, useContext, useEffect } from 'react'
-import { SettingsCtx } from '../SettingsContext.js'
+import 'General.scss'
+import { FC } from 'react'
 
-export const GeneralContent: FC = () => {
-  const setCtx = useContext(SettingsCtx)
 
-  const form = useFormik<OrganizationData>({
-    initialValues: setCtx.organizationData,
-    async onSubmit(data) {
-      setCtx.saveOrganization(data)
-      // console.log('save data')
-    },
-  })
-  useEffect(() => {
-    form.setValues(setCtx.organizationData)
-  }, [form, setCtx.organizationData])
+export type GeneralProps = {
+  form: ReturnType<typeof useFormik<OrganizationData>>
+}
+
+export const GeneralMenu = <span>General</span>
+
+export const General: FC<GeneralProps> = ({ form }) => {
+  const canSubmit = !form.isSubmitting && !form.isValidating
+  // const setCtx = useContext(SettingsCtx)
+
+  // const form = useFormik<OrganizationData>({
+  //   initialValues: setCtx.organizationData,
+  //   async onSubmit(data) {
+  //     setCtx.saveOrganization(data)
+  //     // console.log('save data')
+  //   },
+  // })
+  // useEffect(() => {
+  //   form.setValues(setCtx.organizationData)
+  // }, [form, setCtx.organizationData])
 
   return (
-    <>
+    <div className="general" key="general">
       <Card>
-        <div className="title">General settings</div>
+        <div className="title">General</div>
         <div>Manage your preferences</div>
       </Card>
       <Card>
-        <form onSubmit={form.handleSubmit}>
+        <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
+          <div className="top-items">
+            <PrimaryButton className="save-btn" type="submit">
+            Save
+          </PrimaryButton>
+          </div>
           <div className="parameter">
-            <PrimaryButton type="submit">Save</PrimaryButton>
             <div className="name">Site name</div>
             <div className="actions">
               <InputTextField
@@ -73,6 +85,6 @@ export const GeneralContent: FC = () => {
           </div>
         </form>
       </Card>
-    </>
+    </div>
   )
 }

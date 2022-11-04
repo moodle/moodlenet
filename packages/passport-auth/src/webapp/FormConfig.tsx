@@ -1,4 +1,4 @@
-import { Card, InputTextField, PrimaryButton } from '@moodlenet/react-app/lib/webapp/ui/components'
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import React, { FC, useContext, useRef } from 'react'
 import { PassportConfigs } from '../store/types'
 import { PassportContext } from './MainModule'
