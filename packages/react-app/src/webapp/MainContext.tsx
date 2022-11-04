@@ -6,7 +6,12 @@ import reactAppConn from '../main.mjs'
 import { ReactAppMainComponentProps } from './web-lib.mjs'
 // import { RegistryHandler } from './main-lib/registry'
 
-export type WebPkgDeps = [typeof reactAppConn, typeof organizationConn, typeof authConn, typeof graphConn]
+export type WebPkgDeps = [
+  typeof reactAppConn,
+  typeof organizationConn,
+  typeof authConn,
+  typeof graphConn,
+]
 export type MainContextT = ReactAppMainComponentProps<WebPkgDeps> & {
   // shell: WebAppShellOf<ReactAppPluginMainModule>
   // registries: {
