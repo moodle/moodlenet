@@ -11,6 +11,8 @@ import { SettingsCtrl } from './ui/components/pages/Settings/SettingsHooks.js'
 // const A = lazy(() => import('./A'))
 export type RouteRegItem = { routes: ReactElement; rootPath?: string }
 
+// TODO: I commenti sotto implementarli nel hook
+
 const AppRouter = () => {
   const { registry: routesRegistry } = routes.useRegistry()
   // console.log({ routesRegistry })
