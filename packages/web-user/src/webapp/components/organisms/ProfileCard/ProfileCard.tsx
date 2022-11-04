@@ -153,13 +153,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 
   // .filter((model): model is AddonItem => model !== undefined)
 
-  const title = (
+  /* const title = (
     <div className="display-name" key="display-name">
-      {/* {editForm.values.displayName} */}
+      {/* {editForm.values.displayName} * /}
       {displayName}
     </div>
   )
-
+*/
   const descriptionField = isEditing ? (
     <InputTextField
       textAreaAutoSize={true}

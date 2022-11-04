@@ -1,4 +1,3 @@
-import { MinimalisticHeaderProps } from '@moodlenet/component-library'
 import { SimpleLayout, useSimpleLayoutProps } from '@moodlenet/react-app/ui'
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { FC, useContext, useEffect, useState } from 'react'

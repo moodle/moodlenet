@@ -14,6 +14,8 @@ export type LoginProps = {
 // Record<string, unknown>
 
 export const Login: FC<LoginProps> = ({ loginItems, headerProps }) => {
+  // TODO: I commenti sotto implementarli nel hook
+
   // const { registry: loginRegs } = registries.loginItems.useRegistry()
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
