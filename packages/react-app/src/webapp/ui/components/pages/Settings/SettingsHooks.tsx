@@ -5,7 +5,7 @@ import { MainContext } from '../../../../MainContext.js'
 import { registries } from '../../../../web-lib.mjs'
 import { RegistryEntry } from '../../../../web-lib/registry.js'
 import Appearance from './Appearance/Appearance.js'
-import { GeneralContent } from './General/General.js'
+import { General } from './General/General.js'
 import { Settings, SettingsItem, SettingsProps } from './Settings.js'
 import './Settings.scss'
 import { SettingsSectionItem } from './SettingsContext.js'
@@ -22,7 +22,7 @@ export const useSettingsProps = (): SettingsProps => {
   const mainLayoutProps = null //MainLayoutLoggedInStoryProps
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
-      { pkgId, item: { Menu: () => <span>General</span>, Content: GeneralContent } },
+      { pkgId, item: { Menu: () => <span>General</span>, Content: General } },
       { pkgId, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
       // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
     ]
