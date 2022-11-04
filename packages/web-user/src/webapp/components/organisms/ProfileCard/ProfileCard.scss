@@ -60,17 +60,16 @@
     }
   }
   > .content {
-    padding: 0 40px 0 40px;
+    padding: 60px 40px 0 40px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding-top: 10px;
 
     > .top-items {
       width: auto;
       display: flex;
       justify-content: flex-end;
-      margin-right: -20px;
+      margin: -52px -20px 0 0;
 
       > .edit-save {
         width: 40px;
