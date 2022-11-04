@@ -19,3 +19,4 @@ build-storybook.log*
 install-info.json
 
 packages/**/lib/*
+packages/dev-machine/.machines/*
