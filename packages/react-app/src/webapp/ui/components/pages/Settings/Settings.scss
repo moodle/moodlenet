@@ -40,22 +40,38 @@
 
       > .card {
         padding: 26px 40px;
+      }
+
+      > .card,
+      > .card > .section {
         &,
         > form {
           display: flex;
           flex-direction: column;
-
           gap: 20px;
+
+          > .parameter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            > .name {
+              font-weight: bold;
+            }
+          }
         }
 
         > .title {
+          display: flex;
+          justify-content: space-between;
           font-size: 23px;
           font-weight: bold;
         }
+
         > .subtitle {
           font-size: 20px;
           font-weight: bold;
         }
+
         > .option,
         > * .option {
           display: flex;

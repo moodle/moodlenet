@@ -1,8 +1,8 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
-import './General.scss'
 import { FC } from 'react'
+import './General.scss'
 
 export type GeneralProps = {
   form: ReturnType<typeof useFormik<OrganizationData>>
@@ -28,16 +28,15 @@ export const General: FC<GeneralProps> = ({ form }) => {
   return (
     <div className="general" key="general">
       <Card>
-        <div className="title">General</div>
-        <div>Manage your preferences</div>
-      </Card>
-      <Card>
-        <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
-          <div className="top-items">
+        <div className="title">
+          {/* <Trans> */}
+            General
+            {/* </Trans> */}
             <PrimaryButton className="save-btn" type="submit">
               Save
             </PrimaryButton>
-          </div>
+        </div>
+        <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
           <div className="parameter">
             <div className="name">Site name</div>
             <div className="actions">

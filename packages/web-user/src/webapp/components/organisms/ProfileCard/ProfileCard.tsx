@@ -160,7 +160,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
   )
 
-  const descriptionField = isEditing ? (
+  const description = isEditing ? (
     <InputTextField
       textAreaAutoSize={true}
       value={form.values.description}
@@ -445,14 +445,14 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const updatedContentItems = sortAddonItems([
     updatedTopItems,
     cardHeader,
-    descriptionField,
+    description,
     approvalInfo,
     updatedBottomItems,
     ...(contentItems ?? []),
   ])
 
   return (
-    <div className="profile-card">
+    <div className="profile-card" key="profile-card">
       {isShowingBackground && backgroundUrl && (
         <Modal
           className="image-modal"
