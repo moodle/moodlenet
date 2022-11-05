@@ -84,20 +84,28 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({
       menuContent={user.avatarMenuItems.map((avatarMenuItem, i) => {
         // reoderedAvatarMenuItems.map((avatarMenuItem, i) => {
         return avatarMenuItem.Path ? (
-          <div></div>
-        ) : (
           <Link
             key={i}
             className={`avatar-menu-item ${avatarMenuItem.ClassName}`}
-            to={avatarMenuItem.Path ?? ''}
+            to={avatarMenuItem.Path}
             //   onClick={avatarMenuItem.OnClick}
           >
             <>
               {avatarMenuItem.Icon}
-              {/* {<avatarMenuItem.Icon />} */}
               {avatarMenuItem.Text}
             </>
           </Link>
+        ) : (
+          <div
+            key={i}
+            className={`avatar-menu-item ${avatarMenuItem.ClassName}`}
+            //   onClick={avatarMenuItem.OnClick}
+          >
+            <>
+              {avatarMenuItem.Icon}
+              {avatarMenuItem.Text}
+            </>
+          </div>
           // <div></div>
           // <div
           //   key={i}

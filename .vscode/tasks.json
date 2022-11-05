@@ -244,6 +244,7 @@
     },
     {
       "label": "storybook",
+      "icon": "book",
       "type": "shell",
       "command": "cd packages/storybook && yarn run storybook",
       "windows": {

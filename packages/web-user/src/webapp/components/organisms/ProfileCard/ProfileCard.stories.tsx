@@ -19,7 +19,12 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 }
 
 export const LoggedOut = () => {
-  const props = useProfileCardStoryProps()
+  const props = useProfileCardStoryProps({
+    props: {
+      // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
+      contentItems: [],
+    },
+  })
   return <ProfileCard {...props} />
 }
 
