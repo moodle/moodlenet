@@ -13,7 +13,7 @@ export type LoginProps = {
 }
 // Record<string, unknown>
 
-export const Login: FC<LoginProps> = ({ loginItems, headerProps }) => {
+export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps }) => {
   // TODO: I commenti sotto implementarli nel hook
 
   // const { registry: loginRegs } = registries.loginItems.useRegistry()
@@ -78,4 +78,4 @@ export const Login: FC<LoginProps> = ({ loginItems, headerProps }) => {
   )
 }
 
-Login.displayName = 'LoginPage'
+LoginPage.displayName = 'LoginPage'
