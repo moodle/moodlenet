@@ -1,7 +1,7 @@
 import assert from 'assert'
+import { PkgModuleRef } from '../main.mjs'
 import { getPkgModuleInfo } from '../pkg-mng/lib/pkg.mjs'
 import { PackageInfo } from '../pkg-mng/types.mjs'
-import { PkgModuleRef } from '../shell/types/pkg.mjs'
 import { PkgIdentifier, PkgName } from '../types.mjs'
 import { PkgEntry } from './types.mjs'
 // import { PkgConnectionDef, PkgEntry, PkgIdentifier, PkgModuleRef, PkgName } from '../types/pkg.mjs'

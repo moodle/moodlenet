@@ -1,5 +1,6 @@
 import { PkgIdentifier } from '../../types.mjs'
-import type { TypeofPath, TypePaths } from './crawl-path.js'
+import type { TypeofPath, TypePaths } from '../types-crawl-path.js'
+import { PkgModuleRef } from '../types.mjs'
 
 export type ArgsValidity =
   | boolean
@@ -46,11 +47,6 @@ export type Apis<Defs extends ApiDefs> = {
       never
 }
 
-export type PkgModuleRef = NodeModule | ImportMeta
-
-// export type ShellApi<S extends Shell, Path extends string>=1
-// export type ApiRef<Defs extends ApiDefs> = { defs: Defs; shell: Shell }
-
 export type ApiDefPaths<Defs extends ApiDefs> = TypePaths<Defs, ApiDef, ApiDef>
 
 export type ApiFnType<Defs extends ApiDefs, Path extends ApiDefPaths<Defs>> = TypeofPath<
@@ -63,7 +59,3 @@ export type ApiFnType<Defs extends ApiDefs, Path extends ApiDefPaths<Defs>> = Ty
       // ? ReturnType<Def['api']>
       never
   : never
-
-export type PkgConnectionDef = {
-  apis: ApiDefs
-}

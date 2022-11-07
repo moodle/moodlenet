@@ -1,5 +1,6 @@
 import { PackageInfo } from '../pkg-mng/types.mjs'
-import { FlatApiDefs, PkgConnectionDef } from '../shell/types/pkg.mjs'
+import { PkgConnectionDef } from '../pkg-shell/types.mjs'
+import { FlatApiDefs } from '../pkg-shell/apis/types.mjs'
 import { PkgIdentifier } from '../types.mjs'
 
 export type PkgEntry<PkgConnDef extends PkgConnectionDef = PkgConnectionDef> = {
