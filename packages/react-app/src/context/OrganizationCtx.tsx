@@ -1,29 +1,43 @@
 import { HeaderTitleProps } from '@moodlenet/component-library'
 import { OrganizationData } from '@moodlenet/organization'
-import { useContext, useState } from 'react'
-import { SettingsCtx } from './SettingsContext.js'
+import { useCallback, useContext, useEffect, useState } from 'react'
 
-export const OrganizationCtx = (): HeaderTitleProps => {
-  ;[organizationData, setDataOrg] = useState<OrganizationData>({
-    instanceName: '',
-    landingTitle: '',
-    landingSubtitle: '',
-    smallLogo: '',
-    logo: '',
-  })
-  const { logo, smallLogo } = organizationData
+import { MainContext } from './MainContext.js'
+
+const OrganizationDataEmpity = {
+  instanceName: '',
+  landingTitle: '',
+  landingSubtitle: '',
+  smallLogo: '',
+  logo: '',
+}
+
+export const OrganizationCtx = (): OrganizationData => {
+  const [organizationData, setDataOrg] = useState<OrganizationData>(OrganizationDataEmpity)
+  const {
+    pkgs: [reactAppSrv, organizationSrv],
+  } = useContext(MainContext)
+
+  const saveOrganization = useCallback(
+    // WE CAN NOT USE IT IS CALLED 1 TIME ONLY
+    (data: OrganizationData) => {
+      organizationSrv.call('setOrgData')({ orgData: data })
+      setDataOrg(data)
+    },
+    [organizationSrv],
+  )
+
   useEffect(() => {
     organizationSrv
       .call('getOrgData')()
       .then(({ data: orgData }) => setDataOrg(orgData))
-    reactAppSrv
-      .call('getAppearance')()
-      .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
-  }, [])
+  }, [organizationSrv])
 
-  return {
-    logo,
-    smallLogo,
+  return organizationData
+
+  /*{
+    logo: organizationData.logo,
+    smallLogo : organizationData.smallLogo,
     url: '/',
-  }
+  } */
 }
