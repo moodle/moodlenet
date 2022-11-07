@@ -6,19 +6,19 @@ import { OrganizationData } from '@moodlenet/organization'
 import { MainContext } from '../../../../MainContext.js'
 
 export const useHeaderTitleProps = (): HeaderTitleProps => {
-    const {
-        pkgs: [reactAppSrv, organizationSrv],
-      } = useContext(MainContext)
+  const {
+    pkgs: [reactAppSrv, organizationSrv],
+  } = useContext(MainContext)
 
-      const [organizationData, setDataOrg] = useState<OrganizationData>({
-        instanceName: '',
-        landingTitle: '',
-        landingSubtitle: '',
-        smallLogo: '',
-        logo: '',
-      })
+  const [organizationData, setDataOrg] = useState<OrganizationData>({
+    instanceName: '',
+    landingTitle: '',
+    landingSubtitle: '',
+    smallLogo: '',
+    logo: '',
+  })
 
-  const { organizationData,  appearanceData, saveAppearance  } = useContext(SettingsCtx)
+  const { organizationData, appearanceData, saveAppearance } = useContext(SettingsCtx)
 
   const saveOrganization = useCallback(
     (data: OrganizationData) => {
