@@ -13,6 +13,7 @@ export const IconContainer: FC<IconType> = ({ icon }) => {
   // if (!clientSessionData || clientSessionData.isRoot) {
   //   return null
   // }
+  // return <Icon icon={<span>xxx</span>}></Icon>
   return typeof icon === 'string' ? (
     <div
       style={{
@@ -30,4 +31,6 @@ export const IconContainer: FC<IconType> = ({ icon }) => {
   // return <Link to={`/content/${clientSessionData.myUserNode._id}`} style={avatar} className="avatar" />
 }
 
-export const Icon = (iconProps: IconType) => <IconContainer {...iconProps} />
+export const Icon = (iconProps: IconType) => {
+  return <IconContainer {...iconProps} />
+}

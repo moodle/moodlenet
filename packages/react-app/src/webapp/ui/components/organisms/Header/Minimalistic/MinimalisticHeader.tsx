@@ -6,7 +6,7 @@ import {
 } from '@moodlenet/component-library'
 
 import { FC, PropsWithChildren } from 'react'
-import { Href, Link } from '../../../../elements/link.js'
+import { Href, Link } from '../../../elements/link.js'
 import HeaderTitle, { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 
 import './MinimalisticHeader.scss'

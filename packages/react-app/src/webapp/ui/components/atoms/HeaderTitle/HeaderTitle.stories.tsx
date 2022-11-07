@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import smallLogo from '../../../assets/logos/moodlenet-logo-small.svg'
 import logo from '../../../assets/logos/moodlenet-logo.svg'
-import { href } from '../../../elements/link.js'
+import { href } from '../../elements/link.js'
 import { HeaderTitle, HeaderTitleProps } from './HeaderTitle.js'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {
@@ -15,7 +15,7 @@ const meta: ComponentMeta<typeof HeaderTitle> = {
 }
 
 export const HeaderTitleStoryProps: HeaderTitleProps = {
-  url: href('Landing/Logged In'),
+  url: href('Pages/Landing/Logged In'),
   logo: logo,
   smallLogo: smallLogo,
 }
