@@ -1,4 +1,4 @@
-import { PkgConnectionDef } from './shell/types/pkg.mjs'
+import { PkgConnectionDef } from './pkg-shell/types.mjs'
 
 export type PkgName = string
 export type PkgVersion = string
