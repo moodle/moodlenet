@@ -7,9 +7,7 @@ import { pkgApis } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
 const connect = getConnect()
 
-export const ProvideMainContexts: FC<PropsWithChildren<Record<string, unknown>>> = ({
-  children,
-}) => {
+export const ProvideMainContexts: FC<PropsWithChildren> = ({ children }) => {
   const Main = useMemo(
     () =>
       connect.pkgs.reduce((_children, { MainComponent: PluginMainComponent, usesPkgs, pkgId }) => {
@@ -42,8 +40,8 @@ export const ProvideMainContexts: FC<PropsWithChildren<Record<string, unknown>>>
 
 function getConnect() {
   type PluginMainComponentObject = {
-    MainComponent: ReactAppMainComponent<any>
-    pkgId: PkgIdentifier<any>
+    MainComponent: ReactAppMainComponent
+    pkgId: PkgIdentifier
     usesPkgs: WebPkgDepList
   }
   type Connect = {

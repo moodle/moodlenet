@@ -12,7 +12,7 @@ export async function getSessionToken({
   pkgId,
 }: {
   uid: string
-  pkgId: PkgIdentifier<any>
+  pkgId: PkgIdentifier
 }): Promise<GetSessionResp> {
   const user = await store.getByProviderId({ pkgName: pkgId.name, uid })
   if (!user) {
