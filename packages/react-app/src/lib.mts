@@ -21,7 +21,7 @@ export async function setupPlugin<Deps extends WebPkgDepList = never>({
   pluginDef,
 }: {
   pluginDef: WebappPluginDef<Deps>
-  pkgId: PkgIdentifier<any>
+  pkgId: PkgIdentifier
 }) {
   const guestPkgEntry = pkgEntryByPkgId(pkgId)
   assert(guestPkgEntry, `can't setup plugin, no guestPkgEntry for ${pkgId.name}@${pkgId.version}`)

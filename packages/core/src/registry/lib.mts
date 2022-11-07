@@ -1,12 +1,15 @@
 import assert from 'assert'
+import { getPkgModuleInfo } from '../pkg-mng/lib/pkg.mjs'
 import { PackageInfo } from '../pkg-mng/types.mjs'
-import { PkgConnectionDef, PkgEntry, PkgIdentifier, PkgModuleRef, PkgName } from './types/pkg.mjs'
-import { getPkgModuleInfo } from './lib.mjs'
+import { PkgModuleRef } from '../shell/types/pkg.mjs'
+import { PkgIdentifier, PkgName } from '../types.mjs'
+import { PkgEntry } from './types.mjs'
+// import { PkgConnectionDef, PkgEntry, PkgIdentifier, PkgModuleRef, PkgName } from '../types/pkg.mjs'
 
 /*
  * PkgRegistry
  */
-const PKG_REG_ENTRIES: PkgEntry<any>[] = []
+const PKG_REG_ENTRIES: PkgEntry[] = []
 
 export function listEntries() {
   return PKG_REG_ENTRIES.slice()
@@ -18,7 +21,7 @@ export function getPkgEntryByPkgRootDir(pkgRootDir: string) {
 export function getPkgRegEntryByPkgName(pkgName: PkgName) {
   return PKG_REG_ENTRIES.find(_ => _.pkgId.name === pkgName)
 }
-// export function getPkgApiDefsByPkgName(pkgName: PkgName): Pick<PkgEntry<any>, 'apiDefs' | 'flatApiDefs'> | undefined {
+// export function getPkgApiDefsByPkgName(pkgName: PkgName): Pick<PkgEntry, 'apiDefs' | 'flatApiDefs'> | undefined {
 //   const pkgEntry = getPkgEntryByPkgName(pkgName)
 //   return pkgEntry && { apiDefs: pkgEntry.apiDefs, flatApiDefs: pkgEntry.flatApiDefs }
 // }
@@ -37,7 +40,7 @@ export async function ensureRegisterPkg(pkg_module_ref: PkgModuleRef) {
   }
   const pkgId = pkgIdByInfo(pkgModInfo.pkgInfo)
   Object.freeze(pkgId)
-  const pkgEntry: PkgEntry<PkgConnectionDef> = {
+  const pkgEntry: PkgEntry = {
     pkgId,
     pkgInfo: pkgModInfo.pkgInfo,
     pkgConnectionDef: { apis: {} },
@@ -46,15 +49,15 @@ export async function ensureRegisterPkg(pkg_module_ref: PkgModuleRef) {
   return registerPkg(pkgEntry)
 }
 
-export function pkgIdByInfo(pkgInfo: PackageInfo): PkgIdentifier<any> {
-  const pkgId: PkgIdentifier<any> = {
+export function pkgIdByInfo(pkgInfo: PackageInfo): PkgIdentifier {
+  const pkgId: PkgIdentifier = {
     name: pkgInfo.packageJson.name,
     version: pkgInfo.packageJson.version,
   }
   return pkgId
 }
 
-export function pkgEntryByPkgId(pkgId: PkgIdentifier<any>): PkgEntry<any> | undefined {
+export function pkgEntryByPkgId(pkgId: PkgIdentifier): PkgEntry | undefined {
   const pkgEntry = getPkgRegEntryByPkgName(pkgId.name)
   if (!pkgEntry) {
     return undefined
@@ -62,7 +65,7 @@ export function pkgEntryByPkgId(pkgId: PkgIdentifier<any>): PkgEntry<any> | unde
   //TODO:FIXME: add version check
   return pkgEntry
 }
-function registerPkg(pkgEntry: PkgEntry<any>) {
+function registerPkg(pkgEntry: PkgEntry) {
   const pkgName = pkgEntry.pkgId.name
   assert(!getPkgRegEntryByPkgName(pkgName), `can't register ${pkgName} twice`)
   const pkgRootDir = pkgEntry.pkgInfo.pkgRootDir

@@ -7,7 +7,7 @@ export type MountAppArgs = {
 }
 export type MountAppItem = {
   mountAppArgs: MountAppArgs
-  pkgId: PkgIdentifier<any>
+  pkgId: PkgIdentifier
   mountOnAbsPath?: string
 }
 
