@@ -1,4 +1,5 @@
 import { MemoryRouter } from 'react-router-dom'
+import { ProvideStorybookLinkComponent } from '../src/lib/SBLinkComponent'
 import { Wrapper } from '../src/Wrapper'
 
 export const parameters = {
@@ -32,9 +33,11 @@ export const parameters = {
 export const decorators = [
   Story => (
     <MemoryRouter>
-      <Wrapper>
-        <Story />
-      </Wrapper>
+      <ProvideStorybookLinkComponent>
+        <Wrapper>
+          <Story />
+        </Wrapper>
+      </ProvideStorybookLinkComponent>
     </MemoryRouter>
   ),
 ]

@@ -1,12 +1,12 @@
-import { Header, HeaderProps } from '@moodlenet/component-library'
 import { CSSProperties, FC, ReactNode } from 'react'
 import { baseStyle } from '../../../styles/config.js'
+import { MainHeader, MainHeaderProps } from '../../organisms/Header/MainHeader/MainHeader.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
 export type MainLayoutProps = {
-  headerProps: HeaderProps
+  headerProps: MainHeaderProps
   style?: CSSProperties
   // contentStyle?: CSSProperties
   children?: ReactNode
@@ -35,7 +35,7 @@ export const MainLayout: FC<MainLayoutProps> = ({
         // ...styleContext.style,
       }}
     >
-      <Header {...headerProps} />
+      <MainHeader {...headerProps} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>

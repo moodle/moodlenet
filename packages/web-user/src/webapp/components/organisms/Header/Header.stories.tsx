@@ -1,4 +1,4 @@
-import { HeaderAvatarMenuItemRegItem } from '@moodlenet/component-library'
+import { HeaderAvatarMenuItemRegItem, href } from '@moodlenet/component-library'
 import { ClassName, Icon, Position, Text } from './Header.js'
 
 export const HeaderProfileStoryProps: HeaderAvatarMenuItemRegItem = {
@@ -11,4 +11,5 @@ export const HeaderProfileStoryProps: HeaderAvatarMenuItemRegItem = {
   ),
   ClassName: ClassName,
   Position: Position,
+  Path: href('Pages/Profile/Logged In'),
 }
