@@ -1,6 +1,9 @@
-import { HeaderMenuItemRegItem, HeaderRightComponentRegItem } from '@moodlenet/component-library'
 import { RouteRegItem } from './app-routes.js'
 import { SettingsSectionItem } from './components.mjs'
+import {
+  HeaderMenuItemRegItem,
+  HeaderRightComponentRegItem,
+} from './ui/components/organisms/Header/addons.js'
 import { LoginItem, SignupItem } from './web-lib.mjs'
 import { createRegistry } from './web-lib/registry.js'
 

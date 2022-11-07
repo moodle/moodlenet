@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Href, Link } from '../../../elements/link.js'
+import { Href, Link } from '../../elements/link.js'
 
 import './HeaderTitle.scss'
 
