@@ -1,8 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
-import { MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
-import { href } from '../../elements/link.js'
+import { href, MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
 
 const meta: ComponentMeta<typeof MainHeader> = {
   title: 'Organisms/Header',

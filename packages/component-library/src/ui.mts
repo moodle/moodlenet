@@ -19,8 +19,6 @@ export * from './webapp/ui/components/molecules/modals/ReportModal/ReportModal.j
 export * from './webapp/ui/components/organisms/Header/addons.js'
 export * from './webapp/ui/components/organisms/Header/Minimalistic/MinimalisticHeader.js'
 export * from './webapp/ui/components/organisms/Header/Standard/Header.js'
-export * from './webapp/ui/elements/link.js'
-export * from './webapp/ui/elements/tags.js'
 export * from './webapp/ui/helpers/factories.js'
 export * from './webapp/ui/helpers/utilities.js'
 export * from './webapp/ui/lib/index.mjs'

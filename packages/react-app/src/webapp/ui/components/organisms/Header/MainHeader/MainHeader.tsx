@@ -11,7 +11,7 @@ import {
 import { FC } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
-import { Href, Link } from '../../../../elements/link.js'
+import { Href, Link } from '../../../elements/link.js'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { HeaderMenuItem } from '../addons.js'
 
