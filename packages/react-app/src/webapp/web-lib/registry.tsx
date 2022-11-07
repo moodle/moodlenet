@@ -1,14 +1,23 @@
 import { PkgIdentifier, PkgName } from '@moodlenet/core'
-import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 export type RegistryEntry<ItemType> = {
   item: ItemType
-  pkgId: PkgIdentifier<any>
+  pkgId: PkgIdentifier
 }
 
 export type UnRegisterFn = () => void
-export type RegisterFn<ItemType> = (pkgId: PkgIdentifier<any>, item: ItemType) => UnRegisterFn
-export type UseRegisterHook<ItemType> = (pkgId: PkgIdentifier<any>, item: ItemType) => void
+export type RegisterFn<ItemType> = (pkgId: PkgIdentifier, item: ItemType) => UnRegisterFn
+export type UseRegisterHook<ItemType> = (pkgId: PkgIdentifier, item: ItemType) => void
 
 // export type CreateRegistryCfg<ItemType> = {}
 export type Registry<ItemType> = {
@@ -30,7 +39,9 @@ export type RegistryContextT<ItemType> = {
   register: RegisterFn<ItemType>
 }
 
-export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */): RegistryHandler<ItemType> {
+export function createRegistry<
+  ItemType,
+>(/* cfg?: CreateRegistryCfg<ItemType> */): RegistryHandler<ItemType> {
   const initialRegistry: Registry<ItemType> = { byPkg: {}, entries: [] }
   type CurrentContextT = RegistryContextT<ItemType>
   const context = createContext<CurrentContextT>(null as any)
@@ -44,7 +55,9 @@ export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */
           entries: currentReg.entries.filter(_entry => _entry !== entry),
           byPkg: {
             ...currentReg.byPkg,
-            [entry.pkgId.name]: (currentReg.byPkg[entry.pkgId.name] ?? []).filter(_entry => _entry !== entry),
+            [entry.pkgId.name]: (currentReg.byPkg[entry.pkgId.name] ?? []).filter(
+              _entry => _entry !== entry,
+            ),
           },
         }
         return unregistrationNewRegistry
@@ -87,7 +100,7 @@ export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */
     return useContext(context)
   }
 
-  function useRegister(pkgId: PkgIdentifier<any>, item: ItemType) {
+  function useRegister(pkgId: PkgIdentifier, item: ItemType) {
     const ctx = useContext(context)
     useEffect(() => ctx.register(pkgId, item), [item, ctx.register])
   }

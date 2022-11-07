@@ -1,11 +1,13 @@
 import { resolve } from 'path'
-import { getPackageInfo, getPackageInfoIn } from '../pkg-mng/lib.mjs'
-import { WORKING_DIR } from './env.mjs'
+import { getPackageInfo, getPackageInfoIn } from '../pkg-mng/lib/pkg.mjs'
+import { IS_DEVELOPMENT, WORKING_DIR } from './env.mjs'
 
 process.on('error', err => {
   console.error(err)
   err instanceof Error && console.error(err.stack)
-  process.exit()
+  if (!IS_DEVELOPMENT) {
+    process.exit()
+  }
 })
 
 const systemPkgInfo = await getPackageInfoIn({ pkgRootDir: WORKING_DIR })

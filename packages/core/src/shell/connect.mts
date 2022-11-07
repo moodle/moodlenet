@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { API_DEF_SYMBOL, flattenApiDefs } from './lib.mjs'
-import { ensureRegisterPkg, getPkgRegEntryByPkgName } from './registry.mjs'
+import { ensureRegisterPkg, getPkgRegEntryByPkgName } from '../registry/lib.mjs'
 import {
   ApiDef,
   ApiDefPaths,
@@ -10,9 +10,9 @@ import {
   CallApiOpts,
   CtxApiFn,
   PkgConnectionDef,
-  PkgIdentifier,
   PkgModuleRef,
 } from './types/pkg.mjs'
+import { PkgIdentifier } from '../types.mjs'
 
 export async function connectPkg<PkgConnDef extends PkgConnectionDef>(
   pkg_module_ref: PkgModuleRef,
@@ -49,7 +49,7 @@ export async function pkgConnection<PkgConnDef extends PkgConnectionDef>(
     const apiDef = targetPkgEntry.flatApiDefs[path]
     assert(apiDef, `no apiDef in ${targetPkgEntry.pkgId.name}::${path}`)
 
-    return async function callApi(...args: any[]) {
+    return async function callApi(...args: unknown[]) {
       const _argValidity = await apiDef.argsValidation(...args)
       const argValidity =
         'boolean' === typeof _argValidity ? { valid: _argValidity, msg: undefined } : _argValidity
