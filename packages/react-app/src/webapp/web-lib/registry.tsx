@@ -12,12 +12,12 @@ import {
 
 export type RegistryEntry<ItemType> = {
   item: ItemType
-  pkgId: PkgIdentifier<any>
+  pkgId: PkgIdentifier
 }
 
 export type UnRegisterFn = () => void
-export type RegisterFn<ItemType> = (pkgId: PkgIdentifier<any>, item: ItemType) => UnRegisterFn
-export type UseRegisterHook<ItemType> = (pkgId: PkgIdentifier<any>, item: ItemType) => void
+export type RegisterFn<ItemType> = (pkgId: PkgIdentifier, item: ItemType) => UnRegisterFn
+export type UseRegisterHook<ItemType> = (pkgId: PkgIdentifier, item: ItemType) => void
 
 // export type CreateRegistryCfg<ItemType> = {}
 export type Registry<ItemType> = {
@@ -106,7 +106,7 @@ export function createRegistry<
     return useContext(context)
   }
 
-  function useRegister(pkgId: PkgIdentifier<any>, item: ItemType) {
+  function useRegister(pkgId: PkgIdentifier, item: ItemType) {
     const { register } = useContext(context)
     useEffect(() => {
       return register(pkgId, item)

@@ -1,12 +1,11 @@
 import assert from 'assert'
 import execa from 'execa'
-import { mkdirSync } from 'fs'
-import { readdir } from 'fs/promises'
+import { mkdir, readdir } from 'fs/promises'
 import { resolve } from 'path'
 import { InstallPkgReq } from '../pkg-mng/types.mjs'
-import { getPkgModulePaths } from '../pkg-shell/lib.mjs'
-import { install } from '../pkg-mng/lib.mjs'
-import { IS_LOCAL_DEVELOPMENT, WORKING_DIR } from './env.mjs'
+import { install } from '../pkg-mng/lib/npm.mjs'
+import { IS_DEVELOPMENT, WORKING_DIR } from './env.mjs'
+import { getPkgModulePaths } from '../pkg-mng/lib/pkg.mjs'
 
 export const defaultCorePackages = {
   'core': '0.1.0',
@@ -27,7 +26,7 @@ export const defaultCorePackages = {
   // 'passport-auth': '0.1.0',
 }
 
-mkdirSync(WORKING_DIR, { recursive: true })
+await mkdir(WORKING_DIR, { recursive: true })
 const dir = await readdir(WORKING_DIR, {
   withFileTypes: true,
 })
@@ -35,16 +34,16 @@ assert(!dir.length, `won't install in not-empty dir ${WORKING_DIR}`)
 
 await execa('npm', ['-y', 'init'], {
   cwd: WORKING_DIR,
-  timeout: 600000,
+  timeout: 15,
 })
 
-const myModInfo = getPkgModulePaths(import.meta)
+const myModPaths = getPkgModulePaths(import.meta)
 const installPkgReqs = Object.entries(defaultCorePackages).map<InstallPkgReq>(
   ([pkgName, pkgVersion]) =>
-    IS_LOCAL_DEVELOPMENT
+    IS_DEVELOPMENT
       ? {
           type: 'symlink',
-          fromFolder: resolve(myModInfo.moduleDir, '..', '..', '..', pkgName),
+          fromFolder: resolve(myModPaths.moduleDir, '..', '..', '..', pkgName),
         }
       : { type: 'npm', pkgId: { name: `@moodlenet/${pkgName}`, version: pkgVersion } },
 )

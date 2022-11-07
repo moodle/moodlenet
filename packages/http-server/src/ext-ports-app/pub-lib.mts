@@ -15,7 +15,7 @@ export const BASE_PKG_MOUNT_URL = '/.pkg'
 // export type RawSubOptsHeaders = {
 //   'content-type': 'application/json'
 // }
-export function getPkgApiFetchOpts(pkgId: PkgIdentifier<any>, apiPath: string, args?: any[]) {
+export function getPkgApiFetchOpts(pkgId: PkgIdentifier, apiPath: string, args?: any[]) {
   // console.log('appapppa')
   const url = `${BASE_APIS_URL}/${pkgId.name}/${pkgId.version}/${apiPath}`
   const requestInit: RequestInit = {
