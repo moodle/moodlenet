@@ -1,8 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../../elements/link.js'
 import {
   HeaderTitleOrganizationStoryProps,
   HeaderTitleStoryProps,
-} from '../HeaderTitle/HeaderTitle.stories.js'
+} from '../../../atoms/HeaderTitle/HeaderTitle.stories.js'
 // import { href } from '../../../../elements/link'
 import { MinimalisticHeader, MinimalisticHeaderProps } from './MinimalisticHeader.js'
 
@@ -16,14 +17,14 @@ const meta: ComponentMeta<typeof MinimalisticHeader> = {
 }
 
 export const MinimalisticHeaderStoryProps: MinimalisticHeaderProps = {
-  //   homeHref: href('Landing/Logged In'),
   page: 'login',
+  loginHref: href('Pages/Access/Login/Default'),
+  signupHref: href('Pages/Access/SignUp/Default'),
   headerTitleProps: HeaderTitleStoryProps,
 }
 
 export const MinimalisticHeaderOrganizationStoryProps: MinimalisticHeaderProps = {
-  page: 'login',
-  //   homeHref: href('Landing/Logged In'),
+  ...MinimalisticHeaderStoryProps,
   headerTitleProps: HeaderTitleOrganizationStoryProps,
 }
 

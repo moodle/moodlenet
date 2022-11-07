@@ -1,13 +1,11 @@
 import { AnchorHTMLAttributes, ComponentType, CSSProperties, DetailedHTMLProps } from 'react'
-import { createCtx } from '../../context.js'
+import { createCtx } from '../lib/context.js'
+
 export type Href = {
   ext: boolean
   url: string
 }
-export const emptyHref: Href = {
-  ext: false,
-  url: '',
-}
+
 export type LinkComponentElementProps = DetailedHTMLProps<
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
     href: Href

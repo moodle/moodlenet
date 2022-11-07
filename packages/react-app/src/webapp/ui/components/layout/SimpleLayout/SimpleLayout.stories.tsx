@@ -1,6 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import {
+  MinimalisticHeaderOrganizationStoryProps,
+  MinimalisticHeaderStoryProps,
+} from '../../organisms/Header/Minimalistic/MinimalisticHeader.stories.js'
 // import { href } from '../../../../elements/link'
-import { MinimalisticHeaderStories } from '@moodlenet/component-library/stories'
 
 import SimpleLayout, { SimpleLayoutProps } from './SimpleLayout.js'
 
@@ -19,14 +22,14 @@ const meta: ComponentMeta<typeof SimpleLayout> = {
 
 export const SimpleLayoutStoryProps: SimpleLayoutProps = {
   page: 'login',
-  headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
+  headerProps: MinimalisticHeaderStoryProps,
   //   homeHrpef: href('Landing/Logged In'),
   // organization: { ...SimpleLayoutTitleStoryProps },
 }
 
 export const SimpleLayoutOrganizationStoryProps: SimpleLayoutProps = {
   page: 'login',
-  headerProps: MinimalisticHeaderStories.MinimalisticHeaderOrganizationStoryProps,
+  headerProps: MinimalisticHeaderOrganizationStoryProps,
   //   homeHref: href('Landing/Logged In'),
   // organization: { ...SimpleLayoutTitleOrganizationStoryProps },
 }

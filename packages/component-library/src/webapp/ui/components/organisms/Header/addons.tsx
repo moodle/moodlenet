@@ -1,10 +1,11 @@
-import { ComponentType, ReactNode } from 'react'
+import { ComponentType, ReactElement } from 'react'
+import { Href } from '../../../elements/link.js'
 
 export type HeaderRightComponentRegItem = { Component: ComponentType }
-export type HeaderAvatarMenuItemRegItem = {
+export type HeaderMenuItemRegItem = {
   Text: string
-  Icon: ComponentType | ReactNode
-  Path?: string
+  Icon: ReactElement
+  Path: Href
   ClassName?: string
   Position?: number
   OnClick?: () => unknown
