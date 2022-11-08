@@ -1,6 +1,6 @@
 In this folder, we create context 
 
-ALL external import to plugin, and server MUST STAY ONLY HERE 
+ALL external import to plugin, and server MUST STAY ONLY HERE
 
 context here expose must use with hook
 
