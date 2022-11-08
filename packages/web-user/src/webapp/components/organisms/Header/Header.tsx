@@ -3,6 +3,7 @@ import { FC, ReactElement } from 'react'
 export const Text = 'Profile'
 export const Path = '/profile'
 export const ClassName = 'profile'
+export const Key = 'profile'
 export const Position = 0
 type IconType = {
   icon: string | ReactElement
@@ -22,7 +23,6 @@ export const IconContainer: FC<IconType> = ({ icon }) => {
         backgroundSize: 'cover',
       }}
       className="avatar"
-      key="avatar"
     />
   ) : (
     icon
