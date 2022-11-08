@@ -1,28 +1,28 @@
 // import { Trans } from '@lingui/macro'
 import { Card, Colorpicker, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useContext } from 'react'
-import { AppearanceData } from '../../../../../../main.mjs'
+import { FC /* , useContext */ } from 'react'
+import { AppearanceData } from '../../../../../../types.mjs'
+
 import { getColorPalette } from '../../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
-import { SettingsCtx, StyleType } from '../SettingsContext.js'
 import './Appearance.scss'
 
 export type AppearanceProps = {
   // organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
   form: ReturnType<typeof useFormik<AppearanceData>>
-  style: StyleType
-  setStyle: () => unknown
+  appearanceData: AppearanceData
+  setAppearanceData: (appearanceData: AppearanceData) => unknown
 }
 
 export const AppearanceMenu = <span>Appearance</span>
 
 export const Appearance: FC<AppearanceProps> = ({
   form,
-  setStyle,
-  style /* { organization } */,
+  setAppearanceData,
+  appearanceData /* { organization } */,
 }) => {
-  const styleContext = useContext(SettingsCtx)
+  // const styleContext = useContext(SettingsCtx)
   // const [logo, setLogo] = useState(true)
   // const [compactLogo, setCompactLogo] = useState(true)
 
@@ -30,13 +30,16 @@ export const Appearance: FC<AppearanceProps> = ({
     form.values.color = color
     // styleContext.saveAppearance({ color })
     // styleContext.setStyle({
-    setStyle(
-      ...style,
-      // ...styleContext.style,
-      ...getColorPalette(color),
-      // '--primary-color': color,
-      // '--primary-background-color': setOpacity(color, 0.25),
-    )
+    setAppearanceData({
+      color,
+      customStyle: {
+        ...appearanceData.customStyle,
+        // ...styleContext.style,
+        ...getColorPalette(color),
+        // '--primary-color': color,
+        // '--primary-background-color': setOpacity(color, 0.25),
+      },
+    })
   }
 
   // const setStyle = (style: string) => {
@@ -111,13 +114,13 @@ export const Appearance: FC<AppearanceProps> = ({
           </div>
           <div className="field">
             <Colorpicker
-              value={style['--primary-color']}
+              value={appearanceData.customStyle['--primary-color']}
               // value={styleContext.style['--primary-color']}
               onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
             />
             <InputTextField
               edit={true}
-              value={style['--primary-color']}
+              value={appearanceData.customStyle['--primary-color']}
               // value={styleContext.style['--primary-color']}
               onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
             />

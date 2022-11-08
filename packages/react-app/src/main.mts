@@ -3,8 +3,8 @@ import graphConn from '@moodlenet/content-graph'
 import { connectPkg } from '@moodlenet/core'
 import organizationConn from '@moodlenet/organization'
 import apis from './apis.mjs'
+import { WebPkgDeps } from './common/types.mjs'
 import { setupPlugin } from './lib.mjs'
-import { WebPkgDeps } from './webapp/MainContext.js'
 
 export * from './types.mjs'
 
@@ -13,14 +13,14 @@ export * from './types.mjs'
 // export * from './pub-lib.mjs'
 // export * from './types.mjs'
 
-const pkgId = await connectPkg(import.meta, { apis })
-export default pkgId
+const reactAppConn = await connectPkg(import.meta, { apis })
+export default reactAppConn
 
-const WebPkgDeps: WebPkgDeps = [pkgId, organizationConn, authConn, graphConn]
+const webPkgDeps: WebPkgDeps = [reactAppConn, organizationConn, authConn, graphConn]
 await setupPlugin<WebPkgDeps>({
-  pkgId,
+  pkgId: reactAppConn,
   pluginDef: {
     mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
-    usesPkgs: WebPkgDeps,
+    usesPkgs: webPkgDeps,
   },
 })

@@ -1,7 +1,8 @@
 import { FC, useContext, useMemo } from 'react'
+import { MainContext } from '../../../../context/MainContext.js'
+import { SettingsSectionItem } from '../../../../context/SettingsContext.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { MainContext } from '../../../../MainContext.js'
 import { registries } from '../../../../web-lib.mjs'
 import { RegistryEntry } from '../../../../web-lib/registry.js'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
@@ -9,7 +10,6 @@ import Appearance from './Appearance/Appearance.js'
 import { General } from './General/General.js'
 import { Settings, SettingsItem, SettingsProps } from './Settings.js'
 import './Settings.scss'
-import { SettingsSectionItem } from './SettingsContext.js'
 
 export const SettingsCtrl: FC = () => {
   const settingsProps = useSettingsProps()

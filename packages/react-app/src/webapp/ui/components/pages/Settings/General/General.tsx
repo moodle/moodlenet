@@ -1,11 +1,11 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { FC } from 'react'
+import { OrganizationDataType } from '../../../../../context/OrganizationCtx.js'
 import './General.scss'
 
 export type GeneralProps = {
-  form: ReturnType<typeof useFormik<OrganizationData>>
+  form: ReturnType<typeof useFormik<OrganizationDataType>>
 }
 
 export const GeneralMenu = <span>General</span>
@@ -30,11 +30,11 @@ export const General: FC<GeneralProps> = ({ form }) => {
       <Card>
         <div className="title">
           {/* <Trans> */}
-            General
-            {/* </Trans> */}
-            <PrimaryButton className="save-btn" type="submit">
-              Save
-            </PrimaryButton>
+          General
+          {/* </Trans> */}
+          <PrimaryButton className="save-btn" type="submit">
+            Save
+          </PrimaryButton>
         </div>
         <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
           <div className="parameter">
