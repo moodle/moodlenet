@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { WebPkgDeps } from '../../main.mjs'
+import { WebPkgDeps } from '../../common/types.mjs'
 import { ReactAppMainComponentProps } from '../web-lib.mjs'
 
 export type MainContextT = ReactAppMainComponentProps<WebPkgDeps>
