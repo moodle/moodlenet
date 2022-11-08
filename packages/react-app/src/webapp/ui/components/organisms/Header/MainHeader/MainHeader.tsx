@@ -5,13 +5,12 @@ import {
   Header,
   PrimaryButton,
   Searchbox,
-  sortAddonItems,
   TertiaryButton,
 } from '@moodlenet/component-library'
 import { FC } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
-import { sortAnyItems } from '../../../../helpers/utilities.js'
+import { sortAddonItems, sortAnyItems } from '../../../../helpers/utilities.js'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { Href, Link } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'

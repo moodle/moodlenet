@@ -7,10 +7,10 @@ import {
   PrimaryButton,
   RoundButton,
   SecondaryButton,
-  sortAddonItems,
   TertiaryButton,
   useImageUrl,
 } from '@moodlenet/component-library'
+import { sortAddonItems } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { Dispatch, FC, SetStateAction, useLayoutEffect, useRef, useState } from 'react'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'

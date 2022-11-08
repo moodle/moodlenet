@@ -27,3 +27,7 @@ export * from './ui/components/pages/Settings/Settings.js'
 export * from './ui/components/pages/Settings/SettingsContext.js'
 export * from './ui/components/pages/Settings/SettingsHooks.js'
 // @endindex
+// @index(['./ui/helpers/**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+export * from './ui/helpers/factories.js'
+export * from './ui/helpers/utilities.js'
+// @endindex
