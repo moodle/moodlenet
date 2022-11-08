@@ -1,3 +1,21 @@
+### package.json
+definire cosa esportare, webapp esporta 3 cose
+
+### pkgConnection
+
+### registry
+ESTENDE UN PACKAGE
+
+  <registries.settingsSections.Provider>
+  se voglio aghiungere il contenuto a qualcosa già definito ma non popolato,esempio  sezione pannello o menu,
+
+o inserisco un elemento a mano
+un package registra degli elementi
+reactapp vuole, per esempio:  da la possibilità di aggiungere un pagina ad altri package,
+
+pack esterno chiama l'import di registry routers e aggiunge la pagina ,
+reactapp legge il suo  registry rooter , e vede gli inserimenti esterni e li usi.
+
 ### inti.mts
 used from lib
 
@@ -22,7 +40,13 @@ WebappPluginDef<Deps> & {
 
 get/set Appreance -> ??? REMOVE !!!!
 
-### registry,mts
+### web-lib.mjs
+cosa vuole esportare verso l'esterno
+per esempio qui auth plugins ecc
+per esempio, mi serve sapere l'auth. e mi importo da webApp context auth
+fa da interfaccia e definisce la compatibilità con altri moduli
+
+### core/registry,mts
 used by main.mts and connect.mts
 
 PKG_REG_ENTRIES lista packages
@@ -32,9 +56,25 @@ ensureRegisterPkg register if not exit packages
 
 listEntries export PKG_REG_ENTRIES
 
+TUTTI I PACKAGE CHE SONO STATI AVVIATI con conncet package
+dopo che sono stati registrati.
+
+### web-lib/registry,mts
+espone la funzionalità di registry della webapp (no core)
+usato registeres.mts
+
+### webapp/registries.mts
+utilizza registry sopra per definire i registers della webapp
+
 ### use-pkg-apis.mts
 used by lib.mts
 
+utillizza delle api esportate da core che utilizzato core/registry.mts ma solo quelli che servono al pack corrente, E LE INIZIALIZZA QUI
+esempio apperanceData prepara uno store per essa.
+
+httpSrvPkg prende il riferimento a http, ma l'inizializzaione sta su init.mts
+
+kvPkg --> keyValuePackage
 write data in store
 take ./types/data.mjs
 and define keys from data
@@ -69,3 +109,19 @@ WebPkgDeps -> list depency types
 MainContextT
 
 export react context with data from api.mts
+
+
+### core/src/main/boot.mts
+entry point del processo,
+chiama tutti i main definiti in pack json
+quindo questo main si estende con tutti quelli degli altri packages
+
+produce packge.json c0on tutti i package e li risolve
+
+
+
+TODO
+
+il package dovrebbe avere 3 cartelle, common, webapp, server
+
+

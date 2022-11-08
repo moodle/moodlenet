@@ -1,3 +1,4 @@
+import { baseStyle, BaseStyleType } from '@moodlenet/component-library'
 import { OrganizationData } from '@moodlenet/organization'
 import {
   ComponentType,
@@ -11,10 +12,9 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { AppearanceData } from '../../../../../types.mjs'
-import { MainContext } from '../../../../MainContext.js'
+import { AppearanceData } from '../types.mjs'
+import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
-import { baseStyle, BaseStyleType } from '../../../styles/config.js'
 
 export type StyleType = BaseStyleType & CSSProperties
 
