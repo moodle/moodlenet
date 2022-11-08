@@ -1,9 +1,9 @@
 import { ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib'
 import { useMemo } from 'react'
-import { MainContextT, WebPkgDeps } from './types.mjs'
-import Router from './Router.js'
-import * as avatarmenuItem from './Header.js'
+import * as avatarmenuItem from './components/organisms/Header/Header.js'
 import { MainContext } from './MainContext.js'
+import Router from './Router.js'
+import { MainContextT, WebPkgDeps } from './types.mjs'
 
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   registries.avatarMenuItems.useRegister(pkgId, avatarmenuItem)

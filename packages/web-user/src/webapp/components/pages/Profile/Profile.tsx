@@ -1,12 +1,13 @@
 import {
+  AddonItem,
   InputTextField,
   Modal,
   PrimaryButton,
   ReportModal,
   Snackbar,
 } from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
-import { ComponentType, FC, useState } from 'react'
+import { MainLayout, MainLayoutProps, sortAddonItems } from '@moodlenet/react-app/ui'
+import { FC, useState } from 'react'
 import { OverallCard, OverallCardProps } from '../../molecules/OverallCard/OverallCard.js'
 import { ProfileCard, ProfileCardProps } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
@@ -15,7 +16,8 @@ export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
   overallCardProps: OverallCardProps
   profileCardProps: ProfileCardProps
-  mainColumnContent?: { Comp: ComponentType<{ callback(): void }>; key: string; callback(): void }[]
+  mainColumnItems?: AddonItem[]
+  sideColumnItems?: AddonItem[]
   displayName: string
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
@@ -26,7 +28,8 @@ export const Profile: FC<ProfileProps> = ({
   mainLayoutProps,
   overallCardProps,
   profileCardProps,
-  mainColumnContent,
+  mainColumnItems,
+  sideColumnItems,
   displayName,
   showAccountApprovedSuccessAlert,
   showAccountCreationSuccessAlert,
@@ -149,29 +152,31 @@ export const Profile: FC<ProfileProps> = ({
     // )
   ]
 
+  const profileCard = (
+    <ProfileCard
+      {...profileCardProps}
+      // editForm={editForm}
+      isEditing={isEditing}
+      toggleIsEditing={toggleIsEditing}
+      setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
+      setShowUrlCopiedAlert={setShowUrlCopiedAlert}
+      setIsReporting={setIsReporting}
+      openSendMessage={() => setIsSendingMessage(/* !!sendEmailForm */ true)}
+    />
+  )
+
+  const overallCard = <OverallCard {...overallCardProps} />
+
+  const updatedMainColumnItems = sortAddonItems([profileCard, ...(mainColumnItems ?? [])])
+  const updatedSideColumnItems = sortAddonItems([overallCard, ...(sideColumnItems ?? [])])
+
   return (
     <MainLayout {...mainLayoutProps}>
       {modals} {snackbars}
       <div className="profile">
         <div className="content">
-          <div className="main-column">
-            <ProfileCard
-              {...profileCardProps}
-              // editForm={editForm}
-              isEditing={isEditing}
-              toggleIsEditing={toggleIsEditing}
-              setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
-              setShowUrlCopiedAlert={setShowUrlCopiedAlert}
-              setIsReporting={setIsReporting}
-              openSendMessage={() => setIsSendingMessage(/* !!sendEmailForm */ true)}
-            />
-            {mainColumnContent?.map(({ Comp, key, callback }) => {
-              return <Comp key={key} callback={callback} />
-            })}
-          </div>
-          <div className="side-column">
-            <OverallCard {...overallCardProps} />
-          </div>
+          <div className="main-column">{updatedMainColumnItems}</div>
+          <div className="side-column">{updatedSideColumnItems}</div>
         </div>
       </div>
     </MainLayout>

@@ -1,6 +1,6 @@
 import { ComponentMeta } from '@storybook/react'
 import { ProfileCard } from './ProfileCard.js'
-import { getProfileCardStoryProps } from './stories-props.js'
+import { useProfileCardStoryProps } from './stories-props.js'
 
 const meta: ComponentMeta<typeof ProfileCard> = {
   title: 'Molecules/ProfileCard',
@@ -8,7 +8,7 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['getProfileCardStoryProps'],
+  excludeStories: ['useProfileCardStoryProps'],
   decorators: [
     Story => (
       <div style={{ maxWidth: 500 }}>
@@ -19,12 +19,17 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 }
 
 export const LoggedOut = () => {
-  const props = getProfileCardStoryProps()
+  const props = useProfileCardStoryProps({
+    props: {
+      // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
+      contentItems: [],
+    },
+  })
   return <ProfileCard {...props} />
 }
 
 export const LoggedIn = () => {
-  const props = getProfileCardStoryProps({
+  const props = useProfileCardStoryProps({
     props: {
       // isAuthenticated: true,
       // isFollowing: true,
@@ -34,9 +39,23 @@ export const LoggedIn = () => {
 }
 
 export const Owner = () => {
-  const props = getProfileCardStoryProps({
+  const props = useProfileCardStoryProps({
     props: {
       isOwner: true,
+      canEdit: true,
+      // showAccountApprovedSuccessAlert: true,
+      // isApproved: true,
+    },
+  })
+  return <ProfileCard {...props} />
+}
+
+export const Editing = () => {
+  const props = useProfileCardStoryProps({
+    props: {
+      isOwner: true,
+      canEdit: true,
+      isEditing: true,
       // showAccountApprovedSuccessAlert: true,
       // isApproved: true,
     },
@@ -44,7 +63,7 @@ export const Owner = () => {
   return <ProfileCard {...props} />
 }
 // export const Approved = () => {
-//   const props = getProfileCardStoryProps({
+//   const props = useProfileCardStoryProps({
 //     props: {
 //       isOwner: true,
 //       isElegibleForApproval: true,
@@ -56,7 +75,7 @@ export const Owner = () => {
 // }
 
 // export const Admin = () => {
-//   const props = getProfileCardStoryProps({
+//   const props = useProfileCardStoryProps({
 //     props: {
 //       isAuthenticated: true,
 //       isAdmin: true,
