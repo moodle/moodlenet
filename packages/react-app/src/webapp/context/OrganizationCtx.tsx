@@ -1,4 +1,4 @@
-import { OrganizationData } from '@moodlenet/organization'
+import { OrganizationData as TOrganizationData } from '@moodlenet/organization'
 import {
   createContext,
   FC,
@@ -19,6 +19,7 @@ const OrganizationDataEmpity = {
   logo: '',
 }
 
+export type OrganizationData = TOrganizationData
 export type TOrganizationCtx = {
   organizationData: OrganizationData
   saveOrganization: (data: OrganizationData) => void
