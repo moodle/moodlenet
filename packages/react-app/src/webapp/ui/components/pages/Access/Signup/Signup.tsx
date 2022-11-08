@@ -1,5 +1,6 @@
 import { CallMade as CallMadeIcon } from '@material-ui/icons'
-import { Card, MinimalisticHeaderProps } from '@moodlenet/component-library'
+import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
+import { Card } from '@moodlenet/component-library'
 import { CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { SignupItem } from '../../../../../web-lib.mjs'
@@ -26,7 +27,6 @@ export const Signup: FC<SignupProps> = ({ headerProps, signupItems }) => {
   return (
     <SimpleLayout
       headerProps={headerProps}
-      page="signup"
       style={{ height: '100%' }}
       contentStyle={{ padding: '0' }}
     >

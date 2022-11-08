@@ -1,11 +1,11 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { FC } from 'react'
-import { OrganizationDataType } from '../../../../../context/OrganizationCtx.js'
 import './General.scss'
 
 export type GeneralProps = {
-  form: ReturnType<typeof useFormik<OrganizationDataType>>
+  form: ReturnType<typeof useFormik<OrganizationData>>
 }
 
 export const GeneralMenu = <span>General</span>

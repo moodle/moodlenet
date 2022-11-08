@@ -1,9 +1,5 @@
-import {
-  Card,
-  InputTextField,
-  MinimalisticHeaderProps,
-  PrimaryButton,
-} from '@moodlenet/component-library'
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import { FC, useCallback, useContext, useState } from 'react'
 import { MainContext } from '../../../../../context/MainContext.js'
 import { AuthCtx } from '../../../../../web-lib.mjs'
@@ -23,7 +19,7 @@ export type RootLoginProps = {
 
 export const RootLogin: FC<RootLoginProps> = ({ headerProps }) => {
   return (
-    <SimpleLayout headerProps={headerProps} page="rootLogin">
+    <SimpleLayout headerProps={headerProps}>
       <RootLoginBody />
     </SimpleLayout>
   )

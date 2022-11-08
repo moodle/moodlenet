@@ -1,7 +1,13 @@
-import { useMinimalisticHeaderProps } from '../../../layout/Headers/HeaderHooks.mjs'
+import { useMemo } from 'react'
+import { useMinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 import { RootLoginProps } from './RootLogin.js'
 
 export const useRootLoginProps = (): RootLoginProps => {
   const headerProps = useMinimalisticHeaderProps()
-  return { headerProps }
+  const rootLoginProps = useMemo<RootLoginProps>(() => {
+    return {
+      headerProps,
+    }
+  }, [headerProps])
+  return rootLoginProps
 }

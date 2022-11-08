@@ -1,7 +1,7 @@
 // import { Trans } from '@lingui/macro'
 import { Card, Colorpicker, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC /* , useContext */ } from 'react'
+import { FC /* , useContext */, useCallback } from 'react'
 import { AppearanceData } from '../../../../../../types.mjs'
 
 import { getColorPalette } from '../../../../styles/utilities.js'
@@ -11,36 +11,30 @@ import './Appearance.scss'
 export type AppearanceProps = {
   // organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
   form: ReturnType<typeof useFormik<AppearanceData>>
-  appearanceData: AppearanceData
-  setAppearanceData: (appearanceData: AppearanceData) => unknown
 }
 
 export const AppearanceMenu = <span>Appearance</span>
 
-export const Appearance: FC<AppearanceProps> = ({
-  form,
-  setAppearanceData,
-  appearanceData /* { organization } */,
-}) => {
+export const Appearance: FC<AppearanceProps> = ({ form }) => {
   // const styleContext = useContext(SettingsCtx)
   // const [logo, setLogo] = useState(true)
   // const [compactLogo, setCompactLogo] = useState(true)
 
-  const setColor = (color: string) => {
-    form.values.color = color
-    // styleContext.saveAppearance({ color })
-    // styleContext.setStyle({
-    setAppearanceData({
-      color,
-      customStyle: {
-        ...appearanceData.customStyle,
+  const setColor = useCallback(
+    (color: string) => {
+      // styleContext.saveAppearance({ color })
+      // styleContext.setStyle({
+      const customStyle = {
+        ...form.values.customStyle,
         // ...styleContext.style,
         ...getColorPalette(color),
         // '--primary-color': color,
         // '--primary-background-color': setOpacity(color, 0.25),
-      },
-    })
-  }
+      }
+      form.setValues({ color, customStyle })
+    },
+    [form],
+  )
 
   // const setStyle = (style: string) => {
   //   // const result = sass.compileString(style)
@@ -49,6 +43,7 @@ export const Appearance: FC<AppearanceProps> = ({
   //     ...(style as CSSProperties),
   //   })
   // }
+  const saveDisabled = !form.dirty || !form.isValid
 
   return (
     <div className="appearance" key="appearance">
@@ -114,13 +109,13 @@ export const Appearance: FC<AppearanceProps> = ({
           </div>
           <div className="field">
             <Colorpicker
-              value={appearanceData.customStyle['--primary-color']}
+              value={form.values.customStyle?.['--primary-color']}
               // value={styleContext.style['--primary-color']}
               onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
             />
             <InputTextField
               edit={true}
-              value={appearanceData.customStyle['--primary-color']}
+              value={form.values.customStyle?.['--primary-color']}
               // value={styleContext.style['--primary-color']}
               onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
             />
@@ -137,6 +132,9 @@ export const Appearance: FC<AppearanceProps> = ({
           />
         </div>
       </Card>
+      <PrimaryButton onClick={form.submitForm} disabled={saveDisabled}>
+        Save
+      </PrimaryButton>
     </div>
   )
 }

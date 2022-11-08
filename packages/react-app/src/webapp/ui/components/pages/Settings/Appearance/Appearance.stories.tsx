@@ -15,11 +15,10 @@ export const useAppearanceStoryProps = (overrides?: {
       // validationSchema,
       initialValues: {
         color: '',
+        customStyle: baseStyle(),
         ...overrides?.editFormValues,
       },
     }),
-    setStyle: () => [],
-    style: baseStyle(),
     ...overrides?.props,
   }
 }

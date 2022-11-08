@@ -7,6 +7,7 @@ import { ReactAppMainComponent } from './web-lib.mjs'
 import * as auth from './context/auth.js'
 import * as Organization from './context/OrganizationCtx.js'
 import { WebPkgDeps } from '../common/types.mjs'
+import { ProvideLinkComponentCtx } from './ui.mjs'
 
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   const mainContext = useMemo<MainContextT>(() => {
@@ -24,19 +25,21 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
           <registries.routes.Provider>
             <registries.settingsSections.Provider>
               <registries.rightComponents.Provider>
-                <MainContext.Provider value={mainContext}>
-                  <Organization.Provider>
-                    <auth.Provider>
-                      <set.Provider>
-                        <ContentGraphProvider>
-                          {/* <I18nProvider i18n={i18n}> */}
-                          {children}
-                          {/* </I18nProvider> */}
-                        </ContentGraphProvider>
-                      </set.Provider>
-                    </auth.Provider>
-                  </Organization.Provider>
-                </MainContext.Provider>
+                <ProvideLinkComponentCtx>
+                  <MainContext.Provider value={mainContext}>
+                    <Organization.Provider>
+                      <auth.Provider>
+                        <set.Provider>
+                          <ContentGraphProvider>
+                            {/* <I18nProvider i18n={i18n}> */}
+                            {children}
+                            {/* </I18nProvider> */}
+                          </ContentGraphProvider>
+                        </set.Provider>
+                      </auth.Provider>
+                    </Organization.Provider>
+                  </MainContext.Provider>
+                </ProvideLinkComponentCtx>
               </registries.rightComponents.Provider>
             </registries.settingsSections.Provider>
           </registries.routes.Provider>

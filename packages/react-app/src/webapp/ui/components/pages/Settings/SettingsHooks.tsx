@@ -6,8 +6,8 @@ import { SettingsSectionItem } from '../../../../context/SettingsContext.js'
 import { registries } from '../../../../web-lib.mjs'
 import { RegistryEntry } from '../../../../web-lib/registry.js'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
-import Appearance from './Appearance/Appearance.js'
-import { General } from './General/General.js'
+import { AppearanceContainer } from './Appearance/GeneralContainer.js'
+import { GeneralContainer } from './General/GeneralContainer.js'
 import { Settings, SettingsItem, SettingsProps } from './Settings.js'
 import './Settings.scss'
 
@@ -22,8 +22,20 @@ export const useSettingsProps = (): SettingsProps => {
   const mainLayoutProps = useMainLayoutProps()
   const settingsItems = useMemo(() => {
     const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
-      { pkgId, item: { Menu: () => <span>General</span>, Content: General } },
-      { pkgId, item: { Menu: () => <span>Appearance</span>, Content: Appearance } },
+      {
+        pkgId,
+        item: {
+          Menu: <span key={'general'}>General</span>,
+          Content: <GeneralContainer key={'general'} />,
+        },
+      },
+      {
+        pkgId,
+        item: {
+          Menu: <span key={'appearance'}>Appearance</span>,
+          Content: <AppearanceContainer key={'appearance'} />,
+        },
+      },
       // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
     ]
     return baseSettingsItems
@@ -31,7 +43,7 @@ export const useSettingsProps = (): SettingsProps => {
       .map<SettingsItem>(({ item: { Content, Menu }, pkgId }) => ({
         key: pkgId.name,
         Menu,
-        Panel: Content,
+        Content,
       }))
   }, [pkgId, sectionsReg.entries])
   const settingsProps = useMemo<SettingsProps>(
