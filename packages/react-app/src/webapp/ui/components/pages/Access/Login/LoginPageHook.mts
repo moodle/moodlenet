@@ -1,5 +1,5 @@
 import { loginItems as loginItemsRegistry } from '../../../../../registries.mjs'
-import { useMinimalisticHeaderProps } from '../../../layout/Headers/HeaderHooks.mjs'
+import { useMinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 import { LoginProps } from './Login.js'
 
 export const useLopigPageProps = (): LoginProps => {

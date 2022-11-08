@@ -1,40 +1,36 @@
-import { baseStyle, BaseStyleType } from '@moodlenet/component-library'
+import { baseStyle } from '@moodlenet/component-library'
 import {
-  ComponentType,
   createContext,
-  CSSProperties,
   FC,
   PropsWithChildren,
+  ReactElement,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
-import { AppearanceData } from '../../types/data.mjs'
+import { AppearanceData, CustomStyleType } from '../../types/data.mjs'
 import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
 
-export type StyleType = BaseStyleType & CSSProperties
-
-export const StyleContextDefault = {
+export const defaultCustomStyle: CustomStyleType = {
   ...baseStyle(),
 }
 
 export type SettingsSectionItem = {
-  Menu: ComponentType
-  Content: ComponentType
+  Menu: ReactElement
+  Content: ReactElement
 }
 
-export type SetCtxT = {
-  style: StyleType
-  setStyle: React.Dispatch<React.SetStateAction<StyleType>>
-  saveAppearance(data: AppearanceData): unknown
+export type AppearanceDataType = AppearanceData
+export type SettingsCtxT = {
+  saveAppearanceData(data: AppearanceData): unknown
   appearanceData: AppearanceData
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const SettingsCtx = createContext<SetCtxT>(null as any)
+export const SettingsCtx = createContext<SettingsCtxT>(null as any)
 
 export const Provider: FC<PropsWithChildren> = ({ children }) => {
   // const nav = useNavigate()
@@ -43,10 +39,12 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
   } = useContext(MainContext)
 
   // dentro a use effect prendo il valore
-  const [style, setStyle] = useState<SetCtxT['style']>(StyleContextDefault)
-  const [appearanceData, setAppareanceData] = useState<AppearanceData>({ color: '' })
+  const [appearanceData, setAppareanceData] = useState<AppearanceData>({
+    color: '',
+    customStyle: defaultCustomStyle,
+  })
 
-  const saveAppearance = useCallback(
+  const saveAppearanceData = useCallback(
     (data: AppearanceData) => {
       reactAppSrv.call('setAppearance')({ appearanceData: data })
 
@@ -63,14 +61,12 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
       )
   }, [organizationSrv, reactAppSrv])
 
-  const ctx = useMemo<SetCtxT>(() => {
+  const ctx = useMemo<SettingsCtxT>(() => {
     return {
-      style,
-      setStyle,
-      saveAppearance,
+      saveAppearanceData,
       appearanceData,
     }
-  }, [style, saveAppearance, appearanceData])
+  }, [saveAppearanceData, appearanceData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }

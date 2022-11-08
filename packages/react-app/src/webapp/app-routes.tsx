@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { routes } from './registries.mjs'
-import LoginPageContent from './ui/components/pages/Access/Login/loginPageContent.js'
+import LoginPageContainer from './ui/components/pages/Access/Login/LoginPageContainer.js'
 import { RootLoginContainer } from './ui/components/pages/Access/RootLogin/RootLoginContainer.js'
 import { SignUpContainer } from './ui/components/pages/Access/Signup/SignupContainer.js'
 // import * as nodeHomePage from './ui/components/pages/ContentGraph/NodeHome/___NodeHomePage.tsx__'
@@ -20,7 +20,7 @@ const AppRouter = () => {
         {/* <Route path={nodeHomePage.route} element={<nodeHomePage.Component />} /> */}
         <Route path="settings" element={<SettingsCtrl />} />
         <Route path="login">
-          <Route index element={<LoginPageContent />} />
+          <Route index element={<LoginPageContainer />} />
           <Route path="root" element={<RootLoginContainer />} />
         </Route>
         <Route path="signup">

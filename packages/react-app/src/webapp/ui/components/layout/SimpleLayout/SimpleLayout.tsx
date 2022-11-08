@@ -1,7 +1,10 @@
 import { CSSProperties, FC, ReactNode } from 'react'
 import { baseStyle } from '../../../styles/config.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
-import { MinimalisticHeader, MinimalisticHeaderProps } from '@moodlenet/component-library'
+import {
+  MinimalisticHeader,
+  MinimalisticHeaderProps,
+} from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import './SimpleLayout.scss'
 // import { StateContext } from './Providers'
 
@@ -9,7 +12,6 @@ export type SimpleLayoutProps = {
   headerProps: MinimalisticHeaderProps
   style?: CSSProperties
   contentStyle?: CSSProperties
-  page: 'login' | 'signup' | 'activation' | 'rootLogin'
   children?: ReactNode
 }
 
@@ -17,7 +19,6 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
   headerProps,
   style,
   contentStyle,
-  page,
   children,
 }) => {
   // const [collapsed, onCollapse] = useState(false)
@@ -38,7 +39,7 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
         // ...styleContext.style,
       }}
     >
-      <MinimalisticHeader {...headerProps} page={page} />
+      <MinimalisticHeader {...headerProps} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>

@@ -1,4 +1,4 @@
-import { OrganizationData as TOrganizationData } from '@moodlenet/organization'
+import { OrganizationData } from '@moodlenet/organization'
 import {
   createContext,
   FC,
@@ -11,7 +11,7 @@ import {
 
 import { MainContext } from './MainContext.js'
 
-const OrganizationDataEmpity = {
+const EmptyOrganizationData = {
   instanceName: '',
   landingTitle: '',
   landingSubtitle: '',
@@ -19,7 +19,6 @@ const OrganizationDataEmpity = {
   logo: '',
 }
 
-export type OrganizationData = TOrganizationData
 export type TOrganizationCtx = {
   organizationData: OrganizationData
   saveOrganization: (data: OrganizationData) => void
@@ -28,7 +27,7 @@ export type TOrganizationCtx = {
 export const OrganizationCtx = createContext<TOrganizationCtx>(null as any)
 
 export const Provider: FC<PropsWithChildren> = ({ children }) => {
-  const [organizationData, setDataOrg] = useState<OrganizationData>(OrganizationDataEmpity)
+  const [organizationData, setDataOrg] = useState<OrganizationData>(EmptyOrganizationData)
   const {
     pkgs: [, organizationSrv],
   } = useContext(MainContext)

@@ -1,6 +1,7 @@
-import { HeaderTitleProps } from '@moodlenet/component-library'
 import { useContext } from 'react'
 import { OrganizationCtx } from '../../../../context/OrganizationCtx.js'
+import { href } from '../../elements/link.js'
+import { HeaderTitleProps } from './HeaderTitle.js'
 
 export const useHeaderTitleProps = (): HeaderTitleProps => {
   const { organizationData } = useContext(OrganizationCtx)
@@ -8,6 +9,6 @@ export const useHeaderTitleProps = (): HeaderTitleProps => {
   return {
     logo,
     smallLogo,
-    url: '/',
+    url: href('/'),
   }
 }

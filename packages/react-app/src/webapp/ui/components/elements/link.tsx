@@ -4,6 +4,7 @@ import {
   createContext,
   CSSProperties,
   DetailedHTMLProps,
+  FC,
   PropsWithChildren,
   useContext,
 } from 'react'
@@ -58,3 +59,8 @@ export const href = (url: string, ext = false): Href => ({
   ext,
   url,
 })
+
+const ctxValue: LinkComponentCtxType = { LinkComp: Link }
+export const ProvideLinkComponentCtx: FC<PropsWithChildren> = ({ children }) => {
+  return <LinkComponentCtx.Provider value={ctxValue}>{children}</LinkComponentCtx.Provider>
+}

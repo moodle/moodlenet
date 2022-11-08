@@ -16,6 +16,8 @@ export const useGeneralStoryProps = (overrides?: {
         instanceName: 'MoodleNet',
         landingTitle: 'Find, share and curate open educational resources',
         landingSubtitle: 'Search for resources, subjects, collections or people',
+        logo: '',
+        smallLogo: '',
         ...overrides?.editFormValues,
       },
     }),

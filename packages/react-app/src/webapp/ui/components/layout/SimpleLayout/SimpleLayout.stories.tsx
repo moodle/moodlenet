@@ -21,14 +21,12 @@ const meta: ComponentMeta<typeof SimpleLayout> = {
 }
 
 export const SimpleLayoutStoryProps: SimpleLayoutProps = {
-  page: 'login',
   headerProps: MinimalisticHeaderStoryProps,
   //   homeHrpef: href('Landing/Logged In'),
   // organization: { ...SimpleLayoutTitleStoryProps },
 }
 
 export const SimpleLayoutOrganizationStoryProps: SimpleLayoutProps = {
-  page: 'login',
   headerProps: MinimalisticHeaderOrganizationStoryProps,
   //   homeHref: href('Landing/Logged In'),
   // organization: { ...SimpleLayoutTitleOrganizationStoryProps },
