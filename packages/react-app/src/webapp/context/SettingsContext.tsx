@@ -1,5 +1,4 @@
 import { baseStyle, BaseStyleType } from '@moodlenet/component-library'
-import { OrganizationData } from '@moodlenet/organization'
 import {
   ComponentType,
   createContext,
@@ -12,7 +11,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { AppearanceData } from '../types.mjs'
+import { AppearanceData } from '../../types/data.mjs'
 import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
 
@@ -30,8 +29,6 @@ export type SettingsSectionItem = {
 export type SetCtxT = {
   style: StyleType
   setStyle: React.Dispatch<React.SetStateAction<StyleType>>
-  saveOrganization(data: OrganizationData): unknown
-  organizationData: OrganizationData
   saveAppearance(data: AppearanceData): unknown
   appearanceData: AppearanceData
 }
@@ -48,21 +45,6 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
   // dentro a use effect prendo il valore
   const [style, setStyle] = useState<SetCtxT['style']>(StyleContextDefault)
   const [appearanceData, setAppareanceData] = useState<AppearanceData>({ color: '' })
-  const [organizationData, setDataOrg] = useState<OrganizationData>({
-    instanceName: '',
-    landingTitle: '',
-    landingSubtitle: '',
-    smallLogo: '',
-    logo: '',
-  })
-
-  const saveOrganization = useCallback(
-    (data: OrganizationData) => {
-      organizationSrv.call('setOrgData')({ orgData: data })
-      setDataOrg(data)
-    },
-    [organizationSrv],
-  )
 
   const saveAppearance = useCallback(
     (data: AppearanceData) => {
@@ -74,24 +56,21 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
   )
 
   useEffect(() => {
-    organizationSrv
-      .call('getOrgData')()
-      .then(({ data: orgData }) => setDataOrg(orgData))
     reactAppSrv
       .call('getAppearance')()
-      .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
+      .then(({ data: appearanceData }: { data: AppearanceData }) =>
+        setAppareanceData(appearanceData),
+      )
   }, [organizationSrv, reactAppSrv])
 
   const ctx = useMemo<SetCtxT>(() => {
     return {
       style,
       setStyle,
-      saveOrganization,
-      organizationData,
       saveAppearance,
       appearanceData,
     }
-  }, [style, saveOrganization, organizationData, saveAppearance, appearanceData])
+  }, [style, saveAppearance, appearanceData])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }
