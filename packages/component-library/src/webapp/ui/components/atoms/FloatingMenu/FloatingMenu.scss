@@ -32,6 +32,10 @@
       flex-direction: column;
       flex-wrap: wrap;
       > div > * {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
         padding: 7px 15px;
         text-decoration: inherit;
         color: inherit;
@@ -39,7 +43,6 @@
         font-weight: normal;
         font-family: inherit;
         display: flex;
-        align-items: center;
         color: #4d5156;
 
         &:hover {
@@ -50,8 +53,11 @@
           background-color: #e6effc;
         }
 
+        > *:first-child {
+          width: 28px;
+        }
+
         > svg {
-          margin-right: 14px;
           color: #a7a7a7;
           fill: #a7a7a7;
         }

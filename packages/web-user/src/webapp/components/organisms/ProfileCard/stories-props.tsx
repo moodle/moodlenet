@@ -1,5 +1,6 @@
 // import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
+import { useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
 import { people } from '../../../helpers/factories.js'
 import { fileExceedsMaxUploadSize, randomIntFromInterval } from '../../../helpers/utilities.js'
@@ -35,34 +36,24 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 
-export const getProfileCardStoryProps = (overrides?: {
+export const useProfileCardStoryProps = (overrides?: {
   editFormValues?: Partial<ProfileFormValues>
   props?: Partial<ProfileCardProps>
 }): ProfileCardProps => {
   const person = people[randomIntFromInterval(0, 3)]
   return {
-    displayName: person?.displayName ?? '',
-    description:
-      'Rainforest ecosystems advisor. Providing support on the foundation of new nature reserves and protected areas.',
-    location: 'Australia',
-    siteUrl: 'https://iuri.is/',
-    avatarUrl: person?.avatarUrl,
-    backgroundUrl: person?.backgroundUrl,
-    isAuthenticated: false,
     isOwner: false,
-    userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
-    contentItems: [],
-    bottomItems: [],
-    subtitleItems: [],
-    profileUrl: 'profile.url',
+    isAuthenticated: false,
+    profileUrl: '396qamf8hfol-albert',
+    userId: '@396qamf8hfol-alberto@moodle.net',
     setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
     setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
-    toggleIsEditing: action('toggle Is Editing'),
     setIsReporting: action('setIsReporting'),
     // approveUserForm: useFormik({
     //   initialValues: {},
     //   onSubmit: action('approve User'),
     // }),
+    // profileUrl: 'profile.url',
     // unapproveUserForm: useFormik({
     //   initialValues: {},
     //   onSubmit: action('unapprove User'),
@@ -75,22 +66,23 @@ export const getProfileCardStoryProps = (overrides?: {
     //   initialValues: {},
     //   onSubmit: action('request Approval'),
     // }),
-    openSendMessage: action('Open Send Message'),
-    // editForm: useFormik<ProfileFormValues>({
-    //   onSubmit: action('submit edit'),
-    //   validationSchema,
-    //   initialValues: {
-    //     displayName: person!.displayName,
-    //     description:
-    //       'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
-    //     organizationName: person!.organization,
-    //     location: person!.location,
-    //     siteUrl: 'https://iuri.is/',
-    //     avatarImage: person!.avatarUrl,
-    //     backgroundImage: person!.backgroundUrl,
-    //     ...overrides?.editFormValues,
-    //   },
-    // }),
+    toggleIsEditing: action('toogle Is Editing'),
+    openSendMessage: action('open Send Message'),
+    form: useFormik<ProfileFormValues>({
+      onSubmit: action('submit edit'),
+      validationSchema,
+      initialValues: {
+        displayName: person ? person.displayName : '',
+        description:
+          'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
+        organizationName: person && person.organization,
+        location: person && person.location,
+        siteUrl: 'https://iuri.is/',
+        avatarImage: person && person.avatarUrl,
+        backgroundImage: person && person.backgroundUrl,
+        ...overrides?.editFormValues,
+      },
+    }),
     ...overrides?.props,
   }
 }

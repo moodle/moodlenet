@@ -23,6 +23,7 @@
     "@babel/core": "^7.19.0",
     "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/simple-email-auth": "^0.1.0",
+    "@moodlenet/passport-auth": "^0.1.0",
     "@moodlenet/react-app": "^0.1.0",
     "@moodlenet/web-user": "^0.1.0",
     "@storybook/addon-essentials": "^6.5.13",

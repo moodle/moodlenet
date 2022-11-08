@@ -15,7 +15,7 @@ export type BaseStyleType = {
   '--header-background': string
 }
 
-export const baseStyle = () => {
+export const baseStyle = (): BaseStyleType => {
   return {
     '--primary-color': baseMoodleColor,
     '--primary-background-color': setOpacity(baseMoodleColor, 0.12),
@@ -25,7 +25,7 @@ export const baseStyle = () => {
   }
 }
 
-export const randomStyle = () => {
+export const randomStyle = (): BaseStyleType => {
   const newColor = randomColor()
   return {
     '--primary-color': `${newColor}`,

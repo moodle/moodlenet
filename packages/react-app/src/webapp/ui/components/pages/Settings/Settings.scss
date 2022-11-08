@@ -30,66 +30,87 @@
   > .content {
     width: 100%;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
 
-    > .card {
-      padding: 26px 40px;
-      &,
-      > form {
-        display: flex;
-        flex-direction: column;
+    > * {
+      width: 100%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
 
-        gap: 20px;
+      > .card {
+        padding: 26px 40px;
       }
 
-      > .title {
-        font-size: 23px;
-        font-weight: bold;
-      }
-      > .subtitle {
-        font-size: 20px;
-        font-weight: bold;
-      }
-      > .option,
-      > * .option {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+      > .card,
+      > .card > .section {
+        &,
+        > form {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
 
-        > .name {
-          font-weight: bold;
+          > .parameter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            > .name {
+              font-weight: bold;
+            }
+          }
         }
 
-        > .input-text-field {
-          height: 36px;
-          width: 100%;
-        }
-      }
-
-      > .parameter {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        height: fit-content;
-
-        > .name {
-          font-weight: bold;
-        }
-        > .actions {
+        > .title {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          gap: 22px;
+          font-size: 23px;
+          font-weight: bold;
+        }
+
+        > .subtitle {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        > .option,
+        > * .option {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          > .name {
+            font-weight: bold;
+          }
 
           > .input-text-field {
+            height: 36px;
             width: 100%;
-            &.text {
-              height: 36px;
-            }
-            &.textarea {
-              height: 62px;
+          }
+        }
+
+        > .parameter {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          height: fit-content;
+
+          > .name {
+            font-weight: bold;
+          }
+          > .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 22px;
+
+            > .input-text-field {
+              width: 100%;
+              &.text {
+                height: 36px;
+              }
+              &.textarea {
+                height: 62px;
+              }
             }
           }
         }

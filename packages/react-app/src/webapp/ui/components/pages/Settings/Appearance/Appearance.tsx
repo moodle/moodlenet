@@ -1,28 +1,42 @@
 // import { Trans } from '@lingui/macro'
-import { Card, Colorpicker, InputTextField } from '@moodlenet/component-library'
+import { Card, Colorpicker, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import { useFormik } from 'formik'
 import { FC, useContext } from 'react'
+import { AppearanceData } from '../../../../../../main.mjs'
 import { getColorPalette } from '../../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
-import { SettingsCtx } from '../SettingsContext.js'
+import { SettingsCtx, StyleType } from '../SettingsContext.js'
 import './Appearance.scss'
 
 export type AppearanceProps = {
   // organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
+  form: ReturnType<typeof useFormik<AppearanceData>>
+  style: StyleType
+  setStyle: () => unknown
 }
 
-export const Appearance: FC<AppearanceProps> = (/* { organization } */) => {
+export const AppearanceMenu = <span>Appearance</span>
+
+export const Appearance: FC<AppearanceProps> = ({
+  form,
+  setStyle,
+  style /* { organization } */,
+}) => {
   const styleContext = useContext(SettingsCtx)
   // const [logo, setLogo] = useState(true)
   // const [compactLogo, setCompactLogo] = useState(true)
 
   const setColor = (color: string) => {
-    styleContext.saveAppearance({ color })
-    styleContext.setStyle({
-      ...styleContext.style,
+    form.values.color = color
+    // styleContext.saveAppearance({ color })
+    // styleContext.setStyle({
+    setStyle(
+      ...style,
+      // ...styleContext.style,
       ...getColorPalette(color),
       // '--primary-color': color,
       // '--primary-background-color': setOpacity(color, 0.25),
-    })
+    )
   }
 
   // const setStyle = (style: string) => {
@@ -34,22 +48,21 @@ export const Appearance: FC<AppearanceProps> = (/* { organization } */) => {
   // }
 
   return (
-    <>
-      <Card className="appearance-header">
+    <div className="appearance" key="appearance">
+      <Card className="main-card">
         <div className="title">
+          {/* <Trans> */}
           Appearance
-          {/* <Trans>Appearance</Trans> */}
-          {/* <PrimaryButton>
-            Apply
-            <Trans>Apply</Trans>
-          </PrimaryButton> */}
+          {/* </Trans> */}
+          <PrimaryButton className="save-btn" type="submit">
+            Save
+          </PrimaryButton>
         </div>
         <div>
           Manage the look and feel of the platform
           {/* <Trans>Manage the look and feel of the platform</Trans> */}
         </div>
-      </Card>
-      {/* <Card className="logos">
+        {/* <Card className="logos">
         <h2>
           <Trans>Logos</Trans>
         </h2>
@@ -87,38 +100,41 @@ export const Appearance: FC<AppearanceProps> = (/* { organization } */) => {
           )}
         </div>
       </Card> */}
-      <Card className="color-card">
-        <div className="subtitle">
-          Color
-          {/* <Trans>Color</Trans> */}
+        <div className="color section">
+          <div className="subtitle">
+            Color
+            {/* <Trans>Color</Trans> */}
+          </div>
+          <div>
+            Define the primary color defining the whole color palette
+            {/* <Trans>Define the primary color defining the whole color palette</Trans> */}
+          </div>
+          <div className="field">
+            <Colorpicker
+              value={style['--primary-color']}
+              // value={styleContext.style['--primary-color']}
+              onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
+            />
+            <InputTextField
+              edit={true}
+              value={style['--primary-color']}
+              // value={styleContext.style['--primary-color']}
+              onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
+            />
+          </div>
         </div>
-        <div>
-          Define the primary color defining the whole color palette
-          {/* <Trans>Define the primary color defining the whole color palette</Trans> */}
-        </div>
-        <div className="field">
-          <Colorpicker
-            value={styleContext.style['--primary-color']}
-            onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
-          />
+        <div className="scss section">
+          <div className="subtitle">
+            SCSS
+            {/* <Trans>SCSS</Trans> */}
+          </div>
           <InputTextField
-            edit={true}
-            value={styleContext.style['--primary-color']}
-            onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
+            textarea={true}
+            edit /* onChange={c => setStyle(c.currentTarget.value)} */
           />
         </div>
       </Card>
-      <Card className="scss-card">
-        <div className="subtitle">
-          SCSS
-          {/* <Trans>SCSS</Trans> */}
-        </div>
-        <InputTextField
-          textarea={true}
-          edit /* onChange={c => setStyle(c.currentTarget.value)} */
-        />
-      </Card>
-    </>
+    </div>
   )
 }
 
