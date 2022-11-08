@@ -9,10 +9,15 @@ export type FloatingMenuProps = {
   className?: string
 }
 
-export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, hover, hoverElement }) => {
-  const [currentVisible, setCurrentVisible] = useState<Boolean | undefined>(false)
+export const FloatingMenu: FC<FloatingMenuProps> = ({
+  menuContent,
+  className,
+  hover,
+  hoverElement,
+}) => {
+  const [currentVisible, setCurrentVisible] = useState<boolean | undefined>(false)
   const hoverElementRef = useRef<HTMLDivElement>(null)
-  const [isOnHover, setIsOnHover] = useState<Boolean>(false)
+  const [isOnHover, setIsOnHover] = useState<boolean>(false)
   const switchMenu = (e: KeyboardEvent<HTMLDivElement>) => {
     ;['ArrowDown', 'ArrowUp'].includes(e.key) && expand()
     ;['Enter'].includes(e.key) && setCurrentVisible(!currentVisible)
@@ -44,25 +49,25 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
   const updatedMenuContent = menuContent.map((element, i) => {
     if (menuContent.length === 1) {
       return (
-        <div key={i} tabIndex={i + 1} onKeyDown={oneElementActions}>
+        <div key={element.key} tabIndex={i + 1} onKeyDown={oneElementActions}>
           {element}
         </div>
       )
     } else if (i === 0) {
       return (
-        <div key={i} tabIndex={i + 1} onKeyDown={closeMenuUp}>
+        <div key={element.key} tabIndex={i + 1} onKeyDown={closeMenuUp}>
           {element}
         </div>
       )
     } else if (menuContent.length - 1 === i) {
       return (
-        <div key={i} tabIndex={i + 1} className="last element">
+        <div key={element.key} tabIndex={i + 1} className="last element">
           {element}
         </div>
       )
     } else {
       return (
-        <div key={i} tabIndex={i + 1}>
+        <div key={element.key} tabIndex={i + 1}>
           {element}
         </div>
       )
@@ -79,7 +84,11 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
     const currentTarget = e.currentTarget
 
     requestAnimationFrame(() => {
-      if (!(currentTarget.contains(document.activeElement) && currentTarget !== document.activeElement)) {
+      if (
+        !(
+          currentTarget.contains(document.activeElement) && currentTarget !== document.activeElement
+        )
+      ) {
         currentVisible ? close() : expand()
       }
     })
@@ -111,7 +120,8 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ menuContent, className, ho
       <div
         className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
         style={{
-          top: hoverElementRef.current?.clientHeight && `${hoverElementRef.current?.clientHeight}px`,
+          top:
+            hoverElementRef.current?.clientHeight && `${hoverElementRef.current?.clientHeight}px`,
         }}
         onMouseEnter={() => hover && setIsOnHover(true)}
         onMouseLeave={() => hover && setIsOnHover(false)}
