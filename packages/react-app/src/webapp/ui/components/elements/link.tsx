@@ -35,23 +35,32 @@ export const Link: LinkComponentType = props => {
   return <LinkComp {...props}>{props.children}</LinkComp>
 }
 
-// const DefaultLinkComp: LinkComponentType = props => {
-//   const isExternal = props.href.ext
-//   const { href, externalClassName, externalStyle, activeClassName, activeStyle, exact, strict, ...restProps } = props
-//   const extProps = isExternal
-//     ? {
-//         className: externalClassName,
-//         style: externalStyle,
-//         target: '_blank',
-//         rel: 'noopener noreferrer',
-//       }
-//     : null
-//   return (
-//     <a {...extProps} {...restProps} href={href.url}>
-//       {props.children}
-//     </a>
-//   )
-// }
+const DefaultLinkComp: LinkComponentType = props => {
+  const isExternal = props.href.ext
+  const {
+    href,
+    externalClassName,
+    externalStyle,
+    activeClassName,
+    activeStyle,
+    exact,
+    strict,
+    ...restProps
+  } = props
+  const extProps = isExternal
+    ? {
+        className: externalClassName,
+        style: externalStyle,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      }
+    : null
+  return (
+    <a {...extProps} {...restProps} href={href.url}>
+      {props.children}
+    </a>
+  )
+}
 
 export type LinkComponentCtxType = { LinkComp: LinkComponentType }
 export const LinkComponentCtx = createContext<LinkComponentCtxType>(null as any)
@@ -60,7 +69,7 @@ export const href = (url: string, ext = false): Href => ({
   url,
 })
 
-const ctxValue: LinkComponentCtxType = { LinkComp: Link }
+const ctxValue: LinkComponentCtxType = { LinkComp: DefaultLinkComp }
 export const ProvideLinkComponentCtx: FC<PropsWithChildren> = ({ children }) => {
   return <LinkComponentCtx.Provider value={ctxValue}>{children}</LinkComponentCtx.Provider>
 }
