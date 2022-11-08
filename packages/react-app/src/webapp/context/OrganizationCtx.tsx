@@ -1,4 +1,3 @@
-import { HeaderTitleProps } from '@moodlenet/component-library'
 import { OrganizationData } from '@moodlenet/organization'
 import { useCallback, useContext, useEffect, useState } from 'react'
 
@@ -12,10 +11,15 @@ const OrganizationDataEmpity = {
   logo: '',
 }
 
-export const OrganizationCtx = (): OrganizationData => {
+export type TOrganizationCtx = {
+  organizationData: OrganizationData
+  saveOrganization: (data: OrganizationData) => void
+}
+
+export const OrganizationCtx = (): TOrganizationCtx => {
   const [organizationData, setDataOrg] = useState<OrganizationData>(OrganizationDataEmpity)
   const {
-    pkgs: [reactAppSrv, organizationSrv],
+    pkgs: [, organizationSrv],
   } = useContext(MainContext)
 
   const saveOrganization = useCallback(
@@ -30,10 +34,13 @@ export const OrganizationCtx = (): OrganizationData => {
   useEffect(() => {
     organizationSrv
       .call('getOrgData')()
-      .then(({ data: orgData }) => setDataOrg(orgData))
+      .then(({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData))
   }, [organizationSrv])
 
-  return organizationData
+  return {
+    saveOrganization,
+    organizationData,
+  }
 
   /*{
     logo: organizationData.logo,
