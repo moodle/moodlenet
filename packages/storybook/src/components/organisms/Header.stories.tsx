@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { href, MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
+import { HeaderStories } from '@moodlenet/web-user/stories'
 
 const meta: ComponentMeta<typeof MainHeader> = {
   title: 'Organisms/Header',
@@ -24,6 +25,9 @@ const meta: ComponentMeta<typeof MainHeader> = {
   ],
 }
 
+const avatarPicture =
+  'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200'
+
 const MainHeaderStoryProps: MainHeaderProps = {
   accessButtonsProps: {
     loginHref: href('Pages/Login'),
@@ -35,9 +39,8 @@ const MainHeaderStoryProps: MainHeaderProps = {
     menuItems: [],
   },
   avatarMenuProps: {
-    avatarUrl:
-      'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-    menuItems: [],
+    avatarUrl: avatarPicture,
+    menuItems: [HeaderStories.HeaderProfileStoryProps(avatarPicture)],
   },
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
   isAuthenticated: false,

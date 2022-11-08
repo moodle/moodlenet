@@ -11,8 +11,9 @@ import {
 import { FC } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
-import { Href, Link } from '../../../elements/link.js'
+import { sortAnyItems } from '../../../../helpers/utilities.js'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
+import { Href, Link } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'
 
 export type AccessButtonsProps = {
@@ -47,28 +48,54 @@ export type AddMenuProps = {
   menuItems?: HeaderMenuItem[]
 }
 
-export const AddMenu: FC<AddMenuProps> = ({
-  newCollectionHref,
-  newResourceHref /* , menuItems */,
-}) => {
+export const AddMenu: FC<AddMenuProps> = ({ newCollectionHref, newResourceHref, menuItems }) => {
+  const addMenuItems: HeaderMenuItem[] = [
+    {
+      Icon: <NoteAddIcon />,
+      Text: /* t */ `New resource`,
+      Path: newResourceHref,
+      Key: 'new-resoure',
+    },
+    {
+      Icon: <LibraryAddIcon />,
+      Text: /* t */ `New collection`,
+      Path: newCollectionHref,
+      Key: 'new-collection',
+    },
+  ]
+
+  const updatedMenuItems = sortAnyItems(addMenuItems.concat(menuItems ?? []))
+
   return (
     <FloatingMenu
       className="add-menu"
       key="add-menu"
-      menuContent={[
-        <Link key="0" href={newResourceHref} tabIndex={0}>
-          <NoteAddIcon />
-          {/* <Trans> */}
-          New resource
-          {/* </Trans> */}
-        </Link>,
-        <Link key="0" href={newCollectionHref} tabIndex={0}>
-          <LibraryAddIcon />
-          {/* <Trans> */}
-          New collection
-          {/* </Trans> */}
-        </Link>,
-      ]}
+      menuContent={sortAnyItems(updatedMenuItems).map(menuItem => {
+        // reoderedmenuItems.map((menuItem, i) => {
+        return menuItem.Path ? (
+          <Link
+            key={menuItem.Key}
+            className={`add-menu-item ${menuItem.ClassName}`}
+            href={menuItem.Path}
+          >
+            <>
+              {menuItem.Icon}
+              {menuItem.Text}
+            </>
+          </Link>
+        ) : (
+          <div
+            key={menuItem.Key}
+            className={`add-menu-item ${menuItem.ClassName}`}
+            onClick={menuItem.OnClick}
+          >
+            <>
+              {menuItem.Icon}
+              {menuItem.Text}
+            </>
+          </div>
+        )
+      })}
       hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
     />
   )
@@ -93,14 +120,13 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menu"
-      menuContent={(menuItems ?? []).map((menuItem, i) => {
+      menuContent={sortAnyItems(menuItems ?? []).map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
         return menuItem.Path ? (
           <Link
-            key={i}
+            key={menuItem.Key}
             className={`avatar-menu-item ${menuItem.ClassName}`}
             href={menuItem.Path}
-            //   onClick={menuItem.OnClick}
           >
             <>
               {menuItem.Icon}
@@ -109,26 +135,15 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
           </Link>
         ) : (
           <div
-            key={i}
+            key={menuItem.Key}
             className={`avatar-menu-item ${menuItem.ClassName}`}
-            //   onClick={menuItem.OnClick}
+            onClick={menuItem.OnClick}
           >
             <>
               {menuItem.Icon}
               {menuItem.Text}
             </>
           </div>
-          // <div></div>
-          // <div
-          //   key={i}
-          //   tabIndex={0}
-          //   className={`avatar-menu-item ${menuItem.ClassName}`}
-          //   onClick={menuItem.OnClick}
-          // >
-          //   <>
-          //     {/* <menuItem.Icon /> {menuItem.Text} */}
-          //   </>
-          // </div>
         )
       })}
       hoverElement={<div style={avatar} className="avatar" />}

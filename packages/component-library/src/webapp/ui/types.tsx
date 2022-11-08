@@ -8,7 +8,7 @@ export type Organization = {
 
 export type AddonPositionedItem = {
   Item: ReactElement
-  position: number
+  Position: number
 }
 
 export type AddonItem = ReactElement | AddonPositionedItem
