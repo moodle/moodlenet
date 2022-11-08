@@ -50,17 +50,15 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
     myPkg
       .call('listDeployed')()
       .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
-  }, [])
+  }, [myPkg])
   const install = useCallback(() => {
     if (!localPathField) {
       return
     }
     toggleIsInstalling()
-    myPkg.call('install')({
-      installPkgReq: { type: 'symlink', fromFolder: localPathField },
-    })
+    myPkg.call('install')([{ type: 'symlink', fromFolder: localPathField }])
     // .finally(toggleIsInstalling)
-  }, [localPathField])
+  }, [localPathField, myPkg])
 
   return (
     <>
@@ -127,7 +125,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                 )
                 .map(respObj => {
                   // const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
-                  var [extName, description] = respObj.description
+                  let [extName, description] = respObj.description
                     ? respObj.description.split('\n')
                     : ['', '']
                   extName = extName ? extName : ''

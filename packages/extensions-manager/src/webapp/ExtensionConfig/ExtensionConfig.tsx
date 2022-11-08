@@ -40,11 +40,9 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ pkgInfo, onClickBackBtn }) 
   const uninstall = useCallback(() => {
     toggleIsInstalling()
 
-    myPkg.call('uninstall')({
-      pkgId: pkgInfo.pkgId,
-    })
+    myPkg.call('uninstall')([pkgInfo.pkgId])
     // .finally(toggleIsInstalling)
-  }, [pkgInfo.pkgId])
+  }, [myPkg, pkgInfo.pkgId])
 
   type CodeBlockProps = {
     node: any

@@ -15,10 +15,8 @@ const Modules: FC<ModulesProps> = () => {
     if (!localPathField) {
       return
     }
-    myPkg.call('install')({
-      installPkgReq: { type: 'symlink', fromFolder: localPathField },
-    })
-  }, [localPathField])
+    myPkg.call('install')([{ type: 'symlink', fromFolder: localPathField }])
+  }, [localPathField, myPkg])
   return (
     <div className="modules">
       <Card>
