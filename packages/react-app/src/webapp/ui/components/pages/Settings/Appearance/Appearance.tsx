@@ -1,9 +1,9 @@
 // import { Trans } from '@lingui/macro'
 import { Card, Colorpicker, InputTextField } from '@moodlenet/component-library'
 import { FC, useContext } from 'react'
+import { SettingsCtx } from '../../../../../context/SettingsContext.js'
 import { getColorPalette } from '../../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
-import { SettingsCtx } from '../SettingsContext.js'
 import './Appearance.scss'
 
 export type AppearanceProps = {
