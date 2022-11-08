@@ -45,6 +45,7 @@ const StorybookLinkComponent: LinkComponentType = props => {
       </a>
     )
   } else {
+    // console.log('internal !!')
     const { href, externalClassName, externalStyle, children, ...restProps } = props
     // props.activeClassName || props.activeStyle
     return (
