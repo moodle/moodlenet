@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MainContext } from '../MainContext.js'
+import { MainContext } from './MainContext.js'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { UsePkgHandle } from '../web-lib.mjs'
 

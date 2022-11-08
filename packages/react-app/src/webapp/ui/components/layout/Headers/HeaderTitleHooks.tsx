@@ -1,14 +1,10 @@
 import { HeaderTitleProps } from '@moodlenet/component-library'
 import { useContext } from 'react'
-import { SettingsCtx } from '../../pages/Settings/SettingsContext.js'
+import { OrganizationCtx } from '../../../../context/OrganizationCtx.js'
 
 export const useHeaderTitleProps = (): HeaderTitleProps => {
-  const { organizationData } = useContext(SettingsCtx)
-
+  const { organizationData } = useContext(OrganizationCtx)
   const { logo, smallLogo } = organizationData
-  // usa i server
-  // usa i context
-  // ritorna HeaderTitleProps
   return {
     logo,
     smallLogo,

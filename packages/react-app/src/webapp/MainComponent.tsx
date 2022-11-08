@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
 import { ContentGraphProvider } from './components.mjs'
-import { MainContext, MainContextT, WebPkgDeps } from './MainContext.js'
+import { MainContext, MainContextT } from './context/MainContext.js'
 import * as registries from './registries.mjs'
-import * as set from './ui/components/pages/Settings/SettingsContext.js'
+import * as set from './context/SettingsContext.js'
 import { ReactAppMainComponent } from './web-lib.mjs'
-import * as auth from './web-lib/auth.js'
+import * as auth from './context/auth.js'
+import * as Organization from './context/OrganizationCtx.js'
+import { WebPkgDeps } from '../common/types.mjs'
 
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   const mainContext = useMemo<MainContextT>(() => {
@@ -23,15 +25,17 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
             <registries.settingsSections.Provider>
               <registries.rightComponents.Provider>
                 <MainContext.Provider value={mainContext}>
-                  <auth.Provider>
-                    <set.Provider>
-                      <ContentGraphProvider>
-                        {/* <I18nProvider i18n={i18n}> */}
-                        {children}
-                        {/* </I18nProvider> */}
-                      </ContentGraphProvider>
-                    </set.Provider>
-                  </auth.Provider>
+                  <Organization.Provider>
+                    <auth.Provider>
+                      <set.Provider>
+                        <ContentGraphProvider>
+                          {/* <I18nProvider i18n={i18n}> */}
+                          {children}
+                          {/* </I18nProvider> */}
+                        </ContentGraphProvider>
+                      </set.Provider>
+                    </auth.Provider>
+                  </Organization.Provider>
                 </MainContext.Provider>
               </registries.rightComponents.Provider>
             </registries.settingsSections.Provider>

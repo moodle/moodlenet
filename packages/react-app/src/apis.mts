@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { defApi } from '@moodlenet/core'
 import { getAppearance, setAppearance, setupPlugin } from './lib.mjs'
 import { WebappPluginDef } from './types.mjs'

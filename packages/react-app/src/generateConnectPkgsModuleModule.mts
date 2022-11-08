@@ -8,7 +8,11 @@ function ___dirname(import_meta_url: string) {
 }
 const __dirname = ___dirname(import.meta.url)
 
-export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPluginItem<WebPkgDepList>[] }) {
+export function generateConnectPkgModulesModule({
+  plugins,
+}: {
+  plugins: WebappPluginItem<WebPkgDepList>[]
+}) {
   return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgId.name).join(',')} -
 
   // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
@@ -17,8 +21,6 @@ export function generateConnectPkgModulesModule({ plugins }: { plugins: WebappPl
   // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
     resolve(__dirname, '..', 'lib', 'webapp', 'mainContextProviders.js'),
   )}'
-
- 
 
   ${plugins
     .map(
@@ -33,7 +35,7 @@ import pkg_main_component_${index} from '${resolve(
 
     const pkgs = []
     export default {
-      pkgs 
+      pkgs
     }
 
   ${plugins
