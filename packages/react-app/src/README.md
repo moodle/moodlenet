@@ -116,7 +116,12 @@ entry point del processo,
 chiama tutti i main definiti in pack json
 quindo questo main si estende con tutti quelli degli altri packages
 
-produce packge.json c0on tutti i package e li risolve
+produce packge.json c0on tutti i package e li risolv
+
+
+### react-app/src/webapp/ui.mts
+packages/react-app/src/webapp/components.mts
+ export similar 
 
 
 

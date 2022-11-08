@@ -12,6 +12,6 @@ export * from './ui/components/pages/Settings/Appearance/Appearance.js'
 export * from './ui/components/pages/Settings/General/General.js'
 export * from './ui/components/pages/Settings/Header.js'
 export * from './ui/components/pages/Settings/Settings.js'
-export * from './ui/components/pages/Settings/SettingsContext.js'
+export * from './context/SettingsContext.js'
 export * from './ui/components/pages/Settings/SettingsHooks.js'
 // @endindex
