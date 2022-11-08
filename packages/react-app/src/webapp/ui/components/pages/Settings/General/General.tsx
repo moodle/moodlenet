@@ -1,22 +1,20 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect } from 'react'
-import { SettingsCtx } from '../SettingsContext.js'
-
+import { OrganizationCtx, OrganizationData } from '../../../../../context/OrganizationCtx.js'
 export const GeneralContent: FC = () => {
-  const setCtx = useContext(SettingsCtx)
+  const orgCtx = useContext(OrganizationCtx)
 
   const form = useFormik<OrganizationData>({
-    initialValues: setCtx.organizationData,
+    initialValues: orgCtx.organizationData,
     async onSubmit(data) {
-      setCtx.saveOrganization(data)
+      orgCtx.saveOrganization(data)
       // console.log('save data')
     },
   })
   useEffect(() => {
-    form.setValues(setCtx.organizationData)
-  }, [form, setCtx.organizationData])
+    form.setValues(orgCtx.organizationData)
+  }, [form, orgCtx.organizationData])
 
   return (
     <>
