@@ -1,5 +1,13 @@
 import { OrganizationData } from '@moodlenet/organization'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { MainContext } from './MainContext.js'
 
@@ -16,7 +24,9 @@ export type TOrganizationCtx = {
   saveOrganization: (data: OrganizationData) => void
 }
 
-export const OrganizationCtx = (): TOrganizationCtx => {
+export const OrganizationCtx = createContext<TOrganizationCtx>(null as any)
+
+export const Provider: FC<PropsWithChildren> = ({ children }) => {
   const [organizationData, setDataOrg] = useState<OrganizationData>(OrganizationDataEmpity)
   const {
     pkgs: [, organizationSrv],
@@ -37,10 +47,12 @@ export const OrganizationCtx = (): TOrganizationCtx => {
       .then(({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData))
   }, [organizationSrv])
 
-  return {
+  const ctx: TOrganizationCtx = {
     saveOrganization,
     organizationData,
   }
+
+  return <OrganizationCtx.Provider value={ctx}>{children}</OrganizationCtx.Provider>
 
   /*{
     logo: organizationData.logo,
