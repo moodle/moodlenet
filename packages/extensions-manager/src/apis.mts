@@ -1,5 +1,5 @@
-import { uninstall, install, defApi, InstallPkgReq, PkgIdentifier } from '@moodlenet/core'
-import { listDeployed, searchPackages } from './lib.mjs'
+import { defApi, InstallPkgReq, PkgIdentifier } from '@moodlenet/core'
+import { uninstall, install, listDeployed, searchPackages } from './lib.mjs'
 import { DeployedPkgInfo, SearchPackagesResponse } from './types/data.mjs'
 
 export default {
@@ -21,15 +21,15 @@ export default {
   ),
   uninstall: defApi(
     _ctx =>
-      async ({ pkgId }: { pkgId: PkgIdentifier }): Promise<void> => {
-        await uninstall({ pkgId })
+      async (pkgIds: PkgIdentifier[]): Promise<void> => {
+        await uninstall(pkgIds)
       },
     () => true,
   ),
   install: defApi(
     _ctx =>
-      async ({ installPkgReq }: { installPkgReq: InstallPkgReq }): Promise<void> => {
-        await install([installPkgReq])
+      async (installPkgReqs: InstallPkgReq[]): Promise<void> => {
+        await install(installPkgReqs)
       },
     () => true,
   ),
