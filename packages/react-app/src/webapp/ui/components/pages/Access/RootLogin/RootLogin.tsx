@@ -5,9 +5,11 @@ import {
   PrimaryButton,
 } from '@moodlenet/component-library'
 import { FC, useCallback, useContext, useState } from 'react'
-import { MainContext } from '../../../../../MainContext.js'
+import { MainContext } from '../../../../../context/MainContext.js'
+import { AuthCtx } from '../../../../../web-lib.mjs'
+
 // import lib from '../../../../../main-lib'
-import { AuthCtx } from '../../../../../web-lib/auth.js'
+
 // import { Link } from '../../../../elements/link'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './RootLogin.scss'
