@@ -15,8 +15,8 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
   const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0])
 
   return (
-    <MainLayout {...mainLayoutProps}>
-      <div className="settings-page">
+    <MainLayout streched={true} {...mainLayoutProps}>
+      <div className="settings">
         <div className="left-menu">
           <Card>
             {settingsItems.map((settingsEntry, i) => {

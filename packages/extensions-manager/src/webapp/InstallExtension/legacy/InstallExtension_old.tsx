@@ -28,9 +28,6 @@ const DevModeBtn: FC = () => {
   )
 }
 const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
-
-export const InstallExtensionMenu = <span>Install extensions</span>
-
 const InstallExtension: FC<InstallExtensionProps> = () => {
   const { pkgId, pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } =
     useContext(MainContext)
@@ -53,7 +50,9 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       return
     }
     toggleIsInstalling()
-    myPkg.call('install')([{ type: 'symlink', fromFolder: localPathField }])
+    myPkg.call('install')({
+      installPkgReq: { type: 'symlink', fromFolder: localPathField },
+    })
     // .finally(toggleIsInstalling)
   }, [localPathField, myPkg])
 
