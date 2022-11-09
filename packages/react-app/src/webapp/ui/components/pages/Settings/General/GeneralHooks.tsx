@@ -1,6 +1,6 @@
 import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
 import { GeneralProps } from './General.js'
 
