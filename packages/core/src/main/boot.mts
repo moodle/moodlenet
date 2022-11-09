@@ -1,10 +1,13 @@
 import { resolve } from 'path'
 import { getPackageInfo, getPackageInfoIn } from '../pkg-mng/lib.mjs'
-import { WORKING_DIR } from './env.mjs'
+import { IS_LOCAL_DEVELOPMENT, WORKING_DIR } from './env.mjs'
 
 process.on('error', err => {
   console.error(err)
   err instanceof Error && console.error(err.stack)
+  if (!IS_LOCAL_DEVELOPMENT) {
+    return
+  }
   process.exit()
 })
 
