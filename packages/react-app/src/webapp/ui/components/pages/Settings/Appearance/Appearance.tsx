@@ -43,8 +43,7 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
   //     ...(style as CSSProperties),
   //   })
   // }
-  const saveDisabled = !form.dirty || !form.isValid
-
+  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   return (
     <div className="appearance" key="appearance">
       <Card className="main-card">
@@ -52,7 +51,7 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
           {/* <Trans> */}
           Appearance
           {/* </Trans> */}
-          <PrimaryButton className="save-btn" type="submit">
+          <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
             Save
           </PrimaryButton>
         </div>
@@ -132,9 +131,6 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
           />
         </div>
       </Card>
-      <PrimaryButton onClick={form.submitForm} disabled={saveDisabled}>
-        Save
-      </PrimaryButton>
     </div>
   )
 }

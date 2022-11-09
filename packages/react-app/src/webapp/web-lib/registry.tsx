@@ -1,5 +1,14 @@
 import { PkgIdentifier, PkgName } from '@moodlenet/core'
-import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 export type RegistryEntry<ItemType> = {
   item: ItemType
@@ -30,7 +39,9 @@ export type RegistryContextT<ItemType> = {
   register: RegisterFn<ItemType>
 }
 
-export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */): RegistryHandler<ItemType> {
+export function createRegistry<
+  ItemType,
+>(/* cfg?: CreateRegistryCfg<ItemType> */): RegistryHandler<ItemType> {
   const initialRegistry: Registry<ItemType> = { byPkg: {}, entries: [] }
   type CurrentContextT = RegistryContextT<ItemType>
   const context = createContext<CurrentContextT>(null as any)
@@ -39,32 +50,40 @@ export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */
     const [registry, setRegistry] = useState(initialRegistry)
 
     const unregister = useCallback((entry: RegistryEntry<ItemType>) => {
+      // console.log('unregister', entry)
+
       setRegistry(currentReg => {
         const unregistrationNewRegistry: Registry<ItemType> = {
           entries: currentReg.entries.filter(_entry => _entry !== entry),
           byPkg: {
             ...currentReg.byPkg,
-            [entry.pkgId.name]: (currentReg.byPkg[entry.pkgId.name] ?? []).filter(_entry => _entry !== entry),
+            [entry.pkgId.name]: (currentReg.byPkg[entry.pkgId.name] ?? []).filter(
+              _entry => _entry !== entry,
+            ),
           },
         }
         return unregistrationNewRegistry
       })
     }, [])
 
-    const register = useCallback<CurrentContextT['register']>((pkgId, item) => {
-      const entry: RegistryEntry<ItemType> = { pkgId, item }
-      setRegistry(currentReg => {
-        const registrationNewRegistry: Registry<ItemType> = {
-          entries: [...currentReg.entries, entry],
-          byPkg: {
-            ...currentReg.byPkg,
-            [pkgId.name]: [...(currentReg.byPkg[pkgId.name] ?? []), entry],
-          },
-        }
-        return registrationNewRegistry
-      })
-      return () => unregister(entry)
-    }, [])
+    const register = useCallback<CurrentContextT['register']>(
+      (pkgId, item) => {
+        const entry: RegistryEntry<ItemType> = { pkgId, item }
+        // console.log('register', entry)
+        setRegistry(currentReg => {
+          const registrationNewRegistry: Registry<ItemType> = {
+            entries: [...currentReg.entries, entry],
+            byPkg: {
+              ...currentReg.byPkg,
+              [pkgId.name]: [...(currentReg.byPkg[pkgId.name] ?? []), entry],
+            },
+          }
+          return registrationNewRegistry
+        })
+        return () => unregister(entry)
+      },
+      [unregister],
+    )
 
     const ctxValue = useMemo(() => {
       const ctx: CurrentContextT = {
@@ -72,7 +91,7 @@ export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */
         registry,
       }
       return ctx
-    }, [registry])
+    }, [register, registry])
 
     return <context.Provider value={ctxValue}>{children}</context.Provider>
   }
@@ -88,7 +107,9 @@ export function createRegistry<ItemType>(/* cfg?: CreateRegistryCfg<ItemType> */
   }
 
   function useRegister(pkgId: PkgIdentifier<any>, item: ItemType) {
-    const ctx = useContext(context)
-    useEffect(() => ctx.register(pkgId, item), [item, ctx.register])
+    const { register } = useContext(context)
+    useEffect(() => {
+      return register(pkgId, item)
+    }, [item, register, pkgId])
   }
 }

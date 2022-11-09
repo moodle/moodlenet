@@ -10,13 +10,10 @@ export const useGeneralProps = (): GeneralProps => {
   const form = useFormik<OrganizationData>({
     initialValues: organizationData,
     async onSubmit(data) {
-      saveOrganization(data)
-      // console.log('save data')
+      await saveOrganization(data)
     },
+    enableReinitialize: true,
   })
-  useEffect(() => {
-    form.setValues(organizationData)
-  }, [form, organizationData])
 
   const generalProps = useMemo<GeneralProps>(() => {
     return {

@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { PrimaryButton } from '@moodlenet/component-library'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
-
+import defaultBackground from '../../../assets/img/default-landing-background.png'
 export type LandingProps = {
   mainLayoutProps: MainLayoutProps
   title: string
@@ -47,10 +47,10 @@ export const Landing: FC<LandingProps> = ({
   //   // setSearchText,
 }) => {
   {
-    const defaultBackground = new URL(
-      '../../../assets/img/default-landing-background.png',
-      import.meta.url,
-    ).href
+    // const defaultBackground = new URL(
+    //   '../../../assets/img/default-landing-background.png',
+    //   import.meta.url,
+    // ).href
     // const [isSearchboxInViewport, setIsSearchboxInViewport] =
     //   useState<boolean>(true)
     // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
