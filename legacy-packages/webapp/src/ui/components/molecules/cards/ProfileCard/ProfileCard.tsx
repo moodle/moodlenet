@@ -116,13 +116,13 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       defaultBackgroud
     )
     const background = {
-      backgroundImage: 'url(' + backgroundUrl + ')',
+      backgroundImage: 'url("' + backgroundUrl + '")',
       backgroundSize: 'cover',
     }
 
     const [avatarUrl] = useImageUrl(editForm.values.avatarImage, defaultAvatar)
     const avatar = {
-      backgroundImage: 'url(' + avatarUrl + ')',
+      backgroundImage: 'url("' + avatarUrl + '")',
       backgroundSize: 'cover',
     }
 

@@ -108,7 +108,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     ])
 
     const background = {
-      backgroundImage: 'url(' + imageUrl + ')',
+      backgroundImage: 'url("' + imageUrl + '")',
       backgroundSize: 'cover',
     }
     const addLinkFieldRef = useRef<HTMLInputElement>()

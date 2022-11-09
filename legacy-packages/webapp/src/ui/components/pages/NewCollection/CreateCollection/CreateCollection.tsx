@@ -23,7 +23,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
   const shouldShowErrors = !!form.submitCount && !form.isValid
   const [imageUrl] = useImageUrl(form.values.image?.location)
   const background = {
-    backgroundImage: 'url(' + imageUrl + ')',
+    backgroundImage: 'url("' + imageUrl + '")',
     backgroundSize: 'cover',
   }
 
