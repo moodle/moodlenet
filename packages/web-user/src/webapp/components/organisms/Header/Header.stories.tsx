@@ -1,13 +1,13 @@
 import { HeaderMenuItem, href } from '@moodlenet/react-app/ui'
-import { ClassName, Icon, Key, Position, Text } from './Header.js'
+import { className, Icon, key, position, text } from './Header.js'
 
 export const HeaderProfileStoryProps = (icon: string): HeaderMenuItem => {
   return {
-    Text: Text,
+    text: text,
     Icon: <Icon icon={icon} />,
-    ClassName: ClassName,
-    Position: Position,
-    Path: href('Pages/Profile/Logged In'),
-    Key: Key,
+    className: className,
+    position: position,
+    path: href('Pages/Profile/Logged In'),
+    key: key,
   }
 }
