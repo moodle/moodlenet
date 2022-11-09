@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import { LoginPage } from './Login.js'
-import { useLopigPageProps } from './LoginPageHook.mjs'
+import { useLoginProps } from './LoginPageHook.mjs'
 
 export const LoginPanelContainer: FC = () => {
-  const myProps = useLopigPageProps()
+  const myProps = useLoginProps()
 
   return <LoginPage {...myProps} />
 }

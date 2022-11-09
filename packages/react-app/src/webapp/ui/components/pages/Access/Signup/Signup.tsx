@@ -1,13 +1,13 @@
 import { CallMade as CallMadeIcon } from '@material-ui/icons'
 import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import { Card } from '@moodlenet/component-library'
-import { CSSProperties, FC, useEffect, useState } from 'react'
+import { ComponentType, CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { SignupItem } from '../../../../../web-lib.mjs'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
+export type SignupItem = { Icon: ComponentType; Panel: ComponentType; key: string }
 export type SignupProps = {
   signupItems: SignupItem[]
   headerProps: MinimalisticHeaderProps
@@ -43,14 +43,18 @@ export const Signup: FC<SignupProps> = ({ headerProps, signupItems }) => {
           <Card className="signup-card">
             <div className="content">
               <div className="title">Sign up</div>
-              {currSignupEntry ? <currSignupEntry.Panel /> : <div>No Auth available</div>}
+              {currSignupEntry ? (
+                <currSignupEntry.Panel key={currSignupEntry.key} />
+              ) : (
+                <div>No Auth available</div>
+              )}
               {/* {currSignupEntry ? <currSignupEntry.item.Panel /> : <div>No Auth available</div>} */}
               {/* {signupRegs.entries.length > 1 && ( */}
               {signupItems.length > 1 && (
                 <>
                   <div>
                     {/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}
-                    {signupItems.map((signupEntry, index) => {
+                    {signupItems.map(signupEntry => {
                       // {signupRegs.entries.map((signupEntry, index) => {
                       const isCurrent = signupEntry === currSignupEntry
                       const css: CSSProperties = {
@@ -62,7 +66,7 @@ export const Signup: FC<SignupProps> = ({ headerProps, signupItems }) => {
                       const onClick = isCurrent ? undefined : () => chooseSignupEntry(signupEntry)
 
                       return (
-                        <div key={index} style={css} onClick={onClick}>
+                        <div key={signupEntry.key} style={css} onClick={onClick}>
                           <signupEntry.Icon />
                           {/* <signupEntry.item.Icon /> */}
                         </div>
