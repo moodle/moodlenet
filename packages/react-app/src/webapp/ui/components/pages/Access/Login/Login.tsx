@@ -1,13 +1,13 @@
 import { CallMade as CallMadeIcon } from '@material-ui/icons'
 import { Card } from '@moodlenet/component-library'
 import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
-import { CSSProperties, FC, useEffect, useState } from 'react'
+import { ComponentType, CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { LoginItem } from '../../../../../web-lib.mjs'
 // import { Link } from '../../../../elements/link'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Login.scss'
 
+export type LoginItem = { Icon: ComponentType; Panel: ComponentType; key: string }
 export type LoginProps = {
   loginItems: LoginItem[]
   headerProps: MinimalisticHeaderProps
@@ -41,12 +41,16 @@ export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps }) => {
           <Card className="login-card">
             <div className="content">
               <div className="title">Log in</div>
-              {currLoginEntry ? <currLoginEntry.Panel /> : <div>No Auth available</div>}
+              {currLoginEntry ? (
+                <currLoginEntry.Panel key={currLoginEntry.key} />
+              ) : (
+                <div>No Auth available</div>
+              )}
               {loginItems.length > 1 && (
                 // {loginRegs.entries.length > 1 && (
                 <>
                   {/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}
-                  {loginItems.map((entry, index) => {
+                  {loginItems.map(entry => {
                     const isCurrent = entry === currLoginEntry
                     const css: CSSProperties = {
                       float: 'left',
@@ -57,7 +61,7 @@ export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps }) => {
                     const onClick = isCurrent ? undefined : () => chooseLoginEntry(entry)
 
                     return (
-                      <div key={index} style={css} onClick={onClick}>
+                      <div key={entry.key} style={css} onClick={onClick}>
                         <entry.Icon />
                       </div>
                     )

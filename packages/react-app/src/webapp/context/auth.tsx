@@ -4,7 +4,6 @@ import type { NodeGlyph } from '@moodlenet/content-graph'
 import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib/ext-ports-app/pub-lib.mjs'
 import cookies from 'js-cookie'
 import {
-  ComponentType,
   createContext,
   FC,
   PropsWithChildren,
@@ -18,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { MainContext } from './MainContext.js'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { UsePkgHandle } from '../web-lib.mjs'
+import { SignupItem, LoginItem } from '../components.mjs'
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',
@@ -28,8 +28,8 @@ export type ClientSessionData = {
   user: UserData
   myUserNode: NodeGlyph
 }
-export type LoginItem = { Icon: ComponentType; Panel: ComponentType }
-export type SignupItem = { Icon: ComponentType; Panel: ComponentType }
+export type LoginEntryItem = Omit<LoginItem, 'key'>
+export type SignupEntryItem = Omit<SignupItem, 'key'>
 export type AuthCtxT = {
   setSessionToken(
     sessionToken: SessionToken,
