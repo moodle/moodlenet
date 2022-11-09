@@ -22,6 +22,7 @@
   "devDependencies": {
     "@babel/core": "^7.19.0",
     "@moodlenet/component-library": "^0.1.0",
+    "@moodlenet/extensions-manager": "^0.1.0",
     "@moodlenet/simple-email-auth": "^0.1.0",
     "@moodlenet/passport-auth": "^0.1.0",
     "@moodlenet/react-app": "^0.1.0",

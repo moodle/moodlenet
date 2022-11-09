@@ -3,6 +3,7 @@ import {
   AddonItem,
   FloatingMenu,
   Header,
+  HeaderProps,
   PrimaryButton,
   Searchbox,
   TertiaryButton,
@@ -158,7 +159,7 @@ export type MainHeaderProps = {
   addMenuProps: AddMenuProps
   avatarMenuProps: AvatarMenuProps
   accessButtonsProps: AccessButtonsProps
-}
+} & HeaderProps
 
 export const MainHeader: FC<MainHeaderProps> = ({
   leftItems,
@@ -169,6 +170,7 @@ export const MainHeader: FC<MainHeaderProps> = ({
   addMenuProps,
   accessButtonsProps,
   avatarMenuProps,
+  ...props
 }) => {
   const { logo, smallLogo, url } = headerTitleProps
 
@@ -200,6 +202,7 @@ export const MainHeader: FC<MainHeaderProps> = ({
       leftItems={updatedLeftItems}
       centerItems={updatedCenterItems}
       rightItems={updatedRightItems}
+      {...props}
     ></Header>
   )
 }
