@@ -18,7 +18,7 @@ export const IconContainer: FC<IconType> = ({ icon }) => {
   return typeof icon === 'string' ? (
     <div
       style={{
-        backgroundImage: 'url(' + icon + ')',
+        backgroundImage: 'url("' + icon + '")',
         // backgroundImage: 'url(' + clientSessionData.userDisplay.avatarUrl + ')',
         backgroundSize: 'cover',
       }}

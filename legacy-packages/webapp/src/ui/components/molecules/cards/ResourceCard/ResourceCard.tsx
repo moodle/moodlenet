@@ -72,14 +72,16 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
   }) => {
     const avatar = {
       backgroundImage:
-        'url(' + (owner.avatar ? owner.avatar : defaultAvatar) + ')',
+        'url("' + (owner.avatar ? owner.avatar : defaultAvatar) + '")',
       backgroundSize: 'cover',
     }
     let background = {}
     if (orientation === 'horizontal') {
       background = {
         background:
-          'url(' + (image ? image : getBackupImage(resourceId)?.location) + ')',
+          'url("' +
+          (image ? image : getBackupImage(resourceId)?.location) +
+          '")',
       }
     } else {
       background = {
