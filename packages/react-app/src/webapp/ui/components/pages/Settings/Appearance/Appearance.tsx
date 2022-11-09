@@ -1,9 +1,17 @@
 // import { Trans } from '@lingui/macro'
-import { Card, Colorpicker, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import {
+  Card,
+  Colorpicker,
+  InputTextField,
+  PrimaryButton,
+  RoundButton,
+  useImageUrl
+} from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC /* , useContext */, useCallback } from 'react'
+import { FC, useCallback, useRef /* , useContext */ } from 'react'
 import { AppearanceData } from '../../../../../../types.mjs'
-
+import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
+import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
 import { getColorPalette } from '../../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
 import './Appearance.scss'
@@ -31,10 +39,69 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
         // '--primary-color': color,
         // '--primary-background-color': setOpacity(color, 0.25),
       }
-      form.setValues({ color, customStyle })
+      form.values.color = color
+      form.values.customStyle = customStyle
     },
     [form],
   )
+
+  const [logoUrl] = useImageUrl(form.values.logo, defaultLogo)
+
+  const uploadLogoRef = useRef<HTMLInputElement>(null)
+  const selectLogo = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    uploadLogoRef.current?.click()
+  }
+
+  const uploadLogo = (e: React.ChangeEvent<HTMLInputElement>) =>
+    form.setFieldValue('logo', e.currentTarget.files?.item(0))
+
+  const editLogoButton = [
+    <input
+      ref={uploadLogoRef}
+      type="file"
+      accept=".jpg,.jpeg,.png,.gif"
+      onChange={uploadLogo}
+      key="edit-avatar-input"
+      hidden
+    />,
+    <RoundButton
+      className="change-logo-button"
+      type="edit"
+      abbrTitle={/* t */ `Edit profile picture`}
+      onClick={selectLogo}
+      key="edit-logo-btn"
+    />,
+  ]
+
+  const [smallLogoUrl] = useImageUrl(form.values.logo, defaultSmallLogo)
+
+  const uploadSmallLogoRef = useRef<HTMLInputElement>(null)
+  const selectSmallLogo = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    uploadSmallLogoRef.current?.click()
+  }
+
+  const uploadSmallLogo = (e: React.ChangeEvent<HTMLInputElement>) =>
+    form.setFieldValue('logo', e.currentTarget.files?.item(0))
+
+  const editSmallLogoButton = [
+    <input
+      ref={uploadSmallLogoRef}
+      type="file"
+      accept=".jpg,.jpeg,.png,.gif"
+      onChange={uploadSmallLogo}
+      key="edit-avatar-input"
+      hidden
+    />,
+    <RoundButton
+      className="change-small-logo-button"
+      type="edit"
+      abbrTitle={/* t */ `Edit profile picture`}
+      onClick={selectSmallLogo}
+      key="edit-small-logo-btn"
+    />,
+  ]
 
   // const setStyle = (style: string) => {
   //   // const result = sass.compileString(style)
@@ -52,7 +119,9 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
           Appearance
           {/* </Trans> */}
           <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
+            {/* <Trans> */}
             Save
+            {/* </Trans> */}
           </PrimaryButton>
         </div>
         <div>
@@ -103,7 +172,7 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
             {/* <Trans>Color</Trans> */}
           </div>
           <div>
-            Define the primary color defining the whole color palette
+            Choose the primary color defining the whole color palette
             {/* <Trans>Define the primary color defining the whole color palette</Trans> */}
           </div>
           <div className="field">
@@ -118,6 +187,25 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
               // value={styleContext.style['--primary-color']}
               onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
             />
+          </div>
+        </div>
+        <div className="logos section">
+          <div className="subtitle">Logos</div>
+          <div className="field">
+            <div className="parameter">
+              <div className="name">Default</div>
+              <div className="logo-container">
+                <img className="logo" src={logoUrl}></img>
+                {editLogoButton}
+              </div>
+            </div>
+            <div className="parameter">
+              <div className="name">Small</div>
+              <div className="logo-container">
+                <img className="logo" src={smallLogoUrl} />
+                {editSmallLogoButton}
+              </div>
+            </div>
           </div>
         </div>
         <div className="scss section">
