@@ -56,7 +56,7 @@ export const Landing: FC<LandingProps> = ({
     // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
 
     const background = {
-      backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackground + ')',
+      backgroundImage: 'url("' + /* imageUrl ||  */ defaultBackground + '")',
       backgroundSize: 'cover',
     }
 
