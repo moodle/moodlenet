@@ -1,7 +1,7 @@
 import { ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib'
 import * as LoginComponents from './Login/Login.js'
 import { LoginPanelCtrl } from './Login/LoginContainer.js'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { SignUpPanelCtrl } from './SignUpHooks.js'
 import Router from './Router.js'
 import * as settingsComponents from './Settings.js'
@@ -17,13 +17,6 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
   registries.signupItems.useRegister(pkgId, signUpItem)
   registries.settingsSections.useRegister(pkgId, settingsComponents)
   registries.routes.useRegister(pkgId, Router)
-
-  useEffect(() => {
-    console.log({ pkgs })
-  }, [pkgs])
-  useEffect(() => {
-    console.log({ pkgId })
-  }, [pkgId])
 
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {

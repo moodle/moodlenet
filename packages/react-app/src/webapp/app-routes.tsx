@@ -6,7 +6,7 @@ import { RootLoginContainer } from './ui/components/pages/Access/RootLogin/RootL
 import { SignUpContainer } from './ui/components/pages/Access/Signup/SignupContainer.js'
 // import * as nodeHomePage from './ui/components/pages/ContentGraph/NodeHome/___NodeHomePage.tsx__'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
-import { SettingsCtrl } from './ui/components/pages/Settings/SettingsHooks.js'
+import { SettingsContainer } from './ui/components/pages/Settings/SettingsContainer.js'
 
 export type RouteRegItem = { routes: ReactElement; rootPath?: string }
 
@@ -18,7 +18,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<LandingContainer />} />
         {/* <Route path={nodeHomePage.route} element={<nodeHomePage.Component />} /> */}
-        <Route path="settings" element={<SettingsCtrl />} />
+        <Route path="settings" element={<SettingsContainer />} />
         <Route path="login">
           <Route index element={<LoginPageContainer />} />
           <Route path="root" element={<RootLoginContainer />} />

@@ -10,6 +10,7 @@ import { WebappPluginItem } from './types.mjs'
 import { httpSrvPkg, kvStore } from './use-pkg-apis.mjs'
 import { WebPkgDepList } from './webapp/web-lib.mjs'
 import startWebpack from './webpackWatch.mjs'
+import { baseMoodleColor, baseStyle } from './webapp/ui/styles/config.js'
 
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
@@ -22,7 +23,8 @@ const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 
 if (!(await kvStore.get('appearanceData', '')).value) {
   await kvStore.set('appearanceData', '', {
-    color: '#aaaaaa',
+    color: baseMoodleColor,
+    customStyle: baseStyle(),
   })
 }
 

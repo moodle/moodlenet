@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../../context/MainContext.js'
 import { SettingsSectionItem } from '../../../../context/SettingsContext.js'
 // import { Link } from '../../../../elements/link'
@@ -8,13 +8,8 @@ import { RegistryEntry } from '../../../../web-lib/registry.js'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AppearanceContainer } from './Appearance/GeneralContainer.js'
 import { GeneralContainer } from './General/GeneralContainer.js'
-import { Settings, SettingsItem, SettingsProps } from './Settings.js'
+import { SettingsItem, SettingsProps } from './Settings.js'
 import './Settings.scss'
-
-export const SettingsCtrl: FC = () => {
-  const settingsProps = useSettingsProps()
-  return <Settings {...settingsProps} />
-}
 
 export const useSettingsProps = (): SettingsProps => {
   const { pkgId } = useContext(MainContext)

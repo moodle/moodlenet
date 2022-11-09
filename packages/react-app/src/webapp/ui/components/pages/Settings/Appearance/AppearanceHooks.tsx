@@ -5,21 +5,22 @@ import { SettingsCtx } from '../../../../../context/SettingsContext.js'
 import { AppearanceProps } from './Appearance.js'
 
 export const useAppearanceProps = (): AppearanceProps => {
-  const settingsContext = useContext(SettingsCtx)
+  const { appearanceData, saveAppearanceData } = useContext(SettingsCtx)
 
   const form = useFormik<AppearanceData>({
-    initialValues: settingsContext.appearanceData,
+    initialValues: appearanceData,
     async onSubmit(newAppearanceData) {
-      settingsContext.saveAppearanceData(newAppearanceData)
+      await saveAppearanceData(newAppearanceData)
     },
+    enableReinitialize: true,
   })
 
   const appearanceProps = useMemo<AppearanceProps>(() => {
     return {
-      appearanceData: settingsContext.appearanceData,
+      appearanceData,
       form,
     }
-  }, [form, settingsContext.appearanceData])
+  }, [form, appearanceData])
 
   return appearanceProps
 }

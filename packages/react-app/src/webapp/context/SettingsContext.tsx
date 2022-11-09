@@ -1,4 +1,3 @@
-import { baseStyle } from '@moodlenet/component-library'
 import {
   createContext,
   FC,
@@ -11,6 +10,7 @@ import {
   useState,
 } from 'react'
 import { AppearanceData, CustomStyleType } from '../../types/data.mjs'
+import { baseMoodleColor, baseStyle } from '../ui/styles/config.js'
 import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
 
@@ -33,22 +33,20 @@ export type SettingsCtxT = {
 export const SettingsCtx = createContext<SettingsCtxT>(null as any)
 
 export const Provider: FC<PropsWithChildren> = ({ children }) => {
-  // const nav = useNavigate()
   const {
     pkgs: [reactAppSrv, organizationSrv],
   } = useContext(MainContext)
 
-  // dentro a use effect prendo il valore
   const [appearanceData, setAppareanceData] = useState<AppearanceData>({
-    color: '',
+    color: baseMoodleColor,
     customStyle: defaultCustomStyle,
   })
 
   const saveAppearanceData = useCallback(
-    (data: AppearanceData) => {
-      reactAppSrv.call('setAppearance')({ appearanceData: data })
+    async (newAppearanceData: AppearanceData) => {
+      await reactAppSrv.call('setAppearance')({ appearanceData: newAppearanceData })
 
-      setAppareanceData(data)
+      setAppareanceData(newAppearanceData)
     },
     [reactAppSrv],
   )
