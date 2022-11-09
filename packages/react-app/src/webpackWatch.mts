@@ -46,8 +46,10 @@ export function startProdWp({
     if (wpStats?.hasErrors()) {
       throw new Error(`Webpack build error: ${wpStats.toString()}`)
     }
-    await new Promise<void>((resolve, reject) =>
-      rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
+    await new Promise<void>((rimrafResolve, rimrafReject) =>
+      rimraf(resolve(latestBuildFolder, '*'), { disableGlob: true }, e =>
+        e ? rimrafReject(e) : rimrafResolve(),
+      ),
     )
     await cp(buildFolder, latestBuildFolder, { recursive: true })
   })
@@ -83,7 +85,10 @@ export function getWp(
     stats: isDevServer ? 'normal' : 'errors-only',
     mode,
     // entry: ['./src/webapp/index.tsx', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
-    entry: ['./lib/webapp/index.js', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
+    entry: [
+      './lib/webapp/index.js',
+      ...(isDevServer ? [require.resolve('react-refresh/runtime')] : []),
+    ],
     devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,
     // devtool: 'source-map',
     context: resolve(__dirname, '..'),
@@ -297,7 +302,10 @@ export function getWp(
                   require.resolve('@babel/preset-modules'),
                   require.resolve('@babel/preset-typescript'),
                   // require.resolve('@babel/plugin-transform-modules-commonjs'),
-                  [require.resolve('@babel/preset-react'), { development: isDevServer, runtime: 'automatic' }],
+                  [
+                    require.resolve('@babel/preset-react'),
+                    { development: isDevServer, runtime: 'automatic' },
+                  ],
                 ],
                 plugins: [isDevServer && require.resolve('react-refresh/babel')].filter(Boolean),
               },
@@ -350,7 +358,7 @@ export function getWp(
 
   if (isDevServer) {
     const server = new WebpackDevServer(config.devServer, wp)
-    server.startCallback(() => {})
+    server.startCallback(() => void 0)
   }
   return wp
 }

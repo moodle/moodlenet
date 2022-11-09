@@ -1,5 +1,5 @@
-import { Card, HeaderProps } from '@moodlenet/component-library'
-import { MainLayout } from '@moodlenet/react-app/ui'
+import { Card } from '@moodlenet/component-library'
+import { MainHeaderProps, MainLayout } from '@moodlenet/react-app/ui'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import InstallExtension from './InstallExtension/InstallExtension.js'
 import { MainContext } from './MainContext.js'
@@ -17,7 +17,7 @@ type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'Insta
 
 export type ExtensionsProps = {
   sectionProps: ModulesProps | ExtensionsProps
-  headerProps: HeaderProps
+  headerProps: MainHeaderProps
   section?: SectionNameType
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
 }
