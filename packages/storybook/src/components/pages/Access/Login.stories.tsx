@@ -1,6 +1,6 @@
 // import { t } from '@lingui/macro'
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
-import { Login, LoginProps } from '@moodlenet/react-app/ui'
+import { LoginPage, LoginProps } from '@moodlenet/react-app/ui'
 import { Login as SimpleEmailAuth, LoginStoriesProps } from '@moodlenet/simple-email-auth/ui'
 import { ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
@@ -9,9 +9,9 @@ import { useEffect } from 'react'
 // import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 // import { Login, LoginFormValues, LoginProps } from './Login'
 
-const meta: ComponentMeta<typeof Login> = {
+const meta: ComponentMeta<typeof LoginPage> = {
   title: 'Pages/Access/Login',
-  component: Login,
+  component: LoginPage,
   excludeStories: ['LoginStoryProps', 'validationSchema'],
   parameters: { layout: 'fullscreen' },
 }
@@ -35,6 +35,7 @@ LoginProps => {
       {
         Icon: SimpleEmailAuth.Icon,
         Panel: () => <SimpleEmailAuth.Panel {...LoginStoriesProps.useLoginStoriesProps()} />,
+        key: 'email-auth',
       },
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
@@ -65,7 +66,7 @@ LoginProps => {
 
 export const Default = () => {
   const props = LoginStoryProps()
-  return <Login {...props} />
+  return <LoginPage {...props} />
 }
 
 export const Error = () => {
@@ -84,7 +85,7 @@ export const Error = () => {
     // props.form.submitForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return <Login {...props} />
+  return <LoginPage {...props} />
 }
 export const WrongCredentials = () => {
   const props = LoginStoryProps()
@@ -97,7 +98,7 @@ export const WrongCredentials = () => {
     // props.form.submitForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return <Login {...props} />
+  return <LoginPage {...props} />
 }
 
 export default meta

@@ -35,6 +35,7 @@ SignupProps => {
       {
         Icon: SimpleEmailAuth.Icon,
         Panel: () => <SimpleEmailAuth.Panel {...SignupStoriesProps.useSignupPanelProps()} />,
+        key: 'email-auth',
       },
       // { Icon: PrimaryButton, Panel: FileUploader },
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
