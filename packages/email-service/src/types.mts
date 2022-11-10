@@ -1,27 +1,9 @@
 import { SentMessageInfo } from 'nodemailer'
 import JSONTransport from 'nodemailer/lib/json-transport'
-import { Options } from 'nodemailer/lib/mailer'
 import SendmailTransport from 'nodemailer/lib/sendmail-transport'
 import SESTransport from 'nodemailer/lib/ses-transport'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import StreamTransport from 'nodemailer/lib/stream-transport'
-
-export { SendMailOptions, SentMessageInfo, TestAccount, Transport, Transporter, TransportOptions } from 'nodemailer'
-export {
-  Address,
-  AmpAttachment,
-  Attachment,
-  AttachmentLike,
-  Connection,
-  Envelope,
-  Headers,
-  IcalAttachment,
-  ListHeader,
-  ListHeaders,
-  Options,
-  PluginFunction,
-  TextEncoding,
-} from 'nodemailer/lib/mailer'
 
 export type SendResp =
   | {
@@ -34,7 +16,8 @@ export type SendResp =
     }
 
 export type MailerCfg = {
-  defaultFrom?: string
+  defaultFrom: EmailAddr
+  defaultReplyTo: EmailAddr
   transport:
     | string
     | SMTPTransport.Options
@@ -46,4 +29,7 @@ export type MailerCfg = {
 
 export type EmailAddr = string
 
-export type EmailObj = Options
+export type EmailObj = {
+  to: string | EmailAddr | Array<string | EmailAddr>
+  text: string
+}
