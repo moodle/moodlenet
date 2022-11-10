@@ -61,7 +61,7 @@ export const Landing: FC<LandingProps> = ({
     }
 
     return (
-      <MainLayout {...mainLayoutProps} style={{ height: '100%' }}>
+      <MainLayout {...mainLayoutProps}>
         <div className="landing">
           <div className="landing-header" style={background}>
             <div className="landing-title">

@@ -39,12 +39,7 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
             </div>
           ))}
       </div> */}
-      <div
-        style={{
-          ...contentStyle,
-        }}
-        className="content"
-      >
+      <div style={contentStyle} className="content">
         {children}
         <div className="footer"></div>
       </div>
