@@ -50,9 +50,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       return
     }
     toggleIsInstalling()
-    myPkg.call('install')({
-      installPkgReq: { type: 'symlink', fromFolder: localPathField },
-    })
+    myPkg.call('install')([{ type: 'symlink', fromFolder: localPathField }])
     // .finally(toggleIsInstalling)
   }, [localPathField, myPkg])
 

@@ -4,7 +4,7 @@ import { getPkgApiFetchOpts } from '@moodlenet/http-server/lib/ext-ports-app/pub
 
 export type Opts = Record<string, never>
 
-export function pkgApis<PkgId extends PkgIdentifier<any>>(pkgId: PkgId): LocateApi<PkgId> {
+export function pkgApis<PkgId extends PkgIdentifier>(pkgId: PkgId): LocateApi<PkgId> {
   const locateApi = (
     path: string,
     // { ctx = {} }: { ctx?: FloorApiCtx },
@@ -24,9 +24,7 @@ export function pkgApis<PkgId extends PkgIdentifier<any>>(pkgId: PkgId): LocateA
   return locateApi as LocateApi<PkgId>
 }
 
-export type LocateApi<PkgId extends PkgIdentifier<any>> = PkgId extends PkgIdentifier<
-  infer PkgConnDef
->
+export type LocateApi<PkgId extends PkgIdentifier> = PkgId extends PkgIdentifier<infer PkgConnDef>
   ? <Path extends ApiDefPaths<PkgConnDef['apis']>>(
       path: Path,
       // { ctx = {} }: { ctx?: FloorApiCtx },

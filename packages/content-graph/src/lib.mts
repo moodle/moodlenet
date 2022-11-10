@@ -42,7 +42,7 @@ export async function ensureGlyphs<Defs extends GlyphDefsMap>({
   pkgId,
   defs,
 }: {
-  pkgId: PkgIdentifier<any> | false
+  pkgId: PkgIdentifier | false
   defs: GlyphDefOptMap<Defs>
 }): Promise<GlyphDescriptorsMap<Defs>> {
   const allDefs = Object.keys(defs).map<{

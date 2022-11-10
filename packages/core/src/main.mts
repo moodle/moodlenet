@@ -1,5 +1,13 @@
-export { NPM_REGISTRY, install, uninstall } from './pkg-mng/lib.mjs'
-export * from './pkg-mng.mjs'
-export { listEntries, pkgEntryByPkgId } from './pkg-shell/registry.mjs'
-export * from './pkg-shell/connect.mjs'
+export * from './pkg-mng/types.mjs'
+export * from './pkg-registry/types.mjs'
 export * from './types.mjs'
+export { NPM_REGISTRY } from './pkg-mng/lib/npm.mjs'
+export * from './pkg-shell/shell.mjs'
+import apis from './apis.mjs'
+import { connectPkg } from './pkg-shell/shell.mjs'
+
+const pkgConnection = await connectPkg(import.meta, {
+  apis: apis,
+})
+
+export default pkgConnection

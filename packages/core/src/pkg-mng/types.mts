@@ -3,7 +3,7 @@ import { PkgIdentifier } from '../types.mjs'
 
 export type InstallerType = 'symlink' | 'npm' //| 'file' | 'git'
 export type _InstallPkgReq<Type extends InstallerType, More> = More & { type: Type }
-export type NpmInstallReq = _InstallPkgReq<'npm', { pkgId: PkgIdentifier<any> }>
+export type NpmInstallReq = _InstallPkgReq<'npm', { pkgId: PkgIdentifier }>
 export type SymlinkInstallReq = _InstallPkgReq<'symlink', { fromFolder: string }>
 
 export type InstallPkgReq = NpmInstallReq | SymlinkInstallReq
@@ -21,3 +21,5 @@ export type PackageInfo = {
   readme: string | undefined
   pkgRootDir: string
 }
+
+export type NpmRegistry = string
