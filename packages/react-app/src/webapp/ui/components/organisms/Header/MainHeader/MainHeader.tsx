@@ -14,6 +14,7 @@ import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { Href, Link } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'
+import './MainHeader.scss'
 
 export type AccessButtonsProps = {
   loginHref: Href
