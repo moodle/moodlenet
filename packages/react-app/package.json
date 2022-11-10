@@ -32,21 +32,29 @@
     "./web-lib": "./lib/webapp/web-lib.mjs"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index  & npm-watch create-stories-index",
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
     "dev-server": "node lib/-dev-server.mjs",
+    "create-common-index": "vgis src/common/index.mts",
     "create-components-index": "vgis src/webapp/ui.mts",
     "create-stories-index": "vgis src/webapp/stories.mts"
   },
-  "create-stories-index": {
-    "patterns": [
-      "src/webapp/stories.mts",
-      "src/webapp/**/*.stories.tsx"
-    ],
-    "extensions": ".ts,.tsx,.mts",
-    "delay": 300
-  },
   "watch": {
+    "create-stories-index": {
+      "patterns": [
+        "src/webapp/stories.mts",
+        "src/webapp/**/*.stories.tsx"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "create-common-index": {
+      "patterns": [
+        "src/common/**/*.mts"
+      ],
+      "extensions": ".mts",
+      "delay": 300
+    },
     "create-components-index": {
       "patterns": [
         "src/webapp/**/*"

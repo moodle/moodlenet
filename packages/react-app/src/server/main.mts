@@ -1,3 +1,4 @@
+import '../common/index.mjs'
 import authConn from '@moodlenet/authentication-manager'
 import graphConn from '@moodlenet/content-graph'
 import { connectPkg } from '@moodlenet/core'
