@@ -1,36 +1,41 @@
 import assert from 'assert'
 import { readdir, readFile } from 'fs/promises'
-import { resolve } from 'path'
-import { WORKING_DIR } from '../main/env.mjs'
-import { PkgIdentifier } from '../types.mjs'
-import { PackageInfo, SafePackageJson } from './types.mjs'
-import execa from 'execa'
-import { InstallPkgReq } from './types.mjs'
+import { dirname, resolve } from 'path'
+import { packageDirectorySync } from 'pkg-dir'
+import { fileURLToPath } from 'url'
+import { PkgModuleRef } from '../../main.mjs'
+import { WORKING_DIR } from '../../main/env.mjs'
+import { PkgIdentifier } from '../../types.mjs'
+import { PackageInfo, SafePackageJson } from '../types.mjs'
 
-export async function uninstall({ pkgId }: { pkgId: PkgIdentifier<any> }) {
-  await execa('npm', ['uninstall', `${pkgId.name}`], {
-    cwd: WORKING_DIR,
-    timeout: 600000,
-  })
+function isNodeModule(pkg_module_ref: PkgModuleRef): pkg_module_ref is NodeModule {
+  return 'exports' in pkg_module_ref
 }
 
-export async function install(installPkgReqs: InstallPkgReq[]) {
-  const installPkgsArgs = installPkgReqs.map(instReq =>
-    instReq.type === 'npm'
-      ? `${instReq.pkgId.name}@${instReq.pkgId.version}`
-      : `file:${instReq.fromFolder}`,
-  )
-  await execa('npm', ['install', '--registry', NPM_REGISTRY, ...installPkgsArgs], {
-    cwd: WORKING_DIR,
-    timeout: 600000,
-  })
+export function getPkgModuleFilename(pkg_module_ref: PkgModuleRef) {
+  return isNodeModule(pkg_module_ref) ? pkg_module_ref.id : fileURLToPath(pkg_module_ref.url)
+}
+
+export function getPkgModulePaths(pkg_module_ref: PkgModuleRef) {
+  const moduleFilename = getPkgModuleFilename(pkg_module_ref)
+  const moduleDir = dirname(moduleFilename)
+  return { moduleDir, moduleFilename }
+}
+
+export async function getPkgModuleInfo(pkg_module_ref: PkgModuleRef) {
+  const { moduleDir, moduleFilename } = getPkgModulePaths(pkg_module_ref)
+  const pkgRootDir = packageDirectorySync({ cwd: moduleDir })
+  assert(pkgRootDir, `no pkgRootDir found for ${moduleDir}`)
+  const pkgInfo = await getPackageInfoIn({ pkgRootDir })
+
+  return { moduleFilename, moduleDir, pkgInfo }
 }
 
 const infos: Record<string, PackageInfo> = {}
 export async function getPackageInfo({
   pkgId,
 }: {
-  pkgId: PkgIdentifier<any> | Pick<PkgIdentifier<any>, 'name'>
+  pkgId: PkgIdentifier | Pick<PkgIdentifier, 'name'>
 }) {
   return getPackageInfoIn({
     pkgRootDir: resolve(WORKING_DIR, 'node_modules', ...pkgId.name.split('/')),
@@ -76,8 +81,3 @@ export async function getSafePackageJson({
   assert(safePackageJson.version, 'package has no version')
   return safePackageJson
 }
-
-export const NPM_REGISTRY =
-  process.env.NPM_CONFIG_REGISTRY ??
-  process.env.npm_config_registry ??
-  'https://registry.npmjs.org/'

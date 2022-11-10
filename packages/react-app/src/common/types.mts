@@ -32,7 +32,7 @@ export type WebappAddPackageAlias = {
 
 export type WebappPluginItem<Deps extends WebPkgDepList = never> = WebappPluginDef<Deps> & {
   guestPkgInfo: PackageInfo
-  guestPkgId: PkgIdentifier<any>
+  guestPkgId: PkgIdentifier
 }
 
 export type CustomStyleType = BaseStyleType & CSSProperties

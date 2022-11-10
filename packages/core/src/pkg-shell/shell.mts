@@ -1,18 +1,13 @@
 import assert from 'assert'
-import { API_DEF_SYMBOL, flattenApiDefs } from './lib.mjs'
-import { ensureRegisterPkg, getPkgRegEntryByPkgName } from './registry.mjs'
-import {
-  ApiDef,
-  ApiDefPaths,
-  ApiFn,
-  ApiFnType,
-  ArgsValidation,
-  CallApiOpts,
-  CtxApiFn,
-  PkgConnectionDef,
-  PkgIdentifier,
-  PkgModuleRef,
-} from './types/pkg.mjs'
+import { ensureRegisterPkg, getPkgRegEntryByPkgName } from '../pkg-registry/lib.mjs'
+import { PkgIdentifier } from '../types.mjs'
+import { callApi, flattenApiDefs } from './apis/lib.mjs'
+
+import { ApiDefPaths, ApiFnType, CallApiOpts } from './apis/types.mjs'
+import { PkgConnectionDef, PkgModuleRef } from './types.mjs'
+
+export * from './types.mjs'
+export * from './apis/shell.mjs'
 
 export async function connectPkg<PkgConnDef extends PkgConnectionDef>(
   pkg_module_ref: PkgModuleRef,
@@ -49,32 +44,29 @@ export async function pkgConnection<PkgConnDef extends PkgConnectionDef>(
     const apiDef = targetPkgEntry.flatApiDefs[path]
     assert(apiDef, `no apiDef in ${targetPkgEntry.pkgId.name}::${path}`)
 
-    return async function callApi(...args: any[]) {
-      const _argValidity = await apiDef.argsValidation(...args)
-      const argValidity =
-        'boolean' === typeof _argValidity ? { valid: _argValidity, msg: undefined } : _argValidity
-      if (!argValidity.valid) {
-        throw new TypeError(`invalid api params, msg: ${argValidity.msg ?? 'no details'}`)
-      }
-      return apiDef.api({
-        ...opts.ctx,
-        caller: { pkgId: callerPkgRegEntry.pkgId, moduleRef: caller_pkg_module_ref },
-      })(...args)
-    } as ApiFnType<PkgConnDef['apis'], Path>
+    return callApi<PkgConnDef, Path>(apiDef, opts, callerPkgRegEntry, caller_pkg_module_ref)
   }
 
   return {
     api: locateApi,
   }
 }
-
-export function defApi<_ApiFn extends ApiFn>(
-  api: CtxApiFn<_ApiFn>,
-  argsValidation: ArgsValidation,
-): ApiDef<_ApiFn> {
-  return {
-    api,
-    argsValidation,
-    ...{ [API_DEF_SYMBOL]: API_DEF_SYMBOL },
-  }
-}
+// function callApi<PkgConnDef extends PkgConnectionDef, Path extends ApiDefPaths<PkgConnDef['apis']>>(
+//   apiDef: ApiDef<ApiFn>,
+//   opts: CallApiOpts,
+//   callerPkgRegEntry: PkgEntry<PkgConnectionDef>,
+//   caller_pkg_module_ref: PkgModuleRef,
+// ): ApiFnType<PkgConnDef['apis'], Path> {
+//   return async function callApi(...args: unknown[]) {
+//     const _argValidity = await apiDef.argsValidation(...args)
+//     const argValidity =
+//       'boolean' === typeof _argValidity ? { valid: _argValidity, msg: undefined } : _argValidity
+//     if (!argValidity.valid) {
+//       throw new TypeError(`invalid api params, msg: ${argValidity.msg ?? 'no details'}`)
+//     }
+//     return apiDef.api({
+//       ...opts.ctx,
+//       caller: { pkgId: callerPkgRegEntry.pkgId, moduleRef: caller_pkg_module_ref },
+//     })(...args)
+//   } as ApiFnType<PkgConnDef['apis'], Path>
+// }

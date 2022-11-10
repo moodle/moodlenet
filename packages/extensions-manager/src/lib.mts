@@ -1,5 +1,5 @@
-import { InstallPkgReq, NPM_REGISTRY } from '@moodlenet/core'
-import { listEntries } from '@moodlenet/core'
+import type { InstallPkgReq, PkgIdentifier } from '@moodlenet/core'
+import { NPM_REGISTRY } from '@moodlenet/core'
 import _axios from 'axios'
 import type {
   DeployedPkgInfo,
@@ -7,11 +7,22 @@ import type {
   SearchPackagesResponse,
 } from './types/data.mjs'
 import type { SearchResponse } from './types/npmRegistry.mjs'
+import { corePkg } from './use-pkg-apis.mjs'
 
 const axios = _axios.default
 
+export async function install(installPkgReqs: InstallPkgReq[]) {
+  await corePkg.api('pkg-mng/install')(installPkgReqs)
+  return
+}
+
+export async function uninstall(pkgIds: PkgIdentifier[]) {
+  await corePkg.api('pkg-mng/uninstall')(pkgIds)
+  return
+}
+
 export async function listDeployed() {
-  const entries = await listEntries()
+  const entries = await corePkg.api('active-pkgs/ls')()
   return entries.map<DeployedPkgInfo>(entry => ({
     packageJson: entry.pkgInfo.packageJson,
     pkgId: entry.pkgId,
@@ -26,7 +37,7 @@ export async function searchPackages({
 }): Promise<SearchPackagesResponse> {
   const [searchRes, pkgEntries] = await Promise.all([
     searchPackagesFromRegistry({ searchText: `moodlenet ${searchText}` }),
-    listEntries(),
+    corePkg.api('active-pkgs/ls')(),
   ])
   const objects = searchRes.objects.map(
     ({ package: { name: pkgName, description, keywords, version = '*', links } }) => {

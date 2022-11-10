@@ -59,12 +59,8 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
     searchPackagesResObject.installed
-      ? myPkg.call('uninstall')({
-          pkgId: searchPackagesResObject.pkgId,
-        })
-      : myPkg.call('install')({
-          installPkgReq: searchPackagesResObject.installPkgReq,
-        })
+      ? myPkg.call('uninstall')([searchPackagesResObject.pkgId])
+      : myPkg.call('install')([searchPackagesResObject.installPkgReq])
 
     // promise.finally(toggleIsInstalling)
   }, [myPkg, searchPackagesResObject, toggleIsInstalling])

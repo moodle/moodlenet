@@ -5,7 +5,11 @@ import * as store from './store.mjs'
 import { SessionToken, User } from './types.mjs'
 
 type GetRootSessionTokenResp = { success: false } | { success: true; sessionToken: SessionToken }
-export async function getRootSessionToken({ password }: { password: string }): Promise<GetRootSessionTokenResp> {
+export async function getRootSessionToken({
+  password,
+}: {
+  password: string
+}): Promise<GetRootSessionTokenResp> {
   if (!(env.rootPassword && password)) {
     return { success: false }
   } else if (env.rootPassword === password) {
@@ -21,8 +25,10 @@ export async function registerUser({
   pkgId,
 }: {
   uid: string
-  pkgId: PkgIdentifier<any>
-}): Promise<{ success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }> {
+  pkgId: PkgIdentifier
+}): Promise<
+  { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
+> {
   const user = await store.create({
     providerId: {
       pkgName: pkgId.name,

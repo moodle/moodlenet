@@ -10,7 +10,7 @@ export type SearchPackagesResObject = {
   homepage?: string
 } & (
   | {
-      pkgId: PkgIdentifier<any>
+      pkgId: PkgIdentifier
       installed: true
     }
   | {
@@ -19,5 +19,5 @@ export type SearchPackagesResObject = {
     }
 )
 export type DeployedPkgInfo = Pick<PackageInfo, 'packageJson' | 'readme'> & {
-  pkgId: PkgIdentifier<any>
+  pkgId: PkgIdentifier
 }
