@@ -47,9 +47,7 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     reactAppSrv
       .call('getAppearance')()
-      .then(({ data: appearanceData }: { data: AppearanceData }) =>
-        setAppareanceData(appearanceData),
-      )
+      .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
   }, [organizationSrv, reactAppSrv])
 
   const ctx = useMemo<SettingsCtxT>(() => {

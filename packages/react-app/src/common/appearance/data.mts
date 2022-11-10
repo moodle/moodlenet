@@ -43,8 +43,8 @@ export const getAppearanceDataStyle = (
   return {
     color: baseColor,
     customStyle: {
-      ...baseStyle({ baseColor: baseMoodleColor }),
-      ...getColorPalette(baseMoodleColor),
+      ...baseStyle({ baseColor }),
+      ...getColorPalette(baseColor),
     },
   }
 }
