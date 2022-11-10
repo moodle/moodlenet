@@ -51,15 +51,15 @@ export const AddMenu: FC<AddMenuProps> = ({ newCollectionHref, newResourceHref, 
   const addMenuItems: HeaderMenuItem[] = [
     {
       Icon: <NoteAddIcon />,
-      Text: /* t */ `New resource`,
-      Path: newResourceHref,
-      Key: 'new-resoure',
+      text: /* t */ `New resource`,
+      path: newResourceHref,
+      key: 'new-resoure',
     },
     {
       Icon: <LibraryAddIcon />,
-      Text: /* t */ `New collection`,
-      Path: newCollectionHref,
-      Key: 'new-collection',
+      text: /* t */ `New collection`,
+      path: newCollectionHref,
+      key: 'new-collection',
     },
   ]
 
@@ -71,26 +71,26 @@ export const AddMenu: FC<AddMenuProps> = ({ newCollectionHref, newResourceHref, 
       key="add-menu"
       menuContent={sortAnyItems(updatedMenuItems).map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
-        return menuItem.Path ? (
+        return menuItem.path ? (
           <Link
-            key={menuItem.Key}
-            className={`add-menu-item ${menuItem.ClassName}`}
-            href={menuItem.Path}
+            key={menuItem.key}
+            className={`add-menu-item ${menuItem.className}`}
+            href={menuItem.path}
           >
             <>
               {menuItem.Icon}
-              {menuItem.Text}
+              {menuItem.text}
             </>
           </Link>
         ) : (
           <div
-            key={menuItem.Key}
-            className={`add-menu-item ${menuItem.ClassName}`}
-            onClick={menuItem.OnClick}
+            key={menuItem.key}
+            className={`add-menu-item ${menuItem.className}`}
+            onClick={menuItem.onClick}
           >
             <>
               {menuItem.Icon}
-              {menuItem.Text}
+              {menuItem.text}
             </>
           </div>
         )
@@ -121,26 +121,26 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
       key="avatar-menu"
       menuContent={sortAnyItems(menuItems ?? []).map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
-        return menuItem.Path ? (
+        return menuItem.path ? (
           <Link
-            key={menuItem.Key}
-            className={`avatar-menu-item ${menuItem.ClassName}`}
-            href={menuItem.Path}
+            key={menuItem.key}
+            className={`avatar-menu-item ${menuItem.className}`}
+            href={menuItem.path}
           >
             <>
               {menuItem.Icon}
-              {menuItem.Text}
+              {menuItem.text}
             </>
           </Link>
         ) : (
           <div
-            key={menuItem.Key}
-            className={`avatar-menu-item ${menuItem.ClassName}`}
-            onClick={menuItem.OnClick}
+            key={menuItem.key}
+            className={`avatar-menu-item ${menuItem.className}`}
+            onClick={menuItem.onClick}
           >
             <>
               {menuItem.Icon}
-              {menuItem.Text}
+              {menuItem.text}
             </>
           </div>
         )
