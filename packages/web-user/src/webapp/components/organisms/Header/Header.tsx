@@ -1,10 +1,10 @@
 import { FC, ReactElement } from 'react'
 
-export const Text = 'Profile'
-export const Path = '/profile'
-export const ClassName = 'profile'
-export const Key = 'profile'
-export const Position = 0
+export const text = 'Profile'
+export const path = '/profile'
+export const className = 'profile'
+export const key = 'profile'
+export const position = 0
 type IconType = {
   icon: string | ReactElement
 }

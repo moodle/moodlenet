@@ -2,13 +2,13 @@ import { ComponentType, ReactElement, ReactNode } from 'react'
 import { Href } from '../../elements/link.js'
 
 export type HeaderMenuItem = {
-  Text: string
   Icon: ComponentType | ReactNode
-  Key: string | number
-  Path?: Href
-  ClassName?: string
-  Position?: number
-  OnClick?: () => unknown
+  text: string
+  key: string | number
+  path?: Href
+  className?: string
+  position?: number
+  onClick?: () => unknown
 }
 
 export type HeaderRightComponentRegItem = { Component: ComponentType }

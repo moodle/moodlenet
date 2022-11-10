@@ -35,10 +35,10 @@ export const randomIntFromInterval = (min: number, max: number) => {
 export const fileExceedsMaxUploadSize = (size: number, max: number | null) =>
   max === null ? false : size > max
 
-export const isPositionedItem = <T extends { Position: number }>(
+export const isPositionedItem = <T extends { position: number }>(
   toBeDetermined: unknown,
 ): toBeDetermined is T => {
-  const toDetermine = (toBeDetermined as T).Position
+  const toDetermine = (toBeDetermined as T).position
   if (toDetermine || toDetermine === 0) {
     return true
   }
@@ -69,11 +69,11 @@ const iterateIndex = (list: number[], index: number): number =>
   list.includes(index) ? iterateIndex(list, index + 1) : index
 
 // type WithProperty<T> = T & { [key: string]: unknown }
-type WithPosition<T> = T & { Position: number }
+type WithPosition<T> = T & { position: number }
 
 export const positionItems = <T extends object>(items: T[]): WithPosition<T>[] => {
   const positions: number[] = items
-    .map(item => isPositionedItem(item) && item.Position)
+    .map(item => isPositionedItem(item) && item.position)
     .filter((pos): pos is number => Number.isInteger(pos))
   let index = 0
   return items.map(item => {
@@ -82,14 +82,14 @@ export const positionItems = <T extends object>(items: T[]): WithPosition<T>[] =
     } else {
       const newIndex = iterateIndex(positions, index)
       index = newIndex + 1
-      return { ...item, Position: newIndex }
+      return { ...item, position: newIndex }
     }
   })
 }
 
 export const positionAddonItems = (items: AddonItem[]): AddonPositionedItem[] => {
   const positions: number[] = items
-    .map(item => isPositionedItem(item) && item.Position)
+    .map(item => isPositionedItem(item) && item.position)
     .filter((pos): pos is number => Number.isInteger(pos))
   let index = 0
   return items.map(item => {
@@ -98,13 +98,13 @@ export const positionAddonItems = (items: AddonItem[]): AddonPositionedItem[] =>
     } else {
       const newIndex = iterateIndex(positions, index)
       index = newIndex + 1
-      return { Item: item, Position: newIndex }
+      return { Item: item, position: newIndex }
     }
   })
 }
 
-export const sortItems = <T extends { Position: number }>(items: T[]): T[] => {
-  return items.sort((a, b) => a.Position - b.Position)
+export const sortItems = <T extends { position: number }>(items: T[]): T[] => {
+  return items.sort((a, b) => a.position - b.position)
 }
 
 export const addonPositionedItemToReactElements = (
