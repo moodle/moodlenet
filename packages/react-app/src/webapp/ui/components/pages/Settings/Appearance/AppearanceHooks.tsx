@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
-import { AppearanceData } from '../../../../../../types/data.mjs'
+import { AppearanceData } from '../../../../../../common/types.mjs'
 import { SettingsCtx } from '../../../../../context/SettingsContext.js'
 import { AppearanceProps } from './Appearance.js'
 

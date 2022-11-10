@@ -1,7 +1,7 @@
 import { pkgConnection } from '@moodlenet/core'
 import httpSrvPkgRef from '@moodlenet/http-server'
 import kvsPkgRef from '@moodlenet/key-value-store'
-import { AppearanceData } from './types/data.mjs'
+import { AppearanceData } from '../common/types.mjs'
 
 export type KeyValueData = { appearanceData: AppearanceData }
 export const kvsPkg = await pkgConnection(import.meta, kvsPkgRef)

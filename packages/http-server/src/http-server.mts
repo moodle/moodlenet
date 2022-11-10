@@ -62,7 +62,7 @@ export function createHttpServer() {
       const pkgApp = mountAppArgs.getApp(express)
       if (mountOnAbsPath) {
         console.log(`HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
-        app.use(`/${mountOnAbsPath}/`, pkgApp)
+        app.use(mountOnAbsPath, pkgApp)
       } else {
         const pkgBaseRoute = `/${pkgId.name}`
         console.log(`HTTP: mounting ${BASE_PKG_MOUNT_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)

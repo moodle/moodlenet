@@ -3,10 +3,8 @@ import graphConn from '@moodlenet/content-graph'
 import { connectPkg } from '@moodlenet/core'
 import organizationConn from '@moodlenet/organization'
 import apis from './apis.mjs'
-import { WebPkgDeps } from './common/types.mjs'
+import { WebPkgDeps } from '../common/types.mjs'
 import { setupPlugin } from './lib.mjs'
-
-export * from './types.mjs'
 
 // import { fileURLToPath } from 'url'
 // const __dirname = fileURLToPath(new URL('.', import.meta.url))

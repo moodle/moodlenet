@@ -6,32 +6,29 @@ import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { ResolveOptions } from 'webpack'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
-import { WebappPluginItem } from './types.mjs'
+import { WebappPluginItem } from '../common/types.mjs'
 import { httpSrvPkg, kvStore } from './use-pkg-apis.mjs'
-import { WebPkgDepList } from './webapp/web-lib.mjs'
+import { WebPkgDepList } from '../webapp/web-lib.mjs'
 import startWebpack from './webpackWatch.mjs'
-import { baseMoodleColor, baseStyle } from './webapp/ui/styles/config.js'
+import { defaultAppearanceData } from '../common/appearance/data.mjs'
 
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const require = createRequire(import.meta.url)
 
-const buildFolder = resolve(__dirname, '..', 'build')
+const buildFolder = resolve(__dirname, '..', '..', 'build')
 await mkdir(buildFolder, { recursive: true })
-const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
+const latestBuildFolder = resolve(__dirname, '..', '..', 'latest-build')
 
 if (!(await kvStore.get('appearanceData', '')).value) {
-  await kvStore.set('appearanceData', '', {
-    color: baseMoodleColor,
-    customStyle: baseStyle(),
-  })
+  await kvStore.set('appearanceData', '', defaultAppearanceData)
 }
 
 // const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
 const connectPkgModulesFile = {
   alias: '_connect-moodlenet-pkg-modules_',
-  target: resolve(__dirname, '..', '_connect-moodlenet-pkg-modules_.mjs'),
+  target: resolve(__dirname, '..', '..', '_connect-moodlenet-pkg-modules_.mjs'),
   // target: resolve(__dirname, '..', '_connect-moodlenet-pkg-modules_.mts'),
   // target: resolve(tmpDir, 'ConnectPkgModules.tsx'),
 }
@@ -39,10 +36,10 @@ const connectPkgModulesFile = {
 httpSrvPkg.api('mount')({
   getApp(express) {
     const mountApp = express()
-    const staticWebApp = express.static(latestBuildFolder, { index: './public/index.html' })
+    const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
     mountApp.use(staticWebApp)
     mountApp.get(`*`, (req, res, next) => {
-      if (req.url.startsWith('/_/')) {
+      if (req.url.startsWith('/.')) {
         next()
         return
       }
@@ -103,7 +100,7 @@ function writeGenerated() {
       generateConnectPkgModulesModule({ plugins: pkgPlugins }),
     ),
     writeFile(
-      resolve(__dirname, '..', '_resolve-alias_.json'),
+      resolve(__dirname, '..', '..', '_resolve-alias_.json'),
       JSON.stringify(baseResolveAlias, null, 4),
     ),
   ])

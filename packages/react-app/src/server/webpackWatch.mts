@@ -91,7 +91,7 @@ export function getWp(
     ],
     devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,
     // devtool: 'source-map',
-    context: resolve(__dirname, '..'),
+    context: resolve(__dirname, '..', '..'),
     watch: true,
     watchOptions: {
       aggregateTimeout: 10,
