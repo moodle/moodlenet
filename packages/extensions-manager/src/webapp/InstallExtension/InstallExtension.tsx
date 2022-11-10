@@ -3,7 +3,7 @@ import { Card, InputTextField, Loading, PrimaryButton, Switch } from '@moodlenet
 import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
 import { registries } from '@moodlenet/react-app/web-lib'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
-import { DeployedPkgInfo } from '../../types.mjs'
+import { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from '../../types.mjs'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
@@ -14,6 +14,15 @@ import { MainContext } from '../MainContext.js'
 import './InstallExtension.scss'
 
 export type InstallExtensionProps = {
+  // It was empty before
+  devMode: boolean
+  setDevMode: React.Dispatch<React.SetStateAction<boolean>>
+  selectedExtConfig: DeployedPkgInfo | null
+  setSelectedExtConfig: React.Dispatch<React.SetStateAction<DeployedPkgInfo | null>>
+  selectedExtInfo: SearchPackagesResObject | null
+  setSelectedExtInfo: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
+  searchPkgResp: SearchPackagesResponse | undefined
+  setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
   // menuItemPressed: boolean
 }
 
