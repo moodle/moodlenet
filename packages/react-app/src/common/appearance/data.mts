@@ -1,4 +1,5 @@
-import { adjustColor, randomColor, setOpacity } from './utilities.js'
+import { AppearanceData } from '../types.mjs'
+import { adjustColor, randomColor, setOpacity, getColorPalette } from './colorUtilities.mjs'
 
 export const baseMoodleColor = '#F88012'
 export const primaryColor = 'var(--base-moodle-color)'
@@ -15,10 +16,10 @@ export type BaseStyleType = {
   '--header-background': string
 }
 
-export const baseStyle = (): BaseStyleType => {
+export const baseStyle = ({ baseColor }: { baseColor: string }): BaseStyleType => {
   return {
-    '--primary-color': baseMoodleColor,
-    '--primary-background-color': setOpacity(baseMoodleColor, 0.12),
+    '--primary-color': baseColor,
+    '--primary-background-color': setOpacity(baseColor, 0.12),
     '--primary-color-hover': primaryColorHover,
     '--primary-color-active': primaryColorActive,
     '--header-background': headerBackgroundColor,
@@ -34,4 +35,22 @@ export const randomStyle = (): BaseStyleType => {
     '--primary-color-active': `${adjustColor(newColor, -20)}`,
     '--header-background': `${adjustColor(newColor, 95)}`,
   }
+}
+
+export const getAppearanceDataStyle = (
+  baseColor: string,
+): Pick<AppearanceData, 'color' | 'customStyle'> => {
+  return {
+    color: baseColor,
+    customStyle: {
+      ...baseStyle({ baseColor: baseMoodleColor }),
+      ...getColorPalette(baseMoodleColor),
+    },
+  }
+}
+
+export const defaultAppearanceData: AppearanceData = {
+  logo: '',
+  smallLogo: '',
+  ...getAppearanceDataStyle(baseMoodleColor),
 }

@@ -1,5 +1,4 @@
 import { CSSProperties, FC, ReactNode } from 'react'
-import { baseStyle } from '../../../styles/config.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import {
   MinimalisticHeader,
@@ -29,16 +28,7 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
   // const styleContext = useContext(SettingsCtx)
 
   return (
-    <div
-      className="simple-layout"
-      style={{
-        ...style,
-        ...baseStyle(),
-        // TODO Send context to higher levels
-        // ...getColorPalette(styleContext.appearanceData.color),
-        // ...styleContext.style,
-      }}
-    >
+    <div className="simple-layout" style={style}>
       <MinimalisticHeader {...headerProps} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (

@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "lib/server/main.mjs",
   "readme": "",
   "files": [
     "lib/",
@@ -25,8 +25,9 @@
   ],
   "description": "Web application\nFrontend interface to interact with the backend",
   "exports": {
-    ".": "./lib/main.mjs",
+    ".": "./lib/server/main.mjs",
     "./stories": "./lib/webapp/stories.mjs",
+    "./common": "./lib/common/index.mjs",
     "./ui": "./lib/webapp/ui.mjs",
     "./web-lib": "./lib/webapp/web-lib.mjs"
   },

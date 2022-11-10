@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { defApi } from '@moodlenet/core'
 import { getAppearance, setAppearance, setupPlugin } from './lib.mjs'
-import { WebappPluginDef } from './types.mjs'
-import { AppearanceData } from './types/data.mjs'
-import { WebPkgDepList } from './webapp/web-lib.mjs'
+import { WebappPluginDef, AppearanceData } from '../common/types.mjs'
+import { WebPkgDepList } from '../webapp/web-lib.mjs'
 
 export default {
   getAppearance: defApi(

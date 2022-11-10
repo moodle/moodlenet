@@ -9,14 +9,10 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { AppearanceData, CustomStyleType } from '../../types/data.mjs'
-import { baseMoodleColor, baseStyle } from '../ui/styles/config.js'
+import { AppearanceData } from '../../common/types.mjs'
+import { defaultAppearanceData } from '../../common/appearance/data.mjs'
 import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
-
-export const defaultCustomStyle: CustomStyleType = {
-  ...baseStyle(),
-}
 
 export type SettingsSectionItem = {
   Menu: ReactElement
@@ -37,10 +33,7 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
     pkgs: [reactAppSrv, organizationSrv],
   } = useContext(MainContext)
 
-  const [appearanceData, setAppareanceData] = useState<AppearanceData>({
-    color: baseMoodleColor,
-    customStyle: defaultCustomStyle,
-  })
+  const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(
     async (newAppearanceData: AppearanceData) => {

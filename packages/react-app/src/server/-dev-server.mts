@@ -8,7 +8,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const port = Number(process.argv[2]) || 3000
 const proxy = process.argv[3] || 'http://localhost:8080'
 console.log({ port, proxy })
-const _resolve_alias_json_filename = resolve(__dirname, '..', '_resolve-alias_.json')
+const _resolve_alias_json_filename = resolve(__dirname, '..', '..', '_resolve-alias_.json')
 getAliases().then(aliases => {
   const wp = getWp({
     mode: 'dev-server',

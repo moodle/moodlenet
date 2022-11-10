@@ -5,14 +5,14 @@ import {
   InputTextField,
   PrimaryButton,
   RoundButton,
-  useImageUrl
+  useImageUrl,
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useCallback, useRef /* , useContext */ } from 'react'
-import { AppearanceData } from '../../../../../../types.mjs'
+import { getAppearanceDataStyle } from '../../../../../../common/appearance/data.mjs'
+import { AppearanceData } from '../../../../../../common/types.mjs'
 import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
 import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
-import { getColorPalette } from '../../../../styles/utilities.js'
 // import { Organization } from '../../../../types'
 import './Appearance.scss'
 
@@ -30,17 +30,7 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
 
   const setColor = useCallback(
     (color: string) => {
-      // styleContext.saveAppearance({ color })
-      // styleContext.setStyle({
-      const customStyle = {
-        ...form.values.customStyle,
-        // ...styleContext.style,
-        ...getColorPalette(color),
-        // '--primary-color': color,
-        // '--primary-background-color': setOpacity(color, 0.25),
-      }
-      form.values.color = color
-      form.values.customStyle = customStyle
+      form.setValues({ ...form.values, ...getAppearanceDataStyle(color) })
     },
     [form],
   )
@@ -177,13 +167,13 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
           </div>
           <div className="field">
             <Colorpicker
-              value={form.values.customStyle?.['--primary-color']}
+              value={form.values.color}
               // value={styleContext.style['--primary-color']}
               onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
             />
             <InputTextField
               edit={true}
-              value={form.values.customStyle?.['--primary-color']}
+              value={form.values.color}
               // value={styleContext.style['--primary-color']}
               onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
             />
