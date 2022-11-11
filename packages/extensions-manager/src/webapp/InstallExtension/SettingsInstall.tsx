@@ -1,4 +1,8 @@
-import InstallExtension, { InstallExtensionMenu } from './InstallExtension.js'
+import { FC } from 'react'
+import InstallExtension, {
+  InstallExtensionMenu,
+  InstallExtensionProps,
+} from './InstallExtension.js'
 
 // export const MenuComponent: FC = () => {
 //   const { setSelectedExtInfo } = useContext(MainContext)
@@ -7,4 +11,6 @@ import InstallExtension, { InstallExtensionMenu } from './InstallExtension.js'
 
 export const SettingsInstallMenu = InstallExtensionMenu
 // export const SettingsInstallMenu = <MenuComponent />
-export const SettingsInstallContent = <InstallExtension />
+export const SettingsInstallContent: FC<InstallExtensionProps> = ({ selectedExt }) => {
+  return <InstallExtension selectedExt={selectedExt} />
+}

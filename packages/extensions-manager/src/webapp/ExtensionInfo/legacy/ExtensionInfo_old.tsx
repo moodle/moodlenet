@@ -1,5 +1,6 @@
-import { Card } from '@moodlenet/component-library'
-import { FC, ReactNode, ReactPortal } from 'react'
+import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material'
+import { FC, ReactNode, ReactPortal, useCallback, useContext, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
@@ -9,49 +10,64 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
+import { SearchPackagesResObject } from '../../types/data.mjs'
+import { mandatoryPackages } from '../fakeData.js'
+import { MainContext } from '../MainContext.js'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
-  // isInstalling: boolean
-  // toggleIsInstalling(): unknown
-  // searchPackagesResObject: SearchPackagesResObject
-  // onClickBackBtn?(arg0?: unknown): unknown | any
-  readme: string
+  isInstalling: boolean
+  toggleIsInstalling(): unknown
+  searchPackagesResObject: SearchPackagesResObject
+  onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({ readme }) => {
-  // isInstalling,
-  // toggleIsInstalling,
-  // searchPackagesResObject,
-  // onClickBackBtn,
-  // readme,
-  // }) => {
-  // const { pkgs } = useContext(MainContext)
-  // const [myPkg] = pkgs
-  // // const stateContext = useContext(StateContext)
+const ExtensionInfo: FC<ExtensionInfoProps> = ({
+  isInstalling,
+  toggleIsInstalling,
+  searchPackagesResObject,
+  onClickBackBtn,
+}) => {
+  const { pkgs } = useContext(MainContext)
+  const [myPkg] = pkgs
+  const [readme, setReadme] = useState('')
+  useEffect(() => {
+    fetch(
+      `${searchPackagesResObject.registry}/${searchPackagesResObject.pkgName}` /* ${
+        searchPackagesResObject.version ? `/${searchPackagesResObject.version}` : ''
+      }` */,
+    )
+      .then(_ => _.json())
+      .then(({ readme }) => setReadme(readme))
+  }, [
+    searchPackagesResObject.registry,
+    searchPackagesResObject.pkgName,
+    searchPackagesResObject.version,
+  ])
+  // const stateContext = useContext(StateContext)
 
-  // // const modulesList = extension?.modules.map(
-  // //   (module: Module, i) =>
-  // //     (!module.mandatory || stateContext?.devMode) && (
-  // //       <div className="module" key={i}>
-  // //         <div className="name">{module.name}</div>
-  // //         <Switch enabled={module.enabled} mandatory={module.mandatory} />
-  // //       </div>
-  // //     ),
-  // // )
+  // const modulesList = extension?.modules.map(
+  //   (module: Module, i) =>
+  //     (!module.mandatory || stateContext?.devMode) && (
+  //       <div className="module" key={i}>
+  //         <div className="name">{module.name}</div>
+  //         <Switch enabled={module.enabled} mandatory={module.mandatory} />
+  //       </div>
+  //     ),
+  // )
 
-  // const install_uninstall = useCallback(() => {
-  //   toggleIsInstalling()
-  //   searchPackagesResObject.installed
-  //     ? myPkg.call('uninstall')({
-  //         pkgId: searchPackagesResObject.pkgId,
-  //       })
-  //     : myPkg.call('install')({
-  //         installPkgReq: searchPackagesResObject.installPkgReq,
-  //       })
+  const install_uninstall = useCallback(() => {
+    toggleIsInstalling()
+    searchPackagesResObject.installed
+      ? myPkg.call('uninstall')({
+          pkgId: searchPackagesResObject.pkgId,
+        })
+      : myPkg.call('install')({
+          installPkgReq: searchPackagesResObject.installPkgReq,
+        })
 
-  //   // promise.finally(toggleIsInstalling)
-  // }, [myPkg, searchPackagesResObject, toggleIsInstalling])
+    // promise.finally(toggleIsInstalling)
+  }, [myPkg, searchPackagesResObject, toggleIsInstalling])
 
   type CodeBlockProps = {
     node: any
@@ -78,7 +94,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ readme }) => {
 
   return (
     <div className="extension-info">
-      {/* <Card className="header-card">
+      <Card className="header-card">
         <div className="title">
           <div className="title-and-back">
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
@@ -90,7 +106,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ readme }) => {
             className={`install-btn ${isInstalling ? 'loading' : ''}`}
             noHover={isInstalling}
             disabled={mandatoryPackages.includes(searchPackagesResObject.pkgName)}
-            // onClick={install_uninstall}
+            onClick={install_uninstall}
           >
             <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
               <Loading color="white" />
@@ -102,7 +118,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ readme }) => {
         </div>
 
         <div>{searchPackagesResObject.pkgName}</div>
-      </Card> */}
+      </Card>
       {readme && (
         <Card>
           <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
