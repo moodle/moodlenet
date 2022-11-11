@@ -10,11 +10,11 @@
   grid-column-gap: 40px;
   justify-items: center;
 
-  @media screen and (min-width: 700px) and (max-width: 1400px) {
+  @media screen and (min-width: 650px) and (max-width: 1400px) {
     grid-template-columns: 240px repeat(1, auto) 0;
   }
 
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 650px) {
     &.menu-visible {
       grid-template-columns: 240px 800px;
     }
@@ -158,7 +158,7 @@
         color: grey;
         cursor: pointer;
         visibility: hidden;
-        @media screen and (max-width: 700px) {
+        @media screen and (max-width: 650px) {
           visibility: visible;
         }
       }

@@ -30,7 +30,7 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
 
   const headerLeftItems = [
     {
-      Item: (
+      Item: () => (
         <div
           onClick={() => toggleMenu(!showMenu)}
           className="header-menu-btn"
@@ -39,7 +39,7 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
           <MenuIcon className="menu-btn" />
         </div>
       ),
-      position: 0,
+      key: 'header-menu-btn',
     },
   ]
 
