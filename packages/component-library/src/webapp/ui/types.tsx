@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ComponentType, ReactElement } from 'react'
 
 export type Organization = {
   logo: string
@@ -11,4 +11,9 @@ export type AddonPositionedItem = {
   position: number
 }
 
-export type AddonItem = ReactElement | AddonPositionedItem
+// export type AddonItem = ReactElement | AddonPositionedItem
+
+export type AddonItem = {
+  Item: ComponentType
+  key: string | number
+}

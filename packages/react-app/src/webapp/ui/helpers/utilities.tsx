@@ -65,6 +65,16 @@ export const isAddonItem = (
   return false
 }
 
+export const isAddonPositionedItem = (
+  toBeDetermined: AddonItem | undefined | false | null,
+): toBeDetermined is AddonPositionedItem => {
+  const toDetermine = toBeDetermined as AddonPositionedItem
+  if (toDetermine || toDetermine === 0) {
+    return true
+  }
+  return false
+}
+
 const iterateIndex = (list: number[], index: number): number =>
   list.includes(index) ? iterateIndex(list, index + 1) : index
 
@@ -111,6 +121,20 @@ export const addonPositionedItemToReactElements = (
   items: AddonPositionedItem[],
 ): ReactElement[] => {
   return items.map(item => item.Item)
+}
+
+export const addonItemToReactElements = (items: AddonItem[]): ReactElement[] => {
+  console.log('convert items:', items)
+  return items.map(item => {
+    // isAddonPositionedItem(item)
+    if (isAddonPositionedItem(item)) {
+      return item.Item
+    } else if (isAddonItem(item)) {
+      return item
+    } else {
+      return <></>
+    }
+  })
 }
 
 export const sortAnyItems = <T extends object>(items: T[]): WithPosition<T>[] => {
