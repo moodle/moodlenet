@@ -1,28 +1,45 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { Card, InputTextField, Loading, PrimaryButton, Switch } from '@moodlenet/component-library'
+import { Switch } from '@moodlenet/component-library'
 import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
-import { registries } from '@moodlenet/react-app/web-lib'
-import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
-import { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from '../../types.mjs'
+import { FC, useContext } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
 // import { DevModeBtn } from '../Extensions.js'
-import { getNumberFromString, getPastelColor } from '../helpers/utilities.js'
 import { MainContext } from '../MainContext.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './InstallExtension.scss'
 
+export type Extension = {
+  readme: string
+  // pkgName: string
+  // description: string
+  // keywords: string[]
+  // version?: string
+  // registry: string
+  // homepage?: string
+}
+//& (
+//   | {
+//       pkgId: PkgIdentifier<any>
+//       installed: true
+//     }
+//   | {
+//       installPkgReq: InstallPkgReq
+//       installed: false
+//     }
+// )
+
 export type InstallExtensionProps = {
   // It was empty before
-  devMode: boolean
-  setDevMode: React.Dispatch<React.SetStateAction<boolean>>
-  selectedExtConfig: DeployedPkgInfo | null
-  setSelectedExtConfig: React.Dispatch<React.SetStateAction<DeployedPkgInfo | null>>
-  selectedExtInfo: SearchPackagesResObject | null
-  setSelectedExtInfo: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
-  searchPkgResp: SearchPackagesResponse | undefined
-  setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
+  // devMode: boolean
+  // setDevMode: React.Dispatch<React.SetStateAction<boolean>>
+  // selectedExtConfig: DeployedPkgInfo | null
+  // setSelectedExtConfig: React.Dispatch<React.SetStateAction<DeployedPkgInfo | null>>
+  selectedExt: Extension | null
+  // setSelectedExt: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
+  // searchPkgResp: SearchPackagesResponse | undefined
+  // setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
   // menuItemPressed: boolean
 }
 
@@ -40,139 +57,143 @@ const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 
 export const InstallExtensionMenu = <span>Install extensions</span>
 
-const InstallExtension: FC<InstallExtensionProps> = () => {
-  const { pkgId, pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } =
-    useContext(MainContext)
-  const [myPkg] = pkgs
-  // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
+const InstallExtension: FC<InstallExtensionProps> = ({ selectedExt }) => {
+  // const { pkgId, pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } =
+  //   useContext(MainContext)
+  // const [myPkg] = pkgs
+  // // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
 
-  registries.rightComponents.useRegister(pkgId, DevModeBtnAddon)
+  // registries.rightComponents.useRegister(pkgId, DevModeBtnAddon)
 
-  const [localPathField, setLocalPathField] = useState('')
-  const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
-  const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
+  // const [localPathField, setLocalPathField] = useState('')
+  // const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
+  // const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
 
-  useEffect(() => {
-    myPkg
-      .call('listDeployed')()
-      .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
-  }, [myPkg])
-  const install = useCallback(() => {
-    if (!localPathField) {
-      return
-    }
-    toggleIsInstalling()
-    myPkg.call('install')([{ type: 'symlink', fromFolder: localPathField }])
-    // .finally(toggleIsInstalling)
-  }, [localPathField, myPkg])
+  // useEffect(() => {
+  //   myPkg
+  //     .call('listDeployed')()
+  //     .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
+  // }, [myPkg])
+  // const install = useCallback(() => {
+  //   if (!localPathField) {
+  //     return
+  //   }
+  //   toggleIsInstalling()
+  //   myPkg.call('install')({
+  //     installPkgReq: { type: 'symlink', fromFolder: localPathField },
+  //   })
+  //   // .finally(toggleIsInstalling)
+  // }, [localPathField, myPkg])
+
+  // const searchExtensions = !selectedExtInfo && (
+  //   <div className="search-extensions">
+  //     <Card className="install">
+  //       <div className="title">Install extensions</div>
+  //     </Card>
+  //     {devMode && (
+  //       <Card>
+  //         <div className="subtitle">From local package</div>
+  //         <div className="option">
+  //           <div className="name">Local path</div>
+  //           <div className="actions">
+  //             <InputTextField
+  //               className="local-path"
+  //               placeholder="Local path to package"
+  //               value={localPathField}
+  //               onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
+  //               name="package-name"
+  //               edit
+  //               // error={shouldShowErrors && editForm.errors.displayName}
+  //             />
+  //             <PrimaryButton
+  //               className={`${isInstalling ? 'loading' : ''}`}
+  //               disabled={localPathField === ''}
+  //               noHover={isInstalling}
+  //               onClick={install}
+  //             >
+  //               <div
+  //                 className="loading"
+  //                 style={{ visibility: isInstalling ? 'visible' : 'hidden' }}
+  //               >
+  //                 <Loading color="white" />
+  //               </div>
+  //               <div
+  //                 className="label"
+  //                 style={{ visibility: isInstalling ? 'hidden' : 'visible' }}
+  //               >
+  //                 Install
+  //               </div>
+  //             </PrimaryButton>
+  //           </div>
+  //         </div>
+  //       </Card>
+  //     )}
+  //     <Card className="available-extensions">
+  //       <div className="subtitle">Compatible extensions</div>
+  //       <div className="list">
+  //         {searchPkgResp?.objects
+  //           .filter(
+  //             respObj =>
+  //               !extInfoList.find(({ packageJson: { name } }) => respObj.pkgName === name),
+  //           )
+  //           .filter(
+  //             respObj =>
+  //               ![
+  //                 '@moodlenet/webapp',
+  //                 '@moodlenet/common',
+  //                 '@moodlenet/backend',
+  //                 '@moodlenet/ce-platform',
+  //                 '@moodlenet/arangodb',
+  //               ].includes(respObj.pkgName),
+  //           )
+  //           .map(respObj => {
+  //             // const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
+  //             let [extName, description] = respObj.description
+  //               ? respObj.description.split('\n')
+  //               : ['', '']
+  //             extName = extName ? extName : ''
+  //             description = description ? description : ''
+  //             return (
+  //               <div
+  //                 className="package"
+  //                 key={respObj.pkgName}
+  //                 onClick={() =>
+  //                   setSelectedExtInfo(respObj)
+  //                 } /* onClick={() => setSelectedPackage(o.package.name)} */
+  //               >
+  //                 {/* <PackageIcon /> */}
+  //                 <div
+  //                   className="logo"
+  //                   style={{ background: getPastelColor(getNumberFromString(extName), 0.5) }}
+  //                 >
+  //                   <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
+  //                   <div
+  //                     className="circle"
+  //                     style={{ background: getPastelColor(getNumberFromString(extName)) }}
+  //                   />
+  //                 </div>
+  //                 <div className="info">
+  //                   <div className="title">{extName}</div>
+  //                   <div className="details">{description}</div>
+  //                 </div>
+  //                 <PrimaryButton className="install-btn">Details</PrimaryButton>
+  //               </div>
+  //             )
+  //           })}
+  //       </div>
+  //     </Card>
+  //   </div>
+  // )
 
   return (
     <>
-      {!selectedExtInfo && (
-        <div className="search-extensions">
-          <Card className="install">
-            <div className="title">Install extensions</div>
-          </Card>
-          {devMode && (
-            <Card>
-              <div className="subtitle">From local package</div>
-              <div className="option">
-                <div className="name">Local path</div>
-                <div className="actions">
-                  <InputTextField
-                    className="local-path"
-                    placeholder="Local path to package"
-                    value={localPathField}
-                    onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
-                    name="package-name"
-                    edit
-                    // error={shouldShowErrors && editForm.errors.displayName}
-                  />
-                  <PrimaryButton
-                    className={`${isInstalling ? 'loading' : ''}`}
-                    disabled={localPathField === ''}
-                    noHover={isInstalling}
-                    onClick={install}
-                  >
-                    <div
-                      className="loading"
-                      style={{ visibility: isInstalling ? 'visible' : 'hidden' }}
-                    >
-                      <Loading color="white" />
-                    </div>
-                    <div
-                      className="label"
-                      style={{ visibility: isInstalling ? 'hidden' : 'visible' }}
-                    >
-                      Install
-                    </div>
-                  </PrimaryButton>
-                </div>
-              </div>
-            </Card>
-          )}
-          <Card className="available-extensions">
-            <div className="subtitle">Compatible extensions</div>
-            <div className="list">
-              {searchPkgResp?.objects
-                .filter(
-                  respObj =>
-                    !extInfoList.find(({ packageJson: { name } }) => respObj.pkgName === name),
-                )
-                .filter(
-                  respObj =>
-                    ![
-                      '@moodlenet/webapp',
-                      '@moodlenet/common',
-                      '@moodlenet/backend',
-                      '@moodlenet/ce-platform',
-                      '@moodlenet/arangodb',
-                    ].includes(respObj.pkgName),
-                )
-                .map(respObj => {
-                  // const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
-                  let [extName, description] = respObj.description
-                    ? respObj.description.split('\n')
-                    : ['', '']
-                  extName = extName ? extName : ''
-                  description = description ? description : ''
-                  return (
-                    <div
-                      className="package"
-                      key={respObj.pkgName}
-                      onClick={() =>
-                        setSelectedExtInfo(respObj)
-                      } /* onClick={() => setSelectedPackage(o.package.name)} */
-                    >
-                      {/* <PackageIcon /> */}
-                      <div
-                        className="logo"
-                        style={{ background: getPastelColor(getNumberFromString(extName), 0.5) }}
-                      >
-                        <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
-                        <div
-                          className="circle"
-                          style={{ background: getPastelColor(getNumberFromString(extName)) }}
-                        />
-                      </div>
-                      <div className="info">
-                        <div className="title">{extName}</div>
-                        <div className="details">{description}</div>
-                      </div>
-                      <PrimaryButton className="install-btn">Details</PrimaryButton>
-                    </div>
-                  )
-                })}
-            </div>
-          </Card>
-        </div>
-      )}
-      {selectedExtInfo && (
+      {selectedExt && (
         <ExtensionInfo
-          isInstalling={isInstalling}
-          toggleIsInstalling={toggleIsInstalling}
-          searchPackagesResObject={selectedExtInfo}
-          onClickBackBtn={() => setSelectedExtInfo(null)}
+          readme={selectedExt.readme}
+          // isInstalling={isInstalling}
+          // toggleIsInstalling={toggleIsInstalling}
+          // searchPackagesResObject={selectedExtInfo}
+          // onClickBackBtn={() => setSelectedExtInfo(null)}
         />
       )}
       {/* {isInstalling && (
