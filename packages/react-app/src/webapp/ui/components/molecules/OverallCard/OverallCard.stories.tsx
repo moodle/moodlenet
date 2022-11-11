@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
+// import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
 import { OverallCard, OverallCardProps } from './OverallCard.js'
 
 const meta: ComponentMeta<typeof OverallCard> = {
@@ -23,11 +24,11 @@ const meta: ComponentMeta<typeof OverallCard> = {
 }
 
 export const OverallCardStoryProps: OverallCardProps = {
-  followers: 0,
-  resources: 23,
-  kudos: 121,
-  years: 20,
-  //   followersHref: href('Pages/Followers/Default'),
+  items: [
+    // { Icon: PermIdentity, href: href('Pages/Followers/Default'), name: 'Followers', value: 25 },
+    // { Icon: Grade, name: 'Kudos', value: 121 },
+    // { Icon: LibraryBooks, name: 'Resource', value: 23 },
+  ],
 }
 
 export const OverallCardNoCardStoryProps: OverallCardProps = {
