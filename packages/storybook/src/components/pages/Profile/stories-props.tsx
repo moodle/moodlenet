@@ -1,5 +1,5 @@
 import { OverallCardStories } from '@moodlenet/web-user/stories'
-import { ProfileProps, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
+import { OverallCard, ProfileProps, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
 
 // const editForm: ProfileFormValues = {
 //   displayName: 'Alberto Curcella',
@@ -26,10 +26,15 @@ export const useProfileStoryProps = (overrides?: {
     // editFormValues: overrides?.editFormValues,
   })
 
+  const overallCard = {
+    Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
+    key: 'overall-card',
+  }
+
   return {
     displayName: 'Juanito',
     mainLayoutProps: MainLayoutLoggedInStoryProps,
-    overallCardProps: OverallCardStories.OverallCardStoryProps,
+    sideColumnItems: [overallCard],
     profileCardProps: ProfileCardStoryProps,
     // editForm: ProfileCardStoryProps.editForm,
     // sendEmailForm: useFormik<{ text: string }>({
