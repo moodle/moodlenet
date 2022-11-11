@@ -10,7 +10,6 @@ import {
 import { FC } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
-import { sortAddonItems, sortAnyItems } from '../../../../helpers/utilities.js'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { Href, Link } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'
@@ -63,13 +62,13 @@ export const AddMenu: FC<AddMenuProps> = ({ newCollectionHref, newResourceHref, 
     },
   ]
 
-  const updatedMenuItems = sortAnyItems(addMenuItems.concat(menuItems ?? []))
+  const updatedMenuItems = addMenuItems.concat(menuItems ?? [])
 
   return (
     <FloatingMenu
       className="add-menu"
       key="add-menu"
-      menuContent={sortAnyItems(updatedMenuItems).map(menuItem => {
+      menuContent={updatedMenuItems.map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
         return menuItem.path ? (
           <Link
@@ -119,7 +118,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menu"
-      menuContent={sortAnyItems(menuItems ?? []).map(menuItem => {
+      menuContent={(menuItems ?? []).map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
         return menuItem.path ? (
           <Link
@@ -173,22 +172,29 @@ export const MainHeader: FC<MainHeaderProps> = ({
 }) => {
   const { logo, smallLogo, url } = headerTitleProps
 
-  const updatedLeftItems = sortAddonItems([
-    <HeaderTitle key="header-title" logo={logo} smallLogo={smallLogo} url={url} />,
+  const updatedLeftItems = [
+    {
+      Item: () => <HeaderTitle logo={logo} smallLogo={smallLogo} url={url} />,
+      key: 'header-title',
+    },
     ...(leftItems ?? []),
-  ])
+  ].filter(Boolean)
 
-  const updatedCenterItems = sortAddonItems([
-    <Searchbox key="searchbox" placeholder="Search for open education content" />,
+  const updatedCenterItems = [
+    { Item: () => <Searchbox placeholder="Search for open education content" />, key: 'searchbox' },
     ...(centerItems ?? []),
-  ])
+  ]
 
-  const updatedRightItems = sortAddonItems([
-    isAuthenticated && <AddMenu {...addMenuProps} />,
-    isAuthenticated && <AvatarMenu {...avatarMenuProps} />,
-    !isAuthenticated && <AccessButtons {...accessButtonsProps} />,
+  const updatedRightItems: AddonItem[] = [
+    isAuthenticated ? { Item: () => <AddMenu {...addMenuProps} />, key: 'add-menu' } : undefined,
+    isAuthenticated
+      ? { Item: () => <AvatarMenu {...avatarMenuProps} />, key: 'avatar-menu' }
+      : undefined,
+    !isAuthenticated
+      ? { Item: () => <AccessButtons {...accessButtonsProps} />, key: 'access-buttons' }
+      : undefined,
     ...(rightItems ?? []),
-  ])
+  ].filter((item): item is AddonItem => !!item)
   return (
     <Header
       leftItems={updatedLeftItems}
