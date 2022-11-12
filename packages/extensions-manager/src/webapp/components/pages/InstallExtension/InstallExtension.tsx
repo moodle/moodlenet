@@ -8,7 +8,7 @@ import {
   Switch,
 } from '@moodlenet/component-library'
 import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
-import { FC, useContext, useReducer } from 'react'
+import { FC, useContext, useReducer, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
@@ -17,17 +17,23 @@ import { MainContext } from '../../../MainContext.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
 import './InstallExtension.scss'
-import { ExtensionType } from './InstallExtensionCtrl.js'
 
-export type Extension = {
+export type ExtensionType = {
+  name: string
+  description: string
   readme: string
-  // pkgName: string
-  // description: string
-  // keywords: string[]
-  // version?: string
-  // registry: string
-  // homepage?: string
+  installed: boolean
 }
+
+// export type Extension = {
+//   readme: string
+// pkgName: string
+// description: string
+// keywords: string[]
+// version?: string
+// registry: string
+// homepage?: string
+// }
 //& (
 //   | {
 //       pkgId: PkgIdentifier<any>
@@ -38,20 +44,6 @@ export type Extension = {
 //       installed: false
 //     }
 // )
-
-export type InstallExtensionProps = {
-  // It was empty before
-  devMode: boolean
-  extensions: ExtensionType[]
-  // setDevMode: React.Dispatch<React.SetStateAction<boolean>>
-  // selectedExtConfig: DeployedPkgInfo | null
-  // setSelectedExtConfig: React.Dispatch<React.SetStateAction<DeployedPkgInfo | null>>
-  selectedExt?: Extension
-  setSelectedExt: React.Dispatch<React.SetStateAction<ExtensionType | null>>
-  // searchPkgResp: SearchPackagesResponse | undefined
-  // setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
-  // menuItemPressed: boolean
-}
 
 const DevModeBtn: FC = () => {
   const { devMode, setDevMode } = useContext(MainContext)
@@ -70,16 +62,25 @@ export const InstallExtensionMenu: AddonItem = {
   key: 'menu-install-extensions',
 }
 
-export const InstallExtensionsMenu: AddonItem = {
-  Item: () => <span>Install extensions</span>,
-  key: 'menu-install-extensions',
+export type InstallExtensionProps = {
+  // It was empty before
+  devMode: boolean
+  extensions: ExtensionType[]
+  // setDevMode: React.Dispatch<React.SetStateAction<boolean>>
+  // selectedExtConfig: DeployedPkgInfo | null
+  // setSelectedExtConfig: React.Dispatch<React.SetStateAction<DeployedPkgInfo | null>>
+  selectedExt?: ExtensionType
+  // setSelectedExt: React.Dispatch<React.SetStateAction<ExtensionType | undefined>>
+  // searchPkgResp: SearchPackagesResponse | undefined
+  // setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
+  // menuItemPressed: boolean
 }
 
 const InstallExtension: FC<InstallExtensionProps> = ({
-  selectedExt,
+  // selectedExt,
   devMode,
   extensions,
-  setSelectedExt,
+  // setSelectedExt,
 }) => {
   // const { pkgId, pkgs, selectedExt, setSelectedExt, devMode, searchPkgResp } =
   //   useContext(MainContext)
@@ -89,6 +90,7 @@ const InstallExtension: FC<InstallExtensionProps> = ({
   // registries.rightComponents.useRegister(pkgId, DevModeBtnAddon)
 
   // const [localPathField, setLocalPathField] = useState('')
+  const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>(undefined)
   const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
   // const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
 
@@ -161,9 +163,9 @@ const InstallExtension: FC<InstallExtensionProps> = ({
               <div
                 className="package"
                 key={extension.name}
-                onClick={() =>
+                onClick={() => {
                   setSelectedExt(extension)
-                } /* onClick={() => setSelectedPackage(o.package.name)} */
+                }}
               >
                 {/* <PackageIcon /> */}
                 <div
@@ -194,11 +196,10 @@ const InstallExtension: FC<InstallExtensionProps> = ({
       {searchExtensions}
       {selectedExt && (
         <ExtensionInfo
-          readme={selectedExt.readme}
-          // isInstalling={isInstalling}
-          // toggleIsInstalling={toggleIsInstalling}
-          // searchPackagesResObject={selectedExt}
-          // onClickBackBtn={() => setSelectedExt(null)}
+          extension={selectedExt}
+          isInstalling={isInstalling}
+          toggleIsInstalling={toggleIsInstalling}
+          onClickBackBtn={() => setSelectedExt(undefined)}
         />
       )}
       {/* {isInstalling && (
