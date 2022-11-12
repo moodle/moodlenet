@@ -172,11 +172,11 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     ? {
         Item: () => (
           <InputTextField
-            textAreaAutoSize={true}
+            textAreaAutoSize
             value={form.values.description}
             onChange={form.handleChange}
-            textarea={true}
-            displayMode={true}
+            textarea
+            displayMode
             placeholder={/* t */ `What should others know about you?`}
             className="description"
             key="description"

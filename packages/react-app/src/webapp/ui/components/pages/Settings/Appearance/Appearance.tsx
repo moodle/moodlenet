@@ -1,15 +1,16 @@
 // import { Trans } from '@lingui/macro'
 import {
+  AddonItem,
   Card,
   Colorpicker,
   InputTextField,
   PrimaryButton,
   RoundButton,
-  useImageUrl,
+  useImageUrl
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useCallback, useRef /* , useContext */ } from 'react'
-import { getAppearanceDataStyle } from '../../../../../../common/appearance/data.mjs'
+import { FC, useCallback, useRef } from 'react'
+import { getAppearanceDataStyle } from '../../../../../../common/index.mjs'
 import { AppearanceData } from '../../../../../../common/types.mjs'
 import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
 import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
@@ -21,7 +22,10 @@ export type AppearanceProps = {
   form: ReturnType<typeof useFormik<AppearanceData>>
 }
 
-export const AppearanceMenu = <span>Appearance</span>
+export const AppearanceMenu: AddonItem = {
+  Item: () => <span>Appearance</span>,
+  key: 'menu-appearance',
+}
 
 export const Appearance: FC<AppearanceProps> = ({ form }) => {
   // const styleContext = useContext(SettingsCtx)

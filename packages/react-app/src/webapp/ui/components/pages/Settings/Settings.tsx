@@ -1,12 +1,12 @@
 import { Menu as MenuIcon } from '@material-ui/icons'
-import { FC, ReactElement, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { Card } from '@moodlenet/component-library'
+import { AddonItem, Card } from '@moodlenet/component-library'
 import './Settings.scss'
 
-export type SettingsItem = { Content: ReactElement; Menu: ReactElement }
+export type SettingsItem = { Content: AddonItem; Menu: AddonItem }
 export type SettingsProps = {
   mainLayoutProps: MainLayoutProps
   settingsItems: SettingsItem[]
@@ -20,7 +20,6 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
     const handleResize = () => {
       document.documentElement.clientWidth > 700 && toggleMenu(true)
     }
-    console.log('being called')
     window.addEventListener('resize', handleResize)
 
     return () => {
@@ -57,29 +56,28 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
           <div className="left-menu">
             <Card>
               {settingsItems.map((settingsEntry, i) => {
-                const isCurrent = settingsEntry === currSettingsItem
-
+                const isCurrent = JSON.stringify(settingsEntry) === JSON.stringify(currSettingsItem)
                 const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsEntry)
-                // console.log('key: ', settingsEntry.Content.key)
 
                 return (
                   <div
-                    key={i}
-                    // key={settingsEntry.Content.key ? settingsEntry.Content.key : ''}
-                    className={`section ${settingsEntry === currSettingsItem ? 'selected' : ''}`}
+                    key={settingsEntry.Menu.key}
+                    className={`section ${isCurrent ? 'selected' : ''}`}
                     onClick={onClick}
                   >
-                    {settingsEntry.Menu}
+                    {<settingsEntry.Menu.Item />}
                   </div>
                 )
               })}
             </Card>
           </div>
         )}
-        <div className="content">
-          {currSettingsItem ? currSettingsItem.Content : null}
-          {/* {ctxElement} */}
-        </div>
+        {currSettingsItem && (
+          <div className="content" key={currSettingsItem.Content.key}>
+            {currSettingsItem ? <currSettingsItem.Content.Item /> : <></>}
+            {/* {ctxElement} */}
+          </div>
+        )}
       </div>
     </MainLayout>
   )
