@@ -80,6 +80,10 @@
 
         &:hover {
           background-color: #f9f9f9;
+          > .primary-button {
+            background-color: var(--primary-color-hover);
+            box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
+          }
         }
 
         > .logo {
@@ -88,7 +92,7 @@
           height: 40px;
           width: 40px;
           flex: 0 0 40px;
-          padding: 5px;
+          padding: 4px;
           background-color: #fdb068;
           > .circle {
             height: 100%;
@@ -100,7 +104,7 @@
             position: absolute;
             left: 4px;
             right: 0;
-            top: 10px;
+            top: 6px;
             bottom: 0;
             font-size: 28px;
             text-align: center;

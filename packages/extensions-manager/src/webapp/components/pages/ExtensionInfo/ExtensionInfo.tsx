@@ -1,4 +1,5 @@
-import { Card } from '@moodlenet/component-library'
+import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
+import { ArrowBack } from '@mui/icons-material'
 import { FC, ReactNode, ReactPortal } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
@@ -9,21 +10,27 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
+import { mandatoryPackages } from '../../../fakeData.js'
+import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
-  // isInstalling: boolean
-  // toggleIsInstalling(): unknown
+  isInstalling: boolean
+  toggleIsInstalling(): unknown
   // searchPackagesResObject: SearchPackagesResObject
-  // onClickBackBtn?(arg0?: unknown): unknown | any
-  readme: string
+  onClickBackBtn?(arg0?: unknown): unknown | any
+  // readme: string
+  extension: ExtensionType
 }
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({ readme }) => {
-  // isInstalling,
+const ExtensionInfo: FC<ExtensionInfoProps> = ({
+  extension,
+  isInstalling,
+  toggleIsInstalling,
+  onClickBackBtn,
+}) => {
   // toggleIsInstalling,
   // searchPackagesResObject,
-  // onClickBackBtn,
   // readme,
   // }) => {
   // const { pkgs } = useContext(MainContext)
@@ -78,38 +85,36 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ readme }) => {
 
   return (
     <div className="extension-info">
-      {/* <Card className="header-card">
+      <Card className="header-card">
         <div className="title">
           <div className="title-and-back">
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
-              <ArrowBackIcon />
+              <ArrowBack />
             </TertiaryButton>
-            {searchPackagesResObject.description.split('\n')[0]}
+            {extension.description.split('\n')[0]}
           </div>
           <PrimaryButton
             className={`install-btn ${isInstalling ? 'loading' : ''}`}
             noHover={isInstalling}
-            disabled={mandatoryPackages.includes(searchPackagesResObject.pkgName)}
+            disabled={mandatoryPackages.includes(extension.name)}
             // onClick={install_uninstall}
           >
             <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
               <Loading color="white" />
             </div>
             <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
-              {searchPackagesResObject.installed ? 'Uninstall' : 'Install'}
+              {extension.installed ? 'Uninstall' : 'Install'}
             </div>
           </PrimaryButton>
         </div>
 
-        <div>{searchPackagesResObject.pkgName}</div>
-      </Card> */}
-      {readme && (
-        <Card>
-          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-            {readme}
-          </ReactMarkdown>
-        </Card>
-      )}
+        <div>{extension.name}</div>
+      </Card>
+      <Card>
+        <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
+          {extension.readme}
+        </ReactMarkdown>
+      </Card>
     </div>
   )
 }
