@@ -39,6 +39,9 @@ export const useElements = (): SettingsItem => {
   const props = useInstallExtensionStoryProps()
   return {
     Menu: SettingsInstallMenu,
-    Content: <SettingsInstallContent selectedExt={props.selectedExt} />,
+    Content: {
+      Item: () => <SettingsInstallContent selectedExt={props.selectedExt} />,
+      key: 'content-install-extension',
+    },
   }
 }

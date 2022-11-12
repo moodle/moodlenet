@@ -31,7 +31,6 @@ export const AccessButtons: FC<AccessButtonsProps> = ({ loginHref, signupHref })
           {/* </Trans> */}
         </PrimaryButton>
       </Link>
-      ,
       <Link href={signupHref} key="signup-button">
         <TertiaryButton>
           {/* <Trans> */}

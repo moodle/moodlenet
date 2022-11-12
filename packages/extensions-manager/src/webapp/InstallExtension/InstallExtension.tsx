@@ -1,5 +1,5 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { Switch } from '@moodlenet/component-library'
+import { AddonItem, Switch } from '@moodlenet/component-library'
 import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
 import { FC, useContext } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
@@ -55,7 +55,10 @@ const DevModeBtn: FC = () => {
 }
 const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 
-export const InstallExtensionMenu = <span>Install extensions</span>
+export const InstallExtensionMenu: AddonItem = {
+  Item: () => <span>Install extensions</span>,
+  key: 'menu-install-extensions',
+}
 
 const InstallExtension: FC<InstallExtensionProps> = ({ selectedExt }) => {
   // const { pkgId, pkgs, selectedExtInfo, setSelectedExtInfo, devMode, searchPkgResp } =

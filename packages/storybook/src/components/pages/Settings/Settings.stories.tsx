@@ -2,7 +2,7 @@
 import { InstallExtensionStories } from '@moodlenet/extensions-manager/stories'
 import { AppearanceStories, GeneralStories } from '@moodlenet/react-app/stories'
 import { Settings, SettingsProps } from '@moodlenet/react-app/ui'
-import { Settings as SimpleEmailAuthSettins } from '@moodlenet/simple-email-auth/ui'
+import { Settings as SimpleEmailAuthSettings } from '@moodlenet/simple-email-auth/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 // import { href } from '../../../elements/link'
@@ -32,7 +32,7 @@ export const SettingsDefaultStoryProps = (): SettingsProps => {
         Menu: InstallExtensionStories.useElements().Menu,
         Content: InstallExtensionStories.useElements().Content,
       },
-      { Menu: SimpleEmailAuthSettins.Menu, Content: SimpleEmailAuthSettins.Content },
+      { Menu: SimpleEmailAuthSettings.Menu, Content: SimpleEmailAuthSettings.Content },
       // { Menu: PassportAuthSettins.Menu, Content: PassportAuthSettins.Content },
     ],
     mainLayoutProps: MainLayoutLoggedInStoryProps,
