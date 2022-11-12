@@ -1,7 +1,10 @@
 import { SettingsItem } from '@moodlenet/react-app/ui'
+import { action } from '@storybook/addon-actions'
 import { useEffect, useState } from 'react'
-import { InstallExtensionProps } from './InstallExtension.js'
-import { SettingsInstallContent, SettingsInstallMenu } from './SettingsInstall.js'
+import InstallExtension, {
+  InstallExtensionMenu,
+  InstallExtensionProps,
+} from './InstallExtension.js'
 
 export const useInstallExtensionStoryProps = (overrides?: {
   // editFormValues?: Partial<InstallExtensionData>
@@ -17,10 +20,18 @@ export const useInstallExtensionStoryProps = (overrides?: {
   }, [])
 
   return {
-    selectedExt: {
-      readme: readme,
-    },
-    // devMode: false,
+    // selectedExt: {
+    //   readme: readme,
+    // },
+    devMode: true,
+    setSelectedExt: action('Extension selected'),
+    extensions: [
+      {
+        name: '@moodlenet/react-app',
+        description: 'React App\n The foundations of the web application',
+      },
+    ],
+
     // searchPkgResp: []
     // form: useFormik<InstallExtensionData>({
     //   onSubmit: action('submit InstallExtension settings'),
@@ -37,10 +48,11 @@ export const useInstallExtensionStoryProps = (overrides?: {
 
 export const useElements = (): SettingsItem => {
   const props = useInstallExtensionStoryProps()
+  console.log(props)
   return {
-    Menu: SettingsInstallMenu,
+    Menu: InstallExtensionMenu,
     Content: {
-      Item: () => <SettingsInstallContent selectedExt={props.selectedExt} />,
+      Item: () => <InstallExtension {...props} />,
       key: 'content-install-extension',
     },
   }
