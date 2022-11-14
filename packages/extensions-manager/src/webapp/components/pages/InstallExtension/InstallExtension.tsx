@@ -8,7 +8,7 @@ import {
   Switch,
 } from '@moodlenet/component-library'
 import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
-import { FC, useContext, useReducer, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
@@ -23,6 +23,8 @@ export type ExtensionType = {
   description: string
   readme: string
   installed: boolean
+  isInstallingUninstalling: boolean
+  toggleInstallingUninstalling: () => void
 }
 
 // export type Extension = {
@@ -91,7 +93,7 @@ const InstallExtension: FC<InstallExtensionProps> = ({
 
   // const [localPathField, setLocalPathField] = useState('')
   const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>(undefined)
-  const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
+  const [isInstalling, toggleIsInstalling] = useState<boolean>(false)
   // const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
 
   // useEffect(() => {
@@ -195,12 +197,7 @@ const InstallExtension: FC<InstallExtensionProps> = ({
     <>
       {searchExtensions}
       {selectedExt && (
-        <ExtensionInfo
-          extension={selectedExt}
-          isInstalling={isInstalling}
-          toggleIsInstalling={toggleIsInstalling}
-          onClickBackBtn={() => setSelectedExt(undefined)}
-        />
+        <ExtensionInfo extension={selectedExt} onClickBackBtn={() => setSelectedExt(undefined)} />
       )}
       {/* {isInstalling && (
         <div style={{ position: 'fixed', top: '0', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.6)' }}>
