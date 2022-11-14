@@ -1,26 +1,29 @@
 {
   "name": "@moodlenet/web-user",
   "version": "0.1.0",
+  "author": "MoodleNet",
+  "moodlenet": {
+    "displayName": "Profile page",
+    "icon": "https://moodle.net/moodlenet-logo-small.svg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/component-library"
+  },
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Page to display user public information",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
     "node": ">=16"
   },
   "main": "lib/main.mjs",
-  "moodlenet": {
-    "creator": "MoodleNet",
-    "displayName": "Profile page"
-  },
-  "keywords": [
-    "moodlenetPackage"
-  ],
-  "description": "Profile page\nPage to display user public information",
   "readme": "",
   "files": [
     "lib/"
   ],
-  "repository": "https://gitlab.com/moodlenet/moodlenet",
-  "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",

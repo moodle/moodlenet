@@ -1,6 +1,19 @@
 {
   "name": "@moodlenet/component-library",
   "version": "0.1.0",
+  "author": "MoodleNet",
+  "moodlenet": {
+    "displayName": "MoodleNet Component Library",
+    "icon": "https://moodle.net/moodlenet-logo-small.svg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/component-library"
+  },
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Library containing many components used in the Web app",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
@@ -15,14 +28,6 @@
     "_redirects",
     "moodlenet-component-library-lib.d.ts"
   ],
-  "moodlenet": {
-    "creator": "MoodleNet",
-    "displayName": "Web application"
-  },
-  "keywords": [
-    "moodlenetPackage"
-  ],
-  "description": "Web application\nFrontend interface to interact with the backend",
   "exports": {
     ".": "./lib/ui.mjs",
     "./stories": "./lib/stories.mjs"
@@ -58,7 +63,6 @@
       "delay": 300
     }
   },
-  "author": "",
   "devDependencies": {
     "@types/node": "^17.0.35",
     "@types/react": "^18.0.9",
