@@ -1,5 +1,6 @@
+import { OverallCard } from '@moodlenet/react-app/ui'
 import { OverallCardStories } from '@moodlenet/web-user/stories'
-import { OverallCard, ProfileProps, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
+import { ProfileProps, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
 
 // const editForm: ProfileFormValues = {
 //   displayName: 'Alberto Curcella',
@@ -32,7 +33,6 @@ export const useProfileStoryProps = (overrides?: {
   }
 
   return {
-    displayName: 'Juanito',
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     sideColumnItems: [overallCard],
     profileCardProps: ProfileCardStoryProps,

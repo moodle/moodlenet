@@ -3,6 +3,7 @@ import {
   AddonItem,
   FloatingMenu,
   Header,
+  HeaderProps,
   PrimaryButton,
   Searchbox,
   TertiaryButton,
@@ -13,6 +14,7 @@ import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { Href, Link } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'
+import './MainHeader.scss'
 
 export type AccessButtonsProps = {
   loginHref: Href
@@ -158,7 +160,7 @@ export type MainHeaderProps = {
   addMenuProps: AddMenuProps
   avatarMenuProps: AvatarMenuProps
   accessButtonsProps: AccessButtonsProps
-}
+} & HeaderProps
 
 export const MainHeader: FC<MainHeaderProps> = ({
   leftItems,
@@ -169,6 +171,7 @@ export const MainHeader: FC<MainHeaderProps> = ({
   addMenuProps,
   accessButtonsProps,
   avatarMenuProps,
+  ...props
 }) => {
   const { logo, smallLogo, url } = headerTitleProps
 
@@ -200,6 +203,7 @@ export const MainHeader: FC<MainHeaderProps> = ({
       leftItems={updatedLeftItems}
       centerItems={updatedCenterItems}
       rightItems={updatedRightItems}
+      {...props}
     ></Header>
   )
 }

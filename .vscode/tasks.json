@@ -45,6 +45,7 @@
         "simple-email-auth dev-build",
         "web-user dev-build",
         "component-library dev-build",
+        "extensions-manager dev-build",
         "dev-assistant",
         "storybook"
       ],

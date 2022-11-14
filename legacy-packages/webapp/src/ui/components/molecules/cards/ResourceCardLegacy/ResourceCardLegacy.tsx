@@ -7,7 +7,6 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import { Href, Link } from '../../../../elements/link'
 import { getTagList } from '../../../../elements/tags'
 import { withCtrl } from '../../../../lib/ctrl'
-import defaultBackgroud from '../../../../static/img/default-background.svg'
 import '../../../../styles/tags.scss'
 import { FollowTag } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
@@ -63,7 +62,7 @@ export const ResourceCardLegacy = withCtrl<ResourceCardLegacyProps>(
     toggleBookmark,
   }) => {
     const background = {
-      backgroundImage: 'url(' + (image ? image : defaultBackgroud) + ')',
+      backgroundImage: "'url("' + (image ? image : defaultBackgroud) + '")',
       backgroundSize: 'cover',
     }
 
