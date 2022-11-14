@@ -27,5 +27,8 @@ export const useGeneralStoryProps = (overrides?: {
 
 export const useElements = (): SettingsItem => {
   const props = useGeneralStoryProps()
-  return { Menu: GeneralMenu, Content: <General {...props} /> }
+  return {
+    Menu: GeneralMenu,
+    Content: { Item: () => <General {...props} />, key: 'content-general' },
+  }
 }

@@ -1,14 +1,37 @@
 @import '../../../styles/application.scss';
 
-.settings-page {
+.settings {
   width: 100%;
   height: 100%;
-  max-width: 1100px;
-  display: flex;
   margin-top: 30px;
-  gap: 40px;
+  // gap: 40px;
+  display: grid;
+  grid-template-columns: 240px repeat(1, auto) 170px;
+  grid-column-gap: 40px;
+  justify-items: center;
+
+  @media screen and (min-width: 650px) and (max-width: 1400px) {
+    grid-template-columns: 240px repeat(1, auto) 0;
+  }
+
+  @media screen and (max-width: 650px) {
+    &.menu-visible {
+      grid-template-columns: 240px 800px;
+    }
+    &.menu-hidden {
+      display: flex;
+    }
+  }
+
+  > * {
+    display: flex;
+  }
+
   > .left-menu {
+    margin-right: auto;
     min-width: 300px;
+    height: fit-content;
+
     > .card {
       padding: 30px 0;
       display: flex;
@@ -28,6 +51,9 @@
     }
   }
   > .content {
+    grid-column-start: 2;
+    max-width: 800px;
+    // max-width: 1100px;
     width: 100%;
     min-width: 0;
 
@@ -113,6 +139,27 @@
               }
             }
           }
+        }
+      }
+    }
+  }
+}
+
+.main-layout {
+  > .content {
+    height: fit-content;
+  }
+}
+
+.header {
+  > .content {
+    > .left {
+      > .header-menu-btn {
+        color: grey;
+        cursor: pointer;
+        visibility: hidden;
+        @media screen and (max-width: 650px) {
+          visibility: visible;
         }
       }
     }

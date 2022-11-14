@@ -105,13 +105,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 
   const [backgroundUrl] = useImageUrl(form.values.backgroundImage, defaultBackgroud)
   const background = {
-    backgroundImage: 'url(' + backgroundUrl + ')',
+    backgroundImage: 'url("' + backgroundUrl + '")',
     backgroundSize: 'cover',
   }
 
   const [avatarUrl] = useImageUrl(form.values.avatarImage, defaultAvatar)
   const avatar = {
-    backgroundImage: 'url(' + avatarUrl + ')',
+    backgroundImage: 'url("' + avatarUrl + '")',
     backgroundSize: 'cover',
   }
 
@@ -172,11 +172,11 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     ? {
         Item: () => (
           <InputTextField
-            textAreaAutoSize={true}
+            textAreaAutoSize
             value={form.values.description}
             onChange={form.handleChange}
-            textarea={true}
-            displayMode={true}
+            textarea
+            displayMode
             placeholder={/* t */ `What should others know about you?`}
             className="description"
             key="description"
@@ -449,41 +449,41 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       },
   ]
 
-  const editAvatarButton = isEditing && (
-    <>
-      <input
-        ref={uploadAvatarRef}
-        type="file"
-        accept=".jpg,.jpeg,.png,.gif"
-        onChange={uploadAvatar}
-        hidden
-      />
-      <RoundButton
-        className="change-avatar-button"
-        type="edit"
-        abbrTitle={/* t */ `Edit profile picture`}
-        onClick={selectAvatar}
-      />
-    </>
-  )
+  const editAvatarButton = isEditing && [
+    <input
+      ref={uploadAvatarRef}
+      type="file"
+      accept=".jpg,.jpeg,.png,.gif"
+      onChange={uploadAvatar}
+      key="edit-avatar-input"
+      hidden
+    />,
+    <RoundButton
+      className="change-avatar-button"
+      type="edit"
+      abbrTitle={/* t */ `Edit profile picture`}
+      onClick={selectAvatar}
+      key="edit-avatar-btn"
+    />,
+  ]
 
-  const editBackgroundButton = isEditing && (
-    <>
-      <input
-        ref={uploadBackgroundRef}
-        type="file"
-        accept=".jpg,.jpeg,.png,.gif"
-        onChange={uploadBackground}
-        hidden
-      />
-      <RoundButton
-        className="change-background-button"
-        type="edit"
-        abbrTitle={/* t */ `Edit background`}
-        onClick={selectBackground}
-      />
-    </>
-  )
+  const editBackgroundButton = isEditing && [
+    <input
+      ref={uploadBackgroundRef}
+      type="file"
+      accept=".jpg,.jpeg,.png,.gif"
+      onChange={uploadBackground}
+      key="edit-background-input"
+      hidden
+    />,
+    <RoundButton
+      className="change-background-button"
+      type="edit"
+      abbrTitle={/* t */ `Edit background`}
+      key="edit-background-btn"
+      onClick={selectBackground}
+    />,
+  ]
 
   const updatedBottomItems = {
     Item: () => (

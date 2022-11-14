@@ -46,7 +46,7 @@ export const CollectionCardLegacy = withCtrl<CollectionCardLegacyProps>(
     collectionHref,
   }) => {
     const background = {
-      backgroundImage: 'url(' + (imageUrl || defaultBackgroud) + ')',
+      backgroundImage: 'url("' + (imageUrl || defaultBackgroud) + '")',
       backgroundSize: 'cover',
     }
 

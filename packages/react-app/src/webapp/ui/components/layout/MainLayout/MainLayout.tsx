@@ -1,3 +1,4 @@
+import { baseStyle } from '@moodlenet/component-library'
 import { CSSProperties, FC, ReactNode } from 'react'
 import { MainHeader, MainHeaderProps } from '../../organisms/Header/MainHeader/MainHeader.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
@@ -7,13 +8,14 @@ import './MainLayout.scss'
 export type MainLayoutProps = {
   headerProps: MainHeaderProps
   style?: CSSProperties
-  // contentStyle?: CSSProperties
+  streched?: boolean
   children?: ReactNode
 }
 
 export const MainLayout: FC<MainLayoutProps> = ({
   headerProps,
   style,
+  streched,
   /* contentStyle, */ children,
 }) => {
   // const [collapsed, onCollapse] = useState(false)
@@ -24,7 +26,16 @@ export const MainLayout: FC<MainLayoutProps> = ({
   // const styleContext = useContext(SettingsCtx)
 
   return (
-    <div className="main-layout" style={style}>
+    <div
+      className={`main-layout ${streched ? 'streched' : ''}`}
+      style={{
+        ...style,
+        ...baseStyle(),
+        // TODO Send context to higher levels
+        // ...getColorPalette(styleContext.appearanceData.color),
+        // ...styleContext.style,
+      }}
+    >
       <MainHeader {...headerProps} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (

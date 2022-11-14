@@ -20,6 +20,8 @@
     gap: 6px;
 
     > .left {
+      display: flex;
+      align-items: center;
     }
 
     > .center {

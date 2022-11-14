@@ -1,14 +1,14 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { Card, PrimaryButton } from '@moodlenet/component-library'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { getNumberFromString, getPastelColor } from '../helpers/utilities.js'
+import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionConfig from '../ExtensionConfig/ExtensionConfig.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { extNameDescription } from '../../common/lib.mjs'
-import { DeployedPkgInfo } from '../../types.mjs'
-import { MainContext } from '../MainContext.js'
+import { extNameDescription } from '../../../../common/lib.mjs'
+import { DeployedPkgInfo } from '../../../../types.mjs'
+import { MainContext } from '../../../MainContext.js'
 import './styles.scss'
 
 export type PackagesProps = {

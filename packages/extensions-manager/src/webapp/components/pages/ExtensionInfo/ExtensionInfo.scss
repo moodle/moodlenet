@@ -33,6 +33,8 @@
       > .primary-button {
         display: grid;
         grid-template-columns: 1fr;
+        width: fit-content;
+        transition: width 2s;
         > div {
           grid-row-start: 1;
           grid-column-start: 1;

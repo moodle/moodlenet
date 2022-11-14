@@ -1,4 +1,4 @@
-import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import { AddonItem, Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { FC } from 'react'
@@ -8,7 +8,12 @@ export type GeneralProps = {
   form: ReturnType<typeof useFormik<OrganizationData>>
 }
 
-export const GeneralMenu = <span>General</span>
+export const GeneralMenu: AddonItem = 
+{
+  Item: () => <span>General</span>,
+  key: 'menu-general',
+}
+
 
 export const General: FC<GeneralProps> = ({ form }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
@@ -41,7 +46,7 @@ export const General: FC<GeneralProps> = ({ form }) => {
           <div className="name">Landing page title</div>
           <div className="actions">
             <InputTextField
-              textarea={true}
+              textarea
               className="landing-title"
               placeholder="Give a title to the landing page"
               value={form.values.landingTitle}
@@ -56,7 +61,7 @@ export const General: FC<GeneralProps> = ({ form }) => {
           <div className="name">Landing page subtitle</div>
           <div className="actions">
             <InputTextField
-              textarea={true}
+              textarea
               className="landing-subtitle"
               placeholder="Give a subtitle to the landing page"
               value={form.values.landingSubtitle}
