@@ -3,8 +3,6 @@ import { WORKING_DIR } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
-import type { PackageFile } from 'npm-check-updates/build/src/types/PackageFile.js'
-import assert from 'assert'
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO: any check on pkgIds ? (active / version)
@@ -55,7 +53,12 @@ export async function updateAll(): Promise<Record<string, string>> {
 
 export const NPM_REGISTRY =
   process.env.npm_config_registry ??
-  process.env[
-    Object.keys(process.env).find(_ => _.toUpperCase() === 'npm_config_registry') ?? ''
-  ] ??
-  'https://registry.npmjs.org/'
+  process.env.NPM_CONFIG_REGISTRY ??
+  (() => {
+    const randomCasedEnvVarName = Object.keys(process.env).find(
+      _ => _.toLowerCase() === 'npm_config_registry',
+    )
+    return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
+  })() ??
+  ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 1000 })).stdout ||
+    'https://registry.npmjs.org/')
