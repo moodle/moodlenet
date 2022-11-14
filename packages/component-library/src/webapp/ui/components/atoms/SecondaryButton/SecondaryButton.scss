@@ -17,8 +17,8 @@
 
   &:not(.disabled) {
     &.black {
-      color: #4d5156;
-      border: 2px solid #4d5156;
+      color: #212121;
+      border: 2px solid #212121;
     }
 
     &.red {
@@ -105,8 +105,8 @@
 
       &.black,
       &.hover-black {
-        color: #4d5156;
-        border: 2px solid #4d5156;
+        color: #212121;
+        border: 2px solid #212121;
       }
 
       &.hover-fill-red {

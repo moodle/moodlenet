@@ -1,6 +1,6 @@
 import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
 import { ArrowBack } from '@mui/icons-material'
-import { FC, ReactNode, ReactPortal } from 'react'
+import { FC, ReactNode, ReactPortal, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
@@ -15,21 +15,40 @@ import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
-  isInstalling: boolean
-  toggleIsInstalling(): unknown
+  // isInstalling: boolean
+  // toggleInstallUninstall: (ext: ExtensionType) => void
   // searchPackagesResObject: SearchPackagesResObject
-  onClickBackBtn?(arg0?: unknown): unknown | any
+  onClickBackBtn?: (arg0?: unknown) => unknown
   // readme: string
   extension: ExtensionType
 }
 
 const ExtensionInfo: FC<ExtensionInfoProps> = ({
   extension,
-  isInstalling,
-  toggleIsInstalling,
+  // isInstalling,
+  // toggleisInstalling,
   onClickBackBtn,
 }) => {
-  // toggleIsInstalling,
+  const {
+    // isInstallingUninstalling,
+    description,
+    // installed,
+    name,
+    readme,
+    // toggleInstallingUninstalling,
+  } = extension
+
+  const [isInstallingUninstalling, toggleInstallingUninstalling] = useState(false)
+  const [installed, setInstalled] = useState(false)
+
+  useEffect(() => {
+    isInstallingUninstalling &&
+      setTimeout(() => {
+        setInstalled(!installed)
+        toggleInstallingUninstalling(!isInstallingUninstalling)
+      }, 1000)
+  }, [isInstallingUninstalling, installed])
+  // toggleisInstalling,
   // searchPackagesResObject,
   // readme,
   // }) => {
@@ -48,7 +67,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   // // )
 
   // const install_uninstall = useCallback(() => {
-  //   toggleIsInstalling()
+  //   toggleisInstalling()
   //   searchPackagesResObject.installed
   //     ? myPkg.call('uninstall')({
   //         pkgId: searchPackagesResObject.pkgId,
@@ -57,8 +76,8 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
   //         installPkgReq: searchPackagesResObject.installPkgReq,
   //       })
 
-  //   // promise.finally(toggleIsInstalling)
-  // }, [myPkg, searchPackagesResObject, toggleIsInstalling])
+  //   // promise.finally(toggleisInstalling)
+  // }, [myPkg, searchPackagesResObject, toggleisInstalling])
 
   type CodeBlockProps = {
     node: any
@@ -91,28 +110,34 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBack />
             </TertiaryButton>
-            {extension.description.split('\n')[0]}
+            {description.split('\n')[0]}
           </div>
           <PrimaryButton
-            className={`install-btn ${isInstalling ? 'loading' : ''}`}
-            noHover={isInstalling}
-            disabled={mandatoryPackages.includes(extension.name)}
-            // onClick={install_uninstall}
+            className={`install-btn ${isInstallingUninstalling ? 'loading' : ''}`}
+            noHover={isInstallingUninstalling}
+            disabled={mandatoryPackages.includes(name)}
+            onClick={toggleInstallingUninstalling}
           >
-            <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
+            <div
+              className="loading"
+              style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
+            >
               <Loading color="white" />
             </div>
-            <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
-              {extension.installed ? 'Uninstall' : 'Install'}
+            <div
+              className="label"
+              style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
+            >
+              {installed ? 'Uninstall' : 'Install'}
             </div>
           </PrimaryButton>
         </div>
 
-        <div>{extension.name}</div>
+        <div>{name}</div>
       </Card>
       <Card>
         <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-          {extension.readme}
+          {readme}
         </ReactMarkdown>
       </Card>
     </div>
