@@ -6,6 +6,8 @@ export * from './pkg-shell/shell.mjs'
 import apis from './apis.mjs'
 import { connectPkg } from './pkg-shell/shell.mjs'
 
+console.log('HA ! UPGRADED')
+
 const pkgConnection = await connectPkg(import.meta, {
   apis: apis,
 })

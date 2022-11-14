@@ -34,17 +34,17 @@ assert(!dir.length, `won't install in not-empty dir ${WORKING_DIR}`)
 
 await execa('npm', ['-y', 'init'], {
   cwd: WORKING_DIR,
-  timeout: 15,
+  timeout: 5000,
 })
 
 const myModPaths = getPkgModulePaths(import.meta)
 const installPkgReqs = Object.entries(defaultCorePackages).map<InstallPkgReq>(
-  ([pkgName, pkgVersion]) =>
-    IS_DEVELOPMENT
+  ([pkgName /* , pkgVersion */]) =>
+    IS_DEVELOPMENT && process.env.USE_LOCAL_REPO
       ? {
           type: 'symlink',
           fromFolder: resolve(myModPaths.moduleDir, '..', '..', '..', pkgName),
         }
-      : { type: 'npm', pkgId: { name: `@moodlenet/${pkgName}`, version: pkgVersion } },
+      : { type: 'npm', pkgId: { name: `@moodlenet/${pkgName}`, version: 'latest' } },
 )
 await install(installPkgReqs)

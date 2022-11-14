@@ -1,7 +1,10 @@
+import { run } from 'npm-check-updates'
 import { WORKING_DIR } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
+import type { PackageFile } from 'npm-check-updates/build/src/types/PackageFile.js'
+import assert from 'assert'
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO: any check on pkgIds ? (active / version)
@@ -24,7 +27,35 @@ export async function install(installPkgReqs: InstallPkgReq[]) {
   })
 }
 
+export async function checkUpdates(): Promise<{ updatePkgs: Record<string, string> }> {
+  const updatePkgs = ((await run({
+    registry: NPM_REGISTRY,
+    target: 'minor',
+    jsonUpgraded: true,
+    cwd: WORKING_DIR,
+  })) ?? {}) as Record<string, string>
+
+  return { updatePkgs }
+}
+
+export async function updateAll(): Promise<Record<string, string>> {
+  const { updatePkgs } = await checkUpdates()
+  const installPkgs = Object.entries(updatePkgs).map<InstallPkgReq>(([pkgName, version]) => {
+    return {
+      type: 'npm',
+      pkgId: {
+        name: pkgName,
+        version,
+      },
+    }
+  })
+  await install(installPkgs)
+  return updatePkgs
+}
+
 export const NPM_REGISTRY =
+  process.env.npm_config_registry ??
   process.env[
-    Object.keys(process.env).find(_ => _.toUpperCase() === 'NPM_CONFIG_REGISTRY') ?? ''
-  ] ?? 'https://registry.npmjs.org/'
+    Object.keys(process.env).find(_ => _.toUpperCase() === 'npm_config_registry') ?? ''
+  ] ??
+  'https://registry.npmjs.org/'
