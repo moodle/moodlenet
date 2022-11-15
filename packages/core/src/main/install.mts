@@ -1,11 +1,9 @@
-import assert from 'assert'
-import execa from 'execa'
-import { mkdir, readdir } from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import { resolve } from 'path'
-import { InstallPkgReq } from '../pkg-mng/types.mjs'
-import { install } from '../pkg-mng/lib/npm.mjs'
-import { IS_DEVELOPMENT, WORKING_DIR } from './env.mjs'
+import { SYSTEM_DIR, WORKING_DIR, writeSysCurrPackagejson } from './env.mjs'
 import { getPkgModulePaths } from '../pkg-mng/lib/pkg.mjs'
+import execa from 'execa'
+import { NPM_REGISTRY } from '../pkg-mng/lib/npm.mjs'
 export const defaultCorePackages = [
   'core',
   'arangodb',
@@ -17,42 +15,63 @@ export const defaultCorePackages = [
   'content-graph',
   'email-service',
   'react-app',
-  // 'web-user',
   'extensions-manager',
   'simple-email-auth',
+  // 'web-user',
+  // 'passport-auth',
   // 'test-extension',
   // 'test-extension-2',
-  // 'passport-auth',
 ]
-const removePkgFields = ['description', 'main', 'scripts', 'keywords', 'author', 'license']
 
 await mkdir(WORKING_DIR, { recursive: true })
-const dir = await readdir(WORKING_DIR, {
-  withFileTypes: true,
-})
-assert(!dir.length, `won't install in not-empty dir ${WORKING_DIR}`)
 
-await execa('npm', ['-y', 'init'], {
-  cwd: WORKING_DIR,
-  timeout: 5000,
-})
+// assert(
+//   !(await readdir(SYSTEM_DIR, { withFileTypes: true })).length,
+//   `won't install system in not-empty dir ${SYSTEM_DIR}`,
+// )
 
-await Promise.all(
-  removePkgFields.map(unsetKey =>
-    execa('npm', ['pkg', 'delete', unsetKey], {
-      cwd: WORKING_DIR,
-      timeout: 5000,
-    }),
-  ),
-)
+await mkdir(SYSTEM_DIR, { recursive: true })
+// assert(
+//   !(await readdir(WORKING_DIR, { withFileTypes: true })).length,
+//   `won't install deployment in not-empty dir ${WORKING_DIR}`,
+// )
+const sysPkgJson = await freshInstallPkgJson()
 
-const myModPaths = getPkgModulePaths(import.meta)
-const installPkgReqs = defaultCorePackages.map<InstallPkgReq>(pkgName =>
-  IS_DEVELOPMENT && process.env.USE_LOCAL_REPO
-    ? {
-        type: 'symlink',
-        fromFolder: resolve(myModPaths.moduleDir, '..', '..', '..', pkgName),
+await writeSysCurrPackagejson(sysPkgJson)
+
+async function freshInstallPkgJson() {
+  const myModPaths = getPkgModulePaths(import.meta)
+  const defaultCorePackageWithVersion = await Promise.all(
+    defaultCorePackages.map(async pkgName => {
+      const fullPkgName = `@moodlenet/${pkgName}`
+      const version = process.env.USE_LOCAL_REPO
+        ? `file:${resolve(myModPaths.moduleDir, '..', '..', '..', pkgName)}`
+        : (
+            await execa('npm', [
+              'view',
+              fullPkgName,
+              'dist-tags.latest',
+              '--registry',
+              NPM_REGISTRY,
+            ])
+          ).stdout
+      return {
+        fullPkgName,
+        version,
       }
-    : { type: 'npm', pkgId: { name: `@moodlenet/${pkgName}`, version: 'latest' } },
-)
-await install(installPkgReqs)
+    }),
+  )
+
+  const dependencies = defaultCorePackageWithVersion.reduce<Record<string, string>>(
+    (_, { fullPkgName, version }) => {
+      return {
+        ..._,
+        [fullPkgName]: version,
+      }
+    },
+    {},
+  )
+  return {
+    dependencies,
+  }
+}
