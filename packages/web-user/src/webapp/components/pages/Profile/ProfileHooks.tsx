@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useMemo, useState } from 'react'
+import { FC, useMemo } from 'react'
 import ProfilePage, { ProfileProps } from './Profile.js'
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useProfileCardProps } from '../../organisms/ProfileCard/ProfileCardHooks.js'
