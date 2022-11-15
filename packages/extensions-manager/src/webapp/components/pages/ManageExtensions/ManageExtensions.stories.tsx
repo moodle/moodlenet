@@ -1,33 +1,32 @@
 import { SettingsItem } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
-import { useFormik } from 'formik'
 import { FC } from 'react'
-import InstallExtension, {
-  ExtensionType,
-  InstallExtensionFormValues,
-  InstallExtensionMenu,
-  InstallExtensionProps,
-} from './InstallExtension.js'
+import ManageExtensions, {
+  ManageExtensionsMenu,
+  ManageExtensionsProps,
+} from './ManageExtensions.js'
 
 // import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 import packageIcon1 from '../../../assets/icons/package-icon.png'
+import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 // import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'
 
-export const useInstallExtensionStoryProps = (overrides?: {
-  // editFormValues?: Partial<InstallExtensionData>
-  props?: Partial<InstallExtensionProps>
-}): InstallExtensionProps => {
+export const useManageExtensionsStoryProps = (overrides?: {
+  // editFormValues?: Partial<ManageExtensionsData>
+  props?: Partial<ManageExtensionsProps>
+}): ManageExtensionsProps => {
   const extensions: ExtensionType[] = [
     {
       name: '@moodlenet/component-library',
       displayName: 'Component library',
       description: 'Library containing many components used in the web app',
       icon: packageIcon2,
-      installed: false,
+      installed: true,
       isInstallingUninstalling: false,
       toggleInstallingUninstalling: action('Toogle install uninstall'),
+      // config: { Item: () => <Card>Some filler</Card>, key: 'something' },
       repositoryUrl:
         'https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/component-library',
       readme:
@@ -38,7 +37,7 @@ export const useInstallExtensionStoryProps = (overrides?: {
       displayName: 'React app',
       description: 'Base frontend interface interacting with the backend',
       icon: packageIcon1,
-      installed: false,
+      installed: true,
       isInstallingUninstalling: false,
       toggleInstallingUninstalling: action('Toogle install uninstall'),
       repositoryUrl:
@@ -64,32 +63,29 @@ export const useInstallExtensionStoryProps = (overrides?: {
   return {
     // selectedExt: ,
     extensions: extensions,
-    devMode: true,
-    isInstalling: false,
-    setIsInstalling: action('Set is installing'),
     // searchPkgResp: []
-    form: useFormik<InstallExtensionFormValues>({
-      onSubmit: action('submit InstallExtension settings'),
-      // validationSchema,
-      initialValues: {
-        localPath: '',
-        ...overrides?.props?.form?.initialValues,
-      },
-    }),
+    // form: useFormik<ManageExtensionsFormValues>({
+    //   onSubmit: action('submit ManageExtensions settings'),
+    //   // validationSchema,
+    //   initialValues: {
+    //     localPath: '',
+    //     ...overrides?.props?.form?.initialValues,
+    //   },
+    // }),
     ...overrides?.props,
   }
 }
 
-export const SettingsInstallContent: FC<InstallExtensionProps> = props => {
-  return <InstallExtension {...props} />
+export const ManageExtensionsContent: FC<ManageExtensionsProps> = props => {
+  return <ManageExtensions {...props} />
 }
 
 export const useElements = (): SettingsItem => {
-  const props = useInstallExtensionStoryProps()
+  const props = useManageExtensionsStoryProps()
   return {
-    Menu: InstallExtensionMenu,
+    Menu: ManageExtensionsMenu,
     Content: {
-      Item: () => <SettingsInstallContent {...props} />,
+      Item: () => <ManageExtensionsContent {...props} />,
       key: 'content-install-extension',
     },
   }

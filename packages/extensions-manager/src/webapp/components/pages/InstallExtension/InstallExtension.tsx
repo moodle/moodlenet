@@ -16,7 +16,7 @@ import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
 // import { DevModeBtn } from '../Extensions.js'
 import { MainContext } from '../../../MainContext.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
+import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
 import './InstallExtension.scss'
 
 export type ExtensionType = {
@@ -28,6 +28,7 @@ export type ExtensionType = {
   installed: boolean
   repositoryUrl: string
   isInstallingUninstalling: boolean
+  config?: AddonItem
   toggleInstallingUninstalling: () => void
 }
 
@@ -48,7 +49,7 @@ const DevModeBtn: FC = () => {
 const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 
 export const InstallExtensionMenu: AddonItem = {
-  Item: () => <span>Install extensions</span>,
+  Item: () => <span>Install extension</span>,
   key: 'menu-install-extensions',
 }
 
@@ -56,7 +57,6 @@ export type InstallExtensionProps = {
   form: ReturnType<typeof useFormik<InstallExtensionFormValues>>
   devMode: boolean
   extensions: ExtensionType[]
-  selectedExt?: ExtensionType
   isInstalling: boolean
   setIsInstalling: () => void
   // setDevMode: React.Dispatch<React.SetStateAction<boolean>>
@@ -89,10 +89,10 @@ const InstallExtension: FC<InstallExtensionProps> = ({
   const shouldShowErrors = !!form.submitCount
   // const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
 
-  const searchExtensions = !selectedExt && (
-    <div className="search-extensions">
-      <Card className="install">
-        <div className="title">Install extensions</div>
+  const installExtension = !selectedExt && (
+    <div className="install-extension">
+      <Card className="title">
+        <div className="title">Install extension</div>
       </Card>
       {devMode && (
         <Card>
@@ -134,52 +134,17 @@ const InstallExtension: FC<InstallExtensionProps> = ({
           </div>
         </Card>
       )}
-      <Card className="available-extensions">
-        <div className="subtitle">Compatible extensions</div>
-        <div className="list">
-          {extensions.map(extension => {
-            const { displayName, description, icon } = extension
-            const background = icon
-              ? { backgroundImage: `url("${extension.icon}")`, backgroundSize: 'cover' }
-              : { background: getPastelColor(getNumberFromString(displayName), 0.5) }
-            return (
-              <div
-                className="package"
-                key={extension.displayName}
-                onClick={() => {
-                  setSelectedExt(extension)
-                }}
-              >
-                {/* <PackageIcon /> */}
-                <div className="logo" style={background}>
-                  {!extension.icon && (
-                    <>
-                      <div className="letter">
-                        {displayName.substring(0, 1).toLocaleLowerCase()}
-                      </div>
-                      <div
-                        className="circle"
-                        style={{ background: getPastelColor(getNumberFromString(displayName)) }}
-                      />
-                    </>
-                  )}
-                </div>
-                <div className="info">
-                  <div className="title">{displayName}</div>
-                  <div className="details">{description}</div>
-                </div>
-                <PrimaryButton className="install-btn">Details</PrimaryButton>
-              </div>
-            )
-          })}
-        </div>
-      </Card>
+      <ExtensionsList
+        extensions={extensions}
+        setSelectedExt={setSelectedExt}
+        title="Compatible extensions"
+      />
     </div>
   )
 
   return (
     <>
-      {searchExtensions}
+      {installExtension}
       {selectedExt && (
         <ExtensionInfo extension={selectedExt} onClickBackBtn={() => setSelectedExt(undefined)} />
       )}
