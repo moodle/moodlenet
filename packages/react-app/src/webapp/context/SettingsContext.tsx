@@ -1,8 +1,8 @@
 import {
+  ComponentType,
   createContext,
   FC,
   PropsWithChildren,
-  ReactElement,
   useCallback,
   useContext,
   useEffect,
@@ -15,8 +15,8 @@ import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
 
 export type SettingsSectionItem = {
-  Menu: ReactElement
-  Content: ReactElement
+  Menu: ComponentType
+  Content: ComponentType
 }
 
 export type AppearanceDataType = AppearanceData
