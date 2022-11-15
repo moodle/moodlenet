@@ -24,11 +24,6 @@
   "files": [
     "lib/"
   ],
-  "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3",
-    "formik": "^2.2.9"
-  },
   "peerDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/component-library": "^0.1.0",

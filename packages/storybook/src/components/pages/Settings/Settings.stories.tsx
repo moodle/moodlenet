@@ -21,16 +21,16 @@ export const SettingsDefaultStoryProps = (): SettingsProps => {
   return {
     settingsItems: [
       {
-        Menu: InstallExtensionStories.useElements().Menu,
-        Content: InstallExtensionStories.useElements().Content,
-      },
-      {
         Menu: GeneralStories.useElements().Menu,
         Content: GeneralStories.useElements().Content,
       },
       {
         Menu: AppearanceStories.useElements().Menu,
         Content: AppearanceStories.useElements().Content,
+      },
+      {
+        Menu: InstallExtensionStories.useElements().Menu,
+        Content: InstallExtensionStories.useElements().Content,
       },
       { Menu: SimpleEmailAuthSettings.Menu, Content: SimpleEmailAuthSettings.Content },
       // { Menu: PassportAuthSettins.Menu, Content: PassportAuthSettins.Content },
