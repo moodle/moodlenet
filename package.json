@@ -12,7 +12,6 @@
     "@babel/core": "^7.19.3",
     "@babel/plugin-syntax-flow": "^7.18.6",
     "@babel/plugin-transform-react-jsx": "^7.19.0",
-    "@material-ui/icons": "^4.11.3",
     "@storybook/addon-actions": "^6.5.13",
     "@storybook/addon-links": "^6.5.13",
     "@storybook/react": "^6.5.13",
@@ -42,7 +41,10 @@
     "run-script-os": "^1.1.6",
     "storybook-addon-state": "^1.0.3",
     "typescript": "^4.7.2",
-    "vscode-generate-index-standalone": "^1.6.0"
+    "vscode-generate-index-standalone": "^1.6.0",
+    "formik": "^2.2.9",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3"
   },
   "scripts": {
     "init": "husky install && npx husky add .husky/pre-commit \"npm run pre-commit\"",

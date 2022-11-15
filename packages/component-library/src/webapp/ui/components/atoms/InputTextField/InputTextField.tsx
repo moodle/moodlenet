@@ -120,5 +120,6 @@ const _removeTextAreaProp = (_ = {}) => {
   return rest
 }
 
+InputTextField.defaultProps = { edit: true }
 InputTextField.displayName = 'InputTextField'
 export default InputTextField

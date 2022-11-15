@@ -1,6 +1,6 @@
 import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
 import { ArrowBackIosNew } from '@mui/icons-material'
-import { FC, ReactNode, ReactPortal, useEffect, useState } from 'react'
+import { FC, ReactNode, ReactPortal } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
@@ -16,41 +16,32 @@ import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
-  // isInstalling: boolean
-  // toggleInstallUninstall: (ext: ExtensionType) => void
-  // searchPackagesResObject: SearchPackagesResObject
   onClickBackBtn?: (arg0?: unknown) => unknown
-  // readme: string
   extension: ExtensionType
 }
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({
-  extension,
-  // isInstalling,
-  // toggleisInstalling,
-  onClickBackBtn,
-}) => {
+const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) => {
   const {
-    // isInstallingUninstalling,
     description,
     icon,
     repositoryUrl,
-    // installed,
+    installed,
     displayName,
     readme,
-    // toggleInstallingUninstalling,
+    isInstallingUninstalling,
+    toggleInstallingUninstalling,
   } = extension
 
-  const [isInstallingUninstalling, toggleInstallingUninstalling] = useState(false)
-  const [installed, setInstalled] = useState(false)
+  // const [isInstallingUninstalling, toggleInstallingUninstalling] = useState(false)
+  // const [installed, setInstalled] = useState(false)
 
-  useEffect(() => {
-    isInstallingUninstalling &&
-      setTimeout(() => {
-        setInstalled(!installed)
-        toggleInstallingUninstalling(!isInstallingUninstalling)
-      }, 1000)
-  }, [isInstallingUninstalling, installed])
+  // useEffect(() => {
+  //   isInstallingUninstalling &&
+  //     setTimeout(() => {
+  //       setInstalled(!installed)
+  //       toggleInstallingUninstalling(!isInstallingUninstalling)
+  //     }, 1000)
+  // }, [isInstallingUninstalling, installed])
   // toggleisInstalling,
   // searchPackagesResObject,
   // readme,
@@ -135,7 +126,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({
               className={`install-btn ${isInstallingUninstalling ? 'loading' : ''}`}
               noHover={isInstallingUninstalling}
               disabled={mandatoryPackages.includes(displayName)}
-              onClick={() => toggleInstallingUninstalling(true)}
+              onClick={toggleInstallingUninstalling}
             >
               <div
                 className="loading"

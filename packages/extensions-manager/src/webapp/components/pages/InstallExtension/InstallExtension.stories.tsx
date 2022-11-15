@@ -1,14 +1,16 @@
 import { SettingsItem } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
+import { useFormik } from 'formik'
 import { FC } from 'react'
 import InstallExtension, {
   ExtensionType,
+  InstallExtensionFormValues,
   InstallExtensionMenu,
   InstallExtensionProps,
 } from './InstallExtension.js'
 
-import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 // import packageIcon3 from '../../../assets/icons/package-icon-3.png'
+import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 import packageIcon1 from '../../../assets/icons/package-icon.png'
 // import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'
@@ -64,15 +66,14 @@ export const useInstallExtensionStoryProps = (overrides?: {
     extensions: extensions,
     devMode: true,
     // searchPkgResp: []
-    // form: useFormik<InstallExtensionData>({
-    //   onSubmit: action('submit InstallExtension settings'),
-    //   // validationSchema,
-    //   initialValues: {
-    //     color: '',
-    //     customStyle: baseStyle(),
-    //     ...overrides?.editFormValues,
-    //   },
-    // }),
+    form: useFormik<InstallExtensionFormValues>({
+      onSubmit: action('submit InstallExtension settings'),
+      // validationSchema,
+      initialValues: {
+        localPath: '',
+        ...overrides?.props?.form?.initialValues,
+      },
+    }),
     ...overrides?.props,
   }
 }

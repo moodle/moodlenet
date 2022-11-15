@@ -74,9 +74,5 @@
   "peerDependencies": {
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1"
-  },
-  "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3"
   }
 }

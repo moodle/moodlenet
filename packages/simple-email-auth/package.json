@@ -24,11 +24,6 @@
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
-  "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3",
-    "formik": "^2.2.9"
-  },
   "peerDependencies": {
     "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/arangodb": "^0.1.0",
