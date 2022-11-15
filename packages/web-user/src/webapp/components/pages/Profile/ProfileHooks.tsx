@@ -1,40 +1,20 @@
 import { FC, useCallback, useContext, useMemo, useState } from 'react'
 import ProfilePage, { ProfileProps } from './Profile.js'
-import { MainContext } from '../../../MainContext.js'
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
-
-type RespCall =
-  | {
-      success: true
-    }
-  | {
-      success: false
-      msg: string
-    }
+import { useProfileCardProps } from '../../organisms/ProfileCard/ProfileCardHooks.js'
 
 export const useProfileProps = (): ProfileProps => {
-  const { pkgs } = useContext(MainContext)
-  const [profileApi] = pkgs
-  const [errMsg, setErrMsg] = useState('')
-
-  const createProfile = useCallback(async () => {
-    const res: any = await profileApi.call('createProfile')({
-      displayName: 'test create',
-      userId: 'u111',
-    })
-    !(res as RespCall).success && setErrMsg(res.msg)
-  }, [profileApi])
+  const profileCardProps = useProfileCardProps()
 
   const mainLayoutProps = useMainLayoutProps()
 
   const panelProps = useMemo<ProfileProps>(() => {
     const props: ProfileProps = {
-      // displayName,
-      // profileCardProps,
+      profileCardProps,
       mainLayoutProps,
     }
     return props
-  }, [])
+  }, [mainLayoutProps, profileCardProps])
 
   return panelProps
 }
