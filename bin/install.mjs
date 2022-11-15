@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import yargs from 'yargs'
-import { mkdir, rm } from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
 
