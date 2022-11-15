@@ -8,6 +8,7 @@ import {
   Switch,
 } from '@moodlenet/component-library'
 import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
+import { useFormik } from 'formik'
 import { FC, useContext, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
@@ -25,30 +26,14 @@ export type ExtensionType = {
   icon?: string
   readme: string
   installed: boolean
-  isInstallingUninstalling: boolean
   repositoryUrl: string
+  isInstallingUninstalling: boolean
   toggleInstallingUninstalling: () => void
 }
 
-// export type Extension = {
-//   readme: string
-// pkgName: string
-// description: string
-// keywords: string[]
-// version?: string
-// registry: string
-// homepage?: string
-// }
-//& (
-//   | {
-//       pkgId: PkgIdentifier<any>
-//       installed: true
-//     }
-//   | {
-//       installPkgReq: InstallPkgReq
-//       installed: false
-//     }
-// )
+export type InstallExtensionFormValues = {
+  localPath: string
+}
 
 const DevModeBtn: FC = () => {
   const { devMode, setDevMode } = useContext(MainContext)
@@ -68,13 +53,15 @@ export const InstallExtensionMenu: AddonItem = {
 }
 
 export type InstallExtensionProps = {
-  // It was empty before
+  form: ReturnType<typeof useFormik<InstallExtensionFormValues>>
   devMode: boolean
   extensions: ExtensionType[]
+  selectedExt?: ExtensionType
+  isInstalling: boolean
+  setIsInstalling: () => void
   // setDevMode: React.Dispatch<React.SetStateAction<boolean>>
   // selectedExtConfig: DeployedPkgInfo | null
   // setSelectedExtConfig: React.Dispatch<React.SetStateAction<DeployedPkgInfo | null>>
-  selectedExt?: ExtensionType
   // setSelectedExt: React.Dispatch<React.SetStateAction<ExtensionType | undefined>>
   // searchPkgResp: SearchPackagesResponse | undefined
   // setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
@@ -82,9 +69,11 @@ export type InstallExtensionProps = {
 }
 
 const InstallExtension: FC<InstallExtensionProps> = ({
-  // selectedExt,
+  form,
   devMode,
   extensions,
+  isInstalling,
+  setIsInstalling,
   // setSelectedExt,
 }) => {
   // const { pkgId, pkgs, selectedExt, setSelectedExt, devMode, searchPkgResp } =
@@ -95,8 +84,9 @@ const InstallExtension: FC<InstallExtensionProps> = ({
   // registries.rightComponents.useRegister(pkgId, DevModeBtnAddon)
 
   // const [localPathField, setLocalPathField] = useState('')
-  const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>(extensions[1])
-  const [isInstalling, toggleIsInstalling] = useState<boolean>(false)
+  const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>()
+  // const [isInstalling, toggleIsInstalling] = useState<boolean>(false)
+  const shouldShowErrors = !!form.submitCount
   // const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
 
   const searchExtensions = !selectedExt && (
@@ -110,31 +100,36 @@ const InstallExtension: FC<InstallExtensionProps> = ({
           <div className="option">
             <div className="name">Local path</div>
             <div className="actions">
-              <InputTextField
-                className="local-path"
-                placeholder="Local path to package"
-                // value={localPathField}
-                // onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
-                name="package-name"
-                edit
-                // error={shouldShowErrors && editForm.errors.displayName}
-              />
-              <PrimaryButton
-                className={`${isInstalling ? 'loading' : ''}`}
-                // disabled={localPathField === ''}
-                noHover={isInstalling}
-                // onClick={install}
-              >
-                <div
-                  className="loading"
-                  style={{ visibility: isInstalling ? 'visible' : 'hidden' }}
+              <>
+                <InputTextField
+                  className="local-path"
+                  placeholder="Local path to package"
+                  value={form.values.localPath}
+                  onChange={form.handleChange}
+                  name="package-name"
+                  error={shouldShowErrors && form.errors.localPath}
+                />
+                <PrimaryButton
+                  className={`${isInstalling ? 'loading' : ''}`}
+                  // disabled={localPathField === ''}
+                  noHover={isInstalling}
+                  onClick={setIsInstalling}
                 >
-                  <Loading color="white" />
-                </div>
-                <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
-                  Install
-                </div>
-              </PrimaryButton>
+                  <div
+                    className="loading"
+                    style={{ visibility: isInstalling ? 'visible' : 'hidden' }}
+                  >
+                    <Loading color="white" />
+                  </div>
+                  <div
+                    className="label"
+                    style={{ visibility: isInstalling ? 'hidden' : 'visible' }}
+                    onClick={form.submitForm}
+                  >
+                    Install
+                  </div>
+                </PrimaryButton>
+              </>
             </div>
           </div>
         </Card>
