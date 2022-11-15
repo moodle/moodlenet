@@ -19,7 +19,7 @@ export const General: FC<GeneralProps> = ({ form }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   return (
     <div className="general" key="general">
-      <Card>
+      <Card className="column">
         <div className="title">
           {/* <Trans> */}
           General

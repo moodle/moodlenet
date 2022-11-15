@@ -107,7 +107,7 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   return (
     <div className="appearance" key="appearance">
-      <Card className="main-card">
+      <Card className="main-card column">
         <div className="title">
           {/* <Trans> */}
           Appearance
