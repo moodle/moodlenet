@@ -23,7 +23,6 @@
         "key-value-store dev-build",
         "organization dev-build",
         "web-user dev-build",
-        "storybook dev-build",
         "component-library dev-build"
       ],
       "presentation": {
