@@ -44,7 +44,6 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
 
   return (
     <MainLayout
-      streched={true}
       {...mainLayoutProps}
       headerProps={{
         ...mainLayoutProps.headerProps,
@@ -55,7 +54,7 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
         {showMenu && (
           <div className="left-menu">
             <Card>
-              {settingsItems.map((settingsEntry, i) => {
+              {settingsItems.map(settingsEntry => {
                 const isCurrent = JSON.stringify(settingsEntry) === JSON.stringify(currSettingsItem)
                 const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsEntry)
 

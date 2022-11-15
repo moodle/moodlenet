@@ -1,52 +1,54 @@
-import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../../context/MainContext.js'
-import { SettingsSectionItem } from '../../../../context/SettingsContext.js'
+import { useMemo } from 'react'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { registries } from '../../../../web-lib.mjs'
-import { RegistryEntry } from '../../../../web-lib/registry.js'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AppearanceContainer } from './Appearance/GeneralContainer.js'
 import { GeneralContainer } from './General/GeneralContainer.js'
 import { SettingsItem, SettingsProps } from './Settings.js'
 import './Settings.scss'
 
+const localSettingsItems: SettingsItem[] = [
+  {
+    Content: { Item: GeneralContainer, key: `@moodlenet/react-app/general` },
+    Menu: { Item: () => <span>General</span>, key: `@moodlenet/react-app/general` },
+  },
+  {
+    Content: { Item: AppearanceContainer, key: `@moodlenet/react-app/appearance` },
+    Menu: { Item: () => <span>Appearance</span>, key: `@moodlenet/react-app/appearance` },
+  },
+]
+
 export const useSettingsProps = (): SettingsProps => {
-  const { pkgId } = useContext(MainContext)
   const { registry: sectionsReg } = registries.settingsSections.useRegistry()
   const mainLayoutProps = useMainLayoutProps()
-  const settingsItems = useMemo(() => {
-    const baseSettingsItems: RegistryEntry<SettingsSectionItem>[] = [
-      {
-        pkgId,
-        item: {
-          Menu: <span key={'general'}>General</span>,
-          Content: <GeneralContainer key={'general'} />,
-        },
+
+  const settingsItems = useMemo<SettingsItem[]>(() => {
+    const pkgItems = sectionsReg.entries.map<SettingsItem>(
+      ({ item: { Content, Menu }, pkgId }, index) => {
+        const key = `${pkgId.name}/${index}`
+        const settingsItem: SettingsItem = {
+          Content: {
+            key,
+            Item: Content,
+          },
+          Menu: {
+            key,
+            Item: Menu,
+          },
+        }
+        return settingsItem
       },
-      {
-        pkgId,
-        item: {
-          Menu: <span key={'appearance'}>Appearance</span>,
-          Content: <AppearanceContainer key={'appearance'} />,
-        },
-      },
-      // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
-    ]
-    return baseSettingsItems
-      .concat(sectionsReg.entries)
-      .map<SettingsItem>(({ item: { Content, Menu }, pkgId }) => ({
-        key: pkgId.name,
-        Menu,
-        Content,
-      }))
-  }, [pkgId, sectionsReg.entries])
-  const settingsProps = useMemo<SettingsProps>(
-    () => ({
+    )
+
+    return localSettingsItems.concat(pkgItems)
+  }, [sectionsReg.entries])
+
+  const settingsProps = useMemo<SettingsProps>(() => {
+    return {
       mainLayoutProps,
       settingsItems,
-    }),
-    [settingsItems, mainLayoutProps],
-  )
+    }
+  }, [mainLayoutProps, settingsItems])
   return settingsProps
 }
