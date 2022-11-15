@@ -20,10 +20,13 @@ import './InstallExtension.scss'
 
 export type ExtensionType = {
   name: string
+  displayName: string
   description: string
+  icon?: string
   readme: string
   installed: boolean
   isInstallingUninstalling: boolean
+  repositoryUrl: string
   toggleInstallingUninstalling: () => void
 }
 
@@ -92,25 +95,9 @@ const InstallExtension: FC<InstallExtensionProps> = ({
   // registries.rightComponents.useRegister(pkgId, DevModeBtnAddon)
 
   // const [localPathField, setLocalPathField] = useState('')
-  const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>(undefined)
+  const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>(extensions[1])
   const [isInstalling, toggleIsInstalling] = useState<boolean>(false)
   // const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
-
-  // useEffect(() => {
-  //   myPkg
-  //     .call('listDeployed')()
-  //     .then(({ pkgInfos }) => setExtInfoList(pkgInfos))
-  // }, [myPkg])
-  // const install = useCallback(() => {
-  //   if (!localPathField) {
-  //     return
-  //   }
-  //   toggleIsInstalling()
-  //   myPkg.call('install')({
-  //     installPkgReq: { type: 'symlink', fromFolder: localPathField },
-  //   })
-  //   // .finally(toggleIsInstalling)
-  // }, [localPathField, myPkg])
 
   const searchExtensions = !selectedExt && (
     <div className="search-extensions">
@@ -156,32 +143,34 @@ const InstallExtension: FC<InstallExtensionProps> = ({
         <div className="subtitle">Compatible extensions</div>
         <div className="list">
           {extensions.map(extension => {
-            let [extName, description] = extension.description
-              ? extension.description.split('\n')
-              : ['', '']
-            extName = extName ? extName : ''
-            description = description ? description : ''
+            const { displayName, description, icon } = extension
+            const background = icon
+              ? { backgroundImage: `url("${extension.icon}")`, backgroundSize: 'cover' }
+              : { background: getPastelColor(getNumberFromString(displayName), 0.5) }
             return (
               <div
                 className="package"
-                key={extension.name}
+                key={extension.displayName}
                 onClick={() => {
                   setSelectedExt(extension)
                 }}
               >
                 {/* <PackageIcon /> */}
-                <div
-                  className="logo"
-                  style={{ background: getPastelColor(getNumberFromString(extName), 0.5) }}
-                >
-                  <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
-                  <div
-                    className="circle"
-                    style={{ background: getPastelColor(getNumberFromString(extName)) }}
-                  />
+                <div className="logo" style={background}>
+                  {!extension.icon && (
+                    <>
+                      <div className="letter">
+                        {displayName.substring(0, 1).toLocaleLowerCase()}
+                      </div>
+                      <div
+                        className="circle"
+                        style={{ background: getPastelColor(getNumberFromString(displayName)) }}
+                      />
+                    </>
+                  )}
                 </div>
                 <div className="info">
-                  <div className="title">{extName}</div>
+                  <div className="title">{displayName}</div>
                   <div className="details">{description}</div>
                 </div>
                 <PrimaryButton className="install-btn">Details</PrimaryButton>

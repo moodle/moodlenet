@@ -1,6 +1,16 @@
 {
   "name": "@moodlenet/react-app",
   "version": "0.1.0",
+  "author": "MoodleNet",
+  "description": "Frontend interface to interact with the backend",
+  "moodlenet": {
+    "displayName": "Web application",
+    "icon": "https://moodle.net/moodlenet-logo-small.svg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/react-app"
+  },
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
@@ -16,14 +26,9 @@
     "_redirects",
     "moodlenet-react-app-lib.d.ts"
   ],
-  "moodlenet": {
-    "creator": "MoodleNet",
-    "displayName": "Web application"
-  },
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Web application\nFrontend interface to interact with the backend",
   "exports": {
     ".": "./lib/server/main.mjs",
     "./stories": "./lib/webapp/stories.mjs",
@@ -71,7 +76,6 @@
       "delay": 300
     }
   },
-  "author": "",
   "peerDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/component-library": "^0.1.0",
