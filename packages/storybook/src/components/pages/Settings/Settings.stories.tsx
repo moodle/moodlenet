@@ -1,5 +1,8 @@
 // import { Settings as PassportAuthSettins } from '@moodlenet/passport-auth/ui'
-import { InstallExtensionStories } from '@moodlenet/extensions-manager/stories'
+import {
+  InstallExtensionStories,
+  ManageExtensionsStories,
+} from '@moodlenet/extensions-manager/stories'
 import { AppearanceStories, GeneralStories } from '@moodlenet/react-app/stories'
 import { Settings, SettingsProps } from '@moodlenet/react-app/ui'
 import { Settings as SimpleEmailAuthSettings } from '@moodlenet/simple-email-auth/ui'
@@ -31,6 +34,10 @@ export const SettingsDefaultStoryProps = (): SettingsProps => {
       {
         Menu: InstallExtensionStories.useElements().Menu,
         Content: InstallExtensionStories.useElements().Content,
+      },
+      {
+        Menu: ManageExtensionsStories.useElements().Menu,
+        Content: ManageExtensionsStories.useElements().Content,
       },
       { Menu: SimpleEmailAuthSettings.Menu, Content: SimpleEmailAuthSettings.Content },
       // { Menu: PassportAuthSettins.Menu, Content: PassportAuthSettins.Content },

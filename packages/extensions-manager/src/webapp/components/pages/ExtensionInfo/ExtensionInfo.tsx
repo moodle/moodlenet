@@ -18,9 +18,10 @@ import './ExtensionInfo.scss'
 export type ExtensionInfoProps = {
   onClickBackBtn?: (arg0?: unknown) => unknown
   extension: ExtensionType
+  children?: ReactNode
 }
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) => {
+const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBackBtn }) => {
   const {
     description,
     icon,
@@ -145,6 +146,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) =>
           <div className="description">{description}</div>
         </div>
       </Card>
+      {children}
       <Card className="readme-card">
         <div className="readme-header">
           <div className="readme-type">README</div>
