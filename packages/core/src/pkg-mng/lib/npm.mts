@@ -1,5 +1,5 @@
 import { run } from 'npm-check-updates'
-import { WORKING_DIR, writeSysCurrPackagejson } from '../../main/env.mjs'
+import { WORKING_DIR, writeWdPackageJson } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
@@ -39,7 +39,7 @@ export async function checkUpdates(): Promise<{ updatePkgs: Record<string, strin
 export async function updateAll(): Promise<Record<string, string>> {
   const { updatePkgs: dependencies } = await checkUpdates()
 
-  await writeSysCurrPackagejson({ dependencies })
+  await writeWdPackageJson({ dependencies })
 
   return dependencies
 }
