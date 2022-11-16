@@ -26,8 +26,8 @@
     "@moodlenet/key-value-store": "^0.1.0"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.1.2",
-    "@moodlenet/key-value-store": "^0.1.2",
+    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/key-value-store": "^0.1.0",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.35",
     "typescript": "^4.7.2"
