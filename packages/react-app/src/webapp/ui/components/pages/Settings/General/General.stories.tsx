@@ -1,6 +1,7 @@
 import { OrganizationData } from '@moodlenet/organization'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
+import { FC } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import { SettingsItem } from '../Settings.js'
 import { General, GeneralFormValues, GeneralMenu, GeneralProps } from './General.js'
@@ -32,10 +33,10 @@ export const useGeneralStoryProps = (overrides?: {
   }
 }
 
+const GeneralItem: FC = () => <General {...useGeneralStoryProps()} />
 export const useElements = (): SettingsItem => {
-  const props = useGeneralStoryProps()
   return {
     Menu: GeneralMenu,
-    Content: { Item: () => <General {...props} />, key: 'content-general' },
+    Content: { Item: GeneralItem, key: 'content-general' },
   }
 }
