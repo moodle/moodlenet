@@ -25,6 +25,7 @@ export type ExtensionType = {
   description: string
   icon?: string
   readme: string
+  mandatory?: boolean
   installed: boolean
   repositoryUrl: string
   isInstallingUninstalling: boolean
@@ -76,18 +77,9 @@ const InstallExtension: FC<InstallExtensionProps> = ({
   setIsInstalling,
   // setSelectedExt,
 }) => {
-  // const { pkgId, pkgs, selectedExt, setSelectedExt, devMode, searchPkgResp } =
-  //   useContext(MainContext)
-  // const [myPkg] = pkgs
-  // // const { Card, PrimaryButton, InputTextField, Loading } = reactApp.ui.components
-
-  // registries.rightComponents.useRegister(pkgId, DevModeBtnAddon)
-
-  // const [localPathField, setLocalPathField] = useState('')
   const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>()
-  // const [isInstalling, toggleIsInstalling] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
-  // const [extInfoList, setExtInfoList] = useState<DeployedPkgInfo[]>([])
+  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
 
   const installExtension = !selectedExt && (
     <div className="install-extension">
@@ -104,6 +96,7 @@ const InstallExtension: FC<InstallExtensionProps> = ({
                 <InputTextField
                   className="local-path"
                   placeholder="Local path to package"
+                  disabled={canSubmit}
                   value={form.values.localPath}
                   onChange={form.handleChange}
                   name="package-name"

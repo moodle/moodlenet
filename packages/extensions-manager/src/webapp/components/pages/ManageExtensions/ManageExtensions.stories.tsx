@@ -25,6 +25,7 @@ export const useManageExtensionsStoryProps = (overrides?: {
       icon: packageIcon2,
       installed: true,
       isInstallingUninstalling: false,
+      mandatory: true,
       toggleInstallingUninstalling: action('Toogle install uninstall'),
       // config: { Item: () => <Card>Some filler</Card>, key: 'something' },
       repositoryUrl:
@@ -39,6 +40,7 @@ export const useManageExtensionsStoryProps = (overrides?: {
       icon: packageIcon1,
       installed: true,
       isInstallingUninstalling: false,
+      mandatory: true,
       toggleInstallingUninstalling: action('Toogle install uninstall'),
       repositoryUrl:
         'https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/react-app',
@@ -52,6 +54,7 @@ export const useManageExtensionsStoryProps = (overrides?: {
       // icon: packageIcon2,
       installed: true,
       isInstallingUninstalling: false,
+      mandatory: false,
       toggleInstallingUninstalling: action('Toogle install uninstall'),
       repositoryUrl:
         'https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/web-user',
