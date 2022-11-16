@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { AddonItem, Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC } from 'react'
+import { FC, useRef } from 'react'
 import './General.scss'
 
 export type GeneralFormValues = {
@@ -26,14 +26,14 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
   const shouldShowErrors = !!form.submitCount
 
   const instanceName = {
-    Item: () => (
+    Item: useRef(() => (
       <div className="parameter">
         <div className="name">Site name</div>
         <div className="actions">
           <InputTextField
             className="instance-name"
             placeholder="Give a name to your site"
-            value={form.values.instanceName}
+            defaultValue={form.values.instanceName}
             onChange={form.handleChange}
             name="instanceName"
             key="instanceName"
@@ -41,7 +41,7 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
           />
         </div>
       </div>
-    ),
+    )).current,
     key: 'title',
   }
 
@@ -64,10 +64,12 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
     <Card className="update">
       <div className="left">
         <div className="title">Updated successfully!</div>
-        <div className="description">Your app is up and running on the lastest release. Have fun! </div>
+        <div className="description">
+          Your app is up and running on the lastest release. Have fun!{' '}
+        </div>
       </div>
       <div className="right">
-        <div className='confetti'>🎉</div>
+        <div className="confetti">🎉</div>
       </div>
     </Card>
   )
