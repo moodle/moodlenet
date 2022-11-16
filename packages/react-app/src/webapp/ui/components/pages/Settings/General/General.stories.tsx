@@ -1,26 +1,33 @@
 import { OrganizationData } from '@moodlenet/organization'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
+import { object, SchemaOf, string } from 'yup'
 import { SettingsItem } from '../Settings.js'
-import { General, GeneralMenu, GeneralProps } from './General.js'
+import { General, GeneralFormValues, GeneralMenu, GeneralProps } from './General.js'
+
+export const validationSchema: SchemaOf<GeneralFormValues> = object({
+  instanceName: string().max(160).min(3).required(/* t */ `Please provide an instance name`),
+  landingTitle: string().max(160).min(3).required(/* t */ `Please provide a landing title`),
+  landingSubtitle: string().max(4096).min(3).required(/* t */ `Please provide a landing subtitle`),
+})
 
 export const useGeneralStoryProps = (overrides?: {
   editFormValues?: Partial<OrganizationData>
   props?: Partial<GeneralProps>
 }): GeneralProps => {
   return {
-    form: useFormik<OrganizationData>({
-      onSubmit: action('submit general settings'),
-      // validationSchema,
+    form: useFormik<GeneralFormValues>({
+      onSubmit: action('submit edit'),
+      validationSchema,
       initialValues: {
         instanceName: 'MoodleNet',
         landingTitle: 'Find, share and curate open educational resources',
         landingSubtitle: 'Search for resources, subjects, collections or people',
-        logo: '',
-        smallLogo: '',
         ...overrides?.editFormValues,
       },
     }),
+    // updateExtensions: action('Updating extensions'),
+    updateSuccess: true,
     ...overrides?.props,
   }
 }
