@@ -1,50 +1,77 @@
-import assert from 'assert'
-import execa from 'execa'
-import { mkdir, readdir } from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import { resolve } from 'path'
-import { InstallPkgReq } from '../pkg-mng/types.mjs'
-import { install } from '../pkg-mng/lib/npm.mjs'
-import { IS_DEVELOPMENT, WORKING_DIR } from './env.mjs'
+import { SYSTEM_DIR, WORKING_DIR, writeSysCurrPackagejson } from './env.mjs'
 import { getPkgModulePaths } from '../pkg-mng/lib/pkg.mjs'
-
-export const defaultCorePackages = {
-  'core': '0.1.0',
-  'arangodb': '0.1.0',
-  'key-value-store': '0.1.0',
-  'crypto': '0.1.0',
-  'authentication-manager': '0.1.0',
-  'http-server': '0.1.0',
-  'organization': '0.1.0',
-  'content-graph': '0.1.0',
-  'email-service': '0.1.0',
-  'react-app': '0.1.0',
-  // 'web-user': '0.1.0',
-  'extensions-manager': '0.1.0',
-  'simple-email-auth': '0.1.0',
-  // 'test-extension': '0.1.0',
-  // 'test-extension-2': '0.1.0',
-  // 'passport-auth': '0.1.0',
-}
+import execa from 'execa'
+import { NPM_REGISTRY } from '../pkg-mng/lib/npm.mjs'
+export const defaultCorePackages = [
+  'core',
+  'arangodb',
+  'key-value-store',
+  'crypto',
+  'authentication-manager',
+  'http-server',
+  'organization',
+  'content-graph',
+  'email-service',
+  'react-app',
+  'extensions-manager',
+  'simple-email-auth',
+  // 'web-user',
+  // 'passport-auth',
+  // 'test-extension',
+  // 'test-extension-2',
+]
 
 await mkdir(WORKING_DIR, { recursive: true })
-const dir = await readdir(WORKING_DIR, {
-  withFileTypes: true,
-})
-assert(!dir.length, `won't install in not-empty dir ${WORKING_DIR}`)
 
-await execa('npm', ['-y', 'init'], {
-  cwd: WORKING_DIR,
-  timeout: 15,
-})
+// assert(
+//   !(await readdir(SYSTEM_DIR, { withFileTypes: true })).length,
+//   `won't install system in not-empty dir ${SYSTEM_DIR}`,
+// )
 
-const myModPaths = getPkgModulePaths(import.meta)
-const installPkgReqs = Object.entries(defaultCorePackages).map<InstallPkgReq>(
-  ([pkgName, pkgVersion]) =>
-    IS_DEVELOPMENT
-      ? {
-          type: 'symlink',
-          fromFolder: resolve(myModPaths.moduleDir, '..', '..', '..', pkgName),
-        }
-      : { type: 'npm', pkgId: { name: `@moodlenet/${pkgName}`, version: pkgVersion } },
-)
-await install(installPkgReqs)
+await mkdir(SYSTEM_DIR, { recursive: true })
+// assert(
+//   !(await readdir(WORKING_DIR, { withFileTypes: true })).length,
+//   `won't install deployment in not-empty dir ${WORKING_DIR}`,
+// )
+const sysPkgJson = await freshInstallPkgJson()
+
+await writeSysCurrPackagejson(sysPkgJson)
+
+async function freshInstallPkgJson() {
+  const myModPaths = getPkgModulePaths(import.meta)
+  const defaultCorePackageWithVersion = await Promise.all(
+    defaultCorePackages.map(async pkgName => {
+      const fullPkgName = `@moodlenet/${pkgName}`
+      const version = process.env.USE_LOCAL_REPO
+        ? `file:${resolve(myModPaths.moduleDir, '..', '..', '..', pkgName)}`
+        : (
+            await execa('npm', [
+              'view',
+              fullPkgName,
+              'dist-tags.latest',
+              '--registry',
+              NPM_REGISTRY,
+            ])
+          ).stdout
+      return {
+        fullPkgName,
+        version,
+      }
+    }),
+  )
+
+  const dependencies = defaultCorePackageWithVersion.reduce<Record<string, string>>(
+    (_, { fullPkgName, version }) => {
+      return {
+        ..._,
+        [fullPkgName]: version,
+      }
+    },
+    {},
+  )
+  return {
+    dependencies,
+  }
+}

@@ -19,7 +19,7 @@
     "src/",
     "bin/"
   ],
-  "bin": "./lib/bin/cli.mjs",
+  "bin": "./bin/cli.mjs",
   "main": "lib/main.mjs",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
