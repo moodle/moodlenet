@@ -8,7 +8,7 @@ type Env = {
 }
 function getEnv(rawExtEnv: any): Env {
   const env: Env = {
-    port: 8080,
+    port: Number(process.env.MOODLENET_HTTP_SERVER_PORT) || 8080,
     ...rawExtEnv,
   }
   //FIXME: implement checks ?

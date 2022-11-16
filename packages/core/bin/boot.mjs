@@ -1,13 +1,37 @@
 #!/usr/bin/env node
-// import assert from 'assert'
-// import yargs from 'yargs'
-// const opts = await yargs(process.argv.slice(2))
-// const argv = await opts.argv
-// const { sysd } = argv
-// assert(
-//   typeof sysd === 'undefined' || typeof sysd === 'string' || typeof sysd === 'number',
-//   '--sysd should be a string or omit for default ./system',
-// )
-// process.env.MOODLENET_CORE_WORKING_DIR = process.cwd()
-// process.env.MOODLENET_CORE_SYSTEM_DIR = sysd ? String(sysd) : undefined
-await import('../lib/main/boot.mjs')
+import yargs from 'yargs'
+import forever from 'forever'
+import { dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
+
+const opts = await yargs(process.argv.slice(2))
+const argv = await opts.argv
+
+const runForever = argv.forever === true
+console.log(`${runForever ? '' : 'not '}using forever`)
+if (!runForever) {
+  await import('../lib/main/boot.mjs')
+} else {
+  const uid = String(Math.random())
+  const foreverMonitor = forever.start(
+    resolve(dirname(fileURLToPath(import.meta.url)), '..', 'lib', 'main', 'boot.mjs'),
+    { uid },
+  )
+  foreverMonitor.on('exit:code', code => {
+    if (String(code) === '15') {
+      /////////////////////////////////////////
+      return
+    }
+
+    foreverMonitor.stop()
+  })
+}
+
+// _events: {
+//   start: [Function: startLogs],
+//   restart: [Array],
+//   exit: [Function: stopLogs],
+//   'watch:error': [Function (anonymous)],
+//   'watch:restart': [Function (anonymous)],
+//   'exit:code': [Function (anonymous)]
+// },

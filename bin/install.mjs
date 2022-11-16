@@ -3,13 +3,13 @@
 import { resolve } from 'path'
 import rimraf from 'rimraf'
 import execa from 'execa'
-import { clean, moodlenetDevDir, usesLocalRepo } from './env.mjs'
+import { clean, moodlenetDevDir, useRegistry } from './env.mjs'
 
 if (clean) {
   rimraf.sync(moodlenetDevDir)
 }
 
-const opts = usesLocalRepo ? ['--dev-install-local-repo-symlinks'] : []
+const opts = useRegistry ? [] : ['--dev-install-local-repo-symlinks']
 
 console.log(`installing dev in ${moodlenetDevDir}`, { opts })
 await execa('npm', ['start', '--', moodlenetDevDir, ...opts], {
