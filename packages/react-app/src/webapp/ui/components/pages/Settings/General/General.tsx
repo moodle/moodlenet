@@ -25,28 +25,6 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   const shouldShowErrors = !!form.submitCount
 
-  const instanceName = {
-    Item: useRef(() => (
-      <div className="parameter">
-        <div className="name">Site name</div>
-        <div className="actions">
-          <InputTextField
-            className="instance-name"
-            placeholder="Give a name to your site"
-            defaultValue={form.values.instanceName}
-            onChange={form.handleChange}
-            name="instanceName"
-            key="instanceName"
-            error={shouldShowErrors && form.errors.instanceName}
-          />
-        </div>
-      </div>
-    )).current,
-    key: 'title',
-  }
-
-  const fields = [instanceName]
-
   const update = updateExtensions && (
     <Card className="update">
       <div className="left">
@@ -87,9 +65,20 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
             Save
           </PrimaryButton>
         </div>
-        {fields.map(({ Item, key }) => (
-          <Item key={key} />
-        ))}
+        <div className="parameter">
+          <div className="name">Site name</div>
+          <div className="actions">
+            <InputTextField
+              className="instance-name"
+              placeholder="Give a name to your site"
+              defaultValue={form.values.instanceName}
+              onChange={form.handleChange}
+              name="instanceName"
+              key="instanceName"
+              error={shouldShowErrors && form.errors.instanceName}
+            />
+          </div>
+        </div>
         <div className="parameter">
           <div className="name">Landing page title</div>
           <div className="actions">
