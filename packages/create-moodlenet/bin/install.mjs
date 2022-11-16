@@ -28,7 +28,7 @@ installing moodlenet@${myPkgJson.version} in ${installDir}
 may take some time...
 `)
 
-await execa('npm', ['install'], { cwd: installDir })
+await execa('npm', ['install'], { cwd: installDir, stdout: process.stdout })
 
 process.exit(0)
 
