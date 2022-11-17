@@ -28,7 +28,7 @@ export const useGeneralStoryProps = (overrides?: {
       },
     }),
     // updateExtensions: action('Updating extensions'),
-    updateSuccess: true,
+    // updateSuccess: true,
     ...overrides?.props,
   }
 }
