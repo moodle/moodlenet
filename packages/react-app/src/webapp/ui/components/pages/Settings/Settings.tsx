@@ -45,8 +45,10 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
   return (
     <MainLayout
       {...mainLayoutProps}
+      streched={true}
       headerProps={{
         ...mainLayoutProps.headerProps,
+
         leftItems: headerLeftItems,
       }}
     >

@@ -10,7 +10,7 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useCallback, useRef } from 'react'
-import { getAppearanceDataStyle } from '../../../../../../common/index.mjs'
+import { getAppearanceStyle } from '../../../../../../common/index.mjs'
 import { CustomStyleType } from '../../../../../../common/types.mjs'
 import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
 import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
@@ -21,6 +21,7 @@ export type AppearanceFormValues = {
   logo: string
   smallLogo: string
   color: string
+  scss: string
   //TODO: decide if having this as optional
   customStyle: CustomStyleType
 }
@@ -42,7 +43,7 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
 
   const setColor = useCallback(
     (color: string) => {
-      form.setValues({ ...form.values, ...getAppearanceDataStyle(color) })
+      form.setValues({ ...form.values, ...getAppearanceStyle(color) })
     },
     [form],
   )
@@ -115,7 +116,7 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   return (
     <div className="appearance" key="appearance">
-      <Card className="main-card column">
+      <Card className="column">
         <div className="title">
           {/* <Trans> */}
           Appearance
@@ -126,48 +127,8 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
             {/* </Trans> */}
           </PrimaryButton>
         </div>
-        <div>
-          Manage the look and feel of the platform
-          {/* <Trans>Manage the look and feel of the platform</Trans> */}
-        </div>
-        {/* <Card className="logos">
-        <h2>
-          <Trans>Logos</Trans>
-        </h2>
-        <div>
-          <h3>Default</h3>
-          {logo ? (
-            <div className="logo-container">
-              <img className="logo big" src={organization.logo} alt="Logo" />
-              <SecondaryButton onClick={() => setLogo(false)} color="grey">
-                Delete
-              </SecondaryButton>
-            </div>
-          ) : (
-            <FileUploader type="image" />
-          )}
-        </div>
-        <div>
-          <h3>Compact</h3>
-          {compactLogo ? (
-            <div className="logo-container">
-              <img
-                className="logo small"
-                src={organization.smallLogo}
-                alt="small Logo"
-              />
-              <SecondaryButton
-                onClick={() => setCompactLogo(false)}
-                color="grey"
-              >
-                Delete
-              </SecondaryButton>
-            </div>
-          ) : (
-            <FileUploader type="image" />
-          )}
-        </div>
-      </Card> */}
+      </Card>
+      <Card className="main-card column">
         <div className="color section">
           <div className="subtitle">
             Color
@@ -179,15 +140,14 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
           </div>
           <div className="field">
             <Colorpicker
+              name="color-colorpicker"
               value={form.values.color}
-              // value={styleContext.style['--primary-color']}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
+              onChange={e => setColor(e.currentTarget.value)}
             />
             <InputTextField
-              edit={true}
+              name="color-input"
               value={form.values.color}
-              // value={styleContext.style['--primary-color']}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => setColor(e.currentTarget.value)}
+              onChange={e => setColor(e.currentTarget.value)}
             />
           </div>
         </div>
@@ -216,8 +176,10 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
             {/* <Trans>SCSS</Trans> */}
           </div>
           <InputTextField
+            name="scss"
             textarea={true}
-            edit /* onChange={c => setStyle(c.currentTarget.value)} */
+            value={form.values.scss}
+            onChange={form.handleChange}
           />
         </div>
       </Card>
