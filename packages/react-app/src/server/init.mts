@@ -5,12 +5,12 @@ import { packageDirectorySync } from 'pkg-dir'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { ResolveOptions } from 'webpack'
-import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
+import { defaultAppearanceFormValues } from '../common/appearance/data.mjs'
 import { WebappPluginItem } from '../common/types.mjs'
-import { httpSrvPkg, kvStore } from './use-pkgs.mjs'
 import { WebPkgDepList } from '../webapp/web-lib.mjs'
+import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
+import { httpSrvPkg, kvStore } from './use-pkgs.mjs'
 import startWebpack from './webpackWatch.mjs'
-import { defaultAppearanceData } from '../common/appearance/data.mjs'
 
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
@@ -22,7 +22,7 @@ await mkdir(buildFolder, { recursive: true })
 const latestBuildFolder = resolve(__dirname, '..', '..', 'latest-build')
 
 if (!(await kvStore.get('appearanceData', '')).value) {
-  await kvStore.set('appearanceData', '', defaultAppearanceData)
+  await kvStore.set('appearanceData', '', defaultAppearanceFormValues)
 }
 
 // const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
