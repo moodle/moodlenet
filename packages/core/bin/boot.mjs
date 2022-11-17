@@ -18,7 +18,7 @@ if (!runForever) {
     { uid },
   )
   foreverMonitor.on('exit:code', code => {
-    if (String(code) === '15') {
+    if (code === 0) {
       /////////////////////////////////////////
       return
     }

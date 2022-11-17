@@ -27,3 +27,16 @@ export async function writeWdPackageJson(pkgJson: PackageJson): Promise<void> {
   const wdPackageJsonStr = JSON.stringify(pkgJson, null, 2)
   await writeFile(WD_PACKAGEJSON_PATH, wdPackageJsonStr, { encoding: 'utf8' })
 }
+
+export async function patchWdPackageJsonDeps(
+  dependenciesPatch: PackageJson['dependencies'],
+): Promise<void> {
+  const wdPackageJson = await readWdPackageJson()
+  await writeWdPackageJson({
+    ...wdPackageJson,
+    dependencies: {
+      ...wdPackageJson.dependencies,
+      ...dependenciesPatch,
+    },
+  })
+}
