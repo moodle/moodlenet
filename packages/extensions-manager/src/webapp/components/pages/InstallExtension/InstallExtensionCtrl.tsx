@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { SearchPackagesResObject } from '../../../../types.mjs'
+import { MainContext } from '../../../MainContext.js'
 import { ExtensionType } from './InstallExtension.js'
 
 // export type ExtensionType = {
@@ -19,9 +20,11 @@ const approvedExtensions = [
 export const useFilterExtensionList = (
   rawExtensions: SearchPackagesResObject[],
 ): ExtensionType[] => {
+  const { defaultRegistry } = useContext(MainContext)
   const [readme, setReadme] = useState('')
   useEffect(() => {
-    fetch(`https://registry.npmjs.org/@moodlenet/ce-platform`, {
+    //fetch(`https://registry.npmjs.org/@moodlenet/ce-platform`, {
+    fetch(`${defaultRegistry}/${pkgName}`, {
       // mode: 'no-cors',
     })
       .then(_ => _.json())
