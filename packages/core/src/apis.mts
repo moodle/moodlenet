@@ -1,5 +1,5 @@
 import { defApi } from './pkg-shell/apis/shell.mjs'
-import { install, uninstall } from './pkg-mng/lib/npm.mjs'
+import { checkUpdates, install, uninstall, updateAll } from './pkg-mng/lib/npm.mjs'
 import { listEntries, pkgEntryByPkgId } from './pkg-registry/lib.mjs'
 import { PkgIdentifier } from './types.mjs'
 import { InstallPkgReq } from './main.mjs'
@@ -33,6 +33,20 @@ export default {
       _ctx => async (pkgs: PkgIdentifier[]) => {
         await uninstall(pkgs)
         return
+      },
+      () => true,
+    ),
+    checkUpdates: defApi(
+      _ctx => async () => {
+        const ncuRes = await checkUpdates()
+        return ncuRes
+      },
+      () => true,
+    ),
+    updateAll: defApi(
+      _ctx => async () => {
+        const ncuRes = await updateAll()
+        return ncuRes
       },
       () => true,
     ),

@@ -32,7 +32,6 @@
     "@moodlenet/react-app": "^0.1.0"
   },
   "devDependencies": {
-    "yup": "^0.32.11",
     "@lingui/macro": "^3.14.0",
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/component-library": "^0.1.0",
@@ -43,7 +42,8 @@
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
     "react-router-dom": "^6.3.0",
-    "typescript": "^4.7.2"
+    "typescript": "^4.7.2",
+    "yup": "^0.32.11"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",

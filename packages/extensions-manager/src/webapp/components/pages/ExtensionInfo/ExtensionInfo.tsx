@@ -1,4 +1,10 @@
-import { Card, Loading, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
+import {
+  Card,
+  Loading,
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from '@moodlenet/component-library'
 import { ArrowBackIosNew } from '@mui/icons-material'
 import { FC, ReactNode, ReactPortal } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -10,7 +16,6 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
-import { mandatoryPackages } from '../../../fakeData.js'
 import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
 import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 import './ExtensionInfo.scss'
@@ -27,52 +32,12 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
     icon,
     repositoryUrl,
     installed,
+    mandatory,
     displayName,
     readme,
     isInstallingUninstalling,
     toggleInstallingUninstalling,
   } = extension
-
-  // const [isInstallingUninstalling, toggleInstallingUninstalling] = useState(false)
-  // const [installed, setInstalled] = useState(false)
-
-  // useEffect(() => {
-  //   isInstallingUninstalling &&
-  //     setTimeout(() => {
-  //       setInstalled(!installed)
-  //       toggleInstallingUninstalling(!isInstallingUninstalling)
-  //     }, 1000)
-  // }, [isInstallingUninstalling, installed])
-  // toggleisInstalling,
-  // searchPackagesResObject,
-  // readme,
-  // }) => {
-  // const { pkgs } = useContext(MainContext)
-  // const [myPkg] = pkgs
-  // // const stateContext = useContext(StateContext)
-
-  // // const modulesList = extension?.modules.map(
-  // //   (module: Module, i) =>
-  // //     (!module.mandatory || stateContext?.devMode) && (
-  // //       <div className="module" key={i}>
-  // //         <div className="displayName">{module.displayName}</div>
-  // //         <Switch enabled={module.enabled} mandatory={module.mandatory} />
-  // //       </div>
-  // //     ),
-  // // )
-
-  // const install_uninstall = useCallback(() => {
-  //   toggleisInstalling()
-  //   searchPackagesResObject.installed
-  //     ? myPkg.call('uninstall')({
-  //         pkgId: searchPackagesResObject.pkgId,
-  //       })
-  //     : myPkg.call('install')({
-  //         installPkgReq: searchPackagesResObject.installPkgReq,
-  //       })
-
-  //   // promise.finally(toggleisInstalling)
-  // }, [myPkg, searchPackagesResObject, toggleisInstalling])
 
   type CodeBlockProps = {
     node: any
@@ -123,25 +88,48 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
         <div className="header-right">
           <div className="top-header">
             <div className="title">{displayName}</div>
-            <PrimaryButton
-              className={`install-btn ${isInstallingUninstalling ? 'loading' : ''}`}
-              noHover={isInstallingUninstalling}
-              disabled={mandatoryPackages.includes(displayName)}
-              onClick={toggleInstallingUninstalling}
-            >
-              <div
-                className="loading"
-                style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
+            {installed ? (
+              <SecondaryButton
+                className={`install-uninstall-btn ${isInstallingUninstalling ? 'loading' : ''}`}
+                noHover={isInstallingUninstalling}
+                color="grey"
+                disabled={mandatory}
+                onClick={toggleInstallingUninstalling}
               >
-                <Loading color="white" />
-              </div>
-              <div
-                className="label"
-                style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
+                <div
+                  className="loading"
+                  style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
+                >
+                  <Loading color="white" />
+                </div>
+                <div
+                  className="label"
+                  style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
+                >
+                  Uninstall
+                </div>
+              </SecondaryButton>
+            ) : (
+              <PrimaryButton
+                className={`install-uninstall-btn ${isInstallingUninstalling ? 'loading' : ''}`}
+                noHover={isInstallingUninstalling}
+                disabled={mandatory}
+                onClick={toggleInstallingUninstalling}
               >
-                {installed ? 'Uninstall' : 'Install'}
-              </div>
-            </PrimaryButton>
+                <div
+                  className="loading"
+                  style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
+                >
+                  <Loading color="white" />
+                </div>
+                <div
+                  className="label"
+                  style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
+                >
+                  Install
+                </div>
+              </PrimaryButton>
+            )}
           </div>
           <div className="description">{description}</div>
         </div>

@@ -1,4 +1,5 @@
-import { WORKING_DIR } from '../../main/env.mjs'
+import { run } from 'npm-check-updates'
+import { WORKING_DIR, writeSysCurrPackagejson } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
@@ -24,7 +25,33 @@ export async function install(installPkgReqs: InstallPkgReq[]) {
   })
 }
 
+export async function checkUpdates(): Promise<{ updatePkgs: Record<string, string> }> {
+  const updatePkgs = ((await run({
+    registry: NPM_REGISTRY,
+    target: 'minor',
+    jsonUpgraded: true,
+    cwd: WORKING_DIR,
+  })) ?? {}) as Record<string, string>
+
+  return { updatePkgs }
+}
+
+export async function updateAll(): Promise<Record<string, string>> {
+  const { updatePkgs: dependencies } = await checkUpdates()
+
+  await writeSysCurrPackagejson({ dependencies })
+
+  return dependencies
+}
+
 export const NPM_REGISTRY =
-  process.env[
-    Object.keys(process.env).find(_ => _.toUpperCase() === 'NPM_CONFIG_REGISTRY') ?? ''
-  ] ?? 'https://registry.npmjs.org/'
+  process.env.npm_config_registry ??
+  process.env.NPM_CONFIG_REGISTRY ??
+  (() => {
+    const randomCasedEnvVarName = Object.keys(process.env).find(
+      _ => _.toLowerCase() === 'npm_config_registry',
+    )
+    return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
+  })() ??
+  ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 1000 })).stdout ||
+    'https://registry.npmjs.org/')
