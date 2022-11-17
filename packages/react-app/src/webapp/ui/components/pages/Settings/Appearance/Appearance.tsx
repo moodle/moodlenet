@@ -11,15 +11,23 @@ import {
 import { useFormik } from 'formik'
 import { FC, useCallback, useRef } from 'react'
 import { getAppearanceDataStyle } from '../../../../../../common/index.mjs'
-import { AppearanceData } from '../../../../../../common/types.mjs'
+import { CustomStyleType } from '../../../../../../common/types.mjs'
 import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
 import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
 // import { Organization } from '../../../../types'
 import './Appearance.scss'
 
+export type AppearanceFormValues = {
+  logo: string
+  smallLogo: string
+  color: string
+  //TODO: decide if having this as optional
+  customStyle: CustomStyleType
+}
+
 export type AppearanceProps = {
   // organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
-  form: ReturnType<typeof useFormik<AppearanceData>>
+  form: ReturnType<typeof useFormik<AppearanceFormValues>>
 }
 
 export const AppearanceMenu: AddonItem = {
