@@ -1,5 +1,5 @@
 import { run } from 'npm-check-updates'
-import { WORKING_DIR, writeWdPackageJson } from '../../main/env.mjs'
+import { patchWdPackageJsonDeps, WORKING_DIR, writeWdPackageJson } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
@@ -36,12 +36,12 @@ export async function checkUpdates(): Promise<{ updatePkgs: Record<string, strin
   return { updatePkgs }
 }
 
-export async function updateAll(): Promise<Record<string, string>> {
-  const { updatePkgs: dependencies } = await checkUpdates()
+export async function updateAll(): Promise<{ updatePkgs: Record<string, string> }> {
+  const { updatePkgs } = await checkUpdates()
 
-  await writeWdPackageJson({ dependencies })
+  await patchWdPackageJsonDeps(updatePkgs)
 
-  return dependencies
+  return { updatePkgs }
 }
 
 export const NPM_REGISTRY =

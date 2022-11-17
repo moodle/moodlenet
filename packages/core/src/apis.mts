@@ -3,6 +3,7 @@ import { checkUpdates, install, NPM_REGISTRY, uninstall, updateAll } from './pkg
 import { listEntries, pkgEntryByPkgId } from './pkg-registry/lib.mjs'
 import { PkgIdentifier } from './types.mjs'
 import { InstallPkgReq } from './main.mjs'
+import { rebootSystem } from './main/sys.mjs'
 
 export default {
   'active-pkgs': {
@@ -38,17 +39,28 @@ export default {
     ),
     checkUpdates: defApi(
       _ctx => async () => {
-        const ncuRes = await checkUpdates()
-        return ncuRes
+        const { updatePkgs } = await checkUpdates()
+        return { updatePkgs }
       },
       () => true,
     ),
     updateAll: defApi(
       _ctx => async () => {
-        const ncuRes = await updateAll()
-        return ncuRes
+        const { updatePkgs } = await updateAll()
+        if (Object.keys(updatePkgs).length) {
+          rebootSystem()
+        }
+        return { updatePkgs }
       },
       () => true,
     ),
   },
+  'rebootSystem': defApi(
+    _ctx => async () => {
+      console.log('..rebooting system')
+      rebootSystem()
+      return
+    },
+    () => true,
+  ),
 }
