@@ -1,6 +1,6 @@
 import { AddonItem, Card, PrimaryButton, Switch } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import './Advanced.scss'
 
 export type AdvancedFormValues = {
@@ -11,16 +11,14 @@ export type AdvancedProps = {
   form: ReturnType<typeof useFormik<AdvancedFormValues>>
 }
 
-export const AdvancedMenu: AddonItem = 
-{
+export const AdvancedMenu: AddonItem = {
   Item: () => <span>Advanced</span>,
   key: 'menu-Advanced',
 }
 
-
 export const Advanced: FC<AdvancedProps> = ({ form }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
-  const [devMode, setDevMode] = useState(false)
+  // const [devMode, setDevMode] = useState(false)
 
   return (
     <div className="advanced" key="advanced">
@@ -33,18 +31,15 @@ export const Advanced: FC<AdvancedProps> = ({ form }) => {
             Save
           </PrimaryButton>
         </div>
+      </Card>
+      <Card className="column">
         <div className="parameter">
           <div className="name">Developer mode</div>
           <div className="actions">
             <Switch
               className="toggle-dev-mode"
-              enabled={devMode}
-              // enabled={form.values.devMode}
-              toggleSwitch={() => setDevMode(!devMode)}
-              // toggleSwitch={() => form.setValues({ ...form.values, devMode: !form.values.devMode })}
-              name="toggleDevMode"
-              edit
-              // error={shouldShowErrors && editForm.errors.displayName}
+              enabled={form.values.devMode}
+              toggleSwitch={() => form.setFieldValue('devMode', !form.values.devMode)}
             />
           </div>
         </div>

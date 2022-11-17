@@ -9,8 +9,8 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { defaultAppearanceFormValues } from '../../common/appearance/data.mjs'
 import { AppearanceData } from '../../common/types.mjs'
-import { defaultAppearanceData } from '../../common/appearance/data.mjs'
 import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
 
@@ -33,7 +33,7 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
     pkgs: [reactAppSrv, organizationSrv],
   } = useContext(MainContext)
 
-  const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
+  const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceFormValues)
 
   const saveAppearanceData = useCallback(
     async (newAppearanceData: AppearanceData) => {

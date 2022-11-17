@@ -59,12 +59,15 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
       <Card className="column">
         <div className="title">
           {/* <Trans> */}
+        
           General
           {/* </Trans> */}
           <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
             Save
           </PrimaryButton>
         </div>
+      </Card>
+      <Card className="column">
         <div className="parameter">
           <div className="name">Site name</div>
           <div className="actions">
