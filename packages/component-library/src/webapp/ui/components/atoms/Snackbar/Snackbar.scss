@@ -1,12 +1,14 @@
 @import '../../../styles/application';
 
 .snackbar.card {
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
   min-height: 40px;
   color: #fff;
   font-size: 0.875rem;
   font-weight: bold;
   background-color: #7b7b7b;
-  display: flex;
   left: 50%;
   transform: translateX(-50%);
   align-items: center;
@@ -16,7 +18,6 @@
   border-radius: 4px;
   gap: 10px;
   z-index: 11;
-  width: fit-content;
   box-shadow: 0px 1px 2px 0px rgb(36 39 41 / 5%), 0px 2px 6px 2px rgb(41 44 46 / 5%);
 
   &:not(.inside-snackbar) {

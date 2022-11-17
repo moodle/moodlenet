@@ -1,8 +1,8 @@
 // @index(['webapp/**/!(*.stories)*.{mts,tsx}', '!webapp/**/*_old.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from './webapp/components/pages/ExtensionConfig/ExtensionConfig.js'
 export * from './webapp/components/pages/ExtensionInfo/ExtensionInfo.js'
+export * from './webapp/components/pages/InstallExtension/Hooks/InstallExtensionHook.js'
 export * from './webapp/components/pages/InstallExtension/InstallExtension.js'
-export * from './webapp/components/pages/InstallExtension/InstallExtensionCtrl.js'
 export * from './webapp/components/pages/ManageExtensions/ManageExtensions.js'
 export * from './webapp/Extensions.js'
 export * from './webapp/ExtensionsRoutes.js'
