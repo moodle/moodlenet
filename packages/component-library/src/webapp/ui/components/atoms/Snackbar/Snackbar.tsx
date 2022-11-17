@@ -7,7 +7,7 @@ import {
 } from '@material-ui/icons'
 import React, { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react'
 import Card from '../Card/Card.js'
-import './styles.scss'
+import './Snackbar.scss'
 
 export type SnackbarProps = {
   actions?: ReactNode

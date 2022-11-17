@@ -3,6 +3,7 @@ import {
   Loading,
   PrimaryButton,
   SecondaryButton,
+  Snackbar,
   TertiaryButton,
 } from '@moodlenet/component-library'
 import { ArrowBackIosNew } from '@mui/icons-material'
@@ -31,11 +32,12 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
     description,
     icon,
     repositoryUrl,
-    installed,
     mandatory,
     displayName,
     readme,
+    installed,
     isInstallingUninstalling,
+    installUninstallSucces,
     toggleInstallingUninstalling,
   } = extension
 
@@ -66,8 +68,33 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
     ? { backgroundImage: `url("${icon}")`, backgroundSize: 'cover' }
     : { background: getPastelColor(getNumberFromString(displayName), 0.5) }
 
+  // const [isInstallingUninstalling, setIsInstallingUninstalling] = useState(false)
+  // const [installUninstallSucces, setInstallUninstallSucces] = useState(false)
+  // const [installed, setInstalled] = useState(false)
+
+  // const toggleInstallingUninstalling = () => {
+  //   setIsInstallingUninstalling(true)
+  // }
+
+  // useEffect(() => {
+  //   isInstallingUninstalling &&
+  //     setTimeout(() => {
+  //       setIsInstallingUninstalling(false)
+  //       setInstallUninstallSucces(true)
+  //       setInstalled(!installed)
+  //       setTimeout(() => {
+  //         setInstallUninstallSucces(false)
+  //       }, 4000)
+  //     }, 4000)
+  // }, [isInstallingUninstalling, installed])
+
   return (
     <div className="extension-info">
+      {installUninstallSucces && (
+        <Snackbar type="success" autoHideDuration={4000}>
+          {installed ? 'Extension installed' : 'Extension uninstalled'}
+        </Snackbar>
+      )}
       <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
         <ArrowBackIosNew /> Back
       </TertiaryButton>
@@ -100,7 +127,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
                   className="loading"
                   style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
                 >
-                  <Loading color="white" />
+                  <Loading color="#727588" />
                 </div>
                 <div
                   className="label"
