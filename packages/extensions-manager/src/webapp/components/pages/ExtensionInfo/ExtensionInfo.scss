@@ -15,7 +15,7 @@
     }
   }
 
-  > .card {
+  > .card:not(.snackbar) {
     width: 100%;
 
     padding: 26px 40px;

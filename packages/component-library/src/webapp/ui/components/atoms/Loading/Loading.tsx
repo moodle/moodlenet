@@ -4,7 +4,7 @@ import { FC } from 'react'
 import './Loading.scss'
 
 export type LoadingProps = {
-  color?: 'white' | 'orange'
+  color?: 'white' | 'orange' | string
   size?: number
 }
 
@@ -27,7 +27,7 @@ export const Loading: FC<LoadingProps> = ({ color, size }) => {
         //   },
         // }}
         size={size}
-        style={{ color: 'white' }}
+        style={{ color: color }}
         thickness={6}
       />
     </div>

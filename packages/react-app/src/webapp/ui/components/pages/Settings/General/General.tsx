@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { AddonItem, Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useRef } from 'react'
+import { FC } from 'react'
 import './General.scss'
 
 export type GeneralFormValues = {
@@ -74,7 +74,7 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
               defaultValue={form.values.instanceName}
               onChange={form.handleChange}
               name="instanceName"
-              key="instanceName"
+              key="instance-name"
               error={shouldShowErrors && form.errors.instanceName}
             />
           </div>
