@@ -10,16 +10,23 @@
   grid-column-gap: 40px;
   justify-items: center;
 
-  @media screen and (min-width: 650px) and (max-width: 1400px) {
-    grid-template-columns: 240px repeat(1, auto) 0;
+  @media screen and (min-width: 800px) and (max-width: 1400px) {
+    grid-template-columns: 240px repeat(1, auto);
   }
 
-  @media screen and (max-width: 650px) {
+  @media screen and (max-width: 800px) {
     &.menu-visible {
       grid-template-columns: 240px 800px;
     }
     &.menu-hidden {
       display: flex;
+    }
+  }
+
+  @media (max-width: 450px) {
+    margin-top: 4px;
+    &.menu-visible {
+      padding: 0 25px;
     }
   }
 
@@ -63,9 +70,18 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      @media (max-width: 450px) {
+        gap: 0;
+      }
 
       > .card:not(.snackbar) {
         padding: 24px;
+        @media (max-width: 450px) {
+          box-shadow: none;
+          border-radius: 0;
+          margin-top: 0;
+          padding: 12px 24px;
+        }
       }
 
       > .column,
@@ -155,11 +171,11 @@
   > .content {
     > .left {
       > .header-menu-btn {
-        color: grey;
+        color: #858585;
         cursor: pointer;
-        visibility: hidden;
-        @media screen and (max-width: 650px) {
-          visibility: visible;
+        display: none;
+        @media screen and (max-width: 800px) {
+          display: block;
         }
       }
     }

@@ -1,20 +1,21 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
-import { defaultAppearanceData } from '../../../../../../common/index.mjs'
+import { FC } from 'react'
+import { defaultAppearanceFormValues } from '../../../../../../common/index.mjs'
 import { AppearanceData } from '../../../../../../common/types.mjs'
 import { SettingsItem } from '../Settings.js'
-import { Appearance, AppearanceMenu, AppearanceProps } from './Appearance.js'
+import { Appearance, AppearanceFormValues, AppearanceMenu, AppearanceProps } from './Appearance.js'
 
 export const useAppearanceStoryProps = (overrides?: {
   editFormValues?: Partial<AppearanceData>
   props?: Partial<AppearanceProps>
 }): AppearanceProps => {
   return {
-    form: useFormik<AppearanceData>({
+    form: useFormik<AppearanceFormValues>({
       onSubmit: action('submit Appearance settings'),
       // validationSchema,
       initialValues: {
-        ...defaultAppearanceData,
+        ...defaultAppearanceFormValues,
         ...overrides?.editFormValues,
       },
     }),
@@ -22,10 +23,10 @@ export const useAppearanceStoryProps = (overrides?: {
   }
 }
 
+const AppearanceItem: FC = () => <Appearance {...useAppearanceStoryProps()} />
 export const useElements = (): SettingsItem => {
-  const props = useAppearanceStoryProps()
   return {
     Menu: AppearanceMenu,
-    Content: { Item: () => <Appearance {...props} />, key: 'content-appearance' },
+    Content: { Item: AppearanceItem, key: 'content-appearance' },
   }
 }
