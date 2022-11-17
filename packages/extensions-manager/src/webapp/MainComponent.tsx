@@ -21,17 +21,23 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
   const [selectedExtConfig, setSelectedExtConfig] = useState<DeployedPkgInfo | null>(null)
   const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
   const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
+  const [defaultRegistry, setDefaultRegistry] = useState<string>('')
   const [myPkg] = pkgs
 
   useEffect(() => {
     myPkg
       .call('searchPackages')({ searchText: 'moodlenet' })
       .then(resp => setSearchPkgResp(resp))
-  }, [])
+
+    myPkg
+      .call('getDefaultRegistry')()
+      .then(resp => setDefaultRegistry(resp))
+  }, [myPkg])
 
   return (
     <MainContext.Provider
       value={{
+        defaultRegistry,
         pkgs,
         pkgId,
         devMode,

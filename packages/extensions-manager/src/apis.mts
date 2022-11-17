@@ -1,4 +1,4 @@
-import { defApi, InstallPkgReq, PkgIdentifier } from '@moodlenet/core'
+import { defApi, InstallPkgReq, NPM_REGISTRY, PkgIdentifier } from '@moodlenet/core'
 import { uninstall, install, listDeployed, searchPackages } from './lib.mjs'
 import { DeployedPkgInfo, SearchPackagesResponse } from './types/data.mjs'
 
@@ -31,6 +31,12 @@ export default {
       async (installPkgReqs: InstallPkgReq[]): Promise<void> => {
         await install(installPkgReqs)
       },
+    () => true,
+  ),
+  getDefaultRegistry: defApi(
+    _ctx => async () => {
+      return NPM_REGISTRY
+    },
     () => true,
   ),
 }

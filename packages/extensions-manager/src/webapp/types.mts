@@ -12,6 +12,7 @@ export type NewCollectionFormValues = {
 export type WebPkgDeps = [typeof myConn]
 
 export type MainContextType = ReactAppMainComponentProps<WebPkgDeps> & {
+  defaultRegistry: string
   devMode: boolean
   setDevMode: React.Dispatch<React.SetStateAction<boolean>>
   selectedExtConfig: DeployedPkgInfo | null
