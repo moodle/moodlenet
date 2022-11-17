@@ -40,6 +40,8 @@ import {
 } from './ProfileCtrl.gen'
 const followersHref = href(mainPath.followers)
 
+// TODO: LOOK ETTORE FOR FORM
+
 const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
     .test((v, { createError }) =>

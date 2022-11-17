@@ -106,7 +106,7 @@ export const useProfileCardProps = (): ProfileCardProps => {
     //   initialValues: {},
     //   onSubmit: action('request Approval'),
     // }),
-    toggleIsEditing: () => true,
+    toggleIsEditing: () => setIsEditing(!isEditing),
     // openSendMessage: action('open Send Message'),
     moreButtonItems: [],
     form,

@@ -5,7 +5,6 @@ import { useProfileCardProps } from '../../organisms/ProfileCard/ProfileCardHook
 
 export const useProfileProps = (): ProfileProps => {
   const profileCardProps = useProfileCardProps()
-
   const mainLayoutProps = useMainLayoutProps()
 
   const panelProps = useMemo<ProfileProps>(() => {

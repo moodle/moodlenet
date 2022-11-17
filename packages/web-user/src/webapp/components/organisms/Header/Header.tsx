@@ -1,4 +1,3 @@
-import { ComponentType } from 'react'
 import { FC, ReactElement } from 'react'
 
 export const text = 'Profile'
