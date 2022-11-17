@@ -1,8 +1,10 @@
 import { run } from 'npm-check-updates'
-import { patchWdPackageJsonDeps, WORKING_DIR, writeWdPackageJson } from '../../main/env.mjs'
+import { patchWdPackageJsonDeps, WORKING_DIR } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
+import { overrideLocalMNLock } from '../../main/MNLock.mjs'
+import { rebootSystem } from '../../main/sys.mjs'
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO: any check on pkgIds ? (active / version)
@@ -38,9 +40,13 @@ export async function checkUpdates(): Promise<{ updatePkgs: Record<string, strin
 
 export async function updateAll(): Promise<{ updatePkgs: Record<string, string> }> {
   const { updatePkgs } = await checkUpdates()
+  if (Object.keys(updatePkgs).length === 0) {
+    return { updatePkgs }
+  }
 
   await patchWdPackageJsonDeps(updatePkgs)
-
+  await overrideLocalMNLock({ installed: false })
+  rebootSystem()
   return { updatePkgs }
 }
 
