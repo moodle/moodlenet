@@ -46,7 +46,7 @@
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [".tsx"]
+        "extensions": [".tsx", ".jsx"]
       }
     ],
     "react/jsx-uses-react": "error",
