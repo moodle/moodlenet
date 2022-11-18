@@ -19,6 +19,7 @@ export type ExtensionType = {
   icon?: string
   readme: string
   mandatory?: boolean
+  developedByMoodleNet?: boolean
   installed: boolean
   repositoryUrl: string
   isInstallingUninstalling: boolean

@@ -50,6 +50,7 @@ export const useManageExtensionsStoryProps = (overrides?: {
     useExtensionStoryProps({
       props: {
         icon: packageIcon4,
+        developedByMoodleNet: true,
         installed: true,
       },
     }),
