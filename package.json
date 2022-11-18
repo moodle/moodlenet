@@ -65,7 +65,8 @@
     "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
     "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
     "dev-install-be": "node bin/install.mjs",
-    "dev-backend": "node-dev bin/boot.mjs --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
+    "dev-backend": "node bin/boot.mjs",
+    "-dev-backend": "node-dev bin/boot.mjs --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
     "dev-backend-plain": "node bin/boot.mjs --forever --trace-warnings --inspect --enable-source-maps --",
     "dev-webapp": "node bin/dev-webapp.mjs",
     "dev-assistant": "lerna run dev-assistant --parallel --stream --"
