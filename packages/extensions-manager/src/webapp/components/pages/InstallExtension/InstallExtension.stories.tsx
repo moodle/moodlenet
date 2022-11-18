@@ -4,7 +4,6 @@ import { useFormik } from 'formik'
 import { FC } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import InstallExtension, {
-  ExtensionType,
   InstallExtensionFormValues,
   InstallExtensionMenu,
   InstallExtensionProps,
@@ -12,6 +11,7 @@ import InstallExtension, {
 
 import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 import packageIcon5 from '../../../assets/icons/package-icon-5.png'
+import { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 // import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'

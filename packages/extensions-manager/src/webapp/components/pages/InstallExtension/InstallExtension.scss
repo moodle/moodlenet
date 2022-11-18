@@ -3,6 +3,17 @@
   flex-direction: column;
   gap: 16px;
 
+  > .card.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+    > svg {
+      width: 34px;
+      height: 34px;
+    }
+  }
+
   > .card {
     display: flex;
     flex-direction: column;
