@@ -25,8 +25,8 @@
       &:hover {
         // background-color: #f9f9f9;
         border: 1px solid #d1d1d1;
-        transform: translate3d(0px, -5px, 0px);
-        box-shadow: rgb(0 0 0 / 8%) 0px 3px 10px 0px;
+        transform: translate3d(0px, -1px, 0px);
+        // box-shadow: rgb(0 0 0 / 8%) 0px 3px 10px 0px;
         > .primary-button {
           background-color: var(--primary-color-hover);
           box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
