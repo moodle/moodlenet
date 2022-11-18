@@ -1,8 +1,10 @@
 import { run } from 'npm-check-updates'
-import { WORKING_DIR, writeSysCurrPackagejson } from '../../main/env.mjs'
+import { patchWdPackageJsonDeps, WORKING_DIR } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
+import { overrideLocalMNLock } from '../../main/MNLock.mjs'
+import { rebootSystem } from '../../main/sys.mjs'
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO: any check on pkgIds ? (active / version)
@@ -36,12 +38,16 @@ export async function checkUpdates(): Promise<{ updatePkgs: Record<string, strin
   return { updatePkgs }
 }
 
-export async function updateAll(): Promise<Record<string, string>> {
-  const { updatePkgs: dependencies } = await checkUpdates()
+export async function updateAll(): Promise<{ updatePkgs: Record<string, string> }> {
+  const { updatePkgs } = await checkUpdates()
+  if (Object.keys(updatePkgs).length === 0) {
+    return { updatePkgs }
+  }
 
-  await writeSysCurrPackagejson({ dependencies })
-
-  return dependencies
+  await patchWdPackageJsonDeps(updatePkgs)
+  await overrideLocalMNLock({ installed: false })
+  rebootSystem()
+  return { updatePkgs }
 }
 
 export const NPM_REGISTRY =
