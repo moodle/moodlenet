@@ -1,11 +1,11 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { AddonItem, Card } from '@moodlenet/component-library'
+import { KeyboardArrowLeftRounded, KeyboardArrowUpRounded } from '@mui/icons-material'
 import { FC, useState } from 'react'
 import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
+import { ExtensionType } from '../Extensions/Extensions.js'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
-// import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 import './ManageExtensions.scss'
 
 export const ManageExtensionsMenu: AddonItem = {
@@ -15,22 +15,36 @@ export const ManageExtensionsMenu: AddonItem = {
 
 export type ManageExtensionsProps = {
   extensions: ExtensionType[]
+  setShowInstallExtension?: React.Dispatch<React.SetStateAction<boolean>>
   // menuItemPressed: boolean
 }
 
-const ManageExtensions: FC<ManageExtensionsProps> = ({ extensions }) => {
+const ManageExtensions: FC<ManageExtensionsProps> = ({ extensions, setShowInstallExtension }) => {
   const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>()
+  const [showManageExtensions, setShowManageExtensions] = useState(true)
+
+  const selectExtension = (ext: ExtensionType) => {
+    setSelectedExt(ext)
+    setShowInstallExtension && setShowInstallExtension(false)
+  }
+  const diselectExtension = () => {
+    setSelectedExt(undefined)
+    setShowInstallExtension && setShowInstallExtension(true)
+  }
 
   const manageExtensions = !selectedExt && (
     <div className="manage-extensions">
-      <Card className="title">
+      <Card className="title" onClick={() => setShowManageExtensions(!showManageExtensions)}>
         <div className="title">Manage extensions</div>
+        {showManageExtensions ? <KeyboardArrowUpRounded /> : <KeyboardArrowLeftRounded />}
       </Card>
-      <ExtensionsList
-        extensions={extensions}
-        setSelectedExt={setSelectedExt}
-        title="Installed extensions"
-      />
+      {showManageExtensions && (
+        <ExtensionsList
+          extensions={extensions}
+          setSelectedExt={selectExtension}
+          title="Installed extensions"
+        />
+      )}
     </div>
   )
 
@@ -38,7 +52,7 @@ const ManageExtensions: FC<ManageExtensionsProps> = ({ extensions }) => {
     <>
       {manageExtensions}
       {selectedExt && (
-        <ExtensionInfo extension={selectedExt} onClickBackBtn={() => setSelectedExt(undefined)}>
+        <ExtensionInfo extension={selectedExt} onClickBackBtn={diselectExtension}>
           {selectedExt.config && <selectedExt.config.Item key={selectedExt.config.key} />}
         </ExtensionInfo>
       )}

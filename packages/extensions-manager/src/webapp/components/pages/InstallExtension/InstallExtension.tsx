@@ -6,27 +6,13 @@ import {
   PrimaryButton,
   Snackbar,
 } from '@moodlenet/component-library'
+import { KeyboardArrowLeftRounded, KeyboardArrowUpRounded } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { FC, useState } from 'react'
 import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
+import { ExtensionType } from '../Extensions/Extensions.js'
 import './InstallExtension.scss'
-
-export type ExtensionType = {
-  name: string
-  displayName: string
-  description: string
-  icon?: string
-  readme: string
-  mandatory?: boolean
-  developedByMoodleNet?: boolean
-  installed: boolean
-  repositoryUrl: string
-  isInstallingUninstalling: boolean
-  installUninstallSucces: boolean
-  config?: AddonItem
-  toggleInstallingUninstalling: () => void
-}
 
 export type InstallExtensionFormValues = {
   localPath: string
@@ -45,7 +31,7 @@ export type InstallExtensionFormValues = {
 // const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 
 export const InstallExtensionMenu: AddonItem = {
-  Item: () => <span>Install extension</span>,
+  Item: () => <span>Extensions</span>,
   key: 'menu-install-extensions',
 }
 
@@ -56,6 +42,7 @@ export type InstallExtensionProps = {
   isInstalling?: boolean
   installSucces?: boolean
   setIsInstalling: () => void
+  setShowManageExtensions?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const InstallExtension: FC<InstallExtensionProps> = ({
@@ -65,10 +52,21 @@ const InstallExtension: FC<InstallExtensionProps> = ({
   isInstalling,
   installSucces,
   setIsInstalling,
+  setShowManageExtensions,
 }) => {
   const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>()
+  const [showInstallExtension, setShowInstallExtension] = useState(false)
   const shouldShowErrors = !!form.submitCount
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
+
+  const selectExtension = (ext: ExtensionType) => {
+    setSelectedExt(ext)
+    setShowManageExtensions && setShowManageExtensions(false)
+  }
+  const diselectExtension = () => {
+    setSelectedExt(undefined)
+    setShowManageExtensions && setShowManageExtensions(true)
+  }
 
   return (
     <>
@@ -79,10 +77,11 @@ const InstallExtension: FC<InstallExtensionProps> = ({
       )}
       {!selectedExt && (
         <div className="install-extension">
-          <Card className="title">
+          <Card className="title" onClick={() => setShowInstallExtension(!showInstallExtension)}>
             <div className="title">Install extension</div>
+            {showInstallExtension ? <KeyboardArrowUpRounded /> : <KeyboardArrowLeftRounded />}
           </Card>
-          {devMode && (
+          {devMode && showInstallExtension && (
             <Card>
               <div className="subtitle">From local package</div>
               <div className="option">
@@ -122,16 +121,16 @@ const InstallExtension: FC<InstallExtensionProps> = ({
               </div>
             </Card>
           )}
-          <ExtensionsList
-            extensions={extensions}
-            setSelectedExt={setSelectedExt}
-            title="Compatible extensions"
-          />
+          {showInstallExtension && (
+            <ExtensionsList
+              extensions={extensions}
+              setSelectedExt={selectExtension}
+              title="Compatible extensions"
+            />
+          )}
         </div>
       )}
-      {selectedExt && (
-        <ExtensionInfo extension={selectedExt} onClickBackBtn={() => setSelectedExt(undefined)} />
-      )}
+      {selectedExt && <ExtensionInfo extension={selectedExt} onClickBackBtn={diselectExtension} />}
     </>
   )
 }
