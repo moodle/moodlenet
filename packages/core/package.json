@@ -24,26 +24,18 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "axios": "^0.27.2",
-    "dependency-graph": "^0.11.0",
     "dotenv": "^16.0.0",
     "dotenv-expand": "^8.0.1",
     "execa": "^5.1.1",
-    "forever": "^4.0.3",
     "npm-check-updates": "^16.3.18",
     "pkg-dir": "^7.0.0",
-    "prompts": "^2.4.2",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.5.5",
     "semver": "^7.3.6",
-    "tar": "^6.1.11",
     "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.35",
-    "@types/prompts": "^2.0.14",
     "@types/semver": "^7.3.9",
-    "@types/tar": "^6.1.1",
     "@types/yargs": "^17.0.10",
     "typescript": "^4.7.2"
   },

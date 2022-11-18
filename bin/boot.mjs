@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 import execa from 'execa'
-import { moodlenetDevDir, args } from './env.mjs'
+import { mnDevDir, fwRestOpts, fwRestArgs } from './env.mjs'
 
-await execa('npm', ['start', '--', moodlenetDevDir, ...args], {
-  cwd: moodlenetDevDir,
+console.log({ fwRestOpts })
+await execa('npm', ['start' /* mnDevDir, */, '--', ...fwRestOpts, ...fwRestArgs], {
+  cwd: mnDevDir,
   stdout: process.stdout,
 })
