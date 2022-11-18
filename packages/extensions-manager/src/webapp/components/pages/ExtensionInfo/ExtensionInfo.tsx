@@ -10,6 +10,7 @@ import { ArrowBackIosNew } from '@mui/icons-material'
 import { FC, ReactNode, ReactPortal } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
+import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
 // import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 // import { searchNpmExtensionInfo } from '../../../../../helpers/utilities'
@@ -37,6 +38,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
     readme,
     installed,
     isInstallingUninstalling,
+    developedByMoodleNet,
     installUninstallSucces,
     toggleInstallingUninstalling,
   } = extension
@@ -112,53 +114,63 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
             )}
           </div>
         </div>
-        <div className="header-right">
-          <div className="top-header">
+        <div className="header-center">
+          <div className="top">
             <div className="title">{displayName}</div>
-            {installed ? (
-              <SecondaryButton
-                className={`install-uninstall-btn ${isInstallingUninstalling ? 'loading' : ''}`}
-                noHover={isInstallingUninstalling}
-                color="grey"
-                disabled={mandatory}
-                onClick={toggleInstallingUninstalling}
+            {developedByMoodleNet && (
+              <abbr
+                className={`approved-icon`}
+                title={`This extensions is mantained and recommended by the MoodleNet team`}
               >
-                <div
-                  className="loading"
-                  style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
-                >
-                  <Loading color="#727588" />
-                </div>
-                <div
-                  className="label"
-                  style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
-                >
-                  Uninstall
-                </div>
-              </SecondaryButton>
-            ) : (
-              <PrimaryButton
-                className={`install-uninstall-btn ${isInstallingUninstalling ? 'loading' : ''}`}
-                noHover={isInstallingUninstalling}
-                disabled={mandatory}
-                onClick={toggleInstallingUninstalling}
-              >
-                <div
-                  className="loading"
-                  style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
-                >
-                  <Loading color="white" />
-                </div>
-                <div
-                  className="label"
-                  style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
-                >
-                  Install
-                </div>
-              </PrimaryButton>
+                <ApprovedIcon />
+              </abbr>
             )}
           </div>
-          <div className="description">{description}</div>
+          <div className="details">{description}</div>
+        </div>
+        <div className="header-right">
+          {installed ? (
+            <SecondaryButton
+              className={`install-uninstall-btn ${isInstallingUninstalling ? 'loading' : ''}`}
+              noHover={isInstallingUninstalling}
+              color="grey"
+              disabled={mandatory}
+              onClick={toggleInstallingUninstalling}
+            >
+              <div
+                className="loading"
+                style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
+              >
+                <Loading color="#727588" />
+              </div>
+              <div
+                className="label"
+                style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
+              >
+                Uninstall
+              </div>
+            </SecondaryButton>
+          ) : (
+            <PrimaryButton
+              className={`install-uninstall-btn ${isInstallingUninstalling ? 'loading' : ''}`}
+              noHover={isInstallingUninstalling}
+              disabled={mandatory}
+              onClick={toggleInstallingUninstalling}
+            >
+              <div
+                className="loading"
+                style={{ visibility: isInstallingUninstalling ? 'visible' : 'hidden' }}
+              >
+                <Loading color="white" />
+              </div>
+              <div
+                className="label"
+                style={{ visibility: isInstallingUninstalling ? 'hidden' : 'visible' }}
+              >
+                Install
+              </div>
+            </PrimaryButton>
+          )}
         </div>
       </Card>
       {children}

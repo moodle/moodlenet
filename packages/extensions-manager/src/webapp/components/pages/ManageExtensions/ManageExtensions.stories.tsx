@@ -1,6 +1,5 @@
 import { SettingsItem } from '@moodlenet/react-app/ui'
 import { FC } from 'react'
-import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 import { useExtensionStoryProps } from '../InstallExtension/InstallExtension.stories.js'
 import ManageExtensions, {
   ManageExtensionsMenu,
@@ -10,6 +9,7 @@ import ManageExtensions, {
 import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 import packageIcon1 from '../../../assets/icons/package-icon.png'
+import { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon5 from '../../../assets/icons/package-icon-5.png'
 // import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 
@@ -50,6 +50,7 @@ export const useManageExtensionsStoryProps = (overrides?: {
     useExtensionStoryProps({
       props: {
         icon: packageIcon4,
+        developedByMoodleNet: true,
         installed: true,
       },
     }),

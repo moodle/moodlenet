@@ -17,11 +17,17 @@ export const setOpacity = (color: string, opacity: number): string => {
   const _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255)
   return color + _opacity.toString(16).toUpperCase()
 }
+export const setRgbOpacity = (color: RgbType, opacity: number): RgbaType => {
+  // coerce values so ti is between 0 and 1.
+  const _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255)
+  return { ...color, a: _opacity }
+}
 
 export const randomColor = () =>
   `#${Math.floor(Math.random() * 16777215).toString(16)}`
 
 type RgbType = { r: number; g: number; b: number }
+type RgbaType = { r: number; g: number; b: number; a: number }
 
 export const hexToRgb = (hex: string): RgbType => {
   // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")

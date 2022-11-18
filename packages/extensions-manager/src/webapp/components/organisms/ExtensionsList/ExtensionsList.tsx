@@ -4,6 +4,7 @@ import { FC } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { DevModeBtn } from '../Extensions.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
 import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
 import { ExtensionType } from '../../pages/InstallExtension/InstallExtension.js'
 import './ExtensionsList.scss'
@@ -20,13 +21,13 @@ const ExtensionsList: FC<ExtensionsListProps> = ({ extensions, title, setSelecte
       <div className="subtitle">{title}</div>
       <div className="list">
         {extensions.map(extension => {
-          const { displayName, description, icon } = extension
+          const { displayName, description, icon, developedByMoodleNet } = extension
           const background = icon
             ? { backgroundImage: `url("${extension.icon}")`, backgroundSize: 'cover' }
             : { background: getPastelColor(getNumberFromString(displayName), 0.5) }
           return (
             <div
-              className="package"
+              className="extension"
               key={extension.displayName}
               onClick={() => {
                 setSelectedExt(extension)
@@ -45,7 +46,17 @@ const ExtensionsList: FC<ExtensionsListProps> = ({ extensions, title, setSelecte
                 )}
               </div>
               <div className="info">
-                <div className="title">{displayName}</div>
+                <div className="top">
+                  <div className="title">{displayName}</div>
+                  {developedByMoodleNet && (
+                    <abbr
+                      className={`approved-icon`}
+                      title={`This extensions is mantained and recommended by the MoodleNet team`}
+                    >
+                      <ApprovedIcon />
+                    </abbr>
+                  )}
+                </div>
                 <div className="details">{description}</div>
               </div>
               <PrimaryButton className="install-btn">Details</PrimaryButton>
