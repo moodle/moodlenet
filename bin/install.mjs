@@ -3,14 +3,14 @@
 import { resolve } from 'path'
 import rimraf from 'rimraf'
 import execa from 'execa'
-import { moodlenetDevDir, opts, args } from './env.mjs'
+import { mnDevDir, restOpts, fwRestArgs } from './env.mjs'
 
-if (opts.clean) {
-  rimraf.sync(moodlenetDevDir)
+if (restOpts.clean) {
+  rimraf.sync(mnDevDir)
 }
 
-console.log(`installing dev in ${moodlenetDevDir}`, { args, opts })
-await execa('npm', ['start', '--', moodlenetDevDir, '--dev-install-local-repo-symlinks', ...args], {
+console.log(`installing dev in ${mnDevDir}`, { fwRestArgs, restOpts })
+await execa('npm', ['start', '--', mnDevDir, '--dev-install-local-repo-symlinks', ...fwRestArgs], {
   cwd: resolve(process.cwd(), 'packages', 'create-moodlenet'),
   timeout: 600000,
   stdout: process.stdout,
@@ -20,7 +20,7 @@ await execa('npm', ['start', '--', moodlenetDevDir, '--dev-install-local-repo-sy
 //   'npm',
 //   ['pkg', 'set', `scripts.start=pm2 restart --force --name xx --watch --update-env --attach --env development moodlenet.config.js`],
 //   {
-//     cwd: moodlenetDevDir,
+//     cwd: mnDevDir,
 //     stdout: process.stdout,
 //   },
 // )
