@@ -16,7 +16,11 @@ await execa('npm', ['start', '--', moodlenetDevDir, '--dev-install-local-repo-sy
   stdout: process.stdout,
 })
 
-await execa('npm', ['pkg', 'set', `scripts.start=node node_modules/@moodlenet/core/bin/boot.mjs`], {
-  cwd: moodlenetDevDir,
-  stdout: process.stdout,
-})
+// await execa(
+//   'npm',
+//   ['pkg', 'set', `scripts.start=pm2 restart --force --name xx --watch --update-env --attach --env development moodlenet.config.js`],
+//   {
+//     cwd: moodlenetDevDir,
+//     stdout: process.stdout,
+//   },
+// )

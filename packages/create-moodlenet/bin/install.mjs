@@ -12,13 +12,15 @@ const opts = await yargs(process.argv.slice(2))
 const argv = await opts.argv
 
 const installDir = resolve(process.cwd(), String(argv._))
+const installationBaseDir = basename(installDir)
+const installationName = `moodlenet.${installationBaseDir}`
+const pm2ConfigFileName = `${installationName}.config.js`
 
 const { 'dev-install-local-repo-symlinks': useLocalRepo } = argv
 
 await mkdir(installDir, { recursive: true })
 
 const installPkgJson = await freshInstallPkgJson()
-
 await writeFile(resolve(installDir, 'package.json'), JSON.stringify(installPkgJson, null, 2), {
   encoding: 'utf8',
 })
@@ -27,8 +29,19 @@ console.log(`
 installing moodlenet@${myPkgJson.version} in ${installDir}
 may take some time...
 `)
-
 await execa('npm', ['install'], { cwd: installDir, stdout: process.stdout })
+
+console.log(`
+installing pm2...
+`)
+await execa('npm', ['install', '-D', 'pm2'], {
+  cwd: installDir,
+  stdout: process.stdout,
+})
+
+await writeFile(resolve(installDir, pm2ConfigFileName), getPm2ConfigFileStr(), {
+  encoding: 'utf8',
+})
 
 process.exit(0)
 
@@ -73,14 +86,31 @@ async function freshInstallPkgJson() {
   }, {})
 
   return {
-    name: basename(installDir),
+    name: installationName,
     version: '1',
     installTimeVersion: myPkgJson.version,
     scripts: {
-      start: 'npx @moodlenet/core',
+      start: `pm2 restart --force --name ${installationName} --watch --update-env --attach ${pm2ConfigFileName}`,
     },
     dependencies,
   }
+}
+function getPm2ConfigFileStr() {
+  return `
+module.exports = {
+  apps: [{
+    name: '${installationName}',
+    script: './node_modules/@moodlenet/core/bin/boot.mjs',
+    cwd:'.',    
+    env_development: {
+      NODE_ENV: 'development'
+    },
+    env_production: {
+      NODE_ENV: 'production'
+    }
+  }]
+}
+`
 }
 
 // async function writeJson(path, json) {
