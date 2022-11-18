@@ -5,7 +5,7 @@ import { MyContext } from './Context.js'
 import Router from './Router.jsx'
 
 const MyPageLink = () => {
-  return <Link href={{ url: '/my-moodlenet-pkg-template' }}>my page</Link>
+  return <Link href={{ url: '/my-moodlenet-mjs-pkg-template' }}>my page</Link>
 }
 const MainComponent = ({ pkgs, pkgId, children }) => {
   registries.routes.useRegister(pkgId, Router)
