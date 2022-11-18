@@ -16,9 +16,11 @@ const installationBaseDir = basename(installDir)
 const installationName = `moodlenet.${installationBaseDir}`
 const pm2ConfigFileName = `${installationName}.config.js`
 
-const { 'dev-install-local-repo-symlinks': useLocalRepo } = argv
+const { devInstallLocalRepoSymlinks } = argv
 
 await mkdir(installDir, { recursive: true })
+
+const currentRegistryStr = (await execa('npm', ['get', 'registry'])).stdout
 
 const installPkgJson = await freshInstallPkgJson()
 await writeFile(resolve(installDir, 'package.json'), JSON.stringify(installPkgJson, null, 2), {
@@ -26,22 +28,33 @@ await writeFile(resolve(installDir, 'package.json'), JSON.stringify(installPkgJs
 })
 
 console.log(`
-installing moodlenet@${myPkgJson.version} in ${installDir}
-may take some time...
+installing pm2 config...
 `)
-await execa('npm', ['install'], { cwd: installDir, stdout: process.stdout })
+await writeFile(resolve(installDir, pm2ConfigFileName), getPm2ConfigFileStr(), {
+  encoding: 'utf8',
+})
 
 console.log(`
-installing pm2...
+installing moodlenet@${myPkgJson.version} core packages in ${installDir}
+may take some time...
 `)
-await execa('npm', ['install', '-D', 'pm2'], {
+await execa('npm', ['install'], {
   cwd: installDir,
   stdout: process.stdout,
 })
 
+console.log(`
+installing pm2...
+`)
+
 await writeFile(resolve(installDir, pm2ConfigFileName), getPm2ConfigFileStr(), {
   encoding: 'utf8',
 })
+!devInstallLocalRepoSymlinks &&
+  (await execa('npm', ['install', '-D', 'pm2'], {
+    cwd: installDir,
+    stdout: process.stdout,
+  }))
 
 process.exit(0)
 
@@ -68,7 +81,7 @@ async function freshInstallPkgJson() {
   const defaultCorePackageWithVersion = await Promise.all(
     defaultCorePackages.map(async pkgName => {
       const fullPkgName = `@moodlenet/${pkgName}`
-      const version = useLocalRepo
+      const version = devInstallLocalRepoSymlinks
         ? `file:${resolve(myModuleDir, '..', '..', pkgName)}`
         : (await execa('npm', ['view', fullPkgName, 'dist-tags.latest'])).stdout
       return {
@@ -90,22 +103,26 @@ async function freshInstallPkgJson() {
     version: '1',
     installTimeVersion: myPkgJson.version,
     scripts: {
-      start: `pm2 restart --force --name ${installationName} --watch --update-env --attach ${pm2ConfigFileName}`,
+      start: `pm2 restart --force --name ${installationName} --watch --update-env --attach --wait-ready ${pm2ConfigFileName}`,
     },
     dependencies,
   }
 }
 function getPm2ConfigFileStr() {
+  const currentRegistryEnvVar = currentRegistryStr
+    ? `
+      npm_config_registry:'${currentRegistryStr}',`
+    : ''
   return `
 module.exports = {
   apps: [{
     name: '${installationName}',
-    script: './node_modules/@moodlenet/core/bin/boot.mjs',
+    script: 'npx @moodlenet/core',
     cwd:'.',    
-    env_development: {
+    env_development: {${currentRegistryEnvVar}
       NODE_ENV: 'development'
     },
-    env_production: {
+    env_production: {${currentRegistryEnvVar}
       NODE_ENV: 'production'
     }
   }]

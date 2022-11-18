@@ -34,6 +34,8 @@ await Promise.all(imports)
 
 console.log('\n------- ALL PACKAGES IMPORTED -------\n')
 
+process.send?.('ready')
+
 async function ensureInstallPackages() {
   if ((await readLocalMNLock()).installed) {
     return
