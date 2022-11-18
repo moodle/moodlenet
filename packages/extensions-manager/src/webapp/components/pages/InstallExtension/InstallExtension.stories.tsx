@@ -4,7 +4,6 @@ import { useFormik } from 'formik'
 import { FC } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import InstallExtension, {
-  ExtensionType,
   InstallExtensionFormValues,
   InstallExtensionMenu,
   InstallExtensionProps,
@@ -12,6 +11,7 @@ import InstallExtension, {
 
 import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 import packageIcon5 from '../../../assets/icons/package-icon-5.png'
+import { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 // import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'
@@ -65,6 +65,7 @@ export const useInstallExtensionStoryProps = (overrides?: {
         icon: packageIcon5,
         // installed: true,
         // installUninstallSucces: true,
+        developedByMoodleNet: true,
         repositoryUrl:
           'https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/react-app',
         readme:
@@ -77,6 +78,7 @@ export const useInstallExtensionStoryProps = (overrides?: {
         displayName: 'Web user',
         description: 'Extension to display user public information',
         // icon: packageIcon2,
+        developedByMoodleNet: true,
         repositoryUrl:
           'https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/web-user',
         readme:
