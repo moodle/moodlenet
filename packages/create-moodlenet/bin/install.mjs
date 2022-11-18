@@ -21,6 +21,7 @@ const { devInstallLocalRepoSymlinks } = argv
 await mkdir(installDir, { recursive: true })
 
 const currentRegistryStr = (await execa('npm', ['get', 'registry'])).stdout
+const currentRegistry = currentRegistryStr === 'undefined' ? undefined : currentRegistryStr
 
 const installPkgJson = await freshInstallPkgJson()
 await writeFile(resolve(installDir, 'package.json'), JSON.stringify(installPkgJson, null, 2), {
@@ -103,26 +104,27 @@ async function freshInstallPkgJson() {
     version: '1',
     installTimeVersion: myPkgJson.version,
     scripts: {
-      start: `pm2 restart --force --name ${installationName} --watch --update-env --attach --wait-ready ${pm2ConfigFileName}`,
+      'start': `pm2 restart --source-map-support --force --name ${installationName} --update-env --attach --wait-ready ${pm2ConfigFileName}`,
+      'start-dev': `pm2-dev --raw --node-args="--trace-uncaught --enable-source-maps" start moodlenet.cacca.config.js`,
     },
     dependencies,
   }
 }
 function getPm2ConfigFileStr() {
-  const currentRegistryEnvVar = currentRegistryStr
-    ? `
-      npm_config_registry:'${currentRegistryStr}',`
-    : ''
+  const currentRegistryEnvVar = currentRegistry ? `'${currentRegistry}'` : 'undefined'
   return `
 module.exports = {
   apps: [{
     name: '${installationName}',
-    script: 'npx @moodlenet/core',
+    script: 'npx',
+    args: '@moodlenet/core',
     cwd:'.',    
-    env_development: {${currentRegistryEnvVar}
+    env_development: {
+      npm_config_registry: ${currentRegistryEnvVar},
       NODE_ENV: 'development'
     },
-    env_production: {${currentRegistryEnvVar}
+    env_production: {
+      npm_config_registry: ${currentRegistryEnvVar},
       NODE_ENV: 'production'
     }
   }]
