@@ -65,6 +65,7 @@ export const useInstallExtensionStoryProps = (overrides?: {
         icon: packageIcon5,
         // installed: true,
         // installUninstallSucces: true,
+        developedByMoodleNet: true,
         repositoryUrl:
           'https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/react-app',
         readme:
@@ -77,6 +78,7 @@ export const useInstallExtensionStoryProps = (overrides?: {
         displayName: 'Web user',
         description: 'Extension to display user public information',
         // icon: packageIcon2,
+        developedByMoodleNet: true,
         repositoryUrl:
           'https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/web-user',
         readme:
