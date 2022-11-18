@@ -70,8 +70,5 @@
     "dev-backend-plain": "node bin/boot.mjs --forever --trace-warnings --inspect --enable-source-maps --",
     "dev-webapp": "node bin/dev-webapp.mjs",
     "dev-assistant": "lerna run dev-assistant --parallel --stream --"
-  },
-  "dependencies": {
-    "yup": "^0.32.11"
   }
 }
