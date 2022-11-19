@@ -39,7 +39,9 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
                     <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
                       <div className={`border ${isCurrent ? 'selected' : ''}`} />
                     </div>
-                    <div className={`content`}>{<settingsEntry.Menu.Item />}</div>
+                    <div className={`content ${isCurrent ? 'selected' : ''}`}>
+                      {<settingsEntry.Menu.Item />}
+                    </div>
                   </div>
                 )
               })}
