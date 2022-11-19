@@ -1,12 +1,11 @@
 import { useMemo } from 'react'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { registries } from '../../../../web-lib.mjs'
-import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
-import { AppearanceContainer } from './Appearance/GeneralContainer.js'
-import { GeneralContainer } from './General/GeneralContainer.js'
-import { SettingsItem, SettingsProps } from './Settings.js'
-import './Settings.scss'
+import { registries } from '../../../../../../web-lib.mjs'
+import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
+import { AppearanceContainer } from '../../Appearance/GeneralContainer.js'
+import { GeneralContainer } from '../../General/GeneralContainer.js'
+import { SettingsItem, SettingsProps } from '../Settings.js'
 
 const localSettingsItems: SettingsItem[] = [
   {

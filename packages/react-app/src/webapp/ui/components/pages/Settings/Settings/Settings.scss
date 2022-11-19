@@ -1,4 +1,4 @@
-@import '../../../styles/application.scss';
+@import '../../../../styles/application.scss';
 
 .settings {
   width: 100%;
@@ -14,22 +14,6 @@
     grid-template-columns: 240px repeat(1, auto);
   }
 
-  @media screen and (max-width: 800px) {
-    &.menu-visible {
-      grid-template-columns: 240px 800px;
-    }
-    &.menu-hidden {
-      display: flex;
-    }
-  }
-
-  @media (max-width: 450px) {
-    margin-top: 4px;
-    &.menu-visible {
-      padding: 0 25px;
-    }
-  }
-
   > * {
     display: flex;
   }
@@ -43,38 +27,61 @@
       padding: 30px 0;
       display: flex;
       flex-direction: column;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
       > .section {
+        display: flex;
         cursor: pointer;
         font-size: 18px;
         font-weight: 500;
-        padding: 14px 48px;
         color: black;
-        &.selected {
+
+        > .border-container {
+          width: 6px;
+          height: 100%;
+          > .border {
+            width: 100%;
+            height: 100%;
+            &.selected {
+              background-color: var(--primary-color);
+            }
+          }
+        }
+
+        > .content {
           padding: 14px 48px 14px 42px;
-          background: var(--primary-background-color);
-          border-left: 6px solid var(--primary-color);
+          &.selected {
+            background: var(--primary-background-color);
+          }
         }
       }
     }
   }
+
   > .content {
-    grid-column-start: 2;
-    max-width: 800px;
     // max-width: 1100px;
     width: 100%;
     min-width: 0;
+    justify-content: center;
 
     > *:not(.snackbar) {
       width: 100%;
+      max-width: 800px;
       min-width: 0;
       display: flex;
       flex-direction: column;
       gap: 16px;
       @media (max-width: 450px) {
-        gap: 0;
+        &,
+        > * {
+          gap: 0;
+        }
       }
 
-      > .card:not(.snackbar) {
+      > .card:not(.snackbar),
+      > * > .card {
         padding: 24px;
         @media (max-width: 450px) {
           box-shadow: none;
@@ -159,25 +166,65 @@
       }
     }
   }
+
+  @media (max-width: 1000px) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 4px;
+
+    > .left-menu {
+      justify-content: center;
+      margin-right: inherit;
+      box-shadow: 0px 6px 4px -5px #e1dedb;
+      margin: 0 -25px;
+      > .card {
+        padding: 0;
+        flex-direction: row;
+        box-shadow: none;
+        overflow-x: scroll;
+        padding: 0 8px;
+        border-radius: 0;
+
+        > .section {
+          flex-direction: column-reverse;
+          > .border-container {
+            width: 100%;
+            height: 6px;
+            padding: 0 24px;
+            > .border {
+              width: 100%;
+              height: 100%;
+              &.selected {
+                border-radius: 4px 4px 0px 0px;
+                background-color: var(--primary-color);
+              }
+            }
+          }
+          > .content {
+            font-size: 15px;
+            padding: 14px 18px 10px 18px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 450px) {
+    > .left-menu {
+      > .card {
+        > .section {
+          > .content {
+            padding: 4px 18px 10px 18px;
+          }
+        }
+      }
+    }
+  }
 }
 
 .main-layout {
   > .content {
     height: fit-content;
-  }
-}
-
-.header {
-  > .content {
-    > .left {
-      > .header-menu-btn {
-        color: #858585;
-        cursor: pointer;
-        display: none;
-        @media screen and (max-width: 800px) {
-          display: block;
-        }
-      }
-    }
   }
 }
