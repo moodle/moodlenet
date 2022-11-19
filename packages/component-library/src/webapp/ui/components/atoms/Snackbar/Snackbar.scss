@@ -95,23 +95,3 @@
     }
   }
 }
-
-.view > .snackbar-stack,
-.snackbar-stack {
-  z-index: 9;
-  display: flex;
-  gap: 12px;
-  position: fixed;
-  align-items: center;
-  height: fit-content;
-  flex-direction: column;
-  width: 100%;
-
-  &.position-top {
-    top: 68px;
-  }
-
-  &.position-bottom {
-    bottom: 20px;
-  }
-}

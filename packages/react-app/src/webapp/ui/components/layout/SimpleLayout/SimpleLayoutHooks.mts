@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { SettingsCtx } from '../../../../components.mjs'
+import { SettingsCtx } from '../../../../context/SettingsContext.js'
 import { useMinimalisticHeaderProps } from '../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 import { SimpleLayoutProps } from './SimpleLayout.js'
 
