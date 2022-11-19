@@ -1,4 +1,4 @@
-import './styles.scss'
+import './SnackbarStack.scss'
 
 export type SnackbarStackProps = {
   snackbarList: (React.ReactElement | null)[] | null

@@ -1,6 +1,5 @@
-import { Menu as MenuIcon } from '@material-ui/icons'
-import { FC, useEffect, useState } from 'react'
-import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
+import { FC, useState } from 'react'
+import MainLayout, { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { AddonItem, Card } from '@moodlenet/component-library'
@@ -14,33 +13,6 @@ export type SettingsProps = {
 
 export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) => {
   const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0])
-  const [showMenu, toggleMenu] = useState(document.documentElement.clientWidth > 700 ? true : false)
-
-  useEffect(() => {
-    const handleResize = () => {
-      document.documentElement.clientWidth > 700 && toggleMenu(true)
-    }
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  const headerLeftItems = [
-    {
-      Item: () => (
-        <div
-          onClick={() => toggleMenu(!showMenu)}
-          className="header-menu-btn"
-          key="header-menu-btn"
-        >
-          <MenuIcon className="menu-btn" />
-        </div>
-      ),
-      key: 'header-menu-btn',
-    },
-  ]
 
   return (
     <MainLayout
@@ -48,12 +20,10 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
       streched={true}
       headerProps={{
         ...mainLayoutProps.headerProps,
-
-        leftItems: headerLeftItems,
       }}
     >
-      <div className={`settings ${showMenu ? 'menu-visible' : 'menu-hidden'}`}>
-        {showMenu && (
+      <div className={`settings`}>
+        {
           <div className="left-menu">
             <Card>
               {settingsItems.map(settingsEntry => {
@@ -66,13 +36,16 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
                     className={`section ${isCurrent ? 'selected' : ''}`}
                     onClick={onClick}
                   >
-                    {<settingsEntry.Menu.Item />}
+                    <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
+                      <div className={`border ${isCurrent ? 'selected' : ''}`} />
+                    </div>
+                    <div className={`content`}>{<settingsEntry.Menu.Item />}</div>
                   </div>
                 )
               })}
             </Card>
           </div>
-        )}
+        }
         {currSettingsItem && (
           <div className="content" key={currSettingsItem.Content.key}>
             {currSettingsItem ? <currSettingsItem.Content.Item /> : <></>}
