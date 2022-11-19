@@ -11,3 +11,5 @@ export const HeaderProfileStoryProps = (icon: string): HeaderMenuItem => {
     key: key,
   }
 }
+
+export default HeaderProfileStoryProps
