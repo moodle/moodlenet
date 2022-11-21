@@ -1,4 +1,9 @@
-import type { CollectionDef, CollectionDefOpt, CollectionKind, CollectionOpts } from '@moodlenet/arangodb'
+import type {
+  CollectionDef,
+  CollectionDefOpt,
+  CollectionKind,
+  CollectionOpts,
+} from '@moodlenet/arangodb'
 import type { UserId } from '@moodlenet/authentication-manager'
 
 // type DateString = string
@@ -9,7 +14,10 @@ export type ContentGraphGlyphs = GlyphDefsMap<{
   Deleted: { kind: 'edge'; type: WithDate<{}> }
 }>
 
-export type GlyphDef<Kind extends CollectionKind = CollectionKind, Type extends {} = {}> = CollectionDef<Kind, Type>
+export type GlyphDef<
+  Kind extends CollectionKind = CollectionKind,
+  Type extends {} = {},
+> = CollectionDef<Kind, Type>
 
 export type GlyphDefsMap<Defs extends Record<string, GlyphDef> = Record<string, GlyphDef>> = Defs
 
@@ -46,7 +54,10 @@ export type GlyphID = `${string}/${string}`
 // declare const GLYPH_ID_SYMBOL: unique symbol
 // type GLYPH_ID_SYMBOL = typeof GLYPH_ID_SYMBOL
 
-export type GlyphIdentifier<Kind extends CollectionKind = CollectionKind, Typename extends string = string> =
+export type GlyphIdentifier<
+  Kind extends CollectionKind = CollectionKind,
+  Typename extends string = string,
+> =
   | GlyphID
   | ({
       _kind?: Kind
@@ -96,18 +107,19 @@ export type EdgeGlyphMeta<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescr
 export type EdgeData<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
   GlyphDesc extends GlyphDescriptor<'edge', infer EdgeDataType> ? EdgeDataType : never
 /*  GlyphDesc[GLYPHDESCTYPE_SYMBOL]  */
-export type EdgeGlyph<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> = EdgeData<GlyphDesc> &
-  EdgeGlyphMeta<GlyphDesc>
+export type EdgeGlyph<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
+  EdgeData<GlyphDesc> & EdgeGlyphMeta<GlyphDesc>
 
 export type NodeData<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
   GlyphDesc extends GlyphDescriptor<'node', infer NodeDataType> ? NodeDataType & ContentNode : never
 /*  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & ContentNode */
-export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> = NodeData<GlyphDesc> &
-  NodeGlyphMeta<GlyphDesc>
+export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
+  NodeData<GlyphDesc> & NodeGlyphMeta<GlyphDesc>
 
 export type Glyph = NodeGlyph | EdgeGlyph
 
 export type WithPerformerNodeIdentifier = { performerNode: GlyphIdentifier<'node'> }
+export type EditNodeOpts = {} //& WithPerformerNodeIdentifier
 export type CreateNodeOpts = { authenticableBy: { userId: UserId } } & WithPerformerNodeIdentifier
 export type CreateEdgeOpts = {} /* & WithPerformerIdentifier */
 

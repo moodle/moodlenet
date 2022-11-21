@@ -1,6 +1,6 @@
 import { AddonItem, Card, Switch } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC } from 'react'
+import { FC, useCallback } from 'react'
 import './Advanced.scss'
 
 export type AdvancedFormValues = {
@@ -17,9 +17,11 @@ export const AdvancedMenu: AddonItem = {
 }
 
 export const Advanced: FC<AdvancedProps> = ({ form }) => {
-  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
+  // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   // const [devMode, setDevMode] = useState(false)
-
+  const toggleDevMode = useCallback(() => {
+    form.submitForm()
+  }, [form])
   return (
     <div className="advanced" key="advanced">
       <Card className="column">
@@ -39,7 +41,7 @@ export const Advanced: FC<AdvancedProps> = ({ form }) => {
             <Switch
               className="toggle-dev-mode"
               enabled={form.values.devMode}
-              toggleSwitch={() => form.setFieldValue('devMode', !form.values.devMode)}
+              toggleSwitch={toggleDevMode}
             />
           </div>
         </div>

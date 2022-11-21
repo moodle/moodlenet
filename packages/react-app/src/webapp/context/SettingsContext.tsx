@@ -7,9 +7,10 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useReducer,
   useState,
 } from 'react'
-import { defaultAppearanceFormValues } from '../../common/appearance/data.mjs'
+import { defaultAppearanceData } from '../../common/appearance/data.mjs'
 import { AppearanceData } from '../../common/types.mjs'
 import { MainContext } from './MainContext.js'
 // import lib from '../../../../main-lib'
@@ -19,10 +20,11 @@ export type SettingsSectionItem = {
   Content: ComponentType
 }
 
-export type AppearanceDataType = AppearanceData
 export type SettingsCtxT = {
   saveAppearanceData(data: AppearanceData): unknown
   appearanceData: AppearanceData
+  devMode: boolean
+  toggleDevMode(): void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,7 +35,7 @@ export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     pkgs: [reactAppSrv, organizationSrv],
   } = useContext(MainContext)
 
-  const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceFormValues)
+  const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(
     async (newAppearanceData: AppearanceData) => {
@@ -43,6 +45,8 @@ export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     },
     [reactAppSrv],
   )
+
+  const [devMode, toggleDevMode] = useReducer(prev => !prev, false)
 
   useEffect(() => {
     reactAppSrv
@@ -54,8 +58,10 @@ export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     return {
       saveAppearanceData,
       appearanceData,
+      devMode,
+      toggleDevMode,
     }
-  }, [saveAppearanceData, appearanceData])
+  }, [saveAppearanceData, appearanceData, devMode])
 
   return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }

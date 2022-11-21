@@ -1,4 +1,4 @@
-import { AppearanceFormValues } from '../../webapp/components.mjs'
+import { AppearanceData } from '../types.mjs'
 import { adjustColor, getColorPalette, randomColor, setOpacity } from './colorUtilities.mjs'
 
 export const baseMoodleColor = '#F88012'
@@ -39,7 +39,7 @@ export const randomStyle = (): BaseStyleType => {
 
 export const getAppearanceStyle = (
   baseColor: string,
-): Pick<AppearanceFormValues, 'color' | 'customStyle'> => {
+): Pick<AppearanceData, 'color' | 'customStyle'> => {
   return {
     color: baseColor,
     customStyle: {
@@ -49,9 +49,9 @@ export const getAppearanceStyle = (
   }
 }
 
-export const defaultAppearanceFormValues: AppearanceFormValues = {
+export const defaultAppearanceData: AppearanceData = {
   logo: '',
   smallLogo: '',
-  scss: '',
+  // scss: '',
   ...getAppearanceStyle(baseMoodleColor),
 }

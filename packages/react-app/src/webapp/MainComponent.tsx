@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { ContentGraphProvider } from './components.mjs'
 import { MainContext, MainContextT } from './context/MainContext.js'
+
 import * as registries from './registries.mjs'
 import * as set from './context/SettingsContext.js'
 import { ReactAppMainComponent } from './web-lib.mjs'
@@ -30,11 +30,9 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
                     <Organization.Provider>
                       <auth.AuthProvider>
                         <set.SettingsProvider>
-                          <ContentGraphProvider>
-                            {/* <I18nProvider i18n={i18n}> */}
-                            {children}
-                            {/* </I18nProvider> */}
-                          </ContentGraphProvider>
+                          {/* <I18nProvider i18n={i18n}> */}
+                          {children}
+                          {/* </I18nProvider> */}
                         </set.SettingsProvider>
                       </auth.AuthProvider>
                     </Organization.Provider>

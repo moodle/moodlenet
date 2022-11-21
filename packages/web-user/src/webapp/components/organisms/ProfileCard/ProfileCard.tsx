@@ -11,11 +11,12 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
+import { ProfileFormValues } from '../../../../types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackgroud from '../../../assets/img/default-background.svg'
-import { ProfileFormValues } from '../../../types.mjs'
 import './ProfileCard.scss'
 
+export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
 export type ProfileCardProps = {
   form: ReturnType<typeof useFormik<ProfileFormValues>>
   // userId: string
@@ -103,13 +104,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
     form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
-  const [backgroundUrl] = useImageUrl(form.values.backgroundImage, defaultBackgroud)
+  const [backgroundUrl] = useImageUrl(/* form.values.backgroundImage */ null, defaultBackgroud)
   const background = {
     backgroundImage: 'url("' + backgroundUrl + '")',
     backgroundSize: 'cover',
   }
 
-  const [avatarUrl] = useImageUrl(form.values.avatarImage, defaultAvatar)
+  const [avatarUrl] = useImageUrl(/* form.values.avatarImage */ null, defaultAvatar)
   const avatar = {
     backgroundImage: 'url("' + avatarUrl + '")',
     backgroundSize: 'cover',

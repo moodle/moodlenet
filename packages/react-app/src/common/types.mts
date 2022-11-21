@@ -1,6 +1,7 @@
 import type authConn from '@moodlenet/authentication-manager'
 import { BaseStyleType } from '@moodlenet/component-library'
 import type graphConn from '@moodlenet/content-graph'
+import type coreConn from '@moodlenet/core'
 import type organizationConn from '@moodlenet/organization'
 import { CSSProperties } from 'react'
 import type reactAppConn from '../server/main.mjs'
@@ -12,6 +13,7 @@ export type WebPkgDeps = [
   typeof organizationConn,
   typeof authConn,
   typeof graphConn,
+  typeof coreConn,
 ]
 
 export type WebappPluginDef<Deps extends WebPkgDepList = never> = {

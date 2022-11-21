@@ -16,11 +16,11 @@ export const useAppearanceProps = (): AppearanceProps => {
   })
 
   const appearanceProps = useMemo<AppearanceProps>(() => {
-    return {
-      appearanceData,
+    const props: AppearanceProps = {
       form,
     }
-  }, [form, appearanceData])
+    return props
+  }, [form])
 
   return appearanceProps
 }

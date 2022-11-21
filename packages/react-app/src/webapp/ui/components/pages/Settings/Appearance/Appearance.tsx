@@ -5,30 +5,20 @@ import {
   Colorpicker,
   InputTextField,
   PrimaryButton,
-  RoundButton,
-  useImageUrl
+  // RoundButton,
+  // useImageUrl,
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useCallback, useRef } from 'react'
-import { getAppearanceStyle } from '../../../../../../common/index.mjs'
-import { CustomStyleType } from '../../../../../../common/types.mjs'
-import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
-import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
+import { FC, useCallback /* , useRef */ } from 'react'
+import { AppearanceData, getAppearanceStyle } from '../../../../../../common/index.mjs'
+// import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
+// import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
 // import { Organization } from '../../../../types'
 import './Appearance.scss'
 
-export type AppearanceFormValues = {
-  logo: string
-  smallLogo: string
-  color: string
-  scss: string
-  //TODO: decide if having this as optional
-  customStyle: CustomStyleType
-}
-
 export type AppearanceProps = {
   // organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
-  form: ReturnType<typeof useFormik<AppearanceFormValues>>
+  form: ReturnType<typeof useFormik<AppearanceData>>
 }
 
 export const AppearanceMenu: AddonItem = {
@@ -48,63 +38,63 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
     [form],
   )
 
-  const [logoUrl] = useImageUrl(form.values.logo, defaultLogo)
+  // const [logoUrl] = useImageUrl(form.values.logo, defaultLogo)
 
-  const uploadLogoRef = useRef<HTMLInputElement>(null)
-  const selectLogo = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    uploadLogoRef.current?.click()
-  }
+  // const uploadLogoRef = useRef<HTMLInputElement>(null)
+  // const selectLogo = (e: React.MouseEvent<HTMLElement>) => {
+  //   e.stopPropagation()
+  //   uploadLogoRef.current?.click()
+  // }
 
-  const uploadLogo = (e: React.ChangeEvent<HTMLInputElement>) =>
-    form.setFieldValue('logo', e.currentTarget.files?.item(0))
+  // const uploadLogo = (e: React.ChangeEvent<HTMLInputElement>) =>
+  //   form.setFieldValue('logo', e.currentTarget.files?.item(0))
 
-  const editLogoButton = [
-    <input
-      ref={uploadLogoRef}
-      type="file"
-      accept=".jpg,.jpeg,.png,.gif"
-      onChange={uploadLogo}
-      key="edit-avatar-input"
-      hidden
-    />,
-    <RoundButton
-      className="change-logo-button"
-      type="edit"
-      abbrTitle={/* t */ `Edit profile picture`}
-      onClick={selectLogo}
-      key="edit-logo-btn"
-    />,
-  ]
+  // const editLogoButton = [
+  //   <input
+  //     ref={uploadLogoRef}
+  //     type="file"
+  //     accept=".jpg,.jpeg,.png,.gif"
+  //     onChange={uploadLogo}
+  //     key="edit-avatar-input"
+  //     hidden
+  //   />,
+  //   <RoundButton
+  //     className="change-logo-button"
+  //     type="edit"
+  //     abbrTitle={/* t */ `Edit profile picture`}
+  //     onClick={selectLogo}
+  //     key="edit-logo-btn"
+  //   />,
+  // ]
 
-  const [smallLogoUrl] = useImageUrl(form.values.logo, defaultSmallLogo)
+  // const [smallLogoUrl] = useImageUrl(form.values.logo, defaultSmallLogo)
 
-  const uploadSmallLogoRef = useRef<HTMLInputElement>(null)
-  const selectSmallLogo = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    uploadSmallLogoRef.current?.click()
-  }
+  // const uploadSmallLogoRef = useRef<HTMLInputElement>(null)
+  // const selectSmallLogo = (e: React.MouseEvent<HTMLElement>) => {
+  //   e.stopPropagation()
+  //   uploadSmallLogoRef.current?.click()
+  // }
 
-  const uploadSmallLogo = (e: React.ChangeEvent<HTMLInputElement>) =>
-    form.setFieldValue('logo', e.currentTarget.files?.item(0))
+  // const uploadSmallLogo = (e: React.ChangeEvent<HTMLInputElement>) =>
+  //   form.setFieldValue('logo', e.currentTarget.files?.item(0))
 
-  const editSmallLogoButton = [
-    <input
-      ref={uploadSmallLogoRef}
-      type="file"
-      accept=".jpg,.jpeg,.png,.gif"
-      onChange={uploadSmallLogo}
-      key="edit-avatar-input"
-      hidden
-    />,
-    <RoundButton
-      className="change-small-logo-button"
-      type="edit"
-      abbrTitle={/* t */ `Edit profile picture`}
-      onClick={selectSmallLogo}
-      key="edit-small-logo-btn"
-    />,
-  ]
+  // const editSmallLogoButton = [
+  //   <input
+  //     ref={uploadSmallLogoRef}
+  //     type="file"
+  //     accept=".jpg,.jpeg,.png,.gif"
+  //     onChange={uploadSmallLogo}
+  //     key="edit-avatar-input"
+  //     hidden
+  //   />,
+  //   <RoundButton
+  //     className="change-small-logo-button"
+  //     type="edit"
+  //     abbrTitle={/* t */ `Edit profile picture`}
+  //     onClick={selectSmallLogo}
+  //     key="edit-small-logo-btn"
+  //   />,
+  // ]
 
   // const setStyle = (style: string) => {
   //   // const result = sass.compileString(style)
@@ -115,42 +105,42 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
   // }
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
 
-  const logoSection = (
-    <div className="logos section">
-      <div className="subtitle">Logos</div>
-      <div className="field">
-        <div className="parameter">
-          <div className="name">Default</div>
-          <div className="logo-container">
-            <img className="logo" src={logoUrl}></img>
-            {editLogoButton}
-          </div>
-        </div>
-        <div className="parameter">
-          <div className="name">Small</div>
-          <div className="logo-container">
-            <img className="logo" src={smallLogoUrl} />
-            {editSmallLogoButton}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  // const logoSection = (
+  //   <div className="logos section">
+  //     <div className="subtitle">Logos</div>
+  //     <div className="field">
+  //       <div className="parameter">
+  //         <div className="name">Default</div>
+  //         <div className="logo-container">
+  //           <img className="logo" src={logoUrl}></img>
+  //           {editLogoButton}
+  //         </div>
+  //       </div>
+  //       <div className="parameter">
+  //         <div className="name">Small</div>
+  //         <div className="logo-container">
+  //           <img className="logo" src={smallLogoUrl} />
+  //           {editSmallLogoButton}
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // )
 
-  const scssSection = (
-    <div className="scss section">
-      <div className="subtitle">
-        SCSS
-        {/* <Trans>SCSS</Trans> */}
-      </div>
-      <InputTextField
-        name="scss"
-        textarea={true}
-        value={form.values.scss}
-        onChange={form.handleChange}
-      />
-    </div>
-  )
+  // const scssSection = (
+  //   <div className="scss section">
+  //     <div className="subtitle">
+  //       SCSS
+  //       {/* <Trans>SCSS</Trans> */}
+  //     </div>
+  //     <InputTextField
+  //       name="scss"
+  //       textarea={true}
+  //       value={form.values.scss}
+  //       onChange={form.handleChange}
+  //     />
+  //   </div>
+  // )
 
   return (
     <div className="appearance" key="appearance">
