@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { registries } from '../../../../../../web-lib.mjs'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
-import { AppearanceContainer } from '../../Appearance/GeneralContainer.js'
+import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
 import { GeneralContainer } from '../../General/GeneralContainer.js'
 import { SettingsItem, SettingsProps } from '../Settings.js'
 
