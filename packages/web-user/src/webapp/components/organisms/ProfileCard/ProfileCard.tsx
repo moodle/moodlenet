@@ -16,6 +16,8 @@ import defaultBackgroud from '../../../assets/img/default-background.svg'
 import { ProfileFormValues } from '../../../types.mjs'
 import './ProfileCard.scss'
 
+export type ProfileCardPropsOmited = Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
+
 export type ProfileCardProps = {
   form: ReturnType<typeof useFormik<ProfileFormValues>>
   // userId: string

@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { useFormik } from 'formik'
-import { ProfileCardProps } from './ProfileCard.js'
+import { ProfileCardProps, ProfileCardPropsOmited } from './ProfileCard.js'
 import { ProfileFormValues } from '../../../types.mjs'
 import { fileExceedsMaxUploadSize, randomIntFromInterval } from '../../../helpers/utilities.js'
 import { people } from '../../../helpers/factories.js'
@@ -49,15 +49,28 @@ const overrides = {
 
 const person = people[randomIntFromInterval(0, 3)]
 
-export const useProfileCardProps = (): ProfileCardProps => {
+const profileDefault = {
+  displayName: person ? person.displayName : '',
+  description:
+    'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
+  organizationName: person && person.organization,
+  location: person && person.location,
+  siteUrl: 'https://iuri.is/',
+  avatarImage: person && person.avatarUrl,
+  backgroundImage: person && person.backgroundUrl,
+  ...overrides?.editFormValues,
+}
+
+export const useProfileCardProps = (): ProfileCardPropsOmited => {
   const { pkgs } = useContext(MainContext)
   const auth = useContext(AuthCtx)
-  const [isEditing, setIsEditing] = useState(false)
   const [errMsg, setErrMsg] = useState('')
+  const [profile, setProfile] = useState(profileDefault)
   const userAuth = auth.clientSessionData
   const [profileApi] = pkgs
 
-  const createProfile = async (data: ProfileFormValues) => {
+  // const createProfile = async (data: ProfileFormValues) => {
+  const editProfile = async (data: ProfileFormValues) => {
     const res: any = await profileApi.call('createProfile')({
       displayName: data.displayName,
       userId: userAuth?.user.id || 'nouserId',
@@ -65,23 +78,28 @@ export const useProfileCardProps = (): ProfileCardProps => {
     !(res as RespCall).success && setErrMsg(res.msg)
   }
 
+  // idprofile, metto come fisso
+
+  /* const getProfile = async (userId: string) => {
+    const res: any = await profileApi.call('getProfile')({ userId })
+    (res as RespCall).success ? setProfile() && setErrMsg(res.msg)
+  } */
+
+  useEffect(() => {
+    const userId = userAuth?.user.id
+    if (!userId) return
+    profileApi
+      .call('getProfile')({ userId })
+      .then(_profile => setProfile(_profile))
+  }, [profileApi, userAuth?.user.id])
+
   const form = useFormik<ProfileFormValues>({
-    onSubmit: createProfile,
+    onSubmit: editProfile,
     validationSchema,
-    initialValues: {
-      displayName: person ? person.displayName : '',
-      description:
-        'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
-      organizationName: person && person.organization,
-      location: person && person.location,
-      siteUrl: 'https://iuri.is/',
-      avatarImage: person && person.avatarUrl,
-      backgroundImage: person && person.backgroundUrl,
-      ...overrides?.editFormValues,
-    },
+    initialValues: profile,
   })
 
-  const profileCardsProps: ProfileCardProps = {
+  const profileCardsProps: ProfileCardPropsOmited = {
     isOwner: false,
     isAuthenticated: false,
     // profileUrl: '396qamf8hfol-albert',
@@ -106,7 +124,6 @@ export const useProfileCardProps = (): ProfileCardProps => {
     //   initialValues: {},
     //   onSubmit: action('request Approval'),
     // }),
-    toggleIsEditing: () => setIsEditing(!isEditing),
     // openSendMessage: action('open Send Message'),
     moreButtonItems: [],
     form,
