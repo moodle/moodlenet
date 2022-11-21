@@ -42,7 +42,7 @@ export const useManageExtensionsProps = (
           }),
         ),
       )
-  })
+  }, [myPkg])
 
   const manageExtensionsPropsControlled = useMemo<ManageExtensionsPropsControlled>(() => {
     const props: ManageExtensionsPropsControlled = {
