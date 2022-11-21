@@ -17,7 +17,8 @@ import { useNavigate } from 'react-router-dom'
 import { MainContext } from './MainContext.js'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { UsePkgHandle } from '../web-lib.mjs'
-import { SignupItem, LoginItem } from '../components.mjs'
+import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
+import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',
@@ -40,7 +41,7 @@ export type AuthCtxT = {
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
-export const Provider: FC<PropsWithChildren> = ({ children }) => {
+export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
   const {
     pkgs: [, , authApis, graphApis],

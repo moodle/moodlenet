@@ -1,6 +1,8 @@
-import { ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib'
-import * as SettingsInstallComponents from './InstallExtension/SettingsInstall.js'
-import * as SettingsEnabledExtComponents from './ManageExtensionstsx'
+import {
+  ReactAppMainComponent,
+  registries,
+  SettingsSectionItem,
+} from '@moodlenet/react-app/web-lib'
 
 import { useEffect, useState } from 'react'
 import type {
@@ -8,19 +10,22 @@ import type {
   SearchPackagesResObject,
   SearchPackagesResponse,
 } from '../types/data.mjs'
-import ExtensionsRoutes from './ExtensionsRoutes.js'
 import { MainContext } from './MainContext.js'
 import type { WebPkgDeps } from './types.mjs'
+import { ExtensionsMenu } from './components/pages/Extensions/Extensions.js'
+import { ExtensionsContainer } from './components/pages/Extensions/ExtensionsContainer.js'
 
+const extensionSettingsItem: SettingsSectionItem = {
+  Menu: ExtensionsMenu,
+  Content: ExtensionsContainer,
+}
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
-  registries.settingsSections.useRegister(pkgId, SettingsInstallComponents)
-  registries.settingsSections.useRegister(pkgId, SettingsEnabledExtComponents)
-  registries.routes.useRegister(pkgId, ExtensionsRoutes)
+  registries.settingsSections.useRegister(pkgId, extensionSettingsItem)
 
   const [devMode, setDevMode] = useState(false)
   const [selectedExtConfig, setSelectedExtConfig] = useState<DeployedPkgInfo | null>(null)
   const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
-  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
+  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>({ objects: [] })
   const [defaultRegistry, setDefaultRegistry] = useState<string>('')
   const [myPkg] = pkgs
 
@@ -47,7 +52,6 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
         selectedExtInfo,
         setSelectedExtInfo,
         searchPkgResp,
-        setSearchPkgResp,
       }}
     >
       {children}

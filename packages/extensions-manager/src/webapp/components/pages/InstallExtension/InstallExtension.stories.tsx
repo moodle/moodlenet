@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import { FC } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import InstallExtension, {
-  InstallExtensionFormValues,
+  InstallLocalPathExtensionFormValues,
   InstallExtensionMenu,
   InstallExtensionProps,
 } from './InstallExtension.js'
@@ -16,7 +16,7 @@ import { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'
 
-export const validationSchema: SchemaOf<InstallExtensionFormValues> = object({
+export const validationSchema: SchemaOf<InstallLocalPathExtensionFormValues> = object({
   localPath: string().max(4096).min(3).required(/* t */ `Please provide a local path`),
 })
 
@@ -94,12 +94,12 @@ export const useInstallExtensionStoryProps = (overrides?: {
     isInstalling: false,
     // installSucces: true,
     setIsInstalling: action('Set is installing'),
-    form: useFormik<InstallExtensionFormValues>({
+    installLocalPathExtensionForm: useFormik<InstallLocalPathExtensionFormValues>({
       onSubmit: action('submit InstallExtension settings'),
       validationSchema,
       initialValues: {
         localPath: '',
-        ...overrides?.props?.form?.initialValues,
+        ...overrides?.props?.installLocalPathExtensionForm?.initialValues,
       },
     }),
     ...overrides?.props,
@@ -112,7 +112,10 @@ export const SettingsInstallItem: FC = () => (
 
 export const useElements = (): SettingsItem => {
   return {
-    Menu: InstallExtensionMenu,
+    Menu: {
+      Item: InstallExtensionMenu,
+      key: 'menu-install-extensions',
+    },
     Content: {
       Item: SettingsInstallItem,
       key: 'content-install-extension',

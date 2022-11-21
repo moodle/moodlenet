@@ -79,7 +79,10 @@ export const ManageExtensionsContent: FC<ManageExtensionsProps> = props => {
 export const useElements = (): SettingsItem => {
   const props = useManageExtensionsStoryProps()
   return {
-    Menu: ManageExtensionsMenu,
+    Menu: {
+      Item: ManageExtensionsMenu,
+      key: 'menu-manage-extensions',
+    },
     Content: {
       Item: () => <ManageExtensionsContent {...props} />,
       key: 'content-install-extension',

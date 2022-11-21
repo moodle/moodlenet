@@ -19,6 +19,5 @@ export type MainContextType = ReactAppMainComponentProps<WebPkgDeps> & {
   setSelectedExtConfig: React.Dispatch<React.SetStateAction<DeployedPkgInfo | null>>
   selectedExtInfo: SearchPackagesResObject | null
   setSelectedExtInfo: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
-  searchPkgResp: SearchPackagesResponse | undefined
-  setSearchPkgResp: React.Dispatch<React.SetStateAction<SearchPackagesResponse | undefined>>
+  searchPkgResp: SearchPackagesResponse
 }
