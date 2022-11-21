@@ -34,16 +34,20 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 
-export const useProfileCardProps = ({ key }: { key: string }): ProfileCardPropsControlled => {
+export const useProfileCardProps = ({
+  profileKey,
+}: {
+  profileKey: string
+}): ProfileCardPropsControlled => {
   const { pkgs } = useContext(MainContext)
   const [profileApi] = pkgs
   const { clientSessionData } = useContext(AuthCtx)
 
-  const [profile, setProfile] = useState<ProfileFormValues>(null as any)
+  const [profile, setProfile] = useState<ProfileFormValues>({} as any)
 
   const form = useFormik<ProfileFormValues>({
     async onSubmit({ description, displayName, location, organizationName, siteUrl }) {
-      const res = await profileApi.call('editProfile')(key, {
+      const res = await profileApi.call('editProfile')(profileKey, {
         displayName,
         description,
         location,
@@ -57,21 +61,22 @@ export const useProfileCardProps = ({ key }: { key: string }): ProfileCardPropsC
     },
     validationSchema,
     initialValues: profile,
+    enableReinitialize: true,
   })
 
   useEffect(() => {
     profileApi
-      .call('getProfile')(key)
+      .call('getProfile')(profileKey)
       .then(res => {
         if (!res) {
           return
         }
         setProfile(res)
       })
-  }, [key, profileApi])
+  }, [profileKey, profileApi])
 
   const profileCardsProps: ProfileCardPropsControlled = {
-    isOwner: clientSessionData?.myUserNode._key === key,
+    isOwner: clientSessionData?.myUserNode._key === profileKey,
     isAuthenticated: !!clientSessionData,
     moreButtonItems: [],
     form,

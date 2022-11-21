@@ -1,7 +1,10 @@
 import { NodeGlyph } from '@moodlenet/content-graph'
-import { glyphDescriptors } from './init.mjs'
-import { CreateRequest, EditRequest, ProfileGlyphDescriptors } from './types.mjs'
+import { CreateRequest, EditRequest, ProfileGlyphDescriptors, ProfileGlyphs } from './types.mjs'
 import { graphPkg } from './use-pkg-apis.mjs'
+
+export const glyphDescriptors = await graphPkg.api('ensureGlyphs')<ProfileGlyphs>({
+  defs: { Profile: { kind: 'node' } },
+})
 
 export async function createProfile({ displayName, userId }: CreateRequest) {
   graphPkg.api('node/create')(
