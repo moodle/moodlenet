@@ -6,13 +6,14 @@ import { FC } from 'react'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
 import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
-import { ExtensionType } from '../../pages/InstallExtension/InstallExtension.js'
+import { ExtensionType } from '../../pages/Extensions/Extensions.js'
+
 import './ExtensionsList.scss'
 
 export type ExtensionsListProps = {
   extensions: ExtensionType[]
   title?: string
-  setSelectedExt: React.Dispatch<React.SetStateAction<ExtensionType | undefined>>
+  setSelectedExt: (ext: ExtensionType) => void // React.Dispatch<React.SetStateAction<ExtensionType | undefined>>
 }
 
 const ExtensionsList: FC<ExtensionsListProps> = ({ extensions, title, setSelectedExt }) => {

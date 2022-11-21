@@ -19,8 +19,8 @@ import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.s
 // import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
 import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
-import { ExtensionType } from '../InstallExtension/InstallExtension.js'
 import './ExtensionInfo.scss'
+import { ExtensionType } from '../Extensions/Extensions.js'
 
 export type ExtensionInfoProps = {
   onClickBackBtn?: (arg0?: unknown) => unknown
