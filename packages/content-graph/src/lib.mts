@@ -15,6 +15,7 @@ import {
   EdgeData,
   EdgeGlyph,
   EdgeLinkIdentifiers,
+  EditNodeOpts,
   GlyphDefOptMap,
   GlyphDefsMap,
   GlyphDescriptor,
@@ -120,6 +121,35 @@ export async function createNode<GlyphDesc extends GlyphDescriptor<'node'>>(
 }
 
 /*
+    editNode
+    */
+export async function editNode<GlyphDesc extends GlyphDescriptor<'node'>>(
+  glyphDesc: GlyphDesc,
+  identifier: GlyphIdentifier<'node'>,
+  data: Partial<NodeData<GlyphDesc>> & WithMaybeKey,
+  _opts: Partial<EditNodeOpts> = {},
+): Promise<null | { node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }> {
+  type NodeEditData = WithMaybeKey & Partial<Omit<NodeGlyph, '_id' | '_key'>>
+  const nodeEditData: NodeEditData = {
+    ...data,
+    _meta: {},
+  }
+  const _id = idOf(identifier)
+  const q = `
+UPDATE {_id:"${_id}"} 
+  WITH ${JSON.stringify(nodeEditData)} 
+  INTO \`${glyphDesc._type}\` 
+RETURN NEW`
+  const node: null | NodeGlyph<typeof glyphDesc> = (await arangoPkg.api('query')({ q }))
+    .resultSet[0]
+  if (!node) {
+    return null
+  }
+  const { glyph, meta } = extractGlyphMeta(node)
+  return { node: glyph, meta }
+}
+
+/*
     createEdge
     */
 export async function createEdge<GlyphDesc extends GlyphDescriptor<'edge'>>(
@@ -146,7 +176,10 @@ export async function createEdge<GlyphDesc extends GlyphDescriptor<'edge'>>(
     _toType,
   }
 
-  const q = `INSERT ${JSON.stringify(edgeCreateData)} INTO \`${glyphDesc._type}\` RETURN NEW`
+  const q = `
+INSERT ${JSON.stringify(edgeCreateData)}
+  INTO \`${glyphDesc._type}\` 
+RETURN NEW`
   const edge: EdgeGlyph<typeof glyphDesc> = (await arangoPkg.api('query')({ q })).resultSet[0]
 
   // if (opts.performer) {
@@ -176,11 +209,9 @@ export async function getAuthenticatedNode({
   return { node: glyph, meta }
 }
 
-export async function readNode<GlyphDesc extends GlyphDescriptor<'node'>>({
-  identifier,
-}: {
-  identifier: GlyphIdentifier<'node'>
-}): Promise<undefined | { node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }> {
+export async function readNode<GlyphDesc extends GlyphDescriptor<'node'>>(
+  identifier: GlyphIdentifier<'node'>,
+): Promise<undefined | { node: NodeGlyph<GlyphDesc>; meta: GlyphMeta }> {
   const q = `RETURN DOCUMENT("${idOf(identifier)}")`
   const node: NodeGlyph<any> | undefined = (await arangoPkg.api('query')({ q })).resultSet[0]
   if (!node) {
