@@ -8,13 +8,6 @@ import { people } from '../../../helpers/factories.js'
 import { mixed, object, SchemaOf, string } from 'yup'
 import { MainContext } from '../../../MainContext.js'
 
-type RespCall =
-  | { success: true }
-  | {
-      success: false
-      msg: string
-    }
-
 const maxUploadSize = 1024 * 1024 * 50
 export const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
@@ -53,20 +46,19 @@ export const useProfileCardProps = (): ProfileCardProps => {
   const { pkgs } = useContext(MainContext)
   const auth = useContext(AuthCtx)
   const [isEditing, setIsEditing] = useState(false)
-  const [errMsg, setErrMsg] = useState('')
   const userAuth = auth.clientSessionData
   const [profileApi] = pkgs
 
-  const createProfile = async (data: ProfileFormValues) => {
-    const res: any = await profileApi.call('createProfile')({
+  const editProfile = async (data: ProfileFormValues) => {
+    const res = await profileApi.call('editProfile')({
       displayName: data.displayName,
       userId: userAuth?.user.id || 'nouserId',
     })
-    !(res as RespCall).success && setErrMsg(res.msg)
+    !res.success && setErrMsg(res.msg)
   }
 
   const form = useFormik<ProfileFormValues>({
-    onSubmit: createProfile,
+    onSubmit: editProfile,
     validationSchema,
     initialValues: {
       displayName: person ? person.displayName : '',

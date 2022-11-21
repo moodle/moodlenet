@@ -1,17 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { AddonItem, Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { FC } from 'react'
 import './General.scss'
 
-export type GeneralFormValues = {
-  instanceName: string
-  landingTitle: string
-  landingSubtitle: string
-}
-
 export type GeneralProps = {
-  form: ReturnType<typeof useFormik<GeneralFormValues>>
+  form: ReturnType<typeof useFormik<OrganizationData>>
   updateSuccess?: boolean
   updateExtensions?: () => void
 }
@@ -59,7 +54,6 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
       <Card className="column">
         <div className="title">
           {/* <Trans> */}
-        
           General
           {/* </Trans> */}
           <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
