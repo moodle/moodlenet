@@ -3,7 +3,7 @@ import Extensions from './Extensions.js'
 import { useExtensionsProps } from './ExtensionsHooks.js'
 
 export const ExtensionsContainer: FC = () => {
-  const panelProps = useExtensionsProps()
+  const extensionsProps = useExtensionsProps()
 
-  return <Extensions {...panelProps} />
+  return <Extensions {...extensionsProps} />
 }

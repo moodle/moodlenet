@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import Extensions from './ManageExtensions.js'
-import { useExtensionsProps } from './ExtensionsHooks.js'
+import { useManageExtensionsStoryProps } from './ManageExtensions.stories.js'
 
 export const ManageExtensionsContainer: FC = () => {
-  const panelProps = useExtensionsProps()
+  const manageExtensionsStoryProps = useManageExtensionsStoryProps()
 
-  return <Extensions {...panelProps} />
+  return <Extensions {...manageExtensionsStoryProps} />
 }

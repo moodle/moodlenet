@@ -28,7 +28,7 @@ export type SettingsCtxT = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SettingsCtx = createContext<SettingsCtxT>(null as any)
 
-export const Provider: FC<PropsWithChildren> = ({ children }) => {
+export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const {
     pkgs: [reactAppSrv, organizationSrv],
   } = useContext(MainContext)

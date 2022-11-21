@@ -30,7 +30,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "formik": "^2.2.9",
     "husky": "^8.0.0",
     "husky-init": "^8.0.0",
     "lerna": "^5.0.0",
@@ -70,8 +69,5 @@
     "dev-backend-plain": "node bin/boot.mjs --forever --trace-warnings --inspect --enable-source-maps --",
     "dev-webapp": "node bin/dev-webapp.mjs",
     "dev-assistant": "lerna run dev-assistant --parallel --stream --"
-  },
-  "dependencies": {
-    "yup": "^0.32.11"
   }
 }

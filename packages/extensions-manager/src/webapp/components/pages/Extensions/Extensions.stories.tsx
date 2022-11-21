@@ -20,7 +20,10 @@ export const ExtensionsItem: FC = () => <Extensions {...useExtensionsStoryProps(
 
 export const useElements = (): SettingsItem => {
   return {
-    Menu: ExtensionsMenu,
+    Menu: {
+      Item: ExtensionsMenu,
+      key: 'menu-extensions',
+    },
     Content: {
       Item: ExtensionsItem,
       key: 'content-extensions',
