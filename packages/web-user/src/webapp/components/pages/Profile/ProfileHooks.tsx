@@ -1,10 +1,10 @@
-import { FC, useMemo } from 'react'
-import ProfilePage, { ProfileProps } from './Profile.js'
+import { useMemo } from 'react'
+import { ProfileProps } from './Profile.js'
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useProfileCardProps } from '../../organisms/ProfileCard/ProfileCardHooks.js'
 
-export const useProfileProps = (): ProfileProps => {
-  const profileCardProps = useProfileCardProps()
+export const useProfileProps = ({ key }: { key: string }): ProfileProps => {
+  const profileCardProps = useProfileCardProps({ key })
   const mainLayoutProps = useMainLayoutProps()
 
   const panelProps = useMemo<ProfileProps>(() => {
@@ -16,10 +16,4 @@ export const useProfileProps = (): ProfileProps => {
   }, [mainLayoutProps, profileCardProps])
 
   return panelProps
-}
-
-export const ProfileCtrl: FC = () => {
-  const panelProps = useProfileProps()
-
-  return <ProfilePage {...panelProps} />
 }

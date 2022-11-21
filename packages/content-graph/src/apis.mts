@@ -1,6 +1,6 @@
 import { getApiCtxClientSession } from '@moodlenet/authentication-manager'
 import { defApi } from '@moodlenet/core'
-import { createNode, ensureGlyphs, getAuthenticatedNode, readNode } from './lib.mjs'
+import { createNode, editNode, ensureGlyphs, getAuthenticatedNode, readNode } from './lib.mjs'
 import {
   CreateNodeOpts,
   GlyphDefOptMap,
@@ -32,8 +32,20 @@ export default {
   node: {
     read: defApi(
       _ctx =>
-        async <GlyphDesc extends GlyphDescriptor<'node'>>({ identifier }: { identifier: GlyphIdentifier<'node'> }) => {
-          const result = await readNode<GlyphDesc>({ identifier })
+        async <GlyphDesc extends GlyphDescriptor<'node'>>(identifier: GlyphIdentifier<'node'>) => {
+          const result = await readNode<GlyphDesc>(identifier)
+          return result && { node: result.node }
+        },
+      () => true,
+    ),
+    edit: defApi(
+      _ctx =>
+        async <GlyphDesc extends GlyphDescriptor<'node'>>(
+          glyphDesc: GlyphDesc,
+          identifier: GlyphIdentifier<'node'>,
+          data: Partial<NodeData<GlyphDesc>> & WithMaybeKey,
+        ) => {
+          const result = await editNode<GlyphDesc>(glyphDesc, identifier, data)
           return result && { node: result.node }
         },
       () => true,
