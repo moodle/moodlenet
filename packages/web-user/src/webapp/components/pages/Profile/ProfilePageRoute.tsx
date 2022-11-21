@@ -5,5 +5,5 @@ import { ProfileContainer } from './ProfileContainer.js'
 export const ProfilePageRoute: FC = () => {
   const { key } = useParams()
 
-  return <ProfileContainer key={key ?? ''} />
+  return <ProfileContainer profileKey={key ?? ''} />
 }

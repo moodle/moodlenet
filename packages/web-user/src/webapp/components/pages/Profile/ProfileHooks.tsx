@@ -3,8 +3,8 @@ import { ProfileProps } from './Profile.js'
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useProfileCardProps } from '../../organisms/ProfileCard/ProfileCardHooks.js'
 
-export const useProfileProps = ({ key }: { key: string }): ProfileProps => {
-  const profileCardProps = useProfileCardProps({ key })
+export const useProfileProps = ({ profileKey }: { profileKey: string }): ProfileProps => {
+  const profileCardProps = useProfileCardProps({ profileKey })
   const mainLayoutProps = useMainLayoutProps()
 
   const panelProps = useMemo<ProfileProps>(() => {
