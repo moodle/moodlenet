@@ -6,7 +6,14 @@ const meta: ComponentMeta<typeof Switch> = {
   component: Switch,
 }
 
-const SwitchStory: ComponentStory<typeof Switch> = () => <Switch enabled={false} />
+const SwitchStory: ComponentStory<typeof Switch> = () => (
+  <Switch
+    enabled={false}
+    toggleSwitch={function (): unknown {
+      throw new Error('Function not implemented.')
+    }}
+  />
+)
 
 export const Default = SwitchStory.bind({})
 
