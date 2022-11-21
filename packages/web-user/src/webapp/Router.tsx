@@ -1,5 +1,5 @@
 import { Route } from 'react-router-dom'
-import { ProfileCtrl } from './components/pages/Profile/ProfileHooks.js'
+import { ProfilePageRoute } from './components/pages/Profile/ProfilePageRoute.js'
 
 // export default () => {
 // const props = fakeProfilePageProps
@@ -17,4 +17,4 @@ import { ProfileCtrl } from './components/pages/Profile/ProfileHooks.js'
 // <Route path={fakeProfilePageProps.profileCardProps.profileUrl} element={<ProfilePage {...fakeProfilePageProps} />} />
 
 // export default { routes: <Route index element={<ProfilePageCtrl {...fakeProfilePageProps} />} /> }
-export default { routes: <Route index element={<ProfileCtrl />} /> }
+export default { routes: <Route path="/:key" element={<ProfilePageRoute />} /> }

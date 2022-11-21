@@ -1,12 +1,12 @@
 import { AddonItem } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { FC, useState } from 'react'
-import { ProfileCard, ProfileCardProps } from '../../organisms/ProfileCard/ProfileCard.js'
+import { ProfileCard, ProfileCardPropsControlled } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
 
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
-  profileCardProps: ProfileCardProps
+  profileCardProps: ProfileCardPropsControlled
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
   // displayName: string

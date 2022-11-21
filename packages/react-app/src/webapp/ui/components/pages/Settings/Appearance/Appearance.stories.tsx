@@ -1,21 +1,21 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { FC } from 'react'
-import { defaultAppearanceFormValues } from '../../../../../../common/index.mjs'
+import { defaultAppearanceData } from '../../../../../../common/index.mjs'
 import { AppearanceData } from '../../../../../../common/types.mjs'
-import { SettingsItem } from '../Settings.js'
-import { Appearance, AppearanceFormValues, AppearanceMenu, AppearanceProps } from './Appearance.js'
+import { SettingsItem } from '../Settings/Settings.js'
+import { Appearance, AppearanceMenu, AppearanceProps } from './Appearance.js'
 
 export const useAppearanceStoryProps = (overrides?: {
   editFormValues?: Partial<AppearanceData>
   props?: Partial<AppearanceProps>
 }): AppearanceProps => {
   return {
-    form: useFormik<AppearanceFormValues>({
+    form: useFormik<AppearanceData>({
       onSubmit: action('submit Appearance settings'),
       // validationSchema,
       initialValues: {
-        ...defaultAppearanceFormValues,
+        ...defaultAppearanceData,
         ...overrides?.editFormValues,
       },
     }),

@@ -7,7 +7,5 @@ if (!dataExists) {
     instanceName: 'MoodleNet',
     landingSubtitle: 'Find, share and curate open educational resources',
     landingTitle: 'Search for resources, subjects, collections or people',
-    smallLogo: '',
-    logo: '',
   })
 }

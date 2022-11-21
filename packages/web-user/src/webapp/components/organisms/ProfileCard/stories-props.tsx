@@ -2,15 +2,15 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
+import { ProfileFormValues } from '../../../../types.mjs'
 import { people } from '../../../helpers/factories.js'
 import { fileExceedsMaxUploadSize, randomIntFromInterval } from '../../../helpers/utilities.js'
-import { ProfileFormValues } from '../../../types.mjs'
 import { ProfileCardProps } from './ProfileCard.js'
 // import { people } from '../../../../../helpers/factories'
 // import { fileExceedsMaxUploadSize, people, randomIntFromInterval } from '@moodlenet/component-library/ui.mjs'
 
 const maxUploadSize = 1024 * 1024 * 50
-export const validationSchema: SchemaOf<ProfileFormValues> = object({
+export const profileStoriesValidationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
@@ -71,7 +71,7 @@ export const useProfileCardStoryProps = (overrides?: {
     moreButtonItems: [],
     form: useFormik<ProfileFormValues>({
       onSubmit: action('submit edit'),
-      validationSchema,
+      validationSchema: profileStoriesValidationSchema,
       initialValues: {
         displayName: person ? person.displayName : '',
         description:
