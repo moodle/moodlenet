@@ -1,5 +1,5 @@
 import { RouteRegItem } from './app-routes.js'
-import { SettingsSectionItem } from './components.mjs'
+import { SettingsSectionItem } from './context/SettingsContext.js'
 import {
   HeaderMenuItemRegItem,
   HeaderRightComponentRegItem,

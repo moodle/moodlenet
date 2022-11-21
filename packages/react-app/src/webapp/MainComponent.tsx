@@ -28,15 +28,15 @@ const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, childre
                 <ProvideLinkComponentCtx>
                   <MainContext.Provider value={mainContext}>
                     <Organization.Provider>
-                      <auth.Provider>
-                        <set.Provider>
+                      <auth.AuthProvider>
+                        <set.SettingsProvider>
                           <ContentGraphProvider>
                             {/* <I18nProvider i18n={i18n}> */}
                             {children}
                             {/* </I18nProvider> */}
                           </ContentGraphProvider>
-                        </set.Provider>
-                      </auth.Provider>
+                        </set.SettingsProvider>
+                      </auth.AuthProvider>
                     </Organization.Provider>
                   </MainContext.Provider>
                 </ProvideLinkComponentCtx>
