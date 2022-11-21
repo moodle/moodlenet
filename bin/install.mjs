@@ -15,12 +15,3 @@ await execa('npm', ['start', '--', mnDevDir, '--dev-install-local-repo-symlinks'
   timeout: 600000,
   stdout: process.stdout,
 })
-
-// await execa(
-//   'npm',
-//   ['pkg', 'set', `scripts.start=pm2 restart --force --name xx --watch --update-env --attach --env development moodlenet.config.js`],
-//   {
-//     cwd: mnDevDir,
-//     stdout: process.stdout,
-//   },
-// )
