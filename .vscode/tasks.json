@@ -23,6 +23,7 @@
         "key-value-store dev-build",
         "organization dev-build",
         "web-user dev-build",
+        "storybook dev-build",
         "component-library dev-build"
       ],
       "presentation": {
@@ -64,6 +65,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "content-graph dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/storybook/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "storybook dev-build"
       // "dependsOn": ["core dev-build"]
     },
     {
