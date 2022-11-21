@@ -1,7 +1,11 @@
 import { AddonItem } from '@moodlenet/component-library'
 import { FC, useState } from 'react'
-import InstallExtension, { InstallExtensionProps } from '../InstallExtension/InstallExtension.js'
-import ManageExtensions, { ManageExtensionsProps } from '../ManageExtensions/ManageExtensions.js'
+import InstallExtension, {
+  InstallExtensionPropsControlled,
+} from '../InstallExtension/InstallExtension.js'
+import ManageExtensions, {
+  ManageExtensionsPropsControlled,
+} from '../ManageExtensions/ManageExtensions.js'
 import './Extensions.scss'
 
 export type ExtensionType = {
@@ -24,14 +28,11 @@ export type ExtensionsFormValues = {
   localPath: string
 }
 
-export const ExtensionsMenu: AddonItem = {
-  Item: () => <span>Extensions</span>,
-  key: 'menu-extensions',
-}
+export const ExtensionsMenu: FC = () => <span>Extensions</span>
 
 export type ExtensionsProps = {
-  installExtensionProps: InstallExtensionProps
-  manageExtensionsProps: ManageExtensionsProps
+  installExtensionProps: InstallExtensionPropsControlled
+  manageExtensionsProps: ManageExtensionsPropsControlled
 }
 
 const Extensions: FC<ExtensionsProps> = ({ installExtensionProps, manageExtensionsProps }) => {

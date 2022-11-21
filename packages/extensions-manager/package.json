@@ -27,9 +27,11 @@
     "@mui/icons-material": "^5.8.2",
     "@mui/material": "^5.8.2",
     "axios": "^0.27.2",
+    "formik": "^2.2.9",
     "react-markdown": "^8.0.3",
     "react-syntax-highlighter": "^15.5.0",
-    "rehype-raw": "^6.1.1"
+    "rehype-raw": "^6.1.1",
+    "yup": "^0.32.11"
   },
   "peerDependencies": {
     "@moodlenet/component-library": "^0.1.0",
@@ -47,6 +49,7 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
+    "react-scripts": "^5.0.1",
     "typescript": "^4.7.2"
   },
   "scripts": {

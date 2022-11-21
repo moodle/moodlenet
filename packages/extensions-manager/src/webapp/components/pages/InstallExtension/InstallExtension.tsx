@@ -1,5 +1,4 @@
 import {
-  AddonItem,
   Card,
   InputTextField,
   Loading,
@@ -14,7 +13,7 @@ import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
 import { ExtensionType } from '../Extensions/Extensions.js'
 import './InstallExtension.scss'
 
-export type InstallExtensionFormValues = {
+export type InstallLocalPathExtensionFormValues = {
   localPath: string
 }
 
@@ -30,13 +29,14 @@ export type InstallExtensionFormValues = {
 // }
 // const DevModeBtnAddon: HeaderRightComponentRegItem = { Component: DevModeBtn }
 
-export const InstallExtensionMenu: AddonItem = {
-  Item: () => <span>Extensions</span>,
-  key: 'menu-install-extensions',
-}
+export const InstallExtensionMenu = () => <span>Extensions</span>
 
+export type InstallExtensionPropsControlled = Omit<
+  InstallExtensionProps,
+  'setShowInstallExtension' | 'setShowManageExtensions'
+>
 export type InstallExtensionProps = {
-  form: ReturnType<typeof useFormik<InstallExtensionFormValues>>
+  installLocalPathExtensionForm: ReturnType<typeof useFormik<InstallLocalPathExtensionFormValues>>
   devMode: boolean
   extensions: ExtensionType[]
   isInstalling?: boolean
@@ -46,7 +46,7 @@ export type InstallExtensionProps = {
 }
 
 const InstallExtension: FC<InstallExtensionProps> = ({
-  form,
+  installLocalPathExtensionForm,
   devMode,
   extensions,
   isInstalling,
@@ -56,8 +56,12 @@ const InstallExtension: FC<InstallExtensionProps> = ({
 }) => {
   const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>()
   const [showInstallExtension, setShowInstallExtension] = useState(false)
-  const shouldShowErrors = !!form.submitCount
-  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
+  const shouldShowErrors = !!installLocalPathExtensionForm.submitCount
+  const canSubmit =
+    installLocalPathExtensionForm.dirty &&
+    installLocalPathExtensionForm.isValid &&
+    !installLocalPathExtensionForm.isSubmitting &&
+    !installLocalPathExtensionForm.isValidating
 
   const selectExtension = (ext: ExtensionType) => {
     setSelectedExt(ext)
@@ -90,12 +94,12 @@ const InstallExtension: FC<InstallExtensionProps> = ({
                   <InputTextField
                     className="local-path"
                     placeholder="Local path to package"
-                    defaultValue={form.values.localPath}
-                    value={form.values.localPath}
-                    onChange={form.handleChange}
+                    defaultValue={installLocalPathExtensionForm.values.localPath}
+                    value={installLocalPathExtensionForm.values.localPath}
+                    onChange={installLocalPathExtensionForm.handleChange}
                     name="packageName"
                     key="package-name"
-                    error={shouldShowErrors && form.errors.localPath}
+                    error={shouldShowErrors && installLocalPathExtensionForm.errors.localPath}
                   />
                   <PrimaryButton
                     className={`${isInstalling ? 'loading' : ''}`}
@@ -112,7 +116,7 @@ const InstallExtension: FC<InstallExtensionProps> = ({
                     <div
                       className="label"
                       style={{ visibility: isInstalling ? 'hidden' : 'visible' }}
-                      onClick={form.submitForm}
+                      onClick={installLocalPathExtensionForm.submitForm}
                     >
                       Install
                     </div>
