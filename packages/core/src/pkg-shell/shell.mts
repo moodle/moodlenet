@@ -18,7 +18,8 @@ export async function connectPkg<PkgConnDef extends PkgConnectionDef>(
   pkgEntry.pkgConnectionDef = connDef
   pkgEntry.flatApiDefs = flatApiDefs
   console.log(`-- CONNECTED package ${pkgEntry.pkgId.name}@${pkgEntry.pkgId.version} --`)
-  return pkgEntry.pkgId
+  //TODO: try to set generics on ensureRegisterPkg to get a typed pkgEntry instead of casting here below
+  return pkgEntry.pkgId as PkgIdentifier<PkgConnDef>
 }
 
 export async function pkgConnection<PkgConnDef extends PkgConnectionDef>(
