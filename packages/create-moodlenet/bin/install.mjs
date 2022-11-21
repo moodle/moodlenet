@@ -104,8 +104,8 @@ async function freshInstallPkgJson() {
     version: '1',
     installTimeVersion: myPkgJson.version,
     scripts: {
-      'start': `pm2 restart --source-map-support --force --name ${installationName} --update-env --attach --wait-ready ${pm2ConfigFileName}`,
-      'start-dev': `pm2-dev --raw --node-args="--trace-uncaught --enable-source-maps" start moodlenet.cacca.config.js`,
+      'start': `pm2 --env=production --source-map-support --force --name ${installationName} --update-env --attach --wait-ready restart ${pm2ConfigFileName}`,
+      'start-dev': `pm2-dev --env=development --raw --node-args="--trace-uncaught --enable-source-maps" start ${pm2ConfigFileName}`,
     },
     dependencies,
   }
@@ -118,7 +118,7 @@ module.exports = {
     name: '${installationName}',
     script: 'npx',
     args: '@moodlenet/core',
-    cwd:'.',    
+    cwd: '.',    
     env_development: {
       npm_config_registry: ${currentRegistryEnvVar},
       NODE_ENV: 'development'
