@@ -1,4 +1,4 @@
-import { AddonItem, Card, PrimaryButton, Switch } from '@moodlenet/component-library'
+import { AddonItem, Card, Switch } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC } from 'react'
 import './Advanced.scss'
@@ -27,9 +27,9 @@ export const Advanced: FC<AdvancedProps> = ({ form }) => {
           {/* <Trans> */}
           Advanced
           {/* </Trans> */}
-          <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
+          {/* <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
             Save
-          </PrimaryButton>
+          </PrimaryButton> */}
         </div>
       </Card>
       <Card className="column">

@@ -114,6 +114,44 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
   //   })
   // }
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
+
+  const logoSection = (
+    <div className="logos section">
+      <div className="subtitle">Logos</div>
+      <div className="field">
+        <div className="parameter">
+          <div className="name">Default</div>
+          <div className="logo-container">
+            <img className="logo" src={logoUrl}></img>
+            {editLogoButton}
+          </div>
+        </div>
+        <div className="parameter">
+          <div className="name">Small</div>
+          <div className="logo-container">
+            <img className="logo" src={smallLogoUrl} />
+            {editSmallLogoButton}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  const scssSection = (
+    <div className="scss section">
+      <div className="subtitle">
+        SCSS
+        {/* <Trans>SCSS</Trans> */}
+      </div>
+      <InputTextField
+        name="scss"
+        textarea={true}
+        value={form.values.scss}
+        onChange={form.handleChange}
+      />
+    </div>
+  )
+
   return (
     <div className="appearance" key="appearance">
       <Card className="column">
@@ -151,37 +189,8 @@ export const Appearance: FC<AppearanceProps> = ({ form }) => {
             />
           </div>
         </div>
-        <div className="logos section">
-          <div className="subtitle">Logos</div>
-          <div className="field">
-            <div className="parameter">
-              <div className="name">Default</div>
-              <div className="logo-container">
-                <img className="logo" src={logoUrl}></img>
-                {editLogoButton}
-              </div>
-            </div>
-            <div className="parameter">
-              <div className="name">Small</div>
-              <div className="logo-container">
-                <img className="logo" src={smallLogoUrl} />
-                {editSmallLogoButton}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="scss section">
-          <div className="subtitle">
-            SCSS
-            {/* <Trans>SCSS</Trans> */}
-          </div>
-          <InputTextField
-            name="scss"
-            textarea={true}
-            value={form.values.scss}
-            onChange={form.handleChange}
-          />
-        </div>
+        {/* {logoSection}
+        {scssSection} */}
       </Card>
     </div>
   )
