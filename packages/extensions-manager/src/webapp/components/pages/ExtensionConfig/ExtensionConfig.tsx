@@ -1,10 +1,11 @@
 import { Card } from '@moodlenet/component-library'
 import { FC } from 'react'
+import { ExtensionType } from '../Extensions/Extensions.js'
 // import { searchNpmExtensionConfig } from '../../../../../helpers/utilities'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus'
 // import vscDarkPlus from 'react-syntax-highlighter'
-import { ExtensionType } from '../InstallExtension/InstallExtension.js'
+
 import './ExtensionConfig.scss'
 
 export type ExtensionConfigProps = {
@@ -14,7 +15,7 @@ export type ExtensionConfigProps = {
 }
 
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension }) => {
-  const { Item, key } = extension.config ?? { undefined, undefined }
+  const { Item, key } = extension.config ?? { Item: undefined, key: undefined }
 
   const modulesList = null /* extension?.modules.map(
     (module: Module, i) =>
