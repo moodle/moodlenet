@@ -15,3 +15,14 @@ https://medium.com/@loclghst/set-up-eslint-prettier-and-pre-commit-hooks-using-h
 https://dev.to/smetankajakub/how-to-integrate-husky-eslint-prettier-to-project-in-less-than-15-minutes-5gh
 
 ¸¸¸ "scripts": { "ibs": "husky install && yarn bs", "pre-commit": "lint-staged && lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents", "prepare": "husky install", "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .", "prettier": "prettier --check --ignore-path .gitignore \"**/\*.+(json|ts|tsx)\"", "prettierjs": "prettier --check --ignore-path .gitignore \"**/\*.+(js)\""
+
+
+npm link ./packages/create-moodlenet/
+
+
+~/repo/moodlenet $ yarn dev-install-be miofolder --clean
+~/repo/moodlenet $ cd .dev-machines/miofolder
+~/repo/moodlenet/dev-machines/miofolder $ yarn start-dev
+
+1
+~/repo/moodlenet $ yarn dev-webapp
