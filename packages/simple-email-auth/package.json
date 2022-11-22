@@ -24,6 +24,10 @@
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
+  "dependencies": {
+    "formik": "^2.2.9",
+    "yup": "^0.32.11"
+  },
   "peerDependencies": {
     "@moodlenet/arangodb": "^0.1.0",
     "@moodlenet/authentication-manager": "^0.1.0",
