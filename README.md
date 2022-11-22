@@ -18,3 +18,11 @@ https://dev.to/smetankajakub/how-to-integrate-husky-eslint-prettier-to-project-i
 
 
 npm link ./packages/create-moodlenet/
+
+
+~/repo/moodlenet $ yarn dev-install-be miofolder --clean
+~/repo/moodlenet $ cd .dev-machines/miofolder
+~/repo/moodlenet/dev-machines/miofolder $ yarn start-dev
+
+1
+~/repo/moodlenet $ yarn dev-webapp
