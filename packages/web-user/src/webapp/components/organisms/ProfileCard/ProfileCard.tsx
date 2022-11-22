@@ -124,7 +124,10 @@ export const ProfileCard: FC<ProfileCardProps> = ({
               <PrimaryButton
                 // className={`${form.isSubmitting ? 'loading' : ''}`}
                 color="green"
-                onClick={toggleIsEditing}
+                onClick={() => {
+                  form.submitForm()
+                  toggleIsEditing()
+                }}
                 key="save-button"
               >
                 {/* {form.isSubmitting ? (

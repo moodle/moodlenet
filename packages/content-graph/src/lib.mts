@@ -7,6 +7,7 @@ import {
   getCollectionName,
   glyphIdentifier2glyphID,
   idOf,
+  keyOf,
 } from './pub-lib.mjs'
 import {
   ContentGraphGlyphs,
@@ -134,9 +135,9 @@ export async function editNode<GlyphDesc extends GlyphDescriptor<'node'>>(
     ...data,
     _meta: {},
   }
-  const _id = idOf(identifier)
+  const _key = keyOf(identifier)
   const q = `
-UPDATE {_id:"${_id}"} 
+UPDATE "${_key}" 
   WITH ${JSON.stringify(nodeEditData)} 
   INTO \`${glyphDesc._type}\` 
 RETURN NEW`
