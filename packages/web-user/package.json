@@ -24,6 +24,10 @@
   "files": [
     "lib/"
   ],
+  "dependencies": {
+    "formik": "^2.2.9",
+    "yup": "^0.32.11"
+  },
   "peerDependencies": {
     "@moodlenet/authentication-manager": "^0.1.0",
     "@moodlenet/component-library": "^0.1.0",
@@ -42,8 +46,7 @@
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
     "react-router-dom": "^6.3.0",
-    "typescript": "^4.7.2",
-    "yup": "^0.32.11"
+    "typescript": "^4.7.2"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
