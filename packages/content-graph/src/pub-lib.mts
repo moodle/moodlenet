@@ -39,3 +39,11 @@ export function idOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIden
     ? identifier._id
     : `${identifier._type}/${identifier._key}`
 }
+
+export function keyOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIdentif): string {
+  return typeof identifier === 'string'
+    ? identifier.split('/')[1]!
+    : '_id' in identifier
+    ? identifier._id.split('/')[1]!
+    : identifier._key
+}

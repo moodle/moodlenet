@@ -75,11 +75,14 @@ export const useProfileCardProps = ({
       })
   }, [profileKey, profileApi])
 
+  const isOwner = clientSessionData?.myUserNode._key === profileKey
   const profileCardsProps: ProfileCardPropsControlled = {
-    isOwner: clientSessionData?.myUserNode._key === profileKey,
+    isOwner,
+    canEdit: isOwner,
     isAuthenticated: !!clientSessionData,
     moreButtonItems: [],
     form,
   }
+
   return profileCardsProps
 }
