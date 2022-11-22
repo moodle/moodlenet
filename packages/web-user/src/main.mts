@@ -1,6 +1,5 @@
 import { connectPkg } from '@moodlenet/core'
 import apis from './apis.mjs'
-import './init.mjs'
 import { WebPkgDeps } from './ui.mjs'
 import { reactAppPkg } from './use-pkg-apis.mjs'
 
