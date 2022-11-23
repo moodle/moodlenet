@@ -10,9 +10,9 @@
   "files": [
     "bin/"
   ],
-  "bin": "./bin/install.mjs",
+  "bin": "./bin/install.mts",
   "scripts": {
-    "start": "node ./bin/install.mjs"
+    "start": "node ./bin/install.mts"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

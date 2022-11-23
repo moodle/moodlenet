@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "lib/main.mts",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Extensions manager"
@@ -67,8 +67,8 @@
     }
   },
   "exports": {
-    ".": "./lib/main.mjs",
-    "./ui": "./lib/ui.mjs",
-    "./stories": "./lib/stories.mjs"
+    ".": "./src/main.mts",
+    "./ui": "./src/ui.mts",
+    "./stories": "./src/stories.mts"
   }
 }

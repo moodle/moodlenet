@@ -19,8 +19,11 @@
     "src/",
     "bin/"
   ],
-  "bin": "./bin/boot.mjs",
-  "main": "lib/main.mjs",
+  "bin": "./bin/boot.mts",
+  "exports": {
+    ".": "./src/main.mts",
+    "./boot": "./src/main/boot.mts"
+  },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

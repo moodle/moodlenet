@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "lib/main.mts",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Email authentication"
@@ -20,7 +20,8 @@
     "src/"
   ],
   "exports": {
-    "./ui": "./lib/webapp/ui.mjs"
+    "./ui": "./src/webapp/ui.mts",
+    ".": "./src/main.mts"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

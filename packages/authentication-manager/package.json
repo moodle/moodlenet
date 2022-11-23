@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "type": "module",
+  "exports": {
+    ".": "./src/main.mts"
+  },
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "lib/main.mts",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Authentication manager"

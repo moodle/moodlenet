@@ -7,7 +7,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/server/main.mjs",
+  "main": "lib/server/main.mts",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "MoodleNet pkg template"

@@ -10,6 +10,6 @@ export default connection
 
 const WebPkgDeps: WebPkgDeps = [connection]
 await reactAppPkg.api('plugin')({
-  mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
+  mainComponentLoc: ['src', 'webapp', 'MainComponent.js'],
   usesPkgs: WebPkgDeps,
 })

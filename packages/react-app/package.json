@@ -16,7 +16,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/server/main.mjs",
+  "main": "lib/server/main.mts",
   "readme": "",
   "files": [
     "lib/",
@@ -30,16 +30,16 @@
     "moodlenetPackage"
   ],
   "exports": {
-    ".": "./lib/server/main.mjs",
-    "./stories": "./lib/webapp/stories.mjs",
-    "./common": "./lib/common/index.mjs",
-    "./ui": "./lib/webapp/ui.mjs",
-    "./web-lib": "./lib/webapp/web-lib.mjs"
+    ".": "./src/server/main.mts",
+    "./stories": "./src/webapp/stories.mts",
+    "./common": "./src/common/index.mts",
+    "./ui": "./src/webapp/ui.mts",
+    "./web-lib": "./src/webapp/web-lib.mts"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
-    "dev-server": "node lib/-dev-server.mjs",
+    "dev-server": "node lib/-dev-server.mts",
     "create-common-index": "vgis src/common/index.mts",
     "create-components-index": "vgis src/webapp/ui.mts",
     "create-stories-index": "vgis src/webapp/stories.mts"

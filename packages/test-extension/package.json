@@ -19,7 +19,7 @@
   "files": [
     "lib/"
   ],
-  "main": "lib/main.mjs",
+  "main": "lib/main.mts",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "devDependencies": {

@@ -2,6 +2,9 @@
   "name": "@moodlenet/arangodb",
   "version": "0.1.0",
   "author": "MoodleNet",
+  "exports": {
+    ".": "./src/main.mts"
+  },
   "moodlenet": {
     "displayName": "MoodleNet Arango database",
     "icon": "https://moodle.net/moodlenet-logo-small.svg"
@@ -22,7 +25,6 @@
   "files": [
     "lib/"
   ],
-  "main": "lib/main.mjs",
   "dependencies": {
     "arangojs": "^7.8.0"
   },

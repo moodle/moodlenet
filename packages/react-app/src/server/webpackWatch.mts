@@ -86,7 +86,7 @@ export function getWp(
     mode,
     // entry: ['./src/webapp/index.tsx', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
     entry: [
-      './lib/webapp/index.js',
+      './src/webapp/index.js',
       ...(isDevServer ? [require.resolve('react-refresh/runtime')] : []),
     ],
     devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,
@@ -149,7 +149,7 @@ export function getWp(
         },
     resolve: {
       cache: true,
-      extensions: ['.ts', '.mts', '.tsx', '.js', '.mjs', '.jsx'],
+      extensions: ['.ts', '.mjs', '.tsx', '.js', '.mjs', '.jsx'],
       //modules: [__dirname, 'node_modules'],
       alias: cfg.baseResolveAlias,
       // fullySpecified: true,
@@ -325,7 +325,7 @@ export function getWp(
       // new webpack.NormalModuleReplacementPlugin(/.mjs$/, resource => {
       //   // resource.request = resource.request.replace(/^node:/, '')
       //   const url = resource.request
-      //   // const newUrl = url.endsWith('.mjs') ? require.resolve(url.replace(/.mjs$/, '.mts')) : url
+      //   // const newUrl = url.endsWith('.mjs') ? require.resolve(url.replace(/.mjs$/, '.mjs')) : url
       //   const newUrl = url.endsWith('.mjs') ? require.resolve(url.replace(/.mjs$/, '')) : url
       //   console.log({ url, newUrl })
       //   resource.request = newUrl

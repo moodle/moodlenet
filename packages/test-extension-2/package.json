@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "lib/main.mts",
   "private": "true",
   "moodlenet": {
     "creator": "MoodleNet",

@@ -8,7 +8,7 @@ export * from './types.mjs'
 const connection = await connectPkg(import.meta, { apis })
 
 await reactAppPkg.api('plugin')<WebPkgDeps>({
-  mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
+  mainComponentLoc: ['src', 'webapp', 'MainComponent.js'],
   usesPkgs: [connection],
 })
 

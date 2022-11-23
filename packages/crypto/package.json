@@ -6,7 +6,9 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "exports": {
+    ".": "./src/main.mts"
+  },
   "keywords": [
     "moodlenetPackage"
   ],

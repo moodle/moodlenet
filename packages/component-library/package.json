@@ -29,8 +29,8 @@
     "moodlenet-component-library-lib.d.ts"
   ],
   "exports": {
-    ".": "./lib/ui.mjs",
-    "./stories": "./lib/stories.mjs"
+    ".": "./src/ui.mts",
+    "./stories": "./src/stories.mts"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",

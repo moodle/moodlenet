@@ -15,7 +15,7 @@
     "src/"
   ],
   "exports": {
-    "./ui": "./lib/webapp/ui.mjs"
+    "./ui": "./src/webapp/ui.mts"
   },
   "main": "lib/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",

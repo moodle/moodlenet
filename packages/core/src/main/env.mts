@@ -1,16 +1,16 @@
-import dotenv from 'dotenv'
-import { expand } from 'dotenv-expand'
+// import dotenv from 'dotenv'
+// import { expand } from 'dotenv-expand'
 import { readFile, writeFile } from 'fs/promises'
 
 import { resolve } from 'path'
 import { PackageJson } from 'type-fest'
 
-export const DOTENV_PATH = process.env.MOODLENET_CORE_DOTENV_PATH
-const base_env = dotenv.config({
-  path: DOTENV_PATH,
-  debug: true,
-})
-expand(base_env)
+// export const DOTENV_PATH = process.env.MOODLENET_CORE_DOTENV_PATH
+// const base_env = dotenv.config({
+//   path: DOTENV_PATH,
+//   debug: true,
+// })
+// expand(base_env)
 
 export const WORKING_DIR = process.cwd()
 export const NODE_ENV = process.env.NODE_ENV
