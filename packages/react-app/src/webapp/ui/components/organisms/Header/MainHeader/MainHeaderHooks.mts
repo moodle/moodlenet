@@ -1,5 +1,6 @@
+import { AddonItem } from '@moodlenet/component-library'
 import { useContext, useMemo } from 'react'
-import { avatarMenuItems } from '../../../../../registries.mjs'
+import { avatarMenuItems, rightComponents } from '../../../../../registries.mjs'
 import { AuthCtx } from '../../../../../web-lib.mjs'
 import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
 import { href } from '../../../elements/link.js'
@@ -20,6 +21,7 @@ export const useHeaderProps = (): MainHeaderProps => {
   const isAuthenticated = !!clientSessionData
   const avatarUrl = clientSessionData?.userDisplay.avatarUrl
   const avatarMenuReg = avatarMenuItems.useRegistry()
+  const rightItemsReg = rightComponents.useRegistry()
 
   // prendo i valori dal registry inseriti da webuser o da package esterni
   const menuItems = useMemo(() => {
@@ -47,6 +49,15 @@ export const useHeaderProps = (): MainHeaderProps => {
     ]
   }, [avatarMenuReg.registry.entries, logout])
 
+  const rightItems = useMemo(() => {
+    return rightItemsReg.registry.entries.map<AddonItem>(({ item, pkgId }, idx) => {
+      return {
+        Item: item.Component,
+        key: `${pkgId.name}_${idx}`,
+      }
+    })
+  }, [rightItemsReg.registry.entries])
+
   const mainHeaderProps = useMemo<MainHeaderProps>(() => {
     return {
       headerTitleProps,
@@ -66,8 +77,8 @@ export const useHeaderProps = (): MainHeaderProps => {
       isAuthenticated,
       centerItems: [], //TODO: needs a registry,
       leftItems: [], //TODO: needs a registry,
-      rightItems: [], //TODO: needs a registry
+      rightItems,
     }
-  }, [avatarUrl, headerTitleProps, isAuthenticated, menuItems])
+  }, [avatarUrl, headerTitleProps, isAuthenticated, menuItems, rightItems])
   return mainHeaderProps
 }
