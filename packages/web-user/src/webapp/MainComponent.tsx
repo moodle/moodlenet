@@ -8,9 +8,10 @@ import { MainContextT, WebPkgDeps } from './types.mjs'
 
 const avatarmenuItemReg: HeaderMenuItemRegItem = {
   Icon: <>{avatarmenuItem.Icon}</>,
-  Text: '',
-  Path: { url: '/', ext: true },
+  Text: 'profile',
+  Path: { url: '/profile', ext: true },
 }
+
 const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
   registries.avatarMenuItems.useRegister(pkgId, avatarmenuItemReg)
   registries.routes.useRegister(pkgId, Router)
