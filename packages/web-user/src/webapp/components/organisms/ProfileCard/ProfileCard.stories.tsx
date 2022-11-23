@@ -22,7 +22,7 @@ export const LoggedOut = () => {
   const props = useProfileCardStoryProps({
     props: {
       // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
-      contentItems: [],
+      // contentItems: [],
     },
   })
   return <ProfileCard {...props} />

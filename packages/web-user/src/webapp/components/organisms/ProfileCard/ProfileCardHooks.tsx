@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { useFormik } from 'formik'
 import { ProfileCardPropsControlled } from './ProfileCard.js'
