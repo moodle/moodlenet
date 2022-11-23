@@ -15,34 +15,37 @@ import { MainHeaderProps } from './MainHeader.js'
 }*/
 
 export const useHeaderProps = (): MainHeaderProps => {
-  const { clientSessionData } = useContext(AuthCtx)
+  const { clientSessionData, logout } = useContext(AuthCtx)
   const headerTitleProps = useHeaderTitleProps()
   const isAuthenticated = !!clientSessionData
   const avatarUrl = clientSessionData?.userDisplay.avatarUrl
   const avatarMenuReg = avatarMenuItems.useRegistry()
 
   // prendo i valori dal registry inseriti da webuser o da package esterni
-  const menuItems = avatarMenuReg.registry.entries.map<HeaderMenuItem>((el, idx) => {
-    return {
-      Icon: el.item.Icon,
-      text: el.item.Text,
-      key: el.pkgId.name + idx,
-      path: el.item.Path,
-    }
-  })
-
-  menuItems.unshift({
-    Icon: 'Settings',
-    text: '',
-    key: 'SettingsIdx',
-    path: href('/settings'),
-  })
-  menuItems.unshift({
-    Icon: '',
-    text: 'LogOut',
-    key: 'logOutIdx',
-    path: href('/logout'),
-  })
+  const menuItems = useMemo(() => {
+    return [
+      ...avatarMenuReg.registry.entries.map<HeaderMenuItem>((el, idx) => {
+        return {
+          Icon: el.item.Icon,
+          text: el.item.Text,
+          key: el.pkgId.name + idx,
+          path: el.item.Path,
+        }
+      }),
+      {
+        Icon: 'Settings',
+        text: '',
+        key: 'SettingsIdx',
+        path: href('/settings'),
+      },
+      {
+        Icon: '',
+        text: 'LogOut',
+        key: 'logOutIdx',
+        onClick: logout,
+      },
+    ]
+  }, [avatarMenuReg.registry.entries, logout])
 
   const mainHeaderProps = useMemo<MainHeaderProps>(() => {
     return {

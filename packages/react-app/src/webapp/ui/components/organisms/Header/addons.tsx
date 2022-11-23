@@ -1,8 +1,8 @@
-import { ComponentType, ReactElement, ReactNode } from 'react'
+import { ComponentType, ReactNode } from 'react'
 import { Href } from '../../elements/link.js'
 
 export type HeaderMenuItem = {
-  Icon: ComponentType | ReactNode
+  Icon: ReactNode
   text: string
   key: string | number
   path?: Href
@@ -14,7 +14,7 @@ export type HeaderMenuItem = {
 export type HeaderRightComponentRegItem = { Component: ComponentType }
 export type HeaderMenuItemRegItem = {
   Text: string
-  Icon: ReactElement
+  Icon: ReactNode
   Path: Href
   ClassName?: string
   Position?: number
