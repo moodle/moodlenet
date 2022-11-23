@@ -1,3 +1,3 @@
-# MoodleNet Simple Email Auth
+# Sample extension template
 
-This package provides a simple email-password authentication for Moodlenet
+This package provides a simple extension template for Moodlenet

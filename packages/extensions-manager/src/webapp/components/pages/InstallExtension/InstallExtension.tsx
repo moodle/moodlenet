@@ -71,7 +71,6 @@ const InstallExtension: FC<InstallExtensionProps> = ({
     setSelectedExt(undefined)
     setShowManageExtensions && setShowManageExtensions(true)
   }
-
   return (
     <>
       {installSucces && (
@@ -94,16 +93,15 @@ const InstallExtension: FC<InstallExtensionProps> = ({
                   <InputTextField
                     className="local-path"
                     placeholder="Local path to package"
-                    defaultValue={installLocalPathExtensionForm.values.localPath}
                     value={installLocalPathExtensionForm.values.localPath}
                     onChange={installLocalPathExtensionForm.handleChange}
-                    name="packageName"
+                    name="localPath"
                     key="package-name"
                     error={shouldShowErrors && installLocalPathExtensionForm.errors.localPath}
                   />
                   <PrimaryButton
                     className={`${isInstalling ? 'loading' : ''}`}
-                    disabled={canSubmit}
+                    disabled={!canSubmit}
                     noHover={isInstalling}
                     onClick={setIsInstalling}
                   >

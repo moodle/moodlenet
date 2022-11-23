@@ -5,16 +5,21 @@ import { registries } from '../../../../../../web-lib.mjs'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
 import { GeneralContainer } from '../../General/GeneralContainer.js'
+import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { SettingsItem, SettingsProps } from '../Settings.js'
 
 const localSettingsItems: SettingsItem[] = [
   {
-    Content: { Item: GeneralContainer, key: `@moodlenet/react-app/general` },
-    Menu: { Item: () => <span>General</span>, key: `@moodlenet/react-app/general` },
+    Content: { Item: GeneralContainer, key: `@moodlenet/react-app/general-settings` },
+    Menu: { Item: () => <span>General</span>, key: `@moodlenet/react-app/general-settings` },
   },
   {
-    Content: { Item: AppearanceContainer, key: `@moodlenet/react-app/appearance` },
-    Menu: { Item: () => <span>Appearance</span>, key: `@moodlenet/react-app/appearance` },
+    Content: { Item: AppearanceContainer, key: `@moodlenet/react-app/appearance-settings` },
+    Menu: { Item: () => <span>Appearance</span>, key: `@moodlenet/react-app/appearance-settings` },
+  },
+  {
+    Content: { Item: AdvancedContainer, key: `@moodlenet/react-app/advanced-settings` },
+    Menu: { Item: () => <span>Advanced</span>, key: `@moodlenet/react-app/advanced-settings` },
   },
 ]
 
