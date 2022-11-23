@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { useFormik } from 'formik'
 import { ProfileCardPropsControlled } from './ProfileCard.js'
@@ -76,13 +76,20 @@ export const useProfileCardProps = ({
   }, [profileKey, profileApi])
 
   const isOwner = clientSessionData?.myUserNode._key === profileKey
+  // const profileCardsProps = useMemo(() => {
+  //   const props: ProfileCardPropsControlled = {
+  //     isOwner,
+  //     canEdit: isOwner,
+  //     isAuthenticated: !!clientSessionData,
+  //     form,
+  //   }
+  //   return props
+  // }, [clientSessionData, form, isOwner])
   const profileCardsProps: ProfileCardPropsControlled = {
     isOwner,
     canEdit: isOwner,
     isAuthenticated: !!clientSessionData,
-    moreButtonItems: [],
     form,
   }
-
   return profileCardsProps
 }

@@ -8,6 +8,7 @@ import {
   Searchbox,
   TertiaryButton,
 } from '@moodlenet/component-library'
+import { useMemo } from 'react'
 import { FC } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
@@ -175,29 +176,38 @@ export const MainHeader: FC<MainHeaderProps> = ({
 }) => {
   const { logo, smallLogo, url } = headerTitleProps
 
-  const updatedLeftItems = [
-    {
-      Item: () => <HeaderTitle logo={logo} smallLogo={smallLogo} url={url} />,
-      key: 'header-title',
-    },
-    ...(leftItems ?? []),
-  ].filter(Boolean)
+  const updatedLeftItems = useMemo(() => {
+    return [
+      {
+        Item: () => <HeaderTitle logo={logo} smallLogo={smallLogo} url={url} />,
+        key: 'header-title',
+      },
+      ...(leftItems ?? []),
+    ].filter(Boolean)
+  }, [leftItems, logo, smallLogo, url])
 
-  const updatedCenterItems = [
-    { Item: () => <Searchbox placeholder="Search for open education content" />, key: 'searchbox' },
-    ...(centerItems ?? []),
-  ]
+  const updatedCenterItems = useMemo(() => {
+    return [
+      {
+        Item: () => <Searchbox placeholder="Search for open education content" />,
+        key: 'searchbox',
+      },
+      ...(centerItems ?? []),
+    ]
+  }, [centerItems])
 
-  const updatedRightItems: AddonItem[] = [
-    isAuthenticated ? { Item: () => <AddMenu {...addMenuProps} />, key: 'add-menu' } : undefined,
-    isAuthenticated
-      ? { Item: () => <AvatarMenu {...avatarMenuProps} />, key: 'avatar-menu' }
-      : undefined,
-    !isAuthenticated
-      ? { Item: () => <AccessButtons {...accessButtonsProps} />, key: 'access-buttons' }
-      : undefined,
-    ...(rightItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  const updatedRightItems: AddonItem[] = useMemo(() => {
+    return [
+      isAuthenticated ? { Item: () => <AddMenu {...addMenuProps} />, key: 'add-menu' } : undefined,
+      isAuthenticated
+        ? { Item: () => <AvatarMenu {...avatarMenuProps} />, key: 'avatar-menu' }
+        : undefined,
+      !isAuthenticated
+        ? { Item: () => <AccessButtons {...accessButtonsProps} />, key: 'access-buttons' }
+        : undefined,
+      ...(rightItems ?? []),
+    ].filter((item): item is AddonItem => !!item)
+  }, [accessButtonsProps, addMenuProps, avatarMenuProps, isAuthenticated, rightItems])
   return (
     <Header
       leftItems={updatedLeftItems}
