@@ -8,6 +8,7 @@ export const useLoginProps = (): LoginProps => {
   const { registry } = loginItemsRegistry.useRegistry()
   const loginProps = useMemo<LoginProps>(() => {
     const loginItems = registry.entries.map(el => ({ ...el.item, key: el.pkgId.name }))
+    // console.log('xxxx', loginItems)
     return {
       headerProps,
       loginItems,

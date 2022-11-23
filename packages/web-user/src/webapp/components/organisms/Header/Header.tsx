@@ -1,20 +1,25 @@
-import { FC, ReactElement } from 'react'
+import { href } from '@moodlenet/react-app/ui'
+import { AuthCtx } from '@moodlenet/react-app/web-lib'
+import { FC, ReactElement, useContext } from 'react'
 
 export const text = 'Profile'
-export const path = '/profile'
+export const path = href('/@moodlenet/web-user/my-profile')
 export const className = 'profile'
 export const key = 'profile'
 export const position = 0
 type IconType = {
   icon: string | ReactElement
 }
-export const IconContainer: FC<IconType> = ({ icon }) => {
-  // const { clientSessionData } = useContext(AuthCtx)
+export const IconContainer: FC = () => {
+  const { clientSessionData } = useContext(AuthCtx)
+  if (!clientSessionData?.myUserNode) {
+    return null
+  }
+  const iconUrl = '' // TODO: should use avatarUrl from clientSessionData?.myUserNode
+  return <Icon icon={iconUrl}></Icon>
+}
 
-  // if (!clientSessionData || clientSessionData.isRoot) {
-  //   return null
-  // }
-  // return <Icon icon={<span>xxx</span>}></Icon>
+export const Icon: FC<IconType> = ({ icon }: IconType) => {
   return typeof icon === 'string' ? (
     <div
       style={{
@@ -27,10 +32,4 @@ export const IconContainer: FC<IconType> = ({ icon }) => {
   ) : (
     icon
   )
-
-  // return <Link to={`/content/${clientSessionData.myUserNode._id}`} style={avatar} className="avatar" />
-}
-
-export const Icon = (iconProps: IconType) => {
-  return <IconContainer {...iconProps} />
 }

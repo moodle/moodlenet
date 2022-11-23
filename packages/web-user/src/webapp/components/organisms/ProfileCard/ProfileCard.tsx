@@ -1,7 +1,7 @@
 import { Edit, Save } from '@material-ui/icons'
 import {
-  AddonItem,
-  FloatingMenu,
+  // AddonItem,
+  // FloatingMenu,
   InputTextField,
   Modal,
   PrimaryButton,
@@ -45,9 +45,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   }
 
   useLayoutEffect(() => {
-    //window.addEventListener('resize', setIsShowingSmallCardHelper)
+    window.addEventListener('resize', setIsShowingSmallCardHelper)
     return () => {
-      //window.removeEventListener('resize', setIsShowingSmallCardHelper)
+      window.removeEventListener('resize', setIsShowingSmallCardHelper)
     }
   }, [])
 

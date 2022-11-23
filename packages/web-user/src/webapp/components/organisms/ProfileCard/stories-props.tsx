@@ -68,7 +68,7 @@ export const useProfileCardStoryProps = (overrides?: {
     // }),
     toggleIsEditing: action('toogle Is Editing'),
     // openSendMessage: action('open Send Message'),
-    moreButtonItems: [],
+    // moreButtonItems: [],
     form: useFormik<ProfileFormValues>({
       onSubmit: action('submit edit'),
       validationSchema: profileStoriesValidationSchema,
