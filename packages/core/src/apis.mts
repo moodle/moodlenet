@@ -26,6 +26,7 @@ export default {
     install: defApi(
       _ctx => async (pkgs: InstallPkgReq[]) => {
         await install(pkgs)
+        rebootSystem()
         return
       },
       () => true,
@@ -33,6 +34,7 @@ export default {
     uninstall: defApi(
       _ctx => async (pkgs: PkgIdentifier[]) => {
         await uninstall(pkgs)
+        rebootSystem()
         return
       },
       () => true,
