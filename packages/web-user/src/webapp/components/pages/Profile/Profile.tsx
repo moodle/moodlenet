@@ -1,6 +1,6 @@
 import { AddonItem } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
-import { FC, useState } from 'react'
+import { FC, useReducer } from 'react'
 import { ProfileCard, ProfileCardPropsControlled } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
 
@@ -24,18 +24,13 @@ export const Profile: FC<ProfileProps> = ({
   // showAccountApprovedSuccessAlert,
   // showAccountCreationSuccessAlert,
 }) => {
-  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   // const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
   // const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   // const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
   // const [showMessageSentAlert, setShowMessageSentAlert] = useState<boolean>(false)
   // const [isReporting, setIsReporting] = useState<boolean>(false)
-
-  const toggleIsEditing = () => {
-    isEditing /* && editForm.dirty && editForm.submitForm() */
-    setIsEditing(!isEditing)
-  }
 
   // const modals = [
   //   isSendingMessage /* && sendEmailForm  */ && (
@@ -142,23 +137,7 @@ export const Profile: FC<ProfileProps> = ({
   // )
   // ]
 
-  const profileCard = {
-    Item: () => (
-      <ProfileCard
-        {...profileCardProps}
-        // editForm={editForm}
-        isEditing={isEditing}
-        toggleIsEditing={toggleIsEditing}
-        // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
-        // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
-        // setIsReporting={setIsReporting}
-        // openSendMessage={() => setIsSendingMessage(/* !!sendEmailForm */ true)}
-      />
-    ),
-    key: 'profile-card',
-  }
-
-  const updatedMainColumnItems: AddonItem[] = [profileCard, ...(mainColumnItems ?? [])]
+  const updatedMainColumnItems: AddonItem[] = [...(mainColumnItems ?? [])]
 
   return (
     <MainLayout {...mainLayoutProps}>
@@ -166,6 +145,16 @@ export const Profile: FC<ProfileProps> = ({
       <div className="profile">
         <div className="content">
           <div className="main-column">
+            <ProfileCard
+              {...profileCardProps}
+              // editForm={editForm}
+              isEditing={isEditing}
+              toggleIsEditing={toggleIsEditing}
+              // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
+              // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
+              // setIsReporting={setIsReporting}
+              // openSendMessage={() => setIsSendingMessage(/* !!sendEmailForm */ true)}
+            />
             {updatedMainColumnItems.map(i => (
               <i.Item key={i.key} />
             ))}
