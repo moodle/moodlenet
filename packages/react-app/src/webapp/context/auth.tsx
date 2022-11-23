@@ -47,6 +47,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     pkgs: [, , authApis, graphApis],
   } = useContext(MainContext)
 
+  const [firstCallDone, setFirstCallDone] = useState(false)
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
   const fetchClientSession = useCallback(
@@ -85,9 +86,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const storedSessionToken = readSessionToken()
     if (!storedSessionToken) {
+      setFirstCallDone(true)
       return
     }
-    fetchClientSession(storedSessionToken)
+    fetchClientSession(storedSessionToken).then(() => setFirstCallDone(true))
   }, [fetchClientSession])
 
   const ctx = useMemo<AuthCtxT>(() => {
@@ -99,6 +101,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [clientSessionData, setSessionToken, logout])
 
+  if (!firstCallDone) {
+    return null
+  }
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
 }
 

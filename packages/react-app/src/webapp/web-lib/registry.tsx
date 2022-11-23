@@ -17,7 +17,15 @@ export type RegistryEntry<ItemType> = {
 
 export type UnRegisterFn = () => void
 export type RegisterFn<ItemType> = (pkgId: PkgIdentifier, item: ItemType) => UnRegisterFn
-export type UseRegisterHook<ItemType> = (pkgId: PkgIdentifier, item: ItemType) => void
+
+export type UseRegisterHookOpt = {
+  condition: boolean
+}
+export type UseRegisterHook<ItemType> = (
+  pkgId: PkgIdentifier,
+  item: ItemType,
+  opts?: Partial<UseRegisterHookOpt>,
+) => void
 
 // export type CreateRegistryCfg<ItemType> = {}
 export type Registry<ItemType> = {
@@ -96,20 +104,24 @@ export function createRegistry<
     return <context.Provider value={ctxValue}>{children}</context.Provider>
   }
 
+  const useRegistry: UseRegistryHook<ItemType> = () => {
+    return useContext(context)
+  }
+
+  const useRegister: UseRegisterHook<ItemType> = (pkgId, item, _opts) => {
+    const { register } = useContext(context)
+
+    useEffect(() => {
+      if (_opts?.condition === false) {
+        return
+      }
+      return register(pkgId, item)
+    }, [item, register, pkgId, _opts?.condition])
+  }
+
   return {
     useRegistry,
     useRegister,
     Provider,
-  }
-
-  function useRegistry() {
-    return useContext(context)
-  }
-
-  function useRegister(pkgId: PkgIdentifier, item: ItemType) {
-    const { register } = useContext(context)
-    useEffect(() => {
-      return register(pkgId, item)
-    }, [item, register, pkgId])
   }
 }
