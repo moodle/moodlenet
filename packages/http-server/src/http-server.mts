@@ -11,14 +11,14 @@ import {
 import { env } from './init.mjs'
 import type { MountAppItem } from './types.mjs'
 
-export function createHttpServer() {
+export async function createHttpServer() {
   const extPortsApp = makeExtPortsApp()
 
   let server: Server
   let app: Application
   let mountedApps: MountAppItem[] = []
-  let shutdownGracefully: () => Promise<void>
-  start()
+  let shutdownGracefullyLocalServer: () => Promise<void>
+  await start()
   return {
     get: () => ({ server, mainApp: app }),
     mountApp,
@@ -26,14 +26,14 @@ export function createHttpServer() {
     restart,
   }
 
-  function mountApp(mountItem: MountAppItem) {
+  async function mountApp(mountItem: MountAppItem) {
     mountedApps = [...mountedApps, mountItem]
     console.log(`HTTP: register mountApp for ${mountItem.pkgId.name}`)
     //    app.use(mountItem.mountPath, mountItem.mountAppArgs.getApp(express))
-    restart()
-    return () => {
+    await restart()
+    return async () => {
       mountedApps = mountedApps.filter(_ => _ !== mountItem)
-      return restart()
+      await restart()
     }
   }
 
@@ -43,10 +43,10 @@ export function createHttpServer() {
   }
 
   async function stop() {
-    const err = await shutdownGracefully().catch(err => err)
+    const err = await shutdownGracefullyLocalServer().catch(err => err)
     console.info(`HTTP: stopped with ${err ? 'error:' : 'no error'}`, err ?? '')
   }
-  function start() {
+  async function start() {
     app = express()
       .use(cookieParser())
       .use(`*`, async (req, __, next) => {
@@ -69,10 +69,10 @@ export function createHttpServer() {
         pkgAppContainer.use(pkgBaseRoute, pkgApp)
       }
     })
-    return new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       console.info(`HTTP: starting server on port ${env.port}`)
       server = app.listen(env.port, (...args: any[]) => (args[0] ? reject(args[0]) : resolve()))
-      shutdownGracefully = gracefulShutdown(server, {
+      shutdownGracefullyLocalServer = gracefulShutdown(server, {
         development: false,
         forceExit: false,
         timeout: 1000,

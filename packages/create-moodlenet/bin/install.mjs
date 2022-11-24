@@ -105,7 +105,7 @@ async function freshInstallPkgJson() {
     installTimeVersion: myPkgJson.version,
     scripts: {
       'start': `pm2 --env=production --source-map-support --force --name ${installationName} --update-env --attach --wait-ready restart ${pm2ConfigFileName}`,
-      'start-dev': `pm2-dev --env=development --raw --node-args="--trace-uncaught --enable-source-maps" start ${pm2ConfigFileName}`,
+      'start-dev': `pm2-dev --ignore=moodlenet-lock.json,package-lock.json --env=development --raw --node-args="--trace-uncaught --enable-source-maps" start ${pm2ConfigFileName}`,
     },
     dependencies,
   }

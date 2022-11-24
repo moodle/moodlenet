@@ -1,7 +1,7 @@
 import { createHttpServer } from './http-server.mjs' //FIXME: circular dep
 
 export const env = getEnv({} /* shell.env */)
-export const httpServer = createHttpServer()
+export const httpServer = await createHttpServer()
 
 type Env = {
   port: number
