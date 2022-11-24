@@ -276,7 +276,8 @@ export function getWp(
         },
         {
           test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
+          // TODO: is there a way to ignore /node_modules/ except for "installed mn packages" ?
+          // exclude: /node_modules/, // HACK: removed because it won't compile jsx from within system's installed packages .. but this way it may be heavier..
           use: [
             ...(isDevServer
               ? [
