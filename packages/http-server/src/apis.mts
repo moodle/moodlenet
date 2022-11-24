@@ -10,7 +10,7 @@ export default {
         pkgId: ctx.caller.pkgId,
         mountOnAbsPath: mountAppArgs.mountOnAbsPath,
       }
-      const unmount = httpServer.mountApp(mountAppItem)
+      const unmount = await httpServer.mountApp(mountAppItem)
       // FIXME: on uninstall unmount()
       return unmount
     },
