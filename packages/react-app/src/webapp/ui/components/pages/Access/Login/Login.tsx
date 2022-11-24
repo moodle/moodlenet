@@ -15,17 +15,7 @@ export type LoginProps = {
 // Record<string, unknown>
 
 export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps }) => {
-  // TODO: I commenti sotto implementarli nel hook
-
-  // const { registry: loginRegs } = registries.loginItems.useRegistry()
-  // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-  //   if (e.key === 'Enter') {
-  //     // form.submitForm()
-  //   }
-  // }
-
   // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
-
   // const defaultLoginEntry = loginRegs.entries[0]
   const defaultLoginEntry = loginItems[0]
   const [currLoginEntry, chooseLoginEntry] = useState(defaultLoginEntry)

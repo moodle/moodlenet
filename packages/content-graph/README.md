@@ -3,7 +3,7 @@
 This package manages system's all installed authentication strategies
 
 Glyphs : definezione !!!
-arango, collezioni, 2 tipi di collezioni, nodi , e edge, e.> dge crea relazioni tra nodi (definite tipo json), 
+arango, collezioni, 2 tipi di collezioni, nodi , e edge, e.> dge crea relazioni tra nodi (definite tipo json),
 glyphs = struttura dei dati che può essere nodo o edge
 
 node -> contengono le entità (oggetti di bussines)

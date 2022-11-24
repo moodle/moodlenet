@@ -27,13 +27,11 @@ npm link ./packages/create-moodlenet/
 1
 ~/repo/moodlenet $ yarn dev-webapp
 
+### use of register : 
 
+here I take the items define in the external component
 
-### use di register : 
-
-qui prendo gli item defini nel componente esterno 
-
-packages/react-app/src/webapp/ui/components/organisms/Header/MainHeader/MainHeaderHooks.mts
+  packages/react-app/src/webapp/ui/components/organisms/Header/MainHeader/MainHeaderHooks.mts
 
   const avatarMenuReg = avatarMenuItems.useRegistry()
 
@@ -46,11 +44,10 @@ packages/react-app/src/webapp/ui/components/organisms/Header/MainHeader/MainHead
     }
   })
 
-qui viengono definti gli item da aggingere al header o parent component
+here the items to be added to the header or parent component are defined
   packages/web-user/src/webapp/MainComponent.tsx
 
-ATTENZIONE :
+ATTENTION :
 
-gli item di registry, possono aggiungere a una lista già esistente, per esempo qui i avatarmenuitem,
-alcuni sono aggiunti da webApp perchè fissi, altri da webUser per esempo il link al suo profile 
-
+registry items, can add to an already existing list, for example here the avatarmenuitem,
+some are added by webApp because they are fixed, others by webUser for example the link to his profile
