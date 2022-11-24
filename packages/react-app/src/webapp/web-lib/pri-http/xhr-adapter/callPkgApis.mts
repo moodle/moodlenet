@@ -1,6 +1,6 @@
 import type { ApiDefPaths, ApiFnType, PkgIdentifier } from '@moodlenet/core'
-import type { HttpApiResponse } from '@moodlenet/http-server'
-import { getPkgApiFetchOpts } from '@moodlenet/http-server/lib/ext-ports-app/pub-lib.mjs'
+import type { HttpApiResponse } from '@moodlenet/http-server/lib'
+import { getPkgApiFetchOpts } from '@moodlenet/http-server/lib'
 
 export type Opts = Record<string, never>
 

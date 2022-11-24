@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "dist/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Test extension"
@@ -17,7 +17,7 @@
   "description": "Test extension\nJust an extension to make tests",
   "readme": "",
   "files": [
-    "lib/"
+    "dist/"
   ],
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

@@ -15,12 +15,12 @@
   ],
   "description": "Core\nThe kernel of MoodleNet",
   "files": [
-    "lib/",
+    "dist/",
     "src/",
     "bin/"
   ],
   "bin": "./bin/boot.mjs",
-  "main": "lib/main.mjs",
+  "main": "dist/main.mjs",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

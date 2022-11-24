@@ -11,13 +11,13 @@
   ],
   "description": "Passport Auth\nUse social authentication systems",
   "files": [
-    "lib/",
+    "dist/",
     "src/"
   ],
   "exports": {
-    "./ui": "./lib/webapp/ui.mjs"
+    "./ui": "./dist/webapp/ui.mjs"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

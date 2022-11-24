@@ -19,7 +19,7 @@ export function generateConnectPkgModulesModule({
     resolve(__dirname, '..', 'src', 'webapp', 'mainContextProviders.tsx'),
   )}'
   // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
-    resolve(__dirname, '..', 'lib', 'webapp', 'mainContextProviders.js'),
+    resolve(__dirname, '..', 'dist', 'webapp', 'mainContextProviders.js'),
   )}'
 
   ${plugins

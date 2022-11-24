@@ -86,7 +86,7 @@ export function getWp(
     mode,
     // entry: ['./src/webapp/index.tsx', ...(isDevServer ? [require.resolve('react-refresh/runtime')] : [])],
     entry: [
-      './lib/webapp/index.js',
+      './dist/webapp/index.js',
       ...(isDevServer ? [require.resolve('react-refresh/runtime')] : []),
     ],
     devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,

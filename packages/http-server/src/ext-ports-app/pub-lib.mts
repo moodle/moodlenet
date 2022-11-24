@@ -1,6 +1,6 @@
 import type { PkgIdentifier } from '@moodlenet/core'
+export * from '../types.mjs'
 export const SESSION_TOKEN_COOKIE_NAME = 'mn-session'
-
 export const BASE_APIS_URL = '/.apis'
 export const BASE_PKG_MOUNT_URL = '/.pkg'
 

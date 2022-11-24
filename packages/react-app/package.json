@@ -16,10 +16,10 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/server/main.mjs",
+  "main": "dist/server/main.mjs",
   "readme": "",
   "files": [
-    "lib/",
+    "dist/",
     "src/",
     "public/",
     "public/favicon*",
@@ -30,16 +30,16 @@
     "moodlenetPackage"
   ],
   "exports": {
-    ".": "./lib/server/main.mjs",
-    "./stories": "./lib/webapp/stories.mjs",
-    "./common": "./lib/common/index.mjs",
-    "./ui": "./lib/webapp/ui.mjs",
-    "./web-lib": "./lib/webapp/web-lib.mjs"
+    ".": "./dist/server/main.mjs",
+    "./stories": "./dist/webapp/stories.mjs",
+    "./common": "./dist/common/index.mjs",
+    "./ui": "./dist/webapp/ui.mjs",
+    "./web-lib": "./dist/webapp/web-lib.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
-    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
-    "dev-server": "node lib/-dev-server.mjs",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
+    "dev-server": "node dist/-dev-server.mjs",
     "create-common-index": "vgis src/common/index.mts",
     "create-components-index": "vgis src/webapp/ui.mts",
     "create-stories-index": "vgis src/webapp/stories.mts"

@@ -6,7 +6,11 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "exports": {
+    ".": "./dist/main.mjs",
+    "./lib": "./dist/ext-ports-app/pub-lib.mjs"
+  },
+  "main": "dist/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "HTTP server"
@@ -16,7 +20,7 @@
   ],
   "description": "HTTP server\nMain system HTTP server",
   "files": [
-    "lib/",
+    "dist/",
     "src/"
   ],
   "repository": "https://gitlab.com/moodlenet/moodlenet",

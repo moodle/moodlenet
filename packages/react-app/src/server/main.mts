@@ -20,7 +20,7 @@ const webPkgDeps: WebPkgDeps = [reactAppConn, organizationConn, authConn, graphC
 await setupPlugin<WebPkgDeps>({
   pkgId: reactAppConn,
   pluginDef: {
-    mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
+    mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
     usesPkgs: webPkgDeps,
   },
 })
