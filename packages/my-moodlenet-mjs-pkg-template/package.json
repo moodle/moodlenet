@@ -7,7 +7,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/server/main.mjs",
+  "main": "src/server/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "MoodleNet pkg template"
@@ -17,7 +17,7 @@
   ],
   "description": "MoodleNet pkg template",
   "files": [
-    "lib/"
+    "src/"
   ],
   "peerDependencies": {
     "@moodlenet/component-library": "^0.1.0",
