@@ -40,7 +40,7 @@ export async function editProfile(_key: string, { displayName, description }: Ed
 export async function getProfile(
   _key: string,
 ): Promise<NodeGlyph<ProfileGlyphDescriptors['Profile']> | null> {
-  // TODO: viene riscritto meglio con utility, per ora insrisco profile a mano
+  // TODO: this must rewrite better like utility for now we inject by hand Profile
   const res = await graphPkg.api('node/read')<ProfileGlyphDescriptors['Profile']>({
     _key,
     ...glyphDescriptors.Profile,
