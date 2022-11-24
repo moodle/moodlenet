@@ -6,14 +6,14 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "dist/main.mjs",
   "keywords": [
     "moodlenetPackage"
   ],
   "description": "Crypto service\nSystem cryptography services",
   "readme": "",
   "files": [
-    "lib/"
+    "dist/"
   ],
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

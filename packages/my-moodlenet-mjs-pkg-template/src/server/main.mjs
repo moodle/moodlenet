@@ -5,6 +5,6 @@ import { reactAppPkg } from './use-pkgs.mjs'
 const connection = await connectPkg(import.meta, { apis })
 
 reactAppPkg.api('plugin')({
-  mainComponentLoc: ['lib', 'webapp', 'MainComponent.jsx'],
+  mainComponentLoc: ['dist', 'webapp', 'MainComponent.jsx'],
   usesPkgs: [connection],
 })

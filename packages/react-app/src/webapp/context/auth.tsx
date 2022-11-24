@@ -1,7 +1,7 @@
 import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
 import type graphPkgRef from '@moodlenet/content-graph'
 import type { NodeGlyph } from '@moodlenet/content-graph'
-import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib/ext-ports-app/pub-lib.mjs'
+import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
 import cookies from 'js-cookie'
 import {
   createContext,

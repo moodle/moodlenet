@@ -19,10 +19,10 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "dist/main.mjs",
   "readme": "",
   "files": [
-    "lib/"
+    "dist/"
   ],
   "dependencies": {
     "formik": "^2.2.9",
@@ -50,7 +50,7 @@
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
-    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
     "create-components-index": "vgis src/ui.mts"
   },
   "watch": {
@@ -71,8 +71,8 @@
     }
   },
   "exports": {
-    ".": "./lib/main.mjs",
-    "./ui": "./lib/ui.mjs",
-    "./stories": "./lib/stories.mjs"
+    ".": "./dist/main.mjs",
+    "./ui": "./dist/ui.mjs",
+    "./stories": "./dist/stories.mjs"
   }
 }

@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "dist/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Content Graph"
@@ -16,7 +16,7 @@
   ],
   "description": "Content Graph\nMaintainance of all Moodlenet Entities",
   "files": [
-    "lib/",
+    "dist/",
     "src/"
   ],
   "repository": "https://gitlab.com/moodlenet/moodlenet",

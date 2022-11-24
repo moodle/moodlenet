@@ -2,13 +2,13 @@
   "extends": "../../tsconfig.json",
   "exclude": [
     "node_modules",
-    "lib",
+    "dist",
     "build",
     "latest-build",
     "_connect-moodlenet-pkg-modules_.mts"
   ],
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "lib"
+    "outDir": "dist"
   }
 }

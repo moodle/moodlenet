@@ -17,9 +17,9 @@
   "description": "Test extension\nJust an extension to make tests",
   "readme": "",
   "files": [
-    "lib/"
+    "dist/"
   ],
-  "main": "lib/main.mjs",
+  "main": "dist/main.mjs",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "devDependencies": {

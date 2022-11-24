@@ -10,7 +10,7 @@ const connection = await connectPkg(import.meta, { apis })
 export default connection
 
 reactAppPkg.api('plugin')<WebPkgDeps>({
-  mainComponentLoc: ['lib', 'webapp', 'MainComponent.js'],
+  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
   usesPkgs: [connection],
 })
 

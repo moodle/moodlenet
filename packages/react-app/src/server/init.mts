@@ -57,22 +57,7 @@ const baseResolveAlias: ResolveOptions['alias'] = {
   'react-router-dom': packageDirectorySync({ cwd: require.resolve('react-router-dom') })!,
   'react-dom': packageDirectorySync({ cwd: require.resolve('react-dom') })!,
   '@material-ui/icons': '@material-ui/icons/esm',
-  // '@moodlenet/react-app/src/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
-  // '@moodlenet/react-app/lib/webapp/ui': resolve(__dirname, '..', 'src', 'webapp', 'ui'),
 
-  // '@moodlenet/authentication-manager/src/*': '@moodlenet/authentication-manager/src/*',
-  // '@moodlenet/authentication-manager/lib/*': '@moodlenet/authentication-manager/src/*',
-
-  // '@moodlenet/content-graph/src/*': '@moodlenet/content-graph/src/*',
-  // '@moodlenet/content-graph/lib/*': '@moodlenet/content-graph/src/*',
-
-  // '@moodlenet/organization/src/*': '@moodlenet/organization/src/*',
-  // '@moodlenet/organization/lib/*': '@moodlenet/organization/src/*',
-
-  // '@moodlenet/http-server/src/*': '@moodlenet/http-server/src/*',
-  // '@moodlenet/http-server/lib/*': '@moodlenet/http-server/src/*',
-
-  // '*.mjs': '*.mts',
   [connectPkgModulesFile.alias]: connectPkgModulesFile.target,
 }
 await writeGenerated()

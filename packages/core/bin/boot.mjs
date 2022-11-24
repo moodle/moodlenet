@@ -5,4 +5,4 @@
 // const opts = await yargs(process.argv.slice(2))
 // const argv = await opts.argv
 
-await import('../lib/main/boot.mjs')
+await import('../dist/main/boot.mjs')

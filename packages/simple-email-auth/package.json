@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "lib/main.mjs",
+  "main": "dist/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Email authentication"
@@ -16,11 +16,11 @@
   ],
   "description": "Email authentication\nBasic authentication using email and password",
   "files": [
-    "lib/",
+    "dist/",
     "src/"
   ],
   "exports": {
-    "./ui": "./lib/webapp/ui.mjs"
+    "./ui": "./dist/webapp/ui.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
@@ -59,7 +59,7 @@
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
-    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} lib",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
     "create-components-index": "vgis src/webapp/ui.mts"
   },
   "watch": {

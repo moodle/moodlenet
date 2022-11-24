@@ -2,7 +2,7 @@
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
 import { ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
-// import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/lib/webapp/Signup.js'
+// import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/dist/webapp/Signup.js'
 import { Signup, SignupProps } from '@moodlenet/react-app/ui'
 import { Signup as SimpleEmailAuth, SignupStoriesProps } from '@moodlenet/simple-email-auth/ui'
 // import { object, SchemaOf, string } from 'yup'
