@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { ManageExtensionsPropsControlled } from './ManageExtensions.js'
 
 import { ExtensionType } from '../Extensions/Extensions.js'
@@ -10,7 +10,8 @@ export const useManageExtensionsProps = (
   overrides?: Partial<ManageExtensionsPropsControlled>,
 ): ManageExtensionsPropsControlled => {
   const [extensions, setExtensions] = useState<ExtensionType[]>([])
-
+  const [installUninstallSucces, toggleInstallUninstallSucces] = useReducer(_ => !_, false)
+  const [isInstallingUninstalling, toggleIsInstallingUninstalling] = useReducer(_ => !_, false)
   const {
     pkgs: [myPkg],
   } = useContext(MainContext)
@@ -19,7 +20,7 @@ export const useManageExtensionsProps = (
       .call('listDeployed')()
       .then(resp =>
         setExtensions(
-          resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A' }) => {
+          resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A', pkgId }) => {
             const repositoryUrl =
               typeof packageJson.repository === 'string'
                 ? packageJson.repository
@@ -34,15 +35,26 @@ export const useManageExtensionsProps = (
               readme,
               developedByMoodleNet,
               mandatory: developedByMoodleNet,
-              installUninstallSucces: true,
-              isInstallingUninstalling: true,
-              toggleInstallingUninstalling: () => null,
+              installUninstallSucces,
+              isInstallingUninstalling,
+              toggleInstallingUninstalling: () => {
+                if (isInstallingUninstalling) {
+                  return
+                }
+                toggleIsInstallingUninstalling()
+                myPkg
+                  .call('uninstall')([pkgId])
+                  .then(() => {
+                    toggleInstallUninstallSucces()
+                    toggleIsInstallingUninstalling()
+                  })
+              },
             }
             return extensionType
           }),
         ),
       )
-  }, [myPkg])
+  }, [installUninstallSucces, isInstallingUninstalling, myPkg])
 
   const manageExtensionsPropsControlled = useMemo<ManageExtensionsPropsControlled>(() => {
     const props: ManageExtensionsPropsControlled = {
