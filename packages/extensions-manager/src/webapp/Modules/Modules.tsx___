@@ -15,7 +15,7 @@ const Modules: FC<ModulesProps> = () => {
     if (!localPathField) {
       return
     }
-    myPkg.call('install')([{ type: 'symlink', fromFolder: localPathField }])
+    myPkg.call('install')([{ type: 'pack-folder', fromFolder: localPathField }])
   }, [localPathField, myPkg])
   return (
     <div className="modules">

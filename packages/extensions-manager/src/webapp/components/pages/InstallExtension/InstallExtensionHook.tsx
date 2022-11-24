@@ -17,7 +17,7 @@ export const useInstallExtensionProps = (): InstallExtensionPropsControlled => {
       return mypkg.call('install')([
         {
           fromFolder: localPath,
-          type: 'symlink',
+          type: 'pack-folder',
         },
       ])
     },
