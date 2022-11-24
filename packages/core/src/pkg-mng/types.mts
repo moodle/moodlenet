@@ -1,12 +1,12 @@
 import { PackageJson } from 'type-fest'
 import { PkgIdentifier } from '../types.mjs'
 
-export type InstallerType = 'symlink' | 'npm' //| 'file' | 'git'
+export type InstallerType = 'pack-folder' | 'npm' //| 'file' | 'git'
 export type _InstallPkgReq<Type extends InstallerType, More> = More & { type: Type }
 export type NpmInstallReq = _InstallPkgReq<'npm', { pkgId: PkgIdentifier }>
-export type SymlinkInstallReq = _InstallPkgReq<'symlink', { fromFolder: string }>
+export type PackFolderInstallReq = _InstallPkgReq<'pack-folder', { fromFolder: string }>
 
-export type InstallPkgReq = NpmInstallReq | SymlinkInstallReq
+export type InstallPkgReq = NpmInstallReq | PackFolderInstallReq
 
 // export type MoodlenetPkgManifest = Record<string, never>
 export type SafePackageJson = PackageJson & {
