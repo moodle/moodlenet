@@ -5,6 +5,14 @@ import { query } from './lib/query.mjs'
 import { CollectionDefOptMap, QueryReq } from './types.mjs'
 
 export default {
+  xx: defApi(
+    ctx =>
+      async ({ defs }: { defs: CollectionDefOptMap }) => {
+        return 100
+      },
+    () => true,
+    //{noPrimary:true}
+  ),
   ensureCollections: defApi(
     ctx =>
       async ({ defs }: { defs: CollectionDefOptMap }) => {

@@ -62,7 +62,7 @@ export const ResourceCardLegacy = withCtrl<ResourceCardLegacyProps>(
     toggleBookmark,
   }) => {
     const background = {
-      backgroundImage: "'url("' + (image ? image : defaultBackgroud) + '")',
+      backgroundImage: `url("${image ? image : ''}")`,
       backgroundSize: 'cover',
     }
 
