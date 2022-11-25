@@ -16,3 +16,5 @@ build-storybook.log*
 
 .env
 .env.*
+
+/tsconfig.tsbuildinfo
