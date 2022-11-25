@@ -37,6 +37,14 @@
     },
     {
       "group": "build",
+      "command": "npx",
+      "args": ["tsc", "--build", "--watch"],
+      "isBackground": true,
+      "problemMatcher": ["$tsc-watch"],
+      "label": "build-watch-all"
+    },
+    {
+      "group": "build",
       "problemMatcher": [],
       "label": "frontend-tasks",
       "dependsOrder": "parallel",
