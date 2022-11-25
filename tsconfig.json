@@ -2,27 +2,7 @@
   "exclude": ["./legacy-packages", "./packages/storybook", "./packages/passport-auth"],
   "compilerOptions": {
     "composite": true,
-    "incremental": true,
-    "noUncheckedIndexedAccess": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "declaration": true,
-    // "sourceMap": true /* Generates corresponding '.map' file. */,
-    "strict": true /* Enable all strict type-checking options. */,
-    "noUnusedLocals": true /* Report errors on unused locals. */,
-    "noUnusedParameters": true /* Report errors on unused parameters. */,
-    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
-    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
-    "esModuleInterop": true,
-    // "module": "esnext",
-    "skipLibCheck": true,
-    "target": "ESNext",
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "resolveJsonModule": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "moduleResolution": "Node16",
-    "module": "Node16"
+    "incremental": true
   },
   "references": [
     { "path": "./packages/arangodb" },
