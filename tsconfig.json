@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig-base.json",
   "exclude": ["./legacy-packages", "./packages/storybook", "./packages/passport-auth"],
   "compilerOptions": {
     "composite": true,
