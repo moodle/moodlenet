@@ -54,7 +54,8 @@
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets",
-    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist"
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
+    "build": "tsc --build"
   },
   "watch": {
     "copy-assets": {

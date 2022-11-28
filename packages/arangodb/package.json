@@ -37,5 +37,7 @@
   "peerDependencies": {
     "@moodlenet/core": "^0.1.0"
   },
-  "scripts": {}
+  "scripts": {
+    "build": "tsc --build"
+  }
 }

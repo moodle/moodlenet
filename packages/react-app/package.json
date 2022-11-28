@@ -42,7 +42,8 @@
     "dev-server": "node dist/-dev-server.mjs",
     "create-common-index": "vgis src/common/index.mts",
     "create-components-index": "vgis src/webapp/ui.mts",
-    "create-stories-index": "vgis src/webapp/stories.mts"
+    "create-stories-index": "vgis src/webapp/stories.mts",
+    "build": "tsc --build"
   },
   "watch": {
     "create-stories-index": {
