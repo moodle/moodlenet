@@ -32,7 +32,8 @@
   "scripts": {
     "dev-assistant": "npm-watch copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "esbuild": "node ../esbuild.js"
   },
   "watch": {
     "copy-assets": {

@@ -20,7 +20,8 @@
     "src/"
   ],
   "scripts": {
-    "buildx": "tsc --build"
+    "buildx": "tsc --build",
+    "esbuildx": "node ../esbuild.js"
   },
   "peerDependencies": {
     "@moodlenet/component-library": "^0.1.0",

@@ -37,7 +37,8 @@
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
     "create-ui-index": "vgis src/ui.mts",
     "create-stories-index": "vgis src/stories.mts",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "esbuild": "node ../esbuild.js"
   },
   "watch": {
     "create-stories-index": {

@@ -43,7 +43,8 @@
     "create-common-index": "vgis src/common/index.mts",
     "create-components-index": "vgis src/webapp/ui.mts",
     "create-stories-index": "vgis src/webapp/stories.mts",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "esbuild": "node ../esbuild.js"
   },
   "watch": {
     "create-stories-index": {

@@ -38,6 +38,7 @@
     "@moodlenet/core": "^0.1.0"
   },
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "esbuild": "node ../esbuild.js"
   }
 }

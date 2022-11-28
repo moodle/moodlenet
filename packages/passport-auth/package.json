@@ -53,6 +53,7 @@
     "typescript": "^4.7.2"
   },
   "scripts": {
-    "buildx": "tsc --build"
+    "buildx": "tsc --build",
+    "esbuildx": "node ../esbuild.js"
   }
 }
