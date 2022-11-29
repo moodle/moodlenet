@@ -50,7 +50,7 @@ function createDeclaration() {
 
 // const inject = glob.sync('src/**/*.mts', 'src/**/*.tsx')
 //const inject = glob.sync('src/**/*.+(mts|tsx|ts)')  'src/**/!(*.mts_|*.tsx_|*.ts|*.ts )'
-const inject = glob('src/**/*.*', {
+const inject = glob('src/**/!(vendor|node_modules)/*.+(mts|tsx|ts|svg|png|jpg|scss|css|json)', {
   ignore: ['mts_', 'tsx_', 'ts_', 'js_', 'node_modules/*'],
   sync: true,
 })
