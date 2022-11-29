@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/http-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
@@ -30,12 +30,12 @@
     "http-graceful-shutdown": "^3.1.7"
   },
   "peerDependencies": {
-    "@moodlenet/authentication-manager": "^0.1.0",
-    "@moodlenet/core": "^0.1.0"
+    "@moodlenet/authentication-manager": "^0.2.0",
+    "@moodlenet/core": "^0.2.0"
   },
   "devDependencies": {
-    "@moodlenet/authentication-manager": "^0.1.0",
-    "@moodlenet/core": "^0.1.0",
+    "@moodlenet/authentication-manager": "^0.2.0",
+    "@moodlenet/core": "^0.2.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.14",
     "@types/node": "^17.0.35",

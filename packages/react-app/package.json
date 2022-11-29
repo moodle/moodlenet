@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/react-app",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "MoodleNet",
   "description": "Frontend interface to interact with the backend",
   "moodlenet": {
@@ -77,22 +77,22 @@
     }
   },
   "peerDependencies": {
-    "@moodlenet/authentication-manager": "^0.1.0",
-    "@moodlenet/component-library": "^0.1.0",
-    "@moodlenet/content-graph": "^0.1.0",
-    "@moodlenet/core": "^0.1.0",
-    "@moodlenet/http-server": "^0.1.0",
-    "@moodlenet/key-value-store": "^0.1.0",
-    "@moodlenet/organization": "^0.1.0"
+    "@moodlenet/authentication-manager": "^0.2.0",
+    "@moodlenet/component-library": "^0.2.0",
+    "@moodlenet/content-graph": "^0.2.0",
+    "@moodlenet/core": "^0.2.0",
+    "@moodlenet/http-server": "^0.2.0",
+    "@moodlenet/key-value-store": "^0.2.0",
+    "@moodlenet/organization": "^0.2.0"
   },
   "devDependencies": {
-    "@moodlenet/authentication-manager": "^0.1.0",
-    "@moodlenet/component-library": "^0.1.0",
-    "@moodlenet/content-graph": "^0.1.0",
-    "@moodlenet/core": "^0.1.0",
-    "@moodlenet/http-server": "^0.1.0",
-    "@moodlenet/key-value-store": "^0.1.0",
-    "@moodlenet/organization": "^0.1.0",
+    "@moodlenet/authentication-manager": "^0.2.0",
+    "@moodlenet/component-library": "^0.2.0",
+    "@moodlenet/content-graph": "^0.2.0",
+    "@moodlenet/core": "^0.2.0",
+    "@moodlenet/http-server": "^0.2.0",
+    "@moodlenet/key-value-store": "^0.2.0",
+    "@moodlenet/organization": "^0.2.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/jest": "^27.5.1",
     "@types/js-cookie": "^3.0.2",
