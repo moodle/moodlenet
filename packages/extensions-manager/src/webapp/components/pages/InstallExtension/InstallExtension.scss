@@ -1,0 +1,153 @@
+.install-extension {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  > .card.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+    > svg {
+      width: 34px;
+      height: 34px;
+    }
+  }
+
+  > .card {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 40px;
+    gap: 20px;
+
+    > .title {
+      font-size: 23px;
+      font-weight: bold;
+    }
+    > .subtitle {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    > .option {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      > .name {
+        font-weight: bold;
+      }
+      > .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 22px;
+
+        > .input-text-field {
+          height: 36px;
+          width: 100%;
+        }
+
+        > .primary-button {
+          display: grid;
+          grid-template-columns: 1fr;
+          > div {
+            grid-row-start: 1;
+            grid-column-start: 1;
+
+            &.loading {
+              display: flex;
+              visibility: visible;
+              width: 100%;
+              align-items: center;
+              justify-content: center;
+            }
+          }
+
+          &.loading {
+            pointer-events: none;
+          }
+        }
+      }
+    }
+  }
+
+  > .available-extensions {
+    > .list {
+      min-height: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      > .package {
+        display: flex;
+        width: 100%;
+        height: 74px;
+        gap: 14px;
+        align-items: center;
+        position: relative;
+        padding: 0 11px;
+        border: 1px solid #ededed;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #f9f9f9;
+          > .primary-button {
+            background-color: var(--primary-color-hover);
+            box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
+          }
+        }
+
+        > .logo {
+          position: relative;
+          border-radius: 5px;
+          height: 40px;
+          width: 40px;
+          flex: 0 0 40px;
+          padding: 4px;
+          background-color: #fdb068;
+          background-size: cover;
+          > .circle {
+            height: 100%;
+            width: 100%;
+            border-radius: 100px;
+            background-color: #ff8e24;
+          }
+          > .letter {
+            position: absolute;
+            left: 4px;
+            right: 0;
+            top: 6px;
+            bottom: 0;
+            font-size: 28px;
+            text-align: center;
+            border-radius: 100px;
+            color: #ffffff;
+            font-weight: bolder;
+            font-family: 'Press Start 2P';
+            transform-style: preserve-3d;
+          }
+        }
+
+        > .info {
+          min-width: 0px;
+          > .title {
+            font-size: 18px;
+          }
+          > .details {
+            font-size: 13px;
+            color: rgb(100, 100, 100);
+          }
+          > * {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+        }
+
+        > .install-btn {
+          margin-left: auto;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@moodlenet/create",
+  "version": "3.0.0-alpha.8",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "description": "MoodleNet installer",
+  "files": [
+    "bin/"
+  ],
+  "bin": "./bin/install.mjs",
+  "scripts": {
+    "start": "node ./bin/install.mjs"
+  },
+  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "author": "https://github.com/aleclofabbro",
+  "dependencies": {
+    "execa": "^5.1.1",
+    "yargs": "^17.5.1"
+  }
+}
