@@ -7,7 +7,9 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "src/server/main.mjs",
+  "exports": {
+    ".": "./src/server/main.mjs"
+  },
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "MoodleNet pkg template"
@@ -19,6 +21,9 @@
   "files": [
     "src/"
   ],
+  "scripts": {
+    "buildx": "tsc --build"
+  },
   "peerDependencies": {
     "@moodlenet/component-library": "^0.1.0",
     "@moodlenet/core": "^0.1.0",

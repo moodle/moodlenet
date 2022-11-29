@@ -19,8 +19,6 @@
     { "path": "./packages/organization" },
     { "path": "./packages/react-app" },
     { "path": "./packages/simple-email-auth" },
-    { "path": "./packages/test-extension" },
-    { "path": "./packages/test-extension-2" },
     { "path": "./packages/web-user" }
   ]
 }

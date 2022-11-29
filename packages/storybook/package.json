@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "buildx": "tsc && vite build",
     "preview": "vite preview",
     "storybook": "npx start-storybook -p 6006",
     "build-storybook": "build-storybook"
@@ -41,8 +41,6 @@
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
     "sass": "^1.54.9",
     "sass-loader": "^13.1.0",
     "style-loader": "^3.3.1",
