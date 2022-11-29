@@ -1,7 +1,7 @@
 {
   "name": "storybook-vite",
   "private": true,
-  "version": "0.0.8",
+  "version": "0.0.9",
   "type": "module",
   "engines": {
     "node": ">=16"
@@ -21,12 +21,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",
-    "@moodlenet/component-library": "^0.1.0",
-    "@moodlenet/extensions-manager": "^0.1.0",
-    "@moodlenet/passport-auth": "^0.1.0",
-    "@moodlenet/react-app": "^0.1.0",
-    "@moodlenet/simple-email-auth": "^0.1.0",
-    "@moodlenet/web-user": "^0.1.0",
+    "@moodlenet/component-library": "^0.2.0",
+    "@moodlenet/extensions-manager": "^0.2.0",
+    "@moodlenet/passport-auth": "^0.2.0",
+    "@moodlenet/react-app": "^0.2.0",
+    "@moodlenet/simple-email-auth": "^0.2.0",
+    "@moodlenet/web-user": "^0.2.0",
     "@storybook/addon-essentials": "^6.5.13",
     "@storybook/addon-interactions": "^6.5.13",
     "@storybook/addon-links": "^6.5.13",
