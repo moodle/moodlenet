@@ -112,6 +112,11 @@ async function freshInstallPkgJson() {
 }
 function getPm2ConfigFileStr() {
   const currentRegistryEnvVar = currentRegistry ? `'${currentRegistry}'` : 'undefined'
+  const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES_VAR = devInstallLocalRepoSymlinks
+    ? `
+    MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES: 'true',
+`
+    : ''
   return `
 module.exports = {
   apps: [{
@@ -119,13 +124,13 @@ module.exports = {
     script: 'npx',
     args: '@moodlenet/core',
     cwd: '.',    
-    env_development: {
+    env_development: {${MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES_VAR}
       npm_config_registry: ${currentRegistryEnvVar},
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     },
-    env_production: {
+    env_production: {${MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES_VAR}
       npm_config_registry: ${currentRegistryEnvVar},
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
     }
   }]
 }
