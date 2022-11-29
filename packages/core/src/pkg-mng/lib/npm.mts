@@ -72,7 +72,7 @@ export async function updateAll(): Promise<{ updatePkgs: Record<string, string> 
   return { updatePkgs }
 }
 
-export const NPM_REGISTRY =
+export const NPM_REGISTRY = (
   process.env.npm_config_registry ??
   process.env.NPM_CONFIG_REGISTRY ??
   (() => {
@@ -83,3 +83,4 @@ export const NPM_REGISTRY =
   })() ??
   ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 1000 })).stdout ||
     'https://registry.npmjs.org/')
+).replace(/\/$/, '')
