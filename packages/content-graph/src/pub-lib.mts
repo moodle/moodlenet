@@ -33,17 +33,17 @@ export function extractGlyphMeta<G extends Glyph>(_glyph: G): { glyph: G; meta: 
 }
 
 export function idOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIdentif): GlyphID {
-  return typeof identifier === 'string'
-    ? identifier
-    : '_id' in identifier
-    ? identifier._id
-    : `${identifier._type}/${identifier._key}`
+  return typeof identifier === 'object'
+    ? '_id' in identifier
+      ? identifier._id
+      : `${identifier._type}/${identifier._key}`
+    : identifier
 }
 
 export function keyOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIdentif): string {
-  return typeof identifier === 'string'
-    ? identifier.split('/')[1]!
-    : '_id' in identifier
-    ? identifier._id.split('/')[1]!
-    : identifier._key
+  return typeof identifier === 'object'
+    ? '_id' in identifier
+      ? identifier._id.split('/')[1]!
+      : identifier._key
+    : identifier.split('/')[1]!
 }

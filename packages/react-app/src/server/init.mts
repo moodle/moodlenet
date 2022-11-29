@@ -61,7 +61,7 @@ const baseResolveAlias: ResolveOptions['alias'] = {
   [connectPkgModulesFile.alias]: connectPkgModulesFile.target,
 }
 await writeGenerated()
-const wp = startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
+const wp = startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias, pkgPlugins })
 // wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
 //   emit('webapp/recompiled')()
 // })
@@ -87,6 +87,10 @@ function writeGenerated() {
     writeFile(
       resolve(__dirname, '..', '..', '_resolve-alias_.json'),
       JSON.stringify(baseResolveAlias, null, 4),
+    ),
+    writeFile(
+      resolve(__dirname, '..', '..', '_pkg_plugins_.json'),
+      JSON.stringify(pkgPlugins, null, 4),
     ),
   ])
   // return Promise.all([

@@ -15,9 +15,9 @@
     "src/"
   ],
   "exports": {
+    ".": "./dist/main.mjs",
     "./ui": "./dist/webapp/ui.mjs"
   },
-  "main": "dist/index.js",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
@@ -52,5 +52,7 @@
     "react-router-dom": "^6.3.0",
     "typescript": "^4.7.2"
   },
-  "scripts": {}
+  "scripts": {
+    "buildx": "tsc --build"
+  }
 }
