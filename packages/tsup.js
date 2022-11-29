@@ -10,6 +10,7 @@ import svgrPlugin from 'esbuild-plugin-svgr'
 
 import { defineConfig, build } from 'tsup'
 
+console.log('xxx')
 const pkg = JSON.parse(await readFile(resolve('./', 'package.json'), 'utf-8'))
 console.log('xxx', process.cwd())
 // const urlpack=fileURLToPath(pkg.)
@@ -27,7 +28,7 @@ const buildDefault = {
   minify: false,
   bundle: false,
   outbase: './src',
-  format: ['js', 'jsx', 'ts', 'tsx'].includes('js') ? undefined : 'esm',
+  format: ['esm'], // ['js', 'jsx', 'ts', 'tsx'].includes('js') ? undefined : 'esm',
   target: 'node16',
   sourcemap: true,
   outExtension: { '.js': '.mjs' },
@@ -47,22 +48,14 @@ function createDeclaration() {
     .catch(error => console.log('error execa', error))
 }
 
-export function builder(config) {
-  console.log('package', pkg.name)
-  console.time('timer')
-  build({ ...buildDefault, ...{ outdir: './dist' }, ...config })
-    .catch(() => process.exit(1))
-    .then(res => {
-      console.timeEnd('timer')
-      createDeclaration()
-      res.warnings && console.log('warning', res.warnings)
-    })
-}
-
 // const inject = glob.sync('src/**/*.mts', 'src/**/*.tsx')
-//const inject = glob.sync('src/**/*.+(mts|tsx|ts)')
-const inject = glob.sync('src/**/*.*')
-// builder({ entryPoints: inject })
+//const inject = glob.sync('src/**/*.+(mts|tsx|ts)')  'src/**/!(*.mts_|*.tsx_|*.ts|*.ts )'
+const inject = glob('src/**/*.*', {
+  ignore: ['mts_', 'tsx_', 'ts_', 'js_', 'node_modules/*'],
+  sync: true,
+})
+
+console.log('xxxx', inject)
 
 const xxx = defineConfig({
   entry: inject,
@@ -73,16 +66,13 @@ const xxx = defineConfig({
   outbase: './src',
   minify: false,
   target: 'node16',
-  format: ['esm'],
+  format: ['esm'], // ['js', 'jsx', 'ts', 'tsx'].includes('js') ? undefined : 'esm', // ['esm'],
   loader: { '.js': 'jsx' },
   watch: 'forever',
   //dts: true, // manda in errore
-  // outExtension: { '.js': '.mjs' },
   bundle: false,
   outExtension({ format }) {
-    //console.log('xxxxx', aaa)
-    return { js: `.mjs` }
-    // return { js: `.${format}.mjs` }
+    return { js: `.mjs` } // `.${format}.mjs`
   },
   esbuildPlugins: [sassPlugin(), svgrPlugin()],
   async onSuccess() {
@@ -92,14 +82,14 @@ const xxx = defineConfig({
   esbuildOptions(options, context) {
     // options.loader = { '.js': 'jsx' }
     // console.log('iptions', options)
-    // options.outExtension={ '.js': '.mjs' }
+    options.outExtension = { '.js': '.mjs' }
     // options.format= ['js', 'jsx', 'ts', 'tsx'].includes('js') ? undefined : 'esm'
   },
   // esbuildPlugins: [nodeExternalsPlugin()],
 })
 
 build(xxx)
-console.log('xxxxxxxxxx', inject)
+// console.log('xxxxxxxxxx', inject)
 /* can import css
 
 require('esbuild').buildSync({
