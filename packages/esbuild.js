@@ -41,7 +41,7 @@ export default function builder(config) {
     .catch(() => process.exit(1))
     .then(res => {
       console.timeEnd('timer')
-      execa('tscx', ['--emitDeclarationOnly'], {
+      execa('tsc', ['--emitDeclarationOnly'], {
         cwd: resolve(process.cwd(), ''),
         stdout: process.stdout,
       })

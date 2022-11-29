@@ -12,7 +12,10 @@
   ],
   "bin": "./bin/install.mjs",
   "scripts": {
-    "start": "node ./bin/install.mjs"
+    "start": "node ./bin/install.mjs",
+    "buildx": "tsc --build",
+    "esbuildx": "node ../esbuild.js",
+    "tsupx": "node ../tsup.js"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

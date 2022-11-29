@@ -37,6 +37,7 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "esbuild": "node ../esbuild.js"
+    "esbuild": "node ../esbuild.js",
+    "tsup": "node ../tsup.js"
   }
 }

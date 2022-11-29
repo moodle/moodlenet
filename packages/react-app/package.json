@@ -44,7 +44,8 @@
     "create-components-index": "vgis src/webapp/ui.mts",
     "create-stories-index": "vgis src/webapp/stories.mts",
     "build": "tsc --build",
-    "esbuild": "node ../esbuild.js"
+    "esbuild": "node ../esbuild.js",
+    "tsup": "node ../tsup.js"
   },
   "watch": {
     "create-stories-index": {
