@@ -1,0 +1,88 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "start dev env",
+      "command": "yarn",
+      "args": ["start-dev"],
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev-tasks",
+      "group": "build",
+      "dependsOn": [
+        "common dev-build",
+        "common-gql-gen",
+        "webapp-gql-gen",
+        "backend-gql-gen",
+        "backend dev-build",
+        "webapp dev-build",
+        "ce-platform dev-build"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/ce-platform/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "ce-platform dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/common/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "common dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/webapp/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "webapp dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/backend/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "backend dev-build"
+    },
+    {
+      "label": "common-gql-gen",
+      "command": "yarn",
+      "type": "shell",
+      "args": ["gen:graphql:types", "-w"],
+      "options": {
+        "cwd": "packages/common"
+      },
+      "group": "build"
+    },
+    {
+      "label": "backend-gql-gen",
+      "command": "yarn",
+      "type": "shell",
+      "args": ["gen:graphql:types", "-w"],
+      "options": {
+        "cwd": "packages/backend"
+      },
+      "group": "build"
+    },
+    {
+      "label": "webapp-gql-gen",
+      "command": "yarn",
+      "type": "shell",
+      "args": ["gen:graphql:types", "-w"],
+      "options": {
+        "cwd": "packages/webapp"
+      },
+      "group": "build"
+    }
+  ]
+}

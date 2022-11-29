@@ -1,0 +1,11 @@
+.followers {
+  > .browser {
+    > .content > .main-column > .people {
+      gap: 26px;
+      > .title > .card-header > .title {
+        color: #212121;
+        font-size: 30px;
+      }
+    }
+  }
+}

@@ -1,0 +1,133 @@
+@import '../../../styles/application';
+
+.secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 45px;
+  font-weight: bold;
+  font-size: 13.5px;
+  letter-spacing: 0.4px;
+  height: 32px;
+  padding: 5px 18px;
+  width: fit-content;
+  cursor: pointer;
+  white-space: nowrap;
+  background: initial;
+
+  &:not(.disabled) {
+    &.black {
+      color: #212121;
+      border: 2px solid #212121;
+    }
+
+    &.red {
+      color: red;
+      border: 2px solid red;
+    }
+
+    &.orange {
+      color: $primary-color;
+      border: 2px solid $primary-color;
+    }
+
+    &.grey {
+      color: #727588;
+      border: 2px solid #727588;
+    }
+
+    &.light-grey {
+      color: #b9b9b9;
+      border: 2px solid #b9b9b9;
+    }
+    &.dark-blue {
+      color: #194866;
+      border: 2px solid #194866;
+    }
+
+    &:hover {
+      box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
+
+      &.orange,
+      &.hover-orange {
+        color: $primary-color-hover;
+        border: 2px solid $primary-color-hover;
+      }
+
+      &.grey &.hover-grey {
+        color: darken(#727588, 5%);
+        border: 2px solid darken(#727588, 5%);
+      }
+
+      &.light-grey &.hover-light-grey {
+        color: #b9b9b9;
+        border: 2px solid #b9b9b9;
+      }
+
+      &.red &.hover-grey {
+        color: rgb(231, 2, 2);
+        border: 2px solid rgb(231, 2, 2);
+      }
+
+      &.black,
+      &.hover-black {
+        color: rgba(0, 0, 0, 0.671);
+        border: 2px solid rgba(0, 0, 0, 0.671);
+      }
+
+      &.hover-fill-red {
+        background-color: rgb(231, 2, 2);
+        color: white;
+        border: 2px solid rgb(231, 2, 2);
+      }
+    }
+
+    &:active {
+      box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%), 0px 2px 6px 2px rgb(60 64 67 / 15%);
+
+      &.orange,
+      &.hover-orange {
+        color: $primary-color-active;
+        border: 2px solid $primary-color-active;
+      }
+
+      &.grey,
+      &.hover-grey {
+        color: #707483;
+        border: 2px solid #707483;
+      }
+
+      &.red,
+      &.hover-red {
+        color: rgb(196, 1, 1);
+        border: 2px solid rgb(196, 1, 1);
+      }
+
+      &.black,
+      &.hover-black {
+        color: #212121;
+        border: 2px solid #212121;
+      }
+
+      &.hover-fill-red {
+        background-color: rgb(196, 1, 1);
+        color: white;
+        border: 2px solid rgb(196, 1, 1);
+      }
+    }
+  }
+
+  &:focus-visible {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #1a6affb0;
+  }
+
+  &.disabled {
+    user-select: none;
+    pointer-events: none;
+    color: #e8e8e8;
+    border: 2px solid #e8e8e8;
+  }
+}

@@ -1,0 +1,51 @@
+.appearance {
+  > .main-card {
+    > .color {
+      > .field {
+        display: flex;
+        gap: 12px;
+
+        > .input-text-field {
+          height: 46px;
+          width: 120px;
+        }
+      }
+    }
+
+    > .logos {
+      > .field {
+        display: flex;
+        gap: 40px;
+        > .parameter {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          > .name {
+            font-weight: bold;
+          }
+          > .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            > .logo {
+              height: 28px;
+            }
+          }
+        }
+        > div {
+          margin: 10px 0;
+        }
+        > .file-uploader {
+          height: 180px;
+        }
+      }
+    }
+
+    > .scss {
+      > .textarea {
+        padding-bottom: 20px;
+      }
+    }
+  }
+}

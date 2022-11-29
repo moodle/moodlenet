@@ -1,0 +1,137 @@
+@import '../../../styles/main.scss';
+
+html {
+  width: 100%;
+  height: 100%;
+  font-family: 'Open Sans';
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+.main-layout {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background-color: var(--color-light-gray-14);
+
+  &.streched {
+    > .header {
+      padding: 0 20px;
+      > .content {
+        max-width: none;
+      }
+    }
+    > .content {
+      max-width: none;
+      padding: 0 20px 60px;
+    }
+  }
+
+  > .header {
+    width: -webkit-fill-available;
+    display: flex;
+    justify-content: center;
+    background: white;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
+
+    @media screen and (max-width: 675px) {
+      padding: 0 25px;
+      > .content {
+        gap: 15px;
+      }
+    }
+
+    > .content {
+      height: 100%;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      > .right {
+        display: flex;
+
+        > .dev-mode {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          > .label {
+            font-size: 13px;
+            color: #7e7e7e;
+          }
+        }
+      }
+    }
+  }
+
+  > .content {
+    height: 100%;
+    width: -webkit-fill-available;
+    padding: 0 100px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    @media (max-width: 450px) {
+      background: white;
+      padding: 0;
+    }
+
+    @media screen and (max-width: 675px) and (min-width: 450px) {
+      padding: 0 25px;
+    }
+  }
+
+  > .side-menu {
+    width: 160px;
+    height: 100%;
+    background: #1d6bbf;
+
+    .logo {
+      height: 32px;
+      line-height: 32px;
+      margin: 16px;
+      color: white;
+      text-align: center;
+    }
+  }
+
+  > .footer {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
+}
+
+a {
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p,
+div,
+pre {
+  margin: 0;
+}
+
+blockquote {
+  margin: 0;
+  padding: 0 10px;
+  font-style: italic;
+}
