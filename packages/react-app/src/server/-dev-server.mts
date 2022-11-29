@@ -9,12 +9,14 @@ const port = Number(process.argv[2]) || 3000
 const proxy = process.argv[3] || 'http://localhost:8080'
 console.log({ port, proxy })
 const _resolve_alias_json_filename = resolve(__dirname, '..', '..', '_resolve-alias_.json')
-getAliases().then(aliases => {
+const _pkg_plugins_json_filename = resolve(__dirname, '..', '..', '_pkg_plugins_.json')
+getAliases().then(async aliases => {
   const wp = getWp({
     mode: 'dev-server',
     baseResolveAlias: aliases,
     port,
     proxy,
+    pkgPlugins: await getPkgPlugins(),
   })
   // console.log({ wpConfig })
 
@@ -45,4 +47,9 @@ async function getAliases() {
   }
   lastAliasesString = newAliasesString
   return JSON.parse(newAliasesString)
+}
+
+async function getPkgPlugins() {
+  const newPkgPluginsString = await readFile(_pkg_plugins_json_filename, 'utf-8')
+  return JSON.parse(newPkgPluginsString)
 }

@@ -25,7 +25,6 @@
   "files": [
     "dist/"
   ],
-  "main": "dist/main.mjs",
   "dependencies": {
     "arangojs": "^7.8.0"
   },
@@ -37,5 +36,7 @@
   "peerDependencies": {
     "@moodlenet/core": "^0.1.0"
   },
-  "scripts": {}
+  "scripts": {
+    "build": "tsc --build"
+  }
 }

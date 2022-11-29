@@ -19,7 +19,6 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "dist/main.mjs",
   "readme": "",
   "files": [
     "dist/"
@@ -46,12 +45,14 @@
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
     "react-router-dom": "^6.3.0",
+    "react-scripts": "^5.0.1",
     "typescript": "^4.7.2"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
-    "create-components-index": "vgis src/ui.mts"
+    "create-components-index": "vgis src/ui.mts",
+    "build": "tsc --build"
   },
   "watch": {
     "create-components-index": {

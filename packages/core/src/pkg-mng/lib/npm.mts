@@ -1,5 +1,9 @@
 import { run } from 'npm-check-updates'
-import { patchWdPackageJsonDeps, WORKING_DIR } from '../../main/env.mjs'
+import {
+  MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES,
+  patchWdPackageJsonDeps,
+  WORKING_DIR,
+} from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
@@ -20,15 +24,19 @@ export async function install(installPkgReqs: InstallPkgReq[]) {
   const installPkgsArgs = await Promise.all(
     installPkgReqs.map(async instReq => {
       if (instReq.type === 'pack-folder') {
-        const exeResultStr = (
-          await execa('npm', ['pack', '--json'], {
-            cwd: instReq.fromFolder,
-            timeout: 600000,
-          })
-        ).stdout
-        const exeResult = JSON.parse(exeResultStr)
-        const packFileName = exeResult[0].filename as string
-        return resolve(instReq.fromFolder, packFileName)
+        if (MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES) {
+          return `file:${instReq.fromFolder}`
+        } else {
+          const exeResultStr = (
+            await execa('npm', ['pack', '--json'], {
+              cwd: instReq.fromFolder,
+              timeout: 600000,
+            })
+          ).stdout
+          const exeResult = JSON.parse(exeResultStr)
+          const packFileName = exeResult[0].filename as string
+          return resolve(instReq.fromFolder, packFileName)
+        }
       } else if (instReq.type === 'npm') {
         return `${instReq.pkgId.name}@${instReq.pkgId.version}`
       }

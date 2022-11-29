@@ -36,7 +36,8 @@
     "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
     "create-ui-index": "vgis src/ui.mts",
-    "create-stories-index": "vgis src/stories.mts"
+    "create-stories-index": "vgis src/stories.mts",
+    "build": "tsc --build"
   },
   "watch": {
     "create-stories-index": {
@@ -65,7 +66,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.35",
-    "@types/react": "^18.0.9",
+    "@types/react": "^17 || ^18",
     "@types/react-dom": "^18.0.5",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
