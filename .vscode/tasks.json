@@ -2,85 +2,260 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "start dev env",
-      "command": "yarn",
-      "args": ["start-dev"],
-      "group": "none",
-      "problemMatcher": []
-    },
-    {
+      "group": "build",
+      "problemMatcher": [],
       "label": "dev-tasks",
-      "group": "build",
+      "dependsOrder": "parallel",
       "dependsOn": [
-        "common dev-build",
-        "common-gql-gen",
-        "webapp-gql-gen",
-        "backend-gql-gen",
-        "backend dev-build",
-        "webapp dev-build",
-        "ce-platform dev-build"
+        "http-server dev-build",
+        "react-app dev-build",
+        "core dev-build",
+        "arangodb dev-build",
+        "authentication-manager dev-build",
+        "extensions-manager dev-build",
+        "passport-auth dev-build",
+        "simple-email-auth dev-build",
+        "email-service dev-build",
+        "crypto dev-build",
+        "content-graph dev-build",
+        "key-value-store dev-build",
+        "organization dev-build",
+        "web-user dev-build",
+        "storybook dev-build",
+        "component-library dev-build"
       ],
-      "problemMatcher": []
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "group": "build",
+      "command": "npx",
+      "args": ["tsc", "--build", "--watch"],
+      "isBackground": true,
+      "problemMatcher": ["$tsc-watch"],
+      "label": "build-watch-all"
+    },
+    {
+      "group": "build",
+      "problemMatcher": [],
+      "label": "frontend-tasks",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "react-app dev-build",
+        "simple-email-auth dev-build",
+        "web-user dev-build",
+        "component-library dev-build",
+        "extensions-manager dev-build",
+        "dev-assistant",
+        "storybook"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/ce-platform/tsconfig.json",
+      "tsconfig": "packages/content-graph/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "ce-platform dev-build"
+      "label": "content-graph dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/common/tsconfig.json",
+      "tsconfig": "packages/storybook/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "common dev-build"
+      "label": "storybook dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/webapp/tsconfig.json",
+      "tsconfig": "packages/storybook/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "webapp dev-build"
+      "label": "storybook dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/backend/tsconfig.json",
+      "tsconfig": "packages/crypto/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "backend dev-build"
+      "label": "crypto dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
-      "label": "common-gql-gen",
-      "command": "yarn",
+      "type": "typescript",
+      "tsconfig": "packages/simple-email-auth/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "simple-email-auth dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/extensions-manager/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "extensions-manager dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/authentication-manager/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "authentication-manager dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/arangodb/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "arangodb dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/core/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "core dev-build"
+      // "dependsOn": []
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/http-server/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "http-server dev-build"
+      // "dependsOn": ["core dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/react-app/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "react-app dev-build"
+      // "dependsOn": ["core dev-build", "http-server dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/component-library/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "component-library dev-build"
+      // "dependsOn": ["core dev-build", "http-server dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/web-user/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "web-user dev-build"
+      // "dependsOn": ["core dev-build", "web-user dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/email-service/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "email-service dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/key-value-store/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "key-value-store dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/organization/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "organization dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/email-service/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "email-service dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/key-value-store/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "key-value-store dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/organization/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "organization dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/passport-auth/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "passport-auth dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "label": "dev-assistant",
       "type": "shell",
-      "args": ["gen:graphql:types", "-w"],
-      "options": {
-        "cwd": "packages/common"
-      },
+      "command": "yarn dev-assistant",
       "group": "build"
     },
     {
-      "label": "backend-gql-gen",
-      "command": "yarn",
+      "label": "storybook",
       "type": "shell",
-      "args": ["gen:graphql:types", "-w"],
-      "options": {
-        "cwd": "packages/backend"
-      },
-      "group": "build"
-    },
-    {
-      "label": "webapp-gql-gen",
-      "command": "yarn",
-      "type": "shell",
-      "args": ["gen:graphql:types", "-w"],
-      "options": {
-        "cwd": "packages/webapp"
+      "command": "cd packages/storybook && yarn run storybook",
+      "windows": {
+        "command": "cd packages/storybook; yarn run storybook"
       },
       "group": "build"
     }

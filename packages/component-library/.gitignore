@@ -1,0 +1,6 @@
+/build
+/latest-build
+/dist
+/tsconfig.tsbuildinfo
+/_connect-moodlenet-pkg-modules_.*
+/_resolve-alias_.json

@@ -1,42 +1,68 @@
 {
-  "name": "moodlenet",
+  "name": "moodlenet-dev",
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
   "devDependencies": {
-    "@octokit/core": "^3.5.1",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@storybook/addon-actions": "^6.5.13",
+    "@storybook/addon-links": "^6.5.13",
+    "@storybook/react": "^6.5.13",
+    "@types/rimraf": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
-    "eslint": "^7.11.0",
-    "husky": "^7.0.4",
-    "lerna": "^3.22.1",
-    "typescript": "^4.5.2"
+    "copyfiles": "^2.4.1",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "husky": "^8.0.0",
+    "husky-init": "^8.0.0",
+    "lerna": "^5.0.0",
+    "lerna-dependency-graph": "^1.1.0",
+    "lint-staged": "^13.0.3",
+    "node-dev": "^7.4.3",
+    "npm-watch": "^0.11.0",
+    "pm2": "^5.2.2",
+    "prettier": "2.7.1",
+    "rimraf": "^3.0.2",
+    "run-script-os": "^1.1.6",
+    "storybook-addon-state": "^1.0.3",
+    "typescript": "^4.7.2",
+    "vscode-generate-index-standalone": "^1.6.0"
   },
   "scripts": {
-    "ibs": "husky install && yarn bs",
-    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
-    "setup": "lerna run setup --parallel --stream",
-    "upgrade-version": "lerna run upgrade-version --parallel --stream",
-    "start-dev": "lerna run start-dev --parallel --stream -- -- ",
-    "build": "lerna run build --stream",
-    "clean-build": "lerna run clean-build --stream",
+    "init-dev": "yarn clean-bs && yarn build-all && yarn dev-assistant",
+    "init-husky": "rimraf .husky && husky install && npx husky add .husky/pre-commit \"yarn pre-commit\"",
+    "bs": "lerna bootstrap",
+    "build-all": "lerna run build --no-bail",
+    "clean-dist-build": "yarn clean-dist-dirs && yarn build-all",
+    "clean-dist-dirs": "rimraf packages/*/dist && rimraf packages/*/tsconfig.tsbuildinfo",
+    "clean-node_modules": "rimraf packages/*/node_modules && rimraf packages/*/package-lock.json && rimraf packages/*/yarn.lock",
+    "clean-dirs": "yarn clean-node_modules && yarn clean-dist-dirs",
+    "clean-bs": "yarn clean-dirs && yarn bs",
     "start": "lerna run start --parallel --stream",
-    "pre-commit": "lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents"
-  },
-  "eslintConfig": {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "ignorePatterns": "*.gen.*",
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "rules": {
-      "@typescript-eslint/no-explicit-any": "warn"
-    }
+    "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
+    "pre-commit": "lint-staged",
+    "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
+    "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
+    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
+    "dev-install-be": "node bin/install.mjs",
+    "dev-backend": "node bin/boot.mjs",
+    "-dev-backend": "node-dev bin/boot.mjs --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --notify=false --enable-source-maps --",
+    "dev-backend-plain": "node bin/boot.mjs --forever --trace-warnings --inspect --enable-source-maps --",
+    "dev-webapp": "node bin/dev-webapp.mjs",
+    "dev-assistant": "lerna run dev-assistant --parallel --stream --"
   }
 }

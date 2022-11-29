@@ -1,0 +1,23 @@
+.signup-content {
+  > .card {
+    > .content {
+      > .bottom {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        @media (max-width: 450px) {
+          flex-direction: column-reverse;
+          gap: 5px;
+        }
+        > a > .tertiary-button {
+          color: white;
+          white-space: normal;
+          &:hover {
+            background-color: grey;
+          }
+        }
+      }
+    }
+  }
+}

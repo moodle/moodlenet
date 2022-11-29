@@ -1,6 +1,19 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.organizeImports": true
-  }
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/node_modules": true
+  },
+  // config related to code formatting
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.alwaysShowStatus": true,
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  // "eslint.lintTask.enable": true,
+  "typescript.tsdk": "./node_modules/typescript/lib"
 }
+// https://github.com/microsoft/vscode-eslint/issues/91
