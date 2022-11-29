@@ -14,6 +14,8 @@ expand(base_env)
 
 export const WORKING_DIR = process.cwd()
 export const NODE_ENV = process.env.NODE_ENV
+export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES =
+  process.env.MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES === 'true'
 export const IS_DEVELOPMENT = NODE_ENV === 'development'
 export const WD_PACKAGEJSON_PATH = resolve(WORKING_DIR, 'package.json')
 

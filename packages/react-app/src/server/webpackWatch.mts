@@ -284,7 +284,7 @@ export function getWp(
           exclude: val => {
             const regexStr =
               cfg.pkgPlugins.reduce((_, { guestPkgId }) => {
-                return `${_}(?!${guestPkgId.name.replace('/', '\\/')}$)`
+                return `${_}(?!${guestPkgId.name.replace('/', '\\/')}\\/)`
               }, 'node_modules\\/') + '.*'
             const excludeRegex = new RegExp(regexStr)
             const excluded = excludeRegex.test(val)
