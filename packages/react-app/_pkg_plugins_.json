@@ -1,0 +1,563 @@
+[
+    {
+        "mainComponentLoc": [
+            "dist",
+            "webapp",
+            "MainComponent.js"
+        ],
+        "usesPkgs": [
+            {
+                "name": "@moodlenet/react-app",
+                "version": "0.1.0"
+            },
+            {
+                "name": "@moodlenet/organization",
+                "version": "0.1.0"
+            },
+            {
+                "name": "@moodlenet/authentication-manager",
+                "version": "0.1.0"
+            },
+            {
+                "name": "@moodlenet/content-graph",
+                "version": "0.1.0"
+            },
+            {
+                "name": "@moodlenet/core",
+                "version": "0.1.0"
+            }
+        ],
+        "guestPkgId": {
+            "name": "@moodlenet/react-app",
+            "version": "0.1.0"
+        },
+        "guestPkgInfo": {
+            "packageJson": {
+                "name": "@moodlenet/react-app",
+                "version": "0.1.0",
+                "author": "MoodleNet",
+                "description": "Frontend interface to interact with the backend",
+                "moodlenet": {
+                    "displayName": "Web application",
+                    "icon": "https://moodle.net/moodlenet-logo-small.svg"
+                },
+                "repository": {
+                    "type": "git",
+                    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/react-app"
+                },
+                "license": "AGPL-3.0",
+                "type": "module",
+                "engines": {
+                    "node": ">=16"
+                },
+                "readme": "",
+                "files": [
+                    "dist/",
+                    "src/",
+                    "public/",
+                    "public/favicon*",
+                    "_redirects",
+                    "moodlenet-react-app-lib.d.ts"
+                ],
+                "keywords": [
+                    "moodlenetPackage"
+                ],
+                "exports": {
+                    ".": "./dist/server/main.mjs",
+                    "./stories": "./dist/webapp/stories.mjs",
+                    "./common": "./dist/common/index.mjs",
+                    "./ui": "./dist/webapp/ui.mjs",
+                    "./web-lib": "./dist/webapp/web-lib.mjs"
+                },
+                "scripts": {
+                    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
+                    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
+                    "dev-server": "node dist/-dev-server.mjs",
+                    "create-common-index": "vgis src/common/index.mts",
+                    "create-components-index": "vgis src/webapp/ui.mts",
+                    "create-stories-index": "vgis src/webapp/stories.mts",
+                    "build": "tsc --build"
+                },
+                "watch": {
+                    "create-stories-index": {
+                        "patterns": [
+                            "src/webapp/stories.mts",
+                            "src/webapp/**/*.stories.tsx"
+                        ],
+                        "extensions": ".ts,.tsx,.mts",
+                        "delay": 300
+                    },
+                    "create-common-index": {
+                        "patterns": [
+                            "src/common/**/*.mts"
+                        ],
+                        "extensions": ".mts",
+                        "delay": 300
+                    },
+                    "create-components-index": {
+                        "patterns": [
+                            "src/webapp/**/*"
+                        ],
+                        "extensions": ".ts,.tsx,.mts",
+                        "delay": 300
+                    },
+                    "copy-assets": {
+                        "patterns": [
+                            "src/**/*"
+                        ],
+                        "extensions": ".scss,.png,.svg,.json",
+                        "ignore": "**/*.*ts*",
+                        "delay": 300
+                    }
+                },
+                "peerDependencies": {
+                    "@moodlenet/authentication-manager": "^0.1.0",
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/content-graph": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/http-server": "^0.1.0",
+                    "@moodlenet/key-value-store": "^0.1.0",
+                    "@moodlenet/organization": "^0.1.0"
+                },
+                "devDependencies": {
+                    "@moodlenet/authentication-manager": "^0.1.0",
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/content-graph": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/http-server": "^0.1.0",
+                    "@moodlenet/key-value-store": "^0.1.0",
+                    "@moodlenet/organization": "^0.1.0",
+                    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+                    "@types/jest": "^27.5.1",
+                    "@types/js-cookie": "^3.0.2",
+                    "@types/lodash": "^4.14.182",
+                    "@types/node": "^17.0.35",
+                    "@types/react": "^18.0.9",
+                    "@types/react-dom": "^18.0.5",
+                    "@types/rimraf": "^3.0.2",
+                    "eslint": "^8.16.0",
+                    "eslint-config-airbnb": "^19.0.4",
+                    "eslint-config-prettier": "^8.5.0",
+                    "eslint-plugin-import": "^2.26.0",
+                    "eslint-plugin-jsx-a11y": "^6.5.1",
+                    "eslint-plugin-prettier": "^4.0.0",
+                    "eslint-plugin-react": "^7.30.0",
+                    "eslint-plugin-react-hooks": "^4.5.0",
+                    "husky": "^8.0.1",
+                    "lint-staged": "^12.4.2",
+                    "prettier": "^2.6.2"
+                },
+                "dependencies": {
+                    "@babel/core": "^7.18.0",
+                    "@babel/plugin-proposal-class-properties": "^7.17.12",
+                    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+                    "@babel/preset-env": "^7.18.0",
+                    "@babel/preset-react": "^7.17.12",
+                    "@material-ui/icons": "^4.11.3",
+                    "@svgr/webpack": "^6.2.1",
+                    "babel-eslint": "^10.1.0",
+                    "babel-loader": "^8.2.5",
+                    "babel-plugin-import": "^1.13.5",
+                    "compression-webpack-plugin": "^10.0.0",
+                    "copy-webpack-plugin": "^11.0.0",
+                    "cross-env": "^7.0.3",
+                    "css-loader": "^6.7.1",
+                    "file-loader": "^6.2.0",
+                    "formik": "^2.2.9",
+                    "html-webpack-plugin": "^5.5.0",
+                    "js-cookie": "^3.0.1",
+                    "less": "^4.1.2",
+                    "less-loader": "^11.0.0",
+                    "pkg-dir": "^7.0.0",
+                    "pretty-quick": "^3.1.3",
+                    "react": "^18.1.0",
+                    "react-dom": "^18.1.0",
+                    "react-refresh": "^0.13.0",
+                    "react-refresh-typescript": "^2.0.5",
+                    "react-router-dom": "^6.3.0",
+                    "react-scripts": "^5.0.1",
+                    "resolve-typescript-plugin": "^1.2.0",
+                    "rimraf": "^3.0.2",
+                    "rxjs": "^7.5.5",
+                    "sass": "^1.52.1",
+                    "sass-loader": "^13.0.0",
+                    "serve": "^13.0.2",
+                    "style-loader": "^3.3.1",
+                    "ts-loader": "^9.3.0",
+                    "typescript": "^4.7.2",
+                    "url-loader": "^4.1.1",
+                    "webpack": "^5.72.1",
+                    "webpack-bundle-analyzer": "^4.5.0",
+                    "webpack-cli": "^4.9.2",
+                    "webpack-dev-server": "^4.9.0",
+                    "webpack-virtual-modules": "^0.4.3",
+                    "yup": "^0.32.11"
+                }
+            },
+            "readme": "# Moodlenet's extensible React webapp\n\nThis is the official package for Moodlenet's Webapp client, developed with React\n",
+            "pkgRootDir": "/home/alec/MOODLENET/repo/moodlenet3/packages/react-app"
+        }
+    },
+    {
+        "mainComponentLoc": [
+            "dist",
+            "webapp",
+            "MainComponent.js"
+        ],
+        "usesPkgs": [
+            {
+                "name": "@moodlenet/extensions-manager",
+                "version": "0.1.0"
+            }
+        ],
+        "guestPkgId": {
+            "name": "@moodlenet/extensions-manager",
+            "version": "0.1.0"
+        },
+        "guestPkgInfo": {
+            "packageJson": {
+                "name": "@moodlenet/extensions-manager",
+                "version": "0.1.0",
+                "license": "AGPL-3.0",
+                "type": "module",
+                "engines": {
+                    "node": ">=16"
+                },
+                "exports": {
+                    ".": "./dist/main.mjs",
+                    "./ui": "./dist/ui.mjs",
+                    "./stories": "./dist/stories.mjs"
+                },
+                "moodlenet": {
+                    "creator": "MoodleNet",
+                    "displayName": "Extensions manager"
+                },
+                "keywords": [
+                    "moodlenetPackage"
+                ],
+                "description": "Extensions manager\nManager for system extensions",
+                "files": [
+                    "dist/",
+                    "src/"
+                ],
+                "repository": "https://gitlab.com/moodlenet/moodlenet",
+                "author": "https://github.com/aleclofabbro",
+                "dependencies": {
+                    "@emotion/react": "^11.9.0",
+                    "@emotion/styled": "^11.8.1",
+                    "@mui/icons-material": "^5.8.2",
+                    "@mui/material": "^5.8.2",
+                    "axios": "^0.27.2",
+                    "formik": "^2.2.9",
+                    "react-markdown": "^8.0.3",
+                    "react-syntax-highlighter": "^15.5.0",
+                    "rehype-raw": "^6.1.1",
+                    "yup": "^0.32.11"
+                },
+                "peerDependencies": {
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0"
+                },
+                "devDependencies": {
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0",
+                    "@types/node": "^17.0.35",
+                    "@types/react": "^18.0.9",
+                    "@types/react-dom": "^18.0.5",
+                    "@types/react-syntax-highlighter": "^15.5.2",
+                    "react": "^18.1.0",
+                    "react-dom": "^18.1.0",
+                    "react-router-dom": "^6.3.0",
+                    "react-scripts": "^5.0.1",
+                    "typescript": "^4.7.2"
+                },
+                "scripts": {
+                    "dev-assistant": "npm-watch copy-assets",
+                    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
+                    "build": "tsc --build"
+                },
+                "watch": {
+                    "copy-assets": {
+                        "patterns": [
+                            "src/**/*"
+                        ],
+                        "extensions": ".scss,.png,.svg,.json",
+                        "ignore": "**/*.*ts*",
+                        "delay": 300
+                    }
+                }
+            },
+            "readme": "# MoodleNet Extensions Manager\n\nThis package manages installation and uninstallation of extension packages\n",
+            "pkgRootDir": "/home/alec/MOODLENET/repo/moodlenet3/packages/extensions-manager"
+        }
+    },
+    {
+        "mainComponentLoc": [
+            "dist",
+            "webapp",
+            "MainComponent.js"
+        ],
+        "usesPkgs": [
+            {
+                "name": "@moodlenet/web-user",
+                "version": "0.1.0"
+            }
+        ],
+        "guestPkgId": {
+            "name": "@moodlenet/web-user",
+            "version": "0.1.0"
+        },
+        "guestPkgInfo": {
+            "packageJson": {
+                "name": "@moodlenet/web-user",
+                "version": "0.1.0",
+                "author": "MoodleNet",
+                "moodlenet": {
+                    "displayName": "Profile page",
+                    "icon": "https://moodle.net/moodlenet-logo-small.svg"
+                },
+                "repository": {
+                    "type": "git",
+                    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/component-library"
+                },
+                "keywords": [
+                    "moodlenetPackage"
+                ],
+                "description": "Page to display user public information",
+                "license": "AGPL-3.0",
+                "type": "module",
+                "engines": {
+                    "node": ">=16"
+                },
+                "readme": "",
+                "files": [
+                    "dist/"
+                ],
+                "dependencies": {
+                    "formik": "^2.2.9",
+                    "yup": "^0.32.11"
+                },
+                "peerDependencies": {
+                    "@moodlenet/authentication-manager": "^0.1.0",
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/content-graph": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0"
+                },
+                "devDependencies": {
+                    "@lingui/macro": "^3.14.0",
+                    "@moodlenet/authentication-manager": "^0.1.0",
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/content-graph": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0",
+                    "@types/node": "^17.0.35",
+                    "@types/react": "^18.0.9",
+                    "@types/react-dom": "^18.0.5",
+                    "react-router-dom": "^6.3.0",
+                    "react-scripts": "^5.0.1",
+                    "typescript": "^4.7.2"
+                },
+                "scripts": {
+                    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
+                    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
+                    "create-components-index": "vgis src/ui.mts",
+                    "build": "tsc --build"
+                },
+                "watch": {
+                    "create-components-index": {
+                        "patterns": [
+                            "src/webapp/**/*"
+                        ],
+                        "extensions": ".ts,.tsx,.mts",
+                        "delay": 300
+                    },
+                    "copy-assets": {
+                        "patterns": [
+                            "src/**/*"
+                        ],
+                        "extensions": ".scss,.png,.svg,.json",
+                        "ignore": "**/*.*ts*",
+                        "delay": 300
+                    }
+                },
+                "exports": {
+                    ".": "./dist/main.mjs",
+                    "./ui": "./dist/ui.mjs",
+                    "./stories": "./dist/stories.mjs"
+                }
+            },
+            "readme": "",
+            "pkgRootDir": "/home/alec/MOODLENET/repo/moodlenet3/packages/web-user"
+        }
+    },
+    {
+        "mainComponentLoc": [
+            "src",
+            "webapp",
+            "MainComponent.jsx"
+        ],
+        "usesPkgs": [
+            {
+                "name": "my-moodlenet-mjs-pkg-template",
+                "version": "0.1.0"
+            }
+        ],
+        "guestPkgId": {
+            "name": "my-moodlenet-mjs-pkg-template",
+            "version": "0.1.0"
+        },
+        "guestPkgInfo": {
+            "packageJson": {
+                "name": "my-moodlenet-mjs-pkg-template",
+                "private": true,
+                "version": "0.1.0",
+                "license": "AGPL-3.0",
+                "type": "module",
+                "engines": {
+                    "node": ">=16"
+                },
+                "exports": {
+                    ".": "./src/server/main.mjs"
+                },
+                "moodlenet": {
+                    "creator": "MoodleNet",
+                    "displayName": "MoodleNet pkg template"
+                },
+                "keywords": [
+                    "moodlenetPackage"
+                ],
+                "description": "MoodleNet pkg template",
+                "files": [
+                    "src/"
+                ],
+                "scripts": {
+                    "buildx": "tsc --build"
+                },
+                "peerDependencies": {
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0"
+                },
+                "devDependencies": {
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0",
+                    "@types/node": "^17.0.35",
+                    "@types/react": "^18.0.9",
+                    "@types/react-dom": "^18.0.5",
+                    "react-router-dom": "^6.3.0",
+                    "typescript": "^4.7.2"
+                }
+            },
+            "readme": "# Sample extension template\n\nThis package provides a simple extension template for Moodlenet\n",
+            "pkgRootDir": "/home/alec/MOODLENET/repo/moodlenet3/packages/my-moodlenet-mjs-pkg-template"
+        }
+    },
+    {
+        "mainComponentLoc": [
+            "dist",
+            "webapp",
+            "MainComponent.js"
+        ],
+        "usesPkgs": [
+            {
+                "name": "@moodlenet/simple-email-auth",
+                "version": "0.1.0"
+            }
+        ],
+        "guestPkgId": {
+            "name": "@moodlenet/simple-email-auth",
+            "version": "0.1.0"
+        },
+        "guestPkgInfo": {
+            "packageJson": {
+                "name": "@moodlenet/simple-email-auth",
+                "version": "0.1.0",
+                "license": "AGPL-3.0",
+                "type": "module",
+                "engines": {
+                    "node": ">=16"
+                },
+                "moodlenet": {
+                    "creator": "MoodleNet",
+                    "displayName": "Email authentication"
+                },
+                "keywords": [
+                    "moodlenetPackage"
+                ],
+                "description": "Email authentication\nBasic authentication using email and password",
+                "files": [
+                    "dist/",
+                    "src/"
+                ],
+                "exports": {
+                    ".": "./dist/main.mjs",
+                    "./ui": "./dist/webapp/ui.mjs"
+                },
+                "repository": "https://gitlab.com/moodlenet/moodlenet",
+                "author": "https://github.com/aleclofabbro",
+                "dependencies": {
+                    "formik": "^2.2.9",
+                    "yup": "^0.32.11"
+                },
+                "peerDependencies": {
+                    "@moodlenet/arangodb": "^0.1.0",
+                    "@moodlenet/authentication-manager": "^0.1.0",
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/content-graph": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/crypto": "^0.1.0",
+                    "@moodlenet/email-service": "^0.1.0",
+                    "@moodlenet/http-server": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0",
+                    "@moodlenet/web-user": "^0.1.0"
+                },
+                "devDependencies": {
+                    "@moodlenet/arangodb": "^0.1.0",
+                    "@moodlenet/authentication-manager": "^0.1.0",
+                    "@moodlenet/component-library": "^0.1.0",
+                    "@moodlenet/content-graph": "^0.1.0",
+                    "@moodlenet/core": "^0.1.0",
+                    "@moodlenet/crypto": "^0.1.0",
+                    "@moodlenet/email-service": "^0.1.0",
+                    "@moodlenet/http-server": "^0.1.0",
+                    "@moodlenet/react-app": "^0.1.0",
+                    "@moodlenet/web-user": "^0.1.0",
+                    "@types/node": "^17.0.35",
+                    "@types/react": "^18.0.9",
+                    "@types/react-dom": "^18.0.5",
+                    "react-router-dom": "^6.3.0",
+                    "typescript": "^4.7.2"
+                },
+                "scripts": {
+                    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
+                    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
+                    "create-components-index": "vgis src/webapp/ui.mts",
+                    "build": "tsc --build"
+                },
+                "watch": {
+                    "create-components-index": {
+                        "patterns": [
+                            "src/webapp/**/*"
+                        ],
+                        "extensions": ".ts,.tsx,.mts",
+                        "delay": 300
+                    },
+                    "copy-assets": {
+                        "patterns": [
+                            "src/**/*"
+                        ],
+                        "extensions": ".scss,.png,.svg,.json",
+                        "ignore": "**/*.*ts*",
+                        "delay": 300
+                    }
+                }
+            },
+            "readme": "# MoodleNet Simple Email Auth\n\nThis package provides a simple email-password authentication for Moodlenet\n",
+            "pkgRootDir": "/home/alec/MOODLENET/repo/moodlenet3/packages/simple-email-auth"
+        }
+    }
+]

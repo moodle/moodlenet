@@ -6,7 +6,6 @@
   "engines": {
     "node": ">=16"
   },
-  "main": "dist/main.mjs",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Email authentication"
@@ -20,6 +19,7 @@
     "src/"
   ],
   "exports": {
+    ".": "./dist/main.mjs",
     "./ui": "./dist/webapp/ui.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
@@ -60,7 +60,8 @@
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
-    "create-components-index": "vgis src/webapp/ui.mts"
+    "create-components-index": "vgis src/webapp/ui.mts",
+    "build": "tsc --build"
   },
   "watch": {
     "create-components-index": {

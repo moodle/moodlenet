@@ -5,7 +5,6 @@ import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
 import { overrideLocalMNLock } from '../../main/MNLock.mjs'
 import { rebootSystem } from '../../main/sys.mjs'
-import { resolve } from 'path'
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO: any check on pkgIds ? (active / version)
@@ -20,15 +19,16 @@ export async function install(installPkgReqs: InstallPkgReq[]) {
   const installPkgsArgs = await Promise.all(
     installPkgReqs.map(async instReq => {
       if (instReq.type === 'pack-folder') {
-        const exeResultStr = (
-          await execa('npm', ['pack', '--json'], {
-            cwd: instReq.fromFolder,
-            timeout: 600000,
-          })
-        ).stdout
-        const exeResult = JSON.parse(exeResultStr)
-        const packFileName = exeResult[0].filename as string
-        return resolve(instReq.fromFolder, packFileName)
+        // const exeResultStr = (
+        //   await execa('npm', ['pack', '--json'], {
+        //     cwd: instReq.fromFolder,
+        //     timeout: 600000,
+        //   })
+        // ).stdout
+        // const exeResult = JSON.parse(exeResultStr)
+        // const packFileName = exeResult[0].filename as string
+        // return resolve(instReq.fromFolder, packFileName)
+        return `file:${instReq.fromFolder}`
       } else if (instReq.type === 'npm') {
         return `${instReq.pkgId.name}@${instReq.pkgId.version}`
       }

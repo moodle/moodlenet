@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 import type { Configuration, ResolveOptions } from 'webpack'
 import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
+import { WebappPluginItem } from '../common/types.mjs'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const require = createRequire(import.meta.url)
@@ -22,24 +23,22 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 // const { jsonBeautify } = require('beautify-json');
 
 export default startProdWp
-export type ExtensionsBag = {
-  extensionsDirectoryModule: string
-  webpackAliases: Record<string, string>
-}
 export function startProdWp({
   // overrideCfg = _ => _,
   buildFolder,
   latestBuildFolder,
   // virtualModules,
   baseResolveAlias,
+  pkgPlugins,
 }: {
   baseResolveAlias: ResolveOptions['alias']
   latestBuildFolder: string
   buildFolder: string
+  pkgPlugins: WebappPluginItem<any>[]
   // overrideCfg?: (_: Configuration) => Configuration
   // virtualModules: VirtualModulesPlugin
 }) {
-  const wp = getWp({ baseResolveAlias, buildFolder, mode: 'prod' })
+  const wp = getWp({ baseResolveAlias, buildFolder, mode: 'prod', pkgPlugins })
   // console.log({ baseResolveAlias, latestBuildFolder, buildFolder })
 
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
@@ -70,12 +69,14 @@ export function getWp(
         mode: 'prod'
         buildFolder: string
         baseResolveAlias: ResolveOptions['alias']
+        pkgPlugins: WebappPluginItem<any>[]
       }
     | {
-        baseResolveAlias: ResolveOptions['alias']
         mode: 'dev-server'
         port: number
         proxy: string
+        pkgPlugins: WebappPluginItem<any>[]
+        baseResolveAlias: ResolveOptions['alias']
       },
 ) {
   const isDevServer = cfg.mode === 'dev-server'
@@ -277,7 +278,19 @@ export function getWp(
         {
           test: /\.[jt]sx?$/,
           // TODO: is there a way to ignore /node_modules/ except for "installed mn packages" ?
-          // exclude: /node_modules/, // HACK: removed because it won't compile jsx from within system's installed packages .. but this way it may be heavier..
+          // node_modules\/(?!@m\/xx$)(?!@m\/yy$)(?!a$)(?!a$).*
+          // https://regexr.com/73d26
+          // exclude: /node_modules/, // HACK: removed because it won't compile jsx from within system's installed packages .. but this way it IS heavier..
+          exclude: val => {
+            const regexStr =
+              cfg.pkgPlugins.reduce((_, { guestPkgId }) => {
+                return `${_}(?!${guestPkgId.name.replace('/', '\\/')}$)`
+              }, 'node_modules\\/') + '.*'
+            const excludeRegex = new RegExp(regexStr)
+            const excluded = excludeRegex.test(val)
+            // !excluded && console.log(` notExcluding: ${val} `)
+            return excluded
+          },
           use: [
             ...(isDevServer
               ? [

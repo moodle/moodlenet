@@ -2,6 +2,7 @@ import { createTransport } from 'nodemailer'
 import { env } from './env.mjs'
 import type { EmailObj, SendResp } from './types.mjs'
 import { kvStore } from './use-pkg-apis.mjs'
+export { SentMessageInfo } from 'nodemailer'
 
 export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendResp> {
   const mailerCfg = env?.mailerCfg ??
