@@ -1,0 +1,164 @@
+.extension-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+
+  > .tertiary-button {
+    width: fit-content;
+    padding: 6px 10px 6px 3px;
+    font-size: 16px;
+    display: flex;
+    gap: 5px;
+    > svg {
+      height: 16px;
+    }
+  }
+
+  > .card:not(.snackbar) {
+    width: 100%;
+
+    padding: 26px 40px;
+    gap: 20px;
+
+    > .title {
+      font-size: 23px;
+      font-weight: bold;
+    }
+  }
+
+  > .header-card {
+    display: flex;
+    gap: 18px;
+    > .header-left {
+      > .logo {
+        height: 68px;
+        width: 68px;
+        position: relative;
+        border-radius: 5px;
+        padding: 5px;
+        background-color: #fdb068;
+        background-size: cover;
+        > .circle {
+          height: 100%;
+          width: 100%;
+          border-radius: 100px;
+          background-color: #ff8e24;
+        }
+        > .letter {
+          position: absolute;
+          left: 6px;
+          right: 0;
+          top: 16px;
+          bottom: 0;
+          font-size: 35px;
+          text-align: center;
+          border-radius: 100px;
+          color: #ffffff;
+          font-weight: bolder;
+          font-family: 'Press Start 2P';
+          transform-style: preserve-3d;
+        }
+      }
+    }
+    > .header-center {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      gap: 8px;
+      > .top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        > .title {
+          font-size: 22px;
+          font-weight: bold;
+          color: #2a2a2a;
+        }
+        > .approved-icon {
+          display: flex;
+          > svg {
+            height: 16px;
+          }
+        }
+      }
+      > .details {
+        font-size: 15.5px;
+      }
+      // > .details,
+      > .top > .title {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    }
+    > .header-right {
+      margin-left: auto;
+      > .install-uninstall-btn {
+        display: grid;
+        grid-template-columns: 1fr;
+        max-width: 1000px;
+        transition: width 2s;
+        > div {
+          grid-row-start: 1;
+          grid-column-start: 1;
+
+          &.loading {
+            display: flex;
+            visibility: visible;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+
+        &.loading {
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  > .readme-card.card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 30px;
+
+    > .readme-header {
+      display: flex;
+      gap: 20px;
+      > .readme-type {
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 20px;
+        letter-spacing: 5.57px;
+        color: #8d8d8d;
+      }
+      > .repository-link {
+        font-size: 14px;
+        font-weight: bold;
+        color: #1ea7fd;
+      }
+    }
+
+    .readme-content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+  }
+
+  > .modules {
+    > .list {
+      min-height: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      > .module {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  }
+}

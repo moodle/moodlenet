@@ -1,0 +1,82 @@
+{
+  "name": "@moodlenet/component-library",
+  "version": "0.1.0",
+  "author": "MoodleNet",
+  "moodlenet": {
+    "displayName": "MoodleNet Component Library",
+    "icon": "https://moodle.net/moodlenet-logo-small.svg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/component-library"
+  },
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Library containing many components used in the Web app",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "readme": "",
+  "files": [
+    "dist/",
+    "src/",
+    "public/",
+    "public/favicon*",
+    "_redirects",
+    "moodlenet-component-library-dist.d.ts"
+  ],
+  "exports": {
+    ".": "./dist/ui.mjs",
+    "./stories": "./dist/stories.mjs"
+  },
+  "scripts": {
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
+    "create-ui-index": "vgis src/ui.mts",
+    "create-stories-index": "vgis src/stories.mts",
+    "build": "tsc --build"
+  },
+  "watch": {
+    "create-stories-index": {
+      "patterns": [
+        "src/stories.mts",
+        "src/**/*.stories.tsx"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "create-ui-index": {
+      "patterns": [
+        "src/**/*"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "copy-assets": {
+      "patterns": [
+        "src/**/*"
+      ],
+      "extensions": ".scss,.png,.svg,.json",
+      "ignore": "**/*.*ts*",
+      "delay": 300
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.35",
+    "@types/react": "^17 || ^18",
+    "@types/react-dom": "^18.0.5",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "^5.0.1",
+    "typescript": "^4.7.2"
+  },
+  "peerDependencies": {
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "^5.0.1"
+  },
+  "dependencies": {
+    "@material-ui/icons": "^4.11.3"
+  }
+}

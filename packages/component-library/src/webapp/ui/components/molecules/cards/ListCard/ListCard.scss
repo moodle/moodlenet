@@ -1,0 +1,104 @@
+.list-card {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 6px #dedede;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  @media (max-width: 450px) {
+    box-shadow: none;
+    border-radius: 0;
+    margin-top: 0;
+  }
+
+  > .title {
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .title {
+        font-size: 24px;
+        margin-right: 16px;
+        color: #194866;
+      }
+      .secondary-button {
+        height: 26px;
+        padding: 14px;
+        border-radius: 20px;
+      }
+    }
+  }
+
+  > .content {
+    padding: 3px 3px 10px 3px;
+
+    > .element {
+      width: 100%;
+    }
+
+    &:not(.grid) {
+      width: 100%;
+      height: 100%;
+      display: inline-flex;
+      gap: 12px;
+
+      &.vertical {
+        flex-direction: column;
+      }
+
+      &.horizontal {
+        padding-right: 13px;
+        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 3%);
+        mask-image: linear-gradient(to left, transparent 0%, black 3%);
+      }
+
+      &.wrap {
+        flex-wrap: wrap;
+      }
+    }
+
+    &.grid {
+      display: grid;
+      flex-wrap: wrap;
+      width: 100%;
+      height: -moz-fit-content;
+      height: fit-content;
+      grid-gap: 15px;
+      gap: 15px;
+      justify-content: center;
+      > * {
+        justify-self: center;
+      }
+    }
+  }
+
+  > .action {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    > button {
+      padding: 12px;
+      gap: 5px;
+      > svg {
+        height: 20px;
+      }
+    }
+  }
+}
+
+.no-card {
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+
+  .content {
+    margin: 0px;
+  }
+}
