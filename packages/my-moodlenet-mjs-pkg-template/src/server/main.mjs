@@ -1,10 +1,31 @@
-import { connectPkg } from '@moodlenet/core'
-import apis from './apis.mjs'
-import { reactAppPkg } from './use-pkgs.mjs'
+import { connectPkg, defApi, pkgConnection } from '@moodlenet/core'
+import reactAppPkgRef from '@moodlenet/react-app'
 
-const connection = await connectPkg(import.meta, { apis })
+const myPkgConnection = await connectPkg(import.meta, {
+  apis: {
+    helloWorldApi: defApi(
+      ctx => async (stringParam, numberParam) => {
+        return {
+          msg: `Hello world`,
+          stringParam,
+          numberParam,
+          callerPackage: ctx.caller.pkgId,
+        }
+      },
+      (stringParam, numberParam) => {
+        const valid = typeof stringParam === 'string' && typeof numberParam === 'number'
+        return {
+          valid,
+          msg: valid ? undefined : 'bad params',
+        }
+      },
+    ),
+  },
+})
+
+export const reactAppPkg = await pkgConnection(import.meta, reactAppPkgRef)
 
 reactAppPkg.api('plugin')({
   mainComponentLoc: ['src', 'webapp', 'MainComponent.jsx'],
-  usesPkgs: [connection],
+  usesPkgs: [myPkgConnection],
 })
