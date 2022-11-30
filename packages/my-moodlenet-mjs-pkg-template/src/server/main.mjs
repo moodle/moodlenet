@@ -3,23 +3,25 @@ import reactAppPkgRef from '@moodlenet/react-app'
 
 const myPkgConnection = await connectPkg(import.meta, {
   apis: {
-    helloWorldApi: defApi(
-      ctx => async (stringParam, numberParam) => {
-        return {
-          msg: `Hello world`,
-          stringParam,
-          numberParam,
-          callerPackage: ctx.caller.pkgId,
-        }
-      },
-      (stringParam, numberParam) => {
-        const valid = typeof stringParam === 'string' && typeof numberParam === 'number'
-        return {
-          valid,
-          msg: valid ? undefined : 'bad params',
-        }
-      },
-    ),
+    hello: {
+      world: defApi(
+        ctx => async (stringParam, numberParam) => {
+          return {
+            msg: `Hello world`,
+            stringParam,
+            numberParam,
+            callerPackage: ctx.caller.pkgId,
+          }
+        },
+        (stringParam, numberParam) => {
+          const valid = typeof stringParam === 'string' && typeof numberParam === 'number'
+          return {
+            valid,
+            msg: valid ? undefined : 'bad params',
+          }
+        },
+      ),
+    },
   },
 })
 

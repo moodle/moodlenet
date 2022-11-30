@@ -21,7 +21,7 @@ const MainComponent = ({ pkgs, pkgId, children }) => {
   const [myPkg] = pkgs
   const [apiResponse, setApiResponse] = useState()
   useEffect(() => {
-    myPkg.call('helloWorldApi')('my string param', 100).then(setApiResponse)
+    myPkg.call('hello/world')('my string param', 100).then(setApiResponse)
   }, [myPkg])
 
   const ctx = useMemo(() => ({ apiResponse }), [apiResponse])
