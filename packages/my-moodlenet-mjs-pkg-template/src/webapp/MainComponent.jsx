@@ -1,8 +1,11 @@
+import { Route } from 'react-router-dom'
 import { Link } from '@moodlenet/react-app/ui'
 import { registries } from '@moodlenet/react-app/web-lib'
 import { useEffect, useMemo, useState } from 'react'
 import { MyContext } from './Context.js'
-import Router from './Router.jsx'
+import HelloWorldPage from './HelloWorldPage.jsx'
+
+const myRoutes = { routes: <Route index element={<HelloWorldPage />} /> }
 
 const MyPageLink = () => {
   return <Link href={{ url: '/my-moodlenet-mjs-pkg-template' }}>my page</Link>
@@ -14,7 +17,7 @@ const myPageMenuItem = {
   Path: { url: '/my-moodlenet-mjs-pkg-template' },
 }
 const MainComponent = ({ pkgs, pkgId, children }) => {
-  registries.routes.useRegister(pkgId, Router)
+  registries.routes.useRegister(pkgId, myRoutes)
   registries.rightComponents.useRegister(pkgId, myRightComponent)
   registries.avatarMenuItems.useRegister(pkgId, myPageMenuItem)
 
