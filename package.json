@@ -43,11 +43,13 @@
     "vscode-generate-index-standalone": "^1.6.0"
   },
   "scripts": {
-    "init-dev": "yarn clean-bs && yarn build-all && yarn dev-assistant",
+    "init-dev": "yarn clean-bs && yarn pre-build && yarn dev-assistant",
     "init-husky": "rimraf .husky && husky install && npx husky add .husky/pre-commit \"yarn pre-commit\"",
     "bs": "lerna bootstrap",
-    "build-all": "lerna run build --no-bail",
-    "clean-dist-build": "yarn clean-dist-dirs && yarn build-all",
+    "build-all": "tsc build --build",
+    "build-all-watch": "tsc --build --watch",
+    "pre-build": "lerna run build --no-bail",
+    "----clean-dist-build": "yarn clean-dist-dirs && yarn pre-build",
     "clean-dist-dirs": "rimraf packages/*/dist && rimraf packages/*/tsconfig.tsbuildinfo",
     "clean-node_modules": "rimraf packages/*/node_modules && rimraf packages/*/package-lock.json && rimraf packages/*/yarn.lock",
     "clean-dirs": "yarn clean-node_modules && yarn clean-dist-dirs",
