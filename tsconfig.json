@@ -4,23 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "incremental": true
-  },
-  "references": [
-    { "path": "./packages/arangodb" },
-    { "path": "./packages/authentication-manager" },
-    { "path": "./packages/component-library" },
-    { "path": "./packages/content-graph" },
-    { "path": "./packages/core" },
-    { "path": "./packages/crypto" },
-    { "path": "./packages/email-service" },
-    { "path": "./packages/extensions-manager" },
-    { "path": "./packages/http-server" },
-    { "path": "./packages/key-value-store" },
-    { "path": "./packages/organization" },
-    { "path": "./packages/react-app" },
-    { "path": "./packages/simple-email-auth" },
-    { "path": "./packages/test-extension" },
-    { "path": "./packages/test-extension-2" },
-    { "path": "./packages/web-user" }
-  ]
+    // "diagnostics": true,
+    // "extendedDiagnostics": true
+  }
 }
