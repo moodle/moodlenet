@@ -3,43 +3,19 @@
   "tasks": [
     {
       "group": "build",
-      "problemMatcher": [],
-      "label": "dev-tasks",
-      "dependsOrder": "parallel",
-      "dependsOn": [
-        "http-server dev-build",
-        "react-app dev-build",
-        "core dev-build",
-        "arangodb dev-build",
-        "authentication-manager dev-build",
-        "extensions-manager dev-build",
-        "passport-auth dev-build",
-        "simple-email-auth dev-build",
-        "email-service dev-build",
-        "crypto dev-build",
-        "content-graph dev-build",
-        "key-value-store dev-build",
-        "organization dev-build",
-        "web-user dev-build",
-        "storybook dev-build",
-        "component-library dev-build"
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      }
+      "command": "yarn",
+      "args": ["build-all-watch"],
+      "isBackground": true,
+      "problemMatcher": ["$tsc-watch"],
+      "label": "build-all-watch"
     },
     {
       "group": "build",
-      "command": "npx",
-      "args": ["tsc", "--build", "--watch"],
+      "command": "yarn",
+      "args": ["dev-assistant"],
       "isBackground": true,
       "problemMatcher": ["$tsc-watch"],
-      "label": "build-watch-all"
+      "label": "dev-assistant"
     },
     {
       "group": "build",
@@ -63,201 +39,6 @@
         "showReuseMessage": true,
         "clear": false
       }
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/content-graph/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "content-graph dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/storybook/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "storybook dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/storybook/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "storybook dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/crypto/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "crypto dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/simple-email-auth/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "simple-email-auth dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/extensions-manager/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "extensions-manager dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/authentication-manager/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "authentication-manager dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/arangodb/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "arangodb dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/core/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "core dev-build"
-      // "dependsOn": []
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/http-server/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "http-server dev-build"
-      // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/react-app/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "react-app dev-build"
-      // "dependsOn": ["core dev-build", "http-server dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/component-library/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "component-library dev-build"
-      // "dependsOn": ["core dev-build", "http-server dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/web-user/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "web-user dev-build"
-      // "dependsOn": ["core dev-build", "web-user dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/email-service/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "email-service dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/key-value-store/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "key-value-store dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/organization/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "organization dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/email-service/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "email-service dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/key-value-store/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "key-value-store dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/organization/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "organization dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/passport-auth/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "passport-auth dev-build"
-      // "dependsOn": ["core dev-build", "react-app dev-build"]
-    },
-    {
-      "label": "dev-assistant",
-      "type": "shell",
-      "command": "yarn dev-assistant",
-      "group": "build"
-    },
-    {
-      "label": "storybook",
-      "type": "shell",
-      "command": "cd packages/storybook && yarn run storybook",
-      "windows": {
-        "command": "cd packages/storybook; yarn run storybook"
-      },
-      "group": "build"
     }
   ]
 }
