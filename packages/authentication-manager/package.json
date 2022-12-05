@@ -34,7 +34,11 @@
   "scripts": {
     "dev-assistant": "npm-watch copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
-    "build": "tsc --build"
+    "tsc-build": "tsc --build",
+    "tsc-complete": "npm run tsc-move-output",
+    "cleanup-all": "npm run cleanup-build && rimraf node_modules && rimraf package-lock-json && rimraf yarn-lock",
+    "cleanup-build": "rimraf dist && rimraf tsconfig.tsbuildinfo",
+    "tsc-move-output": "copyfiles -u 1 src/**/*.{mjs,mjs.map,d.mts,d.mts.map,js,js.map,d.ts,d.ts.map} dist && rimraf src/**/*.{mjs,mjs.map,d.mts,d.mts.map,js,js.map,d.ts,d.ts.map}"
   },
   "watch": {
     "copy-assets": {
