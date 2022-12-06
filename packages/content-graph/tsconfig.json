@@ -3,5 +3,19 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist"
-  }
+  },
+  "references": [
+    {
+      "path": "../arangodb"
+    },
+    {
+      "path": "../authentication-manager"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../key-value-store"
+    }
+  ]
 }

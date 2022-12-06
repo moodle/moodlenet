@@ -21,21 +21,5 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "moduleResolution": "Node16",
     "module": "Node16"
-  },
-  "references": [
-    { "path": "./packages/arangodb" },
-    { "path": "./packages/authentication-manager" },
-    { "path": "./packages/component-library" },
-    { "path": "./packages/content-graph" },
-    { "path": "./packages/core" },
-    { "path": "./packages/crypto" },
-    { "path": "./packages/email-service" },
-    { "path": "./packages/extensions-manager" },
-    { "path": "./packages/http-server" },
-    { "path": "./packages/key-value-store" },
-    { "path": "./packages/organization" },
-    { "path": "./packages/react-app" },
-    { "path": "./packages/simple-email-auth" },
-    { "path": "./packages/web-user" }
-  ]
+  }
 }

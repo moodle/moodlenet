@@ -3,5 +3,28 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist"
-  }
+  },
+  "references": [
+    {
+      "path": "../authentication-manager"
+    },
+    {
+      "path": "../component-library"
+    },
+    {
+      "path": "../content-graph"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
+      "path": "../react-app"
+    },
+    {
+      "path": "../web-user"
+    }
+  ]
 }

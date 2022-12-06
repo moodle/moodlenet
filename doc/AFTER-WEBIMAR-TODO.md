@@ -15,45 +15,10 @@
 
 #### DX
 
-- {T} npm install -D
-- {P} npm run dev-assistant
-- {P} npm run dev-tsc-watch
+- {T} npm install
 - {T} npm run dev-install-backend $DIR
 - {P} npm run dev-start-backend $DIR
 - {P} npm run dev-start-webapp
-
-#### project scripts
-
-##### root
-
-- {T} prj-bs
-- {T} post-install -> prj-init
-- {T} prj-init
-  - prj-clean-all
-  - prj-husky-init
-  - prj-bs
-  - (?) lerna run build --no-bail (--parallel?)
-- {P} dev-assis tant
-  - lerna run dev-assistant --parallel --stream
-- {P} dev-tsc-watch
-- {T} dev-install-backend
-- {P} dev-start-backend
-- {P} dev-start-webapp
-- {T} prj-clean-all
-  - prj-clean-husky
-  - prj-clean-node-modules-dirs
-  - prj-clean-build-outputs
-
-##### pkg
-
-- {P} dev-assistant
-- {T} (?) build
-- {T} tsc-complete
-  - tsc-move-output
-- {T} tsc-started
-- {T} tsc-failure
-- {T} tsc-firstsuccess
-- {T} tsc-success
 
 ## investigate on even better 3rd party package development env and process
 

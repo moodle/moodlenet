@@ -3,16 +3,24 @@
   "tasks": [
     {
       "group": "build",
-      "command": "yarn",
-      "args": ["build-all-watch"],
+      "command": "npm",
+      "args": ["run", "prj-build"],
       "isBackground": true,
-      "problemMatcher": ["$tsc-watch"],
-      "label": "build-all-watch"
+      "problemMatcher": ["$tsc"],
+      "label": "prj-build"
     },
     {
       "group": "build",
-      "command": "yarn",
-      "args": ["dev-assistant"],
+      "command": "npm",
+      "args": ["run", "prj-build-watch"],
+      "isBackground": true,
+      "problemMatcher": ["$tsc-watch"],
+      "label": "prj-build-watch"
+    },
+    {
+      "group": "build",
+      "command": "npm",
+      "args": ["run", "dev-assistant"],
       "isBackground": true,
       "problemMatcher": ["$tsc-watch"],
       "label": "dev-assistant"

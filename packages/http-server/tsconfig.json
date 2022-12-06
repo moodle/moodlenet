@@ -3,5 +3,13 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist"
-  }
+  },
+  "references": [
+    {
+      "path": "../authentication-manager"
+    },
+    {
+      "path": "../core"
+    }
+  ]
 }

@@ -3,5 +3,16 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist"
-  }
+  },
+  "references": [
+    {
+      "path": "../component-library"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../react-app"
+    }
+  ]
 }
