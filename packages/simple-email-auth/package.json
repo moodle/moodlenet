@@ -59,9 +59,9 @@
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
+    "dev-init": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
-    "create-components-index": "vgis src/webapp/ui.mts",
-    "build": "tsc --build"
+    "create-components-index": "vgis src/webapp/ui.mts"
   },
   "watch": {
     "create-components-index": {

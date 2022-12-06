@@ -8,7 +8,30 @@
     "_connect-moodlenet-pkg-modules_.mts"
   ],
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
-  }
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../authentication-manager"
+    },
+    {
+      "path": "../component-library"
+    },
+    {
+      "path": "../content-graph"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
+      "path": "../key-value-store"
+    },
+    {
+      "path": "../organization"
+    }
+  ]
 }

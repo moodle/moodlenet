@@ -1,8 +1,39 @@
 {
   "extends": "../../tsconfig-base.json",
-  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
-  }
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../arangodb"
+    },
+    {
+      "path": "../authentication-manager"
+    },
+    {
+      "path": "../component-library"
+    },
+    {
+      "path": "../content-graph"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../crypto"
+    },
+    {
+      "path": "../email-service"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
+      "path": "../react-app"
+    },
+    {
+      "path": "../web-user"
+    }
+  ]
 }

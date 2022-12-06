@@ -2,10 +2,33 @@
 
 ## better dev env
 
+### tsc --build issue
+
 - tsc emits in src : for the moment a patch script moving compiled files from `src` to `dist`
   - <https://github.com/microsoft/TypeScript/issues/28875>
   - <https://github.com/RyanCavanaugh/project-references-demo/issues/4>
-- repository setup scripts
+
+### project setup
+
+{T} : task  
+{P} : process
+
+#### DX
+
+- {T} npm install
+- {T} npm run dev-install-backend $DIR
+- {P} npm run dev-start-backend $DIR
+- {P} npm run dev-start-webapp
+
+## investigate on even better 3rd party package development env and process
+
+Better after npm publishing
+
+Desiderata requirements:
+
+- Development of 3rd party packages shouldn't require cloning and using repository
+- Developer would simply need to install a "real" system and develop anywhere the package
+- Installing on local installed system should be fast and straightforward
 
 ## Well define packages exports
 
