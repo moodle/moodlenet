@@ -6,6 +6,12 @@
     "creator": "MoodleNet",
     "displayName": "Passport Auth"
   },
+  "type": "module",
+  "engines": {
+    "node": ">=16",
+    "npm": "^8",
+    "yarn": "please-use-npm"
+  },
   "keywords": [
     "moodlenetPackage"
   ],
