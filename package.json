@@ -6,7 +6,9 @@
   "author": "https://github.com/aleclofabbro",
   "type": "module",
   "engines": {
-    "node": ">=16"
+    "node": ">=16",
+    "npm": "^8",
+    "yarn": "please-use-npm"
   },
   "devDependencies": {
     "@material-ui/core": "^4.12.4",
