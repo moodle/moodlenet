@@ -1,8 +1,15 @@
 {
   "extends": "../../tsconfig-base.json",
-  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
-  }
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../arangodb"
+    },
+    {
+      "path": "../core"
+    }
+  ]
 }
