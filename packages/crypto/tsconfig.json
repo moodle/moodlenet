@@ -3,5 +3,13 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist"
-  }
+  },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../key-value-store"
+    }
+  ]
 }
