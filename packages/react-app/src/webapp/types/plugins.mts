@@ -1,17 +1,20 @@
 import { PkgIdentifier } from '@moodlenet/core'
 import { ComponentType, PropsWithChildren } from 'react'
+import { WebPkgDeps } from '../../common/types.mjs'
 import { LocateApi } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
-export type WebPkgDepList = PkgIdentifier[]
-export type ReactAppMainComponent<UsesPkgs extends WebPkgDepList = WebPkgDepList> = ComponentType<
-  PropsWithChildren<ReactAppMainComponentProps<UsesPkgs>>
->
-export type ReactAppMainComponentProps<UsesPkgs extends WebPkgDepList> = {
-  pkgs: {
-    [Index in keyof UsesPkgs]: UsePkgHandle<UsesPkgs[Index]>
-  }
-  pkgId: PkgIdentifier
+export type ReactAppMainComponent = ComponentType<PropsWithChildren>
+
+export type UsePkgHandle<TargetPkgId extends PkgIdentifier> = {
+  pkgId: TargetPkgId
+  call: LocateApi<TargetPkgId>
 }
-export type UsePkgHandle<UsesPkg extends PkgIdentifier> = {
-  call: LocateApi<UsesPkg>
+export type PkgContextT<
+  PkgId extends PkgIdentifier,
+  UsesPkgDeps extends WebPkgDeps | Record<string, never> = Record<string, never>,
+> = {
+  me: UsePkgHandle<PkgId>
+  use: {
+    [key in keyof UsesPkgDeps]: UsePkgHandle<UsesPkgDeps[key]>
+  }
 }

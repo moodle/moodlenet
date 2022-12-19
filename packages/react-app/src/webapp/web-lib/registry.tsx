@@ -1,31 +1,24 @@
 import { PkgIdentifier, PkgName } from '@moodlenet/core'
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { usePkgContext } from '../context/PkgContext.mjs'
 
 export type RegistryEntry<ItemType> = {
   item: ItemType
   pkgId: PkgIdentifier
 }
 
-export type UnRegisterFn = () => void
-export type RegisterFn<ItemType> = (pkgId: PkgIdentifier, item: ItemType) => UnRegisterFn
+export type UnregisterMeFn = () => void
+export type RegisterFn<ItemType> = (
+  pkgId: PkgIdentifier,
+  item: ItemType,
+  opts?: Partial<UseRegisterHookOpt>,
+) => UnregisterMeFn
+export type UnregisterFn<ItemType> = (entry: RegistryEntry<ItemType>) => void
 
 export type UseRegisterHookOpt = {
   condition: boolean
 }
-export type UseRegisterHook<ItemType> = (
-  pkgId: PkgIdentifier,
-  item: ItemType,
-  opts?: Partial<UseRegisterHookOpt>,
-) => void
+export type UseRegisterHook<ItemType> = (item: ItemType, opts?: Partial<UseRegisterHookOpt>) => void
 
 // export type CreateRegistryCfg<ItemType> = {}
 export type Registry<ItemType> = {
@@ -33,95 +26,115 @@ export type Registry<ItemType> = {
   entries: RegistryEntry<ItemType>[]
 }
 
-export type CreateRegistry = typeof createRegistry
-export type UseRegistryHook<ItemType> = () => RegistryContextT<ItemType>
+export type UseRegistryHook<ItemType> = () => RegistryHandle<ItemType>
 
-export type RegistryHandler<ItemType> = {
+export type RegistryHandle<ItemType> = {
   useRegister: UseRegisterHook<ItemType>
-  useRegistry: UseRegistryHook<ItemType>
-  Provider: FC<PropsWithChildren>
-}
-
-export type RegistryContextT<ItemType> = {
   registry: Registry<ItemType>
   register: RegisterFn<ItemType>
+  unregister: UnregisterFn<ItemType>
 }
 
-export function createRegistry<
+export function useCreateRegistry<
   ItemType,
->(/* cfg?: CreateRegistryCfg<ItemType> */): RegistryHandler<ItemType> {
-  const initialRegistry: Registry<ItemType> = { byPkg: {}, entries: [] }
-  type CurrentContextT = RegistryContextT<ItemType>
-  const context = createContext<CurrentContextT>(null as any)
+>(/* cfg?: CreateRegistryCfg<ItemType> */): RegistryHandle<ItemType> {
+  type CurrentRegistryHandleT = RegistryHandle<ItemType>
 
-  const Provider: FC<PropsWithChildren> = ({ children }) => {
-    const [registry, setRegistry] = useState(initialRegistry)
+  const [registry, setRegistry] = useState<Registry<ItemType>>({ byPkg: {}, entries: [] })
 
-    const unregister = useCallback((entry: RegistryEntry<ItemType>) => {
-      // console.log('unregister', entry)
+  const unregister = useRef((entry: RegistryEntry<ItemType>) => {
+    // console.log('unregister', entry)
 
-      setRegistry(currentReg => {
-        const unregistrationNewRegistry: Registry<ItemType> = {
-          entries: currentReg.entries.filter(_entry => _entry !== entry),
-          byPkg: {
-            ...currentReg.byPkg,
-            [entry.pkgId.name]: (currentReg.byPkg[entry.pkgId.name] ?? []).filter(
-              _entry => _entry !== entry,
-            ),
-          },
-        }
-        return unregistrationNewRegistry
-      })
-    }, [])
-
-    const register = useCallback<CurrentContextT['register']>(
-      (pkgId, item) => {
-        const entry: RegistryEntry<ItemType> = { pkgId, item }
-        // console.log('register', entry)
-        setRegistry(currentReg => {
-          const registrationNewRegistry: Registry<ItemType> = {
-            entries: [...currentReg.entries, entry],
-            byPkg: {
-              ...currentReg.byPkg,
-              [pkgId.name]: [...(currentReg.byPkg[pkgId.name] ?? []), entry],
-            },
-          }
-          return registrationNewRegistry
-        })
-        return () => unregister(entry)
-      },
-      [unregister],
-    )
-
-    const ctxValue = useMemo(() => {
-      const ctx: CurrentContextT = {
-        register,
-        registry,
+    setRegistry(currentReg => {
+      const unregistrationNewRegistry: Registry<ItemType> = {
+        entries: currentReg.entries.filter(_entry => _entry !== entry),
+        byPkg: {
+          ...currentReg.byPkg,
+          [entry.pkgId.name]: (currentReg.byPkg[entry.pkgId.name] ?? []).filter(
+            _entry => _entry !== entry,
+          ),
+        },
       }
-      return ctx
-    }, [register, registry])
+      return unregistrationNewRegistry
+    })
+  }).current
 
-    return <context.Provider value={ctxValue}>{children}</context.Provider>
-  }
+  const register = useRef<CurrentRegistryHandleT['register']>((pkgId, item) => {
+    const entry: RegistryEntry<ItemType> = { pkgId, item }
+    // console.log('register', entry)
+    setRegistry(currentReg => {
+      const registrationNewRegistry: Registry<ItemType> = {
+        entries: [...currentReg.entries, entry],
+        byPkg: {
+          ...currentReg.byPkg,
+          [pkgId.name]: [...(currentReg.byPkg[pkgId.name] ?? []), entry],
+        },
+      }
+      return registrationNewRegistry
+    })
+    return () => unregister(entry)
+  }).current
 
-  const useRegistry: UseRegistryHook<ItemType> = () => {
-    return useContext(context)
-  }
-
-  const useRegister: UseRegisterHook<ItemType> = (pkgId, item, _opts) => {
-    const { register } = useContext(context)
-
+  const useRegister = useRef<UseRegisterHook<ItemType>>(function useRegister(item, _opts) {
+    const { me } = usePkgContext()
     useEffect(() => {
       if (_opts?.condition === false) {
         return
       }
-      return register(pkgId, item)
-    }, [item, register, pkgId, _opts?.condition])
-  }
+      return register(me.pkgId, item)
+    }, [item, me.pkgId, _opts?.condition])
+  }).current
 
-  return {
-    useRegistry,
-    useRegister,
-    Provider,
+  const currentRegistryHandle = useMemo<CurrentRegistryHandleT>(
+    () => ({
+      register,
+      registry,
+      unregister,
+      useRegister,
+    }),
+    [register, registry, unregister, useRegister],
+  )
+  return currentRegistryHandle
+}
+
+export type GuestRegistry<ItemType> = {
+  useRegister: UseRegisterHook<ItemType>
+}
+
+export function useGuestRegistry<ItemType>(
+  handle: RegistryHandle<ItemType>,
+): GuestRegistry<ItemType> {
+  const guest = useMemo<GuestRegistry<ItemType>>(() => guestRegistry(handle), [handle])
+  return guest
+}
+
+export type GuestRegistryMap<Map extends RegistryMap> = {
+  [key in keyof Map]: Map[key] extends RegistryHandle<infer ItemType>
+    ? GuestRegistry<ItemType>
+    : never
+}
+
+export type RegistryMap = {
+  [key in string]: RegistryHandle<any>
+}
+
+export function useGuestRegistryMap<Map extends RegistryMap>(map: Map): GuestRegistryMap<Map> {
+  const guestMap = useMemo(() => guestRegistryMap(map), [map])
+  return guestMap
+}
+
+export function guestRegistry<ItemType>(handle: RegistryHandle<ItemType>): GuestRegistry<ItemType> {
+  const guest = {
+    useRegister: handle.useRegister,
   }
+  return guest
+}
+export function guestRegistryMap<Map extends RegistryMap>(map: Map): GuestRegistryMap<Map> {
+  return Object.entries(map).reduce<GuestRegistryMap<Map>>(
+    (guestMap, [key, handle]) => ({
+      ...guestMap,
+      [key]: guestRegistry(handle),
+    }),
+    {} as GuestRegistryMap<Map>,
+  )
 }

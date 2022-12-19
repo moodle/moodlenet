@@ -1,6 +1,6 @@
-import { ReactElement } from 'react'
+import { ReactElement, useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { routes } from './registries.mjs'
+import { MainContext } from './context/MainContext.mjs'
 import LoginPageContainer from './ui/components/pages/Access/Login/LoginPageContainer.js'
 import { RootLoginContainer } from './ui/components/pages/Access/RootLogin/RootLoginContainer.js'
 import { SignUpContainer } from './ui/components/pages/Access/Signup/SignupContainer.js'
@@ -11,7 +11,9 @@ import { SettingsContainer } from './ui/components/pages/Settings/Settings/Hook/
 export type RouteRegItem = { routes: ReactElement; rootPath?: string }
 
 const AppRouter = () => {
-  const { registry: routesRegistry } = routes.useRegistry()
+  const {
+    reg: { routes },
+  } = useContext(MainContext)
   // console.log({ routesRegistry })
   return (
     <>
@@ -32,7 +34,7 @@ const AppRouter = () => {
           <A />
       }
     /> */}
-        {routesRegistry.entries.map(({ pkgId, item: { routes, rootPath } }) => {
+        {routes.registry.entries.map(({ pkgId, item: { routes, rootPath } }) => {
           return (
             <Route path={rootPath ?? pkgId.name} key={`${pkgId.name}`} caseSensitive>
               {routes}

@@ -1,17 +1,20 @@
 import { connectPkg } from '@moodlenet/core'
+import auth from '@moodlenet/authentication-manager'
 import apis from './apis.mjs'
+import { MyPkgContext } from './common/types.mjs'
 import { confirm } from './lib.mjs'
 import { httpPkg, reactAppPkg } from './use-pkg-apis.mjs'
-import { WebPkgDeps } from './webapp/types.mjs'
 
 export * from './types.mjs'
 
 const connection = await connectPkg(import.meta, { apis })
 export default connection
 
-reactAppPkg.api('plugin')<WebPkgDeps>({
-  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-  usesPkgs: [connection],
+reactAppPkg.api('plugin')<MyPkgContext>({
+  def: {
+    mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+    usesPkgs: { auth },
+  },
 })
 
 httpPkg.api('mount')({
