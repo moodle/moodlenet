@@ -6,8 +6,7 @@ import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { ResolveOptions } from 'webpack'
 import { defaultAppearanceData } from '../common/appearance/data.mjs'
-import { WebappPluginItem } from '../common/types.mjs'
-import { WebPkgDepList } from '../webapp/web-lib.mjs'
+import { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
 import { httpSrvPkg, kvStore } from './use-pkgs.mjs'
 import startWebpack from './webpackWatch.mjs'
@@ -107,7 +106,7 @@ function writeGenerated() {
   // ])
 }
 
-export async function addWebappPluginItem<Deps extends WebPkgDepList = never>(
+export async function addWebappPluginItem<Deps extends WebPkgDeps = never>(
   webappPluginItem: WebappPluginItem<Deps>,
 ) {
   // console.log({ webappPluginItem })

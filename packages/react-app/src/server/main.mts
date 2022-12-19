@@ -5,8 +5,8 @@ import coreConn from '@moodlenet/core'
 import { connectPkg } from '@moodlenet/core'
 import organizationConn from '@moodlenet/organization'
 import apis from './apis.mjs'
-import { WebPkgDeps } from '../common/types.mjs'
 import { setupPlugin } from './lib.mjs'
+import { MyPkgContext } from '../common/my-webapp/types.mjs'
 
 // import { fileURLToPath } from 'url'
 // const __dirname = fileURLToPath(new URL('.', import.meta.url))
@@ -16,11 +16,15 @@ import { setupPlugin } from './lib.mjs'
 const reactAppConn = await connectPkg(import.meta, { apis })
 export default reactAppConn
 
-const webPkgDeps: WebPkgDeps = [reactAppConn, organizationConn, authConn, graphConn, coreConn]
-await setupPlugin<WebPkgDeps>({
+await setupPlugin<MyPkgContext>({
   pkgId: reactAppConn,
   pluginDef: {
     mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-    usesPkgs: webPkgDeps,
+    usesPkgs: {
+      auth: authConn,
+      graph: graphConn,
+      organization: organizationConn,
+      core: coreConn,
+    },
   },
 })

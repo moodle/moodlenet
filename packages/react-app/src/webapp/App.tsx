@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import AppRoutes from './app-routes.js'
-import { ProvideMainContexts } from './mainContextProviders.js'
+import { PkgMainComponentsWrap } from './pkgMainComponentWrap.js'
 
 // const reloadWebapp = (() => {
 //   let to = 0
@@ -20,9 +20,9 @@ const App: FC = () => {
   // }, [])
   return (
     <BrowserRouter>
-      <ProvideMainContexts>
+      <PkgMainComponentsWrap>
         <AppRoutes />
-      </ProvideMainContexts>
+      </PkgMainComponentsWrap>
     </BrowserRouter>
   )
 }

@@ -1,16 +1,30 @@
 import type { ApiDefPaths, ApiFnType, PkgIdentifier } from '@moodlenet/core'
 import type { HttpApiResponse } from '@moodlenet/http-server/lib'
 import { getPkgApiFetchOpts } from '@moodlenet/http-server/lib'
+import { UsePkgHandle } from '../../../types/plugins.mjs'
 
 export type Opts = Record<string, never>
 
-export function pkgApis<PkgId extends PkgIdentifier>(pkgId: PkgId): LocateApi<PkgId> {
+export function getUseUsePkgHandle<PkgId extends PkgIdentifier>(
+  targetPkgId: PkgId,
+  userPkgId: PkgId,
+): UsePkgHandle<PkgId> {
+  return {
+    pkgId: userPkgId,
+    call: pkgApis(targetPkgId, userPkgId),
+  }
+}
+
+export function pkgApis<PkgId extends PkgIdentifier>(
+  targetPkgId: PkgId,
+  userPkgId: PkgId,
+): LocateApi<PkgId> {
   const locateApi = (
     path: string,
     // { ctx = {} }: { ctx?: FloorApiCtx },
   ) => {
-    const callApi: ApiFnType<any, any> = async (...args: any[]) => {
-      const { requestInit, url } = getPkgApiFetchOpts(pkgId, path, args)
+    const callApi = async (...args: unknown[]) => {
+      const { requestInit, url } = getPkgApiFetchOpts(userPkgId, targetPkgId, path, args)
       const response = await fetch(url, requestInit)
 
       if (response.status !== 200) {

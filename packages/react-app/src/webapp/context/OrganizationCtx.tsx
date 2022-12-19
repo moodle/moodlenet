@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react'
 
-import { MainContext } from './MainContext.js'
+import { MainContext } from './MainContext.mjs'
 
 const EmptyOrganizationData = {
   instanceName: '',
@@ -24,28 +24,26 @@ export type TOrganizationCtx = {
   saveOrganization: (data: OrganizationData) => void
 }
 
-export const OrganizationCtx = createContext<TOrganizationCtx>(null as any)
+export const OrganizationCtx = createContext<TOrganizationCtx>(null as never)
 
 export const Provider: FC<PropsWithChildren> = ({ children }) => {
   const [organizationData, setDataOrg] = useState<OrganizationData>(EmptyOrganizationData)
-  const {
-    pkgs: [, organizationSrv],
-  } = useContext(MainContext)
+  const { use } = useContext(MainContext)
 
   const saveOrganization = useCallback(
     // WE CAN NOT USE IT IS CALLED 1 TIME ONLY
     (data: OrganizationData) => {
-      organizationSrv.call('setOrgData')({ orgData: data })
+      use.organization.call('setOrgData')({ orgData: data })
       setDataOrg(data)
     },
-    [organizationSrv],
+    [use.organization],
   )
 
   useEffect(() => {
-    organizationSrv
+    use.organization
       .call('getOrgData')()
       .then(({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData))
-  }, [organizationSrv])
+  }, [use.organization])
 
   const ctx: TOrganizationCtx = {
     saveOrganization,
