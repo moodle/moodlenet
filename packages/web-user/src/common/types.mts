@@ -1,4 +1,5 @@
-//TODO: should go to `common` dir
+import { PkgContextT } from '@moodlenet/react-app/web-lib'
+import type me from '../main.mjs'
 
 export type ProfileFormValues = {
   displayName: string
@@ -9,3 +10,5 @@ export type ProfileFormValues = {
   backgroundImage?: string | File | null
   avatarImage?: string | File | null
 }
+
+export type MyPkgContext = PkgContextT<typeof me>

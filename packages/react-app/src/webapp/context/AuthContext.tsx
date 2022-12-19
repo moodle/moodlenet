@@ -1,5 +1,5 @@
 import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
-import type graphPkgRef from '@moodlenet/content-graph'
+
 import type { NodeGlyph } from '@moodlenet/content-graph'
 import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
 import cookies from 'js-cookie'
@@ -14,9 +14,8 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MainContext } from './MainContext.js'
+import { MainContext } from './MainContext.mjs'
 import rootAvatarUrl from '../static/img/ROOT.png'
-import { UsePkgHandle } from '../web-lib.mjs'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
 
@@ -39,33 +38,61 @@ export type AuthCtxT = {
   clientSessionData: ClientSessionData | null
 }
 
-export const AuthCtx = createContext<AuthCtxT>(null as any)
+export const AuthCtx = createContext<AuthCtxT>(null as never)
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
-  const {
-    pkgs: [, , authApis, graphApis],
-  } = useContext(MainContext)
+  const { use } = useContext(MainContext)
 
   const [firstCallDone, setFirstCallDone] = useState(false)
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
+  const getClientSessionData = useCallback(
+    async (clientSession: ClientSession): Promise<ClientSessionData> => {
+      if (clientSession.root) {
+        return {
+          isRoot: true as const,
+          userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
+          myUserNode: {} as any,
+          user: {} as any,
+        }
+      }
+
+      const myUserNodeRes = await use.graph.call('getMyUserNode')()
+      if (!myUserNodeRes) {
+        throw new Error(
+          `shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`,
+        )
+      }
+      const { node: myUserNode } = myUserNodeRes
+      const { title /* ,icon, description*/ } = myUserNode
+      const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
+      return {
+        isRoot: false,
+        user: clientSession.user,
+        myUserNode,
+        userDisplay: { name: title, avatarUrl },
+      }
+    },
+    [use.graph],
+  )
+
   const fetchClientSession = useCallback(
     async (token: SessionToken) => {
-      const res = await authApis.call('getClientSession')({ token })
+      const res = await use.auth.call('getClientSession')({ token })
       if (!res.success) {
         writeSessionToken()
         return { success: false, msg: 'invalid token' } as const
       }
       writeSessionToken(token)
-      const clientSessionData = await getClientSessionData(res.clientSession, graphApis)
+      const clientSessionData = await getClientSessionData(res.clientSession)
       setClientSessionData(clientSessionData)
       return {
         success: true,
         clientSession: res.clientSession,
       } as const
     },
-    [authApis, graphApis],
+    [getClientSessionData, use.auth],
   )
 
   const logout = useCallback<AuthCtxT['logout']>(() => {
@@ -120,33 +147,3 @@ function writeSessionToken(token?: SessionToken | undefined) {
 // function writeSessionToken(token: SessionToken | null) {
 //   token ? localStorage.setItem('SESSION_TOKEN', token) : localStorage.removeItem('SESSION_TOKEN')
 // }
-
-async function getClientSessionData(
-  clientSession: ClientSession,
-  graphApis: UsePkgHandle<typeof graphPkgRef>,
-): Promise<ClientSessionData> {
-  if (clientSession.root) {
-    return {
-      isRoot: true as const,
-      userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
-      myUserNode: {} as any,
-      user: {} as any,
-    }
-  }
-
-  const myUserNodeRes = await graphApis.call('getMyUserNode')()
-  if (!myUserNodeRes) {
-    throw new Error(
-      `shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`,
-    )
-  }
-  const { node: myUserNode } = myUserNodeRes
-  const { title /* ,icon, description*/ } = myUserNode
-  const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
-  return {
-    isRoot: false,
-    user: clientSession.user,
-    myUserNode,
-    userDisplay: { name: title, avatarUrl },
-  }
-}

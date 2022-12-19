@@ -2,7 +2,7 @@
 import { defApi } from '@moodlenet/core'
 import { getAppearance, setAppearance, setupPlugin } from './lib.mjs'
 import { WebappPluginDef, AppearanceData } from '../common/types.mjs'
-import { WebPkgDepList } from '../webapp/web-lib.mjs'
+import { PkgContextT } from '../webapp/types/plugins.mjs'
 
 export default {
   getAppearance: defApi(
@@ -20,8 +20,12 @@ export default {
   ),
   plugin: defApi(
     ctx =>
-      async <Deps extends WebPkgDepList = never>(pluginDef: WebappPluginDef<Deps>) => {
-        return await setupPlugin({ pluginDef, pkgId: ctx.caller.pkgId })
+      async <MyPkgContext extends PkgContextT<any, any>>({
+        def,
+      }: {
+        def: MyPkgContext extends PkgContextT<any, infer Deps> ? WebappPluginDef<Deps> : never
+      }) => {
+        return await setupPlugin({ pluginDef: def, pkgId: ctx.caller.pkgId })
       },
     () => true,
   ),

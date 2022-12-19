@@ -1,12 +1,12 @@
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { registries } from '../../../../../../web-lib.mjs'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
 import { GeneralContainer } from '../../General/GeneralContainer.js'
 import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { SettingsItem, SettingsProps } from '../Settings.js'
+import { MainContext } from '../../../../../../context/MainContext.mjs'
 
 const localSettingsItems: SettingsItem[] = [
   {
@@ -24,11 +24,11 @@ const localSettingsItems: SettingsItem[] = [
 ]
 
 export const useSettingsProps = (): SettingsProps => {
-  const { registry: sectionsReg } = registries.settingsSections.useRegistry()
+  const { reg } = useContext(MainContext)
   const mainLayoutProps = useMainLayoutProps()
 
   const settingsItems = useMemo<SettingsItem[]>(() => {
-    const pkgItems = sectionsReg.entries.map<SettingsItem>(
+    const pkgItems = reg.settingsSections.registry.entries.map<SettingsItem>(
       ({ item: { Content, Menu }, pkgId }, index) => {
         const key = `${pkgId.name}/${index}`
         const settingsItem: SettingsItem = {
@@ -46,7 +46,7 @@ export const useSettingsProps = (): SettingsProps => {
     )
 
     return localSettingsItems.concat(pkgItems)
-  }, [sectionsReg.entries])
+  }, [reg.settingsSections.registry])
 
   const settingsProps = useMemo<SettingsProps>(() => {
     return {

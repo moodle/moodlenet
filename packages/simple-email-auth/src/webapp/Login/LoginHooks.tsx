@@ -5,15 +5,15 @@ import { MainContext } from '../MainContext.js'
 import { useFormik } from 'formik'
 
 export const usePanelProps = (): LoginProps => {
-  const { pkgs } = useContext(MainContext)
-  const [authPkgApis] = pkgs
+  const { me } = useContext(MainContext)
+
   const [wrongCreds, setWrongCreds] = useState(false)
   const auth = useContext(AuthCtx)
 
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
-      const res = await authPkgApis.call('login')({
+      const res = await me.call('login')({
         email,
         password,
       })

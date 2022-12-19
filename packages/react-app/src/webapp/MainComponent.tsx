@@ -1,49 +1,50 @@
 import { useMemo } from 'react'
-import { MainContext, MainContextT } from './context/MainContext.js'
+import { MainContext, MainContextT } from './context/MainContext.mjs'
 
-import * as registries from './registries.mjs'
+import { useMakeRegistries } from './registries.mjs'
 import * as set from './context/SettingsContext.js'
-import { ReactAppMainComponent } from './web-lib.mjs'
-import * as auth from './context/auth.js'
+import * as auth from './context/AuthContext.js'
 import * as Organization from './context/OrganizationCtx.js'
-import { WebPkgDeps } from '../common/types.mjs'
 import { ProvideLinkComponentCtx } from './ui.mjs'
+import { usePkgContext } from './context/PkgContext.mjs'
+import { ReactAppContext, ReactAppContextT } from './context/ReactAppContext.mjs'
+import { guestRegistryMap } from './web-lib/registry.js'
+import { MyPkgContext } from '../common/my-webapp/types.mjs'
+import { ReactAppMainComponent } from './web-lib.mjs'
 
-const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
+const MainComponent: ReactAppMainComponent = ({ children }) => {
+  const registries = useMakeRegistries()
+  const pkgContext = usePkgContext<MyPkgContext>()
+
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {
-      pkgs,
-      pkgId,
+      ...pkgContext,
+      reg: registries,
     }
     return ctx
-  }, [pkgId, pkgs])
+  }, [registries, pkgContext])
+
+  const exportContext = useMemo<ReactAppContextT>(
+    () => ({ registries: guestRegistryMap(registries) }),
+    [registries],
+  )
   // console.log({ mainContext })
   return (
-    <registries.loginItems.Provider>
-      <registries.signupItems.Provider>
-        <registries.avatarMenuItems.Provider>
-          <registries.routes.Provider>
-            <registries.settingsSections.Provider>
-              <registries.rightComponents.Provider>
-                <ProvideLinkComponentCtx>
-                  <MainContext.Provider value={mainContext}>
-                    <Organization.Provider>
-                      <auth.AuthProvider>
-                        <set.SettingsProvider>
-                          {/* <I18nProvider i18n={i18n}> */}
-                          {children}
-                          {/* </I18nProvider> */}
-                        </set.SettingsProvider>
-                      </auth.AuthProvider>
-                    </Organization.Provider>
-                  </MainContext.Provider>
-                </ProvideLinkComponentCtx>
-              </registries.rightComponents.Provider>
-            </registries.settingsSections.Provider>
-          </registries.routes.Provider>
-        </registries.avatarMenuItems.Provider>
-      </registries.signupItems.Provider>
-    </registries.loginItems.Provider>
+    <ProvideLinkComponentCtx>
+      <MainContext.Provider value={mainContext}>
+        <ReactAppContext.Provider value={exportContext}>
+          <Organization.Provider>
+            <auth.AuthProvider>
+              <set.SettingsProvider>
+                {/* <I18nProvider i18n={i18n}> */}
+                {children}
+                {/* </I18nProvider> */}
+              </set.SettingsProvider>
+            </auth.AuthProvider>
+          </Organization.Provider>
+        </ReactAppContext.Provider>
+      </MainContext.Provider>
+    </ProvideLinkComponentCtx>
   )
 }
 export default MainComponent

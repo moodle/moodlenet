@@ -1,8 +1,7 @@
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
-import { WebappPluginItem } from '../common/types.mjs'
+import { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import { fixModuleLocForWebpackByOS } from './util.mjs'
-import { WebPkgDepList } from '../webapp/web-lib.mjs'
 function ___dirname(import_meta_url: string) {
   return fileURLToPath(new URL('.', import_meta_url))
 }
@@ -11,7 +10,7 @@ const __dirname = ___dirname(import.meta.url)
 export function generateConnectPkgModulesModule({
   plugins,
 }: {
-  plugins: WebappPluginItem<WebPkgDepList>[]
+  plugins: WebappPluginItem<WebPkgDeps>[]
 }) {
   return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgId.name).join(',')} -
 

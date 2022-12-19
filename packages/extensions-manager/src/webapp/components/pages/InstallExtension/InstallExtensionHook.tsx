@@ -8,13 +8,11 @@ import {
 } from './InstallExtension.js'
 
 export const useInstallExtensionProps = (): InstallExtensionPropsControlled => {
-  const {
-    pkgs: [mypkg],
-  } = useContext(MainContext)
+  const { me } = useContext(MainContext)
   const installLocalPathExtensionForm = useFormik<InstallLocalPathExtensionFormValues>({
     initialValues: { localPath: '' },
     onSubmit({ localPath }) {
-      return mypkg.call('install')([
+      return me.call('install')([
         {
           fromFolder: localPath,
           type: 'pack-folder',
