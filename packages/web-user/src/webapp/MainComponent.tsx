@@ -1,10 +1,16 @@
 import { HeaderMenuItemRegItem } from '@moodlenet/react-app/ui'
-import { AuthCtx, ReactAppMainComponent, registries } from '@moodlenet/react-app/web-lib'
+import {
+  AuthCtx,
+  ReactAppContext,
+  ReactAppMainComponent,
+  usePkgContext,
+} from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
+import { MyPkgContext } from '../main.mjs'
 import * as avatarmenuItem from './components/organisms/Header/Header.js'
 import { MainContext } from './MainContext.js'
 import Router from './Router.js'
-import { MainContextT, WebPkgDeps } from './types.mjs'
+import { MainContextT } from './types.mjs'
 
 const avatarmenuItemReg: HeaderMenuItemRegItem = {
   Icon: '', //<avatarmenuItem.IconContainer />,
@@ -14,17 +20,19 @@ const avatarmenuItemReg: HeaderMenuItemRegItem = {
   Position: avatarmenuItem.position,
 }
 
-const MainComponent: ReactAppMainComponent<WebPkgDeps> = ({ pkgs, pkgId, children }) => {
+const MainComponent: ReactAppMainComponent = ({ children }) => {
+  const pkgCtx = usePkgContext<MyPkgContext>()
   const { clientSessionData } = useContext(AuthCtx)
-  registries.avatarMenuItems.useRegister(pkgId, avatarmenuItemReg, {
+  const { registries } = useContext(ReactAppContext)
+  registries.avatarMenuItems.useRegister(avatarmenuItemReg, {
     condition: !!clientSessionData?.myUserNode, // TODO: should have chance to check myUserNode against GlyphDescriptor Profile !
   })
-  registries.routes.useRegister(pkgId, Router)
+  registries.routes.useRegister(Router)
 
   const mainContext = useMemo<MainContextT>(() => {
-    const ctx: MainContextT = { pkgs, pkgId }
+    const ctx: MainContextT = { ...pkgCtx }
     return ctx
-  }, [pkgs, pkgId])
+  }, [pkgCtx])
   // console.log({ mainContext })
   return <MainContext.Provider value={mainContext}>{children}</MainContext.Provider>
 }

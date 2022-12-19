@@ -15,14 +15,20 @@ export const BASE_PKG_MOUNT_URL = '/.pkg'
 // export type RawSubOptsHeaders = {
 //   'content-type': 'application/json'
 // }
-export function getPkgApiFetchOpts(pkgId: PkgIdentifier, apiPath: string, args?: any[]) {
+export function getPkgApiFetchOpts(
+  userPkgId: PkgIdentifier,
+  targetPkgId: PkgIdentifier,
+  apiPath: string,
+  args?: unknown[],
+) {
   // console.log('appapppa')
-  const url = `${BASE_APIS_URL}/${pkgId.name}/${pkgId.version}/${apiPath}`
+  const url = `${BASE_APIS_URL}/${targetPkgId.name}/${targetPkgId.version}/${apiPath}`
   const requestInit: RequestInit = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'x-moodlenet-local-caller': `${userPkgId.name}@${userPkgId.version}`,
     },
     body: JSON.stringify({ args }),
   }

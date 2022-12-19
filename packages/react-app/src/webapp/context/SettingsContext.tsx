@@ -12,7 +12,7 @@ import {
 } from 'react'
 import { defaultAppearanceData } from '../../common/appearance/data.mjs'
 import { AppearanceData } from '../../common/types.mjs'
-import { MainContext } from './MainContext.js'
+import { MainContext } from './MainContext.mjs'
 // import lib from '../../../../main-lib'
 
 export type SettingsSectionItem = {
@@ -31,28 +31,24 @@ export type SettingsCtxT = {
 export const SettingsCtx = createContext<SettingsCtxT>(null as any)
 
 export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const {
-    pkgs: [reactAppSrv, organizationSrv],
-  } = useContext(MainContext)
+  const { me } = useContext(MainContext)
 
   const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(
     async (newAppearanceData: AppearanceData) => {
-      await reactAppSrv.call('setAppearance')({ appearanceData: newAppearanceData })
+      await me.call('setAppearance')({ appearanceData: newAppearanceData })
 
       setAppareanceData(newAppearanceData)
     },
-    [reactAppSrv],
+    [me],
   )
 
   const [devMode, toggleDevMode] = useReducer(prev => !prev, false)
 
   useEffect(() => {
-    reactAppSrv
-      .call('getAppearance')()
-      .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
-  }, [organizationSrv, reactAppSrv])
+    me.call('getAppearance')().then(({ data: appearanceData }) => setAppareanceData(appearanceData))
+  }, [me])
 
   const ctx = useMemo<SettingsCtxT>(() => {
     return {

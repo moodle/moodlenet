@@ -1,15 +1,13 @@
 import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { useCallback, useContext, useMemo } from 'react'
-import { MainContext } from '../../../../../context/MainContext.js'
+import { MainContext } from '../../../../../context/MainContext.mjs'
 import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
 import { GeneralProps } from './General.js'
 
 export const useGeneralProps = (): GeneralProps => {
   const { organizationData, saveOrganization } = useContext(OrganizationCtx)
-  const {
-    pkgs: [, , , , corePkg],
-  } = useContext(MainContext)
+  const { use } = useContext(MainContext)
 
   const form = useFormik<OrganizationData>({
     initialValues: organizationData,
@@ -20,8 +18,8 @@ export const useGeneralProps = (): GeneralProps => {
   })
 
   const updateExtensions = useCallback(() => {
-    corePkg.call('pkg-mng/updateAll')()
-  }, [corePkg])
+    use.core.call('pkg-mng/updateAll')()
+  }, [use.core])
 
   const generalProps = useMemo<GeneralProps>(() => {
     return {

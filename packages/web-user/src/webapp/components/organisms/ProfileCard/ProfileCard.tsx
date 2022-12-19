@@ -38,7 +38,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
-  const [_isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
+  const [, /* _isShowingSmallCard */ setIsShowingSmallCard] = useState<boolean>(false)
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
@@ -88,7 +88,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           color="green"
           onClick={() => {
             form.submitForm()
-            toggleIsEditing()
+            form.isValid && toggleIsEditing()
           }}
           key="save-button"
         >
