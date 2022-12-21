@@ -3,8 +3,8 @@ import type {
   CollectionDefOpt,
   CollectionKind,
   CollectionOpts,
-} from '@moodlenet/arangodb'
-import type { UserId } from '@moodlenet/authentication-manager'
+} from '../../arangodb/dist/init.mjs'
+import type { UserId } from '../../authentication-manager/dist/init.mjs'
 
 // type DateString = string
 type WithDate<T> = T //& { date: DateString }

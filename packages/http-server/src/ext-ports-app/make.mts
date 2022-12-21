@@ -1,4 +1,4 @@
-import { setApiCtxClientSessionToken } from '@moodlenet/authentication-manager'
+import { setApiCtxClientSessionToken } from '../../../authentication-manager/dist/init.mjs'
 import { FloorApiCtx, pkgConnection } from '@moodlenet/core'
 import express, { json } from 'express'
 import { format } from 'util'

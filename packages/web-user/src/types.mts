@@ -1,5 +1,5 @@
-import { UserId } from '@moodlenet/authentication-manager'
-import { GlyphDefsMap, GlyphDescriptorsMap } from '@moodlenet/content-graph'
+import { UserId } from '../../authentication-manager/dist/init.mjs'
+import { GlyphDefsMap, GlyphDescriptorsMap } from '../../content-graph/dist/init.mjs'
 import { ProfileFormValues } from './common/types.mjs'
 export * from './common/types.mjs'
 

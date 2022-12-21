@@ -1,8 +1,8 @@
-export const env = getEnv({})
-function getEnv(_: any): Env {
-  const rootPassword = typeof _?.rootPassword === 'string' ? String(_.rootPassword) : undefined
-  return {
-    rootPassword,
-  }
-}
-export type Env = { rootPassword?: string }
+import { connectPkg } from '@moodlenet/core'
+import apis from './apis.mjs'
+
+export * from './pub-lib.mjs'
+export * from './types.mjs'
+
+const connection = await connectPkg(import.meta, { apis })
+export default connection

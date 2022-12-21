@@ -37,7 +37,8 @@ export function getPkgConfigs(pkgName: string) {
 export default async function ignite(ignites: Ignites) {
   // console.log(ignites)
   _ignites = ignites
-
+  process.once('SIGTERM', stopAllAndExit)
+  process.once('SIGINT', stopAllAndExit)
   await initAll()
   await startAll()
 }
@@ -64,6 +65,10 @@ export async function stopAll() {
   for (const pkgEntry of _pkgListDepOrdered.reverse()) {
     await rootImportLog(pkgEntry, 'stop')
   }
+}
+export async function stopAllAndExit() {
+  await stopAll()
+  process.exit()
 }
 
 async function rootImportLog(
