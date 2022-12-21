@@ -1,5 +1,5 @@
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
-import type me from '../main.mjs'
+import type me from '../init.mjs'
 
 export type ProfileFormValues = {
   displayName: string

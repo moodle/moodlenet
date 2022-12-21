@@ -1,6 +1,10 @@
-import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
+import type {
+  ClientSession,
+  SessionToken,
+  UserData,
+} from '../../../../authentication-manager/dist/init.mjs'
 
-import type { NodeGlyph } from '@moodlenet/content-graph'
+import type { NodeGlyph } from '../../../../content-graph/dist/init.mjs'
 import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
 import cookies from 'js-cookie'
 import {

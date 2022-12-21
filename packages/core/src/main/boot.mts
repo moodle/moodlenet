@@ -1,6 +1,6 @@
 import execa from 'execa'
 import { resolve } from 'path'
-import { NPM_REGISTRY } from '../main.mjs'
+import { NPM_REGISTRY } from '../init.mjs'
 import { getPackageInfo } from '../pkg-mng/lib/pkg.mjs'
 import { IS_DEVELOPMENT, WORKING_DIR, readWdPackageJson } from './env.mjs'
 import { overrideLocalMNLock, readLocalMNLock } from './MNLock.mjs'

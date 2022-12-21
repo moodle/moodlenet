@@ -1,5 +1,5 @@
 import { defApi } from '@moodlenet/core'
-import { httpServer } from './init.mjs'
+import { httpServer } from './env.mjs'
 import { MountAppArgs, MountAppItem } from './types.mjs'
 
 export default {

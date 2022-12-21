@@ -1,4 +1,4 @@
-import type { UserId } from '@moodlenet/authentication-manager'
+import type { UserId } from '../../../authentication-manager/dist/init.mjs'
 import assert from 'assert'
 import { OauthResult, ProviderName } from './types'
 

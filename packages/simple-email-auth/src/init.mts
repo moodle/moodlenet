@@ -1,5 +1,5 @@
 import { connectPkg } from '@moodlenet/core'
-import auth from '@moodlenet/authentication-manager'
+import auth from '@moodlenet/authentication-manager/init'
 import apis from './apis.mjs'
 import { MyPkgContext } from './common/types.mjs'
 import { confirm } from './lib.mjs'

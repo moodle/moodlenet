@@ -1,4 +1,4 @@
-import graphConn from '@moodlenet/content-graph'
+import graphConn from '../../content-graph/dist/init.mjs'
 import { pkgConnection } from '@moodlenet/core'
 import reactAppConn from '@moodlenet/react-app'
 

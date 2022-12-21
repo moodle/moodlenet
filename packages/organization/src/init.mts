@@ -1,11 +1,8 @@
-import { kvStore } from './use-pkgs.mjs'
+import { connectPkg } from '@moodlenet/core'
+import apis from './apis.mjs'
+import './initializeData.mjs'
 
-const { value: dataExists } = await kvStore.get('organizationData', '')
+export * from './types.mjs'
 
-if (!dataExists) {
-  await kvStore.set('organizationData', '', {
-    instanceName: 'MoodleNet',
-    landingSubtitle: 'Find, share and curate open educational resources',
-    landingTitle: 'Search for resources, subjects, collections or people',
-  })
-}
+const connection = await connectPkg(import.meta, { apis })
+export default connection

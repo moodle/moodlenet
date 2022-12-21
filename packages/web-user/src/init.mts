@@ -1,6 +1,6 @@
 import { connectPkg } from '@moodlenet/core'
 import apis from './apis.mjs'
-import { MyPkgContext } from './main.mjs'
+import { MyPkgContext } from './init.mjs'
 
 import { reactAppPkg } from './use-pkg-apis.mjs'
 

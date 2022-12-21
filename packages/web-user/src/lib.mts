@@ -1,4 +1,4 @@
-import { NodeGlyph } from '@moodlenet/content-graph'
+import { NodeGlyph } from '../../content-graph/dist/init.mjs'
 import { CreateRequest, EditRequest, ProfileGlyphDescriptors, ProfileGlyphs } from './types.mjs'
 import { graphPkg } from './use-pkg-apis.mjs'
 

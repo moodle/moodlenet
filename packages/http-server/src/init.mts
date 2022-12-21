@@ -1,16 +1,8 @@
-import { createHttpServer } from './http-server.mjs' //FIXME: circular dep
+import { connectPkg } from '@moodlenet/core'
+import apis from './apis.mjs'
 
-export const env = getEnv({} /* shell.env */)
-export const httpServer = await createHttpServer()
+// export * from './ext-ports-app/pub-lib.mjs'
+export * from './types.mjs'
 
-type Env = {
-  port: number
-}
-function getEnv(rawExtEnv: any): Env {
-  const env: Env = {
-    port: Number(process.env.MOODLENET_HTTP_SERVER_PORT) || 8080,
-    ...rawExtEnv,
-  }
-  //FIXME: implement checks ?
-  return env
-}
+const connection = await connectPkg(import.meta, { apis })
+export default connection

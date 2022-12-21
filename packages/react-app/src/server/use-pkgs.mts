@@ -1,6 +1,6 @@
 import corePkgConn from '@moodlenet/core'
 import { pkgConnection } from '@moodlenet/core'
-import httpSrvPkgConn from '@moodlenet/http-server'
+import httpSrvPkgConn from '../../../http-server/dist/init.mjs'
 import kvsPkgConn from '@moodlenet/key-value-store'
 import { AppearanceData } from '../common/types.mjs'
 

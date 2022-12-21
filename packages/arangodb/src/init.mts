@@ -1,21 +1,6 @@
-import { Config } from 'arangojs/connection.js'
+import { connectPkg } from '@moodlenet/core'
+import apis from './apis.mjs'
+export * from './types.mjs'
 
-export const env = getEnv(null)
-
-// shell.onExtUninstalled(async ({ extName }) => {
-//   const extDBName = getExtDBName(extName)
-//   const exists = await sysDB.database(extDBName).exists()
-//   if (exists) {
-//     sysDB.dropDatabase(extDBName)
-//   }
-// })
-type Env = {
-  connectionCfg: Config
-}
-function getEnv(rawExtEnv: any): Env {
-  //FIXME: implement checks
-  const env: Env = {
-    ...rawExtEnv,
-  }
-  return env
-}
+const connection = await connectPkg(import.meta, { apis })
+export default connection
