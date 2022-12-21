@@ -81,6 +81,6 @@ export const NPM_REGISTRY = (
     )
     return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
   })() ??
-  ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 1000 })).stdout ||
+  ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 10e3 })).stdout ||
     'https://registry.npmjs.org/')
 ).replace(/\/$/, '')
