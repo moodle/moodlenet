@@ -1,4 +1,4 @@
-import { OrganizationData } from '@moodlenet/organization'
+import { OrganizationData } from '../../../../../../../../organization/dist/init.mjs'
 import { useFormik } from 'formik'
 import { useCallback, useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'

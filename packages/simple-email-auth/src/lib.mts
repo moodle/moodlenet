@@ -1,4 +1,4 @@
-import { SessionToken } from '@moodlenet/authentication-manager'
+import { SessionToken } from '../../authentication-manager/dist/init.mjs'
 import assert from 'assert'
 import * as store from './store.mjs'
 import { ConfirmEmailPayload, SignupReq } from './types.mjs'

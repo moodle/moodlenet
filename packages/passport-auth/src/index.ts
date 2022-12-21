@@ -1,9 +1,9 @@
-import { AuthenticationManagerExtDef } from '@moodlenet/authentication-manager'
-import type { ContentGraphExtDef } from '@moodlenet/content-graph'
+import { AuthenticationManagerExtDef } from '../../authentication-manager/dist/init.mjs'
+import type { ContentGraphExtDef } from '../../content-graph/dist/init.mjs'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
-import type { MNHttpServerExtDef } from '@moodlenet/http-server'
+import type { MNHttpServerExtDef } from '../../http-server/dist/init.mjs'
 import type { ReactAppExtDef } from '@moodlenet/react-app'
-import type { WebUserExtDef } from '@moodlenet/web-user'
+import type { WebUserExtDef } from '../../web-user/dist/init.mjs'
 import { resolve } from 'path'
 import { prepareApp } from './oauth-server'
 import configApiKeyStore from './store'
@@ -16,7 +16,14 @@ export type PassportAuthTopo = {
 export type PassportAuthExtDef = ExtDef<'@moodlenet/passport-auth', '0.1.0', void, PassportAuthTopo>
 export type PassportAuthExt = Ext<
   PassportAuthExtDef,
-  [CoreExt, ReactAppExtDef, MNHttpServerExtDef, AuthenticationManagerExtDef, ContentGraphExtDef, WebUserExtDef]
+  [
+    CoreExt,
+    ReactAppExtDef,
+    MNHttpServerExtDef,
+    AuthenticationManagerExtDef,
+    ContentGraphExtDef,
+    WebUserExtDef,
+  ]
 >
 
 const ext: PassportAuthExt = {
@@ -50,7 +57,9 @@ const ext: PassportAuthExt = {
           'get/sub': { validate: () => ({ valid: true }) },
         })
 
-        const store = configApiKeyStore({ folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey') })
+        const store = configApiKeyStore({
+          folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey'),
+        })
         shell.provide.services({
           async get() {
             const configs = await store.read()

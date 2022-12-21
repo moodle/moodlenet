@@ -1,4 +1,4 @@
-import arangoPkgRef from '@moodlenet/arangodb'
+import arangoPkgRef from '../../arangodb/dist/init.mjs'
 import { PkgModuleRef, pkgConnection } from '@moodlenet/core'
 import { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'

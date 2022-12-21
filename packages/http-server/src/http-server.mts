@@ -8,7 +8,7 @@ import {
   BASE_PKG_MOUNT_URL,
   SESSION_TOKEN_COOKIE_NAME,
 } from './ext-ports-app/pub-lib.mjs'
-import { env } from './init.mjs'
+import { env } from './env.mjs'
 import type { MountAppItem } from './types.mjs'
 
 export async function createHttpServer() {

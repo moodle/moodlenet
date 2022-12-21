@@ -9,7 +9,8 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    ".": "./dist/main.mjs",
+    ".": "./dist/root-export.mjs",
+    "./init": "./dist/init.mjs",
     "./lib": "./dist/ext-ports-app/pub-lib.mjs"
   },
   "moodlenet": {

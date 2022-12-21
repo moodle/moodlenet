@@ -1,4 +1,4 @@
-import { getApiCtxClientSession } from '@moodlenet/authentication-manager'
+import { getApiCtxClientSession } from '../../authentication-manager/dist/init.mjs'
 import { defApi } from '@moodlenet/core'
 import { createNode, editNode, ensureGlyphs, getAuthenticatedNode, readNode } from './lib.mjs'
 import {

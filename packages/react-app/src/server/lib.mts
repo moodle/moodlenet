@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { addWebappPluginItem } from './init.mjs'
+import { addWebappPluginItem } from './wp-config.mjs'
 import { AppearanceData, WebappPluginDef, WebappPluginItem } from '../common/types.mjs'
 import { corePkg, kvStore } from './use-pkgs.mjs'
 import { PkgContextT } from '../webapp/types/plugins.mjs'

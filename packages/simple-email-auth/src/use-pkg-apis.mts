@@ -1,12 +1,12 @@
-import arangoPkgRef from '@moodlenet/arangodb'
-import authMngPkgRef from '@moodlenet/authentication-manager'
-import graphPkgRef from '@moodlenet/content-graph'
+import arangoPkgRef from '../../arangodb/dist/init.mjs'
+import authMngPkgRef from '../../authentication-manager/dist/init.mjs'
+import graphPkgRef from '../../content-graph/dist/init.mjs'
 import { pkgConnection } from '@moodlenet/core'
 import cryptoPkgRef from '@moodlenet/crypto'
 import emailSrvPkgRef from '@moodlenet/email-service'
-import httpPkgRef from '@moodlenet/http-server'
+import httpPkgRef from '../../http-server/dist/init.mjs'
 import reactAppPkgRef from '@moodlenet/react-app'
-import webUserPkgRef from '@moodlenet/web-user'
+import webUserPkgRef from '../../web-user/dist/init.mjs'
 
 export const arangoPkg = await pkgConnection(import.meta, arangoPkgRef)
 export const cryptoPkg = await pkgConnection(import.meta, cryptoPkgRef)
