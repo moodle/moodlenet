@@ -18,10 +18,8 @@
   "description": "Core\nThe kernel of MoodleNet",
   "files": [
     "dist/",
-    "src/",
-    "bin/"
+    "src/"
   ],
-  "bin": "./bin/boot.mjs",
   "exports": {
     ".": "./dist/main.mjs",
     "./ignite": "./dist/ignite.mjs"
