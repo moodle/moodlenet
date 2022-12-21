@@ -23,7 +23,8 @@
   ],
   "bin": "./bin/boot.mjs",
   "exports": {
-    ".": "./dist/main.mjs"
+    ".": "./dist/main.mjs",
+    "./ignite": "./dist/ignite.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
