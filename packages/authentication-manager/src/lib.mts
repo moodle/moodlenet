@@ -1,5 +1,5 @@
 import { PkgIdentifier } from '@moodlenet/core'
-import { env } from './init.mjs'
+import { env } from './env.mjs'
 import { encryptClientSession } from './pub-lib.mjs'
 import * as store from './store.mjs'
 import { SessionToken, User } from './types.mjs'

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { AddonItem, Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { OrganizationData } from '@moodlenet/organization'
+import { OrganizationData } from '../../../../../../../../organization/dist/init.mjs'
 import { useFormik } from 'formik'
 import { FC } from 'react'
 import './General.scss'

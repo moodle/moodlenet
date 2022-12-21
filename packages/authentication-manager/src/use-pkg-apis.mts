@@ -1,4 +1,4 @@
-import arangoPkgRef from '@moodlenet/arangodb'
+import arangoPkgRef from '../../arangodb/dist/init.mjs'
 import { pkgConnection } from '@moodlenet/core'
 import cryptoPkgRef from '@moodlenet/crypto'
 

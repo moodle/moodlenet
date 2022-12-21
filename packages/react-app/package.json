@@ -31,7 +31,8 @@
     "moodlenetPackage"
   ],
   "exports": {
-    ".": "./dist/server/main.mjs",
+    ".": "./dist/root-export.mjs",
+    "./init": "./dist/server/init.mjs",
     "./stories": "./dist/webapp/stories.mjs",
     "./common": "./dist/common/index.mjs",
     "./ui": "./dist/webapp/ui.mjs",

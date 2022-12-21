@@ -1,5 +1,5 @@
-import { CollectionDefOpt, CollectionDefOptMap } from '@moodlenet/arangodb'
-import { UserId } from '@moodlenet/authentication-manager'
+import { CollectionDefOpt, CollectionDefOptMap } from '../../arangodb/dist/init.mjs'
+import { UserId } from '../../authentication-manager/dist/init.mjs'
 import { PkgIdentifier } from '@moodlenet/core'
 import {
   edgeLinkIdentifiers2edgeLink,

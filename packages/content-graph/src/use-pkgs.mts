@@ -1,5 +1,5 @@
-import arangoApiRef from '@moodlenet/arangodb'
-import authMngApiRef from '@moodlenet/authentication-manager'
+import arangoApiRef from '../../arangodb/dist/init.mjs'
+import authMngApiRef from '../../authentication-manager/dist/init.mjs'
 import { pkgConnection } from '@moodlenet/core'
 import kvsApiRef from '@moodlenet/key-value-store'
 import { ContentGraphKVStore } from './types.mjs'

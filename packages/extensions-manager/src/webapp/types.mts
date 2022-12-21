@@ -1,5 +1,5 @@
 import { MyPkgContext } from '../common/types.mjs'
-import { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from '../main.mjs'
+import { DeployedPkgInfo, SearchPackagesResObject, SearchPackagesResponse } from '../init.mjs'
 
 export type NewCollectionFormValues = {
   title: string

@@ -20,10 +20,4 @@ await execa('npm', ['install'], {
   stdout: process.stdout,
 })
 
-// !devInstallLocalRepoSymlinks &&
-//   (await execa('npm', ['install', '-D', 'pm2'], {
-//     cwd: installDir,
-//     stdout: process.stdout,
-//   }))
-
 process.exit(0)

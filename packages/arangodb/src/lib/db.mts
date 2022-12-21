@@ -1,6 +1,6 @@
 import { PkgIdentifier } from '@moodlenet/core'
 import { Database } from 'arangojs/database.js'
-import { env } from '../init.mjs'
+import { env } from '../env.mjs'
 
 export const sysDB = new Database({ ...env.connectionCfg })
 export async function ensureDB(dbName: string) {
