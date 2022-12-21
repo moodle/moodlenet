@@ -41,6 +41,8 @@ export function startProdWp({
   const wp = getWp({ baseResolveAlias, buildFolder, mode: 'prod', pkgPlugins })
   // console.log({ baseResolveAlias, latestBuildFolder, buildFolder })
 
+  // process.on('SIGTERM', () => wp.close(() => void 0))
+
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
       throw new Error(`Webpack build error: ${wpStats.toString()}`)
@@ -51,11 +53,12 @@ export function startProdWp({
       ),
     )
     await cp(buildFolder, latestBuildFolder, { recursive: true })
+    wp.close(() => void 0)
   })
 
-  wp.watch({}, () => {
-    /* console.log(`Webpack  watched`) */
-  })
+  // wp.watch({}, () => {
+  //   /* console.log(`Webpack  watched`) */
+  // })
 
   return {
     compiler: wp,
@@ -93,7 +96,7 @@ export function getWp(
     devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,
     // devtool: 'source-map',
     context: resolve(__dirname, '..', '..'),
-    watch: true,
+    watch: isDevServer,
     watchOptions: {
       aggregateTimeout: 10,
       followSymlinks: true,
