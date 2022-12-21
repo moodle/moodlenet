@@ -13,7 +13,7 @@ process.on('message', cmd => {
       return
     }
     case 'shutdown': {
-      shutdown()
+      shutdownServices()
       return
     }
   }
@@ -21,18 +21,19 @@ process.on('message', cmd => {
 
 process.on('SIGINT', async () => {
   bannerLog('SHUTTING DOWN PROCESS')
-  await shutdown()
+  await shutdownServices()
   bannerLog('PROCESS SHUT DOWN')
   process.exit()
 })
 await boot()
+process.send?.('ready')
 
 async function reboot() {
   if (shutting_down) {
     return
   }
   rebooting = true
-  await shutdown()
+  await shutdownServices()
   await boot()
   rebooting = false
   return
@@ -40,7 +41,7 @@ async function reboot() {
 
 async function boot() {
   return new Promise(resolve => {
-    bannerLog(`${rebooting ? 'RE' : ''}BOOTING SYSTEM`)
+    bannerLog(`${rebooting ? 'RE' : ''}BOOTING SERVICES`)
 
     // ignitor_process = fork('ignitor.mjs', { execPath: 'npx', execArgv: ['-y', 'node-dev'] })
     ignitor_process = fork('ignitor.mjs')
@@ -55,18 +56,20 @@ async function boot() {
   })
 }
 
-async function shutdown() {
+async function shutdownServices() {
+  assert(ignitor_process, 'no process to shutdown')
+
   if (shutting_down) {
     console.info('already shutting down ....')
     return
   }
+
   shutting_down = true
-  assert(ignitor_process, 'no process to shutdown')
-  bannerLog(`SHUTTING DOWN SYSTEM`)
+  bannerLog(`SHUTTING DOWN SERVICES`)
 
   return new Promise(resolve => {
     ignitor_process.once('exit', () => {
-      bannerLog(`SYSTEM SHUT DOWN`)
+      bannerLog(`SERVICES SHUT DOWN`)
 
       ignitor_process = null
       shutting_down = false
