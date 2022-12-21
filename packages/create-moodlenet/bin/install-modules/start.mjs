@@ -13,27 +13,31 @@ process.on('message', cmd => {
       return
     }
     case 'shutdown': {
-      shutdownServices()
+      shutdownServices('SIGINT')
       return
     }
   }
 })
 
-process.on('SIGINT', async () => {
-  bannerLog('SHUTTING DOWN PROCESS')
-  await shutdownServices(true)
-  bannerLog('PROCESS SHUT DOWN')
-  process.exit()
-})
+process.on('SIGINT', processKiller)
+process.on('SIGTERM', processKiller)
+
 await boot()
 process.send?.('ready')
+
+async function processKiller(sig) {
+  bannerLog(`${sig} PROCESS`)
+  await shutdownServices(sig)
+  bannerLog(`PROCESS ${sig}ed`)
+  process.exit()
+}
 
 async function reboot() {
   if (shutting_down) {
     return
   }
   rebooting = true
-  await shutdownServices()
+  await shutdownServices('SIGINT')
   await boot()
   rebooting = false
   return
@@ -56,7 +60,7 @@ async function boot() {
   })
 }
 
-async function shutdownServices(kill) {
+async function shutdownServices(sig) {
   assert(ignitor_process, 'no process to shutdown')
 
   if (shutting_down) {
@@ -76,7 +80,7 @@ async function shutdownServices(kill) {
 
       resolve()
     })
-    ignitor_process.kill(kill ? 'SIGKILL' : 'SIGINT')
+    ignitor_process.kill(sig)
   })
 }
 
