@@ -21,7 +21,7 @@ process.on('message', cmd => {
 
 process.on('SIGINT', async () => {
   bannerLog('SHUTTING DOWN PROCESS')
-  await shutdownServices()
+  await shutdownServices(true)
   bannerLog('PROCESS SHUT DOWN')
   process.exit()
 })
@@ -56,7 +56,7 @@ async function boot() {
   })
 }
 
-async function shutdownServices() {
+async function shutdownServices(kill) {
   assert(ignitor_process, 'no process to shutdown')
 
   if (shutting_down) {
@@ -76,7 +76,7 @@ async function shutdownServices() {
 
       resolve()
     })
-    ignitor_process.kill()
+    ignitor_process.kill(kill ? 'SIGKILL' : 'SIGINT')
   })
 }
 
