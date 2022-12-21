@@ -3,12 +3,12 @@ import { PackageJson } from 'type-fest'
 type Reboot = () => unknown
 type Shutdown = () => unknown
 type RootImport = (module: string) => Promise<unknown>
-type PkgConfigs = unknown
+type Configs = { pkgs: { [pkgName in string]: unknown } }
 type PkgListDepOrdered = [string, string | undefined][]
 type Ignites = {
   rootImport: RootImport
-  pkgJson: PackageJson
-  pkgConfigs: PkgConfigs
+  rootPkgJson: PackageJson
+  configs: Configs
   reboot: Reboot
   shutdown: Shutdown
 }
@@ -26,36 +26,39 @@ export async function shutdown() {
   _ignites.shutdown()
 }
 
-export function getPkgConfigs() {
-  return _ignites.pkgConfigs
+export function getConfigs() {
+  return _ignites.configs
+}
+
+export function getPkgConfigs(pkgName: string) {
+  return getConfigs().pkgs[pkgName]
 }
 
 export default async function ignite(ignites: Ignites) {
-  console.log(ignites)
+  // console.log(ignites)
   _ignites = ignites
 
   await initAll()
-  // await startAll()
+  await startAll()
 }
 
 async function initAll() {
   await Promise.all(
-    Object.entries(_ignites.pkgJson.dependencies ?? {}).map(async pkgEntry => {
-      await rootImportLog(pkgEntry, '')
-      // await rootImportLog(pkgEntry, 'init')
+    Object.entries(_ignites.rootPkgJson.dependencies ?? {}).map(async pkgEntry => {
+      await rootImportLog(pkgEntry, 'init')
 
-      // should this should push on any kind of "connection"?
+      // should this be pushed on any kind of "connection"?
       _pkgListDepOrdered.push(pkgEntry)
     }),
   )
-  console.log({ _pkgListDepOrdered })
+  // console.log({ _pkgListDepOrdered })
 }
 
-// async function startAll() {
-//   for (const pkgEntry of _pkgListDepOrdered) {
-//     await rootImportLog(pkgEntry, 'start')
-//   }
-// }
+async function startAll() {
+  for (const pkgEntry of _pkgListDepOrdered) {
+    await rootImportLog(pkgEntry, 'start')
+  }
+}
 
 export async function stopAll() {
   for (const pkgEntry of _pkgListDepOrdered.reverse()) {
@@ -66,9 +69,20 @@ export async function stopAll() {
 async function rootImportLog(
   [pkgName, pkgVersion = '']: [string, string | undefined],
   exp: string,
+  ignoreNotFoundError = true,
 ) {
   console.info(`-- BEGIN: [${exp}] ${pkgName}@${pkgVersion} --`)
-  const pkgModName = exp ? `${pkgName}/${exp}` : pkgName
-  await _ignites.rootImport(pkgModName)
+  const pkgExportName = exp ? `${pkgName}/${exp}` : pkgName
+  await _ignites.rootImport(pkgExportName).catch(err => {
+    const msg = `ROOT IMPORT: ${pkgExportName} ${err?.code ?? 'not found'}`
+    if (
+      ignoreNotFoundError &&
+      ['ERR_PACKAGE_PATH_NOT_EXPORTED', 'ERR_MODULE_NOT_FOUND'].includes(err?.code)
+    ) {
+      console.info(`${msg} - ignoring`)
+      return
+    }
+    throw new Error(msg, { cause: err })
+  })
   console.info(`---- END: [${exp}] ${pkgName}@${pkgVersion} ----`)
 }

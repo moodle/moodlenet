@@ -41,9 +41,12 @@ async function freshInstallPkgJson() {
     version: '1',
     installTimeVersion: myPkgJson.version,
     scripts: {
-      'start': `node start.mjs`,
-      'start-dev': `node start.mjs`,
+      start: `node start.mjs`,
     },
     dependencies,
+    devDependencies: {
+      'dotenv': '^16.0.3',
+      'dotenv-expand': '^10.0.0',
+    },
   }
 }
