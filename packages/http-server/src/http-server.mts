@@ -18,6 +18,8 @@ export async function createHttpServer() {
   let app: Application
   let mountedApps: MountAppItem[] = []
   let shutdownGracefullyLocalServer: () => Promise<void>
+  process.on('SIGTERM', () => shutdownGracefullyLocalServer())
+
   await start()
   return {
     get: () => ({ server, mainApp: app }),
@@ -44,7 +46,7 @@ export async function createHttpServer() {
 
   async function stop() {
     const err = await shutdownGracefullyLocalServer().catch(err => err)
-    console.info(`HTTP: stopped with ${err ? 'error:' : 'no error'}`, err ?? '')
+    console.info(`HTTP: stopped ${err ? 'error:' : 'successfully'}`, err ?? '')
   }
   async function start() {
     app = express()
