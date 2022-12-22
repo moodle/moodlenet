@@ -1,21 +1,14 @@
 import { Config } from 'arangojs/connection.js'
+import { getConfig } from '@moodlenet/core'
 
-export const env = getEnv(null)
+export const env = await getEnv()
 
-// shell.onExtUninstalled(async ({ extName }) => {
-//   const extDBName = getExtDBName(extName)
-//   const exists = await sysDB.database(extDBName).exists()
-//   if (exists) {
-//     sysDB.dropDatabase(extDBName)
-//   }
-// })
 type Env = {
   connectionCfg: Config
 }
-function getEnv(rawExtEnv: any): Env {
-  //FIXME: implement checks
-  const env: Env = {
-    ...rawExtEnv,
-  }
+
+async function getEnv(): Promise<Env> {
+  const config = await getConfig(import.meta)
+  const env: Env = config
   return env
 }

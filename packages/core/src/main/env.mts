@@ -1,9 +1,11 @@
 import dotenv from 'dotenv'
 import { expand } from 'dotenv-expand'
+import execa from 'execa'
 import { readFile, writeFile } from 'fs/promises'
 
 import { resolve } from 'path'
 import { PackageJson } from 'type-fest'
+import { getConfig } from '../pkg-shell/shell.mjs'
 
 export const DOTENV_PATH = process.env.MOODLENET_CORE_DOTENV_PATH
 const base_env = dotenv.config({
@@ -19,6 +21,22 @@ export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES =
 
 export const IS_DEVELOPMENT = NODE_ENV === 'development'
 export const WD_PACKAGEJSON_PATH = resolve(WORKING_DIR, 'package.json')
+
+const config = await getConfig(import.meta)
+
+export const NPM_REGISTRY = (
+  config.npm_config_registry ??
+  process.env.npm_config_registry ??
+  process.env.NPM_CONFIG_REGISTRY ??
+  (() => {
+    const randomCasedEnvVarName = Object.keys(process.env).find(
+      _ => _.toLowerCase() === 'npm_config_registry',
+    )
+    return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
+  })() ??
+  ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 10e3 })).stdout ||
+    'https://registry.npmjs.org/')
+).replace(/\/$/, '')
 
 export async function readWdPackageJson(): Promise<PackageJson> {
   const wdPackageJsonStr = await readFile(WD_PACKAGEJSON_PATH, { encoding: 'utf8' })
