@@ -1,5 +1,5 @@
 import { defApi } from '@moodlenet/core'
-import { httpServer } from './env.mjs'
+import { mountApp } from './init.mjs'
 import { MountAppArgs, MountAppItem } from './types.mjs'
 
 export default {
@@ -10,9 +10,7 @@ export default {
         pkgId: ctx.caller.pkgId,
         mountOnAbsPath: mountAppArgs.mountOnAbsPath,
       }
-      const unmount = await httpServer.mountApp(mountAppItem)
-      // FIXME: on uninstall unmount()
-      return unmount
+      await mountApp(mountAppItem)
     },
     (/* ...args */) => true,
   ),

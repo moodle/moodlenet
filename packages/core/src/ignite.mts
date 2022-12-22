@@ -82,7 +82,7 @@ async function rootImportLog(
     if (!('code' in err)) {
       throw err
     }
-    const msg = `ROOT IMPORT: ${pkgExportName} ${err?.code ?? 'not found'}`
+    const msg = `        ROOT IMPORT: ${pkgExportName} ${err?.code ?? 'not found'}`
     if (
       ignoreNotFoundError &&
       ['ERR_PACKAGE_PATH_NOT_EXPORTED', 'ERR_MODULE_NOT_FOUND'].includes(err?.code)
