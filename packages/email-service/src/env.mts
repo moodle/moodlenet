@@ -1,17 +1,13 @@
-import { MailerCfg } from './types.mjs'
+import { getConfig } from '@moodlenet/core'
+import { NodemailerTransport } from './types.mjs'
 
-export const env = getEnv(null)
+export const env = await getEnv()
 
-type Env =
-  | Partial<{
-      mailerCfg: MailerCfg
-    }>
-  | undefined
-function getEnv(_: any): Env {
-  // mailerCfg:{jsonTransport}
-  return _
-    ? {
-        mailerCfg: _.mailerCfg,
-      }
-    : undefined
+type Env = {
+  nodemailerTransport: NodemailerTransport
+}
+async function getEnv(): Promise<Env> {
+  const config = await getConfig(import.meta)
+  const env: Env = config
+  return env
 }

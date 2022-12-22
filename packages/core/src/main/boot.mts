@@ -6,8 +6,8 @@ import { IS_DEVELOPMENT, WORKING_DIR, readWdPackageJson } from './env.mjs'
 import { overrideLocalMNLock, readLocalMNLock } from './MNLock.mjs'
 import { SafePackageJson } from '../pkg-mng/types.mjs'
 
-process.on('error', err => {
-  console.error(err)
+process.on('uncaughtException', err => {
+  console.error('Uncaught Error', err)
   err instanceof Error && console.error(err.stack)
   if (!IS_DEVELOPMENT) {
     return

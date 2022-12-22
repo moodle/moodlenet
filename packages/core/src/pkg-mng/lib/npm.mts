@@ -1,6 +1,7 @@
 import { run } from 'npm-check-updates'
 import {
   MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES,
+  NPM_REGISTRY,
   patchWdPackageJsonDeps,
   WORKING_DIR,
 } from '../../main/env.mjs'
@@ -72,15 +73,15 @@ export async function updateAll(): Promise<{ updatePkgs: Record<string, string> 
   return { updatePkgs }
 }
 
-export const NPM_REGISTRY = (
-  process.env.npm_config_registry ??
-  process.env.NPM_CONFIG_REGISTRY ??
-  (() => {
-    const randomCasedEnvVarName = Object.keys(process.env).find(
-      _ => _.toLowerCase() === 'npm_config_registry',
-    )
-    return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
-  })() ??
-  ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 10e3 })).stdout ||
-    'https://registry.npmjs.org/')
-).replace(/\/$/, '')
+// export const NPM_REGISTRY = (
+//   process.env.npm_config_registry ??
+//   process.env.NPM_CONFIG_REGISTRY ??
+//   (() => {
+//     const randomCasedEnvVarName = Object.keys(process.env).find(
+//       _ => _.toLowerCase() === 'npm_config_registry',
+//     )
+//     return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
+//   })() ??
+//   ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 10e3 })).stdout ||
+//     'https://registry.npmjs.org/')
+// ).replace(/\/$/, '')

@@ -1,7 +1,7 @@
 export * from './pkg-mng/types.mjs'
 export * from './pkg-registry/types.mjs'
 export * from './types.mjs'
-export { NPM_REGISTRY } from './pkg-mng/lib/npm.mjs'
+export { NPM_REGISTRY } from './main/env.mjs'
 export * from './pkg-shell/shell.mjs'
 import apis from './apis.mjs'
 import { connectPkg } from './pkg-shell/shell.mjs'
