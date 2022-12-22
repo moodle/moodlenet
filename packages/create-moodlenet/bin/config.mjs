@@ -16,10 +16,9 @@ function getConfigFileStr() {
       pkgs: {
         '@moodlenet/core': {
           npm_config_registry: currentRegistry,
-          development: 'development',
         },
         '@moodlenet/arangodb': {
-          config: {
+          connectionCfg: {
             url: 'http://localhost:8529',
           },
         },

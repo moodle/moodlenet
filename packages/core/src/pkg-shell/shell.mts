@@ -1,4 +1,5 @@
 import assert from 'assert'
+import { getPkgConfig } from '../ignite.mjs'
 import { ensureRegisterPkg, getPkgRegEntryByPkgName } from '../pkg-registry/lib.mjs'
 import { PkgIdentifier } from '../types.mjs'
 import { callApi, flattenApiDefs } from './apis/lib.mjs'
@@ -71,3 +72,9 @@ export async function pkgConnection<PkgConnDef extends PkgConnectionDef>(
 //     })(...args)
 //   } as ApiFnType<PkgConnDef['apis'], Path>
 // }
+
+export async function getConfig(caller_pkg_module_ref: PkgModuleRef) {
+  const callerPkgRegEntry = await ensureRegisterPkg(caller_pkg_module_ref)
+  const pkgConfig = getPkgConfig(callerPkgRegEntry.pkgId.name)
+  return pkgConfig
+}
