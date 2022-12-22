@@ -3,7 +3,7 @@ import { PackageJson } from 'type-fest'
 type Reboot = () => unknown
 type Shutdown = () => unknown
 type RootImport = (module: string) => Promise<unknown>
-type Configs = { pkgs: { [pkgName in string]: unknown } }
+type Configs = { pkgs: { [pkgName in string]: any } }
 type PkgListDepOrdered = [string, string | undefined][]
 type Ignites = {
   rootImport: RootImport
@@ -30,7 +30,7 @@ export function getConfigs() {
   return _ignites.configs
 }
 
-export function getPkgConfigs(pkgName: string) {
+export function getPkgConfig(pkgName: string) {
   return getConfigs().pkgs[pkgName]
 }
 
@@ -79,6 +79,9 @@ async function rootImportLog(
   console.info(`-- BEGIN: [${exp}] ${pkgName}@${pkgVersion} --`)
   const pkgExportName = exp ? `${pkgName}/${exp}` : pkgName
   await _ignites.rootImport(pkgExportName).catch(err => {
+    if (!('code' in err)) {
+      throw err
+    }
     const msg = `ROOT IMPORT: ${pkgExportName} ${err?.code ?? 'not found'}`
     if (
       ignoreNotFoundError &&
