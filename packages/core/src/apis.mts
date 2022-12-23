@@ -59,7 +59,6 @@ export default {
   },
   'rebootSystem': defApi(
     _ctx => async () => {
-      console.log('..rebooting system')
       rebootSystem()
       return
     },
