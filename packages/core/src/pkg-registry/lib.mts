@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { PkgModuleRef } from '../init.mjs'
+import { PkgModuleRef } from '../root-export.mjs'
 import { getPkgModuleInfo } from '../pkg-mng/lib/pkg.mjs'
 import { PackageInfo } from '../pkg-mng/types.mjs'
 import { PkgIdentifier, PkgName } from '../types.mjs'

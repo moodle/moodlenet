@@ -1,4 +1,4 @@
-import { PkgEntry } from '../../init.mjs'
+import { PkgEntry } from '../../root-export.mjs'
 import {
   ApiDef,
   ApiDefPaths,
