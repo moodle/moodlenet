@@ -5,20 +5,6 @@ let shutting_down = false
 let rebooting = false
 let ignitor_process = null
 
-process.on('message', cmd => {
-  bannerLog(`[${cmd}] COMMAND`)
-  switch (cmd) {
-    case 'reboot': {
-      reboot()
-      return
-    }
-    case 'shutdown': {
-      shutdownServices('SIGINT')
-      return
-    }
-  }
-})
-
 process.on('SIGINT', processKiller)
 process.on('SIGTERM', processKiller)
 
@@ -50,12 +36,22 @@ async function boot() {
     // ignitor_process = fork('ignitor.mjs', { execPath: 'npx', execArgv: ['-y', 'node-dev'] })
     ignitor_process = fork('ignitor.mjs')
     ignitor_process.once('exit', sig => !rebooting && process.exit(sig))
-    ignitor_process.on('message', function readyHandler(msg) {
-      if (msg !== 'ready') {
+    ignitor_process.on('message', cmd => {
+      if (cmd === 'ready') {
+        resolve()
         return
       }
-      ignitor_process.off('message', readyHandler)
-      resolve()
+      bannerLog(`[${cmd}] COMMAND`)
+      switch (cmd) {
+        case 'reboot': {
+          reboot()
+          return
+        }
+        case 'shutdown': {
+          shutdownServices('SIGINT')
+          return
+        }
+      }
     })
   })
 }
