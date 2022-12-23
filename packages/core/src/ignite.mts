@@ -1,4 +1,4 @@
-import { PackageJson } from 'type-fest'
+import type { PackageJson } from 'type-fest'
 
 type Reboot = () => unknown
 type Shutdown = () => unknown
@@ -35,7 +35,6 @@ export function getPkgConfig(pkgName: string) {
 }
 
 export default async function ignite(ignites: Ignites) {
-  // console.log(ignites)
   _ignites = ignites
   process.once('SIGTERM', stopAllAndExit)
   process.once('SIGINT', stopAllAndExit)

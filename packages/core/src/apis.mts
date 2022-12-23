@@ -2,7 +2,7 @@ import { defApi } from './pkg-shell/apis/shell.mjs'
 import { checkUpdates, install, uninstall, updateAll } from './pkg-mng/lib/npm.mjs'
 import { listEntries, pkgEntryByPkgId } from './pkg-registry/lib.mjs'
 import { PkgIdentifier } from './types.mjs'
-import { InstallPkgReq } from './init.mjs'
+import { InstallPkgReq } from './root-export.mjs'
 import { rebootSystem } from './main/sys.mjs'
 
 export default {

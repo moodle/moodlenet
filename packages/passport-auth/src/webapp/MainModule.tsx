@@ -3,7 +3,7 @@ import {
   ReactAppPluginMainModule,
   WebappPluginMainModule,
   WebAppShellOf,
-} from '@moodlenet/react-app'
+} from '../../../react-app/dist/root-export.mjs'
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { PassportAuthExt } from '..'
 import { PassportConfigs } from '../store/types'

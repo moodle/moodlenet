@@ -1,22 +1,22 @@
 import '../common/index.mjs'
 import authConn from '../../../authentication-manager/dist/init.mjs'
 import graphConn from '../../../content-graph/dist/init.mjs'
-import coreConn, { connectPkg } from '@moodlenet/core'
+import coreConn from '@moodlenet/core'
 import organizationConn from '../../../organization/dist/init.mjs'
-import apis from './apis.mjs'
 import { setupPlugin } from './lib.mjs'
 import { MyPkgContext } from '../common/my-webapp/types.mjs'
+import { httpSrvPkg, kvStore } from './use-pkgs.mjs'
+import { defaultAppearanceData } from '../common/index.mjs'
+import myPkgId from '../root-export.mjs'
+import { latestBuildFolder } from './webpack/generated-files.mjs'
+import { resolve } from 'path'
 
-// import { fileURLToPath } from 'url'
-// const __dirname = fileURLToPath(new URL('.', import.meta.url))
-// export * from './pub-lib.mjs'
-// export * from './types.mjs'
-
-const reactAppConn = await connectPkg(import.meta, { apis })
-export default reactAppConn
+if (!(await kvStore.get('appearanceData', '')).value) {
+  await kvStore.set('appearanceData', '', defaultAppearanceData)
+}
 
 await setupPlugin<MyPkgContext>({
-  pkgId: reactAppConn,
+  pkgId: myPkgId,
   pluginDef: {
     mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
     usesPkgs: {
@@ -26,4 +26,21 @@ await setupPlugin<MyPkgContext>({
       core: coreConn,
     },
   },
+})
+
+httpSrvPkg.api('mount')({
+  getApp(express) {
+    const mountApp = express()
+    const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
+    mountApp.use(staticWebApp)
+    mountApp.get(`*`, (req, res, next) => {
+      if (req.url.startsWith('/.')) {
+        next()
+        return
+      }
+      res.sendFile(resolve(latestBuildFolder, 'index.html'))
+    })
+    return mountApp
+  },
+  mountOnAbsPath: '/',
 })

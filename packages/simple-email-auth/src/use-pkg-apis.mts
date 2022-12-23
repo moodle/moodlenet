@@ -5,7 +5,7 @@ import { pkgConnection } from '@moodlenet/core'
 import cryptoPkgRef from '@moodlenet/crypto'
 import emailSrvPkgRef from '@moodlenet/email-service'
 import httpPkgRef from '../../http-server/dist/init.mjs'
-import reactAppPkgRef from '@moodlenet/react-app'
+import reactAppPkgRef from '../../react-app/dist/root-export.mjs'
 import webUserPkgRef from '../../web-user/dist/init.mjs'
 
 export const arangoPkg = await pkgConnection(import.meta, arangoPkgRef)
