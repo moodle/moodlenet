@@ -17,7 +17,6 @@ let _ignites: Ignites = null as never
 const _pkgListDepOrdered: PkgListDepOrdered = []
 
 export async function reboot() {
-  await stopAll()
   _ignites.reboot()
 }
 
@@ -61,6 +60,7 @@ async function startAll() {
 }
 
 export async function stopAll() {
+  console.info('Stop all packages')
   for (const pkgEntry of _pkgListDepOrdered.reverse()) {
     await rootImportLog(pkgEntry, 'stop')
   }

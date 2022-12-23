@@ -1,3 +1,5 @@
+import { reboot } from '../ignite.mjs'
+
 export function rebootSystem(to = 500) {
-  setTimeout(() => process.exit(0), to)
+  setTimeout(() => reboot(), to)
 }
