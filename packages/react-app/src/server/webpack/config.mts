@@ -1,16 +1,14 @@
 import CompressionPlugin from 'compression-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
-import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { createRequire } from 'module'
 import { resolve } from 'path'
 import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
-import rimraf from 'rimraf'
 import { fileURLToPath } from 'url'
-import type { Configuration, ResolveOptions } from 'webpack'
+import type { Configuration } from 'webpack'
 import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
-import { WebappPluginItem } from '../common/types.mjs'
+import { getAliases, getPkgPlugins } from './generated-files.mjs'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const require = createRequire(import.meta.url)
@@ -22,69 +20,22 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
 
-export default startProdWp
-export function startProdWp({
-  // overrideCfg = _ => _,
-  buildFolder,
-  latestBuildFolder,
-  // virtualModules,
-  baseResolveAlias,
-  pkgPlugins,
-}: {
-  baseResolveAlias: ResolveOptions['alias']
-  latestBuildFolder: string
-  buildFolder: string
-  pkgPlugins: WebappPluginItem<any>[]
-  // overrideCfg?: (_: Configuration) => Configuration
-  // virtualModules: VirtualModulesPlugin
-}) {
-  const wp = getWp({ baseResolveAlias, buildFolder, mode: 'prod', pkgPlugins })
-  // console.log({ baseResolveAlias, latestBuildFolder, buildFolder })
-
-  // process.on('SIGTERM', () => wp.close(() => void 0))
-
-  wp.hooks.afterDone.tap('swap folders', async wpStats => {
-    if (wpStats?.hasErrors()) {
-      throw new Error(`Webpack build error: ${wpStats.toString()}`)
-    }
-    await new Promise<void>((rimrafResolve, rimrafReject) =>
-      rimraf(resolve(latestBuildFolder, '*'), { disableGlob: true }, e =>
-        e ? rimrafReject(e) : rimrafResolve(),
-      ),
-    )
-    await cp(buildFolder, latestBuildFolder, { recursive: true })
-    wp.close(() => void 0)
-  })
-
-  // wp.watch({}, () => {
-  //   /* console.log(`Webpack  watched`) */
-  // })
-
-  return {
-    compiler: wp,
-    // reconfigExtAndAliases,
-  }
-}
-
-export function getWp(
+export async function getWp(
   cfg:
     | {
         mode: 'prod'
         buildFolder: string
-        baseResolveAlias: ResolveOptions['alias']
-        pkgPlugins: WebappPluginItem<any>[]
       }
     | {
         mode: 'dev-server'
         port: number
         proxy: string
-        pkgPlugins: WebappPluginItem<any>[]
-        baseResolveAlias: ResolveOptions['alias']
       },
 ) {
   const isDevServer = cfg.mode === 'dev-server'
   const mode: Configuration['mode'] = isDevServer ? 'development' : 'production'
-
+  const alias = await getAliases()
+  const pkgPlugins = await getPkgPlugins()
   const config: Configuration = {
     stats: isDevServer ? 'normal' : 'errors-only',
     mode,
@@ -95,7 +46,7 @@ export function getWp(
     ],
     devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,
     // devtool: 'source-map',
-    context: resolve(__dirname, '..', '..'),
+    context: resolve(__dirname, '..', '..', '..'),
     watch: isDevServer,
     watchOptions: {
       aggregateTimeout: 10,
@@ -155,7 +106,7 @@ export function getWp(
       cache: true,
       extensions: ['.ts', '.mts', '.tsx', '.js', '.mjs', '.jsx'],
       //modules: [__dirname, 'node_modules'],
-      alias: cfg.baseResolveAlias,
+      alias,
       // fullySpecified: true,
       plugins: [new ResolveTypeScriptPlugin({ includeNodeModules: true })],
     },
@@ -286,7 +237,7 @@ export function getWp(
           // exclude: /node_modules/, // HACK: removed because it won't compile jsx from within system's installed packages .. but this way it IS heavier..
           exclude: val => {
             const regexStr =
-              cfg.pkgPlugins.reduce((_, { guestPkgId }) => {
+              pkgPlugins.reduce((_, { guestPkgId }) => {
                 return `${_}(?!${guestPkgId.name.replace('/', '\\/')}\\/)`
               }, 'node_modules\\/') + '.*'
             const excludeRegex = new RegExp(regexStr)

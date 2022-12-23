@@ -33,6 +33,7 @@
   "exports": {
     ".": "./dist/root-export.mjs",
     "./init": "./dist/server/init.mjs",
+    "./start": "./dist/server/start.mjs",
     "./stories": "./dist/webapp/stories.mjs",
     "./common": "./dist/common/index.mjs",
     "./ui": "./dist/webapp/ui.mjs",
@@ -42,7 +43,7 @@
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
     "dev-init": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json} dist",
-    "dev-server": "node dist/-dev-server.mjs",
+    "dev-server": "node dist/webpack/-dev-server.mjs",
     "create-common-index": "vgis src/common/index.mts",
     "create-components-index": "vgis src/webapp/ui.mts",
     "create-stories-index": "vgis src/webapp/stories.mts"

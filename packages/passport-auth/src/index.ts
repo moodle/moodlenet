@@ -2,7 +2,7 @@ import { AuthenticationManagerExtDef } from '../../authentication-manager/dist/i
 import type { ContentGraphExtDef } from '../../content-graph/dist/init.mjs'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExtDef } from '../../http-server/dist/init.mjs'
-import type { ReactAppExtDef } from '@moodlenet/react-app'
+import type { ReactAppExtDef } from '../../react-app/dist/root-export.mjs'
 import type { WebUserExtDef } from '../../web-user/dist/init.mjs'
 import { resolve } from 'path'
 import { prepareApp } from './oauth-server'
