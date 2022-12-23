@@ -1,3 +1,5 @@
-import def from './server/init.mjs'
-export * from './server/init.mjs'
-export default def
+import { connectPkg } from '@moodlenet/core'
+import apis from './server/apis.mjs'
+
+const myPkgId = await connectPkg(import.meta, { apis })
+export default myPkgId
