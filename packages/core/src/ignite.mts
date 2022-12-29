@@ -42,6 +42,7 @@ export default async function ignite(ignites: Ignites) {
 }
 
 async function initAll() {
+  console.info('\nInut all packages\n')
   await Promise.all(
     Object.entries(_ignites.rootPkgJson.dependencies ?? {}).map(async pkgEntry => {
       await rootImportLog(pkgEntry, 'init')
@@ -54,20 +55,21 @@ async function initAll() {
 }
 
 async function startAll() {
+  console.info('\nStart all packages\n')
   for (const pkgEntry of _pkgListDepOrdered) {
     await rootImportLog(pkgEntry, 'start')
   }
 }
 
 export async function stopAll() {
-  console.info('Stop all packages')
+  console.info('\nStop all packages\n')
   for (const pkgEntry of _pkgListDepOrdered.reverse()) {
-    await rootImportLog(pkgEntry, 'stop')
+    await rootImportLog(pkgEntry, 'stop').catch(() => void 0)
   }
 }
 export async function stopAllAndExit() {
   await stopAll()
-  process.exit()
+  process.exit(0)
 }
 
 async function rootImportLog(
@@ -75,21 +77,32 @@ async function rootImportLog(
   exp: string,
   ignoreNotFoundError = true,
 ) {
-  console.info(`-- BEGIN: [${exp}] ${pkgName}@${pkgVersion} --`)
+  // const fullPkgName = `${pkgName}@${pkgVersion}`
+  // const fullActionName = `[${exp}] ${fullPkgName}`
+  const fullActionName = `[${exp}] ${pkgName}`
   const pkgExportName = exp ? `${pkgName}/${exp}` : pkgName
-  await _ignites.rootImport(pkgExportName).catch(err => {
-    if (!('code' in err)) {
-      throw err
-    }
-    const msg = `        ROOT IMPORT: ${pkgExportName} ${err?.code ?? 'not found'}`
-    if (
-      ignoreNotFoundError &&
-      ['ERR_PACKAGE_PATH_NOT_EXPORTED', 'ERR_MODULE_NOT_FOUND'].includes(err?.code)
-    ) {
-      console.info(`${msg} - ignoring`)
-      return
-    }
-    throw new Error(msg, { cause: err })
-  })
-  console.info(`---- END: [${exp}] ${pkgName}@${pkgVersion} ----`)
+
+  // console.info(`${fullActionName} --- BEGIN ---`)
+
+  const endMessageWith = await _ignites.rootImport(pkgExportName).then(
+    () => '',
+    err => {
+      const errMsg = `${fullActionName}@${pkgVersion} : Import Error`
+      if (!err?.code) {
+        throw new Error(`${errMsg} [${err}]`, { cause: err })
+      }
+
+      const isNotFoundErr = ['ERR_PACKAGE_PATH_NOT_EXPORTED', 'ERR_MODULE_NOT_FOUND'].includes(
+        err.code,
+      )
+
+      if (!(ignoreNotFoundError && isNotFoundErr)) {
+        const msgWCode = `${errMsg} CODE: ${err.code}`
+        throw new Error(msgWCode, { cause: err })
+      }
+
+      return `${exp} export not available for this package, ignoring `
+    },
+  )
+  console.info(`${fullActionName} --- DONE ---${endMessageWith ? ` [${endMessageWith}]` : ``}`)
 }
