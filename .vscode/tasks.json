@@ -3,6 +3,7 @@
   "tasks": [
     {
       "group": "build",
+      "type": "shell",
       "command": "npm",
       "args": ["run", "prj-build"],
       "isBackground": true,
@@ -11,6 +12,7 @@
     },
     {
       "group": "build",
+      "type": "shell",
       "command": "npm",
       "args": ["run", "prj-build-watch"],
       "isBackground": true,
@@ -19,6 +21,7 @@
     },
     {
       "group": "build",
+      "type": "shell",
       "command": "npm",
       "args": ["run", "dev-assistant"],
       "isBackground": true,
@@ -27,18 +30,20 @@
     },
     {
       "group": "build",
+      "type": "shell",
+      "command": "sb",
+      // "args": ["run", "dev-assistant"],
+      // "isBackground": true,
+      "problemMatcher": ["$tsc"],
+      "label": "storybook"
+    },
+    {
+      "group": "build",
+      "type": "shell",
       "problemMatcher": [],
       "label": "frontend-tasks",
       "dependsOrder": "parallel",
-      "dependsOn": [
-        "react-app dev-build",
-        "simple-email-auth dev-build",
-        "web-user dev-build",
-        "component-library dev-build",
-        "extensions-manager dev-build",
-        "dev-assistant",
-        "storybook"
-      ],
+      "dependsOn": ["prj-build-watch", "dev-assistant", "storybook"],
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -47,6 +52,14 @@
         "showReuseMessage": true,
         "clear": false
       }
+    },
+    {
+      "group": "build",
+      "type": "npm",
+      "script": "prj-build-watch",
+      "problemMatcher": [],
+      "label": "npm: prj-build-watch",
+      "detail": "npm run prj-build -- --watch"
     }
   ]
 }

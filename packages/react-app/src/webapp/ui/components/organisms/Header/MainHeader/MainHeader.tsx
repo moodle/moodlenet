@@ -8,8 +8,7 @@ import {
   Searchbox,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import { useMemo } from 'react'
-import { FC } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
@@ -174,6 +173,8 @@ export const MainHeader: FC<MainHeaderProps> = ({
   avatarMenuProps,
   ...props
 }) => {
+  const [searchText, setSearchText] = useState('')
+
   const { logo, smallLogo, url } = headerTitleProps
 
   const updatedLeftItems = useMemo(() => {
@@ -189,12 +190,18 @@ export const MainHeader: FC<MainHeaderProps> = ({
   const updatedCenterItems = useMemo(() => {
     return [
       {
-        Item: () => <Searchbox placeholder="Search for open education content" />,
+        Item: () => (
+          <Searchbox
+            placeholder="Search for open education content"
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+        ),
         key: 'searchbox',
       },
       ...(centerItems ?? []),
     ]
-  }, [centerItems])
+  }, [centerItems, searchText])
 
   const updatedRightItems: AddonItem[] = useMemo(() => {
     return [

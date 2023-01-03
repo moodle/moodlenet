@@ -1,29 +1,37 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from 'react'
+import {
+  ChangeEventHandler,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import { elementFullyInViewPort } from '../../../helpers/utilities.js'
 import './Searchbox.scss'
 
 export type SearchboxProps = {
-  // searchText: string
+  searchText: string
   placeholder: string
   size?: 'small' | 'big'
-  // setSearchText(text: string): unknown
+  setSearchText(text: string): unknown
   setIsSearchboxInViewport?: Dispatch<SetStateAction<boolean>>
   marginTop?: number
 }
 
 export const Searchbox: FC<SearchboxProps> = ({
-  // searchText,
+  searchText,
   placeholder,
   size,
   marginTop,
-  // setSearchText,
+  setSearchText,
   setIsSearchboxInViewport,
 }) => {
-  // const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
-  //   ev => setSearchText(ev.currentTarget.value),
-  //   [setSearchText],
-  // )
+  const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
+    ev => setSearchText(ev.currentTarget.value),
+    [setSearchText],
+  )
   const searchboxRef = useRef<HTMLDivElement>(null)
 
   const setElementFullyInViewPort = useCallback(() => {
@@ -53,9 +61,9 @@ export const Searchbox: FC<SearchboxProps> = ({
         id="search-text"
         placeholder={placeholder}
         autoFocus
-        defaultValue={''}
-        // defaultValue={searchText}
-        // onChange={setSearchTextCB}
+        // defaultValue={''}
+        defaultValue={searchText}
+        onChange={setSearchTextCB}
       />
     </div>
   )
