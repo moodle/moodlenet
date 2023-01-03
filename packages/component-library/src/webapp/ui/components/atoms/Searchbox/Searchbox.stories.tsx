@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Searchbox, SearchboxProps } from './Searchbox.js'
 
@@ -9,9 +10,8 @@ const meta: ComponentMeta<typeof Searchbox> = {
 
 export const SearchboxStoryProps: SearchboxProps = {
   placeholder: 'Start type to search',
-
-  //   searchText: '',
-  //   setSearchText: action('Search Text'),
+  searchText: '',
+  setSearchText: action('Search Text'),
 }
 
 const SearchboxStory: ComponentStory<typeof Searchbox> = args => <Searchbox {...args} />
