@@ -1,6 +1,7 @@
 import { RouteRegItem } from './app-routes.js'
 import { LoginEntryItem, SignupEntryItem } from './context/AuthContext.js'
 import { SettingsSectionItem } from './context/SettingsContext.js'
+import { FooterComponentRegItem } from './ui/components/organisms/Footer/addons.js'
 import {
   HeaderMenuItemRegItem,
   HeaderRightComponentRegItem,
@@ -11,6 +12,9 @@ export type MainRegistries = ReturnType<typeof useMakeRegistries>
 export type GuestMainRegistries = GuestRegistryMap<MainRegistries>
 export function useMakeRegistries() {
   const rightComponents = useCreateRegistry<HeaderRightComponentRegItem>()
+  const footerLeftComponents = useCreateRegistry<FooterComponentRegItem>()
+  const footerCenterComponents = useCreateRegistry<FooterComponentRegItem>()
+  const footerRightComponents = useCreateRegistry<FooterComponentRegItem>()
   const routes = useCreateRegistry<RouteRegItem>()
   const avatarMenuItems = useCreateRegistry<HeaderMenuItemRegItem>()
   const addMenuItems = useCreateRegistry<HeaderMenuItemRegItem>()
@@ -19,6 +23,9 @@ export function useMakeRegistries() {
   const signupItems = useCreateRegistry<SignupEntryItem>()
   return {
     rightComponents,
+    footerLeftComponents,
+    footerCenterComponents,
+    footerRightComponents,
     routes,
     avatarMenuItems,
     addMenuItems,

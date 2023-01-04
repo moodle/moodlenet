@@ -1,5 +1,6 @@
 import { baseStyle } from '@moodlenet/component-library'
 import { CSSProperties, FC, ReactNode } from 'react'
+import { MainFooter, MainFooterProps } from '../../organisms/Footer/MainFooter/MainFooter.js'
 import { MainHeader, MainHeaderProps } from '../../organisms/Header/MainHeader/MainHeader.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import './MainLayout.scss'
@@ -7,6 +8,7 @@ import './MainLayout.scss'
 
 export type MainLayoutProps = {
   headerProps: MainHeaderProps
+  footerProps: MainFooterProps
   style?: CSSProperties
   streched?: boolean
   children?: ReactNode
@@ -14,6 +16,7 @@ export type MainLayoutProps = {
 
 export const MainLayout: FC<MainLayoutProps> = ({
   headerProps,
+  footerProps,
   style,
   streched,
   /* contentStyle, */ children,
@@ -55,7 +58,7 @@ export const MainLayout: FC<MainLayoutProps> = ({
         className="content"
       >
         {children}
-        <div className="footer"></div>
+        <MainFooter {...footerProps} />
       </div>
     </div>
   )
