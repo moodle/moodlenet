@@ -16,7 +16,7 @@ export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendRe
       ...emailObj,
     })
     .then(messageInfo => {
-      logWarnTransportIsJonTransport(env.nodemailerTransport, emailObj, messageInfo)
+      logWarnTransportIsJsonTransport(env.nodemailerTransport, emailObj, messageInfo)
       return { success: true, messageInfo } as const
     })
     .catch(err => ({ success: false, error: String(err) } as const))
@@ -24,13 +24,19 @@ export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendRe
   return resp
 }
 
-function logWarnTransportIsJonTransport(
+function logWarnTransportIsJsonTransport(
   transport: NodemailerTransport,
   emailObj: EmailObj,
   messageInfo: SMTPTransport.SentMessageInfo,
 ) {
-  typeof transport === 'object' && 'jsonTransport' in transport && transport.jsonTransport === true
-  console.warn(`@moodlenet/email-service:
+  if (
+    typeof transport !== 'object' ||
+    !('jsonTransport' in transport) ||
+    transport.jsonTransport !== true
+  ) {
+    return
+  }
+  console.log(`@moodlenet/email-service:
   missing configuration
   couldn't really send the following message #${messageInfo.messageId}
   ${JSON.stringify(messageInfo.envelope, null, 4)}
