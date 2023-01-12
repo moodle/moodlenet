@@ -18,9 +18,18 @@
 
       > tbody {
         > tr {
+          // display: flex;
+          // justify-content: space-between;
+
           &:nth-child(even) {
             // background-color: #f3f3f3;
           }
+          // > td:not(.roles) {
+          // width: 40%;
+          // overflow: hidden;
+          // text-overflow: ellipsis;
+          // white-space: nowrap;
+          // }
           > .roles {
             > * {
               cursor: pointer;

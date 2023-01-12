@@ -34,8 +34,8 @@ export const Users: FC<UsersProps> = ({ form }) => {
     setUsers(
       form?.values.users.filter(
         user =>
-          user.displayName.includes(searchText) ||
-          user.email.includes(searchText) ||
+          user.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchText.toLowerCase()) ||
           searchText === '',
       ),
     )
@@ -61,7 +61,7 @@ export const Users: FC<UsersProps> = ({ form }) => {
             <tr>
               <td>Display name</td>
               <td>Email</td>
-              <td>Roles</td>
+              <td>User types</td>
             </tr>
           </thead>
           <tbody>
@@ -74,7 +74,7 @@ export const Users: FC<UsersProps> = ({ form }) => {
                     <abbr
                       onClick={user.toggleIsAdmin}
                       className={`admin ${user.isAdmin ? 'on' : 'off'}`}
-                      title={user.isAdmin ? 'Remove admin role' : 'Assign admin role'}
+                      title="Admin"
                     >
                       {user.isAdmin ? <AdminIconOn /> : <AdminIconOff />}
                     </abbr>
