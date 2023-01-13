@@ -31,9 +31,10 @@
     {
       "group": "build",
       "type": "shell",
-      "command": "sb",
-      // "args": ["run", "dev-assistant"],
-      // "isBackground": true,
+      "command": "npm run storybook",
+      "options": {
+        "cwd": "packages/storybook"
+      },
       "problemMatcher": ["$tsc"],
       "label": "storybook"
     },
