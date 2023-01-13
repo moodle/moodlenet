@@ -13,7 +13,7 @@ import { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import { ProfileFormValues } from '../../../../types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
-import defaultBackgroud from '../../../assets/img/default-background.svg'
+import defaultBackground from '../../../assets/img/default-background.svg'
 import './ProfileCard.scss'
 
 export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
@@ -69,7 +69,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
     form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
-  const [backgroundUrl] = useImageUrl(/* form.values.backgroundImage */ null, defaultBackgroud)
+  const [backgroundUrl] = useImageUrl(/* form.values.backgroundImage */ null, defaultBackground)
   const background = {
     backgroundImage: 'url("' + backgroundUrl + '")',
     backgroundSize: 'cover',
@@ -230,13 +230,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 
   const updatedBottomItems = <div className="buttons"></div>
 
-  const updatedContentItems = [
-    updatedTopItems,
-    cardHeader,
-    description,
-    // approvalInfo,
-    updatedBottomItems,
-  ]
+  const updatedContentItems = [updatedTopItems, cardHeader, description, updatedBottomItems]
   return (
     <div className="profile-card" key="profile-card">
       {isShowingBackground && backgroundUrl && (
@@ -261,25 +255,27 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           <img src={avatarUrl} alt="Avatar" />
         </Modal>
       )}
-      <div
-        className="background"
-        style={{
-          ...background,
-          // pointerEvents: form.isSubmitting ? 'none' : 'inherit',
-        }}
-        onClick={() => !isEditing && setIsShowingBackground(true)}
-      >
+      <div className={`background-container`}>
         {editBackgroundButton}
+        <div
+          className={`background`}
+          style={{
+            ...background,
+            pointerEvents: !isEditing || defaultBackground === backgroundUrl ? 'none' : 'inherit',
+          }}
+          onClick={() => setIsShowingBackground(true)}
+        ></div>
       </div>
-      <div
-        className="avatar"
-        style={{
-          ...avatar,
-          // pointerEvents: form.isSubmitting ? 'none' : 'inherit',
-        }}
-        onClick={() => !isEditing && setIsShowingAvatar(true)}
-      >
+      <div className={`avatar-container`}>
         {editAvatarButton}
+        <div
+          className={`avatar`}
+          style={{
+            ...avatar,
+            pointerEvents: !isEditing || defaultAvatar === avatarUrl ? 'none' : 'inherit',
+          }}
+          onClick={() => setIsShowingAvatar(true)}
+        ></div>
       </div>
       <div className="content">{...updatedContentItems}</div>
     </div>
