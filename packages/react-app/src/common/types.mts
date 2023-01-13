@@ -1,6 +1,6 @@
 import { BaseStyleType } from '@moodlenet/component-library'
-import { CSSProperties } from 'react'
 import type { PackageInfo, PkgIdentifier } from '@moodlenet/core'
+import { CSSProperties } from 'react'
 
 export type WebPkgDeps = {
   [k in string]: PkgIdentifier
@@ -34,4 +34,11 @@ export type AppearanceData = {
   color: string
   //TODO: decide if having this as optional
   customStyle?: CustomStyleType
+}
+
+export type User = {
+  displayName: string
+  email: string
+  userTypes: string[]
+  toggleUserType: (userType: string) => void
 }
