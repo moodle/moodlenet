@@ -22,23 +22,21 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
   targetPkgId: PkgIdentifier,
   userPkgId: PkgIdentifier,
 ): LocateRpc<TargetPkgExpose> {
-  const locateApi = (
+  return function locateApi(
     path: string,
     // { ctx = {} }: { ctx?: FloorApiCtx },
-  ) => {
-    const callApi = async (...args: unknown[]) => {
-      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, args)
+  ) {
+    return async function (body: unknown) {
+      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [body])
       const response = await fetch(url, requestInit)
 
       if (response.status !== 200) {
         throw new Error(await response.text())
       }
-      const body: HttpApiResponse = await response.json()
-      return body.response
+      const responseJson: HttpApiResponse = await response.json()
+      return responseJson.response
     }
-    return callApi
-  }
-  return locateApi as LocateRpc<TargetPkgExpose>
+  } as LocateRpc<TargetPkgExpose>
 }
 
 export type LocateRpc<TargetPkgExpose extends PkgExpose> = <

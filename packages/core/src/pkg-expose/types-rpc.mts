@@ -3,7 +3,7 @@ type RpcRequestBody = any // FIXME: well define with constraints (serializable +
 type RpcResponseBody = any // FIXME: well define with constraints (serializable)
 export type RpcResponse = Promise<RpcResponseBody>
 
-type RpcArgs = [
+export type RpcArgs = [
   body: RpcRequestBody,
   // params: Record<string, string>
   // query: Record<string, string | string[]>

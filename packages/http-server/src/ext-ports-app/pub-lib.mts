@@ -1,4 +1,4 @@
-import type { PkgIdentifier } from '@moodlenet/core'
+import type { PkgIdentifier, RpcArgs } from '@moodlenet/core'
 export * from '../types.mjs'
 export const SESSION_TOKEN_COOKIE_NAME = 'mn-session'
 export const BASE_RPC_URL = '/.rpc'
@@ -8,8 +8,9 @@ export function getPkgRpcFetchOpts(
   userPkgId: PkgIdentifier,
   targetPkgId: PkgIdentifier,
   apiPath: string,
-  args?: unknown[],
+  args: RpcArgs,
 ) {
+  const [body] = args
   const url = `${BASE_RPC_URL}/${targetPkgId.name}/${targetPkgId.version}/${apiPath}`
   const requestInit: RequestInit = {
     method: 'POST',
@@ -18,7 +19,7 @@ export function getPkgRpcFetchOpts(
       'Accept': 'application/json',
       'x-moodlenet-react-app-caller': `${userPkgId.name}@${userPkgId.version}`,
     },
-    body: JSON.stringify({ args }),
+    body: JSON.stringify(body),
   }
   return { url, requestInit }
 }

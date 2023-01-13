@@ -2,7 +2,6 @@ import '../common/exports.mjs'
 import { setupPlugin } from './lib.mjs'
 import { expose as authExpose } from '@moodlenet/authentication-manager'
 import { expose as graphExpose } from '@moodlenet/content-graph'
-import { expose as coreExpose } from '@moodlenet/core'
 import { expose as orgExpose } from '@moodlenet/organization'
 import { mountApp } from '@moodlenet/http-server'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
@@ -24,7 +23,6 @@ await setupPlugin<MyWebAppDeps>({
     deps: {
       me: myExpose,
       organization: orgExpose,
-      core: coreExpose,
       graph: graphExpose,
       auth: authExpose,
     },
