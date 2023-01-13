@@ -4,7 +4,7 @@ import type {
   UserData,
 } from '../../../../authentication-manager/dist/init.mjs'
 
-import type { NodeGlyph } from '../../../../content-graph/dist/init.mjs'
+import type { NodeGlyph } from '@moodlenet/content-graph'
 import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
 import cookies from 'js-cookie'
 import {
@@ -62,7 +62,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         }
       }
 
-      const myUserNodeRes = await use.graph.call('getMyUserNode')()
+      const myUserNodeRes = await use.graph.rpc('getMyUserNode')()
       if (!myUserNodeRes) {
         throw new Error(
           `shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`,
@@ -83,7 +83,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const fetchClientSession = useCallback(
     async (token: SessionToken) => {
-      const res = await use.auth.call('getClientSession')({ token })
+      const res = await use.auth.rpc('getClientSession')({ token })
       if (!res.success) {
         writeSessionToken()
         return { success: false, msg: 'invalid token' } as const

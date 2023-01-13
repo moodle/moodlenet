@@ -41,7 +41,7 @@ export const RootLoginBody: FC = () => {
   const rootLogin = useCallback(async () => {
     setLoginFailed(false)
     setSubmitting(true)
-    const res = await use.auth.call('getRootSessionToken')({ password: rootPassword })
+    const res = await use.auth.rpc('getRootSessionToken')({ password: rootPassword })
     if (res.success) {
       setSessionToken(res.sessionToken)
     }

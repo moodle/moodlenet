@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { FC } from 'react'
-import { defaultAppearanceData } from '../../../../../../common/index.mjs'
+import { defaultAppearanceData } from '../../../../../../common/exports.mjs'
 import { AppearanceData } from '../../../../../../common/types.mjs'
 import { SettingsItem } from '../Settings/Settings.js'
 import { Appearance, AppearanceMenu, AppearanceProps } from './Appearance.js'

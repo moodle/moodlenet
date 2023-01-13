@@ -28,7 +28,12 @@ export type TypePaths<Obj, SearchType, Primitive, Depth extends number = 10> = O
       | ''
       | (Obj extends object
           ? {
-              [Core in keyof Obj]-?: TypePaths<Obj[Core], SearchType, Primitive, Prev[Depth]> extends infer R
+              [Core in keyof Obj]-?: TypePaths<
+                Obj[Core],
+                SearchType,
+                Primitive,
+                Prev[Depth]
+              > extends infer R
                 ? Join<Core, R>
                 : never
             }[keyof Obj]
@@ -39,7 +44,12 @@ export type TypePaths<Obj, SearchType, Primitive, Depth extends number = 10> = O
   : // ^^ added this block
   Obj extends object
   ? {
-      [Core in keyof Obj]-?: TypePaths<Obj[Core], SearchType, Primitive, Prev[Depth]> extends infer R
+      [Core in keyof Obj]-?: TypePaths<
+        Obj[Core],
+        SearchType,
+        Primitive,
+        Prev[Depth]
+      > extends infer R
         ? Join<Core, R>
         : never
     }[keyof Obj]

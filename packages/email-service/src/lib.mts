@@ -3,7 +3,7 @@ import { createTransport } from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js'
 import { env } from './env.mjs'
 import type { EmailObj, NodemailerTransport, SendResp } from './types.mjs'
-import { kvStore } from './use-pkg-apis.mjs'
+import kvStore from './kvStore.mjs'
 export { SentMessageInfo } from 'nodemailer'
 
 export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendResp> {

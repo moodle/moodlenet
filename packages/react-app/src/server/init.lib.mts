@@ -49,7 +49,7 @@ export function writeGenerated() {
   ])
 }
 
-export async function addWebappPluginItem<Deps extends WebPkgDeps = never>(
+export function addWebappPluginItem<Deps extends WebPkgDeps = never>(
   webappPluginItem: WebappPluginItem<Deps>,
 ) {
   pkgPlugins[webappPluginItem.guestPkgId === myPkgId ? 'unshift' : 'push'](webappPluginItem)

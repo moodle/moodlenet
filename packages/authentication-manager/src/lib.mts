@@ -4,7 +4,9 @@ import { encryptClientSession } from './pub-lib.mjs'
 import * as store from './store.mjs'
 import { SessionToken, User } from './types.mjs'
 
-type GetRootSessionTokenResp = { success: false } | { success: true; sessionToken: SessionToken }
+export type GetRootSessionTokenResp =
+  | { success: false }
+  | { success: true; sessionToken: SessionToken }
 export async function getRootSessionToken({
   password,
 }: {

@@ -19,16 +19,16 @@ export function getPkgModuleFilename(pkg_module_ref: PkgModuleRef) {
 export function getPkgModulePaths(pkg_module_ref: PkgModuleRef) {
   const moduleFilename = getPkgModuleFilename(pkg_module_ref)
   const moduleDir = dirname(moduleFilename)
-  return { moduleDir, moduleFilename }
+  return { moduleDir }
 }
 
-export async function getPkgModuleInfo(pkg_module_ref: PkgModuleRef) {
-  const { moduleDir, moduleFilename } = getPkgModulePaths(pkg_module_ref)
+export async function getPkgInfo(pkg_module_ref: PkgModuleRef) {
+  const { moduleDir } = getPkgModulePaths(pkg_module_ref)
   const pkgRootDir = packageDirectorySync({ cwd: moduleDir })
   assert(pkgRootDir, `no pkgRootDir found for ${moduleDir}`)
   const pkgInfo = await getPackageInfoIn({ pkgRootDir })
 
-  return { moduleFilename, moduleDir, pkgInfo }
+  return pkgInfo
 }
 
 const infos: Record<string, PackageInfo> = {}

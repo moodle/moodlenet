@@ -1,4 +1,4 @@
-import { OrganizationData } from '../../../../../../../../organization/dist/init.mjs'
+import { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { useCallback, useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
@@ -18,7 +18,7 @@ export const useGeneralProps = (): GeneralProps => {
   })
 
   const updateExtensions = useCallback(() => {
-    use.core.call('pkg-mng/updateAll')()
+    use.core.rpc('pkg-mng/updateAll')()
   }, [use.core])
 
   const generalProps = useMemo<GeneralProps>(() => {

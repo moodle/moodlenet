@@ -11,6 +11,6 @@ export default connection
 await reactAppPkg.api('plugin')<MyPkgContext>({
   def: {
     mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-    usesPkgs: {},
+    deps: {},
   },
 })
