@@ -1,5 +1,5 @@
-import type { CollectionDefOpt, CollectionDefOptMap } from '../../arangodb/dist/init.mjs'
-import { getApiCtxClientSession, UserId } from '../../authentication-manager/dist/init.mjs'
+import type { CollectionDefOpt, CollectionDefOptMap } from '@moodlenet/arangodb'
+import { getApiCtxClientSession, UserId } from '@moodlenet/authentication-manager'
 import { PkgIdentifier } from '@moodlenet/core'
 import {
   edgeLinkIdentifiers2edgeLink,

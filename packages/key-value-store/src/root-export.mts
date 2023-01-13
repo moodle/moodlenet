@@ -1,11 +1,11 @@
 import { ensureCollections, query } from '@moodlenet/arangodb'
-import { PkgShell } from '@moodlenet/core'
+import { Shell } from '@moodlenet/core'
 import { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export * from './types.js'
 export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 
 export default async function storeFactory<TMap extends KVSTypeMap>(
-  shell: PkgShell,
+  shell: Shell,
 ): Promise<KVStore<TMap>> {
   return shell.initiateCall(async () => {
     await ensureCollections({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })

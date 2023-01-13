@@ -3,6 +3,7 @@ import { getPkgDBName } from './lib/db.mjs'
 import { queryDb } from './lib/query.mjs'
 import shell from './shell.mjs'
 import { CollectionDefOptMap, QueryReq } from './types.mjs'
+export * from './types.mjs'
 
 export async function ensureCollections({ defs }: { defs: CollectionDefOptMap }) {
   const callerPkgId = shell.assertCallInitiator()
