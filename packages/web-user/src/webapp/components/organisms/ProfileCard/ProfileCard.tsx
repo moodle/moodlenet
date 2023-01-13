@@ -81,7 +81,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     backgroundSize: 'cover',
   }
 
-  const editButton = canEdit && (
+  const editButton = (
     <div className="edit-save">
       {isEditing ? (
         <PrimaryButton
@@ -142,7 +142,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
   )
 
-  const updatedTopItems = <div className="top-items">{editButton}</div>
+  const updatedTopItems = canEdit && <div className="top-items">{editButton}</div>
 
   const updatedTitleItems = [title]
 

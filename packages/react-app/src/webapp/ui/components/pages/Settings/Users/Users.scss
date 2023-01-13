@@ -8,9 +8,12 @@
 
       > tbody > tr > td,
       > thead > tr > td {
-        // border-bottom: 1px solid #dddddd;
         text-align: left;
         padding: 8px;
+        &.user-types {
+          display: flex;
+          justify-content: center;
+        }
       }
       > thead > tr > td {
         font-weight: bold;
@@ -18,23 +21,9 @@
 
       > tbody {
         > tr {
-          // display: flex;
-          // justify-content: space-between;
-
-          &:nth-child(even) {
-            // background-color: #f3f3f3;
-          }
-          // > td:not(.roles) {
-          // width: 40%;
-          // overflow: hidden;
-          // text-overflow: ellipsis;
-          // white-space: nowrap;
-          // }
-          > .roles {
+          > .user-types {
             > * {
               cursor: pointer;
-              // }
-              // > .admin {
               &.on {
                 fill: var(--primary-color);
                 &:hover {
