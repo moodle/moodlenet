@@ -1,16 +1,12 @@
 import { AddonItem, Card, Searchbox } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
+import { User } from '../../../../../../common/types.mjs'
 import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-settings-outlined.svg'
 import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-settings.svg'
 import './Users.scss'
 
-export type User = {
-  displayName: string
-  email: string
-  isAdmin: boolean
-  toggleIsAdmin: () => void
-}
+
 
 export type UsersFormValues = {
   users: User[]
@@ -61,7 +57,7 @@ export const Users: FC<UsersProps> = ({ form }) => {
             <tr>
               <td>Display name</td>
               <td>Email</td>
-              <td>User types</td>
+              <td className="user-types">User types</td>
             </tr>
           </thead>
           <tbody>
@@ -70,13 +66,13 @@ export const Users: FC<UsersProps> = ({ form }) => {
                 <tr key={user.email}>
                   <td>{user.displayName}</td>
                   <td>{user.email}</td>
-                  <td className="roles">
+                  <td className="user-types">
                     <abbr
-                      onClick={user.toggleIsAdmin}
-                      className={`admin ${user.isAdmin ? 'on' : 'off'}`}
+                      onClick={() => user.toggleUserType('Admin')}
+                      className={`admin ${user.userTypes.indexOf('Admin') > -1 ? 'on' : 'off'}`}
                       title="Admin"
                     >
-                      {user.isAdmin ? <AdminIconOn /> : <AdminIconOff />}
+                      {user.userTypes.indexOf('Admin') > -1 ? <AdminIconOn /> : <AdminIconOff />}
                     </abbr>
                   </td>
                 </tr>
