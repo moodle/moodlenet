@@ -1,12 +1,14 @@
-import { ApiCtx, FloorApiCtx, PkgIdentifier } from '@moodlenet/core'
+import type { PkgIdentifier } from '@moodlenet/core'
+import { std } from '@moodlenet/crypto'
 import assert from 'assert'
+import shell from './shell.mjs'
 import * as store from './store.mjs'
 import { ClientSession, SessionToken } from './types.mjs'
-import { cryptoPkg } from './use-pkg-apis.mjs'
 
 type GetSessionResp =
   | { success: false; msg: string }
   | { success: true; sessionToken: SessionToken }
+
 export async function getSessionToken({
   uid,
   pkgId,
@@ -31,53 +33,47 @@ export async function getClientSession({ token }: { token: string }) {
   return { success: true, clientSession } as const
 }
 
-export async function getApiCtxClientSession({
-  ctx,
-}: {
-  ctx: ApiCtx
-}): Promise<ClientSession | undefined> {
-  ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
-  const presentClientSession = ctx['@moodlenet/authentication-manager'].clientSession
-  if (presentClientSession) {
-    return presentClientSession
-  }
-
-  const token = ctx['@moodlenet/authentication-manager']?.token
-  if (!token) {
-    return undefined
-  }
-
-  const data = await getClientSession({ token })
-
-  if (!data.success) {
+export async function getApiCtxClientSession(): Promise<ClientSession | void> {
+  const ctx = shell.myAsyncCtx.get()
+  if (!ctx) {
     return
   }
+  if (ctx.type === 'client-session-fetched') {
+    return ctx.clientSession
+  }
+
+  const data = await getClientSession({ token: ctx.authToken })
+
+  if (!data.success) {
+    // FIXME: SHALL? shell.myAsyncCtx.unset()
+    return
+  }
+
   const { clientSession } = data
 
-  ctx['@moodlenet/authentication-manager'].clientSession = clientSession
+  shell.myAsyncCtx.set(() => ({
+    type: 'client-session-fetched',
+    authToken: ctx.authToken,
+    clientSession,
+  }))
 
   return clientSession
 }
 
-export async function setApiCtxClientSessionToken({
-  token,
-  ctx,
-}: {
-  token: string | undefined
-  ctx: FloorApiCtx
-}) {
-  ctx['@moodlenet/authentication-manager'] = ctx['@moodlenet/authentication-manager'] ?? {}
+export async function setApiCtxClientSessionToken({ token }: { token: string | undefined }) {
   if (!token) {
+    shell.myAsyncCtx.unset()
     return
   }
 
-  ctx['@moodlenet/authentication-manager'].token = token
-  // console.log({ token, ctx })
-  // console.log({ ctx })
+  shell.myAsyncCtx.set(() => ({
+    type: 'auth-token-set',
+    authToken: token,
+  }))
 }
 
 export async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
-  const { encrypted: sessionToken } = await cryptoPkg.api('std/encrypt')({
+  const { encrypted: sessionToken } = await std.encrypt({
     payload: JSON.stringify(clientSession),
   })
   return sessionToken
@@ -85,7 +81,7 @@ export async function encryptClientSession(clientSession: ClientSession): Promis
 
 async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
-    const decryptRes = await cryptoPkg.api('std/decrypt')({ encrypted: token })
+    const decryptRes = await std.decrypt({ encrypted: token })
     assert(decryptRes.valid)
     const clientSession: ClientSession = JSON.parse(decryptRes.payload)
     assert(isClientSession(clientSession))
@@ -94,6 +90,7 @@ async function decryptClientSession(token: SessionToken): Promise<ClientSession 
     return null
   }
 }
+
 function isClientSession(clientSession: any): clientSession is ClientSession {
   // FIXME: implement checks
   return !!clientSession

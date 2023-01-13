@@ -11,7 +11,7 @@ const connection = await connectPkg(import.meta, { apis })
 await reactAppPkg.api('plugin')<MyPkgContext>({
   def: {
     mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-    usesPkgs: {},
+    deps: {},
   },
 })
 

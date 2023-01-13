@@ -1,5 +1,5 @@
 import _keypair, { keypair as KP } from 'keypair'
-import { kvStore } from './use-pkgs.mjs'
+import kvStore from './kvStore.mjs'
 // workaround for mistaken export type def in 'keypair' pkg
 // CHECK: if I'm missing something, or if gets fixed, or change lib
 export const keypair = _keypair as any as typeof KP

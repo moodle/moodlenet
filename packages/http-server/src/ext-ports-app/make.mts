@@ -1,8 +1,7 @@
-import { setApiCtxClientSessionToken } from '../../../authentication-manager/dist/init.mjs'
-import { FloorApiCtx, pkgConnection } from '@moodlenet/core'
 import express, { json } from 'express'
 import { format } from 'util'
 import { HttpApiResponse } from '../types.mjs'
+import shell from '../shell.mjs'
 
 // getPkgApisRefByPkgName
 
@@ -32,38 +31,38 @@ export function makeExtPortsApp() {
       return next()
     }
 
-    const pkgConn = await pkgConnection<any>(import.meta, { name: pkgName, version: pkgVersion })
     const apiReqBody = req.body
-    if (!isApiReqBody(apiReqBody)) {
+    const rpcDefItem = shell.getExposedByPkgIdValue({ name: pkgName, version: pkgVersion })?.expose
+      .rpc[path]
+    if (!rpcDefItem) {
       res.sendStatus(400)
       return
     }
-    // console.log({ mmm: req.moodlenet })
-    const ctx: FloorApiCtx = { primary: true }
-    setApiCtxClientSessionToken({ ctx, token: req.moodlenet.authToken })
-    const apiFn = pkgConn.api(path, { ctx })
-    const apiArgs = apiReqBody?.args ?? []
-    apiFn(...apiArgs)
+
+    res.header('Content-Type', 'application/json')
+
+    try {
+      rpcDefItem.guard(apiReqBody)
+    } catch (err) {
+      res.status(400)
+      res.json({ error: err })
+      return
+    }
+
+    rpcDefItem
+      .fn(apiReqBody)
       .then(apiResponse => {
         const httpApiResponse: HttpApiResponse = {
           response: apiResponse,
         }
-        res.header('Content-Type', 'application/json')
         res.status(200).send(httpApiResponse)
       })
       .catch(err => {
         console.error(err)
         res.status(500)
-        res.end(err instanceof Error ? format(err) : err) //(JSON.stringify({ msg: {}, val: String(err) }))
+        res.end({ error: err instanceof Error ? format(err) : err }) //(JSON.stringify({ msg: {}, val: String(err) }))
       })
   })
   srvApp.all(`*`, (_, res) => res.status(404).send(`service not available`))
   return srvApp
-}
-
-type ApiReqBody = {
-  args: any[]
-}
-function isApiReqBody(_: any): _ is ApiReqBody | undefined {
-  return _ === void 0 || _.args === void 0 || Array.isArray(_.args)
 }

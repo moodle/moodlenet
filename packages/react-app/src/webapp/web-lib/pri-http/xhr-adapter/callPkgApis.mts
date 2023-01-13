@@ -1,30 +1,33 @@
-import type { ApiDefPaths, ApiFnType, PkgIdentifier } from '@moodlenet/core'
+import type { PkgExpose, PkgIdentifier } from '@moodlenet/core'
 import type { HttpApiResponse } from '@moodlenet/http-server/lib'
-import { getPkgApiFetchOpts } from '@moodlenet/http-server/lib'
+import { getPkgRpcFetchOpts } from '@moodlenet/http-server/lib'
 import { UsePkgHandle } from '../../../types/plugins.mjs'
 
 export type Opts = Record<string, never>
 
-export function getUseUsePkgHandle<PkgId extends PkgIdentifier>(
-  targetPkgId: PkgId,
-  userPkgId: PkgId,
-): UsePkgHandle<PkgId> {
+export function getUseUsePkgHandle<TargetPkgExpose extends PkgExpose>({
+  targetPkgId,
+  userPkgId,
+}: {
+  targetPkgId: PkgIdentifier
+  userPkgId: PkgIdentifier
+}): UsePkgHandle<TargetPkgExpose> {
   return {
     pkgId: userPkgId,
-    call: pkgApis(targetPkgId, userPkgId),
+    rpc: pkgRpcs(targetPkgId, userPkgId),
   }
 }
 
-export function pkgApis<PkgId extends PkgIdentifier>(
-  targetPkgId: PkgId,
-  userPkgId: PkgId,
-): LocateApi<PkgId> {
+export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
+  targetPkgId: PkgIdentifier,
+  userPkgId: PkgIdentifier,
+): LocateRpc<TargetPkgExpose> {
   const locateApi = (
     path: string,
     // { ctx = {} }: { ctx?: FloorApiCtx },
   ) => {
     const callApi = async (...args: unknown[]) => {
-      const { requestInit, url } = getPkgApiFetchOpts(userPkgId, targetPkgId, path, args)
+      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, args)
       const response = await fetch(url, requestInit)
 
       if (response.status !== 200) {
@@ -35,12 +38,11 @@ export function pkgApis<PkgId extends PkgIdentifier>(
     }
     return callApi
   }
-  return locateApi as LocateApi<PkgId>
+  return locateApi as LocateRpc<TargetPkgExpose>
 }
 
-export type LocateApi<PkgId extends PkgIdentifier> = PkgId extends PkgIdentifier<infer PkgConnDef>
-  ? <Path extends ApiDefPaths<PkgConnDef['apis']>>(
-      path: Path,
-      // { ctx = {} }: { ctx?: FloorApiCtx },
-    ) => ApiFnType<PkgConnDef['apis'], Path>
-  : never
+export type LocateRpc<TargetPkgExpose extends PkgExpose> = <
+  Path extends keyof TargetPkgExpose['rpc'],
+>(
+  path: Path,
+) => TargetPkgExpose['rpc'][Path]['fn']

@@ -1,3 +1,2 @@
-import def from './init.mjs'
-export * from './init.mjs'
-export default def
+export * from './types.mjs'
+export { mountApp } from './lib.mjs'

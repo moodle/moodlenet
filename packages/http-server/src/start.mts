@@ -2,13 +2,11 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import gracefulShutdown from 'http-graceful-shutdown'
 import { makeExtPortsApp } from './ext-ports-app/make.mjs'
-import {
-  BASE_APIS_URL,
-  BASE_PKG_MOUNT_URL,
-  SESSION_TOKEN_COOKIE_NAME,
-} from './ext-ports-app/pub-lib.mjs'
+import { BASE_RPC_URL, BASE_PKG_URL, SESSION_TOKEN_COOKIE_NAME } from './ext-ports-app/pub-lib.mjs'
 import { env } from './env.mjs'
-import { mountedApps } from './init.mjs'
+import { mountedApps } from './lib.mjs'
+import { setApiCtxClientSessionToken } from '../../authentication-manager/src/pub-lib.mjs'
+import shell from './shell.mjs'
 
 const extPortsApp = makeExtPortsApp()
 export let shutdownGracefullyLocalServer: () => Promise<void>
@@ -17,22 +15,22 @@ process.on('SIGTERM', () => shutdownGracefullyLocalServer())
 const app = express()
   .use(cookieParser())
   .use(`*`, async (req, __, next) => {
-    // console.log({ cookies: req.cookies })
-    req.moodlenet = {}
-    req.moodlenet.authToken = req.cookies[SESSION_TOKEN_COOKIE_NAME]
-    next()
+    shell.initiateCall(() => {
+      setApiCtxClientSessionToken({ token: req.cookies[SESSION_TOKEN_COOKIE_NAME] })
+      next()
+    })
   })
-app.use(`${BASE_APIS_URL}/`, extPortsApp)
+app.use(`${BASE_RPC_URL}/`, extPortsApp)
 const pkgAppContainer = express()
-app.use(`${BASE_PKG_MOUNT_URL}/`, pkgAppContainer)
-mountedApps.forEach(({ mountAppArgs, mountOnAbsPath, pkgId }) => {
-  const pkgApp = mountAppArgs.getApp(express)
+app.use(`${BASE_PKG_URL}/`, pkgAppContainer)
+mountedApps.forEach(({ getApp, mountOnAbsPath, pkgId }) => {
+  const pkgApp = getApp(express)
   if (mountOnAbsPath) {
     console.log(`HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
     app.use(mountOnAbsPath, pkgApp)
   } else {
     const pkgBaseRoute = `/${pkgId.name}`
-    console.log(`HTTP: mounting ${BASE_PKG_MOUNT_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)
+    console.log(`HTTP: mounting ${BASE_PKG_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)
     pkgAppContainer.use(pkgBaseRoute, pkgApp)
   }
 })

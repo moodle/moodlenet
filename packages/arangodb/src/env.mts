@@ -1,5 +1,5 @@
 import { Config } from 'arangojs/connection.js'
-import { getConfig } from '@moodlenet/core'
+import shell from './shell.mjs'
 
 export const env = await getEnv()
 
@@ -8,7 +8,8 @@ type Env = {
 }
 
 async function getEnv(): Promise<Env> {
-  const config = await getConfig(import.meta)
+  const config = shell.config
+  // FIXME: validate configs
   const env: Env = config
   return env
 }

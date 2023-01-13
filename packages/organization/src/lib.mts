@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { OrganizationData } from './types.mjs'
-import { kvStore } from './use-pkgs.mjs'
+import kvStore from './kvStore.mjs'
 
 export async function setOrgData({ orgData }: { orgData: OrganizationData }) {
   const data = await kvStore.set('organizationData', '', orgData)

@@ -35,7 +35,8 @@
     "./init": "./dist/server/init.mjs",
     "./start": "./dist/server/start.mjs",
     "./stories": "./dist/webapp/stories.mjs",
-    "./common": "./dist/common/index.mjs",
+    "./common": "./dist/common/exports.mjs",
+    "./server": "./dist/server/exports.mjs",
     "./ui": "./dist/webapp/ui.mjs",
     "./web-lib": "./dist/webapp/web-lib.mjs"
   },

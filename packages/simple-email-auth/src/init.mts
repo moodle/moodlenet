@@ -13,7 +13,7 @@ export default connection
 reactAppPkg.api('plugin')<MyPkgContext>({
   def: {
     mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-    usesPkgs: { auth },
+    deps: { auth },
   },
 })
 
