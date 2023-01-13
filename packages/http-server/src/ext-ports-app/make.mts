@@ -1,6 +1,6 @@
 import express, { json } from 'express'
 import { format } from 'util'
-import { HttpApiResponse } from '../types.mjs'
+import { HttpApiResponse as HttpRpcResponse } from '../types.mjs'
 import shell from '../shell.mjs'
 
 // getPkgApisRefByPkgName
@@ -31,7 +31,6 @@ export function makeExtPortsApp() {
       return next()
     }
 
-    const apiReqBody = req.body
     const rpcDefItem = shell.getExposedByPkgIdValue({ name: pkgName, version: pkgVersion })?.expose
       .rpc[path]
     if (!rpcDefItem) {
@@ -41,8 +40,9 @@ export function makeExtPortsApp() {
 
     res.header('Content-Type', 'application/json')
 
+    const rpcArgs = [req.body] as const
     try {
-      rpcDefItem.guard(apiReqBody)
+      rpcDefItem.guard(...rpcArgs)
     } catch (err) {
       res.status(400)
       res.json({ error: err })
@@ -50,12 +50,12 @@ export function makeExtPortsApp() {
     }
 
     rpcDefItem
-      .fn(apiReqBody)
-      .then(apiResponse => {
-        const httpApiResponse: HttpApiResponse = {
-          response: apiResponse,
+      .fn(...rpcArgs)
+      .then(response => {
+        const httpRpcResponse: HttpRpcResponse = {
+          response,
         }
-        res.status(200).send(httpApiResponse)
+        res.status(200).send(httpRpcResponse)
       })
       .catch(err => {
         console.error(err)

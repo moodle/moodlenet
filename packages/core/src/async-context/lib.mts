@@ -1,15 +1,13 @@
 import assert from 'assert'
 import { AsyncLocalStorage } from 'async_hooks'
 import { pkgMeta } from '../common/meta.mjs'
-import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
-import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
+import { PkgIdentifier } from '../types.mjs'
 import { ApiCtx, CoreAsyncCtx } from './types.mjs'
 
 export const asyncContext = new AsyncLocalStorage<ApiCtx>()
 
-export async function pkgAsyncContext<T>(pkg_module_ref: PkgModuleRef) {
-  const { pkgId } = await ensureRegisterPkg(pkg_module_ref)
-  return pkgMeta<T>(pkgId, getApiContextStore)
+export function pkgAsyncContext<T>(pkgName: string) {
+  return pkgMeta<T>(pkgName, getApiContextStore)
 
   function getApiContextStore() {
     const currentStore = asyncContext.getStore()
@@ -18,7 +16,7 @@ export async function pkgAsyncContext<T>(pkg_module_ref: PkgModuleRef) {
   }
 }
 
-export const getSetCoreAsyncContext = await pkgAsyncContext<CoreAsyncCtx>(import.meta)
+export const getSetCoreAsyncContext = await pkgAsyncContext<CoreAsyncCtx>(`@moodlenet/core`)
 
 export function assertCallInitiator() {
   const initiator = getCallInitiator()

@@ -32,7 +32,7 @@ export function getConfigs() {
   return _ignites.configs
 }
 
-export function getPkgConfig(pkgName: string) {
+export function getConfig(pkgName: string) {
   return getConfigs().pkgs[pkgName]
 }
 

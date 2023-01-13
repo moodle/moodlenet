@@ -22,7 +22,9 @@ const extensionSettingsItem: SettingsSectionItem = {
 }
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
-
+  const {
+    use: { me },
+  } = myPkgCtx
   const { registries } = useContext(ReactAppContext)
   registries.settingsSections.useRegister(extensionSettingsItem)
 
@@ -33,14 +35,10 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   const [defaultRegistry, setDefaultRegistry] = useState<string>('')
 
   useEffect(() => {
-    myPkgCtx.me
-      .call('searchPackages')({ searchText: 'moodlenet' })
-      .then(resp => setSearchPkgResp(resp))
+    me.rpc('searchPackages')({ searchText: 'moodlenet' }).then(resp => setSearchPkgResp(resp))
 
-    myPkgCtx.me
-      .call('getDefaultRegistry')()
-      .then(resp => setDefaultRegistry(resp))
-  }, [myPkgCtx.me])
+    me.rpc('getDefaultRegistry')().then(resp => setDefaultRegistry(resp))
+  }, [me])
 
   return (
     <MainContext.Provider

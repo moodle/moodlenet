@@ -1,7 +1,5 @@
-import { PkgIdentifier } from '../root-export.mjs'
-
-export function pkgMeta<T>(pkgId: PkgIdentifier, getContainer: () => Record<string, unknown>) {
-  return getSet<T>(pkgId.name, getContainer)
+export function pkgMeta<T>(pkgName: string, getContainer: () => Record<string, unknown>) {
+  return getSet<T>(pkgName, getContainer)
 }
 
 export type GetSet<T> = ReturnType<typeof getSet<T>>
