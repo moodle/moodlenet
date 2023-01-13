@@ -5,7 +5,7 @@ import { makeExtPortsApp } from './ext-ports-app/make.mjs'
 import { BASE_RPC_URL, BASE_PKG_URL, SESSION_TOKEN_COOKIE_NAME } from './ext-ports-app/pub-lib.mjs'
 import { env } from './env.mjs'
 import { mountedApps } from './lib.mjs'
-import { setApiCtxClientSessionToken } from '../../authentication-manager/src/pub-lib.mjs'
+import { setApiCtxClientSessionToken } from '@moodlenet/authentication-manager'
 import shell from './shell.mjs'
 
 const extPortsApp = makeExtPortsApp()
@@ -37,6 +37,7 @@ mountedApps.forEach(({ getApp, mountOnAbsPath, pkgId }) => {
 await new Promise<void>((resolve, reject) => {
   console.info(`HTTP: starting server on port ${env.port}`)
   const server = app.listen(env.port, (...args: any[]) => (args[0] ? reject(args[0]) : resolve()))
+  server.on('error', err => console.error('HTTP: server error:', err))
   shutdownGracefullyLocalServer = gracefulShutdown(server, {
     development: false,
     forceExit: false,

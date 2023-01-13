@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import kvStore from './kvStore.mjs'
-import { addWebappPluginItem } from './init.lib.mjs'
+import { addWebappPluginItem } from './webapp-plugins.mjs'
 import shell from './shell.mjs'
 import { PkgIdentifier } from '@moodlenet/core'
 

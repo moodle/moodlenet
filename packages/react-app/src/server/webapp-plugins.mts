@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 import type { ResolveOptions } from 'webpack'
 import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
-import myPkgId from '../root-export.mjs'
+import shell from './shell.mjs'
 
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
@@ -52,5 +52,5 @@ export function writeGenerated() {
 export function addWebappPluginItem<Deps extends WebPkgDeps = never>(
   webappPluginItem: WebappPluginItem<Deps>,
 ) {
-  pkgPlugins[webappPluginItem.guestPkgId === myPkgId ? 'unshift' : 'push'](webappPluginItem)
+  pkgPlugins[webappPluginItem.guestPkgId === shell.myId ? 'unshift' : 'push'](webappPluginItem)
 }

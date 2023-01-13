@@ -1,5 +1,4 @@
-import { getRootSessionToken } from './lib.mjs'
-import { getClientSession } from './pub-lib.mjs'
+import { getRootSessionToken, getClientSession } from './lib.mjs'
 import shell from './shell.mjs'
 
 export const expose = await shell.expose({

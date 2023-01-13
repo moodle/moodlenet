@@ -12,8 +12,8 @@ import { PkgModuleRef } from '../types.mjs'
 import { listEntries, pkgEntryByPkgIdValue } from '../pkg-registry/lib.mjs'
 
 // FIXME: maintain a registry for shells (for pkg singletons)
-export async function pkgShell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
-  const { pkgId, pkgInfo } = await ensureRegisterPkg(pkg_module_ref)
+export async function shell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
+  const { pkgId: myId, pkgInfo } = await ensureRegisterPkg(pkg_module_ref)
   const config = await getConfig(pkg_module_ref)
   const myAsyncCtx = await pkgAsyncContext<PkgAsyncCtx>(pkg_module_ref)
   const expose = pkgExpose(pkg_module_ref)
@@ -28,7 +28,7 @@ export async function pkgShell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
     getExposedByPkgName,
     listEntries,
     pkgEntryByPkgIdValue,
-    pkgId,
+    myId,
     pkgInfo,
     call,
     callers,
@@ -36,7 +36,7 @@ export async function pkgShell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
 
   function initiateCall<R>(exec: () => R): R {
     return asyncContext.run({}, () => {
-      getSetCoreAsyncContext.set(_ => ({ ..._, initiator: pkgId }))
+      getSetCoreAsyncContext.set(_ => ({ ..._, initiator: myId }))
       return exec()
     })
   }

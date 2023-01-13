@@ -18,7 +18,7 @@ if (!(await kvStore.get('appearanceData', '')).value) {
 }
 
 await setupPlugin<MyWebAppDeps>({
-  pkgId: shell.pkgId,
+  pkgId: shell.myId,
   pluginDef: {
     mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
     deps: {
@@ -31,7 +31,7 @@ await setupPlugin<MyWebAppDeps>({
   },
 })
 
-mountApp({
+await shell.call(mountApp)({
   getApp(express) {
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })

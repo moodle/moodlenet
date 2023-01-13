@@ -1,2 +1,2 @@
-import type { pkgShell } from './shell.mjs'
-export type PkgShell = Awaited<ReturnType<typeof pkgShell>>
+import type { shell } from './shell.mjs'
+export type Shell = Awaited<ReturnType<typeof shell>>

@@ -90,10 +90,7 @@ async function rootImportLog(
     err => {
       const errMsg = `${fullActionName}@${pkgVersion} : Import Error`
 
-      const isNotFoundErr = ['ERR_PACKAGE_PATH_NOT_EXPORTED', 'ERR_MODULE_NOT_FOUND'].includes(
-        err.code,
-      )
-
+      const isNotFoundErr = ['ERR_PACKAGE_PATH_NOT_EXPORTED'].includes(err.code)
       if (!(ignoreNotFoundError && isNotFoundErr)) {
         const msgWCode = `
 ${errMsg}

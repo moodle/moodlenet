@@ -1,3 +1,3 @@
-import { pkgShell } from '@moodlenet/core'
+import { shell } from '@moodlenet/core'
 
-export default await pkgShell(import.meta)
+export default await shell(import.meta)
