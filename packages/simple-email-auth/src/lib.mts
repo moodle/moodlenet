@@ -1,8 +1,11 @@
-import { SessionToken } from '../../authentication-manager/dist/init.mjs'
+import { SessionToken, getSessionToken, registerUser } from '@moodlenet/authentication-manager'
+import * as crypto from '@moodlenet/crypto'
+import { createProfile } from '@moodlenet/web-user'
+import { send } from '@moodlenet/email-service'
 import assert from 'assert'
 import * as store from './store.mjs'
 import { ConfirmEmailPayload, SignupReq } from './types.mjs'
-import { authMngPkg, cryptoPkg, emailSrvPkg, webUserPkg } from './use-pkg-apis.mjs'
+import shell from './shell.mjs'
 
 export async function login({
   email,
@@ -15,7 +18,7 @@ export async function login({
   if (!user || user.password !== password) {
     return { success: false }
   }
-  const res = await authMngPkg.api('getSessionToken')({ uid: user.id })
+  const res = await shell.call(getSessionToken)({ uid: user.id })
 
   if (!res.success) {
     return { success: false }
@@ -36,10 +39,10 @@ export async function signup(
   const confirmEmailPayload: ConfirmEmailPayload = {
     req,
   }
-  const { encrypted: confirmEmailToken } = await cryptoPkg.api('std/encrypt')({
+  const { encrypted: confirmEmailToken } = await shell.call(crypto.std.encrypt)({
     payload: JSON.stringify(confirmEmailPayload),
   })
-  emailSrvPkg.api('send')({
+  shell.call(send)({
     emailObj: {
       to: req.email,
       text: `hey ${req.displayName} confirm your email with /.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
@@ -69,7 +72,7 @@ export async function confirm({
 
   const user = await store.create({ email, password })
 
-  const authRes = await authMngPkg.api('registerUser')({ uid: user.id })
+  const authRes = await shell.call(registerUser)({ uid: user.id })
 
   if (!authRes.success) {
     await store.delUser(user.id)
@@ -77,7 +80,7 @@ export async function confirm({
     return { msg, success }
   }
 
-  await webUserPkg.api('createProfile')({
+  await shell.call(createProfile)({
     displayName,
     userId: authRes.user.id,
   })
@@ -86,7 +89,7 @@ export async function confirm({
   return { success: true, sessionToken }
 
   async function getConfirmEmailPayload() {
-    const decryptRes = await cryptoPkg.api('std/decrypt')({ encrypted: token })
+    const decryptRes = await shell.call(crypto.std.decrypt)({ encrypted: token })
 
     try {
       assert(decryptRes.valid)

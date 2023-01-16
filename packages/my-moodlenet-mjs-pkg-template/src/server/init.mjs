@@ -29,5 +29,5 @@ export const reactAppPkg = await pkgConnection(import.meta, reactAppPkgRef)
 
 reactAppPkg.api('plugin')({
   mainComponentLoc: ['src', 'webapp', 'MainComponent.jsx'],
-  usesPkgs: [myPkgConnection],
+  deps: [myPkgConnection],
 })

@@ -1,6 +1,8 @@
-export const env = getEnv({})
+import shell from './shell.mjs'
+
+export const env = getEnv(shell.config)
 function getEnv(_: any): Env {
-  const rootPassword = typeof _?.rootPassword === 'string' ? String(_.rootPassword) : undefined
+  const rootPassword = 'string' === typeof _?.rootPassword ? _.rootPassword : undefined
   return {
     rootPassword,
   }

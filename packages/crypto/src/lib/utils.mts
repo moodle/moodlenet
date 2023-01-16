@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { kvStore } from '../use-pkgs.mjs'
+import kvStore from '../kvStore.mjs'
 
 export async function getKeys() {
   const { value: pair } = await kvStore.get('keypairs', '')

@@ -12,6 +12,8 @@ import { overrideLocalMNLock } from '../../main/MNLock.mjs'
 import { rebootSystem } from '../../main/sys.mjs'
 import { resolve } from 'path'
 
+export { NPM_REGISTRY } from '../../main/env.mjs'
+
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO: any check on pkgIds ? (active / version)
   const uninstallPkgsArgs = pkgIds.map(({ name }) => name)

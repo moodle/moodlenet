@@ -1,4 +1,4 @@
-import { kvStore } from './use-pkgs.mjs'
+import kvStore from './kvStore.mjs'
 
 const { value: dataExists } = await kvStore.get('organizationData', '')
 

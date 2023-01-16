@@ -1,7 +1,2 @@
-import { ApiDefs } from './apis/types.mjs'
-
-export type PkgModuleRef = NodeModule | ImportMeta
-
-export type PkgConnectionDef = {
-  apis: ApiDefs
-}
+import type { shell } from './shell.mjs'
+export type Shell = Awaited<ReturnType<typeof shell>>

@@ -15,7 +15,6 @@ import { ReactAppMainComponent } from './web-lib.mjs'
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const registries = useMakeRegistries()
   const pkgContext = usePkgContext<MyPkgContext>()
-
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {
       ...pkgContext,

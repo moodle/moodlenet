@@ -31,13 +31,15 @@ export type SettingsCtxT = {
 export const SettingsCtx = createContext<SettingsCtxT>(null as any)
 
 export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { me } = useContext(MainContext)
+  const {
+    use: { me },
+  } = useContext(MainContext)
 
   const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(
     async (newAppearanceData: AppearanceData) => {
-      await me.call('setAppearance')({ appearanceData: newAppearanceData })
+      await me.rpc('setAppearance')({ appearanceData: newAppearanceData })
 
       setAppareanceData(newAppearanceData)
     },
@@ -47,7 +49,7 @@ export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const [devMode, toggleDevMode] = useReducer(prev => !prev, false)
 
   useEffect(() => {
-    me.call('getAppearance')().then(({ data: appearanceData }) => setAppareanceData(appearanceData))
+    me.rpc('getAppearance')().then(({ data: appearanceData }) => setAppareanceData(appearanceData))
   }, [me])
 
   const ctx = useMemo<SettingsCtxT>(() => {

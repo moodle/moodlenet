@@ -5,7 +5,7 @@ import { readFile, writeFile } from 'fs/promises'
 
 import { resolve } from 'path'
 import { PackageJson } from 'type-fest'
-import { getConfig } from '../pkg-shell/shell.mjs'
+import { getConfig } from '../ignite.mjs'
 
 export const DOTENV_PATH = process.env.MOODLENET_CORE_DOTENV_PATH
 const base_env = dotenv.config({
@@ -22,7 +22,7 @@ export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES =
 export const IS_DEVELOPMENT = NODE_ENV === 'development'
 export const WD_PACKAGEJSON_PATH = resolve(WORKING_DIR, 'package.json')
 
-const config = await getConfig(import.meta)
+const config = await getConfig('@moodlenet/core')
 
 export const NPM_REGISTRY = (
   config.npm_config_registry ??

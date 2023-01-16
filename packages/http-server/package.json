@@ -10,7 +10,6 @@
   },
   "exports": {
     ".": "./dist/root-export.mjs",
-    "./init": "./dist/init.mjs",
     "./start": "./dist/start.mjs",
     "./stop": "./dist/stop.mjs",
     "./lib": "./dist/ext-ports-app/pub-lib.mjs"

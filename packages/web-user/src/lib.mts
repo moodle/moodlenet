@@ -1,13 +1,10 @@
-import { NodeGlyph } from '../../content-graph/dist/init.mjs'
-import { CreateRequest, EditRequest, ProfileGlyphDescriptors, ProfileGlyphs } from './types.mjs'
-import { graphPkg } from './use-pkg-apis.mjs'
-
-export const glyphDescriptors = await graphPkg.api('ensureGlyphs')<ProfileGlyphs>({
-  defs: { Profile: { kind: 'node' } },
-})
+import { createNode, editNode, NodeGlyph, readNode } from '@moodlenet/content-graph'
+import { glyphDescriptors } from './init.mjs'
+import shell from './shell.mjs'
+import { CreateRequest, EditRequest, ProfileGlyphDescriptors } from './types.mjs'
 
 export async function createProfile({ displayName, userId }: CreateRequest) {
-  graphPkg.api('node/create')(
+  shell.call(createNode)(
     glyphDescriptors.Profile,
     {
       description: '',
@@ -19,7 +16,7 @@ export async function createProfile({ displayName, userId }: CreateRequest) {
 }
 
 export async function editProfile(_key: string, { displayName, description }: EditRequest) {
-  const res = await graphPkg.api('node/edit')(
+  const res = await shell.call(editNode)(
     glyphDescriptors.Profile,
     {
       _key,
@@ -41,7 +38,7 @@ export async function getProfile(
   _key: string,
 ): Promise<NodeGlyph<ProfileGlyphDescriptors['Profile']> | null> {
   // TODO: this must rewrite better like utility for now we inject by hand Profile
-  const res = await graphPkg.api('node/read')<ProfileGlyphDescriptors['Profile']>({
+  const res = await shell.call(readNode)<ProfileGlyphDescriptors['Profile']>({
     _key,
     ...glyphDescriptors.Profile,
   })

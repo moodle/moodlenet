@@ -14,7 +14,7 @@ wp.hooks.afterDone.tap('swap folders', async wpStats => {
   console.log(`webpack compiled`)
 
   if (wpStats?.hasErrors()) {
-    throw new Error(`Webpack build error: ${wpStats.toString()}`)
+    errorExit(wpStats.toString())
   }
   await new Promise<void>((rimrafResolve, rimrafReject) =>
     rimraf(resolve(latestBuildFolder, '*'), { disableGlob: true }, e =>
@@ -22,5 +22,10 @@ wp.hooks.afterDone.tap('swap folders', async wpStats => {
     ),
   )
   await cp(buildFolder, latestBuildFolder, { recursive: true })
-  wp.close(() => void 0)
+  wp.close(() => process.exit(0))
 })
+
+function errorExit(err: any) {
+  console.log(`Webpack error: ${err}`)
+  process.exit(1)
+}
