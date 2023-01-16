@@ -16,7 +16,7 @@ export const usePanelProps = (): SignupProps => {
     initialValues: { email: '', password: '', displayName: '' },
     async onSubmit({ email, password, displayName }) {
       setErrMsg('')
-      const res = await me.rpc('signup')({
+      const res = await me.rpc.signup({
         displayName,
         email,
         password,

@@ -15,7 +15,7 @@ export const usePanelProps = (): LoginProps => {
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
-      const res = await me.rpc('login')({
+      const res = await me.rpc.login({
         email,
         password,
       })

@@ -8,24 +8,27 @@ export type Opts = Record<string, never>
 export function getUseUsePkgHandle<TargetPkgExpose extends PkgExpose>({
   targetPkgId,
   userPkgId,
+  rpcPaths,
 }: {
   targetPkgId: PkgIdentifier
   userPkgId: PkgIdentifier
+  rpcPaths: string[]
 }): UsePkgHandle<TargetPkgExpose> {
   return {
     pkgId: userPkgId,
-    rpc: pkgRpcs(targetPkgId, userPkgId),
+    rpc: pkgRpcs(targetPkgId, userPkgId, rpcPaths),
   }
 }
 
 export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
   targetPkgId: PkgIdentifier,
   userPkgId: PkgIdentifier,
+  rpcPaths: string[],
 ): LocateRpc<TargetPkgExpose> {
-  return function locateApi(
-    path: string,
-    // { ctx = {} }: { ctx?: FloorApiCtx },
-  ) {
+  rpcPaths.forEach(path => ((locateRpc as any)[path] = locateRpc(path)))
+  return locateRpc as LocateRpc<TargetPkgExpose>
+
+  function locateRpc(path: string) {
     return async function (body: unknown) {
       const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [body])
       const response = await fetch(url, requestInit)
@@ -36,11 +39,13 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
       const responseJson: HttpApiResponse = await response.json()
       return responseJson.response
     }
-  } as LocateRpc<TargetPkgExpose>
+  }
 }
 
-export type LocateRpc<TargetPkgExpose extends PkgExpose> = <
+export type LocateRpc<TargetPkgExpose extends PkgExpose> = (<
   Path extends keyof TargetPkgExpose['rpc'],
 >(
   path: Path,
-) => TargetPkgExpose['rpc'][Path]['fn']
+) => TargetPkgExpose['rpc'][Path]['fn']) & {
+  [path in keyof TargetPkgExpose['rpc']]: TargetPkgExpose['rpc'][path]['fn']
+}
