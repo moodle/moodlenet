@@ -35,9 +35,9 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   const [defaultRegistry, setDefaultRegistry] = useState<string>('')
 
   useEffect(() => {
-    me.rpc('searchPackages')({ searchText: 'moodlenet' }).then(resp => setSearchPkgResp(resp))
+    me.rpc.searchPackages({ searchText: 'moodlenet' }).then(resp => setSearchPkgResp(resp))
 
-    me.rpc('getDefaultRegistry')().then(resp => setDefaultRegistry(resp))
+    me.rpc.getDefaultRegistry().then(resp => setDefaultRegistry(resp))
   }, [me])
 
   return (

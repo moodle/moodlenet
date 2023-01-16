@@ -39,7 +39,7 @@ export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const saveAppearanceData = useCallback(
     async (newAppearanceData: AppearanceData) => {
-      await me.rpc('setAppearance')({ appearanceData: newAppearanceData })
+      await me.rpc.setAppearance({ appearanceData: newAppearanceData })
 
       setAppareanceData(newAppearanceData)
     },
@@ -49,7 +49,7 @@ export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const [devMode, toggleDevMode] = useReducer(prev => !prev, false)
 
   useEffect(() => {
-    me.rpc('getAppearance')().then(({ data: appearanceData }) => setAppareanceData(appearanceData))
+    me.rpc.getAppearance().then(({ data: appearanceData }) => setAppareanceData(appearanceData))
   }, [me])
 
   const ctx = useMemo<SettingsCtxT>(() => {
