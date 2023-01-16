@@ -76,13 +76,13 @@ export function useCreateRegistry<
   }).current
 
   const useRegister = useRef<UseRegisterHook<ItemType>>(function useRegister(item, _opts) {
-    const { me } = usePkgContext()
+    const { myId } = usePkgContext()
     useEffect(() => {
       if (_opts?.condition === false) {
         return
       }
-      return register(me.pkgId, item)
-    }, [item, me.pkgId, _opts?.condition])
+      return register(myId, item)
+    }, [item, myId, _opts?.condition])
   }).current
 
   const currentRegistryHandle = useMemo<CurrentRegistryHandleT>(

@@ -1,3 +1,18 @@
-import def from './init.mjs'
-export * from './init.mjs'
-export default def
+import { ensure } from './lib/collections.mjs'
+import { getPkgDBName } from './lib/db.mjs'
+import { queryDb } from './lib/query.mjs'
+import shell from './shell.mjs'
+import { CollectionDefOptMap, QueryReq } from './types.mjs'
+export * from './types.mjs'
+
+export async function ensureCollections({ defs }: { defs: CollectionDefOptMap }) {
+  const { pkgId: callerPkgId } = shell.assertCallInitiator()
+  const dbName = getPkgDBName(callerPkgId)
+  return ensure(dbName, { defs })
+}
+
+export async function query(queryReq: QueryReq) {
+  const { pkgId: callerPkgId } = shell.assertCallInitiator()
+  const dbName = getPkgDBName(callerPkgId)
+  return queryDb(dbName, queryReq)
+}

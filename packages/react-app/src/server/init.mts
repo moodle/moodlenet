@@ -1,34 +1,35 @@
-import '../common/index.mjs'
-import authConn from '../../../authentication-manager/dist/init.mjs'
-import graphConn from '../../../content-graph/dist/init.mjs'
-import coreConn from '@moodlenet/core'
-import organizationConn from '../../../organization/dist/init.mjs'
+import '../common/exports.mjs'
 import { setupPlugin } from './lib.mjs'
-import { MyPkgContext } from '../common/my-webapp/types.mjs'
-import { httpSrvPkg, kvStore } from './use-pkgs.mjs'
-import { defaultAppearanceData } from '../common/index.mjs'
-import myPkgId from '../root-export.mjs'
+import { expose as authExpose } from '@moodlenet/authentication-manager'
+import { expose as graphExpose } from '@moodlenet/content-graph'
+import { expose as orgExpose } from '@moodlenet/organization'
+import { mountApp } from '@moodlenet/http-server'
+import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
+import kvStore from './kvStore.mjs'
+import { defaultAppearanceData } from '../common/exports.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 import { resolve } from 'path'
+import { expose as myExpose } from './expose.mjs'
+import shell from './shell.mjs'
 
 if (!(await kvStore.get('appearanceData', '')).value) {
   await kvStore.set('appearanceData', '', defaultAppearanceData)
 }
 
-await setupPlugin<MyPkgContext>({
-  pkgId: myPkgId,
+await setupPlugin<MyWebAppDeps>({
+  pkgId: shell.myId,
   pluginDef: {
     mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-    usesPkgs: {
-      auth: authConn,
-      graph: graphConn,
-      organization: organizationConn,
-      core: coreConn,
+    deps: {
+      me: myExpose,
+      organization: orgExpose,
+      graph: graphExpose,
+      auth: authExpose,
     },
   },
 })
 
-httpSrvPkg.api('mount')({
+await shell.call(mountApp)({
   getApp(express) {
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })

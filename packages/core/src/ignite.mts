@@ -6,14 +6,17 @@ type RootImport = (module: string) => Promise<unknown>
 type Configs = { pkgs: { [pkgName in string]: any } }
 type PkgListDepOrdered = [string, string | undefined][]
 type Ignites = {
+  rootDir: string
   rootImport: RootImport
+  rootRequire: NodeRequire
   rootPkgJson: PackageJson
   configs: Configs
   reboot: Reboot
   shutdown: Shutdown
 }
 
-let _ignites: Ignites = null as never
+let _ignites: Ignites
+
 const _pkgListDepOrdered: PkgListDepOrdered = []
 
 export async function reboot() {
@@ -29,7 +32,7 @@ export function getConfigs() {
   return _ignites.configs
 }
 
-export function getPkgConfig(pkgName: string) {
+export function getConfig(pkgName: string) {
   return getConfigs().pkgs[pkgName]
 }
 
@@ -42,12 +45,10 @@ export default async function ignite(ignites: Ignites) {
 }
 
 async function initAll() {
-  console.info('\nInut all packages\n')
+  console.info('\nInit all packages\n')
   await Promise.all(
     Object.entries(_ignites.rootPkgJson.dependencies ?? {}).map(async pkgEntry => {
       await rootImportLog(pkgEntry, 'init')
-
-      // should this be pushed on any kind of "connection"?
       _pkgListDepOrdered.push(pkgEntry)
     }),
   )
@@ -82,27 +83,25 @@ async function rootImportLog(
   const fullActionName = `[${exp}] ${pkgName}`
   const pkgExportName = exp ? `${pkgName}/${exp}` : pkgName
 
-  // console.info(`${fullActionName} --- BEGIN ---`)
+  console.info(`${fullActionName} --- BEGIN`)
 
   const endMessageWith = await _ignites.rootImport(pkgExportName).then(
     () => '',
     err => {
       const errMsg = `${fullActionName}@${pkgVersion} : Import Error`
-      if (!err?.code) {
-        throw new Error(`${errMsg} [${err}]`, { cause: err })
-      }
 
-      const isNotFoundErr = ['ERR_PACKAGE_PATH_NOT_EXPORTED', 'ERR_MODULE_NOT_FOUND'].includes(
-        err.code,
-      )
-
+      const isNotFoundErr = ['ERR_PACKAGE_PATH_NOT_EXPORTED'].includes(err.code)
       if (!(ignoreNotFoundError && isNotFoundErr)) {
-        const msgWCode = `${errMsg} CODE: ${err.code}`
+        const msgWCode = `
+${errMsg}
+CODE: ${err.code}
+${err.stack}
+`
         throw new Error(msgWCode, { cause: err })
       }
 
-      return `${exp} export not available for this package, ignoring `
+      return `"${exp}" export not available for this package, ignoring`
     },
   )
-  console.info(`${fullActionName} --- DONE ---${endMessageWith ? ` [${endMessageWith}]` : ``}`)
+  console.info(`${fullActionName} --- DONE${endMessageWith ? ` [${endMessageWith}]` : ``}`)
 }

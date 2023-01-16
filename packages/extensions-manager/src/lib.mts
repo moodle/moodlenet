@@ -1,5 +1,5 @@
 import type { InstallPkgReq, PkgIdentifier } from '@moodlenet/core'
-import { NPM_REGISTRY } from '@moodlenet/core'
+import { npm, pkgRegistry } from '@moodlenet/core'
 import _axios from 'axios'
 import type {
   DeployedPkgInfo,
@@ -7,22 +7,21 @@ import type {
   SearchPackagesResponse,
 } from './types/data.mjs'
 import type { SearchResponse } from './types/npmRegistry.mjs'
-import { corePkg } from './use-pkg-apis.mjs'
 
 const axios = _axios.default
 
 export async function install(installPkgReqs: InstallPkgReq[]) {
-  await corePkg.api('pkg-mng/install')(installPkgReqs)
+  await npm.install(installPkgReqs)
   return
 }
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
-  await corePkg.api('pkg-mng/uninstall')(pkgIds)
+  await npm.uninstall(pkgIds)
   return
 }
 
 export async function listDeployed() {
-  const entries = await corePkg.api('active-pkgs/ls')()
+  const entries = await pkgRegistry.listEntries()
   return entries.map<DeployedPkgInfo>(entry => ({
     packageJson: entry.pkgInfo.packageJson,
     pkgId: entry.pkgId,
@@ -37,7 +36,7 @@ export async function searchPackages({
 }): Promise<SearchPackagesResponse> {
   const [searchRes, pkgEntries] = await Promise.all([
     searchPackagesFromRegistry({ searchText: `moodlenet ${searchText}` }),
-    corePkg.api('active-pkgs/ls')(),
+    pkgRegistry.listEntries(),
   ])
   const objects = searchRes.objects.map(
     ({ package: { name: pkgName, description, keywords, version = '*', links } }) => {
@@ -56,7 +55,7 @@ export async function searchPackages({
         description: description ?? '',
         keywords: keywords ?? [],
         version,
-        registry: NPM_REGISTRY,
+        registry: npm.NPM_REGISTRY,
         homepage: links?.homepage,
         ...(installedPkgId
           ? { installed: true, pkgId: installedPkgId }
@@ -79,28 +78,9 @@ export async function searchPackagesFromRegistry({
   const keywordsString = keywords.map(kw => `keywords:${kw}`).join(' ')
   const text = `${searchText} ${keywordsString}`
 
-  const res = await axios.get<SearchResponse>(`${NPM_REGISTRY}/-/v1/search`, { params: { text } })
-
-  // FIXME:
-  // !!!!!!! REMOVE ME ! JUST FOR DEMO !
-  res.data.objects = res.data.objects.filter(
-    ({ package: { name } }) => !___ignore___mn2_pkgs.includes(name),
-  )
-  // !!!!!!!
+  const res = await axios.get<SearchResponse>(`${npm.NPM_REGISTRY}/-/v1/search`, {
+    params: { text },
+  })
 
   return res.data
 }
-/* 
-keywords:moodlenetPackage
- */
-// !!!!!!!
-
-// FIXME:
-// !!!!!!! REMOVE ME ! JUST FOR DEMO !
-const ___ignore___mn2_pkgs = [
-  '@moodlenet/webapp',
-  '@moodlenet/common',
-  '@moodlenet/backend',
-  '@moodlenet/ce-platform',
-]
-// !!!!!!!

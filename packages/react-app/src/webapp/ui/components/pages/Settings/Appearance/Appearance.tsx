@@ -10,7 +10,7 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useCallback /* , useRef */ } from 'react'
-import { AppearanceData, getAppearanceStyle } from '../../../../../../common/index.mjs'
+import { AppearanceData, getAppearanceStyle } from '../../../../../../common/exports.mjs'
 // import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
 // import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
 // import { Organization } from '../../../../types'

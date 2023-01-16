@@ -1,9 +1,9 @@
-import { OrganizationData } from '../../../../../../../../organization/dist/init.mjs'
+import type { OrganizationData } from '@moodlenet/organization'
 import { useFormik } from 'formik'
 import { useCallback, useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
 import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
-import { GeneralProps } from './General.js'
+import type { GeneralProps } from './General.js'
 
 export const useGeneralProps = (): GeneralProps => {
   const { organizationData, saveOrganization } = useContext(OrganizationCtx)
@@ -17,9 +17,10 @@ export const useGeneralProps = (): GeneralProps => {
     enableReinitialize: true,
   })
 
+  //FIXME: @Bru: can we put this updateAll UI in @moodlenet/extension-manager ?
   const updateExtensions = useCallback(() => {
-    use.core.call('pkg-mng/updateAll')()
-  }, [use.core])
+    use.me.rpc('remove-me/updateAllPkgs')()
+  }, [use.me])
 
   const generalProps = useMemo<GeneralProps>(() => {
     return {

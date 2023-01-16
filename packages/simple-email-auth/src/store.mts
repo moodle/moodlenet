@@ -1,13 +1,14 @@
+import { query } from '@moodlenet/arangodb'
 import assert from 'assert'
+import shell from './shell.mjs'
 import { Email, User, UserId } from './store/types.mjs'
-import { arangoPkg } from './use-pkg-apis.mjs'
 
-await arangoPkg.api('ensureCollections')({ defs: { User: { kind: 'node' } } })
+// await arangoPkg.api('ensureCollections')({ defs: { User: { kind: 'node' } } })
 
 export async function getByEmail(email: Email): Promise<User | undefined> {
   const {
     resultSet: [user],
-  } = await arangoPkg.api('query')({
+  } = await shell.call(query)({
     q: `FOR u in User
           FILTER u.email == '${email}'
           LIMIT 1
@@ -20,7 +21,7 @@ export async function getByEmail(email: Email): Promise<User | undefined> {
 export async function getById(id: UserId): Promise<User | undefined> {
   const {
     resultSet: [user],
-  } = await arangoPkg.api('query')({
+  } = await shell.call(query)({
     q: `RETURN DOCUMENT('User/${id}')`,
   })
 
@@ -30,7 +31,7 @@ export async function getById(id: UserId): Promise<User | undefined> {
 export async function delUser(id: UserId) {
   const {
     resultSet: [user],
-  } = await arangoPkg.api('query')({
+  } = await shell.call(query)({
     q: `REMOVE User/${id} FROM User
         RETURN OLD`,
   })
@@ -40,7 +41,7 @@ export async function delUser(id: UserId) {
 export async function create(newUserData: Omit<User, 'id' | 'created'>): Promise<User> {
   const {
     resultSet: [newUser],
-  } = await arangoPkg.api('query')({
+  } = await shell.call(query)({
     q: `
         INSERT ${JSON.stringify(newUserData)} INTO User
         RETURN NEW`,

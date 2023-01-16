@@ -1,4 +1,4 @@
-import { OrganizationData } from '../../../../organization/dist/init.mjs'
+import { OrganizationData } from '@moodlenet/organization'
 import {
   createContext,
   FC,
@@ -33,7 +33,7 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
   const saveOrganization = useCallback(
     // WE CAN NOT USE IT IS CALLED 1 TIME ONLY
     (data: OrganizationData) => {
-      use.organization.call('setOrgData')({ orgData: data })
+      use.organization.rpc('setOrgData')({ orgData: data })
       setDataOrg(data)
     },
     [use.organization],
@@ -41,7 +41,7 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     use.organization
-      .call('getOrgData')()
+      .rpc('getOrgData')()
       .then(({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData))
   }, [use.organization])
 

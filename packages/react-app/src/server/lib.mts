@@ -1,8 +1,9 @@
 import assert from 'assert'
-import { AppearanceData, WebappPluginDef, WebappPluginItem } from '../common/types.mjs'
-import { corePkg, kvStore } from './use-pkgs.mjs'
-import { PkgContextT } from '../webapp/types/plugins.mjs'
-import { addWebappPluginItem } from './init.lib.mjs'
+import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
+import kvStore from './kvStore.mjs'
+import shell from './shell.mjs'
+import { PkgIdentifier } from '@moodlenet/core'
+import { addWebappPluginItem } from './webapp-plugins.mjs'
 
 export async function setAppearance({ appearanceData }: { appearanceData: AppearanceData }) {
   const data = await kvStore.set('appearanceData', '', appearanceData)
@@ -15,21 +16,27 @@ export async function getAppearance() {
   return { data: data.value }
 }
 
-export async function setupPlugin<Ctx extends PkgContextT<any, any>>({
-  pkgId,
+export async function setupPlugin<Deps extends WebPkgDeps>({
   pluginDef,
-}: Ctx extends PkgContextT<infer PkgId, infer Deps>
-  ? {
-      pluginDef: WebappPluginDef<Deps>
-      pkgId: PkgId
-    }
-  : never) {
-  const guestPkgEntry = await corePkg.api('active-pkgs/get-by-pkgid')(pkgId)
-  assert(guestPkgEntry, `can't setup plugin, no guestPkgEntry for ${pkgId.name}@${pkgId.version}`)
-  const webappPluginItem: WebappPluginItem<any> = {
+  pkgId,
+}: {
+  pluginDef: WebappPluginDef<Deps>
+  pkgId: PkgIdentifier
+}) {
+  const guestPkgEntry = await shell.pkgEntryByPkgIdValue(pkgId)
+  assert(
+    guestPkgEntry,
+    `can't setup react-app plugin, no pkgEntry for ${pkgId.name}@${pkgId.version}`,
+  )
+  const webappPluginItem: WebappPluginItem = {
     ...pluginDef,
-    guestPkgId: pkgId,
+    guestPkgId: guestPkgEntry.pkgId,
     guestPkgInfo: guestPkgEntry.pkgInfo,
   }
-  addWebappPluginItem(webappPluginItem)
+  await addWebappPluginItem(webappPluginItem)
+}
+
+export async function plugin<Deps extends WebPkgDeps>(pluginDef: WebappPluginDef<Deps>) {
+  const { pkgId } = shell.assertCallInitiator()
+  return setupPlugin<Deps>({ pkgId, pluginDef })
 }
