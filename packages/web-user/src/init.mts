@@ -1,18 +1,13 @@
-import { connectPkg } from '@moodlenet/core'
-import apis from './apis.mjs'
-import { MyPkgContext } from './init.mjs'
+import { ensureGlyphs } from '@moodlenet/content-graph'
+import { plugin } from '@moodlenet/react-app/server'
+import { expose as me } from './expose.mjs'
+import shell from './shell.mjs'
+import { MyPkgDeps, ProfileGlyphs } from './types.mjs'
 
-import { reactAppPkg } from './use-pkg-apis.mjs'
-
-export * from './types.mjs'
-
-const connection = await connectPkg(import.meta, { apis })
-
-await reactAppPkg.api('plugin')<MyPkgContext>({
-  def: {
-    mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-    deps: {},
-  },
+await shell.call(plugin)<MyPkgDeps>({
+  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  deps: { me },
 })
-
-export default connection
+export const glyphDescriptors = await shell.call(ensureGlyphs)<ProfileGlyphs>({
+  defs: { Profile: { kind: 'node' } },
+})

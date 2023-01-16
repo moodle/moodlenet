@@ -39,14 +39,17 @@ export const useProfileCardProps = ({
 }: {
   profileKey: string
 }): ProfileCardPropsControlled => {
-  const { me } = useContext(MainContext)
+  const {
+    use: { me },
+  } = useContext(MainContext)
   const { clientSessionData } = useContext(AuthCtx)
 
   const [profile, setProfile] = useState<ProfileFormValues>({} as any)
 
   const form = useFormik<ProfileFormValues>({
     async onSubmit({ description, displayName, location, organizationName, siteUrl }) {
-      const res = await me.call('editProfile')(profileKey, {
+      const res = await me.rpc('editProfile')({
+        key: profileKey,
         displayName,
         description,
         location,
@@ -64,7 +67,7 @@ export const useProfileCardProps = ({
   })
 
   useEffect(() => {
-    me.call('getProfile')(profileKey).then(res => {
+    me.rpc('getProfile')(profileKey).then(res => {
       if (!res) {
         return
       }

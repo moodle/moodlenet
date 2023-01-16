@@ -1,4 +1,3 @@
-import type { PkgIdentifier } from '@moodlenet/core'
 import { std } from '@moodlenet/crypto'
 import assert from 'assert'
 import shell from './shell.mjs'
@@ -26,13 +25,12 @@ export async function getRootSessionToken({
 
 export async function registerUser({
   uid,
-  pkgId,
 }: {
   uid: string
-  pkgId: PkgIdentifier
 }): Promise<
   { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
 > {
+  const { pkgId } = shell.assertCallInitiator()
   const user = await store.create({
     providerId: {
       pkgName: pkgId.name,
@@ -48,13 +46,8 @@ type GetSessionResp =
   | { success: false; msg: string }
   | { success: true; sessionToken: SessionToken }
 
-export async function getSessionToken({
-  uid,
-  pkgId,
-}: {
-  uid: string
-  pkgId: PkgIdentifier
-}): Promise<GetSessionResp> {
+export async function getSessionToken({ uid }: { uid: string }): Promise<GetSessionResp> {
+  const { pkgId } = shell.assertCallInitiator()
   const user = await store.getByProviderId({ pkgName: pkgId.name, uid })
   if (!user) {
     return { success: false, msg: 'cannot find user' }

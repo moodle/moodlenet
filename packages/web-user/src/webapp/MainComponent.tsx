@@ -6,7 +6,7 @@ import {
   usePkgContext,
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
-import { MyPkgContext } from '../init.mjs'
+import { MyPkgContext } from '../types.mjs'
 import * as avatarmenuItem from './components/organisms/Header/Header.js'
 import { MainContext } from './MainContext.js'
 import Router from './Router.js'

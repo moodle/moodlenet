@@ -36,7 +36,7 @@ export async function shell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
 
   function initiateCall<R>(exec: () => R): R {
     return asyncContext.run({}, () => {
-      getSetCoreAsyncContext.set(_ => ({ ..._, initiator: myId }))
+      getSetCoreAsyncContext.set(_ => ({ ..._, initiator: { pkgId: myId } }))
       return exec()
     })
   }

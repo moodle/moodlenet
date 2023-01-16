@@ -1,10 +1,11 @@
 import { query } from '@moodlenet/arangodb'
 import assert from 'assert'
+import shell from './shell.mjs'
 import { ProviderId, User, UserId } from './store/types.mjs'
 
 export async function getByProviderId(pId: ProviderId): Promise<User | undefined> {
   const m_user = (
-    await query({
+    await shell.call(query)({
       q: `FOR u in User
               FILTER u.providerId == ${JSON.stringify(pId)}
               LIMIT 1
@@ -17,7 +18,7 @@ export async function getByProviderId(pId: ProviderId): Promise<User | undefined
 
 export async function getById(id: UserId): Promise<User | undefined> {
   const m_user = (
-    await query({
+    await shell.call(query)({
       q: `RETURN DOCUMENT('User/${id}')`,
     })
   ).resultSet[0]
@@ -27,7 +28,7 @@ export async function getById(id: UserId): Promise<User | undefined> {
 
 export async function delUser(id: UserId) {
   const m_user = (
-    await query({
+    await shell.call(query)({
       q: `REMOVE User/${id} FROM User
             RETURN OLD`,
     })
@@ -38,7 +39,7 @@ export async function delUser(id: UserId) {
 
 export async function create(newUser: Omit<User, 'id' | 'created'>): Promise<User> {
   const m_user = (
-    await query({
+    await shell.call(query)({
       q: `
         INSERT ${JSON.stringify(newUser)} INTO User
         RETURN $NEW`,
