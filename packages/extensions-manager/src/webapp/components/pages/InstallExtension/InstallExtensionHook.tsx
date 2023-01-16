@@ -14,7 +14,7 @@ export const useInstallExtensionProps = (): InstallExtensionPropsControlled => {
   const installLocalPathExtensionForm = useFormik<InstallLocalPathExtensionFormValues>({
     initialValues: { localPath: '' },
     onSubmit({ localPath }) {
-      return me.rpc('install')([
+      return me.rpc.install([
         {
           fromFolder: localPath,
           type: 'pack-folder',

@@ -48,7 +48,7 @@ export const useProfileCardProps = ({
 
   const form = useFormik<ProfileFormValues>({
     async onSubmit({ description, displayName, location, organizationName, siteUrl }) {
-      const res = await me.rpc('editProfile')({
+      const res = await me.rpc.editProfile({
         key: profileKey,
         displayName,
         description,
@@ -67,7 +67,7 @@ export const useProfileCardProps = ({
   })
 
   useEffect(() => {
-    me.rpc('getProfile')(profileKey).then(res => {
+    me.rpc.getProfile(profileKey).then(res => {
       if (!res) {
         return
       }

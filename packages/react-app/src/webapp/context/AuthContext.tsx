@@ -62,7 +62,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         }
       }
 
-      const myUserNodeRes = await use.graph.rpc('getMyUserNode')()
+      const myUserNodeRes = await use.graph.rpc.getMyUserNode()
       if (!myUserNodeRes) {
         throw new Error(
           `shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`,
@@ -83,7 +83,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const fetchClientSession = useCallback(
     async (token: SessionToken) => {
-      const res = await use.auth.rpc('getClientSession')({ token })
+      const res = await use.auth.rpc.getClientSession({ token })
       if (!res.success) {
         writeSessionToken()
         return { success: false, msg: 'invalid token' } as const

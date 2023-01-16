@@ -4,15 +4,15 @@ import shell from './shell.mjs'
 
 export const expose = await shell.expose({
   rpc: {
-    'getAppearance': {
+    getAppearance: {
       guard: () => void 0,
       fn: getAppearance,
     },
-    'setAppearance': {
+    setAppearance: {
       guard: () => void 0,
       fn: setAppearance,
     },
-    'remove-me/updateAllPkgs': {
+    updateAllPkgs: {
       guard: () => void 0,
       fn: () => npm.updateAll(),
     },
