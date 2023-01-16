@@ -5,7 +5,9 @@ import * as SignUpAddon from './Signup.js'
 import { useFormik } from 'formik'
 
 export const usePanelProps = (): SignupProps => {
-  const { me } = useContext(MainContext)
+  const {
+    use: { me },
+  } = useContext(MainContext)
 
   const [emailSent, setEmailSent] = useState(false)
   const [errMsg, setErrMsg] = useState('')
@@ -14,7 +16,7 @@ export const usePanelProps = (): SignupProps => {
     initialValues: { email: '', password: '', displayName: '' },
     async onSubmit({ email, password, displayName }) {
       setErrMsg('')
-      const res = await me.call('signup')({
+      const res = await me.rpc('signup')({
         displayName,
         email,
         password,

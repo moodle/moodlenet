@@ -1,5 +1,5 @@
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
-import type me from '../init.mjs'
+import type { expose as me } from '../expose.mjs'
 
 export type ProfileFormValues = {
   displayName: string
@@ -11,4 +11,5 @@ export type ProfileFormValues = {
   avatarImage?: string | File | null
 }
 
-export type MyPkgContext = PkgContextT<typeof me>
+export type MyPkgDeps = { me: typeof me }
+export type MyPkgContext = PkgContextT<MyPkgDeps>

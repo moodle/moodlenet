@@ -29,9 +29,9 @@ export function getCallInitiator() {
   return initiator
 }
 
-export function pkgInitiateCall<R>(initiator: PkgIdentifier, exec: () => Promise<R>): Promise<R> {
+export function pkgInitiateCall<R>(pkgId: PkgIdentifier, exec: () => Promise<R>): Promise<R> {
   return asyncContext.run({}, () => {
-    getSetCoreAsyncContext.set(_ => ({ ..._, initiator }))
+    getSetCoreAsyncContext.set(_ => ({ ..._, initiator: { pkgId } }))
     return exec()
   })
 }

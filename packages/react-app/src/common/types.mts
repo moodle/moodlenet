@@ -22,7 +22,7 @@ export type WebappPluginDef<
 //   [index in keyof Requires]: Requires[index] extends WebappPluginMainModule<infer _Ext, infer Lib, any> ? Lib : never
 // }
 
-export type WebappPluginItem<Deps extends WebPkgDeps = never> = WebappPluginDef<Deps> & {
+export type WebappPluginItem<Deps extends WebPkgDeps = WebPkgDeps> = WebappPluginDef<Deps> & {
   guestPkgInfo: PackageInfo
   guestPkgId: PkgIdentifier
 }

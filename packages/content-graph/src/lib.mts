@@ -1,6 +1,5 @@
 import type { CollectionDefOpt, CollectionDefOptMap } from '@moodlenet/arangodb'
 import { getApiCtxClientSession, UserId } from '@moodlenet/authentication-manager'
-import { PkgIdentifier } from '@moodlenet/core'
 import {
   edgeLinkIdentifiers2edgeLink,
   extractGlyphMeta,
@@ -31,8 +30,7 @@ import kvStore from './kvStore.mjs'
 import { ensureCollections, query } from '@moodlenet/arangodb'
 import shell from './shell.mjs'
 
-export const contentGraphGlyphs = await ensureGlyphs<ContentGraphGlyphs>({
-  pkgId: false,
+export const contentGraphGlyphs = await shell.call(ensureGlyphs)<ContentGraphGlyphs>({
   defs: {
     Created: { kind: 'edge' },
     Updated: { kind: 'edge' },
@@ -43,12 +41,11 @@ export const contentGraphGlyphs = await ensureGlyphs<ContentGraphGlyphs>({
     ensureGlyphs
     */
 export async function ensureGlyphs<Defs extends GlyphDefsMap>({
-  pkgId,
   defs,
 }: {
-  pkgId: PkgIdentifier | false
   defs: GlyphDefOptMap<Defs>
 }): Promise<GlyphDescriptorsMap<Defs>> {
+  const { pkgId } = shell.assertCallInitiator()
   const allDefs = Object.keys(defs).map<{
     descriptor: GlyphDescriptor
     opts: CollectionDefOpt

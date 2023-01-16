@@ -1,9 +1,9 @@
 import assert from 'assert'
 import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import kvStore from './kvStore.mjs'
-import { addWebappPluginItem } from './webapp-plugins.mjs'
 import shell from './shell.mjs'
 import { PkgIdentifier } from '@moodlenet/core'
+import { addWebappPluginItem } from './webapp-plugins.mjs'
 
 export async function setAppearance({ appearanceData }: { appearanceData: AppearanceData }) {
   const data = await kvStore.set('appearanceData', '', appearanceData)
@@ -28,19 +28,15 @@ export async function setupPlugin<Deps extends WebPkgDeps>({
     guestPkgEntry,
     `can't setup react-app plugin, no pkgEntry for ${pkgId.name}@${pkgId.version}`,
   )
-  const webappPluginItem: WebappPluginItem<any> = {
+  const webappPluginItem: WebappPluginItem = {
     ...pluginDef,
     guestPkgId: guestPkgEntry.pkgId,
     guestPkgInfo: guestPkgEntry.pkgInfo,
   }
-  addWebappPluginItem(webappPluginItem)
+  await addWebappPluginItem(webappPluginItem)
 }
 
-export async function plugin<Deps extends WebPkgDeps>({
-  pluginDef,
-}: {
-  pluginDef: WebappPluginDef<Deps>
-}) {
-  const pkgId = shell.assertCallInitiator()
+export async function plugin<Deps extends WebPkgDeps>(pluginDef: WebappPluginDef<Deps>) {
+  const { pkgId } = shell.assertCallInitiator()
   return setupPlugin<Deps>({ pkgId, pluginDef })
 }
