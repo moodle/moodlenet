@@ -12,9 +12,9 @@ export const PkgMainComponentsWrap: FC<PropsWithChildren> = ({ children }) => {
     () =>
       plugins.pkgs.reduce((_children, { MainComponent, deps, pkgId }) => {
         const use = Object.entries(deps).reduce(
-          (usePkgHandles, [key, targetPkgId]) => ({
+          (usePkgHandles, [key, { pkgId: targetPkgId, rpcPaths }]) => ({
             ...usePkgHandles,
-            [key]: getUseUsePkgHandle({ targetPkgId, userPkgId: pkgId }),
+            [key]: getUseUsePkgHandle({ targetPkgId, userPkgId: pkgId, rpcPaths }),
           }),
           {},
         )
@@ -34,7 +34,8 @@ function getPlugins() {
   type PluginMainComponentObject = {
     MainComponent: ReactAppMainComponent
     pkgId: PkgIdentifier
-    deps: { [depName: string]: PkgIdentifier }
+    rpcPaths: string[]
+    deps: { [depName: string]: { pkgId: PkgIdentifier; rpcPaths: string[] } }
   }
   type Plugins = {
     pkgs: PluginMainComponentObject[]

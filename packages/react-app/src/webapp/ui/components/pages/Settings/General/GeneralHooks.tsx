@@ -19,7 +19,7 @@ export const useGeneralProps = (): GeneralProps => {
 
   //FIXME: @Bru: can we put this updateAll UI in @moodlenet/extension-manager ?
   const updateExtensions = useCallback(() => {
-    use.me.rpc('remove-me/updateAllPkgs')()
+    use.me.rpc.updateAllPkgs()
   }, [use.me])
 
   const generalProps = useMemo<GeneralProps>(() => {

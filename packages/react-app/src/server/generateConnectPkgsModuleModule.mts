@@ -50,7 +50,13 @@ import pkg_main_component_${index} from '${resolve(
     pkgId:Object.freeze(${JSON.stringify(pluginItem.guestPkgId)}),
     deps: ${JSON.stringify(
       Object.entries(pluginItem.deps).reduce(
-        (_, [depName, { pkgId }]) => ({ ..._, [depName]: pkgId }),
+        (_, [depName, { pkgId, rpc }]) => ({
+          ..._,
+          [depName]: {
+            pkgId,
+            rpcPaths: Object.keys(rpc),
+          },
+        }),
         {},
       ),
     )}

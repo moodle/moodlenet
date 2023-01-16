@@ -33,15 +33,15 @@ export const Provider: FC<PropsWithChildren> = ({ children }) => {
   const saveOrganization = useCallback(
     // WE CAN NOT USE IT IS CALLED 1 TIME ONLY
     (data: OrganizationData) => {
-      use.organization.rpc('setOrgData')({ orgData: data })
+      use.organization.rpc.setOrgData({ orgData: data })
       setDataOrg(data)
     },
     [use.organization],
   )
 
   useEffect(() => {
-    use.organization
-      .rpc('getOrgData')()
+    use.organization.rpc
+      .getOrgData()
       .then(({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData))
   }, [use.organization])
 

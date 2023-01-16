@@ -16,7 +16,7 @@ export const useManageExtensionsProps = (
     use: { me },
   } = useContext(MainContext)
   useEffect(() => {
-    me.rpc('listDeployed')().then(resp =>
+    me.rpc.listDeployed().then(resp =>
       setExtensions(
         resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A', pkgId }) => {
           const repositoryUrl =
@@ -40,7 +40,7 @@ export const useManageExtensionsProps = (
                 return
               }
               toggleIsInstallingUninstalling()
-              me.rpc('uninstall')([pkgId]).then(() => {
+              me.rpc.uninstall([pkgId]).then(() => {
                 toggleInstallUninstallSucces()
                 toggleIsInstallingUninstalling()
               })
