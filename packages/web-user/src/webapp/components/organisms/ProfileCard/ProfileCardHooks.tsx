@@ -67,7 +67,7 @@ export const useProfileCardProps = ({
   })
 
   useEffect(() => {
-    me.rpc.getProfile(profileKey).then(res => {
+    me.rpc.getProfile({ key: profileKey }).then(res => {
       if (!res) {
         return
       }

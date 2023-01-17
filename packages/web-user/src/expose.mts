@@ -19,8 +19,8 @@ export const expose = await shell.expose({
     },
     getProfile: {
       guard: () => void 0,
-      fn: (key: string) => {
-        return getProfile(key)
+      fn: (body: { key: string }) => {
+        return getProfile(body.key)
       },
     },
   },
