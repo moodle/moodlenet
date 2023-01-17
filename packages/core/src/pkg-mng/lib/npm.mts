@@ -10,7 +10,6 @@ import execa from 'execa'
 import { InstallPkgReq } from '../types.mjs'
 import { overrideLocalMNLock } from '../../main/MNLock.mjs'
 import { rebootSystem } from '../../main/sys.mjs'
-import { resolve } from 'path'
 
 export { NPM_REGISTRY } from '../../main/env.mjs'
 
@@ -21,35 +20,37 @@ export async function uninstall(pkgIds: PkgIdentifier[]) {
     cwd: WORKING_DIR,
     timeout: 600000,
   })
+  rebootSystem()
 }
 
 export async function install(installPkgReqs: InstallPkgReq[]) {
   const installPkgsArgs = await Promise.all(
-    installPkgReqs.map(async instReq => {
+    installPkgReqs.flatMap(async instReq => {
       if (instReq.type === 'pack-folder') {
-        if (MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES) {
-          return `file:${instReq.fromFolder}`
-        } else {
-          const exeResultStr = (
-            await execa('npm', ['pack', '--json'], {
-              cwd: instReq.fromFolder,
-              timeout: 600000,
-            })
-          ).stdout
-          const exeResult = JSON.parse(exeResultStr)
-          const packFileName = exeResult[0].filename as string
-          return resolve(instReq.fromFolder, packFileName)
-        }
+        return `file:${instReq.fromFolder}`
       } else if (instReq.type === 'npm') {
         return `${instReq.pkgId.name}@${instReq.pkgId.version}`
       }
       throw new Error(`unexpected installPkgReq type ${(instReq as any).type}`)
     }),
   )
-  await execa('npm', ['install', '--registry', NPM_REGISTRY, ...installPkgsArgs], {
-    cwd: WORKING_DIR,
-    timeout: 600000,
-  })
+  await execa(
+    MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? 'npx' : 'npm',
+    [
+      ...(MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? ['-y', 'npm@8'] : []),
+      'install',
+      '--registry',
+      NPM_REGISTRY,
+      ...(MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? [] : ['--install-links']),
+      ...installPkgsArgs,
+    ],
+    {
+      cwd: WORKING_DIR,
+      timeout: 600000,
+      stdout: process.stdout,
+    },
+  )
+  rebootSystem()
 }
 
 export async function checkUpdates(): Promise<{ updatePkgs: Record<string, string> }> {
