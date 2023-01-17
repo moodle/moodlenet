@@ -11,13 +11,11 @@ import type { SearchResponse } from './types/npmRegistry.mjs'
 const axios = _axios.default
 
 export async function install(installPkgReqs: InstallPkgReq[]) {
-  await npm.install(installPkgReqs)
-  return
+  return npm.install(installPkgReqs)
 }
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
-  await npm.uninstall(pkgIds)
-  return
+  return npm.uninstall(pkgIds)
 }
 
 export async function listDeployed() {

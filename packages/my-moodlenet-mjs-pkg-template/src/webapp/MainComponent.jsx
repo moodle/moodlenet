@@ -1,7 +1,7 @@
 import { Route } from 'react-router-dom'
 import { Link } from '@moodlenet/react-app/ui'
-import { registries } from '@moodlenet/react-app/web-lib'
-import { useEffect, useMemo, useState } from 'react'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/web-lib'
+import { useEffect, useMemo, useState, useContext } from 'react'
 import { MyContext } from './Context.js'
 import HelloWorldPage from './HelloWorldPage.jsx'
 
@@ -16,16 +16,22 @@ const myPageMenuItem = {
   Icon: null,
   Path: { url: '/my-moodlenet-mjs-pkg-template' },
 }
-const MainComponent = ({ pkgs, pkgId, children }) => {
-  registries.routes.useRegister(pkgId, myRoutes)
-  registries.rightComponents.useRegister(pkgId, myRightComponent)
-  registries.avatarMenuItems.useRegister(pkgId, myPageMenuItem)
+const MainComponent = ({ children }) => {
+  const pkgCtx = usePkgContext()
+  const { registries } = useContext(ReactAppContext)
+  registries.routes.useRegister(myRoutes)
+  registries.rightComponents.useRegister(myRightComponent)
+  registries.avatarMenuItems.useRegister(myPageMenuItem)
 
-  const [myPkg] = pkgs
   const [apiResponse, setApiResponse] = useState()
   useEffect(() => {
-    myPkg.call('hello/world')('my string param', 100).then(setApiResponse)
-  }, [myPkg])
+    pkgCtx.use.me
+      .rpc('hello/world')({
+        stringParam: 'my string param',
+        numberParam: 100,
+      })
+      .then(setApiResponse)
+  }, [pkgCtx.use.me])
 
   const ctx = useMemo(() => ({ apiResponse }), [apiResponse])
   return <MyContext.Provider value={ctx}>{children}</MyContext.Provider>
