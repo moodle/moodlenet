@@ -1,19 +1,13 @@
 import { AddonItem, Card, Searchbox } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { User } from '../../../../../../common/types.mjs'
 import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-settings-outlined.svg'
 import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-settings.svg'
 import './Users.scss'
 
-
-
-export type UsersFormValues = {
-  users: User[]
-}
-
 export type UsersProps = {
-  form?: ReturnType<typeof useFormik<UsersFormValues>>
+  users: User[]
+  toggleUserType(key: string, userType: string): void
 }
 
 export const UsersMenu: AddonItem = {
@@ -21,21 +15,21 @@ export const UsersMenu: AddonItem = {
   key: 'menu-Users',
 }
 
-export const Users: FC<UsersProps> = ({ form }) => {
+export const Users: FC<UsersProps> = ({ users, toggleUserType }) => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   const [searchText, setSearchText] = useState('')
-  const [users, setUsers] = useState(form?.values.users)
+  const [currentUsers, setCurrentUsers] = useState(users)
 
   useEffect(() => {
-    setUsers(
-      form?.values.users.filter(
+    setCurrentUsers(
+      users.filter(
         user =>
           user.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
           user.email.toLowerCase().includes(searchText.toLowerCase()) ||
           searchText === '',
       ),
     )
-  }, [searchText, form?.values.users])
+  }, [searchText, users])
   return (
     <div className="users" key="Users">
       <Card className="column">
@@ -61,18 +55,18 @@ export const Users: FC<UsersProps> = ({ form }) => {
             </tr>
           </thead>
           <tbody>
-            {users?.map(user => {
+            {currentUsers?.map(({ displayName, email, key, userTypes }) /* user */ => {
               return (
-                <tr key={user.email}>
-                  <td>{user.displayName}</td>
-                  <td>{user.email}</td>
+                <tr key={key}>
+                  <td>{displayName}</td>
+                  <td>{email}</td>
                   <td className="user-types">
                     <abbr
-                      onClick={() => user.toggleUserType('Admin')}
-                      className={`admin ${user.userTypes.indexOf('Admin') > -1 ? 'on' : 'off'}`}
+                      onClick={() => toggleUserType(key, 'Admin')}
+                      className={`admin ${userTypes.indexOf('Admin') > -1 ? 'on' : 'off'}`}
                       title="Admin"
                     >
-                      {user.userTypes.indexOf('Admin') > -1 ? <AdminIconOn /> : <AdminIconOff />}
+                      {userTypes.indexOf('Admin') > -1 ? <AdminIconOn /> : <AdminIconOff />}
                     </abbr>
                   </td>
                 </tr>
