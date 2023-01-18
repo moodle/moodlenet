@@ -8,7 +8,6 @@ import './Users.scss'
 export type UsersProps = {
   users: User[]
   toggleUserType(key: string, userType: string): void
-  // toggleUserType(user: User, userType: string): void
 }
 
 export const UsersMenu: AddonItem = {
