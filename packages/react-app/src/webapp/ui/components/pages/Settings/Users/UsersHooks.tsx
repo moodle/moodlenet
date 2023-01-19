@@ -1,24 +1,39 @@
-// import { useFormik } from 'formik'
-// import { useContext, useMemo } from 'react'
-// import { SettingsCtx } from '../../../../../web-lib.mjs'
-// import { UsersFormValues, UsersProps } from './Users.js'
+import { useEffect } from '@storybook/addons'
+import { useContext, useMemo, useState } from 'react'
+import { MainContext } from '../../../../../context/MainContext.mjs'
+import { TUserProps, TUsersProps } from '../../../../../web-lib.mjs'
 
-// export const useUsersProps = (): UsersProps => {
-//   const { devMode, toggleDevMode } = useContext(SettingsCtx)
+export const useUsersProps = (): TUserProps => {
+  const { use } = useContext(MainContext)
+  const [users, setUsers] = useState<TUsersProps[]>([])
 
-//   const form = useFormik<UsersFormValues>({
-//     initialValues: { devMode },
-//     async onSubmit() {
-//       toggleDevMode()
-//     },
-//     enableReinitialize: true,
-//   })
 
-//   const UsersProps = useMemo<UsersProps>(() => {
-//     return {
-//       form,
-//     }
-//   }, [form])
+  useEffect(() => {
+    const users = use.auth
+      .rpc('getUsers')({ search: '' })
+      .then(res => {
+        setUsers(res)
+      })
+  }, [use.auth])
 
-//   return UsersProps
-// }
+  const getUsers = useMemo<TUsersProps>(() => {
+    use.auth.rpc('getUsers')(req:{ search: '' })
+      .then(res => {
+        setUsers(res)
+      })
+  })
+
+  const usersProps = useMemo<TUsersProps>(() => {
+    const _change = async (key: string, userType: string) => {
+     use.auth.rpc('changeUserType')({ key, userType })
+    }
+    return {
+      users,
+      changeType:
+    }
+  }, [_change, users])
+
+  return {
+    users,
+  }
+}

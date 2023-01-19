@@ -22,6 +22,20 @@ import { MainContext } from './MainContext.mjs'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
+// implementare la gestione della lista utenti, dove vengono assegnati il gruppo 
+
+// da dare pasto a alle  form non importa quali
+export type TUserProps = {
+  key: string
+  displayName: string
+  email: string
+  userTypes: string[]
+}
+
+export type TUsersProps = {
+  users: TUserProps[],
+2  changeType: (user: TUserProps, userType: string) => void
+}
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',
@@ -46,6 +60,8 @@ export const AuthCtx = createContext<AuthCtxT>(null as never)
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
+
+  // prendo il contexct main con auth user ecc
   const { use } = useContext(MainContext)
 
   const [firstCallDone, setFirstCallDone] = useState(false)
