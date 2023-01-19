@@ -22,20 +22,9 @@ import { MainContext } from './MainContext.mjs'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
-// implementare la gestione della lista utenti, dove vengono assegnati il gruppo 
+// implementare la gestione della lista utenti, dove vengono assegnati il gruppo
 
 // da dare pasto a alle  form non importa quali
-export type TUserProps = {
-  key: string
-  displayName: string
-  email: string
-  userTypes: string[]
-}
-
-export type TUsersProps = {
-  users: TUserProps[],
-2  changeType: (user: TUserProps, userType: string) => void
-}
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',
@@ -78,7 +67,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         }
       }
 
-      const myUserNodeRes = await use.graph.rpc.getMyUserNode()
+      const myUserNodeRes = await use.graph.rpc('getMyUserNode')()
       if (!myUserNodeRes) {
         throw new Error(
           `shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`,
@@ -99,7 +88,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const fetchClientSession = useCallback(
     async (token: SessionToken) => {
-      const res = await use.auth.rpc.getClientSession({ token })
+      const res = await use.auth.rpc('getClientSession')({ token })
       if (!res.success) {
         writeSessionToken()
         return { success: false, msg: 'invalid token' } as const
