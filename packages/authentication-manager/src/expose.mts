@@ -26,7 +26,7 @@ export const expose = await shell.expose({
     getUsers: {
       guard: () => void 0,
       fn: async (req: { search: string }): Promise<UserTypeApiProps[]> => {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
           const usersFilt = fakeUsersData.filter(user => user.displayName.indexOf(req.search) > -1)
           resolve(usersFilt)
         })
