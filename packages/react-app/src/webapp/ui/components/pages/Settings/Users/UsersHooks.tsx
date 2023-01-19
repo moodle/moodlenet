@@ -1,3 +1,4 @@
+import { UserTypeApiProps } from '@moodlenet/authentication-manager'
 import { useEffect } from '@storybook/addons'
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
@@ -18,34 +19,34 @@ export type UserTypeListProps = {
 export const useUsersProps = (): UserTypeListProps => {
   const { use } = useContext(MainContext)
   const [users, setUsers] = useState<UserTypeProps[]>([])
+  const [search, setSearch] = useState<string>('')
 
-  const getUsers = useCallback(() => {
-    use.auth
-      .rpc('getUsers')({ search: '' })
-      .then(list => {
-        const users = list.map(el => {
-          const { userId, ...aUser } = el
-          return { ...aUser, key: userId }
-        })
-        setUsers(users)
-      })
-  }, [use.auth])
+  const mapKey = (el: UserTypeApiProps): UserTypeProps => {
+    const { userId, ...aUser } = el
+    return { ...aUser, key: userId }
+  }
+
+  const getUsers = useCallback(
+    (_search: string) => {
+      setSearch(_search)
+      use.auth
+        .rpc('getUsers')({ search })
+        .then(list => setUsers(list.map(mapKey)))
+    },
+    [search, use.auth],
+  )
 
   useEffect(() => {
-    getUsers()
-  }, [getUsers])
+    getUsers(search)
+  }, [getUsers, search])
 
   const usersProps = useMemo<UserTypeListProps>(() => {
     const _change = async (key: string, userType: string) => {
-      use.auth.rpc.changeUserType({ key, userType }).then(() => getUsers())
+      use.auth.rpc.changeUserType({ key, userType }).then(() => getUsers(search))
     }
 
-    const userProps: UserTypeListProps = {
-      users,
-      changeType: _change,
-    }
-    return userProps
-  }, [getUsers, use.auth.rpc, users])
+    return { users, changeType: _change }
+  }, [getUsers, search, use.auth.rpc, users])
 
   return usersProps
 }
