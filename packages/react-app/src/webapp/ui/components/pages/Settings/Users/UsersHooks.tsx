@@ -37,7 +37,7 @@ export const useUsersProps = (): UserTypeListProps => {
 
   const usersProps = useMemo<UserTypeListProps>(() => {
     const _change = async (key: string, userType: string) => {
-      use.auth.rpc.changeUserType({ key, userType })
+      use.auth.rpc.changeUserType({ key, userType }).then(() => getUsers())
     }
 
     const userProps: UserTypeListProps = {
@@ -45,7 +45,7 @@ export const useUsersProps = (): UserTypeListProps => {
       changeType: _change,
     }
     return userProps
-  }, [use.auth.rpc, users])
+  }, [getUsers, use.auth.rpc, users])
 
   return usersProps
 }
