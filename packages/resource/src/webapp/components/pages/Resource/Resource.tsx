@@ -1,44 +1,95 @@
 import { InsertDriveFile, Link } from '@material-ui/icons'
-import { AddonItem, Card, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
-import { FC, useReducer } from 'react'
-import { ContributorCard } from '../../molecules/ContributorCard/ContributorCard.js'
-import { ContributorCardStoryProps } from '../../molecules/ContributorCard/ContributorCard.stories.js'
 import {
-  ResourceCard,
-  ResourceCardPropsControlled,
-} from '../../organisms/ResourceCard/ResourceCard.js'
+  AddonItem,
+  Card,
+  FollowTag,
+  IconTextOptionProps,
+  OptionItemProp,
+  PrimaryButton,
+  SecondaryButton,
+  TextOptionProps,
+} from '@moodlenet/component-library'
+import {
+  FormikHandle,
+  MainLayout,
+  MainLayoutProps,
+  SelectOptions,
+  SelectOptionsMulti,
+} from '@moodlenet/react-app/ui'
+import { FC } from 'react'
+import { NewResourceFormValues } from '../../../../common/types.mjs'
+import {
+  ContributorCard,
+  ContributorCardProps,
+} from '../../molecules/ContributorCard/ContributorCard.js'
+import { ContributorCardStoryProps } from '../../molecules/ContributorCard/ContributorCard.stories.js'
 import './Resource.scss'
+
+export type ResourceFormValues = Omit<NewResourceFormValues, 'addToCollections' | 'content'> & {
+  isFile: boolean
+}
 
 export type ResourceProps = {
   mainLayoutProps: MainLayoutProps
-  resourceCardProps: ResourceCardPropsControlled
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
+
+  resourceId: string
+  resourceUrl: string
+  isAuthenticated: boolean
+  isOwner: boolean
+  isAdmin: boolean
+  autoImageAdded: boolean
+  canSearchImage: boolean
+  numLikes: number
+  collections: SelectOptionsMulti<OptionItemProp>
+  liked: boolean
+  bookmarked: boolean
+  tags: FollowTag[]
+  contributorCardProps: ContributorCardProps
+  form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
+  contentUrl: string
+  toggleLikeForm: FormikHandle
+  toggleBookmarkForm: FormikHandle
+  deleteResourceForm?: FormikHandle
+  addToCollectionsForm: FormikHandle<{ collections: string[] }>
+  sendToMoodleLmsForm: FormikHandle<{ site?: string }>
+  reportForm?: FormikHandle<{ comment: string }>
+  resourceFormat: string
+  contentType: 'link' | 'file'
+
+  licenses: SelectOptions<IconTextOptionProps>
+  setCategoryFilter(text: string): unknown
+  categories: SelectOptions<TextOptionProps>
+  setTypeFilter(text: string): unknown
+  types: SelectOptions<TextOptionProps>
+  setLevelFilter(text: string): unknown
+  levels: SelectOptions<TextOptionProps>
+  setLanguageFilter(text: string): unknown
+  languages: SelectOptions<TextOptionProps>
+  downloadFilename: string
+  type: string
 }
 
 export const Resource: FC<ResourceProps> = ({
   mainLayoutProps,
-  resourceCardProps,
   mainColumnItems,
   sideColumnItems,
+
+  contentType,
 }) => {
-  const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
+  // const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
 
-  const resourCard: AddonItem = {
-    Item: () => (
-      <ResourceCard
-        {...resourceCardProps}
-        isEditing={isEditing}
-        toggleIsEditing={toggleIsEditing}
-      />
-    ),
-    key: 'resource-card',
-  }
-
-  const updatedMainColumnItems = [resourCard, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
+  // const resourCard: AddonItem = {
+  //   Item: () => (
+  //     <ResourceCard
+  //       {...resourceCardProps}
+  //       isEditing={isEditing}
+  //       toggleIsEditing={toggleIsEditing}
+  //     />
+  //   ),
+  //   key: 'resource-card',
+  // }
 
   const contributorCard = {
     Item: () => <ContributorCard {...ContributorCardStoryProps} />,
@@ -71,21 +122,21 @@ export const Resource: FC<ResourceProps> = ({
           // download={downloadFilename}
         >
           <SecondaryButton>
-            {/* {contentType === 'file' ? ( */}
-            <>
-              <InsertDriveFile />
-              {/* <Trans> */}
-              Download file
-              {/* </Trans> */}
-            </>
-            {/* ) : ( */}
-            <>
-              <Link />
-              {/* <Trans> */}
-              Open link
-              {/* </Trans> */}
-            </>
-            {/* )} */}
+            {contentType === 'file' ? (
+              <>
+                <InsertDriveFile />
+                {/* <Trans> */}
+                Download file
+                {/* </Trans> */}
+              </>
+            ) : (
+              <>
+                <Link />
+                {/* <Trans> */}
+                Open link
+                {/* </Trans> */}
+              </>
+            )}
           </SecondaryButton>
         </a>
       </Card>
@@ -97,6 +148,9 @@ export const Resource: FC<ResourceProps> = ({
     (item): item is AddonItem => !!item,
   )
 
+  const updatedMainColumnItems = [contributorCard, ...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
+  )
   return (
     <MainLayout {...mainLayoutProps}>
       {/* {modals} {snackbars} */}

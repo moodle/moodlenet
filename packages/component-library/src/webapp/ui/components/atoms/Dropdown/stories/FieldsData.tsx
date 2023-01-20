@@ -1,10 +1,10 @@
+import { ReactComponent as ByIcon } from '../../../../assets/icons/license/by.svg'
+import { ReactComponent as CcIcon } from '../../../../assets/icons/license/cc.svg'
+import { ReactComponent as NcIcon } from '../../../../assets/icons/license/nc.svg'
+import { ReactComponent as NdIcon } from '../../../../assets/icons/license/nd.svg'
+import { ReactComponent as SaIcon } from '../../../../assets/icons/license/sa.svg'
+import { ReactComponent as ZeroIcon } from '../../../../assets/icons/license/zero.svg'
 import { getYearList } from '../../../../helpers/utilities.js'
-import { ReactComponent as ByIcon } from '../../../static/icons/license/by.svg'
-import { ReactComponent as CcIcon } from '../../../static/icons/license/cc.svg'
-import { ReactComponent as NcIcon } from '../../../static/icons/license/nc.svg'
-import { ReactComponent as NdIcon } from '../../../static/icons/license/nd.svg'
-import { ReactComponent as SaIcon } from '../../../static/icons/license/sa.svg'
-import { ReactComponent as ZeroIcon } from '../../../static/icons/license/zero.svg'
 import { TextOptionProps } from '../Dropdown.js'
 
 export const by = <ByIcon style={{ width: '20px' }} />

@@ -15,7 +15,7 @@
 // import defaultBackground from '../../../assets/img/default-background.svg'
 // import { ResourceFormValues } from '../../pages/Resource/Resource.js'
 // import './ResourceCard.scss'
-
+export {};
 // export type ResourceCardPropsControlled = Omit<ResourceCardProps, 'isEditing' | 'toggleIsEditing'>
 // export type ResourceCardProps = {
 //   form: ReturnType<typeof useFormik<ResourceFormValues>>
@@ -28,7 +28,6 @@
 //   isFollowing?: boolean
 //   toggleIsEditing(): unknown
 // }
-
 // export const ResourceCard: FC<ResourceCardProps> = ({
 //   form,
 //   isEditing,
@@ -39,48 +38,39 @@
 //   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
 //   const shouldShowErrors = !!form.submitCount
 //   const [, /* _isShowingSmallCard */ setIsShowingSmallCard] = useState<boolean>(false)
-
 //   const setIsShowingSmallCardHelper = () => {
 //     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
 //   }
-
 //   useLayoutEffect(() => {
 //     window.addEventListener('resize', setIsShowingSmallCardHelper)
 //     return () => {
 //       window.removeEventListener('resize', setIsShowingSmallCardHelper)
 //     }
 //   }, [])
-
 //   const uploadBackgroundRef = useRef<HTMLInputElement>(null)
 //   const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
 //     e.stopPropagation()
 //     uploadBackgroundRef.current?.click()
 //   }
-
 //   const uploadAvatarRef = useRef<HTMLInputElement>(null)
 //   const selectAvatar = (e: React.MouseEvent<HTMLElement>) => {
 //     e.stopPropagation()
 //     uploadAvatarRef.current?.click()
 //   }
-
 //   const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) =>
 //     form.setFieldValue('backgroundImage', e.currentTarget.files?.item(0))
-
 //   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
 //     form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
-
 //   const [backgroundUrl] = useImageUrl(/* form.values.backgroundImage */ null, defaultBackground)
 //   const background = {
 //     backgroundImage: 'url("' + backgroundUrl + '")',
 //     backgroundSize: 'cover',
 //   }
-
 //   const [avatarUrl] = useImageUrl(/* form.values.avatarImage */ null, defaultAvatar)
 //   const avatar = {
 //     backgroundImage: 'url("' + avatarUrl + '")',
 //     backgroundSize: 'cover',
 //   }
-
 //   const editButton = (
 //     <div className="edit-save">
 //       {isEditing ? (
@@ -101,7 +91,6 @@
 //       )}
 //     </div>
 //   )
-
 //   const title = isEditing ? (
 //     <InputTextField
 //       className="display-name underline"
@@ -120,7 +109,6 @@
 //       {form.values.displayName}
 //     </div>
 //   )
-
 //   const description = isEditing ? (
 //     <InputTextField
 //       textAreaAutoSize
@@ -141,11 +129,8 @@
 //       {form.values.description}
 //     </div>
 //   )
-
 //   const updatedTopItems = canEdit && <div className="top-items">{editButton}</div>
-
 //   const updatedTitleItems = [title]
-
 //   const baseSubtitleItems = isEditing
 //     ? [
 //         <span key="edit-location">
@@ -181,17 +166,13 @@
 //           {form.values.siteUrl}
 //         </a>,
 //       ]
-
 //   const updatedSubtitleItems = [...baseSubtitleItems]
-
 //   const cardHeader = (
 //     <div className="resource-card-header" key="card-header">
 //       <div className="title">{updatedTitleItems}</div>
-
 //       <div className={`subtitle ${isEditing ? 'edit' : ''}`}>{updatedSubtitleItems}</div>
 //     </div>
 //   )
-
 //   const editAvatarButton = isEditing && [
 //     <input
 //       ref={uploadAvatarRef}
@@ -209,7 +190,6 @@
 //       key="edit-avatar-btn"
 //     />,
 //   ]
-
 //   const editBackgroundButton = isEditing && [
 //     <input
 //       ref={uploadBackgroundRef}
@@ -227,9 +207,7 @@
 //       onClick={selectBackground}
 //     />,
 //   ]
-
 //   const updatedBottomItems = <div className="buttons"></div>
-
 //   const updatedContentItems = [updatedTopItems, cardHeader, description, updatedBottomItems]
 //   return (
 //     <div className="resource-card" key="resource-card">
@@ -281,3 +259,4 @@
 //     </div>
 //   )
 // }
+//# sourceMappingURL=ResourceCard.js.map

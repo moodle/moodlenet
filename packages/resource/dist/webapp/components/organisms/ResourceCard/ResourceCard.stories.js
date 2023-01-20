@@ -1,7 +1,7 @@
 // import { ComponentMeta } from '@storybook/react'
 // import { ResourceCard } from './ResourceCard.js'
 // import { useResourceCardStoryProps } from './stories-props.js'
-
+export {};
 // const meta: ComponentMeta<typeof ResourceCard> = {
 //   title: 'Molecules/ResourceCard',
 //   component: ResourceCard,
@@ -17,7 +17,6 @@
 //     ),
 //   ],
 // }
-
 // export const LoggedOut = () => {
 //   const props = useResourceCardStoryProps({
 //     props: {
@@ -27,7 +26,6 @@
 //   })
 //   return <ResourceCard {...props} />
 // }
-
 // export const LoggedIn = () => {
 //   const props = useResourceCardStoryProps({
 //     props: {
@@ -37,7 +35,6 @@
 //   })
 //   return <ResourceCard {...props} />
 // }
-
 // export const Owner = () => {
 //   const props = useResourceCardStoryProps({
 //     props: {
@@ -49,7 +46,6 @@
 //   })
 //   return <ResourceCard {...props} />
 // }
-
 // export const Editing = () => {
 //   const props = useResourceCardStoryProps({
 //     props: {
@@ -73,7 +69,6 @@
 // //   })
 // //   return <ResourceCard {...props} />
 // // }
-
 // // export const Admin = () => {
 // //   const props = useResourceCardStoryProps({
 // //     props: {
@@ -83,5 +78,5 @@
 // //   })
 // //   return <ResourceCard {...props} />
 // // }
-
 // export default meta
+//# sourceMappingURL=ResourceCard.stories.js.map

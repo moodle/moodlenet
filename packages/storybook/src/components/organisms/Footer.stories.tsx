@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import { MainFooter, MainFooterProps } from '@moodlenet/react-app/ui'
-import PoweredByMoodleNet from '../../../public/powered-by-moodlenet.svg'
+import PoweredByMoodleNet from '../../assets/logos/powered-by-moodlenet.svg'
 
 const meta: ComponentMeta<typeof MainFooter> = {
   title: 'Organisms/Footer',
