@@ -8,7 +8,7 @@
 // import { ResourceCardProps } from './ResourceCard.js'
 // // import { people } from '../../../../../helpers/factories'
 // // import { fileExceedsMaxUploadSize, people, randomIntFromInterval } from '@moodlenet/component-library/ui.mjs'
-
+export {};
 // const maxUploadSize = 1024 * 1024 * 50
 // export const resourceStoriesValidationSchema: SchemaOf<ResourceFormValues> = object({
 //   avatarImage: mixed()
@@ -35,7 +35,6 @@
 //   siteUrl: string().url().optional(),
 //   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 // })
-
 // export const useResourceCardStoryProps = (overrides?: {
 //   editFormValues?: Partial<ResourceFormValues>
 //   props?: Partial<ResourceCardProps>
@@ -87,3 +86,4 @@
 //     ...overrides?.props,
 //   }
 // }
+//# sourceMappingURL=stories-props.js.map

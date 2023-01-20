@@ -6,44 +6,42 @@ import {
   FormikErrors,
   FormikState,
   FormikTouched,
-  useFormik,
 } from 'formik'
-import { useMemo } from 'react'
-import { hasNoValue } from '../../src/webapp/helpers/data.js'
 export type SubmitForm<Values> = FormikConfig<Values>['onSubmit']
-type FormikInputAttrs<Values> = {
-  [ValueName in keyof Values]: { name: ValueName; value?: Values[ValueName] }
-}
-export const formikInputAttrs = <Values>(values: Values) =>
-  Object.entries(values).reduce<FormikInputAttrs<Values>>(
-    (collect, [name, value]) => ({
-      ...collect,
-      [name]: {
-        name,
-        ...(value instanceof File || hasNoValue(value)
-          ? null
-          : {
-              value,
-            }),
-      },
-    }),
-    {} as any,
-  )
+// type FormikInputAttrs<Values> = {
+//   [ValueName in keyof Values]: { name: ValueName; value?: Values[ValueName] }
+// }
+// export const formikInputAttrs = <Values>(values: Values) =>
+//   Object.entries(values).reduce<FormikInputAttrs<Values>>(
+//     (collect, [name, value]) => ({
+//       ...collect,
+//       [name]: {
+//         name,
+//         ...(value instanceof File || hasNoValue(value)
+//           ? null
+//           : {
+//               value,
+//             }),
+//       },
+//     }),
+//     {} as any,
+//   )
 
-export const useFormikInputAttrs = <Values>(values: Values) =>
-  useMemo(() => formikInputAttrs(values), [values])
+// export const useFormikInputAttrs = <Values>(values: Values) =>
+//   useMemo(() => formikInputAttrs(values), [values])
 
-export type FormikBag<Values = {}> = readonly [FormikHandle<Values>, FormikInputAttrs<Values>]
-export const useFormikBag = <Values>(config: FormikConfig<Values>) => {
-  const formik = useFormik(config)
-  const s_formik = formik as FormikHandle<Values>
-  const inputAttrs = useFormikInputAttrs(s_formik.values)
-  const bag = useMemo<FormikBag<Values>>(() => [s_formik, inputAttrs], [s_formik, inputAttrs])
-  // console.log(['*', s_formik, inputAttrs, formik, bag])
-  return useMemo(() => [formik, bag] as const, [formik, bag])
-}
+// export type FormikBag<Values = {}> = readonly [FormikHandle<Values>, FormikInputAttrs<Values>]
+// export const useFormikBag = <Values>(config: FormikConfig<Values>) => {
+//   const formik = useFormik(config)
+//   const s_formik = formik as FormikHandle<Values>
+//   const inputAttrs = useFormikInputAttrs(s_formik.values)
+//   const bag = useMemo<FormikBag<Values>>(() => [s_formik, inputAttrs], [s_formik, inputAttrs])
+//   // console.log(['*', s_formik, inputAttrs, formik, bag])
+//   return useMemo(() => [formik, bag] as const, [formik, bag])
+// }
 
-export interface FormikHandle<Values = {}> {
+export interface FormikHandle<Values = Record<string, unknown>> {
+  // export interface FormikHandle<Values = {}> {
   initialValues: Values
   initialErrors: FormikErrors<unknown>
   initialTouched: FormikTouched<unknown>
