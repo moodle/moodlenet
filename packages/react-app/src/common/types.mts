@@ -58,3 +58,13 @@ export type WebUserData = {
   email?: string
   isAdmin: boolean
 }
+
+export type AssetInfo = {
+  location: string | File
+  credits?: Credits | null
+}
+
+export type Credits = {
+  owner: { url: string; name: string }
+  provider?: { name: string; url: string }
+}

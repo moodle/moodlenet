@@ -31,3 +31,12 @@ export const randomIntFromInterval = (min: number, max: number) => {
 
 export const fileExceedsMaxUploadSize = (size: number, max: number | null) =>
   max === null ? false : size > max
+
+export const getYearList = (startYear: number): string[] => {
+  const currentYear = new Date().getFullYear()
+  const years = []
+  while (startYear <= currentYear) {
+    years.push((startYear++).toString())
+  }
+  return years.reverse()
+}
