@@ -1,5 +1,3 @@
-import { OverallCardStories } from '@moodlenet/react-app/stories'
-import { OverallCard } from '@moodlenet/react-app/ui'
 import { ResourceProps, useResourceCardStoryProps } from '@moodlenet/resource/ui'
 
 // const editForm: ResourceFormValues = {
@@ -27,14 +25,9 @@ export const useResourceStoryProps = (overrides?: {
     // editFormValues: overrides?.editFormValues,
   })
 
-  const overallCard = {
-    Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
-    key: 'overall-card',
-  }
-
   return {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
-    sideColumnItems: [overallCard],
+    sideColumnItems: [],
     resourceCardProps: ResourceCardStoryProps,
     // editForm: ResourceCardStoryProps.editForm,
     // sendEmailForm: useFormik<{ text: string }>({

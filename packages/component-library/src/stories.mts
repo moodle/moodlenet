@@ -1,6 +1,7 @@
 // @index(['./**/*.stories.tsx'], f => `export * as ${f.name.replace('.stories','Stories')} from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * as CardStories from './webapp/ui/components/atoms/Card/Card.stories.js'
 export * as ColorpickerStories from './webapp/ui/components/atoms/Colorpicker/Colorpicker.stories.js'
+export * as DropdownStories from './webapp/ui/components/atoms/Dropdown/stories/Dropdown.stories.js'
 export * as FileUploaderStories from './webapp/ui/components/atoms/FileUploader/FileUploader.stories.js'
 export * as FloatingMenuStories from './webapp/ui/components/atoms/FloatingMenu/FloatingMenu.stories.js'
 export * as InputTextFieldStories from './webapp/ui/components/atoms/InputTextField/InputTextField.stories.js'
