@@ -12,6 +12,13 @@ export type UsersProps = {
   }[]
   search(str: string): unknown
 }
+export type UserTypeProps = {
+  key: string
+  displayName: string
+  email: string
+  userTypes: string[]
+}
+
 
 export const UsersMenu: AddonItem = {
   Item: () => <span>Users</span>,
