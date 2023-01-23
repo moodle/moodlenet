@@ -5,6 +5,11 @@ import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-s
 import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-settings.svg'
 import './Users.scss'
 
+export type UsersProps = {
+  users: User[]
+  toggleUserType(key: string, userType: string): void
+}
+
 export type UserTypeListProps = {
   users: User[]
   toggleUserType(key: string, userType: string): void
@@ -15,7 +20,6 @@ export type UserTypeProps = {
   email: string
   userTypes: string[]
 }
-
 
 export const UsersMenu: AddonItem = {
   Item: () => <span>Users</span>,
