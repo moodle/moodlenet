@@ -13,17 +13,6 @@ export type UsersProps = {
   }[]
 }
 
-export type UserTypeListProps = {
-  users: User[]
-  toggleUserType(key: string, userType: string): void
-}
-export type UserTypeProps = {
-  key: string
-  displayName: string
-  email: string
-  userTypes: string[]
-}
-
 export const UsersMenu: AddonItem = {
   Item: () => <span>Users</span>,
   key: 'menu-Users',

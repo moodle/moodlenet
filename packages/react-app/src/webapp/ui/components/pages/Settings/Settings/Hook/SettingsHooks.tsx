@@ -7,6 +7,7 @@ import { GeneralContainer } from '../../General/GeneralContainer.js'
 import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { SettingsItem, SettingsProps } from '../Settings.js'
 import { MainContext } from '../../../../../../context/MainContext.mjs'
+import { UsersContainer } from '../../Users/UsersContainer.js'
 
 const localSettingsItems: SettingsItem[] = [
   {
@@ -20,6 +21,10 @@ const localSettingsItems: SettingsItem[] = [
   {
     Content: { Item: AdvancedContainer, key: `@moodlenet/react-app/advanced-settings` },
     Menu: { Item: () => <span>Advanced</span>, key: `@moodlenet/react-app/advanced-settings` },
+  },
+  {
+    Content: { Item: UsersContainer, key: `@moodlenet/react-app/users-types` },
+    Menu: { Item: () => <span>User Types </span>, key: `@moodlenet/react-app/users-types` },
   },
 ]
 
