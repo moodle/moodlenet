@@ -1,6 +1,5 @@
 import { AddonItem, Card, Searchbox } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { User } from '../../../../../../common/types.mjs'
 import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-settings-outlined.svg'
 import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-settings.svg'
@@ -11,6 +10,7 @@ export type UsersProps = {
     user: User
     toggleIsAdmin(): unknown
   }[]
+  search(str: string): unknown
 }
 
 export const UsersMenu: AddonItem = {
@@ -23,46 +23,33 @@ const Row: FC<{
   // editUser: (User: User) =>  void | Promise<any>
   toggleIsAdmin: () => unknown | Promise<unknown>
 }> = ({ /* editUser */ toggleIsAdmin, user }) => {
-  const form = useFormik<User>({
-    initialValues: user,
-    // validate:yup,
-    onSubmit: (/* values */) => {
-      ///
-      // return editUser(values)
-    },
-  })
+  // const form = useFormik<User>({
+  //   initialValues: user,
+  //   // validate:yup,
+  //   onSubmit: (/* values */) => {
+  //     ///
+  //     // return editUser(values)
+  //   },
+  // })
+
   return (
     <tr>
-      <td>{form.values.displayName}</td>
-      <td>{form.values.email}</td>
+      <td>{user.displayName}</td>
+      <td>{user.email}</td>
       <td className="user-types">
         <abbr
           onClick={toggleIsAdmin}
-          className={`admin ${form.values.isAdmin ? 'on' : 'off'}`}
+          className={`admin ${user.isAdmin ? 'on' : 'off'}`}
           title="Admin"
         >
-          {form.values.isAdmin ? <AdminIconOn /> : <AdminIconOff />}
+          {user.isAdmin ? <AdminIconOn /> : <AdminIconOff />}
         </abbr>
       </td>
     </tr>
   )
 }
 
-export const Users: FC<UsersProps> = ({ users }) => {
-  // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
-  const [searchText, setSearchText] = useState('')
-  const [currentUsers, setCurrentUsers] = useState(users)
-
-  useEffect(() => {
-    setCurrentUsers(
-      users.filter(
-        ({ user }) =>
-          user.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchText.toLowerCase()) ||
-          searchText === '',
-      ),
-    )
-  }, [searchText, users])
+export const Users: FC<UsersProps> = ({ users, search }) => {
   return (
     <div className="users" key="Users">
       <Card className="column">
@@ -76,8 +63,8 @@ export const Users: FC<UsersProps> = ({ users }) => {
         <Searchbox
           key="users-searchbox"
           placeholder="Search by display name or email"
-          searchText={searchText}
-          setSearchText={setSearchText}
+          searchText={''}
+          setSearchText={search}
         />
         <table className="users-table">
           <thead>
@@ -88,7 +75,7 @@ export const Users: FC<UsersProps> = ({ users }) => {
             </tr>
           </thead>
           <tbody>
-            {currentUsers?.map(({ user, toggleIsAdmin }, i) /* user */ => {
+            {users.map(({ user, toggleIsAdmin }, i) /* user */ => {
               return <Row user={user} toggleIsAdmin={toggleIsAdmin} key={i} />
             })}
           </tbody>

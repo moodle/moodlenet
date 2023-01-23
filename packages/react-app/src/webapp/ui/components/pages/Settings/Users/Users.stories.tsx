@@ -1,9 +1,11 @@
 import { action } from '@storybook/addon-actions'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SettingsItem } from '../Settings/Settings.js'
 import { Users, UsersMenu, UsersProps } from './Users.js'
 
-export const useUsersStoryProps = (overrides?: { props?: Partial<UsersProps> }): UsersProps => {
+export const useUsersStoryProps = (overrides?: {
+  props?: Partial<UsersProps>
+}): Omit<UsersProps, 'search'> => {
   return {
     users: [
       {
@@ -43,7 +45,24 @@ export const useUsersStoryProps = (overrides?: { props?: Partial<UsersProps> }):
   }
 }
 
-const UsersItem: FC = () => <Users {...useUsersStoryProps()} />
+const UsersItem: FC = () => {
+  // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
+  const [searchText, setSearchText] = useState('')
+  const [currentUsers, setCurrentUsers] = useState(useUsersStoryProps().users)
+
+  useEffect(() => {
+    setCurrentUsers(
+      currentUsers.filter(
+        ({ user }) =>
+          user.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+          searchText === '',
+      ),
+    )
+  }, [searchText, currentUsers])
+
+  return <Users users={currentUsers} search={setSearchText} />
+}
 export const useElements = (): SettingsItem => {
   return {
     Menu: UsersMenu,
