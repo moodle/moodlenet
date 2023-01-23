@@ -7,31 +7,38 @@ export const useUsersStoryProps = (overrides?: { props?: Partial<UsersProps> }):
   return {
     users: [
       {
-        key: '1',
-        displayName: 'Maria Anders',
-        email: 'maria.anders@school.edu',
-        userTypes: [],
+        user: {
+          displayName: 'Maria Anders',
+          email: 'maria.anders@school.edu',
+          isAdmin: false,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
       },
       {
-        key: '1',
-        displayName: 'Josef Stevenson',
-        email: 'josef.stevenson@university.edu',
-        userTypes: ['Admin'],
+        user: {
+          displayName: 'Josef Stevenson',
+          email: 'josef.stevenson@university.edu',
+          isAdmin: true,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
       },
       {
-        key: '1',
-        displayName: 'Veronica Velazquez',
-        email: 'vero.velazquez@next-school.edu',
-        userTypes: ['Admin'],
+        user: {
+          displayName: 'Veronica Velazquez',
+          email: 'vero.velazquez@next-school.edu',
+          isAdmin: true,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
       },
       {
-        key: '1',
-        displayName: 'Alfred Nobel Tschekov',
-        email: 'alfrednt@old-university.edu',
-        userTypes: [],
+        user: {
+          displayName: 'Alfred Nobel Tschekov',
+          email: 'alfrednt@old-university.edu',
+          isAdmin: false,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
       },
     ],
-    toggleUserType: action('Toggeling user type'),
     ...overrides?.props,
   }
 }
