@@ -24,6 +24,7 @@ import {
 import { ContributorCardStories } from '@moodlenet/resource/stories'
 import { Resource, ResourceFormValues, ResourceProps } from '@moodlenet/resource/ui'
 import { FormikConfig, useFormik } from 'formik'
+import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,
@@ -141,6 +142,7 @@ export const ResourceStoryProps = (overrides?: {
       toRemove && action('Remove ')(toRemove)
     },
   })
+
   useEffect(
     () =>
       action('changed addToCollectionsForm.values')(
@@ -150,19 +152,21 @@ export const ResourceStoryProps = (overrides?: {
   )
 
   return {
+    mainLayoutProps: MainLayoutLoggedOutStoryProps,
     form,
     resourceId: 'qjnwglkd69io-sports',
     resourceUrl: 'resource.url',
     downloadFilename: 'resource.pdf',
     type: 'pdf',
-    headerPageTemplateProps: {
-      headerPageProps: HeaderPageLoggedInStoryProps,
-      isAuthenticated: true,
-      mainPageWrapperProps: {
-        userAcceptsPolicies: null,
-        cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-      },
-    },
+    // headerPageTemplateProps: {
+    //   headerPageProps: HeaderPageLoggedInStoryProps,
+    //   isAuthenticated: true,
+    //   mainPageWrapperProps: {
+    //     userAcceptsPolicies: null,
+    //     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+    //   },
+    // },
+
     isAuthenticated: true,
     isOwner: false,
     isAdmin: false,
