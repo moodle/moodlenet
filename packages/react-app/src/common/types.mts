@@ -37,8 +37,7 @@ export type AppearanceData = {
 }
 
 export type User = {
-  key: string
   displayName: string
   email: string
-  userTypes: string[]
+  isAdmin: boolean
 }

@@ -1,4 +1,5 @@
 import { AddonItem, Card, Searchbox } from '@moodlenet/component-library'
+import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { User } from '../../../../../../common/types.mjs'
 import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-settings-outlined.svg'
@@ -6,8 +7,10 @@ import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-se
 import './Users.scss'
 
 export type UsersProps = {
-  users: User[]
-  toggleUserType(key: string, userType: string): void
+  users: {
+    user: User
+    toggleIsAdmin(): unknown
+  }[]
 }
 
 export type UserTypeListProps = {
@@ -26,7 +29,37 @@ export const UsersMenu: AddonItem = {
   key: 'menu-Users',
 }
 
-export const Users: FC<UserTypeListProps> = ({ users, toggleUserType }) => {
+const Row: FC<{
+  user: User
+  // editUser: (User: User) =>  void | Promise<any>
+  toggleIsAdmin: () => unknown | Promise<unknown>
+}> = ({ /* editUser */ toggleIsAdmin, user }) => {
+  const form = useFormik<User>({
+    initialValues: user,
+    // validate:yup,
+    onSubmit: (/* values */) => {
+      ///
+      // return editUser(values)
+    },
+  })
+  return (
+    <tr>
+      <td>{form.values.displayName}</td>
+      <td>{form.values.email}</td>
+      <td className="user-types">
+        <abbr
+          onClick={toggleIsAdmin}
+          className={`admin ${form.values.isAdmin ? 'on' : 'off'}`}
+          title="Admin"
+        >
+          {form.values.isAdmin ? <AdminIconOn /> : <AdminIconOff />}
+        </abbr>
+      </td>
+    </tr>
+  )
+}
+
+export const Users: FC<UsersProps> = ({ users }) => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   const [searchText, setSearchText] = useState('')
   const [currentUsers, setCurrentUsers] = useState(users)
@@ -34,7 +67,7 @@ export const Users: FC<UserTypeListProps> = ({ users, toggleUserType }) => {
   useEffect(() => {
     setCurrentUsers(
       users.filter(
-        user =>
+        ({ user }) =>
           user.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
           user.email.toLowerCase().includes(searchText.toLowerCase()) ||
           searchText === '',
@@ -66,22 +99,8 @@ export const Users: FC<UserTypeListProps> = ({ users, toggleUserType }) => {
             </tr>
           </thead>
           <tbody>
-            {currentUsers?.map(({ displayName, email, key, userTypes }) /* user */ => {
-              return (
-                <tr key={key}>
-                  <td>{displayName}</td>
-                  <td>{email}</td>
-                  <td className="user-types">
-                    <abbr
-                      onClick={() => toggleUserType(key, 'Admin')}
-                      className={`admin ${userTypes.indexOf('Admin') > -1 ? 'on' : 'off'}`}
-                      title="Admin"
-                    >
-                      {userTypes.indexOf('Admin') > -1 ? <AdminIconOn /> : <AdminIconOff />}
-                    </abbr>
-                  </td>
-                </tr>
-              )
+            {currentUsers?.map(({ user, toggleIsAdmin }, i) /* user */ => {
+              return <Row user={user} toggleIsAdmin={toggleIsAdmin} key={i} />
             })}
           </tbody>
         </table>
