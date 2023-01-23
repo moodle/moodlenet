@@ -23,3 +23,15 @@ Nella cartelle plugin proviamo i singoli plugin come progetti npm, nei loro file
 yarn bs
 
 questo comando grazie a lerna, permette di installare le dipendenze in tutti i sotto progetti presenti nella cartella packages.
+
+new gen 2023----------------------------
+
+docker run -e ARANGO_NO_AUTH=1 -p 8529:8529 --name=mn3arango arangodb
+ docker start mn3arango
+  npm  run dev-install-backend prova
+ npm  run dev-start-backend prova
+  npm  run dev-start-webapp
+
+
+  devi aggiungere il container al registry 
+  packages/react-app/src/webapp/ui/components/pages/Settings/Settings/Hook/SettingsHooks.tsx riga 11

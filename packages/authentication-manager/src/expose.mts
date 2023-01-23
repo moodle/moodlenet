@@ -5,12 +5,12 @@ export type UserTypeApiProps = {
   userId: string
   displayName: string
   email: string
-  userTypes: string[]
+  isAdmin: boolean
 }
 
 const fakeUsersData: UserTypeApiProps[] = [
-  { userId: 'aaaa', displayName: 'aaaa', email: 'aaa@aa.com', userTypes: ['a', 'b'] },
-  { userId: 'bbbb', displayName: 'bbbb', email: 'bbbb@aa.com', userTypes: ['a', 'c'] },
+  { userId: 'aaaa', displayName: 'aaaa', email: 'aaa@aa.com', isAdmin: true},
+  { userId: 'bbbb', displayName: 'bbbb', email: 'bbbb@aa.com', isAdmin: false},
 ]
 
 export const expose = await shell.expose({
@@ -32,13 +32,12 @@ export const expose = await shell.expose({
         })
       },
     },
-    changeUserType: {
+    toggleIsAdmin: {
       guard: () => void 0,
-      fn: async (req: { key: string; userType: string }) => {
-        const aUser = fakeUsersData.find(user => user.userId === req.key)
+      fn: async (req: { userId: string }) => {
+        const aUser = fakeUsersData.find(user => user.userId === req.userId)
         if (!aUser) return
-        const idx = aUser?.userTypes.findIndex(utype => utype === req.userType)
-        idx < 0 ? aUser?.userTypes.push(req.userType) : aUser?.userTypes.splice(idx, 1)
+        aUser.isAdmin = !aUser.isAdmin
         return { success: true }
       },
     },
