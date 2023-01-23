@@ -19,7 +19,6 @@ export type UserTypeProps = {
   userTypes: string[]
 }
 
-
 export const UsersMenu: AddonItem = {
   Item: () => <span>Users</span>,
   key: 'menu-Users',
