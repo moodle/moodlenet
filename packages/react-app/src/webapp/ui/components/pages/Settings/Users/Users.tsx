@@ -5,6 +5,10 @@ import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-s
 import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-settings.svg'
 import './Users.scss'
 
+/**
+ search, filter non devono stare 
+ */
+
 export type UsersProps = {
   users: {
     user: User
