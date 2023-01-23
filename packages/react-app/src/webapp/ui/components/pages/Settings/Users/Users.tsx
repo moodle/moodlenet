@@ -5,17 +5,24 @@ import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-s
 import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-settings.svg'
 import './Users.scss'
 
-export type UsersProps = {
+export type UserTypeListProps = {
   users: User[]
   toggleUserType(key: string, userType: string): void
 }
+export type UserTypeProps = {
+  key: string
+  displayName: string
+  email: string
+  userTypes: string[]
+}
+
 
 export const UsersMenu: AddonItem = {
   Item: () => <span>Users</span>,
   key: 'menu-Users',
 }
 
-export const Users: FC<UsersProps> = ({ users, toggleUserType }) => {
+export const Users: FC<UserTypeListProps> = ({ users, toggleUserType }) => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   const [searchText, setSearchText] = useState('')
   const [currentUsers, setCurrentUsers] = useState(users)
