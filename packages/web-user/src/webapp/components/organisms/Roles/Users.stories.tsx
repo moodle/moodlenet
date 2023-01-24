@@ -1,6 +1,6 @@
+import { SettingsItem } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import { FC, useEffect, useState } from 'react'
-import { SettingsItem } from '../Settings/Settings.js'
 import { Users, UsersMenu, UsersProps } from './Users.js'
 
 export const useUsersStoryProps = (overrides?: {

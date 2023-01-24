@@ -1,8 +1,8 @@
 import { AddonItem, Card, Searchbox } from '@moodlenet/component-library'
+import { User } from '@moodlenet/react-app/common'
 import { FC } from 'react'
-import { User } from '../../../../../../common/types.mjs'
-import { ReactComponent as AdminIconOff } from '../../../../assets/icons/admin-settings-outlined.svg'
-import { ReactComponent as AdminIconOn } from '../../../../assets/icons/admin-settings.svg'
+import { ReactComponent as AdminIconOff } from '../../../assets/icons/admin-settings-outlined.svg'
+import { ReactComponent as AdminIconOn } from '../../../assets/icons/admin-settings.svg'
 import './Users.scss'
 
 /**

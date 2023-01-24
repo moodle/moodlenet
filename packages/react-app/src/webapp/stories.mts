@@ -7,5 +7,4 @@ export * as MinimalisticHeaderStories from './ui/components/organisms/Header/Min
 export * as AdvancedStories from './ui/components/pages/Settings/Advanced/Advanced.stories.js'
 export * as AppearanceStories from './ui/components/pages/Settings/Appearance/Appearance.stories.js'
 export * as GeneralStories from './ui/components/pages/Settings/General/General.stories.js'
-export * as UsersStories from './ui/components/pages/Settings/Users/Users.stories.js'
 // @endindex
