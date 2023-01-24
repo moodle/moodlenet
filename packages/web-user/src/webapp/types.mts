@@ -1,3 +1,3 @@
-import { MyPkgContext } from '../types.mjs'
+import { MyPkgContext } from '../server/types.mjs'
 
 export type MainContextT = MyPkgContext

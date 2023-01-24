@@ -1,7 +1,7 @@
 import { UserId } from '@moodlenet/authentication-manager'
 import { GlyphDefsMap, GlyphDescriptorsMap } from '@moodlenet/content-graph'
-import { ProfileFormValues } from './common/types.mjs'
-export * from './common/types.mjs'
+import { ProfileFormValues } from '../common/types.mjs'
+export * from '../common/types.mjs'
 
 export type ProfileGlyphs = GlyphDefsMap<{
   Profile: {

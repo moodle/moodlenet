@@ -1,5 +1,7 @@
 import type { CollectionDefOpt, CollectionDefOptMap } from '@moodlenet/arangodb'
+import { ensureCollections, query } from '@moodlenet/arangodb'
 import { getApiCtxClientSession, UserId } from '@moodlenet/authentication-manager'
+import kvStore from './kvStore.mjs'
 import {
   edgeLinkIdentifiers2edgeLink,
   extractGlyphMeta,
@@ -8,6 +10,7 @@ import {
   idOf,
   keyOf,
 } from './pub-lib.mjs'
+import shell from './shell.mjs'
 import {
   ContentGraphGlyphs,
   CreateEdgeOpts,
@@ -26,9 +29,6 @@ import {
   NodeGlyph,
   WithMaybeKey,
 } from './types.mjs'
-import kvStore from './kvStore.mjs'
-import { ensureCollections, query } from '@moodlenet/arangodb'
-import shell from './shell.mjs'
 
 export const contentGraphGlyphs = await shell.call(ensureGlyphs)<ContentGraphGlyphs>({
   defs: {

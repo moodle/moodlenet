@@ -1,8 +1,4 @@
-import type {
-  ClientSession,
-  SessionToken,
-  UserData,
-} from '../../../../authentication-manager/dist/init.mjs'
+import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
 
 import type { NodeGlyph } from '@moodlenet/content-graph'
 import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
@@ -18,10 +14,10 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MainContext } from './MainContext.mjs'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
+import { MainContext } from './MainContext.mjs'
 // implementare la gestione della lista utenti, dove vengono assegnati il gruppo
 
 // da dare pasto a alle  form non importa quali

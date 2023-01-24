@@ -1,6 +1,6 @@
 import type { expose as auth } from '@moodlenet/authentication-manager'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
-import type { expose as me } from '../expose.mjs'
+import type { expose as me } from '../server/expose.mjs'
 
 export type ProfileFormValues = {
   displayName: string
