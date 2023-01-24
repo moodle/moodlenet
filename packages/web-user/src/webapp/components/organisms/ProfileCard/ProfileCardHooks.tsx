@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react'
 import { AuthCtx } from '@moodlenet/react-app/web-lib'
 import { useFormik } from 'formik'
-import { ProfileCardPropsControlled } from './ProfileCard.js'
-import { fileExceedsMaxUploadSize } from '../../../helpers/utilities.js'
+import { useContext, useEffect, useState } from 'react'
 import { mixed, object, SchemaOf, string } from 'yup'
+import { ProfileFormValues } from '../../../../server/types.mjs'
+import { fileExceedsMaxUploadSize } from '../../../helpers/utilities.js'
 import { MainContext } from '../../../MainContext.js'
-import { ProfileFormValues } from '../../../../types.mjs'
+import { ProfileCardPropsControlled } from './ProfileCard.js'
 
 const maxUploadSize = 1024 * 1024 * 50
 export const validationSchema: SchemaOf<ProfileFormValues> = object({

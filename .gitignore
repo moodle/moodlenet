@@ -19,3 +19,4 @@ build-storybook.log*
 
 /tsconfig.tsbuildinfo
 /.husky
+/packages/*/dist

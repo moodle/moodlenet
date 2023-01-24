@@ -11,7 +11,7 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
-import { ProfileFormValues } from '../../../../types.mjs'
+import { ProfileFormValues } from '../../../../server/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
 import './ProfileCard.scss'

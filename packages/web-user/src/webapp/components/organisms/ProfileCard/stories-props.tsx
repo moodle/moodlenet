@@ -2,7 +2,7 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { ProfileFormValues } from '../../../../types.mjs'
+import { ProfileFormValues } from '../../../../server/types.mjs'
 import { people } from '../../../helpers/factories.js'
 import { fileExceedsMaxUploadSize, randomIntFromInterval } from '../../../helpers/utilities.js'
 import { ProfileCardProps } from './ProfileCard.js'
