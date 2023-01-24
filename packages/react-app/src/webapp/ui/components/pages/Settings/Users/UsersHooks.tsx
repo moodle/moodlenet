@@ -17,8 +17,8 @@ export const useUsersProps = (): UsersProps => {
   )
 
   useEffect(() => {
-    use.auth.rpc('getUsers')({ search: '' }).then(setUsersCache)
-  }, [use.auth])
+    searchUser('')
+  }, [searchUser])
 
   const userProps = useMemo<UsersProps>(() => {
     const users: UsersProps['users'] = usersCache.map(({ userId, displayName, email, isAdmin }) => {
