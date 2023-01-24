@@ -1,11 +1,11 @@
-import { UserData } from './store/types.mjs'
+import { User } from './store/types.mjs'
 export * from './store/types.mjs'
 
 export type SessionToken = string
 
 export type ClientSession = UserClientSession | RootClientSession
 export type UserClientSession = {
-  user: UserData
+  user: User
   root?: false
 }
 export type RootClientSession = {

@@ -1,15 +1,16 @@
 import { query } from '@moodlenet/arangodb'
 import assert from 'assert'
 import shell from './shell.mjs'
-import { ProviderId, User, UserId } from './store/types.mjs'
+import { ProviderId, User, UserData, UserId } from './store/types.mjs'
 
-export async function getByProviderId(pId: ProviderId): Promise<User | undefined> {
+export async function getByProviderId(providerId: ProviderId): Promise<User | undefined> {
   const m_user = (
     await shell.call(query)({
       q: `FOR u in User
-              FILTER u.providerId == ${JSON.stringify(pId)}
+              FILTER u.providerId == @providerId
               LIMIT 1
             RETURN u`,
+      bindVars: { providerId },
     })
   ).resultSet[0]
 
@@ -19,7 +20,8 @@ export async function getByProviderId(pId: ProviderId): Promise<User | undefined
 export async function getById(id: UserId): Promise<User | undefined> {
   const m_user = (
     await shell.call(query)({
-      q: `RETURN DOCUMENT('User/${id}')`,
+      q: `RETURN DOCUMENT(@_id)`,
+      bindVars: { _id: _id(id) },
     })
   ).resultSet[0]
 
@@ -29,20 +31,35 @@ export async function getById(id: UserId): Promise<User | undefined> {
 export async function delUser(id: UserId) {
   const m_user = (
     await shell.call(query)({
-      q: `REMOVE User/${id} FROM User
+      q: `REMOVE @id FROM User
             RETURN OLD`,
+      bindVars: { id: _id(id) },
     })
   ).resultSet[0]
 
   return _user(m_user)
 }
 
-export async function create(newUser: Omit<User, 'id' | 'created'>): Promise<User> {
+export async function modUser(id: UserId, modUser: Partial<User>) {
+  const m_user = (
+    await shell.call(query)({
+      q: `UPDATE @id WITH @modUser FROM User
+            RETURN OLD`,
+      bindVars: { id: _id(id), modUser },
+    })
+  ).resultSet[0]
+
+  return _user(m_user)
+}
+
+export async function create(newUser: Omit<UserData, 'created'>): Promise<User> {
   const m_user = (
     await shell.call(query)({
       q: `
-        INSERT ${JSON.stringify(newUser)} INTO User
+        let newUser = MERGE(@newUser, { created: DATE_ISO8601(DATE_NOW()) })
+        INSERT newUser INTO User
         RETURN $NEW`,
+      bindVars: { newUser },
     })
   ).resultSet[0]
   const user = _user(m_user)
@@ -50,14 +67,18 @@ export async function create(newUser: Omit<User, 'id' | 'created'>): Promise<Use
   return user
 }
 
-function _user(user: any): User | undefined {
-  return user
+function _user(userDoc: any): User | undefined {
+  return userDoc
     ? {
-        id: user._key,
-        created: user.created,
-        providerId: user.providerId,
-        // displayName: user.displayName,
-        // avatarUrl: user.avatarUrl,
+        id: userDoc._key,
+        created: userDoc.created,
+        providerId: userDoc.providerId,
+        isAdmin: userDoc.isAdmin,
       }
     : undefined
+}
+
+function _id(_of: string | User) {
+  const key = 'string' === typeof _of ? _of : _of.id
+  return `User/${key}`
 }

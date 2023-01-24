@@ -1,11 +1,11 @@
-import { SessionToken, getSessionToken, registerUser } from '@moodlenet/authentication-manager'
+import { getSessionToken, registerUser, SessionToken } from '@moodlenet/authentication-manager'
 import * as crypto from '@moodlenet/crypto'
-import { createProfile } from '@moodlenet/web-user'
 import { send } from '@moodlenet/email-service'
+import { createProfile } from '@moodlenet/web-user'
 import assert from 'assert'
+import shell from './shell.mjs'
 import * as store from './store.mjs'
 import { ConfirmEmailPayload, SignupReq } from './types.mjs'
-import shell from './shell.mjs'
 
 export async function login({
   email,
@@ -70,12 +70,15 @@ export async function confirm({
     return { success: false, msg: 'user registered' }
   }
 
-  const user = await store.create({ email, password })
+  const myUser = await store.create({ email, password })
 
-  const authRes = await shell.call(registerUser)({ uid: user.id })
+  const authRes = await shell.call(registerUser)({
+    uid: myUser.id,
+    isAdmin: false,
+  })
 
   if (!authRes.success) {
-    await store.delUser(user.id)
+    await store.delUser(myUser.id)
     const { msg, success } = authRes
     return { msg, success }
   }
