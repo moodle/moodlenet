@@ -3,10 +3,12 @@ import {
   AuthCtx,
   ReactAppContext,
   ReactAppMainComponent,
+  SettingsSectionItem,
   usePkgContext,
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../types.mjs'
+import { UsersContainer } from '../ui.mjs'
 import * as avatarmenuItem from './components/organisms/Header/Header.js'
 import { MainContext } from './MainContext.js'
 import Router from './Router.js'
@@ -20,6 +22,11 @@ const avatarmenuItemReg: HeaderMenuItemRegItem = {
   Position: avatarmenuItem.position,
 }
 
+const settingsSectionItem: SettingsSectionItem = {
+  Content: UsersContainer,
+  Menu: () => <span>User Types </span>,
+}
+
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const pkgCtx = usePkgContext<MyPkgContext>()
   const { clientSessionData } = useContext(AuthCtx)
@@ -28,6 +35,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     condition: !!clientSessionData?.myUserNode, // TODO: should have chance to check myUserNode against GlyphDescriptor Profile !
   })
   registries.routes.useRegister(Router)
+  registries.settingsSections.useRegister(settingsSectionItem)
 
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = { ...pkgCtx }

@@ -44,9 +44,6 @@ export * from './ui/components/pages/Settings/Header.js'
 export * from './ui/components/pages/Settings/Settings/Hook/SettingsContainer.js'
 export * from './ui/components/pages/Settings/Settings/Hook/SettingsHooks.js'
 export * from './ui/components/pages/Settings/Settings/Settings.js'
-export * from './ui/components/pages/Settings/Users/Users.js'
-export * from './ui/components/pages/Settings/Users/UsersContainer.js'
-export * from './ui/components/pages/Settings/Users/UsersHooks.js'
 // @endindex
 // @index(['./ui/helpers/**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from './ui/helpers/factories.js'

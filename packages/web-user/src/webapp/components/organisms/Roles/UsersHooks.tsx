@@ -1,7 +1,7 @@
 import { UserTypeApiProps } from '@moodlenet/authentication-manager'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { UsersProps } from '@moodlenet/react-app/ui'
-import { MainContext } from '../../../../../context/MainContext.mjs'
+import { MainContext } from '../../../MainContext.js'
+import { UsersProps } from './Users.js'
 
 export const useUsersProps = (): UsersProps => {
   const { use } = useContext(MainContext)
