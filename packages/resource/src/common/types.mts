@@ -1,4 +1,4 @@
-import { Visibility } from '@moodlenet/component-library'
+import { FollowTag, Visibility } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
 
 export type NewResourceFormValues = {
@@ -22,11 +22,8 @@ export type NewResourceFormValues = {
 export type ResourceType = {
   id: string
   url: string
-  isAuthenticated: boolean
   numLikes: number
-  liked: boolean
-  bookmarked: boolean
-  // tags: FollowTag[]
+  tags: FollowTag[]
   contentUrl: string
   resourceFormat: string
   contentType: 'link' | 'file'

@@ -13,6 +13,7 @@ import {
   LanguagesTextOptionProps,
   LevelTextOptionProps,
   MonthTextOptionProps,
+  OptionItemProp,
   TypeTextOptionProps,
   YearsProps,
 } from '@moodlenet/component-library'
@@ -21,6 +22,7 @@ import {
 //   LicenseIconTextOptionProps,
 //   VisbilityIconTextOptionProps,
 // } from '../NewResource/UploadResource/storiesData'
+import { TagListStory } from '@moodlenet/react-app/ui'
 import { ContributorCardStories } from '@moodlenet/resource/stories'
 import { Resource, ResourceFormValues, ResourceProps } from '@moodlenet/resource/ui'
 import { FormikConfig, useFormik } from 'formik'
@@ -99,7 +101,17 @@ export const resourceFormValues: ResourceFormValues = {
   type: TypeTextOptionProps[2]!.value,
 }
 
-export const ResourceStoryProps = (overrides?: {
+export const CollectionTextOptionProps: OptionItemProp[] = [
+  { label: 'Education', value: 'Education' },
+  { label: 'Biology', value: 'Biology' },
+  { label: 'Algebra', value: 'Algebra' },
+  { label: 'Phycology', value: 'Phycology' },
+  { label: 'Phylosophy', value: 'Phylosophy' },
+  { label: 'Sociology', value: 'Sociology' },
+  { label: 'English Literature', value: 'English Literature' },
+]
+
+export const useResourceStoryProps = (overrides?: {
   props?: Partial<ResourceProps>
   formConfig?: Partial<FormikConfig<ResourceFormValues>>
   formValues?: Partial<ResourceFormValues>
@@ -114,12 +126,12 @@ export const ResourceStoryProps = (overrides?: {
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
       category: CategoriesTextOptionProps[2]!.value,
-      language: LanguagesTextOptionProps[2]!.value,
-      level: LevelTextOptionProps[2]!.value,
-      license: LicenseIconTextOptionProps[2]!.value,
-      month: MonthTextOptionProps[8]!.value,
+      language: LanguagesTextOptionProps[2]?.value,
+      level: LevelTextOptionProps[2]?.value,
+      license: LicenseIconTextOptionProps[2]?.value,
+      month: MonthTextOptionProps[8]?.value,
       year: YearsProps[20],
-      type: TypeTextOptionProps[2]!.value,
+      type: TypeTextOptionProps[2]?.value,
       image: {
         location:
           'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
@@ -168,6 +180,7 @@ export const ResourceStoryProps = (overrides?: {
     // },
 
     isAuthenticated: true,
+    canEdit: false,
     isOwner: false,
     isAdmin: false,
     liked: false,
@@ -235,50 +248,50 @@ export const ResourceStoryProps = (overrides?: {
   }
 }
 
-const headerPageTemplatePropsUnauth: HeaderPageTemplateProps = {
-  isAuthenticated: false,
-  headerPageProps: {
-    headerProps: {
-      ...HeaderLoggedOutStoryProps,
-      me: null,
-    },
-  },
-  mainPageWrapperProps: {
-    userAcceptsPolicies: null,
-    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-  },
-}
-export const LinkLoggedOut = () => {
-  const props = ResourceStoryProps({
-    props: {
-      headerPageTemplateProps: headerPageTemplatePropsUnauth,
-      isAuthenticated: false,
-    },
-  })
+// const headerPageTemplatePropsUnauth: HeaderPageTemplateProps = {
+//   isAuthenticated: false,
+//   headerPageProps: {
+//     headerProps: {
+//       ...HeaderLoggedOutStoryProps,
+//       me: null,
+//     },
+//   },
+//   mainPageWrapperProps: {
+//     userAcceptsPolicies: null,
+//     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+//   },
+// }
+// export const LinkLoggedOut = () => {
+//   const props = ResourceStoryProps({
+//     props: {
+//       headerPageTemplateProps: headerPageTemplatePropsUnauth,
+//       isAuthenticated: false,
+//     },
+//   })
 
-  return <Resource {...props} />
-}
+//   return <Resource {...props} />
+// }
 
-export const FileLoggedOut = () => {
-  const props = ResourceStoryProps({
-    props: {
-      headerPageTemplateProps: headerPageTemplatePropsUnauth,
-      isAuthenticated: false,
-      contentType: 'file',
-      contentUrl: 'https://picsum.photos/200/100',
-      resourceFormat: 'Video',
-    },
-  })
-  return <Resource {...props} />
-}
+// export const FileLoggedOut = () => {
+//   const props = ResourceStoryProps({
+//     props: {
+//       headerPageTemplateProps: headerPageTemplatePropsUnauth,
+//       isAuthenticated: false,
+//       contentType: 'file',
+//       contentUrl: 'https://picsum.photos/200/100',
+//       resourceFormat: 'Video',
+//     },
+//   })
+//   return <Resource {...props} />
+// }
 
 export const LoggedIn = () => {
-  const props = ResourceStoryProps({})
+  const props = useResourceStoryProps({})
   return <Resource {...props} />
 }
 
 export const Owner = () => {
-  const props = ResourceStoryProps({
+  const props = useResourceStoryProps({
     props: {
       isOwner: true,
       contentType: 'file',
@@ -291,7 +304,7 @@ export const Owner = () => {
 }
 
 export const Admin = () => {
-  const props = ResourceStoryProps({
+  const props = useResourceStoryProps({
     props: {
       isOwner: true,
       isAdmin: true,

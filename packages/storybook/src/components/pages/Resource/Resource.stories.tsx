@@ -1,4 +1,4 @@
-import { Resource, useResourceCardStoryProps } from '@moodlenet/resource/ui'
+import { Resource } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useResourceStoryProps } from './stories-props.js'
@@ -27,9 +27,7 @@ export const LoggedOut: ResourceStory = () => {
   const props = useResourceStoryProps({
     props: {
       mainLayoutProps: MainLayoutLoggedOutStoryProps,
-      resourceCardProps: useResourceCardStoryProps({
-        props: { isAuthenticated: false },
-      }),
+      isAuthenticated: false,
     },
   })
   //     {
@@ -80,9 +78,7 @@ export const LoggedOut: ResourceStory = () => {
 export const LoggedIn: ResourceStory = () => {
   const props = useResourceStoryProps({
     props: {
-      resourceCardProps: useResourceCardStoryProps({
-        props: { isAuthenticated: true },
-      }),
+      isAuthenticated: true,
     },
   })
   return <Resource {...props} />
@@ -91,42 +87,8 @@ export const LoggedIn: ResourceStory = () => {
 export const Owner: ResourceStory = () => {
   const props = useResourceStoryProps({
     props: {
-      resourceCardProps: useResourceCardStoryProps(
-        { props: { isOwner: true, canEdit: true, isApproved: true } },
-
-        //   collectionCardPropsList: [
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //   ],
-        //   resourceCardPropsList: [
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //   ],
-      ),
-    },
-  })
-  return <Resource {...props} />
-}
-
-export const Unapproved: ResourceStory = () => {
-  const props = useResourceStoryProps({
-    props: {
-      resourceCardProps: useResourceCardStoryProps({
-        props: { isOwner: true, isApproved: false },
-      }),
+      isOwner: true,
+      canEdit: true,
       //   collectionCardPropsList: [
       //     CollectionCardOwnerPrivateStoryProps(
       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
@@ -148,11 +110,41 @@ export const Unapproved: ResourceStory = () => {
       //     ResourceCardOwnerPrivateStoryProps,
       //     ResourceCardOwnerStoryProps,
       //   ],
-      //   showAccountApprovedSuccessAlert: true,
     },
   })
   return <Resource {...props} />
 }
+
+// export const Unapproved: ResourceStory = () => {
+//   const props = useResourceStoryProps({
+//     props: {
+//       isOwner: true,
+//       //   collectionCardPropsList: [
+//       //     CollectionCardOwnerPrivateStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //     CollectionCardOwnerStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //     CollectionCardOwnerStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //     CollectionCardOwnerPrivateStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //   ],
+//       //   resourceCardPropsList: [
+//       //     ResourceCardOwnerPrivateStoryProps,
+//       //     ResourceCardOwnerStoryProps,
+//       //     ResourceCardOwnerStoryProps,
+//       //     ResourceCardOwnerPrivateStoryProps,
+//       //     ResourceCardOwnerStoryProps,
+//       //   ],
+//       //   showAccountApprovedSuccessAlert: true,
+//     },
+//   })
+//   return <Resource {...props} />
+// }
 
 export const Activated: ResourceStory = () => {
   const props = useResourceStoryProps({
