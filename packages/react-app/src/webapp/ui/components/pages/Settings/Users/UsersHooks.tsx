@@ -12,7 +12,6 @@ export const useUsersProps = (): UsersProps => {
     (str: string) => {
       use.auth.rpc('getUsers')({ search: str }).then(setUsersCache)
       setSearch(str)
-      console.log('search ', str)
     },
     [use.auth],
   )
