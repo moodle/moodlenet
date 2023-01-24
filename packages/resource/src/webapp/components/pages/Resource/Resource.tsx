@@ -1,23 +1,39 @@
-import { InsertDriveFile, Link } from '@material-ui/icons'
+import {
+  Bookmark,
+  BookmarkBorder,
+  DeleteOutline,
+  Edit,
+  Favorite,
+  FavoriteBorder,
+  InsertDriveFile,
+  Link,
+  Save,
+  Share,
+} from '@material-ui/icons'
 import {
   AddonItem,
   Card,
-  FollowTag,
+  FloatingMenu,
   IconTextOptionProps,
+  InputTextField,
+  Loading,
   OptionItemProp,
   PrimaryButton,
   SecondaryButton,
+  Snackbar,
+  TertiaryButton,
   TextOptionProps,
 } from '@moodlenet/component-library'
 import {
   FormikHandle,
+  getTagList,
   MainLayout,
   MainLayoutProps,
   SelectOptions,
   SelectOptionsMulti,
 } from '@moodlenet/react-app/ui'
-import { FC } from 'react'
-import { NewResourceFormValues } from '../../../../common/types.mjs'
+import { FC, useState } from 'react'
+import { NewResourceFormValues, ResourceType } from '../../../../common/types.mjs'
 import {
   ContributorCard,
   ContributorCardProps,
@@ -34,29 +50,28 @@ export type ResourceProps = {
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
 
-  resourceId: string
-  resourceUrl: string
   isAuthenticated: boolean
+  // isApproved: boolean
   isOwner: boolean
   isAdmin: boolean
+  canEdit: boolean
   autoImageAdded: boolean
   canSearchImage: boolean
-  numLikes: number
-  collections: SelectOptionsMulti<OptionItemProp>
   liked: boolean
   bookmarked: boolean
-  tags: FollowTag[]
-  contributorCardProps: ContributorCardProps
   form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
-  contentUrl: string
+
   toggleLikeForm: FormikHandle
   toggleBookmarkForm: FormikHandle
   deleteResourceForm?: FormikHandle
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-  reportForm?: FormikHandle<{ comment: string }>
-  resourceFormat: string
-  contentType: 'link' | 'file'
+
+  // reportForm?: FormikHandle<{ comment: string }>
+
+  // tags: FollowTag[]
+  contributorCardProps: ContributorCardProps
+  collections: SelectOptionsMulti<OptionItemProp>
 
   licenses: SelectOptions<IconTextOptionProps>
   setCategoryFilter(text: string): unknown
@@ -69,15 +84,50 @@ export type ResourceProps = {
   languages: SelectOptions<TextOptionProps>
   downloadFilename: string
   type: string
-}
+} & ResourceType
 
 export const Resource: FC<ResourceProps> = ({
   mainLayoutProps,
   mainColumnItems,
   sideColumnItems,
 
+  // id: resourceId,
+  url: resourceUrl,
   contentType,
+  // resourceFormat,
+  // contentUrl,
+  numLikes,
+  tags,
+
+  isAuthenticated,
+  // canEdit,
+  isAdmin,
+  isOwner,
+
+  liked,
+  bookmarked,
 }) => {
+  const [isEditing, setIsEditing] = useState<boolean>(
+    // canSearchImage && autoImageAdded
+    false,
+  )
+  // const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+  //   const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
+  //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
+  //     useState<boolean>(false)
+  //   const [isAddingToCollection, setIsAddingToCollection] =
+  //     useState<boolean>(false)
+  //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
+  //     useState<boolean>(false)
+  //   const [isToDelete, setIsToDelete] = useState<boolean>(false)
+  //   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
+  //   const backupImage: AssetInfo | null | undefined = useMemo(
+  //     () => getBackupImage(resourceId),
+  //     [resourceId]
+  //   )
+  //   const [isReporting, setIsReporting] = useState<boolean>(false)
+  //   const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
+  const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   // const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
 
   // const resourCard: AddonItem = {
@@ -90,6 +140,214 @@ export const Resource: FC<ResourceProps> = ({
   //   ),
   //   key: 'resource-card',
   // }
+
+  const handleOnEditClick = () => {
+    setIsEditing(true)
+  }
+
+  const copyUrl = () => {
+    navigator.clipboard.writeText(resourceUrl)
+    setShowUrlCopiedAlert(false)
+    setTimeout(() => {
+      setShowUrlCopiedAlert(true)
+    }, 100)
+  }
+
+  const mainResourceCard = {
+    Item: () => (
+      <Card className="main-resource-card" hideBorderWhenSmall={true}>
+        <div className="resource-header">
+          <div className="type-and-actions">
+            <span className="resource-type">
+              <div className="resource">Resource</div>
+              <div
+                className="type"
+                style={
+                  {
+                    // background: typeColor,
+                  }
+                }
+              >
+                {/* {typeName} */}
+              </div>
+            </span>
+            <div className="actions">
+              {!isEditing && (
+                <div
+                  className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${
+                    liked && 'liked'
+                  }`}
+                  // onClick={isAuthenticated && !isOwner ? toggleLikeForm.submitForm : () => {}}
+                >
+                  {liked ? <Favorite /> : <FavoriteBorder />}
+                  <span>{numLikes}</span>
+                </div>
+              )}
+              {isAuthenticated && !isEditing && (
+                <div
+                  className={`bookmark ${bookmarked && 'bookmarked'}`}
+                  // onClick={toggleBookmarkForm.submitForm}
+                >
+                  {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+                </div>
+              )}
+              {isAuthenticated && !isOwner && (
+                <FloatingMenu
+                  className="more-button"
+                  menuContent={[
+                    <div key="share-btn" tabIndex={0} onClick={copyUrl}>
+                      <Share />
+                      Share
+                    </div>,
+                    // <div tabIndex={0} onClick={() => setIsReporting(true)}>
+                    //   <Flag />
+                    //   <Trans>Report</Trans>
+                    // </div>,
+                  ]}
+                  hoverElement={<TertiaryButton className={`more`}>...</TertiaryButton>}
+                />
+              )}
+              {(isAdmin || isOwner) && (
+                <div className="edit-save">
+                  {isEditing ? (
+                    <PrimaryButton
+                      // className={`${form.isSubmitting ? 'loading' : ''}`}
+                      color="green"
+                      // onClick={handleOnSaveClick}
+                    >
+                      <div
+                        className="loading"
+                        style={
+                          {
+                            // visibility: form.isSubmitting ? 'visible' : 'hidden',
+                          }
+                        }
+                      >
+                        <Loading color="white" />
+                      </div>
+                      <div
+                        className="label"
+                        style={
+                          {
+                            // visibility: form.isSubmitting ? 'hidden' : 'visible',
+                          }
+                        }
+                      >
+                        <Save />
+                      </div>
+                    </PrimaryButton>
+                  ) : (
+                    <SecondaryButton onClick={handleOnEditClick} color="orange">
+                      <Edit />
+                    </SecondaryButton>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          {isOwner ? (
+            <InputTextField
+              name="name"
+              textarea
+              textAreaAutoSize
+              displayMode
+              className="title underline"
+              // value={form.values.name}
+              edit={isEditing}
+              // onChange={form.handleChange}
+              style={
+                {
+                  // pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+                }
+              }
+              // error={isEditing && shouldShowErrors && form.errors.name}
+            />
+          ) : (
+            <div className="title">{/* {form.values.name} */}</div>
+          )}
+          {tags.length > 0 && <div className="tags scroll">{getTagList(tags, 'medium')}</div>}
+        </div>
+        {/* {(form.values.image || isEditing) && (
+          <div className="image-container">
+            {contentType === 'link' ? (
+              <a href={contentUrl} target="_blank" rel="noreferrer">
+                {imageDiv}
+              </a>
+            ) : (
+              <>{imageDiv}</>
+            )}
+            {getImageCredits(form.values.image)}
+            {isEditing && !form.isSubmitting && (
+              <div className="image-actions">
+                <input
+                  ref={uploadImageRef}
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.gif"
+                  onChange={uploadImage}
+                  hidden
+                />
+                {canSearchImage && (
+                  <RoundButton
+                    className={`search-image-button ${form.isSubmitting ? 'disabled' : ''} ${
+                      autoImageAdded ? 'highlight' : ''
+                    }`}
+                    type="search"
+                    abbrTitle={`Search for an image`}
+                    onClick={() => setIsSearchingImage(true)}
+                  />
+                )}
+                <RoundButton
+                  className={`change-image-button ${form.isSubmitting ? 'disabled' : ''}`}
+                  type="upload"
+                  abbrTitle={`Upload an image`}
+                  onClick={selectImage}
+                />
+                <RoundButton
+                  className={`delete-image ${form.isSubmitting ? 'disabled' : ''}`}
+                  type="cross"
+                  abbrTitle={`Delete image`}
+                  onClick={deleteImage}
+                />
+              </div>
+            )}
+          </div>
+        )} */}
+        {isOwner ? (
+          <InputTextField
+            className="description underline"
+            name="description"
+            textarea
+            textAreaAutoSize
+            displayMode
+            edit={isEditing}
+            // value={form.values.description}
+            // onChange={form.handleChange}
+            style={
+              {
+                // pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+              }
+            }
+            // error={isEditing && form.errors.description}
+          />
+        ) : (
+          <div className="description">{/* {form.values.description} */}</div>
+        )}
+        {isEditing && (
+          <div className="bottom">
+            <SecondaryButton
+              color="red"
+              onHoverColor="fill-red"
+              // onClick={() => setIsToDelete(true)}
+            >
+              <DeleteOutline />
+            </SecondaryButton>
+          </div>
+        )}
+        {/* <div className="comments"></div> */}
+      </Card>
+    ),
+    key: 'main-resource-card',
+  }
 
   const contributorCard = {
     Item: () => <ContributorCard {...ContributorCardStoryProps} />,
@@ -148,12 +406,23 @@ export const Resource: FC<ResourceProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const updatedMainColumnItems = [contributorCard, ...(mainColumnItems ?? [])].filter(
+  const updatedMainColumnItems = [mainResourceCard, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,
+  )
+
+  const snackbars = (
+    <>
+      {showUrlCopiedAlert && (
+        <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+          Copied to clipoard
+        </Snackbar>
+      )}
+    </>
   )
   return (
     <MainLayout {...mainLayoutProps}>
-      {/* {modals} {snackbars} */}
+      {/* {modals}*/}
+      {snackbars}
       <div className="resource">
         <div className="content">
           <div className="main-column">

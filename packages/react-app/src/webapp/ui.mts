@@ -2,6 +2,7 @@
 export * from './ui/components/atoms/HeaderTitle/HeaderTitle.js'
 export * from './ui/components/atoms/HeaderTitle/HeaderTitleHooks.js'
 export * from './ui/components/elements/link.js'
+export * from './ui/components/elements/tags.js'
 export * from './ui/components/layout/MainLayout/MainLayout.js'
 export * from './ui/components/layout/MainLayout/MainLayoutContainer.js'
 export * from './ui/components/layout/MainLayout/MainLayoutHooks.mjs'
