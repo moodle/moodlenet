@@ -16,6 +16,14 @@ export const useUsersProps = (): UsersProps => {
     use.auth.rpc('getUsers')({ search }).then(setUsersCache)
   }, [search, use.auth])
 
+  const runSearch = useCallback(
+    (str: string) => {
+      setSearch(str)
+      load()
+    },
+    [load],
+  )
+
   useEffect(() => {
     use.auth.rpc('getUsers')({ search: '' }).then(setUsersCache)
   }, [use.auth])
@@ -32,8 +40,9 @@ export const useUsersProps = (): UsersProps => {
     })
     return {
       users,
+      search: runSearch,
     }
-  }, [load, use.auth.rpc, usersCache])
+  }, [load, runSearch, use.auth.rpc, usersCache])
 
   return userProps
 }
