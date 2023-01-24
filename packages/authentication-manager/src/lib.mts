@@ -1,9 +1,9 @@
 import { std } from '@moodlenet/crypto'
 import assert from 'assert'
+import { env } from './env.mjs'
 import shell from './shell.mjs'
 import * as store from './store.mjs'
-import type { ClientSession, User, SessionToken } from './types.mjs'
-import { env } from './env.mjs'
+import type { ClientSession, SessionToken, User } from './types.mjs'
 
 export type GetRootSessionTokenResp =
   | { success: false }
@@ -25,8 +25,10 @@ export async function getRootSessionToken({
 
 export async function registerUser({
   uid,
+  isAdmin,
 }: {
   uid: string
+  isAdmin: boolean
 }): Promise<
   { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
 > {
@@ -36,6 +38,7 @@ export async function registerUser({
       pkgName: pkgId.name,
       uid,
     },
+    isAdmin,
   })
   const sessionToken = await encryptClientSession({ user })
 

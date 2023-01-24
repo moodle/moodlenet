@@ -10,5 +10,6 @@
   "bracketSpacing": true,
   "useTabs": false,
   "quoteProps": "consistent",
-  "proseWrap": "never"
+  "proseWrap": "never",
+  "plugins": ["prettier-plugin-organize-imports"]
 }
