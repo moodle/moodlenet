@@ -8,20 +8,13 @@ export const useUsersProps = (): UsersProps => {
   const [search, setSearch] = useState<string>('')
   const [usersCache, setUsersCache] = useState<UserTypeApiProps[]>([])
 
-  // const searchUser = useCallback((_search: string) => {
-  //   setSearch(_search)
-  // }, [])
-
-  const load = useCallback(() => {
-    use.auth.rpc('getUsers')({ search }).then(setUsersCache)
-  }, [search, use.auth])
-
-  const runSearch = useCallback(
+  const searchUser = useCallback(
     (str: string) => {
+      use.auth.rpc('getUsers')({ search: str }).then(setUsersCache)
       setSearch(str)
-      load()
+      console.log('search ', str)
     },
-    [load],
+    [use.auth],
   )
 
   useEffect(() => {
@@ -31,7 +24,7 @@ export const useUsersProps = (): UsersProps => {
   const userProps = useMemo<UsersProps>(() => {
     const users: UsersProps['users'] = usersCache.map(({ userId, displayName, email, isAdmin }) => {
       const toggleIsAdmin = async () => {
-        use.auth.rpc.toggleIsAdmin({ userId }).then(() => load())
+        use.auth.rpc.toggleIsAdmin({ userId }).then(() => searchUser(search))
       }
       return {
         user: { displayName, email, isAdmin },
@@ -40,9 +33,9 @@ export const useUsersProps = (): UsersProps => {
     })
     return {
       users,
-      search: runSearch,
+      search: searchUser,
     }
-  }, [load, runSearch, use.auth.rpc, usersCache])
+  }, [search, searchUser, use.auth.rpc, usersCache])
 
   return userProps
 }
