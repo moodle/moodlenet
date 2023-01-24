@@ -3,7 +3,7 @@ import CopyPlugin from 'copy-webpack-plugin'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { createRequire } from 'module'
 import { resolve } from 'path'
-import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
+// import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 import { fileURLToPath } from 'url'
 import type { Configuration } from 'webpack'
 import webpack from 'webpack'
@@ -44,7 +44,7 @@ export async function getWp(
       './dist/webapp/index.js',
       ...(isDevServer ? [require.resolve('react-refresh/runtime')] : []),
     ],
-    devtool: 'eval-source-map', // isDevServer ? 'inline-source-map' : undefined,
+    devtool: isDevServer ? 'eval-source-map' : undefined,
     // devtool: 'source-map',
     context: resolve(__dirname, '..', '..', '..'),
     watch: isDevServer,
@@ -104,35 +104,37 @@ export async function getWp(
         },
     resolve: {
       cache: true,
-      extensions: ['.ts', '.mts', '.tsx', '.js', '.mjs', '.jsx'],
+      extensions: [/* '.ts', '.mts', '.tsx',  */ '.js', '.mjs', '.jsx'],
       //modules: [__dirname, 'node_modules'],
       alias,
       // fullySpecified: true,
-      plugins: [new ResolveTypeScriptPlugin({ includeNodeModules: true })],
+      plugins: [], //new ResolveTypeScriptPlugin({ includeNodeModules: true })],
     },
     experiments: {
       topLevelAwait: true,
     },
-    optimization: {
-      moduleIds: 'deterministic',
-      runtimeChunk: 'single',
-      splitChunks: {
-        cacheGroups: {
-          vendors: {
-            test: /node_modules\/(?!antd\/).*/,
-            name: 'vendors',
-            chunks: 'all',
+    optimization: isDevServer
+      ? undefined
+      : {
+          moduleIds: 'deterministic',
+          runtimeChunk: 'single',
+          splitChunks: {
+            cacheGroups: {
+              vendors: {
+                test: /node_modules\/(?!antd\/).*/,
+                name: 'vendors',
+                chunks: 'all',
+              },
+              // This can be your own design library.
+              // antd: {
+              //   test: /node_modules\/(antd\/).*/,
+              //   name: 'antd',
+              //   chunks: 'all',
+              // },
+            },
           },
-          // This can be your own design library.
-          // antd: {
-          //   test: /node_modules\/(antd\/).*/,
-          //   name: 'antd',
-          //   chunks: 'all',
-          // },
         },
-      },
-    },
-    cache: true,
+    cache: isDevServer,
     performance: {
       hints: 'warning',
       // Calculates sizes of gziped bundles.
