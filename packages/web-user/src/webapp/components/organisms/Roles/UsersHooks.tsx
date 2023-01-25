@@ -1,5 +1,5 @@
-import { UserTypeApiProps } from '@moodlenet/authentication-manager'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { UserTypeApiProps } from '../../../../common/types.mjs'
 import { MainContext } from '../../../MainContext.js'
 import { UsersProps } from './Users.js'
 
@@ -10,10 +10,10 @@ export const useUsersProps = (): UsersProps => {
 
   const searchUser = useCallback(
     (str: string) => {
-      use.auth.rpc('getUsers')({ search: str }).then(setUsersCache)
+      use.me.rpc['webapp/roles/searchUsers']({ search: str }).then(setUsersCache)
       setSearch(str)
     },
-    [use.auth],
+    [use.me],
   )
 
   useEffect(() => {
@@ -21,12 +21,12 @@ export const useUsersProps = (): UsersProps => {
   }, [searchUser])
 
   const userProps = useMemo<UsersProps>(() => {
-    const users: UsersProps['users'] = usersCache.map(({ userId, displayName, email, isAdmin }) => {
+    const users: UsersProps['users'] = usersCache.map(({ userId, title, email, isAdmin }) => {
       const toggleIsAdmin = async () => {
-        return use.auth.rpc.toggleIsAdmin({ userId }).then(() => searchUser(search))
+        return use.me.rpc['webapp/roles/toggleIsAdmin']({ userId }).then(() => searchUser(search))
       }
       return {
-        user: { displayName, email, isAdmin },
+        user: { title, email, isAdmin },
         toggleIsAdmin,
       }
     })
@@ -34,7 +34,7 @@ export const useUsersProps = (): UsersProps => {
       users,
       search: searchUser,
     }
-  }, [search, searchUser, use.auth.rpc, usersCache])
+  }, [search, searchUser, use.me.rpc, usersCache])
 
   return userProps
 }

@@ -1,7 +1,7 @@
-import { Route } from 'react-router-dom'
 import { Link } from '@moodlenet/react-app/ui'
 import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/web-lib'
-import { useEffect, useMemo, useState, useContext } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { Route } from 'react-router-dom'
 import { MyContext } from './Context.js'
 import HelloWorldPage from './HelloWorldPage.jsx'
 
@@ -25,12 +25,10 @@ const MainComponent = ({ children }) => {
 
   const [apiResponse, setApiResponse] = useState()
   useEffect(() => {
-    pkgCtx.use.me
-      .rpc('hello/world')({
-        stringParam: 'my string param',
-        numberParam: 100,
-      })
-      .then(setApiResponse)
+    pkgCtx.use.me.rpc['hello/world']({
+      stringParam: 'my string param',
+      numberParam: 100,
+    }).then(setApiResponse)
   }, [pkgCtx.use.me])
 
   const ctx = useMemo(() => ({ apiResponse }), [apiResponse])

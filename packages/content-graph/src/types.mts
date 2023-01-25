@@ -9,14 +9,14 @@ import type { UserId } from '@moodlenet/authentication-manager'
 // type DateString = string
 type WithDate<T> = T //& { date: DateString }
 export type ContentGraphGlyphs = GlyphDefsMap<{
-  Created: { kind: 'edge'; type: WithDate<{}> }
-  Updated: { kind: 'edge'; type: WithDate<{}> }
-  Deleted: { kind: 'edge'; type: WithDate<{}> }
+  Created: { kind: 'edge'; type: WithDate<Record<string, never>> }
+  Updated: { kind: 'edge'; type: WithDate<Record<string, never>> }
+  Deleted: { kind: 'edge'; type: WithDate<Record<string, never>> }
 }>
 
 export type GlyphDef<
   Kind extends CollectionKind = CollectionKind,
-  Type extends {} = {},
+  Type extends Record<string, unknown> = Record<string, unknown>,
 > = CollectionDef<Kind, Type>
 
 export type GlyphDefsMap<Defs extends Record<string, GlyphDef> = Record<string, GlyphDef>> = Defs
@@ -31,7 +31,7 @@ export type GlyphDefOptMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
 // export type GLYPHDESCTYPE_SYMBOL = typeof GLYPH_HANDLE_TYPE_SYMBOL
 export type GlyphDescriptor<
   Kind extends CollectionKind = CollectionKind,
-  _Type extends {} = {},
+  _Type extends Record<string, unknown> = Record<string, unknown>,
   // GlyphName extends string = string,
 > = {
   _type: string
@@ -71,7 +71,7 @@ export type GlyphIdentifier<
         }
     ))
 
-export type BaseGlyphMeta<GlyphDesc extends GlyphDescriptor> = GlyphDesc & {
+export type GlyphIdDescriptor<GlyphDesc extends GlyphDescriptor> = GlyphDesc & {
   _key: string
   _id: GlyphID
 } /* & WithCreatorId &  */
@@ -84,8 +84,9 @@ export type ContentNode = {
   //icon:Asset
   //image:Asset
 }
-export type NodeGlyphMeta<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
-  BaseGlyphMeta<GlyphDesc>
+export type NodeGlyphIdDescriptor<
+  GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>,
+> = GlyphIdDescriptor<GlyphDesc>
 
 export type EdgeLink = {
   _from: GlyphID
@@ -101,29 +102,31 @@ export type EdgeLinkType = {
   _fromType: string
   _toType: string
 }
-export type EdgeGlyphMeta<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
-  BaseGlyphMeta<GlyphDesc> & EdgeLinkType & EdgeLink
+export type EdgeGlyphIdDescriptor<
+  GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>,
+> = GlyphIdDescriptor<GlyphDesc> & EdgeLinkType & EdgeLink
 
 export type EdgeData<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
   GlyphDesc extends GlyphDescriptor<'edge', infer EdgeDataType> ? EdgeDataType : never
 /*  GlyphDesc[GLYPHDESCTYPE_SYMBOL]  */
 export type EdgeGlyph<GlyphDesc extends GlyphDescriptor<'edge'> = GlyphDescriptor<'edge'>> =
-  EdgeData<GlyphDesc> & EdgeGlyphMeta<GlyphDesc>
+  EdgeData<GlyphDesc> & EdgeGlyphIdDescriptor<GlyphDesc> & WithGlyphMeta
 
 export type NodeData<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
   GlyphDesc extends GlyphDescriptor<'node', infer NodeDataType> ? NodeDataType & ContentNode : never
 /*  GlyphDesc[GLYPHDESCTYPE_SYMBOL] & ContentNode */
 export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescriptor<'node'>> =
-  NodeData<GlyphDesc> & NodeGlyphMeta<GlyphDesc>
+  NodeData<GlyphDesc> & NodeGlyphIdDescriptor<GlyphDesc> & WithGlyphMeta
 
 export type Glyph = NodeGlyph | EdgeGlyph
 
 export type WithPerformerNodeIdentifier = { performerNode: GlyphIdentifier<'node'> }
-export type EditNodeOpts = {} //& WithPerformerNodeIdentifier
+export type EditNodeOpts = Record<string, never> //& WithPerformerNodeIdentifier
 export type CreateNodeOpts = { authenticableBy: { userId: UserId } } & WithPerformerNodeIdentifier
-export type CreateEdgeOpts = {} /* & WithPerformerIdentifier */
+export type CreateEdgeOpts = Record<string, never> /* & WithPerformerIdentifier */
 
-export type GlyphMeta = {}
+export type GlyphMeta = Record<string, unknown>
+export type WithGlyphMeta = { _meta: GlyphMeta }
 
 export type ContentGraphKVStore = {
   userId2NodeAssoc: {
@@ -135,3 +138,16 @@ export type ContentGraphKVStore = {
     }
   }
 }
+
+export type GlyphsMapOf<GlyphDescMap extends GlyphDescriptorsMap> = {
+  [name in keyof GlyphDescMap]: GlyphsOf<GlyphDescMap[name]>
+}
+
+export type GlyphsOf<GlyphDesc extends GlyphDescriptor> = GlyphDesc extends GlyphDescriptor<
+  'node',
+  infer Type
+>
+  ? NodeGlyph<GlyphDescriptor<'node', Type>>
+  : GlyphDesc extends GlyphDef<'edge', infer Type>
+  ? EdgeGlyph<GlyphDescriptor<'edge', Type>>
+  : never

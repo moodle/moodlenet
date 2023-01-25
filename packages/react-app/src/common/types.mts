@@ -37,7 +37,7 @@ export type AppearanceData = {
 }
 
 export type User = {
-  displayName: string
+  title: string
   email: string
   isAdmin: boolean
 }

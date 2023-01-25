@@ -1,20 +1,21 @@
 import { UserId } from '@moodlenet/authentication-manager'
-import { GlyphDefsMap, GlyphDescriptorsMap } from '@moodlenet/content-graph'
+import { GlyphDefsMap, GlyphDescriptorsMap, GlyphsMapOf } from '@moodlenet/content-graph'
 import { ProfileFormValues } from '../common/types.mjs'
 export * from '../common/types.mjs'
 
-export type ProfileGlyphs = GlyphDefsMap<{
+export type WebUserGlyphDefMap = GlyphDefsMap<{
   Profile: {
     kind: 'node'
-    type: { displayName: string; organizationName?: string; location?: string; siteUrl?: string }
+    type: { organizationName?: string; location?: string; siteUrl?: string }
   }
 }>
 
-export type ProfileGlyphDescriptors = GlyphDescriptorsMap<ProfileGlyphs>
+export type WebUserGlyphDescriptors = GlyphDescriptorsMap<WebUserGlyphDefMap>
+export type WebUserGlyphs = GlyphsMapOf<WebUserGlyphDescriptors>
 
 export type CreateRequest = {
   description?: string
-  displayName: string
+  title: string
   userId: UserId // dont confuse with GlyphID, this is from authentication-manager
 }
 
