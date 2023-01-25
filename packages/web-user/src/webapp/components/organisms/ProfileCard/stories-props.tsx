@@ -29,7 +29,7 @@ export const profileStoriesValidationSchema: SchemaOf<ProfileFormValues> = objec
         : true,
     )
     .optional(),
-  displayName: string().max(160).min(3).required(/* t */ `Please provide a display name`),
+  title: string().max(160).min(3).required(/* t */ `Please provide a display name`),
   location: string().optional(),
   organizationName: string().max(30).min(3).optional(),
   siteUrl: string().url().optional(),
@@ -73,7 +73,7 @@ export const useProfileCardStoryProps = (overrides?: {
       onSubmit: action('submit edit'),
       validationSchema: profileStoriesValidationSchema,
       initialValues: {
-        displayName: person ? person.displayName : '',
+        title: person ? person.title : '',
         description:
           'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
         organizationName: person && person.organization,

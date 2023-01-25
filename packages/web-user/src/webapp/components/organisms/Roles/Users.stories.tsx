@@ -10,7 +10,7 @@ export const useUsersStoryProps = (overrides?: {
     users: [
       {
         user: {
-          displayName: 'Maria Anders',
+          title: 'Maria Anders',
           email: 'maria.anders@school.edu',
           isAdmin: false,
         },
@@ -18,7 +18,7 @@ export const useUsersStoryProps = (overrides?: {
       },
       {
         user: {
-          displayName: 'Josef Stevenson',
+          title: 'Josef Stevenson',
           email: 'josef.stevenson@university.edu',
           isAdmin: true,
         },
@@ -26,7 +26,7 @@ export const useUsersStoryProps = (overrides?: {
       },
       {
         user: {
-          displayName: 'Veronica Velazquez',
+          title: 'Veronica Velazquez',
           email: 'vero.velazquez@next-school.edu',
           isAdmin: true,
         },
@@ -34,7 +34,7 @@ export const useUsersStoryProps = (overrides?: {
       },
       {
         user: {
-          displayName: 'Alfred Nobel Tschekov',
+          title: 'Alfred Nobel Tschekov',
           email: 'alfrednt@old-university.edu',
           isAdmin: false,
         },
@@ -54,7 +54,7 @@ const UsersItem: FC = () => {
     setCurrentUsers(
       currentUsers.filter(
         ({ user }) =>
-          user.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
+          user.title.toLowerCase().includes(searchText.toLowerCase()) ||
           user.email.toLowerCase().includes(searchText.toLowerCase()) ||
           searchText === '',
       ),

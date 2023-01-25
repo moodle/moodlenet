@@ -45,7 +45,7 @@ export async function signup(
   shell.call(send)({
     emailObj: {
       to: req.email,
-      text: `hey ${req.displayName} confirm your email with /.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+      text: `hey ${req.title} confirm your email with /.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
     },
   })
   return { success: true }
@@ -61,7 +61,7 @@ export async function confirm({
     return { success: false, msg: `invalid confirm token` }
   }
   const {
-    req: { displayName, email, password },
+    req: { title, email, password },
   } = confirmEmailPayload
 
   const mUser = await store.getByEmail(email)
@@ -84,7 +84,7 @@ export async function confirm({
   }
 
   await shell.call(createProfile)({
-    displayName,
+    title,
     userId: authRes.user.id,
   })
 

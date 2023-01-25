@@ -27,7 +27,7 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
         : true,
     )
     .optional(),
-  displayName: string().max(160).min(3).required(/* t */ `Please provide a display name`),
+  title: string().max(160).min(3).required(/* t */ `Please provide a display name`),
   location: string().optional(),
   organizationName: string().max(30).min(3).optional(),
   siteUrl: string().url().optional(),
@@ -44,13 +44,13 @@ export const useProfileCardProps = ({
   } = useContext(MainContext)
   const { clientSessionData } = useContext(AuthCtx)
 
-  const [profile, setProfile] = useState<ProfileFormValues>({} as any)
+  const [profile, setProfile] = useState<ProfileFormValues>({} as never)
 
   const form = useFormik<ProfileFormValues>({
-    async onSubmit({ description, displayName, location, organizationName, siteUrl }) {
-      const res = await me.rpc.editProfile({
+    async onSubmit({ description, title, location, organizationName, siteUrl }) {
+      const res = await me.rpc['webapp/profile/edit']({
         key: profileKey,
-        displayName,
+        title,
         description,
         location,
         organizationName,
@@ -62,12 +62,12 @@ export const useProfileCardProps = ({
       form.setValues(res)
     },
     validationSchema,
-    initialValues: profile,
+    initialValues: profile as never,
     enableReinitialize: true,
   })
 
   useEffect(() => {
-    me.rpc.getProfile({ key: profileKey }).then(res => {
+    me.rpc['webapp/profile/get']({ key: profileKey }).then(res => {
       if (!res) {
         return
       }

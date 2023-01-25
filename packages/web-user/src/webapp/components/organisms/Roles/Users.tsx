@@ -38,7 +38,7 @@ const Row: FC<{
 
   return (
     <tr>
-      <td>{user.displayName}</td>
+      <td>{user.title}</td>
       <td>{user.email}</td>
       <td className="user-types">
         <abbr

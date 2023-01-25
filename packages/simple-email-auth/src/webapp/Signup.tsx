@@ -8,7 +8,7 @@ import { useFormik } from 'formik'
 import { FC } from 'react'
 import './Signup.scss'
 
-export type SignupFormValues = { email: string; password: string; displayName: string }
+export type SignupFormValues = { email: string; password: string; title: string }
 
 export type SignupProps = {
   form: ReturnType<typeof useFormik<SignupFormValues>>
@@ -29,12 +29,12 @@ export const Panel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
         <InputTextField
           className="display-name"
           placeholder={`Display name`}
-          name="displayName"
+          name="title"
           edit
           disabled={disable}
-          value={form.values.displayName}
+          value={form.values.title}
           onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.displayName}
+          error={shouldShowErrors && form.errors.title}
         />
         <InputTextField
           className="email"

@@ -1,11 +1,14 @@
 import { PkgIdentifier } from '@moodlenet/core'
+import assert from 'assert'
 import {
+  EdgeGlyph,
   EdgeLink,
   EdgeLinkIdentifiers,
   Glyph,
   GlyphID,
   GlyphIdentifier,
   GlyphMeta,
+  NodeGlyph,
 } from './types.mjs'
 
 export function getCollectionName(pkgId: PkgIdentifier | false, collectionBaseName: string) {
@@ -25,11 +28,21 @@ export function edgeLinkIdentifiers2edgeLink(_: EdgeLinkIdentifiers): EdgeLink {
   }
 }
 
-export function extractGlyphMeta<G extends Glyph>(_glyph: G): { glyph: G; meta: GlyphMeta } {
-  const glyph: any = { ..._glyph }
-  const meta = glyph._meta
-  delete glyph._meta
+export function extractGlyphMeta<G extends Glyph>(
+  _glyph: G,
+): { glyph: Omit<G, '_meta'>; meta: GlyphMeta } {
+  const { _meta: meta, ...glyph } = _glyph
   return { glyph, meta }
+}
+
+export function extractNodeMeta<N extends NodeGlyph>(node: N) {
+  const { glyph, meta } = extractGlyphMeta(node)
+  return { node: glyph, meta }
+}
+
+export function extractEdgeMeta<E extends EdgeGlyph>(edge: E) {
+  const { glyph, meta } = extractGlyphMeta(edge)
+  return { edge: glyph, meta }
 }
 
 export function idOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIdentif): GlyphID {
@@ -41,9 +54,8 @@ export function idOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIden
 }
 
 export function keyOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIdentif): string {
-  return typeof identifier === 'object'
-    ? '_id' in identifier
-      ? identifier._id.split('/')[1]!
-      : identifier._key
-    : identifier.split('/')[1]!
+  const _id = idOf(identifier)
+  const _key = _id.split('/')[1]
+  assert(_key, `keyOf ${_id} no key !`)
+  return _key
 }

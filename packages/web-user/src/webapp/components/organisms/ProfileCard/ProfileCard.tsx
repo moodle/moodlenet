@@ -106,18 +106,18 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     <InputTextField
       className="display-name underline"
       placeholder={/* t */ `Display name`}
-      value={form.values.displayName}
+      value={form.values.title}
       onChange={form.handleChange}
-      name="displayName"
+      name="title"
       key="display-name"
       displayMode={true}
       edit={isEditing}
       disabled={form.isSubmitting}
-      error={isEditing && shouldShowErrors && form.errors.displayName}
+      error={isEditing && shouldShowErrors && form.errors.title}
     />
   ) : (
     <div className="display-name" key="display-name">
-      {form.values.displayName}
+      {form.values.title}
     </div>
   )
 
