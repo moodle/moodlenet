@@ -34,7 +34,7 @@ import {
 } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useState } from 'react'
-import { ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
+import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
 import {
   ContributorCard,
   ContributorCardProps,
@@ -96,6 +96,7 @@ export const Resource: FC<ResourceProps> = ({
   // id: resourceId,
   url: resourceUrl,
   contentType,
+  type,
   // resourceFormat,
   // contentUrl,
   numLikes,
@@ -121,7 +122,7 @@ export const Resource: FC<ResourceProps> = ({
     // canSearchImage && autoImageAdded
     false,
   )
-  // const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+  const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   //   const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
   //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
   //     useState<boolean>(false)
@@ -151,8 +152,20 @@ export const Resource: FC<ResourceProps> = ({
   //   key: 'resource-card',
   // }
 
+  const { typeName, typeColor } = getResourceTypeInfo(type)
+
   const handleOnEditClick = () => {
     setIsEditing(true)
+  }
+
+  const handleOnSaveClick = () => {
+    if (form.isValid) {
+      form.submitForm()
+      setShouldShowErrors(false)
+      setIsEditing(false)
+    } else {
+      setShouldShowErrors(true)
+    }
   }
 
   const copyUrl = () => {
@@ -172,13 +185,11 @@ export const Resource: FC<ResourceProps> = ({
               <div className="resource-label">Resource</div>
               <div
                 className="type"
-                style={
-                  {
-                    // background: typeColor,
-                  }
-                }
+                style={{
+                  background: typeColor,
+                }}
               >
-                {/* {typeName} */}
+                {typeName}
               </div>
             </span>
             <div className="actions">
@@ -221,27 +232,23 @@ export const Resource: FC<ResourceProps> = ({
                 <div className="edit-save">
                   {isEditing ? (
                     <PrimaryButton
-                      // className={`${form.isSubmitting ? 'loading' : ''}`}
+                      className={`${form.isSubmitting ? 'loading' : ''}`}
                       color="green"
-                      // onClick={handleOnSaveClick}
+                      onClick={handleOnSaveClick}
                     >
                       <div
                         className="loading"
-                        style={
-                          {
-                            // visibility: form.isSubmitting ? 'visible' : 'hidden',
-                          }
-                        }
+                        style={{
+                          visibility: form.isSubmitting ? 'visible' : 'hidden',
+                        }}
                       >
                         <Loading color="white" />
                       </div>
                       <div
                         className="label"
-                        style={
-                          {
-                            // visibility: form.isSubmitting ? 'hidden' : 'visible',
-                          }
-                        }
+                        style={{
+                          visibility: form.isSubmitting ? 'hidden' : 'visible',
+                        }}
                       >
                         <Save />
                       </div>
@@ -264,13 +271,11 @@ export const Resource: FC<ResourceProps> = ({
               className="title underline"
               value={form.values.name}
               edit={isEditing}
-              // onChange={form.handleChange}
-              style={
-                {
-                  // pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-                }
-              }
-              // error={isEditing && shouldShowErrors && form.errors.name}
+              onChange={form.handleChange}
+              style={{
+                pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+              }}
+              error={isEditing && shouldShowErrors && form.errors.name}
             />
           ) : (
             <div className="title">{/* {form.values.name} */}</div>

@@ -1,8 +1,7 @@
+import { ResourceFormValues } from '@moodlenet/resource/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
-// import { FormikConfig, useFormik } from 'formik'
-import { ResourceFormValues } from '@moodlenet/resource/common'
-import { useEffect } from 'react'
+// import { useEffect } from 'react'
 import { boolean, mixed, object, SchemaOf, string } from 'yup'
 // import { href } from '../../../elements/link'
 // import { TagListStory } from '../../../elements/tags'
@@ -16,7 +15,7 @@ import {
   MonthTextOptionProps,
   OptionItemProp,
   TypeTextOptionProps,
-  YearsProps
+  YearsProps,
 } from '@moodlenet/component-library'
 // import {
 //   CategoriesTextOptionProps,
@@ -25,13 +24,16 @@ import {
 // } from '../NewResource/UploadResource/storiesData'
 import { TagListStory } from '@moodlenet/react-app/ui'
 import { ContributorCardStories } from '@moodlenet/resource/stories'
+// import { Resource, ResourceProps } from '@moodlenet/resource/ui'
+// import { useFormik } from 'formik'
 import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
+import { useEffect } from 'react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,
-  VisbilityIconTextOptionProps
+  VisbilityIconTextOptionProps,
 } from './storiesData.js'
 
 const maxUploadSize = 1024 * 1024 * 50
@@ -117,30 +119,31 @@ export const useResourceStoryProps = (overrides?: {
   // formConfig?: Partial<FormikConfig<ResourceFormValues>>
   resourceValues?: Partial<ResourceFormValues>
 }): ResourceProps => {
-  const resource = {
+  const resource: ResourceFormValues = {
     // validationSchema,
     // onSubmit: action('submit edit'),
     // initialValues: {
-      isFile: true,
-      visibility: 'Public',
-      name: 'Best resource ever',
-      description:
-        'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      category: CategoriesTextOptionProps[2]!.value,
-      language: LanguagesTextOptionProps[2]?.value,
-      level: LevelTextOptionProps[2]?.value,
-      license: LicenseIconTextOptionProps[2]?.value,
-      month: MonthTextOptionProps[8]?.value,
-      year: YearsProps[20],
-      type: TypeTextOptionProps[2]?.value,
-      image: {
-        location:
-          'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-      },
-      ...overrides?.resourceValues,
+    isFile: true,
+    visibility: 'Public',
+    name: 'Best resource ever',
+    description:
+      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+    category: CategoriesTextOptionProps[2]!.value,
+    language: LanguagesTextOptionProps[2]?.value,
+    level: LevelTextOptionProps[2]?.value,
+    license: LicenseIconTextOptionProps[2]?.value,
+    month: MonthTextOptionProps[8]?.value,
+    year: YearsProps[20],
+    type: TypeTextOptionProps[2]?.value,
+    image: {
+      location:
+        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+    },
+    ...overrides?.resourceValues,
     // },
     // ...overrides?.formConfig,
-  })
+  }
+
   const addToCollectionsForm = useFormik<{ collections: string[] }>({
     initialValues: { collections: [] },
     // onSubmit() {},
@@ -166,9 +169,11 @@ export const useResourceStoryProps = (overrides?: {
 
   return {
     mainLayoutProps: MainLayoutLoggedOutStoryProps,
-    resource:
-    resourceId: 'qjnwglkd69io-sports',
-    resourceUrl: 'resource.url',
+    resource: resource,
+    editResource: async () => action('editing resource submited'),
+
+    id: 'qjnwglkd69io-sports',
+    url: 'resource.url',
     downloadFilename: 'resource.pdf',
     type: 'pdf',
     // headerPageTemplateProps: {
@@ -192,10 +197,10 @@ export const useResourceStoryProps = (overrides?: {
     contentUrl: '#',
     contentType: 'link',
     resourceFormat: 'Video',
-    reportForm: useFormik<{ comment: string }>({
-      initialValues: { comment: '' },
-      onSubmit: action('submit report Form'),
-    }),
+    // reportForm: useFormik<{ comment: string }>({
+    //   initialValues: { comment: '' },
+    //   onSubmit: action('submit report Form'),
+    // }),
     collections: {
       opts: CollectionTextOptionProps,
       selected: CollectionTextOptionProps.filter(
@@ -204,23 +209,23 @@ export const useResourceStoryProps = (overrides?: {
     },
     types: {
       opts: TypeTextOptionProps,
-      selected: TypeTextOptionProps.find(({ value }) => value === form.values.type),
+      selected: TypeTextOptionProps.find(({ value }) => value === resource.type),
     },
     levels: {
       opts: LevelTextOptionProps,
-      selected: LevelTextOptionProps.find(({ value }) => value === form.values.level),
+      selected: LevelTextOptionProps.find(({ value }) => value === resource.level),
     },
     languages: {
       opts: LanguagesTextOptionProps,
-      selected: LanguagesTextOptionProps.find(({ value }) => value === form.values.language),
+      selected: LanguagesTextOptionProps.find(({ value }) => value === resource.language),
     },
     categories: {
       opts: CategoriesTextOptionProps,
-      selected: CategoriesTextOptionProps.find(({ value }) => value === form.values.category),
+      selected: CategoriesTextOptionProps.find(({ value }) => value === resource.category),
     },
     licenses: {
       opts: LicenseIconTextOptionProps,
-      selected: LicenseIconTextOptionProps.find(({ value }) => value === form.values.license),
+      selected: LicenseIconTextOptionProps.find(({ value }) => value === resource.license),
     },
     toggleLikeForm: useFormik({
       initialValues: {},

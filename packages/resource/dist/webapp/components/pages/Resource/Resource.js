@@ -4,12 +4,13 @@ import { Card, FloatingMenu, InputTextField, Loading, PrimaryButton, SecondaryBu
 import { getTagList, MainLayout, } from '@moodlenet/react-app/ui';
 import { useFormik } from 'formik';
 import { useState } from 'react';
+import { getResourceTypeInfo } from '../../../../common/types.mjs';
 import { ContributorCard, } from '../../molecules/ContributorCard/ContributorCard.js';
 import { ContributorCardStoryProps } from '../../molecules/ContributorCard/ContributorCard.stories.js';
 import './Resource.scss';
 export const Resource = ({ mainLayoutProps, mainColumnItems, sideColumnItems, resource, editResource, 
 // id: resourceId,
-url: resourceUrl, contentType, 
+url: resourceUrl, contentType, type, 
 // resourceFormat,
 // contentUrl,
 numLikes, tags, isAuthenticated, 
@@ -25,7 +26,7 @@ isAdmin, isOwner, liked, bookmarked, }) => {
     const [isEditing, setIsEditing] = useState(
     // canSearchImage && autoImageAdded
     false);
-    // const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const [shouldShowErrors, setShouldShowErrors] = useState(false);
     //   const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
     //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
     //     useState<boolean>(false)
@@ -53,8 +54,19 @@ isAdmin, isOwner, liked, bookmarked, }) => {
     //   ),
     //   key: 'resource-card',
     // }
+    const { typeName, typeColor } = getResourceTypeInfo(type);
     const handleOnEditClick = () => {
         setIsEditing(true);
+    };
+    const handleOnSaveClick = () => {
+        if (form.isValid) {
+            form.submitForm();
+            setShouldShowErrors(false);
+            setIsEditing(false);
+        }
+        else {
+            setShouldShowErrors(true);
+        }
     };
     const copyUrl = () => {
         navigator.clipboard.writeText(resourceUrl);
@@ -65,26 +77,20 @@ isAdmin, isOwner, liked, bookmarked, }) => {
     };
     const mainResourceCard = {
         Item: () => (_jsxs(Card, { className: "main-resource-card", hideBorderWhenSmall: true, children: [_jsxs("div", { className: "resource-header", children: [_jsxs("div", { className: "type-and-actions", children: [_jsxs("span", { className: "resource-type", children: [_jsx("div", { className: "resource-label", children: "Resource" }), _jsx("div", { className: "type", style: {
-                                            // background: typeColor,
-                                            } })] }), _jsxs("div", { className: "actions", children: [!isEditing && (_jsxs("div", { className: `like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`, children: [liked ? _jsx(Favorite, {}) : _jsx(FavoriteBorder, {}), _jsx("span", { children: numLikes })] })), isAuthenticated && !isEditing && (_jsx("div", { className: `bookmark ${bookmarked && 'bookmarked'}`, children: bookmarked ? _jsx(Bookmark, {}) : _jsx(BookmarkBorder, {}) })), isAuthenticated && !isOwner && (_jsx(FloatingMenu, { className: "more-button", menuContent: [
+                                                background: typeColor,
+                                            }, children: typeName })] }), _jsxs("div", { className: "actions", children: [!isEditing && (_jsxs("div", { className: `like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`, children: [liked ? _jsx(Favorite, {}) : _jsx(FavoriteBorder, {}), _jsx("span", { children: numLikes })] })), isAuthenticated && !isEditing && (_jsx("div", { className: `bookmark ${bookmarked && 'bookmarked'}`, children: bookmarked ? _jsx(Bookmark, {}) : _jsx(BookmarkBorder, {}) })), isAuthenticated && !isOwner && (_jsx(FloatingMenu, { className: "more-button", menuContent: [
                                                 _jsxs("div", { tabIndex: 0, onClick: copyUrl, children: [_jsx(Share, {}), "Share"] }, "share-btn"),
                                                 // <div tabIndex={0} onClick={() => setIsReporting(true)}>
                                                 //   <Flag />
                                                 //   <Trans>Report</Trans>
                                                 // </div>,
-                                            ], hoverElement: _jsx(TertiaryButton, { className: `more`, children: "..." }) })), (isAdmin || isOwner) && (_jsx("div", { className: "edit-save", children: isEditing ? (_jsxs(PrimaryButton
-                                            // className={`${form.isSubmitting ? 'loading' : ''}`}
-                                            , { 
-                                                // className={`${form.isSubmitting ? 'loading' : ''}`}
-                                                color: "green", children: [_jsx("div", { className: "loading", style: {
-                                                        // visibility: form.isSubmitting ? 'visible' : 'hidden',
+                                            ], hoverElement: _jsx(TertiaryButton, { className: `more`, children: "..." }) })), (isAdmin || isOwner) && (_jsx("div", { className: "edit-save", children: isEditing ? (_jsxs(PrimaryButton, { className: `${form.isSubmitting ? 'loading' : ''}`, color: "green", onClick: handleOnSaveClick, children: [_jsx("div", { className: "loading", style: {
+                                                            visibility: form.isSubmitting ? 'visible' : 'hidden',
                                                         }, children: _jsx(Loading, { color: "white" }) }), _jsx("div", { className: "label", style: {
-                                                        // visibility: form.isSubmitting ? 'hidden' : 'visible',
-                                                        }, children: _jsx(Save, {}) })] })) : (_jsx(SecondaryButton, { onClick: handleOnEditClick, color: "orange", children: _jsx(Edit, {}) })) }))] })] }), isOwner ? (_jsx(InputTextField, { name: "name", textarea: true, textAreaAutoSize: true, displayMode: true, className: "title underline", value: form.values.name, edit: isEditing, 
-                            // onChange={form.handleChange}
-                            style: {
-                            // pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-                            } })) : (_jsx("div", { className: "title" })), tags.length > 0 && _jsx("div", { className: "tags scroll", children: getTagList(tags, 'medium') })] }), isOwner ? (_jsx(InputTextField, { className: "description underline", name: "description", textarea: true, textAreaAutoSize: true, displayMode: true, edit: isEditing, 
+                                                            visibility: form.isSubmitting ? 'hidden' : 'visible',
+                                                        }, children: _jsx(Save, {}) })] })) : (_jsx(SecondaryButton, { onClick: handleOnEditClick, color: "orange", children: _jsx(Edit, {}) })) }))] })] }), isOwner ? (_jsx(InputTextField, { name: "name", textarea: true, textAreaAutoSize: true, displayMode: true, className: "title underline", value: form.values.name, edit: isEditing, onChange: form.handleChange, style: {
+                                pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+                            }, error: isEditing && shouldShowErrors && form.errors.name })) : (_jsx("div", { className: "title" })), tags.length > 0 && _jsx("div", { className: "tags scroll", children: getTagList(tags, 'medium') })] }), isOwner ? (_jsx(InputTextField, { className: "description underline", name: "description", textarea: true, textAreaAutoSize: true, displayMode: true, edit: isEditing, 
                     // value={form.values.description}
                     // onChange={form.handleChange}
                     style: {
