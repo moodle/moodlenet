@@ -31,6 +31,10 @@ export type ResourceType = {
   type: string
 }
 
+export type ResourceFormValues = Omit<NewResourceFormValues, 'addToCollections' | 'content'> & {
+  isFile: boolean
+}
+
 // isOwner: boolean
 //   isAdmin: boolean
 //   autoImageAdded: boolean

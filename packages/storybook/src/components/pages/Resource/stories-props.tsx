@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 // import { FormikConfig, useFormik } from 'formik'
+import { ResourceFormValues } from '@moodlenet/resource/common'
 import { useEffect } from 'react'
 import { boolean, mixed, object, SchemaOf, string } from 'yup'
 // import { href } from '../../../elements/link'
@@ -15,7 +16,7 @@ import {
   MonthTextOptionProps,
   OptionItemProp,
   TypeTextOptionProps,
-  YearsProps,
+  YearsProps
 } from '@moodlenet/component-library'
 // import {
 //   CategoriesTextOptionProps,
@@ -24,13 +25,13 @@ import {
 // } from '../NewResource/UploadResource/storiesData'
 import { TagListStory } from '@moodlenet/react-app/ui'
 import { ContributorCardStories } from '@moodlenet/resource/stories'
-import { Resource, ResourceFormValues, ResourceProps } from '@moodlenet/resource/ui'
-import { FormikConfig, useFormik } from 'formik'
+import { Resource, ResourceProps } from '@moodlenet/resource/ui'
+import { useFormik } from 'formik'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,
-  VisbilityIconTextOptionProps,
+  VisbilityIconTextOptionProps
 } from './storiesData.js'
 
 const maxUploadSize = 1024 * 1024 * 50
@@ -113,13 +114,13 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 
 export const useResourceStoryProps = (overrides?: {
   props?: Partial<ResourceProps>
-  formConfig?: Partial<FormikConfig<ResourceFormValues>>
-  formValues?: Partial<ResourceFormValues>
+  // formConfig?: Partial<FormikConfig<ResourceFormValues>>
+  resourceValues?: Partial<ResourceFormValues>
 }): ResourceProps => {
-  const form = useFormik<ResourceFormValues>({
-    validationSchema,
-    onSubmit: action('submit edit'),
-    initialValues: {
+  const resource = {
+    // validationSchema,
+    // onSubmit: action('submit edit'),
+    // initialValues: {
       isFile: true,
       visibility: 'Public',
       name: 'Best resource ever',
@@ -136,9 +137,9 @@ export const useResourceStoryProps = (overrides?: {
         location:
           'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
       },
-      ...overrides?.formValues,
-    },
-    ...overrides?.formConfig,
+      ...overrides?.resourceValues,
+    // },
+    // ...overrides?.formConfig,
   })
   const addToCollectionsForm = useFormik<{ collections: string[] }>({
     initialValues: { collections: [] },
@@ -165,7 +166,7 @@ export const useResourceStoryProps = (overrides?: {
 
   return {
     mainLayoutProps: MainLayoutLoggedOutStoryProps,
-    form,
+    resource:
     resourceId: 'qjnwglkd69io-sports',
     resourceUrl: 'resource.url',
     downloadFilename: 'resource.pdf',

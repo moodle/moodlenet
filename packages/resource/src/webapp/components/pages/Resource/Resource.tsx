@@ -32,8 +32,9 @@ import {
   SelectOptions,
   SelectOptionsMulti,
 } from '@moodlenet/react-app/ui'
+import { useFormik } from 'formik'
 import { FC, useState } from 'react'
-import { NewResourceFormValues, ResourceType } from '../../../../common/types.mjs'
+import { ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
 import {
   ContributorCard,
   ContributorCardProps,
@@ -41,14 +42,13 @@ import {
 import { ContributorCardStoryProps } from '../../molecules/ContributorCard/ContributorCard.stories.js'
 import './Resource.scss'
 
-export type ResourceFormValues = Omit<NewResourceFormValues, 'addToCollections' | 'content'> & {
-  isFile: boolean
-}
-
 export type ResourceProps = {
   mainLayoutProps: MainLayoutProps
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
+
+  resource: ResourceFormValues
+  editResource: (values: ResourceFormValues) => Promise<unknown>
 
   isAuthenticated: boolean
   // isApproved: boolean
@@ -59,7 +59,7 @@ export type ResourceProps = {
   canSearchImage: boolean
   liked: boolean
   bookmarked: boolean
-  form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
+  // form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
 
   toggleLikeForm: FormikHandle
   toggleBookmarkForm: FormikHandle
@@ -91,6 +91,8 @@ export const Resource: FC<ResourceProps> = ({
   mainColumnItems,
   sideColumnItems,
 
+  resource,
+  editResource,
   // id: resourceId,
   url: resourceUrl,
   contentType,
@@ -107,6 +109,14 @@ export const Resource: FC<ResourceProps> = ({
   liked,
   bookmarked,
 }) => {
+  const form = useFormik<ResourceFormValues>({
+    initialValues: resource,
+    // validate:yup,
+    onSubmit: values => {
+      return editResource(values)
+    },
+  })
+
   const [isEditing, setIsEditing] = useState<boolean>(
     // canSearchImage && autoImageAdded
     false,
@@ -159,7 +169,7 @@ export const Resource: FC<ResourceProps> = ({
         <div className="resource-header">
           <div className="type-and-actions">
             <span className="resource-type">
-              <div className="resource">Resource</div>
+              <div className="resource-label">Resource</div>
               <div
                 className="type"
                 style={
@@ -252,7 +262,7 @@ export const Resource: FC<ResourceProps> = ({
               textAreaAutoSize
               displayMode
               className="title underline"
-              // value={form.values.name}
+              value={form.values.name}
               edit={isEditing}
               // onChange={form.handleChange}
               style={

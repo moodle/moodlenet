@@ -1,14 +1,17 @@
 import { FollowTag } from '@moodlenet/component-library'
-import { CSSProperties } from 'react'
-import { href, Link } from './link.js'
+import { CSSProperties, FC } from 'react'
+import { href, Link } from '../link.js'
+import './Tag.scss'
 
-export const getTag = (
-  tag: FollowTag,
-  size?: 'small' | 'medium' | 'big',
-  click = true,
-  index = 0,
-  style?: CSSProperties,
-) => {
+export type TagProps = {
+  tag: FollowTag
+  click: boolean
+  index: number
+  size?: 'small' | 'medium' | 'big'
+  style?: CSSProperties
+}
+
+export const Tag: FC<TagProps> = ({ tag, size, index = 0, click = true, style }) => {
   return click && tag.subjectHomeHref ? (
     <Link href={tag.subjectHomeHref} className="tag-container" key={index}>
       <div className={`tag ${tag.type} hover ${size}`} style={style}>
@@ -24,7 +27,8 @@ export const getTag = (
 
 export const getTagList = (tags: FollowTag[], size: 'small' | 'medium' | 'big', click = true) => {
   return tags.map((tag, index) => {
-    return getTag(tag, size, click, index)
+    // return getTag(tag, size, click, index)
+    return <Tag key={index} tag={tag} size={size} click={click} index={index} />
   })
 }
 

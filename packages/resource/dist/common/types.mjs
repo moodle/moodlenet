@@ -1,4 +1,4 @@
-export {};
+export {}
 // isOwner: boolean
 //   isAdmin: boolean
 //   autoImageAdded: boolean
