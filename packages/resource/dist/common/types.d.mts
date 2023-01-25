@@ -26,4 +26,7 @@ export type ResourceType = {
   downloadFilename: string
   type: string
 }
+export type ResourceFormValues = Omit<NewResourceFormValues, 'addToCollections' | 'content'> & {
+  isFile: boolean
+}
 //# sourceMappingURL=types.d.mts.map

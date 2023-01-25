@@ -6,7 +6,7 @@
 // import { fileExceedsMaxUploadSize } from '../../../helpers/utilities.js'
 // import { MainContext } from '../../../MainContext.js'
 // import { ResourceCardPropsControlled } from './ResourceCard.js'
-
+export {}
 // const maxUploadSize = 1024 * 1024 * 50
 // export const validationSchema: SchemaOf<ResourceFormValues> = object({
 //   avatarImage: mixed()
