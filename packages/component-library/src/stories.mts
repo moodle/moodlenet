@@ -14,5 +14,7 @@ export * as SecondaryButtonStories from './webapp/ui/components/atoms/SecondaryB
 export * as SnackbarStories from './webapp/ui/components/atoms/Snackbar/Snackbar.stories.js'
 export * as SwitchStories from './webapp/ui/components/atoms/Switch/Switch.stories.js'
 export * as TertiaryButtonStories from './webapp/ui/components/atoms/TertiaryButton/TertiaryButton.stories.js'
+export * as AddToCollectionsCardStories from './webapp/ui/components/molecules/cards/AddToCollectionsCard/AddToCollectionsCard.stories.js'
 export * as HeaderStories from './webapp/ui/components/organisms/Header/Standard/Header.stories.js'
+export * as SearchImageStories from './webapp/ui/components/organisms/SearchImage/SearchImage.stories.js'
 // @endindex

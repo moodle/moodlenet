@@ -8,6 +8,7 @@ export type ResourceProps = {
     mainLayoutProps: MainLayoutProps;
     mainColumnItems?: AddonItem[];
     sideColumnItems?: AddonItem[];
+    moreButtonItems?: AddonItem[];
     resource: ResourceFormValues;
     editResource: (values: ResourceFormValues) => Promise<unknown>;
     isAuthenticated: boolean;
@@ -18,9 +19,9 @@ export type ResourceProps = {
     canSearchImage: boolean;
     liked: boolean;
     bookmarked: boolean;
-    toggleLikeForm: FormikHandle;
-    toggleBookmarkForm: FormikHandle;
-    deleteResourceForm?: FormikHandle;
+    toggleLike?(): unknown;
+    toggleBookmark?(): unknown;
+    deleteResource?(): unknown;
     addToCollectionsForm: FormikHandle<{
         collections: string[];
     }>;
