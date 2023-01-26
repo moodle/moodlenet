@@ -7,7 +7,6 @@ export async function queryDb(dbName: string, { q, bindVars, opts }: QueryReq) {
     const msg = `arango query error: q:${q} bindVars:${JSON.stringify(
       bindVars,
     )} opts:${JSON.stringify(opts)}\nerror:${String(e)}`
-    console.error(msg)
     throw new Error(msg, { cause: e })
   })
   const resultSet = await qcursor.all()

@@ -25,10 +25,8 @@ export async function getRootSessionToken({
 
 export async function registerUser({
   uid,
-  isAdmin,
 }: {
   uid: string
-  isAdmin: boolean
 }): Promise<
   { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
 > {
@@ -38,7 +36,6 @@ export async function registerUser({
       pkgName: pkgId.name,
       uid,
     },
-    isAdmin,
   })
   const sessionToken = await encryptClientSession({ user })
 

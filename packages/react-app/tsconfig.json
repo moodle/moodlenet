@@ -13,6 +13,9 @@
   },
   "references": [
     {
+      "path": "../arangodb"
+    },
+    {
       "path": "../authentication-manager"
     },
     {

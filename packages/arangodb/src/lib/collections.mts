@@ -25,7 +25,9 @@ export async function ensure(dbName: string, { defs }: { defs: CollectionDefOptM
         ? db.createEdgeCollection(collectionName, {})
         : db.createCollection(collectionName, {}))
 
-      await Promise.all((opts?.indexes ?? []).map(indexDef => collection.ensureIndex(indexDef as any)))
+      await Promise.all(
+        (opts?.indexes ?? []).map(indexDef => collection.ensureIndex(indexDef as any)),
+      )
       return collection
     }),
   )
