@@ -17,11 +17,6 @@ import {
   YearsProps,
 } from '@moodlenet/component-library'
 // import {
-//   CategoriesTextOptionProps,
-//   LicenseIconTextOptionProps,
-//   VisbilityIconTextOptionProps,
-// } from '../NewResource/UploadResource/storiesData'
-import { TagListStory } from '@moodlenet/react-app/ui'
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 // import { useFormik } from 'formik'
 import { ResourceFormValues } from '../../../../common.mjs'
@@ -165,7 +160,7 @@ export const useMainResourceCardStoryProps = (overrides?: {
     liked: false,
     numLikes: 23,
     bookmarked: true,
-    tags: TagListStory.slice(0, 1),
+    // tags: TagListStory.slice(0, 1),
     contentUrl: '#',
     contentType: 'link',
     resourceFormat: 'Video',

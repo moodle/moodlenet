@@ -26,7 +26,7 @@
     flex-direction: column;
     gap: 8px;
 
-    .type-and-actions {
+    .top-header-row {
       font-size: 14px;
       display: flex;
       justify-content: space-between;
@@ -35,14 +35,14 @@
       > * {
         display: flex;
       }
-      > .resource-type {
+      > .top-left-header {
         flex: 1 1 auto;
         overflow: hidden;
         font-size: 19px;
         font-weight: bold;
         align-items: center;
         gap: 10px;
-        > .type {
+        > .type-pill {
           border-radius: 16px;
           font-size: 13px;
           overflow: hidden;
@@ -57,7 +57,7 @@
           color: white;
         }
       }
-      > .actions {
+      > .top-right-header {
         display: flex;
         flex: 1 0 auto;
         gap: 12px;
@@ -264,7 +264,7 @@
     line-height: 20px;
   }
 
-  .bottom {
+  .resource-footer {
     display: flex;
     justify-content: flex-end;
     > div {

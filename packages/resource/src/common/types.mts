@@ -23,7 +23,7 @@ export type ResourceType = {
   id: string
   url: string
   numLikes: number
-  tags: FollowTag[]
+  // tags: FollowTag[]
   contentUrl: string
   resourceFormat: string
   contentType: 'link' | 'file'
