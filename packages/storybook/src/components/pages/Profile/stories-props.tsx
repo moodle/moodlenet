@@ -1,6 +1,5 @@
 import { OverallCardStories } from '@moodlenet/react-app/stories'
-import { OverallCard } from '@moodlenet/react-app/ui'
-import { ProfileProps, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
+import { OverallCard, ProfileProps, useProfileCardStoryProps } from '@moodlenet/react-app/ui'
 
 // const editForm: ProfileFormValues = {
 //   displayName: 'Alberto Curcella',

@@ -1,8 +1,12 @@
 // import { Settings as PassportAuthSettins } from '@moodlenet/passport-auth/ui'
 import { ExtensionsStories } from '@moodlenet/extensions-manager/stories'
-import { AdvancedStories, AppearanceStories, GeneralStories } from '@moodlenet/react-app/stories'
+import {
+  AdvancedStories,
+  AppearanceStories,
+  GeneralStories,
+  UsersStories,
+} from '@moodlenet/react-app/stories'
 import { Settings, SettingsProps } from '@moodlenet/react-app/ui'
-import { UsersStories } from '@moodlenet/web-user/stories'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 // import { href } from '../../../elements/link'

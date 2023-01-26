@@ -1,11 +1,11 @@
-import { expose as auth } from '@moodlenet/authentication-manager'
-import { expose as me } from './expose.mjs'
-import { MyWebDeps } from './common/types.mjs'
-import { confirm } from './lib.mjs'
 import { ensureCollections } from '@moodlenet/arangodb'
-import shell from './shell.mjs'
-import { plugin } from '@moodlenet/react-app/server'
+import { expose as auth } from '@moodlenet/authentication-manager'
 import { mountApp } from '@moodlenet/http-server'
+import { plugin } from '@moodlenet/react-app/server'
+import { MyWebDeps } from './common/types.mjs'
+import { expose as me } from './expose.mjs'
+import { confirm } from './lib.mjs'
+import shell from './shell.mjs'
 
 await shell.call(ensureCollections)({ defs: { User: { kind: 'node' } } })
 

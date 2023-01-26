@@ -164,7 +164,6 @@ export async function getWp(
               loader: 'sass-loader' /* ,
               options: {
                 additionalData: (content: any, loaderContext: any) => {
-                  console.log(inspect({ content, loaderContext }, false, 2, true))
                   // More information about available properties https://webpack.js.org/api/loaders/
                   // const { resourcePath, rootContext } = loaderContext;
                   // const relativePath = path.relative(rootContext, resourcePath);

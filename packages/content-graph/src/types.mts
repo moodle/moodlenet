@@ -4,7 +4,6 @@ import type {
   CollectionKind,
   CollectionOpts,
 } from '@moodlenet/arangodb'
-import type { UserId } from '@moodlenet/authentication-manager'
 
 // type DateString = string
 type WithDate<T> = T //& { date: DateString }
@@ -22,7 +21,9 @@ export type GlyphDef<
 export type GlyphDefsMap<Defs extends Record<string, GlyphDef> = Record<string, GlyphDef>> = Defs
 
 export type GlyphOpts = { collection?: CollectionOpts }
-export type GlyphDefOpt<Kind extends CollectionKind> = CollectionDefOpt<Kind>
+export type GlyphDefOpt<Kind extends CollectionKind> = {
+  collection: CollectionDefOpt<Kind>
+}
 export type GlyphDefOptMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
   readonly [glyphName in keyof Defs]: GlyphDefOpt<Defs[glyphName]['kind']>
 }
@@ -120,24 +121,12 @@ export type NodeGlyph<GlyphDesc extends GlyphDescriptor<'node'> = GlyphDescripto
 
 export type Glyph = NodeGlyph | EdgeGlyph
 
-export type WithPerformerNodeIdentifier = { performerNode: GlyphIdentifier<'node'> }
-export type EditNodeOpts = Record<string, never> //& WithPerformerNodeIdentifier
-export type CreateNodeOpts = { authenticableBy: { userId: UserId } } & WithPerformerNodeIdentifier
-export type CreateEdgeOpts = Record<string, never> /* & WithPerformerIdentifier */
+export type EditNodeOpts = { meta: GlyphMeta } //& WithPerformerNodeIdentifier
+export type CreateNodeOpts = Record<string, never>
+export type CreateEdgeOpts = Record<string, never>
 
 export type GlyphMeta = Record<string, unknown>
 export type WithGlyphMeta = { _meta: GlyphMeta }
-
-export type ContentGraphKVStore = {
-  userId2NodeAssoc: {
-    userId: UserId
-    nodeId: {
-      _type: string
-      _key: string
-      _id: GlyphID
-    }
-  }
-}
 
 export type GlyphsMapOf<GlyphDescMap extends GlyphDescriptorsMap> = {
   [name in keyof GlyphDescMap]: GlyphsOf<GlyphDescMap[name]>

@@ -73,7 +73,6 @@ function _user(userDoc: any): User | undefined {
         id: userDoc._key,
         created: userDoc.created,
         providerId: userDoc.providerId,
-        isAdmin: userDoc.isAdmin,
       }
     : undefined
 }

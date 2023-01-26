@@ -1,7 +1,7 @@
 import express, { json } from 'express'
 import { format } from 'util'
-import { HttpApiResponse as HttpRpcResponse } from '../types.mjs'
 import shell from '../shell.mjs'
+import { HttpApiResponse as HttpRpcResponse } from '../types.mjs'
 
 // getPkgApisRefByPkgName
 
@@ -45,11 +45,11 @@ export function makeExtPortsApp() {
       rpcDefItem.guard(...rpcArgs)
     } catch (err) {
       res.status(400)
-      res.json({ error: err })
+      res.send(err)
       return
     }
 
-    rpcDefItem
+    await rpcDefItem
       .fn(...rpcArgs)
       .then(response => {
         const httpRpcResponse: HttpRpcResponse = {
@@ -58,9 +58,9 @@ export function makeExtPortsApp() {
         res.status(200).send(httpRpcResponse)
       })
       .catch(err => {
-        console.error(err)
+        // console.log(err)
         res.status(500)
-        res.end({ error: err instanceof Error ? format(err) : err }) //(JSON.stringify({ msg: {}, val: String(err) }))
+        res.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
       })
   })
   srvApp.all(`*`, (_, res) => res.status(404).send(`service not available`))

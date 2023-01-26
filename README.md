@@ -45,7 +45,7 @@ here I take the items define in the external component
   })
 
 here the items to be added to the header or parent component are defined
-  packages/web-user/src/webapp/MainComponent.tsx
+  packages/*/src/webapp/MainComponent.tsx
 
 ATTENTION :
 

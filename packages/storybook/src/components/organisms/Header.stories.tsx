@@ -1,8 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-import { HeaderTitleStories } from '@moodlenet/react-app/stories'
+import { HeaderProfileStories, HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { href, MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
-import { HeaderStories } from '@moodlenet/web-user/stories'
 
 const meta: ComponentMeta<typeof MainHeader> = {
   title: 'Organisms/Header',
@@ -40,7 +39,7 @@ const MainHeaderStoryProps: MainHeaderProps = {
   },
   avatarMenuProps: {
     avatarUrl: avatarPicture,
-    menuItems: [HeaderStories.HeaderProfileStoryProps(avatarPicture)],
+    menuItems: [HeaderProfileStories.HeaderProfileStoryProps(avatarPicture)],
   },
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
   isAuthenticated: false,

@@ -1,16 +1,17 @@
 import { useMemo } from 'react'
 import { MainContext, MainContextT } from './context/MainContext.mjs'
 
-import { useMakeRegistries } from './registries.mjs'
-import * as set from './context/SettingsContext.js'
+import { MyPkgContext } from '../common/my-webapp/types.mjs'
 import * as auth from './context/AuthContext.js'
 import * as Organization from './context/OrganizationCtx.js'
-import { ProvideLinkComponentCtx } from './ui.mjs'
 import { usePkgContext } from './context/PkgContext.mjs'
 import { ReactAppContext, ReactAppContextT } from './context/ReactAppContext.mjs'
-import { guestRegistryMap } from './web-lib/registry.js'
-import { MyPkgContext } from '../common/my-webapp/types.mjs'
+import * as set from './context/SettingsContext.js'
+import { useMakeRegistries } from './registries.mjs'
+import SetupComponent from './SetupComponent.js'
+import { ProvideLinkComponentCtx } from './ui.mjs'
 import { ReactAppMainComponent } from './web-lib.mjs'
+import { guestRegistryMap } from './web-lib/registry.js'
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const registries = useMakeRegistries()
@@ -36,7 +37,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
             <auth.AuthProvider>
               <set.SettingsProvider>
                 {/* <I18nProvider i18n={i18n}> */}
-                {children}
+                <SetupComponent>{children}</SetupComponent>
                 {/* </I18nProvider> */}
               </set.SettingsProvider>
             </auth.AuthProvider>

@@ -6,6 +6,8 @@ import { RootLoginContainer } from './ui/components/pages/Access/RootLogin/RootL
 import { SignUpContainer } from './ui/components/pages/Access/Signup/SignupContainer.js'
 // import * as nodeHomePage from './ui/components/pages/ContentGraph/NodeHome/___NodeHomePage.tsx__'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
+import { MyProfilePageRoute } from './ui/components/pages/Profile/MyProfilePageRoute.js'
+import { ProfilePageRoute } from './ui/components/pages/Profile/ProfilePageRoute.js'
 import { SettingsContainer } from './ui/components/pages/Settings/Settings/Hook/SettingsContainer.js'
 
 export type RouteRegItem = { routes: ReactElement; rootPath?: string }
@@ -28,6 +30,8 @@ const AppRouter = () => {
         <Route path="signup">
           <Route index element={<SignUpContainer />} />
         </Route>
+        <Route path="profile/:key/" element={<ProfilePageRoute />} />
+        <Route path="my-profile/" element={<MyProfilePageRoute />} />
         {/* <Route
       path="a"
       element={

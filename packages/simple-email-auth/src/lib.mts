@@ -1,7 +1,8 @@
 import { getSessionToken, registerUser, SessionToken } from '@moodlenet/authentication-manager'
 import * as crypto from '@moodlenet/crypto'
 import { send } from '@moodlenet/email-service'
-import { createProfile } from '@moodlenet/web-user'
+import { getHttpBaseUrl } from '@moodlenet/http-server'
+import { createProfile } from '@moodlenet/react-app/server'
 import assert from 'assert'
 import shell from './shell.mjs'
 import * as store from './store.mjs'
@@ -45,7 +46,9 @@ export async function signup(
   shell.call(send)({
     emailObj: {
       to: req.email,
-      text: `hey ${req.title} confirm your email with /.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+      text: `hey ${
+        req.title
+      } confirm your email on ${await getHttpBaseUrl()}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
     },
   })
   return { success: true }
@@ -74,7 +77,6 @@ export async function confirm({
 
   const authRes = await shell.call(registerUser)({
     uid: myUser.id,
-    isAdmin: false,
   })
 
   if (!authRes.success) {
@@ -86,6 +88,8 @@ export async function confirm({
   await shell.call(createProfile)({
     title,
     userId: authRes.user.id,
+    isAdmin: false,
+    contacts: { email },
   })
 
   const { sessionToken } = authRes
@@ -105,7 +109,7 @@ export async function confirm({
     }
   }
 }
-function isConfirmEmailPayload(_: any): _ is ConfirmEmailPayload {
+function isConfirmEmailPayload(_: unknown): _ is ConfirmEmailPayload {
   //FIXME: implement checks
   return !!_
 }
