@@ -1,4 +1,4 @@
-import { Resource } from '@moodlenet/resource/ui'
+import { Resource, useMainResourceCardStoryProps } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useResourceStoryProps } from './stories-props.js'
@@ -89,6 +89,9 @@ export const Owner: ResourceStory = () => {
     props: {
       isOwner: true,
       canEdit: true,
+      mainResourceCardProps: useMainResourceCardStoryProps({
+        props: { isOwner: true, canEdit: true },
+      }),
       //   collectionCardPropsList: [
       //     CollectionCardOwnerPrivateStoryProps(
       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1

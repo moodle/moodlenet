@@ -3,9 +3,11 @@ import { FormikHandle, MainLayoutProps, SelectOptions, SelectOptionsMulti } from
 import { FC } from 'react';
 import { ResourceFormValues, ResourceType } from '../../../../common/types.mjs';
 import { ContributorCardProps } from '../../molecules/ContributorCard/ContributorCard.js';
+import { MainResourceCardProps } from '../../organisms/MainResourceCard/MainResourceCard.js';
 import './Resource.scss';
 export type ResourceProps = {
     mainLayoutProps: MainLayoutProps;
+    mainResourceCardProps: MainResourceCardProps;
     mainColumnItems?: AddonItem[];
     sideColumnItems?: AddonItem[];
     moreButtonItems?: AddonItem[];
@@ -16,11 +18,6 @@ export type ResourceProps = {
     isAdmin: boolean;
     canEdit: boolean;
     autoImageAdded: boolean;
-    canSearchImage: boolean;
-    liked: boolean;
-    bookmarked: boolean;
-    toggleLike?(): unknown;
-    toggleBookmark?(): unknown;
     deleteResource?(): unknown;
     addToCollectionsForm: FormikHandle<{
         collections: string[];

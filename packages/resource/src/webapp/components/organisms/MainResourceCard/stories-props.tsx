@@ -1,4 +1,3 @@
-import { ResourceFormValues } from '@moodlenet/resource/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 // import { useEffect } from 'react'
@@ -23,13 +22,11 @@ import {
 //   VisbilityIconTextOptionProps,
 // } from '../NewResource/UploadResource/storiesData'
 import { TagListStory } from '@moodlenet/react-app/ui'
-import { ContributorCardStories } from '@moodlenet/resource/stories'
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 // import { useFormik } from 'formik'
-import { Resource, ResourceProps, useMainResourceCardStoryProps } from '@moodlenet/resource/ui'
-import { useFormik } from 'formik'
-import { useEffect } from 'react'
-import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+import { ResourceFormValues } from '../../../../common.mjs'
+import Resource from '../../pages/Resource/Resource.js'
+import MainResourceCard, { MainResourceCardProps } from './MainResourceCard.js'
 import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,
@@ -114,11 +111,11 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
   { label: 'English Literature', value: 'English Literature' },
 ]
 
-export const useResourceStoryProps = (overrides?: {
-  props?: Partial<ResourceProps>
+export const useMainResourceCardStoryProps = (overrides?: {
+  props?: Partial<MainResourceCardProps>
   // formConfig?: Partial<FormikConfig<ResourceFormValues>>
   resourceValues?: Partial<ResourceFormValues>
-}): ResourceProps => {
+}): MainResourceCardProps => {
   const resource: ResourceFormValues = {
     // validationSchema,
     // onSubmit: action('submit edit'),
@@ -144,32 +141,7 @@ export const useResourceStoryProps = (overrides?: {
     // ...overrides?.formConfig,
   }
 
-  const addToCollectionsForm = useFormik<{ collections: string[] }>({
-    initialValues: { collections: [] },
-    // onSubmit() {},
-    async onSubmit() {
-      return
-    },
-    validate({ collections: curr }) {
-      const prev = addToCollectionsForm.values.collections
-      const toAdd = curr.filter(_ => !prev.includes(_))[0]
-      const toRemove = prev.filter(_ => !curr.includes(_))[0]
-      toAdd && action('Add ')(toAdd)
-      toRemove && action('Remove ')(toRemove)
-    },
-  })
-
-  useEffect(
-    () =>
-      action('changed addToCollectionsForm.values')(
-        addToCollectionsForm.values.collections.join(';'),
-      ),
-    [addToCollectionsForm.values.collections],
-  )
-
   return {
-    mainLayoutProps: MainLayoutLoggedOutStoryProps,
-    mainResourceCardProps: useMainResourceCardStoryProps(),
     resource: resource,
     editResource: async () => action('editing resource submited'),
 
@@ -190,11 +162,10 @@ export const useResourceStoryProps = (overrides?: {
     canEdit: false,
     isOwner: false,
     isAdmin: false,
-    // liked: false,
+    liked: false,
     numLikes: 23,
-    // bookmarked: true,
+    bookmarked: true,
     tags: TagListStory.slice(0, 1),
-    contributorCardProps: ContributorCardStories.ContributorCardStoryProps,
     contentUrl: '#',
     contentType: 'link',
     resourceFormat: 'Video',
@@ -202,47 +173,12 @@ export const useResourceStoryProps = (overrides?: {
     //   initialValues: { comment: '' },
     //   onSubmit: action('submit report Form'),
     // }),
-    collections: {
-      opts: CollectionTextOptionProps,
-      selected: CollectionTextOptionProps.filter(
-        ({ value }) => !!addToCollectionsForm.values.collections?.includes(value),
-      ),
-    },
-    types: {
-      opts: TypeTextOptionProps,
-      selected: TypeTextOptionProps.find(({ value }) => value === resource.type),
-    },
-    levels: {
-      opts: LevelTextOptionProps,
-      selected: LevelTextOptionProps.find(({ value }) => value === resource.level),
-    },
-    languages: {
-      opts: LanguagesTextOptionProps,
-      selected: LanguagesTextOptionProps.find(({ value }) => value === resource.language),
-    },
-    categories: {
-      opts: CategoriesTextOptionProps,
-      selected: CategoriesTextOptionProps.find(({ value }) => value === resource.category),
-    },
-    licenses: {
-      opts: LicenseIconTextOptionProps,
-      selected: LicenseIconTextOptionProps.find(({ value }) => value === resource.license),
-    },
-    // toggleLike: action('toggleLike'),
-    // toggleBookmark: action('toggleBookmark'),
+    toggleLike: action('toggleLike'),
+    toggleBookmark: action('toggleBookmark'),
     deleteResource: action('deleteResource'),
 
-    sendToMoodleLmsForm: useFormik<{ site?: string }>({
-      initialValues: { site: 'http://my-lms.org' },
-      onSubmit: action('Send to Moodle LMS'),
-    }),
-    addToCollectionsForm,
-    setCategoryFilter: action('setCategoryFilter'),
-    setTypeFilter: action('setTypeFilter'),
-    setLevelFilter: action('setLevelFilter'),
-    setLanguageFilter: action('setLanguageFilter'),
     autoImageAdded: false,
-    // canSearchImage: true,
+    canSearchImage: true,
     ...overrides?.props,
   }
 }
@@ -285,12 +221,12 @@ export const useResourceStoryProps = (overrides?: {
 // }
 
 export const LoggedIn = () => {
-  const props = useResourceStoryProps({})
-  return <Resource {...props} />
+  const props = useMainResourceCardStoryProps({})
+  return <MainResourceCard {...props} />
 }
 
 export const Owner = () => {
-  const props = useResourceStoryProps({
+  const props = useMainResourceCardStoryProps({
     props: {
       isOwner: true,
       contentType: 'file',
@@ -299,17 +235,17 @@ export const Owner = () => {
       // autoImageAdded: true,
     },
   })
-  return <Resource {...props} />
+  return <MainResourceCard {...props} />
 }
 
 export const Admin = () => {
-  const props = useResourceStoryProps({
+  const props = useMainResourceCardStoryProps({
     props: {
       isOwner: true,
       isAdmin: true,
     },
   })
-  return <Resource {...props} />
+  return <MainResourceCard {...props} />
 }
 
 export default meta
