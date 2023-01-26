@@ -42,9 +42,11 @@ body {
   > .header {
     width: -webkit-fill-available;
     display: flex;
+    position: fixed;
     justify-content: center;
     background: white;
     box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
+    z-index: 5;
 
     @media screen and (max-width: 675px) {
       padding: 0 25px;
@@ -80,7 +82,7 @@ body {
   > .content {
     height: 100%;
     width: -webkit-fill-available;
-    padding: 0 100px 0;
+    padding: 60px 100px 0;
     // padding: 0 100px 80px;
     display: flex;
     flex-direction: column;

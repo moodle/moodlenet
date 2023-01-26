@@ -23,7 +23,7 @@ import {
   TertiaryButton,
 } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
-import { getBackupImage, getTagList, useImageUrl } from '@moodlenet/react-app/ui'
+import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useMemo, useRef, useState } from 'react'
 import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
@@ -32,37 +32,42 @@ import './MainResourceCard.scss'
 export type MainResourceCardProps = {
   mainColumnItems?: AddonItem[]
   headerColumnItems?: AddonItem[]
+  topLeftHeaderItems?: AddonItem[]
+  topRightHeaderItems?: AddonItem[]
   moreButtonItems?: AddonItem[]
-  isEditing?: boolean
-  setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>
+  footerRowItems?: AddonItem[]
 
   resource: ResourceFormValues
+  downloadFilename: string
+  type: string
   editResource: (values: ResourceFormValues) => Promise<unknown>
+  deleteResource?(): unknown
 
+  isEditing?: boolean
+  setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>
   isAuthenticated: boolean
-  // isApproved: boolean
   isOwner: boolean
   isAdmin: boolean
   canEdit: boolean
   autoImageAdded: boolean
   canSearchImage: boolean
+
   liked: boolean
-  bookmarked: boolean
-
   toggleLike?(): unknown
+  bookmarked: boolean
   toggleBookmark?(): unknown
-  deleteResource?(): unknown
+  // isApproved: boolean
   // reportForm?: FormikHandle<{ comment: string }>
-
   // tags: FollowTag[]
-  downloadFilename: string
-  type: string
 } & ResourceType
 
 export const MainResourceCard: FC<MainResourceCardProps> = ({
   mainColumnItems,
   headerColumnItems,
+  topLeftHeaderItems,
+  topRightHeaderItems,
   moreButtonItems,
+  footerRowItems,
   isEditing,
   setIsEditing,
 
@@ -76,10 +81,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   // resourceFormat,
   contentUrl,
   numLikes,
-  tags,
+  //   tags,
 
   isAuthenticated,
-  // canEdit,
+  canEdit,
   isAdmin,
   isOwner,
   autoImageAdded,
@@ -182,18 +187,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     )
   }
 
-  const imageDiv = (
-    <img
-      className="image"
-      src={imageUrl}
-      alt="Background"
-      {...(contentType === 'file' && {
-        onClick: () => setIsShowingImage(true),
-      })}
-      style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
-    />
-  )
-
   const shareButton: AddonItem = {
     Item: () => (
       <div key="share-btn" tabIndex={0} onClick={copyUrl}>
@@ -208,9 +201,179 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const updatedHeaderColumnItems = [...(headerColumnItems ?? [])].filter(
+  const title: AddonItem = {
+    Item: () =>
+      canEdit ? (
+        <InputTextField
+          name="name"
+          textarea
+          textAreaAutoSize
+          displayMode
+          className="title underline"
+          value={form.values.name}
+          edit={isEditing}
+          onChange={form.handleChange}
+          style={{
+            pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+          }}
+          error={isEditing && shouldShowErrors && form.errors.name}
+        />
+      ) : (
+        <div className="title">{form.values.name}</div>
+      ),
+    key: 'type-and-actions',
+  }
+
+  //   const tagsDiv: AddonItem = {
+  //     Item: () =>
+  //       tags.length > 0 ? <div className="tags scroll">{getTagList(tags, 'medium')}</div> : <></>,
+  //     key: 'type-and-actions',
+  //   }
+
+  const resourceLabel = {
+    Item: () => <div className="resource-label">Resource</div>,
+    key: 'resource-label',
+  }
+
+  const typePill = {
+    Item: () => (
+      <div
+        className="type-pill"
+        style={{
+          background: typeColor,
+        }}
+      >
+        {typeName}
+      </div>
+    ),
+    key: 'type-pill',
+  }
+
+  const updatedTopLeftHeaderItems = [resourceLabel, typePill, ...(topLeftHeaderItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
+
+  const likeButton = {
+    Item: () =>
+      !isEditing ? (
+        <div
+          className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
+          onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
+        >
+          {liked ? <Favorite /> : <FavoriteBorder />}
+          <span>{numLikes}</span>
+        </div>
+      ) : (
+        <></>
+      ),
+    key: 'like-button',
+  }
+
+  const bookmarkButton = {
+    Item: () =>
+      isAuthenticated && !isEditing ? (
+        <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+          {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+        </div>
+      ) : (
+        <></>
+      ),
+    key: 'bookmark-button',
+  }
+
+  const moreButton = {
+    Item: () =>
+      isAuthenticated && !isOwner ? (
+        <FloatingMenu
+          className="more-button"
+          menuContent={
+            updatedMoreButtonItems.map(i => (
+              <i.Item key={i.key} />
+            ))
+            // <div tabIndex={0} onClick={() => setIsReporting(true)}>
+            //   <Flag />
+            //   <Trans>Report</Trans>
+            // </div>,
+          }
+          hoverElement={<TertiaryButton className={`more`}>...</TertiaryButton>}
+        />
+      ) : (
+        <></>
+      ),
+    key: 'more-button',
+  }
+
+  const editSaveButton = {
+    Item: () =>
+      isAdmin || isOwner ? (
+        <div className="edit-save">
+          {isEditing ? (
+            <PrimaryButton
+              className={`${form.isSubmitting ? 'loading' : ''}`}
+              color="green"
+              onClick={handleOnSaveClick}
+            >
+              <div
+                className="loading"
+                style={{
+                  visibility: form.isSubmitting ? 'visible' : 'hidden',
+                }}
+              >
+                <Loading color="white" />
+              </div>
+              <div
+                className="label"
+                style={{
+                  visibility: form.isSubmitting ? 'hidden' : 'visible',
+                }}
+              >
+                <Save />
+              </div>
+            </PrimaryButton>
+          ) : (
+            <SecondaryButton onClick={handleOnEditClick} color="orange">
+              <Edit />
+            </SecondaryButton>
+          )}
+        </div>
+      ) : (
+        <></>
+      ),
+    key: 'edit-save-button',
+  }
+
+  const updatedTopRightHeaderItems = [
+    likeButton,
+    bookmarkButton,
+    moreButton,
+    editSaveButton,
+    ...(topRightHeaderItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const topHeaderRow: AddonItem = {
+    Item: () => (
+      <div className="top-header-row">
+        <div className="top-left-header">
+          {updatedTopLeftHeaderItems.map(i => (
+            <i.Item key={i.key} />
+          ))}
+        </div>
+        <div className="top-right-header">
+          {updatedTopRightHeaderItems.map(i => (
+            <i.Item key={i.key} />
+          ))}
+        </div>
+      </div>
+    ),
+    key: 'top-header-row',
+  }
+
+  const updatedHeaderColumnItems = [
+    topHeaderRow,
+    title,
+    // tagsDiv,
+    ...(headerColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
 
   const resourceHeader: AddonItem = {
     Item: () => (
@@ -218,115 +381,136 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         {updatedHeaderColumnItems.map(i => (
           <i.Item key={i.key} />
         ))}
-        <div className="type-and-actions">
-          <span className="resource-type">
-            <div className="resource-label">Resource</div>
-            <div
-              className="type"
-              style={{
-                background: typeColor,
-              }}
-            >
-              {typeName}
-            </div>
-          </span>
-          <div className="actions">
-            {!isEditing && (
-              <div
-                className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${
-                  liked && 'liked'
-                }`}
-                onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
-              >
-                {liked ? <Favorite /> : <FavoriteBorder />}
-                <span>{numLikes}</span>
-              </div>
-            )}
-            {isAuthenticated && !isEditing && (
-              <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-                {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-              </div>
-            )}
-            {isAuthenticated && !isOwner && (
-              <FloatingMenu
-                className="more-button"
-                menuContent={
-                  updatedMoreButtonItems.map(i => (
-                    <i.Item key={i.key} />
-                  ))
-                  // <div tabIndex={0} onClick={() => setIsReporting(true)}>
-                  //   <Flag />
-                  //   <Trans>Report</Trans>
-                  // </div>,
-                }
-                hoverElement={<TertiaryButton className={`more`}>...</TertiaryButton>}
-              />
-            )}
-            {(isAdmin || isOwner) && (
-              <div className="edit-save">
-                {isEditing ? (
-                  <PrimaryButton
-                    className={`${form.isSubmitting ? 'loading' : ''}`}
-                    color="green"
-                    onClick={handleOnSaveClick}
-                  >
-                    <div
-                      className="loading"
-                      style={{
-                        visibility: form.isSubmitting ? 'visible' : 'hidden',
-                      }}
-                    >
-                      <Loading color="white" />
-                    </div>
-                    <div
-                      className="label"
-                      style={{
-                        visibility: form.isSubmitting ? 'hidden' : 'visible',
-                      }}
-                    >
-                      <Save />
-                    </div>
-                  </PrimaryButton>
-                ) : (
-                  <SecondaryButton onClick={handleOnEditClick} color="orange">
-                    <Edit />
-                  </SecondaryButton>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-        {isOwner ? (
-          <InputTextField
-            name="name"
-            textarea
-            textAreaAutoSize
-            displayMode
-            className="title underline"
-            value={form.values.name}
-            edit={isEditing}
-            onChange={form.handleChange}
-            style={{
-              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-            }}
-            error={isEditing && shouldShowErrors && form.errors.name}
-          />
-        ) : (
-          <div className="title">{form.values.name}</div>
-        )}
-        {tags.length > 0 && <div className="tags scroll">{getTagList(tags, 'medium')}</div>}
       </div>
     ),
     key: 'resource-header',
+  }
+
+  const imageDiv = (
+    <img
+      className="image"
+      src={imageUrl}
+      alt="Background"
+      {...(contentType === 'file' && {
+        onClick: () => setIsShowingImage(true),
+      })}
+      style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
+    />
+  )
+
+  const imageContainer: AddonItem = {
+    Item: () =>
+      form.values.image || isEditing ? (
+        <div className="image-container">
+          {contentType === 'link' ? (
+            <a href={contentUrl} target="_blank" rel="noreferrer">
+              {imageDiv}
+            </a>
+          ) : (
+            <>{imageDiv}</>
+          )}
+          {/* {getImageCredits(form.values.image)} */}
+          {isEditing && !form.isSubmitting && (
+            <div className="image-actions">
+              <input
+                ref={uploadImageRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                onChange={uploadImage}
+                hidden
+              />
+              {canSearchImage && (
+                <RoundButton
+                  className={`search-image-button ${form.isSubmitting ? 'disabled' : ''} ${
+                    autoImageAdded ? 'highlight' : ''
+                  }`}
+                  type="search"
+                  abbrTitle={`Search for an image`}
+                  onClick={() => setIsSearchingImage(true)}
+                />
+              )}
+              <RoundButton
+                className={`change-image-button ${form.isSubmitting ? 'disabled' : ''}`}
+                type="upload"
+                abbrTitle={`Upload an image`}
+                onClick={selectImage}
+              />
+              <RoundButton
+                className={`delete-image ${form.isSubmitting ? 'disabled' : ''}`}
+                type="cross"
+                abbrTitle={`Delete image`}
+                onClick={deleteImage}
+              />
+            </div>
+          )}
+        </div>
+      ) : (
+        <></>
+      ),
+    key: 'image-container',
   }
 
   const searchImageComponent = isSearchingImage && (
     <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
   )
 
-  const updatedMainColumnItems = [resourceHeader, ...(mainColumnItems ?? [])].filter(
+  const description: AddonItem = {
+    Item: () =>
+      isOwner ? (
+        <InputTextField
+          className="description underline"
+          name="description"
+          textarea
+          textAreaAutoSize
+          displayMode
+          edit={isEditing}
+          value={form.values.description}
+          onChange={form.handleChange}
+          style={{
+            pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+          }}
+          error={isEditing && form.errors.description}
+        />
+      ) : (
+        <div className="description"> {form.values.description} </div>
+      ),
+    key: 'description',
+  }
+
+  const deleteButton: AddonItem = {
+    Item: () =>
+      isEditing ? (
+        <SecondaryButton color="red" onHoverColor="fill-red" onClick={() => setIsToDelete(true)}>
+          <DeleteOutline />
+        </SecondaryButton>
+      ) : (
+        <></>
+      ),
+    key: 'delete-button',
+  }
+
+  const updatedFooterRowItems = [deleteButton, ...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
+
+  const resourceFooter: AddonItem = {
+    Item: () => (
+      <div className="resource-footer">
+        {updatedFooterRowItems.map(i => (
+          <i.Item key={i.key} />
+        ))}
+      </div>
+    ),
+    key: 'resource-footer',
+  }
+
+  const updatedMainColumnItems = [
+    resourceHeader,
+    imageContainer,
+    description,
+    resourceFooter,
+    ...(mainColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
 
   const snackbars = (
     <>
@@ -386,80 +570,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         {updatedMainColumnItems.map(i => (
           <i.Item key={i.key} />
         ))}
-        {(form.values.image || isEditing) && (
-          <div className="image-container">
-            {contentType === 'link' ? (
-              <a href={contentUrl} target="_blank" rel="noreferrer">
-                {imageDiv}
-              </a>
-            ) : (
-              <>{imageDiv}</>
-            )}
-            {/* {getImageCredits(form.values.image)} */}
-            {isEditing && !form.isSubmitting && (
-              <div className="image-actions">
-                <input
-                  ref={uploadImageRef}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  onChange={uploadImage}
-                  hidden
-                />
-                {canSearchImage && (
-                  <RoundButton
-                    className={`search-image-button ${form.isSubmitting ? 'disabled' : ''} ${
-                      autoImageAdded ? 'highlight' : ''
-                    }`}
-                    type="search"
-                    abbrTitle={`Search for an image`}
-                    onClick={() => setIsSearchingImage(true)}
-                  />
-                )}
-                <RoundButton
-                  className={`change-image-button ${form.isSubmitting ? 'disabled' : ''}`}
-                  type="upload"
-                  abbrTitle={`Upload an image`}
-                  onClick={selectImage}
-                />
-                <RoundButton
-                  className={`delete-image ${form.isSubmitting ? 'disabled' : ''}`}
-                  type="cross"
-                  abbrTitle={`Delete image`}
-                  onClick={deleteImage}
-                />
-              </div>
-            )}
-          </div>
-        )}
-        {isOwner ? (
-          <InputTextField
-            className="description underline"
-            name="description"
-            textarea
-            textAreaAutoSize
-            displayMode
-            edit={isEditing}
-            value={form.values.description}
-            onChange={form.handleChange}
-            style={{
-              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-            }}
-            error={isEditing && form.errors.description}
-          />
-        ) : (
-          <div className="description"> {form.values.description} </div>
-        )}
-        {isEditing && (
-          <div className="bottom">
-            <SecondaryButton
-              color="red"
-              onHoverColor="fill-red"
-              onClick={() => setIsToDelete(true)}
-            >
-              <DeleteOutline />
-            </SecondaryButton>
-          </div>
-        )}
       </Card>
     </>
 

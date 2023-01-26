@@ -22,7 +22,6 @@ import {
 //   LicenseIconTextOptionProps,
 //   VisbilityIconTextOptionProps,
 // } from '../NewResource/UploadResource/storiesData'
-import { TagListStory } from '@moodlenet/react-app/ui'
 import { ContributorCardStories } from '@moodlenet/resource/stories'
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 // import { useFormik } from 'formik'
@@ -193,7 +192,6 @@ export const useResourceStoryProps = (overrides?: {
     // liked: false,
     numLikes: 23,
     // bookmarked: true,
-    tags: TagListStory.slice(0, 1),
     contributorCardProps: ContributorCardStories.ContributorCardStoryProps,
     contentUrl: '#',
     contentType: 'link',
