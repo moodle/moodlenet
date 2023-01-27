@@ -25,7 +25,7 @@ const person = people[randomProfileIndex]
 
 export const ContributorCardStoryProps: ContributorCardProps = {
   avatarUrl: person ? person.avatarUrl : null,
-  displayName: person ? person.displayName : '',
+  displayName: person ? person.title : '',
   timeSinceCreation: `${randomUploadedHours} ${
     randomProfileIndex === 0
       ? 'hours'
