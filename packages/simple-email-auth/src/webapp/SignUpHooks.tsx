@@ -1,8 +1,8 @@
+import { useFormik } from 'formik'
 import { FC, useContext, useMemo, useState } from 'react'
-import { SignupFormValues, SignupProps } from './Signup.js'
 import { MainContext } from './MainContext.js'
 import * as SignUpAddon from './Signup.js'
-import { useFormik } from 'formik'
+import { SignupFormValues, SignupProps } from './Signup.js'
 
 export const usePanelProps = (): SignupProps => {
   const {
@@ -13,11 +13,11 @@ export const usePanelProps = (): SignupProps => {
   const [errMsg, setErrMsg] = useState('')
 
   const form = useFormik<SignupFormValues>({
-    initialValues: { email: '', password: '', displayName: '' },
-    async onSubmit({ email, password, displayName }) {
+    initialValues: { email: '', password: '', title: '' },
+    async onSubmit({ email, password, title }) {
       setErrMsg('')
       const res = await me.rpc.signup({
-        displayName,
+        title,
         email,
         password,
       })

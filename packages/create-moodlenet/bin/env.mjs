@@ -1,8 +1,8 @@
-import yargs from 'yargs'
-import { dirname, resolve, basename } from 'path'
-import { mkdir, readFile } from 'fs/promises'
-import { fileURLToPath } from 'url'
 import execa from 'execa'
+import { mkdir, readFile } from 'fs/promises'
+import { basename, dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
+import yargs from 'yargs'
 
 export const myModuleDir = dirname(fileURLToPath(import.meta.url))
 export const myPkgJson = JSON.parse(await readFile(resolve(myModuleDir, '..', 'package.json')))
@@ -33,5 +33,4 @@ export const defaultCorePackages = [
   'react-app',
   'extensions-manager',
   'simple-email-auth',
-  'web-user',
 ]

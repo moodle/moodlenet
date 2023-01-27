@@ -1,8 +1,4 @@
-import type {
-  ClientSession,
-  SessionToken,
-  UserData,
-} from '../../../../authentication-manager/dist/init.mjs'
+import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
 
 import type { NodeGlyph } from '@moodlenet/content-graph'
 import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
@@ -18,10 +14,14 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MainContext } from './MainContext.mjs'
+import { WebUserGlyphDescriptors } from '../../server/types.mjs'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
+import { MainContext } from './MainContext.mjs'
+// implementare la gestione della lista utenti, dove vengono assegnati il gruppo
+
+// da dare pasto a alle  form non importa quali
 
 // import rootAvatarUrl from '../webapp/static/img/ROOT.png'
 // displayName: 'ROOT',
@@ -30,7 +30,7 @@ export type ClientSessionData = {
   isRoot: boolean
   userDisplay: { name: string; avatarUrl: string }
   user: UserData
-  myUserNode: NodeGlyph
+  myUserNode: NodeGlyph<WebUserGlyphDescriptors['Profile']>
 }
 export type LoginEntryItem = Omit<LoginItem, 'key'>
 export type SignupEntryItem = Omit<SignupItem, 'key'>
@@ -46,39 +46,38 @@ export const AuthCtx = createContext<AuthCtxT>(null as never)
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
+
+  // prendo il contexct main con auth user ecc
   const { use } = useContext(MainContext)
 
   const [firstCallDone, setFirstCallDone] = useState(false)
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
   const getClientSessionData = useCallback(
-    async (clientSession: ClientSession): Promise<ClientSessionData> => {
+    async (clientSession: ClientSession): Promise<ClientSessionData | null> => {
       if (clientSession.root) {
         return {
           isRoot: true as const,
           userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
-          myUserNode: {} as any,
-          user: {} as any,
+          myUserNode: {} as never,
+          user: {} as never,
         }
       }
 
-      const myUserNodeRes = await use.graph.rpc.getMyUserNode()
-      if (!myUserNodeRes) {
-        throw new Error(
-          `shouldn't happen : can't fetch getMyUserNode for userId : ${clientSession.user.id}`,
-        )
+      const myUserProfile = await use.me.rpc['webapp/getMyProfile']()
+      if (!myUserProfile) {
+        return null
       }
-      const { node: myUserNode } = myUserNodeRes
-      const { title /* ,icon, description*/ } = myUserNode
+      const { title /* ,icon, description*/ } = myUserProfile
       const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
       return {
         isRoot: false,
         user: clientSession.user,
-        myUserNode,
+        myUserNode: myUserProfile,
         userDisplay: { name: title, avatarUrl },
       }
     },
-    [use.graph],
+    [use.me],
   )
 
   const fetchClientSession = useCallback(
@@ -91,6 +90,12 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       writeSessionToken(token)
       const clientSessionData = await getClientSessionData(res.clientSession)
       setClientSessionData(clientSessionData)
+      if (!clientSessionData) {
+        return {
+          success: false,
+          msg: 'no session data',
+        } as const
+      }
       return {
         success: true,
         clientSession: res.clientSession,
@@ -108,10 +113,12 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const res = await fetchClientSession(token)
       if (res.success) {
         nav('/')
+      } else {
+        logout()
       }
       return res
     },
-    [fetchClientSession, nav],
+    [fetchClientSession, logout, nav],
   )
 
   useEffect(() => {

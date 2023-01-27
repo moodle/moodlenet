@@ -25,8 +25,13 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
   userPkgId: PkgIdentifier,
   rpcPaths: string[],
 ): LocateRpc<TargetPkgExpose> {
-  rpcPaths.forEach(path => ((locateRpc as any)[path] = locateRpc(path)))
-  return locateRpc as LocateRpc<TargetPkgExpose>
+  return rpcPaths.reduce(
+    (_rpc, path) => ({
+      ..._rpc,
+      [path]: locateRpc(path),
+    }),
+    {} as LocateRpc<TargetPkgExpose>,
+  )
 
   function locateRpc(path: string) {
     return async function (body: unknown) {
@@ -42,10 +47,10 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
   }
 }
 
-export type LocateRpc<TargetPkgExpose extends PkgExpose> = (<
+export type LocateRpc<TargetPkgExpose extends PkgExpose> = /* (<
   Path extends keyof TargetPkgExpose['rpc'],
 >(
   path: Path,
-) => TargetPkgExpose['rpc'][Path]['fn']) & {
+) =>  TargetPkgExpose['rpc'][Path]['fn']) &  */ {
   [path in keyof TargetPkgExpose['rpc']]: TargetPkgExpose['rpc'][path]['fn']
 }

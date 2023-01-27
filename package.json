@@ -38,6 +38,7 @@
     "npm-watch": "^0.11.0",
     "pm2": "^5.2.2",
     "prettier": "2.7.1",
+    "prettier-plugin-organize-imports": "^3.2.2",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.6",
     "storybook-addon-state": "^1.0.3",
@@ -50,7 +51,7 @@
     "prj-husky-init": "rimraf .husky && husky install && husky add .husky/pre-commit \"npm run pre-commit\"",
     "prj-bs": "lerna bootstrap",
     "dev-assistant": "lerna run dev-assistant --parallel --stream --",
-    "prj-build": "tsc --build ./packages/arangodb ./packages/authentication-manager ./packages/component-library ./packages/content-graph ./packages/core ./packages/crypto ./packages/email-service ./packages/extensions-manager ./packages/http-server ./packages/key-value-store ./packages/organization ./packages/react-app ./packages/simple-email-auth ./packages/web-user",
+    "prj-build": "tsc --build ./packages/arangodb ./packages/authentication-manager ./packages/component-library ./packages/content-graph ./packages/core ./packages/crypto ./packages/email-service ./packages/extensions-manager ./packages/http-server ./packages/key-value-store ./packages/organization ./packages/react-app ./packages/simple-email-auth",
     "prj-build-watch": "npm run prj-build -- --watch",
     "dev-install-backend": "node bin/install.mjs",
     "dev-start-backend": "node bin/boot.mjs",
@@ -59,8 +60,6 @@
     "pkg-cleanup-all": "npm run prj-cleanup-build && lerna run cleanup-all --parallel && rimraf tsconfig.tsbuildinfo && rimraf packages/*/tsconfig.tsbuildinfo && rimraf packages/*/node_modules",
     "prj-cleanup-build": "lerna run cleanup-build --parallel && rimraf packages/*/dist && rimraf packages/*/tsconfig.tsbuildinfo",
     "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
-    "pre-commit": "lint-staged",
-    "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
-    "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\""
+    "pre-commit": "lint-staged"
   }
 }

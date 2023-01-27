@@ -4,6 +4,7 @@ export const env = await getEnv()
 
 type Env = {
   port: number
+  domain: { name: string; protocol: string }
 }
 async function getEnv(): Promise<Env> {
   const config = shell.config
