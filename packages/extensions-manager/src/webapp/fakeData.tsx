@@ -24,6 +24,7 @@ export const mandatoryPackages = [
   '@moodlenet/http-server',
   '@moodlenet/webapp',
   '@moodlenet/react-app',
+  '@moodlenet/resource',
 ]
 
 export const packagesFake: Package[] = [

@@ -1,3 +1,6 @@
+import { AssetInfo } from '../../../common/types.mjs'
+import { ContentBackupImages } from '../assets/data/images.js'
+
 export const elementFullyInViewPort = (
   el: Element,
   options?: {
@@ -50,6 +53,22 @@ export const isItem = (
     return true
   }
   return false
+}
+
+export const getNumberFromString = (s: string) =>
+  parseInt(
+    s
+      .split('')
+      .map(l => {
+        return l.charCodeAt(0)
+      })
+      .join(''),
+    10,
+  )
+
+export const getBackupImage = (id: string): AssetInfo | undefined => {
+  const numId = getNumberFromString(id)
+  return ContentBackupImages[numId % ContentBackupImages.length]
 }
 
 // export const isAddonItem = (

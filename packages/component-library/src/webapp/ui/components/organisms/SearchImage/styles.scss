@@ -1,0 +1,143 @@
+.modal-portal > .search-image {
+  > .modal {
+    height: 100%;
+    width: 100%;
+    max-height: 80vh;
+    max-width: 500px;
+    > .modal-header {
+    }
+
+    > .content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      gap: 20px;
+      margin-top: 80px;
+      > .image-search-box {
+        position: fixed;
+        margin-top: -70px;
+        width: 100%;
+        max-width: min(450px, calc(100% - 80px));
+        display: flex;
+        height: 40px;
+        padding: 0 5px;
+        > .input-text-field {
+          width: 100%;
+          margin-right: -10px;
+          > .input-container {
+            padding-right: 10px;
+          }
+        }
+        > .search-button {
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          border-radius: 6px;
+          box-shadow: 0 0 6px #dedede;
+          > svg {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            > g > g > path {
+              fill: white;
+            }
+          }
+        }
+      }
+      overflow-y: scroll;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+      &::-webkit-scrollbar {
+        /* WebKit */
+        width: 0;
+        height: 0;
+      }
+      > .sample-queries-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px 10px;
+        padding: 5px;
+        > * {
+          width: fit-content;
+        }
+      }
+      > .images-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        align-items: center;
+        > .images {
+          display: flex;
+          gap: 15px;
+          width: 100%;
+
+          > .column-1,
+          > .column-2 {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 50%;
+            > .image-container {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+              > .image {
+                cursor: pointer;
+                position: relative;
+                width: 100%;
+                display: flex;
+                > img {
+                  width: 100%;
+                  > .active-overlay {
+                    display: none;
+                  }
+                  &:hover {
+                    opacity: 0.6;
+                  }
+                  &:active {
+                    opacity: 0.6;
+                    > .active-overlay {
+                      display: block;
+                      top: 0;
+                      left: 0;
+                      position: absolute;
+                      width: 100%;
+                      height: 100%;
+                      background-color: #1a6aff47;
+                    }
+                  }
+                }
+              }
+              > .credits {
+                font-size: 12px;
+                color: #5a5a5a;
+                &:hover {
+                  text-decoration: underline;
+                  opacity: 0.6;
+                }
+              }
+            }
+          }
+        }
+        > .load-more {
+          margin-bottom: 8px;
+        }
+      }
+      > .loading,
+      > .error-msg {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: -5px;
+      }
+    }
+  }
+}
