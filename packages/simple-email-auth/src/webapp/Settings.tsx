@@ -4,7 +4,7 @@ import { FC } from 'react'
 import './Signup.scss'
 
 // const { InputTextField, PrimaryButton, TertiaryButton, Card } = lib.ui.components
-export type SignupFormValues = { email: string; password: string; displayName: string }
+export type SignupFormValues = { email: string; password: string; title: string }
 
 export const Menu: FC = () => <span>Email Auth</span>
 

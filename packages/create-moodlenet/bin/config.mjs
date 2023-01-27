@@ -1,6 +1,6 @@
 import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
-import { installDir, currentRegistry } from './env.mjs'
+import { currentRegistry, installDir } from './env.mjs'
 
 console.log(`
 installing config...
@@ -24,6 +24,7 @@ function getConfigFileStr() {
         },
         '@moodlenet/http-server': {
           port: 8080,
+          domain: { name: 'localhost:8080', protocol: 'http' },
         },
         '@moodlenet/email-service': {
           nodemailerTransport: { jsonTransport: true },

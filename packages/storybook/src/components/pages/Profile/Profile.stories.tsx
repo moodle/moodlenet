@@ -1,4 +1,4 @@
-import { Profile, useProfileCardStoryProps } from '@moodlenet/web-user/ui'
+import { Profile, useProfileCardStoryProps } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useProfileStoryProps } from './stories-props.js'

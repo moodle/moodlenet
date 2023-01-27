@@ -1,2 +1,2 @@
+export { getHttpBaseUrl, mountApp } from './lib.mjs'
 export * from './types.mjs'
-export { mountApp } from './lib.mjs'

@@ -37,7 +37,24 @@ export type AppearanceData = {
 }
 
 export type User = {
-  displayName: string
-  email: string
+  title: string
+  email?: string
+  isAdmin: boolean
+}
+
+export type ProfileFormValues = {
+  title: string
+  description: string
+  organizationName?: string
+  location?: string
+  siteUrl?: string
+  backgroundImage?: string | File | null
+  avatarImage?: string | File | null
+}
+
+export type WebUserData = {
+  _key: string
+  name: string
+  email?: string
   isAdmin: boolean
 }

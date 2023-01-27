@@ -7,14 +7,12 @@ export type ProviderId = {
   uid: string
 }
 
-export type User = UserData //& Record<never,never>
-
+export type User = UserData & { id: UserId }
 export type UserData = {
-  id: UserId
   providerId: ProviderId
   created: string
-  // displayName: string
-  // avatarUrl?: string
 }
 
 export type Users = Record<UserId, User>
+
+export type UserType = 'admin' | 'full-user' | 'read-only-user'

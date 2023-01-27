@@ -1,12 +1,12 @@
 import { useContext, useMemo } from 'react'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
+import { MainContext } from '../../../../../../context/MainContext.mjs'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
+import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
 import { GeneralContainer } from '../../General/GeneralContainer.js'
-import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { SettingsItem, SettingsProps } from '../Settings.js'
-import { MainContext } from '../../../../../../context/MainContext.mjs'
 
 const localSettingsItems: SettingsItem[] = [
   {

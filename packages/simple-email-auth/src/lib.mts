@@ -1,11 +1,12 @@
-import { SessionToken, getSessionToken, registerUser } from '@moodlenet/authentication-manager'
+import { getSessionToken, registerUser, SessionToken } from '@moodlenet/authentication-manager'
 import * as crypto from '@moodlenet/crypto'
-import { createProfile } from '@moodlenet/web-user'
 import { send } from '@moodlenet/email-service'
+import { getHttpBaseUrl } from '@moodlenet/http-server'
+import { createProfile } from '@moodlenet/react-app/server'
 import assert from 'assert'
+import shell from './shell.mjs'
 import * as store from './store.mjs'
 import { ConfirmEmailPayload, SignupReq } from './types.mjs'
-import shell from './shell.mjs'
 
 export async function login({
   email,
@@ -45,7 +46,9 @@ export async function signup(
   shell.call(send)({
     emailObj: {
       to: req.email,
-      text: `hey ${req.displayName} confirm your email with /.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+      text: `hey ${
+        req.title
+      } confirm your email on ${await getHttpBaseUrl()}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
     },
   })
   return { success: true }
@@ -61,7 +64,7 @@ export async function confirm({
     return { success: false, msg: `invalid confirm token` }
   }
   const {
-    req: { displayName, email, password },
+    req: { title, email, password },
   } = confirmEmailPayload
 
   const mUser = await store.getByEmail(email)
@@ -70,19 +73,23 @@ export async function confirm({
     return { success: false, msg: 'user registered' }
   }
 
-  const user = await store.create({ email, password })
+  const myUser = await store.create({ email, password })
 
-  const authRes = await shell.call(registerUser)({ uid: user.id })
+  const authRes = await shell.call(registerUser)({
+    uid: myUser.id,
+  })
 
   if (!authRes.success) {
-    await store.delUser(user.id)
+    await store.delUser(myUser.id)
     const { msg, success } = authRes
     return { msg, success }
   }
 
   await shell.call(createProfile)({
-    displayName,
+    title,
     userId: authRes.user.id,
+    isAdmin: false,
+    contacts: { email },
   })
 
   const { sessionToken } = authRes
@@ -102,7 +109,7 @@ export async function confirm({
     }
   }
 }
-function isConfirmEmailPayload(_: any): _ is ConfirmEmailPayload {
+function isConfirmEmailPayload(_: unknown): _ is ConfirmEmailPayload {
   //FIXME: implement checks
   return !!_
 }
