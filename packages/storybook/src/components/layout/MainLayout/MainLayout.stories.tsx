@@ -2,8 +2,6 @@ import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { FooterStoryProps } from '../../organisms/Footer.stories.js'
 
-// import { href } from '../../../../elements/link'
-
 import {
   HeaderLoggedInStoryProps,
   HeaderLoggedOutOrganizationStoryProps,
