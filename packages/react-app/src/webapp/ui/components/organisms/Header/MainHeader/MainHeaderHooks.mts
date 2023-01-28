@@ -6,6 +6,7 @@ import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks
 import { href } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'
 import { MainHeaderProps } from './MainHeader.js'
+// import ExitToApp from '@material-ui/icons'
 
 /*
    Icon: <Icon icon={'avatar'} />,
@@ -37,13 +38,14 @@ export const useHeaderProps = (): MainHeaderProps => {
       }),
       {
         Icon: 'Settings',
-        text: '',
+        text: 'Admin',
         key: 'SettingsIdx',
         path: href('/settings'),
       },
       {
         Icon: '',
-        text: 'LogOut',
+        // Icon: ExitToApp,
+        text: 'Log out',
         key: 'logOutIdx',
         onClick: logout,
       },
