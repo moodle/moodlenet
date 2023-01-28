@@ -6,7 +6,7 @@ import { AuthCtx, SettingsSectionItem } from './web-lib.mjs'
 
 const settingsSectionItem: SettingsSectionItem = {
   Content: UsersContainer,
-  Menu: () => <span>User Types </span>,
+  Menu: () => <span>Users </span>,
 }
 
 const SetupComponent: FC<PropsWithChildren> = ({ children }) => {

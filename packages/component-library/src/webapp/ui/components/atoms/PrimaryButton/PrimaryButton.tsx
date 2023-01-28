@@ -23,12 +23,12 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
 }) => {
   return (
     <button
-      className={`primary-button button ${className} ${onHoverColor} ${
+      className={`primary-button button ${className ?? ''} ${onHoverColor ?? ''} ${
         disabled ? 'disabled' : ''
       } ${color}`}
       tabIndex={!disabled ? 0 : undefined}
       style={{ pointerEvents: noHover ? 'none' : 'unset' }}
-      onClick={!disabled ? onClick : () => {}}
+      onClick={!disabled ? onClick : () => null}
       onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}
       {...props}
     >
