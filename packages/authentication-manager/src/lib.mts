@@ -16,7 +16,7 @@ export async function getRootSessionToken({
   if (!(env.rootPassword && password)) {
     return { success: false }
   } else if (env.rootPassword === password) {
-    const sessionToken = await encryptClientSession({ root: true })
+    const sessionToken = await encryptClientSession({ isRoot: true })
     return { success: true, sessionToken }
   } else {
     return { success: false }
