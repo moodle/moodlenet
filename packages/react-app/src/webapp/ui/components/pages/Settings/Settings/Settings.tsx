@@ -1,9 +1,10 @@
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import MainLayout, { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { AddonItem, Card } from '@moodlenet/component-library'
 import './Settings.scss'
+import { AuthCtx } from '../../../../../web-lib.mjs'
 
 export type SettingsItem = { Content: AddonItem; Menu: AddonItem }
 export type SettingsProps = {
@@ -13,7 +14,18 @@ export type SettingsProps = {
 
 export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) => {
   const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0])
-
+  const { clientSessionData } = useContext(AuthCtx)
+  if (clientSessionData?.isRoot) {
+    return (
+      <MainLayout
+        {...mainLayoutProps}
+        streched={true}
+        headerProps={{
+          ...mainLayoutProps.headerProps,
+        }}
+      ></MainLayout>
+    )
+  }
   return (
     <MainLayout
       {...mainLayoutProps}
