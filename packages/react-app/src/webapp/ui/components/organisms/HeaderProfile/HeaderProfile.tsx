@@ -15,7 +15,7 @@ const IconContainer: FC = () => {
   if (!clientSessionData?.user) {
     return <></>
   }
-  const iconUrl = '' // TODO: should use avatarUrl from clientSessionData?.myUserNode
+  const iconUrl = '' // TODO: should use avatarUrl from clientSessionData?.myProfile
   return <HeaderProfileIcon icon={iconUrl}></HeaderProfileIcon>
 }
 
