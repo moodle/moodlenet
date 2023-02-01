@@ -29,8 +29,8 @@ import { MainContext } from './MainContext.mjs'
 export type ClientSessionData = {
   isAdmin: boolean
   userDisplay: { name: string; avatarUrl: string }
-  user: UserData
-  myUserNode: NodeGlyph<WebUserGlyphDescriptors['Profile']>
+  user?: UserData
+  myProfile?: NodeGlyph<WebUserGlyphDescriptors['Profile']>
 }
 export type LoginEntryItem = Omit<LoginItem, 'key'>
 export type SignupEntryItem = Omit<SignupItem, 'key'>
@@ -59,8 +59,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         return {
           isAdmin: true,
           userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
-          myUserNode: {} as never,
-          user: {} as never,
         }
       }
 
@@ -73,9 +71,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
       return {
         isAdmin: myUserProfile.isAdmin,
-        user: clientSession.user,
-        myUserNode: profile,
         userDisplay: { name: title, avatarUrl },
+        user: clientSession.user,
+        myProfile: profile,
       }
     },
     [use.me],
