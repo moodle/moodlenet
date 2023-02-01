@@ -72,7 +72,6 @@ export const expose = await shell.expose({
           return null
         }
         const user = await getProfileUser(clientSession.user.id)
-
         if (!user) {
           return null
         }
@@ -80,7 +79,7 @@ export const expose = await shell.expose({
         if (!profile) {
           return null
         }
-        return profile
+        return { profile, isAdmin: user.isAdmin }
       },
     },
   },

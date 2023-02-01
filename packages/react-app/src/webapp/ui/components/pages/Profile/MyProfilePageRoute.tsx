@@ -5,9 +5,9 @@ import { ProfileContainer } from './ProfileContainer.js'
 
 export const MyProfilePageRoute: FC = () => {
   const { clientSessionData } = useContext(AuthCtx)
-  if (!clientSessionData?.user) {
+  if (!clientSessionData?.myProfile) {
     return <Navigate to="/login" />
   }
 
-  return <ProfileContainer profileKey={clientSessionData.myUserNode._key} />
+  return <ProfileContainer profileKey={clientSessionData.myProfile._key} />
 }

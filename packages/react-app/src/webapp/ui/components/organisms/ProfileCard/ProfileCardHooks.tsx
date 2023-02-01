@@ -75,7 +75,7 @@ export const useProfileCardProps = ({
     })
   }, [profileKey, me])
 
-  const isOwner = clientSessionData?.myUserNode._key === profileKey
+  const isOwner = clientSessionData?.myProfile?._key === profileKey
   // const profileCardsProps = useMemo(() => {
   //   const props: ProfileCardPropsControlled = {
   //     isOwner,

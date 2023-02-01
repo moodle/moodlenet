@@ -27,10 +27,10 @@ import { MainContext } from './MainContext.mjs'
 // displayName: 'ROOT',
 //             avatarUrl: rootAvatarUrl,
 export type ClientSessionData = {
-  isRoot: boolean
+  isAdmin: boolean
   userDisplay: { name: string; avatarUrl: string }
-  user: UserData
-  myUserNode: NodeGlyph<WebUserGlyphDescriptors['Profile']>
+  user?: UserData
+  myProfile?: NodeGlyph<WebUserGlyphDescriptors['Profile']>
 }
 export type LoginEntryItem = Omit<LoginItem, 'key'>
 export type SignupEntryItem = Omit<SignupItem, 'key'>
@@ -55,12 +55,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const getClientSessionData = useCallback(
     async (clientSession: ClientSession): Promise<ClientSessionData | null> => {
-      if (clientSession.root) {
+      if (clientSession.isRoot) {
         return {
-          isRoot: true as const,
+          isAdmin: true,
           userDisplay: { name: 'ROOT', avatarUrl: rootAvatarUrl },
-          myUserNode: {} as never,
-          user: {} as never,
         }
       }
 
@@ -68,13 +66,14 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       if (!myUserProfile) {
         return null
       }
-      const { title /* ,icon, description*/ } = myUserProfile
+      const { profile } = myUserProfile
+      const { title /* ,icon, description*/ } = profile
       const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
       return {
-        isRoot: false,
-        user: clientSession.user,
-        myUserNode: myUserProfile,
+        isAdmin: myUserProfile.isAdmin,
         userDisplay: { name: title, avatarUrl },
+        user: clientSession.user,
+        myProfile: profile,
       }
     },
     [use.me],

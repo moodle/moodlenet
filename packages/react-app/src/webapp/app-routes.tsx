@@ -8,7 +8,7 @@ import { SignUpContainer } from './ui/components/pages/Access/Signup/SignupConta
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
 import { MyProfilePageRoute } from './ui/components/pages/Profile/MyProfilePageRoute.js'
 import { ProfilePageRoute } from './ui/components/pages/Profile/ProfilePageRoute.js'
-import { SettingsContainer } from './ui/components/pages/Settings/Settings/Hook/SettingsContainer.js'
+import { SettingsPageRoute } from './ui/components/pages/Settings/Settings/Hook/SettingsPageRoute.js'
 
 export type RouteRegItem = { routes: ReactElement; rootPath?: string }
 
@@ -22,7 +22,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<LandingContainer />} />
         {/* <Route path={nodeHomePage.route} element={<nodeHomePage.Component />} /> */}
-        <Route path="settings" element={<SettingsContainer />} />
+        <Route path="settings" element={<SettingsPageRoute />} />
         <Route path="login">
           <Route index element={<LoginPageContainer />} />
           <Route path="root" element={<RootLoginContainer />} />

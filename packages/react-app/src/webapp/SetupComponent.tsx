@@ -13,7 +13,7 @@ const SetupComponent: FC<PropsWithChildren> = ({ children }) => {
   const { clientSessionData } = useContext(AuthCtx)
   const { reg } = useContext(MainContext)
   reg.avatarMenuItems.useRegister(avatarmenuItemReg, {
-    condition: !!clientSessionData?.myUserNode, // TODO: should have chance to check myUserNode against GlyphDescriptor Profile !
+    condition: !!clientSessionData?.myProfile,
   })
   reg.settingsSections.useRegister(settingsSectionItem)
 
