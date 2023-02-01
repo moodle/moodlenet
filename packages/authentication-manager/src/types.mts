@@ -6,10 +6,10 @@ export type SessionToken = string
 export type ClientSession = UserClientSession | RootClientSession
 export type UserClientSession = {
   user: User
-  root?: false
+  isRoot?: false
 }
 export type RootClientSession = {
-  root: true
+  isRoot: true
   user?: undefined
 }
 

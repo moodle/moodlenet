@@ -27,7 +27,7 @@ export const useHeaderProps = (): MainHeaderProps => {
 
   // prendo i valori dal registry inseriti da webuser o da package esterni
   const menuItems = useMemo(() => {
-    return [
+    const menuList: HeaderMenuItem[] = [
       ...avatarMenuReg.registry.entries.map<HeaderMenuItem>((el, idx) => {
         return {
           Icon: el.item.Icon,
@@ -37,12 +37,6 @@ export const useHeaderProps = (): MainHeaderProps => {
         }
       }),
       {
-        Icon: 'Settings',
-        text: 'Admin',
-        key: 'SettingsIdx',
-        path: href('/settings'),
-      },
-      {
         Icon: '',
         // Icon: ExitToApp,
         text: 'Log out',
@@ -50,7 +44,16 @@ export const useHeaderProps = (): MainHeaderProps => {
         onClick: logout,
       },
     ]
-  }, [avatarMenuReg.registry.entries, logout])
+    if (clientSessionData?.isAdmin) {
+      menuList.push({
+        Icon: 'Settings',
+        text: 'Admin',
+        key: 'SettingsIdx',
+        path: href('/settings'),
+      })
+    }
+    return menuList
+  }, [avatarMenuReg.registry.entries, clientSessionData?.isAdmin, logout])
 
   const rightItems = useMemo(() => {
     return rightItemsReg.registry.entries.map<AddonItem>(({ item, pkgId }, idx) => {
