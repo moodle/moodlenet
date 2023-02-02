@@ -1,22 +1,23 @@
-import { FollowTag, Visibility } from '@moodlenet/component-library'
+import { FollowTag } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
 
-export type NewResourceFormValues = {
+export type ResourceFormValues = {
   // upload
   name: string
   description: string
-  category: string
-  content: string | File
-  visibility: Visibility
-  addToCollections: string[]
-  license?: string
+  content: string | File | null
+  // category: string
+  // visibility: Visibility
+  // addToCollections: string[]
+  // license?: string
   // image?: string | File | null
   image?: AssetInfo | null
   type?: string
-  level?: string
-  month?: string
-  year?: string
-  language?: string
+  // level?: string
+  // month?: string
+  // year?: string
+  // language?: string
+  isFile: boolean
 }
 
 export type ResourceType = {
@@ -29,10 +30,6 @@ export type ResourceType = {
   contentType: 'link' | 'file'
   downloadFilename: string
   type: string
-}
-
-export type ResourceFormValues = Omit<NewResourceFormValues, 'addToCollections' | 'content'> & {
-  isFile: boolean
 }
 
 // isOwner: boolean

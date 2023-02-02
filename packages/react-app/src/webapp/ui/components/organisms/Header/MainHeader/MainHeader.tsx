@@ -1,4 +1,3 @@
-import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@material-ui/icons'
 import {
   AddonItem,
   FloatingMenu,
@@ -43,25 +42,23 @@ export const AccessButtons: FC<AccessButtonsProps> = ({ loginHref, signupHref })
 }
 
 export type AddMenuProps = {
-  newResourceHref: Href
-  newCollectionHref: Href
   menuItems?: HeaderMenuItem[]
 }
 
-export const AddMenu: FC<AddMenuProps> = ({ newCollectionHref, newResourceHref, menuItems }) => {
+export const AddMenu: FC<AddMenuProps> = ({ menuItems }) => {
   const addMenuItems: HeaderMenuItem[] = [
-    {
-      Icon: <NoteAddIcon />,
-      text: /* t */ `New resource`,
-      path: newResourceHref,
-      key: 'new-resoure',
-    },
-    {
-      Icon: <LibraryAddIcon />,
-      text: /* t */ `New collection`,
-      path: newCollectionHref,
-      key: 'new-collection',
-    },
+    // {
+    //   Icon: <NoteAddIcon />,
+    //   text: /* t */ `New resource`,
+    //   path: newResourceHref,
+    //   key: 'new-resoure',
+    // },
+    // {
+    //   Icon: <LibraryAddIcon />,
+    //   text: /* t */ `New collection`,
+    //   path: newCollectionHref,
+    //   key: 'new-collection',
+    // },
   ]
 
   const updatedMenuItems = addMenuItems.concat(menuItems ?? [])
@@ -70,6 +67,7 @@ export const AddMenu: FC<AddMenuProps> = ({ newCollectionHref, newResourceHref, 
     <FloatingMenu
       className="add-menu"
       key="add-menu"
+      abbr="Add content"
       menuContent={updatedMenuItems.map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
         return menuItem.path ? (
@@ -120,6 +118,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menu"
+      abbr="User menu"
       menuContent={(menuItems ?? []).map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
         return menuItem.path ? (

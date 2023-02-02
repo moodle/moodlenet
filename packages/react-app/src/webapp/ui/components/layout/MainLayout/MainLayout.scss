@@ -91,11 +91,11 @@ body {
 
     @media (max-width: 450px) {
       background: white;
-      padding: 0;
+      padding: 60px 0 0;
     }
 
     @media screen and (max-width: 675px) and (min-width: 450px) {
-      padding: 0 25px;
+      padding: 60px 25px 0;
     }
   }
 

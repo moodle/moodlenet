@@ -8,26 +8,13 @@ import { boolean, mixed, object, SchemaOf, string } from 'yup'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { CollectionTextOptionProps } from '../NewResource/AddToCollections/storiesData'
-import {
-  LanguagesTextOptionProps,
-  LevelTextOptionProps,
-  MonthTextOptionProps,
-  OptionItemProp,
-  TypeTextOptionProps,
-  YearsProps,
-} from '@moodlenet/component-library'
+import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-library'
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 // import { useFormik } from 'formik'
-import { ResourceFormValues } from '../../../../common.mjs'
-import Resource from '../../pages/Resource/Resource.js'
-import MainResourceCard, { MainResourceCardProps } from './MainResourceCard.js'
-import {
-  CategoriesTextOptionProps,
-  LicenseIconTextOptionProps,
-  VisbilityIconTextOptionProps,
-} from './storiesData.js'
-
+import { ResourceFormValues } from '@moodlenet/resource/common'
+import { MainResourceCard, MainResourceCardProps, Resource } from '@moodlenet/resource/ui'
+import { useResourceForm } from 'components/pages/Resource/stories-props.js'
 const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof Resource> = {
@@ -53,6 +40,7 @@ const meta: ComponentMeta<typeof Resource> = {
 
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
   category: string().required(/* t */ `Please select a subject`),
+  content: string().required(/* t */ `Please upload a content`),
   license: string().when('isFile', (isFile, schema) => {
     return isFile ? schema.required(/* t */ `Select a license`) : schema.optional()
   }),
@@ -79,18 +67,19 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
 })
 export const resourceFormValues: ResourceFormValues = {
   isFile: true,
-  visibility: VisbilityIconTextOptionProps[0]!.value,
-  category: CategoriesTextOptionProps[2]!.value,
+  // visibility: VisbilityIconTextOptionProps[0]!.value,
+  // category: CategoriesTextOptionProps[2]!.value,
+  content: '',
   // description:
   //   'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
   image: { location: 'https://picsum.photos/200/100' },
-  language: LanguagesTextOptionProps[2]!.value,
-  level: LevelTextOptionProps[2]!.value,
-  license: LicenseIconTextOptionProps[2]!.value,
-  month: MonthTextOptionProps[8]!.value,
-  year: YearsProps[20],
+  // language: LanguagesTextOptionProps[2]!.value,
+  // level: LevelTextOptionProps[2]!.value,
+  // license: LicenseIconTextOptionProps[2]!.value,
+  // month: MonthTextOptionProps[8]!.value,
+  // year: YearsProps[20],
   name: '',
   // name: 'The Best Resource Ever',
   type: TypeTextOptionProps[2]!.value,
@@ -115,17 +104,18 @@ export const useMainResourceCardStoryProps = (overrides?: {
     // validationSchema,
     // onSubmit: action('submit edit'),
     // initialValues: {
+    content: null,
     isFile: true,
-    visibility: 'Public',
+    // visibility: 'Public',
     name: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    category: CategoriesTextOptionProps[2]!.value,
-    language: LanguagesTextOptionProps[2]?.value,
-    level: LevelTextOptionProps[2]?.value,
-    license: LicenseIconTextOptionProps[2]?.value,
-    month: MonthTextOptionProps[8]?.value,
-    year: YearsProps[20],
+    // category: CategoriesTextOptionProps[2]!.value,
+    // language: LanguagesTextOptionProps[2]?.value,
+    // level: LevelTextOptionProps[2]?.value,
+    // license: LicenseIconTextOptionProps[2]?.value,
+    // month: MonthTextOptionProps[8]?.value,
+    // year: YearsProps[20],
     type: TypeTextOptionProps[2]?.value,
     image: {
       location:
@@ -138,25 +128,23 @@ export const useMainResourceCardStoryProps = (overrides?: {
 
   return {
     resource: resource,
+    publish: action('save resource'),
     editResource: async () => action('editing resource submited'),
 
     id: 'qjnwglkd69io-sports',
     url: 'resource.url',
     downloadFilename: 'resource.pdf',
     type: 'pdf',
-    // headerPageTemplateProps: {
-    //   headerPageProps: HeaderPageLoggedInStoryProps,
-    //   isAuthenticated: true,
-    //   mainPageWrapperProps: {
-    //     userAcceptsPolicies: null,
-    //     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-    //   },
-    // },
+    fileMaxSize: 5 * 1024 * 1024,
 
     isAuthenticated: true,
     canEdit: false,
     isOwner: false,
     isAdmin: false,
+    shouldShowErrors: false,
+    isPublished: false,
+    setIsPublished: action('set is published'),
+    form: useResourceForm(),
     liked: false,
     numLikes: 23,
     bookmarked: true,
