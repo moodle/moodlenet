@@ -51,25 +51,35 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   const updatedMenuContent = menuContent.map((element, i) => {
     if (menuContent.length === 1) {
       return (
-        <div key={element.key} tabIndex={i + 1} onKeyDown={oneElementActions}>
+        <div
+          className={`${element.key}`}
+          key={element.key}
+          tabIndex={i + 1}
+          onKeyDown={oneElementActions}
+        >
           {element}
         </div>
       )
     } else if (i === 0) {
       return (
-        <div key={element.key} tabIndex={i + 1} onKeyDown={closeMenuUp}>
+        <div
+          className={`${element.key}`}
+          key={element.key}
+          tabIndex={i + 1}
+          onKeyDown={closeMenuUp}
+        >
           {element}
         </div>
       )
     } else if (menuContent.length - 1 === i) {
       return (
-        <div key={element.key} tabIndex={i + 1} className="last element">
+        <div className={`last element ${element.key}`} key={element.key} tabIndex={i + 1}>
           {element}
         </div>
       )
     } else {
       return (
-        <div key={element.key} tabIndex={i + 1}>
+        <div className={`${element.key}`} key={element.key} tabIndex={i + 1}>
           {element}
         </div>
       )

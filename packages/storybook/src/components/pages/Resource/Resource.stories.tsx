@@ -141,6 +141,8 @@ export const New: ResourceStory = () => {
     props: {
       isOwner: true,
       canEdit: true,
+      contentUrl: 'moodle.com',
+      downloadFilename: undefined,
       // isEditing: isEditting,
       // setIsEditing: setIsEditing,
       isWaitingForApproval: false,

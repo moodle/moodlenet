@@ -1,4 +1,11 @@
-import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder, Share } from '@material-ui/icons'
+import {
+  Bookmark,
+  BookmarkBorder,
+  Favorite,
+  FavoriteBorder,
+  Link as LinkIcon,
+  Share,
+} from '@material-ui/icons'
 import {
   AddonItem,
   Card,
@@ -12,9 +19,18 @@ import {
 } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
-import { Delete, HourglassBottom, MoreVert, Public, PublicOff } from '@mui/icons-material'
+import {
+  AddToPhotos,
+  Delete,
+  HourglassBottom,
+  InsertDriveFile,
+  MoreVert,
+  Public,
+  PublicOff,
+} from '@mui/icons-material'
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
+import { ReactComponent as MoodleIcon } from '../../../assets/icons/m-of-moodle.svg'
 import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
 
@@ -232,7 +248,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const shareButton: AddonItem | null = {
     Item: () => (
-      <div key="share-btn" tabIndex={0} onClick={copyUrl}>
+      <div key="share-button" tabIndex={0} onClick={copyUrl}>
         <Share />
         Share
       </div>
@@ -242,7 +258,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const deleteButton: AddonItem = {
     Item: () => (
-      <div key="delete-btn" tabIndex={0} onClick={() => setIsToDelete(true)}>
+      <div key="delete-button" tabIndex={0} onClick={() => setIsToDelete(true)}>
         <Delete />
         Delete
       </div>
@@ -255,7 +271,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && canEdit && !isPublished && !isWaitingForApproval
       ? {
           Item: () => (
-            <div key="publish-btn" tabIndex={0} onClick={() => setIsPublished(true)}>
+            <div key="publish-button" tabIndex={0} onClick={() => setIsPublished(true)}>
               <Public />
               Publish
             </div>
@@ -269,7 +285,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && canEdit && (isPublished || isWaitingForApproval)
       ? {
           Item: () => (
-            <div key="draft-btn" tabIndex={0} onClick={() => setIsPublished(false)}>
+            <div key="draft-button" tabIndex={0} onClick={() => setIsPublished(false)}>
               <PublicOff />
               Back to draft
             </div>
@@ -282,7 +298,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && canEdit && !isPublished && isWaitingForApproval
       ? {
           Item: () => (
-            <abbr key="publishing-btn" title="Publish requested" style={{ cursor: 'initial' }}>
+            <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
               <HourglassBottom style={{ fill: '#d0d1db' }} />
             </abbr>
           ),
@@ -303,10 +319,65 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
+  const sendToMoodleButton: AddonItem | null =
+    width < 800 && form.values.content
+      ? {
+          Item: () => (
+            <div key="send-to-moodle-button" tabIndex={0} onClick={() => setIsPublished(false)}>
+              <MoodleIcon />
+              Send to Moodle
+            </div>
+          ),
+          key: 'send-to-moodle-button',
+        }
+      : null
+
+  const addToCollectionButton: AddonItem | null =
+    width < 800 && form.values.content && isAuthenticated
+      ? {
+          Item: () => (
+            <div key="add-to-collection-button" tabIndex={0} onClick={() => setIsPublished(false)}>
+              <AddToPhotos />
+              Add to collection
+            </div>
+          ),
+          key: 'add-to-collection-button',
+        }
+      : null
+
+  const openLinkOrDownloadFile: AddonItem | null =
+    width < 800 && form.values.content
+      ? {
+          Item: () => (
+            <div
+              key="open-link-or-download-file-button"
+              tabIndex={0}
+              onClick={() => setIsPublished(false)}
+            >
+              {form.values.content instanceof File ? (
+                <>
+                  <InsertDriveFile />
+                  Download file
+                </>
+              ) : (
+                <>
+                  <LinkIcon />
+                  Open link
+                </>
+              )}
+            </div>
+          ),
+          key: '"open-link-or-download-file-button',
+        }
+      : null
+
   const updatedMoreButtonItems = [
     publishButton,
     draftButton,
+    openLinkOrDownloadFile,
     shareButton,
+    sendToMoodleButton,
+    addToCollectionButton,
     deleteButton,
     ...(moreButtonItems ?? []),
   ].filter((item): item is AddonItem => !!item)
