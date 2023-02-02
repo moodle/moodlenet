@@ -61,5 +61,11 @@
     "prj-cleanup-build": "lerna run cleanup-build --parallel && rimraf packages/*/dist && rimraf packages/*/tsconfig.tsbuildinfo",
     "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
     "pre-commit": "lint-staged"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.6"
   }
 }
