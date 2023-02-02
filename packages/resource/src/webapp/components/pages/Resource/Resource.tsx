@@ -2,21 +2,20 @@ import { InsertDriveFile, Link } from '@material-ui/icons'
 import {
   AddonItem,
   Card,
-  IconTextOptionProps,
   Modal,
   OptionItemProp,
   PrimaryButton,
   SecondaryButton,
-  TextOptionProps,
 } from '@moodlenet/component-library'
 import {
   FormikHandle,
   MainLayout,
   MainLayoutProps,
-  SelectOptions,
   SelectOptionsMulti,
 } from '@moodlenet/react-app/ui'
-import { FC, useState } from 'react'
+import { useFormik } from 'formik'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { SchemaOf } from 'yup'
 import { ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
 import {
   ContributorCard,
@@ -36,19 +35,26 @@ export type ResourceProps = {
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
   moreButtonItems?: AddonItem[]
+  extraDetailsItems?: AddonItem[]
 
   resource: ResourceFormValues
   editResource: (values: ResourceFormValues) => Promise<unknown>
+  validationSchema: SchemaOf<ResourceFormValues>
 
   isAuthenticated: boolean
   // isApproved: boolean
   isOwner: boolean
   isAdmin: boolean
   canEdit: boolean
+  // isEditing: boolean
+  // setIsEditing: Dispatch<SetStateAction<boolean>>
   autoImageAdded: boolean
   // form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
 
   deleteResource?(): unknown
+  setIsPublished: Dispatch<SetStateAction<boolean>>
+  isPublished: boolean
+  isWaitingForApproval?: boolean
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
 
@@ -58,15 +64,15 @@ export type ResourceProps = {
   contributorCardProps: ContributorCardProps
   collections: SelectOptionsMulti<OptionItemProp>
 
-  licenses: SelectOptions<IconTextOptionProps>
-  setCategoryFilter(text: string): unknown
-  categories: SelectOptions<TextOptionProps>
-  setTypeFilter(text: string): unknown
-  types: SelectOptions<TextOptionProps>
-  setLevelFilter(text: string): unknown
-  levels: SelectOptions<TextOptionProps>
-  setLanguageFilter(text: string): unknown
-  languages: SelectOptions<TextOptionProps>
+  // licenses: SelectOptions<IconTextOptionProps>
+  // setCategoryFilter(text: string): unknown
+  // categories: SelectOptions<TextOptionProps>
+  // setTypeFilter(text: string): unknown
+  // types: SelectOptions<TextOptionProps>
+  // setLevelFilter(text: string): unknown
+  // levels: SelectOptions<TextOptionProps>
+  // setLanguageFilter(text: string): unknown
+  // languages: SelectOptions<TextOptionProps>
   downloadFilename: string
   type: string
 } & ResourceType
@@ -76,43 +82,49 @@ export const Resource: FC<ResourceProps> = ({
   mainResourceCardProps,
   mainColumnItems,
   sideColumnItems,
+  extraDetailsItems,
   // moreButtonItems,
 
-  // resource,
-  // editResource,
+  resource,
+  validationSchema,
+  editResource,
   deleteResource,
+  setIsPublished,
+
   // id: resourceId,
   // url: resourceUrl,
   contentType,
+  // licenses,
   // type,
   // resourceFormat,
   // contentUrl,
   // tags,
 
   // isAuthenticated,
-  // canEdit,
+  canEdit,
   // isAdmin,
-  // isOwner,
+  // isEditing,
+  // setIsEditing,
+  isOwner,
+  isWaitingForApproval,
+  isPublished,
   // autoImageAdded,
 }) => {
-  // const form = useFormik<ResourceFormValues>({
-  //   initialValues: resource,
-  //   // validate:yup,
-  //   onSubmit: values => {
-  //     return editResource(values)
-  //   },
-  // })
+  const form = useFormik<ResourceFormValues>({
+    initialValues: resource,
+    validationSchema: validationSchema,
+    onSubmit: values => {
+      return editResource(values)
+    },
+  })
 
-  const [isEditing, setIsEditing] = useState<boolean>(
-    // canSearchImage && autoImageAdded
-    false,
-  )
   //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
   //     useState<boolean>(false)
   //   const [isAddingToCollection, setIsAddingToCollection] =
   //     useState<boolean>(false)
   //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
   //     useState<boolean>(false)
+  const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   // const backupImage: AssetInfo | null | undefined = useMemo(
@@ -122,7 +134,7 @@ export const Resource: FC<ResourceProps> = ({
   //   const [isReporting, setIsReporting] = useState<boolean>(false)
   //   const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
   // const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  // const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
+  // const [isEditing, setIsEditing] = useReducer(_ => !_, false)
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
@@ -130,60 +142,169 @@ export const Resource: FC<ResourceProps> = ({
     Item: () => (
       <MainResourceCard
         {...mainResourceCardProps}
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
+        isOwner={isOwner}
+        isPublished={isPublished}
+        setIsPublished={setIsPublished}
+        isWaitingForApproval={isWaitingForApproval}
+        // isEditing={isEditing}
+        // setIsEditing={setIsEditing}
+        canEdit={canEdit}
+        form={form}
+        shouldShowErrors={shouldShowErrors}
+        publish={publish}
       />
     ),
     key: 'main-resource-card',
   }
 
   const contributorCard = {
-    Item: () => <ContributorCard {...ContributorCardStoryProps} />,
+    Item: () => (!isOwner ? <ContributorCard {...ContributorCardStoryProps} /> : <></>),
     key: 'contributor-card',
   }
 
-  const actions = {
-    Item: () => (
-      <Card className="resource-action-card" hideBorderWhenSmall={true}>
-        <PrimaryButton
-        // onClick={() => setIsAddingToMoodleLms(true)}
-        >
-          Send to Moodle
-        </PrimaryButton>
-        {/* {isAuthenticated && ( */}
-        <SecondaryButton
-        // onClick={() => setIsAddingToCollection(true)}
-        >
-          Add to Collection
-        </SecondaryButton>
-        <a
-          // href={contentUrl}
-          target="_blank"
-          rel="noreferrer"
-          // download={downloadFilename}
-        >
-          <SecondaryButton>
-            {contentType === 'file' ? (
-              <>
-                <InsertDriveFile />
-                Download file
-              </>
-            ) : (
-              <>
-                <Link />
-                Open link
-              </>
-            )}
+  const publish = () => {
+    if (form.isValid) {
+      console.log('is form valid')
+      form.submitForm()
+      setShouldShowErrors(false)
+      setIsPublished(true)
+    } else {
+      setShouldShowErrors(true)
+    }
+  }
+
+  const editorActionsContainer = {
+    Item: () =>
+      canEdit ? (
+        <Card className="resource-action-card" hideBorderWhenSmall={true}>
+          {isPublished && (
+            <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
+              Published
+            </PrimaryButton>
+          )}
+          {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+            <PrimaryButton onClick={publish} color="green">
+              Publish
+            </PrimaryButton>
+          )}
+          {!isPublished && isWaitingForApproval && (
+            <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
+          )}
+          {isPublished || isWaitingForApproval ? (
+            <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
+          ) : (
+            <></>
+          )}
+        </Card>
+      ) : (
+        // {canEdit && (
+        //   <SecondaryButton color={'red'} onClick={deleteResource}>
+        //     {/* <Edit /> */}
+        //     Delete
+        //   </SecondaryButton>
+        // )}
+        <></>
+      ),
+    key: 'editor-actions-container',
+  }
+  const generalActionsContainer = {
+    Item: () =>
+      form.values.content ? (
+        <Card className="resource-action-card" hideBorderWhenSmall={true}>
+          <PrimaryButton
+          // onClick={() => setIsAddingToMoodleLms(true)}
+          >
+            Send to Moodle
+          </PrimaryButton>
+          {/* {isAuthenticated && ( */}
+          <SecondaryButton
+          // onClick={() => setIsAddingToCollection(true)}
+          >
+            Add to Collection
           </SecondaryButton>
-        </a>
-      </Card>
-    ),
+          <a
+            // href={contentUrl}
+            target="_blank"
+            rel="noreferrer"
+            // download={downloadFilename}
+          >
+            <SecondaryButton>
+              {contentType === 'file' ? (
+                <>
+                  <InsertDriveFile />
+                  Download file
+                </>
+              ) : (
+                <>
+                  <Link />
+                  Open link
+                </>
+              )}
+            </SecondaryButton>
+          </a>
+        </Card>
+      ) : (
+        <></>
+      ),
     key: 'actions',
   }
 
-  const updatedSideColumnItems = [contributorCard, actions, ...(sideColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
+  // const license: AddonItem | null =
+  //   contentType === 'file'
+  //     ? {
+  //         Item: () => (
+  //           <Dropdown
+  //             name="license"
+  //             className="license-dropdown"
+  //             onChange={form.handleChange}
+  //             value={form.values.license}
+  //             label={`License`}
+  //             edit
+  //             highlight={shouldShowErrors && !!form.errors.license}
+  //             disabled={form.isSubmitting}
+  //             error={form.errors.license}
+  //             position={{ top: 50, bottom: 25 }}
+  //             pills={
+  //               licenses.selected && (
+  //                 <IconPill key={licenses.selected.value} icon={licenses.selected.icon} />
+  //               )
+  //             }
+  //           >
+  //             {licenses.opts.map(({ icon, label, value }) => (
+  //               <IconTextOption icon={icon} label={label} value={value} key={value} />
+  //             ))}
+  //           </Dropdown>
+  //         ),
+  //         key: 'extra-details-card',
+  //       }
+  //     : null
+
+  const updatedExtraDetailsItems = [
+    // license,
+    ...(extraDetailsItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const extraDetailsContainer = {
+    Item: () =>
+      updatedExtraDetailsItems.length > 0 ? (
+        <Card className="extra-details-card" hideBorderWhenSmall={true}>
+          {updatedExtraDetailsItems.map(i => (
+            <i.Item key={i.key} />
+          ))}
+        </Card>
+      ) : (
+        <></>
+      ),
+    key: 'extra-edtails-container',
+  }
+
+  const updatedSideColumnItems = [
+    contributorCard,
+    editorActionsContainer,
+    generalActionsContainer,
+    extraDetailsContainer,
+    ...(sideColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
 
   const updatedMainColumnItems = [mainResourceCard, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,

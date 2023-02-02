@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import { HeaderProfileStories, HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { href, MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
+import { HeaderStories } from '@moodlenet/resource/stories'
 
 const meta: ComponentMeta<typeof MainHeader> = {
   title: 'Organisms/Header',
@@ -33,9 +34,9 @@ const MainHeaderStoryProps: MainHeaderProps = {
     signupHref: href('Pages/Signup'),
   },
   addMenuProps: {
-    newCollectionHref: href('Pages/NewCollection'),
-    newResourceHref: href('Pages/NewCollection'),
-    menuItems: [],
+    // newCollectionHref: href('Pages/NewCollection'),
+    // newResourceHref: href('Pages/NewCollection'),
+    menuItems: [HeaderStories.HeaderResourceStoryProps()],
   },
   avatarMenuProps: {
     avatarUrl: avatarPicture,

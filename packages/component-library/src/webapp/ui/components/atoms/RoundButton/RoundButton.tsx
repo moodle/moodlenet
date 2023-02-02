@@ -3,10 +3,10 @@ import {
   CloseRounded as CloseRoundedIcon,
   DeleteOutline as DeleteOutlineIcon,
   Edit as EditIcon,
+  InsertDriveFile as InsertDriveFileIcon,
+  Search as SearchIcon,
 } from '@material-ui/icons'
-// import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
-// import SearchIcon from '@mui/icons-material/Search'
-// import UploadIcon from '@mui/icons-material/Upload'
+import { Upload as UploadIcon } from '@mui/icons-material'
 import { FC, ReactNode } from 'react'
 import './RoundButton.scss'
 
@@ -49,11 +49,9 @@ export const RoundButton: FC<RoundButtonProps> = ({
             {type === 'trash' && <DeleteOutlineIcon className={svgClassName} />}
             {type === 'edit' && <EditIcon className={svgClassName} />}
             {type === 'refresh' && <CachedIcon className={svgClassName} />}
-            {/* {type === 'search' && <SearchIcon className={svgClassName} />}
             {type === 'upload' && <UploadIcon className={svgClassName} />}
-            {type === 'file' && (
-              <InsertDriveFileIcon className={svgClassName} />
-            )} */}
+            {type === 'search' && <SearchIcon className={svgClassName} />}
+            {type === 'file' && <InsertDriveFileIcon className={svgClassName} />}
           </>
         )}
       </div>

@@ -1,32 +1,21 @@
-import {
-  Bookmark,
-  BookmarkBorder,
-  DeleteOutline,
-  Edit,
-  Favorite,
-  FavoriteBorder,
-  Save,
-  Share,
-} from '@material-ui/icons'
+import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder, Share } from '@material-ui/icons'
 import {
   AddonItem,
   Card,
   FloatingMenu,
   InputTextField,
-  Loading,
   Modal,
   PrimaryButton,
-  RoundButton,
-  SearchImage,
-  SecondaryButton,
   Snackbar,
   TertiaryButton,
+  useWindowDimensions,
 } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
-import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
-import { useFormik } from 'formik'
-import { FC, useMemo, useRef, useState } from 'react'
+import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
+import { Delete, HourglassBottom, MoreVert, Public, PublicOff } from '@mui/icons-material'
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
+import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
 
 export type MainResourceCardProps = {
@@ -38,19 +27,27 @@ export type MainResourceCardProps = {
   footerRowItems?: AddonItem[]
 
   resource: ResourceFormValues
+  form: FormikHandle<ResourceFormValues>
   downloadFilename: string
   type: string
   editResource: (values: ResourceFormValues) => Promise<unknown>
+  publish: () => void
   deleteResource?(): unknown
+  setIsPublished: Dispatch<SetStateAction<boolean>>
+  isPublished: boolean
+  isWaitingForApproval?: boolean
 
-  isEditing?: boolean
-  setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>
+  // isEditing: boolean
+  // setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  shouldShowErrors: boolean
+  // setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
   isAuthenticated: boolean
   isOwner: boolean
-  isAdmin: boolean
+  isAdmin?: boolean
   canEdit: boolean
   autoImageAdded: boolean
   canSearchImage: boolean
+  fileMaxSize: number
 
   liked: boolean
   toggleLike?(): unknown
@@ -68,12 +65,19 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   topRightHeaderItems,
   moreButtonItems,
   footerRowItems,
-  isEditing,
-  setIsEditing,
+  // isEditing,
+  // setIsEditing,
 
-  resource,
-  editResource,
+  form,
+  // resource,
+  // editResource,
+  // saveResource,
   deleteResource,
+  isPublished,
+  setIsPublished,
+  isWaitingForApproval,
+  // resourceValidator
+
   id: resourceId,
   url: resourceUrl,
   contentType,
@@ -82,62 +86,32 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   contentUrl,
   numLikes,
   //   tags,
+  fileMaxSize,
 
+  shouldShowErrors,
+  // setShouldShowErrors,
   isAuthenticated,
   canEdit,
-  isAdmin,
+  // isAdmin,
   isOwner,
-  autoImageAdded,
-  canSearchImage,
+  // autoImageAdded,
+  // canSearchImage,
 
   liked,
   toggleLike,
   bookmarked,
   toggleBookmark,
 }) => {
-  const form = useFormik<ResourceFormValues>({
-    initialValues: resource,
-    // validate: yup,
-    onSubmit: values => {
-      return editResource(values)
-    },
-  })
-
-  const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
-  const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
-  //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
-  //     useState<boolean>(false)
-  //   const [isAddingToCollection, setIsAddingToCollection] =
-  //     useState<boolean>(false)
-  //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
-  //     useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const backupImage: AssetInfo | null | undefined = useMemo(
     () => getBackupImage(resourceId),
     [resourceId],
   )
-  //   const [isReporting, setIsReporting] = useState<boolean>(false)
-  //   const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-
   const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
-
   const { typeName, typeColor } = getResourceTypeInfo(type)
-
-  const handleOnEditClick = () => {
-    setIsEditing && setIsEditing(true)
-  }
-
-  const handleOnSaveClick = () => {
-    if (form.isValid) {
-      form.submitForm()
-      setShouldShowErrors(false)
-      setIsEditing && setIsEditing(false)
-    } else {
-      setShouldShowErrors(true)
-    }
-  }
+  const { width } = useWindowDimensions()
 
   const copyUrl = () => {
     navigator.clipboard.writeText(resourceUrl)
@@ -147,25 +121,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }, 100)
   }
 
-  const uploadImageRef = useRef<HTMLInputElement>(null)
-  const selectImage = () => {
-    uploadImageRef.current?.click()
-  }
-
-  const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.currentTarget.files?.item(0)
-    if (selectedFile) {
-      form.setFieldValue('image', { location: selectedFile })
-    }
-  }
-
-  const setImage = (image: AssetInfo | undefined) => {
-    form.setFieldValue('image', image)
-  }
-
-  const deleteImage = () => {
-    form.setFieldValue('image', null)
-  }
+  // const setImage = (image: AssetInfo | undefined) => {
+  //   form.setFieldValue('image', image)
+  // }
 
   const getImageCredits = (image: AssetInfo | undefined | null) => {
     const credits = image ? (image.credits ? image.credits : undefined) : backupImage?.credits
@@ -187,40 +145,33 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     )
   }
 
-  const shareButton: AddonItem = {
+  const title: AddonItem | null = {
     Item: () => (
-      <div key="share-btn" tabIndex={0} onClick={copyUrl}>
-        <Share />
-        Share
-      </div>
+      // form.values.content ? (
+      <>
+        {canEdit ? (
+          <InputTextField
+            name="name"
+            textarea
+            textAreaAutoSize
+            displayMode
+            className="title underline"
+            value={form.values.name}
+            placeholder="Title"
+            onChange={form.handleChange}
+            style={{
+              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+            }}
+            error={shouldShowErrors && form.errors.name}
+          />
+        ) : (
+          <div className="title">{form.values.name}</div>
+        )}
+      </>
     ),
-    key: 'share-button',
-  }
-
-  const updatedMoreButtonItems = [shareButton, ...(moreButtonItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
-
-  const title: AddonItem = {
-    Item: () =>
-      canEdit ? (
-        <InputTextField
-          name="name"
-          textarea
-          textAreaAutoSize
-          displayMode
-          className="title underline"
-          value={form.values.name}
-          edit={isEditing}
-          onChange={form.handleChange}
-          style={{
-            pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-          }}
-          error={isEditing && shouldShowErrors && form.errors.name}
-        />
-      ) : (
-        <div className="title">{form.values.name}</div>
-      ),
+    // ) : (
+    //   <></>
+    // ),
     key: 'type-and-actions',
   }
 
@@ -236,16 +187,17 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   }
 
   const typePill = {
-    Item: () => (
-      <div
-        className="type-pill"
-        style={{
-          background: typeColor,
-        }}
-      >
-        {typeName}
-      </div>
-    ),
+    Item: () =>
+      type && (
+        <div
+          className="type-pill"
+          style={{
+            background: typeColor,
+          }}
+        >
+          {typeName}
+        </div>
+      ),
     key: 'type-pill',
   }
 
@@ -254,24 +206,21 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   )
 
   const likeButton = {
-    Item: () =>
-      !isEditing ? (
-        <div
-          className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
-          onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
-        >
-          {liked ? <Favorite /> : <FavoriteBorder />}
-          <span>{numLikes}</span>
-        </div>
-      ) : (
-        <></>
-      ),
+    Item: () => (
+      <div
+        className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
+        onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
+      >
+        {liked ? <Favorite /> : <FavoriteBorder />}
+        <span>{numLikes}</span>
+      </div>
+    ),
     key: 'like-button',
   }
 
   const bookmarkButton = {
     Item: () =>
-      isAuthenticated && !isEditing ? (
+      isAuthenticated ? (
         <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
           {bookmarked ? <Bookmark /> : <BookmarkBorder />}
         </div>
@@ -281,73 +230,178 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     key: 'bookmark-button',
   }
 
-  const moreButton = {
-    Item: () =>
-      isAuthenticated && !isOwner ? (
-        <FloatingMenu
-          className="more-button"
-          menuContent={
-            updatedMoreButtonItems.map(i => (
-              <i.Item key={i.key} />
-            ))
-            // <div tabIndex={0} onClick={() => setIsReporting(true)}>
-            //   <Flag />
-            //   <Trans>Report</Trans>
-            // </div>,
-          }
-          hoverElement={<TertiaryButton className={`more`}>...</TertiaryButton>}
-        />
-      ) : (
-        <></>
-      ),
-    key: 'more-button',
+  const shareButton: AddonItem | null = {
+    Item: () => (
+      <div key="share-btn" tabIndex={0} onClick={copyUrl}>
+        <Share />
+        Share
+      </div>
+    ),
+    key: 'share-button',
   }
 
-  const editSaveButton = {
-    Item: () =>
-      isAdmin || isOwner ? (
-        <div className="edit-save">
-          {isEditing ? (
-            <PrimaryButton
-              className={`${form.isSubmitting ? 'loading' : ''}`}
-              color="green"
-              onClick={handleOnSaveClick}
-            >
-              <div
-                className="loading"
-                style={{
-                  visibility: form.isSubmitting ? 'visible' : 'hidden',
-                }}
-              >
-                <Loading color="white" />
-              </div>
-              <div
-                className="label"
-                style={{
-                  visibility: form.isSubmitting ? 'hidden' : 'visible',
-                }}
-              >
-                <Save />
-              </div>
-            </PrimaryButton>
-          ) : (
-            <SecondaryButton onClick={handleOnEditClick} color="orange">
-              <Edit />
-            </SecondaryButton>
-          )}
-        </div>
-      ) : (
-        <></>
-      ),
-    key: 'edit-save-button',
+  const deleteButton: AddonItem = {
+    Item: () => (
+      <div key="delete-btn" tabIndex={0} onClick={() => setIsToDelete(true)}>
+        <Delete />
+        Delete
+      </div>
+    ),
+
+    key: 'delete-button',
   }
+
+  const publishButton: AddonItem | null =
+    width < 800 && canEdit && !isPublished && !isWaitingForApproval
+      ? {
+          Item: () => (
+            <div key="publish-btn" tabIndex={0} onClick={() => setIsPublished(true)}>
+              <Public />
+              Publish
+            </div>
+          ),
+
+          key: 'publish-button',
+        }
+      : null
+
+  const draftButton: AddonItem | null =
+    width < 800 && canEdit && (isPublished || isWaitingForApproval)
+      ? {
+          Item: () => (
+            <div key="draft-btn" tabIndex={0} onClick={() => setIsPublished(false)}>
+              <PublicOff />
+              Back to draft
+            </div>
+          ),
+          key: 'draft-button',
+        }
+      : null
+
+  const publishingButton: AddonItem | null =
+    width < 800 && canEdit && !isPublished && isWaitingForApproval
+      ? {
+          Item: () => (
+            <abbr key="publishing-btn" title="Publish requested" style={{ cursor: 'initial' }}>
+              <HourglassBottom style={{ fill: '#d0d1db' }} />
+            </abbr>
+          ),
+
+          key: 'publishing-button',
+        }
+      : null
+
+  const publishedButton: AddonItem | null =
+    width < 800 && canEdit && isPublished
+      ? {
+          Item: () => (
+            <abbr title="Published" style={{ cursor: 'initial' }}>
+              <Public style={{ fill: '#00bd7e' }} />
+            </abbr>
+          ),
+          key: 'publishing-button',
+        }
+      : null
+
+  const updatedMoreButtonItems = [
+    publishButton,
+    draftButton,
+    shareButton,
+    deleteButton,
+    ...(moreButtonItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const moreButton: AddonItem | null =
+    updatedMoreButtonItems.length > 0
+      ? {
+          Item: () => (
+            <FloatingMenu
+              className="more-button"
+              menuContent={
+                updatedMoreButtonItems.map(i => (
+                  <i.Item key={i.key} />
+                ))
+                // <div tabIndex={0} onClick={() => setIsReporting(true)}>
+                //   <Flag />
+                //   <Trans>Report</Trans>
+                // </div>,
+              }
+              hoverElement={
+                <TertiaryButton className={`more`}>
+                  <MoreVert />
+                </TertiaryButton>
+              }
+              abbr="More options"
+            />
+          ),
+          key: 'more-button',
+        }
+      : null
+
+  // const editSaveButton = canEdit
+  //   ? {
+  //       Item: () => (
+  //         <div className="edit-save">
+  //           {isEditing ? (
+  //             <PrimaryButton
+  //               className={`${form.isSubmitting ? 'loading' : ''}`}
+  //               color="green"
+  //               onClick={handleOnSaveClick}
+  //             >
+  //               <div
+  //                 className="loading"
+  //                 style={{
+  //                   visibility: form.isSubmitting ? 'visible' : 'hidden',
+  //                 }}
+  //               >
+  //                 <Loading color="white" />
+  //               </div>
+  //               <div
+  //                 className="label"
+  //                 style={{
+  //                   visibility: form.isSubmitting ? 'hidden' : 'visible',
+  //                 }}
+  //               >
+  //                 <Save />
+  //               </div>
+  //             </PrimaryButton>
+  //           ) : (
+  //             <SecondaryButton onClick={handleOnEditClick} color="orange">
+  //               <Edit />
+  //             </SecondaryButton>
+  //           )}
+  //         </div>
+  //       ),
+  //       key: 'edit-save-button',
+  //     }
+  //   : null
+
+  // const deleteButton: AddonItem | null =
+  //   width < 800
+  //     ? {
+  //         Item: () => (
+  //           <SecondaryButton
+  //             color="red"
+  //             onHoverColor="fill-red"
+  //             className="delete-button"
+  //             onClick={() => setIsToDelete(true)}
+  //           >
+  //             <DeleteOutline />
+  //           </SecondaryButton>
+  //         ),
+  //         key: 'delete-button',
+  //       }
+  //     : null
 
   const updatedTopRightHeaderItems = [
     likeButton,
     bookmarkButton,
-    moreButton,
-    editSaveButton,
+    publishedButton,
+    publishingButton,
+    // deleteButton,
+    // editSaveButton,
     ...(topRightHeaderItems ?? []),
+    moreButton,
   ].filter((item): item is AddonItem => !!item)
 
   const topHeaderRow: AddonItem = {
@@ -386,6 +440,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     key: 'resource-header',
   }
 
+  const resourceUploader = {
+    Item: () => <UploadResource form={form} fileMaxSize={fileMaxSize} />,
+    key: 'resource-uploader',
+  }
+
   const imageDiv = (
     <img
       className="image"
@@ -398,98 +457,62 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     />
   )
 
-  const imageContainer: AddonItem = {
-    Item: () =>
-      form.values.image || isEditing ? (
-        <div className="image-container">
-          {contentType === 'link' ? (
-            <a href={contentUrl} target="_blank" rel="noreferrer">
-              {imageDiv}
-            </a>
-          ) : (
-            <>{imageDiv}</>
-          )}
-          {/* {getImageCredits(form.values.image)} */}
-          {isEditing && !form.isSubmitting && (
-            <div className="image-actions">
-              <input
-                ref={uploadImageRef}
-                type="file"
-                accept=".jpg,.jpeg,.png,.gif"
-                onChange={uploadImage}
-                hidden
-              />
-              {canSearchImage && (
-                <RoundButton
-                  className={`search-image-button ${form.isSubmitting ? 'disabled' : ''} ${
-                    autoImageAdded ? 'highlight' : ''
-                  }`}
-                  type="search"
-                  abbrTitle={`Search for an image`}
-                  onClick={() => setIsSearchingImage(true)}
-                />
+  const imageContainer: AddonItem | null = !canEdit
+    ? {
+        Item: () =>
+          form.values.content && form.values.image ? (
+            <div className="image-container">
+              {contentType === 'link' ? (
+                <a href={contentUrl} target="_blank" rel="noreferrer">
+                  {imageDiv}
+                </a>
+              ) : (
+                <>{imageDiv}</>
               )}
-              <RoundButton
-                className={`change-image-button ${form.isSubmitting ? 'disabled' : ''}`}
-                type="upload"
-                abbrTitle={`Upload an image`}
-                onClick={selectImage}
-              />
-              <RoundButton
-                className={`delete-image ${form.isSubmitting ? 'disabled' : ''}`}
-                type="cross"
-                abbrTitle={`Delete image`}
-                onClick={deleteImage}
-              />
+              {/* {getImageCredits(form.values.image)} */}
             </div>
-          )}
-        </div>
-      ) : (
-        <></>
-      ),
-    key: 'image-container',
-  }
+          ) : (
+            <></>
+          ),
+        key: 'image-container',
+      }
+    : null
 
-  const searchImageComponent = isSearchingImage && (
-    <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
-  )
+  // const searchImageComponent = isSearchingImage && (
+  //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
+  // )
 
   const description: AddonItem = {
-    Item: () =>
-      isOwner ? (
-        <InputTextField
-          className="description underline"
-          name="description"
-          textarea
-          textAreaAutoSize
-          displayMode
-          edit={isEditing}
-          value={form.values.description}
-          onChange={form.handleChange}
-          style={{
-            pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-          }}
-          error={isEditing && form.errors.description}
-        />
-      ) : (
-        <div className="description"> {form.values.description} </div>
-      ),
+    Item: () => (
+      // form.values.content ? (
+      <>
+        {canEdit ? (
+          <InputTextField
+            className="description underline"
+            name="description"
+            textarea
+            textAreaAutoSize
+            displayMode
+            placeholder="Description"
+            value={form.values.description}
+            onChange={form.handleChange}
+            style={{
+              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+            }}
+            error={shouldShowErrors && form.errors.description}
+          />
+        ) : (
+          <div className="description"> {form.values.description} </div>
+        )}
+      </>
+    ),
+    // ) : (
+    //   <></>
+    // ),
     key: 'description',
   }
 
-  const deleteButton: AddonItem = {
-    Item: () =>
-      isEditing ? (
-        <SecondaryButton color="red" onHoverColor="fill-red" onClick={() => setIsToDelete(true)}>
-          <DeleteOutline />
-        </SecondaryButton>
-      ) : (
-        <></>
-      ),
-    key: 'delete-button',
-  }
-
-  const updatedFooterRowItems = [deleteButton, ...(footerRowItems ?? [])].filter(
+  const updatedFooterRowItems = [...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
 
@@ -506,6 +529,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const updatedMainColumnItems = [
     resourceHeader,
+    resourceUploader,
     imageContainer,
     description,
     resourceFooter,
@@ -565,7 +589,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <>
       {modals}
       {snackbars}
-      {searchImageComponent}
+      {/* {searchImageComponent} */}
       <Card className="main-resource-card" hideBorderWhenSmall={true}>
         {updatedMainColumnItems.map(i => (
           <i.Item key={i.key} />

@@ -1,6 +1,7 @@
-import { Resource, useMainResourceCardStoryProps } from '@moodlenet/resource/ui'
+import { Resource } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+import { useMainResourceCardStoryProps } from 'components/organisms/MainResourceCard/stories-props.js'
+import { useState } from 'react'
 import { useResourceStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
@@ -26,7 +27,6 @@ type ResourceStory = ComponentStory<typeof Resource>
 export const LoggedOut: ResourceStory = () => {
   const props = useResourceStoryProps({
     props: {
-      mainLayoutProps: MainLayoutLoggedOutStoryProps,
       isAuthenticated: false,
     },
   })
@@ -77,9 +77,7 @@ export const LoggedOut: ResourceStory = () => {
 
 export const LoggedIn: ResourceStory = () => {
   const props = useResourceStoryProps({
-    props: {
-      isAuthenticated: true,
-    },
+    props: {},
   })
   return <Resource {...props} />
 }
@@ -118,6 +116,49 @@ export const Owner: ResourceStory = () => {
   return <Resource {...props} />
 }
 
+export const NewResourceProps = {
+  content: null,
+  name: '',
+  description: '',
+  category: '',
+  image: null,
+
+  // visibility: 'Private',
+  isFile: false,
+}
+
+export const New: ResourceStory = () => {
+  // const [isEditting, setIsEditing] = useState(false)
+  const [isPublished, setIsPublished] = useState(false)
+  // const [isWaitingForApproval, setIsWaitingForApproval] = useState(true)
+
+  // useEffect(() => {
+  //   !isPublished && setIsWaitingForApproval(false)
+  // }, [isPublished])
+
+  const props = useResourceStoryProps({
+    resourceValues: NewResourceProps,
+    props: {
+      isOwner: true,
+      canEdit: true,
+      // isEditing: isEditting,
+      // setIsEditing: setIsEditing,
+      isWaitingForApproval: false,
+      isPublished: isPublished,
+      setIsPublished: setIsPublished,
+      mainResourceCardProps: useMainResourceCardStoryProps({
+        props: {
+          // isOwner: true,
+          // canEdit: true,
+          // isEditing: false,
+        },
+        resourceValues: NewResourceProps,
+      }),
+    },
+  })
+  return <Resource {...props} />
+}
+
 // export const Unapproved: ResourceStory = () => {
 //   const props = useResourceStoryProps({
 //     props: {
@@ -149,45 +190,45 @@ export const Owner: ResourceStory = () => {
 //   return <Resource {...props} />
 // }
 
-export const Activated: ResourceStory = () => {
-  const props = useResourceStoryProps({
-    // editFormValues: {
-    //   description: '',
-    //   location: '',
-    //   avatarImage: null,
-    //   backgroundImage: null,
-    //   organizationName: '',
-    //   siteUrl: '',
-    // },
-    // props: {
-    //   //   collectionCardPropsList: [],
-    //   //   resourceCardPropsList: [],
-    //   showAccountCreationSuccessAlert: true,
-    //   getResourceCardProps: useuseResourceCardStoryProps({
-    //     props: {
-    //       isAuthenticated: true,
-    //       isOwner: true,
-    //     },
-    //   }),
-    // },
-  })
-  return <Resource {...props} />
-}
+// export const Activated: ResourceStory = () => {
+//   const props = useResourceStoryProps({
+//     // editFormValues: {
+//     //   description: '',
+//     //   location: '',
+//     //   avatarImage: null,
+//     //   backgroundImage: null,
+//     //   organizationName: '',
+//     //   siteUrl: '',
+//     // },
+//     // props: {
+//     //   //   collectionCardPropsList: [],
+//     //   //   resourceCardPropsList: [],
+//     //   showAccountCreationSuccessAlert: true,
+//     //   getResourceCardProps: useuseResourceCardStoryProps({
+//     //     props: {
+//     //       isAuthenticated: true,
+//     //       isOwner: true,
+//     //     },
+//     //   }),
+//     // },
+//   })
+//   return <Resource {...props} />
+// }
 
 export const Admin: ResourceStory = () => {
   const props = useResourceStoryProps({
-    // props: {
-    //   getResourceCardProps: useuseResourceCardStoryProps({
-    //     props: {
-    //       isAdmin: true,
-    //       isAuthenticated: true,
-    //       isApproved: false,
-    //     },
-    //   }),
-    //   collectionCardPropsList: [],
-    //   resourceCardPropsList: [],
-    //   showAccountApprovedSuccessAlert: true,
-    // },
+    props: {
+      isAdmin: true,
+      //   getResourceCardProps: useuseResourceCardStoryProps({
+      //     props: {
+      //       isAuthenticated: true,
+      //       isApproved: false,
+      //     },
+      //   }),
+      //   collectionCardPropsList: [],
+      //   resourceCardPropsList: [],
+      //   showAccountApprovedSuccessAlert: true,
+    },
   })
   return <Resource {...props} />
 }
