@@ -73,8 +73,8 @@ export const useHeaderProps = (): MainHeaderProps => {
         signupHref: href('/signup'),
       },
       addMenuProps: {
-        newCollectionHref: href('.'),
-        newResourceHref: href('.'),
+        // newCollectionHref: href('.'),
+        // newResourceHref: href('.'),
       },
       avatarMenuProps: {
         menuItems,

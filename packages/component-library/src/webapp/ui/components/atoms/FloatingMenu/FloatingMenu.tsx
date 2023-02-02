@@ -1,10 +1,11 @@
-import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
+import React, { FC, KeyboardEvent, useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
 
 export type FloatingMenuProps = {
   menuContent: React.ReactElement[]
   hoverElement: React.ReactNode
+  abbr?: string
   hover?: boolean
   className?: string
 }
@@ -12,6 +13,7 @@ export type FloatingMenuProps = {
 export const FloatingMenu: FC<FloatingMenuProps> = ({
   menuContent,
   className,
+  abbr,
   hover,
   hoverElement,
 }) => {
@@ -49,25 +51,35 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   const updatedMenuContent = menuContent.map((element, i) => {
     if (menuContent.length === 1) {
       return (
-        <div key={element.key} tabIndex={i + 1} onKeyDown={oneElementActions}>
+        <div
+          className={`${element.key}`}
+          key={element.key}
+          tabIndex={i + 1}
+          onKeyDown={oneElementActions}
+        >
           {element}
         </div>
       )
     } else if (i === 0) {
       return (
-        <div key={element.key} tabIndex={i + 1} onKeyDown={closeMenuUp}>
+        <div
+          className={`${element.key}`}
+          key={element.key}
+          tabIndex={i + 1}
+          onKeyDown={closeMenuUp}
+        >
           {element}
         </div>
       )
     } else if (menuContent.length - 1 === i) {
       return (
-        <div key={element.key} tabIndex={i + 1} className="last element">
+        <div className={`last element ${element.key}`} key={element.key} tabIndex={i + 1}>
           {element}
         </div>
       )
     } else {
       return (
-        <div key={element.key} tabIndex={i + 1}>
+        <div className={`${element.key}`} key={element.key} tabIndex={i + 1}>
           {element}
         </div>
       )
@@ -95,41 +107,43 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
     e.stopPropagation()
   }
 
-  useEffect(() => {
-    hoverElementRef?.current?.setAttribute('inert', '')
-  }, [hoverElementRef])
+  // useEffect(() => {
+  //   hoverElementRef?.current?.setAttribute('inert', '')
+  // }, [hoverElementRef])
 
   return (
-    <div
-      className={`floating-menu ${className}`}
-      onBlur={e => handleBlur(e)}
-      onFocus={expand}
-      onMouseDown={e => handleOnMouseDown(e)}
-      tabIndex={0}
-    >
+    <abbr title={abbr} className={`floating-menu-container ${className}`}>
       <div
-        className="hover-element"
-        ref={hoverElementRef}
-        onKeyUp={switchMenu}
-        onKeyDown={closeMenu}
-        onMouseEnter={() => hover && expand()}
-        onMouseLeave={() => hover && close()}
+        className={`floating-menu ${className}`}
+        onBlur={e => handleBlur(e)}
+        onFocus={expand}
+        onMouseDown={e => handleOnMouseDown(e)}
+        tabIndex={0}
       >
-        {hoverElement}
+        <div
+          className="hover-element"
+          ref={hoverElementRef}
+          onKeyUp={switchMenu}
+          onKeyDown={closeMenu}
+          onMouseEnter={() => hover && expand()}
+          onMouseLeave={() => hover && close()}
+        >
+          {hoverElement}
+        </div>
+        <div
+          className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
+          style={{
+            top:
+              hoverElementRef.current?.clientHeight && `${hoverElementRef.current?.clientHeight}px`,
+          }}
+          onMouseEnter={() => hover && setIsOnHover(true)}
+          onMouseLeave={() => hover && setIsOnHover(false)}
+          onClick={close}
+        >
+          <Card className="content">{updatedMenuContent}</Card>
+        </div>
       </div>
-      <div
-        className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
-        style={{
-          top:
-            hoverElementRef.current?.clientHeight && `${hoverElementRef.current?.clientHeight}px`,
-        }}
-        onMouseEnter={() => hover && setIsOnHover(true)}
-        onMouseLeave={() => hover && setIsOnHover(false)}
-        onClick={close}
-      >
-        <Card className="content">{updatedMenuContent}</Card>
-      </div>
-    </div>
+    </abbr>
   )
 }
 
