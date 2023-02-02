@@ -74,6 +74,7 @@ export type ResourceProps = {
   // setLanguageFilter(text: string): unknown
   // languages: SelectOptions<TextOptionProps>
   downloadFilename: string
+  contentUrl: string
   type: string
 } & ResourceType
 
@@ -93,7 +94,7 @@ export const Resource: FC<ResourceProps> = ({
 
   // id: resourceId,
   // url: resourceUrl,
-  contentType,
+  // contentType,
   // licenses,
   // type,
   // resourceFormat,
@@ -108,6 +109,8 @@ export const Resource: FC<ResourceProps> = ({
   isOwner,
   isWaitingForApproval,
   isPublished,
+  contentUrl,
+  downloadFilename,
   // autoImageAdded,
 }) => {
   const form = useFormik<ResourceFormValues>({
@@ -222,14 +225,9 @@ export const Resource: FC<ResourceProps> = ({
           >
             Add to Collection
           </SecondaryButton>
-          <a
-            // href={contentUrl}
-            target="_blank"
-            rel="noreferrer"
-            // download={downloadFilename}
-          >
+          <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
             <SecondaryButton>
-              {contentType === 'file' ? (
+              {form.values.content instanceof File ? (
                 <>
                   <InsertDriveFile />
                   Download file

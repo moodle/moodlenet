@@ -259,8 +259,6 @@ export const useResourceStoryProps = (overrides?: {
     // },
     // toggleLike: action('toggleLike'),
     // toggleBookmark: action('toggleBookmark'),
-    isEditing: false,
-    setIsEditing: action('setIsEditing'),
     deleteResource: action('deleteResource'),
 
     sendToMoodleLmsForm: useFormik<{ site?: string }>({

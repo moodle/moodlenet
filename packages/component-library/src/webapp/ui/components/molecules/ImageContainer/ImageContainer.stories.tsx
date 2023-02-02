@@ -11,7 +11,7 @@ export default {
   title: 'Molecules/ImageContainer',
   component: ImageContainer,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  excludeStories: ['imageContainerProps'],
+  excludeStories: ['useImageContainerProps'],
   decorators: [
     Story => (
       <div style={{ maxWidth: '500', maxHeight: '500' }}>

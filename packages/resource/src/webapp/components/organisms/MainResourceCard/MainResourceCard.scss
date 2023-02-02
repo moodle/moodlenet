@@ -82,10 +82,21 @@
 
         > .more-button {
           margin-left: -5px;
+
           > .more-button {
             > .hover-element {
               > .more {
                 padding: 0 4px;
+              }
+            }
+
+            > .menu > .content {
+              > .send-to-moodle-button {
+                > div {
+                  > svg {
+                    padding: 1.5px;
+                  }
+                }
               }
             }
           }
