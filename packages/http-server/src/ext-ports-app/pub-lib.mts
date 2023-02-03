@@ -10,16 +10,37 @@ export function getPkgRpcFetchOpts(
   apiPath: string,
   args: RpcArgs,
 ) {
-  const [body] = args
   const url = `${BASE_RPC_URL}/${targetPkgId.name}/${apiPath}`
+  const [bodyArg] = args
+  const [method, body, contentType] = getRequestBody(bodyArg)
   const requestInit: RequestInit = {
-    method: 'POST',
+    method,
     headers: {
-      'Content-Type': 'application/json',
+      ...(contentType ? { 'Content-Type': contentType } : null),
       'Accept': 'application/json',
       'x-moodlenet-react-app-caller': `${userPkgId.name}@${userPkgId.version}`,
     },
-    body: JSON.stringify(body),
+    body,
   }
   return { url, requestInit }
+}
+
+function getRequestBody(bodyArg: RpcArgs[0]): [method: string, body?: any, contentType?: string] {
+  const hasBody = bodyArg !== undefined
+  if (!hasBody) {
+    return ['GET', undefined, undefined]
+  }
+  const hasFiles = hasBodyFiles(bodyArg)
+
+  if (!hasFiles) {
+    return ['POST', JSON.stringify(bodyArg), 'application/json']
+  } else {
+    const formData = new FormData()
+    formData.append('.', JSON.stringify(bodyArg))
+    return ['POST', formData, undefined]
+  }
+}
+
+function hasBodyFiles(bodyArg: any) {
+  return !!bodyArg
 }
