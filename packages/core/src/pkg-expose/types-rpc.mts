@@ -19,7 +19,16 @@ export type RpcFnGuard = (...rpcArgs: RpcArgs) => unknown
 
 export type RpcFnOf<RpcItem extends RpcDefItem> = RpcItem['fn']
 
-export type RpcDefItem = { fn: RpcFn; guard: RpcFnGuard }
+export type RpcBodyFieldConfig = {
+  maxCount?: number
+}
+export type RpcBodyWithFilesConfig = {
+  fields: {
+    [fieldName: string]: number | RpcBodyFieldConfig
+  }
+  maxFileSize?: number | undefined
+}
+export type RpcDefItem = { fn: RpcFn; guard: RpcFnGuard; bodyWithFiles?: RpcBodyWithFilesConfig }
 export type RpcDefs = Record<string, RpcDefItem>
 
 // https://dev.to/bytimo/useful-types-extract-route-params-with-typescript-5fhn
