@@ -1,6 +1,7 @@
 import { RpcArgs } from '@moodlenet/core'
+import assert from 'assert'
 import express, { json, Request } from 'express'
-import multer from 'multer'
+import multer, { Field } from 'multer'
 import { format } from 'util'
 import shell from '../shell.mjs'
 import { HttpApiResponse as HttpRpcResponse } from '../types.mjs'
@@ -13,8 +14,27 @@ export function makeExtPortsApp() {
     const pkgApp = express()
     srvApp.use(`/${pkgId.name}`, pkgApp)
     Object.entries(expose.rpc).forEach(([rpcRoute, rpcDefItem]) => {
-      const multipartMW = multer()
-      pkgApp.all(`/${rpcRoute}`, multipartMW.none(), async (req, res, next) => {
+      const fileFieldsEntries = Object.entries(rpcDefItem.bodyWithFiles?.fields ?? {})
+      const multerFields = fileFieldsEntries.map<Field>(([fieldName, _fieldDef]) => {
+        const fieldDef: Omit<Field, 'name'> =
+          'number' === typeof _fieldDef ? { maxCount: _fieldDef } : { maxCount: _fieldDef.maxCount }
+        return {
+          name: fieldName,
+          ...fieldDef,
+        }
+      })
+      const multipartMW = multer({
+        limits: {
+          files: multerFields.reduce((acc, { maxCount }) => acc + (maxCount ?? 0), 0),
+          fileSize: rpcDefItem.bodyWithFiles?.maxFileSize,
+        },
+      })
+
+      // console.log({ multerFields })
+
+      const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
+
+      pkgApp.all(`/${rpcRoute}`, multerMw, async (req, res, next) => {
         if (!['get', 'post'].includes(req.method.toLowerCase())) {
           res.status(405).send('unsupported ${req.method} method for rpc')
           next()
@@ -89,7 +109,30 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
   }
 
   if (type === 'multipart') {
-    return [JSON.parse(req.body['.']), type]
+    assert(!Array.isArray(req.files), `Multer passed req.files as array !! shouldn't ever happen !`)
+    const files = req.files ?? {}
+
+    const body = Object.keys(files)
+      .filter(fullPropName => fullPropName.startsWith('.'))
+      .filter(fullPropName => fullPropName !== '.')
+      .reduce((acc, propName) => {
+        const propPath = propName.split('.').slice(1)
+        const bodyAcc = { ...acc }
+
+        propPath.reduce((filePropAcc, nextPropName, index) => {
+          const isNumberProp = !isNaN(Number(nextPropName))
+          if (index + 1 === propPath.length) {
+            filePropAcc[nextPropName] = files[propName]
+          } else {
+            filePropAcc[nextPropName] = filePropAcc[nextPropName] ?? isNumberProp ? [] : {}
+          }
+          return filePropAcc[nextPropName]
+        }, bodyAcc)
+
+        return bodyAcc
+      }, JSON.parse(req.body['.']))
+
+    return [body, type]
   }
 
   throw new Error('Unsupported contentType: ${contentTypeHeader}')
