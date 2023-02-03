@@ -1,5 +1,10 @@
 import { FollowTag } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
+import { PkgContextT } from '@moodlenet/react-app/web-lib'
+import type { expose as me } from '../server/expose.mjs'
+
+export type MyPkgDeps = { me: typeof me }
+export type MyPkgContext = PkgContextT<MyPkgDeps>
 
 export type ResourceFormValues = {
   // upload
