@@ -63,7 +63,7 @@ export const AddMenu: FC<AddMenuProps> = ({ menuItems }) => {
 
   const updatedMenuItems = addMenuItems.concat(menuItems ?? [])
 
-  return (
+  return updatedMenuItems.length > 0 ? (
     <FloatingMenu
       className="add-menu"
       key="add-menu"
@@ -96,7 +96,7 @@ export const AddMenu: FC<AddMenuProps> = ({ menuItems }) => {
       })}
       hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
     />
-  )
+  ) : null
 }
 
 export type AvatarMenuProps = {
@@ -106,6 +106,20 @@ export type AvatarMenuProps = {
 }
 
 export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logout */ }) => {
+  const avatarMenuItems: HeaderMenuItem[] = [
+    // {
+    //   Icon: <NoteAddIcon />,
+    //   text: /* t */ `New resource`,
+    //   path: newResourceHref,
+    //   key: 'new-resoure',
+    // },
+    // {
+    //   Icon: <LibraryAddIcon />,
+    //   text: /* t */ `New collection`,
+    //   path: newCollectionHref,
+    //   key: 'new-collection',
+    // },
+  ]
   const avatarImageUrl = avatarUrl ?? defaultAvatar
 
   const avatar = {
@@ -114,7 +128,9 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
     // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
-  return (
+
+  const updatedAvatarItems = avatarMenuItems.concat(menuItems ?? [])
+  return updatedAvatarItems.length > 0 ? (
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menu"
@@ -147,7 +163,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
       })}
       hoverElement={<div style={avatar} className="avatar" />}
     />
-  )
+  ) : null
 }
 
 export type MainHeaderProps = {
