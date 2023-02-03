@@ -1,5 +1,6 @@
 import { PackageJson } from 'type-fest'
 import { PkgIdentifier } from '../types.mjs'
+export { PackageJson } from 'type-fest'
 
 export type InstallerType = 'pack-folder' | 'npm' //| 'file' | 'git'
 export type _InstallPkgReq<Type extends InstallerType, More> = More & { type: Type }
