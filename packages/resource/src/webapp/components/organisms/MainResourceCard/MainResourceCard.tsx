@@ -20,7 +20,6 @@ import {
 import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
-  AddToPhotos,
   Delete,
   HourglassBottom,
   InsertDriveFile,
@@ -30,7 +29,6 @@ import {
 } from '@mui/icons-material'
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
-import { ReactComponent as MoodleIcon } from '../../../assets/icons/m-of-moodle.svg'
 import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
 
@@ -88,8 +86,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   // resource,
   // editResource,
   // saveResource,
-  deleteResource,
   isPublished,
+  publish,
+  deleteResource,
   setIsPublished,
   isWaitingForApproval,
   // resourceValidator
@@ -271,7 +270,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && canEdit && !isPublished && !isWaitingForApproval
       ? {
           Item: () => (
-            <div key="publish-button" tabIndex={0} onClick={() => setIsPublished(true)}>
+            <div key="publish-button" tabIndex={0} onClick={publish}>
               <Public />
               Publish
             </div>
@@ -319,31 +318,31 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const sendToMoodleButton: AddonItem | null =
-    width < 800 && form.values.content
-      ? {
-          Item: () => (
-            <div key="send-to-moodle-button" tabIndex={0} onClick={() => setIsPublished(false)}>
-              <MoodleIcon />
-              Send to Moodle
-            </div>
-          ),
-          key: 'send-to-moodle-button',
-        }
-      : null
+  // const sendToMoodleButton: AddonItem | null =
+  //   width < 800 && form.values.content
+  //     ? {
+  //         Item: () => (
+  //           <div key="send-to-moodle-button" tabIndex={0} onClick={() => setIsPublished(false)}>
+  //             <MoodleIcon />
+  //             Send to Moodle
+  //           </div>
+  //         ),
+  //         key: 'send-to-moodle-button',
+  //       }
+  //     : null
 
-  const addToCollectionButton: AddonItem | null =
-    width < 800 && form.values.content && isAuthenticated
-      ? {
-          Item: () => (
-            <div key="add-to-collection-button" tabIndex={0} onClick={() => setIsPublished(false)}>
-              <AddToPhotos />
-              Add to collection
-            </div>
-          ),
-          key: 'add-to-collection-button',
-        }
-      : null
+  // const addToCollectionButton: AddonItem | null =
+  //   width < 800 && form.values.content && isAuthenticated
+  //     ? {
+  //         Item: () => (
+  //           <div key="add-to-collection-button" tabIndex={0} onClick={() => setIsPublished(false)}>
+  //             <AddToPhotos />
+  //             Add to collection
+  //           </div>
+  //         ),
+  //         key: 'add-to-collection-button',
+  //       }
+  //     : null
 
   const openLinkOrDownloadFile: AddonItem | null =
     width < 800 && form.values.content
@@ -376,8 +375,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     draftButton,
     openLinkOrDownloadFile,
     shareButton,
-    sendToMoodleButton,
-    addToCollectionButton,
+    // sendToMoodleButton,
+    // addToCollectionButton,
     deleteButton,
     ...(moreButtonItems ?? []),
   ].filter((item): item is AddonItem => !!item)

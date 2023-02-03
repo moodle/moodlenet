@@ -214,17 +214,17 @@ export const Resource: FC<ResourceProps> = ({
     Item: () =>
       form.values.content ? (
         <Card className="resource-action-card" hideBorderWhenSmall={true}>
-          <PrimaryButton
+          {/* <PrimaryButton
           // onClick={() => setIsAddingToMoodleLms(true)}
           >
             Send to Moodle
-          </PrimaryButton>
+          </PrimaryButton> */}
           {/* {isAuthenticated && ( */}
-          <SecondaryButton
+          {/* <SecondaryButton
           // onClick={() => setIsAddingToCollection(true)}
           >
             Add to Collection
-          </SecondaryButton>
+          </SecondaryButton> */}
           <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
             <SecondaryButton>
               {form.values.content instanceof File ? (
