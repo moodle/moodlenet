@@ -11,7 +11,7 @@ export function getPkgRpcFetchOpts(
   args: RpcArgs,
 ) {
   const [body] = args
-  const url = `${BASE_RPC_URL}/${targetPkgId.name}/${targetPkgId.version}/${apiPath}`
+  const url = `${BASE_RPC_URL}/${targetPkgId.name}/${apiPath}`
   const requestInit: RequestInit = {
     method: 'POST',
     headers: {

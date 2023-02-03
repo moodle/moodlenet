@@ -1,13 +1,7 @@
-import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
 import assert from 'assert'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
-import { PkgExpose, PkgExposeDef } from './types.mjs'
-
-type ExposedRegItem = {
-  pkgId: PkgIdentifier
-  // exposeDef: PkgExposeDef
-  expose: PkgExpose
-}
+import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
+import { ExposedRegItem, PkgExpose, PkgExposeDef } from './types.mjs'
 
 const _PKG_EXPOSED_REG: ExposedRegItem[] = []
 
@@ -16,7 +10,10 @@ export function pkgExpose(pkg_module_ref: PkgModuleRef) {
     exposeDef: _PkgExposeDef,
   ): Promise<PkgExpose<_PkgExposeDef>> {
     const { pkgId } = await ensureRegisterPkg(pkg_module_ref)
-    assert(!getExposedByPkgIdValue(pkgId), `cannot expose twice for ${pkgId.name}@${pkgId.version}`)
+    assert(
+      !getExposedByPkgIdentifier(pkgId),
+      `cannot expose twice for ${pkgId.name}@${pkgId.version}`,
+    )
     // FIXME: ensure in "init" phase
     const pkgExpose: PkgExpose<_PkgExposeDef> = {
       ...exposeDef,
@@ -30,10 +27,14 @@ export function pkgExpose(pkg_module_ref: PkgModuleRef) {
   }
 }
 
-export function getExposedByPkgIdValue(pkgId: PkgIdentifier) {
+export function getExposedByPkgIdentifier(pkgId: PkgIdentifier) {
   const exposed = getExposedByPkgName(pkgId.name)
   //FIXME: check pkg version compatibility
   return exposed
+}
+
+export function getExposes() {
+  return _PKG_EXPOSED_REG.slice()
 }
 
 export function getExposedByPkgName(pkgName: string) {
