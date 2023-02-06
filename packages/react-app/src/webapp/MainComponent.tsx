@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { MainContext, MainContextT } from './context/MainContext.mjs'
 
 import { MyPkgContext } from '../common/my-webapp/types.mjs'
@@ -28,7 +28,21 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     () => ({ registries: guestRegistryMap(registries) }),
     [registries],
   )
-  // console.log({ mainContext })
+  useEffect(() => {
+    pkgContext.use.organization.rpc
+      .__________REMOVE_ME__test_rpcFiles({
+        a: '112',
+        b: [
+          new File(new Array(12).fill(1), `/a/b/bin`, {
+            // type: 'application/json',
+          }),
+        ],
+      })
+      .then(
+        ({ a, b: [{ name, size, type }] }) => console.log({ a, name, size, type }),
+        console.error,
+      )
+  }, [pkgContext.use.organization.rpc])
   return (
     <ProvideLinkComponentCtx>
       <MainContext.Provider value={mainContext}>
