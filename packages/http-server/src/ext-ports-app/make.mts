@@ -1,7 +1,9 @@
-import { RpcArgs } from '@moodlenet/core'
+import { primarySetRpcFileHandler, RpcArgs, RpcFile } from '@moodlenet/core'
 import assert from 'assert'
 import express, { json, Request } from 'express'
+import { open } from 'fs/promises'
 import multer, { Field } from 'multer'
+import { Readable } from 'stream'
 import { format } from 'util'
 import shell from '../shell.mjs'
 import { HttpApiResponse as HttpRpcResponse } from '../types.mjs'
@@ -30,8 +32,6 @@ export function makeExtPortsApp() {
         },
       })
 
-      // console.log({ multerFields })
-
       const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
 
       pkgApp.all(`/${rpcRoute}`, multerMw, async (req, res, next) => {
@@ -45,6 +45,7 @@ export function makeExtPortsApp() {
         try {
           rpcArgs = getRpcArgs(req)
         } catch (err) {
+          console.log(err)
           res.status(400)
           res.send(err)
           return
@@ -53,6 +54,7 @@ export function makeExtPortsApp() {
         try {
           rpcDefItem.guard(...rpcArgs)
         } catch (err) {
+          console.log(err)
           res.status(400)
           res.send(err)
           return
@@ -68,7 +70,7 @@ export function makeExtPortsApp() {
             res.status(200).send(httpRpcResponse)
           })
           .catch(err => {
-            // console.log(err)
+            console.log(err)
             res.status(500)
             res.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
           })
@@ -110,23 +112,58 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
 
   if (type === 'multipart') {
     assert(!Array.isArray(req.files), `Multer passed req.files as array !! shouldn't ever happen !`)
-    const files = req.files ?? {}
+    const multerFilesMap = req.files ?? {}
+    const files = Object.keys(multerFilesMap).reduce((acc, propPath) => {
+      const fieldFileArray = multerFilesMap[propPath]
+      assert(
+        fieldFileArray,
+        `Shouldn't happen: fieldFileArray should be an array, not a ${fieldFileArray}`,
+      )
+      const rpcFiles = fieldFileArray.map(multerFile => {
+        return primarySetRpcFileHandler(
+          {
+            type: multerFile.mimetype,
+            name: multerFile.originalname,
+            size: multerFile.size,
+          },
+          {
+            async getReadable() {
+              if (multerFile.path) {
+                const fd = await open(multerFile.path, 'r')
+                const readable = fd.createReadStream()
+                return readable
+              } else {
+                return Readable.from(multerFile.buffer)
+              }
+            },
+          },
+        )
+      })
+      return {
+        ...acc,
+        [propPath]: rpcFiles,
+      }
+    }, {} as Record<string, RpcFile[]>)
 
     const body = Object.keys(files)
-      .filter(fullPropName => fullPropName.startsWith('.'))
-      .filter(fullPropName => fullPropName !== '.')
-      .reduce((acc, propName) => {
-        const propPath = propName.split('.').slice(1)
+      .filter(fileFullPropName => fileFullPropName.startsWith('.'))
+      .filter(fileFullPropName => fileFullPropName !== '.')
+      .reduce((acc, filesPropPath) => {
+        const propPath = filesPropPath.split('.').slice(1)
         const bodyAcc = { ...acc }
 
-        propPath.reduce((filePropAcc, nextPropName, index) => {
-          const isNumberProp = !isNaN(Number(nextPropName))
-          if (index + 1 === propPath.length) {
-            filePropAcc[nextPropName] = files[propName]
-          } else {
-            filePropAcc[nextPropName] = filePropAcc[nextPropName] ?? isNumberProp ? [] : {}
+        propPath.reduce((filePropAcc, currPropName, index) => {
+          // const isNumberProp = !isNaN(Number(currPropName))
+          const isLast = index === propPath.length - 1
+          if (isLast) {
+            filePropAcc[currPropName] = files[filesPropPath]
           }
-          return filePropAcc[nextPropName]
+          return filePropAcc[currPropName]
+          /*           if (isLast) {
+            filePropAcc[currPropName] = files[filesPropPath]
+          } else {
+            filePropAcc[currPropName] = filePropAcc[currPropName] ?? isNumberProp ? [] : {}
+          } */
         }, bodyAcc)
 
         return bodyAcc
