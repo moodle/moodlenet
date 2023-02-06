@@ -30,17 +30,42 @@ function getRequestBody(bodyArg: RpcArgs[0]): [method: string, body?: any, conte
   if (!hasBody) {
     return ['GET', undefined, undefined]
   }
-  const hasFiles = hasBodyFiles(bodyArg)
-
-  if (!hasFiles) {
+  const files = extractBodyFiles(bodyArg)
+  if (!files.length) {
     return ['POST', JSON.stringify(bodyArg), 'application/json']
   } else {
     const formData = new FormData()
     formData.append('.', JSON.stringify(bodyArg))
+    files.forEach(({ file, propPath }) => formData.append(propPath, file))
     return ['POST', formData, undefined]
   }
 }
 
-function hasBodyFiles(bodyArg: any) {
-  return !!bodyArg
+type BodyFile = { propPath: string; file: File }
+function extractBodyFiles(bodyArg: any, basePropPath = ''): BodyFile[] {
+  if (!bodyArg) {
+    return []
+  }
+  const bodyEntries = Object.entries(bodyArg)
+  const moreFiles = bodyEntries.flatMap(([propName, propVal]) => {
+    if (typeof propVal !== 'object') {
+      return []
+    }
+    if (Array.isArray(propVal) && !!propVal.find(propValElem => propValElem instanceof File)) {
+      delete bodyArg[propName]
+      return propVal.map(file => {
+        const bodyFile: BodyFile = {
+          file,
+          propPath: `${basePropPath}.${propName}`,
+        }
+        return bodyFile
+      })
+    }
+
+    return bodyEntries.flatMap(([propName, val]) =>
+      extractBodyFiles(val, `${basePropPath}.${propName}`),
+    )
+  })
+
+  return moreFiles
 }

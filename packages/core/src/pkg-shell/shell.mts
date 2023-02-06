@@ -22,11 +22,11 @@ export async function shell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
   const myAsyncCtx = pkgAsyncContext<PkgAsyncCtx>(myId.name)
   const expose = pkgExpose(pkg_module_ref)
   return {
-    config,
-    // with a simple `getExposed,` tsc complains `shell(import.meta)` all aroud with:
-    // The inferred type of 'default' cannot be named without a reference to '../node_modules/@moodlenet/core/dist/pkg-expose/lib.mjs'. This is likely not portable. A type annotation is necessary.
-    // O_O
     getExposes: () => getExposes(),
+    // the previous props needs to be explicitely defined, otherways tsc complains `shell(import.meta)` all aroud with:
+    // ** The inferred type of 'default' cannot be named without a reference to '../node_modules/@moodlenet/core/dist/pkg-expose/lib.mjs'. This is likely not portable. A type annotation is necessary. **
+    // O_O
+    config,
     initiateCall,
     myAsyncCtx,
     assertCallInitiator,
