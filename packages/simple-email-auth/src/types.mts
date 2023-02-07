@@ -1,2 +1,2 @@
-export type SignupReq = { email: string; password: string; title: string }
+export type SignupReq = { email: string; password: string; displayName: string }
 export type ConfirmEmailPayload = { req: SignupReq }

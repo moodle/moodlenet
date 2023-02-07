@@ -13,11 +13,11 @@ export const usePanelProps = (): SignupProps => {
   const [errMsg, setErrMsg] = useState('')
 
   const form = useFormik<SignupFormValues>({
-    initialValues: { email: '', password: '', title: '' },
-    async onSubmit({ email, password, title }) {
+    initialValues: { email: '', password: '', displayName: '' },
+    async onSubmit({ email, password, displayName }) {
       setErrMsg('')
       const res = await me.rpc.signup({
-        title,
+        displayName,
         email,
         password,
       })
