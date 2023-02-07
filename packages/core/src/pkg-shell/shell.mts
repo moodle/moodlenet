@@ -1,15 +1,19 @@
 import {
   assertCallInitiator,
-  getCallInitiator,
   asyncContext,
+  getCallInitiator,
   getSetCoreAsyncContext,
   pkgAsyncContext,
 } from '../async-context/lib.mjs'
 import { getConfig } from '../ignite.mjs'
-import { pkgExpose, getExposedByPkgIdValue, getExposedByPkgName } from '../pkg-expose/lib.mjs'
-import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
+import {
+  getExposedByPkgIdentifier,
+  getExposedByPkgName,
+  getExposes,
+  pkgExpose,
+} from '../pkg-expose/lib.mjs'
+import { ensureRegisterPkg, listEntries, pkgEntryByPkgIdValue } from '../pkg-registry/lib.mjs'
 import { PkgModuleRef } from '../types.mjs'
-import { listEntries, pkgEntryByPkgIdValue } from '../pkg-registry/lib.mjs'
 
 // FIXME: maintain a registry for shells (for pkg singletons)
 export async function shell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
@@ -18,13 +22,17 @@ export async function shell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
   const myAsyncCtx = pkgAsyncContext<PkgAsyncCtx>(myId.name)
   const expose = pkgExpose(pkg_module_ref)
   return {
+    getExposes: () => getExposes(),
+    // the previous props needs to be explicitely defined, otherways tsc complains `shell(import.meta)` all aroud with:
+    // ** The inferred type of 'default' cannot be named without a reference to '../node_modules/@moodlenet/core/dist/pkg-expose/lib.mjs'. This is likely not portable. A type annotation is necessary. **
+    // O_O
     config,
     initiateCall,
     myAsyncCtx,
     assertCallInitiator,
     expose,
     getCallInitiator,
-    getExposedByPkgIdValue,
+    getExposedByPkgIdentifier,
     getExposedByPkgName,
     listEntries,
     pkgEntryByPkgIdValue,

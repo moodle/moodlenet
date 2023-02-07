@@ -1,5 +1,5 @@
 import { ensureCollections, query } from '@moodlenet/arangodb'
-import { Shell } from '@moodlenet/core'
+import type { Shell } from '@moodlenet/core'
 import { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export * from './types.js'
 export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'

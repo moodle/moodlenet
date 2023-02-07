@@ -23,6 +23,7 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
+    "argon2": "^0.30.3",
     "jsonwebtoken": "^8.5.1",
     "keypair": "^1.0.4"
   },
@@ -31,6 +32,7 @@
     "@moodlenet/key-value-store": "^0.2.0"
   },
   "devDependencies": {
+    "@types/argon2": "^0.15.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/key-value-store": "^0.2.0",
     "@types/jsonwebtoken": "^8.5.8",

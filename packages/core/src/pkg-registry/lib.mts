@@ -1,7 +1,6 @@
 import assert from 'assert'
-import { PkgModuleRef } from '../root-export.mjs'
 import { getPkgInfo } from '../pkg-mng/lib/pkg.mjs'
-import { PkgIdentifier, PkgName } from '../types.mjs'
+import { PkgIdentifier, PkgModuleRef, PkgName } from '../types.mjs'
 import { PkgEntry } from './types.mjs'
 
 const _PKG_REG_ENTRIES: PkgEntry[] = []

@@ -46,12 +46,17 @@ export default async function ignite(ignites: Ignites) {
 
 async function initAll() {
   console.info('\nInit all packages\n')
-  await Promise.all(
-    Object.entries(_ignites.rootPkgJson.dependencies ?? {}).map(async pkgEntry => {
-      await rootImportLog(pkgEntry, 'init')
-      _pkgListDepOrdered.push(pkgEntry)
-    }),
-  )
+  const pkgList = Object.entries(_ignites.rootPkgJson.dependencies ?? {})
+  for (const pkgEntry of pkgList) {
+    await rootImportLog(pkgEntry, 'init')
+    _pkgListDepOrdered.push(pkgEntry)
+  }
+  // await Promise.all(
+  //   Object.entries(_ignites.rootPkgJson.dependencies ?? {}).map(async pkgEntry => {
+  //     await rootImportLog(pkgEntry, 'init')
+  //     _pkgListDepOrdered.push(pkgEntry)
+  //   }),
+  // )
   // console.log({ _pkgListDepOrdered })
 }
 

@@ -1,6 +1,9 @@
-type RpcRequestBody = any // FIXME: well define with constraints (serializable + `Files` support)
+import { PkgIdentifier } from '../types.mjs'
+import { PkgExpose } from './types.mjs'
 
-type RpcResponseBody = any // FIXME: well define with constraints (serializable)
+export type RpcRequestBody = any // FIXME: well define with constraints (serializable + `Files` support)
+
+export type RpcResponseBody = any // FIXME: well define with constraints (serializable)
 export type RpcResponse = Promise<RpcResponseBody>
 
 export type RpcArgs = [
@@ -8,15 +11,24 @@ export type RpcArgs = [
   //params: {
   //  route: Record<string, string>
   //  query: Record<string, string | string[]>
-  //  header: Record<string, string>
   //}
+  //header: Record<string, string>
 ]
 export type RpcFn = (...rpcArgs: RpcArgs) => RpcResponse
 export type RpcFnGuard = (...rpcArgs: RpcArgs) => unknown
 
 export type RpcFnOf<RpcItem extends RpcDefItem> = RpcItem['fn']
 
-export type RpcDefItem = { fn: RpcFn; guard: RpcFnGuard }
+export type RpcBodyFieldConfig = {
+  maxCount?: number
+}
+export type RpcBodyWithFilesConfig = {
+  fields: {
+    [fieldName: string]: number | RpcBodyFieldConfig
+  }
+  maxFileSize?: number | undefined
+}
+export type RpcDefItem = { fn: RpcFn; guard: RpcFnGuard; bodyWithFiles?: RpcBodyWithFilesConfig }
 export type RpcDefs = Record<string, RpcDefItem>
 
 // https://dev.to/bytimo/useful-types-extract-route-params-with-typescript-5fhn
@@ -28,6 +40,12 @@ type ExtractParam<Path, NextPart> = Path extends `:${infer Param}`
 export type ExctractParams<Path> = Path extends `${infer Segment}/${infer Rest}`
   ? ExtractParam<Segment, ExctractParams<Rest>>
   : ExtractParam<Path, Record<never, never>>
+
+export type ExposedRegItem = {
+  pkgId: PkgIdentifier
+  // exposeDef: PkgExposeDef
+  expose: PkgExpose
+}
 
 // // TEST
 
