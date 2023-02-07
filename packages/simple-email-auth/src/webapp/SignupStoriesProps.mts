@@ -7,7 +7,7 @@ export const useSignupPanelProps = (): SignupProps => {
     emailSent: false,
     errMsg: '',
     form: useFormik<SignupFormValues>({
-      initialValues: { title: '', email: '', password: '' },
+      initialValues: { displayName: '', email: '', password: '' },
       onSubmit: action('signup clicked'),
     }),
   }
