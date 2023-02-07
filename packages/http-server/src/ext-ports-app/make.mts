@@ -1,68 +1,176 @@
-import express, { json } from 'express'
+import { primarySetRpcFileHandler, RpcArgs, RpcFile } from '@moodlenet/core'
+import assert from 'assert'
+import express, { json, Request } from 'express'
+import { open } from 'fs/promises'
+import multer, { Field } from 'multer'
+import { Readable } from 'stream'
 import { format } from 'util'
 import shell from '../shell.mjs'
 import { HttpApiResponse as HttpRpcResponse } from '../types.mjs'
 
-// getPkgApisRefByPkgName
-
 export function makeExtPortsApp() {
+  const exposes = shell.getExposes()
   const srvApp = express()
   srvApp.use(json())
-  // srvApp.post(`${BASE_APIS_URL}/*`, async (req, res, next) => {
-  srvApp.post(`/*`, async (req, res, next) => {
-    // console.log({ url: req.url })
-    /*
-    gets ext name&ver 
-    checks ext enabled and version match (core port)
-    checks port is guarded
-    pushes msg
-    */
-
-    const urlTokens = req.path.split('/').slice(1)
-    if (urlTokens.length < 2) {
-      return next()
-    }
-    const isScopedPkgName = urlTokens[0]?.[0] === '@'
-    const path = urlTokens.slice(isScopedPkgName ? 3 : 2).join('/')
-    const pkgName = urlTokens.slice(0, isScopedPkgName ? 2 : 1).join('/')
-    const pkgVersion = urlTokens[isScopedPkgName ? 2 : 1]
-
-    if (!(path && pkgName && pkgVersion)) {
-      return next()
-    }
-
-    const rpcDefItem = shell.getExposedByPkgIdValue({ name: pkgName, version: pkgVersion })?.expose
-      .rpc[path]
-    if (!rpcDefItem) {
-      res.sendStatus(400)
-      return
-    }
-
-    res.header('Content-Type', 'application/json')
-
-    const rpcArgs = [req.body] as const
-    try {
-      rpcDefItem.guard(...rpcArgs)
-    } catch (err) {
-      res.status(400)
-      res.send(err)
-      return
-    }
-
-    await rpcDefItem
-      .fn(...rpcArgs)
-      .then(response => {
-        const httpRpcResponse: HttpRpcResponse = {
-          response,
+  exposes.forEach(({ expose, pkgId }) => {
+    const pkgApp = express()
+    srvApp.use(`/${pkgId.name}`, pkgApp)
+    Object.entries(expose.rpc).forEach(([rpcRoute, rpcDefItem]) => {
+      const fileFieldsEntries = Object.entries(rpcDefItem.bodyWithFiles?.fields ?? {})
+      const multerFields = fileFieldsEntries.map<Field>(([fieldName, _fieldDef]) => {
+        const fieldDef: Omit<Field, 'name'> =
+          'number' === typeof _fieldDef ? { maxCount: _fieldDef } : { maxCount: _fieldDef.maxCount }
+        return {
+          name: fieldName,
+          ...fieldDef,
         }
-        res.status(200).send(httpRpcResponse)
       })
-      .catch(err => {
-        // console.log(err)
-        res.status(500)
-        res.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
+      const multipartMW = multer({
+        limits: {
+          files: multerFields.reduce((acc, { maxCount }) => acc + (maxCount ?? 0), 0),
+          fileSize: rpcDefItem.bodyWithFiles?.maxFileSize,
+        },
       })
+
+      const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
+
+      pkgApp.all(`/${rpcRoute}`, multerMw, async (req, res, next) => {
+        if (!['get', 'post'].includes(req.method.toLowerCase())) {
+          res.status(405).send('unsupported ${req.method} method for rpc')
+          next()
+        }
+
+        let rpcArgs: RpcArgs
+
+        try {
+          rpcArgs = getRpcArgs(req)
+        } catch (err) {
+          console.log(err)
+          res.status(400)
+          res.send(err)
+          return
+        }
+
+        try {
+          rpcDefItem.guard(...rpcArgs)
+        } catch (err) {
+          console.log(err)
+          res.status(400)
+          res.send(err)
+          return
+        }
+
+        await rpcDefItem
+          .fn(...rpcArgs)
+          .then(response => {
+            res.header('Content-Type', 'application/json')
+            const httpRpcResponse: HttpRpcResponse = {
+              response,
+            }
+            res.status(200).send(httpRpcResponse)
+          })
+          .catch(err => {
+            console.log(err)
+            res.status(500)
+            res.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
+          })
+      })
+      return srvApp
+    })
   })
-  srvApp.all(`*`, (_, res) => res.status(404).send(`service not available`))
   return srvApp
+}
+
+function getRpcArgs(req: Request): RpcArgs {
+  const [body /* , _type */] = getRpcBody(req)
+  const rpcArgs: RpcArgs = [body]
+  return rpcArgs
+}
+
+function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart' | 'none'] {
+  const contentTypeHeader = req.headers['content-type']
+
+  const type = !contentTypeHeader
+    ? 'none'
+    : /^application\/json/i.test(contentTypeHeader)
+    ? 'json'
+    : /^multipart\/form-data/i.test(contentTypeHeader)
+    ? 'multipart'
+    : undefined
+
+  if (!type) {
+    throw new Error(`Unsupported content-type: ${contentTypeHeader}`)
+  }
+
+  if ('get' === req.method.toLowerCase()) {
+    return [undefined, type]
+  }
+
+  if (type === 'json') {
+    return [req.body, type]
+  }
+
+  if (type === 'multipart') {
+    assert(!Array.isArray(req.files), `Multer passed req.files as array !! shouldn't ever happen !`)
+    const multerFilesMap = req.files ?? {}
+    const files = Object.keys(multerFilesMap).reduce((acc, propPath) => {
+      const fieldFileArray = multerFilesMap[propPath]
+      assert(
+        fieldFileArray,
+        `Shouldn't happen: fieldFileArray should be an array, not a ${fieldFileArray}`,
+      )
+      const rpcFiles = fieldFileArray.map(multerFile => {
+        return primarySetRpcFileHandler(
+          {
+            type: multerFile.mimetype,
+            name: multerFile.originalname,
+            size: multerFile.size,
+          },
+          {
+            async getReadable() {
+              if (multerFile.path) {
+                const fd = await open(multerFile.path, 'r')
+                const readable = fd.createReadStream()
+                return readable
+              } else {
+                return Readable.from(multerFile.buffer)
+              }
+            },
+          },
+        )
+      })
+      return {
+        ...acc,
+        [propPath]: rpcFiles,
+      }
+    }, {} as Record<string, RpcFile[]>)
+
+    const body = Object.keys(files)
+      .filter(fileFullPropName => fileFullPropName.startsWith('.'))
+      .filter(fileFullPropName => fileFullPropName !== '.')
+      .reduce((acc, filesPropPath) => {
+        const propPath = filesPropPath.split('.').slice(1)
+        const bodyAcc = { ...acc }
+
+        propPath.reduce((filePropAcc, currPropName, index) => {
+          // const isNumberProp = !isNaN(Number(currPropName))
+          const isLast = index === propPath.length - 1
+          if (isLast) {
+            filePropAcc[currPropName] = files[filesPropPath]
+          }
+          return filePropAcc[currPropName]
+          /*           if (isLast) {
+            filePropAcc[currPropName] = files[filesPropPath]
+          } else {
+            filePropAcc[currPropName] = filePropAcc[currPropName] ?? isNumberProp ? [] : {}
+          } */
+        }, bodyAcc)
+
+        return bodyAcc
+      }, JSON.parse(req.body['.']))
+
+    return [body, type]
+  }
+
+  throw new Error('Unsupported contentType: ${contentTypeHeader}')
 }

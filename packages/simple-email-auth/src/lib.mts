@@ -16,9 +16,13 @@ export async function login({
   password: string
 }): Promise<{ success: true; sessionToken: SessionToken } | { success: false }> {
   const user = await store.getByEmail(email)
-  if (!user || user.password !== password) {
+  const userExistsAndPasswordMatches =
+    !!user && (await crypto.argon.verifyPwd({ plainPwd: password, pwdHash: user.password }))
+
+  if (!userExistsAndPasswordMatches) {
     return { success: false }
   }
+
   const res = await shell.call(getSessionToken)({ uid: user.id })
 
   if (!res.success) {
@@ -36,9 +40,13 @@ export async function signup(
   if (mUser) {
     return { success: false, msg: 'email exists' }
   }
-
+  console.log({ req })
   const confirmEmailPayload: ConfirmEmailPayload = {
-    req,
+    req: {
+      email: req.email,
+      password: await crypto.argon.hashPwd(req.password),
+      displayName: req.displayName,
+    },
   }
   const { encrypted: confirmEmailToken } = await shell.call(crypto.std.encrypt)({
     payload: JSON.stringify(confirmEmailPayload),
@@ -47,7 +55,7 @@ export async function signup(
     emailObj: {
       to: req.email,
       text: `hey ${
-        req.title
+        req.displayName
       } confirm your email on ${await getHttpBaseUrl()}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
     },
   })
@@ -64,7 +72,7 @@ export async function confirm({
     return { success: false, msg: `invalid confirm token` }
   }
   const {
-    req: { title, email, password },
+    req: { displayName, email, password },
   } = confirmEmailPayload
 
   const mUser = await store.getByEmail(email)
@@ -86,7 +94,7 @@ export async function confirm({
   }
 
   await shell.call(createProfile)({
-    title,
+    title: displayName,
     userId: authRes.user.id,
     isAdmin: false,
     contacts: { email },
