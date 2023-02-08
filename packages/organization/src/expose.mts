@@ -1,4 +1,5 @@
-import { getRpcFileHandler, RpcFile } from '@moodlenet/core'
+import { assertRpcFileReadable, readableRpcFile, RpcFile } from '@moodlenet/core'
+import { open } from 'fs/promises'
 import { getOrgData, setOrgData } from './lib.mjs'
 import shell from './shell.mjs'
 
@@ -16,15 +17,42 @@ export const expose = await shell.expose({
       guard: () => void 0,
       async fn(body: { a: string; b: [RpcFile] }) {
         console.log('__________REMOVE_ME__test_rpcFiles_body_b:', JSON.stringify(body.b, null, 4))
-        const readable = await getRpcFileHandler(body.b[0]).getReadable()
+        const rpcFile = body.b[0]
+        const readable = await assertRpcFileReadable(rpcFile)
 
-        console.log({ __________REMOVE_ME__test_rpcFiles_body_files: readable.read() })
-        return body
+        readable.setEncoding('utf8')
+        const content = readable.read()
+        console.log({ __________REMOVE_ME__test_rpcFiles_body_files: content })
+        return { ...body, content }
+        // return body.b[0]
       },
       bodyWithFiles: {
         fields: {
           '.b': 1,
         },
+      },
+    },
+    __________REMOVE_ME__test_streamResponse: {
+      guard: () => void 0,
+      async fn() {
+        console.log('__________REMOVE_ME__test_streamResponse')
+        const name = 'package-lock.json'
+        const size = await (async () => {
+          const inode = await open(name, 'r')
+          return (await inode.stat()).size
+        })()
+        return readableRpcFile(
+          {
+            name,
+            type: 'application/json',
+            size,
+          },
+          async () => {
+            const inode = await open(name, 'r')
+            return inode.createReadStream()
+          },
+        )
+        // return { __stream, __mimetype: 'image/svg' }
       },
     },
   },

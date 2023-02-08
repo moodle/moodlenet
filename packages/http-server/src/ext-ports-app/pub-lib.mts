@@ -21,6 +21,9 @@ export function getPkgRpcFetchOpts(
       'x-moodlenet-react-app-caller': `${userPkgId.name}@${userPkgId.version}`,
     },
     body,
+    credentials: 'same-origin',
+    redirect: 'error',
+    // cache,
   }
   return { url, requestInit }
 }
