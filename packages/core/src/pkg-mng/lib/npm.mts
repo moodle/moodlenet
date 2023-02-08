@@ -1,3 +1,4 @@
+import execa from 'execa'
 import { run } from 'npm-check-updates'
 import {
   MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES,
@@ -5,11 +6,9 @@ import {
   patchWdPackageJsonDeps,
   WORKING_DIR,
 } from '../../main/env.mjs'
-import { PkgIdentifier } from '../../types.mjs'
-import execa from 'execa'
-import { InstallPkgReq } from '../types.mjs'
-import { overrideLocalMNLock } from '../../main/MNLock.mjs'
 import { rebootSystem } from '../../main/sys.mjs'
+import { PkgIdentifier } from '../../types.mjs'
+import { InstallPkgReq } from '../types.mjs'
 
 export { NPM_REGISTRY } from '../../main/env.mjs'
 
@@ -71,7 +70,6 @@ export async function updateAll(): Promise<{ updatePkgs: Record<string, string> 
   }
 
   await patchWdPackageJsonDeps(updatePkgs)
-  await overrideLocalMNLock({ installed: false })
   rebootSystem()
   return { updatePkgs }
 }
