@@ -1,8 +1,14 @@
 import assert from 'assert'
+import { Readable } from 'stream'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
 import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
-import { ExposedRegItem, PkgExpose, PkgExposeDef, RpcFile, RpcFileHandler } from './types.mjs'
+import { PkgExpose, PkgExposeDef, RpcFile } from './types.mjs'
 
+type ExposedRegItem = {
+  pkgId: PkgIdentifier
+  // exposeDef: PkgExposeDef
+  expose: PkgExpose
+}
 const _PKG_EXPOSED_REG: ExposedRegItem[] = []
 
 export function pkgExpose(pkg_module_ref: PkgModuleRef) {
@@ -42,18 +48,32 @@ export function getExposedByPkgName(pkgName: string) {
 }
 
 const RPC_FILE_HANDLER_SYM = Symbol('RPC_FILE_HANDLER_SYMBOL')
-export function primarySetRpcFileHandler(rpcFile: RpcFile, handler: RpcFileHandler): RpcFile {
-  assert(!!rpcFile, 'cannot attach RpcFileHandler to unvalued RpcFile')
+
+export function readableRpcFile(
+  rpcFile: RpcFile,
+  getReadable: () => Readable | Promise<Readable>,
+): RpcFile {
+  assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore brute force symbol prop mixin
-  rpcFile[RPC_FILE_HANDLER_SYM] = handler
+  rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
   return rpcFile
 }
-export function getRpcFileHandler(rpcFile: RpcFile): RpcFileHandler {
-  assert(!!rpcFile, 'cannot get RpcFileHandler from unvalued RpcFile')
+
+export async function assertRpcFileReadable(rpcFile: RpcFile): Promise<Readable> {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore brute force symbol prop mixin
-  const handler = rpcFile[RPC_FILE_HANDLER_SYM]
-  assert(!!handler, 'this RpcFile has no handler attached')
-  return handler
+  const readable = await getMaybeRpcFileReadable(rpcFile)
+  assert(readable, 'this RpcFile has no getReadable attached')
+  return readable
+}
+
+export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefined | Readable> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore brute force symbol prop mixin
+  const getReadable = rpcFile?.[RPC_FILE_HANDLER_SYM]
+  if (!getReadable) {
+    return undefined
+  }
+  return await getReadable()
 }

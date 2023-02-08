@@ -1,6 +1,3 @@
-import { PkgIdentifier } from '../types.mjs'
-import { PkgExpose } from './types.mjs'
-
 export type RpcRequestBody = any // FIXME: well define with constraints (serializable + `Files` support)
 
 export type RpcResponseBody = any // FIXME: well define with constraints (serializable)
@@ -31,21 +28,17 @@ export type RpcBodyWithFilesConfig = {
 export type RpcDefItem = { fn: RpcFn; guard: RpcFnGuard; bodyWithFiles?: RpcBodyWithFilesConfig }
 export type RpcDefs = Record<string, RpcDefItem>
 
+export type RpcFile = { type: string; name: string; size: number }
+
 // https://dev.to/bytimo/useful-types-extract-route-params-with-typescript-5fhn
 // kudos https://dev.to/bytimo
-type ExtractParam<Path, NextPart> = Path extends `:${infer Param}`
-  ? Record<Param, string> & NextPart
-  : NextPart
+// type ExtractParam<Path, NextPart> = Path extends `:${infer Param}`
+//   ? Record<Param, string> & NextPart
+//   : NextPart
 
-export type ExctractParams<Path> = Path extends `${infer Segment}/${infer Rest}`
-  ? ExtractParam<Segment, ExctractParams<Rest>>
-  : ExtractParam<Path, Record<never, never>>
-
-export type ExposedRegItem = {
-  pkgId: PkgIdentifier
-  // exposeDef: PkgExposeDef
-  expose: PkgExpose
-}
+// export type ExctractParams<Path> = Path extends `${infer Segment}/${infer Rest}`
+//   ? ExtractParam<Segment, ExctractParams<Rest>>
+//   : ExtractParam<Path, Record<never, never>>
 
 // // TEST
 
