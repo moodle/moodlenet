@@ -122,7 +122,6 @@ export const NewResourceProps = {
   description: '',
   category: '',
   image: null,
-
   // visibility: 'Private',
   isFile: false,
 }
