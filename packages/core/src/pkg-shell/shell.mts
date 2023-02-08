@@ -1,3 +1,5 @@
+import { mkdir } from 'fs/promises'
+import { join } from 'path'
 import {
   assertCallInitiator,
   asyncContext,
@@ -6,6 +8,7 @@ import {
   pkgAsyncContext,
 } from '../async-context/lib.mjs'
 import { getConfig } from '../ignite.mjs'
+import { fsBaseFolder } from '../main/env.mjs'
 import {
   getExposedByPkgIdentifier,
   getExposedByPkgName,
@@ -21,11 +24,14 @@ export async function shell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
   const config = getConfig(myId.name)
   const myAsyncCtx = pkgAsyncContext<PkgAsyncCtx>(myId.name)
   const expose = pkgExpose(pkg_module_ref)
+  const baseFsFolder = join(fsBaseFolder, ...myId.name.split('/'))
+  await mkdir(baseFsFolder, { recursive: true })
   return {
     getExposes: () => getExposes(),
     // the previous props needs to be explicitely defined, otherways tsc complains `shell(import.meta)` all aroud with:
     // ** The inferred type of 'default' cannot be named without a reference to '../node_modules/@moodlenet/core/dist/pkg-expose/lib.mjs'. This is likely not portable. A type annotation is necessary. **
     // O_O
+    baseFsFolder,
     config,
     initiateCall,
     myAsyncCtx,
