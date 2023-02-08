@@ -3,7 +3,7 @@ import { expand } from 'dotenv-expand'
 import execa from 'execa'
 import { readFile, writeFile } from 'fs/promises'
 
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 import { PackageJson } from 'type-fest'
 import { getConfig } from '../ignite.mjs'
 
@@ -24,6 +24,7 @@ export const WD_PACKAGEJSON_PATH = resolve(WORKING_DIR, 'package.json')
 
 const config = await getConfig('@moodlenet/core')
 
+export const fsBaseFolder = config.fsFolder ?? join(WORKING_DIR, 'fs')
 export const NPM_REGISTRY = (
   config.npm_config_registry ??
   process.env.npm_config_registry ??
