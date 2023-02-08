@@ -19,6 +19,7 @@ const meta: ComponentMeta<typeof Resource> = {
     'ResourceActivatedStoryProps',
     'ResourceAdminStoryProps',
     'ResourceApprovedStoryProps',
+    'NewResourceProps',
   ],
 }
 
