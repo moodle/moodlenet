@@ -10,8 +10,17 @@ export function getPkgRpcFetchOpts(
   apiPath: string,
   args: RpcArgs,
 ) {
-  const url = `${BASE_RPC_URL}/${targetPkgId.name}/${apiPath}`
-  const [bodyArg] = args
+  const [bodyArg, params, query] = args
+  const searchParams = new URLSearchParams(query ?? {}).toString()
+  const apiPathWithParams = Object.entries(params ?? {}).reduce(
+    (_restPath, [key, val]) => _restPath.replaceAll(`:${key}`, String(val)),
+    apiPath,
+  )
+
+  const url = `${BASE_RPC_URL}/${targetPkgId.name}/${apiPathWithParams}${
+    searchParams ? `?${searchParams}` : ''
+  }`
+
   const [method, body, contentType] = getRequestBody(bodyArg)
   const requestInit: RequestInit = {
     method,

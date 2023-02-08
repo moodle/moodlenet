@@ -94,7 +94,7 @@ export function makeExtPortsApp() {
 
 function getRpcArgs(req: Request): RpcArgs {
   const [body /* , _type */] = getRpcBody(req)
-  const rpcArgs: RpcArgs = [body]
+  const rpcArgs: RpcArgs = [body, req.params, req.query]
   return rpcArgs
 }
 

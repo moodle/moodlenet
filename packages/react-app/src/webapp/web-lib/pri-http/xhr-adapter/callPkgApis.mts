@@ -34,8 +34,12 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
   )
 
   function locateRpc(path: string) {
-    return async function (body: unknown) {
-      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [body])
+    return async function (body: unknown, params: unknown, query: unknown) {
+      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [
+        body,
+        params,
+        query,
+      ])
       const response = await fetch(url, requestInit)
 
       if (response.status !== 200) {

@@ -61,8 +61,6 @@ export function readableRpcFile(
 }
 
 export async function assertRpcFileReadable(rpcFile: RpcFile): Promise<Readable> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore brute force symbol prop mixin
   const readable = await getMaybeRpcFileReadable(rpcFile)
   assert(readable, 'this RpcFile has no getReadable attached')
   return readable
