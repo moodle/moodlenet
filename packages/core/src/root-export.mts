@@ -1,6 +1,10 @@
 export type { assertCallInitiator, getCallInitiator } from './async-context/lib.mjs'
 export * from './async-context/types.mjs'
-export { getRpcFileHandler, primarySetRpcFileHandler } from './pkg-expose/lib.mjs'
+export {
+  assertRpcFileReadable,
+  getMaybeRpcFileReadable,
+  readableRpcFile,
+} from './pkg-expose/lib.mjs'
 export type { getExposedByPkgIdentifier, getExposedByPkgName } from './pkg-expose/lib.mjs'
 export * from './pkg-expose/types.mjs'
 export * from './pkg-mng/index.mjs'

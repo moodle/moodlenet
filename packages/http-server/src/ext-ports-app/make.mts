@@ -1,4 +1,4 @@
-import { primarySetRpcFileHandler, RpcArgs, RpcFile } from '@moodlenet/core'
+import { getMaybeRpcFileReadable, readableRpcFile, RpcArgs, RpcFile } from '@moodlenet/core'
 import assert from 'assert'
 import express, { json, Request } from 'express'
 import { open } from 'fs/promises'
@@ -34,20 +34,20 @@ export function makeExtPortsApp() {
 
       const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
 
-      pkgApp.all(`/${rpcRoute}`, multerMw, async (req, res, next) => {
-        if (!['get', 'post'].includes(req.method.toLowerCase())) {
-          res.status(405).send('unsupported ${req.method} method for rpc')
+      pkgApp.all(`/${rpcRoute}`, multerMw, async (httpReq, httpResp, next) => {
+        if (!['get', 'post'].includes(httpReq.method.toLowerCase())) {
+          httpResp.status(405).send('unsupported ${req.method} method for rpc')
           next()
         }
 
         let rpcArgs: RpcArgs
 
         try {
-          rpcArgs = getRpcArgs(req)
+          rpcArgs = getRpcArgs(httpReq)
         } catch (err) {
           console.log(err)
-          res.status(400)
-          res.send(err)
+          httpResp.status(400)
+          httpResp.send(err)
           return
         }
 
@@ -55,24 +55,35 @@ export function makeExtPortsApp() {
           rpcDefItem.guard(...rpcArgs)
         } catch (err) {
           console.log(err)
-          res.status(400)
-          res.send(err)
+          httpResp.status(400)
+          httpResp.send(err)
           return
         }
 
         await rpcDefItem
           .fn(...rpcArgs)
-          .then(response => {
-            res.header('Content-Type', 'application/json')
-            const httpRpcResponse: HttpRpcResponse = {
-              response,
+          .then(async rpcResponse => {
+            const mReadable = await getMaybeRpcFileReadable(rpcResponse)
+            if (mReadable) {
+              const rpcFile: RpcFile = rpcResponse
+              rpcFile.name && httpResp.header('x-rpc-file-filename', `${rpcFile.name}`)
+              rpcFile.size && httpResp.header('x-rpc-file-size', `${rpcFile.size}`)
+              rpcFile.type && httpResp.header('Content-Type', `${rpcFile.type}`)
+              mReadable.pipe(httpResp)
+              return
+            } else {
+              httpResp.header('Content-Type', 'application/json')
+              const httpRpcResponse: HttpRpcResponse = {
+                response: rpcResponse,
+              }
+              httpResp./* status(200). */ send(httpRpcResponse)
+              return
             }
-            res.status(200).send(httpRpcResponse)
           })
           .catch(err => {
             console.log(err)
-            res.status(500)
-            res.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
+            httpResp.status(500)
+            httpResp.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
           })
       })
       return srvApp
@@ -120,22 +131,20 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
         `Shouldn't happen: fieldFileArray should be an array, not a ${fieldFileArray}`,
       )
       const rpcFiles = fieldFileArray.map(multerFile => {
-        return primarySetRpcFileHandler(
+        return readableRpcFile(
           {
             type: multerFile.mimetype,
             name: multerFile.originalname,
             size: multerFile.size,
           },
-          {
-            async getReadable() {
-              if (multerFile.path) {
-                const fd = await open(multerFile.path, 'r')
-                const readable = fd.createReadStream()
-                return readable
-              } else {
-                return Readable.from(multerFile.buffer)
-              }
-            },
+          async function getReadable() {
+            if (multerFile.path) {
+              const fd = await open(multerFile.path, 'r')
+              const readable = fd.createReadStream({ autoClose: true })
+              return readable
+            } else {
+              return Readable.from(multerFile.buffer)
+            }
           },
         )
       })
