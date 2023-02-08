@@ -510,10 +510,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     key: 'resource-header',
   }
 
-  const resourceUploader = {
-    Item: () => <UploadResource form={form} fileMaxSize={fileMaxSize} />,
-    key: 'resource-uploader',
-  }
+  const resourceUploader: AddonItem | null = canEdit
+    ? {
+        Item: () => <UploadResource form={form} fileMaxSize={fileMaxSize} />,
+        key: 'resource-uploader',
+      }
+    : null
 
   const imageDiv = (
     <img
