@@ -29,19 +29,21 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     [registries],
   )
   useEffect(() => {
-    pkgContext.use.organization.rpc
-      .__________REMOVE_ME__test_rpcFiles({
+    pkgContext.use.organization.rpc['__________REMOVE_ME__test_rpcFiles/:id/aa'](
+      {
         a: '112',
         b: [
           new File(new Array(12).fill(1), `/a/b/bin`, {
             // type: 'application/json',
           }),
         ],
-      })
-      .then(
-        ({ a, b: [{ name, size, type }] }) => console.log({ a, name, size, type }),
-        console.error,
-      )
+      },
+      { id: 'xxx' },
+      { by: 'byeby' },
+    ).then(
+      ({ a, b: [{ name, size, type }] }) => console.log({ a, name, size, type }),
+      console.error,
+    )
   }, [pkgContext.use.organization.rpc])
   return (
     <ProvideLinkComponentCtx>
