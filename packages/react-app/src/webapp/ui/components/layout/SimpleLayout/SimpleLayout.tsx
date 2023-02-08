@@ -4,6 +4,7 @@ import {
   MinimalisticHeader,
   MinimalisticHeaderProps,
 } from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
+import { LayoutContainer } from '../LayoutContainer/LayoutContainer.js'
 import './SimpleLayout.scss'
 // import { StateContext } from './Providers'
 
@@ -28,9 +29,10 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
   // const styleContext = useContext(SettingsCtx)
 
   return (
-    <div className="simple-layout" style={style}>
-      <MinimalisticHeader {...headerProps} />
-      {/* <div className="side-menu">
+    <LayoutContainer>
+      <div className="simple-layout" style={style}>
+        <MinimalisticHeader {...headerProps} />
+        {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
               <Link to={path}>
@@ -39,11 +41,12 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
             </div>
           ))}
       </div> */}
-      <div style={contentStyle} className="content">
-        {children}
-        <div className="footer"></div>
+        <div style={contentStyle} className="content">
+          {children}
+          <div className="footer"></div>
+        </div>
       </div>
-    </div>
+    </LayoutContainer>
   )
 }
 

@@ -1,7 +1,7 @@
-import { baseStyle } from '@moodlenet/component-library'
 import { CSSProperties, FC, ReactNode } from 'react'
 import { MainFooter, MainFooterProps } from '../../organisms/Footer/MainFooter/MainFooter.js'
 import { MainHeader, MainHeaderProps } from '../../organisms/Header/MainHeader/MainHeader.js'
+import { LayoutContainer } from '../LayoutContainer/LayoutContainer.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
@@ -29,18 +29,18 @@ export const MainLayout: FC<MainLayoutProps> = ({
   // const styleContext = useContext(SettingsCtx)
 
   return (
-    <div
-      className={`main-layout ${streched ? 'streched' : ''}`}
-      style={{
-        ...style,
-        ...baseStyle(),
-        // TODO Send context to higher levels
-        // ...getColorPalette(styleContext.appearanceData.color),
-        // ...styleContext.style,
-      }}
-    >
-      <MainHeader {...headerProps} />
-      {/* <div className="side-menu">
+    <LayoutContainer>
+      <div
+        className={`main-layout ${streched ? 'streched' : ''}`}
+        style={{
+          ...style,
+          // TODO Send context to higher levels
+          // ...getColorPalette(styleContext.appearanceData.color),
+          // ...styleContext.style,
+        }}
+      >
+        <MainHeader {...headerProps} />
+        {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
               <Link to={path}>
@@ -49,18 +49,19 @@ export const MainLayout: FC<MainLayoutProps> = ({
             </div>
           ))}
       </div> */}
-      <div
-        style={
-          {
-            /* ...contentStyle */
+        <div
+          style={
+            {
+              /* ...contentStyle */
+            }
           }
-        }
-        className="content"
-      >
-        {children}
-        <MainFooter {...footerProps} />
+          className="content"
+        >
+          {children}
+          <MainFooter {...footerProps} />
+        </div>
       </div>
-    </div>
+    </LayoutContainer>
   )
 }
 
