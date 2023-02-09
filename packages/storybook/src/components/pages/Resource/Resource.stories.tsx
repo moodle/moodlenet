@@ -19,6 +19,7 @@ const meta: ComponentMeta<typeof Resource> = {
     'ResourceActivatedStoryProps',
     'ResourceAdminStoryProps',
     'ResourceApprovedStoryProps',
+    'NewResourceProps',
   ],
 }
 
@@ -88,7 +89,13 @@ export const Owner: ResourceStory = () => {
       isOwner: true,
       canEdit: true,
       mainResourceCardProps: useMainResourceCardStoryProps({
-        props: { isOwner: true, canEdit: true },
+        props: {
+          isOwner: true,
+          canEdit: true,
+          // isSaving: true,
+          isSaving: false,
+          isSaved: true,
+        },
       }),
       //   collectionCardPropsList: [
       //     CollectionCardOwnerPrivateStoryProps(
@@ -129,6 +136,11 @@ export const NewResourceProps = {
 export const New: ResourceStory = () => {
   // const [isEditting, setIsEditing] = useState(false)
   const [isPublished, setIsPublished] = useState(false)
+  // const [uploadProgress, setUploadProgress] = useState(0)
+
+  // useEffect(() => {
+  //   uploadProgress < 100 && setTimeout(() => setUploadProgress(oldCount => oldCount + 1), 70)
+  // }, [uploadProgress])
   // const [isWaitingForApproval, setIsWaitingForApproval] = useState(true)
 
   // useEffect(() => {
@@ -149,6 +161,7 @@ export const New: ResourceStory = () => {
       setIsPublished: setIsPublished,
       mainResourceCardProps: useMainResourceCardStoryProps({
         props: {
+          uploadProgress: 50,
           // isOwner: true,
           // canEdit: true,
           // isEditing: false,
@@ -219,7 +232,7 @@ export const New: ResourceStory = () => {
 export const Admin: ResourceStory = () => {
   const props = useResourceStoryProps({
     props: {
-      isAdmin: true,
+      canEdit: true,
       //   getResourceCardProps: useuseResourceCardStoryProps({
       //     props: {
       //       isAuthenticated: true,
