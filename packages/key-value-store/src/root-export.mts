@@ -12,7 +12,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>(
     const kvStore: KVStore<any> = {
       set: shell.call(set),
       get: shell.call(get),
-      unset,
+      unset: shell.call(unset),
     }
     return kvStore
 
@@ -63,7 +63,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>(
   })
 }
 
-type Record = null | { value?: any }
-function valObj(_: Record): ValueObj {
+type DBRecord = { value?: any }
+function valObj(_: undefined | DBRecord): ValueObj {
   return { value: _?.value ?? undefined }
 }
