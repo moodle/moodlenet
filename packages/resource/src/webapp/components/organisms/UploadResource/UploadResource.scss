@@ -114,6 +114,7 @@
       > .input-container {
         padding: 8px 0;
         height: 100%;
+        border-radius: 10px;
         background-color: transparent;
         > :last-child:not(input) {
           margin-right: 10px;
@@ -124,7 +125,7 @@
     > .uploaded-name {
       width: 100%;
       display: flex;
-      height: 46px;
+      height: 48px;
       padding-right: 10px;
       align-items: center;
       font-weight: 500;
