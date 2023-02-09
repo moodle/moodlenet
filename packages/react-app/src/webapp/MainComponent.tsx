@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { MainContext, MainContextT } from './context/MainContext.mjs'
 
 import { MyPkgContext } from '../common/my-webapp/types.mjs'
@@ -28,23 +28,23 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     () => ({ registries: guestRegistryMap(registries) }),
     [registries],
   )
-  useEffect(() => {
-    pkgContext.use.organization.rpc['__________REMOVE_ME__test_rpcFiles/:id/aa'](
-      {
-        a: '112',
-        b: [
-          new File(new Array(12).fill(1), `/a/b/bin`, {
-            // type: 'application/json',
-          }),
-        ],
-      },
-      { id: 'xxx' },
-      { by: 'byeby' },
-    ).then(
-      ({ a, b: [{ name, size, type }] }) => console.log({ a, name, size, type }),
-      console.error,
-    )
-  }, [pkgContext.use.organization.rpc])
+
+  // FIXME: __________REMOVE_ME__test_rpcFiles
+  // useEffect(() => {
+  //   const fileContent = ('ciccio-' + String(Math.random()).substring(2, 6) + '\n').split('')
+  //   const fileName = `/a/b/${String(Math.random()).substring(2, 7)}`
+  //   const uploadFile = new File(fileContent, fileName, { type: 'text/plain' })
+  //   console.log({ uploadFile })
+  //   pkgContext.use.organization.rpc['__________REMOVE_ME__test_rpcFiles/:id/aa'](
+  //     {
+  //       a: '112',
+  //       b: [uploadFile],
+  //     },
+  //     { id: 'xxx' },
+  //     { by: 'byeby' },
+  //   ).then(createFileResponse => console.log({ createFileResponse }), console.error)
+  // }, [pkgContext.use.organization.rpc])
+
   return (
     <ProvideLinkComponentCtx>
       <MainContext.Provider value={mainContext}>
