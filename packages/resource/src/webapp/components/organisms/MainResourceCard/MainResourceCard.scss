@@ -59,6 +59,20 @@
           max-width: fit-content;
           color: white;
         }
+        > .saving-feedback,
+        > .saved-feedback {
+          display: flex;
+          font-size: 12px;
+          gap: 5px;
+          align-items: center;
+          color: #8f8f8f;
+          // font-weight: normal;
+          > svg {
+            height: 21px;
+            width: 21px;
+            fill: #8f8f8f;
+          }
+        }
       }
       > .top-right-header {
         display: flex;
@@ -180,11 +194,16 @@
       > .textarea-container {
         min-height: 40px;
 
+        &,
         > textarea {
           font-size: 26px;
           line-height: 30px;
           font-weight: bold;
         }
+      }
+
+      > .textarea-container {
+        min-height: 40px;
       }
     }
 

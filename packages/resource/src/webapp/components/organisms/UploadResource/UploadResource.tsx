@@ -30,6 +30,7 @@ import './UploadResource.scss'
 export type UploadResourceProps = {
   fileMaxSize: number | null
   form: FormikHandle<ResourceFormValues>
+  uploadProgress?: number
 }
 
 // const usingFields: (keyof NewResourceFormValues)[] = [
@@ -42,7 +43,7 @@ export type UploadResourceProps = {
 //   'content',
 // ]
 
-export const UploadResource: FC<UploadResourceProps> = ({ fileMaxSize, form }) => {
+export const UploadResource: FC<UploadResourceProps> = ({ fileMaxSize, form, uploadProgress }) => {
   // const { nextForm, form } = useNewResourcePageCtx()
   // const isValid = usingFields.reduce(
   //   (valid, fldName) => valid && !form.errors[fldName],
@@ -186,6 +187,13 @@ export const UploadResource: FC<UploadResourceProps> = ({ fileMaxSize, form }) =
     <ImageContainer imageUrl={imageUrl} deleteImage={deleteImage} uploadImage={uploadImage} />
   )
 
+  const uploadedNameBackground =
+    contentIsFile && uploadProgress
+      ? `linear-gradient(to right, #1a6aff33 ${uploadProgress}% , #ffffff00 ${
+          uploadProgress + 3
+        }%, #ffffff00 )`
+      : 'none'
+
   return (
     <div className="upload-resource">
       <div className="main-container">
@@ -277,7 +285,10 @@ export const UploadResource: FC<UploadResourceProps> = ({ fileMaxSize, form }) =
             }
           />
         ) : (
-          <div className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'}`}>
+          <div
+            className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'}`}
+            style={{ background: uploadedNameBackground }}
+          >
             <div className="content-icon">
               {contentIsFile ? <InsertDriveFileIcon /> : <LinkIcon />}
             </div>

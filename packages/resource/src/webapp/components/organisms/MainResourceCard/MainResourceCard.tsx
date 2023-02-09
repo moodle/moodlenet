@@ -20,12 +20,14 @@ import {
 import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
+  CloudDoneOutlined,
   Delete,
   HourglassBottom,
   InsertDriveFile,
   MoreVert,
   Public,
   PublicOff,
+  Sync,
 } from '@mui/icons-material'
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
@@ -50,6 +52,8 @@ export type MainResourceCardProps = {
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isPublished: boolean
   isWaitingForApproval?: boolean
+  isSaving?: boolean
+  isSaved?: boolean
 
   // isEditing: boolean
   // setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
@@ -62,6 +66,7 @@ export type MainResourceCardProps = {
   autoImageAdded: boolean
   canSearchImage: boolean
   fileMaxSize: number
+  uploadProgress?: number
 
   liked: boolean
   toggleLike?(): unknown
@@ -91,6 +96,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   deleteResource,
   setIsPublished,
   isWaitingForApproval,
+  isSaving,
+  isSaved,
   // resourceValidator
 
   id: resourceId,
@@ -102,6 +109,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   numLikes,
   //   tags,
   fileMaxSize,
+  uploadProgress,
 
   shouldShowErrors,
   // setShouldShowErrors,
@@ -216,9 +224,42 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     key: 'type-pill',
   }
 
-  const updatedTopLeftHeaderItems = [resourceLabel, typePill, ...(topLeftHeaderItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
+  const savingFeedback = isSaving
+    ? {
+        Item: () => (
+          <div className="saving-feedback">
+            <Sync />
+            {/* Saving */}
+          </div>
+        ),
+        key: 'saving-feedback',
+      }
+    : null
+
+  const savedFeedback =
+    !isSaving && isSaved
+      ? {
+          Item: () => {
+            // const [showSavedText, setShowSavedText] = useState(true)
+            // setTimeout(() => setShowSavedText(false), 3000)
+            return (
+              <div className="saved-feedback">
+                <CloudDoneOutlined />
+                {/* {showSavedText && 'Saved'} */}
+              </div>
+            )
+          },
+          key: 'saved-feedback',
+        }
+      : null
+
+  const updatedTopLeftHeaderItems = [
+    resourceLabel,
+    typePill,
+    savingFeedback,
+    savedFeedback,
+    ...(topLeftHeaderItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
 
   const likeButton = {
     Item: () => (
@@ -510,10 +551,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     key: 'resource-header',
   }
 
-  const resourceUploader = {
-    Item: () => <UploadResource form={form} fileMaxSize={fileMaxSize} />,
-    key: 'resource-uploader',
-  }
+  const resourceUploader: AddonItem | null = canEdit
+    ? {
+        Item: () => (
+          <UploadResource form={form} fileMaxSize={fileMaxSize} uploadProgress={uploadProgress} />
+        ),
+        key: 'resource-uploader',
+      }
+    : null
 
   const imageDiv = (
     <img

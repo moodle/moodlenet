@@ -101,11 +101,9 @@ export const Resource: FC<ResourceProps> = ({
   // contentUrl,
   // tags,
 
-  // isAuthenticated,
+  isAuthenticated,
   canEdit,
   // isAdmin,
-  // isEditing,
-  // setIsEditing,
   isOwner,
   isWaitingForApproval,
   isPublished,
@@ -149,6 +147,7 @@ export const Resource: FC<ResourceProps> = ({
         isPublished={isPublished}
         setIsPublished={setIsPublished}
         isWaitingForApproval={isWaitingForApproval}
+        isAuthenticated={isAuthenticated}
         // isEditing={isEditing}
         // setIsEditing={setIsEditing}
         canEdit={canEdit}
