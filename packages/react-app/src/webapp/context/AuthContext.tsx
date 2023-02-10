@@ -131,7 +131,7 @@ function deleteSessionTokenCookie() {
   cookies.remove(SESSION_TOKEN_COOKIE_NAME)
 }
 
-let sessionTokenCookieChanged: () => void = () => void 0
+let sessionTokenCookieChanged = () => void 0 as unknown
 let lastSessionTokenCookie = readSessionTokenCookie()
 wrapFetch((url, reqInit, next) => {
   return next(url, reqInit).finally(() => {
