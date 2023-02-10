@@ -1,3 +1,4 @@
+import { getCurrentClientSessionToken } from '@moodlenet/authentication-manager'
 import { getMaybeRpcFileReadable, readableRpcFile, RpcArgs, RpcFile } from '@moodlenet/core'
 import assert from 'assert'
 import express, { json, Request } from 'express'
@@ -5,6 +6,7 @@ import { open } from 'fs/promises'
 import multer, { Field } from 'multer'
 import { Readable } from 'stream'
 import { format } from 'util'
+import { sendAuthTokenCookie } from '../lib.mjs'
 import shell from '../shell.mjs'
 import { HttpApiResponse as HttpRpcResponse } from '../types.mjs'
 
@@ -41,6 +43,7 @@ export function makeExtPortsApp() {
         }
 
         let rpcArgs: RpcArgs
+        // const enteringWithToken = await getCurrentClientSessionToken()
 
         try {
           rpcArgs = getRpcArgs(httpReq)
@@ -63,6 +66,8 @@ export function makeExtPortsApp() {
         await rpcDefItem
           .fn(...rpcArgs)
           .then(async rpcResponse => {
+            const newCurrentToken = await getCurrentClientSessionToken()
+            sendAuthTokenCookie(httpResp, newCurrentToken)
             const mReadable = await getMaybeRpcFileReadable(rpcResponse)
             if (mReadable) {
               const rpcFile: RpcFile = rpcResponse

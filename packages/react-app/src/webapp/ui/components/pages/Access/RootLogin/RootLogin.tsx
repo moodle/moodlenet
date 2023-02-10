@@ -1,8 +1,7 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import { FC, useCallback, useContext, useState } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
-import { AuthCtx } from '../../../../../web-lib.mjs'
+import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 
 // import lib from '../../../../../main-lib'
 
@@ -25,7 +24,7 @@ export const RootLogin: FC<RootLoginProps> = ({ headerProps }) => {
   )
 }
 export const RootLoginBody: FC = () => {
-  const { setSessionToken } = useContext(AuthCtx)
+  //const { setSessionToken } = useContext(AuthCtx)
   const { use } = useContext(MainContext)
 
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -42,12 +41,12 @@ export const RootLoginBody: FC = () => {
     setLoginFailed(false)
     setSubmitting(true)
     const res = await use.auth.rpc.getRootSessionToken({ password: rootPassword })
-    if (res.success) {
-      setSessionToken(res.sessionToken)
-    }
+    // if (res.success) {
+    //   setSessionToken(res.sessionToken)
+    // }
     setLoginFailed(!res.success)
     setSubmitting(false)
-  }, [use.auth, rootPassword, setSessionToken])
+  }, [use.auth, rootPassword])
 
   return (
     <div className="root-login-page">

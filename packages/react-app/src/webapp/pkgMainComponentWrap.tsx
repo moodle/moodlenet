@@ -3,7 +3,7 @@ import { FC, PropsWithChildren, useMemo } from 'react'
 import _connect from '_connect-moodlenet-pkg-modules_'
 import { PkgContext } from './context/PkgContext.mjs'
 import { ReactAppMainComponent } from './web-lib.mjs'
-import { getUseUsePkgHandle } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
+import { getUsePkgHandle } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
 const plugins = getPlugins()
 
@@ -14,7 +14,7 @@ export const PkgMainComponentsWrap: FC<PropsWithChildren> = ({ children }) => {
         const use = Object.entries(deps).reduce(
           (usePkgHandles, [key, { pkgId: targetPkgId, rpcPaths }]) => ({
             ...usePkgHandles,
-            [key]: getUseUsePkgHandle({ targetPkgId, userPkgId: pkgId, rpcPaths }),
+            [key]: getUsePkgHandle({ targetPkgId, userPkgId: pkgId, rpcPaths }),
           }),
           {},
         )

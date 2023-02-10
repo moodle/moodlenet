@@ -1,4 +1,4 @@
-import { getApiCtxClientSession } from '@moodlenet/authentication-manager'
+import { getCurrentClientSession } from '@moodlenet/authentication-manager'
 import { npm } from '@moodlenet/core'
 import { getAppearance, setAppearance } from './lib.mjs'
 import shell from './shell.mjs'
@@ -67,7 +67,7 @@ export const expose = await shell.expose({
     'webapp/getMyProfile': {
       guard: () => void 0,
       async fn() {
-        const clientSession = await getApiCtxClientSession()
+        const clientSession = await getCurrentClientSession()
         if (!clientSession?.user) {
           return null
         }

@@ -1,6 +1,6 @@
 import { ensureCollections } from '@moodlenet/arangodb'
 import { expose as auth } from '@moodlenet/authentication-manager'
-import { mountApp } from '@moodlenet/http-server'
+import { mountApp, sendAuthTokenCookie } from '@moodlenet/http-server'
 import { plugin } from '@moodlenet/react-app/server'
 import { MyWebDeps } from './common/types.mjs'
 import { expose as me } from './expose.mjs'
@@ -24,9 +24,8 @@ shell.call(mountApp)({
         res.status(400).end(confirmResp.msg)
         return
       }
-      res.redirect(
-        `/@moodlenet/simple-email-auth/confirm-email?sessionToken=${confirmResp.sessionToken}`,
-      )
+      sendAuthTokenCookie(res, confirmResp.sessionToken)
+      res.redirect(`/`)
     })
     return app
   },

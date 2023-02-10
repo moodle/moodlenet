@@ -1,4 +1,9 @@
-import { getSessionToken, registerUser, SessionToken } from '@moodlenet/authentication-manager'
+import {
+  getSessionToken,
+  registerUser,
+  SessionToken,
+  setCurrentClientSessionToken,
+} from '@moodlenet/authentication-manager'
 import * as crypto from '@moodlenet/crypto'
 import { send } from '@moodlenet/email-service'
 import { getHttpBaseUrl } from '@moodlenet/http-server'
@@ -14,7 +19,7 @@ export async function login({
 }: {
   email: string
   password: string
-}): Promise<{ success: true; sessionToken: SessionToken } | { success: false }> {
+}): Promise<{ success: true } | { success: false }> {
   const user = await store.getByEmail(email)
   const userExistsAndPasswordMatches =
     !!user && (await crypto.argon.verifyPwd({ plainPwd: password, pwdHash: user.password }))
@@ -23,13 +28,12 @@ export async function login({
     return { success: false }
   }
 
-  const res = await shell.call(getSessionToken)({ uid: user.id })
+  const maybeSessionToken = await shell.call(getSessionToken)({ uid: user.id })
 
-  if (!res.success) {
-    return { success: false }
-  }
-  const sessionToken = res.sessionToken
-  return { success: true, sessionToken }
+  setCurrentClientSessionToken(maybeSessionToken)
+
+  const success = !!maybeSessionToken
+  return { success }
 }
 
 export async function signup(
@@ -40,7 +44,7 @@ export async function signup(
   if (mUser) {
     return { success: false, msg: 'email exists' }
   }
-  console.log({ req })
+  // console.log({ req })
   const confirmEmailPayload: ConfirmEmailPayload = {
     req: {
       email: req.email,
