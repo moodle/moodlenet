@@ -1,2 +1,2 @@
-export { getHttpBaseUrl, mountApp } from './lib.mjs'
+export { getHttpBaseUrl, mountApp, sendAuthTokenCookie } from './lib.mjs'
 export * from './types.mjs'

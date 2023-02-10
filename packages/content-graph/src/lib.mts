@@ -1,6 +1,6 @@
 import type { CollectionDefOpt, CollectionDefOptMap } from '@moodlenet/arangodb'
 import * as arangodb from '@moodlenet/arangodb'
-// import { getApiCtxClientSession, UserId } from '@moodlenet/authentication-manager'
+// import { getCurrentClientSession, UserId } from '@moodlenet/authentication-manager'
 import assert from 'assert'
 import {
   edgeLinkIdentifiers2edgeLink,

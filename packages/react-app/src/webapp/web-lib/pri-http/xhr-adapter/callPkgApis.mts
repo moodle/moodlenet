@@ -1,11 +1,23 @@
 import type { PkgExpose, PkgIdentifier } from '@moodlenet/core'
 import type { HttpApiResponse } from '@moodlenet/http-server/lib'
 import { getPkgRpcFetchOpts } from '@moodlenet/http-server/lib'
-import { UsePkgHandle } from '../../../types/plugins.mjs'
+import type { UsePkgHandle } from '../../../types/plugins.mjs'
 
 export type Opts = Record<string, never>
 
-export function getUseUsePkgHandle<TargetPkgExpose extends PkgExpose>({
+export type FetchWrapper = (
+  url: string,
+  requestInit: RequestInit,
+  next: FetchWrapper2,
+) => Promise<Response>
+export type FetchWrapper2 = (url: string, requestInit: RequestInit) => Promise<Response>
+
+const FETCH_WRAPPERS: { wrapper: FetchWrapper }[] = []
+export function wrapFetch(wrapper: FetchWrapper) {
+  FETCH_WRAPPERS.push({ wrapper })
+}
+
+export function getUsePkgHandle<TargetPkgExpose extends PkgExpose>({
   targetPkgId,
   userPkgId,
   rpcPaths,
@@ -40,7 +52,12 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
         params,
         query,
       ])
-      const response = await fetch(url, requestInit)
+      const fetchExecutor: FetchWrapper2 = (url, requestInit) => fetch(url, requestInit)
+      const response = await FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {
+        const currentWrapper: FetchWrapper2 = (url, requestInit) =>
+          wrapper(url, requestInit, nextWrapper)
+        return currentWrapper
+      }, fetchExecutor)(url, requestInit)
 
       if (response.status !== 200) {
         throw new Error(await response.text())
