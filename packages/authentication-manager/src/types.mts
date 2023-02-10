@@ -13,6 +13,8 @@ export type RootClientSession = {
   user?: undefined
 }
 
-export type AuthAsyncCtx =
-  | { type: 'auth-token-set'; authToken: string }
-  | { type: 'client-session-fetched'; authToken: string; clientSession: ClientSession }
+export type AuthAsyncCtx = {
+  currentSession?:
+    | { type: 'auth-token-set'; authToken: string }
+    | { type: 'client-session-fetched'; authToken: string; clientSession: ClientSession }
+}

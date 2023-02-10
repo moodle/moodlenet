@@ -1,11 +1,11 @@
+import { setCurrentClientSessionToken } from '@moodlenet/authentication-manager'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import gracefulShutdown from 'http-graceful-shutdown'
-import { makeExtPortsApp } from './ext-ports-app/make.mjs'
-import { BASE_RPC_URL, BASE_PKG_URL, SESSION_TOKEN_COOKIE_NAME } from './ext-ports-app/pub-lib.mjs'
 import { env } from './env.mjs'
+import { makeExtPortsApp } from './ext-ports-app/make.mjs'
+import { BASE_PKG_URL, BASE_RPC_URL, SESSION_TOKEN_COOKIE_NAME } from './ext-ports-app/pub-lib.mjs'
 import { mountedApps } from './lib.mjs'
-import { setApiCtxClientSessionToken } from '@moodlenet/authentication-manager'
 import shell from './shell.mjs'
 
 const extPortsApp = makeExtPortsApp()
@@ -16,7 +16,10 @@ const app = express()
   .use(cookieParser())
   .use(`*`, async (req, __, next) => {
     shell.initiateCall(() => {
-      setApiCtxClientSessionToken({ token: req.cookies[SESSION_TOKEN_COOKIE_NAME] })
+      const cookieSessionTokenAny = req.cookies[SESSION_TOKEN_COOKIE_NAME]
+      const maybeCookieSessionToken =
+        'string' === typeof cookieSessionTokenAny ? cookieSessionTokenAny : undefined
+      setCurrentClientSessionToken(maybeCookieSessionToken)
       next()
     })
   })
