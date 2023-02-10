@@ -18,14 +18,9 @@ import { WebUserGlyphDescriptors } from '../../server/types.mjs'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
+import { wrapFetch } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 import { MainContext } from './MainContext.mjs'
-// implementare la gestione della lista utenti, dove vengono assegnati il gruppo
 
-// da dare pasto a alle  form non importa quali
-
-// import rootAvatarUrl from '../webapp/static/img/ROOT.png'
-// displayName: 'ROOT',
-//             avatarUrl: rootAvatarUrl,
 export type ClientSessionData = {
   isAdmin: boolean
   userDisplay: { name: string; avatarUrl: string }
@@ -35,11 +30,9 @@ export type ClientSessionData = {
 export type LoginEntryItem = Omit<LoginItem, 'key'>
 export type SignupEntryItem = Omit<SignupItem, 'key'>
 export type AuthCtxT = {
-  setSessionToken(
-    sessionToken: SessionToken,
-  ): Promise<{ success: true; clientSession: ClientSession } | { success: false; msg: string }>
   logout(): void
-  clientSessionData: ClientSessionData | null
+  readSessionTokenCookie(): SessionToken | undefined
+  clientSessionData: ClientSessionData | null | undefined
 }
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
@@ -47,11 +40,8 @@ export const AuthCtx = createContext<AuthCtxT>(null as never)
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
 
-  // prendo il contexct main con auth user ecc
   const { use } = useContext(MainContext)
-
-  const [firstCallDone, setFirstCallDone] = useState(false)
-  const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
+  const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>()
 
   const getClientSessionData = useCallback(
     async (clientSession: ClientSession): Promise<ClientSessionData | null> => {
@@ -79,81 +69,78 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     [use.me],
   )
 
-  const fetchClientSession = useCallback(
-    async (token: SessionToken) => {
-      const res = await use.auth.rpc.getClientSession({ token })
-      if (!res.success) {
-        writeSessionToken()
-        return { success: false, msg: 'invalid token' } as const
-      }
-      writeSessionToken(token)
-      const clientSessionData = await getClientSessionData(res.clientSession)
-      setClientSessionData(clientSessionData)
-      if (!clientSessionData) {
-        return {
-          success: false,
-          msg: 'no session data',
-        } as const
-      }
-      return {
-        success: true,
-        clientSession: res.clientSession,
-      } as const
-    },
-    [getClientSessionData, use.auth],
-  )
-
   const logout = useCallback<AuthCtxT['logout']>(() => {
+    // await rpc.invalildateMyToken()
     setClientSessionData(null)
-    writeSessionToken()
-  }, [setClientSessionData])
-  const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(
-    async token => {
-      const res = await fetchClientSession(token)
-      if (res.success) {
-        nav('/')
-      } else {
-        logout()
-      }
-      return res
-    },
-    [fetchClientSession, logout, nav],
-  )
+    deleteSessionTokenCookie()
+    nav('/')
+  }, [setClientSessionData, nav])
 
-  useEffect(() => {
-    const storedSessionToken = readSessionToken()
-    if (!storedSessionToken) {
-      setFirstCallDone(true)
+  const fetchClientSession = useCallback(async () => {
+    if (!readSessionTokenCookie()) {
+      logout()
       return
     }
-    fetchClientSession(storedSessionToken).then(() => setFirstCallDone(true))
-  }, [fetchClientSession])
+    const maybeClientSession = await use.auth.rpc.getCurrentClientSession()
+    if (!maybeClientSession) {
+      return { success: false, msg: 'invalid token' } as const
+    }
+    const clientSession = maybeClientSession
+    const newClientSessionData = await getClientSessionData(clientSession)
+    setClientSessionData(newClientSessionData)
+    if (!newClientSessionData) {
+      return {
+        success: false,
+        msg: 'no session data',
+      } as const
+    }
+    return {
+      success: true,
+      clientSession,
+    } as const
+  }, [getClientSessionData, logout, use.auth.rpc])
+
+  useEffect(() => {
+    sessionTokenCookieChanged = () => fetchClientSession().finally(() => nav('/'))
+  }, [fetchClientSession, nav])
 
   const ctx = useMemo<AuthCtxT>(() => {
-    return {
-      setSessionToken,
+    const authCtxT: AuthCtxT = {
+      // setSessionToken,
+      readSessionTokenCookie,
       logout,
       clientSessionData,
-      // ...(clientSession?.root ? { isRoot: true, clientSession } : { isRoot: false, clientSession }),
     }
-  }, [clientSessionData, setSessionToken, logout])
+    return authCtxT
+  }, [clientSessionData, logout])
 
-  if (!firstCallDone) {
+  if (clientSessionData === undefined) {
+    setClientSessionData(null)
+    fetchClientSession()
     return null
   }
+
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
 }
 
-function readSessionToken(): SessionToken | undefined {
+function readSessionTokenCookie(): SessionToken | undefined {
   return cookies.get(SESSION_TOKEN_COOKIE_NAME)
 }
-function writeSessionToken(token?: SessionToken | undefined) {
-  token ? cookies.set(SESSION_TOKEN_COOKIE_NAME, token) : cookies.remove(SESSION_TOKEN_COOKIE_NAME)
+
+function deleteSessionTokenCookie() {
+  cookies.remove(SESSION_TOKEN_COOKIE_NAME)
 }
 
-// function readSessionToken(): SessionToken | null {
-//   return localStorage.getItem('SESSION_TOKEN')
-// }
-// function writeSessionToken(token: SessionToken | null) {
-//   token ? localStorage.setItem('SESSION_TOKEN', token) : localStorage.removeItem('SESSION_TOKEN')
-// }
+let sessionTokenCookieChanged: () => void = () => void 0
+let lastSessionTokenCookie = readSessionTokenCookie()
+wrapFetch((url, reqInit, next) => {
+  return next(url, reqInit).finally(() => {
+    const currentSessionTokenCookie = readSessionTokenCookie()
+    // console.log({ lastSessionTokenCookie, currentSessionTokenCookie })
+    if (lastSessionTokenCookie === currentSessionTokenCookie) {
+      return
+    }
+    lastSessionTokenCookie = currentSessionTokenCookie
+    sessionTokenCookieChanged()
+  })
+})
