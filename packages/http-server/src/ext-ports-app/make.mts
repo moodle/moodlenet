@@ -78,8 +78,8 @@ export function makeExtPortsApp() {
               const mReadable = await getMaybeRpcFileReadable(rpcResponse)
               if (mReadable) {
                 const rpcFile: RpcFile = rpcResponse
-                rpcFile.name && httpResp.header('x-rpc-file-filename', `${rpcFile.name}`)
-                rpcFile.size && httpResp.header('x-rpc-file-size', `${rpcFile.size}`)
+                rpcFile.name && httpResp.header('x-rpc-file-name', `${rpcFile.name}`)
+                rpcFile.size && httpResp.header('Content-Length', `${rpcFile.size}`)
                 rpcFile.type && httpResp.header('Content-Type', `${rpcFile.type}`)
                 mReadable.pipe(httpResp)
                 return
