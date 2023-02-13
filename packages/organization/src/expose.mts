@@ -1,6 +1,6 @@
 import { assertRpcFileReadable, readableRpcFile, RpcFile } from '@moodlenet/core'
 import { open } from 'fs/promises'
-import fsStore from './fsStore.mjs'
+import { publicFiles } from './fsStore.mjs'
 import { getOrgData, setOrgData } from './lib.mjs'
 import shell from './shell.mjs'
 
@@ -14,13 +14,17 @@ export const expose = await shell.expose({
       guard: () => void 0,
       fn: getOrgData,
     },
+    '__________REMOVE_ME__test_ls_files/download/*': {
+      guard: () => void 0,
+      fn: async (_, p) => publicFiles.getRpcFileByDirectAccessId(p[0]),
+    },
     '__________REMOVE_ME__test_ls_files': {
       guard: () => void 0,
       async fn(_, __, q: { path?: string; maxDepth?: string }) {
         console.log(q)
         const maxDepth = q.maxDepth ? Number(q.maxDepth) || 0 : 0
         //path/to/logicalFilename/for/filename
-        const ls = await fsStore.ls({ path: q.path, maxDepth })
+        const ls = await publicFiles.ls({ path: q.path, maxDepth })
         return { ls }
       },
     },
@@ -35,8 +39,8 @@ export const expose = await shell.expose({
         const rpcFile = body.b[0]
 
         const logicalFilename = `path/to/logicalFilename/for/filename/${rpcFile.name}`
-        await fsStore.create(logicalFilename, rpcFile)
-        const content = await fsStore.get(logicalFilename).then(async fsItem => {
+        await publicFiles.create(logicalFilename, rpcFile)
+        const content = await publicFiles.get(logicalFilename).then(async fsItem => {
           if (!fsItem) {
             return '!!!!!! no fsItem found !'
           }
@@ -59,7 +63,10 @@ export const expose = await shell.expose({
         //     join(shell.baseFsFolder, `${rpcFile.name}-${String(Math.random()).substring(2, 5)}`),
         //   ),
         // )
-        const ls = await fsStore.ls({ path: 'path/to/logicalFilename/for/filename', maxDepth: 2 })
+        const ls = await publicFiles.ls({
+          path: 'path/to/logicalFilename/for/filename',
+          maxDepth: 2,
+        })
         return { ...body, content, id, by, ls }
         // return body.b[0]
       },
@@ -96,7 +103,7 @@ export const expose = await shell.expose({
       guard: () => void 0,
       async fn(_, { id }) {
         console.log('__________REMOVE_ME__test_streamResponse-from-store')
-        const fsItem = await fsStore.get(`path/to/logicalFilename/for/filename/${id}`)
+        const fsItem = await publicFiles.get(`path/to/logicalFilename/for/filename/${id}`)
 
         if (!fsItem) {
           return '!!!!!! no fsItem found !'
