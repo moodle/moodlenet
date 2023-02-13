@@ -1,27 +1,36 @@
 import { ensureCollections, query } from '@moodlenet/arangodb'
 import { assertRpcFileReadable, readableRpcFile, RpcFile, Shell } from '@moodlenet/core'
 import assert from 'assert'
-import { mkdir, open, writeFile } from 'fs/promises'
+import { mkdir, open, readFile, writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
-export const COLLECTION_NAME = 'Moodlenet_simple_file_store'
+export const BASE_COLLECTION_NAME = 'Moodlenet_simple_file_store'
 
-export default async function storeFactory(shell: Shell) {
-  const storeBaseFsFolder = resolve(shell.baseFsFolder, 'simple-file-store')
+export default async function storeFactory(shell: Shell, bucketName: string) {
+  const storeBaseFsFolder = resolve(shell.baseFsFolder, 'simple-file-store', bucketName)
+  const collectionName = `${BASE_COLLECTION_NAME}_${bucketName}`
   await mkdir(storeBaseFsFolder, { recursive: true })
-  await shell.call(ensureCollections)({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
+  await shell.call(ensureCollections)({ defs: { [collectionName]: { kind: 'node' } } })
   const fsStore = {
     create: shell.call(create),
     get: shell.call(get),
     del: shell.call(del),
     ls: shell.call(ls),
+    getRpcFileByDirectAccessId: shell.call(getRpcFileByDirectAccessId),
   }
   return fsStore
+
+  // function rpcDirectAccess(logicalName: string): RpcDefItem {
+  //   return {
+  //     guard: () => void 0,
+  //     async fn() {},
+  //   }
+  // }
 
   async function get(logicalName: string): Promise<undefined | FsItem> {
     const maybeRawDbRecord: RawDbRecord | undefined = (
       await query({
-        q: `FOR fileRecord in ${COLLECTION_NAME}
+        q: `FOR fileRecord in ${collectionName}
               FILTER fileRecord.logicalName == @logicalName
               LIMIT 1
             RETURN fileRecord`,
@@ -35,6 +44,26 @@ export default async function storeFactory(shell: Shell) {
 
     const fsItem = getFsItem(rawDbRecord)
     return fsItem
+  }
+
+  async function getRpcFileByDirectAccessId(directAccessId: string): Promise<RpcFile> {
+    const { fd, fileAbsPath } = await getFileDescriptorByDirectAccessId(directAccessId)
+    let rpcFile: RpcFile
+
+    try {
+      const fsItemStr = await readFile(`${fileAbsPath}_rpc_file`, { encoding: 'utf-8' })
+      rpcFile = JSON.parse(fsItemStr)
+    } catch {
+      const fdStat = await fd.stat()
+      const defName = directAccessId.split('/').pop() ?? 'no-name'
+      rpcFile = {
+        name: defName,
+        size: fdStat.size,
+        type: '',
+      }
+    }
+    readableRpcFileBydirectAccessId(rpcFile, directAccessId)
+    return rpcFile
   }
 
   type LsOpts = { maxDepth: number; path: string }
@@ -56,7 +85,7 @@ export default async function storeFactory(shell: Shell) {
     )
 
     const allFilters = pathLengthFilter.concat(pathFilter).join(`\n AND `)
-    const lsQuery = `FOR fileRecord in ${COLLECTION_NAME}
+    const lsQuery = `FOR fileRecord in ${collectionName}
     FILTER ${allFilters}
   RETURN fileRecord`
     // console.log(lsQuery)
@@ -72,32 +101,32 @@ export default async function storeFactory(shell: Shell) {
     return fsItems
   }
 
-  async function create(logicalName: string, rpcFile: RpcFile): Promise<FsItem> {
-    const logicalPath = getLogicalPath(logicalName)
-
+  async function create(logicalName: string, _rpcFile: RpcFile): Promise<FsItem> {
     const fsFileRelativePath = newFsFileRelativePath()
-    const fsFileAbsolutePath = resolve(storeBaseFsFolder, ...fsFileRelativePath)
     const storeInDir = resolve(storeBaseFsFolder, ...fsFileRelativePath.slice(0, -1))
-    // // console.log('create', { storeInDir, logicalName, rpcFile })
-
-    const rpcFileReadable = await assertRpcFileReadable(rpcFile)
-
-    // // console.log('create', { fsFileRelativePath, fsFileAbsolutePath })
 
     await mkdir(storeInDir, { recursive: true })
-    await writeFile(fsFileAbsolutePath, rpcFileReadable)
+
+    const fsFileAbsolutePath = resolve(storeBaseFsFolder, ...fsFileRelativePath)
+    const rpcFileReadable = await assertRpcFileReadable(_rpcFile)
+
+    const logicalPath = getLogicalPath(logicalName)
+    const directAccessId = fsFileRelativePath.join('/')
+    const rpcFile: RpcFile = {
+      name: _rpcFile.name,
+      size: _rpcFile.size,
+      type: _rpcFile.type,
+    }
 
     const partRawDbRecord: Omit<RawDbRecord, '_key' | 'created'> = {
-      fsFileRelativePath,
-      logicalPath,
       logicalName,
+      rpcFile,
+      logicalPath,
+      directAccessId,
       logicalPathLength: logicalPath.length,
-      rpcFile: {
-        name: rpcFile.name,
-        size: rpcFile.size,
-        type: rpcFile.type,
-      },
     }
+
+    await writeFile(`${fsFileAbsolutePath}`, rpcFileReadable)
 
     // // console.log('create', { partRawDbRecord })
     const newRawDbRecord: RawDbRecord | undefined = (
@@ -105,7 +134,7 @@ export default async function storeFactory(shell: Shell) {
         q: `let newRecord = MERGE(@partRawDbRecord, { 
               created: DATE_ISO8601(DATE_NOW()),
             })
-            INSERT newRecord IN ${COLLECTION_NAME} 
+            INSERT newRecord IN ${collectionName} 
             RETURN NEW`,
         bindVars: {
           partRawDbRecord,
@@ -117,19 +146,21 @@ export default async function storeFactory(shell: Shell) {
     ).resultSet[0]
     assert(newRawDbRecord, `couldn't store in DB, shouldn't happen !`)
 
-    const newFsItem = getFsItem(newRawDbRecord)
-    // // console.log('save', { newFsItem, newRawDbRecord })
+    await writeFile(`${fsFileAbsolutePath}_rpc_file`, JSON.stringify(newRawDbRecord.rpcFile), {
+      encoding: 'utf-8',
+    })
 
+    const newFsItem = getFsItem(newRawDbRecord)
     return newFsItem
   }
 
   async function del(logicalName: string): Promise<null | FsItem> {
     const maybeRawDbRecord: RawDbRecord | undefined = (
       await query({
-        q: `FOR fileRecord in ${COLLECTION_NAME}
+        q: `FOR fileRecord in ${collectionName}
           FILTER fileRecord.logicalName == @logicalName
           LIMIT 1
-          REMOVE fileRecord IN ${COLLECTION_NAME}
+          REMOVE fileRecord IN ${collectionName}
         RETURN OLD`,
         bindVars: { logicalName },
       })
@@ -139,12 +170,12 @@ export default async function storeFactory(shell: Shell) {
     }
     const rawDbRecord = maybeRawDbRecord
 
-    const fsFileAbsolutePath = resolve(storeBaseFsFolder, ...rawDbRecord.fsFileRelativePath)
+    const fsFileAbsolutePath = getFsAbsolutePathByDirectAccessId(rawDbRecord.directAccessId)
 
-    await rimraf(fsFileAbsolutePath, { maxRetries: 10 }).catch(async err => {
+    await rimraf(`${fsFileAbsolutePath}*`, { maxRetries: 10 }).catch(async err => {
       // FIXME: really should reinsert ? ^^'
       await query({
-        q: `INSERT @rawDbRecord IN ${COLLECTION_NAME} RETURN NEW`,
+        q: `INSERT @rawDbRecord IN ${collectionName} RETURN NEW`,
         bindVars: { rawDbRecord },
       })
       throw err
@@ -154,33 +185,53 @@ export default async function storeFactory(shell: Shell) {
       created: rawDbRecord.created,
       logicalName: rawDbRecord.logicalName,
       rpcFile: rawDbRecord.rpcFile,
+      directAccessId: rawDbRecord.directAccessId,
     }
   }
 
   function getFsItem(rawDbRecord: RawDbRecord): FsItem {
-    readableRpcFile(rawDbRecord.rpcFile, async function getReadable() {
-      const fullFsName = resolve(storeBaseFsFolder, ...rawDbRecord.fsFileRelativePath)
-      const fd = await open(fullFsName, 'r')
-      // // console.log('readable of dbRecord:', { dbRecord, fullFsName, stat: await fd.stat() })
-      const readable = fd.createReadStream({ autoClose: true })
-      return readable
-    })
+    readableRpcFileBydirectAccessId(rawDbRecord.rpcFile, rawDbRecord.directAccessId)
     return {
       created: rawDbRecord.created,
       logicalName: rawDbRecord.logicalName,
       rpcFile: rawDbRecord.rpcFile,
+      directAccessId: rawDbRecord.directAccessId,
     }
+  }
+
+  function readableRpcFileBydirectAccessId(rpcFile: RpcFile, directAccessId: string) {
+    readableRpcFile(rpcFile, async function getReadable() {
+      const { readable } = await fdAndReadableBydirectAccessId(directAccessId)
+      return readable
+    })
+  }
+
+  async function fdAndReadableBydirectAccessId(directAccessId: string) {
+    const { fd } = await getFileDescriptorByDirectAccessId(directAccessId)
+    const readable = fd.createReadStream({ autoClose: true })
+    return { readable, fd }
+  }
+
+  function getFsAbsolutePathByDirectAccessId(directAccessId: string) {
+    const fileAbsPath = resolve(storeBaseFsFolder, ...directAccessId.split('/'))
+    return fileAbsPath
+  }
+
+  async function getFileDescriptorByDirectAccessId(directAccessId: string) {
+    const fileAbsPath = getFsAbsolutePathByDirectAccessId(directAccessId)
+    const fd = await open(fileAbsPath, 'r')
+    return { fileAbsPath, fd }
   }
 }
 function newFsFileRelativePath() {
   const now = new Date()
   return [
-    'Y-' + String(now.getFullYear()),
-    'M-' + String(now.getMonth() + 1).padStart(2, '0'),
-    'D-' + String(now.getUTCDate()).padStart(2, '0'),
-    'h-' + String(now.getUTCHours()).padStart(2, '0'),
-    'm-' + String(now.getMinutes()).padStart(2, '0'),
-    's-' + String(now.getSeconds()).padStart(2, '0'),
+    String(now.getFullYear()),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getUTCDate()).padStart(2, '0'),
+    String(now.getUTCHours()).padStart(2, '0'),
+    String(now.getMinutes()).padStart(2, '0'),
+    String(now.getSeconds()).padStart(2, '0'),
     String(Math.random()).substring(2, 20),
   ]
 }
@@ -189,13 +240,13 @@ type RawDbRecord = FsItem & {
   _key: string
   logicalPath: string[]
   logicalPathLength: number
-  fsFileRelativePath: string[]
 }
 
 type FsItem = {
   logicalName: string
   rpcFile: RpcFile
   created: string
+  directAccessId: string
 }
 
 function getLogicalPath(logicalName: string) {
