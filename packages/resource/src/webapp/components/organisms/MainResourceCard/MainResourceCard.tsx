@@ -227,10 +227,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const savingFeedback = isSaving
     ? {
         Item: () => (
-          <div className="saving-feedback">
+          <abbr className="saving-feedback" title="Saving">
             <Sync />
             {/* Saving */}
-          </div>
+          </abbr>
         ),
         key: 'saving-feedback',
       }
@@ -243,10 +243,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
             // const [showSavedText, setShowSavedText] = useState(true)
             // setTimeout(() => setShowSavedText(false), 3000)
             return (
-              <div className="saved-feedback">
+              <abbr className="saved-feedback" title="Saved">
                 <CloudDoneOutlined />
                 {/* {showSavedText && 'Saved'} */}
-              </div>
+              </abbr>
             )
           },
           key: 'saved-feedback',
