@@ -7,6 +7,7 @@ export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 export default async function storeFactory<TMap extends KVSTypeMap>(
   shell: Shell,
 ): Promise<KVStore<TMap>> {
+  // FIXME: initiateCall->call ?
   return shell.initiateCall(async () => {
     await ensureCollections({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
     const kvStore: KVStore<any> = {
