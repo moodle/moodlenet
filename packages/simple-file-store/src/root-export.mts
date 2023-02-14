@@ -1,5 +1,6 @@
 import { ensureCollections, query } from '@moodlenet/arangodb'
 import { assertRpcFileReadable, readableRpcFile, RpcFile, Shell } from '@moodlenet/core'
+import { mountApp } from '@moodlenet/http-server'
 import assert from 'assert'
 import { mkdir, open, readFile, writeFile } from 'fs/promises'
 import { resolve } from 'path'
@@ -17,6 +18,7 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
     del: shell.call(del),
     ls: shell.call(ls),
     getRpcFileByDirectAccessId: shell.call(getRpcFileByDirectAccessId),
+    mountStaticHttpServer: shell.call(mountStaticHttpServer),
   }
   return fsStore
 
@@ -102,7 +104,7 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
   }
 
   async function create(logicalName: string, _rpcFile: RpcFile): Promise<FsItem> {
-    const fsFileRelativePath = newFsFileRelativePath()
+    const fsFileRelativePath = newFsFileRelativePath(_rpcFile.name)
     const storeInDir = resolve(storeBaseFsFolder, ...fsFileRelativePath.slice(0, -1))
 
     await mkdir(storeInDir, { recursive: true })
@@ -222,8 +224,22 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
     const fd = await open(fileAbsPath, 'r')
     return { fileAbsPath, fd }
   }
+
+  async function mountStaticHttpServer(path: string) {
+    mountApp({
+      getApp(express) {
+        const basePathApp = express()
+        const app = express()
+        basePathApp.use(path, app)
+        app.use(express.static(storeBaseFsFolder))
+        return basePathApp
+      },
+    })
+  }
 }
-function newFsFileRelativePath() {
+function newFsFileRelativePath(originalFilename: string) {
+  const origExt = originalFilename.split('.').pop()
+  const mDotExt = origExt ? `.${origExt}` : ''
   const now = new Date()
   return [
     String(now.getFullYear()),
@@ -232,7 +248,7 @@ function newFsFileRelativePath() {
     String(now.getUTCHours()).padStart(2, '0'),
     String(now.getMinutes()).padStart(2, '0'),
     String(now.getSeconds()).padStart(2, '0'),
-    String(Math.random()).substring(2, 20),
+    String(Math.random()).substring(2, 20) + mDotExt,
   ]
 }
 
