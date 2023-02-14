@@ -1,53 +1,35 @@
-import JWT, { Jwt, JwtPayload, SignOptions, VerifyOptions } from 'jsonwebtoken'
-import { getKeys } from './utils.mjs'
+import { instanceDomain } from '@moodlenet/core'
+import * as jose from 'jose'
+import { env } from '../env.mjs'
 
-export type SignArgs = { payload: any; signOpts?: SignOptions }
-export async function sign({ payload, signOpts }: SignArgs) {
-  const { privateKey } = await getKeys()
-  const jwt = JWT.sign(payload, privateKey, signOpts)
-  return { jwt }
+const alg = env.keys.alg
+
+export async function sign(payload: any, opts?: jose.SignOptions) {
+  const jwt = new jose.SignJWT(payload)
+    .setProtectedHeader({ alg })
+    .setIssuer(instanceDomain)
+    .setIssuedAt()
+    .setAudience('urn:example:audience')
+    .setExpirationTime('2w')
+    .sign(env.keyLikes.private, opts)
+  return jwt
 }
 
-export type VerifyArgs = { jwt: string; verifyOpts?: VerifyOptions }
-export async function verify({ jwt, verifyOpts }: VerifyArgs): Promise<{
-  payload: string | Jwt | JwtPayload
+export async function verify(
+  jwt: string,
+  opts?: jose.JWTVerifyOptions,
+): Promise<{
+  payload: jose.JWTPayload
 }> {
-  const { publicKey } = await getKeys()
-  const payload = JWT.verify(jwt, publicKey, verifyOpts)
+  const jwtVerifyResult = await jose.jwtVerify(jwt, env.keyLikes.private, opts)
+  const payload = jwtVerifyResult.payload
   return { payload }
 }
 
-/**
- * copied followings from @types/jsonwebtoken/index.d.ts
- * otherways getting: The inferred type of 'cryptoPkgApis' cannot be named without a reference to '@moodlenet/crypto/node_modules/@types/jsonwebtoken'. This is likely not portable. A type annotation is necessary.
- */
-// export interface JwtHeader {
-//   // 'alg': string | Algorithm
-//   // 'typ'?: string | undefined
-//   // 'cty'?: string | undefined
-//   // 'crit'?: Array<string | Exclude<keyof JwtHeader, 'crit'>> | undefined
-//   // 'kid'?: string | undefined
-//   // 'jku'?: string | undefined
-//   // 'x5u'?: string | string[] | undefined
-//   // 'x5t#S256'?: string | undefined
-//   // 'x5t'?: string | undefined
-//   // 'x5c'?: string | string[] | undefined
-// }
-// export interface JwtPayload {
-//   // [key: string]: any
-//   // iss?: string | undefined
-//   // sub?: string | undefined
-//   // aud?: string | string[] | undefined
-//   // exp?: number | undefined
-//   // nbf?: number | undefined
-//   // iat?: number | undefined
-//   // jti?: string | undefined
-// }
-
-// export interface Jwt {
-//   header: JwtHeader
-//   payload: JwtPayload | string
-//   signature: string
-// }
-/*
- */
+// const jwt = await sign({ ciccio: 'pllo' })
+// setTimeout(async () => {
+//   const ver = await verify(jwt, { clockTolerance: 3 }).catch(console.log)
+//   console.log({ jwt, ver })
+// }, 3000)
+// const ver = await verify(jwt)
+// console.log({ jwt, ver })

@@ -7,3 +7,9 @@ export type PkgIdentifier = {
 
 export type PkgName = string
 export type PkgVersion = string
+
+export type CoreConfigs = {
+  npmRegistry: string
+  baseFsFolder: string
+  instanceDomain: string
+}

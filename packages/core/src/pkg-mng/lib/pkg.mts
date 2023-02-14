@@ -3,8 +3,8 @@ import { readdir, readFile } from 'fs/promises'
 import { dirname, resolve } from 'path'
 import { packageDirectorySync } from 'pkg-dir'
 import { fileURLToPath } from 'url'
+import { ignites } from '../../main/env.mjs'
 import { PkgModuleRef } from '../../root-export.mjs'
-import { WORKING_DIR } from '../../main/env.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import { PackageInfo, SafePackageJson } from '../types.mjs'
 
@@ -38,7 +38,7 @@ export async function getPackageInfo({
   pkgId: PkgIdentifier | Pick<PkgIdentifier, 'name'>
 }) {
   return getPackageInfoIn({
-    pkgRootDir: resolve(WORKING_DIR, 'node_modules', ...pkgId.name.split('/')),
+    pkgRootDir: resolve(ignites.rootDir, 'node_modules', ...pkgId.name.split('/')),
   })
 }
 
