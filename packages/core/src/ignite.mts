@@ -1,4 +1,5 @@
 import type { PackageJson } from 'type-fest'
+import { CoreConfigs } from './types.mjs'
 
 type Reboot = () => unknown
 type Shutdown = () => unknown
@@ -19,8 +20,12 @@ let _ignites: Ignites
 
 const _pkgListDepOrdered: PkgListDepOrdered = []
 
-export async function reboot() {
+export function reboot() {
   _ignites.reboot()
+}
+
+export function getIgnites() {
+  return _ignites
 }
 
 export async function shutdown() {
@@ -34,6 +39,15 @@ export function getConfigs() {
 
 export function getConfig(pkgName: string) {
   return getConfigs().pkgs[pkgName]
+}
+
+export function getCoreConfigs(): CoreConfigs {
+  const coreConfigs = getConfig('@moodlenet/core')
+  return {
+    baseFsFolder: coreConfigs.baseFsFolder,
+    npmRegistry: coreConfigs.npmRegistry,
+    instanceDomain: coreConfigs.instanceDomain,
+  }
 }
 
 export default async function ignite(ignites: Ignites) {

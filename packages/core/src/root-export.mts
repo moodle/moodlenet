@@ -1,3 +1,5 @@
+import { coreConfigs } from './main/env.mjs'
+export const { instanceDomain, npmRegistry } = coreConfigs
 export type { assertCallInitiator, getCallInitiator } from './async-context/lib.mjs'
 export * from './async-context/types.mjs'
 export {

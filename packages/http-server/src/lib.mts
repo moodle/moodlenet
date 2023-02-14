@@ -1,3 +1,4 @@
+import { instanceDomain } from '@moodlenet/core'
 import { CookieOptions, Response } from 'express'
 import { env } from './env.mjs'
 import { SESSION_TOKEN_COOKIE_NAME } from './ext-ports-app/pub-lib.mjs'
@@ -14,7 +15,10 @@ export async function mountApp(mountItem: Pick<MountAppItem, 'getApp' | 'mountOn
 }
 
 export async function getHttpBaseUrl() {
-  return `${env.domain.protocol}://${env.domain.name}`
+  const isStandardPort =
+    (env.port === 80 && env.protocol === 'http') || (env.port === 443 && env.protocol === 'https')
+  const maybeWithPort = isStandardPort ? '' : `:${env.port}`
+  return `${env.protocol}://${instanceDomain}${maybeWithPort}`
 }
 
 export function sendAuthTokenCookie(httpResp: Response, newToken: string | void) {

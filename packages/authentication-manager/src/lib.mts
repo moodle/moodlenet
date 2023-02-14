@@ -1,4 +1,4 @@
-import { std } from '@moodlenet/crypto'
+import { jwt } from '@moodlenet/crypto'
 import assert from 'assert'
 import { env } from './env.mjs'
 import shell from './shell.mjs'
@@ -14,7 +14,7 @@ export async function getRootSessionToken({
   if (!(env.rootPassword && password)) {
     return { success: false }
   } else if (env.rootPassword === password) {
-    const sessionToken = await encryptClientSession({ isRoot: true })
+    const sessionToken = await signClientSession({ isRoot: true })
     setCurrentClientSessionToken(sessionToken)
     return { success: true }
   } else {
@@ -36,7 +36,7 @@ export async function registerUser({
       uid,
     },
   })
-  const sessionToken = await encryptClientSession({ user })
+  const sessionToken = await signClientSession({ user })
 
   return { success: true, user, sessionToken }
 }
@@ -47,7 +47,7 @@ export async function getSessionToken({ uid }: { uid: string }): Promise<Session
   if (!user) {
     return undefined
   }
-  const sessionToken = await encryptClientSession({ user })
+  const sessionToken = await signClientSession({ user })
   return sessionToken
 }
 
@@ -64,12 +64,17 @@ export async function getCurrentClientSession(): Promise<ClientSession | void> {
   }
 
   const workingAuthToken = workingCtx.currentSession.authToken
-  const maybeClientSession = await decryptClientSession(workingAuthToken)
+  const maybeClientSession = await verifyClientSession(workingAuthToken)
 
   // console.log({ maybeClientSession })
 
   if (!maybeClientSession) {
-    // FIXME: SHALL? shell.myAsyncCtx.unset()
+    shell.myAsyncCtx.set(_ => {
+      return {
+        ..._,
+        currentSession: undefined,
+      }
+    })
     return
   }
   const workingClientSession = maybeClientSession
@@ -106,18 +111,15 @@ export async function setCurrentClientSessionToken(token: string | undefined) {
   }))
 }
 
-async function encryptClientSession(clientSession: ClientSession): Promise<SessionToken> {
-  const { encrypted: sessionToken } = await std.encrypt({
-    payload: JSON.stringify(clientSession),
-  })
+async function signClientSession(clientSession: ClientSession): Promise<SessionToken> {
+  const sessionToken = await jwt.sign(clientSession)
   return sessionToken
 }
 
-async function decryptClientSession(token: SessionToken): Promise<ClientSession | null> {
+async function verifyClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
-    const decryptRes = await std.decrypt({ encrypted: token })
-    assert(decryptRes.valid)
-    const clientSession: ClientSession = JSON.parse(decryptRes.payload)
+    const decryptRes = await jwt.verify(token)
+    const clientSession = decryptRes.payload
     assert(isClientSession(clientSession))
     return clientSession
   } catch {

@@ -5,7 +5,6 @@ import { cp } from 'fs/promises'
 import { resolve } from 'path'
 import { installDir, myPkgJson /* devInstallLocalRepoSymlinks */ } from './env.mjs'
 import './package.json.mjs'
-import './config.mjs'
 
 console.log(`
 installing moodlenet@${myPkgJson.version} core packages in ${installDir}
