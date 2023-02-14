@@ -1,5 +1,5 @@
-import { InstallPkgReq, PkgIdentifier, npm } from '@moodlenet/core'
-import { uninstall, install, listDeployed, searchPackages } from './lib.mjs'
+import { InstallPkgReq, npmRegistry, PkgIdentifier } from '@moodlenet/core'
+import { install, listDeployed, searchPackages, uninstall } from './lib.mjs'
 import shell from './shell.mjs'
 import { DeployedPkgInfo, SearchPackagesResponse } from './types/data.mjs'
 
@@ -35,7 +35,7 @@ export const expose = await shell.expose({
     getDefaultRegistry: {
       guard: () => void 0,
       fn: async () => {
-        return npm.NPM_REGISTRY
+        return npmRegistry
       },
     },
   },

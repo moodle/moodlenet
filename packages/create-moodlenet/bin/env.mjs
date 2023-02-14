@@ -1,4 +1,3 @@
-import execa from 'execa'
 import { mkdir, readFile } from 'fs/promises'
 import { basename, dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
@@ -16,9 +15,9 @@ export const installationBaseDir = basename(installDir)
 export const installationName = `moodlenet.${installationBaseDir}`
 export const { devInstallLocalRepoSymlinks } = argv
 
-const currentRegistryStr = (await execa('npm', ['get', 'registry'])).stdout
-export const currentRegistry =
-  currentRegistryStr === 'undefined' ? 'https://registry.npmjs.org/' : currentRegistryStr
+// const currentRegistryStr = (await execa('npm', ['get', 'registry'])).stdout
+// export const currentRegistry =
+//   currentRegistryStr === 'undefined' ? 'https://registry.npmjs.org/' : currentRegistryStr
 
 export const defaultCorePackages = [
   'core',

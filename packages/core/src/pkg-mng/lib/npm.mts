@@ -1,22 +1,20 @@
 import execa from 'execa'
 import { run } from 'npm-check-updates'
 import {
+  coreConfigs,
+  ignites,
   MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES,
-  NPM_REGISTRY,
   patchWdPackageJsonDeps,
-  WORKING_DIR,
 } from '../../main/env.mjs'
 import { rebootSystem } from '../../main/sys.mjs'
 import { PkgIdentifier } from '../../types.mjs'
 import { InstallPkgReq } from '../types.mjs'
 
-export { NPM_REGISTRY } from '../../main/env.mjs'
-
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO: any check on pkgIds ? (active / version)
   const uninstallPkgsArgs = pkgIds.map(({ name }) => name)
   await execa('npm', ['uninstall', ...uninstallPkgsArgs], {
-    cwd: WORKING_DIR,
+    cwd: ignites.rootDir,
     timeout: 600000,
   })
   rebootSystem()
@@ -39,12 +37,12 @@ export async function install(installPkgReqs: InstallPkgReq[]) {
       ...(MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? ['-y', 'npm@8'] : []),
       'install',
       '--registry',
-      NPM_REGISTRY,
+      coreConfigs.npmRegistry,
       ...(MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? [] : ['--install-links']),
       ...installPkgsArgs,
     ],
     {
-      cwd: WORKING_DIR,
+      cwd: ignites.rootDir,
       timeout: 600000,
       stdout: process.stdout,
     },
@@ -54,10 +52,10 @@ export async function install(installPkgReqs: InstallPkgReq[]) {
 
 export async function checkUpdates(): Promise<{ updatePkgs: Record<string, string> }> {
   const updatePkgs = ((await run({
-    registry: NPM_REGISTRY,
+    registry: coreConfigs.npmRegistry,
     target: 'minor',
     jsonUpgraded: true,
-    cwd: WORKING_DIR,
+    cwd: ignites.rootDir,
   })) ?? {}) as Record<string, string>
 
   return { updatePkgs }
@@ -73,16 +71,3 @@ export async function updateAll(): Promise<{ updatePkgs: Record<string, string> 
   rebootSystem()
   return { updatePkgs }
 }
-
-// export const NPM_REGISTRY = (
-//   process.env.npm_config_registry ??
-//   process.env.NPM_CONFIG_REGISTRY ??
-//   (() => {
-//     const randomCasedEnvVarName = Object.keys(process.env).find(
-//       _ => _.toLowerCase() === 'npm_config_registry',
-//     )
-//     return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
-//   })() ??
-//   ((await execa('npm', ['get', 'registry'], { cwd: WORKING_DIR, timeout: 10e3 })).stdout ||
-//     'https://registry.npmjs.org/')
-// ).replace(/\/$/, '')

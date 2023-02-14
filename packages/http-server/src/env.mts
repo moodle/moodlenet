@@ -4,10 +4,13 @@ export const env = await getEnv()
 
 type Env = {
   port: number
-  domain: { name: string; protocol: string }
+  protocol: string
 }
 async function getEnv(): Promise<Env> {
-  const config = shell.config
+  const config: Env = {
+    port: shell.config.port,
+    protocol: shell.config.protocol,
+  }
   //FIXME: validate configs
   const env: Env = config
   return env

@@ -3,4 +3,4 @@ import { publicFiles } from './fsStore.mjs'
 import './initializeData.mjs'
 
 // FIXME: REMOVE_ME
-publicFiles.mountStaticHttpServer('/public')
+await publicFiles.mountStaticHttpServer('/public')
