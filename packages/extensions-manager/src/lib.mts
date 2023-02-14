@@ -1,5 +1,5 @@
 import type { InstallPkgReq, PkgIdentifier } from '@moodlenet/core'
-import { npm, pkgRegistry } from '@moodlenet/core'
+import { npm, npmRegistry, pkgRegistry } from '@moodlenet/core'
 import _axios from 'axios'
 import type {
   DeployedPkgInfo,
@@ -53,7 +53,7 @@ export async function searchPackages({
         description: description ?? '',
         keywords: keywords ?? [],
         version,
-        registry: npm.NPM_REGISTRY,
+        registry: npmRegistry,
         homepage: links?.homepage,
         ...(installedPkgId
           ? { installed: true, pkgId: installedPkgId }
@@ -76,7 +76,7 @@ export async function searchPackagesFromRegistry({
   const keywordsString = keywords.map(kw => `keywords:${kw}`).join(' ')
   const text = `${searchText} ${keywordsString}`
 
-  const res = await axios.get<SearchResponse>(`${npm.NPM_REGISTRY}/-/v1/search`, {
+  const res = await axios.get<SearchResponse>(`${npmRegistry}/-/v1/search`, {
     params: { text },
   })
 

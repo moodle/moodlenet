@@ -14,5 +14,3 @@ export type UserData = {
 }
 
 export type Users = Record<UserId, User>
-
-export type UserType = 'admin' | 'full-user' | 'read-only-user'

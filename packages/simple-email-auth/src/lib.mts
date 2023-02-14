@@ -52,9 +52,8 @@ export async function signup(
       displayName: req.displayName,
     },
   }
-  const { encrypted: confirmEmailToken } = await shell.call(crypto.std.encrypt)({
-    payload: JSON.stringify(confirmEmailPayload),
-  })
+  const confirmEmailToken = await shell.call(crypto.jwt.sign)(confirmEmailPayload)
+
   shell.call(send)({
     emailObj: {
       to: req.email,
@@ -108,12 +107,9 @@ export async function confirm({
   return { success: true, sessionToken }
 
   async function getConfirmEmailPayload() {
-    const decryptRes = await shell.call(crypto.std.decrypt)({ encrypted: token })
-
     try {
-      assert(decryptRes.valid)
+      const { payload: confirmEmailPayload } = await shell.call(crypto.jwt.verify)(token)
 
-      const confirmEmailPayload = JSON.parse(decryptRes.payload)
       assert(isConfirmEmailPayload(confirmEmailPayload))
       return confirmEmailPayload
     } catch {

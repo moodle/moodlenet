@@ -1,5 +1,5 @@
-import yargs from 'yargs'
 import { resolve } from 'path'
+import yargs from 'yargs'
 
 export const yOpts = yargs(process.argv.slice(2)).argv
 export const { _, $0, ...restOpts } = yOpts
@@ -8,10 +8,12 @@ export const fwRestOpts = Object.entries(restOpts).reduce((_, [k, v]) => {
   return v === true ? [..._, `--${k}`] : [..._, `--${k}`, `${v}`]
 }, [])
 export const fwRestArgs = restArgs.map(String)
-export const mnDevDir = resolve(process.cwd(), `.dev-machines`, String(mnDevDirOpt))
+export const devMachinesDir = resolve(process.cwd(), `.dev-machines`)
+export const mnDevDir = resolve(devMachinesDir, String(mnDevDirOpt))
 // process.env.NODE_ENV = 'development'
 
 console.log({
+  devMachinesDir,
   mnDevDir,
   mnDevDirOpt,
   fwRestOpts,
