@@ -166,7 +166,6 @@ export const Resource: FC<ResourceProps> = ({
 
   const publish = () => {
     if (form.isValid) {
-      console.log('is form valid')
       form.submitForm()
       setShouldShowErrors(false)
       setIsPublished(true)
@@ -199,12 +198,6 @@ export const Resource: FC<ResourceProps> = ({
           )}
         </Card>
       ) : (
-        // {canEdit && (
-        //   <SecondaryButton color={'red'} onClick={deleteResource}>
-        //     {/* <Edit /> */}
-        //     Delete
-        //   </SecondaryButton>
-        // )}
         <></>
       ),
     key: 'editor-actions-container',
@@ -225,7 +218,9 @@ export const Resource: FC<ResourceProps> = ({
             Add to Collection
           </SecondaryButton> */}
           <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
-            <SecondaryButton>
+            <SecondaryButton
+              abbr={form.values.content instanceof File ? 'Download file' : 'Open link'}
+            >
               {form.values.content instanceof File ? (
                 <>
                   <InsertDriveFile />

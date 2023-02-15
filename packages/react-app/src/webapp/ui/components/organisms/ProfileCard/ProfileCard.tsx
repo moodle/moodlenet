@@ -126,7 +126,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       textAreaAutoSize
       value={form.values.description}
       onChange={form.handleChange}
-      textarea
+      isTextarea
       displayMode
       placeholder={/* t */ `What should others know about you?`}
       className="description"

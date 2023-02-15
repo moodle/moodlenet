@@ -31,6 +31,7 @@ export type UploadResourceProps = {
   fileMaxSize: number | null
   form: FormikHandle<ResourceFormValues>
   uploadProgress?: number
+  imageOnClick?(): unknown
 }
 
 // const usingFields: (keyof NewResourceFormValues)[] = [
@@ -43,7 +44,12 @@ export type UploadResourceProps = {
 //   'content',
 // ]
 
-export const UploadResource: FC<UploadResourceProps> = ({ fileMaxSize, form, uploadProgress }) => {
+export const UploadResource: FC<UploadResourceProps> = ({
+  fileMaxSize,
+  form,
+  uploadProgress,
+  imageOnClick,
+}) => {
   // const { nextForm, form } = useNewResourcePageCtx()
   // const isValid = usingFields.reduce(
   //   (valid, fldName) => valid && !form.errors[fldName],
@@ -184,7 +190,12 @@ export const UploadResource: FC<UploadResourceProps> = ({ fileMaxSize, form, upl
   }
 
   const imageContainer = (
-    <ImageContainer imageUrl={imageUrl} deleteImage={deleteImage} uploadImage={uploadImage} />
+    <ImageContainer
+      imageUrl={imageUrl}
+      deleteImage={deleteImage}
+      uploadImage={uploadImage}
+      imageOnClick={imageOnClick}
+    />
   )
 
   const uploadedNameBackground =

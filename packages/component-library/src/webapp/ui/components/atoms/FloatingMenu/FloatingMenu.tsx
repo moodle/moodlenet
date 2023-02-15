@@ -112,7 +112,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   // }, [hoverElementRef])
 
   return (
-    <abbr title={abbr} className={`floating-menu-container ${className}`}>
+    <div className={`floating-menu-container ${className}`}>
       <div
         className={`floating-menu ${className}`}
         onBlur={e => handleBlur(e)}
@@ -120,8 +120,9 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
         onMouseDown={e => handleOnMouseDown(e)}
         tabIndex={0}
       >
-        <div
+        <abbr
           className="hover-element"
+          title={abbr}
           ref={hoverElementRef}
           onKeyUp={switchMenu}
           onKeyDown={closeMenu}
@@ -129,7 +130,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
           onMouseLeave={() => hover && close()}
         >
           {hoverElement}
-        </div>
+        </abbr>
         <div
           className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
           style={{
@@ -143,7 +144,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
           <Card className="content">{updatedMenuContent}</Card>
         </div>
       </div>
-    </abbr>
+    </div>
   )
 }
 

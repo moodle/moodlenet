@@ -77,7 +77,7 @@
       > .top-right-header {
         display: flex;
         flex: 1 0 auto;
-        gap: 12px;
+        gap: 4px;
         justify-content: flex-end;
 
         > * {
@@ -85,6 +85,7 @@
           align-items: center;
           gap: 2px;
           font-size: 15px;
+          font-weight: normal;
           cursor: pointer;
           // color: #8c8e95;
           > svg,
@@ -94,9 +95,11 @@
           }
         }
 
-        > .more-button {
-          margin-left: -5px;
+        > .tertiary-button {
+          padding: 3px 4px;
+        }
 
+        > .more-button {
           > .more-button {
             > .hover-element {
               > .more {
@@ -126,6 +129,9 @@
             pointer-events: none;
             cursor: auto;
             color: #d0d1db;
+            > span {
+              font-weight: normal;
+            }
           }
         }
 

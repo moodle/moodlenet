@@ -4,6 +4,7 @@ import './PrimaryButton.scss'
 export type PrimaryButtonProps = {
   onClick?(arg0?: unknown): unknown | any
   className?: string
+  abbr?: string
   disabled?: boolean
   color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card' | 'light-gray'
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
@@ -14,6 +15,7 @@ export type PrimaryButtonProps = {
 export const PrimaryButton: FC<PrimaryButtonProps> = ({
   children,
   className,
+  abbr,
   color,
   onHoverColor,
   noHover,
@@ -22,18 +24,19 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
   ...props
 }) => {
   return (
-    <button
+    <abbr
       className={`primary-button button ${className ?? ''} ${onHoverColor ?? ''} ${
         disabled ? 'disabled' : ''
       } ${color}`}
       tabIndex={!disabled ? 0 : undefined}
       style={{ pointerEvents: noHover ? 'none' : 'unset' }}
+      title={abbr}
       onClick={!disabled ? onClick : () => null}
       onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}
       {...props}
     >
       {children}
-    </button>
+    </abbr>
   )
 }
 

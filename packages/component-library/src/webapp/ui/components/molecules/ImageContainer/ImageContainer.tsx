@@ -8,12 +8,14 @@ export type ImageContainerProps = {
   imageUrl?: string
   link?: string
   contentUrl?: string
+  imageCover?: boolean
   imageOnClick?: () => unknown
 }
 
 export const ImageContainer: FC<ImageContainerProps> = ({
   uploadImage,
   deleteImage,
+  imageCover,
   imageUrl,
   link,
   contentUrl,
@@ -29,7 +31,9 @@ export const ImageContainer: FC<ImageContainerProps> = ({
     selectedFile && uploadImage(selectedFile)
   }
 
-  const imageDiv = (
+  const imageDiv = imageCover ? (
+    <div className="image" style={{ backgroundImage: `url(${imageUrl})` }} onClick={imageOnClick} />
+  ) : (
     <img
       className="image"
       src={imageUrl}

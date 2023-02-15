@@ -80,7 +80,7 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
           <div className="name">Landing page title</div>
           <div className="actions">
             <InputTextField
-              textarea
+              isTextarea
               className="landing-title"
               placeholder="Give a title to the landing page"
               value={form.values.landingTitle}
@@ -95,7 +95,7 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
           <div className="name">Landing page subtitle</div>
           <div className="actions">
             <InputTextField
-              textarea
+              isTextarea
               className="landing-subtitle"
               placeholder="Give a subtitle to the landing page"
               value={form.values.landingSubtitle}

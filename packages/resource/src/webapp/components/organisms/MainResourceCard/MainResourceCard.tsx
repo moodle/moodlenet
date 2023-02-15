@@ -175,7 +175,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         {canEdit ? (
           <InputTextField
             name="name"
-            textarea
+            isTextarea
             textAreaAutoSize
             displayMode
             className="title underline"
@@ -261,25 +261,32 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const likeButton = {
-    Item: () => (
-      <div
-        className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
-        onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
-      >
-        {liked ? <Favorite /> : <FavoriteBorder />}
-        <span>{numLikes}</span>
-      </div>
-    ),
-    key: 'like-button',
-  }
+  const likeButton = isPublished
+    ? {
+        Item: () => (
+          <TertiaryButton
+            className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
+            onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
+            abbr={liked ? 'Unlike' : 'Like'}
+          >
+            {liked ? <Favorite /> : <FavoriteBorder />}
+            <span>{numLikes}</span>
+          </TertiaryButton>
+        ),
+        key: 'like-button',
+      }
+    : null
 
   const bookmarkButton = {
     Item: () =>
       isAuthenticated ? (
-        <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+        <TertiaryButton
+          className={`bookmark ${bookmarked && 'bookmarked'}`}
+          onClick={toggleBookmark}
+          abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+        >
           {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-        </div>
+        </TertiaryButton>
       ) : (
         <></>
       ),
@@ -288,33 +295,35 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const shareButton: AddonItem | null = {
     Item: () => (
-      <div key="share-button" tabIndex={0} onClick={copyUrl}>
+      <abbr key="share-button" tabIndex={0} onClick={copyUrl} title="Share">
         <Share />
         Share
-      </div>
+      </abbr>
     ),
     key: 'share-button',
   }
 
-  const deleteButton: AddonItem = {
-    Item: () => (
-      <div key="delete-button" tabIndex={0} onClick={() => setIsToDelete(true)}>
-        <Delete />
-        Delete
-      </div>
-    ),
+  const deleteButton: AddonItem | null = canEdit
+    ? {
+        Item: () => (
+          <abbr key="delete-button" tabIndex={0} onClick={() => setIsToDelete(true)} title="Delete">
+            <Delete />
+            Delete
+          </abbr>
+        ),
 
-    key: 'delete-button',
-  }
+        key: 'delete-button',
+      }
+    : null
 
   const publishButton: AddonItem | null =
     width < 800 && canEdit && !isPublished && !isWaitingForApproval
       ? {
           Item: () => (
-            <div key="publish-button" tabIndex={0} onClick={publish}>
+            <abbr key="publish-button" tabIndex={0} onClick={publish} title="Publish resource">
               <Public />
               Publish
-            </div>
+            </abbr>
           ),
 
           key: 'publish-button',
@@ -325,10 +334,15 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && canEdit && (isPublished || isWaitingForApproval)
       ? {
           Item: () => (
-            <div key="draft-button" tabIndex={0} onClick={() => setIsPublished(false)}>
+            <abbr
+              key="draft-button"
+              tabIndex={0}
+              onClick={() => setIsPublished(false)}
+              title="Back to draft"
+            >
               <PublicOff />
               Back to draft
-            </div>
+            </abbr>
           ),
           key: 'draft-button',
         }
@@ -351,7 +365,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && canEdit && isPublished
       ? {
           Item: () => (
-            <abbr title="Published" style={{ cursor: 'initial' }}>
+            <abbr title="Resource published" style={{ cursor: 'initial' }}>
               <Public style={{ fill: '#00bd7e' }} />
             </abbr>
           ),
@@ -389,10 +403,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && form.values.content
       ? {
           Item: () => (
-            <div
+            <abbr
               key="open-link-or-download-file-button"
               tabIndex={0}
               onClick={() => setIsPublished(false)}
+              title={form.values.content instanceof File ? 'Download file' : 'Open link'}
             >
               {form.values.content instanceof File ? (
                 <>
@@ -405,7 +420,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                   Open link
                 </>
               )}
-            </div>
+            </abbr>
           ),
           key: '"open-link-or-download-file-button',
         }
@@ -438,11 +453,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                 // </div>,
               }
               hoverElement={
-                <TertiaryButton className={`more`}>
+                <TertiaryButton className={`more`} abbr="More options">
                   <MoreVert />
                 </TertiaryButton>
               }
-              abbr="More options"
             />
           ),
           key: 'more-button',
@@ -554,7 +568,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const resourceUploader: AddonItem | null = canEdit
     ? {
         Item: () => (
-          <UploadResource form={form} fileMaxSize={fileMaxSize} uploadProgress={uploadProgress} />
+          <UploadResource
+            form={form}
+            fileMaxSize={fileMaxSize}
+            uploadProgress={uploadProgress}
+            imageOnClick={() => setIsShowingImage(true)}
+          />
         ),
         key: 'resource-uploader',
       }
@@ -605,7 +624,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           <InputTextField
             className="description underline"
             name="description"
-            textarea
+            isTextarea
             textAreaAutoSize
             displayMode
             placeholder="Description"

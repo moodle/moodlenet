@@ -8,7 +8,7 @@ import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, st
 // import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-// import { CollectionTextOptionProps } from '../NewResource/AddToCollections/storiesData'
+// import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
 import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-library'
 // import {
 //   CategoriesTextOptionProps,
@@ -147,8 +147,8 @@ export const useResourceStoryProps = (overrides?: {
     // validationSchema,
     // onSubmit: action('submit edit'),
     // initialValues: {
-    isFile: true,
-    content: '',
+    isFile: false,
+    content: 'moodle.net',
     // visibility: 'Public',
     name: 'Best resource ever',
     description:
