@@ -1,4 +1,4 @@
-import { ensureCollections, query } from '@moodlenet/arangodb'
+import { ensureCollections, queryRs } from '@moodlenet/arangodb'
 import type { Shell } from '@moodlenet/core'
 import { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export * from './types.js'
@@ -23,7 +23,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>(
 
     async function get(type: string, key: string): Promise<ValueObj> {
       const _key = fullKeyOf(type, key)
-      const record = (await query({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` }))
+      const record = (await queryRs({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` }))
         .resultSet[0]
       return valObj(record)
     }
@@ -35,7 +35,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>(
       const _key = fullKeyOf(type, key)
       const strval = JSON.stringify(value)
       const oldRec = (
-        await query({
+        await queryRs({
           q: `let key = "${_key}"
         let doc = { _key: key, value:${strval} }
             UPSERT { _key: key }
@@ -52,7 +52,7 @@ export default async function storeFactory<TMap extends KVSTypeMap>(
     async function unset(type: string, key: string): Promise<ValueObj> {
       const _key = fullKeyOf(type, key)
       const oldDoc = (
-        await query({
+        await queryRs({
           q: `REMOVE ${COLLECTION_NAME}/${_key}
               FROM ${COLLECTION_NAME} 
             RETURN OLD`,

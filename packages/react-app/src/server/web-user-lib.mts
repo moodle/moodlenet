@@ -1,4 +1,4 @@
-import { query } from '@moodlenet/arangodb'
+import { queryRs } from '@moodlenet/arangodb'
 import { createNode, editNode, extractNodeMeta, readNode } from '@moodlenet/content-graph'
 import { glyphDescriptors } from './init.mjs'
 import shell from './shell.mjs'
@@ -22,7 +22,7 @@ export async function createProfile({ title: title, userId, isAdmin, contacts }:
     name: profile.title,
     contacts,
   }
-  await shell.call(query)({
+  await shell.call(queryRs)({
     q: `
       INSERT @user INTO User
     `,
@@ -53,7 +53,7 @@ export async function editProfile(_key: string, { title, description }: ProfileF
 
 export async function getProfileUser(_key: string): Promise<User | undefined> {
   const user = (
-    await shell.call(query)({
+    await shell.call(queryRs)({
       q: `
         RETURN DOCUMENT(@id)
       `,
@@ -70,7 +70,7 @@ export async function patchProfileUser(
   const byUserKey = 'user' in byKey
   const key = byUserKey ? byKey.user : byKey.profile
 
-  await shell.call(query)({
+  await shell.call(queryRs)({
     q: `
       FOR user in User 
         FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
@@ -105,7 +105,7 @@ export async function searchUsers(search: string) {
     LIMIT 10
     RETURN profileUser`
   const userProfiles: (User & { _key: string })[] = (
-    await shell.call(query)({
+    await shell.call(queryRs)({
       q,
       bindVars: { search },
     })

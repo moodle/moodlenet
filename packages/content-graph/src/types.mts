@@ -1,51 +1,59 @@
 import type {
-  CollectionDef,
-  CollectionDefOpt,
+  CollectionHandle,
   CollectionKind,
-  CollectionOpts,
+  CreateCollectionDef,
+  CreateCollectionOpts,
 } from '@moodlenet/arangodb'
 
 // type DateString = string
 type WithDate<T> = T //& { date: DateString }
-export type ContentGraphGlyphs = GlyphDefsMap<{
+export type ContentGraphGlyphs = {
   Created: { kind: 'edge'; type: WithDate<Record<string, never>> }
   Updated: { kind: 'edge'; type: WithDate<Record<string, never>> }
   Deleted: { kind: 'edge'; type: WithDate<Record<string, never>> }
-}>
+}
 
 export type GlyphDef<
   Kind extends CollectionKind = CollectionKind,
   Type extends Record<string, unknown> = Record<string, unknown>,
-> = CollectionDef<Kind, Type>
+> = CreateCollectionDef<Kind, Type>
 
 export type GlyphDefsMap<Defs extends Record<string, GlyphDef> = Record<string, GlyphDef>> = Defs
 
-export type GlyphOpts = { collection?: CollectionOpts }
-export type GlyphDefOpt<Kind extends CollectionKind> = {
-  collection: CollectionDefOpt<Kind>
+// export type GlyphOpts = { collection?: CollectionOpts }
+export type CreateGlyphDefOpt<Def extends GlyphDef> = {
+  collection: CreateCollectionOpts<Def>
 }
-export type GlyphDefOptMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
-  readonly [glyphName in keyof Defs]: GlyphDefOpt<Defs[glyphName]['kind']>
+export type CreateGlyphsDefOptMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
+  readonly [glyphName in keyof Defs]: CreateGlyphDefOpt<Defs[glyphName]>
 }
 
 // declare const GLYPH_HANDLE_TYPE_SYMBOL: unique symbol
 // export type GLYPHDESCTYPE_SYMBOL = typeof GLYPH_HANDLE_TYPE_SYMBOL
 export type GlyphDescriptor<
   Kind extends CollectionKind = CollectionKind,
-  _Type extends Record<string, unknown> = Record<string, unknown>,
+  _DataType extends Record<string, unknown> = Record<string, unknown>,
   // GlyphName extends string = string,
 > = {
-  _type: string
+  _glyphname: string //FIXME: rename to _typename ?
   _kind: Kind
 
   // _pkg: { glyph: GlyphName; pkgName: ExtName /* ; version: ExtVersion  */ }
   // [GLYPH_HANDLE_TYPE_SYMBOL]?: Type
 }
 
+export type GlyphHandle<Def extends GlyphDef> = GlyphDescriptor<Def['kind'], Def['dataType']> & {
+  collectionHandle: CollectionHandle<Def>
+}
+
+export type GlyphHandlesMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
+  readonly [collectionName in string & keyof Defs]: GlyphHandle<Defs[collectionName]>
+}
+
 export type GlyphDescriptorsMap<Defs extends GlyphDefsMap = GlyphDefsMap> = {
   readonly [collectionName in string & keyof Defs]: GlyphDescriptor<
     Defs[collectionName]['kind'],
-    Defs[collectionName]['type']
+    Defs[collectionName]['dataType']
     // ,collectionName
   >
 }
@@ -57,14 +65,14 @@ export type GlyphID = `${string}/${string}`
 
 export type GlyphIdentifier<
   Kind extends CollectionKind = CollectionKind,
-  Typename extends string = string,
+  Glyphname extends string = string,
 > =
   | GlyphID
   | ({
       _kind?: Kind
     } & (
       | {
-          _type: Typename
+          _glyphname: Glyphname
           _key: string
         }
       | {
