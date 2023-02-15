@@ -1,4 +1,4 @@
-import { ensureCollections, query } from '@moodlenet/arangodb'
+import { ensureCollections, queryRs } from '@moodlenet/arangodb'
 import { assertRpcFileReadable, readableRpcFile, RpcFile, Shell } from '@moodlenet/core'
 import { mountApp } from '@moodlenet/http-server'
 import assert from 'assert'
@@ -31,7 +31,7 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
 
   async function get(logicalName: string): Promise<undefined | FsItem> {
     const maybeRawDbRecord: RawDbRecord | undefined = (
-      await query({
+      await queryRs({
         q: `FOR fileRecord in ${collectionName}
               FILTER fileRecord.logicalName == @logicalName
               LIMIT 1
@@ -92,7 +92,7 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
   RETURN fileRecord`
     // console.log(lsQuery)
     const rawDbRecords: RawDbRecord[] = (
-      await query({
+      await queryRs({
         q: lsQuery,
         bindVars: opts.maxDepth
           ? { logicalPathMinLength, logicalPathMaxLength }
@@ -132,7 +132,7 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
 
     // // console.log('create', { partRawDbRecord })
     const newRawDbRecord: RawDbRecord | undefined = (
-      await query({
+      await queryRs({
         q: `let newRecord = MERGE(@partRawDbRecord, { 
               created: DATE_ISO8601(DATE_NOW()),
             })
@@ -158,7 +158,7 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
 
   async function del(logicalName: string): Promise<null | FsItem> {
     const maybeRawDbRecord: RawDbRecord | undefined = (
-      await query({
+      await queryRs({
         q: `FOR fileRecord in ${collectionName}
           FILTER fileRecord.logicalName == @logicalName
           LIMIT 1
@@ -176,7 +176,7 @@ export default async function storeFactory(shell: Shell, bucketName: string) {
 
     await rimraf(`${fsFileAbsolutePath}*`, { maxRetries: 10 }).catch(async err => {
       // FIXME: really should reinsert ? ^^'
-      await query({
+      await queryRs({
         q: `INSERT @rawDbRecord IN ${collectionName} RETURN NEW`,
         bindVars: { rawDbRecord },
       })
