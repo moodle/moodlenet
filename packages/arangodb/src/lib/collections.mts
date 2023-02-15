@@ -1,58 +1,74 @@
+import { CollectionMetadata } from 'arangojs/collection.js'
 import arangojs from 'arangojs/index.js'
 import assert from 'assert'
-import { CollectionDef, CollectionDefOptMap, CollectionHandle } from '../types.mjs'
-import { ensureDB, sysDB } from './db.mjs'
+import {
+  CollectionHandle,
+  CollectionHandlesMap,
+  CreateCollectionDef,
+  CreateCollectionDefsMap,
+  CreateCollectionOpts,
+  CreateCollectionOptsMap,
+} from '../types.mjs'
+import { ensureDB } from './db.mjs'
 
-export async function ensure(dbName: string, { defs }: { defs: CollectionDefOptMap }) {
+export async function ensureCollections<Defs extends CreateCollectionDefsMap>(
+  dbName: string,
+  { defs }: { defs: CreateCollectionOptsMap<Defs> },
+): Promise<CollectionHandlesMap<Defs>> {
   const { /* created, */ db } = await ensureDB(dbName)
-  const currentCollections = await db.listCollections(true)
-  const collections = await Promise.all(
-    Object.keys(defs).map(async collectionName => {
-      const { kind, opts } = defs[collectionName]!
-      const isEdge = kind === 'edge'
-      const foundColl = currentCollections.find(coll => coll.name === collectionName)
-      if (foundColl) {
-        assert(
-          (isEdge && foundColl.type === arangojs.CollectionType.EDGE_COLLECTION) ||
-            (!isEdge && foundColl.type === arangojs.CollectionType.DOCUMENT_COLLECTION),
-          `arango ensure collection type mismatch: found colleciton ${collectionName} of wrong kind (expected ${kind})`,
-        )
-        // if exists assume indexes are the same as first time, expecting a dropIndexes and re-ensureIndexes during package upgrade
-        // FIXME: however, it would be great finding a dynamic solution : remove and add named indexes
-        return db.collection(collectionName)
-      }
-      const collection = await (isEdge
-        ? db.createEdgeCollection(collectionName, {})
-        : db.createCollection(collectionName, {}))
+  const checkAgainstCollectionMetadata = await db.listCollections(true)
+  const collectionHandlesMap = await Object.keys(defs).reduce(async (_handlesP, collectionName) => {
+    const def = defs[collectionName]
+    assert(def)
+    const currentCollectionHandle = await ensureCollection(dbName, collectionName, def, {
+      checkAgainstCollectionMetadata,
+    })
+    return {
+      ...(await _handlesP),
+      [collectionName]: currentCollectionHandle,
+    }
+  }, Promise.resolve({}) as Promise<CollectionHandlesMap<Defs>>)
 
-      await Promise.all(
-        (opts?.indexes ?? []).map(indexDef => collection.ensureIndex(indexDef as any)),
-      )
-      return collection
-    }),
-  )
-  const collectionHandlesMap = collections.reduce((_res, collection) => {
-    const handle: CollectionHandle<CollectionDef<any>> = { collection }
-    return { ..._res, [handle.collection.name]: handle }
-  }, {} as any)
   return collectionHandlesMap
 }
 
-export async function list(dbName: string) {
-  const db = sysDB.database(dbName)
-  const collectionsMeta = (await db.listCollections(true)).filter(
-    coll => coll.type === arangojs.CollectionType.DOCUMENT_COLLECTION,
-  )
-  return { collectionsMeta }
-}
+export async function ensureCollection<Def extends CreateCollectionDef>(
+  dbName: string,
+  collectionName: string,
+  createOptsAndKind: CreateCollectionOpts<Def>,
+  opts?: { checkAgainstCollectionMetadata?: CollectionMetadata[] },
+): Promise<CollectionHandle<Def>> {
+  type _DataType = Def['dataType']
+  type _CollectionType = CollectionHandle<Def>['collection']
+  const { kind, ...createOpts } = createOptsAndKind
 
-export async function drop(dbName: string, { collectionName }: { collectionName: string }) {
-  const db = sysDB.database(dbName)
-  return db
-    .collection(collectionName)
-    .drop({ isSystem: false })
-    .then(
-      _ => true,
-      () => false,
-    )
+  const { db } = await ensureDB(dbName)
+  const collection = await getCollectionOrCreate()
+  const collectionHandle: CollectionHandle<Def> = {
+    collection,
+  }
+  return collectionHandle
+
+  async function getCollectionOrCreate(): Promise<_CollectionType> {
+    const currentCollections =
+      opts?.checkAgainstCollectionMetadata ?? (await db.listCollections(true))
+    const foundCollMeta = currentCollections.find(coll => coll.name === collectionName)
+    if (foundCollMeta) {
+      assert(
+        (kind === 'edge' && foundCollMeta.type === arangojs.CollectionType.EDGE_COLLECTION) ||
+          (kind === 'node' && foundCollMeta.type === arangojs.CollectionType.DOCUMENT_COLLECTION),
+        `arango ensure collection type mismatch: found colleciton ${collectionName} of wrong kind (expected ${kind})`,
+      )
+      const collection = db.collection<_DataType>(collectionName)
+
+      return collection
+    }
+
+    const collection =
+      kind === 'edge'
+        ? await db.createEdgeCollection<_DataType>(collectionName, createOpts)
+        : await db.createCollection<_DataType>(collectionName, createOpts)
+
+    return collection as _CollectionType
+  }
 }
