@@ -1,4 +1,4 @@
-import { query } from '@moodlenet/arangodb'
+import { queryRs } from '@moodlenet/arangodb'
 import assert from 'assert'
 import shell from './shell.mjs'
 import { Email, User, UserId } from './store/types.mjs'
@@ -8,7 +8,7 @@ import { Email, User, UserId } from './store/types.mjs'
 export async function getByEmail(email: Email): Promise<User | undefined> {
   const {
     resultSet: [user],
-  } = await shell.call(query)({
+  } = await shell.call(queryRs)({
     q: `FOR u in User
           FILTER u.email == '${email}'
           LIMIT 1
@@ -21,7 +21,7 @@ export async function getByEmail(email: Email): Promise<User | undefined> {
 export async function getById(id: UserId): Promise<User | undefined> {
   const {
     resultSet: [user],
-  } = await shell.call(query)({
+  } = await shell.call(queryRs)({
     q: `RETURN DOCUMENT('User/${id}')`,
   })
 
@@ -31,7 +31,7 @@ export async function getById(id: UserId): Promise<User | undefined> {
 export async function delUser(id: UserId) {
   const {
     resultSet: [user],
-  } = await shell.call(query)({
+  } = await shell.call(queryRs)({
     q: `REMOVE User/${id} FROM User
         RETURN OLD`,
   })
@@ -41,7 +41,7 @@ export async function delUser(id: UserId) {
 export async function create(newUserData: Omit<User, 'id' | 'created'>): Promise<User> {
   const {
     resultSet: [newUser],
-  } = await shell.call(query)({
+  } = await shell.call(queryRs)({
     q: `
         INSERT ${JSON.stringify(newUserData)} INTO User
         RETURN NEW`,

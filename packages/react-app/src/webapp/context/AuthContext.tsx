@@ -37,11 +37,12 @@ export type AuthCtxT = {
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
 
+let _firstAuthFetchDone = false
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
 
   const { use } = useContext(MainContext)
-  const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>()
+  const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null>(null)
 
   const getClientSessionData = useCallback(
     async (clientSession: ClientSession): Promise<ClientSessionData | null> => {
@@ -78,15 +79,18 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const fetchClientSession = useCallback(async () => {
     if (!readSessionTokenCookie()) {
+      _firstAuthFetchDone = true
       logout()
       return
     }
     const maybeClientSession = await use.auth.rpc.getCurrentClientSession()
     if (!maybeClientSession) {
+      _firstAuthFetchDone = true
       return { success: false, msg: 'invalid token' } as const
     }
     const clientSession = maybeClientSession
     const newClientSessionData = await getClientSessionData(clientSession)
+    _firstAuthFetchDone = true
     setClientSessionData(newClientSessionData)
     if (!newClientSessionData) {
       return {
@@ -114,13 +118,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     return authCtxT
   }, [clientSessionData, logout])
 
-  if (clientSessionData === undefined) {
-    setClientSessionData(null)
+  if (!_firstAuthFetchDone) {
     fetchClientSession()
-    return null
   }
 
-  return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
+  return _firstAuthFetchDone ? <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider> : null
 }
 
 function readSessionTokenCookie(): SessionToken | undefined {

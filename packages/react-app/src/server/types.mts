@@ -5,7 +5,7 @@ export * from '../common/types.mjs'
 export type WebUserGlyphDefMap = GlyphDefsMap<{
   Profile: {
     kind: 'node'
-    type: { organizationName?: string; location?: string; siteUrl?: string }
+    dataType: { organizationName?: string; location?: string; siteUrl?: string }
   }
 }>
 

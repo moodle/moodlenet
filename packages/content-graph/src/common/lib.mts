@@ -20,7 +20,7 @@ export function getPkgNamespace(pkgId: PkgIdentifier) {
 }
 
 export function glyphIdentifier2glyphID(_: GlyphIdentifier | GlyphID): GlyphID {
-  return 'string' === typeof _ ? _ : '_id' in _ ? _._id : `${_._type}/${_._key}`
+  return 'string' === typeof _ ? _ : '_id' in _ ? _._id : `${_._glyphname}/${_._key}`
 }
 
 export function edgeLinkIdentifiers2edgeLink(_: EdgeLinkIdentifiers): EdgeLink {
@@ -51,7 +51,7 @@ export function idOf<GlyphIdentif extends GlyphIdentifier>(identifier: GlyphIden
   return typeof identifier === 'object'
     ? '_id' in identifier
       ? identifier._id
-      : `${identifier._type}/${identifier._key}`
+      : `${identifier._glyphname}/${identifier._key}`
     : identifier
 }
 

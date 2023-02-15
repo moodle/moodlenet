@@ -1,18 +1,22 @@
-import { ensure } from './lib/collections.mjs'
+import * as collectionLib from './lib/collections.mjs'
 import { getPkgDBName } from './lib/db.mjs'
-import { queryDb } from './lib/query.mjs'
+import { queryDbRs } from './lib/query.mjs'
 import shell from './shell.mjs'
-import { CollectionDefOptMap, QueryReq } from './types.mjs'
+import { CreateCollectionDefsMap, CreateCollectionOptsMap, QueryReq } from './types.mjs'
 export * from './types.mjs'
 
-export async function ensureCollections({ defs }: { defs: CollectionDefOptMap }) {
+export async function ensureCollections<Defs extends CreateCollectionDefsMap>({
+  defs,
+}: {
+  defs: CreateCollectionOptsMap<Defs>
+}) {
   const { pkgId: callerPkgId } = shell.assertCallInitiator()
   const dbName = getPkgDBName(callerPkgId)
-  return ensure(dbName, { defs })
+  return collectionLib.ensureCollections(dbName, { defs })
 }
 
-export async function query(queryReq: QueryReq) {
+export async function queryRs(queryReq: QueryReq) {
   const { pkgId: callerPkgId } = shell.assertCallInitiator()
   const dbName = getPkgDBName(callerPkgId)
-  return queryDb(dbName, queryReq)
+  return queryDbRs(dbName, queryReq)
 }
