@@ -337,12 +337,26 @@
 
   > .description {
     font-size: 14px;
-    line-height: 20px;
+    line-height: 22px;
+    position: relative;
+    > .see-more {
+      position: absolute;
+      cursor: pointer;
+      bottom: 0;
+      right: 0;
+      color: gray;
+      background: white;
+      padding-left: 8px;
+      &:hover {
+        color: #1a6aff;
+      }
+    }
   }
 
   .collection-footer {
     display: flex;
-    justify-content: flex-end;
+    gap: 8px;
+    // justify-content: flex-end;
     > button {
       width: 40px;
       > svg {
