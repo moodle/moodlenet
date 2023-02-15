@@ -6,6 +6,7 @@ import {
   InputTextField,
   Modal,
   PrimaryButton,
+  SecondaryButton,
   Snackbar,
   TertiaryButton,
   useWindowDimensions,
@@ -15,16 +16,13 @@ import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/
 import {
   CloudDoneOutlined,
   Delete,
-  HourglassBottom,
   InsertDriveFile,
   MoreVert,
   PermIdentity,
   Person,
-  Public,
-  PublicOff,
   Sync,
 } from '@mui/icons-material'
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { CollectionFormValues, CollectionType } from '../../../../common/types.mjs'
 import { UploadImage } from '../UploadImage/UploadImage.js'
 // import { UploadImage } from '../UploadImage/UploadImage.js'
@@ -43,8 +41,8 @@ export type MainCollectionCardProps = {
   editCollection: (values: CollectionFormValues) => Promise<unknown>
   publish: () => void
   deleteCollection?(): unknown
-  setIsPublished: Dispatch<SetStateAction<boolean>>
   isPublished: boolean
+  setIsPublished: Dispatch<SetStateAction<boolean>>
   isWaitingForApproval?: boolean
   isSaving?: boolean
   isSaved?: boolean
@@ -233,7 +231,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const followButton = isPublished
+  const followersButton = isPublished
     ? {
         Item: () => (
           <TertiaryButton
@@ -246,7 +244,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
             <span>{numFollowers}</span>
           </TertiaryButton>
         ),
-        key: 'follow-button',
+        key: 'followers-button',
       }
     : null
 
@@ -289,68 +287,68 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       }
     : null
 
-  const publishButton: AddonItem | null =
-    width < 800 && canEdit && !isPublished && !isWaitingForApproval
-      ? {
-          Item: () => (
-            <abbr key="publish-button" tabIndex={0} onClick={publish} title="Publish collection">
-              <Public />
-              Publish
-            </abbr>
-          ),
+  // const publishButton: AddonItem | null =
+  //   width < 800 && canEdit && !isPublished && !isWaitingForApproval
+  //     ? {
+  //         Item: () => (
+  //           <abbr key="publish-button" tabIndex={0} onClick={publish} title="Publish collection">
+  //             <Public />
+  //             Publish
+  //           </abbr>
+  //         ),
 
-          key: 'publish-button',
-        }
-      : null
+  //         key: 'publish-button',
+  //       }
+  //     : null
 
-  const draftButton: AddonItem | null =
-    width < 800 && canEdit && (isPublished || isWaitingForApproval)
-      ? {
-          Item: () => (
-            <abbr
-              key="draft-button"
-              tabIndex={0}
-              onClick={() => setIsPublished(false)}
-              title="Back to draft"
-            >
-              <PublicOff />
-              Back to draft
-            </abbr>
-          ),
-          key: 'draft-button',
-        }
-      : null
+  // const draftButton: AddonItem | null =
+  //   width < 800 && canEdit && (isPublished || isWaitingForApproval)
+  //     ? {
+  //         Item: () => (
+  //           <abbr
+  //             key="draft-button"
+  //             tabIndex={0}
+  //             onClick={() => setIsPublished(false)}
+  //             title="Back to draft"
+  //           >
+  //             <PublicOff />
+  //             Back to draft
+  //           </abbr>
+  //         ),
+  //         key: 'draft-button',
+  //       }
+  //     : null
 
-  const publishingButton: AddonItem | null =
-    width < 800 && canEdit && !isPublished && isWaitingForApproval
-      ? {
-          Item: () => (
-            <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
-              <HourglassBottom style={{ fill: '#d0d1db' }} />
-            </abbr>
-          ),
+  // const publishingButton: AddonItem | null =
+  //   width < 800 && canEdit && !isPublished && isWaitingForApproval
+  //     ? {
+  //         Item: () => (
+  //           <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
+  //             <HourglassBottom style={{ fill: '#d0d1db' }} />
+  //           </abbr>
+  //         ),
 
-          key: 'publishing-button',
-        }
-      : null
+  //         key: 'publishing-button',
+  //       }
+  //     : null
 
-  const publishedButton: AddonItem | null =
-    width < 800 && canEdit && isPublished
-      ? {
-          Item: () => (
-            <abbr title="Collection published" style={{ cursor: 'initial' }}>
-              <Public style={{ fill: '#00bd7e' }} />
-            </abbr>
-          ),
-          key: 'publishing-button',
-        }
-      : null
+  // const isPublishedButton: AddonItem | null =
+  //   width < 800 && canEdit && isPublished
+  //     ? {
+  //         Item: () => (
+  //           <abbr title="Collection isPublished" style={{ cursor: 'initial' }}>
+  //             <Public style={{ fill: '#00bd7e' }} />
+  //           </abbr>
+  //         ),
+  //         key: 'publishing-button',
+  //       }
+  //     : null
 
   // const sendToMoodleButton: AddonItem | null =
   //   width < 800 && form.values.content
   //     ? {
   //         Item: () => (
-  //           <div key="send-to-moodle-button" tabIndex={0} onClick={() => setIsPublished(false)}>
+  //           <div key="send-to-moodle-button" tabIndex={0} onClick={() => setisPublished(false)}>
   //             <MoodleIcon />
   //             Send to Moodle
   //           </div>
@@ -363,7 +361,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //   width < 800 && form.values.content && isAuthenticated
   //     ? {
   //         Item: () => (
-  //           <div key="add-to-collection-button" tabIndex={0} onClick={() => setIsPublished(false)}>
+  //           <div key="add-to-collection-button" tabIndex={0} onClick={() => setisPublished(false)}>
   //             <AddToPhotos />
   //             Add to collection
   //           </div>
@@ -400,8 +398,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       : null
 
   const updatedMoreButtonItems = [
-    publishButton,
-    draftButton,
+    // publishButton,
+    // draftButton,
     openLinkOrDownloadFile,
     shareButton,
     // sendToMoodleButton,
@@ -492,10 +490,10 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //     : null
 
   const updatedTopRightHeaderItems = [
-    followButton,
+    followersButton,
     bookmarkButton,
-    publishedButton,
-    publishingButton,
+    // isPublishedButton,
+    // publishingButton,
     // deleteButton,
     // editSaveButton,
     ...(topRightHeaderItems ?? []),
@@ -573,6 +571,20 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
   // )
 
+  const descriptionRef = useRef<HTMLDivElement>(null)
+  const [showFullDescription, setShowFullDescription] = useState(true)
+
+  useEffect(() => {
+    const fieldElem = descriptionRef.current
+    if (fieldElem) {
+      {
+        console.log(fieldElem.scrollHeight)
+        fieldElem.scrollHeight > 70 && setShowFullDescription(false)
+        // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'}
+      }
+    }
+  }, [descriptionRef])
+
   const description: AddonItem = {
     Item: () => (
       // form.values.content ? (
@@ -593,7 +605,23 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
             error={shouldShowErrors && form.errors.description}
           />
         ) : (
-          <div className="description"> {form.values.description} </div>
+          <div className="description">
+            <div
+              className="description-text"
+              ref={descriptionRef}
+              style={{
+                height: showFullDescription ? 'fit-content' : '66px',
+                overflow: showFullDescription ? 'auto' : 'hidden',
+              }}
+            >
+              {form.values.description}
+            </div>
+            {!showFullDescription && (
+              <div className="see-more" onClick={() => setShowFullDescription(true)}>
+                ...see more
+              </div>
+            )}
+          </div>
         )}
       </>
     ),
@@ -603,9 +631,65 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     key: 'description',
   }
 
-  const updatedFooterRowItems = [...(footerRowItems ?? [])].filter(
+  const publishButton: AddonItem | null = canEdit
+    ? {
+        Item: () => (
+          <>
+            {isPublished && (
+              <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
+                Published
+              </PrimaryButton>
+            )}
+            {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+              <PrimaryButton onClick={publish} color="green">
+                Publish
+              </PrimaryButton>
+            )}
+            {!isPublished && isWaitingForApproval && (
+              <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
+            )}
+            {isPublished || isWaitingForApproval ? (
+              <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
+            ) : (
+              <></>
+            )}
+          </>
+        ),
+        key: 'follow-button',
+      }
+    : null
+
+  const followButton: AddonItem | null = !isOwner
+    ? {
+        Item: () =>
+          followed ? (
+            <SecondaryButton
+              disabled={!isAuthenticated}
+              onClick={toggleFollow}
+              className="following-button"
+              abbr="Unfollow"
+              color="orange"
+            >
+              Following
+            </SecondaryButton>
+          ) : (
+            <PrimaryButton
+              disabled={!isAuthenticated}
+              onClick={toggleFollow}
+              className="follow-button"
+              abbr="Follow"
+            >
+              Follow
+            </PrimaryButton>
+          ),
+        key: 'follow-button',
+      }
+    : null
+
+  const updatedFooterRowItems = [publishButton, followButton, ...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
+  console.log(updatedFooterRowItems)
 
   const collectionFooter: AddonItem = {
     Item: () => (
@@ -685,161 +769,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         {updatedMainColumnItems.map(i => (
           <i.Item key={i.key} />
         ))}
-        {/* <div className={`image`} style={background} onClick={() => setisShowingImage(true)}>
-          <div className="image-actions" onClick={e => e.stopPropagation()}>
-            <input
-              ref={uploadImageRef}
-              type="file"
-              accept=".jpg,.jpeg,.png,.gif"
-              onChange={uploadImage}
-              hidden
-            />
-            {canSearchImage && (
-              <RoundButton
-                className={`search-image-button ${form.isSubmitting ? 'disabled' : ''} ${
-                  autoImageAdded ? 'highlight' : ''
-                }`}
-                type="search"
-                abbrTitle={`Search for an image`}
-                onClick={() => setIsSearchingImage(true)}
-              />
-            )}
-            <RoundButton
-              className={`change-image-button ${form.isSubmitting ? 'disabled' : ''}`}
-              type="upload"
-              abbrTitle={`Upload and image`}
-              onClick={selectImage}
-            />
-            <RoundButton
-              className={`delete-image ${form.isSubmitting ? 'disabled' : ''}`}
-              type="cross"
-              abbrTitle={`Delete image`}
-              onClick={deleteImage}
-            />
-          </div>
-          {getImageCredits(form.values.image)}
-        </div> */}
-        {/* <div className="info">
-                <div className="label">
-                    Collection
-                  <div
-                    className={`actions ${
-                      isAdmin || isOwner ? 'edit-save' : ''
-                    }`}
-                  >
-                    
-
-                    {isAuthenticated && !isEditing && (
-                      <div
-                        className={`bookmark ${bookmarked && 'bookmarked'}`}
-                        onClick={toggleBookmark.submitForm}
-                      >
-                        {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-                      </div>
-                    )}
-                    {isAuthenticated && !isOwner && (
-                      <FloatingMenu
-                        className="more-button"
-                        menuContent={[
-                          <div tabIndex={0} onClick={copyUrl}>
-                            <Share />
-                              Share
-                          </div>,
-                        ]}
-                        hoverElement={
-                          <TertiaryButton className={`more`}>
-                            ...
-                          </TertiaryButton>
-                        }
-                      />
-                    )}
-                  </div>
-                </div>
-                {isOwner ? (
-                  <InputTextField
-                    className="title underline"
-                    name="title"
-                    isTextarea
-                    textAreaAutoSize
-                    displayMode
-                    value={form.values.title}
-                    onChange={form.handleChange}
-                    style={{
-                      pointerEvents: `${
-                        form.isSubmitting ? 'none' : 'inherit'
-                      }`,
-                    }}
-                    error={shouldShowErrors && form.errors.title}
-                  />
-                ) : (
-                  <div className="title">{form.values.title}</div>
-                )}
-                {isOwner ? (
-                  <InputTextField
-                    className="description underline"
-                    name="description"
-                    isTextarea
-                    textAreaAutoSize
-                    displayMode
-                    value={form.values.description}
-                    onChange={form.handleChange}
-                    style={{
-                      pointerEvents: `${
-                        form.isSubmitting ? 'none' : 'inherit'
-                      }`,
-                    }}
-                    error={isEditing && form.errors.description}
-                  />
-                ) : (
-                  <div className="description">{form.values.description}</div>
-                )}
-                {!isOwner && !isAdmin && (
-                  <div className="actions">
-                    <div className="left">
-                      {!isOwner && !followed && (
-                        <PrimaryButton
-                          disabled={!isAuthenticated}
-                          onClick={toggleFollow.submitForm}
-                          className="follow-button"
-                        >
-                            Follow
-                        </PrimaryButton>
-                      )}
-                      {!isOwner && followed && (
-                        <SecondaryButton
-                          disabled={!isAuthenticated}
-                          onClick={toggleFollow.submitForm}
-                          className="following-button"
-                          color="orange"
-                        >
-                          {/* <CheckIcon /> */}
-        {/* Following */}
-        {/* </SecondaryButton> */}
-        {/* )} */}
-        {/* </div> */}
-        {/* </div> */}
-        {/* )} */}
-        {/* </div> */}
       </Card>
     </>
-
-    //   <MainLayout {...mainLayoutProps}>
-    //     {modals}
-    //     {snackbars}
-    //     {searchImageComponent}
-    //     <div className="collection">
-    //       <div className="content">
-    //         <div className="main-column">
-    //
-    //         </div>
-    //         <div className="side-column">
-    //           {updatedSideColumnItems?.map(i => (
-    //             <i.Item key={i.key} />
-    //           ))}
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </MainLayout>
   )
 }
 MainCollectionCard.displayName = 'MainCollectionCard'
