@@ -573,13 +573,14 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [showFullDescription, setShowFullDescription] = useState(true)
+  const [isSmallDescription, setIsSmallDescription] = useState(false)
 
   useEffect(() => {
     const fieldElem = descriptionRef.current
     if (fieldElem) {
       {
         console.log(fieldElem.scrollHeight)
-        fieldElem.scrollHeight > 70 && setShowFullDescription(false)
+        fieldElem.scrollHeight > 70 ? setShowFullDescription(false) : setIsSmallDescription(true)
         // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'}
       }
     }
@@ -612,6 +613,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
               style={{
                 height: showFullDescription ? 'fit-content' : '66px',
                 overflow: showFullDescription ? 'auto' : 'hidden',
+                paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
               }}
             >
               {form.values.description}
@@ -619,6 +621,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
             {!showFullDescription && (
               <div className="see-more" onClick={() => setShowFullDescription(true)}>
                 ...see more
+              </div>
+            )}
+            {showFullDescription && !isSmallDescription && (
+              <div className="see-more" onClick={() => setShowFullDescription(false)}>
+                see less
               </div>
             )}
           </div>

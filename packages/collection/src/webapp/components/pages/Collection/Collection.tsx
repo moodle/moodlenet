@@ -25,6 +25,7 @@ export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
   mainCollectionCardProps: MainCollectionCardProps
 
+  wideColumnItems?: AddonItem[]
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
   moreButtonItems?: AddonItem[]
@@ -69,6 +70,7 @@ export type CollectionProps = {
 export const Collection: FC<CollectionProps> = ({
   mainLayoutProps,
   mainCollectionCardProps,
+  wideColumnItems,
   mainColumnItems,
   sideColumnItems,
   extraDetailsItems,
@@ -252,6 +254,10 @@ export const Collection: FC<CollectionProps> = ({
     (item): item is AddonItem => !!item,
   )
 
+  const updatedWideColumnItems = [mainCollectionCard, ...(wideColumnItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
+  )
+
   const snackbars = <></>
 
   const modals = (
@@ -285,15 +291,22 @@ export const Collection: FC<CollectionProps> = ({
       {snackbars}
       <div className="collection">
         <div className="content">
-          <div className="main-column">
-            {updatedMainColumnItems.map(i => (
+          <div className="wide-column">
+            {updatedWideColumnItems.map(i => (
               <i.Item key={i.key} />
             ))}
           </div>
-          <div className="side-column">
-            {updatedSideColumnItems?.map(i => (
-              <i.Item key={i.key} />
-            ))}
+          <div className="main-and-side-columns">
+            <div className="main-column">
+              {updatedMainColumnItems.map(i => (
+                <i.Item key={i.key} />
+              ))}
+            </div>
+            <div className="side-column">
+              {updatedSideColumnItems?.map(i => (
+                <i.Item key={i.key} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
