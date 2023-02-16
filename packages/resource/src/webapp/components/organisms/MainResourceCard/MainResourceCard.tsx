@@ -10,6 +10,7 @@ import {
   AddonItem,
   Card,
   FloatingMenu,
+  FloatingMenuContentItem,
   InputTextField,
   Modal,
   PrimaryButton,
@@ -21,7 +22,6 @@ import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
-  Delete,
   HourglassBottom,
   InsertDriveFile,
   MoreVert,
@@ -29,7 +29,16 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
@@ -39,7 +48,7 @@ export type MainResourceCardProps = {
   headerColumnItems?: AddonItem[]
   topLeftHeaderItems?: AddonItem[]
   topRightHeaderItems?: AddonItem[]
-  moreButtonItems?: AddonItem[]
+  moreButtonItems?: FloatingMenuContentItem[]
   footerRowItems?: AddonItem[]
 
   resource: ResourceFormValues
@@ -192,10 +201,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         )}
       </>
     ),
-    // ) : (
-    //   <></>
-    // ),
-    key: 'type-and-actions',
+    key: 'resource-title',
   }
 
   //   const tagsDiv: AddonItem = {
@@ -293,58 +299,37 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     key: 'bookmark-button',
   }
 
-  const shareButton: AddonItem | null = {
-    Item: () => (
-      <abbr key="share-button" tabIndex={0} onClick={copyUrl} title="Share">
-        <Share />
-        Share
-      </abbr>
-    ),
+  const shareButton: FloatingMenuContentItem | null = {
     key: 'share-button',
+    onClick: copyUrl,
+    text: 'Share',
+    Icon: <Share />,
   }
 
-  const deleteButton: AddonItem | null = canEdit
-    ? {
-        Item: () => (
-          <abbr key="delete-button" tabIndex={0} onClick={() => setIsToDelete(true)} title="Delete">
-            <Delete />
-            Delete
-          </abbr>
-        ),
+  // const deleteButton: FloatingMenuContentItem | null = {
+  //   key: 'delete-button',
+  //   onClick: () => setIsToDelete(true),
+  //   text: 'Delete',
+  //   Icon: <Delete />,
+  // }
 
-        key: 'delete-button',
-      }
-    : null
-
-  const publishButton: AddonItem | null =
+  const publishButton: FloatingMenuContentItem | null =
     width < 800 && canEdit && !isPublished && !isWaitingForApproval
       ? {
-          Item: () => (
-            <abbr key="publish-button" tabIndex={0} onClick={publish} title="Publish resource">
-              <Public />
-              Publish
-            </abbr>
-          ),
-
+          Icon: <Public />,
+          text: 'Publish',
           key: 'publish-button',
+          onClick: publish,
         }
       : null
 
-  const draftButton: AddonItem | null =
+  const draftButton: FloatingMenuContentItem | null =
     width < 800 && canEdit && (isPublished || isWaitingForApproval)
       ? {
-          Item: () => (
-            <abbr
-              key="draft-button"
-              tabIndex={0}
-              onClick={() => setIsPublished(false)}
-              title="Back to draft"
-            >
-              <PublicOff />
-              Back to draft
-            </abbr>
-          ),
+          Icon: <PublicOff />,
+          text: 'Back to draft',
           key: 'draft-button',
+          onClick: () => setIsPublished(false),
         }
       : null
 
@@ -399,30 +384,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //       }
   //     : null
 
-  const openLinkOrDownloadFile: AddonItem | null =
+  const openLinkOrDownloadFile: FloatingMenuContentItem | null =
     width < 800 && form.values.content
       ? {
-          Item: () => (
-            <abbr
-              key="open-link-or-download-file-button"
-              tabIndex={0}
-              onClick={() => setIsPublished(false)}
-              title={form.values.content instanceof File ? 'Download file' : 'Open link'}
-            >
-              {form.values.content instanceof File ? (
-                <>
-                  <InsertDriveFile />
-                  Download file
-                </>
-              ) : (
-                <>
-                  <LinkIcon />
-                  Open link
-                </>
-              )}
-            </abbr>
-          ),
-          key: '"open-link-or-download-file-button',
+          Icon: form.values.content instanceof File ? <InsertDriveFile /> : <LinkIcon />,
+          text: form.values.content instanceof File ? 'Download file' : 'Open link',
+          key: 'open-link-or-download-file-button',
+          onClick: () => setIsPublished(false),
         }
       : null
 
@@ -431,36 +399,48 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     draftButton,
     openLinkOrDownloadFile,
     shareButton,
+    // deleteButton,
     // sendToMoodleButton,
     // addToCollectionButton,
-    deleteButton,
     ...(moreButtonItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  ].filter((item): item is FloatingMenuContentItem => !!item)
 
   const moreButton: AddonItem | null =
     updatedMoreButtonItems.length > 0
-      ? {
-          Item: () => (
-            <FloatingMenu
-              className="more-button"
-              menuContent={
-                updatedMoreButtonItems.map(i => (
-                  <i.Item key={i.key} />
-                ))
-                // <div tabIndex={0} onClick={() => setIsReporting(true)}>
-                //   <Flag />
-                //   <Trans>Report</Trans>
-                // </div>,
-              }
-              hoverElement={
-                <TertiaryButton className={`more`} abbr="More options">
-                  <MoreVert />
-                </TertiaryButton>
-              }
-            />
-          ),
-          key: 'more-button',
-        }
+      ? updatedMoreButtonItems.length === 1
+        ? {
+            Item: () => (
+              <>
+                {updatedMoreButtonItems.map(i => {
+                  return (
+                    <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
+                      {i.Icon}
+                    </TertiaryButton>
+                  )
+                })}
+              </>
+            ),
+            key: 'more-button',
+          }
+        : {
+            Item: () => (
+              <FloatingMenu
+                className="more-button"
+                menuContent={updatedMoreButtonItems.map(i => (
+                  <div key={i.key} onClick={i.onClick} tabIndex={0}>
+                    {i.Icon}
+                    {i.text}
+                  </div>
+                ))}
+                hoverElement={
+                  <TertiaryButton className={`more`} abbr="More options">
+                    <MoreVert />
+                  </TertiaryButton>
+                }
+              />
+            ),
+            key: 'more-button',
+          }
       : null
 
   // const editSaveButton = canEdit
@@ -616,35 +596,91 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
   // )
 
-  const description: AddonItem = {
-    Item: () => (
-      // form.values.content ? (
-      <>
-        {canEdit ? (
-          <InputTextField
-            className="description underline"
-            name="description"
-            isTextarea
-            textAreaAutoSize
-            displayMode
-            placeholder="Description"
-            value={form.values.description}
-            onChange={form.handleChange}
-            style={{
-              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-            }}
-            error={shouldShowErrors && form.errors.description}
-          />
-        ) : (
-          <div className="description"> {form.values.description} </div>
-        )}
-      </>
-    ),
-    // ) : (
-    //   <></>
-    // ),
-    key: 'description',
-  }
+  // const description: AddonItem = {
+  //   Item: () => (
+  //     // form.values.content ? (
+  //     <>
+  //       {canEdit ? (
+  //         <InputTextField
+  //           className="description underline"
+  //           name="description"
+  //           isTextarea
+  //           textAreaAutoSize
+  //           displayMode
+  //           placeholder="Description"
+  //           value={form.values.description}
+  //           onChange={form.handleChange}
+  //           style={{
+  //             pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+  //           }}
+  //           error={shouldShowErrors && form.errors.description}
+  //         />
+  //       ) : (
+  //         <div className="description"> {form.values.description} </div>
+  //       )}
+  //     </>
+  //   ),
+  //   // ) : (
+  //   //   <></>
+  //   // ),
+  //   key: 'description',
+  // }
+
+  const descriptionRef = useRef<HTMLDivElement>(null)
+  const [showFullDescription, setShowFullDescription] = useState(true)
+  // const [isSmallDescription, setIsSmallDescription] = useState(false)
+
+  useEffect(() => {
+    const fieldElem = descriptionRef.current
+    if (fieldElem) {
+      {
+        fieldElem.scrollHeight > 70 && setShowFullDescription(false)
+        // fieldElem.scrollHeight > 70 ? setShowFullDescription(false) : setIsSmallDescription(true)
+        // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'}
+      }
+    }
+  }, [descriptionRef])
+
+  const description = canEdit ? (
+    <InputTextField
+      className="description underline"
+      name="description"
+      isTextarea
+      textAreaAutoSize
+      displayMode
+      placeholder="Description"
+      value={form.values.description}
+      onChange={form.handleChange}
+      style={{
+        pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+      }}
+      error={shouldShowErrors && form.errors.description}
+    />
+  ) : (
+    <div className="description">
+      <div
+        className="description-text"
+        ref={descriptionRef}
+        style={{
+          height: showFullDescription ? 'fit-content' : '66px',
+          overflow: showFullDescription ? 'auto' : 'hidden',
+          // paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
+        }}
+      >
+        {form.values.description}
+      </div>
+      {!showFullDescription && (
+        <div className="see-more" onClick={() => setShowFullDescription(true)}>
+          ...see more
+        </div>
+      )}
+      {/* {showFullDescription && !isSmallDescription && (
+              <div className="see-more" onClick={() => setShowFullDescription(false)}>
+                see less
+              </div>
+            )} */}
+    </div>
+  )
 
   const updatedFooterRowItems = [...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
@@ -668,7 +704,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     description,
     resourceFooter,
     ...(mainColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  ].filter((item): item is AddonItem | ReactElement => !!item)
 
   const snackbars = (
     <>
@@ -725,9 +761,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       {snackbars}
       {/* {searchImageComponent} */}
       <Card className="main-resource-card" hideBorderWhenSmall={true}>
-        {updatedMainColumnItems.map(i => (
-          <i.Item key={i.key} />
-        ))}
+        {updatedMainColumnItems.map(i => {
+          if ('Item' in i) {
+            return <i.Item key={i.key} />
+          } else {
+            return i
+          }
+        })}
       </Card>
     </>
 

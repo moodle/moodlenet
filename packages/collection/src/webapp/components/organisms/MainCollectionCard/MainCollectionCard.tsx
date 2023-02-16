@@ -1,22 +1,21 @@
-import { Bookmark, BookmarkBorder, Link as LinkIcon, Share } from '@material-ui/icons'
+import { Bookmark, BookmarkBorder, Share } from '@material-ui/icons'
 import {
   AddonItem,
   Card,
   FloatingMenu,
+  FloatingMenuContentItem,
   InputTextField,
   Modal,
   PrimaryButton,
   SecondaryButton,
   Snackbar,
   TertiaryButton,
-  useWindowDimensions,
 } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
   Delete,
-  InsertDriveFile,
   MoreVert,
   PermIdentity,
   Person,
@@ -25,7 +24,6 @@ import {
 import { Dispatch, FC, SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { CollectionFormValues, CollectionType } from '../../../../common/types.mjs'
 import { UploadImage } from '../UploadImage/UploadImage.js'
-// import { UploadImage } from '../UploadImage/UploadImage.js'
 import './MainCollectionCard.scss'
 
 export type MainCollectionCardProps = {
@@ -33,7 +31,7 @@ export type MainCollectionCardProps = {
   headerColumnItems?: AddonItem[]
   topLeftHeaderItems?: AddonItem[]
   topRightHeaderItems?: AddonItem[]
-  moreButtonItems?: AddonItem[]
+  moreButtonItems?: FloatingMenuContentItem[]
   footerRowItems?: AddonItem[]
 
   collection: CollectionFormValues
@@ -84,10 +82,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   // editCollection,
   // saveCollection,
   isPublished,
-  publish,
   deleteCollection,
-  setIsPublished,
-  isWaitingForApproval,
   isSaving,
   isSaved,
   // collectionValidator
@@ -120,7 +115,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   )
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
-  const { width } = useWindowDimensions()
+  // const { width } = useWindowDimensions()
 
   const copyUrl = () => {
     navigator.clipboard.writeText(collectionUrl)
@@ -264,14 +259,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     key: 'bookmark-button',
   }
 
-  const shareButton: AddonItem | null = {
-    Item: () => (
-      <abbr key="share-button" tabIndex={0} onClick={copyUrl} title="Share">
-        <Share />
-        Share
-      </abbr>
-    ),
+  const shareButton: FloatingMenuContentItem | null = {
     key: 'share-button',
+    onClick: copyUrl,
+    text: 'Share',
+    Icon: <Share />,
   }
 
   const deleteButton: AddonItem | null = canEdit
@@ -370,68 +362,85 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //       }
   //     : null
 
-  const openLinkOrDownloadFile: AddonItem | null =
-    width < 800 && form.values.content
-      ? {
-          Item: () => (
-            <abbr
-              key="open-link-or-download-file-button"
-              tabIndex={0}
-              onClick={() => setIsPublished(false)}
-              title={form.values.content instanceof File ? 'Download file' : 'Open link'}
-            >
-              {form.values.content instanceof File ? (
-                <>
-                  <InsertDriveFile />
-                  Download file
-                </>
-              ) : (
-                <>
-                  <LinkIcon />
-                  Open link
-                </>
-              )}
-            </abbr>
-          ),
-          key: '"open-link-or-download-file-button',
-        }
-      : null
+  // const openLinkOrDownloadFile: AddonItem | null =
+  //   width < 800 && form.values.content
+  //     ? {
+  //         Item: () => (
+  //           <abbr
+  //             key="open-link-or-download-file-button"
+  //             tabIndex={0}
+  //             onClick={() => setIsPublished(false)}
+  //             title={form.values.content instanceof File ? 'Download file' : 'Open link'}
+  //           >
+  //             {form.values.content instanceof File ? (
+  //               <>
+  //                 <InsertDriveFile />
+  //                 Download file
+  //               </>
+  //             ) : (
+  //               <>
+  //                 <LinkIcon />
+  //                 Open link
+  //               </>
+  //             )}
+  //           </abbr>
+  //         ),
+  //         key: '"open-link-or-download-file-button',
+  //       }
+  //     : null
 
   const updatedMoreButtonItems = [
     // publishButton,
     // draftButton,
-    openLinkOrDownloadFile,
     shareButton,
     // sendToMoodleButton,
     // addToCollectionButton,
     deleteButton,
     ...(moreButtonItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  ].filter((item): item is FloatingMenuContentItem => !!item)
 
   const moreButton: AddonItem | null =
     updatedMoreButtonItems.length > 0
-      ? {
-          Item: () => (
-            <FloatingMenu
-              className="more-button"
-              menuContent={
-                updatedMoreButtonItems.map(i => (
-                  <i.Item key={i.key} />
-                ))
-                // <div tabIndex={0} onClick={() => setIsReporting(true)}>
-                //   <Flag />
-                //   <Trans>Report</Trans>
-                // </div>,
-              }
-              hoverElement={
-                <TertiaryButton className={`more`} abbr="More options">
-                  <MoreVert />
-                </TertiaryButton>
-              }
-            />
-          ),
-          key: 'more-button',
-        }
+      ? updatedMoreButtonItems.length === 1
+        ? {
+            Item: () => (
+              <>
+                {updatedMoreButtonItems.map(i => {
+                  return (
+                    <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
+                      {i.Icon}
+                    </TertiaryButton>
+                  )
+                })}
+              </>
+            ),
+            key: 'more-button',
+          }
+        : {
+            Item: () => (
+              <FloatingMenu
+                className="more-button"
+                menuContent={
+                  updatedMoreButtonItems.map(i => (
+                    <div key={i.key} onClick={i.onClick} tabIndex={0}>
+                      {i.Icon}
+                      {i.text}
+                    </div>
+                  ))
+                  // <div tabIndex={0} onClick={() => setIsReporting(true)}>
+                  //   <Flag />
+                  //   <Trans>Report</Trans>
+                  // </div>,
+                }
+                hoverElement={
+                  <TertiaryButton className={`more`} abbr="More options">
+                    <MoreVert />
+                  </TertiaryButton>
+                }
+              />
+            ),
+            key: 'more-button',
+          }
       : null
 
   // const editSaveButton = canEdit
@@ -573,14 +582,14 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [showFullDescription, setShowFullDescription] = useState(true)
-  const [isSmallDescription, setIsSmallDescription] = useState(false)
+  // const [isSmallDescription, setIsSmallDescription] = useState(false)
 
   useEffect(() => {
     const fieldElem = descriptionRef.current
     if (fieldElem) {
       {
-        console.log(fieldElem.scrollHeight)
-        fieldElem.scrollHeight > 70 ? setShowFullDescription(false) : setIsSmallDescription(true)
+        fieldElem.scrollHeight > 70 && setShowFullDescription(false)
+        // fieldElem.scrollHeight > 70 ? setShowFullDescription(false) : setIsSmallDescription(true)
         // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'}
       }
     }
@@ -613,7 +622,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
               style={{
                 height: showFullDescription ? 'fit-content' : '66px',
                 overflow: showFullDescription ? 'auto' : 'hidden',
-                paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
+                // paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
               }}
             >
               {form.values.description}
@@ -623,48 +632,17 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
                 ...see more
               </div>
             )}
-            {showFullDescription && !isSmallDescription && (
+            {/* {showFullDescription && !isSmallDescription && (
               <div className="see-more" onClick={() => setShowFullDescription(false)}>
                 see less
               </div>
-            )}
+            )} */}
           </div>
         )}
       </>
     ),
-    // ) : (
-    //   <></>
-    // ),
     key: 'description',
   }
-
-  const publishButton: AddonItem | null = canEdit
-    ? {
-        Item: () => (
-          <>
-            {isPublished && (
-              <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
-                Published
-              </PrimaryButton>
-            )}
-            {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
-              <PrimaryButton onClick={publish} color="green">
-                Publish
-              </PrimaryButton>
-            )}
-            {!isPublished && isWaitingForApproval && (
-              <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
-            )}
-            {isPublished || isWaitingForApproval ? (
-              <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
-            ) : (
-              <></>
-            )}
-          </>
-        ),
-        key: 'follow-button',
-      }
-    : null
 
   const followButton: AddonItem | null = !isOwner
     ? {
@@ -693,10 +671,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       }
     : null
 
-  const updatedFooterRowItems = [publishButton, followButton, ...(footerRowItems ?? [])].filter(
+  const updatedFooterRowItems = [followButton, ...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
-  console.log(updatedFooterRowItems)
 
   const collectionFooter: AddonItem = {
     Item: () => (

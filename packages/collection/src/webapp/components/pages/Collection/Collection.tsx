@@ -11,10 +11,9 @@ import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { SchemaOf } from 'yup'
 import { CollectionFormValues, CollectionType } from '../../../../common/types.mjs'
 import {
-  ContributorCard,
-  ContributorCardProps,
-} from '../../molecules/ContributorCard/ContributorCard.js'
-import { ContributorCardStoryProps } from '../../molecules/ContributorCard/ContributorCard.stories.js'
+  CollectionContributorCard,
+  CollectionContributorCardProps,
+} from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
 import {
   MainCollectionCard,
   MainCollectionCardProps,
@@ -24,6 +23,7 @@ import './Collection.scss'
 export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
   mainCollectionCardProps: MainCollectionCardProps
+  collectionContributorCardProps: CollectionContributorCardProps
 
   wideColumnItems?: AddonItem[]
   mainColumnItems?: AddonItem[]
@@ -54,7 +54,6 @@ export type CollectionProps = {
   // reportForm?: FormikHandle<{ comment: string }>
 
   // tags: FollowTag[]
-  contributorCardProps: ContributorCardProps
 
   // licenses: SelectOptions<IconTextOptionProps>
   // setCategoryFilter(text: string): unknown
@@ -70,6 +69,8 @@ export type CollectionProps = {
 export const Collection: FC<CollectionProps> = ({
   mainLayoutProps,
   mainCollectionCardProps,
+  collectionContributorCardProps,
+
   wideColumnItems,
   mainColumnItems,
   sideColumnItems,
@@ -151,7 +152,8 @@ export const Collection: FC<CollectionProps> = ({
   }
 
   const contributorCard = {
-    Item: () => (!isOwner ? <ContributorCard {...ContributorCardStoryProps} /> : <></>),
+    Item: () =>
+      !isOwner ? <CollectionContributorCard {...collectionContributorCardProps} /> : <></>,
     key: 'contributor-card',
   }
 
