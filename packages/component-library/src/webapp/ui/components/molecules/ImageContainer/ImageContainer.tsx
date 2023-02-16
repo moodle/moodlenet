@@ -1,4 +1,4 @@
-import { FC, useRef } from 'react'
+import { CSSProperties, FC, useRef } from 'react'
 import RoundButton from '../../atoms/RoundButton/RoundButton.js'
 import './ImageContainer.scss'
 
@@ -6,6 +6,7 @@ export type ImageContainerProps = {
   uploadImage(image: File): unknown
   deleteImage: () => unknown
   imageUrl?: string
+  style?: CSSProperties
   link?: string
   contentUrl?: string
   imageCover?: boolean
@@ -17,6 +18,7 @@ export const ImageContainer: FC<ImageContainerProps> = ({
   deleteImage,
   imageCover,
   imageUrl,
+  style,
   link,
   contentUrl,
   imageOnClick,
@@ -48,7 +50,7 @@ export const ImageContainer: FC<ImageContainerProps> = ({
   )
 
   return (
-    <div className="image-container">
+    <div className="image-container" style={style}>
       {link ? (
         <a href={contentUrl} target="_blank" rel="noreferrer">
           {imageDiv}

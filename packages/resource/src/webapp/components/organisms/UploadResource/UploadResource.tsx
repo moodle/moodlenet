@@ -78,16 +78,11 @@ export const UploadResource: FC<UploadResourceProps> = ({
       setDeleteFileLinkPressed(false)
     }
     form.values.content && !form.errors.content && setShouldShowErrors(false)
+    console.log('Commint here, content: ', form.values.content)
+    console.log('Commint here, image: ', form.values.image?.location)
 
     setSubStep(form.values.content && !form.errors.content ? 'AddImage' : 'AddFileOrLink')
-  }, [
-    form.values.content,
-    form.errors.content,
-    deleteFileLinkPressed,
-    subStep,
-    setSubStep,
-    setDeleteFileLinkPressed,
-  ])
+  }, [form, deleteFileLinkPressed, subStep, setSubStep, setDeleteFileLinkPressed])
 
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
@@ -205,79 +200,85 @@ export const UploadResource: FC<UploadResourceProps> = ({
         }%, #ffffff00 )`
       : 'none'
 
+  const fileUploader = (
+    <div
+      className="file upload"
+      onClick={selectFile}
+      onKeyUp={e => e.key === 'Enter' && selectFile()}
+      tabIndex={0}
+    >
+      <input
+        ref={uploadFileRef}
+        type="file"
+        name="content"
+        key="content"
+        onChange={({ target }) => {
+          setContent(target.files?.[0])
+        }}
+        hidden
+      />
+      <UploadFileIcon />
+      <span>
+        <span>Drop or click to upload a file!</span>
+        <br />
+        {fileMaxSize && (
+          <span style={{ fontSize: '12px' }}>{/* Max size {prettyBytes(fileMaxSize)} */}</span>
+        )}
+      </span>
+    </div>
+  )
+
+  const imageUploader = (
+    <div
+      className="image upload"
+      onClick={selectImage}
+      tabIndex={0}
+      onKeyUp={e => e.key === 'Enter' && selectImage()}
+    >
+      <input
+        ref={uploadImageRef}
+        type="file"
+        accept=".jpg,.jpeg,.png,.gif"
+        name="image"
+        key="image"
+        onChange={({ target }) => {
+          const file = target.files?.[0]
+          if (file) {
+            const fileAssetInfo: AssetInfo = {
+              location: file,
+            }
+            form.setFieldValue('image', fileAssetInfo)
+          }
+        }}
+        hidden
+      />
+      <UploadImageIcon />
+      <span>Drop or click to upload an image!</span>
+    </div>
+  )
+
+  const uploader = (type: 'file' | 'image') => {
+    return (
+      <div
+        className={`uploader ${isToDrop ? 'hover' : ''} 
+            `}
+        // ${form.values.content instanceof Blob && form.errors.content ? 'error' : ''}
+        id="drop_zone"
+        onDrop={dropHandler}
+        onDragOver={dragOverHandler}
+        onDragLeave={() => setIsToDrop(false)}
+      >
+        {type === 'file' ? fileUploader : imageUploader}
+      </div>
+    )
+  }
+
   return (
     <div className="upload-resource">
       <div className="main-container">
-        {!imageUrl ? (
-          <div
-            className={`uploader ${isToDrop ? 'hover' : ''} ${
-              form.values.content instanceof Blob && form.errors.content ? 'error' : ''
-            }`}
-            id="drop_zone"
-            onDrop={dropHandler}
-            onDragOver={dragOverHandler}
-            onDragLeave={() => setIsToDrop(false)}
-          >
-            {subStep === 'AddFileOrLink' ? (
-              <div
-                className="file upload"
-                onClick={selectFile}
-                onKeyUp={e => e.key === 'Enter' && selectFile()}
-                tabIndex={0}
-              >
-                <input
-                  ref={uploadFileRef}
-                  type="file"
-                  name="content"
-                  key="content"
-                  onChange={({ target }) => {
-                    setContent(target.files?.[0])
-                  }}
-                  hidden
-                />
-                <UploadFileIcon />
-                <span>
-                  <span>Drop or click to upload a file!</span>
-                  <br />
-                  {fileMaxSize && (
-                    <span style={{ fontSize: '12px' }}>
-                      {/* Max size {prettyBytes(fileMaxSize)} */}
-                    </span>
-                  )}
-                </span>
-              </div>
-            ) : (
-              <div
-                className="image upload"
-                onClick={selectImage}
-                tabIndex={0}
-                onKeyUp={e => e.key === 'Enter' && selectImage()}
-              >
-                <input
-                  ref={uploadImageRef}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  name="image"
-                  key="image"
-                  onChange={({ target }) => {
-                    const file = target.files?.[0]
-                    if (file) {
-                      const fileAssetInfo: AssetInfo = {
-                        location: file,
-                      }
-                      form.setFieldValue('image', fileAssetInfo)
-                    }
-                  }}
-                  hidden
-                />
-                <UploadImageIcon />
-                <span>Drop or click to upload an image!</span>
-              </div>
-            )}
-          </div>
-        ) : (
-          imageContainer
-        )}
+        {!form.values.content && uploader('file')}
+        {form.values.content && !imageUrl && uploader('image')}
+        {form.values.content && imageUrl && imageContainer}
       </div>
       <div className="bottom-container">
         {subStep === 'AddFileOrLink' ? (

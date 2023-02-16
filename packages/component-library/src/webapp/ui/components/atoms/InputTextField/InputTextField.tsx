@@ -4,7 +4,6 @@ import './InputTextField.scss'
 
 export type InputTextFieldProps = {
   label?: string
-  key?: string
   edit?: boolean
   displayMode?: boolean
   textAreaAutoSize?: boolean
@@ -27,7 +26,6 @@ export const InputTextField = forwardRef<
   const {
     label,
     edit,
-    key,
     displayMode,
     textAreaAutoSize,
     isTextarea,
@@ -94,7 +92,6 @@ export const InputTextField = forwardRef<
       } ${!disabled && errorLeaves ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
-      key={key}
     >
       {label ? <label>{label}</label> : <></>}
       {isTextarea ? (

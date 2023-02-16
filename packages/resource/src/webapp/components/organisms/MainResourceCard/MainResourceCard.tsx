@@ -32,8 +32,8 @@ import {
 import {
   Dispatch,
   FC,
-  ReactElement,
   SetStateAction,
+  StrictMode,
   useEffect,
   useMemo,
   useRef,
@@ -161,7 +161,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     const credits = image ? (image.credits ? image.credits : undefined) : backupImage?.credits
     return (
       credits && (
-        <div className="image-credits">
+        <div className="image-credits" key="image-credits">
           Photo by
           <a href={credits.owner.url} target="_blank" rel="noreferrer">
             {credits.owner.name}
@@ -181,7 +181,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <InputTextField
       name="name"
       isTextarea
-      key="resource-title"
+      key="title"
       textAreaAutoSize
       displayMode
       className="title underline"
@@ -464,10 +464,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const topHeaderRow = (
     <div className="top-header-row" key="top-header-row">
-      <div className="top-left-header">
+      <div className="top-left-header" key="top-left-header">
         {updatedTopLeftHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
-      <div className="top-right-header">
+      <div className="top-right-header" key="top-right-header">
         {updatedTopRightHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
     </div>
@@ -499,6 +499,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const imageDiv = (
     <img
       className="image"
+      key="image"
       src={imageUrl}
       alt="Background"
       {...(contentType === 'file' && {
@@ -576,6 +577,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <InputTextField
       className="description underline"
       name="description"
+      key="description"
       isTextarea
       textAreaAutoSize
       displayMode
@@ -630,12 +632,18 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     description,
     resourceFooter,
     ...(mainColumnItems ?? []),
-  ].filter((item): item is AddonItem | ReactElement => !!item)
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const snackbars = (
     <>
       {showUrlCopiedAlert && (
-        <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+        <Snackbar
+          type="success"
+          position="bottom"
+          autoHideDuration={6000}
+          showCloseButton={false}
+          key="url-copy-snackbar"
+        >
           Copied to clipoard
         </Snackbar>
       )}
@@ -653,6 +661,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
             maxWidth: '90%',
             maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
           }}
+          key="image-modal"
         >
           <img src={imageUrl} alt="Resource" />
           {getImageCredits(form.values.image)}
@@ -675,6 +684,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           onClose={() => setIsToDelete(false)}
           style={{ maxWidth: '400px' }}
           className="delete-message"
+          key="delete-message-modal"
         >
           The resource will be deleted
         </Modal>
@@ -682,14 +692,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </>
   )
   return (
-    <>
+    <StrictMode>
       {modals}
       {snackbars}
       {/* {searchImageComponent} */}
-      <Card className="main-resource-card" hideBorderWhenSmall={true}>
+      <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
-    </>
+    </StrictMode>
 
     //   <MainLayout {...mainLayoutProps}>
     //     {modals}

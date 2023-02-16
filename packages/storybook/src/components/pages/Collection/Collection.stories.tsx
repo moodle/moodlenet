@@ -173,6 +173,7 @@ export const New: CollectionStory = () => {
       isWaitingForApproval: false,
       isPublished: isPublished,
       setIsPublished: setIsPublished,
+      resourceCardPropsList: [],
       mainCollectionCardProps: useMainCollectionCardStoryProps({
         props: {
           uploadProgress: 50,
