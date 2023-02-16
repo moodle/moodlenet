@@ -149,35 +149,27 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     )
   }
 
-  const title: AddonItem | null = {
-    Item: () => (
-      // form.values.content ? (
-      <>
-        {canEdit ? (
-          <InputTextField
-            name="name"
-            isTextarea
-            textAreaAutoSize
-            displayMode
-            className="title underline"
-            value={form.values.name}
-            placeholder="Title"
-            onChange={form.handleChange}
-            style={{
-              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-            }}
-            error={shouldShowErrors && form.errors.name}
-          />
-        ) : (
-          <div className="title">{form.values.name}</div>
-        )}
-      </>
-    ),
-    // ) : (
-    //   <></>
-    // ),
-    key: 'type-and-actions',
-  }
+  const title = canEdit ? (
+    <InputTextField
+      name="name"
+      isTextarea
+      textAreaAutoSize
+      displayMode
+      className="title underline"
+      value={form.values.name}
+      placeholder="Title"
+      key="title"
+      onChange={form.handleChange}
+      style={{
+        pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+      }}
+      error={shouldShowErrors && form.errors.name}
+    />
+  ) : (
+    <div className="title" key="title">
+      {form.values.name}
+    </div>
+  )
 
   //   const tagsDiv: AddonItem = {
   //     Item: () =>
@@ -185,39 +177,28 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //     key: 'type-and-actions',
   //   }
 
-  const collectionLabel = {
-    Item: () => <div className="collection-label">Collection</div>,
-    key: 'collection-label',
-  }
+  const collectionLabel = (
+    <div className="collection-label" key="collection-label">
+      Collection
+    </div>
+  )
 
-  const savingFeedback = isSaving
-    ? {
-        Item: () => (
-          <abbr className="saving-feedback" title="Saving">
-            <Sync />
-            {/* Saving */}
-          </abbr>
-        ),
-        key: 'saving-feedback',
-      }
-    : null
+  const savingFeedback = isSaving ? (
+    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+      <Sync />
+      {/* Saving */}
+    </abbr>
+  ) : null
 
   const savedFeedback =
-    !isSaving && isSaved
-      ? {
-          Item: () => {
-            // const [showSavedText, setShowSavedText] = useState(true)
-            // setTimeout(() => setShowSavedText(false), 3000)
-            return (
-              <abbr className="saved-feedback" title="Saved">
-                <CloudDoneOutlined />
-                {/* {showSavedText && 'Saved'} */}
-              </abbr>
-            )
-          },
-          key: 'saved-feedback',
-        }
-      : null
+    !isSaving && isSaved ? (
+      // const [showSavedText, setShowSavedText] = useState(true)
+      // setTimeout(() => setShowSavedText(false), 3000)
+      <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+        <CloudDoneOutlined />
+        {/* {showSavedText && 'Saved'} */}
+      </abbr>
+    ) : null
 
   const updatedTopLeftHeaderItems = [
     collectionLabel,
@@ -226,38 +207,29 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const followersButton = isPublished
-    ? {
-        Item: () => (
-          <TertiaryButton
-            className={`follow ${followed ? 'followed' : ''}`}
-            disabled={!isAuthenticated || isOwner}
-            onClick={isAuthenticated && !isOwner && toggleFollow ? toggleFollow : () => undefined}
-            abbr={followed ? 'Unfollow' : 'Follow'}
-          >
-            {followed ? <Person /> : <PermIdentity />}
-            <span>{numFollowers}</span>
-          </TertiaryButton>
-        ),
-        key: 'followers-button',
-      }
-    : null
+  const followersButton = isPublished ? (
+    <TertiaryButton
+      className={`follow ${followed ? 'followed' : ''}`}
+      disabled={!isAuthenticated || isOwner}
+      onClick={isAuthenticated && !isOwner && toggleFollow ? toggleFollow : () => undefined}
+      key="followers-button"
+      abbr={followed ? 'Unfollow' : 'Follow'}
+    >
+      {followed ? <Person /> : <PermIdentity />}
+      <span>{numFollowers}</span>
+    </TertiaryButton>
+  ) : null
 
-  const bookmarkButton = {
-    Item: () =>
-      isAuthenticated ? (
-        <TertiaryButton
-          className={`bookmark ${bookmarked && 'bookmarked'}`}
-          onClick={toggleBookmark}
-          abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-        >
-          {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-        </TertiaryButton>
-      ) : (
-        <></>
-      ),
-    key: 'bookmark-button',
-  }
+  const bookmarkButton = isAuthenticated ? (
+    <TertiaryButton
+      className={`bookmark ${bookmarked && 'bookmarked'}`}
+      onClick={toggleBookmark}
+      abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+      key="bookmark-button"
+    >
+      {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+    </TertiaryButton>
+  ) : null
 
   const shareButton: FloatingMenuContentItem | null = {
     key: 'share-button',
@@ -266,18 +238,12 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     Icon: <Share />,
   }
 
-  const deleteButton: AddonItem | null = canEdit
-    ? {
-        Item: () => (
-          <abbr key="delete-button" tabIndex={0} onClick={() => setIsToDelete(true)} title="Delete">
-            <Delete />
-            Delete
-          </abbr>
-        ),
-
-        key: 'delete-button',
-      }
-    : null
+  const deleteButton = canEdit ? (
+    <abbr key="delete-button" tabIndex={0} onClick={() => setIsToDelete(true)} title="Delete">
+      <Delete />
+      Delete
+    </abbr>
+  ) : null
 
   // const publishButton: AddonItem | null =
   //   width < 800 && canEdit && !isPublished && !isWaitingForApproval
@@ -399,49 +365,38 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ...(moreButtonItems ?? []),
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
-  const moreButton: AddonItem | null =
-    updatedMoreButtonItems.length > 0
-      ? updatedMoreButtonItems.length === 1
-        ? {
-            Item: () => (
-              <>
-                {updatedMoreButtonItems.map(i => {
-                  return (
-                    <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
-                      {i.Icon}
-                    </TertiaryButton>
-                  )
-                })}
-              </>
-            ),
-            key: 'more-button',
+  const moreButton =
+    updatedMoreButtonItems.length > 0 ? (
+      updatedMoreButtonItems.length === 1 ? (
+        updatedMoreButtonItems.map(i => (
+          <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
+            {i.Icon}
+          </TertiaryButton>
+        ))
+      ) : (
+        <FloatingMenu
+          className="more-button"
+          key="more-button"
+          menuContent={
+            updatedMoreButtonItems.map(i => (
+              <div key={i.key} onClick={i.onClick} tabIndex={0}>
+                {i.Icon}
+                {i.text}
+              </div>
+            ))
+            // <div tabIndex={0} onClick={() => setIsReporting(true)}>
+            //   <Flag />
+            //   <Trans>Report</Trans>
+            // </div>,
           }
-        : {
-            Item: () => (
-              <FloatingMenu
-                className="more-button"
-                menuContent={
-                  updatedMoreButtonItems.map(i => (
-                    <div key={i.key} onClick={i.onClick} tabIndex={0}>
-                      {i.Icon}
-                      {i.text}
-                    </div>
-                  ))
-                  // <div tabIndex={0} onClick={() => setIsReporting(true)}>
-                  //   <Flag />
-                  //   <Trans>Report</Trans>
-                  // </div>,
-                }
-                hoverElement={
-                  <TertiaryButton className={`more`} abbr="More options">
-                    <MoreVert />
-                  </TertiaryButton>
-                }
-              />
-            ),
-            key: 'more-button',
+          hoverElement={
+            <TertiaryButton className={`more`} abbr="More options">
+              <MoreVert />
+            </TertiaryButton>
           }
-      : null
+        />
+      )
+    ) : null
 
   // const editSaveButton = canEdit
   //   ? {
@@ -509,23 +464,16 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     moreButton,
   ].filter((item): item is AddonItem => !!item)
 
-  const topHeaderRow: AddonItem = {
-    Item: () => (
-      <div className="top-header-row">
-        <div className="top-left-header">
-          {updatedTopLeftHeaderItems.map(i => (
-            <i.Item key={i.key} />
-          ))}
-        </div>
-        <div className="top-right-header">
-          {updatedTopRightHeaderItems.map(i => (
-            <i.Item key={i.key} />
-          ))}
-        </div>
+  const topHeaderRow = (
+    <div className="top-header-row" key="top-header-row">
+      <div className="top-left-header">
+        {updatedTopLeftHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
-    ),
-    key: 'top-header-row',
-  }
+      <div className="top-right-header">
+        {updatedTopRightHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    </div>
+  )
 
   const updatedHeaderColumnItems = [
     topHeaderRow,
@@ -534,23 +482,19 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ...(headerColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const collectionHeader: AddonItem = {
-    Item: () => (
-      <div className="collection-header">
-        {updatedHeaderColumnItems.map(i => (
-          <i.Item key={i.key} />
-        ))}
-      </div>
-    ),
-    key: 'collection-header',
-  }
+  const collectionHeader = (
+    <div className="collection-header" key="collection-header">
+      {updatedHeaderColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+    </div>
+  )
 
-  const collectionUploader: AddonItem | null = canEdit
-    ? {
-        Item: () => <UploadImage form={form} imageOnClick={() => setIsShowingImage(true)} />,
-        key: 'collection-uploader',
-      }
-    : null
+  const collectionUploader = canEdit ? (
+    <UploadImage
+      form={form}
+      imageOnClick={() => setIsShowingImage(true)}
+      key="collection-uploader"
+    />
+  ) : null
 
   const imageDiv = (
     <div
@@ -561,20 +505,14 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     />
   )
 
-  const imageContainer: AddonItem | null = !canEdit
-    ? {
-        Item: () =>
-          form.values.content && form.values.image ? (
-            <div className="image-container">
-              {imageDiv}
-              {/* {getImageCredits(form.values.image)} */}
-            </div>
-          ) : (
-            <></>
-          ),
-        key: 'image-container',
-      }
-    : null
+  const imageContainer = !canEdit ? (
+    form.values.content && form.values.image ? (
+      <div className="image-container" key="image-container">
+        {imageDiv}
+        {/* {getImageCredits(form.values.image)} */}
+      </div>
+    ) : null
+  ) : null
 
   // const searchImageComponent = isSearchingImage && (
   //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
@@ -595,96 +533,85 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     }
   }, [descriptionRef])
 
-  const description: AddonItem = {
-    Item: () => (
-      // form.values.content ? (
-      <>
-        {canEdit ? (
-          <InputTextField
-            className="description underline"
-            name="description"
-            isTextarea
-            textAreaAutoSize
-            displayMode
-            placeholder="Description"
-            value={form.values.description}
-            onChange={form.handleChange}
-            style={{
-              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-            }}
-            error={shouldShowErrors && form.errors.description}
-          />
-        ) : (
-          <div className="description">
-            <div
-              className="description-text"
-              ref={descriptionRef}
-              style={{
-                height: showFullDescription ? 'fit-content' : '66px',
-                overflow: showFullDescription ? 'auto' : 'hidden',
-                // paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
-              }}
-            >
-              {form.values.description}
-            </div>
-            {!showFullDescription && (
-              <div className="see-more" onClick={() => setShowFullDescription(true)}>
-                ...see more
-              </div>
-            )}
-            {/* {showFullDescription && !isSmallDescription && (
+  const description =
+    // form.values.content ? (
+    canEdit ? (
+      <InputTextField
+        className="description underline"
+        name="description"
+        isTextarea
+        textAreaAutoSize
+        displayMode
+        key="description"
+        placeholder="Description"
+        value={form.values.description}
+        onChange={form.handleChange}
+        style={{
+          pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+        }}
+        error={shouldShowErrors && form.errors.description}
+      />
+    ) : (
+      <div className="description">
+        <div
+          key="description"
+          className="description-text"
+          ref={descriptionRef}
+          style={{
+            height: showFullDescription ? 'fit-content' : '66px',
+            overflow: showFullDescription ? 'auto' : 'hidden',
+            // paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
+          }}
+        >
+          {form.values.description}
+        </div>
+        {!showFullDescription && (
+          <div className="see-more" onClick={() => setShowFullDescription(true)}>
+            ...see more
+          </div>
+        )}
+        {/* {showFullDescription && !isSmallDescription && (
               <div className="see-more" onClick={() => setShowFullDescription(false)}>
                 see less
               </div>
             )} */}
-          </div>
-        )}
-      </>
-    ),
-    key: 'description',
-  }
+      </div>
+    )
 
-  const followButton: AddonItem | null = !isOwner
-    ? {
-        Item: () =>
-          followed ? (
-            <SecondaryButton
-              disabled={!isAuthenticated}
-              onClick={toggleFollow}
-              className="following-button"
-              abbr="Unfollow"
-              color="orange"
-            >
-              Following
-            </SecondaryButton>
-          ) : (
-            <PrimaryButton
-              disabled={!isAuthenticated}
-              onClick={toggleFollow}
-              className="follow-button"
-              abbr="Follow"
-            >
-              Follow
-            </PrimaryButton>
-          ),
-        key: 'follow-button',
-      }
-    : null
+  const followButton = !isOwner ? (
+    followed ? (
+      <SecondaryButton
+        disabled={!isAuthenticated}
+        onClick={toggleFollow}
+        className="following-button"
+        key="follow-button"
+        abbr="Unfollow"
+        color="orange"
+      >
+        Following
+      </SecondaryButton>
+    ) : (
+      <PrimaryButton
+        disabled={!isAuthenticated}
+        onClick={toggleFollow}
+        key="follow-button"
+        className="follow-button"
+        abbr="Follow"
+      >
+        Follow
+      </PrimaryButton>
+    )
+  ) : null
 
   const updatedFooterRowItems = [followButton, ...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
 
-  const collectionFooter: AddonItem = {
-    Item: () => (
-      <div className="collection-footer">
-        {updatedFooterRowItems.map(i => (
-          <i.Item key={i.key} />
-        ))}
-      </div>
-    ),
-    key: 'collection-footer',
-  }
+  const collectionFooter = (
+    <div className="collection-footer" key="collection-footer">
+      {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+    </div>
+  )
 
   const updatedMainColumnItems = [
     imageContainer,
@@ -750,9 +677,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       {snackbars}
       {/* {searchImageComponent} */}
       <Card className="main-collection-card" hideBorderWhenSmall={true}>
-        {updatedMainColumnItems.map(i => (
-          <i.Item key={i.key} />
-        ))}
+        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
     </>
   )

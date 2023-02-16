@@ -1,5 +1,6 @@
 import { Edit, Save } from '@material-ui/icons'
 import {
+  AddonItem,
   // AddonItem,
   // FloatingMenu,
   InputTextField,
@@ -18,6 +19,7 @@ import './ProfileCard.scss'
 
 export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
 export type ProfileCardProps = {
+  mainColumnItems?: AddonItem[]
   form: ReturnType<typeof useFormik<ProfileFormValues>>
   isAuthenticated: boolean
   isEditing?: boolean
@@ -30,6 +32,7 @@ export type ProfileCardProps = {
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
+  mainColumnItems,
   form,
   isEditing,
   canEdit,
@@ -228,11 +231,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     />,
   ]
 
-  const updatedBottomItems = <div className="buttons"></div>
-
-  const updatedContentItems = [updatedTopItems, cardHeader, description, updatedBottomItems]
-  return (
-    <div className="profile-card" key="profile-card">
+  const modals = (
+    <>
       {isShowingBackground && backgroundUrl && (
         <Modal
           className="image-modal"
@@ -255,6 +255,21 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           <img src={avatarUrl} alt="Avatar" />
         </Modal>
       )}
+    </>
+  )
+
+  const updatedBottomItems = <div className="buttons"></div>
+
+  const updatedMainColumnItems = [
+    updatedTopItems,
+    cardHeader,
+    description,
+    updatedBottomItems,
+    ...(mainColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+  return (
+    <div className="profile-card" key="profile-card">
+      {modals}
       <div className={`background-container`}>
         {editBackgroundButton}
         <div
@@ -277,7 +292,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           onClick={() => setIsShowingAvatar(true)}
         ></div>
       </div>
-      <div className="content">{...updatedContentItems}</div>
+      <div className="main-column">
+        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
     </div>
   )
 }
