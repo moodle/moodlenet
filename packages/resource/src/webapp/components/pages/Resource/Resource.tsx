@@ -125,26 +125,6 @@ export const Resource: FC<ResourceProps> = ({
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
-  const mainResourceCard = {
-    Item: () => (
-      <MainResourceCard
-        {...mainResourceCardProps}
-        isOwner={isOwner}
-        isPublished={isPublished}
-        setIsPublished={setIsPublished}
-        isWaitingForApproval={isWaitingForApproval}
-        isAuthenticated={isAuthenticated}
-        // isEditing={isEditing}
-        // setIsEditing={setIsEditing}
-        canEdit={canEdit}
-        form={form}
-        shouldShowErrors={shouldShowErrors}
-        publish={publish}
-      />
-    ),
-    key: 'main-resource-card',
-  }
-
   const contributorCard = {
     Item: () => (!isOwner ? <ResourceContributorCard {...resourceContributorCardProps} /> : <></>),
     key: 'contributor-card',
@@ -159,6 +139,22 @@ export const Resource: FC<ResourceProps> = ({
       setShouldShowErrors(true)
     }
   }
+  const mainResourceCard = (
+    <MainResourceCard
+      {...mainResourceCardProps}
+      isOwner={isOwner}
+      isPublished={isPublished}
+      setIsPublished={setIsPublished}
+      isWaitingForApproval={isWaitingForApproval}
+      isAuthenticated={isAuthenticated}
+      // isEditing={isEditing}
+      // setIsEditing={setIsEditing}
+      canEdit={canEdit}
+      form={form}
+      shouldShowErrors={shouldShowErrors}
+      publish={publish}
+    />
+  )
 
   const editorActionsContainer = {
     Item: () =>
@@ -285,7 +281,7 @@ export const Resource: FC<ResourceProps> = ({
   ].filter((item): item is AddonItem => !!item)
 
   const updatedMainColumnItems = [mainResourceCard, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
+    (item): item is AddonItem | JSX.Element => !!item,
   )
 
   const snackbars = <></>
@@ -322,9 +318,13 @@ export const Resource: FC<ResourceProps> = ({
       <div className="resource">
         <div className="content">
           <div className="main-column">
-            {updatedMainColumnItems.map(i => (
-              <i.Item key={i.key} />
-            ))}
+            {updatedMainColumnItems.map(i => {
+              if ('Item' in i) {
+                return <i.Item key={i.key} />
+              } else {
+                return i
+              }
+            })}
           </div>
           <div className="side-column">
             {updatedSideColumnItems?.map(i => (
