@@ -19,6 +19,8 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps } from '@moodlenet/collection/ui'
+import { randomIntFromInterval } from '@moodlenet/react-app/ui'
+import { ResourceCardStories } from '@moodlenet/resource/stories'
 import { useMainCollectionCardStoryProps } from 'components/organisms/MainCollectionCard/stories-props.js'
 import { useFormik } from 'formik'
 import {
@@ -193,6 +195,33 @@ export const useCollectionStoryProps = (overrides?: {
     collectionContributorCardProps:
       CollectionContributorCardStories.CollectionContributorCardStoryProps,
     collectionUrl: '#',
+
+    resourceCardPropsList: [
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
+        orientation: 'horizontal',
+      }),
+    ],
 
     // reportForm: useFormik<{ comment: string }>({
     //   initialValues: { comment: '' },

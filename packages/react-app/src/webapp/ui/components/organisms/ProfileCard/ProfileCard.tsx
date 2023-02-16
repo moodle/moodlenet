@@ -78,9 +78,6 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
     form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
-  console.log(form.values.backgroundImage)
-  console.log(form.values.avatarImage)
-
   const [backgroundUrl] = useImageUrl(form.values.backgroundImage, defaultBackground)
   const background = {
     backgroundImage: 'url("' + backgroundUrl + '")',
@@ -94,7 +91,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   }
 
   const editButton = canEdit ? (
-    <div className="edit-save">
+    <div className="edit-save" key="edit-save">
       {isEditing ? (
         <PrimaryButton
           color="green"

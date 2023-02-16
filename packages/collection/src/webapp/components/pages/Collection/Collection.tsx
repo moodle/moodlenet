@@ -6,6 +6,7 @@ import {
   SecondaryButton,
 } from '@moodlenet/component-library'
 import { FormikHandle, MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
+import { ResourceCard, ResourceCardProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { SchemaOf } from 'yup'
@@ -34,6 +35,7 @@ export type CollectionProps = {
   collection: CollectionFormValues
   editCollection: (values: CollectionFormValues) => Promise<unknown>
   validationSchema: SchemaOf<CollectionFormValues>
+  resourceCardPropsList: ResourceCardProps[]
 
   isAuthenticated: boolean
   // isApproved: boolean
@@ -78,6 +80,7 @@ export const Collection: FC<CollectionProps> = ({
   // moreButtonItems,
 
   collection,
+  resourceCardPropsList,
   validationSchema,
   editCollection,
   deleteCollection,
@@ -239,11 +242,13 @@ export const Collection: FC<CollectionProps> = ({
     ...(sideColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedMainColumnItems = [mainCollectionCard, ...(mainColumnItems ?? [])].filter(
+  const updatedWideColumnItems = [mainCollectionCard, ...(wideColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
 
-  const updatedWideColumnItems = [mainCollectionCard, ...(wideColumnItems ?? [])].filter(
+  const resourceCardList = resourceCardPropsList.map(r => <ResourceCard {...r} key="" />)
+
+  const updatedMainColumnItems = [...resourceCardList, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
 
