@@ -121,78 +121,93 @@ export const Owner: ProfileStory = () => {
   return <Profile {...props} />
 }
 
-export const Unapproved: ProfileStory = () => {
-  const props = useProfileStoryProps({
-    props: {
-      profileCardProps: useProfileCardStoryProps({
-        props: { isOwner: true, isApproved: false },
-      }),
-      //   collectionCardPropsList: [
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //   ],
-      //   resourceCardPropsList: [
-      //     ResourceCardOwnerPrivateStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //     ResourceCardOwnerPrivateStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //   ],
-      //   showAccountApprovedSuccessAlert: true,
-    },
-  })
-  return <Profile {...props} />
-}
+// export const Unapproved: ProfileStory = () => {
+//   const props = useProfileStoryProps({
+//     props: {
+//       profileCardProps: useProfileCardStoryProps({
+//         props: { isOwner: true, isApproved: false },
+//       }),
+//       //   collectionCardPropsList: [
+//       //     CollectionCardOwnerPrivateStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //     CollectionCardOwnerStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //     CollectionCardOwnerStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //     CollectionCardOwnerPrivateStoryProps(
+//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+//       //     ),
+//       //   ],
+//       //   resourceCardPropsList: [
+//       //     ResourceCardOwnerPrivateStoryProps,
+//       //     ResourceCardOwnerStoryProps,
+//       //     ResourceCardOwnerStoryProps,
+//       //     ResourceCardOwnerPrivateStoryProps,
+//       //     ResourceCardOwnerStoryProps,
+//       //   ],
+//       //   showAccountApprovedSuccessAlert: true,
+//     },
+//   })
+//   return <Profile {...props} />
+// }
 
-export const Activated: ProfileStory = () => {
-  const props = useProfileStoryProps({
-    // editFormValues: {
-    //   description: '',
-    //   location: '',
-    //   avatarImage: null,
-    //   backgroundImage: null,
-    //   organizationName: '',
-    //   siteUrl: '',
-    // },
-    // props: {
-    //   //   collectionCardPropsList: [],
-    //   //   resourceCardPropsList: [],
-    //   showAccountCreationSuccessAlert: true,
-    //   getProfileCardProps: useuseProfileCardStoryProps({
-    //     props: {
-    //       isAuthenticated: true,
-    //       isOwner: true,
-    //     },
-    //   }),
-    // },
-  })
-  return <Profile {...props} />
-}
+// export const Activated: ProfileStory = () => {
+//   const props = useProfileStoryProps({
+//     // editFormValues: {
+//     //   description: '',
+//     //   location: '',
+//     //   avatarImage: null,
+//     //   backgroundImage: null,
+//     //   organizationName: '',
+//     //   siteUrl: '',
+//     // },
+//     // props: {
+//     //   //   collectionCardPropsList: [],
+//     //   //   resourceCardPropsList: [],
+//     //   showAccountCreationSuccessAlert: true,
+//     //   getProfileCardProps: useuseProfileCardStoryProps({
+//     //     props: {
+//     //       isAuthenticated: true,
+//     //       isOwner: true,
+//     //     },
+//     //   }),
+//     // },
+//   })
+//   return <Profile {...props} />
+// }
 
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
-    // props: {
-    //   getProfileCardProps: useuseProfileCardStoryProps({
-    //     props: {
-    //       isAdmin: true,
-    //       isAuthenticated: true,
-    //       isApproved: false,
-    //     },
-    //   }),
-    //   collectionCardPropsList: [],
-    //   resourceCardPropsList: [],
-    //   showAccountApprovedSuccessAlert: true,
-    // },
+    props: {
+      profileCardProps: useProfileCardStoryProps(
+        { props: { isAdmin: true, canEdit: true } },
+
+        //   collectionCardPropsList: [
+        //     CollectionCardOwnerPrivateStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //     CollectionCardOwnerPrivateStoryProps(
+        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        //     ),
+        //   ],
+        //   resourceCardPropsList: [
+        //     ResourceCardOwnerPrivateStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //     ResourceCardOwnerPrivateStoryProps,
+        //     ResourceCardOwnerStoryProps,
+        //   ],
+      ),
+    },
   })
   return <Profile {...props} />
 }
