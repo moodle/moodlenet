@@ -4,6 +4,7 @@ import './SecondaryButton.scss'
 export type SecondaryButtonProps = {
   color?: 'black' | 'orange' | 'grey' | 'red' | 'light-grey' | 'dark-blue'
   className?: string
+  abbr?: string
   disabled?: boolean
   onHoverColor?: 'blue' | 'grey' | 'red' | 'fill-red'
   noHover?: boolean
@@ -15,6 +16,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
   children,
   color,
   className,
+  abbr,
   disabled,
   onHoverColor,
   noHover,
@@ -22,18 +24,19 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
   ...props
 }) => {
   return (
-    <button
+    <abbr
       className={`secondary-button button ${className} ${color} hover-${onHoverColor} ${
         disabled ? 'disabled' : ''
       }`}
+      title={abbr}
       tabIndex={!disabled ? 0 : undefined}
       style={{ pointerEvents: noHover ? 'none' : 'unset' }}
-      onClick={!disabled ? onClick : () => {}}
+      onClick={!disabled ? onClick : () => undefined}
       onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}
       {...props}
     >
       {children}
-    </button>
+    </abbr>
   )
 }
 

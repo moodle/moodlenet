@@ -88,9 +88,11 @@ export const Owner: ResourceStory = () => {
     props: {
       isOwner: true,
       canEdit: true,
+      isPublished: false,
       mainResourceCardProps: useMainResourceCardStoryProps({
         props: {
           isOwner: true,
+          isPublished: false,
           canEdit: true,
           // isSaving: true,
           isSaving: false,
@@ -128,6 +130,7 @@ export const NewResourceProps = {
   name: '',
   description: '',
   category: '',
+  type: '',
   image: null,
   // visibility: 'Private',
   isFile: false,

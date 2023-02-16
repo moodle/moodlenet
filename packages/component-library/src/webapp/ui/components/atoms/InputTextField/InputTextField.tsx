@@ -4,6 +4,7 @@ import './InputTextField.scss'
 
 export type InputTextFieldProps = {
   label?: string
+  key?: string
   edit?: boolean
   displayMode?: boolean
   textAreaAutoSize?: boolean
@@ -12,10 +13,10 @@ export type InputTextFieldProps = {
   action?: ReactNode
 } & (
   | ({
-      textarea?: undefined | false
+      isTextarea?: undefined | false
     } & React.InputHTMLAttributes<HTMLInputElement>)
   | ({
-      textarea: true
+      isTextarea: true
     } & React.TextareaHTMLAttributes<HTMLTextAreaElement>)
 )
 
@@ -23,8 +24,18 @@ export const InputTextField = forwardRef<
   HTMLTextAreaElement | HTMLInputElement | null | undefined,
   InputTextFieldProps
 >((props, forwRef) => {
-  const { label, edit, displayMode, textAreaAutoSize, highlight, error, action, ...fieldProps } =
-    props
+  const {
+    label,
+    edit,
+    key,
+    displayMode,
+    textAreaAutoSize,
+    isTextarea,
+    highlight,
+    error,
+    action,
+    ...fieldProps
+  } = props
 
   const { disabled, hidden, /* value, */ className = '' } = fieldProps
   if ('value' in fieldProps) {
@@ -77,15 +88,16 @@ export const InputTextField = forwardRef<
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        fieldProps.textarea ? ' textarea' : 'text'
+        isTextarea ? ' textarea' : 'text'
       } ${highlight || error ? ' highlight' : ''} ${
         !disabled && !errorLeaves && error ? 'enter-error' : ''
       } ${!disabled && errorLeaves ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
+      key={key}
     >
       {label ? <label>{label}</label> : <></>}
-      {fieldProps.textarea ? (
+      {isTextarea ? (
         <div className={`textarea-container ${displayMode && 'display-mode'} ${edit && 'editing'}`}>
           <textarea
             ref={(fieldElementRef as React.RefObject<HTMLTextAreaElement>) ?? textAreaRef}
@@ -106,6 +118,7 @@ export const InputTextField = forwardRef<
             {..._removeTextAreaProp(fieldProps)}
             className={`${className} ${displayMode && 'display-mode'} ${edit && 'editing'}`}
             disabled={disabled || !edit}
+            style={{ backgroundColor: 'inherit' }}
           />
           {action}
         </div>

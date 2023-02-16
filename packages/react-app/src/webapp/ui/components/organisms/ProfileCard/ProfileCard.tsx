@@ -1,5 +1,6 @@
 import { Edit, Save } from '@material-ui/icons'
 import {
+  AddonItem,
   // AddonItem,
   // FloatingMenu,
   InputTextField,
@@ -18,6 +19,10 @@ import './ProfileCard.scss'
 
 export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
 export type ProfileCardProps = {
+  mainColumnItems?: AddonItem[]
+  topItems?: AddonItem[]
+  titleItems?: AddonItem[]
+  subtitleItems?: AddonItem[]
   form: ReturnType<typeof useFormik<ProfileFormValues>>
   isAuthenticated: boolean
   isEditing?: boolean
@@ -30,6 +35,10 @@ export type ProfileCardProps = {
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
+  mainColumnItems,
+  topItems,
+  titleItems,
+  subtitleItems,
   form,
   isEditing,
   canEdit,
@@ -69,20 +78,20 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
     form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
-  const [backgroundUrl] = useImageUrl(/* form.values.backgroundImage */ null, defaultBackground)
+  const [backgroundUrl] = useImageUrl(form.values.backgroundImage, defaultBackground)
   const background = {
     backgroundImage: 'url("' + backgroundUrl + '")',
     backgroundSize: 'cover',
   }
 
-  const [avatarUrl] = useImageUrl(/* form.values.avatarImage */ null, defaultAvatar)
+  const [avatarUrl] = useImageUrl(form.values.avatarImage, defaultAvatar)
   const avatar = {
     backgroundImage: 'url("' + avatarUrl + '")',
     backgroundSize: 'cover',
   }
 
-  const editButton = (
-    <div className="edit-save">
+  const editButton = canEdit ? (
+    <div className="edit-save" key="edit-save">
       {isEditing ? (
         <PrimaryButton
           color="green"
@@ -100,7 +109,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         </SecondaryButton>
       )}
     </div>
-  )
+  ) : null
 
   const title = isEditing ? (
     <InputTextField
@@ -126,7 +135,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       textAreaAutoSize
       value={form.values.description}
       onChange={form.handleChange}
-      textarea
+      isTextarea
       displayMode
       placeholder={/* t */ `What should others know about you?`}
       className="description"
@@ -142,53 +151,72 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
   )
 
-  const updatedTopItems = canEdit && <div className="top-items">{editButton}</div>
+  const updatedTopItems = [editButton, ...(topItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
 
-  const updatedTitleItems = [title]
+  const topItemsContainer =
+    updatedTopItems.length > 0 ? (
+      <div className="top-items">
+        {updatedTopItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    ) : null
 
-  const baseSubtitleItems = isEditing
-    ? [
-        <span key="edit-location">
-          <InputTextField
-            className="underline"
-            placeholder="Location"
-            value={form.values.location}
-            onChange={form.handleChange}
-            displayMode={true}
-            name="location"
-            edit={isEditing}
-            disabled={form.isSubmitting}
-            error={isEditing && shouldShowErrors && form.errors.location}
-          />
-        </span>,
-        <span key="edit-site-url">
-          <InputTextField
-            className="underline"
-            value={form.values.siteUrl}
-            onChange={form.handleChange}
-            displayMode={true}
-            placeholder="Website"
-            name="siteUrl"
-            edit={isEditing}
-            disabled={form.isSubmitting}
-            error={isEditing && shouldShowErrors && form.errors.siteUrl}
-          />
-        </span>,
-      ]
-    : [
-        <span key="location">{form.values.location}</span>,
-        <a key="site-url" href={form.values.siteUrl} target="_blank" rel="noreferrer">
-          {form.values.siteUrl}
-        </a>,
-      ]
+  const updatedTitleItems = [title, ...(titleItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
 
-  const updatedSubtitleItems = [...baseSubtitleItems]
+  const location = isEditing ? (
+    <span key="edit-location">
+      <InputTextField
+        className="underline"
+        placeholder="Location"
+        value={form.values.location}
+        onChange={form.handleChange}
+        displayMode={true}
+        name="location"
+        edit={isEditing}
+        disabled={form.isSubmitting}
+        error={isEditing && shouldShowErrors && form.errors.location}
+      />
+    </span>
+  ) : (
+    <span key="location">{form.values.location}</span>
+  )
+
+  const siteUrl = isEditing ? (
+    <span key="edit-site-url">
+      <InputTextField
+        className="underline"
+        value={form.values.siteUrl}
+        onChange={form.handleChange}
+        displayMode={true}
+        placeholder="Website"
+        name="siteUrl"
+        edit={isEditing}
+        disabled={form.isSubmitting}
+        error={isEditing && shouldShowErrors && form.errors.siteUrl}
+      />
+    </span>
+  ) : (
+    <a key="site-url" href={form.values.siteUrl} target="_blank" rel="noreferrer">
+      {form.values.siteUrl}
+    </a>
+  )
+
+  const updatedSubtitleItems = [location, siteUrl, ...(subtitleItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
 
   const cardHeader = (
     <div className="profile-card-header" key="card-header">
-      <div className="title">{updatedTitleItems}</div>
+      <div className="title">
+        {updatedTitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
 
-      <div className={`subtitle ${isEditing ? 'edit' : ''}`}>{updatedSubtitleItems}</div>
+      <div className={`subtitle ${isEditing ? 'edit' : ''}`}>
+        {updatedSubtitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
     </div>
   )
 
@@ -227,12 +255,38 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       onClick={selectBackground}
     />,
   ]
+  const backgroundContainer = (
+    <div className={`background-container`}>
+      {editBackgroundButton}
+      <div
+        className={`background`}
+        style={{
+          ...background,
+          pointerEvents: form.isSubmitting || !form.values.backgroundImage ? 'none' : 'inherit',
+          cursor: form.isSubmitting || !form.values.backgroundImage ? 'auto' : 'pointer',
+        }}
+        onClick={() => setIsShowingBackground(true)}
+      ></div>
+    </div>
+  )
 
-  const updatedBottomItems = <div className="buttons"></div>
+  const avatarContainer = (
+    <div className={`avatar-container`}>
+      {editAvatarButton}
+      <div
+        className={`avatar`}
+        style={{
+          ...avatar,
+          pointerEvents: form.isSubmitting || !form.values.avatarImage ? 'auto' : 'inherit',
+          cursor: form.isSubmitting || !form.values.avatarImage ? 'auto' : 'pointer',
+        }}
+        onClick={() => setIsShowingAvatar(true)}
+      ></div>
+    </div>
+  )
 
-  const updatedContentItems = [updatedTopItems, cardHeader, description, updatedBottomItems]
-  return (
-    <div className="profile-card" key="profile-card">
+  const modals = (
+    <>
       {isShowingBackground && backgroundUrl && (
         <Modal
           className="image-modal"
@@ -255,29 +309,27 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           <img src={avatarUrl} alt="Avatar" />
         </Modal>
       )}
-      <div className={`background-container`}>
-        {editBackgroundButton}
-        <div
-          className={`background`}
-          style={{
-            ...background,
-            pointerEvents: !isEditing || defaultBackground === backgroundUrl ? 'none' : 'inherit',
-          }}
-          onClick={() => setIsShowingBackground(true)}
-        ></div>
+    </>
+  )
+
+  const updatedBottomItems = <div className="buttons"></div>
+
+  const updatedMainColumnItems = [
+    backgroundContainer,
+    avatarContainer,
+    topItemsContainer,
+    cardHeader,
+    description,
+    updatedBottomItems,
+    ...(mainColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  return (
+    <div className="profile-card" key="profile-card">
+      {modals}
+      <div className="main-column">
+        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
-      <div className={`avatar-container`}>
-        {editAvatarButton}
-        <div
-          className={`avatar`}
-          style={{
-            ...avatar,
-            pointerEvents: !isEditing || defaultAvatar === avatarUrl ? 'none' : 'inherit',
-          }}
-          onClick={() => setIsShowingAvatar(true)}
-        ></div>
-      </div>
-      <div className="content">{...updatedContentItems}</div>
     </div>
   )
 }

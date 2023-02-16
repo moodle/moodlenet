@@ -78,9 +78,12 @@
     > .image-container {
       display: flex;
       justify-content: flex-end;
-      border-radius: 15px;
       height: 100%;
       width: 100%;
+
+      > .image {
+        border-radius: 10px;
+      }
 
       > .round-button {
         margin: 12px;

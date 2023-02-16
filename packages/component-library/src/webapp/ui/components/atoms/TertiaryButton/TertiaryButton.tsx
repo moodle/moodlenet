@@ -3,22 +3,31 @@ import './TertiaryButton.scss'
 
 export type TertiaryButtonProps = {
   className?: string
+  abbr?: string
   disabled?: boolean
   children: ReactNode
   color?: 'black'
   onClick?(arg0?: unknown): unknown | any
 }
 
-export const TertiaryButton: FC<TertiaryButtonProps> = ({ className, disabled, children, color, onClick }) => {
+export const TertiaryButton: FC<TertiaryButtonProps> = ({
+  className,
+  abbr,
+  disabled,
+  children,
+  color,
+  onClick,
+}) => {
   return (
-    <div
+    <abbr
       className={`tertiary-button ${className} ${disabled ? 'disabled' : ''} ${color ? color : ''}`}
+      title={abbr}
       tabIndex={!disabled ? 0 : undefined}
-      onClick={!disabled ? onClick : () => {}}
+      onClick={!disabled ? onClick : () => undefined}
       onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}
     >
       {children}
-    </div>
+    </abbr>
   )
 }
 

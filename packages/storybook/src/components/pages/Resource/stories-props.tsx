@@ -8,16 +8,12 @@ import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, st
 // import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-// import { CollectionTextOptionProps } from '../NewResource/AddToCollections/storiesData'
+// import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
 import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-library'
 // import {
-//   CategoriesTextOptionProps,
-//   LicenseIconTextOptionProps,
-//   VisbilityIconTextOptionProps,
-// } from '../NewResource/UploadResource/storiesData'
-import { ContributorCardStories } from '@moodlenet/resource/stories'
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 // import { useFormik } from 'formik'
+import { ResourceContributorCardStories } from '@moodlenet/resource/stories'
 import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 import { useMainResourceCardStoryProps } from 'components/organisms/MainResourceCard/stories-props.js'
 import { useFormik } from 'formik'
@@ -117,7 +113,7 @@ export const useResourceForm = (overrides?: Partial<ResourceFormValues>) => {
       content: '',
       name: 'Best resource ever',
       description:
-        'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+        'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
       type: TypeTextOptionProps[2]!.value,
       image: {
         location:
@@ -147,12 +143,12 @@ export const useResourceStoryProps = (overrides?: {
     // validationSchema,
     // onSubmit: action('submit edit'),
     // initialValues: {
-    isFile: true,
-    content: '',
+    isFile: false,
+    content: 'moodle.net',
     // visibility: 'Public',
     name: 'Best resource ever',
     description:
-      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     // category: CategoriesTextOptionProps[2]!.value,
     // language: LanguagesTextOptionProps[2]?.value,
     // level: LevelTextOptionProps[2]?.value,
@@ -223,7 +219,7 @@ export const useResourceStoryProps = (overrides?: {
     // liked: false,
     numLikes: 23,
     // bookmarked: true,
-    contributorCardProps: ContributorCardStories.ContributorCardStoryProps,
+    resourceContributorCardProps: ResourceContributorCardStories.ResourceContributorCardStoryProps,
     contentUrl: '#',
     contentType: 'link',
     resourceFormat: 'Video',

@@ -64,10 +64,12 @@ export const ReportModal: FC<ReportModalProps> = ({
       style={{ maxWidth: '400px' }}
     >
       <InputTextField
-        textarea={true}
+        isTextarea={true}
         name="comment"
         edit
-        placeholder={/* t */ `This is spam / commercial / not educational / fraud / copyrighted / other reason.`}
+        placeholder={
+          /* t */ `This is spam / commercial / not educational / fraud / copyrighted / other reason.`
+        }
         // onChange={reportForm.handleChange}
       />
       <div className="required">
