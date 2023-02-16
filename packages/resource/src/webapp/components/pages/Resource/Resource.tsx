@@ -18,10 +18,9 @@ import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { SchemaOf } from 'yup'
 import { ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
 import {
-  ContributorCard,
-  ContributorCardProps,
-} from '../../molecules/ContributorCard/ContributorCard.js'
-import { ContributorCardStoryProps } from '../../molecules/ContributorCard/ContributorCard.stories.js'
+  ResourceContributorCard,
+  ResourceContributorCardProps,
+} from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import {
   MainResourceCard,
   MainResourceCardProps,
@@ -31,6 +30,7 @@ import './Resource.scss'
 export type ResourceProps = {
   mainLayoutProps: MainLayoutProps
   mainResourceCardProps: MainResourceCardProps
+  resourceContributorCardProps: ResourceContributorCardProps
 
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
@@ -57,30 +57,16 @@ export type ResourceProps = {
   isWaitingForApproval?: boolean
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-
   // reportForm?: FormikHandle<{ comment: string }>
-
   // tags: FollowTag[]
-  contributorCardProps: ContributorCardProps
   collections: SelectOptionsMulti<OptionItemProp>
-
-  // licenses: SelectOptions<IconTextOptionProps>
-  // setCategoryFilter(text: string): unknown
-  // categories: SelectOptions<TextOptionProps>
-  // setTypeFilter(text: string): unknown
-  // types: SelectOptions<TextOptionProps>
-  // setLevelFilter(text: string): unknown
-  // levels: SelectOptions<TextOptionProps>
-  // setLanguageFilter(text: string): unknown
-  // languages: SelectOptions<TextOptionProps>
-  downloadFilename: string
-  contentUrl: string
-  type: string
 } & ResourceType
 
 export const Resource: FC<ResourceProps> = ({
   mainLayoutProps,
   mainResourceCardProps,
+  resourceContributorCardProps,
+
   mainColumnItems,
   sideColumnItems,
   extraDetailsItems,
@@ -139,34 +125,12 @@ export const Resource: FC<ResourceProps> = ({
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
-  const mainResourceCard = {
-    Item: () => (
-      <MainResourceCard
-        {...mainResourceCardProps}
-        isOwner={isOwner}
-        isPublished={isPublished}
-        setIsPublished={setIsPublished}
-        isWaitingForApproval={isWaitingForApproval}
-        isAuthenticated={isAuthenticated}
-        // isEditing={isEditing}
-        // setIsEditing={setIsEditing}
-        canEdit={canEdit}
-        form={form}
-        shouldShowErrors={shouldShowErrors}
-        publish={publish}
-      />
-    ),
-    key: 'main-resource-card',
-  }
-
-  const contributorCard = {
-    Item: () => (!isOwner ? <ContributorCard {...ContributorCardStoryProps} /> : <></>),
-    key: 'contributor-card',
-  }
+  const contributorCard = !isOwner ? (
+    <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
+  ) : null
 
   const publish = () => {
     if (form.isValid) {
-      console.log('is form valid')
       form.submitForm()
       setShouldShowErrors(false)
       setIsPublished(true)
@@ -174,6 +138,22 @@ export const Resource: FC<ResourceProps> = ({
       setShouldShowErrors(true)
     }
   }
+  const mainResourceCard = (
+    <MainResourceCard
+      {...mainResourceCardProps}
+      isOwner={isOwner}
+      isPublished={isPublished}
+      setIsPublished={setIsPublished}
+      isWaitingForApproval={isWaitingForApproval}
+      isAuthenticated={isAuthenticated}
+      // isEditing={isEditing}
+      // setIsEditing={setIsEditing}
+      canEdit={canEdit}
+      form={form}
+      shouldShowErrors={shouldShowErrors}
+      publish={publish}
+    />
+  )
 
   const editorActionsContainer = {
     Item: () =>
@@ -199,12 +179,6 @@ export const Resource: FC<ResourceProps> = ({
           )}
         </Card>
       ) : (
-        // {canEdit && (
-        //   <SecondaryButton color={'red'} onClick={deleteResource}>
-        //     {/* <Edit /> */}
-        //     Delete
-        //   </SecondaryButton>
-        // )}
         <></>
       ),
     key: 'editor-actions-container',
@@ -225,7 +199,9 @@ export const Resource: FC<ResourceProps> = ({
             Add to Collection
           </SecondaryButton> */}
           <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
-            <SecondaryButton>
+            <SecondaryButton
+              abbr={form.values.content instanceof File ? 'Download file' : 'Open link'}
+            >
               {form.values.content instanceof File ? (
                 <>
                   <InsertDriveFile />
@@ -301,10 +277,10 @@ export const Resource: FC<ResourceProps> = ({
     generalActionsContainer,
     extraDetailsContainer,
     ...(sideColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const updatedMainColumnItems = [mainResourceCard, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
+    (item): item is AddonItem | JSX.Element => !!item,
   )
 
   const snackbars = <></>
@@ -341,14 +317,10 @@ export const Resource: FC<ResourceProps> = ({
       <div className="resource">
         <div className="content">
           <div className="main-column">
-            {updatedMainColumnItems.map(i => (
-              <i.Item key={i.key} />
-            ))}
+            {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
           <div className="side-column">
-            {updatedSideColumnItems?.map(i => (
-              <i.Item key={i.key} />
-            ))}
+            {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
         </div>
       </div>

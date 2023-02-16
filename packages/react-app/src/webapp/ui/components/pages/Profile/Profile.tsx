@@ -137,7 +137,12 @@ export const Profile: FC<ProfileProps> = ({
   // )
   // ]
 
-  const updatedMainColumnItems: AddonItem[] = [...(mainColumnItems ?? [])]
+  const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem /* | JSX.Element  */ => !!item,
+  )
+  const updatedSideColumnItems = [...(sideColumnItems ?? [])].filter(
+    (item): item is AddonItem /* | JSX.Element */ => !!item,
+  )
 
   return (
     <MainLayout {...mainLayoutProps}>
@@ -155,14 +160,10 @@ export const Profile: FC<ProfileProps> = ({
               // setIsReporting={setIsReporting}
               // openSendMessage={() => setIsSendingMessage(/* !!sendEmailForm */ true)}
             />
-            {updatedMainColumnItems.map(i => (
-              <i.Item key={i.key} />
-            ))}
+            {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
           <div className="side-column">
-            {sideColumnItems?.map(i => (
-              <i.Item key={i.key} />
-            ))}
+            {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
         </div>
       </div>

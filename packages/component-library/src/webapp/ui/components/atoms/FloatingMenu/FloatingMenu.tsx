@@ -1,6 +1,13 @@
-import React, { FC, KeyboardEvent, useRef, useState } from 'react'
+import React, { FC, KeyboardEvent, ReactElement, useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
+
+export type FloatingMenuContentItem = {
+  Icon: ReactElement
+  text: string
+  key: string
+  onClick(): unknown
+}
 
 export type FloatingMenuProps = {
   menuContent: React.ReactElement[]
@@ -112,7 +119,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   // }, [hoverElementRef])
 
   return (
-    <abbr title={abbr} className={`floating-menu-container ${className}`}>
+    <div className={`floating-menu-container ${className}`}>
       <div
         className={`floating-menu ${className}`}
         onBlur={e => handleBlur(e)}
@@ -120,8 +127,9 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
         onMouseDown={e => handleOnMouseDown(e)}
         tabIndex={0}
       >
-        <div
+        <abbr
           className="hover-element"
+          title={abbr}
           ref={hoverElementRef}
           onKeyUp={switchMenu}
           onKeyDown={closeMenu}
@@ -129,7 +137,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
           onMouseLeave={() => hover && close()}
         >
           {hoverElement}
-        </div>
+        </abbr>
         <div
           className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
           style={{
@@ -143,7 +151,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
           <Card className="content">{updatedMenuContent}</Card>
         </div>
       </div>
-    </abbr>
+    </div>
   )
 }
 
