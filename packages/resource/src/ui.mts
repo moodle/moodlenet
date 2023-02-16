@@ -3,7 +3,7 @@ export * from './webapp/components/molecules/ResourceContributorCard/ResourceCon
 export * from './webapp/components/organisms/Header/Header.js'
 export * from './webapp/components/organisms/Header/HeaderResource.js'
 export * from './webapp/components/organisms/MainResourceCard/MainResourceCard.js'
-export * from './webapp/components/organisms/ResourceCard/ResourceCardHooks.js'
+export * from './webapp/components/organisms/ResourceCard/ResourceCard.js'
 export * from './webapp/components/organisms/UploadResource/UploadResource.js'
 export * from './webapp/components/pages/Resource/Resource.js'
 export * from './webapp/components/pages/Resource/ResourceContainer.js'
