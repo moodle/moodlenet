@@ -130,33 +130,6 @@ export const Collection: FC<CollectionProps> = ({
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
-  const mainCollectionCard = {
-    Item: () => (
-      <MainCollectionCard
-        {...mainCollectionCardProps}
-        isOwner={isOwner}
-        isPublished={isPublished}
-        setIsPublished={setIsPublished}
-        isWaitingForApproval={isWaitingForApproval}
-        isAuthenticated={isAuthenticated}
-        numFollowers={numFollowers}
-        // isEditing={isEditing}
-        // setIsEditing={setIsEditing}
-        canEdit={canEdit}
-        form={form}
-        shouldShowErrors={shouldShowErrors}
-        publish={publish}
-      />
-    ),
-    key: 'main-collection-card',
-  }
-
-  const contributorCard = {
-    Item: () =>
-      !isOwner ? <CollectionContributorCard {...collectionContributorCardProps} /> : <></>,
-    key: 'contributor-card',
-  }
-
   const publish = () => {
     if (form.isValid) {
       form.submitForm()
@@ -167,34 +140,55 @@ export const Collection: FC<CollectionProps> = ({
     }
   }
 
-  const editorActionsContainer = {
-    Item: () =>
-      canEdit ? (
-        <Card className="collection-action-card" hideBorderWhenSmall={true}>
-          {isPublished && (
-            <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
-              Published
-            </PrimaryButton>
-          )}
-          {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
-            <PrimaryButton onClick={publish} color="green">
-              Publish
-            </PrimaryButton>
-          )}
-          {!isPublished && isWaitingForApproval && (
-            <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
-          )}
-          {isPublished || isWaitingForApproval ? (
-            <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
-          ) : (
-            <></>
-          )}
-        </Card>
+  const mainCollectionCard = (
+    <MainCollectionCard
+      {...mainCollectionCardProps}
+      isOwner={isOwner}
+      isPublished={isPublished}
+      setIsPublished={setIsPublished}
+      isWaitingForApproval={isWaitingForApproval}
+      isAuthenticated={isAuthenticated}
+      numFollowers={numFollowers}
+      // isEditing={isEditing}
+      // setIsEditing={setIsEditing}
+      canEdit={canEdit}
+      form={form}
+      shouldShowErrors={shouldShowErrors}
+      key="main-collection-card"
+      publish={publish}
+    />
+  )
+
+  const contributorCard = !isOwner ? (
+    <CollectionContributorCard {...collectionContributorCardProps} key="contributor-card" />
+  ) : null
+
+  const editorActionsContainer = canEdit ? (
+    <Card
+      className="collection-action-card"
+      hideBorderWhenSmall={true}
+      key="editor-actions-container"
+    >
+      {isPublished && (
+        <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
+          Published
+        </PrimaryButton>
+      )}
+      {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+        <PrimaryButton onClick={publish} color="green">
+          Publish
+        </PrimaryButton>
+      )}
+      {!isPublished && isWaitingForApproval && (
+        <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
+      )}
+      {isPublished || isWaitingForApproval ? (
+        <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
       ) : (
         <></>
-      ),
-    key: 'editor-actions-container',
-  }
+      )}
+    </Card>
+  ) : null
 
   // const license: AddonItem | null =
   //   contentType === 'file'
@@ -231,19 +225,12 @@ export const Collection: FC<CollectionProps> = ({
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const extraDetailsContainer = {
-    Item: () =>
-      updatedExtraDetailsItems.length > 0 ? (
-        <Card className="extra-details-card" hideBorderWhenSmall={true}>
-          {updatedExtraDetailsItems.map(i => (
-            <i.Item key={i.key} />
-          ))}
-        </Card>
-      ) : (
-        <></>
-      ),
-    key: 'extra-edtails-container',
-  }
+  const extraDetailsContainer =
+    updatedExtraDetailsItems.length > 0 ? (
+      <Card className="extra-details-card" key="extra-edtails-container" hideBorderWhenSmall={true}>
+        {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </Card>
+    ) : null
 
   const updatedSideColumnItems = [
     contributorCard,
@@ -294,20 +281,14 @@ export const Collection: FC<CollectionProps> = ({
       <div className="collection">
         <div className="content">
           <div className="wide-column">
-            {updatedWideColumnItems.map(i => (
-              <i.Item key={i.key} />
-            ))}
+            {updatedWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
           <div className="main-and-side-columns">
             <div className="main-column">
-              {updatedMainColumnItems.map(i => (
-                <i.Item key={i.key} />
-              ))}
+              {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
             </div>
             <div className="side-column">
-              {updatedSideColumnItems?.map(i => (
-                <i.Item key={i.key} />
-              ))}
+              {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
             </div>
           </div>
         </div>

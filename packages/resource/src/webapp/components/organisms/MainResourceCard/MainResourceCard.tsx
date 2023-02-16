@@ -177,32 +177,27 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     )
   }
 
-  const title: AddonItem | null = {
-    Item: () => (
-      // form.values.content ? (
-      <>
-        {canEdit ? (
-          <InputTextField
-            name="name"
-            isTextarea
-            textAreaAutoSize
-            displayMode
-            className="title underline"
-            value={form.values.name}
-            placeholder="Title"
-            onChange={form.handleChange}
-            style={{
-              pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-            }}
-            error={shouldShowErrors && form.errors.name}
-          />
-        ) : (
-          <div className="title">{form.values.name}</div>
-        )}
-      </>
-    ),
-    key: 'resource-title',
-  }
+  const title = canEdit ? (
+    <InputTextField
+      name="name"
+      isTextarea
+      key="resource-title"
+      textAreaAutoSize
+      displayMode
+      className="title underline"
+      value={form.values.name}
+      placeholder="Title"
+      onChange={form.handleChange}
+      style={{
+        pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+      }}
+      error={shouldShowErrors && form.errors.name}
+    />
+  ) : (
+    <div className="title" key="resource-title">
+      {form.values.name}
+    </div>
+  )
 
   //   const tagsDiv: AddonItem = {
   //     Item: () =>
@@ -210,54 +205,41 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //     key: 'type-and-actions',
   //   }
 
-  const resourceLabel = {
-    Item: () => <div className="resource-label">Resource</div>,
-    key: 'resource-label',
-  }
+  const resourceLabel = (
+    <div className="resource-label" key="resource-label">
+      Resource
+    </div>
+  )
 
-  const typePill = {
-    Item: () =>
-      type && (
-        <div
-          className="type-pill"
-          style={{
-            background: typeColor,
-          }}
-        >
-          {typeName}
-        </div>
-      ),
-    key: 'type-pill',
-  }
+  const typePill = type && (
+    <div
+      className="type-pill"
+      key="type-pill"
+      style={{
+        background: typeColor,
+      }}
+    >
+      {typeName}
+    </div>
+  )
 
-  const savingFeedback = isSaving
-    ? {
-        Item: () => (
-          <abbr className="saving-feedback" title="Saving">
-            <Sync />
-            {/* Saving */}
-          </abbr>
-        ),
-        key: 'saving-feedback',
-      }
-    : null
+  const savingFeedback = isSaving ? (
+    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+      <Sync />
+      {/* Saving */}
+    </abbr>
+  ) : null
 
   const savedFeedback =
-    !isSaving && isSaved
-      ? {
-          Item: () => {
-            // const [showSavedText, setShowSavedText] = useState(true)
-            // setTimeout(() => setShowSavedText(false), 3000)
-            return (
-              <abbr className="saved-feedback" title="Saved">
-                <CloudDoneOutlined />
-                {/* {showSavedText && 'Saved'} */}
-              </abbr>
-            )
-          },
-          key: 'saved-feedback',
-        }
-      : null
+    !isSaving && isSaved ? (
+      // const [showSavedText, setShowSavedText] = useState(true)
+      // setTimeout(() => setShowSavedText(false), 3000)
+
+      <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+        <CloudDoneOutlined />
+        {/* {showSavedText && 'Saved'} */}
+      </abbr>
+    ) : null
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
@@ -267,37 +249,28 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const likeButton = isPublished
-    ? {
-        Item: () => (
-          <TertiaryButton
-            className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
-            onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
-            abbr={liked ? 'Unlike' : 'Like'}
-          >
-            {liked ? <Favorite /> : <FavoriteBorder />}
-            <span>{numLikes}</span>
-          </TertiaryButton>
-        ),
-        key: 'like-button',
-      }
-    : null
+  const likeButton = isPublished ? (
+    <TertiaryButton
+      className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
+      onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
+      abbr={liked ? 'Unlike' : 'Like'}
+      key="like-button"
+    >
+      {liked ? <Favorite /> : <FavoriteBorder />}
+      <span>{numLikes}</span>
+    </TertiaryButton>
+  ) : null
 
-  const bookmarkButton = {
-    Item: () =>
-      isAuthenticated ? (
-        <TertiaryButton
-          className={`bookmark ${bookmarked && 'bookmarked'}`}
-          onClick={toggleBookmark}
-          abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-        >
-          {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-        </TertiaryButton>
-      ) : (
-        <></>
-      ),
-    key: 'bookmark-button',
-  }
+  const bookmarkButton = isAuthenticated ? (
+    <TertiaryButton
+      className={`bookmark ${bookmarked && 'bookmarked'}`}
+      onClick={toggleBookmark}
+      key="bookmark-button"
+      abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+    >
+      {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+    </TertiaryButton>
+  ) : null
 
   const shareButton: FloatingMenuContentItem | null = {
     key: 'share-button',
@@ -333,30 +306,19 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const publishingButton: AddonItem | null =
-    width < 800 && canEdit && !isPublished && isWaitingForApproval
-      ? {
-          Item: () => (
-            <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
-              <HourglassBottom style={{ fill: '#d0d1db' }} />
-            </abbr>
-          ),
+  const publishingButton =
+    width < 800 && canEdit && !isPublished && isWaitingForApproval ? (
+      <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
+        <HourglassBottom style={{ fill: '#d0d1db' }} />
+      </abbr>
+    ) : null
 
-          key: 'publishing-button',
-        }
-      : null
-
-  const publishedButton: AddonItem | null =
-    width < 800 && canEdit && isPublished
-      ? {
-          Item: () => (
-            <abbr title="Resource published" style={{ cursor: 'initial' }}>
-              <Public style={{ fill: '#00bd7e' }} />
-            </abbr>
-          ),
-          key: 'publishing-button',
-        }
-      : null
+  const publishedButton =
+    width < 800 && canEdit && isPublished ? (
+      <abbr title="Resource published" key="publishing-button" style={{ cursor: 'initial' }}>
+        <Public style={{ fill: '#00bd7e' }} />
+      </abbr>
+    ) : null
 
   // const sendToMoodleButton: AddonItem | null =
   //   width < 800 && form.values.content
@@ -405,43 +367,34 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(moreButtonItems ?? []),
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
-  const moreButton: AddonItem | null =
-    updatedMoreButtonItems.length > 0
-      ? updatedMoreButtonItems.length === 1
-        ? {
-            Item: () => (
-              <>
-                {updatedMoreButtonItems.map(i => {
-                  return (
-                    <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
-                      {i.Icon}
-                    </TertiaryButton>
-                  )
-                })}
-              </>
-            ),
-            key: 'more-button',
+  const moreButton =
+    updatedMoreButtonItems.length > 0 ? (
+      updatedMoreButtonItems.length === 1 ? (
+        updatedMoreButtonItems.map(i => {
+          return (
+            <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
+              {i.Icon}
+            </TertiaryButton>
+          )
+        })
+      ) : (
+        <FloatingMenu
+          className="more-button"
+          key="more-button"
+          menuContent={updatedMoreButtonItems.map(i => (
+            <div key={i.key} onClick={i.onClick} tabIndex={0}>
+              {i.Icon}
+              {i.text}
+            </div>
+          ))}
+          hoverElement={
+            <TertiaryButton className={`more`} abbr="More options">
+              <MoreVert />
+            </TertiaryButton>
           }
-        : {
-            Item: () => (
-              <FloatingMenu
-                className="more-button"
-                menuContent={updatedMoreButtonItems.map(i => (
-                  <div key={i.key} onClick={i.onClick} tabIndex={0}>
-                    {i.Icon}
-                    {i.text}
-                  </div>
-                ))}
-                hoverElement={
-                  <TertiaryButton className={`more`} abbr="More options">
-                    <MoreVert />
-                  </TertiaryButton>
-                }
-              />
-            ),
-            key: 'more-button',
-          }
-      : null
+        />
+      )
+    ) : null
 
   // const editSaveButton = canEdit
   //   ? {
@@ -509,23 +462,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     moreButton,
   ].filter((item): item is AddonItem => !!item)
 
-  const topHeaderRow: AddonItem = {
-    Item: () => (
-      <div className="top-header-row">
-        <div className="top-left-header">
-          {updatedTopLeftHeaderItems.map(i => (
-            <i.Item key={i.key} />
-          ))}
-        </div>
-        <div className="top-right-header">
-          {updatedTopRightHeaderItems.map(i => (
-            <i.Item key={i.key} />
-          ))}
-        </div>
+  const topHeaderRow = (
+    <div className="top-header-row" key="top-header-row">
+      <div className="top-left-header">
+        {updatedTopLeftHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
-    ),
-    key: 'top-header-row',
-  }
+      <div className="top-right-header">
+        {updatedTopRightHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    </div>
+  )
 
   const updatedHeaderColumnItems = [
     topHeaderRow,
@@ -534,30 +480,21 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(headerColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const resourceHeader: AddonItem = {
-    Item: () => (
-      <div className="resource-header">
-        {updatedHeaderColumnItems.map(i => (
-          <i.Item key={i.key} />
-        ))}
-      </div>
-    ),
-    key: 'resource-header',
-  }
+  const resourceHeader = (
+    <div className="resource-header" key="resource-header">
+      {updatedHeaderColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+    </div>
+  )
 
-  const resourceUploader: AddonItem | null = canEdit
-    ? {
-        Item: () => (
-          <UploadResource
-            form={form}
-            fileMaxSize={fileMaxSize}
-            uploadProgress={uploadProgress}
-            imageOnClick={() => setIsShowingImage(true)}
-          />
-        ),
-        key: 'resource-uploader',
-      }
-    : null
+  const resourceUploader = canEdit ? (
+    <UploadResource
+      form={form}
+      fileMaxSize={fileMaxSize}
+      uploadProgress={uploadProgress}
+      key="resource-uploader"
+      imageOnClick={() => setIsShowingImage(true)}
+    />
+  ) : null
 
   const imageDiv = (
     <img
@@ -571,26 +508,20 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     />
   )
 
-  const imageContainer: AddonItem | null = !canEdit
-    ? {
-        Item: () =>
-          form.values.content && form.values.image ? (
-            <div className="image-container">
-              {contentType === 'link' ? (
-                <a href={contentUrl} target="_blank" rel="noreferrer">
-                  {imageDiv}
-                </a>
-              ) : (
-                <>{imageDiv}</>
-              )}
-              {/* {getImageCredits(form.values.image)} */}
-            </div>
-          ) : (
-            <></>
-          ),
-        key: 'image-container',
-      }
-    : null
+  const imageContainer = !canEdit ? (
+    form.values.content && form.values.image ? (
+      <div className="image-container" key="image-container">
+        {contentType === 'link' ? (
+          <a href={contentUrl} target="_blank" rel="noreferrer">
+            {imageDiv}
+          </a>
+        ) : (
+          <>{imageDiv}</>
+        )}
+        {/* {getImageCredits(form.values.image)} */}
+      </div>
+    ) : null
+  ) : null
 
   // const searchImageComponent = isSearchingImage && (
   //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
@@ -686,16 +617,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const resourceFooter: AddonItem = {
-    Item: () => (
-      <div className="resource-footer">
-        {updatedFooterRowItems.map(i => (
-          <i.Item key={i.key} />
-        ))}
-      </div>
-    ),
-    key: 'resource-footer',
-  }
+  const resourceFooter = (
+    <div className="resource-footer" key="resource-footer">
+      {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+    </div>
+  )
 
   const updatedMainColumnItems = [
     resourceHeader,
@@ -761,13 +687,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       {snackbars}
       {/* {searchImageComponent} */}
       <Card className="main-resource-card" hideBorderWhenSmall={true}>
-        {updatedMainColumnItems.map(i => {
-          if ('Item' in i) {
-            return <i.Item key={i.key} />
-          } else {
-            return i
-          }
-        })}
+        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
     </>
 

@@ -125,10 +125,9 @@ export const Resource: FC<ResourceProps> = ({
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
-  const contributorCard = {
-    Item: () => (!isOwner ? <ResourceContributorCard {...resourceContributorCardProps} /> : <></>),
-    key: 'contributor-card',
-  }
+  const contributorCard = !isOwner ? (
+    <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
+  ) : null
 
   const publish = () => {
     if (form.isValid) {
@@ -278,7 +277,7 @@ export const Resource: FC<ResourceProps> = ({
     generalActionsContainer,
     extraDetailsContainer,
     ...(sideColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const updatedMainColumnItems = [mainResourceCard, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
@@ -318,18 +317,10 @@ export const Resource: FC<ResourceProps> = ({
       <div className="resource">
         <div className="content">
           <div className="main-column">
-            {updatedMainColumnItems.map(i => {
-              if ('Item' in i) {
-                return <i.Item key={i.key} />
-              } else {
-                return i
-              }
-            })}
+            {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
           <div className="side-column">
-            {updatedSideColumnItems?.map(i => (
-              <i.Item key={i.key} />
-            ))}
+            {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
         </div>
       </div>
