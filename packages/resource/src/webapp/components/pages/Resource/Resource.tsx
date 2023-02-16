@@ -18,10 +18,9 @@ import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { SchemaOf } from 'yup'
 import { ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
 import {
-  ContributorCard,
-  ContributorCardProps,
-} from '../../molecules/ContributorCard/ContributorCard.js'
-import { ContributorCardStoryProps } from '../../molecules/ContributorCard/ContributorCard.stories.js'
+  ResourceContributorCard,
+  ResourceContributorCardProps,
+} from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import {
   MainResourceCard,
   MainResourceCardProps,
@@ -31,6 +30,7 @@ import './Resource.scss'
 export type ResourceProps = {
   mainLayoutProps: MainLayoutProps
   mainResourceCardProps: MainResourceCardProps
+  resourceContributorCardProps: ResourceContributorCardProps
 
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
@@ -57,30 +57,16 @@ export type ResourceProps = {
   isWaitingForApproval?: boolean
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-
   // reportForm?: FormikHandle<{ comment: string }>
-
   // tags: FollowTag[]
-  contributorCardProps: ContributorCardProps
   collections: SelectOptionsMulti<OptionItemProp>
-
-  // licenses: SelectOptions<IconTextOptionProps>
-  // setCategoryFilter(text: string): unknown
-  // categories: SelectOptions<TextOptionProps>
-  // setTypeFilter(text: string): unknown
-  // types: SelectOptions<TextOptionProps>
-  // setLevelFilter(text: string): unknown
-  // levels: SelectOptions<TextOptionProps>
-  // setLanguageFilter(text: string): unknown
-  // languages: SelectOptions<TextOptionProps>
-  downloadFilename: string
-  contentUrl: string
-  type: string
 } & ResourceType
 
 export const Resource: FC<ResourceProps> = ({
   mainLayoutProps,
   mainResourceCardProps,
+  resourceContributorCardProps,
+
   mainColumnItems,
   sideColumnItems,
   extraDetailsItems,
@@ -160,7 +146,7 @@ export const Resource: FC<ResourceProps> = ({
   }
 
   const contributorCard = {
-    Item: () => (!isOwner ? <ContributorCard {...ContributorCardStoryProps} /> : <></>),
+    Item: () => (!isOwner ? <ResourceContributorCard {...resourceContributorCardProps} /> : <></>),
     key: 'contributor-card',
   }
 

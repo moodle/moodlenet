@@ -1,15 +1,15 @@
 import { people, randomIntFromInterval } from '@moodlenet/component-library'
 import { href } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { ContributorCard, ContributorCardProps } from './ContributorCard.js'
+import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard.js'
 
-const meta: ComponentMeta<typeof ContributorCard> = {
-  title: 'Pages/Resource/ContributorCard',
-  component: ContributorCard,
+const meta: ComponentMeta<typeof ResourceContributorCard> = {
+  title: 'Pages/Resource/ResourceContributorCard',
+  component: ResourceContributorCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ContributorCardStoryProps', 'Default'],
+  excludeStories: ['ResourceContributorCardStoryProps', 'Default'],
   decorators: [
     Story => (
       <div style={{ height: 100, width: 300 }}>
@@ -23,7 +23,7 @@ const randomProfileIndex = randomIntFromInterval(0, 3)
 const randomUploadedHours = randomIntFromInterval(1, 12)
 const person = people[randomProfileIndex]
 
-export const ContributorCardStoryProps: ContributorCardProps = {
+export const ResourceContributorCardStoryProps: ResourceContributorCardProps = {
   avatarUrl: person ? person.avatarUrl : null,
   displayName: person ? person.title : '',
   timeSinceCreation: `${randomUploadedHours} ${
@@ -38,11 +38,11 @@ export const ContributorCardStoryProps: ContributorCardProps = {
   creatorProfileHref: href('Pages/Profile/LoggedIn'),
 }
 
-const ContributorCardStory: ComponentStory<typeof ContributorCard> = args => (
-  <ContributorCard {...args} />
+const ResourceContributorCardStory: ComponentStory<typeof ResourceContributorCard> = args => (
+  <ResourceContributorCard {...args} />
 )
 
-export const Default = ContributorCardStory.bind({})
-Default.args = ContributorCardStoryProps
+export const Default = ResourceContributorCardStory.bind({})
+Default.args = ResourceContributorCardStoryProps
 
 export default meta

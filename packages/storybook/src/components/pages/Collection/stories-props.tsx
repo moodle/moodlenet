@@ -15,7 +15,7 @@ import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-librar
 //   LicenseIconTextOptionProps,
 //   VisbilityIconTextOptionProps,
 // } from '../NewCollection/UploadCollection/storiesData'
-import { ContributorCardStories } from '@moodlenet/collection/stories'
+import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps } from '@moodlenet/collection/ui'
@@ -175,6 +175,7 @@ export const useCollectionStoryProps = (overrides?: {
         ? MainLayoutLoggedOutStoryProps
         : MainLayoutLoggedInStoryProps,
     mainCollectionCardProps: useMainCollectionCardStoryProps({}),
+
     collection: collection,
     editCollection: async () => action('editing collection submited'),
     validationSchema: validationSchema,
@@ -189,7 +190,8 @@ export const useCollectionStoryProps = (overrides?: {
     isAdmin: false,
     numFollowers: 23,
     // bookmarked: true,
-    contributorCardProps: ContributorCardStories.ContributorCardStoryProps,
+    collectionContributorCardProps:
+      CollectionContributorCardStories.CollectionContributorCardStoryProps,
     collectionUrl: '#',
 
     // reportForm: useFormik<{ comment: string }>({

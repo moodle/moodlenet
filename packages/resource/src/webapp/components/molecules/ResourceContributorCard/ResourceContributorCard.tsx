@@ -3,23 +3,23 @@ import { Href, Link } from '@moodlenet/react-app/ui'
 import { FC } from 'react'
 // import '../../../../styles/tags.scss'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
-import './ContributorCard.scss'
+import './ResourceContributorCard.scss'
 
-export type ContributorCardProps = {
+export type ResourceContributorCardProps = {
   avatarUrl: string | null
   displayName: string
   timeSinceCreation: string
   creatorProfileHref: Href
 }
 
-export const ContributorCard: FC<ContributorCardProps> = ({
+export const ResourceContributorCard: FC<ResourceContributorCardProps> = ({
   avatarUrl,
   displayName,
   timeSinceCreation,
   creatorProfileHref,
 }) => {
   return (
-    <Card className="contributor-card" hideBorderWhenSmall={true}>
+    <Card className="resource-contributor-card" hideBorderWhenSmall={true}>
       <Link href={creatorProfileHref}>
         <img className="avatar" src={avatarUrl || defaultAvatar} alt="Avatar" />
       </Link>

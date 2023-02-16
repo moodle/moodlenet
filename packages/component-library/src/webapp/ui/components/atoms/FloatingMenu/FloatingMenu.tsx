@@ -1,6 +1,13 @@
-import React, { FC, KeyboardEvent, useRef, useState } from 'react'
+import React, { FC, KeyboardEvent, ReactElement, useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
+
+export type FloatingMenuContentItem = {
+  Icon: ReactElement
+  text: string
+  key: string
+  onClick(): unknown
+}
 
 export type FloatingMenuProps = {
   menuContent: React.ReactElement[]
