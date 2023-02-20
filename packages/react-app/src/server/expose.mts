@@ -2,13 +2,13 @@ import { getCurrentClientSession } from '@moodlenet/authentication-manager'
 import { npm } from '@moodlenet/core'
 import { getAppearance, setAppearance } from './lib.mjs'
 import shell from './shell.mjs'
-import { ProfileFormValues, WebUserData } from './types.mjs'
+import { WebUserData, WebUserProfile } from './types.mjs'
 import {
-  editProfile,
+  editWebUserProfile,
   getProfile,
-  getProfileUser,
-  patchProfileUser,
+  getWebUser,
   searchUsers,
+  toggleWebUserIsAdmin,
 } from './web-user-lib.mjs'
 
 export const expose = await shell.expose({
@@ -27,60 +27,75 @@ export const expose = await shell.expose({
     },
     'webapp/profile/edit': {
       guard: () => void 0,
-      fn: (profileFormValues: ProfileFormValues & { key: string }) => {
-        const { key, ...editRequest } = profileFormValues
-        return editProfile(key, editRequest)
+      fn: async (profileFormValues: WebUserProfile): Promise<WebUserProfile | null> => {
+        const { _key, ...editRequest } = profileFormValues
+        const profileDoc = await editWebUserProfile({ _key }, editRequest)
+        const profile = profileDoc && webUserProfileDoc2WebUserProfile(profileDoc)
+        return profile
       },
     },
     'webapp/profile/get': {
       guard: () => void 0,
-      fn: (body: { key: string }) => {
-        return getProfile(body.key)
+      fn: async (body: { _key: string }): Promise<WebUserProfile | null> => {
+        const profileDoc = await getProfile({ _key: body._key })
+        const profile = profileDoc && webUserProfileDoc2WebUserProfile(profileDoc)
+        return profile
       },
     },
     'webapp/roles/searchUsers': {
       guard: () => void 0,
       fn: async ({ search }: { search: string }): Promise<WebUserData[]> => {
         const users = await searchUsers(search)
-        const x = users.map<WebUserData>(user => {
+        const webUsers = users.map<WebUserData>(user => {
           return {
             _key: user._key,
             isAdmin: user.isAdmin,
-            name: user.name,
+            name: user.displayName,
             email: user.contacts.email,
           }
         })
-        return x
+        return webUsers
       },
     },
     'webapp/roles/toggleIsAdmin': {
       guard: () => void 0,
-      fn: async ({ _key }: { _key: string }) => {
-        const profileUser = await getProfileUser(_key)
-        if (!profileUser) {
-          return false
-        }
-        await patchProfileUser({ user: _key }, { isAdmin: !profileUser.isAdmin })
-        return true
+      fn: async (by: { profileKey: string } | { userKey: string }) => {
+        const patchedUser = await toggleWebUserIsAdmin(by)
+        return !!patchedUser
       },
     },
     'webapp/getMyProfile': {
       guard: () => void 0,
-      async fn() {
+      async fn(): Promise<null | { profile: WebUserProfile; isAdmin: boolean }> {
         const clientSession = await getCurrentClientSession()
         if (!clientSession?.user) {
           return null
         }
-        const user = await getProfileUser(clientSession.user.id)
+        const user = await getWebUser({ userKey: clientSession.user._key })
         if (!user) {
           return null
         }
-        const profile = await getProfile(user.profileKey)
-        if (!profile) {
+        const profileDoc = await getProfile(user.profileKey)
+        if (!profileDoc) {
           return null
         }
+
+        const profile = webUserProfileDoc2WebUserProfile(profileDoc)
+
         return { profile, isAdmin: user.isAdmin }
       },
     },
   },
 })
+
+function webUserProfileDoc2WebUserProfile(profileDoc: WebUserProfile): WebUserProfile {
+  const webUserProfile: WebUserProfile = {
+    _key: profileDoc._key,
+    aboutMe: profileDoc.aboutMe,
+    displayName: profileDoc.displayName,
+    location: profileDoc.location,
+    organizationName: profileDoc.organizationName,
+    siteUrl: profileDoc.siteUrl,
+  }
+  return webUserProfile
+}

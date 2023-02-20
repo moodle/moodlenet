@@ -43,8 +43,8 @@ export type User = {
 }
 
 export type ProfileFormValues = {
-  title: string
-  description: string
+  displayName: string
+  aboutMe: string
   organizationName?: string
   location?: string
   siteUrl?: string

@@ -7,7 +7,7 @@ import {
 import * as crypto from '@moodlenet/crypto'
 import { send } from '@moodlenet/email-service'
 import { getHttpBaseUrl } from '@moodlenet/http-server'
-import { createProfile } from '@moodlenet/react-app/server'
+import { createWebUser } from '@moodlenet/react-app/server'
 import assert from 'assert'
 import shell from './shell.mjs'
 import * as store from './store.mjs'
@@ -28,7 +28,7 @@ export async function login({
     return { success: false }
   }
 
-  const maybeSessionToken = await shell.call(getSessionToken)({ uid: user.id })
+  const maybeSessionToken = await shell.call(getSessionToken)({ uid: user._key })
 
   setCurrentClientSessionToken(maybeSessionToken)
 
@@ -87,20 +87,21 @@ export async function confirm({
   const myUser = await store.create({ email, password })
 
   const authRes = await shell.call(registerUser)({
-    uid: myUser.id,
+    uid: myUser._key,
   })
 
   if (!authRes.success) {
-    await store.delUser(myUser.id)
+    await store.delUser({ _key: myUser._key })
     const { msg, success } = authRes
     return { msg, success }
   }
 
-  await shell.call(createProfile)({
-    title: displayName,
-    userId: authRes.user.id,
+  await shell.call(createWebUser)({
+    userKey: authRes.user._key,
+    displayName: displayName,
     isAdmin: false,
     contacts: { email },
+    aboutMe: '',
   })
 
   const { sessionToken } = authRes

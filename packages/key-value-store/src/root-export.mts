@@ -1,70 +1,52 @@
-import { ensureCollections, queryRs } from '@moodlenet/arangodb'
+import { DocumentMetadata, ensureDocumentCollection } from '@moodlenet/arangodb'
 import type { Shell } from '@moodlenet/core'
 import { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export * from './types.js'
-export const COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
+export const KV_COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 
-export default async function storeFactory<TMap extends KVSTypeMap>(
+export default async function kvStoreFactory<TMap extends KVSTypeMap>(
   shell: Shell,
 ): Promise<KVStore<TMap>> {
-  // FIXME: initiateCall->call ?
   return shell.initiateCall(async () => {
-    await ensureCollections({ defs: { [COLLECTION_NAME]: { kind: 'node' } } })
-    const kvStore: KVStore<any> = {
+    const { collection: KVCollection /* , newlyCreated  */ } = await shell.call(
+      ensureDocumentCollection,
+    )(KV_COLLECTION_NAME)
+
+    const kvStore: KVStore<TMap> = {
       set: shell.call(set),
       get: shell.call(get),
       unset: shell.call(unset),
     }
+
     return kvStore
 
     function fullKeyOf(type: string, key: string) {
       return `${type}::${key}`
     }
-
     async function get(type: string, key: string): Promise<ValueObj> {
-      const _key = fullKeyOf(type, key)
-      const record = (await queryRs({ q: `RETURN DOCUMENT('${COLLECTION_NAME}/${_key}')` }))
-        .resultSet[0]
-      return valObj(record)
+      const doc = await KVCollection.document(fullKeyOf(type, key), true)
+      return valObj(doc)
     }
 
-    async function set(type: string, key: string, value: any): Promise<ValueObj> {
+    async function set(type: string, key: string, value: unknown): Promise<void> {
       if (value === void 0) {
         return unset(type, key)
       }
-      const _key = fullKeyOf(type, key)
-      const strval = JSON.stringify(value)
-      const oldRec = (
-        await queryRs({
-          q: `let key = "${_key}"
-        let doc = { _key: key, value:${strval} }
-            UPSERT { _key: key }
-              INSERT doc
-              UPDATE doc
-              IN ${COLLECTION_NAME} 
-            RETURN OLD`,
-        })
-      ).resultSet[0]
+      await KVCollection.save(
+        { _key: fullKeyOf(type, key), value },
 
-      return valObj(oldRec)
+        { overwriteMode: 'update' },
+      )
+      return
     }
 
-    async function unset(type: string, key: string): Promise<ValueObj> {
-      const _key = fullKeyOf(type, key)
-      const oldDoc = (
-        await queryRs({
-          q: `REMOVE ${COLLECTION_NAME}/${_key}
-              FROM ${COLLECTION_NAME} 
-            RETURN OLD`,
-        })
-      ).resultSet[0]
-
-      return valObj(oldDoc)
+    async function unset(type: string, key: string): Promise<void> {
+      await KVCollection.remove(fullKeyOf(type, key), {})
     }
   })
 }
 
-type DBRecord = { value?: any }
-function valObj(_: undefined | DBRecord): ValueObj {
-  return { value: _?.value ?? undefined }
+type DBRecord = { value?: any } & DocumentMetadata
+function valObj(_: DBRecord | null | undefined): ValueObj {
+  return { value: _ ? _.value : undefined }
 }

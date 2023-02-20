@@ -1,25 +1,25 @@
-import { UserId } from '@moodlenet/authentication-manager'
-import { GlyphDefsMap, GlyphDescriptorsMap, GlyphsMapOf } from '@moodlenet/content-graph'
 export * from '../common/types.mjs'
 
-export type WebUserGlyphDefMap = GlyphDefsMap<{
-  Profile: {
-    kind: 'node'
-    dataType: { organizationName?: string; location?: string; siteUrl?: string }
-  }
-}>
+export type WebUserProfileDataType = {
+  displayName: string
+  aboutMe: string
+  organizationName?: string
+  location?: string
+  siteUrl?: string
+}
+export type WebUserProfile = WebUserProfileDataType & { _key: string }
 
-export type WebUserGlyphDescriptors = GlyphDescriptorsMap<WebUserGlyphDefMap>
-export type WebUserGlyphs = GlyphsMapOf<WebUserGlyphDescriptors>
-
-export type CreateRequest = {
-  description?: string
-  title: string
-  userId: UserId // dont confuse with GlyphID, this is from authentication-manager
-  isAdmin: boolean
+export type WebUserDataType = {
+  displayName: string
   contacts: Contacts
+  isAdmin: boolean
+  userKey: string
+  profileKey: string
 }
 
 export type Contacts = {
   email?: string
 }
+
+export type CreateRequest = Pick<WebUserDataType, 'contacts' | 'isAdmin' | 'userKey'> &
+  WebUserProfileDataType

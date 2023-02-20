@@ -1,12 +1,12 @@
-export type UserId = string
+import { DocumentMetadata } from '@moodlenet/arangodb'
+
 export type Email = string
 export type Password = string
 
-export type User = {
-  id: UserId
+export type EmailPwdUser = EmailPwdUserData & { _key: string }
+export type EmailPwdUserData = {
   email: Email
   password: Password
   created: string
 }
-
-export type Users = Record<UserId, User>
+export type EmailPwdUserDoc = EmailPwdUserData & DocumentMetadata
