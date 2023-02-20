@@ -1,13 +1,13 @@
+import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import kvStore from './kvStore.mjs'
 import shell from './shell.mjs'
-import { PkgIdentifier } from '@moodlenet/core'
 import { addWebappPluginItem } from './webapp-plugins.mjs'
 
 export async function setAppearance({ appearanceData }: { appearanceData: AppearanceData }) {
-  const data = await kvStore.set('appearanceData', '', appearanceData)
-  return { valid: !data || !data.value ? false : true }
+  await kvStore.set('appearanceData', '', appearanceData)
+  return { valid: true }
 }
 
 export async function getAppearance() {

@@ -1,6 +1,5 @@
 import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
 
-import type { NodeGlyph } from '@moodlenet/content-graph'
 import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
 import cookies from 'js-cookie'
 import {
@@ -14,7 +13,7 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { WebUserGlyphDescriptors } from '../../server/types.mjs'
+import { WebUserProfile } from '../../server/types.mjs'
 import rootAvatarUrl from '../static/img/ROOT.png'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
@@ -25,7 +24,7 @@ export type ClientSessionData = {
   isAdmin: boolean
   userDisplay: { name: string; avatarUrl: string }
   user?: UserData
-  myProfile?: NodeGlyph<WebUserGlyphDescriptors['Profile']>
+  myProfile?: WebUserProfile
 }
 export type LoginEntryItem = Omit<LoginItem, 'key'>
 export type SignupEntryItem = Omit<SignupItem, 'key'>
@@ -58,7 +57,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         return null
       }
       const { profile } = myUserProfile
-      const { title /* ,icon, description*/ } = profile
+      const { displayName: title /* ,icon, description*/ } = profile
       const avatarUrl = /* icon ?? */ 'https://moodle.net/static/media/default-avatar.2ccf3558.svg'
       return {
         isAdmin: myUserProfile.isAdmin,

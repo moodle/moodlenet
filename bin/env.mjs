@@ -1,3 +1,4 @@
+import { mkdir } from 'fs/promises'
 import { resolve } from 'path'
 import yargs from 'yargs'
 
@@ -11,6 +12,8 @@ export const fwRestArgs = restArgs.map(String)
 export const devMachinesDir = resolve(process.cwd(), `.dev-machines`)
 export const mnDevDir = resolve(devMachinesDir, String(mnDevDirOpt))
 // process.env.NODE_ENV = 'development'
+
+await mkdir(mnDevDir, { recursive: true })
 
 console.log({
   devMachinesDir,

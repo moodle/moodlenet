@@ -1,4 +1,4 @@
-import { ensureCollections } from '@moodlenet/arangodb'
+import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb'
 import { expose as auth } from '@moodlenet/authentication-manager'
 import { mountApp, sendAuthTokenCookie } from '@moodlenet/http-server'
 import { plugin } from '@moodlenet/react-app/server'
@@ -6,8 +6,12 @@ import { MyWebDeps } from './common/types.mjs'
 import { expose as me } from './expose.mjs'
 import { confirm } from './lib.mjs'
 import shell from './shell.mjs'
+import { EmailPwdUserData } from './store/types.mjs'
 
-await shell.call(ensureCollections)({ defs: { User: { kind: 'node' } } })
+export const { db } = await shell.call(getMyDB)()
+export const { collection: EmailPwdUserCollection /* ,newlyCreated */ } = await shell.call(
+  ensureDocumentCollection,
+)<EmailPwdUserData>('EmailPwdUser')
 
 shell.call(plugin)<MyWebDeps>({
   mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],

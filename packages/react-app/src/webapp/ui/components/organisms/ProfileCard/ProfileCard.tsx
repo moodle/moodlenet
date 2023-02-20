@@ -106,39 +106,39 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     <InputTextField
       className="display-name underline"
       placeholder={/* t */ `Display name`}
-      value={form.values.title}
+      value={form.values.displayName}
       onChange={form.handleChange}
-      name="title"
+      name="displayName"
       key="display-name"
       displayMode={true}
       edit={isEditing}
       disabled={form.isSubmitting}
-      error={isEditing && shouldShowErrors && form.errors.title}
+      error={isEditing && shouldShowErrors && form.errors.displayName}
     />
   ) : (
     <div className="display-name" key="display-name">
-      {form.values.title}
+      {form.values.displayName}
     </div>
   )
 
   const description = isEditing ? (
     <InputTextField
       textAreaAutoSize
-      value={form.values.description}
+      value={form.values.aboutMe}
       onChange={form.handleChange}
       textarea
       displayMode
       placeholder={/* t */ `What should others know about you?`}
       className="description"
       key="description"
-      name="description"
+      name="aboutMe"
       edit={isEditing}
       disabled={form.isSubmitting}
-      error={isEditing && shouldShowErrors && form.errors.description}
+      error={isEditing && shouldShowErrors && form.errors.aboutMe}
     />
   ) : (
     <div className="description" key="description">
-      {form.values.description}
+      {form.values.aboutMe}
     </div>
   )
 
