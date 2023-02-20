@@ -7,6 +7,7 @@ export type FloatingMenuContentItem = {
   text: string
   key: string
   onClick(): unknown
+  className?: string
 }
 
 export type FloatingMenuProps = {

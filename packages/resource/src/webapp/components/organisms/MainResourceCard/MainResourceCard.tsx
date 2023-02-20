@@ -22,6 +22,7 @@ import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
+  Delete,
   HourglassBottom,
   InsertDriveFile,
   MoreVert,
@@ -60,6 +61,7 @@ export type MainResourceCardProps = {
   deleteResource?(): unknown
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isPublished: boolean
+  hasBeenPublished: boolean //At any point on time, so it might already have likes
   isWaitingForApproval?: boolean
   isSaving?: boolean
   isSaved?: boolean
@@ -104,6 +106,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   publish,
   deleteResource,
   setIsPublished,
+  hasBeenPublished,
   isWaitingForApproval,
   isSaving,
   isSaved,
@@ -249,60 +252,82 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const likeButton = isPublished ? (
-    <TertiaryButton
-      className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
-      onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
-      abbr={liked ? 'Unlike' : 'Like'}
-      key="like-button"
-    >
-      {liked ? <Favorite /> : <FavoriteBorder />}
-      <span>{numLikes}</span>
-    </TertiaryButton>
-  ) : null
+  const likeButton =
+    isPublished || hasBeenPublished ? (
+      <TertiaryButton
+        className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
+        onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
+        abbr={isOwner ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
+        key="like-button"
+      >
+        {liked ? <Favorite /> : <FavoriteBorder />}
+        <span>{numLikes}</span>
+      </TertiaryButton>
+    ) : null
 
-  const bookmarkButton = isAuthenticated ? (
+  const empty =
+    !form.values.content && !form.values.name && !form.values.description && !form.values.image
+
+  const bookmarkButtonSmallScreen: FloatingMenuContentItem | null =
+    !empty && width < 800
+      ? {
+          key: 'bookmark-button',
+          className: `bookmark ${bookmarked && 'bookmarked'}`,
+          onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
+          text: bookmarked ? 'Remove bookmark' : 'Bookmark',
+          Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
+        }
+      : null
+
+  const bookmarkButtonBigScreen = !empty && width > 800 && (
     <TertiaryButton
-      className={`bookmark ${bookmarked && 'bookmarked'}`}
-      onClick={toggleBookmark}
       key="bookmark-button"
+      className={`bookmark ${bookmarked && 'bookmarked'}`}
       abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+      onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
     >
       {bookmarked ? <Bookmark /> : <BookmarkBorder />}
     </TertiaryButton>
-  ) : null
+  )
 
-  const shareButton: FloatingMenuContentItem | null = {
-    key: 'share-button',
-    onClick: copyUrl,
-    text: 'Share',
-    Icon: <Share />,
-  }
+  const shareButton: FloatingMenuContentItem | null = isPublished
+    ? {
+        key: 'share-button',
+        onClick: copyUrl,
+        text: 'Share',
+        Icon: <Share />,
+      }
+    : null
 
-  // const deleteButton: FloatingMenuContentItem | null = {
-  //   key: 'delete-button',
-  //   onClick: () => setIsToDelete(true),
-  //   text: 'Delete',
-  //   Icon: <Delete />,
-  // }
+  const deleteButton: FloatingMenuContentItem | null = !empty
+    ? {
+        key: 'delete-button',
+        onClick: () => setIsToDelete(true),
+        text: 'Delete',
+        Icon: <Delete />,
+      }
+    : null
 
-  const publishButton: FloatingMenuContentItem | null =
-    width < 800 && canEdit && !isPublished && !isWaitingForApproval
-      ? {
-          Icon: <Public />,
-          text: 'Publish',
-          key: 'publish-button',
-          onClick: publish,
-        }
-      : null
+  const publishButton =
+    width < 800 && canEdit && !isPublished && !isWaitingForApproval ? (
+      <TertiaryButton
+        abbr="Publish"
+        onClick={publish}
+        className="publish-button"
+        key="publish-button"
+      >
+        <Public />
+      </TertiaryButton>
+    ) : null
 
   const draftButton: FloatingMenuContentItem | null =
     width < 800 && canEdit && (isPublished || isWaitingForApproval)
       ? {
-          Icon: <PublicOff />,
           text: 'Back to draft',
-          key: 'draft-button',
           onClick: () => setIsPublished(false),
+          className: 'draft-button',
+          key: 'draft-button',
+          Icon: <PublicOff />,
         }
       : null
 
@@ -315,7 +340,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const publishedButton =
     width < 800 && canEdit && isPublished ? (
-      <abbr title="Resource published" key="publishing-button" style={{ cursor: 'initial' }}>
+      <abbr title="Published" key="publish-button" style={{ cursor: 'initial' }}>
         <Public style={{ fill: '#00bd7e' }} />
       </abbr>
     ) : null
@@ -357,11 +382,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       : null
 
   const updatedMoreButtonItems = [
-    publishButton,
     draftButton,
     openLinkOrDownloadFile,
     shareButton,
-    // deleteButton,
+    bookmarkButtonSmallScreen,
+    deleteButton,
     // sendToMoodleButton,
     // addToCollectionButton,
     ...(moreButtonItems ?? []),
@@ -369,32 +394,37 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const moreButton =
     updatedMoreButtonItems.length > 0 ? (
-      updatedMoreButtonItems.length === 1 ? (
-        updatedMoreButtonItems.map(i => {
-          return (
-            <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
-              {i.Icon}
-            </TertiaryButton>
-          )
-        })
-      ) : (
-        <FloatingMenu
-          className="more-button"
-          key="more-button"
-          menuContent={updatedMoreButtonItems.map(i => (
-            <div key={i.key} onClick={i.onClick} tabIndex={0}>
-              {i.Icon}
-              {i.text}
-            </div>
-          ))}
-          hoverElement={
-            <TertiaryButton className={`more`} abbr="More options">
-              <MoreVert />
-            </TertiaryButton>
-          }
-        />
-      )
-    ) : null
+      // updatedMoreButtonItems.length === 1 ? (
+      //   updatedMoreButtonItems.map(i => {
+      //     return (
+      //       <TertiaryButton
+      //         key={i.key}
+      //         abbr={i.text}
+      //         onClick={i.onClick}
+      //         className={i.className ?? i.key}
+      //       >
+      //         {i.Icon}
+      //       </TertiaryButton>
+      //     )
+      //   })
+      // ) : (
+      <FloatingMenu
+        className="more-button"
+        key="more-button"
+        menuContent={updatedMoreButtonItems.map(i => (
+          <div key={i.key} onClick={i.onClick} tabIndex={0} className={i.className ?? i.key}>
+            {i.Icon}
+            {i.text}
+          </div>
+        ))}
+        hoverElement={
+          <TertiaryButton className={`more`} abbr="More options">
+            <MoreVert />
+          </TertiaryButton>
+        }
+      />
+    ) : // )
+    null
 
   // const editSaveButton = canEdit
   //   ? {
@@ -434,29 +464,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //     }
   //   : null
 
-  // const deleteButton: AddonItem | null =
-  //   width < 800
-  //     ? {
-  //         Item: () => (
-  //           <SecondaryButton
-  //             color="red"
-  //             onHoverColor="fill-red"
-  //             className="delete-button"
-  //             onClick={() => setIsToDelete(true)}
-  //           >
-  //             <DeleteOutline />
-  //           </SecondaryButton>
-  //         ),
-  //         key: 'delete-button',
-  //       }
-  //     : null
-
   const updatedTopRightHeaderItems = [
     likeButton,
-    bookmarkButton,
     publishedButton,
     publishingButton,
-    // deleteButton,
+    publishButton,
+    bookmarkButtonBigScreen,
     // editSaveButton,
     ...(topRightHeaderItems ?? []),
     moreButton,
@@ -619,11 +632,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const resourceFooter = (
-    <div className="resource-footer" key="resource-footer">
-      {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </div>
-  )
+  const resourceFooter =
+    updatedFooterRowItems.length > 0 ? (
+      <div className="resource-footer" key="resource-footer">
+        {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    ) : null
 
   const updatedMainColumnItems = [
     resourceHeader,

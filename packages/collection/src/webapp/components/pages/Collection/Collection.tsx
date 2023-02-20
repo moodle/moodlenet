@@ -50,6 +50,7 @@ export type CollectionProps = {
   deleteCollection?(): unknown
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isPublished: boolean
+  hasBeenPublished: boolean //At any point on time, so it might already have followers
   isWaitingForApproval?: boolean
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
 
@@ -82,6 +83,7 @@ export const Collection: FC<CollectionProps> = ({
   collection,
   resourceCardPropsList,
   validationSchema,
+  numFollowers,
   editCollection,
   deleteCollection,
   setIsPublished,
@@ -94,14 +96,15 @@ export const Collection: FC<CollectionProps> = ({
   // collectionFormat,
   // contentUrl,
   // tags,
-  numFollowers,
 
   isAuthenticated,
   canEdit,
   // isAdmin,
   isOwner,
+
   isWaitingForApproval,
   isPublished,
+  hasBeenPublished,
   // collectionUrl,
   // autoImageAdded,
 }) => {
@@ -152,6 +155,7 @@ export const Collection: FC<CollectionProps> = ({
       isWaitingForApproval={isWaitingForApproval}
       isAuthenticated={isAuthenticated}
       numFollowers={numFollowers}
+      hasBeenPublished={hasBeenPublished}
       // isEditing={isEditing}
       // setIsEditing={setIsEditing}
       canEdit={canEdit}

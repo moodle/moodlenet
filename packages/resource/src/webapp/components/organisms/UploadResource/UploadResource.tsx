@@ -78,8 +78,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
       setDeleteFileLinkPressed(false)
     }
     form.values.content && !form.errors.content && setShouldShowErrors(false)
-    console.log('Commint here, content: ', form.values.content)
-    console.log('Commint here, image: ', form.values.image?.location)
 
     setSubStep(form.values.content && !form.errors.content ? 'AddImage' : 'AddFileOrLink')
   }, [form, deleteFileLinkPressed, subStep, setSubStep, setDeleteFileLinkPressed])
@@ -184,14 +182,28 @@ export const UploadResource: FC<UploadResourceProps> = ({
     form.setFieldValue('image', fileAssetInfo)
   }
 
+  const imageRef = useRef<HTMLDivElement>(null)
+
   const imageContainer = (
     <ImageContainer
       imageUrl={imageUrl}
+      ref={imageRef}
       deleteImage={deleteImage}
       uploadImage={uploadImage}
       imageOnClick={imageOnClick}
+      link={typeof form.values.content === 'string' ? form.values.content : undefined}
     />
   )
+
+  const simpleImageContainer = <ImageContainer imageUrl={imageUrl} ref={imageRef} />
+
+  const [imageHeight, setImageHeight] = useState<string | number>('initial')
+
+  useEffect(() => {
+    const currentImageHeight = imageRef.current?.clientHeight
+    currentImageHeight && setImageHeight(currentImageHeight)
+    // console.log('height ', currentImageHeight)
+  }, [imageUrl, imageRef])
 
   const uploadedNameBackground =
     contentIsFile && uploadProgress
@@ -200,12 +212,15 @@ export const UploadResource: FC<UploadResourceProps> = ({
         }%, #ffffff00 )`
       : 'none'
 
+  // const uploadHeight = Number.isInteger(imageHeight) && imageHeight > 250 ? { height: imageHeight } : {}
+
   const fileUploader = (
     <div
       className="file upload"
       onClick={selectFile}
       onKeyUp={e => e.key === 'Enter' && selectFile()}
       tabIndex={0}
+      // style={{ ...uploadHeight }}
     >
       <input
         ref={uploadFileRef}
@@ -234,6 +249,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
       onClick={selectImage}
       tabIndex={0}
       onKeyUp={e => e.key === 'Enter' && selectImage()}
+      // style={{ ...uploadHeight }}
     >
       <input
         ref={uploadImageRef}
@@ -275,10 +291,14 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   return (
     <div className="upload-resource">
-      <div className="main-container">
+      <div
+        className={`main-container ${imageUrl && !form.values.content ? 'no-file-but-image' : ''}`}
+        style={{ height: imageUrl && !form.values.content ? imageHeight : 'fit-content' }}
+      >
         {!form.values.content && uploader('file')}
         {form.values.content && !imageUrl && uploader('image')}
-        {form.values.content && imageUrl && imageContainer}
+        {imageUrl && form.values.content && imageContainer}
+        {imageUrl && !form.values.content && simpleImageContainer}
       </div>
       <div className="bottom-container">
         {subStep === 'AddFileOrLink' ? (

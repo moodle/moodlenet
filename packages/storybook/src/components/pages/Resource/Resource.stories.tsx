@@ -88,12 +88,10 @@ export const Owner: ResourceStory = () => {
     props: {
       isOwner: true,
       canEdit: true,
-      isPublished: false,
+      isPublished: true,
+      hasBeenPublished: true,
       mainResourceCardProps: useMainResourceCardStoryProps({
         props: {
-          isOwner: true,
-          isPublished: false,
-          canEdit: true,
           // isSaving: true,
           isSaving: false,
           isSaved: true,
@@ -164,7 +162,7 @@ export const New: ResourceStory = () => {
       setIsPublished: setIsPublished,
       mainResourceCardProps: useMainResourceCardStoryProps({
         props: {
-          uploadProgress: 50,
+          // uploadProgress: 50,
           // isOwner: true,
           // canEdit: true,
           // isEditing: false,
