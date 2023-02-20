@@ -1,6 +1,6 @@
 import { instanceDomain } from '@moodlenet/core'
 import * as jose from 'jose'
-import { env } from '../env.mjs'
+import { env } from '../init.mjs'
 
 const alg = env.keys.alg
 

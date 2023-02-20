@@ -1,8 +1,8 @@
 import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
-import kvStore from './kvStore.mjs'
-import shell from './shell.mjs'
+import { kvStore } from './init.mjs'
+import { shell } from './shell.mjs'
 import { addWebappPluginItem } from './webapp-plugins.mjs'
 
 export async function setAppearance({ appearanceData }: { appearanceData: AppearanceData }) {

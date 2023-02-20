@@ -1,7 +1,7 @@
-import { DocumentSelector } from '@moodlenet/arangodb'
+import { DocumentSelector } from '@moodlenet/arangodb/server'
 import assert from 'assert'
 import { db, UserCollection } from './init.mjs'
-import { ProviderId, UserData, UserDocument } from './store/types.mjs'
+import { ProviderId, UserData, UserDocument } from './types/storeTypes.mjs'
 
 export async function getByProviderId(providerId: ProviderId): Promise<UserDocument | undefined> {
   const foundUserCursor = await db.query<UserDocument>(

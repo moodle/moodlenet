@@ -1,6 +1,6 @@
 import { plugin } from '@moodlenet/react-app/server'
 import assert from 'assert'
-import shell from './shell.mjs'
+import { shell } from './shell.mjs'
 
 export const expose = await shell.expose({
   rpc: {
