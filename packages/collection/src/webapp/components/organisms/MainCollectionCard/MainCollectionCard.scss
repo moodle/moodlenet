@@ -112,8 +112,9 @@
           gap: 2px;
           font-size: 15px;
           font-weight: normal;
-          cursor: pointer;
-          // color: #8c8e95;
+          &:not(.disabled) {
+            cursor: pointer;
+          }
           > svg,
           * > svg {
             width: 21px;
@@ -145,12 +146,7 @@
           }
         }
 
-        > .follow {
-          > svg {
-            width: 21px;
-            height: 21px;
-          }
-
+        > .follow:not(.disabled) {
           &.followed {
             color: var(--primary-color);
             &:not(:hover) > svg {
@@ -164,15 +160,6 @@
           &:hover {
             color: var(--primary-color-hover);
           }
-
-          &.disabled {
-            pointer-events: none;
-            cursor: auto;
-            color: #d0d1db;
-            > span {
-              font-weight: normal;
-            }
-          }
         }
 
         .bookmarked {
@@ -183,40 +170,13 @@
           color: #009966;
         }
 
-        // > .share:hover {
-        //   color: $primary-color;
-        // }
-
-        > .edit-save {
-          width: 40px;
-          > * {
-            width: 100%;
-            > svg,
-            * > svg {
-              width: 18px;
-              height: 18px;
-            }
-          }
-          > .primary-button {
-            display: grid;
-            grid-template-columns: 1fr;
-            > div {
-              grid-row-start: 1;
-              grid-column-start: 1;
-              display: flex;
-
-              &.loading {
-                display: flex;
-                visibility: visible;
-                width: 100%;
-                align-items: center;
-                justify-content: center;
-              }
-            }
-
-            &.loading {
-              pointer-events: none;
-            }
+        > .publish-button {
+          padding: 0px 6px;
+          border-radius: 45px;
+          color: white;
+          background-color: #00bd7e;
+          &:hover {
+            background-color: #009966;
           }
         }
       }
@@ -225,18 +185,13 @@
     > .title {
       &,
       > .textarea-container {
-        min-height: 40px;
-
+        min-height: fit-content;
         &,
         > textarea {
           font-size: 26px;
           line-height: 30px;
           font-weight: bold;
         }
-      }
-
-      > .textarea-container {
-        min-height: 40px;
       }
     }
 
@@ -350,6 +305,9 @@
       &:hover {
         color: #1a6aff;
       }
+    }
+    > .textarea > .textarea-container {
+      min-height: fit-content;
     }
   }
 

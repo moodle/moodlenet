@@ -22,6 +22,7 @@ import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
+  Delete,
   HourglassBottom,
   InsertDriveFile,
   MoreVert,
@@ -32,8 +33,8 @@ import {
 import {
   Dispatch,
   FC,
-  ReactElement,
   SetStateAction,
+  StrictMode,
   useEffect,
   useMemo,
   useRef,
@@ -60,6 +61,7 @@ export type MainResourceCardProps = {
   deleteResource?(): unknown
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isPublished: boolean
+  hasBeenPublished: boolean //At any point on time, so it might already have likes
   isWaitingForApproval?: boolean
   isSaving?: boolean
   isSaved?: boolean
@@ -104,6 +106,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   publish,
   deleteResource,
   setIsPublished,
+  hasBeenPublished,
   isWaitingForApproval,
   isSaving,
   isSaved,
@@ -161,7 +164,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     const credits = image ? (image.credits ? image.credits : undefined) : backupImage?.credits
     return (
       credits && (
-        <div className="image-credits">
+        <div className="image-credits" key="image-credits">
           Photo by
           <a href={credits.owner.url} target="_blank" rel="noreferrer">
             {credits.owner.name}
@@ -181,7 +184,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <InputTextField
       name="name"
       isTextarea
-      key="resource-title"
+      key="title"
       textAreaAutoSize
       displayMode
       className="title underline"
@@ -249,60 +252,82 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const likeButton = isPublished ? (
-    <TertiaryButton
-      className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
-      onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
-      abbr={liked ? 'Unlike' : 'Like'}
-      key="like-button"
-    >
-      {liked ? <Favorite /> : <FavoriteBorder />}
-      <span>{numLikes}</span>
-    </TertiaryButton>
-  ) : null
+  const likeButton =
+    isPublished || hasBeenPublished ? (
+      <TertiaryButton
+        className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
+        onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
+        abbr={isOwner ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
+        key="like-button"
+      >
+        {liked ? <Favorite /> : <FavoriteBorder />}
+        <span>{numLikes}</span>
+      </TertiaryButton>
+    ) : null
 
-  const bookmarkButton = isAuthenticated ? (
+  const empty =
+    !form.values.content && !form.values.name && !form.values.description && !form.values.image
+
+  const bookmarkButtonSmallScreen: FloatingMenuContentItem | null =
+    !empty && width < 800
+      ? {
+          key: 'bookmark-button',
+          className: `bookmark ${bookmarked && 'bookmarked'}`,
+          onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
+          text: bookmarked ? 'Remove bookmark' : 'Bookmark',
+          Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
+        }
+      : null
+
+  const bookmarkButtonBigScreen = !empty && width > 800 && (
     <TertiaryButton
-      className={`bookmark ${bookmarked && 'bookmarked'}`}
-      onClick={toggleBookmark}
       key="bookmark-button"
+      className={`bookmark ${bookmarked && 'bookmarked'}`}
       abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+      onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
     >
       {bookmarked ? <Bookmark /> : <BookmarkBorder />}
     </TertiaryButton>
-  ) : null
+  )
 
-  const shareButton: FloatingMenuContentItem | null = {
-    key: 'share-button',
-    onClick: copyUrl,
-    text: 'Share',
-    Icon: <Share />,
-  }
+  const shareButton: FloatingMenuContentItem | null = isPublished
+    ? {
+        key: 'share-button',
+        onClick: copyUrl,
+        text: 'Share',
+        Icon: <Share />,
+      }
+    : null
 
-  // const deleteButton: FloatingMenuContentItem | null = {
-  //   key: 'delete-button',
-  //   onClick: () => setIsToDelete(true),
-  //   text: 'Delete',
-  //   Icon: <Delete />,
-  // }
+  const deleteButton: FloatingMenuContentItem | null = !empty
+    ? {
+        key: 'delete-button',
+        onClick: () => setIsToDelete(true),
+        text: 'Delete',
+        Icon: <Delete />,
+      }
+    : null
 
-  const publishButton: FloatingMenuContentItem | null =
-    width < 800 && canEdit && !isPublished && !isWaitingForApproval
-      ? {
-          Icon: <Public />,
-          text: 'Publish',
-          key: 'publish-button',
-          onClick: publish,
-        }
-      : null
+  const publishButton =
+    width < 800 && canEdit && !isPublished && !isWaitingForApproval ? (
+      <TertiaryButton
+        abbr="Publish"
+        onClick={publish}
+        className="publish-button"
+        key="publish-button"
+      >
+        <Public />
+      </TertiaryButton>
+    ) : null
 
   const draftButton: FloatingMenuContentItem | null =
     width < 800 && canEdit && (isPublished || isWaitingForApproval)
       ? {
-          Icon: <PublicOff />,
           text: 'Back to draft',
-          key: 'draft-button',
           onClick: () => setIsPublished(false),
+          className: 'draft-button',
+          key: 'draft-button',
+          Icon: <PublicOff />,
         }
       : null
 
@@ -315,7 +340,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const publishedButton =
     width < 800 && canEdit && isPublished ? (
-      <abbr title="Resource published" key="publishing-button" style={{ cursor: 'initial' }}>
+      <abbr title="Published" key="publish-button" style={{ cursor: 'initial' }}>
         <Public style={{ fill: '#00bd7e' }} />
       </abbr>
     ) : null
@@ -357,11 +382,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       : null
 
   const updatedMoreButtonItems = [
-    publishButton,
     draftButton,
     openLinkOrDownloadFile,
     shareButton,
-    // deleteButton,
+    bookmarkButtonSmallScreen,
+    deleteButton,
     // sendToMoodleButton,
     // addToCollectionButton,
     ...(moreButtonItems ?? []),
@@ -369,32 +394,37 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const moreButton =
     updatedMoreButtonItems.length > 0 ? (
-      updatedMoreButtonItems.length === 1 ? (
-        updatedMoreButtonItems.map(i => {
-          return (
-            <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
-              {i.Icon}
-            </TertiaryButton>
-          )
-        })
-      ) : (
-        <FloatingMenu
-          className="more-button"
-          key="more-button"
-          menuContent={updatedMoreButtonItems.map(i => (
-            <div key={i.key} onClick={i.onClick} tabIndex={0}>
-              {i.Icon}
-              {i.text}
-            </div>
-          ))}
-          hoverElement={
-            <TertiaryButton className={`more`} abbr="More options">
-              <MoreVert />
-            </TertiaryButton>
-          }
-        />
-      )
-    ) : null
+      // updatedMoreButtonItems.length === 1 ? (
+      //   updatedMoreButtonItems.map(i => {
+      //     return (
+      //       <TertiaryButton
+      //         key={i.key}
+      //         abbr={i.text}
+      //         onClick={i.onClick}
+      //         className={i.className ?? i.key}
+      //       >
+      //         {i.Icon}
+      //       </TertiaryButton>
+      //     )
+      //   })
+      // ) : (
+      <FloatingMenu
+        className="more-button"
+        key="more-button"
+        menuContent={updatedMoreButtonItems.map(i => (
+          <div key={i.key} onClick={i.onClick} tabIndex={0} className={i.className ?? i.key}>
+            {i.Icon}
+            {i.text}
+          </div>
+        ))}
+        hoverElement={
+          <TertiaryButton className={`more`} abbr="More options">
+            <MoreVert />
+          </TertiaryButton>
+        }
+      />
+    ) : // )
+    null
 
   // const editSaveButton = canEdit
   //   ? {
@@ -434,29 +464,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //     }
   //   : null
 
-  // const deleteButton: AddonItem | null =
-  //   width < 800
-  //     ? {
-  //         Item: () => (
-  //           <SecondaryButton
-  //             color="red"
-  //             onHoverColor="fill-red"
-  //             className="delete-button"
-  //             onClick={() => setIsToDelete(true)}
-  //           >
-  //             <DeleteOutline />
-  //           </SecondaryButton>
-  //         ),
-  //         key: 'delete-button',
-  //       }
-  //     : null
-
   const updatedTopRightHeaderItems = [
     likeButton,
-    bookmarkButton,
     publishedButton,
     publishingButton,
-    // deleteButton,
+    publishButton,
+    bookmarkButtonBigScreen,
     // editSaveButton,
     ...(topRightHeaderItems ?? []),
     moreButton,
@@ -464,10 +477,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const topHeaderRow = (
     <div className="top-header-row" key="top-header-row">
-      <div className="top-left-header">
+      <div className="top-left-header" key="top-left-header">
         {updatedTopLeftHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
-      <div className="top-right-header">
+      <div className="top-right-header" key="top-right-header">
         {updatedTopRightHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
     </div>
@@ -499,6 +512,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const imageDiv = (
     <img
       className="image"
+      key="image"
       src={imageUrl}
       alt="Background"
       {...(contentType === 'file' && {
@@ -576,6 +590,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <InputTextField
       className="description underline"
       name="description"
+      key="description"
       isTextarea
       textAreaAutoSize
       displayMode
@@ -617,11 +632,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const resourceFooter = (
-    <div className="resource-footer" key="resource-footer">
-      {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </div>
-  )
+  const resourceFooter =
+    updatedFooterRowItems.length > 0 ? (
+      <div className="resource-footer" key="resource-footer">
+        {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    ) : null
 
   const updatedMainColumnItems = [
     resourceHeader,
@@ -630,12 +646,18 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     description,
     resourceFooter,
     ...(mainColumnItems ?? []),
-  ].filter((item): item is AddonItem | ReactElement => !!item)
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const snackbars = (
     <>
       {showUrlCopiedAlert && (
-        <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+        <Snackbar
+          type="success"
+          position="bottom"
+          autoHideDuration={6000}
+          showCloseButton={false}
+          key="url-copy-snackbar"
+        >
           Copied to clipoard
         </Snackbar>
       )}
@@ -653,6 +675,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
             maxWidth: '90%',
             maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
           }}
+          key="image-modal"
         >
           <img src={imageUrl} alt="Resource" />
           {getImageCredits(form.values.image)}
@@ -675,6 +698,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           onClose={() => setIsToDelete(false)}
           style={{ maxWidth: '400px' }}
           className="delete-message"
+          key="delete-message-modal"
         >
           The resource will be deleted
         </Modal>
@@ -682,14 +706,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </>
   )
   return (
-    <>
+    <StrictMode>
       {modals}
       {snackbars}
       {/* {searchImageComponent} */}
-      <Card className="main-resource-card" hideBorderWhenSmall={true}>
+      <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
-    </>
+    </StrictMode>
 
     //   <MainLayout {...mainLayoutProps}>
     //     {modals}

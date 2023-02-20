@@ -10,15 +10,19 @@ import {
   SecondaryButton,
   Snackbar,
   TertiaryButton,
+  useWindowDimensions,
 } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
   Delete,
+  HourglassBottom,
   MoreVert,
   PermIdentity,
   Person,
+  Public,
+  PublicOff,
   Sync,
 } from '@mui/icons-material'
 import { Dispatch, FC, SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
@@ -40,6 +44,7 @@ export type MainCollectionCardProps = {
   publish: () => void
   deleteCollection?(): unknown
   isPublished: boolean
+  hasBeenPublished: boolean //At any point on time, so it might already have followers
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isWaitingForApproval?: boolean
   isSaving?: boolean
@@ -81,7 +86,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   // collection,
   // editCollection,
   // saveCollection,
+  publish,
+  setIsPublished,
+  isWaitingForApproval,
   isPublished,
+  hasBeenPublished,
   deleteCollection,
   isSaving,
   isSaved,
@@ -115,7 +124,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   )
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
-  // const { width } = useWindowDimensions()
+  const { width } = useWindowDimensions()
 
   const copyUrl = () => {
     navigator.clipboard.writeText(collectionUrl)
@@ -207,113 +216,98 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const followersButton = isPublished ? (
-    <TertiaryButton
-      className={`follow ${followed ? 'followed' : ''}`}
-      disabled={!isAuthenticated || isOwner}
-      onClick={isAuthenticated && !isOwner && toggleFollow ? toggleFollow : () => undefined}
-      key="followers-button"
-      abbr={followed ? 'Unfollow' : 'Follow'}
-    >
-      {followed ? <Person /> : <PermIdentity />}
-      <span>{numFollowers}</span>
-    </TertiaryButton>
-  ) : null
+  const followersButton =
+    isPublished || hasBeenPublished ? (
+      <TertiaryButton
+        className={`follow ${followed ? 'followed' : ''}`}
+        disabled={!isAuthenticated || isOwner}
+        onClick={isAuthenticated && !isOwner && toggleFollow ? toggleFollow : () => undefined}
+        abbr={isOwner ? 'Creators cannot like their own content' : followed ? 'Unfollow' : 'Follow'}
+        key="followers-button"
+      >
+        {followed ? <Person /> : <PermIdentity />}
+        <span>{numFollowers}</span>
+      </TertiaryButton>
+    ) : null
 
-  const bookmarkButton = isAuthenticated ? (
+  const empty =
+    !form.values.content && !form.values.name && !form.values.description && !form.values.image
+
+  const bookmarkButtonSmallScreen =
+    !empty && width < 800
+      ? {
+          key: 'bookmark-button',
+          className: `bookmark ${bookmarked && 'bookmarked'}`,
+          onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
+          text: bookmarked ? 'Remove bookmark' : 'Bookmark',
+          Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
+        }
+      : null
+
+  const bookmarkButtonBigScreen = !empty && width > 800 && (
     <TertiaryButton
-      className={`bookmark ${bookmarked && 'bookmarked'}`}
-      onClick={toggleBookmark}
-      abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
       key="bookmark-button"
+      className={`bookmark ${bookmarked && 'bookmarked'}`}
+      abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+      onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
     >
       {bookmarked ? <Bookmark /> : <BookmarkBorder />}
     </TertiaryButton>
-  ) : null
+  )
 
-  const shareButton: FloatingMenuContentItem | null = {
-    key: 'share-button',
-    onClick: copyUrl,
-    text: 'Share',
-    Icon: <Share />,
-  }
+  const shareButton: FloatingMenuContentItem | null = isPublished
+    ? {
+        key: 'share-button',
+        onClick: copyUrl,
+        text: 'Share',
+        Icon: <Share />,
+      }
+    : null
 
-  const deleteButton = canEdit ? (
-    <abbr key="delete-button" tabIndex={0} onClick={() => setIsToDelete(true)} title="Delete">
-      <Delete />
-      Delete
-    </abbr>
-  ) : null
+  const deleteButton: FloatingMenuContentItem | null = !empty
+    ? {
+        key: 'delete-button',
+        onClick: () => setIsToDelete(true),
+        text: 'Delete',
+        Icon: <Delete />,
+      }
+    : null
 
-  // const publishButton: AddonItem | null =
-  //   width < 800 && canEdit && !isPublished && !isWaitingForApproval
-  //     ? {
-  //         Item: () => (
-  //           <abbr key="publish-button" tabIndex={0} onClick={publish} title="Publish collection">
-  //             <Public />
-  //             Publish
-  //           </abbr>
-  //         ),
+  const publishButton =
+    width < 800 && canEdit && !isPublished && !isWaitingForApproval ? (
+      <TertiaryButton
+        abbr="Publish"
+        onClick={publish}
+        className="publish-button"
+        key="publish-button"
+      >
+        <Public />
+      </TertiaryButton>
+    ) : null
 
-  //         key: 'publish-button',
-  //       }
-  //     : null
+  const draftButton: FloatingMenuContentItem | null =
+    width < 800 && canEdit && (isPublished || isWaitingForApproval)
+      ? {
+          Icon: <PublicOff />,
+          text: 'Back to draft',
+          key: 'draft-button',
+          onClick: () => setIsPublished(false),
+        }
+      : null
 
-  // const draftButton: AddonItem | null =
-  //   width < 800 && canEdit && (isPublished || isWaitingForApproval)
-  //     ? {
-  //         Item: () => (
-  //           <abbr
-  //             key="draft-button"
-  //             tabIndex={0}
-  //             onClick={() => setIsPublished(false)}
-  //             title="Back to draft"
-  //           >
-  //             <PublicOff />
-  //             Back to draft
-  //           </abbr>
-  //         ),
-  //         key: 'draft-button',
-  //       }
-  //     : null
+  const publishingButton =
+    width < 800 && canEdit && !isPublished && isWaitingForApproval ? (
+      <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
+        <HourglassBottom style={{ fill: '#d0d1db' }} />
+      </abbr>
+    ) : null
 
-  // const publishingButton: AddonItem | null =
-  //   width < 800 && canEdit && !isPublished && isWaitingForApproval
-  //     ? {
-  //         Item: () => (
-  //           <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
-  //             <HourglassBottom style={{ fill: '#d0d1db' }} />
-  //           </abbr>
-  //         ),
-
-  //         key: 'publishing-button',
-  //       }
-  //     : null
-
-  // const isPublishedButton: AddonItem | null =
-  //   width < 800 && canEdit && isPublished
-  //     ? {
-  //         Item: () => (
-  //           <abbr title="Collection isPublished" style={{ cursor: 'initial' }}>
-  //             <Public style={{ fill: '#00bd7e' }} />
-  //           </abbr>
-  //         ),
-  //         key: 'publishing-button',
-  //       }
-  //     : null
-
-  // const sendToMoodleButton: AddonItem | null =
-  //   width < 800 && form.values.content
-  //     ? {
-  //         Item: () => (
-  //           <div key="send-to-moodle-button" tabIndex={0} onClick={() => setisPublished(false)}>
-  //             <MoodleIcon />
-  //             Send to Moodle
-  //           </div>
-  //         ),
-  //         key: 'send-to-moodle-button',
-  //       }
-  //     : null
+  const publishedButton =
+    width < 800 && canEdit && isPublished ? (
+      <abbr title="Resource published" key="publishing-button" style={{ cursor: 'initial' }}>
+        <Public style={{ fill: '#00bd7e' }} />
+      </abbr>
+    ) : null
 
   // const addToCollectionButton: AddonItem | null =
   //   width < 800 && form.values.content && isAuthenticated
@@ -356,9 +350,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //     : null
 
   const updatedMoreButtonItems = [
-    // publishButton,
-    // draftButton,
+    draftButton,
     shareButton,
+    bookmarkButtonSmallScreen,
     // sendToMoodleButton,
     // addToCollectionButton,
     deleteButton,
@@ -367,99 +361,43 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const moreButton =
     updatedMoreButtonItems.length > 0 ? (
-      updatedMoreButtonItems.length === 1 ? (
-        updatedMoreButtonItems.map(i => (
-          <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
-            {i.Icon}
+      // updatedMoreButtonItems.length === 1 ? (
+      //   updatedMoreButtonItems.map(i => (
+      //     <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
+      //       {i.Icon}
+      //     </TertiaryButton>
+      //   ))
+      // ) : (
+      <FloatingMenu
+        className="more-button"
+        key="more-button"
+        menuContent={
+          updatedMoreButtonItems.map(i => (
+            <div key={i.key} onClick={i.onClick} tabIndex={0}>
+              {i.Icon}
+              {i.text}
+            </div>
+          ))
+          // <div tabIndex={0} onClick={() => setIsReporting(true)}>
+          //   <Flag />
+          //   <Trans>Report</Trans>
+          // </div>,
+        }
+        hoverElement={
+          <TertiaryButton className={`more`} abbr="More options">
+            <MoreVert />
           </TertiaryButton>
-        ))
-      ) : (
-        <FloatingMenu
-          className="more-button"
-          key="more-button"
-          menuContent={
-            updatedMoreButtonItems.map(i => (
-              <div key={i.key} onClick={i.onClick} tabIndex={0}>
-                {i.Icon}
-                {i.text}
-              </div>
-            ))
-            // <div tabIndex={0} onClick={() => setIsReporting(true)}>
-            //   <Flag />
-            //   <Trans>Report</Trans>
-            // </div>,
-          }
-          hoverElement={
-            <TertiaryButton className={`more`} abbr="More options">
-              <MoreVert />
-            </TertiaryButton>
-          }
-        />
-      )
-    ) : null
-
-  // const editSaveButton = canEdit
-  //   ? {
-  //       Item: () => (
-  //         <div className="edit-save">
-  //           {isEditing ? (
-  //             <PrimaryButton
-  //               className={`${form.isSubmitting ? 'loading' : ''}`}
-  //               color="green"
-  //               onClick={handleOnSaveClick}
-  //             >
-  //               <div
-  //                 className="loading"
-  //                 style={{
-  //                   visibility: form.isSubmitting ? 'visible' : 'hidden',
-  //                 }}
-  //               >
-  //                 <Loading color="white" />
-  //               </div>
-  //               <div
-  //                 className="label"
-  //                 style={{
-  //                   visibility: form.isSubmitting ? 'hidden' : 'visible',
-  //                 }}
-  //               >
-  //                 <Save />
-  //               </div>
-  //             </PrimaryButton>
-  //           ) : (
-  //             <SecondaryButton onClick={handleOnEditClick} color="orange">
-  //               <Edit />
-  //             </SecondaryButton>
-  //           )}
-  //         </div>
-  //       ),
-  //       key: 'edit-save-button',
-  //     }
-  //   : null
-
-  // const deleteButton: AddonItem | null =
-  //   width < 800
-  //     ? {
-  //         Item: () => (
-  //           <SecondaryButton
-  //             color="red"
-  //             onHoverColor="fill-red"
-  //             className="delete-button"
-  //             onClick={() => setIsToDelete(true)}
-  //           >
-  //             <DeleteOutline />
-  //           </SecondaryButton>
-  //         ),
-  //         key: 'delete-button',
-  //       }
-  //     : null
+        }
+      />
+    ) : // )
+    null
 
   const updatedTopRightHeaderItems = [
     followersButton,
-    bookmarkButton,
-    // isPublishedButton,
-    // publishingButton,
-    // deleteButton,
-    // editSaveButton,
+    publishedButton,
+    publishingButton,
+    publishButton,
+    bookmarkButtonBigScreen,
     ...(topRightHeaderItems ?? []),
     moreButton,
   ].filter((item): item is AddonItem => !!item)
@@ -518,65 +456,74 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
   // )
 
+  const descriptionEditRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLDivElement>(null)
+
+  const [alwaysFullDescription, setAlwaysFullDescription] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState(true)
   // const [isSmallDescription, setIsSmallDescription] = useState(false)
 
   useEffect(() => {
-    const fieldElem = descriptionRef.current
+    const fieldElem = descriptionRef.current ?? descriptionEditRef.current
     if (fieldElem) {
-      {
-        fieldElem.scrollHeight > 70 && setShowFullDescription(false)
-        // fieldElem.scrollHeight > 70 ? setShowFullDescription(false) : setIsSmallDescription(true)
-        // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'}
-      }
-    }
-  }, [descriptionRef])
+      console.log('current he: ', fieldElem && fieldElem.scrollHeight)
 
-  const description =
+      canEdit && fieldElem.scrollHeight < 80 && setAlwaysFullDescription(true)
+
+      setShowFullDescription(alwaysFullDescription || fieldElem.scrollHeight < 80)
+    }
+  }, [
+    descriptionRef.current?.scrollHeight,
+    descriptionEditRef.current?.scrollHeight,
+    alwaysFullDescription,
+    canEdit,
+  ])
+
+  const description = (
     // form.values.content ? (
-    canEdit ? (
-      <InputTextField
-        className="description underline"
-        name="description"
-        isTextarea
-        textAreaAutoSize
-        displayMode
-        key="description"
-        placeholder="Description"
-        value={form.values.description}
-        onChange={form.handleChange}
-        style={{
-          pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-        }}
-        error={shouldShowErrors && form.errors.description}
-      />
-    ) : (
-      <div className="description">
+    <div
+      className="description"
+      style={{
+        pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+        height: showFullDescription ? 'fit-content' : '66px',
+        overflow: showFullDescription ? 'auto' : 'hidden',
+      }}
+    >
+      {canEdit ? (
+        <InputTextField
+          className="description underline"
+          name="description"
+          isTextarea
+          ref={descriptionEditRef}
+          textAreaAutoSize
+          displayMode
+          key="description"
+          placeholder="Description"
+          value={form.values.description}
+          onChange={form.handleChange}
+          error={shouldShowErrors && form.errors.description}
+        />
+      ) : (
         <div
           key="description"
           className="description-text"
           ref={descriptionRef}
-          style={{
-            height: showFullDescription ? 'fit-content' : '66px',
-            overflow: showFullDescription ? 'auto' : 'hidden',
-            // paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
-          }}
+          // style={{
+          //   height: showFullDescription ? 'fit-content' : '66px',
+          //   overflow: showFullDescription ? 'auto' : 'hidden',
+          //   // paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
+          // }}
         >
           {form.values.description}
         </div>
-        {!showFullDescription && (
-          <div className="see-more" onClick={() => setShowFullDescription(true)}>
-            ...see more
-          </div>
-        )}
-        {/* {showFullDescription && !isSmallDescription && (
-              <div className="see-more" onClick={() => setShowFullDescription(false)}>
-                see less
-              </div>
-            )} */}
-      </div>
-    )
+      )}
+      {!showFullDescription && (
+        <div className="see-more" onClick={() => setShowFullDescription(true)}>
+          ...see more
+        </div>
+      )}
+    </div>
+  )
 
   const followButton = !isOwner ? (
     followed ? (
@@ -607,11 +554,12 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const collectionFooter = (
-    <div className="collection-footer" key="collection-footer">
-      {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </div>
-  )
+  const collectionFooter =
+    updatedFooterRowItems.length > 0 ? (
+      <div className="collection-footer" key="collection-footer">
+        {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    ) : null
 
   const updatedMainColumnItems = [
     imageContainer,

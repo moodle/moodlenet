@@ -144,17 +144,12 @@ export const useResourceStoryProps = (overrides?: {
     // onSubmit: action('submit edit'),
     // initialValues: {
     isFile: false,
-    content: 'moodle.net',
+    // content: 'random-link.com',
+    content: null,
     // visibility: 'Public',
     name: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    // category: CategoriesTextOptionProps[2]!.value,
-    // language: LanguagesTextOptionProps[2]?.value,
-    // level: LevelTextOptionProps[2]?.value,
-    // license: LicenseIconTextOptionProps[2]?.value,
-    // month: MonthTextOptionProps[8]?.value,
-    // year: YearsProps[20],
     type: TypeTextOptionProps[2]?.value,
     image: {
       location:
@@ -203,14 +198,6 @@ export const useResourceStoryProps = (overrides?: {
     downloadFilename: 'resource.pdf',
     type: 'pdf',
     setIsPublished: action('setIsPublished'),
-    // headerPageTemplateProps: {
-    //   headerPageProps: HeaderPageLoggedInStoryProps,
-    //   isAuthenticated: true,
-    //   mainPageWrapperProps: {
-    //     userAcceptsPolicies: null,
-    //     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-    //   },
-    // },
 
     isAuthenticated: true,
     canEdit: false,
@@ -221,7 +208,7 @@ export const useResourceStoryProps = (overrides?: {
     // bookmarked: true,
     resourceContributorCardProps: ResourceContributorCardStories.ResourceContributorCardStoryProps,
     contentUrl: '#',
-    contentType: 'link',
+    contentType: 'file',
     resourceFormat: 'Video',
     // reportForm: useFormik<{ comment: string }>({
     //   initialValues: { comment: '' },
@@ -233,28 +220,6 @@ export const useResourceStoryProps = (overrides?: {
         ({ value }) => !!addToCollectionsForm.values.collections?.includes(value),
       ),
     },
-    // types: {
-    //   opts: TypeTextOptionProps,
-    //   selected: TypeTextOptionProps.find(({ value }) => value === resource.type),
-    // },
-    // levels: {
-    //   opts: LevelTextOptionProps,
-    //   selected: LevelTextOptionProps.find(({ value }) => value === resource.level),
-    // },
-    // languages: {
-    //   opts: LanguagesTextOptionProps,
-    //   selected: LanguagesTextOptionProps.find(({ value }) => value === resource.language),
-    // },
-    // categories: {
-    //   opts: CategoriesTextOptionProps,
-    //   selected: CategoriesTextOptionProps.find(({ value }) => value === resource.category),
-    // },
-    // licenses: {
-    //   opts: LicenseIconTextOptionProps,
-    //   selected: LicenseIconTextOptionProps.find(({ value }) => value === resource.license),
-    // },
-    // toggleLike: action('toggleLike'),
-    // toggleBookmark: action('toggleBookmark'),
     deleteResource: action('deleteResource'),
 
     sendToMoodleLmsForm: useFormik<{ site?: string }>({
@@ -263,79 +228,10 @@ export const useResourceStoryProps = (overrides?: {
     }),
     addToCollectionsForm,
     isPublished: true,
-    // setCategoryFilter: action('setCategoryFilter'),
-    // setTypeFilter: action('setTypeFilter'),
-    // setLevelFilter: action('setLevelFilter'),
-    // setLanguageFilter: action('setLanguageFilter'),
     autoImageAdded: false,
     // canSearchImage: true,
     ...overrides?.props,
   }
-}
-
-// const headerPageTemplatePropsUnauth: HeaderPageTemplateProps = {
-//   isAuthenticated: false,
-//   headerPageProps: {
-//     headerProps: {
-//       ...HeaderLoggedOutStoryProps,
-//       me: null,
-//     },
-//   },
-//   mainPageWrapperProps: {
-//     userAcceptsPolicies: null,
-//     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-//   },
-// }
-// export const LinkLoggedOut = () => {
-//   const props = ResourceStoryProps({
-//     props: {
-//       headerPageTemplateProps: headerPageTemplatePropsUnauth,
-//       isAuthenticated: false,
-//     },
-//   })
-
-//   return <Resource {...props} />
-// }
-
-// export const FileLoggedOut = () => {
-//   const props = ResourceStoryProps({
-//     props: {
-//       headerPageTemplateProps: headerPageTemplatePropsUnauth,
-//       isAuthenticated: false,
-//       contentType: 'file',
-//       contentUrl: 'https://picsum.photos/200/100',
-//       resourceFormat: 'Video',
-//     },
-//   })
-//   return <Resource {...props} />
-// }
-
-export const LoggedIn = () => {
-  const props = useResourceStoryProps({})
-  return <Resource {...props} />
-}
-
-export const Owner = () => {
-  const props = useResourceStoryProps({
-    props: {
-      isOwner: true,
-      contentType: 'file',
-      contentUrl: 'https://picsum.photos/200/100',
-      resourceFormat: 'Video',
-      // autoImageAdded: true,
-    },
-  })
-  return <Resource {...props} />
-}
-
-export const Admin = () => {
-  const props = useResourceStoryProps({
-    props: {
-      isOwner: true,
-      isAdmin: true,
-    },
-  })
-  return <Resource {...props} />
 }
 
 export default meta
