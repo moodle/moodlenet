@@ -27,11 +27,11 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
         : true,
     )
     .optional(),
-  title: string().max(160).min(3).required(/* t */ `Please provide a display name`),
+  displayName: string().max(160).min(3).required(/* t */ `Please provide a display name`),
   location: string().optional(),
   organizationName: string().max(30).min(3).optional(),
   siteUrl: string().url().optional(),
-  description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
+  aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 
 export const useProfileCardProps = ({
@@ -47,11 +47,17 @@ export const useProfileCardProps = ({
   const [profile, setProfile] = useState<ProfileFormValues>({} as never)
 
   const form = useFormik<ProfileFormValues>({
-    async onSubmit({ description, title, location, organizationName, siteUrl }) {
+    async onSubmit({
+      aboutMe: description,
+      displayName: title,
+      location,
+      organizationName,
+      siteUrl,
+    }) {
       const res = await me.rpc['webapp/profile/edit']({
-        key: profileKey,
-        title,
-        description,
+        _key: profileKey,
+        displayName: title,
+        aboutMe: description,
         location,
         organizationName,
         siteUrl,
@@ -67,7 +73,7 @@ export const useProfileCardProps = ({
   })
 
   useEffect(() => {
-    me.rpc['webapp/profile/get']({ key: profileKey }).then(res => {
+    me.rpc['webapp/profile/get']({ _key: profileKey }).then(res => {
       if (!res) {
         return
       }

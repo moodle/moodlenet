@@ -1,22 +1,30 @@
-import * as collectionLib from './lib/collections.mjs'
-import { getPkgDBName } from './lib/db.mjs'
-import { queryDbRs } from './lib/query.mjs'
-import shell from './shell.mjs'
-import { CreateCollectionDefsMap, CreateCollectionOptsMap, QueryReq } from './types.mjs'
-export * from './types.mjs'
-
-export async function ensureCollections<Defs extends CreateCollectionDefsMap>({
-  defs,
-}: {
-  defs: CreateCollectionOptsMap<Defs>
-}) {
-  const { pkgId: callerPkgId } = shell.assertCallInitiator()
-  const dbName = getPkgDBName(callerPkgId)
-  return collectionLib.ensureCollections(dbName, { defs })
-}
-
-export async function queryRs(queryReq: QueryReq) {
-  const { pkgId: callerPkgId } = shell.assertCallInitiator()
-  const dbName = getPkgDBName(callerPkgId)
-  return queryDbRs(dbName, queryReq)
-}
+export * from 'arangojs'
+export { aql } from 'arangojs'
+export * from 'arangojs/analyzer.js'
+export * from 'arangojs/aql.js'
+export * from 'arangojs/collection.js'
+export * from 'arangojs/connection.js'
+export * from 'arangojs/cursor.js'
+export * from 'arangojs/database.js'
+export {
+  Document,
+  DocumentData,
+  DocumentMetadata,
+  DocumentSelector,
+  Edge,
+  EdgeData,
+  EdgeMetadata,
+  ObjectWithId,
+  ObjectWithKey,
+  Patch,
+  _documentHandle,
+} from 'arangojs/documents.js'
+export * from 'arangojs/error.js'
+export * from 'arangojs/foxx-manifest.js'
+export * from 'arangojs/graph.js'
+export * from 'arangojs/index.js'
+export * from 'arangojs/indexes.js'
+export * from 'arangojs/route.js'
+export * from 'arangojs/transaction.js'
+export * from 'arangojs/view.js'
+export * from './lib.mjs'

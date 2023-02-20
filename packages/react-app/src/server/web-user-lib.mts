@@ -1,115 +1,130 @@
-import { queryRs } from '@moodlenet/arangodb'
-import { createNode, editNode, extractNodeMeta, readNode } from '@moodlenet/content-graph'
-import { glyphDescriptors } from './init.mjs'
-import shell from './shell.mjs'
-import { Contacts, CreateRequest, ProfileFormValues, WebUserGlyphDescriptors } from './types.mjs'
+import { DocumentMetadata, DocumentSelector } from '@moodlenet/arangodb'
+import assert from 'assert'
+import { db, WebUserCollection, WebUserProfile } from './init.mjs'
+import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 
-type User = {
-  isAdmin: boolean
-  profileKey: string
-  name: string
-  contacts: Contacts
-}
-
-export async function createProfile({ title: title, userId, isAdmin, contacts }: CreateRequest) {
-  const profile = await shell.call(createNode)(glyphDescriptors.Profile, {
-    description: '',
-    title,
-  })
-  const user: User = {
+export async function createWebUser(createRequest: CreateRequest) {
+  const { contacts, isAdmin, userKey, ...profileData } = createRequest
+  const newProfile = await WebUserProfile.create(profileData)
+  assert(newProfile)
+  const user: WebUserDataType = {
+    profileKey: newProfile._key,
+    displayName: newProfile.displayName,
     isAdmin,
-    profileKey: profile._key,
-    name: profile.title,
+    userKey,
     contacts,
   }
-  await shell.call(queryRs)({
-    q: `
-      INSERT @user INTO User
-    `,
 
-    bindVars: { user: { ...user, _key: userId } },
-  })
+  const { new: newWebUser } = await WebUserCollection.save(user)
+  assert(newWebUser)
+  return newWebUser
 }
 
-export async function editProfile(_key: string, { title, description }: ProfileFormValues) {
-  const res = await shell.call(editNode)(
-    glyphDescriptors.Profile,
-    {
-      _key,
-      ...glyphDescriptors.Profile,
-    },
-    {
-      description,
-      title,
-    },
-  )
-  if (!res) {
-    return null
-  }
-  const { node } = extractNodeMeta(res)
-  await patchProfileUser({ profile: _key }, { name: title })
-  return node
-}
-
-export async function getProfileUser(_key: string): Promise<User | undefined> {
-  const user = (
-    await shell.call(queryRs)({
-      q: `
-        RETURN DOCUMENT(@id)
-      `,
-      bindVars: { id: `User/${_key}` },
-    })
-  ).resultSet[0]
-
-  return user
-}
-export async function patchProfileUser(
-  byKey: { profile: string } | { user: string },
-  patch: Partial<User> | string,
+export async function editWebUserProfile(
+  sel: DocumentSelector,
+  updateWithData: Partial<WebUserProfileDataType>,
 ) {
-  const byUserKey = 'user' in byKey
-  const key = byUserKey ? byKey.user : byKey.profile
+  const mUpdated = await WebUserProfile.update(sel, updateWithData)
 
-  await shell.call(queryRs)({
-    q: `
-      FOR user in User 
-        FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
-        UPDATE user
-        WITH ${typeof patch === 'string' ? patch : '@patch'} 
-        INTO User
-    `,
-    bindVars: { patch, key },
-  })
-}
-
-export async function getProfile(_key: string) {
-  // TODO: this must rewrite better like utility for now we inject by hand Profile
-  const node = await shell.call(readNode)<WebUserGlyphDescriptors['Profile']>({
-    _key,
-    ...glyphDescriptors.Profile,
-  })
-  if (!node) {
+  if (!mUpdated) {
     return null
   }
-  return node
+  const { old: oldData, new: newData } = mUpdated
+  assert(newData)
+  const displayNameChanged = newData.displayName && oldData.displayName !== newData.displayName
+  if (displayNameChanged) {
+    await patchWebUser({ profileKey: oldData._key }, { displayName: newData.displayName })
+  }
+
+  return newData
 }
 
-export async function searchUsers(search: string) {
-  const q = `
-    FOR profileUser in User
+export async function getWebUser(
+  by: { profileKey: string } | { userKey: string },
+): Promise<(WebUserDataType & DocumentMetadata) | undefined> {
+  const byUserKey = 'userKey' in by
+  const key = byUserKey ? by.userKey : by.profileKey
+  const foundUsersCursor = await db.query<WebUserDataType & DocumentMetadata>(
+    `
+      FOR user in @@WebUserCollection
+        FILTER user.${byUserKey ? 'userKey' : 'profileKey'} == @key
+        LIMIT 1
+      RETURN user
+    `,
+    { key, '@WebUserCollection': WebUserCollection.name },
+  )
+  const [foundUser] = await foundUsersCursor.all()
+  return foundUser
+}
+
+export async function patchWebUser(
+  by: { profileKey: string } | { userKey: string },
+  patch: Partial<WebUserDataType>, // | string,
+) {
+  const byUserKey = 'userKey' in by
+  const key = byUserKey ? by.userKey : by.profileKey
+
+  const patchedCursor = await db.query(
+    `
+      FOR user in @@WebUserCollection
+        FILTER user.${byUserKey ? 'userKey' : 'profileKey'} == @key
+        LIMIT 1
+        UPDATE user
+        //! ///////////////////////////////WITH ${typeof patch === 'string' ? patch : '@patch'} 
+        WITH @patch
+        INTO @@WebUserCollection
+      RETURN NEW
+    `,
+    { patch, key, '@WebUserCollection': WebUserCollection.name },
+  )
+
+  const [patchedUser] = await patchedCursor.all()
+  return patchedUser
+}
+
+export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKey: string }) {
+  const byUserKey = 'userKey' in by
+  const key = byUserKey ? by.userKey : by.profileKey
+
+  const patchedCursor = await db.query(
+    `
+      FOR user in @@WebUserCollection
+        FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
+        LIMIT 1
+        UPDATE user
+        WITH { isAdmin: !user.isAdmin }
+        INTO @@WebUserCollection
+      RETURN NEW
+    `,
+    { key, '@WebUserCollection': WebUserCollection.name },
+  )
+
+  const [patchedUser] = await patchedCursor.all()
+  return patchedUser
+}
+
+export async function getProfile(
+  sel: DocumentSelector,
+): Promise<null | (WebUserProfileDataType & DocumentMetadata)> {
+  const profile = await WebUserProfile.get(sel)
+  return profile
+}
+
+export async function searchUsers(search: string): Promise<(WebUserDataType & DocumentMetadata)[]> {
+  const cursor = await db.query(
+    `
+    FOR profileUser in @@WebUserCollection
     let matchScore = LENGTH(@search) < 1 ? 1 
                       : NGRAM_POSITIONAL_SIMILARITY(profileUser.name, @search, 2)
                         + NGRAM_POSITIONAL_SIMILARITY(profileUser.contacts.email, @search, 2)
     SORT matchScore DESC
     FILTER matchScore > 0.05
     LIMIT 10
-    RETURN profileUser`
-  const userProfiles: (User & { _key: string })[] = (
-    await shell.call(queryRs)({
-      q,
-      bindVars: { search },
-    })
-  ).resultSet
+    RETURN profileUser`,
+    { search, '@WebUserCollection': WebUserCollection.name },
+  )
+
+  const userProfiles = await cursor.all()
 
   return userProfiles //.map(extractNodeMeta).map(({ node }) => node)
 }

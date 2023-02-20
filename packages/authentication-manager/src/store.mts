@@ -1,83 +1,47 @@
-import { queryRs } from '@moodlenet/arangodb'
+import { DocumentSelector } from '@moodlenet/arangodb'
 import assert from 'assert'
-import shell from './shell.mjs'
-import { ProviderId, User, UserData, UserId } from './store/types.mjs'
+import { db, UserCollection } from './init.mjs'
+import { ProviderId, UserData, UserDocument } from './store/types.mjs'
 
-export async function getByProviderId(providerId: ProviderId): Promise<User | undefined> {
-  const m_user = (
-    await shell.call(queryRs)({
-      q: `FOR u in User
+export async function getByProviderId(providerId: ProviderId): Promise<UserDocument | undefined> {
+  const foundUserCursor = await db.query<UserDocument>(
+    `FOR u in @@UserCollection
               FILTER u.providerId == @providerId
               LIMIT 1
             RETURN u`,
-      bindVars: { providerId },
-    })
-  ).resultSet[0]
+    { providerId, '@UserCollection': UserCollection.name },
+  )
 
-  return _user(m_user)
+  const [foundUser] = await foundUserCursor.all()
+
+  return foundUser
 }
 
-export async function getById(id: UserId): Promise<User | undefined> {
-  const m_user = (
-    await shell.call(queryRs)({
-      q: `RETURN DOCUMENT(@_id)`,
-      bindVars: { _id: _id(id) },
-    })
-  ).resultSet[0]
-
-  return _user(m_user)
+export async function getById(sel: DocumentSelector): Promise<UserDocument | null> {
+  const m_user = await UserCollection.document(sel, true)
+  return m_user
 }
 
-export async function delUser(id: UserId) {
-  const m_user = (
-    await shell.call(queryRs)({
-      q: `REMOVE @id FROM User
-            RETURN OLD`,
-      bindVars: { id: _id(id) },
-    })
-  ).resultSet[0]
+export async function delUser(sel: DocumentSelector) {
+  const { old } = await UserCollection.remove(sel, { returnOld: true })
 
-  return _user(m_user)
+  return old
 }
 
-export async function modUser(id: UserId, modUser: Partial<User>) {
-  const m_user = (
-    await shell.call(queryRs)({
-      q: `UPDATE @id WITH @modUser FROM User
-            RETURN OLD`,
-      bindVars: { id: _id(id), modUser },
-    })
-  ).resultSet[0]
+export async function modUser(sel: DocumentSelector, modUser: Partial<UserDocument>) {
+  const { old } = await UserCollection.update(sel, modUser, { returnOld: true })
 
-  return _user(m_user)
+  return old
 }
 
-export async function create(newUser: Omit<UserData, 'created'>): Promise<User> {
-  const m_user = (
-    await shell.call(queryRs)({
-      q: `
-        let newUser = MERGE(@newUser, { created: DATE_ISO8601(DATE_NOW()) })
-        INSERT newUser INTO User
-        RETURN $NEW`,
-      bindVars: { newUser },
-    })
-  ).resultSet[0]
-  const user = _user(m_user)
-  assert(user, 'no user after creation !')
-  return user
-}
-
-function _user(userDoc: any): User | undefined {
-  return userDoc
-    ? {
-        id: userDoc._key,
-        created: userDoc.created,
-        providerId: userDoc.providerId,
-      }
-    : undefined
-}
-
-function _id(_of: string | User) {
-  const key = 'string' === typeof _of ? _of : _of.id
-  return `User/${key}`
+export async function create(newUserData: Omit<UserData, 'created'>): Promise<UserDocument> {
+  const { new: newUser } = await UserCollection.save(
+    {
+      ...newUserData,
+      created: new Date().toISOString(),
+    },
+    { returnNew: true, overwriteMode: 'conflict' },
+  )
+  assert(newUser, 'no user after creation !')
+  return newUser
 }
