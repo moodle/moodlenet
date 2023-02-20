@@ -1,7 +1,7 @@
-import { getCurrentClientSession } from '@moodlenet/authentication-manager'
+import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
 import { npm } from '@moodlenet/core'
 import { getAppearance, setAppearance } from './lib.mjs'
-import shell from './shell.mjs'
+import { shell } from './shell.mjs'
 import { WebUserData, WebUserProfile } from './types.mjs'
 import {
   editWebUserProfile,

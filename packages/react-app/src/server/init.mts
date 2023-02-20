@@ -1,19 +1,19 @@
-import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb'
-import { expose as authExpose } from '@moodlenet/authentication-manager'
-import { EntityCollectionDef, registerEntities } from '@moodlenet/content-graph'
-import { mountApp } from '@moodlenet/http-server'
-import { expose as orgExpose } from '@moodlenet/organization'
+import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
+import { expose as authExpose } from '@moodlenet/authentication-manager/server'
+import { EntityCollectionDef, registerEntities } from '@moodlenet/content-graph/server'
+import { mountApp } from '@moodlenet/http-server/server'
+import kvStoreFactory from '@moodlenet/key-value-store/server'
+import { expose as orgExpose } from '@moodlenet/organization/server'
 import { resolve } from 'path'
-import '../common/exports.mjs'
 import { defaultAppearanceData } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
-import kvStore from './kvStore.mjs'
 import { setupPlugin } from './lib.mjs'
-import shell from './shell.mjs'
-import { WebUserDataType, WebUserProfileDataType } from './types.mjs'
+import { shell } from './shell.mjs'
+import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 
+export const kvStore = await kvStoreFactory<KeyValueData>(shell)
 if (!(await kvStore.get('appearanceData', '')).value) {
   await kvStore.set('appearanceData', '', defaultAppearanceData)
 }

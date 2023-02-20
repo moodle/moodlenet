@@ -1,6 +1,6 @@
 import type { PkgExpose, PkgIdentifier } from '@moodlenet/core'
-import type { HttpApiResponse } from '@moodlenet/http-server/lib'
-import { getPkgRpcFetchOpts } from '@moodlenet/http-server/lib'
+import type { HttpRpcResponse } from '@moodlenet/http-server/common'
+import { getPkgRpcFetchOpts } from '@moodlenet/http-server/common'
 import type { UsePkgHandle } from '../../../types/plugins.mjs'
 
 export type Opts = Record<string, never>
@@ -62,7 +62,7 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
       if (response.status !== 200) {
         throw new Error(await response.text())
       }
-      const responseJson: HttpApiResponse = await response.json()
+      const responseJson: HttpRpcResponse = await response.json()
       return responseJson.response
     }
   }

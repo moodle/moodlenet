@@ -1,4 +1,4 @@
-import { OrganizationData } from '@moodlenet/organization'
+import { OrganizationData } from '@moodlenet/organization/common'
 import {
   createContext,
   FC,

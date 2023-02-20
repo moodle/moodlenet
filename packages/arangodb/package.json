@@ -22,7 +22,7 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    ".": "./dist/root-export.mjs"
+    "./server": "./dist/exports.mjs"
   },
   "files": [
     "dist/"

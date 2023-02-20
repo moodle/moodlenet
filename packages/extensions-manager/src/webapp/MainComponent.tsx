@@ -10,11 +10,11 @@ import type {
   DeployedPkgInfo,
   SearchPackagesResObject,
   SearchPackagesResponse,
-} from '../types/data.mjs'
-import { MainContext } from './MainContext.js'
+} from '../common/data.mjs'
+import { MyPkgContext } from '../common/types.mjs'
 import { ExtensionsMenu } from './components/pages/Extensions/Extensions.js'
 import { ExtensionsContainer } from './components/pages/Extensions/ExtensionsContainer.js'
-import { MyPkgContext } from '../common/types.mjs'
+import { MainContext } from './MainContext.js'
 
 const extensionSettingsItem: SettingsSectionItem = {
   Menu: ExtensionsMenu,
