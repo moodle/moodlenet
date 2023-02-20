@@ -54,6 +54,7 @@ export type ResourceProps = {
   deleteResource?(): unknown
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isPublished: boolean
+  hasBeenPublished: boolean
   isWaitingForApproval?: boolean
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
@@ -93,7 +94,9 @@ export const Resource: FC<ResourceProps> = ({
   isOwner,
   isWaitingForApproval,
   isPublished,
+  hasBeenPublished,
   contentUrl,
+  contentType,
   downloadFilename,
   // autoImageAdded,
 }) => {
@@ -148,6 +151,8 @@ export const Resource: FC<ResourceProps> = ({
       isAuthenticated={isAuthenticated}
       // isEditing={isEditing}
       // setIsEditing={setIsEditing}
+      contentType={contentType}
+      hasBeenPublished={hasBeenPublished}
       canEdit={canEdit}
       form={form}
       shouldShowErrors={shouldShowErrors}
@@ -155,72 +160,63 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
-  const editorActionsContainer = {
-    Item: () =>
-      canEdit ? (
-        <Card className="resource-action-card" hideBorderWhenSmall={true}>
-          {isPublished && (
-            <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
-              Published
-            </PrimaryButton>
-          )}
-          {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
-            <PrimaryButton onClick={publish} color="green">
-              Publish
-            </PrimaryButton>
-          )}
-          {!isPublished && isWaitingForApproval && (
-            <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
-          )}
-          {isPublished || isWaitingForApproval ? (
-            <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
-          ) : (
-            <></>
-          )}
-        </Card>
+  const editorActionsContainer = canEdit ? (
+    <Card
+      className="resource-action-card"
+      hideBorderWhenSmall={true}
+      key="editor-actions-container"
+    >
+      {isPublished && (
+        <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
+          Published
+        </PrimaryButton>
+      )}
+      {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+        <PrimaryButton onClick={publish} color="green">
+          Publish
+        </PrimaryButton>
+      )}
+      {!isPublished && isWaitingForApproval && (
+        <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
+      )}
+      {isPublished || isWaitingForApproval ? (
+        <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
       ) : (
         <></>
-      ),
-    key: 'editor-actions-container',
-  }
-  const generalActionsContainer = {
-    Item: () =>
-      form.values.content ? (
-        <Card className="resource-action-card" hideBorderWhenSmall={true}>
-          {/* <PrimaryButton
+      )}
+    </Card>
+  ) : null
+
+  const generalActionsContainer = form.values.content ? (
+    <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
+      {/* <PrimaryButton
           // onClick={() => setIsAddingToMoodleLms(true)}
           >
             Send to Moodle
           </PrimaryButton> */}
-          {/* {isAuthenticated && ( */}
-          {/* <SecondaryButton
+      {/* {isAuthenticated && ( */}
+      {/* <SecondaryButton
           // onClick={() => setIsAddingToCollection(true)}
           >
             Add to Collection
           </SecondaryButton> */}
-          <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
-            <SecondaryButton
-              abbr={form.values.content instanceof File ? 'Download file' : 'Open link'}
-            >
-              {form.values.content instanceof File ? (
-                <>
-                  <InsertDriveFile />
-                  Download file
-                </>
-              ) : (
-                <>
-                  <Link />
-                  Open link
-                </>
-              )}
-            </SecondaryButton>
-          </a>
-        </Card>
-      ) : (
-        <></>
-      ),
-    key: 'actions',
-  }
+      <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
+        <SecondaryButton abbr={form.values.content instanceof File ? 'Download file' : 'Open link'}>
+          {form.values.content instanceof File ? (
+            <>
+              <InsertDriveFile />
+              Download file
+            </>
+          ) : (
+            <>
+              <Link />
+              Open link
+            </>
+          )}
+        </SecondaryButton>
+      </a>
+    </Card>
+  ) : null
 
   // const license: AddonItem | null =
   //   contentType === 'file'
@@ -257,19 +253,12 @@ export const Resource: FC<ResourceProps> = ({
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const extraDetailsContainer = {
-    Item: () =>
-      updatedExtraDetailsItems.length > 0 ? (
-        <Card className="extra-details-card" hideBorderWhenSmall={true}>
-          {updatedExtraDetailsItems.map(i => (
-            <i.Item key={i.key} />
-          ))}
-        </Card>
-      ) : (
-        <></>
-      ),
-    key: 'extra-edtails-container',
-  }
+  const extraDetailsContainer =
+    updatedExtraDetailsItems.length > 0 ? (
+      <Card className="extra-details-card" hideBorderWhenSmall={true} key="extra-details-container">
+        {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </Card>
+    ) : null
 
   const updatedSideColumnItems = [
     contributorCard,

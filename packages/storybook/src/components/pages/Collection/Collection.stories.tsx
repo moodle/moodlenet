@@ -101,6 +101,7 @@ export const Owner: CollectionStory = () => {
       isOwner: true,
       canEdit: true,
       isPublished: false,
+      hasBeenPublished: true,
       mainCollectionCardProps: useMainCollectionCardStoryProps({
         props: {
           isOwner: true,
@@ -173,9 +174,10 @@ export const New: CollectionStory = () => {
       isWaitingForApproval: false,
       isPublished: isPublished,
       setIsPublished: setIsPublished,
+      resourceCardPropsList: [],
       mainCollectionCardProps: useMainCollectionCardStoryProps({
         props: {
-          uploadProgress: 50,
+          // uploadProgress: 50,
           // isOwner: true,
           // canEdit: true,
           // isEditing: false,

@@ -14,25 +14,29 @@
   white-space: nowrap;
   text-decoration: none;
 
-  &:hover {
+  &:hover:not(.disabled) {
     border-radius: 45px;
     background-color: #f1f3f4;
   }
 
-  &:active {
+  &:active:not(.disabled) {
     background-color: #e2e5e5;
   }
 
-  &:focus-visible {
+  &:focus-visible:not(.disabled) {
     border: none;
     outline: none;
     transition: 0.1s;
     box-shadow: 0 0 3pt 2pt #1a6affb0;
   }
 
-  &:disabled {
+  &:disabled:not(.abbr) {
     user-select: none;
     pointer-events: none;
+  }
+
+  &.disabled.abbr {
+    cursor: initial;
   }
 
   &.black {

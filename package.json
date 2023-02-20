@@ -50,7 +50,8 @@
     "postinstall": "npm run prj-init",
     "prj-init": "npm run prj-husky-init && npm run prj-bs && lerna run dev-init --parallel --stream && npm run prj-build",
     "prj-husky-init": "rimraf .husky && husky install && husky add .husky/pre-commit \"npm run pre-commit\"",
-    "prj-bs": "lerna bootstrap",
+    "prj-bs": "lerna bootstrap", 
+    
     "dev-assistant": "lerna run dev-assistant --parallel --stream --",
     "prj-build": "tsc --build ./packages/arangodb ./packages/authentication-manager ./packages/component-library ./packages/content-graph ./packages/core ./packages/crypto ./packages/email-service ./packages/extensions-manager ./packages/http-server ./packages/key-value-store ./packages/organization ./packages/react-app ./packages/simple-email-auth ./packages/resource ./packages/collection ./packages/simple-file-store",
     "prj-build-watch": "npm run prj-build -- --watch",

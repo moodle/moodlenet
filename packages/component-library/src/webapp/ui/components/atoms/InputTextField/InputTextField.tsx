@@ -4,7 +4,6 @@ import './InputTextField.scss'
 
 export type InputTextFieldProps = {
   label?: string
-  key?: string
   edit?: boolean
   displayMode?: boolean
   textAreaAutoSize?: boolean
@@ -27,7 +26,6 @@ export const InputTextField = forwardRef<
   const {
     label,
     edit,
-    key,
     displayMode,
     textAreaAutoSize,
     isTextarea,
@@ -59,7 +57,10 @@ export const InputTextField = forwardRef<
     const fitTextArea = () => {
       if (fieldElem) {
         fieldElem.style.height = 'fit-content'
-        fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
+        console.log(fieldElem.scrollHeight)
+        console.log(Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px')
+        fieldElem.style.height = fieldElem.scrollHeight + 'px'
+        // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
       }
     }
     fitTextArea()
@@ -94,7 +95,6 @@ export const InputTextField = forwardRef<
       } ${!disabled && errorLeaves ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
-      key={key}
     >
       {label ? <label>{label}</label> : <></>}
       {isTextarea ? (
