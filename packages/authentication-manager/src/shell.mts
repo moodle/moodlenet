@@ -1,4 +1,4 @@
-import { shell } from '@moodlenet/core'
-import { AuthAsyncCtx } from './types.mjs'
+import { getMyShell } from '@moodlenet/core'
+import { AuthAsyncCtx } from './types/sessionTypes.mjs'
 
-export default await shell<AuthAsyncCtx>(import.meta)
+export const shell = await getMyShell<AuthAsyncCtx>(import.meta)

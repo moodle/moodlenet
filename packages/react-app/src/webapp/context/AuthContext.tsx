@@ -1,6 +1,10 @@
-import type { ClientSession, SessionToken, UserData } from '@moodlenet/authentication-manager'
+import type {
+  ClientSession,
+  SessionToken,
+  UserData,
+} from '@moodlenet/authentication-manager/server'
 
-import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/lib'
+import { SESSION_TOKEN_COOKIE_NAME } from '@moodlenet/http-server/common'
 import cookies from 'js-cookie'
 import {
   createContext,

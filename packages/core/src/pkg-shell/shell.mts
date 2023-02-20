@@ -19,7 +19,7 @@ import { ensureRegisterPkg, listEntries, pkgEntryByPkgIdValue } from '../pkg-reg
 import { PkgModuleRef } from '../types.mjs'
 
 // FIXME: maintain a registry for shells (for pkg singletons)
-export async function shell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
+export async function getMyShell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
   const { pkgId: myId, pkgInfo } = await ensureRegisterPkg(pkg_module_ref)
   const config = getConfig(myId.name)
   const myAsyncCtx = pkgAsyncContext<PkgAsyncCtx>(myId.name)

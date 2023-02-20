@@ -1,9 +1,9 @@
-import { jwt } from '@moodlenet/crypto'
+import { jwt } from '@moodlenet/crypto/server'
 import assert from 'assert'
-import { env } from './env.mjs'
-import shell from './shell.mjs'
+import { env } from './init.mjs'
+import { shell } from './shell.mjs'
 import * as store from './store.mjs'
-import type { ClientSession, SessionToken, UserDocument } from './types.mjs'
+import type { ClientSession, SessionToken, UserDocument } from './types/sessionTypes.mjs'
 
 export type GetRootSessionTokenResp = { success: boolean }
 export async function getRootSessionToken({

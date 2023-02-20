@@ -9,9 +9,9 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./init": "./dist/init.mjs",
-    "./ui": "./dist/ui.mjs",
-    "./stories": "./dist/stories.mjs"
+    "./init": "./dist/server/init.mjs",
+    "./ui": "./dist/webapp/ui.mjs",
+    "./stories": "./dist/webapp/stories.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",
