@@ -66,7 +66,7 @@
           gap: 5px;
           align-items: center;
           color: #8f8f8f;
-          // font-weight: normal;
+          font-weight: normal;
           > svg {
             height: 21px;
             width: 21px;
@@ -86,8 +86,9 @@
           gap: 2px;
           font-size: 15px;
           font-weight: normal;
-          cursor: pointer;
-          // color: #8c8e95;
+          &:not(.disabled) {
+            cursor: pointer;
+          }
           > svg,
           * > svg {
             width: 21px;
@@ -119,33 +120,34 @@
           }
         }
 
-        > .like {
+        > .publish-button {
+          padding: 0px 6px;
+          border-radius: 45px;
+          color: white;
+          background-color: #00bd7e;
+          &:hover {
+            background-color: #009966;
+          }
+        }
+
+        > .like:not(.disabled) {
           > svg {
             width: 21px;
             height: 21px;
           }
 
-          &.disabled {
-            pointer-events: none;
-            cursor: auto;
-            color: #d0d1db;
-            > span {
-              font-weight: normal;
+          &.liked {
+            &:not(:hover) > svg {
+              color: #fc0071;
+            }
+            &:hover > * {
+              color: #ce005d;
             }
           }
-        }
 
-        > .liked {
-          &:not(:hover) > svg {
-            color: #fc0071;
-          }
-          &:hover > * {
+          &:hover {
             color: #ce005d;
           }
-        }
-
-        > .like:hover {
-          color: #ce005d;
         }
 
         .bookmarked {

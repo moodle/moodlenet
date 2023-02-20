@@ -33,10 +33,13 @@ export const ResourceCardStoryProps = (
     resourceId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
     tags: TagListStory,
     isOwner: false,
-    title: `Why the Tropical rainforest ${
-      Math.random() < 0.5 ? 'stands as' : 'is'
-    } the world's most important ecosystem`,
-    image: i === 0 ? 'https://picsum.photos/400/400' : null,
+    title: `Why the  ${
+      Math.random() < 0.5 ? 'tropical rainforests are' : 'the oceans are'
+    } the world's most important ecosystems`,
+    image:
+      i === 0
+        ? 'https://images.unsplash.com/photo-1442120108414-42e7ea50d0b5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1249&q=80'
+        : null,
     type: 'Video',
     resourceHomeHref: href('Pages/Resource/Logged In'),
     isAuthenticated: true,

@@ -20,7 +20,9 @@ export const TertiaryButton: FC<TertiaryButtonProps> = ({
 }) => {
   return (
     <abbr
-      className={`tertiary-button ${className} ${disabled ? 'disabled' : ''} ${color ? color : ''}`}
+      className={`tertiary-button ${className} ${disabled ? 'disabled' : ''}  ${
+        abbr ? 'abbr' : ''
+      } ${color ? color : ''}`}
       title={abbr}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => undefined}

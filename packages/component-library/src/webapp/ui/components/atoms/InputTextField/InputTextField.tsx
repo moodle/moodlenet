@@ -57,7 +57,10 @@ export const InputTextField = forwardRef<
     const fitTextArea = () => {
       if (fieldElem) {
         fieldElem.style.height = 'fit-content'
-        fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
+        console.log(fieldElem.scrollHeight)
+        console.log(Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px')
+        fieldElem.style.height = fieldElem.scrollHeight + 'px'
+        // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
       }
     }
     fitTextArea()

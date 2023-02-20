@@ -54,6 +54,7 @@ export type ResourceProps = {
   deleteResource?(): unknown
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isPublished: boolean
+  hasBeenPublished: boolean
   isWaitingForApproval?: boolean
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
@@ -93,7 +94,9 @@ export const Resource: FC<ResourceProps> = ({
   isOwner,
   isWaitingForApproval,
   isPublished,
+  hasBeenPublished,
   contentUrl,
+  contentType,
   downloadFilename,
   // autoImageAdded,
 }) => {
@@ -148,6 +151,8 @@ export const Resource: FC<ResourceProps> = ({
       isAuthenticated={isAuthenticated}
       // isEditing={isEditing}
       // setIsEditing={setIsEditing}
+      contentType={contentType}
+      hasBeenPublished={hasBeenPublished}
       canEdit={canEdit}
       form={form}
       shouldShowErrors={shouldShowErrors}
