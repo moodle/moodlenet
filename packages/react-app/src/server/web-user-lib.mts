@@ -1,11 +1,15 @@
-import { DocumentMetadata, DocumentSelector } from '@moodlenet/arangodb'
+import { DocumentMetadata, DocumentSelector } from '@moodlenet/arangodb/server'
+import { SearchData } from '@moodlenet/content-graph/server'
 import assert from 'assert'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
 import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, userKey, ...profileData } = createRequest
-  const newProfile = await WebUserProfile.create(profileData)
+  const newProfile = await WebUserProfile.create(
+    profileData,
+    getWebUserProfileSearchData(profileData),
+  )
   assert(newProfile)
   const user: WebUserDataType = {
     profileKey: newProfile._key,
@@ -15,16 +19,37 @@ export async function createWebUser(createRequest: CreateRequest) {
     contacts,
   }
 
-  const { new: newWebUser } = await WebUserCollection.save(user)
+  const { new: newWebUser } = await WebUserCollection.save(user, { returnNew: true })
   assert(newWebUser)
   return newWebUser
+}
+
+function getWebUserProfilePartSearchData(
+  profileData: Partial<Pick<WebUserProfileDataType, 'displayName' | 'aboutMe'>>,
+): Partial<SearchData> {
+  return {
+    description: profileData.aboutMe,
+    title: profileData.displayName,
+  }
+}
+function getWebUserProfileSearchData(
+  profileData: Pick<WebUserProfileDataType, 'displayName' | 'aboutMe'>,
+): SearchData {
+  return {
+    description: profileData.aboutMe,
+    title: profileData.displayName,
+  }
 }
 
 export async function editWebUserProfile(
   sel: DocumentSelector,
   updateWithData: Partial<WebUserProfileDataType>,
 ) {
-  const mUpdated = await WebUserProfile.update(sel, updateWithData)
+  const mUpdated = await WebUserProfile.update(
+    sel,
+    updateWithData,
+    getWebUserProfilePartSearchData(updateWithData),
+  )
 
   if (!mUpdated) {
     return null

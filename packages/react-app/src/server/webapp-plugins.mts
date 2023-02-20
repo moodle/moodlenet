@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 import type { ResolveOptions } from 'webpack'
 import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
-import shell from './shell.mjs'
+import { shell } from './shell.mjs'
 
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })

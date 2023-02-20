@@ -1,4 +1,4 @@
-import { OrganizationData } from '@moodlenet/organization'
+import { OrganizationData } from '@moodlenet/organization/common'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { FC } from 'react'

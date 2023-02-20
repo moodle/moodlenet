@@ -2,13 +2,13 @@ import {
   ensureDocumentCollection,
   InvertedIndexPrimarySortFieldOptions,
   SearchAliasViewPatchIndexOptions,
-} from '@moodlenet/arangodb'
-import { getCurrentClientSession } from '@moodlenet/authentication-manager'
+} from '@moodlenet/arangodb/server'
+import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
 import assert from 'assert'
-// import { getCurrentClientSession, UserId } from '@moodlenet/authentication-manager'
-import { getEntityCollectionName } from './common/lib.mjs'
-import { EntitiesView } from './server/init/db.mjs'
-import shell from './shell.mjs'
+// import { getCurrentClientSession, UserId } from '@moodlenet/authentication-manager/server'
+import type { PkgIdentifier } from '@moodlenet/core'
+import { EntitiesView } from './init.mjs'
+import { shell } from './shell.mjs'
 import {
   EntityCollectionDef,
   EntityCollectionDefOpts,
@@ -17,6 +17,14 @@ import {
   EntityCollectionHandles,
   EntityData,
 } from './types.mjs'
+
+export function getEntityCollectionName(pkgId: PkgIdentifier, entityName: string) {
+  return `${getPkgNamespace(pkgId)}__${entityName}`
+}
+
+export function getPkgNamespace(pkgId: PkgIdentifier) {
+  return `${pkgId.name.replace(/^@/, '').replace('/', '__')}`
+}
 
 export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
   [name in keyof Defs]: EntityCollectionDefOpts
@@ -80,13 +88,17 @@ export async function registerEntity<DataType extends Record<string, any>>(
     })
   }
 
-  const create: EntityCollectionHandle<Def>['create'] = async newEntityData => {
+  const create: EntityCollectionHandle<Def>['create'] = async (
+    newEntityData,
+    newEntitySearchData,
+  ) => {
     const now = new Date().toISOString()
 
     const { new: newEntity } = await collection.save(
       {
         ...newEntityData,
         _meta: {
+          searchData: newEntitySearchData,
           creator: userKey ? { userKey } : undefined,
           updated: now,
           created: now,
@@ -99,13 +111,18 @@ export async function registerEntity<DataType extends Record<string, any>>(
     return newEntity
   }
 
-  const update: EntityCollectionHandle<Def>['update'] = async (sel, patchEntityData) => {
+  const update: EntityCollectionHandle<Def>['update'] = async (
+    sel,
+    patchEntityData,
+    patchSearchData,
+  ) => {
     const updateResponse = await collection.update(
       sel,
       {
         ...patchEntityData,
         _meta: {
           updated: new Date().toISOString(),
+          searchData: patchSearchData,
         },
       },
       { returnNew: true, returnOld: true },

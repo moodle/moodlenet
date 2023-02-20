@@ -74,7 +74,7 @@
     }
   },
   "exports": {
-    ".": "./dist/root-export.mjs",
+    "./server": "./dist/exports.mjs",
     "./init": "./dist/init.mjs",
     "./ui": "./dist/ui.mjs",
     "./stories": "./dist/stories.mjs",
