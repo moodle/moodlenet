@@ -1,200 +1,143 @@
-import type { CreateCollectionOpts, CreateCollectionOptsMap } from '@moodlenet/arangodb'
-import * as arangodb from '@moodlenet/arangodb'
-// import { getCurrentClientSession, UserId } from '@moodlenet/authentication-manager'
+import {
+  ensureDocumentCollection,
+  InvertedIndexPrimarySortFieldOptions,
+  SearchAliasViewPatchIndexOptions,
+} from '@moodlenet/arangodb'
+import { getCurrentClientSession } from '@moodlenet/authentication-manager'
 import assert from 'assert'
-import { getCollectionName, idOf, keyOf, pkgMetaAccess } from './common/lib.mjs'
+// import { getCurrentClientSession, UserId } from '@moodlenet/authentication-manager'
+import { getEntityCollectionName } from './common/lib.mjs'
+import { EntitiesView } from './server/init/db.mjs'
 import shell from './shell.mjs'
 import {
-  CreateGlyphsDefOptMap,
-  CreateNodeOpts,
-  EditNodeOpts,
-  GlyphDef,
-  GlyphDefsMap,
-  GlyphDescriptor,
-  GlyphHandle,
-  GlyphHandlesMap,
-  GlyphIdentifier,
-  NodeData,
-  NodeGlyph,
-  WithMaybeKey,
+  EntityCollectionDef,
+  EntityCollectionDefOpts,
+  EntityCollectionDefs,
+  EntityCollectionHandle,
+  EntityCollectionHandles,
+  EntityData,
 } from './types.mjs'
 
-// export const contentGraphGlyphs = await shell.call(ensureGlyphs)<ContentGraphGlyphs>({
-//   defs: {
-//     Created: { collection: { kind: 'edge' } },
-//     Updated: { collection: { kind: 'edge' } },
-//     Deleted: { collection: { kind: 'edge' } },
-//   },
-// })
-
-export function metaAccess<T>() {
-  const { pkgId } = shell.assertCallInitiator()
-  return pkgMetaAccess<T>(pkgId)
-}
-/*
-    ensureGlyphs
-    */
-export async function ensureGlyphs<Defs extends GlyphDefsMap>({
-  defs,
-}: {
-  defs: CreateGlyphsDefOptMap<Defs>
-}): Promise<GlyphHandlesMap<Defs>> {
-  const { pkgId } = shell.assertCallInitiator()
-  // NOTE: Object.entries looses entry typing!
-  const allDefs = Object.keys(defs).map<{
-    descriptor: GlyphDescriptor
-    collectionOpts: CreateCollectionOpts<any>
-    glyphName: string
-    fullGlyphName: string
-  }>(glyphName => {
-    const fullGlyphName = getCollectionName(pkgId, glyphName)
-    const glyphOpts = defs[glyphName]
-    // NOTE: Object.entries looses entry typing!
-    assert(
-      glyphOpts,
-      `ensureGlyphs defs[${glyphName}] no value? can't happen! Object.entries looses typings..??`,
-    )
-    const descriptor: GlyphDescriptor = {
-      _kind: glyphOpts.collection.kind,
-      // _pkg: { glyph: pkgGlyphName, pkgName: extName },
-      _glyphname: fullGlyphName,
+export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
+  [name in keyof Defs]: EntityCollectionDefOpts
+}): Promise<EntityCollectionHandles<Defs>> {
+  const handles = await Object.keys(entities).reduce(async (_acc, entityName) => {
+    const defOpt = entities[entityName]
+    assert(defOpt)
+    return {
+      ...(await _acc),
+      [entityName]: await registerEntity(entityName, defOpt),
     }
-    return { descriptor, collectionOpts: glyphOpts.collection, glyphName, fullGlyphName }
-  })
-
-  const createCollectionOptsMap = allDefs.reduce(
-    (_coll_def_opt_map, { fullGlyphName, collectionOpts: opts }) => {
-      return { ..._coll_def_opt_map, [fullGlyphName]: opts }
-    },
-    {} as CreateCollectionOptsMap<any>,
-  )
-
-  const collectionsHandles = await shell.call(arangodb.ensureCollections)({
-    defs: createCollectionOptsMap,
-  })
-
-  const glyphHandlesMap = allDefs.reduce(
-    (_glyph_handles_map, { descriptor, glyphName, fullGlyphName }) => {
-      const collectionHandle = collectionsHandles[fullGlyphName]
-      assert(collectionHandle)
-      const glyphHandle: GlyphHandle<any> = {
-        _glyphname: descriptor._glyphname,
-        _kind: descriptor._kind,
-        collectionHandle,
-      }
-      return { ..._glyph_handles_map, [glyphName]: glyphHandle }
-    },
-    {} as GlyphHandlesMap<Defs>,
-  )
-
-  return glyphHandlesMap
+  }, Promise.resolve({} as EntityCollectionHandles<Defs>))
+  return handles
 }
 
-/*
-    createNode
-    */
-export async function createNode<
-  T extends Record<string, any>,
-  GlyphDesc extends GlyphDescriptor<'node', T>,
->(
-  glyphHandle: GlyphHandle<GlyphDef<GlyphDesc['_kind'], T>>,
-  data: NodeData<GlyphDesc> & WithMaybeKey,
-  opts: Partial<CreateNodeOpts> = {},
-): Promise<NodeGlyph<GlyphDesc>> {
-  type NodeCreateData = WithMaybeKey & Omit<NodeGlyph, '_id' | '_key'>
+const DEFAULT_TITLE_DESCRIPTION_INDEX_NAME = 'default_title_description'
+const DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS = ['title', 'description']
+export async function registerEntity<DataType extends Record<string, any>>(
+  entityName: string,
+  defOpt?: EntityCollectionDefOpts,
+): Promise<EntityCollectionHandle<EntityCollectionDef<DataType>>> {
+  type Def = EntityCollectionDef<DataType>
+  const { pkgId } = shell.assertCallInitiator()
+  const entityCollectionName = getEntityCollectionName(pkgId, entityName)
+  const { collection, newlyCreated } = await shell.call(ensureDocumentCollection)<
+    EntityData<DataType>
+  >(entityCollectionName)
+  //const currentProperties = await EntitiesView.updateProperties<SearchAliasViewPropertiesOptions>()
+  const userKey = (await getCurrentClientSession())?.user?._key
+  newlyCreated &&
+    (await collection.ensureIndex({
+      name: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME,
+      type: 'inverted',
+      primarySort: {
+        fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS.map<InvertedIndexPrimarySortFieldOptions>(
+          field => ({ direction: 'asc', field }),
+        ),
+      },
+      storedValues: [{ fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS }],
+      fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS,
+      inBackground: true,
+    }))
 
-  const nodeCreateData: NodeCreateData = {
-    ...data,
-    _glyphname: glyphHandle._glyphname,
-    _meta: opts.meta ? metaAccess().nu(opts.meta) : {},
+  const defaultIndexesIfNewlyCreated: Required<EntityCollectionDefOpts>['updateAdditionaIndexes'] =
+    newlyCreated ? [{ index: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME, operation: 'add' }] : []
+
+  const updateIndexes = [
+    ...defaultIndexesIfNewlyCreated,
+    ...(defOpt?.updateAdditionaIndexes ?? []),
+  ].map<SearchAliasViewPatchIndexOptions>(({ index, operation }) => ({
+    collection: collection.name,
+    index,
+    operation,
+  }))
+
+  if (updateIndexes.length) {
+    await EntitiesView.updateProperties({
+      // indexes: [],
+      // indexes:[...currentProperties.indexes, ...addIndexes],
+      indexes: updateIndexes, //[...currentProperties.indexes, ...addIndexes],
+    })
   }
-  const q = `INSERT ${JSON.stringify(nodeCreateData)} INTO \`${glyphHandle._glyphname}\` RETURN NEW`
-  const nodeGlyph: NodeGlyph<GlyphDesc> = (await shell.call(arangodb.queryRs)({ q })).resultSet[0]
 
-  return nodeGlyph
-}
+  const create: EntityCollectionHandle<Def>['create'] = async newEntityData => {
+    const now = new Date().toISOString()
 
-/*
-    editNode
-    */
-export async function editNode<
-  T extends Record<string, any>,
-  GlyphDesc extends GlyphDescriptor<'node', T>,
->(
-  glyphHandle: GlyphHandle<GlyphDef<GlyphDesc['_kind'], T>>,
-  identifier: GlyphIdentifier<'node'>,
-  data: Partial<NodeData<GlyphDesc>> & WithMaybeKey,
-  opts: Partial<EditNodeOpts> = {},
-): Promise<null | NodeGlyph<GlyphDesc>> {
-  type NodeEditData = WithMaybeKey & Partial<Omit<NodeGlyph, '_id' | '_key'>>
-  const nodeEditData: NodeEditData = {
-    ...data,
-    _meta: opts.meta ? metaAccess().nu(opts.meta) : {},
+    const { new: newEntity } = await collection.save(
+      {
+        ...newEntityData,
+        _meta: {
+          creator: userKey ? { userKey } : undefined,
+          updated: now,
+          created: now,
+          entityClass: { pkgName: pkgId.name, type: entityName },
+        },
+      },
+      { returnNew: true },
+    )
+    assert(newEntity)
+    return newEntity
   }
-  const _key = keyOf(identifier)
-  const q = `
-UPDATE "${_key}" 
-  WITH ${JSON.stringify(nodeEditData)} 
-  INTO \`${glyphHandle._glyphname}\` 
-RETURN NEW`
-  const nodeGlyph: null | NodeGlyph<GlyphDesc> = (await shell.call(arangodb.queryRs)({ q }))
-    .resultSet[0]
-  if (!nodeGlyph) {
-    return null
+
+  const update: EntityCollectionHandle<Def>['update'] = async (sel, patchEntityData) => {
+    const updateResponse = await collection.update(
+      sel,
+      {
+        ...patchEntityData,
+        _meta: {
+          updated: new Date().toISOString(),
+        },
+      },
+      { returnNew: true, returnOld: true },
+    )
+    if (!updateResponse) {
+      return null
+    }
+    const { new: newEntityData, old: oldEntityData } = updateResponse
+    assert(newEntityData && oldEntityData)
+    return { new: newEntityData, old: oldEntityData }
   }
-  return nodeGlyph
-}
 
-/*
-    createEdge
-    */
-// export async function createEdge<GlyphDesc extends GlyphDescriptor<'edge'>>(
-//   glyphDesc: GlyphDesc,
-//   data: EdgeData<GlyphDesc> & WithMaybeKey,
-//   linkId: EdgeLinkIdentifiers,
-//   // _opts: Partial<CreateEdgeOpts> = {},
-// ): Promise<EdgeGlyph<GlyphDesc>> {
-//   const link = edgeLinkIdentifiers2edgeLink(linkId)
-//   const _fromType = link._from.split('/')[0]!
-//   const _toType = link._to.split('/')[0]!
-//   // const edgeMeta:Omit<EdgeGlyphMeta, '_id' | '_key'>={
-//   //   ...glyphDesc,
-//   //   ...link,
-//   //   _fromType,
-//   //   _toType,
-//   // }
-//   type EdgeCreateData = WithMaybeKey & Omit<EdgeGlyph, '_id' | '_key'>
-//   const edgeCreateData: EdgeCreateData = {
-//     ...data,
-//     ...glyphDesc,
-//     ...link,
-//     _fromType,
-//     _toType,
-//   }
-
-//   const q = `
-// INSERT ${JSON.stringify(edgeCreateData)}
-//   INTO \`${glyphDesc._glyphname}\`
-// RETURN NEW`
-//   const edgeGlyph: EdgeGlyph<typeof glyphDesc> = (await shell.call(arangodb.queryRs)({ q }))
-//     .resultSet[0]
-
-//   return edgeGlyph
-// }
-
-export async function readNode<GlyphDesc extends GlyphDescriptor<'node'>>(
-  identifier: GlyphIdentifier<'node', GlyphDesc['_glyphname']>,
-): Promise<undefined | NodeGlyph<GlyphDesc>> {
-  const q = `RETURN DOCUMENT("${idOf(identifier)}")`
-  const nodeGlyph: NodeGlyph<any> | undefined = (await shell.call(arangodb.queryRs)({ q }))
-    .resultSet[0]
-  if (!nodeGlyph) {
-    return undefined
+  const remove: EntityCollectionHandle<Def>['remove'] = async sel => {
+    const { old } = await collection.remove(sel, { returnOld: true })
+    if (!old) {
+      return null
+    }
+    return old
   }
-  return nodeGlyph
-}
+  const get: EntityCollectionHandle<Def>['get'] = async sel => {
+    const entity = await collection.document(sel, true)
+    if (!entity) {
+      return null
+    }
+    return entity
+  }
 
-export async function queryCgRs({ q, bindVars }: { q: string; bindVars: Record<string, any> }) {
-  // console.log({ q, bindVars })
-  return shell.call(arangodb.queryRs)({ q, bindVars })
+  return {
+    collection,
+    create,
+    update,
+    get,
+    remove,
+  }
 }

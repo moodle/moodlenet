@@ -3,7 +3,7 @@ import assert from 'assert'
 import { env } from './env.mjs'
 import shell from './shell.mjs'
 import * as store from './store.mjs'
-import type { ClientSession, SessionToken, User } from './types.mjs'
+import type { ClientSession, SessionToken, UserDocument } from './types.mjs'
 
 export type GetRootSessionTokenResp = { success: boolean }
 export async function getRootSessionToken({
@@ -27,7 +27,8 @@ export async function registerUser({
 }: {
   uid: string
 }): Promise<
-  { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
+  | { success: true; user: UserDocument; sessionToken: SessionToken }
+  | { success: false; msg: string }
 > {
   const { pkgId } = shell.assertCallInitiator()
   const user = await store.create({
@@ -51,7 +52,7 @@ export async function getSessionToken({ uid }: { uid: string }): Promise<Session
   return sessionToken
 }
 
-export async function getCurrentClientSession(): Promise<ClientSession | void> {
+export async function getCurrentClientSession(): Promise<ClientSession | undefined> {
   const workingCtx = shell.myAsyncCtx.get()
   // console.log({ workingCtx })
   if (!workingCtx?.currentSession) {

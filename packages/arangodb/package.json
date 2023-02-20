@@ -28,7 +28,7 @@
     "dist/"
   ],
   "dependencies": {
-    "arangojs": "^7.8.0"
+    "arangojs": "8.1.0"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.2.0",

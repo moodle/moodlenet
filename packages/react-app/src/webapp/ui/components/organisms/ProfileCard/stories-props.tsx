@@ -29,11 +29,11 @@ export const profileStoriesValidationSchema: SchemaOf<ProfileFormValues> = objec
         : true,
     )
     .optional(),
-  title: string().max(160).min(3).required(/* t */ `Please provide a display name`),
+  displayName: string().max(160).min(3).required(/* t */ `Please provide a display name`),
   location: string().optional(),
   organizationName: string().max(30).min(3).optional(),
   siteUrl: string().url().optional(),
-  description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
+  aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 
 export const useProfileCardStoryProps = (overrides?: {
@@ -73,8 +73,8 @@ export const useProfileCardStoryProps = (overrides?: {
       onSubmit: action('submit edit'),
       validationSchema: profileStoriesValidationSchema,
       initialValues: {
-        title: person ? person.title : '',
-        description:
+        displayName: person ? person.title : '',
+        aboutMe:
           'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
         organizationName: person && person.organization,
         location: person && person.location,
