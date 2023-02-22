@@ -1,8 +1,9 @@
 import { Collection } from '@moodlenet/collection/ui'
+import { getResourcesCardStoryProps } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useMainCollectionCardStoryProps } from 'components/organisms/MainCollectionCard/stories-props.js'
 import { useState } from 'react'
-import { getResourceCardStoryProps, useCollectionStoryProps } from './stories-props.js'
+import { useCollectionStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Collection> = {
@@ -34,7 +35,7 @@ export const LoggedOut: CollectionStory = () => {
           // followed: false,
         },
       }),
-      resourceCardPropsList: getResourceCardStoryProps(15, {
+      resourceCardPropsList: getResourcesCardStoryProps(15, {
         isAuthenticated: false,
         orientation: 'horizontal',
       }),
@@ -106,7 +107,7 @@ export const Owner: CollectionStory = () => {
       canEdit: true,
       isPublished: false,
       hasBeenPublished: true,
-      resourceCardPropsList: getResourceCardStoryProps(15, {
+      resourceCardPropsList: getResourcesCardStoryProps(15, {
         canEdit: true,
         isOwner: true,
         orientation: 'horizontal',
