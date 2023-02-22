@@ -19,12 +19,7 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps } from '@moodlenet/collection/ui'
-import { ResourceCardStories } from '@moodlenet/resource/stories'
-import {
-  getRandomSortedArrayElements,
-  ResourceCardProps,
-  resourcesCardFactory,
-} from '@moodlenet/resource/ui'
+import { getResourcesCardStoryProps } from '@moodlenet/resource/ui'
 import { useMainCollectionCardStoryProps } from 'components/organisms/MainCollectionCard/stories-props.js'
 import { useFormik } from 'formik'
 import {
@@ -143,18 +138,6 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
   { label: 'English Literature', value: 'English Literature' },
 ]
 
-export const getResourceCardStoryProps = (
-  amount = 8,
-  overrides?: Partial<ResourceCardProps>,
-): ResourceCardProps[] => {
-  return getRandomSortedArrayElements(resourcesCardFactory, amount).map(e => {
-    return ResourceCardStories.ResourceCardStoryProps(undefined, {
-      ...e,
-      ...overrides,
-    })
-  })
-}
-
 export const useCollectionStoryProps = (overrides?: {
   props?: Partial<CollectionProps>
   // formConfig?: Partial<FormikConfig<CollectionFormValues>>
@@ -187,7 +170,7 @@ export const useCollectionStoryProps = (overrides?: {
     // ...overrides?.formConfig,
   }
 
-  const resourceCardPropsList = getResourceCardStoryProps(15, {
+  const resourceCardPropsList = getResourcesCardStoryProps(15, {
     orientation: 'horizontal',
   })
 

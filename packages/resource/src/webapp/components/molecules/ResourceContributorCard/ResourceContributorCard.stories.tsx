@@ -1,4 +1,4 @@
-import { people, randomIntFromInterval } from '@moodlenet/component-library'
+import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
 import { href } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard.js'
@@ -21,7 +21,7 @@ const meta: ComponentMeta<typeof ResourceContributorCard> = {
 
 const randomProfileIndex = randomIntFromInterval(0, 3)
 const randomUploadedHours = randomIntFromInterval(1, 12)
-const person = people[randomProfileIndex]
+const person = peopleFactory[randomProfileIndex]
 
 export const ResourceContributorCardStoryProps: ResourceContributorCardProps = {
   avatarUrl: person ? person.avatarUrl : null,

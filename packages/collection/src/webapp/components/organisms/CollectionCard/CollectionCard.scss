@@ -1,0 +1,170 @@
+// @import '../../../../styles/application';
+
+.collection-card {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 185px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 6px #dedede;
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+
+  &.draft {
+    opacity: 1;
+  }
+
+  > .collection-card-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    transform-origin: top right;
+  }
+
+  > .collection-card-header {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    pointer-events: none;
+    padding: 19px;
+    color: white;
+    z-index: 1;
+
+    > * {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      > * {
+        display: flex;
+        gap: 5px;
+      }
+
+      > svg,
+      * > svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    > .header-left {
+      > .num-resources {
+        pointer-events: none;
+        > svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      gap: 2px;
+      pointer-events: auto;
+
+      > :not(.disabled) {
+        cursor: pointer;
+      }
+
+      > .tertiary-button {
+        display: flex;
+        cursor: pointer;
+        color: white;
+        align-items: center;
+        gap: 4px;
+        padding: 0 7px;
+        font-weight: normal;
+
+        > span {
+          color: white;
+        }
+
+        &:hover:not(.disabled) {
+          > span {
+            color: #687082;
+          }
+        }
+
+        > svg,
+        * > svg {
+          width: 18px;
+          height: 18px;
+        }
+
+        &.disabled {
+          cursor: auto;
+        }
+
+        &:last-child {
+          margin-right: -7px;
+        }
+      }
+
+      > .publish-button {
+        &.published {
+          color: #00bd7e;
+          &:hover {
+            color: #009966;
+          }
+        }
+        &.draft {
+          &:hover {
+            color: #63656a;
+          }
+        }
+      }
+
+      > .follow-button {
+        &.followed {
+          color: var(--primary-color);
+        }
+        &:hover:not(.disabled) {
+          color: var(--primary-color);
+        }
+        &:active {
+          color: var(--primary-color-active);
+        }
+      }
+
+      > .bookmark-button {
+        &.bookmarked,
+        &:hover:not(.disabled) {
+          color: #00bd7e;
+        }
+
+        &.bookmarked:hover {
+          color: #009966;
+        }
+      }
+    }
+  }
+  > .collection-card-content {
+    position: absolute;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    padding: 15px 25px 0 25px;
+
+    > .title {
+      text-align: center;
+      text-align: center;
+      font-family: 'Lato';
+      font-style: normal;
+      font-weight: normal;
+      font-size: 20px;
+      color: white;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow-wrap: break-word;
+    }
+  }
+}

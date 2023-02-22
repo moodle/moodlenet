@@ -1,13 +1,19 @@
-import { ListCard } from '@moodlenet/component-library'
+import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
+import { Link } from '@moodlenet/react-app/ui'
+import { ArrowForwardRounded } from '@mui/icons-material'
 import { FC } from 'react'
 import ResourceCard, { ResourceCardProps } from '../ResourceCard/ResourceCard.js'
 import './ResourceCardList.scss'
 
 export type ResourceCardListProps = {
   resourceCardPropsList: ResourceCardProps[]
+  searchResourcesHref: Href
 }
 
-export const ResourceCardList: FC<ResourceCardListProps> = ({ resourceCardPropsList }) => {
+export const ResourceCardList: FC<ResourceCardListProps> = ({
+  resourceCardPropsList,
+  searchResourcesHref,
+}) => {
   return (
     <ListCard
       className="resource-list"
@@ -25,12 +31,10 @@ export const ResourceCardList: FC<ResourceCardListProps> = ({ resourceCardPropsL
             <div className="subtitle">Highlights on top quality content</div>
           </div>
           {
-            //   <SecondaryButton className="more" color="dark-blue">
-            //     <Link href={searchResourcesHref}>
-            //       See more resources
-            //     </Link>
-            //     {/* <ArrowForwardRoundedIcon /> */}
-            //   </SecondaryButton>
+            <SecondaryButton className="more" color="dark-blue">
+              <Link href={searchResourcesHref}>See more resources</Link>
+              <ArrowForwardRounded />
+            </SecondaryButton>
           }
         </div>
       }
