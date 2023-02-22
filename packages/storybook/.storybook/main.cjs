@@ -1,12 +1,12 @@
 // const react = require('@vitejs/plugin-react').default
 const svgr = require('vite-plugin-svgr')
+const path = require('path')
 const { default: tsconfigPaths } = require('vite-tsconfig-paths')
 const { mergeConfig } = require('vite')
-const { readdirSync, writeFileSync } = require('fs')
+const { readdirSync, symlinkSync, rmSync, statSync } = require('fs')
 
-const path = require('path')
 const packagesDirs = readdirSync(path.join('..')).map(pkg_name => path.join('..', pkg_name))
-hackPackageJsonExports()
+linkDist2SrcForViteStorybook(true)
 
 module.exports = {
   stories: [
@@ -46,40 +46,41 @@ module.exports = {
 const recoverHackSignals = [
   'SIGTERM',
   'SIGINT',
-  'SIGHUP',
+  // 'SIGHUP',
   'SIGBREAK',
   // 'SIGKILL',
   // 'SIGSTOP',
-  'SIGBUS',
-  'SIGFPE',
-  'SIGSEGV',
-  'SIGILL',
+  // 'SIGFPE',
+  // 'SIGSEGV',
+  // 'SIGILL',
   'exit',
   'beforeExit',
-  'abort',
-  'unhandledRejection',
-  'uncaughtException',
+  // 'abort',
+  // 'unhandledRejection',
+  // 'uncaughtException',
   'disconnect'
 ]
 recoverHackSignals.forEach((evname) => {
-  process.once(evname, () => hackPackageJsonExports(true))
+  process.once(evname, () => {
+    linkDist2SrcForViteStorybook(false)
+    process.exit()
+  })
 })
 
-function hackPackageJsonExports(recover) {
-
-  console.log('hackPackageJsonExports' + (recover ? ' (recover)' : ''))
+function linkDist2SrcForViteStorybook(create) {
+  console.log(create ? 'creating' : 'removing', 'link dist to src folder for Vite-Storybook')
   packagesDirs.forEach(pkgDir => {
     const pkgJsonFile = path.resolve(pkgDir, 'package.json')
     const pkgJson = require(pkgJsonFile)
     const pkgExports = pkgJson.exports
-    if (!pkgExports) {
+    if (!pkgExports || pkgDir === path.resolve(__dirname, '..')) {
       return
     }
-    const pkgExportsStr = JSON.stringify(pkgExports)
-    const hackedPkgExportsStr = pkgExportsStr.replaceAll(...recover ? [`"./src/`, `"./dist/`] : [`"./dist/`, `"./src/`])
-    const hackedExports = JSON.parse(hackedPkgExportsStr)
-    pkgJson.exports = hackedExports
-    writeFileSync(pkgJsonFile, JSON.stringify(pkgJson, null, 2) + '\n')
+    const distFullPath = path.resolve(pkgDir, 'dist')
+    const srcFullPath = path.resolve(pkgDir, 'src')
+    const distStats = statSync(distFullPath, { throwIfNoEntry: false })
+    distStats && rmSync(distFullPath, { recursive: distStats.isDirectory(), force: true })
+    create && symlinkSync(srcFullPath, distFullPath)
   })
 
 }
