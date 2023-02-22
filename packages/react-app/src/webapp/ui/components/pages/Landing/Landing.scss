@@ -143,21 +143,8 @@
     }
   }
 
-  > .resources > .content {
+  > .list-card > .content {
     overflow: hidden;
-    // max-height: 735px;
-    margin-bottom: -10px;
-  }
-
-  > .collections > .content {
-    overflow: hidden;
-    // max-height: 394px;
-    margin-bottom: -10px;
-  }
-
-  > .people > .content {
-    overflow: hidden;
-    // max-height: 262px;
     margin-bottom: -10px;
   }
 

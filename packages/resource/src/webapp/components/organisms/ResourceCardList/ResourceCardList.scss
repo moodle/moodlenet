@@ -1,0 +1,50 @@
+> .resource-list {
+  gap: 46px;
+  > .title > .card-header {
+    display: flex;
+    justify-content: space-between;
+
+    @media (max-width: 580px) {
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    > .info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'Lato';
+      font-style: normal;
+      font-weight: 700;
+
+      > .title {
+        font-size: 28px;
+        line-height: 34px;
+        color: #223b6a;
+      }
+      > .subtitle {
+        font-size: 16px;
+        color: #91939f;
+      }
+    }
+    > .more {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 0 26px;
+      font-family: 'Open Sans';
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 50px;
+      height: 48px;
+    }
+  }
+
+  > .content {
+    overflow: hidden;
+    // max-height: 735px;
+    margin-bottom: -10px;
+  }
+}

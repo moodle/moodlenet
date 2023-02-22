@@ -19,8 +19,12 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps } from '@moodlenet/collection/ui'
-import { randomIntFromInterval } from '@moodlenet/react-app/ui'
 import { ResourceCardStories } from '@moodlenet/resource/stories'
+import {
+  getRandomSortedArrayElements,
+  ResourceCardProps,
+  resourcesCardFactory,
+} from '@moodlenet/resource/ui'
 import { useMainCollectionCardStoryProps } from 'components/organisms/MainCollectionCard/stories-props.js'
 import { useFormik } from 'formik'
 import {
@@ -139,6 +143,18 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
   { label: 'English Literature', value: 'English Literature' },
 ]
 
+export const getResourceCardStoryProps = (
+  amount = 8,
+  overrides?: Partial<ResourceCardProps>,
+): ResourceCardProps[] => {
+  return getRandomSortedArrayElements(resourcesCardFactory, amount).map(e => {
+    return ResourceCardStories.ResourceCardStoryProps(undefined, {
+      ...e,
+      ...overrides,
+    })
+  })
+}
+
 export const useCollectionStoryProps = (overrides?: {
   props?: Partial<CollectionProps>
   // formConfig?: Partial<FormikConfig<CollectionFormValues>>
@@ -171,6 +187,10 @@ export const useCollectionStoryProps = (overrides?: {
     // ...overrides?.formConfig,
   }
 
+  const resourceCardPropsList = getResourceCardStoryProps(15, {
+    orientation: 'horizontal',
+  })
+
   return {
     mainLayoutProps:
       overrides?.props?.isAuthenticated !== undefined && !overrides?.props?.isAuthenticated
@@ -185,6 +205,7 @@ export const useCollectionStoryProps = (overrides?: {
     id: 'qjnwglkd69io-sports',
     url: 'collection.url',
     setIsPublished: action('setIsPublished'),
+    hasBeenPublished: true,
 
     isAuthenticated: true,
     canEdit: false,
@@ -196,32 +217,8 @@ export const useCollectionStoryProps = (overrides?: {
       CollectionContributorCardStories.CollectionContributorCardStoryProps,
     collectionUrl: '#',
 
-    resourceCardPropsList: [
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-      ResourceCardStories.ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1, {
-        orientation: 'horizontal',
-      }),
-    ],
+    resourceCardPropsList: resourceCardPropsList,
+    // resourceCardPropsList: getRandomSortedArrayElements(resourceCardList, 15),
 
     // reportForm: useFormik<{ comment: string }>({
     //   initialValues: { comment: '' },

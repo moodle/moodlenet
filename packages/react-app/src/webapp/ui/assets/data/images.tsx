@@ -13,6 +13,7 @@ import lukechesser from '../img/contentBackup/lukechesser.jpg'
 import lukechesser2 from '../img/contentBackup/lukechesser2.jpg'
 import mymind from '../img/contentBackup/mymind.jpg'
 import seanwsinclair from '../img/contentBackup/seanwsinclair.jpg'
+import solenfeyisa from '../img/contentBackup/solenfeyissa.jpg'
 import vackground from '../img/contentBackup/vackground.jpg'
 
 export type RecursivePartial<T> = {
@@ -21,11 +22,11 @@ export type RecursivePartial<T> = {
 
 export const ContentBackupImages: AssetInfo[] = [
   {
-    location: 'static/media/mymind.a4646614.jpg',
+    location: solenfeyisa,
     credits: {
       owner: {
-        name: 'mymind',
-        url: 'https://unsplash.com/@mymind',
+        name: 'Solen Feyissa',
+        url: 'https://unsplash.com/@solenfeyissa',
       },
       provider: {
         name: 'Unsplash',
