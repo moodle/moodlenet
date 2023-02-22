@@ -1,4 +1,3 @@
-import { shuffleArray } from '@moodlenet/component-library'
 import { href } from '@moodlenet/react-app/ui'
 import { ResourceCardProps } from '../../ui.mjs'
 
@@ -59,21 +58,3 @@ export const resourcesCardFactory: Partial<ResourceCardProps>[] = [
       'https://media.wired.com/photos/59d3ac76dfe65f09d639f81a/2:1/w_2400,h_1200,c_limit/ligoHP.jpg',
   },
 ]
-
-export const getRandomSortedArrayElements = <T,>(baseArray: T[], lengthNewArray?: number): T[] => {
-  // console.log('base array ', baseArray)
-  const newArray: T[] = []
-  const newArrayLength = lengthNewArray ?? baseArray.length ?? 0
-  // console.log('length new array ', newArrayLength)
-  while (newArray.length < newArrayLength) {
-    shuffleArray(baseArray).forEach(e => {
-      if (newArray.length < newArrayLength) {
-        newArray.push(e)
-      } else {
-        return
-      }
-    })
-  }
-  // console.log('new array ', newArray)
-  return newArray
-}

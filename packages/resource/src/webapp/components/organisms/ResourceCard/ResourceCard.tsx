@@ -148,7 +148,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   }, [resourceCard])
 
   const deleteButton = canEdit && (
-    <TertiaryButton onClick={onRemoveClick} className="delete">
+    <TertiaryButton onClick={onRemoveClick} className={`delete ${orientation}`}>
       <CloseRounded />
     </TertiaryButton>
   )
@@ -190,22 +190,23 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     </Link>
   )
 
-  const pulished = canEdit && (
+  const pulishButton = canEdit && (
     <TertiaryButton
       onClick={isPublished ? () => setIsPublished(false) : publish}
-      className={`publish ${isPublished ? 'published' : 'draft'}`}
+      className={`publish-button ${isPublished ? 'published' : 'draft'}`}
       abbr={isPublished ? 'Sent to draft' : 'Publish'}
     >
       <Public />
     </TertiaryButton>
   )
 
-  const bookmark = isAuthenticated && !selectionMode && (
+  const bookmarkButton = isAuthenticated && !selectionMode && (
     <TertiaryButton
-      className={`bookmark ${bookmarked && 'bookmarked'} ${
+      className={`bookmark-button ${bookmarked && 'bookmarked'} ${
         selectionMode || !isAuthenticated ? 'disabled' : ''
       }`}
       onClick={toggleBookmark}
+      abbr="Bookmark"
     >
       {bookmarked ? <Bookmark /> : <BookmarkBorder />}
     </TertiaryButton>
@@ -213,7 +214,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const likeButton = (
     <TertiaryButton
-      className={`like ${liked && 'liked'} ${
+      className={`like-button ${liked && 'liked'} ${
         selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
       }`}
       abbr={
@@ -239,9 +240,9 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   )
 
   const updatedBottomRightItems = [
-    pulished,
-    bookmark,
+    bookmarkButton,
     likeButton,
+    pulishButton,
     ...(bottomRightItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 

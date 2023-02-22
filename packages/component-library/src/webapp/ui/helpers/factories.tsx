@@ -1,4 +1,4 @@
-export const people: {
+export const peopleFactory: {
   title: string
   avatarUrl: string
   backgroundUrl: string

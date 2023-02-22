@@ -1,11 +1,11 @@
-import { Landing, LandingProps } from '@moodlenet/react-app/ui'
-import { ResourceCardList } from '@moodlenet/resource/ui'
+import { CollectionCardList, getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
+import { href, Landing, LandingProps } from '@moodlenet/react-app/ui'
+import { getResourcesCardStoryProps, ResourceCardList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
-import { getResourceCardStoryProps } from '../Collection/stories-props.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Landing> = {
@@ -22,18 +22,30 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
-  // mainColumnItems: [
-  //   {
-  //     Item: () => (
-  //       <ResourceCardList
-  //         resourceCardPropsList={getResourceCardStoryProps(15, {
-  //           isAuthenticated: false,
-  //         })}
-  //       />
-  //     ),
-  //     key: 'resource-card-list',
-  //   },
-  // ],
+  mainColumnItems: [
+    {
+      Item: () => (
+        <ResourceCardList
+          searchResourcesHref={href('Page/Search')}
+          resourceCardPropsList={getResourcesCardStoryProps(15, {
+            isAuthenticated: false,
+          })}
+        />
+      ),
+      key: 'resource-card-list',
+    },
+    {
+      Item: () => (
+        <CollectionCardList
+          searchCollectionsHref={href('Page/Search')}
+          collectionCardPropsList={getCollectionsCardStoryProps(15, {
+            isAuthenticated: false,
+          })}
+        />
+      ),
+      key: 'resource-card-list',
+    },
+  ],
 }
 
 export const LandingLoggedInStoryProps: LandingProps = {
@@ -41,7 +53,27 @@ export const LandingLoggedInStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedInStoryProps,
   mainColumnItems: [
     {
-      Item: () => <ResourceCardList resourceCardPropsList={getResourceCardStoryProps(8, {})} />,
+      Item: () => (
+        <ResourceCardList
+          searchResourcesHref={href('Page/Search')}
+          resourceCardPropsList={getResourcesCardStoryProps(15, {
+            liked: true,
+            bookmarked: true,
+          })}
+        />
+      ),
+      key: 'resource-card-list',
+    },
+    {
+      Item: () => (
+        <CollectionCardList
+          searchCollectionsHref={href('Page/Search')}
+          collectionCardPropsList={getCollectionsCardStoryProps(15, {
+            followed: true,
+            bookmarked: true,
+          })}
+        />
+      ),
       key: 'resource-card-list',
     },
   ],
@@ -70,8 +102,24 @@ export const Owner: LandingStory = () => {
       {
         Item: () => (
           <ResourceCardList
-            resourceCardPropsList={getResourceCardStoryProps(15, {
+            searchResourcesHref={href('Page/Search')}
+            resourceCardPropsList={getResourcesCardStoryProps(15, {
               isOwner: true,
+              canEdit: true,
+              isPublished: true,
+            })}
+          />
+        ),
+        key: 'resource-card-list',
+      },
+      {
+        Item: () => (
+          <CollectionCardList
+            searchCollectionsHref={href('Page/Search')}
+            collectionCardPropsList={getCollectionsCardStoryProps(15, {
+              isOwner: true,
+              canEdit: true,
+              isPublished: false,
             })}
           />
         ),
