@@ -250,7 +250,11 @@ export const Collection: FC<CollectionProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const resourceCardList = resourceCardPropsList.map(r => <ResourceCard {...r} key="" />)
+  console.log('list', resourceCardPropsList)
+
+  const resourceCardList = resourceCardPropsList.map(r => (
+    <ResourceCard {...r} key={r.resourceId} />
+  ))
 
   const updatedMainColumnItems = [...resourceCardList, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,

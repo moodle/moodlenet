@@ -41,10 +41,10 @@ export type MainCollectionCardProps = {
   collection: CollectionFormValues
   form: FormikHandle<CollectionFormValues>
   editCollection: (values: CollectionFormValues) => Promise<unknown>
-  publish: () => void
   deleteCollection?(): unknown
-  isPublished: boolean
   hasBeenPublished: boolean //At any point on time, so it might already have followers
+  publish: () => void
+  isPublished: boolean
   setIsPublished: Dispatch<SetStateAction<boolean>>
   isWaitingForApproval?: boolean
   isSaving?: boolean
@@ -87,9 +87,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   // editCollection,
   // saveCollection,
   publish,
+  isPublished,
   setIsPublished,
   isWaitingForApproval,
-  isPublished,
   hasBeenPublished,
   deleteCollection,
   isSaving,
@@ -222,7 +222,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         className={`follow ${followed ? 'followed' : ''}`}
         disabled={!isAuthenticated || isOwner}
         onClick={isAuthenticated && !isOwner && toggleFollow ? toggleFollow : () => undefined}
-        abbr={isOwner ? 'Creators cannot like their own content' : followed ? 'Unfollow' : 'Follow'}
+        abbr={
+          isOwner ? 'Creators cannot follow their own content' : followed ? 'Unfollow' : 'Follow'
+        }
         key="followers-button"
       >
         {followed ? <Person /> : <PermIdentity />}
@@ -466,10 +468,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   useEffect(() => {
     const fieldElem = descriptionRef.current ?? descriptionEditRef.current
     if (fieldElem) {
-      console.log('current he: ', fieldElem && fieldElem.scrollHeight)
-
       canEdit && fieldElem.scrollHeight < 80 && setAlwaysFullDescription(true)
-
       setShowFullDescription(alwaysFullDescription || fieldElem.scrollHeight < 80)
     }
   }, [
