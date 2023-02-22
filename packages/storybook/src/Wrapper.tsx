@@ -1,5 +1,5 @@
 import { FC, ReactNode, useEffect } from 'react'
-import { baseStyle } from '../../component-library/dist/webapp/ui/styles/config.js'
+import { baseStyle } from '../../component-library/src/webapp/ui/styles/config.js'
 import './Wrapper.scss'
 
 export const Wrapper: FC<{ children: ReactNode }> = ({ children }) => {
