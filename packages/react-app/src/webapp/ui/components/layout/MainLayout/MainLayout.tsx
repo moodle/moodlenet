@@ -58,8 +58,8 @@ export const MainLayout: FC<MainLayoutProps> = ({
           className="content"
         >
           {children}
-          <MainFooter {...footerProps} />
         </div>
+        <MainFooter {...footerProps} />
       </div>
     </LayoutContainer>
   )

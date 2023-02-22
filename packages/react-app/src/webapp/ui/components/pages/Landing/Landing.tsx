@@ -1,13 +1,16 @@
 import { FC } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
-import { PrimaryButton } from '@moodlenet/component-library'
+import { AddonItem } from '@moodlenet/component-library'
+import defaultBackground from '../../../assets/img/default-landing-background.png'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
-import defaultBackground from '../../../assets/img/default-landing-background.png'
 export type LandingProps = {
   mainLayoutProps: MainLayoutProps
+  mainColumnItems?: AddonItem[]
+
   title: string
   subtitle: string
+
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
   // collectionCardPropsList: CP<CollectionCardProps>[]
   // resourceCardPropsList: CP<ResourceCardProps>[]
@@ -27,6 +30,8 @@ export type LandingProps = {
 
 export const Landing: FC<LandingProps> = ({
   mainLayoutProps,
+  mainColumnItems,
+
   title,
   subtitle,
   // {
@@ -59,37 +64,45 @@ export const Landing: FC<LandingProps> = ({
       backgroundImage: 'url("' + /* imageUrl ||  */ defaultBackground + '")',
       backgroundSize: 'cover',
     }
+    const headerCard = (
+      <div className="landing-header" style={background}>
+        <div className="landing-title">
+          <div className="title">{title}</div>
+          {/* <div className="title">{organization.title}</div> */}
+          <div className="subtitle">{subtitle}</div>
+          {/* <div className="subtitle">{organization.subtitle}</div> */}
+        </div>
+        {/* <Searchbox
+  // setSearchText={() => {
+  //   return 'sdsf'
+  // }}
+  size="big"
+  // setSearchText={setSearchText}
+  // searchText=""
+  placeholder={`Search for open educational conten`}
+  // setIsSearchboxInViewport={setIsSearchboxInViewport}
+  marginTop={12}
+/> */}
+        {/* <PrimaryButton
+          className="share-content"
+          color="blue"
+          onClick={() => alert('Nothing to see here, for the moment 🤫')}
+          // onClick={() => setIsCreatingContent(true)}
+        >
+          Share content
+        </PrimaryButton> */}
+      </div>
+    )
+
+    const updatedMainColumnItems = [headerCard, ...(mainColumnItems ?? [])].filter(
+      (item): item is AddonItem | JSX.Element => !!item,
+    )
 
     return (
       <MainLayout {...mainLayoutProps}>
         <div className="landing">
-          <div className="landing-header" style={background}>
-            <div className="landing-title">
-              <div className="title">{title}</div>
-              {/* <div className="title">{organization.title}</div> */}
-              <div className="subtitle">{subtitle}</div>
-              {/* <div className="subtitle">{organization.subtitle}</div> */}
-            </div>
-            {/* <Searchbox
-          // setSearchText={() => {
-          //   return 'sdsf'
-          // }}
-          size="big"
-          // setSearchText={setSearchText}
-          // searchText=""
-          placeholder={`Search for open educational conten`}
-          // setIsSearchboxInViewport={setIsSearchboxInViewport}
-          marginTop={12}
-        /> */}
-            <PrimaryButton
-              className="share-content"
-              color="blue"
-              onClick={() => alert('Nothing to see here, for the moment 🤫')}
-              // onClick={() => setIsCreatingContent(true)}
-            >
-              Share content
-            </PrimaryButton>
-          </div>
+          {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+
           {/* <ListCard
             className="resources"
             content={resourceCardPropsList

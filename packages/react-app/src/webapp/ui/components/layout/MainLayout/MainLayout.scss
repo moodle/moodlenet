@@ -80,7 +80,7 @@ body {
   }
 
   > .content {
-    height: 100%;
+    height: fit-content;
     width: -webkit-fill-available;
     padding: 60px 100px 0;
     // padding: 0 100px 80px;
@@ -92,6 +92,9 @@ body {
     @media (max-width: 450px) {
       background: white;
       padding: 60px 0 0;
+      > * > * {
+        padding: 0 25px;
+      }
     }
 
     @media screen and (max-width: 675px) and (min-width: 450px) {
