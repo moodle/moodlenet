@@ -1,4 +1,5 @@
-import { CSSProperties, FC, ReactNode } from 'react'
+import { CSSProperties, forwardRef, ReactNode } from 'react'
+import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
 import './Card.scss'
 
 export type CardProps = {
@@ -13,19 +14,24 @@ export type CardProps = {
   onMouseDown?(arg0: unknown): unknown
 }
 
-export const Card: FC<CardProps> = ({
-  onClick,
-  onMouseDown,
-  className,
-  noCard,
-  hover,
-  style,
-  hideBorderWhenSmall,
-  removePaddingWhenSmall,
-  children,
-}) => {
+export const Card = forwardRef<HTMLDivElement | null | undefined, CardProps>((props, ref) => {
+  const {
+    onClick,
+    onMouseDown,
+    className,
+    noCard,
+    hover,
+    style,
+    hideBorderWhenSmall,
+    removePaddingWhenSmall,
+    children,
+  } = props
+
+  const cardElementRef = useForwardedRef(ref)
+
   return (
     <div
+      ref={cardElementRef as any}
       className={`card ${className ? className : ''} ${hideBorderWhenSmall ? 'hide-border' : ''} ${
         noCard ? 'no-card' : ''
       } ${removePaddingWhenSmall ? 'remove-padding' : ''} ${hover ? 'hover' : ''}`}
@@ -36,10 +42,11 @@ export const Card: FC<CardProps> = ({
       {children}
     </div>
   )
-}
+})
 
 Card.defaultProps = {
   removePaddingWhenSmall: false,
 }
+Card.displayName = 'Card'
 
 export default Card

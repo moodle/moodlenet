@@ -15,36 +15,35 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 // import Card from '../../../atoms/Card/Card'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
-import { Link } from '@material-ui/core'
-import {
-  Bookmark,
-  BookmarkBorder,
-  Favorite,
-  FavoriteBorder,
-  Visibility as VisibilityIcon,
-  VisibilityOff,
-} from '@material-ui/icons'
-import { Card, FollowTag, Href, TertiaryButton, Visibility } from '@moodlenet/component-library'
-import { getBackupImage } from '@moodlenet/react-app/ui'
-import { CloseRounded } from '@mui/icons-material'
-import { FC, useEffect, useRef, useState } from 'react'
+import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder } from '@material-ui/icons'
+import { AddonItem, Card, FollowTag, Href, TertiaryButton } from '@moodlenet/component-library'
+import { getBackupImage, Link } from '@moodlenet/react-app/ui'
+import { CloseRounded, Public } from '@mui/icons-material'
+import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
 import { getResourceTypeInfo } from '../../../../common.mjs'
 import './ResourceCard.scss'
 
 export type ResourceCardProps = {
+  mainColumnItems?: AddonItem[]
+  topLeftItems?: AddonItem[]
+  topRightItems?: AddonItem[]
+  bottomLeftItems?: AddonItem[]
+  bottomRightItems?: AddonItem[]
+
   resourceId: string
-  toggleVisible?(): unknown
   tags?: FollowTag[]
   className?: string
   orientation?: 'vertical' | 'horizontal'
   image?: string | null
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
-  visibility: Visibility
+
+  publish: () => void
+  isPublished: boolean
+  setIsPublished: Dispatch<SetStateAction<boolean>>
   resourceHomeHref?: Href
-  allowDeletion?: boolean
   isOwner: boolean
-  isEditing?: boolean
+  canEdit: boolean
   isAuthenticated?: boolean
   isSelected?: boolean
   selectionMode?: boolean
@@ -63,23 +62,30 @@ export type ResourceCardProps = {
 }
 
 export const ResourceCard: FC<ResourceCardProps> = ({
+  mainColumnItems,
+  topLeftItems,
+  topRightItems,
+  bottomLeftItems,
+  bottomRightItems,
+
   resourceId,
   orientation,
   isSelected,
-  toggleVisible,
   image,
   type,
   title,
   resourceHomeHref,
-  isEditing,
+  canEdit,
   selectionMode,
   isAuthenticated,
   liked,
   numLikes,
   bookmarked,
   isOwner,
-  visibility,
-  allowDeletion,
+
+  publish,
+  isPublished,
+  setIsPublished,
   owner,
   onClick,
   onRemoveClick,
@@ -113,12 +119,8 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   const content = (
     <div className="content">
       {orientation === 'horizontal' && <div className={`image ${size}`} style={background} />}
-      <div
-        className={`resource-card-content ${
-          orientation === 'horizontal' ? 'horizontal' : 'vertical'
-        } ${size}`}
-      >
-        <abbr className="title" title={title}>
+      <div className={`resource-card-content ${orientation ?? ''} ${size}`}>
+        <abbr className={`title ${orientation ?? ''}`} title={title}>
           <span>{title}</span>
         </abbr>
       </div>
@@ -127,14 +129,15 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   useEffect(() => {
     const updateSize = () => {
+      console.log('width ', resourceCard.current && resourceCard.current.clientWidth)
       setSize(
-        resourceCard.current && resourceCard.current.clientWidth < 200
+        resourceCard.current && resourceCard.current.clientWidth < 300
           ? 'micro'
-          : resourceCard.current && resourceCard.current.clientWidth < 300
+          : resourceCard.current && resourceCard.current.clientWidth < 400
           ? 'tiny'
-          : resourceCard.current && resourceCard.current.clientWidth < 385
+          : resourceCard.current && resourceCard.current.clientWidth < 500
           ? 'small'
-          : resourceCard.current && resourceCard.current.clientWidth < 575
+          : resourceCard.current && resourceCard.current.clientWidth < 700
           ? 'medium'
           : 'big',
       )
@@ -144,90 +147,142 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     return () => window.removeEventListener('resize', updateSize)
   }, [resourceCard])
 
+  const deleteButton = canEdit && (
+    <TertiaryButton onClick={onRemoveClick} className="delete">
+      <CloseRounded />
+    </TertiaryButton>
+  )
+
+  const typeLabel = (
+    <div className="type" style={{ background: typeColor }}>
+      {typeName}
+    </div>
+  )
+
+  const updatedTopLeftItems = [typeLabel, ...(topLeftItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
+
+  const updatedTopRightItems = [deleteButton, ...(topRightItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
+
+  const header = (
+    <div className={`resource-card-header ${orientation} ${size}`}>
+      <div className="header-left">
+        {updatedTopLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+      <div className="header-right">
+        {updatedTopRightItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+      {/* <div className={`level`}>
+        <div className="name">
+        L1
+        </div>
+      </div> */}
+    </div>
+  )
+
+  const avatarLabel = (
+    <Link href={owner.profileHref}>
+      <div style={avatar} className="avatar" />
+      <span>{owner.displayName}</span>
+    </Link>
+  )
+
+  const pulished = canEdit && (
+    <TertiaryButton
+      onClick={isPublished ? () => setIsPublished(false) : publish}
+      className={`publish ${isPublished ? 'published' : 'draft'}`}
+      abbr={isPublished ? 'Sent to draft' : 'Publish'}
+    >
+      <Public />
+    </TertiaryButton>
+  )
+
+  const bookmark = isAuthenticated && !selectionMode && (
+    <TertiaryButton
+      className={`bookmark ${bookmarked && 'bookmarked'} ${
+        selectionMode || !isAuthenticated ? 'disabled' : ''
+      }`}
+      onClick={toggleBookmark}
+    >
+      {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+    </TertiaryButton>
+  )
+
+  const likeButton = (
+    <TertiaryButton
+      className={`like ${liked && 'liked'} ${
+        selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
+      }`}
+      abbr={
+        isOwner
+          ? 'Creators cannot like their own content'
+          : !isAuthenticated
+          ? 'Loggin to like the resource'
+          : 'Like'
+      }
+      onClick={
+        isAuthenticated && !isOwner && !selectionMode
+          ? toggleLike
+          : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()
+      }
+    >
+      {liked ? <Favorite /> : <FavoriteBorder />}
+      <span>{numLikes}</span>
+    </TertiaryButton>
+  )
+
+  const updatedBottomLeftItems = [avatarLabel, ...(bottomLeftItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
+
+  const updatedBottomRightItems = [
+    pulished,
+    bookmark,
+    likeButton,
+    ...(bottomRightItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  const footer = (
+    <div className={`resource-card-footer ${orientation} ${size}`}>
+      <div className="footer-left">
+        {updatedBottomLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+      <div className="footer-right">
+        {updatedBottomRightItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    </div>
+  )
+
+  const contentContainer =
+    resourceHomeHref && !selectionMode ? (
+      <Link className="content-container" href={resourceHomeHref}>
+        {content}
+      </Link>
+    ) : (
+      <div className="content-container">{content}</div>
+    )
+
+  const updatedMainColumnItems = [
+    header,
+    contentContainer,
+    footer,
+    ...(mainColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
   return (
     <Card
-      // ref={resourceCard}
+      ref={resourceCard}
       className={`resource-card ${isSelected ? 'selected' : ''} ${orientation} ${
-        isOwner && visibility === 'Private' ? 'is-private' : ''
+        isOwner && isPublished ? '' : 'is-private'
       }`}
       hover={true}
       onClick={onClick}
       style={orientation === 'vertical' ? background : {}}
     >
-      <div className={`resource-card-header ${orientation} ${size}`}>
-        <div className="left-side">
-          <div className="type" style={{ background: typeColor }}>
-            {typeName}
-          </div>
-        </div>
-        <div className="right-side">
-          {isEditing && allowDeletion && (
-            <TertiaryButton onClick={onRemoveClick} className="delete">
-              <CloseRounded />
-            </TertiaryButton>
-          )}
-        </div>
-        {/* <div className={`level`}>
-            <div className="name">
-              L1
-            </div>
-          </div> */}
-      </div>
-      <div className={`resource-card-footer ${orientation} ${size}`}>
-        <div className="left-side">
-          <Link
-          // href={owner.profileHref}
-          >
-            <div style={avatar} className="avatar" />
-            {size !== 'micro' && <span>{owner.displayName}</span>}
-          </Link>
-        </div>
-        <div className="right-side">
-          {isOwner && (
-            <abbr
-              onClick={toggleVisible}
-              className={`visibility ${visibility === 'Public' ? 'public' : 'private'}`}
-              title={visibility}
-            >
-              {visibility === 'Public' ? <VisibilityIcon /> : <VisibilityOff />}
-            </abbr>
-          )}
-          {isAuthenticated && !selectionMode && (
-            <div
-              className={`bookmark ${bookmarked && 'bookmarked'} ${
-                selectionMode || !isAuthenticated ? 'disabled' : ''
-              }`}
-              onClick={toggleBookmark}
-            >
-              {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-            </div>
-          )}
-          <div
-            className={`like ${liked && 'liked'} ${
-              selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
-            }`}
-            {...(isAuthenticated && !isOwner && !selectionMode
-              ? { onClick: toggleLike }
-              : {
-                  onClick: e => {
-                    e.stopPropagation()
-                  },
-                })}
-          >
-            {liked ? <Favorite /> : <FavoriteBorder />}
-            <span>{numLikes}</span>
-          </div>
-        </div>
-      </div>
-      {resourceHomeHref && !selectionMode ? (
-        <Link
-        // href={resourceHomeHref}
-        >
-          {content}
-        </Link>
-      ) : (
-        <div className="content-container">{content}</div>
-      )}
+      {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </Card>
   )
 }

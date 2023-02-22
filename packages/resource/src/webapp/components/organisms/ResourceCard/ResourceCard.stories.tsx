@@ -1,4 +1,5 @@
 import { ContentBackupImages, href, TagListStory } from '@moodlenet/react-app/ui'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import ResourceCard, { ResourceCardProps } from './ResourceCard.js'
 
@@ -46,7 +47,10 @@ export const ResourceCardStoryProps = (
     bookmarked: false,
     liked: false,
     numLikes: 23,
-    visibility: 'Public',
+    isPublished: true,
+    canEdit: false,
+    publish: action('publish resource'),
+    setIsPublished: action('publish resource'),
     owner: {
       profileHref: href('Pages/Profile/Logged In'),
       avatar:
@@ -76,7 +80,7 @@ export const ResourceCardOwnerStoryProps: ResourceCardProps = {
 export const ResourceCardOwnerPrivateStoryProps: ResourceCardProps = {
   ...ResourceCardLoggedInStoryProps,
   isOwner: true,
-  visibility: 'Private',
+  isPublished: false,
 }
 
 export const ResourceCardOwnerBookmarkedStoryProps: ResourceCardProps = {

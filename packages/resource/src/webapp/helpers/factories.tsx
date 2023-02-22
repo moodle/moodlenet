@@ -1,43 +1,79 @@
-export const resources: {
-  title: string
-  description?: string
-  ownerName: string
-  avatarUrl: string
-  backgroundUrl: string
-  username: string
-}[] = [
+import { shuffleArray } from '@moodlenet/component-library'
+import { href } from '@moodlenet/react-app/ui'
+import { ResourceCardProps } from '../../ui.mjs'
+
+export const resourcesCardFactory: Partial<ResourceCardProps>[] = [
   {
     title: 'Why the oceans are so important',
-    ownerName: 'Juanito Rodriguez',
-    avatarUrl:
-      'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-    backgroundUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/37/Chualluma_La_Paz.jpg',
-    username: 'profesorrodriguez',
+    owner: {
+      displayName: 'Juanito Rodriguez',
+      avatar:
+        'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+      profileHref: href('Pages/Profile'),
+    },
+    image:
+      'https://images.unsplash.com/photo-1604060215504-0954788ee762?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
   },
   {
     title: 'How ecosystems collapse',
-    ownerName: 'Finaritra Randevoson',
-    avatarUrl:
-      'https://images.unsplash.com/photo-1586351012965-861624544334?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-    backgroundUrl:
-      'https://www.tropenbos.org/image.php/2229/project/AdobeStock_301188707.jpeg?format=lightwindow',
-    username: 'finarandevoson',
+    owner: {
+      displayName: 'Finaritra Randevoson',
+      avatar:
+        'https://images.unsplash.com/photo-1586351012965-861624544334?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+      profileHref: href('Pages/Profile'),
+    },
+    image:
+      'https://images.unsplash.com/photo-1621451651659-ac1c3100a9b7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80',
   },
   {
     title: 'The true role of CO2',
-    ownerName: 'Alberto Curcella',
-    avatarUrl:
-      'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-    backgroundUrl: 'https://media.fisheries.noaa.gov/dam-migration/vaquita_barbtaylorartist.jpg',
-    username: 'dralbicurcella',
+    owner: {
+      displayName: 'Alberto Curcella',
+      avatar:
+        'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+      profileHref: href('Pages/Profile'),
+    },
+    image:
+      'https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80',
   },
   {
-    title: 'Meaningful life with few needs',
-    ownerName: 'Katy Greentree',
-    avatarUrl:
-      'https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
-    backgroundUrl:
-      'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
-    username: 'katygreetree',
+    title: 'Fullfilling life with little needs',
+    owner: {
+      displayName: 'Katy Greentree',
+      avatar:
+        'https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
+      profileHref: href('Pages/Profile'),
+    },
+    image:
+      'https://images.unsplash.com/photo-1575996531329-2c400bbd91e7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+  },
+  {
+    title: 'How black holes collapse',
+    owner: {
+      displayName: 'Cristina Forat',
+      avatar:
+        'https://images.unsplash.com/photo-1574838163272-16992518d74c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1208&q=80',
+      profileHref: href('Pages/Profile'),
+    },
+    image:
+      'https://media.wired.com/photos/59d3ac76dfe65f09d639f81a/2:1/w_2400,h_1200,c_limit/ligoHP.jpg',
   },
 ]
+
+export const getRandomSortedArrayElements = <T,>(baseArray: T[], lengthNewArray?: number): T[] => {
+  // console.log('base array ', baseArray)
+  const newArray: T[] = []
+  const newArrayLength = lengthNewArray ?? baseArray.length ?? 0
+  // console.log('length new array ', newArrayLength)
+  while (newArray.length < newArrayLength) {
+    shuffleArray(baseArray).forEach(e => {
+      if (newArray.length < newArrayLength) {
+        newArray.push(e)
+      } else {
+        return
+      }
+    })
+  }
+  // console.log('new array ', newArray)
+  return newArray
+}

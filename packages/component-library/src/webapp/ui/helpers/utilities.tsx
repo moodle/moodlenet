@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { useEffect, useState } from 'react'
 
 export const elementFullyInViewPort = (
@@ -22,6 +23,20 @@ export const elementFullyInViewPort = (
     top + height <= window.pageYOffset + window.innerHeight &&
     left + width <= window.pageXOffset + window.innerWidth
   )
+}
+
+export const range = (size: number, startAt = 0) => {
+  return [...Array(size).keys()].map(i => i + startAt)
+}
+
+export const shuffleArray = <T,>(array: T[]): T[] => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const [element_i, element_j] = [array[i], array[j]]
+    assert(element_i && element_j, 'This should never happen')
+    ;[array[i], array[j]] = [element_j, element_i]
+  }
+  return array
 }
 
 export const getRandomInt = (max: number): number => Math.floor(Math.random() * max)
