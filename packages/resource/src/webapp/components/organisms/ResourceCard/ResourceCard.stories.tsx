@@ -26,7 +26,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
   ],
 }
 
-export const ResourceCardStoryProps = (
+export const getResourceCardStoryProps = (
   i?: 0 | 1,
   overrides?: Partial<ResourceCardProps>,
 ): ResourceCardProps => {
@@ -62,12 +62,12 @@ export const ResourceCardStoryProps = (
 }
 
 export const ResourceCardLoggedInStoryProps: ResourceCardProps = {
-  ...ResourceCardStoryProps(),
+  ...getResourceCardStoryProps(),
 }
 
 export const ResourceCardLoggedOutStoryProps = (i?: 0 | 1): ResourceCardProps => {
   return {
-    ...ResourceCardStoryProps(i),
+    ...getResourceCardStoryProps(i),
     isAuthenticated: false,
   }
 }

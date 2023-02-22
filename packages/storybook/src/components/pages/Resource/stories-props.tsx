@@ -144,9 +144,8 @@ export const useResourceStoryProps = (overrides?: {
     // onSubmit: action('submit edit'),
     // initialValues: {
     isFile: false,
-    // content: 'random-link.com',
-    content: null,
-    // visibility: 'Public',
+    content: 'random-link.com',
+    // content: null,
     name: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
@@ -229,6 +228,7 @@ export const useResourceStoryProps = (overrides?: {
     addToCollectionsForm,
     isPublished: true,
     autoImageAdded: false,
+    hasBeenPublished: true,
     // canSearchImage: true,
     ...overrides?.props,
   }
