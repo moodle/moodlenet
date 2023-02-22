@@ -10,7 +10,7 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./init": "./src/server/init.mjs"
+    "./init": "./dist/server/init.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",
@@ -21,7 +21,7 @@
   ],
   "description": "MoodleNet pkg template",
   "files": [
-    "src/"
+    "dist/"
   ],
   "scripts": {
     "buildx": "tsc --build"
