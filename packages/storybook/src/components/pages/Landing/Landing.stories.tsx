@@ -22,18 +22,18 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
-  mainColumnItems: [
-    {
-      Item: () => (
-        <ResourceCardList
-          resourceCardPropsList={getResourceCardStoryProps(15, {
-            isAuthenticated: false,
-          })}
-        />
-      ),
-      key: 'resource-card-list',
-    },
-  ],
+  // mainColumnItems: [
+  //   {
+  //     Item: () => (
+  //       <ResourceCardList
+  //         resourceCardPropsList={getResourceCardStoryProps(15, {
+  //           isAuthenticated: false,
+  //         })}
+  //       />
+  //     ),
+  //     key: 'resource-card-list',
+  //   },
+  // ],
 }
 
 export const LandingLoggedInStoryProps: LandingProps = {

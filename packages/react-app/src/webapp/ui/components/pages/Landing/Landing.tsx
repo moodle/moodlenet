@@ -1,6 +1,6 @@
 import { FC } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
-import { AddonItem } from '@moodlenet/component-library'
+import { AddonItem, PrimaryButton } from '@moodlenet/component-library'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
@@ -83,14 +83,14 @@ export const Landing: FC<LandingProps> = ({
   // setIsSearchboxInViewport={setIsSearchboxInViewport}
   marginTop={12}
 /> */}
-        {/* <PrimaryButton
+        <PrimaryButton
           className="share-content"
           color="blue"
           onClick={() => alert('Nothing to see here, for the moment 🤫')}
           // onClick={() => setIsCreatingContent(true)}
         >
           Share content
-        </PrimaryButton> */}
+        </PrimaryButton>
       </div>
     )
 

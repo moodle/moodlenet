@@ -1,13 +1,20 @@
 @import '../../../styles/application.scss';
 
 .footer {
-  padding: 50px 0 40px;
+  padding: 50px 0 40px 0;
   display: flex;
   justify-content: center;
   top: 0;
   width: 100%;
   height: fit-content;
   font-size: 0.7rem;
+
+  @media screen and (max-width: 675px) {
+    padding: 25px 0 35px 0;
+    > .content {
+      gap: 15px;
+    }
+  }
 
   > .content {
     height: 100%;
