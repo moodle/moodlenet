@@ -1,6 +1,12 @@
-import { ResourceFormValues } from '@moodlenet/resource/common'
+import {
+  ResourceAccess,
+  ResourceActions,
+  ResourceFormValues,
+  ResourceType,
+} from '@moodlenet/resource/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
+import { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
 import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, string } from 'yup'
 // import { href } from '../../../elements/link'
@@ -9,19 +15,17 @@ import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, st
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
-import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-library'
+import { OptionItemProp } from '@moodlenet/component-library'
+import { overrideDeep } from '@moodlenet/component-library/common'
+
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 // import { useFormik } from 'formik'
 import { ResourceContributorCardStories } from '@moodlenet/resource/stories'
 import { Resource, ResourceProps } from '@moodlenet/resource/ui'
-import { useMainResourceCardStoryProps } from 'components/organisms/MainResourceCard/stories-props.js'
 import { useFormik } from 'formik'
 import { useEffect } from 'react'
-import {
-  MainLayoutLoggedInStoryProps,
-  MainLayoutLoggedOutStoryProps,
-} from '../../layout/MainLayout/MainLayout.stories.js'
+import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
 const maxUploadSize = 1024 * 1024 * 50
 
@@ -84,7 +88,6 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
 })
 
 export const resourceFormValues: ResourceFormValues = {
-  isFile: false,
   content: '',
   // visibility: VisbilityIconTextOptionProps[0]!.value,
   // category: CategoriesTextOptionProps[2]!.value,
@@ -92,7 +95,7 @@ export const resourceFormValues: ResourceFormValues = {
   //   'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  image: { location: 'https://picsum.photos/200/100' },
+  image: 'https://picsum.photos/200/100',
   // language: LanguagesTextOptionProps[2]!.value,
   // level: LevelTextOptionProps[2]!.value,
   // license: LicenseIconTextOptionProps[2]!.value,
@@ -101,7 +104,6 @@ export const resourceFormValues: ResourceFormValues = {
 
   name: '',
   // name: 'The Best Resource Ever',
-  type: TypeTextOptionProps[2]!.value,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormValues>) => {
@@ -109,18 +111,14 @@ export const useResourceForm = (overrides?: Partial<ResourceFormValues>) => {
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
-      isFile: true,
       content: '',
       name: 'Best resource ever',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      type: TypeTextOptionProps[2]!.value,
-      image: {
-        location:
-          'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-      },
-      ...overrides,
+      image:
+        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
     },
+    ...overrides,
   })
 }
 
@@ -134,29 +132,29 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
   { label: 'English Literature', value: 'English Literature' },
 ]
 
-export const useResourceStoryProps = (overrides?: {
-  props?: Partial<ResourceProps>
-  // formConfig?: Partial<FormikConfig<ResourceFormValues>>
-  resourceValues?: Partial<ResourceFormValues>
-}): ResourceProps => {
-  const resource: ResourceFormValues = {
+export const useResourceStoryProps = (
+  overrides?: PartialDeep<ResourceProps>,
+  //   {
+  //   props?: Partial<ResourceProps>
+  //   resource?: Partial<ResourceType>
+  //   resourceForm?: Partial<ResourceFormValues>
+  //   actions?: Partial<ResourceActions>
+  //   access?: Partial<ResourceAccess>
+  //   mainResourceCardSlots?: Partial<MainResourceCardSlots>
+  // }
+): ResourceProps => {
+  const resourceForm: ResourceFormValues = {
     // validationSchema,
     // onSubmit: action('submit edit'),
     // initialValues: {
-    isFile: false,
     content: 'random-link.com',
     // content: null,
     name: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    type: TypeTextOptionProps[2]?.value,
-    image: {
-      location:
-        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-    },
-    ...overrides?.resourceValues,
-    // },
-    // ...overrides?.formConfig,
+    image:
+      'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+    // ...overrides?.resourceForm,
   }
 
   const addToCollectionsForm = useFormik<{ collections: string[] }>({
@@ -182,56 +180,67 @@ export const useResourceStoryProps = (overrides?: {
     [addToCollectionsForm.values.collections],
   )
 
-  return {
-    mainLayoutProps:
-      overrides?.props?.isAuthenticated !== undefined && !overrides?.props?.isAuthenticated
-        ? MainLayoutLoggedOutStoryProps
-        : MainLayoutLoggedInStoryProps,
-    mainResourceCardProps: useMainResourceCardStoryProps(),
-    resource: resource,
-    editResource: async () => action('editing resource submited'),
-    validationSchema: validationSchema,
-
+  const resource: ResourceType = {
     id: 'qjnwglkd69io-sports',
-    url: 'resource.url',
+    mnUrl: 'resource.url',
     downloadFilename: 'resource.pdf',
-    type: 'pdf',
-    setIsPublished: action('setIsPublished'),
+    specificContentType: 'pdf',
+    contentType: 'file',
+    contentUrl: '#',
+    isPublished: true,
+    numLikes: 23,
+    // ...overrides?.resource,
+  }
 
+  const actions: ResourceActions = {
+    liked: false,
+    bookmarked: false,
+    toggleLike: action('toggleLike'),
+    toggleBookmark: action('toggleBookmark'),
+    deleteResource: action('deleteResource'),
+    editResource: async () => action('editing resource submited'),
+    setIsPublished: action('setIsPublished'),
+    ...overrides?.actions,
+  }
+
+  const access: ResourceAccess = {
     isAuthenticated: true,
     canEdit: false,
     isOwner: false,
     isAdmin: false,
-    // liked: false,
-    numLikes: 23,
-    // bookmarked: true,
-    resourceContributorCardProps: ResourceContributorCardStories.ResourceContributorCardStoryProps,
-    contentUrl: '#',
-    contentType: 'file',
-    resourceFormat: 'Video',
-    // reportForm: useFormik<{ comment: string }>({
-    //   initialValues: { comment: '' },
-    //   onSubmit: action('submit report Form'),
-    // }),
-    collections: {
-      opts: CollectionTextOptionProps,
-      selected: CollectionTextOptionProps.filter(
-        ({ value }) => !!addToCollectionsForm.values.collections?.includes(value),
-      ),
-    },
-    deleteResource: action('deleteResource'),
-
-    sendToMoodleLmsForm: useFormik<{ site?: string }>({
-      initialValues: { site: 'http://my-lms.org' },
-      onSubmit: action('Send to Moodle LMS'),
-    }),
-    addToCollectionsForm,
-    isPublished: true,
-    autoImageAdded: false,
-    hasBeenPublished: true,
-    // canSearchImage: true,
-    ...overrides?.props,
+    // ...overrides?.access,
   }
+
+  const mainResourceCardSlots = {
+    mainColumnItems: [],
+    headerColumnItems: [],
+    topLeftHeaderItems: [],
+    topRightHeaderItems: [],
+    moreButtonItems: [],
+    footerRowItems: [],
+  }
+
+  return overrideDeep<ResourceProps>(
+    // mainLayoutProps:
+    //   overrides?.props?.access?.isAuthenticated !== undefined && !overrides?.props?.access?.isAuthenticated
+    //     ? MainLayoutLoggedOutStoryProps
+    //     : MainLayoutLoggedInStoryProps,
+
+    {
+      mainLayoutProps: MainLayoutLoggedOutStoryProps,
+      fileMaxSize: 343243,
+      mainResourceCardSlots: mainResourceCardSlots,
+      resourceContributorCardProps:
+        ResourceContributorCardStories.ResourceContributorCardStoryProps,
+
+      resource: resource,
+      resourceForm: resourceForm,
+      actions: actions,
+      access: access,
+      validationSchema: validationSchema,
+    },
+    { ...overrides },
+  )
 }
 
 export default meta

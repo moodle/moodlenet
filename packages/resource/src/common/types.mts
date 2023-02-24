@@ -1,59 +1,44 @@
 import { FollowTag } from '@moodlenet/component-library'
-import { AssetInfo } from '@moodlenet/react-app/common'
+import { Dispatch, SetStateAction } from 'react'
 
 export type ResourceFormValues = {
-  // upload
   name: string
   description: string
   content: string | File | null
-  // category: string
-  // visibility: Visibility
-  // addToCollections: string[]
-  // license?: string
-  // image?: string | File | null
-  image?: AssetInfo | null
-  type?: string
-  // level?: string
-  // month?: string
-  // year?: string
-  // language?: string
-  isFile: boolean
+  image: string | File | null
 }
 
 export type ResourceType = {
   id: string
-  url: string
+  mnUrl: string
   numLikes: number
   contentType: 'link' | 'file'
-  // tags: FollowTag[]
-  contentUrl: string
-  resourceFormat: string
   downloadFilename: string
-  type: string
+  specificContentType: string // ex: url, pdf, doc...
+  contentUrl: string
+  isPublished: boolean
 }
 
-// isOwner: boolean
-//   isAdmin: boolean
-//   autoImageAdded: boolean
-//   canSearchImage: boolean
-//   contributorCardProps: ContributorCardProps
-//   form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
-//   toggleLikeForm: FormikHandle
-//   toggleBookmarkForm: FormikHandle
-//   deleteResourceForm?: FormikHandle
-//   addToCollectionsForm: FormikHandle<{ collections: string[] }>
-//   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-//   collections: SelectOptionsMulti<OptionItemProp>
-// reportForm?: FormikHandle<{ comment: string }>
-// licenses: SelectOptions<IconTextOptionProps>
-// setCategoryFilter(text: string): unknown
-// categories: SelectOptions<TextOptionProps>
-// setTypeFilter(text: string): unknown
-// types: SelectOptions<TextOptionProps>
-// setLevelFilter(text: string): unknown
-// levels: SelectOptions<TextOptionProps>
-// setLanguageFilter(text: string): unknown
-// languages: SelectOptions<TextOptionProps>
+export type ResourceActions = {
+  isSaving?: boolean
+  isSaved?: boolean
+  isWaitingForApproval?: boolean
+  uploadProgress?: number
+  liked: boolean
+  toggleLike?(): unknown
+  bookmarked: boolean
+  toggleBookmark?(): unknown
+  editResource: (values: ResourceFormValues) => Promise<unknown>
+  deleteResource(): unknown
+  setIsPublished: Dispatch<SetStateAction<boolean>>
+}
+
+export type ResourceAccess = {
+  isAuthenticated: boolean
+  isOwner: boolean
+  isAdmin: boolean
+  canEdit: boolean
+}
 
 export type Organization = {
   name: string
@@ -63,7 +48,6 @@ export type Organization = {
   url: string
   logo: string
   smallLogo: string
-  // description: string
   color: string
 }
 

@@ -1,6 +1,6 @@
 import { CollectionCardList, getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
 import { href, Landing, LandingProps } from '@moodlenet/react-app/ui'
-import { getResourcesCardStoryProps, ResourceCardList } from '@moodlenet/resource/ui'
+import { getResourcesCardStoryProps, LandingPageResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   MainLayoutLoggedInStoryProps,
@@ -25,7 +25,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainColumnItems: [
     {
       Item: () => (
-        <ResourceCardList
+        <LandingPageResourceList
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             isAuthenticated: false,
@@ -54,7 +54,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
   mainColumnItems: [
     {
       Item: () => (
-        <ResourceCardList
+        <LandingPageResourceList
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             liked: true,
@@ -101,7 +101,7 @@ export const Owner: LandingStory = () => {
     mainColumnItems: [
       {
         Item: () => (
-          <ResourceCardList
+          <LandingPageResourceList
             searchResourcesHref={href('Page/Search')}
             resourceCardPropsList={getResourcesCardStoryProps(15, {
               isOwner: true,
