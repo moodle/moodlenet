@@ -30,7 +30,6 @@ import {
   Sync,
 } from '@mui/icons-material'
 import { FC, StrictMode, useEffect, useMemo, useRef, useState } from 'react'
-import { SchemaOf } from 'yup'
 import {
   getResourceTypeInfo,
   ResourceAccess,
@@ -55,14 +54,12 @@ export type MainResourceCardProps = {
 
   resource: ResourceType
   form: FormikHandle<ResourceFormValues>
-  validationSchema: SchemaOf<ResourceFormValues>
 
   actions: ResourceActions
   access: ResourceAccess
 
   shouldShowErrors: boolean
   fileMaxSize: number
-  uploadProgress?: number
   publish: () => void
 }
 
@@ -88,17 +85,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     footerRowItems,
   } = slots
 
-  const {
-    id: resourceId,
-    mnUrl,
-    contentType,
-    isPublished,
-    numLikes,
-    contentUrl,
-    specificContentType,
-  } = resource
+  const { id, mnUrl, contentType, numLikes, contentUrl, specificContentType } = resource
 
   const {
+    isPublished,
     bookmarked,
     toggleBookmark,
     liked,
@@ -114,7 +104,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const { canEdit, isAuthenticated, isOwner } = access
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: string | undefined = useMemo(() => getBackupImage(resourceId), [resourceId])
+  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [imageUrl] = useImageUrl(form.values?.image, backupImage)
   const { typeName, typeColor } = getResourceTypeInfo(specificContentType)
@@ -208,7 +198,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     isPublished || numLikes > 0 ? (
       <TertiaryButton
         className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
-        onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
+        onClick={isAuthenticated && !isOwner ? toggleLike : () => undefined}
         abbr={isOwner ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
         key="like-button"
       >

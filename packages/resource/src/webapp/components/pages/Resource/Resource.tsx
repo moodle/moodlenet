@@ -61,7 +61,8 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
 }) => {
-  const { editResource, setIsPublished, isWaitingForApproval, deleteResource } = actions
+  const { editResource, setIsPublished, isWaitingForApproval, deleteResource, isPublished } =
+    actions
   const { isOwner, canEdit } = access
 
   const form = useFormik<ResourceFormValues>({
@@ -107,31 +108,14 @@ export const Resource: FC<ResourceProps> = ({
   }
   const mainResourceCard = (
     <MainResourceCard
+      key="main-resource-card"
       resource={resource}
       form={form}
-      validationSchema={validationSchema}
       publish={publish}
       actions={actions}
       access={access}
       slots={mainResourceCardSlots}
       fileMaxSize={fileMaxSize}
-      // mnUrl={mnUrl}
-      // resourceType={resourceType}
-
-      //   bookmarked={bookmarked}
-      //   downloadFilename={downloadFilename}
-      //   specificContentType={specificContentType}
-      //   id={id}
-      //   toggleBookmark={toggleBookmark}
-      //   liked={liked}
-      //   toggleLike={toggleLike}
-      //   isOwner={isOwner}
-      //   isPublished={isPublished}
-      //   isWaitingForApproval={isWaitingForApproval}
-      //   isAuthenticated={isAuthenticated}
-      //   contentType={contentType}
-      //   hasBeenPublished={hasBeenPublished}
-      //   canEdit={canEdit}
       shouldShowErrors={shouldShowErrors}
     />
   )
@@ -142,20 +126,20 @@ export const Resource: FC<ResourceProps> = ({
       hideBorderWhenSmall={true}
       key="editor-actions-container"
     >
-      {resource.isPublished && (
+      {isPublished && (
         <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
           Published
         </PrimaryButton>
       )}
-      {!resource.isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+      {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
         <PrimaryButton onClick={publish} color="green">
           Publish
         </PrimaryButton>
       )}
-      {!resource.isPublished && isWaitingForApproval && (
+      {!isPublished && isWaitingForApproval && (
         <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
       )}
-      {resource.isPublished || isWaitingForApproval ? (
+      {isPublished || isWaitingForApproval ? (
         <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
       ) : (
         <></>

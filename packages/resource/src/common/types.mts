@@ -1,5 +1,4 @@
 import { FollowTag } from '@moodlenet/component-library'
-import { Dispatch, SetStateAction } from 'react'
 
 export type ResourceFormValues = {
   name: string
@@ -16,21 +15,21 @@ export type ResourceType = {
   downloadFilename: string
   specificContentType: string // ex: url, pdf, doc...
   contentUrl: string
-  isPublished: boolean
 }
 
 export type ResourceActions = {
+  isPublished: boolean
+  setIsPublished: (approve: boolean) => void
+  isWaitingForApproval?: boolean
   isSaving?: boolean
   isSaved?: boolean
-  isWaitingForApproval?: boolean
-  uploadProgress?: number
   liked: boolean
-  toggleLike?(): unknown
+  toggleLike(): unknown
   bookmarked: boolean
-  toggleBookmark?(): unknown
+  toggleBookmark(): unknown
   editResource: (values: ResourceFormValues) => Promise<unknown>
   deleteResource(): unknown
-  setIsPublished: Dispatch<SetStateAction<boolean>>
+  uploadProgress?: number
 }
 
 export type ResourceAccess = {

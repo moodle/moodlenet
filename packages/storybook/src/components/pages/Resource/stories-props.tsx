@@ -22,10 +22,13 @@ import { overrideDeep } from '@moodlenet/component-library/common'
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 // import { useFormik } from 'formik'
 import { ResourceContributorCardStories } from '@moodlenet/resource/stories'
-import { Resource, ResourceProps } from '@moodlenet/resource/ui'
+import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
 import { useEffect } from 'react'
-import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+import {
+  MainLayoutLoggedInStoryProps,
+  MainLayoutLoggedOutStoryProps,
+} from '../../layout/MainLayout/MainLayout.stories.js'
 
 const maxUploadSize = 1024 * 1024 * 50
 
@@ -187,12 +190,12 @@ export const useResourceStoryProps = (
     specificContentType: 'pdf',
     contentType: 'file',
     contentUrl: '#',
-    isPublished: true,
     numLikes: 23,
     // ...overrides?.resource,
   }
 
   const actions: ResourceActions = {
+    isPublished: true,
     liked: false,
     bookmarked: false,
     toggleLike: action('toggleLike'),
@@ -211,7 +214,7 @@ export const useResourceStoryProps = (
     // ...overrides?.access,
   }
 
-  const mainResourceCardSlots = {
+  const mainResourceCardSlots: MainResourceCardSlots = {
     mainColumnItems: [],
     headerColumnItems: [],
     topLeftHeaderItems: [],
@@ -227,7 +230,10 @@ export const useResourceStoryProps = (
     //     : MainLayoutLoggedInStoryProps,
 
     {
-      mainLayoutProps: MainLayoutLoggedOutStoryProps,
+      mainLayoutProps:
+        overrides?.access?.isAuthenticated !== undefined && !overrides?.access?.isAuthenticated
+          ? MainLayoutLoggedOutStoryProps
+          : MainLayoutLoggedInStoryProps,
       fileMaxSize: 343243,
       mainResourceCardSlots: mainResourceCardSlots,
       resourceContributorCardProps:
