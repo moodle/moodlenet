@@ -1,5 +1,7 @@
 import {
   Card,
+  getNumberFromString,
+  getPastelColor,
   Loading,
   PrimaryButton,
   SecondaryButton,
@@ -18,9 +20,8 @@ import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.s
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
-import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
-import './ExtensionInfo.scss'
 import { ExtensionType } from '../Extensions/Extensions.js'
+import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {
   onClickBackBtn?: (arg0?: unknown) => unknown

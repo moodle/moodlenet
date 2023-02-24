@@ -1,5 +1,7 @@
 import assert from 'assert'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { AssetInfo } from '../../../common/types.mjs'
+import { ContentBackupImages } from '../assets/data/images.js'
 
 export const elementFullyInViewPort = (
   el: Element,
@@ -79,4 +81,49 @@ export const useWindowDimensions = () => {
   }, [])
 
   return windowDimensions
+}
+
+export const getNumberFromString = (s: string) => {
+  let number = 1
+
+  s.split('').forEach(l => {
+    number = number * l.charCodeAt(0)
+  })
+
+  return number
+}
+
+export const getPastelColor = (i?: number, opacity = 1) => {
+  const number = i ? parseFloat('0.' + i.toString().slice(0, 5).replace('.', '')) : Math.random()
+  return 'hsla(' + 360 * number + ',' + '75%,' + '50%, ' + opacity + ')'
+  // return 'hsla(' + 360 * number + ',' + (25 + 60 * number) + '%,' + (45 + 1 * number) + '%, ' + opacity + ')'
+}
+
+export const getBackupImage = (id: string): AssetInfo | undefined => {
+  const numId = getNumberFromString(id)
+  return ContentBackupImages[numId % ContentBackupImages.length]
+}
+
+export const useImageCredits = (
+  image: AssetInfo | undefined | null,
+  id = `${Math.random() * 100}`,
+) => {
+  const backupImage: AssetInfo | null | undefined = useMemo(() => getBackupImage(id), [id])
+  const credits = image ? (image.credits ? image.credits : undefined) : backupImage?.credits
+  return (
+    credits && (
+      <div className="image-credits" key="image-credits">
+        Photo by
+        <a href={credits.owner.url} target="_blank" rel="noreferrer">
+          {credits.owner.name}
+        </a>
+        on
+        {
+          <a href={credits.owner.url} target="_blank" rel="noreferrer">
+            {credits.provider?.name}
+          </a>
+        }
+      </div>
+    )
+  )
 }

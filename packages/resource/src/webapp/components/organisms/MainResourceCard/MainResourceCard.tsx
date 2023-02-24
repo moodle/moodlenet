@@ -18,7 +18,6 @@ import {
   TertiaryButton,
   useWindowDimensions,
 } from '@moodlenet/component-library'
-import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
@@ -30,126 +29,99 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
+import { FC, StrictMode, useEffect, useMemo, useRef, useState } from 'react'
+import { SchemaOf } from 'yup'
 import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  StrictMode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
-import { getResourceTypeInfo, ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
+  getResourceTypeInfo,
+  ResourceAccess,
+  ResourceActions,
+  ResourceFormValues,
+  ResourceType,
+} from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
 
-export type MainResourceCardProps = {
+export type MainResourceCardSlots = {
   mainColumnItems?: AddonItem[]
   headerColumnItems?: AddonItem[]
   topLeftHeaderItems?: AddonItem[]
   topRightHeaderItems?: AddonItem[]
   moreButtonItems?: FloatingMenuContentItem[]
   footerRowItems?: AddonItem[]
+}
 
-  resource: ResourceFormValues
+export type MainResourceCardProps = {
+  slots: MainResourceCardSlots
+
+  resource: ResourceType
   form: FormikHandle<ResourceFormValues>
-  downloadFilename: string
-  type: string
-  editResource: (values: ResourceFormValues) => Promise<unknown>
-  publish: () => void
-  deleteResource?(): unknown
-  setIsPublished: Dispatch<SetStateAction<boolean>>
-  isPublished: boolean
-  hasBeenPublished: boolean //At any point on time, so it might already have likes
-  isWaitingForApproval?: boolean
-  isSaving?: boolean
-  isSaved?: boolean
+  validationSchema: SchemaOf<ResourceFormValues>
 
-  // isEditing: boolean
-  // setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  actions: ResourceActions
+  access: ResourceAccess
+
   shouldShowErrors: boolean
-  // setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
-  isAuthenticated: boolean
-  isOwner: boolean
-  isAdmin?: boolean
-  canEdit: boolean
-  autoImageAdded: boolean
-  canSearchImage: boolean
   fileMaxSize: number
   uploadProgress?: number
-
-  liked: boolean
-  toggleLike?(): unknown
-  bookmarked: boolean
-  toggleBookmark?(): unknown
-  // isApproved: boolean
-  // reportForm?: FormikHandle<{ comment: string }>
-  // tags: FollowTag[]
-} & ResourceType
+  publish: () => void
+}
 
 export const MainResourceCard: FC<MainResourceCardProps> = ({
-  mainColumnItems,
-  headerColumnItems,
-  topLeftHeaderItems,
-  topRightHeaderItems,
-  moreButtonItems,
-  footerRowItems,
-  // isEditing,
-  // setIsEditing,
+  slots,
 
+  resource,
   form,
-  // resource,
-  // editResource,
-  // saveResource,
-  isPublished,
-  publish,
-  deleteResource,
-  setIsPublished,
-  hasBeenPublished,
-  isWaitingForApproval,
-  isSaving,
-  isSaved,
-  // resourceValidator
 
-  id: resourceId,
-  url: resourceUrl,
-  contentType,
-  type,
-  // resourceFormat,
-  contentUrl,
-  numLikes,
-  //   tags,
+  actions,
+  access,
+
   fileMaxSize,
-  uploadProgress,
-
   shouldShowErrors,
-  // setShouldShowErrors,
-  isAuthenticated,
-  canEdit,
-  // isAdmin,
-  isOwner,
-  // autoImageAdded,
-  // canSearchImage,
-
-  liked,
-  toggleLike,
-  bookmarked,
-  toggleBookmark,
+  publish,
 }) => {
+  const {
+    mainColumnItems,
+    headerColumnItems,
+    topLeftHeaderItems,
+    topRightHeaderItems,
+    moreButtonItems,
+    footerRowItems,
+  } = slots
+
+  const {
+    id: resourceId,
+    mnUrl,
+    contentType,
+    isPublished,
+    numLikes,
+    contentUrl,
+    specificContentType,
+  } = resource
+
+  const {
+    bookmarked,
+    toggleBookmark,
+    liked,
+    toggleLike,
+    setIsPublished,
+    deleteResource,
+    isSaved,
+    isSaving,
+    isWaitingForApproval,
+    uploadProgress,
+  } = actions
+
+  const { canEdit, isAuthenticated, isOwner } = access
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: AssetInfo | null | undefined = useMemo(
-    () => getBackupImage(resourceId),
-    [resourceId],
-  )
+  const backupImage: string | undefined = useMemo(() => getBackupImage(resourceId), [resourceId])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
-  const { typeName, typeColor } = getResourceTypeInfo(type)
+  const [imageUrl] = useImageUrl(form.values?.image, backupImage)
+  const { typeName, typeColor } = getResourceTypeInfo(specificContentType)
   const { width } = useWindowDimensions()
 
   const copyUrl = () => {
-    navigator.clipboard.writeText(resourceUrl)
+    navigator.clipboard.writeText(mnUrl)
     setShowUrlCopiedAlert(false)
     setTimeout(() => {
       setShowUrlCopiedAlert(true)
@@ -159,26 +131,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   // const setImage = (image: AssetInfo | undefined) => {
   //   form.setFieldValue('image', image)
   // }
-
-  const getImageCredits = (image: AssetInfo | undefined | null) => {
-    const credits = image ? (image.credits ? image.credits : undefined) : backupImage?.credits
-    return (
-      credits && (
-        <div className="image-credits" key="image-credits">
-          Photo by
-          <a href={credits.owner.url} target="_blank" rel="noreferrer">
-            {credits.owner.name}
-          </a>
-          on
-          {
-            <a href={credits.owner.url} target="_blank" rel="noreferrer">
-              {credits.provider?.name}
-            </a>
-          }
-        </div>
-      )
-    )
-  }
 
   const title = canEdit ? (
     <InputTextField
@@ -214,7 +166,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const typePill = type && (
+  const typePill = specificContentType && (
     <div
       className="type-pill"
       key="type-pill"
@@ -253,7 +205,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   ].filter((item): item is AddonItem => !!item)
 
   const likeButton =
-    isPublished || hasBeenPublished ? (
+    isPublished || numLikes > 0 ? (
       <TertiaryButton
         className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
         onClick={isAuthenticated && !isOwner && toggleLike ? toggleLike : () => undefined}
@@ -673,12 +625,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           onClose={() => setIsShowingImage(false)}
           style={{
             maxWidth: '90%',
-            maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
+            maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
           }}
           key="image-modal"
         >
           <img src={imageUrl} alt="Resource" />
-          {getImageCredits(form.values.image)}
+          {/* {getImageCredits(form.values.image)} */}
         </Modal>
       )}
       {isToDelete && deleteResource && (

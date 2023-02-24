@@ -3,105 +3,69 @@ import {
   AddonItem,
   Card,
   Modal,
-  OptionItemProp,
   PrimaryButton,
   SecondaryButton,
 } from '@moodlenet/component-library'
-import {
-  FormikHandle,
-  MainLayout,
-  MainLayoutProps,
-  SelectOptionsMulti,
-} from '@moodlenet/react-app/ui'
+import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { FC, useState } from 'react'
 import { SchemaOf } from 'yup'
-import { ResourceFormValues, ResourceType } from '../../../../common/types.mjs'
+import {
+  ResourceAccess,
+  ResourceActions,
+  ResourceFormValues,
+  ResourceType,
+} from '../../../../common/types.mjs'
 import {
   ResourceContributorCard,
   ResourceContributorCardProps,
 } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import {
   MainResourceCard,
-  MainResourceCardProps,
+  MainResourceCardSlots,
 } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
 
 export type ResourceProps = {
   mainLayoutProps: MainLayoutProps
-  mainResourceCardProps: MainResourceCardProps
+  mainResourceCardSlots: MainResourceCardSlots
   resourceContributorCardProps: ResourceContributorCardProps
 
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
-  moreButtonItems?: AddonItem[]
   extraDetailsItems?: AddonItem[]
 
-  resource: ResourceFormValues
-  editResource: (values: ResourceFormValues) => Promise<unknown>
+  resource: ResourceType
+  resourceForm: ResourceFormValues
   validationSchema: SchemaOf<ResourceFormValues>
+  actions: ResourceActions
+  access: ResourceAccess
 
-  isAuthenticated: boolean
-  // isApproved: boolean
-  isOwner: boolean
-  isAdmin: boolean
-  canEdit: boolean
-  // isEditing: boolean
-  // setIsEditing: Dispatch<SetStateAction<boolean>>
-  autoImageAdded: boolean
-  // form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
-
-  deleteResource?(): unknown
-  setIsPublished: Dispatch<SetStateAction<boolean>>
-  isPublished: boolean
-  hasBeenPublished: boolean
-  isWaitingForApproval?: boolean
-  addToCollectionsForm: FormikHandle<{ collections: string[] }>
-  sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-  // reportForm?: FormikHandle<{ comment: string }>
-  // tags: FollowTag[]
-  collections: SelectOptionsMulti<OptionItemProp>
-} & ResourceType
+  fileMaxSize: number
+}
 
 export const Resource: FC<ResourceProps> = ({
   mainLayoutProps,
-  mainResourceCardProps,
   resourceContributorCardProps,
 
   mainColumnItems,
   sideColumnItems,
   extraDetailsItems,
-  // moreButtonItems,
+  mainResourceCardSlots,
 
   resource,
+  resourceForm,
   validationSchema,
-  editResource,
-  deleteResource,
-  setIsPublished,
+  actions,
+  access,
 
-  // id: resourceId,
-  // url: resourceUrl,
-  // contentType,
-  // licenses,
-  // type,
-  // resourceFormat,
-  // contentUrl,
-  // tags,
-
-  isAuthenticated,
-  canEdit,
-  // isAdmin,
-  isOwner,
-  isWaitingForApproval,
-  isPublished,
-  hasBeenPublished,
-  contentUrl,
-  contentType,
-  downloadFilename,
-  // autoImageAdded,
+  fileMaxSize,
 }) => {
+  const { editResource, setIsPublished, isWaitingForApproval, deleteResource } = actions
+  const { isOwner, canEdit } = access
+
   const form = useFormik<ResourceFormValues>({
-    initialValues: resource,
+    initialValues: resourceForm,
     validationSchema: validationSchema,
     onSubmit: values => {
       return editResource(values)
@@ -143,20 +107,32 @@ export const Resource: FC<ResourceProps> = ({
   }
   const mainResourceCard = (
     <MainResourceCard
-      {...mainResourceCardProps}
-      isOwner={isOwner}
-      isPublished={isPublished}
-      setIsPublished={setIsPublished}
-      isWaitingForApproval={isWaitingForApproval}
-      isAuthenticated={isAuthenticated}
-      // isEditing={isEditing}
-      // setIsEditing={setIsEditing}
-      contentType={contentType}
-      hasBeenPublished={hasBeenPublished}
-      canEdit={canEdit}
+      resource={resource}
       form={form}
-      shouldShowErrors={shouldShowErrors}
+      validationSchema={validationSchema}
       publish={publish}
+      actions={actions}
+      access={access}
+      slots={mainResourceCardSlots}
+      fileMaxSize={fileMaxSize}
+      // mnUrl={mnUrl}
+      // resourceType={resourceType}
+
+      //   bookmarked={bookmarked}
+      //   downloadFilename={downloadFilename}
+      //   specificContentType={specificContentType}
+      //   id={id}
+      //   toggleBookmark={toggleBookmark}
+      //   liked={liked}
+      //   toggleLike={toggleLike}
+      //   isOwner={isOwner}
+      //   isPublished={isPublished}
+      //   isWaitingForApproval={isWaitingForApproval}
+      //   isAuthenticated={isAuthenticated}
+      //   contentType={contentType}
+      //   hasBeenPublished={hasBeenPublished}
+      //   canEdit={canEdit}
+      shouldShowErrors={shouldShowErrors}
     />
   )
 
@@ -166,20 +142,20 @@ export const Resource: FC<ResourceProps> = ({
       hideBorderWhenSmall={true}
       key="editor-actions-container"
     >
-      {isPublished && (
+      {resource.isPublished && (
         <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
           Published
         </PrimaryButton>
       )}
-      {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+      {!resource.isPublished && !isWaitingForApproval /*  && !isEditing */ && (
         <PrimaryButton onClick={publish} color="green">
           Publish
         </PrimaryButton>
       )}
-      {!isPublished && isWaitingForApproval && (
+      {!resource.isPublished && isWaitingForApproval && (
         <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
       )}
-      {isPublished || isWaitingForApproval ? (
+      {resource.isPublished || isWaitingForApproval ? (
         <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
       ) : (
         <></>
@@ -200,7 +176,12 @@ export const Resource: FC<ResourceProps> = ({
           >
             Add to Collection
           </SecondaryButton> */}
-      <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
+      <a
+        href={resource.contentUrl}
+        target="_blank"
+        rel="noreferrer"
+        download={resource.downloadFilename}
+      >
         <SecondaryButton abbr={form.values.content instanceof File ? 'Download file' : 'Open link'}>
           {form.values.content instanceof File ? (
             <>
