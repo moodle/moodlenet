@@ -1,7 +1,7 @@
 import { Collection } from '@moodlenet/collection/ui'
 import { getResourcesCardStoryProps } from '@moodlenet/resource/ui'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useMainCollectionCardStoryProps } from 'components/organisms/MainCollectionCard/stories-props.js'
 import { useState } from 'react'
 import { useCollectionStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
@@ -28,18 +28,15 @@ type CollectionStory = ComponentStory<typeof Collection>
 
 export const LoggedOut: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    props: {
+    collection: {},
+    actions: {},
+    access: {
       isAuthenticated: false,
-      mainCollectionCardProps: useMainCollectionCardStoryProps({
-        props: {
-          // followed: false,
-        },
-      }),
-      resourceCardPropsList: getResourcesCardStoryProps(15, {
-        isAuthenticated: false,
-        orientation: 'horizontal',
-      }),
     },
+    resourceCardPropsList: getResourcesCardStoryProps(15, {
+      isAuthenticated: false,
+      orientation: 'horizontal',
+    }),
   })
   //     {
   //     props: {
@@ -88,63 +85,39 @@ export const LoggedOut: CollectionStory = () => {
 
 export const LoggedIn: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    props: {
-      mainCollectionCardProps: useMainCollectionCardStoryProps({
-        props: {
-          bookmarked: true,
-          followed: true,
-        },
-      }),
+    collection: {},
+    actions: {
+      bookmarked: true,
+      followed: true,
     },
+    access: {},
   })
+
   return <Collection {...props} />
 }
 
 export const Owner: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    props: {
+    collection: {},
+    actions: {
+      isPublished: false,
+      bookmarked: true,
+      followed: true,
+      // isSaving: true,
+      isSaving: false,
+      // isSaved: true,
+    },
+    access: {
       isOwner: true,
       canEdit: true,
-      isPublished: false,
-      hasBeenPublished: true,
-      resourceCardPropsList: getResourcesCardStoryProps(15, {
-        canEdit: true,
-        isOwner: true,
-        orientation: 'horizontal',
-      }),
-      mainCollectionCardProps: useMainCollectionCardStoryProps({
-        props: {
-          isOwner: true,
-          isPublished: false,
-          canEdit: true,
-          // isSaving: true,
-          isSaving: false,
-          // isSaved: true,
-        },
-      }),
-      //   collectionCardPropsList: [
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //   ],
-      //   CollectionCardPropsList: [
-      //     CollectionCardOwnerPrivateStoryProps,
-      //     CollectionCardOwnerStoryProps,
-      //     CollectionCardOwnerStoryProps,
-      //     CollectionCardOwnerPrivateStoryProps,
-      //     CollectionCardOwnerStoryProps,
-      //   ],
     },
+    resourceCardPropsList: getResourcesCardStoryProps(15, {
+      canEdit: true,
+      isOwner: true,
+      orientation: 'horizontal',
+    }),
   })
+
   return <Collection {...props} />
 }
 
@@ -174,100 +147,36 @@ export const New: CollectionStory = () => {
   // }, [isPublished])
 
   const props = useCollectionStoryProps({
-    collectionValues: NewCollectionProps,
-    props: {
+    collection: {
+      mnUrl: 'moodle.com',
+    },
+    collectionForm: NewCollectionProps,
+    actions: {
+      bookmarked: true,
+      followed: true,
+      // isSaving: true,
+      isSaving: false,
+      // isSaved: true,
+      isWaitingForApproval: false,
+      setIsPublished: action('set is published'),
+    },
+    access: {
       isOwner: true,
       canEdit: true,
-      collectionUrl: 'moodle.com',
-      // isEditing: isEditting,
-      // setIsEditing: setIsEditing,
-      isWaitingForApproval: false,
-      isPublished: isPublished,
-      setIsPublished: setIsPublished,
-      resourceCardPropsList: [],
-      mainCollectionCardProps: useMainCollectionCardStoryProps({
-        props: {
-          // uploadProgress: 50,
-          // isOwner: true,
-          // canEdit: true,
-          // isEditing: false,
-        },
-        collectionValues: NewCollectionProps,
-      }),
     },
+    resourceCardPropsList: [],
   })
+
   return <Collection {...props} />
 }
 
-// export const Unapproved: CollectionStory = () => {
-//   const props = useCollectionStoryProps({
-//     props: {
-//       isOwner: true,
-//       //   collectionCardPropsList: [
-//       //     CollectionCardOwnerPrivateStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //     CollectionCardOwnerStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //     CollectionCardOwnerStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //     CollectionCardOwnerPrivateStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //   ],
-//       //   CollectionCardPropsList: [
-//       //     CollectionCardOwnerPrivateStoryProps,
-//       //     CollectionCardOwnerStoryProps,
-//       //     CollectionCardOwnerStoryProps,
-//       //     CollectionCardOwnerPrivateStoryProps,
-//       //     CollectionCardOwnerStoryProps,
-//       //   ],
-//       //   showAccountApprovedSuccessAlert: true,
-//     },
-//   })
-//   return <Collection {...props} />
-// }
-
-// export const Activated: CollectionStory = () => {
-//   const props = useCollectionStoryProps({
-//     // editFormValues: {
-//     //   description: '',
-//     //   location: '',
-//     //   avatarImage: null,
-//     //   backgroundImage: null,
-//     //   organizationName: '',
-//     //   siteUrl: '',
-//     // },
-//     // props: {
-//     //   //   collectionCardPropsList: [],
-//     //   //   CollectionCardPropsList: [],
-//     //   showAccountCreationSuccessAlert: true,
-//     //   getCollectionCardProps: useuseCollectionCardStoryProps({
-//     //     props: {
-//     //       isAuthenticated: true,
-//     //       isOwner: true,
-//     //     },
-//     //   }),
-//     // },
-//   })
-//   return <Collection {...props} />
-// }
-
 export const Admin: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    props: {
+    collection: {},
+    actions: {},
+    access: {
+      isAdmin: true,
       canEdit: true,
-      //   getCollectionCardProps: useuseCollectionCardStoryProps({
-      //     props: {
-      //       isAuthenticated: true,
-      //       isApproved: false,
-      //     },
-      //   }),
-      //   collectionCardPropsList: [],
-      //   CollectionCardPropsList: [],
-      //   showAccountApprovedSuccessAlert: true,
     },
   })
   return <Collection {...props} />

@@ -5,26 +5,32 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@moodlenet/component-library'
-import { FormikHandle, MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
+import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { ResourceCard, ResourceCardProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { FC, useState } from 'react'
 import { SchemaOf } from 'yup'
-import { CollectionFormValues, CollectionType } from '../../../../common/types.mjs'
+import {
+  CollectionAccess,
+  CollectionActions,
+  CollectionFormValues,
+  CollectionType,
+} from '../../../../common/types.mjs'
 import {
   CollectionContributorCard,
   CollectionContributorCardProps,
 } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
 import {
   MainCollectionCard,
-  MainCollectionCardProps,
+  MainCollectionCardSlots,
 } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
 import './Collection.scss'
 
 export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
-  mainCollectionCardProps: MainCollectionCardProps
+  mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
+  resourceCardPropsList: ResourceCardProps[]
 
   wideColumnItems?: AddonItem[]
   mainColumnItems?: AddonItem[]
@@ -32,109 +38,44 @@ export type CollectionProps = {
   moreButtonItems?: AddonItem[]
   extraDetailsItems?: AddonItem[]
 
-  collection: CollectionFormValues
-  editCollection: (values: CollectionFormValues) => Promise<unknown>
+  collection: CollectionType
+  collectionForm: CollectionFormValues
   validationSchema: SchemaOf<CollectionFormValues>
-  resourceCardPropsList: ResourceCardProps[]
-
-  isAuthenticated: boolean
-  // isApproved: boolean
-  isOwner: boolean
-  isAdmin: boolean
-  canEdit: boolean
-  // isEditing: boolean
-  // setIsEditing: Dispatch<SetStateAction<boolean>>
-  autoImageAdded: boolean
-  // form: FormikHandle<Omit<CollectionFormValues, 'addToCollections'>>
-
-  deleteCollection?(): unknown
-  setIsPublished: Dispatch<SetStateAction<boolean>>
-  isPublished: boolean
-  hasBeenPublished: boolean //At any point on time, so it might already have followers
-  isWaitingForApproval?: boolean
-  sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-
-  // reportForm?: FormikHandle<{ comment: string }>
-
-  // tags: FollowTag[]
-
-  // licenses: SelectOptions<IconTextOptionProps>
-  // setCategoryFilter(text: string): unknown
-  // categories: SelectOptions<TextOptionProps>
-  // setTypeFilter(text: string): unknown
-  // types: SelectOptions<TextOptionProps>
-  // setLevelFilter(text: string): unknown
-  // levels: SelectOptions<TextOptionProps>
-  // setLanguageFilter(text: string): unknown
-  // languages: SelectOptions<TextOptionProps>
-} & CollectionType
+  actions: CollectionActions
+  access: CollectionAccess
+}
 
 export const Collection: FC<CollectionProps> = ({
   mainLayoutProps,
-  mainCollectionCardProps,
+  mainCollectionCardSlots,
   collectionContributorCardProps,
+  resourceCardPropsList,
 
   wideColumnItems,
   mainColumnItems,
   sideColumnItems,
   extraDetailsItems,
-  // moreButtonItems,
 
   collection,
-  resourceCardPropsList,
+  collectionForm,
   validationSchema,
-  numFollowers,
-  editCollection,
-  deleteCollection,
-  setIsPublished,
-
-  // id: collectionId,
-  // url: collectionUrl,
-  // contentType,
-  // licenses,
-  // type,
-  // collectionFormat,
-  // contentUrl,
-  // tags,
-
-  isAuthenticated,
-  canEdit,
-  // isAdmin,
-  isOwner,
-
-  isWaitingForApproval,
-  isPublished,
-  hasBeenPublished,
-  // collectionUrl,
-  // autoImageAdded,
+  actions,
+  access,
 }) => {
+  const { editCollection, setIsPublished, isPublished, isWaitingForApproval, deleteCollection } =
+    actions
+  const { isOwner, canEdit } = access
+
   const form = useFormik<CollectionFormValues>({
-    initialValues: collection,
+    initialValues: collectionForm,
     validationSchema: validationSchema,
     onSubmit: values => {
       return editCollection(values)
     },
   })
 
-  //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
-  //     useState<boolean>(false)
-  //   const [isAddingToCollection, setIsAddingToCollection] =
-  //     useState<boolean>(false)
-  //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
-  //     useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  // const backupImage: AssetInfo | null | undefined = useMemo(
-  //   () => getBackupImage(collectionId),
-  //   [collectionId],
-  // )
-  //   const [isReporting, setIsReporting] = useState<boolean>(false)
-  //   const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
-  // const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  // const [isEditing, setIsEditing] = useReducer(_ => !_, false)
-
-  // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
   const publish = () => {
     if (form.isValid) {
@@ -148,21 +89,14 @@ export const Collection: FC<CollectionProps> = ({
 
   const mainCollectionCard = (
     <MainCollectionCard
-      {...mainCollectionCardProps}
-      isOwner={isOwner}
-      isPublished={isPublished}
-      setIsPublished={setIsPublished}
-      isWaitingForApproval={isWaitingForApproval}
-      isAuthenticated={isAuthenticated}
-      numFollowers={numFollowers}
-      hasBeenPublished={hasBeenPublished}
-      // isEditing={isEditing}
-      // setIsEditing={setIsEditing}
-      canEdit={canEdit}
-      form={form}
-      shouldShowErrors={shouldShowErrors}
       key="main-collection-card"
+      collection={collection}
+      form={form}
       publish={publish}
+      actions={actions}
+      access={access}
+      slots={mainCollectionCardSlots}
+      shouldShowErrors={shouldShowErrors}
     />
   )
 
@@ -196,36 +130,6 @@ export const Collection: FC<CollectionProps> = ({
       )}
     </Card>
   ) : null
-
-  // const license: AddonItem | null =
-  //   contentType === 'file'
-  //     ? {
-  //         Item: () => (
-  //           <Dropdown
-  //             name="license"
-  //             className="license-dropdown"
-  //             onChange={form.handleChange}
-  //             value={form.values.license}
-  //             label={`License`}
-  //             edit
-  //             highlight={shouldShowErrors && !!form.errors.license}
-  //             disabled={form.isSubmitting}
-  //             error={form.errors.license}
-  //             position={{ top: 50, bottom: 25 }}
-  //             pills={
-  //               licenses.selected && (
-  //                 <IconPill key={licenses.selected.value} icon={licenses.selected.icon} />
-  //               )
-  //             }
-  //           >
-  //             {licenses.opts.map(({ icon, label, value }) => (
-  //               <IconTextOption icon={icon} label={label} value={value} key={value} />
-  //             ))}
-  //           </Dropdown>
-  //         ),
-  //         key: 'extra-details-card',
-  //       }
-  //     : null
 
   const updatedExtraDetailsItems = [
     // license,
@@ -264,7 +168,7 @@ export const Collection: FC<CollectionProps> = ({
 
   const modals = (
     <>
-      {isToDelete && deleteCollection && (
+      {isToDelete && (
         <Modal
           title={`Alert`}
           actions={

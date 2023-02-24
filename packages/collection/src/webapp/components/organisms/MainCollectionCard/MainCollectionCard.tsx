@@ -24,109 +24,84 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
-import { Dispatch, FC, SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
-import { CollectionFormValues, CollectionType } from '../../../../common/types.mjs'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  CollectionAccess,
+  CollectionActions,
+  CollectionFormValues,
+  CollectionType,
+} from '../../../../common/types.mjs'
 import { UploadImage } from '../UploadImage/UploadImage.js'
 import './MainCollectionCard.scss'
 
-export type MainCollectionCardProps = {
+export type MainCollectionCardSlots = {
   mainColumnItems?: AddonItem[]
   headerColumnItems?: AddonItem[]
   topLeftHeaderItems?: AddonItem[]
   topRightHeaderItems?: AddonItem[]
   moreButtonItems?: FloatingMenuContentItem[]
   footerRowItems?: AddonItem[]
+}
 
-  collection: CollectionFormValues
+export type MainCollectionCardProps = {
+  slots: MainCollectionCardSlots
+
+  collection: CollectionType
   form: FormikHandle<CollectionFormValues>
-  editCollection: (values: CollectionFormValues) => Promise<unknown>
-  deleteCollection?(): unknown
-  hasBeenPublished: boolean //At any point on time, so it might already have followers
-  publish: () => void
-  isPublished: boolean
-  setIsPublished: Dispatch<SetStateAction<boolean>>
-  isWaitingForApproval?: boolean
-  isSaving?: boolean
-  isSaved?: boolean
 
-  // isEditing: boolean
-  // setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  actions: CollectionActions
+  access: CollectionAccess
+
   shouldShowErrors: boolean
-  // setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
-  isAuthenticated: boolean
-  isOwner: boolean
-  isAdmin?: boolean
-  canEdit: boolean
-  autoImageAdded: boolean
-  canSearchImage: boolean
-  fileMaxSize: number
-  uploadProgress?: number
-
-  followed: boolean
-  toggleFollow?(): unknown
-  bookmarked: boolean
-  toggleBookmark?(): unknown
-  // isApproved: boolean
-  // reportForm?: FormikHandle<{ comment: string }>
-  // tags: FollowTag[]
-} & CollectionType
+  publish: () => void
+}
 
 export const MainCollectionCard: FC<MainCollectionCardProps> = ({
-  mainColumnItems,
-  headerColumnItems,
-  topLeftHeaderItems,
-  topRightHeaderItems,
-  moreButtonItems,
-  footerRowItems,
-  // isEditing,
-  // setIsEditing,
+  slots,
 
+  collection,
   form,
-  // collection,
-  // editCollection,
-  // saveCollection,
-  publish,
-  isPublished,
-  setIsPublished,
-  isWaitingForApproval,
-  hasBeenPublished,
-  deleteCollection,
-  isSaving,
-  isSaved,
-  // collectionValidator
 
-  id: collectionId,
-  url: collectionUrl,
-  // collectionFormat,
-  numFollowers,
-  //   tags,
+  actions,
+  access,
 
   shouldShowErrors,
-  // setShouldShowErrors,
-  isAuthenticated,
-  canEdit,
-  // isAdmin,
-  isOwner,
-  // autoImageAdded,
-  // canSearchImage,
-
-  followed,
-  toggleFollow,
-  bookmarked,
-  toggleBookmark,
+  publish,
 }) => {
+  const {
+    mainColumnItems,
+    headerColumnItems,
+    topLeftHeaderItems,
+    topRightHeaderItems,
+    moreButtonItems,
+    footerRowItems,
+  } = slots
+
+  const { id, mnUrl, numFollowers } = collection
+
+  const {
+    isPublished,
+    bookmarked,
+    toggleBookmark,
+    followed,
+    toggleFollow,
+    setIsPublished,
+    deleteCollection,
+    isSaved,
+    isSaving,
+    isWaitingForApproval,
+  } = actions
+
+  const { canEdit, isAuthenticated, isOwner } = access
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: string | undefined = useMemo(
-    () => getBackupImage(collectionId),
-    [collectionId],
-  )
+  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage)
+  const [imageUrl] = useImageUrl(form.values?.image, backupImage)
   const { width } = useWindowDimensions()
 
   const copyUrl = () => {
-    navigator.clipboard.writeText(collectionUrl)
+    navigator.clipboard.writeText(mnUrl)
     setShowUrlCopiedAlert(false)
     setTimeout(() => {
       setShowUrlCopiedAlert(true)
@@ -196,11 +171,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   ].filter((item): item is AddonItem => !!item)
 
   const followersButton =
-    isPublished || hasBeenPublished ? (
+    isPublished || numFollowers > 0 ? (
       <TertiaryButton
         className={`follow ${followed ? 'followed' : ''}`}
         disabled={!isAuthenticated || isOwner}
-        onClick={isAuthenticated && !isOwner && toggleFollow ? toggleFollow : () => undefined}
+        onClick={isAuthenticated && !isOwner ? toggleFollow : () => undefined}
         abbr={
           isOwner ? 'Creators cannot follow their own content' : followed ? 'Unfollow' : 'Follow'
         }
@@ -211,8 +186,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       </TertiaryButton>
     ) : null
 
-  const empty =
-    !form.values.content && !form.values.name && !form.values.description && !form.values.image
+  const empty = !form.values.name && !form.values.description && !form.values.image
 
   const bookmarkButtonSmallScreen =
     !empty && width < 800
@@ -425,7 +399,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   )
 
   const imageContainer = !canEdit ? (
-    form.values.content && form.values.image ? (
+    form.values.image ? (
       <div className="image-container" key="image-container">
         {imageDiv}
         {/* {getImageCredits(form.values.image)} */}
@@ -567,7 +541,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
           onClose={() => setIsShowingImage(false)}
           style={{
             maxWidth: '90%',
-            maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
+            maxHeight: '90%',
+            // maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
           }}
         >
           <img src={imageUrl} alt="Collection" />
