@@ -1,7 +1,7 @@
+import { ResourceFormValues } from '@moodlenet/resource/common'
 import { Resource } from '@moodlenet/resource/ui'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useMainResourceCardStoryProps } from 'components/organisms/MainResourceCard/stories-props.js'
-import { useState } from 'react'
 import { useResourceStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
@@ -27,148 +27,61 @@ type ResourceStory = ComponentStory<typeof Resource>
 
 export const LoggedOut: ResourceStory = () => {
   const props = useResourceStoryProps({
-    props: {
+    resource: {},
+    actions: {},
+    access: {
       isAuthenticated: false,
     },
   })
-  //     {
-  //     props: {
-  //       headerPageTemplateProps: {
-  //         isAuthenticated: false,
-  //         headerPageProps: {
-  //           // isAuthenticated: false,
-  //           headerProps: {
-  //             ...HeaderLoggedOutStoryProps,
-  //             me: null,
-  //           },
-  //           // subHeaderProps: {
-  //           //   tags: [],
-  //           // },
-  //         },
-  //         mainPageWrapperProps: {
-  //           userAcceptsPolicies: null,
-  //           cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-  //         },
-  //       },
-  //       collectionCardPropsList: [
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //       ],
-  //       resourceCardPropsList: [
-  //         ResourceCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         ResourceCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //       ],
-  //     },
-  //   }
-  //   )
 
   return <Resource {...props} />
 }
 
 export const LoggedIn: ResourceStory = () => {
-  const props = useResourceStoryProps({
-    props: {},
-  })
+  const props = useResourceStoryProps({})
   return <Resource {...props} />
 }
 
 export const Owner: ResourceStory = () => {
   const props = useResourceStoryProps({
-    props: {
+    resource: {
+      isPublished: true,
+    },
+    actions: {
+      isSaving: false,
+      isSaved: true,
+    },
+    access: {
       isOwner: true,
       canEdit: true,
-      isPublished: true,
-      hasBeenPublished: true,
-      mainResourceCardProps: useMainResourceCardStoryProps({
-        props: {
-          // isSaving: true,
-          isSaving: false,
-          isSaved: true,
-        },
-      }),
-      //   collectionCardPropsList: [
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //     CollectionCardOwnerPrivateStoryProps(
-      //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-      //     ),
-      //   ],
-      //   resourceCardPropsList: [
-      //     ResourceCardOwnerPrivateStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //     ResourceCardOwnerPrivateStoryProps,
-      //     ResourceCardOwnerStoryProps,
-      //   ],
     },
   })
   return <Resource {...props} />
 }
 
-export const NewResourceProps = {
-  content: null,
+export const NewResourceProps: Partial<ResourceFormValues> = {
   name: '',
   description: '',
-  category: '',
-  type: '',
+  content: null,
   image: null,
-  // visibility: 'Private',
-  isFile: false,
 }
 
 export const New: ResourceStory = () => {
-  // const [isEditting, setIsEditing] = useState(false)
-  const [isPublished, setIsPublished] = useState(false)
-  // const [uploadProgress, setUploadProgress] = useState(0)
-
-  // useEffect(() => {
-  //   uploadProgress < 100 && setTimeout(() => setUploadProgress(oldCount => oldCount + 1), 70)
-  // }, [uploadProgress])
-  // const [isWaitingForApproval, setIsWaitingForApproval] = useState(true)
-
-  // useEffect(() => {
-  //   !isPublished && setIsWaitingForApproval(false)
-  // }, [isPublished])
-
   const props = useResourceStoryProps({
-    resourceValues: NewResourceProps,
-    props: {
+    resource: {
+      downloadFilename: undefined,
+      isPublished: true,
+    },
+    resourceForm: NewResourceProps,
+    actions: {
+      isWaitingForApproval: false,
+      setIsPublished: action('set is published'),
+      isSaving: false,
+      isSaved: true,
+    },
+    access: {
       isOwner: true,
       canEdit: true,
-      contentUrl: 'moodle.com',
-      downloadFilename: undefined,
-      // isEditing: isEditting,
-      // setIsEditing: setIsEditing,
-      isWaitingForApproval: false,
-      isPublished: isPublished,
-      setIsPublished: setIsPublished,
-      mainResourceCardProps: useMainResourceCardStoryProps({
-        props: {
-          // uploadProgress: 50,
-          // isOwner: true,
-          // canEdit: true,
-          // isEditing: false,
-        },
-        resourceValues: NewResourceProps,
-      }),
     },
   })
   return <Resource {...props} />
@@ -232,17 +145,10 @@ export const New: ResourceStory = () => {
 
 export const Admin: ResourceStory = () => {
   const props = useResourceStoryProps({
-    props: {
+    resource: {},
+    actions: {},
+    access: {
       canEdit: true,
-      //   getResourceCardProps: useuseResourceCardStoryProps({
-      //     props: {
-      //       isAuthenticated: true,
-      //       isApproved: false,
-      //     },
-      //   }),
-      //   collectionCardPropsList: [],
-      //   resourceCardPropsList: [],
-      //   showAccountApprovedSuccessAlert: true,
     },
   })
   return <Resource {...props} />

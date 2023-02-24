@@ -10,7 +10,7 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./init": "./dist/server/init.mjs"
+    "./init": "./src/server/init.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",

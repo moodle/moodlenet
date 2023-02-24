@@ -12,7 +12,6 @@ import {
   TertiaryButton,
   useWindowDimensions,
 } from '@moodlenet/component-library'
-import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
@@ -118,12 +117,12 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 }) => {
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: AssetInfo | null | undefined = useMemo(
+  const backupImage: string | undefined = useMemo(
     () => getBackupImage(collectionId),
     [collectionId],
   )
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
+  const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage)
   const { width } = useWindowDimensions()
 
   const copyUrl = () => {
@@ -137,26 +136,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   // const setImage = (image: AssetInfo | undefined) => {
   //   form.setFieldValue('image', image)
   // }
-
-  const getImageCredits = (image: AssetInfo | undefined | null) => {
-    const credits = image ? (image.credits ? image.credits : undefined) : backupImage?.credits
-    return (
-      credits && (
-        <div className="image-credits">
-          Photo by
-          <a href={credits.owner.url} target="_blank" rel="noreferrer">
-            {credits.owner.name}
-          </a>
-          on
-          {
-            <a href={credits.owner.url} target="_blank" rel="noreferrer">
-              {credits.provider?.name}
-            </a>
-          }
-        </div>
-      )
-    )
-  }
 
   const title = canEdit ? (
     <InputTextField
@@ -592,7 +571,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
           }}
         >
           <img src={imageUrl} alt="Collection" />
-          {getImageCredits(form.values.image)}
+          {/* {getImageCredits(form.values.image)} */}
         </Modal>
       )}
       {isToDelete && deleteCollection && (
