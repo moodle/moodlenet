@@ -1,54 +1,37 @@
 import { FollowTag } from '@moodlenet/component-library'
-import { AssetInfo } from '@moodlenet/react-app/common'
 
 export type CollectionFormValues = {
-  // upload
   name: string
   description: string
-  content: string | File | null
-  // category: string
-  // visibility: Visibility
-  // addToCollections: string[]
-  // license?: string
-  // image?: string | File | null
-  image?: AssetInfo | null
-  type?: string
-  // level?: string
-  // month?: string
-  // year?: string
-  // language?: string
-  isFile: boolean
+  image: string | File | null
 }
 
 export type CollectionType = {
   id: string
-  url: string
+  mnUrl: string
   numFollowers: number
-  collectionUrl: string
 }
 
-// isOwner: boolean
-//   isAdmin: boolean
-//   autoImageAdded: boolean
-//   canSearchImage: boolean
-//   contributorCardProps: ContributorCardProps
-//   form: FormikHandle<Omit<CollectionFormValues, 'addToCollections'>>
-//   toggleLikeForm: FormikHandle
-//   toggleBookmarkForm: FormikHandle
-//   deleteCollectionForm?: FormikHandle
-//   addToCollectionsForm: FormikHandle<{ collections: string[] }>
-//   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-//   collections: SelectOptionsMulti<OptionItemProp>
-// reportForm?: FormikHandle<{ comment: string }>
-// licenses: SelectOptions<IconTextOptionProps>
-// setCategoryFilter(text: string): unknown
-// categories: SelectOptions<TextOptionProps>
-// setTypeFilter(text: string): unknown
-// types: SelectOptions<TextOptionProps>
-// setLevelFilter(text: string): unknown
-// levels: SelectOptions<TextOptionProps>
-// setLanguageFilter(text: string): unknown
-// languages: SelectOptions<TextOptionProps>
+export type CollectionActions = {
+  isPublished: boolean
+  setIsPublished: (publish: boolean) => void
+  editCollection: (values: CollectionFormValues) => Promise<unknown>
+  isWaitingForApproval?: boolean
+  deleteCollection(): unknown
+  followed: boolean
+  toggleFollow(): unknown
+  bookmarked: boolean
+  toggleBookmark(): unknown
+  isSaving?: boolean
+  isSaved?: boolean
+}
+
+export type CollectionAccess = {
+  isAuthenticated: boolean
+  isOwner: boolean
+  isAdmin: boolean
+  canEdit: boolean
+}
 
 export type Organization = {
   name: string

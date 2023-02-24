@@ -44,10 +44,9 @@ export const LoggedIn: ResourceStory = () => {
 
 export const Owner: ResourceStory = () => {
   const props = useResourceStoryProps({
-    resource: {
-      isPublished: true,
-    },
+    resource: {},
     actions: {
+      isPublished: true,
       isSaving: false,
       isSaved: true,
     },
@@ -70,10 +69,10 @@ export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
     resource: {
       downloadFilename: undefined,
-      isPublished: true,
     },
     resourceForm: NewResourceProps,
     actions: {
+      isPublished: true,
       isWaitingForApproval: false,
       setIsPublished: action('set is published'),
       isSaving: false,

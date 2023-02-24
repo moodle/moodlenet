@@ -1,4 +1,9 @@
-import { CollectionFormValues } from '@moodlenet/collection/common'
+import {
+  CollectionAccess,
+  CollectionActions,
+  CollectionFormValues,
+  CollectionType,
+} from '@moodlenet/collection/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 // import { useEffect } from 'react'
@@ -9,7 +14,7 @@ import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, st
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { CollectionTextOptionProps } from '../NewCollection/AddToCollections/storiesData'
-import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-library'
+import { OptionItemProp } from '@moodlenet/component-library'
 // import {
 //   CategoriesTextOptionProps,
 //   LicenseIconTextOptionProps,
@@ -18,10 +23,11 @@ import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-librar
 import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
-import { Collection, CollectionProps } from '@moodlenet/collection/ui'
+import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
+import { overrideDeep } from '@moodlenet/component-library/common'
 import { getResourcesCardStoryProps } from '@moodlenet/resource/ui'
-import { useMainCollectionCardStoryProps } from 'components/organisms/MainCollectionCard/stories-props.js'
 import { useFormik } from 'formik'
+import { PartialDeep } from 'type-fest'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -88,24 +94,10 @@ export const validationSchema: SchemaOf<CollectionFormValues> = object({
 })
 
 export const collectionFormValues: CollectionFormValues = {
-  isFile: false,
-  content: '',
-  // visibility: VisbilityIconTextOptionProps[0]!.value,
-  // category: CategoriesTextOptionProps[2]!.value,
-  // description:
-  //   'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  image: { location: 'https://picsum.photos/200/100' },
-  // language: LanguagesTextOptionProps[2]!.value,
-  // level: LevelTextOptionProps[2]!.value,
-  // license: LicenseIconTextOptionProps[2]!.value,
-  // month: MonthTextOptionProps[8]!.value,
-  // year: YearsProps[20],
-
+  image: 'https://picsum.photos/200/100',
   name: '',
-  // name: 'The Best Collection Ever',
-  type: TypeTextOptionProps[2]!.value,
 }
 
 export const useCollectionForm = (overrides?: Partial<CollectionFormValues>) => {
@@ -113,16 +105,11 @@ export const useCollectionForm = (overrides?: Partial<CollectionFormValues>) => 
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
-      isFile: true,
-      content: '',
       name: 'Best collection ever',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      type: TypeTextOptionProps[2]!.value,
-      image: {
-        location:
-          'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-      },
+      image:
+        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
       ...overrides,
     },
   })
@@ -138,113 +125,75 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
   { label: 'English Literature', value: 'English Literature' },
 ]
 
-export const useCollectionStoryProps = (overrides?: {
-  props?: Partial<CollectionProps>
-  // formConfig?: Partial<FormikConfig<CollectionFormValues>>
-  collectionValues?: Partial<CollectionFormValues>
-}): CollectionProps => {
-  const collection: CollectionFormValues = {
-    // validationSchema,
-    // onSubmit: action('submit edit'),
-    // initialValues: {
-    isFile: false,
-    content: 'moodle.net',
-    // visibility: 'Public',
+export const useCollectionStoryProps = (
+  overrides?: PartialDeep<CollectionProps>,
+): CollectionProps => {
+  const collection: CollectionType = {
+    id: 'qjnwglkd69io-sports',
+    mnUrl: 'collection.url',
+    numFollowers: 23,
+  }
+
+  const collectionForm: CollectionFormValues = {
     name: 'Best collection ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find.',
-    // 'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    // category: CategoriesTextOptionProps[2]!.value,
-    // language: LanguagesTextOptionProps[2]?.value,
-    // level: LevelTextOptionProps[2]?.value,
-    // license: LicenseIconTextOptionProps[2]?.value,
-    // month: MonthTextOptionProps[8]?.value,
-    // year: YearsProps[20],
-    type: TypeTextOptionProps[2]?.value,
-    image: {
-      location:
-        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-    },
-    ...overrides?.collectionValues,
-    // },
-    // ...overrides?.formConfig,
+    image:
+      'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+  }
+
+  const actions: CollectionActions = {
+    followed: false,
+    toggleFollow: action('toggleFollow'),
+    isPublished: true,
+    bookmarked: false,
+    toggleBookmark: action('toggleBookmark'),
+    editCollection: async () => action('editing collection submited'),
+    setIsPublished: action('setIsPublished'),
+    deleteCollection: action('deleteCollection'),
+  }
+
+  const access: CollectionAccess = {
+    isAuthenticated: true,
+    canEdit: false,
+    isOwner: false,
+    isAdmin: false,
+  }
+
+  const mainCollectionCardSlots: MainCollectionCardSlots = {
+    mainColumnItems: [],
+    headerColumnItems: [],
+    topLeftHeaderItems: [],
+    topRightHeaderItems: [],
+    moreButtonItems: [],
+    footerRowItems: [],
   }
 
   const resourceCardPropsList = getResourcesCardStoryProps(15, {
     orientation: 'horizontal',
   })
 
-  return {
-    mainLayoutProps:
-      overrides?.props?.isAuthenticated !== undefined && !overrides?.props?.isAuthenticated
-        ? MainLayoutLoggedOutStoryProps
-        : MainLayoutLoggedInStoryProps,
-    mainCollectionCardProps: useMainCollectionCardStoryProps({}),
+  return overrideDeep<CollectionProps>(
+    {
+      mainLayoutProps:
+        overrides?.access?.isAuthenticated !== undefined && !overrides?.access?.isAuthenticated
+          ? MainLayoutLoggedOutStoryProps
+          : MainLayoutLoggedInStoryProps,
 
-    collection: collection,
-    editCollection: async () => action('editing collection submited'),
-    validationSchema: validationSchema,
+      mainCollectionCardSlots: mainCollectionCardSlots,
+      collectionContributorCardProps:
+        CollectionContributorCardStories.CollectionContributorCardStoryProps,
+      resourceCardPropsList: resourceCardPropsList,
 
-    id: 'qjnwglkd69io-sports',
-    url: 'collection.url',
-    setIsPublished: action('setIsPublished'),
-    hasBeenPublished: true,
+      collection: collection,
+      collectionForm: collectionForm,
+      validationSchema: validationSchema,
 
-    isAuthenticated: true,
-    canEdit: false,
-    isOwner: false,
-    isAdmin: false,
-    numFollowers: 23,
-    // bookmarked: true,
-    collectionContributorCardProps:
-      CollectionContributorCardStories.CollectionContributorCardStoryProps,
-    collectionUrl: '#',
-
-    resourceCardPropsList: resourceCardPropsList,
-    // resourceCardPropsList: getRandomSortedArrayElements(resourceCardList, 15),
-
-    // reportForm: useFormik<{ comment: string }>({
-    //   initialValues: { comment: '' },
-    //   onSubmit: action('submit report Form'),
-    // }),
-
-    // types: {
-    //   opts: TypeTextOptionProps,
-    //   selected: TypeTextOptionProps.find(({ value }) => value === collection.type),
-    // },
-    // levels: {
-    //   opts: LevelTextOptionProps,
-    //   selected: LevelTextOptionProps.find(({ value }) => value === collection.level),
-    // },
-    // languages: {
-    //   opts: LanguagesTextOptionProps,
-    //   selected: LanguagesTextOptionProps.find(({ value }) => value === collection.language),
-    // },
-    // categories: {
-    //   opts: CategoriesTextOptionProps,
-    //   selected: CategoriesTextOptionProps.find(({ value }) => value === collection.category),
-    // },
-    // licenses: {
-    //   opts: LicenseIconTextOptionProps,
-    //   selected: LicenseIconTextOptionProps.find(({ value }) => value === collection.license),
-    // },
-    // toggleLike: action('toggleLike'),
-    // toggleBookmark: action('toggleBookmark'),
-    deleteCollection: action('deleteCollection'),
-
-    sendToMoodleLmsForm: useFormik<{ site?: string }>({
-      initialValues: { site: 'http://my-lms.org' },
-      onSubmit: action('Send to Moodle LMS'),
-    }),
-    isPublished: true,
-    // setCategoryFilter: action('setCategoryFilter'),
-    // setTypeFilter: action('setTypeFilter'),
-    // setLevelFilter: action('setLevelFilter'),
-    // setLanguageFilter: action('setLanguageFilter'),
-    autoImageAdded: false,
-    // canSearchImage: true,
-    ...overrides?.props,
-  }
+      actions: actions,
+      access: access,
+    },
+    { ...overrides },
+  )
 }
 
 // const headerPageTemplatePropsUnauth: HeaderPageTemplateProps = {
@@ -283,31 +232,5 @@ export const useCollectionStoryProps = (overrides?: {
 //   })
 //   return <Collection {...props} />
 // }
-
-export const LoggedIn = () => {
-  const props = useCollectionStoryProps({})
-  return <Collection {...props} />
-}
-
-export const Owner = () => {
-  const props = useCollectionStoryProps({
-    props: {
-      isOwner: true,
-      collectionUrl: 'https://picsum.photos/200/100',
-      // autoImageAdded: true,
-    },
-  })
-  return <Collection {...props} />
-}
-
-export const Admin = () => {
-  const props = useCollectionStoryProps({
-    props: {
-      isOwner: true,
-      isAdmin: true,
-    },
-  })
-  return <Collection {...props} />
-}
 
 export default meta
