@@ -2,7 +2,7 @@ import { ImageContainer } from '@moodlenet/component-library'
 import { AssetInfo } from '@moodlenet/react-app/common'
 import { FormikHandle, useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
-import { default as React, FC, useCallback, useEffect, useRef, useState } from 'react'
+import { default as React, FC, useCallback, useRef, useState } from 'react'
 import { CollectionFormValues } from '../../../../common.mjs'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import { SelectOptions } from '../../../../lib/types'
@@ -42,34 +42,12 @@ export const UploadImage: FC<UploadImageProps> = ({ form, imageOnClick }) => {
   //   true
   // )
 
-  const [imageUrl] = useImageUrl(form.values.image?.location)
+  const [imageUrl] = useImageUrl(form.values.image)
 
   // const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
 
-  const [subStep, setSubStep] = useState<'AddFileOrLink' | 'AddImage'>(
-    form.values.content && !form.errors.content ? 'AddImage' : 'AddFileOrLink',
-  )
-
-  const [deleteFileLinkPressed, setDeleteFileLinkPressed] = useState(false)
-
-  useEffect(() => {
-    if (deleteFileLinkPressed) {
-      setDeleteFileLinkPressed(false)
-    }
-
-    setSubStep(form.values.content && !form.errors.content ? 'AddImage' : 'AddFileOrLink')
-  }, [
-    form.values.content,
-    form.errors.content,
-    deleteFileLinkPressed,
-    subStep,
-    setSubStep,
-    setDeleteFileLinkPressed,
-  ])
-
   const deleteImage = useCallback(() => {
-    setDeleteFileLinkPressed(true)
     form.setFieldValue('image', undefined)
   }, [form])
 
@@ -142,7 +120,7 @@ export const UploadImage: FC<UploadImageProps> = ({ form, imageOnClick }) => {
         <div className={`uploader `}>
           <div
             className={`image upload ${isToDrop ? 'hover' : ''} ${
-              form.values.content instanceof Blob && form.errors.content ? 'error' : ''
+              form.values.image instanceof Blob && form.errors.image ? 'error' : ''
             }`}
             onClick={selectImage}
             id="drop_zone"
