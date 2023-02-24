@@ -1,11 +1,15 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { Card, PrimaryButton } from '@moodlenet/component-library'
+import {
+  Card,
+  getNumberFromString,
+  getPastelColor,
+  PrimaryButton,
+} from '@moodlenet/component-library'
 import { FC } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { DevModeBtn } from '../Extensions.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
-import { getNumberFromString, getPastelColor } from '../../../helpers/utilities.js'
 import { ExtensionType } from '../../pages/Extensions/Extensions.js'
 
 import './ExtensionsList.scss'

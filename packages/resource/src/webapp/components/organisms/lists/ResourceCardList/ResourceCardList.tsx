@@ -2,17 +2,19 @@ import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
 import { FC } from 'react'
-import ResourceCard, { ResourceCardProps } from '../ResourceCard/ResourceCard.js'
+import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
 import './ResourceCardList.scss'
 
 export type ResourceCardListProps = {
   resourceCardPropsList: ResourceCardProps[]
   searchResourcesHref: Href
+  orientation?: 'vertical' | 'horizontal'
 }
 
 export const ResourceCardList: FC<ResourceCardListProps> = ({
   resourceCardPropsList,
   searchResourcesHref,
+  orientation = 'vertical',
 }) => {
   return (
     <ListCard
@@ -21,7 +23,7 @@ export const ResourceCardList: FC<ResourceCardListProps> = ({
         <ResourceCard
           {...resourceCardProps}
           key={resourceCardProps.resourceId}
-          orientation="vertical"
+          orientation={orientation}
         />
       ))}
       title={

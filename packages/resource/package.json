@@ -74,10 +74,10 @@
     }
   },
   "exports": {
-    "./server": "./dist/exports.mjs",
-    "./init": "./dist/init.mjs",
-    "./ui": "./dist/ui.mjs",
-    "./stories": "./dist/stories.mjs",
-    "./common": "./dist/common.mjs"
+    "./server": "./src/exports.mjs",
+    "./init": "./src/init.mjs",
+    "./ui": "./src/ui.mjs",
+    "./stories": "./src/stories.mjs",
+    "./common": "./src/common.mjs"
   }
 }

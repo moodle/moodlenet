@@ -56,7 +56,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   //   true
   // )
 
-  const [imageUrl] = useImageUrl(form.values.image?.location)
+  const [imageUrl] = useImageUrl(form.values.image)
 
   const contentIsFile = form.values.content instanceof File
   const contentName =
