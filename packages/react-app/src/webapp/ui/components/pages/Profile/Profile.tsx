@@ -1,29 +1,38 @@
 import { AddonItem } from '@moodlenet/component-library'
+import { useFormik } from 'formik'
 import { FC, useReducer } from 'react'
+import { SchemaOf } from 'yup'
+import { ProfileAccess, ProfileActions, ProfileFormValues } from '../../../../../common/types.mjs'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
-import { ProfileCard, ProfileCardPropsControlled } from '../../organisms/ProfileCard/ProfileCard.js'
+import { ProfileCard, ProfileCardSlots } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
 
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
-  profileCardProps: ProfileCardPropsControlled
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
-  // displayName: string
-  // showAccountCreationSuccessAlert?: boolean
-  // showAccountApprovedSuccessAlert?: boolean
-  // mainColumnContent?: { Comp: ComponentType; key: string }[]
+
+  profileCardSlots: ProfileCardSlots
+  profileForm: ProfileFormValues
+  validationSchema: SchemaOf<ProfileFormValues>
+
+  actions: ProfileActions
+  access: ProfileAccess
 }
 
 export const Profile: FC<ProfileProps> = ({
   mainLayoutProps,
-  profileCardProps,
   mainColumnItems,
   sideColumnItems,
-  // displayName,
-  // showAccountApprovedSuccessAlert,
-  // showAccountCreationSuccessAlert,
+
+  profileCardSlots,
+  profileForm,
+  validationSchema,
+
+  actions,
+  access,
 }) => {
+  const { editProfile } = actions
   const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   // const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
@@ -31,6 +40,14 @@ export const Profile: FC<ProfileProps> = ({
   // const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
   // const [showMessageSentAlert, setShowMessageSentAlert] = useState<boolean>(false)
   // const [isReporting, setIsReporting] = useState<boolean>(false)
+
+  const form = useFormik<ProfileFormValues>({
+    initialValues: profileForm,
+    validationSchema: validationSchema,
+    onSubmit: values => {
+      return editProfile(values)
+    },
+  })
 
   // const modals = [
   //   isSendingMessage /* && sendEmailForm  */ && (
@@ -151,7 +168,10 @@ export const Profile: FC<ProfileProps> = ({
         <div className="content">
           <div className="main-column">
             <ProfileCard
-              {...profileCardProps}
+              slots={profileCardSlots}
+              form={form}
+              access={access}
+              actions={actions}
               // editForm={editForm}
               isEditing={isEditing}
               toggleIsEditing={toggleIsEditing}
