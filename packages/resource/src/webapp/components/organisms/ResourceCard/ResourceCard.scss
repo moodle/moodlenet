@@ -132,7 +132,10 @@
 
     &.vertical {
       > .footer-right > .tertiary-button {
-        color: white;
+        &,
+        > span {
+          color: white;
+        }
       }
     }
 

@@ -1,3 +1,4 @@
+import { overrideDeep } from '@moodlenet/component-library/common'
 import {
   ResourceAccess,
   ResourceActions,
@@ -17,7 +18,6 @@ import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, st
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
 import { OptionItemProp } from '@moodlenet/component-library'
-import { overrideDeep } from '@moodlenet/component-library/common'
 
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
@@ -147,17 +147,12 @@ export const useResourceStoryProps = (
   // }
 ): ResourceProps => {
   const resourceForm: ResourceFormValues = {
-    // validationSchema,
-    // onSubmit: action('submit edit'),
-    // initialValues: {
     content: 'random-link.com',
-    // content: null,
     name: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     image:
       'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-    // ...overrides?.resourceForm,
   }
 
   // const addToCollectionsForm = useFormik<{ collections: string[] }>({
