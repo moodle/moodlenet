@@ -16,7 +16,7 @@ export type EntityClass = {
 }
 
 export type EntityMetadata = {
-  searchData: SearchData
+  // searchData: SearchData
   entityClass: EntityClass
   creator?: {
     userKey: string
@@ -24,7 +24,7 @@ export type EntityMetadata = {
   }
   created: string
   updated: string
-  claims?: Record<PkgName, any>
+  claims: Record<PkgName, any>
 }
 
 export type EntityDocument<DataType extends Record<string, any>> = EntityData<DataType> &
@@ -36,10 +36,10 @@ export type EntityData<DataType extends Record<string, any>> = {
   _meta: EntityMetadata
 } & DataType
 
-export type SearchData = {
-  title: string
-  description: string
-}
+// export type SearchData = {
+//   title: string
+//   description: string
+// }
 
 export type EntityCollectionDef<DataType extends Record<string, any>> = {
   dataType: DataType
@@ -49,12 +49,12 @@ export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   collection: DocumentCollection<EntityData<Def['dataType']>>
   create: (
     newEntityData: Def['dataType'],
-    newEntitySearchData: SearchData,
+    // newEntitySearchData: SearchData,
   ) => Promise<EntityDocument<Def['dataType']>>
-  update: (
+  patch: (
     sel: DocumentSelector,
     patchEntityData: Patch<Def['dataType']>,
-    patchSearchData: Patch<SearchData>,
+    // patchSearchData: Patch<SearchData>,
   ) => Promise<null | {
     old: EntityDocument<Def['dataType']>
     new: EntityDocument<Def['dataType']>

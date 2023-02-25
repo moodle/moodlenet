@@ -1,6 +1,5 @@
 import {
   ensureDocumentCollection,
-  InvertedIndexPrimarySortFieldOptions,
   SearchAliasViewPatchIndexOptions,
 } from '@moodlenet/arangodb/server'
 import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
@@ -40,8 +39,8 @@ export async function registerEntities<Defs extends EntityCollectionDefs>(entiti
   return handles
 }
 
-const DEFAULT_TITLE_DESCRIPTION_INDEX_NAME = 'default_title_description'
-const DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS = ['title', 'description']
+// const DEFAULT_TITLE_DESCRIPTION_INDEX_NAME = 'default_title_description'
+// const DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS = ['title', 'description']
 export async function registerEntity<DataType extends Record<string, any>>(
   entityName: string,
   defOpt?: EntityCollectionDefOpts,
@@ -49,30 +48,29 @@ export async function registerEntity<DataType extends Record<string, any>>(
   type Def = EntityCollectionDef<DataType>
   const { pkgId } = shell.assertCallInitiator()
   const entityCollectionName = getEntityCollectionName(pkgId, entityName)
-  const { collection, newlyCreated } = await shell.call(ensureDocumentCollection)<
+  const { collection /* , newlyCreated */ } = await shell.call(ensureDocumentCollection)<
     EntityData<DataType>
   >(entityCollectionName)
   //const currentProperties = await EntitiesView.updateProperties<SearchAliasViewPropertiesOptions>()
-  const userKey = (await getCurrentClientSession())?.user?._key
-  newlyCreated &&
-    (await collection.ensureIndex({
-      name: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME,
-      type: 'inverted',
-      primarySort: {
-        fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS.map<InvertedIndexPrimarySortFieldOptions>(
-          field => ({ direction: 'asc', field }),
-        ),
-      },
-      storedValues: [{ fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS }],
-      fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS,
-      inBackground: true,
-    }))
+  // newlyCreated &&
+  //   (await collection.ensureIndex({
+  //     name: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME,
+  //     type: 'inverted',
+  //     primarySort: {
+  //       fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS.map<InvertedIndexPrimarySortFieldOptions>(
+  //         field => ({ direction: 'asc', field }),
+  //       ),
+  //     },
+  //     storedValues: [{ fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS }],
+  //     fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS,
+  //     inBackground: true,
+  //   }))
 
-  const defaultIndexesIfNewlyCreated: Required<EntityCollectionDefOpts>['updateAdditionaIndexes'] =
-    newlyCreated ? [{ index: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME, operation: 'add' }] : []
+  // const defaultIndexesIfNewlyCreated: Required<EntityCollectionDefOpts>['updateAdditionaIndexes'] =
+  //   newlyCreated ? [{ index: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME, operation: 'add' }] : []
 
   const updateIndexes = [
-    ...defaultIndexesIfNewlyCreated,
+    // ...defaultIndexesIfNewlyCreated,
     ...(defOpt?.updateAdditionaIndexes ?? []),
   ].map<SearchAliasViewPatchIndexOptions>(({ index, operation }) => ({
     collection: collection.name,
@@ -90,19 +88,22 @@ export async function registerEntity<DataType extends Record<string, any>>(
 
   const create: EntityCollectionHandle<Def>['create'] = async (
     newEntityData,
-    newEntitySearchData,
+    // newEntitySearchData,
   ) => {
+    const userKey = (await getCurrentClientSession())?.user?._key
+
     const now = new Date().toISOString()
 
     const { new: newEntity } = await collection.save(
       {
         ...newEntityData,
         _meta: {
-          searchData: newEntitySearchData,
+          // searchData: newEntitySearchData,
           creator: userKey ? { userKey } : undefined,
           updated: now,
           created: now,
           entityClass: { pkgName: pkgId.name, type: entityName },
+          claims: {},
         },
       },
       { returnNew: true },
@@ -111,10 +112,10 @@ export async function registerEntity<DataType extends Record<string, any>>(
     return newEntity
   }
 
-  const update: EntityCollectionHandle<Def>['update'] = async (
+  const patch: EntityCollectionHandle<Def>['patch'] = async (
     sel,
     patchEntityData,
-    patchSearchData,
+    // patchSearchData,
   ) => {
     const updateResponse = await collection.update(
       sel,
@@ -122,10 +123,10 @@ export async function registerEntity<DataType extends Record<string, any>>(
         ...patchEntityData,
         _meta: {
           updated: new Date().toISOString(),
-          searchData: patchSearchData,
+          // searchData: patchSearchData,
         },
       },
-      { returnNew: true, returnOld: true },
+      { returnNew: true, returnOld: true, mergeObjects: true },
     )
     if (!updateResponse) {
       return null
@@ -153,7 +154,7 @@ export async function registerEntity<DataType extends Record<string, any>>(
   return {
     collection,
     create,
-    update,
+    patch,
     get,
     remove,
   }
