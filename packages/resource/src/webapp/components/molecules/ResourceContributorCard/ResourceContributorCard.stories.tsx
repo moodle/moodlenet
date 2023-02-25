@@ -25,7 +25,7 @@ const person = peopleFactory[randomProfileIndex]
 
 export const ResourceContributorCardStoryProps: ResourceContributorCardProps = {
   avatarUrl: person ? person.avatarUrl : null,
-  displayName: person ? person.title : '',
+  displayName: person ? person.displayName : '',
   timeSinceCreation: `${randomUploadedHours} ${
     randomProfileIndex === 0
       ? 'hours'
