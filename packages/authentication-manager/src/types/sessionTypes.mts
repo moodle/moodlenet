@@ -1,6 +1,7 @@
 import { UserDocument } from './storeTypes.mjs'
 export * from './storeTypes.mjs'
 
+export type UserId = string
 export type SessionToken = string
 
 export type ClientSession = UserClientSession | RootClientSession

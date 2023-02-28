@@ -1,5 +1,5 @@
 {
-  "name": "@moodlenet/content-graph",
+  "name": "@moodlenet/access-control",
   "version": "0.2.0",
   "license": "AGPL-3.0",
   "type": "module",
@@ -13,12 +13,12 @@
   },
   "moodlenet": {
     "creator": "MoodleNet",
-    "displayName": "Content Graph"
+    "displayName": "Access control"
   },
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Content Graph\nMaintainance of all Moodlenet Entities",
+  "description": "Access control\nMaintainance of all Moodlenet Entities",
   "files": [
     "dist/",
     "src/"

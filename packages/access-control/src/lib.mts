@@ -1,12 +1,7 @@
-import {
-  ensureDocumentCollection,
-  SearchAliasViewPatchIndexOptions,
-} from '@moodlenet/arangodb/server'
+import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
-import assert from 'assert'
-// import { getCurrentClientSession, UserId } from '@moodlenet/authentication-manager/server'
 import type { PkgIdentifier } from '@moodlenet/core'
-import { EntitiesView } from './init.mjs'
+import assert from 'assert'
 import { shell } from './shell.mjs'
 import {
   EntityCollectionDef,
@@ -39,11 +34,9 @@ export async function registerEntities<Defs extends EntityCollectionDefs>(entiti
   return handles
 }
 
-// const DEFAULT_TITLE_DESCRIPTION_INDEX_NAME = 'default_title_description'
-// const DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS = ['title', 'description']
 export async function registerEntity<DataType extends Record<string, any>>(
   entityName: string,
-  defOpt?: EntityCollectionDefOpts,
+  _defOpt?: EntityCollectionDefOpts,
 ): Promise<EntityCollectionHandle<EntityCollectionDef<DataType>>> {
   type Def = EntityCollectionDef<DataType>
   const { pkgId } = shell.assertCallInitiator()
@@ -51,45 +44,7 @@ export async function registerEntity<DataType extends Record<string, any>>(
   const { collection /* , newlyCreated */ } = await shell.call(ensureDocumentCollection)<
     EntityData<DataType>
   >(entityCollectionName)
-  //const currentProperties = await EntitiesView.updateProperties<SearchAliasViewPropertiesOptions>()
-  // newlyCreated &&
-  //   (await collection.ensureIndex({
-  //     name: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME,
-  //     type: 'inverted',
-  //     primarySort: {
-  //       fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS.map<InvertedIndexPrimarySortFieldOptions>(
-  //         field => ({ direction: 'asc', field }),
-  //       ),
-  //     },
-  //     storedValues: [{ fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS }],
-  //     fields: DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS,
-  //     inBackground: true,
-  //   }))
-
-  // const defaultIndexesIfNewlyCreated: Required<EntityCollectionDefOpts>['updateAdditionaIndexes'] =
-  //   newlyCreated ? [{ index: DEFAULT_TITLE_DESCRIPTION_INDEX_NAME, operation: 'add' }] : []
-
-  const updateIndexes = [
-    // ...defaultIndexesIfNewlyCreated,
-    ...(defOpt?.updateAdditionaIndexes ?? []),
-  ].map<SearchAliasViewPatchIndexOptions>(({ index, operation }) => ({
-    collection: collection.name,
-    index,
-    operation,
-  }))
-
-  if (updateIndexes.length) {
-    await EntitiesView.updateProperties({
-      // indexes: [],
-      // indexes:[...currentProperties.indexes, ...addIndexes],
-      indexes: updateIndexes, //[...currentProperties.indexes, ...addIndexes],
-    })
-  }
-
-  const create: EntityCollectionHandle<Def>['create'] = async (
-    newEntityData,
-    // newEntitySearchData,
-  ) => {
+  const create: EntityCollectionHandle<Def>['create'] = async newEntityData => {
     const userKey = (await getCurrentClientSession())?.user?._key
 
     const now = new Date().toISOString()
@@ -98,12 +53,11 @@ export async function registerEntity<DataType extends Record<string, any>>(
       {
         ...newEntityData,
         _meta: {
-          // searchData: newEntitySearchData,
-          creator: userKey ? { userKey } : undefined,
+          owner: userKey,
           updated: now,
           created: now,
           entityClass: { pkgName: pkgId.name, type: entityName },
-          claims: {},
+          pkgMeta: {},
         },
       },
       { returnNew: true },
@@ -112,18 +66,13 @@ export async function registerEntity<DataType extends Record<string, any>>(
     return newEntity
   }
 
-  const patch: EntityCollectionHandle<Def>['patch'] = async (
-    sel,
-    patchEntityData,
-    // patchSearchData,
-  ) => {
+  const patch: EntityCollectionHandle<Def>['patch'] = async (sel, patchEntityData) => {
     const updateResponse = await collection.update(
       sel,
       {
         ...patchEntityData,
         _meta: {
           updated: new Date().toISOString(),
-          // searchData: patchSearchData,
         },
       },
       { returnNew: true, returnOld: true, mergeObjects: true },
