@@ -197,8 +197,15 @@
 
     > .footer-right {
       display: flex;
-      gap: 2px;
       pointer-events: auto;
+
+      &.vertical {
+        > .tertiary-button {
+          > span {
+            color: white;
+          }
+        }
+      }
 
       > .tertiary-button {
         display: flex;
@@ -206,10 +213,6 @@
         gap: 4px;
         padding: 0 7px;
         font-weight: normal;
-
-        > span {
-          color: white;
-        }
 
         &:hover:not(.disabled) {
           > span {
