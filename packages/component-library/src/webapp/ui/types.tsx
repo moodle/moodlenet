@@ -21,3 +21,12 @@ export type FollowTag = {
   name: string
   subjectHomeHref?: Href
 }
+
+export type PeopleFactory = {
+  displayName: string
+  avatarUrl: string
+  backgroundUrl: string
+  username: string
+  organization: string
+  location: string
+}
