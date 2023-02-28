@@ -1,4 +1,6 @@
-import { Profile, useProfileCardStoryProps } from '@moodlenet/react-app/ui'
+import { getCollectionsCardStoryProps, ProfileCollectionList } from '@moodlenet/collection/ui'
+import { href, Profile, useProfileCardStoryProps } from '@moodlenet/react-app/ui'
+import { getResourcesCardStoryProps, ProfileResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useProfileStoryProps } from './stories-props.js'
@@ -30,49 +32,48 @@ export const LoggedOut: ProfileStory = () => {
       profileCardProps: useProfileCardStoryProps({
         props: { isAuthenticated: false },
       }),
+      mainColumnItems: [
+        {
+          Item: () => (
+            <ProfileResourceList
+              isOwner={false}
+              newResourceHref={href('Page/Resource/New')}
+              resourceCardPropsList={getResourcesCardStoryProps(5, {
+                isAuthenticated: false,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={false}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+                isAuthenticated: false,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
+      sideColumnItems: [
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={false}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+                isAuthenticated: false,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
     },
   })
-  //     {
-  //     props: {
-  //       headerPageTemplateProps: {
-  //         isAuthenticated: false,
-  //         headerPageProps: {
-  //           // isAuthenticated: false,
-  //           headerProps: {
-  //             ...HeaderLoggedOutStoryProps,
-  //             me: null,
-  //           },
-  //           // subHeaderProps: {
-  //           //   tags: [],
-  //           // },
-  //         },
-  //         mainPageWrapperProps: {
-  //           userAcceptsPolicies: null,
-  //           cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-  //         },
-  //       },
-  //       collectionCardPropsList: [
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //       ],
-  //       resourceCardPropsList: [
-  //         ResourceCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         ResourceCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //       ],
-  //     },
-  //   }
-  //   )
 
   return <Profile {...props} />
 }
@@ -83,6 +84,40 @@ export const LoggedIn: ProfileStory = () => {
       profileCardProps: useProfileCardStoryProps({
         props: { isAuthenticated: true },
       }),
+      mainColumnItems: [
+        {
+          Item: () => (
+            <ProfileResourceList
+              isOwner={false}
+              newResourceHref={href('Page/Resource/New')}
+              resourceCardPropsList={getResourcesCardStoryProps(5, {})}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={false}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
+      sideColumnItems: [
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={false}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
     },
   })
   return <Profile {...props} />
@@ -91,122 +126,101 @@ export const LoggedIn: ProfileStory = () => {
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
     props: {
-      profileCardProps: useProfileCardStoryProps(
-        { props: { isOwner: true, canEdit: true, isApproved: true } },
-
-        //   collectionCardPropsList: [
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //   ],
-        //   resourceCardPropsList: [
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //   ],
-      ),
+      profileCardProps: useProfileCardStoryProps({
+        props: { isOwner: true, canEdit: true, isApproved: true },
+      }),
+      mainColumnItems: [
+        {
+          Item: () => (
+            <ProfileResourceList
+              isOwner={true}
+              newResourceHref={href('Page/Resource/New')}
+              resourceCardPropsList={getResourcesCardStoryProps(5, {
+                isOwner: true,
+                canEdit: true,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={true}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+                isOwner: true,
+                canEdit: true,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
+      sideColumnItems: [
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={false}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+                isOwner: true,
+                canEdit: true,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
     },
   })
   return <Profile {...props} />
 }
 
-// export const Unapproved: ProfileStory = () => {
-//   const props = useProfileStoryProps({
-//     props: {
-//       profileCardProps: useProfileCardStoryProps({
-//         props: { isOwner: true, isApproved: false },
-//       }),
-//       //   collectionCardPropsList: [
-//       //     CollectionCardOwnerPrivateStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //     CollectionCardOwnerStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //     CollectionCardOwnerStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //     CollectionCardOwnerPrivateStoryProps(
-//       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-//       //     ),
-//       //   ],
-//       //   resourceCardPropsList: [
-//       //     ResourceCardOwnerPrivateStoryProps,
-//       //     ResourceCardOwnerStoryProps,
-//       //     ResourceCardOwnerStoryProps,
-//       //     ResourceCardOwnerPrivateStoryProps,
-//       //     ResourceCardOwnerStoryProps,
-//       //   ],
-//       //   showAccountApprovedSuccessAlert: true,
-//     },
-//   })
-//   return <Profile {...props} />
-// }
-
-// export const Activated: ProfileStory = () => {
-//   const props = useProfileStoryProps({
-//     // editFormValues: {
-//     //   description: '',
-//     //   location: '',
-//     //   avatarImage: null,
-//     //   backgroundImage: null,
-//     //   organizationName: '',
-//     //   siteUrl: '',
-//     // },
-//     // props: {
-//     //   //   collectionCardPropsList: [],
-//     //   //   resourceCardPropsList: [],
-//     //   showAccountCreationSuccessAlert: true,
-//     //   getProfileCardProps: useuseProfileCardStoryProps({
-//     //     props: {
-//     //       isAuthenticated: true,
-//     //       isOwner: true,
-//     //     },
-//     //   }),
-//     // },
-//   })
-//   return <Profile {...props} />
-// }
-
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
     props: {
-      profileCardProps: useProfileCardStoryProps(
-        { props: { isAdmin: true, canEdit: true } },
-
-        //   collectionCardPropsList: [
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //     CollectionCardOwnerPrivateStoryProps(
-        //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
-        //     ),
-        //   ],
-        //   resourceCardPropsList: [
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //     ResourceCardOwnerPrivateStoryProps,
-        //     ResourceCardOwnerStoryProps,
-        //   ],
-      ),
+      profileCardProps: useProfileCardStoryProps({ props: { isAdmin: true, canEdit: true } }),
+      mainColumnItems: [
+        {
+          Item: () => (
+            <ProfileResourceList
+              isOwner={false}
+              newResourceHref={href('Page/Resource/New')}
+              resourceCardPropsList={getResourcesCardStoryProps(5, {
+                canEdit: true,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={false}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+                canEdit: true,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
+      sideColumnItems: [
+        {
+          Item: () => (
+            <ProfileCollectionList
+              isOwner={false}
+              newCollectionHref={href('Page/Collection/New')}
+              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+                canEdit: true,
+              })}
+            />
+          ),
+          key: 'collection-card-list',
+        },
+      ],
     },
   })
   return <Profile {...props} />
