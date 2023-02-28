@@ -2,7 +2,7 @@
 const svgr = require('vite-plugin-svgr')
 const { default: tsconfigPaths } = require('vite-tsconfig-paths')
 const { mergeConfig } = require('vite')
-const { readdirSync, writeFileSync } = require('fs')
+const { readdirSync, writeFileSync, statSync } = require('fs')
 
 const path = require('path')
 const packagesDirs = readdirSync(path.join('..')).map(pkg_name => path.join('..', pkg_name))
@@ -69,7 +69,14 @@ function hackPackageJsonExports(recover) {
 
   console.log('hackPackageJsonExports' + (recover ? ' (recover)' : ''))
   packagesDirs.forEach(pkgDir => {
+    const tsconfigFile = path.resolve(pkgDir, 'tsconfig.json')
     const pkgJsonFile = path.resolve(pkgDir, 'package.json')
+
+    const tsconfigFileExists = !!statSync(tsconfigFile, { throwIfNoEntry: false })
+    const pkgJsonFileExists = !!statSync(pkgJsonFile, { throwIfNoEntry: false })
+    if (!(tsconfigFileExists && pkgJsonFileExists)) {
+      return
+    }
     const pkgJson = require(pkgJsonFile)
     const pkgExports = pkgJson.exports
     if (!pkgExports) {
