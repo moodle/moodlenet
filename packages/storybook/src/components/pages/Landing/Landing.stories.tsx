@@ -1,4 +1,4 @@
-import { CollectionCardList, getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
+import { getCollectionsCardStoryProps, LandingCollectionList } from '@moodlenet/collection/ui'
 import {
   getSmallProfilesCardStoryProps,
   href,
@@ -6,7 +6,7 @@ import {
   LandingProps,
   SmallProfileCardList,
 } from '@moodlenet/react-app/ui'
-import { getResourcesCardStoryProps, LandingPageResourceList } from '@moodlenet/resource/ui'
+import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   MainLayoutLoggedInStoryProps,
@@ -31,7 +31,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainColumnItems: [
     {
       Item: () => (
-        <LandingPageResourceList
+        <LandingResourceList
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             isAuthenticated: false,
@@ -42,7 +42,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     },
     {
       Item: () => (
-        <CollectionCardList
+        <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
             isAuthenticated: false,
@@ -71,7 +71,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
   mainColumnItems: [
     {
       Item: () => (
-        <LandingPageResourceList
+        <LandingResourceList
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             liked: true,
@@ -83,7 +83,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
     },
     {
       Item: () => (
-        <CollectionCardList
+        <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
             followed: true,
@@ -129,7 +129,7 @@ export const Owner: LandingStory = () => {
     mainColumnItems: [
       {
         Item: () => (
-          <LandingPageResourceList
+          <LandingResourceList
             searchResourcesHref={href('Page/Search')}
             resourceCardPropsList={getResourcesCardStoryProps(15, {
               isOwner: true,
@@ -142,7 +142,7 @@ export const Owner: LandingStory = () => {
       },
       {
         Item: () => (
-          <CollectionCardList
+          <LandingCollectionList
             searchCollectionsHref={href('Page/Search')}
             collectionCardPropsList={getCollectionsCardStoryProps(15, {
               isOwner: true,

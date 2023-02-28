@@ -2,21 +2,21 @@ import { ArrowForwardRounded } from '@material-ui/icons'
 import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import { FC } from 'react'
-import { CollectionCard, CollectionCardProps } from '../CollectionCard/CollectionCard.js'
-import './CollectionCardList.scss'
+import { CollectionCard, CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
+import './LandingCollectionList.scss'
 
-export type CollectionCardListProps = {
+export type LandingCollectionListProps = {
   searchCollectionsHref: Href
   collectionCardPropsList: CollectionCardProps[]
 }
 
-export const CollectionCardList: FC<CollectionCardListProps> = ({
+export const LandingCollectionList: FC<LandingCollectionListProps> = ({
   collectionCardPropsList,
   searchCollectionsHref,
 }) => {
   return (
     <ListCard
-      className="collections"
+      className="landing-collection-card-list"
       content={collectionCardPropsList.slice(0, 20).map(collectionCardProps => (
         <CollectionCard key={collectionCardProps.collectionId} {...collectionCardProps} />
       ))}
@@ -42,6 +42,6 @@ export const CollectionCardList: FC<CollectionCardListProps> = ({
   )
 }
 
-CollectionCardList.defaultProps = {}
+LandingCollectionList.defaultProps = {}
 
-export default CollectionCardList
+export default LandingCollectionList
