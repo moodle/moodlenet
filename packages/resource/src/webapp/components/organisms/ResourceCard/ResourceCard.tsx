@@ -129,7 +129,6 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   useEffect(() => {
     const updateSize = () => {
-      console.log('width ', resourceCard.current && resourceCard.current.clientWidth)
       setSize(
         resourceCard.current && resourceCard.current.clientWidth < 300
           ? 'micro'

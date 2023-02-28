@@ -1,5 +1,11 @@
 import { CollectionCardList, getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
-import { href, Landing, LandingProps } from '@moodlenet/react-app/ui'
+import {
+  getSmallProfilesCardStoryProps,
+  href,
+  Landing,
+  LandingProps,
+  SmallProfileCardList,
+} from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, LandingPageResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
@@ -43,7 +49,18 @@ export const LandingLoggedOutStoryProps: LandingProps = {
           })}
         />
       ),
-      key: 'resource-card-list',
+      key: 'collection-card-list',
+    },
+    {
+      Item: () => (
+        <SmallProfileCardList
+          searchAuthorsHref={href('Page/Search')}
+          smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+            isAuthenticated: false,
+          })}
+        />
+      ),
+      key: 'people-card-list',
     },
   ],
 }
@@ -75,6 +92,17 @@ export const LandingLoggedInStoryProps: LandingProps = {
         />
       ),
       key: 'resource-card-list',
+    },
+    {
+      Item: () => (
+        <SmallProfileCardList
+          searchAuthorsHref={href('Page/Search')}
+          smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+            followed: true,
+          })}
+        />
+      ),
+      key: 'people-card-list',
     },
   ],
 }
@@ -124,6 +152,17 @@ export const Owner: LandingStory = () => {
           />
         ),
         key: 'resource-card-list',
+      },
+      {
+        Item: () => (
+          <SmallProfileCardList
+            searchAuthorsHref={href('Page/Search')}
+            smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+              isOwner: true,
+            })}
+          />
+        ),
+        key: 'people-card-list',
       },
     ],
   }
