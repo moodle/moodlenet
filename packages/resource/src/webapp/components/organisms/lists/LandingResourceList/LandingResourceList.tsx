@@ -3,27 +3,25 @@ import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
 import { FC } from 'react'
 import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
-import './ResourceCardList.scss'
+import './LandingResourceList.scss'
 
-export type ResourceCardListProps = {
+export type LandingResourceListProps = {
   resourceCardPropsList: ResourceCardProps[]
   searchResourcesHref: Href
-  orientation?: 'vertical' | 'horizontal'
 }
 
-export const ResourceCardList: FC<ResourceCardListProps> = ({
+export const LandingResourceList: FC<LandingResourceListProps> = ({
   resourceCardPropsList,
   searchResourcesHref,
-  orientation = 'vertical',
 }) => {
   return (
     <ListCard
-      className="resource-list"
+      className="landing-resource-list"
       content={resourceCardPropsList.slice(0, 10).map(resourceCardProps => (
         <ResourceCard
           {...resourceCardProps}
           key={resourceCardProps.resourceId}
-          orientation={orientation}
+          orientation="vertical"
         />
       ))}
       title={
@@ -48,6 +46,6 @@ export const ResourceCardList: FC<ResourceCardListProps> = ({
   )
 }
 
-ResourceCardList.defaultProps = {}
+LandingResourceList.defaultProps = {}
 
-export default ResourceCardList
+export default LandingResourceList

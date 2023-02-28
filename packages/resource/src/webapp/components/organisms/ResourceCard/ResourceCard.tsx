@@ -247,10 +247,10 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const footer = (
     <div className={`resource-card-footer ${orientation} ${size}`}>
-      <div className="footer-left">
+      <div className={`footer-left  ${orientation}`}>
         {updatedBottomLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
-      <div className="footer-right">
+      <div className={`footer-right  ${orientation}`}>
         {updatedBottomRightItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
     </div>
