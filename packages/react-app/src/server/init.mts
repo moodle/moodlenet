@@ -1,6 +1,6 @@
+import { EntityCollectionDef, registerEntities } from '@moodlenet/access-control/server'
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { expose as authExpose } from '@moodlenet/authentication-manager/server'
-import { EntityCollectionDef, registerEntities } from '@moodlenet/content-graph/server'
 import { mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { expose as orgExpose } from '@moodlenet/organization/server'
