@@ -17,5 +17,5 @@ export type RootClientSession = {
 export type AuthAsyncCtx = {
   currentSession?:
     | { type: 'auth-token-set'; authToken: string }
-    | { type: 'client-session-fetched'; authToken: string; clientSession: ClientSession }
+    | { type: 'client-session-verified'; authToken: string; clientSession: ClientSession }
 }
