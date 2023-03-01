@@ -1,5 +1,5 @@
 {
-  "name": "@moodlenet/access-control",
+  "name": "@moodlenet/system-entities",
   "version": "0.2.0",
   "license": "AGPL-3.0",
   "type": "module",

@@ -1,8 +1,3 @@
-import {
-  EntityCollectionDef,
-  registerAccessController,
-  registerEntities,
-} from '@moodlenet/access-control/server'
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import {
   expose as authExpose,
@@ -11,6 +6,11 @@ import {
 import { mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { expose as orgExpose } from '@moodlenet/organization/server'
+import {
+  EntityCollectionDef,
+  registerAccessController,
+  registerEntities,
+} from '@moodlenet/system-entities/server'
 import { resolve } from 'path'
 import { defaultAppearanceData } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
