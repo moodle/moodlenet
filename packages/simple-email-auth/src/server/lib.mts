@@ -95,17 +95,20 @@ export async function confirm({
     const { msg, success } = authRes
     return { msg, success }
   }
-
-  await shell.call(createWebUser)({
-    userKey: authRes.user._key,
-    displayName: displayName,
-    isAdmin: false,
-    contacts: { email },
-    aboutMe: '',
-  })
-
   const { sessionToken } = authRes
-  return { success: true, sessionToken }
+  return shell.initiateCall(async () => {
+    await setCurrentClientSessionToken(sessionToken)
+
+    await createWebUser({
+      userKey: authRes.user._key,
+      displayName: displayName,
+      isAdmin: false,
+      contacts: { email },
+      aboutMe: '',
+    })
+
+    return { success: true, sessionToken }
+  })
 
   async function getConfirmEmailPayload() {
     try {
