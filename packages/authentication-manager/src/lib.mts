@@ -60,7 +60,7 @@ export async function getCurrentClientSession(): Promise<ClientSession | undefin
   }
   // console.log({ currentSession: workingCtx?.currentSession })
 
-  if (workingCtx.currentSession.type === 'client-session-fetched') {
+  if (workingCtx.currentSession.type === 'client-session-verified') {
     return workingCtx.currentSession.clientSession
   }
 
@@ -78,18 +78,18 @@ export async function getCurrentClientSession(): Promise<ClientSession | undefin
     })
     return
   }
-  const workingClientSession = maybeClientSession
+  const currentClientSession = maybeClientSession
 
   shell.myAsyncCtx.set(editCurrentSession => ({
     ...editCurrentSession,
     currentSession: {
-      type: 'client-session-fetched',
+      type: 'client-session-verified',
       authToken: workingAuthToken,
-      clientSession: workingClientSession,
+      clientSession: currentClientSession,
     },
   }))
 
-  return workingClientSession
+  return currentClientSession
 }
 
 export async function getCurrentClientSessionToken(): Promise<string | void> {
