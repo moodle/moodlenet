@@ -137,6 +137,7 @@ export async function registerEntity<DataType extends Record<string, any>>(
           )
         ).filter(notUndefined)
     const q = `
+LET clientSession = @clientSession
 FOR entity in @@collection
 FILTER entity._key == @key && ${controllers.map(_ => `(${_})`).join(' && ')}
 LIMIT 1
@@ -149,7 +150,7 @@ return {NEW, OLD}
         updated: new Date().toISOString(),
       },
     }
-    const bindVars = { '@collection': collection.name, entityPatch, key }
+    const bindVars = { '@collection': collection.name, entityPatch, key, clientSession }
     // console.log(q, bindVars)
     const updateResponseCursor = await db.query<{
       NEW: EntityDocument<DataType>
