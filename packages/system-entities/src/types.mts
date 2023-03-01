@@ -1,9 +1,4 @@
-import type {
-  DocumentCollection,
-  DocumentMetadata,
-  DocumentSelector,
-  Patch,
-} from '@moodlenet/arangodb/server'
+import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
 import { UserId } from '@moodlenet/authentication-manager/server'
 import type { PkgIdentifier, PkgName } from '@moodlenet/core'
 
@@ -35,22 +30,23 @@ export type EntityCollectionDef<DataType extends Record<string, any>> = {
 export type ByKeyOrId = { _id: string } | { _key: string }
 export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   collection: DocumentCollection<EntityData<Def['dataType']>>
-  create(
-    newEntityData: Def['dataType'],
-  ): Promise<
-    | { accessControl: true; newEntity: EntityDocument<Def['dataType']> }
-    | { accessControl: false; controllerDenies: ControllerDeny[] }
-  >
-  patch(
-    byKeyOrId: ByKeyOrId,
-    patchEntityData: Patch<Def['dataType']>,
-  ): Promise<null | {
-    old: EntityDocument<Def['dataType']>
-    new: EntityDocument<Def['dataType']>
-  }>
-  remove(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
-  get(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
-  is(doc: EntityDocument<any>): doc is EntityDocument<Def['dataType']>
+  entityClass: EntityClass
+  // create(
+  //   newEntityData: Def['dataType'],
+  // ): Promise<
+  //   | { accessControl: true; newEntity: EntityDocument<Def['dataType']> }
+  //   | { accessControl: false; controllerDenies: ControllerDeny[] }
+  // >
+  // patch(
+  //   byKeyOrId: ByKeyOrId,
+  //   patchEntityData: Patch<Def['dataType']>,
+  // ): Promise<null | {
+  //   old: EntityDocument<Def['dataType']>
+  //   new: EntityDocument<Def['dataType']>
+  // }>
+  // // remove(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
+  // get(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
+  // is(doc: EntityDocument<any>): doc is EntityDocument<Def['dataType']>
 }
 
 export type EntityCollectionDefs = { [name in string]: EntityCollectionDef<any> }

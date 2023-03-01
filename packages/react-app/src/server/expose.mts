@@ -75,7 +75,7 @@ export const expose = await shell.expose({
         if (!user) {
           return null
         }
-        const profileDoc = await getProfile(user.profileKey)
+        const profileDoc = await getProfile({ _key: user.profileKey })
         if (!profileDoc) {
           return null
         }
