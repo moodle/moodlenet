@@ -32,7 +32,7 @@ export type EntityData<DataType extends Record<string, any>> = {
 export type EntityCollectionDef<DataType extends Record<string, any>> = {
   dataType: DataType
 }
-
+export type ByKeyOrId = { _id: string } | { _key: string }
 export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   collection: DocumentCollection<EntityData<Def['dataType']>>
   create(
@@ -42,7 +42,7 @@ export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
     | { accessControl: false; controllerDenies: ControllerDeny[] }
   >
   patch(
-    sel: DocumentSelector,
+    byKeyOrId: ByKeyOrId,
     patchEntityData: Patch<Def['dataType']>,
   ): Promise<null | {
     old: EntityDocument<Def['dataType']>
@@ -63,7 +63,7 @@ export type EntityCollectionDefOpts = unknown
 export type AccessController = {
   create(entityClass: EntityClass): Promise<unknown>
   read(entity: EntityDocument<any>): Promise<unknown>
-  update(entity: EntityDocument<Record<string, any>>): Promise<unknown>
+  update(): Promise<string>
   delete(entity: EntityDocument<any>): Promise<unknown>
 }
 

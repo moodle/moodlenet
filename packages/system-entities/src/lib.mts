@@ -2,9 +2,11 @@ import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
 import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
+import { db } from './init.mjs'
 import { shell } from './shell.mjs'
 import {
   AccessController,
+  ByKeyOrId,
   ControllerDeny,
   EntityClass,
   EntityCollectionDef,
@@ -13,6 +15,7 @@ import {
   EntityCollectionHandle,
   EntityCollectionHandles,
   EntityData,
+  EntityDocument,
 } from './types.mjs'
 
 export function getEntityCollectionName(pkgId: PkgIdentifier, entityName: string) {
@@ -118,44 +121,48 @@ export async function registerEntity<DataType extends Record<string, any>>(
     return { newEntity, accessControl: true }
   }
 
-  const patch: EntityCollectionHandle<Def>['patch'] = async (sel, patchEntityData) => {
-    const entity = await get(sel)
-    if (!entity) {
-      return null
-    }
+  const patch: EntityCollectionHandle<Def>['patch'] = async (byKeyOrId, patchEntityData) => {
+    const key = getKey(byKeyOrId)
+    // const entity = await get(sel)
+    // if (!entity) {
+    //   return null
+    // }
     const clientSession = await getCurrentClientSession()
 
-    const controllerDenies = clientSession?.isRoot
+    const controllers = clientSession?.isRoot
       ? []
       : (
           await Promise.all(
-            accessControllerRegistry.map(({ controller, pkgId }) => {
-              return Promise.resolve(controller.update?.(entity))
-                .then(() => undefined)
-                .catch(error => {
-                  const controllerDeny: ControllerDeny = { pkgId, error }
-                  return controllerDeny
-                })
-            }),
+            accessControllerRegistry.map(({ controller /* , pkgId */ }) => controller.update?.()),
           )
         ).filter(notUndefined)
-    if (controllerDenies.length) {
-      return null
-    }
-    const updateResponse = await collection.update(
-      sel,
-      {
-        ...patchEntityData,
-        _meta: {
-          updated: new Date().toISOString(),
-        },
+    const q = `
+FOR entity in @@collection
+FILTER entity._key == @key && ${controllers.map(_ => `(${_})`).join(' && ')}
+LIMIT 1
+UPDATE entity WITH @entityPatch IN @@collection
+return {NEW, OLD}
+`
+    const entityPatch = {
+      ...patchEntityData,
+      _meta: {
+        updated: new Date().toISOString(),
       },
-      { returnNew: true, returnOld: true, mergeObjects: true },
-    )
+    }
+    const bindVars = { '@collection': collection.name, entityPatch, key }
+    // console.log(q, bindVars)
+    const updateResponseCursor = await db.query<{
+      NEW: EntityDocument<DataType>
+      OLD: EntityDocument<DataType>
+    }>(q, bindVars)
+
+    const updateResponse = (await updateResponseCursor.all())[0]
+    // console.log({ updateResponse })
+
     if (!updateResponse) {
       return null
     }
-    const { new: newEntityData, old: oldEntityData } = updateResponse
+    const { NEW: newEntityData, OLD: oldEntityData } = updateResponse
     assert(newEntityData && oldEntityData)
     return { new: newEntityData, old: oldEntityData }
   }
@@ -193,4 +200,14 @@ export async function registerEntity<DataType extends Record<string, any>>(
 
 function notUndefined<T>(_: T | undefined): _ is T {
   return _ !== undefined
+}
+
+function getKey(ByKeyOrId: ByKeyOrId) {
+  if ('_key' in ByKeyOrId) {
+    return ByKeyOrId._key
+  } else {
+    const _key = ByKeyOrId._id.split('/')[0]
+    assert(_key)
+    return _key
+  }
 }
