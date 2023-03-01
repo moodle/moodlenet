@@ -21,7 +21,7 @@ ensureGlyphs fullGlyphName = getCollectionName(pkgId, pkgGlyphName) Defs[collect
 
 return { descriptor, opts, pkgGlyphName, fullGlyphName }
 
-CollectionDefOptMap : lista delle collezioni dei packages, i package di norma inseriscono le collezioni in un unico db access-control e possibile che un package si crea un db / collezione suo db
+CollectionDefOptMap : lista delle collezioni dei packages, i package di norma inseriscono le collezioni in un unico db system-entities e possibile che un package si crea un db / collezione suo db
 
 access control crea db , e permette di creare collezione
 
