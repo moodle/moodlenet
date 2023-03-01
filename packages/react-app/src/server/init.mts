@@ -15,10 +15,9 @@ import { resolve } from 'path'
 import { defaultAppearanceData } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
-import { setupPlugin } from './lib.mjs'
+import { plugin } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
-import { getWebUser } from './web-user-lib.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 
 export const kvStore = await kvStoreFactory<KeyValueData>(shell)
@@ -47,27 +46,19 @@ await shell.call(registerAccessController)({
     if (!clientSession?.user) {
       throw new Error('must be authenticated')
     }
-    const webUser = await getWebUser({ userKey: clientSession?.user._key })
 
-    if (!webUser) {
-      throw new Error('cannot find user')
-    }
-
-    if (webUser.profileKey !== doc._key) {
+    if (clientSession?.user._key !== doc._meta.owner) {
       throw new Error('only me can update me')
     }
   },
 })
 
-await setupPlugin<MyWebAppDeps>({
-  pkgId: shell.myId,
-  pluginDef: {
-    mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-    deps: {
-      me: myExpose,
-      organization: orgExpose,
-      auth: authExpose,
-    },
+await shell.call(plugin)<MyWebAppDeps>({
+  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  deps: {
+    me: myExpose,
+    organization: orgExpose,
+    auth: authExpose,
   },
 })
 
