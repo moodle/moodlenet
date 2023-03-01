@@ -1,7 +1,8 @@
-import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
+import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
 import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
 import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
+import { inspect } from 'util'
 import { db } from './init.mjs'
 import { shell } from './shell.mjs'
 import {
@@ -64,7 +65,6 @@ export async function registerEntity<DataType extends Record<string, any>>(
   entityName: string,
   _defOpt?: EntityCollectionDefOpts,
 ): Promise<EntityCollectionHandle<EntityCollectionDef<DataType>>> {
-  type Def = EntityCollectionDef<DataType>
   const { pkgId } = shell.assertCallInitiator()
 
   const entityClass: EntityClass = {
@@ -77,126 +77,194 @@ export async function registerEntity<DataType extends Record<string, any>>(
     EntityData<DataType>
   >(entityCollectionName)
 
-  const create: EntityCollectionHandle<Def>['create'] = async newEntityData => {
-    const clientSession = await getCurrentClientSession()
-    const controllerDenies = clientSession?.isRoot
-      ? []
-      : (
-          await Promise.all(
-            accessControllerRegistry.map(({ controller, pkgId }) => {
-              return Promise.resolve(controller.create?.(entityClass))
-                .then(() => undefined)
-                .catch(error => {
-                  const controllerDeny: ControllerDeny = { pkgId, error }
-                  return controllerDeny
-                })
-            }),
-          )
-        ).filter(notUndefined)
-    if (controllerDenies.length) {
-      return {
-        accessControl: false,
-        controllerDenies,
-      }
-    }
-
-    const userKey = (await getCurrentClientSession())?.user?._key
-
-    const now = new Date().toISOString()
-
-    const { new: newEntity } = await collection.save(
-      {
-        ...newEntityData,
-        _meta: {
-          owner: userKey,
-          updated: now,
-          created: now,
-          entityClass,
-          pkgMeta: {},
-        },
-      },
-      { returnNew: true },
-    )
-    assert(newEntity)
-    return { newEntity, accessControl: true }
-  }
-
-  const patch: EntityCollectionHandle<Def>['patch'] = async (byKeyOrId, patchEntityData) => {
-    const key = getKey(byKeyOrId)
-    // const entity = await get(sel)
-    // if (!entity) {
-    //   return null
-    // }
-    const clientSession = await getCurrentClientSession()
-
-    const controllers = clientSession?.isRoot
-      ? []
-      : (
-          await Promise.all(
-            accessControllerRegistry.map(({ controller /* , pkgId */ }) => controller.update?.()),
-          )
-        ).filter(notUndefined)
-    const q = `
-LET clientSession = @clientSession
-FOR entity in @@collection
-FILTER entity._key == @key && ${controllers.map(_ => `(${_})`).join(' && ')}
-LIMIT 1
-UPDATE entity WITH @entityPatch IN @@collection
-return {NEW, OLD}
-`
-    const entityPatch = {
-      ...patchEntityData,
-      _meta: {
-        updated: new Date().toISOString(),
-      },
-    }
-    const bindVars = { '@collection': collection.name, entityPatch, key, clientSession }
-    // console.log(q, bindVars)
-    const updateResponseCursor = await db.query<{
-      NEW: EntityDocument<DataType>
-      OLD: EntityDocument<DataType>
-    }>(q, bindVars)
-
-    const updateResponse = (await updateResponseCursor.all())[0]
-    // console.log({ updateResponse })
-
-    if (!updateResponse) {
-      return null
-    }
-    const { NEW: newEntityData, OLD: oldEntityData } = updateResponse
-    assert(newEntityData && oldEntityData)
-    return { new: newEntityData, old: oldEntityData }
-  }
-
-  const remove: EntityCollectionHandle<Def>['remove'] = async sel => {
-    const { old } = await collection.remove(sel, { returnOld: true })
-    if (!old) {
-      return null
-    }
-    return old
-  }
-  const is: EntityCollectionHandle<Def>['is'] = (doc): doc is any => {
-    return (
-      doc._meta.entityClass.pkgName === entityClass.pkgName &&
-      doc._meta.entityClass.type === entityClass.type
-    )
-  }
-  const get: EntityCollectionHandle<Def>['get'] = async sel => {
-    const entity = await collection.document(sel, true)
-    if (!entity) {
-      return null
-    }
-    return entity
-  }
-
   return {
     collection,
-    create,
-    patch,
-    get,
-    remove,
-    is,
+    entityClass,
   }
+}
+
+export async function create<Def extends EntityCollectionDef<any>>(
+  handle: EntityCollectionHandle<Def>,
+  newEntityData: Def['dataType'],
+) {
+  const clientSession = await getCurrentClientSession()
+  const controllerDenies = clientSession?.isRoot
+    ? []
+    : (
+        await Promise.all(
+          accessControllerRegistry.map(({ controller, pkgId }) => {
+            return Promise.resolve(controller.create?.(handle.entityClass))
+              .then(() => undefined)
+              .catch(error => {
+                const controllerDeny: ControllerDeny = { pkgId, error }
+                return controllerDeny
+              })
+          }),
+        )
+      ).filter(notUndefined)
+
+  if (controllerDenies.length) {
+    return {
+      accessControl: false,
+      controllerDenies,
+    } as const
+  }
+
+  const userKey = (await getCurrentClientSession())?.user?._key
+
+  const now = new Date().toISOString()
+
+  const { new: newEntity } = await handle.collection.save(
+    {
+      ...newEntityData,
+      _meta: {
+        owner: userKey,
+        updated: now,
+        created: now,
+        entityClass: handle.entityClass,
+        pkgMeta: {},
+      },
+    },
+    { returnNew: true },
+  )
+  assert(newEntity)
+  return { newEntity, accessControl: true } as const
+}
+
+export async function patch<Def extends EntityCollectionDef<any>>(
+  handle: EntityCollectionHandle<Def>,
+  byKeyOrId: ByKeyOrId,
+  entityDataPatch: Patch<Def['dataType']>,
+) {
+  const entityAccess = await getEntityAccess(handle, byKeyOrId)
+  if (!entityAccess) {
+    return
+  }
+  if (!entityAccess.access.w.can) {
+    throw new Error('no privilege to update')
+  }
+  const entityPatch = {
+    ...entityDataPatch,
+    _meta: {
+      updated: new Date().toISOString(),
+    },
+  }
+
+  const { new: newEntityData, old: oldEntityData } = await handle.collection.update(
+    byKeyOrId,
+    entityPatch,
+    { mergeObjects: true, returnNew: true, returnOld: true },
+  )
+
+  assert(newEntityData && oldEntityData)
+  return { new: newEntityData, old: oldEntityData }
+}
+
+export async function get<Def extends EntityCollectionDef<any>>(
+  handle: EntityCollectionHandle<Def>,
+  byKeyOrId: ByKeyOrId,
+) {
+  const entityAccess = await getEntityAccess(handle, byKeyOrId)
+  return entityAccess?.access.r.can ? entityAccess.entity : null
+}
+
+export async function getEntityAccess<Def extends EntityCollectionDef<any>>(
+  handle: EntityCollectionHandle<Def>,
+  byKeyOrId: ByKeyOrId,
+) {
+  const key = getKey(byKeyOrId)
+  const cursor = await find<Def>(
+    handle,
+    `
+    FILTER entity._key == "${key}"
+    LIMIT 1
+  `,
+  )
+  const get_findResult = (await cursor.all())[0]
+  console.log(inspect({ get_findResult }, false, 10, true))
+  return get_findResult
+}
+
+export async function find<Def extends EntityCollectionDef<any>>(
+  handle: EntityCollectionHandle<Def>,
+  queryBody: string,
+  // opts?:Partial<{filter:('r'|'w'|'d')[]}>
+) {
+  type DataType = Def extends EntityCollectionDef<infer T> ? T : never
+  const clientSession = await getCurrentClientSession()
+  const rAccess = 'true'
+  const dAccess = 'true'
+  const wAccess = (
+    await Promise.all(
+      accessControllerRegistry.map(({ controller /* , pkgId */ }) => controller.update?.()),
+    )
+  )
+    .map(_ => `(${_})`)
+    .join(',\n')
+  const accessControls = clientSession?.isRoot
+    ? `{
+        r: [ true ] /* ROOT ACCESS */,
+        w: [ true ] /* ROOT ACCESS */,
+        d: [ true ] /* ROOT ACCESS */,
+      }`
+    : ` {
+        w: [ ${wAccess} ],
+        r: [ ${rAccess} ],
+        d: [ ${dAccess} ],
+      }`
+
+  const q = `
+LET clientSession = @clientSession
+FOR entity in @@collection
+${queryBody}
+LET accessControls = ${accessControls}
+LET access = {
+  r: { 
+    can: (accessControls.r NONE == false) && (accessControls.r ANY == true) 
+  },
+  w:  { 
+    can: (accessControls.w NONE == false) && (accessControls.w ANY == true) 
+  },
+  d:  { 
+    can: (accessControls.d NONE == false) && (accessControls.d ANY == true) 
+  }
+}
+return { 
+  entity,
+  access
+}
+`
+
+  const bindVars = { '@collection': handle.collection.name, clientSession }
+  console.log(q, bindVars)
+  const updateResponseCursor = await db.query<{
+    entity: EntityDocument<DataType>
+    access: {
+      r: { can: boolean }
+      w: { can: boolean }
+      d: { can: boolean }
+    }
+  }>(q, bindVars)
+  return updateResponseCursor
+}
+
+// const remove: EntityCollectionHandle<Def>['remove'] = async sel => {
+//   const { old } = await collection.remove(sel, { returnOld: true })
+//   if (!old) {
+//     return null
+//   }
+//   return old
+// }
+
+export function docIsOfClass<T extends Record<string, any>>(
+  doc: EntityDocument<any>,
+  entityClass: EntityClass,
+): doc is EntityDocument<T> {
+  return isSameClass(entityClass, doc._meta.entityClass)
+}
+
+export function isSameClass<EC extends EntityClass>(class1: EC, class2: EntityClass): class2 is EC {
+  return class1.pkgName === class2.pkgName && class1.type === class2.type
 }
 
 function notUndefined<T>(_: T | undefined): _ is T {

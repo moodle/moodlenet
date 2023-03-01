@@ -1,12 +1,12 @@
-import { DocumentMetadata, DocumentSelector, Patch } from '@moodlenet/arangodb/server'
-import { ByKeyOrId } from '@moodlenet/system-entities/server'
+import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
+import { ByKeyOrId, create, get, patch } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
 import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, userKey, ...profileData } = createRequest
-  const createResult = await WebUserProfile.create(profileData)
+  const createResult = await create(WebUserProfile, profileData)
 
   if (!createResult.accessControl) {
     return createResult.controllerDenies
@@ -31,7 +31,7 @@ export async function editWebUserProfile(
   byKeyOrId: ByKeyOrId,
   updateWithData: Partial<WebUserProfileDataType>,
 ) {
-  const mUpdated = await WebUserProfile.patch(byKeyOrId, updateWithData)
+  const mUpdated = await patch(WebUserProfile, byKeyOrId, updateWithData)
 
   if (!mUpdated) {
     return null
@@ -110,9 +110,9 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
 }
 
 export async function getProfile(
-  sel: DocumentSelector,
+  byKeyOrId: ByKeyOrId,
 ): Promise<null | (WebUserProfileDataType & DocumentMetadata)> {
-  const profile = await WebUserProfile.get(sel)
+  const profile = await get(WebUserProfile, byKeyOrId)
   return profile
 }
 

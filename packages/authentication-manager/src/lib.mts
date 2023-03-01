@@ -52,11 +52,11 @@ export async function getSessionToken({ uid }: { uid: string }): Promise<Session
   return sessionToken
 }
 
-export async function getCurrentClientSession(): Promise<ClientSession | undefined> {
+export async function getCurrentClientSession(): Promise<ClientSession | null> {
   const workingCtx = shell.myAsyncCtx.get()
   // console.log({ workingCtx })
   if (!workingCtx?.currentSession) {
-    return
+    return null
   }
   // console.log({ currentSession: workingCtx?.currentSession })
 
@@ -76,7 +76,7 @@ export async function getCurrentClientSession(): Promise<ClientSession | undefin
         currentSession: undefined,
       }
     })
-    return
+    return null
   }
   const currentClientSession = maybeClientSession
 
@@ -92,12 +92,12 @@ export async function getCurrentClientSession(): Promise<ClientSession | undefin
   return currentClientSession
 }
 
-export async function getCurrentClientSessionToken(): Promise<string | void> {
+export async function getCurrentClientSessionToken(): Promise<string | null> {
   const workingCtx = shell.myAsyncCtx.get()
-  return workingCtx?.currentSession?.authToken
+  return workingCtx?.currentSession?.authToken ?? null
 }
 
-export async function setCurrentClientSessionToken(token: string | undefined) {
+export async function setCurrentClientSessionToken(token: string | null | undefined) {
   if (!token) {
     shell.myAsyncCtx.set(current => ({ ...current, currentSession: undefined }))
     return
