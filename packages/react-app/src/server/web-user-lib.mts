@@ -5,10 +5,14 @@ import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, userKey, ...profileData } = createRequest
-  const newProfile = await WebUserProfile.create(
-    profileData,
-    // getWebUserProfileSearchData(profileData),
-  )
+  const createResult = await WebUserProfile.create(profileData)
+
+  if (!createResult.accessControl) {
+    return createResult.controllerDenies
+  }
+
+  const newProfile = createResult.newEntity
+
   const webUserData: WebUserDataType = {
     profileKey: newProfile._key,
     displayName: newProfile.displayName,
@@ -22,32 +26,11 @@ export async function createWebUser(createRequest: CreateRequest) {
   return newWebUser
 }
 
-// function getWebUserProfilePartSearchData(
-//   profileData: Partial<Pick<WebUserProfileDataType, 'displayName' | 'aboutMe'>>,
-// ): Partial<SearchData> {
-//   return {
-//     description: profileData.aboutMe,
-//     title: profileData.displayName,
-//   }
-// }
-// function getWebUserProfileSearchData(
-//   profileData: Pick<WebUserProfileDataType, 'displayName' | 'aboutMe'>,
-// ): SearchData {
-//   return {
-//     description: profileData.aboutMe,
-//     title: profileData.displayName,
-//   }
-// }
-
 export async function editWebUserProfile(
   sel: DocumentSelector,
   updateWithData: Partial<WebUserProfileDataType>,
 ) {
-  const mUpdated = await WebUserProfile.patch(
-    sel,
-    updateWithData,
-    // getWebUserProfilePartSearchData(updateWithData),
-  )
+  const mUpdated = await WebUserProfile.patch(sel, updateWithData)
 
   if (!mUpdated) {
     return null
@@ -148,5 +131,5 @@ export async function searchUsers(search: string): Promise<(WebUserDataType & Do
 
   const userProfiles = await cursor.all()
 
-  return userProfiles //.map(extractNodeMeta).map(({ node }) => node)
+  return userProfiles
 }

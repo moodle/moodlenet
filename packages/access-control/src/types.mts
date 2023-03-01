@@ -5,10 +5,9 @@ import type {
   Patch,
 } from '@moodlenet/arangodb/server'
 import { UserId } from '@moodlenet/authentication-manager/server'
-import type { PkgName } from '@moodlenet/core'
+import type { PkgIdentifier, PkgName } from '@moodlenet/core'
 
-export type EntityFullIdentifier = { _id: string } & EntityClass
-export type EntityIdentifier = { _id: string }
+export type EntityIdentifier = { _id: string } | { _key: string; entityClass: EntityClass }
 
 export type EntityClass = {
   pkgName: string
@@ -36,16 +35,22 @@ export type EntityCollectionDef<DataType extends Record<string, any>> = {
 
 export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   collection: DocumentCollection<EntityData<Def['dataType']>>
-  create: (newEntityData: Def['dataType']) => Promise<EntityDocument<Def['dataType']>>
-  patch: (
+  create(
+    newEntityData: Def['dataType'],
+  ): Promise<
+    | { accessControl: true; newEntity: EntityDocument<Def['dataType']> }
+    | { accessControl: false; controllerDenies: ControllerDeny[] }
+  >
+  patch(
     sel: DocumentSelector,
     patchEntityData: Patch<Def['dataType']>,
-  ) => Promise<null | {
+  ): Promise<null | {
     old: EntityDocument<Def['dataType']>
     new: EntityDocument<Def['dataType']>
   }>
-  remove: (sel: DocumentSelector) => Promise<null | EntityDocument<Def['dataType']>>
-  get: (sel: DocumentSelector) => Promise<null | EntityDocument<Def['dataType']>>
+  remove(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
+  get(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
+  is(doc: EntityDocument<any>): doc is EntityDocument<Def['dataType']>
 }
 
 export type EntityCollectionDefs = { [name in string]: EntityCollectionDef<any> }
@@ -54,3 +59,18 @@ export type EntityCollectionHandles<Defs extends EntityCollectionDefs> = {
 }
 
 export type EntityCollectionDefOpts = unknown
+
+export type AccessController = {
+  create(entityClass: EntityClass): Promise<unknown>
+  read(entity: EntityDocument<any>): Promise<unknown>
+  update(entity: EntityDocument<Record<string, any>>): Promise<unknown>
+  delete(entity: EntityDocument<any>): Promise<unknown>
+}
+
+export type ControllerDeny = { pkgId: PkgIdentifier; error: unknown }
+export type AccessType = 'create' | 'read' | 'update' | 'delete'
+export type AccessError = {
+  accessType: AccessType
+  entityClass: EntityClass
+  controllerDenies: ControllerDeny[]
+}

@@ -1,6 +1,13 @@
-import { EntityCollectionDef, registerEntities } from '@moodlenet/access-control/server'
+import {
+  EntityCollectionDef,
+  registerAccessController,
+  registerEntities,
+} from '@moodlenet/access-control/server'
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
-import { expose as authExpose } from '@moodlenet/authentication-manager/server'
+import {
+  expose as authExpose,
+  getCurrentClientSession,
+} from '@moodlenet/authentication-manager/server'
 import { mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { expose as orgExpose } from '@moodlenet/organization/server'
@@ -11,6 +18,7 @@ import { expose as myExpose } from './expose.mjs'
 import { setupPlugin } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
+import { getWebUser } from './web-user-lib.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 
 export const kvStore = await kvStoreFactory<KeyValueData>(shell)
@@ -28,6 +36,27 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
   WebUserProfile: EntityCollectionDef<WebUserProfileDataType>
 }>({
   WebUserProfile: {},
+})
+
+await shell.call(registerAccessController)({
+  async update(doc) {
+    if (!WebUserProfile.is(doc)) {
+      return
+    }
+    const clientSession = await getCurrentClientSession()
+    if (!clientSession?.user) {
+      throw new Error('must be authenticated')
+    }
+    const webUser = await getWebUser({ userKey: clientSession?.user._key })
+
+    if (!webUser) {
+      throw new Error('cannot find user')
+    }
+
+    if (webUser.profileKey !== doc._key) {
+      throw new Error('only me can update me')
+    }
+  },
 })
 
 await setupPlugin<MyWebAppDeps>({
