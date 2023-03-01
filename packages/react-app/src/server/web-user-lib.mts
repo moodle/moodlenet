@@ -1,4 +1,5 @@
 import { DocumentMetadata, DocumentSelector, Patch } from '@moodlenet/arangodb/server'
+import { ByKeyOrId } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
 import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.mjs'
@@ -27,10 +28,10 @@ export async function createWebUser(createRequest: CreateRequest) {
 }
 
 export async function editWebUserProfile(
-  sel: DocumentSelector,
+  byKeyOrId: ByKeyOrId,
   updateWithData: Partial<WebUserProfileDataType>,
 ) {
-  const mUpdated = await WebUserProfile.patch(sel, updateWithData)
+  const mUpdated = await WebUserProfile.patch(byKeyOrId, updateWithData)
 
   if (!mUpdated) {
     return null

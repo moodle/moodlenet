@@ -9,7 +9,8 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./server": "./dist/exports.mjs"
+    "./server": "./dist/exports.mjs",
+    "./server/aql-ac": "./dist/access-control-lib/aql.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",

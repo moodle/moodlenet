@@ -1,8 +1,5 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
-import {
-  expose as authExpose,
-  getCurrentClientSession,
-} from '@moodlenet/authentication-manager/server'
+import { expose as authExpose } from '@moodlenet/authentication-manager/server'
 import { mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { expose as orgExpose } from '@moodlenet/organization/server'
@@ -11,6 +8,7 @@ import {
   registerAccessController,
   registerEntities,
 } from '@moodlenet/system-entities/server'
+import { isOwner } from '@moodlenet/system-entities/server/aql-ac'
 import { resolve } from 'path'
 import { defaultAppearanceData } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
@@ -38,18 +36,8 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 })
 
 await shell.call(registerAccessController)({
-  async update(doc) {
-    if (!WebUserProfile.is(doc)) {
-      return
-    }
-    const clientSession = await getCurrentClientSession()
-    if (!clientSession?.user) {
-      throw new Error('must be authenticated')
-    }
-
-    if (clientSession?.user._key !== doc._meta.owner) {
-      throw new Error('only me can update me')
-    }
+  async update() {
+    return isOwner()
   },
 })
 
