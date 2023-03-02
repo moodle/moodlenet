@@ -10,9 +10,12 @@
   width: fit-content;
   min-height: 32px;
   padding: 6px 18px;
-  cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
+
+  &:not(.disabled) {
+    cursor: pointer;
+  }
 
   &:hover:not(.disabled) {
     border-radius: 45px;
@@ -30,13 +33,17 @@
     box-shadow: 0 0 3pt 2pt #1a6affb0;
   }
 
-  &:disabled:not(.abbr) {
-    user-select: none;
+  &.disabled {
     pointer-events: none;
-  }
 
-  &.disabled.abbr {
-    cursor: initial;
+    &:not(.abbr) {
+      user-select: none;
+      pointer-events: none;
+    }
+
+    &.abbr {
+      cursor: initial;
+    }
   }
 
   &.black {

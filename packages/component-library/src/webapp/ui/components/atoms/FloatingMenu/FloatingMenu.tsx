@@ -141,6 +141,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
         </abbr>
         <div
           className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
+          role="navigation"
           style={{
             top:
               hoverElementRef.current?.clientHeight && `${hoverElementRef.current?.clientHeight}px`,
