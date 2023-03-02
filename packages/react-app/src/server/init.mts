@@ -36,8 +36,11 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 })
 
 await shell.call(registerAccessController)({
-  async update() {
+  async write() {
     return isOwner()
+  },
+  async read() {
+    return true
   },
 })
 
