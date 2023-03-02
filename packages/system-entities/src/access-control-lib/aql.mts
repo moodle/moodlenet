@@ -6,3 +6,6 @@
 export async function isOwner() {
   return `(!!clientSession && entity._meta.owner == clientSession.user._key)`
 }
+export async function isAuthenticated() {
+  return `(!!clientSession)`
+}

@@ -2,35 +2,37 @@ import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/s
 import { UserId } from '@moodlenet/authentication-manager/server'
 import type { PkgIdentifier, PkgName } from '@moodlenet/core'
 
-export type EntityIdentifier = { _id: string } | { _key: string; entityClass: EntityClass }
+// export type EntityIdentifier = { _id: string } | { _key: string; entityClass: EntityClass }
 
-export type EntityClass = {
+export type SomeEntityDataType = Record<string, any>
+
+export type EntityClass<_EntityDataType extends SomeEntityDataType> = {
   pkgName: string
   type: string
 }
 
 export type EntityMetadata = {
-  entityClass: EntityClass
+  entityClass: EntityClass<any>
   owner?: UserId
   created: string
   updated: string
   pkgMeta: Record<PkgName, any>
 }
 
-export type EntityDocument<DataType extends Record<string, any>> = EntityData<DataType> &
+export type EntityDocument<EntityDataType extends SomeEntityDataType> = EntityData<EntityDataType> &
   DocumentMetadata
 
-export type EntityData<DataType extends Record<string, any>> = {
+export type EntityData<EntityDataType extends SomeEntityDataType> = {
   _meta: EntityMetadata
-} & DataType
+} & EntityDataType
 
-export type EntityCollectionDef<DataType extends Record<string, any>> = {
-  dataType: DataType
+export type EntityCollectionDef<EntityDataType extends SomeEntityDataType> = {
+  dataType: EntityDataType
 }
 export type ByKeyOrId = { _id: string } | { _key: string }
 export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   collection: DocumentCollection<EntityData<Def['dataType']>>
-  entityClass: EntityClass
+  entityClass: EntityClass<Def['dataType']>
   // create(
   //   newEntityData: Def['dataType'],
   // ): Promise<
@@ -44,7 +46,7 @@ export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   //   old: EntityDocument<Def['dataType']>
   //   new: EntityDocument<Def['dataType']>
   // }>
-  // // remove(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
+  // delete(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
   // get(sel: DocumentSelector): Promise<null | EntityDocument<Def['dataType']>>
   // is(doc: EntityDocument<any>): doc is EntityDocument<Def['dataType']>
 }
@@ -56,17 +58,21 @@ export type EntityCollectionHandles<Defs extends EntityCollectionDefs> = {
 
 export type EntityCollectionDefOpts = unknown
 
-export type AccessController = {
-  create(entityClass: EntityClass): Promise<unknown>
-  read(entity: EntityDocument<any>): Promise<unknown>
-  update(): Promise<string>
-  delete(entity: EntityDocument<any>): Promise<unknown>
+export type AccessControllers = {
+  create(entityClass: EntityClass<any>): Promise<unknown>
+  read: AqlAccessController
+  write: AqlAccessController
+  delete: AqlAccessController
 }
+
+export type AqlAccessController = (
+  entityClass: EntityClass<any>,
+) => Promise<string | null | undefined | boolean>
 
 export type ControllerDeny = { pkgId: PkgIdentifier; error: unknown }
 export type AccessType = 'create' | 'read' | 'update' | 'delete'
 export type AccessError = {
   accessType: AccessType
-  entityClass: EntityClass
+  entityClass: EntityClass<any>
   controllerDenies: ControllerDeny[]
 }

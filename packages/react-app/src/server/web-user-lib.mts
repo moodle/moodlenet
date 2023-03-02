@@ -6,7 +6,7 @@ import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, userKey, ...profileData } = createRequest
-  const createResult = await create(WebUserProfile, profileData)
+  const createResult = await create(WebUserProfile.entityClass, profileData)
 
   if (!createResult.accessControl) {
     return createResult.controllerDenies
@@ -31,7 +31,7 @@ export async function editWebUserProfile(
   byKeyOrId: ByKeyOrId,
   updateWithData: Partial<WebUserProfileDataType>,
 ) {
-  const mUpdated = await patch(WebUserProfile, byKeyOrId, updateWithData)
+  const mUpdated = await patch(WebUserProfile.entityClass, byKeyOrId, updateWithData)
 
   if (!mUpdated) {
     return null
@@ -112,7 +112,7 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
 export async function getProfile(
   byKeyOrId: ByKeyOrId,
 ): Promise<null | (WebUserProfileDataType & DocumentMetadata)> {
-  const profile = await get(WebUserProfile, byKeyOrId)
+  const profile = await get(WebUserProfile.entityClass, byKeyOrId)
   return profile
 }
 

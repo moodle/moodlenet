@@ -37,15 +37,15 @@ export async function registerEntities<Defs extends EntityCollectionDefs>(entiti
 
 // const DEFAULT_TITLE_DESCRIPTION_INDEX_NAME = 'default_title_description'
 // const DEFAULT_TITLE_DESCRIPTION_INDEX_FIELDS = ['title', 'description']
-export async function registerEntity<DataType extends Record<string, any>>(
+export async function registerEntity<EntityDataType extends SomeEntityDataType>(
   entityName: string,
   _defOpt?: EntityCollectionDefOpts,
-): Promise<EntityCollectionHandle<EntityCollectionDef<DataType>>> {
-  type Def = EntityCollectionDef<DataType>
+): Promise<EntityCollectionHandle<EntityCollectionDef<EntityDataType>>> {
+  type Def = EntityCollectionDef<EntityDataType>
   const { pkgId } = shell.assertCallInitiator()
   const entityCollectionName = getEntityCollectionName(pkgId, entityName)
   const { collection /* , newlyCreated */ } = await shell.call(ensureDocumentCollection)<
-    EntityData<DataType>
+    EntityData<EntityDataType>
   >(entityCollectionName)
   //const currentProperties = await EntitiesView.updateProperties<SearchAliasViewPropertiesOptions>()
   // newlyCreated &&
