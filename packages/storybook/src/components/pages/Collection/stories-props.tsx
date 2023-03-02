@@ -132,6 +132,7 @@ export const useCollectionStoryProps = (
     id: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
     numFollowers: 23,
+    ...overrides?.collection,
   }
 
   const collectionForm: CollectionFormValues = {
@@ -140,6 +141,7 @@ export const useCollectionStoryProps = (
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find.',
     image:
       'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+    // ...overrides?.collectionForm,
   }
 
   const actions: CollectionActions = {
@@ -151,6 +153,7 @@ export const useCollectionStoryProps = (
     editCollection: async () => action('editing collection submited'),
     setIsPublished: action('setIsPublished'),
     deleteCollection: action('deleteCollection'),
+    ...overrides?.actions,
   }
 
   const access: CollectionAccess = {
@@ -158,6 +161,7 @@ export const useCollectionStoryProps = (
     canEdit: false,
     isOwner: false,
     isAdmin: false,
+    ...overrides?.access,
   }
 
   const mainCollectionCardSlots: MainCollectionCardSlots = {
