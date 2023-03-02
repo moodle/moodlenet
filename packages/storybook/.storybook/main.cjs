@@ -59,14 +59,13 @@ const recoverHackSignals = [
   'abort',
   'unhandledRejection',
   'uncaughtException',
-  'disconnect'
+  'disconnect',
 ]
-recoverHackSignals.forEach((evname) => {
+recoverHackSignals.forEach(evname => {
   process.once(evname, () => hackPackageJsonExports(true))
 })
 
 function hackPackageJsonExports(recover) {
-
   console.log('hackPackageJsonExports' + (recover ? ' (recover)' : ''))
   packagesDirs.forEach(pkgDir => {
     const tsconfigFile = path.resolve(pkgDir, 'tsconfig.json')
@@ -83,10 +82,13 @@ function hackPackageJsonExports(recover) {
       return
     }
     const pkgExportsStr = JSON.stringify(pkgExports)
-    const hackedPkgExportsStr = pkgExportsStr.replaceAll(...recover ? [`"./src/`, `"./dist/`] : [`"./dist/`, `"./src/`])
+    const hackedPkgExportsStr = pkgExportsStr.replaceAll(
+      ...(recover ? [`"./src/`, `"./dist/`] : [`"./dist/`, `"./src/`]),
+    )
     const hackedExports = JSON.parse(hackedPkgExportsStr)
     pkgJson.exports = hackedExports
     writeFileSync(pkgJsonFile, JSON.stringify(pkgJson, null, 2) + '\n')
   })
-
 }
+
+module.exports = { hackPackageJsonExports }
