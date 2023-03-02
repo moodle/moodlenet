@@ -27,7 +27,7 @@ export const expose = await shell.expose({
     },
     'webapp/profile/edit': {
       guard: () => void 0,
-      fn: async (profileFormValues: WebUserProfile): Promise<WebUserProfile | null> => {
+      fn: async (profileFormValues: WebUserProfile): Promise<WebUserProfile | undefined> => {
         const { _key, ...editRequest } = profileFormValues
         const profileDoc = await editWebUserProfile({ _key }, editRequest)
         const profile = profileDoc && webUserProfileDoc2WebUserProfile(profileDoc)
@@ -36,7 +36,7 @@ export const expose = await shell.expose({
     },
     'webapp/profile/get': {
       guard: () => void 0,
-      fn: async (body: { _key: string }): Promise<WebUserProfile | null> => {
+      fn: async (body: { _key: string }): Promise<WebUserProfile | undefined> => {
         const profileDoc = await getProfile({ _key: body._key })
         const profile = profileDoc && webUserProfileDoc2WebUserProfile(profileDoc)
         return profile

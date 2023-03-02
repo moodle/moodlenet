@@ -5,10 +5,11 @@ import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { expose as orgExpose } from '@moodlenet/organization/server'
 import {
   EntityCollectionDef,
+  isSameClass,
   registerAccessController,
   registerEntities,
 } from '@moodlenet/system-entities/server'
-import { isOwner } from '@moodlenet/system-entities/server/aql-ac'
+import { isEntityClass, isOwner } from '@moodlenet/system-entities/server/aql-ac'
 import { resolve } from 'path'
 import { defaultAppearanceData } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
@@ -24,10 +25,9 @@ if (!(await kvStore.get('appearanceData', '')).value) {
 }
 
 export const { db } = await shell.call(getMyDB)()
-export const WEB_USER_COLLECTION_NAME = 'WebUser'
 export const { collection: WebUserCollection /* ,newlyCreated */ } = await shell.call(
   ensureDocumentCollection<WebUserDataType>,
-)(WEB_USER_COLLECTION_NAME)
+)('WebUser')
 
 export const { WebUserProfile } = await shell.call(registerEntities)<{
   WebUserProfile: EntityCollectionDef<WebUserProfileDataType>
@@ -36,10 +36,17 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 })
 
 await shell.call(registerAccessController)({
-  async write() {
-    return isOwner()
+  async u() {
+    return `${isEntityClass(WebUserProfile.entityClass)} && ${isOwner()}`
   },
-  async read() {
+  async r(/* { myPkgMeta } */) {
+    return `${isEntityClass(WebUserProfile.entityClass)}` // && ${myPkgMeta}.xx == null`
+  },
+  async c(entityClass) {
+    if (!isSameClass(WebUserProfile.entityClass, entityClass)) {
+      return
+    }
+    // FIXME: WHAT TO CHECK ?
     return true
   },
 })

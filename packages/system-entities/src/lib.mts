@@ -1,15 +1,15 @@
 import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
-import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
-import type { PkgIdentifier, PkgName } from '@moodlenet/core'
+import { getCurrentClientSession, ROOT_USER_KEY } from '@moodlenet/authentication-manager/server'
+import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
+import { myPkgMeta } from './access-control-lib/aql.mjs'
 import { db } from './init.mjs'
+import { getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
 import {
   AccessControllers,
-  AqlAccessController,
   ByKeyOrId,
-  ControllerDeny,
   EntityClass,
   EntityCollectionDef,
   EntityCollectionDefOpts,
@@ -20,24 +20,6 @@ import {
   EntityDocument,
   SomeEntityDataType,
 } from './types.mjs'
-
-export function getEntityCollectionName(entityClass: EntityClass<any>) {
-  return `${getPkgNamespace(entityClass.pkgName)}__${entityClass.type}`
-}
-
-export async function getEntityCollection<EntityDataType extends SomeEntityDataType>(
-  entityClass: EntityClass<EntityDataType>,
-) {
-  const entityCollection = db.collection<EntityData<EntityDataType>>(
-    getEntityCollectionName(entityClass),
-  )
-  assert(await entityCollection.exists())
-  return entityCollection
-}
-
-export function getPkgNamespace(pkgName: PkgName) {
-  return `${pkgName.replace(/^@/, '').replace('/', '__')}`
-}
 
 export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
   [name in keyof Defs]: EntityCollectionDefOpts
@@ -61,14 +43,14 @@ export async function registerEntities<Defs extends EntityCollectionDefs>(entiti
 
 type AccessControllerRegistry = AccessControllerRegistryItem[]
 type AccessControllerRegistryItem = {
-  controller: Partial<AccessControllers>
+  accessControllers: Partial<AccessControllers>
   pkgId: PkgIdentifier
 }
 const accessControllerRegistry: AccessControllerRegistry = []
-export async function registerAccessController(controller: Partial<AccessControllers>) {
+export async function registerAccessController(accessControllers: Partial<AccessControllers>) {
   const { pkgId } = shell.assertCallInitiator()
   accessControllerRegistry.push({
-    controller,
+    accessControllers,
     pkgId,
   })
 }
@@ -94,43 +76,53 @@ export async function registerEntity<EntityDataType extends SomeEntityDataType>(
     entityClass,
   }
 }
+export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataType>) {
+  const clientSession = await getCurrentClientSession()
+
+  if (clientSession?.isRoot) {
+    return true
+  }
+
+  const controllerResults = (
+    await Promise.all(
+      accessControllerRegistry.map(async ({ accessControllers: controller /* , pkgId  */ }) =>
+        controller.c?.(entityClass),
+      ),
+    )
+  ).filter(neitherUndefinedOrNull)
+
+  const canCreate = !controllerResults.includes(false) && controllerResults.includes(true)
+  return canCreate
+}
 
 export async function create<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   newEntityData: EntityDataType,
 ) {
-  const collection = await getEntityCollection(entityClass)
   const clientSession = await getCurrentClientSession()
-  const controllerDenies = clientSession?.isRoot
-    ? []
-    : (
-        await Promise.all(
-          accessControllerRegistry.map(({ controller, pkgId }) => {
-            return Promise.resolve(controller.create?.(entityClass))
-              .then(() => undefined)
-              .catch(error => {
-                const controllerDeny: ControllerDeny = { pkgId, error }
-                return controllerDeny
-              })
-          }),
-        )
-      ).filter(neitherUndefinedOrNull)
-
-  if (controllerDenies.length) {
+  if (!clientSession) {
     return {
       accessControl: false,
-      controllerDenies,
     } as const
   }
 
-  const userKey = (await getCurrentClientSession())?.user?._key
+  const canCreate = await canCreateEntity(entityClass)
+  if (!canCreate) {
+    return {
+      accessControl: false,
+    } as const
+  }
+
+  const userKey = clientSession.isRoot ? ROOT_USER_KEY : clientSession.user._key
 
   const now = new Date().toISOString()
 
+  const collection = await getEntityCollection(entityClass)
   const { new: newEntity } = await collection.save(
     {
       ...newEntityData,
       _meta: {
+        creator: userKey,
         owner: userKey,
         updated: now,
         created: now,
@@ -153,8 +145,8 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
   if (!entityAccess) {
     return
   }
-  if (!entityAccess.access.w.can) {
-    throw new Error('no privilege to update')
+  if (!entityAccess.access.u.can) {
+    return
   }
   const entityPatch = {
     ...entityDataPatch,
@@ -175,12 +167,31 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
   return { new: newEntityData, old: oldEntityData }
 }
 
+export async function del<EntityDataType extends SomeEntityDataType>(
+  entityClass: EntityClass<EntityDataType>,
+  byKeyOrId: ByKeyOrId,
+) {
+  const key = getKey(byKeyOrId)
+  const collectionName = getEntityCollectionName(entityClass)
+  const delCursor = await queryEntities<EntityDataType>(
+    entityClass,
+    `FILTER entity._key == "${key}" 
+    LIMIT 1`,
+    {
+      opBody: `FILTER access.d.can 
+                REMOVE entity IN ${collectionName}`,
+    },
+  )
+  const deletedEntity = (await delCursor.all())[0]?.entity
+  return deletedEntity
+}
+
 export async function get<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   byKeyOrId: ByKeyOrId,
 ) {
   const entityAccess = await getEntityAccess(entityClass, byKeyOrId)
-  return entityAccess?.access.r.can ? entityAccess.entity : null
+  return entityAccess?.entity
 }
 
 export async function getEntityAccess<EntityDataType extends SomeEntityDataType>(
@@ -188,27 +199,25 @@ export async function getEntityAccess<EntityDataType extends SomeEntityDataType>
   byKeyOrId: ByKeyOrId,
 ) {
   const key = getKey(byKeyOrId)
-  const cursor = await find<EntityDataType>(
+  const cursor = await queryEntities<EntityDataType>(
     entityClass,
-    `
-    FILTER entity._key == "${key}"
-    LIMIT 1
-  `,
+    `FILTER entity._key == "${key}" LIMIT 1`,
   )
   const get_findResult = (await cursor.all())[0]
   console.log(inspect({ get_findResult }, false, 10, true))
   return get_findResult
 }
 
-export async function find<EntityDataType extends SomeEntityDataType>(
+export async function queryEntities<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   queryBody: string,
-  // opts?:Partial<{filter:('r'|'w'|'d')[]}>
+  opts?: Partial<{ opBody: string; noFilterRead: boolean }>,
 ) {
   const entityCollectionName = getEntityCollectionName(entityClass)
   const clientSession = await getCurrentClientSession()
-  const { aql: aqlAccessControlsObjString /* , directDenies  */ } =
-    await getAQLAccessControlObjectDefStringAndDirectDenies(entityClass, clientSession?.isRoot)
+  const { aqlAccessControlsObjString } = await getAQLAccessControlObjectDefString(
+    clientSession?.isRoot,
+  )
 
   const q = `
     LET clientSession = @clientSession
@@ -219,13 +228,16 @@ export async function find<EntityDataType extends SomeEntityDataType>(
       r: { 
         can: (accessControls.r NONE == false) && (accessControls.r ANY == true) 
       },
-      w:  { 
-        can: (accessControls.w NONE == false) && (accessControls.w ANY == true) 
+      u:  { 
+        can: (accessControls.u NONE == false) && (accessControls.u ANY == true) 
       },
       d:  { 
         can: (accessControls.d NONE == false) && (accessControls.d ANY == true) 
       }
     }
+    ${opts?.noFilterRead === true ? '' : 'FILTER access.r.can'}
+    ${opts?.opBody ?? '// NOOP'}
+
     return { 
       entity,
       access
@@ -238,20 +250,12 @@ export async function find<EntityDataType extends SomeEntityDataType>(
     entity: EntityDocument<EntityDataType>
     access: {
       r: { can: boolean }
-      w: { can: boolean }
+      u: { can: boolean }
       d: { can: boolean }
     }
   }>(q, bindVars)
   return updateResponseCursor
 }
-
-// const delete: EntityCollectionHandle<Def>['delete'] = async sel => {
-//   const { old } = await collection.remove(sel, { returnOld: true })
-//   if (!old) {
-//     return null
-//   }
-//   return old
-// }
 
 export function docIsOfClass<EntityDataType extends SomeEntityDataType>(
   doc: EntityDocument<any>,
@@ -281,72 +285,44 @@ function getKey(ByKeyOrId: ByKeyOrId) {
   }
 }
 
-async function getAQLAccessControlObjectDefStringAndDirectDenies(
-  entityClass: EntityClass<SomeEntityDataType>,
-  rootAccess = false,
-) {
+async function getAQLAccessControlObjectDefString(rootAccess = false) {
   if (rootAccess) {
     return {
-      aql: `{
+      aqlAccessControlsObjString: `{
         r: [ true ] /* ROOT ACCESS */,
-        w: [ true ] /* ROOT ACCESS */,
+        u: [ true ] /* ROOT ACCESS */,
         d: [ true ] /* ROOT ACCESS */,
       }`,
-      directDenies: {
-        r: false,
-        d: false,
-        w: false,
-      },
-    } as const
+    }
   }
 
-  const [
-    rAccessElemsStringAndDirectDeny,
-    wAccessElemsStringAndDirectDeny,
-    dAccessElemsStringAndDirectDeny,
-  ] = await Promise.all([
-    getAqlOperationAccessControlArrayElemsStringAndDirectDeny(
-      entityClass,
-      accessControllerRegistry.map(({ controller }) => controller.read),
-    ),
-    getAqlOperationAccessControlArrayElemsStringAndDirectDeny(
-      entityClass,
-      accessControllerRegistry.map(({ controller }) => controller.write),
-    ),
-    getAqlOperationAccessControlArrayElemsStringAndDirectDeny(
-      entityClass,
-      accessControllerRegistry.map(({ controller }) => controller.delete),
-    ),
+  const [r, w, d] = await Promise.all([
+    getAqlOperationAccessControlArrayElemsString('r'),
+    getAqlOperationAccessControlArrayElemsString('u'),
+    getAqlOperationAccessControlArrayElemsString('d'),
   ])
 
-  const directDenies = {
-    r: rAccessElemsStringAndDirectDeny.directDeny,
-    w: wAccessElemsStringAndDirectDeny.directDeny,
-    d: dAccessElemsStringAndDirectDeny.directDeny,
-  }
-
-  const aql = `{
-        r: [ ${rAccessElemsStringAndDirectDeny.elemsString} ],
-        w: [ ${wAccessElemsStringAndDirectDeny.elemsString} ],
-        d: [ ${dAccessElemsStringAndDirectDeny.elemsString} ],
+  const aqlAccessControlsObjString = `{
+        r: [ ${r.aql} ],
+        u: [ ${w.aql} ],
+        d: [ ${d.aql} ],
       }`
-  return { aql, directDenies } as const
+  return { aqlAccessControlsObjString }
 }
 
-async function getAqlOperationAccessControlArrayElemsStringAndDirectDeny(
-  entityClass: EntityClass<SomeEntityDataType>,
-  aqlAccessController: (AqlAccessController | undefined | null)[],
-) {
+async function getAqlOperationAccessControlArrayElemsString(op: 'r' | 'u' | 'd') {
   const operationAccessControlResponses = await Promise.all(
-    aqlAccessController.map(controller => controller?.(entityClass)),
+    accessControllerRegistry.map(({ accessControllers, pkgId }) =>
+      accessControllers[op]?.({ myPkgMeta: myPkgMeta(pkgId.name) }),
+    ),
   )
 
-  const directDeny = operationAccessControlResponses.includes(false)
-
-  const elemsString = operationAccessControlResponses
+  const aql = operationAccessControlResponses
     .filter(neitherUndefinedOrNull)
     .map(acElem => `(${acElem})`)
     .join(',\n')
 
-  return { elemsString, directDeny }
+  return {
+    aql,
+  }
 }
