@@ -3,14 +3,20 @@ import assert from 'assert'
 import { env } from './init.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
-import type { ClientSession, SessionToken, UserDocument } from './types/sessionTypes.mjs'
+import type {
+  ClientSession,
+  RootUserKey,
+  SessionToken,
+  UserDocument,
+} from './types/sessionTypes.mjs'
 
-export type GetRootSessionTokenResp = { success: boolean }
+export const ROOT_USER_KEY: RootUserKey = '__ROOT_USER_KEY__'
+
 export async function getRootSessionToken({
   password,
 }: {
   password: string
-}): Promise<GetRootSessionTokenResp> {
+}): Promise<{ success: boolean }> {
   if (!(env.rootPassword && password)) {
     return { success: false }
   } else if (env.rootPassword === password) {

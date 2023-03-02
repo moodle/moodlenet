@@ -9,7 +9,7 @@ export async function createWebUser(createRequest: CreateRequest) {
   const createResult = await create(WebUserProfile.entityClass, profileData)
 
   if (!createResult.accessControl) {
-    return createResult.controllerDenies
+    return
   }
 
   const newProfile = createResult.newEntity
@@ -34,7 +34,7 @@ export async function editWebUserProfile(
   const mUpdated = await patch(WebUserProfile.entityClass, byKeyOrId, updateWithData)
 
   if (!mUpdated) {
-    return null
+    return undefined
   }
   const { old: oldData, new: newData } = mUpdated
   const displayNameChanged = newData.displayName && oldData.displayName !== newData.displayName
@@ -111,7 +111,7 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
 
 export async function getProfile(
   byKeyOrId: ByKeyOrId,
-): Promise<null | (WebUserProfileDataType & DocumentMetadata)> {
+): Promise<undefined | (WebUserProfileDataType & DocumentMetadata)> {
   const profile = await get(WebUserProfile.entityClass, byKeyOrId)
   return profile
 }
