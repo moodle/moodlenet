@@ -484,7 +484,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         onClick={toggleFollow}
         className="following-button"
         key="follow-button"
-        abbr="Unfollow"
         color="orange"
       >
         Following
@@ -495,7 +494,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         onClick={toggleFollow}
         key="follow-button"
         className="follow-button"
-        abbr="Follow"
       >
         Follow
       </PrimaryButton>

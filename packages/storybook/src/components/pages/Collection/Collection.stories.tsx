@@ -102,7 +102,6 @@ export const Owner: CollectionStory = () => {
     actions: {
       isPublished: false,
       bookmarked: true,
-      followed: true,
       // isSaving: true,
       isSaving: false,
       // isSaved: true,

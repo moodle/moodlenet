@@ -4,6 +4,7 @@ import './TertiaryButton.scss'
 export type TertiaryButtonProps = {
   className?: string
   abbr?: string
+  hiddenText?: string
   disabled?: boolean
   children: ReactNode
   color?: 'black'
@@ -13,6 +14,7 @@ export type TertiaryButtonProps = {
 export const TertiaryButton: FC<TertiaryButtonProps> = ({
   className,
   abbr,
+  hiddenText,
   disabled,
   children,
   color,
@@ -29,6 +31,7 @@ export const TertiaryButton: FC<TertiaryButtonProps> = ({
       onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}
     >
       {children}
+      {hiddenText && <span className="visually-hidden">{hiddenText}</span>}
     </abbr>
   )
 }

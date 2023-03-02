@@ -166,7 +166,7 @@ export const Resource: FC<ResourceProps> = ({
         rel="noreferrer"
         download={resource.downloadFilename}
       >
-        <SecondaryButton abbr={form.values.content instanceof File ? 'Download file' : 'Open link'}>
+        <SecondaryButton>
           {form.values.content instanceof File ? (
             <>
               <InsertDriveFile />

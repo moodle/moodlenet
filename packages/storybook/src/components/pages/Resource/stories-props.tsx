@@ -191,7 +191,7 @@ export const useResourceStoryProps = (
     contentType: 'file',
     contentUrl: '#',
     numLikes: 23,
-    // ...overrides?.resource,
+    ...overrides?.resource,
   }
 
   const actions: ResourceActions = {
@@ -211,7 +211,7 @@ export const useResourceStoryProps = (
     canEdit: false,
     isOwner: false,
     isAdmin: false,
-    // ...overrides?.access,
+    ...overrides?.access,
   }
 
   const mainResourceCardSlots: MainResourceCardSlots = {

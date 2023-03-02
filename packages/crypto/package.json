@@ -9,7 +9,7 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./server": "./src/exports.mjs"
+    "./server": "./dist/exports.mjs"
   },
   "keywords": [
     "moodlenetPackage"

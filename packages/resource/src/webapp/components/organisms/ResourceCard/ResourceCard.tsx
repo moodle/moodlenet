@@ -16,7 +16,14 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder } from '@material-ui/icons'
-import { AddonItem, Card, FollowTag, Href, TertiaryButton } from '@moodlenet/component-library'
+import {
+  AddonItem,
+  Card,
+  FollowTag,
+  Href,
+  isEllipsisActive,
+  TertiaryButton,
+} from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { CloseRounded, Public } from '@mui/icons-material'
 import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
@@ -116,12 +123,18 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   }
   background = { ...background, backgroundSize: 'cover' }
 
+  const titleRef = useRef<HTMLElement>(null)
+  const [showTitleAbbr, setShowTitleAbbr] = useState(false)
+  useEffect(() => {
+    titleRef.current instanceof HTMLElement && setShowTitleAbbr(isEllipsisActive(titleRef.current))
+  }, [titleRef])
+
   const content = (
     <div className="content">
       {orientation === 'horizontal' && <div className={`image ${size}`} style={background} />}
       <div className={`resource-card-content ${orientation ?? ''} ${size}`}>
-        <abbr className={`title ${orientation ?? ''}`} title={title}>
-          <span>{title}</span>
+        <abbr className={`title ${orientation ?? ''}`} {...(showTitleAbbr && { title: title })}>
+          <span ref={titleRef}>{title}</span>
         </abbr>
       </div>
     </div>
@@ -182,10 +195,20 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     </div>
   )
 
+  const ownerNameRef = useRef<HTMLElement>(null)
+  const [showOwnerNameAbbr, setShowOwnerNameAbbr] = useState(false)
+  useEffect(() => {
+    console.log('Owner name')
+    ownerNameRef.current instanceof HTMLElement &&
+      setShowOwnerNameAbbr(isEllipsisActive(ownerNameRef.current))
+  }, [ownerNameRef])
+
   const avatarLabel = (
     <Link href={owner.profileHref}>
       <div style={avatar} className="avatar" />
-      <span>{owner.displayName}</span>
+      <abbr ref={ownerNameRef} {...(showOwnerNameAbbr && { title: owner.displayName })}>
+        {owner.displayName}
+      </abbr>
     </Link>
   )
 
@@ -205,7 +228,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
         selectionMode || !isAuthenticated ? 'disabled' : ''
       }`}
       onClick={toggleBookmark}
-      abbr="Bookmark"
+      hiddenText={bookmarked ? 'Remove bookmark' : 'Bookmark'}
     >
       {bookmarked ? <Bookmark /> : <BookmarkBorder />}
     </TertiaryButton>
@@ -216,13 +239,10 @@ export const ResourceCard: FC<ResourceCardProps> = ({
       className={`like-button ${liked && 'liked'} ${
         selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
       }`}
-      abbr={
-        isOwner
-          ? 'Creators cannot like their own content'
-          : !isAuthenticated
-          ? 'Loggin to like the resource'
-          : 'Like'
-      }
+      {...(isOwner
+        ? { abbr: 'Creators cannot like their own content' }
+        : !isAuthenticated && { abbr: 'Loggin to like the resource' })}
+      hiddenText={liked ? 'Unlike' : 'Like'}
       onClick={
         isAuthenticated && !isOwner && !selectionMode
           ? toggleLike
@@ -258,7 +278,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const contentContainer =
     resourceHomeHref && !selectionMode ? (
-      <Link className="content-container" href={resourceHomeHref}>
+      <Link className="content-container" href={resourceHomeHref} role="navigation">
         {content}
       </Link>
     ) : (
