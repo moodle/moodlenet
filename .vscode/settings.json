@@ -1,6 +1,6 @@
 {
   "files.exclude": {
-    "**/.git": true,
+    "**/.git": false,
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
@@ -14,6 +14,9 @@
   "eslint.enable": true,
   "eslint.format.enable": true,
   // "eslint.lintTask.enable": true,
-  "typescript.tsdk": "./node_modules/typescript/lib"
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  }
 }
 // https://github.com/microsoft/vscode-eslint/issues/91
