@@ -265,10 +265,10 @@ export function docIsOfClass<EntityDataType extends SomeEntityDataType>(
 }
 
 export function isSameClass<EntityDataType extends SomeEntityDataType>(
-  class1: EntityClass<EntityDataType>,
-  class2: EntityClass<any>,
-): class2 is EntityClass<EntityDataType> {
-  return class1.pkgName === class2.pkgName && class1.type === class2.type
+  target: EntityClass<EntityDataType>,
+  someClass: EntityClass<SomeEntityDataType>,
+): someClass is EntityClass<EntityDataType> {
+  return target.pkgName === someClass.pkgName && target.type === someClass.type
 }
 
 function neitherUndefinedOrNull<T>(_: T | undefined | null): _ is T {
@@ -284,6 +284,42 @@ function getKey(ByKeyOrId: ByKeyOrId) {
     return _key
   }
 }
+
+export function includesSameClass(
+  target: EntityClass<SomeEntityDataType>,
+  someClasses: EntityClass<SomeEntityDataType>[],
+) {
+  return someClasses.map(someClass => isSameClass(target, someClass)).includes(true)
+}
+
+export function includesAnySameClass(
+  targets: EntityClass<SomeEntityDataType>[],
+  someClasses: EntityClass<SomeEntityDataType>[],
+) {
+  return targets.map(target => includesSameClass(target, someClasses)).includes(true)
+}
+
+// export function matchEntityClass(
+//   target: EntityClass<SomeEntityDataType>,
+//   someClasses: EntityClass<SomeEntityDataType>[],
+//   falseOnEmptyStack?: boolean,
+// ) {
+//   if (!falseOnEmptyStack && !someClasses.length) {
+//     return true
+//   }
+//   return someClasses.map(someClass => isSameClass(target, someClass)).includes(true)
+// }
+
+// export function matchAnySameClass(
+//   targets: EntityClass<SomeEntityDataType>[],
+//   someClasses: EntityClass<SomeEntityDataType>[],
+//   falseOnEmptyStack?: boolean,
+// ) {
+//   if (!falseOnEmptyStack && !someClasses.length) {
+//     return true
+//   }
+//   return targets.map(target => includesSameClass(target, someClasses)).includes(true)
+// }
 
 async function getAQLAccessControlObjectDefString(rootAccess = false) {
   if (rootAccess) {
