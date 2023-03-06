@@ -44,12 +44,15 @@ export type EntityCollectionHandles<Defs extends EntityCollectionDefs> = {
 export type EntityCollectionDefOpts = unknown
 
 export type AccessControllers = {
-  c(entityClass: EntityClass<SomeEntityDataType>): Promise<boolean | null | undefined>
+  c(
+    entityClass: EntityClass<SomeEntityDataType>,
+  ): null | undefined | boolean | Promise<boolean | null | undefined>
   r: AqlAccessController
   u: AqlAccessController
   d: AqlAccessController
 }
 
-export type AqlAccessController = (_: {
-  myPkgMeta: string
-}) => Promise<string | null | undefined | boolean>
+export type AqlAccessController = (_: { myPkgMeta: string }) => AqlAccessControllerResp
+
+type AqlAccessControllerResp = AqlAccessControllerRespValue | Promise<AqlAccessControllerRespValue>
+type AqlAccessControllerRespValue = string | null | undefined | boolean
