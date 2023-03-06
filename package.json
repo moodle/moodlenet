@@ -66,7 +66,7 @@
     "pkg-cleanup-all": "npm run prj-cleanup-build && lerna run cleanup-all --parallel && rimraf tsconfig.tsbuildinfo && rimraf packages/*/tsconfig.tsbuildinfo && rimraf packages/*/node_modules",
     "prj-cleanup-build": "lerna run cleanup-build --parallel && rimraf packages/*/dist && rimraf packages/*/tsconfig.tsbuildinfo",
     "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
-    "pre-commit": "node ./packages/storybook/.storybook/recover-package.json.cjs && lint-staged"
+    "pre-commit": "lint-staged"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
