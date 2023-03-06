@@ -33,7 +33,7 @@ export type CollectionCardActions = {
 export type CollectionCardAccess = {
   isAuthenticated: boolean
   canEdit: boolean
-  isOwner: boolean
+  isCreator: boolean
 }
 
 export type CollectionCardProps = {
@@ -67,7 +67,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
     toggleFollow,
     toggleBookmark,
   } = actions
-  const { isAuthenticated, canEdit, isOwner } = access
+  const { isAuthenticated, canEdit, isCreator } = access
 
   const background = {
     background:
@@ -107,17 +107,17 @@ export const CollectionCard: FC<CollectionCardProps> = ({
   const followButton = (
     <TertiaryButton
       className={`follow-button ${followed ? 'followed' : ''} ${
-        !isAuthenticated || isOwner ? 'disabled' : ''
+        !isAuthenticated || isCreator ? 'disabled' : ''
       }`}
       abbr={
-        isOwner
+        isCreator
           ? 'Creators cannot follow their own content'
           : !isAuthenticated
           ? 'Loggin to follow the resource'
           : 'Follow'
       }
       onClick={
-        isAuthenticated && !isOwner
+        isAuthenticated && !isCreator
           ? toggleFollow
           : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()
       }

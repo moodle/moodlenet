@@ -107,12 +107,12 @@ export const Owner: CollectionStory = () => {
       // isSaved: true,
     },
     access: {
-      isOwner: true,
+      isCreator: true,
       canEdit: true,
     },
     resourceCardPropsList: getResourcesCardStoryProps(15, {
       canEdit: true,
-      isOwner: true,
+      isCreator: true,
       orientation: 'horizontal',
     }),
   })
@@ -160,7 +160,7 @@ export const New: CollectionStory = () => {
       setIsPublished: action('set is published'),
     },
     access: {
-      isOwner: true,
+      isCreator: true,
       canEdit: true,
     },
     resourceCardPropsList: [],

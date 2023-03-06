@@ -64,7 +64,7 @@ export const Collection: FC<CollectionProps> = ({
 }) => {
   const { editCollection, setIsPublished, isPublished, isWaitingForApproval, deleteCollection } =
     actions
-  const { isOwner, canEdit } = access
+  const { isCreator, canEdit } = access
 
   const form = useFormik<CollectionFormValues>({
     initialValues: collectionForm,
@@ -100,7 +100,7 @@ export const Collection: FC<CollectionProps> = ({
     />
   )
 
-  const contributorCard = !isOwner ? (
+  const contributorCard = !isCreator ? (
     <CollectionContributorCard {...collectionContributorCardProps} key="contributor-card" />
   ) : null
 

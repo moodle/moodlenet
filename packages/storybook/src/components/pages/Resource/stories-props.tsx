@@ -209,7 +209,7 @@ export const useResourceStoryProps = (
   const access: ResourceAccess = {
     isAuthenticated: true,
     canEdit: false,
-    isOwner: false,
+    isCreator: false,
     isAdmin: false,
     ...overrides?.access,
   }

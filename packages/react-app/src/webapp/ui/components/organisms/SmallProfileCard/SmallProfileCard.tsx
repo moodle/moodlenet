@@ -22,7 +22,7 @@ export type ProfileCardActions = {
 }
 
 export type ProfileCardAccess = {
-  isOwner: boolean
+  isCreator: boolean
   isAuthenticated: boolean
 }
 
@@ -52,7 +52,7 @@ export const SmallProfileCard: FC<SmallProfileCardProps> = ({
     // organizationName,
   } = data
   const { followed, toggleFollow } = actions
-  const { isOwner, isAuthenticated } = access
+  const { isCreator, isAuthenticated } = access
 
   const header = (
     <Link className="profile-card-header" href={profileHref}>
@@ -71,17 +71,17 @@ export const SmallProfileCard: FC<SmallProfileCardProps> = ({
 
   const buttons = (
     <div className="buttons">
-      {!isOwner && followed && (
+      {!isCreator && followed && (
         <SecondaryButton onClick={toggleFollow} color="orange">
           Following
         </SecondaryButton>
       )}
-      {!isOwner && !followed && (
+      {!isCreator && !followed && (
         <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow} className="follow">
           Follow
         </PrimaryButton>
       )}
-      {isOwner && <div className="empty" />}
+      {isCreator && <div className="empty" />}
     </div>
   )
 

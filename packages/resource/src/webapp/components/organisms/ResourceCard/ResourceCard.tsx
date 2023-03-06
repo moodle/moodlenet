@@ -49,7 +49,7 @@ export type ResourceCardProps = {
   isPublished: boolean
   setIsPublished: Dispatch<SetStateAction<boolean>>
   resourceHomeHref?: Href
-  isOwner: boolean
+  isCreator: boolean
   canEdit: boolean
   isAuthenticated?: boolean
   isSelected?: boolean
@@ -88,7 +88,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   liked,
   numLikes,
   bookmarked,
-  isOwner,
+  isCreator,
 
   publish,
   isPublished,
@@ -236,10 +236,10 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   const likeButton = (
     <TertiaryButton
       className={`like-button ${liked && 'liked'} ${
-        selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
+        selectionMode || !isAuthenticated || isCreator ? 'disabled' : ''
       }`}
       abbr={
-        isOwner
+        isCreator
           ? 'Creators cannot like their own content'
           : !isAuthenticated
           ? 'Loggin to like the resource'
@@ -247,7 +247,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
       }
       hiddenText=""
       onClick={
-        isAuthenticated && !isOwner && !selectionMode
+        isAuthenticated && !isCreator && !selectionMode
           ? toggleLike
           : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()
       }
@@ -299,7 +299,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     <Card
       ref={resourceCard}
       className={`resource-card ${isSelected ? 'selected' : ''} ${orientation} ${
-        isOwner && isPublished ? '' : 'is-private'
+        isCreator && isPublished ? '' : 'is-private'
       }`}
       hover={true}
       onClick={onClick}

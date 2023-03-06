@@ -28,7 +28,7 @@ export type CollectionActions = {
 
 export type CollectionAccess = {
   isAuthenticated: boolean
-  isOwner: boolean
+  isCreator: boolean
   isAdmin: boolean
   canEdit: boolean
 }

@@ -101,7 +101,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadProgress,
   } = actions
 
-  const { canEdit, isAuthenticated, isOwner } = access
+  const { canEdit, isAuthenticated, isCreator } = access
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
@@ -197,9 +197,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const likeButton =
     isPublished || numLikes > 0 ? (
       <TertiaryButton
-        className={`like ${isAuthenticated && !isOwner ? '' : 'disabled'} ${liked && 'liked'}`}
-        onClick={isAuthenticated && !isOwner ? toggleLike : () => undefined}
-        abbr={isOwner ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
+        className={`like ${isAuthenticated && !isCreator ? '' : 'disabled'} ${liked && 'liked'}`}
+        onClick={isAuthenticated && !isCreator ? toggleLike : () => undefined}
+        abbr={isCreator ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
         key="like-button"
       >
         {liked ? <Favorite /> : <FavoriteBorder />}
