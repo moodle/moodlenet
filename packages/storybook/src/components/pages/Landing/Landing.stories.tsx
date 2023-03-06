@@ -136,7 +136,7 @@ export const Owner: LandingStory = () => {
           <LandingResourceList
             searchResourcesHref={href('Page/Search')}
             resourceCardPropsList={getResourcesCardStoryProps(15, {
-              isOwner: true,
+              isCreator: true,
               canEdit: true,
               isPublished: true,
             })}
@@ -153,7 +153,7 @@ export const Owner: LandingStory = () => {
                 isPublished: false,
               },
               access: {
-                isOwner: true,
+                isCreator: true,
                 canEdit: true,
               },
             })}
@@ -167,7 +167,7 @@ export const Owner: LandingStory = () => {
             searchAuthorsHref={href('Page/Search')}
             smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
               access: {
-                isOwner: true,
+                isCreator: true,
               },
             })}
           />

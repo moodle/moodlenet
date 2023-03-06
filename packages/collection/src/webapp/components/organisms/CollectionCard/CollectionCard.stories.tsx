@@ -54,7 +54,7 @@ export const getCollectionCardStoryProps = (
 
   const access = {
     isAuthenticated: true,
-    isOwner: false,
+    isCreator: false,
     canEdit: false,
   }
 
@@ -117,7 +117,7 @@ export const CollectionCardOwnerStoryProps: CollectionCardProps = {
       isPublished: true,
     },
     access: {
-      isOwner: true,
+      isCreator: true,
     },
   }),
 }

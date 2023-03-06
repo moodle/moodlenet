@@ -33,7 +33,7 @@ export const getSmallProfileCardFactory = (
         toggleFollow: action('toogleFollow'),
       },
       access: {
-        isOwner: false,
+        isCreator: false,
         isAuthenticated: false,
       },
     },

@@ -57,7 +57,7 @@ export const SmallProfileCardOwnerStoryProps: SmallProfileCardProps = {
     data: {},
     actions: {},
     access: {
-      isOwner: true,
+      isCreator: true,
     },
   }),
 }

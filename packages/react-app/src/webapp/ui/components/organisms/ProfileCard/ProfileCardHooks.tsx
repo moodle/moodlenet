@@ -81,19 +81,19 @@ export const useProfileCardProps = ({
     })
   }, [profileKey, me])
 
-  const isOwner = clientSessionData?.myProfile?._key === profileKey
+  const isCreator = clientSessionData?.myProfile?._key === profileKey
   // const profileCardsProps = useMemo(() => {
   //   const props: ProfileCardPropsControlled = {
-  //     isOwner,
-  //     canEdit: isOwner,
+  //     isCreator,
+  //     canEdit: isCreator,
   //     isAuthenticated: !!clientSessionData,
   //     form,
   //   }
   //   return props
-  // }, [clientSessionData, form, isOwner])
+  // }, [clientSessionData, form, isCreator])
   const profileCardsProps: ProfileCardPropsControlled = {
-    isOwner,
-    canEdit: isOwner,
+    isCreator,
+    canEdit: isCreator,
     isAuthenticated: !!clientSessionData,
     form,
   }

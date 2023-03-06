@@ -138,7 +138,7 @@ export const useMainCollectionCardStoryProps = (overrides?: {
 
     isAuthenticated: true,
     canEdit: false,
-    isOwner: false,
+    isCreator: false,
     isAdmin: false,
     shouldShowErrors: false,
     isPublished: false,
@@ -209,7 +209,7 @@ export const LoggedIn = () => {
 export const Owner = () => {
   const props = useMainCollectionCardStoryProps({
     props: {
-      isOwner: true,
+      isCreator: true,
       collectionUrl: 'https://picsum.photos/200/100',
     },
   })
@@ -219,7 +219,7 @@ export const Owner = () => {
 export const Admin = () => {
   const props = useMainCollectionCardStoryProps({
     props: {
-      isOwner: true,
+      isCreator: true,
       isAdmin: true,
     },
   })
