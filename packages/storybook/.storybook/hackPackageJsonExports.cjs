@@ -1,7 +1,9 @@
 const { writeFileSync, readdirSync, statSync } = require('fs')
 const path = require('path')
 
-const packagesDirs = readdirSync(path.join('..')).map(pkg_name => path.join('..', pkg_name))
+const packagesDirs = readdirSync(path.resolve(__dirname, '..', '..')).map(pkg_name =>
+  path.resolve(__dirname, '..', '..', pkg_name),
+)
 
 function hackPackageJsonExports(recover) {
   console.log('hackPackageJsonExports' + (recover ? ' (recover)' : ''))
