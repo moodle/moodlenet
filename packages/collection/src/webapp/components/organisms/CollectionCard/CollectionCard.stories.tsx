@@ -35,7 +35,7 @@ export const getCollectionCardStoryProps = (
 ): CollectionCardProps => {
   const data: CollectionCardData = {
     collectionId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
-    title: 'Best collection ever created Best collection ever created Best collection ever created',
+    title: 'Best collection ever created',
     imageUrl: 'https://picsum.photos/300/200',
     collectionHref: href('Pages/Collection/Logged In'),
   }

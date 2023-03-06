@@ -29,17 +29,17 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
   mainColumnItems: [
-    {
-      Item: () => (
-        <LandingResourceList
-          searchResourcesHref={href('Page/Search')}
-          resourceCardPropsList={getResourcesCardStoryProps(15, {
-            isAuthenticated: false,
-          })}
-        />
-      ),
-      key: 'resource-card-list',
-    },
+    // {
+    //   Item: () => (
+    //     <LandingResourceList
+    //       searchResourcesHref={href('Page/Search')}
+    //       resourceCardPropsList={getResourcesCardStoryProps(15, {
+    //         isAuthenticated: false,
+    //       })}
+    //     />
+    //   ),
+    //   key: 'resource-card-list',
+    // },
     {
       Item: () => (
         <LandingCollectionList
