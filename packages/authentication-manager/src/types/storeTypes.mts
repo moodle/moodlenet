@@ -12,3 +12,5 @@ export type UserData = {
   providerId: ProviderId
   created: string
 }
+
+export type RootUserKey = '__ROOT_USER_KEY__'

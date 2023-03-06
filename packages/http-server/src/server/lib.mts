@@ -21,7 +21,10 @@ export async function getHttpBaseUrl() {
   return `${env.protocol}://${instanceDomain}${maybeWithPort}`
 }
 
-export function sendAuthTokenCookie(httpResp: Response, newToken: string | void) {
+export function sendAuthTokenCookie(
+  httpResp: Response,
+  newToken: string | void | undefined | null,
+) {
   const sessionCookieOtions: CookieOptions = {
     /** FIXME: set proper options !!! */
   }

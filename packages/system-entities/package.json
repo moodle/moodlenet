@@ -1,5 +1,5 @@
 {
-  "name": "@moodlenet/content-graph",
+  "name": "@moodlenet/system-entities",
   "version": "0.2.0",
   "license": "AGPL-3.0",
   "type": "module",
@@ -9,16 +9,17 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./server": "./dist/exports.mjs"
+    "./server": "./dist/exports.mjs",
+    "./server/aql-ac": "./dist/access-control-lib/aql.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",
-    "displayName": "Content Graph"
+    "displayName": "Access control"
   },
   "keywords": [
     "moodlenetPackage"
   ],
-  "description": "Content Graph\nMaintainance of all Moodlenet Entities",
+  "description": "Access control\nMaintainance of all Moodlenet Entities",
   "files": [
     "dist/",
     "src/"

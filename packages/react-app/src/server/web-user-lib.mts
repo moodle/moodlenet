@@ -1,17 +1,20 @@
-import { DocumentMetadata, DocumentSelector } from '@moodlenet/arangodb/server'
-import { SearchData } from '@moodlenet/content-graph/server'
+import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
+import { ByKeyOrId, create, get, patch } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
 import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, userKey, ...profileData } = createRequest
-  const newProfile = await WebUserProfile.create(
-    profileData,
-    getWebUserProfileSearchData(profileData),
-  )
-  assert(newProfile)
-  const user: WebUserDataType = {
+  const createResult = await create(WebUserProfile.entityClass, profileData)
+
+  if (!createResult.accessControl) {
+    return
+  }
+
+  const newProfile = createResult.newEntity
+
+  const webUserData: WebUserDataType = {
     profileKey: newProfile._key,
     displayName: newProfile.displayName,
     isAdmin,
@@ -19,43 +22,21 @@ export async function createWebUser(createRequest: CreateRequest) {
     contacts,
   }
 
-  const { new: newWebUser } = await WebUserCollection.save(user, { returnNew: true })
+  const { new: newWebUser } = await WebUserCollection.save(webUserData, { returnNew: true })
   assert(newWebUser)
   return newWebUser
 }
 
-function getWebUserProfilePartSearchData(
-  profileData: Partial<Pick<WebUserProfileDataType, 'displayName' | 'aboutMe'>>,
-): Partial<SearchData> {
-  return {
-    description: profileData.aboutMe,
-    title: profileData.displayName,
-  }
-}
-function getWebUserProfileSearchData(
-  profileData: Pick<WebUserProfileDataType, 'displayName' | 'aboutMe'>,
-): SearchData {
-  return {
-    description: profileData.aboutMe,
-    title: profileData.displayName,
-  }
-}
-
 export async function editWebUserProfile(
-  sel: DocumentSelector,
+  byKeyOrId: ByKeyOrId,
   updateWithData: Partial<WebUserProfileDataType>,
 ) {
-  const mUpdated = await WebUserProfile.update(
-    sel,
-    updateWithData,
-    getWebUserProfilePartSearchData(updateWithData),
-  )
+  const mUpdated = await patch(WebUserProfile.entityClass, byKeyOrId, updateWithData)
 
   if (!mUpdated) {
-    return null
+    return undefined
   }
   const { old: oldData, new: newData } = mUpdated
-  assert(newData)
   const displayNameChanged = newData.displayName && oldData.displayName !== newData.displayName
   if (displayNameChanged) {
     await patchWebUser({ profileKey: oldData._key }, { displayName: newData.displayName })
@@ -84,7 +65,7 @@ export async function getWebUser(
 
 export async function patchWebUser(
   by: { profileKey: string } | { userKey: string },
-  patch: Partial<WebUserDataType>, // | string,
+  patch: Patch<WebUserDataType>, // | string,
 ) {
   const byUserKey = 'userKey' in by
   const key = byUserKey ? by.userKey : by.profileKey
@@ -129,9 +110,9 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
 }
 
 export async function getProfile(
-  sel: DocumentSelector,
-): Promise<null | (WebUserProfileDataType & DocumentMetadata)> {
-  const profile = await WebUserProfile.get(sel)
+  byKeyOrId: ByKeyOrId,
+): Promise<undefined | (WebUserProfileDataType & DocumentMetadata)> {
+  const profile = await get(WebUserProfile.entityClass, byKeyOrId)
   return profile
 }
 
@@ -141,7 +122,7 @@ export async function searchUsers(search: string): Promise<(WebUserDataType & Do
     FOR profileUser in @@WebUserCollection
     let matchScore = LENGTH(@search) < 1 ? 1 
                       : NGRAM_POSITIONAL_SIMILARITY(profileUser.name, @search, 2)
-                        + NGRAM_POSITIONAL_SIMILARITY(profileUser.contacts.email, @search, 2)
+                      + NGRAM_POSITIONAL_SIMILARITY(profileUser.contacts.email, @search, 2)
     SORT matchScore DESC
     FILTER matchScore > 0.05
     LIMIT 10
@@ -151,5 +132,5 @@ export async function searchUsers(search: string): Promise<(WebUserDataType & Do
 
   const userProfiles = await cursor.all()
 
-  return userProfiles //.map(extractNodeMeta).map(({ node }) => node)
+  return userProfiles
 }

@@ -27,7 +27,7 @@ export const defaultCorePackages = [
   'authentication-manager',
   'http-server',
   'organization',
-  'content-graph',
+  'system-entities',
   'email-service',
   'react-app',
   'extensions-manager',
