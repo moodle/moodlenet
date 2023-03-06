@@ -39,7 +39,7 @@ export const packagesFake: Package[] = [
       { name: 'Web app', enabled: true, mandatory: true },
       { name: 'Http server', enabled: false, mandatory: true },
       { name: 'Pri Http', enabled: true, mandatory: true },
-      { name: 'Content graph', enabled: true, mandatory: false },
+      { name: 'Access control', enabled: true, mandatory: false },
       { name: 'Authentification', enabled: false },
     ],
   },

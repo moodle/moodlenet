@@ -1,6 +1,7 @@
 import { UserDocument } from './storeTypes.mjs'
 export * from './storeTypes.mjs'
 
+export type UserId = string
 export type SessionToken = string
 
 export type ClientSession = UserClientSession | RootClientSession
@@ -16,5 +17,5 @@ export type RootClientSession = {
 export type AuthAsyncCtx = {
   currentSession?:
     | { type: 'auth-token-set'; authToken: string }
-    | { type: 'client-session-fetched'; authToken: string; clientSession: ClientSession }
+    | { type: 'client-session-verified'; authToken: string; clientSession: ClientSession }
 }

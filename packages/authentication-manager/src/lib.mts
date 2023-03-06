@@ -3,14 +3,20 @@ import assert from 'assert'
 import { env } from './init.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
-import type { ClientSession, SessionToken, UserDocument } from './types/sessionTypes.mjs'
+import type {
+  ClientSession,
+  RootUserKey,
+  SessionToken,
+  UserDocument,
+} from './types/sessionTypes.mjs'
 
-export type GetRootSessionTokenResp = { success: boolean }
+export const ROOT_USER_KEY: RootUserKey = '__ROOT_USER_KEY__'
+
 export async function getRootSessionToken({
   password,
 }: {
   password: string
-}): Promise<GetRootSessionTokenResp> {
+}): Promise<{ success: boolean }> {
   if (!(env.rootPassword && password)) {
     return { success: false }
   } else if (env.rootPassword === password) {
@@ -52,15 +58,15 @@ export async function getSessionToken({ uid }: { uid: string }): Promise<Session
   return sessionToken
 }
 
-export async function getCurrentClientSession(): Promise<ClientSession | undefined> {
+export async function getCurrentClientSession(): Promise<ClientSession | null> {
   const workingCtx = shell.myAsyncCtx.get()
   // console.log({ workingCtx })
   if (!workingCtx?.currentSession) {
-    return
+    return null
   }
   // console.log({ currentSession: workingCtx?.currentSession })
 
-  if (workingCtx.currentSession.type === 'client-session-fetched') {
+  if (workingCtx.currentSession.type === 'client-session-verified') {
     return workingCtx.currentSession.clientSession
   }
 
@@ -76,28 +82,28 @@ export async function getCurrentClientSession(): Promise<ClientSession | undefin
         currentSession: undefined,
       }
     })
-    return
+    return null
   }
-  const workingClientSession = maybeClientSession
+  const currentClientSession = maybeClientSession
 
   shell.myAsyncCtx.set(editCurrentSession => ({
     ...editCurrentSession,
     currentSession: {
-      type: 'client-session-fetched',
+      type: 'client-session-verified',
       authToken: workingAuthToken,
-      clientSession: workingClientSession,
+      clientSession: currentClientSession,
     },
   }))
 
-  return workingClientSession
+  return currentClientSession
 }
 
-export async function getCurrentClientSessionToken(): Promise<string | void> {
+export async function getCurrentClientSessionToken(): Promise<string | null> {
   const workingCtx = shell.myAsyncCtx.get()
-  return workingCtx?.currentSession?.authToken
+  return workingCtx?.currentSession?.authToken ?? null
 }
 
-export async function setCurrentClientSessionToken(token: string | undefined) {
+export async function setCurrentClientSessionToken(token: string | null | undefined) {
   if (!token) {
     shell.myAsyncCtx.set(current => ({ ...current, currentSession: undefined }))
     return

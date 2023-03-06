@@ -1,4 +1,3 @@
-import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import { kvStore } from './init.mjs'
@@ -16,13 +15,8 @@ export async function getAppearance() {
   return { data: data.value }
 }
 
-export async function setupPlugin<Deps extends WebPkgDeps>({
-  pluginDef,
-  pkgId,
-}: {
-  pluginDef: WebappPluginDef<Deps>
-  pkgId: PkgIdentifier
-}) {
+export async function plugin<Deps extends WebPkgDeps>(pluginDef: WebappPluginDef<Deps>) {
+  const { pkgId } = shell.assertCallInitiator()
   const guestPkgEntry = await shell.pkgEntryByPkgIdValue(pkgId)
   assert(
     guestPkgEntry,
@@ -34,9 +28,4 @@ export async function setupPlugin<Deps extends WebPkgDeps>({
     guestPkgInfo: guestPkgEntry.pkgInfo,
   }
   await addWebappPluginItem(webappPluginItem)
-}
-
-export async function plugin<Deps extends WebPkgDeps>(pluginDef: WebappPluginDef<Deps>) {
-  const { pkgId } = shell.assertCallInitiator()
-  return setupPlugin<Deps>({ pkgId, pluginDef })
 }

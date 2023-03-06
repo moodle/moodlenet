@@ -1,10 +1,10 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { resolve } from 'path'
 import { AuthenticationManagerExtDef } from '../../authentication-manager/dist/init.mjs'
-import type { ContentGraphExtDef } from '../../content-graph/dist/init.mjs'
 import type { MNHttpServerExtDef } from '../../http-server/dist/init.mjs'
 import type { WebUserExtDef } from '../../react-app/dist/init.mjs'
 import type { ReactAppExtDef } from '../../react-app/dist/root-export.mjs'
+import type { ContentGraphExtDef } from '../../system-entities/dist/init.mjs'
 import { prepareApp } from './oauth-server'
 import configApiKeyStore from './store'
 import { PassportConfigs } from './store/types'
@@ -34,7 +34,7 @@ const ext: PassportAuthExt = {
     '@moodlenet/react-app@0.1.0',
     '@moodlenet/http-server@0.1.0',
     '@moodlenet/authentication-manager@0.1.0',
-    '@moodlenet/content-graph@0.1.0',
+    '@moodlenet/system-entities@0.1.0',
   ],
   connect(shell) {
     const [, reactApp, http] = shell.deps
