@@ -34,8 +34,6 @@
   }
 
   &.disabled {
-    pointer-events: none;
-
     &:not(.abbr) {
       user-select: none;
       pointer-events: none;

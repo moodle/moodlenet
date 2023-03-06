@@ -18,7 +18,7 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
     <ListCard
       className="landing-collection-card-list"
       content={collectionCardPropsList.slice(0, 20).map(collectionCardProps => (
-        <CollectionCard key={collectionCardProps.collectionId} {...collectionCardProps} />
+        <CollectionCard key={collectionCardProps.data.collectionId} {...collectionCardProps} />
       ))}
       title={
         <div className="card-header">

@@ -198,7 +198,6 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   const ownerNameRef = useRef<HTMLElement>(null)
   const [showOwnerNameAbbr, setShowOwnerNameAbbr] = useState(false)
   useEffect(() => {
-    console.log('Owner name')
     ownerNameRef.current instanceof HTMLElement &&
       setShowOwnerNameAbbr(isEllipsisActive(ownerNameRef.current))
   }, [ownerNameRef])
@@ -239,10 +238,14 @@ export const ResourceCard: FC<ResourceCardProps> = ({
       className={`like-button ${liked && 'liked'} ${
         selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
       }`}
-      {...(isOwner
-        ? { abbr: 'Creators cannot like their own content' }
-        : !isAuthenticated && { abbr: 'Loggin to like the resource' })}
-      hiddenText={liked ? 'Unlike' : 'Like'}
+      abbr={
+        isOwner
+          ? 'Creators cannot like their own content'
+          : !isAuthenticated
+          ? 'Loggin to like the resource'
+          : ''
+      }
+      hiddenText=""
       onClick={
         isAuthenticated && !isOwner && !selectionMode
           ? toggleLike

@@ -5,6 +5,7 @@ export type SecondaryButtonProps = {
   color?: 'black' | 'orange' | 'grey' | 'red' | 'light-grey' | 'dark-blue'
   className?: string
   abbr?: string
+  hiddenText?: string
   disabled?: boolean
   onHoverColor?: 'blue' | 'grey' | 'red' | 'fill-red'
   noHover?: boolean
@@ -17,6 +18,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
   color,
   className,
   abbr,
+  hiddenText,
   disabled,
   onHoverColor,
   noHover,
@@ -36,6 +38,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
       {...props}
     >
       {children}
+      {hiddenText && <span className="visually-hidden">{hiddenText}</span>}
     </abbr>
   )
 }

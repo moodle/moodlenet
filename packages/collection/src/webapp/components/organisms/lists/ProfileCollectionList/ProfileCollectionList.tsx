@@ -34,7 +34,7 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
       className="profile-collection-list"
       title={`Curated collections`}
       content={collectionCardPropsList.map(collectionCardProps => (
-        <CollectionCard key={collectionCardProps.collectionId} {...collectionCardProps} />
+        <CollectionCard key={collectionCardProps.data.collectionId} {...collectionCardProps} />
       ))}
       actions={
         isOwner

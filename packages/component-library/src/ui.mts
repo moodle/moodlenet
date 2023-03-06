@@ -1,4 +1,5 @@
 // @index(['./webapp/ui/**/!(*.stories)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+export * from './webapp/ui/assets/data/images.js'
 export * from './webapp/ui/components/atoms/Card/Card.js'
 export * from './webapp/ui/components/atoms/Colorpicker/Colorpicker.js'
 export * from './webapp/ui/components/atoms/Dropdown/Dropdown.js'

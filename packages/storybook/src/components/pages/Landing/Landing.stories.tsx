@@ -45,7 +45,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
-            isAuthenticated: false,
+            access: { isAuthenticated: false },
           })}
         />
       ),
@@ -56,7 +56,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
         <SmallProfileCardList
           searchAuthorsHref={href('Page/Search')}
           smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
-            isAuthenticated: false,
+            access: { isAuthenticated: false },
           })}
         />
       ),
@@ -86,8 +86,10 @@ export const LandingLoggedInStoryProps: LandingProps = {
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
-            followed: true,
-            bookmarked: true,
+            actions: {
+              followed: true,
+              bookmarked: true,
+            },
           })}
         />
       ),
@@ -98,7 +100,9 @@ export const LandingLoggedInStoryProps: LandingProps = {
         <SmallProfileCardList
           searchAuthorsHref={href('Page/Search')}
           smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
-            followed: true,
+            actions: {
+              followed: true,
+            },
           })}
         />
       ),
@@ -145,9 +149,13 @@ export const Owner: LandingStory = () => {
           <LandingCollectionList
             searchCollectionsHref={href('Page/Search')}
             collectionCardPropsList={getCollectionsCardStoryProps(15, {
-              isOwner: true,
-              canEdit: true,
-              isPublished: false,
+              actions: {
+                isPublished: false,
+              },
+              access: {
+                isOwner: true,
+                canEdit: true,
+              },
             })}
           />
         ),
@@ -158,7 +166,9 @@ export const Owner: LandingStory = () => {
           <SmallProfileCardList
             searchAuthorsHref={href('Page/Search')}
             smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
-              isOwner: true,
+              access: {
+                isOwner: true,
+              },
             })}
           />
         ),
