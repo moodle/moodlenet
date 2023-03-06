@@ -32,4 +32,6 @@ export const defaultCorePackages = [
   'react-app',
   'extensions-manager',
   'simple-email-auth',
+  'simple-file-store',
+  'openid',
 ]

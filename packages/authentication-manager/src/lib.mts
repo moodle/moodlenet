@@ -123,7 +123,7 @@ async function signClientSession(clientSession: ClientSession): Promise<SessionT
   return sessionToken
 }
 
-async function verifyClientSession(token: SessionToken): Promise<ClientSession | null> {
+export async function verifyClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
     const decryptRes = await jwt.verify(token)
     const clientSession = decryptRes.payload
