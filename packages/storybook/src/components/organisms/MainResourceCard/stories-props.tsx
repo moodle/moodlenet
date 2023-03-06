@@ -139,7 +139,7 @@
 
 //     isAuthenticated: true,
 //     canEdit: false,
-//     isOwner: false,
+//     isCreator: false,
 //     isAdmin: false,
 //     shouldShowErrors: false,
 //     isPublished: false,
@@ -212,7 +212,7 @@
 // export const Owner = () => {
 //   const props = useMainResourceCardStoryProps({
 //     props: {
-//       isOwner: true,
+//       isCreator: true,
 //       contentType: 'file',
 //       contentUrl: 'https://picsum.photos/200/100',
 //       resourceFormat: 'Video',
@@ -225,7 +225,7 @@
 // export const Admin = () => {
 //   const props = useMainResourceCardStoryProps({
 //     props: {
-//       isOwner: true,
+//       isCreator: true,
 //       isAdmin: true,
 //     },
 //   })

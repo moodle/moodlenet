@@ -17,7 +17,7 @@ export const SmallProfileCardList: FC<SmallProfileCardListProps> = ({
   return (
     <ListCard
       content={smallProfileCardPropsList.slice(0, 11).map(smallProfileCardProps => (
-        <SmallProfileCard key={smallProfileCardProps.id} {...smallProfileCardProps} />
+        <SmallProfileCard key={smallProfileCardProps.data.userId} {...smallProfileCardProps} />
       ))}
       title={
         <div className="card-header">

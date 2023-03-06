@@ -8,13 +8,13 @@ import './ProfileCollectionList.scss'
 export type ProfileCollectionListProps = {
   collectionCardPropsList: CollectionCardProps[]
   newCollectionHref: Href
-  isOwner: boolean
+  isCreator: boolean
 }
 
 export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
   collectionCardPropsList,
   newCollectionHref,
-  isOwner,
+  isCreator,
 }) => {
   // const [windowWidth, /* _isShowingSmallCard */ setIsShowingSmallCard] = useState<boolean>(false)
 
@@ -29,15 +29,15 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
   //   }
   // }, [])
 
-  return (isOwner || collectionCardPropsList.length > 0) && window.innerWidth ? (
+  return (isCreator || collectionCardPropsList.length > 0) && window.innerWidth ? (
     <ListCard
       className="profile-collection-list"
       title={`Curated collections`}
       content={collectionCardPropsList.map(collectionCardProps => (
-        <CollectionCard key={collectionCardProps.collectionId} {...collectionCardProps} />
+        <CollectionCard key={collectionCardProps.data.collectionId} {...collectionCardProps} />
       ))}
       actions={
-        isOwner
+        isCreator
           ? {
               element: (
                 <Link href={newCollectionHref}>

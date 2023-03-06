@@ -116,6 +116,10 @@
     > .overall-card {
       height: fit-content;
 
+      > .overall-container {
+        padding: 4px 0 14px;
+      }
+
       > .data > span {
         font: 10px;
       }

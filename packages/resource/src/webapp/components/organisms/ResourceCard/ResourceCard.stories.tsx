@@ -33,7 +33,7 @@ export const getResourceCardStoryProps = (
   return {
     resourceId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
     tags: TagListStory,
-    isOwner: false,
+    isCreator: false,
     title: `Why the  ${
       Math.random() < 0.5 ? 'tropical rainforests are' : 'the oceans are'
     } the world's most important ecosystems`,
@@ -74,12 +74,12 @@ export const ResourceCardLoggedOutStoryProps = (i?: 0 | 1): ResourceCardProps =>
 
 export const ResourceCardOwnerStoryProps: ResourceCardProps = {
   ...ResourceCardLoggedInStoryProps,
-  isOwner: true,
+  isCreator: true,
 }
 
 export const ResourceCardOwnerPrivateStoryProps: ResourceCardProps = {
   ...ResourceCardLoggedInStoryProps,
-  isOwner: true,
+  isCreator: true,
   isPublished: false,
 }
 

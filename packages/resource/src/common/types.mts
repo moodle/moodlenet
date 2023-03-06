@@ -34,7 +34,7 @@ export type ResourceActions = {
 
 export type ResourceAccess = {
   isAuthenticated: boolean
-  isOwner: boolean
+  isCreator: boolean
   isAdmin: boolean
   canEdit: boolean
 }

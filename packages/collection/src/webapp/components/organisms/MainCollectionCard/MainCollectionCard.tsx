@@ -92,7 +92,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     isWaitingForApproval,
   } = actions
 
-  const { canEdit, isAuthenticated, isOwner } = access
+  const { canEdit, isAuthenticated, isCreator } = access
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
@@ -174,10 +174,10 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     isPublished || numFollowers > 0 ? (
       <TertiaryButton
         className={`follow ${followed ? 'followed' : ''}`}
-        disabled={!isAuthenticated || isOwner}
-        onClick={isAuthenticated && !isOwner ? toggleFollow : () => undefined}
+        disabled={!isAuthenticated || isCreator}
+        onClick={isAuthenticated && !isCreator ? toggleFollow : () => undefined}
         abbr={
-          isOwner ? 'Creators cannot follow their own content' : followed ? 'Unfollow' : 'Follow'
+          isCreator ? 'Creators cannot follow their own content' : followed ? 'Unfollow' : 'Follow'
         }
         key="followers-button"
       >
@@ -477,7 +477,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  const followButton = !isOwner ? (
+  const followButton = !isCreator ? (
     followed ? (
       <SecondaryButton
         disabled={!isAuthenticated}
