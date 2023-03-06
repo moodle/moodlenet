@@ -245,7 +245,7 @@ export const useResourceStoryProps = (
       access: access,
       validationSchema: validationSchema,
     },
-    { ...overrides },
+    overrides,
   )
 }
 
