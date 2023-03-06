@@ -27,25 +27,8 @@ export const elementFullyInViewPort = (
   )
 }
 
-export const isEllipsisActive = (e: HTMLElement) => {
-  console.log(
-    'offsetWidth',
-    e.offsetWidth,
-    '< scrollWidth',
-    e.scrollWidth,
-    '?',
-    e.offsetWidth < e.scrollWidth,
-  )
-  console.log(
-    'offsetHeight',
-    e.offsetHeight,
-    '< scrollHeight',
-    e.scrollHeight,
-    '?',
-    e.offsetHeight < e.scrollHeight,
-  )
-  return e.offsetWidth < e.scrollWidth || e.offsetHeight < e.scrollHeight
-}
+export const isEllipsisActive = (e: HTMLElement) =>
+  e.offsetWidth < e.scrollWidth || e.offsetHeight < e.scrollHeight
 
 export const range = (size: number, startAt = 0) => {
   return [...Array(size).keys()].map(i => i + startAt)

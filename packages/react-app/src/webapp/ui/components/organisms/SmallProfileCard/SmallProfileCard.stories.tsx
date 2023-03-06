@@ -29,18 +29,37 @@ export const SmallProfileCardLoggedOutStoryProps: SmallProfileCardProps = {
 }
 
 export const SmallProfileCardLoggedInStoryProps: SmallProfileCardProps = {
-  ...getSmallProfileCardFactory(),
-  isAuthenticated: true,
+  ...getSmallProfileCardFactory(undefined, {
+    mainColumnItems: [],
+    data: {},
+    actions: {},
+    access: {
+      isAuthenticated: true,
+    },
+  }),
 }
 
 export const SmallProfileCardFollowingStoryProps: SmallProfileCardProps = {
-  ...getSmallProfileCardFactory(),
-  followed: true,
+  ...getSmallProfileCardFactory(undefined, {
+    mainColumnItems: [],
+    data: {},
+    actions: {
+      followed: true,
+    },
+    access: {},
+  }),
 }
 
 export const SmallProfileCardOwnerStoryProps: SmallProfileCardProps = {
-  ...SmallProfileCardLoggedInStoryProps,
-  isOwner: true,
+  ...getSmallProfileCardFactory(undefined, {
+    ...SmallProfileCardLoggedInStoryProps,
+    mainColumnItems: [],
+    data: {},
+    actions: {},
+    access: {
+      isOwner: true,
+    },
+  }),
 }
 
 const SmallProfileCardStory: ComponentStory<typeof SmallProfileCard> = args => (
