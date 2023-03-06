@@ -8,7 +8,7 @@ export type TertiaryButtonProps = {
   disabled?: boolean
   children: ReactNode
   color?: 'black'
-  onClick?(arg0?: unknown): unknown | any
+  onClick?(arg0?: unknown): unknown
 }
 
 export const TertiaryButton: FC<TertiaryButtonProps> = ({

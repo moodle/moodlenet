@@ -51,7 +51,7 @@ export const Owner: ResourceStory = () => {
       isSaved: true,
     },
     access: {
-      isOwner: true,
+      isCreator: true,
       canEdit: true,
     },
   })
@@ -79,7 +79,7 @@ export const New: ResourceStory = () => {
       isSaved: true,
     },
     access: {
-      isOwner: true,
+      isCreator: true,
       canEdit: true,
     },
   })
@@ -89,7 +89,7 @@ export const New: ResourceStory = () => {
 // export const Unapproved: ResourceStory = () => {
 //   const props = useResourceStoryProps({
 //     props: {
-//       isOwner: true,
+//       isCreator: true,
 //       //   collectionCardPropsList: [
 //       //     CollectionCardOwnerPrivateStoryProps(
 //       //       randomIntFromInterval(0, 1) === 0 ? 0 : 1
@@ -134,7 +134,7 @@ export const New: ResourceStory = () => {
 //     //   getResourceCardProps: useuseResourceCardStoryProps({
 //     //     props: {
 //     //       isAuthenticated: true,
-//     //       isOwner: true,
+//     //       isCreator: true,
 //     //     },
 //     //   }),
 //     // },

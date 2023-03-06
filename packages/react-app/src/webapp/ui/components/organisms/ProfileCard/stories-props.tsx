@@ -42,7 +42,7 @@ export const useProfileCardStoryProps = (overrides?: {
 }): ProfileCardProps => {
   const person = people[randomIntFromInterval(0, 3)]
   return {
-    isOwner: false,
+    isCreator: false,
     isAuthenticated: false,
     // profileUrl: '396qamf8hfol-albert',
     // userId: '@396qamf8hfol-alberto@moodle.net',

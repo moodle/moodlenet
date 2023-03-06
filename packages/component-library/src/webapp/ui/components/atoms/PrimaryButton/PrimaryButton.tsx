@@ -2,9 +2,10 @@ import { FC, ReactNode } from 'react'
 import './PrimaryButton.scss'
 
 export type PrimaryButtonProps = {
-  onClick?(arg0?: unknown): unknown | any
+  onClick?(arg0?: unknown): unknown
   className?: string
   abbr?: string
+  hiddenText?: string
   disabled?: boolean
   color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card' | 'light-gray'
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
@@ -16,6 +17,7 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
   children,
   className,
   abbr,
+  hiddenText,
   color,
   onHoverColor,
   noHover,
@@ -36,6 +38,7 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
       {...props}
     >
       {children}
+      {hiddenText && <span className="visually-hidden">{hiddenText}</span>}
     </abbr>
   )
 }

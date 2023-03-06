@@ -63,7 +63,7 @@ export const Resource: FC<ResourceProps> = ({
 }) => {
   const { editResource, setIsPublished, isWaitingForApproval, deleteResource, isPublished } =
     actions
-  const { isOwner, canEdit } = access
+  const { isCreator, canEdit } = access
 
   const form = useFormik<ResourceFormValues>({
     initialValues: resourceForm,
@@ -93,7 +93,7 @@ export const Resource: FC<ResourceProps> = ({
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
-  const contributorCard = !isOwner ? (
+  const contributorCard = !isCreator ? (
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
   ) : null
 

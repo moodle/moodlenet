@@ -36,7 +36,7 @@ export const LoggedOut: ProfileStory = () => {
         {
           Item: () => (
             <ProfileResourceList
-              isOwner={false}
+              isCreator={false}
               newResourceHref={href('Page/Resource/New')}
               resourceCardPropsList={getResourcesCardStoryProps(5, {
                 isAuthenticated: false,
@@ -48,7 +48,7 @@ export const LoggedOut: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={false}
+              isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
                 isAuthenticated: false,
@@ -62,7 +62,7 @@ export const LoggedOut: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={false}
+              isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
                 isAuthenticated: false,
@@ -88,7 +88,7 @@ export const LoggedIn: ProfileStory = () => {
         {
           Item: () => (
             <ProfileResourceList
-              isOwner={false}
+              isCreator={false}
               newResourceHref={href('Page/Resource/New')}
               resourceCardPropsList={getResourcesCardStoryProps(5, {})}
             />
@@ -98,7 +98,7 @@ export const LoggedIn: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={false}
+              isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
             />
@@ -110,7 +110,7 @@ export const LoggedIn: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={false}
+              isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
             />
@@ -127,16 +127,16 @@ export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
     props: {
       profileCardProps: useProfileCardStoryProps({
-        props: { isOwner: true, canEdit: true, isApproved: true },
+        props: { isCreator: true, canEdit: true, isApproved: true },
       }),
       mainColumnItems: [
         {
           Item: () => (
             <ProfileResourceList
-              isOwner={true}
+              isCreator={true}
               newResourceHref={href('Page/Resource/New')}
               resourceCardPropsList={getResourcesCardStoryProps(5, {
-                isOwner: true,
+                isCreator: true,
                 canEdit: true,
               })}
             />
@@ -146,10 +146,10 @@ export const Owner: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={true}
+              isCreator={true}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isOwner: true,
+                isCreator: true,
                 canEdit: true,
               })}
             />
@@ -161,10 +161,10 @@ export const Owner: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={false}
+              isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isOwner: true,
+                isCreator: true,
                 canEdit: true,
               })}
             />
@@ -185,7 +185,7 @@ export const Admin: ProfileStory = () => {
         {
           Item: () => (
             <ProfileResourceList
-              isOwner={false}
+              isCreator={false}
               newResourceHref={href('Page/Resource/New')}
               resourceCardPropsList={getResourcesCardStoryProps(5, {
                 canEdit: true,
@@ -197,7 +197,7 @@ export const Admin: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={false}
+              isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
                 canEdit: true,
@@ -211,7 +211,7 @@ export const Admin: ProfileStory = () => {
         {
           Item: () => (
             <ProfileCollectionList
-              isOwner={false}
+              isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
                 canEdit: true,

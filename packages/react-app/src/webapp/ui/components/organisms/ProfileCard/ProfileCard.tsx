@@ -26,7 +26,7 @@ export type ProfileCardProps = {
   form: ReturnType<typeof useFormik<ProfileFormValues>>
   isAuthenticated: boolean
   isEditing?: boolean
-  isOwner?: boolean
+  isCreator?: boolean
   canEdit?: boolean
   isAdmin?: boolean
   isApproved?: boolean

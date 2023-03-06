@@ -8,15 +8,15 @@ import './ProfileResourceList.scss'
 export type ProfileResourceListProps = {
   resourceCardPropsList: ResourceCardProps[]
   newResourceHref: Href
-  isOwner: boolean
+  isCreator: boolean
 }
 
 export const ProfileResourceList: FC<ProfileResourceListProps> = ({
   resourceCardPropsList,
   newResourceHref,
-  isOwner,
+  isCreator,
 }) => {
-  return isOwner || resourceCardPropsList.length > 0 ? (
+  return isCreator || resourceCardPropsList.length > 0 ? (
     <ListCard
       className="resources"
       content={resourceCardPropsList.map(resourceCardProps => {
@@ -30,7 +30,7 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
       })}
       title={`Latest resources`}
       actions={
-        isOwner
+        isCreator
           ? {
               element: (
                 <Link href={newResourceHref}>

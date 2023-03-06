@@ -29,7 +29,7 @@
 //     fetchPolicy: 'cache-and-network',
 //   })
 //   const profileNode = narrowNodeType(['Profile'])(data?.node)
-//   const isOwner = !!session && !!profileNode && profileNode.id === session.profile.id
+//   const isCreator = !!session && !!profileNode && profileNode.id === session.profile.id
 
 //   const [addRelation, addRelationRes] = useAddProfileRelationMutation()
 //   const [delRelation, delRelationRes] = useDelProfileRelationMutation()
@@ -104,11 +104,11 @@
 //             username: profileNode.name,
 //             isVerified: true,
 //             isAuthenticated,
-//             isOwner,
+//             isCreator,
 //             profileHref: href(nodeGqlId2UrlPath(id)),
 //           }
 //         : null,
-//     [profileNode, id, myFollowEdgeId, kudos, org.name, toggleFollow, isAuthenticated, isOwner],
+//     [profileNode, id, myFollowEdgeId, kudos, org.name, toggleFollow, isAuthenticated, isCreator],
 //   )
 //   return SmallProfileCardUIProps && [SmallProfileCardUIProps]
 // }

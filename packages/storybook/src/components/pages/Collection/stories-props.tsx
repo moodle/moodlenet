@@ -159,7 +159,7 @@ export const useCollectionStoryProps = (
   const access: CollectionAccess = {
     isAuthenticated: true,
     canEdit: false,
-    isOwner: false,
+    isCreator: false,
     isAdmin: false,
     ...overrides?.access,
   }
