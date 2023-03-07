@@ -13,7 +13,6 @@ export type EntityClass<_EntityDataType extends SomeEntityDataType> = {
 
 export type EntityMetadata = {
   entityClass: EntityClass<any>
-  owner: UserId
   creator: UserId
   created: string
   updated: string
