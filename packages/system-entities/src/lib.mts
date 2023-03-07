@@ -3,7 +3,7 @@ import { getCurrentClientSession, ROOT_USER_KEY } from '@moodlenet/authenticatio
 import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
-import { myPkgMeta } from './access-control-lib/aql.mjs'
+import { pkgMetaVar } from './access-control-lib/aql.mjs'
 import { db } from './init.mjs'
 import { getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
@@ -123,7 +123,6 @@ export async function create<EntityDataType extends SomeEntityDataType>(
       ...newEntityData,
       _meta: {
         creator: userKey,
-        owner: userKey,
         updated: now,
         created: now,
         entityClass,
@@ -349,7 +348,7 @@ async function getAQLAccessControlObjectDefString(rootAccess = false) {
 async function getAqlOperationAccessControlArrayElemsString(op: 'r' | 'u' | 'd') {
   const operationAccessControlResponses = await Promise.all(
     accessControllerRegistry.map(({ accessControllers, pkgId }) =>
-      accessControllers[op]?.({ myPkgMeta: myPkgMeta(pkgId.name) }),
+      accessControllers[op]?.({ myPkgMeta: pkgMetaVar(pkgId.name) }),
     ),
   )
 
