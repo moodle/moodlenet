@@ -9,7 +9,7 @@ import {
   registerAccessController,
   registerEntities,
 } from '@moodlenet/system-entities/server'
-import { isEntityClass, isOwner } from '@moodlenet/system-entities/server/aql-ac'
+import { isCreator, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import { resolve } from 'path'
 import { defaultAppearanceData } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
@@ -37,7 +37,7 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 
 await shell.call(registerAccessController)({
   u() {
-    return `${isEntityClass(WebUserProfile.entityClass)} && ${isOwner()}`
+    return `${isEntityClass(WebUserProfile.entityClass)} && ${isCreator()}`
   },
   r(/* { myPkgMeta } */) {
     return `${isEntityClass(WebUserProfile.entityClass)}` // && ${myPkgMeta}.xx == null`

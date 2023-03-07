@@ -1,15 +1,11 @@
-// export async function isOwner() {
-//   const clientSession = await getCurrentClientSession()
-//   const sessionUserKey = clientSession?.user?._key
-//   return sessionUserKey ? `(entity._meta.owner == "${sessionUserKey}")` : 'false'
-
-import { PkgName } from '@moodlenet/core'
+import type { PkgName } from '@moodlenet/core'
 import { getPkgNamespace } from '../pkg-db-names.mjs'
-import { EntityClass, SomeEntityDataType } from '../types.mjs'
+import type { EntityClass, SomeEntityDataType } from '../types.mjs'
 
-// }
-export function isOwner() {
-  return `( !!clientSession && entity._meta.owner == clientSession.user._key )`
+// TODO: export a set of const for known vars for safer AQL construction ? (entity, entityClass, _meta, creator, clientSession)
+
+export function isCreator() {
+  return `( !!clientSession && entity._meta.creator == clientSession.user._key )`
 }
 
 export function isAuthenticated() {
@@ -24,6 +20,6 @@ export function isEntityClass(
   return `( ${entityClassesStr} ${isArray ? 'any ' : ''}== entity._meta.entityClass )`
 }
 
-export function myPkgMeta(pkgName: PkgName) {
+export function pkgMetaVar(pkgName: PkgName) {
   return `entity._meta.pkgMeta["${getPkgNamespace(pkgName)}"]`
 }
