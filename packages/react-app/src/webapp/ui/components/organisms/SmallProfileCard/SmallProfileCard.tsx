@@ -31,14 +31,7 @@ export const SmallProfileCard: FC<SmallProfileCardProps> = ({
   actions,
   access,
 }) => {
-  const {
-    userId,
-    backgroundUrl,
-    avatarUrl,
-    displayName,
-    profileHref,
-    // organizationName,
-  } = data
+  const { userId, backgroundUrl, avatarUrl, displayName, profileHref } = data
   const { followed } = state
   const { toggleFollow } = actions
   const { isCreator, isAuthenticated } = access
