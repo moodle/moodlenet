@@ -92,10 +92,28 @@ export const useProfileCardProps = ({
   //   return props
   // }, [clientSessionData, form, isCreator])
   const profileCardsProps: ProfileCardPropsControlled = {
-    isCreator,
-    canEdit: isCreator,
-    isAuthenticated: !!clientSessionData,
+    // TODO Replace all the fields data with meaningfull ones
+    slots: {
+      mainColumnItems: [],
+      topItems: [],
+      titleItems: [],
+      subtitleItems: [],
+      footerRowItems: [],
+    },
     form,
+    state: {
+      followed: false,
+    },
+    access: {
+      isAdmin: false, //TODO Fix props
+      isCreator,
+      canEdit: isCreator, // TODO This could be also an admin with the rights to edit @
+      isAuthenticated: !!clientSessionData,
+    },
+    actions: {
+      editProfile: () => undefined,
+      toggleFollow: () => undefined,
+    },
   }
   return profileCardsProps
 }

@@ -44,37 +44,28 @@ export const useProfileCardStoryProps = (
   const person = people[randomIntFromInterval(0, 3)]
   return overrideDeep<ProfileCardProps>(
     {
-      access: {
-        isCreator: false,
-        isAuthenticated: false,
+      slots: {
+        mainColumnItems: [],
+        topItems: [],
+        titleItems: [],
+        subtitleItems: [],
+        footerRowItems: [],
+      },
+      isEditing: false,
+      toggleIsEditing: action('toggle Is Editing'),
+      state: {
+        followed: false,
       },
       actions: {
-        toggleIsEditing: action('toogle Is Editing'),
+        editProfile: action('edit profile'),
+        toggleFollow: action('toogle is following'),
       },
-      // profileUrl: '396qamf8hfol-albert',
-      // userId: '@396qamf8hfol-alberto@moodle.net',
-      // setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
-      // setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
-      // setIsReporting: action('setIsReporting'),
-      // approveUserForm: useFormik({
-      //   initialValues: {},
-      //   onSubmit: action('approve User'),
-      // }),
-      // profileUrl: 'profile.url',
-      // unapproveUserForm: useFormik({
-      //   initialValues: {},
-      //   onSubmit: action('unapprove User'),
-      // }),
-      // toggleFollowForm: useFormik({
-      //   initialValues: {},
-      //   onSubmit: action('toggle Follow'),
-      // }),
-      // requestApprovalForm: useFormik({
-      //   initialValues: {},
-      //   onSubmit: action('request Approval'),
-      // }),
-      // openSendMessage: action('open Send Message'),
-      // moreButtonItems: [],
+      access: {
+        isAdmin: false,
+        isCreator: false,
+        isAuthenticated: false,
+        canEdit: false,
+      },
       form: useFormik<ProfileFormValues>({
         onSubmit: action('submit edit'),
         validationSchema: profileStoriesValidationSchema,
