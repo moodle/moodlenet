@@ -43,9 +43,10 @@ export const SmallProfileCardFollowingStoryProps: SmallProfileCardProps = {
   ...getSmallProfileCardFactory(undefined, {
     mainColumnItems: [],
     data: {},
-    actions: {
+    state: {
       followed: true,
     },
+    actions: {},
     access: {},
   }),
 }

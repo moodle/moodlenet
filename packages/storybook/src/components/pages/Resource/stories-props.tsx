@@ -2,6 +2,7 @@ import {
   ResourceAccess,
   ResourceActions,
   ResourceFormValues,
+  ResourceState,
   ResourceType,
 } from '@moodlenet/resource/common'
 import { action } from '@storybook/addon-actions'
@@ -24,7 +25,6 @@ import { overrideDeep } from '@moodlenet/component-library/common'
 import { ResourceContributorCardStories } from '@moodlenet/resource/stories'
 import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
-import { useEffect } from 'react'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -160,28 +160,28 @@ export const useResourceStoryProps = (
     // ...overrides?.resourceForm,
   }
 
-  const addToCollectionsForm = useFormik<{ collections: string[] }>({
-    initialValues: { collections: [] },
-    // onSubmit() {},
-    async onSubmit() {
-      return
-    },
-    validate({ collections: curr }) {
-      const prev = addToCollectionsForm.values.collections
-      const toAdd = curr.filter(_ => !prev.includes(_))[0]
-      const toRemove = prev.filter(_ => !curr.includes(_))[0]
-      toAdd && action('Add ')(toAdd)
-      toRemove && action('Remove ')(toRemove)
-    },
-  })
+  // const addToCollectionsForm = useFormik<{ collections: string[] }>({
+  //   initialValues: { collections: [] },
+  //   // onSubmit() {},
+  //   async onSubmit() {
+  //     return
+  //   },
+  //   validate({ collections: curr }) {
+  //     const prev = addToCollectionsForm.values.collections
+  //     const toAdd = curr.filter(_ => !prev.includes(_))[0]
+  //     const toRemove = prev.filter(_ => !curr.includes(_))[0]
+  //     toAdd && action('Add ')(toAdd)
+  //     toRemove && action('Remove ')(toRemove)
+  //   },
+  // })
 
-  useEffect(
-    () =>
-      action('changed addToCollectionsForm.values')(
-        addToCollectionsForm.values.collections.join(';'),
-      ),
-    [addToCollectionsForm.values.collections],
-  )
+  // useEffect(
+  //   () =>
+  //     action('changed addToCollectionsForm.values')(
+  //       addToCollectionsForm.values.collections.join(';'),
+  //     ),
+  //   [addToCollectionsForm.values.collections],
+  // )
 
   const resource: ResourceType = {
     id: 'qjnwglkd69io-sports',
@@ -191,19 +191,20 @@ export const useResourceStoryProps = (
     contentType: 'file',
     contentUrl: '#',
     numLikes: 23,
-    ...overrides?.resource,
   }
 
-  const actions: ResourceActions = {
+  const state: ResourceState = {
     isPublished: true,
     liked: false,
     bookmarked: false,
+  }
+
+  const actions: ResourceActions = {
     toggleLike: action('toggleLike'),
     toggleBookmark: action('toggleBookmark'),
     deleteResource: action('deleteResource'),
     editResource: async () => action('editing resource submited'),
     setIsPublished: action('setIsPublished'),
-    ...overrides?.actions,
   }
 
   const access: ResourceAccess = {
@@ -211,7 +212,6 @@ export const useResourceStoryProps = (
     canEdit: false,
     isCreator: false,
     isAdmin: false,
-    ...overrides?.access,
   }
 
   const mainResourceCardSlots: MainResourceCardSlots = {
@@ -224,11 +224,6 @@ export const useResourceStoryProps = (
   }
 
   return overrideDeep<ResourceProps>(
-    // mainLayoutProps:
-    //   overrides?.props?.access?.isAuthenticated !== undefined && !overrides?.props?.access?.isAuthenticated
-    //     ? MainLayoutLoggedOutStoryProps
-    //     : MainLayoutLoggedInStoryProps,
-
     {
       mainLayoutProps:
         overrides?.access?.isAuthenticated !== undefined && !overrides?.access?.isAuthenticated
@@ -241,6 +236,7 @@ export const useResourceStoryProps = (
 
       resource: resource,
       resourceForm: resourceForm,
+      state: state,
       actions: actions,
       access: access,
       validationSchema: validationSchema,
