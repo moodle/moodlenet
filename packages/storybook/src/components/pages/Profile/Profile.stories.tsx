@@ -25,54 +25,56 @@ const meta: ComponentMeta<typeof Profile> = {
 
 type ProfileStory = ComponentStory<typeof Profile>
 
-export const LoggedOut: ProfileStory = () => {
+export const LoggedOut = () => {
   const props = useProfileStoryProps({
-    props: {
-      mainLayoutProps: MainLayoutLoggedOutStoryProps,
-      profileCardProps: useProfileCardStoryProps({
-        props: { isAuthenticated: false },
-      }),
-      mainColumnItems: [
-        {
-          Item: () => (
-            <ProfileResourceList
-              isCreator={false}
-              newResourceHref={href('Page/Resource/New')}
-              resourceCardPropsList={getResourcesCardStoryProps(5, {
+    mainLayoutProps: MainLayoutLoggedOutStoryProps,
+    profileCardProps: useProfileCardStoryProps({
+      access: { isAuthenticated: false },
+    }),
+    mainColumnItems: [
+      {
+        Item: () => (
+          <ProfileResourceList
+            isCreator={false}
+            newResourceHref={href('Page/Resource/New')}
+            resourceCardPropsList={getResourcesCardStoryProps(5, {
+              isAuthenticated: false,
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={false}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              access: { isAuthenticated: false },
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+    sideColumnItems: [
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={false}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              access: {
                 isAuthenticated: false,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={false}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isAuthenticated: false,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
-      sideColumnItems: [
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={false}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isAuthenticated: false,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
-    },
+              },
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+
+    access: { isAuthenticated: false },
   })
 
   return <Profile {...props} />
@@ -80,147 +82,158 @@ export const LoggedOut: ProfileStory = () => {
 
 export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
-    props: {
-      profileCardProps: useProfileCardStoryProps({
-        props: { isAuthenticated: true },
-      }),
-      mainColumnItems: [
-        {
-          Item: () => (
-            <ProfileResourceList
-              isCreator={false}
-              newResourceHref={href('Page/Resource/New')}
-              resourceCardPropsList={getResourcesCardStoryProps(5, {})}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={false}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
-      sideColumnItems: [
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={false}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
-    },
+    profileCardProps: useProfileCardStoryProps({
+      access: { isAuthenticated: true },
+    }),
+    mainColumnItems: [
+      {
+        Item: () => (
+          <ProfileResourceList
+            isCreator={false}
+            newResourceHref={href('Page/Resource/New')}
+            resourceCardPropsList={getResourcesCardStoryProps(5, {})}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={false}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+    sideColumnItems: [
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={false}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+
+    access: { isAuthenticated: true },
   })
+
   return <Profile {...props} />
 }
 
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
-    props: {
-      profileCardProps: useProfileCardStoryProps({
-        props: { isCreator: true, canEdit: true, isApproved: true },
-      }),
-      mainColumnItems: [
-        {
-          Item: () => (
-            <ProfileResourceList
-              isCreator={true}
-              newResourceHref={href('Page/Resource/New')}
-              resourceCardPropsList={getResourcesCardStoryProps(5, {
+    profileCardProps: useProfileCardStoryProps({
+      props: { isCreator: true, canEdit: true, isApproved: true },
+    }),
+    mainColumnItems: [
+      {
+        Item: () => (
+          <ProfileResourceList
+            isCreator={true}
+            newResourceHref={href('Page/Resource/New')}
+            resourceCardPropsList={getResourcesCardStoryProps(5, {
+              isCreator: true,
+              canEdit: true,
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={true}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              access: {
                 isCreator: true,
                 canEdit: true,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={true}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              },
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+    sideColumnItems: [
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={false}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              access: {
                 isCreator: true,
                 canEdit: true,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
-      sideColumnItems: [
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={false}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isCreator: true,
-                canEdit: true,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
-    },
+              },
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+    access: { isOwner: true, canEdit: true },
   })
+
   return <Profile {...props} />
 }
 
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
-    props: {
-      profileCardProps: useProfileCardStoryProps({ props: { isAdmin: true, canEdit: true } }),
-      mainColumnItems: [
-        {
-          Item: () => (
-            <ProfileResourceList
-              isCreator={false}
-              newResourceHref={href('Page/Resource/New')}
-              resourceCardPropsList={getResourcesCardStoryProps(5, {
+    profileCardProps: useProfileCardStoryProps({ props: { isAdmin: true, canEdit: true } }),
+    mainColumnItems: [
+      {
+        Item: () => (
+          <ProfileResourceList
+            isCreator={false}
+            newResourceHref={href('Page/Resource/New')}
+            resourceCardPropsList={getResourcesCardStoryProps(5, {
+              canEdit: true,
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={false}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              access: {
                 canEdit: true,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={false}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              },
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+    sideColumnItems: [
+      {
+        Item: () => (
+          <ProfileCollectionList
+            isCreator={false}
+            newCollectionHref={href('Page/Collection/New')}
+            collectionCardPropsList={getCollectionsCardStoryProps(5, {
+              access: {
                 canEdit: true,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
-      sideColumnItems: [
-        {
-          Item: () => (
-            <ProfileCollectionList
-              isCreator={false}
-              newCollectionHref={href('Page/Collection/New')}
-              collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                canEdit: true,
-              })}
-            />
-          ),
-          key: 'collection-card-list',
-        },
-      ],
+              },
+            })}
+          />
+        ),
+        key: 'collection-card-list',
+      },
+    ],
+    access: {
+      isCreator: true,
+      canEdit: true,
     },
   })
   return <Profile {...props} />
