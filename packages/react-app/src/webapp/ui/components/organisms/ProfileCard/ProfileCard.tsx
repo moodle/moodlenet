@@ -11,7 +11,12 @@ import {
   useImageUrl,
 } from '@moodlenet/component-library'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
-import { ProfileAccess, ProfileActions, ProfileFormValues } from '../../../../../common/types.mjs'
+import {
+  ProfileAccess,
+  ProfileActions,
+  ProfileFormValues,
+  ProfileState,
+} from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
 import { FormikHandle } from '../../../lib/formik.js'
@@ -30,6 +35,7 @@ export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 't
 export type ProfileCardProps = {
   slots: ProfileCardSlots
   form: FormikHandle<ProfileFormValues>
+  state: ProfileState
   actions: ProfileActions
   access: ProfileAccess
   isEditing: boolean
@@ -39,14 +45,16 @@ export type ProfileCardProps = {
 export const ProfileCard: FC<ProfileCardProps> = ({
   slots,
   form,
+  state,
   actions,
   access,
   isEditing,
   toggleIsEditing,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerRowItems } = slots
-  const { followed, toggleFollow } = actions
-  const { canEdit, isOwner, isAuthenticated } = access
+  const { followed } = state
+  const { toggleFollow } = actions
+  const { isCreator, isAuthenticated, canEdit } = access
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
@@ -288,7 +296,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </div>
   )
 
-  const followButton = !isOwner ? (
+  const followButton = !isCreator ? (
     followed ? (
       <SecondaryButton
         disabled={!isAuthenticated}

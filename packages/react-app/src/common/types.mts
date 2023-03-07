@@ -70,7 +70,7 @@ export type Credits = {
   provider?: { name: string; url: string }
 }
 
-export type ProfileCardData = {
+export type ProfileData = {
   userId: string
   backgroundUrl: string | null
   avatarUrl: string | null
@@ -80,15 +80,18 @@ export type ProfileCardData = {
   profileHref: Href
 }
 
-export type ProfileCardState = {
+export type ProfileState = {
   followed: boolean
 }
 
-export type ProfileCardActions = {
+export type ProfileActions = {
+  editProfile(values: ProfileFormValues): void | Promise<unknown>
   toggleFollow(): unknown
 }
 
-export type ProfileCardAccess = {
+export type ProfileAccess = {
+  canEdit: boolean
   isCreator: boolean
+  isAdmin: boolean
   isAuthenticated: boolean
 }

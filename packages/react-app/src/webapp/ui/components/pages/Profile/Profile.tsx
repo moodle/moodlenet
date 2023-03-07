@@ -2,7 +2,12 @@ import { AddonItem } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useReducer } from 'react'
 import { SchemaOf } from 'yup'
-import { ProfileAccess, ProfileActions, ProfileFormValues } from '../../../../../common/types.mjs'
+import {
+  ProfileAccess,
+  ProfileActions,
+  ProfileFormValues,
+  ProfileState,
+} from '../../../../../common/types.mjs'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import { ProfileCard, ProfileCardSlots } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
@@ -16,6 +21,7 @@ export type ProfileProps = {
   profileForm: ProfileFormValues
   validationSchema: SchemaOf<ProfileFormValues>
 
+  state: ProfileState
   actions: ProfileActions
   access: ProfileAccess
 }
@@ -29,6 +35,7 @@ export const Profile: FC<ProfileProps> = ({
   profileForm,
   validationSchema,
 
+  state,
   actions,
   access,
 }) => {
@@ -170,6 +177,7 @@ export const Profile: FC<ProfileProps> = ({
             <ProfileCard
               slots={profileCardSlots}
               form={form}
+              state={state}
               access={access}
               actions={actions}
               // editForm={editForm}

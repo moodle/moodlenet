@@ -1,5 +1,5 @@
 import { getCollectionsCardStoryProps, ProfileCollectionList } from '@moodlenet/collection/ui'
-import { href, Profile, useProfileCardStoryProps } from '@moodlenet/react-app/ui'
+import { href, Profile } from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, ProfileResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
@@ -28,9 +28,7 @@ type ProfileStory = ComponentStory<typeof Profile>
 export const LoggedOut = () => {
   const props = useProfileStoryProps({
     mainLayoutProps: MainLayoutLoggedOutStoryProps,
-    profileCardProps: useProfileCardStoryProps({
-      access: { isAuthenticated: false },
-    }),
+    access: { isAuthenticated: false },
     mainColumnItems: [
       {
         Item: () => (
@@ -38,7 +36,7 @@ export const LoggedOut = () => {
             isCreator={false}
             newResourceHref={href('Page/Resource/New')}
             resourceCardPropsList={getResourcesCardStoryProps(5, {
-              isAuthenticated: false,
+              access: { isAuthenticated: false },
             })}
           />
         ),
@@ -73,8 +71,6 @@ export const LoggedOut = () => {
         key: 'collection-card-list',
       },
     ],
-
-    access: { isAuthenticated: false },
   })
 
   return <Profile {...props} />
@@ -82,9 +78,7 @@ export const LoggedOut = () => {
 
 export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
-    profileCardProps: useProfileCardStoryProps({
-      access: { isAuthenticated: true },
-    }),
+    access: { isAuthenticated: true },
     mainColumnItems: [
       {
         Item: () => (
@@ -119,8 +113,6 @@ export const LoggedIn: ProfileStory = () => {
         key: 'collection-card-list',
       },
     ],
-
-    access: { isAuthenticated: true },
   })
 
   return <Profile {...props} />
@@ -128,9 +120,7 @@ export const LoggedIn: ProfileStory = () => {
 
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
-    profileCardProps: useProfileCardStoryProps({
-      props: { isCreator: true, canEdit: true, isApproved: true },
-    }),
+    access: { isAuthenticated: true, canEdit: true, isCreator: true },
     mainColumnItems: [
       {
         Item: () => (
@@ -138,8 +128,10 @@ export const Owner: ProfileStory = () => {
             isCreator={true}
             newResourceHref={href('Page/Resource/New')}
             resourceCardPropsList={getResourcesCardStoryProps(5, {
-              isCreator: true,
-              canEdit: true,
+              access: {
+                isCreator: true,
+                canEdit: true,
+              },
             })}
           />
         ),
@@ -165,7 +157,7 @@ export const Owner: ProfileStory = () => {
       {
         Item: () => (
           <ProfileCollectionList
-            isCreator={false}
+            isCreator={true}
             newCollectionHref={href('Page/Collection/New')}
             collectionCardPropsList={getCollectionsCardStoryProps(5, {
               access: {
@@ -178,7 +170,6 @@ export const Owner: ProfileStory = () => {
         key: 'collection-card-list',
       },
     ],
-    access: { isOwner: true, canEdit: true },
   })
 
   return <Profile {...props} />
@@ -186,7 +177,7 @@ export const Owner: ProfileStory = () => {
 
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
-    profileCardProps: useProfileCardStoryProps({ props: { isAdmin: true, canEdit: true } }),
+    access: { isAdmin: true, canEdit: true },
     mainColumnItems: [
       {
         Item: () => (
@@ -194,7 +185,7 @@ export const Admin: ProfileStory = () => {
             isCreator={false}
             newResourceHref={href('Page/Resource/New')}
             resourceCardPropsList={getResourcesCardStoryProps(5, {
-              canEdit: true,
+              access: { canEdit: true },
             })}
           />
         ),
@@ -231,10 +222,6 @@ export const Admin: ProfileStory = () => {
         key: 'collection-card-list',
       },
     ],
-    access: {
-      isCreator: true,
-      canEdit: true,
-    },
   })
   return <Profile {...props} />
 }

@@ -20,7 +20,12 @@ import {
   peopleFactory,
   randomIntFromInterval,
 } from '@moodlenet/component-library'
-import { ProfileAccess, ProfileActions, ProfileFormValues } from '@moodlenet/react-app/common'
+import {
+  ProfileAccess,
+  ProfileActions,
+  ProfileFormValues,
+  ProfileState,
+} from '@moodlenet/react-app/common'
 import { action } from '@storybook/addon-actions'
 import { mixed, object, SchemaOf, string } from 'yup'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
@@ -69,21 +74,24 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     footerRowItems: [],
   }
 
+  const state: ProfileState = {
+    followed: false,
+  }
+
   const actions: ProfileActions = {
     editProfile: async () => action('editing profile'),
-    followed: true,
     toggleFollow: action('toggle follow'),
   }
 
   const access: ProfileAccess = {
     isAuthenticated: true,
     canEdit: false,
+    isCreator: false,
     isAdmin: false,
-    isOwner: false,
   }
 
   const profileForm: ProfileFormValues = {
-    displayName: person ? person.title : '',
+    displayName: person ? person.displayName : '',
     aboutMe:
       'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
     organizationName: person && person.organization,
@@ -99,6 +107,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       sideColumnItems: [overallCard],
       profileCardSlots: profileCardSlots,
       profileForm: profileForm,
+      state: state,
       actions: actions,
       access: access,
       validationSchema: profileStoriesValidationSchema,

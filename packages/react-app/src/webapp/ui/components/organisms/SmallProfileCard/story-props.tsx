@@ -32,9 +32,12 @@ export const getSmallProfileCardFactory = (
         followed: false,
       },
       actions: {
+        editProfile: action('edit profile'),
         toggleFollow: action('toogleFollow'),
       },
       access: {
+        isAdmin: false,
+        canEdit: false,
         isCreator: false,
         isAuthenticated: false,
       },
