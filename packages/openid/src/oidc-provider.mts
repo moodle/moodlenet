@@ -1,6 +1,6 @@
 import { verifyClientSession } from '@moodlenet/authentication-manager/server'
+import { instanceDomain } from '@moodlenet/core'
 import { jwt } from '@moodlenet/crypto/server'
-import { getHttpBaseUrl } from '@moodlenet/http-server/server'
 import Provider, { Configuration } from 'oidc-provider'
 import { inspect } from 'util'
 
@@ -96,7 +96,7 @@ const configuration: Configuration = {
 }
 
 //export const provider = new Provider('http://issuerdomain.com', configuration)
-export const provider = new Provider(await getHttpBaseUrl(), configuration)
+export const provider = new Provider(instanceDomain, configuration)
 
 provider.use((ctx, next) => {
   console.log(ctx.path, inspect({ ctx }, true, 10, true))

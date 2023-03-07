@@ -1,7 +1,7 @@
 import { /* ensureDocumentCollection,  */ getMyDB } from '@moodlenet/arangodb/server'
 import { mountApp } from '@moodlenet/http-server/server'
+import { provider } from './oidc-provider.mjs'
 import { shell } from './shell.mjs'
-import { provider } from './xx/provider.mjs'
 // import { DataType } from './types/storeTypes.mjs'
 
 export * from './lib.mjs'
