@@ -28,8 +28,10 @@ export const getSmallProfileCardFactory = (
         organizationName: profile?.organization ?? '',
         username: profile?.username ?? '',
       },
-      actions: {
+      state: {
         followed: false,
+      },
+      actions: {
         toggleFollow: action('toogleFollow'),
       },
       access: {

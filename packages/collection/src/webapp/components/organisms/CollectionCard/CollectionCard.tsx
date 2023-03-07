@@ -1,40 +1,15 @@
 import { Bookmark, BookmarkBorder, FilterNone, PermIdentity, Person } from '@material-ui/icons'
-import {
-  AddonItem,
-  Card,
-  Href,
-  isEllipsisActive,
-  TertiaryButton,
-} from '@moodlenet/component-library'
+import { AddonItem, Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { Public } from '@mui/icons-material'
-import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
+import {
+  CollectionCardAccess,
+  CollectionCardActions,
+  CollectionCardData,
+  CollectionCardState,
+} from '../../../../common.mjs'
 import './CollectionCard.scss'
-
-export type CollectionCardData = {
-  collectionId: string
-  imageUrl?: string | null
-  title: string
-  collectionHref: Href
-}
-
-export type CollectionCardActions = {
-  publish: () => void
-  isPublished: boolean
-  setIsPublished: Dispatch<SetStateAction<boolean>>
-  bookmarked: boolean
-  followed: boolean
-  numFollowers: number
-  numResource: number
-  toggleFollow: () => unknown
-  toggleBookmark: () => unknown
-}
-
-export type CollectionCardAccess = {
-  isAuthenticated: boolean
-  canEdit: boolean
-  isCreator: boolean
-}
 
 export type CollectionCardProps = {
   mainColumnItems?: AddonItem[]
@@ -42,6 +17,7 @@ export type CollectionCardProps = {
   topRightItems?: AddonItem[]
 
   data: CollectionCardData
+  state: CollectionCardState
   actions: CollectionCardActions
   access: CollectionCardAccess
 }
@@ -52,21 +28,13 @@ export const CollectionCard: FC<CollectionCardProps> = ({
   topRightItems,
 
   data,
+  state,
   actions,
   access,
 }) => {
   const { collectionId, imageUrl, title, collectionHref } = data
-  const {
-    publish,
-    isPublished,
-    setIsPublished,
-    bookmarked,
-    followed,
-    numFollowers,
-    numResource,
-    toggleFollow,
-    toggleBookmark,
-  } = actions
+  const { isPublished, bookmarked, followed, numFollowers, numResource } = state
+  const { publish, setIsPublished, toggleFollow, toggleBookmark } = actions
   const { isAuthenticated, canEdit, isCreator } = access
 
   const background = {

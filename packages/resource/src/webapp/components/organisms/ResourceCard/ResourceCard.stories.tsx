@@ -1,6 +1,9 @@
+import { overrideDeep } from '@moodlenet/component-library/common'
 import { ContentBackupImages, href, TagListStory } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { PartialDeep } from 'type-fest'
+import { ResourceCardActions, ResourceCardData, ResourceCardState } from '../../../../common.mjs'
 import ResourceCard, { ResourceCardProps } from './ResourceCard.js'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
@@ -16,6 +19,8 @@ const meta: ComponentMeta<typeof ResourceCard> = {
     'ResourceCardOwnerStoryProps',
     'ResourceCardOwnerBookmarkedStoryProps',
     'ResourceCardOwnerPrivateStoryProps',
+    'ResourceCardVerticalLoggedInStoryProps',
+    'ResourceCardVerticalLoggedOutStoryProps',
   ],
   decorators: [
     Story => (
@@ -27,66 +32,103 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 }
 
 export const getResourceCardStoryProps = (
-  i?: 0 | 1,
-  overrides?: Partial<ResourceCardProps>,
+  overrides?: PartialDeep<ResourceCardProps>,
 ): ResourceCardProps => {
-  return {
+  const data: ResourceCardData = {
     resourceId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
     tags: TagListStory,
-    isCreator: false,
     title: `Why the  ${
       Math.random() < 0.5 ? 'tropical rainforests are' : 'the oceans are'
     } the world's most important ecosystems`,
     image:
-      i === 0
-        ? 'https://images.unsplash.com/photo-1442120108414-42e7ea50d0b5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1249&q=80'
-        : null,
+      'https://images.unsplash.com/photo-1442120108414-42e7ea50d0b5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1249&q=80',
     type: 'Video',
     resourceHomeHref: href('Pages/Resource/Logged In'),
-    isAuthenticated: true,
-    bookmarked: false,
-    liked: false,
     numLikes: 23,
-    isPublished: true,
-    canEdit: false,
-    publish: action('publish resource'),
-    setIsPublished: action('publish resource'),
     owner: {
       profileHref: href('Pages/Profile/Logged In'),
       avatar:
         'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80',
       displayName: 'Karl Phosler',
     },
-    ...overrides,
+    isPublished: true,
   }
+  const state: ResourceCardState = {
+    bookmarked: false,
+    liked: false,
+    isSelected: false,
+    selectionMode: false,
+  }
+  const actions: ResourceCardActions = {
+    toggleLike: action('toggle like'),
+    toggleBookmark: action('toggle bookmark'),
+    publish: action('publish resource'),
+    setIsPublished: action('set is published'),
+  }
+  const access = {
+    canEdit: false,
+    isCreator: false,
+    isAuthenticated: true,
+  }
+  return overrideDeep<ResourceCardProps>(
+    {
+      data,
+      state,
+      actions,
+      access,
+    },
+    overrides,
+  )
 }
 
-export const ResourceCardLoggedInStoryProps: ResourceCardProps = {
-  ...getResourceCardStoryProps(),
-}
+export const ResourceCardLoggedInStoryProps: ResourceCardProps = getResourceCardStoryProps()
 
-export const ResourceCardLoggedOutStoryProps = (i?: 0 | 1): ResourceCardProps => {
-  return {
-    ...getResourceCardStoryProps(i),
+export const ResourceCardLoggedOutStoryProps: ResourceCardProps = getResourceCardStoryProps({
+  access: {
     isAuthenticated: false,
-  }
-}
+  },
+})
 
-export const ResourceCardOwnerStoryProps: ResourceCardProps = {
-  ...ResourceCardLoggedInStoryProps,
-  isCreator: true,
-}
+export const ResourceCardOwnerStoryProps: ResourceCardProps = getResourceCardStoryProps({
+  access: {
+    isCreator: true,
+  },
+})
 
-export const ResourceCardOwnerPrivateStoryProps: ResourceCardProps = {
-  ...ResourceCardLoggedInStoryProps,
-  isCreator: true,
-  isPublished: false,
-}
+export const ResourceCardOwnerPrivateStoryProps: ResourceCardProps = getResourceCardStoryProps({
+  data: {
+    isPublished: false,
+  },
+  access: {
+    isCreator: true,
+  },
+})
 
-export const ResourceCardOwnerBookmarkedStoryProps: ResourceCardProps = {
+export const ResourceCardOwnerBookmarkedStoryProps: ResourceCardProps = getResourceCardStoryProps({
   ...ResourceCardOwnerStoryProps,
-  bookmarked: true,
-}
+  state: {
+    bookmarked: true,
+  },
+  access: {},
+})
+
+export const ResourceCardVerticalLoggedInStoryProps: ResourceCardProps = getResourceCardStoryProps({
+  ...ResourceCardOwnerStoryProps,
+  orientation: 'vertical',
+  state: {
+    liked: true,
+  },
+  access: {},
+})
+
+export const ResourceCardVerticalLoggedOutStoryProps: ResourceCardProps = getResourceCardStoryProps(
+  {
+    ...ResourceCardLoggedOutStoryProps,
+    orientation: 'vertical',
+    state: {},
+    access: {},
+  },
+)
 
 const ResourceCardStory: ComponentStory<typeof ResourceCard> = args => <ResourceCard {...args} />
 
@@ -94,7 +136,7 @@ export const LoggedIn = ResourceCardStory.bind({})
 LoggedIn.args = ResourceCardLoggedInStoryProps
 
 export const LoggedOut = ResourceCardStory.bind({})
-LoggedOut.args = ResourceCardLoggedOutStoryProps()
+LoggedOut.args = ResourceCardLoggedOutStoryProps
 
 export const Owner = ResourceCardStory.bind({})
 Owner.args = ResourceCardOwnerStoryProps
@@ -106,31 +148,24 @@ export const Private = ResourceCardStory.bind({})
 Private.args = ResourceCardOwnerPrivateStoryProps
 
 export const VerticalLoggedIn = ResourceCardStory.bind({})
-VerticalLoggedIn.args = {
-  ...ResourceCardLoggedInStoryProps,
-  orientation: 'vertical',
-  liked: true,
-}
+VerticalLoggedIn.args = ResourceCardVerticalLoggedInStoryProps
 
 export const VerticalLoggedOut = ResourceCardStory.bind({})
-VerticalLoggedOut.args = {
-  ...ResourceCardLoggedOutStoryProps,
-  orientation: 'vertical',
-}
+VerticalLoggedOut.args = ResourceCardVerticalLoggedOutStoryProps
 
 export const VerticalOwner = ResourceCardStory.bind({})
 VerticalOwner.args = { ...ResourceCardOwnerStoryProps, orientation: 'vertical' }
 
 export const VerticalPublic = ResourceCardStory.bind({})
-VerticalPublic.args = {
+VerticalPublic.args = getResourceCardStoryProps({
   ...ResourceCardOwnerStoryProps,
   orientation: 'vertical',
-}
+})
 
 export const VerticalPrivate = ResourceCardStory.bind({})
-VerticalPrivate.args = {
+VerticalPrivate.args = getResourceCardStoryProps({
   ...ResourceCardOwnerPrivateStoryProps,
   orientation: 'vertical',
-}
+})
 
 export default meta

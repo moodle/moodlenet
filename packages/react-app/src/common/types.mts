@@ -1,6 +1,7 @@
 import { BaseStyleType } from '@moodlenet/component-library'
 import type { PackageInfo, PkgExpose, PkgIdentifier } from '@moodlenet/core'
 import { CSSProperties } from 'react'
+import { Href } from '../webapp/ui.mjs'
 
 export type WebPkgDeps = {
   [k in string]: PkgExpose
@@ -67,4 +68,27 @@ export type AssetInfo = {
 export type Credits = {
   owner: { url: string; name: string }
   provider?: { name: string; url: string }
+}
+
+export type ProfileCardData = {
+  userId: string
+  backgroundUrl: string | null
+  avatarUrl: string | null
+  displayName: string
+  username: string
+  organizationName: string
+  profileHref: Href
+}
+
+export type ProfileCardState = {
+  followed: boolean
+}
+
+export type ProfileCardActions = {
+  toggleFollow(): unknown
+}
+
+export type ProfileCardAccess = {
+  isCreator: boolean
+  isAuthenticated: boolean
 }

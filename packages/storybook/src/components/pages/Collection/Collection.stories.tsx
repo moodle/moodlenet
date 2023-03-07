@@ -1,6 +1,5 @@
 import { Collection } from '@moodlenet/collection/ui'
 import { getResourcesCardStoryProps } from '@moodlenet/resource/ui'
-import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useState } from 'react'
 import { useCollectionStoryProps } from './stories-props.js'
@@ -28,68 +27,31 @@ type CollectionStory = ComponentStory<typeof Collection>
 
 export const LoggedOut: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    collection: {},
+    data: {},
+    state: {},
     actions: {},
     access: {
       isAuthenticated: false,
     },
     resourceCardPropsList: getResourcesCardStoryProps(15, {
-      isAuthenticated: false,
+      access: {
+        isAuthenticated: false,
+      },
       orientation: 'horizontal',
     }),
   })
-  //     {
-  //     props: {
-  //       headerPageTemplateProps: {
-  //         isAuthenticated: false,
-  //         headerPageProps: {
-  //           // isAuthenticated: false,
-  //           headerProps: {
-  //             ...HeaderLoggedOutStoryProps,
-  //             me: null,
-  //           },
-  //           // subHeaderProps: {
-  //           //   tags: [],
-  //           // },
-  //         },
-  //         mainPageWrapperProps: {
-  //           userAcceptsPolicies: null,
-  //           cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-  //         },
-  //       },
-  //       collectionCardPropsList: [
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //       ],
-  //       CollectionCardPropsList: [
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //         CollectionCardLoggedOutStoryProps(
-  //           randomIntFromInterval(0, 1) === 0 ? 0 : 1
-  //         ),
-  //       ],
-  //     },
-  //   }
-  //   )
 
   return <Collection {...props} />
 }
 
 export const LoggedIn: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    collection: {},
-    actions: {
+    data: {},
+    state: {
       bookmarked: true,
       followed: true,
     },
+    actions: {},
     access: {},
   })
 
@@ -98,21 +60,25 @@ export const LoggedIn: CollectionStory = () => {
 
 export const Owner: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    collection: {},
-    actions: {
+    data: {
       isPublished: false,
+    },
+    state: {
       bookmarked: true,
       // isSaving: true,
       isSaving: false,
       // isSaved: true,
     },
+    actions: {},
     access: {
       isCreator: true,
       canEdit: true,
     },
     resourceCardPropsList: getResourcesCardStoryProps(15, {
-      canEdit: true,
-      isCreator: true,
+      access: {
+        canEdit: true,
+        isCreator: true,
+      },
       orientation: 'horizontal',
     }),
   })
@@ -146,18 +112,21 @@ export const New: CollectionStory = () => {
   // }, [isPublished])
 
   const props = useCollectionStoryProps({
-    collection: {
+    data: {
       mnUrl: 'moodle.com',
+      isPublished,
+      isWaitingForApproval: false,
     },
     collectionForm: NewCollectionProps,
-    actions: {
+    state: {
       bookmarked: true,
       followed: true,
       // isSaving: true,
       isSaving: false,
       // isSaved: true,
-      isWaitingForApproval: false,
-      setIsPublished: action('set is published'),
+    },
+    actions: {
+      setIsPublished,
     },
     access: {
       isCreator: true,
@@ -171,7 +140,8 @@ export const New: CollectionStory = () => {
 
 export const Admin: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    collection: {},
+    data: {},
+    state: {},
     actions: {},
     access: {
       isAdmin: true,

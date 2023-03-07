@@ -28,8 +28,9 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CollectionAccess,
   CollectionActions,
+  Collectiondata,
   CollectionFormValues,
-  CollectionType,
+  CollectionState,
 } from '../../../../common/types.mjs'
 import { UploadImage } from '../UploadImage/UploadImage.js'
 import './MainCollectionCard.scss'
@@ -46,9 +47,10 @@ export type MainCollectionCardSlots = {
 export type MainCollectionCardProps = {
   slots: MainCollectionCardSlots
 
-  collection: CollectionType
+  data: Collectiondata
   form: FormikHandle<CollectionFormValues>
 
+  state: CollectionState
   actions: CollectionActions
   access: CollectionAccess
 
@@ -59,9 +61,10 @@ export type MainCollectionCardProps = {
 export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   slots,
 
-  collection,
+  data,
   form,
 
+  state,
   actions,
   access,
 
@@ -77,20 +80,10 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { id, mnUrl, numFollowers } = collection
+  const { id, mnUrl, numFollowers, isPublished, isWaitingForApproval } = data
 
-  const {
-    isPublished,
-    bookmarked,
-    toggleBookmark,
-    followed,
-    toggleFollow,
-    setIsPublished,
-    deleteCollection,
-    isSaved,
-    isSaving,
-    isWaitingForApproval,
-  } = actions
+  const { bookmarked, followed, isSaved, isSaving } = state
+  const { toggleBookmark, toggleFollow, setIsPublished, deleteCollection } = actions
 
   const { canEdit, isAuthenticated, isCreator } = access
   const [isToDelete, setIsToDelete] = useState<boolean>(false)

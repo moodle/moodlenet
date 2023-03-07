@@ -4,7 +4,8 @@ import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
-import { CollectionCard, CollectionCardData, CollectionCardProps } from './CollectionCard.js'
+import { CollectionCardData } from '../../../../common.mjs'
+import { CollectionCard, CollectionCardProps } from './CollectionCard.js'
 
 const meta: ComponentMeta<typeof CollectionCard> = {
   title: 'Molecules/CollectionCard',
@@ -40,12 +41,15 @@ export const getCollectionCardStoryProps = (
     collectionHref: href('Pages/Collection/Logged In'),
   }
 
-  const actions = {
+  const state = {
     bookmarked: false,
     followed: false,
     numFollowers: 32,
     numResource: 5,
     isPublished: true,
+  }
+
+  const actions = {
     publish: action('publish resource'),
     setIsPublished: action('set is published'),
     toggleFollow: linkTo('Molecules/CollectionCard', 'followed'),
@@ -62,6 +66,7 @@ export const getCollectionCardStoryProps = (
     {
       mainColumnItems: [],
       data: data,
+      state: state,
       actions: actions,
       access: access,
     },
@@ -76,8 +81,10 @@ export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
 export const CollectionCardfollowedStoryProps: CollectionCardProps = {
   ...getCollectionCardStoryProps({
     ...CollectionCardLoggedInStoryProps,
-    actions: {
+    state: {
       followed: true,
+    },
+    actions: {
       toggleFollow: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working}
     },
   }),
@@ -86,8 +93,10 @@ export const CollectionCardfollowedStoryProps: CollectionCardProps = {
 export const CollectionCardBookmarkedStoryProps: CollectionCardProps = {
   ...getCollectionCardStoryProps({
     ...CollectionCardLoggedInStoryProps,
-    actions: {
+    state: {
       bookmarked: true,
+    },
+    actions: {
       toggleBookmark: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working}
     },
   }),
@@ -99,6 +108,7 @@ export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {
     data: {
       collectionHref: href('Pages/Collection/Logged Out'),
     },
+    state: {},
     actions: {},
     access: {
       isAuthenticated: false,
@@ -112,10 +122,11 @@ export const CollectionCardOwnerStoryProps: CollectionCardProps = {
     data: {
       collectionHref: href('Pages/Collection/Owner'),
     },
-    actions: {
+    state: {
       followed: true,
       isPublished: true,
     },
+    actions: {},
     access: {
       isCreator: true,
     },
@@ -126,9 +137,10 @@ export const CollectionCardOwnerPrivateStoryProps: CollectionCardProps = {
   ...getCollectionCardStoryProps({
     ...CollectionCardOwnerStoryProps,
     data: {},
-    actions: {
+    state: {
       isPublished: false,
     },
+    actions: {},
     access: {},
   }),
 }
