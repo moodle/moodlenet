@@ -100,7 +100,7 @@ async function defaultConfigJson() {
     {
       pkgs: {
         '@moodlenet/core': {
-          instanceDomain: 'localhost',
+          instanceDomain: 'http://localhost:8080',
           npmRegistry,
         },
         '@moodlenet/crypto': {
@@ -118,7 +118,6 @@ async function defaultConfigJson() {
         },
         '@moodlenet/http-server': {
           port: 8080,
-          protocol: 'http',
         },
         '@moodlenet/email-service': {
           nodemailerTransport: {
