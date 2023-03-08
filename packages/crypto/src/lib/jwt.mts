@@ -1,28 +1,55 @@
 import { instanceDomain } from '@moodlenet/core'
 import * as jose from 'jose'
 import { env } from '../init.mjs'
+import { shell } from '../shell.mjs'
+import { JwtPayload, JwtStdClaims } from '../types.mjs'
 
 const alg = env.keys.alg
 
-export async function sign(payload: any, opts?: jose.SignOptions) {
-  const jwt = new jose.SignJWT(payload)
+export async function sign(_payload: JwtPayload, stdClaims: JwtStdClaims, opts?: jose.SignOptions) {
+  const payload = _payload
+  const caller = shell.assertCallInitiator()
+  if (stdClaims.scope !== undefined) {
+    payload.scope = [stdClaims.scope].flat().join(' ')
+  }
+
+  const signingJwt = new jose.SignJWT(payload)
     .setProtectedHeader({ alg })
+    .setExpirationTime(stdClaims.expirationTime)
     .setIssuer(instanceDomain)
-    .setIssuedAt()
-    .setAudience('urn:example:audience')
-    .setExpirationTime('2w')
-    .sign(env.keyLikes.private, opts)
+    .setAudience(caller.pkgId.name)
+
+  if (stdClaims.issuedAt !== undefined) {
+    signingJwt.setIssuedAt(stdClaims.issuedAt)
+  }
+  if (stdClaims.subject !== undefined) {
+    signingJwt.setSubject(stdClaims.subject)
+  }
+  if (stdClaims.jti !== undefined) {
+    signingJwt.setJti(stdClaims.jti)
+  }
+  if (stdClaims.notBefore !== undefined) {
+    signingJwt.setNotBefore(stdClaims.notBefore)
+  }
+  const jwt = await signingJwt.sign(env.keyLikes.private, opts)
+
   return jwt
 }
 
 export async function verify(
   jwt: string,
-  opts?: jose.JWTVerifyOptions,
+  opts?: Omit<jose.JWTVerifyOptions, 'issuer' | 'audience'>,
 ): Promise<{
   payload: jose.JWTPayload
 }> {
-  const jwtVerifyResult = await jose.jwtVerify(jwt, env.keyLikes.private, opts)
+  const caller = shell.assertCallInitiator()
+  const jwtVerifyResult = await jose.jwtVerify(jwt, env.keyLikes.private, {
+    ...opts,
+    issuer: instanceDomain,
+    audience: caller.pkgId.name,
+  })
   const payload = jwtVerifyResult.payload
+  console.log({ verified: payload })
   return { payload }
 }
 
