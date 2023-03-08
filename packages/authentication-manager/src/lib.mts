@@ -119,13 +119,16 @@ export async function setCurrentClientSessionToken(token: string | null | undefi
 }
 
 async function signClientSession(clientSession: ClientSession): Promise<SessionToken> {
-  const sessionToken = await jwt.sign(clientSession)
+  const sessionToken = await shell.call(jwt.sign)(clientSession, {
+    expirationTime: '2w',
+    scope: 'full-user',
+  })
   return sessionToken
 }
 
-async function verifyClientSession(token: SessionToken): Promise<ClientSession | null> {
+export async function verifyClientSession(token: SessionToken): Promise<ClientSession | null> {
   try {
-    const decryptRes = await jwt.verify(token)
+    const decryptRes = await shell.call(jwt.verify)(token)
     const clientSession = decryptRes.payload
     assert(isClientSession(clientSession))
     return clientSession

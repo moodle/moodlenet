@@ -4,9 +4,9 @@ import {
   SessionToken,
   setCurrentClientSessionToken,
 } from '@moodlenet/authentication-manager/server'
+import { instanceDomain } from '@moodlenet/core'
 import * as crypto from '@moodlenet/crypto/server'
 import { send } from '@moodlenet/email-service/server'
-import { getHttpBaseUrl } from '@moodlenet/http-server/server'
 import { createWebUser } from '@moodlenet/react-app/server'
 import assert from 'assert'
 import { shell } from './shell.mjs'
@@ -52,14 +52,14 @@ export async function signup(
       displayName: req.displayName,
     },
   }
-  const confirmEmailToken = await shell.call(crypto.jwt.sign)(confirmEmailPayload)
+  const confirmEmailToken = await shell.call(crypto.jwt.sign)(confirmEmailPayload, {
+    expirationTime: '1w',
+  })
 
   shell.call(send)({
     emailObj: {
       to: req.email,
-      text: `hey ${
-        req.displayName
-      } confirm your email on ${await getHttpBaseUrl()}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+      text: `hey ${req.displayName} confirm your email on ${instanceDomain}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
     },
   })
   return { success: true }
