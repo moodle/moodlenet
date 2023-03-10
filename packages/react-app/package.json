@@ -147,7 +147,6 @@
     "react-refresh": "^0.13.0",
     "react-refresh-typescript": "^2.0.5",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "^5.0.1",
     "resolve-typescript-plugin": "^1.2.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
