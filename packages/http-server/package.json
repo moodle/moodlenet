@@ -35,14 +35,10 @@
     "multer": "^1.4.5-lts.1"
   },
   "peerDependencies": {
-    "@moodlenet/authentication-manager": "^0.2.0",
-    "@moodlenet/core": "^0.2.0",
-    "@moodlenet/crypto": "^0.2.0"
+    "@moodlenet/core": "^0.2.0"
   },
   "devDependencies": {
-    "@moodlenet/authentication-manager": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
-    "@moodlenet/crypto": "^0.2.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.14",
     "@types/multer": "^1.4.7",

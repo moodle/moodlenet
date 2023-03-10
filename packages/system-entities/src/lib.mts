@@ -1,14 +1,14 @@
 import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
-import { getCurrentClientSession, ROOT_USER_KEY } from '@moodlenet/authentication-manager/server'
-import type { PkgIdentifier } from '@moodlenet/core'
+import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
 import { pkgMetaVar } from './access-control-lib/aql.mjs'
-import { db } from './init.mjs'
+import { db, env } from './init.mjs'
 import { getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
 import {
   AccessControllers,
+  AnonUser,
   ByKeyOrId,
   EntityClass,
   EntityCollectionDef,
@@ -18,8 +18,12 @@ import {
   EntityCollectionHandles,
   EntityData,
   EntityDocument,
+  PkgUser,
+  RootUser,
   SomeEntityDataType,
+  SystemUser,
 } from './types.mjs'
+import { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
 
 export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
   [name in keyof Defs]: EntityCollectionDefOpts
@@ -77,9 +81,9 @@ export async function registerEntity<EntityDataType extends SomeEntityDataType>(
   }
 }
 export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataType>) {
-  const clientSession = await getCurrentClientSession()
+  const currentUser = await getCurrentSystemUser()
 
-  if (clientSession?.isRoot) {
+  if (currentUser.type === 'root') {
     return true
   }
 
@@ -99,12 +103,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   newEntityData: EntityDataType,
 ) {
-  const clientSession = await getCurrentClientSession()
-  if (!clientSession) {
-    return {
-      accessControl: false,
-    } as const
-  }
+  const currentUser = await getCurrentSystemUser()
 
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
@@ -113,8 +112,6 @@ export async function create<EntityDataType extends SomeEntityDataType>(
     } as const
   }
 
-  const userKey = clientSession.isRoot ? ROOT_USER_KEY : clientSession.user._key
-
   const now = new Date().toISOString()
 
   const collection = await getEntityCollection(entityClass)
@@ -122,7 +119,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
     {
       ...newEntityData,
       _meta: {
-        creator: userKey,
+        creator: currentUser,
         updated: now,
         created: now,
         entityClass,
@@ -213,13 +210,11 @@ export async function queryEntities<EntityDataType extends SomeEntityDataType>(
   opts?: Partial<{ opBody: string; noFilterRead: boolean }>,
 ) {
   const entityCollectionName = getEntityCollectionName(entityClass)
-  const clientSession = await getCurrentClientSession()
-  const { aqlAccessControlsObjString } = await getAQLAccessControlObjectDefString(
-    clientSession?.isRoot,
-  )
+  const currentUser = await getCurrentSystemUser()
+  const { aqlAccessControlsObjString } = await getAQLAccessControlObjectDefString(currentUser)
 
   const q = `
-    LET clientSession = @clientSession
+    LET currentUser = @currentUser
     FOR entity in @@collection
     ${queryBody}
     LET accessControls = ${aqlAccessControlsObjString}
@@ -243,8 +238,8 @@ export async function queryEntities<EntityDataType extends SomeEntityDataType>(
     }
 `
 
-  const bindVars = { '@collection': entityCollectionName, clientSession }
-  console.log(q, bindVars)
+  const bindVars = { '@collection': entityCollectionName, currentUser }
+  console.log(q, inspect({ currentUser }, false, 10, true))
   const updateResponseCursor = await db.query<{
     entity: EntityDocument<EntityDataType>
     access: {
@@ -320,8 +315,8 @@ export function includesAnySameClass(
 //   return targets.map(target => includesSameClass(target, someClasses)).includes(true)
 // }
 
-async function getAQLAccessControlObjectDefString(rootAccess = false) {
-  if (rootAccess) {
+async function getAQLAccessControlObjectDefString(systemUser: SystemUser) {
+  if (systemUser.type === 'root') {
     return {
       aqlAccessControlsObjString: `{
         r: [ true ] /* ROOT ACCESS */,
@@ -360,4 +355,50 @@ async function getAqlOperationAccessControlArrayElemsString(op: 'r' | 'u' | 'd')
   return {
     aql,
   }
+}
+
+export async function setCurrentUserFetch(fetchCurrentUser: FetchCurrentUser) {
+  shell.myAsyncCtx.set(() => ({
+    type: 'CurrentUserNotFetchedCtx',
+    fetchCurrentUser,
+  }))
+}
+
+export const ANON_SYSTEM_USER: AnonUser = { type: 'anon' }
+export const ROOT_SYSTEM_USER: RootUser = { type: 'root' }
+
+export async function getCurrentSystemUser() {
+  const currentCtx = shell.myAsyncCtx.get()
+  if (!currentCtx) {
+    return ANON_SYSTEM_USER
+  }
+  if (currentCtx.type === 'CurrentUserFetchedCtx') {
+    return currentCtx.currentUser
+  }
+  const currentUser = await currentCtx.fetchCurrentUser()
+  if (!currentUser) {
+    return ANON_SYSTEM_USER
+  }
+  const currentUserFetchedCtx: CurrentUserFetchedCtx = {
+    type: 'CurrentUserFetchedCtx',
+    currentUser,
+  }
+  shell.myAsyncCtx.set(() => currentUserFetchedCtx)
+  return currentUser
+}
+
+export async function matchRootPassword(matchPassword: string): Promise<boolean> {
+  if (!(env.rootPassword && matchPassword)) {
+    return false
+  }
+  return env.rootPassword === matchPassword
+}
+
+export async function setPkgCurrentUser() {
+  const { pkgId } = shell.assertCallInitiator()
+  const currentPkgUser: PkgUser = {
+    type: 'pkg',
+    pkgName: pkgId.name,
+  }
+  shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
 }

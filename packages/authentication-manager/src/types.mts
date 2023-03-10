@@ -13,4 +13,6 @@ export type UserData = {
   created: string
 }
 
-export type RootUserKey = '__ROOT_USER_KEY__'
+export type AuthAsyncCtx = {
+  currentUserKey?: UserDocument['_key']
+}

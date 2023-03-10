@@ -12,7 +12,7 @@ type IconType = {
 }
 const IconContainer: FC = () => {
   const { clientSessionData } = useContext(AuthCtx)
-  if (!clientSessionData?.user) {
+  if (!clientSessionData?.myProfile) {
     return <></>
   }
   const iconUrl = '' // TODO: should use avatarUrl from clientSessionData?.myProfile

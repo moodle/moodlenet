@@ -1,5 +1,4 @@
 import type { PkgIdentifier, RpcArgs } from '@moodlenet/core'
-export const SESSION_TOKEN_COOKIE_NAME = 'mn-session'
 export const BASE_PKG_URL = '/.pkg'
 export type HttpRpcResponse = { response: any }
 

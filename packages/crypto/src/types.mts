@@ -1,15 +1,8 @@
-import { JWTVerifyOptions } from 'jose'
+import * as jose from 'jose'
 
-export type Configs = {
-  keys: {
-    alg: string
-    type: string
-    private: string
-    public: string
-  }
-}
+export type JwtToken = string
 
-export type JwtPayload = Record<string, unknown>
+export type JwtPayloadCustomClaims = Record<string, unknown>
 export type JwtStdClaims = {
   expirationTime: number | string
   // audience?: string | string[]
@@ -20,4 +13,9 @@ export type JwtStdClaims = {
   issuedAt?: number
 }
 
-export type JwtVerifyOpts = Omit<JWTVerifyOptions, 'algorithms'>
+export type JwtVerifyOpts = Omit<jose.JWTVerifyOptions, 'algorithms'>
+
+export type JwtVerifyResult<CustomClaims extends JwtPayloadCustomClaims> = {
+  protectedHeader: jose.JWTVerifyResult['protectedHeader']
+  payload: CustomClaims & jose.JWTVerifyResult['payload']
+}

@@ -1,11 +1,47 @@
 import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
-import { ByKeyOrId, create, get, patch } from '@moodlenet/system-entities/server'
-import assert from 'assert'
+import { ByKeyOrId, create, get, patch, setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import { ClientSessionDataRpc } from '../common/types.mjs'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
 import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.mjs'
+import {
+  setCurrentVerifiedJwtToken,
+  signWebUserJwt,
+  verifyCurrentTokenCtx,
+} from './web-user-auth-lib.mjs'
 
-export async function createWebUser(createRequest: CreateRequest) {
-  const { contacts, isAdmin, userKey, ...profileData } = createRequest
+export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDataRpc | undefined> {
+  const verifiedCtx = await verifyCurrentTokenCtx()
+  console.log('getCurrentClientSessionDataRpc', { verifiedCtx })
+  if (!verifiedCtx) {
+    return
+  }
+  const { currentWebUser } = verifiedCtx
+  if (currentWebUser.isRoot) {
+    return {
+      isRoot: true,
+    }
+  }
+  // await setCurrentVerifiedJwtToken(verifiedCtx, false)
+
+  const myProfile = await getProfile({ _key: currentWebUser.profileKey })
+  if (!myProfile) {
+    //FIXME: throw error ?
+    return
+  }
+
+  return {
+    isAdmin: currentWebUser.isAdmin,
+    isRoot: false,
+    myProfile,
+  }
+}
+
+type CreateOpts = {
+  setAsCurrentUser: boolean
+}
+export async function createWebUser(createRequest: CreateRequest, opts?: Partial<CreateOpts>) {
+  const { contacts, isAdmin, ...profileData } = createRequest
+  await setPkgCurrentUser()
   const createResult = await create(WebUserProfile.entityClass, profileData)
 
   if (!createResult.accessControl) {
@@ -18,12 +54,22 @@ export async function createWebUser(createRequest: CreateRequest) {
     profileKey: newProfile._key,
     displayName: newProfile.displayName,
     isAdmin,
-    userKey,
     contacts,
   }
 
   const { new: newWebUser } = await WebUserCollection.save(webUserData, { returnNew: true })
-  assert(newWebUser)
+
+  if (!newWebUser) {
+    return
+  }
+  if (opts?.setAsCurrentUser) {
+    const jwtToken = await signWebUserJwt({
+      isAdmin,
+      webUserKey: newWebUser._key,
+      profileKey: newProfile._key,
+    })
+    setCurrentVerifiedJwtToken(jwtToken, true)
+  }
   return newWebUser
 }
 
@@ -34,7 +80,7 @@ export async function editWebUserProfile(
   const mUpdated = await patch(WebUserProfile.entityClass, byKeyOrId, updateWithData)
 
   if (!mUpdated) {
-    return undefined
+    return
   }
   const { old: oldData, new: newData } = mUpdated
   const displayNameChanged = newData.displayName && oldData.displayName !== newData.displayName
@@ -45,6 +91,20 @@ export async function editWebUserProfile(
   return newData
 }
 
+export async function setCurrentWebUser(by: { profileKey: string } | { userKey: string }) {
+  const webUser = await getWebUser(by)
+  if (!webUser) {
+    return false
+  }
+  const jwtToken = await signWebUserJwt({
+    isAdmin: webUser.isAdmin,
+    webUserKey: webUser._key,
+    profileKey: webUser.profileKey,
+  })
+  await setCurrentVerifiedJwtToken(jwtToken, true)
+  return true
+}
+
 export async function getWebUser(
   by: { profileKey: string } | { userKey: string },
 ): Promise<(WebUserDataType & DocumentMetadata) | undefined> {
@@ -53,7 +113,7 @@ export async function getWebUser(
   const foundUsersCursor = await db.query<WebUserDataType & DocumentMetadata>(
     `
       FOR user in @@WebUserCollection
-        FILTER user.${byUserKey ? 'userKey' : 'profileKey'} == @key
+        FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
         LIMIT 1
       RETURN user
     `,
@@ -73,7 +133,7 @@ export async function patchWebUser(
   const patchedCursor = await db.query(
     `
       FOR user in @@WebUserCollection
-        FILTER user.${byUserKey ? 'userKey' : 'profileKey'} == @key
+        FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
         LIMIT 1
         UPDATE user
         //! ///////////////////////////////WITH ${typeof patch === 'string' ? patch : '@patch'} 

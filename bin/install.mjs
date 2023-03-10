@@ -124,7 +124,7 @@ async function defaultConfigJson() {
             jsonTransport: true,
           },
         },
-        '@moodlenet/authentication-manager': {
+        '@moodlenet/system-entities': {
           rootPassword: 'root',
         },
       },

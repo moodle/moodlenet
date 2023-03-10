@@ -40,13 +40,13 @@ export const RootLoginBody: FC = () => {
   const rootLogin = useCallback(async () => {
     setLoginFailed(false)
     setSubmitting(true)
-    const res = await use.auth.rpc.getRootSessionToken({ password: rootPassword })
+    const success = await use.me.rpc.loginAsRoot({ rootPassword })
     // if (res.success) {
     //   setSessionToken(res.sessionToken)
     // }
-    setLoginFailed(!res.success)
+    setLoginFailed(!success)
     setSubmitting(false)
-  }, [use.auth, rootPassword])
+  }, [use.me, rootPassword])
 
   return (
     <div className="root-login-page">
