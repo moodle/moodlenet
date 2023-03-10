@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig-base.json",
-  //"exclude": ["./legacy-packages", "./packages/storybook", "./packages/passport-auth"],
   "compilerOptions": {
+    "typeRoots": ["react-scripts"],
     "incremental": true
   }
 }
