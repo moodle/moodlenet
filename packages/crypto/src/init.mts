@@ -2,10 +2,17 @@ import { readFile } from 'fs/promises'
 import * as jose from 'jose'
 import { KeyLike } from 'jose'
 import { shell } from './shell.mjs'
-import { Configs } from './types.mjs'
 
 export const env = await getEnv()
 
+type Configs = {
+  keys: {
+    alg: string
+    type: string
+    private: string
+    public: string
+  }
+}
 async function getEnv(): Promise<Configs & { keyLikes: { private: KeyLike; public: KeyLike } }> {
   //FIXME: validate configs
   const config: Configs = {

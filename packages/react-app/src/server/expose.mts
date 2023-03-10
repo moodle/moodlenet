@@ -1,12 +1,13 @@
-import { getCurrentClientSession } from '@moodlenet/authentication-manager/server'
 import { npm } from '@moodlenet/core'
+import { WebUserData } from '../common/types.mjs'
 import { getAppearance, setAppearance } from './lib.mjs'
 import { shell } from './shell.mjs'
-import { WebUserData, WebUserProfile } from './types.mjs'
+import { WebUserProfile } from './types.mjs'
+import { loginAsRoot } from './web-user-auth-lib.mjs'
 import {
   editWebUserProfile,
+  getCurrentClientSessionDataRpc,
   getProfile,
-  getWebUser,
   searchUsers,
   toggleWebUserIsAdmin,
 } from './web-user-lib.mjs'
@@ -24,6 +25,14 @@ export const expose = await shell.expose({
     'updateAllPkgs': {
       guard: () => void 0,
       fn: () => npm.updateAll(),
+    },
+    'getCurrentClientSessionDataRpc': {
+      guard: () => void 0,
+      fn: getCurrentClientSessionDataRpc,
+    },
+    'loginAsRoot': {
+      guard: () => void 0,
+      fn: ({ rootPassword }: { rootPassword: string }) => loginAsRoot(rootPassword),
     },
     'webapp/profile/edit': {
       guard: () => void 0,
@@ -62,27 +71,6 @@ export const expose = await shell.expose({
       fn: async (by: { profileKey: string } | { userKey: string }) => {
         const patchedUser = await toggleWebUserIsAdmin(by)
         return !!patchedUser
-      },
-    },
-    'webapp/getMyProfile': {
-      guard: () => void 0,
-      async fn(): Promise<null | { profile: WebUserProfile; isAdmin: boolean }> {
-        const clientSession = await getCurrentClientSession()
-        if (!clientSession?.user) {
-          return null
-        }
-        const user = await getWebUser({ userKey: clientSession.user._key })
-        if (!user) {
-          return null
-        }
-        const profileDoc = await getProfile({ _key: user.profileKey })
-        if (!profileDoc) {
-          return null
-        }
-
-        const profile = webUserProfileDoc2WebUserProfile(profileDoc)
-
-        return { profile, isAdmin: user.isAdmin }
       },
     },
   },
