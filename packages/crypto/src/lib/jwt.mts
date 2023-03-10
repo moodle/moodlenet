@@ -2,15 +2,19 @@ import { instanceDomain } from '@moodlenet/core'
 import * as jose from 'jose'
 import { env } from '../init.mjs'
 import { shell } from '../shell.mjs'
-import { JwtPayload, JwtStdClaims } from '../types.mjs'
+import { JwtPayloadCustomClaims, JwtStdClaims, JwtToken, JwtVerifyResult } from '../types.mjs'
 
 const alg = env.keys.alg
 
-export async function sign(_payload: JwtPayload, stdClaims: JwtStdClaims, opts?: jose.SignOptions) {
-  const payload = _payload
+export async function sign(
+  _payload: JwtPayloadCustomClaims,
+  stdClaims: JwtStdClaims,
+  opts?: jose.SignOptions,
+) {
+  const payload = { ..._payload }
   const caller = shell.assertCallInitiator()
   if (stdClaims.scope !== undefined) {
-    payload.scope = [stdClaims.scope].flat().join(' ')
+    _payload.scope = [stdClaims.scope].flat().join(' ')
   }
 
   const signingJwt = new jose.SignJWT(payload)
@@ -36,27 +40,44 @@ export async function sign(_payload: JwtPayload, stdClaims: JwtStdClaims, opts?:
   return jwt
 }
 
-export async function verify(
-  jwt: string,
+async function rawVerify(
+  token: JwtToken,
+  opts: jose.JWTVerifyOptions = {},
+): Promise<undefined | jose.JWTVerifyResult> {
+  try {
+    const jwtRawVerifyResult = await jose.jwtVerify(token, env.keyLikes.private, {
+      ...opts,
+      issuer: 'issuer' in opts ? opts.issuer : instanceDomain,
+    })
+    return jwtRawVerifyResult
+  } catch {
+    return
+  }
+}
+
+export async function verify<CustomClaims extends JwtPayloadCustomClaims>(
+  token: JwtToken,
   opts?: Omit<jose.JWTVerifyOptions, 'issuer' | 'audience'>,
-): Promise<{
-  payload: jose.JWTPayload
-}> {
+): Promise<undefined | JwtVerifyResult<CustomClaims>> {
   const caller = shell.assertCallInitiator()
-  const jwtVerifyResult = await jose.jwtVerify(jwt, env.keyLikes.private, {
+  const jwtVerifyResult = await rawVerify(token, {
     ...opts,
     issuer: instanceDomain,
     audience: caller.pkgId.name,
   })
-  const payload = jwtVerifyResult.payload
-  console.log({ verified: payload })
-  return { payload }
+  if (!jwtVerifyResult) {
+    return
+  }
+
+  return jwtVerifyResult as JwtVerifyResult<CustomClaims>
 }
 
-// const jwt = await sign({ ciccio: 'pllo' })
-// setTimeout(async () => {
-//   const ver = await verify(jwt, { clockTolerance: 3 }).catch(console.log)
-//   console.log({ jwt, ver })
-// }, 3000)
-// const ver = await verify(jwt)
-// console.log({ jwt, ver })
+export async function decode(token: JwtToken): Promise<undefined | jose.JWTPayload> {
+  try {
+    //For an encrypted JWT Claims Set validation and JWE decryption use jose.jwtDecrypt().
+    const _unverifiedPayload = jose.decodeJwt(token)
+    return _unverifiedPayload
+  } catch {
+    return
+  }
+}

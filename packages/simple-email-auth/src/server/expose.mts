@@ -18,8 +18,8 @@ export const expose = await shell.expose({
     },
     confirm: {
       guard: () => void 0,
-      fn: ({ token }: { token: string }) => {
-        return confirm({ token })
+      fn: ({ confirmToken }: { confirmToken: string }) => {
+        return confirm({ confirmToken })
       },
     },
   },

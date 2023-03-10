@@ -19,7 +19,7 @@ import { ensureRegisterPkg, listEntries, pkgEntryByPkgIdValue } from '../pkg-reg
 import { PkgModuleRef } from '../types.mjs'
 
 // FIXME: maintain a registry for shells (for pkg singletons)
-export async function getMyShell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
+export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleRef) {
   const { pkgId: myId, pkgInfo } = await ensureRegisterPkg(pkg_module_ref)
   const config = getConfig(myId.name)
   const myAsyncCtx = pkgAsyncContext<PkgAsyncCtx>(myId.name)
@@ -48,17 +48,20 @@ export async function getMyShell<PkgAsyncCtx>(pkg_module_ref: PkgModuleRef) {
     callers,
   }
 
-  function initiateCall<R>(exec: () => R): R {
-    return asyncContext.run({}, () => {
-      getSetCoreAsyncContext.set(_ => ({ ..._, initiator: { pkgId: myId } }))
+  function initiateCall<R>(exec: () => R, forcewipeout = false): R {
+    const baseCtx = forcewipeout ? {} : asyncContext.getStore() ?? {}
+    return asyncContext.run(baseCtx, () => {
+      getSetCoreAsyncContext.set(currentCoreCtx => {
+        return { ...currentCoreCtx, initiator: { pkgId: myId } }
+      })
       return exec()
     })
   }
 
-  function call<Fn extends (...args: any[]) => any>(fn: Fn): Fn {
+  function call<Fn extends (...args: any[]) => any>(fn: Fn, forcewipeout = false): Fn {
     return _call as Fn
     function _call(...args: unknown[]) {
-      return initiateCall(() => fn(...args))
+      return initiateCall(() => fn(...args), forcewipeout)
     }
   }
 

@@ -1,6 +1,7 @@
 import { BaseStyleType } from '@moodlenet/component-library'
 import type { PackageInfo, PkgExpose, PkgIdentifier } from '@moodlenet/core'
 import { CSSProperties } from 'react'
+import { WebUserProfile } from '../server/types.mjs'
 
 export type WebPkgDeps = {
   [k in string]: PkgExpose
@@ -12,15 +13,6 @@ export type WebappPluginDef<
   mainComponentLoc: string[]
   deps: Deps
 }
-
-// export type WebappAddPackageAlias = {
-//   loc: string
-//   name: string
-// }
-
-// export type WebPkgDeps<Requires extends WebappRequires<any>> = {
-//   [index in keyof Requires]: Requires[index] extends WebappPluginMainModule<infer _Ext, infer Lib, any> ? Lib : never
-// }
 
 export type WebappPluginItem<Deps extends WebPkgDeps = WebPkgDeps> = WebappPluginDef<Deps> & {
   guestPkgInfo: PackageInfo
@@ -68,3 +60,15 @@ export type Credits = {
   owner: { url: string; name: string }
   provider?: { name: string; url: string }
 }
+
+export type ClientSessionDataRpc =
+  | {
+      isRoot: false
+      isAdmin: boolean
+      myProfile: WebUserProfile
+    }
+  | {
+      isRoot: true
+    }
+
+export type WebUserSessionTokenCookieName = 'web-user-session-token'

@@ -1,16 +1,11 @@
-import {
-  getSessionToken,
-  registerUser,
-  SessionToken,
-  setCurrentClientSessionToken,
-} from '@moodlenet/authentication-manager/server'
 import { instanceDomain } from '@moodlenet/core'
 import * as crypto from '@moodlenet/crypto/server'
+import { JwtToken } from '@moodlenet/crypto/server'
 import { send } from '@moodlenet/email-service/server'
-import { createWebUser } from '@moodlenet/react-app/server'
-import assert from 'assert'
+import { createWebUser, setCurrentWebUser } from '@moodlenet/react-app/server'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
+import { EmailPwdUser } from './store/types.mjs'
 import { ConfirmEmailPayload, SignupReq } from './types.mjs'
 
 export async function login({
@@ -21,18 +16,21 @@ export async function login({
   password: string
 }): Promise<{ success: true } | { success: false }> {
   const user = await store.getByEmail(email)
-  const userExistsAndPasswordMatches =
-    !!user && (await crypto.argon.verifyPwd({ plainPwd: password, pwdHash: user.password }))
-
-  if (!userExistsAndPasswordMatches) {
+  if (!user) {
     return { success: false }
   }
 
-  const maybeSessionToken = await shell.call(getSessionToken)({ uid: user._key })
+  const passwordMatches = await crypto.argon.verifyPwd({
+    plainPwd: password,
+    pwdHash: user.password,
+  })
 
-  setCurrentClientSessionToken(maybeSessionToken)
+  if (!passwordMatches) {
+    return { success: false }
+  }
 
-  const success = !!maybeSessionToken
+  const success = await shell.call(setCurrentWebUser)({ userKey: user.webUserKey })
+
   return { success }
 }
 
@@ -66,10 +64,10 @@ export async function signup(
 }
 
 export async function confirm({
-  token,
+  confirmToken,
 }: {
-  token: string
-}): Promise<{ success: true; sessionToken: SessionToken } | { success: false; msg: string }> {
+  confirmToken: JwtToken
+}): Promise<{ success: true; emailPwdUser: EmailPwdUser } | { success: false; msg: string }> {
   const confirmEmailPayload = await getConfirmEmailPayload()
   if (!confirmEmailPayload) {
     return { success: false, msg: `invalid confirm token` }
@@ -84,44 +82,32 @@ export async function confirm({
     return { success: false, msg: 'user registered' }
   }
 
-  const myUser = await store.create({ email, password })
-
-  const authRes = await shell.call(registerUser)({
-    uid: myUser._key,
-  })
-
-  if (!authRes.success) {
-    await store.delUser({ _key: myUser._key })
-    const { msg, success } = authRes
-    return { msg, success }
-  }
-  const { sessionToken } = authRes
-  return shell.initiateCall(async () => {
-    await setCurrentClientSessionToken(sessionToken)
-
-    await createWebUser({
-      userKey: authRes.user._key,
+  const newWebUser = await shell.call(createWebUser)(
+    {
       displayName: displayName,
       isAdmin: false,
       contacts: { email },
       aboutMe: '',
-    })
+    },
+    { setAsCurrentUser: true },
+  )
 
-    return { success: true, sessionToken }
-  })
+  if (!newWebUser) {
+    return { success: false, msg: 'could not create' }
+  }
+
+  const emailPwdUser = await store.create({ email, password, webUserKey: newWebUser._key })
+
+  return { success: true, emailPwdUser }
 
   async function getConfirmEmailPayload() {
-    try {
-      const { payload: confirmEmailPayload } = await shell.call(crypto.jwt.verify)(token)
-
-      assert(isConfirmEmailPayload(confirmEmailPayload))
-      return confirmEmailPayload
-    } catch {
-      return undefined
+    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ConfirmEmailPayload>(confirmToken)
+    if (!jwtVerifyResp) {
+      return
     }
+
+    const { payload: confirmEmailPayload } = jwtVerifyResp
+
+    return confirmEmailPayload
   }
-}
-function isConfirmEmailPayload(_: unknown): _ is ConfirmEmailPayload {
-  //FIXME: implement checks
-  return !!_
 }

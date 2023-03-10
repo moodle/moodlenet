@@ -1,2 +1,2 @@
 import type { getMyShell } from './shell.mjs'
-export type Shell = Awaited<ReturnType<typeof getMyShell>>
+export type Shell<T = any> = Awaited<ReturnType<typeof getMyShell<T>>>

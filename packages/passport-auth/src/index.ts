@@ -33,7 +33,6 @@ const ext: PassportAuthExt = {
     '@moodlenet/core@0.1.0',
     '@moodlenet/react-app@0.1.0',
     '@moodlenet/http-server@0.1.0',
-    '@moodlenet/authentication-manager@0.1.0',
     '@moodlenet/system-entities@0.1.0',
   ],
   connect(shell) {

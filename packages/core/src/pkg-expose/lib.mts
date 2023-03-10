@@ -71,7 +71,7 @@ export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefin
   //@ts-ignore brute force symbol prop mixin
   const getReadable = rpcFile?.[RPC_FILE_HANDLER_SYM]
   if (!getReadable) {
-    return undefined
+    return
   }
   return await getReadable()
 }

@@ -48,6 +48,7 @@ function _user(user: EmailPwdUserDoc | null | undefined): undefined | EmailPwdUs
   return user
     ? {
         _key: user._key,
+        webUserKey: user.webUserKey,
         created: user.created,
         email: user.email,
         password: user.password,
