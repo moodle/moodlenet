@@ -24,7 +24,6 @@ export const defaultCorePackages = [
   'arangodb',
   'key-value-store',
   'crypto',
-  'authentication-manager',
   'http-server',
   'organization',
   'system-entities',

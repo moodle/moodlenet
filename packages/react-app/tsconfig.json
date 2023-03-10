@@ -16,9 +16,6 @@
       "path": "../arangodb"
     },
     {
-      "path": "../authentication-manager"
-    },
-    {
       "path": "../component-library"
     },
     {

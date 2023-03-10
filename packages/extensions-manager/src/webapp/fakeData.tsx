@@ -19,7 +19,6 @@ export type Module = {
 
 export const mandatoryPackages = [
   '@moodlenet/core',
-  '@moodlenet/authentication-manager',
   '@moodlenet/extensions-manager',
   '@moodlenet/http-server',
   '@moodlenet/webapp',
