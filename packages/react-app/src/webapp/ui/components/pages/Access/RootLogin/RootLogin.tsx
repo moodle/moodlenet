@@ -3,13 +3,9 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
 import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 
-// import lib from '../../../../../main-lib'
-
-// import { Link } from '../../../../elements/link'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './RootLogin.scss'
 
-// const authSrv = lib.priHttp.fetch<AuthenticationManagerExt>('@moodlenet/authentication-manager@0.1.0')
 export type RootLoginFormValues = { email: string; password: string }
 
 export type RootLoginProps = {
@@ -24,16 +20,8 @@ export const RootLogin: FC<RootLoginProps> = ({ headerProps }) => {
   )
 }
 export const RootLoginBody: FC = () => {
-  //const { setSessionToken } = useContext(AuthCtx)
   const { use } = useContext(MainContext)
 
-  // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-  //   if (e.key === 'Enter') {
-  //     // form.submitForm()
-  //   }
-  // }
-
-  // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
   const [submitting, setSubmitting] = useState(false)
   const [loginFailed, setLoginFailed] = useState(false)
   const [rootPassword, setRootPassword] = useState('')
@@ -41,9 +29,6 @@ export const RootLoginBody: FC = () => {
     setLoginFailed(false)
     setSubmitting(true)
     const success = await use.me.rpc.loginAsRoot({ rootPassword })
-    // if (res.success) {
-    //   setSessionToken(res.sessionToken)
-    // }
     setLoginFailed(!success)
     setSubmitting(false)
   }, [use.me, rootPassword])
@@ -54,9 +39,7 @@ export const RootLoginBody: FC = () => {
         <Card>
           <div className="content">
             <div className="title">Root log in</div>
-            <form
-            // onSubmit={form.handleSubmit}
-            >
+            <form>
               <InputTextField
                 className="password"
                 placeholder={`Password`}
@@ -64,47 +47,19 @@ export const RootLoginBody: FC = () => {
                 name="password"
                 edit
                 disabled={submitting}
-                // value={form.values.password}
                 onChange={({ target: { value } }) => setRootPassword(value)}
-                // error={shouldShowErrors && form.errors.password}
               />
-              {/* {wrongCreds && (
-                    <div className="error">
-                      <Trans>Incorrect username or password</Trans>
-                    </div>
-                  )} */}
+
               <button type="submit" style={{ display: 'none' }} />
             </form>
             <div className="bottom">
               <div className="content">
                 <div className="left">
-                  <PrimaryButton
-                    disabled={submitting}
-                    onClick={rootLogin}
-                    // onClick={
-                    //   form.isSubmitting || form.isValidating
-                    //     ? undefined
-                    //     : form.submitForm
-                    // }
-                  >
+                  <PrimaryButton disabled={submitting} onClick={rootLogin}>
                     Log in
                   </PrimaryButton>
                   {loginFailed ? <span>Login failed</span> : null}
                 </div>
-                {/* <div className="right" hidden>
-                  <div className="icon">
-                    <img
-                      alt="apple RootLogin"
-                      src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-                    />
-                  </div>
-                  <div className="icon">
-                    <img
-                      alt="google RootLogin"
-                      src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                    />
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>

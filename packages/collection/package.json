@@ -30,7 +30,6 @@
     "yup": "^0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/authentication-manager": "^0.2.0",
     "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/resource": "^0.2.0",
     "@moodlenet/system-entities": "^0.2.0",
@@ -39,7 +38,6 @@
   },
   "devDependencies": {
     "@lingui/macro": "^3.14.0",
-    "@moodlenet/authentication-manager": "^0.2.0",
     "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/resource": "^0.2.0",
     "@moodlenet/system-entities": "^0.2.0",
