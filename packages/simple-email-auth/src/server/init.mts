@@ -1,6 +1,5 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
-import { expose as auth } from '@moodlenet/authentication-manager/server'
-import { mountApp, sendAuthTokenCookie } from '@moodlenet/http-server/server'
+import { mountApp } from '@moodlenet/http-server/server'
 import { plugin } from '@moodlenet/react-app/server'
 import { MyWebDeps } from '../common/types.mjs'
 import { expose as me } from './expose.mjs'
@@ -15,15 +14,15 @@ export const { collection: EmailPwdUserCollection /* ,newlyCreated */ } = await 
 
 shell.call(plugin)<MyWebDeps>({
   mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-  deps: { me, auth },
+  deps: { me },
 })
 
 shell.call(mountApp)({
   getApp: function getHttpApp(express) {
     const app = express()
-    app.get('/confirm-email/:token', async (req, res) => {
-      const { token } = req.params
-      const confirmResp = await confirm({ token }).catch(e => {
+    app.get('/confirm-email/:confirmToken', async (req, res) => {
+      const { confirmToken } = req.params
+      const confirmResp = await confirm({ confirmToken }).catch(e => {
         console.log(e)
         res.status(500).send(e)
         throw e
@@ -32,7 +31,6 @@ shell.call(mountApp)({
         res.status(400).end(confirmResp.msg)
         return
       }
-      sendAuthTokenCookie(res, confirmResp.sessionToken)
       res.redirect(`/`)
     })
     return app

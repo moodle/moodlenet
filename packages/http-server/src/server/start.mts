@@ -1,27 +1,19 @@
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import gracefulShutdown from 'http-graceful-shutdown'
-import { BASE_PKG_URL, SESSION_TOKEN_COOKIE_NAME } from '../common/pub-lib.mjs'
+import { BASE_PKG_URL } from '../common/pub-lib.mjs'
 import { makeExtPortsApp } from './ext-ports-app/make.mjs'
 import { env } from './init.mjs'
-import { mountedApps } from './lib.mjs'
+import { middlewares, mountedApps } from './lib.mjs'
+import { shell } from './shell.mjs'
 
 export let shutdownGracefullyLocalServer: () => Promise<void>
 
 process.on('SIGTERM', () => shutdownGracefullyLocalServer())
 const app = express()
-  .use(cookieParser())
-  .all('*', (req, __, next) => {
-    // shell.initiateCall(async () => {
+app.use(cookieParser(), (_, __, next) => shell.call(next)())
 
-    const cookieSessionTokenAny = req.cookies[SESSION_TOKEN_COOKIE_NAME]
-    const maybeCookieSessionToken =
-      'string' === typeof cookieSessionTokenAny ? cookieSessionTokenAny : undefined
-    // await setCurrentClientSessionToken(maybeCookieSessionToken)
-    req.mnSessionToken = maybeCookieSessionToken
-    next()
-    // })
-  })
+app.use(...middlewares.map(({ handlers }) => handlers).flat())
 
 const pkgAppContainer = express()
 app.use(`${BASE_PKG_URL}/`, pkgAppContainer)

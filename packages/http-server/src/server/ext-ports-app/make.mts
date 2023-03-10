@@ -1,7 +1,3 @@
-import {
-  getCurrentClientSessionToken,
-  setCurrentClientSessionToken,
-} from '@moodlenet/authentication-manager/server'
 import { getMaybeRpcFileReadable, readableRpcFile, RpcArgs, RpcFile } from '@moodlenet/core'
 import assert from 'assert'
 import express, { json, Request } from 'express'
@@ -10,7 +6,6 @@ import multer, { Field } from 'multer'
 import { Readable } from 'stream'
 import { format } from 'util'
 import { HttpRpcResponse } from '../../common/pub-lib.mjs'
-import { sendAuthTokenCookie } from '../lib.mjs'
 import { shell } from '../shell.mjs'
 
 export function makeExtPortsApp() {
@@ -44,60 +39,51 @@ export function makeExtPortsApp() {
           httpResp.status(405).send('unsupported ${req.method} method for rpc')
           return
         }
-        const enteringWithToken = httpReq.mnSessionToken
-        shell.initiateCall(async () => {
-          await setCurrentClientSessionToken(enteringWithToken)
+        let rpcArgs: RpcArgs
 
-          let rpcArgs: RpcArgs
+        try {
+          rpcArgs = getRpcArgs(httpReq)
+        } catch (err) {
+          console.log(err)
+          httpResp.status(400)
+          httpResp.send(err)
+          return
+        }
 
-          try {
-            rpcArgs = getRpcArgs(httpReq)
-          } catch (err) {
-            console.log(err)
-            httpResp.status(400)
-            httpResp.send(err)
-            return
-          }
+        try {
+          rpcDefItem.guard(...rpcArgs)
+        } catch (err) {
+          console.log(err)
+          httpResp.status(400)
+          httpResp.send(err)
+          return
+        }
 
-          try {
-            rpcDefItem.guard(...rpcArgs)
-          } catch (err) {
-            console.log(err)
-            httpResp.status(400)
-            httpResp.send(err)
-            return
-          }
-
-          await rpcDefItem
-            .fn(...rpcArgs)
-            .then(async rpcResponse => {
-              const newCurrentToken = await getCurrentClientSessionToken()
-              if (enteringWithToken !== newCurrentToken) {
-                sendAuthTokenCookie(httpResp, newCurrentToken)
+        await rpcDefItem
+          .fn(...rpcArgs)
+          .then(async rpcResponse => {
+            const mReadable = await getMaybeRpcFileReadable(rpcResponse)
+            if (mReadable) {
+              const rpcFile: RpcFile = rpcResponse
+              rpcFile.name && httpResp.header('x-rpc-file-name', `${rpcFile.name}`)
+              rpcFile.size && httpResp.header('Content-Length', `${rpcFile.size}`)
+              rpcFile.type && httpResp.header('Content-Type', `${rpcFile.type}`)
+              mReadable.pipe(httpResp)
+              return
+            } else {
+              httpResp.header('Content-Type', 'application/json')
+              const httpRpcResponse: HttpRpcResponse = {
+                response: rpcResponse,
               }
-              const mReadable = await getMaybeRpcFileReadable(rpcResponse)
-              if (mReadable) {
-                const rpcFile: RpcFile = rpcResponse
-                rpcFile.name && httpResp.header('x-rpc-file-name', `${rpcFile.name}`)
-                rpcFile.size && httpResp.header('Content-Length', `${rpcFile.size}`)
-                rpcFile.type && httpResp.header('Content-Type', `${rpcFile.type}`)
-                mReadable.pipe(httpResp)
-                return
-              } else {
-                httpResp.header('Content-Type', 'application/json')
-                const httpRpcResponse: HttpRpcResponse = {
-                  response: rpcResponse,
-                }
-                httpResp./* status(200). */ send(httpRpcResponse)
-                return
-              }
-            })
-            .catch(err => {
-              console.log(err)
-              httpResp.status(500)
-              httpResp.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
-            })
-        })
+              httpResp./* status(200). */ send(httpRpcResponse)
+              return
+            }
+          })
+          .catch(err => {
+            console.log(err)
+            httpResp.status(500)
+            httpResp.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
+          })
         return srvApp
       })
     })

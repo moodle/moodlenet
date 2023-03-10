@@ -1,12 +1,26 @@
 import assert from 'assert'
 import { AsyncLocalStorage } from 'async_hooks'
-import { pkgMeta } from '../common/meta.mjs'
 import { ApiCtx, CoreAsyncCtx } from './types.mjs'
 
 export const asyncContext = new AsyncLocalStorage<ApiCtx>()
 
 export function pkgAsyncContext<T>(pkgName: string) {
-  return pkgMeta<T>(pkgName, getApiContextStore)
+  return { set, unset, get }
+
+  function unset() {
+    set(() => undefined)
+  }
+  function set(setter: (current: T | undefined) => T | undefined): T | undefined {
+    const currentStore = getApiContextStore()
+    const currentVal = currentStore?.[pkgName] as T | undefined
+    const nextVal = setter(currentVal)
+    currentStore[pkgName] = nextVal
+    return
+  }
+  function get(): T | undefined {
+    const currentStore = getApiContextStore()
+    return currentStore?.[pkgName] as T | undefined
+  }
 
   function getApiContextStore() {
     const currentStore = asyncContext.getStore()

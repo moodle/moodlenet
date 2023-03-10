@@ -1,22 +1,26 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
-import { expose as authExpose } from '@moodlenet/authentication-manager/server'
-import { mountApp } from '@moodlenet/http-server/server'
+import { addMiddleware, mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { expose as orgExpose } from '@moodlenet/organization/server'
 import {
+  ANON_SYSTEM_USER,
   EntityCollectionDef,
+  EntityUser,
   isSameClass,
   registerAccessController,
   registerEntities,
+  ROOT_SYSTEM_USER,
+  setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
-import { isCreator, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
+import { isCurrentUserEntity, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import { resolve } from 'path'
-import { defaultAppearanceData } from '../common/exports.mjs'
+import { defaultAppearanceData, WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { plugin } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
+import { setCurrentUnverifiedJwtToken, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 
 export const kvStore = await kvStoreFactory<KeyValueData>(shell)
@@ -37,7 +41,7 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 
 await shell.call(registerAccessController)({
   u() {
-    return `${isEntityClass(WebUserProfile.entityClass)} && ${isCreator()}`
+    return isCurrentUserEntity()
   },
   r(/* { myPkgMeta } */) {
     return `${isEntityClass(WebUserProfile.entityClass)}` // && ${myPkgMeta}.xx == null`
@@ -56,15 +60,57 @@ await shell.call(plugin)<MyWebAppDeps>({
   deps: {
     me: myExpose,
     organization: orgExpose,
-    auth: authExpose,
   },
 })
 
+await shell.call(addMiddleware)({
+  handlers: [
+    async (req, resp, next) => {
+      const enteringToken = req.cookies[WEB_USER_SESSION_TOKEN_COOKIE_NAME]
+      shell.myAsyncCtx.set(() => ({
+        http: {
+          resp,
+          enteringToken,
+        },
+      }))
+      if ('string' !== typeof enteringToken) {
+        return next()
+      }
+      await setCurrentUnverifiedJwtToken(enteringToken)
+      await setCurrentUserFetch(async () => {
+        if (!enteringToken) {
+          return ANON_SYSTEM_USER
+        }
+        const verifyResult = await verifyCurrentTokenCtx()
+        if (!verifyResult) {
+          // CHECK: shoud throw 401 or some other error ?
+          return ANON_SYSTEM_USER
+        }
+        const { currentWebUser } = verifyResult
+        if (currentWebUser.isRoot) {
+          return ROOT_SYSTEM_USER
+        }
+        const entityUser: EntityUser = {
+          type: 'user',
+          entityIdentifier: {
+            entityClass: WebUserProfile.entityClass,
+            _key: currentWebUser.profileKey,
+          },
+        }
+        return entityUser
+      })
+      // console.log('out token set')
+
+      next()
+    },
+  ],
+})
 await shell.call(mountApp)({
   getApp(express) {
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
     mountApp.use(staticWebApp)
+    //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
     mountApp.get(`*`, (req, res, next) => {
       if (req.url.startsWith('/.')) {
         next()

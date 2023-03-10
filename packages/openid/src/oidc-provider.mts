@@ -1,7 +1,6 @@
-import { verifyClientSession } from '@moodlenet/authentication-manager/server'
 import { instanceDomain } from '@moodlenet/core'
-import { jwt } from '@moodlenet/crypto/server'
-import Provider, { Configuration } from 'oidc-provider'
+import { verifyWebUserToken } from '@moodlenet/react-app/server'
+import Provider, { AdapterPayload, Configuration } from 'oidc-provider'
 import { inspect } from 'util'
 
 // const Provider = o as any as typeof o.default
@@ -42,23 +41,22 @@ const configuration: Configuration = {
         return
       },
       async find(token) {
-        const clientSession = await verifyClientSession(token)
-        const { payload } = await jwt.verify(token)
-        console.log(`OAUTH ADAPTER ${name}: find()`, { clientSession, payload }, token)
-
-        const resp = clientSession?.user &&
-          payload && {
-            scope: 'openid',
-            accountId: clientSession.user._key,
-            iat: payload.iat,
-            aud:
-              payload.aud === undefined || payload.aud === null ? undefined : [payload.aud].flat(),
-            exp: payload.exp,
-            iss: payload.iss,
-            jti: payload.jti,
-            nbf: payload.nbf,
-            sub: payload.sub,
-          }
+        const webUser = await verifyWebUserToken(token)
+        console.log(`OAUTH ADAPTER ${name}: find()`, { webUser, token })
+        if (!(webUser && !webUser.isRoot)) {
+          return
+        }
+        const resp: AdapterPayload = {
+          scope: 'openid',
+          accountId: webUser.webUserKey,
+          iat: webUser.iat,
+          aud: webUser.aud === undefined || webUser.aud === null ? undefined : [webUser.aud].flat(),
+          exp: webUser.exp,
+          iss: webUser.iss,
+          jti: webUser.jti,
+          nbf: webUser.nbf,
+          sub: webUser.sub,
+        }
         console.log({ resp })
         return resp
       },
