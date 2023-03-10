@@ -1,8 +1,7 @@
 import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
-import { UserId } from '@moodlenet/authentication-manager/server'
 import type { PkgName } from '@moodlenet/core'
 
-// export type EntityIdentifier = { _id: string } | { _key: string; entityClass: EntityClass }
+export type EntityIdentifier = { _key: string; entityClass: EntityClass<SomeEntityDataType> }
 
 export type SomeEntityDataType = Record<string, any>
 
@@ -13,8 +12,7 @@ export type EntityClass<_EntityDataType extends SomeEntityDataType> = {
 
 export type EntityMetadata = {
   entityClass: EntityClass<any>
-  owner: UserId
-  creator: UserId
+  creator?: SystemUser
   created: string
   updated: string
   pkgMeta: Record<PkgName, any>
@@ -56,3 +54,22 @@ export type AqlAccessController = (_: { myPkgMeta: string }) => AqlAccessControl
 
 type AqlAccessControllerResp = AqlAccessControllerRespValue | Promise<AqlAccessControllerRespValue>
 type AqlAccessControllerRespValue = string | null | undefined | boolean
+
+export type SystemUser = EntityUser | RootUser | AnonUser | PkgUser
+export type EntityUser = {
+  type: 'user'
+  entityIdentifier: EntityIdentifier
+}
+
+export type RootUser = {
+  type: 'root'
+}
+
+export type AnonUser = {
+  type: 'anon'
+}
+
+export type PkgUser = {
+  type: 'pkg'
+  pkgName: PkgName
+}

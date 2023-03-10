@@ -24,7 +24,6 @@ export const defaultCorePackages = [
   'arangodb',
   'key-value-store',
   'crypto',
-  'authentication-manager',
   'http-server',
   'organization',
   'system-entities',
@@ -32,4 +31,6 @@ export const defaultCorePackages = [
   'react-app',
   'extensions-manager',
   'simple-email-auth',
+  'simple-file-store',
+  'openid',
 ]

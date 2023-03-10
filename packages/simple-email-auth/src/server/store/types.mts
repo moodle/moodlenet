@@ -8,5 +8,6 @@ export type EmailPwdUserData = {
   email: Email
   password: Password
   created: string
+  webUserKey: string
 }
 export type EmailPwdUserDoc = EmailPwdUserData & DocumentMetadata

@@ -1,8 +1,20 @@
 import { BaseStyleType } from '@moodlenet/component-library'
 import type { PackageInfo, PkgExpose, PkgIdentifier } from '@moodlenet/core'
 import { CSSProperties } from 'react'
+import { WebUserProfile } from '../server/types.mjs'
 import { Href } from '../webapp/ui.mjs'
 
+export type ClientSessionDataRpc =
+  | {
+      isRoot: false
+      isAdmin: boolean
+      myProfile: WebUserProfile
+    }
+  | {
+      isRoot: true
+    }
+
+export type WebUserSessionTokenCookieName = 'web-user-session-token'
 export type WebPkgDeps = {
   [k in string]: PkgExpose
 }

@@ -9,10 +9,10 @@
       "path": "../arangodb"
     },
     {
-      "path": "../authentication-manager"
+      "path": "../core"
     },
     {
-      "path": "../core"
+      "path": "../crypto"
     },
     {
       "path": "../key-value-store"

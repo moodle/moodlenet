@@ -30,7 +30,7 @@ export async function ensureRegisterPkg(pkg_module_ref: PkgModuleRef) {
 export function pkgEntryByPkgIdValue(pkgId: PkgIdentifier): PkgEntry | undefined {
   const pkgEntry = getPkgRegEntryByPkgName(pkgId.name)
   if (!pkgEntry) {
-    return undefined
+    return
   }
   //FIXME: add version check
   return pkgEntry
