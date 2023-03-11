@@ -42,7 +42,7 @@ export const justExecute = async (q: string, db: Database) => {
   }
 }
 
-// hook this in helper funcs
+// todo: hook this in helper funcs
 type PromiseRetryOpts = {
   retries?: number | undefined
   forever?: boolean | undefined
