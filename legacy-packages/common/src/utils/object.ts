@@ -8,7 +8,7 @@ export const omit = <T, K extends keyof T>(o: T, ks: K[]): DistOmit<T, K> => {
   return pick(o, pickKeys) as any
 }
 
-//TODO: all functions here have some typing issues .
+//todo: all functions here have some typing issues .
 // check if|how to keep those utilities
 
 // export const mapObjProps = <K extends string, V, MV>(source: Record<K, V>, mapper: (v: V, k: K) => MV): Record<K, MV> =>

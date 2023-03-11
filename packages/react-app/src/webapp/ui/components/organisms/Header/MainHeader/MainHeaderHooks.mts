@@ -68,7 +68,7 @@ export const useHeaderProps = (): MainHeaderProps => {
     return {
       headerTitleProps,
       accessButtonsProps: {
-        //TODO: those access hrefs must be centralized in AuthCtx (present also in MinimalisticHeaderHooke)
+        //TODO ETTO: those access hrefs must be centralized in AuthCtx (present also in MinimalisticHeaderHooke)
         loginHref: href('/login'),
         signupHref: href('/signup'),
       },
@@ -81,8 +81,8 @@ export const useHeaderProps = (): MainHeaderProps => {
         avatarUrl,
       },
       isAuthenticated,
-      centerItems: [], //TODO: needs a registry,
-      leftItems: [], //TODO: needs a registry,
+      centerItems: [], //TODO ETTO: needs a registry,
+      leftItems: [], //TODO ETTO: needs a registry,
       rightItems,
     }
   }, [avatarUrl, headerTitleProps, isAuthenticated, menuItems, rightItems])

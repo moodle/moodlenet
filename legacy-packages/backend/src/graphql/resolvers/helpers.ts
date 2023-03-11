@@ -96,7 +96,10 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     }
     return _node
   } else {
-    return assertNever(node, `graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
+    return assertNever(
+      node,
+      `graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`,
+    )
   }
 }
 
@@ -118,7 +121,16 @@ export const gqlNode2GraphNode = (node: GQL.Node): DistOmit<GN.GraphNode, OmitNo
     const _node: Omit<GN.Profile, OmitNodeProps> = {
       _type: 'Profile',
       ...base,
-      ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl', 'description']),
+      ...pick(node, [
+        'bio',
+        'firstName',
+        'lastName',
+        'location',
+        'image',
+        'avatar',
+        'siteUrl',
+        'description',
+      ]),
     }
     return _node
   } else if (node.__typename === 'Collection') {
@@ -185,7 +197,10 @@ export const gqlNode2GraphNode = (node: GQL.Node): DistOmit<GN.GraphNode, OmitNo
     }
     return _node
   } else {
-    return assertNever(node, `gqlNode2GraphNode: can't map unknown node type '${(node as any)?.__typename}'`)
+    return assertNever(
+      node,
+      `gqlNode2GraphNode: can't map unknown node type '${(node as any)?.__typename}'`,
+    )
   }
 }
 
@@ -224,7 +239,10 @@ export const graphEdge2GqlEdge = (edge: GE.GraphEdge): GQL.Edge => {
     }
     return _edge
   } else {
-    return assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
+    return assertNever(
+      edge,
+      `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`,
+    )
   }
 }
 
@@ -268,7 +286,10 @@ export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, OmitEd
     }
     return _edge
   } else {
-    return assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
+    return assertNever(
+      edge,
+      `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`,
+    )
   }
 }
 
@@ -278,38 +299,42 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
 ): Promise<Tuple<Maybe<AssetRef>, N> | null> => {
   type PersistTmpFileReqOrAssetRef = PersistTmpFileReq | AssetRef
 
-  const arrayOfMaybePersistTempFilesReqOrAssetRef = tupleOfAssetRefInputAndType.map<Maybe<PersistTmpFileReqOrAssetRef>>(
-    assRefInpAndType => {
-      if (!assRefInpAndType) {
-        return assRefInpAndType
+  const arrayOfMaybePersistTempFilesReqOrAssetRef = tupleOfAssetRefInputAndType.map<
+    Maybe<PersistTmpFileReqOrAssetRef>
+  >(assRefInpAndType => {
+    if (!assRefInpAndType) {
+      return assRefInpAndType
+    }
+    const { input, uploadType } = assRefInpAndType
+    if (input.type === 'TmpUpload') {
+      const persTmpFileReq: PersistTmpFileReq = {
+        tempAssetId: input.location,
+        uploadType,
+        credits: input.credits ?? null,
       }
-      const { input, uploadType } = assRefInpAndType
-      if (input.type === 'TmpUpload') {
-        const persTmpFileReq: PersistTmpFileReq = {
-          tempAssetId: input.location,
-          uploadType,
-          credits: input.credits ?? null,
-        }
-        return persTmpFileReq
-      } else if (input.type === 'ExternalUrl') {
-        const assetRef: AssetRef = {
-          ext: true,
-          location: input.location,
-          mimetype: 'text/html',
-          credits: input.credits ?? null,
-        } // TODO: define mimetype for links
-        return assetRef
-      } else if (input.type === 'NoAsset') {
-        return null
-      } else if (input.type === 'NoChange') {
-        return undefined
-      } else {
-        return assertNever(input.type, `mapAssetRefInputsToAssetRefs: unknown input type: '${input.type}'`)
-      }
-    },
-  )
+      return persTmpFileReq
+    } else if (input.type === 'ExternalUrl') {
+      const assetRef: AssetRef = {
+        ext: true,
+        location: input.location,
+        mimetype: 'text/html',
+        credits: input.credits ?? null,
+      } // todo define mimetype for links
+      return assetRef
+    } else if (input.type === 'NoAsset') {
+      return null
+    } else if (input.type === 'NoChange') {
+      return undefined
+    } else {
+      return assertNever(
+        input.type,
+        `mapAssetRefInputsToAssetRefs: unknown input type: '${input.type}'`,
+      )
+    }
+  })
 
-  const _isPersistReq = (_: Maybe<PersistTmpFileReqOrAssetRef>): _ is PersistTmpFileReq => !!_ && 'uploadType' in _
+  const _isPersistReq = (_: Maybe<PersistTmpFileReqOrAssetRef>): _ is PersistTmpFileReq =>
+    !!_ && 'uploadType' in _
 
   const toPersistReqsTuple = arrayOfMaybePersistTempFilesReqOrAssetRef.filter(_isPersistReq)
 

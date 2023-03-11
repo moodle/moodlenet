@@ -93,6 +93,6 @@ produce packge.json c0on tutti i package e li risolv
 
 packages/react-app/src/webapp/components.mts export similar
 
-TODO
+TODO ALE //TODO ETTO
 
 il package dovrebbe avere 3 cartelle, common, webapp, server

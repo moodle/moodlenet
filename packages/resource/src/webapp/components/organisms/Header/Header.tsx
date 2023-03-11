@@ -15,7 +15,7 @@
 //   if (!clientSessionData?.myProfile) {
 //     return null
 //   }
-//   const iconUrl = '' // TODO: should use avatarUrl from clientSessionData?.myProfile
+//   const iconUrl = '' // TODO BRU: should use avatarUrl from clientSessionData?.myProfile
 //   return <Icon icon={iconUrl}></Icon>
 // }
 

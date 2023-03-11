@@ -34,7 +34,7 @@ const imports = Object.entries(systemPkgInfo.dependencies ?? {}).map(
 )
 
 function getMain(pkgJ: SafePackageJson) {
-  //TODO: should we support all pkgJ.exports ExportCondition s ?
+  //TODO ALE: should we support all pkgJ.exports ExportCondition s ?
   const pkgJexports = pkgJ.exports
   if (pkgJexports !== undefined && pkgJexports !== null) {
     if (typeof pkgJexports === 'string') {

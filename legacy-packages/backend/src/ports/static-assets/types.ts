@@ -25,7 +25,7 @@ export type TempAssetDesc = {
   size: number
   filename: { base: string | null; ext: string | null }
   mimetype: string
-  // TODO: make uploadType an array,
+  // todo: make uploadType an array,
   // so a single uploaded file can be stored as different
   // assets (eg. when a resource is of image format, that image may be the icon and the image too)
   uploadType: UploadType
@@ -33,4 +33,8 @@ export type TempAssetDesc = {
 
 export type Ulid = string
 
-export type PersistTmpFileReq = { uploadType: UploadType; tempAssetId: TempAssetId; credits?: Credits | null }
+export type PersistTmpFileReq = {
+  uploadType: UploadType
+  tempAssetId: TempAssetId
+  credits?: Credits | null
+}
