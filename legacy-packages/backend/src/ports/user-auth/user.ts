@@ -1,4 +1,7 @@
-import { GraphNodeIdentifierAuth, isGraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
+import {
+  GraphNodeIdentifierAuth,
+  isGraphNodeIdentifierAuth,
+} from '@moodlenet/common/dist/content-graph/types/node'
 import { SessionEnv } from '@moodlenet/common/dist/types'
 import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/dist/webapp/sitemap'
@@ -51,30 +54,33 @@ export type RecoverPasswordJwt = {
 const isRecoverPasswordJwt = (_: any): _ is RecoverPasswordJwt =>
   !!_ && isGraphNodeIdentifierAuth(_.authId) && isEmail(_.email)
 
-export const recoverPasswordEmail = plug(ns(module, 'recover-password-email'), async ({ email }: { email: Email }) => {
-  const activeUser = await getActiveUserByEmailAdapter({ email })
-  if (!activeUser) {
-    return null
-  }
-  const { recoverPasswordEmail, recoverPasswordEmailExpiresSecs } = await getLatestConfigAdapter()
-  const recoverPasswordJwt = await crypto.jwtSigner.adapter(
-    { authId: activeUser.authId, email },
-    recoverPasswordEmailExpiresSecs,
-  )
-  const { publicUrl } = await localOrg.info.adapter()
-  const emailObj = fillEmailTemplate({
-    template: recoverPasswordEmail,
-    to: email,
-    vars: {
-      link: `${publicUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
-        token: recoverPasswordJwt,
-      })}`,
-    },
-  })
-  console.log({ __: emailObj })
-  await sendEmail.adapter(emailObj)
-  return { recoverPasswordJwt }
-})
+export const recoverPasswordEmail = plug(
+  ns(module, 'recover-password-email'),
+  async ({ email }: { email: Email }) => {
+    const activeUser = await getActiveUserByEmailAdapter({ email })
+    if (!activeUser) {
+      return null
+    }
+    const { recoverPasswordEmail, recoverPasswordEmailExpiresSecs } = await getLatestConfigAdapter()
+    const recoverPasswordJwt = await crypto.jwtSigner.adapter(
+      { authId: activeUser.authId, email },
+      recoverPasswordEmailExpiresSecs,
+    )
+    const { publicUrl } = await localOrg.info.adapter()
+    const emailObj = fillEmailTemplate({
+      template: recoverPasswordEmail,
+      to: email,
+      vars: {
+        link: `${publicUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
+          token: recoverPasswordJwt,
+        })}`,
+      },
+    })
+    console.log({ __: emailObj })
+    await sendEmail.adapter(emailObj)
+    return { recoverPasswordJwt }
+  },
+)
 
 export type ActivationEmailTokenObj = {
   email: Email
@@ -112,7 +118,10 @@ export const createSession = plug(
       }
 
       const activationEmailTokenObj = await crypto.jwtVerifier.adapter(activationEmailToken)
-      if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
+      if (
+        !isActivationEmailTokenObj(activationEmailTokenObj) ||
+        activationEmailTokenObj.email !== email
+      ) {
         return INVALID_CREDENTIALS
       }
 
@@ -122,12 +131,20 @@ export const createSession = plug(
       if (!plainPwd) {
         return INVALID_CREDENTIALS
       }
-      const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd, pwdHash: hashedPassword })
+      const passwordMatches = await crypto.passwordVerifier.adapter({
+        plainPwd,
+        pwdHash: hashedPassword,
+      })
       if (!passwordMatches) {
         return INVALID_CREDENTIALS
       }
 
-      const mActiveUser = await saveActiveUserAdapter({ authId, email, password: hashedPassword, status: 'Active' })
+      const mActiveUser = await saveActiveUserAdapter({
+        authId,
+        email,
+        password: hashedPassword,
+        status: 'Active',
+      })
       if ('string' == typeof mActiveUser) {
         return mActiveUser
       }
@@ -161,7 +178,10 @@ export const createSession = plug(
     if (!plainPwd) {
       return null
     }
-    const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd, pwdHash: activeUser.password })
+    const passwordMatches = await crypto.passwordVerifier.adapter({
+      plainPwd,
+      pwdHash: activeUser.password,
+    })
 
     if (!passwordMatches) {
       return INVALID_CREDENTIALS
@@ -172,7 +192,7 @@ export const createSession = plug(
 )
 
 const authJWT = async (activeUser: ActiveUser) => {
-  // TODO : add `jwtExpireSecs` in Config
+  // todo : add `jwtExpireSecs` in Config
   // const {jwtExpireSecs}=await getLatestConfigAdapter()
   const jwtExpireSecs = 30 * 24 * 60 * 60 * 1000
   const jwt = crypto.jwtSigner.adapter(activeUser.authId, jwtExpireSecs)

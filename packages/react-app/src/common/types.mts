@@ -24,7 +24,7 @@ export type AppearanceData = {
   logo: string
   smallLogo: string
   color: string
-  //TODO: decide if having this as optional
+  //TODO BRU //TODO ETTO decide if having this as optional
   customStyle?: CustomStyleType
 }
 

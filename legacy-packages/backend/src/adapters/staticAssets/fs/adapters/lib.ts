@@ -3,16 +3,29 @@ import { mkdir, readdir, readFile, rename, rm, stat } from 'fs/promises'
 import { resolve } from 'path'
 import { Readable } from 'stream'
 import { ulid } from 'ulid'
-import { AssetFileDesc, AssetId, TempAssetDesc, TempAssetId, Ulid } from '../../../../ports/static-assets/types'
+import {
+  AssetFileDesc,
+  AssetId,
+  TempAssetDesc,
+  TempAssetId,
+  Ulid,
+} from '../../../../ports/static-assets/types'
 
 type Path = string[]
 
 export const getUlidPath = (ulid: Ulid): Path => {
   const chars = ulid.toUpperCase().split('')
-  return [chars.slice(0, 3).join(''), chars[3]!, chars[4]!, chars[5]!, chars[6]!, chars.slice(7).join('')]
+  return [
+    chars.slice(0, 3).join(''),
+    chars[3]!,
+    chars[4]!,
+    chars[5]!,
+    chars[6]!,
+    chars.slice(7).join(''),
+  ]
 }
 
-//TODO: all exported functions should get rootFolder
+//todo: all exported functions should get rootFolder
 // and use getDir to get specific ones
 // then remove use of getDir from adapters
 export const getDir = (rootFolder: string, dir: 'temp' | 'assets') =>
@@ -24,7 +37,9 @@ export const newAssetId = async ({
 }: {
   assetDir: string
   ext: string | null
-}): Promise<[assetId: AssetId, fullFSPath: string, fullAssetFSPath: string, fullAssetDescFSPath: string]> => {
+}): Promise<
+  [assetId: AssetId, fullFSPath: string, fullAssetFSPath: string, fullAssetDescFSPath: string]
+> => {
   const _ulid = ulid()
   const filename = [_ulid, ...(ext ? [ext] : [])].join('.')
   const assetDirRelPath = getUlidPath(_ulid)
@@ -74,13 +89,28 @@ export const pipeToFile = async ({
 
 export const forceRm = async (path: string) => rm(path, { force: true }).catch(console.warn)
 
-export const forceRmTemp = async ({ tempDir, tempAssetId }: { tempDir: string; tempAssetId: TempAssetId }) => {
-  const [tempAssetFSPath, tempAssetDescFSPath] = getTempAssetFSPaths({ tempDir, tempAssetId: tempAssetId })
+export const forceRmTemp = async ({
+  tempDir,
+  tempAssetId,
+}: {
+  tempDir: string
+  tempAssetId: TempAssetId
+}) => {
+  const [tempAssetFSPath, tempAssetDescFSPath] = getTempAssetFSPaths({
+    tempDir,
+    tempAssetId: tempAssetId,
+  })
   await forceRm(tempAssetFSPath)
   await forceRm(tempAssetDescFSPath)
 }
 
-export const forceRmAsset = async ({ assetDir, assetId }: { assetDir: string; assetId: AssetId }) => {
+export const forceRmAsset = async ({
+  assetDir,
+  assetId,
+}: {
+  assetDir: string
+  assetId: AssetId
+}) => {
   const [assetFileFSPath, assetFileDescFSPath] = getAssetFileFSPaths({ assetDir, assetId })
   await forceRm(assetFileFSPath)
   await forceRm(assetFileDescFSPath)
@@ -108,7 +138,13 @@ export const getAssetFileFSPaths = ({
   resolve(assetDir, getFileDescName(assetId)),
 ]
 
-export const getAssetStreamAndDesc = async ({ assetId, assetDir }: { assetId: AssetId; assetDir: string }) => {
+export const getAssetStreamAndDesc = async ({
+  assetId,
+  assetDir,
+}: {
+  assetId: AssetId
+  assetDir: string
+}) => {
   const [assetFullPath] = getAssetFileFSPaths({ assetDir, assetId })
   try {
     const assetFileDesc = await getAssetFileDesc(assetDir, assetId)
@@ -143,8 +179,14 @@ export const persistTemp = async ({
 
   const ext = tempAssetDesc.filename.ext
 
-  const [assetId, fullAssetFSPath, fullDirFSPath, fullAssetDescFSPath] = await newAssetId({ assetDir, ext })
-  const [fullTempAssetFSPath, fullTempAssetDescFSPath] = getTempAssetFSPaths({ tempDir, tempAssetId })
+  const [assetId, fullAssetFSPath, fullDirFSPath, fullAssetDescFSPath] = await newAssetId({
+    assetDir,
+    ext,
+  })
+  const [fullTempAssetFSPath, fullTempAssetDescFSPath] = getTempAssetFSPaths({
+    tempDir,
+    tempAssetId,
+  })
   //console.log({ tempAssetId, assetPath: fullAssetPath, assetDir, tempAssetPath, fileDesc })
   const assetFileDesc: AssetFileDesc = {
     assetId,
@@ -165,7 +207,13 @@ export const persistTemp = async ({
   }
 }
 
-export const delOldTemps = async ({ tempDir, olderThanSecs }: { tempDir: string; olderThanSecs: number }) => {
+export const delOldTemps = async ({
+  tempDir,
+  olderThanSecs,
+}: {
+  tempDir: string
+  olderThanSecs: number
+}) => {
   console.log(`deleting old temp assets`)
 
   const tempAssets = await readdir(tempDir)

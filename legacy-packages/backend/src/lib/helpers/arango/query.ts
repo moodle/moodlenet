@@ -42,7 +42,7 @@ export const justExecute = async (q: string, db: Database) => {
   }
 }
 
-// TODO: hook this in helper funcs
+// hook this in helper funcs
 type PromiseRetryOpts = {
   retries?: number | undefined
   forever?: boolean | undefined
@@ -51,6 +51,9 @@ type PromiseRetryOpts = {
 }
 export const queryRetry = async <T>(q: AQ<T>, db: Database, opts?: PromiseRetryOpts) =>
   promiseRetry(
-    retry => db.query(q).catch(err => (String(err?.errorNum) === '1200' ? retry(err) : Promise.reject(err))),
+    retry =>
+      db
+        .query(q)
+        .catch(err => (String(err?.errorNum) === '1200' ? retry(err) : Promise.reject(err))),
     opts,
   )

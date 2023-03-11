@@ -6,8 +6,10 @@ const packagesDirs = readdirSync(path.resolve(__dirname, '..', '..')).map(pkg_na
 )
 
 function hackPackageJsonExports(recover) {
-  console.log('hackPackageJsonExports' + (recover ? ' (recover)' : ''))
-  console.log('packagesDirs', packagesDirs, '')
+  recover
+    ? console.log('\x1b[31m', 'REMOVE hackPackageJsonExports')
+    : console.log('\x1b[32m', 'APPLY hackPackageJsonExports')
+
   packagesDirs.forEach(pkgDir => {
     const tsconfigFile = path.resolve(pkgDir, 'tsconfig.json')
     const pkgJsonFile = path.resolve(pkgDir, 'package.json')
