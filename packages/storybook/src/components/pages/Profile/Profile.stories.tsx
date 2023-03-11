@@ -51,7 +51,9 @@ export const LoggedOut: ProfileStory = () => {
               isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isAuthenticated: false,
+                access: {
+                  isAuthenticated: false,
+                },
               })}
             />
           ),
@@ -65,7 +67,9 @@ export const LoggedOut: ProfileStory = () => {
               isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isAuthenticated: false,
+                access: {
+                  isAuthenticated: false,
+                },
               })}
             />
           ),
@@ -149,8 +153,10 @@ export const Owner: ProfileStory = () => {
               isCreator={true}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isCreator: true,
-                canEdit: true,
+                access: {
+                  isCreator: true,
+                  canEdit: true,
+                },
               })}
             />
           ),
@@ -164,8 +170,11 @@ export const Owner: ProfileStory = () => {
               isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                isCreator: true,
-                canEdit: true,
+                access: {
+                  isCreator: true,
+
+                  canEdit: true,
+                },
               })}
             />
           ),
@@ -200,7 +209,9 @@ export const Admin: ProfileStory = () => {
               isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                canEdit: true,
+                access: {
+                  canEdit: true,
+                },
               })}
             />
           ),
@@ -214,7 +225,9 @@ export const Admin: ProfileStory = () => {
               isCreator={false}
               newCollectionHref={href('Page/Collection/New')}
               collectionCardPropsList={getCollectionsCardStoryProps(5, {
-                canEdit: true,
+                access: {
+                  canEdit: true,
+                },
               })}
             />
           ),
