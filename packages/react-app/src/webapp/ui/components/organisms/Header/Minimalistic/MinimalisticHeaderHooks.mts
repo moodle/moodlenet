@@ -1,20 +1,20 @@
-import { MinimalisticHeaderProps } from './MinimalisticHeader.js'
+import { useMemo } from 'react'
 import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
 import { href } from '../../../elements/link.js'
-import { useMemo } from 'react'
+import { MinimalisticHeaderProps } from './MinimalisticHeader.js'
 
 export const useMinimalisticHeaderProps = (): MinimalisticHeaderProps => {
   const headerTitleProps = useHeaderTitleProps()
   const minimalisticHeaderProps = useMemo<MinimalisticHeaderProps>(() => {
     return {
       headerTitleProps,
-      page: 'activation', // FIXME: ask to bru wich param
-      //TODO: those access hrefs must be centralized in AuthCtx (present also in MainHeaderHooks)
+      page: 'activation', // FIXME //TODO BRU: ask to bru wich param
+      //TODO ETTO: those access hrefs must be centralized in AuthCtx (present also in MainHeaderHooks)
       loginHref: href('/login'),
       signupHref: href('/signup'),
-      centerItems: [], //TODO: needs a registry,,
-      leftItems: [], //TODO: needs a registry,,
-      rightItems: [], //TODO: needs a registry,,
+      centerItems: [], //TODO ETTO: needs a registry,,
+      leftItems: [], //TODO ETTO: needs a registry,,
+      rightItems: [], //TODO ETTO: needs a registry,,
     }
   }, [headerTitleProps])
 

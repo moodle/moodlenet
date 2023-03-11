@@ -39,7 +39,7 @@ import {
   useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
 
-// TODO: LOOK ETTORE FOR FORM
+// TODO ETTO: LOOK ETTORE FOR FORM
 
 const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
@@ -108,7 +108,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     fetchPolicy: 'cache-and-network',
   })
 
-  // TODO: move this service and abstraction to SessionCtx
+  // todo: move this service and abstraction to SessionCtx
   const [sendEmailMut, sendEmailMutRes] = useSendEmailToProfileMutation()
   const profile = narrowNodeType(['Profile'])(data?.node)
   const collections = useMemo(
@@ -179,7 +179,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     },
   })
 
-  // TODO: move this service to SessionCtx
+  // todo: move this service to SessionCtx
   const requestApprovalForm = useFormik({
     initialValues: {},
     onSubmit: async () => {
@@ -281,7 +281,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       if (!(isAdmin && profile)) {
         return
       }
-      // TODO: move this service to SessionCtx
+      // todo: move this service to SessionCtx
       const editResp = await edit({
         variables: {
           id: profile.id,

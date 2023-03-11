@@ -1,6 +1,11 @@
 import { GraphEdge } from '@moodlenet/common/dist/content-graph/types/edge'
 import { GraphNode } from '@moodlenet/common/dist/content-graph/types/node'
-import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/dist/content-graph/types/page'
+import {
+  Page,
+  PageInfo,
+  PageItem,
+  PaginationInput,
+} from '@moodlenet/common/dist/content-graph/types/page'
 import { CollectionType } from 'arangojs'
 import { AQ, aqlstr, getAllResults } from '../../../../lib/helpers/arango/query'
 import { Assertions, BV } from '../../../../ports/content-graph/graph-lang/base'
@@ -23,7 +28,8 @@ export const cursorPaginatedQuery = <T>({
   const beforeCursor = before || after
   const getCursorToo = beforeCursor === after
 
-  const pageLimit = (_: number, pageType: 'after' | 'before') => _ + (pageType === 'before' && getCursorToo ? 1 : 0)
+  const pageLimit = (_: number, pageType: 'after' | 'before') =>
+    _ + (pageType === 'before' && getCursorToo ? 1 : 0)
 
   const _afterPage =
     !after && !!before
@@ -96,7 +102,7 @@ export const makePage = <T>({
   }
   return page
 }
-// TODO: Make it like cursorPaginatedQuery
+// todo: Make it like cursorPaginatedQuery
 export const forwardSkipLimitPagination = ({ page }: { page: PaginationInput }) => {
   const { after, first: limit } = page
   const skip = Math.max((typeof after === 'number' ? after : -1) + 1, 0)
@@ -146,7 +152,8 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 
 export const graphNode2AqlIdentifier = (nodeVar: string | BV<GraphNode>) =>
   `{_id:${graphNode2AqlId(nodeVar)}, _key:${graphNode2AqlKey(nodeVar)}}`
-export const graphNode2AqlId = (nodeVar: string | BV<GraphNode>) => `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
+export const graphNode2AqlId = (nodeVar: string | BV<GraphNode>) =>
+  `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
 export const graphNode2AqlKey = (nodeVar: string | BV<GraphNode>) => `${nodeVar}._permId`
 export const graphNode2AqlGraphNode = (nodeVar: string | BV<GraphNode>) => `${nodeVar} && MERGE(
   UNSET(MERGE({},${nodeVar}), '_permId' ),
@@ -162,7 +169,8 @@ UNSET(MERGE({},${nodeVar}), '_id', '_key' ),
 
 export const graphEdge2AqlIdentifier = (edgeVar: string | BV<GraphEdge>) =>
   `{_id:${graphEdge2AqlId(edgeVar)}, _key:${graphEdge2AqlKey(edgeVar)}}`
-export const graphEdge2AqlId = (edgeVar: string | BV<GraphEdge>) => `CONCAT(${edgeVar}._type,'/',${edgeVar}.id)`
+export const graphEdge2AqlId = (edgeVar: string | BV<GraphEdge>) =>
+  `CONCAT(${edgeVar}._type,'/',${edgeVar}.id)`
 export const graphEdge2AqlKey = (edgeVar: string | BV<GraphEdge>) => `${edgeVar}.id`
 export const graphEdge2AqlGraphEdge = (edgeVar: string | BV<GraphEdge>) => `${edgeVar} && MERGE(
   UNSET(MERGE({},${edgeVar}), 'id' ),
