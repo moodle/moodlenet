@@ -6,7 +6,7 @@ import { createCtx } from '../../lib/context'
 import { LocalInstanceContextType, useLocalInstance } from './LocalInstance'
 import { useSeoContentQuery } from './Seo/Seo.gen'
 
-// TODO: implement Open Graph protocol : https://ogp.me/
+// todo: implement Open Graph protocol : https://ogp.me/
 
 export type SeoMeta = {
   robotsMeta: RobotsMeta[]

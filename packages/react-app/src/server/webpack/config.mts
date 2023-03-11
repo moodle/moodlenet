@@ -232,7 +232,7 @@ export async function getWp(
         },
         {
           test: /\.[jt]sx?$/,
-          // TODO: is there a way to ignore /node_modules/ except for "installed mn packages" ?
+          // TODO ALE: is there a way to ignore /node_modules/ except for "installed mn packages" ?
           // node_modules\/(?!@m\/xx$)(?!@m\/yy$)(?!a$)(?!a$).*
           // https://regexr.com/73d26
           // exclude: /node_modules/, // HACK: removed because it won't compile jsx from within system's installed packages .. but this way it IS heavier..

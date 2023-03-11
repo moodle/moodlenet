@@ -26,7 +26,7 @@ export const AccessHeader = withCtrl<AccessHeaderProps>(
               {page === 'login' ? (
                 <Link href={signupHref}>
                   {' '}
-                  {/* TODO Implement on Controller */}
+                  {/* todo Implement on Controller */}
                   <SecondaryButton color="orange">
                     <Trans>Sign up</Trans>
                   </SecondaryButton>
@@ -34,7 +34,7 @@ export const AccessHeader = withCtrl<AccessHeaderProps>(
               ) : (
                 <Link href={loginHref}>
                   {' '}
-                  {/* TODO Implement on Controller */}
+                  {/* todo Implement on Controller */}
                   <SecondaryButton color="orange">
                     <Trans>Log in</Trans>
                   </SecondaryButton>

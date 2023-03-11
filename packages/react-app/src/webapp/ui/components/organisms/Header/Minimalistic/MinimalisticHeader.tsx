@@ -34,7 +34,7 @@ export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> 
       <div className="buttons">
         {page !== 'signup' && (
           <Link href={signupHref}>
-            {/* // TODO Implement on Controller */}
+            {/* // TODO ETTO Implement on Controller */}
             <SecondaryButton color="orange">
               {/* <Trans> */}
               Sign up
@@ -44,7 +44,7 @@ export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> 
         )}
         {page !== 'login' && (
           <Link href={loginHref}>
-            {/* TODO Implement on Controller */}
+            {/* TODO ETTO Implement on Controller */}
             <SecondaryButton color="orange">
               {/* <Trans> */}
               Log in

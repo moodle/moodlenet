@@ -1,6 +1,6 @@
 import { GraphNodeIdentifierSlug, GraphNodeType } from '../../content-graph/types/node'
 
-// TODO: should this stuff go to common/graphql/helpers.ts ?
+// todo: should this stuff go to common/graphql/helpers.ts ?
 
 const NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH = 'no-home'
 const contentNodeType2NodeHomePagePathsMap: Record<GraphNodeType, string> = {
@@ -48,14 +48,18 @@ const nodeHomePagePathsMap2ContentNodeType: Record<string, GraphNodeType> = Obje
 //   [type in GraphNodeType]: Lowercase<GraphNodeType>
 // }
 
-export const getNodeTypeByCaseInsensitiveContentNodePath = (caseInsensitiveContentNodePath: string) =>
-  nodeHomePagePathsMap2ContentNodeType[caseInsensitiveContentNodePath.toLowerCase()]
+export const getNodeTypeByCaseInsensitiveContentNodePath = (
+  caseInsensitiveContentNodePath: string,
+) => nodeHomePagePathsMap2ContentNodeType[caseInsensitiveContentNodePath.toLowerCase()]
 
 export const nodeGqlId2UrlPath = (id: string) => {
   const [_type, _slug] = id.split('/')
   // console.log({ _type, _slug })
 
-  return nodeIdentifierSlug2HomeUrlPath({ _type: String(_type) as GraphNodeType, _slug: String(_slug) })
+  return nodeIdentifierSlug2HomeUrlPath({
+    _type: String(_type) as GraphNodeType,
+    _slug: String(_slug),
+  })
 }
 export const nodeIdentifierSlug2HomeUrlPath = (slugId: GraphNodeIdentifierSlug) => {
   if (slugId._type === 'Organization') {
@@ -68,7 +72,9 @@ export const nodeIdentifierSlug2HomeUrlPath = (slugId: GraphNodeIdentifierSlug) 
   return contentNodeHomePathSlug
 }
 export const getContentNodeHomePageRoutePath = (nodeType: GraphNodeType) => {
-  const contentNodeHomePageRoutePath = `${getContentNodeHomePageBasePath(nodeType)}/:slug` as `/${string}/:slug`
+  const contentNodeHomePageRoutePath = `${getContentNodeHomePageBasePath(
+    nodeType,
+  )}/:slug` as `/${string}/:slug`
   // console.log({ nodeType, contentNodeHomePageRoutePath })
   return contentNodeHomePageRoutePath
 }
