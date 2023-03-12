@@ -3,7 +3,7 @@ import { AuthCtx } from '../../../../web-lib.mjs'
 import { href } from '../../elements/link.js'
 import { HeaderMenuItemRegItem } from '../Header/addons.js'
 
-// TODO ETTO Shoud separate hook from this component
+// TODO //@ETTO Shoud separate hook from this component
 
 const text = 'Profile'
 const path = href('/my-profile')
@@ -17,7 +17,7 @@ const IconContainer: FC = () => {
   if (!clientSessionData?.myProfile) {
     return <></>
   }
-  const iconUrl = '' // TODO ETTO: should use avatarUrl from clientSessionData?.myProfile
+  const iconUrl = '' // TODO //@ETTO: should use avatarUrl from clientSessionData?.myProfile
   return <HeaderProfileIcon icon={iconUrl}></HeaderProfileIcon>
 }
 
