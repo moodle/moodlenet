@@ -50,6 +50,10 @@ const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} 
 export const BrowserLoggedOutStoryProps: BrowserProps = {
   mainColumnItems: [
     {
+      menuItem: {
+        Item: () => <span>Resources</span>,
+        key: 'menu-resources',
+      },
       Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Page/Search')}
@@ -58,9 +62,13 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
           })}
         />
       ),
-      key: 'resource-card-list',
+      key: 'resource-list',
     },
     {
+      menuItem: {
+        Item: () => <span>Collections</span>,
+        key: 'menu-collections',
+      },
       Item: () => (
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
@@ -69,9 +77,13 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
           })}
         />
       ),
-      key: 'collection-card-list',
+      key: 'collection-list',
     },
     {
+      menuItem: {
+        Item: () => <span>People</span>,
+        key: 'menu-people',
+      },
       Item: () => (
         <SmallProfileCardList
           searchAuthorsHref={href('Page/Search')}
@@ -80,9 +92,10 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
           })}
         />
       ),
-      key: 'people-card-list',
+      key: 'people-list',
     },
   ],
+  sideColumnItems: [],
   //   title: 'Bookmarks',
   //   setSortBy: action(`set sort by`),
   //   setFilters: action(`set Filters`),

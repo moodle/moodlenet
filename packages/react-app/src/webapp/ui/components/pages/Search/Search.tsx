@@ -10,7 +10,9 @@ export type SearchProps = {
 export const Search: FC<SearchProps> = ({ mainLayoutProps, browserProps }) => {
   return (
     <MainLayout {...mainLayoutProps}>
-      <Browser {...browserProps} />
+      <div className="search">
+        <Browser {...browserProps} />
+      </div>
     </MainLayout>
   )
 }
