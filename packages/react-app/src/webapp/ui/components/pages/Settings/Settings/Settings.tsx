@@ -25,7 +25,7 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
       <div className={`settings`}>
         {
           <div className="left-menu" role="navigation">
-            <Card>
+            <Card role="navigation">
               {settingsItems.map(settingsEntry => {
                 const isCurrent = JSON.stringify(settingsEntry) === JSON.stringify(currSettingsItem)
                 const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsEntry)

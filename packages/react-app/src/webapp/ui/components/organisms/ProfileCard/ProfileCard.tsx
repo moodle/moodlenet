@@ -8,14 +8,14 @@ import {
   PrimaryButton,
   RoundButton,
   SecondaryButton,
-  useImageUrl,
+  useImageUrl
 } from '@moodlenet/component-library'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import {
   ProfileCardAccess,
   ProfileCardActions,
   ProfileCardState,
-  ProfileFormValues,
+  ProfileFormValues
 } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
@@ -358,7 +358,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       )}
     </>
   )
-
+  
   const updatedMainColumnItems = [
     backgroundContainer,
     avatarContainer,
@@ -368,6 +368,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     footer,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  console.log('mainColumnItems', updatedMainColumnItems)
 
   return (
     <div className="profile-card" key="profile-card">

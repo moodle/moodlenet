@@ -33,7 +33,7 @@ export const SmallProfileCardList: FC<SmallProfileCardListProps> = ({
           }
         </div>
       }
-      className={`people`}
+      className={`people-list`}
       noCard={true}
       minGrid={170}
       maxHeight={267}
