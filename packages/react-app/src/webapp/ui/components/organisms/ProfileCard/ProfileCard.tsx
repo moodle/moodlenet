@@ -23,6 +23,7 @@ export type ProfileCardProps = {
   topItems?: AddonItem[]
   titleItems?: AddonItem[]
   subtitleItems?: AddonItem[]
+  footerItems?: AddonItem[]
   form: ReturnType<typeof useFormik<ProfileFormValues>>
   isAuthenticated: boolean
   isEditing?: boolean
@@ -39,6 +40,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   topItems,
   titleItems,
   subtitleItems,
+  footerItems,
   form,
   isEditing,
   canEdit,
@@ -208,7 +210,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
-  const cardHeader = (
+  const header = (
     <div className="profile-card-header" key="card-header">
       <div className="title">
         {updatedTitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
@@ -311,18 +313,28 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       )}
     </>
   )
+  const updatedFooterItems = [...(footerItems ?? [])].filter(
+    (item): item is AddonItem /* | JSX.Element */ => !!item,
+  )
 
-  const updatedBottomItems = <div className="buttons"></div>
+  const footer =
+    updatedFooterItems.length > 0 ? (
+      <div className="footer">
+        {updatedFooterItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    ) : null
 
   const updatedMainColumnItems = [
     backgroundContainer,
     avatarContainer,
     topItemsContainer,
-    cardHeader,
+    header,
     description,
-    updatedBottomItems,
+    footer,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  console.log('mainColumnItems', updatedMainColumnItems)
 
   return (
     <div className="profile-card" key="profile-card">

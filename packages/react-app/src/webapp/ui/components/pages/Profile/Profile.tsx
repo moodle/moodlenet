@@ -140,6 +140,7 @@ export const Profile: FC<ProfileProps> = ({
   const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem /* | JSX.Element  */ => !!item,
   )
+
   const updatedSideColumnItems = [...(sideColumnItems ?? [])].filter(
     (item): item is AddonItem /* | JSX.Element */ => !!item,
   )

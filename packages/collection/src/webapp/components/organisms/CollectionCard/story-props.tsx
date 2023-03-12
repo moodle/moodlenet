@@ -9,9 +9,6 @@ export const getCollectionsCardStoryProps = (
   overrides?: PartialDeep<CollectionCardProps>,
 ): CollectionCardProps[] => {
   return getRandomSortedArrayElements(collectionsCardFactory, amount).map(collection => {
-    console.log('collection', collection)
-    // const updatedOverrides = overrideDeep<CollectionCardProps>(collection, { ...overrides })
-    console.log('updatedOverrides', getCollectionCardStoryProps({ ...collection, ...overrides }))
     return getCollectionCardStoryProps({ ...collection, ...overrides })
   })
 }
