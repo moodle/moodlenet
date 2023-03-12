@@ -8,13 +8,13 @@ export const useMinimalisticHeaderProps = (): MinimalisticHeaderProps => {
   const minimalisticHeaderProps = useMemo<MinimalisticHeaderProps>(() => {
     return {
       headerTitleProps,
-      page: 'activation', // FIXME //TODO BRU: ask to bru wich param
-      //TODO ETTO: those access hrefs must be centralized in AuthCtx (present also in MainHeaderHooks)
+      page: 'activation', // FIXME //TODO //@BRU: ask to bru wich param
+      //TODO //@ETTO: those access hrefs must be centralized in AuthCtx (present also in MainHeaderHooks)
       loginHref: href('/login'),
       signupHref: href('/signup'),
-      centerItems: [], //TODO ETTO: needs a registry,,
-      leftItems: [], //TODO ETTO: needs a registry,,
-      rightItems: [], //TODO ETTO: needs a registry,,
+      centerItems: [], //TODO //@ETTO: needs a registry,,
+      leftItems: [], //TODO //@ETTO: needs a registry,,
+      rightItems: [], //TODO //@ETTO: needs a registry,,
     }
   }, [headerTitleProps])
 

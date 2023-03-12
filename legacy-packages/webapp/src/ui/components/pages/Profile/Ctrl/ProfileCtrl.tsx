@@ -39,7 +39,7 @@ import {
   useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
 
-// TODO ETTO: LOOK ETTORE FOR FORM
+// TODO //@ETTO: LOOK ETTORE FOR FORM
 
 const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
