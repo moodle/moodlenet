@@ -37,7 +37,7 @@ export const SmallProfileCard: FC<SmallProfileCardProps> = ({
   const { isCreator, isAuthenticated } = access
 
   const header = (
-    <Link className="profile-card-header" href={profileHref}>
+    <Link className="profile-card-header" href={profileHref} key="header">
       <div className="title-header">
         <abbr className="title" title={displayName}>
           {displayName}
@@ -49,10 +49,12 @@ export const SmallProfileCard: FC<SmallProfileCardProps> = ({
     </Link>
   )
 
-  const overallCard = <OverallCard noCard={true} showIcons={true} {...overallCardProps} />
+  const overallCard = (
+    <OverallCard noCard={true} showIcons={true} {...overallCardProps} key="overall-card" />
+  )
 
   const buttons = (
-    <div className="buttons">
+    <div className="buttons" key="buttons">
       {!isCreator && followed && (
         <SecondaryButton onClick={toggleFollow} color="orange">
           Following
