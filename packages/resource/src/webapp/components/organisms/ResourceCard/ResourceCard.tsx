@@ -160,13 +160,13 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   }, [resourceCard])
 
   const deleteButton = canEdit && (
-    <TertiaryButton onClick={onRemoveClick} className={`delete ${orientation}`}>
+    <TertiaryButton key="delete-button" onClick={onRemoveClick} className={`delete ${orientation}`}>
       <CloseRounded />
     </TertiaryButton>
   )
 
   const typeLabel = (
-    <div className="type" style={{ background: typeColor }}>
+    <div className="type" key="type-label" style={{ background: typeColor }}>
       {typeName}
     </div>
   )
@@ -180,7 +180,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   )
 
   const header = (
-    <div className={`resource-card-header ${orientation} ${size}`}>
+    <div className={`resource-card-header ${orientation} ${size}`} key="resource-card-header">
       <div className="header-left">
         {updatedTopLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
@@ -203,7 +203,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   }, [ownerNameRef])
 
   const avatarLabel = (
-    <Link href={owner.profileHref}>
+    <Link href={owner.profileHref} key="avatar-label">
       <div style={avatar} className="avatar" />
       <abbr ref={ownerNameRef} {...(showOwnerNameAbbr && { title: owner.displayName })}>
         {owner.displayName}
@@ -213,6 +213,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const pulishButton = canEdit && (
     <TertiaryButton
+      key="publish-button"
       onClick={isPublished ? () => setIsPublished(false) : publish}
       className={`publish-button ${isPublished ? 'published' : 'draft'}`}
       abbr={isPublished ? 'Sent to draft' : 'Publish'}
@@ -223,6 +224,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const bookmarkButton = isAuthenticated && !selectionMode && (
     <TertiaryButton
+      key={`bookmark-button`}
       className={`bookmark-button ${bookmarked && 'bookmarked'} ${
         selectionMode || !isAuthenticated ? 'disabled' : ''
       }`}
@@ -235,6 +237,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const likeButton = (
     <TertiaryButton
+      key="like-button"
       className={`like-button ${liked && 'liked'} ${
         selectionMode || !isAuthenticated || isCreator ? 'disabled' : ''
       }`}
@@ -269,7 +272,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const footer = (
-    <div className={`resource-card-footer ${orientation} ${size}`}>
+    <div className={`resource-card-footer ${orientation} ${size}`} key="footer">
       <div className={`footer-left  ${orientation}`}>
         {updatedBottomLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
@@ -281,7 +284,12 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const contentContainer =
     resourceHomeHref && !selectionMode ? (
-      <Link className="content-container" href={resourceHomeHref} role="navigation">
+      <Link
+        className="content-container"
+        href={resourceHomeHref}
+        role="navigation"
+        key="content-container"
+      >
         {content}
       </Link>
     ) : (
