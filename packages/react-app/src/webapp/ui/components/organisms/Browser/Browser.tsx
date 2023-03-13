@@ -1,21 +1,20 @@
 import { AddonItem, Card } from '@moodlenet/component-library'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import './Browser.scss'
 
 export const filterTypes = ['Subjects', 'Collections', 'Resources', 'People'] as const
 export type FilterType = typeof filterTypes[number]
-// type SortType = 'Relevance' | 'Recent' | 'Popularity'
 export type BrowserProps = {
   mainColumnItems?: ({ menuItem?: AddonItem } & AddonItem)[]
   sideColumnItems?: AddonItem[]
 }
-export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) => {
+export const Browser: FC<BrowserProps> = ({ sideColumnItems, mainColumnItems }) => {
   const [currentSection, setCurrentSection] = useState(
     mainColumnItems && mainColumnItems.length > 0 ? mainColumnItems[0]?.key.toString() : '0',
   )
 
   const navMenu = (
-    <div className="nav-menu" role="navigation">
+    <div className="nav-menu" role="navigation" key="nav-menu">
       <Card role="navigation">
         {mainColumnItems &&
           mainColumnItems
@@ -43,45 +42,54 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
   )
 
   const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem /* | JSX.Element  */ => !!item,
+    (item): item is AddonItem => !!item,
   )
 
   const updatedSideColumnItems = [navMenu, ...(sideColumnItems ?? [])].filter(
-    (item): item is AddonItem /* | JSX.Element  */ => !!item,
+    (item): item is AddonItem | JSX.Element => !!item,
   )
 
   const mainColumnRef = useRef<HTMLDivElement>(null)
 
-  const mainColumnElements = updatedMainColumnItems.map(i =>
-    'Item' in i ? <i.Item key={i.key} /> : i,
-  )
-
-  // const updateActiveSection = () => {
-  //   console.log(
-  //     'mainColumnRef.current',
-  //     mainColumnRef.current,
-  //     'children',
-  //     mainColumnRef.current?.children,
-  //     'length',
-  //     mainColumnRef.current?.children?.length ?? '',
-  //   )
+  // const updateActiveSection = useCallback(() => {
+  //   const parent = mainColumnRef.current
   //   const children = mainColumnRef.current?.children
+
+  //   const heights = parent ? [parent.offsetTop] : [0]
+  //   console.log('initial heights', heights)
+
   //   if (children) {
-  //     for (let i = 0; i < children.length; i++) {
-  //       const section = children[i]
-  //       const sectionTop = section?.clientTop
-  //       if (sectionTop && window.pageYOffset >= sectionTop) {
-  //         const key = section?.getAttribute('key')
+  //     for (let i = 0; i < children.length - 1; i++) {
+  //       const child = children[i]
+  //       console.log('child: ', child)
+
+  //       const prevHeight = heights[i]
+  //       console.log('prevHeight', prevHeight)
+
+  //       const childHeight = child?.clientHeight
+  //       console.log('childHeight ', childHeight)
+
+  //       childHeight && heights.push(prevHeight ? childHeight + prevHeight : childHeight)
+  //       const currentHeight = heights[i]
+  //       console.log('currentHeight', currentHeight)
+
+  //       if (currentHeight && window.pageYOffset >= currentHeight) {
+  //         const key = child?.getAttribute('key')
   //         key && setCurrentSection(key)
   //       }
   //     }
-  //   }
-  // }
 
-  // useEffect(() => {
-  //   window.addEventListener('scroll', updateActiveSection)
-  //   return () => window.removeEventListener('scroll', updateActiveSection)
+  //     console.log('heights', heights)
+  //   }
   // }, [])
+
+  // useLayoutEffect(() => {
+  //   console.log('getting here')
+  //   window.addEventListener('scroll', updateActiveSection)
+  //   return () => {
+  //     window.removeEventListener('scroll', updateActiveSection)
+  //   }
+  // }, [updateActiveSection])
 
   // useEffect(() => {
   //   window.addEventListener('scroll', updateActiveSection)
@@ -90,21 +98,27 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
   //   }
   // }, [updateActiveSection])
 
-  useEffect(() => {
-    const a = mainColumnRef.current
-    console.log(mainColumnRef.current?.children)
-  }, [mainColumnRef])
+  // The scroll listener
+  const handleScroll = useCallback(() => {
+    console.log('scrolling')
+  }, [])
+
+  // Attach the scroll listener to the div
+  useLayoutEffect(() => {
+    const div = mainColumnRef.current
+    div && div.addEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  console.log('currentSection', currentSection)
 
   return (
     <div className="browser">
       <div className="content">
-        {/* {!hideSortAndFilter && ( */}
         <div className="side-column">
           {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
-        {/* )} */}
         <div ref={mainColumnRef} className={`main-column`}>
-          {mainColumnElements}
+          {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
       </div>
     </div>
