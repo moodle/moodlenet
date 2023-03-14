@@ -14,7 +14,7 @@ export async function sign(
   const payload = { ..._payload }
   const caller = shell.assertCallInitiator()
   if (stdClaims.scope !== undefined) {
-    _payload.scope = [stdClaims.scope].flat().join(' ')
+    payload.scope = [stdClaims.scope].flat().join(' ')
   }
 
   const signingJwt = new jose.SignJWT(payload)
