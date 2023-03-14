@@ -1,7 +1,7 @@
 import { NoteAdd } from '@material-ui/icons'
 import { Href, ListCard, PrimaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
 import './ProfileResourceList.scss'
 
@@ -16,18 +16,22 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
   newResourceHref,
   isCreator,
 }) => {
-  return isCreator || resourceCardPropsList.length > 0 ? (
+  const listCard = (
     <ListCard
       className="resources"
-      content={resourceCardPropsList.map(resourceCardProps => {
-        return (
-          <ResourceCard
-            key={resourceCardProps.resourceId}
-            {...resourceCardProps}
-            orientation="horizontal"
-          />
-        )
-      })}
+      content={useMemo(
+        () =>
+          resourceCardPropsList.map(resourceCardProps => {
+            return (
+              <ResourceCard
+                key={resourceCardProps.resourceId}
+                {...resourceCardProps}
+                orientation="horizontal"
+              />
+            )
+          }),
+        [resourceCardPropsList],
+      )}
       title={`Latest resources`}
       actions={
         isCreator
@@ -45,7 +49,9 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
           : undefined
       }
     />
-  ) : null
+  )
+
+  return isCreator || resourceCardPropsList.length > 0 ? listCard : null
 }
 
 ProfileResourceList.defaultProps = {}

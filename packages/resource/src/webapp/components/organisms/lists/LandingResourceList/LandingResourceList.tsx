@@ -1,7 +1,7 @@
 import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
 import './LandingResourceList.scss'
 
@@ -17,13 +17,19 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
   return (
     <ListCard
       className="landing-resource-list"
-      content={resourceCardPropsList.slice(0, 10).map(resourceCardProps => (
-        <ResourceCard
-          {...resourceCardProps}
-          key={resourceCardProps.resourceId}
-          orientation="vertical"
-        />
-      ))}
+      content={useMemo(
+        () =>
+          resourceCardPropsList
+            .slice(0, 10)
+            .map(resourceCardProps => (
+              <ResourceCard
+                {...resourceCardProps}
+                key={resourceCardProps.resourceId}
+                orientation="vertical"
+              />
+            )),
+        [resourceCardPropsList],
+      )}
       title={
         <div className="card-header">
           <div className="info">
