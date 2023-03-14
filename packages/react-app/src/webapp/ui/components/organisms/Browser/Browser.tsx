@@ -1,5 +1,5 @@
 import { AddonItem, Card } from '@moodlenet/component-library'
-import { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import './Browser.scss'
 
 export const filterTypes = ['Subjects', 'Collections', 'Resources', 'People'] as const
@@ -99,15 +99,28 @@ export const Browser: FC<BrowserProps> = ({ sideColumnItems, mainColumnItems }) 
   // }, [updateActiveSection])
 
   // The scroll listener
-  const handleScroll = useCallback(() => {
-    console.log('scrolling')
-  }, [])
+  // const handleScroll = useCallback(() => {
+  //   console.log('scrolling')
+  // }, [])
 
-  // Attach the scroll listener to the div
-  useLayoutEffect(() => {
-    const div = mainColumnRef.current
-    div && div.addEventListener('scroll', handleScroll)
-  }, [handleScroll])
+  // // Attach the scroll listener to the div
+  // useEffect(() => {
+  //   console.log('getting here')
+  //   // const div = mainColumnRef.current
+  //   document.addEventListener('scroll', handleScroll)
+  //   return () => {
+  //     console.log('removing listener')
+  //     document.removeEventListener('scroll', handleScroll)
+  //   }
+  // }, [handleScroll])
+
+  // add the scroll listener to the window
+  // useEffect(() => {
+  //   window.addEventListener('scroll', updateActiveSection)
+  //   return () => {
+  //     window.removeEventListener('scroll', updateActiveSection)
+  //   }
+  // }, [updateActiveSection])
 
   console.log('currentSection', currentSection)
 
