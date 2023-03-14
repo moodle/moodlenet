@@ -1,7 +1,7 @@
 import { Href, ListCard, PrimaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import { LibraryAdd } from '@mui/icons-material'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { CollectionCard, CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
 import './ProfileCollectionList.scss'
 
@@ -29,13 +29,17 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
   //   }
   // }, [])
 
-  return (isCreator || collectionCardPropsList.length > 0) && window.innerWidth ? (
+  const listCard = (
     <ListCard
       className="profile-collection-list"
       title={`Curated collections`}
-      content={collectionCardPropsList.map(collectionCardProps => (
-        <CollectionCard key={collectionCardProps.data.collectionId} {...collectionCardProps} />
-      ))}
+      content={useMemo(
+        () =>
+          collectionCardPropsList.map(collectionCardProps => (
+            <CollectionCard key={collectionCardProps.data.collectionId} {...collectionCardProps} />
+          )),
+        [collectionCardPropsList],
+      )}
       actions={
         isCreator
           ? {
@@ -52,7 +56,9 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
           : undefined
       }
     ></ListCard>
-  ) : null
+  )
+
+  return (isCreator || collectionCardPropsList.length > 0) && window.innerWidth ? listCard : null
 }
 
 ProfileCollectionList.defaultProps = {}

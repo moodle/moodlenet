@@ -1,6 +1,6 @@
 import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { ArrowForwardIosRounded } from '@mui/icons-material'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Link } from '../../elements/link.js'
 import { SmallProfileCard, SmallProfileCardProps } from '../SmallProfileCard/SmallProfileCard.js'
 import './SmallProfileCardList.scss'
@@ -16,9 +16,18 @@ export const SmallProfileCardList: FC<SmallProfileCardListProps> = ({
 }) => {
   return (
     <ListCard
-      content={smallProfileCardPropsList.slice(0, 11).map(smallProfileCardProps => (
-        <SmallProfileCard key={smallProfileCardProps.data.userId} {...smallProfileCardProps} />
-      ))}
+      content={useMemo(
+        () =>
+          smallProfileCardPropsList
+            .slice(0, 11)
+            .map(smallProfileCardProps => (
+              <SmallProfileCard
+                key={smallProfileCardProps.data.userId}
+                {...smallProfileCardProps}
+              />
+            )),
+        [smallProfileCardPropsList],
+      )}
       title={
         <div className="card-header">
           <div className="info">
