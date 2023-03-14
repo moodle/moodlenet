@@ -26,7 +26,7 @@ shell.call(mountApp)({
         ;(await getOidcProvider()).callback()(req, res)
       },
     )
-    app.use('/.oauth/', async (req, res) => {
+    app.use('/.openid/', async (req, res) => {
       ;(await getOidcProvider()).callback()(req, res)
     })
     return app

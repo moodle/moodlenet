@@ -35,18 +35,18 @@ async function getProviderConfig() {
     // },
     scopes: ['openid' /* , 'full-user' */],
     routes: {
-      authorization: '/../../.oauth/auth',
-      // revocation: '/../../.oauth/token/revocation',
-      // jwks: '/../../.oauth/jwks',
-      // registration: '/../../.oauth/reg',
-      // end_session: '/../../.oauth/session/end',
-      // token: '/../../.oauth/token',
-      // pushed_authorization_request: '/../../.oauth/request',
-      // userinfo: '/../../.oauth/me',
-      // backchannel_authentication: '/../../.oauth/backchannel_authentication',
-      // code_verification: '/../../.oauth/code_verification',
-      // device_authorization: '/../../.oauth/device_authorization',
-      // introspection: '/../../.oauth/introspection',
+      authorization: '/../../.openid/auth',
+      // revocation: '/../../.openid/token/revocation',
+      // jwks: '/../../.openid/jwks',
+      // registration: '/../../.openid/reg',
+      // end_session: '/../../.openid/session/end',
+      // token: '/../../.openid/token',
+      // pushed_authorization_request: '/../../.openid/request',
+      // userinfo: '/../../.openid/me',
+      // backchannel_authentication: '/../../.openid/backchannel_authentication',
+      // code_verification: '/../../.openid/code_verification',
+      // device_authorization: '/../../.openid/device_authorization',
+      // introspection: '/../../.openid/introspection',
     },
     // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
     interactions: {
@@ -56,7 +56,7 @@ async function getProviderConfig() {
       // },
       // url(_ctx, interaction) {
       //   console.log('interaction', interaction)
-      //   return `/.oauth/interaction/${interaction.uid}`
+      //   return `/.openid/interaction/${interaction.uid}`
       // },
       policy: [
         new interactionPolicy.Prompt(
@@ -188,9 +188,9 @@ export async function getOidcProvider() {
       ctx.path = '/.well-known/openid-configuration'
     } else if (!ctx.path.startsWith('/interaction')) {
       // } else {
-      ctx.path = `/../../.oauth${ctx.path}`
+      ctx.path = `/../../.openid${ctx.path}`
     } else {
-      ctx.path = ctx.path.replace(/^\/.oauth/, '')
+      ctx.path = ctx.path.replace(/^\/.openid/, '')
     }
     console.log(
       ctx.request.method,
