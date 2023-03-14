@@ -1,5 +1,4 @@
 import React from 'react'
-import { shuffleArray } from '../../../helpers/utilities.js'
 
 export const setListPosition = ({
   dropdownButton,
@@ -54,7 +53,7 @@ export const getRandomSortedArrayElements = <T,>(baseArray: T[], lengthNewArray?
   const newArrayLength = lengthNewArray ?? baseArray.length ?? 0
   // console.log('length new array ', newArrayLength)
   while (newArray.length < newArrayLength) {
-    shuffleArray(baseArray).forEach(e => {
+    baseArray.forEach(e => {
       if (newArray.length < newArrayLength) {
         newArray.push(e)
       } else {
