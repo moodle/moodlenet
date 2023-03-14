@@ -8,6 +8,7 @@ import {
 } from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useMemo } from 'react'
 
 const meta: ComponentMeta<typeof Browser> = {
   title: 'Organisms/Browser',
@@ -54,14 +55,21 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
         Item: () => <span>Resources</span>,
         key: 'menu-resources',
       },
-      Item: () => (
-        <LandingResourceList
-          searchResourcesHref={href('Page/Search')}
-          resourceCardPropsList={getResourcesCardStoryProps(15, {
-            isAuthenticated: false,
-          })}
-        />
-      ),
+      Item: () => {
+        const list = useMemo(
+          () =>
+            getResourcesCardStoryProps(15, {
+              isAuthenticated: false,
+            }),
+          [],
+        )
+        return (
+          <LandingResourceList
+            searchResourcesHref={href('Page/Search')}
+            resourceCardPropsList={list}
+          />
+        )
+      },
       key: 'resource-list',
     },
     {
@@ -69,14 +77,21 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
         Item: () => <span>Collections</span>,
         key: 'menu-collections',
       },
-      Item: () => (
-        <LandingCollectionList
-          searchCollectionsHref={href('Page/Search')}
-          collectionCardPropsList={getCollectionsCardStoryProps(15, {
-            access: { isAuthenticated: false },
-          })}
-        />
-      ),
+      Item: () => {
+        const list = useMemo(
+          () =>
+            getCollectionsCardStoryProps(15, {
+              access: { isAuthenticated: false },
+            }),
+          [],
+        )
+        return (
+          <LandingCollectionList
+            searchCollectionsHref={href('Page/Search')}
+            collectionCardPropsList={list}
+          />
+        )
+      },
       key: 'collection-list',
     },
     {
@@ -84,14 +99,21 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
         Item: () => <span>People</span>,
         key: 'menu-people',
       },
-      Item: () => (
-        <SmallProfileCardList
-          searchAuthorsHref={href('Page/Search')}
-          smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
-            access: { isAuthenticated: false },
-          })}
-        />
-      ),
+      Item: () => {
+        const list = useMemo(
+          () =>
+            getSmallProfilesCardStoryProps(15, {
+              access: { isAuthenticated: false },
+            }),
+          [],
+        )
+        return (
+          <SmallProfileCardList
+            searchAuthorsHref={href('Page/Search')}
+            smallProfileCardPropsList={list}
+          />
+        )
+      },
       key: 'people-list',
     },
   ],
