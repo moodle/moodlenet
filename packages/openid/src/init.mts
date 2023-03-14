@@ -1,6 +1,6 @@
 import { /* ensureDocumentCollection,  */ getMyDB } from '@moodlenet/arangodb/server'
 import { mountApp } from '@moodlenet/http-server/server'
-import { provider } from './oidc-provider.mjs'
+import { getOidcProvider } from './oidc-provider.mjs'
 import { shell } from './shell.mjs'
 // import { DataType } from './types/storeTypes.mjs'
 
@@ -20,9 +20,15 @@ shell.call(mountApp)({
   getApp(express) {
     const app = express()
     // app.use('/oauth-authorization-server', (_req, res) => res.json({ a: 1 }))
-    const openIdProvider = provider.callback()
-    app.use('/.well-known/((oauth-authorization-server)|(openid-configuration))', openIdProvider)
-    app.use('/.oauth/', openIdProvider)
+    app.use(
+      '/.well-known/((oauth-authorization-server)|(openid-configuration))',
+      async (req, res) => {
+        ;(await getOidcProvider()).callback()(req, res)
+      },
+    )
+    app.use('/.oauth/', async (req, res) => {
+      ;(await getOidcProvider()).callback()(req, res)
+    })
     return app
   },
   mountOnAbsPath: '/',
