@@ -9,7 +9,7 @@ import { TokenCtx, UnverifiedTokenCtx, VerifiedTokenCtx, WebUserJwtPayload } fro
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
   const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {
     expirationTime: '2w',
-    scope: 'full-user',
+    scope: [/* 'full-user',  */ 'openid'],
   })
   return sessionToken
 }

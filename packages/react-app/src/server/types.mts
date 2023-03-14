@@ -35,7 +35,7 @@ export type WebUserJwtPayload =
       isRoot?: false
       isAdmin: boolean
       webUserKey: string
-      profileKey: string
+      accountId: string
     }
 
 export type WebUserCtxType = {
