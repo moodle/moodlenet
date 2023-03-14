@@ -117,7 +117,7 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
       key: 'people-list',
     },
   ],
-  // sideColumnItems: [],
+  sideColumnItems: [],
 }
 
 export const BrowserLoggedInStoryProps: BrowserProps = {
