@@ -1,4 +1,12 @@
-import { FollowTag } from '@moodlenet/component-library'
+import { Href } from '@moodlenet/react-app/ui'
+
+export type Collectiondata = {
+  id: string
+  mnUrl: string
+  numFollowers: number
+  isPublished: boolean
+  isWaitingForApproval?: boolean
+}
 
 export type CollectionFormValues = {
   name: string
@@ -6,24 +14,19 @@ export type CollectionFormValues = {
   image: string | File | null
 }
 
-export type CollectionType = {
-  id: string
-  mnUrl: string
-  numFollowers: number
+export type CollectionState = {
+  followed: boolean
+  bookmarked: boolean
+  isSaving?: boolean
+  isSaved?: boolean
 }
 
 export type CollectionActions = {
-  isPublished: boolean
   setIsPublished: (publish: boolean) => void
   editCollection: (values: CollectionFormValues) => Promise<unknown>
-  isWaitingForApproval?: boolean
   deleteCollection(): unknown
-  followed: boolean
   toggleFollow(): unknown
-  bookmarked: boolean
   toggleBookmark(): unknown
-  isSaving?: boolean
-  isSaved?: boolean
 }
 
 export type CollectionAccess = {
@@ -31,6 +34,33 @@ export type CollectionAccess = {
   isCreator: boolean
   isAdmin: boolean
   canEdit: boolean
+}
+
+export type CollectionCardData = {
+  collectionId: string
+  imageUrl?: string | null
+  title: string
+  collectionHref: Href
+}
+
+export type CollectionCardState = {
+  isPublished: boolean
+  bookmarked: boolean
+  followed: boolean
+  numFollowers: number
+  numResource: number
+}
+export type CollectionCardActions = {
+  publish: () => void
+  setIsPublished: (publish: boolean) => void
+  toggleFollow: () => unknown
+  toggleBookmark: () => unknown
+}
+
+export type CollectionCardAccess = {
+  isAuthenticated: boolean
+  canEdit: boolean
+  isCreator: boolean
 }
 
 export type Organization = {
@@ -90,11 +120,4 @@ export const getCollectionTypeInfo = (type: string): { typeName: string; typeCol
     default:
       return { typeName: type, typeColor: '#15845A' }
   }
-}
-
-export type CollectionInfo = {
-  type: CollectionType
-  title: string
-  tags: Pick<FollowTag, 'name'>[]
-  image: string
 }

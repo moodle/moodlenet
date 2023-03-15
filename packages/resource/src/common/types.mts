@@ -1,4 +1,5 @@
 import { FollowTag } from '@moodlenet/component-library'
+import { Href } from '@moodlenet/react-app/ui'
 
 export type ResourceFormValues = {
   name: string
@@ -7,7 +8,7 @@ export type ResourceFormValues = {
   image: string | File | null
 }
 
-export type ResourceType = {
+export type ResourceData = {
   id: string
   mnUrl: string
   numLikes: number
@@ -15,21 +16,24 @@ export type ResourceType = {
   downloadFilename: string
   specificContentType: string // ex: url, pdf, doc...
   contentUrl: string
+  isPublished: boolean
+  isWaitingForApproval?: boolean
 }
 
-export type ResourceActions = {
-  isPublished: boolean
-  setIsPublished: (approve: boolean) => void
-  isWaitingForApproval?: boolean
+export type ResourceState = {
   isSaving?: boolean
   isSaved?: boolean
   liked: boolean
-  toggleLike(): unknown
   bookmarked: boolean
+  uploadProgress?: number
+}
+
+export type ResourceActions = {
+  setIsPublished: (publish: boolean) => void
+  toggleLike(): unknown
   toggleBookmark(): unknown
   editResource: (values: ResourceFormValues) => Promise<unknown>
   deleteResource(): unknown
-  uploadProgress?: number
 }
 
 export type ResourceAccess = {
@@ -37,6 +41,42 @@ export type ResourceAccess = {
   isCreator: boolean
   isAdmin: boolean
   canEdit: boolean
+}
+
+export type ResourceCardData = {
+  resourceId: string
+  tags?: FollowTag[]
+  image?: string | null
+  type: string //'Video' | 'Web Page' | 'Moodle Book'
+  title: string
+  isPublished: boolean
+  numLikes: number
+  owner: {
+    displayName: string
+    avatar: string | null
+    profileHref: Href
+  }
+  resourceHomeHref?: Href
+}
+
+export type ResourceCardState = {
+  isSelected: boolean
+  selectionMode: boolean // When selection resources to be added to a collection
+  liked: boolean
+  bookmarked: boolean
+}
+
+export type ResourceCardActions = {
+  toggleLike: () => void
+  toggleBookmark: () => void
+  publish: () => void
+  setIsPublished: (publish: boolean) => void
+}
+
+export type ResourceCardAccess = {
+  isCreator: boolean
+  canEdit: boolean
+  isAuthenticated: boolean
 }
 
 export type Organization = {
@@ -95,11 +135,4 @@ export const getResourceTypeInfo = (type: string): { typeName: string; typeColor
     default:
       return { typeName: type, typeColor: '#15845A' }
   }
-}
-
-export type ResourceInfo = {
-  type: ResourceType
-  title: string
-  tags: Pick<FollowTag, 'name'>[]
-  image: string
 }

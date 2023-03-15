@@ -71,4 +71,25 @@ export type ClientSessionDataRpc =
       isRoot: true
     }
 
-export type WebUserSessionTokenCookieName = 'web-user-session-token'
+export type ProfileCardData = {
+  userId: string
+  backgroundUrl: string | null
+  avatarUrl: string | null
+  displayName: string
+  username: string
+  organizationName: string
+  profileHref: Href
+}
+
+export type ProfileCardState = {
+  followed: boolean
+}
+
+export type ProfileCardActions = {
+  toggleFollow(): unknown
+}
+
+export type ProfileCardAccess = {
+  isCreator: boolean
+  isAuthenticated: boolean
+}

@@ -37,7 +37,7 @@ export const collectionsCardFactory: PartialDeep<CollectionCardProps>[] = [
   {
     mainColumnItems: [],
     data: {
-      title: 'All peoples right of self-determination',
+      title: 'The right of a people to self-determination',
       imageUrl:
         'https://images.unsplash.com/photo-1509580357930-a711cf9d888d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
     },

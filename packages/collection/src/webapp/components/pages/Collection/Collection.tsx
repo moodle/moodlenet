@@ -13,8 +13,9 @@ import { SchemaOf } from 'yup'
 import {
   CollectionAccess,
   CollectionActions,
+  Collectiondata,
   CollectionFormValues,
-  CollectionType,
+  CollectionState,
 } from '../../../../common/types.mjs'
 import {
   CollectionContributorCard,
@@ -38,9 +39,10 @@ export type CollectionProps = {
   moreButtonItems?: AddonItem[]
   extraDetailsItems?: AddonItem[]
 
-  collection: CollectionType
+  data: Collectiondata
   collectionForm: CollectionFormValues
   validationSchema: SchemaOf<CollectionFormValues>
+  state: CollectionState
   actions: CollectionActions
   access: CollectionAccess
 }
@@ -56,14 +58,15 @@ export const Collection: FC<CollectionProps> = ({
   sideColumnItems,
   extraDetailsItems,
 
-  collection,
+  data,
   collectionForm,
   validationSchema,
+  state,
   actions,
   access,
 }) => {
-  const { editCollection, setIsPublished, isPublished, isWaitingForApproval, deleteCollection } =
-    actions
+  const { isPublished, isWaitingForApproval } = data
+  const { editCollection, setIsPublished, deleteCollection } = actions
   const { isCreator, canEdit } = access
 
   const form = useFormik<CollectionFormValues>({
@@ -90,9 +93,10 @@ export const Collection: FC<CollectionProps> = ({
   const mainCollectionCard = (
     <MainCollectionCard
       key="main-collection-card"
-      collection={collection}
+      data={data}
       form={form}
       publish={publish}
+      state={state}
       actions={actions}
       access={access}
       slots={mainCollectionCardSlots}
@@ -157,7 +161,7 @@ export const Collection: FC<CollectionProps> = ({
   console.log('list', resourceCardPropsList)
 
   const resourceCardList = resourceCardPropsList.map(r => (
-    <ResourceCard {...r} key={r.resourceId} />
+    <ResourceCard {...r} key={r.data.resourceId} />
   ))
 
   const updatedMainColumnItems = [...resourceCardList, ...(mainColumnItems ?? [])].filter(
