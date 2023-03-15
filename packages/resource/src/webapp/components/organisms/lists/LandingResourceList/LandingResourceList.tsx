@@ -20,7 +20,7 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
       content={resourceCardPropsList.slice(0, 10).map(resourceCardProps => (
         <ResourceCard
           {...resourceCardProps}
-          key={resourceCardProps.resourceId}
+          key={resourceCardProps.data.resourceId}
           orientation="vertical"
         />
       ))}

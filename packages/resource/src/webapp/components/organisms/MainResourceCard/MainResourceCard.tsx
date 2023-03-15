@@ -34,8 +34,9 @@ import {
   getResourceTypeInfo,
   ResourceAccess,
   ResourceActions,
+  ResourceData,
   ResourceFormValues,
-  ResourceType,
+  ResourceState,
 } from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
@@ -52,9 +53,10 @@ export type MainResourceCardSlots = {
 export type MainResourceCardProps = {
   slots: MainResourceCardSlots
 
-  resource: ResourceType
+  data: ResourceData
   form: FormikHandle<ResourceFormValues>
 
+  state: ResourceState
   actions: ResourceActions
   access: ResourceAccess
 
@@ -66,9 +68,10 @@ export type MainResourceCardProps = {
 export const MainResourceCard: FC<MainResourceCardProps> = ({
   slots,
 
-  resource,
   form,
+  data,
 
+  state,
   actions,
   access,
 
@@ -84,22 +87,18 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     moreButtonItems,
     footerRowItems,
   } = slots
-
-  const { id, mnUrl, contentType, numLikes, contentUrl, specificContentType } = resource
-
   const {
+    id,
+    mnUrl,
+    contentType,
+    numLikes,
+    contentUrl,
+    specificContentType,
     isPublished,
-    bookmarked,
-    toggleBookmark,
-    liked,
-    toggleLike,
-    setIsPublished,
-    deleteResource,
-    isSaved,
-    isSaving,
     isWaitingForApproval,
-    uploadProgress,
-  } = actions
+  } = data
+  const { bookmarked, liked, isSaved, isSaving, uploadProgress } = state
+  const { toggleBookmark, toggleLike, setIsPublished, deleteResource } = actions
 
   const { canEdit, isAuthenticated, isCreator } = access
   const [isToDelete, setIsToDelete] = useState<boolean>(false)

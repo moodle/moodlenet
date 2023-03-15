@@ -13,8 +13,9 @@ import { SchemaOf } from 'yup'
 import {
   ResourceAccess,
   ResourceActions,
+  ResourceData,
   ResourceFormValues,
-  ResourceType,
+  ResourceState,
 } from '../../../../common/types.mjs'
 import {
   ResourceContributorCard,
@@ -35,9 +36,11 @@ export type ResourceProps = {
   sideColumnItems?: AddonItem[]
   extraDetailsItems?: AddonItem[]
 
-  resource: ResourceType
+  data: ResourceData
   resourceForm: ResourceFormValues
   validationSchema: SchemaOf<ResourceFormValues>
+
+  state: ResourceState
   actions: ResourceActions
   access: ResourceAccess
 
@@ -53,16 +56,18 @@ export const Resource: FC<ResourceProps> = ({
   extraDetailsItems,
   mainResourceCardSlots,
 
-  resource,
+  data,
   resourceForm,
   validationSchema,
+
+  state,
   actions,
   access,
 
   fileMaxSize,
 }) => {
-  const { editResource, setIsPublished, isWaitingForApproval, deleteResource, isPublished } =
-    actions
+  const { isWaitingForApproval, isPublished, contentUrl, downloadFilename } = data
+  const { editResource, setIsPublished, deleteResource } = actions
   const { isCreator, canEdit } = access
 
   const form = useFormik<ResourceFormValues>({
@@ -109,9 +114,10 @@ export const Resource: FC<ResourceProps> = ({
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
-      resource={resource}
+      data={data}
       form={form}
       publish={publish}
+      state={state}
       actions={actions}
       access={access}
       slots={mainResourceCardSlots}
@@ -160,12 +166,7 @@ export const Resource: FC<ResourceProps> = ({
           >
             Add to Collection
           </SecondaryButton> */}
-      <a
-        href={resource.contentUrl}
-        target="_blank"
-        rel="noreferrer"
-        download={resource.downloadFilename}
-      >
+      <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
         <SecondaryButton>
           {form.values.content instanceof File ? (
             <>

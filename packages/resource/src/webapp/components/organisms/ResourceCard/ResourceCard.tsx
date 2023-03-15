@@ -16,18 +16,17 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder } from '@material-ui/icons'
-import {
-  AddonItem,
-  Card,
-  FollowTag,
-  Href,
-  isEllipsisActive,
-  TertiaryButton,
-} from '@moodlenet/component-library'
+import { AddonItem, Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { CloseRounded, Public } from '@mui/icons-material'
-import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
-import { getResourceTypeInfo } from '../../../../common.mjs'
+import { FC, useEffect, useRef, useState } from 'react'
+import {
+  getResourceTypeInfo,
+  ResourceCardAccess,
+  ResourceCardActions,
+  ResourceCardData,
+  ResourceCardState,
+} from '../../../../common.mjs'
 import './ResourceCard.scss'
 
 export type ResourceCardProps = {
@@ -37,31 +36,14 @@ export type ResourceCardProps = {
   bottomLeftItems?: AddonItem[]
   bottomRightItems?: AddonItem[]
 
-  resourceId: string
-  tags?: FollowTag[]
   className?: string
   orientation?: 'vertical' | 'horizontal'
-  image?: string | null
-  type: string //'Video' | 'Web Page' | 'Moodle Book'
-  title: string
 
-  publish: () => void
-  isPublished: boolean
-  setIsPublished: Dispatch<SetStateAction<boolean>>
-  resourceHomeHref?: Href
-  isCreator: boolean
-  canEdit: boolean
-  isAuthenticated?: boolean
-  isSelected?: boolean
-  selectionMode?: boolean
-  liked: boolean
-  numLikes: number
-  bookmarked: boolean
-  owner: {
-    displayName: string
-    avatar: string | null
-    profileHref: Href
-  }
+  data: ResourceCardData
+  state: ResourceCardState
+  actions: ResourceCardActions
+  access: ResourceCardAccess
+
   onClick?(arg0: unknown): unknown
   onRemoveClick?(arg0: unknown): unknown
   toggleLike?: () => unknown
@@ -75,30 +57,22 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   bottomLeftItems,
   bottomRightItems,
 
-  resourceId,
-  orientation,
-  isSelected,
-  image,
-  type,
-  title,
-  resourceHomeHref,
-  canEdit,
-  selectionMode,
-  isAuthenticated,
-  liked,
-  numLikes,
-  bookmarked,
-  isCreator,
+  className,
+  orientation = 'vertical',
 
-  publish,
-  isPublished,
-  setIsPublished,
-  owner,
+  data,
+  state,
+  actions,
+  access,
+
   onClick,
   onRemoveClick,
-  toggleLike,
-  toggleBookmark,
 }) => {
+  const { resourceId, image, type, title, isPublished, numLikes, owner, resourceHomeHref } = data
+  const { liked, bookmarked, isSelected, selectionMode } = state
+  const { toggleLike, toggleBookmark, publish, setIsPublished } = actions
+  const { canEdit, isCreator, isAuthenticated } = access
+
   const resourceCard = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState<'micro' | 'tiny' | 'small' | 'medium' | 'big'>('medium')
 
@@ -298,7 +272,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   return (
     <Card
       ref={resourceCard}
-      className={`resource-card ${isSelected ? 'selected' : ''} ${orientation} ${
+      className={`resource-card ${className} ${isSelected ? 'selected' : ''} ${orientation} ${
         isCreator && isPublished ? '' : 'is-private'
       }`}
       hover={true}

@@ -1,5 +1,5 @@
+import { ProfileCard } from '@moodlenet/react-app/ui'
 import { ComponentMeta } from '@storybook/react'
-import { ProfileCard } from './ProfileCard.js'
 import { useProfileCardStoryProps } from './stories-props.js'
 
 const meta: ComponentMeta<typeof ProfileCard> = {
@@ -19,43 +19,38 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 }
 
 export const LoggedOut = () => {
-  const props = useProfileCardStoryProps({
-    props: {
-      // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
-      // contentItems: [],
-    },
-  })
+  const props = useProfileCardStoryProps()
+  // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
+  // contentItems: [],
   return <ProfileCard {...props} />
 }
 
 export const LoggedIn = () => {
-  const props = useProfileCardStoryProps({
-    props: {
-      // isAuthenticated: true,
-      // isFollowing: true,
-    },
-  })
+  const props = useProfileCardStoryProps()
+  // isAuthenticated: true,
+  // isFollowing: true,
   return <ProfileCard {...props} />
 }
 
 export const Owner = () => {
   const props = useProfileCardStoryProps({
-    props: {
+    access: {
       isCreator: true,
       canEdit: true,
-      // showAccountApprovedSuccessAlert: true,
-      // isApproved: true,
     },
+
+    // showAccountApprovedSuccessAlert: true,
+    // isApproved: true,
   })
   return <ProfileCard {...props} />
 }
 
 export const Editing = () => {
   const props = useProfileCardStoryProps({
-    props: {
+    isEditing: true,
+    access: {
       isCreator: true,
       canEdit: true,
-      isEditing: true,
       // showAccountApprovedSuccessAlert: true,
       // isApproved: true,
     },
