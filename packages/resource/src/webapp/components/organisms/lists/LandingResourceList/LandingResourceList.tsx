@@ -19,15 +19,15 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
       className="landing-resource-list"
       content={useMemo(
         () =>
-          resourceCardPropsList
-            .slice(0, 10)
-            .map(resourceCardProps => (
+          resourceCardPropsList.map(resourceCardProps => {
+            return (
               <ResourceCard
-                {...resourceCardProps}
                 key={resourceCardProps.resourceId}
+                {...resourceCardProps}
                 orientation="vertical"
               />
-            )),
+            )
+          }),
         [resourceCardPropsList],
       )}
       title={

@@ -22,16 +22,19 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
     mainColumnItems && mainColumnItems.length > 0 ? mainColumnItems[0]?.key.toString() : '0',
   )
   const [heights, setHeights] = useState<number[]>([])
+  const [navigating, setNavigating] = useState(false) // no avoid nav section buttons be active after selection
   const mainColumnRef = useRef<HTMLDivElement>(null)
 
   const navigateToSection = useCallback(
     (idx: number, key: string) => {
       setCurrentSection(key)
+      setNavigating(true)
       const startHeight = heights[0]
       const height = heights[idx]
       if (height && startHeight) {
         document.body.scrollTop = height - startHeight
       }
+      setTimeout(() => setNavigating(false), 200)
     },
     [heights],
   )
@@ -91,19 +94,19 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
       const topCondition = currentHeight && currentHeight < scrollTop
       const bottomCondition = i < heights.length - 1 ? nextHeight && scrollTop < nextHeight : true
       if (topCondition && bottomCondition) {
-        setCurrentSection(updatedMainColumnItems[i]?.key.toString())
+        !navigating && setCurrentSection(updatedMainColumnItems[i]?.key.toString())
         break
       }
     }
 
     // select the last section when on the bottom of the screen
-    const mainLayoutDiv = document.querySelector('.layout-container > .main-layout')
-    const bodyScrollTop = body.scrollTop
-    if (mainLayoutDiv && window.innerHeight + bodyScrollTop >= mainLayoutDiv.clientHeight) {
-      const lastItem = updatedMainColumnItems[updatedMainColumnItems.length - 1]
-      setCurrentSection(lastItem?.key.toString())
-    }
-  }, [heights, updatedMainColumnItems])
+    // const mainLayoutDiv = document.querySelector('.layout-container > .main-layout')
+    // const bodyScrollTop = body.scrollTop
+    // if (mainLayoutDiv && window.innerHeight + bodyScrollTop >= mainLayoutDiv.clientHeight) {
+    //   const lastItem = updatedMainColumnItems[updatedMainColumnItems.length - 1]
+    //   setCurrentSection(lastItem?.key.toString())
+    // }
+  }, [heights, updatedMainColumnItems, navigating])
 
   useEffect(() => {
     const parent = mainColumnRef.current

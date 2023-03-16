@@ -84,7 +84,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
         isCreator
           ? 'Creators cannot follow their own content'
           : !isAuthenticated
-          ? 'Loggin to follow the resource'
+          ? 'Login to follow the resource'
           : 'Follow'
       }
       onClick={

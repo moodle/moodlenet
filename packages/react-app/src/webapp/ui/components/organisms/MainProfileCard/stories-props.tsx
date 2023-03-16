@@ -7,7 +7,7 @@ import { mixed, object, SchemaOf, string } from 'yup'
 import { ProfileFormValues } from '../../../../../common/types.mjs'
 import { people } from '../../../helpers/factories.js'
 import { fileExceedsMaxUploadSize, randomIntFromInterval } from '../../../helpers/utilities.js'
-import { ProfileCardProps } from './ProfileCard.js'
+import { MainProfileCardProps } from './MainProfileCard.js'
 // import { people } from '../../../../../helpers/factories'
 // import { fileExceedsMaxUploadSize, people, randomIntFromInterval } from '@moodlenet/component-library/ui.mjs'
 
@@ -38,11 +38,11 @@ export const profileStoriesValidationSchema: SchemaOf<ProfileFormValues> = objec
   aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 
-export const useProfileCardStoryProps = (
-  overrides?: PartialDeep<ProfileCardProps>,
-): ProfileCardProps => {
+export const useMainProfileCardStoryProps = (
+  overrides?: PartialDeep<MainProfileCardProps>,
+): MainProfileCardProps => {
   const person = people[randomIntFromInterval(0, 3)]
-  return overrideDeep<ProfileCardProps>(
+  return overrideDeep<MainProfileCardProps>(
     {
       slots: {
         mainColumnItems: [],

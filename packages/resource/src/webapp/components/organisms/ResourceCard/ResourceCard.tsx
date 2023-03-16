@@ -219,7 +219,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
         isCreator
           ? 'Creators cannot like their own content'
           : !isAuthenticated
-          ? 'Loggin to like the resource'
+          ? 'Login to like the resource'
           : ''
       }
       hiddenText=""

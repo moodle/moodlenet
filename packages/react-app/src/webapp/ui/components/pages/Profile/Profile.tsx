@@ -6,14 +6,18 @@ import {
   ProfileCardAccess,
   ProfileCardActions,
   ProfileCardState,
-  ProfileFormValues,
+  ProfileFormValues
 } from '../../../../../common/types.mjs'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
+import {
+  MainProfileCard
+} from '../../organisms/MainProfileCard/MainProfileCard.js'
 import { ProfileCard, ProfileCardSlots } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
 
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
+  
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
 
@@ -161,8 +165,21 @@ export const Profile: FC<ProfileProps> = ({
   // )
   // ]
 
-  const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem /* | JSX.Element  */ => !!item,
+  const mainProfileCard = (
+    <MainProfileCard
+      {...profileCardProps}
+      // editForm={editForm}
+      isEditing={isEditing}
+      toggleIsEditing={toggleIsEditing}
+      // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
+      // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
+      // setIsReporting={setIsReporting}
+      // openSendMessage={() => setIsSendingMessage(/* !!sendEmailForm */ true)}
+    />
+  )
+
+  const updatedMainColumnItems = [mainProfileCard, ...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
   )
 
   const updatedSideColumnItems = [...(sideColumnItems ?? [])].filter(

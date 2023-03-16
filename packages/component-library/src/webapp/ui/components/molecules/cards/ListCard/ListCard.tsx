@@ -1,8 +1,10 @@
-import { FC, ReactNode, useMemo, useRef } from 'react'
+import { FC, ReactElement, ReactNode, useMemo, useRef } from 'react'
 import './ListCard.scss'
 
+export type ListActionsType = { element: ReactElement; position: 'start' | 'end' }
+
 export type ListCardProps = {
-  className: string
+  className?: string
   title?: string | ReactNode | undefined
   content: ReactNode[]
   minGrid?: number
@@ -11,7 +13,7 @@ export type ListCardProps = {
   maxHeight?: number | undefined
   // maxRows?: number
   direction?: 'vertical' | 'horizontal' | 'wrap'
-  actions?: { element: ReactNode; position: 'start' | 'end' }
+  actions?: ListActionsType
 }
 
 export const ListCard: FC<ListCardProps> = ({
