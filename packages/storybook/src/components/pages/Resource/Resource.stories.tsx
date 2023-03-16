@@ -74,10 +74,11 @@ export const New: ResourceStory = () => {
       downloadFilename: undefined,
       numLikes: 0,
       specificContentType: '',
-      isPublished: true,
+      isPublished: false,
       isWaitingForApproval: false,
     },
     resourceForm: NewResourceProps,
+
     state: {
       isSaving: false,
       isSaved: true,

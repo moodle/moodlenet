@@ -1,33 +1,34 @@
 import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { ArrowForwardIosRounded } from '@mui/icons-material'
 import { FC, useMemo } from 'react'
-import { Link } from '../../elements/link.js'
-import { SmallProfileCard, SmallProfileCardProps } from '../SmallProfileCard/SmallProfileCard.js'
-import './SmallProfileCardList.scss'
+import { Link } from '../../../elements/link.js'
+import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
+import './LandingProfileList.scss'
 
-export type SmallProfileCardListProps = {
+export type LandingProfileListProps = {
   searchAuthorsHref: Href
-  smallProfileCardPropsList: SmallProfileCardProps[]
+  profilesPropsList: ProfileCardProps[]
 }
 
-export const SmallProfileCardList: FC<SmallProfileCardListProps> = ({
-  smallProfileCardPropsList,
+export const LandingProfileList: FC<LandingProfileListProps> = ({
+  profilesPropsList,
   searchAuthorsHref,
 }) => {
   return (
     <ListCard
       content={useMemo(
         () =>
-          smallProfileCardPropsList
+          profilesPropsList
             .slice(0, 11)
-            .map(smallProfileCardProps => (
-              <SmallProfileCard
-                key={smallProfileCardProps.data.userId}
-                {...smallProfileCardProps}
-              />
+            .map(profilePropsList => (
+              <ProfileCard key={profilePropsList.data.userId} {...profilePropsList} />
             )),
-        [smallProfileCardPropsList],
+        [profilesPropsList],
       )}
+      className={`people-list`}
+      noCard={true}
+      minGrid={170}
+      maxHeight={267}
       title={
         <div className="card-header">
           <div className="info">
@@ -42,15 +43,10 @@ export const SmallProfileCardList: FC<SmallProfileCardListProps> = ({
           }
         </div>
       }
-      className={`people-list`}
-      noCard={true}
-      minGrid={170}
-      maxHeight={267}
-      // maxRows={1}
     />
   )
 }
 
-SmallProfileCardList.defaultProps = {}
+LandingProfileList.defaultProps = {}
 
-export default SmallProfileCardList
+export default LandingProfileList

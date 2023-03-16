@@ -5,7 +5,7 @@ import svgr from 'vite-plugin-svgr'
 module.exports = {
   root: 'src',
   build: {
-    outDir: '../lib',
+    outDir: '../dist',
   },
 }
 

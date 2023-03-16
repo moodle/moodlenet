@@ -1,12 +1,20 @@
-import { getCollectionsCardStoryProps, LandingCollectionList } from '@moodlenet/collection/ui'
+import {
+  getCollectionsCardStoryProps,
+  LandingCollectionList,
+  SearchCollectionList,
+} from '@moodlenet/collection/ui'
 import {
   Browser,
   BrowserProps,
-  getSmallProfilesCardStoryProps,
+  getProfileCardsStoryProps,
   href,
-  SmallProfileCardList,
+  SearchProfileList,
 } from '@moodlenet/react-app/ui'
-import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/resource/ui'
+import {
+  getResourcesCardStoryProps,
+  LandingResourceList,
+  SearchResourceList,
+} from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useMemo } from 'react'
 
@@ -63,6 +71,63 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
             }),
           [],
         )
+        return <SearchResourceList resourceCardPropsList={list} />
+      },
+      key: 'resource-list',
+    },
+    {
+      menuItem: {
+        Item: () => <span>Collections</span>,
+        key: 'menu-collections',
+      },
+      Item: () => {
+        const list = useMemo(
+          () =>
+            getCollectionsCardStoryProps(15, {
+              access: { isAuthenticated: false },
+            }),
+          [],
+        )
+        return <SearchCollectionList collectionCardPropsList={list} />
+      },
+      key: 'collection-list',
+    },
+    {
+      menuItem: {
+        Item: () => <span>People</span>,
+        key: 'menu-people',
+      },
+      Item: () => {
+        const list = useMemo(
+          () =>
+            getProfileCardsStoryProps(15, {
+              access: { isAuthenticated: false },
+            }),
+          [],
+        )
+        return <SearchProfileList profilesCardPropsList={list} />
+      },
+      key: 'people-list',
+    },
+  ],
+  sideColumnItems: [],
+}
+
+export const BrowserLoggedInStoryProps: BrowserProps = {
+  mainColumnItems: [
+    {
+      menuItem: {
+        Item: () => <span>Resources</span>,
+        key: 'menu-resources',
+      },
+      Item: () => {
+        const list = useMemo(
+          () =>
+            getResourcesCardStoryProps(15, {
+              isAuthenticated: true,
+            }),
+          [],
+        )
         return (
           <LandingResourceList
             searchResourcesHref={href('Page/Search')}
@@ -81,7 +146,7 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
         const list = useMemo(
           () =>
             getCollectionsCardStoryProps(15, {
-              access: { isAuthenticated: false },
+              access: { isAuthenticated: true },
             }),
           [],
         )
@@ -102,17 +167,12 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
       Item: () => {
         const list = useMemo(
           () =>
-            getSmallProfilesCardStoryProps(15, {
-              access: { isAuthenticated: false },
+            getProfileCardsStoryProps(15, {
+              access: { isAuthenticated: true },
             }),
           [],
         )
-        return (
-          <SmallProfileCardList
-            searchAuthorsHref={href('Page/Search')}
-            smallProfileCardPropsList={list}
-          />
-        )
+        return <SearchProfileList profilesCardPropsList={list} />
       },
       key: 'people-list',
     },
@@ -120,78 +180,8 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
   sideColumnItems: [],
 }
 
-export const BrowserLoggedInStoryProps: BrowserProps = {
-  //   setSortBy: action(`set sort by`),
-  //   setFilters: action(`set Filters`),
-  //   subjectCardPropsList: subjectCardPropsList,
-  //   collectionCardPropsList: [
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //     CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
-  //   ],
-  //   resourceCardPropsList: [
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //     ResourceCardLoggedInStoryProps,
-  //   ],
-  //   smallProfileCardPropsList: [
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
-  //   ],
-}
-
 export const BrowserFollowingStoryProps: BrowserProps = {
   ...BrowserLoggedInStoryProps,
-  //   smallProfileCardPropsList: [
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //     SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
-  //   ],
 }
 
 export const LoggedOut = BrowserStory.bind({})

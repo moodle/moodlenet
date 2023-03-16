@@ -8,14 +8,14 @@ import { action } from '@storybook/addon-actions'
 import { PartialDeep } from 'type-fest'
 import { href } from '../../elements/link.js'
 import { OverallCardNoCardStoryProps } from '../../molecules/OverallCard/OverallCard.stories.js'
-import { SmallProfileCardProps } from './SmallProfileCard.js'
+import { ProfileCardProps } from './ProfileCard.js'
 
-export const getSmallProfileCardFactory = (
+export const getProfileCardFactory = (
   profileFactory?: PeopleFactory,
-  overrides?: PartialDeep<SmallProfileCardProps>,
-): SmallProfileCardProps => {
+  overrides?: PartialDeep<ProfileCardProps>,
+): ProfileCardProps => {
   const profile = profileFactory ?? peopleFactory[Math.floor(Math.random() * peopleFactory.length)]
-  return overrideDeep<SmallProfileCardProps>(
+  return overrideDeep<ProfileCardProps>(
     {
       mainColumnItems: [],
       overallCardProps: OverallCardNoCardStoryProps,
@@ -46,14 +46,14 @@ export const getSmallProfileCardFactory = (
   )
 }
 
-export const getSmallProfilesCardStoryProps = (
+export const getProfileCardsStoryProps = (
   amount = 8,
-  overrides?: PartialDeep<SmallProfileCardProps>,
-): SmallProfileCardProps[] => {
+  overrides?: PartialDeep<ProfileCardProps>,
+): ProfileCardProps[] => {
   return getRandomSortedArrayElements(
-    peopleFactory.map(profile => getSmallProfileCardFactory(profile)),
+    peopleFactory.map(profile => getProfileCardFactory(profile)),
     amount,
   ).map(profile => {
-    return overrideDeep<SmallProfileCardProps>(profile, { ...overrides })
+    return overrideDeep<ProfileCardProps>(profile, { ...overrides })
   })
 }

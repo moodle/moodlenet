@@ -1,10 +1,10 @@
 import { getCollectionsCardStoryProps, LandingCollectionList } from '@moodlenet/collection/ui'
 import {
-  getSmallProfilesCardStoryProps,
+  getProfileCardsStoryProps,
   href,
   Landing,
+  LandingProfileList,
   LandingProps,
-  SmallProfileCardList,
 } from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -53,9 +53,9 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     },
     {
       Item: () => (
-        <SmallProfileCardList
+        <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+          profilesPropsList={getProfileCardsStoryProps(15, {
             access: { isAuthenticated: false },
           })}
         />
@@ -97,9 +97,9 @@ export const LandingLoggedInStoryProps: LandingProps = {
     },
     {
       Item: () => (
-        <SmallProfileCardList
+        <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+          profilesPropsList={getProfileCardsStoryProps(15, {
             actions: {
               followed: true,
             },
@@ -163,9 +163,9 @@ export const Owner: LandingStory = () => {
       },
       {
         Item: () => (
-          <SmallProfileCardList
+          <LandingProfileList
             searchAuthorsHref={href('Page/Search')}
-            smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+            profilesPropsList={getProfileCardsStoryProps(15, {
               access: {
                 isCreator: true,
               },
