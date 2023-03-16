@@ -28,7 +28,7 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CollectionAccess,
   CollectionActions,
-  CollectionData,
+  Collectiondata,
   CollectionFormValues,
   CollectionState,
 } from '../../../../common/types.mjs'
@@ -47,7 +47,7 @@ export type MainCollectionCardSlots = {
 export type MainCollectionCardProps = {
   slots: MainCollectionCardSlots
 
-  data: CollectionData
+  data: Collectiondata
   form: FormikHandle<CollectionFormValues>
 
   state: CollectionState
