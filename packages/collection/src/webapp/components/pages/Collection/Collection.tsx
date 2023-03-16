@@ -13,7 +13,7 @@ import { SchemaOf } from 'yup'
 import {
   CollectionAccess,
   CollectionActions,
-  Collectiondata,
+  CollectionData,
   CollectionFormValues,
   CollectionState,
 } from '../../../../common/types.mjs'
@@ -39,7 +39,7 @@ export type CollectionProps = {
   moreButtonItems?: AddonItem[]
   extraDetailsItems?: AddonItem[]
 
-  data: Collectiondata
+  data: CollectionData
   collectionForm: CollectionFormValues
   validationSchema: SchemaOf<CollectionFormValues>
   state: CollectionState
@@ -157,8 +157,6 @@ export const Collection: FC<CollectionProps> = ({
   const updatedWideColumnItems = [mainCollectionCard, ...(wideColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
-
-  console.log('list', resourceCardPropsList)
 
   const resourceCardList = resourceCardPropsList.map(r => (
     <ResourceCard {...r} key={r.data.resourceId} />

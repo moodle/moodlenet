@@ -49,7 +49,7 @@ export const setListPosition = ({
 }
 
 export const getRandomSortedArrayElements = <T,>(baseArray: T[], lengthNewArray?: number): T[] => {
-  // console.log('base array ', baseArray)
+  console.log('base array ', baseArray)
   const newArray: T[] = []
   const newArrayLength = lengthNewArray ?? baseArray.length ?? 0
   // console.log('length new array ', newArrayLength)
@@ -62,6 +62,5 @@ export const getRandomSortedArrayElements = <T,>(baseArray: T[], lengthNewArray?
       }
     })
   }
-  // console.log('new array ', newArray)
   return newArray
 }

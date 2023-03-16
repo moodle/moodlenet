@@ -1,10 +1,10 @@
 import { AddonItem, Card, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { FC } from 'react'
 import {
-  ProfileAccess,
-  ProfileActions,
-  ProfileData,
-  ProfileState,
+  ProfileCardAccess,
+  ProfileCardActions,
+  ProfileCardData,
+  ProfileCardState,
 } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
@@ -16,10 +16,10 @@ export type SmallProfileCardProps = {
   mainColumnItems?: AddonItem[]
   overallCardProps: OverallCardProps
 
-  data: ProfileData
-  state: ProfileState
-  actions: ProfileActions
-  access: ProfileAccess
+  data: ProfileCardData
+  state: ProfileCardState
+  actions: ProfileCardActions
+  access: ProfileCardAccess
 }
 
 export const SmallProfileCard: FC<SmallProfileCardProps> = ({

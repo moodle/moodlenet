@@ -12,10 +12,10 @@ import {
 } from '@moodlenet/component-library'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import {
-  ProfileAccess,
-  ProfileActions,
+  ProfileCardAccess,
+  ProfileCardActions,
+  ProfileCardState,
   ProfileFormValues,
-  ProfileState,
 } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
@@ -35,9 +35,9 @@ export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 't
 export type ProfileCardProps = {
   slots: ProfileCardSlots
   form: FormikHandle<ProfileFormValues>
-  state: ProfileState
-  actions: ProfileActions
-  access: ProfileAccess
+  state: ProfileCardState
+  actions: ProfileCardActions
+  access: ProfileCardAccess
   isEditing: boolean
   toggleIsEditing(): unknown
 }
