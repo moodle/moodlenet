@@ -2,9 +2,9 @@ import { overrideDeep } from '@moodlenet/component-library/common'
 import {
   ResourceAccess,
   ResourceActions,
+  ResourceData,
   ResourceFormValues,
   ResourceState,
-  ResourceType,
 } from '@moodlenet/resource/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
@@ -178,7 +178,7 @@ export const useResourceStoryProps = (
   //   [addToCollectionsForm.values.collections],
   // )
 
-  const resource: ResourceType = {
+  const data: ResourceData = {
     id: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
     downloadFilename: 'resource.pdf',
@@ -186,10 +186,10 @@ export const useResourceStoryProps = (
     contentType: 'file',
     contentUrl: '#',
     numLikes: 23,
+    isPublished: true,
   }
 
   const state: ResourceState = {
-    isPublished: true,
     liked: false,
     bookmarked: false,
   }
@@ -229,7 +229,7 @@ export const useResourceStoryProps = (
       resourceContributorCardProps:
         ResourceContributorCardStories.ResourceContributorCardStoryProps,
 
-      resource: resource,
+      data: data,
       resourceForm: resourceForm,
       state: state,
       actions: actions,

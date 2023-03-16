@@ -34,8 +34,9 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 export const getResourceCardStoryProps = (
   overrides?: PartialDeep<ResourceCardProps>,
 ): ResourceCardProps => {
+  const id = `${Math.floor(Math.random() * ContentBackupImages.length * 10000000)}`
   const data: ResourceCardData = {
-    resourceId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
+    resourceId: `id-${id}`,
     tags: TagListStory,
     title: `Why the  ${
       Math.random() < 0.5 ? 'tropical rainforests are' : 'the oceans are'
