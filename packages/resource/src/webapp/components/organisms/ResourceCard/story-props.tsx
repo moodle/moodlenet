@@ -8,7 +8,8 @@ export const getResourcesCardStoryProps = (
   amount = 8,
   overrides?: PartialDeep<ResourceCardProps>,
 ): ResourceCardProps[] => {
-  return getRandomSortedArrayElements(resourcesCardFactory, amount).map(resource => {
+  const randomsortedarray = getRandomSortedArrayElements(resourcesCardFactory, amount)
+  return randomsortedarray.map(resource => {
     return getResourceCardStoryProps({
       ...resource,
       ...overrides,

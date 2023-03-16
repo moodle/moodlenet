@@ -1,5 +1,5 @@
 import { ResourceFormValues } from '@moodlenet/resource/common'
-import { Resource } from '@moodlenet/resource/ui'
+import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useResourceStoryProps } from './stories-props.js'
@@ -26,8 +26,8 @@ const meta: ComponentMeta<typeof Resource> = {
 type ResourceStory = ComponentStory<typeof Resource>
 
 export const LoggedOut: ResourceStory = () => {
-  const props = useResourceStoryProps({
-    resource: {},
+  const props: ResourceProps = useResourceStoryProps({
+    data: {},
     state: {},
     actions: {},
     access: {
@@ -45,9 +45,10 @@ export const LoggedIn: ResourceStory = () => {
 
 export const Owner: ResourceStory = () => {
   const props = useResourceStoryProps({
-    resource: {},
-    state: {
+    data: {
       isPublished: true,
+    },
+    state: {
       isSaving: false,
       isSaved: true,
     },
@@ -69,15 +70,15 @@ export const NewResourceProps: Partial<ResourceFormValues> = {
 
 export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
-    resource: {
+    data: {
       downloadFilename: undefined,
       numLikes: 0,
       specificContentType: '',
+      isPublished: true,
+      isWaitingForApproval: false,
     },
     resourceForm: NewResourceProps,
     state: {
-      isPublished: true,
-      isWaitingForApproval: false,
       isSaving: false,
       isSaved: true,
     },
@@ -94,7 +95,7 @@ export const New: ResourceStory = () => {
 
 export const Admin: ResourceStory = () => {
   const props = useResourceStoryProps({
-    resource: {},
+    data: {},
     state: {},
     actions: {},
 

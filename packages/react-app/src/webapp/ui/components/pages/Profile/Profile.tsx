@@ -3,10 +3,10 @@ import { useFormik } from 'formik'
 import { FC, useReducer } from 'react'
 import { SchemaOf } from 'yup'
 import {
-  ProfileAccess,
-  ProfileActions,
+  ProfileCardAccess,
+  ProfileCardActions,
+  ProfileCardState,
   ProfileFormValues,
-  ProfileState,
 } from '../../../../../common/types.mjs'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import { ProfileCard, ProfileCardSlots } from '../../organisms/ProfileCard/ProfileCard.js'
@@ -21,9 +21,9 @@ export type ProfileProps = {
   profileForm: ProfileFormValues
   validationSchema: SchemaOf<ProfileFormValues>
 
-  state: ProfileState
-  actions: ProfileActions
-  access: ProfileAccess
+  state: ProfileCardState
+  actions: ProfileCardActions
+  access: ProfileCardAccess
 }
 
 export const Profile: FC<ProfileProps> = ({

@@ -1,11 +1,13 @@
 import {
   CollectionAccess,
   CollectionActions,
+  CollectionData,
   CollectionFormValues,
-  CollectionType,
+  CollectionState,
 } from '@moodlenet/collection/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
+import { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
 import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, string } from 'yup'
 // import { href } from '../../../elements/link'
@@ -25,9 +27,8 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { getResourcesCardStoryProps } from '@moodlenet/resource/ui'
+import { getResourcesCardStoryProps, ResourceCardProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
-import { PartialDeep } from 'type-fest'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -128,11 +129,12 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 export const useCollectionStoryProps = (
   overrides?: PartialDeep<CollectionProps>,
 ): CollectionProps => {
-  const collection: CollectionType = {
+  const data: CollectionData = {
     id: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
     numFollowers: 23,
-    ...overrides?.collection,
+    isPublished: true,
+    ...overrides?.data,
   }
 
   const collectionForm: CollectionFormValues = {
@@ -144,11 +146,13 @@ export const useCollectionStoryProps = (
     // ...overrides?.collectionForm,
   }
 
-  const actions: CollectionActions = {
+  const state: CollectionState = {
     followed: false,
-    toggleFollow: action('toggleFollow'),
-    isPublished: true,
     bookmarked: false,
+  }
+
+  const actions: CollectionActions = {
+    toggleFollow: action('toggleFollow'),
     toggleBookmark: action('toggleBookmark'),
     editCollection: async () => action('editing collection submited'),
     setIsPublished: action('setIsPublished'),
@@ -173,7 +177,13 @@ export const useCollectionStoryProps = (
     footerRowItems: [],
   }
 
-  const resourceCardPropsList = getResourcesCardStoryProps(15, {
+  const accessOverrides = overrides?.access
+
+  const resourceCardPropsList: ResourceCardProps[] = getResourcesCardStoryProps(15, {
+    access: {
+      ...access,
+      ...accessOverrides,
+    },
     orientation: 'horizontal',
   })
 
@@ -189,10 +199,11 @@ export const useCollectionStoryProps = (
         CollectionContributorCardStories.CollectionContributorCardStoryProps,
       resourceCardPropsList: resourceCardPropsList,
 
-      collection: collection,
+      data: data,
       collectionForm: collectionForm,
       validationSchema: validationSchema,
 
+      state: state,
       actions: actions,
       access: access,
     },
