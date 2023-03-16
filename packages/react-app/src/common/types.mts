@@ -1,4 +1,4 @@
-import { BaseStyleType, Href } from '@moodlenet/component-library'
+import { BaseStyleType } from '@moodlenet/component-library'
 import type { PackageInfo, PkgExpose, PkgIdentifier } from '@moodlenet/core'
 import { CSSProperties } from 'react'
 import { WebUserProfile } from '../server/types.mjs'
@@ -87,12 +87,9 @@ export type ProfileCardState = {
 
 export type ProfileCardActions = {
   toggleFollow(): unknown
-  editProfile(values: ProfileFormValues): void | Promise<any>
 }
 
 export type ProfileCardAccess = {
   isCreator: boolean
   isAuthenticated: boolean
-  canEdit: boolean
-  isAdmin: boolean
 }

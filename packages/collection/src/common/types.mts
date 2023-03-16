@@ -1,6 +1,6 @@
 import { Href } from '@moodlenet/react-app/ui'
 
-export type CollectionData = {
+export type Collectiondata = {
   id: string
   mnUrl: string
   numFollowers: number
