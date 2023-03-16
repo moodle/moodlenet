@@ -4,6 +4,10 @@ import { ResourceCardProps } from '../../ui.mjs'
 
 export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
   {
+    access: {
+      canEdit: false,
+      isCreator: true,
+    },
     data: {
       title: 'Why the oceans are so important',
       owner: {
@@ -17,6 +21,10 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
     },
   },
   {
+    access: {
+      canEdit: true,
+      isCreator: true,
+    },
     data: {
       title: 'How ecosystems collapse',
       owner: {
@@ -30,6 +38,10 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
     },
   },
   {
+    access: {
+      canEdit: true,
+      isCreator: true,
+    },
     data: {
       title: 'The true role of CO2',
       owner: {
@@ -43,6 +55,10 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
     },
   },
   {
+    access: {
+      canEdit: true,
+      isCreator: true,
+    },
     data: {
       title: 'Fullfilling life with little needs',
       owner: {
@@ -56,6 +72,10 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
     },
   },
   {
+    access: {
+      canEdit: true,
+      isCreator: true,
+    },
     data: {
       title: 'How black holes collapse',
       owner: {
