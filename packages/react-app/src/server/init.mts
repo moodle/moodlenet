@@ -94,7 +94,7 @@ await shell.call(addMiddleware)({
           type: 'user',
           entityIdentifier: {
             entityClass: WebUserProfile.entityClass,
-            _key: currentWebUser.accountId,
+            _key: currentWebUser.profileKey,
           },
         }
         return entityUser

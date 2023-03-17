@@ -1,42 +1,59 @@
-import { /* ensureDocumentCollection,  */ getMyDB } from '@moodlenet/arangodb/server'
+import { instanceDomain } from '@moodlenet/core'
 import { mountApp } from '@moodlenet/http-server/server'
-import { getOidcProvider } from './oidc-provider.mjs'
+import kvStoreFactory from '@moodlenet/key-value-store/server'
+import Provider from 'oidc-provider'
+import { getProviderConfig } from './oidc-provider.mjs'
 import { shell } from './shell.mjs'
+import { OpenIdKeyValueData } from './types/storeTypes.mjs'
 // import { DataType } from './types/storeTypes.mjs'
 
 export * from './lib.mjs'
 export * from './types/asyncCtxTypes.mjs'
 
-export const env = getEnv(shell.config)
-
-export const { db } = await shell.call(getMyDB)()
-
-// export const COLLECTION_NAME = '************************'
-// export const { collection: MyCollection, newlyCreated } = await shell.call(
-//   ensureDocumentCollection,
-// )<DataType>(COLLECTION_NAME)
+export const kvStore = await kvStoreFactory<OpenIdKeyValueData>(shell)
 
 shell.call(mountApp)({
   getApp(express) {
     const app = express()
-    // app.use('/oauth-authorization-server', (_req, res) => res.json({ a: 1 }))
-    app.use(
-      '/.well-known/((oauth-authorization-server)|(openid-configuration))',
-      async (req, res) => {
-        ;(await getOidcProvider()).callback()(req, res)
-      },
-    )
-    app.use('/.openid/', async (req, res) => {
-      ;(await getOidcProvider()).callback()(req, res)
-    })
+    const providerConfig = getProviderConfig(kvStore)
+
+    setupDiscoveryProvider()
+    setupOpenIdProvider()
+
     return app
+
+    function setupOpenIdProvider() {
+      const openidProvider = new Provider(instanceDomain, providerConfig)
+      openidProvider.use((ctx, next) => {
+        ctx.path = ctx.path.replace(/^\/\.openid/, '')
+        return next()
+      })
+      app.all('/.openid/*', openidProvider.callback())
+    }
+
+    function setupDiscoveryProvider() {
+      const wellKnownProvider = new Provider(instanceDomain, providerConfig)
+      wellKnownProvider.use((ctx, next) => {
+        ctx.path = '/.well-known/openid-configuration'
+        return next()
+      })
+      app.get(
+        '/.well-known/((oauth-authorization-server)|(openid-configuration))',
+        (request, _res, next) => {
+          request.baseUrl = '/.openid'
+          next()
+        },
+        wellKnownProvider.callback(),
+      )
+    }
   },
   mountOnAbsPath: '/',
 })
 
-function getEnv(_: any): Env {
-  return {
-    __: _,
-  }
-}
-export type Env = { __?: unknown }
+// export const env = getEnv(shell.config)
+// function getEnv(_: any): Env {
+//   return {
+//     __: _,
+//   }
+// }
+// export type Env = { __?: unknown }

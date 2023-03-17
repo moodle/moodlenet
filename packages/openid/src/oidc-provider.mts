@@ -1,16 +1,19 @@
-import { instanceDomain } from '@moodlenet/core'
-import { verifyWebUserToken } from '@moodlenet/react-app/server'
-import Provider, { AdapterPayload, Configuration, interactionPolicy } from 'oidc-provider'
-const savedInteractions: Record<
-  string,
-  {
-    id: string
-    payload: AdapterPayload
-    expiresIn: number
-  }
-> = {}
-// const Provider = o as any as typeof o.default
-async function getProviderConfig() {
+import { Account, Configuration, interactionPolicy } from 'oidc-provider'
+import { KVStore } from '../../key-value-store/src/server/types.js'
+import { OpenIdKeyValueData, StoreItem } from './types/storeTypes.mjs'
+const GRANT_KEY = `grant`
+const SESSION_UID_KEY = `sessionUid`
+const USER_CODE_KEY = `userCode`
+
+const GRANTABLE = new Set([
+  'AccessToken',
+  'AuthorizationCode',
+  'RefreshToken',
+  'DeviceCode',
+  'BackchannelAuthenticationRequest',
+])
+
+export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
   const config: Configuration = {
     // ... see the available options in Configuration options section
     clients: [
@@ -24,30 +27,23 @@ async function getProviderConfig() {
     claims: {
       openid: ['scope', 'isAdmin', 'webUserKey', 'accountId', 'exp', 'iss', 'aud'],
     },
-    // async findAccount(ctx, sub, token) {
-    //   console.log(`OAUTH findAccount()`, { ctx, sub, token })
-    //   if (!token) {
-    //     return
-    //   }
-    //   token
-    //   const webUser = await verifyWebUserToken(token)
-    //   const Account: Account = {}
-    // },
-    scopes: ['openid' /* , 'full-user' */],
-    routes: {
-      authorization: '/../../.openid/auth',
-      // revocation: '/../../.openid/token/revocation',
-      // jwks: '/../../.openid/jwks',
-      // registration: '/../../.openid/reg',
-      // end_session: '/../../.openid/session/end',
-      // token: '/../../.openid/token',
-      // pushed_authorization_request: '/../../.openid/request',
-      // userinfo: '/../../.openid/me',
-      // backchannel_authentication: '/../../.openid/backchannel_authentication',
-      // code_verification: '/../../.openid/code_verification',
-      // device_authorization: '/../../.openid/device_authorization',
-      // introspection: '/../../.openid/introspection',
+    async findAccount(ctx, sub, token) {
+      console.log(`\n\nOAUTH findAccount()`, { ctx, sub, token })
+      if (!token) {
+        return
+      }
+      token
+      //const webUser = await verifyWebUserToken(token)
+      const account: Account = {
+        accountId: 'ciccioid',
+        claims(use, scope, claims, rejected) {
+          console.log(`\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
+          return { sub: 'ciccioidSub' }
+        },
+      }
+      return account
     },
+    scopes: ['openid' /* , 'full-user' */],
     // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
     interactions: {
       // url(_ctx, interaction) {
@@ -91,65 +87,95 @@ async function getProviderConfig() {
         ),
       ],
     },
-    adapter(name) {
+    adapter(model) {
       return {
-        async revokeByGrantId(...args) {
-          console.log(`OAUTH ADAPTER ${name}: revokeByGrantId()`, ...args)
-          return
+        async destroy(id) {
+          console.log(`\n\nOAUTH destroy(id) {`, { id, model })
+
+          await kvStore.unset(model, id)
         },
-        async consume(...args) {
-          console.log(`OAUTH ADAPTER ${name}: consume()`, ...args)
-          return
-        },
-        async destroy(...args) {
-          console.log(`OAUTH ADAPTER ${name}: destroy()`, ...args)
-          return
-        },
-        async find(interactionId) {
-          const webUser = await verifyWebUserToken(interactionId)
-          // if (!(webUser && !webUser.isRoot)) {
-          //   return
-          // }
-          // const resp: AdapterPayload = {
-          //   scope: 'openid',
-          //   accountId: webUser.profileKey,
-          //   iat: webUser.iat,
-          //   aud: webUser.aud === undefined || webUser.aud === null ? undefined : [webUser.aud].flat(),
-          //   exp: webUser.exp,
-          //   iss: webUser.iss,
-          //   jti: webUser.jti,
-          //   nbf: webUser.nbf,
-          //   sub: webUser.sub,
-          // }
-          // const resp1: AdapterPayload = {
-          //   ...webUser,
-          //   // accountId: webUser.accountId,
-          //   aud:
-          //     webUser.aud === undefined || webUser.aud === null ? undefined : [webUser.aud].flat(),
-          // }
-          // console.log({ webUser, resp1 })
-          // return resp1
-          const found = savedInteractions[interactionId]?.payload
-          console.log(`OAUTH ADAPTER ${name}: find()`, { found, interactionId, webUser })
-          return found
-        },
-        async findByUid(...args) {
-          console.log(`OAUTH ADAPTER ${name}: findByUid()`, ...args)
-          return
-        },
-        async findByUserCode(...args) {
-          console.log(`OAUTH ADAPTER ${name}: findByUserCode()`, ...args)
-          return
-        },
-        async upsert(id, payload, expiresIn) {
-          console.log(`OAUTH ADAPTER ${name}: upsert()`, { id, payload, expiresIn })
-          const interaction = {
-            id,
-            payload: { ...payload, session: { accountId: '737' } },
-            expiresIn,
+
+        async consume(id) {
+          console.log(`\n\nOAUTH consume(id) {`, { id, model })
+
+          const item = (await kvStore.get(model, id)).value
+          if (!item) {
+            return
           }
-          savedInteractions[id] = interaction
-          return
+          item.payload.consumed = new Date().toISOString()
+        },
+
+        async find(id) {
+          console.log(`\n\nOAUTH find(id) {`, { id, model })
+
+          const item = (await kvStore.get(model, id)).value
+          console.log(`\n\nOAUTH find(id) {`, { found: item })
+          const payload = item && { ...item.payload, session: { accountId: '737' } } // FIXME: set correct sessionAccoutId (maybe depends on model ? 'Interaction' ? ??)
+
+          return payload
+        },
+
+        async findByUid(uid) {
+          console.log(`\n\nOAUTH findByUid(uid) {`, { uid, model })
+
+          const id = await (await kvStore.get(SESSION_UID_KEY, uid)).value
+          if ('string' !== typeof id) {
+            return
+          }
+          return this.find(id)
+        },
+
+        async findByUserCode(userCode) {
+          console.log(`\n\nOAUTH findByUserCode(userCode) {`, { userCode, model })
+
+          const id = (await kvStore.get(USER_CODE_KEY, userCode)).value
+          if ('string' !== typeof id) {
+            return
+          }
+          return this.find(id)
+        },
+
+        async upsert(id, payload, expiresIn) {
+          console.log(`\n\nOAUTH upsert(id, payload, expiresIn) {`, {
+            id,
+            payload,
+            expiresIn,
+            model,
+          })
+
+          if (model === 'Session' && payload.uid) {
+            await kvStore.set(SESSION_UID_KEY, payload.uid, id) // FIXME: set expiresIn
+          }
+
+          const { grantId, userCode } = payload
+          if (GRANTABLE.has(model) && grantId) {
+            const grant = (await kvStore.get(GRANT_KEY, grantId)).value ?? []
+            await kvStore.set(GRANT_KEY, grantId, [...grant, [model, id]])
+          }
+
+          if (userCode) {
+            await kvStore.set(USER_CODE_KEY, userCode, id) // FIXME: set expiresIn
+          }
+
+          const storeItem: StoreItem = {
+            expiresIn: expiresIn,
+            insertedAt: new Date().toISOString(),
+
+            payload,
+            // payload: { ...payload, session: { accountId: '737' } },// FIXME: set correct sessionAccoutId
+          }
+          await kvStore.set(model, id, storeItem) // FIXME: set expiresIn
+        },
+
+        async revokeByGrantId(grantId) {
+          console.log(`\n\nOAUTH revokeByGrantId(grantId) {`, { grantId, model })
+
+          // eslint-disable-line class-methods-use-this
+          const grant = (await kvStore.get(GRANT_KEY, grantId)).value
+          if (grant) {
+            await Promise.all(grant.map(([model, id]) => kvStore.unset(model, id)))
+            kvStore.unset(GRANT_KEY, grantId)
+          }
         },
       }
     },
@@ -160,7 +186,7 @@ async function getProviderConfig() {
       clientCredentials: { enabled: true },
       introspection: { enabled: true },
       devInteractions: { enabled: true },
-      // deviceFlow: { enabled: true },
+      deviceFlow: { enabled: true },
     },
     issueRefreshToken() {
       return true
@@ -177,42 +203,4 @@ async function getProviderConfig() {
     pkce: { required: () => false, methods: ['S256', 'plain'] },
   }
   return config
-}
-//export const provider = new Provider('http://issuerdomain.com', configuration)
-export async function getOidcProvider() {
-  const provider = new Provider(instanceDomain, await getProviderConfig())
-
-  provider.use((ctx, next) => {
-    const orig_path = ctx.path
-    if (ctx.request.url === '/') {
-      ctx.path = '/.well-known/openid-configuration'
-    } else if (!ctx.path.startsWith('/interaction')) {
-      // } else {
-      ctx.path = `/../../.openid${ctx.path}`
-    } else {
-      ctx.path = ctx.path.replace(/^\/.openid/, '')
-    }
-    console.log(
-      ctx.request.method,
-      ctx.request.url,
-      ':',
-      orig_path,
-      '->',
-      ctx.path /* inspect({ ctx }, true, 10, true) */,
-    )
-    // setTimeout(() => {
-    // console.log(orig_path, '->', ctx.path, inspect({ ctx }, true, 10, true))
-    // }, 1000)
-    return next()
-    // if (ctx.path !== '/oauth-authorization-server') {
-    //   return next()
-    // }
-
-    // ctx.path = '/openid-configuration'
-    // return next().then(() => {
-    //   ctx.path = '/oauth-authorization-server'
-    // })
-  })
-
-  return provider
 }

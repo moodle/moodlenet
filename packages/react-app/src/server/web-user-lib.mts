@@ -23,7 +23,7 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   }
   // await setCurrentVerifiedJwtToken(verifiedCtx, false)
 
-  const myProfile = await getProfile({ _key: currentWebUser.accountId })
+  const myProfile = await getProfile({ _key: currentWebUser.profileKey })
   if (!myProfile) {
     //FIXME: throw error ?
     return
@@ -66,7 +66,7 @@ export async function createWebUser(createRequest: CreateRequest, opts?: Partial
     const jwtToken = await signWebUserJwt({
       isAdmin,
       webUserKey: newWebUser._key,
-      accountId: newProfile._key,
+      profileKey: newProfile._key,
     })
     setCurrentVerifiedJwtToken(jwtToken, true)
   }
@@ -99,7 +99,7 @@ export async function setCurrentWebUser(by: { profileKey: string } | { userKey: 
   const jwtToken = await signWebUserJwt({
     isAdmin: webUser.isAdmin,
     webUserKey: webUser._key,
-    accountId: webUser.profileKey,
+    profileKey: webUser.profileKey,
   })
   await setCurrentVerifiedJwtToken(jwtToken, true)
   return true

@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@moodlenet/http-server": "^0.2.0",
-    "@moodlenet/arangodb": "^0.2.0",
+    "@moodlenet/key-value-store": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/crypto": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",
@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "@moodlenet/http-server": "^0.2.0",
-    "@moodlenet/arangodb": "^0.2.0",
+    "@moodlenet/key-value-store": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/crypto": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0"
