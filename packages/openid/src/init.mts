@@ -4,6 +4,7 @@ export * from './types/asyncCtxTypes.mjs'
 await import('./kvStore.mjs')
 await import('./oidc/interactions-endpoints.mjs')
 await import('./oidc/provider-endpoints.mjs')
+await import('./oidc/http-middleware.mjs')
 await import('./expose.mjs')
 
 // export const env = getEnv(shell.config)
