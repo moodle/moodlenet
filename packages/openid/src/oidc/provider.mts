@@ -87,6 +87,14 @@ export function getProviderConfig() {
     },
     scopes: ['openid' /* , 'full-user' */],
     // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
+    cookies: {
+      names: {
+        interaction: '_mn-oid_interaction',
+        resume: '_mn-oid_resume',
+        session: '_mn-oid_session',
+        state: '_mn-oid_state',
+      },
+    },
     interactions: {
       url(ctx, interaction) {
         console.log('interactions url', interaction, ctx)
@@ -156,13 +164,13 @@ export function getProviderConfig() {
     adapter(model) {
       return {
         async destroy(id) {
-          console.log(`\n\nOAUTH destroy(id) {`, { id, model })
+          console.log(`\n\nOAUTH ${model} destroy(id) {`, { id, model })
 
           await kvStore.unset(model, id)
         },
 
         async consume(id) {
-          console.log(`\n\nOAUTH consume(id) {`, { id, model })
+          console.log(`\n\nOAUTH ${model} consume(id) {`, { id, model })
 
           const item = (await kvStore.get(model, id)).value
           if (!item) {
@@ -172,10 +180,10 @@ export function getProviderConfig() {
         },
 
         async find(id) {
-          console.log(`\n\nOAUTH find(id) {`, { id, model })
+          console.log(`\n\nOAUTH ${model} find(id) {`, { id, model })
 
           const item = (await kvStore.get(model, id)).value
-          console.log(`\n\nOAUTH find(id) {`, { found: item })
+          console.log(`\n\nOAUTH ${model} find(id) {`, { found: item })
           // const payload = item && { ...item.payload, session: { accountId: FAKE_ACCOUNT_ID } } // FIXME: set correct sessionAccoutId (maybe depends on model ? 'Interaction' ? ??)
           const payload = item?.payload
 
@@ -183,7 +191,7 @@ export function getProviderConfig() {
         },
 
         async findByUid(uid) {
-          console.log(`\n\nOAUTH findByUid(uid) {`, { uid, model })
+          console.log(`\n\nOAUTH ${model} findByUid(uid) {`, { uid, model })
 
           const id = await (await kvStore.get(SESSION_UID_KEY, uid)).value
           if ('string' !== typeof id) {
@@ -193,7 +201,7 @@ export function getProviderConfig() {
         },
 
         async findByUserCode(userCode) {
-          console.log(`\n\nOAUTH findByUserCode(userCode) {`, { userCode, model })
+          console.log(`\n\nOAUTH ${model} findByUserCode(userCode) {`, { userCode, model })
 
           const id = (await kvStore.get(USER_CODE_KEY, userCode)).value
           if ('string' !== typeof id) {
@@ -203,7 +211,7 @@ export function getProviderConfig() {
         },
 
         async upsert(id, payload, expiresIn) {
-          console.log(`\n\nOAUTH upsert(id, payload, expiresIn) {`, {
+          console.log(`\n\nOAUTH ${model} upsert(id, payload, expiresIn) {`, {
             id,
             payload,
             expiresIn,
@@ -239,7 +247,7 @@ export function getProviderConfig() {
         },
 
         async revokeByGrantId(grantId) {
-          console.log(`\n\nOAUTH revokeByGrantId(grantId) {`, { grantId, model })
+          console.log(`\n\nOAUTH ${model} revokeByGrantId(grantId) {`, { grantId, model })
 
           // eslint-disable-line class-methods-use-this
           const grant = (await kvStore.get(GRANT_KEY, grantId)).value
