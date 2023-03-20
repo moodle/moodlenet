@@ -35,7 +35,7 @@ export const SearchResourceList: FC<SearchResourceListProps> = ({ resourceCardPr
         <TertiaryButton
         // onClick={() => activateSeeAll('Resources')}
         >
-          See all resources results
+          See all resource results
         </TertiaryButton>
       }
       maxRows={3}

@@ -100,13 +100,13 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
     }
 
     // select the last section when on the bottom of the screen
-    const mainLayoutDiv = document.querySelector('.layout-container > .main-layout')
-    const bodyScrollTop = body.scrollTop
+    // const mainLayoutDiv = document.querySelector('.layout-container > .main-layout')
+    // const bodyScrollTop = body.scrollTop
 
-    if (mainLayoutDiv && window.innerHeight + bodyScrollTop >= mainLayoutDiv.clientHeight) {
-      const lastItem = updatedMainColumnItems[updatedMainColumnItems.length - 1]
-      setCurrentSection(lastItem?.key.toString())
-    }
+    // if (mainLayoutDiv && window.innerHeight + bodyScrollTop >= mainLayoutDiv.clientHeight) {
+    //   const lastItem = updatedMainColumnItems[updatedMainColumnItems.length - 1]
+    //   setCurrentSection(lastItem?.key.toString())
+    // }
   }, [heights, updatedMainColumnItems, navigating])
 
   useEffect(() => {

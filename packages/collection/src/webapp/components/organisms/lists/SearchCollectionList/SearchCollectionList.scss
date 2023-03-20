@@ -1,5 +1,5 @@
 .search-collection-list {
-  padding: 24px 24px 66px 24px;
+  padding: 24px 24px 52px 24px;
   position: relative;
   > .list-card-footer {
     width: 100%;
@@ -11,8 +11,9 @@
     > .tertiary-button {
       width: 100%;
       font-size: 15px;
-      height: 70px;
+      height: 56px;
       border-radius: 0;
+      padding: 6px 18px 10px 18px;
     }
   }
 }
