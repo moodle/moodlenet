@@ -1,291 +1,87 @@
-// @import '../../../../styles/application';
-
 .profile-card {
   width: 100%;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
+  max-width: 245px;
+  height: 254px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 
-  @media (max-width: 450px) {
-    box-shadow: none;
-    border-radius: 0;
-    margin-top: 0;
-  }
-
-  > .main-column {
-    padding: 60px 40px 26px 40px;
+  > .images {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-
-    > .background-container {
+    align-items: center;
+    width: 100%;
+    > .background {
+      cursor: pointer;
       width: 100%;
-      height: 160px;
+      height: 70px;
+      object-fit: cover;
       border-radius: 16px 16px 0 0;
-      margin: -60px -40px 42px;
-      width: calc(100% + 80px);
-
-      > .change-background-button {
-        position: absolute;
-        padding: 10px;
-      }
-
-      > .background {
-        cursor: pointer;
-        width: 100%;
-        border-radius: 16px 16px 0 0;
-        background-position: center center;
-        background-size: cover;
-      }
-
-      @media (max-width: 450px) {
-        border-radius: 0;
-        > .background {
-          border-radius: 0;
-        }
-      }
-      @media (max-width: 550px) {
-        height: 100px;
-      }
-      display: flex;
-      justify-content: flex-end;
     }
 
-    > .avatar-container {
-      // margin: -8px -16px;
-      position: absolute;
-      top: 138px;
-      width: 160px;
-      height: 160px;
+    > .avatar > img {
       z-index: 3;
       border: 2px solid white;
-      // margin-left: 40px;
-      // margin-top: -110px;
-      border-radius: 160px;
-      display: flex;
-      justify-content: flex-end;
-
-      @media (max-width: 550px) {
-        width: 120px;
-        height: 120px;
-        margin: 0;
-      }
-
-      @media (max-width: 450px) {
-        top: 82px;
-      }
-
-      @media (min-width: 450px) and (max-width: 550px) {
-        top: 108px;
-      }
-
-      > .change-avatar-button {
-        position: absolute;
-        padding: 13px 5px 5px 5px;
-        @media (max-width: 550px) {
-          padding: 5px;
-        }
-      }
-
-      > .avatar {
-        cursor: pointer;
-        // width: 160px;
-        // height: 160px;
-        width: 100%;
-        height: 100%;
-        border-radius: 160px;
-        background-position: center center;
-        background-size: cover;
-      }
+      border-radius: 50px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-top: -55px;
     }
+  }
 
-    > .top-items {
-      width: auto;
-      display: flex;
-      justify-content: flex-end;
-      margin: -52px -20px 0 0;
-
-      > .edit-save {
-        width: 40px;
-        > *,
-        > * > * {
-          width: 100%;
-          > svg {
-            width: 18px;
-            height: 18px;
-          }
-        }
-        > .primary-button {
-          display: grid;
-          grid-template-columns: 1fr;
-          > div {
-            &.loading {
-              display: flex;
-              visibility: visible;
-              width: 100%;
-              align-items: center;
-              justify-content: center;
-            }
-          }
-
-          &.loading {
-            pointer-events: none;
-          }
-        }
-      }
-    }
-
-    > .input-text-field,
-    > .profile-card-header > .title > .input-text-field,
-    > .profile-card-header > .subtitle > span > .input-text-field {
-      > .input-text-field-container {
-        box-shadow: none;
-        animation: none;
-      }
-    }
-
-    > .enter-error,
-    > .profile-card-header > .title > .enter-error,
-    > .profile-card-header > .subtitle > span > .enter-error {
-      > .error-msg {
-        font-weight: initial;
-      }
-    }
-
-    > .profile-card-header > .subtitle > span > .enter-error {
-      > .input-container {
-        margin-top: 1px;
-      }
-    }
+  > .info {
+    width: 100%;
+    padding: 7px 15px 15px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
 
     > .profile-card-header {
-      > .title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      > .title-header {
         display: flex;
-        align-items: center;
         width: 100%;
-        font-size: 22px;
+        white-space: nowrap;
+        font-size: 15px;
+        font-weight: bold;
         gap: 6px;
-
-        @media (max-width: 550px) {
-          margin-top: -14px;
-        }
-
-        > .display-name {
+        justify-content: center;
+        > .title {
           width: fit-content;
-          font-weight: 700;
           overflow: hidden;
-          white-space: nowrap;
           text-overflow: ellipsis;
-        }
-
-        > .approved-icon {
-          height: 22px;
-          display: flex;
-          align-items: center;
-          > svg {
-            height: 18px;
-            width: 18px;
-            &.zooom-in-enter-animation {
-              animation: enter 1s;
-            }
-
-            @keyframes enter {
-              0% {
-                position: absolute;
-                transform: scale(25);
-                z-index: 10;
-              }
-              50% {
-                transform: scale(0.5);
-                position: absolute;
-                z-index: 10;
-              }
-              74% {
-                transform: scaleX(1);
-                opacity: 1;
-              }
-              75% {
-                transform: scaleX(-1);
-                opacity: 0.3;
-              }
-              100% {
-                opacity: 1;
-                position: relative;
-                height: 18px;
-                z-index: inherit;
-              }
-            }
+          &:hover {
+            text-decoration: underline;
           }
         }
-
-        > .user-id {
-          > .copy-id {
-            font-weight: normal;
-            padding: 5px 12px;
-            margin: -5px 0;
-            height: fit-content;
-          }
-        }
-      }
-      > .title,
-      .display-name > .input-container {
-        height: auto;
-        > input {
-          display: flex;
-          align-items: flex-start;
-          width: 100%;
-          gap: 10px;
-          font-size: 22px;
-          font-weight: bold;
+        > svg {
+          min-height: 16px;
+          min-width: 16px;
+          max-height: 16px;
+          max-width: 16px;
         }
       }
 
       > .subtitle {
+        width: 100%;
         margin-top: 3px;
-        font-size: 13.5px;
-        color: #00000099;
-        display: flex;
+        font-size: 13px;
+        color: #7e7e7e;
         justify-content: flex-start;
-        gap: 6px;
-
-        @media (max-width: 450px) {
-          flex-direction: column;
-        }
-
-        @media (min-width: 450px) {
-          &:not(.edit) > *:not(:first-child):before {
-            content: '·';
-            padding-right: 6px;
-          }
-        }
-
-        > span,
-        > a {
-          display: flex;
-          align-items: flex-start;
-          > .input-text-field > .input-container {
-            height: fit-content;
-            > input {
-              font-size: 13.5px;
-
-              &::placeholder {
-                font-size: 13.5px;
-                color: #757575;
-              }
-            }
-          }
-
-          > .at-symbol {
-            margin-right: 2px;
-          }
-        }
-
-        &.edit > * {
-          width: 100%;
-          > * {
-            width: 100%;
-          }
-        }
+        gap: 5px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        height: 30px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-word;
       }
 
       > .error {
@@ -303,56 +99,29 @@
     }
 
     > .description,
-    .description > .textarea-container {
+    .description > .input-container > textarea {
       font-size: 14px;
       line-height: 20px;
-      min-height: initial;
-    }
-
-    > .not-approved-warning {
-      font-size: 13px;
-      background-color: rgb(255 244 229);
-      padding: 14px 18px;
-      border-radius: 6px;
     }
 
     > .buttons {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 10px;
+      width: 100%;
 
-      > .follow-button {
-        > svg {
-          width: 20px;
-          height: 20px;
-        }
+      > * {
+        height: 32px;
+        width: 100%;
+      }
+    }
+
+    > .overall-card {
+      height: fit-content;
+
+      > .overall-container {
+        padding: 4px 0 14px;
       }
 
-      > .following-button {
-        gap: 2px;
-        > svg {
-          width: 17px;
-          height: 17px;
-        }
-      }
-
-      > .message {
-        cursor: pointer;
-        padding-left: 12px;
-        padding-right: 12px;
-        display: flex;
-        align-items: center;
-      }
-
-      > .floating-menu > .hover-element > .more {
-        &.small {
-          padding: 0 6px;
-        }
-        > .three-dots {
-          margin-top: -12px;
-          font-size: 20px;
-        }
+      > .data > span {
+        font: 10px;
       }
     }
   }

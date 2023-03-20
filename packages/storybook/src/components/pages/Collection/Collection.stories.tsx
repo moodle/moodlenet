@@ -1,6 +1,6 @@
+import { CollectionFormValues } from '@moodlenet/collection/common'
 import { Collection } from '@moodlenet/collection/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useState } from 'react'
 import { useCollectionStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
@@ -72,35 +72,17 @@ export const Owner: CollectionStory = () => {
   return <Collection {...props} />
 }
 
-export const NewCollectionProps = {
-  content: null,
+export const NewCollectionProps: CollectionFormValues = {
   name: '',
   description: '',
-  category: '',
-  type: '',
   image: null,
   // visibility: 'Private',
-  isFile: false,
 }
 
 export const New: CollectionStory = () => {
-  // const [isEditting, setIsEditing] = useState(false)
-  const [isPublished, setIsPublished] = useState(false)
-  // const [uploadProgress, setUploadProgress] = useState(0)
-
-  // useEffect(() => {
-  //   uploadProgress < 100 && setTimeout(() => setUploadProgress(oldCount => oldCount + 1), 70)
-  // }, [uploadProgress])
-  // const [isWaitingForApproval, setIsWaitingForApproval] = useState(true)
-
-  // useEffect(() => {
-  //   !isPublished && setIsWaitingForApproval(false)
-  // }, [isPublished])
-
   const props = useCollectionStoryProps({
     data: {
       mnUrl: 'moodle.com',
-      isPublished,
       isWaitingForApproval: false,
     },
     collectionForm: NewCollectionProps,
@@ -108,12 +90,10 @@ export const New: CollectionStory = () => {
       bookmarked: true,
       followed: true,
       // isSaving: true,
-      isSaving: false,
+      // isSaving: false,
       // isSaved: true,
     },
-    actions: {
-      setIsPublished,
-    },
+    actions: {},
     access: {
       isCreator: true,
       canEdit: true,

@@ -10,6 +10,11 @@
 
   @media screen and (max-width: 900px) {
     padding-top: 0;
+    margin-top: -30px;
+  }
+
+  @media (max-width: 675px) {
+    margin-top: -25px;
   }
 
   > .landing-header {

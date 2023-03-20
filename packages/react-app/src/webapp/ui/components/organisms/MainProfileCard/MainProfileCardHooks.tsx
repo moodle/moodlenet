@@ -5,7 +5,7 @@ import { ProfileFormValues } from '../../../../../common/types.mjs'
 import { MainContext } from '../../../../context/MainContext.mjs'
 import { AuthCtx } from '../../../../web-lib.mjs'
 import { fileExceedsMaxUploadSize } from '../../../helpers/utilities.js'
-import { ProfileCardPropsControlled } from './ProfileCard.js'
+import { MainProfileCardPropsControlled } from './MainProfileCard.js'
 
 const maxUploadSize = 1024 * 1024 * 50
 export const validationSchema: SchemaOf<ProfileFormValues> = object({
@@ -34,11 +34,11 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
   aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 
-export const useProfileCardProps = ({
+export const useMainProfileCardProps = ({
   profileKey,
 }: {
   profileKey: string
-}): ProfileCardPropsControlled => {
+}): MainProfileCardPropsControlled => {
   const {
     use: { me },
   } = useContext(MainContext)
@@ -83,7 +83,7 @@ export const useProfileCardProps = ({
 
   const isCreator = clientSessionData?.myProfile?._key === profileKey
   // const profileCardsProps = useMemo(() => {
-  //   const props: ProfileCardPropsControlled = {
+  //   const props: MainProfileCardPropsControlled = {
   //     isCreator,
   //     canEdit: isCreator,
   //     isAuthenticated: !!clientSessionData,
@@ -91,29 +91,29 @@ export const useProfileCardProps = ({
   //   }
   //   return props
   // }, [clientSessionData, form, isCreator])
-  const profileCardsProps: ProfileCardPropsControlled = {
+  const profileCardsProps: MainProfileCardPropsControlled = {
     // TODO Replace all the fields data with meaningfull ones
     slots: {
       mainColumnItems: [],
       topItems: [],
       titleItems: [],
       subtitleItems: [],
-      footerRowItems: [],
+      footerItems: [],
     },
     form,
-    state: {
-      followed: false,
-    },
+    // state: {
+    //   followed: false,
+    // },
     access: {
       isAdmin: false, //TODO Fix props
       isCreator,
       canEdit: isCreator, // TODO This could be also an admin with the rights to edit @
       isAuthenticated: !!clientSessionData,
     },
-    actions: {
-      editProfile: () => undefined,
-      toggleFollow: () => undefined,
-    },
+    // actions: {
+    //   editProfile: () => undefined,
+    //   toggleFollow: () => undefined,
+    // },
   }
   return profileCardsProps
 }

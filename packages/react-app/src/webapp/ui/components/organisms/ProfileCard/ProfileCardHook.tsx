@@ -13,10 +13,10 @@
 //   useDelProfileRelationMutation,
 //   useProfilePageUserDataQuery,
 // } from '../../../../pages/Profile/Ctrl/ProfileCtrl.gen'
-// import { SmallProfileCardProps } from '../SmallProfileCard'
+// import { ProfileCardProps } from '../ProfileCard'
 
-// export type SmallProfileCardCtrlArg = { id: ID }
-// export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfileCardCtrlArg> = ({
+// export type ProfileCardCtrlArg = { id: ID }
+// export const useProfileCardCtrl: CtrlHook<ProfileCardProps, ProfileCardCtrlArg> = ({
 //   id,
 // }) => {
 //   const { session, isAuthenticated } = useSession()
@@ -84,7 +84,7 @@
 //     [collections, resources],
 //   )
 
-//   const SmallProfileCardUIProps = useMemo<SmallProfileCardProps | null>(
+//   const ProfileCardUIProps = useMemo<ProfileCardProps | null>(
 //     () =>
 //       profileNode
 //         ? {
@@ -110,5 +110,5 @@
 //         : null,
 //     [profileNode, id, myFollowEdgeId, kudos, org.name, toggleFollow, isAuthenticated, isCreator],
 //   )
-//   return SmallProfileCardUIProps && [SmallProfileCardUIProps]
+//   return ProfileCardUIProps && [ProfileCardUIProps]
 // }

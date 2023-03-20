@@ -4,6 +4,7 @@ import './Card.scss'
 
 export type CardProps = {
   className?: string
+  role?: 'navigation'
   style?: CSSProperties
   hideBorderWhenSmall?: boolean
   noCard?: boolean
@@ -21,6 +22,7 @@ export const Card = forwardRef<HTMLDivElement | null | undefined, CardProps>((pr
     className,
     noCard,
     hover,
+    role,
     style,
     hideBorderWhenSmall,
     removePaddingWhenSmall,
@@ -32,6 +34,7 @@ export const Card = forwardRef<HTMLDivElement | null | undefined, CardProps>((pr
   return (
     <div
       ref={cardElementRef as any}
+      role={role}
       className={`card ${className ? className : ''} ${hideBorderWhenSmall ? 'hide-border' : ''} ${
         noCard ? 'no-card' : ''
       } ${removePaddingWhenSmall ? 'remove-padding' : ''} ${hover ? 'hover' : ''}`}
