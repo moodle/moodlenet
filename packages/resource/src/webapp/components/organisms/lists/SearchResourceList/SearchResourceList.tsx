@@ -21,7 +21,7 @@ export const SearchResourceList: FC<SearchResourceListProps> = ({ resourceCardPr
             .map(resourceCardProps => {
               return (
                 <ResourceCard
-                  key={resourceCardProps.resourceId}
+                  key={resourceCardProps.data.resourceId}
                   {...resourceCardProps}
                   orientation="vertical"
                 />

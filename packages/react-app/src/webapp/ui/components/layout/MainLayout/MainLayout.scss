@@ -25,7 +25,8 @@ body {
   width: 100%;
   height: fit-content;
   min-height: 100vh;
-  background-color: var(--color-light-gray-14);
+  background-color: #f6f5f4;
+  // background-color: var(--color-light-gray-14);
 
   &.streched {
     > .header {
