@@ -22,7 +22,7 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
           resourceCardPropsList.map(resourceCardProps => {
             return (
               <ResourceCard
-                key={resourceCardProps.resourceId}
+                key={resourceCardProps.data.resourceId}
                 {...resourceCardProps}
                 orientation="vertical"
               />
@@ -30,7 +30,7 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
           }),
         [resourceCardPropsList],
       )}
-      title={
+      header={
         <div className="card-header">
           <div className="info">
             <div className="title">Featured resources</div>
@@ -46,8 +46,7 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
       }
       noCard={true}
       minGrid={245}
-      maxHeight={736}
-      // maxRows={2}
+      maxRows={2}
     />
   )
 }
