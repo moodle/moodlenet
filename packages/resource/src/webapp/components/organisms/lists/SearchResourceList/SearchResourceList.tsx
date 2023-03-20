@@ -1,4 +1,4 @@
-import { ListCard, SecondaryButton } from '@moodlenet/component-library'
+import { ListCard, TertiaryButton } from '@moodlenet/component-library'
 import { FC, useMemo } from 'react'
 import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
 import './SearchResourceList.scss'
@@ -8,47 +8,41 @@ export type SearchResourceListProps = {
 }
 
 export const SearchResourceList: FC<SearchResourceListProps> = ({ resourceCardPropsList }) => {
-  return (
+  const listCard = (
     <ListCard
-      className="landing-resource-list"
-      // className={`resources ${seeAll ? 'see-all' : ''}`}
+      className="search-resource-list"
       content={useMemo(
         () =>
-          resourceCardPropsList
-            // seeAll
-            // ? resourceCardPropsList  :
-            .slice(0, 6)
-            .map(resourceCardProps => {
-              return (
-                <ResourceCard
-                  key={resourceCardProps.resourceId}
-                  {...resourceCardProps}
-                  orientation="vertical"
-                />
-              )
-            }),
+          resourceCardPropsList.map(resourceCardProps => {
+            return (
+              <ResourceCard
+                key={resourceCardProps.data.resourceId}
+                {...resourceCardProps}
+                orientation="horizontal"
+              />
+            )
+          }),
         [resourceCardPropsList],
       )}
-      title={
+      header={
         <div className="card-header">
           <div className="title">Resources</div>
           {/* {!seeAll && ( */}
-          <SecondaryButton
-            // onClick={() => activateSeeAll('Resources')}
-            color="dark-blue"
-          >
-            See all
-          </SecondaryButton>
           {/* )} */}
         </div>
       }
-      noCard={true}
-      minGrid={245}
-      maxHeight={736}
-      // maxHeight={seeAll ? undefined : 736}
-      // maxRows={seeAll ? undefined : 2}
+      footer={
+        <TertiaryButton
+        // onClick={() => activateSeeAll('Resources')}
+        >
+          See all resource results
+        </TertiaryButton>
+      }
+      maxRows={3}
     />
   )
+
+  return listCard
 }
 
 SearchResourceList.defaultProps = {}

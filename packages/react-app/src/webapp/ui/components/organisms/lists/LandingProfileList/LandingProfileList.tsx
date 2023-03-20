@@ -1,5 +1,5 @@
 import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
-import { ArrowForwardIosRounded } from '@mui/icons-material'
+import { ArrowForwardRounded } from '@mui/icons-material'
 import { FC, useMemo } from 'react'
 import { Link } from '../../../elements/link.js'
 import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
@@ -16,6 +16,7 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
 }) => {
   return (
     <ListCard
+      className={`landing-profile-list`}
       content={useMemo(
         () =>
           profilesPropsList
@@ -25,11 +26,7 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
             )),
         [profilesPropsList],
       )}
-      className={`people-list`}
-      noCard={true}
-      minGrid={170}
-      maxHeight={267}
-      title={
+      header={
         <div className="card-header">
           <div className="info">
             <div className="title">Featured authors</div>
@@ -38,11 +35,14 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
           {
             <SecondaryButton className="more" color="dark-blue">
               <Link href={searchAuthorsHref}>See more authors</Link>
-              <ArrowForwardIosRounded />
+              <ArrowForwardRounded />
             </SecondaryButton>
           }
         </div>
       }
+      noCard={true}
+      minGrid={170}
+      maxRows={2}
     />
   )
 }

@@ -35,7 +35,7 @@ export const ContributorCardStoryProps: ContributorCardProps = {
       ? 'months'
       : 'years'
   } ago`,
-  creatorProfileHref: href('Pages/Profile/LoggedIn'),
+  creatorProfileHref: href('Pages/Profile/Logged In'),
 }
 
 const ContributorCardStory: ComponentStory<typeof ContributorCard> = (args) => (

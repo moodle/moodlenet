@@ -37,7 +37,7 @@ export const CollectionCardLegacyStoryProps = (
   return {
     title: 'Best collection ever created '.split(' ').slice(0, i).join(' '),
     imageUrl: 'https://picsum.photos/200/100',
-    collectionHref: href('Pages/Collection/LoggedIn'),
+    collectionHref: href('Pages/Collection/Logged In'),
     bookmarked: false,
     following: false,
     numFollowers: 32,

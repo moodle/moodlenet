@@ -24,7 +24,7 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
           resourceCardPropsList.map(resourceCardProps => {
             return (
               <ResourceCard
-                key={resourceCardProps.resourceId}
+                key={resourceCardProps.data.resourceId}
                 {...resourceCardProps}
                 orientation="horizontal"
               />

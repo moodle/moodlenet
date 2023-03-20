@@ -1,2 +1,19 @@
 .search-profile-list {
+  padding: 24px 24px 52px 24px;
+  position: relative;
+  > .list-card-footer {
+    width: 100%;
+    margin-left: -24px;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    > .tertiary-button {
+      width: 100%;
+      font-size: 15px;
+      height: 54px;
+      border-radius: 0;
+      padding: 6px 18px 10px 18px;
+    }
+  }
 }

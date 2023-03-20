@@ -1,7 +1,8 @@
 .profile-card {
   width: 100%;
   max-width: 245px;
-  height: 254px;
+  height: fit-content;
+  // height: 254px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,7 +37,7 @@
     padding: 7px 15px 15px 15px;
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 14px;
 
     > .profile-card-header {
       display: flex;
