@@ -74,8 +74,10 @@ export const LandingLoggedInStoryProps: LandingProps = {
         <LandingResourceList
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
-            liked: true,
-            bookmarked: true,
+            state: {
+              liked: true,
+              bookmarked: true,
+            },
           })}
         />
       ),
@@ -86,7 +88,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
-            actions: {
+            state: {
               followed: true,
               bookmarked: true,
             },
@@ -100,7 +102,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
         <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
           profilesPropsList={getProfileCardsStoryProps(15, {
-            actions: {
+            state: {
               followed: true,
             },
           })}
@@ -136,9 +138,13 @@ export const Owner: LandingStory = () => {
           <LandingResourceList
             searchResourcesHref={href('Page/Search')}
             resourceCardPropsList={getResourcesCardStoryProps(15, {
-              isCreator: true,
-              canEdit: true,
-              isPublished: true,
+              data: {
+                isPublished: true,
+              },
+              access: {
+                isCreator: true,
+                canEdit: true,
+              },
             })}
           />
         ),
@@ -149,7 +155,7 @@ export const Owner: LandingStory = () => {
           <LandingCollectionList
             searchCollectionsHref={href('Page/Search')}
             collectionCardPropsList={getCollectionsCardStoryProps(15, {
-              actions: {
+              state: {
                 isPublished: false,
               },
               access: {

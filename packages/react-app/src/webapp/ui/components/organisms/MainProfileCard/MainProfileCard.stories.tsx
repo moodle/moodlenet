@@ -20,27 +20,23 @@ const meta: ComponentMeta<typeof MainProfileCard> = {
 
 export const LoggedOut = () => {
   const props = useMainProfileCardStoryProps({
-    props: {
-      // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
-      // contentItems: [],
-    },
+    // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
+    // contentItems: [],
   })
   return <MainProfileCard {...props} />
 }
 
 export const LoggedIn = () => {
   const props = useMainProfileCardStoryProps({
-    props: {
-      // isAuthenticated: true,
-      // isFollowing: true,
-    },
+    // isAuthenticated: true,
+    // isFollowing: true,
   })
   return <MainProfileCard {...props} />
 }
 
 export const Owner = () => {
   const props = useMainProfileCardStoryProps({
-    props: {
+    access: {
       isCreator: true,
       canEdit: true,
       // showAccountApprovedSuccessAlert: true,
@@ -52,13 +48,13 @@ export const Owner = () => {
 
 export const Editing = () => {
   const props = useMainProfileCardStoryProps({
-    props: {
+    access: {
       isCreator: true,
       canEdit: true,
-      isEditing: true,
-      // showAccountApprovedSuccessAlert: true,
-      // isApproved: true,
     },
+    isEditing: true,
+    // showAccountApprovedSuccessAlert: true,
+    // isApproved: true,
   })
   return <MainProfileCard {...props} />
 }

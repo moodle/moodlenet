@@ -23,7 +23,7 @@ export const useProfileProps = ({ profileKey }: { profileKey: string }): Profile
         editProfile: () => undefined,
         toggleFollow: () => undefined,
       },
-      profileCardSlots: {
+      mainProfileCardSlots: {
         mainColumnItems: [],
         topItems: [],
       },
@@ -31,10 +31,9 @@ export const useProfileProps = ({ profileKey }: { profileKey: string }): Profile
         aboutMe: '',
         displayName: '',
       },
-
-      state: {
-        followed: false,
-      },
+      // state: {
+      //   followed: false,
+      // },
       validationSchema: profileStoriesValidationSchema,
     }
     return props

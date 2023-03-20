@@ -98,22 +98,22 @@ export const useMainProfileCardProps = ({
       topItems: [],
       titleItems: [],
       subtitleItems: [],
-      footerRowItems: [],
+      footerItems: [],
     },
     form,
-    state: {
-      followed: false,
-    },
+    // state: {
+    //   followed: false,
+    // },
     access: {
       isAdmin: false, //TODO Fix props
       isCreator,
       canEdit: isCreator, // TODO This could be also an admin with the rights to edit @
       isAuthenticated: !!clientSessionData,
     },
-    actions: {
-      editProfile: () => undefined,
-      toggleFollow: () => undefined,
-    },
+    // actions: {
+    //   editProfile: () => undefined,
+    //   toggleFollow: () => undefined,
+    // },
   }
   return profileCardsProps
 }

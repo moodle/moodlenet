@@ -1,6 +1,6 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
-import { OverallCard, ProfileCardSlots, ProfileProps } from '@moodlenet/react-app/ui'
+import { MainProfileCardSlots, OverallCard, ProfileProps } from '@moodlenet/react-app/ui'
 import { PartialDeep } from 'type-fest'
 
 // const editForm: ProfileFormValues = {
@@ -20,12 +20,7 @@ import {
   peopleFactory,
   randomIntFromInterval,
 } from '@moodlenet/component-library'
-import {
-  ProfileAccess,
-  ProfileActions,
-  ProfileFormValues,
-  ProfileState,
-} from '@moodlenet/react-app/common'
+import { ProfileAccess, ProfileActions, ProfileFormValues } from '@moodlenet/react-app/common'
 import { action } from '@storybook/addon-actions'
 import { mixed, object, SchemaOf, string } from 'yup'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
@@ -66,17 +61,17 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     key: 'overall-card',
   }
 
-  const profileCardSlots: ProfileCardSlots = {
+  const profileCardSlots: MainProfileCardSlots = {
     topItems: [],
     mainColumnItems: [],
     titleItems: [],
     subtitleItems: [],
-    footerRowItems: [],
+    footerItems: [],
   }
 
-  const state: ProfileState = {
-    followed: false,
-  }
+  // const state: ProfileState = {
+  //   followed: false,
+  // }
 
   const actions: ProfileActions = {
     editProfile: async () => action('editing profile'),
@@ -105,9 +100,9 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     {
       mainLayoutProps: MainLayoutLoggedInStoryProps,
       sideColumnItems: [overallCard],
-      profileCardSlots: profileCardSlots,
+      mainProfileCardSlots: profileCardSlots,
       profileForm: profileForm,
-      state: state,
+      // state: state,
       actions: actions,
       access: access,
       validationSchema: profileStoriesValidationSchema,

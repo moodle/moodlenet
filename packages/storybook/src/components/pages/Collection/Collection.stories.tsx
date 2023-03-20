@@ -88,13 +88,12 @@ export const New: CollectionStory = () => {
     collectionForm: NewCollectionProps,
     state: {
       bookmarked: true,
-    actions: {
-      bookmarked: false,
       followed: true,
       // isSaving: true,
-      isSaving: false,
+      // isSaving: false,
       // isSaved: true,
     },
+    actions: {},
     access: {
       isCreator: true,
       canEdit: true,
