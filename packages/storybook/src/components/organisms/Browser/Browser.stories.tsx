@@ -1,8 +1,4 @@
-import {
-  getCollectionsCardStoryProps,
-  LandingCollectionList,
-  SearchCollectionList,
-} from '@moodlenet/collection/ui'
+import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/collection/ui'
 import {
   Browser,
   BrowserProps,
@@ -10,11 +6,7 @@ import {
   href,
   SearchProfileList,
 } from '@moodlenet/react-app/ui'
-import {
-  getResourcesCardStoryProps,
-  LandingResourceList,
-  SearchResourceList,
-} from '@moodlenet/resource/ui'
+import { getResourcesCardStoryProps, SearchResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useMemo } from 'react'
 
@@ -129,7 +121,7 @@ export const BrowserLoggedInStoryProps: BrowserProps = {
           [],
         )
         return (
-          <LandingResourceList
+          <SearchResourceList
             searchResourcesHref={href('Page/Search')}
             resourceCardPropsList={list}
           />
@@ -151,7 +143,7 @@ export const BrowserLoggedInStoryProps: BrowserProps = {
           [],
         )
         return (
-          <LandingCollectionList
+          <SearchCollectionList
             searchCollectionsHref={href('Page/Search')}
             collectionCardPropsList={list}
           />

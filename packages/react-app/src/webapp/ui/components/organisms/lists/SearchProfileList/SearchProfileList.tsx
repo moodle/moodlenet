@@ -1,4 +1,4 @@
-import { ListCard, SecondaryButton } from '@moodlenet/component-library'
+import { ListCard, TertiaryButton } from '@moodlenet/component-library'
 import { FC, ReactElement, useMemo } from 'react'
 import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
 import './SearchProfileList.scss'
@@ -20,7 +20,7 @@ export const SearchProfileList: FC<SearchProfileListProps> = ({ profilesCardProp
             )),
         [profilesCardPropsList],
       )}
-      title={
+      header={
         <div className="card-header">
           <div className="title">
             People
@@ -28,18 +28,25 @@ export const SearchProfileList: FC<SearchProfileListProps> = ({ profilesCardProp
           </div>
           {/* {!seeAll && ( */}
           {
-            <SecondaryButton
-            // onClick={() => activateSeeAll('People')}
-            >
-              See more
-            </SecondaryButton>
+            // <SecondaryButton
+            //   // onClick={() => activateSeeAll('People')}
+            //   color="dark-blue"
+            // >
+            //   See all
+            // </SecondaryButton>
           }
         </div>
       }
-      className={`people-list`}
-      noCard={true}
+      footer={
+        <TertiaryButton
+        // onClick={() => activateSeeAll('People')}
+        >
+          See all people results
+        </TertiaryButton>
+      }
+      className={`search-profile-list`}
       minGrid={170}
-      maxHeight={267}
+      maxRows={2}
     />
   )
 }

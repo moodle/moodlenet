@@ -1,17 +1,16 @@
-import { FC, ReactElement, ReactNode, useMemo, useRef } from 'react'
+import { FC, ReactElement, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import './ListCard.scss'
 
 export type ListActionsType = { element: ReactElement; position: 'start' | 'end' }
 
 export type ListCardProps = {
   className?: string
-  title?: string | ReactNode | undefined
+  header?: string | ReactNode | undefined
+  footer?: string | ReactNode | undefined
   content: ReactNode[]
   minGrid?: number
   noCard?: boolean
-  maxWidth?: string | undefined | 'auto'
-  maxHeight?: number | undefined
-  // maxRows?: number
+  maxRows?: number
   direction?: 'vertical' | 'horizontal' | 'wrap'
   actions?: ListActionsType
 }
@@ -20,10 +19,10 @@ export const ListCard: FC<ListCardProps> = ({
   className,
   content,
   direction,
-  title,
+  header,
+  footer,
   minGrid,
-  maxHeight,
-  // maxRows,
+  maxRows,
   noCard,
   actions,
 }) => {
@@ -41,31 +40,32 @@ export const ListCard: FC<ListCardProps> = ({
       }),
     [content],
   )
-  // const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
 
-  // const contentDivCurr = contentDiv.current
-  // const elementCurr = element.current
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
+  // const [paddingTop, setPaddingTop] = useState<number | undefined>(undefined)
+  // const [paddingBottom, setPaddingBottom] = useState<number | undefined>(undefined)
 
-  // useLayoutEffect(() => {
-  //   if (!(maxRows && contentDivCurr && elementCurr)) {
-  //     return
-  //   }
-  //   const gap = getComputedStyle(contentDivCurr).gap
-  //   const elementHeight = elementCurr.clientHeight
-  //   const totalMaxHeight = elementHeight
-  //     ? maxRows * elementHeight + parseInt(gap) * (maxRows - 1) + 10
-  //     : undefined
-  //   setMaxHeight(totalMaxHeight)
-  // }, [elementCurr, setMaxHeight, className, contentDivCurr, maxRows])
+  useEffect(() => {
+    const parent = contentDiv.current
+    const childHeight = parent?.children[0]?.clientHeight
+    const gap = Number((parent ? window.getComputedStyle(parent).gap : '').replace('px', ''))
+    const paddingTop = Number(
+      (parent ? window.getComputedStyle(parent).paddingTop : '').replace('px', ''),
+    )
+    const paddingBottom = Number(
+      (parent ? window.getComputedStyle(parent).paddingBottom : '').replace('px', ''),
+    )
 
-  // console.log('############ ', className.toUpperCase())
-  // console.log(contentDiv.current?.clientWidth)
-  // console.log(minGrid)
-  // console.log(contentDiv.current?.clientWidth && minGrid && contentDiv.current?.clientWidth / minGrid)
+    const newMaxHeight =
+      childHeight &&
+      maxRows &&
+      childHeight * maxRows + (maxRows - 1) * gap + paddingTop + paddingBottom
+    newMaxHeight && setMaxHeight(newMaxHeight)
+  }, [contentDiv])
 
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
-      {title && <div className="title">{title}</div>}
+      {header && <div className="list-card-header">{header}</div>}
       {actions?.element && actions.position === 'start' && (
         <div className="action">{actions.element}</div>
       )}
@@ -75,7 +75,11 @@ export const ListCard: FC<ListCardProps> = ({
             minGrid ? 'grid' : ''
           }`}
           style={{
-            ...(maxHeight && { maxHeight: `${maxHeight}px` }),
+            // ...(maxHeight && { maxHeight: `${maxHeight}px` }),
+            ...(maxHeight && {
+              maxHeight: `${maxHeight}px`,
+            }),
+
             // maxHeight: maxHeight ? `${maxHeight}px` : 'auto',
             gridTemplateColumns: minGrid && `repeat(auto-fill, minmax(${minGrid}px, 1fr))`,
           }}
@@ -87,6 +91,7 @@ export const ListCard: FC<ListCardProps> = ({
       {actions?.element && actions.position === 'end' && (
         <div className="action">{actions.element}</div>
       )}
+      {footer && <div className="list-card-footer">{footer}</div>}
     </div>
   )
 }

@@ -35,7 +35,7 @@ export const ResourceContributorCardStoryProps: ResourceContributorCardProps = {
       ? 'months'
       : 'years'
   } ago`,
-  creatorProfileHref: href('Pages/Profile/LoggedIn'),
+  creatorProfileHref: href('Pages/Profile/Logged In'),
 }
 
 const ResourceContributorCardStory: ComponentStory<typeof ResourceContributorCard> = args => (

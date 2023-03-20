@@ -16,7 +16,7 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
 }) => {
   return (
     <ListCard
-      className="landing-collection-card-list"
+      className="landing-collection-list"
       content={useMemo(
         () =>
           collectionCardPropsList
@@ -29,7 +29,7 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
             )),
         [collectionCardPropsList],
       )}
-      title={
+      header={
         <div className="card-header">
           <div className="info">
             <div className="title">Featured collections</div>
@@ -45,8 +45,7 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
       }
       minGrid={245}
       noCard={true}
-      maxHeight={397}
-      // maxRows={2}
+      maxRows={2}
     />
   )
 }
