@@ -12,43 +12,40 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
-import { ProfileFormValues } from '../../../../../common/types.mjs'
+import { ProfileAccess, ProfileFormValues } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
 import './MainProfileCard.scss'
+
+export type MainProfileCardSlots = {
+  mainColumnItems?: AddonItem[]
+  topItems?: AddonItem[]
+  titleItems?: AddonItem[]
+  subtitleItems?: AddonItem[]
+  footerItems?: AddonItem[]
+}
 
 export type MainProfileCardPropsControlled = Omit<
   MainProfileCardProps,
   'isEditing' | 'toggleIsEditing'
 >
 export type MainProfileCardProps = {
-  mainColumnItems?: AddonItem[]
-  topItems?: AddonItem[]
-  titleItems?: AddonItem[]
-  subtitleItems?: AddonItem[]
-  footerItems?: AddonItem[]
+  slots: MainProfileCardSlots
   form: ReturnType<typeof useFormik<ProfileFormValues>>
-  isAuthenticated: boolean
+  access: ProfileAccess
   isEditing?: boolean
-  isCreator?: boolean
-  canEdit?: boolean
-  isAdmin?: boolean
-  isApproved?: boolean
-  isFollowing?: boolean
   toggleIsEditing(): unknown
 }
 
 export const MainProfileCard: FC<MainProfileCardProps> = ({
-  mainColumnItems,
-  topItems,
-  titleItems,
-  subtitleItems,
-  footerItems,
+  slots,
   form,
+  access,
   isEditing,
-  canEdit,
   toggleIsEditing,
 }) => {
+  const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
+  const { canEdit } = access
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
@@ -336,8 +333,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     footer,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-  console.log('mainColumnItems', updatedMainColumnItems)
 
   return (
     <div className="main-profile-card" key="profile-card">

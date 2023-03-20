@@ -49,17 +49,17 @@ export const useMainProfileCardStoryProps = (
         topItems: [],
         titleItems: [],
         subtitleItems: [],
-        footerRowItems: [],
+        footerItems: [],
       },
       isEditing: false,
       toggleIsEditing: action('toggle Is Editing'),
-      state: {
-        followed: false,
-      },
-      actions: {
-        editProfile: action('edit profile'),
-        toggleFollow: action('toogle is following'),
-      },
+      // state: {
+      //   followed: false,
+      // },
+      // actions: {
+      //   editProfile: action('edit profile'),
+      //   toggleFollow: action('toogle is following'),
+      // },
       access: {
         isAdmin: false,
         isCreator: false,

@@ -2,32 +2,28 @@ import { AddonItem } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useReducer } from 'react'
 import { SchemaOf } from 'yup'
-import {
-  ProfileCardAccess,
-  ProfileCardActions,
-  ProfileCardState,
-  ProfileFormValues
-} from '../../../../../common/types.mjs'
+import { ProfileAccess, ProfileActions, ProfileFormValues } from '../../../../../common/types.mjs'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
+
 import {
-  MainProfileCard
+  MainProfileCard,
+  MainProfileCardSlots,
 } from '../../organisms/MainProfileCard/MainProfileCard.js'
-import { ProfileCard, ProfileCardSlots } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
 
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
-  
+
   mainColumnItems?: AddonItem[]
   sideColumnItems?: AddonItem[]
 
-  profileCardSlots: ProfileCardSlots
+  mainProfileCardSlots: MainProfileCardSlots
   profileForm: ProfileFormValues
   validationSchema: SchemaOf<ProfileFormValues>
 
-  state: ProfileCardState
-  actions: ProfileCardActions
-  access: ProfileCardAccess
+  // state: ProfileState
+  actions: ProfileActions
+  access: ProfileAccess
 }
 
 export const Profile: FC<ProfileProps> = ({
@@ -35,11 +31,10 @@ export const Profile: FC<ProfileProps> = ({
   mainColumnItems,
   sideColumnItems,
 
-  profileCardSlots,
+  mainProfileCardSlots,
   profileForm,
   validationSchema,
 
-  state,
   actions,
   access,
 }) => {
@@ -167,8 +162,10 @@ export const Profile: FC<ProfileProps> = ({
 
   const mainProfileCard = (
     <MainProfileCard
-      {...profileCardProps}
       // editForm={editForm}
+      form={form}
+      slots={mainProfileCardSlots}
+      access={access}
       isEditing={isEditing}
       toggleIsEditing={toggleIsEditing}
       // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
@@ -192,20 +189,6 @@ export const Profile: FC<ProfileProps> = ({
       <div className="profile">
         <div className="content">
           <div className="main-column">
-            <ProfileCard
-              slots={profileCardSlots}
-              form={form}
-              state={state}
-              access={access}
-              actions={actions}
-              // editForm={editForm}
-              isEditing={isEditing}
-              toggleIsEditing={toggleIsEditing}
-              // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
-              // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
-              // setIsReporting={setIsReporting}
-              // openSendMessage={() => setIsSendingMessage(/* !!sendEmailForm */ true)}
-            />
             {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
           <div className="side-column">

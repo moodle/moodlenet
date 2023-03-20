@@ -31,13 +31,13 @@
     "moodlenetPackage"
   ],
   "exports": {
-    "./init": "./dist/server/init.mjs",
-    "./start": "./dist/server/start.mjs",
-    "./stories": "./dist/webapp/stories.mjs",
-    "./common": "./dist/common/exports.mjs",
-    "./server": "./dist/server/exports.mjs",
-    "./ui": "./dist/webapp/ui.mjs",
-    "./web-lib": "./dist/webapp/web-lib.mjs"
+    "./init": "./src/server/init.mjs",
+    "./start": "./src/server/start.mjs",
+    "./stories": "./src/webapp/stories.mjs",
+    "./common": "./src/common/exports.mjs",
+    "./server": "./src/server/exports.mjs",
+    "./ui": "./src/webapp/ui.mjs",
+    "./web-lib": "./src/webapp/web-lib.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",

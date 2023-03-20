@@ -1,38 +1,25 @@
 import { AddonItem, Card, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { FC } from 'react'
+import {
+  ProfileAccess,
+  ProfileActions,
+  ProfileData,
+  ProfileState,
+} from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
-import { Href, Link } from '../../elements/link.js'
+import { Link } from '../../elements/link.js'
 import { OverallCard, OverallCardProps } from '../../molecules/OverallCard/OverallCard.js'
 import './ProfileCard.scss'
-
-export type ProfileCardData = {
-  userId: string
-  backgroundUrl: string | null
-  avatarUrl: string | null
-  displayName: string
-  username: string
-  organizationName: string
-  profileHref: Href
-}
-
-export type ProfileCardActions = {
-  followed: boolean
-  toggleFollow(): unknown
-}
-
-export type ProfileCardAccess = {
-  isCreator: boolean
-  isAuthenticated: boolean
-}
 
 export type ProfileCardProps = {
   mainColumnItems?: AddonItem[]
   overallCardProps: OverallCardProps
 
-  data: ProfileCardData
-  actions: ProfileCardActions
-  access: ProfileCardAccess
+  data: ProfileData
+  state: ProfileState
+  actions: ProfileActions
+  access: ProfileAccess
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -40,6 +27,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   overallCardProps,
 
   data,
+  state,
   actions,
   access,
 }) => {
@@ -51,7 +39,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     profileHref,
     // organizationName,
   } = data
-  const { followed, toggleFollow } = actions
+  const { followed } = state
+  const { toggleFollow } = actions
   const { isCreator, isAuthenticated } = access
 
   const header = (
