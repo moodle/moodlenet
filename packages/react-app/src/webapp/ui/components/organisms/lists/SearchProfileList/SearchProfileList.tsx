@@ -29,9 +29,10 @@ export const SearchProfileList: FC<SearchProfileListProps> = ({ profilesCardProp
           {/* {!seeAll && ( */}
           {
             <SecondaryButton
-            // onClick={() => activateSeeAll('People')}
+              // onClick={() => activateSeeAll('People')}
+              color="dark-blue"
             >
-              See more
+              See all
             </SecondaryButton>
           }
         </div>

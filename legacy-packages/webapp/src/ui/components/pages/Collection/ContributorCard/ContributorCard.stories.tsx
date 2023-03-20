@@ -22,7 +22,7 @@ export const ContributorCardStoryProps: ContributorCardProps = {
   avatarUrl:
     'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
   displayName: 'Juanita Rodriguez',
-  creatorProfileHref: href('Pages/Profile/LoggedIn'),
+  creatorProfileHref: href('Pages/Profile/Logged In'),
 }
 
 const ContributorCardStory: ComponentStory<typeof ContributorCard> = (args) => (
