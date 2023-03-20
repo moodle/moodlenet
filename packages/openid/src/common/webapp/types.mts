@@ -6,3 +6,10 @@ export type OpenidWebAppDeps = {
 }
 export type OpenIdPkgContext = PkgContextT<OpenidWebAppDeps>
 export type OpenIdContext = { pkg: OpenIdPkgContext }
+
+export type RpcInteractionDetails = {
+  promptType: string
+  reasons: string[]
+  clientId: string
+  scopes: string[]
+}
