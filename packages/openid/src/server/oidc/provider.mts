@@ -14,7 +14,7 @@ const GRANTABLE = new Set([
   'BackchannelAuthenticationRequest',
 ])
 const FAKE_ACCOUNT_ID = '1111'
-const DEV_INTERACTIONS_ENABLED = true
+const DEV_INTERACTIONS_ENABLED = false
 
 export const providerConfig = await getProviderConfig()
 
@@ -98,9 +98,7 @@ export function getProviderConfig() {
     interactions: {
       url(ctx, interaction) {
         console.log('interactions url', interaction, ctx)
-        return `/@moodlenet/openid/${interaction.prompt.name}?interaction=${
-          interaction.uid
-        }&reasons=${interaction.prompt.reasons.join(',')}`
+        return `/@moodlenet/openid/interaction/${interaction.uid}`
       },
       // url(_ctx, interaction) {
       //   console.log('interaction', interaction)
