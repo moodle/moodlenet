@@ -1,5 +1,6 @@
+import { ContentBackupImages } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { ContentBackupImages, href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -36,7 +37,7 @@ export const getCollectionCardStoryProps = (
 ): CollectionCardProps => {
   const data: CollectionCardData = {
     collectionId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
-    title: 'Best collection ever created',
+    title: 'Such a great collection',
     imageUrl: 'https://picsum.photos/300/200',
     collectionHref: href('Pages/Collection/Logged In'),
   }

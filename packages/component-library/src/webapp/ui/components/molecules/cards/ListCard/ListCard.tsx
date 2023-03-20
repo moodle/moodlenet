@@ -1,8 +1,10 @@
-import { FC, ReactNode, useRef } from 'react'
+import { FC, ReactElement, ReactNode, useMemo, useRef } from 'react'
 import './ListCard.scss'
 
+export type ListActionsType = { element: ReactElement; position: 'start' | 'end' }
+
 export type ListCardProps = {
-  className: string
+  className?: string
   title?: string | ReactNode | undefined
   content: ReactNode[]
   minGrid?: number
@@ -11,7 +13,7 @@ export type ListCardProps = {
   maxHeight?: number | undefined
   // maxRows?: number
   direction?: 'vertical' | 'horizontal' | 'wrap'
-  actions?: { element: ReactNode; position: 'start' | 'end' }
+  actions?: ListActionsType
 }
 
 export const ListCard: FC<ListCardProps> = ({
@@ -27,14 +29,18 @@ export const ListCard: FC<ListCardProps> = ({
 }) => {
   const contentDiv = useRef<HTMLDivElement>(null)
   const element = useRef<HTMLDivElement>(null)
-  const contentWithKeys = content.map((el, i) => {
-    const elementWithKey = [
-      <div className={'element'} key={i} {...(i === 0 && { ref: element })}>
-        {el}
-      </div>,
-    ]
-    return elementWithKey
-  })
+  const contentWithKeys = useMemo(
+    () =>
+      content.map((el, i) => {
+        const elementWithKey = [
+          <div className={'element'} key={i} {...(i === 0 && { ref: element })}>
+            {el}
+          </div>,
+        ]
+        return elementWithKey
+      }),
+    [content],
+  )
   // const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
 
   // const contentDivCurr = contentDiv.current
@@ -60,10 +66,14 @@ export const ListCard: FC<ListCardProps> = ({
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
       {title && <div className="title">{title}</div>}
-      {actions?.element && actions.position === 'start' && <div className="action">{actions.element}</div>}
+      {actions?.element && actions.position === 'start' && (
+        <div className="action">{actions.element}</div>
+      )}
       {contentWithKeys && contentWithKeys.length > 0 && (
         <div
-          className={`content ${direction} ${direction === 'horizontal' ? 'scroll' : ''} ${minGrid ? 'grid' : ''}`}
+          className={`content ${direction} ${direction === 'horizontal' ? 'scroll' : ''} ${
+            minGrid ? 'grid' : ''
+          }`}
           style={{
             ...(maxHeight && { maxHeight: `${maxHeight}px` }),
             // maxHeight: maxHeight ? `${maxHeight}px` : 'auto',
@@ -74,7 +84,9 @@ export const ListCard: FC<ListCardProps> = ({
           {contentWithKeys}
         </div>
       )}
-      {actions?.element && actions.position === 'end' && <div className="action">{actions.element}</div>}
+      {actions?.element && actions.position === 'end' && (
+        <div className="action">{actions.element}</div>
+      )}
     </div>
   )
 }

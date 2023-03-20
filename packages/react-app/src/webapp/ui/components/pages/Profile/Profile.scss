@@ -9,14 +9,13 @@
     height: 100%;
     display: flex;
     justify-content: space-between;
-    margin-top: 30px;
     @media screen and (max-width: 450px) {
       margin-top: 0;
       padding: 0;
 
       > .main-column {
         > .list-card {
-          padding: 15px 40px;
+          padding: 0 40px;
         }
 
         > :not(:last-child) {
