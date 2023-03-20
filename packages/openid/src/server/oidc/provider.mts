@@ -48,7 +48,7 @@ export function getProviderConfig() {
       {
         client_id: 'clid',
         client_secret: 'secret',
-        redirect_uris: ['http://dev-oauth-cli.com:3000/oauth2/redirect'],
+        redirect_uris: ['http://dev-oauth-cli.com:5000/oauth2/redirect'],
         // + other client properties
       },
     ],
