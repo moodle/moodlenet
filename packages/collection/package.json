@@ -73,10 +73,10 @@
     }
   },
   "exports": {
-    ".": "./src/root-export.mjs",
-    "./init": "./src/init.mjs",
-    "./ui": "./src/ui.mjs",
-    "./stories": "./src/stories.mjs",
-    "./common": "./src/common.mjs"
+    ".": "./dist/root-export.mjs",
+    "./init": "./dist/init.mjs",
+    "./ui": "./dist/ui.mjs",
+    "./stories": "./dist/stories.mjs",
+    "./common": "./dist/common.mjs"
   }
 }

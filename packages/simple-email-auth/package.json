@@ -21,8 +21,8 @@
     "src/"
   ],
   "exports": {
-    "./init": "./src/server/init.mjs",
-    "./ui": "./src/webapp/ui.mjs"
+    "./init": "./dist/server/init.mjs",
+    "./ui": "./dist/webapp/ui.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
