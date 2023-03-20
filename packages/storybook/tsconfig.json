@@ -19,7 +19,7 @@
     "baseUrl": "./src"
   },
 
-  "include": ["src"],
+  "include": ["src", "src/lib/SBLinkComponent.tsx"],
   "references": [
     { "path": "./tsconfig.node.json" },
     {

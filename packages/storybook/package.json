@@ -10,10 +10,11 @@
   },
   "scripts": {
     "dev": "vite",
-    "buildx": "tsc && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "storybook": "npx start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "build-deploy": "npm run build-storybook && firebase deploy"
   },
   "dependencies": {
     "react": "^18.2.0",

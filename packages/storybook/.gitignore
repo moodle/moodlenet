@@ -28,3 +28,9 @@ vite.config.js
 vite.config.d.ts.map
 vite.config.js.map
 tsconfig.node.tsbuildinfo
+
+# firebase
+firebase.json
+.firebaserc
+storybook-static
+.firebase
