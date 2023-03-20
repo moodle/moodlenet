@@ -1,5 +1,6 @@
 import { getCollectionsCardStoryProps, ProfileCollectionList } from '@moodlenet/collection/ui'
-import { href, Profile } from '@moodlenet/react-app/ui'
+import { OverallCardStories } from '@moodlenet/react-app/stories'
+import { href, OverallCard, Profile } from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, ProfileResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
@@ -57,6 +58,10 @@ export const LoggedOut = () => {
     ],
     sideColumnItems: [
       {
+        Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
+        key: 'overall-card',
+      },
+      {
         Item: () => (
           <ProfileCollectionList
             isCreator={false}
@@ -102,6 +107,10 @@ export const LoggedIn: ProfileStory = () => {
       },
     ],
     sideColumnItems: [
+      {
+        Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
+        key: 'overall-card',
+      },
       {
         Item: () => (
           <ProfileCollectionList
@@ -155,6 +164,10 @@ export const Owner: ProfileStory = () => {
     ],
     sideColumnItems: [
       {
+        Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
+        key: 'overall-card',
+      },
+      {
         Item: () => (
           <ProfileCollectionList
             isCreator={true}
@@ -207,6 +220,10 @@ export const Admin: ProfileStory = () => {
       },
     ],
     sideColumnItems: [
+      {
+        Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
+        key: 'overall-card',
+      },
       {
         Item: () => (
           <ProfileCollectionList

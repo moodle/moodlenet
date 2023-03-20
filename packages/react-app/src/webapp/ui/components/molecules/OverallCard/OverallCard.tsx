@@ -26,7 +26,7 @@ export const OverallCard: FC<OverallCardProps> = ({
   showIcons,
   noCard,
 }) => {
-  return (
+  return !items || items.length === 0 ? null : (
     <Card
       className="overall-card"
       key="overall-card"
@@ -34,11 +34,7 @@ export const OverallCard: FC<OverallCardProps> = ({
       noCard={noCard}
     >
       <div className="overall-container">
-        {!items || items.length === 0
-          ? // <Trans>
-            'No stats available'
-          : // </Trans>
-          showIcons
+        {items && items.length > 0 && showIcons
           ? items?.map(item => {
               return (
                 <div className="data" key="item.name">
