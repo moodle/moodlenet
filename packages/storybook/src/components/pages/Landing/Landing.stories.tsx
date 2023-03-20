@@ -1,10 +1,10 @@
 import { getCollectionsCardStoryProps, LandingCollectionList } from '@moodlenet/collection/ui'
 import {
-  getSmallProfilesCardStoryProps,
+  getProfileCardsStoryProps,
   href,
   Landing,
+  LandingProfileList,
   LandingProps,
-  SmallProfileCardList,
 } from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -53,9 +53,9 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     },
     {
       Item: () => (
-        <SmallProfileCardList
+        <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+          profilesPropsList={getProfileCardsStoryProps(15, {
             access: { isAuthenticated: false },
           })}
         />
@@ -74,8 +74,10 @@ export const LandingLoggedInStoryProps: LandingProps = {
         <LandingResourceList
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
-            liked: true,
-            bookmarked: true,
+            state: {
+              liked: true,
+              bookmarked: true,
+            },
           })}
         />
       ),
@@ -86,7 +88,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
-            actions: {
+            state: {
               followed: true,
               bookmarked: true,
             },
@@ -97,10 +99,10 @@ export const LandingLoggedInStoryProps: LandingProps = {
     },
     {
       Item: () => (
-        <SmallProfileCardList
+        <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
-            actions: {
+          profilesPropsList={getProfileCardsStoryProps(15, {
+            state: {
               followed: true,
             },
           })}
@@ -136,9 +138,13 @@ export const Owner: LandingStory = () => {
           <LandingResourceList
             searchResourcesHref={href('Page/Search')}
             resourceCardPropsList={getResourcesCardStoryProps(15, {
-              isCreator: true,
-              canEdit: true,
-              isPublished: true,
+              data: {
+                isPublished: true,
+              },
+              access: {
+                isCreator: true,
+                canEdit: true,
+              },
             })}
           />
         ),
@@ -149,7 +155,7 @@ export const Owner: LandingStory = () => {
           <LandingCollectionList
             searchCollectionsHref={href('Page/Search')}
             collectionCardPropsList={getCollectionsCardStoryProps(15, {
-              actions: {
+              state: {
                 isPublished: false,
               },
               access: {
@@ -163,9 +169,9 @@ export const Owner: LandingStory = () => {
       },
       {
         Item: () => (
-          <SmallProfileCardList
+          <LandingProfileList
             searchAuthorsHref={href('Page/Search')}
-            smallProfileCardPropsList={getSmallProfilesCardStoryProps(15, {
+            profilesPropsList={getProfileCardsStoryProps(15, {
               access: {
                 isCreator: true,
               },

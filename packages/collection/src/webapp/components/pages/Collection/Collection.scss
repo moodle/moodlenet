@@ -12,7 +12,6 @@
     width: 100%;
     max-width: 1100px;
     height: 100%;
-    margin-top: 40px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -31,7 +30,7 @@
       padding: 0;
       > .wide-column,
       > .main-and-side-columns > .main-column {
-        padding: 34px;
+        padding: 0 34px;
       }
     }
 

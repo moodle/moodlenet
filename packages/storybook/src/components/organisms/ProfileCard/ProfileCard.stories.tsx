@@ -1,6 +1,7 @@
 import { ProfileCard } from '@moodlenet/react-app/ui'
-import { ComponentMeta } from '@storybook/react'
-import { useProfileCardStoryProps } from './stories-props.js'
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ProfileCardProps } from './ProfileCard.js'
+import { getProfileCardFactory } from './story-props.js'
 
 const meta: ComponentMeta<typeof ProfileCard> = {
   title: 'Molecules/ProfileCard',
@@ -8,7 +9,13 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['useProfileCardStoryProps'],
+  excludeStories: [
+    'getProfileCardsStoryProps',
+    'ProfileCardLoggedOutStoryProps',
+    'ProfileCardLoggedInStoryProps',
+    'ProfileCardFollowingStoryProps',
+    'ProfileCardOwnerStoryProps',
+  ],
   decorators: [
     Story => (
       <div style={{ maxWidth: 500 }}>
@@ -18,65 +25,56 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   ],
 }
 
-export const LoggedOut = () => {
-  const props = useProfileCardStoryProps()
-  // contentItems: [<PrimaryButton key="jal">Done</PrimaryButton>],
-  // contentItems: [],
-  return <ProfileCard {...props} />
+export const ProfileCardLoggedOutStoryProps: ProfileCardProps = {
+  ...getProfileCardFactory(),
 }
 
-export const LoggedIn = () => {
-  const props = useProfileCardStoryProps()
-  // isAuthenticated: true,
-  // isFollowing: true,
-  return <ProfileCard {...props} />
+export const ProfileCardLoggedInStoryProps: ProfileCardProps = {
+  ...getProfileCardFactory(undefined, {
+    mainColumnItems: [],
+    data: {},
+    actions: {},
+    access: {
+      isAuthenticated: true,
+    },
+  }),
 }
 
-export const Owner = () => {
-  const props = useProfileCardStoryProps({
+export const ProfileCardFollowingStoryProps: ProfileCardProps = {
+  ...getProfileCardFactory(undefined, {
+    mainColumnItems: [],
+    data: {},
+    actions: {
+      followed: true,
+    },
+    access: {},
+  }),
+}
+
+export const ProfileCardOwnerStoryProps: ProfileCardProps = {
+  ...getProfileCardFactory(undefined, {
+    ...ProfileCardLoggedInStoryProps,
+    mainColumnItems: [],
+    data: {},
+    actions: {},
     access: {
       isCreator: true,
-      canEdit: true,
     },
-
-    // showAccountApprovedSuccessAlert: true,
-    // isApproved: true,
-  })
-  return <ProfileCard {...props} />
+  }),
 }
 
-export const Editing = () => {
-  const props = useProfileCardStoryProps({
-    isEditing: true,
-    access: {
-      isCreator: true,
-      canEdit: true,
-      // showAccountApprovedSuccessAlert: true,
-      // isApproved: true,
-    },
-  })
-  return <ProfileCard {...props} />
-}
-// export const Approved = () => {
-//   const props = useProfileCardStoryProps({
-//     props: {
-//       isCreator: true,
-//       isElegibleForApproval: true,
-//       showAccountApprovedSuccessAlert: true,
-//       isApproved: true,
-//     },
-//   })
-//   return <ProfileCard {...props} />
-// }
+const ProfileCardStory: ComponentStory<typeof ProfileCard> = args => <ProfileCard {...args} />
 
-// export const Admin = () => {
-//   const props = useProfileCardStoryProps({
-//     props: {
-//       isAuthenticated: true,
-//       isAdmin: true,
-//     },
-//   })
-//   return <ProfileCard {...props} />
-// }
+export const LoggedOut = ProfileCardStory.bind({})
+LoggedOut.args = ProfileCardLoggedOutStoryProps
+
+export const LoggedIn = ProfileCardStory.bind({})
+LoggedIn.args = ProfileCardLoggedInStoryProps
+
+export const Following = ProfileCardStory.bind({})
+Following.args = ProfileCardFollowingStoryProps
+
+export const Owner = ProfileCardStory.bind({})
+Owner.args = ProfileCardOwnerStoryProps
 
 export default meta

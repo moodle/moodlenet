@@ -46,7 +46,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
   }
 
   const numResources = (
-    <div className="num-resources">
+    <div className="num-resources" key="num-resources">
       <FilterNone />
       {numResource}
     </div>
@@ -54,6 +54,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
 
   const publishButton = canEdit && (
     <TertiaryButton
+      key="publish-button"
       onClick={isPublished ? () => setIsPublished(false) : publish}
       className={`publish-button ${isPublished ? 'published' : 'draft'}`}
       abbr={isPublished ? 'Sent to draft' : 'Publish'}
@@ -64,6 +65,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
 
   const bookmarkButton = isAuthenticated && (
     <TertiaryButton
+      key="bookmark-button"
       className={`bookmark-button ${bookmarked ? 'bookmarked' : ''}`}
       onClick={toggleBookmark}
       abbr="Bookmark"
@@ -74,6 +76,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
 
   const followButton = (
     <TertiaryButton
+      key="follow-button"
       className={`follow-button ${followed ? 'followed' : ''} ${
         !isAuthenticated || isCreator ? 'disabled' : ''
       }`}
@@ -81,7 +84,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
         isCreator
           ? 'Creators cannot follow their own content'
           : !isAuthenticated
-          ? 'Loggin to follow the resource'
+          ? 'Login to follow the resource'
           : 'Follow'
       }
       onClick={
@@ -107,7 +110,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const header = (
-    <div className={`collection-card-header`}>
+    <div className={`collection-card-header`} key="header">
       <div className="header-left">
         {updatedTopLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
@@ -124,7 +127,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
   }, [titleRef])
 
   const contentContainer = (
-    <Link href={collectionHref} className="collection-card-content">
+    <Link href={collectionHref} className="collection-card-content" key="content-containr">
       <abbr className="title" title={showTitleAbbr ? title : undefined} ref={titleRef}>
         {title}
       </abbr>

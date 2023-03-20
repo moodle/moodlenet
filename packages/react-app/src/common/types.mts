@@ -34,16 +34,6 @@ export type User = {
   isAdmin: boolean
 }
 
-export type ProfileFormValues = {
-  displayName: string
-  aboutMe: string
-  organizationName?: string
-  location?: string
-  siteUrl?: string
-  backgroundImage?: string | File | null
-  avatarImage?: string | File | null
-}
-
 export type WebUserData = {
   _key: string
   name: string
@@ -71,7 +61,7 @@ export type ClientSessionDataRpc =
       isRoot: true
     }
 
-export type ProfileCardData = {
+export type ProfileData = {
   userId: string
   backgroundUrl: string | null
   avatarUrl: string | null
@@ -81,16 +71,26 @@ export type ProfileCardData = {
   profileHref: Href
 }
 
-export type ProfileCardState = {
+export type ProfileFormValues = {
+  displayName: string
+  aboutMe: string
+  organizationName?: string
+  location?: string
+  siteUrl?: string
+  backgroundImage?: string | File | null
+  avatarImage?: string | File | null
+}
+
+export type ProfileState = {
   followed: boolean
 }
 
-export type ProfileCardActions = {
+export type ProfileActions = {
   toggleFollow(): unknown
   editProfile(values: ProfileFormValues): void | Promise<any>
 }
 
-export type ProfileCardAccess = {
+export type ProfileAccess = {
   isCreator: boolean
   isAuthenticated: boolean
   isAdmin: boolean
