@@ -1,6 +1,7 @@
-import { Account, Configuration, interactionPolicy } from 'oidc-provider'
-import { KVStore } from '../../key-value-store/src/server/types.js'
-import { OpenIdKeyValueData, StoreItem } from './types/storeTypes.mjs'
+import { instanceDomain } from '@moodlenet/core'
+import Provider, { Account, Configuration } from 'oidc-provider'
+import { kvStore } from '../kvStore.mjs'
+import { StoreItem } from '../types/storeTypes.mjs'
 const GRANT_KEY = `grant`
 const SESSION_UID_KEY = `sessionUid`
 const USER_CODE_KEY = `userCode`
@@ -12,15 +13,42 @@ const GRANTABLE = new Set([
   'DeviceCode',
   'BackchannelAuthenticationRequest',
 ])
+const FAKE_ACCOUNT_ID = '1111'
+const DEV_INTERACTIONS_ENABLED = true
 
-export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
+export const providerConfig = await getProviderConfig()
+
+export const discoveryProvider = await setupDiscoveryProvider()
+export const openIdProvider = await setupOpenIdProvider()
+
+export async function setupOpenIdProvider() {
+  const openidProvider = new Provider(instanceDomain, providerConfig)
+  openidProvider.use((ctx, next) => {
+    const op = ctx.path
+    ctx.path = ctx.path.replace(/^\/\.openid/, '')
+    console.log('openidProvider', op, ctx.path)
+    return next()
+  })
+  return openidProvider
+}
+
+export async function setupDiscoveryProvider() {
+  const wellKnownProvider = new Provider(instanceDomain, providerConfig)
+  wellKnownProvider.use((ctx, next) => {
+    ctx.path = '/.well-known/openid-configuration'
+    return next()
+  })
+  return wellKnownProvider
+}
+
+export function getProviderConfig() {
   const config: Configuration = {
     // ... see the available options in Configuration options section
     clients: [
       {
         client_id: 'clid',
         client_secret: 'secret',
-        redirect_uris: ['http://localhost:3000/oauth2/redirect'],
+        redirect_uris: ['http://dev-oauth-cli.com:3000/oauth2/redirect'],
         // + other client properties
       },
     ],
@@ -29,16 +57,30 @@ export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
     },
     async findAccount(ctx, sub, token) {
       console.log(`\n\nOAUTH findAccount()`, { ctx, sub, token })
-      if (!token) {
-        return
-      }
-      token
+      // if (!token) {
+      //   return
+      // }
+      // token
       //const webUser = await verifyWebUserToken(token)
       const account: Account = {
-        accountId: 'ciccioid',
+        accountId: FAKE_ACCOUNT_ID,
+        email: 'this.profile.email',
+        email_verified: true,
+        family_name: 'this.profile.family_name',
+        given_name: 'this.profile.given_name',
+        locale: 'it',
+        name: `this.profile.name (${sub})`,
         claims(use, scope, claims, rejected) {
           console.log(`\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
-          return { sub: 'ciccioidSub' }
+          return {
+            sub: FAKE_ACCOUNT_ID, // it is essential to always return a sub claim
+            email: 'this.profile.email',
+            email_verified: true,
+            family_name: 'this.profile.family_name',
+            given_name: 'this.profile.given_name',
+            locale: 'it',
+            name: `this.profile.name (${sub})`,
+          }
         },
       }
       return account
@@ -46,6 +88,12 @@ export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
     scopes: ['openid' /* , 'full-user' */],
     // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
     interactions: {
+      url(ctx, interaction) {
+        console.log('interactions url', interaction, ctx)
+        return `/@moodlenet/openid/${interaction.prompt.name}?interaction=${
+          interaction.uid
+        }&reasons=${interaction.prompt.reasons.join(',')}`
+      },
       // url(_ctx, interaction) {
       //   console.log('interaction', interaction)
       //   return `/login?interaction=${interaction.uid}`
@@ -54,38 +102,56 @@ export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
       //   console.log('interaction', interaction)
       //   return `/.openid/interaction/${interaction.uid}`
       // },
-      policy: [
-        new interactionPolicy.Prompt(
-          { name: 'consent', requestable: true },
-          ...[
-            'no_session',
-            'max_age',
-            'id_token_hint',
-            'claims_id_token_sub_value',
-            'essential_acrs',
-            'essential_acr',
-            'native_client_prompt',
-            'op_scopes_missing',
-            'op_claims_missing',
-            'rs_scopes_missing',
-          ].map(_ => new interactionPolicy.Check(_, `${_} ccc`, `${_} appap`, () => true)),
-        ),
-        new interactionPolicy.Prompt(
-          { name: 'login', requestable: true },
-          ...[
-            'no_session',
-            'max_age',
-            'id_token_hint',
-            'claims_id_token_sub_value',
-            'essential_acrs',
-            'essential_acr',
-            'native_client_prompt',
-            'op_scopes_missing',
-            'op_claims_missing',
-            'rs_scopes_missing',
-          ].map(_ => new interactionPolicy.Check(_, `${_} ccc`, `${_} appap`, () => true)),
-        ),
-      ],
+      policy: undefined,
+      // policy: DEV_INTERACTIONS_ENABLED
+      //   ? [
+      //       new interactionPolicy.Prompt(
+      //         { name: 'consent', requestable: true },
+      //         ...[
+      //           // 'no_session',
+      //           'consent',
+      //           // 'login',
+      //           // 'max_age',
+      //           // 'id_token_hint',
+      //           // 'claims_id_token_sub_value',
+      //           // 'essential_acrs',
+      //           // 'essential_acr',
+      //           // 'native_client_prompt',
+      //           // 'op_scopes_missing',
+      //           // 'op_claims_missing',
+      //           // 'rs_scopes_missing',
+      //         ].map(
+      //           _ =>
+      //             new interactionPolicy.Check(
+      //               _,
+      //               `${_} consent desc`,
+      //               `${_} consent err`,
+      //               () => true,
+      //             ),
+      //         ),
+      //       ),
+      //       new interactionPolicy.Prompt(
+      //         { name: 'login', requestable: true },
+      //         ...[
+      //           // 'no_session',
+      //           // 'consent',
+      //           'login',
+      //           // 'max_age',
+      //           // 'id_token_hint',
+      //           // 'claims_id_token_sub_value',
+      //           // 'essential_acrs',
+      //           // 'essential_acr',
+      //           // 'native_client_prompt',
+      //           // 'op_scopes_missing',
+      //           // 'op_claims_missing',
+      //           // 'rs_scopes_missing',
+      //         ].map(
+      //           _ =>
+      //             new interactionPolicy.Check(_, `${_} login desc`, `${_} login err`, () => true),
+      //         ),
+      //       ),
+      //     ]
+      //   : undefined,
     },
     adapter(model) {
       return {
@@ -110,7 +176,8 @@ export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
 
           const item = (await kvStore.get(model, id)).value
           console.log(`\n\nOAUTH find(id) {`, { found: item })
-          const payload = item && { ...item.payload, session: { accountId: '737' } } // FIXME: set correct sessionAccoutId (maybe depends on model ? 'Interaction' ? ??)
+          // const payload = item && { ...item.payload, session: { accountId: FAKE_ACCOUNT_ID } } // FIXME: set correct sessionAccoutId (maybe depends on model ? 'Interaction' ? ??)
+          const payload = item?.payload
 
           return payload
         },
@@ -161,8 +228,12 @@ export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
             expiresIn: expiresIn,
             insertedAt: new Date().toISOString(),
 
-            payload,
-            // payload: { ...payload, session: { accountId: '737' } },// FIXME: set correct sessionAccoutId
+            // payload,
+            payload: {
+              ...payload,
+              accountId: FAKE_ACCOUNT_ID,
+              session: { accountId: FAKE_ACCOUNT_ID },
+            }, // FIXME: set correct sessionAccoutId
           }
           await kvStore.set(model, id, storeItem) // FIXME: set expiresIn
         },
@@ -185,7 +256,7 @@ export function getProviderConfig(kvStore: KVStore<OpenIdKeyValueData>) {
       registration: { enabled: true },
       clientCredentials: { enabled: true },
       introspection: { enabled: true },
-      devInteractions: { enabled: true },
+      devInteractions: { enabled: DEV_INTERACTIONS_ENABLED },
       deviceFlow: { enabled: true },
     },
     issueRefreshToken() {
