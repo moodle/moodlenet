@@ -1,4 +1,4 @@
-import { ListCard, SecondaryButton } from '@moodlenet/component-library'
+import { ListCard, TertiaryButton } from '@moodlenet/component-library'
 import { FC, useMemo } from 'react'
 import { CollectionCard, CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
 import './SearchCollectionList.scss'
@@ -12,7 +12,7 @@ export const SearchCollectionList: FC<SearchCollectionListProps> = ({
 }) => {
   return (
     <ListCard
-      className="landing-collection-card-list"
+      className="search-collection-list"
       // className={`collections ${seeAll ? 'see-all' : ''}`}
       content={useMemo(
         () =>
@@ -28,25 +28,22 @@ export const SearchCollectionList: FC<SearchCollectionListProps> = ({
             )),
         [collectionCardPropsList],
       )}
-      title={
+      header={
         <div className="card-header">
           <div className="title">Collections</div>
           {/* {!seeAll && ( */}
-          <SecondaryButton
-            // onClick={() => activateSeeAll('Collections')}
-            color="dark-blue"
-          >
-            See all
-          </SecondaryButton>
           {/* )} */}
         </div>
       }
-      noCard={true}
+      footer={
+        <TertiaryButton
+        // onClick={() => activateSeeAll('Collections')}
+        >
+          See all collection results
+        </TertiaryButton>
+      }
       minGrid={240}
-      maxHeight={397}
-      // maxHeight={seeAll ? undefined : 397}
-      // maxRows={seeAll ? undefined : 2}
-      // maxRows={2}
+      maxRows={2}
     />
   )
 }
