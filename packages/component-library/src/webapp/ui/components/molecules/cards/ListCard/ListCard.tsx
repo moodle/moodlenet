@@ -41,13 +41,26 @@ export const ListCard: FC<ListCardProps> = ({
     [content],
   )
 
-  const [childHeight, setChildHeight] = useState<number | undefined>(undefined)
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
+  // const [paddingTop, setPaddingTop] = useState<number | undefined>(undefined)
+  // const [paddingBottom, setPaddingBottom] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     const parent = contentDiv.current
-    const newChildHeight = parent?.children[0]?.clientHeight
+    const childHeight = parent?.children[0]?.clientHeight
     const gap = Number((parent ? window.getComputedStyle(parent).gap : '').replace('px', ''))
-    newChildHeight && setChildHeight(newChildHeight + gap * 0.8)
+    const paddingTop = Number(
+      (parent ? window.getComputedStyle(parent).paddingTop : '').replace('px', ''),
+    )
+    const paddingBottom = Number(
+      (parent ? window.getComputedStyle(parent).paddingBottom : '').replace('px', ''),
+    )
+
+    const newMaxHeight =
+      childHeight &&
+      maxRows &&
+      childHeight * maxRows + (maxRows - 1) * gap + paddingTop + paddingBottom
+    newMaxHeight && setMaxHeight(newMaxHeight)
   }, [contentDiv])
 
   return (
@@ -63,7 +76,9 @@ export const ListCard: FC<ListCardProps> = ({
           }`}
           style={{
             // ...(maxHeight && { maxHeight: `${maxHeight}px` }),
-            ...(childHeight && maxRows && { maxHeight: `${childHeight * maxRows}px` }),
+            ...(maxHeight && {
+              maxHeight: `${maxHeight}px`,
+            }),
 
             // maxHeight: maxHeight ? `${maxHeight}px` : 'auto',
             gridTemplateColumns: minGrid && `repeat(auto-fill, minmax(${minGrid}px, 1fr))`,

@@ -1,9 +1,21 @@
 .search-resource-list {
+  padding: 24px 24px 69px 24px;
+  position: relative;
+  > .content {
+    padding: 3px 3px 8px 3px;
+  }
   > .list-card-footer {
+    width: 100%;
+    margin-left: -24px;
+    position: absolute;
+    bottom: 0;
     display: flex;
     justify-content: center;
-    > * {
+    > .tertiary-button {
+      width: 100%;
       font-size: 15px;
+      height: 70px;
+      border-radius: 0;
     }
   }
 }
