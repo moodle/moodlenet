@@ -415,7 +415,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     const fieldElem = descriptionRef.current ?? descriptionEditRef.current
     if (fieldElem) {
       canEdit && fieldElem.scrollHeight < 80 && setAlwaysFullDescription(true)
-      setShowFullDescription(alwaysFullDescription || fieldElem.scrollHeight < 80)
+      setShowFullDescription(canEdit || alwaysFullDescription || fieldElem.scrollHeight < 80)
     }
   }, [
     descriptionRef.current?.scrollHeight,
@@ -462,7 +462,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
           {form.values.description}
         </div>
       )}
-      {!showFullDescription && (
+      {!showFullDescription && !canEdit && (
         <div className="see-more" onClick={() => setShowFullDescription(true)}>
           ...see more
         </div>

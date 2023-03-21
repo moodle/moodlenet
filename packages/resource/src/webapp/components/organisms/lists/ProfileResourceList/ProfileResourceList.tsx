@@ -32,7 +32,7 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
           }),
         [resourceCardPropsList],
       )}
-      title={`Latest resources`}
+      header={`Latest resources`}
       actions={
         isCreator
           ? {

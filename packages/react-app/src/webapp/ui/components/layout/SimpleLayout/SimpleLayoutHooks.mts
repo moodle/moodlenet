@@ -1,5 +1,6 @@
 import { useContext, useMemo } from 'react'
 import { SettingsCtx } from '../../../../context/SettingsContext.js'
+import { useFooterProps } from '../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
 import { useMinimalisticHeaderProps } from '../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 import { SimpleLayoutProps } from './SimpleLayout.js'
 
@@ -8,12 +9,14 @@ export const useSimpleLayoutProps = (): SimpleLayoutProps => {
     appearanceData: { customStyle },
   } = useContext(SettingsCtx)
   const headerProps = useMinimalisticHeaderProps()
+  const footerProps = useFooterProps()
   const simpleLayoutProps = useMemo<SimpleLayoutProps>(() => {
     return {
       headerProps,
+      footerProps,
       style: customStyle,
     }
-  }, [customStyle, headerProps])
+  }, [customStyle, headerProps, footerProps])
 
   return simpleLayoutProps
 }

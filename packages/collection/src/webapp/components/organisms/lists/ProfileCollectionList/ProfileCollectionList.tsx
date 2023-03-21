@@ -32,7 +32,7 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
   const listCard = (
     <ListCard
       className="profile-collection-list"
-      title={`Curated collections`}
+      header={`Curated collections`}
       content={useMemo(
         () =>
           collectionCardPropsList.map(collectionCardProps => (
