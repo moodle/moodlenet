@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SubjectsTextOptionProps } from '../../../../common/data.js'
+import { subjectValidationSchema } from '../../../../common/validationSchema.js'
 import { SubjectField, SubjectFieldProps } from './SubjectField.js'
 
 const meta: ComponentMeta<typeof SubjectField> = {
@@ -26,7 +27,7 @@ export const useSubjectFieldStoryProps = (
     isSubmitting: false,
     shouldShowErrors: false,
     editSubject: action('editSubject'),
-    // validationSchema: subjectValidationSchema,
+    validationSchema: subjectValidationSchema,
     setCategoryFilter: action('setCategoryFilter'),
     ...overrides,
   }
