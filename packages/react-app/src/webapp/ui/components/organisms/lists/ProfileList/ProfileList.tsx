@@ -28,8 +28,8 @@ export const ProfileList: FC<ProfileListProps> = ({ smallProfileCardPropsList, t
       className={`people-list`}
       noCard={true}
       minGrid={170}
-      maxHeight={267}
-      // maxRows={1}
+      // maxHeight={267}
+      maxRows={1}
     />
   )
 }
