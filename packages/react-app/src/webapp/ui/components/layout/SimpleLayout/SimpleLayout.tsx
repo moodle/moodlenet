@@ -1,4 +1,5 @@
 import { CSSProperties, FC, ReactNode } from 'react'
+import { MainFooter, MainFooterProps } from '../../../../ui.mjs'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import {
   MinimalisticHeader,
@@ -10,6 +11,7 @@ import './SimpleLayout.scss'
 
 export type SimpleLayoutProps = {
   headerProps: MinimalisticHeaderProps
+  footerProps: MainFooterProps
   style?: CSSProperties
   contentStyle?: CSSProperties
   children?: ReactNode
@@ -17,6 +19,7 @@ export type SimpleLayoutProps = {
 
 export const SimpleLayout: FC<SimpleLayoutProps> = ({
   headerProps,
+  footerProps,
   style,
   contentStyle,
   children,
@@ -43,7 +46,7 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
       </div> */}
         <div style={contentStyle} className="content">
           {children}
-          <div className="footer"></div>
+          <MainFooter {...footerProps} />
         </div>
       </div>
     </LayoutContainer>

@@ -1,5 +1,4 @@
 .browser {
-  margin-top: 50px;
   > .content {
     max-width: 1100px;
     height: 100%;
@@ -35,20 +34,6 @@
           max-width: 100%;
           width: auto;
         }
-      }
-
-      > .people,
-      > .resources,
-      > .collections,
-      > .subjects {
-        &:not(.see-all) {
-          overflow: hidden;
-        }
-      }
-
-      > .load-more {
-        display: flex;
-        justify-content: center;
       }
     }
 
@@ -151,11 +136,10 @@
   }
 
   @media screen and (max-width: 450px) {
-    .search > .content {
-      margin: 25px;
-      .collections > .content > .collection-card {
-        font-size: 15px;
-        width: 100%;
+    > .content {
+      // margin: 25px;
+      > .main-column {
+        gap: 15px;
       }
     }
   }
