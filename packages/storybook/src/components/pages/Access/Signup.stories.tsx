@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 // import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/dist/webapp/Signup.js'
 import { Signup, SignupProps } from '@moodlenet/react-app/ui'
 import { Signup as SimpleEmailAuth, SignupStoriesProps } from '@moodlenet/simple-email-auth/ui'
+import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
 // import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
@@ -41,6 +42,7 @@ SignupProps => {
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
     headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
+    footerProps: FooterStoryProps,
     // accessHeaderProps: AccessHeaderStoryProps,
     // form: useFormik<SignupFormValues>({
     //   validationSchema,

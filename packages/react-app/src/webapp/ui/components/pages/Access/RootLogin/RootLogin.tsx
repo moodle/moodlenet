@@ -1,8 +1,8 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { FC, useCallback, useContext, useState } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 
+import { MainFooterProps } from '../../../../../ui.mjs'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './RootLogin.scss'
 
@@ -10,28 +10,41 @@ export type RootLoginFormValues = { email: string; password: string }
 
 export type RootLoginProps = {
   headerProps: MinimalisticHeaderProps
+  footerProps: MainFooterProps
+  submitLogin: (password: string) => void
+  loginFailed: boolean
 }
 
-export const RootLogin: FC<RootLoginProps> = ({ headerProps }) => {
+export const RootLogin: FC<RootLoginProps> = ({
+  headerProps,
+  footerProps,
+  loginFailed,
+  submitLogin,
+}) => {
   return (
-    <SimpleLayout headerProps={headerProps}>
-      <RootLoginBody />
+    <SimpleLayout headerProps={headerProps} footerProps={footerProps}>
+      <RootLoginBody loginFailed={loginFailed} submitLogin={submitLogin} />
     </SimpleLayout>
   )
 }
-export const RootLoginBody: FC = () => {
-  const { use } = useContext(MainContext)
+export const RootLoginBody: FC<{
+  submitLogin: (password: string) => void
+  loginFailed: boolean
+}> = ({ loginFailed, submitLogin }) => {
+  // const { use } = useContext(MainContext)
 
   const [submitting, setSubmitting] = useState(false)
-  const [loginFailed, setLoginFailed] = useState(false)
   const [rootPassword, setRootPassword] = useState('')
   const rootLogin = useCallback(async () => {
-    setLoginFailed(false)
     setSubmitting(true)
-    const success = await use.me.rpc.loginAsRoot({ rootPassword })
-    setLoginFailed(!success)
-    setSubmitting(false)
-  }, [use.me, rootPassword])
+    submitLogin(rootPassword)
+  }, [rootPassword, submitLogin])
+
+  useEffect(() => {
+    if (loginFailed) {
+      setSubmitting(false)
+    }
+  }, [loginFailed])
 
   return (
     <div className="root-login-page">
