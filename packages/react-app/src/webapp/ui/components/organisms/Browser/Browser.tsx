@@ -18,13 +18,50 @@ export type BrowserProps = {
 }
 
 export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) => {
+  const mainColumnRef = useRef<HTMLDivElement>(null)
+  const [heights, setHeights] = useState<number[]>([])
   const [currentSection, setCurrentSection] = useState(
     mainColumnItems && mainColumnItems.length > 0 ? mainColumnItems[0]?.key.toString() : '0',
   )
-  const [heights, setHeights] = useState<number[]>([])
-  const [navigating, setNavigating] = useState(false) // no avoid nav section buttons be active after selection
-  const mainColumnRef = useRef<HTMLDivElement>(null)
 
+  // find the heights of each section and set the current section
+  useEffect(() => {
+    const parent = mainColumnRef.current
+    const children = mainColumnRef.current?.children
+
+    if (!parent) return
+
+    const observer = new ResizeObserver(() => {
+      const heights = parent ? [parent.offsetTop] : [0]
+
+      if (children) {
+        for (let i = 0; i < children.length - 1; i++) {
+          const child = children[i]
+          const prevHeight = heights[i]
+          const childHeight = child?.clientHeight
+          const gap = Number((parent ? window.getComputedStyle(parent).gap : '').replace('px', ''))
+
+          childHeight && heights.push(prevHeight ? childHeight + prevHeight + gap : childHeight)
+          const currentHeight = heights[i]
+
+          if (currentHeight && window.pageYOffset >= currentHeight) {
+            const key = child?.getAttribute('key')
+            key && setCurrentSection(key)
+          }
+        }
+      }
+      setHeights(heights)
+    })
+
+    observer.observe(parent)
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  const [navigating, setNavigating] = useState(false) // no avoid nav section buttons be active after selection
+
+  // nvaigate to the section when the section button is clicked
   const navigateToSection = useCallback(
     (idx: number, key: string) => {
       setCurrentSection(key)
@@ -82,6 +119,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
     (item): item is AddonItem => !!item,
   )
 
+  // update the current section while scrolling
   const updateActiveSection = useCallback(() => {
     const initialHeight = heights[0]
     const body = document.body
@@ -100,39 +138,14 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
     }
 
     // select the last section when on the bottom of the screen
-    // const mainLayoutDiv = document.querySelector('.layout-container > .main-layout')
-    // const bodyScrollTop = body.scrollTop
+    const mainLayoutDiv = document.querySelector('.layout-container > .main-layout')
+    const bodyScrollTop = body.scrollTop
 
-    // if (mainLayoutDiv && window.innerHeight + bodyScrollTop >= mainLayoutDiv.clientHeight) {
-    //   const lastItem = updatedMainColumnItems[updatedMainColumnItems.length - 1]
-    //   setCurrentSection(lastItem?.key.toString())
-    // }
-  }, [heights, updatedMainColumnItems, navigating])
-
-  useEffect(() => {
-    const parent = mainColumnRef.current
-    const children = mainColumnRef.current?.children
-
-    const heights = parent ? [parent.offsetTop] : [0]
-
-    if (children) {
-      for (let i = 0; i < children.length - 1; i++) {
-        const child = children[i]
-        const prevHeight = heights[i]
-        const childHeight = child?.clientHeight
-        const gap = Number((parent ? window.getComputedStyle(parent).gap : '').replace('px', ''))
-
-        childHeight && heights.push(prevHeight ? childHeight + prevHeight + gap : childHeight)
-        const currentHeight = heights[i]
-
-        if (currentHeight && window.pageYOffset >= currentHeight) {
-          const key = child?.getAttribute('key')
-          key && setCurrentSection(key)
-        }
-      }
-      setHeights(heights)
+    if (mainLayoutDiv && window.innerHeight + bodyScrollTop >= mainLayoutDiv.clientHeight) {
+      const lastItem = updatedMainColumnItems[updatedMainColumnItems.length - 1]
+      setCurrentSection(lastItem?.key.toString())
     }
-  }, [])
+  }, [heights, updatedMainColumnItems, navigating])
 
   // add the scroll listener to the window
   useLayoutEffect(() => {

@@ -1,6 +1,6 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { SubjectFieldStories } from '@moodlenet/ed-meta/stories'
-import { SubjectField } from '@moodlenet/ed-meta/ui'
+import { LicenseFieldStories, SubjectFieldStories } from '@moodlenet/ed-meta/stories'
+import { LicenseField, SubjectField } from '@moodlenet/ed-meta/ui'
 import {
   ResourceAccess,
   ResourceActions,
@@ -226,16 +226,8 @@ export const useResourceStoryProps = (
       key: 'subject-field',
     },
     {
-      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
-      key: 'subject-field',
-    },
-    {
-      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
-      key: 'subject-field',
-    },
-    {
-      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
-      key: 'subject-field',
+      Item: () => <LicenseField {...LicenseFieldStories.useLicenseFieldStoryProps()} />,
+      key: 'license-field',
     },
   ]
 
