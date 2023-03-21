@@ -1,17 +1,13 @@
+import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
+import { SimpleLayout, SimpleLayoutProps } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import {
-  MinimalisticHeaderOrganizationStoryProps,
-  MinimalisticHeaderStoryProps,
-} from '../../organisms/Header/Minimalistic/MinimalisticHeader.stories.js'
-// import { href } from '../../../../elements/link'
-
-import SimpleLayout, { SimpleLayoutProps } from './SimpleLayout.js'
+import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
 
 const meta: ComponentMeta<typeof SimpleLayout> = {
   title: 'Organisms/SimpleLayout',
   component: SimpleLayout,
   argTypes: {
-    // backgroundColor: { control: 'color' },
+    // b../../../../../react-app/src/webapp/ui/components/organisms/Header/Minimalistic/MinimalisticHeader.stories.js
   },
   excludeStories: [
     'SimpleLayoutStory',
@@ -21,13 +17,15 @@ const meta: ComponentMeta<typeof SimpleLayout> = {
 }
 
 export const SimpleLayoutStoryProps: SimpleLayoutProps = {
-  headerProps: MinimalisticHeaderStoryProps,
+  headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
+  footerProps: FooterStoryProps,
   //   homeHrpef: href('Landing/Logged In'),
   // organization: { ...SimpleLayoutTitleStoryProps },
 }
 
 export const SimpleLayoutOrganizationStoryProps: SimpleLayoutProps = {
-  headerProps: MinimalisticHeaderOrganizationStoryProps,
+  headerProps: MinimalisticHeaderStories.MinimalisticHeaderOrganizationStoryProps,
+  footerProps: FooterStoryProps,
   //   homeHref: href('Landing/Logged In'),
   // organization: { ...SimpleLayoutTitleOrganizationStoryProps },
 }

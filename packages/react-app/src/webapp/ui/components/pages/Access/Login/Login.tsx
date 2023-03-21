@@ -1,9 +1,10 @@
 import { CallMade as CallMadeIcon } from '@material-ui/icons'
 import { Card } from '@moodlenet/component-library'
-import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import { ComponentType, CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 // import { Link } from '../../../../elements/link'
+import { MainFooterProps } from '../../../../../ui.mjs'
 import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './Login.scss'
 
@@ -11,10 +12,11 @@ export type LoginItem = { Icon: ComponentType; Panel: ComponentType; key: string
 export type LoginProps = {
   loginItems: LoginItem[]
   headerProps: MinimalisticHeaderProps
+  footerProps: MainFooterProps
 }
 // Record<string, unknown>
 
-export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps }) => {
+export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps, footerProps }) => {
   // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
   // const defaultLoginEntry = loginRegs.entries[0]
   const defaultLoginEntry = loginItems[0]
@@ -22,6 +24,7 @@ export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps }) => {
   useEffect(() => chooseLoginEntry(defaultLoginEntry), [defaultLoginEntry])
   return (
     <SimpleLayout
+      footerProps={footerProps}
       headerProps={headerProps}
       style={{ height: '100%' }}
       contentStyle={{ padding: '0' }}

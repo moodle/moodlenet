@@ -38,6 +38,7 @@ export const SearchResourceList: FC<SearchResourceListProps> = ({ resourceCardPr
           See all resource results
         </TertiaryButton>
       }
+      minGrid={300}
       maxRows={3}
     />
   )
