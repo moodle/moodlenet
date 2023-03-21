@@ -32,7 +32,7 @@ export const CollectionList: FC<CollectionListProps> = ({
   const listCard = (
     <ListCard
       className="collection-list"
-      title={`Curated collections`}
+      header={`Curated collections`}
       content={useMemo(
         () =>
           collectionCardPropsList.map(collectionCardProps => (

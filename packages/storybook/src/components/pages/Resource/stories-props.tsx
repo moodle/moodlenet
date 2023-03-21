@@ -1,4 +1,6 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
+import { SubjectFieldStories } from '@moodlenet/ed-meta/stories'
+import { SubjectField } from '@moodlenet/ed-meta/ui'
 import {
   ResourceAccess,
   ResourceActions,
@@ -17,7 +19,7 @@ import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, st
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
-import { OptionItemProp } from '@moodlenet/component-library'
+import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
@@ -218,6 +220,25 @@ export const useResourceStoryProps = (
     footerRowItems: [],
   }
 
+  const extraDetailsItems: AddonItem[] = [
+    {
+      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
+      key: 'subject-field',
+    },
+    {
+      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
+      key: 'subject-field',
+    },
+    {
+      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
+      key: 'subject-field',
+    },
+    {
+      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
+      key: 'subject-field',
+    },
+  ]
+
   return overrideDeep<ResourceProps>(
     {
       mainLayoutProps:
@@ -235,6 +256,7 @@ export const useResourceStoryProps = (
       actions: actions,
       access: access,
       validationSchema: validationSchema,
+      extraDetailsItems: extraDetailsItems,
     },
     overrides,
   )

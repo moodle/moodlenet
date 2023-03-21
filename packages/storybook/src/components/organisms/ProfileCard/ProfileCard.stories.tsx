@@ -1,7 +1,6 @@
-import { ProfileCard } from '@moodlenet/react-app/ui'
+import { getProfileCardFactory, ProfileCard } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { ProfileCardProps } from './ProfileCard.js'
-import { getProfileCardFactory } from './story-props.js'
 
 const meta: ComponentMeta<typeof ProfileCard> = {
   title: 'Molecules/ProfileCard',
