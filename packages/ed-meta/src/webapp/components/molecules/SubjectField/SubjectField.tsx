@@ -2,6 +2,7 @@ import { Dropdown, SimplePill, TextOption, TextOptionProps } from '@moodlenet/co
 import { SelectOptions } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC } from 'react'
+import { SchemaOf } from 'yup'
 import './SubjectField.scss'
 
 export type SubjectFieldProps = {
@@ -12,7 +13,7 @@ export type SubjectFieldProps = {
   canEdit: boolean
   isEditing: boolean
   shouldShowErrors: boolean
-  // validationSchema: SchemaOf<{ subject: string }>
+  validationSchema: SchemaOf<{ subject: string }>
   setCategoryFilter(text: string): unknown
 }
 
@@ -23,20 +24,19 @@ export const SubjectField: FC<SubjectFieldProps> = ({
   editSubject,
   canEdit,
   isEditing,
-  // validationSchema,
+  validationSchema,
   shouldShowErrors,
 }) => {
   const form = useFormik<{ subject: string }>({
     initialValues: { subject: subject },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchema,
     onSubmit: values => {
       return editSubject(values)
     },
   })
-  console.log('subjects', subjects)
   return isEditing ? (
     <Dropdown
-      name="category"
+      name="subject"
       value={form.values.subject}
       onChange={e => editSubject({ subject: e.target.value })}
       label="Subject"
