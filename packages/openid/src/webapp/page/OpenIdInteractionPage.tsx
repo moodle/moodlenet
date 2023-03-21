@@ -1,13 +1,35 @@
+import { Card, PrimaryButton } from '@moodlenet/component-library'
 import { MinimalisticHeaderProps, SimpleLayout } from '@moodlenet/react-app/ui'
 import { FC } from 'react'
 
-export type OpenIdInteractionProps = {
+export type OpenIdInteractionPageProps = {
+  scopes: string[]
+  clientId: string
   headerProps: MinimalisticHeaderProps
+  authorize(): Promise<unknown>
+  cancel(): Promise<unknown>
 }
-export const OpenIdInteractionPage: FC<OpenIdInteractionProps> = ({ headerProps }) => {
+
+export const OpenIdInteractionPage: FC<OpenIdInteractionPageProps> = ({
+  headerProps,
+  clientId,
+  authorize,
+  cancel,
+  scopes,
+}) => {
   return (
     <SimpleLayout headerProps={headerProps}>
-      <div>ciao</div>
+      <Card>
+        <div>
+          An external system &ldquo;{clientId}&ldquo; is asking to access Moodlenet on your name for
+          the following actions
+        </div>
+        {scopes.map(scope => (
+          <div key={scope}>{scope}</div>
+        ))}
+        <PrimaryButton onClick={authorize}>Authorize</PrimaryButton>
+        <PrimaryButton onClick={cancel}>Cancel</PrimaryButton>
+      </Card>
     </SimpleLayout>
   )
 }

@@ -31,8 +31,16 @@ export type SignupEntryItem = Omit<SignupItem, 'key'>
 export type AuthCtxT = {
   logout(): void
   readSessionTokenCookie(): string | undefined
-  clientSessionData?: ClientSessionData
-}
+} & (
+  | {
+      isAuthenticated: true
+      clientSessionData: ClientSessionData
+    }
+  | {
+      isAuthenticated: false
+      clientSessionData?: undefined
+    }
+)
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
 
@@ -105,11 +113,20 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     if (clientSessionData === null) {
       return null
     }
+
     const authCtxT: AuthCtxT = {
       // setSessionToken,
       readSessionTokenCookie,
       logout,
-      clientSessionData,
+      ...(clientSessionData
+        ? {
+            clientSessionData,
+            isAuthenticated: true,
+          }
+        : {
+            clientSessionData,
+            isAuthenticated: false,
+          }),
     }
     return authCtxT
   }, [clientSessionData, logout])
