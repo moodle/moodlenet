@@ -1,7 +1,9 @@
+import { DocumentMetadata } from '@moodlenet/arangodb/server'
 import { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
 import { Response } from 'express'
 import { AppearanceData } from '../common/types.mjs'
 
+export type WebUserProfileEntity = WebUserProfileDataType & DocumentMetadata
 export type WebUserProfileDataType = {
   displayName: string
   aboutMe: string

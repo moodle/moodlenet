@@ -2,12 +2,31 @@ import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
 import { ByKeyOrId, create, get, patch, setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import { ClientSessionDataRpc } from '../common/types.mjs'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
-import { CreateRequest, WebUserDataType, WebUserProfileDataType } from './types.mjs'
+import {
+  CreateRequest,
+  WebUserDataType,
+  WebUserProfileDataType,
+  WebUserProfileEntity,
+} from './types.mjs'
 import {
   setCurrentVerifiedJwtToken,
   signWebUserJwt,
   verifyCurrentTokenCtx,
 } from './web-user-auth-lib.mjs'
+
+export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity | undefined> {
+  const verifiedCtx = await verifyCurrentTokenCtx()
+  if (!verifiedCtx) {
+    return
+  }
+  const { currentWebUser } = verifiedCtx
+  if (currentWebUser.isRoot) {
+    return
+  }
+
+  const myProfile = await getProfile({ _key: currentWebUser.profileKey })
+  return myProfile
+}
 
 export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDataRpc | undefined> {
   const verifiedCtx = await verifyCurrentTokenCtx()
@@ -169,9 +188,7 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
   return patchedUser
 }
 
-export async function getProfile(
-  byKeyOrId: ByKeyOrId,
-): Promise<undefined | (WebUserProfileDataType & DocumentMetadata)> {
+export async function getProfile(byKeyOrId: ByKeyOrId): Promise<undefined | WebUserProfileEntity> {
   const profile = await get(WebUserProfile.entityClass, byKeyOrId)
   return profile
 }

@@ -1,26 +1,50 @@
 import { useMinimalisticHeaderProps } from '@moodlenet/react-app/ui'
-import { useContext, useEffect, useMemo } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { WebappInteractionDetails } from '../../common/webapp/types.mjs'
 import { OpenIdCtx } from '../OpenIdContextProvider.js'
-import { OpenIdInteractionProps } from './OpenIdInteractionPage.js'
-
-export function useOpenIdInteractionProps({
+import { post_to_url } from './helper.mjs'
+import { OpenIdInteractionPageProps } from './OpenIdInteractionPage.js'
+export type OpenIdInteractionPageResult = { props: OpenIdInteractionPageProps; needsLogin: boolean }
+export function useOpenIdInteractionPage({
   interactionId,
 }: {
   interactionId: string
-}): OpenIdInteractionProps {
+}): null | undefined | OpenIdInteractionPageResult {
   const headerProps = useMinimalisticHeaderProps()
   const openIdContext = useContext(OpenIdCtx)
+  const [interactionDetails, setInteractionDetails] = useState<WebappInteractionDetails | null>()
 
   useEffect(() => {
     openIdContext.pkg.use.me.rpc['webapp/getInteractionDetails']({ interactionId }).then(
-      console.log,
+      setInteractionDetails,
     )
   }, [interactionId, openIdContext.pkg.use.me.rpc])
 
-  const openIdInteractionProps = useMemo<OpenIdInteractionProps>(() => {
-    return {
-      headerProps,
+  const authorize = useCallback<OpenIdInteractionPageProps['authorize']>(async () => {
+    post_to_url(`/.pkg/@moodlenet/openid/interaction/${interactionId}/confirm`)
+  }, [interactionId])
+
+  const cancel = useCallback<OpenIdInteractionPageProps['cancel']>(async () => {
+    post_to_url(`/.pkg/@moodlenet/openid/interaction/${interactionId}/abort`)
+  }, [interactionId])
+
+  const openIdInteractionPageResult = useMemo<
+    OpenIdInteractionPageResult | null | undefined
+  >(() => {
+    if (!interactionDetails) {
+      return interactionDetails
     }
-  }, [headerProps])
-  return openIdInteractionProps
+    return {
+      needsLogin: interactionDetails.needsLogin,
+      props: {
+        headerProps,
+        authorize,
+        cancel,
+        clientId: interactionDetails.clientId,
+        scopes: interactionDetails.scopes,
+      },
+    }
+  }, [authorize, cancel, headerProps, interactionDetails])
+
+  return openIdInteractionPageResult
 }

@@ -1,5 +1,5 @@
 import { instanceDomain } from '@moodlenet/core'
-import Provider, { Account, Configuration } from 'oidc-provider'
+import Provider, { Configuration } from 'oidc-provider'
 import { kvStore } from '../kvStore.mjs'
 import { StoreItem } from '../types/storeTypes.mjs'
 const GRANT_KEY = `grant`
@@ -13,8 +13,8 @@ const GRANTABLE = new Set([
   'DeviceCode',
   'BackchannelAuthenticationRequest',
 ])
-const FAKE_ACCOUNT_ID = '1111'
-const DEV_INTERACTIONS_ENABLED = false
+export const FAKE_ACCOUNT_ID = '1111'
+export const DEV_INTERACTIONS_ENABLED = false
 
 export const providerConfig = await getProviderConfig()
 
@@ -55,45 +55,39 @@ export function getProviderConfig() {
     claims: {
       openid: ['scope', 'isAdmin', 'webUserKey', 'accountId', 'exp', 'iss', 'aud'],
     },
-    async findAccount(ctx, sub, token) {
-      console.log(`\n\nOAUTH findAccount()`, { ctx, sub, token })
-      // if (!token) {
-      //   return
-      // }
-      // token
-      //const webUser = await verifyWebUserToken(token)
-      const account: Account = {
-        accountId: FAKE_ACCOUNT_ID,
-        email: 'this.profile.email',
-        email_verified: true,
-        family_name: 'this.profile.family_name',
-        given_name: 'this.profile.given_name',
-        locale: 'it',
-        name: `this.profile.name (${sub})`,
-        claims(use, scope, claims, rejected) {
-          console.log(`\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
-          return {
-            sub: FAKE_ACCOUNT_ID, // it is essential to always return a sub claim
-            email: 'this.profile.email',
-            email_verified: true,
-            family_name: 'this.profile.family_name',
-            given_name: 'this.profile.given_name',
-            locale: 'it',
-            name: `this.profile.name (${sub})`,
-          }
-        },
-      }
-      return account
-    },
+    // async findAccount(ctx, sub, token) {
+    //   console.log(`\n\nOAUTH findAccount()`, { ctx, sub, token })
+    //   // if (!token) {
+    //   //   return
+    //   // }
+    //   // token
+    //   //const webUser = await verifyWebUserToken(token)
+    //   const account: Account = {
+    //     accountId: FAKE_ACCOUNT_ID,
+    //     name: `this.profile.name (${sub})`,
+    //     claims(use, scope, claims, rejected) {
+    //       console.log(`\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
+    //       return {
+    //         sub: FAKE_ACCOUNT_ID, // it is essential to always return a sub claim
+    //         name: `this.profile.name (${sub})`,
+    //       }
+    //     },
+    //   }
+    //   return account
+    // },
     scopes: ['openid' /* , 'full-user' */],
     // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
     cookies: {
       names: {
-        interaction: '_mn-oid_interaction',
-        resume: '_mn-oid_resume',
-        session: '_mn-oid_session',
-        state: '_mn-oid_state',
+        interaction: '_mn-oid-interaction',
+        resume: '_mn-oid-resume',
+        session: '_mn-oid-session',
+        state: '_mn-oid-state',
       },
+      long: { path: '/' },
+      short: { path: '/' },
+      // long: { path: '/.pkg/@moodlenet/openid/interaction/' },
+      // short: { path: '/.pkg/@moodlenet/openid/interaction/' },
     },
     interactions: {
       url(ctx, interaction) {
@@ -237,8 +231,8 @@ export function getProviderConfig() {
             // payload,
             payload: {
               ...payload,
-              accountId: FAKE_ACCOUNT_ID,
-              session: { accountId: FAKE_ACCOUNT_ID },
+              // accountId: FAKE_ACCOUNT_ID,
+              // session: { accountId: FAKE_ACCOUNT_ID },
             }, // FIXME: set correct sessionAccoutId
           }
           await kvStore.set(model, id, storeItem) // FIXME: set expiresIn
@@ -260,8 +254,8 @@ export function getProviderConfig() {
     features: {
       revocation: { enabled: true },
       registration: { enabled: true },
-      clientCredentials: { enabled: true },
-      introspection: { enabled: true },
+      // clientCredentials: { enabled: true },
+      // introspection: { enabled: true },
       devInteractions: { enabled: DEV_INTERACTIONS_ENABLED },
       deviceFlow: { enabled: true },
     },

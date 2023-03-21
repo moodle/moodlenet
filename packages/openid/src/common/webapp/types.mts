@@ -7,9 +7,10 @@ export type OpenidWebAppDeps = {
 export type OpenIdPkgContext = PkgContextT<OpenidWebAppDeps>
 export type OpenIdContext = { pkg: OpenIdPkgContext }
 
-export type RpcInteractionDetails = {
+export type WebappInteractionDetails = {
   promptType: string
   reasons: string[]
   clientId: string
   scopes: string[]
+  needsLogin: boolean
 }

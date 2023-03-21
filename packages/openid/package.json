@@ -30,6 +30,7 @@
     "oidc-provider": "^8.1.0"
   },
   "devDependencies": {
+    "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/key-value-store": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
@@ -43,6 +44,7 @@
     "typescript": "^4.7.2"
   },
   "peerDependencies": {
+    "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/key-value-store": "^0.2.0",
     "@moodlenet/core": "^0.2.0",

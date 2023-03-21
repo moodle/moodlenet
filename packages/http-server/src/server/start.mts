@@ -11,7 +11,17 @@ export let shutdownGracefullyLocalServer: () => Promise<void>
 
 process.on('SIGTERM', () => shutdownGracefullyLocalServer())
 const app = express()
-app.use(cookieParser(), (_, __, next) => shell.call(next)())
+app.use(cookieParser(), (request, response, next) => {
+  shell.initiateCall(() => {
+    shell.myAsyncCtx.set(() => ({
+      currentHttp: {
+        request,
+        response,
+      },
+    }))
+    next()
+  })
+})
 
 app.use(...middlewares.map(({ handlers }) => handlers).flat())
 
