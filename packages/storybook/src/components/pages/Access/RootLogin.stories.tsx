@@ -1,52 +1,44 @@
 // import { t } from '@lingui/macro'
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
-import { LoginPage, LoginProps } from '@moodlenet/react-app/ui'
-import { Login as SimpleEmailAuth, LoginStoriesProps } from '@moodlenet/simple-email-auth/ui'
+import { RootLogin, RootLoginProps } from '@moodlenet/react-app/ui'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
 import { useEffect } from 'react'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
 // import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
-// import { Login, LoginFormValues, LoginProps } from './Login'
+// import { RootLogin, RootLoginFormValues, RootLoginProps } from './RootLogin'
 
-const meta: ComponentMeta<typeof LoginPage> = {
-  title: 'Pages/Access/Login',
-  component: LoginPage,
-  excludeStories: ['LoginStoryProps', 'validationSchema'],
+const meta: ComponentMeta<typeof RootLogin> = {
+  title: 'Pages/Access/RootLogin',
+  component: RootLogin,
+  excludeStories: ['RootLoginStoryProps', 'validationSchema'],
   parameters: { layout: 'fullscreen' },
 }
 
-// const validationSchema: SchemaOf<LoginFormValues> = object({
+// const validationSchema: SchemaOf<RootLoginFormValues> = object({
 //   email: string()
 //     .required(t`Please provide your email address`)
 //     .email(t`Please provide a valid email address`),
 //   password: string().required(t`Please provide a password`),
 // })
 
-export const LoginStoryProps = (): // override?: {
-// props?: Partial<LoginProps>
-// formValues?: Partial<LoginFormValues>
-// formConfig?: Partial<FormikConfig<LoginFormValues>>
-// }
-LoginProps => {
+export const RootLoginStoryProps = (
+  override?: Partial<RootLoginProps>,
+  // formValues?: Partial<RootLoginFormValues>
+  // formConfig?: Partial<FormikConfig<RootLoginFormValues>>
+): RootLoginProps => {
   return {
-    loginItems: [
-      // { Icon: PrimaryButton, Panel: FileUploader },
-      {
-        Icon: SimpleEmailAuth.Icon,
-        Panel: () => <SimpleEmailAuth.Panel {...LoginStoriesProps.useLoginStoriesProps()} />,
-        key: 'email-auth',
-      },
-      // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
-    ],
     headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
     footerProps: FooterStoryProps,
+    loginFailed: false,
+    submitLogin: action('submit RootLogin'),
     // accessHeaderProps: AccessHeaderStoryProps,
-    // form: useFormik<LoginFormValues>({
+    // form: useFormik<RootLoginFormValues>({
     //   validationSchema,
     //   initialValues: { email: '', password: '', ...override?.formValues },
-    //   onSubmit: action('submit login'),
+    //   onSubmit: action('submit RootLogin'),
     //   ...override?.formConfig,
     // }),
     // wrongCreds: false,
@@ -56,23 +48,23 @@ LoginProps => {
     //   userAcceptsPolicies: null,
     //   cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     // },
-    // ...override?.props,
+    ...override,
   }
 }
-// export const LoginStoryProps: LoginP = {
-//   page: 'login',
+// export const RootLoginStoryProps: RootLoginP = {
+//   page: 'RootLogin',
 //   headerProps: MinimalisticHeaderStoryProps,
 //   //   homeHrpef: href('Landing/Logged In'),
 //   // organization: { ...SimpleLayoutTitleStoryProps },
 // }
 
 export const Default = () => {
-  const props = LoginStoryProps()
-  return <LoginPage {...props} />
+  const props = RootLoginStoryProps()
+  return <RootLogin {...props} />
 }
 
 export const Error = () => {
-  const props = LoginStoryProps()
+  const props = RootLoginStoryProps({ loginFailed: true })
   // {
   // formConfig: {
   //   initialErrors: {
@@ -87,10 +79,10 @@ export const Error = () => {
     // props.form.submitForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return <LoginPage {...props} />
+  return <RootLogin {...props} />
 }
 export const WrongCredentials = () => {
-  const props = LoginStoryProps()
+  const props = RootLoginStoryProps({ loginFailed: true })
   //   {
   //   props: {
   //     wrongCreds: true,
@@ -100,7 +92,7 @@ export const WrongCredentials = () => {
     // props.form.submitForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return <LoginPage {...props} />
+  return <RootLogin {...props} />
 }
 
 export default meta
