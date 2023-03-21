@@ -11,4 +11,10 @@
       }
     }
   }
+
+  > .content {
+    > .element > .profile-card {
+      max-width: none;
+    }
+  }
 }
