@@ -6,7 +6,13 @@
   },
   "references": [
     {
-      "path": "../arangodb"
+      "path": "../component-library"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
+      "path": "../key-value-store"
     },
     {
       "path": "../core"
@@ -15,7 +21,7 @@
       "path": "../crypto"
     },
     {
-      "path": "../http-server"
+      "path": "../react-app"
     }
   ]
 }

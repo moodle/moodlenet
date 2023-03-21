@@ -1,4 +1,5 @@
-import { RpcInteractionDetails } from '../common/webapp/types.mjs'
+import { getCurrentWebUserProfile } from '@moodlenet/react-app/server'
+import { WebappInteractionDetails } from '../common/webapp/types.mjs'
 import { openIdProvider } from './oidc/provider.mjs'
 import { shell } from './shell.mjs'
 
@@ -10,12 +11,45 @@ export const expose = await shell.expose({
         interactionId,
       }: {
         interactionId: string
-      }): Promise<undefined | RpcInteractionDetails> {
-        const found = await openIdProvider.Interaction.find(interactionId, { XXXXX: true })
+      }): Promise<undefined | WebappInteractionDetails> {
+        // const currentHttp = getCurrentHttp()
+        // if (!currentHttp) {
+        //   return
+        // }
+        const currentWebUserProfile = await getCurrentWebUserProfile()
+        if (!currentWebUserProfile) {
+          return
+        }
+
+        const found = await openIdProvider.Interaction.find(interactionId)
         console.log({ found })
         if (!found) {
           return
         }
+
+        // if (found.prompt.name === 'login') {
+        //   // try {
+        //   //   const interactionResult = await openIdProvider.interactionResult(
+        //   //     currentHttp.request,
+        //   //     currentHttp.response,
+        //   //     {
+        //   //       login: {
+        //   //         accountId: currentWebUserProfile._key,
+        //   //       },
+        //   //     },
+        //   //     {
+        //   //       mergeWithLastSubmission: false,
+        //   //     },
+        //   //   )
+        //   //   console.log({ interactionResult })
+        //   // } catch (err) {
+        //   //   throw new Error('-/interaction/:uid/login LOGIN ERR', { cause: err })
+        //   // }
+        //   await openIdProvider.Interaction.adapter.upsert(interactionId, {
+        //     ...found,
+        //   },)
+        // }
+
         const params = found.params as {
           client_id: string
           redirect_uri: string
@@ -28,6 +62,7 @@ export const expose = await shell.expose({
           promptType: found.prompt.name,
           clientId: params.client_id,
           scopes: (params.scope ?? '').split(' '),
+          needsLogin: found.prompt.name === 'login',
         }
       },
     },
