@@ -1,4 +1,6 @@
 import { addMiddleware } from '@moodlenet/http-server/server'
+import { WebUserProfile } from '@moodlenet/react-app/init'
+import { EntityUser, setCurrentUserFetch } from '@moodlenet/system-entities/server'
 import { shell } from '../shell.mjs'
 import { openIdProvider } from './provider.mjs'
 
@@ -13,18 +15,22 @@ await shell.call(addMiddleware)({
         return next()
       }
       const jtiAuthHeader = authHeader.replace(HEADER_PREFIX_REGEXP, '')
-      const authCodePayload = await openIdProvider.AuthorizationCode.find(jtiAuthHeader)
-      console.log({ authCodePayload })
+      const AccessToken = await openIdProvider.AccessToken.find(jtiAuthHeader)
+      // console.log({ AccessTokenAuthBearerHeader: AccessToken })
+      if (AccessToken) {
+        await setCurrentUserFetch(async () => {
+          const entityUser: EntityUser = {
+            type: 'user',
+            entityIdentifier: {
+              entityClass: WebUserProfile.entityClass,
+              _key: AccessToken.accountId,
+            },
+          }
+          return entityUser
+        })
+      }
+
       next()
     },
   ],
 })
-
-const AuthorizationCode = await openIdProvider.AuthorizationCode.find(
-  `Sn93sVdCaEGRn4tnYM7bTXgbxE41USrBgmGPt0Mp5He`,
-)
-const AccessToken = await openIdProvider.AccessToken.find(
-  `Sn93sVdCaEGRn4tnYM7bTXgbxE41USrBgmGPt0Mp5He`,
-)
-const Grant = await openIdProvider.Grant.find(`Sn93sVdCaEGRn4tnYM7bTXgbxE41USrBgmGPt0Mp5He`)
-console.log({ Grant, AuthorizationCode, AccessToken })
