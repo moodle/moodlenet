@@ -1,11 +1,6 @@
 import { AuthCtx, usePkgContext } from '@moodlenet/react-app/web-lib'
 import { createContext, useContext, useMemo } from 'react'
-import {
-  MainContextResourceType,
-  MyPkgContext,
-  ResourceFormValues,
-  RpcCaller,
-} from '../common/types.mjs'
+
 
 export const useMainContext = (): MainContextResourceType => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
@@ -35,7 +30,6 @@ export const useMainContext = (): MainContextResourceType => {
 
   return {
     ...myPkgCtx,
-    rpcCaller,
     auth,
   }
-}
+} 

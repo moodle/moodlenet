@@ -1,30 +1,11 @@
-import { ReactAppContext, ReactAppMainComponent } from '@moodlenet/react-app/web-lib'
-import { useContext } from 'react'
-import { ReactAppContext, ReactAppMainComponent } from '@moodlenet/react-app/web-lib'
-import { useContext } from 'react'
-import { Route } from 'react-router-dom'
-import { ResourcePageRoute } from '../ui.mjs'
-import { MainContext, useMainContext } from './MainContext.js'
-import {
-  AuthCtx,
-  ReactAppContext,
-  ReactAppMainComponent,
-  usePkgContext,
-} from '@moodlenet/react-app/web-lib'
+import { AuthCtx, usePkgContext } from '@moodlenet/react-app/web-lib'
+import { createContext, useContext, useMemo } from 'react'
+import { MyPkgContext, ResourceFormValues, RpcCaller } from './common/types.mjs'
 
-const myRoutes = { rootPath: 'resource', routes: <Route index element={<ResourcePageRoute />} /> }
-
-const MainComponent: ReactAppMainComponent = ({ children }) => {
-  const mainValue = useMainContext()
-  const mainValue = useMainContext()
-  const { registries } = useContext(ReactAppContext)
-  registries.routes.useRegister(myRoutes)
+export const useMainContext = () => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
   const { clientSessionData } = useContext(AuthCtx)
-  const { registries } = useContext(ReactAppContext)
-  registries.routes.useRegister(myRoutes)
 
-  return <MainContext.Provider value={mainValue}>{children}</MainContext.Provider>
   const auth = useMemo(
     () => ({
       isAuthenticated: !!clientSessionData,
@@ -34,6 +15,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     [clientSessionData],
   )
 
+  const me = myPkgCtx.use.me
   const rpcCaller = useMemo((): RpcCaller => {
     return {
       edit: (resourceKey: string, res: ResourceFormValues) =>
@@ -46,22 +28,9 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     }
   }, [me.rpc])
 
-  useEffect(() => {
-    me.rpc['webapp/get']({ param: '1' }).then(res => {
-      console.log(`sample call response:`, res)
-    })
-  }, [me.rpc])
-
-  return <MainContext.Provider value={mainValue}>{children}</MainContext.Provider>
-  return (
-    <MainContext.Provider
-      value={{
-        ...myPkgCtx,
-        rpcCaller,
-        auth,
-      }}
-    >
-      {children}
-    </MainContext.Provider>
-  )
+  return {
+    ...myPkgCtx,
+    rpcCaller,
+    auth,
+  }
 }
