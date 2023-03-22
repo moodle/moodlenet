@@ -1,16 +1,22 @@
 import { ListCard, TertiaryButton } from '@moodlenet/component-library'
-import { FC, ReactElement, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
 import './SearchProfileList.scss'
 
 export type SearchProfileListProps = {
   profilesCardPropsList: ProfileCardProps[]
-  title?: ReactElement
+  showAll: boolean
+  setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-export const SearchProfileList: FC<SearchProfileListProps> = ({ profilesCardPropsList }) => {
+export const SearchProfileList: FC<SearchProfileListProps> = ({
+  profilesCardPropsList,
+  showAll,
+  setShowAll,
+}) => {
   return (
     <ListCard
+      className={`search-profile-list ${showAll ? 'show-all' : ''}`}
       content={useMemo(
         () =>
           profilesCardPropsList
@@ -38,15 +44,14 @@ export const SearchProfileList: FC<SearchProfileListProps> = ({ profilesCardProp
         </div>
       }
       footer={
-        <TertiaryButton
-        // onClick={() => activateSeeAll('People')}
-        >
-          See all people results
-        </TertiaryButton>
+        !showAll ? (
+          <TertiaryButton onClick={() => setShowAll('people-list')}>
+            See all people results
+          </TertiaryButton>
+        ) : null
       }
-      className={`search-profile-list`}
       minGrid={170}
-      maxRows={2}
+      maxRows={showAll ? undefined : 2}
     />
   )
 }

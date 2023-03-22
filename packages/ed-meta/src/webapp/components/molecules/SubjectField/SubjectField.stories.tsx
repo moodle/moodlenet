@@ -24,7 +24,6 @@ export const useSubjectFieldStoryProps = (
     },
     canEdit: true,
     isEditing: true,
-    isSubmitting: false,
     shouldShowErrors: false,
     editSubject: action('editSubject'),
     validationSchema: subjectValidationSchema,
