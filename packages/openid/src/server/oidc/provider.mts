@@ -1,20 +1,9 @@
 import { instanceDomain } from '@moodlenet/core'
-import Provider, { Configuration } from 'oidc-provider'
-import { kvStore } from '../kvStore.mjs'
-import { StoreItem } from '../types/storeTypes.mjs'
-const GRANT_KEY = `grant`
-const SESSION_UID_KEY = `sessionUid`
-const USER_CODE_KEY = `userCode`
-
-const GRANTABLE = new Set([
-  'AccessToken',
-  'AuthorizationCode',
-  'RefreshToken',
-  'DeviceCode',
-  'BackchannelAuthenticationRequest',
-])
-export const FAKE_ACCOUNT_ID = '1111'
-export const DEV_INTERACTIONS_ENABLED = false
+import { jwk } from '@moodlenet/crypto/server'
+import { getProfile } from '@moodlenet/react-app/server'
+import Provider, { Account, Configuration } from 'oidc-provider'
+import { ArangoAdapter } from './arango-adapter.mjs'
+export const ___DEV_INTERACTIONS_ENABLED = false
 
 export const providerConfig = await getProviderConfig()
 
@@ -24,9 +13,8 @@ export const openIdProvider = await setupOpenIdProvider()
 export async function setupOpenIdProvider() {
   const openidProvider = new Provider(instanceDomain, providerConfig)
   openidProvider.use((ctx, next) => {
-    const op = ctx.path
     ctx.path = ctx.path.replace(/^\/\.openid/, '')
-    console.log('openidProvider', op, ctx.path)
+    // console.log('openidProvider', op, ctx.path)
     return next()
   })
   return openidProvider
@@ -41,8 +29,22 @@ export async function setupDiscoveryProvider() {
   return wellKnownProvider
 }
 
-export function getProviderConfig() {
+function getProviderConfig() {
   const config: Configuration = {
+    adapter: ArangoAdapter,
+    ttl: {
+      Session: 60 * 60,
+      AuthorizationCode: 60 * 60,
+      BackchannelAuthenticationRequest: 60 * 60,
+      ClientCredentials: 60 * 60,
+      DeviceCode: 60 * 60,
+      Grant: 60 * 60,
+      IdToken: 60 * 60,
+      Interaction: 60 * 60,
+      RefreshToken: 60 * 60,
+      AccessToken: 60 * 60,
+    },
+    jwks: { keys: [jwk] },
     // ... see the available options in Configuration options section
     clients: [
       {
@@ -55,200 +57,52 @@ export function getProviderConfig() {
     claims: {
       openid: ['scope', 'isAdmin', 'webUserKey', 'accountId', 'exp', 'iss', 'aud'],
     },
-    // async findAccount(ctx, sub, token) {
-    //   console.log(`\n\nOAUTH findAccount()`, { ctx, sub, token })
-    //   // if (!token) {
-    //   //   return
-    //   // }
-    //   // token
-    //   //const webUser = await verifyWebUserToken(token)
-    //   const account: Account = {
-    //     accountId: FAKE_ACCOUNT_ID,
-    //     name: `this.profile.name (${sub})`,
-    //     claims(use, scope, claims, rejected) {
-    //       console.log(`\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
-    //       return {
-    //         sub: FAKE_ACCOUNT_ID, // it is essential to always return a sub claim
-    //         name: `this.profile.name (${sub})`,
-    //       }
-    //     },
-    //   }
-    //   return account
-    // },
+    async findAccount(_ctx, sub /* , token */) {
+      // console.log(`\n\nOAUTH findAccount()`, { ctx, sub, token })
+      // if (!token) {
+      //   return
+      // }
+      // token
+      //const webUser = await verifyWebUserToken(token)
+      const profile = await getProfile({ _key: sub })
+      if (!profile) {
+        throw new Error(`could not find profile for accountId ${sub}`)
+      }
+      const account: Account = {
+        accountId: profile._key,
+        name: profile.displayName,
+        given_name: profile.displayName,
+
+        claims(/* use, scope, claims, rejected */) {
+          // console.log(`\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
+          return {
+            sub: profile._key, // it is essential to always return a sub claim
+            given_name: profile.displayName,
+            name: profile.displayName,
+          }
+        },
+      }
+      return account
+    },
     scopes: ['openid' /* , 'full-user' */],
     // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
     cookies: {
       names: {
-        interaction: '_mn-oid-interaction',
-        resume: '_mn-oid-resume',
-        session: '_mn-oid-session',
-        state: '_mn-oid-state',
+        interaction: '_mn_oid_interaction',
+        resume: '_mn_openid_resume',
+        session: '_mn_openid_session',
+        state: '_mn_openid_state',
       },
-      long: { path: '/' },
-      short: { path: '/' },
-      // long: { path: '/.pkg/@moodlenet/openid/interaction/' },
-      // short: { path: '/.pkg/@moodlenet/openid/interaction/' },
+      // long: { path: '/' },
+      // short: { path: '/' },
+      long: { path: '/.openid/' },
+      short: { path: '/.pkg/@moodlenet/openid/interaction/' },
     },
     interactions: {
-      url(ctx, interaction) {
-        console.log('interactions url', interaction, ctx)
+      url(_ctx, interaction) {
+        // console.log('interactions url', interaction, ctx)
         return `/@moodlenet/openid/interaction/${interaction.uid}`
       },
-      // url(_ctx, interaction) {
-      //   console.log('interaction', interaction)
-      //   return `/login?interaction=${interaction.uid}`
-      // },
-      // url(_ctx, interaction) {
-      //   console.log('interaction', interaction)
-      //   return `/.openid/interaction/${interaction.uid}`
-      // },
-      policy: undefined,
-      // policy: DEV_INTERACTIONS_ENABLED
-      //   ? [
-      //       new interactionPolicy.Prompt(
-      //         { name: 'consent', requestable: true },
-      //         ...[
-      //           // 'no_session',
-      //           'consent',
-      //           // 'login',
-      //           // 'max_age',
-      //           // 'id_token_hint',
-      //           // 'claims_id_token_sub_value',
-      //           // 'essential_acrs',
-      //           // 'essential_acr',
-      //           // 'native_client_prompt',
-      //           // 'op_scopes_missing',
-      //           // 'op_claims_missing',
-      //           // 'rs_scopes_missing',
-      //         ].map(
-      //           _ =>
-      //             new interactionPolicy.Check(
-      //               _,
-      //               `${_} consent desc`,
-      //               `${_} consent err`,
-      //               () => true,
-      //             ),
-      //         ),
-      //       ),
-      //       new interactionPolicy.Prompt(
-      //         { name: 'login', requestable: true },
-      //         ...[
-      //           // 'no_session',
-      //           // 'consent',
-      //           'login',
-      //           // 'max_age',
-      //           // 'id_token_hint',
-      //           // 'claims_id_token_sub_value',
-      //           // 'essential_acrs',
-      //           // 'essential_acr',
-      //           // 'native_client_prompt',
-      //           // 'op_scopes_missing',
-      //           // 'op_claims_missing',
-      //           // 'rs_scopes_missing',
-      //         ].map(
-      //           _ =>
-      //             new interactionPolicy.Check(_, `${_} login desc`, `${_} login err`, () => true),
-      //         ),
-      //       ),
-      //     ]
-      //   : undefined,
-    },
-    adapter(model) {
-      return {
-        async destroy(id) {
-          console.log(`\n\nOAUTH ${model} destroy(id) {`, { id, model })
-
-          await kvStore.unset(model, id)
-        },
-
-        async consume(id) {
-          console.log(`\n\nOAUTH ${model} consume(id) {`, { id, model })
-
-          const item = (await kvStore.get(model, id)).value
-          if (!item) {
-            return
-          }
-          item.payload.consumed = new Date().toISOString()
-        },
-
-        async find(id) {
-          console.log(`\n\nOAUTH ${model} find(id) {`, { id, model })
-
-          const item = (await kvStore.get(model, id)).value
-          console.log(`\n\nOAUTH ${model} find(id) {`, { found: item })
-          // const payload = item && { ...item.payload, session: { accountId: FAKE_ACCOUNT_ID } } // FIXME: set correct sessionAccoutId (maybe depends on model ? 'Interaction' ? ??)
-          const payload = item?.payload
-
-          return payload
-        },
-
-        async findByUid(uid) {
-          console.log(`\n\nOAUTH ${model} findByUid(uid) {`, { uid, model })
-
-          const id = await (await kvStore.get(SESSION_UID_KEY, uid)).value
-          if ('string' !== typeof id) {
-            return
-          }
-          return this.find(id)
-        },
-
-        async findByUserCode(userCode) {
-          console.log(`\n\nOAUTH ${model} findByUserCode(userCode) {`, { userCode, model })
-
-          const id = (await kvStore.get(USER_CODE_KEY, userCode)).value
-          if ('string' !== typeof id) {
-            return
-          }
-          return this.find(id)
-        },
-
-        async upsert(id, payload, expiresIn) {
-          console.log(`\n\nOAUTH ${model} upsert(id, payload, expiresIn) {`, {
-            id,
-            payload,
-            expiresIn,
-            model,
-          })
-
-          if (model === 'Session' && payload.uid) {
-            await kvStore.set(SESSION_UID_KEY, payload.uid, id) // FIXME: set expiresIn
-          }
-
-          const { grantId, userCode } = payload
-          if (GRANTABLE.has(model) && grantId) {
-            const grant = (await kvStore.get(GRANT_KEY, grantId)).value ?? []
-            await kvStore.set(GRANT_KEY, grantId, [...grant, [model, id]])
-          }
-
-          if (userCode) {
-            await kvStore.set(USER_CODE_KEY, userCode, id) // FIXME: set expiresIn
-          }
-
-          const storeItem: StoreItem = {
-            expiresIn: expiresIn,
-            insertedAt: new Date().toISOString(),
-
-            // payload,
-            payload: {
-              ...payload,
-              // accountId: FAKE_ACCOUNT_ID,
-              // session: { accountId: FAKE_ACCOUNT_ID },
-            }, // FIXME: set correct sessionAccoutId
-          }
-          await kvStore.set(model, id, storeItem) // FIXME: set expiresIn
-        },
-
-        async revokeByGrantId(grantId) {
-          console.log(`\n\nOAUTH ${model} revokeByGrantId(grantId) {`, { grantId, model })
-
-          // eslint-disable-line class-methods-use-this
-          const grant = (await kvStore.get(GRANT_KEY, grantId)).value
-          if (grant) {
-            await Promise.all(grant.map(([model, id]) => kvStore.unset(model, id)))
-            kvStore.unset(GRANT_KEY, grantId)
-          }
-        },
-      }
     },
 
     features: {
@@ -256,12 +110,12 @@ export function getProviderConfig() {
       registration: { enabled: true },
       // clientCredentials: { enabled: true },
       // introspection: { enabled: true },
-      devInteractions: { enabled: DEV_INTERACTIONS_ENABLED },
+      devInteractions: { enabled: ___DEV_INTERACTIONS_ENABLED },
       deviceFlow: { enabled: true },
     },
-    issueRefreshToken() {
-      return true
-    },
+    // issueRefreshToken(ctx, client, code) {
+    //   return true
+    // },
     responseTypes: [
       'code id_token token',
       'code id_token',

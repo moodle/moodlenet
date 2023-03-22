@@ -5,6 +5,7 @@ import { shell } from './shell.mjs'
 
 export const env = await getEnv()
 
+// console.log(inspect({ pr: env.keyLikes.private, pu: env.keyLikes.public }, true, 10, true))
 type Configs = {
   keys: {
     alg: string
@@ -13,7 +14,9 @@ type Configs = {
     public: string
   }
 }
-async function getEnv(): Promise<Configs & { keyLikes: { private: KeyLike; public: KeyLike } }> {
+async function getEnv(): Promise<
+  Configs & { jwk: jose.JWK; keyLikes: { private: KeyLike; public: KeyLike } }
+> {
   //FIXME: validate configs
   const config: Configs = {
     keys: shell.config.keys,
@@ -32,8 +35,10 @@ async function getEnv(): Promise<Configs & { keyLikes: { private: KeyLike; publi
     jose.importSPKI(publicKeyStr, config.keys.alg),
   ])
 
+  const jwk = await jose.exportJWK(privateKeyLike)
   return {
     keyLikes: { private: privateKeyLike, public: publicKeyLike },
+    jwk,
     ...config,
   }
 }

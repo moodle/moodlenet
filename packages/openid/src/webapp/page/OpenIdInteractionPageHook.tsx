@@ -25,7 +25,7 @@ export function useOpenIdInteractionPage({
   }, [interactionId])
 
   const cancel = useCallback<OpenIdInteractionPageProps['cancel']>(async () => {
-    post_to_url(`/.pkg/@moodlenet/openid/interaction/${interactionId}/abort`)
+    post_to_url(`/.pkg/@moodlenet/openid/interaction/${interactionId}/abort`, 'GET')
   }, [interactionId])
 
   const openIdInteractionPageResult = useMemo<
