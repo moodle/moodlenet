@@ -7,6 +7,7 @@ export type ResultData = [string | null, ResourceTypeForm | null]
 export type ParamResource = { param: ResourceTypeForm }
 export type ParamResourceId = { param: string }
 
+export const empityResourceForm = getFakeData('0')
 export const editResource = (
   resourceKey: string,
   res: ResourceFormValues,
