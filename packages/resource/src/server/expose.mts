@@ -1,4 +1,4 @@
-import { GetResponce, ResourceFormValues } from '../common.mjs'
+import { ResourceFormValues, ResourceTypeForm } from '../common.mjs'
 import {
   deleteResource,
   editResource,
@@ -25,10 +25,10 @@ export const expose = await shell.expose({
     'webapp/get': {
       guard: () => void 0,
       fn: async ({ param }: ParamResourceId): Promise<ResourceTypeForm> => ({
-        resourceData: await getResource(param),
+        data: await getResource(param),
         authFlags: {
           isAuthenticated: true,
-          isOwner: true,
+          isCreator: true,
           canEdit: true,
           isAdmin: true,
         },

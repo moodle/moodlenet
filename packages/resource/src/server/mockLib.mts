@@ -1,8 +1,4 @@
-import {
-  ResourceFormValues,
-  ResourceTypeForm,
-  ResponceFormAndKey,
-} from '../common/types.mjs'
+import { ResourceFormValues, ResourceTypeForm } from '../common/types.mjs'
 import { resFakeData, resFakes } from './fakeData.mjs'
 
 const getFakeData = (resourceKey: string) => (resourceKey ? resFakeData : resFakeData)
@@ -14,8 +10,8 @@ export type ParamResourceId = { param: string }
 export const editResource = (
   resourceKey: string,
   res: ResourceFormValues,
-): Promise<ResponceFormAndKey> =>
-  new Promise(resolve => resolve({ resourceKey, resourceFormData: res }))
+): Promise<ResourceFormValues> =>
+  new Promise(resolve => resolve(res))
 
 export const deleteResource = (resourceKey: string): Promise<ResourceTypeForm> =>
   new Promise(resolve => resolve(getFakeData(resourceKey)))

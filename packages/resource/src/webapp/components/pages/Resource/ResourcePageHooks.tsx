@@ -47,7 +47,6 @@ export const useResourcePageProps = ({
     }
     return {
       mainLayoutProps,
-      mainResourceCardSlots,
       mainColumnItems: [],
       sideColumnItems: [],
       moreButtonItems: [],
