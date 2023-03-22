@@ -1,9 +1,10 @@
-// import { FC } from 'react'
-// import { useParams } from 'react-router-dom'
-// import { ResourceContainer } from './ResourceContainer.js'
+import { FC } from 'react'
+import { useParams } from 'react-router-dom'
+import { ResourcePageContainer } from './ResourcePageContainer.js'
 
-// export const ResourcePageRoute: FC = () => {
-//   const { key } = useParams()
+export const ResourcePageRoute: FC = () => {
+  const { key } = useParams()
 
-//   return <ResourceContainer resourceKey={key ?? ''} />
-// }
+  return <ResourcePageContainer resourceKey={key ?? ''} />
+}
+
