@@ -1,14 +1,12 @@
 import { OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useMemo } from 'react'
-import { ResourceFormValues } from '../../../../common.mjs'
-import { validationSchemaResource } from '../../../../common/resourceSchema.mjs'
-import { useResourceBaseProps } from '../../../ResourceHooks.js'
-import { ContributorCardProps } from '../../molecules/ContributorCard/ContributorCard.js'
+import { maxUploadSize, ResourceFormValues } from '../../../../common.mjs'
+import { useResourceBaseProps } from '../../../../ResourceHooks.js'
+import { ResourceContributorCardProps } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import { useResourceCardProps } from '../../organisms/MainResourceCard/ResourceCardHook.js'
-import { useResourceCollectionProps } from './formResourceCollection.js'
+import { validationSchema } from '../../organisms/MainResourceCard/resourceForm.js'
 import { ResourceProps } from './Resource.js'
-// import { MainResourceCardProps } from '../../organisms/MainResourceCard/MainResourceCard.js'
 
 export const collectionTextOptionProps: OptionItemProp[] = [
   { label: 'Education', value: 'Education' },
@@ -30,16 +28,25 @@ export const useResourcePageProps = ({
 }): ResourceProps | null => {
   const mainResourceCardProps = useResourceCardProps({ resourceKey })
   const mainLayoutProps = useMainLayoutProps()
-  const { addToCollectionsForm, sendToMoodleLmsForm } = useResourceCollectionProps({
-    add: (str: string) => log(str),
-    remove: (str: string) => log(str),
-  })
-  const { props: baseProps, contributor } = useResourceBaseProps({ resourceKey })
+  const _baseProps = useResourceBaseProps({ resourceKey })
 
   const props = useMemo<ResourceProps | null>((): ResourceProps | null => {
-    if (!mainResourceCardProps || !baseProps) return null
+    if (!mainResourceCardProps || !_baseProps) return null
+    const {
+      actions,
+      props: { data, resourceForm, state, authFlags: access },
+    } = _baseProps
 
-    const contributorCardProps: ContributorCardProps = contributor || {
+    const mainResourceCardSlots = {
+      mainColumnItems: [],
+      headerColumnItems: [],
+      topLeftHeaderItems: [],
+      topRightHeaderItems: [],
+      moreButtonItems: undefined,
+      footerRowItems: undefined,
+    }
+
+    const resourceContributorCardProps: ResourceContributorCardProps = {
       avatarUrl: null,
       displayName: '',
       timeSinceCreation: '',
@@ -47,30 +54,21 @@ export const useResourcePageProps = ({
     }
     return {
       mainLayoutProps,
+      mainResourceCardSlots,
+      resourceContributorCardProps,
+
       mainColumnItems: [],
       sideColumnItems: [],
-      moreButtonItems: [],
       extraDetailsItems: [],
-      validationSchema: validationSchemaResource,
-      addToCollectionsForm,
-      sendToMoodleLmsForm,
-      contributorCardProps,
-      collections: {
-        opts: collectionTextOptionProps,
-        selected: collectionTextOptionProps.filter(
-          ({ value }) => !!addToCollectionsForm.values.collections?.includes(value),
-        ),
-      },
-      ...baseProps,
+      data,
+      resourceForm,
+      validationSchema,
+      state,
+      actions,
+      access,
+      fileMaxSize: maxUploadSize,
     }
-  }, [
-    addToCollectionsForm,
-    baseProps,
-    contributor,
-    mainLayoutProps,
-    mainResourceCardProps,
-    sendToMoodleLmsForm,
-  ])
+  }, [_baseProps, mainLayoutProps, mainResourceCardProps])
 
   return props
 }

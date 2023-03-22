@@ -1,9 +1,36 @@
-import { AuthCtx, usePkgContext } from '@moodlenet/react-app/web-lib'
-import { createContext, useContext, useMemo } from 'react'
-import { MyPkgContext, ResourceFormValues, RpcCaller } from './common/types.mjs'
+import {
+  AuthCtx,
+  ClientSessionData,
+  PkgContextT,
+  ReactAppContext,
+  ReactAppMainComponent,
+  usePkgContext,
+} from '@moodlenet/react-app/web-lib'
+import { useContext, useMemo } from 'react'
+import { Route } from 'react-router-dom'
+import { ResourceFormValues, RpcCaller } from './common/types.mjs'
+import { MainContext } from './MainContext.js'
+import { expose as me } from './server/expose.mjs'
+import { ResourcePageRoute  } from './ui.mjs'
 
-export const useMainContext = () => {
+export type MyWebDeps = { me: typeof me }
+export type MyPkgContext = PkgContextT<MyWebDeps>
+
+export type MainContextResourceType = MyPkgContext & {
+  rpcCaller: RpcCaller
+  auth: {
+    clientSessionData: ClientSessionData | null | undefined
+  }
+}
+
+const myRoutes = { rootPath: 'resource', routes: <Route index element={<ResourcePageRoute />} /> }
+
+export const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
+  const { registries } = useContext(ReactAppContext)
+  registries.routes.useRegister(myRoutes)
+
+  const me = myPkgCtx.use.me
   const { clientSessionData } = useContext(AuthCtx)
 
   const auth = useMemo(
@@ -15,7 +42,6 @@ export const useMainContext = () => {
     [clientSessionData],
   )
 
-  const me = myPkgCtx.use.me
   const rpcCaller = useMemo((): RpcCaller => {
     return {
       edit: (resourceKey: string, res: ResourceFormValues) =>
@@ -28,9 +54,11 @@ export const useMainContext = () => {
     }
   }, [me.rpc])
 
-  return {
+  const mainValue = {
     ...myPkgCtx,
     rpcCaller,
     auth,
   }
+
+  return <MainContext.Provider value={mainValue}>{children}</MainContext.Provider>
 }

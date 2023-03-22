@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { FileMaxSize } from '../../../../common/types.mjs'
-import { useResourceBaseProps } from '../../../ResourceHooks.js'
+import { ResourceFormValues } from '../../../../common/types.mjs'
+import { useResourcePageProps } from '../../pages/Resource/ResourcePageHooks.js'
 import { MainResourceCardProps } from './MainResourceCard.js'
 import { useResourceForm } from './resourceForm.js'
 
@@ -8,63 +8,26 @@ export const useResourceCardProps = ({
   resourceKey,
 }: {
   resourceKey: string
+  overrides?: Partial<ResourceFormValues>
 }): MainResourceCardProps | null => {
-  const { props: baseProps, actions } = useResourceBaseProps({ resourceKey })
-  const resourceForm = useResourceForm(resourceKey)
+  const pageProps = useResourcePageProps({ resourceKey })
+  const form = useResourceForm(resourceKey)
 
   const props = useMemo<MainResourceCardProps | null>((): MainResourceCardProps | null => {
-    if (!baseProps) return null
+    if (!pageProps || !form) return null
+    const { access, actions, data, state, fileMaxSize, mainResourceCardSlots } = pageProps
     return {
-      slots:{
-        mainColumnItems: [],
-      headerColumnItems: [],
-      topLeftHeaderItems: [],
-      topRightHeaderItems: [],
-      moreButtonItems: [],
-      footerRowItems: []
-    },
-    shouldShowErrors:false,
-    fileMaxSize: FileMaxSize,
-
-
-  }
-
-  }, [actions.toggleBookmark, actions.toggleLike, baseProps, resourceForm])
+      slots: mainResourceCardSlots,
+      form,
+      data,
+      state,
+      actions,
+      access,
+      fileMaxSize,
+      shouldShowErrors: true,
+      publish: actions.setIsPublished as any,
+    }
+  }, [form, pageProps])
 
   return props
 }
-
-
-<<<<<<< HEAD
-/* 
-=======
-/*
->>>>>>> master
-      form: resourceForm,
-      publish: () => {
-        throw new Error('to implement')
-      },
-      actions: ResourceActions,
-      access: ResourceAccess,
-      shouldShowErrors: false,
-      fileMaxSize: FileMaxSize,
-      ...baseProps,
-    }
-+/
-
-<<<<<<< HEAD
-/* 
-=======
-/*
->>>>>>> master
-      form: resourceForm,
-      publish: () => {
-        throw new Error('to implement')
-      },
-      actions: ResourceActions,
-      access: ResourceAccess,
-      shouldShowErrors: false,
-      fileMaxSize: FileMaxSize,
-      ...baseProps,
-    }
-+/

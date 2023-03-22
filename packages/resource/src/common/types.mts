@@ -1,16 +1,6 @@
 import { FollowTag } from '@moodlenet/component-library'
 import { Href } from '@moodlenet/react-app/ui'
 
-
-export type MyPkgDeps = { me: typeof me }
-export type MyPkgContext = PkgContextT<MyPkgDeps>
-export type MainContextResourceType = MyPkgContext & {
-  rpcCaller: RpcCaller
-  auth: {
-    clientSessionData: ClientSessionData | null | undefined
-  }
-}
-
 export type ResourceFormValues = {
   name: string
   description: string
@@ -39,7 +29,7 @@ export type ResourceState = {
 }
 
 export type ResourceTypeForm = {
-  formValues: ResourceFormValues
+  resourceForm: ResourceFormValues
   authFlags: ResourceAccess
   state: ResourceState
   data: ResourceData
@@ -54,8 +44,8 @@ export type ResourceActions = {
 }
 
 export type RpcCaller = {
-  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResponceFormAndKey>
-  get: (resourceKey: string) => Promise<GetResponce>
+  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
+  get: (resourceKey: string) => Promise<ResourceTypeForm>
   _delete: (resourceKey: string) => Promise<ResourceTypeForm>
   toggleBookmark: (resourceKey: string) => Promise<ResourceTypeForm>
   toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
@@ -162,3 +152,5 @@ export const getResourceTypeInfo = (type: string): { typeName: string; typeColor
       return { typeName: type, typeColor: '#15845A' }
   }
 }
+
+export const maxUploadSize = 1024 * 1024 * 50

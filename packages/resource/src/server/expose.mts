@@ -24,20 +24,7 @@ export const expose = await shell.expose({
     }, // makeRpc(async () => await loadResources()),
     'webapp/get': {
       guard: () => void 0,
-      fn: async ({ param }: ParamResourceId): Promise<ResourceTypeForm> => ({
-        data: await getResource(param),
-        authFlags: {
-          isAuthenticated: true,
-          isCreator: true,
-          canEdit: true,
-          isAdmin: true,
-        },
-        flags: {
-          liked: true,
-          bookmarked: false,
-          isPublished: false,
-        },
-      }),
+      fn: async ({ param }: ParamResourceId): Promise<ResourceTypeForm> => await getResource(param),
     },
     'webapp/edit': {
       guard: () => void 0,
@@ -46,7 +33,7 @@ export const expose = await shell.expose({
     },
     'webapp/delete': {
       guard: () => void 0,
-      fn: async (res: ResourceTypeForm) => await deleteResource(res),
+      fn: async (resourceKey: string) => await deleteResource(resourceKey),
     },
     'webapp/toggleBookmark': {
       guard: () => void 0,
