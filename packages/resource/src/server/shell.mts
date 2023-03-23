@@ -1,3 +1,3 @@
-import { shell } from '@moodlenet/core'
+import { getMyShell } from '@moodlenet/core'
 
-export default await shell(import.meta)
+export default await getMyShell(import.meta)
