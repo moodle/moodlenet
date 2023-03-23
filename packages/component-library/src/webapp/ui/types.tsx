@@ -6,8 +6,8 @@ export type Organization = {
   url: string
 }
 
-export type AddonItem = {
-  Item: ComponentType
+export type AddonItem<P = any> = {
+  Item: ComponentType<P>
   key: string | number
 }
 

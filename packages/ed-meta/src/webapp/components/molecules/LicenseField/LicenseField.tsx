@@ -43,7 +43,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
     <Dropdown
       name="license"
       className="license-dropdown"
-      onChange={form.handleChange}
+      onChange={form.submitForm}
       value={form.values.license}
       label={`License`}
       edit
