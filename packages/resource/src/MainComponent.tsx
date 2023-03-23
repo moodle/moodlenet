@@ -1,25 +1,14 @@
 import {
   AuthCtx,
-  ClientSessionData,
-  PkgContextT,
   ReactAppContext,
   ReactAppMainComponent,
   usePkgContext,
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
 import { Route } from 'react-router-dom'
-import { MyWebDeps, ResourceFormValues, RpcCaller } from './common/types.mjs'
+import { MyPkgContext, ResourceFormValues, RpcCaller } from './common/types.mjs'
 import { MainContext } from './MainContext.js'
 import { ResourcePageRoute } from './ui.mjs'
-
-export type MyPkgContext = PkgContextT<MyWebDeps>
-
-export type MainContextResourceType = MyPkgContext & {
-  rpcCaller: RpcCaller
-  auth: {
-    clientSessionData: ClientSessionData | null | undefined
-  }
-}
 
 const myRoutes = { rootPath: 'resource', routes: <Route index element={<ResourcePageRoute />} /> }
 
@@ -55,7 +44,7 @@ export const MainComponent: ReactAppMainComponent = ({ children }) => {
 
   const mainValue = {
     ...myPkgCtx,
-    rpcCaller,
+    rpcCaller: rpcCaller,
     auth,
   }
 
