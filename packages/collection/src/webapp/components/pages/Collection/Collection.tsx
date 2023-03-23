@@ -6,7 +6,6 @@ import {
   SecondaryButton,
 } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
-import { ResourceCard, ResourceCardProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
 import { FC, useState } from 'react'
 import { SchemaOf } from 'yup'
@@ -31,7 +30,6 @@ export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
   mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
-  resourceCardPropsList: ResourceCardProps[]
 
   wideColumnItems?: AddonItem[]
   mainColumnItems?: AddonItem[]
@@ -51,7 +49,6 @@ export const Collection: FC<CollectionProps> = ({
   mainLayoutProps,
   mainCollectionCardSlots,
   collectionContributorCardProps,
-  resourceCardPropsList,
 
   wideColumnItems,
   mainColumnItems,
@@ -158,13 +155,7 @@ export const Collection: FC<CollectionProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  console.log('list', resourceCardPropsList)
-
-  const resourceCardList = resourceCardPropsList.map(r => (
-    <ResourceCard {...r} key={r.data.resourceId} />
-  ))
-
-  const updatedMainColumnItems = [...resourceCardList, ...(mainColumnItems ?? [])].filter(
+  const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
 
