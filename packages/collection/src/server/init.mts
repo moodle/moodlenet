@@ -1,22 +1,9 @@
-
-import { mountApp } from '@moodlenet/http-server/server'
+import { plugin } from '@moodlenet/react-app/server'
+import type { MyWebDeps } from '../common/types.mjs'
+import { expose as me } from './expose.mjs'
 import { shell } from './shell.mjs'
 
-export const env = getEnv(shell.config)
-
-shell.call(mountApp)({
-  getApp(express) {
-    const app = express()
-    // app.use('/oauth-authorization-server', (_req, res) => res.json({ a: 1 }))
-    app.use('/test/', ()=>'test')
-    return app
-  },
-  mountOnAbsPath: '/',
+shell.call(plugin)<MyWebDeps>({
+  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  deps: { me },
 })
-
-function getEnv(_: any): Env {
-  return {
-    __: _,
-  }
-}
-export type Env = { __?: unknown }
