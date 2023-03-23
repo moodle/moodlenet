@@ -6,9 +6,8 @@ import {
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
 import { Route } from 'react-router-dom'
-import { MyPkgContext, ResourceFormValues, RpcCaller } from './common/types.mjs'
-import { MainContext } from './MainContext.js'
-import { ResourcePageRoute } from './ui.mjs'
+import { MyPkgContext, ResourceFormValues, RpcCaller } from '../common/types.mjs'
+import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
 
 const myRoutes = { rootPath: 'resource', routes: <Route index element={<ResourcePageRoute />} /> }
 
