@@ -8,12 +8,10 @@ import {
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
 import { Route } from 'react-router-dom'
-import { ResourceFormValues, RpcCaller } from './common/types.mjs'
+import { MyWebDeps, ResourceFormValues, RpcCaller } from './common/types.mjs'
 import { MainContext } from './MainContext.js'
-import { expose as me } from './server/expose.mjs'
-import { ResourcePageRoute  } from './ui.mjs'
+import { ResourcePageRoute } from './ui.mjs'
 
-export type MyWebDeps = { me: typeof me }
 export type MyPkgContext = PkgContextT<MyWebDeps>
 
 export type MainContextResourceType = MyPkgContext & {
@@ -31,6 +29,7 @@ export const MainComponent: ReactAppMainComponent = ({ children }) => {
   registries.routes.useRegister(myRoutes)
 
   const me = myPkgCtx.use.me
+
   const { clientSessionData } = useContext(AuthCtx)
 
   const auth = useMemo(

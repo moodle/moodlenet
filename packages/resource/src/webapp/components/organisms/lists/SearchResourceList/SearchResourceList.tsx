@@ -5,12 +5,18 @@ import './SearchResourceList.scss'
 
 export type SearchResourceListProps = {
   resourceCardPropsList: ResourceCardProps[]
+  showAll: boolean
+  setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-export const SearchResourceList: FC<SearchResourceListProps> = ({ resourceCardPropsList }) => {
+export const SearchResourceList: FC<SearchResourceListProps> = ({
+  resourceCardPropsList,
+  showAll,
+  setShowAll,
+}) => {
   const listCard = (
     <ListCard
-      className="search-resource-list"
+      className={`search-resource-list ${showAll ? 'show-all' : ''}`}
       content={useMemo(
         () =>
           resourceCardPropsList.map(resourceCardProps => {
@@ -27,19 +33,18 @@ export const SearchResourceList: FC<SearchResourceListProps> = ({ resourceCardPr
       header={
         <div className="card-header">
           <div className="title">Resources</div>
-          {/* {!seeAll && ( */}
-          {/* )} */}
         </div>
       }
       footer={
-        <TertiaryButton
-        // onClick={() => activateSeeAll('Resources')}
-        >
-          See all resource results
-        </TertiaryButton>
+        showAll ? null : (
+          <TertiaryButton onClick={() => setShowAll('resource-list')}>
+            See all resource results
+          </TertiaryButton>
+        )
       }
-      minGrid={300}
-      maxRows={3}
+      minGrid={showAll ? 400 : 300}
+      // minGrid={showAll ? undefined : 300}
+      maxRows={showAll ? undefined : 3}
     />
   )
 

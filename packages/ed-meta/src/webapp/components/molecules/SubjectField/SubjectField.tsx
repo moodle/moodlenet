@@ -9,7 +9,6 @@ export type SubjectFieldProps = {
   subject: string
   subjects: SelectOptions<TextOptionProps>
   editSubject: (values: { subject: string }) => void
-  isSubmitting: boolean
   canEdit: boolean
   isEditing: boolean
   shouldShowErrors: boolean
@@ -20,10 +19,8 @@ export type SubjectFieldProps = {
 export const SubjectField: FC<SubjectFieldProps> = ({
   subject,
   subjects,
-  isSubmitting,
   editSubject,
   canEdit,
-  isEditing,
   validationSchema,
   shouldShowErrors,
 }) => {
@@ -34,14 +31,14 @@ export const SubjectField: FC<SubjectFieldProps> = ({
       return editSubject(values)
     },
   })
-  return isEditing ? (
+  return canEdit ? (
     <Dropdown
       name="subject"
       value={form.values.subject}
-      onChange={e => editSubject({ subject: e.target.value })}
+      onChange={form.submitForm}
       label="Subject"
-      disabled={isSubmitting}
-      edit={isEditing}
+      disabled={form.isSubmitting}
+      edit={true}
       highlight={shouldShowErrors && !!form.errors.subject}
       error={form.errors.subject}
       position={{ top: 50, bottom: 25 }}

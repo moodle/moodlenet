@@ -19,17 +19,17 @@ export const resFakeData: ResourceTypeForm = {
     contentType: 'link',
     downloadFilename: 'resf.pdf',
   },
-  state:{
+  state: {
     liked: false,
     bookmarked: false,
   },
-  authFlags:{
+  authFlags: {
     isAuthenticated: true,
     isCreator: true,
     isAdmin: true,
     canEdit: true,
   },
-  formValues: resourceFormValues
+  resourceForm: resourceFormValues,
 }
 
 export const resFakes: ResourceTypeForm[] = [resFakeData]

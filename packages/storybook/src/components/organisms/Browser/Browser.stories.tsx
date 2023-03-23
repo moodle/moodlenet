@@ -3,7 +3,6 @@ import {
   Browser,
   BrowserProps,
   getProfileCardsStoryProps,
-  href,
   SearchProfileList,
 } from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, SearchResourceList } from '@moodlenet/resource/ui'
@@ -23,16 +22,10 @@ const meta: ComponentMeta<typeof Browser> = {
     'BrowserLoggedInStoryProps',
     'BrowserFollowingStoryProps',
   ],
-  decorators: [
-    Story => (
-      <div style={{ margin: '50px' }}>
-        <Story />
-      </div>
-    ),
-  ],
 }
 
-const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} />
+type BrowserStory = ComponentStory<typeof Browser>
+// const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} />
 
 // const subjectCardPropsList: SubjectCardProps[] = [
 //   '#Education',
@@ -48,93 +41,101 @@ const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} 
 //   subjectHomeHref: href('Subject/home'),
 // }))
 
-export const BrowserLoggedOutStoryProps: BrowserProps = {
-  mainColumnItems: [
-    {
-      menuItem: {
-        Item: () => <span>Resources</span>,
-        key: 'menu-resources',
+export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
+  return {
+    mainColumnItems: [
+      {
+        menuItem: () => <span>Resources</span>,
+        Item: ({ showAll, setShowAll }) => {
+          const list = useMemo(
+            () =>
+              getResourcesCardStoryProps(15, {
+                access: {
+                  isAuthenticated: false,
+                },
+              }),
+            [],
+          )
+          return (
+            <SearchResourceList
+              resourceCardPropsList={list}
+              showAll={showAll}
+              setShowAll={setShowAll}
+            />
+          )
+        },
+        key: 'resource-list',
       },
-      Item: () => {
-        const list = useMemo(
-          () =>
-            getResourcesCardStoryProps(15, {
-              isAuthenticated: false,
-            }),
-          [],
-        )
-        return <SearchResourceList resourceCardPropsList={list} />
+      {
+        menuItem: () => <span>Collections</span>,
+        Item: ({ showAll, setShowAll }) => {
+          const list = useMemo(
+            () =>
+              getCollectionsCardStoryProps(15, {
+                access: { isAuthenticated: false },
+              }),
+            [],
+          )
+          return (
+            <SearchCollectionList
+              collectionCardPropsList={list}
+              showAll={showAll}
+              setShowAll={setShowAll}
+            />
+          )
+        },
+        key: 'collection-list',
       },
-      key: 'resource-list',
-    },
-    {
-      menuItem: {
-        Item: () => <span>Collections</span>,
-        key: 'menu-collections',
+      {
+        menuItem: () => <span>People</span>,
+        Item: ({ showAll, setShowAll }) => {
+          const list = useMemo(
+            () =>
+              getProfileCardsStoryProps(15, {
+                access: { isAuthenticated: false },
+              }),
+            [],
+          )
+          return (
+            <SearchProfileList
+              profilesCardPropsList={list}
+              showAll={showAll}
+              setShowAll={setShowAll}
+            />
+          )
+        },
+        key: 'people-list',
       },
-      Item: () => {
-        const list = useMemo(
-          () =>
-            getCollectionsCardStoryProps(15, {
-              access: { isAuthenticated: false },
-            }),
-          [],
-        )
-        return <SearchCollectionList collectionCardPropsList={list} />
-      },
-      key: 'collection-list',
-    },
-    {
-      menuItem: {
-        Item: () => <span>People</span>,
-        key: 'menu-people',
-      },
-      Item: () => {
-        const list = useMemo(
-          () =>
-            getProfileCardsStoryProps(15, {
-              access: { isAuthenticated: false },
-            }),
-          [],
-        )
-        return <SearchProfileList profilesCardPropsList={list} />
-      },
-      key: 'people-list',
-    },
-  ],
-  sideColumnItems: [],
+    ],
+    sideColumnItems: [],
+  }
 }
 
 export const BrowserLoggedInStoryProps: BrowserProps = {
   mainColumnItems: [
     {
-      menuItem: {
-        Item: () => <span>Resources</span>,
-        key: 'menu-resources',
-      },
-      Item: () => {
+      menuItem: () => <span>Resources</span>,
+      Item: ({ showAll, setShowAll }) => {
         const list = useMemo(
           () =>
             getResourcesCardStoryProps(15, {
-              isAuthenticated: true,
+              access: { isAuthenticated: true },
             }),
           [],
         )
         return (
           <SearchResourceList
-            searchResourcesHref={href('Page/Search')}
+            showAll={showAll}
             resourceCardPropsList={list}
+            setShowAll={setShowAll}
           />
         )
       },
       key: 'resource-list',
     },
     {
-      menuItem: {
-        Item: () => <span>Collections</span>,
-        key: 'menu-collections',
-      },
-      Item: () => {
+      menuItem: () => <span>Collections</span>,
+      Item: ({ showAll, setShowAll }) => {
         const list = useMemo(
           () =>
             getCollectionsCardStoryProps(15, {
@@ -144,19 +145,17 @@ export const BrowserLoggedInStoryProps: BrowserProps = {
         )
         return (
           <SearchCollectionList
-            searchCollectionsHref={href('Page/Search')}
             collectionCardPropsList={list}
+            showAll={showAll}
+            setShowAll={setShowAll}
           />
         )
       },
       key: 'collection-list',
     },
     {
-      menuItem: {
-        Item: () => <span>People</span>,
-        key: 'menu-people',
-      },
-      Item: () => {
+      menuItem: () => <span>People</span>,
+      Item: ({ showAll, setShowAll }) => {
         const list = useMemo(
           () =>
             getProfileCardsStoryProps(15, {
@@ -164,7 +163,13 @@ export const BrowserLoggedInStoryProps: BrowserProps = {
             }),
           [],
         )
-        return <SearchProfileList profilesCardPropsList={list} />
+        return (
+          <SearchProfileList
+            profilesCardPropsList={list}
+            showAll={showAll}
+            setShowAll={setShowAll}
+          />
+        )
       },
       key: 'people-list',
     },
@@ -176,13 +181,18 @@ export const BrowserFollowingStoryProps: BrowserProps = {
   ...BrowserLoggedInStoryProps,
 }
 
-export const LoggedOut = BrowserStory.bind({})
-LoggedOut.args = BrowserLoggedOutStoryProps
+export const LoggedOut: BrowserStory = () => {
+  const props = useBrowserLoggedOutStoryProps()
+  return <Browser {...props} />
+}
 
-export const LoggedIn = BrowserStory.bind({})
-LoggedIn.args = BrowserLoggedInStoryProps
+// export const LoggedOut = BrowserStory.bind({})
+// LoggedOut.args = useBrowserLoggedOutStoryProps()
 
-export const Following = BrowserStory.bind({})
-Following.args = BrowserFollowingStoryProps
+// export const LoggedIn = BrowserStory.bind({})
+// LoggedIn.args = BrowserLoggedInStoryProps
+
+// export const Following = BrowserStory.bind({})
+// Following.args = BrowserFollowingStoryProps
 
 export default meta

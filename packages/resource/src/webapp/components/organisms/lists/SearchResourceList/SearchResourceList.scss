@@ -2,6 +2,10 @@
   padding: 24px 24px 54px 24px;
   position: relative;
 
+  &.show-all {
+    padding: 24px;
+  }
+
   > .content {
     padding: 3px 3px 8px 3px;
   }
