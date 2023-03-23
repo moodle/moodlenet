@@ -1,5 +1,8 @@
 import { FollowTag } from '@moodlenet/component-library'
 import { Href } from '@moodlenet/react-app/ui'
+import { expose as me } from '../server/expose.mjs'
+
+export type MyWebDeps = { me: typeof me }
 
 export type ResourceFormValues = {
   name: string
