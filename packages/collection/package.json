@@ -31,7 +31,6 @@
   },
   "peerDependencies": {
     "@moodlenet/component-library": "^0.2.0",
-    "@moodlenet/resource": "^0.2.0",
     "@moodlenet/system-entities": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0"
@@ -39,7 +38,6 @@
   "devDependencies": {
     "@lingui/macro": "^3.14.0",
     "@moodlenet/component-library": "^0.2.0",
-    "@moodlenet/resource": "^0.2.0",
     "@moodlenet/system-entities": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",
