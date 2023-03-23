@@ -1,3 +1,4 @@
-import { shell } from '@moodlenet/core'
+import { getMyShell } from '@moodlenet/core'
+import { OpenIDAsyncCtx } from './types/asyncCtxTypes.mjs'
 
-export default await shell(import.meta)
+export const shell = await getMyShell<OpenIDAsyncCtx>(import.meta)

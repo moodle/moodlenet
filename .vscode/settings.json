@@ -6,7 +6,7 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "**/node_modules": true
+    "**/node_modules": false
   },
   // config related to code formatting
   "editor.defaultFormatter": "esbenp.prettier-vscode",
