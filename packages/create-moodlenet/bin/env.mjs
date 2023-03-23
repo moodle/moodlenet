@@ -33,4 +33,5 @@ export const defaultCorePackages = [
   'simple-email-auth',
   'simple-file-store',
   'openid',
+  'resource',
 ]
