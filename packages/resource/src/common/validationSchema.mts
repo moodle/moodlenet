@@ -1,9 +1,5 @@
-import { FormikHandle } from '@moodlenet/react-app/ui'
-import { useFormik } from 'formik'
 import { boolean, mixed, object, SchemaOf, string } from 'yup'
-import { maxUploadSize, ResourceFormValues } from '../../../../common.mjs'
-import { useResourceBaseProps } from '../../../../ResourceHooks.js'
-import { empityResourceForm } from '../../../../server/mockLib.mjs'
+import { maxUploadSize, ResourceFormValues } from '../common.mjs'
 
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
   category: string().required(/* t */ `Please select a subject`),
@@ -33,15 +29,3 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
     return month ? schema.required(/* t */ `Please select a year`) : schema.optional()
   }),
 })
-
-export const useResourceForm = (resourceKey: string): FormikHandle<ResourceFormValues> => {
-  const baseProps = useResourceBaseProps({ resourceKey })
-  const edit = baseProps?.actions?.editResource
-  const initialValues = baseProps?.props.resourceForm || empityResourceForm.resourceForm
-
-  return useFormik<ResourceFormValues>({
-    validationSchema,
-    onSubmit: values => edit && edit(values),
-    initialValues,
-  })
-}
