@@ -27,7 +27,7 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { getResourcesCardStoryProps, ResourceCardProps } from '@moodlenet/resource/ui'
+import { getResourcesCardStoryProps, ResourceCard, ResourceCardProps } from '@moodlenet/resource/ui'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,
@@ -187,6 +187,14 @@ export const useCollectionStoryProps = (
     orientation: 'horizontal',
   })
 
+  const resourceCardList = (
+    <>
+      {resourceCardPropsList.map(r => (
+        <ResourceCard {...r} key={r.data.resourceId} />
+      ))}
+    </>
+  )
+
   return overrideDeep<CollectionProps>(
     {
       mainLayoutProps:
@@ -195,10 +203,9 @@ export const useCollectionStoryProps = (
           : MainLayoutLoggedInStoryProps,
 
       mainCollectionCardSlots: mainCollectionCardSlots,
+      mainColumnItems: [{ Item: () => resourceCardList, key: 'resource-card-list' }],
       collectionContributorCardProps:
         CollectionContributorCardStories.CollectionContributorCardStoryProps,
-      resourceCardPropsList: resourceCardPropsList,
-
       data: data,
       collectionForm: collectionForm,
       validationSchema: validationSchema,
