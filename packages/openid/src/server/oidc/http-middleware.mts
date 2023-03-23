@@ -25,6 +25,7 @@ await shell.call(addMiddleware)({
               entityClass: WebUserProfile.entityClass,
               _key: AccessToken.accountId,
             },
+            scopes: [...AccessToken.scopes],
           }
           return entityUser
         })
