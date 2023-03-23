@@ -1,8 +1,21 @@
 import { FollowTag } from '@moodlenet/component-library'
 import { Href } from '@moodlenet/react-app/ui'
+import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
 
-export type MyWebDeps = { me: typeof me }
+export type MyWebDeps = {
+  me: typeof me
+}
+
+export type MyPkgContext = PkgContextT<MyWebDeps>
+export type MainContextResourceType = MyPkgContext & {
+  rpcCaller: RpcCaller
+  auth: {
+    isAuthenticated: boolean
+    isAdmin: boolean
+    clientSessionData: ClientSessionData | null | undefined
+  }
+}
 
 export type ResourceFormValues = {
   name: string
