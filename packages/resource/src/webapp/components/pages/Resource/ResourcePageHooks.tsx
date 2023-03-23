@@ -3,7 +3,7 @@ import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useMemo } from 'react'
 import { maxUploadSize, ResourceFormValues } from '../../../../common.mjs'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
-import { useResourceBaseProps } from '../../../../ResourceHooks.js'
+import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import { ResourceContributorCardProps } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import { ResourceProps } from './Resource.js'
 
