@@ -2,6 +2,10 @@
   padding: 24px 24px 52px 24px;
   position: relative;
 
+  &.show-all {
+    padding: 24px;
+  }
+
   > .list-card-footer {
     width: 100%;
     margin-left: -24px;

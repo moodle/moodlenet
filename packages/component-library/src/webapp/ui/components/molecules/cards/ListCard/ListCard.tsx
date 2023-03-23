@@ -41,7 +41,7 @@ export const ListCard: FC<ListCardProps> = ({
     [content],
   )
 
-  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
+  const [maxHeight, setMaxHeight] = useState<undefined | number>(undefined)
   // const [paddingTop, setPaddingTop] = useState<number | undefined>(undefined)
   // const [paddingBottom, setPaddingBottom] = useState<number | undefined>(undefined)
 
@@ -61,7 +61,7 @@ export const ListCard: FC<ListCardProps> = ({
       maxRows &&
       childHeight * maxRows + (maxRows - 1) * gap + paddingTop + paddingBottom
     newMaxHeight && setMaxHeight(newMaxHeight)
-  }, [contentDiv])
+  }, [contentDiv, maxRows, className])
 
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
@@ -76,9 +76,10 @@ export const ListCard: FC<ListCardProps> = ({
           }`}
           style={{
             // ...(maxHeight && { maxHeight: `${maxHeight}px` }),
-            ...(maxHeight && {
-              maxHeight: `${maxHeight}px`,
-            }),
+            ...(maxRows &&
+              maxHeight && {
+                maxHeight: `${maxHeight}px`,
+              }),
 
             // maxHeight: maxHeight ? `${maxHeight}px` : 'auto',
             gridTemplateColumns: minGrid && `repeat(auto-fill, minmax(${minGrid}px, 1fr))`,
