@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { ResourceActions, ResourceFormValues, ResourceTypeForm } from './common.mjs'
+import { ResourceActions, ResourceFormValues, ResourceTypeForm } from '../common.mjs'
 
 import { MainContext } from './MainContext.js'
 
