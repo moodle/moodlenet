@@ -59,6 +59,7 @@ export type SystemUser = EntityUser | RootUser | AnonUser | PkgUser
 export type EntityUser = {
   type: 'user'
   entityIdentifier: EntityIdentifier
+  scopes: true | string[]
 }
 
 export type RootUser = {
