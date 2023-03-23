@@ -8,6 +8,7 @@ import { useContext, useMemo } from 'react'
 import { Route } from 'react-router-dom'
 import { MyPkgContext, ResourceFormValues, RpcCaller } from '../common/types.mjs'
 import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
+import { MainContext } from './MainContext.js'
 
 const myRoutes = { rootPath: 'resource', routes: <Route index element={<ResourcePageRoute />} /> }
 
