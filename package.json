@@ -36,7 +36,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "^8.0.0",
     "husky-init": "^8.0.0",
-    "jose": "^4.11.4",
+    "jose": "^4.13.1",
     "lerna": "^5.0.0",
     "lerna-dependency-graph": "^1.1.0",
     "lint-staged": "^13.0.3",
