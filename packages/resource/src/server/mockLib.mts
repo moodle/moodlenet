@@ -9,10 +9,9 @@ export type ParamResourceId = { param: string }
 
 export const empityResourceForm = getFakeData('0')
 export const editResource = (
-  resourceKey: string,
+  _resourceKey: string,
   res: ResourceFormValues,
-): Promise<ResourceFormValues> =>
-  new Promise(resolve => resolve(res))
+): Promise<ResourceFormValues> => new Promise(resolve => resolve(res))
 
 export const deleteResource = (resourceKey: string): Promise<ResourceTypeForm> =>
   new Promise(resolve => resolve(getFakeData(resourceKey)))
