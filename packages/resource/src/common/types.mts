@@ -49,6 +49,12 @@ export type ResourceTypeForm = {
   authFlags: ResourceAccess
   state: ResourceState
   data: ResourceData
+  contributor: {
+    avatarUrl: string | null
+    displayName: string
+    timeSinceCreation: string
+    creatorProfileHref: Href
+  }
 }
 
 export type ResourceActions = {
