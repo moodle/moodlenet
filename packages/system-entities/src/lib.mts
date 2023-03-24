@@ -135,6 +135,9 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   byKeyOrId: ByKeyOrId,
   entityDataPatch: Patch<EntityDataType>,
+  opts?: {
+    projectAccess?: EntityAccess[]
+  },
 ) {
   const key = getKey(byKeyOrId)
   const delCursor = await queryEntities<
@@ -145,6 +148,7 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
     postAccessBody: `UPDATE entity WITH @entityDataPatch IN @@collection`,
     bindVars: { key, entityDataPatch },
     project: { patched: 'NEW' },
+    projectAccess: opts?.projectAccess,
   })
   const patchRecord = await delCursor.next()
   return patchRecord
