@@ -1,4 +1,4 @@
-import { useMinimalisticHeaderProps } from '@moodlenet/react-app/ui'
+import { useSimpleLayoutProps } from '@moodlenet/react-app/ui'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { WebappInteractionDetails } from '../../common/webapp/types.mjs'
 import { OpenIdCtx } from '../OpenIdContextProvider.js'
@@ -10,7 +10,7 @@ export function useOpenIdInteractionPage({
 }: {
   interactionId: string
 }): null | undefined | OpenIdInteractionPageResult {
-  const headerProps = useMinimalisticHeaderProps()
+  const simpleLayoutProps = useSimpleLayoutProps()
   const openIdContext = useContext(OpenIdCtx)
   const [interactionDetails, setInteractionDetails] = useState<WebappInteractionDetails | null>()
 
@@ -37,14 +37,14 @@ export function useOpenIdInteractionPage({
     return {
       needsLogin: interactionDetails.needsLogin,
       props: {
-        headerProps,
+        simpleLayoutProps,
         authorize,
         cancel,
         clientId: interactionDetails.clientId,
         scopes: interactionDetails.scopes,
       },
     }
-  }, [authorize, cancel, headerProps, interactionDetails])
+  }, [authorize, cancel, simpleLayoutProps, interactionDetails])
 
   return openIdInteractionPageResult
 }

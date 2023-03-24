@@ -5,6 +5,7 @@ export * as OverallCardStories from './ui/components/molecules/OverallCard/Overa
 export * as MinimalisticHeaderStories from './ui/components/organisms/Header/Minimalistic/MinimalisticHeader.stories.js'
 export * as HeaderProfileStories from './ui/components/organisms/HeaderProfile/HeaderProfile.stories.js'
 export * as MainProfileCardStories from './ui/components/organisms/MainProfileCard/MainProfileCard.stories.js'
+export * as ProfileCardStories from './ui/components/organisms/ProfileCard/ProfileCard.stories.js'
 export * as UsersStories from './ui/components/organisms/Roles/Users.stories.js'
 export * as AdvancedStories from './ui/components/pages/Settings/Advanced/Advanced.stories.js'
 export * as AppearanceStories from './ui/components/pages/Settings/Appearance/Appearance.stories.js'

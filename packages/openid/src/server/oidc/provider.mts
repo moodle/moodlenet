@@ -1,6 +1,6 @@
 import { instanceDomain } from '@moodlenet/core'
 import { jwk } from '@moodlenet/crypto/server'
-import { getProfile } from '@moodlenet/react-app/server'
+import { getProfileRecord } from '@moodlenet/react-app/server'
 import Provider, { Account, Configuration } from 'oidc-provider'
 import { ArangoAdapter } from './arango-adapter.mjs'
 export const ___DEV_INTERACTIONS_ENABLED = false
@@ -64,10 +64,11 @@ function getProviderConfig() {
       // }
       // token
       //const webUser = await verifyWebUserToken(token)
-      const profile = await getProfile({ _key: sub })
-      if (!profile) {
+      const record = await getProfileRecord({ _key: sub })
+      if (!record) {
         throw new Error(`could not find profile for accountId ${sub}`)
       }
+      const profile = record.entity
       const account: Account = {
         accountId: profile._key,
         name: profile.displayName,
