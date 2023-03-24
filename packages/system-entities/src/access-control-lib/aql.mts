@@ -5,7 +5,7 @@ import type { EntityClass, EntityIdentifier, SomeEntityDataType } from '../types
 // TODO: export a set of const for known vars for safer AQL construction ? (entity, entityClass, _meta, creator, currentUser)
 
 export function isCreator() {
-  return `( !!currentUser && entity._meta.creator == currentUser.entityIdentifier )`
+  return `( entity._meta.creator == currentUser )`
 }
 
 export function isCurrentUserEntity() {
@@ -15,11 +15,11 @@ export function isCurrentUserEntity() {
 export function isEntity(entityIdentifier: EntityIdentifier) {
   const _str_key = toaql(entityIdentifier._key)
   const _str_entityClass = toaql(entityIdentifier.entityClass)
-  return `( entity._key==${_str_key} && entity._meta.entityClass == ${_str_entityClass} )`
+  return `( entity._key == ${_str_key} && entity._meta.entityClass == ${_str_entityClass} )`
 }
 
 export function isAuthenticated() {
-  return `( !!currentUser && currentUser.type != 'anon' )`
+  return `( currentUser.type != 'anon' )`
 }
 
 export function isEntityClass(
@@ -27,11 +27,11 @@ export function isEntityClass(
 ) {
   const isArray = Array.isArray(entityClasses)
   const entityClassesStr = toaql(entityClasses)
-  return `( ${entityClassesStr} ${isArray ? 'any ' : ''}== entity._meta.entityClass )`
+  return `( ${entityClassesStr} ${isArray ? 'any ' : ''} == entity._meta.entityClass )`
 }
 
 export function entityDocument(entityIdentifier: EntityIdentifier) {
-  return `DOCUMENT("${entityId(entityIdentifier)}")`
+  return `DOCUMENT( "${entityId(entityIdentifier)}" )`
 }
 
 export function pkgMetaVar(pkgName: PkgName) {
