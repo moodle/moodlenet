@@ -18,6 +18,46 @@
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
-  "todo-tree.tree.showBadges": false
+  "todo-tree.tree.showBadges": false,
+  "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "@ALE", "[ ]", "[x]", "@ETTO", "@BRU"],
+  "todo-tree.highlights.customHighlight": {
+    "BUG": {
+      "icon": "bug"
+    },
+    "HACK": {
+      "icon": "tools"
+    },
+    "FIXME": {
+      "icon": "flame"
+    },
+    "XXX": {
+      "icon": "x"
+    },
+    "[ ]": {
+      "icon": "issue-draft"
+    },
+    "[x]": {
+      "icon": "issue-closed"
+    },
+    "@ALE": {
+      "icon": "dependabot",
+      "iconColour": "#0080ff",
+      "foreground": "#fff",
+      "background": "#0081ffe6",
+      "borderRadius": "2px"
+    },
+    "@ETTO": {
+      "icon": "dependabot",
+      "iconColour": "#ff9900",
+      "foreground": "#ffffff",
+      "background": "#ff9900e6"
+    },
+    "@BRU": {
+      "icon": "dependabot",
+      "iconColour": "#00a979",
+      "foreground": "#fff",
+      "background": "#00a97ae6"
+    }
+  }
 }
 // https://github.com/microsoft/vscode-eslint/issues/91
