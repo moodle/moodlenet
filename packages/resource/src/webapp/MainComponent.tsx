@@ -10,9 +10,12 @@ import { MyPkgContext, ResourceFormValues, RpcCaller } from '../common/types.mjs
 import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
 import { MainContext } from './MainContext.js'
 
-const myRoutes = { rootPath: 'resource', routes: <Route index element={<ResourcePageRoute />} /> }
+const myRoutes = {
+  rootPath: '/',
+  routes: <Route path="resource/:key" element={<ResourcePageRoute />} />,
+}
 
-export const MainComponent: ReactAppMainComponent = ({ children }) => {
+const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
   const { registries } = useContext(ReactAppContext)
   registries.routes.useRegister(myRoutes)
@@ -50,3 +53,5 @@ export const MainComponent: ReactAppMainComponent = ({ children }) => {
 
   return <MainContext.Provider value={mainValue}>{children}</MainContext.Provider>
 }
+
+export default MainComponent
