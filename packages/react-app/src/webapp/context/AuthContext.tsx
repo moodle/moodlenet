@@ -44,7 +44,6 @@ export type AuthCtxT = {
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
 
-// let _firstAuthFetchDone: 'never' | 'waiting-first' | 'first-done' = 'never'
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
 
@@ -54,30 +53,17 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   )
 
   const logout = useCallback<AuthCtxT['logout']>(() => {
-    // await rpc.invalildateMyToken()
+    lastSessionTokenCookie = undefined
     setClientSessionData(undefined)
     deleteSessionTokenCookie()
     nav('/')
   }, [setClientSessionData, nav])
-  // console.log('render', { _firstAuthFetchDone })
 
   const fetchClientSessionDataRpc = useCallback(async () => {
-    // console.log('fetchClientSessionDataRpc 1', { _firstAuthFetchDone })
-    // if (_firstAuthFetchDone === 'waiting-first') {
-    //   return
-    // } else if (_firstAuthFetchDone === 'never') {
-    //   _firstAuthFetchDone = 'waiting-first'
-    // }
     return fetch().then(_ => {
-      // console.log('fetch then', _)
       setClientSessionData(_)
     })
-    // .finally(() => {
-    //   // console.log('fetch finally')
-    //   _firstAuthFetchDone = 'first-done'
-    // })
     async function fetch(): Promise<ClientSessionData | undefined> {
-      // console.log('fetchClientSessionDataRpc 2', { _firstAuthFetchDone })
       if (!readSessionTokenCookie()) {
         return
       }
@@ -115,7 +101,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     }
 
     const authCtxT: AuthCtxT = {
-      // setSessionToken,
       readSessionTokenCookie,
       logout,
       ...(clientSessionData
@@ -151,7 +136,6 @@ let lastSessionTokenCookie = readSessionTokenCookie()
 wrapFetch((url, reqInit, next) => {
   return next(url, reqInit).finally(() => {
     const currentSessionTokenCookie = readSessionTokenCookie()
-    // console.log({ lastSessionTokenCookie, currentSessionTokenCookie })
     if (lastSessionTokenCookie === currentSessionTokenCookie) {
       return
     }
