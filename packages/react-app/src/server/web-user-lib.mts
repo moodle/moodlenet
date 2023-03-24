@@ -1,6 +1,5 @@
 import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
 import {
-  ByKeyOrId,
   create,
   EntityAccess,
   getEntity,
@@ -31,7 +30,7 @@ export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity |
     return
   }
 
-  const myProfileRecord = await getProfileRecord({ _key: currentWebUser.profileKey })
+  const myProfileRecord = await getProfileRecord(currentWebUser.profileKey)
   return myProfileRecord?.entity
 }
 
@@ -49,7 +48,7 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   }
   // await setCurrentVerifiedJwtToken(verifiedCtx, false)
 
-  const record = await getProfileRecord({ _key: currentWebUser.profileKey })
+  const record = await getProfileRecord(currentWebUser.profileKey)
   if (!record) {
     //FIXME: throw error ?
     return
@@ -92,19 +91,19 @@ export async function createWebUser(createRequest: CreateRequest, opts?: Partial
       webUserKey: newWebUser._key,
       profileKey: newProfile._key,
     })
-    setCurrentVerifiedJwtToken(jwtToken, true)
+    await setCurrentVerifiedJwtToken(jwtToken, true)
   }
   return newWebUser
 }
 
 export async function editWebUserProfile(
-  byKeyOrId: ByKeyOrId,
+  key: string,
   updateWithData: Partial<WebUserProfileDataType>,
   opts?: {
     projectAccess?: EntityAccess[]
   },
 ) {
-  const mUpdated = await patch(WebUserProfile.entityClass, byKeyOrId, updateWithData, opts)
+  const mUpdated = await patch(WebUserProfile.entityClass, key, updateWithData, opts)
 
   if (!mUpdated) {
     return
@@ -197,12 +196,12 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
 }
 
 export async function getProfileRecord(
-  byKeyOrId: ByKeyOrId,
+  key: string,
   opts?: {
     projectAccess?: EntityAccess[]
   },
 ) {
-  const record = await getEntity(WebUserProfile.entityClass, byKeyOrId, {
+  const record = await getEntity(WebUserProfile.entityClass, key, {
     projectAccess: opts?.projectAccess,
   })
   return record

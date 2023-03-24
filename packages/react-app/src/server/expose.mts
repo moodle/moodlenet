@@ -40,7 +40,7 @@ export const expose = await shell.expose({
         profileFormValues: WebUserProfile,
       ): Promise<{ data: WebUserProfile; canEdit: boolean } | undefined> => {
         const { _key, ...editRequest } = profileFormValues
-        const patchRecord = await editWebUserProfile({ _key }, editRequest)
+        const patchRecord = await editWebUserProfile(_key, editRequest)
         if (!patchRecord) {
           return
         }
@@ -52,10 +52,12 @@ export const expose = await shell.expose({
     },
     'webapp/profile/get': {
       guard: () => void 0,
-      fn: async (body: {
+      fn: async ({
+        _key,
+      }: {
         _key: string
       }): Promise<{ data: WebUserProfile; canEdit: boolean } | undefined> => {
-        const patchRecord = await getProfileRecord({ _key: body._key }, { projectAccess: ['u'] })
+        const patchRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
         if (!patchRecord) {
           return
         }
