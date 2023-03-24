@@ -98,7 +98,6 @@ export const New: CollectionStory = () => {
       isCreator: true,
       canEdit: true,
     },
-    resourceCardPropsList: [],
   })
 
   return <Collection {...props} />
