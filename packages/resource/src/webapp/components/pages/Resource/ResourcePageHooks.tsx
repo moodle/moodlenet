@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import { maxUploadSize, ResourceFormValues } from '../../../../common.mjs'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
-import { ResourceContributorCardProps } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import { ResourceProps } from './Resource.js'
 
 export const collectionTextOptionProps: OptionItemProp[] = [
@@ -30,7 +29,7 @@ export const useResourcePageProps = ({
     if (!_baseProps) return null
     const {
       actions,
-      props: { data, resourceForm, state, authFlags: access },
+      props: { data, resourceForm, state, authFlags: access, contributor },
     } = _baseProps
 
     const mainResourceCardSlots = {
@@ -42,16 +41,10 @@ export const useResourcePageProps = ({
       footerRowItems: undefined,
     }
 
-    const resourceContributorCardProps: ResourceContributorCardProps = {
-      avatarUrl: null,
-      displayName: '',
-      timeSinceCreation: '',
-      creatorProfileHref: { ext: false, url: '' },
-    }
     return {
       mainLayoutProps,
       mainResourceCardSlots,
-      resourceContributorCardProps,
+      resourceContributorCardProps: contributor,
 
       mainColumnItems: [],
       sideColumnItems: [],
