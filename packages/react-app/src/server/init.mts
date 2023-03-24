@@ -91,11 +91,12 @@ await shell.call(addMiddleware)({
           return ROOT_SYSTEM_USER
         }
         const entityUser: EntityUser = {
-          type: 'user',
+          type: 'entity',
           entityIdentifier: {
             entityClass: WebUserProfile.entityClass,
             _key: currentWebUser.profileKey,
           },
+          restrictToScopes: false,
         }
         return entityUser
       })

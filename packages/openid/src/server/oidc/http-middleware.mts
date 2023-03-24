@@ -20,11 +20,12 @@ await shell.call(addMiddleware)({
       if (AccessToken) {
         await setCurrentUserFetch(async () => {
           const entityUser: EntityUser = {
-            type: 'user',
+            type: 'entity',
             entityIdentifier: {
               entityClass: WebUserProfile.entityClass,
               _key: AccessToken.accountId,
             },
+            restrictToScopes: [...AccessToken.scopes],
           }
           return entityUser
         })
