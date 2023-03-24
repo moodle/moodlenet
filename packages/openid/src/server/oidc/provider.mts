@@ -64,7 +64,7 @@ function getProviderConfig() {
       // }
       // token
       //const webUser = await verifyWebUserToken(token)
-      const record = await getProfileRecord({ _key: sub })
+      const record = await getProfileRecord(sub)
       if (!record) {
         throw new Error(`could not find profile for accountId ${sub}`)
       }
