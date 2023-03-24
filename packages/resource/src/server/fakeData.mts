@@ -30,6 +30,12 @@ export const resFakeData: ResourceTypeForm = {
     canEdit: true,
   },
   resourceForm: resourceFormValues,
+  contributor: {
+    avatarUrl: null,
+    displayName: '',
+    timeSinceCreation: '',
+    creatorProfileHref: { ext: false, url: '' },
+  },
 }
 
 export const resFakes: ResourceTypeForm[] = [resFakeData]
