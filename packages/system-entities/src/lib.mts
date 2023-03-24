@@ -9,7 +9,6 @@ import { shell } from './shell.mjs'
 import {
   AccessControllers,
   AnonUser,
-  ByKeyOrId,
   EntityAccess,
   EntityClass,
   EntityCollectionDef,
@@ -133,19 +132,18 @@ export async function create<EntityDataType extends SomeEntityDataType>(
 
 export async function patch<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
-  byKeyOrId: ByKeyOrId,
+  key: string,
   entityDataPatch: Patch<EntityDataType>,
   opts?: {
     projectAccess?: EntityAccess[]
   },
 ) {
-  const key = getKey(byKeyOrId)
   const delCursor = await queryEntities<
     EntityDataType,
     { patched: EntityDocument<EntityDataType> }
   >(entityClass, 'u', {
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
-    postAccessBody: `UPDATE entity WITH @entityDataPatch IN @@collection`,
+    postAccessBody: `UPDATE entity WITH UNSET(@entityDataPatch, '_meta') IN @@collection`,
     bindVars: { key, entityDataPatch },
     project: { patched: 'NEW' },
     projectAccess: opts?.projectAccess,
@@ -156,9 +154,8 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
 
 export async function del<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
-  byKeyOrId: ByKeyOrId,
+  key: string,
 ) {
-  const key = getKey(byKeyOrId)
   const delCursor = await queryEntities<EntityDataType>(entityClass, 'd', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
@@ -173,13 +170,12 @@ export async function getEntity<
   Project extends Record<string, any> = Record<never, never>,
 >(
   entityClass: EntityClass<EntityDataType>,
-  byKeyOrId: ByKeyOrId,
+  key: string,
   opts?: {
     projectAccess?: EntityAccess[]
     project?: { [key in keyof Project]: string }
   },
 ) {
-  const key = getKey(byKeyOrId)
   const getCursor = await queryEntities<EntityDataType, Project>(entityClass, 'r', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
@@ -193,7 +189,7 @@ export async function getEntity<
 
 // export async function getEntityAccess<EntityDataType extends SomeEntityDataType>(
 //   entityClass: EntityClass<EntityDataType>,
-//   byKeyOrId: ByKeyOrId,
+//   key:string,
 // ) {
 //   const key = getKey(byKeyOrId)
 //   const cursor = await queryEntities<EntityDataType>(
@@ -319,15 +315,15 @@ function neitherUndefinedOrNull<T>(_: T | undefined | null): _ is T {
   return _ !== undefined && _ !== null
 }
 
-function getKey(ByKeyOrId: ByKeyOrId) {
-  if ('_key' in ByKeyOrId) {
-    return ByKeyOrId._key
-  } else {
-    const _key = ByKeyOrId._id.split('/')[0]
-    assert(_key)
-    return _key
-  }
-}
+// function getKey(ByKeyOrId: ByKeyOrId) {
+//   if ('_key' in ByKeyOrId) {
+//     return ByKeyOrId._key
+//   } else {
+//     const _key = ByKeyOrId._id.split('/')[0]
+//     assert(_key)
+//     return _key
+//   }
+// }
 
 export function includesSameClass(
   target: EntityClass<SomeEntityDataType>,
