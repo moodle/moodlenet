@@ -1,5 +1,11 @@
 import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
-import { ByKeyOrId, create, get, patch, setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import {
+  ByKeyOrId,
+  create,
+  getEntity,
+  patch,
+  setPkgCurrentUser,
+} from '@moodlenet/system-entities/server'
 import { ClientSessionDataRpc } from '../common/types.mjs'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
 import {
@@ -61,13 +67,11 @@ type CreateOpts = {
 export async function createWebUser(createRequest: CreateRequest, opts?: Partial<CreateOpts>) {
   const { contacts, isAdmin, ...profileData } = createRequest
   await setPkgCurrentUser()
-  const createResult = await create(WebUserProfile.entityClass, profileData)
+  const newProfile = await create(WebUserProfile.entityClass, profileData)
 
-  if (!createResult.accessControl) {
+  if (!newProfile) {
     return
   }
-
-  const newProfile = createResult.newEntity
 
   const webUserData: WebUserDataType = {
     profileKey: newProfile._key,
@@ -101,13 +105,13 @@ export async function editWebUserProfile(
   if (!mUpdated) {
     return
   }
-  const { old: oldData, new: newData } = mUpdated
-  const displayNameChanged = newData.displayName && oldData.displayName !== newData.displayName
+  const { entity, patched } = mUpdated
+  const displayNameChanged = patched.displayName && entity.displayName !== patched.displayName
   if (displayNameChanged) {
-    await patchWebUser({ profileKey: oldData._key }, { displayName: newData.displayName })
+    await patchWebUser({ profileKey: entity._key }, { displayName: patched.displayName })
   }
 
-  return newData
+  return patched
 }
 
 export async function setCurrentWebUser(by: { profileKey: string } | { userKey: string }) {
@@ -189,8 +193,10 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
 }
 
 export async function getProfile(byKeyOrId: ByKeyOrId): Promise<undefined | WebUserProfileEntity> {
-  const profile = await get(WebUserProfile.entityClass, byKeyOrId)
-  return profile
+  const profile = await getEntity(WebUserProfile.entityClass, byKeyOrId, {
+    projectAccess: ['d', 'u'],
+  })
+  return profile?.entity
 }
 
 export async function searchUsers(search: string): Promise<(WebUserDataType & DocumentMetadata)[]> {

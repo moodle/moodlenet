@@ -2,7 +2,7 @@ import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
 import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
-import { pkgMetaVar } from './access-control-lib/aql.mjs'
+import { entityDocument, pkgMetaVar } from './access-control-lib/aql.mjs'
 import { db, env } from './init.mjs'
 import { getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
@@ -10,6 +10,7 @@ import {
   AccessControllers,
   AnonUser,
   ByKeyOrId,
+  EntityAccess,
   EntityClass,
   EntityCollectionDef,
   EntityCollectionDefOpts,
@@ -18,6 +19,7 @@ import {
   EntityCollectionHandles,
   EntityData,
   EntityDocument,
+  EntityMetadata,
   PkgUser,
   RootUser,
   SomeEntityDataType,
@@ -104,12 +106,9 @@ export async function create<EntityDataType extends SomeEntityDataType>(
   newEntityData: EntityDataType,
 ) {
   const currentUser = await getCurrentSystemUser()
-
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
-    return {
-      accessControl: false,
-    } as const
+    return
   }
 
   const now = new Date().toISOString()
@@ -129,7 +128,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
     { returnNew: true },
   )
   assert(newEntity)
-  return { newEntity, accessControl: true } as const
+  return newEntity
 }
 
 export async function patch<EntityDataType extends SomeEntityDataType>(
@@ -137,30 +136,18 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
   byKeyOrId: ByKeyOrId,
   entityDataPatch: Patch<EntityDataType>,
 ) {
-  const entityAccess = await getEntityAccess(entityClass, byKeyOrId)
-  if (!entityAccess) {
-    return
-  }
-  if (!entityAccess.access.u.can) {
-    return
-  }
-  const entityPatch = {
-    ...entityDataPatch,
-    _meta: {
-      updated: new Date().toISOString(),
-    },
-  }
-
-  const collection = await getEntityCollection(entityClass)
-
-  const { new: newEntityData, old: oldEntityData } = await collection.update(
-    byKeyOrId,
-    entityPatch,
-    { mergeObjects: true, returnNew: true, returnOld: true },
-  )
-
-  assert(newEntityData && oldEntityData)
-  return { new: newEntityData, old: oldEntityData }
+  const key = getKey(byKeyOrId)
+  const delCursor = await queryEntities<
+    EntityDataType,
+    { patched: EntityDocument<EntityDataType> }
+  >(entityClass, 'u', {
+    preAccessBody: `FILTER entity._key == @key LIMIT 1`,
+    postAccessBody: `UPDATE entity WITH @entityDataPatch IN @@collection`,
+    bindVars: { key, entityDataPatch },
+    project: { patched: 'NEW' },
+  })
+  const patchRecord = await delCursor.next()
+  return patchRecord
 }
 
 export async function del<EntityDataType extends SomeEntityDataType>(
@@ -168,87 +155,146 @@ export async function del<EntityDataType extends SomeEntityDataType>(
   byKeyOrId: ByKeyOrId,
 ) {
   const key = getKey(byKeyOrId)
-  const collectionName = getEntityCollectionName(entityClass)
-  const delCursor = await queryEntities<EntityDataType>(
-    entityClass,
-    `FILTER entity._key == "${key}" 
-    LIMIT 1`,
-    {
-      opBody: `FILTER access.d.can 
-                REMOVE entity IN ${collectionName}`,
-    },
-  )
-  const deletedEntity = (await delCursor.all())[0]?.entity
-  return deletedEntity
+  const delCursor = await queryEntities<EntityDataType>(entityClass, 'd', {
+    bindVars: { key },
+    preAccessBody: `FILTER entity._key == @key LIMIT 1`,
+    postAccessBody: `REMOVE entity IN @@collection`,
+  })
+  const deleteRecord = await delCursor.next()
+  return deleteRecord
 }
 
-export async function get<EntityDataType extends SomeEntityDataType>(
+export async function getEntity<
+  EntityDataType extends SomeEntityDataType,
+  Project extends Record<string, any> = Record<never, never>,
+>(
   entityClass: EntityClass<EntityDataType>,
   byKeyOrId: ByKeyOrId,
-) {
-  const entityAccess = await getEntityAccess(entityClass, byKeyOrId)
-  return entityAccess?.entity
-}
-
-export async function getEntityAccess<EntityDataType extends SomeEntityDataType>(
-  entityClass: EntityClass<EntityDataType>,
-  byKeyOrId: ByKeyOrId,
+  opts?: {
+    projectAccess?: EntityAccess[]
+    project?: { [key in keyof Project]: string }
+  },
 ) {
   const key = getKey(byKeyOrId)
-  const cursor = await queryEntities<EntityDataType>(
-    entityClass,
-    `FILTER entity._key == "${key}" LIMIT 1`,
-  )
-  const get_findResult = (await cursor.all())[0]
-  console.log(inspect({ get_findResult }, false, 10, true))
-  return get_findResult
+  const getCursor = await queryEntities<EntityDataType, Project>(entityClass, 'r', {
+    bindVars: { key },
+    preAccessBody: `FILTER entity._key == @key LIMIT 1`,
+    project: opts?.project,
+    projectAccess: opts?.projectAccess,
+  })
+  const getRecord = await getCursor.next()
+  console.log(inspect({ getRecord }, false, 10, true))
+  return getRecord
 }
 
-export async function queryEntities<EntityDataType extends SomeEntityDataType>(
+// export async function getEntityAccess<EntityDataType extends SomeEntityDataType>(
+//   entityClass: EntityClass<EntityDataType>,
+//   byKeyOrId: ByKeyOrId,
+// ) {
+//   const key = getKey(byKeyOrId)
+//   const cursor = await queryEntities<EntityDataType>(
+//     entityClass,
+//     `FILTER entity._key == "${key}" LIMIT 1`,
+//   )
+//   const get_findResult = (await cursor.all())[0]
+//   console.log(inspect({ get_findResult }, false, 10, true))
+//   return get_findResult
+// }
+
+export async function queryEntities<
+  EntityDataType extends SomeEntityDataType,
+  Project extends Record<string, any> = Record<never, never>,
+>(
   entityClass: EntityClass<EntityDataType>,
-  queryBody: string,
-  opts?: Partial<{ opBody: string; noFilterRead: boolean }>,
+  access: EntityAccess,
+  opts?: {
+    preAccessBody?: string
+    postAccessBody?: string
+    project?: { [key in keyof Project]: string }
+    bindVars?: Record<string, any>
+    projectAccess?: EntityAccess[]
+  },
 ) {
-  const entityCollectionName = getEntityCollectionName(entityClass)
+  type _QueryRecordType = {
+    entity: Omit<EntityDocument<EntityDataType>, '_meta'>
+    meta: EntityMetadata
+    access: { [access in EntityAccess]?: boolean }
+  } & Project
+
+  const isRead = access === 'r'
   const currentUser = await getCurrentSystemUser()
-  const { aqlAccessControlsObjString } = await getAQLAccessControlObjectDefString(currentUser)
+  if (!isRead && currentUser.type === 'anon') {
+    return db.query<_QueryRecordType>('for x in [] return x')
+  }
+
+  const entityCollectionName = getEntityCollectionName(entityClass)
+
+  const entityAccessesToCompute = [
+    ...new Set<EntityAccess>([
+      access,
+      ...(isRead ? [] : (['r'] as EntityAccess[])),
+      ...(opts?.projectAccess ?? []),
+    ]),
+  ]
+  // console.log({ entityAccessesToCompute, access, opts_projectAccess: opts?.projectAccess })
+  const accessControlsAqlRawProps = (
+    await Promise.all(
+      entityAccessesToCompute.map(async _entityAccess => {
+        const accessStr = await getAQLAccessControlObjectDefString(currentUser, _entityAccess)
+        return `${_entityAccess}: ${accessStr}`
+      }),
+    )
+  ).join(',\n')
+
+  const accessFlagsAqlRawProps = entityAccessesToCompute
+    .map(_entityAccess => {
+      return `${_entityAccess}: (accessControls.${_entityAccess} NONE == false) && (accessControls.${_entityAccess} ANY == true)`
+    })
+    .join(',\n')
+
+  const projectAqlRawProps = opts?.project
+    ? Object.entries(opts.project)
+        .map(([key, keyPrjStr]) => `  ${key}: ${keyPrjStr},`)
+        .join('\n')
+    : ''
+
+  const currentUserEntityAql =
+    currentUser.type === 'entity' ? entityDocument(currentUser.entityIdentifier) : 'null'
 
   const q = `
-    LET currentUser = @currentUser
-    FOR entity in @@collection
-    ${queryBody}
-    LET accessControls = ${aqlAccessControlsObjString}
-    LET access = {
-      r: { 
-        can: (accessControls.r NONE == false) && (accessControls.r ANY == true) 
-      },
-      u:  { 
-        can: (accessControls.u NONE == false) && (accessControls.u ANY == true) 
-      },
-      d:  { 
-        can: (accessControls.d NONE == false) && (accessControls.d ANY == true) 
-      }
-    }
-    ${opts?.noFilterRead === true ? '' : 'FILTER access.r.can'}
-    ${opts?.opBody ?? '// NOOP'}
+LET currentUser = @currentUser
+LET currentUserEntity = ${currentUserEntityAql}
 
-    return { 
-      entity,
-      access
-    }
+// if currentUser.type === 'entity' && currentUserEntity === null
+// the query should fail early with error !
+
+FOR entity in @@collection
+    
+${opts?.preAccessBody ?? '// NO PRE_ACCESS_BODY'}
+LET accessControls = {
+  ${accessControlsAqlRawProps}
+}
+LET access = {
+  ${accessFlagsAqlRawProps}
+}
+
+FILTER ${!isRead ? 'access.r &&' : ''} access.${access}
+
+${opts?.postAccessBody ?? '// NO POST_ACCESS_BODY'}
+
+return {
+  entity: UNSET(entity, '_meta'),
+  meta: entity._meta,
+  access,
+${projectAqlRawProps}
+}
 `
 
-  const bindVars = { '@collection': entityCollectionName, currentUser }
+  const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
   console.log(q, inspect({ currentUser }, false, 10, true))
-  const updateResponseCursor = await db.query<{
-    entity: EntityDocument<EntityDataType>
-    access: {
-      r: { can: boolean }
-      u: { can: boolean }
-      d: { can: boolean }
-    }
-  }>(q, bindVars)
-  return updateResponseCursor
+  const queryCursor = await db.query<_QueryRecordType>(q, bindVars)
+
+  return queryCursor
 }
 
 export function docIsOfClass<EntityDataType extends SomeEntityDataType>(
@@ -315,46 +361,39 @@ export function includesAnySameClass(
 //   return targets.map(target => includesSameClass(target, someClasses)).includes(true)
 // }
 
-async function getAQLAccessControlObjectDefString(systemUser: SystemUser) {
+async function getAQLAccessControlObjectDefString(systemUser: SystemUser, access: EntityAccess) {
   if (systemUser.type === 'root') {
-    return {
-      aqlAccessControlsObjString: `{
-        r: [ true ] /* ROOT ACCESS */,
-        u: [ true ] /* ROOT ACCESS */,
-        d: [ true ] /* ROOT ACCESS */,
-      }`,
-    }
+    return `[ true ] /* ROOT ALWAYS CONSENT ACCESS */`
+  }
+  if (systemUser.type === 'pkg') {
+    return `[ true ] /* PKG CURRENTLY ALWAYS CONSENT ACCESS */`
+  }
+  if (access !== 'r' && systemUser.type === 'anon') {
+    return `[ false ] /* ANON CANNOT WRITE SYSTEM ENTITIES */`
   }
 
-  const [r, w, d] = await Promise.all([
-    getAqlOperationAccessControlArrayElemsString('r'),
-    getAqlOperationAccessControlArrayElemsString('u'),
-    getAqlOperationAccessControlArrayElemsString('d'),
-  ])
+  const accessElemsString = await getAqlEntityAccessControlArrayElemsString(access)
 
-  const aqlAccessControlsObjString = `{
-        r: [ ${r.aql} ],
-        u: [ ${w.aql} ],
-        d: [ ${d.aql} ],
-      }`
-  return { aqlAccessControlsObjString }
+  return `[
+    ${accessElemsString} 
+  ]`
 }
 
-async function getAqlOperationAccessControlArrayElemsString(op: 'r' | 'u' | 'd') {
-  const operationAccessControlResponses = await Promise.all(
+async function getAqlEntityAccessControlArrayElemsString(access: EntityAccess) {
+  const entityAccessControlResponses = await Promise.all(
     accessControllerRegistry.map(({ accessControllers, pkgId }) =>
-      accessControllers[op]?.({ myPkgMeta: pkgMetaVar(pkgId.name) }),
+      accessControllers[access]?.({ myPkgMeta: pkgMetaVar(pkgId.name) }),
     ),
   )
 
-  const aql = operationAccessControlResponses
+  const aql = entityAccessControlResponses
     .filter(neitherUndefinedOrNull)
     .map(acElem => `(${acElem})`)
     .join(',\n')
 
-  return {
-    aql,
-  }
+  return `/* ^ Entity Access[${access}] ^ */
+${aql}
+/* $ Entity Access[${access}] $ */`
 }
 
 export async function setCurrentUserFetch(fetchCurrentUser: FetchCurrentUser) {

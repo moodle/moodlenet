@@ -1,15 +1,15 @@
 import type { PkgName } from '@moodlenet/core'
-import { getPkgNamespace } from '../pkg-db-names.mjs'
+import { entityId, getPkgNamespace } from '../pkg-db-names.mjs'
 import type { EntityClass, EntityIdentifier, SomeEntityDataType } from '../types.mjs'
 
 // TODO: export a set of const for known vars for safer AQL construction ? (entity, entityClass, _meta, creator, currentUser)
 
 export function isCreator() {
-  return `( !!currentUser && entity._meta.creator == currentUser.user._key )`
+  return `( !!currentUser && entity._meta.creator == currentUser.entityIdentifier )`
 }
 
 export function isCurrentUserEntity() {
-  return `( entity._key==currentUser.entityIdentifier._key && entity._meta.entityClass == currentUser.entityIdentifier.entityClass )`
+  return `( entity._key == currentUser.entityIdentifier._key && entity._meta.entityClass == currentUser.entityIdentifier.entityClass )`
 }
 
 export function isEntity(entityIdentifier: EntityIdentifier) {
@@ -19,7 +19,7 @@ export function isEntity(entityIdentifier: EntityIdentifier) {
 }
 
 export function isAuthenticated() {
-  return `( !!currentUser )`
+  return `( !!currentUser && currentUser.type != 'anon' )`
 }
 
 export function isEntityClass(
@@ -28,6 +28,10 @@ export function isEntityClass(
   const isArray = Array.isArray(entityClasses)
   const entityClassesStr = toaql(entityClasses)
   return `( ${entityClassesStr} ${isArray ? 'any ' : ''}== entity._meta.entityClass )`
+}
+
+export function entityDocument(entityIdentifier: EntityIdentifier) {
+  return `DOCUMENT("${entityId(entityIdentifier)}")`
 }
 
 export function pkgMetaVar(pkgName: PkgName) {
