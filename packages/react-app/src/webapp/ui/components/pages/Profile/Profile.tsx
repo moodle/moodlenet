@@ -1,9 +1,10 @@
 import { AddonItem } from '@moodlenet/component-library'
 import { FC, useReducer } from 'react'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
-import { ProfileCard, ProfileCardPropsControlled } from '../../organisms/ProfileCard/ProfileCard.js'
+import { ProfileCard, ProfileCardProps } from '../../organisms/ProfileCard/ProfileCard.js'
 import './Profile.scss'
 
+export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
   profileCardProps: ProfileCardPropsControlled

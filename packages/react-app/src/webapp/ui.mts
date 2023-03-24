@@ -23,7 +23,6 @@ export * from './ui/components/organisms/Header/Minimalistic/MinimalisticHeader.
 export * from './ui/components/organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 export * from './ui/components/organisms/HeaderProfile/HeaderProfile.js'
 export * from './ui/components/organisms/ProfileCard/ProfileCard.js'
-export * from './ui/components/organisms/ProfileCard/ProfileCardHooks.js'
 export * from './ui/components/organisms/ProfileCard/stories-props.js'
 export * from './ui/components/organisms/Roles/Users.js'
 export * from './ui/components/organisms/Roles/UsersContainer.js'

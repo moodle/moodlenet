@@ -41,7 +41,6 @@ export const LoggedIn = () => {
 export const Owner = () => {
   const props = useProfileCardStoryProps({
     props: {
-      isCreator: true,
       canEdit: true,
       // showAccountApprovedSuccessAlert: true,
       // isApproved: true,
@@ -53,7 +52,6 @@ export const Owner = () => {
 export const Editing = () => {
   const props = useProfileCardStoryProps({
     props: {
-      isCreator: true,
       canEdit: true,
       isEditing: true,
       // showAccountApprovedSuccessAlert: true,

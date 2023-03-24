@@ -2,6 +2,7 @@ import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
 import {
   ByKeyOrId,
   create,
+  EntityAccess,
   getEntity,
   patch,
   setPkgCurrentUser,
@@ -30,8 +31,8 @@ export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity |
     return
   }
 
-  const myProfile = await getProfile({ _key: currentWebUser.profileKey })
-  return myProfile
+  const myProfileRecord = await getProfileRecord({ _key: currentWebUser.profileKey })
+  return myProfileRecord?.entity
 }
 
 export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDataRpc | undefined> {
@@ -48,8 +49,8 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   }
   // await setCurrentVerifiedJwtToken(verifiedCtx, false)
 
-  const myProfile = await getProfile({ _key: currentWebUser.profileKey })
-  if (!myProfile) {
+  const record = await getProfileRecord({ _key: currentWebUser.profileKey })
+  if (!record) {
     //FIXME: throw error ?
     return
   }
@@ -57,7 +58,7 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   return {
     isAdmin: currentWebUser.isAdmin,
     isRoot: false,
-    myProfile,
+    myProfile: record.entity,
   }
 }
 
@@ -99,8 +100,11 @@ export async function createWebUser(createRequest: CreateRequest, opts?: Partial
 export async function editWebUserProfile(
   byKeyOrId: ByKeyOrId,
   updateWithData: Partial<WebUserProfileDataType>,
+  opts?: {
+    projectAccess?: EntityAccess[]
+  },
 ) {
-  const mUpdated = await patch(WebUserProfile.entityClass, byKeyOrId, updateWithData)
+  const mUpdated = await patch(WebUserProfile.entityClass, byKeyOrId, updateWithData, opts)
 
   if (!mUpdated) {
     return
@@ -111,7 +115,7 @@ export async function editWebUserProfile(
     await patchWebUser({ profileKey: entity._key }, { displayName: patched.displayName })
   }
 
-  return patched
+  return mUpdated
 }
 
 export async function setCurrentWebUser(by: { profileKey: string } | { userKey: string }) {
@@ -192,11 +196,16 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
   return patchedUser
 }
 
-export async function getProfile(byKeyOrId: ByKeyOrId): Promise<undefined | WebUserProfileEntity> {
-  const profile = await getEntity(WebUserProfile.entityClass, byKeyOrId, {
-    projectAccess: ['d', 'u'],
+export async function getProfileRecord(
+  byKeyOrId: ByKeyOrId,
+  opts?: {
+    projectAccess?: EntityAccess[]
+  },
+) {
+  const record = await getEntity(WebUserProfile.entityClass, byKeyOrId, {
+    projectAccess: opts?.projectAccess,
   })
-  return profile?.entity
+  return record
 }
 
 export async function searchUsers(search: string): Promise<(WebUserDataType & DocumentMetadata)[]> {

@@ -12,25 +12,22 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
+import { SchemaOf } from 'yup'
 import { ProfileFormValues } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
 import './ProfileCard.scss'
 
-export type ProfileCardPropsControlled = Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
 export type ProfileCardProps = {
   mainColumnItems?: AddonItem[]
   topItems?: AddonItem[]
   titleItems?: AddonItem[]
   subtitleItems?: AddonItem[]
-  form: ReturnType<typeof useFormik<ProfileFormValues>>
-  isAuthenticated: boolean
+  formValues: ProfileFormValues
+  validationSchema: SchemaOf<ProfileFormValues>
+  saveProfile(values: ProfileFormValues): Promise<unknown>
   isEditing?: boolean
-  isCreator?: boolean
   canEdit?: boolean
-  isAdmin?: boolean
-  isApproved?: boolean
-  isFollowing?: boolean
   toggleIsEditing(): unknown
 }
 
@@ -39,11 +36,19 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   topItems,
   titleItems,
   subtitleItems,
-  form,
+  formValues,
+  saveProfile,
+  validationSchema,
   isEditing,
   canEdit,
   toggleIsEditing,
 }) => {
+  const form = useFormik<ProfileFormValues>({
+    onSubmit: saveProfile,
+    validationSchema,
+    initialValues: formValues,
+    enableReinitialize: true,
+  })
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
