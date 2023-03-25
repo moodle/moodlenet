@@ -9,7 +9,6 @@ import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useState } from 'react'
 import { SchemaOf } from 'yup'
-import { ResourceCard, ResourceCardProps } from '../../../../../../resource/dist/ui.mjs'
 
 import {
   CollectionAccess,
