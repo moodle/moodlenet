@@ -1,28 +1,20 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { FC, useCallback, useEffect, useState } from 'react'
-import { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 
-import { MainFooterProps } from '../../../../../ui.mjs'
-import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
+import SimpleLayout, { SimpleLayoutProps } from '../../../layout/SimpleLayout/SimpleLayout.js'
 import './RootLogin.scss'
 
 export type RootLoginFormValues = { email: string; password: string }
 
 export type RootLoginProps = {
-  headerProps: MinimalisticHeaderProps
-  footerProps: MainFooterProps
+  simpleLayoutProps: SimpleLayoutProps
   submitLogin: (password: string) => void
   loginFailed: boolean
 }
 
-export const RootLogin: FC<RootLoginProps> = ({
-  headerProps,
-  footerProps,
-  loginFailed,
-  submitLogin,
-}) => {
+export const RootLogin: FC<RootLoginProps> = ({ simpleLayoutProps, loginFailed, submitLogin }) => {
   return (
-    <SimpleLayout headerProps={headerProps} footerProps={footerProps}>
+    <SimpleLayout {...simpleLayoutProps}>
       <RootLoginBody loginFailed={loginFailed} submitLogin={submitLogin} />
     </SimpleLayout>
   )
