@@ -2,6 +2,8 @@ import { DocumentMetadata } from '@moodlenet/arangodb/server'
 import { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
 import { AppearanceData } from '../common/types.mjs'
 
+// ALE:
+// TODO: WebUserProfileEntity _meta { webUserKey }
 export type WebUserProfileEntity = WebUserProfileDataType & DocumentMetadata
 export type WebUserProfileDataType = {
   displayName: string
@@ -34,7 +36,6 @@ export type WebUserJwtPayload =
     }
   | {
       isRoot?: false
-      isAdmin: boolean
       webUserKey: string
       profileKey: string
     }

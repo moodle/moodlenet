@@ -8,5 +8,7 @@ export * from './types.mjs'
 // @endindex
 
 export const WEB_USER_SESSION_TOKEN_COOKIE_NAME = 'web-user-session-token'
+export const WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME =
+  'web-user-session-authenticated-by'
 // export const WEB_USER_SESSION_TOKEN_COOKIE_NAME: WebUserSessionTokenCookieName =
 //   'web-user-session-token'
