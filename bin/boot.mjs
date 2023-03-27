@@ -3,7 +3,7 @@
 import execa from 'execa'
 import { fwRestArgs, fwRestOpts, mnDevDir } from './env.mjs'
 
-console.log({ fwRestOpts })
+// console.log({ fwRestOpts })
 await execa(
   'npx',
   ['-y', 'node-dev', '--notify', 'false', 'start.mjs', '--', ...fwRestOpts, ...fwRestArgs],
@@ -12,6 +12,7 @@ await execa(
     stdout: process.stdout,
     env: {
       MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES: 'true',
+      NODE_ENV: 'development',
     },
   },
 )
