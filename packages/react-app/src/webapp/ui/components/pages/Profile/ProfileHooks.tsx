@@ -28,17 +28,11 @@ export const useProfileProps = ({
   }, [])
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
-      const {
-        aboutMe: description,
-        displayName: title,
-        location,
-        organizationName,
-        siteUrl,
-      } = values
+      const { aboutMe, displayName, location, organizationName, siteUrl } = values
       const res = await me.rpc['webapp/profile/edit']({
         _key: profileKey,
-        displayName: title,
-        aboutMe: description,
+        displayName,
+        aboutMe,
         location,
         organizationName,
         siteUrl,
