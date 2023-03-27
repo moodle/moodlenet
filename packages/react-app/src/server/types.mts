@@ -1,7 +1,8 @@
+import { DocumentMetadata } from '@moodlenet/arangodb/server'
 import { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
-import { Response } from 'express'
 import { AppearanceData } from '../common/types.mjs'
 
+export type WebUserProfileEntity = WebUserProfileDataType & DocumentMetadata
 export type WebUserProfileDataType = {
   displayName: string
   aboutMe: string
@@ -39,7 +40,6 @@ export type WebUserJwtPayload =
     }
 
 export type WebUserCtxType = {
-  http?: { resp: Response; enteringToken?: JwtToken }
   tokenCtx?: TokenCtx
 }
 export type TokenCtx = VerifiedTokenCtx | UnverifiedTokenCtx

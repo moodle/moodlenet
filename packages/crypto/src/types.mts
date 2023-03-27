@@ -17,5 +17,5 @@ export type JwtVerifyOpts = Omit<jose.JWTVerifyOptions, 'algorithms'>
 
 export type JwtVerifyResult<CustomClaims extends JwtPayloadCustomClaims> = {
   protectedHeader: jose.JWTVerifyResult['protectedHeader']
-  payload: CustomClaims & jose.JWTVerifyResult['payload']
+  payload: CustomClaims & jose.JWTVerifyResult['payload'] & { scope?: string }
 }

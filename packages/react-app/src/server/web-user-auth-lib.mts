@@ -1,4 +1,5 @@
 import { jwt, JwtToken } from '@moodlenet/crypto/server'
+import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
 import { matchRootPassword } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { CookieOptions } from 'express'
@@ -9,7 +10,8 @@ import { TokenCtx, UnverifiedTokenCtx, VerifiedTokenCtx, WebUserJwtPayload } fro
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
   const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {
     expirationTime: '2w',
-    scope: 'full-user',
+    subject: !webUserJwtPayload.isRoot ? webUserJwtPayload.profileKey : undefined,
+    scope: [/* 'full-user',  */ 'openid'],
   })
   return sessionToken
 }
@@ -83,8 +85,8 @@ export async function verifyWebUserToken(token: JwtToken) {
 ////
 
 function sendWebUserTokenCookie(jwtToken?: JwtToken) {
-  const httpResponse = shell.myAsyncCtx.get()?.http?.resp
-  console.log('setcookie', { responseFound: !!httpResponse, jwtToken })
+  const httpCtx = getCurrentHttpCtx()
+  const httpResponse = httpCtx?.response
 
   if (!httpResponse) {
     return

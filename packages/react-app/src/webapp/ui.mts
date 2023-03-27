@@ -27,7 +27,6 @@ export * from './ui/components/organisms/lists/LandingProfileList/LandingProfile
 export * from './ui/components/organisms/lists/ProfileList/ProfileList.js'
 export * from './ui/components/organisms/lists/SearchProfileList/SearchProfileList.js'
 export * from './ui/components/organisms/MainProfileCard/MainProfileCard.js'
-export * from './ui/components/organisms/MainProfileCard/MainProfileCardHooks.js'
 export * from './ui/components/organisms/MainProfileCard/stories-props.js'
 export * from './ui/components/organisms/ProfileCard/ProfileCard.js'
 export * from './ui/components/organisms/ProfileCard/ProfileCardHook.js'

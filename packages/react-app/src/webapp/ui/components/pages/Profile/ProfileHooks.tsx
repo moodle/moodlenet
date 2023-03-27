@@ -1,43 +1,107 @@
-import { useMemo } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
+import { WebUserProfile } from '../../../../../server/types.mjs'
+import { MainContext } from '../../../../context/MainContext.mjs'
+import { AuthCtx } from '../../../../web-lib.mjs'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import { ProfileProps } from './Profile.js'
 
-import { useMainProfileCardProps } from '../../organisms/MainProfileCard/MainProfileCardHooks.js'
-import { profileStoriesValidationSchema } from '../../organisms/MainProfileCard/stories-props.js'
+const __should_be_from_server_maxUploadSize = 1024 * 1024 * 50
 
-export const useProfileProps = ({ profileKey }: { profileKey: string }): ProfileProps => {
-  const profileCardProps = useMainProfileCardProps({ profileKey })
-  console.log('Fix this useProfileProps method', profileCardProps)
+export const useProfileProps = ({
+  profileKey,
+}: {
+  profileKey: string
+}): ProfileProps | undefined => {
+  const {
+    use: { me },
+  } = useContext(MainContext)
+
+  const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
+  const [profileResponse, setProfileResponse] = useState<{
+    data: WebUserProfile
+    canEdit: boolean
+  }>()
+
+  const toggleFollow = useCallback<ProfileProps['actions']['toggleFollow']>(async () => {
+    throw new Error('not Implemented')
+  }, [])
+  const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
+    async values => {
+      const {
+        aboutMe: description,
+        displayName: title,
+        location,
+        organizationName,
+        siteUrl,
+      } = values
+      const res = await me.rpc['webapp/profile/edit']({
+        _key: profileKey,
+        displayName: title,
+        aboutMe: description,
+        location,
+        organizationName,
+        siteUrl,
+      })
+      // if (!res) {
+      //   return
+      // }
+      setProfileResponse(res)
+    },
+    [me.rpc, profileKey],
+  )
+
+  useEffect(() => {
+    me.rpc['webapp/profile/get']({ _key: profileKey }).then(res => {
+      if (!res) {
+        return
+      }
+      setProfileResponse(res)
+    })
+  }, [profileKey, me])
+
   const mainLayoutProps = useMainLayoutProps()
-  const profileProps = useMemo<ProfileProps>(() => {
-    //TODO Substitute with real props
+
+  const profileProps = useMemo<ProfileProps | undefined>(() => {
+    if (!profileResponse) {
+      return
+    }
+    const isAdmin = !!clientSessionData?.isAdmin
+    const isCreator = clientSessionData?.myProfile?._key === profileKey
+
     const props: ProfileProps = {
       mainLayoutProps,
       access: {
-        canEdit: false,
-        isAuthenticated: false,
-        isCreator: false,
-        isAdmin: false,
+        canEdit: profileResponse.canEdit,
+        isAdmin,
+        isAuthenticated,
+        isCreator,
       },
       actions: {
-        editProfile: () => undefined,
-        toggleFollow: () => undefined,
+        editProfile,
+        toggleFollow,
       },
       mainProfileCardSlots: {
         mainColumnItems: [],
         topItems: [],
       },
-      profileForm: {
-        aboutMe: '',
-        displayName: '',
-      },
+      profileForm: profileResponse.data,
       // state: {
       //   followed: false,
       // },
-      validationSchema: profileStoriesValidationSchema,
+      validationSchema: profileFormValidationSchema(__should_be_from_server_maxUploadSize), // FIXME
     }
     return props
-  }, [mainLayoutProps])
+  }, [
+    clientSessionData?.isAdmin,
+    clientSessionData?.myProfile?._key,
+    editProfile,
+    isAuthenticated,
+    mainLayoutProps,
+    profileKey,
+    profileResponse,
+    toggleFollow,
+  ])
 
   return profileProps
 }
