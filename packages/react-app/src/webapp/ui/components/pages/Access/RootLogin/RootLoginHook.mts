@@ -1,23 +1,28 @@
-import { useCallback, useMemo } from 'react'
-import { useFooterProps } from '../../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
-import { useMinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
+import { useCallback, useContext, useMemo, useState } from 'react'
+import { MainContext } from '../../../../../context/MainContext.mjs'
+import { useSimpleLayoutProps } from '../../../layout/SimpleLayout/SimpleLayoutHooks.mjs'
 import { RootLoginProps } from './RootLogin.js'
 
 export const useRootLoginProps = (): RootLoginProps => {
-  const headerProps = useMinimalisticHeaderProps()
-  const footerProps = useFooterProps()
+  const simpleLayoutProps = useSimpleLayoutProps()
+  const {
+    use: {
+      me: { rpc },
+    },
+  } = useContext(MainContext)
 
-  //TODO //@ETTO submitLogin & rootLoginProps need to be implemented
-  const loginFailed = false
-  const submitLogin = useCallback(() => undefined, [])
+  const [loginFailed, setLoginFailed] = useState(false)
+  const submitLogin = useCallback<RootLoginProps['submitLogin']>(
+    rootPassword => rpc.loginAsRoot({ rootPassword }).then(success => setLoginFailed(!success)),
+    [rpc],
+  )
 
   const rootLoginProps = useMemo<RootLoginProps>(() => {
     return {
-      headerProps,
-      footerProps,
+      simpleLayoutProps,
       loginFailed,
       submitLogin,
     }
-  }, [headerProps, footerProps, loginFailed, submitLogin])
+  }, [simpleLayoutProps, loginFailed, submitLogin])
   return rootLoginProps
 }
