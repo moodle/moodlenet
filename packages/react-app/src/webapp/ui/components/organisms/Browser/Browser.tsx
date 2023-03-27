@@ -4,12 +4,12 @@ import {
   FloatingMenu,
   PrimaryButton,
   SecondaryButton,
+  TertiaryButton,
 } from '@moodlenet/component-library'
 import { ArrowDropDown } from '@mui/icons-material'
 import {
   ComponentType,
   FC,
-  ReactNode,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -18,6 +18,7 @@ import {
   useState,
 } from 'react'
 import './Browser.scss'
+import { FilterItem, getFilterContentDefaultListElement, getFilterElement } from './Filter.js'
 
 export type MainColumItem = {
   Item: ComponentType<{
@@ -26,16 +27,15 @@ export type MainColumItem = {
   }>
   key: number | string
   menuItem?: ComponentType
+  filters?: FilterItem[]
 }
 
 export type BrowserProps = {
   mainColumnItems?: MainColumItem[]
   sideColumnItems?: AddonItem[]
-  filterBarItems?: AddonItem[]
-  children?: ReactNode
 }
 
-export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems, filterBarItems }) => {
+export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [heights, setHeights] = useState<number[]>([])
   const [currentSection, setCurrentSection] = useState(
@@ -104,27 +104,25 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems, fi
                 ? e.key.toString() === currentMainFilter
                 : e.key.toString() === currentSection
 
-              return e.menuItem ? (
-                <div
-                  key={e.key}
-                  className={`section ${isCurrent ? 'selected' : ''}`}
-                  onClick={() => {
-                    currentMainFilter
-                      ? setCurrentMainFilter(e.key.toString())
-                      : navigateToSection(idx, e.key.toString())
-                  }}
-                >
-                  <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
-                    <div className={`border ${isCurrent ? 'selected' : ''}`} />
-                  </div>
-                  <div className={`content ${isCurrent ? 'selected' : ''}`}>{<e.menuItem />}</div>
-                </div>
-              ) : null
+              const onClick = () =>
+                currentMainFilter
+                  ? setCurrentMainFilter(e.key.toString())
+                  : navigateToSection(idx, e.key.toString())
+
+              return e.menuItem
+                ? getFilterContentDefaultListElement({
+                    Item: e.menuItem,
+                    key: e.key,
+                    isCurrent,
+                    onClick,
+                  })
+                : null
             })
             .filter(item => !!item)
         : [],
     [mainColumnItems, currentMainFilter, currentSection, navigateToSection],
   )
+
   const filterByItemType = useMemo(() => {
     const menuContent = [...navMenuElements.filter((item): item is JSX.Element => !!item)]
     menuContent.unshift(
@@ -145,6 +143,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems, fi
             return (isCurrent || !currentMainFilter) && e.menuItem ? (
               isCurrent ? (
                 <FloatingMenu
+                  className="menu-content-default-list"
                   hoverElement={
                     <PrimaryButton
                       key={e.key}
@@ -185,12 +184,25 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems, fi
     </div>
   )
 
-  const updatedSideColumnItems = [navMenu, ...(sideColumnItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
+  const [currentFilters, setCurrentFilters] = useState<FilterItem[] | undefined>([])
+  useEffect(() => {
+    mainColumnItems?.map(
+      e => e.key.toString() === currentMainFilter && setCurrentFilters(e.filters),
+    )
+  }, [currentMainFilter, mainColumnItems])
+
+  const filters = (
+    <div className="filters">
+      {useMemo(
+        () => currentFilters && currentFilters.map(i => getFilterElement(i)),
+
+        [currentFilters],
+      )}
+    </div>
   )
 
-  const updatedFilterBarItems = [...filterByItemType, ...(filterBarItems ?? [])].filter(
-    (item): item is AddonItem /* | JSX.Element */ => !!item,
+  const updatedSideColumnItems = [navMenu, ...(sideColumnItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
   )
 
   const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
@@ -243,14 +255,24 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems, fi
     document.body.scrollTo(0, 0)
   }, [currentMainFilter])
 
+  const extraFilters = (
+    <>
+      <div className="separator"></div>
+      {filters}
+      <div className="separator"></div>
+      <SecondaryButton className={`filter-element`} color="grey">
+        All filters
+      </SecondaryButton>
+      <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton>
+    </>
+  )
+
   return (
     <div className="browser">
       <div className="filter-bar">
         <div className="filter-bar-content">
-          {useMemo(
-            () => updatedFilterBarItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i)),
-            [updatedFilterBarItems],
-          )}
+          <div className="content-type-filters">{filterByItemType.filter(e => !!e)}</div>
+          {currentMainFilter && currentFilters && currentFilters.length > 0 && extraFilters}
         </div>
       </div>
       <div className="content">
