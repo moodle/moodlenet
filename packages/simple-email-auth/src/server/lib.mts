@@ -2,7 +2,12 @@ import { instanceDomain } from '@moodlenet/core'
 import * as crypto from '@moodlenet/crypto/server'
 import { JwtToken } from '@moodlenet/crypto/server'
 import { send } from '@moodlenet/email-service/server'
-import { createWebUser, setCurrentWebUser } from '@moodlenet/react-app/server'
+import {
+  createWebUser,
+  sendWebUserTokenCookie,
+  signWebUserJwtToken,
+} from '@moodlenet/react-app/server'
+import assert from 'assert'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
 import { EmailPwdUser } from './store/types.mjs'
@@ -29,9 +34,10 @@ export async function login({
     return { success: false }
   }
 
-  const success = await shell.call(setCurrentWebUser)({ userKey: user.webUserKey })
-
-  return { success }
+  const jwtToken = await shell.call(signWebUserJwtToken)({ webUserkey: user.webUserKey })
+  assert(jwtToken, `Couldn't sign token for webUserKey:${user.webUserKey}`)
+  shell.call(sendWebUserTokenCookie)(jwtToken)
+  return { success: true }
 }
 
 export async function signup(
@@ -79,22 +85,21 @@ export async function confirm({
   const mUser = await store.getByEmail(email)
 
   if (mUser) {
-    return { success: false, msg: 'user registered' }
+    return { success: false, msg: 'email registered' }
   }
 
-  const newWebUser = await shell.call(createWebUser)(
-    {
-      displayName: displayName,
-      isAdmin: false,
-      contacts: { email },
-      aboutMe: '',
-    },
-    { setAsCurrentUser: true },
-  )
+  const createNewWebUserResp = await shell.call(createWebUser)({
+    displayName: displayName,
+    isAdmin: false,
+    contacts: { email },
+    aboutMe: '',
+  })
 
-  if (!newWebUser) {
-    return { success: false, msg: 'could not create' }
+  if (!createNewWebUserResp) {
+    return { success: false, msg: 'could not create new WebUser' }
   }
+  const { jwtToken, newWebUser } = createNewWebUserResp
+  shell.call(sendWebUserTokenCookie)(jwtToken)
 
   const emailPwdUser = await store.create({ email, password, webUserKey: newWebUser._key })
 
