@@ -138,7 +138,7 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
     projectAccess?: EntityAccess[]
   },
 ) {
-  const delCursor = await queryEntities<
+  const patchCursor = await queryEntities<
     EntityDataType,
     { patched: EntityDocument<EntityDataType> }
   >(entityClass, 'u', {
@@ -148,7 +148,7 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
     project: { patched: 'NEW' },
     projectAccess: opts?.projectAccess,
   })
-  const patchRecord = await delCursor.next()
+  const patchRecord = await patchCursor.next()
   return patchRecord
 }
 
