@@ -17,7 +17,7 @@ export async function addMiddlewares(mwItem: Pick<MiddlewareItem, 'handlers'>) {
   middlewares.push({ ...mwItem, pkgId: callerPkgId })
 }
 
-export function getCurrentHttp(): undefined | HttpAsyncCtx['currentHttp'] {
+export function getCurrentHttpCtx(): undefined | HttpAsyncCtx['currentHttp'] {
   const ctx = shell.myAsyncCtx.get()
   return (
     ctx && {

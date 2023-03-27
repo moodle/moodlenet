@@ -65,14 +65,9 @@ await shell.call(plugin)<MyWebAppDeps>({
 
 await shell.call(addMiddleware)({
   handlers: [
-    async (req, resp, next) => {
+    async (req, _resp, next) => {
       const enteringToken = req.cookies[WEB_USER_SESSION_TOKEN_COOKIE_NAME]
-      shell.myAsyncCtx.set(() => ({
-        http: {
-          resp,
-          enteringToken,
-        },
-      }))
+
       if ('string' !== typeof enteringToken) {
         return next()
       }
