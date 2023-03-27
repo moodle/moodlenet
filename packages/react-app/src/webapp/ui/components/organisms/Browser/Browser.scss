@@ -19,63 +19,74 @@
       max-width: 1100px;
       gap: 10px;
 
-      > .floating-menu-container > .floating-menu {
-        > .hover-element {
-          > .primary-button {
-            padding: 6px 6px 6px 18px;
-          }
-        }
-        > .menu {
-          margin: 6px 0 0 32px;
-          > .content {
-            padding: 8px 0;
-            display: flex;
-            flex-direction: column;
+      > .separator {
+        width: 1px;
+        height: 24px;
+        background-color: #abacaf;
+      }
+      > div {
+        display: flex;
+        gap: 10px;
 
-            &::-webkit-scrollbar {
-              display: none;
+        > .floating-menu {
+          > .hover-element {
+            > .primary-button,
+            > .secondary-button {
+              padding: 6px 6px 6px 18px;
             }
-            > div > .section {
-              gap: 0;
+          }
+          > .menu {
+            margin: 6px 0 0 32px;
+            > .content {
+              padding: 8px 0;
               display: flex;
-              cursor: pointer;
-              font-size: 15px;
-              font-weight: 500;
-              padding: 0;
-              color: black;
+              flex-direction: column;
 
-              > .border-container {
-                width: 6px;
-                height: 48px;
+              &::-webkit-scrollbar {
+                display: none;
+              }
+              > div > .section {
+                gap: 0;
+                display: flex;
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: 500;
+                padding: 0;
+                color: black;
 
-                &.selected {
-                  background-color: var(--primary-background-color);
+                > .border-container {
+                  width: 6px;
+                  height: 48px;
+
+                  &.selected {
+                    background-color: var(--primary-background-color);
+                  }
+                  > .border {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 0 4px 4px 0;
+                    transition: background-color 150ms ease-in;
+                    &.selected {
+                      background-color: var(--primary-color);
+                    }
+                  }
                 }
-                > .border {
+
+                &:hover {
+                  > .border-container > .border {
+                    &:not(.selected) {
+                      background-color: #e8e8e8;
+                    }
+                  }
+                }
+
+                > .content {
                   width: 100%;
-                  height: 100%;
-                  border-radius: 0 4px 4px 0;
+                  padding: 14px 48px 14px 42px;
                   transition: background-color 150ms ease-in;
                   &.selected {
-                    background-color: var(--primary-color);
+                    background-color: var(--primary-background-color);
                   }
-                }
-              }
-
-              &:hover {
-                > .border-container > .border {
-                  &:not(.selected) {
-                    background-color: #e8e8e8;
-                  }
-                }
-              }
-
-              > .content {
-                width: 100%;
-                padding: 14px 48px 14px 42px;
-                transition: background-color 150ms ease-in;
-                &.selected {
-                  background-color: var(--primary-background-color);
                 }
               }
             }
@@ -197,12 +208,6 @@
         &:not(.full-width) {
           margin-left: 0;
           width: 100%;
-        }
-
-        > .filter-and-sort {
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
         }
       }
 

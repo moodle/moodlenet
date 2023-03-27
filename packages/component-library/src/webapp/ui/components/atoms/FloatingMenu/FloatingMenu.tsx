@@ -11,7 +11,7 @@ export type FloatingMenuContentItem = {
 }
 
 export type FloatingMenuProps = {
-  menuContent: React.ReactElement[]
+  menuContent: React.ReactElement[] | React.ReactElement
   hoverElement: React.ReactNode
   abbr?: string
   hover?: boolean
@@ -56,43 +56,45 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
     currentVisible && setCurrentVisible(false)
   }
 
-  const updatedMenuContent = menuContent.map((element, i) => {
-    if (menuContent.length === 1) {
-      return (
-        <div
-          className={`${element.key}`}
-          key={element.key}
-          tabIndex={i + 1}
-          onKeyDown={oneElementActions}
-        >
-          {element}
-        </div>
-      )
-    } else if (i === 0) {
-      return (
-        <div
-          className={`${element.key}`}
-          key={element.key}
-          tabIndex={i + 1}
-          onKeyDown={closeMenuUp}
-        >
-          {element}
-        </div>
-      )
-    } else if (menuContent.length - 1 === i) {
-      return (
-        <div className={`last element ${element.key}`} key={element.key} tabIndex={i + 1}>
-          {element}
-        </div>
-      )
-    } else {
-      return (
-        <div className={`${element.key}`} key={element.key} tabIndex={i + 1}>
-          {element}
-        </div>
-      )
-    }
-  })
+  const updatedMenuContent = Array.isArray(menuContent)
+    ? menuContent.map((element, i) => {
+        if (menuContent.length === 1) {
+          return (
+            <div
+              className={`${element.key}`}
+              key={element.key}
+              tabIndex={i + 1}
+              onKeyDown={oneElementActions}
+            >
+              {element}
+            </div>
+          )
+        } else if (i === 0) {
+          return (
+            <div
+              className={`${element.key}`}
+              key={element.key}
+              tabIndex={i + 1}
+              onKeyDown={closeMenuUp}
+            >
+              {element}
+            </div>
+          )
+        } else if (menuContent.length - 1 === i) {
+          return (
+            <div className={`last element ${element.key}`} key={element.key} tabIndex={i + 1}>
+              {element}
+            </div>
+          )
+        } else {
+          return (
+            <div className={`${element.key}`} key={element.key} tabIndex={i + 1}>
+              {element}
+            </div>
+          )
+        }
+      })
+    : menuContent
 
   const handleBlur = (e: React.FocusEvent<HTMLDivElement, Element>) => {
     const currentTarget = e.currentTarget
@@ -120,38 +122,36 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   // }, [hoverElementRef])
 
   return (
-    <div className={`floating-menu-container ${className}`}>
-      <div
-        className={`floating-menu ${className}`}
-        onBlur={e => handleBlur(e)}
-        onFocus={expand}
-        onMouseDown={e => handleOnMouseDown(e)}
-        tabIndex={0}
+    <div
+      className={`floating-menu ${className}`}
+      onBlur={e => handleBlur(e)}
+      onFocus={expand}
+      onMouseDown={e => handleOnMouseDown(e)}
+      tabIndex={0}
+    >
+      <abbr
+        className="hover-element"
+        title={abbr}
+        ref={hoverElementRef}
+        onKeyUp={switchMenu}
+        onKeyDown={closeMenu}
+        onMouseEnter={() => hover && expand()}
+        onMouseLeave={() => hover && close()}
       >
-        <abbr
-          className="hover-element"
-          title={abbr}
-          ref={hoverElementRef}
-          onKeyUp={switchMenu}
-          onKeyDown={closeMenu}
-          onMouseEnter={() => hover && expand()}
-          onMouseLeave={() => hover && close()}
-        >
-          {hoverElement}
-        </abbr>
-        <div
-          className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
-          role="navigation"
-          style={{
-            top:
-              hoverElementRef.current?.clientHeight && `${hoverElementRef.current?.clientHeight}px`,
-          }}
-          onMouseEnter={() => hover && setIsOnHover(true)}
-          onMouseLeave={() => hover && setIsOnHover(false)}
-          onClick={close}
-        >
-          <Card className="content">{updatedMenuContent}</Card>
-        </div>
+        {hoverElement}
+      </abbr>
+      <div
+        className={`menu ${currentVisible || (hover && isOnHover) ? 'visible' : ''}`}
+        role="navigation"
+        style={{
+          top:
+            hoverElementRef.current?.clientHeight && `${hoverElementRef.current?.clientHeight}px`,
+        }}
+        onMouseEnter={() => hover && setIsOnHover(true)}
+        onMouseLeave={() => hover && setIsOnHover(false)}
+        onClick={close}
+      >
+        <Card className="content">{updatedMenuContent}</Card>
       </div>
     </div>
   )

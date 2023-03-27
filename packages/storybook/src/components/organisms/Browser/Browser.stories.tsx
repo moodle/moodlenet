@@ -2,6 +2,7 @@ import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/c
 import {
   Browser,
   BrowserProps,
+  getFilterContentDefaultListElement,
   getProfileCardsStoryProps,
   SearchProfileList,
 } from '@moodlenet/react-app/ui'
@@ -64,6 +65,37 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             />
           )
         },
+        filters: [
+          {
+            name: 'Sort by',
+            menuContent: [<div key="relevance">Relevance</div>, <div key="latest">Latest</div>].map(
+              e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+            ),
+            menuContentType: 'menu-content-default-list',
+            key: 'sort-by',
+          },
+          {
+            name: 'Language',
+            menuContent: [
+              'English',
+              'French',
+              'Spanish',
+              'Italian',
+              'German',
+              'Chinesse',
+              'Japaesse',
+              'Korean',
+              'Portuguese',
+            ]
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'sort-by',
+          },
+        ],
         key: 'resource-list',
       },
       {
@@ -84,6 +116,37 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             />
           )
         },
+        filters: [
+          {
+            name: 'Sort by',
+            menuContent: [<div key="relevance">Relevance</div>, <div key="latest">Latest</div>].map(
+              e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+            ),
+            menuContentType: 'menu-content-default-list',
+            key: 'sort-by',
+          },
+          {
+            name: 'Language',
+            menuContent: [
+              'English',
+              'French',
+              'Spanish',
+              'Italian',
+              'German',
+              'Chinesse',
+              'Japaesse',
+              'Korean',
+              'Portuguese',
+            ]
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'sort-by',
+          },
+        ],
         key: 'collection-list',
       },
       {
@@ -104,6 +167,60 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             />
           )
         },
+        filters: [
+          {
+            name: 'Connections',
+            menuContent: ['1st', '2nd', '3rd+']
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'connections',
+          },
+          {
+            name: 'Locations',
+            menuContent: [
+              'USA',
+              'India',
+              'Australia',
+              'China',
+              'Japan',
+              'Germany',
+              'France',
+              'Italy',
+              'Spain',
+              'Portugal',
+            ]
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'locations',
+          },
+          {
+            name: 'Entity',
+            menuContent: [
+              'Massachussets Institute of Technology',
+              'University of Cambridge',
+              'Stanford University',
+              'University of Oxford',
+              'Harvard University',
+              'California Institute of Technology',
+              'Imperial College London',
+              'University College London',
+              'ETH Zurich',
+              'Australian National University',
+            ]
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'locations',
+          },
+        ],
         key: 'people-list',
       },
     ],
