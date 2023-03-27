@@ -9,13 +9,22 @@
       "path": "../arangodb"
     },
     {
+      "path": "../component-library"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
       "path": "../core"
     },
     {
       "path": "../crypto"
     },
     {
-      "path": "../http-server"
+      "path": "../react-app"
+    },
+    {
+      "path": "../system-entities"
     }
   ]
 }

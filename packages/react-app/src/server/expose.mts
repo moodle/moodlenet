@@ -7,7 +7,7 @@ import { loginAsRoot } from './web-user-auth-lib.mjs'
 import {
   editWebUserProfile,
   getCurrentClientSessionDataRpc,
-  getProfile,
+  getProfileRecord,
   searchUsers,
   toggleWebUserIsAdmin,
 } from './web-user-lib.mjs'
@@ -36,19 +36,32 @@ export const expose = await shell.expose({
     },
     'webapp/profile/edit': {
       guard: () => void 0,
-      fn: async (profileFormValues: WebUserProfile): Promise<WebUserProfile | undefined> => {
+      fn: async (
+        profileFormValues: WebUserProfile,
+      ): Promise<{ data: WebUserProfile; canEdit: boolean } | undefined> => {
         const { _key, ...editRequest } = profileFormValues
-        const profileDoc = await editWebUserProfile({ _key }, editRequest)
-        const profile = profileDoc && webUserProfileDoc2WebUserProfile(profileDoc)
-        return profile
+        const patchRecord = await editWebUserProfile(_key, editRequest)
+        if (!patchRecord) {
+          return
+        }
+        return {
+          data: patchRecord.patched,
+          canEdit: !!patchRecord.access.u,
+        }
       },
     },
     'webapp/profile/get': {
       guard: () => void 0,
-      fn: async (body: { _key: string }): Promise<WebUserProfile | undefined> => {
-        const profileDoc = await getProfile({ _key: body._key })
-        const profile = profileDoc && webUserProfileDoc2WebUserProfile(profileDoc)
-        return profile
+      fn: async ({
+        _key,
+      }: {
+        _key: string
+      }): Promise<{ data: WebUserProfile; canEdit: boolean } | undefined> => {
+        const patchRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
+        if (!patchRecord) {
+          return
+        }
+        return { canEdit: !!patchRecord.access.u, data: patchRecord.entity }
       },
     },
     'webapp/roles/searchUsers': {
@@ -75,15 +88,3 @@ export const expose = await shell.expose({
     },
   },
 })
-
-function webUserProfileDoc2WebUserProfile(profileDoc: WebUserProfile): WebUserProfile {
-  const webUserProfile: WebUserProfile = {
-    _key: profileDoc._key,
-    aboutMe: profileDoc.aboutMe,
-    displayName: profileDoc.displayName,
-    location: profileDoc.location,
-    organizationName: profileDoc.organizationName,
-    siteUrl: profileDoc.siteUrl,
-  }
-  return webUserProfile
-}

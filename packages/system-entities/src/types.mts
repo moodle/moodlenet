@@ -42,13 +42,13 @@ export type EntityCollectionHandles<Defs extends EntityCollectionDefs> = {
 export type EntityCollectionDefOpts = unknown
 
 export type AccessControllers = {
+  [op in EntityAccess]: AqlAccessController
+} & {
   c(
     entityClass: EntityClass<SomeEntityDataType>,
   ): null | undefined | boolean | Promise<boolean | null | undefined>
-  r: AqlAccessController
-  u: AqlAccessController
-  d: AqlAccessController
 }
+export type EntityAccess = 'r' | 'u' | 'd'
 
 export type AqlAccessController = (_: { myPkgMeta: string }) => AqlAccessControllerResp
 
@@ -57,8 +57,9 @@ type AqlAccessControllerRespValue = string | null | undefined | boolean
 
 export type SystemUser = EntityUser | RootUser | AnonUser | PkgUser
 export type EntityUser = {
-  type: 'user'
+  type: 'entity'
   entityIdentifier: EntityIdentifier
+  restrictToScopes: false | string[]
 }
 
 export type RootUser = {
