@@ -12,7 +12,7 @@ export const expose = await shell.expose({
       }: {
         interactionId: string
       }): Promise<undefined | WebappInteractionDetails> {
-        // const currentHttp = getCurrentHttp()
+        // const currentHttp = getCurrentHttpCtx()
         // if (!currentHttp) {
         //   return
         // }

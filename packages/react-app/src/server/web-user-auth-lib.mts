@@ -1,4 +1,5 @@
 import { jwt, JwtToken } from '@moodlenet/crypto/server'
+import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
 import { matchRootPassword } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { CookieOptions } from 'express'
@@ -84,8 +85,8 @@ export async function verifyWebUserToken(token: JwtToken) {
 ////
 
 function sendWebUserTokenCookie(jwtToken?: JwtToken) {
-  const httpResponse = shell.myAsyncCtx.get()?.http?.resp
-  console.log('setcookie', { responseFound: !!httpResponse, jwtToken })
+  const httpCtx = getCurrentHttpCtx()
+  const httpResponse = httpCtx?.response
 
   if (!httpResponse) {
     return
