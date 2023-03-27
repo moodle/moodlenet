@@ -6,6 +6,7 @@ import {
   patch,
   setPkgCurrentUser,
 } from '@moodlenet/system-entities/server'
+import assert from 'assert'
 import { ClientSessionDataRpc } from '../common/types.mjs'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
 import {
@@ -14,11 +15,7 @@ import {
   WebUserProfileDataType,
   WebUserProfileEntity,
 } from './types.mjs'
-import {
-  setCurrentVerifiedJwtToken,
-  signWebUserJwt,
-  verifyCurrentTokenCtx,
-} from './web-user-auth-lib.mjs'
+import { signWebUserJwt, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 
 export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity | undefined> {
   const verifiedCtx = await verifyCurrentTokenCtx()
@@ -49,22 +46,18 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   // await setCurrentVerifiedJwtToken(verifiedCtx, false)
 
   const record = await getProfileRecord(currentWebUser.profileKey)
-  if (!record) {
-    //FIXME: throw error ?
-    return
-  }
+  assert(record, `couldn't find Profile for key:${currentWebUser.profileKey}`)
+  const webUser = await getWebUser({ _key: currentWebUser.webUserKey })
+  assert(webUser, `couldn't find WebUser for key:${currentWebUser.webUserKey}`)
 
   return {
-    isAdmin: currentWebUser.isAdmin,
+    isAdmin: webUser.isAdmin,
     isRoot: false,
     myProfile: record.entity,
   }
 }
 
-type CreateOpts = {
-  setAsCurrentUser: boolean
-}
-export async function createWebUser(createRequest: CreateRequest, opts?: Partial<CreateOpts>) {
+export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, ...profileData } = createRequest
   await setPkgCurrentUser()
   const newProfile = await create(WebUserProfile.entityClass, profileData)
@@ -85,15 +78,16 @@ export async function createWebUser(createRequest: CreateRequest, opts?: Partial
   if (!newWebUser) {
     return
   }
-  if (opts?.setAsCurrentUser) {
-    const jwtToken = await signWebUserJwt({
-      isAdmin,
-      webUserKey: newWebUser._key,
-      profileKey: newProfile._key,
-    })
-    await setCurrentVerifiedJwtToken(jwtToken, true)
+  const jwtToken = await signWebUserJwt({
+    webUserKey: newWebUser._key,
+    profileKey: newProfile._key,
+  })
+
+  return {
+    newWebUser,
+    newProfile,
+    jwtToken,
   }
-  return newWebUser
 }
 
 export async function editWebUserProfile(
@@ -103,74 +97,67 @@ export async function editWebUserProfile(
     projectAccess?: EntityAccess[]
   },
 ) {
+  const webUser = await getWebUserByProfileKey({ profileKey: key })
+  assert(webUser, `couldn't find associated WebUser for profileKey ${key}`)
+
   const mUpdated = await patch(WebUserProfile.entityClass, key, updateWithData, opts)
 
   if (!mUpdated) {
     return
   }
-  const { entity, patched } = mUpdated
+  const { entity, patched /* ,meta */ } = mUpdated
   const displayNameChanged = patched.displayName && entity.displayName !== patched.displayName
   if (displayNameChanged) {
-    await patchWebUser({ profileKey: entity._key }, { displayName: patched.displayName })
+    await patchWebUser({ _key: webUser._key }, { displayName: patched.displayName })
   }
 
   return mUpdated
 }
 
-export async function setCurrentWebUser(by: { profileKey: string } | { userKey: string }) {
-  const webUser = await getWebUser(by)
+export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }) {
+  const webUser = await getWebUser({ _key: webUserkey })
   if (!webUser) {
-    return false
+    return
   }
   const jwtToken = await signWebUserJwt({
-    isAdmin: webUser.isAdmin,
     webUserKey: webUser._key,
     profileKey: webUser.profileKey,
   })
-  await setCurrentVerifiedJwtToken(jwtToken, true)
-  return true
+  return jwtToken
 }
 
-export async function getWebUser(
-  by: { profileKey: string } | { userKey: string },
-): Promise<(WebUserDataType & DocumentMetadata) | undefined> {
-  const byUserKey = 'userKey' in by
-  const key = byUserKey ? by.userKey : by.profileKey
+export async function getWebUserByProfileKey({
+  profileKey,
+}: {
+  profileKey: string
+}): Promise<(WebUserDataType & DocumentMetadata) | undefined> {
   const foundUsersCursor = await db.query<WebUserDataType & DocumentMetadata>(
     `
       FOR user in @@WebUserCollection
-        FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
+        FILTER user.profileKey == @profileKey
         LIMIT 1
       RETURN user
     `,
-    { key, '@WebUserCollection': WebUserCollection.name },
+    { profileKey, '@WebUserCollection': WebUserCollection.name },
   )
-  const [foundUser] = await foundUsersCursor.all()
+  const foundUser = await foundUsersCursor.next()
+  return foundUser
+}
+export async function getWebUser({
+  _key,
+}: {
+  _key: string
+}): Promise<(WebUserDataType & DocumentMetadata) | undefined> {
+  const foundUser = await WebUserCollection.document({ _key }, { graceful: true })
   return foundUser
 }
 
 export async function patchWebUser(
-  by: { profileKey: string } | { userKey: string },
+  { _key }: { _key: string },
   patch: Patch<WebUserDataType>, // | string,
 ) {
-  const byUserKey = 'userKey' in by
-  const key = byUserKey ? by.userKey : by.profileKey
+  const { new: patchedUser } = await WebUserCollection.update({ _key }, patch, { returnNew: true })
 
-  const patchedCursor = await db.query(
-    `
-      FOR user in @@WebUserCollection
-        FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
-        LIMIT 1
-        UPDATE user
-        //! ///////////////////////////////WITH ${typeof patch === 'string' ? patch : '@patch'} 
-        WITH @patch
-        INTO @@WebUserCollection
-      RETURN NEW
-    `,
-    { patch, key, '@WebUserCollection': WebUserCollection.name },
-  )
-
-  const [patchedUser] = await patchedCursor.all()
   return patchedUser
 }
 
