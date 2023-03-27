@@ -3,7 +3,6 @@ import { addMiddleware, mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { expose as orgExpose } from '@moodlenet/organization/server'
 import {
-  ANON_SYSTEM_USER,
   EntityCollectionDef,
   EntityUser,
   isSameClass,
@@ -13,6 +12,7 @@ import {
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
 import { isCurrentUserEntity, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
+import assert from 'assert'
 import { resolve } from 'path'
 import { defaultAppearanceData, WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
@@ -71,16 +71,11 @@ await shell.call(addMiddleware)({
       if ('string' !== typeof enteringToken) {
         return next()
       }
+
       await setCurrentUnverifiedJwtToken(enteringToken)
       await setCurrentUserFetch(async () => {
-        if (!enteringToken) {
-          return ANON_SYSTEM_USER
-        }
         const verifyResult = await verifyCurrentTokenCtx()
-        if (!verifyResult) {
-          // CHECK: shoud throw 401 or some other error ?
-          return ANON_SYSTEM_USER
-        }
+        assert(verifyResult, `enteringToken cookie verification failed for fetching current user`)
         const { currentWebUser } = verifyResult
         if (currentWebUser.isRoot) {
           return ROOT_SYSTEM_USER
@@ -95,7 +90,6 @@ await shell.call(addMiddleware)({
         }
         return entityUser
       })
-      // console.log('out token set')
 
       next()
     },

@@ -1,9 +1,11 @@
 import { jwt, JwtToken } from '@moodlenet/crypto/server'
 import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
 import { matchRootPassword } from '@moodlenet/system-entities/server'
-import assert from 'assert'
 import { CookieOptions } from 'express'
-import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../common/exports.mjs'
+import {
+  WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
+  WEB_USER_SESSION_TOKEN_COOKIE_NAME,
+} from '../common/exports.mjs'
 import { shell } from './shell.mjs'
 import { TokenCtx, UnverifiedTokenCtx, VerifiedTokenCtx, WebUserJwtPayload } from './types.mjs'
 
@@ -46,16 +48,12 @@ export async function loginAsRoot(rootPassword: string): Promise<boolean> {
     return false
   }
   const jwtToken = await signWebUserJwt({ isRoot: true })
-  sendWebUserTokenCookie(jwtToken)
+  shell.call(sendWebUserTokenCookie)(jwtToken)
   return true
 }
 
-async function setCurrentTokenCtx(tokenCtx: TokenCtx, sendCookie: boolean) {
+async function setCurrentTokenCtx(tokenCtx: TokenCtx) {
   shell.myAsyncCtx.set(current => ({ ...current, tokenCtx }))
-
-  sendCookie &&
-    // tokenCtx?.type === 'verified-token' &&
-    sendWebUserTokenCookie(tokenCtx?.currentJwtToken)
 }
 
 export async function setCurrentUnverifiedJwtToken(currentJwtToken: JwtToken) {
@@ -63,19 +61,19 @@ export async function setCurrentUnverifiedJwtToken(currentJwtToken: JwtToken) {
     type: 'unverified-token',
     currentJwtToken,
   }
-  await setCurrentTokenCtx(unverifiedTokenCtx, false)
+  await setCurrentTokenCtx(unverifiedTokenCtx)
 }
 
-export async function setCurrentVerifiedJwtToken(currentJwtToken: JwtToken, sendCookie: boolean) {
-  const currentWebUser = await verifyWebUserToken(currentJwtToken)
-  assert(currentWebUser)
-  const verifiedTokenCtx: VerifiedTokenCtx = {
-    type: 'verified-token',
-    currentJwtToken,
-    currentWebUser,
-  }
-  await setCurrentTokenCtx(verifiedTokenCtx, sendCookie)
-}
+// export async function setCurrentVerifiedJwtToken(currentJwtToken: JwtToken, sendCookie: boolean) {
+//   const currentWebUser = await verifyWebUserToken(currentJwtToken)
+//   assert(currentWebUser)
+//   const verifiedTokenCtx: VerifiedTokenCtx = {
+//     type: 'verified-token',
+//     currentJwtToken,
+//     currentWebUser,
+//   }
+//   await setCurrentTokenCtx(verifiedTokenCtx, sendCookie)
+// }
 
 export async function verifyWebUserToken(token: JwtToken) {
   const jwtVerifyResult = await shell.call(jwt.verify)<WebUserJwtPayload>(token)
@@ -84,7 +82,8 @@ export async function verifyWebUserToken(token: JwtToken) {
 
 ////
 
-function sendWebUserTokenCookie(jwtToken?: JwtToken) {
+export function sendWebUserTokenCookie(jwtToken?: JwtToken) {
+  const { pkgId } = shell.assertCallInitiator()
   const httpCtx = getCurrentHttpCtx()
   const httpResponse = httpCtx?.response
 
@@ -97,11 +96,20 @@ function sendWebUserTokenCookie(jwtToken?: JwtToken) {
       /** FIXME: set proper options !!! */
     }
     httpResponse.clearCookie(WEB_USER_SESSION_TOKEN_COOKIE_NAME, clearCookieOptions)
+    httpResponse.clearCookie(
+      WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
+      clearCookieOptions,
+    )
     return
   }
   const setCookieOptions: CookieOptions = {
     /** FIXME: set proper options !!! */
   }
   httpResponse.cookie(WEB_USER_SESSION_TOKEN_COOKIE_NAME, jwtToken, setCookieOptions)
+  httpResponse.cookie(
+    WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
+    pkgId.name,
+    setCookieOptions,
+  )
   return
 }
