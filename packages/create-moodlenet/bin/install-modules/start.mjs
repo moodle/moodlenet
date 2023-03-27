@@ -1,6 +1,8 @@
 import assert from 'assert'
 import { fork } from 'child_process'
 
+const isDev = process.env.NODE_ENV === 'development'
+
 let shutting_down = false
 let rebooting = false
 let ignitor_process = null
@@ -32,9 +34,12 @@ async function reboot() {
 async function boot() {
   return new Promise(resolve => {
     bannerLog(`${rebooting ? 'RE' : ''}BOOTING SERVICES`)
-
+    const env = {
+      ...process.env,
+      NODE_OPTIONS: [process.env.NODE_OPTIONS ?? '', ...(isDev ? ['--inspect'] : [])].join(' '),
+    }
     // ignitor_process = fork('ignitor.mjs', { execPath: 'npx', execArgv: ['-y', 'node-dev'] })
-    ignitor_process = fork('ignitor.mjs')
+    ignitor_process = fork('ignitor.mjs', { env })
     ignitor_process.once('exit', sig => !rebooting && process.exit(sig))
     ignitor_process.on('message', cmd => {
       if (cmd === 'ready') {
