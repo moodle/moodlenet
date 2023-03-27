@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { ResourceActions, ResourceFormValues, ResourceTypeForm } from './common.mjs'
+import { ResourceActions, ResourceFormValues, ResourceTypeForm } from '../common.mjs'
 
 import { MainContext } from './MainContext.js'
 
@@ -35,8 +35,8 @@ export const useResourceBaseProps = ({
   const actions = useMemo<ResourceActions>(() => {
     const updateResourceResp = (resourceData: ResourceTypeForm) =>
       setResourceResp(current => current && { ...current, resourceData })
-    const updateResourceRespForm = (resourceResp: ResourceTypeForm) =>
-      resourceResp && updateResourceResp(resourceResp)
+    const updateResourceRespForm = (resourceForm: ResourceFormValues) =>
+      resourceForm && resourceResp && updateResourceResp({ ...resourceResp, resourceForm })
 
     const { edit, setIsPublished, toggleBookmark, toggleLike, _delete } = rpcCaller
     return {
@@ -50,7 +50,7 @@ export const useResourceBaseProps = ({
         setIsPublished(resourceKey, publish).then(updateResourceResp)
       },
     }
-  }, [resourceKey, rpcCaller])
+  }, [resourceKey, resourceResp, rpcCaller])
 
   return useMemo<ResourceCommonProps | null>((): ResourceCommonProps | null => {
     if (!resourceResp || !actions) return null
