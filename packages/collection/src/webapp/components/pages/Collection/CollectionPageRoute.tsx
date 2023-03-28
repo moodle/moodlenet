@@ -1,9 +1,9 @@
-// import { FC } from 'react'
-// import { useParams } from 'react-router-dom'
-// import { CollectionContainer } from './CollectionContainer.js'
+import { FC } from 'react'
+import { useParams } from 'react-router-dom'
+import { CollectionContainer } from './CollectionPageContainer.js'
 
-// export const CollectionPageRoute: FC = () => {
-//   const { key } = useParams()
+export const CollectionPageRoute: FC = () => {
+  const { key } = useParams()
 
-//   return <CollectionContainer collectionKey={key ?? ''} />
-// }
+  return <CollectionContainer collectionKey={key ?? ''} />
+}
