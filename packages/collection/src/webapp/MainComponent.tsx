@@ -35,14 +35,17 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
 
   const rpcCaller = useMemo((): RpcCaller => {
     return {
-      edit: (collectionId: string, values: CollectionFormValues): Promise<unknown> =>
+      edit: (collectionId: string, values: CollectionFormValues) =>
         me.rpc['webapp/edit']({ key: collectionId, values }),
-      get: (collectionId: string) =>
-        me.rpc['webapp/get/:_key'](null, { _key: collectionId }, { page: '-1' }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
-      _delete: (collectionId: string) => me.rpc['webapp/delete'](collectionId),
-      toggleFollow: (collectionId: string) => me.rpc['webapp/toggleFollow'](collectionId),
-      setIsPublished: (collectionId: string) => me.rpc['webapp/setIsPublished'](collectionId),
-      toggleBookmark: (collectionId: string) => me.rpc['webapp/toggleBookmark'](collectionId),
+      get: (collectionId: string, query?: string | undefined) =>
+        me.rpc['webapp/get/:_key'](null, { _key: collectionId }, query), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
+      _delete: (collectionId: string) => me.rpc['webapp/delete']({ keyId: collectionId }),
+      toggleFollow: (collectionId: string) =>
+        me.rpc['webapp/toggleFollow']({ keyId: collectionId }),
+      setIsPublished: (collectionId: string) =>
+        me.rpc['webapp/setIsPublished']({ keyId: collectionId }),
+      toggleBookmark: (collectionId: string) =>
+        me.rpc['webapp/toggleBookmark']({ keyId: collectionId }),
     }
   }, [me.rpc])
 

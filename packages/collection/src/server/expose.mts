@@ -7,10 +7,7 @@ export const expose = await shell.expose({
   rpc: {
     'webapp/get/:_key': {
       guard: () => void 0,
-      fn: async (_body, params, _query) => {
-        // console.log({ _body, params, _query })
-        await get(params._key, _query)
-      },
+      fn: async (_body, params, _query) => await get(params._key, _query),
     },
     'webapp/edit': {
       guard: () => void 0,
