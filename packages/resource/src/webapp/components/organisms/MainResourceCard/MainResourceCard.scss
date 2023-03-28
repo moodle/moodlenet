@@ -76,10 +76,8 @@
       }
       > .top-right-header {
         display: flex;
-        flex: 1 0 auto;
         gap: 4px;
         margin-right: -6px;
-        justify-content: flex-end;
 
         > * {
           display: flex;
@@ -97,7 +95,8 @@
           }
         }
 
-        > .tertiary-button {
+        > .tertiary-button,
+        * > .tertiary-button {
           padding: 3px 4px;
         }
 
