@@ -36,7 +36,7 @@ export function getPkgRpcFetchOpts(
 }
 
 function getRequestBody(bodyArg: RpcArgs[0]): [method: string, body?: any, contentType?: string] {
-  const hasBody = bodyArg !== undefined
+  const hasBody = !(bodyArg === undefined || bodyArg === null)
   if (!hasBody) {
     return ['GET', undefined, undefined]
   }

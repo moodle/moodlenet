@@ -113,7 +113,7 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
   }
 
   if ('get' === req.method.toLowerCase()) {
-    return [req.query, type]
+    return [undefined, type]
   }
 
   if (type === 'json') {
