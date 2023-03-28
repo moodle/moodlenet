@@ -1,7 +1,7 @@
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useMemo } from 'react'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
-import { useMainHook } from '../../../../MainHooks.js'
+import { useMainHook } from '../../../MainHooks.js'
 import { CollectionProps } from './Collection.js'
 
 export const useCollectionPageProps = ({
