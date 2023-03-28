@@ -4,13 +4,16 @@ const { get, _delete, edit, toggleFollow, setIsPublished } = mockModel
 
 export const expose = await shell.expose({
   rpc: {
-    'webapp/get': {
+    'webapp/get/:_key': {
       guard: () => void 0,
-      fn: async (keyId: string) => await get(keyId),
+      fn: async (_body, params, _query) => {
+        // console.log({ _body, params, _query })
+        await get(params._key)
+      },
     },
     'webapp/edit': {
       guard: () => void 0,
-      fn: async (key: string, values: unknown) => await edit(key, values),
+      fn: async ({ key, values }: { key: string; values: unknown }) => await edit(key, values),
     },
     'webapp/delete': {
       guard: () => void 0,
