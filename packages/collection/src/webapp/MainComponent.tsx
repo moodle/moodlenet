@@ -39,13 +39,12 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
         me.rpc['webapp/edit']({ key: collectionId, values }),
       get: (collectionId: string, query?: string | undefined) =>
         me.rpc['webapp/get/:_key'](null, { _key: collectionId }, query), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
-      _delete: (collectionId: string) => me.rpc['webapp/delete']({ keyId: collectionId }),
-      toggleFollow: (collectionId: string) =>
-        me.rpc['webapp/toggleFollow']({ keyId: collectionId }),
-      setIsPublished: (collectionId: string) =>
-        me.rpc['webapp/setIsPublished']({ keyId: collectionId }),
+      _delete: (collectionId: string) => me.rpc['webapp/delete']({ key: collectionId }),
+      toggleFollow: (collectionId: string) => me.rpc['webapp/toggleFollow']({ key: collectionId }),
+      setIsPublished: (collectionId: string, publish: boolean) =>
+        me.rpc['webapp/setIsPublished']({ key: collectionId, publish }),
       toggleBookmark: (collectionId: string) =>
-        me.rpc['webapp/toggleBookmark']({ keyId: collectionId }),
+        me.rpc['webapp/toggleBookmark']({ key: collectionId }),
     }
   }, [me.rpc])
 

@@ -18,8 +18,11 @@ const _delete = (resourceKey: string): Promise<unknown> =>
 const toggleFollow = (resourceKey: string): Promise<unknown> =>
   new Promise(resolve => resolve(resourceKey))
 
-const setIsPublished = (resourceKey: string): Promise<unknown> =>
-  new Promise(resolve => resolve(resourceKey))
+const setIsPublished = (resourceKey: string, publish: boolean): Promise<unknown> =>
+  new Promise(resolve => resolve({ resourceKey, publish }))
+
+const toggleBookmark = (resourceKey: string): Promise<unknown> =>
+  new Promise(resolve => resolve({ resourceKey }))
 
 export const mockModel = {
   empityFormModel,
@@ -28,4 +31,5 @@ export const mockModel = {
   _delete,
   toggleFollow,
   setIsPublished,
+  toggleBookmark,
 }
