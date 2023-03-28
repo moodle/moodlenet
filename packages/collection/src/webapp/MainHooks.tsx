@@ -4,7 +4,7 @@ import {
   CollectionDataResponce,
   CollectionFormValues,
   MainPropsCollection,
-} from './common/types.mjs'
+} from '../common/types.mjs'
 
 import { MainContext } from './MainContext.js'
 
