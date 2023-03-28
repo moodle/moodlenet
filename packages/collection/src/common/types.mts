@@ -1,8 +1,47 @@
 import { Href } from '@moodlenet/react-app/ui'
+import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
 
 export type MyWebDeps = {
   me: typeof me
+}
+
+export type MyPkgContext = PkgContextT<MyWebDeps>
+export type MainContextResourceType = MyPkgContext & {
+  rpcCaller: RpcCaller
+  auth: {
+    isAuthenticated: boolean
+    isAdmin: boolean
+    clientSessionData: ClientSessionData | null | undefined
+  }
+}
+
+export type RpcCaller = {
+  edit: (collectionId: string, values: CollectionFormValues) => Promise<unknown>
+  get: (collectionId: string) => Promise<unknown | null>
+  _delete: (collectionId: string) => Promise<unknown>
+  toggleFollow: (collectionId: string) => Promise<unknown>
+  setIsPublished: (collectionId: string, publish: boolean) => Promise<unknown>
+  toggleBookmark: (collectionId: string) => Promise<unknown>
+}
+
+export type CollectionContributorCardProps = {
+  avatarUrl: string | null
+  displayName: string
+  creatorProfileHref: Href
+}
+
+export type CollectionDataResponce = {
+  data: Collectiondata
+  form: CollectionFormValues
+  state: CollectionState
+  access: CollectionAccess
+  contributor: CollectionContributorCardProps
+}
+
+export type MainPropsCollection = {
+  actions: CollectionActions
+  props: CollectionDataResponce
 }
 
 export type Collectiondata = {
@@ -126,3 +165,5 @@ export const getCollectionTypeInfo = (type: string): { typeName: string; typeCol
       return { typeName: type, typeColor: '#15845A' }
   }
 }
+
+export const maxUploadSize = 1024 * 1024 * 50
