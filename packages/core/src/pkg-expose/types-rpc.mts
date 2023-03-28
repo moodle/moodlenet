@@ -1,6 +1,6 @@
 export type RpcRequestBody = any // FIXME: well define with constraints (serializable + `Files` support)
 
-export type RpcQueryParams = any // FIXME: well define with REcord<strng,strng>
+export type RpcQueryParams = any //Record<string, string> // FIXME: well define with REcord<strng,strng>
 export type RpcRouteParams = any // FIXME: well define with REcord<strng,strng>
 export type RpcResponseBody = any // FIXME: well define with constraints (serializable)
 export type RpcResponse = Promise<RpcResponseBody>
