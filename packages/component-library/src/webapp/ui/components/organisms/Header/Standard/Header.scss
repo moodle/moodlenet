@@ -34,7 +34,7 @@
       display: flex;
       gap: 6px;
 
-      > .add-menu.floating-menu-container > .add-menu.floating-menu > .hover-element {
+      > .add-menu.floating-menu > .hover-element {
         > .add-icon {
           max-height: 36px;
           > g > path {
@@ -46,7 +46,7 @@
         }
       }
 
-      > .avatar-menu.floating-menu-container > .avatar-menu.floating-menu {
+      > .avatar-menu.floating-menu {
         > .hover-element {
           > .avatar {
             height: 36px;
