@@ -1,8 +1,10 @@
 import { CollectionFormValues } from '../common.mjs'
 import { mockModel } from './mockLib.mjs'
 import { shell } from './shell.mjs'
-const { get, _delete, edit, toggleFollow, setIsPublished } = mockModel
-type KeyId = { keyId: string }
+
+type KeyId = { key: string }
+const { get, _delete, edit, toggleFollow, setIsPublished, toggleBookmark } = mockModel
+
 export const expose = await shell.expose({
   rpc: {
     'webapp/get/:_key': {
@@ -16,19 +18,20 @@ export const expose = await shell.expose({
     },
     'webapp/delete': {
       guard: () => void 0,
-      fn: async ({ keyId }: KeyId) => await _delete(keyId),
+      fn: async ({ key }: KeyId) => await _delete(key),
     },
     'webapp/toggleFollow': {
       guard: () => void 0,
-      fn: async ({ keyId }: KeyId) => await toggleFollow(keyId),
+      fn: async ({ key }: KeyId) => await toggleFollow(key),
     },
     'webapp/setIsPublished': {
       guard: () => void 0,
-      fn: async ({ keyId }: KeyId) => await setIsPublished(keyId),
+      fn: async ({ key, publish }: { key: string; publish: boolean }) =>
+        await setIsPublished(key, publish),
     },
     'webapp/toggleBookmark': {
       guard: () => void 0,
-      fn: async ({ keyId }: KeyId) => await setIsPublished(keyId),
+      fn: async ({ key }: KeyId) => await toggleBookmark(key),
     },
   },
 })
