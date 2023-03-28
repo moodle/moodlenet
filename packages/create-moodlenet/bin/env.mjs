@@ -34,4 +34,5 @@ export const defaultCorePackages = [
   'simple-file-store',
   'openid',
   'resource',
+  'collection',
 ]
