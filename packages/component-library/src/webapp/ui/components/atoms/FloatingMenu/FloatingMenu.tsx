@@ -49,12 +49,10 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }
 
   const expand = () => {
-    console.log('Expanding')
     !currentVisible && setCurrentVisible(true)
   }
 
   const close = () => {
-    console.log('Closing')
     currentVisible && setCurrentVisible(false)
   }
 
@@ -114,7 +112,6 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
       className={`floating-menu ${className}`}
       onBlur={e => handleBlur(e)}
       onFocus={() => {
-        console.log('OnFocus expanding')
         expand()
       }}
       onMouseDown={e => handleOnMouseDown(e)}
