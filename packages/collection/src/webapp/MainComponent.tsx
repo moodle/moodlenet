@@ -11,8 +11,11 @@ import { CollectionPageRoute } from '../ui.mjs'
 import { MainContext } from './MainContext.js'
 
 const myRoutes = {
-  rootPath: '/',
-  routes: <Route path="collection/:key" element={<CollectionPageRoute />} />,
+  routes: (
+    <>
+      <Route path="collection/:key" element={<CollectionPageRoute />} />,
+    </>
+  ),
 }
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
