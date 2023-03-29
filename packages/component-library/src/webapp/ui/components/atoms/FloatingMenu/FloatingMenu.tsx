@@ -48,17 +48,11 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
     closeMenuDown(e)
   }
 
-  const toggle = () => {
-    setCurrentVisible(p => !p)
-  }
-
   const expand = () => {
-    console.log('Expanding')
     !currentVisible && setCurrentVisible(true)
   }
 
   const close = () => {
-    console.log('Closing')
     currentVisible && setCurrentVisible(false)
   }
 
@@ -109,31 +103,15 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }
 
   const handleOnMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    // const currentTarget = e.currentTarget
-
-    // requestAnimationFrame(() => {
-    // if (
-    //   !(
-    //     currentTarget.contains(document.activeElement) && currentTarget !== document.activeElement
-    //   )
-    // ) {
-    console.log('currentVisible ', currentVisible)
     currentVisible ? close() : expand()
-    // }
-    // })
     e.stopPropagation()
   }
-
-  // useEffect(() => {
-  //   hoverElementRef?.current?.setAttribute('inert', '')
-  // }, [hoverElementRef])
 
   return (
     <div
       className={`floating-menu ${className}`}
       onBlur={e => handleBlur(e)}
       onFocus={() => {
-        console.log('OnFocus expanding')
         expand()
       }}
       onMouseDown={e => handleOnMouseDown(e)}
@@ -145,7 +123,6 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
         ref={hoverElementRef}
         onKeyUp={switchMenu}
         onKeyDown={closeMenu}
-        // onClick={toggle}
         onMouseEnter={() => hover && expand()}
         onMouseLeave={() => hover && close()}
       >
