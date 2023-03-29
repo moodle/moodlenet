@@ -103,17 +103,29 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }
 
   const handleOnMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    currentVisible ? close() : expand()
+    const currentTarget = e.currentTarget
+
+    requestAnimationFrame(() => {
+      if (
+        !(
+          currentTarget.contains(document.activeElement) && currentTarget !== document.activeElement
+        )
+      ) {
+        currentVisible ? close() : expand()
+      }
+    })
     e.stopPropagation()
   }
+
+  // useEffect(() => {
+  //   hoverElementRef?.current?.setAttribute('inert', '')
+  // }, [hoverElementRef])
 
   return (
     <div
       className={`floating-menu ${className}`}
       onBlur={e => handleBlur(e)}
-      onFocus={() => {
-        expand()
-      }}
+      onFocus={expand}
       onMouseDown={e => handleOnMouseDown(e)}
       tabIndex={0}
     >
