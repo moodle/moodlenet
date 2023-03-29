@@ -9,7 +9,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
 import { WebUserProfile } from '../../server/types.mjs'
 import defaultAvatarUrl from '../ui/assets/img/default-avatar.svg'
@@ -46,6 +46,7 @@ export const AuthCtx = createContext<AuthCtxT>(null as never)
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const nav = useNavigate()
+  const loc = useLocation()
 
   const { use } = useContext(MainContext)
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null | undefined>(
@@ -92,8 +93,13 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [use.me])
 
   useEffect(() => {
-    sessionTokenCookieChanged = () => fetchClientSessionDataRpc().finally(() => nav('/'))
-  }, [fetchClientSessionDataRpc, nav])
+    sessionTokenCookieChanged = () => {
+      fetchClientSessionDataRpc().finally(() => {
+        const redirectTo = new URLSearchParams(loc.search).get(REDIRECT_Q_NAME)
+        nav(redirectTo || '/')
+      })
+    }
+  }, [fetchClientSessionDataRpc, loc.search, loc.state, nav])
 
   const ctx = useMemo<AuthCtxT | null>(() => {
     if (clientSessionData === null) {
@@ -143,3 +149,33 @@ wrapFetch((url, reqInit, next) => {
     sessionTokenCookieChanged()
   })
 })
+
+const REDIRECT_Q_NAME = 'redirectTo'
+export function useNeedsWebUserLogin(): {
+  isAdmin: boolean
+  myProfile: WebUserProfile
+} | null {
+  const nav = useNavigate()
+  const loc = useLocation()
+  const authCtx = useContext(AuthCtx)
+  useEffect(() => {
+    if (authCtx.isAuthenticated && authCtx.clientSessionData.myProfile) {
+      return
+    }
+    const usp = new URLSearchParams()
+    usp.append(REDIRECT_Q_NAME, `${loc.pathname}${loc.search}${loc.hash}`)
+    nav(`/login?${usp.toString()}`)
+  }, [authCtx.clientSessionData?.myProfile, authCtx.isAuthenticated, loc, nav])
+  return authCtx.clientSessionData?.myProfile
+    ? {
+        isAdmin: authCtx.clientSessionData.isAdmin,
+        myProfile: authCtx.clientSessionData.myProfile,
+      }
+    : null
+}
+
+// const STATE_SYM = Symbol('NeedsWebUserLogin state')
+// type State = {
+//   _: typeof STATE_SYM
+//   redirectToAfterLogin: string
+// }
