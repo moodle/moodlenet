@@ -102,7 +102,7 @@ function getProviderConfig() {
     interactions: {
       url(_ctx, interaction) {
         // console.log('interactions url', interaction, ctx)
-        return `/@moodlenet/openid/interaction/${interaction.uid}`
+        return `/openid/interaction/${interaction.uid}`
       },
     },
 
