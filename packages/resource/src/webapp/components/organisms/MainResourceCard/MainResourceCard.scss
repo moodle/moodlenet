@@ -96,28 +96,8 @@
         }
 
         > .tertiary-button,
-        * > .tertiary-button {
-          padding: 3px 4px;
-        }
-
-        > .more-button {
-          > .more-button {
-            > .hover-element {
-              > .more {
-                padding: 0 6px;
-              }
-            }
-
-            > .menu > .content {
-              > .send-to-moodle-button {
-                > div {
-                  > svg {
-                    padding: 1.5px;
-                  }
-                }
-              }
-            }
-          }
+        > .more-button > .hover-element > .tertiary-button {
+          padding: 0 6px;
         }
 
         > .publish-button {
