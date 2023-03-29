@@ -5,7 +5,7 @@ import { OpenIdInteractionPageRoute } from './page/OpenIdInteractionPageRoute.js
 export const routesItem: RouteRegItem = {
   routes: (
     <>
-      <Route path="interaction/:interactionId" element={<OpenIdInteractionPageRoute />} />
+      <Route path="openid/interaction/:interactionId" element={<OpenIdInteractionPageRoute />} />
     </>
   ),
 }
