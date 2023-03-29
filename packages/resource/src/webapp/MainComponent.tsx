@@ -11,8 +11,11 @@ import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute
 import { MainContext } from './MainContext.js'
 
 const myRoutes = {
-  rootPath: '/',
-  routes: <Route path="resource/:key" element={<ResourcePageRoute />} />,
+  routes: (
+    <>
+      <Route path="resource/:key" element={<ResourcePageRoute />} />
+    </>
+  ),
 }
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
