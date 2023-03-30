@@ -1,9 +1,14 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { ContentBackupImages, href, TagListStory } from '@moodlenet/react-app/ui'
+import { ContentBackupImages, href } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
-import { ResourceCardActions, ResourceCardData, ResourceCardState } from '../../../../common.mjs'
+import {
+  ResourceCardAccess,
+  ResourceCardActions,
+  ResourceCardData,
+  ResourceCardState,
+} from '../../../../common.mjs'
 import ResourceCard, { ResourceCardProps } from './ResourceCard.js'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
@@ -37,38 +42,42 @@ export const getResourceCardStoryProps = (
   const id = `${Math.floor(Math.random() * ContentBackupImages.length * 10000000)}`
   const data: ResourceCardData = {
     resourceId: `id-${id}`,
-    tags: TagListStory,
+    // tags: TagListStory,
     title: `Why the  ${
       Math.random() < 0.5 ? 'tropical rainforests are' : 'the oceans are'
     } the world's most important ecosystems`,
-    image:
+    imageUrl:
       'https://images.unsplash.com/photo-1442120108414-42e7ea50d0b5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1249&q=80',
-    type: 'Video',
+    contentType: 'file',
+    downloadFilename: 'Rainfores documentary.mp4',
     resourceHomeHref: href('Pages/Resource/Logged In'),
-    numLikes: 23,
+    // numLikes: 23,
     owner: {
       profileHref: href('Pages/Profile/Logged In'),
       avatar:
         'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80',
       displayName: 'Karl Phosler',
     },
-    isPublished: true,
   }
   const state: ResourceCardState = {
-    bookmarked: false,
-    liked: false,
+    isPublished: true,
     isSelected: false,
     selectionMode: false,
+    // bookmarked: false,
+    // liked: false,
   }
   const actions: ResourceCardActions = {
-    toggleLike: action('toggle like'),
-    toggleBookmark: action('toggle bookmark'),
+    // toggleLike: action('toggle like'),
+    // toggleBookmark: action('toggle bookmark'),
     publish: action('publish resource'),
-    setIsPublished: action('set is published'),
+    unpublish: action('unpublish resource'),
   }
-  const access = {
-    canEdit: false,
-    isCreator: false,
+  const access: ResourceCardAccess = {
+    // canLike: true,
+    // canBookmark: true,
+    // isCreator: false,
+    canDelete: false,
+    canPublish: false,
     isAuthenticated: true,
   }
   return overrideDeep<ResourceCardProps>(
@@ -92,23 +101,23 @@ export const ResourceCardLoggedOutStoryProps: ResourceCardProps = getResourceCar
 
 export const ResourceCardOwnerStoryProps: ResourceCardProps = getResourceCardStoryProps({
   access: {
-    isCreator: true,
+    // isCreator: true,
   },
 })
 
 export const ResourceCardOwnerPrivateStoryProps: ResourceCardProps = getResourceCardStoryProps({
-  data: {
+  state: {
     isPublished: false,
   },
   access: {
-    isCreator: true,
+    // isCreator: true,
   },
 })
 
 export const ResourceCardOwnerBookmarkedStoryProps: ResourceCardProps = getResourceCardStoryProps({
   ...ResourceCardOwnerStoryProps,
   state: {
-    bookmarked: true,
+    // bookmarked: true,
   },
   access: {},
 })
@@ -117,7 +126,7 @@ export const ResourceCardVerticalLoggedInStoryProps: ResourceCardProps = getReso
   ...ResourceCardOwnerStoryProps,
   orientation: 'vertical',
   state: {
-    liked: true,
+    // liked: true,
   },
   access: {},
 })

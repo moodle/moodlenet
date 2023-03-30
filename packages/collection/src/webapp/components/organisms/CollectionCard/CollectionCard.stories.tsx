@@ -2,10 +2,14 @@ import { ContentBackupImages } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
-import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
-import { CollectionCardData } from '../../../../common.mjs'
+import {
+  CollectionCardAccess,
+  CollectionCardActions,
+  CollectionCardData,
+  CollectionCardState,
+} from '../../../../common.mjs'
 import { CollectionCard, CollectionCardProps } from './CollectionCard.js'
 
 const meta: ComponentMeta<typeof CollectionCard> = {
@@ -42,25 +46,25 @@ export const getCollectionCardStoryProps = (
     collectionHref: href('Pages/Collection/Logged In'),
   }
 
-  const state = {
-    bookmarked: false,
-    followed: false,
-    numFollowers: 32,
-    numResource: 5,
+  const state: CollectionCardState = {
+    numResources: 5,
     isPublished: true,
+    // numFollowers: 32,
+    // bookmarked: false,
+    // followed: false,
   }
 
-  const actions = {
+  const actions: CollectionCardActions = {
     publish: action('publish resource'),
-    setIsPublished: action('set is published'),
-    toggleFollow: linkTo('Molecules/CollectionCard', 'followed'),
-    toggleBookmark: linkTo('Molecules/CollectionCard', 'Bookmarked'),
+    unpublish: action('unpublish resource'),
+    // toggleFollow: linkTo('Molecules/CollectionCard', 'followed'),
+    // toggleBookmark: linkTo('Molecules/CollectionCard', 'Bookmarked'),
   }
 
-  const access = {
+  const access: CollectionCardAccess = {
     isAuthenticated: true,
     isCreator: false,
-    canEdit: false,
+    canPublish: true,
   }
 
   return overrideDeep<CollectionCardProps>(
@@ -83,10 +87,10 @@ export const CollectionCardfollowedStoryProps: CollectionCardProps = {
   ...getCollectionCardStoryProps({
     ...CollectionCardLoggedInStoryProps,
     state: {
-      followed: true,
+      // followed: true,
     },
     actions: {
-      toggleFollow: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working}
+      // toggleFollow: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working}
     },
   }),
 }
@@ -95,10 +99,10 @@ export const CollectionCardBookmarkedStoryProps: CollectionCardProps = {
   ...getCollectionCardStoryProps({
     ...CollectionCardLoggedInStoryProps,
     state: {
-      bookmarked: true,
+      // bookmarked: true,
     },
     actions: {
-      toggleBookmark: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working}
+      // toggleBookmark: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working}
     },
   }),
 }
@@ -124,8 +128,8 @@ export const CollectionCardOwnerStoryProps: CollectionCardProps = {
       collectionHref: href('Pages/Collection/Owner'),
     },
     state: {
-      followed: true,
       isPublished: true,
+      // followed: true,
     },
     actions: {},
     access: {

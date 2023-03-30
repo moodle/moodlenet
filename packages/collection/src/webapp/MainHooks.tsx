@@ -29,15 +29,21 @@ export const useMainHook = ({
     const updateResourceRespForm = (resourceForm: unknown) =>
       resourceForm && resourceResp && updateResourceResp({ ...resourceResp, resourceForm })
 
-    const { _delete, edit, setIsPublished, toggleFollow, toggleBookmark } = rpcCaller
+    const {
+      _delete,
+      edit,
+      setIsPublished,
+      // toggleFollow,
+      // toggleBookmark
+    } = rpcCaller
     return {
       editCollection: (res: CollectionFormValues) =>
         edit(collectionKey, res).then(updateResourceRespForm),
       deleteCollection: () => _delete(collectionKey).then(updateResourceResp),
       setIsPublished: (publish: boolean) =>
         setIsPublished(collectionKey, publish) as unknown as (publish: boolean) => void,
-      toggleFollow: () => toggleFollow(collectionKey) as unknown,
-      toggleBookmark: () => toggleBookmark(collectionKey) as unknown,
+      // toggleFollow: () => toggleFollow(collectionKey) as unknown,
+      // toggleBookmark: () => toggleBookmark(collectionKey) as unknown,
     }
   }, [collectionKey, resourceResp, rpcCaller])
 
