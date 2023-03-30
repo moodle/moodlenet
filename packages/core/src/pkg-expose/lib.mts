@@ -1,7 +1,10 @@
 import assert from 'assert'
 import { Readable } from 'stream'
+import { assertCallInitiator, getSetCoreAsyncContext } from '../async-context/lib.mjs'
+import { RpcStatusType } from '../exports.mjs'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
 import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
+import codes, { RpcStatusName } from './rpc-status-codes.mjs'
 import { PkgExpose, PkgExposeDef, RpcFile } from './types.mjs'
 
 type ExposedRegItem = {
@@ -74,4 +77,30 @@ export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefin
     return
   }
   return await getReadable()
+}
+
+export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) {
+  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
+
+  const initiator = assertCallInitiator()
+  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus: { rpcStatusCode, payload } }))
+}
+
+export function getRpcStatusCode() {
+  const rpcStatus = getSetCoreAsyncContext.get()?.rpcStatus
+  if (rpcStatus === undefined) {
+    return undefined
+  }
+  const { rpcStatusCode, payload } = rpcStatus
+  // const statusDesc =
+  //   typeof code === 'string' ? code : Object.entries(codes).find(([, _code]) => _code === code)?.[0]
+
+  const rpcStatusType: RpcStatusType = {
+    rpcStatusCode,
+    payload,
+  }
+  return rpcStatusType
+}
+export function isRpcStatusType(_: any): _ is RpcStatusType {
+  return 'number' === typeof _?.statusCode
 }
