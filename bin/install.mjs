@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import execa from 'execa'
-import { open, readFile, writeFile } from 'fs/promises'
+import { open, writeFile } from 'fs/promises'
 import * as jose from 'jose'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
@@ -11,7 +11,6 @@ if (restOpts.clean) {
   rimraf.sync(mnDevDir)
 }
 
-const { defaultConfigJsonTemplateFilename } = await ensureAllDefaults()
 await mnCreateInstall()
 await generateInstanceConfigFile()
 
@@ -31,9 +30,7 @@ async function mnCreateInstall() {
 async function generateInstanceConfigFile() {
   const configJsonFilename = resolve(mnDevDir, 'default.config.json')
 
-  const defaultConfigJsonTemplate = JSON.parse(
-    await readFile(defaultConfigJsonTemplateFilename, 'utf-8'),
-  )
+  const defaultConfigJsonTemplate = await defaultConfigJson()
   await writeFile(
     configJsonFilename,
     JSON.stringify(
@@ -51,17 +48,6 @@ async function generateInstanceConfigFile() {
       2,
     ),
   )
-}
-
-async function ensureAllDefaults() {
-  const defaultConfigJsonTemplateFilename = resolve(devMachinesDir, 'default.config.template.json')
-  const configJsonString = await defaultConfigJson()
-  try {
-    await open(defaultConfigJsonTemplateFilename, 'r')
-  } catch {
-    await writeFile(defaultConfigJsonTemplateFilename, configJsonString, 'utf-8')
-  }
-  return { defaultConfigJsonTemplateFilename }
 }
 
 async function ensureDefaultKeypairs() {
@@ -96,43 +82,41 @@ async function defaultConfigJson() {
   const { defaultKeyFilenames, alg, type } = await ensureDefaultKeypairs()
   const npmRegistry = await getNpmRegistry()
 
-  const configJsonString = JSON.stringify(
-    {
-      pkgs: {
-        '@moodlenet/core': {
-          instanceDomain: 'http://localhost:8080',
-          npmRegistry,
-        },
-        '@moodlenet/crypto': {
-          keys: {
-            alg,
-            type,
-            private: defaultKeyFilenames.private,
-            public: defaultKeyFilenames.public,
-          },
-        },
-        '@moodlenet/arangodb': {
-          connectionCfg: {
-            url: 'http://localhost:8529',
-          },
-        },
-        '@moodlenet/http-server': {
-          port: 8080,
-        },
-        '@moodlenet/email-service': {
-          nodemailerTransport: {
-            jsonTransport: true,
-          },
-        },
-        '@moodlenet/system-entities': {
-          rootPassword: 'root',
+  return {
+    pkgs: {
+      '@moodlenet/core': {
+        instanceDomain: 'http://localhost:8080',
+        npmRegistry,
+      },
+      '@moodlenet/crypto': {
+        keys: {
+          alg,
+          type,
+          private: defaultKeyFilenames.private,
+          public: defaultKeyFilenames.public,
         },
       },
+      '@moodlenet/arangodb': {
+        connectionCfg: {
+          url: 'http://localhost:8529',
+        },
+      },
+      '@moodlenet/http-server': {
+        port: 8080,
+      },
+      '@moodlenet/email-service': {
+        nodemailerTransport: {
+          jsonTransport: true,
+        },
+      },
+      '@moodlenet/system-entities': {
+        rootPassword: 'root',
+      },
+      '@moodlenet/react-app': {
+        noWebappServer: true,
+      },
     },
-    null,
-    2,
-  )
-  return configJsonString
+  }
 }
 
 async function getNpmRegistry() {
