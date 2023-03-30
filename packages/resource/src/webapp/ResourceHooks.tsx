@@ -48,7 +48,6 @@ export const useResourceBaseProps = ({
     return {
       editResource: (res: ResourceFormValues) =>
         edit(resourceKey, res).then(updateResourceRespForm),
-      // getResource: () => get(resourceKey).then(setResourceResp),
       deleteResource: () => _delete(resourceKey).then(updateResourceResp),
       // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp),
       // toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
