@@ -3,7 +3,7 @@ export * from './webapp/components/molecules/CollectionContributorCard/Collectio
 export * from './webapp/components/organisms/CollectionCard/CollectionCard.js'
 export * from './webapp/components/organisms/CollectionCard/story-props.js'
 export * from './webapp/components/organisms/Header/Header.js'
-export * from './webapp/components/organisms/Header/HeaderResource.js'
+export * from './webapp/components/organisms/Header/HeaderCollection.js'
 export * from './webapp/components/organisms/lists/CollectionList/CollectionList.js'
 export * from './webapp/components/organisms/lists/LandingCollectionList/LandingCollectionList.js'
 export * from './webapp/components/organisms/lists/ProfileCollectionList/ProfileCollectionList.js'

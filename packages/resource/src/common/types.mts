@@ -1,4 +1,3 @@
-import { FollowTag } from '@moodlenet/component-library'
 import { Href } from '@moodlenet/react-app/ui'
 import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
@@ -18,30 +17,27 @@ export type MainContextResourceType = MyPkgContext & {
 }
 
 export type ResourceFormValues = {
-  name: string
+  title: string
   description: string
-  content: string | File | null
-  image: string | File | null
 }
 
 export type ResourceData = {
-  id: string
+  resourceId: string
   mnUrl: string
-  numLikes: number
   contentType: 'link' | 'file'
+  imageUrl: string | null
+  contentUrl: string | null
   downloadFilename: string
   specificContentType: string // ex: url, pdf, doc...
-  contentUrl: string
-  isPublished: boolean
   isWaitingForApproval?: boolean
+  // numLikes: number
 }
 
 export type ResourceState = {
-  isSaving?: boolean
-  isSaved?: boolean
-  liked: boolean
-  bookmarked: boolean
+  isPublished: boolean
   uploadProgress?: number
+  // liked: boolean
+  // bookmarked: boolean
 }
 
 export type ResourceTypeForm = {
@@ -58,63 +54,71 @@ export type ResourceTypeForm = {
 }
 
 export type ResourceActions = {
-  setIsPublished: (publish: boolean) => void
-  toggleLike(): unknown
-  toggleBookmark(): unknown
-  editResource: (values: ResourceFormValues) => Promise<unknown>
+  publish: () => void
+  unpublish: () => void
+  editData: (values: ResourceFormValues) => Promise<unknown>
+  setImage: (file: File) => Promise<unknown>
+  setContent: (content: File | string) => Promise<unknown>
   deleteResource(): unknown
-}
-
-export type RpcCaller = {
-  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
-  get: (resourceKey: string) => Promise<ResourceTypeForm>
-  _delete: (resourceKey: string) => Promise<ResourceTypeForm>
-  toggleBookmark: (resourceKey: string) => Promise<ResourceTypeForm>
-  toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceTypeForm>
+  // toggleLike(): unknown
+  // toggleBookmark(): unknown
 }
 
 export type ResourceAccess = {
   isAuthenticated: boolean
   isCreator: boolean
-  isAdmin: boolean
   canEdit: boolean
+  canPublish: boolean
+  canDelete: boolean
+  // canLike: boolean
+  // canBookmark: boolean
 }
 
 export type ResourceCardData = {
-  resourceId: string
-  tags?: FollowTag[]
-  image?: string | null
-  type: string //'Video' | 'Web Page' | 'Moodle Book'
-  title: string
-  isPublished: boolean
-  numLikes: number
+  // tags?: FollowTag[]
+  // numLikes: number
   owner: {
     displayName: string
     avatar: string | null
     profileHref: Href
   }
   resourceHomeHref?: Href
-}
+} & Pick<
+  ResourceData,
+  'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'isWaitingForApproval'
+> &
+  Pick<ResourceFormValues, 'title'>
 
 export type ResourceCardState = {
   isSelected: boolean
   selectionMode: boolean // When selection resources to be added to a collection
-  liked: boolean
-  bookmarked: boolean
-}
+  // liked: boolean
+  // bookmarked: boolean
+} & Pick<ResourceState, 'isPublished'>
 
-export type ResourceCardActions = {
-  toggleLike: () => void
-  toggleBookmark: () => void
-  publish: () => void
-  setIsPublished: (publish: boolean) => void
-}
+export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 
-export type ResourceCardAccess = {
-  isCreator: boolean
-  canEdit: boolean
-  isAuthenticated: boolean
+export type ResourceCardAccess = Pick<
+  ResourceAccess,
+  | 'isAuthenticated'
+  //  'canLike' |
+  //  'canBookmark' |
+  | 'canPublish'
+  | 'canDelete'
+>
+// {
+//   isCreator: boolean
+//   canEdit: boolean
+//   isAuthenticated: boolean
+// }
+
+export type RpcCaller = {
+  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
+  get: (resourceKey: string) => Promise<ResourceTypeForm>
+  _delete: (resourceKey: string) => Promise<ResourceTypeForm>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceTypeForm>
+  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>
+  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
 }
 
 export type Organization = {
@@ -128,8 +132,13 @@ export type Organization = {
   color: string
 }
 
-export const getResourceTypeInfo = (type: string): { typeName: string; typeColor: string } => {
-  switch (type) {
+export const getResourceTypeInfo = (
+  isLikeOrFile?: 'link' | 'file',
+  filename?: string,
+): { typeName: string | null; typeColor: string | null } => {
+  const filenameExtension = filename?.split('.').pop()
+  const resourceType = isLikeOrFile === 'link' ? 'link' : filenameExtension ?? 'unknown'
+  switch (resourceType) {
     case 'mp4':
     case 'avi':
     case 'mov':
@@ -157,7 +166,7 @@ export const getResourceTypeInfo = (type: string): { typeName: string; typeColor
     case 'xls':
     case 'xlsx':
     case 'ods':
-      return { typeName: `Spreadshee`, typeColor: '#0f9d58' }
+      return { typeName: `Spreadsheet`, typeColor: '#0f9d58' }
     case 'doc':
     case 'docx':
     case 'odt':
@@ -168,10 +177,12 @@ export const getResourceTypeInfo = (type: string): { typeName: string; typeColor
       return { typeName: `Presentation`, typeColor: '#dfa600' }
     case 'mbz':
       return { typeName: 'Moodle course', typeColor: '#f88012' }
-    case 'Web Page':
+    case 'link':
       return { typeName: `Web page`, typeColor: '#C233C7' }
+    case 'unknown':
+      return { typeName: null, typeColor: null }
     default:
-      return { typeName: type, typeColor: '#15845A' }
+      return { typeName: resourceType, typeColor: '#15845A' }
   }
 }
 
