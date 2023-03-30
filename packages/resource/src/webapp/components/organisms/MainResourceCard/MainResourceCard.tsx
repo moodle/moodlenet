@@ -1,11 +1,4 @@
-import {
-  Bookmark,
-  BookmarkBorder,
-  Favorite,
-  FavoriteBorder,
-  Link as LinkIcon,
-  Share,
-} from '@material-ui/icons'
+import { Link as LinkIcon, Share } from '@material-ui/icons'
 import {
   AddonItem,
   Card,
@@ -55,6 +48,8 @@ export type MainResourceCardProps = {
 
   data: ResourceData
   form: FormikHandle<ResourceFormValues>
+  contentForm: FormikHandle<{ content: File | string | null }>
+  imageForm: FormikHandle<{ image: File | null }>
 
   state: ResourceState
   actions: ResourceActions
@@ -68,8 +63,10 @@ export type MainResourceCardProps = {
 export const MainResourceCard: FC<MainResourceCardProps> = ({
   slots,
 
-  form,
   data,
+  form,
+  contentForm,
+  imageForm,
 
   state,
   actions,
@@ -77,7 +74,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   fileMaxSize,
   shouldShowErrors,
-  publish,
 }) => {
   const {
     mainColumnItems,
@@ -87,26 +83,47 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     moreButtonItems,
     footerRowItems,
   } = slots
+
   const {
-    id,
+    resourceId,
     mnUrl,
     contentType,
-    numLikes,
-    contentUrl,
     specificContentType,
-    isPublished,
     isWaitingForApproval,
+    contentUrl,
+    downloadFilename,
+    imageUrl,
+    // numLikes,
   } = data
-  const { bookmarked, liked, isSaved, isSaving, uploadProgress } = state
-  const { toggleBookmark, toggleLike, setIsPublished, deleteResource } = actions
 
-  const { canEdit, isAuthenticated, isCreator } = access
+  const {
+    isPublished,
+    uploadProgress,
+    // bookmarked,
+    // liked,
+  } = state
+
+  const {
+    publish,
+    unpublish,
+    deleteResource,
+    // toggleBookmark,
+    // toggleLike,
+  } = actions
+
+  const {
+    canEdit,
+    // canLike,
+    // canBookmark,
+    // isCreator,
+  } = access
+
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
+  const backupImage: string | undefined = useMemo(() => getBackupImage(resourceId), [resourceId])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [imageUrl] = useImageUrl(form.values?.image, backupImage)
-  const { typeName, typeColor } = getResourceTypeInfo(specificContentType)
+  const [image] = useImageUrl(imageUrl, backupImage)
+  const { typeName, typeColor } = getResourceTypeInfo(contentType, downloadFilename)
   const { width } = useWindowDimensions()
 
   const copyUrl = () => {
@@ -129,17 +146,17 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       textAreaAutoSize
       displayMode
       className="title underline"
-      value={form.values.name}
+      value={form.values.title}
       placeholder="Title"
       onChange={form.handleChange}
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
       }}
-      error={shouldShowErrors && form.errors.name}
+      error={shouldShowErrors && form.errors.title}
     />
   ) : (
     <div className="title" key="resource-title">
-      {form.values.name}
+      {form.values.title}
     </div>
   )
 
@@ -155,81 +172,92 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const typePill = specificContentType && (
-    <div
-      className="type-pill"
-      key="type-pill"
-      style={{
-        background: typeColor,
-      }}
-    >
-      {typeName}
-    </div>
-  )
+  const typePill =
+    typeName && typeColor ? (
+      <div
+        className="type-pill"
+        key="type-pill"
+        style={{
+          background: typeColor,
+        }}
+      >
+        {typeName}
+      </div>
+    ) : null
 
-  const savingFeedback = isSaving ? (
-    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-      <Sync />
-      {/* Saving */}
-    </abbr>
-  ) : null
-
-  const savedFeedback =
-    !isSaving && isSaved ? (
-      // const [showSavedText, setShowSavedText] = useState(true)
-      // setTimeout(() => setShowSavedText(false), 3000)
-
-      <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-        <CloudDoneOutlined />
-        {/* {showSavedText && 'Saved'} */}
+  const savingFeedback =
+    form.isSubmitting || imageForm.isSubmitting ? (
+      <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+        <Sync />
+        Saving...
       </abbr>
     ) : null
+
+  const [showSavedText, setShowSavedText] = useState(false)
+  const savedFeedback = () => {
+    if (
+      !(form.isSubmitting || imageForm.isSubmitting) &&
+      (form.submitCount > 0 || imageForm.submitCount > 0)
+    ) {
+      setTimeout(() => setShowSavedText(false), 5000)
+      return (
+        <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+          <CloudDoneOutlined />
+          {showSavedText && 'Saved'}
+        </abbr>
+      )
+    }
+    return null
+  }
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
     typePill,
     savingFeedback,
-    savedFeedback,
+    savedFeedback(),
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const likeButton =
-    isPublished || numLikes > 0 ? (
-      <TertiaryButton
-        className={`like ${isAuthenticated && !isCreator ? '' : 'disabled'} ${liked && 'liked'}`}
-        onClick={isAuthenticated && !isCreator ? toggleLike : () => undefined}
-        abbr={isCreator ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
-        key="like-button"
-      >
-        {liked ? <Favorite /> : <FavoriteBorder />}
-        <span>{numLikes}</span>
-      </TertiaryButton>
-    ) : null
+  // const likeButton =
+  //   isPublished || numLikes > 0 ? (
+  //     <TertiaryButton
+  //       className={`like ${!canLike ? '' : 'disabled'} ${liked && 'liked'}`}
+  //       onClick={canLike ? toggleLike : () => undefined}
+  //       abbr={isCreator ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
+  //       key="like-button"
+  //     >
+  //       {liked ? <Favorite /> : <FavoriteBorder />}
+  //       <span>{numLikes}</span>
+  //     </TertiaryButton>
+  //   ) : null
 
   const empty =
-    !form.values.content && !form.values.name && !form.values.description && !form.values.image
+    !form.values.title &&
+    !form.values.description &&
+    !contentForm.values.content &&
+    !imageForm.values.image
 
-  const bookmarkButtonSmallScreen: FloatingMenuContentItem | null =
-    !empty && width < 800
-      ? {
-          key: 'bookmark-button',
-          className: `bookmark ${bookmarked && 'bookmarked'}`,
-          onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
-          text: bookmarked ? 'Remove bookmark' : 'Bookmark',
-          Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
-        }
-      : null
+  // const bookmarkButtonSmallScreen: FloatingMenuContentItem | null =
+  //   !empty && width < 800
+  //     ? {
+  //         key: 'bookmark-button',
+  //         className: `bookmark ${bookmarked && 'bookmarked'}`,
+  //         onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
+  //         text: bookmarked ? 'Remove bookmark' : 'Bookmark',
+  //         Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
+  //       }
+  //     : null
 
-  const bookmarkButtonBigScreen = !empty && width > 800 && (
-    <TertiaryButton
-      key="bookmark-button"
-      className={`bookmark ${bookmarked && 'bookmarked'}`}
-      abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-      onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
-    >
-      {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-    </TertiaryButton>
-  )
+  // const bookmarkButtonBigScreen = !empty && width > 800 && (
+  //   <TertiaryButton
+  //     key="bookmark-button"
+  //     className={`bookmark ${bookmarked && 'bookmarked'}`}
+  //     abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+  //     onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
+  //   >
+  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+  //   </TertiaryButton>
+  // )
 
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {
@@ -265,7 +293,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     width < 800 && canEdit && (isPublished || isWaitingForApproval)
       ? {
           text: 'Back to draft',
-          onClick: () => setIsPublished(false),
+          onClick: unpublish,
           className: 'draft-button',
           key: 'draft-button',
           Icon: <PublicOff />,
@@ -313,12 +341,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //     : null
 
   const openLinkOrDownloadFile: FloatingMenuContentItem | null =
-    width < 800 && form.values.content
+    width < 800 && contentUrl
       ? {
-          Icon: form.values.content instanceof File ? <InsertDriveFile /> : <LinkIcon />,
-          text: form.values.content instanceof File ? 'Download file' : 'Open link',
+          Icon: (
+            <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
+              {contentType === 'file' ? <InsertDriveFile /> : <LinkIcon />}
+            </a>
+          ),
+
+          text: contentType === 'file' ? 'Download file' : 'Open link',
           key: 'open-link-or-download-file-button',
-          onClick: () => setIsPublished(false),
         }
       : null
 
@@ -326,7 +358,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     draftButton,
     openLinkOrDownloadFile,
     shareButton,
-    bookmarkButtonSmallScreen,
+    // bookmarkButtonSmallScreen,
     deleteButton,
     // sendToMoodleButton,
     // addToCollectionButton,
@@ -380,7 +412,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //               <div
   //                 className="loading"
   //                 style={{
-  //                   visibility: form.isSubmitting ? 'visible' : 'hidden',
+  //                   visibility: form.isSubmitting ? 'visible' : 'hresourceIdden',
   //                 }}
   //               >
   //                 <Loading color="white" />
@@ -388,7 +420,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //               <div
   //                 className="label"
   //                 style={{
-  //                   visibility: form.isSubmitting ? 'hidden' : 'visible',
+  //                   visibility: form.isSubmitting ? 'hresourceIdden' : 'visible',
   //                 }}
   //               >
   //                 <Save />
@@ -406,11 +438,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //   : null
 
   const updatedTopRightHeaderItems = [
-    likeButton,
+    // likeButton,
     publishedButton,
     publishingButton,
     publishButton,
-    bookmarkButtonBigScreen,
+    // bookmarkButtonBigScreen,
     // editSaveButton,
     ...(topRightHeaderItems ?? []),
     moreButton,
@@ -442,8 +474,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const resourceUploader = canEdit ? (
     <UploadResource
-      form={form}
+      contentForm={contentForm}
+      imageForm={imageForm}
+      imageUrl={imageUrl}
+      contentUrl={contentUrl}
       fileMaxSize={fileMaxSize}
+      downloadFilename={downloadFilename}
       uploadProgress={uploadProgress}
       key="resource-uploader"
       imageOnClick={() => setIsShowingImage(true)}
@@ -454,19 +490,19 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <img
       className="image"
       key="image"
-      src={imageUrl}
+      src={image}
       alt="Background"
       {...(contentType === 'file' && {
         onClick: () => setIsShowingImage(true),
       })}
-      style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
+      style={{ maxHeight: image ? 'fit-content' : '150px' }}
     />
   )
 
   const imageContainer = !canEdit ? (
-    form.values.content && form.values.image ? (
+    (contentForm.values.content || contentUrl) && (imageForm.values.image || imageUrl) ? (
       <div className="image-container" key="image-container">
-        {contentType === 'link' ? (
+        {contentType === 'link' && contentUrl ? (
           <a href={contentUrl} target="_blank" rel="noreferrer">
             {imageDiv}
           </a>
@@ -607,7 +643,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const modals = (
     <>
-      {isShowingImage /* && imageUrl */ && (
+      {isShowingImage && imageUrl && (
         <Modal
           className="image-modal"
           closeButton={false}
@@ -665,8 +701,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     //         <div className="main-column">
     //
     //         </div>
-    //         <div className="side-column">
-    //           {updatedSideColumnItems?.map(i => (
+    //         <div className="sresourceIde-column">
+    //           {updatedSresourceIdeColumnItems?.map(i => (
     //             <i.Item key={i.key} />
     //           ))}
     //         </div>

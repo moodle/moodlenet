@@ -4,10 +4,6 @@
   position: relative;
   border-radius: 10px;
 
-  &.is-private {
-    opacity: 1;
-  }
-
   > .resource-card-header {
     pointer-events: none;
     position: absolute;

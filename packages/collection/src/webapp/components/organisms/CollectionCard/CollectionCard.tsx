@@ -1,4 +1,4 @@
-import { Bookmark, BookmarkBorder, FilterNone, PermIdentity, Person } from '@material-ui/icons'
+import { FilterNone } from '@material-ui/icons'
 import { AddonItem, Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { Public } from '@mui/icons-material'
@@ -33,9 +33,26 @@ export const CollectionCard: FC<CollectionCardProps> = ({
   access,
 }) => {
   const { collectionId, imageUrl, title, collectionHref } = data
-  const { isPublished, bookmarked, followed, numFollowers, numResource } = state
-  const { publish, setIsPublished, toggleFollow, toggleBookmark } = actions
-  const { isAuthenticated, canEdit, isCreator } = access
+  const {
+    isPublished,
+    // bookmarked,
+    // followed,
+    // numFollowers,
+    numResources,
+  } = state
+  const {
+    publish,
+    unpublish,
+    // toggleFollow,
+    // toggleBookmark
+  } = actions
+  const {
+    // isAuthenticated,
+    // isCreator,
+    // canFollow,
+    // canBookmark,
+    canPublish,
+  } = access
 
   const background = {
     background:
@@ -45,17 +62,17 @@ export const CollectionCard: FC<CollectionCardProps> = ({
     backgroundSize: 'cover',
   }
 
-  const numResources = (
+  const numResourcesDiv = (
     <div className="num-resources" key="num-resources">
       <FilterNone />
-      {numResource}
+      {numResources}
     </div>
   )
 
-  const publishButton = canEdit && (
+  const publishButton = canPublish && (
     <TertiaryButton
       key="publish-button"
-      onClick={isPublished ? () => setIsPublished(false) : publish}
+      onClick={isPublished ? () => unpublish : publish}
       className={`publish-button ${isPublished ? 'published' : 'draft'}`}
       abbr={isPublished ? 'Sent to draft' : 'Publish'}
     >
@@ -63,48 +80,44 @@ export const CollectionCard: FC<CollectionCardProps> = ({
     </TertiaryButton>
   )
 
-  const bookmarkButton = isAuthenticated && (
-    <TertiaryButton
-      key="bookmark-button"
-      className={`bookmark-button ${bookmarked ? 'bookmarked' : ''}`}
-      onClick={toggleBookmark}
-      abbr="Bookmark"
-    >
-      {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-    </TertiaryButton>
-  )
+  // const bookmarkButton = canBookmark && (
+  //   <TertiaryButton
+  //     key="bookmark-button"
+  //     className={`bookmark-button ${bookmarked ? 'bookmarked' : ''}`}
+  //     onClick={toggleBookmark}
+  //     abbr="Bookmark"
+  //   >
+  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+  //   </TertiaryButton>
+  // )
 
-  const followButton = (
-    <TertiaryButton
-      key="follow-button"
-      className={`follow-button ${followed ? 'followed' : ''} ${
-        !isAuthenticated || isCreator ? 'disabled' : ''
-      }`}
-      abbr={
-        isCreator
-          ? 'Creators cannot follow their own content'
-          : !isAuthenticated
-          ? 'Login to follow the resource'
-          : 'Follow'
-      }
-      onClick={
-        isAuthenticated && !isCreator
-          ? toggleFollow
-          : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()
-      }
-    >
-      {followed ? <Person /> : <PermIdentity />}
-      <span>{numFollowers}</span>
-    </TertiaryButton>
-  )
+  // const followButton = (
+  //   <TertiaryButton
+  //     key="follow-button"
+  //     className={`follow-button ${followed ? 'followed' : ''} ${!canFollow ? 'disabled' : ''}`}
+  //     abbr={
+  //       isCreator
+  //         ? 'Creators cannot follow their own content'
+  //         : !isAuthenticated
+  //         ? 'Login or signup to follow the collection'
+  //         : followed
+  //         ? 'Unfollow'
+  //         : 'Follow'
+  //     }
+  //     onClick={canFollow ? toggleFollow : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+  //   >
+  //     {followed ? <Person /> : <PermIdentity />}
+  //     <span>{numFollowers}</span>
+  //   </TertiaryButton>
+  // )
 
-  const updatedTopLeftItems = [numResources, ...(topLeftItems ?? [])].filter(
+  const updatedTopLeftItems = [numResourcesDiv, ...(topLeftItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
   const updatedTopRightItems = [
-    bookmarkButton,
-    followButton,
+    // bookmarkButton,
+    // followButton,
     publishButton,
     ...(topRightItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)

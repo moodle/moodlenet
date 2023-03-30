@@ -13,7 +13,7 @@ import { SchemaOf } from 'yup'
 import {
   CollectionAccess,
   CollectionActions,
-  Collectiondata,
+  CollectionData,
   CollectionFormValues,
   CollectionState,
 } from '../../../../common/types.mjs'
@@ -38,7 +38,7 @@ export type CollectionProps = {
   moreButtonItems?: AddonItem[]
   extraDetailsItems?: AddonItem[]
 
-  data: Collectiondata
+  data: CollectionData
   collectionForm: CollectionFormValues
   validationSchema: SchemaOf<CollectionFormValues>
   state: CollectionState
@@ -63,26 +63,35 @@ export const Collection: FC<CollectionProps> = ({
   actions,
   access,
 }) => {
-  const { isPublished, isWaitingForApproval } = data
-  const { editCollection, setIsPublished, deleteCollection } = actions
-  const { isCreator, canEdit } = access
+  const { isWaitingForApproval } = data
+  const { isPublished } = state
+  const { editData, deleteCollection, publish, unpublish, setImage } = actions
+  const { canPublish } = access
 
   const form = useFormik<CollectionFormValues>({
     initialValues: collectionForm,
     validationSchema: validationSchema,
     onSubmit: values => {
-      return editCollection(values)
+      return editData(values)
+    },
+  })
+
+  const imageForm = useFormik<{ image: File | null }>({
+    initialValues: { image: null },
+    validationSchema: validationSchema,
+    onSubmit: values => {
+      return values.image ? setImage(values.image) : undefined
     },
   })
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
 
-  const publish = () => {
+  const checkFormAndPublish = () => {
     if (form.isValid) {
       form.submitForm()
       setShouldShowErrors(false)
-      setIsPublished(true)
+      publish()
     } else {
       setShouldShowErrors(true)
     }
@@ -93,7 +102,8 @@ export const Collection: FC<CollectionProps> = ({
       key="main-collection-card"
       data={data}
       form={form}
-      publish={publish}
+      imageForm={imageForm}
+      publish={checkFormAndPublish}
       state={state}
       actions={actions}
       access={access}
@@ -102,11 +112,11 @@ export const Collection: FC<CollectionProps> = ({
     />
   )
 
-  const contributorCard = !isCreator ? (
+  const contributorCard = isPublished ? (
     <CollectionContributorCard {...collectionContributorCardProps} key="contributor-card" />
   ) : null
 
-  const editorActionsContainer = canEdit ? (
+  const editorActionsContainer = canPublish ? (
     <Card
       className="collection-action-card"
       hideBorderWhenSmall={true}
@@ -126,7 +136,7 @@ export const Collection: FC<CollectionProps> = ({
         <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
       )}
       {isPublished || isWaitingForApproval ? (
-        <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
+        <SecondaryButton onClick={unpublish}>Back to draft</SecondaryButton>
       ) : (
         <></>
       )}

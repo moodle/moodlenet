@@ -1,6 +1,5 @@
 import { ResourceFormValues } from '@moodlenet/resource/common'
 import { Resource, ResourceProps } from '@moodlenet/resource/ui'
-import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useResourceStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
@@ -12,15 +11,7 @@ const meta: ComponentMeta<typeof Resource> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: [
-    'ResourceLoggedOutStoryProps',
-    'ResourceLoggedInStoryProps',
-    'ResourceOwnerStoryProps',
-    'ResourceActivatedStoryProps',
-    'ResourceAdminStoryProps',
-    'ResourceApprovedStoryProps',
-    'NewResourceProps',
-  ],
+  excludeStories: ['NewResourceProps'],
 }
 
 type ResourceStory = ComponentStory<typeof Resource>
@@ -43,52 +34,46 @@ export const LoggedIn: ResourceStory = () => {
   return <Resource {...props} />
 }
 
-export const Owner: ResourceStory = () => {
+export const Creator: ResourceStory = () => {
   const props = useResourceStoryProps({
-    data: {
-      isPublished: true,
-    },
+    data: {},
     state: {
-      isSaving: false,
-      isSaved: true,
+      isPublished: true,
     },
     actions: {},
     access: {
       isCreator: true,
       canEdit: true,
+      canPublish: true,
     },
   })
   return <Resource {...props} />
 }
 
 export const NewResourceProps: Partial<ResourceFormValues> = {
-  name: '',
+  title: '',
   description: '',
-  content: null,
-  image: null,
 }
 
 export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {
       downloadFilename: undefined,
-      numLikes: 0,
-      specificContentType: '',
-      isPublished: false,
       isWaitingForApproval: false,
+      contentUrl: undefined,
+      imageUrl: undefined,
+      // numLikes: 0,
     },
     resourceForm: NewResourceProps,
 
     state: {
-      isSaving: false,
-      isSaved: true,
+      isPublished: false,
     },
-    actions: {
-      setIsPublished: action('set is published'),
-    },
+    actions: {},
     access: {
       isCreator: true,
       canEdit: true,
+      canPublish: true,
     },
   })
   return <Resource {...props} />
@@ -102,6 +87,7 @@ export const Admin: ResourceStory = () => {
 
     access: {
       canEdit: true,
+      canPublish: true,
     },
   })
   return <Resource {...props} />

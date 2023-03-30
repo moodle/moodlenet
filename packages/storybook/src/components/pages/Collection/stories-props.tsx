@@ -74,7 +74,7 @@ export const validationSchema: SchemaOf<CollectionFormValues> = object({
   }),
   isFile: boolean().required(),
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
-  name: string().max(160).min(3).required(/* t */ `Please provide a title`),
+  title: string().max(160).min(3).required(/* t */ `Please provide a title`),
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && v.size > maxUploadSize
@@ -97,8 +97,8 @@ export const validationSchema: SchemaOf<CollectionFormValues> = object({
 export const collectionFormValues: CollectionFormValues = {
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  image: 'https://picsum.photos/200/100',
-  name: '',
+  // image: 'https://picsum.photos/200/100',
+  title: '',
 }
 
 export const useCollectionForm = (overrides?: Partial<CollectionFormValues>) => {
@@ -106,11 +106,11 @@ export const useCollectionForm = (overrides?: Partial<CollectionFormValues>) => 
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
-      name: 'Best collection ever',
+      title: 'Best collection ever',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      image:
-        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+      // image:
+      //   'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
       ...overrides,
     },
   })
@@ -130,41 +130,44 @@ export const useCollectionStoryProps = (
   overrides?: PartialDeep<CollectionProps>,
 ): CollectionProps => {
   const data: CollectionData = {
-    id: 'qjnwglkd69io-sports',
+    collectionId: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
-    numFollowers: 23,
-    isPublished: true,
+    imageUrl:
+      'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
     ...overrides?.data,
+    // numFollowers: 23,
   }
 
   const collectionForm: CollectionFormValues = {
-    name: 'Best collection ever',
+    title: 'Best collection ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find.',
-    image:
-      'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
     // ...overrides?.collectionForm,
   }
 
   const state: CollectionState = {
-    followed: false,
-    bookmarked: false,
+    isPublished: true,
+    // followed: false,
+    // bookmarked: false,
   }
 
   const actions: CollectionActions = {
-    toggleFollow: action('toggleFollow'),
-    toggleBookmark: action('toggleBookmark'),
-    editCollection: async () => action('editing collection submited'),
-    setIsPublished: action('setIsPublished'),
+    editData: async () => action('editing collection submited'),
+    setImage: async () => action('setImage'),
+    publish: action('publish'),
+    unpublish: action('unpublish'),
     deleteCollection: action('deleteCollection'),
     ...overrides?.actions,
+    // toggleFollow: action('toggleFollow'),
+    // toggleBookmark: action('toggleBookmark'),
   }
 
   const access: CollectionAccess = {
     isAuthenticated: true,
     canEdit: false,
     isCreator: false,
-    isAdmin: false,
+    canDelete: false,
+    canPublish: false,
     ...overrides?.access,
   }
 
@@ -187,13 +190,21 @@ export const useCollectionStoryProps = (
     orientation: 'horizontal',
   })
 
-  const resourceCardList = (
-    <>
-      {resourceCardPropsList.map(r => (
-        <ResourceCard {...r} key={r.data.resourceId} />
-      ))}
-    </>
-  )
+  const mainColumnItems =
+    overrides?.mainColumnItems !== undefined
+      ? undefined
+      : [
+          {
+            Item: () => (
+              <>
+                {resourceCardPropsList.map(r => (
+                  <ResourceCard {...r} key={r.data.resourceId} />
+                ))}
+              </>
+            ),
+            key: 'resource-list',
+          },
+        ]
 
   return overrideDeep<CollectionProps>(
     {
@@ -203,7 +214,7 @@ export const useCollectionStoryProps = (
           : MainLayoutLoggedInStoryProps,
 
       mainCollectionCardSlots: mainCollectionCardSlots,
-      mainColumnItems: [{ Item: () => resourceCardList, key: 'resource-card-list' }],
+      mainColumnItems: mainColumnItems,
       collectionContributorCardProps:
         CollectionContributorCardStories.CollectionContributorCardStoryProps,
       data: data,

@@ -15,7 +15,6 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 // import Card from '../../../atoms/Card/Card'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
-import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder } from '@material-ui/icons'
 import { AddonItem, Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { CloseRounded, Public } from '@mui/icons-material'
@@ -68,15 +67,41 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   onClick,
   onRemoveClick,
 }) => {
-  const { resourceId, image, type, title, isPublished, numLikes, owner, resourceHomeHref } = data
-  const { liked, bookmarked, isSelected, selectionMode } = state
-  const { toggleLike, toggleBookmark, publish, setIsPublished } = actions
-  const { canEdit, isCreator, isAuthenticated } = access
+  const {
+    resourceId,
+    imageUrl,
+    title,
+    // numLikes,
+    owner,
+    resourceHomeHref,
+    contentType,
+    downloadFilename,
+  } = data
+  const {
+    // liked,
+    // bookmarked,
+    isPublished,
+    isSelected,
+    selectionMode,
+  } = state
+  const {
+    // toggleLike,
+    //  toggleBookmark,
+    publish,
+    unpublish,
+  } = actions
+  const {
+    canDelete,
+    canPublish,
+    // canLike,
+    // isCreator,
+    // isAuthenticated,
+  } = access
 
   const resourceCard = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState<'micro' | 'tiny' | 'small' | 'medium' | 'big'>('medium')
 
-  const { typeName, typeColor } = getResourceTypeInfo(type)
+  const { typeName, typeColor } = getResourceTypeInfo(contentType, downloadFilename)
 
   const avatar = {
     backgroundImage: 'url("' + (owner.avatar ? owner.avatar : defaultAvatar) + '")',
@@ -85,13 +110,13 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   let background = {}
   if (orientation === 'horizontal') {
     background = {
-      background: 'url("' + (image ? image : getBackupImage(resourceId)) + '")',
+      background: 'url("' + (imageUrl ? imageUrl : getBackupImage(resourceId)) + '")',
     }
   } else {
     background = {
       background:
         'linear-gradient(0deg, rgba(0, 0, 0, 0.91) 0%, rgba(0, 0, 0, 0.1729) 45.15%, rgba(0, 0, 0, 0) 100%), url(' +
-        (image ? image : getBackupImage(resourceId)) +
+        (imageUrl ? imageUrl : getBackupImage(resourceId)) +
         ')',
     }
   }
@@ -133,17 +158,18 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     return () => window.removeEventListener('resize', updateSize)
   }, [resourceCard])
 
-  const deleteButton = canEdit && (
+  const deleteButton = canDelete && (
     <TertiaryButton key="delete-button" onClick={onRemoveClick} className={`delete ${orientation}`}>
       <CloseRounded />
     </TertiaryButton>
   )
 
-  const typeLabel = (
-    <div className="type" key="type-label" style={{ background: typeColor }}>
-      {typeName}
-    </div>
-  )
+  const typeLabel =
+    typeName && typeColor ? (
+      <div className="type" key="type-label" style={{ background: typeColor }}>
+        {typeName}
+      </div>
+    ) : null
 
   const updatedTopLeftItems = [typeLabel, ...(topLeftItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
@@ -185,10 +211,10 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     </Link>
   )
 
-  const pulishButton = canEdit && (
+  const pulishButton = canPublish && (
     <TertiaryButton
       key="publish-button"
-      onClick={isPublished ? () => setIsPublished(false) : publish}
+      onClick={isPublished ? unpublish : publish}
       className={`publish-button ${isPublished ? 'published' : 'draft'}`}
       abbr={isPublished ? 'Sent to draft' : 'Publish'}
     >
@@ -196,51 +222,51 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     </TertiaryButton>
   )
 
-  const bookmarkButton = isAuthenticated && !selectionMode && (
-    <TertiaryButton
-      key={`bookmark-button`}
-      className={`bookmark-button ${bookmarked && 'bookmarked'} ${
-        selectionMode || !isAuthenticated ? 'disabled' : ''
-      }`}
-      onClick={toggleBookmark}
-      hiddenText={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-    >
-      {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-    </TertiaryButton>
-  )
+  // const bookmarkButton = isAuthenticated && !selectionMode && (
+  //   <TertiaryButton
+  //     key={`bookmark-button`}
+  //     className={`bookmark-button ${bookmarked && 'bookmarked'} ${
+  //       selectionMode || !isAuthenticated ? 'disabled' : ''
+  //     }`}
+  //     onClick={toggleBookmark}
+  //     hiddenText={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+  //   >
+  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+  //   </TertiaryButton>
+  // )
 
-  const likeButton = (
-    <TertiaryButton
-      key="like-button"
-      className={`like-button ${liked && 'liked'} ${
-        selectionMode || !isAuthenticated || isCreator ? 'disabled' : ''
-      }`}
-      abbr={
-        isCreator
-          ? 'Creators cannot like their own content'
-          : !isAuthenticated
-          ? 'Login to like the resource'
-          : ''
-      }
-      hiddenText=""
-      onClick={
-        isAuthenticated && !isCreator && !selectionMode
-          ? toggleLike
-          : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()
-      }
-    >
-      {liked ? <Favorite /> : <FavoriteBorder />}
-      <span>{numLikes}</span>
-    </TertiaryButton>
-  )
+  // const likeButton = (
+  //   <TertiaryButton
+  //     key="like-button"
+  //     className={`like-button ${liked && 'liked'} ${
+  //       selectionMode || !isAuthenticated || canLike ? 'disabled' : ''
+  //     }`}
+  //     abbr={
+  //       isCreator
+  //         ? 'Creators cannot like their own content'
+  //         : !isAuthenticated
+  //         ? 'Login to like the resource'
+  //         : ''
+  //     }
+  //     hiddenText=""
+  //     onClick={
+  //       canLike && !selectionMode
+  //         ? toggleLike
+  //         : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()
+  //     }
+  //   >
+  //     {liked ? <Favorite /> : <FavoriteBorder />}
+  //     <span>{numLikes}</span>
+  //   </TertiaryButton>
+  // )
 
   const updatedBottomLeftItems = [avatarLabel, ...(bottomLeftItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
   const updatedBottomRightItems = [
-    bookmarkButton,
-    likeButton,
+    // bookmarkButton,
+    // likeButton,
     pulishButton,
     ...(bottomRightItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
@@ -280,9 +306,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   return (
     <Card
       ref={resourceCard}
-      className={`resource-card ${className} ${isSelected ? 'selected' : ''} ${orientation} ${
-        isCreator && isPublished ? '' : 'is-private'
-      }`}
+      className={`resource-card ${className} ${isSelected ? 'selected' : ''} ${orientation} `}
       hover={true}
       onClick={onClick}
       style={orientation === 'vertical' ? background : {}}
