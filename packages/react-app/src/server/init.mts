@@ -23,6 +23,8 @@ import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.m
 import { setCurrentUnverifiedJwtToken, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 
+export const env = getEnv()
+
 export const kvStore = await kvStoreFactory<KeyValueData>(shell)
 if (!(await kvStore.get('appearanceData', '')).value) {
   await kvStore.set('appearanceData', '', defaultAppearanceData)
@@ -95,20 +97,33 @@ await shell.call(addMiddleware)({
     },
   ],
 })
-await shell.call(mountApp)({
-  getApp(express) {
-    const mountApp = express()
-    const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
-    mountApp.use(staticWebApp)
-    //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
-    mountApp.get(`*`, (req, res, next) => {
-      if (req.url.startsWith('/.')) {
-        next()
-        return
-      }
-      res.sendFile(resolve(latestBuildFolder, 'index.html'))
-    })
-    return mountApp
-  },
-  mountOnAbsPath: '/',
-})
+
+if (!env.noWebappServer) {
+  await shell.call(mountApp)({
+    getApp(express) {
+      const mountApp = express()
+      const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
+      mountApp.use(staticWebApp)
+      //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
+      mountApp.get(`*`, (req, res, next) => {
+        if (req.url.startsWith('/.')) {
+          next()
+          return
+        }
+        res.sendFile(resolve(latestBuildFolder, 'index.html'))
+      })
+      return mountApp
+    },
+    mountOnAbsPath: '/',
+  })
+}
+
+type Env = {
+  noWebappServer?: boolean
+}
+function getEnv(): Env {
+  const config = shell.config ?? {}
+  //FIXME: validate configs
+  const env: Env = config
+  return env
+}
