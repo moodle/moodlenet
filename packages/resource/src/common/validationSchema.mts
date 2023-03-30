@@ -10,7 +10,7 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
   }),
   isFile: boolean().required(),
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
-  name: string().max(160).min(3).required(/* t */ `Please provide a title`),
+  title: string().max(160).min(3).required(/* t */ `Please provide a title`),
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && v.size > maxUploadSize

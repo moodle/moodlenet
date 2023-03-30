@@ -6,7 +6,7 @@ export type FloatingMenuContentItem = {
   Icon: ReactElement
   text: string
   key: string
-  onClick(): unknown
+  onClick?(): unknown
   className?: string
 }
 
