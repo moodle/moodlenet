@@ -1,4 +1,11 @@
-import { getMaybeRpcFileReadable, readableRpcFile, RpcArgs, RpcFile } from '@moodlenet/core'
+import {
+  getMaybeRpcFileReadable,
+  getRpcStatusCode,
+  isRpcStatusType,
+  readableRpcFile,
+  RpcArgs,
+  RpcFile,
+} from '@moodlenet/core'
 import assert from 'assert'
 import express, { json, Request } from 'express'
 import { open } from 'fs/promises'
@@ -63,6 +70,8 @@ export function makeExtPortsApp() {
           .fn(...rpcArgs)
           .then(async rpcResponse => {
             const mReadable = await getMaybeRpcFileReadable(rpcResponse)
+            const { rpcStatusCode: statusCode } = getRpcStatusCode() ?? { rpcStatusCode: 200 }
+            httpResp.status(statusCode)
             if (mReadable) {
               const rpcFile: RpcFile = rpcResponse
               rpcFile.name && httpResp.header('x-rpc-file-name', `${rpcFile.name}`)
@@ -75,14 +84,18 @@ export function makeExtPortsApp() {
               const httpRpcResponse: HttpRpcResponse = {
                 response: rpcResponse,
               }
-              httpResp./* status(200). */ send(httpRpcResponse)
+              httpResp.send(httpRpcResponse)
               return
             }
           })
           .catch(err => {
-            console.log(err)
-            httpResp.status(500)
-            httpResp.send(err instanceof Error ? format(err) : String(err)) //(JSON.stringify({ msg: {}, val: String(err) }))
+            const { rpcStatusCode, payload } = isRpcStatusType(err)
+              ? err
+              : {
+                  rpcStatusCode: 500,
+                  payload: err instanceof Error ? format(err) : String(err),
+                }
+            httpResp.status(rpcStatusCode).send(payload)
           })
         return srvApp
       })

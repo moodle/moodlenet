@@ -4,7 +4,10 @@ export * from './async-context/types.mjs'
 export {
   assertRpcFileReadable,
   getMaybeRpcFileReadable,
+  getRpcStatusCode,
+  isRpcStatusType,
   readableRpcFile,
+  setRpcStatusCode,
 } from './pkg-expose/lib.mjs'
 export type { getExposedByPkgIdentifier, getExposedByPkgName } from './pkg-expose/lib.mjs'
 export * from './pkg-expose/types.mjs'
