@@ -1,7 +1,9 @@
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
-import { useMemo } from 'react'
+import { AuthCtx } from '@moodlenet/react-app/web-lib'
+import { useContext, useMemo } from 'react'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useMainHook } from '../../../MainHooks.js'
+import { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.jsx'
 import { CollectionProps } from './Collection.js'
 
 export const useCollectionPageProps = ({
@@ -9,6 +11,7 @@ export const useCollectionPageProps = ({
 }: {
   collectionKey: string
 }): CollectionProps | null => {
+  const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const _mainProps = useMainHook({ collectionKey })
   const mainLayoutProps = useMainLayoutProps()
 
@@ -23,16 +26,11 @@ export const useCollectionPageProps = ({
       extraDetailsItems: [],
     }
     const { contributor, form: collectionForm } = props
-    const { data, state, access } = { ...props }
 
-    const mainCollectionCardSlots = {
+    const mainCollectionCardSlots: MainCollectionCardSlots = {
       mainColumnItems: [],
-      topLeftItems: [],
-      topRightItems: [],
-      data,
-      state,
-      actions,
-      access,
+      topLeftHeaderItems: [],
+      topRightHeaderItems: [],
     }
 
     const propsPage: CollectionProps = {
@@ -44,9 +42,15 @@ export const useCollectionPageProps = ({
       collectionForm,
       validationSchema,
       actions,
+      access: {
+        ...props.access,
+        isAuthenticated,
+        isCreator: clientSessionData?.myProfile?._key === _mainProps?.props.contributor._key,
+      },
     }
+
     return propsPage
-  }, [_mainProps, mainLayoutProps])
+  }, [_mainProps, clientSessionData?.myProfile?._key, isAuthenticated, mainLayoutProps])
 
   return collectionProps
 }

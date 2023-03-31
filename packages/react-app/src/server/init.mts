@@ -43,10 +43,10 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 
 await shell.call(registerAccessController)({
   u() {
-    return isCurrentUserEntity()
+    return `(${isEntityClass(WebUserProfile.entityClass)} && ${isCurrentUserEntity()}) || null`
   },
   r(/* { myPkgMeta } */) {
-    return `${isEntityClass(WebUserProfile.entityClass)}` // && ${myPkgMeta}.xx == null`
+    return `${isEntityClass(WebUserProfile.entityClass)} || null` // && ${myPkgMeta}.xx == null`
   },
   c(entityClass) {
     if (!isSameClass(WebUserProfile.entityClass, entityClass)) {

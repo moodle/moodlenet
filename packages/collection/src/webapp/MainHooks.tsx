@@ -17,15 +17,18 @@ export const useMainHook = ({
     rpcCaller,
     // auth: { isAdmin, isAuthenticated },
   } = useContext(MainContext)
-  const [collection, setCollection] = useState<CollectionDataResponce | null>()
+  const [collection, setCollection] = useState<CollectionDataResponce>()
 
   useEffect(() => {
     rpcCaller.get(collectionKey).then(data => setCollection(data))
   }, [collectionKey, rpcCaller, setCollection])
 
   const actions = useMemo<CollectionActions>(() => {
-    const updateRespForm = (resourceForm: CollectionFormValues) => (
-      collection && setCollection(current => current && { ...current, resourceForm }), resourceForm
+    const updateRespForm = (resourceForm: CollectionFormValues | undefined) => (
+      resourceForm &&
+        collection &&
+        setCollection(current => current && { ...current, resourceForm }),
+      resourceForm
     )
 
     const { _delete, edit, setIsPublished, setImage } = rpcCaller
