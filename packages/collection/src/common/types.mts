@@ -1,4 +1,4 @@
-import { Href } from '@moodlenet/react-app/ui'
+import { HeaderMenuItemRegItem, Href } from '@moodlenet/react-app/ui'
 import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
 
@@ -14,6 +14,7 @@ export type MainContextResourceType = MyPkgContext & {
     isAdmin: boolean
     clientSessionData: ClientSessionData | null | undefined
   }
+  actionsMenu: MainActions
 }
 
 export type RpcCaller = {
@@ -22,8 +23,14 @@ export type RpcCaller = {
   _delete: (collectionId: string) => Promise<unknown>
   setIsPublished: (collectionId: string, publish: boolean) => Promise<unknown>
   setImage: (collectionId: string, file: File) => Promise<unknown>
-  // toggleFollow: (collectionId: string) => Promise<unknown>
-  // toggleBookmark: (collectionId: string) => Promise<unknown>
+  create: () => Promise<CollectionDataResponce>
+}
+
+export type MainActions = {
+  create: {
+    action: () => unknown | undefined
+    menu: HeaderMenuItemRegItem
+  }
 }
 
 export type CollectionContributorCardProps = {

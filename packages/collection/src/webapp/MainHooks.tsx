@@ -20,7 +20,7 @@ export const useMainHook = ({
   const [collection, setCollection] = useState<CollectionDataResponce | null>()
 
   useEffect(() => {
-    rpcCaller.get(collectionKey).then(data => setCollection(data as CollectionDataResponce))
+    rpcCaller.get(collectionKey).then(data => setCollection(data))
   }, [collectionKey, rpcCaller, setCollection])
 
   const actions = useMemo<CollectionActions>(() => {
