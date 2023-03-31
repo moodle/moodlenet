@@ -26,9 +26,10 @@ export type ResourceData = {
   mnUrl: string
   contentType: 'link' | 'file'
   imageUrl: string | null
+
   contentUrl: string | null
-  downloadFilename: string
-  specificContentType: string // ex: url, pdf, doc...
+  downloadFilename: string | null
+  // specificContentType: string // ex: url, pdf, doc...
   isWaitingForApproval?: boolean
   // numLikes: number
 }
@@ -134,7 +135,7 @@ export type Organization = {
 
 export const getResourceTypeInfo = (
   isLikeOrFile?: 'link' | 'file',
-  filename?: string,
+  filename?: string | null,
 ): { typeName: string | null; typeColor: string | null } => {
   const filenameExtension = filename?.split('.').pop()
   const resourceType = isLikeOrFile === 'link' ? 'link' : filenameExtension ?? 'unknown'
