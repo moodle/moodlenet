@@ -1,12 +1,10 @@
 import { ResourceFormValues, ResourceTypeForm } from '../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
-const getFakeData = (resourceKey: string, param?: any): ResourceTypeForm =>
+const getFakeData = (resourceKey: string, param?: File | string): ResourceTypeForm =>
   resourceKey || param ? resFakeData : resFakeData
-const resolver = (
-  resourceKey: string,
-  param?: Record<string, any> | string,
-): Promise<ResourceTypeForm> => new Promise(resolve => resolve(getFakeData(resourceKey, param)))
+const resolver = (resourceKey: string, param?: File | string): Promise<ResourceTypeForm> =>
+  new Promise(resolve => resolve(getFakeData(resourceKey, param)))
 
 export const empityResourceForm = getFakeData('0')
 

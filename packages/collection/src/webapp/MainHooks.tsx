@@ -17,42 +17,36 @@ export const useMainHook = ({
     rpcCaller,
     // auth: { isAdmin, isAuthenticated },
   } = useContext(MainContext)
-  const [resourceResp, setResourceResp] = useState<CollectionDataResponce | null>()
+  const [collection, setCollection] = useState<CollectionDataResponce | null>()
 
   useEffect(() => {
-    rpcCaller.get(collectionKey).then(data => setResourceResp(data as CollectionDataResponce))
-  }, [collectionKey, rpcCaller, setResourceResp])
+    rpcCaller.get(collectionKey).then(data => setCollection(data as CollectionDataResponce))
+  }, [collectionKey, rpcCaller, setCollection])
 
   const actions = useMemo<CollectionActions>(() => {
-    const updateResourceResp = (resourceData: unknown) =>
-      setResourceResp(current => current && { ...current, resourceData })
-    const updateResourceRespForm = (resourceForm: unknown) =>
-      resourceForm && resourceResp && updateResourceResp({ ...resourceResp, resourceForm })
+    const updateResp = (resourceData: unknown) =>
+      setCollection(current => current && { ...current, resourceData })
+    const updateRespForm = (resourceForm: CollectionFormValues) => (
+      collection && updateResp({ ...collection, resourceForm }), resourceForm
+    )
 
-    const {
-      _delete,
-      edit,
-      setIsPublished,
-      // toggleFollow,
-      // toggleBookmark
-    } = rpcCaller
-    return {
-      editCollection: (res: CollectionFormValues) =>
-        edit(collectionKey, res).then(updateResourceRespForm),
-      deleteCollection: () => _delete(collectionKey).then(updateResourceResp),
-      setIsPublished: (publish: boolean) =>
-        setIsPublished(collectionKey, publish) as unknown as (publish: boolean) => void,
-      // toggleFollow: () => toggleFollow(collectionKey) as unknown,
-      // toggleBookmark: () => toggleBookmark(collectionKey) as unknown,
+    const { _delete, edit, setIsPublished, setImage } = rpcCaller
+    const actions: CollectionActions = {
+      editData: (res: CollectionFormValues) => edit(collectionKey, res).then(updateRespForm),
+      deleteCollection: () => _delete(collectionKey).then(updateResp),
+      publish: () => setIsPublished(collectionKey, true),
+      unpublish: () => setIsPublished(collectionKey, false),
+      setImage: (file: File) => setImage(collectionKey, file),
     }
-  }, [collectionKey, resourceResp, rpcCaller])
+    return actions
+  }, [collectionKey, collection, rpcCaller])
 
   return useMemo<MainPropsCollection | null>((): MainPropsCollection | null => {
-    if (!resourceResp || !actions) return null
+    if (!collection || !actions) return null
 
     return {
       actions,
-      props: resourceResp,
+      props: collection,
     }
-  }, [actions, resourceResp])
+  }, [actions, collection])
 }

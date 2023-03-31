@@ -45,6 +45,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       _delete: (collectionId: string) => me.rpc['webapp/delete']({ key: collectionId }),
       setIsPublished: (collectionId: string, publish: boolean) =>
         me.rpc['webapp/setIsPublished']({ key: collectionId, publish }),
+      setImage: (key: string, file: File) => me.rpc['webapp/setImage']({ key, file }),
       // toggleFollow: (collectionId: string) => me.rpc['webapp/toggleFollow']({ key: collectionId }),
       // toggleBookmark: (collectionId: string) =>
       //   me.rpc['webapp/toggleBookmark']({ key: collectionId }),
