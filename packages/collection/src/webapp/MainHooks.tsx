@@ -8,27 +8,21 @@ import {
 
 import { MainContext } from './MainContext.js'
 
-export const useMainHook = ({
-  collectionKey,
-}: {
-  collectionKey: string
-}): MainPropsCollection | null => {
-  const {
-    rpcCaller,
-    // auth: { isAdmin, isAuthenticated },
-  } = useContext(MainContext)
+type myProps = { collectionKey: string }
+export const useMainHook = ({ collectionKey }: myProps): MainPropsCollection | null => {
+  const { rpcCaller } = useContext(MainContext)
   const [collection, setCollection] = useState<CollectionDataResponce | null>()
 
   useEffect(() => {
     rpcCaller.get(collectionKey).then(data => setCollection(data))
   }, [collectionKey, rpcCaller, setCollection])
 
-  const actions = useMemo<CollectionActions>(() => {
+  const actions = useMemo((): CollectionActions => {
     const updateRespForm = (resourceForm: CollectionFormValues) => (
       collection && setCollection(current => current && { ...current, resourceForm }), resourceForm
     )
-
     const { _delete, edit, setIsPublished, setImage } = rpcCaller
+
     const actions: CollectionActions = {
       editData: async (res: CollectionFormValues) => {
         await edit(collectionKey, res).then(updateRespForm)
@@ -41,12 +35,8 @@ export const useMainHook = ({
     return actions
   }, [collectionKey, collection, rpcCaller])
 
-  return useMemo<MainPropsCollection | null>((): MainPropsCollection | null => {
-    if (!collection || !actions) return null
-
-    return {
-      actions,
-      props: collection,
-    }
-  }, [actions, collection])
+  return useMemo<MainPropsCollection | null>(
+    () => (!collection ? null : { actions, props: collection }),
+    [actions, collection],
+  )
 }

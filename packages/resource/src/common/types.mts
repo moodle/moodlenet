@@ -43,7 +43,7 @@ export type ResourceState = {
 
 export type ResourceTypeForm = {
   resourceForm: ResourceFormValues
-  authFlags: ResourceAccess
+  access: ResourceAccess
   state: ResourceState
   data: ResourceData
   contributor: {

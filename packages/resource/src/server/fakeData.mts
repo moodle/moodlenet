@@ -22,7 +22,7 @@ export const resFakeData: ResourceTypeForm = {
     // liked: false,
     // bookmarked: false,
   },
-  authFlags: {
+  access: {
     isAuthenticated: true,
     isCreator: true,
     canPublish: true,

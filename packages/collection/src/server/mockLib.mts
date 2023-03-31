@@ -45,18 +45,6 @@ const toggleFollow = (resourceKey: string) => resolver(resourceKey)
 const toggleBookmark = (resourceKey: string) => resolver(resourceKey)
 const setIsPublished = (resourceKey: string, publish: boolean) => resolver(resourceKey, publish)
 const setImage = (resourceKey: string, file: File) => resolver(resourceKey, file)
-/*
-  the type File
-  prints:
-      => lastModified: 1555453309243
-         lastModifiedDate: Wed Apr 17 2019 01:21:49 GMT+0100 (GMT+01:00) {}
-         name: "test.txt"
-         path: "test.txt" --> as you can see there is a path variable in here.
-         size: 16
-         type: "text/plain"
-         webkitRelativePath: ""
-         __proto__: File
-   */
 
 export const mockModel = {
   empityFormModel,

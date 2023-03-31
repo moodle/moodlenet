@@ -12,7 +12,7 @@ export const useCollectionPageProps = ({
   const _mainProps = useMainHook({ collectionKey })
   const mainLayoutProps = useMainLayoutProps()
 
-  const collectionProps = useMemo<CollectionProps | null>(() => {
+  const collectionProps = useMemo(() => {
     if (!_mainProps || !mainLayoutProps) return null
     const { actions, props } = _mainProps
     const layoutProps = {
