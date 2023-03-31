@@ -16,7 +16,7 @@ import {
   EntityCollectionDefs,
   EntityCollectionHandle,
   EntityCollectionHandles,
-  EntityData,
+  EntityDocFullData,
   EntityDocument,
   EntityMetadata,
   PkgUser,
@@ -73,7 +73,7 @@ export async function registerEntity<EntityDataType extends SomeEntityDataType>(
 
   const entityCollectionName = getEntityCollectionName(entityClass)
   const { collection /* , newlyCreated */ } = await shell.call(ensureDocumentCollection)<
-    EntityData<EntityDataType>
+    EntityDocFullData<EntityDataType>
   >(entityCollectionName)
 
   return {
@@ -130,7 +130,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
   return newEntity
 }
 
-export async function patch<EntityDataType extends SomeEntityDataType>(
+export async function patchEntity<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
   entityDataPatch: Patch<EntityDataType>,
@@ -152,7 +152,7 @@ export async function patch<EntityDataType extends SomeEntityDataType>(
   return patchRecord
 }
 
-export async function del<EntityDataType extends SomeEntityDataType>(
+export async function delEntity<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
 ) {
@@ -297,12 +297,12 @@ ${projectAqlRawProps}
   return queryCursor
 }
 
-export function docIsOfClass<EntityDataType extends SomeEntityDataType>(
-  doc: EntityDocument<any>,
-  entityClass: EntityClass<EntityDataType>,
-): doc is EntityDocument<EntityDataType> {
-  return isSameClass(entityClass, doc._meta.entityClass)
-}
+// export function docIsOfClass<EntityDataType extends SomeEntityDataType>(
+//   doc: EntityDocument<any>,
+//   entityClass: EntityClass<EntityDataType>,
+// ): doc is EntityDocument<EntityDataType> {
+//   return isSameClass(entityClass, doc._meta.entityClass)
+// }
 
 export function isSameClass<EntityDataType extends SomeEntityDataType>(
   target: EntityClass<EntityDataType>,
