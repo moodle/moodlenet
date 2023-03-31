@@ -38,11 +38,12 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
 
   const rpcCaller = useMemo((): RpcCaller => {
     return {
-      edit: (resourceKey: string, res: ResourceFormValues) =>
-        me.rpc['webapp/edit'](resourceKey, res),
-      get: (resourceKey: string) => me.rpc['webapp/get']({ param: resourceKey }),
-      _delete: (resourceKey: string) => me.rpc['webapp/delete'](resourceKey),
-      setIsPublished: (resourceKey: string) => me.rpc['webapp/setIsPublished'](resourceKey),
+      edit: (key: string, resource: ResourceFormValues) => me.rpc['webapp/edit']({ key, resource }),
+      get: (key: string) => me.rpc['webapp/get']({ key: key }),
+      _delete: (key: string) => me.rpc['webapp/delete']({ key }),
+      setIsPublished: (key: string) => me.rpc['webapp/setIsPublished']({ key }),
+      setImage: (key: string, file: File) => me.rpc['webapp/setImage']({ key, file }),
+      setContent: (key: string, file: File | string) => me.rpc['webapp/setContent']({ key, file }),
       // toggleBookmark: (resourceKey: string) => me.rpc['webapp/toggleBookmark'](resourceKey),
       // toggleLike: (resourceKey: string) => me.rpc['webapp/toggleLike'](resourceKey),
     }

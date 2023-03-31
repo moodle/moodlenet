@@ -16,16 +16,16 @@ export const collectionTextOptionProps: OptionItemProp[] = [
   { label: 'English Literature', value: 'English Literature' },
 ]
 
-export const useResourcePageProps = ({
-  resourceKey,
-}: {
+type MyProps = {
   resourceKey: string
   overrides?: Partial<ResourceFormValues>
-}): ResourceProps | null => {
+}
+
+export const useResourcePageProps = ({ resourceKey }: MyProps) => {
   const mainLayoutProps = useMainLayoutProps()
   const _baseProps = useResourceBaseProps({ resourceKey })
 
-  const props = useMemo<ResourceProps | null>((): ResourceProps | null => {
+  return useMemo<ResourceProps | null>((): ResourceProps | null => {
     if (!_baseProps) return null
     const {
       actions,
@@ -58,6 +58,4 @@ export const useResourcePageProps = ({
       fileMaxSize: maxUploadSize,
     }
   }, [_baseProps, mainLayoutProps])
-
-  return props
 }
