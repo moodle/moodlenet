@@ -2,7 +2,7 @@ import { DocumentMetadata } from '@moodlenet/arangodb/server'
 import { RpcFile } from '@moodlenet/core'
 
 export type FSStore = {
-  create: (logicalName: string, _rpcFile: RpcFile) => Promise<FsItem>
+  store: (logicalName: string, _rpcFile: RpcFile) => Promise<FsItem>
   get: (logicalName: string) => Promise<undefined | FsItem>
   del: (logicalName: string) => Promise<null | FsItem>
   ls: (pOpts?: Partial<LsOpts> | undefined) => Promise<undefined | FsItem[]>

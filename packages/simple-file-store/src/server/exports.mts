@@ -22,7 +22,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   await mkdir(storeBaseFsFolder, { recursive: true })
 
   const fsStore = {
-    create: shell.call(create),
+    store: shell.call(store),
     get: shell.call(get),
     del: shell.call(del),
     ls: shell.call(ls),
@@ -112,7 +112,8 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     return fsItems
   }
 
-  async function create(logicalName: string, _rpcFile: RpcFile): Promise<FsItem> {
+  async function store(logicalName: string, _rpcFile: RpcFile): Promise<FsItem> {
+    await del(logicalName)
     const fsFileRelativePath = newFsFileRelativePath(_rpcFile.name)
     const storeInDir = resolve(storeBaseFsFolder, ...fsFileRelativePath.slice(0, -1))
 
