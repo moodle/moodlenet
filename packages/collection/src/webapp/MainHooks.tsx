@@ -24,16 +24,16 @@ export const useMainHook = ({
   }, [collectionKey, rpcCaller, setCollection])
 
   const actions = useMemo<CollectionActions>(() => {
-    const updateResp = (resourceData: unknown) =>
-      setCollection(current => current && { ...current, resourceData })
     const updateRespForm = (resourceForm: CollectionFormValues) => (
-      collection && updateResp({ ...collection, resourceForm }), resourceForm
+      collection && setCollection(current => current && { ...current, resourceForm }), resourceForm
     )
 
     const { _delete, edit, setIsPublished, setImage } = rpcCaller
     const actions: CollectionActions = {
-      editData: (res: CollectionFormValues) => edit(collectionKey, res).then(updateRespForm),
-      deleteCollection: () => _delete(collectionKey).then(updateResp),
+      editData: async (res: CollectionFormValues) => {
+        await edit(collectionKey, res).then(updateRespForm)
+      },
+      deleteCollection: () => _delete(collectionKey),
       publish: () => setIsPublished(collectionKey, true),
       unpublish: () => setIsPublished(collectionKey, false),
       setImage: (file: File) => setImage(collectionKey, file),
