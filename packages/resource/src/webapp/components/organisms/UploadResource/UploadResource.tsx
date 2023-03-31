@@ -3,7 +3,7 @@ import {
   ImageContainer,
   InputTextField,
   PrimaryButton,
-  RoundButton,
+  RoundButton
 } from '@moodlenet/component-library'
 import { FormikHandle, useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
@@ -85,6 +85,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const [deleteFileLinkPressed, setDeleteFileLinkPressed] = useState(false)
 
+  const contentAvailable = !!(contentUrl || contentForm.values.content)
+  const imageAvailable = !!(imageUrl || imageForm.values.image)
+
   useEffect(() => {
     if (deleteFileLinkPressed) {
       setShouldShowErrors(false)
@@ -115,13 +118,15 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const deleteImage = useCallback(() => {
     setDeleteFileLinkPressed(true)
-    imageForm.setFieldValue('image', undefined)
+    imageForm.setFieldValue('image', null)
+    imageForm.submitForm()
   }, [imageForm])
 
   const deleteFileOrLink = useCallback(() => {
     setDeleteFileLinkPressed(true)
     setSubStep('AddFileOrLink')
-    contentForm.setFieldValue('content', undefined)
+    contentForm.setFieldValue('content', null)
+    contentForm.submitForm()
     setShouldShowErrors(false)
   }, [contentForm])
 
@@ -218,8 +223,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   useEffect(() => {
     const currentImageHeight = imageRef.current?.clientHeight
-    currentImageHeight && setImageHeight(currentImageHeight)
-  }, [imageUrl, imageRef])
+    imageAvailable && contentAvailable && currentImageHeight && setImageHeight(currentImageHeight)
+  }, [imageAvailable, contentAvailable, imageRef])
 
   const uploadedNameBackground =
     contentIsFile && uploadProgress
@@ -227,8 +232,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
           uploadProgress + 3
         }%, #ffffff00 )`
       : 'none'
-
-  // const uploadHeight = Number.isInteger(imageHeight) && imageHeight > 250 ? { height: imageHeight } : {}
 
   const fileUploader = (
     <div
@@ -276,7 +279,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
         onChange={({ target }) => {
           const file = target.files?.[0]
           if (file) {
-            imageForm.setFieldValue('image', file)
+            uploadImage(file)
           }
         }}
         hidden
@@ -290,8 +293,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
     return (
       <div
         className={`uploader ${isToDrop ? 'hover' : ''} 
-            `}
-        // ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
+        `}
+        //  ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
         id="drop_zone"
         onDrop={dropHandler}
         onDragOver={dragOverHandler}
@@ -302,18 +305,31 @@ export const UploadResource: FC<UploadResourceProps> = ({
     )
   }
 
+  const uploaderDiv = (
+    <>
+      {!contentAvailable && uploader('file')}
+      {!contentAvailable && imageAvailable && simpleImageContainer}
+      {contentAvailable && !imageAvailable && uploader('image')}
+      {contentAvailable && imageAvailable && imageContainer}
+    </>
+  )
+
   return (
     <div className="upload-resource">
       <div
         className={`main-container ${
-          imageUrl && !contentForm.values.content ? 'no-file-but-image' : ''
+          imageAvailable && !contentAvailable ? 'no-file-but-image' : ''
         }`}
-        style={{ height: imageUrl && !contentForm.values.content ? imageHeight : 'fit-content' }}
+        style={{
+          height:
+            imageAvailable && !contentAvailable
+              ? imageHeight < 250 || imageHeight === 'initial'
+                ? 250
+                : imageHeight
+              : 'fit-content',
+        }}
       >
-        {!contentForm.values.content && uploader('file')}
-        {contentForm.values.content && !imageUrl && uploader('image')}
-        {imageUrl && contentForm.values.content && imageContainer}
-        {imageUrl && !contentForm.values.content && simpleImageContainer}
+        {uploaderDiv}
       </div>
       <div className="bottom-container">
         {subStep === 'AddFileOrLink' ? (

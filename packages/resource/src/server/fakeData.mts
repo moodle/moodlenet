@@ -11,7 +11,6 @@ export const resFakeData: ResourceTypeForm = {
     resourceId: 'aaa123',
     mnUrl: 'http:www.ggg.it',
     contentUrl: 'http:www.ggg.it',
-    specificContentType: 'Video',
     contentType: 'link',
     downloadFilename: 'resf.pdf',
     imageUrl: 'https://picsum.photos/200/100',
