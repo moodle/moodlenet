@@ -1,4 +1,4 @@
-import { CollectionFormValues } from '../common.mjs'
+import { CollectionDataResponce, CollectionFormValues } from '../common.mjs'
 import { mockModel } from './mockLib.mjs'
 import { shell } from './shell.mjs'
 
@@ -36,6 +36,11 @@ export const expose = await shell.expose({
     'webapp/setImage': {
       guard: () => void 0,
       fn: async ({ key, file }: KeyId & { file: File }) => await setImage(key, file),
+    },
+    'webapp/create': {
+      guard: () => void 0,
+      fn: async (): Promise<CollectionDataResponce> =>
+        new Promise(resolve => resolve(mockModel.empityFormModel)),
     },
   },
 })
