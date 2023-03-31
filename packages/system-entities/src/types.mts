@@ -18,10 +18,13 @@ export type EntityMetadata = {
   pkgMeta: Record<PkgName, any>
 }
 
-export type EntityDocument<EntityDataType extends SomeEntityDataType> = EntityData<EntityDataType> &
+export type EntityFullDocument<EntityDataType extends SomeEntityDataType> =
+  EntityDocFullData<EntityDataType> & DocumentMetadata
+
+export type EntityDocument<EntityDataType extends SomeEntityDataType> = EntityDataType &
   DocumentMetadata
 
-export type EntityData<EntityDataType extends SomeEntityDataType> = {
+export type EntityDocFullData<EntityDataType extends SomeEntityDataType> = {
   _meta: EntityMetadata
 } & EntityDataType
 
@@ -30,7 +33,7 @@ export type EntityCollectionDef<EntityDataType extends SomeEntityDataType> = {
 }
 export type ByKeyOrId = { _id: string } | { _key: string }
 export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
-  collection: DocumentCollection<EntityData<Def['dataType']>>
+  collection: DocumentCollection<EntityDocFullData<Def['dataType']>>
   entityClass: EntityClass<Def['dataType']>
 }
 
