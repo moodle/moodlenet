@@ -17,52 +17,35 @@ export type ResourceCommonProps = {
   props: ResourceTypeForm
 }
 
-export const useResourceBaseProps = ({
-  resourceKey,
-}: {
-  resourceKey: string
-}): ResourceCommonProps | null => {
-  const {
-    rpcCaller,
-    // auth: { isAdmin, isAuthenticated },
-  } = useContext(MainContext)
-  const [resourceResp, setResourceResp] = useState<ResourceTypeForm | null>()
+export const useResourceBaseProps = ({ resourceKey }: { resourceKey: string }) => {
+  const { rpcCaller } = useContext(MainContext)
+  const [resource, setResource] = useState<ResourceTypeForm | null>()
 
   useEffect(() => {
-    rpcCaller.get(resourceKey).then(setResourceResp)
-  }, [resourceKey, rpcCaller, setResourceResp])
+    rpcCaller.get(resourceKey).then(setResource)
+  }, [resourceKey, rpcCaller, setResource])
 
   const actions = useMemo<ResourceActions>(() => {
-    const updateResourceResp = (resourceData: ResourceTypeForm) =>
-      setResourceResp(current => current && { ...current, resourceData })
-    const updateResourceRespForm = (resourceForm: ResourceFormValues) =>
-      resourceForm && resourceResp && updateResourceResp({ ...resourceResp, resourceForm })
-
-    const {
-      edit,
-      setIsPublished,
-      // toggleBookmark,
-      //  toggleLike,
-      _delete,
-    } = rpcCaller
-    return {
-      editResource: (res: ResourceFormValues) =>
-        edit(resourceKey, res).then(updateResourceRespForm),
-      deleteResource: () => _delete(resourceKey).then(updateResourceResp),
-      // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp),
-      // toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
-      setIsPublished: (publish: boolean): void => {
-        setIsPublished(resourceKey, publish).then(updateResourceResp)
-      },
-    }
-  }, [resourceKey, resourceResp, rpcCaller])
-
-  return useMemo<ResourceCommonProps | null>((): ResourceCommonProps | null => {
-    if (!resourceResp || !actions) return null
+    const updateResp = (resourceData: ResourceTypeForm) =>
+      setResource(current => current && { ...current, resourceData })
+    const updateRespForm = (resourceForm: ResourceFormValues): ResourceFormValues => (
+      resource && updateResp({ ...resource, resourceForm }), resourceForm
+    )
+    const { edit, setImage, setIsPublished, setContent, _delete } = rpcCaller // toggleBookmark, toggleLike,
 
     return {
-      actions,
-      props: resourceResp,
+      publish: () => setIsPublished(resourceKey, true).then(updateResp),
+      unpublish: () => setIsPublished(resourceKey, false).then(updateResp),
+      editData: (values: ResourceFormValues) => edit(resourceKey, values).then(updateRespForm),
+      deleteResource: () => _delete(resourceKey).then(updateResp),
+      setImage: (file: File) => setImage(resourceKey, file),
+      setContent: (content: File | string) => setContent(resourceKey, content),
+      // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp), toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
     }
-  }, [actions, resourceResp])
+  }, [resourceKey, resource, rpcCaller])
+
+  return useMemo<ResourceCommonProps | null>(
+    () => (!resource ? null : { actions, props: resource }),
+    [actions, resource],
+  )
 }

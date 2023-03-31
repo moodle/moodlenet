@@ -57,7 +57,7 @@ export type ResourceTypeForm = {
 export type ResourceActions = {
   publish: () => void
   unpublish: () => void
-  editData: (values: ResourceFormValues) => Promise<unknown>
+  editData: (values: ResourceFormValues) => Promise<ResourceFormValues>
   setImage: (file: File) => Promise<unknown>
   setContent: (content: File | string) => Promise<unknown>
   deleteResource(): unknown
@@ -117,6 +117,8 @@ export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
   get: (resourceKey: string) => Promise<ResourceTypeForm>
   _delete: (resourceKey: string) => Promise<ResourceTypeForm>
+  setImage: (resourceKey: string, file: File) => Promise<ResourceTypeForm>
+  setContent: (resourceKey: string, file: File | string) => Promise<ResourceTypeForm>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceTypeForm>
   // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>
   // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
