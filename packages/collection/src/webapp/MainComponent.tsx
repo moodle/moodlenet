@@ -7,7 +7,12 @@ import {
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
 import { Route, useNavigate } from 'react-router-dom'
-import { CollectionFormValues, MyPkgContext, RpcCaller } from '../common/types.mjs'
+import {
+  CollectionFormValues,
+  MainContextResourceType,
+  MyPkgContext,
+  RpcCaller,
+} from '../common/types.mjs'
 import { CollectionPageRoute } from '../ui.mjs'
 import { MainContext } from './MainContext.js'
 
@@ -46,10 +51,15 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
         me.rpc['webapp/edit']({ key: collectionId, values }),
       get: (collectionId: string, query?: string | undefined) =>
         me.rpc['webapp/get/:_key'](null, { _key: collectionId }, query), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
-      _delete: (collectionId: string) => me.rpc['webapp/delete']({ key: collectionId }),
-      setIsPublished: (collectionId: string, publish: boolean) =>
-        me.rpc['webapp/setIsPublished']({ key: collectionId, publish }),
-      setImage: (key: string, file: File) => me.rpc['webapp/setImage']({ key, file }),
+      _delete: async (collectionId: string) => {
+        await me.rpc['webapp/delete']({ key: collectionId })
+      },
+      setIsPublished: async (collectionId: string, publish: boolean) => {
+        await me.rpc['webapp/setIsPublished']({ key: collectionId, publish })
+      },
+      setImage: async (key: string, file: File) => {
+        await me.rpc['webapp/setImage']({ key, file })
+      },
       create: () => me.rpc['webapp/create'](),
       // toggleFollow: (collectionId: string) => me.rpc['webapp/toggleFollow']({ key: collectionId }),
       // toggleBookmark: (collectionId: string) =>
@@ -71,7 +81,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   })
   registries.routes.useRegister(myRoutes)
 
-  const mainValue = {
+  const mainValue: MainContextResourceType = {
     ...myPkgCtx,
     rpcCaller: rpcCaller,
     actionsMenu,

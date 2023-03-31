@@ -20,15 +20,15 @@ export type MainContextResourceType = MyPkgContext & {
 export type RpcCaller = {
   edit: (collectionId: string, values: CollectionFormValues) => Promise<CollectionFormValues>
   get: (collectionId: string, query?: string) => Promise<CollectionDataResponce>
-  _delete: (collectionId: string) => Promise<unknown>
-  setIsPublished: (collectionId: string, publish: boolean) => Promise<unknown>
-  setImage: (collectionId: string, file: File) => Promise<unknown>
+  _delete: (collectionId: string) => Promise<void>
+  setIsPublished: (collectionId: string, publish: boolean) => Promise<void>
+  setImage: (collectionId: string, file: File) => Promise<void>
   create: () => Promise<CollectionDataResponce>
 }
 
 export type MainActions = {
   create: {
-    action: () => unknown | undefined
+    action: () => Promise<void>
     menu: HeaderMenuItem
   }
 }
@@ -73,13 +73,13 @@ export type CollectionState = {
 }
 
 export type CollectionActions = {
-  publish: () => void
-  unpublish: () => void
-  editData: (values: CollectionFormValues) => Promise<CollectionFormValues>
-  deleteCollection(): void
-  setImage: (file: File) => void
-  // toggleFollow(): unknown
-  // toggleBookmark(): unknown
+  publish: () => Promise<void>
+  unpublish: () => Promise<void>
+  editData: (values: CollectionFormValues) => Promise<void>
+  deleteCollection(): Promise<void>
+  setImage: (file: File) => Promise<void>
+  // toggleFollow(): void
+  // toggleBookmark(): void
 }
 
 export type CollectionAccess = {
