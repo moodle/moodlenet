@@ -1,4 +1,4 @@
-import { HeaderMenuItemRegItem, Href } from '@moodlenet/react-app/ui'
+import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
 import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
 
@@ -29,7 +29,7 @@ export type RpcCaller = {
 export type MainActions = {
   create: {
     action: () => unknown | undefined
-    menu: HeaderMenuItemRegItem
+    menu: HeaderMenuItem
   }
 }
 

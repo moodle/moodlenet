@@ -70,6 +70,7 @@ export const Collection: FC<CollectionProps> = ({
 
   const form = useFormik<CollectionFormValues>({
     initialValues: collectionForm,
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: values => {
       return editData(values)

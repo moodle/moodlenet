@@ -1,4 +1,4 @@
-import { HeaderMenuItemRegItem } from '@moodlenet/react-app/ui'
+import { HeaderMenuItem } from '@moodlenet/react-app/ui'
 import {
   AuthCtx,
   ReactAppContext,
@@ -16,11 +16,11 @@ const myRoutes = {
 }
 
 const menuItems = {
-  create: (OnClick: () => void): HeaderMenuItemRegItem => ({
+  create: (onClick: () => void): HeaderMenuItem => ({
     Icon: '(icon)',
-    Text: `New collection`,
-    Path: { url: 'http://google.com', ext: true },
-    OnClick,
+    text: `New collection`,
+    key: 'mykey',
+    onClick,
   }),
 }
 
