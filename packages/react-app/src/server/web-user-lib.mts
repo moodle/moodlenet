@@ -1,9 +1,10 @@
-import { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
+import { DocumentMetadata } from '@moodlenet/arangodb/server'
 import {
   create,
   EntityAccess,
   getEntity,
-  patch,
+  Patch,
+  patchEntity,
   setPkgCurrentUser,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
@@ -100,7 +101,7 @@ export async function editWebUserProfile(
   const webUser = await getWebUserByProfileKey({ profileKey: key })
   assert(webUser, `couldn't find associated WebUser for profileKey ${key}`)
 
-  const mUpdated = await patch(WebUserProfile.entityClass, key, updateWithData, opts)
+  const mUpdated = await patchEntity(WebUserProfile.entityClass, key, updateWithData, opts)
 
   if (!mUpdated) {
     return
