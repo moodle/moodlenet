@@ -17,10 +17,11 @@ export type MainContextResourceType = MyPkgContext & {
 }
 
 export type RpcCaller = {
-  edit: (collectionId: string, values: CollectionFormValues) => Promise<unknown>
+  edit: (collectionId: string, values: CollectionFormValues) => Promise<CollectionFormValues>
   get: (collectionId: string, query?: string) => Promise<CollectionDataResponce>
   _delete: (collectionId: string) => Promise<unknown>
   setIsPublished: (collectionId: string, publish: boolean) => Promise<unknown>
+  setImage: (collectionId: string, file: File) => Promise<unknown>
   // toggleFollow: (collectionId: string) => Promise<unknown>
   // toggleBookmark: (collectionId: string) => Promise<unknown>
 }
@@ -67,9 +68,9 @@ export type CollectionState = {
 export type CollectionActions = {
   publish: () => void
   unpublish: () => void
-  editData: (values: CollectionFormValues) => Promise<unknown>
-  deleteCollection(): unknown
-  setImage: (file: File) => Promise<unknown>
+  editData: (values: CollectionFormValues) => Promise<CollectionFormValues>
+  deleteCollection(): void
+  setImage: (file: File) => void
   // toggleFollow(): unknown
   // toggleBookmark(): unknown
 }

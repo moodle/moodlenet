@@ -1,28 +1,35 @@
 import { CollectionDataResponce, CollectionFormValues } from '../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
-const getFakeData = (resourceKey: string, query?: string): unknown =>
+const getFakeData = (resourceKey: string, query?: string): CollectionDataResponce =>
   resourceKey || query ? resFakeData : resFakeData
 
-const empityFormModel = getFakeData('0')
+// prettier-ignore
+const newPromise = <T,>(r: T):Promise<T> => new Promise<T>(resolve => resolve(r))
+const resolver = (resourceKey: string, param?: unknown) => newPromise({ resourceKey, param })
 
-const get = async (resourceKey: string, query?: string): Promise<CollectionDataResponce> =>
-  new Promise(resolve => resolve(getFakeData(resourceKey, query) as CollectionDataResponce))
-
-const edit = (_resourceKey: string, res: CollectionFormValues): Promise<unknown> =>
-  new Promise(resolve => resolve(res))
-
-const _delete = (resourceKey: string): Promise<unknown> =>
-  new Promise(resolve => resolve(getFakeData(resourceKey)))
-
-const toggleFollow = (resourceKey: string): Promise<unknown> =>
-  new Promise(resolve => resolve(resourceKey))
-
-const setIsPublished = (resourceKey: string, publish: boolean): Promise<unknown> =>
-  new Promise(resolve => resolve({ resourceKey, publish }))
-
-const toggleBookmark = (resourceKey: string): Promise<unknown> =>
-  new Promise(resolve => resolve({ resourceKey }))
+const empityFormModel = getFakeData
+const get = async (resourceKey: string, query?: string) =>
+  newPromise<CollectionDataResponce>(getFakeData(resourceKey, query))
+const edit = (_resourceKey: string, res: CollectionFormValues) =>
+  newPromise<CollectionFormValues>(res)
+const _delete = (resourceKey: string) => resolver(resourceKey)
+const toggleFollow = (resourceKey: string) => resolver(resourceKey)
+const toggleBookmark = (resourceKey: string) => resolver(resourceKey)
+const setIsPublished = (resourceKey: string, publish: boolean) => resolver(resourceKey, publish)
+const setImage = (resourceKey: string, file: File) => resolver(resourceKey, file)
+/*
+  the type File
+  prints:
+      => lastModified: 1555453309243
+         lastModifiedDate: Wed Apr 17 2019 01:21:49 GMT+0100 (GMT+01:00) {}
+         name: "test.txt"
+         path: "test.txt" --> as you can see there is a path variable in here.
+         size: 16
+         type: "text/plain"
+         webkitRelativePath: ""
+         __proto__: File
+   */
 
 export const mockModel = {
   empityFormModel,
@@ -32,4 +39,5 @@ export const mockModel = {
   toggleFollow,
   setIsPublished,
   toggleBookmark,
+  setImage,
 }

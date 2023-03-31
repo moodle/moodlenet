@@ -3,7 +3,7 @@ import { mockModel } from './mockLib.mjs'
 import { shell } from './shell.mjs'
 
 type KeyId = { key: string }
-const { get, _delete, edit, toggleFollow, setIsPublished, toggleBookmark } = mockModel
+const { get, _delete, edit, toggleFollow, setIsPublished, toggleBookmark, setImage } = mockModel
 
 export const expose = await shell.expose({
   rpc: {
@@ -32,6 +32,10 @@ export const expose = await shell.expose({
     'webapp/toggleBookmark': {
       guard: () => void 0,
       fn: async ({ key }: KeyId) => await toggleBookmark(key),
+    },
+    'webapp/setImage': {
+      guard: () => void 0,
+      fn: async ({ key, file }: KeyId & { file: File }) => await setImage(key, file),
     },
   },
 })
