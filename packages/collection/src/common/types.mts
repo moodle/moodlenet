@@ -18,12 +18,15 @@ export type MainContextResourceType = MyPkgContext & {
 }
 
 export type RpcCaller = {
-  edit: (collectionId: string, values: CollectionFormValues) => Promise<CollectionFormValues>
-  get: (collectionId: string, query?: string) => Promise<CollectionDataResponce>
+  edit: (
+    collectionId: string,
+    values: CollectionFormValues,
+  ) => Promise<CollectionFormValues | undefined>
+  get: (collectionId: string) => Promise<CollectionDataResponce | undefined>
   _delete: (collectionId: string) => Promise<void>
   setIsPublished: (collectionId: string, publish: boolean) => Promise<void>
   setImage: (collectionId: string, file: File) => Promise<void>
-  create: () => Promise<CollectionDataResponce>
+  create: () => Promise<{ _key: string }>
 }
 
 export type MainActions = {
@@ -43,8 +46,8 @@ export type CollectionDataResponce = {
   data: CollectionData
   form: CollectionFormValues
   state: CollectionState
-  access: CollectionAccess
-  contributor: CollectionContributorCardProps
+  access: Pick<CollectionAccess, 'canDelete' | 'canEdit' | 'canPublish'>
+  contributor: { _key: string } & CollectionContributorCardProps
 }
 
 export type MainPropsCollection = {

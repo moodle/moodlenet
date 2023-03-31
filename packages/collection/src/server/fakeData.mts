@@ -1,4 +1,4 @@
-import { CollectionContributorCardProps, CollectionDataResponce } from '../common/types.mjs'
+import { CollectionContributorCardProps } from '../common/types.mjs'
 
 export const collectionFormValues = {
   description:
@@ -13,24 +13,24 @@ export const contributor: CollectionContributorCardProps = {
   creatorProfileHref: { url: 'Pages/Profile/Logged In', ext: false },
 }
 
-export const resFakeData: CollectionDataResponce = {
-  data: {
-    collectionId: 'aaa123',
-    mnUrl: 'http:www.ggg.it',
-    imageUrl: 'https://picsum.photos/200/100',
-    isWaitingForApproval: false,
-  },
-  form: collectionFormValues,
-  state: {
-    isPublished: true,
-    numResources: 1,
-  },
-  access: {
-    isAuthenticated: true,
-    isCreator: true,
-    canPublish: true,
-    canEdit: true,
-    canDelete: true,
-  },
-  contributor,
-}
+// export const resFakeData: CollectionDataResponce = {
+//   data: {
+//     collectionId: 'aaa123',
+//     mnUrl: 'http:www.ggg.it',
+//     imageUrl: 'https://picsum.photos/200/100',
+//     isWaitingForApproval: false,
+//   },
+//   form: collectionFormValues,
+//   state: {
+//     isPublished: true,
+//     numResources: 1,
+//   },
+//   access: {
+//     isAuthenticated: true,
+//     isCreator: true,
+//     canPublish: true,
+//     canEdit: true,
+//     canDelete: true,
+//   },
+//   contributor,
+// }

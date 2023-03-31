@@ -45,7 +45,7 @@ mountedApps.forEach(({ getApp, mountOnAbsPath, pkgId }) => {
 await new Promise<void>((resolve, reject) => {
   console.info(`HTTP: starting server on port ${env.port}`)
   const server = app.listen(env.port, (...args: any[]) => (args[0] ? reject(args[0]) : resolve()))
-  server.on('error', err => console.error('HTTP: server error:', err))
+  server.on('error', err => console.log('HTTP: server error:', err))
   shutdownGracefullyLocalServer = gracefulShutdown(server, {
     development: false,
     forceExit: false,

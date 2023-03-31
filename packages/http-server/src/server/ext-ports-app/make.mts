@@ -89,6 +89,7 @@ export function makeExtPortsApp() {
             }
           })
           .catch(err => {
+            console.log({ HTTP_RPC_ERROR: err })
             const { rpcStatusCode, payload } = isRpcStatusType(err)
               ? err
               : {

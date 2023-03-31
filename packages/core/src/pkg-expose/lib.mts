@@ -80,10 +80,15 @@ export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefin
 }
 
 export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) {
-  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
+  const rpcStatus = RpcStatus(status, payload)
 
   const initiator = assertCallInitiator()
-  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus: { rpcStatusCode, payload } }))
+  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus }))
+}
+
+export function RpcStatus(status: RpcStatusName | number, payload?: any): RpcStatusType {
+  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
+  return { rpcStatusCode, payload }
 }
 
 export function getRpcStatusCode() {
@@ -102,5 +107,5 @@ export function getRpcStatusCode() {
   return rpcStatusType
 }
 export function isRpcStatusType(_: any): _ is RpcStatusType {
-  return 'number' === typeof _?.statusCode
+  return 'number' === typeof _?.rpcStatusCode
 }

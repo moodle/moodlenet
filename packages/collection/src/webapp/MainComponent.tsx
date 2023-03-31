@@ -49,27 +49,22 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     return {
       edit: (collectionId: string, values: CollectionFormValues) =>
         me.rpc['webapp/edit']({ key: collectionId, values }),
-      get: (collectionId: string, query?: string | undefined) =>
-        me.rpc['webapp/get/:_key'](null, { _key: collectionId }, query), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
+      get: (collectionId: string) => me.rpc['webapp/get/:_key'](null, { _key: collectionId }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
       _delete: async (collectionId: string) => {
-        await me.rpc['webapp/delete']({ key: collectionId })
+        await me.rpc['webapp/delete/:_key'](null, { _key: collectionId })
       },
       setIsPublished: async (collectionId: string, publish: boolean) => {
         await me.rpc['webapp/setIsPublished']({ key: collectionId, publish })
       },
-      setImage: async (key: string, file: File) => {
-        await me.rpc['webapp/setImage']({ key, file })
+      setImage: async (_key: string, file: File) => {
+        await me.rpc['webapp/collection/:_key/uploadImage']({ file }, { _key })
       },
       create: () => me.rpc['webapp/create'](),
-      // toggleFollow: (collectionId: string) => me.rpc['webapp/toggleFollow']({ key: collectionId }),
-      // toggleBookmark: (collectionId: string) =>
-      //   me.rpc['webapp/toggleBookmark']({ key: collectionId }),
     }
   }, [me.rpc])
 
   const actionsMenu = useMemo(() => {
-    const acCreate = () =>
-      rpcCaller.create().then(({ data: { collectionId } }) => nav(`/collection/${collectionId}`))
+    const acCreate = () => rpcCaller.create().then(({ _key }) => nav(`/collection/${_key}`))
 
     return {
       create: { action: acCreate, menu: menuItems.create(acCreate) },
