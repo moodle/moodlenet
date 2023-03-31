@@ -17,7 +17,8 @@ export type ResourceCommonProps = {
   props: ResourceTypeForm
 }
 
-export const useResourceBaseProps = ({ resourceKey }: { resourceKey: string }) => {
+type myProps = { resourceKey: string }
+export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
   const [resource, setResource] = useState<ResourceTypeForm | null>()
 

@@ -27,10 +27,8 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
 
   return useMemo<ResourceProps | null>((): ResourceProps | null => {
     if (!_baseProps) return null
-    const {
-      actions,
-      props: { data, resourceForm, state, authFlags: access, contributor },
-    } = _baseProps
+    const { actions, props } = _baseProps
+    const { data, resourceForm, state, access, contributor } = props
 
     const mainResourceCardSlots = {
       mainColumnItems: [],
