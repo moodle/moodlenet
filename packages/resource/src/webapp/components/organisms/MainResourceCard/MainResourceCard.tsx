@@ -49,7 +49,9 @@ export type MainResourceCardProps = {
   data: ResourceData
   form: FormikHandle<ResourceFormValues>
   contentForm: FormikHandle<{ content: File | string | null }>
+  contentUrl: string | null
   imageForm: FormikHandle<{ image: File | null }>
+  imageUrl: string | null
 
   state: ResourceState
   actions: ResourceActions
@@ -66,7 +68,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   data,
   form,
   contentForm,
+  contentUrl,
   imageForm,
+  imageUrl,
 
   state,
   actions,
@@ -88,11 +92,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     resourceId,
     mnUrl,
     contentType,
-    specificContentType,
     isWaitingForApproval,
-    contentUrl,
     downloadFilename,
-    imageUrl,
     // numLikes,
   } = data
 
@@ -650,7 +651,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           onClose={() => setIsShowingImage(false)}
           style={{
             maxWidth: '90%',
-            maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
+            maxHeight: 'calc(90% + 20px)',
+            // maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
           }}
           key="image-modal"
         >

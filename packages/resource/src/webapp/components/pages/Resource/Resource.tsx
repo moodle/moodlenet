@@ -4,26 +4,26 @@ import {
   Card,
   Modal,
   PrimaryButton,
-  SecondaryButton,
+  SecondaryButton
 } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SchemaOf } from 'yup'
 import {
   ResourceAccess,
   ResourceActions,
   ResourceData,
   ResourceFormValues,
-  ResourceState,
+  ResourceState
 } from '../../../../common/types.mjs'
 import {
   ResourceContributorCard,
-  ResourceContributorCardProps,
+  ResourceContributorCardProps
 } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import {
   MainResourceCard,
-  MainResourceCardSlots,
+  MainResourceCardSlots
 } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
 
@@ -66,7 +66,7 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
 }) => {
-  const { isWaitingForApproval, downloadFilename, contentUrl, contentType } = data
+  const { isWaitingForApproval, downloadFilename, contentUrl, imageUrl, contentType } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish } = access
   const { isPublished } = state
@@ -79,19 +79,32 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
 
-  const contentForm = useFormik<{ content: File | string | null }>({
+  const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
+
+    const contentForm = useFormik<{ content: File | string | null }>({
     initialValues: { content: null },
     onSubmit: values => {
+      setCurrentContentUrl(null)
       return values.content ? setContent(values.content) : undefined
     },
   })
+  useEffect(() => {
+    setCurrentContentUrl(contentUrl)
+  }, [contentUrl])
 
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(imageUrl)
+  
   const imageForm = useFormik<{ image: File | null }>({
     initialValues: { image: null },
     onSubmit: values => {
+      setCurrentImageUrl(null)
       return values.image ? setImage(values.image) : undefined
     },
   })
+  
+  useEffect(() => {
+    setCurrentImageUrl(imageUrl)
+  }, [imageUrl])
 
   //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
   //     useState<boolean>(false)
@@ -134,7 +147,9 @@ export const Resource: FC<ResourceProps> = ({
       data={data}
       form={form}
       contentForm={contentForm}
+      contentUrl={currentContentUrl}
       imageForm={imageForm}
+      imageUrl={currentImageUrl}
       state={state}
       actions={actions}
       access={access}
