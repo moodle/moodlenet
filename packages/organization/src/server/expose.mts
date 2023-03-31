@@ -39,7 +39,7 @@ export const expose = await shell.expose({
         const rpcFile = body.b[0]
 
         const logicalFilename = `path/to/logicalFilename/for/filename/${rpcFile.name}`
-        await publicFiles.create(logicalFilename, rpcFile)
+        await publicFiles.store(logicalFilename, rpcFile)
         const content = await publicFiles.get(logicalFilename).then(async fsItem => {
           if (!fsItem) {
             return '!!!!!! no fsItem found !'
