@@ -1,10 +1,10 @@
-import { DocumentMetadata } from '@moodlenet/arangodb/server'
 import { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
+import { EntityDocument } from '@moodlenet/system-entities/server'
 import { AppearanceData } from '../common/types.mjs'
 
 // ALE:
 // TODO: WebUserProfileEntity _meta { webUserKey }
-export type WebUserProfileEntity = WebUserProfileDataType & DocumentMetadata
+export type WebUserProfileEntity = EntityDocument<WebUserProfileDataType>
 export type WebUserProfileDataType = {
   displayName: string
   aboutMe: string
