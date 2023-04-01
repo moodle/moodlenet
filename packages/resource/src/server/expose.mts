@@ -24,17 +24,16 @@ const rpcCtrl = {
   setIsPublished: async ({ key }: KeyId) => await setIsPublished(key),
   // toggleBookmark: async ({ key }: KeyId) => await toggleBookmark(key), // toggleLike: async ({ key }: KeyId) => await toggleLike(key),
 }
-const guards = {
-  noCheck: () => void 0,
-}
+const guards = { noCheck: () => void 0 }
+const { noCheck } = guards
 export const expose = await shell.expose({
   rpc: {
-    [rpcUrl.edit]: { guard: guards.noCheck, fn: rpcCtrl.edit },
-    [rpcUrl.get]: { guard: guards.noCheck, fn: rpcCtrl.get },
-    [rpcUrl.delete]: { guard: guards.noCheck, fn: rpcCtrl.delete },
-    [rpcUrl.setImage]: { guard: guards.noCheck, fn: rpcCtrl.setImage },
-    [rpcUrl.setContent]: { guard: guards.noCheck, fn: rpcCtrl.setContent },
-    [rpcUrl.setIsPublished]: { guard: guards.noCheck, fn: rpcCtrl.setIsPublished },
+    [rpcUrl.edit]: { guard: noCheck, fn: rpcCtrl.edit },
+    [rpcUrl.get]: { guard: noCheck, fn: rpcCtrl.get },
+    [rpcUrl.delete]: { guard: noCheck, fn: rpcCtrl.delete },
+    [rpcUrl.setImage]: { guard: noCheck, fn: rpcCtrl.setImage },
+    [rpcUrl.setContent]: { guard: noCheck, fn: rpcCtrl.setContent },
+    [rpcUrl.setIsPublished]: { guard: noCheck, fn: rpcCtrl.setIsPublished },
     // [rpcUrl.toggleBookmark]: { guard, fn: rpcLib.toggleBookmark },  // [rpcUrl.toggleLike]: { guard, fn: rpcLib.toggleLike },
   },
 })
