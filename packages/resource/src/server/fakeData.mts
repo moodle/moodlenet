@@ -1,4 +1,4 @@
-import { ResourceFormValues, ResourceTypeForm } from '../common.mjs'
+import { ResourceFormValues, ResourceRpc } from '../common.mjs'
 
 export const resourceFormValues: ResourceFormValues = {
   description:
@@ -6,7 +6,7 @@ export const resourceFormValues: ResourceFormValues = {
   title: 'The Best Resource Ever',
 }
 
-export const resFakeData: ResourceTypeForm = {
+export const resFakeData: ResourceRpc = {
   data: {
     resourceId: 'aaa123',
     mnUrl: 'http:www.ggg.it',
@@ -23,7 +23,6 @@ export const resFakeData: ResourceTypeForm = {
     // bookmarked: false,
   },
   access: {
-    isAuthenticated: true,
     isCreator: true,
     canPublish: true,
     canDelete: true,
@@ -33,11 +32,10 @@ export const resFakeData: ResourceTypeForm = {
   resourceForm: resourceFormValues,
   contributor: {
     avatarUrl: null,
-    displayName: '',
     timeSinceCreation: '',
     creatorProfileHref: { ext: false, url: '' },
   },
 }
 
-export const resFakes: ResourceTypeForm[] = [resFakeData]
-export const resFake: ResourceTypeForm = resFakes[0] || resFakeData
+export const resFakes: ResourceRpc[] = [resFakeData]
+export const resFake: ResourceRpc = resFakes[0] || resFakeData

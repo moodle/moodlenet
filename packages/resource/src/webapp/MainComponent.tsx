@@ -6,27 +6,29 @@ import {
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
 import { Route } from 'react-router-dom'
-import { MyPkgContext, ResourceFormValues, RpcCaller } from '../common/types.mjs'
+import {
+  MyPkgContext,
+  ResourceFormValues,
+  ResourceMainProps,
+  ResourceRpc,
+  RpcCaller,
+  rpcUrl,
+} from '../common/types.mjs'
 import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
 import { MainContext } from './MainContext.js'
 
 const myRoutes = {
-  routes: (
-    <>
-      <Route path="resource/:key" element={<ResourcePageRoute />} />
-    </>
-  ),
+  routes: <Route path="resource/:key" element={<ResourcePageRoute />} />,
 }
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
+  const { use } = myPkgCtx
+  const { me } = use
   const { registries } = useContext(ReactAppContext)
-  registries.routes.useRegister(myRoutes)
-
-  const me = myPkgCtx.use.me
-
   const { clientSessionData } = useContext(AuthCtx)
 
+  registries.routes.useRegister(myRoutes)
   const auth = useMemo(
     () => ({
       isAuthenticated: !!clientSessionData,
@@ -37,21 +39,31 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   )
 
   const rpcCaller = useMemo((): RpcCaller => {
-    return {
-      edit: (key: string, resource: ResourceFormValues) => me.rpc['webapp/edit']({ key, resource }),
-      get: (key: string) => me.rpc['webapp/get']({ key: key }),
-      _delete: (key: string) => me.rpc['webapp/delete']({ key }),
-      setIsPublished: (key: string) => me.rpc['webapp/setIsPublished']({ key }),
-      setImage: (key: string, file: File) => me.rpc['webapp/setImage']({ key, file }),
-      setContent: (key: string, file: File | string) => me.rpc['webapp/setContent']({ key, file }),
-      // toggleBookmark: (resourceKey: string) => me.rpc['webapp/toggleBookmark'](resourceKey),
-      // toggleLike: (resourceKey: string) => me.rpc['webapp/toggleLike'](resourceKey),
+    const resourceRpcToProps = (rpcResource: ResourceRpc): ResourceMainProps => ({
+      ...rpcResource,
+      access: { ...rpcResource.access, isAuthenticated: auth.isAuthenticated },
+    })
+    const addAuth = (rpcResource: Promise<ResourceRpc>): Promise<ResourceMainProps> =>
+      rpcResource.then(resourceRpcToProps)
+    const rpc = me.rpc
+
+    const rpcWeb = {
+      edit: (key: string, resource: ResourceFormValues) => rpc[rpcUrl.edit]({ key, resource }),
+      get: (key: string) => rpc[rpcUrl.get]({ key }).then(resourceRpcToProps),
+      _delete: (key: string) => addAuth(rpc[rpcUrl.delete]({ key })),
+      setImage: (key: string, file: File) => addAuth(rpc[rpcUrl.setImage]({ key, file })),
+      setContent: (key: string, file: File | string) =>
+        addAuth(rpc[rpcUrl.setContent]({ key, file })),
+      setIsPublished: (key: string) => addAuth(rpc[rpcUrl.setIsPublished]({ key })),
+      // toggleLike: (key: string) => rpc[rpcUrl.toggleLike].fn({ key }),  // toggleBookmark: (key: string) => rpc[rpcUrl.toggleBookmark].fn({ key }),
     }
-  }, [me.rpc])
+
+    return rpcWeb
+  }, [auth.isAuthenticated, me.rpc])
 
   const mainValue = {
     ...myPkgCtx,
-    rpcCaller: rpcCaller,
+    rpcCaller,
     auth,
   }
 
