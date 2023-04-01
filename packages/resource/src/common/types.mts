@@ -41,26 +41,36 @@ export type ResourceState = {
   // bookmarked: boolean
 }
 
-export type ResourceTypeForm = {
+export type ResourceMainProps = {
   resourceForm: ResourceFormValues
   access: ResourceAccess
   state: ResourceState
   data: ResourceData
   contributor: {
     avatarUrl: string | null
-    displayName: string
     timeSinceCreation: string
     creatorProfileHref: Href
   }
 }
-
+export type ResourceAccessServer = Omit<ResourceAccess, 'isAuthenticated'>
+export type ResourceRpc = Omit<ResourceMainProps, 'access'> & { access: ResourceAccessServer }
+export type RpcCaller = {
+  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
+  get: (resourceKey: string) => Promise<ResourceMainProps>
+  _delete: (resourceKey: string) => Promise<ResourceRpc>
+  setImage: (resourceKey: string, file: File) => Promise<ResourceMainProps>
+  setContent: (resourceKey: string, file: File | string) => Promise<ResourceMainProps>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceMainProps>
+  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>
+  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
+}
 export type ResourceActions = {
-  publish: () => void
-  unpublish: () => void
+  publish: () => Promise<void>
+  unpublish: () => Promise<void>
   editData: (values: ResourceFormValues) => Promise<ResourceFormValues>
-  setImage: (file: File) => Promise<unknown>
-  setContent: (content: File | string) => Promise<unknown>
-  deleteResource(): unknown
+  setImage: (file: File) => Promise<void>
+  setContent: (content: File | string) => Promise<void>
+  deleteResource(): Promise<void>
   // toggleLike(): unknown
   // toggleBookmark(): unknown
 }
@@ -112,17 +122,6 @@ export type ResourceCardAccess = Pick<
 //   canEdit: boolean
 //   isAuthenticated: boolean
 // }
-
-export type RpcCaller = {
-  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
-  get: (resourceKey: string) => Promise<ResourceTypeForm>
-  _delete: (resourceKey: string) => Promise<ResourceTypeForm>
-  setImage: (resourceKey: string, file: File) => Promise<ResourceTypeForm>
-  setContent: (resourceKey: string, file: File | string) => Promise<ResourceTypeForm>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceTypeForm>
-  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>
-  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
-}
 
 export type Organization = {
   name: string
@@ -190,3 +189,26 @@ export const getResourceTypeInfo = (
 }
 
 export const maxUploadSize = 1024 * 1024 * 50
+
+export const rpcUrl = (() => {
+  const upload = 'webapp/upload' as const
+  const get = 'webapp/get' as const
+  const edit = 'webapp/edit' as const
+  const _delete = 'webapp/delete' as const
+  const setImage = 'webapp/setImage' as const
+  const setContent = 'webapp/setContent' as const
+  const toggleBookmark = 'webapp/toggleBookmark' as const
+  const toggleLike = 'webapp/toggleLike' as const
+  const setIsPublished = 'webapp/setIsPublished' as const
+  return {
+    upload,
+    get,
+    edit,
+    delete: _delete,
+    setImage,
+    setContent,
+    toggleBookmark,
+    toggleLike,
+    setIsPublished,
+  }
+})()

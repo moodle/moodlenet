@@ -1,17 +1,15 @@
-import { ResourceFormValues, ResourceTypeForm } from '../common/types.mjs'
+import { ResourceFormValues, ResourceRpc } from '../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
-const getFakeData = (resourceKey: string, param?: File | string): ResourceTypeForm =>
+const getFakeData = (resourceKey: string, param?: File | string): ResourceRpc =>
   resourceKey || param ? resFakeData : resFakeData
-const resolver = (resourceKey: string, param?: File | string): Promise<ResourceTypeForm> =>
+const resolver = (resourceKey: string, param?: File | string): Promise<ResourceRpc> =>
   new Promise(resolve => resolve(getFakeData(resourceKey, param)))
 
 export const empityResourceForm = getFakeData('0')
 
-export const editResource = (
-  _resourceKey: string,
-  res: ResourceFormValues,
-): Promise<ResourceFormValues> => new Promise<ResourceFormValues>(resolve => resolve(res))
+export const editResource = (_resourceKey: string, res: ResourceFormValues) =>
+  new Promise<ResourceFormValues>(resolve => resolve(res))
 export const deleteResource = (resourceKey: string) => resolver(resourceKey)
 export const getResource = async (resourceKey: string) => resolver(resourceKey)
 export const uploadResource = async (resourceKey: string) => resolver(resourceKey)
