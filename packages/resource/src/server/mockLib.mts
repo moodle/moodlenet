@@ -1,18 +1,48 @@
 import { ResourceFormValues, ResourceRpc } from '../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
-const getFakeData = (resourceKey: string, param?: File | string): ResourceRpc =>
-  resourceKey || param ? resFakeData : resFakeData
-const resolver = (resourceKey: string, param?: File | string): Promise<ResourceRpc> =>
-  new Promise(resolve => resolve(getFakeData(resourceKey, param)))
+const getFakeData = (resourceKey: string, query?: File | string): ResourceRpc =>
+  resourceKey || query ? resFakeData : resFakeData
+// prettier-ignore
+const newPromise = <T, >(r: T): Promise<T> => new Promise<T>(resolve => resolve(r))
+const resolver = (resourceKey: string, query?: File | string): Promise<ResourceRpc> =>
+  newPromise(getFakeData(resourceKey, query))
 
-export const empityResourceForm = getFakeData('0')
+export const empityResourceForm: ResourceRpc = {
+  data: {
+    resourceId: 'aaa123',
+    mnUrl: 'http:www.ggg.it',
+    contentUrl: 'http:www.ggg.it',
+    contentType: 'link',
+    downloadFilename: 'resf.pdf',
+    imageUrl: 'https://picsum.photos/200/100',
+  },
+  state: {
+    isPublished: true,
+  },
+  access: {
+    isCreator: true,
+    canPublish: true,
+    canDelete: true,
+    canEdit: true,
+  },
+  resourceForm: { description: '', title: '' },
+  contributor: {
+    avatarUrl: null,
+    displayName: '',
+    timeSinceCreation: '',
+    creatorProfileHref: { ext: false, url: '' },
+  },
+}
 
-export const editResource = (_resourceKey: string, res: ResourceFormValues) =>
-  new Promise<ResourceFormValues>(resolve => resolve(res))
-export const deleteResource = (resourceKey: string) => resolver(resourceKey)
-export const getResource = async (resourceKey: string) => resolver(resourceKey)
-export const uploadResource = async (resourceKey: string) => resolver(resourceKey)
+export const get = async (resourceKey: string, query?: string) =>
+  newPromise<ResourceRpc>(
+    resourceKey === 'new123' ? empityResourceForm : getFakeData(resourceKey, query),
+  )
+export const edit = (_resourceKey: string, res: ResourceFormValues) =>
+  newPromise<ResourceFormValues>(res)
+export const _delete = (resourceKey: string) => resolver(resourceKey)
+export const upload = async (resourceKey: string) => resolver(resourceKey)
 export const toggleLike = (resourceKey = '') => resolver(resourceKey)
 export const toggleBookmark = (resourceKey = '') => resolver(resourceKey)
 export const setIsPublished = (resourceKey = '') => resolver(resourceKey)

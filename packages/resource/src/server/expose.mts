@@ -1,12 +1,5 @@
 import { ResourceFormValues, rpcUrl } from '../common.mjs'
-import {
-  deleteResource,
-  editResource,
-  getResource,
-  setContent,
-  setImage,
-  setIsPublished,
-} from './mockLib.mjs'
+import { edit, get, setContent, setImage, setIsPublished, _delete } from './mockLib.mjs'
 import shell from './shell.mjs'
 
 export type KeyId = { key: string }
@@ -16,9 +9,9 @@ export type KeyResource = { key: string; resource: ResourceFormValues }
 
 // good for export in file name controller if code grow
 const rpcCtrl = {
-  edit: async ({ key, resource }: KeyResource) => await editResource(key, resource),
-  get: async ({ key }: KeyId) => await getResource(key),
-  delete: async ({ key }: KeyId) => await deleteResource(key),
+  edit: async ({ key, resource }: KeyResource) => await edit(key, resource),
+  get: async ({ key }: KeyId) => await get(key),
+  delete: async ({ key }: KeyId) => await _delete(key),
   setImage: async ({ key, file }: KeyFile) => await setImage(key, file),
   setContent: async ({ key, file }: KeyFileStr) => await setContent(key, file),
   setIsPublished: async ({ key }: KeyId) => await setIsPublished(key),
@@ -37,5 +30,3 @@ export const expose = await shell.expose({
     // [rpcUrl.toggleBookmark]: { guard, fn: rpcLib.toggleBookmark },  // [rpcUrl.toggleLike]: { guard, fn: rpcLib.toggleLike },
   },
 })
-
-// const a = expose.rpc[rpcUrl.edit]

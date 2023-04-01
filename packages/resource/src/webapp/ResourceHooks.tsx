@@ -35,7 +35,8 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     )
     const { edit, setImage, setIsPublished, setContent, _delete } = rpcCaller // toggleBookmark, toggleLike,
     const brk = (_: unknown): Promise<void> => new Promise(resolve => _ || resolve())
-    const ac: ResourceActions = {
+
+    return {
       publish: () => brk(setIsPublished(resourceKey, true).then(res => updateResp(res))),
       unpublish: () => brk(setIsPublished(resourceKey, false).then(updateResp)),
       editData: (values: ResourceFormValues) => edit(resourceKey, values).then(updateRespForm),
@@ -44,7 +45,6 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       setContent: (content: File | string) => brk(setContent(resourceKey, content)),
       // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp), toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
     }
-    return ac
   }, [resourceKey, resource, rpcCaller])
 
   return useMemo<ResourceCommonProps | null>(

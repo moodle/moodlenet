@@ -1,14 +1,17 @@
 import { CollectionDataResponce, CollectionFormValues } from '../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
-const getFakeData = (resourceKey: string, query?: string): CollectionDataResponce =>
-  resourceKey || query ? resFakeData : resFakeData
+const getFakeData = (
+  collectionId: string,
+  query?: File | string | boolean,
+): CollectionDataResponce => (collectionId || query ? resFakeData : resFakeData)
 
 // prettier-ignore
 const newPromise = <T,>(r: T):Promise<T> => new Promise<T>(resolve => resolve(r))
-const resolver = (resourceKey: string, param?: unknown) => newPromise({ resourceKey, param })
+const resolver = (collectionId: string, query?: File | string | boolean) =>
+  newPromise(getFakeData(collectionId, query))
 
-const empityFormModel: CollectionDataResponce = {
+export const empityFormModel: CollectionDataResponce = {
   data: {
     collectionId: 'new123',
     mnUrl: '',
@@ -34,25 +37,16 @@ const empityFormModel: CollectionDataResponce = {
   },
 }
 
-const get = async (resourceKey: string, query?: string) =>
+export const get = async (collectionId: string, query?: string) =>
   newPromise<CollectionDataResponce>(
-    resourceKey === 'new123' ? empityFormModel : getFakeData(resourceKey, query),
+    collectionId === 'new123' ? empityFormModel : getFakeData(collectionId, query),
   )
-const edit = (_resourceKey: string, res: CollectionFormValues) =>
-  newPromise<CollectionFormValues>(res)
-const _delete = (resourceKey: string) => resolver(resourceKey)
-const toggleFollow = (resourceKey: string) => resolver(resourceKey)
-const toggleBookmark = (resourceKey: string) => resolver(resourceKey)
-const setIsPublished = (resourceKey: string, publish: boolean) => resolver(resourceKey, publish)
-const setImage = (resourceKey: string, file: File) => resolver(resourceKey, file)
-
-export const mockModel = {
-  empityFormModel,
-  get,
-  edit,
-  _delete,
-  toggleFollow,
-  setIsPublished,
-  toggleBookmark,
-  setImage,
-}
+export const edit = (_key: string, values: CollectionFormValues) =>
+  newPromise<CollectionFormValues>(values)
+export const _delete = (collectionId: string) => resolver(collectionId)
+export const toggleFollow = (collectionId: string) => resolver(collectionId)
+export const toggleBookmark = (collectionId: string) => resolver(collectionId)
+export const setIsPublished = (collectionId: string, publish: boolean) =>
+  resolver(collectionId, publish)
+export const setImage = (key: string, file: File) => resolver(key, file)
+export const create = () => newPromise(empityFormModel)
