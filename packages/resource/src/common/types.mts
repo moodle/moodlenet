@@ -48,6 +48,7 @@ export type ResourceMainProps = {
   data: ResourceData
   contributor: {
     avatarUrl: string | null
+    displayName: string
     timeSinceCreation: string
     creatorProfileHref: Href
   }
@@ -65,8 +66,8 @@ export type RpcCaller = {
   // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
 }
 export type ResourceActions = {
-  publish: () => Promise<void>
-  unpublish: () => Promise<void>
+  publish: () => void
+  unpublish: () => void
   editData: (values: ResourceFormValues) => Promise<ResourceFormValues>
   setImage: (file: File) => Promise<void>
   setContent: (content: File | string) => Promise<void>

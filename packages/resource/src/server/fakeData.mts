@@ -32,6 +32,7 @@ export const resFakeData: ResourceRpc = {
   resourceForm: resourceFormValues,
   contributor: {
     avatarUrl: null,
+    displayName: '',
     timeSinceCreation: '',
     creatorProfileHref: { ext: false, url: '' },
   },

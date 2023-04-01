@@ -69,8 +69,12 @@ export const getResourceCardStoryProps = (
   const actions: ResourceCardActions = {
     // toggleLike: action('toggle like'),
     // toggleBookmark: action('toggle bookmark'),
-    publish: action('publish resource'),
-    unpublish: action('unpublish resource'),
+    publish: () => {
+      action('publish resource')
+    },
+    unpublish: () => {
+      action('unpublish resource')
+    },
   }
   const access: ResourceCardAccess = {
     // canLike: true,
