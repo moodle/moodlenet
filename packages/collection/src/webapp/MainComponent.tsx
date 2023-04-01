@@ -46,24 +46,17 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   )
 
   const rpcCaller = useMemo((): RpcCaller => {
+    const rpc = me.rpc
+
     return {
-      edit: (collectionId: string, values: CollectionFormValues) =>
-        me.rpc['webapp/edit']({ key: collectionId, values }),
-      get: (collectionId: string, query?: string | undefined) =>
-        me.rpc['webapp/get/:_key'](null, { _key: collectionId }, query), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
-      _delete: async (collectionId: string) => {
-        await me.rpc['webapp/delete']({ key: collectionId })
-      },
-      setIsPublished: async (collectionId: string, publish: boolean) => {
-        await me.rpc['webapp/setIsPublished']({ key: collectionId, publish })
-      },
-      setImage: async (key: string, file: File) => {
-        await me.rpc['webapp/setImage']({ key, file })
-      },
-      create: () => me.rpc['webapp/create'](),
-      // toggleFollow: (collectionId: string) => me.rpc['webapp/toggleFollow']({ key: collectionId }),
-      // toggleBookmark: (collectionId: string) =>
-      //   me.rpc['webapp/toggleBookmark']({ key: collectionId }),
+      edit: (key: string, values: CollectionFormValues) => rpc['webapp/edit']({ key: key, values }),
+      get: (_key: string) => rpc['webapp/get/:_key']({ _key }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
+      _delete: async (key: string) => await rpc['webapp/delete']({ key: key }),
+      setIsPublished: async (key: string, publish: boolean) =>
+        await rpc['webapp/setIsPublished']({ key: key, publish }),
+      setImage: async (key: string, file: File) => await rpc['webapp/setImage']({ key, file }),
+      create: () => rpc['webapp/create'](),
+      // toggleFollow: (key: string) => me.rpc['webapp/toggleFollow']({ key: key }), // toggleBookmark: (key: string) => me.rpc['webapp/toggleBookmark']({ key: key }),
     }
   }, [me.rpc])
 

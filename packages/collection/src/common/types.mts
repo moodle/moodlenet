@@ -18,11 +18,11 @@ export type MainContextResourceType = MyPkgContext & {
 }
 
 export type RpcCaller = {
-  edit: (collectionId: string, values: CollectionFormValues) => Promise<CollectionFormValues>
-  get: (collectionId: string, query?: string) => Promise<CollectionDataResponce>
-  _delete: (collectionId: string) => Promise<void>
-  setIsPublished: (collectionId: string, publish: boolean) => Promise<void>
-  setImage: (collectionId: string, file: File) => Promise<void>
+  edit: (key: string, values: CollectionFormValues) => Promise<CollectionFormValues>
+  get: (key: string) => Promise<CollectionDataResponce>
+  _delete: (key: string) => Promise<CollectionDataResponce>
+  setIsPublished: (key: string, publish: boolean) => Promise<CollectionDataResponce>
+  setImage: (key: string, file: File) => Promise<CollectionDataResponce>
   create: () => Promise<CollectionDataResponce>
 }
 
