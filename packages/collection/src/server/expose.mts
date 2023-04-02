@@ -1,5 +1,7 @@
 import { RpcFile, RpcStatus } from '@moodlenet/core'
+import { isCreator } from '@moodlenet/system-entities/server/aql-ac'
 import { CollectionDataResponce, CollectionFormValues } from '../common.mjs'
+import { canPublish } from './aql.mjs'
 import {
   createCollection,
   delCollection,
@@ -44,13 +46,18 @@ export const expose = await shell.expose({
     'webapp/get/:_key': {
       guard: () => void 0,
       fn: async (_, params: { _key: string }): Promise<CollectionDataResponce | undefined> => {
-        const found = await getCollection(params._key, { projectAccess: ['u', 'r'] })
+        const found = await getCollection(params._key, {
+          projectAccess: ['u', 'r'],
+          project: {
+            canPublish: canPublish(),
+            isCreator: isCreator(),
+          },
+        })
         if (!found) {
           return
         }
         return {
           contributor: {
-            _key: (found.creator as any)._key,
             avatarUrl: '',
             creatorProfileHref: { url: '', ext: false },
             displayName: '',
@@ -66,7 +73,8 @@ export const expose = await shell.expose({
           access: {
             canDelete: !!found.access.d,
             canEdit: !!found.access.u,
-            canPublish: true,
+            canPublish: found.canPublish,
+            isCreator: found.isCreator,
           },
         }
       },

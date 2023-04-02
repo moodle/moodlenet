@@ -1,5 +1,4 @@
 import { RpcFile } from '@moodlenet/core'
-import { webUserCreatorEntity } from '@moodlenet/react-app/server'
 import {
   create,
   delEntity,
@@ -7,6 +6,7 @@ import {
   getEntity,
   Patch,
   patchEntity,
+  ProjectVal,
 } from '@moodlenet/system-entities/server'
 import { Collection, publicFiles } from './init.mjs'
 import { shell } from './shell.mjs'
@@ -18,17 +18,16 @@ export async function createCollection(collectionData: CollectionDataType) {
   return newCollection
 }
 
-export async function getCollection(
+export async function getCollection<Project extends ProjectVal<any>>(
   _key: string,
   opts?: {
+    project?: Project
     projectAccess?: EntityAccess[]
   },
 ) {
   const foundCollection = await shell.call(getEntity)(Collection.entityClass, _key, {
     projectAccess: opts?.projectAccess,
-    project: {
-      creator: webUserCreatorEntity(),
-    },
+    project: opts?.project,
   })
   return foundCollection
 }

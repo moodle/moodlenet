@@ -167,17 +167,14 @@ export async function delEntity<EntityDataType extends SomeEntityDataType>(
   return deleteRecord
 }
 
+type GetEntityOpts<Project extends ProjectVal<any>> = Pick<
+  QueryEntityOpts<Project>,
+  'project' | 'projectAccess'
+>
 export async function getEntity<
   EntityDataType extends SomeEntityDataType,
   Project extends ProjectVal<any>,
->(
-  entityClass: EntityClass<EntityDataType>,
-  key: string,
-  opts?: {
-    projectAccess?: EntityAccess[]
-    project?: Project
-  },
-) {
+>(entityClass: EntityClass<EntityDataType>, key: string, opts?: GetEntityOpts<Project>) {
   const getCursor = await queryEntities(entityClass, 'r', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
@@ -203,20 +200,17 @@ export async function getEntity<
 //   return get_findResult
 // }
 
+type QueryEntityOpts<Project extends ProjectVal<any>> = {
+  preAccessBody?: string
+  postAccessBody?: string
+  project?: Project
+  bindVars?: Record<string, any>
+  projectAccess?: EntityAccess[]
+}
 export async function queryEntities<
   EntityDataType extends SomeEntityDataType,
   Project extends ProjectVal<any>,
->(
-  entityClass: EntityClass<EntityDataType>,
-  access: EntityAccess,
-  opts?: {
-    preAccessBody?: string
-    postAccessBody?: string
-    project?: Project
-    bindVars?: Record<string, any>
-    projectAccess?: EntityAccess[]
-  },
-) {
+>(entityClass: EntityClass<EntityDataType>, access: EntityAccess, opts?: QueryEntityOpts<Project>) {
   type _QueryRecordType = {
     entity: Omit<EntityDocument<EntityDataType>, '_meta'>
     meta: EntityMetadata
