@@ -11,7 +11,7 @@ export const useCollectionPageProps = ({
 }: {
   collectionKey: string
 }): CollectionProps | null => {
-  const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
+  const { isAuthenticated } = useContext(AuthCtx)
   const _mainProps = useMainHook({ collectionKey })
   const mainLayoutProps = useMainLayoutProps()
 
@@ -45,12 +45,12 @@ export const useCollectionPageProps = ({
       access: {
         ...props.access,
         isAuthenticated,
-        isCreator: clientSessionData?.myProfile?._key === _mainProps?.props.contributor._key,
+        isCreator: _mainProps.props.access.isCreator,
       },
     }
 
     return propsPage
-  }, [_mainProps, clientSessionData?.myProfile?._key, isAuthenticated, mainLayoutProps])
+  }, [_mainProps, isAuthenticated, mainLayoutProps])
 
   return collectionProps
 }

@@ -46,8 +46,8 @@ export type CollectionDataResponce = {
   data: CollectionData
   form: CollectionFormValues
   state: CollectionState
-  access: Pick<CollectionAccess, 'canDelete' | 'canEdit' | 'canPublish'>
-  contributor: { _key: string } & CollectionContributorCardProps
+  access: Pick<CollectionAccess, 'canDelete' | 'canEdit' | 'canPublish' | 'isCreator'>
+  contributor: CollectionContributorCardProps
 }
 
 export type MainPropsCollection = {
