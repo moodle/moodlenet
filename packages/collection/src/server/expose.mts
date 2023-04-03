@@ -47,7 +47,7 @@ export const expose = await shell.expose({
       guard: () => void 0,
       fn: async (_, params: { _key: string }): Promise<CollectionDataResponce | undefined> => {
         const found = await getCollection(params._key, {
-          projectAccess: ['u', 'r'],
+          projectAccess: ['u', 'd'],
           project: {
             canPublish: canPublish(),
             isCreator: isCreator(),

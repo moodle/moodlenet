@@ -4,9 +4,10 @@ import {
   delEntity,
   EntityAccess,
   getEntity,
+  GetEntityOpts,
   Patch,
   patchEntity,
-  ProjectVal,
+  QueryEntitiesCustomProject,
 } from '@moodlenet/system-entities/server'
 import { Collection, publicFiles } from './init.mjs'
 import { shell } from './shell.mjs'
@@ -18,13 +19,10 @@ export async function createCollection(collectionData: CollectionDataType) {
   return newCollection
 }
 
-export async function getCollection<Project extends ProjectVal<any>>(
-  _key: string,
-  opts?: {
-    project?: Project
-    projectAccess?: EntityAccess[]
-  },
-) {
+export async function getCollection<
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(_key: string, opts?: GetEntityOpts<Project, ProjectAccess>) {
   const foundCollection = await shell.call(getEntity)(Collection.entityClass, _key, {
     projectAccess: opts?.projectAccess,
     project: opts?.project,
