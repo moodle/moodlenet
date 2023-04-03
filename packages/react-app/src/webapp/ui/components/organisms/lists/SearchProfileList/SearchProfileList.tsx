@@ -20,7 +20,7 @@ export const SearchProfileList: FC<SearchProfileListProps> = ({
       content={useMemo(
         () =>
           profilesCardPropsList
-            .slice(0, 11)
+            // .slice(0, 11)
             .map(profileCardPropsList => (
               <ProfileCard key={profileCardPropsList.data.userId} {...profileCardPropsList} />
             )),

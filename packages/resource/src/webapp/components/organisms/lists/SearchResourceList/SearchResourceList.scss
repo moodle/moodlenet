@@ -1,5 +1,5 @@
 .search-resource-list {
-  padding: 24px 24px 54px 24px;
+  padding: 24px 24px 66px 24px;
   position: relative;
 
   &.show-all {
@@ -12,6 +12,7 @@
   > .list-card-footer {
     width: 100%;
     margin-left: -24px;
+    border-top: 1px solid rgb(0 0 0 / 8%);
     position: absolute;
     bottom: 0;
     display: flex;
@@ -21,7 +22,7 @@
       font-size: 15px;
       height: 55px;
       border-radius: 0;
-      padding: 6px 18px 10px 18px;
+      padding: 0 18px;
     }
   }
 
