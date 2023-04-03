@@ -25,6 +25,7 @@ const meta: ComponentMeta<typeof Browser> = {
   ],
 }
 
+// make array of 20 license types
 type BrowserStory = ComponentStory<typeof Browser>
 // const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} />
 
@@ -50,7 +51,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         Item: ({ showAll, setShowAll }) => {
           const list = useMemo(
             () =>
-              getResourcesCardStoryProps(15, {
+              getResourcesCardStoryProps(30, {
                 access: {
                   isAuthenticated: false,
                 },
@@ -76,6 +77,27 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             key: 'sort-by',
           },
           {
+            name: 'Subjects',
+            menuContent: [
+              'Generic programmes and qualifications',
+              'Literacy and numeracy',
+              'Arts and humanities',
+              'Social sciences',
+              'Business and administration',
+              'Natural sciences',
+              'Engineering and technology',
+              'Agriculture, forestry and fisheries',
+              'Health and welfare',
+              'Personal skills and development',
+            ]
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'subjects',
+          },
+          {
             name: 'Language',
             menuContent: [
               'English',
@@ -93,7 +115,26 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
                 getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
               ),
             menuContentType: 'menu-content-default-list',
-            key: 'sort-by',
+            key: 'language',
+          },
+          {
+            name: 'License',
+            menuContent: [
+              'Attribution',
+              'Attribution-ShareAlike',
+              'Attribution-NoDerivs',
+              'Attribution-NonCommercial',
+              'Attribution-NonCommercial-ShareAlike',
+              'Attribution-NonCommercial-NoDerivs',
+              'Public Domain Dedication (CC0)',
+              'Public Domain Mark',
+            ]
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'license',
           },
         ],
         key: 'resource-list',
@@ -103,7 +144,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         Item: ({ showAll, setShowAll }) => {
           const list = useMemo(
             () =>
-              getCollectionsCardStoryProps(15, {
+              getCollectionsCardStoryProps(30, {
                 access: { isAuthenticated: false },
               }),
             [],
@@ -127,6 +168,27 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             key: 'sort-by',
           },
           {
+            name: 'Subjects',
+            menuContent: [
+              'Generic programmes and qualifications',
+              'Literacy and numeracy',
+              'Arts and humanities',
+              'Social sciences',
+              'Business and administration',
+              'Natural sciences',
+              'Engineering and technology',
+              'Agriculture, forestry and fisheries',
+              'Health and welfare',
+              'Personal skills and development',
+            ]
+              .map(e => <div key={e.toLocaleLowerCase()}>{e}</div>)
+              .map(e =>
+                getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
+              ),
+            menuContentType: 'menu-content-default-list',
+            key: 'subjects',
+          },
+          {
             name: 'Language',
             menuContent: [
               'English',
@@ -144,7 +206,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
                 getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
               ),
             menuContentType: 'menu-content-default-list',
-            key: 'sort-by',
+            key: 'language',
           },
         ],
         key: 'collection-list',
@@ -154,7 +216,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         Item: ({ showAll, setShowAll }) => {
           const list = useMemo(
             () =>
-              getProfileCardsStoryProps(15, {
+              getProfileCardsStoryProps(30, {
                 access: { isAuthenticated: false },
               }),
             [],
@@ -197,7 +259,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
                 getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
               ),
             menuContentType: 'menu-content-default-list',
-            key: 'locations',
+            key: 'subjects',
           },
           {
             name: 'Entities',
@@ -218,7 +280,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
                 getFilterContentDefaultListElement({ Item: () => e, key: e.key?.valueOf() ?? '' }),
               ),
             menuContentType: 'menu-content-default-list',
-            key: 'locations',
+            key: 'entities',
           },
           {
             name: 'Locations',
@@ -251,66 +313,66 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
 
 export const BrowserLoggedInStoryProps: BrowserProps = {
   mainColumnItems: [
-    {
-      menuItem: () => <span>Resources</span>,
-      Item: ({ showAll, setShowAll }) => {
-        const list = useMemo(
-          () =>
-            getResourcesCardStoryProps(15, {
-              access: { isAuthenticated: true },
-            }),
-          [],
-        )
-        return (
-          <SearchResourceList
-            showAll={showAll}
-            resourceCardPropsList={list}
-            setShowAll={setShowAll}
-          />
-        )
-      },
-      key: 'resource-list',
-    },
-    {
-      menuItem: () => <span>Collections</span>,
-      Item: ({ showAll, setShowAll }) => {
-        const list = useMemo(
-          () =>
-            getCollectionsCardStoryProps(15, {
-              access: { isAuthenticated: true },
-            }),
-          [],
-        )
-        return (
-          <SearchCollectionList
-            collectionCardPropsList={list}
-            showAll={showAll}
-            setShowAll={setShowAll}
-          />
-        )
-      },
-      key: 'collection-list',
-    },
-    {
-      menuItem: () => <span>People</span>,
-      Item: ({ showAll, setShowAll }) => {
-        const list = useMemo(
-          () =>
-            getProfileCardsStoryProps(15, {
-              access: { isAuthenticated: true },
-            }),
-          [],
-        )
-        return (
-          <SearchProfileList
-            profilesCardPropsList={list}
-            showAll={showAll}
-            setShowAll={setShowAll}
-          />
-        )
-      },
-      key: 'people-list',
-    },
+    // {
+    //   menuItem: () => <span>Resources</span>,
+    //   Item: ({ showAll, setShowAll }) => {
+    //     const list = useMemo(
+    //       () =>
+    //         getResourcesCardStoryProps(30, {
+    //           access: { isAuthenticated: true },
+    //         }),
+    //       [],
+    //     )
+    //     return (
+    //       <SearchResourceList
+    //         showAll={showAll}
+    //         resourceCardPropsList={list}
+    //         setShowAll={setShowAll}
+    //       />
+    //     )
+    //   },
+    //   key: 'resource-list',
+    // },
+    // {
+    //   menuItem: () => <span>Collections</span>,
+    //   Item: ({ showAll, setShowAll }) => {
+    //     const list = useMemo(
+    //       () =>
+    //         getCollectionsCardStoryProps(30, {
+    //           access: { isAuthenticated: true },
+    //         }),
+    //       [],
+    //     )
+    //     return (
+    //       <SearchCollectionList
+    //         collectionCardPropsList={list}
+    //         showAll={showAll}
+    //         setShowAll={setShowAll}
+    //       />
+    //     )
+    //   },
+    //   key: 'collection-list',
+    // },
+    // {
+    //   menuItem: () => <span>People</span>,
+    //   Item: ({ showAll, setShowAll }) => {
+    //     const list = useMemo(
+    //       () =>
+    //         getProfileCardsStoryProps(30, {
+    //           access: { isAuthenticated: true },
+    //         }),
+    //       [],
+    //     )
+    //     return (
+    //       <SearchProfileList
+    //         profilesCardPropsList={list}
+    //         showAll={showAll}
+    //         setShowAll={setShowAll}
+    //       />
+    //     )
+    //   },
+    //   key: 'people-list',
+    // },
   ],
   sideColumnItems: [],
 }

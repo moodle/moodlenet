@@ -185,21 +185,20 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
   )
 
   const [currentFilters, setCurrentFilters] = useState<FilterItem[] | undefined>([])
+  console.log('currentMainFilter', currentMainFilter)
   useEffect(() => {
     mainColumnItems?.map(
       e => e.key.toString() === currentMainFilter && setCurrentFilters(e.filters),
     )
   }, [currentMainFilter, mainColumnItems])
+  console.log('currentFilters', currentFilters)
 
-  const filters = (
-    <div className="filters">
-      {useMemo(
-        () => currentFilters && currentFilters.map(i => getFilterElement(i)),
+  const filters =
+    currentFilters && currentFilters.length > 0 ? (
+      <div className="filters">{currentFilters.map(i => getFilterElement(i))}</div>
+    ) : null
 
-        [currentFilters],
-      )}
-    </div>
-  )
+  console.log('filters ', filters)
 
   const updatedSideColumnItems = [navMenu, ...(sideColumnItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
@@ -255,24 +254,27 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
     document.body.scrollTo(0, 0)
   }, [currentMainFilter])
 
-  const extraFilters = (
-    <>
-      <div className="separator"></div>
-      {filters}
-      <div className="separator"></div>
-      <SecondaryButton className={`filter-element`} color="grey">
-        All filters
-      </SecondaryButton>
-      <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton>
-    </>
-  )
+  const extraFilters =
+    currentMainFilter && currentFilters && currentFilters.length > 0 ? (
+      <>
+        <div className="separator" />
+        {filters}
+        <div className="separator"></div>
+        <SecondaryButton className={`filter-element`} color="grey">
+          All filters
+        </SecondaryButton>
+        <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton>
+      </>
+    ) : null
+
+  console.log('extraFilters', extraFilters)
 
   return (
     <div className="browser">
       <div className="filter-bar">
         <div className="filter-bar-content">
           <div className="content-type-filters">{filterByItemType.filter(e => !!e)}</div>
-          {currentMainFilter && currentFilters && currentFilters.length > 0 && extraFilters}
+          {extraFilters}
         </div>
       </div>
       <div className="content">
