@@ -2,10 +2,6 @@ import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/s
 import type { PkgName } from '@moodlenet/core'
 
 export type AqlVal<_T> = string & { $$AqlVal$$?: _T }
-export type ProjectVal<P extends Record<string, AqlVal<any>>> = P
-export type ProjectRes<P> = {
-  [k in keyof P]: P[k] extends AqlVal<infer T> ? T : any
-}
 
 // type X = ProjectRes<{ patched: AqlVal<EntityDocument<SomeEntityDataType>> }>
 

@@ -21,8 +21,6 @@ import {
   EntityDocument,
   EntityMetadata,
   PkgUser,
-  ProjectRes,
-  ProjectVal,
   RootUser,
   SomeEntityDataType,
   SystemUser,
@@ -167,14 +165,19 @@ export async function delEntity<EntityDataType extends SomeEntityDataType>(
   return deleteRecord
 }
 
-type GetEntityOpts<Project extends ProjectVal<any>> = Pick<
-  QueryEntityOpts<Project>,
-  'project' | 'projectAccess'
->
+export type GetEntityOpts<
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = Pick<QueryEntityOpts<Project, ProjectAccess>, 'project' | 'projectAccess'>
 export async function getEntity<
   EntityDataType extends SomeEntityDataType,
-  Project extends ProjectVal<any>,
->(entityClass: EntityClass<EntityDataType>, key: string, opts?: GetEntityOpts<Project>) {
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(
+  entityClass: EntityClass<EntityDataType>,
+  key: string,
+  opts?: GetEntityOpts<Project, ProjectAccess>,
+) {
   const getCursor = await queryEntities(entityClass, 'r', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
@@ -199,28 +202,48 @@ export async function getEntity<
 //   console.log(inspect({ get_findResult }, false, 10, true))
 //   return get_findResult
 // }
+export type QueryEntitiesCustomProject<P extends Record<string, AqlVal<any>>> = P
 
-type QueryEntityOpts<Project extends ProjectVal<any>> = {
+export type QueryEntitiesProjectResult<P> = {
+  [k in keyof P]: P[k] extends AqlVal<infer T> ? T : any
+}
+
+export type QueryEntitiesRecordType<
+  EntityDataType extends SomeEntityDataType,
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = {
+  entity: Omit<EntityDocument<EntityDataType>, '_meta'>
+  meta: EntityMetadata
+  access: { [access in ProjectAccess]: boolean }
+} & QueryEntitiesProjectResult<Project>
+
+export type QueryEntityOpts<
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = {
   preAccessBody?: string
   postAccessBody?: string
   project?: Project
   bindVars?: Record<string, any>
-  projectAccess?: EntityAccess[]
+  projectAccess?: ProjectAccess[]
 }
+
 export async function queryEntities<
   EntityDataType extends SomeEntityDataType,
-  Project extends ProjectVal<any>,
->(entityClass: EntityClass<EntityDataType>, access: EntityAccess, opts?: QueryEntityOpts<Project>) {
-  type _QueryRecordType = {
-    entity: Omit<EntityDocument<EntityDataType>, '_meta'>
-    meta: EntityMetadata
-    access: { [access in EntityAccess]?: boolean }
-  } & ProjectRes<Project>
-
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(
+  entityClass: EntityClass<EntityDataType>,
+  access: EntityAccess,
+  opts?: QueryEntityOpts<Project, ProjectAccess>,
+) {
   const isRead = access === 'r'
   const currentUser = await getCurrentSystemUser()
   if (!isRead && currentUser.type === 'anon') {
-    return db.query<_QueryRecordType>('for x in [] return x')
+    return db.query<QueryEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(
+      'for x in [] return x',
+    )
   }
 
   const entityCollectionName = getEntityCollectionName(entityClass)
@@ -288,7 +311,9 @@ ${projectAqlRawProps}
 
   const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
   console.log(q, inspect({ bindVars }, false, 10, true))
-  const queryCursor = await db.query<_QueryRecordType>(q, bindVars)
+  const queryCursor = await db.query<
+    QueryEntitiesRecordType<EntityDataType, Project, ProjectAccess>
+  >(q, bindVars)
 
   return queryCursor
 }
