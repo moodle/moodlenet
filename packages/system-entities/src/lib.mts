@@ -2,7 +2,11 @@ import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
 import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
-import { entityDocument, pkgMetaOf } from './access-control-lib/aql.mjs'
+import {
+  entityDocument,
+  entityIdentifier2EntityIdAql,
+  pkgMetaOf,
+} from './access-control-lib/aql.mjs'
 import { db, env } from './init.mjs'
 import { entityId, getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
@@ -26,6 +30,7 @@ import {
   SystemUser,
 } from './types.mjs'
 import { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
+import { EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './user-info.mjs'
 
 export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
   [name in keyof Defs]: EntityCollectionDefOpts
@@ -283,11 +288,13 @@ export async function queryEntities<
   const q = `
 LET currentUser = @currentUser
 LET currentUserEntity = ${currentUserEntityAql}
-
 // if currentUser.type === 'entity' && currentUserEntity === null
 // the query should fail early with error !
 
 FOR entity in @@collection
+LET creatorEntityId=entity._meta.creator.type == 'entity' ? ${entityIdentifier2EntityIdAql(
+    'entity._meta.creator.entityIdentifier',
+  )} : null
     
 ${opts?.preAccessBody ?? '// NO PRE_ACCESS_BODY'}
 LET accessControls = {
@@ -461,4 +468,8 @@ export async function setPkgCurrentUser() {
     pkgName: pkgId.name,
   }
   shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
+}
+
+export function registerEntityInfoProvider(providerItem: EntityInfoProviderItem) {
+  ENTITY_INFO_PROVIDERS.push({ providerItem })
 }

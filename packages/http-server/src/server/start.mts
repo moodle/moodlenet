@@ -33,6 +33,9 @@ app.use(`${BASE_PKG_URL}/`, extPortsApp)
 
 mountedApps.forEach(({ getApp, mountOnAbsPath, pkgId }) => {
   const pkgApp = getApp(express)
+  if (!pkgApp) {
+    return
+  }
   if (mountOnAbsPath) {
     console.log(`HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
     app.use(mountOnAbsPath, pkgApp)

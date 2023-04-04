@@ -1,5 +1,6 @@
 import type { PkgName } from '@moodlenet/core'
-import { entityId, getPkgNamespace } from '../pkg-db-names.mjs'
+import { includesSameClass } from '../lib.mjs'
+import { entityId, getPkgNamespace, getPkgNamespaceAql } from '../pkg-db-names.mjs'
 import type {
   AqlVal,
   EntityClass,
@@ -7,6 +8,7 @@ import type {
   EntityIdentifier,
   SomeEntityDataType,
 } from '../types.mjs'
+import { EntityInfo, ENTITY_INFO_PROVIDERS } from '../user-info.mjs'
 
 // TODO: export a set of const for known vars for safer AQL construction ? (entity, entityClass, _meta, creator, currentUser)
 
@@ -52,4 +54,42 @@ export function pkgMetaOf<T>(pkgName: PkgName): AqlVal<T> {
 
 export function toaql<T>(any: unknown): AqlVal<T> {
   return any === void 0 ? 'undefined' : JSON.stringify(any)
+}
+
+export function entityIdentifier2EntityIdAql(entityIdentifierVar: string) {
+  const pkgNamespaceAql = getPkgNamespaceAql(`${entityIdentifierVar}.entityClass.pkgName`)
+  return `CONCAT(${pkgNamespaceAql},'__',${entityIdentifierVar}.entityClass.type, "/", ${entityIdentifierVar}._key )`
+}
+
+export function entityDocByIdentifierAql(entityIdentifierVar: string) {
+  const docId = entityIdentifier2EntityIdAql(entityIdentifierVar)
+  return `DOCUMENT(${docId})`
+}
+export function systemUserInfoAqlProvider(
+  systemUserVar: string,
+  opts?: { restrictToEntityClasses?: EntityClass<SomeEntityDataType>[] },
+): AqlVal<EntityInfo> {
+  const providersRows = ENTITY_INFO_PROVIDERS.filter(({ providerItem: { entityClass } }) =>
+    !opts?.restrictToEntityClasses
+      ? true
+      : includesSameClass(entityClass, opts?.restrictToEntityClasses),
+  ).map(({ providerItem: { aqlProvider, entityClass } }) => {
+    const isSameClass = `${toaql(entityClass)} == ${systemUserVar}.entityIdentifier.entityClass`
+    const resolvedInfo = aqlProvider('creatorDoc')
+    return `( ${isSameClass} ? ( ${resolvedInfo} ) : null )`
+  })
+  const providersArrayAql = `[ ${providersRows.join(' , ')} ]`
+  const entityProvidersAql = `(( 
+    LET creatorDoc = DOCUMENT(creatorEntityId)
+    FOR userInfo in ${providersArrayAql} FILTER !!userInfo LIMIT 1 RETURN userInfo )[0])`
+  const aql = `(
+    ${systemUserVar}.type == 'entity' ? ${entityProvidersAql} 
+    : ${systemUserVar}.type == 'root' ? { icon: '', name: 'ROOT', homepage: '' }
+    : /* type == 'pkg' */ { icon: '', name: ${systemUserVar}.pkgName, homepage: '' }
+  )`
+  return aql
+}
+
+export function creatorUserInfoAqlProvider(): AqlVal<EntityInfo> {
+  return systemUserInfoAqlProvider('entity._meta.creator')
 }

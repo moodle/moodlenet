@@ -8,16 +8,21 @@ import {
   isSameClass,
   registerAccessController,
   registerEntities,
+  registerEntityInfoProvider,
   ROOT_SYSTEM_USER,
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
 import { isCurrentUserEntity, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import assert from 'assert'
 import { resolve } from 'path'
-import { defaultAppearanceData, WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../common/exports.mjs'
+import {
+  defaultAppearanceData,
+  PROFILE_HOME_PAGE_ROUTE_PATH,
+  WEB_USER_SESSION_TOKEN_COOKIE_NAME,
+} from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
-import { plugin } from './lib.mjs'
+import { getWebappUrl, plugin } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 import { setCurrentUnverifiedJwtToken, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
@@ -39,6 +44,21 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
   WebUserProfile: EntityCollectionDef<WebUserProfileDataType>
 }>({
   WebUserProfile: {},
+})
+
+registerEntityInfoProvider({
+  entityClass: WebUserProfile.entityClass,
+  aqlProvider(entityDocVar) {
+    const baseHomePagegetWebappUrl = getWebappUrl(PROFILE_HOME_PAGE_ROUTE_PATH)
+    const homepage = `SUBSTITUTE( "${baseHomePagegetWebappUrl}" , ":key" , ${entityDocVar}._key )`
+    // const homepagepath =
+    // const homepage = `CONCAT( "${instanceDomain}" , ${homepagepath} )`
+    return `{ 
+      icon: '##', 
+      name: ${entityDocVar}.displayName, 
+      homepage: ${homepage}
+    }`
+  },
 })
 
 await shell.call(registerAccessController)({
@@ -98,25 +118,26 @@ await shell.call(addMiddleware)({
   ],
 })
 
-if (!env.noWebappServer) {
-  await shell.call(mountApp)({
-    getApp(express) {
-      const mountApp = express()
-      const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
-      mountApp.use(staticWebApp)
-      //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
-      mountApp.get(`*`, (req, res, next) => {
-        if (req.url.startsWith('/.')) {
-          next()
-          return
-        }
-        res.sendFile(resolve(latestBuildFolder, 'index.html'))
-      })
-      return mountApp
-    },
-    mountOnAbsPath: '/',
-  })
-}
+export const httpApp = await shell.call(mountApp)({
+  getApp(express) {
+    if (env.noWebappServer) {
+      return
+    }
+    const mountApp = express()
+    const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
+    mountApp.use(staticWebApp)
+    //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
+    mountApp.get(`*`, (req, res, next) => {
+      if (req.url.startsWith('/.')) {
+        next()
+        return
+      }
+      res.sendFile(resolve(latestBuildFolder, 'index.html'))
+    })
+    return mountApp
+  },
+  mountOnAbsPath: '/',
+})
 
 type Env = {
   noWebappServer?: boolean
