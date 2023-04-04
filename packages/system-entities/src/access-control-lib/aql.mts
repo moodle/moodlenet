@@ -1,4 +1,5 @@
 import type { PkgName } from '@moodlenet/core'
+import { EntityInfo, ENTITY_INFO_PROVIDERS } from '../entity-info.mjs'
 import { includesSameClass } from '../lib.mjs'
 import { entityId, getPkgNamespace, getPkgNamespaceAql } from '../pkg-db-names.mjs'
 import type {
@@ -8,7 +9,6 @@ import type {
   EntityIdentifier,
   SomeEntityDataType,
 } from '../types.mjs'
-import { EntityInfo, ENTITY_INFO_PROVIDERS } from '../user-info.mjs'
 
 // TODO: export a set of const for known vars for safer AQL construction ? (entity, entityClass, _meta, creator, currentUser)
 
@@ -52,10 +52,6 @@ export function pkgMetaOf<T>(pkgName: PkgName): AqlVal<T> {
   return `entity._meta.pkgMeta["${getPkgNamespace(pkgName)}"]`
 }
 
-export function toaql<T>(any: unknown): AqlVal<T> {
-  return any === void 0 ? 'undefined' : JSON.stringify(any)
-}
-
 export function entityIdentifier2EntityIdAql(entityIdentifierVar: string) {
   const pkgNamespaceAql = getPkgNamespaceAql(`${entityIdentifierVar}.entityClass.pkgName`)
   return `CONCAT(${pkgNamespaceAql},'__',${entityIdentifierVar}.entityClass.type, "/", ${entityIdentifierVar}._key )`
@@ -65,7 +61,7 @@ export function entityDocByIdentifierAql(entityIdentifierVar: string) {
   const docId = entityIdentifier2EntityIdAql(entityIdentifierVar)
   return `DOCUMENT(${docId})`
 }
-export function systemUserInfoAqlProvider(
+export function userInfoAqlProvider(
   systemUserVar: string,
   opts?: { restrictToEntityClasses?: EntityClass<SomeEntityDataType>[] },
 ): AqlVal<EntityInfo> {
@@ -81,15 +77,19 @@ export function systemUserInfoAqlProvider(
   const providersArrayAql = `[ ${providersRows.join(' , ')} ]`
   const entityProvidersAql = `(( 
     LET creatorDoc = DOCUMENT(creatorEntityId)
-    FOR userInfo in ${providersArrayAql} FILTER !!userInfo LIMIT 1 RETURN userInfo )[0])`
+    FOR entityInfo in ${providersArrayAql} FILTER !!entityInfo LIMIT 1 RETURN entityInfo )[0])`
   const aql = `(
     ${systemUserVar}.type == 'entity' ? ${entityProvidersAql} 
-    : ${systemUserVar}.type == 'root' ? { icon: '', name: 'ROOT', homepage: '' }
-    : /* type == 'pkg' */ { icon: '', name: ${systemUserVar}.pkgName, homepage: '' }
+    : ${systemUserVar}.type == 'root' ? { iconUrl: '', name: 'ROOT', homepagePath: '' }
+    : /* type == 'pkg' */ { iconUrl: '', name: ${systemUserVar}.pkgName, homepagePath: '' }
   )`
   return aql
 }
 
 export function creatorUserInfoAqlProvider(): AqlVal<EntityInfo> {
-  return systemUserInfoAqlProvider('entity._meta.creator')
+  return userInfoAqlProvider('entity._meta.creator')
+}
+
+export function toaql<T>(any: unknown): AqlVal<T> {
+  return any === void 0 ? 'undefined' : JSON.stringify(any)
 }

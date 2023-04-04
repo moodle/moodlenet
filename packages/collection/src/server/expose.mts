@@ -1,4 +1,4 @@
-import { instanceDomain, RpcFile, RpcStatus } from '@moodlenet/core'
+import { RpcFile, RpcStatus } from '@moodlenet/core'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
 import { CollectionDataResponce, CollectionFormValues } from '../common.mjs'
@@ -61,9 +61,9 @@ export const expose = await shell.expose({
         }
         return {
           contributor: {
-            avatarUrl: found.contributor.icon,
+            avatarUrl: found.contributor.iconUrl,
             creatorProfileHref: {
-              url: found.contributor.homepage.replace(new RegExp(`^${instanceDomain}`), ''),
+              url: found.contributor.homepagePath,
               ext: false,
             },
             displayName: found.contributor.name,
