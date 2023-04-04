@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
-import { kvStore } from './init.mjs'
+import { httpApp, kvStore } from './init.mjs'
 import { shell } from './shell.mjs'
 import { addWebappPluginItem } from './webapp-plugins.mjs'
 
@@ -28,4 +28,8 @@ export async function plugin<Deps extends WebPkgDeps>(pluginDef: WebappPluginDef
     guestPkgInfo: guestPkgEntry.pkgInfo,
   }
   await addWebappPluginItem(webappPluginItem)
+}
+
+export function getWebappUrl(path?: string) {
+  return `${httpApp.baseUrl}${path ?? ''}`
 }

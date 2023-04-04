@@ -1,6 +1,8 @@
-import { RpcFile, RpcStatus } from '@moodlenet/core'
-import { isCreator } from '@moodlenet/system-entities/server/aql-ac'
+import { instanceDomain, RpcFile, RpcStatus } from '@moodlenet/core'
+import { getWebappUrl } from '@moodlenet/react-app/server'
+import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
 import { CollectionDataResponce, CollectionFormValues } from '../common.mjs'
+import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import {
   createCollection,
@@ -45,12 +47,13 @@ export const expose = await shell.expose({
     // },
     'webapp/get/:_key': {
       guard: () => void 0,
-      fn: async (_, params: { _key: string }): Promise<CollectionDataResponce | undefined> => {
-        const found = await getCollection(params._key, {
+      fn: async (_, { _key }: { _key: string }): Promise<CollectionDataResponce | undefined> => {
+        const found = await getCollection(_key, {
           projectAccess: ['u', 'd'],
           project: {
             canPublish: canPublish(),
             isCreator: isCreator(),
+            contributor: creatorUserInfoAqlProvider(),
           },
         })
         if (!found) {
@@ -58,14 +61,18 @@ export const expose = await shell.expose({
         }
         return {
           contributor: {
-            avatarUrl: '',
-            creatorProfileHref: { url: '', ext: false },
-            displayName: '',
+            avatarUrl: found.contributor.icon,
+            creatorProfileHref: {
+              url: found.contributor.homepage.replace(new RegExp(`^${instanceDomain}`), ''),
+              ext: false,
+            },
+            displayName: found.contributor.name,
           },
+
           form: { description: found.entity.description, title: found.entity.title },
           data: {
             collectionId: found.entity._key,
-            mnUrl: '',
+            mnUrl: getWebappUrl(getCollectionHomePageRoutePath({ _key })),
             imageUrl: '',
             isWaitingForApproval: false,
           },

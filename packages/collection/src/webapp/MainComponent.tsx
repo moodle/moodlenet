@@ -13,11 +13,12 @@ import {
   MyPkgContext,
   RpcCaller,
 } from '../common/types.mjs'
+import { COLLECTION_HOME_PAGE_ROUTE_PATH } from '../common/webapp-routes.mjs'
 import { CollectionPageRoute } from '../ui.mjs'
 import { MainContext } from './MainContext.js'
 
 const myRoutes = {
-  routes: <Route path="collection/:key" element={<CollectionPageRoute />} />,
+  routes: <Route path={COLLECTION_HOME_PAGE_ROUTE_PATH} element={<CollectionPageRoute />} />,
 }
 
 const menuItems = {
