@@ -7,6 +7,7 @@ import {
   entityIdentifier2EntityIdAql,
   pkgMetaOf,
 } from './access-control-lib/aql.mjs'
+import { EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { db, env } from './init.mjs'
 import { entityId, getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
@@ -30,7 +31,6 @@ import {
   SystemUser,
 } from './types.mjs'
 import { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
-import { EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './user-info.mjs'
 
 export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
   [name in keyof Defs]: EntityCollectionDefOpts

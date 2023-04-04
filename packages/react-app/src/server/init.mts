@@ -22,7 +22,7 @@ import {
 } from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
-import { getWebappUrl, plugin } from './lib.mjs'
+import { plugin } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 import { setCurrentUnverifiedJwtToken, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
@@ -49,14 +49,14 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 registerEntityInfoProvider({
   entityClass: WebUserProfile.entityClass,
   aqlProvider(entityDocVar) {
-    const baseHomePagegetWebappUrl = getWebappUrl(PROFILE_HOME_PAGE_ROUTE_PATH)
-    const homepage = `SUBSTITUTE( "${baseHomePagegetWebappUrl}" , ":key" , ${entityDocVar}._key )`
+    // const baseHomePagegetWebappUrl = getWebappUrl(PROFILE_HOME_PAGE_ROUTE_PATH)
+    const homepagePath = `SUBSTITUTE( "/${PROFILE_HOME_PAGE_ROUTE_PATH}" , ":key" , ${entityDocVar}._key )`
     // const homepagepath =
     // const homepage = `CONCAT( "${instanceDomain}" , ${homepagepath} )`
     return `{ 
-      icon: '##', 
+      iconUrl: '##', 
       name: ${entityDocVar}.displayName, 
-      homepage: ${homepage}
+      homepagePath: ${homepagePath}
     }`
   },
 })

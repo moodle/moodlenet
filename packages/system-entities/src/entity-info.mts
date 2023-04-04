@@ -1,9 +1,9 @@
 import { AqlVal, EntityClass, SomeEntityDataType } from './types.mjs'
 
 export type EntityInfo = {
-  icon: string
+  iconUrl: string
   name: string
-  homepage: string
+  homepagePath: string
 }
 export type EntityInfoProviderItem = {
   entityClass: EntityClass<SomeEntityDataType>
