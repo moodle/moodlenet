@@ -14,7 +14,6 @@ import {
   ResourceProps,
   ResourceRpc,
   RpcCaller,
-  rpcUrl,
 } from '../common/types.mjs'
 import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
 import { MainContext } from './MainContext.js'
@@ -32,13 +31,12 @@ const toFormProps = (r: ResourceFormRpc): ResourceFormProps => r
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
-  const { use } = myPkgCtx
-  const { me } = use
   const { registries } = useContext(ReactAppContext)
   const { clientSessionData } = useContext(AuthCtx)
 
   registries.routes.useRegister(myRoutes)
   const auth = useMemo(() => authToAccessRpc(clientSessionData), [clientSessionData])
+  const me = myPkgCtx.use.me
 
   const rpcCaller = useMemo((): RpcCaller => {
     const rpc = me.rpc
@@ -46,13 +44,13 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
 
     const rpcItem: RpcCaller = {
       edit: (key: string, values: ResourceFormProps) =>
-        rpc[rpcUrl.edit]({ key, resource: toFormRpc(values) }).then(toFormProps),
-      get: (key: string) => addAuth(rpc[rpcUrl.get]({ key })),
-      _delete: (key: string) => addAuth(rpc[rpcUrl.delete]({ key })),
-      setImage: (key: string, file: File) => addAuth(rpc[rpcUrl.setImage]({ key, file })),
+        rpc['webapp/edit']({ key, resource: toFormRpc(values) }).then(toFormProps),
+      get: (key: string) => addAuth(rpc['webapp/get']({ key })),
+      _delete: (key: string) => addAuth(rpc['webapp/delete']({ key })),
+      setImage: (key: string, file: File) => addAuth(rpc['webapp/setImage']({ key, file })),
       setContent: (key: string, file: File | string) =>
-        addAuth(rpc[rpcUrl.setContent]({ key, file })),
-      setIsPublished: (key: string) => addAuth(rpc[rpcUrl.setIsPublished]({ key })),
+        addAuth(rpc['webapp/setContent']({ key, file })),
+      setIsPublished: (key: string) => addAuth(rpc['webapp/setIsPublished']({ key })),
       // toggleLike: (key: string) => rpc[rpcUrl.toggleLike].fn({ key }),  // toggleBookmark: (key: string) => rpc[rpcUrl.toggleBookmark].fn({ key }),
     }
 

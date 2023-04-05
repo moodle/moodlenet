@@ -1,4 +1,4 @@
-import { ResourceFormRpc, rpcUrl } from '../common.mjs'
+import { ResourceFormRpc } from '../common.mjs'
 import { edit, get, setContent, setImage, setIsPublished, _delete } from './mockLib.mjs'
 import shell from './shell.mjs'
 
@@ -21,12 +21,12 @@ const guards = { noCheck: () => void 0 }
 const { noCheck } = guards
 export const expose = await shell.expose({
   rpc: {
-    [rpcUrl.edit]: { guard: noCheck, fn: rpcCtrl.edit },
-    [rpcUrl.get]: { guard: noCheck, fn: rpcCtrl.get },
-    [rpcUrl.delete]: { guard: noCheck, fn: rpcCtrl.delete },
-    [rpcUrl.setImage]: { guard: noCheck, fn: rpcCtrl.setImage },
-    [rpcUrl.setContent]: { guard: noCheck, fn: rpcCtrl.setContent },
-    [rpcUrl.setIsPublished]: { guard: noCheck, fn: rpcCtrl.setIsPublished },
+    ['webapp/edit']: { guard: noCheck, fn: rpcCtrl.edit },
+    ['webapp/get']: { guard: noCheck, fn: rpcCtrl.get },
+    ['webapp/delete']: { guard: noCheck, fn: rpcCtrl.delete },
+    ['webapp/setImage']: { guard: noCheck, fn: rpcCtrl.setImage },
+    ['webapp/setContent']: { guard: noCheck, fn: rpcCtrl.setContent },
+    ['webapp/setIsPublished']: { guard: noCheck, fn: rpcCtrl.setIsPublished },
     // [rpcUrl.toggleBookmark]: { guard, fn: rpcLib.toggleBookmark },  // [rpcUrl.toggleLike]: { guard, fn: rpcLib.toggleLike },
   },
 })
