@@ -28,6 +28,10 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
+  loginHref: href('Pages/Access/Login'),
+  signUpHref: href('Pages/Access/Signup'),
+  newResourceHref: href('Pages/Resource/New'),
+  newCollectionHref: href('Pages/Collection/New'),
   mainColumnItems: [
     {
       Item: () => (
@@ -65,6 +69,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       key: 'people-card-list',
     },
   ],
+  shareContentModalItems: [],
 }
 
 export const LandingLoggedInStoryProps: LandingProps = {
@@ -77,11 +82,12 @@ export const LandingLoggedInStoryProps: LandingProps = {
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             state: {
-              liked: true,
-              bookmarked: true,
+              // liked: true,
+              // bookmarked: true,
             },
             access: {
-              canEdit: false,
+              canDelete: false,
+              canPublish: false,
             },
           })}
         />
@@ -94,8 +100,8 @@ export const LandingLoggedInStoryProps: LandingProps = {
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
             state: {
-              followed: true,
-              bookmarked: true,
+              // followed: true,
+              // bookmarked: true,
             },
           })}
         />
@@ -108,7 +114,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
           searchAuthorsHref={href('Page/Search')}
           profilesPropsList={getProfileCardsStoryProps(15, {
             state: {
-              followed: true,
+              // followed: true,
             },
           })}
         />
@@ -143,12 +149,13 @@ export const Owner: LandingStory = () => {
           <LandingResourceList
             searchResourcesHref={href('Page/Search')}
             resourceCardPropsList={getResourcesCardStoryProps(15, {
-              data: {
+              state: {
                 isPublished: true,
               },
               access: {
-                isCreator: true,
-                canEdit: true,
+                canDelete: true,
+                canPublish: true,
+                isAuthenticated: true,
               },
             })}
           />
@@ -165,7 +172,8 @@ export const Owner: LandingStory = () => {
               },
               access: {
                 isCreator: true,
-                canEdit: true,
+                canPublish: true,
+                isAuthenticated: true,
               },
             })}
           />

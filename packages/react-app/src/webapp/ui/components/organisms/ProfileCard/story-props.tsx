@@ -29,11 +29,11 @@ export const getProfileCardFactory = (
         username: profile?.username ?? '',
       },
       state: {
-        followed: false,
+        // followed: false,
       },
       actions: {
         editProfile: action('edit profile'),
-        toggleFollow: action('toogleFollow'),
+        // toggleFollow: action('toogleFollow'),
       },
       access: {
         isAdmin: false,

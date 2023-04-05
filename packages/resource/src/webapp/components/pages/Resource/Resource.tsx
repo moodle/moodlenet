@@ -4,7 +4,7 @@ import {
   Card,
   Modal,
   PrimaryButton,
-  SecondaryButton
+  SecondaryButton,
 } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
@@ -15,15 +15,15 @@ import {
   ResourceActions,
   ResourceData,
   ResourceFormValues,
-  ResourceState
+  ResourceState,
 } from '../../../../common/types.mjs'
 import {
   ResourceContributorCard,
-  ResourceContributorCardProps
+  ResourceContributorCardProps,
 } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import {
   MainResourceCard,
-  MainResourceCardSlots
+  MainResourceCardSlots,
 } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
 
@@ -32,9 +32,9 @@ export type ResourceProps = {
   mainResourceCardSlots: MainResourceCardSlots
   resourceContributorCardProps: ResourceContributorCardProps
 
-  mainColumnItems?: AddonItem[]
-  sideColumnItems?: AddonItem[]
-  extraDetailsItems?: AddonItem[]
+  mainColumnItems: AddonItem[]
+  sideColumnItems: AddonItem[]
+  extraDetailsItems: AddonItem[]
 
   data: ResourceData
   resourceForm: ResourceFormValues
@@ -66,10 +66,10 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
 }) => {
-  const { isWaitingForApproval, downloadFilename, contentUrl, imageUrl, contentType } = data
+  const { downloadFilename, contentUrl, imageUrl, contentType } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish } = access
-  const { isPublished } = state
+  const { isPublished, isWaitingForApproval } = state
 
   const form = useFormik<ResourceFormValues>({
     initialValues: resourceForm,
@@ -81,7 +81,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
 
-    const contentForm = useFormik<{ content: File | string | null }>({
+  const contentForm = useFormik<{ content: File | string | null }>({
     initialValues: { content: null },
     onSubmit: values => {
       setCurrentContentUrl(null)
@@ -93,7 +93,7 @@ export const Resource: FC<ResourceProps> = ({
   }, [contentUrl])
 
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(imageUrl)
-  
+
   const imageForm = useFormik<{ image: File | null }>({
     initialValues: { image: null },
     onSubmit: values => {
@@ -101,7 +101,7 @@ export const Resource: FC<ResourceProps> = ({
       return values.image ? setImage(values.image) : undefined
     },
   })
-  
+
   useEffect(() => {
     setCurrentImageUrl(imageUrl)
   }, [imageUrl])

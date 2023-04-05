@@ -92,13 +92,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     resourceId,
     mnUrl,
     contentType,
-    isWaitingForApproval,
     downloadFilename,
     // numLikes,
   } = data
 
   const {
     isPublished,
+    isWaitingForApproval,
     uploadProgress,
     // bookmarked,
     // liked,

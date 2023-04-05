@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 import { MainContext } from './context/MainContext.mjs'
-import { avatarmenuItemReg } from './ui/components/organisms/HeaderProfile/HeaderProfile.js'
+import { profileAvatarmenuItemReg } from './ui/components/organisms/HeaderProfile/HeaderProfile.js'
 import { UsersContainer } from './ui/components/organisms/Roles/UsersContainer.js'
 import { AuthCtx, SettingsSectionItem } from './web-lib.mjs'
 
@@ -12,7 +12,7 @@ const settingsSectionItem: SettingsSectionItem = {
 const SetupComponent: FC<PropsWithChildren> = ({ children }) => {
   const { clientSessionData } = useContext(AuthCtx)
   const { reg } = useContext(MainContext)
-  reg.avatarMenuItems.useRegister(avatarmenuItemReg, {
+  reg.avatarMenuItems.useRegister(profileAvatarmenuItemReg, {
     condition: !!clientSessionData?.myProfile,
   })
   reg.settingsSections.useRegister(settingsSectionItem)

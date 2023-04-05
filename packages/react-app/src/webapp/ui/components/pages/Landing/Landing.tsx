@@ -1,15 +1,24 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
-import { AddonItem, PrimaryButton } from '@moodlenet/component-library'
+import { ArrowForward, NoteAdd } from '@material-ui/icons'
+import { AddonItem, Modal, PrimaryButton } from '@moodlenet/component-library'
+import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
+import { Href, Link } from '../../elements/link.js'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
 export type LandingProps = {
   mainLayoutProps: MainLayoutProps
-  mainColumnItems?: AddonItem[]
+  mainColumnItems: AddonItem[]
+  shareContentModalItems: AddonItem[]
 
   title: string
   subtitle: string
+
+  loginHref: Href
+  signUpHref: Href
+  newResourceHref: Href
+  newCollectionHref: Href
 
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
   // collectionCardPropsList: CP<CollectionCardProps>[]
@@ -17,11 +26,6 @@ export type LandingProps = {
   // smallProfileCardPropsList: CP<SmallProfileCardProps>[]
   // trendCardProps: TrendCardProps
   // organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
-  // isAuthenticated: boolean
-  // loginHref: Href
-  // signUpHref: Href
-  // newResourceHref: Href
-  // newCollectionHref: Href
   // setSearchText(text: string): unknown
   // searchResourcesHref: Href
   // searchCollectionsHref: Href
@@ -31,9 +35,16 @@ export type LandingProps = {
 export const Landing: FC<LandingProps> = ({
   mainLayoutProps,
   mainColumnItems,
+  shareContentModalItems,
 
   title,
   subtitle,
+
+  loginHref,
+  signUpHref,
+  newResourceHref,
+  newCollectionHref,
+
   // {
   //   // searchResourcesHref,
   //   // searchAuthorsHref,
@@ -45,34 +56,31 @@ export const Landing: FC<LandingProps> = ({
   //   // smallProfileCardPropsList,
   //   // organization,
   //   // isAuthenticated,
-  //   // loginHref,
-  //   // signUpHref,
-  //   // newResourceHref,
-  //   // newCollectionHref,
   //   // setSearchText,
 }) => {
-  {
-    // const defaultBackground = new URL(
-    //   '../../../assets/img/default-landing-background.png',
-    //   import.meta.url,
-    // ).href
-    // const [isSearchboxInViewport, setIsSearchboxInViewport] =
-    //   useState<boolean>(true)
-    // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
+  const isAuthenticated = mainLayoutProps.headerProps.isAuthenticated
 
-    const background = {
-      backgroundImage: 'url("' + /* imageUrl ||  */ defaultBackground + '")',
-      backgroundSize: 'cover',
-    }
-    const headerCard = (
-      <div className="landing-header" style={background}>
-        <div className="landing-title">
-          <div className="title">{title}</div>
-          {/* <div className="title">{organization.title}</div> */}
-          <div className="subtitle">{subtitle}</div>
-          {/* <div className="subtitle">{organization.subtitle}</div> */}
-        </div>
-        {/* <Searchbox
+  // const defaultBackground = new URL(
+  //   '../../../assets/img/default-landing-background.png',
+  //   import.meta.url,
+  // ).href
+  // const [isSearchboxInViewport, setIsSearchboxInViewport] =
+  //   useState<boolean>(true)
+  const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
+
+  const background = {
+    backgroundImage: 'url("' + /* imageUrl ||  */ defaultBackground + '")',
+    backgroundSize: 'cover',
+  }
+  const headerCard = (
+    <div className="landing-header" style={background}>
+      <div className="landing-title">
+        <div className="title">{title}</div>
+        {/* <div className="title">{organization.title}</div> */}
+        <div className="subtitle">{subtitle}</div>
+        {/* <div className="subtitle">{organization.subtitle}</div> */}
+      </div>
+      {/* <Searchbox
   // setSearchText={() => {
   //   return 'sdsf'
   // }}
@@ -83,27 +91,104 @@ export const Landing: FC<LandingProps> = ({
   // setIsSearchboxInViewport={setIsSearchboxInViewport}
   marginTop={12}
 /> */}
-        <PrimaryButton
-          className="share-content"
-          color="blue"
-          onClick={() => alert('Nothing to see here, for the moment 🤫')}
-          // onClick={() => setIsCreatingContent(true)}
-        >
-          Share content
-        </PrimaryButton>
-      </div>
-    )
+      <PrimaryButton
+        className="share-content"
+        color="blue"
+        onClick={() => setIsShowingContentModal(true)}
+        // onClick={() => setIsCreatingContent(true)}
+      >
+        Share content
+      </PrimaryButton>
+    </div>
+  )
 
-    const updatedMainColumnItems = [headerCard, ...(mainColumnItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
-    )
+  const updatedMainColumnItems = [headerCard, ...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
 
-    return (
-      <MainLayout {...mainLayoutProps}>
-        <div className="landing">
-          {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+  const newResource = (
+    <Link href={newCollectionHref}>
+      <PrimaryButton className="" color="card">
+        <LibraryAdd />
+        <div className="content">
+          <div className="title">Create a new collection</div>
+          <div className="subtitle">Collections are groups of resources</div>
+        </div>
+      </PrimaryButton>
+    </Link>
+  )
 
-          {/* <ListCard
+  const newCollection = (
+    <Link href={newResourceHref}>
+      <PrimaryButton className="" color="card">
+        <NoteAdd />
+        <div className="content">
+          <div className="title">Create a new resource</div>
+          <div className="subtitle">A resource is a single item of content</div>
+        </div>
+      </PrimaryButton>
+    </Link>
+  )
+
+  const updatedShareContentModalItems = [
+    newResource,
+    newCollection,
+    ...(shareContentModalItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  const modals = [
+    !isAuthenticated && isShowingContentModal && (
+      <Modal
+        className="create-content-modal"
+        title={`Log in or create an account to start sharing content`}
+        closeButton={false}
+        onClose={() => {
+          setIsShowingContentModal(false)
+        }}
+        style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
+      >
+        <Link href={loginHref}>
+          <PrimaryButton className="" color="card">
+            <ArrowForward />
+            <div className="content">
+              <div className="title">Log in</div>
+              <div className="subtitle">Enter to your account</div>
+            </div>
+          </PrimaryButton>
+        </Link>
+        <Link href={signUpHref}>
+          <PrimaryButton className="" color="card">
+            <StreamOutlined />
+            <div className="content">
+              <div className="title">Join now</div>
+              <div className="subtitle">Create a new account</div>
+            </div>
+          </PrimaryButton>
+        </Link>
+      </Modal>
+    ),
+    isAuthenticated && isShowingContentModal && (
+      <Modal
+        className="create-content-modal"
+        title={`What would you like to create?`}
+        closeButton={false}
+        onClose={() => {
+          setIsShowingContentModal(false)
+        }}
+        style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
+      >
+        {updatedShareContentModalItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </Modal>
+    ),
+  ]
+
+  return (
+    <MainLayout {...mainLayoutProps}>
+      {modals}
+      <div className="landing">
+        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+
+        {/* <ListCard
             className="resources"
             content={resourceCardPropsList
               .slice(0, 10)
@@ -199,11 +284,10 @@ export const Landing: FC<LandingProps> = ({
             maxHeight={267}
             // maxRows={1}
           /> */}
-          {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
-        </div>
-      </MainLayout>
-    )
-  }
+        {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
+      </div>
+    </MainLayout>
+  )
 }
 
 Landing.displayName = 'LandingPage'
