@@ -27,25 +27,25 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   }, [resourceKey, rpcCaller, setResource])
 
   const actions = useMemo<ResourceActions>(() => {
-    const updateResp = (resourceData: ResourceProps) => {
-      setResource(current => current && { ...current, resourceData })
-    }
-    const updateRespForm = (resourceForm: ResourceFormProps): ResourceFormProps => (
-      resource && updateResp({ ...resource, resourceForm }), resourceForm
-    )
+    // const updateResp = (resourceData: ResourceProps) => {
+    //   setResource(current => current && { ...current, resourceData })
+    // }
+    // const updateRespForm = (resourceForm: ResourceFormProps): ResourceFormProps => (
+    //   resource && updateResp({ ...resource, resourceForm }), resourceForm
+    // )
     const { edit, setImage, setIsPublished, setContent, _delete } = rpcCaller // toggleBookmark, toggleLike,
-    const brk = (_: unknown): Promise<void> => new Promise(resolve => _ || resolve())
 
-    return {
-      publish: () => brk(setIsPublished(resourceKey, true).then(res => updateResp(res))),
-      unpublish: () => brk(setIsPublished(resourceKey, false).then(updateResp)),
-      editData: (values: ResourceFormProps) => edit(resourceKey, values).then(updateRespForm),
-      deleteResource: () => brk(_delete(resourceKey)),
-      setImage: (file: File) => brk(setImage(resourceKey, file).then(updateResp)),
-      setContent: (content: File | string) => brk(setContent(resourceKey, content)),
+    const resourceActions: ResourceActions = {
+      publish: () => setIsPublished(resourceKey, true),
+      unpublish: () => setIsPublished(resourceKey, false),
+      editData: (values: ResourceFormProps) => edit(resourceKey, values),
+      deleteResource: () => _delete(resourceKey),
+      setImage: (file: File) => setImage(resourceKey, file),
+      setContent: (content: File | string) => setContent(resourceKey, content),
       // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp), toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
     }
-  }, [resourceKey, resource, rpcCaller])
+    return resourceActions
+  }, [resourceKey, rpcCaller])
 
   return useMemo<ResourceCommonProps | null>(
     () => (!resource ? null : { actions, props: resource }),

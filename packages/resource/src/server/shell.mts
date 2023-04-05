@@ -1,3 +1,2 @@
 import { getMyShell } from '@moodlenet/core'
-
-export default await getMyShell(import.meta)
+export const shell = await getMyShell<unknown>(import.meta)

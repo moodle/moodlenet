@@ -57,11 +57,11 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
 
     return {
       edit: (key: string, values: CollectionFormProps) =>
-        rpc['webapp/edit']({ key: key, values: toFormRpc(values) }),
+        rpc['webapp/edit/:_key']({ values: toFormRpc(values) }, { _key: key }),
       get: (_key: string) => addAuth(rpc['webapp/get/:_key'](null, { _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
       _delete: async (key: string) => rpc['webapp/delete/:_key'](null, { _key: key }),
       setIsPublished: async (key: string, publish: boolean) =>
-        rpc['webapp/set-is-published']({ key: key, publish }),
+        rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
       setImage: async (key: string, file: File) =>
         rpc['webapp/upload-image/:_key']({ file }, { _key: key }),
       create: () => rpc['webapp/create'](),
