@@ -78,6 +78,11 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     }
   }, [nav, rpcCaller])
 
+  registries.addMenuItems.useRegister(actionsMenu.create.menu, {
+    condition: auth.access.isAuthenticated,
+  })
+  registries.routes.useRegister(myRoutes)
+
   const mainValue = {
     ...myPkgCtx,
     rpcCaller,
