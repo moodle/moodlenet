@@ -33,8 +33,8 @@ const toFormProps = (r: ResourceFormRpc): ResourceFormProps => r
 const menuItems = {
   create: (onClick: () => void): HeaderMenuItem => ({
     Icon: '(icon)',
-    text: `New collection`,
-    key: 'mykey',
+    text: `New Resource`,
+    key: 'newResource1',
     onClick,
   }),
 }
@@ -71,7 +71,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
 
   const actionsMenu = useMemo(() => {
     const acCreate = () =>
-      rpcCaller.create().then(({ data: { resourceId } }) => nav(`/collection/${resourceId}`))
+      rpcCaller.create().then(({ data: { resourceId } }) => nav(`/resource/${resourceId}`))
 
     return {
       create: { action: acCreate, menu: menuItems.create(acCreate) },
