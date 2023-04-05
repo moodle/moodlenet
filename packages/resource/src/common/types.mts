@@ -186,26 +186,3 @@ export const getResourceTypeInfo = (
 }
 
 export const maxUploadSize = 1024 * 1024 * 50
-
-export const rpcUrl = (() => {
-  const upload = 'webapp/upload' as const
-  const get = 'webapp/get' as const
-  const edit = 'webapp/edit' as const
-  const _delete = 'webapp/delete' as const
-  const setImage = 'webapp/setImage' as const
-  const setContent = 'webapp/setContent' as const
-  const toggleBookmark = 'webapp/toggleBookmark' as const
-  const toggleLike = 'webapp/toggleLike' as const
-  const setIsPublished = 'webapp/setIsPublished' as const
-  return {
-    upload,
-    get,
-    edit,
-    delete: _delete,
-    setImage,
-    setContent,
-    toggleBookmark,
-    toggleLike,
-    setIsPublished,
-  }
-})()
