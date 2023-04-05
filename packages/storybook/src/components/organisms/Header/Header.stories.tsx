@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
+import { HeaderCollectionStories } from '@moodlenet/collection/stories'
 import { HeaderProfileStories, HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { href, MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
 import { HeaderResourceStories } from '@moodlenet/resource/stories'
@@ -36,11 +37,17 @@ const MainHeaderStoryProps: MainHeaderProps = {
   addMenuProps: {
     // newCollectionHref: href('Pages/NewCollection'),
     // newResourceHref: href('Pages/NewCollection'),
-    menuItems: [HeaderResourceStories.HeaderResourceStoryProps()],
+    menuItems: [
+      HeaderResourceStories.HeaderResourceStoryProps(),
+      HeaderCollectionStories.HeaderCollectionStoryProps(),
+    ],
   },
   avatarMenuProps: {
     avatarUrl: avatarPicture,
-    menuItems: [HeaderProfileStories.HeaderProfileStoryProps(avatarPicture)],
+    menuItems: [
+      HeaderProfileStories.HeaderProfileAvatarMenuStoryProps(avatarPicture),
+      HeaderProfileStories.HeaderSignoutAvatarMenuStoryProps,
+    ],
   },
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
   isAuthenticated: false,

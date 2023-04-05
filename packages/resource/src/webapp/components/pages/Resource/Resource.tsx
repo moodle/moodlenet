@@ -4,26 +4,26 @@ import {
   Card,
   Modal,
   PrimaryButton,
-  SecondaryButton,
+  SecondaryButton
 } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SchemaOf } from 'yup'
 import {
   ResourceAccess,
   ResourceActions,
   ResourceData,
   ResourceFormValues,
-  ResourceState,
+  ResourceState
 } from '../../../../common/types.mjs'
 import {
   ResourceContributorCard,
-  ResourceContributorCardProps,
+  ResourceContributorCardProps
 } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import {
   MainResourceCard,
-  MainResourceCardSlots,
+  MainResourceCardSlots
 } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
 
@@ -66,17 +66,45 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
 }) => {
-  const { isWaitingForApproval, isPublished, contentUrl, downloadFilename } = data
-  const { editResource, setIsPublished, deleteResource } = actions
-  const { isCreator, canEdit } = access
+  const { isWaitingForApproval, downloadFilename, contentUrl, imageUrl, contentType } = data
+  const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
+  const { canPublish } = access
+  const { isPublished } = state
 
   const form = useFormik<ResourceFormValues>({
     initialValues: resourceForm,
     validationSchema: validationSchema,
     onSubmit: values => {
-      return editResource(values)
+      return editData(values)
     },
   })
+
+  const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
+
+    const contentForm = useFormik<{ content: File | string | null }>({
+    initialValues: { content: null },
+    onSubmit: values => {
+      setCurrentContentUrl(null)
+      return values.content ? setContent(values.content) : undefined
+    },
+  })
+  useEffect(() => {
+    setCurrentContentUrl(contentUrl)
+  }, [contentUrl])
+
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(imageUrl)
+  
+  const imageForm = useFormik<{ image: File | null }>({
+    initialValues: { image: null },
+    onSubmit: values => {
+      setCurrentImageUrl(null)
+      return values.image ? setImage(values.image) : undefined
+    },
+  })
+  
+  useEffect(() => {
+    setCurrentImageUrl(imageUrl)
+  }, [imageUrl])
 
   //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
   //     useState<boolean>(false)
@@ -98,25 +126,30 @@ export const Resource: FC<ResourceProps> = ({
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
-  const contributorCard = !isCreator ? (
+  const contributorCard = isPublished && (
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
-  ) : null
+  )
 
-  const publish = () => {
+  const checkFormAndPublish = () => {
     if (form.isValid) {
       form.submitForm()
       setShouldShowErrors(false)
-      setIsPublished(true)
+      publish()
     } else {
       setShouldShowErrors(true)
     }
   }
+
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
+      publish={checkFormAndPublish}
       data={data}
       form={form}
-      publish={publish}
+      contentForm={contentForm}
+      contentUrl={currentContentUrl}
+      imageForm={imageForm}
+      imageUrl={currentImageUrl}
       state={state}
       actions={actions}
       access={access}
@@ -126,7 +159,7 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
-  const editorActionsContainer = canEdit ? (
+  const editorActionsContainer = canPublish ? (
     <Card
       className="resource-action-card"
       hideBorderWhenSmall={true}
@@ -146,14 +179,14 @@ export const Resource: FC<ResourceProps> = ({
         <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
       )}
       {isPublished || isWaitingForApproval ? (
-        <SecondaryButton onClick={() => setIsPublished(false)}>Back to draft</SecondaryButton>
+        <SecondaryButton onClick={unpublish}>Back to draft</SecondaryButton>
       ) : (
         <></>
       )}
     </Card>
   ) : null
 
-  const generalActionsContainer = form.values.content ? (
+  const generalActionsContainer = contentUrl ? (
     <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
       {/* <PrimaryButton
           // onClick={() => setIsAddingToMoodleLms(true)}
@@ -168,7 +201,7 @@ export const Resource: FC<ResourceProps> = ({
           </SecondaryButton> */}
       <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
         <SecondaryButton>
-          {form.values.content instanceof File ? (
+          {contentType === 'file' ? (
             <>
               <InsertDriveFile />
               Download file

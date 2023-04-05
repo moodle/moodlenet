@@ -1,4 +1,4 @@
-import { Bookmark, BookmarkBorder, Share } from '@material-ui/icons'
+import { Share } from '@material-ui/icons'
 import {
   AddonItem,
   Card,
@@ -7,7 +7,6 @@ import {
   InputTextField,
   Modal,
   PrimaryButton,
-  SecondaryButton,
   Snackbar,
   TertiaryButton,
   useWindowDimensions,
@@ -18,8 +17,6 @@ import {
   Delete,
   HourglassBottom,
   MoreVert,
-  PermIdentity,
-  Person,
   Public,
   PublicOff,
   Sync,
@@ -28,7 +25,7 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CollectionAccess,
   CollectionActions,
-  Collectiondata,
+  CollectionData,
   CollectionFormValues,
   CollectionState,
 } from '../../../../common/types.mjs'
@@ -47,8 +44,9 @@ export type MainCollectionCardSlots = {
 export type MainCollectionCardProps = {
   slots: MainCollectionCardSlots
 
-  data: Collectiondata
+  data: CollectionData
   form: FormikHandle<CollectionFormValues>
+  imageForm: FormikHandle<{ image: File | null }>
 
   state: CollectionState
   actions: CollectionActions
@@ -63,6 +61,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   data,
   form,
+  imageForm,
 
   state,
   actions,
@@ -80,17 +79,44 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { id, mnUrl, numFollowers, isPublished, isWaitingForApproval } = data
+  const {
+    collectionId,
+    mnUrl,
+    imageUrl,
+    isWaitingForApproval,
+    //  numFollowers,
+  } = data
 
-  const { bookmarked, followed, isSaved, isSaving } = state
-  const { toggleBookmark, toggleFollow, setIsPublished, deleteCollection } = actions
+  const {
+    isPublished,
+    // bookmarked,
+    // followed,
+  } = state
 
-  const { canEdit, isAuthenticated, isCreator } = access
+  const {
+    //  toggleBookmark,
+    //  toggleFollow,
+    unpublish,
+    deleteCollection,
+  } = actions
+  const {
+    canPublish,
+    canDelete,
+    canEdit,
+    //  canFollow,
+    //  canBookmark,
+    //  isCreator,
+    //  isAuthenticated
+  } = access
+
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
+  const backupImage: string | undefined = useMemo(
+    () => getBackupImage(collectionId),
+    [collectionId],
+  )
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [imageUrl] = useImageUrl(form.values?.image, backupImage)
+  const [image] = useImageUrl(imageUrl, backupImage)
   const { width } = useWindowDimensions()
 
   const copyUrl = () => {
@@ -112,18 +138,18 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       textAreaAutoSize
       displayMode
       className="title underline"
-      value={form.values.name}
+      value={form.values.title}
       placeholder="Title"
       key="title"
       onChange={form.handleChange}
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
       }}
-      error={shouldShowErrors && form.errors.name}
+      error={shouldShowErrors && form.errors.title}
     />
   ) : (
     <div className="title" key="title">
-      {form.values.name}
+      {form.values.title}
     </div>
   )
 
@@ -139,69 +165,83 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  const savingFeedback = isSaving ? (
-    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-      <Sync />
-      {/* Saving */}
-    </abbr>
-  ) : null
-
-  const savedFeedback =
-    !isSaving && isSaved ? (
-      // const [showSavedText, setShowSavedText] = useState(true)
-      // setTimeout(() => setShowSavedText(false), 3000)
-      <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-        <CloudDoneOutlined />
-        {/* {showSavedText && 'Saved'} */}
+  const savingFeedback =
+    form.isSubmitting || imageForm.isSubmitting ? (
+      <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+        <Sync />
+        Saving...
       </abbr>
     ) : null
+
+  const [showSavedText, setShowSavedText] = useState(false)
+  const savedFeedback = () => {
+    if (
+      !(form.isSubmitting || imageForm.isSubmitting) &&
+      (form.submitCount > 0 || imageForm.submitCount > 0)
+    ) {
+      setTimeout(() => setShowSavedText(false), 5000)
+      return (
+        <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+          <CloudDoneOutlined />
+          {showSavedText && 'Saved'}
+        </abbr>
+      )
+    }
+    return null
+  }
 
   const updatedTopLeftHeaderItems = [
     collectionLabel,
     savingFeedback,
-    savedFeedback,
+    savedFeedback(),
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const followersButton =
-    isPublished || numFollowers > 0 ? (
-      <TertiaryButton
-        className={`follow ${followed ? 'followed' : ''}`}
-        disabled={!isAuthenticated || isCreator}
-        onClick={isAuthenticated && !isCreator ? toggleFollow : () => undefined}
-        abbr={
-          isCreator ? 'Creators cannot follow their own content' : followed ? 'Unfollow' : 'Follow'
-        }
-        key="followers-button"
-      >
-        {followed ? <Person /> : <PermIdentity />}
-        <span>{numFollowers}</span>
-      </TertiaryButton>
-    ) : null
+  // const followersButton =
+  //   isPublished || numFollowers > 0 ? (
+  //     <TertiaryButton
+  //       className={`follow ${followed ? 'followed' : ''}`}
+  //       disabled={!canFollow}
+  //       onClick={canFollow ? toggleFollow : () => undefined}
+  //       abbr={
+  //         isCreator
+  //           ? 'Creators cannot follow their own content'
+  //           : !isAuthenticated
+  //           ? 'Login or signup to follow'
+  //           : followed
+  //           ? 'Unfollow'
+  //           : 'Follow'
+  //       }
+  //       key="followers-button"
+  //     >
+  //       {followed ? <Person /> : <PermIdentity />}
+  //       <span>{numFollowers}</span>
+  //     </TertiaryButton>
+  //   ) : null
 
-  const empty = !form.values.name && !form.values.description && !form.values.image
+  const empty = !form.values.title && !form.values.description && !imageForm.values.image
 
-  const bookmarkButtonSmallScreen =
-    !empty && width < 800
-      ? {
-          key: 'bookmark-button',
-          className: `bookmark ${bookmarked && 'bookmarked'}`,
-          onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
-          text: bookmarked ? 'Remove bookmark' : 'Bookmark',
-          Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
-        }
-      : null
+  // const bookmarkButtonSmallScreen =
+  //   !empty && width < 800
+  //     ? {
+  //         key: 'bookmark-button',
+  //         className: `bookmark ${bookmarked && 'bookmarked'}`,
+  //         onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
+  //         text: bookmarked ? 'Remove bookmark' : 'Bookmark',
+  //         Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
+  //       }
+  //     : null
 
-  const bookmarkButtonBigScreen = !empty && width > 800 && (
-    <TertiaryButton
-      key="bookmark-button"
-      className={`bookmark ${bookmarked && 'bookmarked'}`}
-      abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-      onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
-    >
-      {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-    </TertiaryButton>
-  )
+  // const bookmarkButtonBigScreen = !empty && width > 800 && (
+  //   <TertiaryButton
+  //     key="bookmark-button"
+  //     className={`bookmark ${bookmarked && 'bookmarked'}`}
+  //     abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+  //     onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
+  //   >
+  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
+  //   </TertiaryButton>
+  // )
 
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {
@@ -212,17 +252,18 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       }
     : null
 
-  const deleteButton: FloatingMenuContentItem | null = !empty
-    ? {
-        key: 'delete-button',
-        onClick: () => setIsToDelete(true),
-        text: 'Delete',
-        Icon: <Delete />,
-      }
-    : null
+  const deleteButton: FloatingMenuContentItem | null =
+    !empty && canDelete
+      ? {
+          key: 'delete-button',
+          onClick: () => setIsToDelete(true),
+          text: 'Delete',
+          Icon: <Delete />,
+        }
+      : null
 
   const publishButton =
-    width < 800 && canEdit && !isPublished && !isWaitingForApproval ? (
+    width < 800 && canPublish && !isPublished && !isWaitingForApproval ? (
       <TertiaryButton
         abbr="Publish"
         onClick={publish}
@@ -234,17 +275,17 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ) : null
 
   const draftButton: FloatingMenuContentItem | null =
-    width < 800 && canEdit && (isPublished || isWaitingForApproval)
+    width < 800 && canPublish && (isPublished || isWaitingForApproval)
       ? {
           Icon: <PublicOff />,
           text: 'Back to draft',
           key: 'draft-button',
-          onClick: () => setIsPublished(false),
+          onClick: unpublish,
         }
       : null
 
   const publishingButton =
-    width < 800 && canEdit && !isPublished && isWaitingForApproval ? (
+    width < 800 && canPublish && !isPublished && isWaitingForApproval ? (
       <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
         <HourglassBottom style={{ fill: '#d0d1db' }} />
       </abbr>
@@ -300,7 +341,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const updatedMoreButtonItems = [
     draftButton,
     shareButton,
-    bookmarkButtonSmallScreen,
+    // bookmarkButtonSmallScreen,
     // sendToMoodleButton,
     // addToCollectionButton,
     deleteButton,
@@ -341,11 +382,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     null
 
   const updatedTopRightHeaderItems = [
-    followersButton,
+    // followersButton,
     publishedButton,
     publishingButton,
     publishButton,
-    bookmarkButtonBigScreen,
+    // bookmarkButtonBigScreen,
     ...(topRightHeaderItems ?? []),
     moreButton,
   ].filter((item): item is AddonItem => !!item)
@@ -376,7 +417,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const collectionUploader = canEdit ? (
     <UploadImage
-      form={form}
+      imageForm={imageForm}
+      imageUrl={imageUrl}
       imageOnClick={() => setIsShowingImage(true)}
       key="collection-uploader"
     />
@@ -387,15 +429,14 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       className="image"
       onClick={() => setIsShowingImage(true)}
       // style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
-      style={{ backgroundImage: `url(${imageUrl})` }}
+      style={{ backgroundImage: `url(${image})` }}
     />
   )
 
   const imageContainer = !canEdit ? (
-    form.values.image ? (
+    imageForm.values.image || imageUrl ? (
       <div className="image-container" key="image-container">
         {imageDiv}
-        {/* {getImageCredits(form.values.image)} */}
       </div>
     ) : null
   ) : null
@@ -470,32 +511,42 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  const followButton = !isCreator ? (
-    followed ? (
-      <SecondaryButton
-        disabled={!isAuthenticated}
-        onClick={toggleFollow}
-        className="following-button"
-        key="follow-button"
-        color="orange"
-      >
-        Following
-      </SecondaryButton>
-    ) : (
-      <PrimaryButton
-        disabled={!isAuthenticated}
-        onClick={toggleFollow}
-        key="follow-button"
-        className="follow-button"
-      >
-        Follow
-      </PrimaryButton>
-    )
-  ) : null
+  // const followButton = !isCreator ? (
+  //   followed ? (
+  //     <SecondaryButton
+  //       disabled={!canFollow}
+  //       onClick={toggleFollow}
+  //       className="following-button"
+  //       key="follow-button"
+  //       color="orange"
+  //     >
+  //       Following
+  //     </SecondaryButton>
+  //   ) : (
+  //     <PrimaryButton
+  //       disabled={!canFollow}
+  //       onClick={toggleFollow}
+  //       key="follow-button"
+  //       className="follow-button"
+  //       abbr={
+  //         isCreator
+  //           ? 'Creators cannot follow their own content'
+  //           : !isAuthenticated
+  //           ? 'Login or signup to follow'
+  //           : followed
+  //           ? 'Unfollow'
+  //           : 'Follow'
+  //       }
+  //     >
+  //       Follow
+  //     </PrimaryButton>
+  //   )
+  // ) : null
 
-  const updatedFooterRowItems = [followButton, ...(footerRowItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
+  const updatedFooterRowItems = [
+    // followButton,
+    ...(footerRowItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
 
   const collectionFooter =
     updatedFooterRowItems.length > 0 ? (
@@ -525,7 +576,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const modals = (
     <>
-      {isShowingImage /* && imageUrl */ && (
+      {isShowingImage /* && image */ && (
         <Modal
           className="image-modal"
           closeButton={false}
@@ -536,7 +587,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
             // maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
           }}
         >
-          <img src={imageUrl} alt="Collection" />
+          <img src={image} alt="Collection" />
           {/* {getImageCredits(form.values.image)} */}
         </Modal>
       )}

@@ -1,34 +1,62 @@
 import { ArrowDropDown } from '@material-ui/icons'
 import { FloatingMenu, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
-import { ComponentType } from 'react'
+import { ComponentType, FC } from 'react'
 
-export type FilterItem = {
+export type FilterProps = {
   name: string
   menuContent: React.ReactElement[] | React.ReactElement
   menuContentType?: 'menu-content-default-list' | string
   key: number | string
+  isUsed?: boolean
 }
 
-export const getFilterElement = (filter: FilterItem, isUsed?: boolean): JSX.Element => {
+export const Filter: FC<FilterProps> = ({ key, menuContent, name, isUsed, menuContentType }) => {
   return (
     <FloatingMenu
-      key={filter.key}
-      className={`${filter.menuContentType}`}
+      key={key}
+      className={`${menuContentType}`}
       hoverElement={
         isUsed ? (
           <PrimaryButton className={`filter-element ${isUsed ? 'selected' : ''}`}>
-            {filter.name}
+            {name}
             <ArrowDropDown />
           </PrimaryButton>
         ) : (
           <SecondaryButton className={`filter-element ${isUsed ? 'selected' : ''}`} color="grey">
-            {filter.name}
+            {name}
             <ArrowDropDown />
           </SecondaryButton>
         )
       }
-      menuContent={filter.menuContent}
+      menuContent={menuContent}
     />
+  )
+}
+
+export type FilterMenuElementProps = {
+  name: string
+  key: string | number
+  isCurrent?: boolean
+  onClick?: () => unknown
+}
+
+export const FilterMenuElement: FC<FilterMenuElementProps> = ({
+  key,
+  name,
+  isCurrent,
+  onClick,
+}) => {
+  return (
+    <div
+      key={key}
+      className={`section ${isCurrent ? 'selected' : ''}`}
+      onClick={onClick && onClick}
+    >
+      <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
+        <div className={`border ${isCurrent ? 'selected' : ''}`} />
+      </div>
+      <div className={`content ${isCurrent ? 'selected' : ''}`}>{name}</div>
+    </div>
   )
 }
 

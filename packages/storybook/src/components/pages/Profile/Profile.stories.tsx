@@ -138,8 +138,8 @@ export const Owner: ProfileStory = () => {
             newResourceHref={href('Page/Resource/New')}
             resourceCardPropsList={getResourcesCardStoryProps(5, {
               access: {
-                isCreator: true,
-                canEdit: true,
+                canDelete: true,
+                canPublish: true,
               },
             })}
           />
@@ -153,8 +153,8 @@ export const Owner: ProfileStory = () => {
             newCollectionHref={href('Page/Collection/New')}
             collectionCardPropsList={getCollectionsCardStoryProps(5, {
               access: {
+                canPublish: true,
                 isCreator: true,
-                canEdit: true,
               },
             })}
           />
@@ -175,7 +175,7 @@ export const Owner: ProfileStory = () => {
             collectionCardPropsList={getCollectionsCardStoryProps(5, {
               access: {
                 isCreator: true,
-                canEdit: true,
+                canPublish: true,
               },
             })}
           />
@@ -198,7 +198,10 @@ export const Admin: ProfileStory = () => {
             isCreator={false}
             newResourceHref={href('Page/Resource/New')}
             resourceCardPropsList={getResourcesCardStoryProps(5, {
-              access: { canEdit: true },
+              access: {
+                canDelete: true,
+                canPublish: true,
+              },
             })}
           />
         ),
@@ -211,7 +214,8 @@ export const Admin: ProfileStory = () => {
             newCollectionHref={href('Page/Collection/New')}
             collectionCardPropsList={getCollectionsCardStoryProps(5, {
               access: {
-                canEdit: true,
+                canPublish: true,
+                isCreator: true,
               },
             })}
           />
@@ -231,7 +235,8 @@ export const Admin: ProfileStory = () => {
             newCollectionHref={href('Page/Collection/New')}
             collectionCardPropsList={getCollectionsCardStoryProps(5, {
               access: {
-                canEdit: true,
+                isCreator: true,
+                canPublish: true,
               },
             })}
           />
