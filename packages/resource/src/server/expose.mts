@@ -1,20 +1,20 @@
-import { ResourceFormValues, rpcUrl } from '../common.mjs'
+import { ResourceFormRpc, rpcUrl } from '../common.mjs'
 import { edit, get, setContent, setImage, setIsPublished, _delete } from './mockLib.mjs'
 import shell from './shell.mjs'
 
-export type KeyId = { key: string }
+export type Key = { key: string }
 export type KeyFile = { key: string; file: File }
 export type KeyFileStr = { key: string; file: File | string }
-export type KeyResource = { key: string; resource: ResourceFormValues }
+export type KeyFormRpc = { key: string; resource: ResourceFormRpc }
 
 // good for export in file name controller if code grow
 const rpcCtrl = {
-  edit: async ({ key, resource }: KeyResource) => await edit(key, resource),
-  get: async ({ key }: KeyId) => await get(key),
-  delete: async ({ key }: KeyId) => await _delete(key),
+  edit: async ({ key, resource }: KeyFormRpc) => await edit(key, resource),
+  get: async ({ key }: Key) => await get(key),
+  delete: async ({ key }: Key) => await _delete(key),
   setImage: async ({ key, file }: KeyFile) => await setImage(key, file),
   setContent: async ({ key, file }: KeyFileStr) => await setContent(key, file),
-  setIsPublished: async ({ key }: KeyId) => await setIsPublished(key),
+  setIsPublished: async ({ key }: Key) => await setIsPublished(key),
   // toggleBookmark: async ({ key }: KeyId) => await toggleBookmark(key), // toggleLike: async ({ key }: KeyId) => await toggleLike(key),
 }
 const guards = { noCheck: () => void 0 }

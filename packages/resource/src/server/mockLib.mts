@@ -1,4 +1,4 @@
-import { ResourceFormValues, ResourceRpc } from '../common/types.mjs'
+import { ResourceFormRpc, ResourceRpc } from '../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
 const getFakeData = (resourceKey: string, query?: File | string): ResourceRpc =>
@@ -39,8 +39,7 @@ export const get = async (resourceKey: string, query?: string) =>
   newPromise<ResourceRpc>(
     resourceKey === 'new123' ? empityResourceForm : getFakeData(resourceKey, query),
   )
-export const edit = (_resourceKey: string, res: ResourceFormValues) =>
-  newPromise<ResourceFormValues>(res)
+export const edit = (_resourceKey: string, res: ResourceFormRpc) => newPromise<ResourceFormRpc>(res)
 export const _delete = (resourceKey: string) => resolver(resourceKey)
 export const upload = async (resourceKey: string) => resolver(resourceKey)
 export const toggleLike = (resourceKey = '') => resolver(resourceKey)

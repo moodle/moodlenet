@@ -1,7 +1,7 @@
 import { OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useMemo } from 'react'
-import { maxUploadSize, ResourceFormValues } from '../../../../common.mjs'
+import { maxUploadSize, ResourceFormProps } from '../../../../common.mjs'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import { ResourceProps } from './Resource.js'
@@ -18,7 +18,7 @@ export const collectionTextOptionProps: OptionItemProp[] = [
 
 type MyProps = {
   resourceKey: string
-  overrides?: Partial<ResourceFormValues>
+  overrides?: Partial<ResourceFormProps>
 }
 
 export const useResourcePageProps = ({ resourceKey }: MyProps) => {

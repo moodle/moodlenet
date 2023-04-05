@@ -1,4 +1,4 @@
-import { CollectionContributorCardProps, CollectionDataResponce } from '../common/types.mjs'
+import { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
 
 export const collectionFormValues = {
   description:
@@ -6,14 +6,14 @@ export const collectionFormValues = {
   title: 'The Best Collection Ever',
 }
 
-export const contributor: CollectionContributorCardProps = {
+export const contributor: CollectionContributorRpc = {
   avatarUrl:
     'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
   displayName: 'Juanita Rodriguez',
   creatorProfileHref: { url: 'Pages/Profile/Logged In', ext: false },
 }
 
-export const resFakeData: CollectionDataResponce = {
+export const resFakeData: CollectionRpc = {
   data: {
     collectionId: 'aaa123',
     mnUrl: 'http:www.ggg.it',
@@ -26,7 +26,6 @@ export const resFakeData: CollectionDataResponce = {
     numResources: 1,
   },
   access: {
-    isAuthenticated: true,
     isCreator: true,
     canPublish: true,
     canEdit: true,
