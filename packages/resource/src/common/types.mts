@@ -1,5 +1,5 @@
 import { AuthDataRpc } from '@moodlenet/react-app/common'
-import { Href } from '@moodlenet/react-app/ui'
+import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
 
@@ -11,6 +11,13 @@ export type MyPkgContext = PkgContextT<MyWebDeps>
 export type MainContextResource = MyPkgContext & {
   rpcCaller: RpcCaller
   auth: AuthDataRpc
+  actionsMenu: MainActions
+}
+export type MainActions = {
+  create: {
+    action: () => Promise<void>
+    menu: HeaderMenuItem
+  }
 }
 
 export type ResourceFormRpc = {
@@ -71,8 +78,8 @@ export type RpcCaller = {
   setImage: (resourceKey: string, file: File) => Promise<ResourceProps>
   setContent: (resourceKey: string, file: File | string) => Promise<ResourceProps>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceProps>
-  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>
-  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
+  create: () => Promise<ResourceProps>
+  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
 }
 export type ResourceActions = {
   publish: () => void
