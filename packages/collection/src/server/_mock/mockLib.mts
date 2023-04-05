@@ -1,4 +1,4 @@
-import { CollectionFormRpc, CollectionRpc } from '../common/types.mjs'
+import { CollectionFormRpc, CollectionRpc } from '../../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
 const getFakeData = (collectionId: string, query?: File | string | boolean): CollectionRpc =>

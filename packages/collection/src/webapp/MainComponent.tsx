@@ -61,9 +61,9 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       get: (_key: string) => addAuth(rpc['webapp/get/:_key'](null, { _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
       _delete: async (key: string) => rpc['webapp/delete/:_key'](null, { _key: key }),
       setIsPublished: async (key: string, publish: boolean) =>
-        rpc['webapp/setIsPublished']({ key: key, publish }),
+        rpc['webapp/set-is-published']({ key: key, publish }),
       setImage: async (key: string, file: File) =>
-        rpc['webapp/collection/:_key/uploadImage']({ file }, { _key: key }),
+        rpc['webapp/upload-image/:_key']({ file }, { _key: key }),
       create: () => rpc['webapp/create'](),
       // toggleFollow: (key: string) => me.rpc['webapp/toggleFollow']({ key: key }), // toggleBookmark: (key: string) => me.rpc['webapp/toggleBookmark']({ key: key }),
     }
