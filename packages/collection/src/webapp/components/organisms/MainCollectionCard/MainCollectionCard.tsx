@@ -133,7 +133,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const title = canEdit ? (
     <InputTextField
-      name="name"
+      name="title"
       isTextarea
       textAreaAutoSize
       displayMode

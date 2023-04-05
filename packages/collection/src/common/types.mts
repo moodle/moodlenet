@@ -75,12 +75,12 @@ export type CollectionProps = {
 }
 
 export type RpcCaller = {
-  edit: (key: string, values: CollectionFormProps) => Promise<CollectionFormProps>
-  get: (key: string) => Promise<CollectionProps>
-  _delete: (key: string) => Promise<CollectionProps>
-  setIsPublished: (key: string, publish: boolean) => Promise<CollectionProps>
-  setImage: (key: string, file: File) => Promise<CollectionProps>
-  create: () => Promise<CollectionProps>
+  edit: (key: string, values: CollectionFormProps) => Promise<void>
+  get: (key: string) => Promise<CollectionProps | undefined>
+  _delete: (key: string) => Promise<void>
+  setIsPublished: (key: string, publish: boolean) => Promise<void>
+  setImage: (key: string, file: File) => Promise<void>
+  create: () => Promise<{ _key: string }>
 }
 
 export type CollectionActions = {

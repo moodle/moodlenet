@@ -17,20 +17,21 @@ import {
   MyPkgContext,
   RpcCaller,
 } from '../common/types.mjs'
+import { COLLECTION_HOME_PAGE_ROUTE_PATH } from '../common/webapp-routes.mjs'
 import { CollectionPageRoute } from '../ui.mjs'
 import { MainContext } from './MainContext.js'
 
 const myRoutes = {
-  routes: <Route path="collection/:key" element={<CollectionPageRoute />} />,
+  routes: <Route path={COLLECTION_HOME_PAGE_ROUTE_PATH} element={<CollectionPageRoute />} />,
 }
 
 const addAuthMissing =
   (missing: { isAuthenticated: boolean }) =>
-  (rpcCollection: Promise<CollectionRpc>): Promise<CollectionProps> =>
-    rpcCollection.then(res => ModelRpcToProps(missing, res))
+  (rpcCollection: Promise<CollectionRpc | undefined>): Promise<CollectionProps | undefined> =>
+    rpcCollection.then(res => res && ModelRpcToProps(missing, res))
 
 const toFormRpc = (r: CollectionFormProps): CollectionFormRpc => r
-const toFormProps = (r: CollectionFormRpc): CollectionFormProps => r
+// const toFormProps = (r: CollectionFormRpc): CollectionFormProps => r
 
 const menuItems = {
   create: (onClick: () => void): HeaderMenuItem => ({
@@ -56,20 +57,20 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
 
     return {
       edit: (key: string, values: CollectionFormProps) =>
-        rpc['webapp/edit']({ key: key, values: toFormRpc(values) }).then(toFormProps),
-      get: (_key: string) => addAuth(rpc['webapp/get/:_key']({ _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
-      _delete: async (key: string) => addAuth(rpc['webapp/delete']({ key: key })),
+        rpc['webapp/edit']({ key: key, values: toFormRpc(values) }),
+      get: (_key: string) => addAuth(rpc['webapp/get/:_key'](null, { _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
+      _delete: async (key: string) => rpc['webapp/delete/:_key'](null, { _key: key }),
       setIsPublished: async (key: string, publish: boolean) =>
-        addAuth(rpc['webapp/setIsPublished']({ key: key, publish })),
-      setImage: async (key: string, file: File) => addAuth(rpc['webapp/setImage']({ key, file })),
-      create: () => addAuth(rpc['webapp/create']()),
+        rpc['webapp/setIsPublished']({ key: key, publish }),
+      setImage: async (key: string, file: File) =>
+        rpc['webapp/collection/:_key/uploadImage']({ file }, { _key: key }),
+      create: () => rpc['webapp/create'](),
       // toggleFollow: (key: string) => me.rpc['webapp/toggleFollow']({ key: key }), // toggleBookmark: (key: string) => me.rpc['webapp/toggleBookmark']({ key: key }),
     }
   }, [auth.access, me.rpc])
 
   const actionsMenu = useMemo(() => {
-    const acCreate = () =>
-      rpcCaller.create().then(({ data: { collectionId } }) => nav(`/collection/${collectionId}`))
+    const acCreate = () => rpcCaller.create().then(({ _key }) => nav(`/collection/${_key}`))
 
     return {
       create: { action: acCreate, menu: menuItems.create(acCreate) },
