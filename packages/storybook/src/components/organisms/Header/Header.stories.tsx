@@ -31,8 +31,10 @@ const avatarPicture =
 
 const MainHeaderStoryProps: MainHeaderProps = {
   accessButtonsProps: {
-    loginHref: href('Pages/Login'),
-    signupHref: href('Pages/Signup'),
+    // http://localhost:6006/?path=/story/pages-resource--logged-in
+    // loginHref: href('Pages/Login'),
+    loginHref: href('Pages/Access/Login'),
+    signupHref: href('Pages/Access/Signup'),
   },
   addMenuProps: {
     // newCollectionHref: href('Pages/NewCollection'),

@@ -18,7 +18,9 @@ export const resFakeData: ResourceTypeForm = {
     // numLikes: 0,
   },
   state: {
+    uploadProgress: undefined,
     isPublished: true,
+    isWaitingForApproval: false,
     // liked: false,
     // bookmarked: false,
   },

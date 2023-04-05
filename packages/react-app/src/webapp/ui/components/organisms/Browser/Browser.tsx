@@ -1,6 +1,6 @@
 import { FloatingMenu, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { ArrowDropDown } from '@mui/icons-material'
-import { ComponentType, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ComponentType, FC, useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
 import { Filter, FilterProps, getFilterContentDefaultListElement } from './Filter.js'
 
@@ -20,77 +20,16 @@ export type BrowserProps = {
 
 export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
-  const [heights, setHeights] = useState<number[]>([])
-  const [currentSection, setCurrentSection] = useState(
-    mainColumnItems && mainColumnItems.length > 0 ? mainColumnItems[0]?.key.toString() : '0',
-  )
   const [currentMainFilter, setCurrentMainFilter] = useState<string | undefined>(undefined)
-
-  // find the heights of each section and set the current section
-  useEffect(() => {
-    const parent = mainColumnRef.current
-    const children = mainColumnRef.current?.children
-
-    if (!parent) return
-
-    const observer = new ResizeObserver(() => {
-      const heights = parent ? [parent.offsetTop] : [0]
-
-      if (children) {
-        for (let i = 0; i < children.length - 1; i++) {
-          const child = children[i]
-          const prevHeight = heights[i]
-          const childHeight = child?.clientHeight
-          const gap = Number((parent ? window.getComputedStyle(parent).gap : '').replace('px', ''))
-
-          childHeight && heights.push(prevHeight ? childHeight + prevHeight + gap : childHeight)
-          const currentHeight = heights[i]
-
-          if (currentHeight && window.pageYOffset >= currentHeight) {
-            const key = child?.getAttribute('key')
-            key && setCurrentSection(key)
-          }
-        }
-      }
-      setHeights(heights)
-    })
-
-    observer.observe(parent)
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
-
-  const [navigating, setNavigating] = useState(false) // no avoid nav section buttons be active after selection
-
-  // nvaigate to the section when the section button is clicked
-  const navigateToSection = useCallback(
-    (idx: number, key: string) => {
-      setCurrentSection(key)
-      setNavigating(true)
-      const startHeight = heights[0]
-      const height = heights[idx]
-      if (height && startHeight) {
-        document.body.scrollTop = height - startHeight
-      }
-      setTimeout(() => setNavigating(false), 200)
-    },
-    [heights],
-  )
 
   const navMenuElements = useMemo(
     () =>
       mainColumnItems
         ? mainColumnItems
-            .map((e, idx) => {
-              const isCurrent = currentMainFilter
-                ? e.key.toString() === currentMainFilter
-                : e.key.toString() === currentSection
+            .map(e => {
+              const isCurrent = currentMainFilter ? e.key.toString() === currentMainFilter : false
 
-              const onClick = () =>
-                currentMainFilter
-                  ? setCurrentMainFilter(e.key.toString())
-                  : navigateToSection(idx, e.key.toString())
+              const onClick = () => setCurrentMainFilter(e.key.toString())
 
               return e.menuItem
                 ? getFilterContentDefaultListElement({
@@ -103,7 +42,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
             })
             .filter(item => !!item)
         : [],
-    [mainColumnItems, currentMainFilter, currentSection, navigateToSection],
+    [mainColumnItems, currentMainFilter],
   )
 
   const filterByItemType = useMemo(() => {

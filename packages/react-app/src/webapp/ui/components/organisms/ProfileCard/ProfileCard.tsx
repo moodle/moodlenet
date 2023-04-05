@@ -1,4 +1,4 @@
-import { AddonItem, Card, PrimaryButton } from '@moodlenet/component-library'
+import { AddonItem, Card } from '@moodlenet/component-library'
 import { FC } from 'react'
 import {
   ProfileAccess,
@@ -66,7 +66,6 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 
   const buttons = (
     <div className="buttons" key="buttons">
-      <PrimaryButton onClick={() => console.log('follow')}>Follow</PrimaryButton>
       {/* {!isCreator && followed && (
         <SecondaryButton onClick={toggleFollow} color="orange">
           Following
