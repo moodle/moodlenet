@@ -28,7 +28,9 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       deleteCollection: () => _delete(collectionKey),
       publish: () => setIsPublished(collectionKey, true),
       unpublish: () => setIsPublished(collectionKey, false),
-      setImage: (file: File) => setImage(collectionKey, file),
+      setImage: async (file: File) => {
+        setImage(collectionKey, file)
+      },
     }
     return actions
   }, [collectionKey, rpcCaller])

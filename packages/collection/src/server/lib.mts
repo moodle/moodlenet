@@ -1,4 +1,3 @@
-import { RpcFile } from '@moodlenet/core'
 import {
   create,
   delEntity,
@@ -9,7 +8,7 @@ import {
   patchEntity,
   QueryEntitiesCustomProject,
 } from '@moodlenet/system-entities/server'
-import { Collection, publicFiles, publicFilesHttp } from './init.mjs'
+import { Collection } from './init.mjs'
 import { shell } from './shell.mjs'
 import { CollectionDataType, CollectionEntityDoc } from './types.mjs'
 
@@ -40,18 +39,6 @@ export async function delCollection(_key: string) {
   return patchResult
 }
 
-export async function storeImageFile(collectionKey: string, imageRpcFile: RpcFile) {
-  const imageLogicalFilename = getImageLogicalFilename(collectionKey)
-
-  const fsItem = await publicFiles.store(imageLogicalFilename, imageRpcFile)
-
-  return fsItem
-}
-
 export function getImageLogicalFilename(collectionKey: string) {
   return `image/${collectionKey}`
-}
-
-export function getImageUrl(collectionKey: string) {
-  return publicFilesHttp.getFileUrl(getImageLogicalFilename(collectionKey))
 }

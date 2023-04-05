@@ -60,9 +60,9 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       get: (key: string) => addAuth(rpc['webapp/get/:_key'](null, { _key: key })),
       _delete: (key: string) => rpc['webapp/delete/:_key'](null, { _key: key }),
       setImage: (key: string, file: File) =>
-        rpc['webapp/upload-image/:_key']({ file }, { _key: key }),
+        rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }),
       setContent: (key: string, content: File | string) =>
-        rpc['webapp/upload-content/:_key']({ content }, { _key: key }),
+        rpc['webapp/upload-content/:_key']({ content: [content] }, { _key: key }),
       setIsPublished: (key, publish) =>
         rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
       create: () => rpc['webapp/create'](),
