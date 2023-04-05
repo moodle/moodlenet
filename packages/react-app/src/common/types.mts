@@ -51,6 +51,12 @@ export type Credits = {
   provider?: { name: string; url: string }
 }
 
+export type AuthDataRpc = {
+  isRoot: false
+  access: { isAdmin: boolean; isAuthenticated: boolean }
+  myProfile: undefined | WebUserProfile
+} // | { isRoot: true }
+
 export type ClientSessionDataRpc =
   | {
       isRoot: false

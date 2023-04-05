@@ -1,36 +1,36 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { ResourceActions, ResourceFormValues, ResourceMainProps } from '../common.mjs'
+import { ResourceActions, ResourceFormProps, ResourceProps } from '../common.mjs'
 
 import { MainContext } from './MainContext.js'
 
 export type Actions = {
-  editResource: (res: ResourceFormValues) => Promise<ResourceFormValues>
-  getResource: () => Promise<ResourceMainProps>
-  deleteResource: () => Promise<ResourceMainProps>
-  toggleBookmark: () => Promise<ResourceMainProps>
-  toggleLike: () => Promise<ResourceMainProps>
-  setIsPublished: (approve: boolean) => Promise<ResourceMainProps>
+  editResource: (res: ResourceFormProps) => Promise<ResourceFormProps>
+  getResource: () => Promise<ResourceProps>
+  deleteResource: () => Promise<ResourceProps>
+  toggleBookmark: () => Promise<ResourceProps>
+  toggleLike: () => Promise<ResourceProps>
+  setIsPublished: (approve: boolean) => Promise<ResourceProps>
 }
 
 export type ResourceCommonProps = {
   actions: ResourceActions
-  props: ResourceMainProps
+  props: ResourceProps
 }
 
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
-  const [resource, setResource] = useState<ResourceMainProps | null>()
+  const [resource, setResource] = useState<ResourceProps | null>()
 
   useEffect(() => {
     rpcCaller.get(resourceKey).then(res => setResource(res))
   }, [resourceKey, rpcCaller, setResource])
 
   const actions = useMemo<ResourceActions>(() => {
-    const updateResp = (resourceData: ResourceMainProps) => {
+    const updateResp = (resourceData: ResourceProps) => {
       setResource(current => current && { ...current, resourceData })
     }
-    const updateRespForm = (resourceForm: ResourceFormValues): ResourceFormValues => (
+    const updateRespForm = (resourceForm: ResourceFormProps): ResourceFormProps => (
       resource && updateResp({ ...resource, resourceForm }), resourceForm
     )
     const { edit, setImage, setIsPublished, setContent, _delete } = rpcCaller // toggleBookmark, toggleLike,
@@ -39,7 +39,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     return {
       publish: () => brk(setIsPublished(resourceKey, true).then(res => updateResp(res))),
       unpublish: () => brk(setIsPublished(resourceKey, false).then(updateResp)),
-      editData: (values: ResourceFormValues) => edit(resourceKey, values).then(updateRespForm),
+      editData: (values: ResourceFormProps) => edit(resourceKey, values).then(updateRespForm),
       deleteResource: () => brk(_delete(resourceKey)),
       setImage: (file: File) => brk(setImage(resourceKey, file).then(updateResp)),
       setContent: (content: File | string) => brk(setContent(resourceKey, content)),

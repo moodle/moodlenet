@@ -6,7 +6,7 @@ import { PartialDeep } from 'type-fest'
 import {
   ResourceCardAccess,
   ResourceCardActions,
-  ResourceCardData,
+  ResourceCardDataProps,
   ResourceCardState,
 } from '../../../../common.mjs'
 import ResourceCard, { ResourceCardProps } from './ResourceCard.js'
@@ -40,7 +40,7 @@ export const getResourceCardStoryProps = (
   overrides?: PartialDeep<ResourceCardProps>,
 ): ResourceCardProps => {
   const id = `${Math.floor(Math.random() * ContentBackupImages.length * 10000000)}`
-  const data: ResourceCardData = {
+  const data: ResourceCardDataProps = {
     resourceId: `id-${id}`,
     // tags: TagListStory,
     title: `Why the  ${

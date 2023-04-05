@@ -1,5 +1,6 @@
+import { AuthDataRpc } from '@moodlenet/react-app/common'
 import { Href } from '@moodlenet/react-app/ui'
-import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
+import { PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
 
 export type MyWebDeps = {
@@ -7,88 +8,92 @@ export type MyWebDeps = {
 }
 
 export type MyPkgContext = PkgContextT<MyWebDeps>
-export type MainContextResourceType = MyPkgContext & {
+export type MainContextResource = MyPkgContext & {
   rpcCaller: RpcCaller
-  auth: {
-    isAuthenticated: boolean
-    isAdmin: boolean
-    clientSessionData: ClientSessionData | null | undefined
-  }
+  auth: AuthDataRpc
 }
 
-export type ResourceFormValues = {
+export type ResourceFormRpc = {
   title: string
   description: string
 }
 
-export type ResourceData = {
+export type ResourceDataRpc = {
   resourceId: string
   mnUrl: string
   contentType: 'link' | 'file'
   imageUrl: string | null
 
   contentUrl: string | null
-  downloadFilename: string | null
-  // specificContentType: string // ex: url, pdf, doc...
-  isWaitingForApproval?: boolean
-  // numLikes: number
+  downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...
+  isWaitingForApproval?: boolean // numLikes: number
 }
 
-export type ResourceState = {
+export type ResourceStateRpc = {
   isPublished: boolean
-  uploadProgress?: number
-  // liked: boolean
-  // bookmarked: boolean
+  uploadProgress?: number // liked: boolean // bookmarked: boolean
 }
 
-export type ResourceMainProps = {
-  resourceForm: ResourceFormValues
-  access: ResourceAccess
-  state: ResourceState
-  data: ResourceData
-  contributor: {
-    avatarUrl: string | null
-    displayName: string
-    timeSinceCreation: string
-    creatorProfileHref: Href
-  }
+export type ResourceContributorRpc = {
+  avatarUrl: string | null
+  displayName: string
+  timeSinceCreation: string
+  creatorProfileHref: Href
 }
-export type ResourceAccessServer = Omit<ResourceAccess, 'isAuthenticated'>
-export type ResourceRpc = Omit<ResourceMainProps, 'access'> & { access: ResourceAccessServer }
+
+export type ResourceRpc = {
+  resourceForm: ResourceFormRpc
+  access: ResourceAccessRpc
+  state: ResourceStateRpc
+  data: ResourceDataRpc
+  contributor: ResourceContributorRpc
+}
+
+export type ResourceFormProps = ResourceFormRpc
+export type ResourceDataProps = ResourceDataRpc
+export type ResourceStateProps = ResourceStateRpc
+export type ResourceCardDataProps = ResourceCardDataRpc
+export type ResourceAccessProps = ResourceAccessRpc & { isAuthenticated: boolean }
+export type ResourceContributorProps = ResourceContributorRpc
+
+export type ResourceProps = {
+  resourceForm: ResourceFormProps
+  access: ResourceAccessProps
+  state: ResourceStateProps
+  data: ResourceDataProps
+  contributor: ResourceContributorProps
+}
+
 export type RpcCaller = {
-  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
-  get: (resourceKey: string) => Promise<ResourceMainProps>
-  _delete: (resourceKey: string) => Promise<ResourceRpc>
-  setImage: (resourceKey: string, file: File) => Promise<ResourceMainProps>
-  setContent: (resourceKey: string, file: File | string) => Promise<ResourceMainProps>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceMainProps>
+  edit: (resourceKey: string, res: ResourceFormProps) => Promise<ResourceFormProps>
+  get: (resourceKey: string) => Promise<ResourceProps>
+  _delete: (resourceKey: string) => Promise<ResourceProps>
+  setImage: (resourceKey: string, file: File) => Promise<ResourceProps>
+  setContent: (resourceKey: string, file: File | string) => Promise<ResourceProps>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceProps>
   // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>
   // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
 }
 export type ResourceActions = {
   publish: () => void
   unpublish: () => void
-  editData: (values: ResourceFormValues) => Promise<ResourceFormValues>
+  editData: (values: ResourceFormProps) => void
   setImage: (file: File) => Promise<void>
-  setContent: (content: File | string) => Promise<void>
+  setContent: (content: File | string) => void
   deleteResource(): Promise<void>
-  // toggleLike(): unknown
-  // toggleBookmark(): unknown
+  // toggleLike(): unknown// toggleBookmark(): unknown
 }
 
-export type ResourceAccess = {
-  isAuthenticated: boolean
+export type ResourceAccessRpc = {
   isCreator: boolean
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
-  // canLike: boolean
-  // canBookmark: boolean
+  // canLike: boolean // canBookmark: boolean
 }
 
-export type ResourceCardData = {
-  // tags?: FollowTag[]
-  // numLikes: number
+export type ResourceCardDataRpc = {
+  // tags?: FollowTag[]  // numLikes: number
   owner: {
     displayName: string
     avatar: string | null
@@ -96,33 +101,24 @@ export type ResourceCardData = {
   }
   resourceHomeHref?: Href
 } & Pick<
-  ResourceData,
+  ResourceDataProps,
   'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'isWaitingForApproval'
 > &
-  Pick<ResourceFormValues, 'title'>
+  Pick<ResourceFormProps, 'title'>
 
 export type ResourceCardState = {
   isSelected: boolean
   selectionMode: boolean // When selection resources to be added to a collection
   // liked: boolean
   // bookmarked: boolean
-} & Pick<ResourceState, 'isPublished'>
+} & Pick<ResourceStateProps, 'isPublished'>
 
 export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 
 export type ResourceCardAccess = Pick<
-  ResourceAccess,
-  | 'isAuthenticated'
-  //  'canLike' |
-  //  'canBookmark' |
-  | 'canPublish'
-  | 'canDelete'
->
-// {
-//   isCreator: boolean
-//   canEdit: boolean
-//   isAuthenticated: boolean
-// }
+  ResourceAccessProps,
+  'isAuthenticated' | 'canPublish' | 'canDelete' //  'canLike' | //  'canBookmark' |
+> //   isCreator: boolean //   canEdit: boolean
 
 export type Organization = {
   name: string

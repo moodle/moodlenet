@@ -4,26 +4,26 @@ import {
   Card,
   Modal,
   PrimaryButton,
-  SecondaryButton
+  SecondaryButton,
 } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { SchemaOf } from 'yup'
 import {
-  ResourceAccess,
+  ResourceAccessProps,
   ResourceActions,
-  ResourceData,
-  ResourceFormValues,
-  ResourceState
+  ResourceDataProps,
+  ResourceFormProps,
+  ResourceStateProps,
 } from '../../../../common/types.mjs'
 import {
   ResourceContributorCard,
-  ResourceContributorCardProps
+  ResourceContributorCardProps,
 } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import {
   MainResourceCard,
-  MainResourceCardSlots
+  MainResourceCardSlots,
 } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
 
@@ -36,13 +36,13 @@ export type ResourceProps = {
   sideColumnItems?: AddonItem[]
   extraDetailsItems?: AddonItem[]
 
-  data: ResourceData
-  resourceForm: ResourceFormValues
-  validationSchema: SchemaOf<ResourceFormValues>
+  data: ResourceDataProps
+  resourceForm: ResourceFormProps
+  validationSchema: SchemaOf<ResourceFormProps>
 
-  state: ResourceState
+  state: ResourceStateProps
   actions: ResourceActions
-  access: ResourceAccess
+  access: ResourceAccessProps
 
   fileMaxSize: number
 }
@@ -71,7 +71,7 @@ export const Resource: FC<ResourceProps> = ({
   const { canPublish } = access
   const { isPublished } = state
 
-  const form = useFormik<ResourceFormValues>({
+  const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
     validationSchema: validationSchema,
     onSubmit: values => {
@@ -81,7 +81,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
 
-    const contentForm = useFormik<{ content: File | string | null }>({
+  const contentForm = useFormik<{ content: File | string | null }>({
     initialValues: { content: null },
     onSubmit: values => {
       setCurrentContentUrl(null)
@@ -93,7 +93,7 @@ export const Resource: FC<ResourceProps> = ({
   }, [contentUrl])
 
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(imageUrl)
-  
+
   const imageForm = useFormik<{ image: File | null }>({
     initialValues: { image: null },
     onSubmit: values => {
@@ -101,7 +101,7 @@ export const Resource: FC<ResourceProps> = ({
       return values.image ? setImage(values.image) : undefined
     },
   })
-  
+
   useEffect(() => {
     setCurrentImageUrl(imageUrl)
   }, [imageUrl])
