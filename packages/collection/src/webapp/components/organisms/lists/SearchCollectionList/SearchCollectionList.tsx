@@ -23,7 +23,7 @@ export const SearchCollectionList: FC<SearchCollectionListProps> = ({
           // seeAll
           // ? collectionCardPropsList :
           collectionCardPropsList
-            .slice(0, 6)
+            // .slice(0, 6)
             .map(collectionCardProps => (
               <CollectionCard
                 key={collectionCardProps.data.collectionId}

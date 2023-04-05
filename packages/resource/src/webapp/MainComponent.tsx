@@ -42,9 +42,9 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
         me.rpc['webapp/edit'](resourceKey, res),
       get: (resourceKey: string) => me.rpc['webapp/get']({ param: resourceKey }),
       _delete: (resourceKey: string) => me.rpc['webapp/delete'](resourceKey),
-      toggleBookmark: (resourceKey: string) => me.rpc['webapp/toggleBookmark'](resourceKey),
-      toggleLike: (resourceKey: string) => me.rpc['webapp/toggleLike'](resourceKey),
       setIsPublished: (resourceKey: string) => me.rpc['webapp/setIsPublished'](resourceKey),
+      // toggleBookmark: (resourceKey: string) => me.rpc['webapp/toggleBookmark'](resourceKey),
+      // toggleLike: (resourceKey: string) => me.rpc['webapp/toggleLike'](resourceKey),
     }
   }, [me.rpc])
 

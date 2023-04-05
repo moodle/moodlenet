@@ -14,7 +14,7 @@ const meta: ComponentMeta<typeof Collection> = {
   excludeStories: [
     'CollectionLoggedOutStoryProps',
     'CollectionLoggedInStoryProps',
-    'CollectionOwnerStoryProps',
+    'CollectionCreatorStoryProps',
     'CollectionActivatedStoryProps',
     'CollectionAdminStoryProps',
     'CollectionApprovedStoryProps',
@@ -41,8 +41,8 @@ export const LoggedIn: CollectionStory = () => {
   const props = useCollectionStoryProps({
     data: {},
     state: {
-      bookmarked: true,
-      followed: true,
+      // bookmarked: true,
+      // followed: true,
     },
     actions: {},
     access: {},
@@ -51,19 +51,21 @@ export const LoggedIn: CollectionStory = () => {
   return <Collection {...props} />
 }
 
-export const Owner: CollectionStory = () => {
+export const Creator: CollectionStory = () => {
   const props = useCollectionStoryProps({
     data: {
-      isPublished: false,
+      imageUrl:
+        'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
     },
     state: {
-      bookmarked: true,
+      isPublished: true,
+      // bookmarked: true,
       // isSaving: true,
-      isSaving: false,
-      // isSaved: true,
     },
     actions: {},
     access: {
+      canDelete: true,
+      canPublish: true,
       isCreator: true,
       canEdit: true,
     },
@@ -73,28 +75,29 @@ export const Owner: CollectionStory = () => {
 }
 
 export const NewCollectionProps: CollectionFormValues = {
-  name: '',
+  title: '',
   description: '',
-  image: null,
   // visibility: 'Private',
 }
 
 export const New: CollectionStory = () => {
   const props = useCollectionStoryProps({
+    mainColumnItems: [],
     data: {
       mnUrl: 'moodle.com',
       isWaitingForApproval: false,
     },
     collectionForm: NewCollectionProps,
     state: {
-      bookmarked: true,
-      followed: true,
-      // isSaving: true,
-      // isSaving: false,
-      // isSaved: true,
+      isPublished: false,
+      // bookmarked: true,
+      // followed: true,
     },
     actions: {},
     access: {
+      canDelete: true,
+      canPublish: true,
+
       isCreator: true,
       canEdit: true,
     },
@@ -109,8 +112,9 @@ export const Admin: CollectionStory = () => {
     state: {},
     actions: {},
     access: {
-      isAdmin: true,
       canEdit: true,
+      canPublish: true,
+      canDelete: true,
     },
   })
   return <Collection {...props} />

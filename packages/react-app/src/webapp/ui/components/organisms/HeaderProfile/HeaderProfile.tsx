@@ -1,3 +1,4 @@
+import { ExitToApp } from '@mui/icons-material'
 import { FC, ReactElement, useContext } from 'react'
 import { AuthCtx } from '../../../../web-lib.mjs'
 import { href } from '../../elements/link.js'
@@ -38,10 +39,18 @@ export const HeaderProfileIcon: FC<IconType> = ({ icon }: IconType) => {
   )
 }
 
-export const avatarmenuItemReg: HeaderMenuItemRegItem = {
+export const profileAvatarmenuItemReg: HeaderMenuItemRegItem = {
   Icon: <IconContainer />,
-  Path: path,
-  Text: text,
-  ClassName: className,
-  Position: position,
+  Path: href('/my-profile'),
+  Text: 'Profile',
+  ClassName: 'profile',
+  // Position: position,
+}
+
+export const signoutAvatarmenuItemReg: HeaderMenuItemRegItem = {
+  Icon: <ExitToApp />,
+  Path: href('/signout'),
+  Text: 'Sign out',
+  ClassName: 'signout',
+  // Position: position,
 }

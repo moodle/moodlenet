@@ -20,9 +20,9 @@ export type RpcCaller = {
   edit: (collectionId: string, values: CollectionFormValues) => Promise<unknown>
   get: (collectionId: string, query?: string) => Promise<CollectionDataResponce>
   _delete: (collectionId: string) => Promise<unknown>
-  toggleFollow: (collectionId: string) => Promise<unknown>
   setIsPublished: (collectionId: string, publish: boolean) => Promise<unknown>
-  toggleBookmark: (collectionId: string) => Promise<unknown>
+  // toggleFollow: (collectionId: string) => Promise<unknown>
+  // toggleBookmark: (collectionId: string) => Promise<unknown>
 }
 
 export type CollectionContributorCardProps = {
@@ -32,7 +32,7 @@ export type CollectionContributorCardProps = {
 }
 
 export type CollectionDataResponce = {
-  data: Collectiondata
+  data: CollectionData
   form: CollectionFormValues
   state: CollectionState
   access: CollectionAccess
@@ -44,68 +44,62 @@ export type MainPropsCollection = {
   props: CollectionDataResponce
 }
 
-export type Collectiondata = {
-  id: string
+export type CollectionData = {
+  collectionId: string
   mnUrl: string
-  numFollowers: number
-  isPublished: boolean
+  imageUrl?: string
   isWaitingForApproval?: boolean
+  // numFollowers: number
 }
 
 export type CollectionFormValues = {
-  name: string
+  title: string
   description: string
-  image: string | File | null
 }
 
 export type CollectionState = {
-  followed: boolean
-  bookmarked: boolean
-  isSaving?: boolean
-  isSaved?: boolean
+  isPublished?: boolean
+  numResources?: number
+  // followed: boolean
+  // bookmarked: boolean
 }
 
 export type CollectionActions = {
-  setIsPublished: (publish: boolean) => void
-  editCollection: (values: CollectionFormValues) => Promise<unknown>
+  publish: () => void
+  unpublish: () => void
+  editData: (values: CollectionFormValues) => Promise<unknown>
   deleteCollection(): unknown
-  toggleFollow(): unknown
-  toggleBookmark(): unknown
+  setImage: (file: File) => Promise<unknown>
+  // toggleFollow(): unknown
+  // toggleBookmark(): unknown
 }
 
 export type CollectionAccess = {
   isAuthenticated: boolean
   isCreator: boolean
-  isAdmin: boolean
   canEdit: boolean
+  canPublish: boolean
+  canDelete: boolean
+  // canFollow: boolean
+  // canBookmark: boolean
 }
 
-export type CollectionCardData = {
-  collectionId: string
-  imageUrl?: string | null
-  title: string
-  collectionHref: Href
-}
+export type CollectionCardData = { collectionHref: Href } & Pick<
+  CollectionData,
+  'collectionId' | 'imageUrl'
+> &
+  Pick<CollectionFormValues, 'title'>
 
-export type CollectionCardState = {
-  isPublished: boolean
-  bookmarked: boolean
-  followed: boolean
-  numFollowers: number
-  numResource: number
-}
-export type CollectionCardActions = {
-  publish: () => void
-  setIsPublished: (publish: boolean) => void
-  toggleFollow: () => unknown
-  toggleBookmark: () => unknown
-}
+export type CollectionCardState = Pick<CollectionState, 'isPublished' | 'numResources'>
 
-export type CollectionCardAccess = {
-  isAuthenticated: boolean
-  canEdit: boolean
-  isCreator: boolean
-}
+export type CollectionCardActions = Pick<CollectionActions, 'publish' | 'unpublish'>
+
+export type CollectionCardAccess = Pick<
+  CollectionAccess,
+  'isAuthenticated' | 'isCreator' | 'canPublish'
+  // |   'canFollow'
+  // | 'canBookmark'
+>
 
 export type Organization = {
   name: string

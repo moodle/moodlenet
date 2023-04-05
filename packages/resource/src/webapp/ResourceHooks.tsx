@@ -38,14 +38,19 @@ export const useResourceBaseProps = ({
     const updateResourceRespForm = (resourceForm: ResourceFormValues) =>
       resourceForm && resourceResp && updateResourceResp({ ...resourceResp, resourceForm })
 
-    const { edit, setIsPublished, toggleBookmark, toggleLike, _delete } = rpcCaller
+    const {
+      edit,
+      setIsPublished,
+      // toggleBookmark,
+      //  toggleLike,
+      _delete,
+    } = rpcCaller
     return {
       editResource: (res: ResourceFormValues) =>
         edit(resourceKey, res).then(updateResourceRespForm),
-      // getResource: () => get(resourceKey).then(setResourceResp),
       deleteResource: () => _delete(resourceKey).then(updateResourceResp),
-      toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp),
-      toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
+      // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp),
+      // toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
       setIsPublished: (publish: boolean): void => {
         setIsPublished(resourceKey, publish).then(updateResourceResp)
       },
