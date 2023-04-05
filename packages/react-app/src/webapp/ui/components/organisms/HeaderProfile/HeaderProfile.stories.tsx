@@ -1,16 +1,27 @@
 import { href } from '../../elements/link.js'
 import { HeaderMenuItem } from '../Header/addons.js'
-import { avatarmenuItemReg, HeaderProfileIcon } from './HeaderProfile.js'
+import {
+  HeaderProfileIcon,
+  profileAvatarmenuItemReg,
+  signoutAvatarmenuItemReg,
+} from './HeaderProfile.js'
 
-export const HeaderProfileStoryProps = (icon: string): HeaderMenuItem => {
+export const HeaderProfileAvatarMenuStoryProps = (icon: string): HeaderMenuItem => {
   return {
-    text: avatarmenuItemReg.Text,
+    text: profileAvatarmenuItemReg.Text,
     Icon: <HeaderProfileIcon icon={icon} />,
-    className: avatarmenuItemReg.ClassName,
-    position: avatarmenuItemReg.Position,
+    className: profileAvatarmenuItemReg.ClassName,
+    // position: profileAvatarmenuItemReg.Position,
     path: href('Pages/Profile/Logged In'),
     key: `HeaderProfileItem`,
   }
 }
 
-export default HeaderProfileStoryProps
+export const HeaderSignoutAvatarMenuStoryProps: HeaderMenuItem = {
+  text: signoutAvatarmenuItemReg.Text,
+  Icon: signoutAvatarmenuItemReg.Icon,
+  className: signoutAvatarmenuItemReg.ClassName,
+  // position: signoutAvatarmenuItemReg.Position,
+  path: href('Pages/Landing/Logged Out'),
+  key: `HeaderProfileItem`,
+}
