@@ -1,4 +1,5 @@
 import { authToAccessRpc, ModelRpcToProps } from '@moodlenet/react-app/common'
+import { HeaderMenuItem } from '@moodlenet/react-app/ui'
 import {
   AuthCtx,
   ReactAppContext,
@@ -6,7 +7,7 @@ import {
   usePkgContext,
 } from '@moodlenet/react-app/web-lib'
 import { useContext, useMemo } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, useNavigate } from 'react-router-dom'
 import {
   MyPkgContext,
   ResourceFormProps,
@@ -29,7 +30,17 @@ const addAuthMissing =
 const toFormRpc = (r: ResourceFormProps): ResourceFormRpc => r
 const toFormProps = (r: ResourceFormRpc): ResourceFormProps => r
 
+const menuItems = {
+  create: (onClick: () => void): HeaderMenuItem => ({
+    Icon: '(icon)',
+    text: `New collection`,
+    key: 'mykey',
+    onClick,
+  }),
+}
+
 const MainComponent: ReactAppMainComponent = ({ children }) => {
+  const nav = useNavigate()
   const myPkgCtx = usePkgContext<MyPkgContext>()
   const { registries } = useContext(ReactAppContext)
   const { clientSessionData } = useContext(AuthCtx)
@@ -51,15 +62,26 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       setContent: (key: string, file: File | string) =>
         addAuth(rpc['webapp/setContent']({ key, file })),
       setIsPublished: (key: string) => addAuth(rpc['webapp/setIsPublished']({ key })),
+      create: () => addAuth(rpc['webapp/create']()),
       // toggleLike: (key: string) => rpc[rpcUrl.toggleLike].fn({ key }),  // toggleBookmark: (key: string) => rpc[rpcUrl.toggleBookmark].fn({ key }),
     }
 
     return rpcItem
   }, [auth.access, me.rpc])
 
+  const actionsMenu = useMemo(() => {
+    const acCreate = () =>
+      rpcCaller.create().then(({ data: { resourceId } }) => nav(`/collection/${resourceId}`))
+
+    return {
+      create: { action: acCreate, menu: menuItems.create(acCreate) },
+    }
+  }, [nav, rpcCaller])
+
   const mainValue = {
     ...myPkgCtx,
     rpcCaller,
+    actionsMenu,
     auth,
   }
 

@@ -8,7 +8,7 @@ const newPromise = <T, >(r: T): Promise<T> => new Promise<T>(resolve => resolve(
 const resolver = (resourceKey: string, query?: File | string): Promise<ResourceRpc> =>
   newPromise(getFakeData(resourceKey, query))
 
-export const empityResourceForm: ResourceRpc = {
+export const empityFormModel: ResourceRpc = {
   data: {
     resourceId: 'aaa123',
     mnUrl: 'http:www.ggg.it',
@@ -37,7 +37,7 @@ export const empityResourceForm: ResourceRpc = {
 
 export const get = async (resourceKey: string, query?: string) =>
   newPromise<ResourceRpc>(
-    resourceKey === 'new123' ? empityResourceForm : getFakeData(resourceKey, query),
+    resourceKey === 'new123' ? empityFormModel : getFakeData(resourceKey, query),
   )
 export const edit = (_resourceKey: string, res: ResourceFormRpc) => newPromise<ResourceFormRpc>(res)
 export const _delete = (resourceKey: string) => resolver(resourceKey)
@@ -47,3 +47,4 @@ export const toggleBookmark = (resourceKey = '') => resolver(resourceKey)
 export const setIsPublished = (resourceKey = '') => resolver(resourceKey)
 export const setImage = (resourceKey: string, file: File) => resolver(resourceKey, file)
 export const setContent = (resourceKey: string, file: File | string) => resolver(resourceKey, file)
+export const create = () => newPromise(empityFormModel)
