@@ -1,24 +1,8 @@
-import {
-  AddonItem,
-  Card,
-  FloatingMenu,
-  PrimaryButton,
-  SecondaryButton,
-  TertiaryButton,
-} from '@moodlenet/component-library'
+import { FloatingMenu, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { ArrowDropDown } from '@mui/icons-material'
-import {
-  ComponentType,
-  FC,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { ComponentType, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
-import { FilterItem, getFilterContentDefaultListElement, getFilterElement } from './Filter.js'
+import { Filter, FilterProps, getFilterContentDefaultListElement } from './Filter.js'
 
 export type MainColumItem = {
   Item: ComponentType<{
@@ -27,15 +11,14 @@ export type MainColumItem = {
   }>
   key: number | string
   menuItem?: ComponentType
-  filters?: FilterItem[]
+  filters?: FilterProps[]
 }
 
 export type BrowserProps = {
   mainColumnItems?: MainColumItem[]
-  sideColumnItems?: AddonItem[]
 }
 
-export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) => {
+export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [heights, setHeights] = useState<number[]>([])
   const [currentSection, setCurrentSection] = useState(
@@ -176,77 +159,24 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
       : []
   }, [mainColumnItems, currentMainFilter, navMenuElements, setCurrentMainFilter])
 
-  const navMenu = (
-    <div className="nav-menu" role="navigation" key="nav-menu">
-      <Card className="navigation-card" role="navigation">
-        {navMenuElements}
-      </Card>
-    </div>
-  )
-
-  const [currentFilters, setCurrentFilters] = useState<FilterItem[] | undefined>([])
-  console.log('currentMainFilter', currentMainFilter)
+  const [currentFilters, setCurrentFilters] = useState<FilterProps[] | undefined>([])
   useEffect(() => {
     mainColumnItems?.map(
       e => e.key.toString() === currentMainFilter && setCurrentFilters(e.filters),
     )
   }, [currentMainFilter, mainColumnItems])
-  console.log('currentFilters', currentFilters)
 
   const filters =
     currentFilters && currentFilters.length > 0 ? (
-      <div className="filters">{currentFilters.map(i => getFilterElement(i))}</div>
+      <div className="filters">
+        {currentFilters.map(i => (
+          <Filter {...i} key={i.key} />
+        ))}
+      </div>
     ) : null
-
-  console.log('filters ', filters)
-
-  const updatedSideColumnItems = [navMenu, ...(sideColumnItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
-  )
 
   const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
     (item): item is MainColumItem /* | JSX.Element */ => !!item,
-  )
-
-  // update the current section while scrolling
-  const updateActiveSection = useCallback(() => {
-    const initialHeight = heights[0]
-    const body = document.body
-    const scrollTop = (initialHeight ? body.scrollTop + initialHeight : body.scrollTop) + 200
-
-    // find and select current section while scrolling
-    for (let i = 0; i < heights.length; i++) {
-      const currentHeight = heights[i]
-      const nextHeight = heights[i + 1]
-      const topCondition = currentHeight && currentHeight < scrollTop
-      const bottomCondition = i < heights.length - 1 ? nextHeight && scrollTop < nextHeight : true
-      if (topCondition && bottomCondition) {
-        !navigating && setCurrentSection(updatedMainColumnItems[i]?.key.toString())
-        break
-      }
-    }
-
-    // select the last section when on the bottom of the screen
-    const mainLayoutDiv = document.querySelector('.layout-container > .main-layout')
-    const bodyScrollTop = body.scrollTop
-
-    if (mainLayoutDiv && window.innerHeight + bodyScrollTop >= mainLayoutDiv.clientHeight) {
-      const lastItem = updatedMainColumnItems[updatedMainColumnItems.length - 1]
-      setCurrentSection(lastItem?.key.toString())
-    }
-  }, [heights, updatedMainColumnItems, navigating])
-
-  // add the scroll listener to the window
-  useLayoutEffect(() => {
-    document.body.addEventListener('scroll', updateActiveSection)
-    return () => {
-      document.body.removeEventListener('scroll', updateActiveSection)
-    }
-  }, [updateActiveSection])
-
-  const sideColumnElements = useMemo(
-    () => updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i)),
-    [updatedSideColumnItems],
   )
 
   // scroll to top when changing the main filter
@@ -257,13 +187,13 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
   const extraFilters =
     currentMainFilter && currentFilters && currentFilters.length > 0 ? (
       <>
-        <div className="separator" />
+        {/* <div className="separator" /> */}
         {filters}
-        <div className="separator"></div>
+        {/* <div className="separator"></div>
         <SecondaryButton className={`filter-element`} color="grey">
           All filters
-        </SecondaryButton>
-        <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton>
+        </SecondaryButton> */}
+        {/* <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton> */}
       </>
     ) : null
 
@@ -278,7 +208,6 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, sideColumnItems }) 
         </div>
       </div>
       <div className="content">
-        {!currentMainFilter && <div className="side-column">{sideColumnElements}</div>}
         <div className={`main-column ${currentMainFilter ? 'full-width' : ''}`} ref={mainColumnRef}>
           {useMemo(
             () =>

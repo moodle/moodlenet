@@ -44,7 +44,10 @@ const MainHeaderStoryProps: MainHeaderProps = {
   },
   avatarMenuProps: {
     avatarUrl: avatarPicture,
-    menuItems: [HeaderProfileStories.HeaderProfileStoryProps(avatarPicture)],
+    menuItems: [
+      HeaderProfileStories.HeaderProfileAvatarMenuStoryProps(avatarPicture),
+      HeaderProfileStories.HeaderSignoutAvatarMenuStoryProps,
+    ],
   },
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
   isAuthenticated: false,
