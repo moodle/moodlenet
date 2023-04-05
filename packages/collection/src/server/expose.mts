@@ -40,43 +40,13 @@ import {
 // const { noCheck } = guards
 export const expose = await shell.expose({
   rpc: {
-    // 'webapp/get/:_key': { guard: noCheck, fn: rpcCtrl.get },
-    // 'webapp/edit': { guard: noCheck, fn: rpcCtrl.edit },
-    // 'webapp/delete': { guard: noCheck, fn: rpcCtrl.delete },
-    // 'webapp/setIsPublished': { guard: noCheck, fn: rpcCtrl.setIsPublished },
-    // 'webapp/setImage': { guard: noCheck, fn: rpcCtrl.setImage },
-    // 'webapp/create': { guard: noCheck, fn: rpcCtrl.create },
-    //'webapp/toggleBookmark': { guard: noCheck, fn: rpcCtrl.toggleBookmark },// 'webapp/toggleFollow': { guard: noCheck, fn: rpcCtrl.toggleFollow },
-
-    // 'webapp/get/:_key': {
-    //   guard: () => void 0,
-    //   fn: async (_body, params, _query) => await get(params._key, _query),
-    // },
-    // 'webapp/edit': {
-    //   guard: () => void 0,
-    //   fn: async ({ key, values }: { key: string; values: CollectionFormValues }) =>
-    //     await edit(key, values),
-    // },
-    // 'webapp/delete': {
-    //   guard: () => void 0,
-    //   fn: async ({ key }: KeyId) => await _delete(key),
-    // },
-    'webapp/setIsPublished': {
+    'webapp/set-is-published': {
       guard: () => void 0,
       fn: async ({ key, publish }: { key: string; publish: boolean }) => {
         console.log({ key, publish })
         //  await setIsPublished(key, publish)
       },
     },
-    // 'webapp/setImage': {
-    //   guard: () => void 0,
-    //   fn: async ({ key, file }: KeyId & { file: File }) => await setImage(key, file),
-    // },
-    // 'webapp/create': {
-    //   guard: () => void 0,
-    //   fn: async (): Promise<CollectionDataResponce> =>
-    //     new Promise(resolve => resolve(mockModel.empityFormModel)),
-    // },
     'webapp/get/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }: { _key: string }): Promise<CollectionRpc | undefined> => {
@@ -150,7 +120,7 @@ export const expose = await shell.expose({
         return
       },
     },
-    'webapp/collection/:_key/uploadImage': {
+    'webapp/upload-image/:_key': {
       guard: () => void 0,
       async fn({ file }: { file: RpcFile }, { _key }: { _key: string }) {
         await storeImageFile(_key, file)
