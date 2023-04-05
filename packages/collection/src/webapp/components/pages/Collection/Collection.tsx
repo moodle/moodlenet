@@ -32,11 +32,11 @@ export type CollectionProps = {
   mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
 
-  wideColumnItems?: AddonItem[]
-  mainColumnItems?: AddonItem[]
-  sideColumnItems?: AddonItem[]
-  moreButtonItems?: AddonItem[]
-  extraDetailsItems?: AddonItem[]
+  wideColumnItems: AddonItem[]
+  mainColumnItems: AddonItem[]
+  sideColumnItems: AddonItem[]
+  moreButtonItems: AddonItem[]
+  extraDetailsItems: AddonItem[]
 
   data: CollectionData
   collectionForm: CollectionFormValues

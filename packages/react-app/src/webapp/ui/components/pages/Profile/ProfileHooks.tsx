@@ -23,9 +23,9 @@ export const useProfileProps = ({
     canEdit: boolean
   }>()
 
-  const toggleFollow = useCallback<ProfileProps['actions']['toggleFollow']>(async () => {
-    throw new Error('not Implemented')
-  }, [])
+  // const toggleFollow = useCallback<ProfileProps['actions']['toggleFollow']>(async () => {
+  //   throw new Error('not Implemented')
+  // }, [])
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
@@ -73,7 +73,7 @@ export const useProfileProps = ({
       },
       actions: {
         editProfile,
-        toggleFollow,
+        // toggleFollow,
       },
       mainProfileCardSlots: {
         mainColumnItems: [],
@@ -94,7 +94,7 @@ export const useProfileProps = ({
     mainLayoutProps,
     profileKey,
     profileResponse,
-    toggleFollow,
+    // toggleFollow,
   ])
 
   return profileProps
