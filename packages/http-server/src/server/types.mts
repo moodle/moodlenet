@@ -9,7 +9,7 @@ export type HttpAsyncCtx = {
 }
 
 export type MountAppItem = {
-  getApp(express: typeof _express): Application
+  getApp(express: typeof _express): Application | undefined
   mountOnAbsPath?: string
   pkgId: PkgIdentifier
 }

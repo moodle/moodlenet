@@ -47,3 +47,14 @@ export const setIsPublished = (collectionId: string, publish: boolean) =>
   resolver(collectionId, publish)
 export const setImage = (key: string, file: File) => resolver(key, file)
 export const create = () => newPromise(empityFormModel)
+
+export const mockModel = {
+  // empityFormModel,
+  // get,
+  // edit,
+  _delete,
+  toggleFollow,
+  setIsPublished,
+  toggleBookmark,
+  setImage,
+}

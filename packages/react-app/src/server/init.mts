@@ -8,13 +8,18 @@ import {
   isSameClass,
   registerAccessController,
   registerEntities,
+  registerEntityInfoProvider,
   ROOT_SYSTEM_USER,
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
 import { isCurrentUserEntity, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import assert from 'assert'
 import { resolve } from 'path'
-import { defaultAppearanceData, WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../common/exports.mjs'
+import {
+  defaultAppearanceData,
+  PROFILE_HOME_PAGE_ROUTE_PATH,
+  WEB_USER_SESSION_TOKEN_COOKIE_NAME,
+} from '../common/exports.mjs'
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { plugin } from './lib.mjs'
@@ -22,6 +27,8 @@ import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 import { setCurrentUnverifiedJwtToken, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
+
+export const env = getEnv()
 
 export const kvStore = await kvStoreFactory<KeyValueData>(shell)
 if (!(await kvStore.get('appearanceData', '')).value) {
@@ -39,12 +46,27 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
   WebUserProfile: {},
 })
 
+registerEntityInfoProvider({
+  entityClass: WebUserProfile.entityClass,
+  aqlProvider(entityDocVar) {
+    // const baseHomePagegetWebappUrl = getWebappUrl(PROFILE_HOME_PAGE_ROUTE_PATH)
+    const homepagePath = `SUBSTITUTE( "/${PROFILE_HOME_PAGE_ROUTE_PATH}" , ":key" , ${entityDocVar}._key )`
+    // const homepagepath =
+    // const homepage = `CONCAT( "${instanceDomain}" , ${homepagepath} )`
+    return `{ 
+      iconUrl: '##', 
+      name: ${entityDocVar}.displayName, 
+      homepagePath: ${homepagePath}
+    }`
+  },
+})
+
 await shell.call(registerAccessController)({
   u() {
-    return isCurrentUserEntity()
+    return `(${isEntityClass(WebUserProfile.entityClass)} && ${isCurrentUserEntity()}) || null`
   },
   r(/* { myPkgMeta } */) {
-    return `${isEntityClass(WebUserProfile.entityClass)}` // && ${myPkgMeta}.xx == null`
+    return `${isEntityClass(WebUserProfile.entityClass)} || null` // && ${myPkgMeta}.xx == null`
   },
   c(entityClass) {
     if (!isSameClass(WebUserProfile.entityClass, entityClass)) {
@@ -95,8 +117,12 @@ await shell.call(addMiddleware)({
     },
   ],
 })
-await shell.call(mountApp)({
+
+export const httpApp = await shell.call(mountApp)({
   getApp(express) {
+    if (env.noWebappServer) {
+      return
+    }
     const mountApp = express()
     const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
     mountApp.use(staticWebApp)
@@ -112,3 +138,13 @@ await shell.call(mountApp)({
   },
   mountOnAbsPath: '/',
 })
+
+type Env = {
+  noWebappServer?: boolean
+}
+function getEnv(): Env {
+  const config = shell.config ?? {}
+  //FIXME: validate configs
+  const env: Env = config
+  return env
+}

@@ -7,7 +7,7 @@ import {
 } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SchemaOf } from 'yup'
 
 import {
@@ -76,6 +76,12 @@ export const Collection: FC<CollectionProps> = ({
       return editData(values)
     },
   })
+
+  useEffect(() => {
+    if (form.dirty) {
+      editData(form.values)
+    }
+  }, [form.values, form.dirty, editData])
 
   const imageForm = useFormik<{ image: File | null }>({
     initialValues: { image: null },

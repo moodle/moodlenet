@@ -18,22 +18,20 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
   }, [collectionKey, rpcCaller, setCollection])
 
   const actions = useMemo((): CollectionActions => {
-    const updateRespForm = (resourceForm: CollectionFormProps) => (
-      collection && setCollection(current => current && { ...current, resourceForm }), resourceForm
-    )
+    // const updateRespForm = (resourceForm: CollectionFormProps) => (
+    //   collection && setCollection(current => current && { ...current, resourceForm }), resourceForm
+    // )
     const { _delete, edit, setIsPublished, setImage } = rpcCaller
-    const brk = (_: unknown): Promise<void> => new Promise(resolve => _ || resolve())
 
     const actions: CollectionActions = {
-      editData: async (res: CollectionFormProps) =>
-        brk(await edit(collectionKey, res).then(dd => updateRespForm(dd))),
-      deleteCollection: () => brk(_delete(collectionKey)),
-      publish: () => brk(setIsPublished(collectionKey, true)),
-      unpublish: () => brk(setIsPublished(collectionKey, false)),
-      setImage: (file: File) => brk(setImage(collectionKey, file)),
+      editData: async (res: CollectionFormProps) => edit(collectionKey, res),
+      deleteCollection: () => _delete(collectionKey),
+      publish: () => setIsPublished(collectionKey, true),
+      unpublish: () => setIsPublished(collectionKey, false),
+      setImage: (file: File) => setImage(collectionKey, file),
     }
     return actions
-  }, [collectionKey, collection, rpcCaller])
+  }, [collectionKey, rpcCaller])
 
   return useMemo<CollectionMainProps | null>(
     () => (!collection ? null : { actions, props: collection }),

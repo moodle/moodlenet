@@ -1,6 +1,10 @@
 import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
 import type { PkgName } from '@moodlenet/core'
 
+export type AqlVal<_T> = string & { $$AqlVal$$?: _T }
+
+// type X = ProjectRes<{ patched: AqlVal<EntityDocument<SomeEntityDataType>> }>
+
 export type EntityIdentifier = { _key: string; entityClass: EntityClass<SomeEntityDataType> }
 
 export type SomeEntityDataType = Record<string, any>
@@ -12,16 +16,20 @@ export type EntityClass<_EntityDataType extends SomeEntityDataType> = {
 
 export type EntityMetadata = {
   entityClass: EntityClass<any>
-  creator?: SystemUser
+  creator: SystemUser
+  creatorEntityId?: string
   created: string
   updated: string
   pkgMeta: Record<PkgName, any>
 }
 
-export type EntityDocument<EntityDataType extends SomeEntityDataType> = EntityData<EntityDataType> &
+export type EntityFullDocument<EntityDataType extends SomeEntityDataType> =
+  EntityDocFullData<EntityDataType> & DocumentMetadata
+
+export type EntityDocument<EntityDataType extends SomeEntityDataType> = EntityDataType &
   DocumentMetadata
 
-export type EntityData<EntityDataType extends SomeEntityDataType> = {
+export type EntityDocFullData<EntityDataType extends SomeEntityDataType> = {
   _meta: EntityMetadata
 } & EntityDataType
 
@@ -30,7 +38,7 @@ export type EntityCollectionDef<EntityDataType extends SomeEntityDataType> = {
 }
 export type ByKeyOrId = { _id: string } | { _key: string }
 export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
-  collection: DocumentCollection<EntityData<Def['dataType']>>
+  collection: DocumentCollection<EntityDocFullData<Def['dataType']>>
   entityClass: EntityClass<Def['dataType']>
 }
 
