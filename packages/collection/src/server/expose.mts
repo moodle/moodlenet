@@ -8,6 +8,7 @@ import {
   createCollection,
   delCollection,
   getCollection,
+  getImageUrl,
   patchCollection,
   storeImageFile,
 } from './lib.mjs'
@@ -73,7 +74,7 @@ export const expose = await shell.expose({
           data: {
             collectionId: found.entity._key,
             mnUrl: getWebappUrl(getCollectionHomePageRoutePath({ _key })),
-            imageUrl: '',
+            imageUrl: getImageUrl(_key),
             isWaitingForApproval: false,
           },
           state: { isPublished: true, numResources: 0 },

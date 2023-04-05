@@ -5,11 +5,13 @@ import assert from 'assert'
 import { mkdir, open, readFile, writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
-import { DbRecord, DbRecordData, FsItem, FSStore, LsOpts } from './types.mjs'
+import { DbRecord, DbRecordData, FsItem, LsOpts } from './types.mjs'
 export * from './types.mjs'
 export const BASE_COLLECTION_NAME = 'Moodlenet_simple_file_store'
 
-export default async function fileStoreFactory(shell: Shell, bucketName: string): Promise<FSStore> {
+export type FSStore = Awaited<ReturnType<typeof fileStoreFactory>>
+
+export default async function fileStoreFactory(shell: Shell, bucketName: string) {
   const storeBaseFsFolder = resolve(shell.baseFsFolder, 'simple-file-store', bucketName)
   const BUCKET_COLLECTION_NAME = `${BASE_COLLECTION_NAME}_${bucketName}`
 
@@ -212,7 +214,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   }
 
   async function mountStaticHttpServer(path: string) {
-    mountApp({
+    const { baseUrl } = await mountApp({
       getApp(express) {
         const basePathApp = express()
         const app = express()
@@ -221,6 +223,11 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
         return basePathApp
       },
     })
+    return {
+      getFileUrl(logicalName: string) {
+        return `${baseUrl}${path}/${logicalName}`
+      },
+    }
   }
 
   function getFsItem(rawDbRecord: DbRecordData): FsItem {
