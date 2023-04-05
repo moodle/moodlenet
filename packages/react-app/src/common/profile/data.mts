@@ -1,4 +1,3 @@
-import { fileExceedsMaxUploadSize } from '@moodlenet/component-library'
 import { mixed, object, SchemaOf, string } from 'yup'
 import { ClientSessionData } from '../../webapp/web-lib.mjs'
 import { AuthDataRpc, ProfileFormValues } from '../types.mjs'
@@ -7,7 +6,7 @@ export function profileFormValidationSchema(maxUploadSize: number): SchemaOf<Pro
   return object({
     avatarImage: mixed()
       .test((v, { createError }) =>
-        v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
+        v instanceof Blob && v.size > maxUploadSize
           ? createError({
               message: /* t */ `The image is too big, reduce the size or use another image`,
             })
@@ -16,7 +15,7 @@ export function profileFormValidationSchema(maxUploadSize: number): SchemaOf<Pro
       .optional(),
     backgroundImage: mixed()
       .test((v, { createError }) =>
-        v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
+        v instanceof Blob && v.size > maxUploadSize
           ? createError({
               message: /* t */ `The image is too big, reduce the size or use another image`,
             })
