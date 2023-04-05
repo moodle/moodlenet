@@ -9,7 +9,7 @@ import {
   patchEntity,
   QueryEntitiesCustomProject,
 } from '@moodlenet/system-entities/server'
-import { Collection, publicFiles } from './init.mjs'
+import { Collection, publicFiles, publicFilesHttp } from './init.mjs'
 import { shell } from './shell.mjs'
 import { CollectionDataType, CollectionEntityDoc } from './types.mjs'
 
@@ -48,6 +48,10 @@ export async function storeImageFile(collectionKey: string, imageRpcFile: RpcFil
   return fsItem
 }
 
-function getImageLogicalFilename(collectionKey: string) {
+export function getImageLogicalFilename(collectionKey: string) {
   return `image/${collectionKey}`
+}
+
+export function getImageUrl(collectionKey: string) {
+  return publicFilesHttp.getFileUrl(getImageLogicalFilename(collectionKey))
 }
