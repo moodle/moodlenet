@@ -30,13 +30,13 @@ export type ResourceData = {
   contentUrl: string | null
   downloadFilename: string | null
   // specificContentType: string // ex: url, pdf, doc...
-  isWaitingForApproval?: boolean
   // numLikes: number
 }
 
 export type ResourceState = {
   isPublished: boolean
-  uploadProgress?: number
+  isWaitingForApproval: boolean
+  uploadProgress: number | undefined
   // liked: boolean
   // bookmarked: boolean
 }
@@ -76,18 +76,15 @@ export type ResourceAccess = {
 }
 
 export type ResourceCardData = {
-  // tags?: FollowTag[]
+  // tags: FollowTag[]
   // numLikes: number
   owner: {
     displayName: string
     avatar: string | null
     profileHref: Href
   }
-  resourceHomeHref?: Href
-} & Pick<
-  ResourceData,
-  'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'isWaitingForApproval'
-> &
+  resourceHomeHref: Href
+} & Pick<ResourceData, 'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId'> &
   Pick<ResourceFormValues, 'title'>
 
 export type ResourceCardState = {
@@ -95,7 +92,7 @@ export type ResourceCardState = {
   selectionMode: boolean // When selection resources to be added to a collection
   // liked: boolean
   // bookmarked: boolean
-} & Pick<ResourceState, 'isPublished'>
+} & Pick<ResourceState, 'isPublished' | 'isWaitingForApproval'>
 
 export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 

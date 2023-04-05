@@ -63,6 +63,7 @@ export const getResourceCardStoryProps = (
     isPublished: true,
     isSelected: false,
     selectionMode: false,
+    isWaitingForApproval: false,
     // bookmarked: false,
     // liked: false,
   }

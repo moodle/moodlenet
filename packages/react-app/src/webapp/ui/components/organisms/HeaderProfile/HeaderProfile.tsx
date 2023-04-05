@@ -6,10 +6,6 @@ import { HeaderMenuItemRegItem } from '../Header/addons.js'
 
 // TODO //@ETTO Shoud separate hook from this component
 
-const text = 'Profile'
-const path = href('/my-profile')
-const className = 'profile'
-const position = 0
 type IconType = {
   icon: string | ReactElement
 }

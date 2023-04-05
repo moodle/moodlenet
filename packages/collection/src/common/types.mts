@@ -47,7 +47,7 @@ export type MainPropsCollection = {
 export type CollectionData = {
   collectionId: string
   mnUrl: string
-  imageUrl?: string
+  imageUrl: string | undefined
   isWaitingForApproval?: boolean
   // numFollowers: number
 }
@@ -58,8 +58,8 @@ export type CollectionFormValues = {
 }
 
 export type CollectionState = {
-  isPublished?: boolean
-  numResources?: number
+  isPublished: boolean
+  numResources: number
   // followed: boolean
   // bookmarked: boolean
 }
