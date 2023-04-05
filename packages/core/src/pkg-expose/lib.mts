@@ -59,7 +59,11 @@ export function readableRpcFile(
   assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore brute force symbol prop mixin
-  rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
+  // rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
+  Object.defineProperty(rpcFile, RPC_FILE_HANDLER_SYM, {
+    enumerable: false,
+    value: getReadable,
+  })
   return rpcFile
 }
 

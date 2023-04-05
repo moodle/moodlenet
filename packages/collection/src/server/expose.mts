@@ -4,40 +4,17 @@ import { shell } from './shell.mjs'
 import { RpcFile, RpcStatus } from '@moodlenet/core'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
-// import { CollectionDataResponce, CollectionFormValues } from '../common.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
+import { publicFiles, publicFilesHttp } from './init.mjs'
 import {
   createCollection,
   delCollection,
   getCollection,
-  getImageUrl,
+  getImageLogicalFilename,
   patchCollection,
-  storeImageFile,
 } from './lib.mjs'
-// import { mockModel } from './mockLib.mjs'
 
-// type KeyId = { key: string }
-// type KeyValue = { key: string; values: CollectionFormRpc }
-// type KeyFile = { key: string; file: File }
-// type keyBoolean = { key: string; publish: boolean }
-// type Result = Parameters<(a: { _key: string } | null, b?: { _key: string }) => CollectionFormRpc>
-
-// good for export in file name controller if code grow
-// const rpcCtrl = {
-//   // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
-//   get: async (...args: Result) =>
-//     await get((args[0]?._key ? args[0]?._key : args[1]?._key) || '-1'),
-//   edit: async ({ key, values }: KeyValue) => await edit(key, values),
-//   setIsPublished: async ({ key, publish }: keyBoolean) => await setIsPublished(key, publish),
-//   setImage: async ({ key, file }: KeyFile) => await setImage(key, file),
-//   create: async () => await create(),
-//   delete: async ({ key }: KeyId) => await _delete(key),
-//   // toggleFollow: async ({ key }: KeyId) => await toggleFollow(key), // toggleBookmark: async ({ key }: KeyId) => await toggleBookmark(key),
-// }
-
-// const guards = { noCheck: () => void 0 }
-// const { noCheck } = guards
 export const expose = await shell.expose({
   rpc: {
     'webapp/set-is-published/:_key': {
@@ -61,6 +38,10 @@ export const expose = await shell.expose({
         if (!found) {
           return
         }
+        const imageUrl = found.entity.image
+          ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
+          : ''
+
         return {
           contributor: {
             avatarUrl: found.contributor.iconUrl,
@@ -75,7 +56,7 @@ export const expose = await shell.expose({
           data: {
             collectionId: found.entity._key,
             mnUrl: getWebappUrl(getCollectionHomePageRoutePath({ _key })),
-            imageUrl: getImageUrl(_key),
+            imageUrl,
             isWaitingForApproval: false,
           },
           state: { isPublished: true, numResources: 0 },
@@ -104,7 +85,7 @@ export const expose = await shell.expose({
     'webapp/create': {
       guard: () => void 0,
       fn: async (): Promise<{ _key: string }> => {
-        const createResult = await createCollection({ description: '', title: '' })
+        const createResult = await createCollection({ description: '', title: '', image: null })
         if (!createResult) {
           throw RpcStatus('Unauthorized')
         }
@@ -125,8 +106,22 @@ export const expose = await shell.expose({
     },
     'webapp/upload-image/:_key': {
       guard: () => void 0,
-      async fn({ file }: { file: RpcFile }, { _key }: { _key: string }) {
-        await storeImageFile(_key, file)
+      async fn({ file: [file] }: { file: [RpcFile] }, { _key }: { _key: string }) {
+        const imageLogicalFilename = getImageLogicalFilename(_key)
+
+        const { directAccessId } = await publicFiles.store(imageLogicalFilename, file)
+
+        // here applies AC ----
+        await patchCollection(_key, {
+          image: { kind: 'file', directAccessId },
+        })
+
+        return publicFilesHttp.getFileUrl({ directAccessId })
+      },
+      bodyWithFiles: {
+        fields: {
+          '.file': 1,
+        },
       },
     },
   },

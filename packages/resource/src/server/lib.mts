@@ -9,7 +9,7 @@ import {
   patchEntity,
   QueryEntitiesCustomProject,
 } from '@moodlenet/system-entities/server'
-import { publicFiles, publicFilesHttp, Resource } from './init.mjs'
+import { Resource, resourceFiles } from './init.mjs'
 import { shell } from './shell.mjs'
 import { ResourceDataType, ResourceEntityDoc } from './types.mjs'
 
@@ -40,34 +40,23 @@ export async function delResource(_key: string) {
   return patchResult
 }
 
-export async function storeImageFile(resourceKey: string, imageRpcFile: RpcFile) {
-  const imageLogicalFilename = getImageLogicalFilename(resourceKey)
-
-  const fsItem = await publicFiles.store(imageLogicalFilename, imageRpcFile)
-
-  return fsItem
-}
-
 export function getImageLogicalFilename(resourceKey: string) {
   return `image/${resourceKey}`
 }
 
-export function getImageUrl(resourceKey: string) {
-  return publicFilesHttp.getFileUrl(getImageLogicalFilename(resourceKey))
-}
+export async function storeResourceFile(resourceKey: string, imageRpcFile: RpcFile) {
+  const resourceLogicalFilename = getResourceLogicalFilename(resourceKey)
 
-export async function storeContentFile(resourceKey: string, imageRpcFile: RpcFile) {
-  const imageLogicalFilename = getImageLogicalFilename(resourceKey)
-
-  const fsItem = await publicFiles.store(imageLogicalFilename, imageRpcFile)
+  const fsItem = await resourceFiles.store(resourceLogicalFilename, imageRpcFile)
 
   return fsItem
 }
 
-export function getContentLogicalFilename(resourceKey: string) {
-  return `image/${resourceKey}`
+export function getResourceLogicalFilename(resourceKey: string) {
+  return `resource-file/${resourceKey}`
 }
 
-export function getContentUrl(resourceKey: string) {
-  return `resourceContent.getFileUrl(getImageLogicalFilename(${resourceKey}))`
+export const RESOURCE_DOWNLOAD_ENDPOINT = 'dl/resource/:_key/:filename'
+export function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcFile: RpcFile }) {
+  return RESOURCE_DOWNLOAD_ENDPOINT.replace(':_key', _key).replace(':filename', rpcFile.name)
 }
