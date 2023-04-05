@@ -16,19 +16,20 @@ import {
   ResourceRpc,
   RpcCaller,
 } from '../common/types.mjs'
+import { RESOURCE_HOME_PAGE_ROUTE_PATH } from '../common/webapp-routes.mjs'
 import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
 import { MainContext } from './MainContext.js'
 
 const myRoutes = {
-  routes: <Route path="resource/:key" element={<ResourcePageRoute />} />,
+  routes: <Route path={RESOURCE_HOME_PAGE_ROUTE_PATH} element={<ResourcePageRoute />} />,
 }
 const addAuthMissing =
   (missing: { isAuthenticated: boolean }) =>
-  (rpcResource: Promise<ResourceRpc>): Promise<ResourceProps> =>
-    rpcResource.then(res => ModelRpcToProps(missing, res))
+  (rpcResource: Promise<ResourceRpc | undefined>): Promise<ResourceProps | undefined> =>
+    rpcResource.then(res => res && ModelRpcToProps(missing, res))
 
 const toFormRpc = (r: ResourceFormProps): ResourceFormRpc => r
-const toFormProps = (r: ResourceFormRpc): ResourceFormProps => r
+// const toFormProps = (r: ResourceFormRpc): ResourceFormProps => r
 
 const menuItems = {
   create: (onClick: () => void): HeaderMenuItem => ({
@@ -55,14 +56,16 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
 
     const rpcItem: RpcCaller = {
       edit: (key: string, values: ResourceFormProps) =>
-        rpc['webapp/edit']({ key, resource: toFormRpc(values) }).then(toFormProps),
-      get: (key: string) => addAuth(rpc['webapp/get']({ key })),
-      _delete: (key: string) => addAuth(rpc['webapp/delete']({ key })),
-      setImage: (key: string, file: File) => addAuth(rpc['webapp/setImage']({ key, file })),
-      setContent: (key: string, file: File | string) =>
-        addAuth(rpc['webapp/setContent']({ key, file })),
-      setIsPublished: (key: string) => addAuth(rpc['webapp/setIsPublished']({ key })),
-      create: () => addAuth(rpc['webapp/create']()),
+        rpc['webapp/edit/:_key']({ values: toFormRpc(values) }, { _key: key }),
+      get: (key: string) => addAuth(rpc['webapp/get/:_key'](null, { _key: key })),
+      _delete: (key: string) => rpc['webapp/delete/:_key'](null, { _key: key }),
+      setImage: (key: string, file: File) =>
+        rpc['webapp/upload-image/:_key']({ file }, { _key: key }),
+      setContent: (key: string, content: File | string) =>
+        rpc['webapp/upload-content/:_key']({ content }, { _key: key }),
+      setIsPublished: (key, publish) =>
+        rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
+      create: () => rpc['webapp/create'](),
       // toggleLike: (key: string) => rpc[rpcUrl.toggleLike].fn({ key }),  // toggleBookmark: (key: string) => rpc[rpcUrl.toggleBookmark].fn({ key }),
     }
 
@@ -70,8 +73,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   }, [auth.access, me.rpc])
 
   const actionsMenu = useMemo(() => {
-    const acCreate = () =>
-      rpcCaller.create().then(({ data: { resourceId } }) => nav(`/resource/${resourceId}`))
+    const acCreate = () => rpcCaller.create().then(({ _key }) => nav(`/resource/${_key}`))
 
     return {
       create: { action: acCreate, menu: menuItems.create(acCreate) },

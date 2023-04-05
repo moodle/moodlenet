@@ -1,34 +1,127 @@
-import { ResourceFormRpc } from '../common.mjs'
-import { create, edit, get, setContent, setImage, setIsPublished, _delete } from './mockLib.mjs'
-import shell from './shell.mjs'
+import { ResourceFormRpc, ResourceRpc } from '../common.mjs'
+import { shell } from './shell.mjs'
 
-export type Key = { key: string }
-export type KeyFile = { key: string; file: File }
-export type KeyFileStr = { key: string; file: File | string }
-export type KeyFormRpc = { key: string; resource: ResourceFormRpc }
+import { RpcFile, RpcStatus } from '@moodlenet/core'
+import { getWebappUrl } from '@moodlenet/react-app/server'
+import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
+// import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
+import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
+import { canPublish } from './aql.mjs'
+import {
+  createResource,
+  delResource,
+  getImageUrl,
+  getResource,
+  patchResource,
+  storeContentFile,
+  storeImageFile,
+} from './lib.mjs'
 
-// good for export in file name controller if code grow
-const rpcCtrl = {
-  create: async () => await create(),
-  edit: async ({ key, resource }: KeyFormRpc) => await edit(key, resource),
-  get: async ({ key }: Key) => await get(key),
-  delete: async ({ key }: Key) => await _delete(key),
-  setImage: async ({ key, file }: KeyFile) => await setImage(key, file),
-  setContent: async ({ key, file }: KeyFileStr) => await setContent(key, file),
-  setIsPublished: async ({ key }: Key) => await setIsPublished(key),
-  // toggleBookmark: async ({ key }: KeyId) => await toggleBookmark(key), // toggleLike: async ({ key }: KeyId) => await toggleLike(key),
-}
-const guards = { noCheck: () => void 0 }
-const { noCheck } = guards
 export const expose = await shell.expose({
   rpc: {
-    'webapp/create': { guard: noCheck, fn: rpcCtrl.create },
-    'webapp/edit': { guard: noCheck, fn: rpcCtrl.edit },
-    'webapp/get': { guard: noCheck, fn: rpcCtrl.get },
-    'webapp/delete': { guard: noCheck, fn: rpcCtrl.delete },
-    'webapp/setImage': { guard: noCheck, fn: rpcCtrl.setImage },
-    'webapp/setContent': { guard: noCheck, fn: rpcCtrl.setContent },
-    'webapp/setIsPublished': { guard: noCheck, fn: rpcCtrl.setIsPublished },
-    // [rpcUrl.toggleBookmark]: { guard, fn: rpcLib.toggleBookmark },  // [rpcUrl.toggleLike]: { guard, fn: rpcLib.toggleLike },
+    'webapp/set-is-published/:_key': {
+      guard: () => void 0,
+      fn: async ({ publish }: { publish: boolean }, { _key }: { _key: string }) => {
+        console.log({ _key, publish })
+        //  await setIsPublished(key, publish)
+      },
+    },
+    'webapp/get/:_key': {
+      guard: () => void 0,
+      fn: async (_, { _key }: { _key: string }): Promise<ResourceRpc | undefined> => {
+        const found = await getResource(_key, {
+          projectAccess: ['u', 'd'],
+          project: {
+            canPublish: canPublish(),
+            isCreator: isCreator(),
+            contributor: creatorUserInfoAqlProvider(),
+          },
+        })
+        if (!found) {
+          return
+        }
+        return {
+          contributor: {
+            avatarUrl: found.contributor.iconUrl,
+            creatorProfileHref: {
+              url: found.contributor.homepagePath,
+              ext: false,
+            },
+            displayName: found.contributor.name,
+            timeSinceCreation:
+              '___________________________________________________________________________________________',
+          },
+          resourceForm: { description: found.entity.description, title: found.entity.title },
+          data: {
+            contentType: 'file', // -----------------------------------------------
+            contentUrl: '___________________________________________________________',
+            downloadFilename: '___________________________________________________________',
+            resourceId: found.entity._key,
+            mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
+            imageUrl: getImageUrl(_key),
+            isWaitingForApproval: false,
+          },
+          state: { isPublished: true },
+          access: {
+            canDelete: !!found.access.d,
+            canEdit: !!found.access.u,
+            canPublish: found.canPublish,
+            isCreator: found.isCreator,
+          },
+        }
+      },
+    },
+    'webapp/edit/:_key': {
+      guard: () => void 0,
+      fn: async (
+        { values }: { values: ResourceFormRpc },
+        { _key }: { _key: string },
+      ): Promise<void> => {
+        const patchResult = await patchResource(_key, values)
+        if (!patchResult) {
+          return //throw ?
+        }
+        return
+      },
+    },
+    'webapp/create': {
+      guard: () => void 0,
+      fn: async (): Promise<{ _key: string }> => {
+        const createResult = await createResource({ description: '', title: '' })
+        if (!createResult) {
+          throw RpcStatus('Unauthorized')
+        }
+        return {
+          _key: createResult._key,
+        }
+      },
+    },
+    'webapp/delete/:_key': {
+      guard: () => void 0,
+      fn: async (_, { _key }: { _key: string }): Promise<void> => {
+        const delResult = await delResource(_key)
+        if (!delResult) {
+          return
+        }
+        return
+      },
+    },
+    'webapp/upload-image/:_key': {
+      guard: () => void 0,
+      async fn({ file }: { file: RpcFile }, { _key }: { _key: string }) {
+        await storeImageFile(_key, file)
+        return ''
+      },
+    },
+    'webapp/upload-content/:_key': {
+      guard: () => void 0,
+      async fn({ content }: { content: RpcFile | string }, { _key }: { _key: string }) {
+        if (typeof content === 'string') {
+          return content
+        }
+        await storeContentFile(_key, content)
+        return ''
+      },
+    },
   },
 })

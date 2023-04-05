@@ -40,10 +40,10 @@ import {
 // const { noCheck } = guards
 export const expose = await shell.expose({
   rpc: {
-    'webapp/set-is-published': {
+    'webapp/set-is-published/:_key': {
       guard: () => void 0,
-      fn: async ({ key, publish }: { key: string; publish: boolean }) => {
-        console.log({ key, publish })
+      fn: async ({ publish }: { publish: boolean }, { _key }: { _key: string }) => {
+        console.log({ _key, publish })
         //  await setIsPublished(key, publish)
       },
     },
@@ -88,10 +88,13 @@ export const expose = await shell.expose({
         }
       },
     },
-    'webapp/edit': {
+    'webapp/edit/:_key': {
       guard: () => void 0,
-      fn: async ({ key, values }: { key: string; values: CollectionFormRpc }): Promise<void> => {
-        const patchResult = await patchCollection(key, values)
+      fn: async (
+        { values }: { values: CollectionFormRpc },
+        { _key }: { _key: string },
+      ): Promise<void> => {
+        const patchResult = await patchCollection(_key, values)
         if (!patchResult) {
           return
         }

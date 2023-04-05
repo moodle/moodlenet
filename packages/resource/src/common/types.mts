@@ -1,7 +1,7 @@
 import { AuthDataRpc } from '@moodlenet/react-app/common'
 import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
-import { expose as me } from '../server/expose.mjs'
+import type { expose as me } from '../server/expose.mjs'
 
 export type MyWebDeps = {
   me: typeof me
@@ -51,7 +51,7 @@ export type ResourceContributorRpc = {
 export type ResourceRpc = {
   resourceForm: ResourceFormRpc
   access: ResourceAccessRpc
-  state: ResourceStateRpc
+  state: Pick<ResourceStateRpc, 'isPublished'>
   data: ResourceDataRpc
   contributor: ResourceContributorRpc
 }
@@ -72,20 +72,20 @@ export type ResourceProps = {
 }
 
 export type RpcCaller = {
-  edit: (resourceKey: string, res: ResourceFormProps) => Promise<ResourceFormProps>
-  get: (resourceKey: string) => Promise<ResourceProps>
-  _delete: (resourceKey: string) => Promise<ResourceProps>
-  setImage: (resourceKey: string, file: File) => Promise<ResourceProps>
-  setContent: (resourceKey: string, file: File | string) => Promise<ResourceProps>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceProps>
-  create: () => Promise<ResourceProps>
+  edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
+  get: (resourceKey: string) => Promise<ResourceProps | undefined>
+  _delete: (resourceKey: string) => Promise<void>
+  setImage: (resourceKey: string, file: File) => Promise<string>
+  setContent: (resourceKey: string, file: File | string) => Promise<string>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
+  create: () => Promise<{ _key: string }>
   // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
 }
 export type ResourceActions = {
   publish: () => void
   unpublish: () => void
   editData: (values: ResourceFormProps) => void
-  setImage: (file: File) => Promise<void>
+  setImage: (file: File) => Promise<string>
   setContent: (content: File | string) => void
   deleteResource(): Promise<void>
   // toggleLike(): unknown// toggleBookmark(): unknown
