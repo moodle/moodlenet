@@ -177,7 +177,7 @@ export type MainHeaderProps = {
   addMenuProps: AddMenuProps
   avatarMenuProps: AvatarMenuProps
   accessButtonsProps: AccessButtonsProps
-  hideSearchbox: boolean
+  hideSearchbox?: boolean
 } & HeaderProps
 
 export const MainHeader: FC<MainHeaderProps> = ({
