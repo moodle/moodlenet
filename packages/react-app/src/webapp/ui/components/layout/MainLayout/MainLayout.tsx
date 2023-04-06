@@ -1,6 +1,11 @@
 import { CSSProperties, FC, ReactNode } from 'react'
 import { MainFooter, MainFooterProps } from '../../organisms/Footer/MainFooter/MainFooter.js'
-import { MainHeader, MainHeaderProps } from '../../organisms/Header/MainHeader/MainHeader.js'
+import {
+  MainHeader,
+  MainHeaderContext,
+  MainHeaderProps,
+  useSimpleMainHeaderContextController,
+} from '../../organisms/Header/MainHeader/MainHeader.js'
 import { LayoutContainer } from '../LayoutContainer/LayoutContainer.js'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import './MainLayout.scss'
@@ -27,20 +32,22 @@ export const MainLayout: FC<MainLayoutProps> = ({
   // const stateContext = useContext(StateContext)
 
   // const styleContext = useContext(SettingsCtx)
+  const mainHeaderContextValue = useSimpleMainHeaderContextController()
 
   return (
-    <LayoutContainer>
-      <div
-        className={`main-layout ${streched ? 'streched' : ''}`}
-        style={{
-          ...style,
-          // TODO //@ETTO Send context to higher levels
-          // ...getColorPalette(styleContext.appearanceData.color),
-          // ...styleContext.style,
-        }}
-      >
-        <MainHeader {...headerProps} />
-        {/* <div className="side-menu">
+    <MainHeaderContext.Provider value={mainHeaderContextValue}>
+      <LayoutContainer>
+        <div
+          className={`main-layout ${streched ? 'streched' : ''}`}
+          style={{
+            ...style,
+            // TODO //@ETTO Send context to higher levels
+            // ...getColorPalette(styleContext.appearanceData.color),
+            // ...styleContext.style,
+          }}
+        >
+          <MainHeader {...headerProps} />
+          {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
               <Link to={path}>
@@ -49,19 +56,20 @@ export const MainLayout: FC<MainLayoutProps> = ({
             </div>
           ))}
       </div> */}
-        <div
-          style={
-            {
-              /* ...contentStyle */
+          <div
+            style={
+              {
+                /* ...contentStyle */
+              }
             }
-          }
-          className="content"
-        >
-          {children}
+            className="content"
+          >
+            {children}
+          </div>
+          <MainFooter {...footerProps} />
         </div>
-        <MainFooter {...footerProps} />
-      </div>
-    </LayoutContainer>
+      </LayoutContainer>
+    </MainHeaderContext.Provider>
   )
 }
 

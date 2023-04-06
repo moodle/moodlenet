@@ -64,6 +64,15 @@ export const useHeaderProps = (): MainHeaderProps => {
     })
   }, [rightItemsReg.registry.entries])
 
+  const addMenuItems = useMemo(
+    () =>
+      reg.addMenuItems.registry.entries.map<HeaderMenuItem>(({ item, pkgId }, i) => ({
+        ...item,
+        key: `${pkgId.name}[${i}]::${item.key}`,
+      })),
+    [reg.addMenuItems.registry.entries],
+  )
+
   const mainHeaderProps = useMemo<MainHeaderProps>(() => {
     return {
       headerTitleProps,
@@ -73,6 +82,7 @@ export const useHeaderProps = (): MainHeaderProps => {
         signupHref: href('/signup'),
       },
       addMenuProps: {
+        menuItems: addMenuItems,
         // newCollectionHref: href('.'),
         // newResourceHref: href('.'),
       },
@@ -85,6 +95,6 @@ export const useHeaderProps = (): MainHeaderProps => {
       leftItems: [], //TODO //@ETTO: needs a registry
       rightItems,
     }
-  }, [avatarUrl, headerTitleProps, isAuthenticated, menuItems, rightItems])
+  }, [addMenuItems, avatarUrl, headerTitleProps, isAuthenticated, menuItems, rightItems])
   return mainHeaderProps
 }

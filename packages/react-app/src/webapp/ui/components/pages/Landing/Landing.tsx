@@ -1,8 +1,15 @@
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
 import { ArrowForward, NoteAdd } from '@material-ui/icons'
-import { AddonItem, Modal, PrimaryButton, Searchbox } from '@moodlenet/component-library'
+import {
+  AddonItem,
+  Modal,
+  PrimaryButton,
+  Searchbox,
+  SearchboxProps,
+} from '@moodlenet/component-library'
 import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
+import { MainHeaderContext } from '../../../../ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 import { Href, Link } from '../../elements/link.js'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
@@ -32,7 +39,20 @@ export type LandingProps = {
   // searchCollectionsHref: Href
   // searchAuthorsHref: Href
 }
+const LandingSearchBox: FC<Pick<SearchboxProps, 'setSearchText'>> = ({ setSearchText }) => {
+  const { setHideSearchbox } = useContext(MainHeaderContext)
 
+  return (
+    <Searchbox
+      size="big"
+      setSearchText={setSearchText}
+      searchText=""
+      placeholder={`Search for open educational content`}
+      setIsSearchboxInViewport={setHideSearchbox}
+      marginTop={12}
+    />
+  )
+}
 export const Landing: FC<LandingProps> = ({
   mainLayoutProps,
   mainColumnItems,
@@ -67,7 +87,6 @@ export const Landing: FC<LandingProps> = ({
   //   '../../../assets/img/default-landing-background.png',
   //   import.meta.url,
   // ).href
-  const [isSearchboxInViewport, setIsSearchboxInViewport] = useState<boolean>(true)
   const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
 
   const background = {
@@ -82,14 +101,7 @@ export const Landing: FC<LandingProps> = ({
         <div className="subtitle">{subtitle}</div>
         {/* <div className="subtitle">{organization.subtitle}</div> */}
       </div>
-      <Searchbox
-        size="big"
-        setSearchText={setSearchText}
-        searchText=""
-        placeholder={`Search for open educational content`}
-        setIsSearchboxInViewport={setIsSearchboxInViewport}
-        marginTop={12}
-      />
+      <LandingSearchBox setSearchText={setSearchText} />
       <PrimaryButton
         className="share-content"
         color="blue"
@@ -182,10 +194,7 @@ export const Landing: FC<LandingProps> = ({
   ]
 
   return (
-    <MainLayout
-      {...mainLayoutProps}
-      headerProps={{ ...mainLayoutProps.headerProps, hideSearchbox: isSearchboxInViewport }}
-    >
+    <MainLayout {...mainLayoutProps} headerProps={{ ...mainLayoutProps.headerProps }}>
       {modals}
       <div className="landing">
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
