@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
 import { ArrowForward, NoteAdd } from '@material-ui/icons'
-import { AddonItem, Modal, PrimaryButton } from '@moodlenet/component-library'
+import { AddonItem, Modal, PrimaryButton, Searchbox } from '@moodlenet/component-library'
 import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 import { Href, Link } from '../../elements/link.js'
@@ -20,13 +20,14 @@ export type LandingProps = {
   newResourceHref: Href
   newCollectionHref: Href
 
+  setSearchText(text: string): unknown
+
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
   // collectionCardPropsList: CP<CollectionCardProps>[]
   // resourceCardPropsList: CP<ResourceCardProps>[]
   // smallProfileCardPropsList: CP<SmallProfileCardProps>[]
   // trendCardProps: TrendCardProps
   // organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
-  // setSearchText(text: string): unknown
   // searchResourcesHref: Href
   // searchCollectionsHref: Href
   // searchAuthorsHref: Href
@@ -44,6 +45,8 @@ export const Landing: FC<LandingProps> = ({
   signUpHref,
   newResourceHref,
   newCollectionHref,
+
+  setSearchText,
 
   // {
   //   // searchResourcesHref,
@@ -64,8 +67,7 @@ export const Landing: FC<LandingProps> = ({
   //   '../../../assets/img/default-landing-background.png',
   //   import.meta.url,
   // ).href
-  // const [isSearchboxInViewport, setIsSearchboxInViewport] =
-  //   useState<boolean>(true)
+  const [isSearchboxInViewport, setIsSearchboxInViewport] = useState<boolean>(true)
   const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
 
   const background = {
@@ -80,17 +82,14 @@ export const Landing: FC<LandingProps> = ({
         <div className="subtitle">{subtitle}</div>
         {/* <div className="subtitle">{organization.subtitle}</div> */}
       </div>
-      {/* <Searchbox
-  // setSearchText={() => {
-  //   return 'sdsf'
-  // }}
-  size="big"
-  // setSearchText={setSearchText}
-  // searchText=""
-  placeholder={`Search for open educational conten`}
-  // setIsSearchboxInViewport={setIsSearchboxInViewport}
-  marginTop={12}
-/> */}
+      <Searchbox
+        size="big"
+        setSearchText={setSearchText}
+        searchText=""
+        placeholder={`Search for open educational content`}
+        setIsSearchboxInViewport={setIsSearchboxInViewport}
+        marginTop={12}
+      />
       <PrimaryButton
         className="share-content"
         color="blue"
@@ -183,7 +182,10 @@ export const Landing: FC<LandingProps> = ({
   ]
 
   return (
-    <MainLayout {...mainLayoutProps}>
+    <MainLayout
+      {...mainLayoutProps}
+      headerProps={{ ...mainLayoutProps.headerProps, hideSearchbox: isSearchboxInViewport }}
+    >
       {modals}
       <div className="landing">
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
