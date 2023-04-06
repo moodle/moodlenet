@@ -7,6 +7,7 @@ import {
   Searchbox,
   TertiaryButton,
 } from '@moodlenet/component-library'
+import { Person } from '@mui/icons-material'
 import { FC, useMemo, useState } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
@@ -23,14 +24,15 @@ export type AccessButtonsProps = {
 export const AccessButtons: FC<AccessButtonsProps> = ({ loginHref, signupHref }) => {
   return (
     <>
-      <Link href={loginHref} key="login-button">
+      <Link href={loginHref} key="login-button" className="login-button access-button">
         <PrimaryButton>
           {/* <Trans> */}
-          Login
+          <span>Login</span>
           {/* </Trans> */}
+          <Person />
         </PrimaryButton>
       </Link>
-      <Link href={signupHref} key="signup-button">
+      <Link href={signupHref} key="signup-button" className="signup-button access-button">
         <TertiaryButton>
           {/* <Trans> */}
           Join now
@@ -175,6 +177,7 @@ export type MainHeaderProps = {
   addMenuProps: AddMenuProps
   avatarMenuProps: AvatarMenuProps
   accessButtonsProps: AccessButtonsProps
+  hideSearchbox: boolean
 } & HeaderProps
 
 export const MainHeader: FC<MainHeaderProps> = ({
@@ -185,6 +188,7 @@ export const MainHeader: FC<MainHeaderProps> = ({
   headerTitleProps,
   addMenuProps,
   accessButtonsProps,
+  hideSearchbox,
   avatarMenuProps,
   ...props
 }) => {
@@ -203,20 +207,20 @@ export const MainHeader: FC<MainHeaderProps> = ({
   }, [leftItems, logo, smallLogo, url])
 
   const updatedCenterItems = useMemo(() => {
-    return [
-      {
-        Item: () => (
-          <Searchbox
-            placeholder="Search for open education content"
-            searchText={searchText}
-            setSearchText={setSearchText}
-          />
-        ),
-        key: 'searchbox',
-      },
-      ...(centerItems ?? []),
-    ]
-  }, [centerItems, searchText])
+    const searchbox = hideSearchbox
+      ? undefined
+      : {
+          Item: () => (
+            <Searchbox
+              placeholder="Search for open education content"
+              searchText={searchText}
+              setSearchText={setSearchText}
+            />
+          ),
+          key: 'searchbox',
+        }
+    return [searchbox, ...(centerItems ?? [])].filter((item): item is AddonItem => !!item)
+  }, [centerItems, searchText, hideSearchbox])
 
   const updatedRightItems: AddonItem[] = useMemo(() => {
     return [
