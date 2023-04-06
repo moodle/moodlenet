@@ -1,7 +1,6 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { addMiddleware, mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
-import { expose as orgExpose } from '@moodlenet/organization/server'
 import {
   EntityCollectionDef,
   EntityUser,
@@ -78,7 +77,6 @@ await shell.call(plugin)<MyWebAppDeps>({
   mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
   deps: {
     me: myExpose,
-    organization: orgExpose,
   },
 })
 

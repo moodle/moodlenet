@@ -1,5 +1,5 @@
 import { plugin } from '@moodlenet/react-app/server'
-import { OpenidWebAppDeps } from '../common/webapp/types.mjs'
+import { OpenidWebAppDeps } from '../webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { shell } from './shell.mjs'
 
@@ -13,9 +13,7 @@ await import('./expose.mjs')
 
 await shell.call(plugin)<OpenidWebAppDeps>({
   mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
-  deps: {
-    me: myExpose,
-  },
+  deps: { me: myExpose },
 })
 
 // export const env = getEnv(shell.config)

@@ -5,7 +5,7 @@ import { RpcStatusType } from '../exports.mjs'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
 import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
 import { rpcStatusCodes, RpcStatusName } from './rpc-status-codes.mjs'
-import { PkgExpose, PkgExposeDef, RpcFile } from './types.mjs'
+import { PkgExpose, PkgExposeDef, PkgExposeImpl, RpcFile } from './types.mjs'
 
 type ExposedRegItem = {
   pkgId: PkgIdentifier
@@ -16,7 +16,7 @@ const _PKG_EXPOSED_REG: ExposedRegItem[] = []
 
 export function pkgExpose(pkg_module_ref: PkgModuleRef) {
   return async function expose<_PkgExposeDef extends PkgExposeDef>(
-    exposeDef: _PkgExposeDef,
+    exposeImpl: PkgExposeImpl<_PkgExposeDef>,
   ): Promise<PkgExpose<_PkgExposeDef>> {
     const { pkgId } = await ensureRegisterPkg(pkg_module_ref)
     assert(
@@ -25,7 +25,7 @@ export function pkgExpose(pkg_module_ref: PkgModuleRef) {
     )
     // FIXME: ensure in "init" phase
     const pkgExpose: PkgExpose<_PkgExposeDef> = {
-      ...exposeDef,
+      ...exposeImpl,
       pkgId,
     }
 

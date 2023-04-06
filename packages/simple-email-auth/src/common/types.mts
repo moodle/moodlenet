@@ -1,4 +1,4 @@
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
-import type { expose as me } from '../server/expose.mjs'
-export type MyWebDeps = { me: typeof me }
+import { SimpleEmailAuthExposeType } from './expose-def.mjs'
+export type MyWebDeps = { me: SimpleEmailAuthExposeType }
 export type MyPkgContext = PkgContextT<MyWebDeps>
