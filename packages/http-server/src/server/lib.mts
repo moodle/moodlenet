@@ -11,7 +11,7 @@ export async function mountApp(mountItem: Pick<MountAppItem, 'getApp' | 'mountOn
   const { pkgId: callerPkgId } = shell.assertCallInitiator()
   console.log(`HTTP: register mountApp for ${callerPkgId.name}`)
   mountedApps.push({ ...mountItem, pkgId: callerPkgId })
-  const baseUrl = `${instanceDomain}/.pkg${mountItem.mountOnAbsPath ?? `/${callerPkgId.name}`}`
+  const baseUrl = `${instanceDomain}${mountItem.mountOnAbsPath ?? `/.pkg/${callerPkgId.name}`}`
   return {
     baseUrl,
   }

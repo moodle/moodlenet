@@ -49,12 +49,9 @@ export const { WebUserProfile } = await shell.call(registerEntities)<{
 registerEntityInfoProvider({
   entityClass: WebUserProfile.entityClass,
   aqlProvider(entityDocVar) {
-    // const baseHomePagegetWebappUrl = getWebappUrl(PROFILE_HOME_PAGE_ROUTE_PATH)
     const homepagePath = `SUBSTITUTE( "/${PROFILE_HOME_PAGE_ROUTE_PATH}" , ":key" , ${entityDocVar}._key )`
-    // const homepagepath =
-    // const homepage = `CONCAT( "${instanceDomain}" , ${homepagepath} )`
     return `{ 
-      iconUrl: '##', 
+      iconUrl: '', 
       name: ${entityDocVar}.displayName, 
       homepagePath: ${homepagePath}
     }`
