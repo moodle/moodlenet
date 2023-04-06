@@ -1,6 +1,6 @@
-export type RpcStatusName = keyof typeof codes
+export type RpcStatusName = keyof typeof rpcStatusCodes
 
-export const codes = {
+export const rpcStatusCodes = {
   'Continue': 100,
   'Switching Protocols': 101,
   'Processing': 102,
@@ -66,4 +66,4 @@ export const codes = {
   'Network Authentication Required': 511,
 } as const
 
-export default codes
+export default rpcStatusCodes

@@ -4,7 +4,7 @@ import { assertCallInitiator, getSetCoreAsyncContext } from '../async-context/li
 import { RpcStatusType } from '../exports.mjs'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
 import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
-import codes, { RpcStatusName } from './rpc-status-codes.mjs'
+import { rpcStatusCodes, RpcStatusName } from './rpc-status-codes.mjs'
 import { PkgExpose, PkgExposeDef, RpcFile } from './types.mjs'
 
 type ExposedRegItem = {
@@ -84,12 +84,6 @@ export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefin
 }
 
 export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) {
-<<<<<<< HEAD
-  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
-
-  const initiator = assertCallInitiator()
-  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus: { rpcStatusCode, payload } }))
-=======
   const rpcStatus = RpcStatus(status, payload)
 
   const initiator = assertCallInitiator()
@@ -97,12 +91,24 @@ export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) 
 }
 
 export function RpcStatus(status: RpcStatusName | number, payload?: any): RpcStatusType {
-  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
-  return { rpcStatusCode, payload }
->>>>>>> origin/fix/resource-review-finalize
+  const rpcStatusCode = getRpcStatusCode(status)
+  return { rpcStatusCode, payload: payload ?? getRpcStatusName(status) }
 }
 
-export function getRpcStatusCode() {
+export function getRpcStatusName(status: RpcStatusName | number, defaultName?: string) {
+  const mRpcStatusName =
+    typeof status === 'string'
+      ? status
+      : Object.entries(rpcStatusCodes).find(([_, code]) => code === status)?.[0]
+  return mRpcStatusName ?? defaultName ?? ''
+}
+
+export function getRpcStatusCode(status: RpcStatusName | number) {
+  const rpcStatusCode = typeof status === 'number' ? status : rpcStatusCodes[status]
+  return rpcStatusCode
+}
+
+export function getCurrentRpcStatusCode() {
   const rpcStatus = getSetCoreAsyncContext.get()?.rpcStatus
   if (rpcStatus === undefined) {
     return undefined
@@ -118,9 +124,5 @@ export function getRpcStatusCode() {
   return rpcStatusType
 }
 export function isRpcStatusType(_: any): _ is RpcStatusType {
-<<<<<<< HEAD
-  return 'number' === typeof _?.statusCode
-=======
   return 'number' === typeof _?.rpcStatusCode
->>>>>>> origin/fix/resource-review-finalize
 }

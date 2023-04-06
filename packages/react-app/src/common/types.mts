@@ -88,11 +88,11 @@ export type ProfileFormValues = {
 }
 
 export type ProfileState = {
-  followed: boolean
+  // followed: boolean
 }
 
 export type ProfileActions = {
-  toggleFollow(): unknown
+  // toggleFollow(): unknown
   editProfile(values: ProfileFormValues): void | Promise<any>
 }
 
