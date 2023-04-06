@@ -1,4 +1,4 @@
-import type { PkgExpose, PkgIdentifier } from '@moodlenet/core'
+import type { PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
 import type { HttpRpcResponse } from '@moodlenet/http-server/common'
 import { getPkgRpcFetchOpts } from '@moodlenet/http-server/common'
 import type { UsePkgHandle } from '../../../types/plugins.mjs'
@@ -17,7 +17,7 @@ export function wrapFetch(wrapper: FetchWrapper) {
   FETCH_WRAPPERS.push({ wrapper })
 }
 
-export function getUsePkgHandle<TargetPkgExpose extends PkgExpose>({
+export function getUsePkgHandle<TargetPkgExposeDef extends PkgExposeDef>({
   targetPkgId,
   userPkgId,
   rpcPaths,
@@ -25,24 +25,24 @@ export function getUsePkgHandle<TargetPkgExpose extends PkgExpose>({
   targetPkgId: PkgIdentifier
   userPkgId: PkgIdentifier
   rpcPaths: string[]
-}): UsePkgHandle<TargetPkgExpose> {
+}): UsePkgHandle<TargetPkgExposeDef> {
   return {
     pkgId: userPkgId,
     rpc: pkgRpcs(targetPkgId, userPkgId, rpcPaths),
   }
 }
 
-export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
+export function pkgRpcs<TargetPkgExposeDef extends PkgExposeDef>(
   targetPkgId: PkgIdentifier,
   userPkgId: PkgIdentifier,
   rpcPaths: string[],
-): LocateRpc<TargetPkgExpose> {
+): LocateRpc<TargetPkgExposeDef> {
   return rpcPaths.reduce(
     (_rpc, path) => ({
       ..._rpc,
       [path]: locateRpc(path),
     }),
-    {} as LocateRpc<TargetPkgExpose>,
+    {} as LocateRpc<TargetPkgExposeDef>,
   )
 
   function locateRpc(path: string) {
@@ -68,10 +68,10 @@ export function pkgRpcs<TargetPkgExpose extends PkgExpose>(
   }
 }
 
-export type LocateRpc<TargetPkgExpose extends PkgExpose> = /* (<
+export type LocateRpc<TargetPkgExposeDef extends PkgExposeDef> = /* (<
   Path extends keyof TargetPkgExpose['rpc'],
 >(
   path: Path,
 ) =>  TargetPkgExpose['rpc'][Path]['fn']) &  */ {
-  [path in keyof TargetPkgExpose['rpc']]: TargetPkgExpose['rpc'][path]['fn']
+  [path in keyof TargetPkgExposeDef['rpc']]: TargetPkgExposeDef['rpc'][path]
 }

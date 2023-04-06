@@ -1,7 +1,7 @@
 import { useSimpleLayoutProps } from '@moodlenet/react-app/ui'
 import { useNeedsWebUserLogin } from '@moodlenet/react-app/web-lib'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { WebappInteractionDetails } from '../../common/webapp/types.mjs'
+import { WebappInteractionDetails } from '../../common/expose-def.mjs'
 import { OpenIdCtx } from '../OpenIdContextProvider.js'
 import { post_to_url } from './helper.mjs'
 import { OpenIdInteractionPageProps } from './OpenIdInteractionPage.js'
