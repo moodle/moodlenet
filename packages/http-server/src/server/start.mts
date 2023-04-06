@@ -4,24 +4,14 @@ import gracefulShutdown from 'http-graceful-shutdown'
 import { BASE_PKG_URL } from '../common/pub-lib.mjs'
 import { makeExtPortsApp } from './ext-ports-app/make.mjs'
 import { env } from './init.mjs'
-import { middlewares, mountedApps } from './lib.mjs'
-import { shell } from './shell.mjs'
+import { httpContextMW, middlewares, mountedApps } from './lib.mjs'
 
 export let shutdownGracefullyLocalServer: () => Promise<void>
 
 process.on('SIGTERM', () => shutdownGracefullyLocalServer())
 const app = express()
-app.use(cookieParser(), (request, response, next) => {
-  shell.initiateCall(() => {
-    shell.myAsyncCtx.set(() => ({
-      currentHttp: {
-        request,
-        response,
-      },
-    }))
-    next()
-  })
-})
+app.use(cookieParser())
+app.use(httpContextMW)
 
 app.use(...middlewares.map(({ handlers }) => handlers).flat())
 
@@ -33,6 +23,9 @@ app.use(`${BASE_PKG_URL}/`, extPortsApp)
 
 mountedApps.forEach(({ getApp, mountOnAbsPath, pkgId }) => {
   const pkgApp = getApp(express)
+  if (!pkgApp) {
+    return
+  }
   if (mountOnAbsPath) {
     console.log(`HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
     app.use(mountOnAbsPath, pkgApp)
@@ -45,7 +38,7 @@ mountedApps.forEach(({ getApp, mountOnAbsPath, pkgId }) => {
 await new Promise<void>((resolve, reject) => {
   console.info(`HTTP: starting server on port ${env.port}`)
   const server = app.listen(env.port, (...args: any[]) => (args[0] ? reject(args[0]) : resolve()))
-  server.on('error', err => console.error('HTTP: server error:', err))
+  server.on('error', err => console.log('HTTP: server error:', err))
   shutdownGracefullyLocalServer = gracefulShutdown(server, {
     development: false,
     forceExit: false,

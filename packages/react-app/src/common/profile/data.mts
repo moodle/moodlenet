@@ -1,12 +1,12 @@
-import { fileExceedsMaxUploadSize } from '@moodlenet/component-library'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { ProfileFormValues } from '../types.mjs'
+import { ClientSessionData } from '../../webapp/web-lib.mjs'
+import { AuthDataRpc, ProfileFormValues } from '../types.mjs'
 
 export function profileFormValidationSchema(maxUploadSize: number): SchemaOf<ProfileFormValues> {
   return object({
     avatarImage: mixed()
       .test((v, { createError }) =>
-        v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
+        v instanceof Blob && v.size > maxUploadSize
           ? createError({
               message: /* t */ `The image is too big, reduce the size or use another image`,
             })
@@ -15,7 +15,7 @@ export function profileFormValidationSchema(maxUploadSize: number): SchemaOf<Pro
       .optional(),
     backgroundImage: mixed()
       .test((v, { createError }) =>
-        v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
+        v instanceof Blob && v.size > maxUploadSize
           ? createError({
               message: /* t */ `The image is too big, reduce the size or use another image`,
             })
@@ -29,3 +29,12 @@ export function profileFormValidationSchema(maxUploadSize: number): SchemaOf<Pro
     aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   })
 }
+
+export const authToAccessRpc = (auth: ClientSessionData | undefined): AuthDataRpc => ({
+  isRoot: false,
+  access: {
+    isAuthenticated: !!auth,
+    isAdmin: !!auth?.isAdmin,
+  },
+  myProfile: auth?.myProfile,
+})

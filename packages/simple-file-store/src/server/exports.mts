@@ -5,11 +5,13 @@ import assert from 'assert'
 import { mkdir, open, readFile, writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
-import { DbRecord, DbRecordData, FsItem, FSStore, LsOpts } from './types.mjs'
+import { DbRecord, DbRecordData, FsItem, LsOpts } from './types.mjs'
 export * from './types.mjs'
 export const BASE_COLLECTION_NAME = 'Moodlenet_simple_file_store'
 
-export default async function fileStoreFactory(shell: Shell, bucketName: string): Promise<FSStore> {
+export type FSStore = Awaited<ReturnType<typeof fileStoreFactory>>
+
+export default async function fileStoreFactory(shell: Shell, bucketName: string) {
   const storeBaseFsFolder = resolve(shell.baseFsFolder, 'simple-file-store', bucketName)
   const BUCKET_COLLECTION_NAME = `${BASE_COLLECTION_NAME}_${bucketName}`
 
@@ -44,7 +46,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
               FILTER fileRecord.logicalName == @logicalName
               LIMIT 1
             RETURN fileRecord`,
-      { logicalName, '@BucketCollection': BucketCollection },
+      { logicalName, '@BucketCollection': BucketCollection.name },
     )
 
     const [maybeRawDbRecord] = await cursor.all()
@@ -103,7 +105,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     // console.log(lsQuery)
     const rawDbRecords = await db
       .query<DbRecord>(lsQuery, {
-        '@BucketCollection': BucketCollection,
+        '@BucketCollection': BucketCollection.name,
         logicalPathMinLength,
         ...(opts.maxDepth ? { logicalPathMaxLength } : null),
       })
@@ -150,12 +152,16 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     })
     assert(newRawDbRecord, `couldn't store in DB, shouldn't happen !`)
 
-    await writeFile(`${fsFileAbsolutePath}_rpc_file`, JSON.stringify(newRawDbRecord.rpcFile), {
+    await writeFile(rpcFileName(fsFileAbsolutePath), JSON.stringify(newRawDbRecord.rpcFile), {
       encoding: 'utf-8',
     })
 
     const newFsItem = getFsItem(newRawDbRecord)
     return newFsItem
+  }
+
+  function rpcFileName(filename: string) {
+    return `${filename}_rpc_file`
   }
 
   async function del(logicalName: string): Promise<null | FsItem> {
@@ -167,7 +173,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
                 LIMIT 1
                 REMOVE fileRecord IN @@BucketCollection
               RETURN OLD`,
-          { logicalName, '@BucketCollection': BucketCollection },
+          { logicalName, '@BucketCollection': BucketCollection.name },
         )
         .then(_ => _.all())
     )[0]
@@ -177,12 +183,12 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     const rawDbRecord = maybeRawDbRecord
 
     const fsFileAbsolutePath = getFsAbsolutePathByDirectAccessId(rawDbRecord.directAccessId)
+    console.log(`del ${logicalName}`, { maybeRawDbRecord, fsFileAbsolutePath })
 
-    await rimraf(`${fsFileAbsolutePath}*`, { maxRetries: 10 }).catch(async err => {
-      // FIXME: really should reinsert ? ^^'
-      await BucketCollection.save(rawDbRecord, { overwriteMode: 'replace' })
-      throw err
-    })
+    await Promise.all([
+      rimraf(rpcFileName(fsFileAbsolutePath)),
+      rimraf(fsFileAbsolutePath, { maxRetries: 10 }),
+    ])
 
     return getNonReadableFsItem(rawDbRecord)
   }
@@ -212,15 +218,30 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   }
 
   async function mountStaticHttpServer(path: string) {
-    mountApp({
+    const { baseUrl } = await mountApp({
       getApp(express) {
+        console.log(`getApp [${path}] for ${shell.myId.name}`)
         const basePathApp = express()
         const app = express()
+        app.use((req, _res, next) => {
+          console.log({ storeBaseFsFolder, path, url: req.url })
+          next()
+        })
+        // basePathApp.use((req, _res, next) => {
+        //   console.log(`basePathApp[${path}] for ${shell.myId.name} req:${req.url}`)
+        //   next()
+        // })
         basePathApp.use(path, app)
-        app.use(express.static(storeBaseFsFolder))
-        return basePathApp
+        // app.use(path, express.static(storeBaseFsFolder, {}))
+        app.use(path, express.static(storeBaseFsFolder, {}))
+        return app //basePathApp
       },
     })
+    return {
+      getFileUrl({ directAccessId }: { directAccessId: string }) {
+        return `${baseUrl}${path}/${directAccessId}`
+      },
+    }
   }
 
   function getFsItem(rawDbRecord: DbRecordData): FsItem {

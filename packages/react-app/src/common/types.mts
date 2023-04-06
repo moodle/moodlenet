@@ -51,6 +51,12 @@ export type Credits = {
   provider?: { name: string; url: string }
 }
 
+export type AuthDataRpc = {
+  isRoot: false
+  access: { isAdmin: boolean; isAuthenticated: boolean }
+  myProfile: undefined | WebUserProfile
+} // | { isRoot: true }
+
 export type ClientSessionDataRpc =
   | {
       isRoot: false
@@ -82,11 +88,11 @@ export type ProfileFormValues = {
 }
 
 export type ProfileState = {
-  // followed: boolean
+  followed: boolean
 }
 
 export type ProfileActions = {
-  // toggleFollow(): unknown
+  toggleFollow(): unknown
   editProfile(values: ProfileFormValues): void | Promise<any>
 }
 

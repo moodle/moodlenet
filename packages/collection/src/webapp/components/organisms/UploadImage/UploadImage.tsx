@@ -21,7 +21,7 @@ import './UploadImage.scss'
 export type UploadImageProps = {
   imageForm: FormikHandle<{ image: File | null }>
   imageUrl: string | undefined
-  imageOnClick?: () => unknown
+  imageOnClick?: () => void
 }
 
 // const usingFields: (keyof NewCollectionFormValues)[] = [

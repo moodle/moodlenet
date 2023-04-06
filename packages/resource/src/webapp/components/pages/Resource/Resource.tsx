@@ -11,11 +11,11 @@ import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { SchemaOf } from 'yup'
 import {
-  ResourceAccess,
+  ResourceAccessProps,
   ResourceActions,
-  ResourceData,
-  ResourceFormValues,
-  ResourceState,
+  ResourceDataProps,
+  ResourceFormProps,
+  ResourceStateProps,
 } from '../../../../common/types.mjs'
 import {
   ResourceContributorCard,
@@ -36,13 +36,13 @@ export type ResourceProps = {
   sideColumnItems: AddonItem[]
   extraDetailsItems: AddonItem[]
 
-  data: ResourceData
-  resourceForm: ResourceFormValues
-  validationSchema: SchemaOf<ResourceFormValues>
+  data: ResourceDataProps
+  resourceForm: ResourceFormProps
+  validationSchema: SchemaOf<ResourceFormProps>
 
-  state: ResourceState
+  state: ResourceStateProps
   actions: ResourceActions
-  access: ResourceAccess
+  access: ResourceAccessProps
 
   fileMaxSize: number
 }
@@ -66,12 +66,12 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
 }) => {
-  const { downloadFilename, contentUrl, imageUrl, contentType } = data
+  const { isWaitingForApproval, downloadFilename, contentUrl, imageUrl, contentType } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish } = access
-  const { isPublished, isWaitingForApproval } = state
+  const { isPublished } = state
 
-  const form = useFormik<ResourceFormValues>({
+  const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
     validationSchema: validationSchema,
     onSubmit: values => {

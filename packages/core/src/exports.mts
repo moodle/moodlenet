@@ -7,6 +7,7 @@ export {
   getRpcStatusCode,
   isRpcStatusType,
   readableRpcFile,
+  RpcStatus,
   setRpcStatusCode,
 } from './pkg-expose/lib.mjs'
 export type { getExposedByPkgIdentifier, getExposedByPkgName } from './pkg-expose/lib.mjs'

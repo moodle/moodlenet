@@ -1,123 +1,131 @@
-import { Href } from '@moodlenet/react-app/ui'
-import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
-import { expose as me } from '../server/expose.mjs'
+import { AuthDataRpc } from '@moodlenet/react-app/common'
+import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
+import { PkgContextT } from '@moodlenet/react-app/web-lib'
+import type { expose as me } from '../server/expose.mjs'
 
 export type MyWebDeps = {
   me: typeof me
 }
 
 export type MyPkgContext = PkgContextT<MyWebDeps>
-export type MainContextResourceType = MyPkgContext & {
+export type MainContextResource = MyPkgContext & {
   rpcCaller: RpcCaller
-  auth: {
-    isAuthenticated: boolean
-    isAdmin: boolean
-    clientSessionData: ClientSessionData | null | undefined
+  auth: AuthDataRpc
+  actionsMenu: MainActions
+}
+export type MainActions = {
+  create: {
+    action: () => Promise<void>
+    menu: HeaderMenuItem
   }
 }
 
-export type ResourceFormValues = {
+export type ResourceFormRpc = {
   title: string
   description: string
 }
 
-export type ResourceData = {
+export type ResourceDataRpc = {
   resourceId: string
   mnUrl: string
   contentType: 'link' | 'file'
   imageUrl: string | null
 
   contentUrl: string | null
-  downloadFilename: string | null
-  // specificContentType: string // ex: url, pdf, doc...
-  // numLikes: number
+  downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...
+  isWaitingForApproval?: boolean // numLikes: number
 }
 
-export type ResourceState = {
+export type ResourceStateRpc = {
   isPublished: boolean
-  isWaitingForApproval: boolean
-  uploadProgress: number | undefined
-  // liked: boolean
-  // bookmarked: boolean
+  uploadProgress?: number // liked: boolean // bookmarked: boolean
 }
 
-export type ResourceTypeForm = {
-  resourceForm: ResourceFormValues
-  authFlags: ResourceAccess
-  state: ResourceState
-  data: ResourceData
-  contributor: {
-    avatarUrl: string | null
-    displayName: string
-    timeSinceCreation: string
-    creatorProfileHref: Href
-  }
+export type ResourceContributorRpc = {
+  avatarUrl: string | null
+  displayName: string
+  timeSinceCreation: string
+  creatorProfileHref: Href
 }
 
+export type ResourceRpc = {
+  resourceForm: ResourceFormRpc
+  access: ResourceAccessRpc
+  state: Pick<ResourceStateRpc, 'isPublished'>
+  data: ResourceDataRpc
+  contributor: ResourceContributorRpc
+}
+
+export type ResourceFormProps = ResourceFormRpc
+export type ResourceDataProps = ResourceDataRpc
+export type ResourceStateProps = ResourceStateRpc
+export type ResourceCardDataProps = ResourceCardDataRpc
+export type ResourceAccessProps = ResourceAccessRpc & { isAuthenticated: boolean }
+export type ResourceContributorProps = ResourceContributorRpc
+
+export type ResourceProps = {
+  resourceForm: ResourceFormProps
+  access: ResourceAccessProps
+  state: ResourceStateProps
+  data: ResourceDataProps
+  contributor: ResourceContributorProps
+}
+
+export type RpcCaller = {
+  edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
+  get: (resourceKey: string) => Promise<ResourceProps | undefined>
+  _delete: (resourceKey: string) => Promise<void>
+  setImage: (resourceKey: string, file: File) => Promise<string>
+  setContent: (resourceKey: string, file: File | string) => Promise<string>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
+  create: () => Promise<{ _key: string }>
+  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
+}
 export type ResourceActions = {
   publish: () => void
   unpublish: () => void
-  editData: (values: ResourceFormValues) => Promise<unknown>
-  setImage: (file: File) => Promise<unknown>
-  setContent: (content: File | string) => Promise<unknown>
-  deleteResource(): unknown
-  // toggleLike(): unknown
-  // toggleBookmark(): unknown
+  editData: (values: ResourceFormProps) => void
+  setImage: (file: File) => Promise<string>
+  setContent: (content: File | string) => void
+  deleteResource(): Promise<void>
+  // toggleLike(): unknown// toggleBookmark(): unknown
 }
 
-export type ResourceAccess = {
-  isAuthenticated: boolean
+export type ResourceAccessRpc = {
   isCreator: boolean
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
-  // canLike: boolean
-  // canBookmark: boolean
+  // canLike: boolean // canBookmark: boolean
 }
 
-export type ResourceCardData = {
-  // tags: FollowTag[]
-  // numLikes: number
+export type ResourceCardDataRpc = {
+  // tags?: FollowTag[]  // numLikes: number
   owner: {
     displayName: string
     avatar: string | null
     profileHref: Href
   }
-  resourceHomeHref: Href
-} & Pick<ResourceData, 'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId'> &
-  Pick<ResourceFormValues, 'title'>
+  resourceHomeHref?: Href
+} & Pick<
+  ResourceDataProps,
+  'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'isWaitingForApproval'
+> &
+  Pick<ResourceFormProps, 'title'>
 
 export type ResourceCardState = {
   isSelected: boolean
   selectionMode: boolean // When selection resources to be added to a collection
   // liked: boolean
   // bookmarked: boolean
-} & Pick<ResourceState, 'isPublished' | 'isWaitingForApproval'>
+} & Pick<ResourceStateProps, 'isPublished'>
 
 export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 
 export type ResourceCardAccess = Pick<
-  ResourceAccess,
-  | 'isAuthenticated'
-  //  'canLike' |
-  //  'canBookmark' |
-  | 'canPublish'
-  | 'canDelete'
->
-// {
-//   isCreator: boolean
-//   canEdit: boolean
-//   isAuthenticated: boolean
-// }
-
-export type RpcCaller = {
-  edit: (resourceKey: string, res: ResourceFormValues) => Promise<ResourceFormValues>
-  get: (resourceKey: string) => Promise<ResourceTypeForm>
-  _delete: (resourceKey: string) => Promise<ResourceTypeForm>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<ResourceTypeForm>
-  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>
-  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
-}
+  ResourceAccessProps,
+  'isAuthenticated' | 'canPublish' | 'canDelete' //  'canLike' | //  'canBookmark' |
+> //   isCreator: boolean //   canEdit: boolean
 
 export type Organization = {
   name: string
