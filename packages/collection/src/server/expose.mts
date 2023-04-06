@@ -107,8 +107,11 @@ export const expose = await shell.expose({
     },
     'webapp/upload-image/:_key': {
       guard: () => void 0,
+      // async fn({ file: [file] }: { file: [RpcFile] }, { _key }: { _key: string }) {
       async fn({ file: [file] }: { file: [RpcFile] }, { _key }: { _key: string }) {
         const got = await getCollection(_key, { projectAccess: ['u'] })
+        console.log(inspect({ got }))
+
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
@@ -116,11 +119,9 @@ export const expose = await shell.expose({
 
         const { directAccessId } = await publicFiles.store(imageLogicalFilename, file)
 
-        // here applies AC ----
-        const patched = await patchCollection(_key, {
+        await patchCollection(_key, {
           image: { kind: 'file', directAccessId },
         })
-        console.log(inspect({ got, patched, directAccessId }))
         return publicFilesHttp.getFileUrl({ directAccessId })
       },
       bodyWithFiles: {

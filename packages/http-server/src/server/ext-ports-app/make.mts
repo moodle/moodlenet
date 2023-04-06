@@ -13,7 +13,7 @@ import multer, { Field } from 'multer'
 import { Readable } from 'stream'
 import { format } from 'util'
 import { HttpRpcResponse } from '../../common/pub-lib.mjs'
-import { httpContextMW } from '../lib.mjs'
+import { getMiddlewares } from '../lib.mjs'
 import { shell } from '../shell.mjs'
 
 export function makeExtPortsApp() {
@@ -42,7 +42,7 @@ export function makeExtPortsApp() {
 
       const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
 
-      pkgApp.all(`/${rpcRoute}`, multerMw, httpContextMW, async (httpReq, httpResp) => {
+      pkgApp.all(`/${rpcRoute}`, multerMw, ...getMiddlewares(), async (httpReq, httpResp) => {
         if (!['get', 'post'].includes(httpReq.method.toLowerCase())) {
           httpResp.status(405).send('unsupported ${req.method} method for rpc')
           return
