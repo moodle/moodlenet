@@ -3,7 +3,7 @@ import {
   ImageContainer,
   InputTextField,
   PrimaryButton,
-  RoundButton
+  RoundButton,
 } from '@moodlenet/component-library'
 import { FormikHandle, useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
@@ -111,10 +111,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
-  const addLink = () =>
+  const addLink = () => {
     contentForm
       .setFieldValue('content', addLinkFieldRef.current?.value, true)
       .then(_ => setShouldShowErrors(!!_?.content))
+    contentForm.submitForm()
+  }
 
   const deleteImage = useCallback(() => {
     setDeleteFileLinkPressed(true)
@@ -148,7 +150,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
           setShouldShowErrors(!!errors?.content)
         } else if (isImage) {
           if (file) {
+            contentForm.submitForm()
             imageForm.setFieldValue('image', file)
+            imageForm.submitForm()
           }
         }
       })
@@ -187,6 +191,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
       } else {
         if (selectedFile) {
           imageForm.setFieldValue('image', selectedFile)
+          imageForm.submitForm()
         }
       }
     },
@@ -202,6 +207,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const uploadImage = (file: File) => {
     imageForm.setFieldValue('image', file)
+    imageForm.submitForm()
   }
 
   const imageRef = useRef<HTMLDivElement>(null)
