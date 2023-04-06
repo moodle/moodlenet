@@ -77,6 +77,7 @@ export const Creator: CollectionStory = () => {
 export const NewCollectionProps: CollectionFormValues = {
   title: '',
   description: '',
+  // visibility: 'Private',
 }
 
 export const New: CollectionStory = () => {

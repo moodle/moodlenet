@@ -1,7 +1,7 @@
 import { mixed, object, SchemaOf, string } from 'yup'
-import { CollectionFormValues, maxUploadSize } from './types.mjs'
+import { CollectionFormProps, maxUploadSize } from './types.mjs'
 
-export const validationSchema: SchemaOf<CollectionFormValues> = object({
+export const validationSchema: SchemaOf<CollectionFormProps> = object({
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   title: string().max(160).min(3).required(/* t */ `Please provide a title`),
   image: mixed()

@@ -7,15 +7,15 @@ import {
 } from '@moodlenet/component-library'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SchemaOf } from 'yup'
 
 import {
-  CollectionAccess,
+  CollectionAccessProps,
   CollectionActions,
-  CollectionData,
-  CollectionFormValues,
-  CollectionState,
+  CollectionDataProps,
+  CollectionFormProps,
+  CollectionStateProps,
 } from '../../../../common/types.mjs'
 import {
   CollectionContributorCard,
@@ -38,12 +38,12 @@ export type CollectionProps = {
   moreButtonItems: AddonItem[]
   extraDetailsItems: AddonItem[]
 
-  data: CollectionData
-  collectionForm: CollectionFormValues
-  validationSchema: SchemaOf<CollectionFormValues>
-  state: CollectionState
+  data: CollectionDataProps
+  collectionForm: CollectionFormProps
+  validationSchema: SchemaOf<CollectionFormProps>
+  state: CollectionStateProps
   actions: CollectionActions
-  access: CollectionAccess
+  access: CollectionAccessProps
 }
 
 export const Collection: FC<CollectionProps> = ({
@@ -68,13 +68,20 @@ export const Collection: FC<CollectionProps> = ({
   const { editData, deleteCollection, publish, unpublish, setImage } = actions
   const { canPublish } = access
 
-  const form = useFormik<CollectionFormValues>({
+  const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: values => {
       return editData(values)
     },
   })
+
+  useEffect(() => {
+    if (form.dirty) {
+      editData(form.values)
+    }
+  }, [form.values, form.dirty, editData])
 
   const imageForm = useFormik<{ image: File | null }>({
     initialValues: { image: null },

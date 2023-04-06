@@ -127,7 +127,7 @@ shell.call(mountApp)({
 
     const ErrorRequestHandler: ErrorRequestHandler = (err, req, _res, next) => {
       if (err instanceof AssertionError) {
-        console.error('OIDC interaction-endpoints Error Handler', req.url, err)
+        console.log('OIDC interaction-endpoints Error Handler', req.url, err)
         // handle interaction expired / session not found error
       }
       next(err)

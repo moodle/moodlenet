@@ -25,11 +25,11 @@ import {
 import { FC, StrictMode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getResourceTypeInfo,
-  ResourceAccess,
+  ResourceAccessProps,
   ResourceActions,
-  ResourceData,
-  ResourceFormValues,
-  ResourceState,
+  ResourceDataProps,
+  ResourceFormProps,
+  ResourceStateProps,
 } from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
@@ -46,16 +46,16 @@ export type MainResourceCardSlots = {
 export type MainResourceCardProps = {
   slots: MainResourceCardSlots
 
-  data: ResourceData
-  form: FormikHandle<ResourceFormValues>
+  data: ResourceDataProps
+  form: FormikHandle<ResourceFormProps>
   contentForm: FormikHandle<{ content: File | string | null }>
   contentUrl: string | null
   imageForm: FormikHandle<{ image: File | null }>
   imageUrl: string | null
 
-  state: ResourceState
+  state: ResourceStateProps
   actions: ResourceActions
-  access: ResourceAccess
+  access: ResourceAccessProps
 
   shouldShowErrors: boolean
   fileMaxSize: number
@@ -92,13 +92,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     resourceId,
     mnUrl,
     contentType,
+    isWaitingForApproval,
     downloadFilename,
     // numLikes,
   } = data
 
   const {
     isPublished,
-    isWaitingForApproval,
     uploadProgress,
     // bookmarked,
     // liked,

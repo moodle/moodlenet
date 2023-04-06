@@ -23,7 +23,7 @@ import {
   getResourceTypeInfo,
   ResourceCardAccess,
   ResourceCardActions,
-  ResourceCardData,
+  ResourceCardDataProps,
   ResourceCardState,
 } from '../../../../common.mjs'
 import './ResourceCard.scss'
@@ -38,7 +38,7 @@ export type ResourceCardProps = {
   className?: string
   orientation?: 'vertical' | 'horizontal'
 
-  data: ResourceCardData
+  data: ResourceCardDataProps
   state: ResourceCardState
   actions: ResourceCardActions
   access: ResourceCardAccess
