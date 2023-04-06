@@ -2,9 +2,10 @@ import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { assertRpcFileReadable, readableRpcFile, RpcFile, Shell } from '@moodlenet/core'
 import { mountApp } from '@moodlenet/http-server/server'
 import assert from 'assert'
-import { mkdir, open, readFile, writeFile } from 'fs/promises'
+import { mkdir, open, readdir, readFile, rmdir, writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
+import sanitizeFilename from 'sanitize-filename'
 import { DbRecord, DbRecordData, FsItem, LsOpts } from './types.mjs'
 export * from './types.mjs'
 export const BASE_COLLECTION_NAME = 'Moodlenet_simple_file_store'
@@ -116,7 +117,9 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
 
   async function store(logicalName: string, _rpcFile: RpcFile): Promise<FsItem> {
     await del(logicalName)
-    const fsFileRelativePath = newFsFileRelativePath(_rpcFile.name)
+    const sanitizedFileName = getSanitizedFileName(_rpcFile.name)
+
+    const fsFileRelativePath = newFsFileRelativePath(sanitizedFileName)
     const storeInDir = resolve(storeBaseFsFolder, ...fsFileRelativePath.slice(0, -1))
 
     await mkdir(storeInDir, { recursive: true })
@@ -126,15 +129,12 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
 
     const logicalPath = getLogicalPath(logicalName)
     const directAccessId = fsFileRelativePath.join('/')
-    const rpcFile: RpcFile = {
-      name: _rpcFile.name,
-      size: _rpcFile.size,
-      type: _rpcFile.type,
-    }
 
     const dbRecordData: DbRecordData = {
       logicalName,
-      rpcFile,
+      rpcFile: {
+        ..._rpcFile,
+      },
       logicalPath,
       directAccessId,
       logicalPathLength: logicalPath.length,
@@ -189,6 +189,19 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
       rimraf(rpcFileName(fsFileAbsolutePath)),
       rimraf(fsFileAbsolutePath, { maxRetries: 10 }),
     ])
+
+    let _curr_dir = fsFileAbsolutePath
+    do {
+      _curr_dir = resolve(fsFileAbsolutePath, '..')
+      const files = await readdir(_curr_dir)
+      if (files.length) {
+        break
+      }
+      const doBreak = await rmdir(_curr_dir).catch(() => true)
+      if (doBreak) {
+        break
+      }
+    } while (_curr_dir === storeBaseFsFolder)
 
     return getNonReadableFsItem(rawDbRecord)
   }
@@ -251,9 +264,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   }
 }
 
-function newFsFileRelativePath(originalFilename: string) {
-  const origExt = originalFilename.split('.').pop()
-  const mDotExt = origExt ? `.${origExt}` : ''
+function newFsFileRelativePath(filename: string) {
   const now = new Date()
   return [
     String(now.getFullYear()),
@@ -262,8 +273,27 @@ function newFsFileRelativePath(originalFilename: string) {
     String(now.getUTCHours()).padStart(2, '0'),
     String(now.getMinutes()).padStart(2, '0'),
     String(now.getSeconds()).padStart(2, '0'),
-    String(Math.random()).substring(2, 20) + mDotExt,
+    filename,
   ]
+}
+function getSanitizedFileName(originalFilename: string) {
+  let safeFileName = originalFilename
+    .normalize('NFKD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-z0-9._-]/gi, '_')
+    .replace(/^_+/, '')
+    .replace(/_+$/, '')
+  while (/__/.test(safeFileName)) {
+    safeFileName = safeFileName.replace(/__/gi, '_')
+  }
+
+  const sanitized = sanitizeFilename(safeFileName)
+  const rnd = String(Math.random()).substring(2, 5)
+  return `${rnd}_${sanitized}`
+  // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
+  // const origExt = originalFilename.split('.').pop()
+  // const mDotExt = origExt ? `.${origExt}` : ''
+  // String(Math.random()).substring(2, 20) + mDotExt
 }
 
 function getLogicalPath(logicalName: string) {
