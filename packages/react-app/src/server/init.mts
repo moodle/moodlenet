@@ -115,27 +115,6 @@ await shell.call(addMiddleware)({
   ],
 })
 
-<<<<<<< HEAD
-if (!env.noWebappServer) {
-  await shell.call(mountApp)({
-    getApp(express) {
-      const mountApp = express()
-      const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
-      mountApp.use(staticWebApp)
-      //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
-      mountApp.get(`*`, (req, res, next) => {
-        if (req.url.startsWith('/.')) {
-          next()
-          return
-        }
-        res.sendFile(resolve(latestBuildFolder, 'index.html'))
-      })
-      return mountApp
-    },
-    mountOnAbsPath: '/',
-  })
-}
-=======
 export const httpApp = await shell.call(mountApp)({
   getApp(express) {
     if (env.noWebappServer) {
@@ -156,7 +135,6 @@ export const httpApp = await shell.call(mountApp)({
   },
   mountOnAbsPath: '/',
 })
->>>>>>> origin/fix/resource-review-finalize
 
 type Env = {
   noWebappServer?: boolean

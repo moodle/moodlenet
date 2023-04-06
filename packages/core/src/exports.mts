@@ -3,8 +3,8 @@ export const { instanceDomain, npmRegistry } = coreConfigs
 export * from './async-context/types.mjs'
 export {
   assertRpcFileReadable,
+  getCurrentRpcStatusCode,
   getMaybeRpcFileReadable,
-  getRpcStatusCode,
   isRpcStatusType,
   readableRpcFile,
   RpcStatus,

@@ -1,6 +1,6 @@
 import {
+  getCurrentRpcStatusCode,
   getMaybeRpcFileReadable,
-  getRpcStatusCode,
   isRpcStatusType,
   readableRpcFile,
   RpcArgs,
@@ -71,7 +71,9 @@ export function makeExtPortsApp() {
           .fn(...rpcArgs)
           .then(async rpcResponse => {
             const mReadable = await getMaybeRpcFileReadable(rpcResponse)
-            const { rpcStatusCode: statusCode } = getRpcStatusCode() ?? { rpcStatusCode: 200 }
+            const { rpcStatusCode: statusCode } = getCurrentRpcStatusCode() ?? {
+              rpcStatusCode: 200,
+            }
             httpResp.status(statusCode)
             if (mReadable) {
               const rpcFile: RpcFile = rpcResponse
@@ -90,10 +92,6 @@ export function makeExtPortsApp() {
             }
           })
           .catch(err => {
-<<<<<<< HEAD
-=======
-            console.log({ HTTP_RPC_ERROR: err })
->>>>>>> origin/fix/resource-review-finalize
             const { rpcStatusCode, payload } = isRpcStatusType(err)
               ? err
               : {
@@ -193,7 +191,7 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
         }, bodyAcc)
 
         return bodyAcc
-      }, JSON.parse(req.body['.']))
+      }, JSON.parse(req.body['.'] ?? '{}'))
 
     return [body, type]
   }
