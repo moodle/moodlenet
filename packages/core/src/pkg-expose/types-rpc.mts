@@ -20,8 +20,12 @@ export type RpcBodyWithFilesConfig = {
   }
   maxFileSize?: number | undefined
 }
-export type RpcDefItem = { fn: RpcFn; guard: RpcFnGuard; bodyWithFiles?: RpcBodyWithFilesConfig }
-export type RpcDefs = Record<string, RpcDefItem>
+export type RpcDefItem<Fn extends RpcFn = RpcFn> = {
+  fn: Fn
+  guard: RpcFnGuard
+  bodyWithFiles?: RpcBodyWithFilesConfig
+}
+// export type RpcDefs = Record<string, RpcDefItem>
 
 export type RpcFile = { type: string; name: string; size: number }
 

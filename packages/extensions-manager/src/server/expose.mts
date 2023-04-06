@@ -1,13 +1,13 @@
-import { InstallPkgReq, npmRegistry, PkgIdentifier } from '@moodlenet/core'
-import { DeployedPkgInfo, SearchPackagesResponse } from '../common/data.mjs'
+import { npmRegistry } from '@moodlenet/core'
+import { ExtMngrExposeType } from '../common/expose-def.mjs'
 import { install, listDeployed, searchPackages, uninstall } from './lib.mjs'
 import { shell } from './shell.mjs'
 
-export const expose = await shell.expose({
+export const expose = await shell.expose<ExtMngrExposeType>({
   rpc: {
     searchPackages: {
       guard: () => void 0,
-      fn: async ({ searchText }: { searchText: string }): Promise<SearchPackagesResponse> => {
+      async fn({ searchText }) {
         return searchPackages({
           searchText,
         })
@@ -15,26 +15,26 @@ export const expose = await shell.expose({
     },
     listDeployed: {
       guard: () => void 0,
-      fn: async (): Promise<{ pkgInfos: DeployedPkgInfo[] }> => {
+      async fn() {
         const pkgInfos = await listDeployed()
         return { pkgInfos }
       },
     },
     uninstall: {
       guard: () => void 0,
-      fn: async (pkgIds: PkgIdentifier[]): Promise<void> => {
+      async fn(pkgIds) {
         await uninstall(pkgIds)
       },
     },
     install: {
       guard: () => void 0,
-      fn: async (installPkgReqs: InstallPkgReq[]): Promise<void> => {
+      async fn(installPkgReqs) {
         await install(installPkgReqs)
       },
     },
     getDefaultRegistry: {
       guard: () => void 0,
-      fn: async () => {
+      async fn() {
         return npmRegistry
       },
     },

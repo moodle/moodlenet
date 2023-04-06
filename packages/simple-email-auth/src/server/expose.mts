@@ -1,24 +1,24 @@
+import { SimpleEmailAuthExposeType } from '../common/expose-def.mjs'
 import { confirm, login, signup } from './lib.mjs'
 import { shell } from './shell.mjs'
-import { SignupReq } from './types.mjs'
 
-export const expose = await shell.expose({
+export const expose = await shell.expose<SimpleEmailAuthExposeType>({
   rpc: {
     login: {
       guard: () => void 0,
-      fn: ({ email, password }: { email: string; password: string }) => {
+      async fn({ email, password }) {
         return login({ email, password })
       },
     },
     signup: {
       guard: () => void 0,
-      fn: (signupReq: SignupReq) => {
+      async fn(signupReq) {
         return signup(signupReq)
       },
     },
     confirm: {
       guard: () => void 0,
-      fn: ({ confirmToken }: { confirmToken: string }) => {
+      async fn({ confirmToken }) {
         return confirm({ confirmToken })
       },
     },

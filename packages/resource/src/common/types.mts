@@ -1,10 +1,10 @@
 import { AuthDataRpc } from '@moodlenet/react-app/common'
 import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
-import type { expose as me } from '../server/expose.mjs'
+import { ResourceExposeType } from './expose-def.mjs'
 
 export type MyWebDeps = {
-  me: typeof me
+  me: ResourceExposeType
 }
 
 export type MyPkgContext = PkgContextT<MyWebDeps>
