@@ -5,7 +5,11 @@ import type { HttpAsyncCtx, MiddlewareItem, MountAppItem } from './types.mjs'
 export * from './types.mjs'
 
 export const mountedApps: MountAppItem[] = []
-export const middlewares: MiddlewareItem[] = []
+const middlewares: MiddlewareItem[] = []
+
+export function getMiddlewares() {
+  return [httpContextMW, ...middlewares.map(({ handlers }) => handlers).flat()]
+}
 
 export async function mountApp(mountItem: Pick<MountAppItem, 'getApp' | 'mountOnAbsPath'>) {
   const { pkgId: callerPkgId } = shell.assertCallInitiator()
@@ -33,7 +37,7 @@ export function getCurrentHttpCtx(): undefined | HttpAsyncCtx['currentHttp'] {
 }
 
 export const httpContextMW: RequestHandler = (request, response, next) => {
-  shell.initiateCall(() => {
+  shell.initiateCall(async () => {
     shell.myAsyncCtx.set(() => ({
       currentHttp: {
         request,
