@@ -1,45 +1,35 @@
-import { ResourceFormValues, ResourceTypeForm } from '../common.mjs'
+import { CollectionContributorRpc, CollectionRpc } from '../../common/types.mjs'
 
-export const resourceFormValues: ResourceFormValues = {
+export const collectionFormValues = {
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  title: 'The Best Resource Ever',
+  title: 'The Best Collection Ever',
 }
 
-export const resFakeData: ResourceTypeForm = {
-  data: {
-    resourceId: 'aaa123',
-    mnUrl: 'http:www.ggg.it',
-    contentUrl: 'http:www.ggg.it',
-    contentType: 'link',
-    downloadFilename: 'resf.pdf',
-    imageUrl: 'https://picsum.photos/200/100',
+export const contributor: CollectionContributorRpc = {
+  avatarUrl:
+    'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
+  displayName: 'Juanita Rodriguez',
+  creatorProfileHref: { url: 'Pages/Profile/Logged In', ext: false },
+}
 
-    // numLikes: 0,
-  },
-  state: {
-    uploadProgress: undefined,
-    isPublished: true,
+export const resFakeData: CollectionRpc = {
+  data: {
+    collectionId: 'aaa123',
+    mnUrl: 'http:www.ggg.it',
+    imageUrl: 'https://picsum.photos/200/100',
     isWaitingForApproval: false,
-    // liked: false,
-    // bookmarked: false,
   },
-  authFlags: {
-    isAuthenticated: true,
+  form: collectionFormValues,
+  state: {
+    isPublished: true,
+    numResources: 1,
+  },
+  access: {
     isCreator: true,
     canPublish: true,
-    canDelete: true,
     canEdit: true,
-    // canLike: false,
+    canDelete: true,
   },
-  resourceForm: resourceFormValues,
-  contributor: {
-    avatarUrl: null,
-    displayName: '',
-    timeSinceCreation: '',
-    creatorProfileHref: { ext: false, url: '' },
-  },
+  contributor,
 }
-
-export const resFakes: ResourceTypeForm[] = [resFakeData]
-export const resFake: ResourceTypeForm = resFakes[0] || resFakeData

@@ -1,5 +1,6 @@
-import { Href } from '@moodlenet/react-app/ui'
-import { ClientSessionData, PkgContextT } from '@moodlenet/react-app/web-lib'
+import { AuthDataRpc } from '@moodlenet/react-app/common'
+import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
+import { PkgContextT } from '@moodlenet/react-app/web-lib'
 import { expose as me } from '../server/expose.mjs'
 
 export type MyWebDeps = {
@@ -7,98 +8,105 @@ export type MyWebDeps = {
 }
 
 export type MyPkgContext = PkgContextT<MyWebDeps>
-export type MainContextResourceType = MyPkgContext & {
+export type MainContextCollection = MyPkgContext & {
   rpcCaller: RpcCaller
-  auth: {
-    isAuthenticated: boolean
-    isAdmin: boolean
-    clientSessionData: ClientSessionData | null | undefined
+  auth: AuthDataRpc
+  actionsMenu: MainActions
+}
+
+export type MainActions = {
+  create: {
+    action: () => Promise<void>
+    menu: HeaderMenuItem
   }
 }
 
-export type RpcCaller = {
-  edit: (collectionId: string, values: CollectionFormValues) => Promise<unknown>
-  get: (collectionId: string, query?: string) => Promise<CollectionDataResponce>
-  _delete: (collectionId: string) => Promise<unknown>
-  setIsPublished: (collectionId: string, publish: boolean) => Promise<unknown>
-  // toggleFollow: (collectionId: string) => Promise<unknown>
-  // toggleBookmark: (collectionId: string) => Promise<unknown>
-}
-
-export type CollectionContributorCardProps = {
+export type CollectionContributorRpc = {
   avatarUrl: string | null
   displayName: string
   creatorProfileHref: Href
 }
 
-export type CollectionDataResponce = {
-  data: CollectionData
-  form: CollectionFormValues
-  state: CollectionState
-  access: CollectionAccess
-  contributor: CollectionContributorCardProps
+export type CollectionAccessRpc = {
+  isCreator: boolean
+  canEdit: boolean
+  canPublish: boolean
+  canDelete: boolean // canFollow: boolean // canBookmark: boolean
 }
 
-export type MainPropsCollection = {
-  actions: CollectionActions
-  props: CollectionDataResponce
-}
-
-export type CollectionData = {
+export type CollectionDataRpc = {
   collectionId: string
   mnUrl: string
-  imageUrl: string | undefined
+  imageUrl?: string
   isWaitingForApproval?: boolean
   // numFollowers: number
 }
 
-export type CollectionFormValues = {
+export type CollectionStateRpc = {
+  isPublished?: boolean
+  numResources?: number // followed: boolean // bookmarked: boolean
+}
+
+export type CollectionFormRpc = {
   title: string
   description: string
 }
 
-export type CollectionState = {
-  isPublished: boolean
-  numResources: number
-  // followed: boolean
-  // bookmarked: boolean
+export type CollectionRpc = {
+  data: CollectionDataProps
+  form: CollectionFormProps
+  state: CollectionStateProps
+  access: CollectionAccessRpc
+  contributor: CollectionContributorProps
+}
+
+export type CollectionAccessProps = CollectionAccessRpc & { isAuthenticated: boolean }
+export type CollectionDataProps = CollectionDataRpc
+export type CollectionStateProps = CollectionStateRpc
+export type CollectionFormProps = CollectionFormRpc
+export type CollectionContributorProps = CollectionContributorRpc
+
+export type CollectionProps = {
+  data: CollectionDataProps
+  form: CollectionFormProps
+  state: CollectionStateProps
+  access: CollectionAccessProps
+  contributor: CollectionContributorProps
+}
+
+export type RpcCaller = {
+  edit: (key: string, values: CollectionFormProps) => Promise<void>
+  get: (key: string) => Promise<CollectionProps | undefined>
+  _delete: (key: string) => Promise<void>
+  setIsPublished: (key: string, publish: boolean) => Promise<void>
+  setImage: (key: string, file: File) => Promise<string>
+  create: () => Promise<{ _key: string }>
 }
 
 export type CollectionActions = {
-  publish: () => void
-  unpublish: () => void
-  editData: (values: CollectionFormValues) => Promise<unknown>
-  deleteCollection(): unknown
-  setImage: (file: File) => Promise<unknown>
-  // toggleFollow(): unknown
-  // toggleBookmark(): unknown
+  publish: () => Promise<void>
+  unpublish: () => Promise<void>
+  editData: (values: CollectionFormProps) => Promise<void>
+  deleteCollection(): Promise<void>
+  setImage: (file: File) => Promise<void> // toggleFollow(): void // toggleBookmark(): void
 }
 
-export type CollectionAccess = {
-  isAuthenticated: boolean
-  isCreator: boolean
-  canEdit: boolean
-  canPublish: boolean
-  canDelete: boolean
-  // canFollow: boolean
-  // canBookmark: boolean
+export type CollectionMainProps = {
+  actions: CollectionActions
+  props: CollectionProps
 }
 
 export type CollectionCardData = { collectionHref: Href } & Pick<
-  CollectionData,
+  CollectionDataProps,
   'collectionId' | 'imageUrl'
 > &
-  Pick<CollectionFormValues, 'title'>
+  Pick<CollectionFormProps, 'title'>
 
-export type CollectionCardState = Pick<CollectionState, 'isPublished' | 'numResources'>
-
+export type CollectionCardState = Pick<CollectionStateProps, 'isPublished' | 'numResources'>
 export type CollectionCardActions = Pick<CollectionActions, 'publish' | 'unpublish'>
-
 export type CollectionCardAccess = Pick<
-  CollectionAccess,
-  'isAuthenticated' | 'isCreator' | 'canPublish'
-  // |   'canFollow'
-  // | 'canBookmark'
+  CollectionAccessProps,
+  'isAuthenticated' | 'isCreator' | 'canPublish' // |   'canFollow'  // | 'canBookmark'
 >
 
 export type Organization = {
@@ -109,8 +117,7 @@ export type Organization = {
   url: string
   logo: string
   smallLogo: string
-  // description: string
-  color: string
+  color: string // description: string
 }
 
 export const getCollectionTypeInfo = (type: string): { typeName: string; typeColor: string } => {

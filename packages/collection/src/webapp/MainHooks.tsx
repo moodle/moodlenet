@@ -1,58 +1,42 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import {
   CollectionActions,
-  CollectionDataResponce,
-  CollectionFormValues,
-  MainPropsCollection,
+  CollectionFormProps,
+  CollectionMainProps,
+  CollectionProps,
 } from '../common/types.mjs'
 
 import { MainContext } from './MainContext.js'
 
-export const useMainHook = ({
-  collectionKey,
-}: {
-  collectionKey: string
-}): MainPropsCollection | null => {
-  const {
-    rpcCaller,
-    // auth: { isAdmin, isAuthenticated },
-  } = useContext(MainContext)
-  const [resourceResp, setResourceResp] = useState<CollectionDataResponce | null>()
+type myProps = { collectionKey: string }
+export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null => {
+  const { rpcCaller } = useContext(MainContext)
+  const [collection, setCollection] = useState<CollectionProps | null>()
 
   useEffect(() => {
-    rpcCaller.get(collectionKey).then(data => setResourceResp(data as CollectionDataResponce))
-  }, [collectionKey, rpcCaller, setResourceResp])
+    rpcCaller.get(collectionKey).then(data => setCollection(data))
+  }, [collectionKey, rpcCaller, setCollection])
 
-  const actions = useMemo<CollectionActions>(() => {
-    const updateResourceResp = (resourceData: unknown) =>
-      setResourceResp(current => current && { ...current, resourceData })
-    const updateResourceRespForm = (resourceForm: unknown) =>
-      resourceForm && resourceResp && updateResourceResp({ ...resourceResp, resourceForm })
+  const actions = useMemo((): CollectionActions => {
+    // const updateRespForm = (resourceForm: CollectionFormProps) => (
+    //   collection && setCollection(current => current && { ...current, resourceForm }), resourceForm
+    // )
+    const { _delete, edit, setIsPublished, setImage } = rpcCaller
 
-    const {
-      _delete,
-      edit,
-      setIsPublished,
-      // toggleFollow,
-      // toggleBookmark
-    } = rpcCaller
-    return {
-      editCollection: (res: CollectionFormValues) =>
-        edit(collectionKey, res).then(updateResourceRespForm),
-      deleteCollection: () => _delete(collectionKey).then(updateResourceResp),
-      setIsPublished: (publish: boolean) =>
-        setIsPublished(collectionKey, publish) as unknown as (publish: boolean) => void,
-      // toggleFollow: () => toggleFollow(collectionKey) as unknown,
-      // toggleBookmark: () => toggleBookmark(collectionKey) as unknown,
+    const actions: CollectionActions = {
+      editData: async (res: CollectionFormProps) => edit(collectionKey, res),
+      deleteCollection: () => _delete(collectionKey),
+      publish: () => setIsPublished(collectionKey, true),
+      unpublish: () => setIsPublished(collectionKey, false),
+      setImage: async (file: File) => {
+        setImage(collectionKey, file)
+      },
     }
-  }, [collectionKey, resourceResp, rpcCaller])
+    return actions
+  }, [collectionKey, rpcCaller])
 
-  return useMemo<MainPropsCollection | null>((): MainPropsCollection | null => {
-    if (!resourceResp || !actions) return null
-
-    return {
-      actions,
-      props: resourceResp,
-    }
-  }, [actions, resourceResp])
+  return useMemo<CollectionMainProps | null>(
+    () => (!collection ? null : { actions, props: collection }),
+    [actions, collection],
+  )
 }

@@ -15,7 +15,7 @@ export function pkgAsyncContext<T>(pkgName: string) {
     const currentVal = currentStore?.[pkgName] as T | undefined
     const nextVal = setter(currentVal)
     currentStore[pkgName] = nextVal
-    return
+    return nextVal
   }
   function get(): T | undefined {
     const currentStore = getApiContextStore()

@@ -4,7 +4,7 @@ import { assertCallInitiator, getSetCoreAsyncContext } from '../async-context/li
 import { RpcStatusType } from '../exports.mjs'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
 import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
-import codes, { RpcStatusName } from './rpc-status-codes.mjs'
+import { rpcStatusCodes, RpcStatusName } from './rpc-status-codes.mjs'
 import { PkgExpose, PkgExposeDef, RpcFile } from './types.mjs'
 
 type ExposedRegItem = {
@@ -59,7 +59,11 @@ export function readableRpcFile(
   assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore brute force symbol prop mixin
-  rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
+  // rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
+  Object.defineProperty(rpcFile, RPC_FILE_HANDLER_SYM, {
+    enumerable: false,
+    value: getReadable,
+  })
   return rpcFile
 }
 
@@ -80,13 +84,31 @@ export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefin
 }
 
 export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) {
-  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
+  const rpcStatus = RpcStatus(status, payload)
 
   const initiator = assertCallInitiator()
-  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus: { rpcStatusCode, payload } }))
+  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus }))
 }
 
-export function getRpcStatusCode() {
+export function RpcStatus(status: RpcStatusName | number, payload?: any): RpcStatusType {
+  const rpcStatusCode = getRpcStatusCode(status)
+  return { rpcStatusCode, payload: payload ?? getRpcStatusName(status) }
+}
+
+export function getRpcStatusName(status: RpcStatusName | number, defaultName?: string) {
+  const mRpcStatusName =
+    typeof status === 'string'
+      ? status
+      : Object.entries(rpcStatusCodes).find(([_, code]) => code === status)?.[0]
+  return mRpcStatusName ?? defaultName ?? ''
+}
+
+export function getRpcStatusCode(status: RpcStatusName | number) {
+  const rpcStatusCode = typeof status === 'number' ? status : rpcStatusCodes[status]
+  return rpcStatusCode
+}
+
+export function getCurrentRpcStatusCode() {
   const rpcStatus = getSetCoreAsyncContext.get()?.rpcStatus
   if (rpcStatus === undefined) {
     return undefined
@@ -102,5 +124,5 @@ export function getRpcStatusCode() {
   return rpcStatusType
 }
 export function isRpcStatusType(_: any): _ is RpcStatusType {
-  return 'number' === typeof _?.statusCode
+  return 'number' === typeof _?.rpcStatusCode
 }

@@ -23,11 +23,11 @@ import {
 } from '@mui/icons-material'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  CollectionAccess,
+  CollectionAccessProps,
   CollectionActions,
-  CollectionData,
-  CollectionFormValues,
-  CollectionState,
+  CollectionDataProps,
+  CollectionFormProps,
+  CollectionStateProps,
 } from '../../../../common/types.mjs'
 import { UploadImage } from '../UploadImage/UploadImage.js'
 import './MainCollectionCard.scss'
@@ -44,13 +44,13 @@ export type MainCollectionCardSlots = {
 export type MainCollectionCardProps = {
   slots: MainCollectionCardSlots
 
-  data: CollectionData
-  form: FormikHandle<CollectionFormValues>
+  data: CollectionDataProps
+  form: FormikHandle<CollectionFormProps>
   imageForm: FormikHandle<{ image: File | null }>
 
-  state: CollectionState
+  state: CollectionStateProps
   actions: CollectionActions
-  access: CollectionAccess
+  access: CollectionAccessProps
 
   shouldShowErrors: boolean
   publish: () => void
@@ -133,7 +133,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const title = canEdit ? (
     <InputTextField
-      name="name"
+      name="title"
       isTextarea
       textAreaAutoSize
       displayMode

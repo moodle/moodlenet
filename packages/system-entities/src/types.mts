@@ -1,6 +1,10 @@
 import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
 import type { PkgName } from '@moodlenet/core'
 
+export type AqlVal<_T> = string & { $$AqlVal$$?: _T }
+
+// type X = ProjectRes<{ patched: AqlVal<EntityDocument<SomeEntityDataType>> }>
+
 export type EntityIdentifier = { _key: string; entityClass: EntityClass<SomeEntityDataType> }
 
 export type SomeEntityDataType = Record<string, any>
@@ -12,7 +16,8 @@ export type EntityClass<_EntityDataType extends SomeEntityDataType> = {
 
 export type EntityMetadata = {
   entityClass: EntityClass<any>
-  creator?: SystemUser
+  creator: SystemUser
+  creatorEntityId?: string
   created: string
   updated: string
   pkgMeta: Record<PkgName, any>

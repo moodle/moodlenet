@@ -1,4 +1,4 @@
 import { createContext } from 'react'
-import { MainContextResourceType } from '../common/types.mjs'
+import { MainContextResource } from '../common/types.mjs'
 
-export const MainContext = createContext<MainContextResourceType>(null as any)
+export const MainContext = createContext<MainContextResource>(null as any)
