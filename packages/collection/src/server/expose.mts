@@ -112,10 +112,9 @@ export const expose = await shell.expose({
         const { directAccessId } = await publicFiles.store(imageLogicalFilename, file)
 
         // here applies AC ----
-        await patchCollection(_key, {
+        /* const patched =  */ await patchCollection(_key, {
           image: { kind: 'file', directAccessId },
         })
-
         return publicFilesHttp.getFileUrl({ directAccessId })
       },
       bodyWithFiles: {
