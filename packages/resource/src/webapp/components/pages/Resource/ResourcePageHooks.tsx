@@ -1,7 +1,7 @@
 import { OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
 import { useMemo } from 'react'
-import { maxUploadSize, ResourceFormValues } from '../../../../common.mjs'
+import { maxUploadSize, ResourceFormProps } from '../../../../common.mjs'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import { ResourceProps } from './Resource.js'
@@ -16,21 +16,19 @@ export const collectionTextOptionProps: OptionItemProp[] = [
   { label: 'English Literature', value: 'English Literature' },
 ]
 
-export const useResourcePageProps = ({
-  resourceKey,
-}: {
+type MyProps = {
   resourceKey: string
-  overrides?: Partial<ResourceFormValues>
-}): ResourceProps | null => {
+  overrides?: Partial<ResourceFormProps>
+}
+
+export const useResourcePageProps = ({ resourceKey }: MyProps) => {
   const mainLayoutProps = useMainLayoutProps()
   const _baseProps = useResourceBaseProps({ resourceKey })
 
-  const props = useMemo<ResourceProps | null>((): ResourceProps | null => {
+  return useMemo<ResourceProps | null>((): ResourceProps | null => {
     if (!_baseProps) return null
-    const {
-      actions,
-      props: { data, resourceForm, state, authFlags: access, contributor },
-    } = _baseProps
+    const { actions, props } = _baseProps
+    const { data, resourceForm, state, access, contributor } = props
 
     const mainResourceCardSlots = {
       mainColumnItems: [],
@@ -58,6 +56,4 @@ export const useResourcePageProps = ({
       fileMaxSize: maxUploadSize,
     }
   }, [_baseProps, mainLayoutProps])
-
-  return props
 }

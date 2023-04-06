@@ -59,7 +59,11 @@ export function readableRpcFile(
   assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore brute force symbol prop mixin
-  rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
+  // rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
+  Object.defineProperty(rpcFile, RPC_FILE_HANDLER_SYM, {
+    enumerable: false,
+    value: getReadable,
+  })
   return rpcFile
 }
 
@@ -80,10 +84,22 @@ export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefin
 }
 
 export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) {
+<<<<<<< HEAD
   const rpcStatusCode = typeof status === 'number' ? status : codes[status]
 
   const initiator = assertCallInitiator()
   getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus: { rpcStatusCode, payload } }))
+=======
+  const rpcStatus = RpcStatus(status, payload)
+
+  const initiator = assertCallInitiator()
+  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus }))
+}
+
+export function RpcStatus(status: RpcStatusName | number, payload?: any): RpcStatusType {
+  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
+  return { rpcStatusCode, payload }
+>>>>>>> origin/fix/resource-review-finalize
 }
 
 export function getRpcStatusCode() {
@@ -102,5 +118,9 @@ export function getRpcStatusCode() {
   return rpcStatusType
 }
 export function isRpcStatusType(_: any): _ is RpcStatusType {
+<<<<<<< HEAD
   return 'number' === typeof _?.statusCode
+=======
+  return 'number' === typeof _?.rpcStatusCode
+>>>>>>> origin/fix/resource-review-finalize
 }

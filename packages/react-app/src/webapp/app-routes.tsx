@@ -1,5 +1,6 @@
 import { ReactElement, useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { PROFILE_HOME_PAGE_ROUTE_PATH } from '../common/webapp-routes.mjs'
 import { MainContext } from './context/MainContext.mjs'
 import LoginPageContainer from './ui/components/pages/Access/Login/LoginPageContainer.js'
 import { RootLoginContainer } from './ui/components/pages/Access/RootLogin/RootLoginContainer.js'
@@ -26,7 +27,7 @@ const AppRouter = () => {
       <Route path="signup">
         <Route index element={<SignUpContainer />} />
       </Route>
-      <Route path="profile/:key/" element={<ProfilePageRoute />} />
+      <Route path={PROFILE_HOME_PAGE_ROUTE_PATH} element={<ProfilePageRoute />} />
       <Route path="my-profile/" element={<MyProfilePageRoute />} />
       {routes.registry.entries.flatMap(entry => {
         const {

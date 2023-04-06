@@ -2,13 +2,19 @@ import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
 import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
-import { entityDocument, pkgMetaVar } from './access-control-lib/aql.mjs'
+import {
+  entityDocument,
+  entityIdentifier2EntityIdAql,
+  pkgMetaOf,
+} from './access-control-lib/aql.mjs'
+import { EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { db, env } from './init.mjs'
-import { getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
+import { entityId, getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
 import {
   AccessControllers,
   AnonUser,
+  AqlVal,
   EntityAccess,
   EntityClass,
   EntityCollectionDef,
@@ -118,6 +124,8 @@ export async function create<EntityDataType extends SomeEntityDataType>(
       ...newEntityData,
       _meta: {
         creator: currentUser,
+        creatorEntityId:
+          currentUser.type === 'entity' ? entityId(currentUser.entityIdentifier) : undefined,
         updated: now,
         created: now,
         entityClass,
@@ -138,14 +146,11 @@ export async function patchEntity<EntityDataType extends SomeEntityDataType>(
     projectAccess?: EntityAccess[]
   },
 ) {
-  const patchCursor = await queryEntities<
-    EntityDataType,
-    { patched: EntityDocument<EntityDataType> }
-  >(entityClass, 'u', {
+  const patchCursor = await queryEntities(entityClass, 'u', {
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
     postAccessBody: `UPDATE entity WITH UNSET(@entityDataPatch, '_meta') IN @@collection`,
     bindVars: { key, entityDataPatch },
-    project: { patched: 'NEW' },
+    project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
     projectAccess: opts?.projectAccess,
   })
   const patchRecord = await patchCursor.next()
@@ -156,7 +161,7 @@ export async function delEntity<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
 ) {
-  const delCursor = await queryEntities<EntityDataType>(entityClass, 'd', {
+  const delCursor = await queryEntities(entityClass, 'd', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
     postAccessBody: `REMOVE entity IN @@collection`,
@@ -165,18 +170,20 @@ export async function delEntity<EntityDataType extends SomeEntityDataType>(
   return deleteRecord
 }
 
+export type GetEntityOpts<
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = Pick<QueryEntityOpts<Project, ProjectAccess>, 'project' | 'projectAccess'>
 export async function getEntity<
   EntityDataType extends SomeEntityDataType,
-  Project extends Record<string, any> = Record<never, never>,
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
 >(
   entityClass: EntityClass<EntityDataType>,
   key: string,
-  opts?: {
-    projectAccess?: EntityAccess[]
-    project?: { [key in keyof Project]: string }
-  },
+  opts?: GetEntityOpts<Project, ProjectAccess>,
 ) {
-  const getCursor = await queryEntities<EntityDataType, Project>(entityClass, 'r', {
+  const getCursor = await queryEntities(entityClass, 'r', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
     project: opts?.project,
@@ -200,31 +207,48 @@ export async function getEntity<
 //   console.log(inspect({ get_findResult }, false, 10, true))
 //   return get_findResult
 // }
+export type QueryEntitiesCustomProject<P extends Record<string, AqlVal<any>>> = P
+
+export type QueryEntitiesProjectResult<P> = {
+  [k in keyof P]: P[k] extends AqlVal<infer T> ? T : any
+}
+
+export type QueryEntitiesRecordType<
+  EntityDataType extends SomeEntityDataType,
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = {
+  entity: Omit<EntityDocument<EntityDataType>, '_meta'>
+  meta: EntityMetadata
+  access: { [access in ProjectAccess]: boolean }
+} & QueryEntitiesProjectResult<Project>
+
+export type QueryEntityOpts<
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = {
+  preAccessBody?: string
+  postAccessBody?: string
+  project?: Project
+  bindVars?: Record<string, any>
+  projectAccess?: ProjectAccess[]
+}
 
 export async function queryEntities<
   EntityDataType extends SomeEntityDataType,
-  Project extends Record<string, any> = Record<never, never>,
+  Project extends QueryEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
 >(
   entityClass: EntityClass<EntityDataType>,
   access: EntityAccess,
-  opts?: {
-    preAccessBody?: string
-    postAccessBody?: string
-    project?: { [key in keyof Project]: string }
-    bindVars?: Record<string, any>
-    projectAccess?: EntityAccess[]
-  },
+  opts?: QueryEntityOpts<Project, ProjectAccess>,
 ) {
-  type _QueryRecordType = {
-    entity: Omit<EntityDocument<EntityDataType>, '_meta'>
-    meta: EntityMetadata
-    access: { [access in EntityAccess]?: boolean }
-  } & Project
-
   const isRead = access === 'r'
   const currentUser = await getCurrentSystemUser()
   if (!isRead && currentUser.type === 'anon') {
-    return db.query<_QueryRecordType>('for x in [] return x')
+    return db.query<QueryEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(
+      'for x in [] return x',
+    )
   }
 
   const entityCollectionName = getEntityCollectionName(entityClass)
@@ -264,11 +288,13 @@ export async function queryEntities<
   const q = `
 LET currentUser = @currentUser
 LET currentUserEntity = ${currentUserEntityAql}
-
 // if currentUser.type === 'entity' && currentUserEntity === null
 // the query should fail early with error !
 
 FOR entity in @@collection
+LET creatorEntityId=entity._meta.creator.type == 'entity' ? ${entityIdentifier2EntityIdAql(
+    'entity._meta.creator.entityIdentifier',
+  )} : null
     
 ${opts?.preAccessBody ?? '// NO PRE_ACCESS_BODY'}
 LET accessControls = {
@@ -291,8 +317,10 @@ ${projectAqlRawProps}
 `
 
   const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
-  console.log(q, inspect({ currentUser }, false, 10, true))
-  const queryCursor = await db.query<_QueryRecordType>(q, bindVars)
+  console.log(q, inspect({ bindVars }, false, 10, true))
+  const queryCursor = await db.query<
+    QueryEntitiesRecordType<EntityDataType, Project, ProjectAccess>
+  >(q, bindVars)
 
   return queryCursor
 }
@@ -382,7 +410,7 @@ async function getAQLAccessControlObjectDefString(systemUser: SystemUser, access
 async function getAqlEntityAccessControlArrayElemsString(access: EntityAccess) {
   const entityAccessControlResponses = await Promise.all(
     accessControllerRegistry.map(({ accessControllers, pkgId }) =>
-      accessControllers[access]?.({ myPkgMeta: pkgMetaVar(pkgId.name) }),
+      accessControllers[access]?.({ myPkgMeta: pkgMetaOf(pkgId.name) }),
     ),
   )
 
@@ -440,4 +468,8 @@ export async function setPkgCurrentUser() {
     pkgName: pkgId.name,
   }
   shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
+}
+
+export function registerEntityInfoProvider(providerItem: EntityInfoProviderItem) {
+  ENTITY_INFO_PROVIDERS.push({ providerItem })
 }

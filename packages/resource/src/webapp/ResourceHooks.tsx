@@ -1,68 +1,54 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { ResourceActions, ResourceFormValues, ResourceTypeForm } from '../common.mjs'
+import { ResourceActions, ResourceFormProps, ResourceProps } from '../common.mjs'
 
 import { MainContext } from './MainContext.js'
 
 export type Actions = {
-  editResource: (res: ResourceFormValues) => Promise<ResourceFormValues>
-  getResource: () => Promise<ResourceTypeForm>
-  deleteResource: () => Promise<ResourceTypeForm>
-  toggleBookmark: () => Promise<ResourceTypeForm>
-  toggleLike: () => Promise<ResourceTypeForm>
-  setIsPublished: (approve: boolean) => void
+  editResource: (res: ResourceFormProps) => Promise<ResourceFormProps>
+  getResource: () => Promise<ResourceProps>
+  deleteResource: () => Promise<ResourceProps>
+  toggleBookmark: () => Promise<ResourceProps>
+  toggleLike: () => Promise<ResourceProps>
+  setIsPublished: (approve: boolean) => Promise<ResourceProps>
 }
 
 export type ResourceCommonProps = {
   actions: ResourceActions
-  props: ResourceTypeForm
+  props: ResourceProps
 }
 
-export const useResourceBaseProps = ({
-  resourceKey,
-}: {
-  resourceKey: string
-}): ResourceCommonProps | null => {
-  const {
-    rpcCaller,
-    // auth: { isAdmin, isAuthenticated },
-  } = useContext(MainContext)
-  const [resourceResp, setResourceResp] = useState<ResourceTypeForm | null>()
+type myProps = { resourceKey: string }
+export const useResourceBaseProps = ({ resourceKey }: myProps) => {
+  const { rpcCaller } = useContext(MainContext)
+  const [resource, setResource] = useState<ResourceProps | null>()
 
   useEffect(() => {
-    rpcCaller.get(resourceKey).then(setResourceResp)
-  }, [resourceKey, rpcCaller, setResourceResp])
+    rpcCaller.get(resourceKey).then(res => setResource(res))
+  }, [resourceKey, rpcCaller, setResource])
 
   const actions = useMemo<ResourceActions>(() => {
-    const updateResourceResp = (resourceData: ResourceTypeForm) =>
-      setResourceResp(current => current && { ...current, resourceData })
-    const updateResourceRespForm = (resourceForm: ResourceFormValues) =>
-      resourceForm && resourceResp && updateResourceResp({ ...resourceResp, resourceForm })
+    // const updateResp = (resourceData: ResourceProps) => {
+    //   setResource(current => current && { ...current, resourceData })
+    // }
+    // const updateRespForm = (resourceForm: ResourceFormProps): ResourceFormProps => (
+    //   resource && updateResp({ ...resource, resourceForm }), resourceForm
+    // )
+    const { edit, setImage, setIsPublished, setContent, _delete } = rpcCaller // toggleBookmark, toggleLike,
 
-    const {
-      edit,
-      setIsPublished,
-      // toggleBookmark,
-      //  toggleLike,
-      _delete,
-    } = rpcCaller
-    return {
-      editResource: (res: ResourceFormValues) =>
-        edit(resourceKey, res).then(updateResourceRespForm),
-      deleteResource: () => _delete(resourceKey).then(updateResourceResp),
-      // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp),
-      // toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
-      setIsPublished: (publish: boolean): void => {
-        setIsPublished(resourceKey, publish).then(updateResourceResp)
-      },
+    const resourceActions: ResourceActions = {
+      publish: () => setIsPublished(resourceKey, true),
+      unpublish: () => setIsPublished(resourceKey, false),
+      editData: (values: ResourceFormProps) => edit(resourceKey, values),
+      deleteResource: () => _delete(resourceKey),
+      setImage: (file: File) => setImage(resourceKey, file),
+      setContent: (content: File | string) => setContent(resourceKey, content),
+      // toggleBookmark: () => toggleBookmark(resourceKey).then(updateResourceResp), toggleLike: () => toggleLike(resourceKey).then(updateResourceResp),
     }
-  }, [resourceKey, resourceResp, rpcCaller])
+    return resourceActions
+  }, [resourceKey, rpcCaller])
 
-  return useMemo<ResourceCommonProps | null>((): ResourceCommonProps | null => {
-    if (!resourceResp || !actions) return null
-
-    return {
-      actions,
-      props: resourceResp,
-    }
-  }, [actions, resourceResp])
+  return useMemo<ResourceCommonProps | null>(
+    () => (!resource ? null : { actions, props: resource }),
+    [actions, resource],
+  )
 }

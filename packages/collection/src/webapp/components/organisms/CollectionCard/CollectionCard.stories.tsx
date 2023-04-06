@@ -55,8 +55,12 @@ export const getCollectionCardStoryProps = (
   }
 
   const actions: CollectionCardActions = {
-    publish: action('publish resource'),
-    unpublish: action('unpublish resource'),
+    publish: async () => {
+      action('publish resource')
+    },
+    unpublish: async () => {
+      action('unpublish resource')
+    },
     // toggleFollow: linkTo('Molecules/CollectionCard', 'followed'),
     // toggleBookmark: linkTo('Molecules/CollectionCard', 'Bookmarked'),
   }
