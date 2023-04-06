@@ -8,13 +8,33 @@ import {
   TertiaryButton,
 } from '@moodlenet/component-library'
 import { Person } from '@mui/icons-material'
-import { FC, useMemo, useState } from 'react'
+import { createContext, Dispatch, FC, SetStateAction, useContext, useMemo, useState } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { Href, Link } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'
 import './MainHeader.scss'
+
+export type MainHeaderContextT = {
+  setHideSearchbox: Dispatch<SetStateAction<boolean>>
+  hideSearchbox: boolean
+}
+export const MainHeaderContext = createContext<MainHeaderContextT>({
+  setHideSearchbox: () => undefined,
+  hideSearchbox: false,
+})
+
+export function useSimpleMainHeaderContextController(defaultHide = false) {
+  const [hideSearchbox, setHideSearchbox] = useState(defaultHide)
+  const mainHeaderContextValue = useMemo<MainHeaderContextT>(() => {
+    return {
+      hideSearchbox,
+      setHideSearchbox,
+    }
+  }, [hideSearchbox])
+  return mainHeaderContextValue
+}
 
 export type AccessButtonsProps = {
   loginHref: Href
@@ -177,7 +197,6 @@ export type MainHeaderProps = {
   addMenuProps: AddMenuProps
   avatarMenuProps: AvatarMenuProps
   accessButtonsProps: AccessButtonsProps
-  hideSearchbox?: boolean
 } & HeaderProps
 
 export const MainHeader: FC<MainHeaderProps> = ({
@@ -188,10 +207,10 @@ export const MainHeader: FC<MainHeaderProps> = ({
   headerTitleProps,
   addMenuProps,
   accessButtonsProps,
-  hideSearchbox,
   avatarMenuProps,
   ...props
 }) => {
+  const { hideSearchbox } = useContext(MainHeaderContext)
   const [searchText, setSearchText] = useState('')
 
   const { logo, smallLogo, url } = headerTitleProps
