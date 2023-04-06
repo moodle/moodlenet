@@ -201,7 +201,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
       if (doBreak) {
         break
       }
-    } while (_curr_dir === storeBaseFsFolder)
+    } while (_curr_dir !== storeBaseFsFolder)
 
     return getNonReadableFsItem(rawDbRecord)
   }
