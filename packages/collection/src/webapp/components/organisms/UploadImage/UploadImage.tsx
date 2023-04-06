@@ -48,6 +48,7 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOn
 
   const deleteImage = useCallback(() => {
     imageForm.setFieldValue('image', undefined)
+    imageForm.submitForm()
   }, [imageForm])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
@@ -82,6 +83,7 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOn
         }
       }
       imageForm.setFieldValue('image', selectedFile)
+      imageForm.submitForm()
     },
     [imageForm],
   )
@@ -95,6 +97,7 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOn
 
   const uploadImage = (file: File) => {
     imageForm.setFieldValue('image', file)
+    imageForm.submitForm()
   }
 
   const imageContainer = (
@@ -133,6 +136,7 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOn
                 const file = target.files?.[0]
                 if (file) {
                   imageForm.setFieldValue('image', file)
+                  imageForm.submitForm()
                 }
               }}
               hidden
