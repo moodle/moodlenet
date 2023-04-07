@@ -1,4 +1,5 @@
 import { RpcFile } from '@moodlenet/core'
+import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import {
   create,
   delEntity,
@@ -57,6 +58,11 @@ export function getResourceLogicalFilename(resourceKey: string) {
 }
 
 export const RESOURCE_DOWNLOAD_ENDPOINT = 'dl/resource/:_key/:filename'
-export function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcFile: RpcFile }) {
-  return RESOURCE_DOWNLOAD_ENDPOINT.replace(':_key', _key).replace(':filename', rpcFile.name)
+export async function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcFile: RpcFile }) {
+  const resourcePath = RESOURCE_DOWNLOAD_ENDPOINT.replace(':_key', _key).replace(
+    ':filename',
+    rpcFile.name,
+  )
+  const myRpcBaseUrl = await shell.call(getMyRpcBaseUrl)()
+  return `${myRpcBaseUrl}${resourcePath}`
 }

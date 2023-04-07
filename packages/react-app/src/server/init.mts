@@ -1,5 +1,5 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
-import { addMiddleware, mountApp } from '@moodlenet/http-server/server'
+import { addMiddlewares, mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import {
   EntityCollectionDef,
@@ -86,7 +86,7 @@ await shell.call(plugin)<MyWebAppDeps>({
   },
 })
 
-await shell.call(addMiddleware)({
+await shell.call(addMiddlewares)({
   handlers: [
     async (req, _resp, next) => {
       const enteringToken = req.cookies[WEB_USER_SESSION_TOKEN_COOKIE_NAME]
