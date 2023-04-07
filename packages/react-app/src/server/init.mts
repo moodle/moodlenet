@@ -135,11 +135,19 @@ export const httpApp = await shell.call(mountApp)({
 })
 
 type Env = {
-  noWebappServer?: boolean
+  noWebappServer: boolean
+  webImageSize: [number, number]
+  webIconSize: [number, number]
 }
 function getEnv(): Env {
-  const config = shell.config ?? {}
+  const config = shell.config
   //FIXME: validate configs
-  const env: Env = config
+  const env: Env = {
+    noWebappServer: false,
+    webIconSize: [256, 256],
+    webImageSize: [1000, 1000],
+    ...config,
+  }
+
   return env
 }

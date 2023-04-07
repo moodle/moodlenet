@@ -56,7 +56,7 @@ export function readableRpcFile(
   rpcFile: RpcFile,
   getReadable: () => Readable | Promise<Readable>,
 ): RpcFile {
-  assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
+  //assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore brute force symbol prop mixin
   // rpcFile[RPC_FILE_HANDLER_SYM] = getReadable

@@ -1,9 +1,8 @@
 import { shell } from './shell.mjs'
 
 import { RpcStatus } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
-import { inspect } from 'util'
 import { CollectionExposeType } from '../common/expose-def.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
@@ -104,16 +103,17 @@ export const expose = await shell.expose<CollectionExposeType>({
     },
     'webapp/upload-image/:_key': {
       guard: () => void 0,
-      async fn({ file: [file] }, { _key }) {
+      async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getCollection(_key, { projectAccess: ['u'] })
-        console.log(inspect({ got }))
 
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
         const imageLogicalFilename = getImageLogicalFilename(_key)
 
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, file)
+        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
+
+        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 
         await patchCollection(_key, {
           image: { kind: 'file', directAccessId },
