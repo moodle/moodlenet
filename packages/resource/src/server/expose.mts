@@ -4,6 +4,7 @@ import { RpcFile, RpcStatus } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
+import { ResourceRpc } from '../common.mjs'
 import { ResourceExposeType } from '../common/expose-def.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
@@ -53,7 +54,7 @@ export const expose = await shell.expose<ResourceExposeType>({
           : found.entity.content.kind === 'file'
           ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.rpcFile })
           : found.entity.content.url
-        return {
+        const resourceRpc: ResourceRpc = {
           contributor: {
             avatarUrl: found.contributor.iconUrl,
             creatorProfileHref: {
@@ -61,14 +62,14 @@ export const expose = await shell.expose<ResourceExposeType>({
               ext: false,
             },
             displayName: found.contributor.name,
-            timeSinceCreation:
-              '___________________________________________________________________________________________',
+            timeSinceCreation: found.meta.created,
           },
           resourceForm: { description: found.entity.description, title: found.entity.title },
           data: {
-            contentType: 'file', // -----------------------------------------------
+            contentType: found.entity.content?.kind ?? 'link',
             contentUrl,
-            downloadFilename: '___________________________________________________________',
+            downloadFilename:
+              found.entity.content?.kind === 'file' ? found.entity.content.rpcFile.name : null,
             resourceId: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
             imageUrl,
@@ -82,6 +83,8 @@ export const expose = await shell.expose<ResourceExposeType>({
             isCreator: found.isCreator,
           },
         }
+
+        return resourceRpc
       },
     },
     'webapp/edit/:_key': {
@@ -167,12 +170,13 @@ export const expose = await shell.expose<ResourceExposeType>({
 
         const contentProp: ResourceDataType['content'] = isUrlContent
           ? {
-              kind: 'url',
+              kind: 'link',
               url: content,
             }
           : {
               kind: 'file',
               rpcFile: content.rpcFile,
+              uploadedAt: new Date().toISOString(),
             }
 
         await patchResource(_key, { content: contentProp })
