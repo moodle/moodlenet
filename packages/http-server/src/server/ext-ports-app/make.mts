@@ -1,6 +1,7 @@
 import {
   getCurrentRpcStatusCode,
   getMaybeRpcFileReadable,
+  instanceDomain,
   isRpcStatusType,
   readableRpcFile,
   RpcArgs,
@@ -16,6 +17,10 @@ import { HttpRpcResponse } from '../../common/pub-lib.mjs'
 import { getMiddlewares } from '../lib.mjs'
 import { shell } from '../shell.mjs'
 
+export async function getMyRpcBaseUrl() {
+  const { pkgId } = shell.assertCallInitiator()
+  return `${instanceDomain}/.pkg/${pkgId.name}/`
+}
 export function makeExtPortsApp() {
   const exposes = shell.getExposes()
   const srvApp = express()
@@ -115,7 +120,7 @@ function getRpcArgs(req: Request): RpcArgs {
 
 function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart' | 'none'] {
   const contentTypeHeader = req.headers['content-type']
-
+  console.log({ HHH: req.headers })
   const type = !contentTypeHeader
     ? 'none'
     : /^application\/json/i.test(contentTypeHeader)
@@ -196,5 +201,5 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
     return [body, type]
   }
 
-  throw new Error('Unsupported contentType: ${contentTypeHeader}')
+  throw new Error(`Unsupported contentType: ${contentTypeHeader}`)
 }

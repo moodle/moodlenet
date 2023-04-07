@@ -47,6 +47,12 @@ export const expose = await shell.expose<ResourceExposeType>({
         const imageUrl = found.entity.image
           ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
           : ''
+
+        const contentUrl = !found.entity.content
+          ? null
+          : found.entity.content.kind === 'file'
+          ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.rpcFile })
+          : found.entity.content.url
         return {
           contributor: {
             avatarUrl: found.contributor.iconUrl,
@@ -61,7 +67,7 @@ export const expose = await shell.expose<ResourceExposeType>({
           resourceForm: { description: found.entity.description, title: found.entity.title },
           data: {
             contentType: 'file', // -----------------------------------------------
-            contentUrl: '___________________________________________________________',
+            contentUrl,
             downloadFilename: '___________________________________________________________',
             resourceId: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
@@ -143,11 +149,22 @@ export const expose = await shell.expose<ResourceExposeType>({
     'webapp/upload-content/:_key': {
       guard: () => void 0,
       async fn(
-        { content: [content] }: { content: [RpcFile | string] },
+        { content: [uploadedContent] }: { content: [RpcFile | string] },
         { _key }: { _key: string },
       ) {
+        const got = await getResource(_key, { projectAccess: ['u'] })
+
+        if (!got?.access.u) {
+          throw RpcStatus('Unauthorized')
+        }
+
+        const content =
+          typeof uploadedContent === 'string'
+            ? uploadedContent
+            : await storeResourceFile(_key, uploadedContent)
+
         const isUrlContent = typeof content === 'string'
-        const contentUrl = isUrlContent ? content : getResourceFileUrl({ _key, rpcFile: content })
+
         const contentProp: ResourceDataType['content'] = isUrlContent
           ? {
               kind: 'url',
@@ -155,9 +172,14 @@ export const expose = await shell.expose<ResourceExposeType>({
             }
           : {
               kind: 'file',
-              rpcFile: (await storeResourceFile(_key, content)).rpcFile,
+              rpcFile: content.rpcFile,
             }
+
         await patchResource(_key, { content: contentProp })
+
+        const contentUrl = isUrlContent
+          ? content
+          : getResourceFileUrl({ _key, rpcFile: content.rpcFile })
 
         return contentUrl
       },
