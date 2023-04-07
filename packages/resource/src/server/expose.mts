@@ -12,6 +12,7 @@ import { publicFiles, publicFilesHttp, resourceFiles } from './init.mjs'
 import {
   createResource,
   delResource,
+  delResourceFile,
   getImageLogicalFilename,
   getResource,
   getResourceFileUrl,
@@ -120,6 +121,11 @@ export const expose = await shell.expose<ResourceExposeType>({
         const delResult = await delResource(_key)
         if (!delResult) {
           return
+        }
+        const imageLogicalFilename = getImageLogicalFilename(_key)
+        await publicFiles.del(imageLogicalFilename)
+        if (delResult.entity.content?.kind === 'file') {
+          await delResourceFile(_key)
         }
         return
       },
