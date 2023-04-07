@@ -137,6 +137,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
       logicalName,
       rpcFile: {
         ..._rpcFile,
+        name: sanitizedFileName,
         size,
       },
       logicalPath,
@@ -237,26 +238,14 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   async function mountStaticHttpServer(path: string) {
     const { baseUrl } = await mountApp({
       getApp(express) {
-        console.log(`getApp [${path}] for ${shell.myId.name}`)
-        const basePathApp = express()
         const app = express()
-        app.use((req, _res, next) => {
-          console.log({ storeBaseFsFolder, path, url: req.url })
-          next()
-        })
-        // basePathApp.use((req, _res, next) => {
-        //   console.log(`basePathApp[${path}] for ${shell.myId.name} req:${req.url}`)
-        //   next()
-        // })
-        basePathApp.use(path, app)
-        // app.use(path, express.static(storeBaseFsFolder, {}))
-        app.use(path, express.static(storeBaseFsFolder, {}))
-        return app //basePathApp
+        app.use(`/${path}`, express.static(storeBaseFsFolder, {}))
+        return app
       },
     })
     return {
       getFileUrl({ directAccessId }: { directAccessId: string }) {
-        return `${baseUrl}${path}/${directAccessId}`
+        return `${baseUrl}/${path}/${directAccessId}`
       },
     }
   }
