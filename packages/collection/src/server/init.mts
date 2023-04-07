@@ -39,4 +39,4 @@ await shell.call(registerAccessController)({
 })
 
 export const publicFiles = await fileStoreFactory(shell, 'public')
-export const publicFilesHttp = await publicFiles.mountStaticHttpServer('/public')
+export const publicFilesHttp = await publicFiles.mountStaticHttpServer('public')
