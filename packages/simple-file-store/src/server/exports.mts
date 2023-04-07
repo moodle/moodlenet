@@ -183,17 +183,18 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     const rawDbRecord = maybeRawDbRecord
 
     const fsFileAbsolutePath = getFsAbsolutePathByDirectAccessId(rawDbRecord.directAccessId)
+    const fsFileMetaAbsolutePath = rpcFileName(fsFileAbsolutePath)
     console.log(`del ${logicalName}`, { maybeRawDbRecord, fsFileAbsolutePath })
 
     await Promise.all([
-      rimraf(rpcFileName(fsFileAbsolutePath)),
-      rimraf(fsFileAbsolutePath, { maxRetries: 10 }),
+      rimraf(fsFileMetaAbsolutePath, { maxRetries: 3 }).catch(() => false),
+      rimraf(fsFileAbsolutePath, { maxRetries: 3 }).catch(() => false),
     ])
 
     let _curr_dir = fsFileAbsolutePath
     do {
-      _curr_dir = resolve(fsFileAbsolutePath, '..')
-      const files = await readdir(_curr_dir)
+      _curr_dir = resolve(_curr_dir, '..')
+      const files = await readdir(_curr_dir).catch(() => [])
       if (files.length) {
         break
       }
@@ -277,17 +278,14 @@ function newFsFileRelativePath(filename: string) {
   ]
 }
 function getSanitizedFileName(originalFilename: string) {
-  let safeFileName = originalFilename
+  const sanitized = sanitizeFilename(originalFilename)
     .normalize('NFKD')
     .replace(/\p{Diacritic}/gu, '')
     .replace(/[^a-z0-9._-]/gi, '_')
-    .replace(/^_+/, '')
-    .replace(/_+$/, '')
-  while (/__/.test(safeFileName)) {
-    safeFileName = safeFileName.replace(/__/gi, '_')
-  }
+    .replace(/^[_-]+/, '')
+    .replace(/[_-]+$/, '')
+    .replace(/[_-]+/g, '_')
 
-  const sanitized = sanitizeFilename(safeFileName)
   const rnd = String(Math.random()).substring(2, 5)
   return `${rnd}_${sanitized}`
   // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
