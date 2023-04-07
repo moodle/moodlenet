@@ -33,6 +33,12 @@ export const kvStore = await kvStoreFactory<KeyValueData>(shell)
 if (!(await kvStore.get('appearanceData', '')).value) {
   await kvStore.set('appearanceData', '', defaultAppearanceData)
 }
+if (!(await kvStore.get('configs', '')).value) {
+  await kvStore.set('configs', '', {
+    webIconSize: [256, 256],
+    webImageSize: [1000, 1000],
+  })
+}
 
 export const { db } = await shell.call(getMyDB)()
 export const { collection: WebUserCollection /* ,newlyCreated */ } = await shell.call(
@@ -136,16 +142,12 @@ export const httpApp = await shell.call(mountApp)({
 
 type Env = {
   noWebappServer: boolean
-  webImageSize: [number, number]
-  webIconSize: [number, number]
 }
 function getEnv(): Env {
   const config = shell.config
   //FIXME: validate configs
   const env: Env = {
     noWebappServer: false,
-    webIconSize: [256, 256],
-    webImageSize: [1000, 1000],
     ...config,
   }
 
