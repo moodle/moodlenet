@@ -154,16 +154,17 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     })
     assert(newRawDbRecord, `couldn't store in DB, shouldn't happen !`)
 
-    await writeFile(rpcFileName(fsFileAbsolutePath), JSON.stringify(newRawDbRecord.rpcFile), {
+    const newFsItem = getFsItem(newRawDbRecord)
+
+    await writeFile(itemInfoFileName(fsFileAbsolutePath), JSON.stringify(newFsItem, null, 2), {
       encoding: 'utf-8',
     })
 
-    const newFsItem = getFsItem(newRawDbRecord)
     return newFsItem
   }
 
-  function rpcFileName(filename: string) {
-    return `${filename}_rpc_file`
+  function itemInfoFileName(filename: string) {
+    return `${filename}_info.json`
   }
 
   async function del(logicalName: string): Promise<null | FsItem> {
@@ -185,7 +186,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     const rawDbRecord = maybeRawDbRecord
 
     const fsFileAbsolutePath = getFsAbsolutePathByDirectAccessId(rawDbRecord.directAccessId)
-    const fsFileMetaAbsolutePath = rpcFileName(fsFileAbsolutePath)
+    const fsFileMetaAbsolutePath = itemInfoFileName(fsFileAbsolutePath)
     console.log(`del ${logicalName}`, { maybeRawDbRecord, fsFileAbsolutePath })
 
     await Promise.all([
