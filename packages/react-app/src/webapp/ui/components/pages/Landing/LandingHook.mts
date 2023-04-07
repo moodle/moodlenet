@@ -17,6 +17,6 @@ export const useLandingPageProps = (): LandingProps => {
     signUpHref: href('/signup'),
     newResourceHref: href('/new-resource'),
     newCollectionHref: href('/new-collection'),
-    setSearchText: () => undefined,
+    search: () => undefined,
   }
 }
