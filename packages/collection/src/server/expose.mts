@@ -98,6 +98,9 @@ export const expose = await shell.expose<CollectionExposeType>({
         if (!delResult) {
           return
         }
+        const imageLogicalFilename = getImageLogicalFilename(_key)
+        await publicFiles.del(imageLogicalFilename)
+
         return
       },
     },
