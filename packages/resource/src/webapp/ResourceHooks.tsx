@@ -31,30 +31,30 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
   const actions = useMemo<ResourceActions>(() => {
     const setterSave = (key: keyof SaveState, val: boolean) => setSaved({ ...saved, [key]: val })
-    const updateResource = <T,>(key: string, val: T): typeof resource =>
-      resource && { ...resource, [key]: val }
-    const updateData = <T,>(key: string, val: T) => updateResource('data', { [key]: val })
-
-    const updateImageUrl = (imageUrl: string) => (
-      setterSave('image', false), setResource(updateData('imageUrl', imageUrl)), imageUrl
+    const updateResource = <T,>(state: keyof SaveState, key: string, val: T): T => (
+      resource && setResource({ ...resource, [key]: val }), setterSave(state, false), val
     )
-    const updateContent = (contentUrl: string) => (
-      setterSave('content', false), setResource(updateData('contentUrl', contentUrl)), contentUrl
-    )
+    const updateData =
+      <T,>(state: keyof SaveState, key: string) =>
+      (val: T) => (
+        !resource ? '' : updateResource(state, 'data', { ...resource.data, [key]: val }), val
+      )
 
     const { edit, setImage, setIsPublished, setContent, _delete } = rpcCaller // toggleBookmark, toggleLike,
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
         setterSave('form', true)
-        debounce(() => edit(resourceKey, res).then(() => setterSave('form', false))) // edit(collectionKey, file).then(() => setterSave('data', false))
+        debounce(() =>
+          edit(resourceKey, res).then(form => updateResource('form', 'resourceForm', form)),
+        )
       },
       async setImage(file: File) {
         setterSave('image', true)
-        return setImage(resourceKey, file).then(updateImageUrl)
+        return setImage(resourceKey, file).then(updateData('image', 'imageUrl'))
       },
       setContent(content: File | string) {
         setterSave('content', true)
-        setContent(resourceKey, content).then(updateContent)
+        setContent(resourceKey, content).then(updateData('content', 'contentUrl'))
       },
       publish: () => setIsPublished(resourceKey, true),
       unpublish: () => setIsPublished(resourceKey, false),

@@ -8,6 +8,7 @@ import {
 } from '../common/types.mjs'
 import { MainContext } from './MainContext.js'
 
+type SaveState = { form: boolean; image: boolean }
 type myProps = { collectionKey: string }
 export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null => {
   const { rpcCaller } = useContext(MainContext)
@@ -19,7 +20,10 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
   }, [collectionKey, rpcCaller, setCollection])
 
   const actions = useMemo((): CollectionActions => {
-    const setterSave = (key: 'data' | 'image', val: boolean) => setSaved({ ...saved, [key]: val })
+    const setterSave = (key: keyof SaveState, val: boolean) => setSaved({ ...saved, [key]: val })
+    const updateCollection = <T,>(state: keyof SaveState, key: string, val: T): T => (
+      collection && setCollection({ ...collection, [key]: val }), setterSave(state, false), val
+    )
     const updateData = <T,>(key: string, val: T): typeof collection =>
       collection && { ...collection, data: { ...collection.data, [key]: val } }
 
@@ -31,8 +35,8 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     const { _delete, edit, setIsPublished, setImage } = rpcCaller
     return {
       async editData(res: CollectionFormProps) {
-        setterSave('data', true)
-        debounce(() => edit(collectionKey, res).then(() => setterSave('data', false))) // edit(collectionKey, file).then(() => setterSave('data', false))
+        setterSave('form', true)
+        debounce(() => edit(collectionKey, res).then(() => updateCollection('form', 'form', false))) // edit(collectionKey, file).then(() => setterSave('data', false))
       },
       async setImage(file: File) {
         setterSave('image', true)
