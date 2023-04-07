@@ -1,7 +1,7 @@
 import { shell } from './shell.mjs'
 
 import { RpcFile, RpcStatus } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import { ResourceExposeType } from '../common/expose-def.mjs'
@@ -117,10 +117,17 @@ export const expose = await shell.expose<ResourceExposeType>({
     },
     'webapp/upload-image/:_key': {
       guard: () => void 0,
-      async fn({ file: [file] }, { _key }) {
+      async fn({ file: [uploadedRpcFile] }, { _key }) {
+        const got = await getResource(_key, { projectAccess: ['u'] })
+
+        if (!got?.access.u) {
+          throw RpcStatus('Unauthorized')
+        }
         const imageLogicalFilename = getImageLogicalFilename(_key)
 
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, file)
+        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
+
+        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 
         await patchResource(_key, {
           image: { kind: 'file', directAccessId },

@@ -2,7 +2,7 @@ import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { assertRpcFileReadable, readableRpcFile, RpcFile, Shell } from '@moodlenet/core'
 import { mountApp } from '@moodlenet/http-server/server'
 import assert from 'assert'
-import { mkdir, open, readdir, readFile, rmdir, writeFile } from 'fs/promises'
+import { mkdir, open, readdir, readFile, rmdir, stat, writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
 import sanitizeFilename from 'sanitize-filename'
@@ -116,6 +116,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   }
 
   async function store(logicalName: string, _rpcFile: RpcFile): Promise<FsItem> {
+    const rpcFileReadable = await assertRpcFileReadable(_rpcFile)
     await del(logicalName)
     const sanitizedFileName = getSanitizedFileName(_rpcFile.name)
 
@@ -125,23 +126,24 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     await mkdir(storeInDir, { recursive: true })
 
     const fsFileAbsolutePath = resolve(storeBaseFsFolder, ...fsFileRelativePath)
-    const rpcFileReadable = await assertRpcFileReadable(_rpcFile)
 
     const logicalPath = getLogicalPath(logicalName)
     const directAccessId = fsFileRelativePath.join('/')
+
+    await writeFile(fsFileAbsolutePath, rpcFileReadable)
+    const { size } = await stat(fsFileAbsolutePath)
 
     const dbRecordData: DbRecordData = {
       logicalName,
       rpcFile: {
         ..._rpcFile,
+        size,
       },
       logicalPath,
       directAccessId,
       logicalPathLength: logicalPath.length,
       created: new Date().toISOString(),
     }
-
-    await writeFile(`${fsFileAbsolutePath}`, rpcFileReadable)
 
     // // console.log('create', { partRawDbRecord })
     const { new: newRawDbRecord } = await BucketCollection.save(dbRecordData, {
