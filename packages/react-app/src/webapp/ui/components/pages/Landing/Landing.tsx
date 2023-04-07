@@ -14,6 +14,7 @@ import defaultBackground from '../../../assets/img/default-landing-background.pn
 import { Href, Link } from '../../elements/link.js'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
+
 export type LandingProps = {
   mainLayoutProps: MainLayoutProps
   mainColumnItems: AddonItem[]
@@ -27,7 +28,7 @@ export type LandingProps = {
   newResourceHref: Href
   newCollectionHref: Href
 
-  setSearchText(text: string): unknown
+  search(text: string): unknown
 
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
   // collectionCardPropsList: CP<CollectionCardProps>[]
@@ -39,20 +40,27 @@ export type LandingProps = {
   // searchCollectionsHref: Href
   // searchAuthorsHref: Href
 }
-const LandingSearchBox: FC<Pick<SearchboxProps, 'setSearchText'>> = ({ setSearchText }) => {
+
+const LandingSearchBox: FC<Pick<SearchboxProps, 'setSearchText' | 'searchText' | 'search'>> = ({
+  setSearchText,
+  search,
+  searchText,
+}) => {
   const { setHideSearchbox } = useContext(MainHeaderContext)
 
   return (
     <Searchbox
       size="big"
       setSearchText={setSearchText}
-      searchText=""
+      searchText={searchText}
+      search={search}
       placeholder={`Search for open educational content`}
       setIsSearchboxInViewport={setHideSearchbox}
       marginTop={12}
     />
   )
 }
+
 export const Landing: FC<LandingProps> = ({
   mainLayoutProps,
   mainColumnItems,
@@ -66,7 +74,7 @@ export const Landing: FC<LandingProps> = ({
   newResourceHref,
   newCollectionHref,
 
-  setSearchText,
+  search,
 
   // {
   //   // searchResourcesHref,
@@ -88,6 +96,7 @@ export const Landing: FC<LandingProps> = ({
   //   import.meta.url,
   // ).href
   const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
+  const [searchText, setSearchText] = useState('')
 
   const background = {
     backgroundImage: 'url("' + /* imageUrl ||  */ defaultBackground + '")',
@@ -101,7 +110,8 @@ export const Landing: FC<LandingProps> = ({
         <div className="subtitle">{subtitle}</div>
         {/* <div className="subtitle">{organization.subtitle}</div> */}
       </div>
-      <LandingSearchBox setSearchText={setSearchText} />
+      <LandingSearchBox setSearchText={setSearchText} searchText={searchText} search={search} />
+
       <PrimaryButton
         className="share-content"
         color="blue"

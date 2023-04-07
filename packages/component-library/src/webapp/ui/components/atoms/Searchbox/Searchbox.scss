@@ -20,8 +20,8 @@
   }
 
   > svg {
-    width: 17px;
-    height: 21px;
+    width: 22px;
+    height: 22px;
     margin-top: -4px;
     > g > g > path {
       fill: #757575;
@@ -43,8 +43,34 @@
     }
   }
 
+  &.size-small {
+    > svg {
+      display: none;
+    }
+
+    > .primary-button {
+      margin-right: -16px;
+      padding: 6px 9px;
+      border-radius: 14px;
+      > span {
+        display: none;
+      }
+      > svg {
+        width: 17px;
+        height: 17px;
+        margin-top: -4px;
+        > g > g > path {
+          fill: white;
+        }
+      }
+    }
+
+    @media (max-width: 450px) {
+    }
+  }
+
   &.size-big {
-    padding: 0 20px;
+    padding: 0 18px;
     border-radius: 45px;
     height: 46px;
     width: 100%;
@@ -53,6 +79,13 @@
     > .search-text {
       font-size: 17px;
       width: 100%;
+    }
+
+    > .primary-button {
+      margin-right: -10px;
+      > svg {
+        display: none;
+      }
     }
 
     @media (max-width: 450px) {
