@@ -53,7 +53,7 @@ export const expose = await shell.expose<ResourceExposeType>({
         const contentUrl = !found.entity.content
           ? null
           : found.entity.content.kind === 'file'
-          ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.rpcFile })
+          ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.fsItem.rpcFile })
           : found.entity.content.url
         const resourceRpc: ResourceRpc = {
           contributor: {
@@ -70,7 +70,9 @@ export const expose = await shell.expose<ResourceExposeType>({
             contentType: found.entity.content?.kind ?? 'link',
             contentUrl,
             downloadFilename:
-              found.entity.content?.kind === 'file' ? found.entity.content.rpcFile.name : null,
+              found.entity.content?.kind === 'file'
+                ? found.entity.content.fsItem.rpcFile.name
+                : null,
             resourceId: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
             imageUrl,
@@ -181,8 +183,7 @@ export const expose = await shell.expose<ResourceExposeType>({
             }
           : {
               kind: 'file',
-              rpcFile: content.rpcFile,
-              uploadedAt: new Date().toISOString(),
+              fsItem: content,
             }
 
         await patchResource(_key, { content: contentProp })
