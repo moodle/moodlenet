@@ -197,6 +197,7 @@ export type MainHeaderProps = {
   addMenuProps: AddMenuProps
   avatarMenuProps: AvatarMenuProps
   accessButtonsProps: AccessButtonsProps
+  search(text: string): unknown
 } & HeaderProps
 
 export const MainHeader: FC<MainHeaderProps> = ({
@@ -208,6 +209,7 @@ export const MainHeader: FC<MainHeaderProps> = ({
   addMenuProps,
   accessButtonsProps,
   avatarMenuProps,
+  search,
   ...props
 }) => {
   const { hideSearchbox } = useContext(MainHeaderContext)
@@ -234,12 +236,13 @@ export const MainHeader: FC<MainHeaderProps> = ({
               placeholder="Search for open education content"
               searchText={searchText}
               setSearchText={setSearchText}
+              search={search}
             />
           ),
           key: 'searchbox',
         }
     return [searchbox, ...(centerItems ?? [])].filter((item): item is AddonItem => !!item)
-  }, [centerItems, searchText, hideSearchbox])
+  }, [centerItems, searchText, search, hideSearchbox])
 
   const updatedRightItems: AddonItem[] = useMemo(() => {
     return [
