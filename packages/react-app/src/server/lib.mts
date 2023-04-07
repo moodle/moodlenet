@@ -2,13 +2,15 @@ import { assertRpcFileReadable, readableRpcFile, RpcFile } from '@moodlenet/core
 import assert from 'assert'
 import sharp from 'sharp'
 import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
-import { env, httpApp, kvStore } from './init.mjs'
+import { httpApp, kvStore } from './init.mjs'
 import { shell } from './shell.mjs'
 import { addWebappPluginItem } from './webapp-plugins.mjs'
 
 export type ImageKind = 'image' | 'icon'
 export async function webImageResizer(original: RpcFile, imageKind: ImageKind): Promise<RpcFile> {
-  const { webIconSize, webImageSize } = env
+  const { value: configs } = await kvStore.get('configs', '')
+  assert(configs)
+  const { webIconSize, webImageSize } = configs
 
   const originalReadable = await assertRpcFileReadable(original)
 
