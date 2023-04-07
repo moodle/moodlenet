@@ -69,6 +69,7 @@ export const Users: FC<UsersProps> = ({ users, search }) => {
           placeholder="Search by display name or email"
           searchText={''}
           setSearchText={search}
+          search={search}
         />
         <table className="users-table">
           <thead>
