@@ -2,11 +2,11 @@ import { overrideDeep } from '@moodlenet/component-library/common'
 import { LicenseFieldStories, SubjectFieldStories } from '@moodlenet/ed-meta/stories'
 import { LicenseField, SubjectField } from '@moodlenet/ed-meta/ui'
 import {
-  ResourceAccess,
+  ResourceAccessProps,
   ResourceActions,
-  ResourceData,
-  ResourceFormValues,
-  ResourceState,
+  ResourceDataProps,
+  ResourceFormProps,
+  ResourceStateProps,
 } from '@moodlenet/resource/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
@@ -42,7 +42,7 @@ const meta: ComponentMeta<typeof Resource> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
-    'resourceFormValues',
+    'ResourceFormProps',
     'ResourceStoryProps',
     'resourceFormBag',
     'ResourceStoryProps',
@@ -63,7 +63,7 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
   )
 })
 
-export const validationSchema: SchemaOf<ResourceFormValues> = object({
+export const validationSchema: SchemaOf<ResourceFormProps> = object({
   category: string().required(/* t */ `Please select a subject`),
   content: string().required(/* t */ `Please upload a content`),
 
@@ -92,7 +92,7 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
   }),
 })
 
-export const resourceFormValues: ResourceFormValues = {
+export const ResourceFormValues: ResourceFormProps = {
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
   title: '',
@@ -111,8 +111,8 @@ export const resourceFormValues: ResourceFormValues = {
   // name: 'The Best Resource Ever',
 }
 
-export const useResourceForm = (overrides?: Partial<ResourceFormValues>) => {
-  return useFormik<ResourceFormValues>({
+export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
+  return useFormik<ResourceFormProps>({
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
@@ -142,23 +142,25 @@ export const useResourceStoryProps = (
   //   {
   //   props?: Partial<ResourceProps>
   //   resource?: Partial<ResourceType>
-  //   resourceForm?: Partial<ResourceFormValues>
+  //   resourceForm?: Partial<ResourceFormProps>
   //   actions?: Partial<ResourceActions>
   //   access?: Partial<ResourceAccess>
   //   mainResourceCardSlots?: Partial<MainResourceCardSlots>
   // }
 ): ResourceProps => {
-  const resourceForm: ResourceFormValues = {
+  const resourceForm: ResourceFormProps = {
     title: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     ...overrides?.resourceForm,
   }
 
-  const data: ResourceData = {
+  const data: ResourceDataProps = {
     resourceId: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
-    contentUrl: 'random-file-download-url.com',
+    contentUrl: 'https://moodle.net/profile/d488bc9d51ef-moodle-academy',
+    // contentUrl: 'https://www.youtube.com/watch?v=dZNC5kIvM00&ab_channel=Moodle',
+    // contentUrl: 'https://vimeo.com/204467192',
     imageUrl:
       'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
     downloadFilename: 'resource.pdf',
@@ -168,25 +170,25 @@ export const useResourceStoryProps = (
     // numLikes: 23,
   }
 
-  const state: ResourceState = {
+  const state: ResourceStateProps = {
     isPublished: true,
     // liked: false,
     // bookmarked: false,
   }
 
   const actions: ResourceActions = {
-    deleteResource: action('delete resource'),
+    deleteResource: async () => undefined,
     editData: async () => action('editing resource submited'),
     publish: action('publish'),
     unpublish: action('unpublish'),
-    setContent: async () => action('set content'),
-    setImage: async () => action('set image'),
+    setContent: action('set content'),
+    setImage: async () => '',
     // toggleLike: action('toggleLike'),
     // toggleBookmark: action('toggleBookmark'),
     ...overrides?.actions,
   }
 
-  const access: ResourceAccess = {
+  const access: ResourceAccessProps = {
     isAuthenticated: true,
     canEdit: false,
     isCreator: false,
@@ -221,7 +223,9 @@ export const useResourceStoryProps = (
         overrides?.access?.isAuthenticated !== undefined && !overrides?.access?.isAuthenticated
           ? MainLayoutLoggedOutStoryProps
           : MainLayoutLoggedInStoryProps,
-      fileMaxSize: 343243,
+
+      mainColumnItems: [],
+      sideColumnItems: [],
       mainResourceCardSlots: mainResourceCardSlots,
       resourceContributorCardProps:
         ResourceContributorCardStories.ResourceContributorCardStoryProps,
@@ -231,8 +235,11 @@ export const useResourceStoryProps = (
       state: state,
       actions: actions,
       access: access,
+
       validationSchema: validationSchema,
       extraDetailsItems: extraDetailsItems,
+
+      fileMaxSize: 343243,
     },
     overrides,
   )

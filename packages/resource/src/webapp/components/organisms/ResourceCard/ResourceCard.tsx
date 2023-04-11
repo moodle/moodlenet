@@ -15,7 +15,13 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 // import Card from '../../../atoms/Card/Card'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
-import { AddonItem, Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
+import {
+  AddonItem,
+  Card,
+  getThumbnailFromUrl,
+  isEllipsisActive,
+  TertiaryButton,
+} from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { CloseRounded, Public } from '@mui/icons-material'
 import { FC, useEffect, useRef, useState } from 'react'
@@ -69,6 +75,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 }) => {
   const {
     resourceId,
+    contentUrl,
     imageUrl,
     title,
     // numLikes,
@@ -103,6 +110,8 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   const { typeName, typeColor } = getResourceTypeInfo(contentType, downloadFilename)
 
+  const thumbnail = contentUrl && getThumbnailFromUrl(contentUrl)
+
   const avatar = {
     backgroundImage: 'url("' + (owner.avatar ? owner.avatar : defaultAvatar) + '")',
     backgroundSize: 'cover',
@@ -110,17 +119,18 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   let background = {}
   if (orientation === 'horizontal') {
     background = {
-      background: 'url("' + (imageUrl ? imageUrl : getBackupImage(resourceId)) + '")',
+      background:
+        'url("' + (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(resourceId)) + '")',
     }
   } else {
     background = {
       background:
         'linear-gradient(0deg, rgba(0, 0, 0, 0.91) 0%, rgba(0, 0, 0, 0.1729) 45.15%, rgba(0, 0, 0, 0) 100%), url(' +
-        (imageUrl ? imageUrl : getBackupImage(resourceId)) +
+        (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(resourceId)) +
         ')',
     }
   }
-  background = { ...background, backgroundSize: 'cover' }
+  background = { ...background, backgroundSize: 'cover', backgroundPosition: 'center center' }
 
   const titleRef = useRef<HTMLElement>(null)
   const [showTitleAbbr, setShowTitleAbbr] = useState(false)

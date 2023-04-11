@@ -109,7 +109,12 @@ export type ResourceCardDataRpc = {
   resourceHomeHref?: Href
 } & Pick<
   ResourceDataProps,
-  'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'isWaitingForApproval'
+  | 'imageUrl'
+  | 'downloadFilename'
+  | 'contentType'
+  | 'resourceId'
+  | 'isWaitingForApproval'
+  | 'contentUrl'
 > &
   Pick<ResourceFormProps, 'title'>
 
