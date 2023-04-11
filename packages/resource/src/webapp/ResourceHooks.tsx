@@ -17,13 +17,13 @@ export type ResourceCommonProps = {
   actions: ResourceActions
   props: ResourceProps
 }
-type SaveState = { form: boolean; image: boolean; content: boolean }
+// type SaveState = { form: boolean; image: boolean; content: boolean }
 
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
   const [resource, setResource] = useState<ResourceProps | null>()
-  const [saved] = useState<SaveState>({ form: false, image: false, content: false })
+  // const [saved] = useState<SaveState>({ form: false, image: false, content: false })
 
   useEffect(() => {
     rpcCaller.get(resourceKey).then(res => setResource(res))
