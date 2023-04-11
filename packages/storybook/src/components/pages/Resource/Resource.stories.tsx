@@ -1,4 +1,4 @@
-import { ResourceFormValues } from '@moodlenet/resource/common'
+import { ResourceFormProps } from '@moodlenet/resource/common'
 import { Resource, ResourceProps } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useResourceStoryProps } from './stories-props.js'
@@ -50,7 +50,7 @@ export const Creator: ResourceStory = () => {
   return <Resource {...props} />
 }
 
-export const NewResourceProps: Partial<ResourceFormValues> = {
+export const NewResourceProps: Partial<ResourceFormProps> = {
   title: '',
   description: '',
 }
