@@ -1,5 +1,6 @@
 import { InsertDriveFile as InsertDriveFileIcon, Link as LinkIcon } from '@material-ui/icons'
 import {
+  getPreviewFromUrl,
   ImageContainer,
   InputTextField,
   PrimaryButton,
@@ -160,6 +161,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
     [contentForm, imageForm],
   )
 
+  const embed = contentUrl && getPreviewFromUrl(contentUrl)
+
   const dropHandler = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       setIsToDrop(false)
@@ -315,8 +318,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
     <>
       {!contentAvailable && uploader('file')}
       {!contentAvailable && imageAvailable && simpleImageContainer}
-      {contentAvailable && !imageAvailable && uploader('image')}
-      {contentAvailable && imageAvailable && imageContainer}
+      {contentAvailable && (embed ?? (!imageAvailable && uploader('image')))}
+      {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}
     </>
   )
 

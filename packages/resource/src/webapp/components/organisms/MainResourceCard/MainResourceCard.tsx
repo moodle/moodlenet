@@ -4,6 +4,7 @@ import {
   Card,
   FloatingMenu,
   FloatingMenuContentItem,
+  getPreviewFromUrl,
   InputTextField,
   Modal,
   PrimaryButton,
@@ -473,6 +474,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
+  const embed = contentUrl && getPreviewFromUrl(contentUrl)
+
   const resourceUploader = canEdit ? (
     <UploadResource
       contentForm={contentForm}
@@ -500,20 +503,21 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     />
   )
 
-  const imageContainer = !canEdit ? (
-    (contentForm.values.content || contentUrl) && (imageForm.values.image || imageUrl) ? (
-      <div className="image-container" key="image-container">
-        {contentType === 'link' && contentUrl ? (
-          <a href={contentUrl} target="_blank" rel="noreferrer">
-            {imageDiv}
-          </a>
-        ) : (
-          <>{imageDiv}</>
-        )}
-        {/* {getImageCredits(form.values.image)} */}
-      </div>
-    ) : null
-  ) : null
+  const imageContainer = !canEdit
+    ? embed ??
+      ((contentForm.values.content || contentUrl) && (imageForm.values.image || imageUrl) ? (
+        <div className="image-container" key="image-container">
+          {contentType === 'link' && contentUrl ? (
+            <a href={contentUrl} target="_blank" rel="noreferrer">
+              {imageDiv}
+            </a>
+          ) : (
+            <>{imageDiv}</>
+          )}
+          {/* {getImageCredits(form.values.image)} */}
+        </div>
+      ) : null)
+    : null
 
   // const searchImageComponent = isSearchingImage && (
   //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />

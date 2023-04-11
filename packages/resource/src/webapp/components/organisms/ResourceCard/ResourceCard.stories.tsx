@@ -46,6 +46,7 @@ export const getResourceCardStoryProps = (
     title: `Why the  ${
       Math.random() < 0.5 ? 'tropical rainforests are' : 'the oceans are'
     } the world's most important ecosystems`,
+    contentUrl: 'https://www.youtube.com/watch?v=dZNC5kIvM00&ab_channel=Moodle',
     imageUrl:
       'https://images.unsplash.com/photo-1442120108414-42e7ea50d0b5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1249&q=80',
     contentType: 'file',

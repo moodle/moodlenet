@@ -1,6 +1,7 @@
 import assert from 'assert'
-import { useEffect, useMemo, useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { AssetInfo } from '../../../common/types.mjs'
+import { getYoutubeEmbed, getYoutubeThumbnail } from '../../../ui.mjs'
 import { ContentBackupImages } from '../assets/data/images.js'
 
 export const elementFullyInViewPort = (
@@ -129,4 +130,28 @@ export const useImageCredits = (
       </div>
     )
   )
+}
+
+export const getPreviewFromUrl = (url: string): ReactElement | null => {
+  const domain = getDomainUrl(url)
+  switch (domain) {
+    case 'youtube.com':
+      return getYoutubeEmbed(url)
+    default:
+      return null
+  }
+}
+
+export const getThumbnailFromUrl = (url: string): string | null => {
+  const domain = getDomainUrl(url)
+  switch (domain) {
+    case 'youtube.com':
+      return getYoutubeThumbnail(url)
+    default:
+      return null
+  }
+}
+
+export const getDomainUrl = (url: string): string => {
+  return new URL(url).hostname.replace('www.', '')
 }
