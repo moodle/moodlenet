@@ -179,7 +179,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       !(form.isSubmitting || imageForm.isSubmitting) &&
       (form.submitCount > 0 || imageForm.submitCount > 0)
     ) {
-      setTimeout(() => setShowSavedText(false), 5000)
+      setTimeout(() => setShowSavedText(false), 2000)
       return (
         <abbr className="saved-feedback" key="saved-feedback" title="Saved">
           <CloudDoneOutlined />
