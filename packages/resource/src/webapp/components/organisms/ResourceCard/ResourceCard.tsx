@@ -111,7 +111,6 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   const { typeName, typeColor } = getResourceTypeInfo(contentType, downloadFilename)
 
   const thumbnail = contentUrl && getThumbnailFromUrl(contentUrl)
-  console.log('thumbnail', thumbnail)
 
   const avatar = {
     backgroundImage: 'url("' + (owner.avatar ? owner.avatar : defaultAvatar) + '")',
