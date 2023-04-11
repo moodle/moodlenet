@@ -4,8 +4,8 @@ import { assertCallInitiator, getSetCoreAsyncContext } from '../async-context/li
 import { RpcStatusType } from '../exports.mjs'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
 import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
-import codes, { RpcStatusName } from './rpc-status-codes.mjs'
-import { PkgExpose, PkgExposeDef, RpcFile } from './types.mjs'
+import { rpcStatusCodes, RpcStatusName } from './rpc-status-codes.mjs'
+import { PkgExpose, PkgExposeDef, PkgExposeImpl, RpcFile } from './types.mjs'
 
 type ExposedRegItem = {
   pkgId: PkgIdentifier
@@ -16,7 +16,7 @@ const _PKG_EXPOSED_REG: ExposedRegItem[] = []
 
 export function pkgExpose(pkg_module_ref: PkgModuleRef) {
   return async function expose<_PkgExposeDef extends PkgExposeDef>(
-    exposeDef: _PkgExposeDef,
+    exposeImpl: PkgExposeImpl<_PkgExposeDef>,
   ): Promise<PkgExpose<_PkgExposeDef>> {
     const { pkgId } = await ensureRegisterPkg(pkg_module_ref)
     assert(
@@ -25,7 +25,7 @@ export function pkgExpose(pkg_module_ref: PkgModuleRef) {
     )
     // FIXME: ensure in "init" phase
     const pkgExpose: PkgExpose<_PkgExposeDef> = {
-      ...exposeDef,
+      ...exposeImpl,
       pkgId,
     }
 
@@ -56,7 +56,7 @@ export function readableRpcFile(
   rpcFile: RpcFile,
   getReadable: () => Readable | Promise<Readable>,
 ): RpcFile {
-  assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
+  //assert(!!rpcFile, 'cannot attach getReadable to unvalued RpcFile')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore brute force symbol prop mixin
   // rpcFile[RPC_FILE_HANDLER_SYM] = getReadable
@@ -91,11 +91,24 @@ export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) 
 }
 
 export function RpcStatus(status: RpcStatusName | number, payload?: any): RpcStatusType {
-  const rpcStatusCode = typeof status === 'number' ? status : codes[status]
-  return { rpcStatusCode, payload }
+  const rpcStatusCode = getRpcStatusCode(status)
+  return { rpcStatusCode, payload: payload ?? getRpcStatusName(status) }
 }
 
-export function getRpcStatusCode() {
+export function getRpcStatusName(status: RpcStatusName | number, defaultName?: string) {
+  const mRpcStatusName =
+    typeof status === 'string'
+      ? status
+      : Object.entries(rpcStatusCodes).find(([_, code]) => code === status)?.[0]
+  return mRpcStatusName ?? defaultName ?? ''
+}
+
+export function getRpcStatusCode(status: RpcStatusName | number) {
+  const rpcStatusCode = typeof status === 'number' ? status : rpcStatusCodes[status]
+  return rpcStatusCode
+}
+
+export function getCurrentRpcStatusCode() {
   const rpcStatus = getSetCoreAsyncContext.get()?.rpcStatus
   if (rpcStatus === undefined) {
     return undefined

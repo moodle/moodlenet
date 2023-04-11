@@ -91,9 +91,11 @@ export const useHeaderProps = (): MainHeaderProps => {
         avatarUrl,
       },
       isAuthenticated,
-      centerItems: [], //TODO //@ETTO: needs a registry,
-      leftItems: [], //TODO //@ETTO: needs a registry,
+      centerItems: [], //TODO //@ETTO: needs a registry
+      leftItems: [], //TODO //@ETTO: needs a registry
       rightItems,
+      hideSearchbox: false, //TODO //@ETTO: to be changed ASAP
+      search: () => undefined, //TODO //@ETTO: to be changed ASAP
     }
   }, [addMenuItems, avatarUrl, headerTitleProps, isAuthenticated, menuItems, rightItems])
   return mainHeaderProps

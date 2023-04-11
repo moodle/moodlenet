@@ -28,7 +28,13 @@ export type Contacts = {
 
 export type CreateRequest = Pick<WebUserDataType, 'contacts' | 'isAdmin'> & WebUserProfileDataType
 
-export type KeyValueData = { appearanceData: AppearanceData }
+export type KeyValueData = {
+  appearanceData: AppearanceData
+  configs: {
+    webImageSize: [number, number]
+    webIconSize: [number, number]
+  }
+}
 
 export type WebUserJwtPayload =
   | {

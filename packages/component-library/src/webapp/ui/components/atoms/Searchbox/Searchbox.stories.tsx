@@ -12,6 +12,7 @@ export const SearchboxStoryProps: SearchboxProps = {
   placeholder: 'Start type to search',
   searchText: '',
   setSearchText: action('Search Text'),
+  search: action('Search'),
 }
 
 const SearchboxStory: ComponentStory<typeof Searchbox> = args => <Searchbox {...args} />

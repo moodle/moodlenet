@@ -86,6 +86,7 @@ export const New: CollectionStory = () => {
     data: {
       mnUrl: 'moodle.com',
       isWaitingForApproval: false,
+      imageUrl: undefined,
     },
     collectionForm: NewCollectionProps,
     state: {

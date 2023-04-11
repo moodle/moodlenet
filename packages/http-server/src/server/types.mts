@@ -8,8 +8,9 @@ export type HttpAsyncCtx = {
   }
 }
 
+type MPromise<T> = T | Promise<T>
 export type MountAppItem = {
-  getApp(express: typeof _express): Application | undefined
+  getApp(express: typeof _express): MPromise<Application | undefined>
   mountOnAbsPath?: string
   pkgId: PkgIdentifier
 }

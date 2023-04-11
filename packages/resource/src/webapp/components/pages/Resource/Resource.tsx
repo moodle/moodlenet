@@ -32,9 +32,9 @@ export type ResourceProps = {
   mainResourceCardSlots: MainResourceCardSlots
   resourceContributorCardProps: ResourceContributorCardProps
 
-  mainColumnItems?: AddonItem[]
-  sideColumnItems?: AddonItem[]
-  extraDetailsItems?: AddonItem[]
+  mainColumnItems: AddonItem[]
+  sideColumnItems: AddonItem[]
+  extraDetailsItems: AddonItem[]
 
   data: ResourceDataProps
   resourceForm: ResourceFormProps

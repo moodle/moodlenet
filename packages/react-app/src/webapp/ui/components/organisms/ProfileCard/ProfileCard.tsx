@@ -1,4 +1,4 @@
-import { AddonItem, Card, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
+import { AddonItem, Card } from '@moodlenet/component-library'
 import { FC } from 'react'
 import {
   ProfileAccess,
@@ -14,6 +14,7 @@ import './ProfileCard.scss'
 
 export type ProfileCardProps = {
   mainColumnItems?: AddonItem[]
+  bottomTouchColumnItems?: AddonItem[]
   overallCardProps: OverallCardProps
 
   data: ProfileData
@@ -27,8 +28,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   overallCardProps,
 
   data,
-  state,
-  actions,
+  // state,
+  // actions,
   access,
 }) => {
   const {
@@ -39,9 +40,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     profileHref,
     // organizationName,
   } = data
-  const { followed } = state
-  const { toggleFollow } = actions
-  const { isCreator, isAuthenticated } = access
+  // const { followed } = state
+  // const { toggleFollow } = actions
+  const {
+    isCreator,
+    // isAuthenticated
+  } = access
 
   const header = (
     <Link className="profile-card-header" href={profileHref} key="header">
@@ -62,7 +66,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 
   const buttons = (
     <div className="buttons" key="buttons">
-      {!isCreator && followed && (
+      {/* {!isCreator && followed && (
         <SecondaryButton onClick={toggleFollow} color="orange">
           Following
         </SecondaryButton>
@@ -71,7 +75,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow} className="follow">
           Follow
         </PrimaryButton>
-      )}
+      )} */}
       {isCreator && <div className="empty" />}
     </div>
   )
@@ -82,15 +86,18 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 
   return (
     <Card className="profile-card" hover={true} key={userId}>
-      <div className="images">
-        <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />
-        <Link className="avatar" href={profileHref}>
-          <img src={avatarUrl || defaultAvatar} alt="Avatar" />
-        </Link>
-      </div>
-      <div className="info">
-        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </div>
+      <Link className="profile-card-content" href={profileHref}>
+        <div className="images">
+          <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />
+          <div className="avatar">
+            <img src={avatarUrl || defaultAvatar} alt="Avatar" />
+          </div>
+        </div>
+
+        <div className="info">
+          {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+        </div>
+      </Link>
     </Card>
   )
 }

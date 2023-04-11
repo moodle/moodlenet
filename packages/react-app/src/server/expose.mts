@@ -1,8 +1,9 @@
 import { npm } from '@moodlenet/core'
+import { getOrgData, setOrgData } from '@moodlenet/organization/server'
+import { ReactAppExposeType } from '../common/expose-def.mjs'
 import { WebUserData } from '../common/types.mjs'
 import { getAppearance, setAppearance } from './lib.mjs'
 import { shell } from './shell.mjs'
-import { WebUserProfile } from './types.mjs'
 import { loginAsRoot } from './web-user-auth-lib.mjs'
 import {
   editWebUserProfile,
@@ -12,8 +13,16 @@ import {
   toggleWebUserIsAdmin,
 } from './web-user-lib.mjs'
 
-export const expose = await shell.expose({
+export const expose = await shell.expose<ReactAppExposeType>({
   rpc: {
+    'getOrgData': {
+      guard: () => void 0,
+      fn: getOrgData,
+    },
+    'setOrgData': {
+      guard: () => void 0,
+      fn: setOrgData,
+    },
     'getAppearance': {
       guard: () => void 0,
       fn: getAppearance,
@@ -32,13 +41,11 @@ export const expose = await shell.expose({
     },
     'loginAsRoot': {
       guard: () => void 0,
-      fn: ({ rootPassword }: { rootPassword: string }) => loginAsRoot(rootPassword),
+      fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
     'webapp/profile/edit': {
       guard: () => void 0,
-      fn: async (
-        profileFormValues: WebUserProfile,
-      ): Promise<{ data: WebUserProfile; canEdit: boolean } | undefined> => {
+      async fn(profileFormValues) {
         const { _key, ...editRequest } = profileFormValues
         const patchRecord = await editWebUserProfile(_key, editRequest)
         if (!patchRecord) {
@@ -52,11 +59,7 @@ export const expose = await shell.expose({
     },
     'webapp/profile/get': {
       guard: () => void 0,
-      fn: async ({
-        _key,
-      }: {
-        _key: string
-      }): Promise<{ data: WebUserProfile; canEdit: boolean } | undefined> => {
+      async fn({ _key }) {
         const patchRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
         if (!patchRecord) {
           return
@@ -66,7 +69,7 @@ export const expose = await shell.expose({
     },
     'webapp/roles/searchUsers': {
       guard: () => void 0,
-      fn: async ({ search }: { search: string }): Promise<WebUserData[]> => {
+      async fn({ search }) {
         const users = await searchUsers(search)
         const webUsers = users.map<WebUserData>(user => {
           return {
@@ -81,7 +84,7 @@ export const expose = await shell.expose({
     },
     'webapp/roles/toggleIsAdmin': {
       guard: () => void 0,
-      fn: async (by: { profileKey: string } | { userKey: string }) => {
+      async fn(by) {
         const patchedUser = await toggleWebUserIsAdmin(by)
         return !!patchedUser
       },

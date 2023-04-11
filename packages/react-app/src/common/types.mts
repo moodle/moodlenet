@@ -1,17 +1,19 @@
 import { BaseStyleType, Href } from '@moodlenet/component-library'
-import type { PackageInfo, PkgExpose, PkgIdentifier } from '@moodlenet/core'
+import type { PackageInfo, PkgExpose, PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
 import { CSSProperties } from 'react'
 import { WebUserProfile } from '../server/types.mjs'
 
 export type WebPkgDeps = {
-  [k in string]: PkgExpose
+  [k in string]: PkgExposeDef
 }
 
 export type WebappPluginDef<
   Deps extends WebPkgDeps | Record<string, never> = Record<string, never>,
 > = {
   mainComponentLoc: string[]
-  deps: Deps
+  deps: {
+    [depname in keyof Deps]: PkgExpose<Deps[depname]>
+  }
 }
 
 export type WebappPluginItem<Deps extends WebPkgDeps = WebPkgDeps> = WebappPluginDef<Deps> & {
@@ -88,11 +90,11 @@ export type ProfileFormValues = {
 }
 
 export type ProfileState = {
-  followed: boolean
+  // followed: boolean
 }
 
 export type ProfileActions = {
-  toggleFollow(): unknown
+  // toggleFollow(): unknown
   editProfile(values: ProfileFormValues): void | Promise<any>
 }
 

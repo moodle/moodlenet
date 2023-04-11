@@ -1,9 +1,9 @@
-import { CollectionFormRpc, CollectionRpc } from '../common.mjs'
 import { shell } from './shell.mjs'
 
-import { RpcFile, RpcStatus } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { RpcStatus } from '@moodlenet/core'
+import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
+import { CollectionExposeType } from '../common/expose-def.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles, publicFilesHttp } from './init.mjs'
@@ -15,18 +15,18 @@ import {
   patchCollection,
 } from './lib.mjs'
 
-export const expose = await shell.expose({
+export const expose = await shell.expose<CollectionExposeType>({
   rpc: {
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
-      fn: async ({ publish }: { publish: boolean }, { _key }: { _key: string }) => {
+      async fn({ publish }, { _key }) {
         console.log({ _key, publish })
         //  await setIsPublished(key, publish)
       },
     },
     'webapp/get/:_key': {
       guard: () => void 0,
-      fn: async (_, { _key }: { _key: string }): Promise<CollectionRpc | undefined> => {
+      async fn(_, { _key }) {
         const found = await getCollection(_key, {
           projectAccess: ['u', 'd'],
           project: {
@@ -71,10 +71,7 @@ export const expose = await shell.expose({
     },
     'webapp/edit/:_key': {
       guard: () => void 0,
-      fn: async (
-        { values }: { values: CollectionFormRpc },
-        { _key }: { _key: string },
-      ): Promise<void> => {
+      async fn({ values }, { _key }) {
         const patchResult = await patchCollection(_key, values)
         if (!patchResult) {
           return
@@ -84,7 +81,7 @@ export const expose = await shell.expose({
     },
     'webapp/create': {
       guard: () => void 0,
-      fn: async (): Promise<{ _key: string }> => {
+      async fn() {
         const createResult = await createCollection({ description: '', title: '', image: null })
         if (!createResult) {
           throw RpcStatus('Unauthorized')
@@ -96,23 +93,32 @@ export const expose = await shell.expose({
     },
     'webapp/delete/:_key': {
       guard: () => void 0,
-      fn: async (_, { _key }: { _key: string }): Promise<void> => {
+      async fn(_, { _key }) {
         const delResult = await delCollection(_key)
         if (!delResult) {
           return
         }
+        const imageLogicalFilename = getImageLogicalFilename(_key)
+        await publicFiles.del(imageLogicalFilename)
+
         return
       },
     },
     'webapp/upload-image/:_key': {
       guard: () => void 0,
-      async fn({ file: [file] }: { file: [RpcFile] }, { _key }: { _key: string }) {
+      async fn({ file: [uploadedRpcFile] }, { _key }) {
+        const got = await getCollection(_key, { projectAccess: ['u'] })
+
+        if (!got?.access.u) {
+          throw RpcStatus('Unauthorized')
+        }
         const imageLogicalFilename = getImageLogicalFilename(_key)
 
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, file)
+        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
 
-        // here applies AC ----
-        /* const patched =  */ await patchCollection(_key, {
+        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+
+        await patchCollection(_key, {
           image: { kind: 'file', directAccessId },
         })
         return publicFilesHttp.getFileUrl({ directAccessId })

@@ -7,13 +7,34 @@ import {
   Searchbox,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import { FC, useMemo, useState } from 'react'
+import { Person } from '@mui/icons-material'
+import { createContext, Dispatch, FC, SetStateAction, useContext, useMemo, useState } from 'react'
 import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
 import defaultAvatar from '../../../../assets/img/default-avatar.svg'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { Href, Link } from '../../../elements/link.js'
 import { HeaderMenuItem } from '../addons.js'
 import './MainHeader.scss'
+
+export type MainHeaderContextT = {
+  setHideSearchbox: Dispatch<SetStateAction<boolean>>
+  hideSearchbox: boolean
+}
+export const MainHeaderContext = createContext<MainHeaderContextT>({
+  setHideSearchbox: () => undefined,
+  hideSearchbox: false,
+})
+
+export function useSimpleMainHeaderContextController(defaultHide = false) {
+  const [hideSearchbox, setHideSearchbox] = useState(defaultHide)
+  const mainHeaderContextValue = useMemo<MainHeaderContextT>(() => {
+    return {
+      hideSearchbox,
+      setHideSearchbox,
+    }
+  }, [hideSearchbox])
+  return mainHeaderContextValue
+}
 
 export type AccessButtonsProps = {
   loginHref: Href
@@ -23,14 +44,15 @@ export type AccessButtonsProps = {
 export const AccessButtons: FC<AccessButtonsProps> = ({ loginHref, signupHref }) => {
   return (
     <>
-      <Link href={loginHref} key="login-button">
+      <Link href={loginHref} key="login-button" className="login-button access-button">
         <PrimaryButton>
           {/* <Trans> */}
-          Login
+          <span>Login</span>
           {/* </Trans> */}
+          <Person />
         </PrimaryButton>
       </Link>
-      <Link href={signupHref} key="signup-button">
+      <Link href={signupHref} key="signup-button" className="signup-button access-button">
         <TertiaryButton>
           {/* <Trans> */}
           Join now
@@ -175,6 +197,7 @@ export type MainHeaderProps = {
   addMenuProps: AddMenuProps
   avatarMenuProps: AvatarMenuProps
   accessButtonsProps: AccessButtonsProps
+  search(text: string): unknown
 } & HeaderProps
 
 export const MainHeader: FC<MainHeaderProps> = ({
@@ -186,8 +209,10 @@ export const MainHeader: FC<MainHeaderProps> = ({
   addMenuProps,
   accessButtonsProps,
   avatarMenuProps,
+  search,
   ...props
 }) => {
+  const { hideSearchbox } = useContext(MainHeaderContext)
   const [searchText, setSearchText] = useState('')
 
   const { logo, smallLogo, url } = headerTitleProps
@@ -203,20 +228,21 @@ export const MainHeader: FC<MainHeaderProps> = ({
   }, [leftItems, logo, smallLogo, url])
 
   const updatedCenterItems = useMemo(() => {
-    return [
-      {
-        Item: () => (
-          <Searchbox
-            placeholder="Search for open education content"
-            searchText={searchText}
-            setSearchText={setSearchText}
-          />
-        ),
-        key: 'searchbox',
-      },
-      ...(centerItems ?? []),
-    ]
-  }, [centerItems, searchText])
+    const searchbox = hideSearchbox
+      ? undefined
+      : {
+          Item: () => (
+            <Searchbox
+              placeholder="Search for open education content"
+              searchText={searchText}
+              setSearchText={setSearchText}
+              search={search}
+            />
+          ),
+          key: 'searchbox',
+        }
+    return [searchbox, ...(centerItems ?? [])].filter((item): item is AddonItem => !!item)
+  }, [centerItems, searchText, search, hideSearchbox])
 
   const updatedRightItems: AddonItem[] = useMemo(() => {
     return [
