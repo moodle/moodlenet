@@ -120,7 +120,7 @@ function getRpcArgs(req: Request): RpcArgs {
 
 function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart' | 'none'] {
   const contentTypeHeader = req.headers['content-type']
-  console.log({ HHH: req.headers })
+  // console.log({ HHH: req.headers })
   const type = !contentTypeHeader
     ? 'none'
     : /^application\/json/i.test(contentTypeHeader)

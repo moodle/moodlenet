@@ -1,6 +1,5 @@
 import { getCurrentWebUserProfile } from '@moodlenet/react-app/server'
 import { OpenIdExposeType } from '../common/expose-def.mjs'
-import { openIdProvider } from './oidc/provider.mjs'
 import { shell } from './shell.mjs'
 
 export const expose = await shell.expose<OpenIdExposeType>({
@@ -8,6 +7,7 @@ export const expose = await shell.expose<OpenIdExposeType>({
     'webapp/getInteractionDetails': {
       guard: () => void 0,
       async fn({ interactionId }) {
+        const { openIdProvider } = await import('./oidc/provider.mjs')
         const currentWebUserProfile = await getCurrentWebUserProfile()
         if (!currentWebUserProfile) {
           return
