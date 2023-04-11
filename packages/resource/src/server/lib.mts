@@ -71,3 +71,32 @@ export async function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcF
   const myRpcBaseUrl = await shell.call(getMyRpcBaseUrl)()
   return `${myRpcBaseUrl}${resourcePath}`
 }
+
+export async function setResourceContent(_key: string, resourceContent: RpcFile | string) {
+  const content =
+    typeof resourceContent === 'string'
+      ? resourceContent
+      : await storeResourceFile(_key, resourceContent)
+
+  const isUrlContent = typeof content === 'string'
+
+  const contentProp: ResourceDataType['content'] = isUrlContent
+    ? {
+        kind: 'link',
+        url: content,
+      }
+    : {
+        kind: 'file',
+        fsItem: content,
+      }
+
+  const patchedDoc = await patchResource(_key, { content: contentProp })
+  if (!patchedDoc) {
+    await delResourceFile(_key)
+    return
+  }
+  const contentUrl = await (isUrlContent
+    ? content
+    : getResourceFileUrl({ _key, rpcFile: content.rpcFile }))
+  return { patchedDoc, contentUrl }
+}

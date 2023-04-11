@@ -1,6 +1,6 @@
 import { shell } from './shell.mjs'
 
-import { RpcFile, RpcStatus } from '@moodlenet/core'
+import { RpcFile, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
@@ -19,9 +19,8 @@ import {
   getResourceLogicalFilename,
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
-  storeResourceFile,
+  setResourceContent,
 } from './lib.mjs'
-import { ResourceDataType } from './types.mjs'
 
 export const expose = await shell.expose<ResourceExposeType>({
   rpc: {
@@ -100,6 +99,45 @@ export const expose = await shell.expose<ResourceExposeType>({
         return
       },
     },
+    'basic/v1/create': {
+      guard: () => void 0,
+      fn: async ({ name, description, resource }) => {
+        const resourceContent = [resource].flat()[0]
+        if (!resourceContent) {
+          throw RpcStatus('Bad Request')
+        }
+
+        const createResult = await createResource({
+          description,
+          title: name,
+          content: null,
+          image: null,
+        })
+        if (!createResult) {
+          throw RpcStatus('Unauthorized')
+        }
+
+        const setResourceResult = await setResourceContent(createResult._key, resourceContent)
+
+        if (!setResourceResult) {
+          await delResource(createResult._key)
+          throw RpcStatus('Unauthorized')
+        }
+        setRpcStatusCode('Created')
+        return {
+          _key: createResult._key,
+          description: createResult.description,
+          homepage: getWebappUrl(getResourceHomePageRoutePath({ _key: createResult._key })),
+          name: createResult.title,
+          url: setResourceResult.contentUrl,
+        }
+      },
+      bodyWithFiles: {
+        fields: {
+          '.resource': 1,
+        },
+      },
+    },
     'webapp/create': {
       guard: () => void 0,
       fn: async () => {
@@ -163,36 +201,16 @@ export const expose = await shell.expose<ResourceExposeType>({
         { content: [uploadedContent] }: { content: [RpcFile | string] },
         { _key }: { _key: string },
       ) {
-        const got = await getResource(_key, { projectAccess: ['u'] })
+        // const got = await getResource(_key, { projectAccess: ['u'] })
 
-        if (!got?.access.u) {
+        // if (!got?.access.u) {
+        //   throw RpcStatus('Unauthorized')
+        // }
+        const storeContentResult = await setResourceContent(_key, uploadedContent)
+        if (!storeContentResult) {
           throw RpcStatus('Unauthorized')
         }
-
-        const content =
-          typeof uploadedContent === 'string'
-            ? uploadedContent
-            : await storeResourceFile(_key, uploadedContent)
-
-        const isUrlContent = typeof content === 'string'
-
-        const contentProp: ResourceDataType['content'] = isUrlContent
-          ? {
-              kind: 'link',
-              url: content,
-            }
-          : {
-              kind: 'file',
-              fsItem: content,
-            }
-
-        await patchResource(_key, { content: contentProp })
-
-        const contentUrl = isUrlContent
-          ? content
-          : getResourceFileUrl({ _key, rpcFile: content.rpcFile })
-
-        return contentUrl
+        return storeContentResult.contentUrl
       },
       bodyWithFiles: {
         fields: {
