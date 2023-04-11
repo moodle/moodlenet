@@ -3,6 +3,7 @@ import { jwk } from '@moodlenet/crypto/server'
 import { getProfileRecord } from '@moodlenet/react-app/server'
 import Provider, { Account, Configuration } from 'oidc-provider'
 import { ArangoAdapter } from './arango-adapter.mjs'
+import { getPkgScopes } from './registries.mjs'
 export const ___DEV_INTERACTIONS_ENABLED = false
 
 export const providerConfig = await getProviderConfig()
@@ -30,6 +31,8 @@ export async function setupDiscoveryProvider() {
 }
 
 function getProviderConfig() {
+  const registeredScopes = getPkgScopes().map(({ scope }) => scope)
+  // console.log({ registeredScopes })
   const config: Configuration = {
     adapter: ArangoAdapter,
     ttl: {
@@ -46,14 +49,14 @@ function getProviderConfig() {
     },
     jwks: { keys: [jwk] },
     // ... see the available options in Configuration options section
-    clients: [
-      {
-        client_id: 'clid',
-        client_secret: 'secret',
-        redirect_uris: ['http://dev-oauth-cli.com:5000/oauth2/redirect'],
-        // + other client properties
-      },
-    ],
+    // clients: [
+    //   {
+    //     client_id: 'clid',
+    //     client_secret: 'secret',
+    //     redirect_uris: ['http://dev-oauth-cli.com:5000/oauth2/redirect'],
+    //     // + other client properties
+    //   },
+    // ],
     claims: {
       openid: ['scope', 'isAdmin', 'webUserKey', 'accountId', 'exp', 'iss', 'aud'],
     },
@@ -85,7 +88,7 @@ function getProviderConfig() {
       }
       return account
     },
-    scopes: ['openid' /* , 'full-user' */],
+    scopes: registeredScopes, //['@moodlenet/ed-resource:write.own' /* , 'full-user' */],
     // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
     cookies: {
       names: {
@@ -108,8 +111,13 @@ function getProviderConfig() {
 
     features: {
       revocation: { enabled: true },
+      registrationManagement: {
+        enabled: true,
+        issueRegistrationAccessToken: true,
+        rotateRegistrationAccessToken: true,
+      },
       registration: { enabled: true },
-      // clientCredentials: { enabled: true },
+      clientCredentials: { enabled: true },
       // introspection: { enabled: true },
       devInteractions: { enabled: ___DEV_INTERACTIONS_ENABLED },
       deviceFlow: { enabled: true },

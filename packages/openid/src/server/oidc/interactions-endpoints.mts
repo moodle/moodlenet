@@ -1,16 +1,10 @@
-import {
-  ErrorRequestHandler,
-  mountApp,
-  RequestHandler,
-  urlencoded,
-} from '@moodlenet/http-server/server'
+import { mountApp, RequestHandler, urlencoded } from '@moodlenet/http-server/server'
 import { getCurrentWebUserProfile } from '@moodlenet/react-app/server'
 // import Account from './account.mjs'
 
-import assert, { AssertionError } from 'assert'
+import assert from 'assert'
 import { InteractionResults } from 'oidc-provider'
 import { shell } from '../shell.mjs'
-import { openIdProvider } from './provider.mjs'
 const setNoCache: RequestHandler = (_req, res, next) => {
   res.set('cache-control', 'no-store')
   next()
@@ -18,11 +12,12 @@ const setNoCache: RequestHandler = (_req, res, next) => {
 const body = urlencoded({ extended: false })
 // https://github.com/hyunrealshadow/oidc-provider/blob/dc6bde1e45875d69b7dfd53ef5abf79d0634bc0a/example/routes/express.js
 shell.call(mountApp)({
-  getApp(express) {
+  async getApp(express) {
+    const { openIdProvider } = await import('./provider.mjs')
     const app = express()
 
     app.post('/interaction/:uid/login', setNoCache, body, async (req, res, next) => {
-      console.log('-/interaction/:uid/login LOGIN   ', req.params.uid)
+      // console.log('-/interaction/:uid/login LOGIN   ', req.params.uid)
       try {
         const currentWebUserProfile = await getCurrentWebUserProfile()
         assert(currentWebUserProfile, 'not authenticated')
@@ -42,13 +37,13 @@ shell.call(mountApp)({
           mergeWithLastSubmission: false,
         })
       } catch (err) {
-        console.log('-/interaction/:uid/login LOGIN ERR', err)
+        // console.log('-/interaction/:uid/login LOGIN ERR', err)
         next(err)
       }
     })
 
     app.post('/interaction/:uid/confirm', setNoCache, body, async (req, res, next) => {
-      console.log('-/interaction/:uid/confirm CONFIRM   ', req.params.uid)
+      // console.log('-/interaction/:uid/confirm CONFIRM   ', req.params.uid)
       try {
         const interactionDetails = await openIdProvider.interactionDetails(req, res)
         const {
@@ -102,16 +97,16 @@ shell.call(mountApp)({
           mergeWithLastSubmission: true,
         })
       } catch (err) {
-        console.log('-/interaction/:uid/confirm CONFIRM ERR', err)
+        // console.log('-/interaction/:uid/confirm CONFIRM ERR', err)
         next(err)
       }
     })
 
     app.get('/interaction/:uid/abort', setNoCache, async (req, res, next) => {
-      console.log('-/interaction/:uid/abort ABORT   ', req.params.uid)
-      const details = await openIdProvider.interactionDetails(req, res)
+      // console.log('-/interaction/:uid/abort ABORT   ', req.params.uid)
+      // const details = await openIdProvider.interactionDetails(req, res)
 
-      console.log('-/interaction/:uid/abort ABORT   ', details)
+      // console.log('-/interaction/:uid/abort ABORT   ', details)
       try {
         const result = {
           error: 'access_denied',
@@ -125,14 +120,14 @@ shell.call(mountApp)({
       }
     })
 
-    const ErrorRequestHandler: ErrorRequestHandler = (err, req, _res, next) => {
-      if (err instanceof AssertionError) {
-        console.log('OIDC interaction-endpoints Error Handler', req.url, err)
-        // handle interaction expired / session not found error
-      }
-      next(err)
-    }
-    app.use(ErrorRequestHandler)
+    // const ErrorRequestHandler: ErrorRequestHandler = (err, _req, _res, next) => {
+    //   if (err instanceof AssertionError) {
+    //     // console.log('OIDC interaction-endpoints Error Handler', req.url, err)
+    //     // handle interaction expired / session not found error
+    //   }
+    //   next(err)
+    // }
+    // app.use(ErrorRequestHandler)
 
     return app
   },

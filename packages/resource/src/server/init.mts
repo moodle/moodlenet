@@ -1,3 +1,4 @@
+import { registerScopes } from '@moodlenet/openid/server'
 import { plugin } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import {
@@ -11,6 +12,10 @@ import type { MyWebDeps } from '../common/types.mjs'
 import { expose as me } from './expose.mjs'
 import { shell } from './shell.mjs'
 import { ResourceDataType } from './types.mjs'
+
+await shell.call(registerScopes)({
+  'write.own': { description: 'create and update owned resources' },
+})
 
 shell.call(plugin)<MyWebDeps>({
   mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],

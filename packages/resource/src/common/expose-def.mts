@@ -2,6 +2,7 @@ import { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import { ResourceFormRpc, ResourceRpc } from './types.mjs'
 export type ResourceExposeType = PkgExposeDef<{
   rpc: {
+    // WEBAPP specific
     'webapp/set-is-published/:_key'(
       body: { publish: boolean },
       params: { _key: string },
@@ -18,9 +19,21 @@ export type ResourceExposeType = PkgExposeDef<{
       body: { content: [RpcFile | string] },
       params: { _key: string },
     ): Promise<string>
+    // OTHER
     'dl/resource/:_key/:filename'(
       body: null,
       params: { _key: string; filename: string },
     ): Promise<RpcFile>
+    'basic/v1/create'(body: {
+      name: string
+      description: string
+      resource: string | [RpcFile]
+    }): Promise<{
+      _key: string
+      name: string
+      description: string
+      url: string
+      homepage: string
+    }>
   }
 }>
