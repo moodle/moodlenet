@@ -32,11 +32,11 @@ export type CollectionProps = {
   mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
 
-  wideColumnItems?: AddonItem[]
-  mainColumnItems?: AddonItem[]
-  sideColumnItems?: AddonItem[]
-  moreButtonItems?: AddonItem[]
-  extraDetailsItems?: AddonItem[]
+  wideColumnItems: AddonItem[]
+  mainColumnItems: AddonItem[]
+  sideColumnItems: AddonItem[]
+  moreButtonItems: AddonItem[]
+  extraDetailsItems: AddonItem[]
 
   data: CollectionDataProps
   collectionForm: CollectionFormProps
@@ -96,6 +96,7 @@ export const Collection: FC<CollectionProps> = ({
 
   const checkFormAndPublish = () => {
     if (form.isValid) {
+      console.log('submit etto ')
       form.submitForm()
       setShouldShowErrors(false)
       publish()

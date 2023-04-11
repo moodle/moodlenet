@@ -23,45 +23,43 @@ type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
   const [resource, setResource] = useState<ResourceProps | null>()
-  const [saved, setSaved] = useState<SaveState>({ form: false, image: false, content: false })
+  const [saved] = useState<SaveState>({ form: false, image: false, content: false })
 
   useEffect(() => {
     rpcCaller.get(resourceKey).then(res => setResource(res))
   }, [resourceKey, rpcCaller, setResource])
 
   const actions = useMemo<ResourceActions>(() => {
-    const setterSave = (key: keyof SaveState, val: boolean) => setSaved({ ...saved, [key]: val })
-    const updateResource = <T,>(state: keyof SaveState, key: string, val: T): T => (
-      resource && setResource({ ...resource, [key]: val }), setterSave(state, false), val
+    // const setterSave = (key: keyof SaveState, val: boolean) => setSaved({ ...saved, [key]: val })
+    const { edit: editRpc, setImage, setIsPublished, setContent, _delete } = rpcCaller
+    const edit = debounce(
+      (res: ResourceFormProps) => editRpc(resourceKey, res).then(() => console.log('debouce', res)),
+      1000,
+    )
+    const updateResource = <T,>(key: string, val: T): T => (
+      resource && setResource({ ...resource, [key]: val }), val
     )
     const updateData =
-      <T,>(state: keyof SaveState, key: string) =>
-      (val: T) => (
-        !resource ? '' : updateResource(state, 'data', { ...resource.data, [key]: val }), val
-      )
+      <T,>(key: string) =>
+      (val: T) => (!resource ? '' : updateResource('data', { ...resource.data, [key]: val }), val)
 
-    const { edit, setImage, setIsPublished, setContent, _delete } = rpcCaller // toggleBookmark, toggleLike,
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
-        setterSave('form', true)
-        debounce(() =>
-          edit(resourceKey, res).then(form => updateResource('form', 'resourceForm', form)),
-        )
+        console.log('edit xxx')
+        edit(res) // .then(form => updateResource('form', 'resourceForm', form)),
       },
       async setImage(file: File) {
-        setterSave('image', true)
-        return setImage(resourceKey, file).then(updateData('image', 'imageUrl'))
+        return await setImage(resourceKey, file).then(updateData('imageUrl'))
       },
       setContent(content: File | string) {
-        setterSave('content', true)
-        setContent(resourceKey, content).then(updateData('content', 'contentUrl'))
+        setContent(resourceKey, content).then(updateData('contentUrl'))
       },
       publish: () => setIsPublished(resourceKey, true),
       unpublish: () => setIsPublished(resourceKey, false),
       deleteResource: () => _delete(resourceKey),
     }
     return resourceActions
-  }, [resource, resourceKey, rpcCaller, saved])
+  }, [resource, resourceKey, rpcCaller])
 
   return useMemo<ResourceCommonProps | null>(
     () => (!resource ? null : { actions, props: resource }),

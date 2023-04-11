@@ -6,7 +6,7 @@ import { expose as me } from '../server/expose.mjs'
 export type MyWebDeps = {
   me: typeof me
 }
-
+export type SaveState = { form: boolean; image: boolean }
 export type MyPkgContext = PkgContextT<MyWebDeps>
 export type MainContextCollection = MyPkgContext & {
   rpcCaller: RpcCaller
@@ -94,7 +94,7 @@ export type CollectionActions = {
 export type CollectionMainProps = {
   actions: CollectionActions
   props: CollectionProps
-  saveState: { data: boolean; image: boolean }
+  saveState: { form: boolean; image: boolean }
 }
 
 export type CollectionCardData = { collectionHref: Href } & Pick<
