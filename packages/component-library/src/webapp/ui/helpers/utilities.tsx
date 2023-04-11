@@ -1,7 +1,9 @@
 import assert from 'assert'
-import { useEffect, useMemo, useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { AssetInfo } from '../../../common/types.mjs'
+import { getYoutubeEmbed, getYoutubeThumbnail } from '../../../ui.mjs'
 import { ContentBackupImages } from '../assets/data/images.js'
+import { getVimeoEmbed, getVimeoThumbnail } from '../components/molecules/embeds/Vimeo/Vimeo.js'
 
 export const elementFullyInViewPort = (
   el: Element,
@@ -129,4 +131,37 @@ export const useImageCredits = (
       </div>
     )
   )
+}
+
+export type EmbedType = ReactElement | null
+export type ThumbnailType = string | null
+
+export const getPreviewFromUrl = (url: string): EmbedType => {
+  const domain = getDomainUrl(url)
+  switch (domain) {
+    case 'youtube.com':
+    case 'youto.be':
+      return getYoutubeEmbed(url)
+    case 'vimeo.com':
+      return getVimeoEmbed(url)
+    default:
+      return null
+  }
+}
+
+export const getThumbnailFromUrl = (url: string): ThumbnailType => {
+  const domain = getDomainUrl(url)
+  switch (domain) {
+    case 'youtube.com':
+    case 'youto.be':
+      return getYoutubeThumbnail(url)
+    case 'vimeo.com':
+      return getVimeoThumbnail(url)
+    default:
+      return null
+  }
+}
+
+export const getDomainUrl = (url: string): string => {
+  return new URL(url).hostname.replace('www.', '')
 }

@@ -36,8 +36,7 @@
     "@moodlenet/react-app": "^0.2.0",
     "@moodlenet/openid": "^0.2.0",
     "@moodlenet/simple-file-store": "^0.2.0",
-    "@moodlenet/system-entities": "^0.2.0",
-    "@moodlenet/simple-file-store": "^0.2.0"
+    "@moodlenet/system-entities": "^0.2.0"
   },
   "devDependencies": {
     "@lingui/macro": "^3.14.0",

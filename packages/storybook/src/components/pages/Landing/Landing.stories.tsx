@@ -7,6 +7,7 @@ import {
   LandingProps,
 } from '@moodlenet/react-app/ui'
 import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/resource/ui'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   MainLayoutLoggedInStoryProps,
@@ -32,6 +33,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   signUpHref: href('Pages/Access/Signup'),
   newResourceHref: href('Pages/Resource/New'),
   newCollectionHref: href('Pages/Collection/New'),
+  search: action('search'),
   mainColumnItems: [
     {
       Item: () => (
