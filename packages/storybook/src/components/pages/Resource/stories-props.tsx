@@ -158,7 +158,9 @@ export const useResourceStoryProps = (
   const data: ResourceDataProps = {
     resourceId: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
-    contentUrl: 'https://www.youtube.com/watch?v=uKt3mdu3Y2s&ab_channel=LetsTryThis%21',
+    contentUrl: 'https://moodle.net/profile/d488bc9d51ef-moodle-academy',
+    // contentUrl: 'https://www.youtube.com/watch?v=dZNC5kIvM00&ab_channel=Moodle',
+    // contentUrl: 'https://vimeo.com/204467192',
     imageUrl:
       'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
     downloadFilename: 'resource.pdf',

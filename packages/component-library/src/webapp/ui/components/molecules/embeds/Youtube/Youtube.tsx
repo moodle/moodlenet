@@ -1,4 +1,5 @@
-import { FC, ReactElement, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { EmbedType, ThumbnailType } from '../../../../helpers/utilities.js'
 import './Youtube.scss'
 
 export const getYoutubeId = (url: string) => {
@@ -7,12 +8,12 @@ export const getYoutubeId = (url: string) => {
   return match && match[7] && match[7].length == 11 ? match[7] : false
 }
 
-export const getYoutubeEmbed = (url: string): ReactElement | null => {
+export const getYoutubeEmbed = (url: string): EmbedType => {
   const id = getYoutubeId(url)
   return id ? <YoutubeEmbed id={id} /> : null
 }
 
-export const getYoutubeThumbnail = (url: string): string | null => {
+export const getYoutubeThumbnail = (url: string): ThumbnailType => {
   const id = getYoutubeId(url)
   return id ? `https://img.youtube.com/vi/${id}/0.jpg` : null
 }
@@ -20,8 +21,6 @@ export const getYoutubeThumbnail = (url: string): string | null => {
 type YoutubeType = {
   height: number
   width: number
-  thumbnail_height: number
-  thumbnail_width: number
 }
 
 export const YoutubeEmbed: FC<{ id: string }> = ({ id }) => {
@@ -46,7 +45,7 @@ export const YoutubeEmbed: FC<{ id: string }> = ({ id }) => {
     <iframe
       className="youtube-embed"
       src={`https://www.youtube.com/embed/${id}`}
-      style={{ aspectRatio: `${data?.width ?? 16}/${data?.height ?? 9}`, borderRadius: '10px' }}
+      style={{ aspectRatio: `${data?.width ?? 16}/${data?.height ?? 9}` }}
       title="YouTube video player"
       allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;"
       allowFullScreen
