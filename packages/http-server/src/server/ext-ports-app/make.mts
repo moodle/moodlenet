@@ -1,6 +1,7 @@
 import {
+  getCurrentRpcStatusCode,
   getMaybeRpcFileReadable,
-  getRpcStatusCode,
+  instanceDomain,
   isRpcStatusType,
   readableRpcFile,
   RpcArgs,
@@ -13,9 +14,13 @@ import multer, { Field } from 'multer'
 import { Readable } from 'stream'
 import { format } from 'util'
 import { HttpRpcResponse } from '../../common/pub-lib.mjs'
-import { httpContextMW } from '../lib.mjs'
+import { getMiddlewares } from '../lib.mjs'
 import { shell } from '../shell.mjs'
 
+export async function getMyRpcBaseUrl() {
+  const { pkgId } = shell.assertCallInitiator()
+  return `${instanceDomain}/.pkg/${pkgId.name}/`
+}
 export function makeExtPortsApp() {
   const exposes = shell.getExposes()
   const srvApp = express()
@@ -42,7 +47,7 @@ export function makeExtPortsApp() {
 
       const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
 
-      pkgApp.all(`/${rpcRoute}`, multerMw, httpContextMW, async (httpReq, httpResp) => {
+      pkgApp.all(`/${rpcRoute}`, multerMw, ...getMiddlewares(), async (httpReq, httpResp) => {
         if (!['get', 'post'].includes(httpReq.method.toLowerCase())) {
           httpResp.status(405).send('unsupported ${req.method} method for rpc')
           return
@@ -71,7 +76,9 @@ export function makeExtPortsApp() {
           .fn(...rpcArgs)
           .then(async rpcResponse => {
             const mReadable = await getMaybeRpcFileReadable(rpcResponse)
-            const { rpcStatusCode: statusCode } = getRpcStatusCode() ?? { rpcStatusCode: 200 }
+            const { rpcStatusCode: statusCode } = getCurrentRpcStatusCode() ?? {
+              rpcStatusCode: 200,
+            }
             httpResp.status(statusCode)
             if (mReadable) {
               const rpcFile: RpcFile = rpcResponse
@@ -90,7 +97,6 @@ export function makeExtPortsApp() {
             }
           })
           .catch(err => {
-            console.log({ HTTP_RPC_ERROR: err })
             const { rpcStatusCode, payload } = isRpcStatusType(err)
               ? err
               : {
@@ -114,7 +120,7 @@ function getRpcArgs(req: Request): RpcArgs {
 
 function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart' | 'none'] {
   const contentTypeHeader = req.headers['content-type']
-
+  // console.log({ HHH: req.headers })
   const type = !contentTypeHeader
     ? 'none'
     : /^application\/json/i.test(contentTypeHeader)
@@ -190,10 +196,10 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
         }, bodyAcc)
 
         return bodyAcc
-      }, JSON.parse(req.body['.']))
+      }, JSON.parse(req.body['.'] ?? '{}'))
 
     return [body, type]
   }
 
-  throw new Error('Unsupported contentType: ${contentTypeHeader}')
+  throw new Error(`Unsupported contentType: ${contentTypeHeader}`)
 }

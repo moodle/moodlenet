@@ -9,14 +9,16 @@ import {
 } from 'react'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import { elementFullyInViewPort } from '../../../helpers/utilities.js'
+import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
 import './Searchbox.scss'
 
 export type SearchboxProps = {
   searchText: string
   placeholder: string
-  size?: 'small' | 'big'
   setSearchText(text: string): unknown
+  search(text: string): unknown
   setIsSearchboxInViewport?: Dispatch<SetStateAction<boolean>>
+  size?: 'small' | 'big'
   marginTop?: number
 }
 
@@ -25,6 +27,7 @@ export const Searchbox: FC<SearchboxProps> = ({
   placeholder,
   size,
   marginTop,
+  search,
   setSearchText,
   setIsSearchboxInViewport,
 }) => {
@@ -64,7 +67,15 @@ export const Searchbox: FC<SearchboxProps> = ({
         // defaultValue={''}
         defaultValue={searchText}
         onChange={setSearchTextCB}
+        onKeyDown={e => e.code === 'Enter' && search(searchText)}
       />
+      <PrimaryButton
+        onClick={() => search(searchText)}
+        // {...(size === 'small' ? { color: 'blue' } : {})}
+      >
+        <span>Search</span>
+        <SearchIcon />
+      </PrimaryButton>
     </div>
   )
 }

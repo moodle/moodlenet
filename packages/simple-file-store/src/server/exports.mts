@@ -2,9 +2,10 @@ import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { assertRpcFileReadable, readableRpcFile, RpcFile, Shell } from '@moodlenet/core'
 import { mountApp } from '@moodlenet/http-server/server'
 import assert from 'assert'
-import { mkdir, open, readFile, writeFile } from 'fs/promises'
+import { mkdir, open, readdir, readFile, rmdir, stat, writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
+import sanitizeFilename from 'sanitize-filename'
 import { DbRecord, DbRecordData, FsItem, LsOpts } from './types.mjs'
 export * from './types.mjs'
 export const BASE_COLLECTION_NAME = 'Moodlenet_simple_file_store'
@@ -115,33 +116,35 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   }
 
   async function store(logicalName: string, _rpcFile: RpcFile): Promise<FsItem> {
+    const rpcFileReadable = await assertRpcFileReadable(_rpcFile)
     await del(logicalName)
-    const fsFileRelativePath = newFsFileRelativePath(_rpcFile.name)
+    const sanitizedFileName = getSanitizedFileName(_rpcFile.name)
+
+    const fsFileRelativePath = newFsFileRelativePath(sanitizedFileName)
     const storeInDir = resolve(storeBaseFsFolder, ...fsFileRelativePath.slice(0, -1))
 
     await mkdir(storeInDir, { recursive: true })
 
     const fsFileAbsolutePath = resolve(storeBaseFsFolder, ...fsFileRelativePath)
-    const rpcFileReadable = await assertRpcFileReadable(_rpcFile)
 
     const logicalPath = getLogicalPath(logicalName)
     const directAccessId = fsFileRelativePath.join('/')
-    const rpcFile: RpcFile = {
-      name: _rpcFile.name,
-      size: _rpcFile.size,
-      type: _rpcFile.type,
-    }
+
+    await writeFile(fsFileAbsolutePath, rpcFileReadable)
+    const { size } = await stat(fsFileAbsolutePath)
 
     const dbRecordData: DbRecordData = {
       logicalName,
-      rpcFile,
+      rpcFile: {
+        ..._rpcFile,
+        name: sanitizedFileName,
+        size,
+      },
       logicalPath,
       directAccessId,
       logicalPathLength: logicalPath.length,
       created: new Date().toISOString(),
     }
-
-    await writeFile(`${fsFileAbsolutePath}`, rpcFileReadable)
 
     // // console.log('create', { partRawDbRecord })
     const { new: newRawDbRecord } = await BucketCollection.save(dbRecordData, {
@@ -152,16 +155,17 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     })
     assert(newRawDbRecord, `couldn't store in DB, shouldn't happen !`)
 
-    await writeFile(rpcFileName(fsFileAbsolutePath), JSON.stringify(newRawDbRecord.rpcFile), {
+    const newFsItem = getFsItem(newRawDbRecord)
+
+    await writeFile(itemInfoFileName(fsFileAbsolutePath), JSON.stringify(newFsItem, null, 2), {
       encoding: 'utf-8',
     })
 
-    const newFsItem = getFsItem(newRawDbRecord)
     return newFsItem
   }
 
-  function rpcFileName(filename: string) {
-    return `${filename}_rpc_file`
+  function itemInfoFileName(filename: string) {
+    return `${filename}_info.json`
   }
 
   async function del(logicalName: string): Promise<null | FsItem> {
@@ -183,12 +187,26 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     const rawDbRecord = maybeRawDbRecord
 
     const fsFileAbsolutePath = getFsAbsolutePathByDirectAccessId(rawDbRecord.directAccessId)
+    const fsFileMetaAbsolutePath = itemInfoFileName(fsFileAbsolutePath)
     console.log(`del ${logicalName}`, { maybeRawDbRecord, fsFileAbsolutePath })
 
     await Promise.all([
-      rimraf(rpcFileName(fsFileAbsolutePath)),
-      rimraf(fsFileAbsolutePath, { maxRetries: 10 }),
+      rimraf(fsFileMetaAbsolutePath, { maxRetries: 3 }).catch(() => false),
+      rimraf(fsFileAbsolutePath, { maxRetries: 3 }).catch(() => false),
     ])
+
+    let _curr_dir = fsFileAbsolutePath
+    do {
+      _curr_dir = resolve(_curr_dir, '..')
+      const files = await readdir(_curr_dir).catch(() => [])
+      if (files.length) {
+        break
+      }
+      const doBreak = await rmdir(_curr_dir).catch(() => true)
+      if (doBreak) {
+        break
+      }
+    } while (_curr_dir !== storeBaseFsFolder)
 
     return getNonReadableFsItem(rawDbRecord)
   }
@@ -220,26 +238,14 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   async function mountStaticHttpServer(path: string) {
     const { baseUrl } = await mountApp({
       getApp(express) {
-        console.log(`getApp [${path}] for ${shell.myId.name}`)
-        const basePathApp = express()
         const app = express()
-        app.use((req, _res, next) => {
-          console.log({ storeBaseFsFolder, path, url: req.url })
-          next()
-        })
-        // basePathApp.use((req, _res, next) => {
-        //   console.log(`basePathApp[${path}] for ${shell.myId.name} req:${req.url}`)
-        //   next()
-        // })
-        basePathApp.use(path, app)
-        // app.use(path, express.static(storeBaseFsFolder, {}))
-        app.use(path, express.static(storeBaseFsFolder, {}))
-        return app //basePathApp
+        app.use(`/${path}`, express.static(storeBaseFsFolder, {}))
+        return app
       },
     })
     return {
       getFileUrl({ directAccessId }: { directAccessId: string }) {
-        return `${baseUrl}${path}/${directAccessId}`
+        return `${baseUrl}/${path}/${directAccessId}`
       },
     }
   }
@@ -251,9 +257,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   }
 }
 
-function newFsFileRelativePath(originalFilename: string) {
-  const origExt = originalFilename.split('.').pop()
-  const mDotExt = origExt ? `.${origExt}` : ''
+function newFsFileRelativePath(filename: string) {
   const now = new Date()
   return [
     String(now.getFullYear()),
@@ -262,8 +266,24 @@ function newFsFileRelativePath(originalFilename: string) {
     String(now.getUTCHours()).padStart(2, '0'),
     String(now.getMinutes()).padStart(2, '0'),
     String(now.getSeconds()).padStart(2, '0'),
-    String(Math.random()).substring(2, 20) + mDotExt,
+    filename,
   ]
+}
+function getSanitizedFileName(originalFilename: string) {
+  const sanitized = sanitizeFilename(originalFilename)
+    .normalize('NFKD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-z0-9._-]/gi, '_')
+    .replace(/^[_-]+/, '')
+    .replace(/[_-]+$/, '')
+    .replace(/[_-]+/g, '_')
+
+  const rnd = String(Math.random()).substring(2, 5)
+  return `${rnd}_${sanitized}`
+  // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
+  // const origExt = originalFilename.split('.').pop()
+  // const mDotExt = origExt ? `.${origExt}` : ''
+  // String(Math.random()).substring(2, 20) + mDotExt
 }
 
 function getLogicalPath(logicalName: string) {

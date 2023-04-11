@@ -1,3 +1,4 @@
 export { Application, ErrorRequestHandler, RequestHandler, urlencoded } from 'express'
-export { addMiddlewares as addMiddleware, getCurrentHttpCtx, mountApp } from './lib.mjs'
+export { getMyRpcBaseUrl } from './ext-ports-app/make.mjs'
+export { addMiddlewares, getCurrentHttpCtx, mountApp } from './lib.mjs'
 export * from './types.mjs'

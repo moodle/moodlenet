@@ -1,7 +1,6 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
-import { addMiddleware, mountApp } from '@moodlenet/http-server/server'
+import { addMiddlewares, mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
-import { expose as orgExpose } from '@moodlenet/organization/server'
 import {
   EntityCollectionDef,
   EntityUser,
@@ -33,6 +32,12 @@ export const env = getEnv()
 export const kvStore = await kvStoreFactory<KeyValueData>(shell)
 if (!(await kvStore.get('appearanceData', '')).value) {
   await kvStore.set('appearanceData', '', defaultAppearanceData)
+}
+if (!(await kvStore.get('configs', '')).value) {
+  await kvStore.set('configs', '', {
+    webIconSize: [256, 256],
+    webImageSize: [1000, 1000],
+  })
 }
 
 export const { db } = await shell.call(getMyDB)()
@@ -78,11 +83,10 @@ await shell.call(plugin)<MyWebAppDeps>({
   mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
   deps: {
     me: myExpose,
-    organization: orgExpose,
   },
 })
 
-await shell.call(addMiddleware)({
+await shell.call(addMiddlewares)({
   handlers: [
     async (req, _resp, next) => {
       const enteringToken = req.cookies[WEB_USER_SESSION_TOKEN_COOKIE_NAME]
@@ -137,11 +141,15 @@ export const httpApp = await shell.call(mountApp)({
 })
 
 type Env = {
-  noWebappServer?: boolean
+  noWebappServer: boolean
 }
 function getEnv(): Env {
-  const config = shell.config ?? {}
+  const config = shell.config
   //FIXME: validate configs
-  const env: Env = config
+  const env: Env = {
+    noWebappServer: false,
+    ...config,
+  }
+
   return env
 }

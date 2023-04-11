@@ -1,38 +1,39 @@
-import { ResourceFormRpc, ResourceRpc } from '../common.mjs'
 import { shell } from './shell.mjs'
 
-import { RpcFile, RpcStatus } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { RpcFile, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
+import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
+import { ResourceRpc } from '../common.mjs'
+import { ResourceExposeType } from '../common/expose-def.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles, publicFilesHttp, resourceFiles } from './init.mjs'
 import {
   createResource,
   delResource,
+  delResourceFile,
   getImageLogicalFilename,
   getResource,
   getResourceFileUrl,
   getResourceLogicalFilename,
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
-  storeResourceFile,
+  setResourceContent,
 } from './lib.mjs'
-import { ResourceDataType } from './types.mjs'
 
-export const expose = await shell.expose({
+export const expose = await shell.expose<ResourceExposeType>({
   rpc: {
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
-      fn: async ({ publish }: { publish: boolean }, { _key }: { _key: string }) => {
+      fn: async ({ publish }, { _key }) => {
         console.log({ _key, publish })
         //  await setIsPublished(key, publish)
       },
     },
     'webapp/get/:_key': {
       guard: () => void 0,
-      fn: async (_, { _key }: { _key: string }): Promise<ResourceRpc | undefined> => {
+      fn: async (_, { _key }) => {
         const found = await getResource(_key, {
           projectAccess: ['u', 'd'],
           project: {
@@ -47,7 +48,13 @@ export const expose = await shell.expose({
         const imageUrl = found.entity.image
           ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
           : ''
-        return {
+
+        const contentUrl = !found.entity.content
+          ? null
+          : found.entity.content.kind === 'file'
+          ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.fsItem.rpcFile })
+          : found.entity.content.url
+        const resourceRpc: ResourceRpc = {
           contributor: {
             avatarUrl: found.contributor.iconUrl,
             creatorProfileHref: {
@@ -55,14 +62,16 @@ export const expose = await shell.expose({
               ext: false,
             },
             displayName: found.contributor.name,
-            timeSinceCreation:
-              '___________________________________________________________________________________________',
+            timeSinceCreation: found.meta.created,
           },
           resourceForm: { description: found.entity.description, title: found.entity.title },
           data: {
-            contentType: 'file', // -----------------------------------------------
-            contentUrl: '___________________________________________________________',
-            downloadFilename: '___________________________________________________________',
+            contentType: found.entity.content?.kind ?? 'link',
+            contentUrl,
+            downloadFilename:
+              found.entity.content?.kind === 'file'
+                ? found.entity.content.fsItem.rpcFile.name
+                : null,
             resourceId: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
             imageUrl,
@@ -76,14 +85,13 @@ export const expose = await shell.expose({
             isCreator: found.isCreator,
           },
         }
+
+        return resourceRpc
       },
     },
     'webapp/edit/:_key': {
       guard: () => void 0,
-      fn: async (
-        { values }: { values: ResourceFormRpc },
-        { _key }: { _key: string },
-      ): Promise<void> => {
+      fn: async ({ values }, { _key }) => {
         const patchResult = await patchResource(_key, values)
         if (!patchResult) {
           return //throw ?
@@ -91,9 +99,48 @@ export const expose = await shell.expose({
         return
       },
     },
+    'basic/v1/create': {
+      guard: () => void 0,
+      fn: async ({ name, description, resource }) => {
+        const resourceContent = [resource].flat()[0]
+        if (!resourceContent) {
+          throw RpcStatus('Bad Request')
+        }
+
+        const createResult = await createResource({
+          description,
+          title: name,
+          content: null,
+          image: null,
+        })
+        if (!createResult) {
+          throw RpcStatus('Unauthorized')
+        }
+
+        const setResourceResult = await setResourceContent(createResult._key, resourceContent)
+
+        if (!setResourceResult) {
+          await delResource(createResult._key)
+          throw RpcStatus('Unauthorized')
+        }
+        setRpcStatusCode('Created')
+        return {
+          _key: createResult._key,
+          description: createResult.description,
+          homepage: getWebappUrl(getResourceHomePageRoutePath({ _key: createResult._key })),
+          name: createResult.title,
+          url: setResourceResult.contentUrl,
+        }
+      },
+      bodyWithFiles: {
+        fields: {
+          '.resource': 1,
+        },
+      },
+    },
     'webapp/create': {
       guard: () => void 0,
-      fn: async (): Promise<{ _key: string }> => {
+      fn: async () => {
         const createResult = await createResource({
           description: '',
           title: '',
@@ -110,20 +157,32 @@ export const expose = await shell.expose({
     },
     'webapp/delete/:_key': {
       guard: () => void 0,
-      fn: async (_, { _key }: { _key: string }): Promise<void> => {
+      fn: async (_, { _key }) => {
         const delResult = await delResource(_key)
         if (!delResult) {
           return
+        }
+        const imageLogicalFilename = getImageLogicalFilename(_key)
+        await publicFiles.del(imageLogicalFilename)
+        if (delResult.entity.content?.kind === 'file') {
+          await delResourceFile(_key)
         }
         return
       },
     },
     'webapp/upload-image/:_key': {
       guard: () => void 0,
-      async fn({ file: [file] }: { file: [RpcFile] }, { _key }: { _key: string }) {
+      async fn({ file: [uploadedRpcFile] }, { _key }) {
+        const got = await getResource(_key, { projectAccess: ['u'] })
+
+        if (!got?.access.u) {
+          throw RpcStatus('Unauthorized')
+        }
         const imageLogicalFilename = getImageLogicalFilename(_key)
 
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, file)
+        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
+
+        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 
         await patchResource(_key, {
           image: { kind: 'file', directAccessId },
@@ -139,23 +198,19 @@ export const expose = await shell.expose({
     'webapp/upload-content/:_key': {
       guard: () => void 0,
       async fn(
-        { content: [content] }: { content: [RpcFile | string] },
+        { content: [uploadedContent] }: { content: [RpcFile | string] },
         { _key }: { _key: string },
       ) {
-        const isUrlContent = typeof content === 'string'
-        const contentUrl = isUrlContent ? content : getResourceFileUrl({ _key, rpcFile: content })
-        const contentProp: ResourceDataType['content'] = isUrlContent
-          ? {
-              kind: 'url',
-              url: content,
-            }
-          : {
-              kind: 'file',
-              rpcFile: (await storeResourceFile(_key, content)).rpcFile,
-            }
-        await patchResource(_key, { content: contentProp })
+        // const got = await getResource(_key, { projectAccess: ['u'] })
 
-        return contentUrl
+        // if (!got?.access.u) {
+        //   throw RpcStatus('Unauthorized')
+        // }
+        const storeContentResult = await setResourceContent(_key, uploadedContent)
+        if (!storeContentResult) {
+          throw RpcStatus('Unauthorized')
+        }
+        return storeContentResult.contentUrl
       },
       bodyWithFiles: {
         fields: {
