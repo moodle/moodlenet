@@ -1,5 +1,5 @@
-import { ResourceFormProps } from '@moodlenet/resource/common'
-import { Resource, ResourceProps } from '@moodlenet/resource/ui'
+import { ResourceFormProps } from '@moodlenet/ed-resource/common'
+import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useResourceStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
