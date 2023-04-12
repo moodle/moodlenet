@@ -7,4 +7,3 @@ export const ResourcePageRoute: FC = () => {
 
   return <ResourcePageContainer resourceKey={key ?? ''} />
 }
-

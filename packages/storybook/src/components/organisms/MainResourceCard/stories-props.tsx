@@ -10,10 +10,10 @@
 // // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
 // import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-library'
 // // import {
-// // import { Resource, ResourceProps } from '@moodlenet/resource/ui'
+// // import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 // // import { useFormik } from 'formik'
-// import { ResourceFormValues } from '@moodlenet/resource/common'
-// import { MainResourceCard, MainResourceCardProps, Resource } from '@moodlenet/resource/ui'
+// import { ResourceFormValues } from '@moodlenet/ed-resource/common'
+// import { MainResourceCard, MainResourceCardProps, Resource } from '@moodlenet/ed-resource/ui'
 // import { useResourceForm } from 'components/pages/Resource/stories-props.js'
 // const maxUploadSize = 1024 * 1024 * 50
 
