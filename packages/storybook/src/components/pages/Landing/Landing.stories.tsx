@@ -1,4 +1,5 @@
 import { getCollectionsCardStoryProps, LandingCollectionList } from '@moodlenet/collection/ui'
+import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/ed-resource/ui'
 import {
   getProfileCardsStoryProps,
   href,
@@ -6,7 +7,6 @@ import {
   LandingProfileList,
   LandingProps,
 } from '@moodlenet/react-app/ui'
-import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/resource/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {

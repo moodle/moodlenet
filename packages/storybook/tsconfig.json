@@ -23,7 +23,7 @@
   "references": [
     { "path": "./tsconfig.node.json" },
     {
-      "path": "../resource"
+      "path": "../ed-resource"
     }
   ],
   "paths": {

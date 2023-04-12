@@ -1,7 +1,7 @@
 import { getCollectionsCardStoryProps, ProfileCollectionList } from '@moodlenet/collection/ui'
+import { getResourcesCardStoryProps, ProfileResourceList } from '@moodlenet/ed-resource/ui'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { href, OverallCard, Profile } from '@moodlenet/react-app/ui'
-import { getResourcesCardStoryProps, ProfileResourceList } from '@moodlenet/resource/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useProfileStoryProps } from './stories-props.js'
