@@ -62,7 +62,7 @@ export function getResourceLogicalFilename(resourceKey: string) {
   return `resource-file/${resourceKey}`
 }
 
-export const RESOURCE_DOWNLOAD_ENDPOINT = 'dl/resource/:_key/:filename'
+export const RESOURCE_DOWNLOAD_ENDPOINT = 'dl/ed-resource/:_key/:filename'
 export async function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcFile: RpcFile }) {
   const resourcePath = RESOURCE_DOWNLOAD_ENDPOINT.replace(':_key', _key).replace(
     ':filename',
