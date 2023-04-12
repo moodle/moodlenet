@@ -7,7 +7,7 @@ import {
   ResourceCardAccess,
   ResourceCardActions,
   ResourceCardDataProps,
-  ResourceCardState
+  ResourceCardState,
 } from '../../../../common.mjs'
 import ResourceCard, { ResourceCardProps } from './ResourceCard.js'
 
