@@ -13,7 +13,7 @@ type myProps = { collectionKey: string }
 export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null => {
   const { rpcCaller } = useContext(MainContext)
   const [collection, setCollection] = useState<CollectionProps | null>()
-  const [saved, setSaved] = useState({ form: false, image: false })
+  const [saveState, setSaved] = useState({ form: false, image: false })
 
   useEffect(() => {
     rpcCaller.get(collectionKey).then(data => setCollection(data))
@@ -64,11 +64,14 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
   }, [collection, collectionKey, rpcCaller, setterSave])
 
   useEffect(() => {
-    console.log({ saved: JSON.stringify(saved) })
-  }, [saved])
+    console.log({ saved: JSON.stringify(saveState) })
+  }, [saveState])
 
   return useMemo<CollectionMainProps | null>(
-    () => (!collection ? null : { actions, props: collection, saveState: saved }),
-    [actions, collection, saved],
+    () =>
+      !collection
+        ? null
+        : { actions, props: collection, saveState, isSaving: saveState.form || saveState.image },
+    [actions, collection, saveState],
   )
 }
