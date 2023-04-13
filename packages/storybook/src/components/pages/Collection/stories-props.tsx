@@ -27,7 +27,11 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { getResourcesCardStoryProps, ResourceCard, ResourceCardProps } from '@moodlenet/resource/ui'
+import {
+  getResourcesCardStoryProps,
+  ResourceCard,
+  ResourceCardProps,
+} from '@moodlenet/ed-resource/ui'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,
