@@ -5,6 +5,7 @@ shell.call(mountApp)({
   async getApp(express) {
     const { discoveryProvider, openIdProvider } = await import('./provider.mjs')
     const app = express()
+    // app.set('trust proxy', true)
 
     app.get(
       '/.well-known/((oauth-authorization-server)|(openid-configuration))',
