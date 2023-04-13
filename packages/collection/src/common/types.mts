@@ -94,7 +94,8 @@ export type CollectionActions = {
 export type CollectionMainProps = {
   actions: CollectionActions
   props: CollectionProps
-  saveState: { form: boolean; image: boolean }
+  saveState: SaveState
+  isSaving: boolean
 }
 
 export type CollectionCardData = { collectionHref: Href } & Pick<

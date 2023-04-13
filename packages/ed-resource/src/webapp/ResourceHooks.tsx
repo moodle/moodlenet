@@ -16,6 +16,8 @@ export type Actions = {
 export type ResourceCommonProps = {
   actions: ResourceActions
   props: ResourceProps
+  saveState: SaveState
+  isSaving: boolean
 }
 // type SaveState = { form: boolean; image: boolean; content: boolean }
 
@@ -23,7 +25,7 @@ type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
   const [resource, setResource] = useState<ResourceProps | null>()
-  const [saved, setSaved] = useState({ form: false, image: false, content: false })
+  const [saveState, setSaveState] = useState({ form: false, image: false, content: false })
 
   useEffect(() => {
     rpcCaller.get(resourceKey).then(res => setResource(res))
@@ -31,7 +33,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
   const setterSave = useCallback(
     (key: keyof SaveState, val: boolean) =>
-      setSaved(currentSaved => ({ ...currentSaved, [key]: val })),
+      setSaveState(currentSaved => ({ ...currentSaved, [key]: val })),
     [],
   )
   const actions = useMemo<ResourceActions>(() => {
@@ -71,8 +73,10 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
         return imageUrl
       },
-      setContent(content: File | string) {
-        setContent(resourceKey, content).then(updateData('contentUrl'))
+      async setContent(content: File | string) {
+        setterSave('form', true)
+        await setContent(resourceKey, content).then(updateData('contentUrl'))
+        setterSave('form', false)
       },
       publish: () => setIsPublished(resourceKey, true),
       unpublish: () => setIsPublished(resourceKey, false),
@@ -82,11 +86,19 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   }, [resource, resourceKey, rpcCaller, setterSave])
 
   useEffect(() => {
-    console.log('xxxxx', { saved: JSON.stringify(saved) })
-  }, [saved])
+    console.log('xxxxx', { saved: JSON.stringify(saveState) })
+  }, [saveState])
 
   return useMemo<ResourceCommonProps | null>(
-    () => (!resource ? null : { actions, props: resource }),
-    [actions, resource],
+    () =>
+      !resource
+        ? null
+        : {
+            actions,
+            props: resource,
+            saveState,
+            isSaving: saveState.form || saveState.image || saveState.content,
+          },
+    [actions, resource, saveState],
   )
 }
