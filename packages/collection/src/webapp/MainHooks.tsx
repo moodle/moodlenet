@@ -53,8 +53,8 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       async setImage(file: File) {
         setterSave('image', true)
         setImage(collectionKey, file).then(imageUrl => {
-          setterSave('image', false)
           updateImageUrl(imageUrl)
+          setterSave('image', false)
         })
       },
       deleteCollection: () => _delete(collectionKey),

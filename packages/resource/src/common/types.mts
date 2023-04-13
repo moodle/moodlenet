@@ -7,6 +7,8 @@ export type MyWebDeps = {
   me: ResourceExposeType
 }
 
+export type SaveState = { form: boolean; image: boolean }
+
 export type MyPkgContext = PkgContextT<MyWebDeps>
 export type MainContextResource = MyPkgContext & {
   rpcCaller: RpcCaller
