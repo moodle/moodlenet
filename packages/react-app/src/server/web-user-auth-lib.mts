@@ -82,7 +82,7 @@ export async function verifyWebUserToken(token: JwtToken) {
 
 ////
 
-export function sendWebUserTokenCookie(jwtToken?: JwtToken) {
+export function sendWebUserTokenCookie(jwtToken: JwtToken | undefined) {
   const { pkgId } = shell.assertCallInitiator()
   const httpCtx = getCurrentHttpCtx()
   const httpResponse = httpCtx?.response

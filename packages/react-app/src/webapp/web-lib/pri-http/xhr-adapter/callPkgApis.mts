@@ -1,5 +1,4 @@
 import type { PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
-import type { HttpRpcResponse } from '@moodlenet/http-server/common'
 import { getPkgRpcFetchOpts } from '@moodlenet/http-server/common'
 import type { UsePkgHandle } from '../../../types/plugins.mjs'
 
@@ -58,12 +57,15 @@ export function pkgRpcs<TargetPkgExposeDef extends PkgExposeDef>(
           wrapper(url, requestInit, nextWrapper)
         return currentWrapper
       }, fetchExecutor)(url, requestInit)
-
+      const responseText = await response.text()
       if (response.status !== 200) {
-        throw new Error(await response.text())
+        throw new Error(responseText)
       }
-      const responseJson: HttpRpcResponse = await response.json()
-      return responseJson.response
+      if (!responseText) {
+        return undefined
+      }
+      const responseJson = JSON.parse(responseText)
+      return responseJson
     }
   }
 }

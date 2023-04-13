@@ -18,6 +18,9 @@ export async function setupOpenIdProvider() {
     // console.log('openidProvider', op, ctx.path)
     return next()
   })
+
+  // BEWARE: this setting should be explicitely configured or derived from http-server (#start.mts) ?
+  openidProvider.proxy = true
   return openidProvider
 }
 
@@ -27,6 +30,8 @@ export async function setupDiscoveryProvider() {
     ctx.path = '/.well-known/openid-configuration'
     return next()
   })
+  // BEWARE: this setting should be explicitely configured or derived from http-server (#start.mts) ?
+  wellKnownProvider.proxy = true
   return wellKnownProvider
 }
 
@@ -122,9 +127,10 @@ function getProviderConfig() {
       devInteractions: { enabled: ___DEV_INTERACTIONS_ENABLED },
       deviceFlow: { enabled: true },
     },
-    // issueRefreshToken(ctx, client, code) {
-    //   return true
-    // },
+    issueRefreshToken(ctx, client, code) {
+      console.log('issueRefreshToken', { ctx, client, code })
+      return true
+    },
     responseTypes: [
       'code id_token token',
       'code id_token',
