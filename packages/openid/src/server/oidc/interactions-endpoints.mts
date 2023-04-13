@@ -15,6 +15,7 @@ shell.call(mountApp)({
   async getApp(express) {
     const { openIdProvider } = await import('./provider.mjs')
     const app = express()
+    // app.set('trust proxy', true)
 
     app.post('/interaction/:uid/login', setNoCache, body, async (req, res, next) => {
       // console.log('-/interaction/:uid/login LOGIN   ', req.params.uid)
