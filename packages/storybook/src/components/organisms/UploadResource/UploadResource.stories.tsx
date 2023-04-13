@@ -1,4 +1,4 @@
-import { UploadResource, UploadResourceProps } from '@moodlenet/resource/ui'
+import { UploadResource, UploadResourceProps } from '@moodlenet/ed-resource/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 

@@ -3,7 +3,7 @@ import { resolve } from 'path'
 import yargs from 'yargs'
 
 export const yOpts = yargs(process.argv.slice(2)).argv
-export const { _, $0, ...restOpts } = yOpts
+export const { _, $0, nodeDev, 'node-dev': _nodeDev, ...restOpts } = yOpts
 const [mnDevDirOpt, ...restArgs] = _
 export const fwRestOpts = Object.entries(restOpts).reduce((_, [k, v]) => {
   return v === true ? [..._, `--${k}`] : [..._, `--${k}`, `${v}`]
@@ -26,4 +26,5 @@ console.log({
   yOpts,
   restOpts,
   restArgs,
+  nodeDev,
 })

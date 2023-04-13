@@ -7,7 +7,7 @@ import {
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
-} from '@moodlenet/resource/common'
+} from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
@@ -22,10 +22,10 @@ import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, st
 import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 
 // import {
-// import { Resource, ResourceProps } from '@moodlenet/resource/ui'
+// import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 // import { useFormik } from 'formik'
-import { ResourceContributorCardStories } from '@moodlenet/resource/stories'
-import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/resource/ui'
+import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
+import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,

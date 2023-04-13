@@ -3,7 +3,7 @@
 // import { FC, ReactElement, useContext } from 'react'
 
 // export const text = 'Resource'
-// export const path = href('/@moodlenet/web-user/resource')
+// export const path = href('/@moodlenet/web-user/ed-resource')
 // export const className = 'resource'
 // export const key = 'resource'
 // export const position = 0
