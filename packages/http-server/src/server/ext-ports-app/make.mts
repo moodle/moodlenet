@@ -13,7 +13,7 @@ import { open } from 'fs/promises'
 import multer, { Field } from 'multer'
 import { Readable } from 'stream'
 import { format } from 'util'
-import { HttpRpcResponse } from '../../common/pub-lib.mjs'
+// import { HttpRpcResponse } from '../../common/pub-lib.mjs'
 import { getMiddlewares } from '../lib.mjs'
 import { shell } from '../shell.mjs'
 
@@ -84,15 +84,12 @@ export function makeExtPortsApp() {
               const rpcFile: RpcFile = rpcResponse
               rpcFile.name && httpResp.header('x-rpc-file-name', `${rpcFile.name}`)
               rpcFile.size && httpResp.header('Content-Length', `${rpcFile.size}`)
-              rpcFile.type && httpResp.header('Content-Type', `${rpcFile.type}`)
+              rpcFile.type && httpResp.contentType(`${rpcFile.type}`)
               mReadable.pipe(httpResp)
               return
             } else {
-              httpResp.header('Content-Type', 'application/json')
-              const httpRpcResponse: HttpRpcResponse = {
-                response: rpcResponse,
-              }
-              httpResp.send(httpRpcResponse)
+              httpResp.contentType('application/json')
+              httpResp.json(rpcResponse)
               return
             }
           })

@@ -2,6 +2,7 @@ import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { addMiddlewares, mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import {
+  ANON_SYSTEM_USER,
   EntityCollectionDef,
   EntityUser,
   isSameClass,
@@ -12,7 +13,6 @@ import {
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
 import { isCurrentUserEntity, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
-import assert from 'assert'
 import { resolve } from 'path'
 import {
   defaultAppearanceData,
@@ -24,7 +24,11 @@ import { expose as myExpose } from './expose.mjs'
 import { plugin } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
-import { setCurrentUnverifiedJwtToken, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
+import {
+  sendWebUserTokenCookie,
+  setCurrentUnverifiedJwtToken,
+  verifyCurrentTokenCtx,
+} from './web-user-auth-lib.mjs'
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 
 export const env = getEnv()
@@ -98,7 +102,11 @@ await shell.call(addMiddlewares)({
       await setCurrentUnverifiedJwtToken(enteringToken)
       await setCurrentUserFetch(async () => {
         const verifyResult = await verifyCurrentTokenCtx()
-        assert(verifyResult, `enteringToken cookie verification failed for fetching current user`)
+        if (!verifyResult) {
+          //assert(verifyResult, `enteringToken cookie verification failed for fetching current user`)
+          sendWebUserTokenCookie(undefined)
+          return ANON_SYSTEM_USER
+        }
         const { currentWebUser } = verifyResult
         if (currentWebUser.isRoot) {
           return ROOT_SYSTEM_USER

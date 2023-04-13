@@ -1,6 +1,5 @@
 import type { PkgIdentifier, RpcArgs } from '@moodlenet/core'
 export const BASE_PKG_URL = '/.pkg'
-export type HttpRpcResponse = { response: any }
 
 export function getPkgRpcFetchOpts(
   userPkgId: PkgIdentifier,
