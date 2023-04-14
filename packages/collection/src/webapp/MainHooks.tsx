@@ -30,7 +30,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     /* const updateCollection = <T,>(state: keyof SaveState, key: string, val: T): T => (
       collection && setCollection({ ...collection, [key]: val }), setterSave(state, false), val
     ) */
-    // const setterSave = (key: keyof SaveState, val: boolean) => formSaved() // ({ ...saved, [key]: val })
+
     const { _delete, edit: editRpc, setIsPublished, setImage } = rpcCaller
     const edit = debounce((res: CollectionFormProps) => {
       setterSave('form', true)
@@ -62,10 +62,6 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       unpublish: () => setIsPublished(collectionKey, false),
     }
   }, [collection, collectionKey, rpcCaller, setterSave])
-
-  useEffect(() => {
-    console.log({ saved: JSON.stringify(saveState) })
-  }, [saveState])
 
   return useMemo<CollectionMainProps | null>(
     () =>
