@@ -16,7 +16,11 @@ import {
   WebUserProfileDataType,
   WebUserProfileEntity,
 } from './types.mjs'
-import { signWebUserJwt, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
+import {
+  sendWebUserTokenCookie,
+  signWebUserJwt,
+  verifyCurrentTokenCtx,
+} from './web-user-auth-lib.mjs'
 
 export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity | undefined> {
   const verifiedCtx = await verifyCurrentTokenCtx()
@@ -36,6 +40,7 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   const verifiedCtx = await verifyCurrentTokenCtx()
   console.log('getCurrentClientSessionDataRpc', { verifiedCtx })
   if (!verifiedCtx) {
+    sendWebUserTokenCookie(undefined)
     return
   }
   const { currentWebUser } = verifiedCtx
@@ -46,15 +51,18 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   }
   // await setCurrentVerifiedJwtToken(verifiedCtx, false)
 
-  const record = await getProfileRecord(currentWebUser.profileKey)
-  assert(record, `couldn't find Profile for key:${currentWebUser.profileKey}`)
-  const webUser = await getWebUser({ _key: currentWebUser.webUserKey })
+  const profileRecord = await getProfileRecord(currentWebUser.profileKey)
+  if (!profileRecord) {
+    sendWebUserTokenCookie(undefined)
+    return
+  }
+  const webUser = await getWebUser({ _key: profileRecord.entity._key })
   assert(webUser, `couldn't find WebUser for key:${currentWebUser.webUserKey}`)
 
   return {
     isAdmin: webUser.isAdmin,
     isRoot: false,
-    myProfile: record.entity,
+    myProfile: profileRecord.entity,
   }
 }
 
