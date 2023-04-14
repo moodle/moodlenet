@@ -17,7 +17,7 @@ export const useCollectionPageProps = ({
 
   const collectionProps = useMemo(() => {
     if (!_mainProps || !mainLayoutProps) return null
-    const { actions, props } = _mainProps
+    const { actions, props, isSaving } = _mainProps
     const layoutProps = {
       wideColumnItems: [],
       mainColumnItems: [],
@@ -47,6 +47,7 @@ export const useCollectionPageProps = ({
         isAuthenticated,
         isCreator: _mainProps.props.access.isCreator,
       },
+      isSaving,
     }
 
     return propsPage

@@ -44,6 +44,7 @@ export type CollectionProps = {
   state: CollectionStateProps
   actions: CollectionActions
   access: CollectionAccessProps
+  isSaving: boolean
 }
 
 export const Collection: FC<CollectionProps> = ({

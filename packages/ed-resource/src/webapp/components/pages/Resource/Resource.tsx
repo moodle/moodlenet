@@ -45,6 +45,7 @@ export type ResourceProps = {
   access: ResourceAccessProps
 
   fileMaxSize: number
+  isSaving: boolean
 }
 
 export const Resource: FC<ResourceProps> = ({

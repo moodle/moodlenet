@@ -27,7 +27,7 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
 
   return useMemo<ResourceProps | null>((): ResourceProps | null => {
     if (!_baseProps) return null
-    const { actions, props } = _baseProps
+    const { actions, props, isSaving } = _baseProps
     const { data, resourceForm, state, access, contributor } = props
 
     const mainResourceCardSlots = {
@@ -54,6 +54,7 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
       actions,
       access,
       fileMaxSize: maxUploadSize,
+      isSaving,
     }
   }, [_baseProps, mainLayoutProps])
 }
