@@ -2,8 +2,8 @@ import { watchFile } from 'fs'
 import { getWp } from './config.mjs'
 import { getAliases, _resolve_alias_json_filename } from './generated-files.mjs'
 
-const port = Number(process.argv[2]) || 3000
-const proxy = process.argv[3] || 'http://localhost:8080'
+const port = 3000
+const proxy = 'http://localhost:8080'
 console.log({ port, proxy, _resolve_alias_json_filename })
 
 const wp = await getWp({
