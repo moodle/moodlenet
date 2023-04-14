@@ -51,13 +51,20 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
   }
   // await setCurrentVerifiedJwtToken(verifiedCtx, false)
 
-  const profileRecord = await getProfileRecord(currentWebUser.profileKey)
-  if (!profileRecord) {
+  const webUser = await getWebUser({ _key: currentWebUser.webUserKey })
+  if (!webUser) {
     sendWebUserTokenCookie(undefined)
     return
   }
-  const webUser = await getWebUser({ _key: profileRecord.entity._key })
-  assert(webUser, `couldn't find WebUser for key:${currentWebUser.webUserKey}`)
+  assert(
+    webUser.profileKey === currentWebUser.profileKey,
+    `webUser.profileKey:${webUser.profileKey} not equals currentWebUser.profileKey:${currentWebUser.profileKey}`,
+  )
+  const profileRecord = await getProfileRecord(currentWebUser.profileKey)
+  assert(
+    profileRecord,
+    `couldn't find Profile#${currentWebUser.profileKey} associated with WebUser#${currentWebUser.webUserKey}:${webUser.displayName}`,
+  )
 
   return {
     isAdmin: webUser.isAdmin,
