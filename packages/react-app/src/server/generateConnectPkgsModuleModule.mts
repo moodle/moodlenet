@@ -24,10 +24,9 @@ export function generateConnectPkgModulesModule({
   ${plugins
     .map(
       (pluginItem, index) => `
-import pkg_main_component_${index} from '${resolve(
-        pluginItem.guestPkgInfo.pkgRootDir,
-        ...pluginItem.mainComponentLoc,
-      )}' // ${pluginItem.guestPkgId.name}
+import pkg_main_component_${index} from '${fixModuleLocForWebpackByOS(
+        resolve(pluginItem.guestPkgInfo.pkgRootDir, ...pluginItem.mainComponentLoc),
+      )}' // pkg: ${pluginItem.guestPkgId.name}
     `,
     )
     .join('')}
