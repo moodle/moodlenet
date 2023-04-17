@@ -504,10 +504,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       key="image"
       src={image}
       alt="Background"
-      {...(contentType === 'file' && {
-        onClick: () => setIsShowingImage(true),
-      })}
-      style={{ maxHeight: image ? 'fit-content' : '150px' }}
+      {...(contentType === 'file' &&
+        typeName === 'Image' && {
+          onClick: () => setIsShowingImage(true),
+        })}
+      style={{
+        maxHeight: image ? 'fit-content' : '150px',
+        cursor: contentType === 'file' && typeName !== 'Image' ? 'initial' : 'pointer',
+      }}
     />
   )
 
