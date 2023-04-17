@@ -63,6 +63,7 @@ export const Collection: FC<CollectionProps> = ({
   state,
   actions,
   access,
+  isSaving,
 }) => {
   const { isWaitingForApproval } = data
   const { isPublished } = state
@@ -97,7 +98,6 @@ export const Collection: FC<CollectionProps> = ({
 
   const checkFormAndPublish = () => {
     if (form.isValid) {
-      console.log('submit etto ')
       form.submitForm()
       setShouldShowErrors(false)
       publish()
@@ -118,6 +118,7 @@ export const Collection: FC<CollectionProps> = ({
       access={access}
       slots={mainCollectionCardSlots}
       shouldShowErrors={shouldShowErrors}
+      isSaving={isSaving}
     />
   )
 
@@ -137,7 +138,7 @@ export const Collection: FC<CollectionProps> = ({
         </PrimaryButton>
       )}
       {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
-        <PrimaryButton onClick={publish} color="green">
+        <PrimaryButton onClick={checkFormAndPublish} color="green">
           Publish
         </PrimaryButton>
       )}

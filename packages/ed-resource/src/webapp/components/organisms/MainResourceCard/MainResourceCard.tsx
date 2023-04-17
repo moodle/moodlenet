@@ -58,9 +58,11 @@ export type MainResourceCardProps = {
   actions: ResourceActions
   access: ResourceAccessProps
 
+  isSaving: boolean
+  publish: () => void
+
   shouldShowErrors: boolean
   fileMaxSize: number
-  publish: () => void
 }
 
 export const MainResourceCard: FC<MainResourceCardProps> = ({
@@ -76,6 +78,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   state,
   actions,
   access,
+
+  isSaving,
+  publish,
 
   fileMaxSize,
   shouldShowErrors,
@@ -106,7 +111,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   } = state
 
   const {
-    publish,
     unpublish,
     deleteResource,
     // toggleBookmark,
@@ -190,36 +194,33 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </div>
     ) : null
 
-  const savingFeedback =
-    form.isSubmitting || imageForm.isSubmitting ? (
-      <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-        <Sync />
-        Saving...
-      </abbr>
-    ) : null
-
   const [showSavedText, setShowSavedText] = useState(false)
-  const savedFeedback = () => {
-    if (
-      !(form.isSubmitting || imageForm.isSubmitting) &&
-      (form.submitCount > 0 || imageForm.submitCount > 0)
-    ) {
-      setTimeout(() => setShowSavedText(false), 5000)
-      return (
-        <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-          <CloudDoneOutlined />
-          {showSavedText && 'Saved'}
-        </abbr>
-      )
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    isSaving && setSaved(true)
+    if (!isSaving && saved) {
+      setShowSavedText(true)
+      setTimeout(() => setShowSavedText(false), 3000)
     }
-    return null
-  }
+  }, [isSaving, setShowSavedText, saved])
+
+  const savingFeedback = isSaving ? (
+    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+      <Sync />
+      Saving...
+    </abbr>
+  ) : saved ? (
+    <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+      <CloudDoneOutlined />
+      {showSavedText && 'Saved'}
+    </abbr>
+  ) : null
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
     typePill,
     savingFeedback,
-    savedFeedback(),
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
@@ -476,9 +477,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       {updatedHeaderColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </div>
   )
-
-  console.log('contentUrl', contentUrl)
-  console.log('contentForm.values.content', contentForm.values.content)
 
   const embed = contentUrl
     ? getPreviewFromUrl(contentUrl)
