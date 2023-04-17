@@ -125,7 +125,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const backupImage: string | undefined = useMemo(() => getBackupImage(resourceId), [resourceId])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [image] = useImageUrl(imageUrl, backupImage)
-  const { typeName, typeColor } = getResourceTypeInfo(contentType, downloadFilename)
+  const { typeName, typeColor } = getResourceTypeInfo(
+    contentType,
+    contentType === 'file' ? downloadFilename : contentUrl,
+  )
   const { width } = useWindowDimensions()
 
   const copyUrl = () => {
@@ -474,7 +477,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const embed = contentUrl && getPreviewFromUrl(contentUrl)
+  console.log('contentUrl', contentUrl)
+  console.log('contentForm.values.content', contentForm.values.content)
+
+  const embed = contentUrl
+    ? getPreviewFromUrl(contentUrl)
+    : typeof contentForm.values.content === 'string'
+    ? getPreviewFromUrl(contentForm.values.content)
+    : null
 
   const resourceUploader = canEdit ? (
     <UploadResource
