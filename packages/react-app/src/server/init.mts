@@ -1,4 +1,5 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
+import { instanceDomain } from '@moodlenet/core'
 import { addMiddlewares, mountApp } from '@moodlenet/http-server/server'
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import {
@@ -13,6 +14,7 @@ import {
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
 import { isCurrentUserEntity, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
+import { readFile } from 'fs/promises'
 import { resolve } from 'path'
 import {
   defaultAppearanceData,
@@ -22,6 +24,7 @@ import {
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { plugin } from './lib.mjs'
+import { OpenGraphData, OpenGraphProviderItems } from './opengraph.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 import {
@@ -136,12 +139,36 @@ export const httpApp = await shell.call(mountApp)({
     const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
     mountApp.use(staticWebApp)
     //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
-    mountApp.get(`*`, (req, res, next) => {
+    mountApp.get(`*`, async (req, res, next) => {
       if (req.url.startsWith('/.')) {
         next()
         return
       }
-      res.sendFile(resolve(latestBuildFolder, 'index.html'))
+      const webappPath = req.url.replace(new RegExp(`^${instanceDomain}`), '')
+      let openGraphData: OpenGraphData | undefined
+      for (const providerItem of OpenGraphProviderItems) {
+        openGraphData = await providerItem.provider(webappPath)
+        if (openGraphData) {
+          break
+        }
+      }
+      console.log({ webappPath, openGraphData })
+      const _html = await readFile(resolve(latestBuildFolder, 'index.html'), 'utf-8')
+      const headReplace = openGraphData
+        ? `<head>
+<meta property="og:title" content="${openGraphData.title}" />
+<meta property="og:description" content="${openGraphData.description}" />
+<meta property="og:image" content="${openGraphData.image}" />
+<title>${openGraphData.title}</title>
+<meta name="description" content="${openGraphData.description}">
+`
+        : `<head>
+<title>MoodleNet</title>
+`
+      const html = _html.replace('<head>', headReplace.replace(/\n/g, ''))
+
+      res.setHeader('Content-Type', 'text/html; charset=utf-8')
+      res.send(html)
     })
     return mountApp
   },
