@@ -66,6 +66,7 @@ export const Resource: FC<ResourceProps> = ({
   access,
 
   fileMaxSize,
+  isSaving,
 }) => {
   const { isWaitingForApproval, downloadFilename, contentUrl, imageUrl, contentType } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
@@ -132,6 +133,7 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
+    console.log('checkFormAndPublish')
     if (form.isValid) {
       form.submitForm()
       setShouldShowErrors(false)
@@ -156,6 +158,7 @@ export const Resource: FC<ResourceProps> = ({
       access={access}
       slots={mainResourceCardSlots}
       fileMaxSize={fileMaxSize}
+      isSaving={isSaving}
       shouldShowErrors={shouldShowErrors}
     />
   )
@@ -172,7 +175,7 @@ export const Resource: FC<ResourceProps> = ({
         </PrimaryButton>
       )}
       {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
-        <PrimaryButton onClick={publish} color="green">
+        <PrimaryButton onClick={checkFormAndPublish} color="green">
           Publish
         </PrimaryButton>
       )}

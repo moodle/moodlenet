@@ -1,4 +1,4 @@
-import { CollectionFormValues } from '@moodlenet/collection/common'
+import { CollectionFormProps } from '@moodlenet/collection/common'
 import { Collection } from '@moodlenet/collection/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useCollectionStoryProps } from './stories-props.js'
@@ -58,7 +58,7 @@ export const Creator: CollectionStory = () => {
         'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
     },
     state: {
-      isPublished: true,
+      isPublished: false,
       // bookmarked: true,
       // isSaving: true,
     },
@@ -69,12 +69,13 @@ export const Creator: CollectionStory = () => {
       isCreator: true,
       canEdit: true,
     },
+    isSaving: false,
   })
 
   return <Collection {...props} />
 }
 
-export const NewCollectionProps: CollectionFormValues = {
+export const NewCollectionProps: CollectionFormProps = {
   title: '',
   description: '',
   // visibility: 'Private',

@@ -54,6 +54,7 @@ export type MainCollectionCardProps = {
 
   shouldShowErrors: boolean
   publish: () => void
+  isSaving: boolean
 }
 
 export const MainCollectionCard: FC<MainCollectionCardProps> = ({
@@ -69,6 +70,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   shouldShowErrors,
   publish,
+  isSaving,
 }) => {
   const {
     mainColumnItems,
@@ -165,35 +167,32 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  const savingFeedback =
-    form.isSubmitting || imageForm.isSubmitting ? (
-      <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-        <Sync />
-        Saving...
-      </abbr>
-    ) : null
-
   const [showSavedText, setShowSavedText] = useState(false)
-  const savedFeedback = () => {
-    if (
-      !(form.isSubmitting || imageForm.isSubmitting) &&
-      (form.submitCount > 0 || imageForm.submitCount > 0)
-    ) {
-      setTimeout(() => setShowSavedText(false), 2000)
-      return (
-        <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-          <CloudDoneOutlined />
-          {showSavedText && 'Saved'}
-        </abbr>
-      )
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    isSaving && setSaved(true)
+    if (!isSaving && saved) {
+      setShowSavedText(true)
+      setTimeout(() => setShowSavedText(false), 3000)
     }
-    return null
-  }
+  }, [isSaving, setShowSavedText, saved])
+
+  const savingFeedback = isSaving ? (
+    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+      <Sync />
+      Saving...
+    </abbr>
+  ) : saved ? (
+    <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+      <CloudDoneOutlined />
+      {showSavedText && 'Saved'}
+    </abbr>
+  ) : null
 
   const updatedTopLeftHeaderItems = [
     collectionLabel,
     savingFeedback,
-    savedFeedback(),
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
