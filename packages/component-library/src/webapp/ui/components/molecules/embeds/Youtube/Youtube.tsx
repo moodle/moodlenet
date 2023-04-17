@@ -15,7 +15,7 @@ export const getYouTubeEmbed = (url: string): EmbedType => {
 
 export const getYouTubeThumbnail = (url: string): ThumbnailType => {
   const id = getYouTubeId(url)
-  return id ? `https://img.youtube.com/vi/${id}/0.jpg` : null
+  return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : null
 }
 
 type YouTubeType = {
