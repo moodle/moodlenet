@@ -48,7 +48,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   } = access
 
   const header = (
-    <Link className="profile-card-header" href={profileHref} key="header">
+    <div className="profile-card-header" key="header">
       <div className="title-header">
         <abbr className="title" title={displayName}>
           {displayName}
@@ -57,7 +57,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       {/* <abbr className="subtitle" title={organizationName}>
       {organizationName}
     </abbr> */}
-    </Link>
+    </div>
   )
 
   const overallCard = (
