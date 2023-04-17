@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { EmbedType, ThumbnailType } from '../../../../helpers/utilities.js'
-import './YouTube.scss'
+import './Youtube.scss'
 
 export const getYouTubeId = (url: string) => {
   const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/

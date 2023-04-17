@@ -1,4 +1,4 @@
-import { plugin } from '@moodlenet/react-app/server'
+import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import {
   EntityCollectionDef,
@@ -8,7 +8,9 @@ import {
 } from '@moodlenet/system-entities/server'
 import { isCreator, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import type { MyWebDeps } from '../common/types.mjs'
+import { matchCollectionHomePageRoutePathKey } from '../common/webapp-routes.mjs'
 import { expose as me } from './expose.mjs'
+import { getCollection } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { CollectionDataType } from './types.mjs'
 
@@ -40,3 +42,24 @@ await shell.call(registerAccessController)({
 
 export const publicFiles = await fileStoreFactory(shell, 'public')
 export const publicFilesHttp = await publicFiles.mountStaticHttpServer('public')
+
+shell.call(registerOpenGraphProvider)({
+  async provider(webappPath) {
+    const key = matchCollectionHomePageRoutePathKey(webappPath)
+    if (!key) {
+      return
+    }
+    const collectionRecord = await getCollection(key)
+    if (!collectionRecord) {
+      return
+    }
+    const image = collectionRecord.entity.image
+      ? publicFilesHttp.getFileUrl({ directAccessId: collectionRecord.entity.image.directAccessId })
+      : ''
+    return {
+      description: collectionRecord.entity.description,
+      image: image,
+      title: collectionRecord.entity.title,
+    }
+  },
+})
