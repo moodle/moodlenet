@@ -108,7 +108,10 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   const resourceCard = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState<'micro' | 'tiny' | 'small' | 'medium' | 'big'>('medium')
 
-  const { typeName, typeColor } = getResourceTypeInfo(contentType, downloadFilename)
+  const { typeName, typeColor } = getResourceTypeInfo(
+    contentType,
+    contentType === 'file' ? downloadFilename : contentUrl,
+  )
 
   const thumbnail = contentUrl && getThumbnailFromUrl(contentUrl)
 
