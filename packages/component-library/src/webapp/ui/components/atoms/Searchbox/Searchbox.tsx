@@ -46,6 +46,7 @@ export const Searchbox: FC<SearchboxProps> = ({
   }, [searchboxRef, marginTop, setIsSearchboxInViewport])
 
   useEffect(() => {
+    setIsSearchboxInViewport && setElementFullyInViewPort()
     setIsSearchboxInViewport && window.addEventListener('scroll', setElementFullyInViewPort, true)
     return () => {
       setIsSearchboxInViewport &&
