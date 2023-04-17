@@ -1,9 +1,9 @@
 import {
-  CollectionAccess,
+  CollectionAccessProps,
   CollectionActions,
-  CollectionData,
-  CollectionFormValues,
-  CollectionState,
+  CollectionDataProps,
+  CollectionFormProps,
+  CollectionStateProps,
 } from '@moodlenet/collection/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
@@ -48,7 +48,7 @@ const meta: ComponentMeta<typeof Collection> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
-    'collectionFormValues',
+    'CollectionFormProps',
     'CollectionStoryProps',
     'collectionFormBag',
     'CollectionStoryProps',
@@ -69,7 +69,7 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
   )
 })
 
-export const validationSchema: SchemaOf<CollectionFormValues> = object({
+export const validationSchema: SchemaOf<CollectionFormProps> = object({
   category: string().required(/* t */ `Please select a subject`),
   content: string().required(/* t */ `Please upload a content`),
 
@@ -98,15 +98,15 @@ export const validationSchema: SchemaOf<CollectionFormValues> = object({
   }),
 })
 
-export const collectionFormValues: CollectionFormValues = {
+export const collectionFormProps: CollectionFormProps = {
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
   // image: 'https://picsum.photos/200/100',
   title: '',
 }
 
-export const useCollectionForm = (overrides?: Partial<CollectionFormValues>) => {
-  return useFormik<CollectionFormValues>({
+export const useCollectionForm = (overrides?: Partial<CollectionFormProps>) => {
+  return useFormik<CollectionFormProps>({
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
@@ -133,7 +133,7 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 export const useCollectionStoryProps = (
   overrides?: PartialDeep<CollectionProps>,
 ): CollectionProps => {
-  const data: CollectionData = {
+  const data: CollectionDataProps = {
     collectionId: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
     imageUrl:
@@ -142,31 +142,31 @@ export const useCollectionStoryProps = (
     // numFollowers: 23,
   }
 
-  const collectionForm: CollectionFormValues = {
+  const collectionForm: CollectionFormProps = {
     title: 'Best collection ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find.',
     // ...overrides?.collectionForm,
   }
 
-  const state: CollectionState = {
+  const state: CollectionStateProps = {
     isPublished: true,
     // followed: false,
     // bookmarked: false,
   }
 
   const actions: CollectionActions = {
-    editData: async () => action('editing collection submited'),
-    setImage: async () => action('setImage'),
-    publish: action('publish'),
-    unpublish: action('unpublish'),
-    deleteCollection: action('deleteCollection'),
+    deleteCollection: async () => undefined,
+    editData: async () => undefined,
+    publish: async () => undefined,
+    unpublish: async () => undefined,
+    setImage: async () => undefined,
     ...overrides?.actions,
     // toggleFollow: action('toggleFollow'),
     // toggleBookmark: action('toggleBookmark'),
   }
 
-  const access: CollectionAccess = {
+  const access: CollectionAccessProps = {
     isAuthenticated: true,
     canEdit: false,
     isCreator: false,
@@ -196,7 +196,7 @@ export const useCollectionStoryProps = (
 
   const mainColumnItems =
     overrides?.mainColumnItems !== undefined
-      ? undefined
+      ? []
       : [
           {
             Item: () => (
@@ -219,6 +219,11 @@ export const useCollectionStoryProps = (
 
       mainCollectionCardSlots: mainCollectionCardSlots,
       mainColumnItems: mainColumnItems,
+      extraDetailsItems: [],
+      moreButtonItems: [],
+      sideColumnItems: [],
+      wideColumnItems: [],
+
       collectionContributorCardProps:
         CollectionContributorCardStories.CollectionContributorCardStoryProps,
       data: data,
@@ -228,6 +233,7 @@ export const useCollectionStoryProps = (
       state: state,
       actions: actions,
       access: access,
+      isSaving: false,
     },
     { ...overrides },
   )

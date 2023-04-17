@@ -9,7 +9,6 @@ export const getYouTubeId = (url: string) => {
 }
 
 export const getYouTubeEmbed = (url: string): EmbedType => {
-  console.log('getting here')
   const id = getYouTubeId(url)
   return id ? <YouTubeEmbed id={id} /> : null
 }

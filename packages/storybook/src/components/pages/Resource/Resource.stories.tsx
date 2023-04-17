@@ -38,7 +38,7 @@ export const Creator: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {},
     state: {
-      isPublished: true,
+      isPublished: false,
     },
     actions: {},
     access: {
