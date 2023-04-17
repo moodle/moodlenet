@@ -1,5 +1,5 @@
 import { registerScopes } from '@moodlenet/openid/server'
-import { plugin } from '@moodlenet/react-app/server'
+import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import {
   EntityCollectionDef,
@@ -9,7 +9,9 @@ import {
 } from '@moodlenet/system-entities/server'
 import { isCreator, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import type { MyWebDeps } from '../common/types.mjs'
+import { matchResourceHomePageRoutePathKey } from '../common/webapp-routes.mjs'
 import { expose as me } from './expose.mjs'
+import { getResource } from './lib.mjs'
 import { shell } from './shell.mjs'
 import { ResourceDataType } from './types.mjs'
 
@@ -46,3 +48,24 @@ await shell.call(registerAccessController)({
 export const resourceFiles = await fileStoreFactory(shell, 'resources')
 export const publicFiles = await fileStoreFactory(shell, 'public')
 export const publicFilesHttp = await publicFiles.mountStaticHttpServer('public')
+
+shell.call(registerOpenGraphProvider)({
+  async provider(webappPath) {
+    const key = matchResourceHomePageRoutePathKey(webappPath)
+    if (!key) {
+      return
+    }
+    const resourceRecord = await getResource(key)
+    if (!resourceRecord) {
+      return
+    }
+    const image = resourceRecord.entity.image
+      ? publicFilesHttp.getFileUrl({ directAccessId: resourceRecord.entity.image.directAccessId })
+      : ''
+    return {
+      description: resourceRecord.entity.description,
+      image: image,
+      title: resourceRecord.entity.title,
+    }
+  },
+})

@@ -23,7 +23,7 @@ export * from './webapp/ui/components/atoms/VisibilityDropdown/VisibilityDropdow
 export * from './webapp/ui/components/molecules/cards/AddToCollectionsCard/AddToCollectionsCard.js'
 export * from './webapp/ui/components/molecules/cards/ListCard/ListCard.js'
 export * from './webapp/ui/components/molecules/embeds/Vimeo/Vimeo.js'
-export * from './webapp/ui/components/molecules/embeds/Youtube/YouTube.js'
+export * from './webapp/ui/components/molecules/embeds/Youtube/Youtube.js'
 export * from './webapp/ui/components/molecules/ImageContainer/ImageContainer.js'
 export * from './webapp/ui/components/molecules/modals/ReportModal/ReportModal.js'
 export * from './webapp/ui/components/organisms/Footer/Footer.js'
