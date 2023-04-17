@@ -1,3 +1,4 @@
+import { getDomainUrl } from '@moodlenet/component-library'
 import { AuthDataRpc } from '@moodlenet/react-app/common'
 import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
@@ -145,12 +146,29 @@ export type Organization = {
   color: string
 }
 
+export const getResourceDomainName = (url: string): string => {
+  const domain = getDomainUrl(url)
+  switch (domain) {
+    case 'youtube.com':
+    case 'youtu.be':
+      return 'youtube'
+    case 'vimeo.com':
+      return 'vimeo'
+    default:
+      return 'link'
+  }
+}
+
 export const getResourceTypeInfo = (
-  isLikeOrFile?: 'link' | 'file',
-  filename?: string | null,
+  isLikeOrFile: 'link' | 'file',
+  filenameOrUrl: string | null,
 ): { typeName: string | null; typeColor: string | null } => {
-  const filenameExtension = filename?.split('.').pop()
-  const resourceType = isLikeOrFile === 'link' ? 'link' : filenameExtension ?? 'unknown'
+  const resourceType =
+    (isLikeOrFile === 'file'
+      ? filenameOrUrl?.split('.').pop()
+      : filenameOrUrl
+      ? getResourceDomainName(filenameOrUrl)
+      : 'unknown') ?? 'unknown'
   switch (resourceType) {
     case 'mp4':
     case 'avi':
@@ -176,6 +194,10 @@ export const getResourceTypeInfo = (
       return { typeName: `Image`, typeColor: '#27a930' }
     case 'pdf':
       return { typeName: 'pdf', typeColor: '#df3131' }
+    case 'youtube':
+      return { typeName: 'YouTube', typeColor: '#f00' }
+    case 'vimeo':
+      return { typeName: 'Vimeo', typeColor: '#00adef' }
     case 'xls':
     case 'xlsx':
     case 'ods':

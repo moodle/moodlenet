@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { AssetInfo } from '../../../common/types.mjs'
-import { getYoutubeEmbed, getYoutubeThumbnail } from '../../../ui.mjs'
+import { getYouTubeEmbed, getYouTubeThumbnail } from '../../../ui.mjs'
 import { ContentBackupImages } from '../assets/data/images.js'
 import { getVimeoEmbed, getVimeoThumbnail } from '../components/molecules/embeds/Vimeo/Vimeo.js'
 
@@ -140,8 +140,8 @@ export const getPreviewFromUrl = (url: string): EmbedType => {
   const domain = getDomainUrl(url)
   switch (domain) {
     case 'youtube.com':
-    case 'youto.be':
-      return getYoutubeEmbed(url)
+    case 'youtu.be':
+      return getYouTubeEmbed(url)
     case 'vimeo.com':
       return getVimeoEmbed(url)
     default:
@@ -153,8 +153,8 @@ export const getThumbnailFromUrl = (url: string): ThumbnailType => {
   const domain = getDomainUrl(url)
   switch (domain) {
     case 'youtube.com':
-    case 'youto.be':
-      return getYoutubeThumbnail(url)
+    case 'youtu.be':
+      return getYouTubeThumbnail(url)
     case 'vimeo.com':
       return getVimeoThumbnail(url)
     default:

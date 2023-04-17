@@ -1,30 +1,31 @@
 import { FC, useEffect, useState } from 'react'
 import { EmbedType, ThumbnailType } from '../../../../helpers/utilities.js'
-import './Youtube.scss'
+import './YouTube.scss'
 
-export const getYoutubeId = (url: string) => {
+export const getYouTubeId = (url: string) => {
   const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
   const match = url.match(regExp)
   return match && match[7] && match[7].length == 11 ? match[7] : false
 }
 
-export const getYoutubeEmbed = (url: string): EmbedType => {
-  const id = getYoutubeId(url)
-  return id ? <YoutubeEmbed id={id} /> : null
+export const getYouTubeEmbed = (url: string): EmbedType => {
+  console.log('getting here')
+  const id = getYouTubeId(url)
+  return id ? <YouTubeEmbed id={id} /> : null
 }
 
-export const getYoutubeThumbnail = (url: string): ThumbnailType => {
-  const id = getYoutubeId(url)
+export const getYouTubeThumbnail = (url: string): ThumbnailType => {
+  const id = getYouTubeId(url)
   return id ? `https://img.youtube.com/vi/${id}/0.jpg` : null
 }
 
-type YoutubeType = {
+type YouTubeType = {
   height: number
   width: number
 }
 
-export const YoutubeEmbed: FC<{ id: string }> = ({ id }) => {
-  const [data, setData] = useState<YoutubeType>()
+export const YouTubeEmbed: FC<{ id: string }> = ({ id }) => {
+  const [data, setData] = useState<YouTubeType>()
 
   useEffect(() => {
     // fetch data

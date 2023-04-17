@@ -1,4 +1,4 @@
-import { InsertDriveFile as InsertDriveFileIcon, Link as LinkIcon } from '@material-ui/icons'
+import { InsertDriveFile, Link as LinkIcon } from '@material-ui/icons'
 import {
   getPreviewFromUrl,
   ImageContainer,
@@ -29,9 +29,9 @@ import './UploadResource.scss'
 export type UploadResourceProps = {
   fileMaxSize: number | null
   contentForm: FormikHandle<{ content: File | string | null }>
+  contentUrl: string | null
   imageForm: FormikHandle<{ image: File | null }>
   imageUrl: string | null
-  contentUrl: string | null
   downloadFilename: string | null
   uploadProgress?: number
   imageOnClick?(): unknown
@@ -70,11 +70,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const contentIsFile = contentForm.values.content instanceof File
   const contentName = downloadFilename
     ? downloadFilename
-    : contentIsFile
-    ? contentForm.values.content instanceof File
-      ? contentForm.values.content.name
-      : contentForm.values.content ?? ''
-    : ''
+    : contentForm.values.content instanceof File
+    ? contentForm.values.content.name
+    : contentForm.values.content ?? contentUrl ?? ''
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   // const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -161,7 +159,11 @@ export const UploadResource: FC<UploadResourceProps> = ({
     [contentForm, imageForm],
   )
 
-  const embed = contentUrl && getPreviewFromUrl(contentUrl)
+  const embed = contentUrl
+    ? getPreviewFromUrl(contentUrl)
+    : typeof contentForm.values.content === 'string'
+    ? getPreviewFromUrl(contentForm.values.content)
+    : null
 
   const dropHandler = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -365,9 +367,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
             className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'}`}
             style={{ background: uploadedNameBackground }}
           >
-            <div className="content-icon">
-              {contentIsFile ? <InsertDriveFileIcon /> : <LinkIcon />}
-            </div>
+            <div className="content-icon">{contentIsFile ? <InsertDriveFile /> : <LinkIcon />}</div>
             <abbr className="scroll" title={contentName}>
               {contentName}
             </abbr>
