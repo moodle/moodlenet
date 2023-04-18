@@ -186,7 +186,7 @@ export const useCollectionStoryProps = (
 
   const accessOverrides = overrides?.access
 
-  const resourceCardPropsList: ResourceCardProps[] = getResourcesCardStoryProps(15, {
+  const resourceCardPropsList: ResourceCardProps[] = getResourcesCardStoryProps(6, {
     access: {
       ...access,
       ...accessOverrides,

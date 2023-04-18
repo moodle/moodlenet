@@ -41,7 +41,7 @@ export const LoggedOut = () => {
             })}
           />
         ),
-        key: 'collection-card-list',
+        key: 'resource-card-list',
       },
       {
         Item: () => (
@@ -73,7 +73,7 @@ export const LoggedOut = () => {
             })}
           />
         ),
-        key: 'collection-card-list',
+        key: 'profile-card-list',
       },
     ],
   })
@@ -93,7 +93,7 @@ export const LoggedIn: ProfileStory = () => {
             resourceCardPropsList={getResourcesCardStoryProps(5, {})}
           />
         ),
-        key: 'collection-card-list',
+        key: 'resource-card-list',
       },
       {
         Item: () => (
@@ -119,7 +119,7 @@ export const LoggedIn: ProfileStory = () => {
             collectionCardPropsList={getCollectionsCardStoryProps(5, {})}
           />
         ),
-        key: 'collection-card-list',
+        key: 'profile-card-list',
       },
     ],
   })
@@ -144,7 +144,7 @@ export const Owner: ProfileStory = () => {
             })}
           />
         ),
-        key: 'collection-card-list',
+        key: 'resource-card-list',
       },
       {
         Item: () => (
@@ -180,7 +180,7 @@ export const Owner: ProfileStory = () => {
             })}
           />
         ),
-        key: 'collection-card-list',
+        key: 'profile-card-list',
       },
     ],
   })
@@ -205,7 +205,7 @@ export const Admin: ProfileStory = () => {
             })}
           />
         ),
-        key: 'collection-card-list',
+        key: 'resource-card-list',
       },
       {
         Item: () => (
@@ -241,7 +241,7 @@ export const Admin: ProfileStory = () => {
             })}
           />
         ),
-        key: 'collection-card-list',
+        key: 'profile-card-list',
       },
     ],
   })

@@ -10,11 +10,11 @@ import {
   SecondaryButton,
   useImageUrl,
 } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import { ProfileAccess, ProfileFormValues } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
+import { FormikHandle } from '../../../lib/formik.js'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {
@@ -31,7 +31,7 @@ export type MainProfileCardPropsControlled = Omit<
 >
 export type MainProfileCardProps = {
   slots: MainProfileCardSlots
-  form: ReturnType<typeof useFormik<ProfileFormValues>>
+  form: FormikHandle<ProfileFormValues>
   access: ProfileAccess
   isEditing?: boolean
   toggleIsEditing(): unknown
@@ -159,7 +159,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const topItemsContainer =
     updatedTopItems.length > 0 ? (
-      <div className="top-items">
+      <div className="top-items" key="top-items">
         {updatedTopItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
     ) : null
@@ -212,11 +212,11 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const header = (
     <div className="profile-card-header" key="card-header">
-      <div className="title">
+      <div className="title" key="title-row">
         {updatedTitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
 
-      <div className={`subtitle ${isEditing ? 'edit' : ''}`}>
+      <div className={`subtitle ${isEditing ? 'edit' : ''}`} key="subtitle-row">
         {updatedSubtitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
     </div>
@@ -258,22 +258,23 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     />,
   ]
   const backgroundContainer = (
-    <div className={`background-container`}>
+    <div className={`background-container`} key="background-container">
       {editBackgroundButton}
       <div
         className={`background`}
+        key="background"
         style={{
           ...background,
           pointerEvents: form.isSubmitting || !form.values.backgroundImage ? 'none' : 'inherit',
           cursor: form.isSubmitting || !form.values.backgroundImage ? 'auto' : 'pointer',
         }}
         onClick={() => setIsShowingBackground(true)}
-      ></div>
+      />
     </div>
   )
 
   const avatarContainer = (
-    <div className={`avatar-container`}>
+    <div className={`avatar-container`} key="avatar-container">
       {editAvatarButton}
       <div
         className={`avatar`}
@@ -295,7 +296,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           closeButton={false}
           onClose={() => setIsShowingBackground(false)}
           style={{ maxWidth: '90%', maxHeight: '90%' }}
-          key="image-modal"
+          key="background-modal"
         >
           <img src={backgroundUrl} alt="Background" />
         </Modal>
@@ -306,7 +307,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           closeButton={false}
           onClose={() => setIsShowingAvatar(false)}
           style={{ maxWidth: '90%', maxHeight: '90%' }}
-          key="image-modal"
+          key="avatar-modal"
         >
           <img src={avatarUrl} alt="Avatar" />
         </Modal>

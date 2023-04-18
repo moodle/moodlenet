@@ -535,36 +535,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
   // )
 
-  // const description: AddonItem = {
-  //   Item: () => (
-  //     // form.values.content ? (
-  //     <>
-  //       {canEdit ? (
-  //         <InputTextField
-  //           className="description underline"
-  //           name="description"
-  //           isTextarea
-  //           textAreaAutoSize
-  //           displayMode
-  //           placeholder="Description"
-  //           value={form.values.description}
-  //           onChange={form.handleChange}
-  //           style={{
-  //             pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
-  //           }}
-  //           error={shouldShowErrors && form.errors.description}
-  //         />
-  //       ) : (
-  //         <div className="description"> {form.values.description} </div>
-  //       )}
-  //     </>
-  //   ),
-  //   // ) : (
-  //   //   <></>
-  //   // ),
-  //   key: 'description',
-  // }
-
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [showFullDescription, setShowFullDescription] = useState(true)
   // const [isSmallDescription, setIsSmallDescription] = useState(false)
@@ -597,7 +567,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       error={shouldShowErrors && form.errors.description}
     />
   ) : (
-    <div className="description">
+    <div className="description" key="description-container">
       <div
         className="description-text"
         ref={descriptionRef}
