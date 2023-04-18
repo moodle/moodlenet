@@ -24,7 +24,12 @@ import {
 import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { plugin } from './lib.mjs'
-import { OpenGraphData, OpenGraphProviderItems } from './opengraph.mjs'
+import {
+  getDefaultOpenGraphData,
+  OpenGraphData,
+  OpenGraphDataProvided,
+  OpenGraphProviderItems,
+} from './opengraph.mjs'
 import { shell } from './shell.mjs'
 import { KeyValueData, WebUserDataType, WebUserProfileDataType } from './types.mjs'
 import {
@@ -136,31 +141,55 @@ export const httpApp = await shell.call(mountApp)({
       return
     }
     const mountApp = express()
-    const staticWebApp = express.static(latestBuildFolder, { index: './index.html' })
+    const staticWebApp = express.static(latestBuildFolder, { index: false })
     mountApp.use(staticWebApp)
     //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
     mountApp.get(`*`, async (req, res, next) => {
-      if (req.url.startsWith('/.')) {
+      if (
+        req.url.startsWith('/.') ||
+        // FIXME :\
+        ['/service-worker.js', '/manifest.json', 'favicon.svg'].includes(req.url)
+      ) {
         next()
         return
       }
-      const webappPath = req.url.replace(new RegExp(`^${instanceDomain}`), '')
-      let openGraphData: OpenGraphData | undefined
+
+      const webappPath = req.url
+      let openGraphDataProvided: OpenGraphDataProvided | undefined
       for (const providerItem of OpenGraphProviderItems) {
-        openGraphData = await providerItem.provider(webappPath)
-        if (openGraphData) {
+        openGraphDataProvided = await providerItem.provider(webappPath)
+        if (openGraphDataProvided) {
           break
         }
       }
-      console.log({ webappPath, openGraphData })
+      const openGraphData: OpenGraphData = {
+        url: `${instanceDomain}${req.url}`,
+        type: 'website',
+        //FIXME: need to add image to orgData !
+        image: 'https://moodle.net/moodlenet-logo.svg',
+        ...(await getDefaultOpenGraphData()),
+        ...openGraphDataProvided,
+      }
+
+      console.log({ webappPath, openGraphDataProvided, openGraphData })
+
       const _html = await readFile(resolve(latestBuildFolder, 'index.html'), 'utf-8')
       const headReplace = openGraphData
         ? `<head>
+<title>${openGraphData.title}</title>
+<meta name="description" content="${openGraphData.description}" />
+<!-- OpenGraph -->
 <meta property="og:title" content="${openGraphData.title}" />
 <meta property="og:description" content="${openGraphData.description}" />
 <meta property="og:image" content="${openGraphData.image}" />
-<title>${openGraphData.title}</title>
-<meta name="description" content="${openGraphData.description}">
+<meta property="og:url" content="${openGraphData.url}">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:domain" content="${instanceDomain.split('//')[1]}">
+<meta property="twitter:url" content="${openGraphData.url}">
+<meta name="twitter:title" content="${openGraphData.title}">
+<meta name="twitter:description" content="${openGraphData.description}">
+<meta name="twitter:image" content="${openGraphData.image}">
 `
         : `<head>
 <title>MoodleNet</title>
