@@ -266,7 +266,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
           //   key: 'locations',
           // },
         ],
-        key: 'people-list',
+        key: 'profile-list',
       },
     ],
   }

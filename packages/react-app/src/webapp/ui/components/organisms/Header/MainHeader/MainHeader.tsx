@@ -128,20 +128,7 @@ export type AvatarMenuProps = {
 }
 
 export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logout */ }) => {
-  const avatarMenuItems: HeaderMenuItem[] = [
-    // {
-    //   Icon: <NoteAddIcon />,
-    //   text: /* t */ `New resource`,
-    //   path: newResourceHref,
-    //   key: 'new-resoure',
-    // },
-    // {
-    //   Icon: <LibraryAddIcon />,
-    //   text: /* t */ `New collection`,
-    //   path: newCollectionHref,
-    //   key: 'new-collection',
-    // },
-  ]
+  const avatarMenuItems: HeaderMenuItem[] = []
   const avatarImageUrl = avatarUrl ?? defaultAvatar
 
   const avatar = {

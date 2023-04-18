@@ -467,7 +467,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const description = (
     // form.values.content ? (
     <div
-      className="description"
+      className="description-container"
+      key="description-container"
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
         height: showFullDescription ? 'fit-content' : '66px',

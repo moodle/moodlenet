@@ -162,7 +162,7 @@ export const Profile: FC<ProfileProps> = ({
 
   const mainProfileCard = (
     <MainProfileCard
-      // editForm={editForm}
+      key="main-profile-card"
       form={form}
       slots={mainProfileCardSlots}
       access={access}

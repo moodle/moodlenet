@@ -89,7 +89,12 @@ export const getResourceCardStoryProps = (
     canPublish: false,
     isAuthenticated: true,
   }
-  return overrideDeep<ResourceCardProps>(
+
+  // if (overrides?.data?.resourceId) {
+  //   overrides.data.resourceId = id
+  // }
+
+  const newResource = overrideDeep<ResourceCardProps>(
     {
       data,
       state,
@@ -98,6 +103,11 @@ export const getResourceCardStoryProps = (
     },
     overrides,
   )
+  return overrideDeep<ResourceCardProps>(newResource, {
+    data: {
+      resourceId: id,
+    },
+  })
 }
 
 export const ResourceCardLoggedInStoryProps: ResourceCardProps = getResourceCardStoryProps()
