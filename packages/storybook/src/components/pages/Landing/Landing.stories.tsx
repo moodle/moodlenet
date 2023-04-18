@@ -108,7 +108,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
           })}
         />
       ),
-      key: 'resource-card-list',
+      key: 'collection-card-list',
     },
     {
       Item: () => (
@@ -180,7 +180,7 @@ export const Owner: LandingStory = () => {
             })}
           />
         ),
-        key: 'resource-card-list',
+        key: 'collection-card-list',
       },
       {
         Item: () => (
