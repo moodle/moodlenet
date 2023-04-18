@@ -183,6 +183,7 @@ export const httpApp = await shell.call(mountApp)({
 <meta property="og:description" content="${openGraphData.description}" />
 <meta property="og:image" content="${openGraphData.image}" />
 <meta property="og:url" content="${openGraphData.url}">
+<meta property="og:type" content="${openGraphData.type}">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta property="twitter:domain" content="${instanceDomain.split('//')[1]}">
