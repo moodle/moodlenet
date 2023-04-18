@@ -145,11 +145,7 @@ export const httpApp = await shell.call(mountApp)({
     mountApp.use(staticWebApp)
     //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
     mountApp.get(`*`, async (req, res, next) => {
-      if (
-        req.url.startsWith('/.') ||
-        // FIXME :\
-        ['/service-worker.js', '/manifest.json', 'favicon.svg'].includes(req.url)
-      ) {
+      if (req.url.startsWith('/.') || /\.\w*$/gi.test(req.url)) {
         next()
         return
       }
