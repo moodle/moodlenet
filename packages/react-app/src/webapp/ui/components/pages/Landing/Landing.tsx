@@ -103,7 +103,7 @@ export const Landing: FC<LandingProps> = ({
     backgroundSize: 'cover',
   }
   const headerCard = (
-    <div className="landing-header" style={background}>
+    <div className="landing-header" key="landing-header" style={background}>
       <div className="landing-title">
         <div className="title">{title}</div>
         {/* <div className="title">{organization.title}</div> */}

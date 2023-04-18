@@ -13,7 +13,7 @@ export const HeaderProfileAvatarMenuStoryProps = (icon: string): HeaderMenuItem 
     className: profileAvatarmenuItemReg.ClassName,
     // position: profileAvatarmenuItemReg.Position,
     path: href('Pages/Profile/Logged In'),
-    key: `HeaderProfileItem`,
+    key: `avatar-menu-profile`,
   }
 }
 
@@ -23,5 +23,5 @@ export const HeaderSignoutAvatarMenuStoryProps: HeaderMenuItem = {
   className: signoutAvatarmenuItemReg.ClassName,
   // position: signoutAvatarmenuItemReg.Position,
   path: href('Pages/Landing/Logged Out'),
-  key: `HeaderProfileItem`,
+  key: `avatar-menu-logout`,
 }

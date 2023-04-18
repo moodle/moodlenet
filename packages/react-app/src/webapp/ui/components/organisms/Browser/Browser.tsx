@@ -136,8 +136,6 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
       </>
     ) : null
 
-  console.log('extraFilters', extraFilters)
-
   return (
     <div className="browser">
       <div className="filter-bar">

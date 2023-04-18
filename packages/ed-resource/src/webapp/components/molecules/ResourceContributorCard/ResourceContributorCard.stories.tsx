@@ -2,7 +2,6 @@ import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-libra
 import { href } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard.js'
-
 const meta: ComponentMeta<typeof ResourceContributorCard> = {
   title: 'Pages/Resource/ResourceContributorCard',
   component: ResourceContributorCard,
