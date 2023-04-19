@@ -1,17 +1,22 @@
-import { FloatingMenu, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
+import {
+  AddonItem,
+  FloatingMenu,
+  PrimaryButton,
+  SecondaryButton,
+} from '@moodlenet/component-library'
 import { ArrowDropDown } from '@mui/icons-material'
 import { ComponentType, FC, useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
-import { Filter, FilterProps, getFilterContentDefaultListElement } from './Filter.js'
+import { getFilterContentDefaultListElement } from './Filter.js'
 
 export type MainColumItem = {
   Item: ComponentType<{
     showAll: boolean
     setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
   }>
+  name: string
+  filters: AddonItem[]
   key: number | string
-  menuItem?: ComponentType
-  filters?: FilterProps[]
 }
 
 export type BrowserProps = {
@@ -31,14 +36,12 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
 
               const onClick = () => setCurrentMainFilter(e.key.toString())
 
-              return e.menuItem
-                ? getFilterContentDefaultListElement({
-                    Item: e.menuItem,
-                    key: e.key,
-                    isCurrent,
-                    onClick,
-                  })
-                : null
+              return getFilterContentDefaultListElement({
+                name: e.name,
+                key: e.key,
+                isCurrent,
+                onClick,
+              })
             })
             .filter(item => !!item)
         : [],
@@ -62,7 +65,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
           .map(e => {
             const isCurrent = e.key.toString() === currentMainFilter
 
-            return (isCurrent || !currentMainFilter) && e.menuItem ? (
+            return isCurrent || !currentMainFilter ? (
               isCurrent ? (
                 <FloatingMenu
                   className="menu-content-default-list"
@@ -71,7 +74,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
                       key={e.key}
                       className={`filter-element ${isCurrent ? 'selected' : ''}`}
                     >
-                      <e.menuItem />
+                      <span>{e.name}</span>
                       <ArrowDropDown />
                     </PrimaryButton>
                   }
@@ -89,7 +92,9 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
                   <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
                     <div className={`border ${isCurrent ? 'selected' : ''}`} />
                   </div>
-                  <div className={`content ${isCurrent ? 'selected' : ''}`}>{<e.menuItem />}</div>
+                  <div className={`content ${isCurrent ? 'selected' : ''}`}>
+                    <span>{e.name}</span>
+                  </div>
                 </SecondaryButton>
               )
             ) : null
@@ -98,7 +103,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
       : []
   }, [mainColumnItems, currentMainFilter, navMenuElements, setCurrentMainFilter])
 
-  const [currentFilters, setCurrentFilters] = useState<FilterProps[] | undefined>([])
+  const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
   useEffect(() => {
     mainColumnItems?.map(
       e => e.key.toString() === currentMainFilter && setCurrentFilters(e.filters),
@@ -109,7 +114,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
     currentFilters && currentFilters.length > 0 ? (
       <div className="filters">
         {currentFilters.map(i => (
-          <Filter {...i} key={i.key} />
+          <i.Item key={i.key} />
         ))}
       </div>
     ) : null
