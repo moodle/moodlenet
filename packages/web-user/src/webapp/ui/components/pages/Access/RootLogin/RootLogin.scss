@@ -1,0 +1,213 @@
+.root-login-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  @media (max-height: 600px) {
+    height: min-content;
+
+    > content {
+      margin-top: 5%;
+    }
+  }
+
+  > .content {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: 650px) {
+      justify-content: center;
+      margin: 0 25px;
+    }
+    @media (max-height: 750px) {
+      margin-bottom: 5%;
+    }
+
+    > .card {
+      width: 525px;
+      height: min-content;
+      min-width: 0;
+
+      background-color: white;
+      @media (max-width: 900px) {
+        max-width: 525px;
+        width: 100%;
+      }
+      > .content {
+        flex-direction: column;
+        justify-content: space-between;
+        display: flex;
+        padding: 53px 65px;
+        width: 100%;
+        height: 100%;
+        gap: 33px;
+
+        @media (max-width: 450px) {
+          padding: 53px calc(25px + 5%);
+        }
+
+        > .title {
+          color: #b6bacb;
+          font-size: 32px;
+        }
+
+        > form {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          gap: 15px;
+          > .input-text-field > .input-container {
+            box-shadow: none;
+            height: 46px;
+            border-style: solid;
+            border-width: 0.5px;
+            border-radius: 45px;
+            padding: 0 25px;
+
+            > input {
+              padding: 0;
+              &::placeholder {
+                font-weight: 500;
+                font-size: 17px;
+                color: #b6bacb;
+                opacity: 1;
+              }
+              &::-ms-input-placeholder {
+                font-weight: 500;
+                font-size: 17px;
+                color: #b6bacb;
+              }
+              &:-ms-input-placeholder {
+                font-weight: 500;
+                font-size: 17px;
+                color: #b6bacb;
+              }
+
+              &:focus {
+                border: 0 solid white;
+              }
+
+              &:not(:focus) {
+                color: #b6bacb;
+              }
+            }
+          }
+          > .input-text-field.highlight > .input-container {
+            box-shadow: 0 0 0 2px red;
+            border: none;
+          }
+
+          > .email {
+            max-width: 335px;
+            &:not(.highlight) > .input-container {
+              border-color: var(--primary-color);
+            }
+            &:not(.highlight).focused > .input-container {
+              box-shadow: 0 0 5px var(--primary-color);
+            }
+          }
+
+          > .password {
+            max-width: 250px;
+            &:not(.highlight) > .input-container {
+              border-color: #b6bacb;
+            }
+            &:not(.highlight).focused > .input-container {
+              box-shadow: 0 0 5px #b6bacb;
+            }
+          }
+
+          > .error {
+            width: fit-content;
+            font-size: 12px;
+            align-items: center;
+            display: flex;
+            color: var(--error-color);
+            height: 14px;
+            animation: enter-move 0.5s ease-out;
+
+            @keyframes enter-move {
+              from {
+                height: 0;
+                opacity: 0;
+              }
+              to {
+                font-size: 12px;
+                color: red;
+                height: 14px;
+                opacity: 1;
+              }
+            }
+          }
+        }
+
+        > .bottom {
+          display: flex;
+          flex-direction: column;
+
+          > .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            > .left {
+              display: flex;
+              gap: 10px;
+              > .tertiary-button {
+                @media (max-width: 450px) {
+                  display: none;
+                }
+              }
+            }
+            > .right {
+              display: flex;
+              > .icon {
+                cursor: pointer;
+                height: 33px;
+                width: 33px;
+                padding: 3px;
+                border-radius: 50px;
+                background-color: #fff;
+                box-shadow: 0 0 6px #dedede;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                > img {
+                  height: 55%;
+                }
+              }
+
+              > .icon:first-child {
+                margin-right: 10px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .view {
+    z-index: 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 200px 100px 50px 100px;
+    height: 100%;
+    background-color: #f4f5f7;
+    background-size: cover;
+    overflow-x: hidden;
+    bottom: 0;
+
+    @media (max-width: 450px) {
+      padding: 200px 0 0 0;
+    }
+
+    @media screen and (max-width: 675px) and (min-width: 450px) {
+      padding: 200px 25px;
+    }
+  }
+}

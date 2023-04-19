@@ -1,7 +1,7 @@
 import { getDomainUrl } from '@moodlenet/component-library'
-import { AuthDataRpc } from '@moodlenet/react-app/common'
 import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
+import { AuthDataRpc } from '@moodlenet/web-user/common'
 import { ResourceExposeType } from './expose-def.mjs'
 
 export type MyWebDeps = {

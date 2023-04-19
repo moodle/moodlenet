@@ -35,4 +35,5 @@ export const defaultCorePackages = [
   'openid',
   'ed-resource',
   'collection',
+  'web-user',
 ]
