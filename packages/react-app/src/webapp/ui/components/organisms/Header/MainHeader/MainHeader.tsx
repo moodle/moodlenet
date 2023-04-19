@@ -74,7 +74,6 @@ export const MainHeader: FC<MainHeaderProps> = ({
   const updatedRightItems: AddonItem[] = useMemo(() => {
     return rightItems.filter((item): item is AddonItem => !!item)
   }, [rightItems])
-
   return (
     <Header
       leftItems={updatedLeftItems}

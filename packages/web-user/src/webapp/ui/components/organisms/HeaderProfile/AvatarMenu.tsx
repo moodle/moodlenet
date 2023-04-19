@@ -1,7 +1,7 @@
 import { FloatingMenu } from '@moodlenet/component-library'
 import { Href, Link } from '@moodlenet/react-app/ui'
 import { FC, ReactNode } from 'react'
-import defaultAvatar from '../../../../assets/img/default-avatar.svg'
+import defaultAvatar from '../../../assets/img/default-avatar.svg'
 
 export type AvatarMenuItemRegItem = Omit<AvatarMenuItem, 'key'>
 export type AvatarMenuItem = {
@@ -14,25 +14,11 @@ export type AvatarMenuItem = {
   onClick?: () => unknown
 }
 export type AvatarMenuProps = {
-  menuItems?: AvatarMenuItem[]
-  avatarUrl?: string
+  menuItems: AvatarMenuItem[]
+  avatarUrl: string | undefined
 }
 
-export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logout */ }) => {
-  const avatarMenuItems: AvatarMenuItem[] = [
-    // {
-    //   Icon: <NoteAddIcon />,
-    //   text: /* t */ `New resource`,
-    //   path: newResourceHref,
-    //   key: 'new-resoure',
-    // },
-    // {
-    //   Icon: <LibraryAddIcon />,
-    //   text: /* t */ `New collection`,
-    //   path: newCollectionHref,
-    //   key: 'new-collection',
-    // },
-  ]
+export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl }) => {
   const avatarImageUrl = avatarUrl ?? defaultAvatar
 
   const avatar = {
@@ -42,8 +28,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl /* , logo
     backgroundSize: 'cover',
   }
 
-  const updatedAvatarItems = avatarMenuItems.concat(menuItems ?? [])
-  return updatedAvatarItems.length > 0 ? (
+  return menuItems.length > 0 ? (
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menu"

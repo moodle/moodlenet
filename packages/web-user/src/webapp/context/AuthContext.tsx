@@ -1,15 +1,6 @@
 import { useGuestRegistryMap, wrapFetch } from '@moodlenet/react-app/web-lib'
 import cookies from 'js-cookie'
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
 import { WebUserProfile } from '../../server/types.mjs'
@@ -18,7 +9,7 @@ import defaultAvatarUrl from '../ui/assets/img/default-avatar.svg'
 import rootAvatarUrl from '../ui/assets/img/root-avatar.png'
 import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
 import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
-import { MainContext } from './MainContext.mjs'
+import { MainContextT } from './MainContext.mjs'
 
 export type UserDisplay = { name: string; avatarUrl: string }
 export type ClientSessionData = {
@@ -46,15 +37,11 @@ export type AuthCtxT = {
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
 
-export const AuthProvider: FC<PropsWithChildren<{ registries: MainRegistries }>> = ({
-  children,
-  registries,
-}) => {
+export function useAuthCtx(registries: MainRegistries, { use }: MainContextT) {
   const guestRegistries = useGuestRegistryMap(registries)
   const nav = useNavigate()
   const loc = useLocation()
 
-  const { use } = useContext(MainContext)
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null | undefined>(
     null,
   )
@@ -133,7 +120,7 @@ export const AuthProvider: FC<PropsWithChildren<{ registries: MainRegistries }>>
     fetchClientSessionDataRpc()
   }
 
-  return ctx && <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
+  return ctx
 }
 
 function readSessionTokenCookie() {
