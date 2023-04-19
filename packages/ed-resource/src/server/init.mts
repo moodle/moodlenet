@@ -1,4 +1,4 @@
-import { registerScopes } from '@moodlenet/openid/server'
+import { registerScopes } from '@moodlenet/core'
 import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import {

@@ -87,7 +87,6 @@ export const getResourceCardStoryProps = (
     // isCreator: false,
     canDelete: false,
     canPublish: false,
-    isAuthenticated: true,
   }
 
   // if (overrides?.data?.resourceId) {
@@ -113,9 +112,7 @@ export const getResourceCardStoryProps = (
 export const ResourceCardLoggedInStoryProps: ResourceCardProps = getResourceCardStoryProps()
 
 export const ResourceCardLoggedOutStoryProps: ResourceCardProps = getResourceCardStoryProps({
-  access: {
-    isAuthenticated: false,
-  },
+  access: {},
 })
 
 export const ResourceCardOwnerStoryProps: ResourceCardProps = getResourceCardStoryProps({

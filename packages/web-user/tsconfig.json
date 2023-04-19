@@ -25,6 +25,12 @@
     },
     {
       "path": "../crypto"
+    },
+    {
+      "path": "../collection"
+    },
+    {
+      "path": "../ed-resource"
     }
   ]
 }
