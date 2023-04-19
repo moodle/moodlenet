@@ -1,5 +1,5 @@
 // import { SvgIconTypeMap } from '@material-ui/core'
-import { ExpandLess as ExpandLessIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
+import { ArrowDropDown } from '@material-ui/icons'
 import {
   FC,
   ReactNode,
@@ -8,15 +8,14 @@ import {
   useLayoutEffect,
   useReducer,
   useRef,
-  useState
+  useState,
 } from 'react'
-import { Selector, SelectorProps, useSelectorOption } from '../../../lib/selector.js'
+import { Selector, SelectorProps } from '../../../lib/selector.js'
 
-import RoundButton from '../RoundButton/RoundButton.js'
-import './Dropdown.scss'
-import { setListPosition } from './utils.js'
+import { setListPosition } from '../Dropdown/utils.js'
+import './FilterDropdown.scss'
 
-export type DropdownProps = SelectorProps & {
+export type FilterDropdownProps = SelectorProps & {
   pills: ReactNode
   searchByText?: ((text: string) => unknown) | undefined
   searchText?: string
@@ -27,7 +26,7 @@ export type DropdownProps = SelectorProps & {
   multilines?: boolean
   position?: { top?: number; bottom?: number }
 }
-export const Dropdown: FC<DropdownProps> = props => {
+export const FilterDropdown: FC<FilterDropdownProps> = props => {
   const {
     children,
     pills,
@@ -43,12 +42,12 @@ export const Dropdown: FC<DropdownProps> = props => {
   } = props
   return (
     <Selector {...selectorProps}>
-      <DropdownComp {...props}>{children}</DropdownComp>
+      <FilterDropdownComp {...props}>{children}</FilterDropdownComp>
     </Selector>
   )
 }
 
-const DropdownComp: FC<DropdownProps> = props => {
+const FilterDropdownComp: FC<FilterDropdownProps> = props => {
   const {
     pills,
     highlight,
@@ -132,7 +131,7 @@ const DropdownComp: FC<DropdownProps> = props => {
 
   return (
     <div
-      className={`dropdown ${className ? className : ''} ${searchByText ? 'search' : ''}${
+      className={`filter-dropdown ${className ? className : ''} ${searchByText ? 'search' : ''}${
         disabled ? ' disabled' : ''
       } ${highlight || error ? ' highlight' : ''} ${!errorLeaves && error ? 'enter-error' : ''} ${
         errorLeaves ? 'leave-error' : ''
@@ -140,7 +139,7 @@ const DropdownComp: FC<DropdownProps> = props => {
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
-      {label && <label>{label}</label>}
+      {/* {label && <label>{label}</label>} */}
       <div
         onClick={showContent ? undefined : toggleOpen}
         onFocus={showContent ? undefined : toggleOpen}
@@ -153,7 +152,9 @@ const DropdownComp: FC<DropdownProps> = props => {
           <>
             <input
               ref={dropdownButton}
-              className={`dropdown-button search-field  ${disabled || !edit ? 'not-editing' : ''}`}
+              className={`filter-dropdown-button search-field  ${
+                disabled || !edit ? 'not-editing' : ''
+              }`}
               placeholder={placeholder}
               onInput={({ currentTarget }) => searchByText?.(currentTarget.value)}
               onClick={showContent ? _ => _.stopPropagation() : undefined}
@@ -161,19 +162,19 @@ const DropdownComp: FC<DropdownProps> = props => {
               disabled={disabled || !edit}
               defaultValue={searchText}
             />
-            <ExpandMoreIcon onClickCapture={toggleOpen} />
+            <ArrowDropDown onClickCapture={toggleOpen} />
           </>
         ) : (
           <>
             <div
-              className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
+              className={`filter-dropdown-button ${multiple ? 'multiple' : 'single'} 
               ${multilines ? 'multilines' : ''} 
               ${multiple && !multilines ? 'scroll' : ''}
               `}
             >
               {pills ? pills : !disabled && <div className="placeholder">{placeholder}</div>}
             </div>
-            {!disabled && edit && <ExpandLessIcon />}
+            {!disabled && edit && <ArrowDropDown />}
           </>
         )}
       </div>
@@ -184,7 +185,7 @@ const DropdownComp: FC<DropdownProps> = props => {
           ref={dropdownContent}
           onMouseEnter={() => setHoveringOptions(true)}
           onMouseLeave={() => setHoveringOptions(false)}
-          className="dropdown-content"
+          className="filter-dropdown-content"
           tabIndex={-1}
           onClick={_ => {
             _.stopPropagation()
@@ -198,65 +199,65 @@ const DropdownComp: FC<DropdownProps> = props => {
   )
 }
 
-export const SimplePill: FC<{
-  value: string
-  label: ReactNode
-  edit?: boolean
-}> = ({ label, value, edit }) => {
-  const { toggle } = useSelectorOption(value) ?? {}
-  return (
-    <div className="dropdown-pill">
-      <div className="label">{label}</div>
-      {edit && <RoundButton onClick={toggle} />}
-    </div>
-  )
-}
-export const IconPill: FC<{
-  icon: ReactNode
-}> = ({ icon }) => {
-  return <div className="dropdown-pill icon">{icon}</div>
-}
+// export const SimplePill: FC<{
+//   value: string
+//   label: ReactNode
+//   edit?: boolean
+// }> = ({ label, value, edit }) => {
+//   const { toggle } = useSelectorOption(value) ?? {}
+//   return (
+//     <div className="filter-dropdown-pill">
+//       <div className="label">{label}</div>
+//       {edit && <RoundButton onClick={toggle} />}
+//     </div>
+//   )
+// }
+// export const IconPill: FC<{
+//   icon: ReactNode
+// }> = ({ icon }) => {
+//   return <div className="filter-dropdown-pill icon">{icon}</div>
+// }
 
-export const IconTextPill: FC<{
-  icon: ReactNode
-  label: string
-}> = ({ icon, label }) => {
-  return (
-    <div className="dropdown-pill icon-text">
-      {icon}
-      <span>{label}</span>
-    </div>
-  )
-}
+// export const IconTextPill: FC<{
+//   icon: ReactNode
+//   label: string
+// }> = ({ icon, label }) => {
+//   return (
+//     <div className="filter-dropdown-pill icon-text">
+//       {icon}
+//       <span>{label}</span>
+//     </div>
+//   )
+// }
 
-export type TextOptionProps = {
-  value: string
-  label: string
-}
-export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
-  const { toggle, selected } = useSelectorOption(value) ?? {}
-  return (
-    <div key={value} className={`${selected ? 'selected ' : ''}option only-text`} onClick={toggle}>
-      {label}
-    </div>
-  )
-}
+// export type TextOptionProps = {
+//   value: string
+//   label: string
+// }
+// export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
+//   const { toggle, selected } = useSelectorOption(value) ?? {}
+//   return (
+//     <div key={value} className={`${selected ? 'selected ' : ''}option only-text`} onClick={toggle}>
+//       {label}
+//     </div>
+//   )
+// }
 
-export type IconTextOptionProps = {
-  value: string
-  label: string
-  icon: ReactNode
-}
-export const IconTextOption: FC<IconTextOptionProps> = ({ value, label, icon }) => {
-  const { toggle, selected } = useSelectorOption(value) ?? {}
-  return (
-    <div
-      key={value}
-      className={`${selected ? 'selected ' : ''} option icon-and-text`}
-      onClick={toggle}
-    >
-      {icon}
-      <span>{label}</span>
-    </div>
-  )
-}
+// export type IconTextOptionProps = {
+//   value: string
+//   label: string
+//   icon: ReactNode
+// }
+// export const IconTextOption: FC<IconTextOptionProps> = ({ value, label, icon }) => {
+//   const { toggle, selected } = useSelectorOption(value) ?? {}
+//   return (
+//     <div
+//       key={value}
+//       className={`${selected ? 'selected ' : ''} option icon-and-text`}
+//       onClick={toggle}
+//     >
+//       {icon}
+//       <span>{label}</span>
+//     </div>
+//   )
+// }

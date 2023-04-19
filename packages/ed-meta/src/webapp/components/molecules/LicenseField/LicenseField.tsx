@@ -12,7 +12,6 @@ import './LicenseField.scss'
 
 export type LicenseFieldProps = {
   license: string
-  contentType: 'file' | 'link'
   licenses: SelectOptions<IconTextOptionProps>
   editLicense: (values: { license: string }) => void
   canEdit: boolean
@@ -27,7 +26,6 @@ export const LicenseField: FC<LicenseFieldProps> = ({
   editLicense,
   canEdit,
   isEditing,
-  contentType,
   validationSchema,
   shouldShowErrors,
 }) => {
@@ -71,7 +69,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       )}
     </div>
   ) : null
-  return contentType === 'file' ? licenseDropdown : null
+  return licenseDropdown
 }
 
 export default LicenseField
