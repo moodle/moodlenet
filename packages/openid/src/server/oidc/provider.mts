@@ -1,9 +1,8 @@
-import { instanceDomain } from '@moodlenet/core'
+import { getPkgScopes, instanceDomain } from '@moodlenet/core'
 import { jwk } from '@moodlenet/crypto/server'
-import { getProfileRecord } from '@moodlenet/react-app/server'
+import { getProfileRecord } from '@moodlenet/web-user/server'
 import Provider, { Account, Configuration } from 'oidc-provider'
 import { ArangoAdapter } from './arango-adapter.mjs'
-import { getPkgScopes } from './registries.mjs'
 export const ___DEV_INTERACTIONS_ENABLED = false
 
 export const providerConfig = await getProviderConfig()

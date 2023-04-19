@@ -9,7 +9,6 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
       // isCreator: true,
       canDelete: true,
       canPublish: true,
-      isAuthenticated: true,
     },
     data: {
       title: 'Why the oceans are so important',
@@ -29,7 +28,6 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
       // isCreator: true,
       canDelete: true,
       canPublish: true,
-      isAuthenticated: true,
     },
     data: {
       title: 'How ecosystems collapse',
@@ -49,7 +47,6 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
       // isCreator: true,
       canDelete: true,
       canPublish: true,
-      isAuthenticated: true,
     },
     data: {
       title: 'The true role of CO2',
@@ -69,7 +66,6 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
       // isCreator: true,
       canDelete: true,
       canPublish: true,
-      isAuthenticated: true,
     },
     data: {
       title: 'Fullfilling life with little needs',
@@ -89,7 +85,6 @@ export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
       // isCreator: true,
       canDelete: true,
       canPublish: true,
-      isAuthenticated: true,
     },
     data: {
       title: 'How black holes collapse',

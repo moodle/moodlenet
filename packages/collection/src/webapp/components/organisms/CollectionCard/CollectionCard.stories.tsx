@@ -66,7 +66,6 @@ export const getCollectionCardStoryProps = (
   }
 
   const access: CollectionCardAccess = {
-    isAuthenticated: true,
     isCreator: false,
     canPublish: true,
   }
@@ -119,9 +118,7 @@ export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {
     },
     state: {},
     actions: {},
-    access: {
-      isAuthenticated: false,
-    },
+    access: {},
   }),
 }
 

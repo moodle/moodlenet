@@ -5,9 +5,9 @@ import { MainFooterProps } from './MainFooter.js'
 
 export const useFooterProps = (): MainFooterProps => {
   const { reg } = useContext(MainContext)
-  const leftItemsReg = reg.rightComponents
-  const centerItemsReg = reg.rightComponents
-  const rightItemsReg = reg.rightComponents
+  const leftItemsReg = reg.footerLeftComponents
+  const centerItemsReg = reg.footerCenterComponents
+  const rightItemsReg = reg.footerRightComponents
 
   const leftItems = useMemo(() => {
     return leftItemsReg.registry.entries.map<AddonItem>(({ item, pkgId }, idx) => {

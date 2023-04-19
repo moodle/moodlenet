@@ -4,6 +4,7 @@ import {
   SettingsSectionItem,
   usePkgContext,
 } from '@moodlenet/react-app/web-lib'
+import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../common/types.mjs'
 import * as LoginComponents from './Login/Login.js'
@@ -19,10 +20,11 @@ const loginItem = { Icon: LoginComponents.Icon, Panel: LoginPanelContainer }
 const signUpItem = { Icon: signupComponents.Icon, Panel: SignUpPanelCtrl }
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
-  const { registries } = useContext(ReactAppContext)
-  registries.loginItems.useRegister(loginItem)
-  registries.signupItems.useRegister(signUpItem)
-  registries.settingsSections.useRegister(settingsSectionItem)
+  const reactAppCtx = useContext(ReactAppContext)
+  const webUserCtx = useContext(AuthCtx)
+  webUserCtx.registries.loginItems.useRegister(loginItem)
+  webUserCtx.registries.signupItems.useRegister(signUpItem)
+  reactAppCtx.registries.settingsSections.useRegister(settingsSectionItem)
 
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {

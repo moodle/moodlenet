@@ -25,6 +25,9 @@
     },
     {
       "path": "../system-entities"
+    },
+    {
+      "path": "../web-user"
     }
   ]
 }
