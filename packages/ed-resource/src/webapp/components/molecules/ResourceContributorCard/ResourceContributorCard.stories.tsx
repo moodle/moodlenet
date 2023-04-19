@@ -18,22 +18,12 @@ const meta: ComponentMeta<typeof ResourceContributorCard> = {
   ],
 }
 
-const randomProfileIndex = randomIntFromInterval(0, 3)
-const randomUploadedHours = randomIntFromInterval(1, 12)
-const person = peopleFactory[randomProfileIndex]
+const person = peopleFactory[randomIntFromInterval(0, 3)]
 
 export const ResourceContributorCardStoryProps: ResourceContributorCardProps = {
   avatarUrl: person ? person.avatarUrl : null,
   displayName: person ? person.displayName : '',
-  timeSinceCreation: `${randomUploadedHours} ${
-    randomProfileIndex === 0
-      ? 'hours'
-      : randomProfileIndex === 1
-      ? 'days'
-      : randomProfileIndex === 2
-      ? 'months'
-      : 'years'
-  } ago`,
+  timeSinceCreation: '2023-04-19T10:03:44.540Z',
   creatorProfileHref: href('Pages/Profile/Logged In'),
 }
 

@@ -18,14 +18,17 @@ export const ResourceContributorCard: FC<ResourceContributorCardProps> = ({
   timeSinceCreation,
   creatorProfileHref,
 }) => {
-  const time = duration(new Date(timeSinceCreation).valueOf() - new Date().valueOf()).humanize()
+  const originalTime = new Date(timeSinceCreation).valueOf()
+  const time = originalTime
+    ? duration(new Date(timeSinceCreation).valueOf() - new Date().valueOf()).humanize()
+    : null
   return (
     <Card className="resource-contributor-card" hideBorderWhenSmall={true}>
       <Link href={creatorProfileHref}>
         <img className="avatar" src={avatarUrl || defaultAvatar} alt="Avatar" />
       </Link>
       <div className="description">
-        Uploaded {time} by <Link href={creatorProfileHref}>{displayName}</Link>
+        Uploaded {time && `${time} ago`} by <Link href={creatorProfileHref}>{displayName}</Link>
       </div>
     </Card>
   )
