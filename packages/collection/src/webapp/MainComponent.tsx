@@ -1,11 +1,8 @@
-import { authToAccessRpc, ModelRpcToProps } from '@moodlenet/react-app/common'
+import { ModelRpcToProps } from '@moodlenet/react-app/common'
 import { HeaderMenuItem } from '@moodlenet/react-app/ui'
-import {
-  AuthCtx,
-  ReactAppContext,
-  ReactAppMainComponent,
-  usePkgContext,
-} from '@moodlenet/react-app/web-lib'
+import { ReactAppContext, ReactAppMainComponent, usePkgContext } from '@moodlenet/react-app/web-lib'
+import { authToAccessRpc } from '@moodlenet/web-user/common'
+import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo } from 'react'
 import { Route, useNavigate } from 'react-router-dom'
 import {
@@ -45,11 +42,14 @@ const menuItems = {
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const nav = useNavigate()
   const myPkgCtx = usePkgContext<MyPkgContext>()
-  const { registries } = useContext(ReactAppContext)
-  const { clientSessionData } = useContext(AuthCtx)
+  const reactAppCtx = useContext(ReactAppContext)
+  const webUserCtx = useContext(AuthCtx)
 
   const me = myPkgCtx.use.me
-  const auth = useMemo(() => authToAccessRpc(clientSessionData), [clientSessionData])
+  const auth = useMemo(
+    () => authToAccessRpc(webUserCtx.clientSessionData),
+    [webUserCtx.clientSessionData],
+  )
 
   const rpcCaller = useMemo((): RpcCaller => {
     const addAuth = addAuthMissing(auth.access || null)
@@ -77,10 +77,10 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     }
   }, [nav, rpcCaller])
 
-  registries.addMenuItems.useRegister(actionsMenu.create.menu, {
+  webUserCtx.registries.addMenuItems.useRegister(actionsMenu.create.menu, {
     condition: auth.access.isAuthenticated,
   })
-  registries.routes.useRegister(myRoutes)
+  reactAppCtx.registries.routes.useRegister(myRoutes)
 
   const mainValue: MainContextCollection = {
     ...myPkgCtx,

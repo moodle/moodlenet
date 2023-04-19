@@ -1,4 +1,4 @@
-import { getCurrentWebUserProfile } from '@moodlenet/react-app/server'
+import { getCurrentWebUserProfile } from '@moodlenet/web-user/server'
 import { OpenIdExposeType } from '../common/expose-def.mjs'
 import { shell } from './shell.mjs'
 

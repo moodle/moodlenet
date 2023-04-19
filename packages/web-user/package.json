@@ -1,0 +1,95 @@
+{
+  "name": "@moodlenet/web-user",
+  "version": "0.2.0",
+  "author": "MoodleNet",
+  "description": "Web User features",
+  "moodlenet": {
+    "displayName": "Web applicationUser",
+    "icon": "https://moodle.net/moodlenet-logo-small.svg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/web-user"
+  },
+  "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8",
+    "yarn": "please-use-npm"
+  },
+  "readme": "",
+  "files": [
+    "dist/",
+    "src/"
+  ],
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "exports": {
+    "./init": "./dist/server/init.mjs",
+    "./stories": "./dist/webapp/stories.mjs",
+    "./common": "./dist/common/exports.mjs",
+    "./server": "./dist/server/exports.mjs",
+    "./webapp": "./dist/webapp/exports.mjs"
+  },
+  "scripts": {
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
+    "dev-init": "npm run copy-assets",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
+    "create-stories-index": "vgis src/webapp/stories.mts"
+  },
+  "watch": {
+    "create-stories-index": {
+      "patterns": [
+        "src/webapp/stories.mts",
+        "src/webapp/**/*.stories.tsx"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "create-components-index": {
+      "patterns": [
+        "src/webapp/**/*"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "copy-assets": {
+      "patterns": [
+        "src/**/*"
+      ],
+      "extensions": ".scss,.png,.svg,.json",
+      "ignore": "**/*.*ts*",
+      "delay": 300
+    }
+  },
+  "peerDependencies": {
+    "@moodlenet/arangodb": "^0.2.0",
+    "@moodlenet/component-library": "^0.2.0",
+    "@moodlenet/core": "^0.2.0",
+    "@moodlenet/crypto": "^0.2.0",
+    "@moodlenet/http-server": "^0.2.0",
+    "@moodlenet/react-app": "^0.2.0",
+    "@moodlenet/system-entities": "^0.2.0"
+  },
+  "devDependencies": {
+    "@moodlenet/arangodb": "^0.2.0",
+    "@moodlenet/component-library": "^0.2.0",
+    "@moodlenet/core": "^0.2.0",
+    "@moodlenet/crypto": "^0.2.0",
+    "@moodlenet/http-server": "^0.2.0",
+    "@moodlenet/react-app": "^0.2.0",
+    "@moodlenet/system-entities": "^0.2.0",
+    "@types/js-cookie": "^3.0.2",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.5",
+    "react-router-dom": "^6.3.0"
+  },
+  "dependencies": {
+    "@material-ui/icons": "^4.11.3",
+    "formik": "^2.2.9",
+    "js-cookie": "^3.0.1",
+    "yup": "^0.32.11"
+  }
+}

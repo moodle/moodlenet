@@ -1,6 +1,6 @@
 import { instanceDomain } from '@moodlenet/core'
 import { jwk } from '@moodlenet/crypto/server'
-import { getProfileRecord } from '@moodlenet/react-app/server'
+import { getProfileRecord } from '@moodlenet/web-user/server'
 import Provider, { Account, Configuration } from 'oidc-provider'
 import { ArangoAdapter } from './arango-adapter.mjs'
 import { getPkgScopes } from './registries.mjs'

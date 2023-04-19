@@ -1,5 +1,5 @@
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
-import { AuthCtx } from '@moodlenet/react-app/web-lib'
+import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo } from 'react'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useMainHook } from '../../../MainHooks.js'

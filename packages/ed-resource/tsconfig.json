@@ -25,6 +25,9 @@
     },
     {
       "path": "../simple-file-store"
+    },
+    {
+      "path": "../web-user"
     }
   ]
 }

@@ -1,33 +1,25 @@
 import { FC, useContext, useState } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
-import { ArrowForward, NoteAdd } from '@material-ui/icons'
+// import { ArrowForward, NoteAdd } from '@material-ui/icons'
 import {
   AddonItem,
-  Modal,
-  PrimaryButton,
+  // Modal,
+  // PrimaryButton,
   Searchbox,
   SearchboxProps,
 } from '@moodlenet/component-library'
-import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
+// import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
 import { MainHeaderContext } from '../../../../ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
-import { Href, Link } from '../../elements/link.js'
+// import { Href, Link } from '../../elements/link.js'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
 
 export type LandingProps = {
   mainLayoutProps: MainLayoutProps
   mainColumnItems: AddonItem[]
-  shareContentModalItems: AddonItem[]
-
   title: string
   subtitle: string
-
-  loginHref: Href
-  signUpHref: Href
-  newResourceHref: Href
-  newCollectionHref: Href
-
   search(text: string): unknown
 
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
@@ -64,18 +56,9 @@ const LandingSearchBox: FC<Pick<SearchboxProps, 'setSearchText' | 'searchText' |
 export const Landing: FC<LandingProps> = ({
   mainLayoutProps,
   mainColumnItems,
-  shareContentModalItems,
-
   title,
   subtitle,
-
-  loginHref,
-  signUpHref,
-  newResourceHref,
-  newCollectionHref,
-
   search,
-
   // {
   //   // searchResourcesHref,
   //   // searchAuthorsHref,
@@ -89,13 +72,11 @@ export const Landing: FC<LandingProps> = ({
   //   // isAuthenticated,
   //   // setSearchText,
 }) => {
-  const isAuthenticated = mainLayoutProps.headerProps.isAuthenticated
-
   // const defaultBackground = new URL(
   //   '../../../assets/img/default-landing-background.png',
   //   import.meta.url,
   // ).href
-  const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
+  // const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
   const [searchText, setSearchText] = useState('')
 
   const background = {
@@ -112,14 +93,14 @@ export const Landing: FC<LandingProps> = ({
       </div>
       <LandingSearchBox setSearchText={setSearchText} searchText={searchText} search={search} />
 
-      <PrimaryButton
+      {/* <PrimaryButton
         className="share-content"
         color="blue"
         onClick={() => setIsShowingContentModal(true)}
         // onClick={() => setIsCreatingContent(true)}
       >
         Share content
-      </PrimaryButton>
+      </PrimaryButton> */}
     </div>
   )
 
@@ -127,85 +108,85 @@ export const Landing: FC<LandingProps> = ({
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
-  const newResource = (
-    <Link href={newCollectionHref}>
-      <PrimaryButton className="" color="card">
-        <LibraryAdd />
-        <div className="content">
-          <div className="title">Create a new collection</div>
-          <div className="subtitle">Collections are groups of resources</div>
-        </div>
-      </PrimaryButton>
-    </Link>
-  )
+  // const newResource = (
+  //   <Link href={newCollectionHref}>
+  //     <PrimaryButton className="" color="card">
+  //       <LibraryAdd />
+  //       <div className="content">
+  //         <div className="title">Create a new collection</div>
+  //         <div className="subtitle">Collections are groups of resources</div>
+  //       </div>
+  //     </PrimaryButton>
+  //   </Link>
+  // )
 
-  const newCollection = (
-    <Link href={newResourceHref}>
-      <PrimaryButton className="" color="card">
-        <NoteAdd />
-        <div className="content">
-          <div className="title">Create a new resource</div>
-          <div className="subtitle">A resource is a single item of content</div>
-        </div>
-      </PrimaryButton>
-    </Link>
-  )
+  // const newCollection = (
+  //   <Link href={newResourceHref}>
+  //     <PrimaryButton className="" color="card">
+  //       <NoteAdd />
+  //       <div className="content">
+  //         <div className="title">Create a new resource</div>
+  //         <div className="subtitle">A resource is a single item of content</div>
+  //       </div>
+  //     </PrimaryButton>
+  //   </Link>
+  // )
 
-  const updatedShareContentModalItems = [
-    newResource,
-    newCollection,
-    ...(shareContentModalItems ?? []),
-  ].filter((item): item is AddonItem | JSX.Element => !!item)
+  // const updatedShareContentModalItems = [
+  //   newResource,
+  //   newCollection,
+  //   ...(shareContentModalItems ?? []),
+  // ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const modals = [
-    !isAuthenticated && isShowingContentModal && (
-      <Modal
-        className="create-content-modal"
-        title={`Log in or create an account to start sharing content`}
-        closeButton={false}
-        onClose={() => {
-          setIsShowingContentModal(false)
-        }}
-        style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
-      >
-        <Link href={loginHref}>
-          <PrimaryButton className="" color="card">
-            <ArrowForward />
-            <div className="content">
-              <div className="title">Log in</div>
-              <div className="subtitle">Enter to your account</div>
-            </div>
-          </PrimaryButton>
-        </Link>
-        <Link href={signUpHref}>
-          <PrimaryButton className="" color="card">
-            <StreamOutlined />
-            <div className="content">
-              <div className="title">Join now</div>
-              <div className="subtitle">Create a new account</div>
-            </div>
-          </PrimaryButton>
-        </Link>
-      </Modal>
-    ),
-    isAuthenticated && isShowingContentModal && (
-      <Modal
-        className="create-content-modal"
-        title={`What would you like to create?`}
-        closeButton={false}
-        onClose={() => {
-          setIsShowingContentModal(false)
-        }}
-        style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
-      >
-        {updatedShareContentModalItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </Modal>
-    ),
-  ]
+  // const modals = [
+  //   !isAuthenticated && isShowingContentModal && (
+  //     <Modal
+  //       className="create-content-modal"
+  //       title={`Log in or create an account to start sharing content`}
+  //       closeButton={false}
+  //       onClose={() => {
+  //         setIsShowingContentModal(false)
+  //       }}
+  //       style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
+  //     >
+  //       <Link href={loginHref}>
+  //         <PrimaryButton className="" color="card">
+  //           <ArrowForward />
+  //           <div className="content">
+  //             <div className="title">Log in</div>
+  //             <div className="subtitle">Enter to your account</div>
+  //           </div>
+  //         </PrimaryButton>
+  //       </Link>
+  //       <Link href={signUpHref}>
+  //         <PrimaryButton className="" color="card">
+  //           <StreamOutlined />
+  //           <div className="content">
+  //             <div className="title">Join now</div>
+  //             <div className="subtitle">Create a new account</div>
+  //           </div>
+  //         </PrimaryButton>
+  //       </Link>
+  //     </Modal>
+  //   ),
+  //   isAuthenticated && isShowingContentModal && (
+  //     <Modal
+  //       className="create-content-modal"
+  //       title={`What would you like to create?`}
+  //       closeButton={false}
+  //       onClose={() => {
+  //         setIsShowingContentModal(false)
+  //       }}
+  //       style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
+  //     >
+  //       {updatedShareContentModalItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+  //     </Modal>
+  //   ),
+  // ]
 
   return (
     <MainLayout {...mainLayoutProps} headerProps={{ ...mainLayoutProps.headerProps }}>
-      {modals}
+      {/* modals */}
       <div className="landing">
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
 
