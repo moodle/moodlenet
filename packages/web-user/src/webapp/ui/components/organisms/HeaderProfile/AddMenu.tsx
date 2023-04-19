@@ -1,7 +1,7 @@
 import { FloatingMenu } from '@moodlenet/component-library'
 import { Href, Link } from '@moodlenet/react-app/ui'
 import { FC, ReactNode } from 'react'
-import { ReactComponent as AddIcon } from '../../../../assets/icons/add-round.svg'
+import { ReactComponent as AddIcon } from '../../../assets/icons/add-round.svg'
 
 export type AddMenuItemRegItem = Omit<AddMenuItem, 'key'>
 export type AddMenuItem = {
