@@ -10,11 +10,11 @@ import {
   SecondaryButton,
   useImageUrl,
 } from '@moodlenet/component-library'
+import type { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import { ProfileAccess, ProfileFormValues } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
-import { FormikHandle } from '../../../lib/formik.js'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {
@@ -31,7 +31,7 @@ export type MainProfileCardPropsControlled = Omit<
 >
 export type MainProfileCardProps = {
   slots: MainProfileCardSlots
-  form: FormikHandle<ProfileFormValues>
+  form: ReturnType<typeof useFormik<ProfileFormValues>>
   access: ProfileAccess
   isEditing?: boolean
   toggleIsEditing(): unknown
