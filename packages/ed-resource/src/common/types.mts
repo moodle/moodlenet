@@ -1,7 +1,7 @@
 import { getDomainUrl } from '@moodlenet/component-library'
-import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
+import { Href } from '@moodlenet/react-app/ui'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
-import { AuthDataRpc } from '@moodlenet/web-user/common'
+// import { AuthDataRpc } from '@moodlenet/web-user/common'
 import { ResourceExposeType } from './expose-def.mjs'
 
 export type MyWebDeps = {
@@ -13,15 +13,15 @@ export type SaveState = { form: boolean; image: boolean }
 export type MyPkgContext = PkgContextT<MyWebDeps>
 export type MainContextResource = MyPkgContext & {
   rpcCaller: RpcCaller
-  auth: AuthDataRpc
-  actionsMenu: MainActions
+  // auth: AuthDataRpc
+  // actionsMenu: MainActions
 }
-export type MainActions = {
-  create: {
-    action: () => Promise<void>
-    menu: HeaderMenuItem
-  }
-}
+// export type MainActions = {
+//   create: {
+//     action: () => Promise<void>
+//     menu: HeaderMenuItem
+//   }
+// }
 
 export type ResourceFormRpc = {
   title: string
@@ -63,7 +63,7 @@ export type ResourceFormProps = ResourceFormRpc
 export type ResourceDataProps = ResourceDataRpc
 export type ResourceStateProps = ResourceStateRpc
 export type ResourceCardDataProps = ResourceCardDataRpc
-export type ResourceAccessProps = ResourceAccessRpc & { isAuthenticated: boolean }
+export type ResourceAccessProps = ResourceAccessRpc //& { isAuthenticated: boolean }
 export type ResourceContributorProps = ResourceContributorRpc
 
 export type ResourceProps = {
@@ -132,7 +132,7 @@ export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 
 export type ResourceCardAccess = Pick<
   ResourceAccessProps,
-  'isAuthenticated' | 'canPublish' | 'canDelete' //  'canLike' | //  'canBookmark' |
+  'canPublish' | 'canDelete' // | 'isAuthenticated' | 'canLike' | //  'canBookmark' |
 > //   isCreator: boolean //   canEdit: boolean
 
 export type Organization = {

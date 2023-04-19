@@ -1,5 +1,7 @@
-import { PkgName } from '@moodlenet/core'
-import { ScopeDefs } from '../types/servicesTypes.mjs'
+import { assertCallInitiator } from '../async-context/lib.mjs'
+import { PkgName } from '../types.mjs'
+
+export type ScopeDefs = Record<string, { description: string }>
 
 export const registeredPkgScopeDefs: Record<PkgName, ScopeDefs> = {}
 
@@ -15,4 +17,9 @@ export function getPkgScopes() {
     })
     .flat()
   return pkgScopes
+}
+
+export async function registerScopes(scopeDefs: ScopeDefs) {
+  const { pkgId } = assertCallInitiator()
+  registeredPkgScopeDefs[pkgId.name] = scopeDefs
 }
