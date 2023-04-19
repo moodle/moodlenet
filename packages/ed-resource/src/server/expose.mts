@@ -54,6 +54,8 @@ export const expose = await shell.expose<ResourceExposeType>({
           : found.entity.content.kind === 'file'
           ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.fsItem.rpcFile })
           : found.entity.content.url
+
+        console.log({ found })
         const resourceRpc: ResourceRpc = {
           contributor: {
             avatarUrl: found.contributor.iconUrl,

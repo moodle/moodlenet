@@ -1,5 +1,5 @@
 import { mountApp, RequestHandler, urlencoded } from '@moodlenet/http-server/server'
-import { getCurrentWebUserProfile } from '@moodlenet/react-app/server'
+import { getCurrentWebUserProfile } from '@moodlenet/web-user/server'
 // import Account from './account.mjs'
 
 import assert from 'assert'

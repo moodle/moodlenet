@@ -1,6 +1,6 @@
-import { AuthDataRpc } from '@moodlenet/react-app/common'
-import { HeaderMenuItem, Href } from '@moodlenet/react-app/ui'
+import { Href } from '@moodlenet/react-app/ui'
 import { PkgContextT } from '@moodlenet/react-app/web-lib'
+// import { AuthDataRpc } from '@moodlenet/web-user/common'
 import { CollectionExposeType } from './expose-def.mjs'
 
 export type MyWebDeps = {
@@ -10,16 +10,16 @@ export type SaveState = { form: boolean; image: boolean }
 export type MyPkgContext = PkgContextT<MyWebDeps>
 export type MainContextCollection = MyPkgContext & {
   rpcCaller: RpcCaller
-  auth: AuthDataRpc
-  actionsMenu: MainActions
+  // auth: AuthDataRpc
+  // actionsMenu: MainActions
 }
 
-export type MainActions = {
-  create: {
-    action: () => Promise<void>
-    menu: HeaderMenuItem
-  }
-}
+// export type MainActions = {
+//   create: {
+//     action: () => Promise<void>
+//     menu: HeaderMenuItem
+//   }
+// }
 
 export type CollectionContributorRpc = {
   avatarUrl: string | null
@@ -60,7 +60,7 @@ export type CollectionRpc = {
   contributor: CollectionContributorProps
 }
 
-export type CollectionAccessProps = CollectionAccessRpc & { isAuthenticated: boolean }
+export type CollectionAccessProps = CollectionAccessRpc // & { isAuthenticated: boolean }
 export type CollectionDataProps = CollectionDataRpc
 export type CollectionStateProps = CollectionStateRpc
 export type CollectionFormProps = CollectionFormRpc
@@ -108,7 +108,7 @@ export type CollectionCardState = Pick<CollectionStateProps, 'isPublished' | 'nu
 export type CollectionCardActions = Pick<CollectionActions, 'publish' | 'unpublish'>
 export type CollectionCardAccess = Pick<
   CollectionAccessProps,
-  'isAuthenticated' | 'isCreator' | 'canPublish' // |   'canFollow'  // | 'canBookmark'
+  'isCreator' | 'canPublish' // |  'isAuthenticated' | 'canFollow'  // | 'canBookmark'
 >
 
 export type Organization = {

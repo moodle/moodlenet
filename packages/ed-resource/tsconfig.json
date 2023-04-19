@@ -21,9 +21,6 @@
       "path": "../http-server"
     },
     {
-      "path": "../openid"
-    },
-    {
       "path": "../simple-file-store"
     }
   ]

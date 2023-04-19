@@ -1,6 +1,6 @@
 import { useMainLayoutProps } from '@moodlenet/react-app/ui'
-import { AuthCtx } from '@moodlenet/react-app/web-lib'
-import { useContext, useMemo } from 'react'
+// import { AuthCtx } from '@moodlenet/web-user/webapp'
+import { useMemo } from 'react'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useMainHook } from '../../../MainHooks.js'
 import { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.jsx'
@@ -11,7 +11,7 @@ export const useCollectionPageProps = ({
 }: {
   collectionKey: string
 }): CollectionProps | null => {
-  const { isAuthenticated } = useContext(AuthCtx)
+  // const { isAuthenticated } = useContext(AuthCtx)
   const _mainProps = useMainHook({ collectionKey })
   const mainLayoutProps = useMainLayoutProps()
 
@@ -44,14 +44,14 @@ export const useCollectionPageProps = ({
       actions,
       access: {
         ...props.access,
-        isAuthenticated,
+        // isAuthenticated,
         isCreator: _mainProps.props.access.isCreator,
       },
       isSaving,
     }
 
     return propsPage
-  }, [_mainProps, isAuthenticated, mainLayoutProps])
+  }, [_mainProps, mainLayoutProps])
 
   return collectionProps
 }

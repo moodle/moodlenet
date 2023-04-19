@@ -6,7 +6,7 @@ import {
   createWebUser,
   sendWebUserTokenCookie,
   signWebUserJwtToken,
-} from '@moodlenet/react-app/server'
+} from '@moodlenet/web-user/server'
 import assert from 'assert'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'

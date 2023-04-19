@@ -1,10 +1,10 @@
-import { FC, useContext } from 'react'
-import { AuthCtx } from '../../../../../../web-lib.mjs'
+import { FC } from 'react'
 import { SettingsContainer } from './SettingsContainer.js'
 
+// FIXMA: needs a settable context
+const canShowSettingsPage = true
 export const SettingsPageRoute: FC = () => {
-  const { clientSessionData } = useContext(AuthCtx)
-  if (!clientSessionData?.isAdmin) {
+  if (!canShowSettingsPage) {
     return <div>To implement not found</div>
   }
 

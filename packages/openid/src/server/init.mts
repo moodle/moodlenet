@@ -3,7 +3,6 @@ import { OpenidWebAppDeps } from '../webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { shell } from './shell.mjs'
 
-export * from './lib.mjs'
 export * from './types/asyncCtxTypes.mjs'
 
 await import('./oidc/interactions-endpoints.mjs')

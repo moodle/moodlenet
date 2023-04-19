@@ -1,5 +1,5 @@
 import { useSimpleLayoutProps } from '@moodlenet/react-app/ui'
-import { useNeedsWebUserLogin } from '@moodlenet/react-app/web-lib'
+import { useNeedsWebUserLogin } from '@moodlenet/web-user/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { WebappInteractionDetails } from '../../common/expose-def.mjs'
 import { OpenIdCtx } from '../OpenIdContextProvider.js'
