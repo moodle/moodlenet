@@ -12,7 +12,7 @@ import { OptionItemProp, TypeTextOptionProps } from '@moodlenet/component-librar
 // import {
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
-import { CollectionFormValues } from '@moodlenet/collection/common'
+import { CollectionFormProps } from '@moodlenet/collection/common'
 import { Collection, MainCollectionCard, MainCollectionCardProps } from '@moodlenet/collection/ui'
 import { useCollectionForm } from 'components/pages/Collection/stories-props.js'
 const maxUploadSize = 1024 * 1024 * 50
@@ -38,7 +38,7 @@ const meta: ComponentMeta<typeof Collection> = {
   ],
 }
 
-export const validationSchema: SchemaOf<CollectionFormValues> = object({
+export const validationSchema: SchemaOf<CollectionFormProps> = object({
   category: string().required(/* t */ `Please select a subject`),
   content: string().required(/* t */ `Please upload a content`),
   license: string().when('isFile', (isFile, schema) => {
@@ -65,7 +65,7 @@ export const validationSchema: SchemaOf<CollectionFormValues> = object({
     return month ? schema.required(/* t */ `Please select a year`) : schema.optional()
   }),
 })
-export const collectionFormValues: CollectionFormValues = {
+export const collectionFormValues: CollectionFormProps = {
   isFile: true,
   // visibility: VisbilityIconTextOptionProps[0]!.value,
   // category: CategoriesTextOptionProps[2]!.value,
@@ -97,10 +97,10 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 
 export const useMainCollectionCardStoryProps = (overrides?: {
   props?: Partial<MainCollectionCardProps>
-  // formConfig?: Partial<FormikConfig<CollectionFormValues>>
-  collectionValues?: Partial<CollectionFormValues>
+  // formConfig?: Partial<FormikConfig<CollectionFormProps>>
+  collectionValues?: Partial<CollectionFormProps>
 }): MainCollectionCardProps => {
-  const collection: CollectionFormValues = {
+  const collection: CollectionFormProps = {
     // validationSchema,
     // onSubmit: action('submit edit'),
     // initialValues: {

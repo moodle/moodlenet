@@ -1,4 +1,4 @@
-import { ReactAppContext, ReactAppMainComponent, usePkgContext } from '@moodlenet/react-app/web-lib'
+import { ReactAppContext, ReactAppMainComponent, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext } from 'react'
 
 import { ProvideOpenIdContext } from './OpenIdContextProvider.js'

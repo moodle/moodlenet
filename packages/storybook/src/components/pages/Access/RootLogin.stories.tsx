@@ -1,6 +1,6 @@
 // import { t } from '@lingui/macro'
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
-import { RootLogin, RootLoginProps } from '@moodlenet/react-app/ui'
+import { RootLogin, RootLoginProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'

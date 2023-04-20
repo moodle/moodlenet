@@ -1,4 +1,4 @@
-import { PkgContextT } from '@moodlenet/react-app/web-lib'
+import { PkgContextT } from '@moodlenet/react-app/webapp'
 import { ExtMngrExposeType } from './expose-def.mjs'
 export * from './data.mjs'
 export * from './lib.mjs'

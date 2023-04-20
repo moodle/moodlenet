@@ -1,4 +1,4 @@
-import { useGuestRegistryMap, wrapFetch } from '@moodlenet/react-app/web-lib'
+import { useGuestRegistryMap, wrapFetch } from '@moodlenet/react-app/webapp'
 import cookies from 'js-cookie'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'

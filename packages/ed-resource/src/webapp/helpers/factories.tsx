@@ -1,6 +1,6 @@
 import { href } from '@moodlenet/react-app/ui'
 import { PartialDeep } from 'type-fest'
-import { ResourceCardProps } from '../../ui.mjs'
+import { ResourceCardProps } from '../components/organisms/ResourceCard/ResourceCard.js'
 
 export const resourcesCardFactory: PartialDeep<ResourceCardProps>[] = [
   {
