@@ -13,11 +13,19 @@ import { MainContextT } from './MainContext.mjs'
 
 export type UserDisplay = { name: string; avatarUrl: string }
 export type ClientSessionData = {
-  isAdmin: boolean
   userDisplay: UserDisplay
-  myProfile?: WebUserProfile
-}
-
+} & (
+  | {
+      isAdmin: true
+      isRoot: true
+      myProfile?: undefined
+    }
+  | {
+      isAdmin: boolean
+      isRoot: false
+      myProfile: WebUserProfile
+    }
+)
 export type LoginEntryItem = Omit<LoginItem, 'key'>
 export type SignupEntryItem = Omit<SignupItem, 'key'>
 export type AuthCtxT = {
@@ -71,6 +79,7 @@ export function useAuthCtx(registries: MainRegistries, { use }: MainContextT) {
       if (sessionDataRpc.isRoot) {
         const rootClientSessionData: ClientSessionData = {
           isAdmin: true,
+          isRoot: true,
           userDisplay: { name: 'ROOT-USER', avatarUrl: rootAvatarUrl },
         }
         return rootClientSessionData
@@ -78,6 +87,7 @@ export function useAuthCtx(registries: MainRegistries, { use }: MainContextT) {
 
       const webUserClientSessionData: ClientSessionData = {
         isAdmin: sessionDataRpc.isAdmin,
+        isRoot: false,
         userDisplay: { name: sessionDataRpc.myProfile.displayName, avatarUrl: defaultAvatarUrl }, //sessionDataRpc.myProfile.avatarUrl},
         myProfile: sessionDataRpc.myProfile,
       }
