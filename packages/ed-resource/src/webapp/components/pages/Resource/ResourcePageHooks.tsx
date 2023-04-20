@@ -1,5 +1,5 @@
 import { OptionItemProp } from '@moodlenet/component-library'
-import { useMainLayoutProps } from '@moodlenet/react-app/ui'
+import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import { maxUploadSize, ResourceFormProps } from '../../../../common.mjs'
 import { validationSchema } from '../../../../common/validationSchema.mjs'

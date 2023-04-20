@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
-import { SettingsCtx } from '../../../../../web-lib.mjs'
+import { SettingsCtx } from '../../../../../exports.mjs'
 import { AdvancedFormValues, AdvancedProps } from './Advanced.js'
 
 export const useAdvancedProps = (): AdvancedProps => {

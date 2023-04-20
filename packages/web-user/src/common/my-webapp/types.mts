@@ -1,4 +1,4 @@
-import { PkgContextT } from '@moodlenet/react-app/web-lib'
+import { PkgContextT } from '@moodlenet/react-app/webapp'
 import { WebUserExposeType } from '../expose-def.mjs'
 
 export type MyWebAppDeps = {

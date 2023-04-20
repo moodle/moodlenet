@@ -1,4 +1,4 @@
-import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/ui'
+import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
 import { SignupProps } from './Signup.js'
