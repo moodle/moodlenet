@@ -7,7 +7,7 @@ import {
 import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../common/types.mjs'
-import { MainContext } from './MainContext.js'
+import { MainContext } from './MainContext.mjs'
 import { MainContextT } from './types.mjs'
 import * as LoginComponents from './ui/Login/Login.js'
 import { LoginPanelContainer } from './ui/Login/LoginContainer.js'
