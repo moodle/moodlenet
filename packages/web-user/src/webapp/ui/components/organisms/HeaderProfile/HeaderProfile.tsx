@@ -1,4 +1,5 @@
-import { HeaderMenuItemRegItem, href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
+import { HeaderMenuItemRegItem } from '@moodlenet/react-app/ui'
 import { ExitToApp } from '@mui/icons-material'
 import { FC, ReactElement, useContext } from 'react'
 import { AuthCtx } from '../../../../context/AuthContext.js'

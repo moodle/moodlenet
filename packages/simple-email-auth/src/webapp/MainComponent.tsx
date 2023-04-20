@@ -7,17 +7,17 @@ import {
 import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../common/types.mjs'
-import * as LoginComponents from './Login/Login.js'
-import { LoginPanelContainer } from './Login/LoginContainer.js'
 import { MainContext } from './MainContext.js'
-import { Content, Menu } from './Settings.js'
-import * as signupComponents from './Signup.js'
-import { SignUpPanelCtrl } from './SignUpHooks.js'
 import { MainContextT } from './types.mjs'
+import * as LoginComponents from './ui/Login/Login.js'
+import { LoginPanelContainer } from './ui/Login/LoginContainer.js'
+import { SettingsContent, SettingsMenu } from './ui/Settings.js'
+import * as signupComponents from './ui/Signup/Signup.js'
+import { SignUpPanelCtrl } from './ui/Signup/SignUpHooks.js'
 
-const settingsSectionItem: SettingsSectionItem = { Content, Menu }
-const loginItem = { Icon: LoginComponents.Icon, Panel: LoginPanelContainer }
-const signUpItem = { Icon: signupComponents.Icon, Panel: SignUpPanelCtrl }
+const settingsSectionItem: SettingsSectionItem = { Content: SettingsContent, Menu: SettingsMenu }
+const loginItem = { Icon: LoginComponents.LoginIcon, Panel: LoginPanelContainer }
+const signUpItem = { Icon: signupComponents.SignupIcon, Panel: SignUpPanelCtrl }
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
   const reactAppCtx = useContext(ReactAppContext)

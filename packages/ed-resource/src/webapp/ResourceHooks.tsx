@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ResourceActions, ResourceFormProps, ResourceProps, SaveState } from '../common.mjs'
+import { ResourceActions, ResourceFormProps, ResourceProps, SaveState } from '../common/types.mjs'
 
 import { useNavigate } from 'react-router-dom'
 import { MainContext } from './MainContext.js'

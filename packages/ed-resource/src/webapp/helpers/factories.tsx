@@ -1,4 +1,4 @@
-import { href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
 import { PartialDeep } from 'type-fest'
 import { ResourceCardProps } from '../components/organisms/ResourceCard/ResourceCard.js'
 

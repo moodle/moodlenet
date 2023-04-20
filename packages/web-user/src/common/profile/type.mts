@@ -1,4 +1,4 @@
-import type { Href } from '@moodlenet/react-app/ui'
+import type { Href } from '@moodlenet/react-app/common'
 
 export type ProfileData = {
   userId: string

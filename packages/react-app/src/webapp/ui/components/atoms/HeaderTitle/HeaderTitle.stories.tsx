@@ -1,8 +1,8 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../../../common/lib.mjs'
 // import { href } from '../../../../elements/link'
 import smallLogo from '../../../assets/logos/moodlenet-logo-small.svg'
 import logo from '../../../assets/logos/moodlenet-logo.svg'
-import { href } from '../../elements/link.js'
 import { HeaderTitle, HeaderTitleProps } from './HeaderTitle.js'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {

@@ -48,13 +48,21 @@
     "typescript": "^4.7.2"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
-    "create-components-index": "vgis src/ui.mts"
+    "create-components-index": "vgis src/webapp/exports/ui.mts",
+    "create-stories-index": "vgis src/webapp/exports/stories.mts"
   },
   "watch": {
     "create-components-index": {
+      "patterns": [
+        "src/webapp/**/*"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "create-stories-index": {
       "patterns": [
         "src/webapp/**/*"
       ],
@@ -73,8 +81,9 @@
   "exports": {
     "./server": "./dist/exports.mjs",
     "./init": "./dist/init.mjs",
-    "./ui": "./dist/ui.mjs",
-    "./stories": "./dist/stories.mjs",
-    "./common": "./dist/common.mjs"
+    "./common": "./dist/common/exports.mjs",
+    "./ui": "./dist/webapp/exports/ui.mjs",
+    "./stories": "./dist/webapp/exports/stories.mjs",
+    "./webapp": "./dist/webapp/exports/webapp.mjs"
   }
 }

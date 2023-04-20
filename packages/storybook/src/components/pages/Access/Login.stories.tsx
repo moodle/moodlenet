@@ -1,6 +1,7 @@
 // import { t } from '@lingui/macro'
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
-import { Login as SimpleEmailAuth, LoginStoriesProps } from '@moodlenet/simple-email-auth/ui'
+import { LoginPropsStories } from '@moodlenet/simple-email-auth/stories'
+import { LoginIcon, LoginPanel } from '@moodlenet/simple-email-auth/ui'
 import { LoginPage, LoginProps } from '@moodlenet/web-user/ui'
 import { ComponentMeta } from '@storybook/react'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
@@ -34,8 +35,8 @@ LoginProps => {
     loginItems: [
       // { Icon: PrimaryButton, Panel: FileUploader },
       {
-        Icon: SimpleEmailAuth.Icon,
-        Panel: () => <SimpleEmailAuth.Panel {...LoginStoriesProps.useLoginStoriesProps()} />,
+        Icon: LoginIcon,
+        Panel: () => <LoginPanel {...LoginPropsStories.useLoginStoriesProps()} />,
         key: 'email-auth',
       },
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },

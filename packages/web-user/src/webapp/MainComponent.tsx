@@ -1,4 +1,5 @@
-import { HeaderRightComponentRegItem, href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
+import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
 import {
   ReactAppContext,
   ReactAppMainComponent,

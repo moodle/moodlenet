@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { href } from '../../../elements/link.js'
+import { href } from '../../../../../../common/lib.mjs'
 import {
   HeaderTitleOrganizationStoryProps,
   HeaderTitleStoryProps,

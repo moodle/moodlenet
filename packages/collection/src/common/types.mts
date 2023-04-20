@@ -1,4 +1,4 @@
-import { Href } from '@moodlenet/react-app/ui'
+import { Href } from '@moodlenet/react-app/common'
 import { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import { CollectionExposeType } from './expose-def.mjs'

@@ -1,4 +1,4 @@
-import { href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   CollectionContributorCard,
