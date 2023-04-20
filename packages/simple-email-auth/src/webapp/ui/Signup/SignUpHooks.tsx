@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import { FC, useContext, useMemo, useState } from 'react'
-import { MainContext } from './MainContext.js'
+import { MainContext } from '../../MainContext.mjs'
 import * as SignUpAddon from './Signup.js'
 import { SignupFormValues, SignupProps } from './Signup.js'
 
