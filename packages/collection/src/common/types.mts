@@ -96,6 +96,7 @@ export type CollectionMainProps = {
   props: CollectionProps
   saveState: SaveState
   isSaving: boolean
+  isToDelete: boolean
 }
 
 export type CollectionCardData = { collectionHref: Href } & Pick<
