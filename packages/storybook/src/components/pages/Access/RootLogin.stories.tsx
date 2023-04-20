@@ -30,10 +30,12 @@ export const RootLoginStoryProps = (
   // formConfig?: Partial<FormikConfig<RootLoginFormValues>>
 ): RootLoginProps => {
   return {
-    headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
-    footerProps: FooterStoryProps,
     loginFailed: false,
     submitLogin: action('submit RootLogin'),
+    simpleLayoutProps: {
+      headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
+      footerProps: FooterStoryProps,
+    },
     // accessHeaderProps: AccessHeaderStoryProps,
     // form: useFormik<RootLoginFormValues>({
     //   validationSchema,

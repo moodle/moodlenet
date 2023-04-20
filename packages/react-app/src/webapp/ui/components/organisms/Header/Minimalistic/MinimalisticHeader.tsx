@@ -1,8 +1,9 @@
 import { AddonItem, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 
 import { FC, PropsWithChildren } from 'react'
+import { Href } from '../../../../../../common/lib.mjs'
 import HeaderTitle, { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
-import { Href, Link } from '../../../elements/link.js'
+import { Link } from '../../../elements/link.js'
 
 import './MinimalisticHeader.scss'
 

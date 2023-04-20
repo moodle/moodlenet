@@ -1,4 +1,5 @@
-import { HeaderMenuItem, href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
+import { HeaderMenuItem } from '@moodlenet/react-app/ui'
 import {
   HeaderProfileIcon,
   profileAvatarmenuItemReg,

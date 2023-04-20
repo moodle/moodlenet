@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
+import { href } from '../../../../../../common/lib.mjs'
 import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
-import { href } from '../../../elements/link.js'
 import { MinimalisticHeaderProps } from './MinimalisticHeader.js'
 
 export const useMinimalisticHeaderProps = (): MinimalisticHeaderProps => {

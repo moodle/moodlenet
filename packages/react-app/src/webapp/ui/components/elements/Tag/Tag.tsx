@@ -1,6 +1,7 @@
 import { FollowTag } from '@moodlenet/component-library'
 import { CSSProperties, FC } from 'react'
-import { href, Link } from '../link.js'
+import { href } from '../../../../../common/lib.mjs'
+import { Link } from '../link.js'
 import './Tag.scss'
 
 export type TagProps = {

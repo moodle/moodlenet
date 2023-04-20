@@ -10,8 +10,11 @@
   },
   "exports": {
     "./init": "./dist/server/init.mjs",
-    "./ui": "./dist/webapp/ui.mjs",
-    "./stories": "./dist/webapp/stories.mjs"
+    "./server": "./dist/server/exports.mjs",
+    "./common": "./dist/common/exports.mjs",
+    "./ui": "./dist/webapp/exports/ui.mjs",
+    "./stories": "./dist/webapp/exports/stories.mjs",
+    "./webapp": "./dist/webapp/exports/webapp.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",
@@ -58,11 +61,27 @@
     "typescript": "^4.7.2"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets",
+    "dev-assistant": "npm-watch copy-assets & npm run create-components-index & npm run create-stories-index",
     "dev-init": "npm run copy-assets",
-    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist"
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
+    "create-components-index": "vgis src/webapp/exports/ui.mts",
+    "create-stories-index": "vgis src/webapp/exports/stories.mts"
   },
   "watch": {
+    "create-components-index": {
+      "patterns": [
+        "src/webapp/**/*"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "create-stories-index": {
+      "patterns": [
+        "src/webapp/**/*"
+      ],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
     "copy-assets": {
       "patterns": [
         "src/**/*"
