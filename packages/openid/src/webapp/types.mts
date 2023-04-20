@@ -1,4 +1,4 @@
-import { PkgContextT } from '@moodlenet/react-app/web-lib'
+import { PkgContextT } from '@moodlenet/react-app/webapp'
 import { OpenIdExposeType } from '../common/expose-def.mjs'
 
 export type OpenidWebAppDeps = {

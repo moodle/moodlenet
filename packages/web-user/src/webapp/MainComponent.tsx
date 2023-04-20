@@ -5,7 +5,7 @@ import {
   RouteRegItem,
   SettingsSectionItem,
   usePkgContext,
-} from '@moodlenet/react-app/web-lib'
+} from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 
 import { MyPkgContext } from '../common/my-webapp/types.mjs'

@@ -1,4 +1,4 @@
-import { useMainLayoutProps } from '@moodlenet/react-app/ui'
+import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
 import { WebUserProfile } from '../../../../../server/types.mjs'

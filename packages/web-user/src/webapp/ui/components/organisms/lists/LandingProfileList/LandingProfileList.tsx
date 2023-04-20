@@ -3,7 +3,7 @@ import { ArrowForwardRounded } from '@mui/icons-material'
 import { FC, useMemo } from 'react'
 import { Link } from '../../../../../../../../react-app/src/webapp/ui/components/elements/link.js'
 import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
-import './LandingProfileList.scss.js'
+import './LandingProfileList.scss'
 
 export type LandingProfileListProps = {
   searchAuthorsHref: Href

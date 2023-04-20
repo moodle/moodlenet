@@ -1,4 +1,4 @@
-import { useMainLayoutProps } from '@moodlenet/react-app/ui'
+import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
 import { validationSchema } from '../../../../common/validationSchema.mjs'

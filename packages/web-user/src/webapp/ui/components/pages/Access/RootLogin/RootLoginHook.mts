@@ -1,4 +1,4 @@
-import { useSimpleLayoutProps } from '@moodlenet/react-app/ui'
+import { useSimpleLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
 import { RootLoginProps } from './RootLogin.js'
