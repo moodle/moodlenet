@@ -3,7 +3,7 @@ import {
   ReactAppMainComponent,
   SettingsSectionItem,
   usePkgContext,
-} from '@moodlenet/react-app/web-lib'
+} from '@moodlenet/react-app/webapp'
 
 import { useContext, useEffect, useState } from 'react'
 import type {

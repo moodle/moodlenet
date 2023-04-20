@@ -1,4 +1,4 @@
-import { GuestRegistryMap, useCreateRegistry } from '@moodlenet/react-app/web-lib'
+import { GuestRegistryMap, useCreateRegistry } from '@moodlenet/react-app/webapp'
 import { LoginEntryItem, SignupEntryItem } from './context/AuthContext.js'
 import { AddMenuItemRegItem } from './ui/components/organisms/HeaderProfile/AddMenu.js'
 import { AvatarMenuItemRegItem } from './ui/components/organisms/HeaderProfile/AvatarMenu.js'

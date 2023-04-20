@@ -1,5 +1,5 @@
 import { Link } from '@moodlenet/react-app/ui'
-import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/web-lib'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Route } from 'react-router-dom'
 import { MyContext } from './Context.js'

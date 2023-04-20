@@ -3,7 +3,7 @@ import {
   ReactAppMainComponent,
   SettingsSectionItem,
   usePkgContext,
-} from '@moodlenet/react-app/web-lib'
+} from '@moodlenet/react-app/webapp'
 import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../common/types.mjs'

@@ -1,5 +1,5 @@
 // import { href } from '@moodlenet/react-app/ui'
-// import { AuthCtx } from '@moodlenet/react-app/web-lib'
+// import { AuthCtx } from '@moodlenet/react-app/webapp'
 // import { FC, ReactElement, useContext } from 'react'
 
 // export const text = 'Resource'

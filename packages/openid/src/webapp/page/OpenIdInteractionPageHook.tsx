@@ -1,4 +1,4 @@
-import { useSimpleLayoutProps } from '@moodlenet/react-app/ui'
+import { useSimpleLayoutProps } from '@moodlenet/react-app/webapp'
 import { useNeedsWebUserLogin } from '@moodlenet/web-user/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { WebappInteractionDetails } from '../../common/expose-def.mjs'

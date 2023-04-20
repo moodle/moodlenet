@@ -1,7 +1,7 @@
 // import { t } from '@lingui/macro'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { ProfileFormValues } from '@moodlenet/react-app/common'
-import { ProfileCardProps } from '@moodlenet/react-app/ui'
+import { ProfileFormValues } from '@moodlenet/web-user/common'
+import { ProfileCardProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import {
   profileStoriesValidationSchema,

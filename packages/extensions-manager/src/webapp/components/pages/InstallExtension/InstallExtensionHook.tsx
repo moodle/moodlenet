@@ -1,4 +1,4 @@
-import { SettingsCtx } from '@moodlenet/react-app/web-lib'
+import { SettingsCtx } from '@moodlenet/react-app/webapp'
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../MainContext.js'
