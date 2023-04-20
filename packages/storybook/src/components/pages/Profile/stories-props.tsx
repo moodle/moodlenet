@@ -1,6 +1,7 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
-import { MainProfileCardSlots, OverallCard, ProfileProps } from '@moodlenet/react-app/ui'
+import { OverallCard } from '@moodlenet/react-app/ui'
+import { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
 import { PartialDeep } from 'type-fest'
 
 // const editForm: ProfileFormValues = {
@@ -20,7 +21,7 @@ import {
   peopleFactory,
   randomIntFromInterval,
 } from '@moodlenet/component-library'
-import { ProfileAccess, ProfileActions, ProfileFormValues } from '@moodlenet/react-app/common'
+import { ProfileAccess, ProfileActions, ProfileFormValues } from '@moodlenet/web-user/common'
 import { action } from '@storybook/addon-actions'
 import { mixed, object, SchemaOf, string } from 'yup'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'

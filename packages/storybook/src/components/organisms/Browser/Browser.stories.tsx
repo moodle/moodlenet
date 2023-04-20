@@ -1,12 +1,7 @@
 import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/collection/ui'
 import { getResourcesCardStoryProps, SearchResourceList } from '@moodlenet/ed-resource/ui'
-import {
-  Browser,
-  BrowserProps,
-  FilterMenuElement,
-  getProfileCardsStoryProps,
-  SearchProfileList,
-} from '@moodlenet/react-app/ui'
+import { Browser, BrowserProps, FilterMenuElement } from '@moodlenet/react-app/ui'
+import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useMemo } from 'react'
 
