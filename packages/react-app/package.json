@@ -37,7 +37,7 @@
     "./common": "./dist/common/exports.mjs",
     "./server": "./dist/server/exports.mjs",
     "./ui": "./dist/webapp/ui.mjs",
-    "./web-lib": "./dist/webapp/web-lib.mjs"
+    "./webapp": "./dist/webapp/exports.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
