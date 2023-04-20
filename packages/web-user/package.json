@@ -31,13 +31,15 @@
     "./stories": "./dist/webapp/stories.mjs",
     "./common": "./dist/common/exports.mjs",
     "./server": "./dist/server/exports.mjs",
-    "./webapp": "./dist/webapp/exports.mjs"
+    "./webapp": "./dist/webapp/exports.mjs",
+    "./ui": "./dist/webapp/ui.mjs"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
-    "create-stories-index": "vgis src/webapp/stories.mts"
+    "create-stories-index": "vgis src/webapp/stories.mts",
+    "create-components-index": "vgis src/webapp/ui.mts"
   },
   "watch": {
     "create-stories-index": {
