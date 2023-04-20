@@ -1,5 +1,6 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { ContentBackupImages, href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
+import { ContentBackupImages } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
@@ -8,7 +9,7 @@ import {
   ResourceCardActions,
   ResourceCardDataProps,
   ResourceCardState,
-} from '../../../../common.mjs'
+} from '../../../../common/types.mjs'
 import ResourceCard, { ResourceCardProps } from './ResourceCard.js'
 
 const meta: ComponentMeta<typeof ResourceCard> = {

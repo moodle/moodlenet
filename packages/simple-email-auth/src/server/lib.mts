@@ -1,13 +1,13 @@
 import { instanceDomain } from '@moodlenet/core'
 import * as crypto from '@moodlenet/crypto/server'
 import { JwtToken } from '@moodlenet/crypto/server'
-import { send } from '@moodlenet/email-service/server'
 import {
   createWebUser,
   sendWebUserTokenCookie,
   signWebUserJwtToken,
 } from '@moodlenet/web-user/server'
 import assert from 'assert'
+import { send } from '../../../email-service/dist/server/exports.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
 import { EmailPwdUser } from './store/types.mjs'

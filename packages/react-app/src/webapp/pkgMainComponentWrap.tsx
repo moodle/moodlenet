@@ -2,7 +2,7 @@ import { PkgIdentifier } from '@moodlenet/core'
 import { FC, PropsWithChildren, useMemo } from 'react'
 import _connect from '_connect-moodlenet-pkg-modules_'
 import { PkgContext } from './context/PkgContext.mjs'
-import { ReactAppMainComponent } from './exports.mjs'
+import { ReactAppMainComponent } from './types/plugins.mjs'
 import { getUsePkgHandle } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
 const plugins = getPlugins()

@@ -1,8 +1,8 @@
 import { OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
-import { maxUploadSize, ResourceFormProps } from '../../../../common.mjs'
-import { validationSchema } from '../../../../common/validationSchema.mjs'
+import { ResourceFormProps } from '../../../../common/types.mjs'
+import { maxUploadSize, validationSchema } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import { ResourceProps } from './Resource.js'
 
@@ -49,7 +49,7 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
       extraDetailsItems: [],
       data,
       resourceForm,
-      validationSchema,
+      validationSchema: validationSchema,
       state,
       actions,
       access,

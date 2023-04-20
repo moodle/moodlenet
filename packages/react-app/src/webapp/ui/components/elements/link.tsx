@@ -9,11 +9,7 @@ import {
   useContext,
 } from 'react'
 import * as ReactRouterDom from 'react-router-dom'
-export type Href = {
-  ext: boolean
-  url: string
-}
-
+import { Href } from '../../../../common/lib.mjs'
 export type LinkComponentElementProps = DetailedHTMLProps<
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
     href: Href
@@ -69,10 +65,6 @@ const ReactRouterLinkComponent: LinkComponentType = props => {
 
 export type LinkComponentCtxType = { LinkComp: LinkComponentType }
 export const LinkComponentCtx = createContext<LinkComponentCtxType>(null as any)
-export const href = (url: string, ext = false): Href => ({
-  ext,
-  url,
-})
 
 const ctxValue: LinkComponentCtxType = { LinkComp: ReactRouterLinkComponent }
 export const ProvideLinkComponentCtx: FC<PropsWithChildren> = ({ children }) => {

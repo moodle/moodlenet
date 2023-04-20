@@ -9,8 +9,8 @@ import {
   RpcCaller,
 } from '../common/types.mjs'
 import { COLLECTION_HOME_PAGE_ROUTE_PATH } from '../common/webapp-routes.mjs'
-import { CollectionPageRoute } from '../ui.mjs'
-import { CollectionContextProvider } from './CollectionContext.js'
+import { CollectionContextProvider } from './exports/CollectionContext.js'
+import { CollectionPageRoute } from './exports/ui.mjs'
 import { MainContext } from './MainContext.js'
 
 const myRoutes = {

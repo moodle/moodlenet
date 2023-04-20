@@ -1,5 +1,6 @@
 import { PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
-import { Href, Link } from '@moodlenet/react-app/ui'
+import { Href } from '@moodlenet/react-app/common'
+import { Link } from '@moodlenet/react-app/ui'
 import { Person } from '@mui/icons-material'
 import { FC } from 'react'
 

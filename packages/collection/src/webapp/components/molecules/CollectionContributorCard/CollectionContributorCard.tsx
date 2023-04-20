@@ -1,5 +1,6 @@
 import { Card } from '@moodlenet/component-library'
-import { Href, Link } from '@moodlenet/react-app/ui'
+import { Href } from '@moodlenet/react-app/common'
+import { Link } from '@moodlenet/react-app/ui'
 import { FC } from 'react'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import './CollectionContributorCard.scss'

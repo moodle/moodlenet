@@ -22,7 +22,11 @@
   ],
   "exports": {
     "./init": "./dist/server/init.mjs",
-    "./ui": "./dist/webapp/ui.mjs"
+    "./server": "./dist/server/exports.mjs",
+    "./common": "./dist/common/exports.mjs",
+    "./ui": "./dist/webapp/exports/ui.mjs",
+    "./stories": "./dist/webapp/exports/stories.mjs",
+    "./webapp": "./dist/webapp/exports/webapp.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

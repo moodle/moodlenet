@@ -1,5 +1,5 @@
 import { ComponentType, ReactNode } from 'react'
-import { Href } from '../../elements/link.js'
+import { Href } from '../../../../../common/lib.mjs'
 
 export type FooterMenuItem = {
   Icon: ReactNode
