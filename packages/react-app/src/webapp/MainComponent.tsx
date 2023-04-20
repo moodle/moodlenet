@@ -6,9 +6,9 @@ import * as Organization from './context/OrganizationCtx.js'
 import { usePkgContext } from './context/PkgContext.mjs'
 import { ReactAppContext, ReactAppContextT } from './context/ReactAppContext.mjs'
 import * as set from './context/SettingsContext.js'
-import { ReactAppMainComponent } from './exports.mjs'
+import { ProvideLinkComponentCtx } from './exports/ui.mjs'
+import { ReactAppMainComponent } from './exports/webapp.mjs'
 import { useMakeRegistries } from './registries.mjs'
-import { ProvideLinkComponentCtx } from './ui.mjs'
 import { guestRegistryMap } from './web-lib/registry.js'
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {

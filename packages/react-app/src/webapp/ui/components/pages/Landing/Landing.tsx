@@ -9,7 +9,7 @@ import {
   SearchboxProps,
 } from '@moodlenet/component-library'
 // import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
-import { MainHeaderContext } from '../../../../ui.mjs'
+import { MainHeaderContext } from '../../../../exports/ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 // import { Href, Link } from '../../elements/link.js'
 import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'

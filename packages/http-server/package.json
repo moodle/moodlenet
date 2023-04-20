@@ -9,10 +9,10 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./server": "./dist/server/exports.mjs",
-    "./common": "./dist/common/exports.mjs",
     "./start": "./dist/server/start.mjs",
-    "./stop": "./dist/server/stop.mjs"
+    "./stop": "./dist/server/stop.mjs",
+    "./server": "./dist/server/exports.mjs",
+    "./common": "./dist/common/exports.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",

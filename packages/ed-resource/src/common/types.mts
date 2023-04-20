@@ -1,5 +1,5 @@
 import { getDomainUrl } from '@moodlenet/component-library'
-import { Href } from '@moodlenet/react-app/ui'
+import { Href } from '@moodlenet/react-app/common'
 import { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import { ResourceExposeType } from './expose-def.mjs'
@@ -220,5 +220,3 @@ export const getResourceTypeInfo = (
       return { typeName: resourceType, typeColor: '#15845A' }
   }
 }
-
-export const maxUploadSize = 1024 * 1024 * 50

@@ -31,7 +31,7 @@ import {
   ResourceCardActions,
   ResourceCardDataProps,
   ResourceCardState,
-} from '../../../../common.mjs'
+} from '../../../../common/types.mjs'
 import './ResourceCard.scss'
 
 export type ResourceCardProps = {

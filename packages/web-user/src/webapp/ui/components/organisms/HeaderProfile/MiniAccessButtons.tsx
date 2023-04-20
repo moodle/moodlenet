@@ -1,5 +1,6 @@
 import { AddonItem, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
-import { HeaderTitle, HeaderTitleProps, Href, Link } from '@moodlenet/react-app/ui'
+import { Href } from '@moodlenet/react-app/common'
+import { HeaderTitle, HeaderTitleProps, Link } from '@moodlenet/react-app/ui'
 
 import { FC, PropsWithChildren } from 'react'
 

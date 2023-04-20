@@ -1,6 +1,6 @@
 import { ContentBackupImages } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
@@ -9,7 +9,7 @@ import {
   CollectionCardActions,
   CollectionCardData,
   CollectionCardState,
-} from '../../../../common.mjs'
+} from '../../../../common/types.mjs'
 import { CollectionCard, CollectionCardProps } from './CollectionCard.js'
 
 const meta: ComponentMeta<typeof CollectionCard> = {

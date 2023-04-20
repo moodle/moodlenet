@@ -1,5 +1,5 @@
 import { CSSProperties, FC, ReactNode } from 'react'
-import { MainFooter, MainFooterProps } from '../../../../ui.mjs'
+import { MainFooter, MainFooterProps } from '../../../../exports/ui.mjs'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import {
   MinimalisticHeader,

@@ -1,5 +1,6 @@
 import { boolean, mixed, object, SchemaOf, string } from 'yup'
-import { maxUploadSize, ResourceFormProps } from '../common.mjs'
+import { ResourceFormProps } from './types.mjs'
+export const maxUploadSize = 1024 * 1024 * 50
 
 export const validationSchema: SchemaOf<ResourceFormProps> = object({
   category: string().required(/* t */ `Please select a subject`),

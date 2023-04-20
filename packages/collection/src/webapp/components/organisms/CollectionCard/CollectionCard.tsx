@@ -8,7 +8,7 @@ import {
   CollectionCardActions,
   CollectionCardData,
   CollectionCardState,
-} from '../../../../common.mjs'
+} from '../../../../common/types.mjs'
 import './CollectionCard.scss'
 
 export type CollectionCardProps = {

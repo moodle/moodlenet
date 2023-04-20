@@ -1,6 +1,6 @@
-import { getProfileHomePageRoutePath } from '@moodlenet/react-app/common'
-import { href } from '@moodlenet/react-app/ui'
+import { href } from '@moodlenet/react-app/common'
 import { useContext, useMemo } from 'react'
+import { getProfileHomePageRoutePath } from '../../../../../common/webapp-routes.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { MainContext } from '../../../../context/MainContext.mjs'
 import { AvatarMenuItem, AvatarMenuProps } from './AvatarMenu.js'

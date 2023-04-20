@@ -33,35 +33,26 @@
   "exports": {
     "./init": "./dist/server/init.mjs",
     "./start": "./dist/server/start.mjs",
-    "./stories": "./dist/webapp/stories.mjs",
-    "./common": "./dist/common/exports.mjs",
     "./server": "./dist/server/exports.mjs",
-    "./ui": "./dist/webapp/ui.mjs",
-    "./webapp": "./dist/webapp/exports.mjs"
+    "./common": "./dist/common/exports.mjs",
+    "./ui": "./dist/webapp/exports/ui.mjs",
+    "./stories": "./dist/webapp/exports/stories.mjs",
+    "./webapp": "./dist/webapp/exports/webapp.mjs"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index & npm-watch create-common-index",
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "dev-server": "node dist/webpack/-dev-server.mjs",
-    "create-common-index": "vgis src/common/index.mts",
-    "create-components-index": "vgis src/webapp/ui.mts",
-    "create-stories-index": "vgis src/webapp/stories.mts"
+    "create-components-index": "vgis src/webapp/exports/ui.mts",
+    "create-stories-index": "vgis src/webapp/exports/stories.mts"
   },
   "watch": {
     "create-stories-index": {
       "patterns": [
-        "src/webapp/stories.mts",
         "src/webapp/**/*.stories.tsx"
       ],
       "extensions": ".ts,.tsx,.mts",
-      "delay": 300
-    },
-    "create-common-index": {
-      "patterns": [
-        "src/common/**/*.mts"
-      ],
-      "extensions": ".mts",
       "delay": 300
     },
     "create-components-index": {

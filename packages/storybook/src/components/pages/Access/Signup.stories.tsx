@@ -3,7 +3,9 @@ import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
 import { ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
 // import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/dist/webapp/Signup.js'
-import { Signup as SimpleEmailAuth, SignupStoriesProps } from '@moodlenet/simple-email-auth/ui'
+
+import { SignupPropsStories } from '@moodlenet/simple-email-auth/stories'
+import { SignupIcon, SignupPanel } from '@moodlenet/simple-email-auth/ui'
 import { Signup, SignupProps } from '@moodlenet/web-user/ui'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
 // import { object, SchemaOf, string } from 'yup'
@@ -34,8 +36,8 @@ SignupProps => {
   return {
     signupItems: [
       {
-        Icon: SimpleEmailAuth.Icon,
-        Panel: () => <SimpleEmailAuth.Panel {...SignupStoriesProps.useSignupPanelProps()} />,
+        Icon: SignupIcon,
+        Panel: () => <SignupPanel {...SignupPropsStories.useSignupPanelProps()} />,
         key: 'email-auth',
       },
       // { Icon: PrimaryButton, Panel: FileUploader },
