@@ -2,6 +2,7 @@ import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ResourceActions, ResourceFormProps, ResourceProps, SaveState } from '../common.mjs'
 
+import { useNavigate } from 'react-router-dom'
 import { MainContext } from './MainContext.js'
 
 export type Actions = {
@@ -18,14 +19,17 @@ export type ResourceCommonProps = {
   props: ResourceProps
   saveState: SaveState
   isSaving: boolean
+  isToDelete: boolean
 }
 // type SaveState = { form: boolean; image: boolean; content: boolean }
 
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
+  const nav = useNavigate()
   const [resource, setResource] = useState<ResourceProps | null>()
   const [saveState, setSaveState] = useState({ form: false, image: false, content: false })
+  const [isToDelete, setIsToDelete] = useState(false)
 
   useEffect(() => {
     rpcCaller.get(resourceKey).then(res => setResource(res))
@@ -80,14 +84,16 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       },
       publish: () => setIsPublished(resourceKey, true),
       unpublish: () => setIsPublished(resourceKey, false),
-      deleteResource: () => _delete(resourceKey),
+      deleteResource: () => {
+        setIsToDelete(true)
+        return _delete(resourceKey).then(() => {
+          setIsToDelete(true)
+          nav('/')
+        })
+      },
     }
     return resourceActions
-  }, [resource, resourceKey, rpcCaller, setterSave])
-
-  useEffect(() => {
-    console.log('xxxxx', { saved: JSON.stringify(saveState) })
-  }, [saveState])
+  }, [nav, resource, resourceKey, rpcCaller, setterSave])
 
   return useMemo<ResourceCommonProps | null>(
     () =>
@@ -98,7 +104,8 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
             props: resource,
             saveState,
             isSaving: saveState.form || saveState.image || saveState.content,
+            isToDelete,
           },
-    [actions, resource, saveState],
+    [actions, isToDelete, resource, saveState],
   )
 }

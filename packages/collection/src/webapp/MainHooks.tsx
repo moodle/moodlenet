@@ -1,5 +1,6 @@
 import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   CollectionActions,
   CollectionFormProps,
@@ -12,8 +13,10 @@ import { MainContext } from './MainContext.js'
 type myProps = { collectionKey: string }
 export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null => {
   const { rpcCaller } = useContext(MainContext)
+  const nav = useNavigate()
   const [collection, setCollection] = useState<CollectionProps | null>()
   const [saveState, setSaved] = useState({ form: false, image: false })
+  const [isToDelete, setIsToDelete] = useState(false)
 
   useEffect(() => {
     rpcCaller.get(collectionKey).then(data => setCollection(data))
@@ -57,17 +60,29 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
           setterSave('image', false)
         })
       },
-      deleteCollection: () => _delete(collectionKey),
+      deleteCollection: () => {
+        setIsToDelete(true)
+        return _delete(collectionKey).then(() => {
+          setIsToDelete(true)
+          nav('/')
+        })
+      },
       publish: () => setIsPublished(collectionKey, true),
       unpublish: () => setIsPublished(collectionKey, false),
     }
-  }, [collection, collectionKey, rpcCaller, setterSave])
+  }, [collection, collectionKey, nav, rpcCaller, setterSave])
 
   return useMemo<CollectionMainProps | null>(
     () =>
       !collection
         ? null
-        : { actions, props: collection, saveState, isSaving: saveState.form || saveState.image },
-    [actions, collection, saveState],
+        : {
+            actions,
+            props: collection,
+            saveState,
+            isToDelete,
+            isSaving: saveState.form || saveState.image,
+          },
+    [actions, collection, isToDelete, saveState],
   )
 }
