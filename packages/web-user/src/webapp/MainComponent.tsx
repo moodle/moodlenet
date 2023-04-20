@@ -42,7 +42,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   const authCtx = useAuthCtx(registries, mainContext)
   const reactAppCtx = useContext(ReactAppContext)
   reactAppCtx.registries.rightComponents.useRegister(addMenuItem, {
-    condition: !!authCtx?.isAuthenticated,
+    condition: !!authCtx?.isAuthenticated && !authCtx.clientSessionData.isRoot,
   })
   reactAppCtx.registries.rightComponents.useRegister(avatarMenuItem, {
     condition: !!authCtx?.isAuthenticated,
