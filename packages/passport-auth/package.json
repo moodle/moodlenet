@@ -32,7 +32,6 @@
   "dependencies": {
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
-    "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0"
   },

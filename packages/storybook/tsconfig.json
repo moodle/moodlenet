@@ -27,6 +27,27 @@
     },
     {
       "path": "../web-user"
+    },
+    {
+      "path": "../extensions-manager"
+    },
+    {
+      "path": "../component-library"
+    },
+    {
+      "path": "../passport-auth"
+    },
+    {
+      "path": "../simple-email-auth"
+    },
+    {
+      "path": "../ed-meta"
+    },
+    {
+      "path": "../collection"
+    },
+    {
+      "path": "../react-app"
     }
   ],
   "paths": {
