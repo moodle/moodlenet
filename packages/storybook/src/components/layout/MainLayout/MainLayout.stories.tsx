@@ -6,7 +6,7 @@ import {
   HeaderLoggedInStoryProps,
   HeaderLoggedOutOrganizationStoryProps,
   HeaderLoggedOutStoryProps,
-} from '../../organisms/Header/Header.stories.js'
+} from '../../organisms/MainHeader/MainHeader.stories.js'
 
 const meta: ComponentMeta<typeof MainLayout> = {
   title: 'Organisms/MainLayout',
@@ -39,8 +39,8 @@ export const MainLayoutLoggedInStoryProps: MainLayoutProps = {
 
 export const MainLayoutStory: ComponentStory<typeof MainLayout> = args => <MainLayout {...args} />
 
-export const LoggedOut = MainLayoutStory.bind({})
-LoggedOut.args = MainLayoutLoggedOutStoryProps
+export const MainLayoutLoggedOut = MainLayoutStory.bind({})
+MainLayoutLoggedOut.args = MainLayoutLoggedOutStoryProps
 
 export const LoggedOutOrganization = MainLayoutStory.bind({})
 LoggedOutOrganization.args = MainLayoutOrganizationLoggedOutStoryProps

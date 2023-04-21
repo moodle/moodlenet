@@ -1,5 +1,14 @@
 import { AddonItem, Header, HeaderProps, Searchbox } from '@moodlenet/component-library'
-import { createContext, Dispatch, FC, SetStateAction, useContext, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import './MainHeader.scss'
 
@@ -39,10 +48,15 @@ export const MainHeader: FC<MainHeaderProps> = ({
   search,
   ...props
 }) => {
+  const [pageRendered, setPageRendered] = useState(false)
   const { hideSearchbox } = useContext(MainHeaderContext)
   const [searchText, setSearchText] = useState('')
 
   const { logo, smallLogo, url } = headerTitleProps
+
+  useEffect(() => {
+    setPageRendered(true)
+  }, [])
 
   const updatedLeftItems = useMemo(() => {
     return [
@@ -55,21 +69,22 @@ export const MainHeader: FC<MainHeaderProps> = ({
   }, [leftItems, logo, smallLogo, url])
 
   const updatedCenterItems = useMemo(() => {
-    const searchbox = hideSearchbox
-      ? undefined
-      : {
-          Item: () => (
-            <Searchbox
-              placeholder="Search for open education content"
-              searchText={searchText}
-              setSearchText={setSearchText}
-              search={search}
-            />
-          ),
-          key: 'searchbox',
-        }
+    const searchbox =
+      pageRendered && !hideSearchbox
+        ? {
+            Item: () => (
+              <Searchbox
+                placeholder="Search for open education content"
+                searchText={searchText}
+                setSearchText={setSearchText}
+                search={search}
+              />
+            ),
+            key: 'searchbox',
+          }
+        : null
     return [searchbox, ...(centerItems ?? [])].filter((item): item is AddonItem => !!item)
-  }, [centerItems, searchText, search, hideSearchbox])
+  }, [centerItems, searchText, search, hideSearchbox, pageRendered])
 
   const updatedRightItems: AddonItem[] = useMemo(() => {
     return rightItems.filter((item): item is AddonItem => !!item)

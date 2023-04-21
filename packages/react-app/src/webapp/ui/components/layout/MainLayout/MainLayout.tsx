@@ -14,6 +14,7 @@ import './MainLayout.scss'
 export type MainLayoutProps = {
   headerProps: MainHeaderProps
   footerProps: MainFooterProps
+  defaultHideSearchbox?: boolean
   style?: CSSProperties
   streched?: boolean
   children?: ReactNode
@@ -24,6 +25,7 @@ export const MainLayout: FC<MainLayoutProps> = ({
   footerProps,
   style,
   streched,
+  defaultHideSearchbox = false,
   /* contentStyle, */ children,
 }) => {
   // const [collapsed, onCollapse] = useState(false)
@@ -32,7 +34,7 @@ export const MainLayout: FC<MainLayoutProps> = ({
   // const stateContext = useContext(StateContext)
 
   // const styleContext = useContext(SettingsCtx)
-  const mainHeaderContextValue = useSimpleMainHeaderContextController()
+  const mainHeaderContextValue = useSimpleMainHeaderContextController(defaultHideSearchbox)
 
   return (
     <MainHeaderContext.Provider value={mainHeaderContextValue}>

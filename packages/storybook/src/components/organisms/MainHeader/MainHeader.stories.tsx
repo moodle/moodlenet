@@ -1,14 +1,12 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-import { HeaderCollectionStories } from '@moodlenet/collection/stories'
-import { HeaderResourceStories } from '@moodlenet/ed-resource/stories'
-import { href } from '@moodlenet/react-app/common'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
 import { HeaderProfileStories } from '@moodlenet/web-user/stories'
+import { action } from '@storybook/addon-actions'
 
 const meta: ComponentMeta<typeof MainHeader> = {
-  title: 'Organisms/Header',
+  title: 'Organisms/MainHeader',
   component: MainHeader,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -28,36 +26,34 @@ const meta: ComponentMeta<typeof MainHeader> = {
   ],
 }
 
-const avatarPicture =
-  'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200'
-
 const MainHeaderStoryProps: MainHeaderProps = {
-  accessButtonsProps: {
-    // http://localhost:6006/?path=/story/pages-resource--logged-in
-    // loginHref: href('Pages/Login'),
-    loginHref: href('Pages/Access/Login'),
-    signupHref: href('Pages/Access/Signup'),
-  },
-  addMenuProps: {
-    // newCollectionHref: href('Pages/NewCollection'),
-    // newResourceHref: href('Pages/NewCollection'),
-    menuItems: [
-      HeaderResourceStories.HeaderResourceStoryProps(),
-      HeaderCollectionStories.HeaderCollectionStoryProps(),
-    ],
-  },
-  avatarMenuProps: {
-    avatarUrl: avatarPicture,
-    menuItems: [
-      HeaderProfileStories.HeaderProfileAvatarMenuStoryProps(avatarPicture),
-      HeaderProfileStories.HeaderSignoutAvatarMenuStoryProps,
-    ],
-  },
+  // accessButtonsProps: {
+  //   // http://localhost:6006/?path=/story/pages-resource--logged-in
+  //   // loginHref: href('Pages/Login'),
+  //   loginHref: href('Pages/Access/Login'),
+  //   signupHref: href('Pages/Access/Signup'),
+  // },
+  // addMenuProps: {
+  //   // newCollectionHref: href('Pages/NewCollection'),
+  //   // newResourceHref: href('Pages/NewCollection'),
+  //   menuItems: [
+  //     HeaderResourceStories.HeaderResourceStoryProps(),
+  //     HeaderCollectionStories.HeaderCollectionStoryProps(),
+  //   ],
+  // },
+  // avatarMenuProps: {
+  //   avatarUrl: avatarPicture,
+  //   menuItems: [
+  //     HeaderProfileStories.HeaderProfileAvatarMenuStoryProps(avatarPicture),
+  //     HeaderProfileStories.HeaderSignoutAvatarMenuStoryProps,
+  //   ],
+  // },
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
-  isAuthenticated: false,
+  // isAuthenticated: false,
   leftItems: [],
   centerItems: [],
-  rightItems: [],
+  rightItems: [HeaderProfileStories.AvatarMenuItem],
+  search: action('search'),
   // logout: action('logout'),
   // avatarUrl:
   //   'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
@@ -75,9 +71,6 @@ const MainHeaderStoryProps: MainHeaderProps = {
 
 export const HeaderLoggedOutStoryProps: MainHeaderProps = {
   ...MainHeaderStoryProps,
-  leftItems: [],
-  centerItems: [],
-  rightItems: [],
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
 }
 
@@ -89,7 +82,7 @@ export const HeaderLoggedOutOrganizationStoryProps: MainHeaderProps = {
 export const HeaderLoggedInStoryProps: MainHeaderProps = {
   ...HeaderLoggedOutStoryProps,
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
-  isAuthenticated: true,
+  // isAuthenticated: true,
 }
 
 const HeaderStory: ComponentStory<typeof MainHeader> = args => <MainHeader {...args} />
