@@ -12,12 +12,12 @@ import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../common/my-webapp/types.mjs'
 import { AuthCtx, useAuthCtx } from './context/AuthContext.js'
 import { MainContext, MainContextT } from './context/MainContext.mjs'
+import { AccessButtons } from './exports/ui.mjs'
 import { useMakeRegistries } from './registries.mjs'
 import { routes } from './routes.js'
+import { AddMenuContainer } from './ui/components/molecules/AddMenu/AddMenuContainer.js'
+import { AvatarMenuContainer } from './ui/components/molecules/AvatarMenu/AvatarMenuContainer.js'
 import { UsersContainer } from './ui/components/organisms/Roles/UsersContainer.js'
-import { AddMenuContainer } from './ui/molecules/AddMenu/AddMenuContainer.js'
-import { AvatarMenuContainer } from './ui/molecules/AvatarMenu/AvatarMenuContainer.js'
-import { AccessButtons } from './ui/molecules/MinimalisticAccessButtons/AccessButtons.js'
 const routeRegItem: RouteRegItem = { routes }
 const settingsSectionItem: SettingsSectionItem = {
   Content: UsersContainer,
