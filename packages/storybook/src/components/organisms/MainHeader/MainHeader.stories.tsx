@@ -3,10 +3,11 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderCollectionStories } from '@moodlenet/collection/stories'
 import { AddonItem } from '@moodlenet/component-library'
 import { HeaderResourceStories } from '@moodlenet/ed-resource/stories'
+import { href } from '@moodlenet/react-app/common'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
 import { AvatarMenuStories } from '@moodlenet/web-user/stories'
-import { AddMenu } from '@moodlenet/web-user/ui'
+import { AddMenu, getAccessButtons } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 
 const meta: ComponentMeta<typeof MainHeader> = {
@@ -43,6 +44,17 @@ const AddMenuItem: AddonItem = {
   key: 'avatar-menu',
 }
 
+const getRightItemsHeader = (isAuthenticated: boolean): AddonItem[] => {
+  return isAuthenticated
+    ? [AddMenuItem, AvatarMenuStories.AvatarMenuItem]
+    : [
+        ...getAccessButtons({
+          loginHref: href('Pages/Access/Login'),
+          signupHref: href('Pages/Access/Signup'),
+        }),
+      ]
+}
+
 const MainHeaderStoryProps: MainHeaderProps = {
   // accessButtonsProps: {
   //   // http://localhost:6006/?path=/story/pages-resource--logged-in
@@ -69,7 +81,7 @@ const MainHeaderStoryProps: MainHeaderProps = {
   // isAuthenticated: false,
   leftItems: [],
   centerItems: [],
-  rightItems: [AddMenuItem, AvatarMenuStories.AvatarMenuItem],
+  rightItems: [...getRightItemsHeader(false)],
   search: action('search'),
   // logout: action('logout'),
   // avatarUrl:
@@ -97,9 +109,9 @@ export const HeaderLoggedOutOrganizationStoryProps: MainHeaderProps = {
 }
 
 export const HeaderLoggedInStoryProps: MainHeaderProps = {
-  ...HeaderLoggedOutStoryProps,
+  ...MainHeaderStoryProps,
+  rightItems: [...getRightItemsHeader(true)],
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,
-  // isAuthenticated: true,
 }
 
 const HeaderStory: ComponentStory<typeof MainHeader> = args => <MainHeader {...args} />

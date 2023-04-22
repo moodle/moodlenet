@@ -3,8 +3,7 @@ import { Href } from '@moodlenet/react-app/common'
 import { Link } from '@moodlenet/react-app/ui'
 
 import { ReactElement } from 'react'
-
-import './MinimalisticHeader.scss'
+import './MinimalisticAccessButtons.scss'
 
 export type MinimalisticHeaderProps = {
   showLoginButton: boolean
@@ -28,7 +27,7 @@ export const getAccesMinimalisticHeaderItems = (
     showSignupButton ? (
       <Link href={signupHref}>
         {/* // TODO //@ETTO Implement on Controller */}
-        <SecondaryButton color="orange">
+        <SecondaryButton className={`${showLoginButton ? 'visible' : ''}`} color="orange">
           {/* <Trans> */}
           Sign up
           {/* </Trans> */}
@@ -41,7 +40,7 @@ export const getAccesMinimalisticHeaderItems = (
         {showSignupButton ? (
           <PrimaryButton>
             {/* <Trans> */}
-            Main log in
+            Main login
             {/* </Trans> */}
           </PrimaryButton>
         ) : (
@@ -66,7 +65,12 @@ export const getAccesMinimalisticHeaderItems = (
 
   const updatedRightButtons: AddonItem[] =
     rightButtons.length > 0
-      ? [{ Item: () => <div className="buttons">{rightButtons}</div>, key: 'right-buttons' }]
+      ? [
+          {
+            Item: () => <div className="minimalistic-access-buttons">{rightButtons}</div>,
+            key: '"access-buttons',
+          },
+        ]
       : []
 
   return {
