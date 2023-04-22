@@ -16,7 +16,7 @@ import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.
 import './Landing.scss'
 
 export type LandingProps = {
-  mainLayoutProps: MainLayoutProps
+  mainLayoutProps: Pick<MainLayoutProps, 'headerProps' | 'footerProps'>
   mainColumnItems: AddonItem[]
   title: string
   subtitle: string
@@ -185,7 +185,11 @@ export const Landing: FC<LandingProps> = ({
   // ]
 
   return (
-    <MainLayout {...mainLayoutProps} headerProps={{ ...mainLayoutProps.headerProps }}>
+    <MainLayout
+      {...mainLayoutProps}
+      headerProps={{ ...mainLayoutProps.headerProps }}
+      defaultHideSearchbox={true}
+    >
       {/* modals */}
       <div className="landing">
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}

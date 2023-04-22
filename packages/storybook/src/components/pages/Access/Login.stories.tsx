@@ -1,8 +1,9 @@
 // import { t } from '@lingui/macro'
+import { href } from '@moodlenet/react-app/common'
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
 import { LoginPropsStories } from '@moodlenet/simple-email-auth/stories'
 import { LoginIcon, LoginPanel } from '@moodlenet/simple-email-auth/ui'
-import { LoginPage, LoginProps } from '@moodlenet/web-user/ui'
+import { getLoginMinimalisticHeaderProps, LoginPage, LoginProps } from '@moodlenet/web-user/ui'
 import { ComponentMeta } from '@storybook/react'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
 import { useEffect } from 'react'
@@ -41,7 +42,12 @@ LoginProps => {
       },
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
-    headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
+    headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
+      getLoginMinimalisticHeaderProps(
+        href('Pages/Access/Login/Default'),
+        href('Pages/Access/SignUp/Default'),
+      ),
+    ),
     footerProps: FooterStoryProps,
     // accessHeaderProps: AccessHeaderStoryProps,
     // form: useFormik<LoginFormValues>({

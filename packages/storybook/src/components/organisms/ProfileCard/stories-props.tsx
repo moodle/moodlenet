@@ -1,7 +1,7 @@
 // import { t } from '@lingui/macro'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { ProfileFormValues } from '@moodlenet/web-user/common'
-import { ProfileCardProps } from '@moodlenet/web-user/ui'
+import { MainProfileCardProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import {
   profileStoriesValidationSchema,
@@ -10,11 +10,11 @@ import {
 import { useFormik } from 'formik'
 import { PartialDeep } from 'type-fest'
 
-export const useProfileCardStoryProps = (
-  overrides?: PartialDeep<ProfileCardProps>,
-): ProfileCardProps => {
+export const useMainProfileCardStoryProps = (
+  overrides?: PartialDeep<MainProfileCardProps>,
+): MainProfileCardProps => {
   const profileProps = useProfileStoryProps()
-  const { access, actions, profileForm, profileCardSlots } = profileProps
+  const { access, actions, profileForm, mainProfileCardSlots } = profileProps
   const { editProfile } = actions
   const form = useFormik<ProfileFormValues>({
     initialValues: profileForm,
@@ -23,13 +23,12 @@ export const useProfileCardStoryProps = (
       return editProfile(values)
     },
   })
-  return overrideDeep<ProfileCardProps>(
+  return overrideDeep<MainProfileCardProps>(
     {
       access: access,
-      actions: actions,
       form: form,
       isEditing: false,
-      slots: profileCardSlots,
+      slots: mainProfileCardSlots,
       toggleIsEditing: action('toggle is editting'),
     },
 

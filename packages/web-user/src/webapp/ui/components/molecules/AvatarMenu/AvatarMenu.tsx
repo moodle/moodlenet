@@ -1,7 +1,9 @@
 import { FloatingMenu } from '@moodlenet/component-library'
-import { Href } from '@moodlenet/react-app/common'
-import { Link } from '@moodlenet/react-app/ui'
-import { FC, ReactNode } from 'react'
+import { Href, href } from '@moodlenet/react-app/common'
+import { HeaderMenuItemRegItem, Link } from '@moodlenet/react-app/ui'
+import { ExitToApp } from '@mui/icons-material'
+import { FC, ReactElement, ReactNode, useContext } from 'react'
+import { AuthCtx } from '../../../../context/AuthContext.js'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 
 export type AvatarMenuItemRegItem = Omit<AvatarMenuItem, 'key'>
@@ -63,4 +65,49 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl }) => {
       hoverElement={<div style={avatar} className="avatar" />}
     />
   ) : null
+}
+
+type IconType = {
+  icon: string | ReactElement
+}
+const IconContainer: FC = () => {
+  const { clientSessionData } = useContext(AuthCtx)
+  if (!clientSessionData?.myProfile) {
+    return <></>
+  }
+  const iconUrl = '' // TODO //@ETTO: should use avatarUrl from clientSessionData?.myProfile
+  return <HeaderProfileIcon icon={iconUrl}></HeaderProfileIcon>
+}
+
+export const HeaderProfileIcon: FC<IconType> = ({ icon }: IconType) => {
+  return !icon ? (
+    <></>
+  ) : typeof icon === 'string' ? (
+    <div
+      style={{
+        backgroundImage: 'url("' + icon + '")',
+        // backgroundImage: 'url(' + clientSessionData.userDisplay.avatarUrl + ')',
+        backgroundSize: 'cover',
+      }}
+      className="avatar"
+    />
+  ) : (
+    icon
+  )
+}
+
+export const profileAvatarmenuItemReg: HeaderMenuItemRegItem = {
+  Icon: <IconContainer />,
+  Path: href('/my-profile'),
+  Text: 'Profile',
+  ClassName: 'profile',
+  // Position: position,
+}
+
+export const signoutAvatarmenuItemReg: HeaderMenuItemRegItem = {
+  Icon: <ExitToApp />,
+  Path: href('/signout'),
+  Text: 'Sign out',
+  ClassName: 'signout',
+  // Position: position,
 }
