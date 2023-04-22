@@ -1,6 +1,11 @@
 // import { t } from '@lingui/macro'
+import { href } from '@moodlenet/react-app/common'
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
-import { RootLogin, RootLoginProps } from '@moodlenet/web-user/ui'
+import {
+  getRootLoginMinimalisticHeaderProps,
+  RootLogin,
+  RootLoginProps,
+} from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
@@ -33,7 +38,12 @@ export const RootLoginStoryProps = (
     loginFailed: false,
     submitLogin: action('submit RootLogin'),
     simpleLayoutProps: {
-      headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
+      headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
+        getRootLoginMinimalisticHeaderProps(
+          href('Pages/Access/Login/Default'),
+          href('Pages/Access/SignUp/Default'),
+        ),
+      ),
       footerProps: FooterStoryProps,
     },
     // accessHeaderProps: AccessHeaderStoryProps,

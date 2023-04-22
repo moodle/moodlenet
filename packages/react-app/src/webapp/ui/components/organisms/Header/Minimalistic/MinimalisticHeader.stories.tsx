@@ -1,9 +1,11 @@
+import { overrideDeep } from '@moodlenet/component-library/common'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { href } from '../../../../../../common/lib.mjs'
+import { PartialDeep } from 'type-fest'
 import {
   HeaderTitleOrganizationStoryProps,
   HeaderTitleStoryProps,
 } from '../../../atoms/HeaderTitle/HeaderTitle.stories.js'
+
 // import { href } from '../../../../elements/link'
 import { MinimalisticHeader, MinimalisticHeaderProps } from './MinimalisticHeader.js'
 
@@ -16,15 +18,20 @@ const meta: ComponentMeta<typeof MinimalisticHeader> = {
   excludeStories: ['MinimalisticHeaderStoryProps', 'MinimalisticHeaderOrganizationStoryProps'],
 }
 
-export const MinimalisticHeaderStoryProps: MinimalisticHeaderProps = {
-  page: 'login',
-  loginHref: href('Pages/Access/Login/Default'),
-  signupHref: href('Pages/Access/SignUp/Default'),
-  headerTitleProps: HeaderTitleStoryProps,
+export const MinimalisticHeaderStoryProps = (
+  overrides?: PartialDeep<MinimalisticHeaderProps>,
+): MinimalisticHeaderProps => {
+  // page: 'login',
+  // loginHref: href('Pages/Access/Login/Default'),
+  // signupHref: href('Pages/Access/SignUp/Default'),
+  return overrideDeep<MinimalisticHeaderProps>(
+    { headerTitleProps: HeaderTitleStoryProps, leftItems: [], centerItems: [], rightItems: [] },
+    overrides,
+  )
 }
 
 export const MinimalisticHeaderOrganizationStoryProps: MinimalisticHeaderProps = {
-  ...MinimalisticHeaderStoryProps,
+  ...MinimalisticHeaderStoryProps(),
   headerTitleProps: HeaderTitleOrganizationStoryProps,
 }
 
@@ -33,7 +40,7 @@ const MinimalisticHeaderStory: ComponentStory<typeof MinimalisticHeader> = args 
 )
 
 export const Default = MinimalisticHeaderStory.bind({})
-Default.args = MinimalisticHeaderStoryProps
+Default.args = MinimalisticHeaderStoryProps()
 
 export const Organization = MinimalisticHeaderStory.bind({})
 Organization.args = MinimalisticHeaderOrganizationStoryProps
