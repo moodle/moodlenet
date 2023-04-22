@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import {
   getAccesMinimalisticHeaderItems,
   MinimalisticSlots,
-} from '../../../molecules/MinimalisticAccessButtons/MiniAccessButtons.js'
+} from '../../../molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.js'
 import './Login.scss'
 
 export type LoginItem = { Icon: ComponentType; Panel: ComponentType; key: string }

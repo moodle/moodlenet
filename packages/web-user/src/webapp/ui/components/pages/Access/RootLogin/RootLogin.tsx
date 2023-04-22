@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import {
   getAccesMinimalisticHeaderItems,
   MinimalisticSlots,
-} from '../../../molecules/MinimalisticAccessButtons/MiniAccessButtons.js'
+} from '../../../molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.js'
 import './RootLogin.scss'
 
 export type RootLoginFormValues = { email: string; password: string }
