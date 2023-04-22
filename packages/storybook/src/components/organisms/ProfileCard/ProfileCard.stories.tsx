@@ -44,7 +44,7 @@ export const ProfileCardFollowingStoryProps: ProfileCardProps = {
     mainColumnItems: [],
     data: {},
     actions: {
-      followed: true,
+      // followed: true,
     },
     access: {},
   }),

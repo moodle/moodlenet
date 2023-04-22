@@ -48,7 +48,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             () =>
               getResourcesCardStoryProps(30, {
                 access: {
-                  isAuthenticated: false,
+                  // isAuthenticated: false,
                 },
               }),
             [],
@@ -125,7 +125,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
           const list = useMemo(
             () =>
               getCollectionsCardStoryProps(30, {
-                access: { isAuthenticated: false },
+                // access: { isAuthenticated: false },
               }),
             [],
           )
