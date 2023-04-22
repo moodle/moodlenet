@@ -12,7 +12,7 @@ import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../common/my-webapp/types.mjs'
 import { AuthCtx, useAuthCtx } from './context/AuthContext.js'
 import { MainContext, MainContextT } from './context/MainContext.mjs'
-import { AccessButtons } from './exports/ui.mjs'
+import { getAccessButtons } from './exports/ui.mjs'
 import { useMakeRegistries } from './registries.mjs'
 import { routes } from './routes.js'
 import { AddMenuContainer } from './ui/components/molecules/AddMenu/AddMenuContainer.js'
@@ -27,7 +27,9 @@ const settingsSectionItem: SettingsSectionItem = {
 const avatarMenuItem: HeaderRightComponentRegItem = { Component: AvatarMenuContainer }
 const addMenuItem: HeaderRightComponentRegItem = { Component: AddMenuContainer }
 const accessButtonsItems: HeaderRightComponentRegItem = {
-  Component: () => <AccessButtons loginHref={href('/login')} signupHref={href('/signup')} />,
+  Component: () => (
+    <>{getAccessButtons({ loginHref: href('/login'), signupHref: href('/signup') })}</>
+  ),
 }
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
