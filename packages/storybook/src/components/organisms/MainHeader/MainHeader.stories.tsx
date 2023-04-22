@@ -1,8 +1,12 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
+import { HeaderCollectionStories } from '@moodlenet/collection/stories'
+import { AddonItem } from '@moodlenet/component-library'
+import { HeaderResourceStories } from '@moodlenet/ed-resource/stories'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
-import { HeaderProfileStories } from '@moodlenet/web-user/stories'
+import { AvatarMenuStories } from '@moodlenet/web-user/stories'
+import { AddMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 
 const meta: ComponentMeta<typeof MainHeader> = {
@@ -24,6 +28,19 @@ const meta: ComponentMeta<typeof MainHeader> = {
       </div>
     ),
   ],
+}
+
+const AddMenuItem: AddonItem = {
+  Item: () => (
+    <AddMenu
+      menuItems={[
+        HeaderResourceStories.HeaderResourceStoryProps,
+        HeaderCollectionStories.HeaderCollectionStoryProps,
+      ]}
+      key="avatar-menu"
+    />
+  ),
+  key: 'avatar-menu',
 }
 
 const MainHeaderStoryProps: MainHeaderProps = {
@@ -52,7 +69,7 @@ const MainHeaderStoryProps: MainHeaderProps = {
   // isAuthenticated: false,
   leftItems: [],
   centerItems: [],
-  rightItems: [HeaderProfileStories.AvatarMenuItem],
+  rightItems: [AddMenuItem, AvatarMenuStories.AvatarMenuItem],
   search: action('search'),
   // logout: action('logout'),
   // avatarUrl:

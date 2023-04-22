@@ -14,10 +14,10 @@ import { AuthCtx, useAuthCtx } from './context/AuthContext.js'
 import { MainContext, MainContextT } from './context/MainContext.mjs'
 import { useMakeRegistries } from './registries.mjs'
 import { routes } from './routes.js'
-import { AccessButtons } from './ui/components/organisms/HeaderProfile/AccessButtons.js'
-import { AddMenuContainer } from './ui/components/organisms/HeaderProfile/AddMenuContainer.js'
-import { AvatarMenuContainer } from './ui/components/organisms/HeaderProfile/AvatarMenuContainer.js'
 import { UsersContainer } from './ui/components/organisms/Roles/UsersContainer.js'
+import { AddMenuContainer } from './ui/molecules/AddMenu/AddMenuContainer.js'
+import { AvatarMenuContainer } from './ui/molecules/AvatarMenu/AvatarMenuContainer.js'
+import { AccessButtons } from './ui/molecules/MinimalisticAccessButtons/AccessButtons.js'
 const routeRegItem: RouteRegItem = { routes }
 const settingsSectionItem: SettingsSectionItem = {
   Content: UsersContainer,
