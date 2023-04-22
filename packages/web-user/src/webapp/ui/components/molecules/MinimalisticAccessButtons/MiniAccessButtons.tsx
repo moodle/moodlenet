@@ -1,111 +1,77 @@
 import { AddonItem, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import { Href } from '@moodlenet/react-app/common'
-import { HeaderTitle, HeaderTitleProps, Link } from '@moodlenet/react-app/ui'
+import { Link } from '@moodlenet/react-app/ui'
 
-import { FC, PropsWithChildren } from 'react'
+import { ReactElement } from 'react'
 
 import './MinimalisticHeader.scss'
 
 export type MinimalisticHeaderProps = {
-  page: 'login' | 'signup' | 'activation' | 'rootLogin'
-  headerTitleProps: HeaderTitleProps
+  showLoginButton: boolean
+  showSignupButton: boolean
+  showLearnMoreButton: boolean
   signupHref: Href
   loginHref: Href
-  leftItems?: AddonItem[]
-  centerItems?: AddonItem[]
-  rightItems?: AddonItem[]
+}
+export type MinimalisticSlots = {
+  leftItems: AddonItem[]
+  centerItems: AddonItem[]
+  rightItems: AddonItem[]
 }
 
-export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = (
-  {
-    page,
-    headerTitleProps,
-    leftItems,
-    centerItems,
-    rightItems,
-    loginHref,
-    signupHref,
-  } /* { devMode, setDevMode } */,
-) => {
-  const { logo, smallLogo, url } = headerTitleProps
+export const getAccesMinimalisticHeaderItems = (
+  props: MinimalisticHeaderProps,
+): MinimalisticSlots => {
+  const { showLearnMoreButton, showLoginButton, showSignupButton, loginHref, signupHref } = props
 
-  const rightButtons = page !== 'activation' && {
-    Item: () => (
-      <div className="buttons">
-        {page !== 'signup' && (
-          <Link href={signupHref}>
-            {/* // TODO //@ETTO Implement on Controller */}
-            <SecondaryButton color="orange">
-              {/* <Trans> */}
-              Sign up
-              {/* </Trans> */}
-            </SecondaryButton>
-          </Link>
-        )}
-        {page !== 'login' && (
-          <Link href={loginHref}>
-            {/* TODO //@ETTO Implement on Controller */}
-            <SecondaryButton color="orange">
-              {/* <Trans> */}
-              Log in
-              {/* </Trans> */}
-            </SecondaryButton>
-          </Link>
-        )}
-        <a href="https://moodle.com/moodlenet/" target="__blank">
-          <PrimaryButton color="grey">
+  const rightButtons = [
+    showSignupButton ? (
+      <Link href={signupHref}>
+        {/* // TODO //@ETTO Implement on Controller */}
+        <SecondaryButton color="orange">
+          {/* <Trans> */}
+          Sign up
+          {/* </Trans> */}
+        </SecondaryButton>
+      </Link>
+    ) : null,
+    showLoginButton ? (
+      <Link href={loginHref}>
+        {/* TODO //@ETTO Implement on Controller */}
+        {showSignupButton ? (
+          <PrimaryButton>
             {/* <Trans> */}
-            Learn more
+            Main log in
             {/* </Trans> */}
           </PrimaryButton>
-        </a>
-      </div>
-    ),
-    key: 'buttons',
+        ) : (
+          <SecondaryButton color="orange">
+            {/* <Trans> */}
+            Log in
+            {/* </Trans> */}
+          </SecondaryButton>
+        )}
+      </Link>
+    ) : null,
+    showLearnMoreButton ? (
+      <a href="https://moodle.com/moodlenet/" target="__blank">
+        <PrimaryButton color="grey">
+          {/* <Trans> */}
+          Learn more
+          {/* </Trans> */}
+        </PrimaryButton>
+      </a>
+    ) : null,
+  ].filter((item): item is ReactElement => !!item)
+
+  const updatedRightButtons: AddonItem[] =
+    rightButtons.length > 0
+      ? [{ Item: () => <div className="buttons">{rightButtons}</div>, key: 'right-buttons' }]
+      : []
+
+  return {
+    leftItems: [],
+    centerItems: [],
+    rightItems: [...updatedRightButtons],
   }
-
-  const updatedLeftItems = [
-    {
-      Item: () => <HeaderTitle key="header-title" logo={logo} smallLogo={smallLogo} url={url} />,
-      key: 'header-title',
-    },
-    ...(leftItems ?? []),
-  ]
-
-  const updatedCenterItems = [...(centerItems ?? [])]
-
-  const updatedRightItems = [rightButtons, ...(rightItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
-
-  // const {
-  // registries: {
-  //   header: { rightComponents },
-  // },
-  // } = useContext(MainContext)
-  // const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
-  return (
-    <div className="minimalistic-header">
-      <div className="content">
-        <div className="left">
-          {updatedLeftItems.map(({ Item, key }) => (
-            <Item key={key} />
-          ))}
-        </div>
-        <div className="center">
-          {updatedCenterItems.map(({ Item, key }) => (
-            <Item key={key} />
-          ))}
-        </div>
-        <div className="right">
-          {updatedRightItems.map(({ Item, key }) => (
-            <Item key={key} />
-          ))}
-          {/* {rightComponentsRegistry.entries.flatMap(({ pkg, item: { Component } }, index) => {
-            return <Component key={`${pkg.id}:${index}`} />
-          })} */}
-        </div>
-      </div>
-    </div>
-  )
 }
