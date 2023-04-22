@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import {
   getAccesMinimalisticHeaderItems,
   MinimalisticSlots,
-} from '../../../molecules/MinimalisticAccessButtons/MiniAccessButtons.js'
+} from '../../../molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.js'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
