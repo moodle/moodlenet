@@ -1,17 +1,16 @@
-import { FloatingMenu, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
-import { ArrowDropDown } from '@mui/icons-material'
+import { AddonItem, SecondaryButton, SimpleDropdown } from '@moodlenet/component-library'
 import { ComponentType, FC, useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
-import { Filter, FilterProps, getFilterContentDefaultListElement } from './Filter.js'
+import { getFilterContentDefaultListElement } from './Filter.js'
 
 export type MainColumItem = {
   Item: ComponentType<{
     showAll: boolean
     setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
   }>
+  name: string
+  filters: AddonItem[]
   key: number | string
-  menuItem?: ComponentType
-  filters?: FilterProps[]
 }
 
 export type BrowserProps = {
@@ -27,18 +26,16 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
       mainColumnItems
         ? mainColumnItems
             .map(e => {
-              const isCurrent = currentMainFilter ? e.key.toString() === currentMainFilter : false
+              const isCurrent = currentMainFilter ? e.name === currentMainFilter : false
 
-              const onClick = () => setCurrentMainFilter(e.key.toString())
+              const onClick = () => setCurrentMainFilter(e.name)
 
-              return e.menuItem
-                ? getFilterContentDefaultListElement({
-                    Item: e.menuItem,
-                    key: e.key,
-                    isCurrent,
-                    onClick,
-                  })
-                : null
+              return getFilterContentDefaultListElement({
+                name: e.name,
+                key: e.key,
+                isCurrent,
+                onClick,
+              })
             })
             .filter(item => !!item)
         : [],
@@ -46,70 +43,50 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
   )
 
   const filterByItemType = useMemo(() => {
-    const menuContent = [...navMenuElements.filter((item): item is JSX.Element => !!item)]
-    menuContent.unshift(
-      <div key="show-all" className={`section `} onClick={() => setCurrentMainFilter(undefined)}>
-        <div className={`border-container`}>
-          <div className={`border`} />
-        </div>
-        <div className={`content`}>
-          <span>All</span>
-        </div>
-      </div>,
-    )
     return mainColumnItems
       ? mainColumnItems
           .map(e => {
-            const isCurrent = e.key.toString() === currentMainFilter
+            const isCurrent = e.name === currentMainFilter
 
-            return (isCurrent || !currentMainFilter) && e.menuItem ? (
+            const list = mainColumnItems.map(i => i.name)
+            list.push('All')
+
+            return isCurrent || !currentMainFilter ? (
               isCurrent ? (
-                <FloatingMenu
-                  className="menu-content-default-list"
-                  hoverElement={
-                    <PrimaryButton
-                      key={e.key}
-                      className={`filter-element ${isCurrent ? 'selected' : ''}`}
-                    >
-                      <e.menuItem />
-                      <ArrowDropDown />
-                    </PrimaryButton>
-                  }
-                  menuContent={menuContent}
+                <SimpleDropdown
+                  list={list}
+                  selected={[e.name]}
+                  label={e.name}
+                  onClick={name => setCurrentMainFilter(name === 'All' ? undefined : name)}
                 />
               ) : (
                 <SecondaryButton
                   key={e.key}
                   className={`filter-element ${isCurrent ? 'selected' : ''}`}
                   onClick={() => {
-                    setCurrentMainFilter(e.key.toString())
+                    setCurrentMainFilter(e.name)
                   }}
                   color="grey"
                 >
-                  <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
-                    <div className={`border ${isCurrent ? 'selected' : ''}`} />
-                  </div>
-                  <div className={`content ${isCurrent ? 'selected' : ''}`}>{<e.menuItem />}</div>
+                  <span>{e.name}</span>
                 </SecondaryButton>
               )
             ) : null
           })
           .filter(item => !!item)
       : []
-  }, [mainColumnItems, currentMainFilter, navMenuElements, setCurrentMainFilter])
+  }, [mainColumnItems, currentMainFilter, setCurrentMainFilter])
 
-  const [currentFilters, setCurrentFilters] = useState<FilterProps[] | undefined>([])
+  const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
   useEffect(() => {
-    mainColumnItems?.map(
-      e => e.key.toString() === currentMainFilter && setCurrentFilters(e.filters),
-    )
+    mainColumnItems?.map(e => e.name === currentMainFilter && setCurrentFilters(e.filters))
   }, [currentMainFilter, mainColumnItems])
 
   const filters =
     currentFilters && currentFilters.length > 0 ? (
       <div className="filters">
         {currentFilters.map(i => (
-          <Filter {...i} key={i.key} />
+          <i.Item key={i.key} />
         ))}
       </div>
     ) : null
@@ -149,11 +126,11 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
           {useMemo(
             () =>
               updatedMainColumnItems.map(i =>
-                !currentMainFilter || i.key.toString() === currentMainFilter ? (
+                !currentMainFilter || i.name === currentMainFilter ? (
                   'Item' in i ? (
                     <i.Item
                       key={i.key}
-                      showAll={i.key.toString() === currentMainFilter}
+                      showAll={i.name === currentMainFilter}
                       setShowAll={setCurrentMainFilter}
                     />
                   ) : (

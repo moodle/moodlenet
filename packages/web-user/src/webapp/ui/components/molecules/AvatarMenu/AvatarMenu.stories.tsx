@@ -39,7 +39,6 @@ export const AvatarMenuItem: AddonItem = {
         HeaderProfileAvatarMenuStoryProps(avatarPicture),
         HeaderSignoutAvatarMenuStoryProps,
       ]}
-      key="avatar-menu"
     />
   ),
   key: 'avatar-menu',

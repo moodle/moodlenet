@@ -8,7 +8,7 @@ import {
   useLayoutEffect,
   useReducer,
   useRef,
-  useState,
+  useState
 } from 'react'
 import { Selector, SelectorProps, useSelectorOption } from '../../../lib/selector.js'
 
@@ -252,7 +252,7 @@ export const IconTextOption: FC<IconTextOptionProps> = ({ value, label, icon }) 
   return (
     <div
       key={value}
-      className={`${selected ? 'selected ' : ''}option icon-and-text`}
+      className={`${selected ? 'selected ' : ''} option icon-and-text`}
       onClick={toggle}
     >
       {icon}

@@ -1,9 +1,10 @@
 import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/collection/ui'
+import { SimpleDropdown } from '@moodlenet/component-library'
 import { getResourcesCardStoryProps, SearchResourceList } from '@moodlenet/ed-resource/ui'
-import { Browser, BrowserProps, FilterMenuElement } from '@moodlenet/react-app/ui'
+import { Browser, BrowserProps } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 const meta: ComponentMeta<typeof Browser> = {
   title: 'Organisms/Browser',
@@ -39,10 +40,11 @@ type BrowserStory = ComponentStory<typeof Browser>
 // }))
 
 export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
+  const [currentSortBy, setCurrentSortBy] = useState(['Relevant'])
   return {
     mainColumnItems: [
       {
-        menuItem: () => <span>Resources</span>,
+        name: 'Resources',
         Item: ({ showAll, setShowAll }) => {
           const list = useMemo(
             () =>
@@ -63,11 +65,24 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         },
         filters: [
           {
-            name: 'Sort by',
-            menuContent: ['Relevance', 'Latest'].map(e => <FilterMenuElement key={e} name={e} />),
-            menuContentType: 'menu-content-default-list',
+            Item: () => (
+              <SimpleDropdown
+                list={['Relevant', 'Popular', 'Recent']}
+                selected={currentSortBy}
+                label="Sort by"
+                onClick={name => setCurrentSortBy([name])}
+                notHighlightInitialSelection={true}
+                initialSelection="Relevant"
+              />
+            ),
             key: 'sort-by',
           },
+          // {
+          //   name: 'Sort by',
+          //   menuContent: ['Relevance', 'Latest'].map(e => <FilterMenuElement key={e} name={e} />),
+          //   menuContentType: 'menu-content-default-list',
+          //   key: 'sort-by',
+          // },
           // {
           //   name: 'Subjects',
           //   menuContent: [
@@ -120,7 +135,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         key: 'resource-list',
       },
       {
-        menuItem: () => <span>Collections</span>,
+        name: 'Collections',
         Item: ({ showAll, setShowAll }) => {
           const list = useMemo(
             () =>
@@ -139,11 +154,24 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         },
         filters: [
           {
-            name: 'Sort by',
-            menuContent: ['Relevance', 'Latest'].map(e => <FilterMenuElement key={e} name={e} />),
-            menuContentType: 'menu-content-default-list',
+            Item: () => (
+              <SimpleDropdown
+                list={['Relevant', 'Popular', 'Recent']}
+                selected={currentSortBy}
+                label="Sort by"
+                onClick={name => setCurrentSortBy([name])}
+                notHighlightInitialSelection={true}
+                initialSelection="Relevant"
+              />
+            ),
             key: 'sort-by',
           },
+          // {
+          //   name: 'Sort by',
+          //   menuContent: ['Relevance', 'Latest'].map(e => <FilterMenuElement key={e} name={e} />),
+          //   menuContentType: 'menu-content-default-list',
+          //   key: 'sort-by',
+          // },
           // {
           //   name: 'Subjects',
           //   menuContent: [
@@ -181,7 +209,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         key: 'collection-list',
       },
       {
-        menuItem: () => <span>People</span>,
+        name: 'People',
         Item: ({ showAll, setShowAll }) => {
           const list = useMemo(
             () =>

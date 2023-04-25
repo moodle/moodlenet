@@ -26,7 +26,6 @@ export const useLicenseFieldStoryProps = (
     isEditing: true,
     shouldShowErrors: false,
     editLicense: action('editLicense'),
-    contentType: 'file',
     validationSchema: licenseValidationSchema,
     ...overrides,
   }
