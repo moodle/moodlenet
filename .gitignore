@@ -17,6 +17,6 @@ build-storybook.log*
 .env
 .env.*
 
-/tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo
 /.husky
 /packages/*/dist

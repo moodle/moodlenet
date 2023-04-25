@@ -11,6 +11,7 @@ export * as PrimaryButtonStories from './webapp/ui/components/atoms/PrimaryButto
 export * as RoundButtonStories from './webapp/ui/components/atoms/RoundButton/RoundButton.stories.js'
 export * as SearchboxStories from './webapp/ui/components/atoms/Searchbox/Searchbox.stories.js'
 export * as SecondaryButtonStories from './webapp/ui/components/atoms/SecondaryButton/SecondaryButton.stories.js'
+export * as SimpleDropdownStories from './webapp/ui/components/atoms/SimpleDropdown/SimpleDropdown.stories.js'
 export * as SnackbarStories from './webapp/ui/components/atoms/Snackbar/Snackbar.stories.js'
 export * as SwitchStories from './webapp/ui/components/atoms/Switch/Switch.stories.js'
 export * as TertiaryButtonStories from './webapp/ui/components/atoms/TertiaryButton/TertiaryButton.stories.js'

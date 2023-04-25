@@ -38,10 +38,9 @@ const AddMenuItem: AddonItem = {
         HeaderResourceStories.HeaderResourceStoryProps,
         HeaderCollectionStories.HeaderCollectionStoryProps,
       ]}
-      key="avatar-menu"
     />
   ),
-  key: 'avatar-menu',
+  key: 'avatar-menu-main-header',
 }
 
 const getRightItemsHeader = (isAuthenticated: boolean): AddonItem[] => {
