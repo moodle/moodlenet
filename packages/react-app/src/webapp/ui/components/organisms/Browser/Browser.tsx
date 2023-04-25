@@ -1,7 +1,6 @@
 import { AddonItem, SecondaryButton, SimpleDropdown } from '@moodlenet/component-library'
 import { ComponentType, FC, useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
-import { getFilterContentDefaultListElement } from './Filter.js'
 
 export type MainColumItem = {
   Item: ComponentType<{
@@ -20,27 +19,6 @@ export type BrowserProps = {
 export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | undefined>(undefined)
-
-  const navMenuElements = useMemo(
-    () =>
-      mainColumnItems
-        ? mainColumnItems
-            .map(e => {
-              const isCurrent = currentMainFilter ? e.name === currentMainFilter : false
-
-              const onClick = () => setCurrentMainFilter(e.name)
-
-              return getFilterContentDefaultListElement({
-                name: e.name,
-                key: e.key,
-                isCurrent,
-                onClick,
-              })
-            })
-            .filter(item => !!item)
-        : [],
-    [mainColumnItems, currentMainFilter],
-  )
 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
@@ -131,7 +109,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
                     <i.Item
                       key={i.key}
                       showAll={i.name === currentMainFilter}
-                      setShowAll={setCurrentMainFilter}
+                      setShowAll={() => setCurrentMainFilter(i.name)}
                     />
                   ) : (
                     i
