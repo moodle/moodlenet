@@ -34,7 +34,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl }) => {
   return menuItems.length > 0 ? (
     <FloatingMenu
       className="avatar-menu"
-      key="avatar-menu"
+      key="avatar-menurt"
       abbr="User menu"
       menuContent={(menuItems ?? []).map(menuItem => {
         // reoderedmenuItems.map((menuItem, i) => {
