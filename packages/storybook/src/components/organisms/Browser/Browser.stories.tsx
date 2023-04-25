@@ -1,7 +1,6 @@
 import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/collection/ui'
-import { SimpleDropdown } from '@moodlenet/component-library'
 import { getResourcesCardStoryProps, SearchResourceList } from '@moodlenet/ed-resource/ui'
-import { Browser, BrowserProps } from '@moodlenet/react-app/ui'
+import { Browser, BrowserProps, SortBy } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useMemo, useState } from 'react'
@@ -40,7 +39,8 @@ type BrowserStory = ComponentStory<typeof Browser>
 // }))
 
 export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
-  const [currentSortBy, setCurrentSortBy] = useState(['Relevant'])
+  const [currentResourceSortBy, setCurrentResourceSortBy] = useState('Relevant')
+  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState('Relevant')
   return {
     mainColumnItems: [
       {
@@ -66,14 +66,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         filters: [
           {
             Item: () => (
-              <SimpleDropdown
-                list={['Relevant', 'Popular', 'Recent']}
-                selected={currentSortBy}
-                label="Sort by"
-                onClick={name => setCurrentSortBy([name])}
-                notHighlightInitialSelection={true}
-                initialSelection="Relevant"
-              />
+              <SortBy selected={currentResourceSortBy} setSelection={setCurrentResourceSortBy} />
             ),
             key: 'sort-by',
           },
@@ -155,13 +148,9 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         filters: [
           {
             Item: () => (
-              <SimpleDropdown
-                list={['Relevant', 'Popular', 'Recent']}
-                selected={currentSortBy}
-                label="Sort by"
-                onClick={name => setCurrentSortBy([name])}
-                notHighlightInitialSelection={true}
-                initialSelection="Relevant"
+              <SortBy
+                selected={currentCollectionSortBy}
+                setSelection={setCurrentCollectionSortBy}
               />
             ),
             key: 'sort-by',
