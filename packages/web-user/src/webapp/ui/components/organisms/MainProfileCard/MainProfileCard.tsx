@@ -1,6 +1,7 @@
 import { Edit, Save } from '@material-ui/icons'
 import {
   AddonItem,
+  FloatingMenu,
   // AddonItem,
   // FloatingMenu,
   InputTextField,
@@ -8,8 +9,10 @@ import {
   PrimaryButton,
   RoundButton,
   SecondaryButton,
+  Snackbar,
   useImageUrl,
 } from '@moodlenet/component-library'
+import { Share } from '@mui/icons-material'
 import type { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import { ProfileAccess, ProfileFormValues } from '../../../../../common/types.mjs'
@@ -18,11 +21,11 @@ import defaultBackground from '../../../assets/img/default-background.svg'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {
-  mainColumnItems?: AddonItem[]
-  topItems?: AddonItem[]
-  titleItems?: AddonItem[]
-  subtitleItems?: AddonItem[]
-  footerItems?: AddonItem[]
+  mainColumnItems: AddonItem[]
+  topItems: AddonItem[]
+  titleItems: AddonItem[]
+  subtitleItems: AddonItem[]
+  footerItems: AddonItem[]
 }
 
 export type MainProfileCardPropsControlled = Omit<
@@ -33,7 +36,8 @@ export type MainProfileCardProps = {
   slots: MainProfileCardSlots
   form: ReturnType<typeof useFormik<ProfileFormValues>>
   access: ProfileAccess
-  isEditing?: boolean
+  isEditing: boolean
+  profileUrl: string
   toggleIsEditing(): unknown
 }
 
@@ -42,14 +46,16 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   form,
   access,
   isEditing,
+  profileUrl,
   toggleIsEditing,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
-  const { canEdit } = access
+  const { canEdit, isCreator, isAuthenticated } = access
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
-  const [, /* _isShowingSmallCard */ setIsShowingSmallCard] = useState<boolean>(false)
+  const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
+  const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
@@ -90,6 +96,14 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const avatar = {
     backgroundImage: 'url("' + avatarUrl + '")',
     backgroundSize: 'cover',
+  }
+
+  const copyUrl = () => {
+    navigator.clipboard.writeText(profileUrl)
+    setShowUrlCopiedAlert(false)
+    setTimeout(() => {
+      setShowUrlCopiedAlert(true)
+    }, 100)
   }
 
   const editButton = canEdit ? (
@@ -314,13 +328,113 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       )}
     </>
   )
-  const updatedFooterItems = [...(footerItems ?? [])].filter(
+
+  const snackbars = [
+    showUrlCopiedAlert && (
+      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+        Copied to clipoard
+      </Snackbar>
+    ),
+  ]
+
+  const footerButtons = [
+    // isCreator && !isApproved && !isWaitingApproval && (
+    //   <PrimaryButton
+    //     disabled={!isElegibleForApproval}
+    //     onClick={requestApprovalForm.submitForm}
+    //   >
+    //     Request approval
+    //   </PrimaryButton>
+    // ),
+    // isCreator && isWaitingApproval && (
+    //   <SecondaryButton disabled={true}>
+    //     Waiting for approval
+    //   </SecondaryButton>
+    // ),
+    // isAdmin && !isApproved && (
+    //   <PrimaryButton onClick={approveUserForm.submitForm} color="green">
+    //     Approve
+    //   </PrimaryButton>
+    // ),
+    // isAdmin && isApproved && (
+    //   <SecondaryButton
+    //     onClick={unapproveUserForm.submitForm}
+    //     color="red"
+    //   >
+    //     Unapprove
+    //   </SecondaryButton>
+    // ),
+    // !isCreator && !isFollowing && (
+    //   <PrimaryButton
+    //     disabled={!isAuthenticated}
+    //     onClick={toggleFollowForm.submitForm}
+    //     className="following-button"
+    //   >
+    //     {/* <AddIcon /> */}
+    //     Follow
+    //   </PrimaryButton>
+    // ),
+    // !isCreator && isFollowing && (
+    //   <SecondaryButton
+    //     disabled={!isAuthenticated}
+    //     onClick={toggleFollowForm.submitForm}
+    //     className="following-button"
+    //     color="orange"
+    //   >
+    //     {/* <CheckIcon /> */}
+    //     Following
+    //   </SecondaryButton>
+    // ),
+    !isCreator && (
+      <SecondaryButton
+        color="grey"
+        className={`message`}
+        disabled={!isAuthenticated}
+        // onClick={openSendMessage}
+      >
+        Message
+      </SecondaryButton>
+      // <TertiaryButton
+      //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+      //   onClick={openSendMessage}
+      // >
+      //   <MailOutlineIcon />
+      // </TertiaryButton>
+    ),
+
+    <FloatingMenu
+      key="more-button-menu"
+      menuContent={[
+        <div key="share-button" tabIndex={0} onClick={copyUrl}>
+          <Share />
+          Share
+        </div>,
+        // !isCreator && <div tabIndex={0} onClick={() => setIsReporting(true)}>
+        //   <FlagIcon />
+        //   Report
+        // </div>,
+      ]}
+      hoverElement={
+        isShowingSmallCard ? (
+          <SecondaryButton color="grey" className={`more small`}>
+            <div className="three-dots">...</div>
+          </SecondaryButton>
+        ) : (
+          <SecondaryButton color="grey" className={`more big`}>
+            <div className="text">More</div>
+          </SecondaryButton>
+        )
+      }
+    />,
+  ]
+
+  const updatedFooterItems = [...footerButtons, ...(footerItems ?? [])].filter(
     (item): item is AddonItem /* | JSX.Element */ => !!item,
   )
 
   const footer =
     updatedFooterItems.length > 0 ? (
-      <div className="footer">
+      <div className="main-profile-card-footer">
         {updatedFooterItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
     ) : null
@@ -338,6 +452,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   return (
     <div className="main-profile-card" key="profile-card">
       {modals}
+      {snackbars}
       <div className="main-column">
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
