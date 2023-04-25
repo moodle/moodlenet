@@ -1,11 +1,10 @@
 import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/collection/ui'
+import { SimpleDropdown } from '@moodlenet/component-library'
 import { getResourcesCardStoryProps, SearchResourceList } from '@moodlenet/ed-resource/ui'
 import { Browser, BrowserProps } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useMemo } from 'react'
-import { SortBy } from './Filters/SortBy/SortBy.js'
-import { useSortByStoryProps } from './Filters/SortBy/SortBy.stories.js'
+import { useMemo, useState } from 'react'
 
 const meta: ComponentMeta<typeof Browser> = {
   title: 'Organisms/Browser',
@@ -41,6 +40,7 @@ type BrowserStory = ComponentStory<typeof Browser>
 // }))
 
 export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
+  const [currentSortBy, setCurrentSortBy] = useState(['Relevant'])
   return {
     mainColumnItems: [
       {
@@ -65,7 +65,16 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
         },
         filters: [
           {
-            Item: () => <SortBy {...useSortByStoryProps({})} />,
+            Item: () => (
+              <SimpleDropdown
+                list={['Relevant', 'Popular', 'Recent']}
+                selected={currentSortBy}
+                label="Sort by"
+                onClick={name => setCurrentSortBy([name])}
+                notHighlightInitialSelection={true}
+                initialSelection="Relevant"
+              />
+            ),
             key: 'sort-by',
           },
           // {
@@ -144,6 +153,19 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
           )
         },
         filters: [
+          {
+            Item: () => (
+              <SimpleDropdown
+                list={['Relevant', 'Popular', 'Recent']}
+                selected={currentSortBy}
+                label="Sort by"
+                onClick={name => setCurrentSortBy([name])}
+                notHighlightInitialSelection={true}
+                initialSelection="Relevant"
+              />
+            ),
+            key: 'sort-by',
+          },
           // {
           //   name: 'Sort by',
           //   menuContent: ['Relevance', 'Latest'].map(e => <FilterMenuElement key={e} name={e} />),
