@@ -225,9 +225,19 @@
         color: #000;
       }
 
-      span {
-        font-size: 14px;
-        line-height: 20px;
+      .text-author {
+        position: relative;
+        max-width: 480px;
+        width: 90%;
+        margin: 0 auto;
+        padding: 25px 0 0;
+      }
+
+      .dialog {
+        background: #f5f5f5;
+        padding: 25px;
+        color: #282828;
+        border-radius: 15px;
       }
 
       .disclaimer {
@@ -235,12 +245,6 @@
         color: #687082;
       }
 
-      .text-author {
-        max-width: 365px;
-        width: 90%;
-        margin: 0 auto;
-        padding: 25px 25px 0 25px;
-      }
       .text-author img {
         border-radius: 50%;
         padding-bottom: 20px;
@@ -321,13 +325,7 @@
         >
           <tr>
             <td valign="top" class="bg_white" style="padding: 25px 25px 0 25px">
-              <table
-                role="presentation"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                width="100%"
-              >
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td class="logo" style="text-align: center">
                     <h1>
@@ -357,13 +355,7 @@
         >
           <tr>
             <td valign="middle" class="hero bg_white" style="padding: 60px 0">
-              <table
-                role="presentation"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                width="100%"
-              >
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td style="padding: 0 2.5em; text-align: center">
                     <div class="text">
@@ -374,18 +366,14 @@
                 <tr>
                   <td style="text-align: center">
                     <div class="text-author">
-                      <span class="position"
-                        >Thanks for signing up to MoodleNet! Click the button
-                        below to activate your account.</span
-                      >
+                      <div class="dialog">
+                        Thanks for signing up to MoodleNet! Click the button below to activate your
+                        account.
+                      </div>
                       <p style="margin: 25px 0">
-                        <a href="{{=it.link}}" class="btn btn-primary"
-                          >Activate account</a
-                        >
+                        <a href="{{=it.link}}" class="btn btn-primary">Activate account</a>
                       </p>
-                      <span class="position disclaimer"
-                        >Not you? Just ignore this message.</span
-                      >
+                      <span class="position disclaimer">Not you? Just ignore this message.</span>
                     </div>
                   </td>
                 </tr>
@@ -454,9 +442,8 @@
                     >
                       Copyright © 2021 Moodle Pty Ltd, All rights reserved.<br />
                       This email was intended for
-                      <a href="mailto:{{=it.email}}" target="_blank"
-                        >{{=it.email}}</a
-                      >. This is a service email.
+                      <a href="mailto:{{=it.email}}" target="_blank">{{=it.email}}</a>. This is a
+                      service email.
                     </p>
                   </td>
                 </tr>
