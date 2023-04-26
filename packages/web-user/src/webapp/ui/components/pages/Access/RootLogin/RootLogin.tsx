@@ -1,11 +1,7 @@
-import { Card, Href, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { SimpleLayout, SimpleLayoutProps } from '@moodlenet/react-app/ui'
 import { FC, useCallback, useEffect, useState } from 'react'
 
-import {
-  getAccesMinimalisticHeaderItems,
-  MinimalisticSlots,
-} from '../../../molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.js'
 import './RootLogin.scss'
 
 export type RootLoginFormValues = { email: string; password: string }
@@ -76,17 +72,4 @@ export const RootLoginBody: FC<{
       </div>
     </div>
   )
-}
-
-export const getRootLoginMinimalisticHeaderProps = (
-  loginHref: Href,
-  signupHref: Href,
-): MinimalisticSlots => {
-  return getAccesMinimalisticHeaderItems({
-    loginHref: loginHref,
-    showLearnMoreButton: false,
-    showLoginButton: true,
-    showSignupButton: true,
-    signupHref: signupHref,
-  })
 }
