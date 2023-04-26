@@ -102,10 +102,10 @@ async function rootImportLog(
   const fullActionName = `[${exp}] ${pkgName}`
   const pkgExportName = exp ? `${pkgName}/${exp}` : pkgName
 
-  console.info(`${fullActionName} --- BEGIN`)
+  console.info(`${fullActionName}`)
 
   const endMessageWith = await _ignites.rootImport(pkgExportName).then(
-    () => '',
+    () => 'ok',
     err => {
       const errMsg = `${fullActionName}@${pkgVersion} : Import Error`
 
@@ -119,8 +119,8 @@ ${err.stack}
         throw new Error(msgWCode, { cause: err })
       }
 
-      return `"${exp}" export not available for this package, ignoring`
+      return `noop`
     },
   )
-  console.info(`${fullActionName} --- DONE${endMessageWith ? ` [${endMessageWith}]` : ``}`)
+  console.info(`${fullActionName} --- ${endMessageWith}`)
 }
