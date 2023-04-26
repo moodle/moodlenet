@@ -12,10 +12,10 @@ export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> 
 ) => {
   // const {
   // registries: {
-  //   header: { rightComponents },
+  //   header: { headerRightComponents },
   // },
   // } = useContext(MainContext)
-  // const { registry: rightComponentsRegistry } = rightComponents.useRegistry()
+  // const { registry: rightComponentsRegistry } = headerRightComponents.useRegistry()
   return (
     <div className="minimalistic-header">
       <div className="content">

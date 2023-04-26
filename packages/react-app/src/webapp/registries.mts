@@ -8,14 +8,14 @@ import { GuestRegistryMap, useCreateRegistry } from './web-lib/registry.js'
 export type MainRegistries = ReturnType<typeof useMakeRegistries>
 export type GuestMainRegistries = GuestRegistryMap<MainRegistries>
 export function useMakeRegistries() {
-  const rightComponents = useCreateRegistry<HeaderRightComponentRegItem>()
+  const headerRightComponents = useCreateRegistry<HeaderRightComponentRegItem>()
   const footerLeftComponents = useCreateRegistry<FooterComponentRegItem>()
   const footerCenterComponents = useCreateRegistry<FooterComponentRegItem>()
   const footerRightComponents = useCreateRegistry<FooterComponentRegItem>()
   const routes = useCreateRegistry<RouteRegItem>()
   const settingsSections = useCreateRegistry<SettingsSectionItem>()
   return {
-    rightComponents,
+    headerRightComponents,
     footerLeftComponents,
     footerCenterComponents,
     footerRightComponents,
