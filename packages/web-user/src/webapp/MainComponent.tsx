@@ -26,9 +26,14 @@ const settingsSectionItem: SettingsSectionItem = {
 
 const avatarMenuItem: HeaderRightComponentRegItem = { Component: AvatarMenuContainer }
 const addMenuItem: HeaderRightComponentRegItem = { Component: AddMenuContainer }
-const accessButtonsItems: HeaderRightComponentRegItem = {
+const accessButtons = getAccessButtons({ loginHref: href('/login'), signupHref: href('/signup') })
+const accessButtonsHeaderItem: HeaderRightComponentRegItem = {
   Component: () => (
-    <>{getAccessButtons({ loginHref: href('/login'), signupHref: href('/signup') })}</>
+    <>
+      {accessButtons.map(({ Item, key }) => (
+        <Item key={key} />
+      ))}
+    </>
   ),
 }
 
@@ -50,7 +55,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   reactAppCtx.registries.rightComponents.useRegister(avatarMenuItem, {
     condition: !!authCtx?.isAuthenticated,
   })
-  reactAppCtx.registries.rightComponents.useRegister(accessButtonsItems, {
+  reactAppCtx.registries.rightComponents.useRegister(accessButtonsHeaderItem, {
     condition: !authCtx?.isAuthenticated,
   })
 
