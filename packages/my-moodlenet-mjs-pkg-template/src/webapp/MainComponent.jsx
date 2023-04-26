@@ -20,7 +20,7 @@ const MainComponent = ({ children }) => {
   const pkgCtx = usePkgContext()
   const { registries } = useContext(ReactAppContext)
   registries.routes.useRegister(myRoutes)
-  registries.rightComponents.useRegister(myRightComponent)
+  registries.headerRightComponents.useRegister(myRightComponent)
   registries.avatarMenuItems.useRegister(myPageMenuItem)
 
   const [apiResponse, setApiResponse] = useState()
