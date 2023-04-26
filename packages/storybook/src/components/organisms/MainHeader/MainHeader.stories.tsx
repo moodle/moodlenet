@@ -6,8 +6,8 @@ import { HeaderResourceStories } from '@moodlenet/ed-resource/stories'
 import { href } from '@moodlenet/react-app/common'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
-import { AvatarMenuStories } from '@moodlenet/web-user/stories'
-import { AddMenu, getAccessButtons } from '@moodlenet/web-user/ui'
+import { AccessButtonsStories, AvatarMenuStories } from '@moodlenet/web-user/stories'
+import { AddMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 
 const meta: ComponentMeta<typeof MainHeader> = {
@@ -47,7 +47,7 @@ const getRightItemsHeader = (isAuthenticated: boolean): AddonItem[] => {
   return isAuthenticated
     ? [AddMenuItem, AvatarMenuStories.AvatarMenuItem]
     : [
-        ...getAccessButtons({
+        ...AccessButtonsStories.getAccessButtons({
           loginHref: href('Pages/Access/Login'),
           signupHref: href('Pages/Access/Signup'),
         }),

@@ -12,7 +12,7 @@ import { useContext, useMemo } from 'react'
 import { MyPkgContext } from '../common/my-webapp/types.mjs'
 import { AuthCtx, useAuthCtx } from './context/AuthContext.js'
 import { MainContext, MainContextT } from './context/MainContext.mjs'
-import { getAccessButtons } from './exports/ui.mjs'
+import { LoginHeaderButton, SignupHeaderButton } from './exports/ui.mjs'
 import { useMakeRegistries } from './registries.mjs'
 import { routes } from './routes.js'
 import { AddMenuContainer } from './ui/components/molecules/AddMenu/AddMenuContainer.js'
@@ -26,15 +26,11 @@ const settingsSectionItem: SettingsSectionItem = {
 
 const avatarMenuItem: HeaderRightComponentRegItem = { Component: AvatarMenuContainer }
 const addMenuItem: HeaderRightComponentRegItem = { Component: AddMenuContainer }
-const accessButtons = getAccessButtons({ loginHref: href('/login'), signupHref: href('/signup') })
-const accessButtonsHeaderItem: HeaderRightComponentRegItem = {
-  Component: () => (
-    <>
-      {accessButtons.map(({ Item, key }) => (
-        <Item key={key} />
-      ))}
-    </>
-  ),
+const loginButtonHeaderItem: HeaderRightComponentRegItem = {
+  Component: () => <LoginHeaderButton loginHref={href('/login')} />,
+}
+const signupButtonHeaderItem: HeaderRightComponentRegItem = {
+  Component: () => <SignupHeaderButton signupHref={href('/signup')} />,
 }
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
@@ -55,7 +51,10 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   reactAppCtx.registries.rightComponents.useRegister(avatarMenuItem, {
     condition: !!authCtx?.isAuthenticated,
   })
-  reactAppCtx.registries.rightComponents.useRegister(accessButtonsHeaderItem, {
+  reactAppCtx.registries.rightComponents.useRegister(loginButtonHeaderItem, {
+    condition: !authCtx?.isAuthenticated,
+  })
+  reactAppCtx.registries.rightComponents.useRegister(signupButtonHeaderItem, {
     condition: !authCtx?.isAuthenticated,
   })
 
