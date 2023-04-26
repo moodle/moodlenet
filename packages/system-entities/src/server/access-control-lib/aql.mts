@@ -52,12 +52,12 @@ export function pkgMetaOf<T>(pkgName: PkgName): AqlVal<T> {
   return `entity._meta.pkgMeta["${getPkgNamespace(pkgName)}"]`
 }
 
-export function entityIdentifier2EntityIdAql(entityIdentifierVar: string) {
+export function entityIdentifier2EntityIdAql(entityIdentifierVar: AqlVal<EntityIdentifier>) {
   const pkgNamespaceAql = getPkgNamespaceAql(`${entityIdentifierVar}.entityClass.pkgName`)
   return `CONCAT(${pkgNamespaceAql},'__',${entityIdentifierVar}.entityClass.type, "/", ${entityIdentifierVar}._key )`
 }
 
-export function entityDocByIdentifierAql(entityIdentifierVar: string) {
+export function entityDocByIdentifierAql(entityIdentifierVar: AqlVal<EntityIdentifier>) {
   const docId = entityIdentifier2EntityIdAql(entityIdentifierVar)
   return `DOCUMENT(${docId})`
 }
@@ -90,6 +90,6 @@ export function creatorUserInfoAqlProvider(): AqlVal<EntityInfo> {
   return userInfoAqlProvider('entity._meta.creator')
 }
 
-export function toaql<T>(any: unknown): AqlVal<T> {
-  return any === void 0 ? 'undefined' : JSON.stringify(any)
+export function toaql<T>(any: T): AqlVal<T> {
+  return `(${JSON.stringify(any ?? null)})`
 }

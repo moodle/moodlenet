@@ -9,7 +9,7 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./init": "./dist/init.mjs",
+    "./init": "./dist/server/init.mjs",
     "./server": "./dist/server/exports.mjs",
     "./common": "./dist/common/exports.mjs",
     "./ui": "./dist/webapp/exports/ui.mjs",
