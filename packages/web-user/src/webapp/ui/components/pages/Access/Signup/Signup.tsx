@@ -1,12 +1,8 @@
 import { CallMade as CallMadeIcon } from '@material-ui/icons'
-import { Card, Href } from '@moodlenet/component-library'
+import { Card } from '@moodlenet/component-library'
 import { MainFooterProps, MinimalisticHeaderProps, SimpleLayout } from '@moodlenet/react-app/ui'
 import { ComponentType, CSSProperties, FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  getAccesMinimalisticHeaderItems,
-  MinimalisticSlots,
-} from '../../../molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.js'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
@@ -110,17 +106,4 @@ export const Signup: FC<SignupProps> = ({ headerProps, signupItems, footerProps 
       </div>
     </SimpleLayout>
   )
-}
-
-export const getSignupMinimalisticHeaderProps = (
-  loginHref: Href,
-  signupHref: Href,
-): MinimalisticSlots => {
-  return getAccesMinimalisticHeaderItems({
-    loginHref: loginHref,
-    showLearnMoreButton: true,
-    showLoginButton: true,
-    showSignupButton: false,
-    signupHref: signupHref,
-  })
 }
