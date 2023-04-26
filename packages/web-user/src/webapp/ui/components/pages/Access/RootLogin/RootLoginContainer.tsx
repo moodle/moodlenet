@@ -7,7 +7,7 @@ export const RootLoginContainer: FC = () => {
 
   //TODO //@ETTO: needs a registry in react-app : packages/react-app/src/webapp/ui/components/organisms/Header/Minimalistic/MinimalisticHeaderHooks.mts
   // const { registries } = useContext(ReactAppContext)
-  // registries.miniRightComponents.useRegister({
+  // registries.miniHeaderRightComponents.useRegister({
   //   Component: () => <LoginButtonMini loginHref={href('/login')} />,
   // })
 
