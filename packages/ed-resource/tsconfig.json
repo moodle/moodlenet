@@ -22,6 +22,9 @@
     },
     {
       "path": "../simple-file-store"
+    },
+    {
+      "path": "../ed-meta"
     }
   ]
 }
