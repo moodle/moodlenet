@@ -7,9 +7,10 @@ export const useMinimalisticHeaderProps = (): MinimalisticHeaderProps => {
   const minimalisticHeaderProps = useMemo<MinimalisticHeaderProps>(() => {
     const minimalisticHeaderProps: MinimalisticHeaderProps = {
       headerTitleProps,
-      centerItems: [], //TODO //@ETTO: needs a registry in react-app (miniCenterComponents)
-      leftItems: [], //TODO //@ETTO: needs a registry in react-app (miniLeftComponents)
-      rightItems: [], //TODO //@ETTO: needs a registry in react-app (miniRightComponents)
+      //TODO //@ETTO: needs registries in react-app (packages/react-app/src/webapp/registries.mts)
+      centerItems: [], //TODO //@ETTO: registry name miniHeaderCenterComponents)
+      leftItems: [], //TODO //@ETTO: registry name miniHeaderLeftComponents
+      rightItems: [], //TODO //@ETTO: registry name miniHeaderRightComponents
     }
     return minimalisticHeaderProps
   }, [headerTitleProps])

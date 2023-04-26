@@ -7,7 +7,7 @@ import { MainHeaderProps } from './MainHeader.js'
 export const useHeaderProps = (): MainHeaderProps => {
   const { reg } = useContext(MainContext)
   const headerTitleProps = useHeaderTitleProps()
-  const rightItemsRegEntries = reg.rightComponents.registry.entries
+  const rightItemsRegEntries = reg.headerRightComponents.registry.entries
   const rightItems = useMemo(() => {
     return rightItemsRegEntries.map<AddonItem>(({ item, pkgId }, idx) => {
       return {
