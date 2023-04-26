@@ -20,7 +20,20 @@
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
   "todo-tree.tree.showBadges": false,
-  "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "@ALE", "[ ]", "[x]", "@ETTO", "@BRU"],
+  "todo-tree.general.tags": [
+    "BUG",
+    "HACK",
+    "FIXME",
+    "CHECK",
+    "BEWARE",
+    "NOTE",
+    "TODO",
+    "@ALE",
+    "@ETTO",
+    "@BRU",
+    "[ ]",
+    "[x]"
+  ],
   "todo-tree.highlights.customHighlight": {
     "BUG": {
       "icon": "bug"
