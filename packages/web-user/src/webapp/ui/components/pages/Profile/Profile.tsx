@@ -3,7 +3,12 @@ import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useReducer } from 'react'
 import { SchemaOf } from 'yup'
-import { ProfileAccess, ProfileActions, ProfileFormValues } from '../../../../../common/types.mjs'
+import {
+  ProfileAccess,
+  ProfileActions,
+  ProfileFormValues,
+  ProfileState,
+} from '../../../../../common/types.mjs'
 
 import {
   MainProfileCard,
@@ -21,7 +26,7 @@ export type ProfileProps = {
   profileForm: ProfileFormValues
   validationSchema: SchemaOf<ProfileFormValues>
 
-  // state: ProfileState
+  state: ProfileState
   actions: ProfileActions
   access: ProfileAccess
 }
@@ -35,10 +40,12 @@ export const Profile: FC<ProfileProps> = ({
   profileForm,
   validationSchema,
 
+  state,
   actions,
   access,
 }) => {
-  const { editProfile } = actions
+  const { editProfile, sendMessage } = actions
+  const { profileUrl } = state
   const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   // const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
@@ -111,13 +118,6 @@ export const Profile: FC<ProfileProps> = ({
   //       {/* </Trans> */}
   //     </Snackbar>
   //   ),
-  //   showMessageSentAlert && (
-  //     <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
-  //       {/* <Trans> */}
-  //       Message sent
-  //       {/* </Trans> */}
-  //     </Snackbar>
-  //   ),
   //   showUserIdCopiedAlert && (
   //     <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
   //       {/* <Trans> */}
@@ -165,9 +165,11 @@ export const Profile: FC<ProfileProps> = ({
       // editForm={editForm}
       form={form}
       slots={mainProfileCardSlots}
+      profileUrl={profileUrl}
       access={access}
       isEditing={isEditing}
       toggleIsEditing={toggleIsEditing}
+      sendMessage={sendMessage}
       // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
       // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
       // setIsReporting={setIsReporting}

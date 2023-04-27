@@ -53,6 +53,8 @@ export const useMainProfileCardStoryProps = (
       },
       isEditing: false,
       toggleIsEditing: action('toggle Is Editing'),
+      sendMessage: action('send message'),
+      profileUrl: 'https://iuri.is/',
       // state: {
       //   followed: false,
       // },
