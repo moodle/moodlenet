@@ -36,4 +36,5 @@ export const defaultCorePackages = [
   'ed-resource',
   'collection',
   'web-user',
+  'ed-meta',
 ]
