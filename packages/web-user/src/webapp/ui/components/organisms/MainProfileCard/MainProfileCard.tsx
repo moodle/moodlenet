@@ -76,7 +76,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     if (messageForm.isValid) {
       setShouldShowMessageErrors(false)
       setIsSendingMessage(false)
-      console.log('msg', messageForm.values.msg)
       messageForm.submitForm()
       setShowMessageSentAlert(true)
     } else {
