@@ -30,6 +30,10 @@ export function profileFormValidationSchema(maxUploadSize: number): SchemaOf<Pro
   })
 }
 
+export const messageFormValidationSchema: SchemaOf<{ msg: string }> = object({
+  msg: string().min(3).max(3000).required(/* t */ `Please provide a message`),
+})
+
 export const authToAccessRpc = (auth: ClientSessionData | undefined): AuthDataRpc => ({
   isRoot: false,
   access: {

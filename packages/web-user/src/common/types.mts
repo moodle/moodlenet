@@ -51,12 +51,14 @@ export type ProfileFormValues = {
 }
 
 export type ProfileState = {
+  profileUrl: string
   // followed: boolean
 }
 
 export type ProfileActions = {
   // toggleFollow(): unknown
   editProfile(values: ProfileFormValues): void | Promise<void>
+  sendMessage(msg: string): void | Promise<void>
 }
 
 export type ProfileAccess = {
