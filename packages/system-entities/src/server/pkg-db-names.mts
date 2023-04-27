@@ -1,7 +1,13 @@
 import { PkgName } from '@moodlenet/core'
 import assert from 'assert'
 import { db } from './init.mjs'
-import { EntityClass, EntityDocFullData, EntityIdentifier, SomeEntityDataType } from './types.mjs'
+import {
+  AqlVal,
+  EntityClass,
+  EntityDocFullData,
+  EntityIdentifier,
+  SomeEntityDataType,
+} from './types.mjs'
 
 export function getEntityCollectionName(entityClass: EntityClass<any>) {
   return `${getPkgNamespace(entityClass.pkgName)}__${entityClass.type}`
@@ -21,8 +27,8 @@ export function getPkgNamespace(pkgName: PkgName) {
   return `${pkgName.replace(/^@/, '').replace('/', '__')}`
 }
 
-export function getPkgNamespaceAql(pkgNameVar: string) {
-  return `SUBSTITUTE( REGEX_REPLACE( ${pkgNameVar}, '^@', '' ), '/', '__', 1 )`
+export function aqlGetPkgNamespace(pkgNameVal: AqlVal<PkgName>) {
+  return `SUBSTITUTE( REGEX_REPLACE( ${pkgNameVal}, '^@', '' ), '/', '__', 1 )`
 }
 
 export function entityId(entityIdentifier: EntityIdentifier) {

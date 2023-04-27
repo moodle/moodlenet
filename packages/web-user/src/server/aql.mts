@@ -1,5 +1,4 @@
-import { AqlVal } from '@moodlenet/system-entities/server'
-import { creatorEntityDoc, toaql } from '@moodlenet/system-entities/server/aql-ac'
+import { AqlVal, creatorEntityDoc, toaql } from '@moodlenet/system-entities/server'
 import { WebUserProfile } from './init.mjs'
 import { WebUserProfileEntity } from './types.mjs'
 

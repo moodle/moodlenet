@@ -2,7 +2,7 @@ import { shell } from './shell.mjs'
 
 import { RpcStatus } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
-import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server/aql-ac'
+import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server'
 import { CollectionExposeType } from '../common/expose-def.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
