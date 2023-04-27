@@ -29,10 +29,12 @@ export const getProfileCardFactory = (
         username: profile?.username ?? '',
       },
       state: {
+        profileUrl: 'https://moodle.net/profile',
         // followed: false,
       },
       actions: {
         editProfile: action('edit profile'),
+        sendMessage: action('send message'),
         // toggleFollow: action('toogleFollow'),
       },
       access: {
