@@ -9,7 +9,6 @@ import {
   PrimaryButton,
   Snackbar,
   TertiaryButton,
-  useWindowDimensions,
 } from '@moodlenet/component-library'
 import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
@@ -119,7 +118,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   )
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [image] = useImageUrl(imageUrl, backupImage)
-  const { width } = useWindowDimensions()
+  // const { width } = useWindowDimensions()
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)
@@ -261,39 +260,44 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         }
       : null
 
-  const publishButton =
-    width < 800 && canPublish && !isPublished && !isWaitingForApproval ? (
-      <TertiaryButton
-        abbr="Publish"
-        onClick={publish}
-        className="publish-button"
-        key="publish-button"
-      >
-        <Public />
-      </TertiaryButton>
-    ) : null
-
-  const draftButton: FloatingMenuContentItem | null =
-    width < 800 && canPublish && (isPublished || isWaitingForApproval)
+  const unpublishButton: FloatingMenuContentItem | null =
+    canPublish && (isPublished || isWaitingForApproval)
       ? {
           Icon: <PublicOff />,
-          text: 'Back to draft',
-          key: 'draft-button',
+          text: 'Unpublish',
+          key: 'unpublish-button',
           onClick: unpublish,
         }
       : null
 
+  const publishButton: FloatingMenuContentItem | null =
+    canPublish && !isPublished && !isWaitingForApproval
+      ? {
+          Icon: <Public style={{ fill: '#00bd7e' }} />,
+          text: 'Publish',
+          key: 'publish-button',
+          onClick: publish,
+        }
+      : null
+
   const publishingButton =
-    width < 800 && canPublish && !isPublished && isWaitingForApproval ? (
+    canPublish && !isPublished && isWaitingForApproval ? (
       <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
         <HourglassBottom style={{ fill: '#d0d1db' }} />
       </abbr>
     ) : null
 
   const publishedButton =
-    width < 800 && canEdit && isPublished ? (
-      <abbr title="Resource published" key="publishing-button" style={{ cursor: 'initial' }}>
+    canEdit && isPublished ? (
+      <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
         <Public style={{ fill: '#00bd7e' }} />
+      </abbr>
+    ) : null
+
+  const unpublishedButton =
+    canEdit && !isPublished ? (
+      <abbr title="Unpublished" key="unpublished-button" style={{ cursor: 'initial' }}>
+        <PublicOff style={{ fill: '#a7a7a7' }} />
       </abbr>
     ) : null
 
@@ -338,7 +342,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   //     : null
 
   const updatedMoreButtonItems = [
-    draftButton,
+    publishButton,
+    unpublishButton,
     shareButton,
     // bookmarkButtonSmallScreen,
     // sendToMoodleButton,
@@ -381,10 +386,10 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     null
 
   const updatedTopRightHeaderItems = [
-    // followersButton,
     publishedButton,
+    unpublishedButton,
     publishingButton,
-    publishButton,
+    // followersButton,
     // bookmarkButtonBigScreen,
     ...(topRightHeaderItems ?? []),
     moreButton,

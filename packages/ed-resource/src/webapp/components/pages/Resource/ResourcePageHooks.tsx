@@ -47,6 +47,7 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
       mainColumnItems: [],
       sideColumnItems: [],
       extraDetailsItems: [],
+      generalActionsItems: [],
       data,
       resourceForm,
       validationSchema: validationSchema,
