@@ -2,11 +2,8 @@ import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
 import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
-import {
-  entityDocument,
-  entityIdentifier2EntityIdAql,
-  pkgMetaOf,
-} from './access-control-lib/aql.mjs'
+import { entityIdentifier2EntityIdAql } from './aql-lib/aql.mjs'
+import { entityDocument2Aql, pkgMetaOf2Aql } from './aql-lib/by-proc-values.mjs'
 import { EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { db, env } from './init.mjs'
 import { entityId, getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
@@ -141,14 +138,15 @@ export async function create<EntityDataType extends SomeEntityDataType>(
 export async function patchEntity<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
-  entityDataPatch: Patch<EntityDataType>,
+  { _meta: _, ...entityDataPatch }: Patch<EntityDataType>,
   opts?: {
+    meta?: AqlVal
     projectAccess?: EntityAccess[]
   },
 ) {
   const patchCursor = await queryEntities(entityClass, 'u', {
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
-    postAccessBody: `UPDATE entity WITH UNSET(@entityDataPatch, '_meta') IN @@collection`,
+    postAccessBody: `UPDATE entity WITH @entityDataPatch IN @@collection`,
     bindVars: { key, entityDataPatch },
     project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
     projectAccess: opts?.projectAccess,
@@ -283,7 +281,7 @@ export async function queryEntities<
     : ''
 
   const currentUserEntityAql =
-    currentUser.type === 'entity' ? entityDocument(currentUser.entityIdentifier) : 'null'
+    currentUser.type === 'entity' ? entityDocument2Aql(currentUser.entityIdentifier) : 'null'
 
   const q = `
 LET currentUser = @currentUser
@@ -410,7 +408,7 @@ async function getAQLAccessControlObjectDefString(systemUser: SystemUser, access
 async function getAqlEntityAccessControlArrayElemsString(access: EntityAccess) {
   const entityAccessControlResponses = await Promise.all(
     accessControllerRegistry.map(({ accessControllers, pkgId }) =>
-      accessControllers[access]?.({ myPkgMeta: pkgMetaOf(pkgId.name) }),
+      accessControllers[access]?.({ myPkgMeta: pkgMetaOf2Aql(pkgId.name) }),
     ),
   )
 

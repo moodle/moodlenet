@@ -5,6 +5,8 @@ import {
   ANON_SYSTEM_USER,
   EntityCollectionDef,
   EntityUser,
+  isCurrentOfEntityClass2Aql,
+  isCurrentUserEntity,
   isSameClass,
   registerAccessController,
   registerEntities,
@@ -12,7 +14,6 @@ import {
   ROOT_SYSTEM_USER,
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
-import { isCurrentUserEntity, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import {
   PROFILE_HOME_PAGE_ROUTE_PATH,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
@@ -54,10 +55,12 @@ registerEntityInfoProvider({
 
 await shell.call(registerAccessController)({
   u() {
-    return `(${isEntityClass(WebUserProfile.entityClass)} && ${isCurrentUserEntity()}) || null`
+    return `(${isCurrentOfEntityClass2Aql(
+      WebUserProfile.entityClass,
+    )} && ${isCurrentUserEntity()}) || null`
   },
   r(/* { myPkgMeta } */) {
-    return `${isEntityClass(WebUserProfile.entityClass)} || null` // && ${myPkgMeta}.xx == null`
+    return `${isCurrentOfEntityClass2Aql(WebUserProfile.entityClass)} || null` // && ${myPkgMeta}.xx == null`
   },
   c(entityClass) {
     if (!isSameClass(WebUserProfile.entityClass, entityClass)) {
