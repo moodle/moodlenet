@@ -1,3 +1,4 @@
+import { href } from '@moodlenet/react-app/common'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
@@ -72,11 +73,11 @@ export const useProfileProps = ({
         isCreator,
       },
       state: {
-        profileUrl: 'https://moodle.net/profile', //@ETTO //TODO Needs to be implemented
+        profileUrl: 'https://moodle.net/profile', //@ETTO Needs to be implemented
       },
       actions: {
         editProfile,
-        sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO //TODO Needs to be implemented
+        sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
         // toggleFollow,
       },
       mainProfileCardSlots: {
@@ -86,6 +87,13 @@ export const useProfileProps = ({
         subtitleItems: [],
         titleItems: [],
       },
+      resourceCardPropsList: [], //@ETTO Needs to be implemented
+      newResourceHref: href('/resources/new'), //@ETTO Needs to be implemented
+      collectionCardPropsList: [], //@ETTO Needs to be implemented
+      newCollectionHref: href('/collections/new'), //@ETTO Needs to be implemented
+      mainColumnItems: [], //@ETTO Needs to be implemented
+      overallCardProps: {}, //@ETTO Needs to be implemented
+      sideColumnItems: [], //@ETTO Needs to be implemented
       profileForm: profileResponse.data,
       // state: {
       //   followed: false,
