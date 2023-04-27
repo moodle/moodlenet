@@ -44,6 +44,7 @@ export const Creator: ResourceStory = () => {
       isCreator: true,
       canEdit: true,
       canPublish: true,
+      canDelete: true,
     },
   })
   return <Resource {...props} />
