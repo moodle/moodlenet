@@ -243,6 +243,7 @@ function html() {
             padding: 25px;
             color: #282828;
             border-radius: 15px;
+            box-shadow: 2px 2px #0000003b;
           }
     
           .disclaimer {
@@ -447,7 +448,7 @@ function html() {
                         >
                           Copyright © 2021 Moodle Pty Ltd, All rights reserved.<br />
                           This email was intended for
-                          <a href="mailto:{{=it.email}}" target="_blank">{{=it.email}}</a>. This is a
+                          <a href="mailto:{{=it.email}}" target="_blank">caterine.z.pons@temail.com</a>. This is a
                           service email.
                         </p>
                       </td>

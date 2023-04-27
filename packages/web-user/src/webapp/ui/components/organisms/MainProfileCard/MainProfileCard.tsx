@@ -2,8 +2,6 @@ import { Edit, Save } from '@material-ui/icons'
 import {
   AddonItem,
   FloatingMenu,
-  // AddonItem,
-  // FloatingMenu,
   InputTextField,
   Modal,
   PrimaryButton,
@@ -12,9 +10,11 @@ import {
   Snackbar,
   useImageUrl,
 } from '@moodlenet/component-library'
+import { useFormik } from 'formik'
+
 import { Share } from '@mui/icons-material'
-import type { useFormik } from 'formik'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
+import { messageFormValidationSchema } from '../../../../../common/exports.mjs'
 import { ProfileAccess, ProfileFormValues } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
@@ -39,6 +39,7 @@ export type MainProfileCardProps = {
   isEditing: boolean
   profileUrl: string
   toggleIsEditing(): unknown
+  sendMessage(msg: string): void | Promise<void>
 }
 
 export const MainProfileCard: FC<MainProfileCardProps> = ({
@@ -47,6 +48,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   access,
   isEditing,
   profileUrl,
+  sendMessage,
   toggleIsEditing,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
@@ -54,8 +56,33 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
+  const [shouldShowMessageErrors, setShouldShowMessageErrors] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
+  const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+  const [showMessageSentAlert, setShowMessageSentAlert] = useState<boolean>(false)
+
+  const messageForm = useFormik<{ msg: string }>({
+    initialValues: { msg: '' },
+    // isInitialValid: false,
+    // validateOnMount: true,
+    validationSchema: messageFormValidationSchema,
+    onSubmit: values => {
+      return sendMessage(values.msg)
+    },
+  })
+
+  const checkAndSendMessage = () => {
+    if (messageForm.isValid) {
+      setShouldShowMessageErrors(false)
+      setIsSendingMessage(false)
+      console.log('msg', messageForm.values.msg)
+      messageForm.submitForm()
+      setShowMessageSentAlert(true)
+    } else {
+      setShouldShowMessageErrors(true)
+    }
+  }
 
   const setIsShowingSmallCardHelper = () => {
     setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
@@ -326,6 +353,23 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           <img src={avatarUrl} alt="Avatar" />
         </Modal>
       )}
+      {isSendingMessage && (
+        <Modal
+          title={`${`Send a message to`} ${form.values.displayName}`}
+          actions={<PrimaryButton onClick={checkAndSendMessage}>Send</PrimaryButton>}
+          onClose={() => {
+            setIsSendingMessage(false)
+            setShouldShowMessageErrors(false)
+          }}
+          style={{ maxWidth: '400px' }}
+        >
+          <InputTextField
+            isTextarea={true}
+            name="msg"
+            error={shouldShowMessageErrors && messageForm.errors.msg}
+          />
+        </Modal>
+      )}
     </>
   )
 
@@ -333,6 +377,11 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     showUrlCopiedAlert && (
       <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
         Copied to clipoard
+      </Snackbar>
+    ),
+    showMessageSentAlert && (
+      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+        Message sent
       </Snackbar>
     ),
   ]
@@ -390,7 +439,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         color="grey"
         className={`message`}
         disabled={!isAuthenticated}
-        // onClick={openSendMessage}
+        onClick={() => setIsSendingMessage(true)}
       >
         Message
       </SecondaryButton>
