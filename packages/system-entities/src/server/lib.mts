@@ -86,11 +86,11 @@ export async function registerEntity<EntityDataType extends SomeEntityDataType>(
 }
 export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataType>) {
   const currentUser = await getCurrentSystemUser()
-
   if (currentUser.type === 'root') {
     return true
+  } else if (currentUser.type === 'pkg') {
+    return currentUser.pkgName === entityClass.pkgName
   }
-
   const controllerResults = (
     await Promise.all(
       accessControllerRegistry.map(async ({ accessControllers: controller /* , pkgId  */ }) =>
@@ -105,9 +105,10 @@ export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataTyp
 
 export async function create<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
-  newEntityData: EntityDataType,
+  newEntityData: EntityDataType & { _key?: string },
+  opts?: { pkgCreator?: boolean },
 ) {
-  const currentUser = await getCurrentSystemUser()
+  const currentUser = opts?.pkgCreator ? await setPkgCurrentUser() : await getCurrentSystemUser()
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
     return
@@ -466,6 +467,7 @@ export async function setPkgCurrentUser() {
     pkgName: pkgId.name,
   }
   shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
+  return currentPkgUser
 }
 
 export function registerEntityInfoProvider(providerItem: EntityInfoProviderItem) {
