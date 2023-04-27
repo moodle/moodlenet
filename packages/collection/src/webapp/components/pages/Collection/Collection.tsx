@@ -139,21 +139,21 @@ export const Collection: FC<CollectionProps> = ({
       hideBorderWhenSmall={true}
       key="editor-actions-container"
     >
-      {isPublished && (
+      {/* {isPublished && (
         <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
           Published
         </PrimaryButton>
-      )}
-      {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+      )} */}
+      {canPublish && !isPublished && !isWaitingForApproval /*  && !isEditing */ && (
         <PrimaryButton onClick={checkFormAndPublish} color="green">
           Publish
         </PrimaryButton>
       )}
-      {!isPublished && isWaitingForApproval && (
+      {/* {!isPublished && isWaitingForApproval && (
         <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
-      )}
-      {isPublished || isWaitingForApproval ? (
-        <SecondaryButton onClick={unpublish}>Back to draft</SecondaryButton>
+      )} */}
+      {canPublish && (isPublished || isWaitingForApproval) ? (
+        <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
       ) : (
         <></>
       )}
