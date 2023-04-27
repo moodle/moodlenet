@@ -35,6 +35,7 @@ export type ResourceProps = {
   mainColumnItems: AddonItem[]
   sideColumnItems: AddonItem[]
   extraDetailsItems: AddonItem[]
+  generalActionsItems: AddonItem[]
 
   data: ResourceDataProps
   resourceForm: ResourceFormProps
@@ -55,6 +56,7 @@ export const Resource: FC<ResourceProps> = ({
   mainColumnItems,
   sideColumnItems,
   extraDetailsItems,
+  generalActionsItems,
   mainResourceCardSlots,
 
   data,
@@ -133,7 +135,6 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
-    console.log('checkFormAndPublish')
     if (form.isValid) {
       form.submitForm()
       setShouldShowErrors(false)
@@ -163,63 +164,39 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
-  const editorActionsContainer = canPublish ? (
-    <Card
-      className="resource-action-card"
-      hideBorderWhenSmall={true}
-      key="editor-actions-container"
-    >
-      {isPublished && (
-        <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
-          Published
-        </PrimaryButton>
-      )}
-      {!isPublished && !isWaitingForApproval /*  && !isEditing */ && (
-        <PrimaryButton onClick={checkFormAndPublish} color="green">
-          Publish
-        </PrimaryButton>
-      )}
-      {!isPublished && isWaitingForApproval && (
-        <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
-      )}
-      {isPublished || isWaitingForApproval ? (
-        <SecondaryButton onClick={unpublish}>Back to draft</SecondaryButton>
-      ) : (
-        <></>
-      )}
-    </Card>
-  ) : null
+  const publishButton = canPublish &&
+    !isPublished &&
+    !isWaitingForApproval /*  && !isEditing */ && (
+      <PrimaryButton onClick={checkFormAndPublish} color="green">
+        Publish
+      </PrimaryButton>
+    )
+  const unpublishButton = canPublish && (isPublished || isWaitingForApproval) && (
+    <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
+  )
 
-  const generalActionsContainer = contentUrl ? (
-    <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
-      {/* <PrimaryButton
-          // onClick={() => setIsAddingToMoodleLms(true)}
-          >
-            Send to Moodle
-          </PrimaryButton> */}
-      {/* {isAuthenticated && ( */}
-      {/* <SecondaryButton
-          // onClick={() => setIsAddingToCollection(true)}
-          >
-            Add to Collection
-          </SecondaryButton> */}
-      <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
-        <SecondaryButton>
-          {contentType === 'file' ? (
-            <>
-              <InsertDriveFile />
-              Download file
-            </>
-          ) : (
-            <>
-              <Link />
-              Open link
-            </>
-          )}
-        </SecondaryButton>
-      </a>
-    </Card>
-  ) : null
+  // const editorActionsContainer = canPublish ? (
+  //   <Card
+  //     className="resource-action-card"
+  //     hideBorderWhenSmall={true}
+  //     key="editor-actions-container"
+  //   >
+  //     {/* {isPublished && (
+  //       <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
+  //         Published
+  //       </PrimaryButton>
+  //     )} */}
+
+  //     {/* {!isPublished && isWaitingForApproval && (
+  //       <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
+  //     )} */}
+  //     {/* {isPublished || isWaitingForApproval ? (
+  //       <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
+  //     ) : (
+  //       <></>
+  //     )} */}
+  //   </Card>
+  // ) : null
 
   // const license: AddonItem | null =
   //   contentType === 'file'
@@ -263,9 +240,52 @@ export const Resource: FC<ResourceProps> = ({
       </Card>
     ) : null
 
+  const downloadOrOpenLink = (
+    <a href={contentUrl ?? undefined} target="_blank" rel="noreferrer" download={downloadFilename}>
+      <SecondaryButton>
+        {contentType === 'file' ? (
+          <>
+            <InsertDriveFile />
+            Download file
+          </>
+        ) : (
+          <>
+            <Link />
+            Open link
+          </>
+        )}
+      </SecondaryButton>
+    </a>
+  )
+
+  const updatedGeneralActionsItems = [
+    publishButton,
+    unpublishButton,
+    downloadOrOpenLink,
+    ...(generalActionsItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const generalActionsContainer = contentUrl ? (
+    <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
+      {/* <PrimaryButton
+            // onClick={() => setIsAddingToMoodleLms(true)}
+            >
+              Send to Moodle
+            </PrimaryButton> */}
+      {/* {isAuthenticated && ( */}
+      {/* <SecondaryButton
+            // onClick={() => setIsAddingToCollection(true)}
+            >
+              Add to Collection
+            </SecondaryButton> */}
+
+      {updatedGeneralActionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+    </Card>
+  ) : null
+
   const updatedSideColumnItems = [
     contributorCard,
-    editorActionsContainer,
+    // editorActionsContainer,
     generalActionsContainer,
     extraDetailsContainer,
     ...(sideColumnItems ?? []),

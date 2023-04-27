@@ -12,7 +12,12 @@ import {
   TertiaryButton,
   useWindowDimensions,
 } from '@moodlenet/component-library'
-import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
+import {
+  downloadOrOpenURL,
+  FormikHandle,
+  getBackupImage,
+  useImageUrl,
+} from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
   Delete,
@@ -119,6 +124,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const {
     canEdit,
+    canPublish,
+    canDelete,
     // canLike,
     // canBookmark,
     // isCreator,
@@ -274,49 +281,56 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       }
     : null
 
-  const deleteButton: FloatingMenuContentItem | null = !empty
-    ? {
-        key: 'delete-button',
-        onClick: () => setIsToDelete(true),
-        text: 'Delete',
-        Icon: <Delete />,
-      }
-    : null
+  const deleteButton: FloatingMenuContentItem | null =
+    canDelete && !empty
+      ? {
+          key: 'delete-button',
+          onClick: () => setIsToDelete(true),
+          text: 'Delete',
+          Icon: <Delete />,
+        }
+      : null
 
   const publishButton =
-    width < 800 && canEdit && !isPublished && !isWaitingForApproval ? (
-      <TertiaryButton
-        abbr="Publish"
-        onClick={publish}
-        className="publish-button"
-        key="publish-button"
-      >
-        <Public />
-      </TertiaryButton>
-    ) : null
-
-  const draftButton: FloatingMenuContentItem | null =
-    width < 800 && canEdit && (isPublished || isWaitingForApproval)
+    canPublish && !isPublished && !isWaitingForApproval
       ? {
-          text: 'Back to draft',
+          text: 'Publish',
+          onClick: publish,
+          className: 'publish-button',
+          key: 'publish-button',
+          Icon: <Public style={{ fill: '#00bd7e' }} />,
+        }
+      : null
+
+  const unpublishButton: FloatingMenuContentItem | null =
+    canPublish && (isPublished || isWaitingForApproval)
+      ? {
+          text: 'Unpublish',
           onClick: unpublish,
-          className: 'draft-button',
-          key: 'draft-button',
+          className: 'unpublish-button',
+          key: 'unpublish-button',
           Icon: <PublicOff />,
         }
       : null
 
   const publishingButton =
-    width < 800 && canEdit && !isPublished && isWaitingForApproval ? (
+    canPublish && !isPublished && isWaitingForApproval ? (
       <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
         <HourglassBottom style={{ fill: '#d0d1db' }} />
       </abbr>
     ) : null
 
   const publishedButton =
-    width < 800 && canEdit && isPublished ? (
-      <abbr title="Published" key="publish-button" style={{ cursor: 'initial' }}>
+    canPublish && isPublished ? (
+      <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
         <Public style={{ fill: '#00bd7e' }} />
+      </abbr>
+    ) : null
+
+  const unpublishedButton =
+    canPublish && !isPublished ? (
+      <abbr title="Unpublished" key="unpublished-button" style={{ cursor: 'initial' }}>
+        <PublicOff style={{ fill: '#a7a7a7' }} />
       </abbr>
     ) : null
 
@@ -349,23 +363,21 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const openLinkOrDownloadFile: FloatingMenuContentItem | null =
     width < 800 && contentUrl
       ? {
-          Icon: (
-            <a href={contentUrl} target="_blank" rel="noreferrer" download={downloadFilename}>
-              {contentType === 'file' ? <InsertDriveFile /> : <LinkIcon />}
-            </a>
-          ),
+          Icon: contentType === 'file' ? <InsertDriveFile /> : <LinkIcon />,
 
-          text: contentType === 'file' ? 'Download file' : 'Open link',
+          text: contentType === 'file' ? 'Download' : 'Open link',
           key: 'open-link-or-download-file-button',
+          onClick: () => downloadOrOpenURL(contentUrl, downloadFilename),
         }
       : null
 
   const updatedMoreButtonItems = [
-    draftButton,
+    publishButton,
+    unpublishButton,
     openLinkOrDownloadFile,
     shareButton,
-    // bookmarkButtonSmallScreen,
     deleteButton,
+    // bookmarkButtonSmallScreen,
     // sendToMoodleButton,
     // addToCollectionButton,
     ...(moreButtonItems ?? []),
@@ -447,7 +459,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     // likeButton,
     publishedButton,
     publishingButton,
-    publishButton,
+    unpublishedButton,
     // bookmarkButtonBigScreen,
     // editSaveButton,
     ...(topRightHeaderItems ?? []),

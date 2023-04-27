@@ -32,6 +32,10 @@ a {
     background-color: #8a8a8a;
   }
 
+  &.light-grey {
+    background-color: #bdbdbd;
+  }
+
   &.blue {
     background-color: #1a6aff;
   }
@@ -44,7 +48,7 @@ a {
     color: #212121;
   }
 
-  &:hover:not(.disabled) {
+  &:hover:not(.disabled):not(:active) {
     background-color: var(--primary-color-hover);
     box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
     cursor: pointer;
@@ -59,6 +63,10 @@ a {
 
     &.grey {
       background-color: #7c8091;
+    }
+
+    &.light-grey {
+      background-color: #9c9c9c;
     }
 
     &.blue {
@@ -84,6 +92,10 @@ a {
 
     &.grey {
       background-color: #707483;
+    }
+
+    &.light-grey {
+      background-color: #8d8d8d;
     }
 
     &.blue {

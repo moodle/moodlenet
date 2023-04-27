@@ -88,8 +88,8 @@
           &:not(.disabled) {
             cursor: pointer;
           }
-          > svg,
-          * > svg {
+
+          svg {
             width: 21px;
             height: 21px;
           }
