@@ -2,9 +2,9 @@ import { mkdir } from 'fs/promises'
 import { join } from 'path'
 import {
   assertCallInitiator,
-  asyncContext,
   getCallInitiator,
   getSetCoreAsyncContext,
+  mainAsyncContext,
   pkgAsyncContext,
 } from '../async-context/lib.mjs'
 import { getConfig } from '../ignite.mjs'
@@ -49,8 +49,8 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
   }
 
   function initiateCall<R>(exec: () => R, forcewipeout = false): R {
-    const baseCtx = forcewipeout ? {} : asyncContext.getStore() ?? {}
-    return asyncContext.run(baseCtx, () => {
+    const baseCtx = forcewipeout ? {} : mainAsyncContext.getStore() ?? {}
+    return mainAsyncContext.run({ ...baseCtx }, () => {
       getSetCoreAsyncContext.set(currentCoreCtx => {
         return { ...currentCoreCtx, initiator: { pkgId: myId } }
       })

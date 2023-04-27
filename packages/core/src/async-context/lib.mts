@@ -2,7 +2,7 @@ import assert from 'assert'
 import { AsyncLocalStorage } from 'async_hooks'
 import { ApiCtx, CoreAsyncCtx } from './types.mjs'
 
-export const asyncContext = new AsyncLocalStorage<ApiCtx>()
+export const mainAsyncContext = new AsyncLocalStorage<ApiCtx>()
 
 export function pkgAsyncContext<T>(pkgName: string) {
   return { set, unset, get }
@@ -11,20 +11,19 @@ export function pkgAsyncContext<T>(pkgName: string) {
     set(() => undefined)
   }
   function set(setter: (current: T | undefined) => T | undefined): T | undefined {
-    const currentStore = getApiContextStore()
-    const currentVal = currentStore?.[pkgName] as T | undefined
-    const nextVal = setter(currentVal)
+    const currentStore = assertMainContextStore()
+    const nextVal = setter(get())
     currentStore[pkgName] = nextVal
     return nextVal
   }
   function get(): T | undefined {
-    const currentStore = getApiContextStore()
-    return currentStore?.[pkgName] as T | undefined
+    const currentStore = assertMainContextStore()
+    return currentStore[pkgName] as T | undefined
   }
 
-  function getApiContextStore() {
-    const currentStore = asyncContext.getStore()
-    assert(currentStore, `cannot get apiContext, currently not in an api call async context`)
+  function assertMainContextStore() {
+    const currentStore = mainAsyncContext.getStore()
+    assert(currentStore, `cannot get mainAsyncContext, currently not in an api call async context`)
     return currentStore
   }
 }
