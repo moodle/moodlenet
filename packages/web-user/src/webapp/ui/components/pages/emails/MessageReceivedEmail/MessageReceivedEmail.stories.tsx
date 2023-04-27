@@ -231,33 +231,6 @@ function html() {
             color: #000;
           }
     
-          .dialog {
-            background: #f5f5f5;
-            padding: 25px;
-            color: #282828;
-            border-radius: 0 15px 15px 15px;
-          }
-    
-          .dialog-origin-shape {
-            position: absolute;
-            top: 25px;
-            left: -15px;
-          }
-    
-          .dialog-origin-shape svg {
-            height: 25px;
-            width: 16px;
-          }
-    
-          .dialog-origin-shape svg path {
-            fill: #f5f5f5;
-          }
-    
-          .disclaimer {
-            font-size: 12px;
-            color: #687082;
-          }
-    
           .text-author {
             position: relative;
             max-width: 480px;
@@ -265,6 +238,20 @@ function html() {
             margin: 0 auto;
             padding: 25px 0 0;
           }
+    
+          .dialog {
+            background: #f5f5f5;
+            padding: 25px;
+            color: #282828;
+            border-radius: 15px;
+            box-shadow: 2px 2px #0000003b;
+          }
+    
+          .disclaimer {
+            font-size: 12px;
+            color: #687082;
+          }
+    
           .text-author img {
             border-radius: 50%;
             padding-bottom: 20px;
@@ -380,37 +367,19 @@ function html() {
                       <td style="padding: 0 2.5em; text-align: center">
                         <div class="text">
                           <h2>Nelson Candela sent you a message</h2>
+                          <!-- //TODO //@ETTO //@ALE fillout the senderDisplayName -->
                         </div>
                       </td>
                     </tr>
                     <tr>
                       <td style="text-align: center">
                         <div class="text-author">
-                          <div class="dialog-origin-shape">
-                            <svg
-                              viewBox="0 0 8 13"
-                              height="13"
-                              width="8"
-                              preserveAspectRatio="xMidYMid meet"
-                              class=""
-                              version="1.1"
-                              x="0px"
-                              y="0px"
-                              enable-background="new 0 0 8 13"
-                              xml:space="preserve"
-                            >
-                              <path
-                                fill="currentColor"
-                                d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z"
-                              ></path>
-                            </svg>
-                          </div>
                           <div class="dialog">
                             Dear MoodleNetter, the quality of your content is just great! We are very
                             happy to have contributors like you. Thank you for you efforts!
                           </div>
                           <p style="margin: 25px 0">
-                            <a href="#" class="btn btn-primary">Reply</a>
+                            <a href="#" class="btn btn-primary">Reply at MoodleNet</a>
                           </p>
                         </div>
                       </td>
@@ -480,7 +449,7 @@ function html() {
                         >
                           Copyright © 2021 Moodle Pty Ltd, All rights reserved.<br />
                           This email was intended for
-                          <a href="mailto:{{=it.email}}" target="_blank">simonde.de.beaupoine@gmail.com</a>. This is a
+                          <a href="mailto:{{=it.email}}" target="_blank">caterine.z.pons@temail.com</a>. This is a
                           service email.
                         </p>
                       </td>

@@ -71,13 +71,20 @@ export const useProfileProps = ({
         isAuthenticated,
         isCreator,
       },
+      state: {
+        profileUrl: 'https://moodle.net/profile', //@ETTO //TODO Needs to be implemented
+      },
       actions: {
         editProfile,
+        sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO //TODO Needs to be implemented
         // toggleFollow,
       },
       mainProfileCardSlots: {
         mainColumnItems: [],
         topItems: [],
+        footerItems: [],
+        subtitleItems: [],
+        titleItems: [],
       },
       profileForm: profileResponse.data,
       // state: {
