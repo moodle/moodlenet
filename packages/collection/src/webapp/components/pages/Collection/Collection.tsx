@@ -10,6 +10,7 @@ import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { SchemaOf } from 'yup'
 
+import { ResourceCard, ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import {
   CollectionAccessProps,
   CollectionActions,
@@ -31,6 +32,7 @@ export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
   mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
+  resourceCardPropsList: ResourceCardProps[]
 
   wideColumnItems: AddonItem[]
   mainColumnItems: AddonItem[]
@@ -51,6 +53,7 @@ export const Collection: FC<CollectionProps> = ({
   mainLayoutProps,
   mainCollectionCardSlots,
   collectionContributorCardProps,
+  resourceCardPropsList,
 
   wideColumnItems,
   mainColumnItems,
@@ -105,6 +108,10 @@ export const Collection: FC<CollectionProps> = ({
       setShouldShowErrors(true)
     }
   }
+
+  const resourceList = resourceCardPropsList.map(r => (
+    <ResourceCard {...r} key={r.data.resourceId} />
+  ))
 
   const mainCollectionCard = (
     <MainCollectionCard
@@ -176,7 +183,7 @@ export const Collection: FC<CollectionProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
+  const updatedMainColumnItems = [resourceList, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
 
