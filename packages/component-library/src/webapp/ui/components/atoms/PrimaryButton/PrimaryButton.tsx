@@ -7,7 +7,7 @@ export type PrimaryButtonProps = {
   abbr?: string
   hiddenText?: string
   disabled?: boolean
-  color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card' | 'light-gray'
+  color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card' | 'light-grey'
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
   noHover?: boolean
   children?: ReactNode

@@ -7,7 +7,8 @@ import { useEffect } from 'react'
 import { href } from '@moodlenet/react-app/common'
 import { SignupPropsStories } from '@moodlenet/simple-email-auth/stories'
 import { SignupIcon, SignupPanel } from '@moodlenet/simple-email-auth/ui'
-import { getSignupMinimalisticHeaderProps, Signup, SignupProps } from '@moodlenet/web-user/ui'
+import { MinimalisticAccessButtonsStories } from '@moodlenet/web-user/stories'
+import { Signup, SignupProps } from '@moodlenet/web-user/ui'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
@@ -45,10 +46,13 @@ SignupProps => {
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
     headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
-      getSignupMinimalisticHeaderProps(
-        href('Pages/Access/Login/Default'),
-        href('Pages/Access/SignUp/Default'),
-      ),
+      MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
+        loginHref: href('Pages/Access/Login/Default'),
+        signupHref: href('Pages/Access/SignUp/Default'),
+        showLearnMoreButton: true,
+        showLoginButton: true,
+        showSignupButton: false,
+      }),
     ),
     footerProps: FooterStoryProps,
     // accessHeaderProps: AccessHeaderStoryProps,

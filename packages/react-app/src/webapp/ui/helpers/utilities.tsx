@@ -71,6 +71,21 @@ export const getBackupImage = (id: string): string | undefined => {
   return typeof location === 'string' ? location : undefined
 }
 
+export const downloadOrOpenURL = (url: string, filename: string | null) => {
+  const link = document.createElement('a')
+  link.href = url
+  if (filename) {
+    link.download = filename
+  }
+  link.target = '_blank'
+  link.rel = 'noreferrer'
+  console.log('link: ', link)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  link.remove()
+}
+
 // export const isAddonItem = (
 //   toBeDetermined: AddonItem | undefined | false | null,
 // ): toBeDetermined is AddonItem => {
