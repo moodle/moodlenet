@@ -39,7 +39,9 @@ export const LoggedOut = () => {
             isCreator={false}
             newResourceHref={href('Page/Resource/New')}
             resourceCardPropsList={getResourcesCardStoryProps(5, {
-              access: { isAuthenticated: false },
+              access: {
+                // isAuthenticated: false
+              },
             })}
           />
         ),
@@ -51,7 +53,9 @@ export const LoggedOut = () => {
             isCreator={false}
             newCollectionHref={href('Page/Collection/New')}
             collectionCardPropsList={getCollectionsCardStoryProps(5, {
-              access: { isAuthenticated: false },
+              access: {
+                //  isAuthenticated: false
+              },
             })}
           />
         ),
@@ -70,7 +74,7 @@ export const LoggedOut = () => {
             newCollectionHref={href('Page/Collection/New')}
             collectionCardPropsList={getCollectionsCardStoryProps(5, {
               access: {
-                isAuthenticated: false,
+                // isAuthenticated: false,
               },
             })}
           />

@@ -16,43 +16,18 @@ import { PartialDeep } from 'type-fest'
 //   siteUrl: 'https://moodle.com',
 // }
 
+import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
 import {
-  fileExceedsMaxUploadSize,
-  peopleFactory,
-  randomIntFromInterval,
-} from '@moodlenet/component-library'
-import { ProfileAccess, ProfileActions, ProfileFormValues } from '@moodlenet/web-user/common'
+  ProfileAccess,
+  ProfileActions,
+  profileFormValidationSchema,
+  ProfileFormValues,
+  ProfileState,
+} from '@moodlenet/web-user/common'
 import { action } from '@storybook/addon-actions'
-import { mixed, object, SchemaOf, string } from 'yup'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
 const maxUploadSize = 1024 * 1024 * 50
-
-export const profileStoriesValidationSchema: SchemaOf<ProfileFormValues> = object({
-  avatarImage: mixed()
-    .test((v, { createError }) =>
-      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
-        ? createError({
-            message: /* t */ `The image is too big, reduce the size or use another image`,
-          })
-        : true,
-    )
-    .optional(),
-  backgroundImage: mixed()
-    .test((v, { createError }) =>
-      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
-        ? createError({
-            message: /* t */ `The image is too big, reduce the size or use another image`,
-          })
-        : true,
-    )
-    .optional(),
-  displayName: string().max(160).min(3).required(/* t */ `Please provide a display name`),
-  location: string().optional(),
-  organizationName: string().max(30).min(3).optional(),
-  siteUrl: string().url().optional(),
-  aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
-})
 
 export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): ProfileProps => {
   const person = peopleFactory[randomIntFromInterval(0, 3)]
@@ -70,13 +45,15 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     footerItems: [],
   }
 
-  // const state: ProfileState = {
-  //   followed: false,
-  // }
+  const state: ProfileState = {
+    profileUrl: 'https://moodle.net/profile',
+    // followed: false,
+  }
 
   const actions: ProfileActions = {
-    editProfile: async () => action('editing profile'),
-    toggleFollow: action('toggle follow'),
+    editProfile: action('editing profile'),
+    sendMessage: action('send message'),
+    // toggleFollow: action('toggle follow'),
   }
 
   const access: ProfileAccess = {
@@ -103,10 +80,10 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       sideColumnItems: [overallCard],
       mainProfileCardSlots: profileCardSlots,
       profileForm: profileForm,
-      // state: state,
+      state: state,
       actions: actions,
       access: access,
-      validationSchema: profileStoriesValidationSchema,
+      validationSchema: profileFormValidationSchema(maxUploadSize),
 
       // editForm: ProfileCardStoryProps.editForm,
       // sendEmailForm: useFormik<{ text: string }>({
