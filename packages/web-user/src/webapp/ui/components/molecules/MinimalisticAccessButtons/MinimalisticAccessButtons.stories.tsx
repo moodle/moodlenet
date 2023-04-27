@@ -27,12 +27,8 @@ export const getAccesMinimalisticHeaderItems = (
     showSignupButton ? <SignupButtonMini signupHref={signupHref} /> : null,
     showLoginButton ? <LoginButtonMini loginHref={loginHref} /> : null,
     showLearnMoreButton ? (
-      <a href="https://moodle.com/moodlenet/" target="__blank">
-        <PrimaryButton color="grey">
-          {/* <Trans> */}
-          Learn more
-          {/* </Trans> */}
-        </PrimaryButton>
+      <a href="https://moodle.org/mod/forum/view.php?id=8726" target="__blank">
+        <PrimaryButton color="grey">Learn more</PrimaryButton>
       </a>
     ) : null,
   ].filter((item): item is ReactElement => !!item)
