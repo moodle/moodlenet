@@ -16,7 +16,10 @@ import { PartialDeep } from 'type-fest'
 //   siteUrl: 'https://moodle.com',
 // }
 
+import { getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
 import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
+import { getResourcesCardStoryProps } from '@moodlenet/ed-resource/ui'
+import { href } from '@moodlenet/react-app/common'
 import {
   ProfileAccess,
   ProfileActions,
@@ -77,6 +80,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
   return overrideDeep<ProfileProps>(
     {
       mainLayoutProps: MainLayoutLoggedInStoryProps,
+      mainColumnItems: [],
       sideColumnItems: [overallCard],
       mainProfileCardSlots: profileCardSlots,
       profileForm: profileForm,
@@ -84,6 +88,15 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       actions: actions,
       access: access,
       validationSchema: profileFormValidationSchema(maxUploadSize),
+      resourceCardPropsList: getResourcesCardStoryProps(5, {
+        access: { canPublish: false, canDelete: false },
+      }),
+      newResourceHref: href('Page/Resource/New'),
+      collectionCardPropsList: getCollectionsCardStoryProps(5, {
+        access: { canPublish: false },
+      }),
+      newCollectionHref: href('Page/Collection/New'),
+      overallCardProps: OverallCardStories.OverallCardStoryProps,
 
       // editForm: ProfileCardStoryProps.editForm,
       // sendEmailForm: useFormik<{ text: string }>({

@@ -1,5 +1,5 @@
 import { AddonItem } from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
+import { MainLayout, MainLayoutProps, OverallCard, OverallCardProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useReducer } from 'react'
 import { SchemaOf } from 'yup'
@@ -10,6 +10,9 @@ import {
   ProfileState,
 } from '../../../../../common/types.mjs'
 
+import { CollectionCardProps, ProfileCollectionList } from '@moodlenet/collection/ui'
+import { ProfileResourceList, ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { Href } from '@moodlenet/react-app/common'
 import {
   MainProfileCard,
   MainProfileCardSlots,
@@ -19,12 +22,18 @@ import './Profile.scss'
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
 
-  mainColumnItems?: AddonItem[]
-  sideColumnItems?: AddonItem[]
+  mainColumnItems: AddonItem[]
+  sideColumnItems: AddonItem[]
 
   mainProfileCardSlots: MainProfileCardSlots
   profileForm: ProfileFormValues
   validationSchema: SchemaOf<ProfileFormValues>
+
+  resourceCardPropsList: ResourceCardProps[]
+  newResourceHref: Href
+  collectionCardPropsList: CollectionCardProps[]
+  newCollectionHref: Href
+  overallCardProps: OverallCardProps
 
   state: ProfileState
   actions: ProfileActions
@@ -39,6 +48,12 @@ export const Profile: FC<ProfileProps> = ({
   mainProfileCardSlots,
   profileForm,
   validationSchema,
+
+  resourceCardPropsList,
+  newResourceHref,
+  collectionCardPropsList,
+  newCollectionHref,
+  overallCardProps,
 
   state,
   actions,
@@ -61,6 +76,26 @@ export const Profile: FC<ProfileProps> = ({
       return editProfile(values)
     },
   })
+
+  const resourceList = (
+    <ProfileResourceList
+      key="profile-resource-list"
+      isCreator={false}
+      newResourceHref={newResourceHref}
+      resourceCardPropsList={resourceCardPropsList}
+    />
+  )
+
+  const collectionList = (
+    <ProfileCollectionList
+      key="profile-collection-list"
+      isCreator={false}
+      newCollectionHref={newCollectionHref}
+      collectionCardPropsList={collectionCardPropsList}
+    />
+  )
+
+  const overallCard = <OverallCard {...overallCardProps} />
 
   // const modals = [
   //   isSendingMessage /* && sendEmailForm  */ && (
@@ -177,11 +212,14 @@ export const Profile: FC<ProfileProps> = ({
     />
   )
 
-  const updatedMainColumnItems = [mainProfileCard, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
-  )
+  const updatedMainColumnItems = [
+    mainProfileCard,
+    resourceList,
+    collectionList,
+    ...(mainColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const updatedSideColumnItems = [...(sideColumnItems ?? [])].filter(
+  const updatedSideColumnItems = [overallCard, collectionList, ...(sideColumnItems ?? [])].filter(
     (item): item is AddonItem /* | JSX.Element */ => !!item,
   )
 
