@@ -21,9 +21,8 @@ export const LoggedOut: ResourceStory = () => {
     data: {},
     state: {},
     actions: {},
-    access: {
-      isAuthenticated: false,
-    },
+    access: {},
+    isAuthenticated: false,
   })
 
   return <Resource {...props} />

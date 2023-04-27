@@ -138,7 +138,7 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 ]
 
 export const useResourceStoryProps = (
-  overrides?: PartialDeep<ResourceProps>,
+  overrides?: PartialDeep<ResourceProps & { isAuthenticated: boolean }>,
   //   {
   //   props?: Partial<ResourceProps>
   //   resource?: Partial<ResourceType>
@@ -148,6 +148,8 @@ export const useResourceStoryProps = (
   //   mainResourceCardSlots?: Partial<MainResourceCardSlots>
   // }
 ): ResourceProps => {
+  const isAuthenticated = overrides?.isAuthenticated ?? true
+
   const resourceForm: ResourceFormProps = {
     title: 'Best resource ever',
     description:
@@ -189,7 +191,6 @@ export const useResourceStoryProps = (
   }
 
   const access: ResourceAccessProps = {
-    isAuthenticated: true,
     canEdit: false,
     isCreator: false,
     canDelete: false,
@@ -219,10 +220,9 @@ export const useResourceStoryProps = (
 
   return overrideDeep<ResourceProps>(
     {
-      mainLayoutProps:
-        overrides?.access?.isAuthenticated !== undefined && !overrides?.access?.isAuthenticated
-          ? MainLayoutLoggedOutStoryProps
-          : MainLayoutLoggedInStoryProps,
+      mainLayoutProps: isAuthenticated
+        ? MainLayoutLoggedInStoryProps
+        : MainLayoutLoggedOutStoryProps,
 
       mainColumnItems: [],
       sideColumnItems: [],

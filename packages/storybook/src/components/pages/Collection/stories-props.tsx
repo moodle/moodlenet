@@ -27,11 +27,7 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import {
-  getResourcesCardStoryProps,
-  ResourceCard,
-  ResourceCardProps,
-} from '@moodlenet/ed-resource/ui'
+import { getResourcesCardStoryProps, ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,
@@ -131,8 +127,10 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 ]
 
 export const useCollectionStoryProps = (
-  overrides?: PartialDeep<CollectionProps>,
+  overrides?: PartialDeep<CollectionProps & { isAuthenticated: boolean }>,
 ): CollectionProps => {
+  const isAuthenticated = overrides?.isAuthenticated ?? true
+
   const data: CollectionDataProps = {
     collectionId: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
@@ -167,7 +165,6 @@ export const useCollectionStoryProps = (
   }
 
   const access: CollectionAccessProps = {
-    isAuthenticated: true,
     canEdit: false,
     isCreator: false,
     canDelete: false,
@@ -194,38 +191,24 @@ export const useCollectionStoryProps = (
     orientation: 'horizontal',
   })
 
-  const mainColumnItems =
-    overrides?.mainColumnItems !== undefined
-      ? []
-      : [
-          {
-            Item: () => (
-              <>
-                {resourceCardPropsList.map(r => (
-                  <ResourceCard {...r} key={r.data.resourceId} />
-                ))}
-              </>
-            ),
-            key: 'resource-list',
-          },
-        ]
-
   return overrideDeep<CollectionProps>(
     {
-      mainLayoutProps:
-        overrides?.access?.isAuthenticated !== undefined && !overrides?.access?.isAuthenticated
-          ? MainLayoutLoggedOutStoryProps
-          : MainLayoutLoggedInStoryProps,
+      mainLayoutProps: isAuthenticated
+        ? MainLayoutLoggedInStoryProps
+        : MainLayoutLoggedOutStoryProps,
 
       mainCollectionCardSlots: mainCollectionCardSlots,
-      mainColumnItems: mainColumnItems,
+      mainColumnItems: [],
       extraDetailsItems: [],
       moreButtonItems: [],
       sideColumnItems: [],
       wideColumnItems: [],
 
+      resourceCardPropsList: resourceCardPropsList,
+
       collectionContributorCardProps:
         CollectionContributorCardStories.CollectionContributorCardStoryProps,
+
       data: data,
       collectionForm: collectionForm,
       validationSchema: validationSchema,
