@@ -36,6 +36,7 @@ export const useCollectionPageProps = ({
     const propsPage: CollectionProps = {
       mainLayoutProps,
       mainCollectionCardSlots,
+      resourceCardPropsList: [], //@ETTO this need to be filled
       collectionContributorCardProps: contributor,
       ...layoutProps,
       ...props,
