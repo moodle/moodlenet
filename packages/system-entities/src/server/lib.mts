@@ -89,7 +89,7 @@ export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataTyp
   if (currentUser.type === 'root') {
     return true
   } else if (currentUser.type === 'pkg') {
-    return currentUser.pkgName === entityClass.pkgName
+    return true // currentUser.pkgName === entityClass.pkgName
   }
   const controllerResults = (
     await Promise.all(
@@ -109,6 +109,8 @@ export async function create<EntityDataType extends SomeEntityDataType>(
   opts?: { pkgCreator?: boolean },
 ) {
   const currentUser = opts?.pkgCreator ? await setPkgCurrentUser() : await getCurrentSystemUser()
+
+  console.log({ currentUser })
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
     return
