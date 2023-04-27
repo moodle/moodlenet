@@ -5,7 +5,6 @@ import {
   getEntity,
   Patch,
   patchEntity,
-  setPkgCurrentUser,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { ClientSessionDataRpc } from '../common/types.mjs'
@@ -75,8 +74,7 @@ export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDat
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, ...profileData } = createRequest
-  await setPkgCurrentUser()
-  const newProfile = await create(WebUserProfile.entityClass, profileData)
+  const newProfile = await create(WebUserProfile.entityClass, profileData, { pkgCreator: true })
 
   if (!newProfile) {
     return
