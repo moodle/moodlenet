@@ -3,11 +3,12 @@ import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import {
   EntityCollectionDef,
+  isCreator,
+  isCurrentOfEntityClass2Aql,
   isSameClass,
   registerAccessController,
   registerEntities,
 } from '@moodlenet/system-entities/server'
-import { isCreator, isEntityClass } from '@moodlenet/system-entities/server/aql-ac'
 import type { MyWebDeps } from '../common/types.mjs'
 import { matchResourceHomePageRoutePathKey } from '../common/webapp-routes.mjs'
 import { expose as me } from './expose.mjs'
@@ -31,10 +32,10 @@ export const { Resource } = await shell.call(registerEntities)<{
 })
 await shell.call(registerAccessController)({
   u() {
-    return `(${isEntityClass(Resource.entityClass)} && ${isCreator()}) || null`
+    return `(${isCurrentOfEntityClass2Aql(Resource.entityClass)} && ${isCreator()}) || null`
   },
   r(/* { myPkgMeta } */) {
-    return `${isEntityClass(Resource.entityClass)} || null` // && ${myPkgMeta}.xx == null`
+    return `${isCurrentOfEntityClass2Aql(Resource.entityClass)} || null` // && ${myPkgMeta}.xx == null`
   },
   c(entityClass) {
     if (!isSameClass(Resource.entityClass, entityClass)) {
