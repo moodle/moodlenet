@@ -1,7 +1,7 @@
 import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
 import type { PkgName } from '@moodlenet/core'
 
-export type AqlVal<_T> = string & { $$AqlVal$$?: _T }
+export type AqlVal<_T = unknown> = string & { $$AqlVal$$?: _T }
 
 // type X = ProjectRes<{ patched: AqlVal<EntityDocument<SomeEntityDataType>> }>
 
@@ -58,10 +58,10 @@ export type AccessControllers = {
 }
 export type EntityAccess = 'r' | 'u' | 'd'
 
-export type AqlAccessController = (_: { myPkgMeta: string }) => AqlAccessControllerResp
+export type AqlAccessController = (_: { myPkgMeta: AqlVal }) => AqlAccessControllerResp
 
 type AqlAccessControllerResp = AqlAccessControllerRespValue | Promise<AqlAccessControllerRespValue>
-type AqlAccessControllerRespValue = string | null | undefined | boolean
+type AqlAccessControllerRespValue = AqlVal<null | boolean> | null | undefined | boolean
 
 export type SystemUser = EntityUser | RootUser | AnonUser | PkgUser
 export type EntityUser = {
