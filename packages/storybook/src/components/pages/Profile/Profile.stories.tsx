@@ -1,7 +1,9 @@
 import { getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
 import { getResourcesCardStoryProps } from '@moodlenet/ed-resource/ui'
 import { Profile } from '@moodlenet/web-user/ui'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useState } from 'react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useProfileStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
@@ -67,7 +69,16 @@ export const Owner: ProfileStory = () => {
     sideColumnItems: [],
   })
 
-  return <Profile {...props} />
+  const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
+
+  resourceCardPropsList.map(r => {
+    r.onRemoveClick = () => {
+      action('onRemoveResourceClick')
+      setResourceCardPropsList(resourceCardPropsList.filter(x => x !== r))
+    }
+  })
+
+  return <Profile {...props} resourceCardPropsList={resourceCardPropsList} />
 }
 
 export const Admin: ProfileStory = () => {

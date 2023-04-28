@@ -78,8 +78,8 @@ export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
   get: (resourceKey: string) => Promise<ResourceProps | undefined>
   _delete: (resourceKey: string) => Promise<void>
-  setImage: (resourceKey: string, file: File) => Promise<string>
-  setContent: (resourceKey: string, file: File | string) => Promise<string>
+  setImage: (resourceKey: string, file: File | undefined | null) => Promise<string>
+  setContent: (resourceKey: string, file: File | string | undefined | null) => Promise<string>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
   create: () => Promise<{ _key: string }>
   // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
@@ -88,8 +88,8 @@ export type ResourceActions = {
   publish: () => void
   unpublish: () => void
   editData: (values: ResourceFormProps) => void
-  setImage: (file: File) => void
-  setContent: (content: File | string) => void
+  setImage: (file: File | undefined | null) => void
+  setContent: (content: File | string | undefined | null) => void
   deleteResource(): void
   // toggleLike(): unknown// toggleBookmark(): unknown
 }

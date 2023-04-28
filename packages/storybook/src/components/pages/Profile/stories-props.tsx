@@ -68,8 +68,8 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     editProfile: action('editing profile'),
     sendMessage: action('send message'),
     toggleFollow: action('toggle follow'),
-    setAvatarImage: action('set avatar image'),
-    setBackgroundImage: action('set background image'),
+    setAvatar: action('set avatar image'),
+    setBackground: action('set background image'),
   }
 
   const access: ProfileAccess = {
@@ -104,12 +104,12 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       resourceCardPropsList: getResourcesCardStoryProps(5, {
         access: { canPublish: false, canDelete: false },
       }),
-      newResourceHref: href('Page/Resource/New'),
+      createResource: action('create resource'),
       collectionCardPropsList: getCollectionsCardStoryProps(5, {
         access: { canPublish: false },
       }),
-      newCollectionHref: href('Page/Collection/New'),
-      overallCardProps: OverallCardStories.OverallCardStoryProps,
+      createCollection: action('create collection'),
+      overallCardItems: OverallCardStories.OverallCardStoryProps.items ?? [],
 
       // editForm: ProfileCardStoryProps.editForm,
       // sendEmailForm: useFormik<{ text: string }>({
