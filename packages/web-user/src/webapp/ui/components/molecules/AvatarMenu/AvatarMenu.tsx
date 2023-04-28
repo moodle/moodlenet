@@ -1,10 +1,10 @@
-import { FloatingMenu } from '@moodlenet/component-library'
+import { FloatingMenu, FloatingMenuContentItem } from '@moodlenet/component-library'
 import { ComponentType, FC, useMemo } from 'react'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 
 export type AvatarMenuItem = {
   Component: ComponentType
-  key: string | number
+  key: string
   className?: string
 }
 export type AvatarMenuProps = {
@@ -53,20 +53,23 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   //     signoutAvatarMenuItem,
   //   ]
   // }, [avatarUrl, menuItems, profileHref, settingsHref, signout])
+  const menuContent = useMemo(() => {
+    return menuItems.map(({ Component, key, className = '' }) => {
+      const floatingMenuContentItem: FloatingMenuContentItem = {
+        Component,
+        key,
+        className: `avatar-menu-item ${className}`,
+      }
+      return floatingMenuContentItem
+    })
+  }, [menuItems])
 
   return menuItems.length ? (
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menurt"
       abbr="User menu"
-      menuContent={menuItems.map(({ Component, key, className = '' }) => {
-        // reoderedmenuItems.map((menuItem, i) => {
-        return (
-          <div key={key} className={`avatar-menu-item ${className}`}>
-            <Component />
-          </div>
-        )
-      })}
+      menuContent={menuContent}
       hoverElement={<div style={avatar} className="avatar" />}
     />
   ) : null
