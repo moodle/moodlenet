@@ -71,14 +71,26 @@ export const useProfileProps = ({
         isAdmin,
         isAuthenticated,
         isCreator,
+        canFollow: true, //@ETTO Needs to be implemented
+      },
+      data: {
+        userId: '12sadsadsad', //@ETTO Needs to be implemented
+        username: profileResponse.data.displayName, //@ETTO Needs to be implemented
+        avatarUrl: 'sadsadsadsa.sdsad', //@ETTO Needs to be implemented
+        backgroundUrl: 'sadsadsadsa.sdsad', //@ETTO Needs to be implemented
+        profileHref: href('/profile'), //@ETTO Needs to be implemented
       },
       state: {
-        profileUrl: 'https://moodle.net/profile', //@ETTO Needs to be implemented get it from server
+        profileUrl: 'https://moodle.net/profile', //@ETTO Needs to be implemented
+        followed: false, //@ETTO Needs to be implemented
+        numFollowers: 13, //@ETTO Needs to be implemented
       },
       actions: {
         editProfile,
         sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
-        // toggleFollow,
+        toggleFollow: () => alert('Needs to be implemented'), //@ETTO Needs to be implemented
+        setAvatarImage: (_file: File) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
+        setBackgroundImage: (_file: File) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
       },
       mainProfileCardSlots: {
         mainColumnItems: [],

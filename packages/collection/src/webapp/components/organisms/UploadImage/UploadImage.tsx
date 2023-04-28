@@ -19,7 +19,7 @@ import './UploadImage.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadImageProps = {
-  imageForm: FormikHandle<{ image: File | null }>
+  imageForm: FormikHandle<{ image: File | string | undefined | null }>
   imageUrl: string | undefined
   imageOnClick?: () => void
 }
@@ -47,8 +47,14 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOn
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
 
   const deleteImage = useCallback(() => {
+    console.log('deleteImage')
     imageForm.setFieldValue('image', undefined)
-    imageForm.submitForm()
+    if (imageForm.isValid) {
+      console.log('isValid')
+      imageForm.submitForm()
+    } else {
+      console.log('not valid')
+    }
   }, [imageForm])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)

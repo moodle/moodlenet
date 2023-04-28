@@ -31,20 +31,24 @@ export type CollectionAccessRpc = {
   isCreator: boolean
   canEdit: boolean
   canPublish: boolean
-  canDelete: boolean // canFollow: boolean // canBookmark: boolean
+  canDelete: boolean
+  canFollow: boolean
+  // canBookmark: boolean
 }
 
 export type CollectionDataRpc = {
   collectionId: string
   mnUrl: string
-  imageUrl?: string
-  isWaitingForApproval?: boolean
-  // numFollowers: number
+  imageUrl: string | undefined
+  isWaitingForApproval: boolean | undefined
 }
 
 export type CollectionStateRpc = {
-  isPublished?: boolean
-  numResources?: number // followed: boolean // bookmarked: boolean
+  numFollowers: number
+  numResources: number
+  isPublished: boolean
+  followed: boolean
+  // bookmarked: boolean
 }
 
 export type CollectionFormRpc = {
@@ -79,16 +83,18 @@ export type RpcCaller = {
   get: (key: string) => Promise<CollectionProps | undefined>
   _delete: (key: string) => Promise<void>
   setIsPublished: (key: string, publish: boolean) => Promise<void>
-  setImage: (key: string, file: File) => Promise<string>
+  setImage: (key: string, file: File | null | undefined) => Promise<string>
   create: () => Promise<{ _key: string }>
 }
 
 export type CollectionActions = {
-  publish: () => Promise<void>
-  unpublish: () => Promise<void>
-  editData: (values: CollectionFormProps) => Promise<void>
-  deleteCollection(): Promise<void>
-  setImage: (file: File) => Promise<void> // toggleFollow(): void // toggleBookmark(): void
+  publish: () => void
+  unpublish: () => void
+  editData: (values: CollectionFormProps) => void
+  deleteCollection(): void
+  setImage: (file: File | undefined | null) => void
+  toggleFollow(): void
+  // toggleBookmark(): void
 }
 
 export type CollectionMainProps = {

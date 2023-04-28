@@ -1,12 +1,8 @@
 import { AddonItem, Card } from '@moodlenet/component-library'
 import { Link, OverallCard, OverallCardProps } from '@moodlenet/react-app/ui'
 import { FC } from 'react'
-import {
-  ProfileAccess,
-  ProfileActions,
-  ProfileData,
-  ProfileState,
-} from '../../../../../common/types.mjs'
+import { ProfileCardData } from '../../../../../common/profile/type.mjs'
+import { ProfileAccess, ProfileActions, ProfileState } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
 import './ProfileCard.scss'
@@ -16,7 +12,7 @@ export type ProfileCardProps = {
   bottomTouchColumnItems?: AddonItem[]
   overallCardProps: OverallCardProps
 
-  data: ProfileData
+  data: ProfileCardData
   state: ProfileState
   actions: ProfileActions
   access: ProfileAccess
