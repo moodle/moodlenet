@@ -45,7 +45,7 @@ const AddMenuItem: AddonItem = {
 
 const getRightItemsHeader = (isAuthenticated: boolean): AddonItem[] => {
   return isAuthenticated
-    ? [AddMenuItem, AvatarMenuStories.AvatarMenuItem]
+    ? [AddMenuItem, AvatarMenuStories.AvatarMenuHeaderItem]
     : [
         ...AccessButtonsStories.getAccessButtons({
           loginHref: href('Pages/Access/Login'),
