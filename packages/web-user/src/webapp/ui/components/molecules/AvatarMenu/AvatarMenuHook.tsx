@@ -1,9 +1,13 @@
 import { href } from '@moodlenet/react-app/common'
 import { useContext, useMemo } from 'react'
-import { getProfileHomePageRoutePath } from '../../../../../common/webapp-routes.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { MainContext } from '../../../../context/MainContext.mjs'
 import { AvatarMenuItem, AvatarMenuProps } from './AvatarMenu.js'
+import {
+  ProfileLinkAvatarMenuComponent,
+  SettingsLinkAvatarMenuComponent,
+  SignoutAvatarMenuComponent,
+} from './webUserAvatarMenuComponents.js'
 
 export function useAvatarMenuProps(): AvatarMenuProps {
   const mainCtx = useContext(MainContext)
@@ -22,37 +26,31 @@ export function useAvatarMenuProps(): AvatarMenuProps {
       return avatarMenuItem
     })
 
-    const avatarMenuItems: AvatarMenuItem[] = [
-      {
-        Icon: '',
-        // Icon: ExitToApp,
-        text: 'Log out',
-        key: 'logOutIdx',
-        onClick() {
-          authCtx.logout()
-        },
-      },
-    ]
+    const avatarMenuItems: AvatarMenuItem[] = []
 
     const myProfile = authCtx.clientSessionData.myProfile
     if (myProfile) {
       avatarMenuItems.push({
-        Icon: '',
-        // Icon: ExitToApp,
-        text: 'My profile',
-        key: 'My-profileIdx',
-        path: href(getProfileHomePageRoutePath(myProfile)),
+        Component: () => (
+          <ProfileLinkAvatarMenuComponent
+            avatarUrl={authCtx.clientSessionData.userDisplay.avatarUrl}
+            profileHref={href('/settings')}
+          />
+        ),
+        key: 'profile',
       })
     }
     const isAdmin = authCtx.clientSessionData.isAdmin
     if (isAdmin) {
       avatarMenuItems.push({
-        Icon: '',
-        text: 'Settings',
-        key: 'SettingsIdx',
-        path: href('/settings'),
+        Component: () => <SettingsLinkAvatarMenuComponent settingsHref={href('/settings')} />,
+        key: 'settings',
       })
     }
+    avatarMenuItems.push({
+      Component: () => <SignoutAvatarMenuComponent signout={authCtx.logout} />,
+      key: 'signout',
+    })
 
     return [...avatarMenuItems, ...regAvatarMenuItems]
   }, [authCtx, menuEntries])
