@@ -180,12 +180,12 @@ export const useResourceStoryProps = (
   }
 
   const actions: ResourceActions = {
-    deleteResource: async () => undefined,
-    editData: async () => action('editing resource submited'),
+    deleteResource: action('delete resource'),
+    editData: action('editing resource submited'),
     publish: action('publish'),
     unpublish: action('unpublish'),
     setContent: action('set content'),
-    setImage: async () => '',
+    setImage: action('set image'),
     // toggleLike: action('toggleLike'),
     // toggleBookmark: action('toggleBookmark'),
     ...overrides?.actions,
@@ -227,6 +227,7 @@ export const useResourceStoryProps = (
 
       mainColumnItems: [],
       sideColumnItems: [],
+      generalActionsItems: [],
       mainResourceCardSlots: mainResourceCardSlots,
       resourceContributorCardProps:
         ResourceContributorCardStories.ResourceContributorCardStoryProps,

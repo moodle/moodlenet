@@ -28,6 +28,7 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
+import { useFormik } from 'formik'
 import { FC, StrictMode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getResourceTypeInfo,
@@ -54,10 +55,6 @@ export type MainResourceCardProps = {
 
   data: ResourceDataProps
   form: FormikHandle<ResourceFormProps>
-  contentForm: FormikHandle<{ content: File | string | null }>
-  contentUrl: string | null
-  imageForm: FormikHandle<{ image: File | null }>
-  imageUrl: string | null
 
   state: ResourceStateProps
   actions: ResourceActions
@@ -75,10 +72,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   data,
   form,
-  contentForm,
-  contentUrl,
-  imageForm,
-  imageUrl,
 
   state,
   actions,
@@ -105,6 +98,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType,
     isWaitingForApproval,
     downloadFilename,
+    imageUrl,
+    contentUrl,
     // numLikes,
   } = data
 
@@ -118,6 +113,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const {
     unpublish,
     deleteResource,
+    setContent,
+    setImage,
     // toggleBookmark,
     // toggleLike,
   } = actions
@@ -135,12 +132,54 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const backupImage: string | undefined = useMemo(() => getBackupImage(resourceId), [resourceId])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [image] = useImageUrl(imageUrl, backupImage)
+  const { width } = useWindowDimensions()
+
+  const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
+
+  const contentForm = useFormik<{ content: File | string | null }>({
+    initialValues: { content: contentUrl },
+    onSubmit: values => {
+      return setContent(values.content)
+    },
+  })
+
+  useEffect(() => {
+    setCurrentContentUrl(contentUrl)
+  }, [contentUrl])
+
+  useEffect(() => {
+    setCurrentContentUrl(
+      typeof contentForm.values.content === 'string'
+        ? contentForm.values.content
+        : contentForm.values.content
+        ? contentForm.values.content.name
+        : null,
+    )
+  }, [contentForm])
+
   const { typeName, typeColor } = getResourceTypeInfo(
     contentType,
-    contentType === 'file' ? downloadFilename : contentUrl,
+    contentType === 'file' ? downloadFilename : currentContentUrl,
   )
-  const { width } = useWindowDimensions()
+
+  const imageForm = useFormik<{ image: File | string | undefined | null }>({
+    initialValues: { image: imageUrl },
+    onSubmit: values => {
+      return typeof values.image !== 'string' ? setImage(values.image) : undefined
+    },
+  })
+
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined | null>(imageUrl)
+  const [image] = useImageUrl(currentImageUrl, backupImage)
+  const [imageFromForm] = useImageUrl(imageForm.values.image)
+
+  useEffect(() => {
+    setCurrentImageUrl(imageUrl)
+  }, [imageUrl])
+
+  useEffect(() => {
+    setCurrentImageUrl(imageFromForm)
+  }, [imageFromForm])
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)
@@ -500,13 +539,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <UploadResource
       contentForm={contentForm}
       imageForm={imageForm}
-      imageUrl={imageUrl}
-      contentUrl={contentUrl}
       fileMaxSize={fileMaxSize}
       downloadFilename={downloadFilename}
       uploadProgress={uploadProgress}
-      key="resource-uploader"
       imageOnClick={() => setIsShowingImage(true)}
+      key="resource-uploader"
     />
   ) : null
 

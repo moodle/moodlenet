@@ -29,9 +29,7 @@ import './UploadResource.scss'
 export type UploadResourceProps = {
   fileMaxSize: number | null
   contentForm: FormikHandle<{ content: File | string | null }>
-  contentUrl: string | null
-  imageForm: FormikHandle<{ image: File | null }>
-  imageUrl: string | null
+  imageForm: FormikHandle<{ image: File | string | undefined | null }>
   downloadFilename: string | null
   uploadProgress?: number
   imageOnClick?(): unknown
@@ -49,10 +47,8 @@ export type UploadResourceProps = {
 
 export const UploadResource: FC<UploadResourceProps> = ({
   fileMaxSize,
-  contentForm,
-  contentUrl,
 
-  imageUrl,
+  contentForm,
   imageForm,
   downloadFilename,
 
@@ -65,14 +61,14 @@ export const UploadResource: FC<UploadResourceProps> = ({
   //   true
   // )
 
-  const [image] = useImageUrl(imageUrl, imageForm.values.image)
+  const [image] = useImageUrl(imageForm.values.image)
 
   const contentIsFile = contentForm.values.content instanceof File
   const contentName = downloadFilename
     ? downloadFilename
     : contentForm.values.content instanceof File
     ? contentForm.values.content.name
-    : contentForm.values.content ?? contentUrl ?? ''
+    : contentForm.values.content ?? ''
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   // const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -84,8 +80,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const [deleteFileLinkPressed, setDeleteFileLinkPressed] = useState(false)
 
-  const contentAvailable = !!(contentUrl || contentForm.values.content)
-  const imageAvailable = !!(imageUrl || imageForm.values.image)
+  const contentAvailable = !!contentForm.values.content
+  const imageAvailable = !!imageForm.values.image
 
   useEffect(() => {
     if (deleteFileLinkPressed) {
@@ -95,18 +91,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
     contentForm.values.content && !contentForm.errors.content && setShouldShowErrors(false)
 
     setSubStep(
-      (contentForm.values.content || contentUrl) && !contentForm.errors.content
-        ? 'AddImage'
-        : 'AddFileOrLink',
+      contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
     )
-  }, [
-    contentForm,
-    deleteFileLinkPressed,
-    subStep,
-    contentUrl,
-    setSubStep,
-    setDeleteFileLinkPressed,
-  ])
+  }, [contentForm, deleteFileLinkPressed, subStep, setSubStep, setDeleteFileLinkPressed])
 
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
@@ -119,6 +106,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const deleteImage = useCallback(() => {
     setDeleteFileLinkPressed(true)
+    console.log('deleteImage')
     imageForm.setFieldValue('image', null)
     imageForm.submitForm()
   }, [imageForm])
@@ -159,11 +147,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
     [contentForm, imageForm],
   )
 
-  const embed = contentUrl
-    ? getPreviewFromUrl(contentUrl)
-    : typeof contentForm.values.content === 'string'
-    ? getPreviewFromUrl(contentForm.values.content)
-    : null
+  const embed =
+    typeof contentForm.values.content === 'string'
+      ? getPreviewFromUrl(contentForm.values.content)
+      : contentForm.values.content
+      ? getPreviewFromUrl(contentForm.values.content.name)
+      : null
 
   const dropHandler = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -334,7 +323,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
         style={{
           height:
             imageAvailable && !contentAvailable
-              ? imageHeight < 250 || imageHeight === 'initial'
+              ? (typeof imageHeight === 'number' && imageHeight < 250) || imageHeight === 'initial'
                 ? 250
                 : imageHeight
               : 'fit-content',

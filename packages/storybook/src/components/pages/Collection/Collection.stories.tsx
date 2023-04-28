@@ -1,6 +1,8 @@
 import { CollectionFormProps } from '@moodlenet/collection/common'
 import { Collection } from '@moodlenet/collection/ui'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useState } from 'react'
 import { useCollectionStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
@@ -70,8 +72,16 @@ export const Creator: CollectionStory = () => {
     },
     isSaving: false,
   })
+  const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
 
-  return <Collection {...props} />
+  resourceCardPropsList.map(r => {
+    r.onRemoveClick = () => {
+      action('onRemoveResourceClick')
+      setResourceCardPropsList(resourceCardPropsList.filter(x => x !== r))
+    }
+  })
+
+  return <Collection {...props} resourceCardPropsList={resourceCardPropsList} />
 }
 
 export const NewCollectionProps: CollectionFormProps = {

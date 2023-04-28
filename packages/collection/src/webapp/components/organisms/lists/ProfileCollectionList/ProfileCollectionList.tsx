@@ -1,5 +1,4 @@
-import { Href, ListCard, PrimaryButton } from '@moodlenet/component-library'
-import { Link } from '@moodlenet/react-app/ui'
+import { ListCard, PrimaryButton } from '@moodlenet/component-library'
 import { LibraryAdd } from '@mui/icons-material'
 import { FC, useMemo } from 'react'
 import { CollectionCard, CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
@@ -7,14 +6,14 @@ import './ProfileCollectionList.scss'
 
 export type ProfileCollectionListProps = {
   collectionCardPropsList: CollectionCardProps[]
-  newCollectionHref: Href
-  isCreator: boolean
+  createCollection(): void
+  canEdit: boolean
 }
 
 export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
   collectionCardPropsList,
-  newCollectionHref,
-  isCreator,
+  createCollection,
+  canEdit,
 }) => {
   // const [windowWidth, /* _isShowingSmallCard */ setIsShowingSmallCard] = useState<boolean>(false)
 
@@ -41,15 +40,13 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
         [collectionCardPropsList],
       )}
       actions={
-        isCreator
+        canEdit
           ? {
               element: (
-                <Link href={newCollectionHref}>
-                  <PrimaryButton className="action">
-                    <LibraryAdd />
-                    New collection
-                  </PrimaryButton>
-                </Link>
+                <PrimaryButton className="action" onClick={createCollection}>
+                  <LibraryAdd />
+                  New collection
+                </PrimaryButton>
               ),
               position: 'end',
             }
@@ -58,7 +55,7 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
     ></ListCard>
   )
 
-  return (isCreator || collectionCardPropsList.length > 0) && window.innerWidth ? listCard : null
+  return (canEdit || collectionCardPropsList.length > 0) && window.innerWidth ? listCard : null
 }
 
 ProfileCollectionList.defaultProps = {}

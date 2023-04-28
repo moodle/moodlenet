@@ -12,9 +12,8 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 
-import { FormikHandle } from '@moodlenet/react-app/ui'
 import { Share } from '@mui/icons-material'
-import { FC, useLayoutEffect, useRef, useState } from 'react'
+import { FC, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { messageFormValidationSchema } from '../../../../../common/exports.mjs'
 import {
   ProfileAccess,
@@ -24,7 +23,6 @@ import {
   ProfileState,
 } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
-import defaultBackground from '../../../assets/img/default-background.svg'
 import { FollowButton } from '../../molecules/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
@@ -44,8 +42,6 @@ export type MainProfileCardProps = {
   slots: MainProfileCardSlots
   data: ProfileData
   form: ReturnType<typeof useFormik<ProfileFormValues>>
-  avatarForm: FormikHandle<{ image: File | null }>
-  backgroundForm: FormikHandle<{ image: File | null }>
   access: ProfileAccess
   isEditing: boolean
   state: ProfileState
@@ -58,8 +54,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   slots,
   form,
   data,
-  avatarForm,
-  backgroundForm,
   access,
   state,
   actions,
@@ -71,7 +65,13 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const { avatarUrl, backgroundUrl } = data
   const { canEdit, isCreator, isAuthenticated, canFollow } = access
   const { followed } = state
-  const { toggleFollow, sendMessage } = actions
+  const { toggleFollow, sendMessage, setAvatar, setBackground } = actions
+
+  const [updatedAvatar, setUpdatedAvatar] = useState<string | undefined | null>(avatarUrl)
+  const [updatedBackground, setUpdatedBackground] = useState<string | undefined | null>(
+    backgroundUrl,
+  )
+
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
@@ -80,6 +80,44 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [showMessageSentAlert, setShowMessageSentAlert] = useState<boolean>(false)
+
+  const avatarForm = useFormik<{ image: File | string | null | undefined }>({
+    initialValues: { image: avatarUrl },
+    // validationSchema: validationSchema,
+    onSubmit: values => {
+      return typeof values.image !== 'string' ? setAvatar(values.image) : undefined
+    },
+  })
+
+  const [avatarImageUrl] = useImageUrl(avatarUrl, defaultAvatar)
+  const [avatarFromForm] = useImageUrl(avatarForm.values.image)
+
+  useEffect(() => {
+    setUpdatedAvatar(avatarUrl)
+  }, [avatarUrl])
+
+  useEffect(() => {
+    setUpdatedAvatar(avatarFromForm)
+  }, [avatarFromForm])
+
+  const backgroundForm = useFormik<{ image: File | string | null | undefined }>({
+    initialValues: { image: backgroundUrl },
+    // validationSchema: validationSchema,
+    onSubmit: values => {
+      return typeof values.image !== 'string' ? setBackground(values.image) : undefined
+    },
+  })
+
+  const [backgroundImageUrl] = useImageUrl(backgroundUrl, defaultAvatar)
+  const [backgroundFromForm] = useImageUrl(backgroundForm.values.image)
+
+  useEffect(() => {
+    setUpdatedBackground(backgroundUrl)
+  }, [backgroundUrl])
+
+  useEffect(() => {
+    setUpdatedBackground(backgroundFromForm)
+  }, [backgroundFromForm])
 
   const messageForm = useFormik<{ msg: string }>({
     initialValues: { msg: '' },
@@ -124,23 +162,18 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   }
 
   const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) =>
-    form.setFieldValue('backgroundImage', e.currentTarget.files?.item(0))
+    backgroundForm.setFieldValue('image', e.currentTarget.files?.item(0))
 
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
-    avatarForm.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
+    avatarForm.setFieldValue('image', e.currentTarget.files?.item(0))
 
-  const [backgroundImageUrl] = useImageUrl(
-    backgroundForm.values.image ?? backgroundUrl,
-    defaultBackground,
-  )
   const background = {
-    backgroundImage: 'url("' + backgroundImageUrl + '")',
+    backgroundImage: 'url("' + updatedBackground + '")',
     backgroundSize: 'cover',
   }
 
-  const [avatarImageUrl] = useImageUrl(avatarForm.values.image ?? avatarUrl, defaultAvatar)
   const avatar = {
-    backgroundImage: 'url("' + avatarImageUrl + '")',
+    backgroundImage: 'url("' + updatedAvatar + '")',
     backgroundSize: 'cover',
   }
 

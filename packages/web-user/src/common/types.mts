@@ -56,8 +56,8 @@ export type ProfileActions = {
   toggleFollow(): void
   editProfile(values: ProfileFormValues): void
   sendMessage(msg: string): void
-  setAvatarImage(file: File): void
-  setBackgroundImage: (file: File) => void
+  setAvatar(file: File | undefined | null): void
+  setBackground: (file: File | undefined | null) => void
 }
 
 export type ProfileAccess = {
