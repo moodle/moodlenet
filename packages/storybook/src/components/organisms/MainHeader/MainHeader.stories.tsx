@@ -1,13 +1,17 @@
+import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+
 // import { href } from '../../../../elements/link'
-import { HeaderCollectionStories } from '@moodlenet/collection/stories'
 import { AddonItem } from '@moodlenet/component-library'
-import { HeaderResourceStories } from '@moodlenet/ed-resource/stories'
 import { href } from '@moodlenet/react-app/common'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import { MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
 import { AccessButtonsStories, AvatarMenuStories } from '@moodlenet/web-user/stories'
-import { AddMenu } from '@moodlenet/web-user/ui'
+import {
+  AddMenu,
+  CreateCollectionAddMenuItem,
+  CreateResourceAddMenuItem,
+} from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 
 const meta: ComponentMeta<typeof MainHeader> = {
@@ -35,8 +39,18 @@ const AddMenuItem: AddonItem = {
   Item: () => (
     <AddMenu
       menuItems={[
-        HeaderResourceStories.HeaderResourceStoryProps,
-        HeaderCollectionStories.HeaderCollectionStoryProps,
+        {
+          Component: () => (
+            <CreateResourceAddMenuItem createResource={linkTo('Pages', 'Resource/New')} />
+          ),
+          key: 'create resource',
+        },
+        {
+          Component: () => (
+            <CreateCollectionAddMenuItem createCollection={linkTo('Pages', 'Collection/New')} />
+          ),
+          key: 'create resource',
+        },
       ]}
     />
   ),

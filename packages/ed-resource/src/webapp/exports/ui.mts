@@ -1,6 +1,5 @@
 // @index(['../components/**/!(*.stories|*Hooks|*Hook|*Container)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../components/molecules/ResourceContributorCard/ResourceContributorCard.js'
-export * from '../components/organisms/Header/HeaderResource.js'
 export * from '../components/organisms/lists/LandingResourceList/LandingResourceList.js'
 export * from '../components/organisms/lists/ProfileResourceList/ProfileResourceList.js'
 export * from '../components/organisms/lists/SearchResourceList/SearchResourceList.js'

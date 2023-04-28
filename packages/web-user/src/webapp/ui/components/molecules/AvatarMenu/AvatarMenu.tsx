@@ -54,7 +54,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   //   ]
   // }, [avatarUrl, menuItems, profileHref, settingsHref, signout])
 
-  return (
+  return menuItems.length ? (
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menurt"
@@ -69,5 +69,5 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
       })}
       hoverElement={<div style={avatar} className="avatar" />}
     />
-  )
+  ) : null
 }
