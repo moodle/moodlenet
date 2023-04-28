@@ -142,12 +142,14 @@ export const Resource: FC<ResourceProps> = ({
   const publishButton = canPublish &&
     !isPublished &&
     !isWaitingForApproval /*  && !isEditing */ && (
-      <PrimaryButton onClick={checkFormAndPublish} color="green">
+      <PrimaryButton onClick={checkFormAndPublish} color="green" key="publish-button">
         Publish
       </PrimaryButton>
     )
   const unpublishButton = canPublish && (isPublished || isWaitingForApproval) && (
-    <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
+    <SecondaryButton onClick={unpublish} key="unpublish-button">
+      Unpublish
+    </SecondaryButton>
   )
 
   // const editorActionsContainer = canPublish ? (
@@ -217,7 +219,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const downloadOrOpenLink = (
     <a href={contentUrl ?? undefined} target="_blank" rel="noreferrer" download={downloadFilename}>
-      <SecondaryButton>
+      <SecondaryButton key="donwload-or-open-link-button">
         {contentType === 'file' ? (
           <>
             <InsertDriveFile />
