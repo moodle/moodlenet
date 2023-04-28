@@ -70,8 +70,8 @@ export const Resource: FC<ResourceProps> = ({
   fileMaxSize,
   isSaving,
 }) => {
-  const { isWaitingForApproval, downloadFilename, contentUrl, imageUrl, contentType } = data
-  const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
+  const { isWaitingForApproval, downloadFilename, contentUrl, contentType } = data
+  const { editData, deleteResource, publish, unpublish } = actions
   const { canPublish } = access
   const { isPublished } = state
 
@@ -88,33 +88,6 @@ export const Resource: FC<ResourceProps> = ({
       editData(form.values)
     }
   }, [form.values, form.dirty, editData])
-
-  const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
-
-  const contentForm = useFormik<{ content: File | string | null }>({
-    initialValues: { content: null },
-    onSubmit: values => {
-      setCurrentContentUrl(null)
-      return values.content ? setContent(values.content) : undefined
-    },
-  })
-  useEffect(() => {
-    setCurrentContentUrl(contentUrl)
-  }, [contentUrl])
-
-  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(imageUrl)
-
-  const imageForm = useFormik<{ image: File | null }>({
-    initialValues: { image: null },
-    onSubmit: values => {
-      setCurrentImageUrl(null)
-      return values.image ? setImage(values.image) : undefined
-    },
-  })
-
-  useEffect(() => {
-    setCurrentImageUrl(imageUrl)
-  }, [imageUrl])
 
   //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
   //     useState<boolean>(false)
@@ -156,10 +129,6 @@ export const Resource: FC<ResourceProps> = ({
       publish={checkFormAndPublish}
       data={data}
       form={form}
-      contentForm={contentForm}
-      contentUrl={currentContentUrl}
-      imageForm={imageForm}
-      imageUrl={currentImageUrl}
       state={state}
       actions={actions}
       access={access}

@@ -103,11 +103,13 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const imageForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: imageUrl },
+    // validationSchema: validationSchema //@ALE for some reason this validation is avoidind the onSubmit, I tried to investigate but couldn't find a reason
     onSubmit: values => {
       return typeof values.image !== 'string' ? setImage(values.image) : undefined
     },
   })
 
+  const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const [updatedImage, setUpdatedImage] = useState<string | undefined>(imageUrl)
@@ -117,7 +119,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   )
   const [image] = useImageUrl(imageUrl, backupImage)
   const [imageFromForm] = useImageUrl(imageForm.values.image)
-  const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
 
   useEffect(() => {
     setUpdatedImage(imageUrl)
@@ -134,10 +135,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       setShowUrlCopiedAlert(true)
     }, 100)
   }
-
-  // const setImage = (image: AssetInfo | undefined) => {
-  //   form.setFieldValue('image', image)
-  // }
 
   const title = canEdit ? (
     <InputTextField

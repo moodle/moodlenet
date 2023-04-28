@@ -89,8 +89,8 @@ export const useProfileProps = ({
         editProfile,
         sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
         toggleFollow: () => alert('Needs to be implemented'), //@ETTO Needs to be implemented
-        setAvatarImage: (_file: File) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
-        setBackgroundImage: (_file: File) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
+        setAvatar: (_file: File | undefined | null) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
+        setBackground: (_file: File | undefined | null) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
       },
       mainProfileCardSlots: {
         mainColumnItems: [],
@@ -99,13 +99,13 @@ export const useProfileProps = ({
         subtitleItems: [],
         titleItems: [],
       },
-      newCollectionHref: href('/collections/new'), //@ETTO Needs to be implemented
-      newResourceHref: href('/resources/new'), //@ETTO Needs to be implemented
+      createCollection: () => undefined, //@ETTO Needs to be implemented
+      createResource: () => undefined, //@ETTO Needs to be implemented
       resourceCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       sideColumnItems: [], //@ETTO Needs to be implemented - create registry for it
-      overallCardProps: {},
+      overallCardItems: [],
       profileForm: profileResponse.data,
       // state: {
       //   followed: false,

@@ -1,5 +1,5 @@
 import { AddonItem } from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps, OverallCard, OverallCardProps } from '@moodlenet/react-app/ui'
+import { MainLayout, MainLayoutProps, OverallCard, OverallCardItem } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useReducer } from 'react'
 import { SchemaOf } from 'yup'
@@ -13,7 +13,6 @@ import {
 
 import { CollectionCardProps, ProfileCollectionList } from '@moodlenet/collection/ui'
 import { ProfileResourceList, ResourceCardProps } from '@moodlenet/ed-resource/ui'
-import { Href } from '@moodlenet/react-app/common'
 import {
   MainProfileCard,
   MainProfileCardSlots,
@@ -32,9 +31,9 @@ export type ProfileProps = {
 
   resourceCardPropsList: ResourceCardProps[]
   collectionCardPropsList: CollectionCardProps[]
-  newResourceHref: Href //@BRU ask for a `callback():void` instead of an `Href`, it works this way now
-  newCollectionHref: Href //@BRU ask for a `callback():void` instead of an `Href`, it works this way now
-  overallCardProps: OverallCardProps //@BRU you probably want OverallCardItem[] instead of OverallCardProps here right ?
+  createResource(): void
+  createCollection(): void
+  overallCardItems: OverallCardItem[]
 
   data: ProfileData
   state: ProfileState
@@ -52,17 +51,18 @@ export const Profile: FC<ProfileProps> = ({
   validationSchema,
 
   resourceCardPropsList,
-  newResourceHref,
+  createResource,
   collectionCardPropsList,
-  newCollectionHref,
-  overallCardProps,
+  createCollection,
+  overallCardItems,
 
   data,
   state,
   actions,
   access,
 }) => {
-  const { editProfile, setAvatarImage, setBackgroundImage } = actions
+  const { editProfile } = actions
+  const { canEdit } = access
   const { profileUrl } = state
   const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
@@ -80,27 +80,11 @@ export const Profile: FC<ProfileProps> = ({
     },
   })
 
-  const avatarForm = useFormik<{ image: File | null }>({
-    initialValues: { image: null },
-    validationSchema: validationSchema,
-    onSubmit: values => {
-      return values.image ? setAvatarImage(values.image) : undefined
-    },
-  })
-
-  const backgroundForm = useFormik<{ image: File | null }>({
-    initialValues: { image: null },
-    validationSchema: validationSchema,
-    onSubmit: values => {
-      return values.image ? setBackgroundImage(values.image) : undefined
-    },
-  })
-
   const resourceList = (
     <ProfileResourceList
       key="profile-resource-list"
-      isCreator={false}
-      newResourceHref={newResourceHref}
+      canEdit={canEdit}
+      createResource={createResource}
       resourceCardPropsList={resourceCardPropsList}
     />
   )
@@ -108,45 +92,15 @@ export const Profile: FC<ProfileProps> = ({
   const collectionList = (
     <ProfileCollectionList
       key="profile-collection-list"
-      isCreator={false}
-      newCollectionHref={newCollectionHref}
+      canEdit={canEdit}
+      createCollection={createCollection}
       collectionCardPropsList={collectionCardPropsList}
     />
   )
 
-  const overallCard = <OverallCard {...overallCardProps} />
+  const overallCard = <OverallCard items={overallCardItems} />
 
   // const modals = [
-  //   isSendingMessage /* && sendEmailForm  */ && (
-  //     <Modal
-  //       title={`${/* t */ `Send a message to`} ${displayName}`}
-  //       actions={
-  //         <PrimaryButton
-  //           onClick={() => {
-  //             // sendEmailForm.submitForm()
-  //             setShowMessageSentAlert(false)
-  //             setTimeout(() => {
-  //               setShowMessageSentAlert(true)
-  //               setIsSendingMessage(false)
-  //             }, 100)
-  //           }}
-  //         >
-  //           {/* <Trans> */}
-  //           Send
-  //           {/* </Trans> */}
-  //         </PrimaryButton>
-  //       }
-  //       onClose={() => undefined}
-  //       style={{ maxWidth: '400px' }}
-  //     >
-  //       <InputTextField
-  //         textarea={true}
-  //         name="text"
-  //         edit
-  //         // onChange={sendEmailForm.handleChange}
-  //       />
-  //     </Modal>
-  //   ),
   //   isReporting && (
   //     /* reportForm && */ <ReportModal
   //       // reportForm={reportForm}
@@ -220,8 +174,6 @@ export const Profile: FC<ProfileProps> = ({
       slots={mainProfileCardSlots}
       data={data}
       form={form}
-      avatarForm={avatarForm}
-      backgroundForm={backgroundForm}
       profileUrl={profileUrl}
       access={access}
       actions={actions}

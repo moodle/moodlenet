@@ -67,7 +67,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       async editData(res: ResourceFormProps) {
         edit(res) // .then(form => updateResource('form', 'resourceForm', form)),
       },
-      async setImage(file: File) {
+      async setImage(file: File | undefined | null) {
         setterSave('image', true)
         const imageUrl = await _setImage(resourceKey, file)
         updateImageUrl(imageUrl)
@@ -75,7 +75,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
         return imageUrl
       },
-      async setContent(content: File | string) {
+      async setContent(content: File | string | undefined | null) {
         setterSave('form', true)
         await setContent(resourceKey, content).then(updateData('contentUrl'))
         setterSave('form', false)
