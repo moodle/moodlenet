@@ -30,10 +30,10 @@ export type ProfileProps = {
   validationSchema: SchemaOf<ProfileFormValues>
 
   resourceCardPropsList: ResourceCardProps[]
-  newResourceHref: Href
   collectionCardPropsList: CollectionCardProps[]
-  newCollectionHref: Href
-  overallCardProps: OverallCardProps
+  newResourceHref: Href //@BRU ask for a `callback():void` instead of an `Href`, it works this way now
+  newCollectionHref: Href //@BRU ask for a `callback():void` instead of an `Href`, it works this way now
+  overallCardProps: OverallCardProps //@BRU you probably want OverallCardItem[] instead of OverallCardProps here right ?
 
   state: ProfileState
   actions: ProfileActions

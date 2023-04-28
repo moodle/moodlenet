@@ -73,7 +73,7 @@ export const useProfileProps = ({
         isCreator,
       },
       state: {
-        profileUrl: 'https://moodle.net/profile', //@ETTO Needs to be implemented
+        profileUrl: 'https://moodle.net/profile', //@ETTO Needs to be implemented get it from server
       },
       actions: {
         editProfile,
@@ -87,13 +87,13 @@ export const useProfileProps = ({
         subtitleItems: [],
         titleItems: [],
       },
-      resourceCardPropsList: [], //@ETTO Needs to be implemented
-      newResourceHref: href('/resources/new'), //@ETTO Needs to be implemented
-      collectionCardPropsList: [], //@ETTO Needs to be implemented
       newCollectionHref: href('/collections/new'), //@ETTO Needs to be implemented
-      mainColumnItems: [], //@ETTO Needs to be implemented
-      overallCardProps: {}, //@ETTO Needs to be implemented
-      sideColumnItems: [], //@ETTO Needs to be implemented
+      newResourceHref: href('/resources/new'), //@ETTO Needs to be implemented
+      resourceCardPropsList: [], //@ETTO Needs to be implemented - get it from server
+      collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
+      mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
+      sideColumnItems: [], //@ETTO Needs to be implemented - create registry for it
+      overallCardProps: {},
       profileForm: profileResponse.data,
       // state: {
       //   followed: false,
