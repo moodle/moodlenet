@@ -89,15 +89,6 @@ export const Collection: FC<CollectionProps> = ({
     }
   }, [form.values, form.dirty, editData])
 
-  const imageForm = useFormik<{ image: File | null }>({
-    initialValues: { image: null },
-    validationSchema: validationSchema,
-    onSubmit: values => {
-      // setCurrentImageUrl(null)
-      return values.image ? setImage(values.image) : undefined
-    },
-  })
-
   useEffect(() => {
     setCurrentImageUrl(imageUrl)
   }, [imageUrl])

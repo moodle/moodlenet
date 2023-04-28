@@ -47,14 +47,8 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOn
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
 
   const deleteImage = useCallback(() => {
-    console.log('deleteImage')
     imageForm.setFieldValue('image', undefined)
-    if (imageForm.isValid) {
-      console.log('isValid')
-      imageForm.submitForm()
-    } else {
-      console.log('not valid')
-    }
+    imageForm.submitForm()
   }, [imageForm])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
