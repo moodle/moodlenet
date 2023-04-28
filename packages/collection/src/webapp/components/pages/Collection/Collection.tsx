@@ -65,10 +65,11 @@ export const Collection: FC<CollectionProps> = ({
   access,
   isSaving,
 }) => {
-  const { isWaitingForApproval } = data
+  const { isWaitingForApproval, imageUrl } = data
   const { isPublished } = state
   const { editData, deleteCollection, publish, unpublish, setImage } = actions
   const { canPublish } = access
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(imageUrl)
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
@@ -89,9 +90,14 @@ export const Collection: FC<CollectionProps> = ({
     initialValues: { image: null },
     validationSchema: validationSchema,
     onSubmit: values => {
+      // setCurrentImageUrl(null)
       return values.image ? setImage(values.image) : undefined
     },
   })
+
+  useEffect(() => {
+    setCurrentImageUrl(imageUrl)
+  }, [imageUrl])
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -109,7 +115,7 @@ export const Collection: FC<CollectionProps> = ({
   const mainCollectionCard = (
     <MainCollectionCard
       key="main-collection-card"
-      data={data}
+      data={{ ...data, imageUrl: currentImageUrl }}
       form={form}
       imageForm={imageForm}
       publish={checkFormAndPublish}

@@ -81,6 +81,12 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
 
+  useEffect(() => {
+    if (form.dirty) {
+      editData(form.values)
+    }
+  }, [form.values, form.dirty, editData])
+
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
 
   const contentForm = useFormik<{ content: File | string | null }>({

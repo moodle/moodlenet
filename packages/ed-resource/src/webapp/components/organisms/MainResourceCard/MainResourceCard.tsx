@@ -149,7 +149,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const title = canEdit ? (
     <InputTextField
-      name="name"
+      name="title"
       isTextarea
       key="title"
       textAreaAutoSize
