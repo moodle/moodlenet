@@ -1,22 +1,3 @@
-import { ComponentType, ReactNode } from 'react'
-import { Href } from '../../../../../common/lib.mjs'
-
-export type HeaderMenuItem = {
-  Icon: ReactNode
-  text: string
-  key: string | number
-  path?: Href
-  className?: string
-  position?: number
-  onClick?: () => unknown
-}
+import { ComponentType } from 'react'
 
 export type HeaderRightComponentRegItem = { Component: ComponentType }
-export type HeaderMenuItemRegItem = {
-  Text: string
-  Icon: ReactNode
-  Path: Href
-  ClassName?: string
-  Position?: number
-  OnClick?: () => unknown
-}
