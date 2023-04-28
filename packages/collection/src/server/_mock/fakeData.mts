@@ -23,13 +23,16 @@ export const resFakeData: CollectionRpc = {
   form: collectionFormValues,
   state: {
     isPublished: true,
-    numResources: 1,
+    followed: false,
+    numResources: 23,
+    numFollowers: 12,
   },
   access: {
     isCreator: true,
     canPublish: true,
     canEdit: true,
     canDelete: true,
+    canFollow: true,
   },
   contributor,
 }

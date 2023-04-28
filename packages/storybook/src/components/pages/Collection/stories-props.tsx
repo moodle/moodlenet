@@ -28,6 +28,7 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { getResourcesCardStoryProps, ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,
@@ -136,8 +137,8 @@ export const useCollectionStoryProps = (
     mnUrl: 'collection.url',
     imageUrl:
       'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+    isWaitingForApproval: undefined,
     ...overrides?.data,
-    // numFollowers: 23,
   }
 
   const collectionForm: CollectionFormProps = {
@@ -149,18 +150,20 @@ export const useCollectionStoryProps = (
 
   const state: CollectionStateProps = {
     isPublished: true,
-    // followed: false,
+    followed: false,
+    numFollowers: 23,
+    numResources: 12,
     // bookmarked: false,
   }
 
   const actions: CollectionActions = {
-    deleteCollection: async () => undefined,
-    editData: async () => undefined,
-    publish: async () => undefined,
-    unpublish: async () => undefined,
-    setImage: async () => undefined,
+    deleteCollection: action('deleteCollection'),
+    editData: action('editData'),
+    publish: action('publish'),
+    unpublish: action('unpublish'),
+    setImage: action('setImage'),
+    toggleFollow: action('toggleFollow'),
     ...overrides?.actions,
-    // toggleFollow: action('toggleFollow'),
     // toggleBookmark: action('toggleBookmark'),
   }
 
@@ -169,16 +172,54 @@ export const useCollectionStoryProps = (
     isCreator: false,
     canDelete: false,
     canPublish: false,
+    canFollow: true,
     ...overrides?.access,
   }
+
+  const isPublished =
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
   const mainCollectionCardSlots: MainCollectionCardSlots = {
     mainColumnItems: [],
     headerColumnItems: [],
     topLeftHeaderItems: [],
-    topRightHeaderItems: [],
+    topRightHeaderItems: [
+      isPublished
+        ? {
+            Item: () => (
+              <SmallFollowButton
+                canFollow={access.canFollow}
+                followed={state.followed}
+                isAuthenticated={isAuthenticated}
+                isCreator={access.isCreator}
+                toggleFollow={actions.toggleFollow}
+                numFollowers={state.numFollowers}
+              />
+            ),
+
+            key: 'follow-button',
+          }
+        : null,
+    ],
     moreButtonItems: [],
-    footerRowItems: [],
+    footerRowItems: [
+      !overrides?.access?.isCreator
+        ? {
+            Item: () => (
+              <FollowButton
+                canFollow={access.canFollow}
+                followed={state.followed}
+                isAuthenticated={isAuthenticated}
+                isCreator={access.isCreator}
+                toggleFollow={actions.toggleFollow}
+                key="follow-button"
+              />
+            ),
+
+            key: 'follow-button',
+          }
+        : null,
+    ],
   }
 
   const accessOverrides = overrides?.access

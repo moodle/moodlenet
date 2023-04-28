@@ -1,5 +1,6 @@
 // import { t } from '@lingui/macro'
 import { overrideDeep } from '@moodlenet/component-library/common'
+import { href } from '@moodlenet/react-app/common'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { PartialDeep } from 'type-fest'
@@ -53,20 +54,24 @@ export const useMainProfileCardStoryProps = (
       },
       isEditing: false,
       toggleIsEditing: action('toggle Is Editing'),
-      sendMessage: action('send message'),
+
       profileUrl: 'https://iuri.is/',
       // state: {
       //   followed: false,
       // },
-      // actions: {
-      //   editProfile: action('edit profile'),
-      //   toggleFollow: action('toogle is following'),
-      // },
+      actions: {
+        sendMessage: action('send message'),
+        setAvatarImage: action('set avatar image'),
+        setBackgroundImage: action('set background image'),
+        editProfile: action('edit profile'),
+        toggleFollow: action('toogle is following'),
+      },
       access: {
         isAdmin: false,
         isCreator: false,
         isAuthenticated: false,
         canEdit: false,
+        canFollow: false,
       },
       form: useFormik<ProfileFormValues>({
         onSubmit: action('submit edit'),
@@ -78,11 +83,37 @@ export const useMainProfileCardStoryProps = (
           organizationName: person && person.organization,
           location: person && person.location,
           siteUrl: 'https://iuri.is/',
-          avatarImage: person && person.avatarUrl,
-          backgroundImage: person && person.backgroundUrl,
           ...overrides?.form,
         },
       }),
+      avatarForm: useFormik<{ image: File | null }>({
+        onSubmit: action('submit avatar'),
+        initialValues: {
+          image: null,
+          ...overrides?.avatarForm,
+        },
+      }),
+      backgroundForm: useFormik<{ image: File | null }>({
+        onSubmit: action('submit avatar'),
+        initialValues: {
+          image: null,
+          ...overrides?.backgroundForm,
+        },
+      }),
+      state: {
+        followed: false,
+        numFollowers: 12,
+        profileUrl: 'https://iuri.is/',
+        ...overrides?.state,
+      },
+      data: {
+        avatarUrl: person && person.avatarUrl,
+        backgroundUrl: person && person.backgroundUrl,
+        userId: (Math.random() * 1000000).toString(),
+        username: person && person.username ? person.username : 'username',
+        ...overrides?.data,
+        profileHref: href('https://iuri.is/'),
+      },
     },
     overrides,
   )

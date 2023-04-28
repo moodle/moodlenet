@@ -20,18 +20,7 @@ export type AddMenuProps = {
 
 export const AddMenu: FC<AddMenuProps> = ({ menuItems }) => {
   const addMenuItems: AddMenuItem[] = [
-    // {
-    //   Icon: <NoteAddIcon />,
-    //   text: /* t */ `New resource`,
-    //   path: newResourceHref,
-    //   key: 'new-resoure',
-    // },
-    // {
-    //   Icon: <LibraryAddIcon />,
-    //   text: /* t */ `New collection`,
-    //   path: newCollectionHref,
-    //   key: 'new-collection',
-    // },
+    // harcoded menu items
   ]
 
   const updatedMenuItems = addMenuItems.concat(menuItems ?? [])

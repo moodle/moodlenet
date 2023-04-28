@@ -59,12 +59,13 @@ export const expose = await shell.expose<CollectionExposeType>({
             imageUrl,
             isWaitingForApproval: false,
           },
-          state: { isPublished: true, numResources: 0 },
+          state: { isPublished: true, numResources: 0, followed: false, numFollowers: 13 },
           access: {
             canDelete: !!found.access.d,
             canEdit: !!found.access.u,
             canPublish: found.canPublish,
             isCreator: found.isCreator,
+            canFollow: true, //@ETTO to implement
           },
         }
       },

@@ -31,6 +31,9 @@ export const useCollectionPageProps = ({
       mainColumnItems: [],
       topLeftHeaderItems: [],
       topRightHeaderItems: [],
+      footerRowItems: [],
+      headerColumnItems: [],
+      moreButtonItems: [],
     }
 
     const propsPage: CollectionProps = {

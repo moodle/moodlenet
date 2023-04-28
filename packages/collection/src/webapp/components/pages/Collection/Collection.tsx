@@ -70,7 +70,7 @@ export const Collection: FC<CollectionProps> = ({
 }) => {
   const { isWaitingForApproval, imageUrl } = data
   const { isPublished } = state
-  const { editData, deleteCollection, publish, unpublish, setImage } = actions
+  const { editData, deleteCollection, publish, unpublish } = actions
   const { canPublish } = access
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(imageUrl)
 
@@ -124,7 +124,6 @@ export const Collection: FC<CollectionProps> = ({
       key="main-collection-card"
       data={{ ...data, imageUrl: currentImageUrl }}
       form={form}
-      imageForm={imageForm}
       publish={checkFormAndPublish}
       state={state}
       actions={actions}

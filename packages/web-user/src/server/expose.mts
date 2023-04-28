@@ -53,7 +53,7 @@ export const expose = await shell.expose<WebUserExposeType>({
             _key: user._key,
             isAdmin: user.isAdmin,
             name: user.displayName,
-            email: user.contacts.email,
+            email: user.contacts.email ?? '', //@ETTO email cannot be undefined, << ?? '' >> should be removed
           }
         })
         return webUsers

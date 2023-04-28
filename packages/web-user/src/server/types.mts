@@ -7,9 +7,9 @@ export type WebUserProfileEntity = EntityDocument<WebUserProfileDataType>
 export type WebUserProfileDataType = {
   displayName: string
   aboutMe: string
-  organizationName?: string
-  location?: string
-  siteUrl?: string
+  organizationName: string | undefined
+  location: string | undefined
+  siteUrl: string | undefined
 }
 
 export type WebUserProfile = WebUserProfileDataType & { _key: string }
