@@ -49,7 +49,7 @@ const AddMenuItem: AddonItem = {
           Component: () => (
             <CreateCollectionAddMenuItem createCollection={linkTo('Pages', 'Collection/New')} />
           ),
-          key: 'create resource',
+          key: 'create collection',
         },
       ]}
     />
