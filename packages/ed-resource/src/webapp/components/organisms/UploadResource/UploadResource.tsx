@@ -6,7 +6,7 @@ import {
   PrimaryButton,
   RoundButton,
 } from '@moodlenet/component-library'
-import { FormikHandle, useImageUrl } from '@moodlenet/react-app/ui'
+import { checkIfURL, FormikHandle, useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
 import { default as React, FC, useCallback, useEffect, useRef, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
@@ -106,7 +106,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const deleteImage = useCallback(() => {
     setDeleteFileLinkPressed(true)
-    console.log('deleteImage')
     imageForm.setFieldValue('image', null)
     imageForm.submitForm()
   }, [imageForm])
@@ -147,12 +146,14 @@ export const UploadResource: FC<UploadResourceProps> = ({
     [contentForm, imageForm],
   )
 
-  const embed =
+  const contentValue =
     typeof contentForm.values.content === 'string'
-      ? getPreviewFromUrl(contentForm.values.content)
+      ? contentForm.values.content
       : contentForm.values.content
-      ? getPreviewFromUrl(contentForm.values.content.name)
+      ? contentForm.values.content.name
       : null
+
+  const embed = contentValue && checkIfURL(contentValue) ? getPreviewFromUrl(contentValue) : null
 
   const dropHandler = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {

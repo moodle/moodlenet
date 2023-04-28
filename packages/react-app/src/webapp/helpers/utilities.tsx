@@ -4,7 +4,8 @@ export const elementFullyInViewPort = (
     marginTop?: number
   },
 ): boolean => {
-  let { left, top, right, bottom } = el.getBoundingClientRect()
+  const { left, right, bottom } = el.getBoundingClientRect()
+  let { top } = el.getBoundingClientRect()
 
   const height = bottom - top
   const width = right - left

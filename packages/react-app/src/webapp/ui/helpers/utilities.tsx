@@ -86,6 +86,16 @@ export const downloadOrOpenURL = (url: string, filename: string | null) => {
   link.remove()
 }
 
+export const checkIfURL = (possibleUrl: string): boolean => {
+  let url
+  try {
+    url = new URL(possibleUrl)
+  } catch (_) {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
+}
+
 // export const isAddonItem = (
 //   toBeDetermined: AddonItem | undefined | false | null,
 // ): toBeDetermined is AddonItem => {

@@ -29,6 +29,7 @@ import {
   ProfileState,
 } from '@moodlenet/web-user/common'
 import { action } from '@storybook/addon-actions'
+import { linkTo } from '@storybook/addon-links'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
 const maxUploadSize = 1024 * 1024 * 50
@@ -104,11 +105,11 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       resourceCardPropsList: getResourcesCardStoryProps(5, {
         access: { canPublish: false, canDelete: false },
       }),
-      createResource: action('create resource'),
+      createResource: linkTo('Pages/New Resource/Default'),
       collectionCardPropsList: getCollectionsCardStoryProps(5, {
         access: { canPublish: false },
       }),
-      createCollection: action('create collection'),
+      createCollection: linkTo('Pages/New Collection/Default'),
       overallCardItems: OverallCardStories.OverallCardStoryProps.items ?? [],
 
       // editForm: ProfileCardStoryProps.editForm,
