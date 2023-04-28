@@ -37,8 +37,8 @@ export const getProfileCardFactory = (
         editProfile: action('edit profile'),
         sendMessage: action('send message'),
         toggleFollow: action('toogleFollow'),
-        setAvatarImage: action('set avatar image'),
-        setBackgroundImage: action('set background image'),
+        setAvatar: action('set avatar image'),
+        setBackground: action('set background image'),
       },
       access: {
         isAdmin: false,

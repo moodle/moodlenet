@@ -1,20 +1,19 @@
 import { NoteAdd } from '@material-ui/icons'
-import { Href, ListCard, PrimaryButton } from '@moodlenet/component-library'
-import { Link } from '@moodlenet/react-app/ui'
+import { ListCard, PrimaryButton } from '@moodlenet/component-library'
 import { FC, useMemo } from 'react'
 import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
 import './ProfileResourceList.scss'
 
 export type ProfileResourceListProps = {
   resourceCardPropsList: ResourceCardProps[]
-  newResourceHref: Href
-  isCreator: boolean
+  createResource(): void
+  canEdit: boolean
 }
 
 export const ProfileResourceList: FC<ProfileResourceListProps> = ({
   resourceCardPropsList,
-  newResourceHref,
-  isCreator,
+  createResource,
+  canEdit,
 }) => {
   const listCard = (
     <ListCard
@@ -34,15 +33,13 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
       )}
       header={`Latest resources`}
       actions={
-        isCreator
+        canEdit
           ? {
               element: (
-                <Link href={newResourceHref}>
-                  <PrimaryButton className="action">
-                    <NoteAdd />
-                    New resource
-                  </PrimaryButton>
-                </Link>
+                <PrimaryButton className="action" onClick={createResource}>
+                  <NoteAdd />
+                  New resource
+                </PrimaryButton>
               ),
               position: 'end',
             }
@@ -51,7 +48,7 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
     />
   )
 
-  return isCreator || resourceCardPropsList.length > 0 ? listCard : null
+  return canEdit || resourceCardPropsList.length > 0 ? listCard : null
 }
 
 ProfileResourceList.defaultProps = {}

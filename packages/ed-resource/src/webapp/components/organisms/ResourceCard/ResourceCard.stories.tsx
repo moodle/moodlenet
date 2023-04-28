@@ -100,6 +100,7 @@ export const getResourceCardStoryProps = (
       state,
       actions,
       access,
+      onRemoveClick: () => action('remove resource'),
     },
     overrides,
   )

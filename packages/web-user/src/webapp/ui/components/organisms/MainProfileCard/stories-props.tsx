@@ -61,8 +61,8 @@ export const useMainProfileCardStoryProps = (
       // },
       actions: {
         sendMessage: action('send message'),
-        setAvatarImage: action('set avatar image'),
-        setBackgroundImage: action('set background image'),
+        setAvatar: action('set avatar image'),
+        setBackground: action('set background image'),
         editProfile: action('edit profile'),
         toggleFollow: action('toogle is following'),
       },
@@ -84,20 +84,6 @@ export const useMainProfileCardStoryProps = (
           location: person && person.location,
           siteUrl: 'https://iuri.is/',
           ...overrides?.form,
-        },
-      }),
-      avatarForm: useFormik<{ image: File | null }>({
-        onSubmit: action('submit avatar'),
-        initialValues: {
-          image: null,
-          ...overrides?.avatarForm,
-        },
-      }),
-      backgroundForm: useFormik<{ image: File | null }>({
-        onSubmit: action('submit avatar'),
-        initialValues: {
-          image: null,
-          ...overrides?.backgroundForm,
         },
       }),
       state: {
