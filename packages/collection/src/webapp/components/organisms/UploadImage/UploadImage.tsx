@@ -19,7 +19,7 @@ import './UploadImage.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadImageProps = {
-  imageForm: FormikHandle<{ image: File | null }>
+  imageForm: FormikHandle<{ image: File | string | undefined | null }>
   imageUrl: string | undefined
   imageOnClick?: () => void
 }

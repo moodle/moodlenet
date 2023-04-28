@@ -12,12 +12,20 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 
+import { FormikHandle } from '@moodlenet/react-app/ui'
 import { Share } from '@mui/icons-material'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import { messageFormValidationSchema } from '../../../../../common/exports.mjs'
-import { ProfileAccess, ProfileFormValues } from '../../../../../common/types.mjs'
+import {
+  ProfileAccess,
+  ProfileActions,
+  ProfileData,
+  ProfileFormValues,
+  ProfileState,
+} from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
+import { FollowButton } from '../../molecules/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {
@@ -34,25 +42,36 @@ export type MainProfileCardPropsControlled = Omit<
 >
 export type MainProfileCardProps = {
   slots: MainProfileCardSlots
+  data: ProfileData
   form: ReturnType<typeof useFormik<ProfileFormValues>>
+  avatarForm: FormikHandle<{ image: File | null }>
+  backgroundForm: FormikHandle<{ image: File | null }>
   access: ProfileAccess
   isEditing: boolean
+  state: ProfileState
+  actions: ProfileActions
   profileUrl: string
   toggleIsEditing(): unknown
-  sendMessage(msg: string): void | Promise<void>
 }
 
 export const MainProfileCard: FC<MainProfileCardProps> = ({
   slots,
   form,
+  data,
+  avatarForm,
+  backgroundForm,
   access,
+  state,
+  actions,
   isEditing,
   profileUrl,
-  sendMessage,
   toggleIsEditing,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
-  const { canEdit, isCreator, isAuthenticated } = access
+  const { avatarUrl, backgroundUrl } = data
+  const { canEdit, isCreator, isAuthenticated, canFollow } = access
+  const { followed } = state
+  const { toggleFollow, sendMessage } = actions
   const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
   const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
   const shouldShowErrors = !!form.submitCount
@@ -64,8 +83,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const messageForm = useFormik<{ msg: string }>({
     initialValues: { msg: '' },
-    // isInitialValid: false,
-    // validateOnMount: true,
     validationSchema: messageFormValidationSchema,
     onSubmit: values => {
       return sendMessage(values.msg)
@@ -74,9 +91,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const checkAndSendMessage = () => {
     if (messageForm.isValid) {
+      sendMessage(messageForm.values.msg)
       setShouldShowMessageErrors(false)
       setIsSendingMessage(false)
-      messageForm.submitForm()
       setShowMessageSentAlert(true)
     } else {
       setShouldShowMessageErrors(true)
@@ -110,17 +127,20 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     form.setFieldValue('backgroundImage', e.currentTarget.files?.item(0))
 
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
-    form.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
+    avatarForm.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
-  const [backgroundUrl] = useImageUrl(form.values.backgroundImage, defaultBackground)
+  const [backgroundImageUrl] = useImageUrl(
+    backgroundForm.values.image ?? backgroundUrl,
+    defaultBackground,
+  )
   const background = {
-    backgroundImage: 'url("' + backgroundUrl + '")',
+    backgroundImage: 'url("' + backgroundImageUrl + '")',
     backgroundSize: 'cover',
   }
 
-  const [avatarUrl] = useImageUrl(form.values.avatarImage, defaultAvatar)
+  const [avatarImageUrl] = useImageUrl(avatarForm.values.image ?? avatarUrl, defaultAvatar)
   const avatar = {
-    backgroundImage: 'url("' + avatarUrl + '")',
+    backgroundImage: 'url("' + avatarImageUrl + '")',
     backgroundSize: 'cover',
   }
 
@@ -139,7 +159,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           color="green"
           onClick={() => {
             form.submitForm()
-            form.isValid && toggleIsEditing()
+            avatarForm.submitForm()
+            backgroundForm.submitForm()
+            form.isValid && avatarForm.isValid && backgroundForm.isValid && toggleIsEditing()
           }}
           key="save-button"
         >
@@ -305,8 +327,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         key="background"
         style={{
           ...background,
-          pointerEvents: form.isSubmitting || !form.values.backgroundImage ? 'none' : 'inherit',
-          cursor: form.isSubmitting || !form.values.backgroundImage ? 'auto' : 'pointer',
+          pointerEvents:
+            backgroundForm.isSubmitting || !backgroundForm.values.image ? 'none' : 'inherit',
+          cursor: backgroundForm.isSubmitting || !backgroundForm.values.image ? 'auto' : 'pointer',
         }}
         onClick={() => setIsShowingBackground(true)}
       />
@@ -320,8 +343,8 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         className={`avatar`}
         style={{
           ...avatar,
-          pointerEvents: form.isSubmitting || !form.values.avatarImage ? 'auto' : 'inherit',
-          cursor: form.isSubmitting || !form.values.avatarImage ? 'auto' : 'pointer',
+          pointerEvents: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'inherit',
+          cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
         }}
         onClick={() => setIsShowingAvatar(true)}
       ></div>
@@ -330,7 +353,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const modals = (
     <>
-      {isShowingBackground && backgroundUrl && (
+      {isShowingBackground && backgroundImageUrl && (
         <Modal
           className="image-modal"
           closeButton={false}
@@ -338,10 +361,10 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           style={{ maxWidth: '90%', maxHeight: '90%' }}
           key="background-modal"
         >
-          <img src={backgroundUrl} alt="Background" />
+          <img src={backgroundImageUrl} alt="Background" />
         </Modal>
       )}
-      {isShowingAvatar && avatarUrl && (
+      {isShowingAvatar && avatarImageUrl && (
         <Modal
           className="image-modal"
           closeButton={false}
@@ -349,7 +372,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           style={{ maxWidth: '90%', maxHeight: '90%' }}
           key="avatar-modal"
         >
-          <img src={avatarUrl} alt="Avatar" />
+          <img src={avatarImageUrl} alt="Avatar" />
         </Modal>
       )}
       {isSendingMessage && (
@@ -434,11 +457,22 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     //   </SecondaryButton>
     // ),
     !isCreator && (
+      <FollowButton
+        canFollow={canFollow}
+        followed={followed}
+        isAuthenticated={isAuthenticated}
+        isCreator={isCreator}
+        toggleFollow={toggleFollow}
+        key="follow-button"
+      />
+    ),
+    !isCreator && (
       <SecondaryButton
         color="grey"
         className={`message`}
         disabled={!isAuthenticated}
         onClick={() => setIsSendingMessage(true)}
+        abbr={!isAuthenticated ? 'Login or signup to send messages' : 'Send a message'}
       >
         Message
       </SecondaryButton>
@@ -464,11 +498,11 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       ]}
       hoverElement={
         isShowingSmallCard ? (
-          <SecondaryButton color="grey" className={`more small`}>
+          <SecondaryButton color="grey" className={`more small`} abbr="More actions">
             <div className="three-dots">...</div>
           </SecondaryButton>
         ) : (
-          <SecondaryButton color="grey" className={`more big`}>
+          <SecondaryButton color="grey" className={`more big`} abbr="More actions">
             <div className="text">More</div>
           </SecondaryButton>
         )

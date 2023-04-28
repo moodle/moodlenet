@@ -6,6 +6,7 @@ import { SchemaOf } from 'yup'
 import {
   ProfileAccess,
   ProfileActions,
+  ProfileData,
   ProfileFormValues,
   ProfileState,
 } from '../../../../../common/types.mjs'
@@ -35,6 +36,7 @@ export type ProfileProps = {
   newCollectionHref: Href //@BRU ask for a `callback():void` instead of an `Href`, it works this way now
   overallCardProps: OverallCardProps //@BRU you probably want OverallCardItem[] instead of OverallCardProps here right ?
 
+  data: ProfileData
   state: ProfileState
   actions: ProfileActions
   access: ProfileAccess
@@ -55,11 +57,12 @@ export const Profile: FC<ProfileProps> = ({
   newCollectionHref,
   overallCardProps,
 
+  data,
   state,
   actions,
   access,
 }) => {
-  const { editProfile, sendMessage } = actions
+  const { editProfile, setAvatarImage, setBackgroundImage } = actions
   const { profileUrl } = state
   const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
@@ -74,6 +77,22 @@ export const Profile: FC<ProfileProps> = ({
     validationSchema: validationSchema,
     onSubmit: values => {
       return editProfile(values)
+    },
+  })
+
+  const avatarForm = useFormik<{ image: File | null }>({
+    initialValues: { image: null },
+    validationSchema: validationSchema,
+    onSubmit: values => {
+      return values.image ? setAvatarImage(values.image) : undefined
+    },
+  })
+
+  const backgroundForm = useFormik<{ image: File | null }>({
+    initialValues: { image: null },
+    validationSchema: validationSchema,
+    onSubmit: values => {
+      return values.image ? setBackgroundImage(values.image) : undefined
     },
   })
 
@@ -197,14 +216,18 @@ export const Profile: FC<ProfileProps> = ({
 
   const mainProfileCard = (
     <MainProfileCard
-      // editForm={editForm}
-      form={form}
+      key="main-profile-card"
       slots={mainProfileCardSlots}
+      data={data}
+      form={form}
+      avatarForm={avatarForm}
+      backgroundForm={backgroundForm}
       profileUrl={profileUrl}
       access={access}
+      actions={actions}
+      state={state}
       isEditing={isEditing}
       toggleIsEditing={toggleIsEditing}
-      sendMessage={sendMessage}
       // setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
       // setShowUrlCopiedAlert={setShowUrlCopiedAlert}
       // setIsReporting={setIsReporting}

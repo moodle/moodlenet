@@ -23,6 +23,7 @@ import { href } from '@moodlenet/react-app/common'
 import {
   ProfileAccess,
   ProfileActions,
+  ProfileData,
   profileFormValidationSchema,
   ProfileFormValues,
   ProfileState,
@@ -48,15 +49,27 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     footerItems: [],
   }
 
+  const data: ProfileData = {
+    userId: (Math.random() * 1000000).toString(),
+    username: person ? person.displayName : 'username',
+    avatarUrl: person && person.avatarUrl,
+    backgroundUrl: person && person.backgroundUrl,
+    profileHref: href('Page/Profile/Default'),
+  }
+
   const state: ProfileState = {
     profileUrl: 'https://moodle.net/profile',
-    // followed: false,
+
+    followed: false,
+    numFollowers: 13,
   }
 
   const actions: ProfileActions = {
     editProfile: action('editing profile'),
     sendMessage: action('send message'),
-    // toggleFollow: action('toggle follow'),
+    toggleFollow: action('toggle follow'),
+    setAvatarImage: action('set avatar image'),
+    setBackgroundImage: action('set background image'),
   }
 
   const access: ProfileAccess = {
@@ -64,6 +77,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     canEdit: false,
     isCreator: false,
     isAdmin: false,
+    canFollow: true,
   }
 
   const profileForm: ProfileFormValues = {
@@ -73,8 +87,6 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     organizationName: person && person.organization,
     location: person && person.location,
     siteUrl: 'https://iuri.is/',
-    avatarImage: person && person.avatarUrl,
-    backgroundImage: person && person.backgroundUrl,
   }
 
   return overrideDeep<ProfileProps>(
@@ -86,6 +98,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       profileForm: profileForm,
       state: state,
       actions: actions,
+      data: data,
       access: access,
       validationSchema: profileFormValidationSchema(maxUploadSize),
       resourceCardPropsList: getResourcesCardStoryProps(5, {

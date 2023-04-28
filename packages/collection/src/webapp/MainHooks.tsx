@@ -53,7 +53,8 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       async editData(res: CollectionFormProps) {
         edit(res)
       },
-      async setImage(file: File) {
+      async setImage(file: File | null | undefined) {
+        //@ETTO make sure this null // undefined is useful for deleting images
         setterSave('image', true)
         setImage(collectionKey, file).then(imageUrl => {
           updateImageUrl(imageUrl)
@@ -67,6 +68,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
           nav('/')
         })
       },
+      toggleFollow: () => alert('not implemented'), //@ETTO to implement
       publish: () => setIsPublished(collectionKey, true),
       unpublish: () => setIsPublished(collectionKey, false),
     }

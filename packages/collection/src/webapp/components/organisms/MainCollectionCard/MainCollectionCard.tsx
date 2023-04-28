@@ -20,6 +20,7 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
+import { useFormik } from 'formik'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CollectionAccessProps,
@@ -32,12 +33,12 @@ import { UploadImage } from '../UploadImage/UploadImage.js'
 import './MainCollectionCard.scss'
 
 export type MainCollectionCardSlots = {
-  mainColumnItems?: AddonItem[]
-  headerColumnItems?: AddonItem[]
-  topLeftHeaderItems?: AddonItem[]
-  topRightHeaderItems?: AddonItem[]
-  moreButtonItems?: FloatingMenuContentItem[]
-  footerRowItems?: AddonItem[]
+  mainColumnItems: (AddonItem | null)[]
+  headerColumnItems: (AddonItem | null)[]
+  topLeftHeaderItems: (AddonItem | null)[]
+  topRightHeaderItems: (AddonItem | null)[]
+  moreButtonItems: (FloatingMenuContentItem | null)[]
+  footerRowItems: (AddonItem | null)[]
 }
 
 export type MainCollectionCardProps = {
@@ -45,7 +46,6 @@ export type MainCollectionCardProps = {
 
   data: CollectionDataProps
   form: FormikHandle<CollectionFormProps>
-  imageForm: FormikHandle<{ image: File | null }>
 
   state: CollectionStateProps
   actions: CollectionActions
@@ -61,7 +61,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   data,
   form,
-  imageForm,
 
   state,
   actions,
@@ -80,45 +79,53 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     footerRowItems,
   } = slots
 
-  const {
-    collectionId,
-    mnUrl,
-    imageUrl,
-    isWaitingForApproval,
-    //  numFollowers,
-  } = data
+  const { collectionId, mnUrl, imageUrl, isWaitingForApproval } = data
 
   const {
     isPublished,
     // bookmarked,
-    // followed,
   } = state
 
   const {
     //  toggleBookmark,
-    //  toggleFollow,
     unpublish,
     deleteCollection,
+    setImage,
   } = actions
   const {
     canPublish,
     canDelete,
     canEdit,
-    //  canFollow,
     //  canBookmark,
     //  isCreator,
     //  isAuthenticated
   } = access
 
+  const imageForm = useFormik<{ image: File | string | null | undefined }>({
+    initialValues: { image: imageUrl },
+    onSubmit: values => {
+      return typeof values.image !== 'string' ? setImage(values.image) : undefined
+    },
+  })
+
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
+  const [updatedImage, setUpdatedImage] = useState<string | undefined>(imageUrl)
   const backupImage: string | undefined = useMemo(
     () => getBackupImage(collectionId),
     [collectionId],
   )
-  const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [image] = useImageUrl(imageUrl, backupImage)
-  // const { width } = useWindowDimensions()
+  const [imageFromForm] = useImageUrl(imageForm.values.image)
+  const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+
+  useEffect(() => {
+    setUpdatedImage(imageUrl)
+  }, [imageUrl])
+
+  useEffect(() => {
+    setUpdatedImage(imageFromForm)
+  }, [imageFromForm])
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)
@@ -194,28 +201,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     savingFeedback,
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
-
-  // const followersButton =
-  //   isPublished || numFollowers > 0 ? (
-  //     <TertiaryButton
-  //       className={`follow ${followed ? 'followed' : ''}`}
-  //       disabled={!canFollow}
-  //       onClick={canFollow ? toggleFollow : () => undefined}
-  //       abbr={
-  //         isCreator
-  //           ? 'Creators cannot follow their own content'
-  //           : !isAuthenticated
-  //           ? 'Login or signup to follow'
-  //           : followed
-  //           ? 'Unfollow'
-  //           : 'Follow'
-  //       }
-  //       key="followers-button"
-  //     >
-  //       {followed ? <Person /> : <PermIdentity />}
-  //       <span>{numFollowers}</span>
-  //     </TertiaryButton>
-  //   ) : null
 
   const empty = !form.values.title && !form.values.description && !imageForm.values.image
 
@@ -389,7 +374,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     publishedButton,
     unpublishedButton,
     publishingButton,
-    // followersButton,
     // bookmarkButtonBigScreen,
     ...(topRightHeaderItems ?? []),
     moreButton,
@@ -422,7 +406,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const collectionUploader = canEdit ? (
     <UploadImage
       imageForm={imageForm}
-      imageUrl={imageUrl}
+      imageUrl={updatedImage}
       imageOnClick={() => setIsShowingImage(true)}
       key="collection-uploader"
     />
@@ -516,42 +500,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  // const followButton = !isCreator ? (
-  //   followed ? (
-  //     <SecondaryButton
-  //       disabled={!canFollow}
-  //       onClick={toggleFollow}
-  //       className="following-button"
-  //       key="follow-button"
-  //       color="orange"
-  //     >
-  //       Following
-  //     </SecondaryButton>
-  //   ) : (
-  //     <PrimaryButton
-  //       disabled={!canFollow}
-  //       onClick={toggleFollow}
-  //       key="follow-button"
-  //       className="follow-button"
-  //       abbr={
-  //         isCreator
-  //           ? 'Creators cannot follow their own content'
-  //           : !isAuthenticated
-  //           ? 'Login or signup to follow'
-  //           : followed
-  //           ? 'Unfollow'
-  //           : 'Follow'
-  //       }
-  //     >
-  //       Follow
-  //     </PrimaryButton>
-  //   )
-  // ) : null
-
-  const updatedFooterRowItems = [
-    // followButton,
-    ...(footerRowItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  const updatedFooterRowItems = [...(footerRowItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
+  )
 
   const collectionFooter =
     updatedFooterRowItems.length > 0 ? (
@@ -592,7 +543,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
             // maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
           }}
         >
-          <img src={image} alt="Collection" />
+          <img src={updatedImage ?? image} alt="Collection" />
           {/* {getImageCredits(form.values.image)} */}
         </Modal>
       )}

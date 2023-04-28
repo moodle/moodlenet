@@ -89,6 +89,9 @@ export async function confirm({
   }
 
   const createNewWebUserResp = await shell.call(createWebUser)({
+    location: 'local', //@ETTO  to implement
+    organizationName: 'moodlenet', //@ETTO  to implement
+    siteUrl: 'instanceDomain', //@ETTO  to implement
     displayName: displayName,
     isAdmin: false,
     contacts: { email },
