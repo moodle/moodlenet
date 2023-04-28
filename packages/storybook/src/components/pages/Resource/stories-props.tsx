@@ -27,6 +27,7 @@ import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { useFormik } from 'formik'
+import { useState } from 'react'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -148,6 +149,8 @@ export const useResourceStoryProps = (
   //   mainResourceCardSlots?: Partial<MainResourceCardSlots>
   // }
 ): ResourceProps => {
+  const [filename, setFilename] = useState<string | null>('filename.pdf')
+
   const isAuthenticated = overrides?.isAuthenticated ?? true
 
   const resourceForm: ResourceFormProps = {
@@ -166,7 +169,7 @@ export const useResourceStoryProps = (
     // contentUrl: 'https://vimeo.com/204467192',
     imageUrl:
       'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-    downloadFilename: 'filename.pdf',
+    downloadFilename: filename,
     contentType: 'file',
     // contentType: 'link',
     ...overrides?.data,
@@ -179,12 +182,18 @@ export const useResourceStoryProps = (
     // bookmarked: false,
   }
 
+  const setContent = (e: File | string | undefined | null) => {
+    console.log('set content')
+    typeof e === 'string' ? setFilename(null) : e ? setFilename(e.name) : null
+    action('set content')(e)
+  }
+
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
     editData: action('editing resource submited'),
     publish: action('publish'),
     unpublish: action('unpublish'),
-    setContent: action('set content'),
+    setContent: setContent,
     setImage: action('set image'),
     // toggleLike: action('toggleLike'),
     // toggleBookmark: action('toggleBookmark'),
