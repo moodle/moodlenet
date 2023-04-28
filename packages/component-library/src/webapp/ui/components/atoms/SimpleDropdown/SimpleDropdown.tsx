@@ -1,6 +1,6 @@
 import { ArrowDropDown } from '@material-ui/icons'
 import { FC } from 'react'
-import FloatingMenu from '../FloatingMenu/FloatingMenu.js'
+import FloatingMenu, { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.js'
 import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
 import SecondaryButton from '../SecondaryButton/SecondaryButton.js'
 import './SimpleDropdown.scss'
@@ -28,16 +28,21 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
   const menuContent = list.map(e => {
     const isCurrent = selected.indexOf(e) > -1
     isCurrent && currentName.push(e)
-    return (
-      <div key={e} className="section" onClick={() => onClick(e)}>
-        <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
-          <div className={`border ${isCurrent ? 'selected' : ''}`} />
+    const floatingMenuContentItem: FloatingMenuContentItem = {
+      Component: () => (
+        <div onClick={() => onClick(e)}>
+          <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
+            <div className={`border ${isCurrent ? 'selected' : ''}`} />
+          </div>
+          <div className={`content ${isCurrent ? 'selected' : ''}`}>
+            <span>{e}</span>
+          </div>
         </div>
-        <div className={`content ${isCurrent ? 'selected' : ''}`}>
-          <span>{e}</span>
-        </div>
-      </div>
-    )
+      ),
+      key: e,
+      className: 'section',
+    }
+    return floatingMenuContentItem
   })
 
   const isInitialSelection = initialSelection && selected.indexOf(initialSelection) > -1

@@ -1,61 +1,35 @@
-import { FloatingMenu } from '@moodlenet/component-library'
-import { Href } from '@moodlenet/react-app/common'
-import { Link } from '@moodlenet/react-app/ui'
-import { FC, ReactNode } from 'react'
+import { FloatingMenu, FloatingMenuContentItem } from '@moodlenet/component-library'
+import { ComponentType, FC, useMemo } from 'react'
 import { ReactComponent as AddIcon } from '../../../assets/icons/add-round.svg'
 
-export type AddMenuItemRegItem = Omit<AddMenuItem, 'key'>
 export type AddMenuItem = {
-  Icon: ReactNode
-  text: string
-  key: string | number
-  path?: Href
+  Component: ComponentType
+  key: string
   className?: string
-  position?: number
-  onClick?: () => unknown
 }
 export type AddMenuProps = {
-  menuItems?: AddMenuItem[]
+  menuItems: AddMenuItem[]
 }
 
 export const AddMenu: FC<AddMenuProps> = ({ menuItems }) => {
-  const addMenuItems: AddMenuItem[] = [
-    // harcoded menu items
-  ]
+  const menuContent = useMemo(() => {
+    return menuItems.map(({ Component, key, className = '' }) => {
+      const floatingMenuContentItem: FloatingMenuContentItem = {
+        Component,
+        key,
+        className: `add-menu-item ${className}`,
+      }
+      // reoderedmenuItems.map((menuItem, i) => {
+      return floatingMenuContentItem
+    })
+  }, [menuItems])
 
-  const updatedMenuItems = addMenuItems.concat(menuItems ?? [])
-
-  return updatedMenuItems.length > 0 ? (
+  return menuItems.length ? (
     <FloatingMenu
       className="add-menu"
       key="add-menu"
       abbr="Add content"
-      menuContent={updatedMenuItems.map(menuItem => {
-        // reoderedmenuItems.map((menuItem, i) => {
-        return menuItem.path ? (
-          <Link
-            key={menuItem.key}
-            className={`add-menu-item ${menuItem.className}`}
-            href={menuItem.path}
-          >
-            <>
-              {menuItem.Icon}
-              {menuItem.text}
-            </>
-          </Link>
-        ) : (
-          <div
-            key={menuItem.key}
-            className={`add-menu-item ${menuItem.className}`}
-            onClick={menuItem.onClick}
-          >
-            <>
-              {menuItem.Icon}
-              {menuItem.text}
-            </>
-          </div>
-        )
-      })}
+      menuContent={menuContent}
       hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
     />
   ) : null

@@ -87,10 +87,10 @@ export const useProfileProps = ({
       },
       actions: {
         editProfile,
-        sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
         toggleFollow: () => alert('Needs to be implemented'), //@ETTO Needs to be implemented
         setAvatar: (_file: File | undefined | null) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
         setBackground: (_file: File | undefined | null) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
+        sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented use me.rpc.$_DEV_$_TO_IMPLEMENT
       },
       mainProfileCardSlots: {
         mainColumnItems: [],

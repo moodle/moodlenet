@@ -520,10 +520,16 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     <FloatingMenu
       key="more-button-menu"
       menuContent={[
-        <div key="share-button" tabIndex={0} onClick={copyUrl}>
-          <Share />
-          Share
-        </div>,
+        {
+          key: 'share-button',
+          Component: () => (
+            <div tabIndex={0} onClick={copyUrl}>
+              <Share />
+              Share
+            </div>
+          ),
+        },
+
         // !isCreator && <div tabIndex={0} onClick={() => setIsReporting(true)}>
         //   <FlagIcon />
         //   Report

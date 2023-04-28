@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useLocation, useNavigate } from 'react-router-dom'
 import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
 import { WebUserProfile } from '../../server/types.mjs'
+import { AvatarMenuItem } from '../exports/ui.mjs'
 import { GuestMainRegistries, MainRegistries } from '../registries.mjs'
 import defaultAvatarUrl from '../ui/assets/img/default-avatar.svg'
 import rootAvatarUrl from '../ui/assets/img/root-avatar.png'
@@ -26,6 +27,7 @@ export type ClientSessionData = {
       myProfile: WebUserProfile
     }
 )
+export type AvatarMenuItemRegItem = Omit<AvatarMenuItem, 'key'>
 export type LoginEntryItem = Omit<LoginItem, 'key'>
 export type SignupEntryItem = Omit<SignupItem, 'key'>
 export type AuthCtxT = {

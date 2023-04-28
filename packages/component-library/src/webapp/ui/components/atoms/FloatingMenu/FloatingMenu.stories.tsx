@@ -22,16 +22,21 @@ const meta: ComponentMeta<typeof FloatingMenu> = {
 export const FloatingMenuStoryProps: FloatingMenuProps = {
   hoverElement: <img className="add-icon" src={addIcon} alt="Add" />,
   menuContent: [
-    <div>
-      <div>
-        <NoteAddIcon />
-        New Resource
-      </div>
-      <div>
-        <LibraryAddIcon />
-        New Collection
-      </div>
-    </div>,
+    {
+      Component: () => (
+        <div>
+          <div>
+            <NoteAddIcon />
+            New Resource
+          </div>
+          <div>
+            <LibraryAddIcon />
+            New Collection
+          </div>
+        </div>
+      ),
+      key: '__',
+    },
   ],
 }
 
