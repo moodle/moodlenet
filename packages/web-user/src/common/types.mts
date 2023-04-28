@@ -1,16 +1,16 @@
-import { Href } from '@moodlenet/component-library'
+import { Href } from '@moodlenet/react-app/common'
 import { WebUserProfile } from '../server/types.mjs'
 
 export type User = {
   title: string
-  email?: string
+  email: string
   isAdmin: boolean
 }
 
 export type WebUserData = {
   _key: string
   name: string
-  email?: string
+  email: string
   isAdmin: boolean
 }
 
@@ -32,33 +32,32 @@ export type ClientSessionDataRpc =
 
 export type ProfileData = {
   userId: string
-  backgroundUrl: string | null
-  avatarUrl: string | null
-  displayName: string
+  backgroundUrl: string | null | undefined
+  avatarUrl: string | null | undefined
   username: string
-  organizationName: string
   profileHref: Href
 }
 
 export type ProfileFormValues = {
   displayName: string
   aboutMe: string
-  organizationName?: string
-  location?: string
-  siteUrl?: string
-  backgroundImage?: string | File | null
-  avatarImage?: string | File | null
+  organizationName: string | undefined
+  location: string | undefined
+  siteUrl: string | undefined
 }
 
 export type ProfileState = {
   profileUrl: string
-  // followed: boolean
+  followed: boolean
+  numFollowers: number
 }
 
 export type ProfileActions = {
-  // toggleFollow(): unknown
-  editProfile(values: ProfileFormValues): void | Promise<void>
-  sendMessage(msg: string): void | Promise<void>
+  toggleFollow(): void
+  editProfile(values: ProfileFormValues): void
+  sendMessage(msg: string): void
+  setAvatarImage(file: File): void
+  setBackgroundImage: (file: File) => void
 }
 
 export type ProfileAccess = {
@@ -66,4 +65,5 @@ export type ProfileAccess = {
   isAuthenticated: boolean
   isAdmin: boolean
   canEdit: boolean
+  canFollow: boolean
 }

@@ -88,9 +88,9 @@ export type ResourceActions = {
   publish: () => void
   unpublish: () => void
   editData: (values: ResourceFormProps) => void
-  setImage: (file: File) => Promise<string>
+  setImage: (file: File) => void
   setContent: (content: File | string) => void
-  deleteResource(): Promise<void>
+  deleteResource(): void
   // toggleLike(): unknown// toggleBookmark(): unknown
 }
 
