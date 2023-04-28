@@ -122,7 +122,8 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const messageForm = useFormik<{ msg: string }>({
     initialValues: { msg: '' },
     validationSchema: messageFormValidationSchema,
-    onSubmit: values => {
+    onSubmit: (values, { resetForm }) => {
+      resetForm()
       return sendMessage(values.msg)
     },
   })
@@ -421,6 +422,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           <InputTextField
             isTextarea={true}
             name="msg"
+            onChange={messageForm.handleChange}
             error={shouldShowMessageErrors && messageForm.errors.msg}
           />
         </Modal>
