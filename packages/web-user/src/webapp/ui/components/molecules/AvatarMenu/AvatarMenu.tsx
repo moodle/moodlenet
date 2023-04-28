@@ -75,7 +75,8 @@ const IconContainer: FC = () => {
   if (!clientSessionData?.myProfile) {
     return <></>
   }
-  const iconUrl = '' // TODO //@ETTO: should use avatarUrl from clientSessionData?.myProfile
+
+  const iconUrl = clientSessionData?.userDisplay.avatarUrl
   return <HeaderProfileIcon icon={iconUrl}></HeaderProfileIcon>
 }
 
