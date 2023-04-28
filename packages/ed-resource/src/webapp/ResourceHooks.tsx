@@ -41,12 +41,12 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     [],
   )
   const actions = useMemo<ResourceActions>(() => {
-    // const setterSave = (key: keyof SaveState, val: boolean) => setSaved({ ...saved, [key]: val })
     const { edit: editRpc, setImage: _setImage, setIsPublished, setContent, _delete } = rpcCaller
 
     const edit = debounce((res: ResourceFormProps) => {
       setterSave('form', true)
       editRpc(resourceKey, res).then(() => {
+        console.log('form xxx', res)
         setterSave('form', false)
       })
     }, 1000)
@@ -65,9 +65,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     }
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
-        setterSave('form', true)
         edit(res) // .then(form => updateResource('form', 'resourceForm', form)),
-        setterSave('form', false)
       },
       async setImage(file: File) {
         setterSave('image', true)
@@ -87,7 +85,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       deleteResource: () => {
         setIsToDelete(true)
         return _delete(resourceKey).then(() => {
-          setIsToDelete(true)
+          setIsToDelete(false)
           nav('/')
         })
       },
