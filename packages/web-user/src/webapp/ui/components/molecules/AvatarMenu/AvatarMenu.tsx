@@ -1,114 +1,76 @@
-import { FloatingMenu } from '@moodlenet/component-library'
-import { Href, href } from '@moodlenet/react-app/common'
-import { HeaderMenuItemRegItem, Link } from '@moodlenet/react-app/ui'
-import { ExitToApp } from '@mui/icons-material'
-import { FC, ReactElement, ReactNode, useContext } from 'react'
-import { AuthCtx } from '../../../../context/AuthContext.js'
+import { FloatingMenu, FloatingMenuContentItem } from '@moodlenet/component-library'
+import { ComponentType, FC, useMemo } from 'react'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 
-export type AvatarMenuItemRegItem = Omit<AvatarMenuItem, 'key'>
 export type AvatarMenuItem = {
-  Icon: ReactNode
-  text: string
-  key: string | number
-  path?: Href
+  Component: ComponentType
+  key: string
   className?: string
-  position?: number
-  onClick?: () => unknown
 }
 export type AvatarMenuProps = {
   menuItems: AvatarMenuItem[]
   avatarUrl: string | undefined
+  // settingsHref: Href | null
+  // signout(): void
+  // profileHref: Href
 }
 
-export const AvatarMenu: FC<AvatarMenuProps> = ({ menuItems, avatarUrl }) => {
-  const avatarImageUrl = avatarUrl ?? defaultAvatar
+export const AvatarMenu: FC<AvatarMenuProps> = ({
+  menuItems,
+  avatarUrl = defaultAvatar,
+  // profileHref,
+  // settingsHref,
+  // signout,
+}) => {
+  const avatar = useMemo(
+    () => ({
+      backgroundImage: `url(${avatarUrl})`,
+      // backgroundImage: 'url(' + defaultAvatar + ')',
+      // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
+      backgroundSize: 'cover',
+    }),
+    [avatarUrl],
+  )
+  // const allMenuItems = useMemo(() => {
+  //   const settingsLinkAvatarMenuItem: AvatarMenuItem | null = settingsHref && {
+  //     Component: () => <SettingsLinkComponent settingsHref={settingsHref} />,
+  //     key: 'settings',
+  //   }
+  //   const profileLinkAvatarMenuItem: AvatarMenuItem = {
+  //     Component: () => (
+  //       <ProfileLinkAvatarMenuComponent avatarUrl={avatarUrl} profileHref={profileHref} />
+  //     ),
+  //     key: 'profile',
+  //   }
+  //   const signoutAvatarMenuItem: AvatarMenuItem = {
+  //     Component: () => <SignoutAvatarMenuComponent signout={signout} />,
+  //     key: 'signout',
+  //   }
+  //   return [
+  //     profileLinkAvatarMenuItem,
+  //     ...menuItems,
+  //     ...(settingsLinkAvatarMenuItem ? [settingsLinkAvatarMenuItem] : []),
+  //     signoutAvatarMenuItem,
+  //   ]
+  // }, [avatarUrl, menuItems, profileHref, settingsHref, signout])
+  const menuContent = useMemo(() => {
+    return menuItems.map(({ Component, key, className = '' }) => {
+      const floatingMenuContentItem: FloatingMenuContentItem = {
+        Component,
+        key,
+        className: `avatar-menu-item ${className}`,
+      }
+      return floatingMenuContentItem
+    })
+  }, [menuItems])
 
-  const avatar = {
-    backgroundImage: `url(${avatarImageUrl})`,
-    // backgroundImage: 'url(' + defaultAvatar + ')',
-    // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
-    backgroundSize: 'cover',
-  }
-
-  return menuItems.length > 0 ? (
+  return menuItems.length ? (
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menurt"
       abbr="User menu"
-      menuContent={(menuItems ?? []).map(menuItem => {
-        // reoderedmenuItems.map((menuItem, i) => {
-        return menuItem.path ? (
-          <Link
-            key={menuItem.key}
-            className={`avatar-menu-item ${menuItem.className}`}
-            href={menuItem.path}
-          >
-            <>
-              {menuItem.Icon}
-              {menuItem.text}
-            </>
-          </Link>
-        ) : (
-          <div
-            key={menuItem.key}
-            className={`avatar-menu-item ${menuItem.className}`}
-            onClick={menuItem.onClick}
-          >
-            <>
-              {menuItem.Icon}
-              {menuItem.text}
-            </>
-          </div>
-        )
-      })}
+      menuContent={menuContent}
       hoverElement={<div style={avatar} className="avatar" />}
     />
   ) : null
-}
-
-type IconType = {
-  icon: string | ReactElement
-}
-const IconContainer: FC = () => {
-  const { clientSessionData } = useContext(AuthCtx)
-  if (!clientSessionData?.myProfile) {
-    return <></>
-  }
-
-  const iconUrl = clientSessionData?.userDisplay.avatarUrl
-  return <HeaderProfileIcon icon={iconUrl}></HeaderProfileIcon>
-}
-
-export const HeaderProfileIcon: FC<IconType> = ({ icon }: IconType) => {
-  return !icon ? (
-    <></>
-  ) : typeof icon === 'string' ? (
-    <div
-      style={{
-        backgroundImage: 'url("' + icon + '")',
-        // backgroundImage: 'url(' + clientSessionData.userDisplay.avatarUrl + ')',
-        backgroundSize: 'cover',
-      }}
-      className="avatar"
-    />
-  ) : (
-    icon
-  )
-}
-
-export const profileAvatarmenuItemReg: HeaderMenuItemRegItem = {
-  Icon: <IconContainer />,
-  Path: href('/my-profile'),
-  Text: 'Profile',
-  ClassName: 'profile',
-  // Position: position,
-}
-
-export const signoutAvatarmenuItemReg: HeaderMenuItemRegItem = {
-  Icon: <ExitToApp />,
-  Path: href('/signout'),
-  Text: 'Sign out',
-  ClassName: 'signout',
-  // Position: position,
 }

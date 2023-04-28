@@ -313,10 +313,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {
+        Component: () => (
+          <div onClick={copyUrl}>
+            <Share /> Share
+          </div>
+        ),
         key: 'share-button',
-        onClick: copyUrl,
-        text: 'Share',
-        Icon: <Share />,
       }
     : null
 
@@ -324,31 +326,40 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     canDelete && !empty
       ? {
           key: 'delete-button',
-          onClick: () => setIsToDelete(true),
-          text: 'Delete',
-          Icon: <Delete />,
+          Component: () => (
+            <div onClick={() => setIsToDelete(true)}>
+              <Delete /> Delete,
+            </div>
+          ),
         }
       : null
 
-  const publishButton =
+  const publishButton: FloatingMenuContentItem | null =
     canPublish && !isPublished && !isWaitingForApproval
       ? {
-          text: 'Publish',
-          onClick: publish,
+          Component: () => (
+            <div onClick={publish}>
+              <Public style={{ fill: '#00bd7e' }} />
+              Publish
+            </div>
+          ),
+
           className: 'publish-button',
           key: 'publish-button',
-          Icon: <Public style={{ fill: '#00bd7e' }} />,
         }
       : null
 
   const unpublishButton: FloatingMenuContentItem | null =
     canPublish && (isPublished || isWaitingForApproval)
       ? {
-          text: 'Unpublish',
-          onClick: unpublish,
+          Component: () => (
+            <div onClick={unpublish}>
+              <PublicOff />
+              Unpublish
+            </div>
+          ),
           className: 'unpublish-button',
           key: 'unpublish-button',
-          Icon: <PublicOff />,
         }
       : null
 
@@ -402,11 +413,21 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const openLinkOrDownloadFile: FloatingMenuContentItem | null =
     width < 800 && contentUrl
       ? {
-          Icon: contentType === 'file' ? <InsertDriveFile /> : <LinkIcon />,
-
-          text: contentType === 'file' ? 'Download' : 'Open link',
+          Component:
+            contentType === 'file'
+              ? () => (
+                  <div onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
+                    <InsertDriveFile />
+                    Download
+                  </div>
+                )
+              : () => (
+                  <div onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
+                    <LinkIcon />
+                    Open link
+                  </div>
+                ),
           key: 'open-link-or-download-file-button',
-          onClick: () => downloadOrOpenURL(contentUrl, downloadFilename),
         }
       : null
 
@@ -441,12 +462,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       <FloatingMenu
         className="more-button"
         key="more-button"
-        menuContent={updatedMoreButtonItems.map(i => (
-          <div key={i.key} onClick={i.onClick} tabIndex={0} className={i.className ?? i.key}>
-            {i.Icon}
-            {i.text}
-          </div>
-        ))}
+        menuContent={updatedMoreButtonItems}
         hoverElement={
           <TertiaryButton className={`more`} abbr="More options">
             <MoreVert />

@@ -226,9 +226,12 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {
         key: 'share-button',
-        onClick: copyUrl,
-        text: 'Share',
-        Icon: <Share />,
+        Component: () => (
+          <div onClick={copyUrl}>
+            <Share />
+            Share
+          </div>
+        ),
       }
     : null
 
@@ -236,29 +239,38 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     !empty && canDelete
       ? {
           key: 'delete-button',
-          onClick: () => setIsToDelete(true),
-          text: 'Delete',
-          Icon: <Delete />,
+          Component: () => (
+            <div onClick={() => setIsToDelete(true)}>
+              <Delete />
+              Delete
+            </div>
+          ),
         }
       : null
 
   const unpublishButton: FloatingMenuContentItem | null =
     canPublish && (isPublished || isWaitingForApproval)
       ? {
-          Icon: <PublicOff />,
-          text: 'Unpublish',
+          Component: () => (
+            <div onClick={unpublish}>
+              <PublicOff />
+              Unpublish
+            </div>
+          ),
           key: 'unpublish-button',
-          onClick: unpublish,
         }
       : null
 
   const publishButton: FloatingMenuContentItem | null =
     canPublish && !isPublished && !isWaitingForApproval
       ? {
-          Icon: <Public style={{ fill: '#00bd7e' }} />,
-          text: 'Publish',
+          Component: () => (
+            <div onClick={publish}>
+              <Public style={{ fill: '#00bd7e' }} />
+              Publish
+            </div>
+          ),
           key: 'publish-button',
-          onClick: publish,
         }
       : null
 
@@ -346,18 +358,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       <FloatingMenu
         className="more-button"
         key="more-button"
-        menuContent={
-          updatedMoreButtonItems.map(i => (
-            <div key={i.key} onClick={i.onClick} tabIndex={0}>
-              {i.Icon}
-              {i.text}
-            </div>
-          ))
-          // <div tabIndex={0} onClick={() => setIsReporting(true)}>
-          //   <Flag />
-          //   <Trans>Report</Trans>
-          // </div>,
-        }
+        menuContent={updatedMoreButtonItems}
         hoverElement={
           <TertiaryButton className={`more`} abbr="More options">
             <MoreVert />

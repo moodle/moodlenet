@@ -1,17 +1,15 @@
-import React, { FC, KeyboardEvent, ReactElement, useRef, useState } from 'react'
+import React, { ComponentType, FC, KeyboardEvent, useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
 
 export type FloatingMenuContentItem = {
-  Icon: ReactElement
-  text: string
+  Component: ComponentType
   key: string
-  onClick?(): unknown
   className?: string
 }
 
 export type FloatingMenuProps = {
-  menuContent: React.ReactElement[] | React.ReactElement
+  menuContent: FloatingMenuContentItem[]
   hoverElement: React.ReactNode
   abbr?: string
   hover?: boolean
@@ -57,39 +55,34 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }
 
   const updatedMenuContent = Array.isArray(menuContent)
-    ? menuContent.map((element, i) => {
+    ? menuContent.map(({ Component, key, className }, i) => {
         if (menuContent.length === 1) {
           return (
             <div
-              className={`${element.key}`}
-              key={element.key}
+              className={`${className}`}
+              key={key}
               tabIndex={i + 1}
               onKeyDown={oneElementActions}
             >
-              {element}
+              <Component />
             </div>
           )
         } else if (i === 0) {
           return (
-            <div
-              className={`${element.key}`}
-              key={element.key}
-              tabIndex={i + 1}
-              onKeyDown={closeMenuUp}
-            >
-              {element}
+            <div className={`${className}`} key={key} tabIndex={i + 1} onKeyDown={closeMenuUp}>
+              <Component />
             </div>
           )
         } else if (menuContent.length - 1 === i) {
           return (
-            <div className={`last element ${element.key}`} key={element.key} tabIndex={i + 1}>
-              {element}
+            <div className={`last element ${className}`} key={key} tabIndex={i + 1}>
+              <Component />
             </div>
           )
         } else {
           return (
-            <div className={`${element.key}`} key={element.key} tabIndex={i + 1}>
-              {element}
+            <div className={`${className}`} key={key} tabIndex={i + 1}>
+              <Component />
             </div>
           )
         }
