@@ -67,7 +67,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   return menuItems.length ? (
     <FloatingMenu
       className="avatar-menu"
-      key="avatar-menurt"
+      key="avatar-menu"
       abbr="User menu"
       menuContent={menuContent}
       hoverElement={<div style={avatar} className="avatar" />}

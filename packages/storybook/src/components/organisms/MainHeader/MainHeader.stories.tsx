@@ -54,7 +54,7 @@ const AddMenuItem: AddonItem = {
       ]}
     />
   ),
-  key: 'avatar-menu-main-header',
+  key: 'add-menu',
 }
 
 const getRightItemsHeader = (isAuthenticated: boolean): AddonItem[] => {
