@@ -41,7 +41,10 @@ export type ResourceDataRpc = {
 
 export type ResourceStateRpc = {
   isPublished: boolean
-  uploadProgress?: number // liked: boolean // bookmarked: boolean
+  liked: boolean
+  numLikes: number
+  uploadProgress?: number
+  // bookmarked: boolean
 }
 
 export type ResourceContributorRpc = {
@@ -82,7 +85,7 @@ export type RpcCaller = {
   setContent: (resourceKey: string, file: File | string | undefined | null) => Promise<string>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
   create: () => Promise<{ _key: string }>
-  // toggleBooÇkmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
+  // toggleBookmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
 }
 export type ResourceActions = {
   publish: () => void
@@ -91,7 +94,7 @@ export type ResourceActions = {
   setImage: (file: File | undefined | null) => void
   setContent: (content: File | string | undefined | null) => void
   deleteResource(): void
-  // toggleLike(): unknown// toggleBookmark(): unknown
+  toggleLike(): void // toggleBookmark(): unknown
 }
 
 export type ResourceAccessRpc = {
@@ -99,11 +102,13 @@ export type ResourceAccessRpc = {
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
-  // canLike: boolean // canBookmark: boolean
+  canLike: boolean
+  isAuthenticated: boolean
+  // canBookmark: boolean
 }
 
 export type ResourceCardDataRpc = {
-  // tags?: FollowTag[]  // numLikes: number
+  // tags?: FollowTag[]
   owner: {
     displayName: string
     avatar: string | null
@@ -124,16 +129,16 @@ export type ResourceCardDataRpc = {
 export type ResourceCardState = {
   isSelected: boolean
   selectionMode: boolean // When selection resources to be added to a collection
-  // liked: boolean
   // bookmarked: boolean
-} & Pick<ResourceStateProps, 'isPublished'>
+} & Pick<ResourceStateProps, 'isPublished' | 'liked' | 'numLikes'>
 
-export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
+export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish' | 'toggleLike'>
 
 export type ResourceCardAccess = Pick<
   ResourceAccessProps,
-  'canPublish' | 'canDelete' // | 'isAuthenticated' | 'canLike' | //  'canBookmark' |
-> //   isCreator: boolean //   canEdit: boolean
+  'canPublish' | 'canDelete' | 'canLike' | 'isCreator' | 'isAuthenticated'
+>
+//   'canBookmark'    canEdit: boolean
 
 export type Organization = {
   name: string

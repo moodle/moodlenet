@@ -1,7 +1,6 @@
 import { getRandomSortedArrayElements } from '@moodlenet/component-library'
+import { ResourceCardProps, resourcesCardFactory } from '@moodlenet/ed-resource/ui'
 import { PartialDeep } from 'type-fest'
-import { resourcesCardFactory } from '../../../helpers/factories.js'
-import { ResourceCardProps } from './ResourceCard.js'
 import { getResourceCardStoryProps } from './ResourceCard.stories.js'
 
 export const getResourcesCardStoryProps = (

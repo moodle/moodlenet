@@ -30,7 +30,7 @@ export const FollowButton: FC<FollowButtonProps> = ({
     </SecondaryButton>
   ) : (
     <PrimaryButton
-      disabled={!canFollow || !isAuthenticated}
+      disabled={!canFollow || !isAuthenticated || isCreator}
       onClick={toggleFollow}
       key="follow-button"
       className="follow-button"
