@@ -1,16 +1,17 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { href } from '@moodlenet/react-app/common'
-import { ContentBackupImages } from '@moodlenet/react-app/ui'
-import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { PartialDeep } from 'type-fest'
 import {
   ResourceCardAccess,
   ResourceCardActions,
   ResourceCardDataProps,
   ResourceCardState,
-} from '../../../../common/types.mjs'
-import ResourceCard, { ResourceCardProps } from './ResourceCard.js'
+} from '@moodlenet/ed-resource/common'
+import { ResourceCard, ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { href } from '@moodlenet/react-app/common'
+import { ContentBackupImages } from '@moodlenet/react-app/ui'
+import { LikeButton } from '@moodlenet/web-user/ui'
+import { action } from '@storybook/addon-actions'
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { PartialDeep } from 'type-fest'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
   title: 'Molecules/ResourceCard',
@@ -69,37 +70,70 @@ export const getResourceCardStoryProps = (
     isPublished: true,
     isSelected: false,
     selectionMode: false,
+    liked: false,
+    numLikes: 12,
+    ...overrides?.state,
     // bookmarked: false,
-    // liked: false,
   }
   const actions: ResourceCardActions = {
-    // toggleLike: action('toggle like'),
-    // toggleBookmark: action('toggle bookmark'),
+    toggleLike: action('toggle like'),
     publish: () => {
       action('publish resource')
     },
     unpublish: () => {
       action('unpublish resource')
     },
-  }
-  const access: ResourceCardAccess = {
-    // canLike: true,
-    // canBookmark: true,
-    // isCreator: false,
-    canDelete: false,
-    canPublish: false,
+    // toggleBookmark: action('toggle bookmark'),
   }
 
-  // if (overrides?.data?.resourceId) {
-  //   overrides.data.resourceId = id
-  // }
+  const access: ResourceCardAccess = {
+    isAuthenticated: true,
+    canLike: true,
+    isCreator: false,
+    canDelete: false,
+    canPublish: false,
+    // canBookmark: true,
+    ...overrides?.access,
+  }
+
+  const isPublished =
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
+
+  const slots: Pick<
+    ResourceCardProps,
+    'bottomLeftItems' | 'bottomRightItems' | 'mainColumnItems' | 'topLeftItems' | 'topRightItems'
+  > = {
+    topLeftItems: [],
+    topRightItems: [],
+    mainColumnItems: [],
+    bottomLeftItems: [],
+    bottomRightItems: [
+      isPublished
+        ? {
+            Item: () => (
+              <LikeButton
+                canLike={access.canLike}
+                liked={state.liked}
+                isAuthenticated={access.isAuthenticated}
+                isCreator={access.isCreator}
+                toggleLike={actions.toggleLike}
+                numLikes={state.numLikes}
+              />
+            ),
+            key: 'like-button',
+          }
+        : null,
+    ],
+  }
 
   const newResource = overrideDeep<ResourceCardProps>(
     {
+      ...slots,
       data,
       state,
       actions,
       access,
+
       onRemoveClick: () => action('remove resource'),
     },
     overrides,

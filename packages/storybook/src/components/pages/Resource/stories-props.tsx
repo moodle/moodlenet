@@ -27,6 +27,7 @@ import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
+import { LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import {
@@ -174,12 +175,12 @@ export const useResourceStoryProps = (
     contentType: 'file',
     // contentType: 'link',
     ...overrides?.data,
-    // numLikes: 23,
   }
 
   const state: ResourceStateProps = {
     isPublished: true,
-    // liked: false,
+    liked: true,
+    numLikes: 23,
     // bookmarked: false,
   }
 
@@ -196,7 +197,7 @@ export const useResourceStoryProps = (
     unpublish: action('unpublish'),
     setContent: setContent,
     setImage: action('set image'),
-    // toggleLike: action('toggleLike'),
+    toggleLike: action('toggleLike'),
     // toggleBookmark: action('toggleBookmark'),
     ...overrides?.actions,
   }
@@ -206,14 +207,36 @@ export const useResourceStoryProps = (
     isCreator: false,
     canDelete: false,
     canPublish: false,
+    canLike: true,
+    isAuthenticated: true,
     ...overrides?.access,
   }
+
+  const isPublished =
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
   const mainResourceCardSlots: MainResourceCardSlots = {
     mainColumnItems: [],
     headerColumnItems: [],
     topLeftHeaderItems: [],
-    topRightHeaderItems: [],
+    topRightHeaderItems: [
+      isPublished
+        ? {
+            Item: () => (
+              <LikeButton
+                canLike={access.canLike}
+                liked={state.liked}
+                isAuthenticated={access.isAuthenticated}
+                isCreator={access.isCreator}
+                toggleLike={actions.toggleLike}
+                numLikes={state.numLikes}
+              />
+            ),
+
+            key: 'like-button',
+          }
+        : null,
+    ],
     moreButtonItems: [],
     footerRowItems: [],
   }

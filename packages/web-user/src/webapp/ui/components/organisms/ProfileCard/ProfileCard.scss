@@ -7,6 +7,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  padding-bottom: 13px;
 
   > .profile-card-content {
     width: 100%;
@@ -36,7 +37,7 @@
 
     > .info {
       width: 100%;
-      padding: 7px 15px 15px 15px;
+      padding: 8px 15px 15px;
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -104,15 +105,6 @@
         line-height: 20px;
       }
 
-      > .buttons {
-        width: 100%;
-
-        > * {
-          height: 32px;
-          width: 100%;
-        }
-      }
-
       > .overall-card {
         height: fit-content;
 
@@ -124,6 +116,16 @@
           font: 10px;
         }
       }
+    }
+  }
+
+  > .bottom-touch {
+    padding: 0 15px;
+    width: 100%;
+
+    > * {
+      height: 32px;
+      width: 100%;
     }
   }
 }
