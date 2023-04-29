@@ -5,11 +5,12 @@ import { ProfileCardData } from '../../../../../common/profile/type.mjs'
 import { ProfileAccess, ProfileActions, ProfileState } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
+import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {
-  mainColumnItems?: AddonItem[]
-  bottomTouchColumnItems?: AddonItem[]
+  mainColumnItems: (AddonItem | null)[]
+  bottomTouchColumnItems: (AddonItem | null)[]
   overallCardProps: OverallCardProps
 
   data: ProfileCardData
@@ -20,11 +21,12 @@ export type ProfileCardProps = {
 
 export const ProfileCard: FC<ProfileCardProps> = ({
   mainColumnItems,
+  bottomTouchColumnItems,
   overallCardProps,
 
   data,
-  // state,
-  // actions,
+  state,
+  actions,
   access,
 }) => {
   const {
@@ -37,10 +39,10 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   } = data
   // const { followed } = state
   // const { toggleFollow } = actions
-  const {
-    isCreator,
-    // isAuthenticated
-  } = access
+  const { isCreator, canFollow, isAuthenticated } = access
+
+  const { toggleFollow } = actions
+  const { followed } = state
 
   const header = (
     <div className="profile-card-header" key="header">
@@ -59,23 +61,22 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     <OverallCard noCard={true} showIcons={true} {...overallCardProps} key="overall-card" />
   )
 
-  const buttons = (
-    <div className="buttons" key="buttons">
-      {/* {!isCreator && followed && (
-        <SecondaryButton onClick={toggleFollow} color="orange">
-          Following
-        </SecondaryButton>
-      )}
-      {!isCreator && !followed && (
-        <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow} className="follow">
-          Follow
-        </PrimaryButton>
-      )} */}
-      {isCreator && <div className="empty" />}
-    </div>
+  const followButton = (
+    <FollowButton
+      canFollow={canFollow}
+      followed={followed}
+      isAuthenticated={isAuthenticated}
+      isCreator={isCreator}
+      toggleFollow={toggleFollow}
+      key="follow-button"
+    />
   )
 
-  const updatedMainColumnItems = [header, overallCard, buttons, ...(mainColumnItems ?? [])].filter(
+  const updatedMainColumnItems = [header, overallCard, ...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
+
+  const updatedBottomTouchColumnItems = [followButton, ...(bottomTouchColumnItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
@@ -93,6 +94,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
       </Link>
+      <div className="bottom-touch">
+        {updatedBottomTouchColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
     </Card>
   )
 }

@@ -69,7 +69,7 @@
         cursor: pointer;
       }
 
-      > .tertiary-button {
+      > .tertiary-button:not(.no-style) {
         display: flex;
         cursor: pointer;
         color: white;

@@ -13,14 +13,16 @@ export const ProfileLinkAvatarMenuComponent: FC<{
   avatarUrl: string | undefined
 }> = ({ profileHref, avatarUrl = defaultAvatar }) => {
   return (
-    <Link
-      href={profileHref}
-      style={{
-        backgroundImage: 'url("' + avatarUrl + '")',
-        backgroundSize: 'cover',
-      }}
-      className="avatar"
-    >
+    <Link href={profileHref} className="avatar">
+      <div
+        style={{
+          backgroundImage: 'url("' + avatarUrl + '")',
+          backgroundSize: 'cover',
+          borderRadius: '50%',
+          height: '28px',
+          width: '28px',
+        }}
+      />
       Profile
     </Link>
   )

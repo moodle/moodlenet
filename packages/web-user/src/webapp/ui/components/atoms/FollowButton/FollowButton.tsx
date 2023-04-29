@@ -2,6 +2,7 @@ import { PermIdentity } from '@material-ui/icons'
 import { PrimaryButton, SecondaryButton, TertiaryButton } from '@moodlenet/component-library'
 import { Person } from '@mui/icons-material'
 import { FC } from 'react'
+import './FollowButton.scss'
 
 export type FollowButtonProps = {
   followed: boolean
@@ -18,7 +19,7 @@ export const FollowButton: FC<FollowButtonProps> = ({
   isAuthenticated,
   toggleFollow,
 }) => {
-  return followed ? (
+  return followed && !isCreator ? (
     <SecondaryButton
       disabled={!canFollow}
       onClick={toggleFollow}
@@ -59,7 +60,7 @@ export const SmallFollowButton: FC<FollowButtonProps & { numFollowers: number }>
 }) => {
   return (
     <TertiaryButton
-      className={`follow ${followed ? 'followed' : ''}`}
+      className={`small-follow-button ${followed ? 'followed' : ''} no-style`}
       disabled={!canFollow || isCreator}
       onClick={canFollow ? toggleFollow : () => undefined}
       abbr={

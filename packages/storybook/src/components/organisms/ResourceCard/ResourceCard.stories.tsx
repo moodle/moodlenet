@@ -72,6 +72,7 @@ export const getResourceCardStoryProps = (
     selectionMode: false,
     liked: false,
     numLikes: 12,
+    ...overrides?.state,
     // bookmarked: false,
   }
   const actions: ResourceCardActions = {

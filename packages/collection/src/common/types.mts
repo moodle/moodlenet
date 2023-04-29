@@ -28,6 +28,7 @@ export type CollectionContributorRpc = {
 }
 
 export type CollectionAccessRpc = {
+  isAuthenticated: boolean
   isCreator: boolean
   canEdit: boolean
   canPublish: boolean
@@ -111,11 +112,17 @@ export type CollectionCardData = { collectionHref: Href } & Pick<
 > &
   Pick<CollectionFormProps, 'title'>
 
-export type CollectionCardState = Pick<CollectionStateProps, 'isPublished' | 'numResources'>
-export type CollectionCardActions = Pick<CollectionActions, 'publish' | 'unpublish'>
+export type CollectionCardState = Pick<
+  CollectionStateProps,
+  'isPublished' | 'numResources' | 'followed' | 'numFollowers'
+>
+export type CollectionCardActions = Pick<
+  CollectionActions,
+  'publish' | 'unpublish' | 'toggleFollow'
+>
 export type CollectionCardAccess = Pick<
   CollectionAccessProps,
-  'isCreator' | 'canPublish' // |  'isAuthenticated' | 'canFollow'  // | 'canBookmark'
+  'isCreator' | 'canPublish' | 'canFollow' | 'isAuthenticated' // |  'isAuthenticated' | 'canBookmark'
 >
 
 export type Organization = {

@@ -1,10 +1,11 @@
-import { getCollectionsCardStoryProps, LandingCollectionList } from '@moodlenet/collection/ui'
+import { LandingCollectionList } from '@moodlenet/collection/ui'
 import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { Landing, LandingProps } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, LandingProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
 import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import {
   MainLayoutLoggedInStoryProps,
@@ -78,7 +79,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             state: {
-              // liked: true,
+              liked: false,
               // bookmarked: true,
             },
             access: {
@@ -96,7 +97,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
             state: {
-              // followed: true,
+              followed: true,
               // bookmarked: true,
             },
           })}
@@ -112,6 +113,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
             state: {
               // followed: true,
             },
+            access: {},
           })}
         />
       ),
