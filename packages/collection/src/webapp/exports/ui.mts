@@ -1,4 +1,5 @@
 // @index(['../components/**/!(*.stories|*Hooks|*Hook|*Container)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+export * from '../components/atoms/AddToCollectionButton/AddToCollectionButtons.js'
 export * from '../components/molecules/CollectionContributorCard/CollectionContributorCard.js'
 export * from '../components/organisms/CollectionCard/CollectionCard.js'
 export * from '../components/organisms/CollectionCard/story-props.js'
