@@ -21,17 +21,17 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({
   return (
     <div className="header">
       <div className="content">
-        <div className="left">
+        <div className="left" key="left">
           {leftItems?.map(i => (
             <i.Item key={i.key} />
           ))}
         </div>
-        <div className="center">
+        <div className="center" key="center">
           {centerItems?.map(i => (
             <i.Item key={i.key} />
           ))}
         </div>
-        <div className="right">
+        <div className="right" key="right">
           {rightItems?.map(i => (
             <i.Item key={i.key} />
           ))}

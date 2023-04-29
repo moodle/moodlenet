@@ -91,8 +91,6 @@ export const Resource: FC<ResourceProps> = ({
 
   //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
   //     useState<boolean>(false)
-  //   const [isAddingToCollection, setIsAddingToCollection] =
-  //     useState<boolean>(false)
   //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
   //     useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
@@ -250,12 +248,6 @@ export const Resource: FC<ResourceProps> = ({
               Send to Moodle
             </PrimaryButton> */}
       {/* {isAuthenticated && ( */}
-      {/* <SecondaryButton
-            // onClick={() => setIsAddingToCollection(true)}
-            >
-              Add to Collection
-            </SecondaryButton> */}
-
       {updatedGeneralActionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </Card>
   ) : null
