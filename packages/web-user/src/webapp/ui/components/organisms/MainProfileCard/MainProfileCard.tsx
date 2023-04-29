@@ -23,7 +23,7 @@ import {
   ProfileState,
 } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
-import { FollowButton } from '../../molecules/FollowButton/FollowButton.js'
+import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {

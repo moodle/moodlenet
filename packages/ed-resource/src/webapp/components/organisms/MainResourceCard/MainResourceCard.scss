@@ -110,26 +110,6 @@
           }
         }
 
-        > .like:not(.disabled) {
-          > svg {
-            width: 21px;
-            height: 21px;
-          }
-
-          &.liked {
-            &:not(:hover) > svg {
-              color: #fc0071;
-            }
-            &:hover > * {
-              color: #ce005d;
-            }
-          }
-
-          &:hover {
-            color: #ce005d;
-          }
-        }
-
         .bookmarked {
           color: #00bd7e;
         }

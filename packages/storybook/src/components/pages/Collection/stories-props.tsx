@@ -27,8 +27,9 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { useFormik } from 'formik'
 import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { getResourcesCardStoryProps, ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
+import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,

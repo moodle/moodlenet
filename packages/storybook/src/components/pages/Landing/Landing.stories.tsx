@@ -1,10 +1,11 @@
 import { getCollectionsCardStoryProps, LandingCollectionList } from '@moodlenet/collection/ui'
-import { getResourcesCardStoryProps, LandingResourceList } from '@moodlenet/ed-resource/ui'
+import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { Landing, LandingProps } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, LandingProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -25,10 +26,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
-  loginHref: href('Pages/Access/Login'),
-  signUpHref: href('Pages/Access/Signup'),
-  newResourceHref: href('Pages/Resource/New'),
-  newCollectionHref: href('Pages/Collection/New'),
   search: action('search'),
   mainColumnItems: [
     {
@@ -49,7 +46,9 @@ export const LandingLoggedOutStoryProps: LandingProps = {
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
-            access: { isAuthenticated: false },
+            access: {
+              // isAuthenticated: false
+            },
           })}
         />
       ),
@@ -67,7 +66,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       key: 'people-card-list',
     },
   ],
-  shareContentModalItems: [],
 }
 
 export const LandingLoggedInStoryProps: LandingProps = {
@@ -171,7 +169,7 @@ export const Owner: LandingStory = () => {
               access: {
                 isCreator: true,
                 canPublish: true,
-                isAuthenticated: true,
+                // isAuthenticated: true,
               },
             })}
           />

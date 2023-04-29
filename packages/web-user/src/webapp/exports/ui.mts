@@ -1,11 +1,12 @@
 // @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../ui/assets/data/images.js'
+export * from '../ui/components/atoms/FollowButton/FollowButton.js'
+export * from '../ui/components/atoms/LikeButton/LikeButton.js'
 export * from '../ui/components/molecules/AccessButtons/AccessButtons.js'
 export * from '../ui/components/molecules/AddMenu/AddMenu.js'
 export * from '../ui/components/molecules/AddMenu/AddMenuItems.js'
 export * from '../ui/components/molecules/AvatarMenu/AvatarMenu.js'
 export * from '../ui/components/molecules/AvatarMenu/webUserAvatarMenuComponents.js'
-export * from '../ui/components/molecules/FollowButton/FollowButton.js'
 export * from '../ui/components/molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.js'
 export * from '../ui/components/organisms/lists/LandingProfileList/LandingProfileList.js'
 export * from '../ui/components/organisms/lists/ProfileList/ProfileList.js'

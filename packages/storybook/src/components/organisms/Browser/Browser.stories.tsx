@@ -1,9 +1,10 @@
 import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/collection/ui'
-import { getResourcesCardStoryProps, SearchResourceList } from '@moodlenet/ed-resource/ui'
+import { SearchResourceList } from '@moodlenet/ed-resource/ui'
 import { Browser, BrowserProps, SortBy } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useMemo, useState } from 'react'
+import { getResourcesCardStoryProps } from '../ResourceCard/story-props.js'
 
 const meta: ComponentMeta<typeof Browser> = {
   title: 'Organisms/Browser',

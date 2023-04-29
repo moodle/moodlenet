@@ -18,7 +18,6 @@ import { PartialDeep } from 'type-fest'
 
 import { getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
 import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
-import { getResourcesCardStoryProps } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import {
   ProfileAccess,
@@ -30,6 +29,7 @@ import {
 } from '@moodlenet/web-user/common'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
+import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
 const maxUploadSize = 1024 * 1024 * 50
@@ -79,7 +79,10 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     isCreator: false,
     isAdmin: false,
     canFollow: true,
+    ...overrides?.access,
   }
+
+  console.log('access', access)
 
   const profileForm: ProfileFormValues = {
     displayName: person ? person.displayName : '',
@@ -103,7 +106,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       access: access,
       validationSchema: profileFormValidationSchema(maxUploadSize),
       resourceCardPropsList: getResourcesCardStoryProps(5, {
-        access: { canPublish: false, canDelete: false },
+        access: { ...access },
       }),
       createResource: linkTo('Pages/New Resource/Default'),
       collectionCardPropsList: getCollectionsCardStoryProps(5, {
