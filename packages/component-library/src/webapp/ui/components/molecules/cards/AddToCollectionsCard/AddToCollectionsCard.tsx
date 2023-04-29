@@ -11,6 +11,7 @@ export type AddToCollectionsCardProps = SelectorProps & {
 export type OptionItemProp = { value: string; label: ReactNode }
 export const OptionItem: FC<OptionItemProp> = ({ label, value }) => {
   const { selected, toggle } = useSelectorOption(value) ?? {}
+
   return (
     <div className={`collection-name tag ${selected ? 'selected' : ''}`} onClick={toggle}>
       {label}
@@ -28,9 +29,7 @@ export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = props => {
           <Card noCard={noCard}>
             {header && (
               <div className="collections-header">
-                {/* <Trans> */}
-                Select Collections
-                {/* </Trans> */}
+                Select collections
                 {/*<Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Find more collections`} />*/}
               </div>
             )}

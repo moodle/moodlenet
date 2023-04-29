@@ -49,15 +49,6 @@ export const MainLayout: FC<MainLayoutProps> = ({
           }}
         >
           <MainHeader {...headerProps} />
-          {/* <div className="side-menu">
-          {routes.map(({ path, label }, i) => (
-            <div key={`${path}_${i}`}>
-              <Link to={path}>
-                <span className="menu-item-link">{label}</span>
-              </Link>
-            </div>
-          ))}
-      </div> */}
           <div
             style={
               {

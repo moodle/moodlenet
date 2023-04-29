@@ -24,6 +24,7 @@ import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 // import { useFormik } from 'formik'
+import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { useFormik } from 'formik'
@@ -227,6 +228,9 @@ export const useResourceStoryProps = (
       key: 'license-field',
     },
   ]
+  const generalActionsItems: AddonItem[] = [
+    AddToCollectionButtonStories.useAddToCollectionButtonStory(),
+  ]
 
   return overrideDeep<ResourceProps>(
     {
@@ -236,7 +240,7 @@ export const useResourceStoryProps = (
 
       mainColumnItems: [],
       sideColumnItems: [],
-      generalActionsItems: [],
+      generalActionsItems: generalActionsItems,
       mainResourceCardSlots: mainResourceCardSlots,
       resourceContributorCardProps:
         ResourceContributorCardStories.ResourceContributorCardStoryProps,
