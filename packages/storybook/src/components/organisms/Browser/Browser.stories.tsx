@@ -1,9 +1,10 @@
-import { getCollectionsCardStoryProps, SearchCollectionList } from '@moodlenet/collection/ui'
+import { SearchCollectionList } from '@moodlenet/collection/ui'
 import { SearchResourceList } from '@moodlenet/ed-resource/ui'
 import { Browser, BrowserProps, SortBy } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useMemo, useState } from 'react'
+import { getCollectionsCardStoryProps } from '../CollectionCard/story-props.js'
 import { getResourcesCardStoryProps } from '../ResourceCard/story-props.js'
 
 const meta: ComponentMeta<typeof Browser> = {
@@ -71,60 +72,6 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             ),
             key: 'sort-by',
           },
-          // {
-          //   name: 'Sort by',
-          //   menuContent: ['Relevance', 'Latest'].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'sort-by',
-          // },
-          // {
-          //   name: 'Subjects',
-          //   menuContent: [
-          //     'Generic programmes and qualifications',
-          //     'Literacy and numeracy',
-          //     'Arts and humanities',
-          //     'Social sciences',
-          //     'Business and administration',
-          //     'Natural sciences',
-          //     'Engineering and technology',
-          //     'Agriculture, forestry and fisheries',
-          //     'Health and welfare',
-          //     'Personal skills and development',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'subjects',
-          // },
-          // {
-          //   name: 'Language',
-          //   menuContent: [
-          //     'English',
-          //     'French',
-          //     'Spanish',
-          //     'Italian',
-          //     'German',
-          //     'Chinesse',
-          //     'Japaesse',
-          //     'Korean',
-          //     'Portuguese',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'language',
-          // },
-          // {
-          //   name: 'License',
-          //   menuContent: [
-          //     'Attribution',
-          //     'Attribution-ShareAlike',
-          //     'Attribution-NoDerivs',
-          //     'Attribution-NonCommercial',
-          //     'Attribution-NonCommercial-ShareAlike',
-          //     'Attribution-NonCommercial-NoDerivs',
-          //     'Public Domain Dedication (CC0)',
-          //     'Public Domain Mark',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'license',
-          // },
         ],
         key: 'resource-list',
       },
@@ -156,45 +103,6 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             ),
             key: 'sort-by',
           },
-          // {
-          //   name: 'Sort by',
-          //   menuContent: ['Relevance', 'Latest'].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'sort-by',
-          // },
-          // {
-          //   name: 'Subjects',
-          //   menuContent: [
-          //     'Generic programmes and qualifications',
-          //     'Literacy and numeracy',
-          //     'Arts and humanities',
-          //     'Social sciences',
-          //     'Business and administration',
-          //     'Natural sciences',
-          //     'Engineering and technology',
-          //     'Agriculture, forestry and fisheries',
-          //     'Health and welfare',
-          //     'Personal skills and development',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'subjects',
-          // },
-          // {
-          //   name: 'Language',
-          //   menuContent: [
-          //     'English',
-          //     'French',
-          //     'Spanish',
-          //     'Italian',
-          //     'German',
-          //     'Chinesse',
-          //     'Japaesse',
-          //     'Korean',
-          //     'Portuguese',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'language',
-          // },
         ],
         key: 'collection-list',
       },
@@ -204,7 +112,8 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
           const list = useMemo(
             () =>
               getProfileCardsStoryProps(30, {
-                access: { isAuthenticated: false },
+                access: { isAuthenticated: true, isCreator: true },
+                state: { followed: true },
               }),
             [],
           )
@@ -216,69 +125,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
             />
           )
         },
-        filters: [
-          // {
-          //   name: 'Connections',
-          //   menuContent: ['1st', '2nd', '3rd+']
-          //
-          //     .map(e =>
-          //       <FilterMenuElement key={e} name={e} />
-          //     ),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'connections',
-          // },
-          // {
-          //   name: 'Subjects',
-          //   menuContent: [
-          //     'Generic programmes and qualifications',
-          //     'Literacy and numeracy',
-          //     'Arts and humanities',
-          //     'Social sciences',
-          //     'Business and administration',
-          //     'Natural sciences',
-          //     'Engineering and technology',
-          //     'Agriculture, forestry and fisheries',
-          //     'Health and welfare',
-          //     'Personal skills and development',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'subjects',
-          // },
-          // {
-          //   name: 'Entities',
-          //   menuContent: [
-          //     'Massachussets Institute of Technology',
-          //     'University of Cambridge',
-          //     'Stanford University',
-          //     'University of Oxford',
-          //     'Harvard University',
-          //     'California Institute of Technology',
-          //     'Imperial College London',
-          //     'University College London',
-          //     'ETH Zurich',
-          //     'Australian National University',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'entities',
-          // },
-          // {
-          //   name: 'Locations',
-          //   menuContent: [
-          //     'USA',
-          //     'India',
-          //     'Australia',
-          //     'China',
-          //     'Japan',
-          //     'Germany',
-          //     'France',
-          //     'Italy',
-          //     'Spain',
-          //     'Portugal',
-          //   ].map(e => <FilterMenuElement key={e} name={e} />),
-          //   menuContentType: 'menu-content-default-list',
-          //   key: 'locations',
-          // },
-        ],
+        filters: [],
         key: 'profile-list',
       },
     ],
@@ -286,68 +133,7 @@ export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
 }
 
 export const BrowserLoggedInStoryProps: BrowserProps = {
-  mainColumnItems: [
-    // {
-    //   menuItem: () => <span>Resources</span>,
-    //   Item: ({ showAll, setShowAll }) => {
-    //     const list = useMemo(
-    //       () =>
-    //         getResourcesCardStoryProps(30, {
-    //           access: { isAuthenticated: true },
-    //         }),
-    //       [],
-    //     )
-    //     return (
-    //       <SearchResourceList
-    //         showAll={showAll}
-    //         resourceCardPropsList={list}
-    //         setShowAll={setShowAll}
-    //       />
-    //     )
-    //   },
-    //   key: 'resource-list',
-    // },
-    // {
-    //   menuItem: () => <span>Collections</span>,
-    //   Item: ({ showAll, setShowAll }) => {
-    //     const list = useMemo(
-    //       () =>
-    //         getCollectionsCardStoryProps(30, {
-    //           access: { isAuthenticated: true },
-    //         }),
-    //       [],
-    //     )
-    //     return (
-    //       <SearchCollectionList
-    //         collectionCardPropsList={list}
-    //         showAll={showAll}
-    //         setShowAll={setShowAll}
-    //       />
-    //     )
-    //   },
-    //   key: 'collection-list',
-    // },
-    // {
-    //   menuItem: () => <span>People</span>,
-    //   Item: ({ showAll, setShowAll }) => {
-    //     const list = useMemo(
-    //       () =>
-    //         getProfileCardsStoryProps(30, {
-    //           access: { isAuthenticated: true },
-    //         }),
-    //       [],
-    //     )
-    //     return (
-    //       <SearchProfileList
-    //         profilesCardPropsList={list}
-    //         showAll={showAll}
-    //         setShowAll={setShowAll}
-    //       />
-    //     )
-    //   },
-    //   key: 'people-list',
-    // },
-  ],
+  mainColumnItems: [],
 }
 
 export const BrowserFollowingStoryProps: BrowserProps = {

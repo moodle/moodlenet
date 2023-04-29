@@ -18,6 +18,7 @@ export const getProfileCardFactory = (
   return overrideDeep<ProfileCardProps>(
     {
       mainColumnItems: [],
+      bottomTouchColumnItems: [],
       overallCardProps: OverallCardStories.OverallCardNoCardStoryProps,
       data: {
         userId: 'saddsadsa-21321312',
@@ -44,7 +45,7 @@ export const getProfileCardFactory = (
         isAdmin: false,
         canEdit: false,
         isCreator: false,
-        isAuthenticated: false,
+        isAuthenticated: true,
         canFollow: true,
       },
     },

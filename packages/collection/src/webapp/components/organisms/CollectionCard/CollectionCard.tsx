@@ -12,9 +12,9 @@ import {
 import './CollectionCard.scss'
 
 export type CollectionCardProps = {
-  mainColumnItems?: AddonItem[]
-  topLeftItems?: AddonItem[]
-  topRightItems?: AddonItem[]
+  mainColumnItems: (AddonItem | null)[]
+  topLeftItems: (AddonItem | null)[]
+  topRightItems: (AddonItem | null)[]
 
   data: CollectionCardData
   state: CollectionCardState
