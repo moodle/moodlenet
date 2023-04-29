@@ -42,12 +42,12 @@ import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
 
 export type MainResourceCardSlots = {
-  mainColumnItems?: AddonItem[]
-  headerColumnItems?: AddonItem[]
-  topLeftHeaderItems?: AddonItem[]
-  topRightHeaderItems?: AddonItem[]
-  moreButtonItems?: FloatingMenuContentItem[]
-  footerRowItems?: AddonItem[]
+  mainColumnItems: (AddonItem | null)[]
+  headerColumnItems: (AddonItem | null)[]
+  topLeftHeaderItems: (AddonItem | null)[]
+  topRightHeaderItems: (AddonItem | null)[]
+  moreButtonItems: FloatingMenuContentItem[]
+  footerRowItems: (AddonItem | null)[]
 }
 
 export type MainResourceCardProps = {
@@ -215,7 +215,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  //   const tagsDiv: AddonItem = {
+  //   const tagsDiv: (AddonItem | null) = {
   //     Item: () =>
   //       tags.length > 0 ? <div className="tags scroll">{getTagList(tags, 'medium')}</div> : <></>,
   //     key: 'type-and-actions',
@@ -384,7 +384,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </abbr>
     ) : null
 
-  // const sendToMoodleButton: AddonItem | null =
+  // const sendToMoodleButton: (AddonItem | null) | null =
   //   width < 800 && form.values.content
   //     ? {
   //         Item: () => (
@@ -397,7 +397,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //       }
   //     : null
 
-  // const addToCollectionButton: AddonItem | null =
+  // const addToCollectionButton: (AddonItem | null) | null =
   //   width < 800 && form.values.content && isAuthenticated
   //     ? {
   //         Item: () => (

@@ -35,11 +35,11 @@ import {
 import './ResourceCard.scss'
 
 export type ResourceCardProps = {
-  mainColumnItems?: AddonItem[]
-  topLeftItems?: AddonItem[]
-  topRightItems?: AddonItem[]
-  bottomLeftItems?: AddonItem[]
-  bottomRightItems?: AddonItem[]
+  mainColumnItems: (AddonItem | null)[]
+  topLeftItems: (AddonItem | null)[]
+  topRightItems: (AddonItem | null)[]
+  bottomLeftItems: (AddonItem | null)[]
+  bottomRightItems: (AddonItem | null)[]
 
   className?: string
   orientation?: 'vertical' | 'horizontal'

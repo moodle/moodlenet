@@ -1,8 +1,8 @@
-import { getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
-import { getResourcesCardStoryProps } from '@moodlenet/ed-resource/ui'
 import { Profile } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
+import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { useState } from 'react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useProfileStoryProps } from './stories-props.js'
@@ -57,6 +57,7 @@ export const Owner: ProfileStory = () => {
       access: {
         canDelete: true,
         canPublish: true,
+        isCreator: true,
       },
     }),
     collectionCardPropsList: getCollectionsCardStoryProps(5, {

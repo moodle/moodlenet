@@ -1,25 +1,8 @@
+import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
+import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { OverallCard } from '@moodlenet/react-app/ui'
-import { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
-import { PartialDeep } from 'type-fest'
-
-// const editForm: ProfileFormValues = {
-//   displayName: 'Alberto Curcella',
-//   description: '',
-//   avatarImage:
-//     'https://moodle.net/assets/01F/T/N/3/X/3CGXZ0TQRN1EX27D7WY/01FTN3X3CGXZ0TQRN1EX27D7WY.jpg',
-//   backgroundImage:
-//     'https://images.unsplash.com/photo-1450045439515-ff27c2f2e6b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHw1fHx3aGFsZXxlbnwwfDB8fHwxNjU0NzU2NzU3&ixlib=rb-1.2.1&q=80&w=1080',
-//   location: 'San Felipe, Mexico',
-//   organizationName: 'Moodle Pty Ltd',
-//   siteUrl: 'https://moodle.com',
-// }
-
-import { getCollectionsCardStoryProps } from '@moodlenet/collection/ui'
-import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
-import { getResourcesCardStoryProps } from '@moodlenet/ed-resource/ui'
-import { href } from '@moodlenet/react-app/common'
 import {
   ProfileAccess,
   ProfileActions,
@@ -28,8 +11,12 @@ import {
   ProfileFormValues,
   ProfileState,
 } from '@moodlenet/web-user/common'
+import { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
+import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
+import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
+import { PartialDeep } from 'type-fest'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
 const maxUploadSize = 1024 * 1024 * 50
@@ -79,7 +66,10 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     isCreator: false,
     isAdmin: false,
     canFollow: true,
+    ...overrides?.access,
   }
+
+  console.log('access', access)
 
   const profileForm: ProfileFormValues = {
     displayName: person ? person.displayName : '',
@@ -103,7 +93,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       access: access,
       validationSchema: profileFormValidationSchema(maxUploadSize),
       resourceCardPropsList: getResourcesCardStoryProps(5, {
-        access: { canPublish: false, canDelete: false },
+        access: { ...access },
       }),
       createResource: linkTo('Pages/New Resource/Default'),
       collectionCardPropsList: getCollectionsCardStoryProps(5, {
