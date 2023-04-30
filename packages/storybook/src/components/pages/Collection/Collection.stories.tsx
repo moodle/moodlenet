@@ -32,6 +32,7 @@ export const LoggedOut: CollectionStory = () => {
     state: {},
     actions: {},
     access: {},
+
     isAuthenticated: false,
   })
 
@@ -101,8 +102,6 @@ export const New: CollectionStory = () => {
     collectionForm: NewCollectionProps,
     state: {
       isPublished: false,
-      // bookmarked: true,
-      // followed: true,
     },
     actions: {},
     access: {
@@ -112,6 +111,7 @@ export const New: CollectionStory = () => {
       isCreator: true,
       canEdit: true,
     },
+    resourceCardPropsList: [],
   })
 
   return <Collection {...props} />

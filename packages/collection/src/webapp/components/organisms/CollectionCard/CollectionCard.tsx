@@ -63,10 +63,15 @@ export const CollectionCard: FC<CollectionCardProps> = ({
   }
 
   const numResourcesDiv = (
-    <div className="num-resources" key="num-resources">
+    <TertiaryButton
+      className="num-resources"
+      key="num-resources"
+      abbr={`Contains ${numResources} resource${numResources === 1 ? '' : 's'}`}
+      disabled
+    >
       <FilterNone />
       {numResources}
-    </div>
+    </TertiaryButton>
   )
 
   const publishButton = canPublish && (

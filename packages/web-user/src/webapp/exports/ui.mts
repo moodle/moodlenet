@@ -1,5 +1,6 @@
 // @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../ui/assets/data/images.js'
+export * from '../ui/components/atoms/BookmarkButton/BookmarkButton.js'
 export * from '../ui/components/atoms/FollowButton/FollowButton.js'
 export * from '../ui/components/atoms/LikeButton/LikeButton.js'
 export * from '../ui/components/molecules/AccessButtons/AccessButtons.js'

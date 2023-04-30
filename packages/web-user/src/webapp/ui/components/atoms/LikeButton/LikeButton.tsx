@@ -9,6 +9,7 @@ export type LikeButtonProps = {
   isCreator: boolean
   isAuthenticated: boolean
   toggleLike: () => void
+  color?: 'white' | 'grey'
 }
 
 export const LikeButton: FC<LikeButtonProps & { numLikes: number }> = ({
@@ -18,10 +19,11 @@ export const LikeButton: FC<LikeButtonProps & { numLikes: number }> = ({
   isCreator,
   isAuthenticated,
   toggleLike,
+  color,
 }) => {
   return (
     <TertiaryButton
-      className={`like-button ${liked ? 'liked' : ''}`}
+      className={`like-button ${liked ? 'liked' : ''} ${color}`}
       disabled={!canLike || !isAuthenticated || isCreator}
       onClick={canLike ? toggleLike : () => undefined}
       abbr={
@@ -39,4 +41,8 @@ export const LikeButton: FC<LikeButtonProps & { numLikes: number }> = ({
       <span>{numLikes}</span>
     </TertiaryButton>
   )
+}
+
+LikeButton.defaultProps = {
+  color: 'grey',
 }

@@ -2,8 +2,13 @@ import { OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import { ResourceFormProps } from '../../../../common/types.mjs'
-import { maxUploadSize, validationSchema } from '../../../../common/validationSchema.mjs'
+import {
+  contentValidationSchema,
+  maxUploadSize,
+  validationSchema,
+} from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
+import { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import { ResourceProps } from './Resource.js'
 
 export const collectionTextOptionProps: OptionItemProp[] = [
@@ -30,13 +35,13 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
     const { actions, props, isSaving } = _baseProps
     const { data, resourceForm, state, access, contributor } = props
 
-    const mainResourceCardSlots = {
+    const mainResourceCardSlots: MainResourceCardSlots = {
       mainColumnItems: [],
       headerColumnItems: [],
       topLeftHeaderItems: [],
       topRightHeaderItems: [],
-      moreButtonItems: undefined,
-      footerRowItems: undefined,
+      moreButtonItems: [],
+      footerRowItems: [],
     }
 
     return {
@@ -51,6 +56,7 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
       data,
       resourceForm,
       validationSchema: validationSchema,
+      contentValidationSchema: contentValidationSchema,
       state,
       actions,
       access,
