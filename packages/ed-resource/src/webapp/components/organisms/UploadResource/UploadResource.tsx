@@ -28,10 +28,11 @@ import './UploadResource.scss'
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadResourceProps = {
   fileMaxSize: number | null
-  contentForm: FormikHandle<{ content: File | string | null }>
+  contentForm: FormikHandle<{ content: File | string | undefined | null }>
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
   downloadFilename: string | null
   uploadProgress?: number
+  shouldShowErrors?: boolean
   imageOnClick?(): unknown
 }
 
@@ -52,6 +53,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   imageForm,
   downloadFilename,
 
+  shouldShowErrors,
   uploadProgress,
   imageOnClick,
 }) => {
@@ -70,7 +72,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     ? contentForm.values.content.name
     : contentForm.values.content ?? ''
 
-  const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+  // const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   // const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
 
@@ -85,10 +87,10 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   useEffect(() => {
     if (deleteFileLinkPressed) {
-      setShouldShowErrors(false)
+      // setShouldShowErrors(false)
       setDeleteFileLinkPressed(false)
     }
-    contentForm.values.content && !contentForm.errors.content && setShouldShowErrors(false)
+    // contentForm.values.content && !contentForm.errors.content && setShouldShowErrors(false)
 
     setSubStep(
       contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
@@ -98,9 +100,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
   const addLink = () => {
-    contentForm
-      .setFieldValue('content', addLinkFieldRef.current?.value, true)
-      .then(_ => setShouldShowErrors(!!_?.content))
+    contentForm.setFieldValue('content', addLinkFieldRef.current?.value, true)
+    // .then(_ => setShouldShowErrors(!!_?.content))
     contentForm.submitForm()
   }
 
@@ -115,7 +116,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     setSubStep('AddFileOrLink')
     contentForm.setFieldValue('content', null)
     contentForm.submitForm()
-    setShouldShowErrors(false)
+    // setShouldShowErrors(false)
   }, [contentForm])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
@@ -132,9 +133,11 @@ export const UploadResource: FC<UploadResourceProps> = ({
     (file: File | undefined) => {
       const isImage = file?.type.toLowerCase().startsWith('image')
       contentForm.setFieldValue('content', file).then(errors => {
-        if (errors?.content) {
-          setShouldShowErrors(!!errors?.content)
-        } else if (isImage) {
+        // if (errors?.content) {
+        //   setShouldShowErrors(!!errors?.content)
+        // } else if (isImage) {
+        // } else if (isImage && !errors?.content ) {
+        if (isImage && !errors?.content) {
           if (file) {
             contentForm.submitForm()
             imageForm.setFieldValue('image', file)

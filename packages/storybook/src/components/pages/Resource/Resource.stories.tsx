@@ -29,7 +29,15 @@ export const LoggedOut: ResourceStory = () => {
 }
 
 export const LoggedIn: ResourceStory = () => {
-  const props = useResourceStoryProps({})
+  const props = useResourceStoryProps({
+    data: {},
+    state: {
+      liked: true,
+      bookmarked: true,
+    },
+    actions: {},
+    access: {},
+  })
   return <Resource {...props} />
 }
 

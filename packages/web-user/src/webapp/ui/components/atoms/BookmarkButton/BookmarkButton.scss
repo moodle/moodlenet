@@ -1,4 +1,4 @@
-.like-button {
+.bookmark-button {
   padding: 1px 3px;
   cursor: pointer;
   display: flex;
@@ -10,19 +10,20 @@
   }
 
   &.disabled {
+    color: #00bd7e;
     cursor: auto;
   }
 
   &:hover:not(.disabled) {
     color: #5c5c5c;
     > svg {
-      color: #ce005d;
+      color: #009966;
     }
   }
 
-  &.liked {
+  &.bookmarked {
     > svg {
-      color: #fc0071;
+      color: #00bd7e;
     }
   }
 }

@@ -85,6 +85,9 @@ export const expose = await shell.expose<ResourceExposeType>({
             canEdit: !!found.access.u,
             canPublish: found.canPublish,
             isCreator: found.isCreator,
+            canBookmark: true, //@ETTO to be filled
+            canLike: true, //@ETTO to be filled
+            isAuthenticated: true, //@ETTO to be filled
           },
         }
 

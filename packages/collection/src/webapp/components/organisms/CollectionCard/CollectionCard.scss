@@ -51,8 +51,10 @@
     }
 
     > .header-left {
+      pointer-events: auto;
       > .num-resources {
-        pointer-events: none;
+        color: white;
+        font-weight: normal;
         > svg {
           width: 16px;
           height: 16px;
@@ -69,7 +71,7 @@
         cursor: pointer;
       }
 
-      > .tertiary-button:not(.no-style) {
+      > .tertiary-button {
         display: flex;
         cursor: pointer;
         color: white;
@@ -114,29 +116,6 @@
           &:hover {
             color: #63656a;
           }
-        }
-      }
-
-      > .follow-button {
-        &.followed {
-          color: var(--primary-color);
-        }
-        &:hover:not(.disabled) {
-          color: var(--primary-color);
-        }
-        &:active {
-          color: var(--primary-color-active);
-        }
-      }
-
-      > .bookmark-button {
-        &.bookmarked,
-        &:hover:not(.disabled) {
-          color: #00bd7e;
-        }
-
-        &.bookmarked:hover {
-          color: #009966;
         }
       }
     }

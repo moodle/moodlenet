@@ -27,7 +27,7 @@ import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
-import { LikeButton } from '@moodlenet/web-user/ui'
+import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import {
@@ -94,6 +94,11 @@ export const validationSchema: SchemaOf<ResourceFormProps> = object({
     return month ? schema.required(/* t */ `Please select a year`) : schema.optional()
   }),
 })
+
+export const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> =
+  object({
+    content: string().required(`Please upload a content or a link`),
+  })
 
 export const ResourceFormValues: ResourceFormProps = {
   description:
@@ -181,7 +186,8 @@ export const useResourceStoryProps = (
     isPublished: true,
     liked: true,
     numLikes: 23,
-    // bookmarked: false,
+    bookmarked: false,
+    ...overrides?.state,
   }
 
   const setContent = (e: File | string | undefined | null) => {
@@ -198,7 +204,7 @@ export const useResourceStoryProps = (
     setContent: setContent,
     setImage: action('set image'),
     toggleLike: action('toggleLike'),
-    // toggleBookmark: action('toggleBookmark'),
+    toggleBookmark: action('toggleBookmark'),
     ...overrides?.actions,
   }
 
@@ -208,6 +214,7 @@ export const useResourceStoryProps = (
     canDelete: false,
     canPublish: false,
     canLike: true,
+    canBookmark: true,
     isAuthenticated: true,
     ...overrides?.access,
   }
@@ -233,6 +240,20 @@ export const useResourceStoryProps = (
               />
             ),
 
+            key: 'like-button',
+          }
+        : null,
+      isPublished
+        ? {
+            Item: () => (
+              <BookmarkButton
+                canBookmark={access.canBookmark}
+                bookmarked={state.bookmarked}
+                isAuthenticated={access.isAuthenticated}
+                isCreator={access.isCreator}
+                toggleBookmark={actions.toggleBookmark}
+              />
+            ),
             key: 'like-button',
           }
         : null,
@@ -275,6 +296,7 @@ export const useResourceStoryProps = (
       access: access,
 
       validationSchema: validationSchema,
+      contentValidationSchema: contentValidationSchema,
       extraDetailsItems: extraDetailsItems,
 
       fileMaxSize: 343243,

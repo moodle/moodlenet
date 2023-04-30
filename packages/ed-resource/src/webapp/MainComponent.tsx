@@ -67,7 +67,8 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       setIsPublished: (key, publish) =>
         rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
       create: () => rpc['webapp/create'](),
-      // toggleLike: (key: string) => rpc[rpcUrl.toggleLike].fn({ key }),  // toggleBookmark: (key: string) => rpc[rpcUrl.toggleBookmark].fn({ key }),
+      toggleLike: (_key: string) => undefined, //rpc[rpcUrl.toggleLike].fn({ key }),  //@ETTO to be filled
+      toggleBookmark: (_key: string) => undefined, //rpc[rpcUrl.toggleBookmark].fn({ key }), //@ETTO to be filled
     }
 
     return rpcItem
