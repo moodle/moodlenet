@@ -60,12 +60,12 @@ export const SmallFollowButton: FC<FollowButtonProps & { numFollowers: number }>
 }) => {
   return (
     <TertiaryButton
-      className={`small-follow-button ${followed ? 'followed' : ''} no-style`}
+      className={`small-follow-button ${followed ? 'followed' : ''} `}
       disabled={!canFollow || isCreator}
       onClick={canFollow ? toggleFollow : () => undefined}
       abbr={
         isCreator
-          ? 'Creators cannot follow their own content'
+          ? `${numFollowers} follower${numFollowers === 1 ? '' : 's'}`
           : !isAuthenticated
           ? 'Login or signup to follow'
           : followed

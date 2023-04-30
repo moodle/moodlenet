@@ -247,30 +247,6 @@
           }
         }
       }
-
-      > .like-button {
-        &:hover:not(.disabled) {
-          color: #ce005d;
-        }
-
-        &.liked {
-          color: #fc0071;
-
-          &:hover {
-            color: #ce005d;
-          }
-        }
-      }
-
-      > .bookmark-button {
-        &.bookmarked {
-          color: #00bd7e;
-        }
-
-        &:hover:not(.disabled) {
-          color: #009966;
-        }
-      }
     }
   }
 

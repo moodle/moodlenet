@@ -28,7 +28,6 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
-import { useFormik } from 'formik'
 import { FC, StrictMode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getResourceTypeInfo,
@@ -55,6 +54,8 @@ export type MainResourceCardProps = {
 
   data: ResourceDataProps
   form: FormikHandle<ResourceFormProps>
+  contentForm: FormikHandle<{ content: File | string | undefined | null }>
+  imageForm: FormikHandle<{ image: File | string | undefined | null }>
 
   state: ResourceStateProps
   actions: ResourceActions
@@ -72,6 +73,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   data,
   form,
+  contentForm,
+  imageForm,
 
   state,
   actions,
@@ -100,33 +103,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     downloadFilename,
     imageUrl,
     contentUrl,
-    // numLikes,
   } = data
 
-  const {
-    isPublished,
-    uploadProgress,
-    // bookmarked,
-    // liked,
-  } = state
+  const { isPublished, uploadProgress } = state
 
-  const {
-    unpublish,
-    deleteResource,
-    setContent,
-    setImage,
-    // toggleBookmark,
-    // toggleLike,
-  } = actions
+  const { unpublish, deleteResource } = actions
 
-  const {
-    canEdit,
-    canPublish,
-    canDelete,
-    // canLike,
-    // canBookmark,
-    // isCreator,
-  } = access
+  const { canEdit, canPublish, canDelete } = access
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
@@ -135,13 +118,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const { width } = useWindowDimensions()
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
-
-  const contentForm = useFormik<{ content: File | string | null }>({
-    initialValues: { content: contentUrl },
-    onSubmit: values => {
-      return setContent(values.content)
-    },
-  })
 
   useEffect(() => {
     setCurrentContentUrl(contentUrl)
@@ -161,13 +137,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType,
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
-
-  const imageForm = useFormik<{ image: File | string | undefined | null }>({
-    initialValues: { image: imageUrl },
-    onSubmit: values => {
-      return typeof values.image !== 'string' ? setImage(values.image) : undefined
-    },
-  })
 
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined | null>(imageUrl)
   const [image] = useImageUrl(currentImageUrl, backupImage)
@@ -284,8 +253,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //   ) : null
 
   const empty =
-    !form.values.title &&
-    !form.values.description &&
+    (!form.values.title || form.values.title === '') &&
+    (!form.values.description || form.values.description === '') &&
     !contentForm.values.content &&
     !imageForm.values.image
 
@@ -311,16 +280,17 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //   </TertiaryButton>
   // )
 
-  const shareButton: FloatingMenuContentItem | null = isPublished
-    ? {
-        Component: () => (
-          <div onClick={copyUrl}>
-            <Share /> Share
-          </div>
-        ),
-        key: 'share-button',
-      }
-    : null
+  const shareButton: FloatingMenuContentItem | null =
+    !empty && isPublished
+      ? {
+          Component: () => (
+            <div onClick={copyUrl}>
+              <Share /> Share
+            </div>
+          ),
+          key: 'share-button',
+        }
+      : null
 
   const deleteButton: FloatingMenuContentItem | null =
     canDelete && !empty
@@ -444,7 +414,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
   const moreButton =
-    updatedMoreButtonItems.length > 0 ? (
+    !empty && updatedMoreButtonItems.length > 0 ? (
       // updatedMoreButtonItems.length === 1 ? (
       //   updatedMoreButtonItems.map(i => {
       //     return (
@@ -558,6 +528,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       fileMaxSize={fileMaxSize}
       downloadFilename={downloadFilename}
       uploadProgress={uploadProgress}
+      shouldShowErrors={shouldShowErrors}
       imageOnClick={() => setIsShowingImage(true)}
       key="resource-uploader"
     />

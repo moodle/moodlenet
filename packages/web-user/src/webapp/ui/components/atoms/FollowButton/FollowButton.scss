@@ -3,11 +3,10 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  color: white;
+  // color: white;
   font-weight: normal;
 
   &.disabled {
-    color: #d0d1db;
     cursor: auto;
   }
 
@@ -23,23 +22,3 @@
     }
   }
 }
-
-// .small-follow-button:not(.disabled) {
-//   > svg {
-//     width: 21px;
-//     height: 21px;
-//   }
-
-//   &.liked {
-//     &:not(:hover) > svg {
-//       color: #fc0071;
-//     }
-//     &:hover > * {
-//       color: #ce005d;
-//     }
-//   }
-
-//   &:hover {
-//     color: #ce005d;
-//   }
-// }

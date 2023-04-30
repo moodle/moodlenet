@@ -8,7 +8,7 @@ import {
 import { ResourceCard, ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { ContentBackupImages } from '@moodlenet/react-app/ui'
-import { LikeButton } from '@moodlenet/web-user/ui'
+import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
@@ -72,18 +72,14 @@ export const getResourceCardStoryProps = (
     selectionMode: false,
     liked: false,
     numLikes: 12,
+    bookmarked: false,
     ...overrides?.state,
-    // bookmarked: false,
   }
   const actions: ResourceCardActions = {
     toggleLike: action('toggle like'),
-    publish: () => {
-      action('publish resource')
-    },
-    unpublish: () => {
-      action('unpublish resource')
-    },
-    // toggleBookmark: action('toggle bookmark'),
+    publish: action('publish resource'),
+    unpublish: action('unpublish resource'),
+    toggleBookmark: action('toggle bookmark'),
   }
 
   const access: ResourceCardAccess = {
@@ -92,7 +88,7 @@ export const getResourceCardStoryProps = (
     isCreator: false,
     canDelete: false,
     canPublish: false,
-    // canBookmark: true,
+    canBookmark: true,
     ...overrides?.access,
   }
 
@@ -108,6 +104,20 @@ export const getResourceCardStoryProps = (
     mainColumnItems: [],
     bottomLeftItems: [],
     bottomRightItems: [
+      isPublished
+        ? {
+            Item: () => (
+              <BookmarkButton
+                canBookmark={access.canBookmark}
+                bookmarked={state.bookmarked}
+                isAuthenticated={access.isAuthenticated}
+                isCreator={access.isCreator}
+                toggleBookmark={actions.toggleBookmark}
+              />
+            ),
+            key: 'like-button',
+          }
+        : null,
       isPublished
         ? {
             Item: () => (

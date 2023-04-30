@@ -30,3 +30,8 @@ export const validationSchema: SchemaOf<ResourceFormProps> = object({
     return month ? schema.required(/* t */ `Please select a year`) : schema.optional()
   }),
 })
+
+export const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> =
+  object({
+    content: string().required(`Please upload a content or a link`),
+  })

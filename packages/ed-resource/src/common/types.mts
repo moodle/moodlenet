@@ -43,8 +43,8 @@ export type ResourceStateRpc = {
   isPublished: boolean
   liked: boolean
   numLikes: number
+  bookmarked: boolean
   uploadProgress?: number
-  // bookmarked: boolean
 }
 
 export type ResourceContributorRpc = {
@@ -94,7 +94,8 @@ export type ResourceActions = {
   setImage: (file: File | undefined | null) => void
   setContent: (content: File | string | undefined | null) => void
   deleteResource(): void
-  toggleLike(): void // toggleBookmark(): unknown
+  toggleLike(): void
+  toggleBookmark(): unknown
 }
 
 export type ResourceAccessRpc = {
@@ -104,7 +105,7 @@ export type ResourceAccessRpc = {
   canDelete: boolean
   canLike: boolean
   isAuthenticated: boolean
-  // canBookmark: boolean
+  canBookmark: boolean
 }
 
 export type ResourceCardDataRpc = {
@@ -129,14 +130,16 @@ export type ResourceCardDataRpc = {
 export type ResourceCardState = {
   isSelected: boolean
   selectionMode: boolean // When selection resources to be added to a collection
-  // bookmarked: boolean
-} & Pick<ResourceStateProps, 'isPublished' | 'liked' | 'numLikes'>
+} & Pick<ResourceStateProps, 'isPublished' | 'liked' | 'numLikes' | 'bookmarked'>
 
-export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish' | 'toggleLike'>
+export type ResourceCardActions = Pick<
+  ResourceActions,
+  'publish' | 'unpublish' | 'toggleLike' | 'toggleBookmark'
+>
 
 export type ResourceCardAccess = Pick<
   ResourceAccessProps,
-  'canPublish' | 'canDelete' | 'canLike' | 'isCreator' | 'isAuthenticated'
+  'canPublish' | 'canDelete' | 'canLike' | 'canBookmark' | 'isCreator' | 'isAuthenticated'
 >
 //   'canBookmark'    canEdit: boolean
 

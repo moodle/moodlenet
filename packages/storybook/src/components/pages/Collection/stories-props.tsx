@@ -28,7 +28,7 @@ import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { ResourceCardProps } from '@moodlenet/ed-resource/ui'
-import { FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
+import { BookmarkButton, FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { useFormik } from 'formik'
 import {
@@ -152,9 +152,9 @@ export const useCollectionStoryProps = (
   const state: CollectionStateProps = {
     isPublished: true,
     followed: false,
-    numFollowers: 23,
+    numFollowers: 0,
     numResources: 12,
-    // bookmarked: false,
+    bookmarked: false,
   }
 
   const actions: CollectionActions = {
@@ -164,8 +164,8 @@ export const useCollectionStoryProps = (
     unpublish: action('unpublish'),
     setImage: action('setImage'),
     toggleFollow: action('toggleFollow'),
+    toggleBookmark: action('toggleBookmark'),
     ...overrides?.actions,
-    // toggleBookmark: action('toggleBookmark'),
   }
 
   const access: CollectionAccessProps = {
@@ -174,6 +174,8 @@ export const useCollectionStoryProps = (
     canDelete: false,
     canPublish: false,
     canFollow: true,
+    canBookmark: true,
+    isAuthenticated: true,
     ...overrides?.access,
   }
 
@@ -197,8 +199,21 @@ export const useCollectionStoryProps = (
                 numFollowers={state.numFollowers}
               />
             ),
-
             key: 'follow-button',
+          }
+        : null,
+      isPublished
+        ? {
+            Item: () => (
+              <BookmarkButton
+                canBookmark={access.canBookmark}
+                bookmarked={state.bookmarked}
+                isAuthenticated={access.isAuthenticated}
+                isCreator={access.isCreator}
+                toggleBookmark={actions.toggleBookmark}
+              />
+            ),
+            key: 'like-button',
           }
         : null,
     ],
@@ -225,13 +240,16 @@ export const useCollectionStoryProps = (
 
   const accessOverrides = overrides?.access
 
-  const resourceCardPropsList: ResourceCardProps[] = getResourcesCardStoryProps(6, {
-    access: {
-      ...access,
-      ...accessOverrides,
-    },
-    orientation: 'horizontal',
-  })
+  const resourceCardPropsList: ResourceCardProps[] =
+    overrides?.resourceCardPropsList?.length === 0
+      ? []
+      : getResourcesCardStoryProps(6, {
+          access: {
+            ...access,
+            ...accessOverrides,
+          },
+          orientation: 'horizontal',
+        })
 
   return overrideDeep<CollectionProps>(
     {

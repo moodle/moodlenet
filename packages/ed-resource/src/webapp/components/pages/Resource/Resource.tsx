@@ -40,6 +40,7 @@ export type ResourceProps = {
   data: ResourceDataProps
   resourceForm: ResourceFormProps
   validationSchema: SchemaOf<ResourceFormProps>
+  contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }>
 
   state: ResourceStateProps
   actions: ResourceActions
@@ -62,6 +63,7 @@ export const Resource: FC<ResourceProps> = ({
   data,
   resourceForm,
   validationSchema,
+  contentValidationSchema,
 
   state,
   actions,
@@ -70,8 +72,8 @@ export const Resource: FC<ResourceProps> = ({
   fileMaxSize,
   isSaving,
 }) => {
-  const { isWaitingForApproval, downloadFilename, contentUrl, contentType } = data
-  const { editData, deleteResource, publish, unpublish } = actions
+  const { isWaitingForApproval, downloadFilename, contentUrl, contentType, imageUrl } = data
+  const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish } = access
   const { isPublished } = state
 
@@ -80,6 +82,23 @@ export const Resource: FC<ResourceProps> = ({
     validationSchema: validationSchema,
     onSubmit: values => {
       return editData(values)
+    },
+  })
+
+  const contentForm = useFormik<{ content: File | string | undefined | null }>({
+    initialValues: { content: contentUrl },
+    validationSchema: contentValidationSchema,
+    validateOnMount: true,
+    validateOnChange: true,
+    onSubmit: values => {
+      return setContent(values.content)
+    },
+  })
+
+  const imageForm = useFormik<{ image: File | string | undefined | null }>({
+    initialValues: { image: imageUrl },
+    onSubmit: values => {
+      return typeof values.image !== 'string' ? setImage(values.image) : undefined
     },
   })
 
@@ -112,7 +131,7 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
-    if (form.isValid) {
+    if (form.isValid && contentForm.isValid) {
       form.submitForm()
       setShouldShowErrors(false)
       publish()
@@ -127,6 +146,8 @@ export const Resource: FC<ResourceProps> = ({
       publish={checkFormAndPublish}
       data={data}
       form={form}
+      contentForm={contentForm}
+      imageForm={imageForm}
       state={state}
       actions={actions}
       access={access}
@@ -137,13 +158,12 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
-  const publishButton = canPublish &&
-    !isPublished &&
-    !isWaitingForApproval /*  && !isEditing */ && (
-      <PrimaryButton onClick={checkFormAndPublish} color="green" key="publish-button">
-        Publish
-      </PrimaryButton>
-    )
+  const publishButton = canPublish && !isPublished && !isWaitingForApproval && (
+    <PrimaryButton onClick={checkFormAndPublish} color="green" key="publish-button">
+      Publish
+    </PrimaryButton>
+  )
+
   const unpublishButton = canPublish && (isPublished || isWaitingForApproval) && (
     <SecondaryButton onClick={unpublish} key="unpublish-button">
       Unpublish
@@ -215,23 +235,29 @@ export const Resource: FC<ResourceProps> = ({
       </Card>
     ) : null
 
-  const downloadOrOpenLink = (
-    <a href={contentUrl ?? undefined} target="_blank" rel="noreferrer" download={downloadFilename}>
-      <SecondaryButton key="donwload-or-open-link-button">
-        {contentType === 'file' ? (
-          <>
-            <InsertDriveFile />
-            Download file
-          </>
-        ) : (
-          <>
-            <Link />
-            Open link
-          </>
-        )}
-      </SecondaryButton>
-    </a>
-  )
+  const downloadOrOpenLink =
+    contentUrl || contentForm.values.content ? (
+      <a
+        href={contentUrl ?? undefined}
+        target="_blank"
+        rel="noreferrer"
+        download={downloadFilename}
+      >
+        <SecondaryButton key="donwload-or-open-link-button">
+          {contentType === 'file' ? (
+            <>
+              <InsertDriveFile />
+              Download file
+            </>
+          ) : (
+            <>
+              <Link />
+              Open link
+            </>
+          )}
+        </SecondaryButton>
+      </a>
+    ) : null
 
   const updatedGeneralActionsItems = [
     publishButton,
@@ -240,7 +266,7 @@ export const Resource: FC<ResourceProps> = ({
     ...(generalActionsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const generalActionsContainer = contentUrl ? (
+  const generalActionsContainer = (
     <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
       {/* <PrimaryButton
             // onClick={() => setIsAddingToMoodleLms(true)}
@@ -250,7 +276,7 @@ export const Resource: FC<ResourceProps> = ({
       {/* {isAuthenticated && ( */}
       {updatedGeneralActionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </Card>
-  ) : null
+  )
 
   const updatedSideColumnItems = [
     contributorCard,
