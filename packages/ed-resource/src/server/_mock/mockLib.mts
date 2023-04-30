@@ -25,6 +25,9 @@ export const empityFormModel: ResourceRpc = {
     canPublish: true,
     canDelete: true,
     canEdit: true,
+    canBookmark: false,
+    canLike: false,
+    isAuthenticated: true,
   },
   resourceForm: { description: '', title: '' },
   contributor: {

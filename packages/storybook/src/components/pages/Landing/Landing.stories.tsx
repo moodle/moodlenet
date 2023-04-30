@@ -36,6 +36,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             access: {
               isAuthenticated: false,
+              canPublish: false,
             },
           })}
         />
@@ -47,8 +48,13 @@ export const LandingLoggedOutStoryProps: LandingProps = {
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
+            state: {
+              numResources: 2,
+            },
             access: {
-              // isAuthenticated: false
+              canPublish: false,
+              canBookmark: false,
+              canFollow: false,
             },
           })}
         />
@@ -79,8 +85,8 @@ export const LandingLoggedInStoryProps: LandingProps = {
           searchResourcesHref={href('Page/Search')}
           resourceCardPropsList={getResourcesCardStoryProps(15, {
             state: {
-              liked: false,
-              // bookmarked: true,
+              liked: true,
+              bookmarked: true,
             },
             access: {
               canDelete: false,
@@ -98,7 +104,10 @@ export const LandingLoggedInStoryProps: LandingProps = {
           collectionCardPropsList={getCollectionsCardStoryProps(15, {
             state: {
               followed: true,
-              // bookmarked: true,
+              bookmarked: true,
+            },
+            access: {
+              canPublish: false,
             },
           })}
         />

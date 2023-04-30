@@ -82,6 +82,9 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       },
       publish: () => setIsPublished(resourceKey, true),
       unpublish: () => setIsPublished(resourceKey, false),
+      toggleBookmark: () => undefined, //@ETTO to be filled
+      toggleLike: () => undefined, //@ETTO to be filled
+
       deleteResource: () => {
         setIsToDelete(true)
         return _delete(resourceKey).then(() => {

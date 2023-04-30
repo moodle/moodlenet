@@ -34,7 +34,7 @@ export type CollectionAccessRpc = {
   canPublish: boolean
   canDelete: boolean
   canFollow: boolean
-  // canBookmark: boolean
+  canBookmark: boolean
 }
 
 export type CollectionDataRpc = {
@@ -49,7 +49,7 @@ export type CollectionStateRpc = {
   numResources: number
   isPublished: boolean
   followed: boolean
-  // bookmarked: boolean
+  bookmarked: boolean
 }
 
 export type CollectionFormRpc = {
@@ -95,7 +95,7 @@ export type CollectionActions = {
   deleteCollection(): void
   setImage: (file: File | undefined | null) => void
   toggleFollow(): void
-  // toggleBookmark(): void
+  toggleBookmark(): void
 }
 
 export type CollectionMainProps = {
@@ -114,15 +114,15 @@ export type CollectionCardData = { collectionHref: Href } & Pick<
 
 export type CollectionCardState = Pick<
   CollectionStateProps,
-  'isPublished' | 'numResources' | 'followed' | 'numFollowers'
+  'isPublished' | 'numResources' | 'followed' | 'numFollowers' | 'bookmarked'
 >
 export type CollectionCardActions = Pick<
   CollectionActions,
-  'publish' | 'unpublish' | 'toggleFollow'
+  'publish' | 'unpublish' | 'toggleFollow' | 'toggleBookmark'
 >
 export type CollectionCardAccess = Pick<
   CollectionAccessProps,
-  'isCreator' | 'canPublish' | 'canFollow' | 'isAuthenticated' // |  'isAuthenticated' | 'canBookmark'
+  'isCreator' | 'canPublish' | 'canFollow' | 'isAuthenticated' | 'canBookmark' // |  'isAuthenticated'
 >
 
 export type Organization = {

@@ -8,7 +8,7 @@ import { CollectionCard, CollectionCardProps } from '@moodlenet/collection/ui'
 import { ContentBackupImages } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
-import { SmallFollowButton } from '@moodlenet/web-user/ui'
+import { BookmarkButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -53,21 +53,22 @@ export const getCollectionCardStoryProps = (
     isPublished: true,
     numFollowers: 32,
     followed: false,
+    bookmarked: false,
     ...overrides?.state,
-    // bookmarked: false,
   }
 
   const actions: CollectionCardActions = {
     publish: action('publish resource'),
     unpublish: action('unpublish resource'),
-    toggleFollow: linkTo('Molecules/CollectionCard', 'followed'),
-    // toggleBookmark: linkTo('Molecules/CollectionCard', 'Bookmarked'),
+    toggleFollow: linkTo('Molecules/CollectionCard', 'Default'),
+    toggleBookmark: linkTo('Molecules/CollectionCard', 'Default'),
   }
 
   const access: CollectionCardAccess = {
     isCreator: false,
     canPublish: true,
     canFollow: true,
+    canBookmark: true,
     isAuthenticated: true,
     ...overrides?.access,
   }
@@ -78,6 +79,21 @@ export const getCollectionCardStoryProps = (
   const slots: Pick<CollectionCardProps, 'mainColumnItems' | 'topLeftItems' | 'topRightItems'> = {
     topLeftItems: [],
     topRightItems: [
+      isPublished
+        ? {
+            Item: () => (
+              <BookmarkButton
+                canBookmark={access.canBookmark}
+                bookmarked={state.bookmarked}
+                isAuthenticated={access.isAuthenticated}
+                isCreator={access.isCreator}
+                toggleBookmark={actions.toggleBookmark}
+                style={{ color: 'white' }}
+              />
+            ),
+            key: 'like-button',
+          }
+        : null,
       isPublished
         ? {
             Item: () => (
