@@ -86,7 +86,6 @@ export const getCollectionCardStoryProps = (
                 canBookmark={access.canBookmark}
                 bookmarked={state.bookmarked}
                 isAuthenticated={access.isAuthenticated}
-                isCreator={access.isCreator}
                 toggleBookmark={actions.toggleBookmark}
                 style={{ color: 'white' }}
               />

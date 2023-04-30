@@ -26,6 +26,14 @@ export type MainContextResource = MyPkgContext & {
 export type ResourceFormRpc = {
   title: string
   description: string
+  subject: string
+  license: string
+  level: string | undefined
+  month: string | undefined
+  year: string | undefined
+  language: string | undefined
+  // addToCollections: string[]
+  // type?: string
 }
 
 export type ResourceDataRpc = {
@@ -57,7 +65,7 @@ export type ResourceContributorRpc = {
 export type ResourceRpc = {
   resourceForm: ResourceFormRpc
   access: ResourceAccessRpc
-  state: Pick<ResourceStateRpc, 'isPublished'>
+  state: Pick<ResourceStateRpc, 'isPublished' | 'liked' | 'numLikes' | 'bookmarked'>
   data: ResourceDataRpc
   contributor: ResourceContributorRpc
 }

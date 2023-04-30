@@ -4,18 +4,22 @@ import {
   Card,
   FloatingMenu,
   FloatingMenuContentItem,
+  FollowTag,
   getPreviewFromUrl,
   InputTextField,
   Modal,
   PrimaryButton,
   Snackbar,
   TertiaryButton,
+  TextOptionProps,
   useWindowDimensions,
 } from '@moodlenet/component-library'
+import { SubjectsTextOptionProps } from '@moodlenet/ed-meta/common'
 import {
   downloadOrOpenURL,
   FormikHandle,
   getBackupImage,
+  getTagList,
   useImageUrl,
 } from '@moodlenet/react-app/ui'
 import {
@@ -183,12 +187,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       {form.values.title}
     </div>
   )
-
-  //   const tagsDiv: (AddonItem | null) = {
-  //     Item: () =>
-  //       tags.length > 0 ? <div className="tags scroll">{getTagList(tags, 'medium')}</div> : <></>,
-  //     key: 'type-and-actions',
-  //   }
 
   const resourceLabel = (
     <div className="resource-label" key="resource-label">
@@ -502,10 +500,30 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
+  const selectedSubject: TextOptionProps | undefined = SubjectsTextOptionProps.find(e => {
+    return e.value === form.values.subject
+  })
+  const tags: FollowTag[] = [
+    selectedSubject
+      ? {
+          type: 'subject',
+          name: selectedSubject ? selectedSubject.label : undefined,
+          // href:
+        }
+      : null,
+  ].filter((item): item is FollowTag => !!item)
+
+  const tagsContainer =
+    tags.length > 0 ? (
+      <div className="tags scroll" key="tags">
+        {getTagList(tags, 'medium')}
+      </div>
+    ) : null
+
   const updatedHeaderColumnItems = [
     topHeaderRow,
     title,
-    // tagsDiv,
+    tagsContainer,
     ...(headerColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 

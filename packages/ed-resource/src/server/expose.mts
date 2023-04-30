@@ -66,7 +66,16 @@ export const expose = await shell.expose<ResourceExposeType>({
             displayName: found.contributor.name,
             timeSinceCreation: found.meta.created,
           },
-          resourceForm: { description: found.entity.description, title: found.entity.title },
+          resourceForm: {
+            description: found.entity.description,
+            title: found.entity.title,
+            license: '', //@ETTO to be filled
+            subject: '', //@ETTO to be filled
+            language: '', //@ETTO to be filled
+            level: '', //@ETTO to be filled
+            month: '', //@ETTO to be filled
+            year: '', //@ETTO to be filled
+          },
           data: {
             contentType: found.entity.content?.kind ?? 'link',
             contentUrl,
@@ -79,7 +88,12 @@ export const expose = await shell.expose<ResourceExposeType>({
             imageUrl,
             isWaitingForApproval: false,
           },
-          state: { isPublished: true },
+          state: {
+            isPublished: true, //@ETTO to be filled
+            bookmarked: false, //@ETTO to be filled
+            liked: false, //@ETTO to be filled
+            numLikes: 2, //@ETTO to be filled
+          },
           access: {
             canDelete: !!found.access.d,
             canEdit: !!found.access.u,

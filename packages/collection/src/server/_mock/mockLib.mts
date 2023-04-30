@@ -22,6 +22,7 @@ export const empityFormModel: CollectionRpc = {
     followed: false,
     numResources: 0,
     numFollowers: 0,
+    bookmarked: false,
   },
   access: {
     isCreator: true,
@@ -29,6 +30,8 @@ export const empityFormModel: CollectionRpc = {
     canPublish: true,
     canDelete: true,
     canFollow: true,
+    canBookmark: false,
+    isAuthenticated: true,
   },
   contributor: {
     avatarUrl: '',
