@@ -1,65 +1,74 @@
-import {
-  Dropdown,
-  IconPill,
-  IconTextOption,
-  IconTextOptionProps,
-} from '@moodlenet/component-library'
-import { SelectOptions } from '@moodlenet/react-app/ui'
+import { Dropdown, IconPill, IconTextOption } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC } from 'react'
-import { SchemaOf } from 'yup'
+import { FC, useState } from 'react'
+import { LicenseIconTextOptionProps } from '../../../../common/data.js'
+import { licenseValidationSchema } from '../../../../common/validationSchema.js'
 import './LicenseField.scss'
 
 export type LicenseFieldProps = {
   license: string
-  licenses: SelectOptions<IconTextOptionProps>
-  editLicense: (values: { license: string }) => void
   canEdit: boolean
-  isEditing: boolean
   shouldShowErrors: boolean
-  validationSchema: SchemaOf<{ license: string }>
+  editLicense: (license: string) => void
 }
 
 export const LicenseField: FC<LicenseFieldProps> = ({
   license,
-  licenses,
-  editLicense,
   canEdit,
-  isEditing,
-  validationSchema,
   shouldShowErrors,
+  editLicense,
 }) => {
   const form = useFormik<{ license: string }>({
     initialValues: { license },
-    validationSchema: validationSchema,
+    validationSchema: licenseValidationSchema,
     onSubmit: values => {
-      return editLicense(values)
+      return editLicense(values.license)
     },
   })
 
-  const licenseDropdown = isEditing ? (
+  const licenses = {
+    opts: LicenseIconTextOptionProps,
+    selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
+  }
+  const [updatedLicenses, setUpdatedLicenses] = useState(licenses)
+
+  const filterLicenses = (text: string) => {
+    setUpdatedLicenses({
+      opts: licenses.opts.filter(
+        o =>
+          o.label.toUpperCase().includes(text.toUpperCase()) ||
+          o.value.toUpperCase().includes(text.toUpperCase()),
+      ),
+      selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
+    })
+  }
+
+  const licenseDropdown = canEdit ? (
     <Dropdown
       name="license"
       className="license-dropdown"
-      onChange={form.submitForm}
-      value={form.values.license}
-      label={`License`}
+      onChange={e => {
+        e.currentTarget.value !== license && editLicense(e.currentTarget.value)
+      }}
       edit
+      value={license}
+      label={`License`}
+      placeholder="License category"
+      searchByText={filterLicenses}
       highlight={shouldShowErrors && !!form.errors.license}
-      disabled={form.isSubmitting}
       error={form.errors.license}
       position={{ top: 50, bottom: 25 }}
       pills={
-        licenses.selected && (
-          <IconPill key={licenses.selected.value} icon={licenses.selected.icon} />
+        updatedLicenses.selected && (
+          <IconPill key={updatedLicenses.selected.value} icon={updatedLicenses.selected.icon} />
         )
       }
     >
-      {licenses.opts.map(({ icon, label, value }) => (
+      {updatedLicenses.opts.map(({ icon, label, value }) => (
         <IconTextOption icon={icon} label={label} value={value} key={value} />
       ))}
     </Dropdown>
-  ) : canEdit ? (
+  ) : (
     <div className="detail license">
       <div className="title">License</div>
       {licenses.selected && (
@@ -68,7 +77,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
         </abbr>
       )}
     </div>
-  ) : null
+  )
   return licenseDropdown
 }
 

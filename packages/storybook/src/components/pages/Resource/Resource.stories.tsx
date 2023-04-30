@@ -61,6 +61,8 @@ export const Creator: ResourceStory = () => {
 export const NewResourceProps: Partial<ResourceFormProps> = {
   title: '',
   description: '',
+  subject: '',
+  license: '',
 }
 
 export const New: ResourceStory = () => {

@@ -4,6 +4,12 @@ export const resourceFormValues: ResourceFormRpc = {
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary resource maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
   title: 'The Best Resource Ever',
+  license: '', //@ETTO to be filled
+  subject: '', //@ETTO to be filled
+  language: '', //@ETTO to be filled
+  level: '', //@ETTO to be filled
+  month: '', //@ETTO to be filled
+  year: '', //@ETTO to be filled
 }
 
 export const resFakeData: ResourceRpc = {
@@ -19,8 +25,9 @@ export const resFakeData: ResourceRpc = {
   },
   state: {
     isPublished: true,
-    // liked: false,
-    // bookmarked: false,
+    liked: false,
+    bookmarked: false,
+    numLikes: 12,
   },
   access: {
     isCreator: true,

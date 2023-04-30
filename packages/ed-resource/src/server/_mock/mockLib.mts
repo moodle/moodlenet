@@ -19,6 +19,9 @@ export const empityFormModel: ResourceRpc = {
   },
   state: {
     isPublished: true,
+    bookmarked: false,
+    liked: false,
+    numLikes: 13,
   },
   access: {
     isCreator: true,
@@ -29,7 +32,16 @@ export const empityFormModel: ResourceRpc = {
     canLike: false,
     isAuthenticated: true,
   },
-  resourceForm: { description: '', title: '' },
+  resourceForm: {
+    description: '',
+    title: '',
+    license: '', //@ETTO to be filled
+    subject: '', //@ETTO to be filled
+    language: '', //@ETTO to be filled
+    level: '', //@ETTO to be filled
+    month: '', //@ETTO to be filled
+    year: '', //@ETTO to be filled
+  },
   contributor: {
     avatarUrl: null,
     displayName: '',

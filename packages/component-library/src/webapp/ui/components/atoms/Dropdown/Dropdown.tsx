@@ -8,7 +8,7 @@ import {
   useLayoutEffect,
   useReducer,
   useRef,
-  useState
+  useState,
 } from 'react'
 import { Selector, SelectorProps, useSelectorOption } from '../../../lib/selector.js'
 
@@ -28,19 +28,7 @@ export type DropdownProps = SelectorProps & {
   position?: { top?: number; bottom?: number }
 }
 export const Dropdown: FC<DropdownProps> = props => {
-  const {
-    children,
-    pills,
-    edit,
-    searchByText,
-    label,
-    error,
-    highlight,
-    multilines,
-    searchText,
-    position,
-    ...selectorProps
-  } = props
+  const { children, ...selectorProps } = props
   return (
     <Selector {...selectorProps}>
       <DropdownComp {...props}>{children}</DropdownComp>
@@ -211,6 +199,7 @@ export const SimplePill: FC<{
     </div>
   )
 }
+
 export const IconPill: FC<{
   icon: ReactNode
 }> = ({ icon }) => {

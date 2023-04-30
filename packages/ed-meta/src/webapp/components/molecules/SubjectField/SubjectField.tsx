@@ -1,68 +1,82 @@
-import { Dropdown, SimplePill, TextOption, TextOptionProps } from '@moodlenet/component-library'
-import { SelectOptions } from '@moodlenet/react-app/ui'
+import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC } from 'react'
-import { SchemaOf } from 'yup'
+import { FC, useState } from 'react'
+import { SubjectsTextOptionProps } from '../../../../common/data.js'
+import { subjectValidationSchema } from '../../../../common/validationSchema.js'
 import './SubjectField.scss'
 
 export type SubjectFieldProps = {
   subject: string
-  subjects: SelectOptions<TextOptionProps>
-  editSubject: (values: { subject: string }) => void
   canEdit: boolean
-  isEditing: boolean
   shouldShowErrors: boolean
-  validationSchema: SchemaOf<{ subject: string }>
-  setCategoryFilter(text: string): unknown
+  editSubject(subject: string): void
 }
 
 export const SubjectField: FC<SubjectFieldProps> = ({
   subject,
-  subjects,
-  editSubject,
   canEdit,
-  validationSchema,
   shouldShowErrors,
+  editSubject,
 }) => {
+  const subjects = {
+    opts: SubjectsTextOptionProps,
+    selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+  }
+  const [updatedSubjects, setUpdatedSubjects] = useState(subjects)
+
   const form = useFormik<{ subject: string }>({
     initialValues: { subject: subject },
-    validationSchema: validationSchema,
+    validationSchema: subjectValidationSchema,
     onSubmit: values => {
-      return editSubject(values)
+      return editSubject(values.subject)
     },
   })
+
+  const filterSubjects = (text: string) => {
+    setUpdatedSubjects({
+      opts: subjects.opts.filter(
+        o =>
+          o.label.toUpperCase().includes(text.toUpperCase()) ||
+          o.value.toUpperCase().includes(text.toUpperCase()),
+      ),
+      selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+    })
+  }
+
   return canEdit ? (
     <Dropdown
       name="subject"
-      value={form.values.subject}
-      onChange={form.submitForm}
+      value={subject}
+      onChange={e => {
+        e.currentTarget.value !== subject && editSubject(e.currentTarget.value)
+      }}
       label="Subject"
-      disabled={form.isSubmitting}
+      placeholder="Content category"
       edit={true}
       highlight={shouldShowErrors && !!form.errors.subject}
       error={form.errors.subject}
       position={{ top: 50, bottom: 25 }}
-      // searchByText={setCategoryFilter}
+      searchByText={filterSubjects}
       pills={
-        subjects.selected && (
+        updatedSubjects.selected && (
           <SimplePill
-            key={subjects.selected.value}
-            value={subjects.selected.value}
-            label={subjects.selected.label}
+            key={updatedSubjects.selected.value}
+            value={updatedSubjects.selected.value}
+            label={updatedSubjects.selected.label}
           />
         )
       }
     >
-      {subjects.selected && (
+      {updatedSubjects.selected && (
         <TextOption
-          key={subjects.selected.value}
-          value={subjects.selected.value}
-          label={subjects.selected.label}
+          key={updatedSubjects.selected.value}
+          value={updatedSubjects.selected.value}
+          label={updatedSubjects.selected.label}
         />
       )}
-      {subjects.opts.map(
+      {updatedSubjects.opts.map(
         ({ label, value }) =>
-          subjects.selected?.value !== value && (
+          updatedSubjects.selected?.value !== value && (
             <TextOption key={value} label={label} value={value} />
           ),
       )}

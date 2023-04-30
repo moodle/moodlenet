@@ -1,6 +1,4 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { LicenseFieldStories, SubjectFieldStories } from '@moodlenet/ed-meta/stories'
-import { LicenseField, SubjectField } from '@moodlenet/ed-meta/ui'
 import {
   ResourceAccessProps,
   ResourceActions,
@@ -164,6 +162,8 @@ export const useResourceStoryProps = (
     title: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+    subject: 'Generic programmes and qualifications',
+    license: 'CC-0 (Public domain)',
     ...overrides?.resourceForm,
   }
 
@@ -250,7 +250,6 @@ export const useResourceStoryProps = (
                 canBookmark={access.canBookmark}
                 bookmarked={state.bookmarked}
                 isAuthenticated={access.isAuthenticated}
-                isCreator={access.isCreator}
                 toggleBookmark={actions.toggleBookmark}
               />
             ),
@@ -262,16 +261,7 @@ export const useResourceStoryProps = (
     footerRowItems: [],
   }
 
-  const extraDetailsItems: AddonItem[] = [
-    {
-      Item: () => <SubjectField {...SubjectFieldStories.useSubjectFieldStoryProps()} />,
-      key: 'subject-field',
-    },
-    {
-      Item: () => <LicenseField {...LicenseFieldStories.useLicenseFieldStoryProps()} />,
-      key: 'license-field',
-    },
-  ]
+  const extraDetailsItems: AddonItem[] = []
   const generalActionsItems: AddonItem[] = [
     AddToCollectionButtonStories.useAddToCollectionButtonStory(),
   ]

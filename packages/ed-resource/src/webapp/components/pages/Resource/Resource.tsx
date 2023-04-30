@@ -6,6 +6,8 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@moodlenet/component-library'
+import { LicenseFieldStories, SubjectFieldStories } from '@moodlenet/ed-meta/stories'
+import { LicenseField, SubjectField } from '@moodlenet/ed-meta/ui'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
@@ -74,7 +76,7 @@ export const Resource: FC<ResourceProps> = ({
 }) => {
   const { isWaitingForApproval, downloadFilename, contentUrl, contentType, imageUrl } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
-  const { canPublish } = access
+  const { canPublish, canEdit } = access
   const { isPublished } = state
 
   const form = useFormik<ResourceFormProps>({
@@ -193,38 +195,30 @@ export const Resource: FC<ResourceProps> = ({
   //   </Card>
   // ) : null
 
-  // const license: AddonItem | null =
-  //   contentType === 'file'
-  //     ? {
-  //         Item: () => (
-  //           <Dropdown
-  //             name="license"
-  //             className="license-dropdown"
-  //             onChange={form.handleChange}
-  //             value={form.values.license}
-  //             label={`License`}
-  //             edit
-  //             highlight={shouldShowErrors && !!form.errors.license}
-  //             disabled={form.isSubmitting}
-  //             error={form.errors.license}
-  //             position={{ top: 50, bottom: 25 }}
-  //             pills={
-  //               licenses.selected && (
-  //                 <IconPill key={licenses.selected.value} icon={licenses.selected.icon} />
-  //               )
-  //             }
-  //           >
-  //             {licenses.opts.map(({ icon, label, value }) => (
-  //               <IconTextOption icon={icon} label={label} value={value} key={value} />
-  //             ))}
-  //           </Dropdown>
-  //         ),
-  //         key: 'extra-details-card',
-  //       }
-  //     : null
+  const subjectField = (
+    <SubjectField
+      key="subject-field"
+      {...SubjectFieldStories.useSubjectFieldStoryProps()}
+      canEdit={canEdit}
+      subject={form.values.subject}
+      editSubject={e => form.setFieldValue('subject', e)}
+    />
+  )
+  const licenseField = (
+    <LicenseField
+      key="license-field"
+      {...LicenseFieldStories.useLicenseFieldStoryProps()}
+      canEdit={canEdit}
+      license={form.values.license}
+      editLicense={e => {
+        form.setFieldValue('license', e)
+      }}
+    />
+  )
 
   const updatedExtraDetailsItems = [
-    // license,
+    subjectField,
+    licenseField,
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
@@ -262,8 +256,8 @@ export const Resource: FC<ResourceProps> = ({
   const updatedGeneralActionsItems = [
     publishButton,
     unpublishButton,
-    downloadOrOpenLink,
     ...(generalActionsItems ?? []),
+    downloadOrOpenLink,
   ].filter((item): item is AddonItem => !!item)
 
   const generalActionsContainer = (
