@@ -1,6 +1,6 @@
 import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SubjectsTextOptionProps } from '../../../../common/data.js'
 import { subjectValidationSchema } from '../../../../common/validationSchema.js'
 import './SubjectField.scss'
@@ -18,12 +18,6 @@ export const SubjectField: FC<SubjectFieldProps> = ({
   shouldShowErrors,
   editSubject,
 }) => {
-  const subjects = {
-    opts: SubjectsTextOptionProps,
-    selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
-  }
-  const [updatedSubjects, setUpdatedSubjects] = useState(subjects)
-
   const form = useFormik<{ subject: string }>({
     initialValues: { subject: subject },
     validationSchema: subjectValidationSchema,
@@ -32,16 +26,32 @@ export const SubjectField: FC<SubjectFieldProps> = ({
     },
   })
 
-  const filterSubjects = (text: string) => {
+  const subjects = {
+    opts: SubjectsTextOptionProps,
+    selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+  }
+  const [updatedSubjects, setUpdatedSubjects] = useState(subjects)
+  const [searchText, setSearchText] = useState('')
+
+  useEffect(() => {
+    setUpdatedSubjects({
+      opts: SubjectsTextOptionProps,
+      selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+    })
+  }, [subject])
+
+  useEffect(() => {
     setUpdatedSubjects({
       opts: subjects.opts.filter(
         o =>
-          o.label.toUpperCase().includes(text.toUpperCase()) ||
-          o.value.toUpperCase().includes(text.toUpperCase()),
+          o.label.toUpperCase().includes(searchText.toUpperCase()) ||
+          o.value.toUpperCase().includes(searchText.toUpperCase()),
       ),
-      selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+      selected: SubjectsTextOptionProps.find(
+        ({ value }) => value === subject && value.toUpperCase().includes(searchText.toUpperCase()),
+      ),
     })
-  }
+  }, [searchText, subject, subjects.opts])
 
   return canEdit ? (
     <Dropdown
@@ -52,11 +62,11 @@ export const SubjectField: FC<SubjectFieldProps> = ({
       }}
       label="Subject"
       placeholder="Content category"
-      edit={true}
+      edit
       highlight={shouldShowErrors && !!form.errors.subject}
       error={form.errors.subject}
       position={{ top: 50, bottom: 25 }}
-      searchByText={filterSubjects}
+      searchByText={setSearchText}
       pills={
         updatedSubjects.selected && (
           <SimplePill
@@ -81,15 +91,12 @@ export const SubjectField: FC<SubjectFieldProps> = ({
           ),
       )}
     </Dropdown>
-  ) : canEdit ? (
+  ) : (
     <div className="detail subject">
       <div className="title">Subject</div>
-      <abbr className="value">
-        Films and nature
-        {/* {subjects.selected?.label} */}
-      </abbr>
+      <abbr className="value">{subjects.selected?.label}</abbr>
     </div>
-  ) : null
+  )
 }
 
 export default SubjectField

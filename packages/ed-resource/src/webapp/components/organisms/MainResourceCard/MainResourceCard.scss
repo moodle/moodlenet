@@ -95,7 +95,8 @@
         }
 
         > .tertiary-button,
-        > .more-button > .hover-element > .tertiary-button {
+        > .more-button > .hover-element > .tertiary-button,
+        > abbr {
           padding: 0 6px;
         }
 
