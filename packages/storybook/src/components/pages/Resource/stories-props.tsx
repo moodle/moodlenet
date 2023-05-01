@@ -65,12 +65,9 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
 })
 
 export const validationSchema: SchemaOf<ResourceFormProps> = object({
-  category: string().required(/* t */ `Please select a subject`),
+  subject: string().required(/* t */ `Please select a subject`),
   content: string().required(/* t */ `Please upload a content`),
-
-  license: string().when('isFile', (isFile, schema) => {
-    return isFile ? schema.required(/* t */ `Select a license`) : schema.optional()
-  }),
+  license: string().required(/* t */ `Please provide a license`),
   isFile: boolean().required(),
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   title: string().max(160).min(3).required(/* t */ `Please provide a title`),
@@ -122,12 +119,15 @@ export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
-      // content: '',
       title: 'Best resource ever',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      // image:
-      //   'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+      subject: '',
+      license: '',
+      language: '',
+      level: '',
+      month: '',
+      year: '',
     },
     ...overrides,
   })
@@ -162,8 +162,12 @@ export const useResourceStoryProps = (
     title: 'Best resource ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    subject: 'Generic programmes and qualifications',
+    subject: '0011',
     license: 'CC-0 (Public domain)',
+    language: undefined,
+    level: undefined,
+    month: undefined,
+    year: undefined,
     ...overrides?.resourceForm,
   }
 
@@ -253,7 +257,7 @@ export const useResourceStoryProps = (
                 toggleBookmark={actions.toggleBookmark}
               />
             ),
-            key: 'like-button',
+            key: 'bookmark-button',
           }
         : null,
     ],

@@ -118,6 +118,8 @@ const DropdownComp: FC<DropdownProps> = props => {
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLInputElement>(null)
 
+  // const contentLength: number = children && Array.isArray(children) && children[1].length
+
   return (
     <div
       className={`dropdown ${className ? className : ''} ${searchByText ? 'search' : ''}${
@@ -168,6 +170,7 @@ const DropdownComp: FC<DropdownProps> = props => {
       {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}
 
       {showContent && (
+        // contentLength > 0 &&
         <div
           ref={dropdownContent}
           onMouseEnter={() => setHoveringOptions(true)}

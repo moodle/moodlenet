@@ -46,6 +46,7 @@ export const Creator: ResourceStory = () => {
     data: {},
     state: {
       isPublished: true,
+      liked: false,
     },
     actions: {},
     access: {

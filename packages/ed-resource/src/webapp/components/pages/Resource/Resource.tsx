@@ -6,7 +6,6 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@moodlenet/component-library'
-import { LicenseFieldStories, SubjectFieldStories } from '@moodlenet/ed-meta/stories'
 import { LicenseField, SubjectField } from '@moodlenet/ed-meta/ui'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
@@ -39,11 +38,11 @@ export type ResourceProps = {
   extraDetailsItems: AddonItem[]
   generalActionsItems: AddonItem[]
 
-  data: ResourceDataProps
   resourceForm: ResourceFormProps
   validationSchema: SchemaOf<ResourceFormProps>
   contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }>
 
+  data: ResourceDataProps
   state: ResourceStateProps
   actions: ResourceActions
   access: ResourceAccessProps
@@ -198,21 +197,22 @@ export const Resource: FC<ResourceProps> = ({
   const subjectField = (
     <SubjectField
       key="subject-field"
-      {...SubjectFieldStories.useSubjectFieldStoryProps()}
       canEdit={canEdit}
       subject={form.values.subject}
       editSubject={e => form.setFieldValue('subject', e)}
+      shouldShowErrors={shouldShowErrors}
     />
   )
+
   const licenseField = (
     <LicenseField
       key="license-field"
-      {...LicenseFieldStories.useLicenseFieldStoryProps()}
       canEdit={canEdit}
       license={form.values.license}
       editLicense={e => {
         form.setFieldValue('license', e)
       }}
+      shouldShowErrors={shouldShowErrors}
     />
   )
 

@@ -1,6 +1,6 @@
 import { Dropdown, IconPill, IconTextOption } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { LicenseIconTextOptionProps } from '../../../../common/data.js'
 import { licenseValidationSchema } from '../../../../common/validationSchema.js'
 import './LicenseField.scss'
@@ -31,17 +31,38 @@ export const LicenseField: FC<LicenseFieldProps> = ({
     selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
   }
   const [updatedLicenses, setUpdatedLicenses] = useState(licenses)
+  const [searchText, setSearchText] = useState('')
 
-  const filterLicenses = (text: string) => {
+  useEffect(() => {
+    setUpdatedLicenses({
+      opts: LicenseIconTextOptionProps,
+      selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
+    })
+  }, [license])
+
+  useEffect(() => {
     setUpdatedLicenses({
       opts: licenses.opts.filter(
         o =>
-          o.label.toUpperCase().includes(text.toUpperCase()) ||
-          o.value.toUpperCase().includes(text.toUpperCase()),
+          o.label.toUpperCase().includes(searchText.toUpperCase()) ||
+          o.value.toUpperCase().includes(searchText.toUpperCase()),
       ),
-      selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
+      selected: LicenseIconTextOptionProps.find(
+        ({ value }) => value === license && value.toUpperCase().includes(searchText.toUpperCase()),
+      ),
     })
-  }
+  }, [searchText, license, licenses.opts])
+
+  // const filterLicenses = (text: string) => {
+  //   setUpdatedLicenses({
+  //     opts: licenses.opts.filter(
+  //       o =>
+  //         o.label.toUpperCase().includes(text.toUpperCase()) ||
+  //         o.value.toUpperCase().includes(text.toUpperCase()),
+  //     ),
+  //     selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
+  //   })
+  // }
 
   const licenseDropdown = canEdit ? (
     <Dropdown
@@ -54,7 +75,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       value={license}
       label={`License`}
       placeholder="License category"
-      searchByText={filterLicenses}
+      searchByText={setSearchText}
       highlight={shouldShowErrors && !!form.errors.license}
       error={form.errors.license}
       position={{ top: 50, bottom: 25 }}
