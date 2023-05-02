@@ -7,6 +7,7 @@ import { levelValidationSchema } from '../../../../common/validationSchema.js'
 export type LevelFieldProps = {
   level: string | undefined
   canEdit: boolean
+  error: string | undefined
   shouldShowErrors: boolean
   editLevel(level: string): void
 }
@@ -14,6 +15,7 @@ export type LevelFieldProps = {
 export const LevelField: FC<LevelFieldProps> = ({
   level,
   canEdit,
+  error,
   shouldShowErrors,
   editLevel,
 }) => {
@@ -59,7 +61,7 @@ export const LevelField: FC<LevelFieldProps> = ({
       placeholder="Education level"
       edit
       highlight={shouldShowErrors && !!form.errors.level}
-      error={form.errors.level}
+      error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={

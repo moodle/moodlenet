@@ -8,12 +8,14 @@ export type SubjectFieldProps = {
   subject: string
   canEdit: boolean
   shouldShowErrors: boolean
+  error: string | undefined
   editSubject(subject: string): void
 }
 
 export const SubjectField: FC<SubjectFieldProps> = ({
   subject,
   canEdit,
+  error,
   shouldShowErrors,
   editSubject,
 }) => {
@@ -63,7 +65,7 @@ export const SubjectField: FC<SubjectFieldProps> = ({
       placeholder="Content category"
       edit
       highlight={shouldShowErrors && !!form.errors.subject}
-      error={form.errors.subject}
+      error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={

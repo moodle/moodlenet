@@ -7,11 +7,18 @@ import { typeValidationSchema } from '../../../../common/validationSchema.js'
 export type TypeFieldProps = {
   type: string | undefined
   canEdit: boolean
+  error: string | undefined
   shouldShowErrors: boolean
   editType(type: string): void
 }
 
-export const TypeField: FC<TypeFieldProps> = ({ type, canEdit, shouldShowErrors, editType }) => {
+export const TypeField: FC<TypeFieldProps> = ({
+  type,
+  canEdit,
+  error,
+  shouldShowErrors,
+  editType,
+}) => {
   const form = useFormik<{ type: string | undefined }>({
     initialValues: { type: type },
     validationSchema: typeValidationSchema,
@@ -54,7 +61,7 @@ export const TypeField: FC<TypeFieldProps> = ({ type, canEdit, shouldShowErrors,
       placeholder="Content type"
       edit
       highlight={shouldShowErrors && !!form.errors.type}
-      error={form.errors.type}
+      error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={
