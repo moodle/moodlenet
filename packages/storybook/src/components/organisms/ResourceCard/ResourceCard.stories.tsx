@@ -111,7 +111,6 @@ export const getResourceCardStoryProps = (
                 canBookmark={access.canBookmark}
                 bookmarked={state.bookmarked}
                 isAuthenticated={access.isAuthenticated}
-                isCreator={access.isCreator}
                 toggleBookmark={actions.toggleBookmark}
               />
             ),

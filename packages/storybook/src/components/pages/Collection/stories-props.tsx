@@ -209,7 +209,6 @@ export const useCollectionStoryProps = (
                 canBookmark={access.canBookmark}
                 bookmarked={state.bookmarked}
                 isAuthenticated={access.isAuthenticated}
-                isCreator={access.isCreator}
                 toggleBookmark={actions.toggleBookmark}
               />
             ),

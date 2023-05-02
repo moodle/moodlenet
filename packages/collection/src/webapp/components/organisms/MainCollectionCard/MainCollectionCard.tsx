@@ -276,33 +276,21 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const publishingButton =
     canPublish && !isPublished && isWaitingForApproval ? (
-      <abbr
-        key="publishing-button"
-        title="Publish requested"
-        style={{ cursor: 'initial', padding: '0 4px' }}
-      >
+      <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
         <HourglassBottom style={{ fill: '#d0d1db' }} />
       </abbr>
     ) : null
 
   const publishedButton =
     canEdit && isPublished ? (
-      <abbr
-        title="Published"
-        key="publishing-button"
-        style={{ cursor: 'initial', padding: '0 4px' }}
-      >
+      <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
         <Public style={{ fill: '#00bd7e' }} />
       </abbr>
     ) : null
 
   const unpublishedButton =
     canEdit && !isPublished ? (
-      <abbr
-        title="Unpublished"
-        key="unpublished-button"
-        style={{ cursor: 'initial', padding: '0 4px' }}
-      >
+      <abbr title="Unpublished" key="unpublished-button" style={{ cursor: 'initial' }}>
         <PublicOff style={{ fill: '#a7a7a7' }} />
       </abbr>
     ) : null

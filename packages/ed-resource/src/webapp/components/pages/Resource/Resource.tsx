@@ -6,6 +6,14 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@moodlenet/component-library'
+import {
+  DateField,
+  LanguageField,
+  LevelField,
+  LicenseField,
+  SubjectField,
+  TypeField,
+} from '@moodlenet/ed-meta/ui'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
@@ -37,11 +45,11 @@ export type ResourceProps = {
   extraDetailsItems: AddonItem[]
   generalActionsItems: AddonItem[]
 
-  data: ResourceDataProps
   resourceForm: ResourceFormProps
   validationSchema: SchemaOf<ResourceFormProps>
   contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }>
 
+  data: ResourceDataProps
   state: ResourceStateProps
   actions: ResourceActions
   access: ResourceAccessProps
@@ -74,7 +82,7 @@ export const Resource: FC<ResourceProps> = ({
 }) => {
   const { isWaitingForApproval, downloadFilename, contentUrl, contentType, imageUrl } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
-  const { canPublish } = access
+  const { canPublish, canEdit } = access
   const { isPublished } = state
 
   const form = useFormik<ResourceFormProps>({
@@ -193,38 +201,94 @@ export const Resource: FC<ResourceProps> = ({
   //   </Card>
   // ) : null
 
-  // const license: AddonItem | null =
-  //   contentType === 'file'
-  //     ? {
-  //         Item: () => (
-  //           <Dropdown
-  //             name="license"
-  //             className="license-dropdown"
-  //             onChange={form.handleChange}
-  //             value={form.values.license}
-  //             label={`License`}
-  //             edit
-  //             highlight={shouldShowErrors && !!form.errors.license}
-  //             disabled={form.isSubmitting}
-  //             error={form.errors.license}
-  //             position={{ top: 50, bottom: 25 }}
-  //             pills={
-  //               licenses.selected && (
-  //                 <IconPill key={licenses.selected.value} icon={licenses.selected.icon} />
-  //               )
-  //             }
-  //           >
-  //             {licenses.opts.map(({ icon, label, value }) => (
-  //               <IconTextOption icon={icon} label={label} value={value} key={value} />
-  //             ))}
-  //           </Dropdown>
-  //         ),
-  //         key: 'extra-details-card',
-  //       }
-  //     : null
+  const subjectField = (
+    <SubjectField
+      key="subject-field"
+      canEdit={canEdit}
+      subject={form.values.subject}
+      error={form.errors.subject}
+      editSubject={e => form.setFieldValue('subject', e)}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const licenseField = (
+    <LicenseField
+      key="license-field"
+      canEdit={canEdit}
+      license={form.values.license}
+      editLicense={e => {
+        form.setFieldValue('license', e)
+      }}
+      error={form.errors.license}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const typeField = (
+    <TypeField
+      key="type-field"
+      canEdit={canEdit}
+      type={form.values.type}
+      editType={e => {
+        form.setFieldValue('type', e)
+      }}
+      error={form.errors.type}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const levelField = (
+    <LevelField
+      key="type-field"
+      canEdit={canEdit}
+      level={form.values.level}
+      editLevel={e => {
+        form.setFieldValue('level', e)
+      }}
+      error={form.errors.level}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const dateField = (
+    <DateField
+      key="type-field"
+      canEdit={canEdit}
+      month={form.values.month}
+      year={form.values.year}
+      editMonth={e => {
+        form.setFieldValue('month', e)
+      }}
+      editYear={e => {
+        form.setFieldValue('year', e)
+      }}
+      errorMonth={form.errors.month}
+      errorYear={form.errors.year}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const languageField = (
+    <LanguageField
+      key="type-field"
+      canEdit={canEdit}
+      language={form.values.language}
+      editLanguage={e => {
+        form.setFieldValue('language', e)
+      }}
+      error={form.errors.language}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
 
   const updatedExtraDetailsItems = [
-    // license,
+    subjectField,
+    licenseField,
+    typeField,
+    levelField,
+    dateField,
+    languageField,
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
@@ -262,8 +326,8 @@ export const Resource: FC<ResourceProps> = ({
   const updatedGeneralActionsItems = [
     publishButton,
     unpublishButton,
-    downloadOrOpenLink,
     ...(generalActionsItems ?? []),
+    downloadOrOpenLink,
   ].filter((item): item is AddonItem => !!item)
 
   const generalActionsContainer = (

@@ -69,6 +69,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         })
       },
       toggleFollow: () => alert('not implemented'), //@ETTO to implement
+      toggleBookmark: () => alert('not implemented'), //@ETTO to implement
       publish: () => setIsPublished(collectionKey, true),
       unpublish: () => setIsPublished(collectionKey, false),
     }
