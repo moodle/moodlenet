@@ -2,7 +2,10 @@ import { shell } from './shell.mjs'
 
 import { RpcFile, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
-import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server'
+import {
+  creatorUserInfoAqlProvider,
+  isCurrentUserCreatorOfCurrentEntity,
+} from '@moodlenet/system-entities/server'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import { ResourceExposeType } from '../common/expose-def.mjs'
 import { ResourceRpc } from '../common/types.mjs'
@@ -41,7 +44,7 @@ export const expose = await shell.expose<ResourceExposeType>({
           projectAccess: ['u', 'd'],
           project: {
             canPublish: canPublish(),
-            isCreator: isCreator(),
+            isCreator: isCurrentUserCreatorOfCurrentEntity(),
             contributor: creatorUserInfoAqlProvider(),
           },
         })
