@@ -1,8 +1,6 @@
 import { Dropdown, IconPill, IconTextOption } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { LicenseIconTextOptionProps } from '../../../../common/data.js'
-import { licenseValidationSchema } from '../../../../common/validationSchema.js'
 
 export type LicenseFieldProps = {
   license: string
@@ -19,14 +17,6 @@ export const LicenseField: FC<LicenseFieldProps> = ({
   shouldShowErrors,
   editLicense,
 }) => {
-  const form = useFormik<{ license: string }>({
-    initialValues: { license },
-    validationSchema: licenseValidationSchema,
-    onSubmit: values => {
-      return editLicense(values.license)
-    },
-  })
-
   const licenses = {
     opts: LicenseIconTextOptionProps,
     selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
@@ -66,7 +56,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       label={`License`}
       placeholder="License category"
       searchByText={setSearchText}
-      highlight={shouldShowErrors && !!form.errors.license}
+      highlight={shouldShowErrors && !!error}
       error={error}
       position={{ top: 50, bottom: 25 }}
       pills={

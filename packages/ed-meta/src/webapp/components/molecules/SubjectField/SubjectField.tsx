@@ -1,8 +1,6 @@
 import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { SubjectsTextOptionProps } from '../../../../common/data.js'
-import { subjectValidationSchema } from '../../../../common/validationSchema.js'
 
 export type SubjectFieldProps = {
   subject: string
@@ -19,14 +17,6 @@ export const SubjectField: FC<SubjectFieldProps> = ({
   shouldShowErrors,
   editSubject,
 }) => {
-  const form = useFormik<{ subject: string }>({
-    initialValues: { subject: subject },
-    validationSchema: subjectValidationSchema,
-    onSubmit: values => {
-      return editSubject(values.subject)
-    },
-  })
-
   const subjects = {
     opts: SubjectsTextOptionProps,
     selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
@@ -64,7 +54,7 @@ export const SubjectField: FC<SubjectFieldProps> = ({
       label="Subject"
       placeholder="Content category"
       edit
-      highlight={shouldShowErrors && !!form.errors.subject}
+      highlight={shouldShowErrors && !!error}
       error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}

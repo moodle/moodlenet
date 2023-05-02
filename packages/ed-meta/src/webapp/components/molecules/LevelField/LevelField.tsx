@@ -1,8 +1,6 @@
 import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { LevelTextOptionProps } from '../../../../common/data.js'
-import { levelValidationSchema } from '../../../../common/validationSchema.js'
 
 export type LevelFieldProps = {
   level: string | undefined
@@ -19,14 +17,6 @@ export const LevelField: FC<LevelFieldProps> = ({
   shouldShowErrors,
   editLevel,
 }) => {
-  const form = useFormik<{ level: string | undefined }>({
-    initialValues: { level: level },
-    validationSchema: levelValidationSchema,
-    onSubmit: values => {
-      return values.level ? editLevel(values.level) : undefined
-    },
-  })
-
   const levels = {
     opts: LevelTextOptionProps,
     selected: LevelTextOptionProps.find(({ value }) => value === level),
@@ -60,7 +50,7 @@ export const LevelField: FC<LevelFieldProps> = ({
       label="Level"
       placeholder="Education level"
       edit
-      highlight={shouldShowErrors && !!form.errors.level}
+      highlight={shouldShowErrors && !!error}
       error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
