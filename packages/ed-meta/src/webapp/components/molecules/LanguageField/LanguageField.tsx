@@ -7,6 +7,7 @@ import { languageValidationSchema } from '../../../../common/validationSchema.js
 export type LanguageFieldProps = {
   language: string | undefined
   canEdit: boolean
+  error: string | undefined
   shouldShowErrors: boolean
   editLanguage(language: string): void
 }
@@ -14,6 +15,7 @@ export type LanguageFieldProps = {
 export const LanguageField: FC<LanguageFieldProps> = ({
   language,
   canEdit,
+  error,
   shouldShowErrors,
   editLanguage,
 }) => {
@@ -59,7 +61,7 @@ export const LanguageField: FC<LanguageFieldProps> = ({
       placeholder="Content language"
       edit
       highlight={shouldShowErrors && !!form.errors.language}
-      error={form.errors.language}
+      error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={

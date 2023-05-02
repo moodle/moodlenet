@@ -206,6 +206,7 @@ export const Resource: FC<ResourceProps> = ({
       key="subject-field"
       canEdit={canEdit}
       subject={form.values.subject}
+      error={form.errors.subject}
       editSubject={e => form.setFieldValue('subject', e)}
       shouldShowErrors={shouldShowErrors}
     />
@@ -219,6 +220,7 @@ export const Resource: FC<ResourceProps> = ({
       editLicense={e => {
         form.setFieldValue('license', e)
       }}
+      error={form.errors.license}
       shouldShowErrors={shouldShowErrors}
     />
   )
@@ -231,6 +233,7 @@ export const Resource: FC<ResourceProps> = ({
       editType={e => {
         form.setFieldValue('type', e)
       }}
+      error={form.errors.type}
       shouldShowErrors={shouldShowErrors}
     />
   )
@@ -243,6 +246,7 @@ export const Resource: FC<ResourceProps> = ({
       editLevel={e => {
         form.setFieldValue('level', e)
       }}
+      error={form.errors.level}
       shouldShowErrors={shouldShowErrors}
     />
   )
@@ -273,6 +277,7 @@ export const Resource: FC<ResourceProps> = ({
       editLanguage={e => {
         form.setFieldValue('language', e)
       }}
+      error={form.errors.language}
       shouldShowErrors={shouldShowErrors}
     />
   )

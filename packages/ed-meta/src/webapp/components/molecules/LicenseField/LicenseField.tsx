@@ -3,11 +3,11 @@ import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { LicenseIconTextOptionProps } from '../../../../common/data.js'
 import { licenseValidationSchema } from '../../../../common/validationSchema.js'
-import './LicenseField.scss'
 
 export type LicenseFieldProps = {
   license: string
   canEdit: boolean
+  error: string | undefined
   shouldShowErrors: boolean
   editLicense: (license: string) => void
 }
@@ -15,6 +15,7 @@ export type LicenseFieldProps = {
 export const LicenseField: FC<LicenseFieldProps> = ({
   license,
   canEdit,
+  error,
   shouldShowErrors,
   editLicense,
 }) => {
@@ -53,17 +54,6 @@ export const LicenseField: FC<LicenseFieldProps> = ({
     })
   }, [searchText, license, licenses.opts])
 
-  // const filterLicenses = (text: string) => {
-  //   setUpdatedLicenses({
-  //     opts: licenses.opts.filter(
-  //       o =>
-  //         o.label.toUpperCase().includes(text.toUpperCase()) ||
-  //         o.value.toUpperCase().includes(text.toUpperCase()),
-  //     ),
-  //     selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
-  //   })
-  // }
-
   const licenseDropdown = canEdit ? (
     <Dropdown
       name="license"
@@ -77,7 +67,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       placeholder="License category"
       searchByText={setSearchText}
       highlight={shouldShowErrors && !!form.errors.license}
-      error={form.errors.license}
+      error={error}
       position={{ top: 50, bottom: 25 }}
       pills={
         updatedLicenses.selected && (
