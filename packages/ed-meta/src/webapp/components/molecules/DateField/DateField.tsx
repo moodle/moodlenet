@@ -5,10 +5,8 @@ import {
   SimpleTextOption,
   TextOption,
 } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { YearsProps } from '../../../../common/data.js'
-import { dateValidationSchema } from '../../../../common/validationSchema.js'
 
 export type DateFieldProps = {
   month: string | undefined
@@ -31,14 +29,6 @@ export const DateField: FC<DateFieldProps> = ({
   editMonth,
   editYear,
 }) => {
-  const form = useFormik<{ month: string | undefined; year: string | undefined }>({
-    initialValues: { month, year },
-    validationSchema: dateValidationSchema,
-    onSubmit: values => {
-      return values.month ? editMonth(values.month) : undefined
-    },
-  })
-
   const months = {
     opts: MonthTextOptionProps,
     selected: MonthTextOptionProps.find(({ value }) => value === month),
@@ -94,7 +84,7 @@ export const DateField: FC<DateFieldProps> = ({
           }}
           placeholder="Month"
           edit
-          highlight={shouldShowErrors && !!form.errors.month}
+          highlight={shouldShowErrors && !!errorMonth}
           error={errorMonth}
           position={{ top: 30, bottom: 25 }}
           searchByText={setSearchTextMonth}
@@ -130,7 +120,7 @@ export const DateField: FC<DateFieldProps> = ({
           }}
           placeholder="Year"
           edit
-          highlight={shouldShowErrors && !!form.errors.year}
+          highlight={shouldShowErrors && !!errorYear}
           error={errorYear}
           position={{ top: 30, bottom: 25 }}
           searchByText={setSearchTextYear}
@@ -154,19 +144,17 @@ export const DateField: FC<DateFieldProps> = ({
         </Dropdown>
       </div>
     </div>
-  ) : form.values.month || form.values.year ? (
+  ) : month || year ? (
     <div className="detail">
       <div className="title">Original creation date</div>
       <abbr
         className={`value date`}
-        title={`${
-          MonthTextOptionProps.find(({ value }) => value === form.values.month)?.label ?? ''
-        } ${form.values.year ?? ''}`}
+        title={`${MonthTextOptionProps.find(({ value }) => value === month)?.label ?? ''} ${
+          year ?? ''
+        }`}
       >
-        <span>
-          {MonthTextOptionProps.find(({ value }) => value === form.values.month)?.label ?? ''}
-        </span>
-        <span>{form.values.year ?? ''}</span>
+        <span>{MonthTextOptionProps.find(({ value }) => value === month)?.label ?? ''}</span>
+        <span>{year ?? ''}</span>
       </abbr>
     </div>
   ) : null

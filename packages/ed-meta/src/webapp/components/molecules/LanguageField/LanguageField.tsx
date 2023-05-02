@@ -1,8 +1,6 @@
 import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { LanguagesTextOptionProps } from '../../../../common/data.js'
-import { languageValidationSchema } from '../../../../common/validationSchema.js'
 
 export type LanguageFieldProps = {
   language: string | undefined
@@ -19,14 +17,6 @@ export const LanguageField: FC<LanguageFieldProps> = ({
   shouldShowErrors,
   editLanguage,
 }) => {
-  const form = useFormik<{ language: string | undefined }>({
-    initialValues: { language: language },
-    validationSchema: languageValidationSchema,
-    onSubmit: values => {
-      return values.language ? editLanguage(values.language) : undefined
-    },
-  })
-
   const languages = {
     opts: LanguagesTextOptionProps,
     selected: LanguagesTextOptionProps.find(({ value }) => value === language),
@@ -60,7 +50,7 @@ export const LanguageField: FC<LanguageFieldProps> = ({
       label="Language"
       placeholder="Content language"
       edit
-      highlight={shouldShowErrors && !!form.errors.language}
+      highlight={shouldShowErrors && !!error}
       error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}

@@ -1,8 +1,6 @@
 import { Dropdown, SimplePill, SimpleTextOption } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { TypeSimpleTextOptionProps } from '../../../../common/data.js'
-import { typeValidationSchema } from '../../../../common/validationSchema.js'
 
 export type TypeFieldProps = {
   type: string | undefined
@@ -19,14 +17,6 @@ export const TypeField: FC<TypeFieldProps> = ({
   shouldShowErrors,
   editType,
 }) => {
-  const form = useFormik<{ type: string | undefined }>({
-    initialValues: { type: type },
-    validationSchema: typeValidationSchema,
-    onSubmit: values => {
-      return values.type ? editType(values.type) : undefined
-    },
-  })
-
   const types = {
     opts: TypeSimpleTextOptionProps,
     selected: TypeSimpleTextOptionProps.find(({ value }) => value === type),
@@ -60,7 +50,7 @@ export const TypeField: FC<TypeFieldProps> = ({
       label="Type"
       placeholder="Content type"
       edit
-      highlight={shouldShowErrors && !!form.errors.type}
+      highlight={shouldShowErrors && !!error}
       error={error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
