@@ -14,10 +14,21 @@ import {
   getCollection,
   getImageLogicalFilename,
   patchCollection,
+  updateCollectionContent,
 } from './lib.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({
   rpc: {
+    'webapp/content/:collectionKey/:action/:resourceKey': {
+      guard: () => void 0,
+      async fn(_, { action, collectionKey, resourceKey }) {
+        const updateResult = await updateCollectionContent(collectionKey, action, resourceKey)
+        if (!updateResult) {
+          return //throw ?
+        }
+        return
+      },
+    },
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
       async fn({ publish }, { _key }) {

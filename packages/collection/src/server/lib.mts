@@ -1,5 +1,6 @@
 import {
   create,
+  currentEntityVar,
   delEntity,
   EntityAccess,
   getEntity,
@@ -32,6 +33,29 @@ export async function getCollection<
 export async function patchCollection(_key: string, patch: Patch<CollectionEntityDoc>) {
   const patchResult = await shell.call(patchEntity)(Collection.entityClass, _key, patch)
   return patchResult
+}
+
+export async function updateCollectionContent(
+  collectionKey: string,
+  action: 'add' | 'remove',
+  resourceKey: string,
+) {
+  const aqlAction =
+    action === 'remove'
+      ? `REMOVE_VALUE( ${currentEntityVar}.resourceList, @resourceKey, 1 )`
+      : `PUSH( ${currentEntityVar}.resourceList, @resourceKey, true )`
+  const updateResult = await shell.call(patchEntity)(
+    Collection.entityClass,
+    collectionKey,
+    `{ 
+      resourceList: ${aqlAction}
+    }`,
+    {
+      bindVars: { resourceKey },
+    },
+  )
+
+  return updateResult
 }
 
 export async function delCollection(_key: string) {

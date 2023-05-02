@@ -137,20 +137,23 @@ export async function create<EntityDataType extends SomeEntityDataType>(
   assert(newEntity)
   return newEntity
 }
-
 export async function patchEntity<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
-  { _meta: _, ...entityDataPatch }: Patch<EntityDataType>,
+  entityDataPatch: Patch<EntityDataType> | AqlVal<Patch<EntityDataType>>,
   opts?: {
+    bindVars?: BindVars
     meta?: AqlVal
     projectAccess?: EntityAccess[]
   },
 ) {
+  const isAqlEntityDataPatch = typeof entityDataPatch === 'string'
+  const aqlPatchVar = isAqlEntityDataPatch ? entityDataPatch : '@patchBindVar'
+  const patchBindVar = isAqlEntityDataPatch ? undefined : entityDataPatch
   const patchCursor = await queryEntities(entityClass, 'u', {
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
-    postAccessBody: `UPDATE entity WITH @entityDataPatch IN @@collection`,
-    bindVars: { key, entityDataPatch },
+    postAccessBody: `UPDATE entity WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
+    bindVars: { ...opts?.bindVars, key, patchBindVar },
     project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
     projectAccess: opts?.projectAccess,
   })
@@ -158,6 +161,46 @@ export async function patchEntity<EntityDataType extends SomeEntityDataType>(
   return patchRecord
 }
 
+/* export async function patchEntity<EntityDataType extends SomeEntityDataType>(
+  entityClass: EntityClass<EntityDataType>,
+  key: string,
+  { _meta: _, ...entityDataPatch }: Patch<EntityDataType> | AqlVal<Patch<EntityDataType>>,
+  opts?: {
+    meta?: AqlVal
+    projectAccess?: EntityAccess[]
+  },
+) {
+  const patchRecord = await updateEntity(
+    entityClass,
+    key,
+    `WITH @entityDataPatch`,
+    { entityDataPatch },
+    opts,
+  )
+  return patchRecord
+}
+
+export async function updateEntity<EntityDataType extends SomeEntityDataType>(
+  entityClass: EntityClass<EntityDataType>,
+  key: string,
+  updateBody: string,
+  bindVars: Record<string, any>,
+  opts?: {
+    meta?: AqlVal
+    projectAccess?: EntityAccess[]
+  },
+) {
+  const updateCursor = await queryEntities(entityClass, 'u', {
+    preAccessBody: `FILTER entity._key == @key LIMIT 1`,
+    postAccessBody: `UPDATE entity ${updateBody} IN @@collection`,
+    bindVars: { ...bindVars, key },
+    project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
+    projectAccess: opts?.projectAccess,
+  })
+  const updateRecord = await updateCursor.next()
+  return updateRecord
+}
+ */
 export async function delEntity<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
@@ -209,6 +252,7 @@ export async function getEntity<
 //   return get_findResult
 // }
 export type QueryEntitiesCustomProject<P extends Record<string, AqlVal<any>>> = P
+type BindVars = Record<string, any>
 
 export type QueryEntitiesProjectResult<P> = {
   [k in keyof P]: P[k] extends AqlVal<infer T> ? T : any
@@ -231,7 +275,7 @@ export type QueryEntityOpts<
   preAccessBody?: string
   postAccessBody?: string
   project?: Project
-  bindVars?: Record<string, any>
+  bindVars: BindVars
   projectAccess?: ProjectAccess[]
 }
 
