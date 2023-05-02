@@ -6,7 +6,14 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@moodlenet/component-library'
-import { LicenseField, SubjectField } from '@moodlenet/ed-meta/ui'
+import {
+  DateField,
+  LanguageField,
+  LevelField,
+  LicenseField,
+  SubjectField,
+  TypeField,
+} from '@moodlenet/ed-meta/ui'
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
@@ -216,9 +223,67 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
+  const typeField = (
+    <TypeField
+      key="type-field"
+      canEdit={canEdit}
+      type={form.values.type}
+      editType={e => {
+        form.setFieldValue('type', e)
+      }}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const levelField = (
+    <LevelField
+      key="type-field"
+      canEdit={canEdit}
+      level={form.values.level}
+      editLevel={e => {
+        form.setFieldValue('level', e)
+      }}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const dateField = (
+    <DateField
+      key="type-field"
+      canEdit={canEdit}
+      month={form.values.month}
+      year={form.values.year}
+      editMonth={e => {
+        form.setFieldValue('month', e)
+      }}
+      editYear={e => {
+        form.setFieldValue('year', e)
+      }}
+      errorMonth={form.errors.month}
+      errorYear={form.errors.year}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
+  const languageField = (
+    <LanguageField
+      key="type-field"
+      canEdit={canEdit}
+      language={form.values.language}
+      editLanguage={e => {
+        form.setFieldValue('language', e)
+      }}
+      shouldShowErrors={shouldShowErrors}
+    />
+  )
+
   const updatedExtraDetailsItems = [
     subjectField,
     licenseField,
+    typeField,
+    levelField,
+    dateField,
+    languageField,
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 

@@ -41,6 +41,7 @@ export const empityFormModel: ResourceRpc = {
     level: '', //@ETTO to be filled
     month: '', //@ETTO to be filled
     year: '', //@ETTO to be filled
+    type: '', //@ETTO to be filled
   },
   contributor: {
     avatarUrl: null,

@@ -3,7 +3,6 @@ import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
 import { SubjectsTextOptionProps } from '../../../../common/data.js'
 import { subjectValidationSchema } from '../../../../common/validationSchema.js'
-import './SubjectField.scss'
 
 export type SubjectFieldProps = {
   subject: string
@@ -91,12 +90,12 @@ export const SubjectField: FC<SubjectFieldProps> = ({
           ),
       )}
     </Dropdown>
-  ) : (
+  ) : subject ? (
     <div className="detail subject">
       <div className="title">Subject</div>
       <abbr className="value">{subjects.selected?.label}</abbr>
     </div>
-  )
+  ) : null
 }
 
 export default SubjectField

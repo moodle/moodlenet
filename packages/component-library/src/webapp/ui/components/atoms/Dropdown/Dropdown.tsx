@@ -221,6 +221,18 @@ export const IconTextPill: FC<{
   )
 }
 
+export type SimpleTextOptionProps = {
+  value: string
+}
+export const SimpleTextOption: FC<SimpleTextOptionProps> = ({ value }) => {
+  const { toggle, selected } = useSelectorOption(value) ?? {}
+  return (
+    <div key={value} className={`${selected ? 'selected ' : ''}option only-text`} onClick={toggle}>
+      {value}
+    </div>
+  )
+}
+
 export type TextOptionProps = {
   value: string
   label: string

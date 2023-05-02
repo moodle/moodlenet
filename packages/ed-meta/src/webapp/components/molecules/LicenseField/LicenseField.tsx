@@ -89,7 +89,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
         <IconTextOption icon={icon} label={label} value={value} key={value} />
       ))}
     </Dropdown>
-  ) : (
+  ) : license ? (
     <div className="detail license">
       <div className="title">License</div>
       {licenses.selected && (
@@ -98,7 +98,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
         </abbr>
       )}
     </div>
-  )
+  ) : null
   return licenseDropdown
 }
 
