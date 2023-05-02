@@ -1,79 +1,101 @@
-import { Dropdown, SimplePill, TextOption, TextOptionProps } from '@moodlenet/component-library'
-import { SelectOptions } from '@moodlenet/react-app/ui'
+import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
-import { FC } from 'react'
-import { SchemaOf } from 'yup'
-import './SubjectField.scss'
+import { FC, useEffect, useState } from 'react'
+import { SubjectsTextOptionProps } from '../../../../common/data.js'
+import { subjectValidationSchema } from '../../../../common/validationSchema.js'
 
 export type SubjectFieldProps = {
   subject: string
-  subjects: SelectOptions<TextOptionProps>
-  editSubject: (values: { subject: string }) => void
   canEdit: boolean
-  isEditing: boolean
   shouldShowErrors: boolean
-  validationSchema: SchemaOf<{ subject: string }>
-  setCategoryFilter(text: string): unknown
+  error: string | undefined
+  editSubject(subject: string): void
 }
 
 export const SubjectField: FC<SubjectFieldProps> = ({
   subject,
-  subjects,
-  editSubject,
   canEdit,
-  validationSchema,
+  error,
   shouldShowErrors,
+  editSubject,
 }) => {
   const form = useFormik<{ subject: string }>({
     initialValues: { subject: subject },
-    validationSchema: validationSchema,
+    validationSchema: subjectValidationSchema,
     onSubmit: values => {
-      return editSubject(values)
+      return editSubject(values.subject)
     },
   })
+
+  const subjects = {
+    opts: SubjectsTextOptionProps,
+    selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+  }
+  const [updatedSubjects, setUpdatedSubjects] = useState(subjects)
+  const [searchText, setSearchText] = useState('')
+
+  useEffect(() => {
+    setUpdatedSubjects({
+      opts: SubjectsTextOptionProps,
+      selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+    })
+  }, [subject])
+
+  useEffect(() => {
+    setUpdatedSubjects({
+      opts: subjects.opts.filter(
+        o =>
+          o.label.toUpperCase().includes(searchText.toUpperCase()) ||
+          o.value.toUpperCase().includes(searchText.toUpperCase()),
+      ),
+      selected: SubjectsTextOptionProps.find(
+        ({ value }) => value === subject && value.toUpperCase().includes(searchText.toUpperCase()),
+      ),
+    })
+  }, [searchText, subject, subjects.opts])
+
   return canEdit ? (
     <Dropdown
       name="subject"
-      value={form.values.subject}
-      onChange={form.submitForm}
+      value={subject}
+      onChange={e => {
+        e.currentTarget.value !== subject && editSubject(e.currentTarget.value)
+      }}
       label="Subject"
-      disabled={form.isSubmitting}
-      edit={true}
+      placeholder="Content category"
+      edit
       highlight={shouldShowErrors && !!form.errors.subject}
-      error={form.errors.subject}
+      error={error}
       position={{ top: 50, bottom: 25 }}
-      // searchByText={setCategoryFilter}
+      searchByText={setSearchText}
       pills={
-        subjects.selected && (
+        updatedSubjects.selected && (
           <SimplePill
-            key={subjects.selected.value}
-            value={subjects.selected.value}
-            label={subjects.selected.label}
+            key={updatedSubjects.selected.value}
+            value={updatedSubjects.selected.value}
+            label={updatedSubjects.selected.label}
           />
         )
       }
     >
-      {subjects.selected && (
+      {updatedSubjects.selected && (
         <TextOption
-          key={subjects.selected.value}
-          value={subjects.selected.value}
-          label={subjects.selected.label}
+          key={updatedSubjects.selected.value}
+          value={updatedSubjects.selected.value}
+          label={updatedSubjects.selected.label}
         />
       )}
-      {subjects.opts.map(
+      {updatedSubjects.opts.map(
         ({ label, value }) =>
-          subjects.selected?.value !== value && (
+          updatedSubjects.selected?.value !== value && (
             <TextOption key={value} label={label} value={value} />
           ),
       )}
     </Dropdown>
-  ) : canEdit ? (
+  ) : subject ? (
     <div className="detail subject">
       <div className="title">Subject</div>
-      <abbr className="value">
-        Films and nature
-        {/* {subjects.selected?.label} */}
-      </abbr>
+      <abbr className="value">{subjects.selected?.label}</abbr>
     </div>
   ) : null
 }

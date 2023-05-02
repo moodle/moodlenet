@@ -26,6 +26,7 @@ export const resFakeData: CollectionRpc = {
     followed: false,
     numResources: 23,
     numFollowers: 12,
+    bookmarked: false,
   },
   access: {
     isCreator: true,
@@ -33,6 +34,8 @@ export const resFakeData: CollectionRpc = {
     canEdit: true,
     canDelete: true,
     canFollow: true,
+    canBookmark: true,
+    isAuthenticated: true,
   },
   contributor,
 }

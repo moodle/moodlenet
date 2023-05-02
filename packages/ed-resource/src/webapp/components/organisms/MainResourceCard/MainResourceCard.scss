@@ -95,7 +95,8 @@
         }
 
         > .tertiary-button,
-        > .more-button > .hover-element > .tertiary-button {
+        > .more-button > .hover-element > .tertiary-button,
+        > abbr {
           padding: 0 6px;
         }
 
@@ -175,6 +176,9 @@
     }
 
     .tags {
+      display: flex;
+      justify-content: flex-start;
+      padding: 3px 0 3px 5px;
       gap: 5px;
       > a > .tag {
         font-size: 12px;

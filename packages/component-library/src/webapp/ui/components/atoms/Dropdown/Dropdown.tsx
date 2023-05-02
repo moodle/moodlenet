@@ -8,7 +8,7 @@ import {
   useLayoutEffect,
   useReducer,
   useRef,
-  useState
+  useState,
 } from 'react'
 import { Selector, SelectorProps, useSelectorOption } from '../../../lib/selector.js'
 
@@ -28,19 +28,7 @@ export type DropdownProps = SelectorProps & {
   position?: { top?: number; bottom?: number }
 }
 export const Dropdown: FC<DropdownProps> = props => {
-  const {
-    children,
-    pills,
-    edit,
-    searchByText,
-    label,
-    error,
-    highlight,
-    multilines,
-    searchText,
-    position,
-    ...selectorProps
-  } = props
+  const { children, ...selectorProps } = props
   return (
     <Selector {...selectorProps}>
       <DropdownComp {...props}>{children}</DropdownComp>
@@ -130,6 +118,8 @@ const DropdownComp: FC<DropdownProps> = props => {
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLInputElement>(null)
 
+  // const contentLength: number = children && Array.isArray(children) && children[1].length
+
   return (
     <div
       className={`dropdown ${className ? className : ''} ${searchByText ? 'search' : ''}${
@@ -180,6 +170,7 @@ const DropdownComp: FC<DropdownProps> = props => {
       {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}
 
       {showContent && (
+        // contentLength > 0 &&
         <div
           ref={dropdownContent}
           onMouseEnter={() => setHoveringOptions(true)}
@@ -211,6 +202,7 @@ export const SimplePill: FC<{
     </div>
   )
 }
+
 export const IconPill: FC<{
   icon: ReactNode
 }> = ({ icon }) => {
@@ -225,6 +217,18 @@ export const IconTextPill: FC<{
     <div className="dropdown-pill icon-text">
       {icon}
       <span>{label}</span>
+    </div>
+  )
+}
+
+export type SimpleTextOptionProps = {
+  value: string
+}
+export const SimpleTextOption: FC<SimpleTextOptionProps> = ({ value }) => {
+  const { toggle, selected } = useSelectorOption(value) ?? {}
+  return (
+    <div key={value} className={`${selected ? 'selected ' : ''}option only-text`} onClick={toggle}>
+      {value}
     </div>
   )
 }

@@ -46,6 +46,7 @@ export const Creator: ResourceStory = () => {
     data: {},
     state: {
       isPublished: true,
+      liked: false,
     },
     actions: {},
     access: {
@@ -61,6 +62,8 @@ export const Creator: ResourceStory = () => {
 export const NewResourceProps: Partial<ResourceFormProps> = {
   title: '',
   description: '',
+  subject: '',
+  license: '',
 }
 
 export const New: ResourceStory = () => {

@@ -19,7 +19,7 @@ export type Href = {
 export type FollowTag = {
   type: 'subject' | 'collection' | 'type'
   name: string
-  subjectHomeHref?: Href
+  href?: Href
 }
 
 export type PeopleFactory = {
