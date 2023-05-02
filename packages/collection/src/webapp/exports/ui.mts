@@ -1,4 +1,4 @@
-// @index(['../**/!(*.stories|*Hooks|*Hook|*Container)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+// @index(['../**/!(*.stories|*Hooks|*Hook|*Container)*.{mts,tsx}'], f => f.path.startsWith('./')?'':`export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../components/atoms/AddToCollectionButton/AddToCollectionButtons.js'
 export * from '../components/molecules/CollectionContributorCard/CollectionContributorCard.js'
 export * from '../components/organisms/CollectionCard/CollectionCard.js'
@@ -10,11 +10,11 @@ export * from '../components/organisms/MainCollectionCard/MainCollectionCard.js'
 export * from '../components/organisms/UploadImage/UploadImage.js'
 export * from '../components/pages/Collection/Collection.js'
 export * from '../components/pages/Collection/CollectionPageRoute.js'
+
+
+
 export * from '../helpers/factories.js'
 export * from '../helpers/utils.mjs'
 export * from '../MainComponent.js'
 export * from '../MainContext.js'
 export * from '../type.mjs'
-export * from './CollectionContext.js'
-export * from './stories.mjs'
-export * from './webapp.mjs'
