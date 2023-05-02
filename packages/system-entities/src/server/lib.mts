@@ -2,9 +2,13 @@ import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
 import { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
-import { entityIdentifier2EntityIdAql } from './aql-lib/aql.mjs'
+import {
+  entityIdentifier2EntityIdAql,
+  isCurrentUserCreatorOfCurrentEntity,
+} from './aql-lib/aql.mjs'
 import { entityDocument2Aql, pkgMetaOf2Aql } from './aql-lib/by-proc-values.mjs'
-import { EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
+import { userInfoAqlProvider } from './aql-lib/userInfo.mjs'
+import { EntityInfo, EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { db, env } from './init.mjs'
 import { entityId, getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
@@ -28,7 +32,8 @@ import {
   SystemUser,
 } from './types.mjs'
 import { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
-
+const DEFAULT_QUERY_LIMIT = 25
+const DEFAULT_MAX_QUERY_LIMIT = 100
 export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
   [name in keyof Defs]: EntityCollectionDefOpts
 }): Promise<EntityCollectionHandles<Defs>> {
@@ -150,7 +155,7 @@ export async function patchEntity<EntityDataType extends SomeEntityDataType>(
   const isAqlEntityDataPatch = typeof entityDataPatch === 'string'
   const aqlPatchVar = isAqlEntityDataPatch ? entityDataPatch : '@patchBindVar'
   const patchBindVar = isAqlEntityDataPatch ? undefined : entityDataPatch
-  const patchCursor = await queryEntities(entityClass, 'u', {
+  const patchCursor = await accessEntities(entityClass, 'u', {
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
     postAccessBody: `UPDATE entity WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
     bindVars: { ...opts?.bindVars, key, patchBindVar },
@@ -190,7 +195,7 @@ export async function updateEntity<EntityDataType extends SomeEntityDataType>(
     projectAccess?: EntityAccess[]
   },
 ) {
-  const updateCursor = await queryEntities(entityClass, 'u', {
+  const updateCursor = await accessEntities(entityClass, 'u', {
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
     postAccessBody: `UPDATE entity ${updateBody} IN @@collection`,
     bindVars: { ...bindVars, key },
@@ -205,7 +210,7 @@ export async function delEntity<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
 ) {
-  const delCursor = await queryEntities(entityClass, 'd', {
+  const delCursor = await accessEntities(entityClass, 'd', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
     postAccessBody: `REMOVE entity IN @@collection`,
@@ -215,19 +220,19 @@ export async function delEntity<EntityDataType extends SomeEntityDataType>(
 }
 
 export type GetEntityOpts<
-  Project extends QueryEntitiesCustomProject<any>,
+  Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
-> = Pick<QueryEntityOpts<Project, ProjectAccess>, 'project' | 'projectAccess'>
+> = Pick<AccessEntitiesOpts<Project, ProjectAccess>, 'project' | 'projectAccess'>
 export async function getEntity<
   EntityDataType extends SomeEntityDataType,
-  Project extends QueryEntitiesCustomProject<any>,
+  Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(
   entityClass: EntityClass<EntityDataType>,
   key: string,
   opts?: GetEntityOpts<Project, ProjectAccess>,
 ) {
-  const getCursor = await queryEntities(entityClass, 'r', {
+  const getCursor = await accessEntities(entityClass, 'r', {
     bindVars: { key },
     preAccessBody: `FILTER entity._key == @key LIMIT 1`,
     project: opts?.project,
@@ -238,12 +243,56 @@ export async function getEntity<
   return getRecord
 }
 
+export type QueryEntitiesOpts<
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = AccessEntitiesOpts<Project, ProjectAccess> & {
+  skip?: number
+  limit?: number
+}
+export async function queryEntities<
+  EntityDataType extends SomeEntityDataType,
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(entityClass: EntityClass<EntityDataType>, opts?: QueryEntitiesOpts<Project, ProjectAccess>) {
+  const limit = Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT)
+  const skip = opts?.skip ?? 0
+  const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
+    preAccessBody: opts?.preAccessBody,
+    postAccessBody: `
+      LIMIT ${skip}, ${limit}
+      ${opts?.postAccessBody ?? ''}
+    `,
+    project: opts?.project,
+    projectAccess: opts?.projectAccess,
+  })
+  return queryEntitiesCursor
+}
+
+export type QueryMyEntitiesOpts<
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = QueryEntitiesOpts<Project, ProjectAccess>
+export async function queryMyEntities<
+  EntityDataType extends SomeEntityDataType,
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(entityClass: EntityClass<EntityDataType>, opts?: QueryMyEntitiesOpts<Project, ProjectAccess>) {
+  const queryMyEntitiesCursor = await queryEntities(entityClass, {
+    ...opts,
+    preAccessBody: `
+      FILTER ${isCurrentUserCreatorOfCurrentEntity()}
+      ${opts?.preAccessBody ?? ''}
+    `,
+  })
+  return queryMyEntitiesCursor
+}
 // export async function getEntityAccess<EntityDataType extends SomeEntityDataType>(
 //   entityClass: EntityClass<EntityDataType>,
 //   key:string,
 // ) {
 //   const key = getKey(byKeyOrId)
-//   const cursor = await queryEntities<EntityDataType>(
+//   const cursor = await accessEntities<EntityDataType>(
 //     entityClass,
 //     `FILTER entity._key == "${key}" LIMIT 1`,
 //   )
@@ -251,47 +300,64 @@ export async function getEntity<
 //   console.log(inspect({ get_findResult }, false, 10, true))
 //   return get_findResult
 // }
-export type QueryEntitiesCustomProject<P extends Record<string, AqlVal<any>>> = P
+export type AccessEntitiesCustomProject<P extends Record<string, AqlVal<any>>> = P
 type BindVars = Record<string, any>
 
-export type QueryEntitiesProjectResult<P> = {
+export type AccessEntitiesProjectResult<P> = {
   [k in keyof P]: P[k] extends AqlVal<infer T> ? T : any
 }
 
-export type QueryEntitiesRecordType<
+export type AccessEntitiesRecordType<
   EntityDataType extends SomeEntityDataType,
-  Project extends QueryEntitiesCustomProject<any>,
+  Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 > = {
   entity: Omit<EntityDocument<EntityDataType>, '_meta'>
   meta: EntityMetadata
   access: { [access in ProjectAccess]: boolean }
-} & QueryEntitiesProjectResult<Project>
+} & AccessEntitiesProjectResult<Project>
 
-export type QueryEntityOpts<
-  Project extends QueryEntitiesCustomProject<any>,
+export type AccessEntitiesOpts<
+  Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 > = {
   preAccessBody?: string
   postAccessBody?: string
   project?: Project
-  bindVars: BindVars
+  bindVars?: BindVars
   projectAccess?: ProjectAccess[]
 }
 
-export async function queryEntities<
+export async function getCurrentUserInfo() {
+  const currentUser = await getCurrentSystemUser()
+  const entityInfoAql = userInfoAqlProvider('currentUser')
+  console.log(`LET currentUser = @currentUser 
+  RETURN ${entityInfoAql}`)
+  const cursor = await db.query<EntityInfo>(
+    `LET currentUser = @currentUser 
+    RETURN ${entityInfoAql}`,
+    {
+      currentUser,
+    },
+  )
+  const entityInfo = await cursor.next()
+  assert(entityInfo)
+  return entityInfo
+}
+
+export async function accessEntities<
   EntityDataType extends SomeEntityDataType,
-  Project extends QueryEntitiesCustomProject<any>,
+  Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(
   entityClass: EntityClass<EntityDataType>,
   access: EntityAccess,
-  opts?: QueryEntityOpts<Project, ProjectAccess>,
+  opts?: AccessEntitiesOpts<Project, ProjectAccess>,
 ) {
   const isRead = access === 'r'
   const currentUser = await getCurrentSystemUser()
   if (!isRead && currentUser.type === 'anon') {
-    return db.query<QueryEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(
+    return db.query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(
       'for x in [] return x',
     )
   }
@@ -364,7 +430,7 @@ ${projectAqlRawProps}
   const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
   console.log(q, inspect({ bindVars }, false, 10, true))
   const queryCursor = await db.query<
-    QueryEntitiesRecordType<EntityDataType, Project, ProjectAccess>
+    AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>
   >(q, bindVars)
 
   return queryCursor
@@ -479,6 +545,11 @@ export async function setCurrentUserFetch(fetchCurrentUser: FetchCurrentUser) {
 export const ANON_SYSTEM_USER: AnonUser = { type: 'anon' }
 export const ROOT_SYSTEM_USER: RootUser = { type: 'root' }
 
+export async function assertCurrentEntitySystemUser() {
+  const currentSystemUser = await getCurrentSystemUser()
+  assert(currentSystemUser.type === 'entity')
+  return currentSystemUser
+}
 export async function getCurrentSystemUser() {
   const currentCtx = shell.myAsyncCtx.get()
   if (!currentCtx) {

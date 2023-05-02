@@ -3,8 +3,8 @@ import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import {
   EntityCollectionDef,
-  isCreator,
   isCurrentOfEntityClass2Aql,
+  isCurrentUserCreatorOfCurrentEntity,
   isSameClass,
   registerAccessController,
   registerEntities,
@@ -32,7 +32,9 @@ export const { Resource } = await shell.call(registerEntities)<{
 })
 await shell.call(registerAccessController)({
   u() {
-    return `(${isCurrentOfEntityClass2Aql(Resource.entityClass)} && ${isCreator()}) || null`
+    return `(${isCurrentOfEntityClass2Aql(
+      Resource.entityClass,
+    )} && ${isCurrentUserCreatorOfCurrentEntity()}) || null`
   },
   r(/* { myPkgMeta } */) {
     return `${isCurrentOfEntityClass2Aql(Resource.entityClass)} || null` // && ${myPkgMeta}.xx == null`

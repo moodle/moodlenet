@@ -1,6 +1,7 @@
 import { RpcFile } from '@moodlenet/core'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import {
+  AccessEntitiesCustomProject,
   create,
   delEntity,
   EntityAccess,
@@ -8,7 +9,6 @@ import {
   GetEntityOpts,
   Patch,
   patchEntity,
-  QueryEntitiesCustomProject,
 } from '@moodlenet/system-entities/server'
 import { Resource, resourceFiles } from './init.mjs'
 import { shell } from './shell.mjs'
@@ -21,7 +21,7 @@ export async function createResource(resourceData: ResourceDataType) {
 }
 
 export async function getResource<
-  Project extends QueryEntitiesCustomProject<any>,
+  Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(_key: string, opts?: GetEntityOpts<Project, ProjectAccess>) {
   const foundResource = await shell.call(getEntity)(Resource.entityClass, _key, {
