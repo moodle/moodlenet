@@ -5,4 +5,6 @@ export type CollectionDataType = {
   title: string
   description: string
   image: null | { kind: 'file'; directAccessId: string } // | { kind: 'url'; url: string }
+  published: boolean
+  resourceList: string[]
 }
