@@ -4,6 +4,26 @@ export const subjectValidationSchema: SchemaOf<{ subject: string }> = object({
   subject: string().required(`Please select a subject`),
 })
 
+export const typeValidationSchema: SchemaOf<{ type: string | undefined }> = object({
+  type: string().optional(),
+})
+
+export const levelValidationSchema: SchemaOf<{ level: string | undefined }> = object({
+  level: string().optional(),
+})
+
+export const dateValidationSchema: SchemaOf<{
+  month: string | undefined
+  year: string | undefined
+}> = object({
+  month: string().optional(),
+  year: string().optional(),
+})
+
+export const languageValidationSchema: SchemaOf<{ language: string | undefined }> = object({
+  language: string().optional(),
+})
+
 export const licenseValidationSchema: SchemaOf<{ license: string }> = object({
   //TODO //@BRU //@ETTO //@ALE Update this validation scheme so is optional for links
   license: string().required(`Please select a license`),

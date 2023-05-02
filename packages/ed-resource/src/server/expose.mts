@@ -75,6 +75,7 @@ export const expose = await shell.expose<ResourceExposeType>({
             level: '', //@ETTO to be filled
             month: '', //@ETTO to be filled
             year: '', //@ETTO to be filled
+            type: '', //@ETTO to be filled
           },
           data: {
             contentType: found.entity.content?.kind ?? 'link',

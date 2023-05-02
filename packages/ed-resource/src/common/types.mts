@@ -28,12 +28,12 @@ export type ResourceFormRpc = {
   description: string
   subject: string
   license: string
+  type: string | undefined
   level: string | undefined
   month: string | undefined
   year: string | undefined
   language: string | undefined
   // addToCollections: string[]
-  // type?: string
 }
 
 export type ResourceDataRpc = {

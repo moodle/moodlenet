@@ -10,6 +10,7 @@ export const resourceFormValues: ResourceFormRpc = {
   level: '', //@ETTO to be filled
   month: '', //@ETTO to be filled
   year: '', //@ETTO to be filled
+  type: '', //@ETTO to be filled
 }
 
 export const resFakeData: ResourceRpc = {
