@@ -7,4 +7,5 @@ export type ResourceDataType = {
   description: string
   content: null | { kind: 'file'; fsItem: FsItem } | { kind: 'link'; url: string }
   image: null | { kind: 'file'; directAccessId: string } // | { kind: 'url'; url: string }
+  published: boolean
 }

@@ -4,6 +4,7 @@ import { RpcStatus } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server'
 import { CollectionExposeType } from '../common/expose-def.mjs'
+import { CollectionRpc } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles, publicFilesHttp } from './init.mjs'
@@ -20,8 +21,11 @@ export const expose = await shell.expose<CollectionExposeType>({
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
       async fn({ publish }, { _key }) {
-        console.log({ _key, publish })
-        //  await setIsPublished(key, publish)
+        const patchResult = await patchCollection(_key, { published: publish })
+        if (!patchResult) {
+          return //throw ?
+        }
+        return
       },
     },
     'webapp/get/:_key': {
@@ -42,7 +46,7 @@ export const expose = await shell.expose<CollectionExposeType>({
           ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
           : ''
 
-        return {
+        const collectionRpc: CollectionRpc = {
           contributor: {
             avatarUrl: found.contributor.iconUrl,
             creatorProfileHref: {
@@ -60,22 +64,17 @@ export const expose = await shell.expose<CollectionExposeType>({
             isWaitingForApproval: false,
           },
           state: {
-            isPublished: true, //@ETTO to implement
-            numResources: 0, //@ETTO to implement
-            followed: false, //@ETTO to implement
-            numFollowers: 13, //@ETTO to implement
-            bookmarked: false, //@ETTO to implement
+            numResources: found.entity.resourceList.length,
+            isPublished: found.entity.published,
           },
           access: {
             canDelete: !!found.access.d,
             canEdit: !!found.access.u,
             canPublish: found.canPublish,
             isCreator: found.isCreator,
-            canFollow: true, //@ETTO to implement
-            canBookmark: true, //@ETTO to implement
-            isAuthenticated: true, //@ETTO to implement
           },
         }
+        return collectionRpc
       },
     },
     'webapp/edit/:_key': {
@@ -91,7 +90,13 @@ export const expose = await shell.expose<CollectionExposeType>({
     'webapp/create': {
       guard: () => void 0,
       async fn() {
-        const createResult = await createCollection({ description: '', title: '', image: null })
+        const createResult = await createCollection({
+          description: '',
+          title: '',
+          image: null,
+          published: false,
+          resourceList: [],
+        })
         if (!createResult) {
           throw RpcStatus('Unauthorized')
         }

@@ -19,9 +19,6 @@ export const empityFormModel: ResourceRpc = {
   },
   state: {
     isPublished: true,
-    bookmarked: false,
-    liked: false,
-    numLikes: 13,
   },
   access: {
     isCreator: true,
