@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { MainContext } from '../../../../context/MainContext.mjs'
 import { AddMenuItem, AddMenuProps } from './AddMenu.js'
-import { CreateCollectionAddMenuItem, CreateResourceAddMenuItem } from './AddMenuItems.js'
 
 export function useAddMenuProps(): AddMenuProps {
   const nav = useNavigate()
@@ -19,47 +18,30 @@ export function useAddMenuProps(): AddMenuProps {
     if (!isAuthenticated) {
       return []
     }
-    const regAddMenuItems = menuEntries.map<AddMenuItem>(({ item, pkgId }, index) => {
+    return menuEntries.map<AddMenuItem>(({ item, pkgId }, index) => {
       const addMenuItem: AddMenuItem = {
         ...item,
         key: `${pkgId.name}:${index}`,
       }
       return addMenuItem
     })
-
-    const addMenuItems: AddMenuItem[] = [
-      {
-        Component: () => (
-          <CreateResourceAddMenuItem
-            createResource={() => {
-              resourceCtx.create().then(({ homePath }) => nav(homePath))
-            }}
-          />
-        ),
-
-        key: 'new ResourceIdx',
-      },
-      {
-        Component: () => (
-          <CreateCollectionAddMenuItem
-            createCollection={() => {
-              collectionCtx.create().then(({ homePath }) => nav(homePath))
-            }}
-          />
-        ),
-
-        key: 'new CollectionIdx',
-      },
-    ]
-
-    return [...addMenuItems, ...regAddMenuItems]
-  }, [collectionCtx, isAuthenticated, menuEntries, nav, resourceCtx])
+  }, [isAuthenticated, menuEntries])
 
   const addMenuProps = useMemo<AddMenuProps>(() => {
     const addMenuProps: AddMenuProps = {
       menuItems,
+      createCollectionProps: {
+        createCollection() {
+          collectionCtx.create().then(({ homePath }) => nav(homePath))
+        },
+      },
+      createResourceProps: {
+        createResource() {
+          resourceCtx.create().then(({ homePath }) => nav(homePath))
+        },
+      },
     }
     return addMenuProps
-  }, [menuItems])
+  }, [collectionCtx, menuItems, nav, resourceCtx])
   return addMenuProps
 }

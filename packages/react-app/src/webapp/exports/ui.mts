@@ -1,4 +1,4 @@
-// @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+// @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container|*.specs)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../ui/assets/data/images.js'
 export * from '../ui/components/atoms/HeaderTitle/HeaderTitle.js'
 export * from '../ui/components/elements/link.js'
@@ -31,6 +31,7 @@ export * from '../ui/helpers/factories.js'
 export * from '../ui/helpers/utilities.js'
 export * from '../ui/lib/formik.js'
 export * from '../ui/lib/index.mjs'
+export * from '../ui/lib/proxy-props.js'
 export * from '../ui/lib/types.js'
 export * from '../ui/lib/useForwardedRef.mjs'
 export * from '../ui/lib/useImageUrl.mjs'
