@@ -14,6 +14,12 @@ export const AvatarMenuHeaderItem: AddonItem = {
       profileMenuProps={{
         profileHref: href('Pages/Profile/Logged In'),
       }}
+      bookmarksMenuProps={{
+        bookmarksHref: href('Pages/Bookmarks/LoggedIn'),
+      }}
+      followingMenuProps={{
+        followingHref: href('Pages/Following/LoggedIn'),
+      }}
       signoutMenuProps={{
         signout: linkTo('Pages/Landing', 'Logged In'),
       }}

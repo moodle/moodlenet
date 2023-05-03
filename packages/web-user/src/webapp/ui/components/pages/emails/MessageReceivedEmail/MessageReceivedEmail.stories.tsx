@@ -472,7 +472,7 @@ export const Email: FC = () => {
 }
 
 const meta: ComponentMeta<typeof Email> = {
-  title: 'Pages/Emails/Access/MessageReceivedEmail',
+  title: 'Pages/Emails/Social/MessageReceivedEmail',
   excludeStories: ['Email'],
   parameters: { layout: 'fullscreen' },
 }
