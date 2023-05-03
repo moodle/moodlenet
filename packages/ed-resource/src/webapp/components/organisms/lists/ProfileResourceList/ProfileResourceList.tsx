@@ -26,6 +26,7 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
                 key={resourceCardProps.data.resourceId}
                 {...resourceCardProps}
                 orientation="horizontal"
+                showDeleteButton
               />
             )
           }),

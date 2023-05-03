@@ -66,6 +66,8 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     isCreator: false,
     isAdmin: false,
     canFollow: true,
+    canBookmark: true,
+    canPublish: false,
     ...overrides?.access,
   }
 
@@ -97,7 +99,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       }),
       createResource: linkTo('Pages/New Resource/Default'),
       collectionCardPropsList: getCollectionsCardStoryProps(5, {
-        access: { canPublish: false },
+        access: { ...access },
       }),
       createCollection: linkTo('Pages/New Collection/Default'),
       overallCardItems: OverallCardStories.OverallCardStoryProps.items ?? [],

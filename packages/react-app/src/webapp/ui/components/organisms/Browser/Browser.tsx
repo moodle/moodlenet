@@ -13,10 +13,11 @@ export type MainColumItem = {
 }
 
 export type BrowserProps = {
-  mainColumnItems?: MainColumItem[]
+  mainColumnItems: MainColumItem[]
+  title?: string
 }
 
-export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
+export const Browser: FC<BrowserProps> = ({ mainColumnItems, title }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | undefined>(undefined)
 
@@ -101,6 +102,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems }) => {
       </div>
       <div className="content">
         <div className={`main-column ${currentMainFilter ? 'full-width' : ''}`} ref={mainColumnRef}>
+          {title && <div className="title">{title}</div>}
           {useMemo(
             () =>
               updatedMainColumnItems.map(i =>

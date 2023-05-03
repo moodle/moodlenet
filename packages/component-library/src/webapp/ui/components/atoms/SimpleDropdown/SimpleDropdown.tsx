@@ -30,17 +30,16 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
     isCurrent && currentName.push(e)
     const floatingMenuContentItem: FloatingMenuContentItem = {
       Component: () => (
-        <div onClick={() => onClick(e)}>
+        <>
           <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
             <div className={`border ${isCurrent ? 'selected' : ''}`} />
           </div>
-          <div className={`content ${isCurrent ? 'selected' : ''}`}>
-            <span>{e}</span>
-          </div>
-        </div>
+          <div className={`content ${isCurrent ? 'selected' : ''}`}>{e}</div>
+        </>
       ),
       key: e,
       className: 'section',
+      onClick: onClick,
     }
     return floatingMenuContentItem
   })
