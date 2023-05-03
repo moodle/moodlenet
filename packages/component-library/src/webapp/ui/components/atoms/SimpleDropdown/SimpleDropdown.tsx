@@ -34,12 +34,13 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
           <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
             <div className={`border ${isCurrent ? 'selected' : ''}`} />
           </div>
-          <div className={`content ${isCurrent ? 'selected' : ''}`}>{e}</div>
+          <div onClick={() => onClick(e)} className={`content ${isCurrent ? 'selected' : ''}`}>
+            {e}
+          </div>
         </>
       ),
       key: e,
       className: 'section',
-      onClick: onClick,
     }
     return floatingMenuContentItem
   })
