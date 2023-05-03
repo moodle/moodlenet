@@ -2,7 +2,7 @@ import { href } from '@moodlenet/react-app/common'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
-import { WebUserProfile } from '../../../../../server/types.mjs'
+import { Profile } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { MainContext } from '../../../../context/MainContext.mjs'
 import { ProfileProps } from './Profile.js'
@@ -20,7 +20,7 @@ export const useProfileProps = ({
 
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const [profileResponse, setProfileResponse] = useState<{
-    data: WebUserProfile
+    data: Profile
     canEdit: boolean
   }>()
 
@@ -78,8 +78,8 @@ export const useProfileProps = ({
       data: {
         userId: '12sadsadsad', //@ETTO Needs to be implemented
         username: profileResponse.data.displayName, //@ETTO Needs to be implemented
-        avatarUrl: 'sadsadsadsa.sdsad', //@ETTO Needs to be implemented
-        backgroundUrl: 'sadsadsadsa.sdsad', //@ETTO Needs to be implemented
+        avatarUrl: profileResponse.data.avatarUrl,
+        backgroundUrl: profileResponse.data.backgroundUrl,
         profileHref: href('/profile'), //@ETTO Needs to be implemented
       },
       state: {
@@ -90,8 +90,17 @@ export const useProfileProps = ({
       actions: {
         editProfile,
         toggleFollow: () => alert('Needs to be implemented'), //@ETTO Needs to be implemented
-        setAvatar: (_file: File | undefined | null) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
-        setBackground: (_file: File | undefined | null) => alert('Needs to be implemented'), //@ETTO Needs to be implemented
+        setAvatar: (avatar: File | undefined | null) => {
+          console.log('setAvatar', avatar)
+          me.rpc['webapp/upload-profile-avatar/:_key']({ file: [avatar] }, { _key: profileKey })
+        },
+        setBackground: (background: File | undefined | null) => {
+          console.log('setBackground', background)
+          me.rpc['webapp/upload-profile-background/:_key'](
+            { file: [background] },
+            { _key: profileKey },
+          )
+        },
         sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented use me.rpc.$_DEV_$_TO_IMPLEMENT
       },
       mainProfileCardSlots: {
@@ -123,6 +132,7 @@ export const useProfileProps = ({
     mainLayoutProps,
     profileKey,
     profileResponse,
+    me.rpc,
     // toggleFollow,
   ])
 

@@ -96,6 +96,8 @@ export async function confirm({
     isAdmin: false,
     contacts: { email },
     aboutMe: '',
+    avatarImage: undefined,
+    backgroundImage: undefined,
   })
 
   if (!createNewWebUserResp) {

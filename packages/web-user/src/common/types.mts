@@ -1,6 +1,15 @@
 import { Href } from '@moodlenet/react-app/common'
-import { WebUserProfile } from '../server/types.mjs'
 
+export type Profile = {
+  _key: string
+  displayName: string
+  aboutMe: string
+  organizationName: string | undefined
+  location: string | undefined
+  siteUrl: string | undefined
+  backgroundUrl: string | undefined
+  avatarUrl: string | undefined
+}
 export type User = {
   title: string
   email: string
@@ -17,14 +26,14 @@ export type WebUserData = {
 export type AuthDataRpc = {
   isRoot: false
   access: { isAdmin: boolean; isAuthenticated: boolean }
-  myProfile: undefined | WebUserProfile
+  myProfile: undefined | Profile
 } // | { isRoot: true }
 
 export type ClientSessionDataRpc =
   | {
       isRoot: false
       isAdmin: boolean
-      myProfile: WebUserProfile
+      myProfile: Profile
     }
   | {
       isRoot: true
@@ -32,8 +41,8 @@ export type ClientSessionDataRpc =
 
 export type ProfileData = {
   userId: string
-  backgroundUrl: string | null | undefined
-  avatarUrl: string | null | undefined
+  backgroundUrl: string | undefined
+  avatarUrl: string | undefined
   username: string
   profileHref: Href
 }

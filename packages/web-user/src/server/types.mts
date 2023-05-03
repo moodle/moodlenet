@@ -6,11 +6,18 @@ import { EntityDocument } from '@moodlenet/system-entities/server'
 export type WebUserProfileEntity = EntityDocument<WebUserProfileDataType>
 export type WebUserProfileDataType = {
   displayName: string
-  aboutMe: string
-  organizationName: string | undefined
-  location: string | undefined
-  siteUrl: string | undefined
+  aboutMe: string | undefined | null
+  organizationName: string | undefined | null
+  location: string | undefined | null
+  siteUrl: string | undefined | null
+  backgroundImage: ImageField | undefined | null
+  avatarImage: ImageField | undefined | null
 }
+type ImageField =
+  | { kind: 'file'; directAccessId: string }
+  // | { kind: 'url'; url: string }
+  | undefined
+  | null
 
 export type WebUserProfile = WebUserProfileDataType & { _key: string }
 
