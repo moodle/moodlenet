@@ -48,7 +48,6 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     const { edit: editRpc, setImage: _setImage, setIsPublished, setContent, _delete } = rpcCaller
 
     const edit = debounce((res: ResourceFormProps) => {
-      setterSave('form', true)
       editRpc(resourceKey, res).then(() => {
         console.log('form xxx', res)
         setterSave('form', false)
@@ -69,6 +68,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     }
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
+        setterSave('form', true)
         edit(res) // .then(form => updateResource('form', 'resourceForm', form)),
       },
       async setImage(file: File | undefined | null) {
