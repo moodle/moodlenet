@@ -2,7 +2,10 @@ import { shell } from './shell.mjs'
 
 import { RpcFile, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
-import { creatorUserInfoAqlProvider, isCreator } from '@moodlenet/system-entities/server'
+import {
+  creatorUserInfoAqlProvider,
+  isCurrentUserCreatorOfCurrentEntity,
+} from '@moodlenet/system-entities/server'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import { ResourceExposeType } from '../common/expose-def.mjs'
 import { ResourceRpc } from '../common/types.mjs'
@@ -27,8 +30,11 @@ export const expose = await shell.expose<ResourceExposeType>({
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
       fn: async ({ publish }, { _key }) => {
-        console.log({ _key, publish })
-        //  await setIsPublished(key, publish)
+        const patchResult = await patchResource(_key, { published: publish })
+        if (!patchResult) {
+          return //throw ?
+        }
+        return
       },
     },
     'webapp/get/:_key': {
@@ -38,7 +44,7 @@ export const expose = await shell.expose<ResourceExposeType>({
           projectAccess: ['u', 'd'],
           project: {
             canPublish: canPublish(),
-            isCreator: isCreator(),
+            isCreator: isCurrentUserCreatorOfCurrentEntity(),
             contributor: creatorUserInfoAqlProvider(),
           },
         })
@@ -89,12 +95,7 @@ export const expose = await shell.expose<ResourceExposeType>({
             imageUrl,
             isWaitingForApproval: false,
           },
-          state: {
-            isPublished: true, //@ETTO to be filled
-            bookmarked: false, //@ETTO to be filled
-            liked: false, //@ETTO to be filled
-            numLikes: 2, //@ETTO to be filled
-          },
+          state: { isPublished: found.entity.published },
           access: {
             canDelete: !!found.access.d,
             canEdit: !!found.access.u,
@@ -132,6 +133,7 @@ export const expose = await shell.expose<ResourceExposeType>({
           title: name,
           content: null,
           image: null,
+          published: false,
         })
         if (!createResult) {
           throw RpcStatus('Unauthorized')
@@ -166,6 +168,7 @@ export const expose = await shell.expose<ResourceExposeType>({
           title: '',
           content: null,
           image: null,
+          published: false,
         })
         if (!createResult) {
           throw RpcStatus('Unauthorized')

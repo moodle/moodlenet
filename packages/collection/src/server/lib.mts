@@ -1,12 +1,15 @@
 import {
+  AccessEntitiesCustomProject,
   create,
+  currentEntityVar,
   delEntity,
   EntityAccess,
   getEntity,
   GetEntityOpts,
   Patch,
   patchEntity,
-  QueryEntitiesCustomProject,
+  queryMyEntities,
+  QueryMyEntitiesOpts,
 } from '@moodlenet/system-entities/server'
 import { Collection } from './init.mjs'
 import { shell } from './shell.mjs'
@@ -18,8 +21,19 @@ export async function createCollection(collectionData: CollectionDataType) {
   return newCollection
 }
 
+export async function getMyCollections<
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(opts?: QueryMyEntitiesOpts<Project, ProjectAccess>) {
+  const collectionsCursor = await shell.call(queryMyEntities)(Collection.entityClass, {
+    projectAccess: opts?.projectAccess,
+    project: opts?.project,
+  })
+  return collectionsCursor
+}
+
 export async function getCollection<
-  Project extends QueryEntitiesCustomProject<any>,
+  Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(_key: string, opts?: GetEntityOpts<Project, ProjectAccess>) {
   const foundCollection = await shell.call(getEntity)(Collection.entityClass, _key, {
@@ -32,6 +46,29 @@ export async function getCollection<
 export async function patchCollection(_key: string, patch: Patch<CollectionEntityDoc>) {
   const patchResult = await shell.call(patchEntity)(Collection.entityClass, _key, patch)
   return patchResult
+}
+
+export async function updateCollectionContent(
+  collectionKey: string,
+  action: 'add' | 'remove',
+  resourceKey: string,
+) {
+  const aqlAction =
+    action === 'remove'
+      ? `REMOVE_VALUE( ${currentEntityVar}.resourceList, @resourceKey, 1 )`
+      : `PUSH( ${currentEntityVar}.resourceList, @resourceKey, true )`
+  const updateResult = await shell.call(patchEntity)(
+    Collection.entityClass,
+    collectionKey,
+    `{ 
+      resourceList: ${aqlAction}
+    }`,
+    {
+      bindVars: { resourceKey },
+    },
+  )
+
+  return updateResult
 }
 
 export async function delCollection(_key: string) {
