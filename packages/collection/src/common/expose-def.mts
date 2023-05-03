@@ -23,8 +23,8 @@ export type CollectionExposeType = PkgExposeDef<{
     'webapp/create'(): Promise<{ _key: string }>
     'webapp/delete/:_key'(body: null, params: { _key: string }): Promise<void>
     'webapp/upload-image/:_key'(
-      body: { file: [RpcFile] },
+      body: { file: [RpcFile | undefined | null] },
       params: { _key: string },
-    ): Promise<string>
+    ): Promise<string | null>
   }
 }>

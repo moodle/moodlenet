@@ -59,7 +59,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       setIsPublished: async (key: string, publish: boolean) =>
         rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
       setImage: async (key: string, file: File | null | undefined) =>
-        file ? rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }) : '', //@ETTO Needs to be fixed
+        rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }), //@ETTO Needs to be fixed
       create: () => rpc['webapp/create'](),
       // toggleFollow: (key: string) => me.rpc['webapp/toggleFollow']({ key: key }), // toggleBookmark: (key: string) => me.rpc['webapp/toggleBookmark']({ key: key }),
     }
