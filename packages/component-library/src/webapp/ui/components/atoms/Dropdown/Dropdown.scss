@@ -257,7 +257,9 @@
   }
 
   > .error-msg {
-    margin-left: 3px;
+    margin: 0;
+    padding: 4px 0 10px 0;
+    border-top: 2px solid rgb(255, 49, 49);
   }
 }
 

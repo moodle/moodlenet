@@ -96,6 +96,10 @@ export const checkIfURL = (possibleUrl: string): boolean => {
   return url.protocol === 'http:' || url.protocol === 'https:'
 }
 
+export const capitalizeFirstLetter = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 // export const isAddonItem = (
 //   toBeDetermined: AddonItem | undefined | false | null,
 // ): toBeDetermined is AddonItem => {

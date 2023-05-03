@@ -43,6 +43,7 @@ export type ResourceCardProps = {
 
   className?: string
   orientation?: 'vertical' | 'horizontal'
+  showDeleteButton?: boolean
 
   data: ResourceCardDataProps
   state: ResourceCardState
@@ -64,6 +65,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   className,
   orientation = 'vertical',
+  showDeleteButton,
 
   data,
   state,
@@ -171,7 +173,7 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     return () => window.removeEventListener('resize', updateSize)
   }, [resourceCard])
 
-  const deleteButton = canDelete && (
+  const deleteButton = canDelete && showDeleteButton && (
     <TertiaryButton key="delete-button" onClick={onRemoveClick} className={`delete ${orientation}`}>
       <CloseRounded />
     </TertiaryButton>
@@ -228,61 +230,20 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     <TertiaryButton
       key="publish-button"
       onClick={isPublished ? unpublish : publish}
-      className={`publish-button ${isPublished ? 'published' : 'draft'}`}
-      abbr={isPublished ? 'Sent to draft' : 'Publish'}
+      className={`publish-button ${isPublished ? 'published' : 'unpublished'}`}
+      abbr={isPublished ? 'Unpublish' : 'Publish'}
     >
       <Public />
     </TertiaryButton>
   )
 
-  // const bookmarkButton = isAuthenticated && !selectionMode && (
-  //   <TertiaryButton
-  //     key={`bookmark-button`}
-  //     className={`bookmark-button ${bookmarked && 'bookmarked'} ${
-  //       selectionMode || !isAuthenticated ? 'disabled' : ''
-  //     }`}
-  //     onClick={toggleBookmark}
-  //     hiddenText={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-  //   >
-  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-  //   </TertiaryButton>
-  // )
-
-  // const likeButton = (
-  //   <TertiaryButton
-  //     key="like-button"
-  //     className={`like-button ${liked && 'liked'} ${
-  //       selectionMode || !isAuthenticated || canLike ? 'disabled' : ''
-  //     }`}
-  //     abbr={
-  //       isCreator
-  //         ? 'Creators cannot like their own content'
-  //         : !isAuthenticated
-  //         ? 'Login to like the resource'
-  //         : ''
-  //     }
-  //     hiddenText=""
-  //     onClick={
-  //       canLike && !selectionMode
-  //         ? toggleLike
-  //         : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()
-  //     }
-  //   >
-  //     {liked ? <Favorite /> : <FavoriteBorder />}
-  //     <span>{numLikes}</span>
-  //   </TertiaryButton>
-  // )
-
   const updatedBottomLeftItems = [avatarLabel, ...(bottomLeftItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
-  const updatedBottomRightItems = [
-    // bookmarkButton,
-    // likeButton,
-    pulishButton,
-    ...(bottomRightItems ?? []),
-  ].filter((item): item is AddonItem | JSX.Element => !!item)
+  const updatedBottomRightItems = [pulishButton, ...(bottomRightItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
 
   const footer = (
     <div className={`resource-card-footer ${orientation} ${size}`} key="footer">

@@ -31,7 +31,9 @@ export const LoggedOut: CollectionStory = () => {
     data: {},
     state: {},
     actions: {},
-    access: {},
+    access: {
+      isAuthenticated: false,
+    },
 
     isAuthenticated: false,
   })
@@ -61,8 +63,6 @@ export const Creator: CollectionStory = () => {
     },
     state: {
       isPublished: true,
-      // bookmarked: true,
-      // isSaving: true,
     },
     actions: {},
     access: {
@@ -70,6 +70,7 @@ export const Creator: CollectionStory = () => {
       canPublish: true,
       isCreator: true,
       canEdit: true,
+      canFollow: false,
     },
     isSaving: false,
   })

@@ -5,12 +5,13 @@ import {
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
+  resourceValidationSchema,
 } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
-import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, string } from 'yup'
+import { addMethod, AnySchema, MixedSchema } from 'yup'
 // import { href } from '../../../elements/link'
 // import { TagListStory } from '../../../elements/tags'
 // import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
@@ -23,6 +24,15 @@ import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 // import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 // import { useFormik } from 'formik'
 import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
+import {
+  LanguagesTextOptionProps,
+  LevelTextOptionProps,
+  LicenseIconTextOptionProps,
+  MonthTextOptionProps,
+  SubjectsTextOptionProps,
+  TypeSimpleTextOptionProps,
+  YearsProps,
+} from '@moodlenet/ed-meta/common'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
@@ -64,59 +74,22 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
   )
 })
 
-export const validationSchema: SchemaOf<ResourceFormProps> = object({
-  subject: string().required(/* t */ `Please select a subject`),
-  content: string().required(/* t */ `Please upload a content`),
-  license: string().required(/* t */ `Please provide a license`),
-  isFile: boolean().required(),
-  description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
-  title: string().max(160).min(3).required(/* t */ `Please provide a title`),
-  image: mixed()
-    .test((v, { createError }) =>
-      v instanceof Blob && v.size > maxUploadSize
-        ? createError({
-            message: /* t */ `The file is too big, reduce the size or provide a url`,
-          })
-        : true,
-    )
-    .optional(),
-  language: string().optional(),
-  level: string().optional(),
-  month: string().optional(),
-  type: string().optional(),
-  visibility: mixed().required(/* t */ `Visibility is required`),
-  year: string().when('month', (month, schema) => {
-    return month ? schema.required(/* t */ `Please select a year`) : schema.optional()
-  }),
-})
-
-export const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> =
-  object({
-    content: string().required(`Please upload a content or a link`),
-  })
-
 export const ResourceFormValues: ResourceFormProps = {
+  title: '',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  title: '',
-  // content: '',
-  // visibility: VisbilityIconTextOptionProps[0]!.value,
-  // category: CategoriesTextOptionProps[2]!.value,
-  // description:
-  //   'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-  // image: 'https://picsum.photos/200/100',
-  // language: LanguagesTextOptionProps[2]!.value,
-  // level: LevelTextOptionProps[2]!.value,
-  // license: LicenseIconTextOptionProps[2]!.value,
-  // month: MonthTextOptionProps[8]!.value,
-  // year: YearsProps[20],
-
-  // name: 'The Best Resource Ever',
+  subject: SubjectsTextOptionProps[2]!.value,
+  language: LanguagesTextOptionProps[2]!.value,
+  level: LevelTextOptionProps[2]!.value,
+  license: LicenseIconTextOptionProps[2]!.value,
+  month: MonthTextOptionProps[8]!.value,
+  year: YearsProps[20],
+  type: TypeSimpleTextOptionProps[1]!.value,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
   return useFormik<ResourceFormProps>({
-    validationSchema,
+    validationSchema: resourceValidationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
       title: 'Best resource ever',
@@ -291,8 +264,6 @@ export const useResourceStoryProps = (
       actions: actions,
       access: access,
 
-      validationSchema: validationSchema,
-      contentValidationSchema: contentValidationSchema,
       extraDetailsItems: extraDetailsItems,
 
       fileMaxSize: 343243,

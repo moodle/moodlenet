@@ -66,4 +66,6 @@ export type ProfileAccess = {
   isAdmin: boolean
   canEdit: boolean
   canFollow: boolean
+  canBookmark: boolean
+  canPublish: boolean
 }

@@ -81,7 +81,9 @@ export const LanguageField: FC<LanguageFieldProps> = ({
   ) : language ? (
     <div className="detail language">
       <div className="title">Language</div>
-      <abbr className="value">{languages.selected?.label}</abbr>
+      <abbr className="value" title={languages.selected?.label}>
+        {languages.selected?.label}
+      </abbr>
     </div>
   ) : null
 }
