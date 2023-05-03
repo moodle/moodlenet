@@ -12,6 +12,11 @@
     font-size: 0.7rem;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     background-color: var(--header-background);
+
+    @media screen and (max-width: 675px) {
+      padding: 0 25px;
+    }
+
     > .filter-bar-content {
       display: flex;
       width: 100%;
