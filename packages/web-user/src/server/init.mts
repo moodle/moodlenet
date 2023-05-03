@@ -1,6 +1,7 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { addMiddlewares } from '@moodlenet/http-server/server'
 import { plugin } from '@moodlenet/react-app/server'
+import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import {
   ANON_SYSTEM_USER,
   EntityCollectionDef,
@@ -114,6 +115,9 @@ await shell.call(addMiddlewares)({
     },
   ],
 })
+
+export const publicFiles = await fileStoreFactory(shell, 'public')
+export const publicFilesHttp = await publicFiles.mountStaticHttpServer('public')
 
 type Env = {
   noWebappServer: boolean

@@ -75,6 +75,7 @@
     "@moodlenet/crypto": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",
+    "@moodlenet/simple-file-store": "^0.2.0",
     "@moodlenet/system-entities": "^0.2.0"
   },
   "devDependencies": {
@@ -87,6 +88,7 @@
     "@moodlenet/crypto": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",
+    "@moodlenet/simple-file-store": "^0.2.0",
     "@moodlenet/system-entities": "^0.2.0",
     "@types/js-cookie": "^3.0.2",
     "@types/react": "^18.0.9",

@@ -2,8 +2,7 @@ import { useGuestRegistryMap, wrapFetch } from '@moodlenet/react-app/webapp'
 import cookies from 'js-cookie'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
-import { WebUserProfile } from '../../server/types.mjs'
+import { Profile, WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
 import { AvatarMenuItem } from '../exports/ui.mjs'
 import { GuestMainRegistries, MainRegistries } from '../registries.mjs'
 import defaultAvatarUrl from '../ui/assets/img/default-avatar.svg'
@@ -24,7 +23,7 @@ export type ClientSessionData = {
   | {
       isAdmin: boolean
       isRoot: false
-      myProfile: WebUserProfile
+      myProfile: Profile
     }
 )
 export type AvatarMenuItemRegItem = Omit<AvatarMenuItem, 'key'>
@@ -159,7 +158,7 @@ wrapFetch((url, reqInit, next) => {
 const REDIRECT_Q_NAME = 'redirectTo'
 export function useNeedsWebUserLogin(): {
   isAdmin: boolean
-  myProfile: WebUserProfile
+  myProfile: Profile
 } | null {
   const nav = useNavigate()
   const loc = useLocation()
