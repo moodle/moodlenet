@@ -1,31 +1,35 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
-import { Search } from '@moodlenet/react-app/ui'
+import { Bookmarks } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
 import { useBrowserStoryProps } from 'components/organisms/Browser/stories-props.js'
 
-const meta: ComponentMeta<typeof Search> = {
-  title: 'Pages/Search',
-  component: Search,
+const meta: ComponentMeta<typeof Bookmarks> = {
+  title: 'Pages/Bookmarks',
+  component: Bookmarks,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['SearchStoryProps', 'SearchLoggedOutStoryProps', 'SearchLoggedInStoryProps'],
+  excludeStories: [
+    'BookmarksStoryProps',
+    'BookmarksLoggedOutStoryProps',
+    'BookmarksLoggedInStoryProps',
+  ],
 }
 
-type SearchStory = ComponentStory<typeof Search>
-// const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
+type BookmarksStory = ComponentStory<typeof Bookmarks>
+// const BookmarksStory: ComponentStory<typeof Bookmarks> = args => <Bookmarks {...args} />
 
-export const LoggedOut: SearchStory = () => {
+export const LoggedIn: BookmarksStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
-    browserProps: useBrowserStoryProps(),
+    browserProps: useBrowserStoryProps({ title: 'Bookmarks' }),
   }
-  return <Search {...props} />
+  return <Bookmarks {...props} />
 }
 
-// export const SearchStoryProps: SearchProps = {
+// export const BookmarksStoryProps: BookmarksProps = {
 //   mainLayoutProps: MainLayoutLoggedInStoryProps,
 
 //   // headerPageTemplateProps: {
@@ -39,8 +43,8 @@ export const LoggedOut: SearchStory = () => {
 //   browserProps: BrowserLoggedInStoryProps
 // }
 
-// export const SearchLoggedOutStoryProps: SearchProps = {
-//   ...SearchStoryProps,
+// export const BookmarksLoggedOutStoryProps: BookmarksProps = {
+//   ...BookmarksStoryProps,
 //   mainLayoutProps: MainLayoutLoggedOutStoryProps,
 //   // headerPageTemplateProps: {
 //   //   isAuthenticated: false,
@@ -57,14 +61,14 @@ export const LoggedOut: SearchStory = () => {
 //   browserProps: BrowserLoggedOutStoryProps,
 // }
 
-// export const SearchLoggedInStoryProps: SearchProps = {
-//   ...SearchStoryProps,
+// export const BookmarksLoggedInStoryProps: BookmarksProps = {
+//   ...BookmarksStoryProps,
 // }
 
-// export const LoggedOut = SearchStory.bind({})
-// LoggedOut.args = SearchLoggedOutStoryProps
+// export const LoggedOut = BookmarksStory.bind({})
+// LoggedOut.args = BookmarksLoggedOutStoryProps
 
-// export const LoggedIn = SearchStory.bind({})
-// LoggedIn.args = SearchLoggedInStoryProps
+// export const LoggedIn = BookmarksStory.bind({})
+// LoggedIn.args = BookmarksLoggedInStoryProps
 
 export default meta

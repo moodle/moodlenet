@@ -6,6 +6,7 @@ export type FloatingMenuContentItem = {
   Component: ComponentType
   key: string
   className?: string
+  onClick?: (e: string) => void
 }
 
 export type FloatingMenuProps = {
@@ -55,12 +56,13 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }
 
   const updatedMenuContent = Array.isArray(menuContent)
-    ? menuContent.map(({ Component, key, className }, i) => {
+    ? menuContent.map(({ Component, key, className, onClick }, i) => {
         if (menuContent.length === 1) {
           return (
             <div
               className={`${className}`}
               key={key}
+              onClick={onClick}
               tabIndex={i + 1}
               onKeyDown={oneElementActions}
             >
