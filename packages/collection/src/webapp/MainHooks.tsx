@@ -36,7 +36,6 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
 
     const { _delete, edit: editRpc, setIsPublished, setImage } = rpcCaller
     const edit = debounce((res: CollectionFormProps) => {
-      setterSave('form', true)
       editRpc(collectionKey, res).then(() => {
         setterSave('form', false)
       })
@@ -51,6 +50,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
 
     return {
       async editData(res: CollectionFormProps) {
+        setterSave('form', true)
         edit(res)
       },
       async setImage(file: File | null | undefined) {
