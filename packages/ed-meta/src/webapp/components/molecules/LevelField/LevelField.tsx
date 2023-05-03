@@ -81,7 +81,9 @@ export const LevelField: FC<LevelFieldProps> = ({
   ) : level ? (
     <div className="detail level">
       <div className="title">Level</div>
-      <abbr className="value">{levels.selected?.label}</abbr>
+      <abbr className="value" title={levels.selected?.label}>
+        {levels.selected?.label}
+      </abbr>
     </div>
   ) : null
 }

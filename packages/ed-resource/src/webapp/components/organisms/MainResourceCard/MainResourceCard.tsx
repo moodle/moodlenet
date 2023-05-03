@@ -16,6 +16,7 @@ import {
 } from '@moodlenet/component-library'
 import { SubjectsTextOptionProps } from '@moodlenet/ed-meta/common'
 import {
+  capitalizeFirstLetter,
   downloadOrOpenURL,
   FormikHandle,
   getBackupImage,
@@ -180,7 +181,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
       }}
-      error={shouldShowErrors && form.errors.title}
+      error={shouldShowErrors && form.errors.title && capitalizeFirstLetter(form.errors.title)}
     />
   ) : (
     <div className="title" key="resource-title">

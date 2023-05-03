@@ -52,6 +52,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
               numResources: 2,
             },
             access: {
+              isAuthenticated: false,
               canPublish: false,
               canBookmark: false,
               canFollow: false,
@@ -163,6 +164,8 @@ export const Owner: LandingStory = () => {
                 canDelete: true,
                 canPublish: true,
                 isAuthenticated: true,
+                canLike: false,
+                isCreator: true,
               },
             })}
           />
@@ -175,12 +178,13 @@ export const Owner: LandingStory = () => {
             searchCollectionsHref={href('Page/Search')}
             collectionCardPropsList={getCollectionsCardStoryProps(15, {
               state: {
-                isPublished: false,
+                isPublished: true,
               },
               access: {
                 isCreator: true,
                 canPublish: true,
-                // isAuthenticated: true,
+                canBookmark: true,
+                isAuthenticated: true,
               },
             })}
           />

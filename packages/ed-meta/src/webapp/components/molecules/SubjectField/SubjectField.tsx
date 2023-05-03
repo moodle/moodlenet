@@ -85,7 +85,9 @@ export const SubjectField: FC<SubjectFieldProps> = ({
   ) : subject ? (
     <div className="detail subject">
       <div className="title">Subject</div>
-      <abbr className="value">{subjects.selected?.label}</abbr>
+      <abbr className="value" title={subjects.selected?.label}>
+        {subjects.selected?.label}
+      </abbr>
     </div>
   ) : null
 }
