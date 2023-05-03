@@ -1,6 +1,6 @@
 import { shell } from './shell.mjs'
 
-import { RpcFile, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
+import { RpcStatus, setRpcStatusCode } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
@@ -226,15 +226,20 @@ export const expose = await shell.expose<ResourceExposeType>({
     },
     'webapp/upload-content/:_key': {
       guard: () => void 0,
-      async fn(
-        { content: [uploadedContent] }: { content: [RpcFile | string] },
-        { _key }: { _key: string },
-      ) {
-        // const got = await getResource(_key, { projectAccess: ['u'] })
+      async fn({ content: [uploadedContent] }, { _key }) {
+        const got = await getResource(_key, { projectAccess: ['u'] })
 
-        // if (!got?.access.u) {
-        //   throw RpcStatus('Unauthorized')
-        // }
+        if (!got?.access.u) {
+          throw RpcStatus('Unauthorized')
+        }
+
+        if (!uploadedContent) {
+          await publicFiles.del(getResourceLogicalFilename(_key))
+          await patchResource(_key, {
+            content: null,
+          })
+          return null
+        }
         const storeContentResult = await setResourceContent(_key, uploadedContent)
         if (!storeContentResult) {
           throw RpcStatus('Unauthorized')
