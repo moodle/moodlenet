@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ResourceActions, ResourceFormProps, ResourceProps, SaveState } from '../common/types.mjs'
+import { ResourceActions, ResourceFormProps, ResourceProps } from '../common/types.mjs'
 
 import { useNavigate } from 'react-router-dom'
 import { MainContext } from './MainContext.js'
@@ -21,14 +21,18 @@ export type ResourceCommonProps = {
   isSaving: boolean
   isToDelete: boolean
 }
-// type SaveState = { form: boolean; image: boolean; content: boolean }
+type SaveState = { form: boolean; image: boolean; content: boolean }
 
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
   const nav = useNavigate()
   const [resource, setResource] = useState<ResourceProps | null>()
-  const [saveState, setSaveState] = useState({ form: false, image: false, content: false })
+  const [saveState, setSaveState] = useState<SaveState>({
+    form: false,
+    image: false,
+    content: false,
+  })
   const [isToDelete, setIsToDelete] = useState(false)
 
   useEffect(() => {
@@ -76,9 +80,9 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         return imageUrl
       },
       async setContent(content: File | string | undefined | null) {
-        setterSave('form', true)
+        setterSave('content', true)
         await setContent(resourceKey, content).then(updateData('contentUrl'))
-        setterSave('form', false)
+        setterSave('content', false)
       },
       publish: () => setIsPublished(resourceKey, true),
       unpublish: () => setIsPublished(resourceKey, false),
