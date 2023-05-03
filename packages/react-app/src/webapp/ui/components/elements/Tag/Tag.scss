@@ -1,5 +1,5 @@
 .tag {
-  cursor: pointer;
+  // cursor: pointer;
   width: fit-content;
   height: fit-content;
   padding: 5px 10px;
@@ -41,17 +41,17 @@
     text-overflow: ellipsis;
   }
 
-  &.hover:hover,
-  &:hover {
-    box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 50%);
-    background-color: #dfe1ec;
-  }
+  // &.hover:hover,
+  // &:hover {
+  //   box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 50%);
+  //   background-color: #dfe1ec;
+  // }
 
-  &.hover:active,
-  &:active {
-    box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 70%);
-    background-color: #d6d8e6;
-  }
+  // &.hover:active,
+  // &:active {
+  //   box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 70%);
+  //   background-color: #d6d8e6;
+  // }
 }
 
 .tag,

@@ -78,8 +78,8 @@ export const CollectionCard: FC<CollectionCardProps> = ({
     <TertiaryButton
       key="publish-button"
       onClick={isPublished ? () => unpublish : publish}
-      className={`publish-button ${isPublished ? 'published' : 'draft'}`}
-      abbr={isPublished ? 'Sent to draft' : 'Publish'}
+      className={`publish-button ${isPublished ? 'published' : 'unpublished'}`}
+      abbr={isPublished ? 'Unpublish' : 'Publish'}
     >
       <Public />
     </TertiaryButton>

@@ -1,11 +1,6 @@
-import { SearchCollectionList } from '@moodlenet/collection/ui'
-import { SearchResourceList } from '@moodlenet/ed-resource/ui'
-import { Browser, BrowserProps, SortBy } from '@moodlenet/react-app/ui'
-import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
+import { Browser, BrowserProps } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useMemo, useState } from 'react'
-import { getCollectionsCardStoryProps } from '../CollectionCard/story-props.js'
-import { getResourcesCardStoryProps } from '../ResourceCard/story-props.js'
+import { useBrowserStoryProps } from './stories-props.js'
 
 const meta: ComponentMeta<typeof Browser> = {
   title: 'Organisms/Browser',
@@ -22,115 +17,7 @@ const meta: ComponentMeta<typeof Browser> = {
   ],
 }
 
-// make array of 20 license types
 type BrowserStory = ComponentStory<typeof Browser>
-// const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} />
-
-// const subjectCardPropsList: SubjectCardProps[] = [
-//   '#Education',
-//   '#Forestry',
-//   'Enviromental Science with a lot of Mathematics and Physics',
-//   'Sailing Principles',
-//   'Latin',
-//   'Hebrew',
-//   'NoShow',
-// ].map((x) => ({
-//   organization: { ...SubjectCardStoryProps }.organization,
-//   title: x,
-//   subjectHomeHref: href('Subject/home'),
-// }))
-
-export const useBrowserLoggedOutStoryProps = (): BrowserProps => {
-  const [currentResourceSortBy, setCurrentResourceSortBy] = useState('Relevant')
-  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState('Relevant')
-  return {
-    mainColumnItems: [
-      {
-        name: 'Resources',
-        Item: ({ showAll, setShowAll }) => {
-          const list = useMemo(
-            () =>
-              getResourcesCardStoryProps(30, {
-                access: {
-                  // isAuthenticated: false,
-                },
-              }),
-            [],
-          )
-          return (
-            <SearchResourceList
-              resourceCardPropsList={list}
-              showAll={showAll}
-              setShowAll={setShowAll}
-            />
-          )
-        },
-        filters: [
-          {
-            Item: () => (
-              <SortBy selected={currentResourceSortBy} setSelection={setCurrentResourceSortBy} />
-            ),
-            key: 'sort-by',
-          },
-        ],
-        key: 'resource-list',
-      },
-      {
-        name: 'Collections',
-        Item: ({ showAll, setShowAll }) => {
-          const list = useMemo(
-            () =>
-              getCollectionsCardStoryProps(30, {
-                // access: { isAuthenticated: false },
-              }),
-            [],
-          )
-          return (
-            <SearchCollectionList
-              collectionCardPropsList={list}
-              showAll={showAll}
-              setShowAll={setShowAll}
-            />
-          )
-        },
-        filters: [
-          {
-            Item: () => (
-              <SortBy
-                selected={currentCollectionSortBy}
-                setSelection={setCurrentCollectionSortBy}
-              />
-            ),
-            key: 'sort-by',
-          },
-        ],
-        key: 'collection-list',
-      },
-      {
-        name: 'People',
-        Item: ({ showAll, setShowAll }) => {
-          const list = useMemo(
-            () =>
-              getProfileCardsStoryProps(30, {
-                access: { isAuthenticated: true, isCreator: true },
-                state: { followed: true },
-              }),
-            [],
-          )
-          return (
-            <SearchProfileList
-              profilesCardPropsList={list}
-              showAll={showAll}
-              setShowAll={setShowAll}
-            />
-          )
-        },
-        filters: [],
-        key: 'profile-list',
-      },
-    ],
-  }
-}
 
 export const BrowserLoggedInStoryProps: BrowserProps = {
   mainColumnItems: [],
@@ -141,7 +28,7 @@ export const BrowserFollowingStoryProps: BrowserProps = {
 }
 
 export const LoggedOut: BrowserStory = () => {
-  const props = useBrowserLoggedOutStoryProps()
+  const props = useBrowserStoryProps({ isAuthenticated: false })
   return <Browser {...props} />
 }
 

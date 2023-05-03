@@ -71,7 +71,9 @@ export const useProfileProps = ({
         isAdmin,
         isAuthenticated,
         isCreator,
+        canPublish: false, //@ETTO Needs to be implemented
         canFollow: true, //@ETTO Needs to be implemented
+        canBookmark: true, //@ETTO Needs to be implemented
       },
       data: {
         userId: '12sadsadsad', //@ETTO Needs to be implemented

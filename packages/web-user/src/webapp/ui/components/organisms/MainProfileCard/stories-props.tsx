@@ -69,9 +69,11 @@ export const useMainProfileCardStoryProps = (
       access: {
         isAdmin: false,
         isCreator: false,
-        isAuthenticated: false,
+        isAuthenticated: true,
         canEdit: false,
-        canFollow: false,
+        canPublish: false,
+        canFollow: true,
+        canBookmark: true,
       },
       form: useFormik<ProfileFormValues>({
         onSubmit: action('submit edit'),

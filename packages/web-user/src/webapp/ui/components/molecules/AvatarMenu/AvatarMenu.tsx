@@ -2,6 +2,10 @@ import { FloatingMenu, FloatingMenuContentItem } from '@moodlenet/component-libr
 import { ComponentType, FC, useMemo } from 'react'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import {
+  BookmarksLinkAvatarMenuComponent,
+  BookmarksLinkAvatarMenuComponentProps,
+  FollowingLinkAvatarMenuComponent,
+  FollowingLinkAvatarMenuComponentProps,
   ProfileLinkAvatarMenuComponent,
   ProfileLinkAvatarMenuComponentProps,
   SettingsLinkAvatarMenuComponent,
@@ -19,6 +23,8 @@ export type AvatarMenuProps = {
   menuItems: AvatarMenuItem[]
   avatarUrl: string | undefined
   profileMenuProps: null | Pick<ProfileLinkAvatarMenuComponentProps, 'profileHref'>
+  bookmarksMenuProps: null | Pick<BookmarksLinkAvatarMenuComponentProps, 'bookmarksHref'>
+  followingMenuProps: null | Pick<FollowingLinkAvatarMenuComponentProps, 'followingHref'>
   settingsMenuProps: null | SettingsLinkAvatarMenuComponentProps
   signoutMenuProps: SignoutAvatarMenuComponentProps
 }
@@ -28,6 +34,8 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   avatarUrl = defaultAvatar,
   settingsMenuProps,
   profileMenuProps,
+  bookmarksMenuProps,
+  followingMenuProps,
   signoutMenuProps,
 }) => {
   const allMenuItems = useMemo(() => {
@@ -43,6 +51,16 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
       key: 'profile',
     }
 
+    const bookmarksAvatarMenuItem: AvatarMenuItem | null = bookmarksMenuProps && {
+      Component: () => <BookmarksLinkAvatarMenuComponent {...bookmarksMenuProps} />,
+      key: 'bookmarks',
+    }
+
+    const followingAvatarMenuItem: AvatarMenuItem | null = followingMenuProps && {
+      Component: () => <FollowingLinkAvatarMenuComponent {...followingMenuProps} />,
+      key: 'following',
+    }
+
     const signoutAvatarMenuItem: AvatarMenuItem = {
       Component: () => <SignoutAvatarMenuComponent {...signoutMenuProps} />,
       key: 'signout',
@@ -50,11 +68,21 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
 
     return [
       ...(profileLinkAvatarMenuItem ? [profileLinkAvatarMenuItem] : []),
+      ...(bookmarksAvatarMenuItem ? [bookmarksAvatarMenuItem] : []),
+      ...(followingAvatarMenuItem ? [followingAvatarMenuItem] : []),
       ...menuItems,
       ...(settingsLinkAvatarMenuItem ? [settingsLinkAvatarMenuItem] : []),
       signoutAvatarMenuItem,
     ]
-  }, [avatarUrl, menuItems, profileMenuProps, settingsMenuProps, signoutMenuProps])
+  }, [
+    avatarUrl,
+    bookmarksMenuProps,
+    followingMenuProps,
+    menuItems,
+    profileMenuProps,
+    settingsMenuProps,
+    signoutMenuProps,
+  ])
 
   const floatingMenuContentItems = useMemo(() => {
     return allMenuItems.map(({ Component, key, className = '' }) => {
