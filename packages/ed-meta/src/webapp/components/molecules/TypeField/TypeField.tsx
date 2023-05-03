@@ -75,7 +75,9 @@ export const TypeField: FC<TypeFieldProps> = ({
   ) : type ? (
     <div className="detail type">
       <div className="title">Type</div>
-      <abbr className="value">{types.selected?.value}</abbr>
+      <abbr className="value" title={types.selected?.value}>
+        {types.selected?.value}
+      </abbr>
     </div>
   ) : null
 }

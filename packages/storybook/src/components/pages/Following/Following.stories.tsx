@@ -1,31 +1,35 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
-import { Search } from '@moodlenet/react-app/ui'
+import { Following } from '@moodlenet/react-app/ui'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
 import { useBrowserStoryProps } from 'components/organisms/Browser/stories-props.js'
 
-const meta: ComponentMeta<typeof Search> = {
-  title: 'Pages/Search',
-  component: Search,
+const meta: ComponentMeta<typeof Following> = {
+  title: 'Pages/Following',
+  component: Following,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['SearchStoryProps', 'SearchLoggedOutStoryProps', 'SearchLoggedInStoryProps'],
+  excludeStories: [
+    'FollowingStoryProps',
+    'FollowingLoggedOutStoryProps',
+    'FollowingLoggedInStoryProps',
+  ],
 }
 
-type SearchStory = ComponentStory<typeof Search>
-// const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
+type FollowingStory = ComponentStory<typeof Following>
+// const FollowingStory: ComponentStory<typeof Following> = args => <Following {...args} />
 
-export const LoggedOut: SearchStory = () => {
+export const LoggedIn: FollowingStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
-    browserProps: useBrowserStoryProps(),
+    browserProps: useBrowserStoryProps({ title: 'Following' }),
   }
-  return <Search {...props} />
+  return <Following {...props} />
 }
 
-// export const SearchStoryProps: SearchProps = {
+// export const FollowingStoryProps: FollowingProps = {
 //   mainLayoutProps: MainLayoutLoggedInStoryProps,
 
 //   // headerPageTemplateProps: {
@@ -39,8 +43,8 @@ export const LoggedOut: SearchStory = () => {
 //   browserProps: BrowserLoggedInStoryProps
 // }
 
-// export const SearchLoggedOutStoryProps: SearchProps = {
-//   ...SearchStoryProps,
+// export const FollowingLoggedOutStoryProps: FollowingProps = {
+//   ...FollowingStoryProps,
 //   mainLayoutProps: MainLayoutLoggedOutStoryProps,
 //   // headerPageTemplateProps: {
 //   //   isAuthenticated: false,
@@ -57,14 +61,14 @@ export const LoggedOut: SearchStory = () => {
 //   browserProps: BrowserLoggedOutStoryProps,
 // }
 
-// export const SearchLoggedInStoryProps: SearchProps = {
-//   ...SearchStoryProps,
+// export const FollowingLoggedInStoryProps: FollowingProps = {
+//   ...FollowingStoryProps,
 // }
 
-// export const LoggedOut = SearchStory.bind({})
-// LoggedOut.args = SearchLoggedOutStoryProps
+// export const LoggedOut = FollowingStory.bind({})
+// LoggedOut.args = FollowingLoggedOutStoryProps
 
-// export const LoggedIn = SearchStory.bind({})
-// LoggedIn.args = SearchLoggedInStoryProps
+// export const LoggedIn = FollowingStory.bind({})
+// LoggedIn.args = FollowingLoggedInStoryProps
 
 export default meta

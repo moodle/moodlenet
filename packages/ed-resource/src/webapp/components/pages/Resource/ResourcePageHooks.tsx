@@ -2,11 +2,7 @@ import { OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import { ResourceFormProps } from '../../../../common/types.mjs'
-import {
-  contentValidationSchema,
-  maxUploadSize,
-  validationSchema,
-} from '../../../../common/validationSchema.mjs'
+import { maxUploadSize } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import { ResourceProps } from './Resource.js'
@@ -55,8 +51,6 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
       generalActionsItems: [],
       data,
       resourceForm,
-      validationSchema: validationSchema,
-      contentValidationSchema: contentValidationSchema,
       state,
       actions,
       access,

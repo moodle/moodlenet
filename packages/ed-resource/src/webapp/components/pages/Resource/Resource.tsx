@@ -17,7 +17,6 @@ import {
 import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import { FC, useEffect, useState } from 'react'
-import { SchemaOf } from 'yup'
 import {
   ResourceAccessProps,
   ResourceActions,
@@ -25,6 +24,11 @@ import {
   ResourceFormProps,
   ResourceStateProps,
 } from '../../../../common/types.mjs'
+import {
+  contentValidationSchema,
+  imageValidationSchema,
+  resourceValidationSchema,
+} from '../../../../common/validationSchema.mjs'
 import {
   ResourceContributorCard,
   ResourceContributorCardProps,
@@ -46,9 +50,6 @@ export type ResourceProps = {
   generalActionsItems: AddonItem[]
 
   resourceForm: ResourceFormProps
-  validationSchema: SchemaOf<ResourceFormProps>
-  contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }>
-
   data: ResourceDataProps
   state: ResourceStateProps
   actions: ResourceActions
@@ -70,8 +71,6 @@ export const Resource: FC<ResourceProps> = ({
 
   data,
   resourceForm,
-  validationSchema,
-  contentValidationSchema,
 
   state,
   actions,
@@ -87,7 +86,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
-    validationSchema: validationSchema,
+    validationSchema: resourceValidationSchema,
     onSubmit: values => {
       return editData(values)
     },
@@ -96,8 +95,8 @@ export const Resource: FC<ResourceProps> = ({
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: { content: contentUrl },
     validationSchema: contentValidationSchema,
-    validateOnMount: true,
-    validateOnChange: true,
+    // validateOnMount: true,
+    // validateOnChange: true,
     onSubmit: values => {
       return setContent(values.content)
     },
@@ -105,6 +104,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const imageForm = useFormik<{ image: File | string | undefined | null }>({
     initialValues: { image: imageUrl },
+    validationSchema: imageValidationSchema,
     onSubmit: values => {
       return typeof values.image !== 'string' ? setImage(values.image) : undefined
     },
@@ -139,8 +139,10 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
-    if (form.isValid && contentForm.isValid) {
+    if (form.isValid && contentForm.isValid && imageForm.isValid) {
       form.submitForm()
+      contentForm.submitForm()
+      imageForm.submitForm()
       setShouldShowErrors(false)
       publish()
     } else {
@@ -240,7 +242,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const levelField = (
     <LevelField
-      key="type-field"
+      key="level-field"
       canEdit={canEdit}
       level={form.values.level}
       editLevel={e => {
@@ -253,7 +255,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const dateField = (
     <DateField
-      key="type-field"
+      key="date-field"
       canEdit={canEdit}
       month={form.values.month}
       year={form.values.year}
@@ -271,7 +273,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const languageField = (
     <LanguageField
-      key="type-field"
+      key="language-field"
       canEdit={canEdit}
       language={form.values.language}
       editLanguage={e => {
@@ -291,6 +293,8 @@ export const Resource: FC<ResourceProps> = ({
     languageField,
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
+
+  console.log('errors ', form.errors)
 
   const extraDetailsContainer =
     updatedExtraDetailsItems.length > 0 ? (

@@ -16,6 +16,7 @@ import {
 } from '@moodlenet/component-library'
 import { SubjectsTextOptionProps } from '@moodlenet/ed-meta/common'
 import {
+  capitalizeFirstLetter,
   downloadOrOpenURL,
   FormikHandle,
   getBackupImage,
@@ -32,7 +33,7 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
-import { FC, StrictMode, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getResourceTypeInfo,
   ResourceAccessProps,
@@ -180,7 +181,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
       }}
-      error={shouldShowErrors && form.errors.title}
+      error={shouldShowErrors && form.errors.title && capitalizeFirstLetter(form.errors.title)}
     />
   ) : (
     <div className="title" key="resource-title">
@@ -725,14 +726,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </>
   )
   return (
-    <StrictMode>
+    <>
       {modals}
       {snackbars}
       {/* {searchImageComponent} */}
       <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
-    </StrictMode>
+    </>
 
     //   <MainLayout {...mainLayoutProps}>
     //     {modals}
