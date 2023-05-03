@@ -87,7 +87,7 @@ export const expose = await shell.expose<CollectionExposeType>({
           return
         }
 
-        const contributor: CollectionRpc['contributor'] = getRpcContributor(found.contributor)
+        const contributor: CollectionContributorRpc = getRpcContributor(found.contributor)
         const collectionRpcNoContrib = getCollectionRpc(found)
         const collectionRpc: CollectionRpc = {
           contributor,
