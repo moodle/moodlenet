@@ -128,7 +128,10 @@ export const expose = await shell.expose<WebUserExposeType>({
         const avatarLogicalFilename = getProfileAvatarLogicalFilename(_key)
         if (!uploadedRpcFile) {
           await publicFiles.del(avatarLogicalFilename)
-          return ''
+          await editWebUserProfile(_key, {
+            avatarImage: null,
+          })
+          return null
         }
 
         const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
@@ -157,7 +160,10 @@ export const expose = await shell.expose<WebUserExposeType>({
         const imageLogicalFilename = getProfileImageLogicalFilename(_key)
         if (!uploadedRpcFile) {
           await publicFiles.del(imageLogicalFilename)
-          return ''
+          await editWebUserProfile(_key, {
+            backgroundImage: null,
+          })
+          return null
         }
 
         const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')

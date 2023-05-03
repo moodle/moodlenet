@@ -45,7 +45,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     const updateData = <T,>(key: string, val: T): typeof collection =>
       collection && { ...collection, data: { ...collection.data, [key]: val } }
 
-    const updateImageUrl = (imageUrl: string) => {
+    const updateImageUrl = (imageUrl: string | null) => {
       setCollection(updateData('imageUrl', imageUrl))
     }
 

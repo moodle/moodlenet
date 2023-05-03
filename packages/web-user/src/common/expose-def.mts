@@ -18,10 +18,10 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/upload-profile-background/:_key'(
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
-    ): Promise<string>
+    ): Promise<string | null>
     'webapp/upload-profile-avatar/:_key'(
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
-    ): Promise<string>
+    ): Promise<string | null>
   }
 }>

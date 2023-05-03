@@ -60,8 +60,8 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         !resource ? '' : updateResource('data', { ...resource.data, [key]: val }), val
       )
 
-    const updateImageUrl = (imageUrl: string) => {
-      updateData<string>('imageUrl')(imageUrl)
+    const updateImageUrl = (imageUrl: string | null) => {
+      updateData<string | null>('imageUrl')(imageUrl)
     }
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
