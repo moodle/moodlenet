@@ -22,8 +22,8 @@ export const getProfileCardFactory = (
       overallCardProps: OverallCardStories.OverallCardNoCardStoryProps,
       data: {
         userId: 'saddsadsa-21321312',
-        backgroundUrl: profile?.backgroundUrl ?? null,
-        avatarUrl: profile?.avatarUrl ?? null,
+        backgroundUrl: profile?.backgroundUrl,
+        avatarUrl: profile?.avatarUrl,
         profileHref: href('Pages/Profile/Logged In'),
         displayName: profile?.displayName ?? '',
         // organizationName: profile?.organization ?? '',
