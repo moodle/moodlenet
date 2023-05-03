@@ -12,17 +12,16 @@ export type ProfileLinkAvatarMenuComponentProps = {
 export const ProfileLinkAvatarMenuComponent = proxied<ProfileLinkAvatarMenuComponentProps>(
   ({ profileHref, avatarUrl = defaultAvatar }) => {
     return (
-      <Link
-        href={profileHref}
-        style={{
-          backgroundImage: 'url("' + avatarUrl + '")',
-          backgroundSize: 'cover',
-          borderRadius: '50%',
-          height: '28px',
-          width: '28px',
-        }}
-        className="avatar"
-      >
+      <Link href={profileHref} className="avatar">
+        <div
+          style={{
+            backgroundImage: 'url("' + avatarUrl + '")',
+            backgroundSize: 'cover',
+            borderRadius: '50%',
+            height: '28px',
+            width: '28px',
+          }}
+        />
         Profile
       </Link>
     )

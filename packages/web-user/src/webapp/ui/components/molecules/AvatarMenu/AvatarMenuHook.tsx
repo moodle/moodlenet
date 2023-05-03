@@ -28,6 +28,8 @@ export function useAvatarMenuProps(): AvatarMenuProps {
     const avatarMenuProps: AvatarMenuProps = {
       avatarUrl,
       menuItems,
+      followingMenuProps: hasProfile ? { followingHref: href('/following') } : null,
+      bookmarksMenuProps: hasProfile ? { bookmarksHref: href('/bookmarks') } : null,
       profileMenuProps: hasProfile ? { profileHref: href('/my-profile') } : null,
       signoutMenuProps: { signout: authCtx.logout },
       settingsMenuProps: isAdmin ? { settingsHref: href('/settings') } : null,
