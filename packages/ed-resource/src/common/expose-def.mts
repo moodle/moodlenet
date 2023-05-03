@@ -12,13 +12,13 @@ export type ResourceExposeType = PkgExposeDef<{
     'webapp/create'(): Promise<{ _key: string }>
     'webapp/delete/:_key'(body: null, params: { _key: string }): Promise<void>
     'webapp/upload-image/:_key'(
-      body: { file: [RpcFile] },
+      body: { file: [RpcFile | undefined | null] },
       params: { _key: string },
-    ): Promise<string>
+    ): Promise<string | null>
     'webapp/upload-content/:_key'(
-      body: { content: [RpcFile | string] },
+      body: { content: [RpcFile | string | null | undefined] },
       params: { _key: string },
-    ): Promise<string>
+    ): Promise<string | null>
     // OTHER
     'dl/ed-resource/:_key/:filename'(
       body: null,

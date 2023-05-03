@@ -86,8 +86,11 @@ export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
   get: (resourceKey: string) => Promise<ResourceProps | undefined>
   _delete: (resourceKey: string) => Promise<void>
-  setImage: (resourceKey: string, file: File | undefined | null) => Promise<string>
-  setContent: (resourceKey: string, file: File | string | undefined | null) => Promise<string>
+  setImage: (resourceKey: string, file: File | undefined | null) => Promise<string | null>
+  setContent: (
+    resourceKey: string,
+    file: File | string | undefined | null,
+  ) => Promise<string | null>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
   create: () => Promise<{ _key: string }>
   // toggleBookmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>

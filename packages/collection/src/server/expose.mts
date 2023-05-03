@@ -146,7 +146,13 @@ export const expose = await shell.expose<CollectionExposeType>({
           throw RpcStatus('Unauthorized')
         }
         const imageLogicalFilename = getImageLogicalFilename(_key)
-
+        if (!uploadedRpcFile) {
+          await publicFiles.del(imageLogicalFilename)
+          await patchCollection(_key, {
+            image: null,
+          })
+          return null
+        }
         const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
 
         const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
