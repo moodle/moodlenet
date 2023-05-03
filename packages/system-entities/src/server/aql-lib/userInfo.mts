@@ -1,7 +1,7 @@
 import { EntityInfo, ENTITY_INFO_PROVIDERS } from '../entity-info.mjs'
 import { includesSameClass } from '../lib.mjs'
 import { AqlVal, EntityClass, SomeEntityDataType } from '../types.mjs'
-import { currentEntityVar, toaql } from './aql.mjs'
+import { currentEntityVar, entityIdentifier2EntityIdAql, toaql } from './aql.mjs'
 
 export function userInfoAqlProvider(
   systemUserVar: string,
@@ -18,7 +18,7 @@ export function userInfoAqlProvider(
   })
   const providersArrayAql = `[ ${providersRows.join(' , ')} ]`
   const entityProvidersAql = `(( 
-    LET creatorDoc = DOCUMENT(creatorEntityId)
+    LET creatorDoc = DOCUMENT(${entityIdentifier2EntityIdAql(`${systemUserVar}.entityIdentifier`)})
     FOR entityInfo in ${providersArrayAql} FILTER !!entityInfo LIMIT 1 RETURN entityInfo )[0])`
   const aql = `(
     ${systemUserVar}.type == 'entity' ? ${entityProvidersAql} 

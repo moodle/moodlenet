@@ -26,9 +26,6 @@ export const resFakeData: ResourceRpc = {
   },
   state: {
     isPublished: true,
-    liked: false,
-    bookmarked: false,
-    numLikes: 12,
   },
   access: {
     isCreator: true,

@@ -19,19 +19,13 @@ export const empityFormModel: CollectionRpc = {
   form: { description: '', title: '' },
   state: {
     isPublished: false,
-    followed: false,
     numResources: 0,
-    numFollowers: 0,
-    bookmarked: false,
   },
   access: {
     isCreator: true,
     canEdit: true,
     canPublish: true,
     canDelete: true,
-    canFollow: true,
-    canBookmark: false,
-    isAuthenticated: true,
   },
   contributor: {
     avatarUrl: '',

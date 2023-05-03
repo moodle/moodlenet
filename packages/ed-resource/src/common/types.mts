@@ -49,9 +49,6 @@ export type ResourceDataRpc = {
 
 export type ResourceStateRpc = {
   isPublished: boolean
-  liked: boolean
-  numLikes: number
-  bookmarked: boolean
   uploadProgress?: number
 }
 
@@ -65,7 +62,7 @@ export type ResourceContributorRpc = {
 export type ResourceRpc = {
   resourceForm: ResourceFormRpc
   access: ResourceAccessRpc
-  state: Pick<ResourceStateRpc, 'isPublished' | 'liked' | 'numLikes' | 'bookmarked'>
+  state: Pick<ResourceStateRpc, 'isPublished'>
   data: ResourceDataRpc
   contributor: ResourceContributorRpc
 }
@@ -138,12 +135,9 @@ export type ResourceCardDataRpc = {
 export type ResourceCardState = {
   isSelected: boolean
   selectionMode: boolean // When selection resources to be added to a collection
-} & Pick<ResourceStateProps, 'isPublished' | 'liked' | 'numLikes' | 'bookmarked'>
+} & Pick<ResourceStateProps, 'isPublished'>
 
-export type ResourceCardActions = Pick<
-  ResourceActions,
-  'publish' | 'unpublish' | 'toggleLike' | 'toggleBookmark'
->
+export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 
 export type ResourceCardAccess = Pick<
   ResourceAccessProps,
