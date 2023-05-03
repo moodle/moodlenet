@@ -102,7 +102,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
     backgroundSize: 'cover',
   }
 
-  return menuItems.length ? (
+  return floatingMenuContentItems.length ? (
     <FloatingMenu
       className="avatar-menu"
       key="avatar-menu"

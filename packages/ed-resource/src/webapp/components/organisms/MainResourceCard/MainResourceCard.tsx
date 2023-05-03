@@ -33,7 +33,7 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
-import { FC, StrictMode, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getResourceTypeInfo,
   ResourceAccessProps,
@@ -726,14 +726,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </>
   )
   return (
-    <StrictMode>
+    <>
       {modals}
       {snackbars}
       {/* {searchImageComponent} */}
       <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
-    </StrictMode>
+    </>
 
     //   <MainLayout {...mainLayoutProps}>
     //     {modals}
