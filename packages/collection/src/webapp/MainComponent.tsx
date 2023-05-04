@@ -62,7 +62,6 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       setImage: async (key: string, file: File | null | undefined) =>
         rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }), //@ETTO Needs to be fixed
       create: () => rpc['webapp/create'](),
-      // toggleFollow: (key: string) => me.rpc['webapp/toggleFollow']({ key: key }), // toggleBookmark: (key: string) => me.rpc['webapp/toggleBookmark']({ key: key }),
     }
   }, [me.rpc])
 

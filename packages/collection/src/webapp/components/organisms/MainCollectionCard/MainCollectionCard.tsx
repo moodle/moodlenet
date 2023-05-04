@@ -87,12 +87,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     // bookmarked,
   } = state
 
-  const {
-    //  toggleBookmark,
-    unpublish,
-    deleteCollection,
-    setImage,
-  } = actions
+  const { unpublish, deleteCollection, setImage } = actions
   const {
     canPublish,
     canDelete,

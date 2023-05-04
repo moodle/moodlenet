@@ -9,8 +9,6 @@ export type Actions = {
   editResource: (res: ResourceFormProps) => Promise<ResourceFormProps>
   getResource: () => Promise<ResourceProps>
   deleteResource: () => Promise<ResourceProps>
-  toggleBookmark: () => Promise<ResourceProps>
-  toggleLike: () => Promise<ResourceProps>
   setIsPublished: (approve: boolean) => Promise<ResourceProps>
 }
 
@@ -96,9 +94,6 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         setIsPublish(false)
         setIsPublished(resourceKey, false)
       },
-      toggleBookmark: () => undefined, //@ETTO to be filled
-      toggleLike: () => undefined, //@ETTO to be filled
-
       deleteResource: () => {
         setIsToDelete(true)
         return _delete(resourceKey).then(() => {

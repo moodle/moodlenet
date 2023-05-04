@@ -53,8 +53,6 @@ export type ResourceCardProps = {
 
   onClick?(arg0: unknown): unknown
   onRemoveClick?(arg0: unknown): unknown
-  toggleLike?: () => unknown
-  toggleBookmark?: () => unknown
 }
 
 export const ResourceCard: FC<ResourceCardProps> = ({
