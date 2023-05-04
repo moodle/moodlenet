@@ -1,6 +1,9 @@
+import { CollectionContext } from '@moodlenet/collection/webapp'
+import { ResourceContext } from '@moodlenet/ed-resource/webapp'
 import { href } from '@moodlenet/react-app/common'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
 import type { Profile } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
@@ -14,9 +17,12 @@ export const useProfileProps = ({
 }: {
   profileKey: string
 }): ProfileProps | undefined => {
+  const nav = useNavigate()
   const {
     use: { me },
   } = useContext(MainContext)
+  const resourceCtx = useContext(ResourceContext)
+  const collectionCtx = useContext(CollectionContext)
 
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const [profileResponse, setProfileResponse] = useState<{
@@ -30,6 +36,7 @@ export const useProfileProps = ({
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
+
       const res = await me.rpc['webapp/profile/edit']({
         _key: profileKey,
         displayName,
@@ -53,7 +60,7 @@ export const useProfileProps = ({
       }
       setProfileResponse(res)
     })
-  }, [profileKey, me])
+  }, [me.rpc, profileKey])
 
   const mainLayoutProps = useMainLayoutProps()
 
@@ -110,8 +117,8 @@ export const useProfileProps = ({
         subtitleItems: [],
         titleItems: [],
       },
-      createCollection: () => undefined, //@ETTO Needs to be implemented
-      createResource: () => undefined, //@ETTO Needs to be implemented
+      createCollection: () => collectionCtx.create().then(({ homePath }) => nav(homePath)),
+      createResource: () => resourceCtx.create().then(({ homePath }) => nav(homePath)),
       resourceCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
@@ -127,13 +134,16 @@ export const useProfileProps = ({
   }, [
     clientSessionData?.isAdmin,
     clientSessionData?.myProfile?._key,
+    collectionCtx,
     editProfile,
     isAuthenticated,
     mainLayoutProps,
+    nav,
     profileKey,
     profileResponse,
     me.rpc,
     // toggleFollow,
+    resourceCtx,
   ])
 
   return profileProps
