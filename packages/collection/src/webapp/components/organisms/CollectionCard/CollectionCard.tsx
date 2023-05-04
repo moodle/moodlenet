@@ -42,12 +42,7 @@ export const CollectionCard: FC<CollectionCardProps> = ({
     // numFollowers,
     numResources,
   } = state
-  const {
-    publish,
-    unpublish,
-    // toggleFollow,
-    // toggleBookmark
-  } = actions
+  const { publish, unpublish } = actions
   const {
     // isAuthenticated,
     // isCreator,

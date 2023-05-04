@@ -69,7 +69,7 @@ export type ResourceFormProps = ResourceFormRpc
 export type ResourceDataProps = ResourceDataRpc
 export type ResourceStateProps = ResourceStateRpc
 export type ResourceCardDataProps = ResourceCardDataRpc
-export type ResourceAccessProps = ResourceAccessRpc //& { isAuthenticated: boolean }
+export type ResourceAccessProps = ResourceAccessRpc
 export type ResourceContributorProps = ResourceContributorRpc
 
 export type ResourceProps = {
@@ -91,7 +91,6 @@ export type RpcCaller = {
   ) => Promise<string | null>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
   create: () => Promise<{ _key: string }>
-  // toggleBookmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
 }
 export type ResourceActions = {
   publish: () => void
@@ -100,8 +99,6 @@ export type ResourceActions = {
   setImage: (file: File | undefined | null) => void
   setContent: (content: File | string | undefined | null) => void
   deleteResource(): void
-  toggleLike(): void
-  toggleBookmark(): unknown
 }
 
 export type ResourceAccessRpc = {
@@ -109,9 +106,6 @@ export type ResourceAccessRpc = {
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
-  canLike: boolean
-  isAuthenticated: boolean
-  canBookmark: boolean
 }
 
 export type ResourceCardDataRpc = {
@@ -140,12 +134,7 @@ export type ResourceCardState = {
 
 export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 
-export type ResourceCardAccess = Pick<
-  ResourceAccessProps,
-  'canPublish' | 'canDelete' | 'canLike' | 'canBookmark' | 'isCreator' | 'isAuthenticated'
->
-//   'canBookmark'    canEdit: boolean
-
+export type ResourceCardAccess = Pick<ResourceAccessProps, 'canPublish' | 'canDelete' | 'isCreator'>
 export type Organization = {
   name: string
   shortName: string
