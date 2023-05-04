@@ -1,14 +1,11 @@
-import {
-  getRandomSortedArrayElements,
-  peopleFactory,
-  PeopleFactory,
-} from '@moodlenet/component-library'
+import type { PeopleFactory } from '@moodlenet/component-library'
+import { getRandomSortedArrayElements, peopleFactory } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { action } from '@storybook/addon-actions'
-import { PartialDeep } from 'type-fest'
-import { ProfileCardProps } from './ProfileCard.js'
+import type { PartialDeep } from 'type-fest'
+import type { ProfileCardProps } from './ProfileCard.js'
 
 export const getProfileCardFactory = (
   profileFactory?: PeopleFactory,

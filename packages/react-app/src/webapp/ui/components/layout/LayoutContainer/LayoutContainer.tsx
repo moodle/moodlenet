@@ -1,5 +1,5 @@
 import { baseStyle } from '@moodlenet/component-library'
-import { CSSProperties, FC, ReactNode } from 'react'
+import type { CSSProperties, FC, ReactNode } from 'react'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import './LayoutContainer.scss'
 // import { StateContext } from './Providers'

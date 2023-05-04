@@ -1,5 +1,5 @@
-import { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import { ClientSessionDataRpc, Profile, WebUserData } from './types.mjs'
+import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import type { ClientSessionDataRpc, Profile, WebUserData } from './types.mjs'
 
 export type WebUserExposeType = PkgExposeDef<{
   rpc: {

@@ -1,5 +1,7 @@
-import { createContext, CSSProperties } from 'react'
-import { baseStyle, BaseStyleType } from './config.js'
+import type { CSSProperties } from 'react'
+import { createContext } from 'react'
+import type { BaseStyleType } from './config.js'
+import { baseStyle } from './config.js'
 
 export type StyleContextType = {
   style: BaseStyleType & CSSProperties

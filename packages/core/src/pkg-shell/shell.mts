@@ -16,7 +16,7 @@ import {
   pkgExpose,
 } from '../pkg-expose/lib.mjs'
 import { ensureRegisterPkg, listEntries, pkgEntryByPkgIdValue } from '../pkg-registry/lib.mjs'
-import { PkgModuleRef } from '../types.mjs'
+import type { PkgModuleRef } from '../types.mjs'
 
 // FIXME: maintain a registry for shells (for pkg singletons)
 export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleRef) {

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { by, cc, nc, nd, sa, zero } from './FieldsData.js'
 
 export const LevelDropdown = {

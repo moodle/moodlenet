@@ -1,18 +1,15 @@
-import { RpcFile } from '@moodlenet/core'
+import type { RpcFile } from '@moodlenet/core'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
-import {
+import type {
   AccessEntitiesCustomProject,
-  create,
-  delEntity,
   EntityAccess,
-  getEntity,
   GetEntityOpts,
   Patch,
-  patchEntity,
 } from '@moodlenet/system-entities/server'
+import { create, delEntity, getEntity, patchEntity } from '@moodlenet/system-entities/server'
 import { Resource, resourceFiles } from './init.mjs'
 import { shell } from './shell.mjs'
-import { ResourceDataType, ResourceEntityDoc } from './types.mjs'
+import type { ResourceDataType, ResourceEntityDoc } from './types.mjs'
 
 export async function createResource(resourceData: ResourceDataType) {
   const newResource = await shell.call(create)(Resource.entityClass, resourceData)

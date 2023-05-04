@@ -1,8 +1,8 @@
 import { registerScopes } from '@moodlenet/core'
 import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
+import type { EntityCollectionDef } from '@moodlenet/system-entities/server'
 import {
-  EntityCollectionDef,
   isCurrentOfEntityClass2Aql,
   isCurrentUserCreatorOfCurrentEntity,
   isSameClass,
@@ -14,7 +14,7 @@ import { matchResourceHomePageRoutePathKey } from '../common/webapp-routes.mjs'
 import { expose as me } from './expose.mjs'
 import { getResource } from './lib.mjs'
 import { shell } from './shell.mjs'
-import { ResourceDataType } from './types.mjs'
+import type { ResourceDataType } from './types.mjs'
 
 await shell.call(registerScopes)({
   'write.own': { description: 'create and update owned resources' },

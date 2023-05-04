@@ -1,7 +1,8 @@
-import { AddonItem } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 
-import { FC, PropsWithChildren } from 'react'
-import HeaderTitle, { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
+import type { FC, PropsWithChildren } from 'react'
+import type { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
+import HeaderTitle from '../../../atoms/HeaderTitle/HeaderTitle.js'
 
 import './MinimalisticHeader.scss'
 

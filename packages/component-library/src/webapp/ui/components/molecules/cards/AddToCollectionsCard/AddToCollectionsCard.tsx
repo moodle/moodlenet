@@ -1,5 +1,6 @@
-import { FC, ReactNode } from 'react'
-import { Selector, SelectorProps, useSelectorOption } from '../../../../lib/selector.js'
+import type { FC, ReactNode } from 'react'
+import type { SelectorProps } from '../../../../lib/selector.js'
+import { Selector, useSelectorOption } from '../../../../lib/selector.js'
 import Card from '../../../atoms/Card/Card.js'
 
 import './AddToCollectionsCard.scss'

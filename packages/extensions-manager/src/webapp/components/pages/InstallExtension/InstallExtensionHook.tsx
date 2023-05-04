@@ -2,7 +2,7 @@ import { SettingsCtx } from '@moodlenet/react-app/webapp'
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../MainContext.js'
-import {
+import type {
   InstallExtensionPropsControlled,
   InstallLocalPathExtensionFormValues,
 } from './InstallExtension.js'

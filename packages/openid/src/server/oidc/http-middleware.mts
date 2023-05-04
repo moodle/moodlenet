@@ -1,5 +1,6 @@
 import { addMiddlewares } from '@moodlenet/http-server/server'
-import { EntityUser, setCurrentUserFetch } from '@moodlenet/system-entities/server'
+import type { EntityUser } from '@moodlenet/system-entities/server'
+import { setCurrentUserFetch } from '@moodlenet/system-entities/server'
 import { WebUserProfile } from '@moodlenet/web-user/init'
 import { shell } from '../shell.mjs'
 

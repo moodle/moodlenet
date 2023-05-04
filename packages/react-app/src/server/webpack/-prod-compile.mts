@@ -1,8 +1,8 @@
 import { cp } from 'fs/promises'
 // import { tmpdir } from 'os'
 import { resolve } from 'path'
-import { getWp } from './config.mjs'
 import rimraf from 'rimraf'
+import { getWp } from './config.mjs'
 import { buildFolder, latestBuildFolder } from './generated-files.mjs'
 
 const wp = await getWp({ mode: 'prod', buildFolder })

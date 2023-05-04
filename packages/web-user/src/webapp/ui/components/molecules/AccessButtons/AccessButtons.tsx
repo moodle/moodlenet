@@ -1,8 +1,8 @@
 import { PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
-import { Href } from '@moodlenet/react-app/common'
+import type { Href } from '@moodlenet/react-app/common'
 import { Link } from '@moodlenet/react-app/ui'
 import { Person } from '@mui/icons-material'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 export const LoginHeaderButton: FC<{ loginHref: Href }> = ({ loginHref }) => (
   <Link href={loginHref} key="login-button" className="login-button access-button">

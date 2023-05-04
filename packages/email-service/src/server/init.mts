@@ -1,6 +1,6 @@
 import getStore from '@moodlenet/key-value-store/server'
 import { shell } from './shell.mjs'
-import { MailerCfg, NodemailerTransport } from './types.mjs'
+import type { MailerCfg, NodemailerTransport } from './types.mjs'
 
 export const env = getEnv()
 

@@ -9,7 +9,7 @@ import {
   TertiaryButton,
 } from '@moodlenet/component-library'
 import { ArrowBackIosNew } from '@mui/icons-material'
-import { FC, ReactNode, ReactPortal } from 'react'
+import type { FC, ReactNode, ReactPortal } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
@@ -20,7 +20,7 @@ import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.s
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
-import { ExtensionType } from '../Extensions/Extensions.js'
+import type { ExtensionType } from '../Extensions/Extensions.js'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {

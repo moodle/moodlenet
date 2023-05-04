@@ -1,6 +1,6 @@
-import { PkgExposeDef } from '@moodlenet/core'
-import { EmailPwdUser } from '../server/store/types.mjs'
-import { SignupReq } from '../server/types.mjs'
+import type { PkgExposeDef } from '@moodlenet/core'
+import type { EmailPwdUser } from '../server/store/types.mjs'
+import type { SignupReq } from '../server/types.mjs'
 export type SimpleEmailAuthExposeType = PkgExposeDef<{
   rpc: {
     login(body: {

@@ -19,6 +19,7 @@
   ],
   "settings": {},
   "parserOptions": {
+    "project": "./tsconfig.json",
     "ecmaFeatures": {
       "jsx": true
     },
@@ -32,6 +33,20 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["react", "prettier", "react-hooks", "@typescript-eslint"],
   "rules": {
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "disallowTypeAnnotations": true,
+        "fixStyle": "separate-type-imports"
+      }
+    ],
+    "@typescript-eslint/consistent-type-exports": [
+      "error",
+      {
+        "fixMixedExportsWithInlineTypeSpecifier": true
+      }
+    ],
     "no-mixed-spaces-and-tabs": ["off"],
     // "react/react-in-jsx-scope": 0,
     "react/react-in-jsx-scope": "off",

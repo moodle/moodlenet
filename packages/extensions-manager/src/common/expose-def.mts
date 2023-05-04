@@ -1,5 +1,5 @@
-import { InstallPkgReq, PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
-import { DeployedPkgInfo, SearchPackagesResponse } from './data.mjs'
+import type { InstallPkgReq, PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
+import type { DeployedPkgInfo, SearchPackagesResponse } from './data.mjs'
 
 export type ExtMngrExposeType = PkgExposeDef<{
   rpc: {

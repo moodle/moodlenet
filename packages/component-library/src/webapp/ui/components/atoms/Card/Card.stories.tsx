@@ -1,6 +1,7 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import { Card, CardProps } from './Card.js'
+import type { CardProps } from './Card.js'
+import { Card } from './Card.js'
 
 const meta: ComponentMeta<typeof Card> = {
   title: 'Atoms/Card',

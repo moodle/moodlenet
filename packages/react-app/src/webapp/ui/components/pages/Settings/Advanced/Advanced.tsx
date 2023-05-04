@@ -1,6 +1,8 @@
-import { AddonItem, Card, Switch } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
-import { FC, useCallback } from 'react'
+import type { AddonItem } from '@moodlenet/component-library'
+import { Card, Switch } from '@moodlenet/component-library'
+import type { useFormik } from 'formik'
+import type { FC } from 'react'
+import { useCallback } from 'react'
 import './Advanced.scss'
 
 export type AdvancedFormValues = {

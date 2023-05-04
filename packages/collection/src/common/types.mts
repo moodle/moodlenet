@@ -1,7 +1,7 @@
-import { Href } from '@moodlenet/react-app/common'
-import { PkgContextT } from '@moodlenet/react-app/webapp'
+import type { Href } from '@moodlenet/react-app/common'
+import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
-import { CollectionExposeType } from './expose-def.mjs'
+import type { CollectionExposeType } from './expose-def.mjs'
 
 export type MyWebDeps = {
   me: CollectionExposeType

@@ -2,10 +2,10 @@ import { href } from '@moodlenet/react-app/common'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
-import { Profile } from '../../../../../common/types.mjs'
+import type { Profile } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { MainContext } from '../../../../context/MainContext.mjs'
-import { ProfileProps } from './Profile.js'
+import type { ProfileProps } from './Profile.js'
 
 const __should_be_from_server_maxUploadSize = 1024 * 1024 * 50
 

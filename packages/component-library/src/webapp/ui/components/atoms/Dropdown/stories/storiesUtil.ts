@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
-import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from 'react'
+import type { ChangeEvent, ReactNode } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 export const useStoriesDDCtrl = ({
   options,
@@ -9,36 +10,28 @@ export const useStoriesDDCtrl = ({
   initialSelectionIndexes: number[] | undefined
 }) => {
   const [value, setValue] = useState(
-    initialSelectionIndexes &&
-      initialSelectionIndexes.map((index) => options[index]![0])
+    initialSelectionIndexes && initialSelectionIndexes.map(index => options[index]![0]),
   )
   const [filterString, setFilterString] = useState<string>('')
 
   const selectedOpts = useMemo(
-    () =>
-      value && value.map((val) => options.find(([optVal]) => optVal === val)!),
-    [options, value]
+    () => value && value.map(val => options.find(([optVal]) => optVal === val)!),
+    [options, value],
   )
   const filteredOpts = useMemo(
     () =>
       options.filter(
         ([value, label]) =>
-          new RegExp(filterString, 'ig').test(label) ||
-          new RegExp(filterString, 'ig').test(value)
+          new RegExp(filterString, 'ig').test(label) || new RegExp(filterString, 'ig').test(value),
       ),
-    [filterString, options]
+    [filterString, options],
   )
 
-  const onChange = useCallback(
-    ({ currentTarget }: ChangeEvent<HTMLSelectElement>) => {
-      const newVal = Array.from(currentTarget.selectedOptions).map(
-        ({ value }) => value
-      )
-      action('useStoriesDDCtrl onChange')(newVal)
-      setValue(newVal)
-    },
-    []
-  )
+  const onChange = useCallback(({ currentTarget }: ChangeEvent<HTMLSelectElement>) => {
+    const newVal = Array.from(currentTarget.selectedOptions).map(({ value }) => value)
+    action('useStoriesDDCtrl onChange')(newVal)
+    setValue(newVal)
+  }, [])
 
   const setFilter = useCallback((filter: string) => {
     action('useStoriesDDCtrl setFilter')(filter)

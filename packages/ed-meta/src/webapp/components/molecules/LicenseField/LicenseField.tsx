@@ -1,5 +1,6 @@
 import { Dropdown, IconPill, IconTextOption } from '@moodlenet/component-library'
-import { FC, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
 import { LicenseIconTextOptionProps } from '../../../../common/data.js'
 
 export type LicenseFieldProps = {

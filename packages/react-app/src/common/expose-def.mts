@@ -1,6 +1,6 @@
-import { PkgExposeDef } from '@moodlenet/core'
-import { OrganizationData } from '@moodlenet/organization/common'
-import { AppearanceData } from './types.mjs'
+import type { PkgExposeDef } from '@moodlenet/core'
+import type { OrganizationData } from '@moodlenet/organization/common'
+import type { AppearanceData } from './types.mjs'
 
 export type ReactAppExposeType = PkgExposeDef<{
   rpc: {

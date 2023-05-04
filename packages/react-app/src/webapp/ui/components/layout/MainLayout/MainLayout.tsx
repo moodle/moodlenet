@@ -1,9 +1,10 @@
-import { CSSProperties, FC, ReactNode } from 'react'
-import { MainFooter, MainFooterProps } from '../../organisms/Footer/MainFooter/MainFooter.js'
+import type { CSSProperties, FC, ReactNode } from 'react'
+import type { MainFooterProps } from '../../organisms/Footer/MainFooter/MainFooter.js'
+import { MainFooter } from '../../organisms/Footer/MainFooter/MainFooter.js'
+import type { MainHeaderProps } from '../../organisms/Header/MainHeader/MainHeader.js'
 import {
   MainHeader,
   MainHeaderContext,
-  MainHeaderProps,
   useSimpleMainHeaderContextController,
 } from '../../organisms/Header/MainHeader/MainHeader.js'
 import { LayoutContainer } from '../LayoutContainer/LayoutContainer.js'

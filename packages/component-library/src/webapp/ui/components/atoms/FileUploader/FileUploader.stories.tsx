@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { FileUploader } from './FileUploader.js'
 
 const meta: ComponentMeta<typeof FileUploader> = {
@@ -6,9 +6,7 @@ const meta: ComponentMeta<typeof FileUploader> = {
   component: FileUploader,
 }
 
-const FileUploaderStory: ComponentStory<typeof FileUploader> = () => (
-  <FileUploader></FileUploader>
-)
+const FileUploaderStory: ComponentStory<typeof FileUploader> = () => <FileUploader></FileUploader>
 
 export const Default = FileUploaderStory.bind({})
 
