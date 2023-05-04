@@ -1,5 +1,6 @@
 import { PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import './Login.scss'
 import { PassportContext } from './MainModule'
 

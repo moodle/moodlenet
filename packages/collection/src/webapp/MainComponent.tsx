@@ -1,7 +1,8 @@
-import { ReactAppContext, ReactAppMainComponent, usePkgContext } from '@moodlenet/react-app/webapp'
+import type { ReactAppMainComponent } from '@moodlenet/react-app/webapp'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import { Route } from 'react-router-dom'
-import {
+import type {
   CollectionFormProps,
   CollectionFormRpc,
   MainContextCollection,
@@ -59,7 +60,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
       setIsPublished: async (key: string, publish: boolean) =>
         rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
       setImage: async (key: string, file: File | null | undefined) =>
-        file ? rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }) : '', //@ETTO Needs to be fixed
+        rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }), //@ETTO Needs to be fixed
       create: () => rpc['webapp/create'](),
       // toggleFollow: (key: string) => me.rpc['webapp/toggleFollow']({ key: key }), // toggleBookmark: (key: string) => me.rpc['webapp/toggleBookmark']({ key: key }),
     }

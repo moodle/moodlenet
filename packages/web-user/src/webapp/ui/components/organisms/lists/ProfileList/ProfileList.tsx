@@ -1,6 +1,8 @@
 import { ListCard } from '@moodlenet/component-library'
-import { FC, ReactElement, useMemo } from 'react'
-import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
+import type { FC, ReactElement } from 'react'
+import { useMemo } from 'react'
+import type { ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
+import { ProfileCard } from '../../ProfileCard/ProfileCard.js'
 import './ProfileList.scss'
 
 export type ProfileListProps = {

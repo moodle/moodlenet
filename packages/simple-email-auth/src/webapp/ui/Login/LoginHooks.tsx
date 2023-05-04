@@ -1,7 +1,7 @@
 import { useFormik } from 'formik'
 import { useContext, useMemo, useState } from 'react'
 import { MainContext } from '../../MainContext.mjs'
-import { LoginFormValues, LoginProps } from './Login.js'
+import type { LoginFormValues, LoginProps } from './Login.js'
 
 export const usePanelProps = (): LoginProps => {
   const {

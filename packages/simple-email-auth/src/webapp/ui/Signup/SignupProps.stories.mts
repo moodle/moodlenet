@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
-import { SignupFormValues, SignupProps } from './Signup.js'
+import type { SignupFormValues, SignupProps } from './Signup.js'
 
 export const useSignupPanelProps = (): SignupProps => {
   return {

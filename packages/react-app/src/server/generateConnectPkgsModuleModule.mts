@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
-import { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
+import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
 import { fixModuleLocForWebpackByOS } from './util.mjs'
 function ___dirname(import_meta_url: string) {
   return fileURLToPath(new URL('.', import_meta_url))

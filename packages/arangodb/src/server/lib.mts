@@ -1,4 +1,4 @@
-import { DocumentCollection } from 'arangojs/collection.js'
+import type { DocumentCollection } from 'arangojs/collection.js'
 import { ensureDB, ensureDocCollection, getPkgDBName } from './init.mjs'
 import { shell } from './shell.mjs'
 

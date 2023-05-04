@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactElement } from 'react'
+import type { FC, PropsWithChildren, ReactElement } from 'react'
 import './MinimalisticHeader.scss'
 
 export type MinimalisticHeaderProps = {

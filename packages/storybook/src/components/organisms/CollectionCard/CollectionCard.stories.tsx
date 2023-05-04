@@ -1,18 +1,19 @@
-import {
+import type {
   CollectionCardAccess,
   CollectionCardActions,
   CollectionCardData,
   CollectionCardState,
 } from '@moodlenet/collection/common'
-import { CollectionCard, CollectionCardProps } from '@moodlenet/collection/ui'
+import type { CollectionCardProps } from '@moodlenet/collection/ui'
+import { CollectionCard } from '@moodlenet/collection/ui'
 import { ContentBackupImages } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import { BookmarkButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { PartialDeep } from 'type-fest'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { PartialDeep } from 'type-fest'
 
 const meta: ComponentMeta<typeof CollectionCard> = {
   title: 'Molecules/CollectionCard',

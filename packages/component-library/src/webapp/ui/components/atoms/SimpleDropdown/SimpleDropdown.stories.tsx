@@ -1,5 +1,6 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { SimpleDropdown, SimpleDropdownProps } from './SimpleDropdown.js'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { SimpleDropdownProps } from './SimpleDropdown.js'
+import { SimpleDropdown } from './SimpleDropdown.js'
 
 const meta: ComponentMeta<typeof SimpleDropdown> = {
   title: 'Atoms/SimpleDropdown',

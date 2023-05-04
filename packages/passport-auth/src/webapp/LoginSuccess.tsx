@@ -1,5 +1,6 @@
 import { MainLayout } from '@moodlenet/react-app/lib/webapp/ui/components'
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { PassportContext } from './MainModule'
 

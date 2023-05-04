@@ -1,14 +1,11 @@
-import {
-  getRandomSortedArrayElements,
-  peopleFactory,
-  PeopleFactory,
-} from '@moodlenet/component-library'
+import type { PeopleFactory } from '@moodlenet/component-library'
+import { getRandomSortedArrayElements, peopleFactory } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { action } from '@storybook/addon-actions'
-import { PartialDeep } from 'type-fest'
-import { ProfileCardProps } from './ProfileCard.js'
+import type { PartialDeep } from 'type-fest'
+import type { ProfileCardProps } from './ProfileCard.js'
 
 export const getProfileCardFactory = (
   profileFactory?: PeopleFactory,
@@ -22,8 +19,8 @@ export const getProfileCardFactory = (
       overallCardProps: OverallCardStories.OverallCardNoCardStoryProps,
       data: {
         userId: 'saddsadsa-21321312',
-        backgroundUrl: profile?.backgroundUrl ?? null,
-        avatarUrl: profile?.avatarUrl ?? null,
+        backgroundUrl: profile?.backgroundUrl,
+        avatarUrl: profile?.avatarUrl,
         profileHref: href('Pages/Profile/Logged In'),
         displayName: profile?.displayName ?? '',
         // organizationName: profile?.organization ?? '',

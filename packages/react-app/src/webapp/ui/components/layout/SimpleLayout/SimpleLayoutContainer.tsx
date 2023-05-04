@@ -1,5 +1,6 @@
-import { FC, PropsWithChildren } from 'react'
-import SimpleLayout, { SimpleLayoutProps } from './SimpleLayout.js'
+import type { FC, PropsWithChildren } from 'react'
+import type { SimpleLayoutProps } from './SimpleLayout.js'
+import SimpleLayout from './SimpleLayout.js'
 import { useSimpleLayoutProps } from './SimpleLayoutHooks.mjs'
 
 export const SimpleLayoutContainer: FC<

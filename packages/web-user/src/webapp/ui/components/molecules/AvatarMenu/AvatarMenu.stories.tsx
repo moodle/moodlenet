@@ -1,4 +1,4 @@
-import { AddonItem } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 import { href } from '@moodlenet/react-app/common'
 import { linkTo } from '@storybook/addon-links'
 import { AvatarMenu } from './AvatarMenu.js'

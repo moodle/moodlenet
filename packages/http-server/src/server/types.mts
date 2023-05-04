@@ -1,4 +1,4 @@
-import { PkgIdentifier } from '@moodlenet/core'
+import type { PkgIdentifier } from '@moodlenet/core'
 import type { Application, default as _express, Request, RequestHandler, Response } from 'express'
 
 export type HttpAsyncCtx = {

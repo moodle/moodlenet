@@ -1,5 +1,5 @@
 // import { t, Trans } from '@lingui/macro'
-import { FC, SetStateAction } from 'react'
+import type { FC, SetStateAction } from 'react'
 // import { FormikHandle } from '../../../../lib/formik'
 import InputTextField from '../../../atoms/InputTextField/InputTextField.js'
 import Modal from '../../../atoms/Modal/Modal.js'

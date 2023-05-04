@@ -1,4 +1,4 @@
-import { PkgIdentifier } from '@moodlenet/core'
+import type { PkgIdentifier } from '@moodlenet/core'
 import { getOrgData } from '@moodlenet/organization/server'
 import { shell } from './shell.mjs'
 

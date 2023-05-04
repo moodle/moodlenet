@@ -1,5 +1,5 @@
-import { FC, PropsWithChildren } from 'react'
-import { AddonItem } from '../../../types.js'
+import type { FC, PropsWithChildren } from 'react'
+import type { AddonItem } from '../../../types.js'
 import './Footer.scss'
 
 export type FooterProps = {

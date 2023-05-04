@@ -1,4 +1,5 @@
-import { CSSProperties, forwardRef, ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import { forwardRef } from 'react'
 import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
 import './Card.scss'
 

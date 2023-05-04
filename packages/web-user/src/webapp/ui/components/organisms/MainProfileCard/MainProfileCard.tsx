@@ -1,6 +1,6 @@
 import { Edit, Save } from '@material-ui/icons'
+import type { AddonItem } from '@moodlenet/component-library'
 import {
-  AddonItem,
   FloatingMenu,
   InputTextField,
   Modal,
@@ -13,9 +13,10 @@ import {
 import { useFormik } from 'formik'
 
 import { Share } from '@mui/icons-material'
-import { FC, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { messageFormValidationSchema } from '../../../../../common/exports.mjs'
-import {
+import type {
   ProfileAccess,
   ProfileActions,
   ProfileData,

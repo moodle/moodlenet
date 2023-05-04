@@ -1,5 +1,5 @@
 import { npmRegistry } from '@moodlenet/core'
-import { ExtMngrExposeType } from '../common/expose-def.mjs'
+import type { ExtMngrExposeType } from '../common/expose-def.mjs'
 import { install, listDeployed, searchPackages, uninstall } from './lib.mjs'
 import { shell } from './shell.mjs'
 

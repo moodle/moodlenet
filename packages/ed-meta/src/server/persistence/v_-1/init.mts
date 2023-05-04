@@ -1,7 +1,7 @@
 import { create } from '@moodlenet/system-entities/server'
 import { shell } from '../../shell.mjs'
 import { IscedField, IscedGrade } from '../../sys-entities.mjs'
-import { IscedFieldDataType, IscedGradeDataType } from '../../types.mjs'
+import type { IscedFieldDataType, IscedGradeDataType } from '../../types.mjs'
 import EdMetaIscedFields from './raw/EdMetaIscedFields.mjs'
 import EdMetaIscedGrades from './raw/EdMetaIscedGrades.mjs'
 // import EdMetaIscedGrades from './raw/EdMetaIscedGrades.mjs'

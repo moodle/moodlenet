@@ -1,9 +1,9 @@
 import assert from 'assert'
 import { createTransport } from 'nodemailer'
-import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js'
+import type SMTPTransport from 'nodemailer/lib/smtp-transport/index.js'
 import { env, kvStore } from './init.mjs'
 import type { EmailObj, NodemailerTransport, SendResp } from './types.mjs'
-export { SentMessageInfo } from 'nodemailer'
+export type { SentMessageInfo } from 'nodemailer'
 
 export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendResp> {
   const mailerCfg = (await kvStore.get('mailerCfg', '')).value

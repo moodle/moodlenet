@@ -1,12 +1,12 @@
-import {
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import type { PassportAuthExt } from '..'
+import type {
   PluginMainComponent,
   ReactAppPluginMainModule,
   WebappPluginMainModule,
   WebAppShellOf,
 } from '../../../react-app/dist/root-export.mjs'
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
-import { PassportAuthExt } from '..'
-import { PassportConfigs } from '../store/types'
+import type { PassportConfigs } from '../store/types'
 import * as loginComponents from './Login'
 import AuthRoutes from './routes'
 import * as settingsComponents from './Settings'

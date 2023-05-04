@@ -1,4 +1,4 @@
-import { DocumentMetadata } from '@moodlenet/arangodb/server'
+import type { DocumentMetadata } from '@moodlenet/arangodb/server'
 
 export type Email = string
 export type Password = string

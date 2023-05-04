@@ -1,5 +1,6 @@
 import { Dropdown, SimplePill, SimpleTextOption } from '@moodlenet/component-library'
-import { FC, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
 import { TypeSimpleTextOptionProps } from '../../../../common/data.js'
 
 export type TypeFieldProps = {

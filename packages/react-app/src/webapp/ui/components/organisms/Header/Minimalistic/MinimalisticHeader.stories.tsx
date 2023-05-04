@@ -1,13 +1,14 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { PartialDeep } from 'type-fest'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { PartialDeep } from 'type-fest'
 import {
   HeaderTitleOrganizationStoryProps,
   HeaderTitleStoryProps,
 } from '../../../atoms/HeaderTitle/HeaderTitle.stories.js'
 
 // import { href } from '../../../../elements/link'
-import { MinimalisticHeader, MinimalisticHeaderProps } from './MinimalisticHeader.js'
+import type { MinimalisticHeaderProps } from './MinimalisticHeader.js'
+import { MinimalisticHeader } from './MinimalisticHeader.js'
 
 const meta: ComponentMeta<typeof MinimalisticHeader> = {
   title: 'Organisms/MinimalisticHeader',

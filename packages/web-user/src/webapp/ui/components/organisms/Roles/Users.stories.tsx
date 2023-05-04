@@ -1,7 +1,9 @@
-import { SettingsItem } from '@moodlenet/react-app/ui'
+import type { SettingsItem } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
-import { FC, useEffect, useState } from 'react'
-import { Users, UsersMenu, UsersProps } from './Users.js'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
+import type { UsersProps } from './Users.js'
+import { Users, UsersMenu } from './Users.js'
 
 export const useUsersStoryProps = (overrides?: {
   props?: Partial<UsersProps>

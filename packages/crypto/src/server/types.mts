@@ -1,4 +1,4 @@
-import * as jose from 'jose'
+import type * as jose from 'jose'
 
 export type JwtToken = string
 

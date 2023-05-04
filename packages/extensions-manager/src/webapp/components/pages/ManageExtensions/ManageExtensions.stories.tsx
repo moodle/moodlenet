@@ -1,15 +1,13 @@
-import { SettingsItem } from '@moodlenet/react-app/ui'
-import { FC } from 'react'
+import type { SettingsItem } from '@moodlenet/react-app/ui'
+import type { FC } from 'react'
 import { useExtensionStoryProps } from '../InstallExtension/InstallExtension.stories.js'
-import ManageExtensions, {
-  ManageExtensionsMenu,
-  ManageExtensionsProps,
-} from './ManageExtensions.js'
+import type { ManageExtensionsProps } from './ManageExtensions.js'
+import ManageExtensions, { ManageExtensionsMenu } from './ManageExtensions.js'
 
 import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 import packageIcon1 from '../../../assets/icons/package-icon.png'
-import { ExtensionType } from '../Extensions/Extensions.js'
+import type { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon5 from '../../../assets/icons/package-icon-5.png'
 // import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 

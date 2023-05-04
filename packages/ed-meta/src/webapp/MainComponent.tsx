@@ -1,8 +1,10 @@
-import { ReactAppMainComponent, usePkgContext } from '@moodlenet/react-app/webapp'
+import type { ReactAppMainComponent } from '@moodlenet/react-app/webapp'
+import { usePkgContext } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 
-import { MyPkgContext } from '../common/my-webapp/types.mjs'
-import { MainContext, MainContextT } from './context/MainContext.mjs'
+import type { MyPkgContext } from '../common/my-webapp/types.mjs'
+import type { MainContextT } from './context/MainContext.mjs'
+import { MainContext } from './context/MainContext.mjs'
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const pkgContext = usePkgContext<MyPkgContext>()

@@ -1,7 +1,7 @@
-import { PkgName } from '@moodlenet/core'
+import type { PkgName } from '@moodlenet/core'
 import assert from 'assert'
 import { db } from './init.mjs'
-import {
+import type {
   AqlVal,
   EntityClass,
   EntityDocFullData,

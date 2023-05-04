@@ -2,7 +2,7 @@ import { instanceDomain } from '@moodlenet/core'
 import * as jose from 'jose'
 import { env } from '../init.mjs'
 import { shell } from '../shell.mjs'
-import { JwtPayloadCustomClaims, JwtStdClaims, JwtToken, JwtVerifyResult } from '../types.mjs'
+import type { JwtPayloadCustomClaims, JwtStdClaims, JwtToken, JwtVerifyResult } from '../types.mjs'
 
 const alg = env.keys.alg
 

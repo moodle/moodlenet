@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
-import { MinimalisticHeaderProps } from './MinimalisticHeader.js'
+import type { MinimalisticHeaderProps } from './MinimalisticHeader.js'
 
 export const useMinimalisticHeaderProps = (): MinimalisticHeaderProps => {
   const headerTitleProps = useHeaderTitleProps()

@@ -1,4 +1,4 @@
-import { ResourceFormRpc, ResourceRpc } from '../../common/types.mjs'
+import type { ResourceFormRpc, ResourceRpc } from '../../common/types.mjs'
 import { resFakeData } from './fakeData.mjs'
 
 const getFakeData = (resourceKey: string, query?: File | string): ResourceRpc =>
