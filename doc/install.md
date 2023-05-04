@@ -33,5 +33,5 @@ docker run -e ARANGO_NO_AUTH=1 -p 8529:8529 --name=mn3arango arangodb
   npm  run dev-start-webapp
 
 
-  devi aggiungere il container al registry 
-  packages/react-app/src/webapp/ui/components/pages/Settings/Settings/Hook/SettingsHooks.tsx riga 11
+  devi aggiungere il container al registry
+  packages/react-app/src/webapp/ui/components/pages/Settings/Settings/Hook/SettingsHooks.tsx riga **11**
