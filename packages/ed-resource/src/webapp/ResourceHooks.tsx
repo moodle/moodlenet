@@ -34,9 +34,13 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     content: false,
   })
   const [isToDelete, setIsToDelete] = useState(false)
+  const [isPublished, setIsPublish] = useState(false)
 
   useEffect(() => {
-    rpcCaller.get(resourceKey).then(res => setResource(res))
+    rpcCaller.get(resourceKey).then(res => {
+      res && setIsPublish(res.state.isPublished)
+      setResource(res)
+    })
   }, [resourceKey, rpcCaller])
 
   const setterSave = useCallback(
@@ -84,8 +88,14 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         await setContent(resourceKey, content).then(updateData('contentUrl'))
         setterSave('content', false)
       },
-      publish: () => setIsPublished(resourceKey, true),
-      unpublish: () => setIsPublished(resourceKey, false),
+      publish: () => {
+        setIsPublish(true)
+        setIsPublished(resourceKey, true)
+      },
+      unpublish: () => {
+        setIsPublish(false)
+        setIsPublished(resourceKey, false)
+      },
       toggleBookmark: () => undefined, //@ETTO to be filled
       toggleLike: () => undefined, //@ETTO to be filled
 
@@ -106,11 +116,11 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         ? null
         : {
             actions,
-            props: resource,
+            props: { ...resource, state: { ...resource.state, isPublished } },
             saveState,
             isSaving: saveState.form || saveState.image || saveState.content,
             isToDelete,
           },
-    [actions, isToDelete, resource, saveState],
+    [actions, isPublished, isToDelete, resource, saveState],
   )
 }
