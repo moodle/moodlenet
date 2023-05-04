@@ -44,7 +44,7 @@ export async function getWp(
       './dist/webapp/index.js',
       ...(isDevServer ? [require.resolve('react-refresh/runtime')] : []),
     ],
-    devtool: isDevServer ? 'eval-source-map' : undefined,
+    devtool: false, //isDevServer ? 'eval-source-map' : undefined,
     // devtool: 'source-map',
     context: resolve(__dirname, '..', '..', '..'),
     watch: isDevServer,
@@ -269,7 +269,7 @@ export async function getWp(
                 presets: [
                   require.resolve('@babel/preset-env'),
                   require.resolve('@babel/preset-modules'),
-                  require.resolve('@babel/preset-typescript'),
+                  //require.resolve('@babel/preset-typescript'),
                   // require.resolve('@babel/plugin-transform-modules-commonjs'),
                   [
                     require.resolve('@babel/preset-react'),
@@ -299,8 +299,8 @@ export async function getWp(
       //   console.log({ url, newUrl })
       //   resource.request = newUrl
       // }),
-      isDevServer && new ReactRefreshWebpackPlugin(),
-      isDevServer && new webpack.HotModuleReplacementPlugin(),
+      isDevServer ? new ReactRefreshWebpackPlugin() : () => void 0,
+      isDevServer ? new webpack.HotModuleReplacementPlugin() : () => void 0,
       // new ForkTsCheckerWebpackPlugin(),
       new HtmlWebPackPlugin({
         template: './public/index.html',
@@ -309,9 +309,7 @@ export async function getWp(
         filename: 'index.html',
         publicPath: '/',
       }),
-      new CompressionPlugin({
-        test: /\.js(\?.*)?$/i,
-      }),
+      isDevServer ? () => void 0 : new CompressionPlugin({ test: /\.js(\?.*)?$/i }),
       new CopyPlugin({
         patterns: [{ from: './_redirects' }],
       }),

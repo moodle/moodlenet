@@ -1,6 +1,6 @@
 // import CircularProgress, { circularProgressClasses } from '@mui/material/CircularProgress'
 import { CircularProgress } from '@material-ui/core'
-import { FC } from 'react'
+import type { FC } from 'react'
 import './Loading.scss'
 
 export type LoadingProps = {

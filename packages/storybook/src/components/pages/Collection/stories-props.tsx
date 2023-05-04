@@ -1,4 +1,4 @@
-import {
+import type {
   CollectionAccessProps,
   CollectionActions,
   CollectionDataProps,
@@ -6,17 +6,18 @@ import {
   CollectionStateProps,
 } from '@moodlenet/collection/common'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta } from '@storybook/react'
-import { PartialDeep } from 'type-fest'
+import type { ComponentMeta } from '@storybook/react'
+import type { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
-import { addMethod, AnySchema, boolean, mixed, MixedSchema, object, SchemaOf, string } from 'yup'
+import type { AnySchema, SchemaOf } from 'yup'
+import { addMethod, boolean, mixed, MixedSchema, object, string } from 'yup'
 // import { href } from '../../../elements/link'
 // import { TagListStory } from '../../../elements/tags'
 // import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { CollectionTextOptionProps } from '../NewCollection/AddToCollections/storiesData'
-import { OptionItemProp } from '@moodlenet/component-library'
+import type { OptionItemProp } from '@moodlenet/component-library'
 // import {
 //   CategoriesTextOptionProps,
 //   LicenseIconTextOptionProps,
@@ -25,9 +26,10 @@ import { OptionItemProp } from '@moodlenet/component-library'
 import { CollectionContributorCardStories } from '@moodlenet/collection/stories'
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
-import { Collection, CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
+import type { CollectionProps, MainCollectionCardSlots } from '@moodlenet/collection/ui'
+import { Collection } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { BookmarkButton, FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { useFormik } from 'formik'

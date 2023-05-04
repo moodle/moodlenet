@@ -7,8 +7,8 @@ import {
   patchWdPackageJsonDeps,
 } from '../../main/env.mjs'
 import { rebootSystem } from '../../main/sys.mjs'
-import { PkgIdentifier } from '../../types.mjs'
-import { InstallPkgReq } from '../types.mjs'
+import type { PkgIdentifier } from '../../types.mjs'
+import type { InstallPkgReq } from '../types.mjs'
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO ALE: any check on pkgIds ? (active / version)

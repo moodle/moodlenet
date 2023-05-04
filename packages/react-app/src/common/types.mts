@@ -1,6 +1,6 @@
-import { BaseStyleType } from '@moodlenet/component-library'
+import type { BaseStyleType } from '@moodlenet/component-library'
 import type { PackageInfo, PkgExpose, PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
-import { CSSProperties } from 'react'
+import type { CSSProperties } from 'react'
 
 export type WebPkgDeps = {
   [k in string]: PkgExposeDef

@@ -1,4 +1,4 @@
-import { CollectionContributorRpc, CollectionRpc } from '../../common/types.mjs'
+import type { CollectionContributorRpc, CollectionRpc } from '../../common/types.mjs'
 
 export const collectionFormValues = {
   description:

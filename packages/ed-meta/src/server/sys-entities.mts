@@ -1,6 +1,7 @@
-import { EntityCollectionDef, registerEntities } from '@moodlenet/system-entities/server'
+import type { EntityCollectionDef } from '@moodlenet/system-entities/server'
+import { registerEntities } from '@moodlenet/system-entities/server'
 import { shell } from './shell.mjs'
-import { IscedFieldDataType, IscedGradeDataType } from './types.mjs'
+import type { IscedFieldDataType, IscedGradeDataType } from './types.mjs'
 
 export const { IscedField, IscedGrade } = await shell.call(registerEntities)<{
   IscedField: EntityCollectionDef<IscedFieldDataType>

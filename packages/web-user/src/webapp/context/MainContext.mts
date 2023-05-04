@@ -1,6 +1,6 @@
 import { createContext } from 'react'
-import { MyPkgContext } from '../../common/exports.mjs'
-import { MainRegistries } from '../registries.mjs'
+import type { MyPkgContext } from '../../common/exports.mjs'
+import type { MainRegistries } from '../registries.mjs'
 
 export type MainContextT = MyPkgContext & {
   registries: MainRegistries

@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { User, WebUserData } from '../../../../../common/types.mjs'
+import type { User, WebUserData } from '../../../../../common/types.mjs'
 import { MainContext } from '../../../../context/MainContext.mjs'
-import { UsersProps } from './Users.js'
+import type { UsersProps } from './Users.js'
 
 export const useUsersProps = (): UsersProps => {
   const { use } = useContext(MainContext)

@@ -1,5 +1,5 @@
 import type { PackageJson } from 'type-fest'
-import { CoreConfigs } from './types.mjs'
+import type { CoreConfigs } from './types.mjs'
 
 type Reboot = () => unknown
 type Shutdown = () => unknown

@@ -1,4 +1,4 @@
-import { AppearanceData } from '../common/types.mjs'
+import type { AppearanceData } from '../common/types.mjs'
 
 export type KeyValueData = {
   appearanceData: AppearanceData

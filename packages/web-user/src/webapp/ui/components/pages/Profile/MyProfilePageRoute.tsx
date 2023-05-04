@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { Navigate } from 'react-router-dom'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { ProfileContainer } from './ProfileContainer.js'

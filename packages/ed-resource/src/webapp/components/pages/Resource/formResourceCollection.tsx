@@ -1,4 +1,4 @@
-import { FormikHandle } from '@moodlenet/react-app/ui'
+import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 
 type MyProps = {

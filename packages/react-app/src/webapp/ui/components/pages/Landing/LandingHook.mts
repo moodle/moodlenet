@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { OrganizationCtx } from '../../../../context/OrganizationCtx.js'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
-import { LandingProps } from './Landing.js'
+import type { LandingProps } from './Landing.js'
 
 export const useLandingPageProps = (): LandingProps => {
   const { organizationData } = useContext(OrganizationCtx)

@@ -1,7 +1,8 @@
-import { ReactAppContext, ReactAppMainComponent, usePkgContext } from '@moodlenet/react-app/webapp'
+import type { ReactAppMainComponent } from '@moodlenet/react-app/webapp'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import { Route } from 'react-router-dom'
-import {
+import type {
   MainContextResource,
   MyPkgContext,
   ResourceFormProps,

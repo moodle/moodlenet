@@ -1,5 +1,5 @@
 import { MainLayout } from '@moodlenet/react-app/lib/webapp/ui/components'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 export const LoginFail: FC = () => {

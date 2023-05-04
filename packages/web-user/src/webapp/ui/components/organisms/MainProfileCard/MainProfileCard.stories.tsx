@@ -1,4 +1,4 @@
-import { ComponentMeta } from '@storybook/react'
+import type { ComponentMeta } from '@storybook/react'
 import { MainProfileCard } from './MainProfileCard.js'
 import { useMainProfileCardStoryProps } from './stories-props.js'
 

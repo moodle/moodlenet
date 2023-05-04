@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { Searchbox, SearchboxProps } from './Searchbox.js'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { SearchboxProps } from './Searchbox.js'
+import { Searchbox } from './Searchbox.js'
 
 const meta: ComponentMeta<typeof Searchbox> = {
   title: 'Atoms/Searchbox',

@@ -7,17 +7,17 @@ export * from 'arangojs/connection.js'
 export * from 'arangojs/cursor.js'
 export * from 'arangojs/database.js'
 export {
-  Document,
-  DocumentData,
-  DocumentMetadata,
-  DocumentSelector,
-  Edge,
-  EdgeData,
-  EdgeMetadata,
-  ObjectWithId,
-  ObjectWithKey,
-  Patch,
   _documentHandle,
+  type Document,
+  type DocumentData,
+  type DocumentMetadata,
+  type DocumentSelector,
+  type Edge,
+  type EdgeData,
+  type EdgeMetadata,
+  type ObjectWithId,
+  type ObjectWithKey,
+  type Patch,
 } from 'arangojs/documents.js'
 export * from 'arangojs/error.js'
 export * from 'arangojs/foxx-manifest.js'

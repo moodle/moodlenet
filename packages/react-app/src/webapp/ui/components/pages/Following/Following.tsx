@@ -1,6 +1,8 @@
-import { FC } from 'react'
-import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
-import Browser, { BrowserProps } from '../../organisms/Browser/Browser.js'
+import type { FC } from 'react'
+import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
+import MainLayout from '../../layout/MainLayout/MainLayout.js'
+import type { BrowserProps } from '../../organisms/Browser/Browser.js'
+import Browser from '../../organisms/Browser/Browser.js'
 
 export type FollowingProps = {
   mainLayoutProps: MainLayoutProps

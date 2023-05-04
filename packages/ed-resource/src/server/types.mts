@@ -1,5 +1,5 @@
-import { FsItem } from '@moodlenet/simple-file-store/server'
-import { EntityDocument } from '@moodlenet/system-entities/server'
+import type { FsItem } from '@moodlenet/simple-file-store/server'
+import type { EntityDocument } from '@moodlenet/system-entities/server'
 
 export type ResourceEntityDoc = EntityDocument<ResourceDataType>
 export type ResourceDataType = {

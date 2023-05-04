@@ -4,7 +4,7 @@ import { useContext, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { MainContext } from '../../../../context/MainContext.mjs'
-import { AddMenuItem, AddMenuProps } from './AddMenu.js'
+import type { AddMenuItem, AddMenuProps } from './AddMenu.js'
 
 export function useAddMenuProps(): AddMenuProps {
   const nav = useNavigate()

@@ -1,6 +1,6 @@
 import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
-import { FC } from 'react'
+import type { useFormik } from 'formik'
+import type { FC } from 'react'
 
 /*** TEST  IS LINT REACT WORK --> this give error missing display name
 

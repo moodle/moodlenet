@@ -1,5 +1,6 @@
-import { getProfileCardFactory, ProfileCard, ProfileCardProps } from '@moodlenet/web-user/ui'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ProfileCardProps } from '@moodlenet/web-user/ui'
+import { getProfileCardFactory, ProfileCard } from '@moodlenet/web-user/ui'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { ProfileCardProps } from './ProfileCard.js'
 
 const meta: ComponentMeta<typeof ProfileCard> = {

@@ -1,6 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { ReactComponent as HatLogo } from '../../../../assets/icons/hat-moodle.svg'
-import MainLayout, { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
+import type { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
+import MainLayout from '../../../layout/MainLayout/MainLayout.js'
 import './Fallback.scss'
 
 export type FallbackProps = {

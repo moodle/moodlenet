@@ -1,11 +1,12 @@
 import { linkTo } from '@storybook/addon-links'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 
 // import { href } from '../../../../elements/link'
-import { AddonItem } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 import { href } from '@moodlenet/react-app/common'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
-import { MainHeader, MainHeaderProps } from '@moodlenet/react-app/ui'
+import type { MainHeaderProps } from '@moodlenet/react-app/ui'
+import { MainHeader } from '@moodlenet/react-app/ui'
 import { AccessButtonsStories, AvatarMenuStories } from '@moodlenet/web-user/stories'
 import {
   AddMenu,

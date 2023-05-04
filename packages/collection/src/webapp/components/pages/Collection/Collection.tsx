@@ -1,31 +1,25 @@
-import {
-  AddonItem,
-  Card,
-  Modal,
-  PrimaryButton,
-  SecondaryButton,
-} from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
+import type { AddonItem } from '@moodlenet/component-library'
+import { Card, Modal, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
+import type { MainLayoutProps } from '@moodlenet/react-app/ui'
+import { MainLayout } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useEffect, useState } from 'react'
-import { SchemaOf } from 'yup'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
+import type { SchemaOf } from 'yup'
 
-import { ResourceCard, ResourceCardProps } from '@moodlenet/ed-resource/ui'
-import {
+import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { ResourceCard } from '@moodlenet/ed-resource/ui'
+import type {
   CollectionAccessProps,
   CollectionActions,
   CollectionDataProps,
   CollectionFormProps,
   CollectionStateProps,
 } from '../../../../common/types.mjs'
-import {
-  CollectionContributorCard,
-  CollectionContributorCardProps,
-} from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
-import {
-  MainCollectionCard,
-  MainCollectionCardSlots,
-} from '../../organisms/MainCollectionCard/MainCollectionCard.js'
+import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
+import { CollectionContributorCard } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
+import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
+import { MainCollectionCard } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
 import './Collection.scss'
 
 export type CollectionProps = {

@@ -1,7 +1,7 @@
 import assert from 'assert'
-import { DocumentSelector } from '../../../arangodb/dist/server/exports.mjs'
+import type { DocumentSelector } from '../../../arangodb/dist/server/exports.mjs'
 import { db, EmailPwdUserCollection } from './init.mjs'
-import { Email, EmailPwdUser, EmailPwdUserData, EmailPwdUserDoc } from './store/types.mjs'
+import type { Email, EmailPwdUser, EmailPwdUserData, EmailPwdUserDoc } from './store/types.mjs'
 
 // await arangoPkg.api('ensureCollections')({ defs: { User: { kind: 'node' } } })
 

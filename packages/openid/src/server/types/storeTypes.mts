@@ -1,4 +1,4 @@
-import { AdapterPayload } from 'oidc-provider'
+import type { AdapterPayload } from 'oidc-provider'
 
 export type OtherModelsName = string
 

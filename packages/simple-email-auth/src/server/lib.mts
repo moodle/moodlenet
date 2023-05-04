@@ -1,6 +1,6 @@
 import { instanceDomain } from '@moodlenet/core'
+import type { JwtToken } from '@moodlenet/crypto/server'
 import * as crypto from '@moodlenet/crypto/server'
-import { JwtToken } from '@moodlenet/crypto/server'
 import {
   createWebUser,
   sendWebUserTokenCookie,
@@ -10,8 +10,8 @@ import assert from 'assert'
 import { send } from '../../../email-service/dist/server/exports.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
-import { EmailPwdUser } from './store/types.mjs'
-import { ConfirmEmailPayload, SignupReq } from './types.mjs'
+import type { EmailPwdUser } from './store/types.mjs'
+import type { ConfirmEmailPayload, SignupReq } from './types.mjs'
 
 export async function login({
   email,

@@ -1,5 +1,5 @@
-import { DocumentMetadata } from '@moodlenet/arangodb/server'
-import { RpcFile } from '@moodlenet/core'
+import type { DocumentMetadata } from '@moodlenet/arangodb/server'
+import type { RpcFile } from '@moodlenet/core'
 
 // export type FSStore = {
 //   store: (logicalName: string, _rpcFile: RpcFile) => Promise<FsItem>

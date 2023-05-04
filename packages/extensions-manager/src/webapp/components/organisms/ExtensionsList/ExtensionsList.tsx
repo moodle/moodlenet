@@ -5,12 +5,12 @@ import {
   getPastelColor,
   PrimaryButton,
 } from '@moodlenet/component-library'
-import { FC } from 'react'
+import type { FC } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { DevModeBtn } from '../Extensions.js'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
-import { ExtensionType } from '../../pages/Extensions/Extensions.js'
+import type { ExtensionType } from '../../pages/Extensions/Extensions.js'
 
 import './ExtensionsList.scss'
 

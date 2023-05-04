@@ -1,7 +1,8 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 // import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
-import { OverallCard, OverallCardProps } from './OverallCard.js'
+import type { OverallCardProps } from './OverallCard.js'
+import { OverallCard } from './OverallCard.js'
 
 const meta: ComponentMeta<typeof OverallCard> = {
   title: 'Molecules/OverallCard',

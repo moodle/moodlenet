@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { OpenIdInteractionPage } from './OpenIdInteractionPage.js'
 import { useOpenIdInteractionPage } from './OpenIdInteractionPageHook.js'
 

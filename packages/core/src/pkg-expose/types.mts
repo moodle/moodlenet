@@ -1,5 +1,5 @@
-import { PkgIdentifier } from '../types.mjs'
-import { RpcDefItem, RpcFn } from './types-rpc.mjs'
+import type { PkgIdentifier } from '../types.mjs'
+import type { RpcDefItem, RpcFn } from './types-rpc.mjs'
 export * from './types-rpc.mjs'
 
 export type PkgRpcDefs = Record<string, RpcFn>

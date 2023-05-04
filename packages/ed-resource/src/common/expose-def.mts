@@ -1,5 +1,5 @@
-import { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import { ResourceFormRpc, ResourceRpc } from './types.mjs'
+import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import type { ResourceFormRpc, ResourceRpc } from './types.mjs'
 export type ResourceExposeType = PkgExposeDef<{
   rpc: {
     // WEBAPP specific

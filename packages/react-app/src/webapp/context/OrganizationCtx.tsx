@@ -1,13 +1,6 @@
-import { OrganizationData } from '@moodlenet/organization/common'
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import type { OrganizationData } from '@moodlenet/organization/common'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 import { MainContext } from './MainContext.mjs'
 

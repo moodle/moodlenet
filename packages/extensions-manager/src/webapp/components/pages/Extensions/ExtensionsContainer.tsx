@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import Extensions from './Extensions.js'
 import { useExtensionsProps } from './ExtensionsHooks.js'
 

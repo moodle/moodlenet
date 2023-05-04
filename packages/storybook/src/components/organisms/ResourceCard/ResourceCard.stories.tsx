@@ -1,17 +1,18 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import {
+import type {
   ResourceCardAccess,
   ResourceCardActions,
   ResourceCardDataProps,
   ResourceCardState,
 } from '@moodlenet/ed-resource/common'
-import { ResourceCard, ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { ContentBackupImages } from '@moodlenet/react-app/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { PartialDeep } from 'type-fest'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { PartialDeep } from 'type-fest'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
   title: 'Molecules/ResourceCard',

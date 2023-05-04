@@ -1,14 +1,14 @@
 // import { t } from '@lingui/macro'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { ProfileFormValues } from '@moodlenet/web-user/common'
-import { MainProfileCardProps } from '@moodlenet/web-user/ui'
+import type { ProfileFormValues } from '@moodlenet/web-user/common'
+import type { MainProfileCardProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import {
   profileStoriesValidationSchema,
   useProfileStoryProps,
 } from 'components/pages/Profile/stories-props.js'
 import { useFormik } from 'formik'
-import { PartialDeep } from 'type-fest'
+import type { PartialDeep } from 'type-fest'
 
 export const useMainProfileCardStoryProps = (
   overrides?: PartialDeep<MainProfileCardProps>,

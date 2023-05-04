@@ -1,5 +1,5 @@
-import { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
-import { EntityDocument } from '@moodlenet/system-entities/server'
+import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
+import type { EntityDocument } from '@moodlenet/system-entities/server'
 
 // ALE:
 // TODO: WebUserProfileEntity _meta { webUserKey }

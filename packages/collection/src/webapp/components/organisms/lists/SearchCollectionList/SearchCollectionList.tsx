@@ -1,6 +1,8 @@
 import { ListCard, TertiaryButton } from '@moodlenet/component-library'
-import { FC, useMemo } from 'react'
-import { CollectionCard, CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
+import type { FC } from 'react'
+import { useMemo } from 'react'
+import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
+import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
 import './SearchCollectionList.scss'
 
 export type SearchCollectionListProps = {

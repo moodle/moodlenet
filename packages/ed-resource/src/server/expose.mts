@@ -7,8 +7,8 @@ import {
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
-import { ResourceExposeType } from '../common/expose-def.mjs'
-import { ResourceRpc } from '../common/types.mjs'
+import type { ResourceExposeType } from '../common/expose-def.mjs'
+import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles, publicFilesHttp, resourceFiles } from './init.mjs'

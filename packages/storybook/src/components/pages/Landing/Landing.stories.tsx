@@ -1,10 +1,11 @@
 import { LandingCollectionList } from '@moodlenet/collection/ui'
 import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
-import { Landing, LandingProps } from '@moodlenet/react-app/ui'
+import type { LandingProps } from '@moodlenet/react-app/ui'
+import { Landing } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, LandingProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
 import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import {
