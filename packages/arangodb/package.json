@@ -38,5 +38,7 @@
   "peerDependencies": {
     "@moodlenet/core": "^0.2.0"
   },
-  "scripts": {}
+  "scripts": {
+    "dev-assistant": "tsc --emitDeclarationOnly --watch"
+  }
 }

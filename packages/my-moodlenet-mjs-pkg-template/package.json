@@ -28,9 +28,7 @@
   "files": [
     "src/"
   ],
-  "scripts": {
-    "buildx": "tsc --build"
-  },
+  "scripts": {},
   "peerDependencies": {
     "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/core": "^0.2.0",

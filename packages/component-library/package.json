@@ -36,7 +36,7 @@
     "./common": "./dist/common.mjs"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",
+    "dev-assistant": "tsc --emitDeclarationOnly --watch & npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "create-ui-index": "vgis src/ui.mts",

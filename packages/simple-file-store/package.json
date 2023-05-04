@@ -37,7 +37,9 @@
     "@types/node": "^17.0.35",
     "typescript": "^4.7.2"
   },
-  "scripts": {},
+  "scripts": {
+    "dev-assistant": "tsc --emitDeclarationOnly --watch"
+  },
   "dependencies": {
     "rimraf": "^4.1.2",
     "sanitize-filename": "^1.6.3"

@@ -55,5 +55,7 @@
     "@moodlenet/system-entities": "^0.2.0",
     "@moodlenet/web-user": "^0.2.0"
   },
-  "scripts": {}
+  "scripts": {
+    "dev-assistant": "tsc --emitDeclarationOnly --watch"
+  }
 }

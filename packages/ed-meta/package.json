@@ -50,7 +50,7 @@
     "typescript": "^4.7.2"
   },
   "scripts": {
-    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
+    "dev-assistant": "tsc --emitDeclarationOnly --watch & npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "create-components-index": "vgis src/webapp/exports/ui.mts",
