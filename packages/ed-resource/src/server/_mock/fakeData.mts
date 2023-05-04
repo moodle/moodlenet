@@ -32,9 +32,6 @@ export const resFakeData: ResourceRpc = {
     canPublish: true,
     canDelete: true,
     canEdit: true,
-    canLike: false,
-    canBookmark: false,
-    isAuthenticated: true,
   },
   resourceForm: resourceFormValues,
   contributor: {

@@ -59,7 +59,7 @@ export type CollectionRpc = {
   contributor: CollectionContributorProps
 }
 
-export type CollectionAccessProps = CollectionAccessRpc // & { isAuthenticated: boolean }
+export type CollectionAccessProps = CollectionAccessRpc
 export type CollectionDataProps = CollectionDataRpc
 export type CollectionStateProps = CollectionStateRpc
 export type CollectionFormProps = CollectionFormRpc
@@ -88,8 +88,6 @@ export type CollectionActions = {
   editData: (values: CollectionFormProps) => void
   deleteCollection(): void
   setImage: (file: File | undefined | null) => void
-  toggleFollow(): void
-  toggleBookmark(): void
 }
 
 export type CollectionMainProps = {
@@ -107,10 +105,7 @@ export type CollectionCardData = { collectionHref: Href } & Pick<
   Pick<CollectionFormProps, 'title'>
 
 export type CollectionCardState = Pick<CollectionStateProps, 'isPublished' | 'numResources'>
-export type CollectionCardActions = Pick<
-  CollectionActions,
-  'publish' | 'unpublish' | 'toggleFollow' | 'toggleBookmark'
->
+export type CollectionCardActions = Pick<CollectionActions, 'publish' | 'unpublish'>
 export type CollectionCardAccess = Pick<CollectionAccessProps, 'isCreator' | 'canPublish'>
 
 export type Organization = {

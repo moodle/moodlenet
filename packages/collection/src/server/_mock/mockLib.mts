@@ -41,8 +41,6 @@ export const get = async (collectionId: string, query?: string) =>
 export const edit = (_key: string, values: CollectionFormRpc) =>
   newPromise<CollectionFormRpc>(values)
 export const _delete = (collectionId: string) => resolver(collectionId)
-export const toggleFollow = (collectionId: string) => resolver(collectionId)
-export const toggleBookmark = (collectionId: string) => resolver(collectionId)
 export const setIsPublished = (collectionId: string, publish: boolean) =>
   resolver(collectionId, publish)
 export const setImage = (key: string, file: File) => resolver(key, file)
@@ -53,8 +51,6 @@ export const mockModel = {
   // get,
   // edit,
   _delete,
-  toggleFollow,
   setIsPublished,
-  toggleBookmark,
   setImage,
 }

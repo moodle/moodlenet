@@ -25,9 +25,6 @@ export const empityFormModel: ResourceRpc = {
     canPublish: true,
     canDelete: true,
     canEdit: true,
-    canBookmark: false,
-    canLike: false,
-    isAuthenticated: true,
   },
   resourceForm: {
     description: '',
@@ -55,9 +52,6 @@ export const get = async (resourceKey: string, query?: string) =>
 export const edit = (_resourceKey: string, res: ResourceFormRpc) => newPromise<ResourceFormRpc>(res)
 export const _delete = (resourceKey: string) => resolver(resourceKey)
 export const upload = async (resourceKey: string) => resolver(resourceKey)
-export const toggleLike = (resourceKey = '') => resolver(resourceKey)
-export const toggleBookmark = (resourceKey = '') => resolver(resourceKey)
-export const setIsPublished = (resourceKey = '') => resolver(resourceKey)
 export const setImage = (resourceKey: string, file: File) => resolver(resourceKey, file)
 export const setContent = (resourceKey: string, file: File | string) => resolver(resourceKey, file)
 export const create = () => newPromise(empityFormModel)
