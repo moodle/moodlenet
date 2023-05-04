@@ -284,11 +284,6 @@ export async function getWp(
       ],
     },
     plugins: [
-      isDevServer &&
-        new webpack.ProvidePlugin({
-          React: 'react',
-        }),
-
       new webpack.NormalModuleReplacementPlugin(/^node:/, resource => {
         // resource.request = resource.request.replace(/^node:/, '')
         const url = resource.request
@@ -304,8 +299,8 @@ export async function getWp(
       //   console.log({ url, newUrl })
       //   resource.request = newUrl
       // }),
-      isDevServer && new ReactRefreshWebpackPlugin(),
-      isDevServer && new webpack.HotModuleReplacementPlugin(),
+      isDevServer ? new ReactRefreshWebpackPlugin() : () => void 0,
+      isDevServer ? new webpack.HotModuleReplacementPlugin() : () => void 0,
       // new ForkTsCheckerWebpackPlugin(),
       new HtmlWebPackPlugin({
         template: './public/index.html',
@@ -314,11 +309,7 @@ export async function getWp(
         filename: 'index.html',
         publicPath: '/',
       }),
-      isDevServer
-        ? null
-        : new CompressionPlugin({
-            test: /\.js(\?.*)?$/i,
-          }),
+      isDevServer ? () => void 0 : new CompressionPlugin({ test: /\.js(\?.*)?$/i }),
       new CopyPlugin({
         patterns: [{ from: './_redirects' }],
       }),
