@@ -1,25 +1,15 @@
-import { DocumentMetadata } from '@moodlenet/arangodb/server'
-import {
-  create,
-  EntityAccess,
-  getEntity,
-  Patch,
-  patchEntity,
-} from '@moodlenet/system-entities/server'
+import type { DocumentMetadata } from '@moodlenet/arangodb/server'
+import type { EntityAccess, Patch } from '@moodlenet/system-entities/server'
+import { create, getEntity, patchEntity } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import { ClientSessionDataRpc } from '../common/types.mjs'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
-import {
+import type {
   CreateRequest,
   WebUserDataType,
   WebUserProfileDataType,
   WebUserProfileEntity,
 } from './types.mjs'
-import {
-  sendWebUserTokenCookie,
-  signWebUserJwt,
-  verifyCurrentTokenCtx,
-} from './web-user-auth-lib.mjs'
+import { signWebUserJwt, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 
 export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity | undefined> {
   const verifiedCtx = await verifyCurrentTokenCtx()
@@ -33,43 +23,6 @@ export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity |
 
   const myProfileRecord = await getProfileRecord(currentWebUser.profileKey)
   return myProfileRecord?.entity
-}
-
-export async function getCurrentClientSessionDataRpc(): Promise<ClientSessionDataRpc | undefined> {
-  const verifiedCtx = await verifyCurrentTokenCtx()
-  console.log('getCurrentClientSessionDataRpc', { verifiedCtx })
-  if (!verifiedCtx) {
-    sendWebUserTokenCookie(undefined)
-    return
-  }
-  const { currentWebUser } = verifiedCtx
-  if (currentWebUser.isRoot) {
-    return {
-      isRoot: true,
-    }
-  }
-  // await setCurrentVerifiedJwtToken(verifiedCtx, false)
-
-  const webUser = await getWebUser({ _key: currentWebUser.webUserKey })
-  if (!webUser) {
-    sendWebUserTokenCookie(undefined)
-    return
-  }
-  assert(
-    webUser.profileKey === currentWebUser.profileKey,
-    `webUser.profileKey:${webUser.profileKey} not equals currentWebUser.profileKey:${currentWebUser.profileKey}`,
-  )
-  const profileRecord = await getProfileRecord(currentWebUser.profileKey)
-  assert(
-    profileRecord,
-    `couldn't find Profile#${currentWebUser.profileKey} associated with WebUser#${currentWebUser.webUserKey}:${webUser.displayName}`,
-  )
-
-  return {
-    isAdmin: webUser.isAdmin,
-    isRoot: false,
-    myProfile: profileRecord.entity,
-  }
 }
 
 export async function createWebUser(createRequest: CreateRequest) {
@@ -225,4 +178,11 @@ export async function searchUsers(search: string): Promise<(WebUserDataType & Do
   const userProfiles = await cursor.all()
 
   return userProfiles
+}
+
+export function getProfileImageLogicalFilename(profileKey: string) {
+  return `profile-image/${profileKey}`
+}
+export function getProfileAvatarLogicalFilename(profileKey: string) {
+  return `profile-avatar/${profileKey}`
 }

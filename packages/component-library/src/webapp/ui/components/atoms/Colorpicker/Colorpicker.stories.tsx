@@ -1,5 +1,6 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import Colorpicker, { ColorpickerProps } from './Colorpicker.js'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ColorpickerProps } from './Colorpicker.js'
+import Colorpicker from './Colorpicker.js'
 
 const meta: ComponentMeta<typeof Colorpicker> = {
   title: 'Atoms/Colorpicker',

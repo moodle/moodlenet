@@ -1,4 +1,4 @@
-import { PkgIdentifier } from '../types.mjs'
+import type { PkgIdentifier } from '../types.mjs'
 
 export type { assertCallInitiator, getCallInitiator } from './lib.mjs'
 export type CallInitiator = { pkgId: PkgIdentifier }

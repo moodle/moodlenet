@@ -1,4 +1,5 @@
-import { createContext, FC, PropsWithChildren, useContext, useMemo } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useContext, useMemo } from 'react'
 import { MainContext } from './MainContext.js'
 
 export type ResourceContextT = {

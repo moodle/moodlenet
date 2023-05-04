@@ -4,17 +4,13 @@ import kvStoreFactory from '@moodlenet/key-value-store/server'
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
 import { defaultAppearanceData } from '../common/exports.mjs'
-import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
+import type { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { plugin } from './lib.mjs'
-import {
-  getDefaultOpenGraphData,
-  OpenGraphData,
-  OpenGraphDataProvided,
-  OpenGraphProviderItems,
-} from './opengraph.mjs'
+import type { OpenGraphData, OpenGraphDataProvided } from './opengraph.mjs'
+import { getDefaultOpenGraphData, OpenGraphProviderItems } from './opengraph.mjs'
 import { shell } from './shell.mjs'
-import { KeyValueData } from './types.mjs'
+import type { KeyValueData } from './types.mjs'
 
 import { latestBuildFolder } from './webpack/generated-files.mjs'
 

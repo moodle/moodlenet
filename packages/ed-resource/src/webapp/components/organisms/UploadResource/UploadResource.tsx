@@ -6,9 +6,11 @@ import {
   PrimaryButton,
   RoundButton,
 } from '@moodlenet/component-library'
-import { checkIfURL, FormikHandle, useImageUrl } from '@moodlenet/react-app/ui'
+import type { FormikHandle } from '@moodlenet/react-app/ui'
+import { checkIfURL, useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
-import { default as React, FC, useCallback, useEffect, useRef, useState } from 'react'
+import type { default as React, FC } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import { SelectOptions } from '../../../../lib/types'
 // import { useImageUrl } from '../../../../lib/useImageUrl'

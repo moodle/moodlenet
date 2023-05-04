@@ -1,8 +1,9 @@
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useState } from 'react'
 import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
-import { InputTextField, InputTextFieldProps } from './InputTextField.js'
+import type { InputTextFieldProps } from './InputTextField.js'
+import { InputTextField } from './InputTextField.js'
 
 const meta: ComponentMeta<typeof InputTextField> = {
   title: 'Atoms/InputTextField',

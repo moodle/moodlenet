@@ -1,6 +1,7 @@
-import { mixed, object, SchemaOf, string } from 'yup'
-import { ClientSessionData } from '../../webapp/context/AuthContext.js'
-import { AuthDataRpc, ProfileFormValues } from '../types.mjs'
+import type { SchemaOf } from 'yup'
+import { mixed, object, string } from 'yup'
+import type { ClientSessionData } from '../../webapp/context/AuthContext.js'
+import type { AuthDataRpc, ProfileFormValues } from '../types.mjs'
 
 export function profileFormValidationSchema(maxUploadSize: number): SchemaOf<ProfileFormValues> {
   return object({

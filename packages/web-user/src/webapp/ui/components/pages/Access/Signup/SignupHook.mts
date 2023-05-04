@@ -1,7 +1,7 @@
 import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
-import { SignupProps } from './Signup.js'
+import type { SignupProps } from './Signup.js'
 
 export const useSignUpProps = (): SignupProps => {
   const headerProps = useMinimalisticHeaderProps()

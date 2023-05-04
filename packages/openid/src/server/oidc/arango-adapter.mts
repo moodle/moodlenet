@@ -1,5 +1,5 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
-import { Adapter, AdapterPayload } from 'oidc-provider'
+import type { Adapter, AdapterPayload } from 'oidc-provider'
 import { shell } from '../shell.mjs'
 
 export const { db } = await shell.call(getMyDB)()

@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Dropdown, IconPill, IconTextOption, SimplePill, TextOption } from '../Dropdown.js'
 import { LevelDropdown, LicenseDropdown } from './storiesData.js'
 import { useStoriesDDCtrl } from './storiesUtil.js'

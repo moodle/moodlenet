@@ -1,9 +1,10 @@
-import { mountApp, RequestHandler, urlencoded } from '@moodlenet/http-server/server'
+import type { RequestHandler } from '@moodlenet/http-server/server'
+import { mountApp, urlencoded } from '@moodlenet/http-server/server'
 import { getCurrentWebUserProfile } from '@moodlenet/web-user/server'
 // import Account from './account.mjs'
 
 import assert from 'assert'
-import { InteractionResults } from 'oidc-provider'
+import type { InteractionResults } from 'oidc-provider'
 import { shell } from '../shell.mjs'
 const setNoCache: RequestHandler = (_req, res, next) => {
   res.set('cache-control', 'no-store')

@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, useEffect, useRef } from 'react'
+import type { ChangeEvent, FC } from 'react'
+import { useEffect, useRef } from 'react'
 import './Colorpicker.scss'
 
 export type ColorpickerProps = {
@@ -20,7 +21,8 @@ export const Colorpicker: FC<ColorpickerProps> = ({
   }, [colorpicker])
 
   useEffect(() => {
-    typeof fieldProps.value === 'string' && colorpicker.current?.style.setProperty('--color', fieldProps.value)
+    typeof fieldProps.value === 'string' &&
+      colorpicker.current?.style.setProperty('--color', fieldProps.value)
   }, [fieldProps.value])
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {

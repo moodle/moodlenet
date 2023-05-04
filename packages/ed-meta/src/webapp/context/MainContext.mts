@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { MyPkgContext } from '../../common/exports.mjs'
+import type { MyPkgContext } from '../../common/exports.mjs'
 
 export type MainContextT = MyPkgContext /*  & {
 } */

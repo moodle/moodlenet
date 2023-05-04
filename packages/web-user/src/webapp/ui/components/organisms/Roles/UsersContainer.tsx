@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { Users } from './Users.js'
 import { useUsersProps } from './UsersHooks.js'
 

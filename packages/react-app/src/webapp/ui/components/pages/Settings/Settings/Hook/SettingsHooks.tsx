@@ -6,7 +6,7 @@ import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHook
 import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
 import { GeneralContainer } from '../../General/GeneralContainer.js'
-import { SettingsItem, SettingsProps } from '../Settings.js'
+import type { SettingsItem, SettingsProps } from '../Settings.js'
 
 const localSettingsItems: SettingsItem[] = [
   {

@@ -1,11 +1,12 @@
 import assert from 'assert'
-import { Readable } from 'stream'
+import type { Readable } from 'stream'
 import { assertCallInitiator, getSetCoreAsyncContext } from '../async-context/lib.mjs'
-import { RpcStatusType } from '../exports.mjs'
+import type { RpcStatusType } from '../exports.mjs'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
-import { PkgIdentifier, PkgModuleRef } from '../types.mjs'
-import { rpcStatusCodes, RpcStatusName } from './rpc-status-codes.mjs'
-import { PkgExpose, PkgExposeDef, PkgExposeImpl, RpcFile } from './types.mjs'
+import type { PkgIdentifier, PkgModuleRef } from '../types.mjs'
+import type { RpcStatusName } from './rpc-status-codes.mjs'
+import { rpcStatusCodes } from './rpc-status-codes.mjs'
+import type { PkgExpose, PkgExposeDef, PkgExposeImpl, RpcFile } from './types.mjs'
 
 type ExposedRegItem = {
   pkgId: PkgIdentifier

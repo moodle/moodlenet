@@ -1,6 +1,7 @@
-import { CollectionCardProps, collectionsCardFactory } from '@moodlenet/collection/ui'
+import type { CollectionCardProps } from '@moodlenet/collection/ui'
+import { collectionsCardFactory } from '@moodlenet/collection/ui'
 import { getRandomSortedArrayElements } from '@moodlenet/component-library'
-import { PartialDeep } from 'type-fest'
+import type { PartialDeep } from 'type-fest'
 import { getCollectionCardStoryProps } from './CollectionCard.stories.js'
 
 export const getCollectionsCardStoryProps = (

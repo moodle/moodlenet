@@ -1,18 +1,19 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
 // import { ArrowForward, NoteAdd } from '@material-ui/icons'
+import type { AddonItem, SearchboxProps } from '@moodlenet/component-library'
 import {
-  AddonItem,
   // Modal,
   // PrimaryButton,
   Searchbox,
-  SearchboxProps,
 } from '@moodlenet/component-library'
 // import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
 import { MainHeaderContext } from '../../../../exports/ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 // import { Href, Link } from '../../elements/link.js'
-import MainLayout, { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
+import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
+import MainLayout from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
 
 export type LandingProps = {
@@ -91,8 +92,8 @@ export const Landing: FC<LandingProps> = ({
         <div className="subtitle">{subtitle}</div>
         {/* <div className="subtitle">{organization.subtitle}</div> */}
       </div>
-      <LandingSearchBox setSearchText={setSearchText} searchText={searchText} search={search} />
 
+      <LandingSearchBox setSearchText={setSearchText} searchText={searchText} search={search} />
       {/* <PrimaryButton
         className="share-content"
         color="blue"

@@ -1,7 +1,7 @@
 import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
+import type { EntityCollectionDef } from '@moodlenet/system-entities/server'
 import {
-  EntityCollectionDef,
   isCurrentOfEntityClass2Aql,
   isCurrentUserCreatorOfCurrentEntity,
   isSameClass,
@@ -13,7 +13,7 @@ import { matchCollectionHomePageRoutePathKey } from '../common/webapp-routes.mjs
 import { expose as me } from './expose.mjs'
 import { getCollection } from './lib.mjs'
 import { shell } from './shell.mjs'
-import { CollectionDataType } from './types.mjs'
+import type { CollectionDataType } from './types.mjs'
 
 shell.call(plugin)<MyWebDeps>({
   mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],

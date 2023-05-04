@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import ResourcePage from './Resource.js'
 import { useResourcePageProps } from './ResourcePageHooks.js'
 

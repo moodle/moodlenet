@@ -1,6 +1,7 @@
-import { UploadResource, UploadResourceProps } from '@moodlenet/ed-resource/ui'
+import type { UploadResourceProps } from '@moodlenet/ed-resource/ui'
+import { UploadResource } from '@moodlenet/ed-resource/ui'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 
 const meta: ComponentMeta<typeof UploadResource> = {
   title: 'Organisms/UploadResource',

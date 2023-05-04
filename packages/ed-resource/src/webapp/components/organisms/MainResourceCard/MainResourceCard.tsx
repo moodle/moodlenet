@@ -1,24 +1,26 @@
 import { Link as LinkIcon, Share } from '@material-ui/icons'
-import {
+import type {
   AddonItem,
-  Card,
-  FloatingMenu,
   FloatingMenuContentItem,
   FollowTag,
+  TextOptionProps,
+} from '@moodlenet/component-library'
+import {
+  Card,
+  FloatingMenu,
   getPreviewFromUrl,
   InputTextField,
   Modal,
   PrimaryButton,
   Snackbar,
   TertiaryButton,
-  TextOptionProps,
   useWindowDimensions,
 } from '@moodlenet/component-library'
 import { SubjectsTextOptionProps } from '@moodlenet/ed-meta/common'
+import type { FormikHandle } from '@moodlenet/react-app/ui'
 import {
   capitalizeFirstLetter,
   downloadOrOpenURL,
-  FormikHandle,
   getBackupImage,
   getTagList,
   useImageUrl,
@@ -33,15 +35,16 @@ import {
   PublicOff,
   Sync,
 } from '@mui/icons-material'
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  getResourceTypeInfo,
+import type { FC } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type {
   ResourceAccessProps,
   ResourceActions,
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
 } from '../../../../common/types.mjs'
+import { getResourceTypeInfo } from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
 import './MainResourceCard.scss'
 

@@ -1,14 +1,12 @@
 import { getDomainUrl } from '@moodlenet/component-library'
-import { Href } from '@moodlenet/react-app/common'
-import { PkgContextT } from '@moodlenet/react-app/webapp'
+import type { Href } from '@moodlenet/react-app/common'
+import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
-import { ResourceExposeType } from './expose-def.mjs'
+import type { ResourceExposeType } from './expose-def.mjs'
 
 export type MyWebDeps = {
   me: ResourceExposeType
 }
-
-export type SaveState = { form: boolean; image: boolean }
 
 export type MyPkgContext = PkgContextT<MyWebDeps>
 export type MainContextResource = MyPkgContext & {
@@ -86,8 +84,11 @@ export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
   get: (resourceKey: string) => Promise<ResourceProps | undefined>
   _delete: (resourceKey: string) => Promise<void>
-  setImage: (resourceKey: string, file: File | undefined | null) => Promise<string>
-  setContent: (resourceKey: string, file: File | string | undefined | null) => Promise<string>
+  setImage: (resourceKey: string, file: File | undefined | null) => Promise<string | null>
+  setContent: (
+    resourceKey: string,
+    file: File | string | undefined | null,
+  ) => Promise<string | null>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
   create: () => Promise<{ _key: string }>
   // toggleBookmark: (resourceKey: string) => Promise<ResourceTypeForm>  // toggleLike: (resourceKey: string) => Promise<ResourceTypeForm>
@@ -231,7 +232,8 @@ export const getResourceTypeInfo = (
   }
 }
 
-import { mixed, object, SchemaOf, string } from 'yup'
+import type { SchemaOf } from 'yup'
+import { mixed, object, string } from 'yup'
 export const maxUploadSize = 1024 * 1024 * 50
 
 export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({

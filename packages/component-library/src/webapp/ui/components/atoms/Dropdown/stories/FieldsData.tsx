@@ -5,7 +5,7 @@ import { ReactComponent as NdIcon } from '../../../../assets/icons/license/nd.sv
 import { ReactComponent as SaIcon } from '../../../../assets/icons/license/sa.svg'
 import { ReactComponent as ZeroIcon } from '../../../../assets/icons/license/zero.svg'
 import { getYearList } from '../../../../helpers/utilities.js'
-import { TextOptionProps } from '../Dropdown.js'
+import type { TextOptionProps } from '../Dropdown.js'
 
 export const by = <ByIcon style={{ width: '20px' }} />
 export const zero = <ZeroIcon style={{ width: '20px' }} />

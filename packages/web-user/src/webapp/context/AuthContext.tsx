@@ -2,15 +2,15 @@ import { useGuestRegistryMap, wrapFetch } from '@moodlenet/react-app/webapp'
 import cookies from 'js-cookie'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import type { Profile } from '../../common/exports.mjs'
 import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
-import { WebUserProfile } from '../../server/types.mjs'
-import { AvatarMenuItem } from '../exports/ui.mjs'
-import { GuestMainRegistries, MainRegistries } from '../registries.mjs'
+import type { AvatarMenuItem } from '../exports/ui.mjs'
+import type { GuestMainRegistries, MainRegistries } from '../registries.mjs'
 import defaultAvatarUrl from '../ui/assets/img/default-avatar.svg'
 import rootAvatarUrl from '../ui/assets/img/root-avatar.png'
-import { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
-import { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
-import { MainContextT } from './MainContext.mjs'
+import type { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
+import type { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
+import type { MainContextT } from './MainContext.mjs'
 
 export type UserDisplay = { name: string; avatarUrl: string }
 export type ClientSessionData = {
@@ -24,7 +24,7 @@ export type ClientSessionData = {
   | {
       isAdmin: boolean
       isRoot: false
-      myProfile: WebUserProfile
+      myProfile: Profile
     }
 )
 export type AvatarMenuItemRegItem = Omit<AvatarMenuItem, 'key'>
@@ -159,7 +159,7 @@ wrapFetch((url, reqInit, next) => {
 const REDIRECT_Q_NAME = 'redirectTo'
 export function useNeedsWebUserLogin(): {
   isAdmin: boolean
-  myProfile: WebUserProfile
+  myProfile: Profile
 } | null {
   const nav = useNavigate()
   const loc = useLocation()

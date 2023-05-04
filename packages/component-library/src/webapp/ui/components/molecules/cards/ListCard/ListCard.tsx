@@ -1,4 +1,5 @@
-import { FC, ReactElement, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import type { FC, ReactElement, ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './ListCard.scss'
 
 export type ListActionsType = { element: ReactElement; position: 'start' | 'end' }

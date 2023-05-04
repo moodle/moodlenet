@@ -1,13 +1,14 @@
-import { jwt, JwtToken } from '@moodlenet/crypto/server'
+import type { JwtToken } from '@moodlenet/crypto/server'
+import { jwt } from '@moodlenet/crypto/server'
 import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
 import { matchRootPassword } from '@moodlenet/system-entities/server'
-import { CookieOptions } from 'express'
+import type { CookieOptions } from 'express'
 import {
   WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
 } from '../common/exports.mjs'
 import { shell } from './shell.mjs'
-import { TokenCtx, UnverifiedTokenCtx, VerifiedTokenCtx, WebUserJwtPayload } from './types.mjs'
+import type { TokenCtx, UnverifiedTokenCtx, VerifiedTokenCtx, WebUserJwtPayload } from './types.mjs'
 
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
   const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {

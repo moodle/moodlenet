@@ -5,7 +5,8 @@ import {
   SimpleTextOption,
   TextOption,
 } from '@moodlenet/component-library'
-import { FC, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
 import { YearsProps } from '../../../../common/data.js'
 
 export type DateFieldProps = {

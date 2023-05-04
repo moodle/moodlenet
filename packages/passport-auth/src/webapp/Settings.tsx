@@ -1,4 +1,4 @@
-import { AddonItem } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 import { FormConfig } from './FormConfig'
 
 export const Menu: AddonItem = { Item: () => <span>Passport Auth</span>, key: 'menu-passport-auth' }

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { LoginPage } from './Login.js'
 import { useLoginProps } from './LoginPageHook.mjs'
 

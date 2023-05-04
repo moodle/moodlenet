@@ -1,19 +1,21 @@
-import {
+import type {
   AccessEntitiesCustomProject,
+  EntityAccess,
+  GetEntityOpts,
+  Patch,
+  QueryMyEntitiesOpts,
+} from '@moodlenet/system-entities/server'
+import {
   create,
   currentEntityVar,
   delEntity,
-  EntityAccess,
   getEntity,
-  GetEntityOpts,
-  Patch,
   patchEntity,
   queryMyEntities,
-  QueryMyEntitiesOpts,
 } from '@moodlenet/system-entities/server'
 import { Collection } from './init.mjs'
 import { shell } from './shell.mjs'
-import { CollectionDataType, CollectionEntityDoc } from './types.mjs'
+import type { CollectionDataType, CollectionEntityDoc } from './types.mjs'
 
 export async function createCollection(collectionData: CollectionDataType) {
   const newCollection = await shell.call(create)(Collection.entityClass, collectionData)

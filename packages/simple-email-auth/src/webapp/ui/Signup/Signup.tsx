@@ -4,8 +4,8 @@ import {
   Snackbar,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
-import { FC } from 'react'
+import type { useFormik } from 'formik'
+import type { FC } from 'react'
 import './Signup.scss'
 
 export type SignupFormValues = { email: string; password: string; displayName: string }

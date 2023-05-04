@@ -1,5 +1,5 @@
 // import { Trans } from '@lingui/macro'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { ReactComponent as UploadFileIcon } from '../../../../static/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
 import './FileUploader.scss'

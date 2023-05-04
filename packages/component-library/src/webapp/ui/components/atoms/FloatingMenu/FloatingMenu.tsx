@@ -1,4 +1,6 @@
-import React, { ComponentType, FC, KeyboardEvent, useRef, useState } from 'react'
+import type React from 'react'
+import type { ComponentType, FC, KeyboardEvent } from 'react'
+import { useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
 

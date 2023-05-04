@@ -1,11 +1,10 @@
-import { AddonItem } from '@moodlenet/component-library'
-import { FC, useState } from 'react'
-import InstallExtension, {
-  InstallExtensionPropsControlled,
-} from '../InstallExtension/InstallExtension.js'
-import ManageExtensions, {
-  ManageExtensionsPropsControlled,
-} from '../ManageExtensions/ManageExtensions.js'
+import type { AddonItem } from '@moodlenet/component-library'
+import type { FC } from 'react'
+import { useState } from 'react'
+import type { InstallExtensionPropsControlled } from '../InstallExtension/InstallExtension.js'
+import InstallExtension from '../InstallExtension/InstallExtension.js'
+import type { ManageExtensionsPropsControlled } from '../ManageExtensions/ManageExtensions.js'
+import ManageExtensions from '../ManageExtensions/ManageExtensions.js'
 import './Extensions.scss'
 
 export type ExtensionType = {

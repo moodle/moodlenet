@@ -1,5 +1,5 @@
-import { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import { CollectionFormRpc, CollectionRpc } from './types.mjs'
+import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import type { CollectionFormRpc, CollectionRpc } from './types.mjs'
 
 export type CollectionExposeType = PkgExposeDef<{
   rpc: {
@@ -23,8 +23,8 @@ export type CollectionExposeType = PkgExposeDef<{
     'webapp/create'(): Promise<{ _key: string }>
     'webapp/delete/:_key'(body: null, params: { _key: string }): Promise<void>
     'webapp/upload-image/:_key'(
-      body: { file: [RpcFile] },
+      body: { file: [RpcFile | undefined | null] },
       params: { _key: string },
-    ): Promise<string>
+    ): Promise<string | null>
   }
 }>

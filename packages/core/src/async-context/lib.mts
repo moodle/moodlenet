@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { AsyncLocalStorage } from 'async_hooks'
-import { ApiCtx, CoreAsyncCtx } from './types.mjs'
+import type { ApiCtx, CoreAsyncCtx } from './types.mjs'
 
 export const mainAsyncContext = new AsyncLocalStorage<ApiCtx>()
 

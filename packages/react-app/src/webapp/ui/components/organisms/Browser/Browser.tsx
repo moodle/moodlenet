@@ -1,5 +1,7 @@
-import { AddonItem, SecondaryButton, SimpleDropdown } from '@moodlenet/component-library'
-import { ComponentType, FC, useEffect, useMemo, useRef, useState } from 'react'
+import type { AddonItem } from '@moodlenet/component-library'
+import { SecondaryButton, SimpleDropdown } from '@moodlenet/component-library'
+import type { ComponentType, FC } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
 
 export type MainColumItem = {

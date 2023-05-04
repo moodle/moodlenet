@@ -1,10 +1,10 @@
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import { addMiddlewares } from '@moodlenet/http-server/server'
 import { plugin } from '@moodlenet/react-app/server'
+import fileStoreFactory from '@moodlenet/simple-file-store/server'
+import type { EntityCollectionDef, EntityUser } from '@moodlenet/system-entities/server'
 import {
   ANON_SYSTEM_USER,
-  EntityCollectionDef,
-  EntityUser,
   isCurrentOfEntityClass2Aql,
   isCurrentUserEntity,
   isSameClass,
@@ -18,10 +18,10 @@ import {
   PROFILE_HOME_PAGE_ROUTE_PATH,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
 } from '../common/exports.mjs'
-import { MyWebAppDeps } from '../common/my-webapp/types.mjs'
+import type { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { shell } from './shell.mjs'
-import { WebUserDataType, WebUserProfileDataType } from './types.mjs'
+import type { WebUserDataType, WebUserProfileDataType } from './types.mjs'
 import {
   sendWebUserTokenCookie,
   setCurrentUnverifiedJwtToken,
@@ -114,6 +114,9 @@ await shell.call(addMiddlewares)({
     },
   ],
 })
+
+export const publicFiles = await fileStoreFactory(shell, 'public')
+export const publicFilesHttp = await publicFiles.mountStaticHttpServer('public')
 
 type Env = {
   noWebappServer: boolean

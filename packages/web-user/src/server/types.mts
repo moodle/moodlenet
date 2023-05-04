@@ -1,16 +1,23 @@
-import { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
-import { EntityDocument } from '@moodlenet/system-entities/server'
+import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
+import type { EntityDocument } from '@moodlenet/system-entities/server'
 
 // ALE:
 // TODO: WebUserProfileEntity _meta { webUserKey }
 export type WebUserProfileEntity = EntityDocument<WebUserProfileDataType>
 export type WebUserProfileDataType = {
   displayName: string
-  aboutMe: string
-  organizationName: string | undefined
-  location: string | undefined
-  siteUrl: string | undefined
+  aboutMe: string | undefined | null
+  organizationName: string | undefined | null
+  location: string | undefined | null
+  siteUrl: string | undefined | null
+  backgroundImage: ImageField | undefined | null
+  avatarImage: ImageField | undefined | null
 }
+type ImageField =
+  | { kind: 'file'; directAccessId: string }
+  // | { kind: 'url'; url: string }
+  | undefined
+  | null
 
 export type WebUserProfile = WebUserProfileDataType & { _key: string }
 

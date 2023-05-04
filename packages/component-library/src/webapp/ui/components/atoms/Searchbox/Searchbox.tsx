@@ -1,12 +1,5 @@
-import {
-  ChangeEventHandler,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react'
+import type { ChangeEventHandler, Dispatch, FC, SetStateAction } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import { elementFullyInViewPort } from '../../../helpers/utilities.js'
 import PrimaryButton from '../PrimaryButton/PrimaryButton.js'

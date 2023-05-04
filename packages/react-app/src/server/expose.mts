@@ -1,6 +1,6 @@
 import { npm } from '@moodlenet/core'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
-import { ReactAppExposeType } from '../common/expose-def.mjs'
+import type { ReactAppExposeType } from '../common/expose-def.mjs'
 import { getAppearance, setAppearance } from './lib.mjs'
 import { shell } from './shell.mjs'
 

@@ -1,16 +1,11 @@
 // import { Trans } from '@lingui/macro'
-import {
-  AddonItem,
-  Card,
-  Colorpicker,
-  InputTextField,
-  PrimaryButton,
-  // RoundButton,
-  // useImageUrl,
-} from '@moodlenet/component-library'
-import { useFormik } from 'formik'
-import { FC, useCallback /* , useRef */ } from 'react'
-import { AppearanceData, getAppearanceStyle } from '../../../../../../common/exports.mjs'
+import type { AddonItem } from '@moodlenet/component-library'
+import { Card, Colorpicker, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import type { useFormik } from 'formik'
+import type { FC } from 'react'
+import { useCallback /* , useRef */ } from 'react'
+import type { AppearanceData } from '../../../../../../common/exports.mjs'
+import { getAppearanceStyle } from '../../../../../../common/exports.mjs'
 // import defaultSmallLogo from '../../../../assets/logos/moodlenet-logo-small.png'
 // import defaultLogo from '../../../../assets/logos/moodlenet-logo.png'
 // import { Organization } from '../../../../types'

@@ -1,6 +1,8 @@
 import { ListCard, TertiaryButton } from '@moodlenet/component-library'
-import { FC, useMemo } from 'react'
-import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
+import type { FC } from 'react'
+import { useMemo } from 'react'
+import type { ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
+import { ProfileCard } from '../../ProfileCard/ProfileCard.js'
 import './SearchProfileList.scss'
 
 export type SearchProfileListProps = {

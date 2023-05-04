@@ -1,8 +1,6 @@
+import type { DetailedHTMLProps, FC, SelectHTMLAttributes } from 'react'
 import {
   createContext,
-  DetailedHTMLProps,
-  FC,
-  SelectHTMLAttributes,
   useCallback,
   useContext,
   useLayoutEffect,
@@ -12,10 +10,7 @@ import {
 } from 'react'
 
 export type SelectorProps = Omit<
-  React.DetailedHTMLProps<
-    React.SelectHTMLAttributes<HTMLSelectElement>,
-    HTMLSelectElement
-  >,
+  React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
   'value' | 'defaultValue' | 'multiple'
 > &
   (
@@ -60,10 +55,7 @@ const normalizeValue = (val: RawValueType) =>
 const doRawValuesEquals = (ra1: RawValueType, ra2: RawValueType) => {
   const a1 = normalizeValue(ra1)
   const a2 = normalizeValue(ra2)
-  return (
-    a1.length === a2.length &&
-    a1.reduce((eq, a1_el, index) => eq && a1_el === a2[index], true)
-  )
+  return a1.length === a2.length && a1.reduce((eq, a1_el, index) => eq && a1_el === a2[index], true)
 }
 
 export const useSelectorOption = (optionValue: string) => {
@@ -82,12 +74,10 @@ export const useSelectorOption = (optionValue: string) => {
     deselect: () => deselectOption(optionValue),
   }
 }
-export const Selector: FC<SelectorProps> = (props) => {
+export const Selector: FC<SelectorProps> = props => {
   const selectElemRef = useRef<HTMLSelectElement>(null)
   const { multiple } = props
-  const [selections, setSelections] = useState(() =>
-    normalizeValue(props.defaultValue)
-  )
+  const [selections, setSelections] = useState(() => normalizeValue(props.defaultValue))
 
   useLayoutEffect(() => {
     if (!selectElemRef.current) {
@@ -109,8 +99,8 @@ export const Selector: FC<SelectorProps> = (props) => {
     }
     const empty = () => {
       selectElemRef.current &&
-        Array.from(selectElemRef.current.options).forEach((opt) =>
-          selectElemRef.current?.removeChild(opt)
+        Array.from(selectElemRef.current.options).forEach(opt =>
+          selectElemRef.current?.removeChild(opt),
         )
     }
 
@@ -135,7 +125,7 @@ export const Selector: FC<SelectorProps> = (props) => {
         return
       }
       const optionToDeselect = Array.from(selectElemRef.current.options).find(
-        ({ value }) => value === optionValue
+        ({ value }) => value === optionValue,
       )
       if (!optionToDeselect) {
         return
@@ -143,7 +133,7 @@ export const Selector: FC<SelectorProps> = (props) => {
       selectElemRef.current.removeChild(optionToDeselect)
       fireChange()
     },
-    [fireChange]
+    [fireChange],
   )
 
   const selectOption = useCallback(
@@ -151,22 +141,22 @@ export const Selector: FC<SelectorProps> = (props) => {
       if (!selectElemRef.current) {
         return
       }
-      const alreadySelectedOptionEl = Array.from(
-        selectElemRef.current.options
-      ).find(({ value }) => value === optionValue)
+      const alreadySelectedOptionEl = Array.from(selectElemRef.current.options).find(
+        ({ value }) => value === optionValue,
+      )
       if (alreadySelectedOptionEl) {
         return
       }
       const optElem = createOptionElem(optionValue)
       if (!multiple) {
-        Array.from(selectElemRef.current.options).forEach((opt) =>
-          selectElemRef.current?.removeChild(opt)
+        Array.from(selectElemRef.current.options).forEach(opt =>
+          selectElemRef.current?.removeChild(opt),
         )
       }
       selectElemRef.current.appendChild(optElem)
       fireChange()
     },
-    [fireChange, multiple]
+    [fireChange, multiple],
   )
 
   const toggleOption = useCallback(
@@ -176,7 +166,7 @@ export const Selector: FC<SelectorProps> = (props) => {
       }
       selected ? deselectOption(optionValue) : selectOption(optionValue)
     },
-    [deselectOption, selectOption]
+    [deselectOption, selectOption],
   )
 
   const ctx: SelectorCtxType = useMemo(
@@ -186,7 +176,7 @@ export const Selector: FC<SelectorProps> = (props) => {
       selectOption,
       deselectOption,
     }),
-    [deselectOption, selectOption, selections, toggleOption]
+    [deselectOption, selectOption, selections, toggleOption],
   )
 
   // NOTE: Is it correct (let control select up if value is set ) ?

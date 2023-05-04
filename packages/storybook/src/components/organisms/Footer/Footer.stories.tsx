@@ -1,6 +1,7 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-import { MainFooter, MainFooterProps } from '@moodlenet/react-app/ui'
+import type { MainFooterProps } from '@moodlenet/react-app/ui'
+import { MainFooter } from '@moodlenet/react-app/ui'
 import PoweredByMoodleNet from '../../../assets/logos/powered-by-moodlenet.svg'
 
 const meta: ComponentMeta<typeof MainFooter> = {

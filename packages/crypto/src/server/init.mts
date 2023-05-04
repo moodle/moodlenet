@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
+import type { KeyLike } from 'jose'
 import * as jose from 'jose'
-import { KeyLike } from 'jose'
 import { shell } from './shell.mjs'
 
 export const env = await getEnv()

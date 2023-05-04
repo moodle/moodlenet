@@ -1,7 +1,8 @@
 import LinkTo from '@storybook/addon-links/react.js'
 
-import { LinkComponentCtx, LinkComponentType } from '@moodlenet/react-app/ui'
-import { FC, PropsWithChildren } from 'react'
+import type { LinkComponentType } from '@moodlenet/react-app/ui'
+import { LinkComponentCtx } from '@moodlenet/react-app/ui'
+import type { FC, PropsWithChildren } from 'react'
 
 // HACK: it seems '@storybook/addon-links/react.js' typings are not accurate
 const SBLinkTo = LinkTo as any as FC<PropsWithChildren<Record<string, unknown>>>

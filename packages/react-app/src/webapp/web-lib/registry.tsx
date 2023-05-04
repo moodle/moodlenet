@@ -1,4 +1,4 @@
-import { PkgIdentifier, PkgName } from '@moodlenet/core'
+import type { PkgIdentifier, PkgName } from '@moodlenet/core'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePkgContext } from '../context/PkgContext.mjs'
 

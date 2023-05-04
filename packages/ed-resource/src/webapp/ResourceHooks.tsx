@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ResourceActions, ResourceFormProps, ResourceProps, SaveState } from '../common/types.mjs'
+import type { ResourceActions, ResourceFormProps, ResourceProps } from '../common/types.mjs'
 
 import { useNavigate } from 'react-router-dom'
 import { MainContext } from './MainContext.js'
@@ -21,18 +21,26 @@ export type ResourceCommonProps = {
   isSaving: boolean
   isToDelete: boolean
 }
-// type SaveState = { form: boolean; image: boolean; content: boolean }
+type SaveState = { form: boolean; image: boolean; content: boolean }
 
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
   const nav = useNavigate()
   const [resource, setResource] = useState<ResourceProps | null>()
-  const [saveState, setSaveState] = useState({ form: false, image: false, content: false })
+  const [saveState, setSaveState] = useState<SaveState>({
+    form: false,
+    image: false,
+    content: false,
+  })
   const [isToDelete, setIsToDelete] = useState(false)
+  const [isPublished, setIsPublish] = useState(false)
 
   useEffect(() => {
-    rpcCaller.get(resourceKey).then(res => setResource(res))
+    rpcCaller.get(resourceKey).then(res => {
+      res && setIsPublish(res.state.isPublished)
+      setResource(res)
+    })
   }, [resourceKey, rpcCaller])
 
   const setterSave = useCallback(
@@ -44,7 +52,6 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     const { edit: editRpc, setImage: _setImage, setIsPublished, setContent, _delete } = rpcCaller
 
     const edit = debounce((res: ResourceFormProps) => {
-      setterSave('form', true)
       editRpc(resourceKey, res).then(() => {
         console.log('form xxx', res)
         setterSave('form', false)
@@ -60,11 +67,12 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         !resource ? '' : updateResource('data', { ...resource.data, [key]: val }), val
       )
 
-    const updateImageUrl = (imageUrl: string) => {
-      updateData<string>('imageUrl')(imageUrl)
+    const updateImageUrl = (imageUrl: string | null) => {
+      updateData<string | null>('imageUrl')(imageUrl)
     }
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
+        setterSave('form', true)
         edit(res) // .then(form => updateResource('form', 'resourceForm', form)),
       },
       async setImage(file: File | undefined | null) {
@@ -76,12 +84,18 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         return imageUrl
       },
       async setContent(content: File | string | undefined | null) {
-        setterSave('form', true)
+        setterSave('content', true)
         await setContent(resourceKey, content).then(updateData('contentUrl'))
-        setterSave('form', false)
+        setterSave('content', false)
       },
-      publish: () => setIsPublished(resourceKey, true),
-      unpublish: () => setIsPublished(resourceKey, false),
+      publish: () => {
+        setIsPublish(true)
+        setIsPublished(resourceKey, true)
+      },
+      unpublish: () => {
+        setIsPublish(false)
+        setIsPublished(resourceKey, false)
+      },
       toggleBookmark: () => undefined, //@ETTO to be filled
       toggleLike: () => undefined, //@ETTO to be filled
 
@@ -102,11 +116,11 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         ? null
         : {
             actions,
-            props: resource,
+            props: { ...resource, state: { ...resource.state, isPublished } },
             saveState,
             isSaving: saveState.form || saveState.image || saveState.content,
             isToDelete,
           },
-    [actions, isToDelete, resource, saveState],
+    [actions, isPublished, isToDelete, resource, saveState],
   )
 }

@@ -7,7 +7,7 @@ import {
   Search as SearchIcon,
 } from '@material-ui/icons'
 import { Upload as UploadIcon } from '@mui/icons-material'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import './RoundButton.scss'
 
 export type RoundButtonProps = {
