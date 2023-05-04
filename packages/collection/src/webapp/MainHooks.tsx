@@ -17,9 +17,13 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
   const [collection, setCollection] = useState<CollectionProps | null>()
   const [saveState, setSaved] = useState({ form: false, image: false })
   const [isToDelete, setIsToDelete] = useState(false)
+  const [isPublished, setIsPublish] = useState(false)
 
   useEffect(() => {
-    rpcCaller.get(collectionKey).then(data => setCollection(data))
+    rpcCaller.get(collectionKey).then(res => {
+      res && setIsPublish(res.state.isPublished)
+      setCollection(res)
+    })
   }, [collectionKey, rpcCaller])
 
   const setterSave = useCallback(
@@ -81,11 +85,11 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         ? null
         : {
             actions,
-            props: collection,
+            props: { ...collection, state: { ...collection.state, isPublished } },
             saveState,
             isToDelete,
             isSaving: saveState.form || saveState.image,
           },
-    [actions, collection, isToDelete, saveState],
+    [actions, collection, isPublished, isToDelete, saveState],
   )
 }
