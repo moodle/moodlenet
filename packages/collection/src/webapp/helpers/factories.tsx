@@ -1,5 +1,5 @@
-import { PartialDeep } from 'type-fest'
-import { CollectionCardProps } from '../exports/ui.mjs'
+import type { PartialDeep } from 'type-fest'
+import type { CollectionCardProps } from '../exports/ui.mjs'
 
 export const collectionsCardFactory: PartialDeep<CollectionCardProps>[] = [
   {

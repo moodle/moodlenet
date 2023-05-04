@@ -5,7 +5,9 @@ import {
   InfoOutlined as InfoOutlinedIcon,
   ReportProblemOutlined as ReportProblemOutlinedIcon,
 } from '@material-ui/icons'
-import React, { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react'
+import type React from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Card from '../Card/Card.js'
 import './Snackbar.scss'
 

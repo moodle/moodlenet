@@ -1,5 +1,5 @@
-import { ComponentType, FC, PropsWithChildren } from 'react'
-import { AddonItem } from '../../../../types.js'
+import type { ComponentType, FC, PropsWithChildren } from 'react'
+import type { AddonItem } from '../../../../types.js'
 import './Header.scss'
 
 export type HeaderIconType = {

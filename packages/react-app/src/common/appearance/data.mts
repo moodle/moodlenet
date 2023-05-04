@@ -1,4 +1,4 @@
-import { AppearanceData } from '../types.mjs'
+import type { AppearanceData } from '../types.mjs'
 import { adjustColor, getColorPalette, randomColor, setOpacity } from './colorUtilities.mjs'
 
 export const baseMoodleColor = '#F88012'

@@ -1,4 +1,4 @@
-import { SystemUser } from './types.mjs'
+import type { SystemUser } from './types.mjs'
 
 export type SysEntitiesAsyncCtxType = CurrentUserFetchedCtx | CurrentUserNotFetchedCtx
 export type CurrentUserFetchedCtx = {

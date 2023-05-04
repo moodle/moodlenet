@@ -1,10 +1,12 @@
-import { OrganizationData } from '@moodlenet/organization/common'
+import type { OrganizationData } from '@moodlenet/organization/common'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
-import { FC } from 'react'
-import { object, SchemaOf, string } from 'yup'
-import { SettingsItem } from '../Settings/Settings.js'
-import { General, GeneralMenu, GeneralProps } from './General.js'
+import type { FC } from 'react'
+import type { SchemaOf } from 'yup'
+import { object, string } from 'yup'
+import type { SettingsItem } from '../Settings/Settings.js'
+import type { GeneralProps } from './General.js'
+import { General, GeneralMenu } from './General.js'
 
 export const validationSchema: SchemaOf<OrganizationData> = object({
   instanceName: string().max(160).min(3).required(/* t */ `Please provide an instance name`),

@@ -1,12 +1,12 @@
 import { RpcStatus } from '@moodlenet/core'
 import { webImageResizer } from '@moodlenet/react-app/server'
-import { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import { WebUserExposeType } from '../common/expose-def.mjs'
-import { ClientSessionDataRpc, Profile, WebUserData } from '../common/types.mjs'
+import type { WebUserExposeType } from '../common/expose-def.mjs'
+import type { ClientSessionDataRpc, Profile, WebUserData } from '../common/types.mjs'
 import { publicFiles, publicFilesHttp } from './init.mjs'
 import { shell } from './shell.mjs'
-import { WebUserProfileDataType } from './types.mjs'
+import type { WebUserProfileDataType } from './types.mjs'
 import { loginAsRoot, sendWebUserTokenCookie, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import {
   editWebUserProfile,

@@ -15,8 +15,8 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 // import Card from '../../../atoms/Card/Card'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
+import type { AddonItem } from '@moodlenet/component-library'
 import {
-  AddonItem,
   Card,
   getThumbnailFromUrl,
   isEllipsisActive,
@@ -24,14 +24,15 @@ import {
 } from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { CloseRounded, Public } from '@mui/icons-material'
-import { FC, useEffect, useRef, useState } from 'react'
-import {
-  getResourceTypeInfo,
+import type { FC } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type {
   ResourceCardAccess,
   ResourceCardActions,
   ResourceCardDataProps,
   ResourceCardState,
 } from '../../../../common/types.mjs'
+import { getResourceTypeInfo } from '../../../../common/types.mjs'
 import './ResourceCard.scss'
 
 export type ResourceCardProps = {

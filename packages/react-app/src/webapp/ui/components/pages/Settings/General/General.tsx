@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { AddonItem, Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { OrganizationData } from '@moodlenet/organization/common'
-import { useFormik } from 'formik'
-import { FC } from 'react'
+import type { AddonItem} from '@moodlenet/component-library';
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import type { OrganizationData } from '@moodlenet/organization/common'
+import type { useFormik } from 'formik'
+import type { FC } from 'react'
 import './General.scss'
 
 export type GeneralProps = {

@@ -21,12 +21,12 @@ type RgbType = { r: number; g: number; b: number }
 
 export const hexToRgb = (hex: string): RgbType => {
   // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
   hex = hex.replace(shorthandRegex, function (_, r, g, b) {
     return r + r + g + g + b + b
   })
 
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result
     ? {
         r: result[1] ? parseInt(result[1], 16) : 0,
@@ -180,7 +180,7 @@ export const getGrayScale = (color: HslType) => {
   // Percetage of lightness or darkness that will be increased next
   const ratio = 3
   const desaturatedColor = changeSaturation(color, 10)
-  let grayScaleSet = {} as any
+  const grayScaleSet = {} as any
   for (let i = 14; i > 0; i--) {
     grayScaleSet[`--color-light-gray-${i}`] = hslToHex(
       changeLightness(desaturatedColor, 54 + ratio * i),

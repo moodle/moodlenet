@@ -1,11 +1,11 @@
-import { OptionItemProp } from '@moodlenet/component-library'
+import type { OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
-import { ResourceFormProps } from '../../../../common/types.mjs'
+import type { ResourceFormProps } from '../../../../common/types.mjs'
 import { maxUploadSize } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
-import { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
-import { ResourceProps } from './Resource.js'
+import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
+import type { ResourceProps } from './Resource.js'
 
 export const collectionTextOptionProps: OptionItemProp[] = [
   { label: 'Education', value: 'Education' },

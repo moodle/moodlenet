@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { RoundButton } from './RoundButton.js'
 
 const meta: ComponentMeta<typeof RoundButton> = {

@@ -1,17 +1,17 @@
 import { href } from '@moodlenet/react-app/common'
-import { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
-import {
-  ReactAppContext,
+import type { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
+import type {
   ReactAppMainComponent,
   RouteRegItem,
   SettingsSectionItem,
-  usePkgContext,
 } from '@moodlenet/react-app/webapp'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 
-import { MyPkgContext } from '../common/my-webapp/types.mjs'
+import type { MyPkgContext } from '../common/my-webapp/types.mjs'
 import { AuthCtx, useAuthCtx } from './context/AuthContext.js'
-import { MainContext, MainContextT } from './context/MainContext.mjs'
+import type { MainContextT } from './context/MainContext.mjs'
+import { MainContext } from './context/MainContext.mjs'
 import { LoginHeaderButton, SignupHeaderButton } from './exports/ui.mjs'
 import { useMakeRegistries } from './registries.mjs'
 import { routes } from './routes.js'

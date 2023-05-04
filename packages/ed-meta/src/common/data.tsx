@@ -1,10 +1,9 @@
-import {
-  getYearList,
+import type {
   IconTextOptionProps,
-  LicenseNodes,
   SimpleTextOptionProps,
   TextOptionProps,
 } from '@moodlenet/component-library'
+import { getYearList, LicenseNodes } from '@moodlenet/component-library'
 
 // const newEl = el.map(e => ({value: e}))
 

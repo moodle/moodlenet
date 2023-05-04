@@ -3,8 +3,8 @@ import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useMainHook } from '../../../MainHooks.js'
-import { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.jsx'
-import { CollectionProps } from './Collection.js'
+import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.jsx'
+import type { CollectionProps } from './Collection.js'
 
 export const useCollectionPageProps = ({
   collectionKey,

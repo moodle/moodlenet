@@ -1,4 +1,4 @@
-import { InstallPkgReq, PackageInfo, PkgIdentifier } from '@moodlenet/core'
+import type { InstallPkgReq, PackageInfo, PkgIdentifier } from '@moodlenet/core'
 
 export type SearchPackagesResponse = { objects: SearchPackagesResObject[] }
 export type SearchPackagesResObject = {

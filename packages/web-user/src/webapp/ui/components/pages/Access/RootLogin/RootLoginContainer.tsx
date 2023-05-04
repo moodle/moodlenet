@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { RootLogin } from './RootLogin.js'
 import { useRootLoginProps } from './RootLoginHook.mjs'
 

@@ -1,8 +1,8 @@
 import { getDomainUrl } from '@moodlenet/component-library'
-import { Href } from '@moodlenet/react-app/common'
-import { PkgContextT } from '@moodlenet/react-app/webapp'
+import type { Href } from '@moodlenet/react-app/common'
+import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
-import { ResourceExposeType } from './expose-def.mjs'
+import type { ResourceExposeType } from './expose-def.mjs'
 
 export type MyWebDeps = {
   me: ResourceExposeType
@@ -232,7 +232,8 @@ export const getResourceTypeInfo = (
   }
 }
 
-import { mixed, object, SchemaOf, string } from 'yup'
+import type { SchemaOf } from 'yup'
+import { mixed, object, string } from 'yup'
 export const maxUploadSize = 1024 * 1024 * 50
 
 export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({

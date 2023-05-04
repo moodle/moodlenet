@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { SettingsContainer } from './SettingsContainer.js'
 
 // FIXMA: needs a settable context

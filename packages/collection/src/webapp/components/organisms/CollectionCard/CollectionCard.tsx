@@ -1,9 +1,11 @@
 import { FilterNone } from '@material-ui/icons'
-import { AddonItem, Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
+import { Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
 import { Public } from '@mui/icons-material'
-import { FC, useEffect, useRef, useState } from 'react'
-import {
+import type { FC } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type {
   CollectionCardAccess,
   CollectionCardActions,
   CollectionCardData,

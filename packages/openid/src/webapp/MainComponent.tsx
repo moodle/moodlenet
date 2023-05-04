@@ -1,9 +1,10 @@
-import { ReactAppContext, ReactAppMainComponent, usePkgContext } from '@moodlenet/react-app/webapp'
+import type { ReactAppMainComponent } from '@moodlenet/react-app/webapp'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext } from 'react'
 
 import { ProvideOpenIdContext } from './OpenIdContextProvider.js'
 import { routesItem } from './router.js'
-import { OpenIdPkgContext } from './types.mjs'
+import type { OpenIdPkgContext } from './types.mjs'
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const pkgContext = usePkgContext<OpenIdPkgContext>()

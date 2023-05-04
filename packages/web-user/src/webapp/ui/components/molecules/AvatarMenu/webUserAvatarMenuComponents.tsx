@@ -1,5 +1,5 @@
 import { Bookmarks } from '@material-ui/icons'
-import { Href } from '@moodlenet/react-app/common'
+import type { Href } from '@moodlenet/react-app/common'
 import { Link, proxied } from '@moodlenet/react-app/ui'
 import { ExitToApp } from '@mui/icons-material'
 import { ReactComponent as ArrowsIcon } from '../../../assets/icons/arrows.svg'

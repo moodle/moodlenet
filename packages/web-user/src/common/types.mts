@@ -1,4 +1,4 @@
-import { Href } from '@moodlenet/react-app/common'
+import type { Href } from '@moodlenet/react-app/common'
 
 export type Profile = {
   _key: string

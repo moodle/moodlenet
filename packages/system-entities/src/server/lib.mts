@@ -1,5 +1,6 @@
-import { ensureDocumentCollection, Patch } from '@moodlenet/arangodb/server'
-import { PkgIdentifier } from '@moodlenet/core'
+import type { Patch } from '@moodlenet/arangodb/server'
+import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
+import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
 import {
@@ -8,11 +9,12 @@ import {
 } from './aql-lib/aql.mjs'
 import { entityDocument2Aql, pkgMetaOf2Aql } from './aql-lib/by-proc-values.mjs'
 import { userInfoAqlProvider } from './aql-lib/userInfo.mjs'
-import { EntityInfo, EntityInfoProviderItem, ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
+import type { EntityInfo, EntityInfoProviderItem } from './entity-info.mjs'
+import { ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { db, env } from './init.mjs'
 import { entityId, getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
-import {
+import type {
   AccessControllers,
   AnonUser,
   AqlVal,
@@ -31,7 +33,7 @@ import {
   SomeEntityDataType,
   SystemUser,
 } from './types.mjs'
-import { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
+import type { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
 const DEFAULT_QUERY_LIMIT = 25
 const DEFAULT_MAX_QUERY_LIMIT = 100
 export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
@@ -115,7 +117,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
 ) {
   const currentUser = opts?.pkgCreator ? await setPkgCurrentUser() : await getCurrentSystemUser()
 
-  console.log({ currentUser })
+  // console.log({ currentUser })
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
     return

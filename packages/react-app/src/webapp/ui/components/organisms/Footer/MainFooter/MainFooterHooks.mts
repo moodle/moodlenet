@@ -1,7 +1,7 @@
-import { AddonItem } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
-import { MainFooterProps } from './MainFooter.js'
+import type { MainFooterProps } from './MainFooter.js'
 
 export const useFooterProps = (): MainFooterProps => {
   const { reg } = useContext(MainContext)

@@ -1,9 +1,5 @@
-import {
-  IconTextOptionProps,
-  LicenseNodes,
-  TextOptionProps,
-  VisibilityNodes,
-} from '@moodlenet/component-library'
+import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
+import { LicenseNodes, VisibilityNodes } from '@moodlenet/component-library'
 // import { VisibilityNodes } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 
 export const LicenseIconTextOptionProps: IconTextOptionProps[] = [

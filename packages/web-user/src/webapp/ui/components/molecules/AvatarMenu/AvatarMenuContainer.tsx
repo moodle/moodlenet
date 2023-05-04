@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { AvatarMenu } from './AvatarMenu.js'
 import { useAvatarMenuProps } from './AvatarMenuHook.js'
 

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { Advanced } from './Advanced.js'
 import { useAdvancedProps } from './AdvancedHooks.js'
 
