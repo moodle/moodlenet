@@ -1,5 +1,5 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { FC } from 'react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { FC } from 'react'
 
 function html() {
   return {

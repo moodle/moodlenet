@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { OrganizationData } from '../common/types.mjs'
+import type { OrganizationData } from '../common/types.mjs'
 import { kvStore } from './init.mjs'
 
 export async function setOrgData({ orgData }: { orgData: OrganizationData }) {

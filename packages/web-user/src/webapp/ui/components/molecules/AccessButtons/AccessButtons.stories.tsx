@@ -1,5 +1,5 @@
-import { AddonItem } from '@moodlenet/component-library'
-import { Href } from '@moodlenet/react-app/common'
+import type { AddonItem } from '@moodlenet/component-library'
+import type { Href } from '@moodlenet/react-app/common'
 import { LoginHeaderButton, SignupHeaderButton } from './AccessButtons.js'
 
 export type AccessButtonsProps = {

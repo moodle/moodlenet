@@ -1,17 +1,21 @@
-import { FloatingMenu, FloatingMenuContentItem } from '@moodlenet/component-library'
-import { ComponentType, FC, useMemo } from 'react'
+import type { FloatingMenuContentItem } from '@moodlenet/component-library'
+import { FloatingMenu } from '@moodlenet/component-library'
+import type { ComponentType, FC } from 'react'
+import { useMemo } from 'react'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
+import type {
+  BookmarksLinkAvatarMenuComponentProps,
+  FollowingLinkAvatarMenuComponentProps,
+  ProfileLinkAvatarMenuComponentProps,
+  SettingsLinkAvatarMenuComponentProps,
+  SignoutAvatarMenuComponentProps,
+} from './webUserAvatarMenuComponents.js'
 import {
   BookmarksLinkAvatarMenuComponent,
-  BookmarksLinkAvatarMenuComponentProps,
   FollowingLinkAvatarMenuComponent,
-  FollowingLinkAvatarMenuComponentProps,
   ProfileLinkAvatarMenuComponent,
-  ProfileLinkAvatarMenuComponentProps,
   SettingsLinkAvatarMenuComponent,
-  SettingsLinkAvatarMenuComponentProps,
   SignoutAvatarMenuComponent,
-  SignoutAvatarMenuComponentProps,
 } from './webUserAvatarMenuComponents.js'
 
 export type AvatarMenuItem = {

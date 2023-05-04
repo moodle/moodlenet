@@ -1,17 +1,18 @@
-import { SettingsItem } from '@moodlenet/react-app/ui'
+import type { SettingsItem } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
-import { FC } from 'react'
-import { object, SchemaOf, string } from 'yup'
-import InstallExtension, {
-  InstallExtensionMenu,
+import type { FC } from 'react'
+import type { SchemaOf } from 'yup'
+import { object, string } from 'yup'
+import type {
   InstallExtensionProps,
   InstallLocalPathExtensionFormValues,
 } from './InstallExtension.js'
+import InstallExtension, { InstallExtensionMenu } from './InstallExtension.js'
 
 import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 import packageIcon5 from '../../../assets/icons/package-icon-5.png'
-import { ExtensionType } from '../Extensions/Extensions.js'
+import type { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 // import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'

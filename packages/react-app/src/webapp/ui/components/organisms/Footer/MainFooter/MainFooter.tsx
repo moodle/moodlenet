@@ -1,5 +1,7 @@
-import { AddonItem, Footer, FooterProps } from '@moodlenet/component-library'
-import { FC, useMemo } from 'react'
+import type { AddonItem, FooterProps } from '@moodlenet/component-library'
+import { Footer } from '@moodlenet/component-library'
+import type { FC } from 'react'
+import { useMemo } from 'react'
 import './MainFooter.scss'
 
 export type MainFooterProps = {

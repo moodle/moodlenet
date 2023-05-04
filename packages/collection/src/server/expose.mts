@@ -2,16 +2,18 @@ import { shell } from './shell.mjs'
 
 import { RpcStatus } from '@moodlenet/core'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
-import {
+import type {
   AccessEntitiesRecordType,
   AqlVal,
-  creatorUserInfoAqlProvider,
   EntityInfo,
+} from '@moodlenet/system-entities/server'
+import {
+  creatorUserInfoAqlProvider,
   getCurrentUserInfo,
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
-import { CollectionExposeType } from '../common/expose-def.mjs'
-import { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
+import type { CollectionExposeType } from '../common/expose-def.mjs'
+import type { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles, publicFilesHttp } from './init.mjs'
@@ -24,7 +26,7 @@ import {
   patchCollection,
   updateCollectionContent,
 } from './lib.mjs'
-import { CollectionDataType } from './types.mjs'
+import type { CollectionDataType } from './types.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({
   rpc: {

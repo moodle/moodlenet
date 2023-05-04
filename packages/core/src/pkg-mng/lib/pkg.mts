@@ -3,10 +3,10 @@ import { readdir, readFile } from 'fs/promises'
 import { dirname, resolve } from 'path'
 import { packageDirectorySync } from 'pkg-dir'
 import { fileURLToPath } from 'url'
-import { PkgModuleRef } from '../../exports.mjs'
+import type { PkgModuleRef } from '../../exports.mjs'
 import { ignites } from '../../main/env.mjs'
-import { PkgIdentifier } from '../../types.mjs'
-import { PackageInfo, SafePackageJson } from '../types.mjs'
+import type { PkgIdentifier } from '../../types.mjs'
+import type { PackageInfo, SafePackageJson } from '../types.mjs'
 
 function isNodeModule(pkg_module_ref: PkgModuleRef): pkg_module_ref is NodeModule {
   return 'exports' in pkg_module_ref

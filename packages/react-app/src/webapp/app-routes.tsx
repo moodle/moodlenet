@@ -1,4 +1,5 @@
-import { ReactElement, useContext } from 'react'
+import type { ReactElement } from 'react'
+import { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { MainContext } from './context/MainContext.mjs'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'

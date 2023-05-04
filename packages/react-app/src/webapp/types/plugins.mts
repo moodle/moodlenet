@@ -1,7 +1,7 @@
-import { PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
-import { ComponentType, PropsWithChildren } from 'react'
-import { WebPkgDeps } from '../../common/types.mjs'
-import { PkgRpcHandle } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
+import type { PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
+import type { ComponentType, PropsWithChildren } from 'react'
+import type { WebPkgDeps } from '../../common/types.mjs'
+import type { PkgRpcHandle } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
 export type ReactAppMainComponent = ComponentType<PropsWithChildren>
 

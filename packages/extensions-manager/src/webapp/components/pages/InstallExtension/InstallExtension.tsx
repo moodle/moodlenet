@@ -6,11 +6,12 @@ import {
   Snackbar,
 } from '@moodlenet/component-library'
 import { KeyboardArrowLeftRounded, KeyboardArrowUpRounded } from '@mui/icons-material'
-import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import type { useFormik } from 'formik'
+import type { FC } from 'react'
+import { useState } from 'react'
 import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
-import { ExtensionType } from '../Extensions/Extensions.js'
+import type { ExtensionType } from '../Extensions/Extensions.js'
 import './InstallExtension.scss'
 
 export type InstallLocalPathExtensionFormValues = {

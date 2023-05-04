@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { Signup } from './Signup.js'
 import { useSignUpProps } from './SignupHook.mjs'
 

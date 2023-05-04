@@ -1,8 +1,9 @@
 import { useFormik } from 'formik'
-import { FC, useContext, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { MainContext } from '../../MainContext.mjs'
+import type { SignupFormValues, SignupProps } from './Signup.js'
 import * as SignUpAddon from './Signup.js'
-import { SignupFormValues, SignupProps } from './Signup.js'
 
 export const usePanelProps = (): SignupProps => {
   const {

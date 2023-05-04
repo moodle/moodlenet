@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect } from 'react'
+import type { FC, ReactNode } from 'react'
+import { useEffect } from 'react'
 import { baseStyle } from '../../component-library/src/webapp/ui/styles/config.js'
 import './Wrapper.scss'
 

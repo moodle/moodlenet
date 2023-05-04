@@ -1,6 +1,6 @@
-import type { UserId } from '../../../authentication-manager/dist/init.mjs'
 import assert from 'assert'
-import { OauthResult, ProviderName } from './types'
+import type { UserId } from '../../../authentication-manager/dist/init.mjs'
+import type { OauthResult, ProviderName } from './types'
 
 const SEP = '::'
 

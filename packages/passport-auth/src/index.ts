@@ -1,13 +1,13 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import { resolve } from 'path'
-import { AuthenticationManagerExtDef } from '../../authentication-manager/dist/init.mjs'
+import type { AuthenticationManagerExtDef } from '../../authentication-manager/dist/init.mjs'
 import type { MNHttpServerExtDef } from '../../http-server/dist/init.mjs'
 import type { WebUserExtDef } from '../../react-app/dist/init.mjs'
 import type { ReactAppExtDef } from '../../react-app/dist/root-export.mjs'
 import type { ContentGraphExtDef } from '../../system-entities/dist/init.mjs'
 import { prepareApp } from './oauth-server'
 import configApiKeyStore from './store'
-import { PassportConfigs } from './store/types'
+import type { PassportConfigs } from './store/types'
 
 export type PassportAuthTopo = {
   get: SubTopo<void, { configs: PassportConfigs }>

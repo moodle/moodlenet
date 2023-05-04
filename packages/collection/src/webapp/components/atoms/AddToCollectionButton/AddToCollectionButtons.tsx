@@ -1,14 +1,15 @@
+import type { OptionItemProp } from '@moodlenet/component-library'
 import {
   AddToCollectionsCard,
   Modal,
   OptionItem,
-  OptionItemProp,
   PrimaryButton,
   SecondaryButton,
 } from '@moodlenet/component-library'
-import { SelectOptionsMulti } from '@moodlenet/react-app/ui'
+import type { SelectOptionsMulti } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useState } from 'react'
 
 export type AddToCollectionButtonProps = {
   collections: SelectOptionsMulti<OptionItemProp>

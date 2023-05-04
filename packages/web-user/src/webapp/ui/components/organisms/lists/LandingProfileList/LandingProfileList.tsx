@@ -1,8 +1,11 @@
-import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
+import type { Href } from '@moodlenet/component-library'
+import { ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
-import { FC, useMemo } from 'react'
-import { ProfileCard, ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
+import type { FC } from 'react'
+import { useMemo } from 'react'
+import type { ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
+import { ProfileCard } from '../../ProfileCard/ProfileCard.js'
 import './LandingProfileList.scss'
 
 export type LandingProfileListProps = {

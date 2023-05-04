@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import InstallExtension from './InstallExtension.js'
 import { useInstallExtensionProps } from './InstallExtensionHook.js'
 

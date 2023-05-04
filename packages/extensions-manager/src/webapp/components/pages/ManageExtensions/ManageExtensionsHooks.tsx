@@ -1,8 +1,8 @@
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
-import { ManageExtensionsPropsControlled } from './ManageExtensions.js'
+import type { ManageExtensionsPropsControlled } from './ManageExtensions.js'
 
-import { ExtensionType } from '../Extensions/Extensions.js'
 import { MainContext } from '../../../MainContext.js'
+import type { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon5 from '../../../assets/icons/package-icon-5.png'
 // import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 

@@ -1,13 +1,14 @@
-import { FloatingMenu, FloatingMenuContentItem } from '@moodlenet/component-library'
-import { ProxyProps } from '@moodlenet/react-app/ui'
-import { ComponentType, FC, useMemo } from 'react'
+import type { FloatingMenuContentItem } from '@moodlenet/component-library'
+import { FloatingMenu } from '@moodlenet/component-library'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
+import type { ComponentType, FC } from 'react'
+import { useMemo } from 'react'
 import { ReactComponent as AddIcon } from '../../../assets/icons/add-round.svg'
-import {
-  CreateCollectionAddMenuItem,
+import type {
   CreateCollectionAddMenuItemProps,
-  CreateResourceAddMenuItem,
   CreateResourceAddMenuItemProps,
 } from './AddMenuItems.js'
+import { CreateCollectionAddMenuItem, CreateResourceAddMenuItem } from './AddMenuItems.js'
 
 export type AddMenuItem = {
   Component: ComponentType

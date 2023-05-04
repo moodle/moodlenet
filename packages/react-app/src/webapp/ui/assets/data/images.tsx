@@ -1,4 +1,4 @@
-import { AssetInfo } from '../../../../common/types.mjs'
+import type { AssetInfo } from '../../../../common/types.mjs'
 import ashleywhitlatch from '../img/contentBackup/ashleywhitlatch.jpg'
 import dvlden from '../img/contentBackup/dvlden.jpg'
 import dvlden2 from '../img/contentBackup/dvlden2.jpg'

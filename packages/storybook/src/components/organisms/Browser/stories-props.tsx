@@ -1,10 +1,11 @@
 import { SearchCollectionList } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { SearchResourceList } from '@moodlenet/ed-resource/ui'
-import { BrowserProps, SortBy } from '@moodlenet/react-app/ui'
+import type { BrowserProps } from '@moodlenet/react-app/ui'
+import { SortBy } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
 import { useMemo, useState } from 'react'
-import { PartialDeep } from 'type-fest'
+import type { PartialDeep } from 'type-fest'
 import { getCollectionsCardStoryProps } from '../CollectionCard/story-props.js'
 import { getResourcesCardStoryProps } from '../ResourceCard/story-props.js'
 

@@ -1,4 +1,4 @@
-import { SimpleEmailAuthExposeType } from '../common/expose-def.mjs'
+import type { SimpleEmailAuthExposeType } from '../common/expose-def.mjs'
 import { confirm, login, signup } from './lib.mjs'
 import { shell } from './shell.mjs'
 

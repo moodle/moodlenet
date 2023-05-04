@@ -1,8 +1,11 @@
 import { ArrowForwardRounded } from '@material-ui/icons'
-import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
+import type { Href } from '@moodlenet/component-library'
+import { ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
-import { FC, useMemo } from 'react'
-import { CollectionCard, CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
+import type { FC } from 'react'
+import { useMemo } from 'react'
+import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
+import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
 import './LandingCollectionList.scss'
 
 export type LandingCollectionListProps = {

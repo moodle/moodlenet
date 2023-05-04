@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import Collection from './Collection.js'
 import { useCollectionPageProps } from './CollectionPageHooks.js'
 

@@ -1,5 +1,5 @@
 import { instanceDomain } from '@moodlenet/core'
-import { RequestHandler } from 'express'
+import type { RequestHandler } from 'express'
 import { shell } from './shell.mjs'
 import type { HttpAsyncCtx, MiddlewareItem, MountAppItem } from './types.mjs'
 export * from './types.mjs'

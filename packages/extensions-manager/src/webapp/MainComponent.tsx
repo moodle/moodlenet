@@ -1,9 +1,5 @@
-import {
-  ReactAppContext,
-  ReactAppMainComponent,
-  SettingsSectionItem,
-  usePkgContext,
-} from '@moodlenet/react-app/webapp'
+import type { ReactAppMainComponent, SettingsSectionItem } from '@moodlenet/react-app/webapp'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 
 import { useContext, useEffect, useState } from 'react'
 import type {
@@ -11,7 +7,7 @@ import type {
   SearchPackagesResObject,
   SearchPackagesResponse,
 } from '../common/data.mjs'
-import { MyPkgContext } from '../common/types.mjs'
+import type { MyPkgContext } from '../common/types.mjs'
 import { ExtensionsMenu } from './components/pages/Extensions/Extensions.js'
 import { ExtensionsContainer } from './components/pages/Extensions/ExtensionsContainer.js'
 import { MainContext } from './MainContext.js'

@@ -1,4 +1,5 @@
-import { ComponentType, isValidElement, JSXElementConstructor, ReactElement } from 'react'
+import type { ComponentType, JSXElementConstructor, ReactElement } from 'react'
+import { isValidElement } from 'react'
 const PROXY_VALUE_SYMB: unique symbol = `
 ***
 PROXY SYMBOL

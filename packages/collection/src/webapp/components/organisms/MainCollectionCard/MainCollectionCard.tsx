@@ -1,16 +1,16 @@
 import { Share } from '@material-ui/icons'
+import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
 import {
-  AddonItem,
   Card,
   FloatingMenu,
-  FloatingMenuContentItem,
   InputTextField,
   Modal,
   PrimaryButton,
   Snackbar,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import { FormikHandle, getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
+import type { FormikHandle } from '@moodlenet/react-app/ui'
+import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
   Delete,
@@ -21,8 +21,9 @@ import {
   Sync,
 } from '@mui/icons-material'
 import { useFormik } from 'formik'
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import {
+import type { FC } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type {
   CollectionAccessProps,
   CollectionActions,
   CollectionDataProps,

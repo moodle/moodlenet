@@ -1,6 +1,6 @@
-import { PkgName } from '@moodlenet/core'
+import type { PkgName } from '@moodlenet/core'
 import * as pkgDbNames from '../pkg-db-names.mjs'
-import {
+import type {
   AqlVal,
   EntityClass,
   EntityDocument,

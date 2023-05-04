@@ -1,7 +1,7 @@
 import kvStoreFactory from '@moodlenet/key-value-store/server'
 import fileStoreFactory from '@moodlenet/simple-file-store/server'
 import { shell } from './shell.mjs'
-import { KeyValueStoreData } from './types.mjs'
+import type { KeyValueStoreData } from './types.mjs'
 
 export const kvStore = await kvStoreFactory<KeyValueStoreData>(shell)
 

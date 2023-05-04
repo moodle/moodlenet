@@ -1,14 +1,9 @@
-import { DocumentMetadata } from '@moodlenet/arangodb/server'
-import {
-  create,
-  EntityAccess,
-  getEntity,
-  Patch,
-  patchEntity,
-} from '@moodlenet/system-entities/server'
+import type { DocumentMetadata } from '@moodlenet/arangodb/server'
+import type { EntityAccess, Patch } from '@moodlenet/system-entities/server'
+import { create, getEntity, patchEntity } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { db, WebUserCollection, WebUserProfile } from './init.mjs'
-import {
+import type {
   CreateRequest,
   WebUserDataType,
   WebUserProfileDataType,

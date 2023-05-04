@@ -1,4 +1,4 @@
-import { PeopleFactory } from '../types.js'
+import type { PeopleFactory } from '../types.js'
 
 export const peopleFactory: PeopleFactory[] = [
   {

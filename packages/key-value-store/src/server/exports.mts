@@ -1,6 +1,7 @@
-import { DocumentMetadata, ensureDocumentCollection } from '@moodlenet/arangodb/server'
+import type { DocumentMetadata } from '@moodlenet/arangodb/server'
+import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import type { Shell } from '@moodlenet/core'
-import { KVStore, KVSTypeMap, ValueObj } from './types.js'
+import type { KVStore, KVSTypeMap, ValueObj } from './types.js'
 export * from './types.js'
 export const KV_COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 

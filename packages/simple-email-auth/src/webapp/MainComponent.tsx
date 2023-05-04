@@ -1,14 +1,10 @@
-import {
-  ReactAppContext,
-  ReactAppMainComponent,
-  SettingsSectionItem,
-  usePkgContext,
-} from '@moodlenet/react-app/webapp'
+import type { ReactAppMainComponent, SettingsSectionItem } from '@moodlenet/react-app/webapp'
+import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo } from 'react'
-import { MyPkgContext } from '../common/types.mjs'
+import type { MyPkgContext } from '../common/types.mjs'
 import { MainContext } from './MainContext.mjs'
-import { MainContextT } from './types.mjs'
+import type { MainContextT } from './types.mjs'
 import * as LoginComponents from './ui/Login/Login.js'
 import { LoginPanelContainer } from './ui/Login/LoginContainer.js'
 import { SettingsContent, SettingsMenu } from './ui/Settings.js'

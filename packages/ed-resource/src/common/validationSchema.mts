@@ -1,5 +1,6 @@
-import { mixed, object, SchemaOf, string } from 'yup'
-import { ResourceFormProps } from './types.mjs'
+import type { SchemaOf } from 'yup'
+import { mixed, object, string } from 'yup'
+import type { ResourceFormProps } from './types.mjs'
 export const maxUploadSize = 1024 * 1024 * 50
 
 export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({

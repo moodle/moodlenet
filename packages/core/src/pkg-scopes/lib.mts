@@ -1,5 +1,5 @@
 import { assertCallInitiator } from '../async-context/lib.mjs'
-import { PkgName } from '../types.mjs'
+import type { PkgName } from '../types.mjs'
 
 export type ScopeDefs = Record<string, { description: string }>
 

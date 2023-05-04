@@ -1,5 +1,6 @@
 import { CloseRounded as CloseRoundedIcon } from '@material-ui/icons'
-import React, { PropsWithChildren, ReactNode, useCallback, useEffect } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import Card from '../Card/Card.js'
 import './Modal.scss'

@@ -1,8 +1,11 @@
-import { Href, ListCard, PrimaryButton } from '@moodlenet/component-library'
+import type { Href } from '@moodlenet/component-library'
+import { ListCard, PrimaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import { LibraryAdd } from '@mui/icons-material'
-import { FC, useMemo } from 'react'
-import { CollectionCard, CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
+import type { FC } from 'react'
+import { useMemo } from 'react'
+import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
+import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
 import './CollectionList.scss'
 
 export type CollectionListProps = {

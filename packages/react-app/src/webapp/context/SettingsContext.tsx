@@ -1,8 +1,6 @@
+import type { ComponentType, FC, PropsWithChildren } from 'react'
 import {
-  ComponentType,
   createContext,
-  FC,
-  PropsWithChildren,
   useCallback,
   useContext,
   useEffect,
@@ -11,7 +9,7 @@ import {
   useState,
 } from 'react'
 import { defaultAppearanceData } from '../../common/appearance/data.mjs'
-import { AppearanceData } from '../../common/types.mjs'
+import type { AppearanceData } from '../../common/types.mjs'
 import { MainContext } from './MainContext.mjs'
 // import lib from '../../../../main-lib'
 

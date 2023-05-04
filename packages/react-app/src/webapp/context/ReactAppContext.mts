@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { GuestMainRegistries } from '../registries.mjs'
+import type { GuestMainRegistries } from '../registries.mjs'
 
 export type ReactAppContextT = {
   registries: GuestMainRegistries

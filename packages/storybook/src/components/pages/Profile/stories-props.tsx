@@ -3,20 +3,20 @@ import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { OverallCard } from '@moodlenet/react-app/ui'
-import {
+import type {
   ProfileAccess,
   ProfileActions,
   ProfileData,
-  profileFormValidationSchema,
   ProfileFormValues,
   ProfileState,
 } from '@moodlenet/web-user/common'
-import { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
+import { profileFormValidationSchema } from '@moodlenet/web-user/common'
+import type { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
 import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
-import { PartialDeep } from 'type-fest'
+import type { PartialDeep } from 'type-fest'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
 const maxUploadSize = 1024 * 1024 * 50

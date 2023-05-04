@@ -1,5 +1,5 @@
 import { plugin } from '@moodlenet/react-app/server'
-import { OpenidWebAppDeps } from '../webapp/types.mjs'
+import type { OpenidWebAppDeps } from '../webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { shell } from './shell.mjs'
 
