@@ -1,7 +1,13 @@
-import { assertRpcFileReadable, readableRpcFile, RpcFile } from '@moodlenet/core'
+import type { RpcFile } from '@moodlenet/core'
+import { assertRpcFileReadable, readableRpcFile } from '@moodlenet/core'
 import assert from 'assert'
 import sharp from 'sharp'
-import { AppearanceData, WebappPluginDef, WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
+import type {
+  AppearanceData,
+  WebappPluginDef,
+  WebappPluginItem,
+  WebPkgDeps,
+} from '../common/types.mjs'
 import { httpApp, kvStore } from './init.mjs'
 import { shell } from './shell.mjs'
 import { addWebappPluginItem } from './webapp-plugins.mjs'

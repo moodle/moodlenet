@@ -1,10 +1,11 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { default as image } from '../../../assets/img/contentBackup/fakurian2.jpg'
 import { default as backupImage } from '../../../assets/img/contentBackup/gradienta3.jpg'
 
 import { action } from '@storybook/addon-actions'
 import { useImageUrl } from '../../../lib/useImageUrl.mjs'
-import ImageContainer, { ImageContainerProps } from './ImageContainer.js'
+import type { ImageContainerProps } from './ImageContainer.js'
+import ImageContainer from './ImageContainer.js'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

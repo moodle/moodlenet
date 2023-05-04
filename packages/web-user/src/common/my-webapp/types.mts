@@ -1,5 +1,5 @@
-import { PkgContextT } from '@moodlenet/react-app/webapp'
-import { WebUserExposeType } from '../expose-def.mjs'
+import type { PkgContextT } from '@moodlenet/react-app/webapp'
+import type { WebUserExposeType } from '../expose-def.mjs'
 
 export type MyWebAppDeps = {
   me: WebUserExposeType

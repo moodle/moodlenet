@@ -1,7 +1,7 @@
-import { ExtShell } from '@moodlenet/core'
+import type { ExtShell } from '@moodlenet/core'
 import { Passport } from 'passport'
 import passportGoogle from 'passport-google-oauth20'
-import { PassportAuthExt } from '..'
+import type { PassportAuthExt } from '..'
 
 async function getPassport(shell: ExtShell<PassportAuthExt>) {
   const {

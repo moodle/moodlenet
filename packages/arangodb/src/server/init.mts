@@ -1,6 +1,6 @@
-import { PkgIdentifier } from '@moodlenet/core'
-import { DocumentCollection } from 'arangojs/collection.js'
-import { Config } from 'arangojs/connection.js'
+import type { PkgIdentifier } from '@moodlenet/core'
+import type { DocumentCollection } from 'arangojs/collection.js'
+import type { Config } from 'arangojs/connection.js'
 import { Database } from 'arangojs/database.js'
 import { shell } from './shell.mjs'
 

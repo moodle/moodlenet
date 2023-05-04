@@ -1,5 +1,6 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { Loading, LoadingProps } from './Loading.js'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { LoadingProps } from './Loading.js'
+import { Loading } from './Loading.js'
 
 const meta: ComponentMeta<typeof Loading> = {
   title: 'Atoms/Loading',

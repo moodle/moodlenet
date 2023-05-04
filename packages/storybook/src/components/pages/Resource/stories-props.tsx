@@ -1,24 +1,25 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import {
+import type {
   ResourceAccessProps,
   ResourceActions,
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
-  resourceValidationSchema,
 } from '@moodlenet/ed-resource/common'
+import { resourceValidationSchema } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta } from '@storybook/react'
-import { PartialDeep } from 'type-fest'
+import type { ComponentMeta } from '@storybook/react'
+import type { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
-import { addMethod, AnySchema, MixedSchema } from 'yup'
+import type { AnySchema } from 'yup'
+import { addMethod, MixedSchema } from 'yup'
 // import { href } from '../../../elements/link'
 // import { TagListStory } from '../../../elements/tags'
 // import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
-import { AddonItem, OptionItemProp } from '@moodlenet/component-library'
+import type { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
@@ -34,7 +35,8 @@ import {
   YearsProps,
 } from '@moodlenet/ed-meta/common'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
-import { MainResourceCardSlots, Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
+import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
+import { Resource } from '@moodlenet/ed-resource/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
 import { useState } from 'react'

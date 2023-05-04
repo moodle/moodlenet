@@ -1,9 +1,7 @@
 import { href } from '@moodlenet/react-app/common'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import {
-  CollectionContributorCard,
-  CollectionContributorCardProps,
-} from './CollectionContributorCard.js'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { CollectionContributorCardProps } from './CollectionContributorCard.js'
+import { CollectionContributorCard } from './CollectionContributorCard.js'
 
 const meta: ComponentMeta<typeof CollectionContributorCard> = {
   title: 'Pages/Collection/CollectionContributorCard',

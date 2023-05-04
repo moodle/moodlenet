@@ -1,6 +1,6 @@
 import { Card } from '@moodlenet/component-library'
-import { FC } from 'react'
-import { ExtensionType } from '../Extensions/Extensions.js'
+import type { FC } from 'react'
+import type { ExtensionType } from '../Extensions/Extensions.js'
 // import { searchNpmExtensionConfig } from '../../../../../helpers/utilities'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus'

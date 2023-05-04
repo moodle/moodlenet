@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 
-const getImageUrl = (maybe_url_or_file: undefined | Blob | string, defaultUrl: string | undefined) =>
+const getImageUrl = (
+  maybe_url_or_file: undefined | Blob | string,
+  defaultUrl: string | undefined,
+) =>
   !maybe_url_or_file
     ? defaultUrl
     : typeof maybe_url_or_file === 'string'

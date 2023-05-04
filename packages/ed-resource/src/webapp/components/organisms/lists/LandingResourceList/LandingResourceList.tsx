@@ -1,8 +1,11 @@
-import { Href, ListCard, SecondaryButton } from '@moodlenet/component-library'
+import type { Href } from '@moodlenet/component-library'
+import { ListCard, SecondaryButton } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
-import { FC, useMemo } from 'react'
-import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
+import type { FC } from 'react'
+import { useMemo } from 'react'
+import type { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
+import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './LandingResourceList.scss'
 
 export type LandingResourceListProps = {

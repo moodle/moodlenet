@@ -1,6 +1,8 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { SimpleLayout, SimpleLayoutProps } from '@moodlenet/react-app/ui'
-import { FC, useCallback, useEffect, useState } from 'react'
+import type { SimpleLayoutProps } from '@moodlenet/react-app/ui'
+import { SimpleLayout } from '@moodlenet/react-app/ui'
+import type { FC } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import './RootLogin.scss'
 

@@ -1,7 +1,7 @@
-import { existsSync, mkdirSync } from 'fs';
-import { readFile, writeFile } from 'fs/promises';
-import { resolve } from 'path';
-import { PassportConfigs } from './types'; //emal, users
+import { existsSync, mkdirSync } from 'fs'
+import { readFile, writeFile } from 'fs/promises'
+import { resolve } from 'path'
+import type { PassportConfigs } from './types' //emal, users
 
 export type ConfigsStore = ReturnType<typeof configApiKeyStore>
 export default function configApiKeyStore({ folder }: { folder: string }) {
@@ -30,7 +30,7 @@ export default function configApiKeyStore({ folder }: { folder: string }) {
   }
 
   async function write(configs: any) {
-      await writeFile(file(), JSON.stringify(configs, null, 2))
+    await writeFile(file(), JSON.stringify(configs, null, 2))
   }
 
   function file() {

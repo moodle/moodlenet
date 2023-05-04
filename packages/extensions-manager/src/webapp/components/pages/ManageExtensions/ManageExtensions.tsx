@@ -1,10 +1,11 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { Card } from '@moodlenet/component-library'
 import { KeyboardArrowLeftRounded, KeyboardArrowUpRounded } from '@mui/icons-material'
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useState } from 'react'
 import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
-import { ExtensionType } from '../Extensions/Extensions.js'
+import type { ExtensionType } from '../Extensions/Extensions.js'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 import './ManageExtensions.scss'
 

@@ -1,7 +1,7 @@
 // import csrf from 'csurf'
-import { ExtShell } from '@moodlenet/core'
+import type { ExtShell } from '@moodlenet/core'
 import type { Express } from 'express'
-import { PassportAuthExt } from '..'
+import type { PassportAuthExt } from '..'
 import { getAuthMngUidByOauthResult } from './lib'
 import getPassport from './passport'
 

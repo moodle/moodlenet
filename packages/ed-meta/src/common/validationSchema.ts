@@ -1,4 +1,5 @@
-import { object, SchemaOf, string } from 'yup'
+import type { SchemaOf } from 'yup'
+import { object, string } from 'yup'
 
 export const subjectValidationSchema: SchemaOf<{ subject: string }> = object({
   subject: string().required(`Please select a subject`),

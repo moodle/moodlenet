@@ -2,7 +2,7 @@ import { href } from '@moodlenet/react-app/common'
 import { useContext, useMemo } from 'react'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { MainContext } from '../../../../context/MainContext.mjs'
-import { AvatarMenuItem, AvatarMenuProps } from './AvatarMenu.js'
+import type { AvatarMenuItem, AvatarMenuProps } from './AvatarMenu.js'
 
 export function useAvatarMenuProps(): AvatarMenuProps {
   const mainCtx = useContext(MainContext)

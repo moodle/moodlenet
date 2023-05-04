@@ -1,16 +1,17 @@
+import type { RpcArgs, RpcFile } from '@moodlenet/core'
 import {
   getCurrentRpcStatusCode,
   getMaybeRpcFileReadable,
   instanceDomain,
   isRpcStatusType,
   readableRpcFile,
-  RpcArgs,
-  RpcFile,
 } from '@moodlenet/core'
 import assert from 'assert'
-import express, { json, Request } from 'express'
+import type { Request } from 'express'
+import express, { json } from 'express'
 import { open } from 'fs/promises'
-import multer, { Field } from 'multer'
+import type { Field } from 'multer'
+import multer from 'multer'
 import { Readable } from 'stream'
 import { format } from 'util'
 // import { HttpRpcResponse } from '../../common/pub-lib.mjs'

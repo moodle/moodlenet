@@ -1,15 +1,9 @@
-import { AddonItem, Header, HeaderProps, Searchbox } from '@moodlenet/component-library'
-import {
-  createContext,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { HeaderTitle, HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
+import type { AddonItem, HeaderProps } from '@moodlenet/component-library'
+import { Header, Searchbox } from '@moodlenet/component-library'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import type { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
+import { HeaderTitle } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import './MainHeader.scss'
 
 export type MainHeaderContextT = {

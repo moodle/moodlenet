@@ -3,7 +3,7 @@ import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
 // import { useFooterProps } from '../../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
 // import { useMinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
-import { LoginProps } from './Login.js'
+import type { LoginProps } from './Login.js'
 
 export const useLoginProps = (): LoginProps => {
   const headerProps = useMinimalisticHeaderProps()

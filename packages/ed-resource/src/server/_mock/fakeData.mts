@@ -1,4 +1,4 @@
-import { ResourceFormRpc, ResourceRpc } from '../../common/types.mjs'
+import type { ResourceFormRpc, ResourceRpc } from '../../common/types.mjs'
 
 export const resourceFormValues: ResourceFormRpc = {
   description:

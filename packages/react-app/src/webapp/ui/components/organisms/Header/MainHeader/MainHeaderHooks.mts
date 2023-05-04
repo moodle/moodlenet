@@ -1,8 +1,8 @@
-import { AddonItem } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 import { useContext, useMemo } from 'react'
 import { MainContext } from '../../../../../context/MainContext.mjs'
 import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
-import { MainHeaderProps } from './MainHeader.js'
+import type { MainHeaderProps } from './MainHeader.js'
 
 export const useHeaderProps = (): MainHeaderProps => {
   const { reg } = useContext(MainContext)

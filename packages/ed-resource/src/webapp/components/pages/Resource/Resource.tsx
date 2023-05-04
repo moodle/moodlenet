@@ -1,11 +1,6 @@
 import { InsertDriveFile, Link } from '@material-ui/icons'
-import {
-  AddonItem,
-  Card,
-  Modal,
-  PrimaryButton,
-  SecondaryButton,
-} from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
+import { Card, Modal, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import {
   DateField,
   LanguageField,
@@ -14,10 +9,12 @@ import {
   SubjectField,
   TypeField,
 } from '@moodlenet/ed-meta/ui'
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
+import type { MainLayoutProps } from '@moodlenet/react-app/ui'
+import { MainLayout } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useEffect, useState } from 'react'
-import {
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
+import type {
   ResourceAccessProps,
   ResourceActions,
   ResourceDataProps,
@@ -29,14 +26,10 @@ import {
   imageValidationSchema,
   resourceValidationSchema,
 } from '../../../../common/validationSchema.mjs'
-import {
-  ResourceContributorCard,
-  ResourceContributorCardProps,
-} from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
-import {
-  MainResourceCard,
-  MainResourceCardSlots,
-} from '../../organisms/MainResourceCard/MainResourceCard.js'
+import type { ResourceContributorCardProps } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
+import { ResourceContributorCard } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
+import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
+import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
 
 export type ResourceProps = {

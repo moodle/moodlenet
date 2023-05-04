@@ -1,15 +1,14 @@
-import {
+import type {
   AnchorHTMLAttributes,
   ComponentType,
-  createContext,
   CSSProperties,
   DetailedHTMLProps,
   FC,
   PropsWithChildren,
-  useContext,
 } from 'react'
+import { createContext, useContext } from 'react'
 import * as ReactRouterDom from 'react-router-dom'
-import { Href } from '../../../../common/lib.mjs'
+import type { Href } from '../../../../common/lib.mjs'
 export type LinkComponentElementProps = DetailedHTMLProps<
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
     href: Href

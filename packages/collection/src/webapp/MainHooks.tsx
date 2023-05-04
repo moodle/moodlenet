@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
+import type {
   CollectionActions,
   CollectionFormProps,
   CollectionMainProps,

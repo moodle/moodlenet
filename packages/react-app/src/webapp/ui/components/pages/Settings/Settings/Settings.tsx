@@ -1,8 +1,11 @@
-import { FC, useState } from 'react'
-import MainLayout, { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
+import type { FC } from 'react'
+import { useState } from 'react'
+import type { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
+import MainLayout from '../../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { AddonItem, Card } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
+import { Card } from '@moodlenet/component-library'
 import './Settings.scss'
 
 export type SettingsItem = { Content: AddonItem; Menu: AddonItem }

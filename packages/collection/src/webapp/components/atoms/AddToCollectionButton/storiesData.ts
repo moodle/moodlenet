@@ -1,4 +1,4 @@
-import { OptionItemProp } from '@moodlenet/component-library'
+import type { OptionItemProp } from '@moodlenet/component-library'
 
 export const CollectionTextOptionProps: OptionItemProp[] = [
   { label: 'Education', value: 'Education' },

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import AppRoutes from './app-routes.js'
 import { PkgMainComponentsWrap } from './pkgMainComponentWrap.js'

@@ -1,5 +1,6 @@
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { MainLayoutProps } from '@moodlenet/react-app/ui'
+import { MainLayout } from '@moodlenet/react-app/ui'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { FooterStoryProps } from '../../organisms/Footer/Footer.stories.js'
 
 import {

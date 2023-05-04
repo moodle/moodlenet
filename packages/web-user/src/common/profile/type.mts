@@ -1,4 +1,4 @@
-import { ProfileData } from '../types.mjs'
+import type { ProfileData } from '../types.mjs'
 
 export type ProfileCardData = ProfileData & {
   displayName: string

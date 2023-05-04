@@ -1,5 +1,5 @@
-import { PackageInfo } from '../pkg-mng/types.mjs'
-import { PkgIdentifier } from '../types.mjs'
+import type { PackageInfo } from '../pkg-mng/types.mjs'
+import type { PkgIdentifier } from '../types.mjs'
 
 export type PkgEntry = {
   pkgInfo: PackageInfo

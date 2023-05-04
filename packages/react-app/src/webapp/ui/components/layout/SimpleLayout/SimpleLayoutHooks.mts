@@ -2,7 +2,7 @@ import { useContext, useMemo } from 'react'
 import { SettingsCtx } from '../../../../context/SettingsContext.js'
 import { useFooterProps } from '../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
 import { useMinimalisticHeaderProps } from '../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
-import { SimpleLayoutProps } from './SimpleLayout.js'
+import type { SimpleLayoutProps } from './SimpleLayout.js'
 
 export const useSimpleLayoutProps = (): SimpleLayoutProps => {
   const {

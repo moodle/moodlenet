@@ -1,6 +1,7 @@
 import { Card, PrimaryButton } from '@moodlenet/component-library'
-import { SimpleLayout, SimpleLayoutProps } from '@moodlenet/react-app/ui'
-import { FC } from 'react'
+import type { SimpleLayoutProps } from '@moodlenet/react-app/ui'
+import { SimpleLayout } from '@moodlenet/react-app/ui'
+import type { FC } from 'react'
 
 export type OpenIdInteractionPageProps = {
   scopes: string[]

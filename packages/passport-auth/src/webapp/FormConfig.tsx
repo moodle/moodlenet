@@ -1,6 +1,8 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import React, { FC, useContext, useRef } from 'react'
-import { PassportConfigs } from '../store/types'
+import type React from 'react'
+import type { FC } from 'react'
+import { useContext, useRef } from 'react'
+import type { PassportConfigs } from '../store/types'
 import { PassportContext } from './MainModule'
 
 export const FormConfig: FC = () => {

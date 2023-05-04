@@ -1,4 +1,5 @@
-import { CSSProperties, forwardRef, useRef } from 'react'
+import type { CSSProperties } from 'react'
+import { forwardRef, useRef } from 'react'
 import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
 import RoundButton from '../../atoms/RoundButton/RoundButton.js'
 import './ImageContainer.scss'

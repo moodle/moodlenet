@@ -1,7 +1,9 @@
 import { NoteAdd } from '@material-ui/icons'
 import { ListCard, PrimaryButton } from '@moodlenet/component-library'
-import { FC, useMemo } from 'react'
-import ResourceCard, { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
+import type { FC } from 'react'
+import { useMemo } from 'react'
+import type { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
+import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './ProfileResourceList.scss'
 
 export type ProfileResourceListProps = {

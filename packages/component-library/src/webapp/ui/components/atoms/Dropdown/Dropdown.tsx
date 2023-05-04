@@ -1,16 +1,9 @@
 // import { SvgIconTypeMap } from '@material-ui/core'
 import { ExpandLess as ExpandLessIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
-import {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react'
-import { Selector, SelectorProps, useSelectorOption } from '../../../lib/selector.js'
+import type { FC, ReactNode } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react'
+import type { SelectorProps } from '../../../lib/selector.js'
+import { Selector, useSelectorOption } from '../../../lib/selector.js'
 
 import RoundButton from '../RoundButton/RoundButton.js'
 import './Dropdown.scss'

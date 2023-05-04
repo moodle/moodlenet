@@ -1,4 +1,4 @@
-import { PkgName } from '@moodlenet/core'
+import type { PkgName } from '@moodlenet/core'
 import { aqlGetPkgNamespace } from '../pkg-db-names.mjs'
 import type {
   AqlVal,

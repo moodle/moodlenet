@@ -1,10 +1,9 @@
-import { CSSProperties, FC, ReactNode } from 'react'
-import { MainFooter, MainFooterProps } from '../../../../exports/ui.mjs'
+import type { CSSProperties, FC, ReactNode } from 'react'
+import type { MainFooterProps } from '../../../../exports/ui.mjs'
+import { MainFooter } from '../../../../exports/ui.mjs'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
-import {
-  MinimalisticHeader,
-  MinimalisticHeaderProps,
-} from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
+import type { MinimalisticHeaderProps } from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
+import { MinimalisticHeader } from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import { LayoutContainer } from '../LayoutContainer/LayoutContainer.js'
 import './SimpleLayout.scss'
 // import { StateContext } from './Providers'

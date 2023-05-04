@@ -1,9 +1,11 @@
-import { AddonItem } from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps, OverallCard, OverallCardItem } from '@moodlenet/react-app/ui'
+import type { AddonItem } from '@moodlenet/component-library'
+import type { MainLayoutProps, OverallCardItem } from '@moodlenet/react-app/ui'
+import { MainLayout, OverallCard } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
-import { FC, useReducer } from 'react'
-import { SchemaOf } from 'yup'
-import {
+import type { FC } from 'react'
+import { useReducer } from 'react'
+import type { SchemaOf } from 'yup'
+import type {
   ProfileAccess,
   ProfileActions,
   ProfileData,
@@ -11,12 +13,12 @@ import {
   ProfileState,
 } from '../../../../../common/types.mjs'
 
-import { CollectionCardProps, ProfileCollectionList } from '@moodlenet/collection/ui'
-import { ProfileResourceList, ResourceCardProps } from '@moodlenet/ed-resource/ui'
-import {
-  MainProfileCard,
-  MainProfileCardSlots,
-} from '../../organisms/MainProfileCard/MainProfileCard.js'
+import type { CollectionCardProps } from '@moodlenet/collection/ui'
+import { ProfileCollectionList } from '@moodlenet/collection/ui'
+import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { ProfileResourceList } from '@moodlenet/ed-resource/ui'
+import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainProfileCard.js'
+import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import './Profile.scss'
 
 export type ProfileProps = {

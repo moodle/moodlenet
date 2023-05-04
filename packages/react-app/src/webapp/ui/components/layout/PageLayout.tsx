@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import './PageLayout.scss'
 
 const PageLayout: FC<PropsWithChildren<{ title: string }>> = ({ title, children }) => {

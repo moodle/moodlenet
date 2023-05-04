@@ -1,5 +1,5 @@
-import { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import { CollectionFormRpc, CollectionRpc } from './types.mjs'
+import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import type { CollectionFormRpc, CollectionRpc } from './types.mjs'
 
 export type CollectionExposeType = PkgExposeDef<{
   rpc: {
