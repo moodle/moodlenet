@@ -9,8 +9,9 @@ export * from '../components/organisms/UploadResource/UploadResource.js'
 export * from '../components/pages/Resource/formResourceCollection.js'
 export * from '../components/pages/Resource/Resource.js'
 export * from '../components/pages/Resource/ResourcePageRoute.js'
+
+
 export * from '../helpers/factories.js'
 export * from '../helpers/utilities.js'
 export * from '../MainComponent.js'
-
 // @endindex
