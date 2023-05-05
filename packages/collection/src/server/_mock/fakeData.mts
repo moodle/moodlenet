@@ -21,7 +21,7 @@ export const resFakeData: CollectionRpc = {
   },
   form: collectionFormValues,
   state: {
-    isPublished: true,
+    isPublished: false,
     numResources: 23,
   },
   access: {
