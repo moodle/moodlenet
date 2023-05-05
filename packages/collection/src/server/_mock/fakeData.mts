@@ -18,7 +18,6 @@ export const resFakeData: CollectionRpc = {
     collectionId: 'aaa123',
     mnUrl: 'http:www.ggg.it',
     imageUrl: 'https://picsum.photos/200/100',
-    isWaitingForApproval: false,
   },
   form: collectionFormValues,
   state: {

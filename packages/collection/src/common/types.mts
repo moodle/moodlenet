@@ -38,7 +38,6 @@ export type CollectionDataRpc = {
   collectionId: string
   mnUrl: string
   imageUrl: string | undefined
-  isWaitingForApproval: boolean | undefined
 }
 
 export type CollectionStateRpc = {

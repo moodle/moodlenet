@@ -93,7 +93,6 @@ export const expose = await shell.expose<ResourceExposeType>({
             resourceId: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
             imageUrl,
-            isWaitingForApproval: false,
           },
           state: { isPublished: found.entity.published },
           access: {

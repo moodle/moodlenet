@@ -103,15 +103,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     footerRowItems,
   } = slots
 
-  const {
-    resourceId,
-    mnUrl,
-    contentType,
-    isWaitingForApproval,
-    downloadFilename,
-    imageUrl,
-    contentUrl,
-  } = data
+  const { resourceId, mnUrl, contentType, downloadFilename, imageUrl, contentUrl } = data
 
   const { isPublished, uploadProgress } = state
 
@@ -307,7 +299,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       : null
 
   const publishButton: FloatingMenuContentItem | null =
-    canPublish && !isPublished && !isWaitingForApproval
+    canPublish && !isPublished
       ? {
           Component: () => (
             <div onClick={publish}>
@@ -322,7 +314,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       : null
 
   const unpublishButton: FloatingMenuContentItem | null =
-    canPublish && (isPublished || isWaitingForApproval)
+    canPublish && isPublished
       ? {
           Component: () => (
             <div onClick={unpublish}>
@@ -336,7 +328,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       : null
 
   const publishingButton =
-    canPublish && !isPublished && isWaitingForApproval ? (
+    canPublish && !isPublished ? (
       <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
         <HourglassBottom style={{ fill: '#d0d1db' }} />
       </abbr>

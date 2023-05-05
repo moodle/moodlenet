@@ -72,7 +72,7 @@ export const Resource: FC<ResourceProps> = ({
   fileMaxSize,
   isSaving,
 }) => {
-  const { isWaitingForApproval, downloadFilename, contentUrl, contentType, imageUrl } = data
+  const { downloadFilename, contentUrl, contentType, imageUrl } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish, canEdit } = access
   const { isPublished } = state
@@ -161,13 +161,13 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
-  const publishButton = canPublish && !isPublished && !isWaitingForApproval && (
+  const publishButton = canPublish && !isPublished && (
     <PrimaryButton onClick={checkFormAndPublish} color="green" key="publish-button">
       Publish
     </PrimaryButton>
   )
 
-  const unpublishButton = canPublish && (isPublished || isWaitingForApproval) && (
+  const unpublishButton = canPublish && isPublished && (
     <SecondaryButton onClick={unpublish} key="unpublish-button">
       Unpublish
     </SecondaryButton>
@@ -185,10 +185,10 @@ export const Resource: FC<ResourceProps> = ({
   //       </PrimaryButton>
   //     )} */}
 
-  //     {/* {!isPublished && isWaitingForApproval && (
+  //     {/* {!isPublished && (
   //       <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
   //     )} */}
-  //     {/* {isPublished || isWaitingForApproval ? (
+  //     {/* {isPublished ? (
   //       <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
   //     ) : (
   //       <></>
