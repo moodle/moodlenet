@@ -72,8 +72,14 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
           nav('/')
         })
       },
-      publish: () => setIsPublished(collectionKey, true),
-      unpublish: () => setIsPublished(collectionKey, false),
+      publish: () => {
+        setIsPublish(true)
+        setIsPublished(collectionKey, true)
+      },
+      unpublish: () => {
+        setIsPublish(false)
+        setIsPublished(collectionKey, false)
+      },
     }
   }, [collection, collectionKey, nav, rpcCaller, setterSave])
 
