@@ -14,7 +14,6 @@ export const empityFormModel: CollectionRpc = {
     collectionId: 'new123',
     mnUrl: '',
     imageUrl: '',
-    isWaitingForApproval: false,
   },
   form: { description: '', title: '' },
   state: {

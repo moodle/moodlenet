@@ -80,7 +80,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { collectionId, mnUrl, imageUrl, isWaitingForApproval } = data
+  const { collectionId, mnUrl, imageUrl } = data
 
   const {
     isPublished,
@@ -245,7 +245,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       : null
 
   const unpublishButton: FloatingMenuContentItem | null =
-    canPublish && (isPublished || isWaitingForApproval)
+    canPublish && isPublished
       ? {
           Component: () => (
             <div onClick={unpublish}>
@@ -258,7 +258,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       : null
 
   const publishButton: FloatingMenuContentItem | null =
-    canPublish && !isPublished && !isWaitingForApproval
+    canPublish && !isPublished
       ? {
           Component: () => (
             <div onClick={publish}>
@@ -271,7 +271,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       : null
 
   const publishingButton =
-    canPublish && !isPublished && isWaitingForApproval ? (
+    canPublish && !isPublished ? (
       <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
         <HourglassBottom style={{ fill: '#d0d1db' }} />
       </abbr>
