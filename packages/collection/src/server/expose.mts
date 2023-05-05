@@ -54,6 +54,13 @@ export const expose = await shell.expose<CollectionExposeType>({
         }
       },
     },
+    'webapp/my-collections/:containingResourceKey': {
+      guard: () => void 0,
+      async fn(_, { containingResourceKey }) {
+        containingResourceKey
+        return []
+      },
+    },
     'webapp/content/:collectionKey/:action/:resourceKey': {
       guard: () => void 0,
       async fn(_, { action, collectionKey, resourceKey }) {
