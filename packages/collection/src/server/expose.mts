@@ -30,7 +30,7 @@ import type { CollectionDataType } from './types.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({
   rpc: {
-    'webapp/get-mine': {
+    'webapp/my-collections': {
       guard: () => void 0,
       async fn() {
         const meEntityInfo = await getCurrentUserInfo()
@@ -39,12 +39,11 @@ export const expose = await shell.expose<CollectionExposeType>({
           projectAccess: ['u', 'd'],
           project: {
             canPublish: canPublish(),
-            isCreator: isCurrentUserCreatorOfCurrentEntity(),
           },
         })
         const myCollectionsDocs = await myCollectionsCursor.all()
         const collections = myCollectionsDocs.map(_ => {
-          const collectionRpc = getCollectionRpc(_)
+          const collectionRpc = getCollectionRpc({ ..._, isCreator: true })
           return collectionRpc
         })
 
@@ -57,8 +56,20 @@ export const expose = await shell.expose<CollectionExposeType>({
     'webapp/my-collections/:containingResourceKey': {
       guard: () => void 0,
       async fn(_, { containingResourceKey }) {
-        containingResourceKey
-        return []
+        const myCollectionsCursor = await getMyCollections({
+          projectAccess: ['u'],
+        })
+        const myCollectionsDocs = await myCollectionsCursor.all()
+
+        return myCollectionsDocs
+          .filter(({ access }) => access.u)
+          .map(({ entity: { _key, title, resourceList } }) => {
+            return {
+              collectionKey: _key,
+              collectionName: title,
+              hasResource: resourceList.includes(containingResourceKey),
+            }
+          })
       },
     },
     'webapp/content/:collectionKey/:action/:resourceKey': {
