@@ -1,30 +1,36 @@
-import type { FC, ReactNode } from 'react'
+import type { FC, PropsWithChildren, ReactNode } from 'react'
 import type { SelectorProps } from '../../../../lib/selector.js'
 import { Selector, useSelectorOption } from '../../../../lib/selector.js'
 import Card from '../../../atoms/Card/Card.js'
 
 import './AddToCollectionsCard.scss'
 
-export type AddToCollectionsCardProps = SelectorProps & {
+export type AddToCollectionsCardProps = {
   header?: boolean
   noCard?: boolean
-}
+} & Pick<SelectorProps & { multiple: true }, 'value' | 'onItemSelect' | 'onItemDeselect'>
 export type OptionItemProp = { value: string; label: ReactNode }
 export const OptionItem: FC<OptionItemProp> = ({ label, value }) => {
-  const { selected, toggle } = useSelectorOption(value) ?? {}
+  const { selected, select, deselect } = useSelectorOption(value) ?? {}
 
   return (
-    <div className={`collection-name tag ${selected ? 'selected' : ''}`} onClick={toggle}>
+    <div
+      className={`collection-name tag ${selected ? 'selected' : ''}`}
+      onClick={e => {
+        e.stopPropagation()
+        selected ? deselect?.() : select?.()
+      }}
+    >
       {label}
     </div>
   )
 }
 
-export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = props => {
-  const { header, noCard, children, ...selectorProps } = props
+export const AddToCollectionsCard: FC<PropsWithChildren<AddToCollectionsCardProps>> = props => {
+  const { header, noCard, children, ...selectProps } = props
 
   return (
-    <Selector {...selectorProps}>
+    <Selector {...selectProps} multiple>
       <div className="add-to-collections-card">
         <div className="content">
           <Card noCard={noCard}>

@@ -7,29 +7,25 @@ import {
   SecondaryButton,
 } from '@moodlenet/component-library'
 import type { SelectOptionsMulti } from '@moodlenet/react-app/ui'
-import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 export type AddToCollectionButtonProps = {
   collections: SelectOptionsMulti<OptionItemProp>
-  selectedCollections: string[]
-  setCollections: (collections: string[]) => void
+  add(collectionId: string): void
+  remove(collectionId: string): void
 }
 
 export const AddToCollectionButton: FC<AddToCollectionButtonProps> = ({
   collections,
-  selectedCollections,
-  setCollections,
+  add,
+  remove,
 }) => {
   const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
-
-  const form = useFormik<{ collections: string[] }>({
-    initialValues: { collections: selectedCollections },
-    onSubmit: values => {
-      return setCollections(values.collections)
-    },
-  })
+  const selectedValues = useMemo(
+    () => collections.selected.map(({ value }) => value),
+    [collections.selected],
+  )
 
   const modal = isAddingToCollection && collections && (
     <Modal
@@ -49,13 +45,9 @@ export const AddToCollectionButton: FC<AddToCollectionButtonProps> = ({
       <AddToCollectionsCard
         header={false}
         noCard={true}
-        multiple
-        name="addToCollections"
-        onChange={e => {
-          form.handleChange(e) //@ALE something is wrong here, it doesn't update the formik state, it has something to do with your Selector component
-          form.submitForm()
-        }}
-        value={collections.selected.map(({ value }) => value)}
+        onItemSelect={add}
+        onItemDeselect={remove}
+        value={selectedValues}
       >
         {collections.opts.map(({ label, value }) => (
           <OptionItem key={value} label={label} value={value} />

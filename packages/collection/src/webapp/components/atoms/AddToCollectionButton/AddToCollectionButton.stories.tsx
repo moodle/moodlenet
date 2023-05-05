@@ -12,16 +12,18 @@ export const useAddToCollectionButtonStory = (): AddonItem => {
       ({ value }) => !!selectedCollections.includes(value),
     ),
   }
-  const setCollection = (collections: string[]) => {
-    action('setCollections')(collections)
-    setSelectedCollections(collections)
-  }
   return {
     Item: () => (
       <AddToCollectionButton
         collections={collections}
-        selectedCollections={selectedCollections}
-        setCollections={e => setCollection(e)}
+        add={collection => {
+          action(`add to collection`)(collection)
+          setSelectedCollections(collections => [...collections, collection])
+        }}
+        remove={collection => {
+          action(`remove from collection`)(collection)
+          setSelectedCollections(collections => collections.filter(c => c !== collection))
+        }}
       />
     ),
     key: 'add-to-collection-button',
