@@ -97,7 +97,6 @@ export const New: CollectionStory = () => {
     mainColumnItems: [],
     data: {
       mnUrl: 'moodle.com',
-      isWaitingForApproval: false,
       imageUrl: undefined,
     },
     collectionForm: NewCollectionProps,

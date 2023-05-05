@@ -42,7 +42,6 @@ export type ResourceDataRpc = {
 
   contentUrl: string | null
   downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...
-  isWaitingForApproval?: boolean // numLikes: number
 }
 
 export type ResourceStateRpc = {
@@ -118,12 +117,7 @@ export type ResourceCardDataRpc = {
   resourceHomeHref?: Href
 } & Pick<
   ResourceDataProps,
-  | 'imageUrl'
-  | 'downloadFilename'
-  | 'contentType'
-  | 'resourceId'
-  | 'isWaitingForApproval'
-  | 'contentUrl'
+  'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'contentUrl'
 > &
   Pick<ResourceFormProps, 'title'>
 
