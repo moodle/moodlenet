@@ -71,7 +71,6 @@ export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {
       downloadFilename: undefined,
-      isWaitingForApproval: false,
       contentUrl: undefined,
       imageUrl: undefined,
       // numLikes: 0,

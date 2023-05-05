@@ -210,7 +210,6 @@ function getCollectionRpc(
       collectionId: found.entity._key,
       mnUrl: getWebappUrl(getCollectionHomePageRoutePath({ _key })),
       imageUrl,
-      isWaitingForApproval: false,
     },
     state: {
       numResources: found.entity.resourceList.length,

@@ -62,7 +62,7 @@ export const Collection: FC<CollectionProps> = ({
   access,
   isSaving,
 }) => {
-  const { isWaitingForApproval, imageUrl } = data
+  const { imageUrl } = data
   const { isPublished } = state
   const { editData, deleteCollection, publish, unpublish } = actions
   const { canPublish } = access
@@ -134,15 +134,13 @@ export const Collection: FC<CollectionProps> = ({
           Published
         </PrimaryButton>
       )} */}
-      {canPublish && !isPublished && !isWaitingForApproval /*  && !isEditing */ && (
+      {canPublish && !isPublished /*  && !isEditing */ && (
         <PrimaryButton onClick={checkFormAndPublish} color="green">
           Publish
         </PrimaryButton>
       )}
-      {/* {!isPublished && isWaitingForApproval && (
-        <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
-      )} */}
-      {canPublish && (isPublished || isWaitingForApproval) ? (
+
+      {canPublish && isPublished ? (
         <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
       ) : (
         <></>
