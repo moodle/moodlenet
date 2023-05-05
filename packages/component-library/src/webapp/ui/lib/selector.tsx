@@ -12,8 +12,10 @@ import {
 export type SelectorProps = Omit<
   React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
   'value' | 'defaultValue' | 'multiple'
-> &
-  (
+> & {
+  onItemSelect?(value: string): void
+  onItemDeselect?(value: string): void
+} & (
     | {
         multiple: true
         value?: string[] | undefined
@@ -121,6 +123,7 @@ export const Selector: FC<SelectorProps> = props => {
 
   const deselectOption = useCallback(
     (optionValue: string) => {
+      console.log('deselectOption ', optionValue)
       if (!selectElemRef.current) {
         return
       }
@@ -130,14 +133,17 @@ export const Selector: FC<SelectorProps> = props => {
       if (!optionToDeselect) {
         return
       }
+      props.onItemDeselect?.(optionValue)
+
       selectElemRef.current.removeChild(optionToDeselect)
       fireChange()
     },
-    [fireChange],
+    [fireChange, props],
   )
 
   const selectOption = useCallback(
     (optionValue: string) => {
+      console.log('selectOption ', optionValue)
       if (!selectElemRef.current) {
         return
       }
@@ -148,6 +154,7 @@ export const Selector: FC<SelectorProps> = props => {
         return
       }
       const optElem = createOptionElem(optionValue)
+      props.onItemSelect?.(optionValue)
       if (!multiple) {
         Array.from(selectElemRef.current.options).forEach(opt =>
           selectElemRef.current?.removeChild(opt),
@@ -156,11 +163,12 @@ export const Selector: FC<SelectorProps> = props => {
       selectElemRef.current.appendChild(optElem)
       fireChange()
     },
-    [fireChange, multiple],
+    [fireChange, multiple, props],
   )
 
   const toggleOption = useCallback(
     (optionValue: string, selected: boolean) => {
+      console.log('toggleOption ', optionValue)
       if (!selectElemRef.current) {
         return
       }
@@ -198,7 +206,14 @@ export const Selector: FC<SelectorProps> = props => {
           defaultValue: props.defaultValue,
         }
       : {}
-  const { defaultValue, value: _value, children, ...restProps } = props
+  const {
+    defaultValue,
+    onItemSelect: _onSelect,
+    onItemDeselect: _onDeselect,
+    value: _value,
+    children,
+    ...restProps
+  } = props
   const selectProps: DetailedHTMLProps<
     SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
