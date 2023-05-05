@@ -3,7 +3,7 @@ import type { CollectionFormRpc, CollectionRpc } from './types.mjs'
 
 export type CollectionExposeType = PkgExposeDef<{
   rpc: {
-    'webapp/get-mine'(): Promise<{
+    'webapp/my-collections'(): Promise<{
       collections: Omit<CollectionRpc, 'contributor'>[]
       contributor: CollectionRpc['contributor']
     }>
