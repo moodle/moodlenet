@@ -84,7 +84,7 @@ export const useProfileProps = ({
       },
       data: {
         userId: '12sadsadsad', //@ETTO Needs to be implemented
-        username: profileResponse.data.displayName, //@ETTO Needs to be implemented
+        displayName: profileResponse.data.displayName, //@ETTO Needs to be implemented
         avatarUrl: profileResponse.data.avatarUrl,
         backgroundUrl: profileResponse.data.backgroundUrl,
         profileHref: href('/profile'), //@ETTO Needs to be implemented

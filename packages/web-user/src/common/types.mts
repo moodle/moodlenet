@@ -43,7 +43,7 @@ export type ProfileData = {
   userId: string
   backgroundUrl: string | undefined
   avatarUrl: string | undefined
-  username: string
+  displayName: string
   profileHref: Href
 }
 

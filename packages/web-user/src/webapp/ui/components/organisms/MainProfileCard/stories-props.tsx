@@ -99,7 +99,7 @@ export const useMainProfileCardStoryProps = (
         avatarUrl: person && person.avatarUrl,
         backgroundUrl: person && person.backgroundUrl,
         userId: (Math.random() * 1000000).toString(),
-        username: person && person.username ? person.username : 'username',
+        displayName: person && person.username ? person.username : 'username',
         ...overrides?.data,
         profileHref: href('https://iuri.is/'),
       },
