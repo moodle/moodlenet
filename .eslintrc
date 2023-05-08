@@ -5,6 +5,7 @@
     "node": true,
     "es6": true
   },
+  "ignorePatterns": ["**/*/package-lock.json", "**/*/package.json"],
   "extends": [
     // "airbnb",
     // "airbnb/hooks",
