@@ -20,25 +20,6 @@ import {
 
 export const expose = await shell.expose<WebUserExposeType>({
   rpc: {
-    'webapp/entity/:feature/:action': {
-      guard: () => void 0,
-      // async fn({ entityId }, { action, feature }) {
-      async fn() {
-        return
-      },
-    },
-    'webapp/get-my-featured-entities': {
-      guard: () => void 0,
-      async fn() {
-        return { bookmark: [], follow: [], like: [] }
-      },
-    },
-    'webapp/entity/:feature/count-all': {
-      guard: () => void 0,
-      async fn() {
-        return { count: 10 }
-      },
-    },
     'getCurrentClientSessionDataRpc': {
       guard: () => void 0,
       async fn() {
@@ -198,6 +179,61 @@ export const expose = await shell.expose<WebUserExposeType>({
         fields: {
           '.file': 1,
         },
+      },
+    },
+    'webapp/:action/bookmark/:entity/:_key': {
+      guard: () => void 0,
+      // async fn({ entityId }, { action, feature }) {
+      async fn() {
+        return
+      },
+    },
+    'webapp/:action/follow/:entity/:_key': {
+      guard: () => void 0,
+      // async fn({ entityId }, { action, feature }) {
+      async fn() {
+        return
+      },
+    },
+    'webapp/:action/like/:entity/:_key': {
+      guard: () => void 0,
+      // async fn({ entityId }, { action, feature }) {
+      async fn() {
+        return
+      },
+    },
+    'webapp/all-my-featured-entities': {
+      guard: () => void 0,
+      async fn() {
+        return {
+          bookmarked: { collections: [], profiles: [], resources: [] },
+          following: { collections: [], profiles: [] },
+          likes: { resources: [] },
+        }
+      },
+    },
+    'webapp/followers-count/:entity/:_key': {
+      guard: () => void 0,
+      async fn() {
+        return { count: 10 }
+      },
+    },
+    'webapp/likers-count/resource/:_key': {
+      guard: () => void 0,
+      async fn() {
+        return { count: 10 }
+      },
+    },
+    'webapp/get-my-own-collections': {
+      guard: () => void 0,
+      async fn() {
+        return []
+      },
+    },
+    'webapp/get-my-own-resources': {
+      guard: () => void 0,
+      async fn() {
+        return []
       },
     },
   },
