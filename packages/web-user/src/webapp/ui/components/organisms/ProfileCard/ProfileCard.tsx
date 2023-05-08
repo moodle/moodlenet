@@ -13,7 +13,7 @@ import './ProfileCard.scss'
 export type ProfileCardProps = {
   mainColumnItems: (AddonItem | null)[]
   bottomTouchColumnItems: (AddonItem | null)[]
-  overallCardProps: OverallCardProps
+  overallCardProps: Pick<OverallCardProps, 'items'>
 
   data: ProfileCardData
   state: ProfileState
