@@ -67,6 +67,10 @@ export type WebUserExposeType = PkgExposeDef<{
       body: void,
       params: { _key: string },
     ): Promise<{ count: number }>
+    'webapp/kudos-count/:profileKey'(
+      body: void,
+      params: { profileKey: string },
+    ): Promise<{ count: number }>
     // --
   }
 }>
