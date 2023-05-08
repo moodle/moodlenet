@@ -15,7 +15,7 @@ export type OverallCardItem = {
 }
 
 export type OverallCardProps = {
-  items?: OverallCardItem[]
+  items: OverallCardItem[]
   hideBorderWhenSmall?: boolean
   noCard?: boolean
   showIcons?: boolean
