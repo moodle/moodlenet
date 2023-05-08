@@ -20,6 +20,25 @@ import {
 
 export const expose = await shell.expose<WebUserExposeType>({
   rpc: {
+    'webapp/entity/:feature/:action': {
+      guard: () => void 0,
+      // async fn({ entityId }, { action, feature }) {
+      async fn() {
+        return
+      },
+    },
+    'webapp/get-my-featured-entities': {
+      guard: () => void 0,
+      async fn() {
+        return { bookmark: [], follow: [], like: [] }
+      },
+    },
+    'webapp/entity/:feature/count-all': {
+      guard: () => void 0,
+      async fn() {
+        return { count: 10 }
+      },
+    },
     'getCurrentClientSessionDataRpc': {
       guard: () => void 0,
       async fn() {
