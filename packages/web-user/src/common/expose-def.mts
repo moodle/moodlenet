@@ -1,6 +1,9 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import type { EntityIdentifier } from '@moodlenet/system-entities/server'
 import type { ClientSessionDataRpc, Profile, WebUserData } from './types.mjs'
+export type { EntityIdentifier } from '@moodlenet/system-entities/server'
 
+export type EntityFeature = 'bookmark' | 'follow' | 'like'
 export type WebUserExposeType = PkgExposeDef<{
   rpc: {
     'getCurrentClientSessionDataRpc'(): Promise<ClientSessionDataRpc | undefined>
@@ -23,5 +26,16 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
     ): Promise<string | null>
+    'webapp/entity/:feature/:action'(
+      body: { entityId: EntityIdentifier },
+      params: { action: 'add' | 'remove'; feature: EntityFeature },
+    ): Promise<void>
+    'webapp/get-my-featured-entities'(): Promise<{
+      [feat in EntityFeature]: { entityId: EntityIdentifier }[]
+    }>
+    'webapp/entity/:feature/count-all'(
+      body: { entityId: EntityIdentifier },
+      params: { feature: EntityFeature },
+    ): Promise<{ count: number }>
   }
 }>
