@@ -1,8 +1,6 @@
 import type { ProfileData } from '../types.mjs'
 
-export type ProfileCardData = ProfileData & {
-  displayName: string
-}
+export type ProfileCardData = ProfileData
 
 // export type ProfileData = {
 //   userId: string

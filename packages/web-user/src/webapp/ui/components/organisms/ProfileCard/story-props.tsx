@@ -24,7 +24,6 @@ export const getProfileCardFactory = (
         profileHref: href('Pages/Profile/Logged In'),
         displayName: profile?.displayName ?? '',
         // organizationName: profile?.organization ?? '',
-        username: profile?.username ?? '',
       },
       state: {
         profileUrl: 'https://moodle.net/profile',

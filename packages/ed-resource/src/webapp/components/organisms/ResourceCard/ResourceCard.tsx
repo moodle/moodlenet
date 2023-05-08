@@ -89,8 +89,8 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     // liked,
     // bookmarked,
     isPublished,
-    isSelected,
-    selectionMode,
+    // isSelected,
+    // selectionMode,
   } = state
   const {
     // toggleLike,
@@ -255,19 +255,18 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     </div>
   )
 
-  const contentContainer =
-    resourceHomeHref && !selectionMode ? (
-      <Link
-        className="content-container"
-        href={resourceHomeHref}
-        role="navigation"
-        key="content-container"
-      >
-        {content}
-      </Link>
-    ) : (
-      <div className="content-container">{content}</div>
-    )
+  const contentContainer = resourceHomeHref /* && !selectionMode */ ? (
+    <Link
+      className="content-container"
+      href={resourceHomeHref}
+      role="navigation"
+      key="content-container"
+    >
+      {content}
+    </Link>
+  ) : (
+    <div className="content-container">{content}</div>
+  )
 
   const updatedMainColumnItems = [
     header,
@@ -279,7 +278,9 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   return (
     <Card
       ref={resourceCard}
-      className={`resource-card ${className} ${isSelected ? 'selected' : ''} ${orientation} `}
+      className={`resource-card ${className} ${
+        '' /* isSelected ? 'selected' : '' */
+      } ${orientation} `}
       hover={true}
       onClick={onClick}
       style={orientation === 'vertical' ? background : {}}
