@@ -67,12 +67,12 @@
   },
   "peerDependencies": {
     "@moodlenet/arangodb": "^0.2.0",
-    "@moodlenet/component-library": "^0.2.0",
-    "@moodlenet/ed-resource": "^0.2.0",
     "@moodlenet/collection": "^0.2.0",
-    "@moodlenet/ed-meta": "^0.2.0",
+    "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/crypto": "^0.2.0",
+    "@moodlenet/ed-meta": "^0.2.0",
+    "@moodlenet/ed-resource": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",
     "@moodlenet/simple-file-store": "^0.2.0",
@@ -80,12 +80,12 @@
   },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.2.0",
-    "@moodlenet/ed-resource": "^0.2.0",
     "@moodlenet/collection": "^0.2.0",
-    "@moodlenet/ed-meta": "^0.2.0",
     "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/crypto": "^0.2.0",
+    "@moodlenet/ed-meta": "^0.2.0",
+    "@moodlenet/ed-resource": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",
     "@moodlenet/simple-file-store": "^0.2.0",
@@ -93,7 +93,8 @@
     "@types/js-cookie": "^3.0.2",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "typed-emitter": "^2.1.0"
   },
   "dependencies": {
     "@material-ui/icons": "^4.11.3",
