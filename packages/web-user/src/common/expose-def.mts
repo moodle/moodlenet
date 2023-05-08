@@ -1,5 +1,4 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import type { EntityIdentifier } from '@moodlenet/system-entities/server'
 import type { ClientSessionDataRpc, Profile, WebUserData } from './types.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/server'
 
@@ -26,16 +25,48 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
     ): Promise<string | null>
-    'webapp/entity/:feature/:action'(
-      body: { entityId: EntityIdentifier },
-      params: { action: 'add' | 'remove'; feature: EntityFeature },
+    'webapp/get-my-own-resources'(): Promise<{ _key: string }[]>
+    'webapp/get-my-own-collections'(): Promise<{ _key: string }[]>
+
+    // social features
+    'webapp/:action/follow/:entity/:_key'(
+      body: void,
+      params: { action: 'add' | 'remove'; entity: 'collection' | 'profile'; _key: string },
     ): Promise<void>
-    'webapp/get-my-featured-entities'(): Promise<{
-      [feat in EntityFeature]: { entityId: EntityIdentifier }[]
+    'webapp/:action/like/:entity/:_key'(
+      body: void,
+      params: { action: 'add' | 'remove'; entity: 'resource'; _key: string },
+    ): Promise<void>
+    'webapp/:action/bookmark/:entity/:_key'(
+      body: void,
+      params: {
+        action: 'add' | 'remove'
+        entity: 'collection' | 'profile' | 'resource'
+        _key: string
+      },
+    ): Promise<void>
+    'webapp/all-my-featured-entities'(): Promise<{
+      following: {
+        collections: { _key: string }[]
+        profiles: { _key: string }[]
+      }
+      likes: {
+        resources: { _key: string }[]
+      }
+      bookmarked: {
+        collections: { _key: string }[]
+        profiles: { _key: string }[]
+        resources: { _key: string }[]
+      }
     }>
-    'webapp/entity/:feature/count-all'(
-      body: { entityId: EntityIdentifier },
-      params: { feature: EntityFeature },
+    'webapp/followers-count/:entity/:_key'(
+      body: void,
+      params: { entity: 'collection' | 'profile'; _key: string },
     ): Promise<{ count: number }>
+    'webapp/likers-count/resource/:_key'(
+      body: void,
+      params: { _key: string },
+    ): Promise<{ count: number }>
+    // --
   }
 }>
