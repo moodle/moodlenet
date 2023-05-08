@@ -224,6 +224,12 @@ export const expose = await shell.expose<WebUserExposeType>({
         return { count: 10 }
       },
     },
+    'webapp/kudos-count/:profileKey': {
+      guard: () => void 0,
+      async fn() {
+        return { count: 10 }
+      },
+    },
     'webapp/get-my-own-collections': {
       guard: () => void 0,
       async fn() {
