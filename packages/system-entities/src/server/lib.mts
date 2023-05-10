@@ -3,6 +3,8 @@ import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
 import { inspect } from 'util'
+import { entityIdByIdentifier, getEntityFullTypename } from '../common/entity-identification.mjs'
+import type { EntityClass, SomeEntityDataType } from '../common/types.mjs'
 import {
   entityIdentifier2EntityIdAql,
   isCurrentUserCreatorOfCurrentEntity,
@@ -12,14 +14,13 @@ import { userInfoAqlProvider } from './aql-lib/userInfo.mjs'
 import type { EntityInfo, EntityInfoProviderItem } from './entity-info.mjs'
 import { ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { db, env } from './init.mjs'
-import { entityId, getEntityCollection, getEntityCollectionName } from './pkg-db-names.mjs'
+import { getEntityCollection } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
 import type {
   AccessControllers,
   AnonUser,
   AqlVal,
   EntityAccess,
-  EntityClass,
   EntityCollectionDef,
   EntityCollectionDefOpts,
   EntityCollectionDefs,
@@ -30,7 +31,6 @@ import type {
   EntityMetadata,
   PkgUser,
   RootUser,
-  SomeEntityDataType,
   SystemUser,
 } from './types.mjs'
 import type { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
@@ -81,7 +81,7 @@ export async function registerEntity<EntityDataType extends SomeEntityDataType>(
     type: entityName,
   }
 
-  const entityCollectionName = getEntityCollectionName(entityClass)
+  const entityCollectionName = getEntityFullTypename(entityClass)
   const { collection /* , newlyCreated */ } = await shell.call(ensureDocumentCollection)<
     EntityDocFullData<EntityDataType>
   >(entityCollectionName)
@@ -132,7 +132,9 @@ export async function create<EntityDataType extends SomeEntityDataType>(
       _meta: {
         creator: currentUser,
         creatorEntityId:
-          currentUser.type === 'entity' ? entityId(currentUser.entityIdentifier) : undefined,
+          currentUser.type === 'entity'
+            ? entityIdByIdentifier(currentUser.entityIdentifier)
+            : undefined,
         updated: now,
         created: now,
         entityClass,
@@ -364,7 +366,7 @@ export async function accessEntities<
     )
   }
 
-  const entityCollectionName = getEntityCollectionName(entityClass)
+  const entityCollectionName = getEntityFullTypename(entityClass)
 
   const entityAccessesToCompute = [
     ...new Set<EntityAccess>([
