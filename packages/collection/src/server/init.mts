@@ -8,7 +8,7 @@ import {
   registerAccessController,
   registerEntities,
 } from '@moodlenet/system-entities/server'
-import type { MyWebDeps } from '../common/types.mjs'
+import type { CollectionEntityNames, MyWebDeps } from '../common/types.mjs'
 import { matchCollectionHomePageRoutePathKey } from '../common/webapp-routes.mjs'
 import { expose as me } from './expose.mjs'
 import { getCollection } from './lib.mjs'
@@ -20,11 +20,15 @@ shell.call(plugin)<MyWebDeps>({
   deps: { me },
 })
 
-export const { Collection } = await shell.call(registerEntities)<{
-  Collection: EntityCollectionDef<CollectionDataType>
-}>({
+export const { Collection } = await shell.call(registerEntities)<
+  {
+    Collection: EntityCollectionDef<CollectionDataType>
+  },
+  CollectionEntityNames
+>({
   Collection: {},
 })
+
 await shell.call(registerAccessController)({
   u() {
     return `(${isCurrentOfEntityClass2Aql(
