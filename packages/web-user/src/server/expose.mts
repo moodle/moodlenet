@@ -181,70 +181,41 @@ export const expose = await shell.expose<WebUserExposeType>({
         },
       },
     },
-    'webapp/:action/bookmark/:entity/:_key': {
+    'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id': {
       guard: () => void 0,
-      // async fn({ entityId }, { action, feature }) {
-      async fn() {
+      async fn(/* _,{action,entity_id,feature} */) {
         return
       },
     },
-    'webapp/:action/follow/:entity/:_key': {
+    'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id': {
       guard: () => void 0,
-      // async fn({ entityId }, { action, feature }) {
-      async fn() {
-        return
-      },
-    },
-    'webapp/:action/like/:entity/:_key': {
-      guard: () => void 0,
-      // async fn({ entityId }, { action, feature }) {
-      async fn() {
-        return
+      async fn(/* _, { entity_id, feature } */) {
+        return { count: 1 }
       },
     },
     'webapp/all-my-featured-entities': {
       guard: () => void 0,
       async fn() {
         return {
-          bookmarked: { collections: [], profiles: [], resources: [] },
-          following: { collections: [], profiles: [] },
-          likes: { resources: [] },
+          entities: [],
         }
       },
     },
-    'webapp/followers-count/:entity/:_key': {
+    'webapp/profile-kudos-count/:profileKey': {
       guard: () => void 0,
-      async fn() {
+      async fn(/* _, { profileKey } */) {
         return { count: 10 }
       },
     },
-    'webapp/likers-count/resource/:_key': {
+    'webapp/get-profile-entity-ids/:profileKey': {
       guard: () => void 0,
-      async fn() {
-        return { count: 10 }
-      },
-    },
-    'webapp/kudos-count/:profileKey': {
-      guard: () => void 0,
-      async fn() {
-        return { count: 10 }
-      },
-    },
-    'webapp/get-my-own-collections': {
-      guard: () => void 0,
-      async fn() {
-        return []
-      },
-    },
-    'webapp/get-my-own-resources': {
-      guard: () => void 0,
-      async fn() {
+      async fn(/* _, { profileKey } */) {
         return []
       },
     },
     'webapp/send-message-to-user/:profileKey': {
       guard: () => void 0,
-      async fn() {
+      async fn(/* _,{profileKey} */) {
         return
       },
     },
