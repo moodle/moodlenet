@@ -28,7 +28,6 @@ import {
 import {
   CloudDoneOutlined,
   Delete,
-  HourglassBottom,
   InsertDriveFile,
   MoreVert,
   Public,
@@ -327,12 +326,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const publishingButton =
-    canPublish && !isPublished ? (
-      <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
-        <HourglassBottom style={{ fill: '#d0d1db' }} />
-      </abbr>
-    ) : null
+  // const publishingButton =
+  //   canPublish && !isPublished ? (
+  //     <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
+  //       <HourglassBottom style={{ fill: '#d0d1db' }} />
+  //     </abbr>
+  //   ) : null
 
   const publishedButton =
     canPublish && isPublished ? (
@@ -477,7 +476,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const updatedTopRightHeaderItems = [
     // likeButton,
     publishedButton,
-    publishingButton,
+    // publishingButton,
     unpublishedButton,
     // bookmarkButtonBigScreen,
     // editSaveButton,
