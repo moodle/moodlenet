@@ -11,15 +11,7 @@ import {
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
-import {
-  CloudDoneOutlined,
-  Delete,
-  HourglassBottom,
-  MoreVert,
-  Public,
-  PublicOff,
-  Sync,
-} from '@mui/icons-material'
+import { CloudDoneOutlined, Delete, MoreVert, Public, PublicOff, Sync } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -270,12 +262,12 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         }
       : null
 
-  const publishingButton =
-    canPublish && !isPublished ? (
-      <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
-        <HourglassBottom style={{ fill: '#d0d1db' }} />
-      </abbr>
-    ) : null
+  // const publishingButton =
+  //   canPublish && !isPublished ? (
+  //     <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
+  //       <HourglassBottom style={{ fill: '#d0d1db' }} />
+  //     </abbr>
+  //   ) : null
 
   const publishedButton =
     canEdit && isPublished ? (
@@ -367,7 +359,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const updatedTopRightHeaderItems = [
     publishedButton,
     unpublishedButton,
-    publishingButton,
+    // publishingButton,
     // bookmarkButtonBigScreen,
     ...(topRightHeaderItems ?? []),
     moreButton,
