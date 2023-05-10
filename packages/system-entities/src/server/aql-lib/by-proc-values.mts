@@ -1,12 +1,7 @@
 import type { PkgName } from '@moodlenet/core'
-import * as pkgDbNames from '../pkg-db-names.mjs'
-import type {
-  AqlVal,
-  EntityClass,
-  EntityDocument,
-  EntityIdentifier,
-  SomeEntityDataType,
-} from '../types.mjs'
+import { entityIdByIdentifier, getPkgNamespace } from '../../common/entity-identification.mjs'
+import type { EntityClass, EntityIdentifier, SomeEntityDataType } from '../../common/types.mjs'
+import type { AqlVal, EntityDocument } from '../types.mjs'
 import { currentEntityKey, currentEntityMeta, toaql } from './aql.mjs'
 
 export function isCurrentThisEntity(entityIdentifier: EntityIdentifier): AqlVal<boolean> {
@@ -25,9 +20,9 @@ export function isCurrentOfEntityClass2Aql(
 export function entityDocument2Aql<T extends SomeEntityDataType>(
   entityIdentifier: EntityIdentifier,
 ): AqlVal<EntityDocument<T>> {
-  return `DOCUMENT( "${pkgDbNames.entityId(entityIdentifier)}" )`
+  return `DOCUMENT( "${entityIdByIdentifier(entityIdentifier)}" )`
 }
 
 export function pkgMetaOf2Aql<T>(pkgName: PkgName): AqlVal<T> {
-  return `${currentEntityMeta}.pkgMeta["${pkgDbNames.getPkgNamespace(pkgName)}"]`
+  return `${currentEntityMeta}.pkgMeta["${getPkgNamespace(pkgName)}"]`
 }
