@@ -1,4 +1,5 @@
-import type { AqlVal, EntityClass, SomeEntityDataType } from './types.mjs'
+import type { EntityClass, SomeEntityDataType } from '../common/types.mjs'
+import type { AqlVal } from './types.mjs'
 
 export type EntityInfo = {
   iconUrl: string
