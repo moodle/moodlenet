@@ -9,7 +9,7 @@ import {
   registerAccessController,
   registerEntities,
 } from '@moodlenet/system-entities/server'
-import type { MyWebDeps } from '../common/types.mjs'
+import type { EdResourceEntityNames, MyWebDeps } from '../common/types.mjs'
 import { matchResourceHomePageRoutePathKey } from '../common/webapp-routes.mjs'
 import { expose as me } from './expose.mjs'
 import { getResource } from './lib.mjs'
@@ -25,9 +25,12 @@ shell.call(plugin)<MyWebDeps>({
   deps: { me },
 })
 
-export const { Resource } = await shell.call(registerEntities)<{
-  Resource: EntityCollectionDef<ResourceDataType>
-}>({
+export const { Resource } = await shell.call(registerEntities)<
+  {
+    Resource: EntityCollectionDef<ResourceDataType>
+  },
+  EdResourceEntityNames
+>({
   Resource: {},
 })
 await shell.call(registerAccessController)({

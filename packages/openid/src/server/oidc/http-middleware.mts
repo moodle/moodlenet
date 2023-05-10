@@ -1,7 +1,7 @@
 import { addMiddlewares } from '@moodlenet/http-server/server'
 import type { EntityUser } from '@moodlenet/system-entities/server'
 import { setCurrentUserFetch } from '@moodlenet/system-entities/server'
-import { WebUserProfile } from '@moodlenet/web-user/init'
+import { Profile } from '@moodlenet/web-user/init'
 import { shell } from '../shell.mjs'
 
 const OPENID_HEADER = 'Authorization'
@@ -22,7 +22,7 @@ await shell.call(addMiddlewares)({
           const entityUser: EntityUser = {
             type: 'entity',
             entityIdentifier: {
-              entityClass: WebUserProfile.entityClass,
+              entityClass: Profile.entityClass,
               _key: AccessToken.accountId,
             },
             restrictToScopes: [...AccessToken.scopes],

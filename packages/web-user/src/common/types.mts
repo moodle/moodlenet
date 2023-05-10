@@ -1,5 +1,7 @@
 import type { Href } from '@moodlenet/react-app/common'
 
+export type WebUserEntityNames = 'Profile'
+
 export type Profile = {
   _key: string
   displayName: string

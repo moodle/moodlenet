@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@moodlenet/http-server/server'
 import { mountApp, urlencoded } from '@moodlenet/http-server/server'
-import { getCurrentWebUserProfile } from '@moodlenet/web-user/server'
+import { getCurrentProfile } from '@moodlenet/web-user/server'
 // import Account from './account.mjs'
 
 import assert from 'assert'
@@ -21,7 +21,7 @@ shell.call(mountApp)({
     app.post('/interaction/:uid/login', setNoCache, body, async (req, res, next) => {
       // console.log('-/interaction/:uid/login LOGIN   ', req.params.uid)
       try {
-        const currentWebUserProfile = await getCurrentWebUserProfile()
+        const currentWebUserProfile = await getCurrentProfile()
         assert(currentWebUserProfile, 'not authenticated')
         const {
           prompt: { name },

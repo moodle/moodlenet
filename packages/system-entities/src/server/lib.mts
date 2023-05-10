@@ -36,7 +36,10 @@ import type {
 import type { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
 const DEFAULT_QUERY_LIMIT = 25
 const DEFAULT_MAX_QUERY_LIMIT = 100
-export async function registerEntities<Defs extends EntityCollectionDefs>(entities: {
+export async function registerEntities<
+  Defs extends EntityCollectionDefs<EntityNames>,
+  EntityNames extends string, // = string,
+>(entities: {
   [name in keyof Defs]: EntityCollectionDefOpts
 }): Promise<EntityCollectionHandles<Defs>> {
   const namesAndHandles = await Promise.all(
