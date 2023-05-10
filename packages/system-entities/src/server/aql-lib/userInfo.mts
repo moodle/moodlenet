@@ -1,7 +1,8 @@
+import type { EntityClass, SomeEntityDataType } from '../../common/types.mjs'
 import type { EntityInfo } from '../entity-info.mjs'
 import { ENTITY_INFO_PROVIDERS } from '../entity-info.mjs'
 import { includesSameClass } from '../lib.mjs'
-import type { AqlVal, EntityClass, SomeEntityDataType } from '../types.mjs'
+import type { AqlVal } from '../types.mjs'
 import { currentEntityVar, entityIdentifier2EntityIdAql, toaql } from './aql.mjs'
 
 export function userInfoAqlProvider(

@@ -1,6 +1,6 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import type { ClientSessionDataRpc, Profile, WebUserData } from './types.mjs'
-export type { EntityIdentifier } from '@moodlenet/system-entities/server'
+export type { EntityIdentifier } from '@moodlenet/system-entities/common'
 
 export type EntityFeature = 'bookmark' | 'follow' | 'like'
 export type WebUserExposeType = PkgExposeDef<{
