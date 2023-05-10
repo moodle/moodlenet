@@ -25,49 +25,31 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
     ): Promise<string | null>
-    'webapp/get-my-own-resources'(): Promise<{ _key: string }[]>
-    'webapp/get-my-own-collections'(): Promise<{ _key: string }[]>
+    'webapp/get-profile-entity-ids/:profileKey'(
+      body: void,
+      params: { profileKey: string },
+    ): Promise<{ _id: string }[]>
 
     // social features
-    'webapp/:action/follow/:entity/:_key'(
-      body: void,
-      params: { action: 'add' | 'remove'; entity: 'collection' | 'profile'; _key: string },
-    ): Promise<void>
-    'webapp/:action/like/:entity/:_key'(
-      body: void,
-      params: { action: 'add' | 'remove'; entity: 'resource'; _key: string },
-    ): Promise<void>
-    'webapp/:action/bookmark/:entity/:_key'(
+    'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'(
       body: void,
       params: {
         action: 'add' | 'remove'
-        entity: 'collection' | 'profile' | 'resource'
-        _key: string
+        feature: 'bookmark' | 'follow' | 'like'
+        entity_id: string
       },
     ): Promise<void>
+    'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id'(
+      body: void,
+      params: {
+        feature: 'bookmark' | 'follow' | 'like'
+        entity_id: string
+      },
+    ): Promise<{ count: number }>
     'webapp/all-my-featured-entities'(): Promise<{
-      following: {
-        collections: { _key: string }[]
-        profiles: { _key: string }[]
-      }
-      likes: {
-        resources: { _key: string }[]
-      }
-      bookmarked: {
-        collections: { _key: string }[]
-        profiles: { _key: string }[]
-        resources: { _key: string }[]
-      }
+      entities: { _id: string }[]
     }>
-    'webapp/followers-count/:entity/:_key'(
-      body: void,
-      params: { entity: 'collection' | 'profile'; _key: string },
-    ): Promise<{ count: number }>
-    'webapp/likers-count/resource/:_key'(
-      body: void,
-      params: { _key: string },
-    ): Promise<{ count: number }>
-    'webapp/kudos-count/:profileKey'(
+    'webapp/profile-kudos-count/:profileKey'(
       body: void,
       params: { profileKey: string },
     ): Promise<{ count: number }>
