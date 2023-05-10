@@ -71,6 +71,10 @@ export type WebUserExposeType = PkgExposeDef<{
       body: void,
       params: { profileKey: string },
     ): Promise<{ count: number }>
+    'webapp/send-message-to-user/:profileKey'(
+      body: { message: string },
+      params: { profileKey: string },
+    ): Promise<void>
     // --
   }
 }>
