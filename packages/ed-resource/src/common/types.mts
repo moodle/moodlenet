@@ -4,6 +4,8 @@ import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { ResourceExposeType } from './expose-def.mjs'
 
+export type EdResourceEntityNames = 'Resource'
+
 export type MyWebDeps = {
   me: ResourceExposeType
 }

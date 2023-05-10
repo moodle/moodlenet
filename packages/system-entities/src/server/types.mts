@@ -32,8 +32,10 @@ export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   entityClass: EntityClass<Def['dataType']>
 }
 
-export type EntityCollectionDefs = { [name in string]: EntityCollectionDef<any> }
-export type EntityCollectionHandles<Defs extends EntityCollectionDefs> = {
+export type EntityCollectionDefs<EntityNames extends string> = {
+  [name in EntityNames]: EntityCollectionDef<any>
+}
+export type EntityCollectionHandles<Defs extends EntityCollectionDefs<string>> = {
   [name in keyof Defs]: EntityCollectionHandle<Defs[name]>
 }
 
