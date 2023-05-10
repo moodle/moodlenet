@@ -242,8 +242,15 @@ export const expose = await shell.expose<WebUserExposeType>({
         return []
       },
     },
+    'webapp/send-message-to-user/:profileKey': {
+      guard: () => void 0,
+      async fn() {
+        return
+      },
+    },
   },
 })
+
 function webUserProfileDoc2Profile(entity: EntityDocument<WebUserProfileDataType>) {
   const backgroundUrl = entity.backgroundImage
     ? publicFilesHttp.getFileUrl({
