@@ -36,3 +36,7 @@ export function getIdAndEntityIdentifier(id: string | EntityIdentifier) {
   const _id = gotStringId ? id : entityIdByIdentifier(id)
   return { _id, entityIdentifier }
 }
+
+export function isOfSameClass(cl1: EntityClass<any>, cl2: EntityClass<any>) {
+  return cl1.pkgName == cl2.pkgName && cl1.type == cl2.type
+}

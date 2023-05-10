@@ -16,6 +16,9 @@
     },
     {
       "path": "../key-value-store"
+    },
+    {
+      "path": "../react-app"
     }
   ]
 }

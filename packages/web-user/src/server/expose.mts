@@ -6,10 +6,10 @@ import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type { ClientSessionDataRpc, Profile, WebUserData } from '../common/types.mjs'
 import { publicFiles, publicFilesHttp } from './init.mjs'
 import { shell } from './shell.mjs'
-import type { WebUserProfileDataType } from './types.mjs'
+import type { ProfileDataType } from './types.mjs'
 import { loginAsRoot, sendWebUserTokenCookie, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import {
-  editWebUserProfile,
+  editProfile,
   getProfileAvatarLogicalFilename,
   getProfileImageLogicalFilename,
   getProfileRecord,
@@ -52,7 +52,7 @@ export const expose = await shell.expose<WebUserExposeType>({
           `couldn't find Profile#${currentWebUser.profileKey} associated with WebUser#${currentWebUser.webUserKey}:${webUser.displayName}`,
         )
 
-        const myProfile = webUserProfileDoc2Profile(profileRecord.entity)
+        const myProfile = profileDoc2Profile(profileRecord.entity)
         const clientSessionDataRpc: ClientSessionDataRpc = {
           isAdmin: webUser.isAdmin,
           isRoot: false,
@@ -69,11 +69,11 @@ export const expose = await shell.expose<WebUserExposeType>({
       guard: () => void 0,
       async fn(profileFormValues) {
         const { _key, ...editRequest } = profileFormValues
-        const patchRecord = await editWebUserProfile(_key, editRequest)
+        const patchRecord = await editProfile(_key, editRequest)
         if (!patchRecord) {
           return
         }
-        const data = webUserProfileDoc2Profile(patchRecord.entity)
+        const data = profileDoc2Profile(patchRecord.entity)
 
         return {
           data,
@@ -88,7 +88,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         if (!profileRecord) {
           return
         }
-        const data: Profile = webUserProfileDoc2Profile(profileRecord.entity)
+        const data: Profile = profileDoc2Profile(profileRecord.entity)
         return {
           canEdit: !!profileRecord.access.u,
           data,
@@ -128,7 +128,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         const avatarLogicalFilename = getProfileAvatarLogicalFilename(_key)
         if (!uploadedRpcFile) {
           await publicFiles.del(avatarLogicalFilename)
-          await editWebUserProfile(_key, {
+          await editProfile(_key, {
             avatarImage: null,
           })
           return null
@@ -138,7 +138,7 @@ export const expose = await shell.expose<WebUserExposeType>({
 
         const { directAccessId } = await publicFiles.store(avatarLogicalFilename, resizedRpcFile)
 
-        await editWebUserProfile(_key, {
+        await editProfile(_key, {
           avatarImage: { kind: 'file', directAccessId },
         })
         return publicFilesHttp.getFileUrl({ directAccessId })
@@ -160,7 +160,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         const imageLogicalFilename = getProfileImageLogicalFilename(_key)
         if (!uploadedRpcFile) {
           await publicFiles.del(imageLogicalFilename)
-          await editWebUserProfile(_key, {
+          await editProfile(_key, {
             backgroundImage: null,
           })
           return null
@@ -170,7 +170,7 @@ export const expose = await shell.expose<WebUserExposeType>({
 
         const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 
-        await editWebUserProfile(_key, {
+        await editProfile(_key, {
           backgroundImage: { kind: 'file', directAccessId },
         })
         return publicFilesHttp.getFileUrl({ directAccessId })
@@ -251,7 +251,7 @@ export const expose = await shell.expose<WebUserExposeType>({
   },
 })
 
-function webUserProfileDoc2Profile(entity: EntityDocument<WebUserProfileDataType>) {
+function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
   const backgroundUrl = entity.backgroundImage
     ? publicFilesHttp.getFileUrl({
         directAccessId: entity.backgroundImage.directAccessId,

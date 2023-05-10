@@ -1,10 +1,10 @@
 import type { AqlVal } from '@moodlenet/system-entities/server'
 import { creatorEntityDoc, toaql } from '@moodlenet/system-entities/server'
-import { WebUserProfile } from './init.mjs'
-import type { WebUserProfileEntity } from './types.mjs'
+import { Profile } from './init.mjs'
+import type { ProfileEntity } from './types.mjs'
 
-export function webUserCreatorEntity(): AqlVal<WebUserProfileEntity> {
+export function webUserCreatorEntity(): AqlVal<ProfileEntity> {
   return `((FOR c in [${creatorEntityDoc()}] filter c._meta.entityClass == ${toaql(
-    WebUserProfile.entityClass,
+    Profile.entityClass,
   )} return c)[0])`
 }
