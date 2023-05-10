@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, ReactNode } from 'react'
+import type { CSSProperties, FC, PropsWithChildren } from 'react'
 import type { MainFooterProps } from '../../organisms/Footer/MainFooter/MainFooter.js'
 import { MainFooter } from '../../organisms/Footer/MainFooter/MainFooter.js'
 import type { MainHeaderProps } from '../../organisms/Header/MainHeader/MainHeader.js'
@@ -15,13 +15,15 @@ import './MainLayout.scss'
 export type MainLayoutProps = {
   headerProps: MainHeaderProps
   footerProps: MainFooterProps
+}
+
+export type MainLayoutUIProps = {
   defaultHideSearchbox?: boolean
   style?: CSSProperties
   streched?: boolean
-  children?: ReactNode
 }
 
-export const MainLayout: FC<MainLayoutProps> = ({
+export const MainLayout: FC<PropsWithChildren<MainLayoutProps & MainLayoutUIProps>> = ({
   headerProps,
   footerProps,
   style,
