@@ -108,7 +108,8 @@ export const useProfileProps = ({
             { _key: profileKey },
           )
         },
-        sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented use me.rpc.$_DEV_$_TO_IMPLEMENT
+        sendMessage: (message: string) =>
+          me.rpc['webapp/send-message-to-user/:profileKey']({ message }, { profileKey }),
       },
       mainProfileCardSlots: {
         mainColumnItems: [],

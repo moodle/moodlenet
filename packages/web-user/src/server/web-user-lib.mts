@@ -22,7 +22,17 @@ export async function getCurrentProfile(): Promise<ProfileEntity | undefined> {
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, ...profileData } = createRequest
-  const newProfile = await create(Profile.entityClass, profileData, { pkgCreator: true })
+  const createData: ProfileDataType = {
+    aboutMe: '',
+    avatarImage: undefined,
+    backgroundImage: undefined,
+    location: '',
+    myOwnEntities: [],
+    organizationName: '',
+    siteUrl: '',
+    ...profileData,
+  }
+  const newProfile = await create(Profile.entityClass, createData, { pkgCreator: true })
 
   if (!newProfile) {
     return
