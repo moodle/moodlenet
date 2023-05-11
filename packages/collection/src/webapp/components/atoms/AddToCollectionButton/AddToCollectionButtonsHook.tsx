@@ -15,7 +15,7 @@ const mapHasResourceIfKey = (key: string, action: Action) => (item: CollectionsR
   hasResource: item.collectionKey === key ? action === 'add' : item.hasResource,
 })
 
-const mapCollectionsToProps = (acc: typeof empityOptions, el: CollectionsResorce) => {
+const mapCollectionsToProps = (acc: SelectOptionsMulti<OptionItemProp>, el: CollectionsResorce) => {
   const item = mapToSelectOption(el.collectionKey, el.collectionName)
   return {
     opts: [...acc.opts, item],
