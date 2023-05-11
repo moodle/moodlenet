@@ -73,15 +73,14 @@ export type CollectionProps = {
   access: CollectionAccessProps
   contributor: CollectionContributorProps
 }
+export type CollectionsResorce = {
+  collectionKey: string
+  collectionName: string
+  hasResource: boolean
+}
 
 export type RpcCaller = {
-  collectionsResorce: (containingResourceKey: string) => Promise<
-    {
-      collectionKey: string
-      collectionName: string
-      hasResource: boolean
-    }[]
-  >
+  collectionsResorce: (containingResourceKey: string) => Promise<CollectionsResorce[]>
   actionResorce: (
     collectionKey: string,
     action: 'remove' | 'add',
