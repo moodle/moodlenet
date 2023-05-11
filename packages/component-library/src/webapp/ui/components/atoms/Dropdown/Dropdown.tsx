@@ -21,7 +21,19 @@ export type DropdownProps = SelectorProps & {
   position?: { top?: number; bottom?: number }
 }
 export const Dropdown: FC<DropdownProps> = props => {
-  const { children, ...selectorProps } = props
+  const {
+    children,
+    pills: _pills,
+    searchByText: _searchByText,
+    searchText: _searchText,
+    label: _label,
+    edit: _edit,
+    error: _error,
+    highlight: _highlight,
+    multilines: _multilines,
+    position: _position,
+    ...selectorProps
+  } = props
   return (
     <Selector {...selectorProps}>
       <DropdownComp {...props}>{children}</DropdownComp>

@@ -7,7 +7,7 @@ import {
 } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { YearsProps } from '../../../../common/data.js'
+import { YearsProps } from '../../../../common/MOCK_DATA.js'
 
 export type DateFieldProps = {
   month: string | undefined
