@@ -1,6 +1,6 @@
 import type { PkgName } from '@moodlenet/core'
 import assert from 'assert'
-import type { EntityClass, EntityIdentifier } from './types.mjs'
+import type { EntityClass, EntityIdentifier, EntityIdentifiers } from './types.mjs'
 
 export function getEntityFullTypename(entityClass: EntityClass<any>) {
   return `${getPkgNamespace(entityClass.pkgName)}__${entityClass.type}`
@@ -30,7 +30,7 @@ export function entityIdentifierById(_id: string) {
   return entityIdentifier
 }
 
-export function getIdAndEntityIdentifier(id: string | EntityIdentifier) {
+export function getIdAndEntityIdentifier(id: string | EntityIdentifier): EntityIdentifiers {
   const gotStringId = typeof id === 'string'
   const entityIdentifier = gotStringId ? entityIdentifierById(id) : id
   const _id = gotStringId ? id : entityIdByIdentifier(id)

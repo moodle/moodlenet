@@ -1,6 +1,6 @@
 import { CollectionContext } from '@moodlenet/collection/webapp'
 import { ResourceContext } from '@moodlenet/ed-resource/webapp'
-import type { EntityIdentifier } from '@moodlenet/system-entities/common'
+import type { EntityIdentifiers } from '@moodlenet/system-entities/common'
 import { getIdAndEntityIdentifier } from '@moodlenet/system-entities/common'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useContext, useMemo } from 'react'
@@ -10,7 +10,7 @@ import { ProfileContext } from './ProfileContext.js'
 
 type KnownFeaturedEntities = {
   [feature in `${KnownEntityFeature}s`]: {
-    [knownEntity in `${KnownEntityTypes}s`]: { _id: string; entityIdentifier: EntityIdentifier }[]
+    [knownEntity in `${KnownEntityTypes}s`]: EntityIdentifiers[]
   }
 }
 export type MyKnownFeaturedEntitiesContextT = {
