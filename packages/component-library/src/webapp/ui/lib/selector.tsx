@@ -228,7 +228,7 @@ export const Selector: FC<SelectorProps> = props => {
   return (
     <SelectorContext.Provider value={ctx}>
       {props.children}
-      <select {...selectProps} />
+      <select {...selectProps} disabled />
     </SelectorContext.Provider>
   )
 }

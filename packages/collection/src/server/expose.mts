@@ -72,7 +72,7 @@ export const expose = await shell.expose<CollectionExposeType>({
           })
       },
     },
-    'webapp/content/:collectionKey/:action/:resourceKey': {
+    'webapp/in-collection/:collectionKey/:action-resource/:resourceKey': {
       guard: () => void 0,
       async fn(_, { action, collectionKey, resourceKey }) {
         const updateResult = await updateCollectionContent(collectionKey, action, resourceKey)
