@@ -1,6 +1,5 @@
-import { coreConfigs } from './main/env.mjs'
-export const { instanceDomain, npmRegistry } = coreConfigs
 export * from './async-context/types.mjs'
+export { pkgDepGraph } from './ignite.mjs'
 export {
   assertRpcFileReadable,
   getCurrentRpcStatusCode,
@@ -21,3 +20,5 @@ export { getPkgScopes, registerScopes } from './pkg-scopes/lib.mjs'
 export * from './pkg-shell/shell.mjs'
 export * from './pkg-shell/types.mjs'
 export * from './types.mjs'
+import { coreConfigs } from './main/env.mjs'
+export const { instanceDomain, npmRegistry } = coreConfigs
