@@ -5,6 +5,7 @@ import { createRequire } from 'module'
 import { resolve } from 'path'
 
 const rootPkgJson = JSON.parse(await readFile('package.json', 'utf-8'))
+const rootPkgLockJson = JSON.parse(await readFile('package-lock.json', 'utf-8'))
 
 const configFilePath = process.env.MOODLENET_CONFIG_FILE ?? 'default.config.json'
 const configs = JSON.parse(await readFile(configFilePath, 'utf-8'))
@@ -16,6 +17,7 @@ await ignite({
   rootRequire,
   rootImport,
   rootPkgJson,
+  rootPkgLockJson,
   reboot,
   shutdown,
   configs,
