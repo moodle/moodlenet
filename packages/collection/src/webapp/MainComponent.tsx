@@ -55,7 +55,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
         rpc['webapp/my-collections/:containingResourceKey'](null, { containingResourceKey }),
 
       actionResorce: (collectionKey: string, action: 'remove' | 'add', resourceKey: string) =>
-        rpc['webapp/content/:collectionKey/:action/:resourceKey'](null, {
+        rpc['webapp/in-collection/:collectionKey/:action-resource/:resourceKey'](null, {
           collectionKey,
           action,
           resourceKey,
