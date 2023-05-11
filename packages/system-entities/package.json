@@ -10,7 +10,8 @@
   },
   "exports": {
     "./server": "./dist/server/exports.mjs",
-    "./common": "./dist/common/exports.mjs"
+    "./common": "./dist/common/exports.mjs",
+    "./webapp/rt": "./dist/webapp/rt/exports.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",
