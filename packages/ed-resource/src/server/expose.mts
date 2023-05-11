@@ -75,13 +75,13 @@ export const expose = await shell.expose<ResourceExposeType>({
           resourceForm: {
             description: found.entity.description,
             title: found.entity.title,
-            license: '', //@ETTO to be filled
-            subject: '', //@ETTO to be filled
-            language: '', //@ETTO to be filled
-            level: '', //@ETTO to be filled
-            month: '', //@ETTO to be filled
-            year: '', //@ETTO to be filled
-            type: '', //@ETTO to be filled
+            license: found.entity.license,
+            subject: found.entity.subject,
+            language: found.entity.language,
+            level: found.entity.level,
+            month: found.entity.month,
+            year: found.entity.year,
+            type: found.entity.type,
           },
           data: {
             contentType: found.entity.content?.kind ?? 'link',
@@ -130,6 +130,13 @@ export const expose = await shell.expose<ResourceExposeType>({
           content: null,
           image: null,
           published: false,
+          license: '',
+          subject: '',
+          language: '',
+          level: '',
+          month: '',
+          year: '',
+          type: '',
         })
         if (!createResult) {
           throw RpcStatus('Unauthorized')
@@ -165,6 +172,13 @@ export const expose = await shell.expose<ResourceExposeType>({
           content: null,
           image: null,
           published: false,
+          license: '',
+          subject: '',
+          language: '',
+          level: '',
+          month: '',
+          year: '',
+          type: '',
         })
         if (!createResult) {
           throw RpcStatus('Unauthorized')

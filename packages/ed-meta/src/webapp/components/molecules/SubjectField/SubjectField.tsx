@@ -1,7 +1,7 @@
 import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { SubjectsTextOptionProps } from '../../../../common/data.js'
+import { SubjectsTextOptionProps } from '../../../../common/MOCK_DATA.js'
 
 export type SubjectFieldProps = {
   subject: string
