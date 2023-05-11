@@ -12,7 +12,7 @@ export type ProfileDataType = {
   siteUrl: string | undefined | null
   backgroundImage: ImageField | undefined | null
   avatarImage: ImageField | undefined | null
-  myOwnEntities: { _id: string }[]
+  ownEntities: { _id: string }[]
 }
 type ImageField =
   | { kind: 'file'; directAccessId: string }

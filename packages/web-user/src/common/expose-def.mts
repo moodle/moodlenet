@@ -1,8 +1,8 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import type {
   ClientSessionDataRpc,
-  EntityFeature,
   FeaturedEntity,
+  KnownEntityFeature,
   Profile,
   WebUserData,
 } from './types.mjs'
@@ -17,7 +17,7 @@ export type WebUserExposeType = PkgExposeDef<{
     ): Promise<{ data: Profile; canEdit: boolean } | undefined>
     'webapp/profile/get'(body: {
       _key: string
-    }): Promise<{ data: Profile; canEdit: boolean; myOwnEntities: { _id: string }[] } | undefined>
+    }): Promise<{ data: Profile; canEdit: boolean; ownEntities: { _id: string }[] } | undefined>
     'webapp/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
     'webapp/roles/toggleIsAdmin'(
       body: { profileKey: string } | { userKey: string },
@@ -40,14 +40,14 @@ export type WebUserExposeType = PkgExposeDef<{
       body: void,
       params: {
         action: 'add' | 'remove'
-        feature: EntityFeature
+        feature: KnownEntityFeature
         entity_id: string
       },
     ): Promise<void>
     'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id'(
       body: void,
       params: {
-        feature: EntityFeature
+        feature: KnownEntityFeature
         entity_id: string
       },
     ): Promise<{ count: number }>
