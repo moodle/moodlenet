@@ -9,3 +9,5 @@ export type EntityClass<_EntityDataType extends SomeEntityDataType> = {
 }
 
 export type EntityIdentifiers = { _id: string; entityIdentifier: EntityIdentifier }
+
+export type KeyOrId = { _key: string; _id?: undefined } | { _id: string; _key?: undefined }
