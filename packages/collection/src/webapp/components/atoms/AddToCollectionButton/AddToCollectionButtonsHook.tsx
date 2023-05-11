@@ -5,60 +5,47 @@ import type { CollectionsResorce } from '../../../../common/types.mjs'
 import { MainContext } from '../../../MainContext.js'
 import type { AddToCollectionButtonProps } from './AddToCollectionButtons.js'
 
+const mapToSelectOption = (value: string, label: string) => ({ value, label })
+
 type Action = 'remove' | 'add'
 const empityOptions: SelectOptionsMulti<OptionItemProp> = { opts: [], selected: [] }
-// const isCollectionId = (collectionId: string) => (el: CollectionsResorce) =>
-//   el.collectionKey === collectionId
 
-const collectionToProps = (res: CollectionsResorce[]): SelectOptionsMulti<OptionItemProp> =>
-  res.reduce((acc, el) => {
-    const item = {
-      value: el.collectionKey,
-      label: el.collectionName,
-    }
-    return {
-      opts: [...acc.opts, item],
-      selected: el.hasResource ? [...acc.selected, item] : acc.selected,
-    }
-  }, empityOptions)
+const mapHasResourceIfKey = (key: string, action: Action) => (item: CollectionsResorce) => ({
+  ...item,
+  hasResource: item.collectionKey === key ? action === 'add' : item.hasResource,
+})
+
+const mapCollectionsToProps = (acc: typeof empityOptions, el: CollectionsResorce) => {
+  const item = mapToSelectOption(el.collectionKey, el.collectionName)
+  return {
+    opts: [...acc.opts, item],
+    selected: el.hasResource ? [...acc.selected, item] : acc.selected,
+  }
+}
 
 export const useAddToCollectionButtons = (resourceKey: string): AddToCollectionButtonProps => {
   const [rpcData, setRpcData] = useState<CollectionsResorce[]>([])
-  const { rpcCaller } = useContext(MainContext)
+  const {
+    rpcCaller: { actionResorce, collectionsResorce },
+  } = useContext(MainContext)
 
   useEffect(() => {
-    rpcCaller.collectionsResorce(resourceKey).then(res => setRpcData(res))
-  }, [resourceKey, rpcCaller])
+    collectionsResorce(resourceKey).then(setRpcData)
+  }, [collectionsResorce, resourceKey])
 
-  const collections = useMemo<AddToCollectionButtonProps['collections']>(() => {
-    return collectionToProps(rpcData)
-  }, [rpcData])
+  const collections = useMemo<AddToCollectionButtonProps['collections']>(
+    () => rpcData.reduce(mapCollectionsToProps, empityOptions),
+    [rpcData],
+  )
 
   const addToCollectionButtonProps = useMemo(() => {
-    const setterCollections = (action: Action, collectionKey: string) => () => {
-      // const current = rpcData && rpcData.find(isCollectionId(collectionId))
-      // if (!rpcData || !current) return
+    const setterCollections = (action: Action, collectionKey: string) => () =>
+      setRpcData(rpcData.map(mapHasResourceIfKey(collectionKey, action)))
 
-      // const dataExlucdeCurrent = rpcData.filter(el => !isCollectionId(collectionId)(el))
-      // const hasResource = action === 'add' || action === 'remove' || current.hasResource
-      // setRpcData([...dataExlucdeCurrent, { ...current, hasResource }])
-      const updated = rpcData.map(item => {
-        const hasResource =
-          item.collectionKey === collectionKey ? action === 'add' : item.hasResource
-        return {
-          ...item,
-          hasResource,
-        }
-      })
-
-      setRpcData(updated)
-    }
-
-    const actions = (action: Action) => (collectionKey: string) => {
-      rpcCaller
-        .actionResorce(collectionKey, action, resourceKey)
-        .then(setterCollections(action, collectionKey))
-    }
+    const actions = (action: Action) => (collectionKey: string) =>
+      actionResorce(collectionKey, action, resourceKey).then(
+        setterCollections(action, collectionKey),
+      )
 
     const props: AddToCollectionButtonProps = {
       add: actions('add'),
@@ -67,7 +54,7 @@ export const useAddToCollectionButtons = (resourceKey: string): AddToCollectionB
     }
 
     return props
-  }, [collections, resourceKey, rpcCaller, rpcData])
+  }, [actionResorce, collections, resourceKey, rpcData])
 
   return addToCollectionButtonProps
 }
