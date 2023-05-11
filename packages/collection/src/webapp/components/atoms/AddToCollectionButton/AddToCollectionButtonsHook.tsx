@@ -7,8 +7,8 @@ import type { AddToCollectionButtonProps } from './AddToCollectionButtons.js'
 
 type Action = 'remove' | 'add'
 const empityOptions: SelectOptionsMulti<OptionItemProp> = { opts: [], selected: [] }
-const isCollectionId = (collectionId: string) => (el: CollectionsResorce) =>
-  el.collectionKey === collectionId
+// const isCollectionId = (collectionId: string) => (el: CollectionsResorce) =>
+//   el.collectionKey === collectionId
 
 const collectionToProps = (res: CollectionsResorce[]): SelectOptionsMulti<OptionItemProp> =>
   res.reduce((acc, el) => {
@@ -22,36 +22,52 @@ const collectionToProps = (res: CollectionsResorce[]): SelectOptionsMulti<Option
     }
   }, empityOptions)
 
-export const useAddToCollectionButtons = (resourcenKey: string): AddToCollectionButtonProps => {
-  const [rpcData, setRpcData] = useState<CollectionsResorce[] | null>(null)
+export const useAddToCollectionButtons = (resourceKey: string): AddToCollectionButtonProps => {
+  const [rpcData, setRpcData] = useState<CollectionsResorce[]>([])
   const { rpcCaller } = useContext(MainContext)
 
   useEffect(() => {
-    rpcCaller.collectionsResorce(resourcenKey).then(res => setRpcData(res))
-  }, [resourcenKey, rpcCaller])
+    rpcCaller.collectionsResorce(resourceKey).then(res => setRpcData(res))
+  }, [resourceKey, rpcCaller])
 
-  const hook = useMemo(() => {
-    const setterCollections = (action: Action, collectionId: string) => () => {
-      const current = rpcData && rpcData.find(isCollectionId(collectionId))
-      if (!rpcData || !current) return
+  const collections = useMemo<AddToCollectionButtonProps['collections']>(() => {
+    return collectionToProps(rpcData)
+  }, [rpcData])
 
-      const dataExlucdeCurrent = rpcData.filter(el => !isCollectionId(collectionId)(el))
-      const hasResource = action === 'add' || action === 'remove' || current.hasResource
-      setRpcData([...dataExlucdeCurrent, { ...current, hasResource }])
+  const addToCollectionButtonProps = useMemo(() => {
+    const setterCollections = (action: Action, collectionKey: string) => () => {
+      // const current = rpcData && rpcData.find(isCollectionId(collectionId))
+      // if (!rpcData || !current) return
+
+      // const dataExlucdeCurrent = rpcData.filter(el => !isCollectionId(collectionId)(el))
+      // const hasResource = action === 'add' || action === 'remove' || current.hasResource
+      // setRpcData([...dataExlucdeCurrent, { ...current, hasResource }])
+      const updated = rpcData.map(item => {
+        const hasResource =
+          item.collectionKey === collectionKey ? action === 'add' : item.hasResource
+        return {
+          ...item,
+          hasResource,
+        }
+      })
+
+      setRpcData(updated)
     }
 
     const actions = (action: Action) => (collectionKey: string) => {
       rpcCaller
-        .actionResorce(collectionKey, action, resourcenKey)
+        .actionResorce(collectionKey, action, resourceKey)
         .then(setterCollections(action, collectionKey))
     }
 
-    return {
+    const props: AddToCollectionButtonProps = {
       add: actions('add'),
       remove: actions('remove'),
-      collections: rpcData ? collectionToProps(rpcData) : empityOptions,
+      collections,
     }
-  }, [resourcenKey, rpcCaller, rpcData])
 
-  return hook
+    return props
+  }, [collections, resourceKey, rpcCaller, rpcData])
+
+  return addToCollectionButtonProps
 }
