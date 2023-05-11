@@ -9,7 +9,9 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./server": "./dist/server/exports.mjs"
+    "./server": "./dist/server/exports.mjs",
+    "./common": "./dist/common/exports.mjs",
+    "./webapp/rt": "./dist/webapp/rt/exports.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",
@@ -28,12 +30,14 @@
   "peerDependencies": {
     "@moodlenet/arangodb": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
-    "@moodlenet/key-value-store": "^0.2.0"
+    "@moodlenet/key-value-store": "^0.2.0",
+    "@moodlenet/react-app": "^0.2.0"
   },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/key-value-store": "^0.2.0",
+    "@moodlenet/react-app": "^0.2.0",
     "@types/node": "^17.0.35",
     "typescript": "^4.7.2"
   },

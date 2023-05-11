@@ -3,6 +3,8 @@ import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { CollectionExposeType } from './expose-def.mjs'
 
+export type CollectionEntityNames = 'Collection'
+
 export type MyWebDeps = {
   me: CollectionExposeType
 }

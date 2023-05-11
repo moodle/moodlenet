@@ -1,10 +1,11 @@
+import type { PkgExposeImpl } from '@moodlenet/core'
 import { npm } from '@moodlenet/core'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import type { ReactAppExposeType } from '../common/expose-def.mjs'
 import { getAppearance, setAppearance } from './lib.mjs'
 import { shell } from './shell.mjs'
 
-export const expose = await shell.expose<ReactAppExposeType>({
+const reactAppExposeImpl: PkgExposeImpl<ReactAppExposeType> = {
   rpc: {
     getOrgData: {
       guard: () => void 0,
@@ -27,4 +28,6 @@ export const expose = await shell.expose<ReactAppExposeType>({
       fn: () => npm.updateAll(),
     },
   },
-})
+}
+
+export const expose = await shell.expose(reactAppExposeImpl)

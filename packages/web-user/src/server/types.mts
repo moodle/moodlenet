@@ -2,9 +2,9 @@ import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 
 // ALE:
-// TODO: WebUserProfileEntity _meta { webUserKey }
-export type WebUserProfileEntity = EntityDocument<WebUserProfileDataType>
-export type WebUserProfileDataType = {
+// TODO: ProfileEntity _meta { webUserKey }
+export type ProfileEntity = EntityDocument<ProfileDataType>
+export type ProfileDataType = {
   displayName: string
   aboutMe: string | undefined | null
   organizationName: string | undefined | null
@@ -12,6 +12,7 @@ export type WebUserProfileDataType = {
   siteUrl: string | undefined | null
   backgroundImage: ImageField | undefined | null
   avatarImage: ImageField | undefined | null
+  ownEntities: { _id: string }[]
 }
 type ImageField =
   | { kind: 'file'; directAccessId: string }
@@ -19,7 +20,7 @@ type ImageField =
   | undefined
   | null
 
-export type WebUserProfile = WebUserProfileDataType & { _key: string }
+export type Profile = ProfileDataType & { _key: string }
 
 export type WebUserDataType = {
   displayName: string
@@ -32,7 +33,9 @@ export type Contacts = {
   email?: string
 }
 
-export type CreateRequest = Pick<WebUserDataType, 'contacts' | 'isAdmin'> & WebUserProfileDataType
+export type CreateRequest = Pick<WebUserDataType, 'contacts' | 'isAdmin'> &
+  Pick<ProfileDataType, 'displayName'> &
+  Partial<ProfileDataType>
 
 export type WebUserJwtPayload =
   | {

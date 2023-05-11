@@ -14,6 +14,7 @@ import {
   ROOT_SYSTEM_USER,
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
+import type { WebUserEntityNames } from '../common/exports.mjs'
 import {
   PROFILE_HOME_PAGE_ROUTE_PATH,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
@@ -21,7 +22,7 @@ import {
 import type { MyWebAppDeps } from '../common/my-webapp/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { shell } from './shell.mjs'
-import type { WebUserDataType, WebUserProfileDataType } from './types.mjs'
+import type { ProfileDataType, WebUserDataType } from './types.mjs'
 import {
   sendWebUserTokenCookie,
   setCurrentUnverifiedJwtToken,
@@ -35,14 +36,17 @@ export const { collection: WebUserCollection /* ,newlyCreated */ } = await shell
   ensureDocumentCollection<WebUserDataType>,
 )('WebUser')
 
-export const { WebUserProfile } = await shell.call(registerEntities)<{
-  WebUserProfile: EntityCollectionDef<WebUserProfileDataType>
-}>({
-  WebUserProfile: {},
+export const { Profile } = await shell.call(registerEntities)<
+  {
+    Profile: EntityCollectionDef<ProfileDataType>
+  },
+  WebUserEntityNames
+>({
+  Profile: {},
 })
 
 registerEntityInfoProvider({
-  entityClass: WebUserProfile.entityClass,
+  entityClass: Profile.entityClass,
   aqlProvider(entityDocVar) {
     const homepagePath = `SUBSTITUTE( "/${PROFILE_HOME_PAGE_ROUTE_PATH}" , ":key" , ${entityDocVar}._key )`
     return `{ 
@@ -56,14 +60,14 @@ registerEntityInfoProvider({
 await shell.call(registerAccessController)({
   u() {
     return `(${isCurrentOfEntityClass2Aql(
-      WebUserProfile.entityClass,
+      Profile.entityClass,
     )} && ${isCurrentUserEntity()}) || null`
   },
   r(/* { myPkgMeta } */) {
-    return `${isCurrentOfEntityClass2Aql(WebUserProfile.entityClass)} || null` // && ${myPkgMeta}.xx == null`
+    return `${isCurrentOfEntityClass2Aql(Profile.entityClass)} || null` // && ${myPkgMeta}.xx == null`
   },
   c(entityClass) {
-    if (!isSameClass(WebUserProfile.entityClass, entityClass)) {
+    if (!isSameClass(Profile.entityClass, entityClass)) {
       return
     }
     // FIXME: WHAT TO CHECK ?
@@ -102,7 +106,7 @@ await shell.call(addMiddlewares)({
         const entityUser: EntityUser = {
           type: 'entity',
           entityIdentifier: {
-            entityClass: WebUserProfile.entityClass,
+            entityClass: Profile.entityClass,
             _key: currentWebUser.profileKey,
           },
           restrictToScopes: false,

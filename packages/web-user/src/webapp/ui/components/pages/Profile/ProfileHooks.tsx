@@ -84,7 +84,7 @@ export const useProfileProps = ({
       },
       data: {
         userId: '12sadsadsad', //@ETTO Needs to be implemented
-        username: profileResponse.data.displayName, //@ETTO Needs to be implemented
+        displayName: profileResponse.data.displayName, //@ETTO Needs to be implemented
         avatarUrl: profileResponse.data.avatarUrl,
         backgroundUrl: profileResponse.data.backgroundUrl,
         profileHref: href('/profile'), //@ETTO Needs to be implemented
@@ -108,7 +108,8 @@ export const useProfileProps = ({
             { _key: profileKey },
           )
         },
-        sendMessage: (_msg: string) => alert('Needs to be implemented'), //@ETTO Needs to be implemented use me.rpc.$_DEV_$_TO_IMPLEMENT
+        sendMessage: (message: string) =>
+          me.rpc['webapp/send-message-to-user/:profileKey']({ message }, { profileKey }),
       },
       mainProfileCardSlots: {
         mainColumnItems: [],
@@ -117,8 +118,9 @@ export const useProfileProps = ({
         subtitleItems: [],
         titleItems: [],
       },
-      createCollection: () => collectionCtx.create().then(({ homePath }) => nav(homePath)),
-      createResource: () => resourceCtx.create().then(({ homePath }) => nav(homePath)),
+      createCollection: () =>
+        collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),
+      createResource: () => resourceCtx.createResource().then(({ homePath }) => nav(homePath)),
       resourceCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
@@ -145,6 +147,5 @@ export const useProfileProps = ({
     // toggleFollow,
     resourceCtx,
   ])
-
   return profileProps
 }

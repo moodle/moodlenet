@@ -1,13 +1,12 @@
 import type { PkgName } from '@moodlenet/core'
+import type { EntityIdentifier, SomeEntityDataType } from '../../common/types.mjs'
 import { aqlGetPkgNamespace } from '../pkg-db-names.mjs'
 import type {
   AqlVal,
   EntityDocFullData,
   EntityDocument,
   EntityFullDocument,
-  EntityIdentifier,
   EntityMetadata,
-  SomeEntityDataType,
   SystemUser,
 } from '../types.mjs'
 

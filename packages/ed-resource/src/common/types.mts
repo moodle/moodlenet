@@ -4,6 +4,8 @@ import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { ResourceExposeType } from './expose-def.mjs'
 
+export type EdResourceEntityNames = 'Resource'
+
 export type MyWebDeps = {
   me: ResourceExposeType
 }
@@ -122,8 +124,8 @@ export type ResourceCardDataRpc = {
   Pick<ResourceFormProps, 'title'>
 
 export type ResourceCardState = {
-  isSelected: boolean
-  selectionMode: boolean // When selection resources to be added to a collection
+  // isSelected: boolean
+  // selectionMode: boolean // When selection resources to be added to a collection
 } & Pick<ResourceStateProps, 'isPublished'>
 
 export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>

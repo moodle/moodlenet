@@ -47,7 +47,7 @@ export type AuthCtxT = {
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
 
-export function useAuthCtx(registries: MainRegistries, { use }: MainContextT) {
+export function useAuthCtxValue(registries: MainRegistries, { use }: MainContextT) {
   const guestRegistries = useGuestRegistryMap(registries)
   const nav = useNavigate()
   const loc = useLocation()

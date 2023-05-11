@@ -19,13 +19,7 @@
       "path": "../component-library"
     },
     {
-      "path": "../system-entities"
-    },
-    {
       "path": "../core"
-    },
-    {
-      "path": "../crypto"
     },
     {
       "path": "../http-server"

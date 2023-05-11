@@ -1,18 +1,8 @@
 import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
 import type { PkgName } from '@moodlenet/core'
+import type { EntityClass, EntityIdentifier, SomeEntityDataType } from '../common/types.mjs'
 
 export type AqlVal<_T = unknown> = string & { $$AqlVal$$?: _T }
-
-// type X = ProjectRes<{ patched: AqlVal<EntityDocument<SomeEntityDataType>> }>
-
-export type EntityIdentifier = { _key: string; entityClass: EntityClass<SomeEntityDataType> }
-
-export type SomeEntityDataType = Record<string, any>
-
-export type EntityClass<_EntityDataType extends SomeEntityDataType> = {
-  pkgName: string
-  type: string
-}
 
 export type EntityMetadata = {
   entityClass: EntityClass<any>
@@ -42,8 +32,10 @@ export type EntityCollectionHandle<Def extends EntityCollectionDef<any>> = {
   entityClass: EntityClass<Def['dataType']>
 }
 
-export type EntityCollectionDefs = { [name in string]: EntityCollectionDef<any> }
-export type EntityCollectionHandles<Defs extends EntityCollectionDefs> = {
+export type EntityCollectionDefs<EntityNames extends string> = {
+  [name in EntityNames]: EntityCollectionDef<any>
+}
+export type EntityCollectionHandles<Defs extends EntityCollectionDefs<string>> = {
   [name in keyof Defs]: EntityCollectionHandle<Defs[name]>
 }
 

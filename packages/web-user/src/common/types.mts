@@ -1,5 +1,10 @@
 import type { Href } from '@moodlenet/react-app/common'
 
+export type WebUserEntityNames = 'Profile'
+export type FeaturedEntity = { _id: string; feature: KnownEntityFeature }
+export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
+export type KnownEntityTypes = 'resource' | 'collection' | 'profile'
+
 export type Profile = {
   _key: string
   displayName: string
@@ -43,7 +48,7 @@ export type ProfileData = {
   userId: string
   backgroundUrl: string | undefined
   avatarUrl: string | undefined
-  username: string
+  displayName: string
   profileHref: Href
 }
 

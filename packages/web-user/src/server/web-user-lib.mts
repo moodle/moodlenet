@@ -2,16 +2,11 @@ import type { DocumentMetadata } from '@moodlenet/arangodb/server'
 import type { EntityAccess, Patch } from '@moodlenet/system-entities/server'
 import { create, getEntity, patchEntity } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import { db, WebUserCollection, WebUserProfile } from './init.mjs'
-import type {
-  CreateRequest,
-  WebUserDataType,
-  WebUserProfileDataType,
-  WebUserProfileEntity,
-} from './types.mjs'
+import { db, Profile, WebUserCollection } from './init.mjs'
+import type { CreateRequest, ProfileDataType, ProfileEntity, WebUserDataType } from './types.mjs'
 import { signWebUserJwt, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 
-export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity | undefined> {
+export async function getCurrentProfile(): Promise<ProfileEntity | undefined> {
   const verifiedCtx = await verifyCurrentTokenCtx()
   if (!verifiedCtx) {
     return
@@ -27,7 +22,17 @@ export async function getCurrentWebUserProfile(): Promise<WebUserProfileEntity |
 
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, ...profileData } = createRequest
-  const newProfile = await create(WebUserProfile.entityClass, profileData, { pkgCreator: true })
+  const createData: ProfileDataType = {
+    aboutMe: '',
+    avatarImage: undefined,
+    backgroundImage: undefined,
+    location: '',
+    ownEntities: [],
+    organizationName: '',
+    siteUrl: '',
+    ...profileData,
+  }
+  const newProfile = await create(Profile.entityClass, createData, { pkgCreator: true })
 
   if (!newProfile) {
     return
@@ -57,9 +62,9 @@ export async function createWebUser(createRequest: CreateRequest) {
   }
 }
 
-export async function editWebUserProfile(
+export async function editProfile(
   key: string,
-  updateWithData: Partial<WebUserProfileDataType>,
+  updateWithData: Partial<ProfileDataType>,
   opts?: {
     projectAccess?: EntityAccess[]
   },
@@ -67,7 +72,7 @@ export async function editWebUserProfile(
   const webUser = await getWebUserByProfileKey({ profileKey: key })
   assert(webUser, `couldn't find associated WebUser for profileKey ${key}`)
 
-  const mUpdated = await patchEntity(WebUserProfile.entityClass, key, updateWithData, opts)
+  const mUpdated = await patchEntity(Profile.entityClass, key, updateWithData, opts)
 
   if (!mUpdated) {
     return
@@ -155,7 +160,7 @@ export async function getProfileRecord(
     projectAccess?: EntityAccess[]
   },
 ) {
-  const record = await getEntity(WebUserProfile.entityClass, key, {
+  const record = await getEntity(Profile.entityClass, key, {
     projectAccess: opts?.projectAccess,
   })
   return record
@@ -164,20 +169,20 @@ export async function getProfileRecord(
 export async function searchUsers(search: string): Promise<(WebUserDataType & DocumentMetadata)[]> {
   const cursor = await db.query(
     `
-    FOR profileUser in @@WebUserCollection
+    FOR webUser in @@WebUserCollection
     let matchScore = LENGTH(@search) < 1 ? 1 
-                      : NGRAM_POSITIONAL_SIMILARITY(profileUser.name, @search, 2)
-                      + NGRAM_POSITIONAL_SIMILARITY(profileUser.contacts.email, @search, 2)
+                      : NGRAM_POSITIONAL_SIMILARITY(webUser.name, @search, 2)
+                      + NGRAM_POSITIONAL_SIMILARITY(webUser.contacts.email, @search, 2)
     SORT matchScore DESC
     FILTER matchScore > 0.05
     LIMIT 10
-    RETURN profileUser`,
+    RETURN webUser`,
     { search, '@WebUserCollection': WebUserCollection.name },
   )
 
-  const userProfiles = await cursor.all()
+  const webUsers = await cursor.all()
 
-  return userProfiles
+  return webUsers
 }
 
 export function getProfileImageLogicalFilename(profileKey: string) {
