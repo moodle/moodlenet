@@ -32,12 +32,12 @@ export function useAddMenuProps(): AddMenuProps {
       menuItems,
       createCollectionProps: {
         createCollection() {
-          collectionCtx.create().then(({ homePath }) => nav(homePath))
+          collectionCtx.createCollection().then(({ homePath }) => nav(homePath))
         },
       },
       createResourceProps: {
         createResource() {
-          resourceCtx.create().then(({ homePath }) => nav(homePath))
+          resourceCtx.createResource().then(({ homePath }) => nav(homePath))
         },
       },
     }
