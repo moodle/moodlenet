@@ -27,7 +27,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     avatarImage: undefined,
     backgroundImage: undefined,
     location: '',
-    myOwnEntities: [],
+    ownEntities: [],
     organizationName: '',
     siteUrl: '',
     ...profileData,
