@@ -207,11 +207,11 @@ export const Selector: FC<SelectorProps> = props => {
         }
       : {}
   const {
-    defaultValue,
-    onItemSelect: _onSelect,
-    onItemDeselect: _onDeselect,
+    defaultValue: _defaultValue,
     value: _value,
-    children,
+    children: _children,
+    onItemSelect: _onItemSelect,
+    onItemDeselect: _onItemDeselect,
     ...restProps
   } = props
   const selectProps: DetailedHTMLProps<
