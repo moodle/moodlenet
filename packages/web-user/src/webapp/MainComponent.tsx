@@ -9,10 +9,11 @@ import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 
 import type { MyPkgContext } from '../common/my-webapp/types.mjs'
-import { AuthCtx, useAuthCtx } from './context/AuthContext.js'
+import { AuthCtx, useAuthCtxValue } from './context/AuthContext.js'
 import type { MainContextT } from './context/MainContext.mjs'
 import { MainContext } from './context/MainContext.mjs'
 import { LoginHeaderButton, SignupHeaderButton } from './exports/ui.mjs'
+import { MyProfileContextProvider } from './MyProfileContext.js'
 import { useMakeRegistries } from './registries.mjs'
 import { routes } from './routes.js'
 import { AddMenuContainer } from './ui/components/molecules/AddMenu/AddMenuContainer.js'
@@ -43,7 +44,7 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     }
     return ctx
   }, [pkgContext, registries])
-  const authCtx = useAuthCtx(registries, mainContext)
+  const authCtx = useAuthCtxValue(registries, mainContext)
   const reactAppCtx = useContext(ReactAppContext)
   reactAppCtx.registries.headerRightComponents.useRegister(addMenuItem, {
     condition: !!authCtx?.isAuthenticated && !authCtx.clientSessionData.isRoot,
@@ -64,7 +65,9 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   return (
     authCtx && (
       <MainContext.Provider value={mainContext}>
-        <AuthCtx.Provider value={authCtx}>{children}</AuthCtx.Provider>
+        <AuthCtx.Provider value={authCtx}>
+          <MyProfileContextProvider>{children}</MyProfileContextProvider>
+        </AuthCtx.Provider>
       </MainContext.Provider>
     )
   )
