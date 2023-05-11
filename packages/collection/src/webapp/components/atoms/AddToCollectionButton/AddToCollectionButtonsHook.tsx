@@ -1,65 +1,58 @@
-/*
-instnziato dentro pagina di risorsa, quindi sono sulla risorsa con la sua resource key
-prop hook 
-reouerceKey arogmento funzione da passare 
-
-al click del bottone modale con list di collezioni del utente , 
-e vedere se gia presente,  
-  'webapp/my-collections/:containingResourceKey'(
-ritrona  Promise<{ collectionKey: string; collectionName: string; hasResource: boolean }[]> per 
-costruire selectOptions, lista di tutte le collezioni, con booleano se presente la resourseKey 
-
-SelectOptionsMulti<OptionItemProp>
-lista di opzioni e le opzioni selezionate 
-
-se faccio un add remove , cambio booleano direttamente alla vaeiabile di stato ,
-funzioni di cambio stato manualmente
-
-*/
-
 import type { OptionItemProp } from '@moodlenet/component-library'
 import type { SelectOptionsMulti } from '@moodlenet/react-app/ui'
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import type { CollectionsResorce } from '../../../../common/types.mjs'
 import { MainContext } from '../../../MainContext.js'
 import type { AddToCollectionButtonProps } from './AddToCollectionButtons.js'
 
 type Action = 'remove' | 'add'
 const empityOptions: SelectOptionsMulti<OptionItemProp> = { opts: [], selected: [] }
+const isCollectionIdEqual = (collectionId: string) => (el: CollectionsResorce) =>
+  el.collectionKey === collectionId
+
+const collectionToProps = (res: CollectionsResorce[]): SelectOptionsMulti<OptionItemProp> =>
+  res.reduce((acc, el) => {
+    const item = {
+      value: el.collectionKey,
+      label: el.collectionName,
+    }
+    return {
+      opts: [...acc.opts, item],
+      selected: el.hasResource ? [...acc.selected, item] : acc.selected,
+    }
+  }, empityOptions)
 
 export const useAddToCollectionButtons = (resourcenKey: string): AddToCollectionButtonProps => {
-  const [collections, setCollections] = useState<SelectOptionsMulti<OptionItemProp>>(empityOptions)
+  const [rpcData, setRpcData] = useState<CollectionsResorce[] | null>(null)
   const { rpcCaller } = useContext(MainContext)
 
-  const actions = useMemo(() => {
-    const getResource = () =>
-      rpcCaller.collectionsResorce(resourcenKey).then(res => {
-        const acc = empityOptions
-        res.map(el => {
-          const item = {
-            value: el.collectionKey,
-            label: el.collectionName,
-          }
-          acc.opts.push(item)
-          el.hasResource && acc.selected.push(item)
-        })
+  useEffect(() => {
+    rpcCaller.collectionsResorce(resourcenKey).then(res => setRpcData(res))
+  }, [resourcenKey, rpcCaller])
 
-        setCollections(acc)
-      })
+  const hook = useMemo(() => {
+    const setterCollections = (action: Action, collectionId: string) => () => {
+      const isCollectionId = isCollectionIdEqual(collectionId)
+      const current = rpcData && rpcData.find(isCollectionId)
+      if (!rpcData || !current) return
 
-    const actions = (action: Action) => (collectionId: string) => {
-      rpcCaller.actionResorce(collectionId, action, resourcenKey).then(getResource)
+      const dataExlucdeCurrent = rpcData.filter(el => !isCollectionId(el))
+      const hasResource = action === 'add' || action === 'remove' || current.hasResource
+      setRpcData([...dataExlucdeCurrent, { ...current, hasResource }])
+    }
+
+    const actions = (action: Action) => (collectionKey: string) => {
+      rpcCaller
+        .actionResorce(collectionKey, action, resourcenKey)
+        .then(setterCollections(action, collectionKey))
     }
 
     return {
       add: actions('add'),
       remove: actions('remove'),
+      collections: rpcData ? collectionToProps(rpcData) : empityOptions,
     }
-  }, [resourcenKey, rpcCaller])
+  }, [resourcenKey, rpcCaller, rpcData])
 
-  const hook = {
-    add: actions.add,
-    remove: actions.remove,
-    collections,
-  }
   return hook
 }
