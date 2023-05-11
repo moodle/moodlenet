@@ -1,1 +1,1 @@
-export { CollectionContext } from './CollectionContext.js'
+export { CollectionContext } from '../CollectionContext.js'

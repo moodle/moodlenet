@@ -117,8 +117,9 @@ export const useProfileProps = ({
         subtitleItems: [],
         titleItems: [],
       },
-      createCollection: () => collectionCtx.create().then(({ homePath }) => nav(homePath)),
-      createResource: () => resourceCtx.create().then(({ homePath }) => nav(homePath)),
+      createCollection: () =>
+        collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),
+      createResource: () => resourceCtx.createResource().then(({ homePath }) => nav(homePath)),
       resourceCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
@@ -145,6 +146,5 @@ export const useProfileProps = ({
     // toggleFollow,
     resourceCtx,
   ])
-
   return profileProps
 }
