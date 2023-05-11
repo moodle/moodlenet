@@ -1,11 +1,10 @@
 import type { PropsWithChildren } from 'react'
 import { createContext, useContext, useMemo } from 'react'
-import { getIdAndEntityIdentifier } from '../../common/entity-identification.mjs'
-import type { EntityIdentifier } from '../../common/types.mjs'
+import { getEntityIdentifiers } from '../../common/entity-identification.mjs'
+import type { EntityIdentifier, EntityIdentifiers } from '../../common/types.mjs'
 
 export type SystemEntityContextT = {
-  _id: string
-  entityIdentifier: EntityIdentifier
+  identifiers: EntityIdentifiers
 }
 
 const SystemEntityContext = createContext<SystemEntityContextT | null>(null)
@@ -20,11 +19,8 @@ export function ProvideSystemEntityContext({
   children,
 }: PropsWithChildren<{ id: string | EntityIdentifier }>) {
   const ctx = useMemo<SystemEntityContextT>(() => {
-    const { _id, entityIdentifier } = getIdAndEntityIdentifier(id)
-    return {
-      _id,
-      entityIdentifier,
-    }
+    const identifiers = getEntityIdentifiers(id)
+    return { identifiers }
   }, [id])
   return <SystemEntityContext.Provider value={ctx}>{children}</SystemEntityContext.Provider>
 }

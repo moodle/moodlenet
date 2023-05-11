@@ -2,8 +2,10 @@ import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
+import type { SchemaOf } from 'yup'
+import { mixed, object, string } from 'yup'
+import type { EdResourceRegistries } from '../webapp/registries.mjs'
 import type { ResourceExposeType } from './expose-def.mjs'
-
 export type EdResourceEntityNames = 'Resource'
 
 export type MyWebDeps = {
@@ -13,6 +15,7 @@ export type MyWebDeps = {
 export type MyPkgContext = PkgContextT<MyWebDeps>
 export type MainContextResource = MyPkgContext & {
   rpcCaller: RpcCaller
+  registries: EdResourceRegistries
   // auth: AuthDataRpc
   // actionsMenu: MainActions
 }
@@ -217,8 +220,6 @@ export const getResourceTypeInfo = (
   }
 }
 
-import type { SchemaOf } from 'yup'
-import { mixed, object, string } from 'yup'
 export const maxUploadSize = 1024 * 1024 * 50
 
 export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
