@@ -7,7 +7,7 @@ import type { AddToCollectionButtonProps } from './AddToCollectionButtons.js'
 
 type Action = 'remove' | 'add'
 const empityOptions: SelectOptionsMulti<OptionItemProp> = { opts: [], selected: [] }
-const isCollectionIdEqual = (collectionId: string) => (el: CollectionsResorce) =>
+const isCollectionId = (collectionId: string) => (el: CollectionsResorce) =>
   el.collectionKey === collectionId
 
 const collectionToProps = (res: CollectionsResorce[]): SelectOptionsMulti<OptionItemProp> =>
@@ -32,11 +32,10 @@ export const useAddToCollectionButtons = (resourcenKey: string): AddToCollection
 
   const hook = useMemo(() => {
     const setterCollections = (action: Action, collectionId: string) => () => {
-      const isCollectionId = isCollectionIdEqual(collectionId)
-      const current = rpcData && rpcData.find(isCollectionId)
+      const current = rpcData && rpcData.find(isCollectionId(collectionId))
       if (!rpcData || !current) return
 
-      const dataExlucdeCurrent = rpcData.filter(el => !isCollectionId(el))
+      const dataExlucdeCurrent = rpcData.filter(el => !isCollectionId(collectionId)(el))
       const hasResource = action === 'add' || action === 'remove' || current.hasResource
       setRpcData([...dataExlucdeCurrent, { ...current, hasResource }])
     }
