@@ -1,8 +1,13 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import type { ClientSessionDataRpc, Profile, WebUserData } from './types.mjs'
+import type {
+  ClientSessionDataRpc,
+  EntityFeature,
+  FeaturedEntity,
+  Profile,
+  WebUserData,
+} from './types.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
 
-export type EntityFeature = 'bookmark' | 'follow' | 'like'
 export type WebUserExposeType = PkgExposeDef<{
   rpc: {
     'getCurrentClientSessionDataRpc'(): Promise<ClientSessionDataRpc | undefined>
@@ -12,7 +17,7 @@ export type WebUserExposeType = PkgExposeDef<{
     ): Promise<{ data: Profile; canEdit: boolean } | undefined>
     'webapp/profile/get'(body: {
       _key: string
-    }): Promise<{ data: Profile; canEdit: boolean } | undefined>
+    }): Promise<{ data: Profile; canEdit: boolean; myOwnEntities: { _id: string }[] } | undefined>
     'webapp/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
     'webapp/roles/toggleIsAdmin'(
       body: { profileKey: string } | { userKey: string },
@@ -35,19 +40,19 @@ export type WebUserExposeType = PkgExposeDef<{
       body: void,
       params: {
         action: 'add' | 'remove'
-        feature: 'bookmark' | 'follow' | 'like'
+        feature: EntityFeature
         entity_id: string
       },
     ): Promise<void>
     'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id'(
       body: void,
       params: {
-        feature: 'bookmark' | 'follow' | 'like'
+        feature: EntityFeature
         entity_id: string
       },
     ): Promise<{ count: number }>
     'webapp/all-my-featured-entities'(): Promise<{
-      entities: { _id: string }[]
+      featuredEntities: FeaturedEntity[]
     }>
     'webapp/profile-kudos-count/:profileKey'(
       body: void,

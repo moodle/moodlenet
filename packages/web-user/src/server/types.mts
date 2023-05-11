@@ -12,6 +12,7 @@ export type ProfileDataType = {
   siteUrl: string | undefined | null
   backgroundImage: ImageField | undefined | null
   avatarImage: ImageField | undefined | null
+  myOwnEntities: { _id: string }[]
 }
 type ImageField =
   | { kind: 'file'; directAccessId: string }
@@ -32,7 +33,9 @@ export type Contacts = {
   email?: string
 }
 
-export type CreateRequest = Pick<WebUserDataType, 'contacts' | 'isAdmin'> & ProfileDataType
+export type CreateRequest = Pick<WebUserDataType, 'contacts' | 'isAdmin'> &
+  Pick<ProfileDataType, 'displayName'> &
+  Partial<ProfileDataType>
 
 export type WebUserJwtPayload =
   | {
