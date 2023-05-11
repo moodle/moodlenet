@@ -1,27 +1,26 @@
 import { resolve } from 'path'
-import { fileURLToPath } from 'url'
 import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
+import { shell } from './shell.mjs'
 import { fixModuleLocForWebpackByOS } from './util.mjs'
-function ___dirname(import_meta_url: string) {
-  return fileURLToPath(new URL('.', import_meta_url))
-}
-const __dirname = ___dirname(import.meta.url)
 
 export function generateConnectPkgModulesModule({
   plugins,
 }: {
   plugins: WebappPluginItem<WebPkgDeps>[]
 }) {
-  return `// - generated ConnectPkgsModule for ${plugins.map(_ => _.guestPkgId.name).join(',')} -
+  const pkgDepOrder = shell.pkgDepGraph.overallOrder()
+  const sortedPlugins = plugins.slice().sort(({ guestPkgId: a }, { guestPkgId: b }) => {
+    const aindex = pkgDepOrder.findIndex(pkgName => pkgName === a.name)
+    const bindex = pkgDepOrder.findIndex(pkgName => pkgName === b.name)
+    return aindex - bindex
+  })
+  return `
+/******************************* 
+generated Package Connection Module for:
 
-  // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
-    resolve(__dirname, '..', 'src', 'webapp', 'mainContextProviders.tsx'),
-  )}'
-  // import {pluginMainComponents} from '${fixModuleLocForWebpackByOS(
-    resolve(__dirname, '..', 'dist', 'webapp', 'mainContextProviders.js'),
-  )}'
-
-  ${plugins
+${sortedPlugins.map(_ => _.guestPkgId.name).join('\n')}
+*******************************/
+  ${sortedPlugins
     .map(
       (pluginItem, index) => `
 import pkg_main_component_${index} from '${fixModuleLocForWebpackByOS(
@@ -36,7 +35,7 @@ import pkg_main_component_${index} from '${fixModuleLocForWebpackByOS(
       pkgs
     }
 
-  ${plugins
+  ${sortedPlugins
     .map(
       (pluginItem, index) => `
 
@@ -44,7 +43,6 @@ import pkg_main_component_${index} from '${fixModuleLocForWebpackByOS(
 // connect ${pluginItem.guestPkgId.name} (pkg_main_component_${index})
   
   pkgs.push({
-    //@ts-ignore
     MainComponent:pkg_main_component_${index},
     pkgId:Object.freeze(${JSON.stringify(pluginItem.guestPkgId)}),
     deps: ${JSON.stringify(

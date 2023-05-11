@@ -7,7 +7,7 @@ import {
   mainAsyncContext,
   pkgAsyncContext,
 } from '../async-context/lib.mjs'
-import { getConfig } from '../ignite.mjs'
+import { getConfig, pkgDepGraph } from '../ignite.mjs'
 import { coreConfigs } from '../main/env.mjs'
 import {
   getExposedByPkgIdentifier,
@@ -46,6 +46,7 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
     pkgInfo,
     call,
     callers,
+    pkgDepGraph,
   }
 
   function initiateCall<R>(exec: () => R, forcewipeout = false): R {

@@ -1,3 +1,6 @@
+import { DepGraph } from 'dependency-graph'
+
+import assert from 'assert'
 import type { PackageJson } from 'type-fest'
 import type { CoreConfigs } from './types.mjs'
 
@@ -5,20 +8,19 @@ type Reboot = () => unknown
 type Shutdown = () => unknown
 type RootImport = (module: string) => Promise<unknown>
 type Configs = { pkgs: { [pkgName in string]: any } }
-type PkgListDepOrdered = [string, string | undefined][]
 type Ignites = {
   rootDir: string
   rootImport: RootImport
   rootRequire: NodeRequire
   rootPkgJson: PackageJson
+  rootPkgLockJson: { dependencies: Record<string, { requires: Record<string, any> }> }
   configs: Configs
   reboot: Reboot
   shutdown: Shutdown
 }
 
+export const pkgDepGraph = new DepGraph()
 let _ignites: Ignites
-
-const _pkgListDepOrdered: PkgListDepOrdered = []
 
 export function reboot() {
   _ignites.reboot()
@@ -50,21 +52,40 @@ export function getCoreConfigs(): CoreConfigs {
   }
 }
 
+async function orderDeps() {
+  const pkgjson = _ignites.rootPkgJson
+  const pkglock = _ignites.rootPkgLockJson
+  assert(pkgjson.dependencies)
+  const deps = Object.keys(pkgjson.dependencies)
+  deps.forEach(pkgName => {
+    pkgDepGraph.addNode(pkgName)
+    const lockDepItem = pkglock.dependencies[pkgName]
+    assert(lockDepItem)
+    const lockdeps = Object.keys(lockDepItem.requires)
+    const filteredLockdeps = lockdeps.filter(lockDep => !!deps.find(_ => _ === lockDep))
+    filteredLockdeps.forEach(lockdep => {
+      pkgDepGraph.hasNode(lockdep) || pkgDepGraph.addNode(lockdep)
+      pkgDepGraph.addDependency(pkgName, lockdep)
+    })
+  })
+}
+
 export default async function ignite(ignites: Ignites) {
   _ignites = ignites
   process.once('SIGTERM', stopAllAndExit)
   process.once('SIGINT', stopAllAndExit)
+  await orderDeps()
   await initAll()
   await startAll()
 }
 
 async function initAll() {
   console.info('\nInit all packages\n')
-  const pkgList = Object.entries(_ignites.rootPkgJson.dependencies ?? {})
+  const pkgList = pkgDepGraph.overallOrder()
   for (const pkgEntry of pkgList) {
     await rootImportLog(pkgEntry, 'init')
-    _pkgListDepOrdered.push(pkgEntry)
   }
+  // console.log({ _pkgListDepOrdered: _pkgListDepOrdered.map(([pkgName]) => pkgName) })
   // await Promise.all(
   //   Object.entries(_ignites.rootPkgJson.dependencies ?? {}).map(async pkgEntry => {
   //     await rootImportLog(pkgEntry, 'init')
@@ -76,14 +97,14 @@ async function initAll() {
 
 async function startAll() {
   console.info('\nStart all packages\n')
-  for (const pkgEntry of _pkgListDepOrdered) {
+  for (const pkgEntry of pkgDepGraph.overallOrder()) {
     await rootImportLog(pkgEntry, 'start')
   }
 }
 
 export async function stopAll() {
   console.info('\nStop all packages\n')
-  for (const pkgEntry of _pkgListDepOrdered.reverse()) {
+  for (const pkgEntry of pkgDepGraph.overallOrder().reverse()) {
     await rootImportLog(pkgEntry, 'stop').catch(() => void 0)
   }
 }
@@ -92,13 +113,7 @@ export async function stopAllAndExit() {
   process.exit(0)
 }
 
-async function rootImportLog(
-  [pkgName, pkgVersion = '']: [string, string | undefined],
-  exp: string,
-  ignoreNotFoundError = true,
-) {
-  // const fullPkgName = `${pkgName}@${pkgVersion}`
-  // const fullActionName = `[${exp}] ${fullPkgName}`
+async function rootImportLog(pkgName: string, exp: string, ignoreNotFoundError = true) {
   const fullActionName = `[${exp}] ${pkgName}`
   const pkgExportName = exp ? `${pkgName}/${exp}` : pkgName
 
@@ -107,7 +122,7 @@ async function rootImportLog(
   const endMessageWith = await _ignites.rootImport(pkgExportName).then(
     () => 'ok',
     err => {
-      const errMsg = `${fullActionName}@${pkgVersion} : Import Error`
+      const errMsg = `${fullActionName} : Import Error`
 
       const isNotFoundErr = ['ERR_PACKAGE_PATH_NOT_EXPORTED'].includes(err.code)
       if (!(ignoreNotFoundError && isNotFoundErr)) {
