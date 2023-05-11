@@ -30,7 +30,7 @@ export function entityIdentifierById(_id: string) {
   return entityIdentifier
 }
 
-export function getIdAndEntityIdentifier(id: string | EntityIdentifier): EntityIdentifiers {
+export function getEntityIdentifiers(id: string | EntityIdentifier): EntityIdentifiers {
   const gotStringId = typeof id === 'string'
   const entityIdentifier = gotStringId ? entityIdentifierById(id) : id
   const _id = gotStringId ? id : entityIdByIdentifier(id)
@@ -53,7 +53,7 @@ export function getEntityIdentifiersByKey<EntityTypeName extends string>({
       type,
     },
   }
-  return getIdAndEntityIdentifier(entityIdentifier)
+  return getEntityIdentifiers(entityIdentifier)
 }
 
 export function getEntityIdentifiersById<EnsureEntityClass extends EntityClass<any>>({
@@ -63,7 +63,7 @@ export function getEntityIdentifiersById<EnsureEntityClass extends EntityClass<a
   _id: string
   ensureClass?: EnsureEntityClass
 }) {
-  const identifiers = getIdAndEntityIdentifier(_id)
+  const identifiers = getEntityIdentifiers(_id)
   if (ensureClass && !isOfSameClass(ensureClass, identifiers.entityIdentifier.entityClass)) {
     return undefined
   }

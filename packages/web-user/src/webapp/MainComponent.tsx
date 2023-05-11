@@ -1,3 +1,6 @@
+import { AddToCollectionButtonByResourceContextContainer } from '@moodlenet/collection/webapp'
+import type { ResourcePageGeneralActionsRegItem } from '@moodlenet/ed-resource/webapp'
+import { ResourceContext } from '@moodlenet/ed-resource/webapp'
 import { href } from '@moodlenet/react-app/common'
 import type { HeaderRightComponentRegItem } from '@moodlenet/react-app/ui'
 import type {
@@ -25,6 +28,10 @@ const settingsSectionItem: SettingsSectionItem = {
   Menu: () => <span>Users</span>,
 }
 
+const addToCollectionButtonRegItem: ResourcePageGeneralActionsRegItem = {
+  Item: AddToCollectionButtonByResourceContextContainer,
+}
+
 const avatarMenuItem: HeaderRightComponentRegItem = { Component: AvatarMenuContainer }
 const addMenuItem: HeaderRightComponentRegItem = { Component: AddMenuContainer }
 const loginButtonHeaderItem: HeaderRightComponentRegItem = {
@@ -36,6 +43,8 @@ const signupButtonHeaderItem: HeaderRightComponentRegItem = {
 
 const MainComponent: ReactAppMainComponent = ({ children }) => {
   const pkgContext = usePkgContext<MyPkgContext>()
+  const resourceContext = useContext(ResourceContext)
+
   const registries = useMakeRegistries()
   const mainContext = useMemo<MainContextT>(() => {
     const ctx: MainContextT = {
@@ -57,6 +66,10 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   })
   reactAppCtx.registries.headerRightComponents.useRegister(signupButtonHeaderItem, {
     condition: !authCtx?.isAuthenticated,
+  })
+
+  resourceContext.registries.resourcePageGeneralActions.useRegister(addToCollectionButtonRegItem, {
+    condition: !!authCtx?.isAuthenticated && !authCtx.clientSessionData.isRoot,
   })
 
   reactAppCtx.registries.settingsSections.useRegister(settingsSectionItem)

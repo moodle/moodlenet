@@ -1,7 +1,7 @@
 import { CollectionContext } from '@moodlenet/collection/webapp'
 import { ResourceContext } from '@moodlenet/ed-resource/webapp'
 import type { EntityIdentifiers } from '@moodlenet/system-entities/common'
-import { getIdAndEntityIdentifier } from '@moodlenet/system-entities/common'
+import { getEntityIdentifiers } from '@moodlenet/system-entities/common'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 import type { FeaturedEntity, KnownEntityFeature, KnownEntityTypes } from '../common/types.mjs'
@@ -101,7 +101,7 @@ export function useMyKnownFeaturedEntitiesValue() {
       }
       return featuredEntities
         .filter(({ _id, feature }) => knownEntityFeature === feature && checkers[knownEntity](_id))
-        .map(({ _id }) => getIdAndEntityIdentifier(_id))
+        .map(({ _id }) => getEntityIdentifiers(_id))
     }
   }, [
     collectionContext.collectionEntitiesId,
