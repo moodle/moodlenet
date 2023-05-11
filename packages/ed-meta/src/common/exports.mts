@@ -1,2 +1,2 @@
-export * from './data.js'
+export * from './MOCK_DATA.js'
 export * from './types.mjs'
