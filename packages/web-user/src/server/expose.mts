@@ -208,7 +208,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         return { count: 10 }
       },
     },
-    'webapp/get-profile-entity-ids/:profileKey': {
+    'webapp/profile-owned-entities/:profileKey': {
       guard: () => void 0,
       async fn(/* _, { profileKey } */) {
         return []

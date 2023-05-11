@@ -30,7 +30,7 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
     ): Promise<string | null>
-    'webapp/get-profile-entity-ids/:profileKey'(
+    'webapp/profile-owned-entities/:profileKey'(
       body: void,
       params: { profileKey: string },
     ): Promise<{ _id: string }[]>

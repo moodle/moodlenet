@@ -24,7 +24,6 @@ const myRoutes = {
 //     rpcCollection.then(res => res && ModelRpcToProps(missing, res))
 
 const toFormRpc = (r: CollectionFormProps): CollectionFormRpc => r
-// const toFormProps = (r: CollectionFormRpc): CollectionFormProps => r
 
 // const menuItems = {
 //   create: (onClick: () => void): HeaderMenuItem => ({

@@ -1,8 +1,9 @@
-import type { OptionItemProp } from '@moodlenet/component-library'
+import type { AddonItem, OptionItemProp } from '@moodlenet/component-library'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import type { ResourceFormProps } from '../../../../common/types.mjs'
 import { maxUploadSize } from '../../../../common/validationSchema.mjs'
+import { MainContext } from '../../../MainContext.js'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import type { ResourceProps } from './Resource.js'
@@ -25,6 +26,18 @@ type MyProps = {
 export const useResourcePageProps = ({ resourceKey }: MyProps) => {
   const mainLayoutProps = useMainLayoutProps()
   const _baseProps = useResourceBaseProps({ resourceKey })
+  const { registries } = useContext(MainContext)
+
+  const generalActionsItems = useMemo<ResourceProps['generalActionsItems']>(() => {
+    const items: ResourceProps['generalActionsItems'] =
+      registries.resourcePageGeneralActions.registry.entries.map<AddonItem>(
+        ({ item, pkgId: { name: pkgName } }, index) => ({
+          ...item,
+          key: `${pkgName}-${index}`,
+        }),
+      )
+    return items
+  }, [registries.resourcePageGeneralActions.registry.entries])
 
   return useMemo<ResourceProps | null>((): ResourceProps | null => {
     if (!_baseProps) return null
@@ -48,7 +61,7 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
       mainColumnItems: [],
       sideColumnItems: [],
       extraDetailsItems: [],
-      generalActionsItems: [],
+      generalActionsItems,
       data,
       resourceForm,
       state,
@@ -57,5 +70,5 @@ export const useResourcePageProps = ({ resourceKey }: MyProps) => {
       fileMaxSize: maxUploadSize,
       isSaving,
     }
-  }, [_baseProps, mainLayoutProps])
+  }, [_baseProps, mainLayoutProps, generalActionsItems])
 }

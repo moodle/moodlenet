@@ -1,4 +1,4 @@
-export const COLLECTION_HOME_PAGE_ROUTE_PATH = 'collection/:key'
+export const COLLECTION_HOME_PAGE_ROUTE_PATH = '/collection/:key'
 
 export function matchCollectionHomePageRoutePathKey(path: string) {
   return path.match(

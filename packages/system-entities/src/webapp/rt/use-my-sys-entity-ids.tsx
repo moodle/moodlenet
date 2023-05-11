@@ -1,8 +1,8 @@
 import { usePkgContext } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import {
+  getEntityIdentifiers,
   getEntityIdentifiersByKey,
-  getIdAndEntityIdentifier,
   isOfSameClass,
 } from '../../common/entity-identification.mjs'
 import type { EntityClass, EntityIdentifier } from '../../common/types.mjs'
@@ -32,7 +32,7 @@ export function useMySystemEntitiesId<EntityTypeNames extends string>() {
 
       const {
         entityIdentifier: { entityClass: idClass },
-      } = getIdAndEntityIdentifier(id)
+      } = getEntityIdentifiers(id)
 
       return isOfSameClass(idClass, targetClass)
     }

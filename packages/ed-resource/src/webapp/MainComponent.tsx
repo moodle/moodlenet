@@ -12,7 +12,8 @@ import type {
 import { RESOURCE_HOME_PAGE_ROUTE_PATH } from '../common/webapp-routes.mjs'
 import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
 import { MainContext } from './MainContext.js'
-import { ResourceContextProvider } from './ResourceContext.js'
+import { useMakeRegistries } from './registries.mjs'
+import { ProvideResourceContext } from './ResourceContext.js'
 
 const myRoutes = {
   routes: <Route path={RESOURCE_HOME_PAGE_ROUTE_PATH} element={<ResourcePageRoute />} />,
@@ -39,14 +40,13 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   const myPkgCtx = usePkgContext<MyPkgContext>()
   const reactAppCtx = useContext(ReactAppContext)
   // const webUserCtx = useContext(AuthCtx)
-
   reactAppCtx.registries.routes.useRegister(myRoutes)
   // const auth = useMemo(
   //   () => authToAccessRpc(webUserCtx.clientSessionData),
   //   [webUserCtx.clientSessionData],
   // )
   const me = myPkgCtx.use.me
-
+  const registries = useMakeRegistries()
   const rpcCaller = useMemo((): RpcCaller => {
     const rpc = me.rpc
     // const addAuth = addAuthMissing(auth.access || null)
@@ -84,13 +84,14 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   const mainValue: MainContextResource = {
     ...myPkgCtx,
     rpcCaller,
+    registries,
     // actionsMenu,
     // auth,
   }
 
   return (
     <MainContext.Provider value={mainValue}>
-      <ResourceContextProvider>{children}</ResourceContextProvider>
+      <ProvideResourceContext>{children}</ProvideResourceContext>
     </MainContext.Provider>
   )
 }
