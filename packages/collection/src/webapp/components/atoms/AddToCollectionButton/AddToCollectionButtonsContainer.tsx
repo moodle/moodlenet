@@ -2,7 +2,7 @@ import type { FC } from 'react'
 import { AddToCollectionButton } from './AddToCollectionButtons.js'
 import { useAddToCollectionButtons } from './AddToCollectionButtonsHook.js'
 
-export const CollectionContainer: FC<{ collectionKey: string }> = ({ collectionKey }) => {
-  const opt = useAddToCollectionButtons(collectionKey)
+export const AddToCollectionButtonContainer: FC<{ resourceKey: string }> = ({ resourceKey }) => {
+  const opt = useAddToCollectionButtons(resourceKey)
   return <AddToCollectionButton {...opt} />
 }
