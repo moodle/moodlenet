@@ -37,6 +37,51 @@ export function getIdAndEntityIdentifier(id: string | EntityIdentifier) {
   return { _id, entityIdentifier }
 }
 
+export function getEntityIdentifiersByKey<EntityTypeName extends string>({
+  _key,
+  type,
+  pkgName,
+}: {
+  _key: string
+  type: EntityTypeName
+  pkgName: string
+}) {
+  const entityIdentifier: EntityIdentifier = {
+    _key,
+    entityClass: {
+      pkgName,
+      type,
+    },
+  }
+  return getIdAndEntityIdentifier(entityIdentifier)
+}
+
+export function getEntityIdentifiersById<EnsureEntityClass extends EntityClass<any>>({
+  _id,
+  ensureClass,
+}: {
+  _id: string
+  ensureClass?: EnsureEntityClass
+}) {
+  const identifiers = getIdAndEntityIdentifier(_id)
+  if (ensureClass && !isOfSameClass(ensureClass, identifiers.entityIdentifier.entityClass)) {
+    return undefined
+  }
+  return identifiers
+}
+
+export function getEntityIdentifiersByIdAssertClass<EnsureEntityClass extends EntityClass<any>>({
+  _id,
+  ensureClass,
+}: {
+  _id: string
+  ensureClass: EnsureEntityClass
+}) {
+  const identifiers = getEntityIdentifiersById({ _id, ensureClass })
+  assert(identifiers)
+  return identifiers
+}
+
 export function isOfSameClass(cl1: EntityClass<any>, cl2: EntityClass<any>) {
   return cl1.pkgName == cl2.pkgName && cl1.type == cl2.type
 }
