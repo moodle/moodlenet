@@ -73,6 +73,7 @@ export type CollectionProps = {
   state: CollectionStateProps
   access: CollectionAccessProps
   contributor: CollectionContributorProps
+  resourceList: { _key: string }[]
 }
 export type CollectionsResorce = {
   collectionKey: string
