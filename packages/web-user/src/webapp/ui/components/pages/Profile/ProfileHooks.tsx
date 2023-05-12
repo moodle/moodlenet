@@ -28,6 +28,8 @@ export const useProfileProps = ({
   const [profileResponse, setProfileResponse] = useState<{
     data: Profile
     canEdit: boolean
+    ownResources: { _key: string }[]
+    ownCollections: { _key: string }[]
   }>()
 
   // const toggleFollow = useCallback<ProfileProps['actions']['toggleFollow']>(async () => {
@@ -70,6 +72,10 @@ export const useProfileProps = ({
     }
     const isAdmin = !!clientSessionData?.isAdmin
     const isCreator = clientSessionData?.myProfile?._key === profileKey
+
+    // KEY LISTS FROM SERVER
+    profileResponse.ownCollections
+    profileResponse.ownResources
 
     const props: ProfileProps = {
       mainLayoutProps,
