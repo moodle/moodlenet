@@ -50,7 +50,9 @@ registerEntityInfoProvider({
   aqlProvider(entityDocVar) {
     const homepagePath = `SUBSTITUTE( "${PROFILE_HOME_PAGE_ROUTE_PATH}" , ":key" , ${entityDocVar}._key )`
     return `{ 
-      iconUrl: '', 
+      iconUrl: ${publicFilesHttp.getFileUrlAql({
+        directAccessIdVar: `${entityDocVar}.avatarImage.directAccessId`,
+      })}, 
       name: ${entityDocVar}.displayName, 
       homepagePath: ${homepagePath}
     }`

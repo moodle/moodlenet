@@ -248,6 +248,9 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
       getFileUrl({ directAccessId }: { directAccessId: string }) {
         return `${baseUrl}/${path}/${directAccessId}`
       },
+      getFileUrlAql({ directAccessIdVar }: { directAccessIdVar: string }) {
+        return `( ${directAccessIdVar} && CONCAT_SEPARATOR('/', '${baseUrl}', '${path}', ${directAccessIdVar}) )`
+      },
     }
   }
 
