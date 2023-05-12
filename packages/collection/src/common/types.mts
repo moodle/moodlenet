@@ -58,6 +58,7 @@ export type CollectionRpc = {
   state: CollectionStateProps
   access: CollectionAccessRpc
   contributor: CollectionContributorProps
+  resourceList: { _key: string }[]
 }
 
 export type CollectionAccessProps = CollectionAccessRpc
