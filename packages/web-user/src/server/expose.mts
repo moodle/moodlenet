@@ -78,6 +78,8 @@ export const expose = await shell.expose<WebUserExposeType>({
         return {
           data,
           canEdit: !!patchRecord.access.u,
+          ownCollections: [],
+          ownResources: [],
         }
       },
     },

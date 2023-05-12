@@ -12,9 +12,15 @@ export type WebUserExposeType = PkgExposeDef<{
   rpc: {
     'getCurrentClientSessionDataRpc'(): Promise<ClientSessionDataRpc | undefined>
     'loginAsRoot'(body: { rootPassword: string }): Promise<boolean>
-    'webapp/profile/edit'(
-      body: Omit<Profile, 'avatarUrl' | 'backgroundUrl'>,
-    ): Promise<{ data: Profile; canEdit: boolean } | undefined>
+    'webapp/profile/edit'(body: Omit<Profile, 'avatarUrl' | 'backgroundUrl'>): Promise<
+      | {
+          data: Profile
+          canEdit: boolean
+          ownResources: { _key: string }[]
+          ownCollections: { _key: string }[]
+        }
+      | undefined
+    >
     'webapp/profile/get'(body: { _key: string }): Promise<
       | {
           data: Profile
