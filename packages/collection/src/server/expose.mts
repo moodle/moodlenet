@@ -64,10 +64,11 @@ export const expose = await shell.expose<CollectionExposeType>({
         return myCollectionsDocs
           .filter(({ access }) => access.u)
           .map(({ entity: { _key, title, resourceList } }) => {
+            const resourceListKeys = resourceList.map(({ _key }) => _key)
             return {
               collectionKey: _key,
               collectionName: title,
-              hasResource: resourceList.includes(containingResourceKey),
+              hasResource: resourceListKeys.includes(containingResourceKey),
             }
           })
       },
@@ -205,7 +206,11 @@ function getCollectionRpc(
     : ''
   const _key = found.entity._key
   const collectionRpc: Omit<CollectionRpc, 'contributor'> = {
-    form: { description: found.entity.description, title: found.entity.title },
+    resourceList: found.entity.resourceList,
+    form: {
+      description: found.entity.description,
+      title: found.entity.title,
+    },
     data: {
       collectionId: found.entity._key,
       mnUrl: getWebappUrl(getCollectionHomePageRoutePath({ _key })),
