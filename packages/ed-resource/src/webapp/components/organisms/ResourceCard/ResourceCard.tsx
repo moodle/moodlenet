@@ -23,7 +23,7 @@ import {
   TertiaryButton,
 } from '@moodlenet/component-library'
 import { getBackupImage, Link } from '@moodlenet/react-app/ui'
-import { CloseRounded, Public } from '@mui/icons-material'
+import { Public } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import type {
@@ -42,20 +42,17 @@ export type ResourceCardProps = {
   bottomLeftItems: (AddonItem | null)[]
   bottomRightItems: (AddonItem | null)[]
 
-  className?: string
-  orientation?: 'vertical' | 'horizontal'
-  showDeleteButton?: boolean
-
   data: ResourceCardDataProps
   state: ResourceCardState
   actions: ResourceCardActions
   access: ResourceCardAccess
-
-  onClick?(arg0: unknown): unknown
-  onRemoveClick?(arg0: unknown): unknown
+}
+type ResourceCardPropsUI = {
+  className?: string
+  orientation?: 'vertical' | 'horizontal'
 }
 
-export const ResourceCard: FC<ResourceCardProps> = ({
+export const ResourceCard: FC<ResourceCardProps & ResourceCardPropsUI> = ({
   mainColumnItems,
   topLeftItems,
   topRightItems,
@@ -64,15 +61,11 @@ export const ResourceCard: FC<ResourceCardProps> = ({
 
   className,
   orientation = 'vertical',
-  showDeleteButton,
 
   data,
   state,
   actions,
   access,
-
-  onClick,
-  onRemoveClick,
 }) => {
   const {
     resourceId,
@@ -99,7 +92,6 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     unpublish,
   } = actions
   const {
-    canDelete,
     canPublish,
     // canLike,
     // isCreator,
@@ -172,12 +164,6 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     return () => window.removeEventListener('resize', updateSize)
   }, [resourceCard])
 
-  const deleteButton = canDelete && showDeleteButton && (
-    <TertiaryButton key="delete-button" onClick={onRemoveClick} className={`delete ${orientation}`}>
-      <CloseRounded />
-    </TertiaryButton>
-  )
-
   const typeLabel =
     typeName && typeColor ? (
       <div className="type" key="type-label" style={{ background: typeColor }}>
@@ -189,8 +175,8 @@ export const ResourceCard: FC<ResourceCardProps> = ({
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
-  const updatedTopRightItems = [deleteButton, ...(topRightItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
+  const updatedTopRightItems = [...(topRightItems ?? [])].filter(
+    (item): item is AddonItem /*  | JSX.Element */ => !!item,
   )
 
   const header = (
@@ -282,7 +268,6 @@ export const ResourceCard: FC<ResourceCardProps> = ({
         '' /* isSelected ? 'selected' : '' */
       } ${orientation} `}
       hover={true}
-      onClick={onClick}
       style={orientation === 'vertical' ? background : {}}
     >
       {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
