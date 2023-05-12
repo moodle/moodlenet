@@ -15,9 +15,15 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/profile/edit'(
       body: Omit<Profile, 'avatarUrl' | 'backgroundUrl'>,
     ): Promise<{ data: Profile; canEdit: boolean } | undefined>
-    'webapp/profile/get'(body: {
-      _key: string
-    }): Promise<{ data: Profile; canEdit: boolean; ownEntities: { _id: string }[] } | undefined>
+    'webapp/profile/get'(body: { _key: string }): Promise<
+      | {
+          data: Profile
+          canEdit: boolean
+          ownResources: { _key: string }[]
+          ownCollections: { _key: string }[]
+        }
+      | undefined
+    >
     'webapp/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
     'webapp/roles/toggleIsAdmin'(
       body: { profileKey: string } | { userKey: string },
