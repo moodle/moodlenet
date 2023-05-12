@@ -57,8 +57,8 @@ export async function updateCollectionContent(
 ) {
   const aqlAction =
     action === 'remove'
-      ? `REMOVE_VALUE( ${currentEntityVar}.resourceList, @resourceKey, 1 )`
-      : `PUSH( ${currentEntityVar}.resourceList, @resourceKey, true )`
+      ? `REMOVE_VALUE( ${currentEntityVar}.resourceList, { _key:@resourceKey }, 1 )`
+      : `PUSH( ${currentEntityVar}.resourceList, { _key:@resourceKey }, true )`
   const updateResult = await shell.call(patchEntity)(
     Collection.entityClass,
     collectionKey,
