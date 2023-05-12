@@ -1,9 +1,9 @@
 import { NoteAdd } from '@material-ui/icons'
 import { ListCard, PrimaryButton } from '@moodlenet/component-library'
+import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
-import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './ProfileResourceList.scss'
 
 export type ProfileResourceListProps = {
@@ -28,7 +28,6 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
                 key={resourceCardProps.data.resourceId}
                 {...resourceCardProps}
                 orientation="horizontal"
-                showDeleteButton
               />
             )
           }),

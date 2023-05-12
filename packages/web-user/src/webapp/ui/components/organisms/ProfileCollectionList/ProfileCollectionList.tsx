@@ -1,9 +1,9 @@
+import type { CollectionCardProps } from '@moodlenet/collection/ui'
+import { CollectionCard } from '@moodlenet/collection/ui'
 import { ListCard, PrimaryButton } from '@moodlenet/component-library'
 import { LibraryAdd } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
-import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
 import './ProfileCollectionList.scss'
 
 export type ProfileCollectionListProps = {
