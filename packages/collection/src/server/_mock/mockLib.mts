@@ -10,6 +10,8 @@ const resolver = (collectionId: string, query?: File | string | boolean) =>
   newPromise(getFakeData(collectionId, query))
 
 export const empityFormModel: CollectionRpc = {
+  resourceList: [],
+
   data: {
     collectionId: 'new123',
     mnUrl: '',

@@ -6,5 +6,5 @@ export type CollectionDataType = {
   description: string
   image: null | { kind: 'file'; directAccessId: string } // | { kind: 'url'; url: string }
   published: boolean
-  resourceList: string[]
+  resourceList: { _key: string }[]
 }

@@ -14,6 +14,7 @@ export const contributor: CollectionContributorRpc = {
 }
 
 export const resFakeData: CollectionRpc = {
+  resourceList: [],
   data: {
     collectionId: 'aaa123',
     mnUrl: 'http:www.ggg.it',
