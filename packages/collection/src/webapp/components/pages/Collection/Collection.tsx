@@ -1,6 +1,6 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Modal, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
-import type { MainLayoutProps } from '@moodlenet/react-app/ui'
+import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -26,7 +26,7 @@ export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
   mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
-  resourceCardPropsList: ResourceCardProps[]
+  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardProps> }[]
 
   wideColumnItems: AddonItem[]
   mainColumnItems: AddonItem[]
@@ -100,8 +100,8 @@ export const Collection: FC<CollectionProps> = ({
     }
   }
 
-  const resourceList = resourceCardPropsList.map(r => (
-    <ResourceCard {...r} key={r.data.resourceId} />
+  const resourceList = resourceCardPropsList.map(({ key, resourceCardProps }) => (
+    <ResourceCard {...resourceCardProps} orientation={'horizontal'} key={key} />
   ))
 
   const mainCollectionCard = (
