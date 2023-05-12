@@ -119,7 +119,7 @@ export type ResourceCardDataRpc = {
     avatar: string | null
     profileHref: Href
   }
-  resourceHomeHref?: Href
+  resourceHomeHref: Href
 } & Pick<
   ResourceDataProps,
   'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'contentUrl'

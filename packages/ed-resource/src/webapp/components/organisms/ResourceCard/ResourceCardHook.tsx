@@ -1,6 +1,8 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
+import { href } from '@moodlenet/react-app/common'
 import { useMemo } from 'react'
 import type { ResourceCardDataProps } from '../../../../common/types.mjs'
+import { getResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { ResourceCardProps } from './ResourceCard.js'
 
@@ -28,7 +30,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardProps | n
       contentUrl,
       downloadFilename,
       owner,
-      resourceHomeHref: undefined,
+      resourceHomeHref: href(getResourceHomePageRoutePath({ _key: resourceKey })),
     }
 
     const propsPage: ResourceCardProps = {
@@ -44,7 +46,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardProps | n
     }
 
     return propsPage
-  }, [_mainProps])
+  }, [_mainProps, resourceKey])
 
   return collectionProps
 }
