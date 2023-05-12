@@ -106,7 +106,12 @@ export const expose = await shell.expose<WebUserExposeType>({
             _key: user._key,
             isAdmin: user.isAdmin,
             name: user.displayName,
-            email: user.contacts.email ?? '', //@ETTO email cannot be undefined, << ?? '' >> should be removed
+            //@BRU actually email *could* not be defined for a web-user,
+            // using our email authentication it will always be indeed..
+            // but with some other auth system it may not
+            // indeed a web user would need to have at least 1 contact/message/notification method
+            // be it an email or something else ...
+            email: user.contacts.email ?? '',
           }
         })
         return webUsers

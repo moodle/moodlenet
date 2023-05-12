@@ -1,5 +1,6 @@
 import type {
   AccessEntitiesCustomProject,
+  AqlVal,
   EntityAccess,
   GetEntityOpts,
   Patch,
@@ -12,6 +13,7 @@ import {
   getEntity,
   patchEntity,
   queryMyEntities,
+  toaql,
 } from '@moodlenet/system-entities/server'
 import { Collection } from './init.mjs'
 import { shell } from './shell.mjs'
@@ -55,19 +57,20 @@ export async function updateCollectionContent(
   action: 'add' | 'remove',
   resourceKey: string,
 ) {
+  const aqlResourceListElem: AqlVal<CollectionDataType['resourceList'][number]> = toaql({
+    _key: resourceKey,
+  })
+
   const aqlAction =
     action === 'remove'
-      ? `REMOVE_VALUE( ${currentEntityVar}.resourceList, { _key:@resourceKey }, 1 )`
-      : `PUSH( ${currentEntityVar}.resourceList, { _key:@resourceKey }, true )`
+      ? `REMOVE_VALUE( ${currentEntityVar}.resourceList, ${aqlResourceListElem} , 1 )`
+      : `        PUSH( ${currentEntityVar}.resourceList, ${aqlResourceListElem} , true )`
   const updateResult = await shell.call(patchEntity)(
     Collection.entityClass,
     collectionKey,
     `{ 
       resourceList: ${aqlAction}
     }`,
-    {
-      bindVars: { resourceKey },
-    },
   )
 
   return updateResult
