@@ -4,14 +4,11 @@ export * from '../components/molecules/CollectionContributorCard/CollectionContr
 export * from '../components/organisms/CollectionCard/CollectionCard.js'
 export * from '../components/organisms/lists/CollectionList/CollectionList.js'
 export * from '../components/organisms/lists/LandingCollectionList/LandingCollectionList.js'
-export * from '../components/organisms/lists/ProfileCollectionList/ProfileCollectionList.js'
 export * from '../components/organisms/lists/SearchCollectionList/SearchCollectionList.js'
 export * from '../components/organisms/MainCollectionCard/MainCollectionCard.js'
 export * from '../components/organisms/UploadImage/UploadImage.js'
 export * from '../components/pages/Collection/Collection.js'
 export * from '../components/pages/Collection/CollectionPageRoute.js'
-
-
 export * from '../helpers/factories.js'
 export * from '../helpers/utils.mjs'
 export * from '../MainComponent.js'

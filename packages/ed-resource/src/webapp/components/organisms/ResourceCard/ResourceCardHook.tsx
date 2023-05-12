@@ -29,7 +29,6 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardProps | n
       downloadFilename,
       owner,
       resourceHomeHref: undefined,
-      // collectionHref: href('Pages/Collection/Logged In'),
     }
 
     const propsPage: ResourceCardProps = {
@@ -38,15 +37,10 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardProps | n
       topRightItems: [],
       bottomLeftItems: [],
       bottomRightItems: [],
-      className: '',
-      orientation: 'vertical',
-      showDeleteButton: true,
       data,
       state,
       actions,
       access,
-      //   onClick?(arg0: unknown): unknown
-      // onRemoveClick?(arg0: unknown): unknown
     }
 
     return propsPage

@@ -14,11 +14,11 @@ import type {
 } from '../../../../../common/types.mjs'
 
 import type { CollectionCardProps } from '@moodlenet/collection/ui'
-import { ProfileCollectionList } from '@moodlenet/collection/ui'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
-import { ProfileResourceList } from '@moodlenet/ed-resource/ui'
 import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
+import ProfileCollectionList from '../../organisms/ProfileCollectionList/ProfileCollectionList.js'
+import ProfileResourceList from '../../organisms/ProfileResourceList/ProfileResourceList.js'
 import './Profile.scss'
 
 export type ProfileProps = {
