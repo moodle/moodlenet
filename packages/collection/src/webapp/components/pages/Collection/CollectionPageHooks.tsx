@@ -1,3 +1,5 @@
+import { useResourceCardProps } from '@moodlenet/ed-resource/webapp'
+import { proxyProps } from '@moodlenet/react-app/ui'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
@@ -18,6 +20,15 @@ export const useCollectionPageProps = ({
   const collectionProps = useMemo(() => {
     if (!_mainProps || !mainLayoutProps) return null
     const { actions, props, isSaving } = _mainProps
+    const resourceCardPropsList: CollectionProps['resourceCardPropsList'] = props.resourceList.map(
+      ({ _key }) => {
+        return {
+          key: _key,
+          resourceCardProps: proxyProps(useResourceCardProps, _key),
+        }
+      },
+    )
+
     const layoutProps = {
       wideColumnItems: [],
       mainColumnItems: [],
@@ -39,7 +50,7 @@ export const useCollectionPageProps = ({
     const propsPage: CollectionProps = {
       mainLayoutProps,
       mainCollectionCardSlots,
-      resourceCardPropsList: [], //@ETTO this need to be filled
+      resourceCardPropsList,
       collectionContributorCardProps: contributor,
       ...layoutProps,
       ...props,
