@@ -1,22 +1,20 @@
 import { LibraryAdd, NoteAdd } from '@material-ui/icons'
-import { proxied } from '@moodlenet/react-app/ui'
+import type { FC } from 'react'
 
 export type CreateResourceAddMenuItemProps = { createResource(): void }
-export const CreateResourceAddMenuItem = proxied<{ createResource(): void }>(
-  ({ createResource }) => (
-    <div onClick={createResource}>
-      <NoteAdd />
-      New resource
-    </div>
-  ),
+export const CreateResourceAddMenuItem: FC<{ createResource(): void }> = ({ createResource }) => (
+  <div onClick={createResource}>
+    <NoteAdd />
+    New resource
+  </div>
 )
 
 export type CreateCollectionAddMenuItemProps = { createCollection(): void }
-export const CreateCollectionAddMenuItem = proxied<CreateCollectionAddMenuItemProps>(
-  ({ createCollection }) => (
-    <div onClick={createCollection}>
-      <LibraryAdd />
-      New collection
-    </div>
-  ),
+export const CreateCollectionAddMenuItem: FC<CreateCollectionAddMenuItemProps> = ({
+  createCollection,
+}) => (
+  <div onClick={createCollection}>
+    <LibraryAdd />
+    New collection
+  </div>
 )

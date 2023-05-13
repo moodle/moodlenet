@@ -1,76 +1,66 @@
 import type { ComponentType, JSXElementConstructor, ReactElement } from 'react'
-import { isValidElement } from 'react'
+// import { isValidElement } from 'react'
 const PROXY_VALUE_SYMB: unique symbol = `
 ***
 PROXY SYMBOL
 holding {
-  useProxyProps: ProxyPropsHook<AwaitedProps, ProxyPropsHookArgs>
-  proxyPropsHookArgs: ProxyPropsHookArgs
+  useProxyProps: ProxyPropsHook<AwaitedProps>
 }
 ***
 ` as any
 
-export type ProxyProps<AwaitedProps> = ProxyPropsValue<AwaitedProps, any[]> | AwaitedProps
+export type ProxyProps<AwaitedProps> = DeferedProps<AwaitedProps> | AwaitedProps
 
-type ProxyPropsValue<AwaitedProps, ProxyPropsHookArgs extends any[] = any[]> = {
+type DeferedProps<AwaitedProps> = {
   [PROXY_VALUE_SYMB]: {
-    useProxyProps: ProxyPropsHook<AwaitedProps, ProxyPropsHookArgs>
-    proxyPropsHookArgs: ProxyPropsHookArgs
+    usePropProxy: PropsProxyHook<AwaitedProps>
   }
 }
 
-export type ProxyPropsHook<ProxiedProps, ProxyPropsHookArgs extends any[]> = (
-  ...proxyPropsArgs: ProxyPropsHookArgs
-) => ProxyPropsResult<ProxiedProps>
+export type PropsProxyHook<AwaitedProps> = () => PropsProxyHookResult<AwaitedProps>
 
-export type ProxyPropsResult<ProxiedProps> =
-  | ProxiedProps
-  | [feedProps: ProxiedProps, opts?: Partial<ProxyPropsValueOpts<ProxiedProps>>]
-  | ReactElement
-  | null
+export type PropsProxyHookResult<AwaitedProps> = {
+  props: AwaitedProps | null
+  opts?: Partial<PropsProxyHookResultOpts>
+} | null
+// | ReactElement
 
-export type ProxyPropsValueOpts<ProxiedProps = any> = {
-  wrap(
-    ui: ReactElement<ProxiedProps, JSXElementConstructor<ProxiedProps>>,
-  ): ReactElement<ProxiedProps, JSXElementConstructor<ProxiedProps>>
+export type PropsProxyHookResultOpts = {
+  Wrapper: ComponentType<{ element: ReactElement }>
 }
 
-export function proxyProps<ProxiedProps, ProxyPropsHookArgs extends any[]>(
-  useProxyProps: ProxyPropsHook<ProxiedProps, ProxyPropsHookArgs>,
-  ...proxyPropsHookArgs: ProxyPropsHookArgs
-): ProxyProps<ProxiedProps> {
+export function proxyWith<AwaitedProps>(
+  usePropProxy: PropsProxyHook<AwaitedProps>,
+): ProxyProps<AwaitedProps> {
   return {
     [PROXY_VALUE_SYMB]: {
-      proxyPropsHookArgs,
-      useProxyProps,
+      usePropProxy,
     },
-  } as ProxyProps<ProxiedProps>
+  }
 }
 
-const defaultProxyPropsValueOpts: ProxyPropsValueOpts = { wrap: _ => _ }
-
-ProxyPropsRender.displayName = 'Proxy-Renderer'
+ProxyPropsRender.displayName = 'ProxyPropsRender'
 function ProxyPropsRender({
   Component,
   givenProps,
 }: {
-  givenProps: ProxyPropsValue<any>
+  givenProps: DeferedProps<any>
   Component: ComponentType<any>
 }) {
-  const { useProxyProps, proxyPropsHookArgs } = givenProps[PROXY_VALUE_SYMB]
-  const proxyPropsValue = useProxyProps(...proxyPropsHookArgs)
-  if (!proxyPropsValue) {
+  const { usePropProxy } = givenProps[PROXY_VALUE_SYMB]
+  const propsProxyHookResult = usePropProxy()
+  if (!propsProxyHookResult?.props) {
     return null
-  } else if (isValidElement(proxyPropsValue)) {
-    return proxyPropsValue
   }
-  const [proxiedProps, opts] = Array.isArray(proxyPropsValue) ? proxyPropsValue : [proxyPropsValue]
-  const { wrap } = { ...defaultProxyPropsValueOpts, ...opts } as ProxyPropsValueOpts
-
-  return wrap(<Component {...proxiedProps} {...givenProps} />)
+  //else if (isValidElement(propsProxyHookResult)) {
+  //   return propsProxyHookResult
+  // }
+  const { props: awaitedProps, opts } = propsProxyHookResult
+  const element = <Component {...awaitedProps} {...givenProps} />
+  return opts?.Wrapper ? <opts.Wrapper element={element} /> : element
 }
 
-export function proxied<ComponentProps extends Record<string, any>>(
+export function withProxy<ComponentProps extends Record<string, any>>(
   Component: ComponentType<ComponentProps>,
   displayName?: string,
 ) {
@@ -80,18 +70,18 @@ export function proxied<ComponentProps extends Record<string, any>>(
   return ProxyComponent
 
   function ProxyComponent<
-    StaticProps extends Partial<ComponentProps>,
-    AwaitedProps extends Omit<ComponentProps, keyof StaticProps>,
+    GivenProps extends Partial<ComponentProps>,
+    AwaitedProps extends Omit<ComponentProps, keyof GivenProps>,
   >(
     givenProps: [AwaitedProps] extends [never]
       ? never
       :
           | ComponentProps
-          | (StaticProps & AwaitedProps extends ComponentProps
-              ? StaticProps & ProxyProps<AwaitedProps>
+          | (GivenProps & AwaitedProps extends ComponentProps
+              ? GivenProps & ProxyProps<AwaitedProps>
               : never),
-  ): ReactElement<ComponentProps, JSXElementConstructor<ComponentProps>> | null {
-    if (isProxyPropsHookValue(givenProps)) {
+  ): ReactElement<ComponentProps, JSXElementConstructor<ComponentProps>> {
+    if (isPropsProxyHookValue(givenProps)) {
       return <ProxyPropsRender givenProps={givenProps} Component={Component} />
     } else {
       return <Component {...(givenProps as ComponentProps)} />
@@ -99,6 +89,6 @@ export function proxied<ComponentProps extends Record<string, any>>(
   }
 }
 
-function isProxyPropsHookValue(props: any): props is ProxyPropsValue<any> {
+function isPropsProxyHookValue(props: any): props is DeferedProps<any> {
   return !!(props ?? ({} as any))[PROXY_VALUE_SYMB]
 }
