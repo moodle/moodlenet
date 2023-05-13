@@ -1,5 +1,5 @@
 import { useResourceCardProps } from '@moodlenet/ed-resource/webapp'
-import { proxyProps } from '@moodlenet/react-app/ui'
+import { proxyWith } from '@moodlenet/react-app/ui'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
@@ -24,7 +24,9 @@ export const useCollectionPageProps = ({
       ({ _key }) => {
         return {
           key: _key,
-          resourceCardProps: proxyProps(useResourceCardProps, _key),
+          resourceCardProps: proxyWith(function usePropProxy() {
+            return { props: useResourceCardProps(_key) }
+          }),
         }
       },
     )

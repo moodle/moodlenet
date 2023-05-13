@@ -1,6 +1,5 @@
 import type { FloatingMenuContentItem } from '@moodlenet/component-library'
 import { FloatingMenu } from '@moodlenet/component-library'
-import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { ComponentType, FC } from 'react'
 import { useMemo } from 'react'
 import { ReactComponent as AddIcon } from '../../../assets/icons/add-round.svg'
@@ -16,8 +15,8 @@ export type AddMenuItem = {
   className?: string
 }
 export type AddMenuProps = {
-  createCollectionProps: ProxyProps<CreateCollectionAddMenuItemProps>
-  createResourceProps: ProxyProps<CreateResourceAddMenuItemProps>
+  createCollectionProps: CreateCollectionAddMenuItemProps
+  createResourceProps: CreateResourceAddMenuItemProps
   menuItems: AddMenuItem[]
 }
 
