@@ -22,7 +22,7 @@ import {
   isEllipsisActive,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import { getBackupImage, Link, proxied } from '@moodlenet/react-app/ui'
+import { getBackupImage, Link, withProxy } from '@moodlenet/react-app/ui'
 import { Public } from '@mui/icons-material'
 import { useEffect, useRef, useState } from 'react'
 import type {
@@ -51,7 +51,7 @@ type ResourceCardPropsUI = {
   orientation?: 'vertical' | 'horizontal'
 }
 
-export const ResourceCard = proxied<ResourceCardProps & ResourceCardPropsUI>(
+export const ResourceCard = withProxy<ResourceCardProps & ResourceCardPropsUI>(
   ({
     mainColumnItems,
     topLeftItems,
