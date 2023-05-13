@@ -1,6 +1,6 @@
 import { Bookmarks } from '@material-ui/icons'
 import type { Href } from '@moodlenet/react-app/common'
-import { Link, proxied } from '@moodlenet/react-app/ui'
+import { Link, withProxy } from '@moodlenet/react-app/ui'
 import { ExitToApp } from '@mui/icons-material'
 import { ReactComponent as ArrowsIcon } from '../../../assets/icons/arrows.svg'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
@@ -9,7 +9,7 @@ export type ProfileLinkAvatarMenuComponentProps = {
   profileHref: Href
   avatarUrl: string | undefined
 }
-export const ProfileLinkAvatarMenuComponent = proxied<ProfileLinkAvatarMenuComponentProps>(
+export const ProfileLinkAvatarMenuComponent = withProxy<ProfileLinkAvatarMenuComponentProps>(
   ({ profileHref, avatarUrl = defaultAvatar }) => {
     return (
       <Link href={profileHref} className="avatar">
@@ -29,7 +29,7 @@ export const ProfileLinkAvatarMenuComponent = proxied<ProfileLinkAvatarMenuCompo
 )
 
 export type SignoutAvatarMenuComponentProps = { signout(): void }
-export const SignoutAvatarMenuComponent = proxied<SignoutAvatarMenuComponentProps>(
+export const SignoutAvatarMenuComponent = withProxy<SignoutAvatarMenuComponentProps>(
   ({ signout }) => {
     return (
       <span onClick={signout}>
@@ -40,14 +40,14 @@ export const SignoutAvatarMenuComponent = proxied<SignoutAvatarMenuComponentProp
 )
 
 export type SettingsLinkAvatarMenuComponentProps = { settingsHref: Href }
-export const SettingsLinkAvatarMenuComponent = proxied<SettingsLinkAvatarMenuComponentProps>(
+export const SettingsLinkAvatarMenuComponent = withProxy<SettingsLinkAvatarMenuComponentProps>(
   ({ settingsHref }) => {
     return <Link href={settingsHref}>Settings</Link>
   },
 )
 
 export type BookmarksLinkAvatarMenuComponentProps = { bookmarksHref: Href }
-export const BookmarksLinkAvatarMenuComponent = proxied<BookmarksLinkAvatarMenuComponentProps>(
+export const BookmarksLinkAvatarMenuComponent = withProxy<BookmarksLinkAvatarMenuComponentProps>(
   ({ bookmarksHref }) => {
     return (
       <Link href={bookmarksHref}>
@@ -59,7 +59,7 @@ export const BookmarksLinkAvatarMenuComponent = proxied<BookmarksLinkAvatarMenuC
 )
 
 export type FollowingLinkAvatarMenuComponentProps = { followingHref: Href }
-export const FollowingLinkAvatarMenuComponent = proxied<FollowingLinkAvatarMenuComponentProps>(
+export const FollowingLinkAvatarMenuComponent = withProxy<FollowingLinkAvatarMenuComponentProps>(
   ({ followingHref }) => {
     return (
       <Link href={followingHref}>

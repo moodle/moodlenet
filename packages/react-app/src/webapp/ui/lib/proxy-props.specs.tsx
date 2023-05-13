@@ -1,7 +1,7 @@
-import type { proxied, ProxyProps } from './proxy-props.js'
+import type { ProxyProps, withProxy } from './proxy-props.js'
 
 type MyProps = { a: 1; b: 2; c: 3 }
-declare const CtrledComp: ReturnType<typeof proxied<MyProps>>
+declare const CtrledComp: ReturnType<typeof withProxy<MyProps>>
 
 declare const cp: ProxyProps<MyProps>
 declare const cpa: ProxyProps<Pick<MyProps, 'a'>>
