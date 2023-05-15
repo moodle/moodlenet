@@ -19,9 +19,10 @@ export type MySystemEntitiesId<EntityTypeNames extends string> = {
   // }
 }
 
-export function useMySystemEntitiesId<EntityTypeNames extends string>({
-  pkgId: { name: pkgName },
-}: WebappShell<any>) {
+export function useMySystemEntitiesId<EntityTypeNames extends string>(shell: WebappShell<any>) {
+  const {
+    pkgId: { name: pkgName },
+  } = shell
   const mySystemEntitiesId = useMemo(() => {
     const isIdOfType: MySystemEntitiesId<EntityTypeNames>['isIdOfType'] = (id, type) => {
       const targetClass: EntityClass<any> = {

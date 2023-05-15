@@ -5,6 +5,6 @@ import './persistence/initPersistence.mjs'
 import { shell } from './shell.mjs'
 
 shell.call(plugin)<MyWebDeps>({
-  initModuleLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
   deps: { me },
 })
