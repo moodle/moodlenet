@@ -2,7 +2,7 @@ import type { OrganizationData } from '@moodlenet/organization/common'
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
 import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
-import { shell } from '../../../../../init.mjs'
+import { shell } from '../../../../../shell.mjs'
 import type { GeneralProps } from './General.js'
 
 export const useGeneralProps = (): GeneralProps => {

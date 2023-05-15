@@ -9,7 +9,7 @@ export type WebPkgDeps = {
 export type WebappPluginDef<
   Deps extends WebPkgDeps | Record<string, never> = Record<string, never>,
 > = {
-  mainComponentLoc: string[]
+  initModuleLoc: string[]
   deps: {
     [depname in keyof Deps]: PkgExpose<Deps[depname]>
   }

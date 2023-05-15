@@ -3,21 +3,28 @@ import type { PluginMainInitializerObject } from '_connect-moodlenet-pkg-modules
 import plugins from '_connect-moodlenet-pkg-modules_'
 
 let currentPluginMainInitializerObject: PluginMainInitializerObject
-export function getCurrentPluginMainInitializerObject() {
+export function getCurrentPluginMainInitializerObject(reason = '') {
   assert(
     currentPluginMainInitializerObject,
-    'currentPluginMainInitializerObject can only be accessed during initialization step',
+    `getCurrentPluginMainInitializerObject(${reason}) can only be accessed during initialization step`,
   )
   return currentPluginMainInitializerObject
 }
 export function getCurrentInitPkg() {
-  return getCurrentPluginMainInitializerObject().pkgId
+  return getCurrentPluginMainInitializerObject('getCurrentInitPkg').pkgId
 }
 export async function initializePlugins() {
+  bannerlog('initializing packages plugins')
   for (const pluginMainInitializerObject of plugins) {
+    bannerlog(`initializing ${pluginMainInitializerObject.pkgId.name} ...`)
     currentPluginMainInitializerObject = pluginMainInitializerObject
     await pluginMainInitializerObject.init()
+    bannerlog(`... ${pluginMainInitializerObject.pkgId.name} initialized`)
   }
 
   currentPluginMainInitializerObject = undefined as any
+}
+
+function bannerlog(...args: any[]) {
+  console.log('\n', '*'.repeat(50), '\n', ...args, '\n', '*'.repeat(50), '\n')
 }

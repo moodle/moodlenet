@@ -5,7 +5,7 @@
     "node": true,
     "es6": true
   },
-  "ignorePatterns": ["**/*/*.json"],
+  "ignorePatterns": ["*.json"],
   "extends": [
     // "airbnb",
     // "airbnb/hooks",

@@ -1,7 +1,7 @@
 import type { OrganizationData } from '@moodlenet/organization/common'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useEffect, useState } from 'react'
-import { shell } from '../init.mjs'
+import { shell } from '../shell.mjs'
 
 const EmptyOrganizationData = {
   instanceName: '',
@@ -18,7 +18,7 @@ export type TOrganizationCtx = {
 
 export const OrganizationCtx = createContext<TOrganizationCtx>(null as never)
 
-export const Provider: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideOrganizationContext: FC<PropsWithChildren> = ({ children }) => {
   const [organizationData, setDataOrg] = useState<OrganizationData>(EmptyOrganizationData)
 
   const saveOrganization = useCallback(

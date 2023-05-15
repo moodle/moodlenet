@@ -38,7 +38,7 @@ const ext: PassportAuthExt = {
   connect(shell) {
     const [, reactApp, http] = shell.deps
     reactApp.plug.setup({
-      mainComponentLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
+      initModuleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainModule.tsx'),
     })
     return {
       deploy() {

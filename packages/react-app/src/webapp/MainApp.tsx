@@ -1,6 +1,6 @@
 import type { PkgIdentifier } from '@moodlenet/core'
 import type { ComponentType, FC, PropsWithChildren } from 'react'
-import { getCurrentInitPkg } from './plugin-initializer.js'
+import { getCurrentInitPkg } from './plugin-initializer.mjs'
 
 export type MainAppPluginWrapper = ComponentType<PropsWithChildren>
 export type MainAppPluginHookResult = { MainWrapper?: MainAppPluginWrapper }
