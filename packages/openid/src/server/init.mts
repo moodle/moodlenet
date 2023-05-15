@@ -1,5 +1,5 @@
 import { plugin } from '@moodlenet/react-app/server'
-import type { OpenidWebAppDeps } from '../webapp/types.mjs'
+import type { OpenidWebAppDeps } from '../common/types.mjs'
 import { expose as myExpose } from './expose.mjs'
 import { shell } from './shell.mjs'
 
@@ -11,7 +11,7 @@ await import('./oidc/http-middleware.mjs')
 await import('./expose.mjs')
 
 await shell.call(plugin)<OpenidWebAppDeps>({
-  initModuleLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
   deps: { me: myExpose },
 })
 
