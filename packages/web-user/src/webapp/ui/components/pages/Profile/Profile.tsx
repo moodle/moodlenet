@@ -1,5 +1,5 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import type { MainLayoutProps, OverallCardItem } from '@moodlenet/react-app/ui'
+import type { MainLayoutProps, OverallCardItem, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, OverallCard } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -31,7 +31,7 @@ export type ProfileProps = {
   profileForm: ProfileFormValues
   validationSchema: SchemaOf<ProfileFormValues>
 
-  resourceCardPropsList: ResourceCardProps[]
+  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardProps> }[]
   collectionCardPropsList: CollectionCardProps[]
   createResource(): void
   createCollection(): void
