@@ -2,7 +2,7 @@ import type { PkgIdentifier } from '@moodlenet/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 export type PkgAddOnsHandle<AddOnType> = ReturnType<typeof usePkgAddOns<AddOnType>>
-export type RegisterAddOn<AddOnType> = ReturnType<PkgAddOnsHandle<AddOnType>['getRegHook']>
+export type RegisterAddOn<AddOnType> = ReturnType<PkgAddOnsHandle<AddOnType>[1]>
 export function usePkgAddOns<AddOnType>(addOnName = 'unnamed') {
   type PkgAddOnsEntry = {
     pkgId: PkgIdentifier
@@ -16,12 +16,7 @@ export function usePkgAddOns<AddOnType>(addOnName = 'unnamed') {
   const addOns = useMemo(reduceAddOnsToArray, [addOnsMap, addOnName])
   const getRegHook = useCallback(getRegHookFn, [])
 
-  const pkgAddOnsHandle = useMemo(() => {
-    return {
-      addOns,
-      getRegHook,
-    }
-  }, [addOns, getRegHook])
+  const pkgAddOnsHandle = useMemo(() => [addOns, getRegHook] as const, [addOns, getRegHook])
 
   return pkgAddOnsHandle
 

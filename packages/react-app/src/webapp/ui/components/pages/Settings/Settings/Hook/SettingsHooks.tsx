@@ -1,7 +1,8 @@
-import { useContext, useMemo } from 'react'
+import type { ComponentType } from 'react'
+import { useMemo } from 'react'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { MainContext } from '../../../../../../context/MainContext.mjs'
+import { usePkgAddOns } from '../../../../../../web-lib/add-ons.js'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
@@ -22,31 +23,33 @@ const localSettingsItems: SettingsItem[] = [
     Menu: { Item: () => <span>Advanced</span>, key: `@moodlenet/react-app/advanced-settings` },
   },
 ]
-
+export type SettingsSectionItem = {
+  Menu: ComponentType
+  Content: ComponentType
+}
 export const useSettingsProps = (): SettingsProps => {
-  const { reg } = useContext(MainContext)
+  const [settingsSections /* , _registerSettingsSection */] =
+    usePkgAddOns<SettingsSectionItem>('SettingsSection')
+
   const mainLayoutProps = useMainLayoutProps()
 
   const settingsItems = useMemo<SettingsItem[]>(() => {
-    const pkgItems = reg.settingsSections.registry.entries.map<SettingsItem>(
-      ({ item: { Content, Menu }, pkgId }, index) => {
-        const key = `${pkgId.name}/${index}`
-        const settingsItem: SettingsItem = {
-          Content: {
-            key,
-            Item: Content,
-          },
-          Menu: {
-            key,
-            Item: Menu,
-          },
-        }
-        return settingsItem
-      },
-    )
+    const pkgItems = settingsSections.map<SettingsItem>(({ addOn: { Content, Menu }, key }) => {
+      const settingsItem: SettingsItem = {
+        Content: {
+          key,
+          Item: Content,
+        },
+        Menu: {
+          key,
+          Item: Menu,
+        },
+      }
+      return settingsItem
+    })
 
     return localSettingsItems.concat(pkgItems)
-  }, [reg.settingsSections.registry])
+  }, [settingsSections])
 
   const settingsProps = useMemo<SettingsProps>(() => {
     return {

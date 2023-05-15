@@ -1,40 +1,44 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
+import type { ComponentType } from 'react'
+import { useMemo } from 'react'
+import { usePkgAddOns } from '../../../../../web-lib/add-ons.js'
 import type { MainFooterProps } from './MainFooter.js'
+export type FooterComponentRegItem = { Component: ComponentType }
 
 export const useFooterProps = (): MainFooterProps => {
-  const { reg } = useContext(MainContext)
-  const leftItemsReg = reg.footerLeftComponents
-  const centerItemsReg = reg.footerCenterComponents
-  const rightItemsReg = reg.footerRightComponents
+  const [footerLeftComponents /* , _registerFooterLeftComponents*/] =
+    usePkgAddOns<FooterComponentRegItem>('FooterLeftComponents')
+  const [footerCenterComponents /* , _registerFooterCenterComponents*/] =
+    usePkgAddOns<FooterComponentRegItem>('FooterCenterComponents')
+  const [footerRightComponents /* , _registerFooterRightComponents*/] =
+    usePkgAddOns<FooterComponentRegItem>('FooterRightComponents')
 
   const leftItems = useMemo(() => {
-    return leftItemsReg.registry.entries.map<AddonItem>(({ item, pkgId }, idx) => {
+    return footerLeftComponents.map<AddonItem>(({ addOn: { Component }, key }) => {
       return {
-        Item: item.Component,
-        key: `${pkgId.name}_${idx}`,
+        Item: Component,
+        key,
       }
     })
-  }, [leftItemsReg.registry.entries])
+  }, [footerLeftComponents])
 
   const centerItems = useMemo(() => {
-    return centerItemsReg.registry.entries.map<AddonItem>(({ item, pkgId }, idx) => {
+    return footerCenterComponents.map<AddonItem>(({ addOn: { Component }, key }) => {
       return {
-        Item: item.Component,
-        key: `${pkgId.name}_${idx}`,
+        Item: Component,
+        key,
       }
     })
-  }, [centerItemsReg.registry.entries])
+  }, [footerCenterComponents])
 
   const rightItems = useMemo(() => {
-    return rightItemsReg.registry.entries.map<AddonItem>(({ item, pkgId }, idx) => {
+    return footerRightComponents.map<AddonItem>(({ addOn: { Component }, key }) => {
       return {
-        Item: item.Component,
-        key: `${pkgId.name}_${idx}`,
+        Item: Component,
+        key,
       }
     })
-  }, [rightItemsReg.registry.entries])
+  }, [footerRightComponents])
 
   const mainFooterProps = useMemo<MainFooterProps>(() => {
     return {

@@ -1,27 +1,29 @@
+import type { PkgIdentifier } from '@moodlenet/core'
 import type { ReactElement } from 'react'
-import { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { MainContext } from './context/MainContext.mjs'
+import { getCurrentInitPkg } from './plugin-initializer.js'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
 import { SettingsPageRoute } from './ui/components/pages/Settings/Settings/Hook/SettingsPageRoute.js'
 
 export type RouteRegItem = { routes: ReactElement }
 
+const appRoutesContextPlugins: {
+  routeRegItem: RouteRegItem
+  pkgId: PkgIdentifier
+}[] = []
+export function registerAppRoutesContextPlugin(routeRegItem: RouteRegItem) {
+  const pkgId = getCurrentInitPkg()
+  appRoutesContextPlugins.push({ routeRegItem, pkgId })
+}
+
 const AppRouter = () => {
-  const {
-    reg: { routes },
-  } = useContext(MainContext)
   return (
     <Routes>
       <Route path="/" index element={<LandingContainer />} />
       <Route path="settings" element={<SettingsPageRoute />} />
-      {routes.registry.entries.flatMap(entry => {
-        const {
-          pkgId,
-          item: { routes },
-        } = entry
+      {appRoutesContextPlugins.flatMap(({ pkgId, routeRegItem: { routes } }) => {
         return (
-          <Route path={`/`} key={`pkg-routes:${pkgId.name}`}>
+          <Route path={`/`} key={pkgId.name}>
             {routes}
           </Route>
         )
