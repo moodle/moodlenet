@@ -238,5 +238,11 @@ function getRpcContributor(contributor: EntityInfo): CollectionContributorRpc {
       ext: false,
     },
     displayName: contributor.name,
+    // avatarUrl: contributor?.iconUrl ?? null,
+    // creatorProfileHref: {
+    //   url: 'google.it',
+    //   ext: true,
+    // },
+    // displayName: 'contributor.name',
   }
 }
