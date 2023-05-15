@@ -1,31 +1,32 @@
 import { CollectionContext } from '@moodlenet/collection/webapp'
 import { ResourceContext } from '@moodlenet/ed-resource/webapp'
+import { usePkgAddOns } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { MainContext } from '../../../../context/MainContext.mjs'
 import type { AddMenuItem, AddMenuProps } from './AddMenu.js'
+
+export type AddMenuPluginItem = Omit<AddMenuItem, 'key'>
 
 export function useAddMenuProps(): AddMenuProps {
   const nav = useNavigate()
   const resourceCtx = useContext(ResourceContext)
   const collectionCtx = useContext(CollectionContext)
-  const mainCtx = useContext(MainContext)
   const { isAuthenticated } = useContext(AuthCtx)
-
-  const menuEntries = mainCtx.registries.addMenuItems.registry.entries
+  const [addMenuItems /*,registerAddMenuItems */] = usePkgAddOns<AddMenuPluginItem>('AddMenuPlugin')
   const menuItems = useMemo<AddMenuItem[]>(() => {
     if (!isAuthenticated) {
       return []
     }
-    return menuEntries.map<AddMenuItem>(({ item, pkgId }, index) => {
+    return addMenuItems.map<AddMenuItem>(({ addOn: { Component, className }, key }) => {
       const addMenuItem: AddMenuItem = {
-        ...item,
-        key: `${pkgId.name}:${index}`,
+        Component,
+        key,
+        className,
       }
       return addMenuItem
     })
-  }, [isAuthenticated, menuEntries])
+  }, [addMenuItems, isAuthenticated])
 
   const addMenuProps = useMemo<AddMenuProps>(() => {
     const addMenuProps: AddMenuProps = {

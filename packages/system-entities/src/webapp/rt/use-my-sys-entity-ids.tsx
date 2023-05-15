@@ -1,4 +1,4 @@
-import { usePkgContext } from '@moodlenet/react-app/webapp'
+import type { WebappShell } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import {
   getEntityIdentifiers,
@@ -19,10 +19,10 @@ export type MySystemEntitiesId<EntityTypeNames extends string> = {
   // }
 }
 
-export function useMySystemEntitiesId<EntityTypeNames extends string>() {
+export function useMySystemEntitiesId<EntityTypeNames extends string>(shell: WebappShell<any>) {
   const {
-    myId: { name: pkgName },
-  } = usePkgContext()
+    pkgId: { name: pkgName },
+  } = shell
   const mySystemEntitiesId = useMemo(() => {
     const isIdOfType: MySystemEntitiesId<EntityTypeNames>['isIdOfType'] = (id, type) => {
       const targetClass: EntityClass<any> = {

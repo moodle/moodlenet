@@ -10,7 +10,6 @@ export * from '../components/pages/Resource/Resource.js'
 export * from '../components/pages/Resource/ResourcePageRoute.js'
 export * from '../helpers/factories.js'
 export * from '../helpers/utilities.js'
-export * from '../MainComponent.js'
-export * from '../registries.mjs'
+export * from '../MainWrapper.js'
 
 // @endindex

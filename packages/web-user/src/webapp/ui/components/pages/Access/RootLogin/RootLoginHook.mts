@@ -1,20 +1,16 @@
 import { useSimpleLayoutProps } from '@moodlenet/react-app/webapp'
-import { useCallback, useContext, useMemo, useState } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
+import { useCallback, useMemo, useState } from 'react'
+import { shell } from '../../../../../shell.mjs'
 import type { RootLoginProps } from './RootLogin.js'
 
 export const useRootLoginProps = (): RootLoginProps => {
   const simpleLayoutProps = useSimpleLayoutProps()
-  const {
-    use: {
-      me: { rpc },
-    },
-  } = useContext(MainContext)
 
   const [loginFailed, setLoginFailed] = useState(false)
   const submitLogin = useCallback<RootLoginProps['submitLogin']>(
-    rootPassword => rpc.loginAsRoot({ rootPassword }).then(success => setLoginFailed(!success)),
-    [rpc],
+    rootPassword =>
+      shell.rpc.me.loginAsRoot({ rootPassword }).then(success => setLoginFailed(!success)),
+    [],
   )
 
   const rootLoginProps = useMemo<RootLoginProps>(() => {

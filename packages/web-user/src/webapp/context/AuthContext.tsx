@@ -1,16 +1,12 @@
-import { useGuestRegistryMap, wrapFetch } from '@moodlenet/react-app/webapp'
+import { wrapFetch } from '@moodlenet/react-app/webapp'
 import cookies from 'js-cookie'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Profile } from '../../common/exports.mjs'
 import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
-import type { AvatarMenuItem } from '../exports/ui.mjs'
-import type { GuestMainRegistries, MainRegistries } from '../registries.mjs'
+import { shell } from '../shell.mjs'
 import defaultAvatarUrl from '../ui/assets/img/default-avatar.svg'
 import rootAvatarUrl from '../ui/assets/img/root-avatar.png'
-import type { LoginItem } from '../ui/components/pages/Access/Login/Login.js'
-import type { SignupItem } from '../ui/components/pages/Access/Signup/Signup.js'
-import type { MainContextT } from './MainContext.mjs'
 
 export type UserDisplay = { name: string; avatarUrl: string }
 export type ClientSessionData = {
@@ -27,11 +23,7 @@ export type ClientSessionData = {
       myProfile: Profile
     }
 )
-export type AvatarMenuItemRegItem = Omit<AvatarMenuItem, 'key'>
-export type LoginEntryItem = Omit<LoginItem, 'key'>
-export type SignupEntryItem = Omit<SignupItem, 'key'>
 export type AuthCtxT = {
-  registries: GuestMainRegistries
   logout(): void
   readSessionTokenCookie(): string | undefined
 } & (
@@ -47,8 +39,7 @@ export type AuthCtxT = {
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
 
-export function useAuthCtxValue(registries: MainRegistries, { use }: MainContextT) {
-  const guestRegistries = useGuestRegistryMap(registries)
+export function useAuthCtxValue() {
   const nav = useNavigate()
   const loc = useLocation()
 
@@ -72,7 +63,7 @@ export function useAuthCtxValue(registries: MainRegistries, { use }: MainContext
         return
       }
 
-      const sessionDataRpc = await use.me.rpc.getCurrentClientSessionDataRpc()
+      const sessionDataRpc = await shell.rpc.me.getCurrentClientSessionDataRpc()
 
       if (!sessionDataRpc) {
         return
@@ -95,7 +86,7 @@ export function useAuthCtxValue(registries: MainRegistries, { use }: MainContext
       }
       return webUserClientSessionData
     }
-  }, [use.me])
+  }, [])
 
   useEffect(() => {
     sessionTokenCookieChanged = () => {
@@ -114,7 +105,7 @@ export function useAuthCtxValue(registries: MainRegistries, { use }: MainContext
     const authCtxT: AuthCtxT = {
       readSessionTokenCookie,
       logout,
-      registries: guestRegistries,
+
       ...(clientSessionData
         ? {
             clientSessionData,
@@ -126,7 +117,7 @@ export function useAuthCtxValue(registries: MainRegistries, { use }: MainContext
           }),
     }
     return authCtxT
-  }, [clientSessionData, logout, guestRegistries])
+  }, [clientSessionData, logout])
 
   if (!ctx) {
     fetchClientSessionDataRpc()

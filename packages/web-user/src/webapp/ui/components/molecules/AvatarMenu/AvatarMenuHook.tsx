@@ -1,24 +1,29 @@
 import { href } from '@moodlenet/react-app/common'
+import { usePkgAddOns } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { MainContext } from '../../../../context/MainContext.mjs'
 import type { AvatarMenuItem, AvatarMenuProps } from './AvatarMenu.js'
 
+export type AvatarMenuPluginItem = Omit<AvatarMenuItem, 'key'>
+
 export function useAvatarMenuProps(): AvatarMenuProps {
-  const mainCtx = useContext(MainContext)
   const authCtx = useContext(AuthCtx)
 
-  const menuEntries = mainCtx.registries.avatarMenuItems.registry.entries
+  const [avatarMenuItems /*,registerAvatarMenuItems */] =
+    usePkgAddOns<AvatarMenuPluginItem>('AvatarMenuPlugin')
   const menuItems = useMemo<AvatarMenuItem[]>(() => {
-    const regAvatarMenuItems = menuEntries.map<AvatarMenuItem>(({ item, pkgId }, index) => {
-      const avatarMenuItem: AvatarMenuItem = {
-        ...item,
-        key: `${pkgId.name}:${index}`,
-      }
-      return avatarMenuItem
-    })
+    const regAvatarMenuItems = avatarMenuItems.map<AvatarMenuItem>(
+      ({ addOn: { Component, className }, key }) => {
+        const avatarMenuItem: AvatarMenuItem = {
+          Component,
+          key,
+          className,
+        }
+        return avatarMenuItem
+      },
+    )
     return regAvatarMenuItems
-  }, [menuEntries])
+  }, [avatarMenuItems])
 
   const hasProfile = !!authCtx.clientSessionData?.myProfile
   const avatarUrl = authCtx.clientSessionData?.userDisplay?.avatarUrl

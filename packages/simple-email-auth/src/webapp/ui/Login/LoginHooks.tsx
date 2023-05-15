@@ -1,20 +1,16 @@
 import { useFormik } from 'formik'
-import { useContext, useMemo, useState } from 'react'
-import { MainContext } from '../../MainContext.mjs'
+import { useMemo, useState } from 'react'
+import { shell } from '../../shell.mjs'
 import type { LoginFormValues, LoginProps } from './Login.js'
 
 export const usePanelProps = (): LoginProps => {
-  const {
-    use: { me },
-  } = useContext(MainContext)
-
   const [wrongCreds, setWrongCreds] = useState(false)
   // const auth = useContext(AuthCtx)
 
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
-      const res = await me.rpc.login({
+      const res = await shell.rpc.me.login({
         email,
         password,
       })

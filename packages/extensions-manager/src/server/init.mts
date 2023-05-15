@@ -4,6 +4,6 @@ import { expose as me } from './expose.mjs'
 import { shell } from './shell.mjs'
 
 await shell.call(plugin)<MyPkgDeps>({
-  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
   deps: { me },
 })

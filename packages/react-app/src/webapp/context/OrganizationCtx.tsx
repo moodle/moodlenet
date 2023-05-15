@@ -1,8 +1,7 @@
 import type { OrganizationData } from '@moodlenet/organization/common'
 import type { FC, PropsWithChildren } from 'react'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
-
-import { MainContext } from './MainContext.mjs'
+import { createContext, useCallback, useEffect, useState } from 'react'
+import { shell } from '../shell.mjs'
 
 const EmptyOrganizationData = {
   instanceName: '',
@@ -19,24 +18,23 @@ export type TOrganizationCtx = {
 
 export const OrganizationCtx = createContext<TOrganizationCtx>(null as never)
 
-export const Provider: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideOrganizationContext: FC<PropsWithChildren> = ({ children }) => {
   const [organizationData, setDataOrg] = useState<OrganizationData>(EmptyOrganizationData)
-  const { use } = useContext(MainContext)
 
   const saveOrganization = useCallback(
     // WE CAN NOT USE IT IS CALLED 1 TIME ONLY
     (data: OrganizationData) => {
-      use.me.rpc.setOrgData({ orgData: data })
+      shell.rpc.me.setOrgData({ orgData: data })
       setDataOrg(data)
     },
-    [use.me],
+    [],
   )
 
   useEffect(() => {
-    use.me.rpc
+    shell.rpc.me
       .getOrgData()
       .then(({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData))
-  }, [use.me])
+  }, [])
 
   const ctx: TOrganizationCtx = {
     saveOrganization,
