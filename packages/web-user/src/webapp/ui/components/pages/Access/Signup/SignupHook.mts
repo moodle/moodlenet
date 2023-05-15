@@ -1,22 +1,31 @@
-import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/webapp'
-import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
-import type { SignupProps } from './Signup.js'
+import {
+  useFooterProps,
+  useMinimalisticHeaderProps,
+  usePkgAddOns,
+} from '@moodlenet/react-app/webapp'
+import { useMemo } from 'react'
+import type { SignupItem, SignupProps } from './Signup.js'
+
+export type SignupPluginItem = Omit<SignupItem, 'key'>
 
 export const useSignUpProps = (): SignupProps => {
   const headerProps = useMinimalisticHeaderProps()
   const footerProps = useFooterProps()
-  const { registries } = useContext(MainContext)
+  const [signupPlugins /*,registerSignup */] = usePkgAddOns<SignupPluginItem>('SignupPlugin')
+
   const signupProps = useMemo<SignupProps>(() => {
-    const signupItems = registries.signupItems.registry.entries.map(el => ({
-      ...el.item,
-      key: el.pkgId.name,
-    }))
+    const signupItems: SignupProps['signupItems'] = signupPlugins.map(
+      ({ addOn: { Icon, Panel }, key }) => ({
+        Icon,
+        Panel,
+        key,
+      }),
+    )
     return {
       headerProps,
       footerProps,
       signupItems,
     }
-  }, [headerProps, footerProps, registries.signupItems.registry.entries])
+  }, [signupPlugins, headerProps, footerProps])
   return signupProps
 }

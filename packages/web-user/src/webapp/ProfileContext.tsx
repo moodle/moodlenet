@@ -3,6 +3,7 @@ import { useMySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useMemo } from 'react'
 import type { KnownEntityFeature, KnownEntityTypes, WebUserEntityNames } from '../common/types.mjs'
+import { shell } from './shell.mjs'
 
 export type KnownFeaturedEntities = {
   [feature in KnownEntityFeature]: {
@@ -15,7 +16,7 @@ export type ProfileContextT = {
 export const ProfileContext = createContext<ProfileContextT>(null as any)
 
 export function useProfileContextValue() {
-  const profileEntitiesId = useMySystemEntitiesId<WebUserEntityNames>()
+  const profileEntitiesId = useMySystemEntitiesId<WebUserEntityNames>(shell)
 
   const profileContext = useMemo<ProfileContextT>(() => {
     const profileContext: ProfileContextT = {
