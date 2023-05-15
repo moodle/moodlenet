@@ -7,7 +7,7 @@ import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import type { SchemaOf } from 'yup'
 
-import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import type {
   CollectionAccessProps,
@@ -26,7 +26,7 @@ export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
   mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
-  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardProps> }[]
+  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardPropsData> }[]
 
   wideColumnItems: AddonItem[]
   mainColumnItems: AddonItem[]
@@ -99,7 +99,6 @@ export const Collection: FC<CollectionProps> = ({
       setShouldShowErrors(true)
     }
   }
-
   const resourceList = resourceCardPropsList.map(({ key, resourceCardProps }) => (
     <ResourceCard {...resourceCardProps} orientation={'horizontal'} key={key} />
   ))

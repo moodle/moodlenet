@@ -1,12 +1,12 @@
 import { ListCard, TertiaryButton } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
+import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
 import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './SearchResourceList.scss'
 
 export type SearchResourceListProps = {
-  resourceCardPropsList: ResourceCardProps[]
+  resourceCardPropsList: ResourceCardPropsData[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
 }
