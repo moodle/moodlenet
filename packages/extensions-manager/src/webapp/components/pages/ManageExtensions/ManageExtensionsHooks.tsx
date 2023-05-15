@@ -1,7 +1,7 @@
-import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import { useEffect, useMemo, useReducer, useState } from 'react'
 import type { ManageExtensionsPropsControlled } from './ManageExtensions.js'
 
-import { MainContext } from '../../../MainContext.js'
+import { shell } from '../../../shell.mjs'
 import type { ExtensionType } from '../Extensions/Extensions.js'
 // import packageIcon5 from '../../../assets/icons/package-icon-5.png'
 // import packageIcon3 from '../../../assets/icons/package-icon-3.png'
@@ -12,11 +12,9 @@ export const useManageExtensionsProps = (
   const [extensions, setExtensions] = useState<ExtensionType[]>([])
   const [installUninstallSucces, toggleInstallUninstallSucces] = useReducer(_ => !_, false)
   const [isInstallingUninstalling, toggleIsInstallingUninstalling] = useReducer(_ => !_, false)
-  const {
-    use: { me },
-  } = useContext(MainContext)
+
   useEffect(() => {
-    me.rpc.listDeployed().then(resp =>
+    shell.rpc.me.listDeployed().then(resp =>
       setExtensions(
         resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A', pkgId }) => {
           const repositoryUrl =
@@ -40,7 +38,7 @@ export const useManageExtensionsProps = (
                 return
               }
               toggleIsInstallingUninstalling()
-              me.rpc.uninstall([pkgId]).then(() => {
+              shell.rpc.me.uninstall([pkgId]).then(() => {
                 toggleInstallUninstallSucces()
                 toggleIsInstallingUninstalling()
               })
@@ -50,7 +48,7 @@ export const useManageExtensionsProps = (
         }),
       ),
     )
-  }, [installUninstallSucces, isInstallingUninstalling, me])
+  }, [installUninstallSucces, isInstallingUninstalling])
 
   const manageExtensionsPropsControlled = useMemo<ManageExtensionsPropsControlled>(() => {
     const props: ManageExtensionsPropsControlled = {

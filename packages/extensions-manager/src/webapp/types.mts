@@ -1,6 +1,5 @@
 import type {
   DeployedPkgInfo,
-  MyPkgContext,
   SearchPackagesResObject,
   SearchPackagesResponse,
 } from '../common/types.mjs'
@@ -12,7 +11,7 @@ export type NewCollectionFormValues = {
   image?: string | File | null
 }
 
-export type MainContextType = MyPkgContext & {
+export type MainContextType = {
   defaultRegistry: string
   devMode: boolean
   setDevMode: React.Dispatch<React.SetStateAction<boolean>>
