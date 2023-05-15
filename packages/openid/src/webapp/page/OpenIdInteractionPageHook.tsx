@@ -1,8 +1,8 @@
 import { useSimpleLayoutProps } from '@moodlenet/react-app/webapp'
 import { useNeedsWebUserLogin } from '@moodlenet/web-user/webapp'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { WebappInteractionDetails } from '../../common/expose-def.mjs'
-import { OpenIdCtx } from '../OpenIdContextProvider.js'
+import { shell } from '../shell.mjs'
 import { post_to_url } from './helper.mjs'
 import type { OpenIdInteractionPageProps } from './OpenIdInteractionPage.js'
 export function useOpenIdInteractionPage({
@@ -11,7 +11,6 @@ export function useOpenIdInteractionPage({
   interactionId: string
 }): null | undefined | OpenIdInteractionPageProps {
   const simpleLayoutProps = useSimpleLayoutProps()
-  const openIdContext = useContext(OpenIdCtx)
   const [interactionDetails, setInteractionDetails] = useState<WebappInteractionDetails | null>()
   const webUser = useNeedsWebUserLogin()
   useEffect(() => {
@@ -21,10 +20,8 @@ export function useOpenIdInteractionPage({
   }, [interactionId, interactionDetails?.needsLogin, webUser])
 
   useEffect(() => {
-    openIdContext.pkg.use.me.rpc['webapp/getInteractionDetails']({ interactionId }).then(
-      setInteractionDetails,
-    )
-  }, [interactionId, openIdContext.pkg.use.me.rpc])
+    shell.rpc.me['webapp/getInteractionDetails']({ interactionId }).then(setInteractionDetails)
+  }, [interactionId])
 
   const authorize = useCallback<OpenIdInteractionPageProps['authorize']>(async () => {
     post_to_url(`/.pkg/@moodlenet/openid/interaction/${interactionId}/confirm`)
