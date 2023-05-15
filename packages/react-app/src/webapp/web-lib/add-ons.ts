@@ -8,7 +8,7 @@ export function usePkgAddOns<AddOnType>(addOnName = 'unnamed') {
     pkgId: PkgIdentifier
     addOns: PkgAddOns | null | undefined
   }
-  type PkgAddOns = { [pkgAddOnName: string]: { addOn: AddOnType | null | undefined } }
+  type PkgAddOns = { [pkgAddOnName: string]: AddOnType | null | undefined }
   type PkgAddOnsEntries = { [pkgName: string]: PkgAddOnsEntry }
   type PkgAddOn = { pkgId: PkgIdentifier; name: string; addOn: AddOnType; key: string }
   const [addOnsMap, setAddOnsMap] = useState<PkgAddOnsEntries>({})
@@ -23,7 +23,7 @@ export function usePkgAddOns<AddOnType>(addOnName = 'unnamed') {
   function reduceAddOnsToArray() {
     return Object.values(addOnsMap).reduce<PkgAddOn[]>((outerPkgAddOnAcc, { addOns, pkgId }) => {
       const pkgAddOns = Object.entries(addOns ?? {}).reduce<PkgAddOn[]>(
-        (innerPkgAddOnAcc, [pkgAddOnName, { addOn }]) => {
+        (innerPkgAddOnAcc, [pkgAddOnName, addOn]) => {
           if (!addOn) {
             return innerPkgAddOnAcc
           }
