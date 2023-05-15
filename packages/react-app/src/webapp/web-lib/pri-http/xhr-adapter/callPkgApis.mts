@@ -1,6 +1,5 @@
-import type { PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
+import type { PkgIdentifier, PkgRpcDefs } from '@moodlenet/core'
 import { getPkgRpcFetchOpts } from '@moodlenet/http-server/common'
-import type { UsePkgHandle } from '../../../types/plugins.mjs'
 
 export type Opts = Record<string, never>
 
@@ -16,22 +15,7 @@ export function wrapFetch(wrapper: FetchWrapper) {
   FETCH_WRAPPERS.push({ wrapper })
 }
 
-export function getUsePkgHandle<TargetPkgExposeDef extends PkgExposeDef>({
-  targetPkgId,
-  userPkgId,
-  rpcPaths,
-}: {
-  targetPkgId: PkgIdentifier
-  userPkgId: PkgIdentifier
-  rpcPaths: string[]
-}): UsePkgHandle<TargetPkgExposeDef> {
-  return {
-    pkgId: userPkgId,
-    rpc: pkgRpcs(targetPkgId, userPkgId, rpcPaths),
-  }
-}
-
-export function GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgExposeDef extends PkgExposeDef>(
+export function GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgRpcDefs extends PkgRpcDefs>(
   targetPkgId: PkgIdentifier,
 ) {
   return UNIMPLEMENTED_OR_REVIEW_RPC
@@ -43,7 +27,7 @@ export function GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgExposeDef extends PkgEx
     UNIMPL_TYPE extends 'REVIEW' | 'TO IMPLEMENT' = 'TO IMPLEMENT',
   >(
     UNIMPL_TYPE: UNIMPL_TYPE,
-    RPC_ENDPOINT: UNIMPL_TYPE extends 'REVIEW' ? keyof TargetPkgExposeDef['rpc'] : string,
+    RPC_ENDPOINT: UNIMPL_TYPE extends 'REVIEW' ? keyof TargetPkgRpcDefs : string,
     mockRpcFn: (body: B, params: P, query: Q) => R | Promise<R>,
   ) {
     return async (body: B, params: P, query: Q) => {
@@ -58,11 +42,11 @@ ${line}
   }
 }
 
-export function pkgRpcs<TargetPkgExposeDef extends PkgExposeDef>(
+export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
   targetPkgId: PkgIdentifier,
   userPkgId: PkgIdentifier,
   rpcPaths: string[],
-): PkgRpcHandle<TargetPkgExposeDef> {
+): PkgRpcHandle<TargetPkgRpcDefs> {
   return rpcPaths.reduce(
     (_rpc, path) => ({
       ..._rpc,
@@ -70,8 +54,8 @@ export function pkgRpcs<TargetPkgExposeDef extends PkgExposeDef>(
     }),
     {
       '@UNIMPLEMENTED_OR_REVIEW_RPC':
-        GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgExposeDef>(targetPkgId),
-    } as PkgRpcHandle<TargetPkgExposeDef>,
+        GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgRpcDefs>(targetPkgId),
+    } as PkgRpcHandle<TargetPkgRpcDefs>,
   )
 
   function locateRpc(path: string) {
@@ -100,13 +84,12 @@ export function pkgRpcs<TargetPkgExposeDef extends PkgExposeDef>(
   }
 }
 
-export type PkgRpcHandle<TargetPkgExposeDef extends PkgExposeDef> =
-  LocateRpc<TargetPkgExposeDef> & {
-    '@UNIMPLEMENTED_OR_REVIEW_RPC': ReturnType<
-      typeof GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgExposeDef>
-    >
-  }
+export type PkgRpcHandle<TargetPkgRpcDefs extends PkgRpcDefs> = LocateRpc<TargetPkgRpcDefs> & {
+  '@UNIMPLEMENTED_OR_REVIEW_RPC': ReturnType<
+    typeof GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgRpcDefs>
+  >
+}
 
-export type LocateRpc<TargetPkgExposeDef extends PkgExposeDef> = {
-  [path in keyof TargetPkgExposeDef['rpc']]: TargetPkgExposeDef['rpc'][path]
+export type LocateRpc<TargetPkgRpcDefs extends PkgRpcDefs> = {
+  [path in keyof TargetPkgRpcDefs]: TargetPkgRpcDefs[path]
 }

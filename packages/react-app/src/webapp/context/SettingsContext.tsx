@@ -1,22 +1,9 @@
-import type { ComponentType, FC, PropsWithChildren } from 'react'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { defaultAppearanceData } from '../../common/appearance/data.mjs'
 import type { AppearanceData } from '../../common/types.mjs'
-import { MainContext } from './MainContext.mjs'
+import { shell } from '../init.mjs'
 // import lib from '../../../../main-lib'
-
-export type SettingsSectionItem = {
-  Menu: ComponentType
-  Content: ComponentType
-}
 
 export type SettingsCtxT = {
   saveAppearanceData(data: AppearanceData): unknown
@@ -29,26 +16,21 @@ export type SettingsCtxT = {
 export const SettingsCtx = createContext<SettingsCtxT>(null as any)
 
 export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const {
-    use: { me },
-  } = useContext(MainContext)
-
   const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
-  const saveAppearanceData = useCallback(
-    async (newAppearanceData: AppearanceData) => {
-      await me.rpc.setAppearance({ appearanceData: newAppearanceData })
+  const saveAppearanceData = useCallback(async (newAppearanceData: AppearanceData) => {
+    await shell.rpc.me.setAppearance({ appearanceData: newAppearanceData })
 
-      setAppareanceData(newAppearanceData)
-    },
-    [me],
-  )
+    setAppareanceData(newAppearanceData)
+  }, [])
 
   const [devMode, toggleDevMode] = useReducer(prev => !prev, false)
 
   useEffect(() => {
-    me.rpc.getAppearance().then(({ data: appearanceData }) => setAppareanceData(appearanceData))
-  }, [me])
+    shell.rpc.me
+      .getAppearance()
+      .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
+  }, [])
 
   const ctx = useMemo<SettingsCtxT>(() => {
     return {

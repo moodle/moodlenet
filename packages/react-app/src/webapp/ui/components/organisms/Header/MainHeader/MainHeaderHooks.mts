@@ -1,21 +1,24 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
+import type { ComponentType } from 'react'
+import { useMemo } from 'react'
+import { usePkgAddOns } from '../../../../../web-lib/add-ons.js'
 import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
 import type { MainHeaderProps } from './MainHeader.js'
+export type HeaderRightComponentItem = { Component: ComponentType }
 
 export const useHeaderProps = (): MainHeaderProps => {
-  const { reg } = useContext(MainContext)
+  const [headerRightComponents /* , _registerHeaderRightComponents */] =
+    usePkgAddOns<HeaderRightComponentItem>('HeaderRightComponents')
+
   const headerTitleProps = useHeaderTitleProps()
-  const rightItemsRegEntries = reg.headerRightComponents.registry.entries
   const rightItems = useMemo(() => {
-    return rightItemsRegEntries.map<AddonItem>(({ item, pkgId }, idx) => {
+    return headerRightComponents.map<AddonItem>(({ addOn: { Component }, key }) => {
       return {
-        Item: item.Component,
-        key: `${pkgId.name}_${idx}`,
+        Item: Component,
+        key,
       }
     })
-  }, [rightItemsRegEntries])
+  }, [headerRightComponents])
 
   const mainHeaderProps = useMemo<MainHeaderProps>(() => {
     const mainHeaderProps: MainHeaderProps = {
