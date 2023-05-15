@@ -2,7 +2,7 @@ import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { defaultAppearanceData } from '../../common/appearance/data.mjs'
 import type { AppearanceData } from '../../common/types.mjs'
-import { shell } from '../init.mjs'
+import { shell } from '../shell.mjs'
 // import lib from '../../../../main-lib'
 
 export type SettingsCtxT = {
@@ -15,7 +15,7 @@ export type SettingsCtxT = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SettingsCtx = createContext<SettingsCtxT>(null as any)
 
-export const SettingsProvider: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideSettingsContext: FC<PropsWithChildren> = ({ children }) => {
   const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(async (newAppearanceData: AppearanceData) => {

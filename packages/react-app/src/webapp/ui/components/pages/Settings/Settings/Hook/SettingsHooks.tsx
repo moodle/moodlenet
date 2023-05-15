@@ -1,7 +1,7 @@
 import type { PkgIdentifier } from '@moodlenet/core'
 import type { ComponentType, PropsWithChildren } from 'react'
 import { useMemo } from 'react'
-import { getCurrentInitPkg } from '../../../../../../plugin-initializer.js'
+import { getCurrentInitPkg } from '../../../../../../plugin-initializer.mjs'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { usePkgAddOns, type RegisterAddOn } from '../../../../../../web-lib/add-ons.js'
@@ -27,10 +27,10 @@ const localSettingsItems: SettingsItem[] = [
 ]
 
 export type SettingsPagePluginWrapper = ComponentType<PropsWithChildren>
-export type SettingsPagePluginHookResult = { MainWrapper?: SettingsPagePluginWrapper }
+//export type SettingsPagePluginHookResult = { MainWrapper?: SettingsPagePluginWrapper }
 export type SettingsPagePluginHook = (_: {
   registerAddOn: RegisterAddOn<SettingsSectionItem>
-}) => void | SettingsPagePluginHookResult
+}) => void //| SettingsPagePluginHookResult
 
 const settingsPagePluginPlugins: {
   settingsPagePluginHook: SettingsPagePluginHook
@@ -48,9 +48,11 @@ export type SettingsSectionItem = {
 }
 
 export const useSettingsProps = (): SettingsProps => {
-  const [settingsSections /* , _registerSettingsSection */] =
+  const [settingsSections, getRegisterSettingsSection] =
     usePkgAddOns<SettingsSectionItem>('SettingsSection')
-
+  settingsPagePluginPlugins.forEach(({ pkgId, settingsPagePluginHook }) =>
+    settingsPagePluginHook({ registerAddOn: getRegisterSettingsSection(pkgId) }),
+  )
   const mainLayoutProps = useMainLayoutProps()
 
   const settingsItems = useMemo<SettingsItem[]>(() => {

@@ -21,7 +21,7 @@ await shell.call(registerScopes)({
 })
 
 shell.call(plugin)<MyWebDeps>({
-  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'MainComponent.js'],
   deps: { me },
 })
 

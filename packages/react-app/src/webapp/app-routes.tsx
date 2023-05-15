@@ -1,7 +1,7 @@
 import type { PkgIdentifier } from '@moodlenet/core'
 import type { ReactElement } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { getCurrentInitPkg } from './plugin-initializer.js'
+import { getCurrentInitPkg } from './plugin-initializer.mjs'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
 import { SettingsPageRoute } from './ui/components/pages/Settings/Settings/Hook/SettingsPageRoute.js'
 

@@ -25,7 +25,7 @@ istanzia web pack aggiunge il server express statico a http definisce addWebappP
     called ONLY from main
     import  use-pkg-apis.mts
 
-setupPlugin pluginDef -> { mainComponentLoc: string[]; deps: Deps; }
+setupPlugin pluginDef -> { initModuleLoc: string[]; deps: Deps; }
 
 add package in pluginDef in list in this type : WebappPluginDef<Deps> & { guestPkgInfo: PackageInfo; guestPkgId: PkgIdentifier<any>; }
 
@@ -71,7 +71,7 @@ used by main getAppereange, setAppreance, plugin
 
 used by context/maincontext.mts
 
-setup react-app with this define : WebPkgDeps -> list of object for direct access to default export from package { pkgId, pluginDef: { mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'], deps: WebPkgDeps, },
+setup react-app with this define : WebPkgDeps -> list of object for direct access to default export from package { pkgId, pluginDef: { initModuleLoc: ['dist', 'webapp', 'MainComponent.js'], deps: WebPkgDeps, },
 
 export self package (value of pkgId )
 

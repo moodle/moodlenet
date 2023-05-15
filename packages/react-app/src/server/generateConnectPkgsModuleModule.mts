@@ -17,8 +17,13 @@ export function generateConnectPkgModulesModule({
   return `
   export default [
     ${sortedPlugins
-      .map(
-        pluginItem => `
+      .map(pluginItem => {
+        const importInitModule = fixModuleLocForWebpackByOS(
+          resolve(pluginItem.guestPkgInfo.pkgRootDir, ...pluginItem.initModuleLoc),
+        )
+        // const importInitModule = `${guestPkgId.name}/@moodlenet/react-app/init`
+
+        return `
     {
       pkgId: Object.freeze(${JSON.stringify(pluginItem.guestPkgId)}),
       deps: ${JSON.stringify(
@@ -32,13 +37,11 @@ export function generateConnectPkgModulesModule({
           }),
           {},
         ),
-      )}
+      )},
       init: async () =>
-        import('${fixModuleLocForWebpackByOS(
-          resolve(pluginItem.guestPkgInfo.pkgRootDir, ...pluginItem.mainComponentLoc),
-        )}')
-    }`,
-      )
+        import('${importInitModule}')
+    }`
+      })
       .join(',')}
   ]
   `
@@ -54,7 +57,7 @@ export function generateConnectPkgModulesModule({
 //     .map(
 //       (pluginItem, index) => `
 // import pkg_main_component_${index} from '${fixModuleLocForWebpackByOS(
-//         resolve(pluginItem.guestPkgInfo.pkgRootDir, ...pluginItem.mainComponentLoc),
+//         resolve(pluginItem.guestPkgInfo.pkgRootDir, ...pluginItem.initModuleLoc),
 //       )}' // pkg: ${pluginItem.guestPkgId.name}
 //     `,
 //     )

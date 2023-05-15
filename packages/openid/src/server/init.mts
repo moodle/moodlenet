@@ -11,7 +11,7 @@ await import('./oidc/http-middleware.mjs')
 await import('./expose.mjs')
 
 await shell.call(plugin)<OpenidWebAppDeps>({
-  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'MainComponent.js'],
   deps: { me: myExpose },
 })
 

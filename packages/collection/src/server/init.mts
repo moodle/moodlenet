@@ -16,7 +16,7 @@ import { shell } from './shell.mjs'
 import type { CollectionDataType } from './types.mjs'
 
 shell.call(plugin)<MyWebDeps>({
-  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'MainComponent.js'],
   deps: { me },
 })
 
