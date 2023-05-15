@@ -92,6 +92,7 @@
     "./common": "./dist/common/exports.mjs",
     "./ui": "./dist/webapp/exports/ui.mjs",
     "./stories": "./dist/webapp/exports/stories.mjs",
-    "./webapp": "./dist/webapp/exports/webapp.mjs"
+    "./webapp": "./dist/webapp/exports/webapp.mjs",
+    "./@moodlenet/react-app/init": "./dist/webapp/exports/init.mjs"
   }
 }

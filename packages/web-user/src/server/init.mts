@@ -78,7 +78,7 @@ await shell.call(registerAccessController)({
 })
 
 await shell.call(plugin)<MyWebAppDeps>({
-  mainComponentLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
   deps: {
     me: myExpose,
   },

@@ -1,10 +1,8 @@
 import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
-import type { PkgContextT } from '@moodlenet/react-app/webapp'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
-import type { EdResourceRegistries } from '../webapp/registries.mjs'
 import type { ResourceExposeType } from './expose-def.mjs'
 export type EdResourceEntityNames = 'Resource'
 
@@ -12,19 +10,9 @@ export type MyWebDeps = {
   me: ResourceExposeType
 }
 
-export type MyPkgContext = PkgContextT<MyWebDeps>
-export type MainContextResource = MyPkgContext & {
+export type MainContextResource = {
   rpcCaller: RpcCaller
-  registries: EdResourceRegistries
-  // auth: AuthDataRpc
-  // actionsMenu: MainActions
 }
-// export type MainActions = {
-//   create: {
-//     action: () => Promise<void>
-//     menu: HeaderMenuItem
-//   }
-// }
 
 export type ResourceFormRpc = {
   title: string

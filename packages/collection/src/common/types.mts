@@ -1,6 +1,4 @@
 import type { Href } from '@moodlenet/react-app/common'
-import type { PkgContextT } from '@moodlenet/react-app/webapp'
-// import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { CollectionExposeType } from './expose-def.mjs'
 
 export type CollectionEntityNames = 'Collection'
@@ -9,19 +7,9 @@ export type MyWebDeps = {
   me: CollectionExposeType
 }
 export type SaveState = { form: boolean; image: boolean }
-export type MyPkgContext = PkgContextT<MyWebDeps>
-export type MainContextCollection = MyPkgContext & {
+export type MainContextCollection = {
   rpcCaller: RpcCaller
-  // auth: AuthDataRpc
-  // actionsMenu: MainActions
 }
-
-// export type MainActions = {
-//   create: {
-//     action: () => Promise<void>
-//     menu: HeaderMenuItem
-//   }
-// }
 
 export type CollectionContributorRpc = {
   avatarUrl: string | null

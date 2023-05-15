@@ -1,4 +1,3 @@
-import { guestRegistryMap } from '@moodlenet/react-app/webapp'
 import type { MySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
 import { useMySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
 import type { FC, PropsWithChildren } from 'react'
@@ -6,10 +5,9 @@ import { createContext, useCallback, useContext, useMemo } from 'react'
 import type { EdResourceEntityNames } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { MainContext } from './MainContext.js'
-import type { GuestMainRegistries } from './registries.mjs'
+import { shell } from './shell.mjs'
 
 export type ResourceContextT = {
-  registries: GuestMainRegistries
   createResource(): Promise<{ homePath: string }>
   resourceEntitiesId: MySystemEntitiesId<EdResourceEntityNames>
 }
@@ -18,7 +16,7 @@ export const ResourceContext = createContext<ResourceContextT>(null as any)
 export function useResourceContextValue() {
   const mainContext = useContext(MainContext)
 
-  const resourceEntitiesId = useMySystemEntitiesId<EdResourceEntityNames>()
+  const resourceEntitiesId = useMySystemEntitiesId<EdResourceEntityNames>(shell)
 
   const createResource = useCallback<ResourceContextT['createResource']>(
     async function create() {
@@ -28,19 +26,13 @@ export function useResourceContextValue() {
     [mainContext.rpcCaller],
   )
 
-  const registries = useMemo(
-    () => guestRegistryMap(mainContext.registries),
-    [mainContext.registries],
-  )
-
   const resourceContext = useMemo<ResourceContextT>(() => {
     const resourceContext: ResourceContextT = {
       createResource,
       resourceEntitiesId,
-      registries,
     }
     return resourceContext
-  }, [createResource, registries, resourceEntitiesId])
+  }, [createResource, resourceEntitiesId])
 
   return resourceContext
 }

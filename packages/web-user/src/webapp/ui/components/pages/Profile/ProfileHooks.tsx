@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
 import type { Profile } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { MainContext } from '../../../../context/MainContext.mjs'
+import { shell } from '../../../../shell.mjs'
 import type { ProfileProps } from './Profile.js'
 
 const __should_be_from_server_maxUploadSize = 1024 * 1024 * 50
@@ -18,9 +18,7 @@ export const useProfileProps = ({
   profileKey: string
 }): ProfileProps | undefined => {
   const nav = useNavigate()
-  const {
-    use: { me },
-  } = useContext(MainContext)
+
   const resourceCtx = useContext(ResourceContext)
   const collectionCtx = useContext(CollectionContext)
 
@@ -39,7 +37,7 @@ export const useProfileProps = ({
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
 
-      const res = await me.rpc['webapp/profile/edit']({
+      const res = await shell.rpc.me['webapp/profile/edit']({
         _key: profileKey,
         displayName,
         aboutMe,
@@ -52,17 +50,17 @@ export const useProfileProps = ({
       // }
       setProfileResponse(res)
     },
-    [me.rpc, profileKey],
+    [profileKey],
   )
 
   useEffect(() => {
-    me.rpc['webapp/profile/get']({ _key: profileKey }).then(res => {
+    shell.rpc.me['webapp/profile/get']({ _key: profileKey }).then(res => {
       if (!res) {
         return
       }
       setProfileResponse(res)
     })
-  }, [me.rpc, profileKey])
+  }, [profileKey])
 
   const mainLayoutProps = useMainLayoutProps()
 
@@ -105,17 +103,20 @@ export const useProfileProps = ({
         toggleFollow: () => alert('Needs to be implemented'), //@ETTO Needs to be implemented
         setAvatar: (avatar: File | undefined | null) => {
           console.log('setAvatar', avatar)
-          me.rpc['webapp/upload-profile-avatar/:_key']({ file: [avatar] }, { _key: profileKey })
+          shell.rpc.me['webapp/upload-profile-avatar/:_key'](
+            { file: [avatar] },
+            { _key: profileKey },
+          )
         },
         setBackground: (background: File | undefined | null) => {
           console.log('setBackground', background)
-          me.rpc['webapp/upload-profile-background/:_key'](
+          shell.rpc.me['webapp/upload-profile-background/:_key'](
             { file: [background] },
             { _key: profileKey },
           )
         },
         sendMessage: (message: string) =>
-          me.rpc['webapp/send-message-to-user/:profileKey']({ message }, { profileKey }),
+          shell.rpc.me['webapp/send-message-to-user/:profileKey']({ message }, { profileKey }),
       },
       mainProfileCardSlots: {
         mainColumnItems: [],
@@ -149,8 +150,6 @@ export const useProfileProps = ({
     nav,
     profileKey,
     profileResponse,
-    me.rpc,
-    // toggleFollow,
     resourceCtx,
   ])
   return profileProps

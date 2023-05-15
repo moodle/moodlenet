@@ -1,13 +1,12 @@
 import type { OrganizationData } from '@moodlenet/organization/common'
 import { useFormik } from 'formik'
-import { useCallback, useContext, useMemo } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
+import { useContext, useMemo } from 'react'
 import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
+import { shell } from '../../../../../shell.mjs'
 import type { GeneralProps } from './General.js'
 
 export const useGeneralProps = (): GeneralProps => {
   const { organizationData, saveOrganization } = useContext(OrganizationCtx)
-  const { use } = useContext(MainContext)
 
   const form = useFormik<OrganizationData>({
     initialValues: organizationData,
@@ -17,18 +16,14 @@ export const useGeneralProps = (): GeneralProps => {
     enableReinitialize: true,
   })
 
-  //FIXME: @Bru: can we put this updateAll UI in @moodlenet/extension-manager ?
-  const updateExtensions = useCallback(() => {
-    use.me.rpc.updateAllPkgs()
-  }, [use.me])
-
   const generalProps = useMemo<GeneralProps>(() => {
     return {
       form,
-      updateExtensions,
+      //FIXME: @Bru: can we put this updateAll UI in @moodlenet/extension-manager ?
+      updateExtensions: shell.rpc.me.updateAllPkgs,
       updateSuccess: false,
     }
-  }, [form, updateExtensions])
+  }, [form])
 
   return generalProps
 }

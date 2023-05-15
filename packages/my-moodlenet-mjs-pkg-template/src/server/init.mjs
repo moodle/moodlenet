@@ -22,6 +22,6 @@ export const expose = await shell.expose({
 })
 
 await shell.call(plugin)({
-  mainComponentLoc: ['src', 'webapp', 'MainComponent.jsx'],
+  initModuleLoc: ['src', 'webapp', 'MainComponent.jsx'],
   deps: { me: expose },
 })

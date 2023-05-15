@@ -1,7 +1,10 @@
-import { useContext, useMemo } from 'react'
+import type { PkgIdentifier } from '@moodlenet/core'
+import type { ComponentType, PropsWithChildren } from 'react'
+import { useMemo } from 'react'
+import { getCurrentInitPkg } from '../../../../../../plugin-initializer.mjs'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { MainContext } from '../../../../../../context/MainContext.mjs'
+import { usePkgAddOns, type UseRegisterAddOn } from '../../../../../../web-lib/add-ons.js'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
@@ -23,30 +26,52 @@ const localSettingsItems: SettingsItem[] = [
   },
 ]
 
+export type SettingsPagePluginWrapper = ComponentType<PropsWithChildren>
+//export type SettingsPagePluginHookResult = { MainWrapper?: SettingsPagePluginWrapper }
+export type SettingsPagePluginHook = (_: {
+  useSettingsSectionAddons: UseRegisterAddOn<SettingsSectionItem>
+}) => void //| SettingsPagePluginHookResult
+
+const settingsPagePluginPlugins: {
+  settingsPagePluginHook: SettingsPagePluginHook
+  pkgId: PkgIdentifier
+}[] = []
+
+export function registerSettingsPagePluginHook(settingsPagePluginHook: SettingsPagePluginHook) {
+  const pkgId = getCurrentInitPkg()
+  settingsPagePluginPlugins.push({ settingsPagePluginHook, pkgId })
+}
+
+export type SettingsSectionItem = {
+  Menu: ComponentType
+  Content: ComponentType
+}
+
 export const useSettingsProps = (): SettingsProps => {
-  const { reg } = useContext(MainContext)
+  const [settingsSections, getRegisterSettingsSection] =
+    usePkgAddOns<SettingsSectionItem>('SettingsSection')
+  settingsPagePluginPlugins.forEach(({ pkgId, settingsPagePluginHook }) =>
+    settingsPagePluginHook({ useSettingsSectionAddons: getRegisterSettingsSection(pkgId) }),
+  )
   const mainLayoutProps = useMainLayoutProps()
 
   const settingsItems = useMemo<SettingsItem[]>(() => {
-    const pkgItems = reg.settingsSections.registry.entries.map<SettingsItem>(
-      ({ item: { Content, Menu }, pkgId }, index) => {
-        const key = `${pkgId.name}/${index}`
-        const settingsItem: SettingsItem = {
-          Content: {
-            key,
-            Item: Content,
-          },
-          Menu: {
-            key,
-            Item: Menu,
-          },
-        }
-        return settingsItem
-      },
-    )
+    const pkgItems = settingsSections.map<SettingsItem>(({ addOn: { Content, Menu }, key }) => {
+      const settingsItem: SettingsItem = {
+        Content: {
+          key,
+          Item: Content,
+        },
+        Menu: {
+          key,
+          Item: Menu,
+        },
+      }
+      return settingsItem
+    })
 
     return localSettingsItems.concat(pkgItems)
-  }, [reg.settingsSections.registry])
+  }, [settingsSections])
 
   const settingsProps = useMemo<SettingsProps>(() => {
     return {

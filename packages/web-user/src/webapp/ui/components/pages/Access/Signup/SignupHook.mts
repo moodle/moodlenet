@@ -1,22 +1,51 @@
-import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/webapp'
-import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
-import type { SignupProps } from './Signup.js'
+import type { PkgIdentifier } from '@moodlenet/core'
+import type { UseRegisterAddOn } from '@moodlenet/react-app/webapp'
+import {
+  useFooterProps,
+  useMinimalisticHeaderProps,
+  usePkgAddOns,
+} from '@moodlenet/react-app/webapp'
+import { useMemo } from 'react'
+import { shell } from '../../../../../shell.mjs'
+import type { SignupItem, SignupProps } from './Signup.js'
+
+export type SignupMethodItem = Omit<SignupItem, 'key'>
+export type SignupMethodHookResult = void
+export type SignupMethodHook = (_: {
+  useSignupMethod: UseRegisterAddOn<SignupMethodItem>
+}) => void | SignupMethodHookResult
+
+const signupMethodPlugins: {
+  signupMethodHook: SignupMethodHook
+  pkgId: PkgIdentifier
+}[] = []
+
+export function registerSignupMethodHook(signupMethodHook: SignupMethodHook) {
+  const pkgId = shell.init.getCurrentInitPkg()
+  signupMethodPlugins.push({ signupMethodHook, pkgId })
+}
 
 export const useSignUpProps = (): SignupProps => {
   const headerProps = useMinimalisticHeaderProps()
   const footerProps = useFooterProps()
-  const { registries } = useContext(MainContext)
+  const [signupMethods, getRegisterSignupHook] = usePkgAddOns<SignupMethodItem>('SignupPlugin')
+
+  signupMethodPlugins.forEach(({ pkgId, signupMethodHook }) => {
+    signupMethodHook({ useSignupMethod: getRegisterSignupHook(pkgId) })
+  })
   const signupProps = useMemo<SignupProps>(() => {
-    const signupItems = registries.signupItems.registry.entries.map(el => ({
-      ...el.item,
-      key: el.pkgId.name,
-    }))
+    const signupItems: SignupProps['signupItems'] = signupMethods.map(
+      ({ addOn: { Icon, Panel }, key }) => ({
+        Icon,
+        Panel,
+        key,
+      }),
+    )
     return {
       headerProps,
       footerProps,
       signupItems,
     }
-  }, [headerProps, footerProps, registries.signupItems.registry.entries])
+  }, [signupMethods, headerProps, footerProps])
   return signupProps
 }

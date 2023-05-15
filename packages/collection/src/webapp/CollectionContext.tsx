@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useMemo } from 'react'
 import type { CollectionEntityNames } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { MainContext } from './MainContext.js'
+import { shell } from './shell.mjs'
 
 export type CollectionContextT = {
   createCollection(): Promise<{ homePath: string }>
@@ -14,7 +15,7 @@ export const CollectionContext = createContext<CollectionContextT>(null as any)
 
 export function useCollectionContextValue() {
   const { rpcCaller } = useContext(MainContext)
-  const collectionEntitiesId = useMySystemEntitiesId<CollectionEntityNames>()
+  const collectionEntitiesId = useMySystemEntitiesId<CollectionEntityNames>(shell)
 
   const createCollection = useCallback<CollectionContextT['createCollection']>(
     async function createCollection() {
