@@ -2,16 +2,18 @@ import { NoteAdd } from '@material-ui/icons'
 import { ListCard, PrimaryButton } from '@moodlenet/component-library'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
 import './ProfileResourceList.scss'
 
 export type ProfileResourceListProps = {
-  resourceCardPropsList: ResourceCardProps[]
+  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardProps> }[]
   createResource(): void
   canEdit: boolean
 }
-
+1504062
+1504094
 export const ProfileResourceList: FC<ProfileResourceListProps> = ({
   resourceCardPropsList,
   createResource,
@@ -25,8 +27,8 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
           resourceCardPropsList.map(resourceCardProps => {
             return (
               <ResourceCard
-                key={resourceCardProps.data.resourceId}
-                {...resourceCardProps}
+                key={resourceCardProps.key}
+                {...resourceCardProps.resourceCardProps}
                 orientation="horizontal"
               />
             )

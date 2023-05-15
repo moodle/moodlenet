@@ -140,7 +140,7 @@ export const useProfileProps = ({
         collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),
       createResource: () => resourceCtx.createResource().then(({ homePath }) => nav(homePath)),
       resourceCardPropsList, //@ETTO Needs to be implemented - get it from server
-      // collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
+      collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       sideColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       overallCardItems: [],
