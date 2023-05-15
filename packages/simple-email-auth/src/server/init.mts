@@ -13,7 +13,7 @@ export const { collection: EmailPwdUserCollection /* ,newlyCreated */ } = await 
 )<EmailPwdUserData>('EmailPwdUser')
 
 shell.call(plugin)<MyWebDeps>({
-  initModuleLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
   deps: { me },
 })
 
