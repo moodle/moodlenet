@@ -14,10 +14,12 @@ registerMainAppPluginHook(function useMainAppContext() {
   }
 })
 
-registerSettingsPagePluginHook(function useSettingsPagePluginHook({ registerAddOn }) {
+registerSettingsPagePluginHook(function useSettingsPagePluginHook({
+  useSettingsSectionAddons: registerAddOn,
+}) {
   const addons = useMemo(
     () => ({
-      main: {
+      default: {
         Menu: ExtensionsMenu,
         Content: ExtensionsContainer,
       },

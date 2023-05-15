@@ -1,25 +1,31 @@
-import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/webapp'
-import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../../../context/MainContext.mjs'
+import {
+  useFooterProps,
+  useMinimalisticHeaderProps,
+  usePkgAddOns,
+} from '@moodlenet/react-app/webapp'
+import { useMemo } from 'react'
 // import { useFooterProps } from '../../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
 // import { useMinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
-import type { LoginProps } from './Login.js'
+import type { LoginItem, LoginProps } from './Login.js'
+
+export type LoginPluginItem = Omit<LoginItem, 'key'>
 
 export const useLoginProps = (): LoginProps => {
   const headerProps = useMinimalisticHeaderProps()
   const footerProps = useFooterProps()
-  const { registries } = useContext(MainContext)
+  const [loginPlugins /*,registerLogin */] = usePkgAddOns<LoginPluginItem>('LoginPlugin')
+
   const loginProps = useMemo<LoginProps>(() => {
-    const loginItems = registries.loginItems.registry.entries.map(el => ({
-      ...el.item,
-      key: el.pkgId.name,
+    const loginItems = loginPlugins.map(({ addOn: { Icon, Panel }, key }) => ({
+      Icon,
+      Panel,
+      key,
     }))
-    // console.log('xxxx', loginItems)
     return {
       headerProps,
       footerProps,
       loginItems,
     }
-  }, [headerProps, footerProps, registries.loginItems])
+  }, [loginPlugins, headerProps, footerProps])
   return loginProps
 }

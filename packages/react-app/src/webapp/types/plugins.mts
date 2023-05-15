@@ -7,4 +7,7 @@ export type WebappShell<UsesPkgDeps extends WebPkgDeps> = {
   rpc: {
     [key in keyof UsesPkgDeps]: PkgRpcHandle<UsesPkgDeps[key]['rpc']>
   }
+  init: {
+    getCurrentInitPkg(): PkgIdentifier
+  }
 }

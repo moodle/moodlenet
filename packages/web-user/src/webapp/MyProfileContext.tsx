@@ -2,7 +2,7 @@ import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { FeaturedEntity, KnownEntityFeature } from '../common/types.mjs'
 import { AuthCtx } from './context/AuthContext.js'
-import { MainContext } from './context/MainContext.mjs'
+import { shell } from './shell.mjs'
 
 export type MyProfileContextT = {
   reloadMyFeaturedEntities(): Promise<void>
@@ -16,9 +16,6 @@ export type MyProfileContextT = {
 export const MyProfileContext = createContext<MyProfileContextT | null>(null)
 
 export function useMyProfileContextValue() {
-  const {
-    use: { me },
-  } = useContext(MainContext)
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
 
@@ -28,9 +25,9 @@ export function useMyProfileContextValue() {
       setMyFeaturedEntities([])
     }
 
-    const { featuredEntities } = await me.rpc['webapp/all-my-featured-entities']()
+    const { featuredEntities } = await shell.rpc.me['webapp/all-my-featured-entities']()
     setMyFeaturedEntities(featuredEntities)
-  }, [me.rpc, myProfile])
+  }, [myProfile])
 
   useEffect(() => {
     reloadMyFeaturedEntities()
@@ -38,7 +35,7 @@ export function useMyProfileContextValue() {
 
   const featureEntity = useCallback<MyProfileContextT['featureEntity']>(
     async ({ entity_id, action, feature }) => {
-      await me.rpc[
+      await shell.rpc.me[
         'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
       ](void 0, { action, entity_id: entity_id, feature })
       setMyFeaturedEntities(featuredEntities =>
@@ -47,7 +44,7 @@ export function useMyProfileContextValue() {
           : featuredEntities.filter(item => item._id === entity_id && item.feature === feature),
       )
     },
-    [me.rpc],
+    [],
   )
 
   const myProfileContext = useMemo<MyProfileContextT>(() => {

@@ -1,6 +1,6 @@
 import type { WebPkgDeps } from '../common/types.mjs'
 import type { WebappShell } from './exports/webapp.mjs'
-import { getCurrentPluginMainInitializerObject } from './plugin-initializer.mjs'
+import { getCurrentInitPkg, getCurrentPluginMainInitializerObject } from './plugin-initializer.mjs'
 import { pkgRpcs } from './web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 
 export function getMyShell<UsesPkgDeps extends WebPkgDeps>(): WebappShell<UsesPkgDeps> {
@@ -12,6 +12,9 @@ export function getMyShell<UsesPkgDeps extends WebPkgDeps>(): WebappShell<UsesPk
   const shell: WebappShell<UsesPkgDeps> = {
     pkgId,
     rpc,
+    init: {
+      getCurrentInitPkg,
+    },
   }
   return shell
 }

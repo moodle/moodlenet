@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { getCurrentInitPkg } from '../../../../../../plugin-initializer.mjs'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { usePkgAddOns, type RegisterAddOn } from '../../../../../../web-lib/add-ons.js'
+import { usePkgAddOns, type UseRegisterAddOn } from '../../../../../../web-lib/add-ons.js'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
@@ -29,7 +29,7 @@ const localSettingsItems: SettingsItem[] = [
 export type SettingsPagePluginWrapper = ComponentType<PropsWithChildren>
 //export type SettingsPagePluginHookResult = { MainWrapper?: SettingsPagePluginWrapper }
 export type SettingsPagePluginHook = (_: {
-  registerAddOn: RegisterAddOn<SettingsSectionItem>
+  useSettingsSectionAddons: UseRegisterAddOn<SettingsSectionItem>
 }) => void //| SettingsPagePluginHookResult
 
 const settingsPagePluginPlugins: {
@@ -51,7 +51,7 @@ export const useSettingsProps = (): SettingsProps => {
   const [settingsSections, getRegisterSettingsSection] =
     usePkgAddOns<SettingsSectionItem>('SettingsSection')
   settingsPagePluginPlugins.forEach(({ pkgId, settingsPagePluginHook }) =>
-    settingsPagePluginHook({ registerAddOn: getRegisterSettingsSection(pkgId) }),
+    settingsPagePluginHook({ useSettingsSectionAddons: getRegisterSettingsSection(pkgId) }),
   )
   const mainLayoutProps = useMainLayoutProps()
 
