@@ -1,4 +1,4 @@
-import { CollectionContext } from '@moodlenet/collection/webapp'
+import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection/webapp'
 import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
 import { href } from '@moodlenet/react-app/common'
 import { proxyWith } from '@moodlenet/react-app/ui'
@@ -85,7 +85,15 @@ export const useProfileProps = ({
           }),
         }
       })
-
+    const collectionCardPropsList: ProfileProps['collectionCardPropsList'] =
+      profileResponse.ownCollections.map(({ _key }) => {
+        return {
+          key: _key,
+          resourceCardProps: proxyWith(function usePropProxy() {
+            return { props: useCollectionCardProps(_key) }
+          }),
+        }
+      })
     const props: ProfileProps = {
       mainLayoutProps,
       access: {
@@ -140,7 +148,7 @@ export const useProfileProps = ({
         collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),
       createResource: () => resourceCtx.createResource().then(({ homePath }) => nav(homePath)),
       resourceCardPropsList, //@ETTO Needs to be implemented - get it from server
-      collectionCardPropsList: [], //@ETTO Needs to be implemented - get it from server
+      collectionCardPropsList, //@ETTO Needs to be implemented - get it from server
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       sideColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       overallCardItems: [],
