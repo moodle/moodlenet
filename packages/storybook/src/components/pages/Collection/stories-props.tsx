@@ -30,6 +30,7 @@ import type { CollectionProps, MainCollectionCardSlots } from '@moodlenet/collec
 import { Collection } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { useFormik } from 'formik'
@@ -131,7 +132,13 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 ]
 
 export const useCollectionStoryProps = (
-  overrides?: PartialDeep<CollectionProps & { isAuthenticated: boolean }>,
+  overrides?: PartialDeep<
+    CollectionProps & {
+      isAuthenticated: boolean
+      bookmarkButtonProps: BookmarkButtonProps
+      smallFollowButtonProps: SmallFollowButtonProps
+    }
+  >,
 ): CollectionProps => {
   const isAuthenticated = overrides?.isAuthenticated ?? true
 
@@ -152,10 +159,7 @@ export const useCollectionStoryProps = (
 
   const state: CollectionStateProps = {
     isPublished: true,
-    followed: false,
-    numFollowers: 0,
     numResources: 12,
-    bookmarked: false,
   }
 
   const actions: CollectionActions = {
@@ -164,8 +168,6 @@ export const useCollectionStoryProps = (
     publish: action('publish'),
     unpublish: action('unpublish'),
     setImage: action('setImage'),
-    toggleFollow: action('toggleFollow'),
-    toggleBookmark: action('toggleBookmark'),
     ...overrides?.actions,
   }
 
@@ -174,12 +176,25 @@ export const useCollectionStoryProps = (
     isCreator: false,
     canDelete: false,
     canPublish: false,
-    canFollow: true,
-    canBookmark: true,
-    isAuthenticated: true,
     ...overrides?.access,
   }
 
+  const smallFollowButtonProps: SmallFollowButtonProps = {
+    canFollow: true,
+    followed: false,
+    isCreator: true,
+    numFollowers: 11,
+    toggleFollow: action('toggleFollow'),
+    ...overrides?.smallFollowButtonProps,
+    isAuthenticated,
+  }
+  const bookmarkButtonProps: BookmarkButtonProps = {
+    bookmarked: true,
+    canBookmark: true,
+    toggleBookmark: action('toggleBookmark'),
+    ...overrides?.bookmarkButtonProps,
+    isAuthenticated,
+  }
   const isPublished =
     overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
@@ -190,29 +205,13 @@ export const useCollectionStoryProps = (
     topRightHeaderItems: [
       isPublished
         ? {
-            Item: () => (
-              <SmallFollowButton
-                canFollow={access.canFollow}
-                followed={state.followed}
-                isAuthenticated={isAuthenticated}
-                isCreator={access.isCreator}
-                toggleFollow={actions.toggleFollow}
-                numFollowers={state.numFollowers}
-              />
-            ),
+            Item: () => <SmallFollowButton {...smallFollowButtonProps} />,
             key: 'follow-button',
           }
         : null,
       isPublished
         ? {
-            Item: () => (
-              <BookmarkButton
-                canBookmark={access.canBookmark}
-                bookmarked={state.bookmarked}
-                isAuthenticated={access.isAuthenticated}
-                toggleBookmark={actions.toggleBookmark}
-              />
-            ),
+            Item: () => <BookmarkButton {...bookmarkButtonProps} />,
             key: 'like-button',
           }
         : null,
@@ -221,17 +220,7 @@ export const useCollectionStoryProps = (
     footerRowItems: [
       !overrides?.access?.isCreator
         ? {
-            Item: () => (
-              <FollowButton
-                canFollow={access.canFollow}
-                followed={state.followed}
-                isAuthenticated={isAuthenticated}
-                isCreator={access.isCreator}
-                toggleFollow={actions.toggleFollow}
-                key="follow-button"
-              />
-            ),
-
+            Item: () => <FollowButton {...smallFollowButtonProps} key="follow-button" />,
             key: 'follow-button',
           }
         : null,
@@ -264,7 +253,10 @@ export const useCollectionStoryProps = (
       sideColumnItems: [],
       wideColumnItems: [],
 
-      resourceCardPropsList: resourceCardPropsList,
+      resourceCardPropsList: resourceCardPropsList.map((resourceCardProps, i) => ({
+        key: `${i}`,
+        resourceCardProps,
+      })),
 
       collectionContributorCardProps:
         CollectionContributorCardStories.CollectionContributorCardStoryProps,

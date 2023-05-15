@@ -4,9 +4,9 @@ import { useMemo } from 'react'
 import type { ResourceCardDataProps } from '../../../../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
-import type { ResourceCardProps } from './ResourceCard.js'
+import type { ResourceCardPropsData } from './ResourceCard.js'
 
-export const useResourceCardProps = (resourceKey: string): ResourceCardProps | null => {
+export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData | null => {
   const _mainProps = useResourceBaseProps({ resourceKey })
 
   const collectionProps = useMemo(() => {
@@ -33,7 +33,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardProps | n
       resourceHomeHref: href(getResourceHomePageRoutePath({ _key: resourceKey })),
     }
 
-    const propsPage: ResourceCardProps = {
+    const propsPage: ResourceCardPropsData = {
       mainColumnItems: [],
       topLeftItems: [],
       topRightItems: [],

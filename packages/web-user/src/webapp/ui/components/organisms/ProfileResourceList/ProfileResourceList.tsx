@@ -1,6 +1,5 @@
 import { NoteAdd } from '@material-ui/icons'
 import { ListCard, PrimaryButton } from '@moodlenet/component-library'
-import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'

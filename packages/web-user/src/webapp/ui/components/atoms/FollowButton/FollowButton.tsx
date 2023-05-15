@@ -49,8 +49,8 @@ export const FollowButton: FC<FollowButtonProps> = ({
     </PrimaryButton>
   )
 }
-
-export const SmallFollowButton: FC<FollowButtonProps & { numFollowers: number }> = ({
+export type SmallFollowButtonProps = FollowButtonProps & { numFollowers: number }
+export const SmallFollowButton: FC<SmallFollowButtonProps> = ({
   numFollowers,
   followed,
   canFollow,
