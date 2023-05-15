@@ -1,23 +1,15 @@
-import type { ReactAppMainComponent } from '@moodlenet/react-app/webapp'
-import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
-import { useContext, useMemo } from 'react'
-import { Route } from 'react-router-dom'
+import type { MainAppPluginWrapper } from '@moodlenet/react-app/webapp'
+import { useMemo } from 'react'
 import type {
   MainContextResource,
-  MyPkgContext,
   ResourceFormProps,
   ResourceFormRpc,
   RpcCaller,
 } from '../common/types.mjs'
-import { RESOURCE_HOME_PAGE_ROUTE_PATH } from '../common/webapp-routes.mjs'
-import { ResourcePageRoute } from './components/pages/Resource/ResourcePageRoute.js'
 import { MainContext } from './MainContext.js'
-import { useMakeRegistries } from './registries.mjs'
 import { ProvideResourceContext } from './ResourceContext.js'
+import { shell } from './shell.mjs'
 
-const myRoutes = {
-  routes: <Route path={RESOURCE_HOME_PAGE_ROUTE_PATH} element={<ResourcePageRoute />} />,
-}
 // const addAuthMissing =
 //   (missing: { isAuthenticated: boolean }) =>
 //   (rpcResource: Promise<ResourceRpc | undefined>): Promise<ResourceProps | undefined> =>
@@ -35,20 +27,9 @@ const toFormRpc = (r: ResourceFormProps): ResourceFormRpc => r
 //   }),
 // }
 
-const MainComponent: ReactAppMainComponent = ({ children }) => {
-  // const nav = useNavigate()
-  const myPkgCtx = usePkgContext<MyPkgContext>()
-  const reactAppCtx = useContext(ReactAppContext)
-  // const webUserCtx = useContext(AuthCtx)
-  reactAppCtx.registries.routes.useRegister(myRoutes)
-  // const auth = useMemo(
-  //   () => authToAccessRpc(webUserCtx.clientSessionData),
-  //   [webUserCtx.clientSessionData],
-  // )
-  const me = myPkgCtx.use.me
-  const registries = useMakeRegistries()
+const MainWrapper: MainAppPluginWrapper = ({ children }) => {
   const rpcCaller = useMemo((): RpcCaller => {
-    const rpc = me.rpc
+    const rpc = shell.rpc.me
     // const addAuth = addAuthMissing(auth.access || null)
 
     const rpcItem: RpcCaller = {
@@ -67,26 +48,10 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
     }
 
     return rpcItem
-  }, [me.rpc])
-
-  // const actionsMenu = useMemo(() => {
-  //   const acCreate = () => rpcCaller.create().then(({ _key }) => nav(`/resource/${_key}`))
-
-  //   return {
-  //     create: { action: acCreate, menu: menuItems.create(acCreate) },
-  //   }
-  // }, [nav, rpcCaller])
-
-  // webUserCtx.registries.addMenuItems.useRegister(actionsMenu.create.menu, {
-  //   condition: auth.access.isAuthenticated,
-  // })
+  }, [])
 
   const mainValue: MainContextResource = {
-    ...myPkgCtx,
     rpcCaller,
-    registries,
-    // actionsMenu,
-    // auth,
   }
 
   return (
@@ -96,4 +61,4 @@ const MainComponent: ReactAppMainComponent = ({ children }) => {
   )
 }
 
-export default MainComponent
+export default MainWrapper

@@ -18,4 +18,5 @@ export {
   type SettingsPagePluginWrapper,
   type SettingsSectionItem,
 } from '../ui/components/pages/Settings/Settings/Hook/SettingsHooks.js'
+export { usePkgAddOns, type PkgAddOnsHandle, type RegisterAddOn } from '../web-lib/add-ons.js'
 export { wrapFetch } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'

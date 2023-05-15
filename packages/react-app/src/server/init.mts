@@ -28,7 +28,7 @@ if (!(await kvStore.get('configs', '')).value) {
 }
 
 await shell.call(plugin)<MyWebAppDeps>({
-  initModuleLoc: ['dist', 'webapp', 'MainComponent.js'],
+  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
   deps: {
     me: myExpose,
   },

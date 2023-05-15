@@ -5,15 +5,15 @@ import { getCurrentInitPkg } from './plugin-initializer.mjs'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
 import { SettingsPageRoute } from './ui/components/pages/Settings/Settings/Hook/SettingsPageRoute.js'
 
-export type RouteRegItem = { routes: ReactElement }
+export type PkgRoutes = { routes: ReactElement }
 
 const appRoutesContextPlugins: {
-  routeRegItem: RouteRegItem
+  pkgRoutes: PkgRoutes
   pkgId: PkgIdentifier
 }[] = []
-export function registerAppRoutesContextPlugin(routeRegItem: RouteRegItem) {
+export function registerAppRoutes(pkgRoutes: PkgRoutes) {
   const pkgId = getCurrentInitPkg()
-  appRoutesContextPlugins.push({ routeRegItem, pkgId })
+  appRoutesContextPlugins.push({ pkgRoutes, pkgId })
 }
 
 const AppRouter = () => {
@@ -21,7 +21,7 @@ const AppRouter = () => {
     <Routes>
       <Route path="/" index element={<LandingContainer />} />
       <Route path="settings" element={<SettingsPageRoute />} />
-      {appRoutesContextPlugins.flatMap(({ pkgId, routeRegItem: { routes } }) => {
+      {appRoutesContextPlugins.map(({ pkgId, pkgRoutes: { routes } }) => {
         return (
           <Route path={`/`} key={pkgId.name}>
             {routes}
