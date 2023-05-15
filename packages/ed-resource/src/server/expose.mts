@@ -71,6 +71,13 @@ export const expose = await shell.expose<ResourceExposeType>({
             },
             displayName: found.contributor.name,
             timeSinceCreation: found.meta.created,
+            // avatarUrl: found.contributor?.iconUrl ?? null,
+            // creatorProfileHref: {
+            //   url: 'google.it',
+            //   ext: true,
+            // },
+            // displayName: 'contributor.name',
+            // timeSinceCreation: new Date().toString(),
           },
           resourceForm: {
             description: found.entity.description,
