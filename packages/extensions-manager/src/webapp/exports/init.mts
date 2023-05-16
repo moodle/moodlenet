@@ -1,6 +1,8 @@
+import type { PkgAddOns, SettingsSectionItem } from '@moodlenet/react-app/webapp'
 import {
   registerMainAppPluginHook,
   registerSettingsPagePluginHook,
+  type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 
@@ -9,15 +11,19 @@ import { ExtensionsContainer } from '../components/pages/Extensions/ExtensionsCo
 import MainWrapper from '../MainWrapper.js'
 
 registerMainAppPluginHook(function useMainAppContext() {
-  return {
-    MainWrapper,
-  }
+  const mainAppPlugin = useMemo<MainAppPluginHookResult>(
+    () => ({
+      MainWrapper,
+    }),
+    [],
+  )
+  return mainAppPlugin
 })
 
 registerSettingsPagePluginHook(function useSettingsPagePluginHook({
   useSettingsSectionAddons: registerAddOn,
 }) {
-  const addons = useMemo(
+  const addons = useMemo<PkgAddOns<SettingsSectionItem>>(
     () => ({
       default: {
         Menu: ExtensionsMenu,

@@ -1,3 +1,4 @@
+import type { PkgAddOns, SettingsSectionItem } from '@moodlenet/react-app/webapp'
 import { registerSettingsPagePluginHook } from '@moodlenet/react-app/webapp'
 import { registerLoginMethodHook, registerSignupMethodHook } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
@@ -26,7 +27,11 @@ registerSignupMethodHook(function useSignupMethod({ useSignupMethod }) {
 })
 
 registerSettingsPagePluginHook(function useSettingsPageHook({ useSettingsSectionAddons }) {
-  useSettingsSectionAddons({
-    default: { Content: SettingsContent, Menu: SettingsMenu },
-  })
+  const addons = useMemo<PkgAddOns<SettingsSectionItem>>(
+    () => ({
+      default: { Content: SettingsContent, Menu: SettingsMenu },
+    }),
+    [],
+  )
+  useSettingsSectionAddons(addons)
 })
