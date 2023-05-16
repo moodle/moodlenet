@@ -6,7 +6,7 @@ import {
   getEntityIdentifiersByKey,
   isOfSameClass,
 } from './entity-identification.mjs'
-import type { EntityIdentifier } from './types.mjs'
+import type { EntityClass, EntityIdentifier, SomeEntityDataType } from './types.mjs'
 
 export function getPkgEntitiesTool<EntityTypeNames extends string>({
   pkgId,
@@ -21,6 +21,7 @@ export function getPkgEntitiesTool<EntityTypeNames extends string>({
     getIdentifiersById,
     getIdentifiersByIdAssertType,
     mapToIdentifiersFilterType,
+    getClassOf,
   }
 
   function getIdentifiersByKey<TypeName extends EntityTypeNames>({
@@ -31,6 +32,14 @@ export function getPkgEntitiesTool<EntityTypeNames extends string>({
     type: TypeName
   }) {
     return getEntityIdentifiersByKey({ _key, pkgName, type })
+  }
+
+  function getClassOf<TypeName extends EntityTypeNames>(type: TypeName) {
+    const entityClass: EntityClass<SomeEntityDataType> = {
+      pkgName,
+      type,
+    }
+    return entityClass
   }
 
   function getIdentifiersById<TypeName extends EntityTypeNames>({

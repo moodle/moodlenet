@@ -1,13 +1,5 @@
-import {
-  CollectionContext,
-  CollectionEntitiesTools,
-  useCollectionCardProps,
-} from '@moodlenet/collection/webapp'
-import {
-  EdResourceEntitiesTools,
-  ResourceContext,
-  useResourceCardProps,
-} from '@moodlenet/ed-resource/webapp'
+import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection/webapp'
+import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
 import { href } from '@moodlenet/react-app/common'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
@@ -72,10 +64,7 @@ export const useProfileProps = ({
     const isCreator = clientSessionData?.myProfile?._key === profileKey
 
     const resourceCardPropsList: ProfileProps['resourceCardPropsList'] =
-      EdResourceEntitiesTools.mapToIdentifiersFilterType({
-        type: 'Resource',
-        ids: profileGetRpc.ownEntities,
-      }).map(({ entityIdentifier: { _key } }) => {
+      profileGetRpc.ownKnownEntities.resources.map(({ _key }) => {
         return {
           key: _key,
           resourceCardProps: proxyWith(function usePropProxy() {
@@ -84,10 +73,7 @@ export const useProfileProps = ({
         }
       })
     const collectionCardPropsList: ProfileProps['collectionCardPropsList'] =
-      CollectionEntitiesTools.mapToIdentifiersFilterType({
-        type: 'Collection',
-        ids: profileGetRpc.ownEntities,
-      }).map(({ entityIdentifier: { _key } }) => {
+      profileGetRpc.ownKnownEntities.collections.map(({ _key }) => {
         return {
           key: _key,
           collectionCardProps: proxyWith(function usePropProxy() {
@@ -95,6 +81,7 @@ export const useProfileProps = ({
           }),
         }
       })
+
     const props: ProfileProps = {
       mainLayoutProps,
       access: {
@@ -148,8 +135,8 @@ export const useProfileProps = ({
       createCollection: () =>
         collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),
       createResource: () => resourceCtx.createResource().then(({ homePath }) => nav(homePath)),
-      resourceCardPropsList, //@ETTO Needs to be implemented - get it from server
-      collectionCardPropsList, //@ETTO Needs to be implemented - get it from server
+      resourceCardPropsList,
+      collectionCardPropsList,
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       sideColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       overallCardItems: [],
