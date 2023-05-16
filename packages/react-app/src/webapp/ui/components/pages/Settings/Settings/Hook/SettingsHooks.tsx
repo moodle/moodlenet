@@ -1,5 +1,5 @@
 import type { PkgIdentifier } from '@moodlenet/core'
-import type { ComponentType, PropsWithChildren } from 'react'
+import type { ComponentType } from 'react'
 import { useMemo } from 'react'
 import { getCurrentInitPkg } from '../../../../../../plugin-initializer.mjs'
 // import { Link } from '../../../../elements/link'
@@ -26,7 +26,7 @@ const localSettingsItems: SettingsItem[] = [
   },
 ]
 
-export type SettingsPagePluginWrapper = ComponentType<PropsWithChildren>
+//export type SettingsPagePluginWrapper = ComponentType<PropsWithChildren>
 //export type SettingsPagePluginHookResult = { MainWrapper?: SettingsPagePluginWrapper }
 export type SettingsPagePluginHook = (_: {
   useSettingsSectionAddons: UseRegisterAddOn<SettingsSectionItem>
