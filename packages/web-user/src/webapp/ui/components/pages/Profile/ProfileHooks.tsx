@@ -89,7 +89,7 @@ export const useProfileProps = ({
       profileResponse.ownCollections.map(({ _key }) => {
         return {
           key: _key,
-          resourceCardProps: proxyWith(function usePropProxy() {
+          collectionCardProps: proxyWith(function usePropProxy() {
             return { props: useCollectionCardProps(_key) }
           }),
         }
