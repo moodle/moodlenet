@@ -2,6 +2,7 @@ import type { PkgAddOns, SettingsSectionItem } from '@moodlenet/react-app/webapp
 import { registerSettingsPagePluginHook } from '@moodlenet/react-app/webapp'
 import { registerLoginMethodHook, registerSignupMethodHook } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
+import '../shell.mjs'
 import { LoginIcon } from '../ui/Login/Login.js'
 import { LoginPanelContainer } from '../ui/Login/LoginContainer.js'
 import { SignUpPanelContainer } from '../ui/Signup/SignUpHooks.js'
