@@ -1,4 +1,4 @@
-// @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container|*Context|*.specs)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+// @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container|*Context|*.specs|*Route)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../ui/assets/data/images.js'
 export * from '../ui/components/atoms/HeaderTitle/HeaderTitle.js'
 export * from '../ui/components/elements/link.js'
@@ -25,7 +25,6 @@ export * from '../ui/components/pages/Settings/Advanced/Advanced.js'
 export * from '../ui/components/pages/Settings/Appearance/Appearance.js'
 export * from '../ui/components/pages/Settings/General/General.js'
 export * from '../ui/components/pages/Settings/Header.js'
-export * from '../ui/components/pages/Settings/Settings/Hook/SettingsPageRoute.js'
 export * from '../ui/components/pages/Settings/Settings/Settings.js'
 export * from '../ui/helpers/factories.js'
 export * from '../ui/helpers/utilities.js'
