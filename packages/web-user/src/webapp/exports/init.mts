@@ -14,6 +14,7 @@ import {
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
+import '../shell.mjs'
 
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'

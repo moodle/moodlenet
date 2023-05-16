@@ -5,6 +5,7 @@ import {
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
+import '../shell.mjs'
 
 import { ExtensionsMenu } from '../components/pages/Extensions/Extensions.js'
 import { ExtensionsContainer } from '../components/pages/Extensions/ExtensionsContainer.js'
