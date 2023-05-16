@@ -2,14 +2,9 @@ import type { MySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
 import { useMySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useMemo } from 'react'
-import type { KnownEntityFeature, KnownEntityTypes, WebUserEntityNames } from '../common/types.mjs'
+import type { WebUserEntityNames } from '../common/types.mjs'
 import { shell } from './shell.mjs'
 
-export type KnownFeaturedEntities = {
-  [feature in KnownEntityFeature]: {
-    [knownEntity in KnownEntityTypes]: { _key: string }[]
-  }
-}
 export type ProfileContextT = {
   profileEntitiesId: MySystemEntitiesId<WebUserEntityNames>
 }

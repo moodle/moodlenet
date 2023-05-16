@@ -4,33 +4,33 @@ import type { EntityIdentifiers } from '@moodlenet/system-entities/common'
 import { getEntityIdentifiers } from '@moodlenet/system-entities/common'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useContext, useMemo } from 'react'
-import type { FeaturedEntity, KnownEntityFeature, KnownEntityTypes } from '../common/types.mjs'
-import { MyProfileContext } from './MyProfileContext.js'
-import { ProfileContext } from './ProfileContext.js'
+import type { FeaturedEntity, KnownEntityFeature, KnownEntityTypes } from '../../common/types.mjs'
+import { MyProfileContext } from '../MyProfileContext.js'
+import { ProfileContext } from '../ProfileContext.js'
 
-type KnownFeaturedEntities = {
+type FeaturedKnownEntities = {
   [feature in `${KnownEntityFeature}s`]: {
     [knownEntity in `${KnownEntityTypes}s`]: EntityIdentifiers[]
   }
 }
-export type MyKnownFeaturedEntitiesContextT = {
-  myKnownFeaturedEntities: KnownFeaturedEntities
+export type MyFeaturedKnownEntitiesContextT = {
+  myFeaturedKnownEntities: FeaturedKnownEntities
 }
-export const MyKnownFeaturedEntitiesContext = createContext<MyKnownFeaturedEntitiesContextT | null>(
+export const MyFeaturedKnownEntitiesContext = createContext<MyFeaturedKnownEntitiesContextT | null>(
   null,
 )
 
-export function useMyKnownFeaturedEntitiesValue() {
+export function useMyFeaturedKnownEntitiesValue() {
   const collectionContext = useContext(CollectionContext)
   const resourceContext = useContext(ResourceContext)
   const profileContext = useContext(ProfileContext)
   const myFeaturedEntities = useContext(MyProfileContext)?.myFeaturedEntities
-  const myKnownFeaturedEntities = useMemo(() => {
+  const myFeaturedKnownEntities = useMemo(() => {
     if (!myFeaturedEntities) {
       return null
     }
 
-    const myKnownFeaturedEntities: KnownFeaturedEntities = {
+    const myFeaturedKnownEntities: FeaturedKnownEntities = {
       bookmarks: {
         collections: extractKnownEntityKeysFeature({
           featuredEntities: myFeaturedEntities,
@@ -83,7 +83,7 @@ export function useMyKnownFeaturedEntitiesValue() {
         }),
       },
     }
-    return myKnownFeaturedEntities
+    return myFeaturedKnownEntities
     function extractKnownEntityKeysFeature({
       featuredEntities,
       knownEntity,
@@ -110,24 +110,24 @@ export function useMyKnownFeaturedEntitiesValue() {
     resourceContext.resourceEntitiesId,
   ])
 
-  const myKnownFeaturedEntitiesContext = useMemo<MyKnownFeaturedEntitiesContextT | null>(() => {
-    if (!myKnownFeaturedEntities) {
+  const myFeaturedKnownEntitiesContext = useMemo<MyFeaturedKnownEntitiesContextT | null>(() => {
+    if (!myFeaturedKnownEntities) {
       return null
     }
-    const myKnownFeaturedEntitiesContext: MyKnownFeaturedEntitiesContextT = {
-      myKnownFeaturedEntities,
+    const myFeaturedKnownEntitiesContext: MyFeaturedKnownEntitiesContextT = {
+      myFeaturedKnownEntities,
     }
-    return myKnownFeaturedEntitiesContext
-  }, [myKnownFeaturedEntities])
+    return myFeaturedKnownEntitiesContext
+  }, [myFeaturedKnownEntities])
 
-  return myKnownFeaturedEntitiesContext
+  return myFeaturedKnownEntitiesContext
 }
 
-export const MyKnownFeaturedEntitiesContextProvider: FC<PropsWithChildren> = ({ children }) => {
-  const profileContext = useMyKnownFeaturedEntitiesValue()
+export const MyFeaturedKnownEntitiesContextProvider: FC<PropsWithChildren> = ({ children }) => {
+  const profileContext = useMyFeaturedKnownEntitiesValue()
   return (
-    <MyKnownFeaturedEntitiesContext.Provider value={profileContext}>
+    <MyFeaturedKnownEntitiesContext.Provider value={profileContext}>
       {children}
-    </MyKnownFeaturedEntitiesContext.Provider>
+    </MyFeaturedKnownEntitiesContext.Provider>
   )
 }
