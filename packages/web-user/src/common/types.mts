@@ -5,6 +5,14 @@ export type FeaturedEntity = { _id: string; feature: KnownEntityFeature }
 export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
 export type KnownEntityTypes = 'resource' | 'collection' | 'profile'
 
+export type ProfileGetRpc = {
+  data: Profile
+  canEdit: boolean
+  ownEntities: {
+    _id: string
+  }[]
+}
+
 export type Profile = {
   _key: string
   displayName: string

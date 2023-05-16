@@ -1,15 +1,14 @@
 import type { EntityIdentifiers } from '@moodlenet/system-entities/common'
 import type { FC, PropsWithChildren } from 'react'
-import { createContext, useContext, useMemo } from 'react'
-import { ResourceContext } from './ResourceContext.js'
+import { createContext, useMemo } from 'react'
+import { EdResourceEntitiesTools } from './entities.mjs'
 
 export type CurrentResourceContextT = {
   identifiers: EntityIdentifiers
 }
 export const CurrentResourceContext = createContext<CurrentResourceContextT | null>(null as any)
 export function useCurrentResourceContextValue(_key: string) {
-  const resourceContext = useContext(ResourceContext)
-  const identifiers = resourceContext.resourceEntitiesId.getIdentifiersByKey({
+  const identifiers = EdResourceEntitiesTools.getIdentifiersByKey({
     _key,
     type: 'Resource',
   })
