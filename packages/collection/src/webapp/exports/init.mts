@@ -1,11 +1,17 @@
+import type { MainAppPluginHookResult } from '@moodlenet/react-app/webapp'
 import { registerAppRoutes, registerMainAppPluginHook } from '@moodlenet/react-app/webapp'
+import { useMemo } from 'react'
 
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
 
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(function useMainAppContext() {
-  return {
-    MainWrapper,
-  }
+  const mainAppPlugin = useMemo<MainAppPluginHookResult>(
+    () => ({
+      MainWrapper,
+    }),
+    [],
+  )
+  return mainAppPlugin
 })
