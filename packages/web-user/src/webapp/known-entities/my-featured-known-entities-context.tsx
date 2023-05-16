@@ -1,12 +1,11 @@
-import { CollectionContext } from '@moodlenet/collection/webapp'
-import { ResourceContext } from '@moodlenet/ed-resource/webapp'
+import { CollectionEntitiesTools } from '@moodlenet/collection/webapp'
+import { EdResourceEntitiesTools } from '@moodlenet/ed-resource/webapp'
 import type { EntityIdentifiers } from '@moodlenet/system-entities/common'
-import { getEntityIdentifiers } from '@moodlenet/system-entities/common'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useContext, useMemo } from 'react'
-import type { FeaturedEntity, KnownEntityFeature, KnownEntityTypes } from '../../common/types.mjs'
+import type { KnownEntityFeature, KnownEntityTypes } from '../../common/types.mjs'
+import { WebUserEntitiesTools } from '../entities.mjs'
 import { MyProfileContext } from '../MyProfileContext.js'
-import { ProfileContext } from '../ProfileContext.js'
 
 type FeaturedKnownEntities = {
   [feature in `${KnownEntityFeature}s`]: {
@@ -21,9 +20,6 @@ export const MyFeaturedKnownEntitiesContext = createContext<MyFeaturedKnownEntit
 )
 
 export function useMyFeaturedKnownEntitiesValue() {
-  const collectionContext = useContext(CollectionContext)
-  const resourceContext = useContext(ResourceContext)
-  const profileContext = useContext(ProfileContext)
   const myFeaturedEntities = useContext(MyProfileContext)?.myFeaturedEntities
   const myFeaturedKnownEntities = useMemo(() => {
     if (!myFeaturedEntities) {
@@ -32,83 +28,41 @@ export function useMyFeaturedKnownEntitiesValue() {
 
     const myFeaturedKnownEntities: FeaturedKnownEntities = {
       bookmarks: {
-        collections: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'collection',
-          knownEntityFeature: 'bookmark',
-        }),
-        profiles: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'profile',
-          knownEntityFeature: 'bookmark',
-        }),
-        resources: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'resource',
-          knownEntityFeature: 'bookmark',
-        }),
+        collections: extractFeaturedIdentifiers('Collection', 'bookmark'),
+        profiles: extractFeaturedIdentifiers('Profile', 'bookmark'),
+        resources: extractFeaturedIdentifiers('Resource', 'bookmark'),
       },
       follows: {
-        collections: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'collection',
-          knownEntityFeature: 'follow',
-        }),
-        profiles: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'profile',
-          knownEntityFeature: 'follow',
-        }),
-        resources: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'resource',
-          knownEntityFeature: 'follow',
-        }),
+        collections: extractFeaturedIdentifiers('Collection', 'follow'),
+        profiles: extractFeaturedIdentifiers('Profile', 'follow'),
+        resources: extractFeaturedIdentifiers('Resource', 'follow'),
       },
       likes: {
-        collections: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'collection',
-          knownEntityFeature: 'like',
-        }),
-        profiles: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'profile',
-          knownEntityFeature: 'like',
-        }),
-        resources: extractKnownEntityKeysFeature({
-          featuredEntities: myFeaturedEntities,
-          knownEntity: 'resource',
-          knownEntityFeature: 'like',
-        }),
+        collections: extractFeaturedIdentifiers('Collection', 'like'),
+        profiles: extractFeaturedIdentifiers('Profile', 'like'),
+        resources: extractFeaturedIdentifiers('Resource', 'like'),
       },
     }
     return myFeaturedKnownEntities
-    function extractKnownEntityKeysFeature({
-      featuredEntities,
-      knownEntity,
-      knownEntityFeature,
-    }: {
-      featuredEntities: FeaturedEntity[]
-      knownEntity: KnownEntityTypes
-      knownEntityFeature: KnownEntityFeature
-    }) {
-      const checkers = {
-        collection: (_id: string) =>
-          collectionContext.collectionEntitiesId.isIdOfType(_id, 'Collection'),
-        resource: (_id: string) => resourceContext.resourceEntitiesId.isIdOfType(_id, 'Resource'),
-        profile: (_id: string) => profileContext.profileEntitiesId.isIdOfType(_id, 'Profile'),
-      }
-      return featuredEntities
-        .filter(({ _id, feature }) => knownEntityFeature === feature && checkers[knownEntity](_id))
-        .map(({ _id }) => getEntityIdentifiers(_id))
+    function extractFeaturedIdentifiers(
+      extractEntity: Capitalize<KnownEntityTypes>,
+      extractFeature: KnownEntityFeature,
+    ) {
+      const entitiesTool =
+        extractEntity === 'Collection'
+          ? CollectionEntitiesTools
+          : extractEntity === 'Resource'
+          ? EdResourceEntitiesTools
+          : WebUserEntitiesTools
+      const filteredByFeature = (myFeaturedEntities ?? []).filter(
+        ({ feature }) => extractFeature === feature,
+      )
+      return entitiesTool.mapToIdentifiersFilterType({
+        ids: filteredByFeature,
+        type: extractEntity as any, //typescript compiler gets confused with that dynamic `entitiesTool`
+      })
     }
-  }, [
-    collectionContext.collectionEntitiesId,
-    myFeaturedEntities,
-    profileContext.profileEntitiesId,
-    resourceContext.resourceEntitiesId,
-  ])
+  }, [myFeaturedEntities])
 
   const myFeaturedKnownEntitiesContext = useMemo<MyFeaturedKnownEntitiesContextT | null>(() => {
     if (!myFeaturedKnownEntities) {

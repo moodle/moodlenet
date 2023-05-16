@@ -4,6 +4,7 @@ import type {
   FeaturedEntity,
   KnownEntityFeature,
   Profile,
+  ProfileGetRpc,
   WebUserData,
 } from './types.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
@@ -12,24 +13,8 @@ export type WebUserExposeType = PkgExposeDef<{
   rpc: {
     'getCurrentClientSessionDataRpc'(): Promise<ClientSessionDataRpc | undefined>
     'loginAsRoot'(body: { rootPassword: string }): Promise<boolean>
-    'webapp/profile/edit'(body: Omit<Profile, 'avatarUrl' | 'backgroundUrl'>): Promise<
-      | {
-          data: Profile
-          canEdit: boolean
-          ownResources: { _key: string }[]
-          ownCollections: { _key: string }[]
-        }
-      | undefined
-    >
-    'webapp/profile/get'(body: { _key: string }): Promise<
-      | {
-          data: Profile
-          canEdit: boolean
-          ownResources: { _key: string }[]
-          ownCollections: { _key: string }[]
-        }
-      | undefined
-    >
+    'webapp/profile/edit'(body: Omit<Profile, 'avatarUrl' | 'backgroundUrl'>): Promise<void>
+    'webapp/profile/get'(body: { _key: string }): Promise<ProfileGetRpc | undefined>
     'webapp/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
     'webapp/roles/toggleIsAdmin'(
       body: { profileKey: string } | { userKey: string },
@@ -42,10 +27,6 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
     ): Promise<string | null>
-    'webapp/profile-owned-entities/:profileKey'(
-      body: void,
-      params: { profileKey: string },
-    ): Promise<{ _id: string }[]>
 
     // social features
     'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'(
