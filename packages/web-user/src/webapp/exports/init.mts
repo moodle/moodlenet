@@ -1,11 +1,17 @@
 import { AddToCollectionButtonByResourceContextContainer } from '@moodlenet/collection/webapp'
+import type { ResourcePageGeneralActionsAddonItem } from '@moodlenet/ed-resource/webapp'
 import { registerResourcePagePluginHook } from '@moodlenet/ed-resource/webapp'
-import type { HeaderAddonRegItem, PkgAddOns } from '@moodlenet/react-app/webapp'
+import type {
+  HeaderAddonRegItem,
+  PkgAddOns,
+  SettingsSectionItem,
+} from '@moodlenet/react-app/webapp'
 import {
   registerAppRoutes,
   registerMainAppPluginHook,
   registerMainHeaderPluginHook,
   registerSettingsPagePluginHook,
+  type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 
@@ -23,15 +29,19 @@ import { AuthCtx } from './webapp.mjs'
 registerAppRoutes(pkgRoutes)
 
 registerMainAppPluginHook(function useMainAppContext() {
-  return {
-    MainWrapper,
-  }
+  const mainAppPlugin = useMemo<MainAppPluginHookResult>(
+    () => ({
+      MainWrapper,
+    }),
+    [],
+  )
+  return mainAppPlugin
 })
 
 registerSettingsPagePluginHook(function useSettingsPagePluregisterAddOn({
   useSettingsSectionAddons,
 }) {
-  const addons = useMemo(
+  const addons = useMemo<PkgAddOns<SettingsSectionItem>>(
     () => ({
       default: {
         Content: UsersContainer,
@@ -45,12 +55,16 @@ registerSettingsPagePluginHook(function useSettingsPagePluregisterAddOn({
 
 registerResourcePagePluginHook(function useResourcePage({ useGeneralActionsAddons }) {
   const webUserCtx = useContext(AuthCtx)
-  useGeneralActionsAddons({
-    addToCollectionButton:
-      webUserCtx.isAuthenticated && !webUserCtx.clientSessionData.isRoot
+  const isAuthNotRoot = webUserCtx.isAuthenticated && !webUserCtx.clientSessionData.isRoot
+  const addOns = useMemo<PkgAddOns<ResourcePageGeneralActionsAddonItem>>(
+    () => ({
+      addToCollectionButton: isAuthNotRoot
         ? { Item: AddToCollectionButtonByResourceContextContainer }
         : null,
-  })
+    }),
+    [isAuthNotRoot],
+  )
+  useGeneralActionsAddons(addOns)
 })
 
 registerMainHeaderPluginHook(function useRegisterMainHeader({ useHeaderRightAddons }) {
