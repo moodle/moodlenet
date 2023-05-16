@@ -8,9 +8,10 @@ export type KnownEntityTypes = 'resource' | 'collection' | 'profile'
 export type ProfileGetRpc = {
   data: Profile
   canEdit: boolean
-  ownEntities: {
-    _id: string
-  }[]
+  ownKnownEntities: {
+    resources: { _key: string }[]
+    collections: { _key: string }[]
+  }
 }
 
 export type Profile = {
@@ -40,7 +41,7 @@ export type AuthDataRpc = {
   isRoot: false
   access: { isAdmin: boolean; isAuthenticated: boolean }
   myProfile: undefined | Profile
-} // | { isRoot: true }
+}
 
 export type ClientSessionDataRpc =
   | {

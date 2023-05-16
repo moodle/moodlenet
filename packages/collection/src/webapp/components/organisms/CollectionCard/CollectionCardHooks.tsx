@@ -2,6 +2,7 @@
 import { href } from '@moodlenet/react-app/common'
 import { useMemo } from 'react'
 import type { CollectionCardData } from '../../../../common/types.mjs'
+import { getCollectionHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { useMainHook } from '../../../MainHooks.js'
 import type { CollectionCardProps } from './CollectionCard.js'
 
@@ -11,13 +12,14 @@ export const useCollectionCardProps = (collectionKey: string): CollectionCardPro
   const collectionProps = useMemo(() => {
     if (!_mainProps) return null
     const { props, actions } = _mainProps
+
     const { data: dataProps, state, access, form } = props
     const { collectionId, imageUrl } = dataProps
     const data: CollectionCardData = {
       collectionId,
       imageUrl,
       title: form.title,
-      collectionHref: href('Pages/Collection/Logged In'),
+      collectionHref: href(getCollectionHomePageRoutePath({ _key: collectionKey })),
     }
     const propsPage: CollectionCardProps = {
       mainColumnItems: [],
@@ -30,7 +32,7 @@ export const useCollectionCardProps = (collectionKey: string): CollectionCardPro
     }
 
     return propsPage
-  }, [_mainProps])
+  }, [_mainProps, collectionKey])
 
   return collectionProps
 }

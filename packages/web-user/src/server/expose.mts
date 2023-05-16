@@ -1,9 +1,13 @@
+import { Collection } from '@moodlenet/collection/server'
 import { RpcStatus } from '@moodlenet/core'
+import { Resource } from '@moodlenet/ed-resource/server'
 import { webImageResizer } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
+import { isCreatorOfCurrentEntity, queryEntities, toaql } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
-import type { ClientSessionDataRpc, Profile, WebUserData } from '../common/types.mjs'
+import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
+import { WebUserEntitiesTools } from './entities.mjs'
 import { publicFiles, publicFilesHttp } from './init.mjs'
 import { shell } from './shell.mjs'
 import type { ProfileDataType } from './types.mjs'
@@ -82,12 +86,37 @@ export const expose = await shell.expose<WebUserExposeType>({
         if (!profileRecord) {
           return
         }
-        const data: Profile = profileDoc2Profile(profileRecord.entity)
-        return {
+        const data = profileDoc2Profile(profileRecord.entity)
+        const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
+          _key,
+          type: 'Profile',
+        })
+        const collections = (
+          await (
+            await shell.call(queryEntities)(Collection.entityClass, {
+              preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
+            })
+          ).all()
+        ).map(({ entity: { _key } }) => ({ _key }))
+
+        const resources = (
+          await (
+            await shell.call(queryEntities)(Resource.entityClass, {
+              preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
+            })
+          ).all()
+        ).map(({ entity: { _key } }) => ({ _key }))
+
+        const profileGetRpc: ProfileGetRpc = {
           canEdit: !!profileRecord.access.u,
           data,
-          ownEntities: profileRecord.entity.ownEntities,
+          ownKnownEntities: {
+            collections,
+            resources,
+          },
         }
+
+        return profileGetRpc
       },
     },
     'webapp/roles/searchUsers': {

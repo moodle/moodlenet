@@ -48,6 +48,12 @@ export function isCurrentUserCreatorOfCurrentEntity(): AqlVal<boolean> {
   return `( ${currentEntityMeta}.creator.entityIdentifier == ${currentUserIdentifier} )`
 }
 
+export function isCreatorOfCurrentEntity(
+  creatorEntityIdentifier: AqlVal<EntityIdentifier>,
+): AqlVal<boolean> {
+  return `( ${currentEntityMeta}.creator.entityIdentifier == ${creatorEntityIdentifier} )`
+}
+
 export function isCurrentUserEntity(): AqlVal<boolean> {
   return `( ${currentEntityKey} == ${currentUserIdentifier}._key && ${currentEntityMeta}.entityClass == ${currentUserIdentifier}.entityClass )`
 }

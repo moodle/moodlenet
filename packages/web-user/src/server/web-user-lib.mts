@@ -27,7 +27,6 @@ export async function createWebUser(createRequest: CreateRequest) {
     avatarImage: undefined,
     backgroundImage: undefined,
     location: '',
-    ownEntities: [],
     organizationName: '',
     siteUrl: '',
     ...profileData,
@@ -115,6 +114,7 @@ export async function getWebUserByProfileKey({
   const foundUser = await foundUsersCursor.next()
   return foundUser
 }
+
 export async function getWebUser({
   _key,
 }: {
@@ -188,6 +188,7 @@ export async function searchUsers(search: string): Promise<(WebUserDataType & Do
 export function getProfileImageLogicalFilename(profileKey: string) {
   return `profile-image/${profileKey}`
 }
+
 export function getProfileAvatarLogicalFilename(profileKey: string) {
   return `profile-avatar/${profileKey}`
 }
