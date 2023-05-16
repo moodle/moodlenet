@@ -32,7 +32,7 @@ export type ProfileProps = {
   validationSchema: SchemaOf<ProfileFormValues>
 
   resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardProps> }[]
-  collectionCardPropsList:{ key: string; resourceCardProps: ProxyProps<CollectionCardProps> }[]
+  collectionCardPropsList: { key: string; collectionCardProps: ProxyProps<CollectionCardProps> }[]
   createResource(): void
   createCollection(): void
   overallCardItems: OverallCardItem[]
