@@ -1,8 +1,8 @@
 import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 
-// ALE:
 // TODO: ProfileEntity _meta { webUserKey }
+
 export type ProfileEntity = EntityDocument<ProfileDataType>
 export type ProfileDataType = {
   displayName: string
@@ -12,7 +12,6 @@ export type ProfileDataType = {
   siteUrl: string | undefined | null
   backgroundImage: ImageField | undefined | null
   avatarImage: ImageField | undefined | null
-  ownEntities: { _id: string }[]
 }
 type ImageField =
   | { kind: 'file'; directAccessId: string }
