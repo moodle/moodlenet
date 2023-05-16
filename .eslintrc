@@ -39,7 +39,7 @@
       {
         "ts-ignore": { "descriptionFormat": "^: TS\\d+ because .+$" },
         "ts-nocheck": { "descriptionFormat": "^: TS\\d+ because .+$" },
-        "ts-nocheck": { "descriptionFormat": "^: TS\\d+ because .+$" }
+        "ts-expect-error": { "descriptionFormat": "^: TS\\d+ because .+$" }
       }
     ],
     "@typescript-eslint/consistent-type-imports": [
