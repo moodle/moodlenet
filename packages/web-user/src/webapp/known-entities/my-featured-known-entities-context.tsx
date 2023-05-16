@@ -48,19 +48,23 @@ export function useMyFeaturedKnownEntitiesValue() {
       extractEntity: Capitalize<KnownEntityTypes>,
       extractFeature: KnownEntityFeature,
     ) {
-      const entitiesTool =
-        extractEntity === 'Collection'
-          ? CollectionEntitiesTools
-          : extractEntity === 'Resource'
-          ? EdResourceEntitiesTools
-          : WebUserEntitiesTools
       const filteredByFeature = (myFeaturedEntities ?? []).filter(
         ({ feature }) => extractFeature === feature,
       )
-      return entitiesTool.mapToIdentifiersFilterType({
-        ids: filteredByFeature,
-        type: extractEntity as any, //typescript compiler gets confused with that dynamic `entitiesTool`
-      })
+      return extractEntity === 'Collection'
+        ? CollectionEntitiesTools.mapToIdentifiersFilterType({
+            ids: filteredByFeature,
+            type: extractEntity,
+          })
+        : extractEntity === 'Resource'
+        ? EdResourceEntitiesTools.mapToIdentifiersFilterType({
+            ids: filteredByFeature,
+            type: extractEntity,
+          })
+        : WebUserEntitiesTools.mapToIdentifiersFilterType({
+            ids: filteredByFeature,
+            type: extractEntity,
+          })
     }
   }, [myFeaturedEntities])
 
