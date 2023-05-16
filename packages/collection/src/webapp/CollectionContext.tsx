@@ -1,21 +1,15 @@
-import type { MySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
-import { useMySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useContext, useMemo } from 'react'
-import type { CollectionEntityNames } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { MainContext } from './MainContext.js'
-import { shell } from './shell.mjs'
 
 export type CollectionContextT = {
   createCollection(): Promise<{ homePath: string }>
-  collectionEntitiesId: MySystemEntitiesId<CollectionEntityNames>
 }
 export const CollectionContext = createContext<CollectionContextT>(null as any)
 
 export function useCollectionContextValue() {
   const { rpcCaller } = useContext(MainContext)
-  const collectionEntitiesId = useMySystemEntitiesId<CollectionEntityNames>(shell)
 
   const createCollection = useCallback<CollectionContextT['createCollection']>(
     async function createCollection() {
@@ -28,10 +22,9 @@ export function useCollectionContextValue() {
   const collectionContext = useMemo<CollectionContextT>(() => {
     const collectionContext: CollectionContextT = {
       createCollection,
-      collectionEntitiesId,
     }
     return collectionContext
-  }, [createCollection, collectionEntitiesId])
+  }, [createCollection])
 
   return collectionContext
 }
