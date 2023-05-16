@@ -86,7 +86,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         return {
           canEdit: !!profileRecord.access.u,
           data,
-          ownEntities: [],
+          ownEntities: profileRecord.entity.ownEntities,
         }
       },
     },
