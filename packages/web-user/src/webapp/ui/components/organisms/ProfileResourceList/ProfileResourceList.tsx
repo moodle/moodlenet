@@ -11,8 +11,7 @@ export type ProfileResourceListProps = {
   createResource(): void
   canEdit: boolean
 }
-1504062
-1504094
+
 export const ProfileResourceList: FC<ProfileResourceListProps> = ({
   resourceCardPropsList,
   createResource,
