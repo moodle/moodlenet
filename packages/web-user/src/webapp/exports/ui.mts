@@ -1,4 +1,4 @@
-// @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container|*Context)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
+// @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container|*Context|*Route)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../ui/assets/data/images.js'
 export * from '../ui/components/atoms/BookmarkButton/BookmarkButton.js'
 export * from '../ui/components/atoms/FollowButton/FollowButton.js'
@@ -22,9 +22,7 @@ export * from '../ui/components/organisms/Roles/Users.js'
 export * from '../ui/components/pages/Access/Login/Login.js'
 export * from '../ui/components/pages/Access/RootLogin/RootLogin.js'
 export * from '../ui/components/pages/Access/Signup/Signup.js'
-export * from '../ui/components/pages/Profile/MyProfilePageRoute.js'
 export * from '../ui/components/pages/Profile/Profile.js'
-export * from '../ui/components/pages/Profile/ProfilePageRoute.js'
 export * from '../ui/helpers/factories.js'
 export * from '../ui/helpers/utilities.js'
 // @endindex
