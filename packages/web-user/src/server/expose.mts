@@ -73,14 +73,6 @@ export const expose = await shell.expose<WebUserExposeType>({
         if (!patchRecord) {
           return
         }
-        const data = profileDoc2Profile(patchRecord.entity)
-
-        return {
-          data,
-          canEdit: !!patchRecord.access.u,
-          ownCollections: [],
-          ownResources: [],
-        }
       },
     },
     'webapp/profile/get': {
@@ -94,8 +86,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         return {
           canEdit: !!profileRecord.access.u,
           data,
-          ownCollections: [],
-          ownResources: [],
+          ownEntities: [],
         }
       },
     },
@@ -216,12 +207,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         return { count: 10 }
       },
     },
-    'webapp/profile-owned-entities/:profileKey': {
-      guard: () => void 0,
-      async fn(/* _, { profileKey } */) {
-        return []
-      },
-    },
+
     'webapp/send-message-to-user/:profileKey': {
       guard: () => void 0,
       async fn(/* _,{profileKey} */) {

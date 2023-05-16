@@ -1,12 +1,20 @@
-import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection/webapp'
-import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
+import {
+  CollectionContext,
+  CollectionEntitiesTools,
+  useCollectionCardProps,
+} from '@moodlenet/collection/webapp'
+import {
+  EdResourceEntitiesTools,
+  ResourceContext,
+  useResourceCardProps,
+} from '@moodlenet/ed-resource/webapp'
 import { href } from '@moodlenet/react-app/common'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { profileFormValidationSchema } from '../../../../../common/profile/data.mjs'
-import type { Profile } from '../../../../../common/types.mjs'
+import type { ProfileGetRpc } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
 import { shell } from '../../../../shell.mjs'
 import type { ProfileProps } from './Profile.js'
@@ -24,12 +32,7 @@ export const useProfileProps = ({
   const collectionCtx = useContext(CollectionContext)
 
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
-  const [profileResponse, setProfileResponse] = useState<{
-    data: Profile
-    canEdit: boolean
-    ownResources: { _key: string }[]
-    ownCollections: { _key: string }[]
-  }>()
+  const [profileGetRpc, setProfileGetRpc] = useState<ProfileGetRpc>()
 
   // const toggleFollow = useCallback<ProfileProps['actions']['toggleFollow']>(async () => {
   //   throw new Error('not Implemented')
@@ -38,7 +41,7 @@ export const useProfileProps = ({
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
 
-      const res = await shell.rpc.me['webapp/profile/edit']({
+      await shell.rpc.me['webapp/profile/edit']({
         _key: profileKey,
         displayName,
         aboutMe,
@@ -46,10 +49,6 @@ export const useProfileProps = ({
         organizationName,
         siteUrl,
       })
-      // if (!res) {
-      //   return
-      // }
-      setProfileResponse(res)
     },
     [profileKey],
   )
@@ -59,25 +58,24 @@ export const useProfileProps = ({
       if (!res) {
         return
       }
-      setProfileResponse(res)
+      setProfileGetRpc(res)
     })
   }, [profileKey])
 
   const mainLayoutProps = useMainLayoutProps()
 
   const profileProps = useMemo<ProfileProps | undefined>(() => {
-    if (!profileResponse) {
+    if (!profileGetRpc) {
       return
     }
     const isAdmin = !!clientSessionData?.isAdmin
     const isCreator = clientSessionData?.myProfile?._key === profileKey
 
-    // KEY LISTS FROM SERVER
-    profileResponse.ownCollections
-    profileResponse.ownResources
-
     const resourceCardPropsList: ProfileProps['resourceCardPropsList'] =
-      profileResponse.ownResources.map(({ _key }) => {
+      EdResourceEntitiesTools.mapToIdentifiersFilterType({
+        type: 'Resource',
+        ids: profileGetRpc.ownEntities,
+      }).map(({ entityIdentifier: { _key } }) => {
         return {
           key: _key,
           resourceCardProps: proxyWith(function usePropProxy() {
@@ -86,7 +84,10 @@ export const useProfileProps = ({
         }
       })
     const collectionCardPropsList: ProfileProps['collectionCardPropsList'] =
-      profileResponse.ownCollections.map(({ _key }) => {
+      CollectionEntitiesTools.mapToIdentifiersFilterType({
+        type: 'Collection',
+        ids: profileGetRpc.ownEntities,
+      }).map(({ entityIdentifier: { _key } }) => {
         return {
           key: _key,
           collectionCardProps: proxyWith(function usePropProxy() {
@@ -97,7 +98,7 @@ export const useProfileProps = ({
     const props: ProfileProps = {
       mainLayoutProps,
       access: {
-        canEdit: profileResponse.canEdit,
+        canEdit: profileGetRpc.canEdit,
         isAdmin,
         isAuthenticated,
         isCreator,
@@ -107,9 +108,9 @@ export const useProfileProps = ({
       },
       data: {
         userId: '12sadsadsad', //@ETTO Needs to be implemented
-        displayName: profileResponse.data.displayName, //@ETTO Needs to be implemented
-        avatarUrl: profileResponse.data.avatarUrl,
-        backgroundUrl: profileResponse.data.backgroundUrl,
+        displayName: profileGetRpc.data.displayName, //@ETTO Needs to be implemented
+        avatarUrl: profileGetRpc.data.avatarUrl,
+        backgroundUrl: profileGetRpc.data.backgroundUrl,
         profileHref: href('/profile'), //@ETTO Needs to be implemented
       },
       state: {
@@ -152,7 +153,7 @@ export const useProfileProps = ({
       mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       sideColumnItems: [], //@ETTO Needs to be implemented - create registry for it
       overallCardItems: [],
-      profileForm: profileResponse.data,
+      profileForm: profileGetRpc.data,
       // state: {
       //   followed: false,
       // },
@@ -168,7 +169,7 @@ export const useProfileProps = ({
     mainLayoutProps,
     nav,
     profileKey,
-    profileResponse,
+    profileGetRpc,
     resourceCtx,
   ])
   return profileProps

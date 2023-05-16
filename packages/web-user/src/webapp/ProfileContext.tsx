@@ -1,24 +1,14 @@
-import type { MySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
-import { useMySystemEntitiesId } from '@moodlenet/system-entities/webapp/rt'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useMemo } from 'react'
-import type { WebUserEntityNames } from '../common/types.mjs'
-import { shell } from './shell.mjs'
 
-export type ProfileContextT = {
-  profileEntitiesId: MySystemEntitiesId<WebUserEntityNames>
-}
+export type ProfileContextT = { null: null }
 export const ProfileContext = createContext<ProfileContextT>(null as any)
 
 export function useProfileContextValue() {
-  const profileEntitiesId = useMySystemEntitiesId<WebUserEntityNames>(shell)
-
   const profileContext = useMemo<ProfileContextT>(() => {
-    const profileContext: ProfileContextT = {
-      profileEntitiesId,
-    }
+    const profileContext: ProfileContextT = { null: null }
     return profileContext
-  }, [profileEntitiesId])
+  }, [])
 
   return profileContext
 }
