@@ -4,12 +4,12 @@ import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { ResourceCardProps } from '../../ResourceCard/ResourceCard.js'
+import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
 import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './LandingResourceList.scss'
 
 export type LandingResourceListProps = {
-  resourceCardPropsList: ResourceCardProps[]
+  resourceCardPropsList: ResourceCardPropsData[]
   searchResourcesHref: Href
 }
 

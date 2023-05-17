@@ -32,12 +32,15 @@ export const LoggedOut: ResourceStory = () => {
 export const LoggedIn: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {},
-    state: {
-      liked: true,
-      bookmarked: true,
-    },
+    state: {},
     actions: {},
     access: {},
+    likeButtonProps: {
+      liked: true,
+    },
+    bookmarkButtonProps: {
+      bookmarked: true,
+    },
   })
   return <Resource {...props} />
 }
@@ -47,7 +50,6 @@ export const Creator: ResourceStory = () => {
     data: {},
     state: {
       isPublished: true,
-      liked: false,
     },
     actions: {},
     access: {
@@ -55,6 +57,12 @@ export const Creator: ResourceStory = () => {
       canEdit: true,
       canPublish: true,
       canDelete: true,
+    },
+    likeButtonProps: {
+      liked: false,
+    },
+    bookmarkButtonProps: {
+      bookmarked: false,
     },
   })
   return <Resource {...props} />
