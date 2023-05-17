@@ -37,6 +37,7 @@ import {
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
+import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
 import { useState } from 'react'
@@ -44,8 +45,6 @@ import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
-
-const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -120,7 +119,13 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
 ]
 
 export const useResourceStoryProps = (
-  overrides?: PartialDeep<ResourceProps & { isAuthenticated: boolean }>,
+  overrides?: PartialDeep<
+    ResourceProps & {
+      isAuthenticated: boolean
+      bookmarkButtonProps: BookmarkButtonProps
+      likeButtonProps: LikeButtonProps
+    }
+  >,
   //   {
   //   props?: Partial<ResourceProps>
   //   resource?: Partial<ResourceType>
@@ -165,9 +170,6 @@ export const useResourceStoryProps = (
 
   const state: ResourceStateProps = {
     isPublished: true,
-    liked: true,
-    numLikes: 23,
-    bookmarked: false,
     ...overrides?.state,
   }
 
@@ -184,8 +186,6 @@ export const useResourceStoryProps = (
     unpublish: action('unpublish'),
     setContent: setContent,
     setImage: action('set image'),
-    toggleLike: action('toggleLike'),
-    toggleBookmark: action('toggleBookmark'),
     ...overrides?.actions,
   }
 
@@ -194,10 +194,25 @@ export const useResourceStoryProps = (
     isCreator: false,
     canDelete: false,
     canPublish: false,
-    canLike: true,
-    canBookmark: true,
-    isAuthenticated: true,
     ...overrides?.access,
+  }
+
+  const likeButtonProps: LikeButtonProps = {
+    liked: true,
+    canLike: true,
+    numLikes: 10,
+    toggleLike: action('toggleLike'),
+    isCreator: false,
+    ...overrides?.bookmarkButtonProps,
+    isAuthenticated,
+  }
+
+  const bookmarkButtonProps: BookmarkButtonProps = {
+    bookmarked: true,
+    canBookmark: true,
+    toggleBookmark: action('toggleBookmark'),
+    ...overrides?.bookmarkButtonProps,
+    isAuthenticated,
   }
 
   const isPublished =
@@ -210,30 +225,14 @@ export const useResourceStoryProps = (
     topRightHeaderItems: [
       isPublished
         ? {
-            Item: () => (
-              <LikeButton
-                canLike={access.canLike}
-                liked={state.liked}
-                isAuthenticated={access.isAuthenticated}
-                isCreator={access.isCreator}
-                toggleLike={actions.toggleLike}
-                numLikes={state.numLikes}
-              />
-            ),
+            Item: () => <LikeButton {...likeButtonProps} />,
 
             key: 'like-button',
           }
         : null,
       isPublished
         ? {
-            Item: () => (
-              <BookmarkButton
-                canBookmark={access.canBookmark}
-                bookmarked={state.bookmarked}
-                isAuthenticated={access.isAuthenticated}
-                toggleBookmark={actions.toggleBookmark}
-              />
-            ),
+            Item: () => <BookmarkButton {...bookmarkButtonProps} />,
             key: 'bookmark-button',
           }
         : null,
