@@ -1,51 +1,25 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import type { ComponentType } from 'react'
 import { useMemo } from 'react'
-import { usePkgAddOns } from '../../../../../web-lib/add-ons.js'
+import { createHookPlugin } from '../../../../../web-lib/plugins.mjs'
 import type { MainFooterProps } from './MainFooter.js'
-export type FooterComponentRegItem = { Component: ComponentType }
+export type FooterComponentRegItem = Omit<AddonItem, 'key'>
+
+export const FooterPlugins = createHookPlugin<{
+  leftComponent: FooterComponentRegItem
+  centerComponent: FooterComponentRegItem
+  rightComponent: FooterComponentRegItem
+}>({ centerComponent: null, leftComponent: null, rightComponent: null })
 
 export const useFooterProps = (): MainFooterProps => {
-  const [footerLeftComponents /* , _registerFooterLeftComponents*/] =
-    usePkgAddOns<FooterComponentRegItem>('FooterLeftComponents')
-  const [footerCenterComponents /* , _registerFooterCenterComponents*/] =
-    usePkgAddOns<FooterComponentRegItem>('FooterCenterComponents')
-  const [footerRightComponents /* , _registerFooterRightComponents*/] =
-    usePkgAddOns<FooterComponentRegItem>('FooterRightComponents')
-
-  const leftItems = useMemo(() => {
-    return footerLeftComponents.map<AddonItem>(({ addOn: { Component }, key }) => {
-      return {
-        Item: Component,
-        key,
-      }
-    })
-  }, [footerLeftComponents])
-
-  const centerItems = useMemo(() => {
-    return footerCenterComponents.map<AddonItem>(({ addOn: { Component }, key }) => {
-      return {
-        Item: Component,
-        key,
-      }
-    })
-  }, [footerCenterComponents])
-
-  const rightItems = useMemo(() => {
-    return footerRightComponents.map<AddonItem>(({ addOn: { Component }, key }) => {
-      return {
-        Item: Component,
-        key,
-      }
-    })
-  }, [footerRightComponents])
+  const [addons] = FooterPlugins.useHookPlugin()
 
   const mainFooterProps = useMemo<MainFooterProps>(() => {
-    return {
-      leftItems,
-      centerItems,
-      rightItems,
+    const mainFooterProps: MainFooterProps = {
+      leftItems: addons.leftComponent,
+      centerItems: addons.centerComponent,
+      rightItems: addons.rightComponent,
     }
-  }, [leftItems, centerItems, rightItems])
+    return mainFooterProps
+  }, [addons.leftComponent, addons.centerComponent, addons.rightComponent])
   return mainFooterProps
 }

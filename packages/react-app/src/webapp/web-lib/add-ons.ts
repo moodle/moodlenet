@@ -1,7 +1,8 @@
 import type { PkgIdentifier } from '@moodlenet/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-export type PkgAddOnsHandle<AddOnType> = ReturnType<typeof usePkgAddOns<AddOnType>>
+export type UsePkgAddOns<AddOnType> = typeof usePkgAddOns<AddOnType>
+export type PkgAddOnsHandle<AddOnType> = ReturnType<UsePkgAddOns<AddOnType>>
 export type UseRegisterAddOn<AddOnType> = ReturnType<PkgAddOnsHandle<AddOnType>[1]>
 export type PkgAddOnsEntry<AddOnType> = {
   pkgId: PkgIdentifier
@@ -9,7 +10,13 @@ export type PkgAddOnsEntry<AddOnType> = {
 }
 export type PkgAddOns<AddOnType> = { [pkgAddOnName: string]: AddOnType | null | undefined }
 type PkgAddOnsEntries<AddOnType> = { [pkgName: string]: PkgAddOnsEntry<AddOnType> }
-type PkgAddOn<AddOnType> = { pkgId: PkgIdentifier; name: string; addOn: AddOnType; key: string }
+export type PkgAddOn<AddOnType> = {
+  pkgId: PkgIdentifier
+  name: string
+  addOn: AddOnType
+  key: string
+}
+
 export function usePkgAddOns<AddOnType>(addOnName = 'unnamed') {
   const [addOnsMap, setAddOnsMap] = useState<PkgAddOnsEntries<AddOnType>>({})
 

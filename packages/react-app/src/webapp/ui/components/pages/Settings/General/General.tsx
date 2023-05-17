@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import type { AddonItem} from '@moodlenet/component-library';
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import type { OrganizationData } from '@moodlenet/organization/common'
 import type { useFormik } from 'formik'
@@ -12,10 +11,7 @@ export type GeneralProps = {
   updateExtensions?: () => void
 }
 
-export const GeneralMenu: AddonItem = {
-  Item: () => <span>General</span>,
-  key: 'menu-general',
-}
+export const GeneralMenu = () => <span>General</span>
 
 export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtensions }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating

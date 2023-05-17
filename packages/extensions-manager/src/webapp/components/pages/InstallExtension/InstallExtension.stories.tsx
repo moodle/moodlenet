@@ -113,13 +113,8 @@ export const SettingsInstallItem: FC = () => (
 
 export const useElements = (): SettingsItem => {
   return {
-    Menu: {
-      Item: InstallExtensionMenu,
-      key: 'menu-install-extensions',
-    },
-    Content: {
-      Item: SettingsInstallItem,
-      key: 'content-install-extension',
-    },
+    Menu: InstallExtensionMenu,
+    Content: SettingsInstallItem,
+    key: 'content-install-extension',
   }
 }

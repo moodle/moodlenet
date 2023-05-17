@@ -28,6 +28,7 @@ const AppearanceItem: FC = () => <Appearance {...useAppearanceStoryProps()} />
 export const useElements = (): SettingsItem => {
   return {
     Menu: AppearanceMenu,
-    Content: { Item: AppearanceItem, key: 'content-appearance' },
+    Content: AppearanceItem,
+    key: 'content-appearance',
   }
 }

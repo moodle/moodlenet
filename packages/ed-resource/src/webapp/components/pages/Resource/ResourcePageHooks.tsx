@@ -1,11 +1,8 @@
 import type { AddonItem, OptionItemProp } from '@moodlenet/component-library'
-import type { PkgIdentifier } from '@moodlenet/core'
-import type { UseRegisterAddOn } from '@moodlenet/react-app/webapp'
-import { useMainLayoutProps, usePkgAddOns } from '@moodlenet/react-app/webapp'
+import { createHookPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import { maxUploadSize } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
-import { shell } from '../../../shell.mjs'
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import type { ResourceProps } from './Resource.js'
 
@@ -20,23 +17,9 @@ export const collectionTextOptionProps: OptionItemProp[] = [
   { label: 'Sociology', value: 'Sociology' },
   { label: 'English Literature', value: 'English Literature' },
 ]
-
-// export type ResourcePagePluginWrapper = ComponentType<PropsWithChildren>
-export type ResourcePagePluginHookResult = void //{ MainWrapper?: ResourcePagePluginWrapper }
-export type ResourcePagePluginHook = (_: {
-  resourceKey: string
-  useGeneralActionsAddons: UseRegisterAddOn<ResourcePageGeneralActionsAddonItem>
-}) => void | ResourcePagePluginHookResult
-
-const resourcePagePluginPlugins: {
-  resourcePagePluginHook: ResourcePagePluginHook
-  pkgId: PkgIdentifier
-}[] = []
-
-export function registerResourcePagePluginHook(resourcePagePluginHook: ResourcePagePluginHook) {
-  const pkgId = shell.init.getCurrentInitPkg()
-  resourcePagePluginPlugins.push({ resourcePagePluginHook, pkgId })
-}
+export const ResourcePagePlugins = createHookPlugin<{
+  generalAction: ResourcePageGeneralActionsAddonItem
+}>({ generalAction: null })
 
 type ResourcePageHookArg = {
   resourceKey: string
@@ -45,25 +28,8 @@ type ResourcePageHookArg = {
 export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const mainLayoutProps = useMainLayoutProps()
   const _baseProps = useResourceBaseProps({ resourceKey })
-  const [resourcePageGeneralActions, getRegisterResourcePageGeneralActions] =
-    usePkgAddOns<ResourcePageGeneralActionsAddonItem>('ResourcePageGeneralActions')
 
-  resourcePagePluginPlugins.forEach(({ pkgId, resourcePagePluginHook }) => {
-    resourcePagePluginHook({
-      resourceKey,
-      useGeneralActionsAddons: getRegisterResourcePageGeneralActions(pkgId),
-    })
-  })
-
-  const generalActionsItems = useMemo<ResourceProps['generalActionsItems']>(() => {
-    const items: ResourceProps['generalActionsItems'] = resourcePageGeneralActions.map<AddonItem>(
-      ({ addOn: { Item }, key }) => ({
-        Item,
-        key,
-      }),
-    )
-    return items
-  }, [resourcePageGeneralActions])
+  const [addons] = ResourcePagePlugins.useHookPlugin()
 
   return useMemo<ResourceProps | null>((): ResourceProps | null => {
     if (!_baseProps) return null
@@ -87,7 +53,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
       mainColumnItems: [],
       sideColumnItems: [],
       extraDetailsItems: [],
-      generalActionsItems,
+      generalActionsItems: addons.generalAction,
       data,
       resourceForm,
       state,
@@ -96,5 +62,5 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
       fileMaxSize: maxUploadSize,
       isSaving,
     }
-  }, [_baseProps, mainLayoutProps, generalActionsItems])
+  }, [_baseProps, mainLayoutProps, addons.generalAction])
 }
