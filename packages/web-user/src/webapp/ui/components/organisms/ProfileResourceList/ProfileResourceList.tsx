@@ -1,5 +1,6 @@
 import { NoteAdd } from '@material-ui/icons'
 import { ListCard, PrimaryButton } from '@moodlenet/component-library'
+import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
@@ -11,8 +12,7 @@ export type ProfileResourceListProps = {
   createResource(): void
   canEdit: boolean
 }
-1504062
-1504094
+
 export const ProfileResourceList: FC<ProfileResourceListProps> = ({
   resourceCardPropsList,
   createResource,
