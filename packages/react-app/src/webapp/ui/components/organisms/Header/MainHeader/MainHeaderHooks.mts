@@ -6,10 +6,10 @@ import type { MainHeaderProps } from './MainHeader.js'
 export type HeaderAddonRegItem = Omit<AddonItem, 'key'>
 
 export const HeaderPlugins = createHookPlugin<{
-  rightAddons: HeaderAddonRegItem
-  centerAddons: HeaderAddonRegItem
-  leftAddons: HeaderAddonRegItem
-}>({ centerAddons: null, leftAddons: null, rightAddons: null })
+  rightItems: HeaderAddonRegItem
+  centerItems: HeaderAddonRegItem
+  leftItems: HeaderAddonRegItem
+}>({ centerItems: null, leftItems: null, rightItems: null })
 
 export const useHeaderProps = (): MainHeaderProps => {
   const [addons] = HeaderPlugins.useHookPlugin()
@@ -19,12 +19,12 @@ export const useHeaderProps = (): MainHeaderProps => {
   const mainHeaderProps = useMemo<MainHeaderProps>(() => {
     const mainHeaderProps: MainHeaderProps = {
       headerTitleProps,
-      centerItems: addons.centerAddons,
-      leftItems: addons.leftAddons,
-      rightItems: addons.rightAddons,
+      centerItems: addons.centerItems,
+      leftItems: addons.leftItems,
+      rightItems: addons.rightItems,
       search: () => undefined, //TODO //@ETTO: to be changed ASAP
     }
     return mainHeaderProps
-  }, [addons.centerAddons, addons.leftAddons, addons.rightAddons, headerTitleProps])
+  }, [addons.centerItems, addons.leftItems, addons.rightItems, headerTitleProps])
   return mainHeaderProps
 }

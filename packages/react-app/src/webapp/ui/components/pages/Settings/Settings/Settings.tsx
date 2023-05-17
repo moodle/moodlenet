@@ -1,14 +1,13 @@
-import type { FC } from 'react'
+import type { ComponentType, FC } from 'react'
 import { useState } from 'react'
 import type { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
 import MainLayout from '../../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import type { AddonItem } from '@moodlenet/component-library'
 import { Card } from '@moodlenet/component-library'
 import './Settings.scss'
 
-export type SettingsItem = { Content: AddonItem; Menu: AddonItem }
+export type SettingsItem = { key: string; Content: ComponentType; Menu: ComponentType }
 export type SettingsProps = {
   mainLayoutProps: MainLayoutProps
   settingsItems: SettingsItem[]
@@ -35,7 +34,7 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
 
                 return (
                   <div
-                    key={settingsEntry.Menu.key}
+                    key={settingsEntry.key}
                     className={`section ${isCurrent ? 'selected' : ''}`}
                     onClick={onClick}
                   >
@@ -43,7 +42,7 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
                       <div className={`border ${isCurrent ? 'selected' : ''}`} />
                     </div>
                     <div className={`content ${isCurrent ? 'selected' : ''}`}>
-                      {<settingsEntry.Menu.Item />}
+                      {<settingsEntry.Menu />}
                     </div>
                   </div>
                 )
@@ -52,8 +51,8 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
           </div>
         }
         {currSettingsItem && (
-          <div className="content" key={currSettingsItem.Content.key}>
-            {currSettingsItem ? <currSettingsItem.Content.Item /> : <></>}
+          <div className="content" key={currSettingsItem.key}>
+            {currSettingsItem ? <currSettingsItem.Content /> : <></>}
             {/* {ctxElement} */}
           </div>
         )}

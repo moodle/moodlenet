@@ -1,6 +1,6 @@
 import { AddToCollectionButtonByResourceContextContainer } from '@moodlenet/collection/webapp'
 import type { ResourcePageGeneralActionsAddonItem } from '@moodlenet/ed-resource/webapp'
-import { registerResourcePagePluginHook } from '@moodlenet/ed-resource/webapp'
+import { ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
 import type {
   HeaderAddonRegItem,
   PkgAddOns,
@@ -10,7 +10,7 @@ import {
   HeaderPlugins,
   registerAppRoutes,
   registerMainAppPluginHook,
-  registerSettingsPagePluginHook,
+  SettingsPagePlugins,
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
@@ -39,9 +39,7 @@ registerMainAppPluginHook(function useMainAppContext() {
   return mainAppPlugin
 })
 
-registerSettingsPagePluginHook(function useSettingsPagePluregisterAddOn({
-  useSettingsSectionAddons,
-}) {
+SettingsPagePlugins.register(function useSettingsPagePluregisterAddOn({ useSettingsSection }) {
   const addons = useMemo<PkgAddOns<SettingsSectionItem>>(
     () => ({
       default: {
@@ -51,10 +49,10 @@ registerSettingsPagePluginHook(function useSettingsPagePluregisterAddOn({
     }),
     [],
   )
-  useSettingsSectionAddons(addons)
+  useSettingsSection(addons)
 })
 
-registerResourcePagePluginHook(function useResourcePage({ useGeneralActionsAddons }) {
+ResourcePagePlugins.register(function useResourcePage({ useGeneralAction }) {
   const webUserCtx = useContext(AuthCtx)
   const isAuthNotRoot = webUserCtx.isAuthenticated && !webUserCtx.clientSessionData.isRoot
   const addOns = useMemo<PkgAddOns<ResourcePageGeneralActionsAddonItem>>(
@@ -65,10 +63,10 @@ registerResourcePagePluginHook(function useResourcePage({ useGeneralActionsAddon
     }),
     [isAuthNotRoot],
   )
-  useGeneralActionsAddons(addOns)
+  useGeneralAction(addOns)
 })
 
-HeaderPlugins.register(function useRegisterMainHeader({ useRightAddons }) {
+HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const isRoot = !!clientSessionData?.isRoot
 
@@ -84,5 +82,5 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightAddons }) {
         }
   }, [isRoot, isAuthenticated])
 
-  useRightAddons(headerRightAddons)
+  useRightItems(headerRightAddons)
 })

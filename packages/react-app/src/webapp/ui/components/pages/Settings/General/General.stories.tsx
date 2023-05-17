@@ -39,6 +39,7 @@ const GeneralItem: FC = () => <General {...useGeneralStoryProps()} />
 export const useElements = (): SettingsItem => {
   return {
     Menu: GeneralMenu,
-    Content: { Item: GeneralItem, key: 'content-general' },
+    Content: GeneralItem,
+    key: 'content-general',
   }
 }
