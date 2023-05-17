@@ -2,7 +2,11 @@
 import { Bookmarks } from '@moodlenet/react-app/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
-import { useBrowserStoryProps } from 'components/organisms/Browser/stories-props.js'
+import {
+  useBrowserCollectionList,
+  useBrowserResourceList,
+  useBrowserStoryProps,
+} from 'components/organisms/Browser/stories-props.js'
 
 const meta: ComponentMeta<typeof Bookmarks> = {
   title: 'Pages/Bookmarks',
@@ -24,7 +28,10 @@ type BookmarksStory = ComponentStory<typeof Bookmarks>
 export const LoggedIn: BookmarksStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
-    browserProps: useBrowserStoryProps({ title: 'Bookmarks' }),
+    browserProps: useBrowserStoryProps({
+      title: 'Bookmarks',
+      mainColumnItems: [useBrowserResourceList(), useBrowserCollectionList()], //@ETTO check that on this page you only show the resources and collection
+    }),
   }
   return <Bookmarks {...props} />
 }
