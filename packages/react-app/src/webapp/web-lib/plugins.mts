@@ -1,7 +1,7 @@
 import type { PkgIdentifier } from '@moodlenet/core'
-import { useCallback, useMemo } from 'react'
+import { useRef } from 'react'
 import { getCurrentInitPkg } from '../plugin-initializer.mjs'
-import type { PkgAddOnsHandle, UseRegisterAddOn } from './add-ons.js'
+import type { PkgAddOn, PkgAddOnsHandle, UseRegisterAddOn } from './add-ons.js'
 import { usePkgAddOns as pkgAddOnsHook } from './add-ons.js'
 
 type PkgAddOnsTypesMapT = { [name in `use${Capitalize<string>}`]: any } //`^^
@@ -9,18 +9,26 @@ type PkgAddOnsHandles<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
   [addonName in keyof PkgAddOnsTypesMap]: PkgAddOnsHandle<PkgAddOnsTypesMap[addonName]>
 }
 type PkgAddOnsRegHooks<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
-  [addonName in keyof PkgAddOnsTypesMap]: UseRegisterAddOn<PkgAddOnsTypesMap[addonName]>
+  [addonName in WithUse<string & keyof PkgAddOnsTypesMap>]: UseRegisterAddOn<
+    PkgAddOnsTypesMap[addonName]
+  >
 }
+
+type PkgAddOnsMap<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
+  [addonName in keyof PkgAddOnsTypesMap]: PkgAddOn<PkgAddOnsTypesMap[addonName]>[]
+}
+
+// type RemoveUse<S extends string> = S extends `use${infer T}` ? Uncapitalize<T> : never
+
+type WithUse<S extends string> = `use${Capitalize<S>}`
 
 type Opts = null
 export function createHookPlugin<
   PkgAddOnsTypesMap extends PkgAddOnsTypesMapT,
-  HookT extends (...args: any[]) => any = () => void,
+  HookArgExt = undefined | void,
+  HookRet = undefined | void,
 >(optsMap: { [n in keyof PkgAddOnsTypesMap]: Opts }) {
-  type Hook = (
-    addons: PkgAddOnsRegHooks<PkgAddOnsTypesMap>,
-    ...rest: Parameters<HookT>
-  ) => ReturnType<HookT>
+  type Hook = (hookArg: HookArgExt & PkgAddOnsRegHooks<PkgAddOnsTypesMap>) => HookRet
   type RegEntry = {
     hook: Hook
     pkgId: PkgIdentifier
@@ -29,45 +37,36 @@ export function createHookPlugin<
   // addonFactories.xx?.('23')
   // const x = Object.values(addonFactories)[0]
   return { useHookPlugin, register, registeredEntries } as const
-  function useHookPlugin() {
-    const addonsHandles = useMemo(
-      () =>
-        Object.entries(optsMap).reduce(
-          (_acc, [addonName /* , opts */]) => ({
-            ..._acc,
-            [addonName]: pkgAddOnsHook(addonName.substring(3)),
-          }),
-          {} as PkgAddOnsHandles<PkgAddOnsTypesMap>,
-        ),
-      [],
+  function useHookPlugin(moreArg: HookArgExt) {
+    const { current: addonsHandles } = useRef({} as PkgAddOnsHandles<PkgAddOnsTypesMap>)
+    Object.entries(optsMap).forEach(
+      ([addonName /* , opts */]) =>
+        (addonsHandles[addonName as keyof PkgAddOnsTypesMap] = pkgAddOnsHook(
+          addonName.substring(3),
+        )),
     )
 
-    const mapHooks = useCallback(
-      <R>(
-        mapper: (
-          addons: PkgAddOnsRegHooks<PkgAddOnsTypesMap>,
-          hook: HookT,
-          regEntry: RegEntry,
-        ) => R,
-      ) =>
-        registeredEntries.map<R>(regEntry => {
-          const addons = Object.entries(addonsHandles).reduce(
-            (_acc, [addonName, [_, getRegHook]]) => ({
-              ..._acc,
-              [addonName]: getRegHook(regEntry.pkgId),
-            }),
-            {} as PkgAddOnsRegHooks<PkgAddOnsTypesMap>,
-          )
-          const hook = regEntry.hook.bind(null, addons) as any
-          return mapper(addons, hook, regEntry)
-        }),
-      [addonsHandles],
+    const { current: addonsRegHooks } = useRef({} as PkgAddOnsRegHooks<PkgAddOnsTypesMap>)
+    registeredEntries.forEach(({ pkgId }) => {
+      Object.entries(addonsHandles).forEach(([addonName, [, getRegHook]]) => {
+        const regHookName = (`use` +
+          addonName.substring(0, 1).toUpperCase() +
+          addonName.substring(1)) as keyof PkgAddOnsRegHooks<PkgAddOnsTypesMap>
+        addonsRegHooks[regHookName] = getRegHook(pkgId)
+      })
+    })
+
+    const results = registeredEntries.map(({ pkgId, hook }) => {
+      const res = hook({ ...addonsRegHooks, ...moreArg })
+      return { res, pkgId }
+    })
+
+    const { current: pkgAddons } = useRef({} as PkgAddOnsMap<PkgAddOnsTypesMap>)
+    Object.entries(addonsHandles).forEach(
+      ([addonName, [pkgAddon]]) => (pkgAddons[addonName as keyof PkgAddOnsTypesMap] = pkgAddon),
     )
 
-    return {
-      mapHooks,
-      addonsHandles,
-    }
+    return [pkgAddons, results, addonsHandles] as const
   }
   function register(hook: Hook) {
     const pkgId = getCurrentInitPkg()

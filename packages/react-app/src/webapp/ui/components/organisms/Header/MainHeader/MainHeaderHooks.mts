@@ -1,63 +1,45 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { useMemo } from 'react'
-import { usePkgAddOns } from '../../../../../web-lib/add-ons.js'
 import { createHookPlugin } from '../../../../../web-lib/plugins.mjs'
 import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
 import type { MainHeaderProps } from './MainHeader.js'
 export type HeaderAddonRegItem = Omit<AddonItem, 'key'>
 
-export type MainHeaderPluginHookResult = void //{ MainWrapper?: MainHeaderPluginWrapper }
-const HeaderPlugins = createHookPlugin<
-  {
-    useHeaderRightAddons: HeaderAddonRegItem
-    useHeaderCenterAddons: HeaderAddonRegItem
-    useHeaderLeftAddons: HeaderAddonRegItem
-  },
-  (a: number) => string
->({ useHeaderCenterAddons: null, useHeaderLeftAddons: null, useHeaderRightAddons: null })
+export const HeaderPlugins = createHookPlugin<{
+  rightAddons: HeaderAddonRegItem
+  centerAddons: HeaderAddonRegItem
+  leftAddons: HeaderAddonRegItem
+}>({ centerAddons: null, leftAddons: null, rightAddons: null })
 
 export const useHeaderProps = (): MainHeaderProps => {
-  const plugins = HeaderPlugins.useHookPlugin()
-  const c = plugins.mapHooks((addons, hook) => {
-    return hook(2)
-  })
+  const [addons] = HeaderPlugins.useHookPlugin()
+
   const rightItems = useMemo(() => {
-    return headerRightAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
+    return addons.rightAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
       return {
         Item,
         key,
       }
     })
-  }, [headerRightAddons])
-  plugins.addonsHandles.const[(headerCenterAddons, getRegisterHeaderCenterAddons)] =
-    usePkgAddOns<HeaderAddonRegItem>('HeaderCenterAddons')
+  }, [addons.rightAddons])
+
   const centerItems = useMemo(() => {
-    return headerCenterAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
+    return addons.centerAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
       return {
         Item,
         key,
       }
     })
-  }, [headerCenterAddons])
+  }, [addons.centerAddons])
 
-  const [headerLeftAddons, getRegisterHeaderLeftAddons] =
-    usePkgAddOns<HeaderAddonRegItem>('HeaderLeftAddons')
   const leftItems = useMemo(() => {
-    return headerLeftAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
+    return addons.leftAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
       return {
         Item,
         key,
       }
     })
-  }, [headerLeftAddons])
-
-  mainHeaderPluginPlugins.forEach(({ pkgId, mainHeaderPluginHook }) => {
-    mainHeaderPluginHook({
-      useHeaderCenterAddons: getRegisterHeaderCenterAddons(pkgId),
-      useHeaderLeftAddons: getRegisterHeaderLeftAddons(pkgId),
-      useHeaderRightAddons: getRegisterHeaderRightAddons(pkgId),
-    })
-  })
+  }, [addons.leftAddons])
 
   const headerTitleProps = useHeaderTitleProps()
 

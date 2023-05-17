@@ -13,16 +13,13 @@ export { useMainLayoutProps } from '../ui/components/layout/MainLayout/MainLayou
 export { useSimpleLayoutProps } from '../ui/components/layout/SimpleLayout/SimpleLayoutHooks.mjs'
 export { useFooterProps } from '../ui/components/organisms/Footer/MainFooter/MainFooterHooks.mjs'
 export {
-  registerMainHeaderPluginHook,
+  HeaderPlugins,
   type HeaderAddonRegItem,
-  type MainHeaderPluginHook,
-  type MainHeaderPluginHookResult,
 } from '../ui/components/organisms/Header/MainHeader/MainHeaderHooks.mjs'
 export { useMinimalisticHeaderProps } from '../ui/components/organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 export {
   registerSettingsPagePluginHook,
   type SettingsPagePluginHook,
-  type SettingsPagePluginWrapper,
   type SettingsSectionItem,
 } from '../ui/components/pages/Settings/Settings/Hook/SettingsHooks.js'
 export {
