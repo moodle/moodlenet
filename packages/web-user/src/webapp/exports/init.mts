@@ -7,9 +7,9 @@ import type {
   SettingsSectionItem,
 } from '@moodlenet/react-app/webapp'
 import {
+  HeaderPlugins,
   registerAppRoutes,
   registerMainAppPluginHook,
-  registerMainHeaderPluginHook,
   registerSettingsPagePluginHook,
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
@@ -68,9 +68,10 @@ registerResourcePagePluginHook(function useResourcePage({ useGeneralActionsAddon
   useGeneralActionsAddons(addOns)
 })
 
-registerMainHeaderPluginHook(function useRegisterMainHeader({ useHeaderRightAddons }) {
+HeaderPlugins.register(function useRegisterMainHeader({ useRightAddons }) {
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const isRoot = !!clientSessionData?.isRoot
+
   const headerAddons = useMemo<PkgAddOns<HeaderAddonRegItem> | null>(() => {
     if (!isAuthenticated) {
       return {
@@ -83,5 +84,5 @@ registerMainHeaderPluginHook(function useRegisterMainHeader({ useHeaderRightAddo
       avatarMenu: { Item: AvatarMenuContainer },
     }
   }, [isRoot, isAuthenticated])
-  useHeaderRightAddons(headerAddons)
+  useRightAddons(headerAddons)
 })

@@ -10,7 +10,12 @@ export type PkgAddOnsEntry<AddOnType> = {
 }
 export type PkgAddOns<AddOnType> = { [pkgAddOnName: string]: AddOnType | null | undefined }
 type PkgAddOnsEntries<AddOnType> = { [pkgName: string]: PkgAddOnsEntry<AddOnType> }
-type PkgAddOn<AddOnType> = { pkgId: PkgIdentifier; name: string; addOn: AddOnType; key: string }
+export type PkgAddOn<AddOnType> = {
+  pkgId: PkgIdentifier
+  name: string
+  addOn: AddOnType
+  key: string
+}
 
 export function usePkgAddOns<AddOnType>(addOnName = 'unnamed') {
   const [addOnsMap, setAddOnsMap] = useState<PkgAddOnsEntries<AddOnType>>({})
