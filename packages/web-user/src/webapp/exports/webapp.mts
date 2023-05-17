@@ -1,11 +1,21 @@
 export { AuthCtx, useNeedsWebUserLogin } from '../context/AuthContext.js'
 export {
-  registerLoginMethodHook,
-  type LoginMethodHook,
+  AddMenuPlugins,
+  useAddMenuProps,
+  type AddMenuPluginItem,
+} from '../ui/components/molecules/AddMenu/AddMenuHook.js'
+export {
+  AvatarMenuPlugins,
+  useAvatarMenuProps,
+  type AvatarMenuPluginItem,
+} from '../ui/components/molecules/AvatarMenu/AvatarMenuHook.js'
+export {
+  LoginPlugins,
+  useLoginProps,
   type LoginMethodItem,
 } from '../ui/components/pages/Access/Login/LoginPageHook.mjs'
 export {
-  registerSignupMethodHook,
-  type SignupMethodHook,
+  SignupPlugins,
+  useSignUpProps,
   type SignupMethodItem,
 } from '../ui/components/pages/Access/Signup/SignupHook.mjs'

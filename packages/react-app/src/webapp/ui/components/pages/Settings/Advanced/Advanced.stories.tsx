@@ -26,6 +26,7 @@ const AdvancedItem: FC = () => <Advanced {...useAdvancedStoryProps()} />
 export const useElements = (): SettingsItem => {
   return {
     Menu: AdvancedMenu,
-    Content: { Item: AdvancedItem, key: 'content-advanced' },
+    Content: AdvancedItem,
+    key: 'content-advanced',
   }
 }

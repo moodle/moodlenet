@@ -1,5 +1,4 @@
 // import { Trans } from '@lingui/macro'
-import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Colorpicker, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import type { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -16,10 +15,7 @@ export type AppearanceProps = {
   form: ReturnType<typeof useFormik<AppearanceData>>
 }
 
-export const AppearanceMenu: AddonItem = {
-  Item: () => <span>Appearance</span>,
-  key: 'menu-appearance',
-}
+export const AppearanceMenu = () => <span>Appearance</span>
 
 export const Appearance: FC<AppearanceProps> = ({ form }) => {
   // const styleContext = useContext(SettingsCtx)
