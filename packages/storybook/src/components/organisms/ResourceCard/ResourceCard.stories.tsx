@@ -69,27 +69,17 @@ export const getResourceCardStoryProps = (
   }
   const state: ResourceCardState = {
     isPublished: true,
-    isSelected: false,
-    selectionMode: false,
-    liked: false,
-    numLikes: 12,
-    bookmarked: false,
     ...overrides?.state,
   }
   const actions: ResourceCardActions = {
-    toggleLike: action('toggle like'),
     publish: action('publish resource'),
     unpublish: action('unpublish resource'),
-    toggleBookmark: action('toggle bookmark'),
   }
 
   const access: ResourceCardAccess = {
-    isAuthenticated: true,
-    canLike: true,
     isCreator: false,
     canDelete: false,
     canPublish: false,
-    canBookmark: true,
     ...overrides?.access,
   }
 
@@ -143,8 +133,6 @@ export const getResourceCardStoryProps = (
       state,
       actions,
       access,
-
-      onRemoveClick: () => action('remove resource'),
     },
     overrides,
   )

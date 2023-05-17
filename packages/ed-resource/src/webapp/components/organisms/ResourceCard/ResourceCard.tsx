@@ -34,7 +34,9 @@ import type {
 import { getResourceTypeInfo } from '../../../../common/types.mjs'
 import './ResourceCard.scss'
 
-export type ResourceCardProps = {
+export type ResourceCardProps = ResourceCardPropsData & ResourceCardPropsUI
+
+export type ResourceCardPropsData = {
   mainColumnItems: (AddonItem | null)[]
   topLeftItems: (AddonItem | null)[]
   topRightItems: (AddonItem | null)[]
@@ -46,12 +48,13 @@ export type ResourceCardProps = {
   actions: ResourceCardActions
   access: ResourceCardAccess
 }
+
 type ResourceCardPropsUI = {
   className?: string
   orientation?: 'vertical' | 'horizontal'
 }
 
-export const ResourceCard = withProxy<ResourceCardProps & ResourceCardPropsUI>(
+export const ResourceCard = withProxy<ResourceCardProps>(
   ({
     mainColumnItems,
     topLeftItems,

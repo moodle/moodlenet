@@ -1,8 +1,6 @@
 import type { CollectionFormProps } from '@moodlenet/collection/common'
 import { Collection } from '@moodlenet/collection/ui'
-import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useState } from 'react'
 import { useCollectionStoryProps } from './stories-props.js'
 // import { href } from '../../../elements/link'
 
@@ -31,9 +29,7 @@ export const LoggedOut: CollectionStory = () => {
     data: {},
     state: {},
     actions: {},
-    access: {
-      isAuthenticated: false,
-    },
+    access: {},
 
     isAuthenticated: false,
   })
@@ -70,20 +66,19 @@ export const Creator: CollectionStory = () => {
       canPublish: true,
       isCreator: true,
       canEdit: true,
-      canFollow: false,
     },
     isSaving: false,
   })
-  const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
+  // const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
 
-  resourceCardPropsList.map(r => {
-    r.onRemoveClick = () => {
-      action('onRemoveResourceClick')
-      setResourceCardPropsList(resourceCardPropsList.filter(x => x !== r))
-    }
-  })
+  // resourceCardPropsList.map(r => {
+  //   r.onRemoveClick = () => {
+  //     action('onRemoveResourceClick')
+  //     setResourceCardPropsList(resourceCardPropsList.filter(x => x !== r))
+  //   }
+  // })
 
-  return <Collection {...props} resourceCardPropsList={resourceCardPropsList} />
+  return <Collection {...props} resourceCardPropsList={props.resourceCardPropsList} />
 }
 
 export const NewCollectionProps: CollectionFormProps = {

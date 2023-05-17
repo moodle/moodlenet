@@ -3,16 +3,22 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material'
 import type { FC } from 'react'
 import './LikeButton.scss'
 
-export type LikeButtonProps = {
+export type LikeButtonProps = LikeButtonPropsData & LikeButtonPropsUI
+
+export type LikeButtonPropsData = {
   liked: boolean
   canLike: boolean
+  numLikes: number
   isCreator: boolean
   isAuthenticated: boolean
   toggleLike: () => void
+}
+
+type LikeButtonPropsUI = {
   color?: 'white' | 'grey'
 }
 
-export const LikeButton: FC<LikeButtonProps & { numLikes: number }> = ({
+export const LikeButton: FC<LikeButtonProps> = ({
   numLikes,
   liked,
   canLike,

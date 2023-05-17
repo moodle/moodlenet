@@ -2,7 +2,11 @@
 import { Following } from '@moodlenet/react-app/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
-import { useBrowserStoryProps } from 'components/organisms/Browser/stories-props.js'
+import {
+  useBrowserCollectionList,
+  useBrowserProfileList,
+  useBrowserStoryProps,
+} from 'components/organisms/Browser/stories-props.js'
 
 const meta: ComponentMeta<typeof Following> = {
   title: 'Pages/Following',
@@ -24,7 +28,10 @@ type FollowingStory = ComponentStory<typeof Following>
 export const LoggedIn: FollowingStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
-    browserProps: useBrowserStoryProps({ title: 'Following' }),
+    browserProps: useBrowserStoryProps({
+      title: 'Following',
+      mainColumnItems: [useBrowserProfileList(), useBrowserCollectionList()], //@ETTO check that on this page you only show the profiles and collection, on that order, with profiles first
+    }),
   }
   return <Following {...props} />
 }
