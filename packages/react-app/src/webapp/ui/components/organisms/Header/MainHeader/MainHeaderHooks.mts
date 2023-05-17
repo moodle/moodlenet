@@ -14,44 +14,17 @@ export const HeaderPlugins = createHookPlugin<{
 export const useHeaderProps = (): MainHeaderProps => {
   const [addons] = HeaderPlugins.useHookPlugin()
 
-  const rightItems = useMemo(() => {
-    return addons.rightAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
-      return {
-        Item,
-        key,
-      }
-    })
-  }, [addons.rightAddons])
-
-  const centerItems = useMemo(() => {
-    return addons.centerAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
-      return {
-        Item,
-        key,
-      }
-    })
-  }, [addons.centerAddons])
-
-  const leftItems = useMemo(() => {
-    return addons.leftAddons.map<AddonItem>(({ addOn: { Item }, key }) => {
-      return {
-        Item,
-        key,
-      }
-    })
-  }, [addons.leftAddons])
-
   const headerTitleProps = useHeaderTitleProps()
 
   const mainHeaderProps = useMemo<MainHeaderProps>(() => {
     const mainHeaderProps: MainHeaderProps = {
       headerTitleProps,
-      centerItems,
-      leftItems,
-      rightItems,
+      centerItems: addons.centerAddons,
+      leftItems: addons.leftAddons,
+      rightItems: addons.rightAddons,
       search: () => undefined, //TODO //@ETTO: to be changed ASAP
     }
     return mainHeaderProps
-  }, [centerItems, headerTitleProps, leftItems, rightItems])
+  }, [addons.centerAddons, addons.leftAddons, addons.rightAddons, headerTitleProps])
   return mainHeaderProps
 }

@@ -72,17 +72,17 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightAddons }) {
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const isRoot = !!clientSessionData?.isRoot
 
-  const headerAddons = useMemo<PkgAddOns<HeaderAddonRegItem> | null>(() => {
-    if (!isAuthenticated) {
-      return {
-        loginButton: { Item: LoginButtonContainer },
-        signupButton: { Item: SignupButtonContainer },
-      }
-    }
-    return {
-      addMenu: isRoot ? null : { Item: AddMenuContainer },
-      avatarMenu: { Item: AvatarMenuContainer },
-    }
+  const headerRightAddons = useMemo<PkgAddOns<HeaderAddonRegItem> | null>(() => {
+    return isAuthenticated
+      ? {
+          addMenu: isRoot ? null : { Item: AddMenuContainer },
+          avatarMenu: { Item: AvatarMenuContainer },
+        }
+      : {
+          loginButton: { Item: LoginButtonContainer },
+          signupButton: { Item: SignupButtonContainer },
+        }
   }, [isRoot, isAuthenticated])
-  useRightAddons(headerAddons)
+
+  useRightAddons(headerRightAddons)
 })
