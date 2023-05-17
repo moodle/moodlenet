@@ -68,6 +68,7 @@ const UsersItem: FC = () => {
 export const useElements = (): SettingsItem => {
   return {
     Menu: UsersMenu,
-    Content: { Item: UsersItem, key: 'content-Users' },
+    Content: UsersItem,
+    key: 'content-Users',
   }
 }

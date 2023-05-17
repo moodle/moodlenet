@@ -79,7 +79,6 @@ export function createHookPlugin<
           key: pkgAddOn.key,
         }))),
     )
-    console.log({ rawPkgAddons, mappedAddons })
     return [mappedAddons, rawPkgAddons, results, addonsHandles] as const
   }
   function register(hook: Hook) {

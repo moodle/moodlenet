@@ -1,4 +1,3 @@
-import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Searchbox } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import type { User } from '../../../../../common/types.mjs'
@@ -18,10 +17,7 @@ export type UsersProps = {
   search(str: string): unknown
 }
 
-export const UsersMenu: AddonItem = {
-  Item: () => <span>Users</span>,
-  key: 'menu-Users',
-}
+export const UsersMenu = () => <span>Users</span>
 
 const Row: FC<{
   user: User

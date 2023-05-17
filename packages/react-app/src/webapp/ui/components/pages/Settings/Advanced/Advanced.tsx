@@ -1,4 +1,3 @@
-import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Switch } from '@moodlenet/component-library'
 import type { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -13,10 +12,7 @@ export type AdvancedProps = {
   form: ReturnType<typeof useFormik<AdvancedFormValues>>
 }
 
-export const AdvancedMenu: AddonItem = {
-  Item: () => <span>Advanced</span>,
-  key: 'menu-Advanced',
-}
+export const AdvancedMenu = () => <span>Advanced</span>
 
 export const Advanced: FC<AdvancedProps> = ({ form }) => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating

@@ -1,77 +1,43 @@
-import type { PkgIdentifier } from '@moodlenet/core'
-import type { ComponentType } from 'react'
 import { useMemo } from 'react'
-import { getCurrentInitPkg } from '../../../../../../plugin-initializer.mjs'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { usePkgAddOns, type UseRegisterAddOn } from '../../../../../../web-lib/add-ons.js'
+import { createHookPlugin } from '../../../../../../web-lib/plugins.mjs'
 import { useMainLayoutProps } from '../../../../layout/MainLayout/MainLayoutHooks.mjs'
 import { AdvancedContainer } from '../../Advanced/AdvancedContainer.js'
 import { AppearanceContainer } from '../../Appearance/AppearanceContainer.js'
 import { GeneralContainer } from '../../General/GeneralContainer.js'
 import type { SettingsItem, SettingsProps } from '../Settings.js'
 
+export type SettingsSectionItem = Omit<SettingsItem, 'key'>
 const localSettingsItems: SettingsItem[] = [
   {
-    Content: { Item: GeneralContainer, key: `@moodlenet/react-app/general-settings` },
-    Menu: { Item: () => <span>General</span>, key: `@moodlenet/react-app/general-settings` },
+    key: `@moodlenet/react-app/general-settings`,
+    Content: GeneralContainer,
+    Menu: () => <span>General</span>,
   },
   {
-    Content: { Item: AppearanceContainer, key: `@moodlenet/react-app/appearance-settings` },
-    Menu: { Item: () => <span>Appearance</span>, key: `@moodlenet/react-app/appearance-settings` },
+    key: `@moodlenet/react-app/appearance-settings`,
+    Content: AppearanceContainer,
+    Menu: () => <span>Appearance</span>,
   },
   {
-    Content: { Item: AdvancedContainer, key: `@moodlenet/react-app/advanced-settings` },
-    Menu: { Item: () => <span>Advanced</span>, key: `@moodlenet/react-app/advanced-settings` },
+    key: `@moodlenet/react-app/advanced-settings`,
+    Content: AdvancedContainer,
+    Menu: () => <span>Advanced</span>,
   },
 ]
 
-//export type SettingsPagePluginWrapper = ComponentType<PropsWithChildren>
-//export type SettingsPagePluginHookResult = { MainWrapper?: SettingsPagePluginWrapper }
-export type SettingsPagePluginHook = (_: {
-  useSettingsSectionAddons: UseRegisterAddOn<SettingsSectionItem>
-}) => void //| SettingsPagePluginHookResult
-
-const settingsPagePluginPlugins: {
-  settingsPagePluginHook: SettingsPagePluginHook
-  pkgId: PkgIdentifier
-}[] = []
-
-export function registerSettingsPagePluginHook(settingsPagePluginHook: SettingsPagePluginHook) {
-  const pkgId = getCurrentInitPkg()
-  settingsPagePluginPlugins.push({ settingsPagePluginHook, pkgId })
-}
-
-export type SettingsSectionItem = {
-  Menu: ComponentType
-  Content: ComponentType
-}
+export const SettingsPagePlugins = createHookPlugin<{
+  settingsSection: SettingsSectionItem
+}>({ settingsSection: null })
 
 export const useSettingsProps = (): SettingsProps => {
-  const [settingsSections, getRegisterSettingsSection] =
-    usePkgAddOns<SettingsSectionItem>('SettingsSection')
-  settingsPagePluginPlugins.forEach(({ pkgId, settingsPagePluginHook }) =>
-    settingsPagePluginHook({ useSettingsSectionAddons: getRegisterSettingsSection(pkgId) }),
-  )
+  const [addons] = SettingsPagePlugins.useHookPlugin()
   const mainLayoutProps = useMainLayoutProps()
 
   const settingsItems = useMemo<SettingsItem[]>(() => {
-    const pkgItems = settingsSections.map<SettingsItem>(({ addOn: { Content, Menu }, key }) => {
-      const settingsItem: SettingsItem = {
-        Content: {
-          key,
-          Item: Content,
-        },
-        Menu: {
-          key,
-          Item: Menu,
-        },
-      }
-      return settingsItem
-    })
-
-    return localSettingsItems.concat(pkgItems)
-  }, [settingsSections])
+    return localSettingsItems.concat(addons.settingsSection)
+  }, [addons.settingsSection])
 
   const settingsProps = useMemo<SettingsProps>(() => {
     return {
