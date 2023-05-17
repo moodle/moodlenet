@@ -17,17 +17,22 @@ type PkgAddOnsRegHooks<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
 type PkgAddOnsMap<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
   [addonName in keyof PkgAddOnsTypesMap]: PkgAddOn<PkgAddOnsTypesMap[addonName]>[]
 }
+type MappedPkgAddOnsMap<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
+  [addonName in keyof PkgAddOnsTypesMap]: ({ key: string } & PkgAddOn<
+    PkgAddOnsTypesMap[addonName]
+  >['addOn'])[]
+}
 
 // type RemoveUse<S extends string> = S extends `use${infer T}` ? Uncapitalize<T> : never
 
 type WithUse<S extends string> = `use${Capitalize<S>}`
 
-type Opts = null
+type AddonOpts = null
 export function createHookPlugin<
   PkgAddOnsTypesMap extends PkgAddOnsTypesMapT,
   HookArgExt = undefined | void,
   HookRet = undefined | void,
->(optsMap: { [n in keyof PkgAddOnsTypesMap]: Opts }) {
+>(optsMap: { [n in keyof PkgAddOnsTypesMap]: AddonOpts }) {
   type Hook = (hookArg: HookArgExt & PkgAddOnsRegHooks<PkgAddOnsTypesMap>) => HookRet
   type RegEntry = {
     hook: Hook
@@ -61,12 +66,21 @@ export function createHookPlugin<
       return { res, pkgId }
     })
 
-    const { current: pkgAddons } = useRef({} as PkgAddOnsMap<PkgAddOnsTypesMap>)
+    const { current: rawPkgAddons } = useRef({} as PkgAddOnsMap<PkgAddOnsTypesMap>)
     Object.entries(addonsHandles).forEach(
-      ([addonName, [pkgAddon]]) => (pkgAddons[addonName as keyof PkgAddOnsTypesMap] = pkgAddon),
+      ([addonName, [pkgAddon]]) => (rawPkgAddons[addonName as keyof PkgAddOnsTypesMap] = pkgAddon),
     )
 
-    return [pkgAddons, results, addonsHandles] as const
+    const { current: mappedAddons } = useRef({} as MappedPkgAddOnsMap<PkgAddOnsTypesMap>)
+    Object.entries(rawPkgAddons).forEach(
+      ([addonName, rawPkgAddons]) =>
+        (mappedAddons[addonName as keyof PkgAddOnsTypesMap] = rawPkgAddons.map((pkgAddOn: any) => ({
+          ...pkgAddOn.addOn,
+          key: pkgAddOn.key,
+        }))),
+    )
+    console.log({ rawPkgAddons, mappedAddons })
+    return [mappedAddons, rawPkgAddons, results, addonsHandles] as const
   }
   function register(hook: Hook) {
     const pkgId = getCurrentInitPkg()
