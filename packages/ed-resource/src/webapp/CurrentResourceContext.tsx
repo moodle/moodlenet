@@ -4,9 +4,11 @@ import { createContext, useMemo } from 'react'
 import { EdResourceEntitiesTools } from './entities.mjs'
 
 export type CurrentResourceContextT = {
-  identifiers: EntityIdentifiers
+  identifiers: EntityIdentifiers | null
 }
-export const CurrentResourceContext = createContext<CurrentResourceContextT | null>(null as any)
+const defaultContext: CurrentResourceContextT = { identifiers: null }
+export const CurrentResourceContext = createContext<CurrentResourceContextT>(defaultContext)
+
 export function useCurrentResourceContextValue(_key: string) {
   const identifiers = EdResourceEntitiesTools.getIdentifiersByKey({
     _key,

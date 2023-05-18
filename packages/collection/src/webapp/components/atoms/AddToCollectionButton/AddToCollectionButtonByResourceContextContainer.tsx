@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import { AddToCollectionButtonContainer } from './AddToCollectionButtonsContainer.js'
 
 export const AddToCollectionButtonByResourceContextContainer: FC = () => {
-  const resourceKey = useContext(CurrentResourceContext)?.identifiers.entityIdentifier._key
+  const resourceKey = useContext(CurrentResourceContext).identifiers?.entityIdentifier._key
   if (!resourceKey) {
     return null
   }

@@ -123,7 +123,7 @@ export const Selector: FC<SelectorProps> = props => {
 
   const deselectOption = useCallback(
     (optionValue: string) => {
-      console.log('deselectOption ', optionValue)
+      // console.log('deselectOption ', optionValue)
       if (!selectElemRef.current) {
         return
       }
@@ -143,7 +143,7 @@ export const Selector: FC<SelectorProps> = props => {
 
   const selectOption = useCallback(
     (optionValue: string) => {
-      console.log('selectOption ', optionValue)
+      // console.log('selectOption ', optionValue)
       if (!selectElemRef.current) {
         return
       }
@@ -168,7 +168,7 @@ export const Selector: FC<SelectorProps> = props => {
 
   const toggleOption = useCallback(
     (optionValue: string, selected: boolean) => {
-      console.log('toggleOption ', optionValue)
+      // console.log('toggleOption ', optionValue)
       if (!selectElemRef.current) {
         return
       }
