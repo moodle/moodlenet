@@ -3,35 +3,27 @@ import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
 import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
-import './SearchCollectionList.scss'
+import './BrowserCollectionList.scss'
 
-export type SearchCollectionListProps = {
+export type BrowserCollectionListProps = {
   collectionCardPropsList: CollectionCardProps[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-export const SearchCollectionList: FC<SearchCollectionListProps> = ({
+export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
   collectionCardPropsList,
   showAll,
   setShowAll,
 }) => {
   return (
     <ListCard
-      className={`search-collection-list ${showAll ? 'show-all' : ''}`}
-      // className={`collections ${seeAll ? 'see-all' : ''}`}
+      className={`browser-collection-list ${showAll ? 'show-all' : ''}`}
       content={useMemo(
         () =>
-          // seeAll
-          // ? collectionCardPropsList :
-          collectionCardPropsList
-            // .slice(0, 6)
-            .map(collectionCardProps => (
-              <CollectionCard
-                key={collectionCardProps.data.collectionId}
-                {...collectionCardProps}
-              />
-            )),
+          collectionCardPropsList.map(collectionCardProps => (
+            <CollectionCard key={collectionCardProps.data.collectionId} {...collectionCardProps} />
+          )),
         [collectionCardPropsList],
       )}
       header={
@@ -47,12 +39,11 @@ export const SearchCollectionList: FC<SearchCollectionListProps> = ({
         )
       }
       minGrid={showAll ? 300 : 240}
-      // minGrid={showAll ? undefined : 240}
       maxRows={showAll ? undefined : 2}
     />
   )
 }
 
-SearchCollectionList.defaultProps = {}
+BrowserCollectionList.defaultProps = {}
 
-export default SearchCollectionList
+export default BrowserCollectionList

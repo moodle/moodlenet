@@ -12,7 +12,7 @@ export const Following: FC<FollowingProps> = ({ mainLayoutProps, browserProps })
   return (
     <MainLayout {...mainLayoutProps}>
       <div className="Following">
-        <Browser {...browserProps} />
+        <Browser {...browserProps} title="Following" />
       </div>
     </MainLayout>
   )

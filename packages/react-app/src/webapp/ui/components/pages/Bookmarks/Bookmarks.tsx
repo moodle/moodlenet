@@ -12,7 +12,7 @@ export const Bookmarks: FC<BookmarksProps> = ({ mainLayoutProps, browserProps })
   return (
     <MainLayout {...mainLayoutProps}>
       <div className="bookmarks">
-        <Browser {...browserProps} />
+        <Browser {...browserProps} title="Bookmarks" />
       </div>
     </MainLayout>
   )

@@ -3,22 +3,22 @@ import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
 import { ProfileCard } from '../../ProfileCard/ProfileCard.js'
-import './SearchProfileList.scss'
+import './BrowserProfileList.scss'
 
-export type SearchProfileListProps = {
+export type BrowserProfileListProps = {
   profilesCardPropsList: ProfileCardProps[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-export const SearchProfileList: FC<SearchProfileListProps> = ({
+export const BrowserProfileList: FC<BrowserProfileListProps> = ({
   profilesCardPropsList,
   showAll,
   setShowAll,
 }) => {
   return (
     <ListCard
-      className={`search-profile-list ${showAll ? 'show-all' : ''}`}
+      className={`browser-profile-list ${showAll ? 'show-all' : ''}`}
       content={useMemo(
         () =>
           profilesCardPropsList
@@ -58,6 +58,6 @@ export const SearchProfileList: FC<SearchProfileListProps> = ({
   )
 }
 
-SearchProfileList.defaultProps = {}
+BrowserProfileList.defaultProps = {}
 
-export default SearchProfileList
+export default BrowserProfileList
