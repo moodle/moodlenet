@@ -7,6 +7,7 @@ import {
   BrowserProfileList,
   getProfileCardsStoryProps,
 } from '@moodlenet/web-user/ui'
+import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
 import { getCollectionsCardStoryProps } from '../CollectionCard/story-props.js'
@@ -31,6 +32,7 @@ export const useBrowserResourceList = () => {
           resourceCardPropsList={list}
           showAll={showAll}
           setShowAll={setShowAll}
+          loadMore={action(`load more subjects`)}
         />
       )
     },
@@ -41,6 +43,37 @@ export const useBrowserResourceList = () => {
       key: e.key,
     })),
     key: 'resource-list',
+  }
+}
+
+export const useBrowserCollectionList = () => {
+  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState('Relevant')
+  return {
+    name: 'Collections',
+    Item: ({ showAll, setShowAll }) => {
+      const list = useMemo(
+        () =>
+          getCollectionsCardStoryProps(30, {
+            access: { canPublish: false },
+          }),
+        [],
+      )
+      return (
+        <BrowserCollectionList
+          collectionCardPropsList={list}
+          showAll={showAll}
+          setShowAll={setShowAll}
+          loadMore={action(`load more collections`)}
+        />
+      )
+    },
+    filters: [
+      BrowserCollectionFilters.SortByItem(currentCollectionSortBy, setCurrentCollectionSortBy),
+    ].map(e => ({
+      Item: () => e,
+      key: e.key,
+    })),
+    key: 'collection-list',
   }
 }
 
@@ -63,6 +96,7 @@ export const useBrowserProfileList = () => {
           profilesCardPropsList={list}
           showAll={showAll}
           setShowAll={setShowAll}
+          loadMore={action(`load more profiles`)}
         />
       )
     },
@@ -73,36 +107,6 @@ export const useBrowserProfileList = () => {
       }),
     ),
     key: 'profile-list',
-  }
-}
-
-export const useBrowserCollectionList = () => {
-  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState('Relevant')
-  return {
-    name: 'Collections',
-    Item: ({ showAll, setShowAll }) => {
-      const list = useMemo(
-        () =>
-          getCollectionsCardStoryProps(30, {
-            access: { canPublish: false },
-          }),
-        [],
-      )
-      return (
-        <BrowserCollectionList
-          collectionCardPropsList={list}
-          showAll={showAll}
-          setShowAll={setShowAll}
-        />
-      )
-    },
-    filters: [
-      BrowserCollectionFilters.SortByItem(currentCollectionSortBy, setCurrentCollectionSortBy),
-    ].map(e => ({
-      Item: () => e,
-      key: e.key,
-    })),
-    key: 'collection-list',
   }
 }
 

@@ -9,16 +9,20 @@ export type BrowserResourceListProps = {
   resourceCardPropsList: ResourceCardPropsData[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
+  loadMore: (() => unknown) | null
 }
 
 export const BrowserResourceList: FC<BrowserResourceListProps> = ({
   resourceCardPropsList,
   showAll,
   setShowAll,
+  loadMore,
 }) => {
   const listCard = (
     <ListCard
-      className={`browser-resource-list ${showAll ? 'show-all' : ''}`}
+      className={`browser-resource-list ${showAll ? 'show-all' : ''} ${
+        loadMore ? 'load-more' : ''
+      }`}
       content={useMemo(
         () =>
           resourceCardPropsList.map(resourceCardProps => {
@@ -38,14 +42,17 @@ export const BrowserResourceList: FC<BrowserResourceListProps> = ({
         </div>
       }
       footer={
-        showAll ? null : (
+        showAll ? (
+          loadMore ? (
+            <TertiaryButton onClick={loadMore}>Load more</TertiaryButton>
+          ) : null
+        ) : (
           <TertiaryButton onClick={() => setShowAll('resource-list')}>
             See all resource results
           </TertiaryButton>
         )
       }
       minGrid={showAll ? 400 : 300}
-      // minGrid={showAll ? undefined : 300}
       maxRows={showAll ? undefined : 3}
     />
   )
