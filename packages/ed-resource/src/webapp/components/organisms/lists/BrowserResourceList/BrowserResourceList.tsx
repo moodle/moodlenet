@@ -3,22 +3,22 @@ import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
 import ResourceCard from '../../ResourceCard/ResourceCard.js'
-import './SearchResourceList.scss'
+import './BrowserResourceList.scss'
 
-export type SearchResourceListProps = {
+export type BrowserResourceListProps = {
   resourceCardPropsList: ResourceCardPropsData[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-export const SearchResourceList: FC<SearchResourceListProps> = ({
+export const BrowserResourceList: FC<BrowserResourceListProps> = ({
   resourceCardPropsList,
   showAll,
   setShowAll,
 }) => {
   const listCard = (
     <ListCard
-      className={`search-resource-list ${showAll ? 'show-all' : ''}`}
+      className={`browser-resource-list ${showAll ? 'show-all' : ''}`}
       content={useMemo(
         () =>
           resourceCardPropsList.map(resourceCardProps => {
@@ -53,6 +53,6 @@ export const SearchResourceList: FC<SearchResourceListProps> = ({
   return listCard
 }
 
-SearchResourceList.defaultProps = {}
+BrowserResourceList.defaultProps = {}
 
-export default SearchResourceList
+export default BrowserResourceList

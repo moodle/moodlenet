@@ -1,4 +1,4 @@
-.search-collection-list {
+.browser-resource-list {
   padding: 24px 24px 66px 24px;
   position: relative;
 
@@ -6,6 +6,9 @@
     padding: 24px;
   }
 
+  > .content {
+    padding: 3px 3px 8px 3px;
+  }
   > .list-card-footer {
     width: 100%;
     margin-left: -24px;
@@ -17,14 +20,14 @@
     > .tertiary-button {
       width: 100%;
       font-size: 15px;
-      height: 56px;
+      height: 55px;
       border-radius: 0;
       padding: 0 18px;
     }
   }
 
   @media screen and (max-width: 450px) {
-    padding: 0 0 60px 0;
+    padding: 0 0 62px 0;
     > .list-card-footer {
       margin-left: 0;
       > .tertiary-button {
