@@ -1,13 +1,23 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
+import type { AddonItem } from '@moodlenet/component-library'
 import { href } from '@moodlenet/react-app/common'
+import { createHookPlugin } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { ResourceCardDataProps } from '../../../../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { ResourceCardPropsData } from './ResourceCard.js'
 
+export type ItemWithoutKey = Omit<AddonItem, 'key'>
+
+export const ResourceCardPlugins = createHookPlugin<{
+  topRightItems: ItemWithoutKey
+  // topLeftItems: ItemWithoutKey,
+}>({ topRightItems: null })
+
 export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData | null => {
   const _mainProps = useResourceBaseProps({ resourceKey })
+  const [addons] = ResourceCardPlugins.useHookPlugin()
 
   const collectionProps = useMemo(() => {
     if (!_mainProps) return null
@@ -36,7 +46,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
     const propsPage: ResourceCardPropsData = {
       mainColumnItems: [],
       topLeftItems: [],
-      topRightItems: [],
+      topRightItems: addons.topRightItems,
       bottomLeftItems: [],
       bottomRightItems: [],
       data,
@@ -46,7 +56,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
     }
 
     return propsPage
-  }, [_mainProps, resourceKey])
+  }, [_mainProps, addons.topRightItems, resourceKey])
 
   return collectionProps
 }

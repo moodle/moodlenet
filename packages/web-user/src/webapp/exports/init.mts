@@ -1,6 +1,9 @@
 import { AddToCollectionButtonByResourceContextContainer } from '@moodlenet/collection/webapp'
-import type { ResourcePageGeneralActionsAddonItem } from '@moodlenet/ed-resource/webapp'
-import { ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
+import type {
+  ItemWithoutKey,
+  ResourcePageGeneralActionsAddonItem,
+} from '@moodlenet/ed-resource/webapp'
+import { ResourceCardPlugins, ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
 import type {
   HeaderAddonRegItem,
   PkgAddOns,
@@ -18,6 +21,8 @@ import '../shell.mjs'
 
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
+import { BookmarkButtonContainer } from '../ui/components/atoms/BookmarkButton/BookmarkButtonContainer.js'
+import { LikeButtonContainer } from '../ui/components/atoms/LikeButton/LikeButtonContainer.js'
 import {
   LoginButtonContainer,
   SignupButtonContainer,
@@ -83,4 +88,26 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
   }, [isRoot, isAuthenticated])
 
   useRightItems(headerRightAddons)
+})
+
+ResourceCardPlugins.register(function useRegisterCardPlugin({
+  useTopRightItems, //  useTopLeftItems,
+}) {
+  const socialButtonsGetter = (): PkgAddOns<ItemWithoutKey> | null => ({
+    likeButton: { Item: LikeButtonContainer },
+    bookMarkButton: { Item: BookmarkButtonContainer },
+  })
+
+  const socialButtons = useMemo(socialButtonsGetter, [])
+  useTopRightItems(socialButtons)
+
+  /* @ETTO example more item
+   const bottomLeftAddone = useMemo<PkgAddOns<ItemWithoutKey> | null>(() => {
+    return {
+      pippo: { Item: LikeButtonContainer },
+      ciccio: { Item: BookmarkButtonContainer },
+    }
+  }, [])
+*/
+  //  useTopLeftItems(bottomLeftAddone)
 })
