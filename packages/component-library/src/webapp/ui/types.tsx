@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, PropsWithChildren } from 'react'
 
 export type Organization = {
   logo: string
@@ -6,7 +6,7 @@ export type Organization = {
   url: string
 }
 
-export type AddonItem<P = any> = {
+export type AddonItem<P = PropsWithChildren> = {
   Item: ComponentType<P>
   key: string | number
 }
