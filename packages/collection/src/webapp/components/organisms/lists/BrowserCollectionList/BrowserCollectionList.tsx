@@ -9,16 +9,20 @@ export type BrowserCollectionListProps = {
   collectionCardPropsList: CollectionCardProps[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
+  loadMore: (() => unknown) | null
 }
 
 export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
   collectionCardPropsList,
   showAll,
   setShowAll,
+  loadMore,
 }) => {
   return (
     <ListCard
-      className={`browser-collection-list ${showAll ? 'show-all' : ''}`}
+      className={`browser-collection-list ${showAll ? 'show-all' : ''} ${
+        loadMore ? 'load-more' : ''
+      }`}
       content={useMemo(
         () =>
           collectionCardPropsList.map(collectionCardProps => (
@@ -32,7 +36,11 @@ export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
         </div>
       }
       footer={
-        !showAll && (
+        showAll ? (
+          loadMore ? (
+            <TertiaryButton onClick={loadMore}>Load more</TertiaryButton>
+          ) : null
+        ) : (
           <TertiaryButton onClick={() => setShowAll('collection-list')}>
             See all collection results
           </TertiaryButton>

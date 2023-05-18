@@ -9,16 +9,20 @@ export type BrowserProfileListProps = {
   profilesCardPropsList: ProfileCardProps[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
+  loadMore: (() => unknown) | null
 }
 
 export const BrowserProfileList: FC<BrowserProfileListProps> = ({
   profilesCardPropsList,
   showAll,
   setShowAll,
+  loadMore,
 }) => {
   return (
     <ListCard
-      className={`browser-profile-list ${showAll ? 'show-all' : ''}`}
+      className={`browser-profile-list ${showAll ? 'show-all' : ''}  ${
+        loadMore ? 'load-more' : ''
+      }`}
       content={useMemo(
         () =>
           profilesCardPropsList
@@ -46,11 +50,15 @@ export const BrowserProfileList: FC<BrowserProfileListProps> = ({
         </div>
       }
       footer={
-        !showAll ? (
+        showAll ? (
+          loadMore ? (
+            <TertiaryButton onClick={loadMore}>Load more</TertiaryButton>
+          ) : null
+        ) : (
           <TertiaryButton onClick={() => setShowAll('people-list')}>
             See all people results
           </TertiaryButton>
-        ) : null
+        )
       }
       minGrid={170}
       maxRows={showAll ? undefined : 2}
