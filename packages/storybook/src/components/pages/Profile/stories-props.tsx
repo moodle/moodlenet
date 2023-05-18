@@ -39,7 +39,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
 
   const data: ProfileData = {
     userId: (Math.random() * 1000000).toString(),
-    username: person ? person.displayName : 'username',
+    displayName: person ? person.displayName : '',
     avatarUrl: person && person.avatarUrl,
     backgroundUrl: person && person.backgroundUrl,
     profileHref: href('Page/Profile/Default'),
@@ -96,10 +96,14 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       validationSchema: profileFormValidationSchema(maxUploadSize),
       resourceCardPropsList: getResourcesCardStoryProps(5, {
         access: { ...access },
+      }).map(resource => {
+        return { key: resource.data.resourceId, resourceCardProps: resource }
       }),
       createResource: linkTo('Pages/New Resource/Default'),
       collectionCardPropsList: getCollectionsCardStoryProps(5, {
         access: { ...access },
+      }).map(collection => {
+        return { key: collection.data.collectionId, collectionCardProps: collection }
       }),
       createCollection: linkTo('Pages/New Collection/Default'),
       overallCardItems: OverallCardStories.OverallCardStoryProps.items ?? [],

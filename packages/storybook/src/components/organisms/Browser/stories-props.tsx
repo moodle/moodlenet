@@ -1,9 +1,12 @@
-import { SearchCollectionList } from '@moodlenet/collection/ui'
+import { BrowserCollectionFilters, BrowserCollectionList } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { SearchResourceList } from '@moodlenet/ed-resource/ui'
+import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
 import type { BrowserProps, MainColumItem } from '@moodlenet/react-app/ui'
-import { SortBy } from '@moodlenet/react-app/ui'
-import { getProfileCardsStoryProps, SearchProfileList } from '@moodlenet/web-user/ui'
+import {
+  BrowserProfileFilters,
+  BrowserProfileList,
+  getProfileCardsStoryProps,
+} from '@moodlenet/web-user/ui'
 import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
 import { getCollectionsCardStoryProps } from '../CollectionCard/story-props.js'
@@ -24,7 +27,7 @@ export const useBrowserResourceList = () => {
         [],
       )
       return (
-        <SearchResourceList
+        <BrowserResourceList
           resourceCardPropsList={list}
           showAll={showAll}
           setShowAll={setShowAll}
@@ -32,18 +35,18 @@ export const useBrowserResourceList = () => {
       )
     },
     filters: [
-      {
-        Item: () => (
-          <SortBy selected={currentResourceSortBy} setSelection={setCurrentResourceSortBy} />
-        ),
-        key: 'sort-by',
-      },
-    ],
+      BrowserResourceFilters.SortByItem(currentResourceSortBy, setCurrentResourceSortBy),
+    ].map(e => ({
+      Item: () => e,
+      key: e.key,
+    })),
     key: 'resource-list',
   }
 }
 
 export const useBrowserProfileList = () => {
+  const [currentProfileSortBy, setCurrentProfileSortBy] = useState('Relevant')
+
   return {
     name: 'People',
     Item: ({ showAll, setShowAll }) => {
@@ -56,10 +59,19 @@ export const useBrowserProfileList = () => {
         [],
       )
       return (
-        <SearchProfileList profilesCardPropsList={list} showAll={showAll} setShowAll={setShowAll} />
+        <BrowserProfileList
+          profilesCardPropsList={list}
+          showAll={showAll}
+          setShowAll={setShowAll}
+        />
       )
     },
-    filters: [],
+    filters: [BrowserProfileFilters.SortByItem(currentProfileSortBy, setCurrentProfileSortBy)].map(
+      e => ({
+        Item: () => e,
+        key: e.key,
+      }),
+    ),
     key: 'profile-list',
   }
 }
@@ -77,7 +89,7 @@ export const useBrowserCollectionList = () => {
         [],
       )
       return (
-        <SearchCollectionList
+        <BrowserCollectionList
           collectionCardPropsList={list}
           showAll={showAll}
           setShowAll={setShowAll}
@@ -85,13 +97,11 @@ export const useBrowserCollectionList = () => {
       )
     },
     filters: [
-      {
-        Item: () => (
-          <SortBy selected={currentCollectionSortBy} setSelection={setCurrentCollectionSortBy} />
-        ),
-        key: 'sort-by',
-      },
-    ],
+      BrowserCollectionFilters.SortByItem(currentCollectionSortBy, setCurrentCollectionSortBy),
+    ].map(e => ({
+      Item: () => e,
+      key: e.key,
+    })),
     key: 'collection-list',
   }
 }
