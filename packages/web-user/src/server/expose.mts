@@ -210,12 +210,13 @@ export const expose = await shell.expose<WebUserExposeType>({
         },
       },
     },
-    'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id': {
-      guard: () => void 0,
-      async fn(/* _,{action,entity_id,feature} */) {
-        return
+    '_____REMOVE_ME____webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id':
+      {
+        guard: () => void 0,
+        async fn(/* _,{action,entity_id,feature} */) {
+          return
+        },
       },
-    },
     'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id': {
       guard: () => void 0,
       async fn(/* _, { entity_id, feature } */) {
@@ -243,6 +244,22 @@ export const expose = await shell.expose<WebUserExposeType>({
         return
       },
     },
+
+    'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key':
+      {
+        guard: () => void 0,
+        async fn(/* _,{profileKey} */) {
+          return
+        },
+      },
+
+    'webapp/entity-social-status/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key':
+      {
+        guard: () => void 0,
+        async fn(/* _,{profileKey} */) {
+          return Math.random() > 0.5
+        },
+      },
   },
 })
 

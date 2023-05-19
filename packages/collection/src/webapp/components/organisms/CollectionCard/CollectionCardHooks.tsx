@@ -1,5 +1,5 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
-import type { ItemWithoutKey } from '@moodlenet/ed-resource/webapp'
+import type { AddonItemNoKey } from '@moodlenet/component-library'
 import { href } from '@moodlenet/react-app/common'
 import { createHookPlugin } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
@@ -9,7 +9,7 @@ import { useMainHook } from '../../../MainHooks.js'
 import type { CollectionCardProps } from './CollectionCard.js'
 
 export const CollectionCardPlugins = createHookPlugin<{
-  topRightItems: ItemWithoutKey
+  topRightItems: AddonItemNoKey
   // topLeftItems: ItemWithoutKey,
 }>({ topRightItems: null })
 
