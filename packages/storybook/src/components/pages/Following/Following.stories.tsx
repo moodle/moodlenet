@@ -29,7 +29,6 @@ export const LoggedIn: FollowingStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     browserProps: useBrowserStoryProps({
-      title: 'Following',
       mainColumnItems: [useBrowserProfileList(), useBrowserCollectionList()], //@ETTO check that on this page you only show the profiles and collection, on that order, with profiles first
     }),
   }

@@ -11,14 +11,14 @@ export type AddToCollectionsCardProps = {
 } & Pick<SelectorProps & { multiple: true }, 'value' | 'onItemSelect' | 'onItemDeselect'>
 export type OptionItemProp = { value: string; label: ReactNode }
 export const OptionItem: FC<OptionItemProp> = ({ label, value }) => {
-  const { selected, select, deselect } = useSelectorOption(value) ?? {}
+  const { toggle, selected } = useSelectorOption(value) ?? {}
 
   return (
     <div
       className={`collection-name tag ${selected ? 'selected' : ''}`}
       onClick={e => {
         e.stopPropagation()
-        selected ? deselect?.() : select?.()
+        toggle?.()
       }}
     >
       {label}
