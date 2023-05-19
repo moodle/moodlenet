@@ -3,22 +3,26 @@ import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
 import ResourceCard from '../../ResourceCard/ResourceCard.js'
-import './SearchResourceList.scss'
+import './BrowserResourceList.scss'
 
-export type SearchResourceListProps = {
+export type BrowserResourceListProps = {
   resourceCardPropsList: ResourceCardPropsData[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
+  loadMore: (() => unknown) | null
 }
 
-export const SearchResourceList: FC<SearchResourceListProps> = ({
+export const BrowserResourceList: FC<BrowserResourceListProps> = ({
   resourceCardPropsList,
   showAll,
   setShowAll,
+  loadMore,
 }) => {
   const listCard = (
     <ListCard
-      className={`search-resource-list ${showAll ? 'show-all' : ''}`}
+      className={`browser-resource-list ${showAll ? 'show-all' : ''} ${
+        loadMore ? 'load-more' : ''
+      }`}
       content={useMemo(
         () =>
           resourceCardPropsList.map(resourceCardProps => {
@@ -38,14 +42,17 @@ export const SearchResourceList: FC<SearchResourceListProps> = ({
         </div>
       }
       footer={
-        showAll ? null : (
+        showAll ? (
+          loadMore ? (
+            <TertiaryButton onClick={loadMore}>Load more</TertiaryButton>
+          ) : null
+        ) : (
           <TertiaryButton onClick={() => setShowAll('resource-list')}>
             See all resource results
           </TertiaryButton>
         )
       }
       minGrid={showAll ? 400 : 300}
-      // minGrid={showAll ? undefined : 300}
       maxRows={showAll ? undefined : 3}
     />
   )
@@ -53,6 +60,6 @@ export const SearchResourceList: FC<SearchResourceListProps> = ({
   return listCard
 }
 
-SearchResourceList.defaultProps = {}
+BrowserResourceList.defaultProps = {}
 
-export default SearchResourceList
+export default BrowserResourceList

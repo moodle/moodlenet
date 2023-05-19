@@ -1,8 +1,8 @@
-.search-profile-list {
+.browser-profile-list {
   padding: 24px 24px 66px 24px;
   position: relative;
 
-  &.show-all {
+  &.show-all:not(.load-more) {
     padding: 24px;
   }
 
