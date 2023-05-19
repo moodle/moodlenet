@@ -1,6 +1,9 @@
-import { AddToCollectionButtonByResourceContextContainer } from '@moodlenet/collection/webapp'
+import {
+  AddToCollectionButtonByResourceContextContainer,
+  CollectionCardPlugins,
+} from '@moodlenet/collection/webapp'
 import type { ResourcePageGeneralActionsAddonItem } from '@moodlenet/ed-resource/webapp'
-import { ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
+import { ResourceCardPlugins, ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
 import type {
   HeaderAddonRegItem,
   PkgAddOns,
@@ -16,8 +19,10 @@ import {
 import { useContext, useMemo } from 'react'
 import '../shell.mjs'
 
+import type { AddonItemNoKey } from '@moodlenet/component-library'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
+import { LikeButtonContainer } from '../ui/components/atoms/LikeButton/LikeButtonContainer.js'
 import {
   LoginButtonContainer,
   SignupButtonContainer,
@@ -84,3 +89,44 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
 
   useRightItems(headerRightAddons)
 })
+
+ResourceCardPlugins.register(function useRegisterCardPlugin({
+  useTopRightItems, //  useTopLeftItems,
+  resourceKey,
+}) {
+  const socialButtons = useMemo<PkgAddOns<AddonItemNoKey>>(
+    () => ({
+      likeButton: {
+        Item: () => <LikeButtonContainer _key={resourceKey} entityType={'resource'} />,
+      },
+      // bookMarkButton: { Item: BookmarkButtonContainer },
+    }),
+    [resourceKey],
+  )
+  useTopRightItems(socialButtons)
+})
+
+CollectionCardPlugins.register(function useRegisterCardPlugin({
+  useTopRightItems, //  useTopLeftItems,
+  //collectionKey
+}) {
+  const socialButtons = useMemo<PkgAddOns<AddonItemNoKey>>(
+    () => ({
+      // likeButton: { Item: () => <LikeButtonContainer _key={resourceKey}  entityType="collection"/> },
+      // followButton: { Item: LikeButtonContainer },
+      // bookMarkButton: { Item: BookmarkButtonContainer },
+    }),
+    [],
+  )
+  useTopRightItems(socialButtons)
+})
+
+/* @ETTO example more item
+   const bottomLeftAddone = useMemo<PkgAddOns<ItemWithoutKey> | null>(() => {
+    return {
+      pippo: { Item: LikeButtonContainer },
+      ciccio: { Item: BookmarkButtonContainer },
+    }
+  }, [])
+*/
+//  useTopLeftItems(bottomLeftAddone)

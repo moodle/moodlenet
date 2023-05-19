@@ -1,36 +1,37 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo, useState } from 'react'
+import type { KnownEntityTypes } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { shell } from '../../../../shell.mjs'
+import { useSocialActionHook } from '../../../../SocialActionHook.js'
 import type { LikeButtonProps } from './LikeButton.js'
 
-type MyProps = LikeButtonProps & { numLikes: number }
-
-export const useLikeButtonProps = ({ profileKey }: { profileKey: string }): MyProps | null => {
+export const useLikeButtonProps = ({
+  _key,
+  entityType,
+}: {
+  _key: string
+  entityType: KnownEntityTypes
+}): LikeButtonProps | null => {
   const { isAuthenticated } = useContext(AuthCtx)
-  const [liked, setLiked] = useState(false)
+  const [liked, toggleLiked] = useSocialActionHook({ _key, entityType, feature: 'like' })
   const [numLikes, setNumLikes] = useState(0)
 
-  const props = useMemo(() => {
-    //  if (!pageProgs) return null
+  const props = useMemo<LikeButtonProps>(() => {
     const toggleLike = () => {
-      shell.rpc.me[
-        'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
-      ](undefined, { action: `add`, feature: 'like', entity_id: profileKey }).then(() => {
-        setLiked(!liked), setNumLikes(!liked ? numLikes + 1 : numLikes - 1)
-      })
+      toggleLiked().then(() => setNumLikes(num => ++num))
     }
-    const props: MyProps = {
+
+    const props: LikeButtonProps = {
       liked,
       canLike: true,
-      isCreator: true,
+      isCreator: false,
       isAuthenticated,
       toggleLike,
       numLikes,
     }
 
     return props
-  }, [isAuthenticated, liked, numLikes, profileKey])
+  }, [isAuthenticated, liked, numLikes, toggleLiked])
 
   return props
 }

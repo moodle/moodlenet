@@ -36,7 +36,7 @@ export function useMyProfileContextValue() {
   const featureEntity = useCallback<MyProfileContextT['featureEntity']>(
     async ({ entity_id, action, feature }) => {
       await shell.rpc.me[
-        'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
+        '_____REMOVE_ME____webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
       ](void 0, { action, entity_id: entity_id, feature })
       setMyFeaturedEntities(featuredEntities =>
         action === 'add'
