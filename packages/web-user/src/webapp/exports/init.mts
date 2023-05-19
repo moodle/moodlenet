@@ -19,7 +19,6 @@ import {
 import { useContext, useMemo } from 'react'
 import '../shell.mjs'
 
-import type { AddonItem } from '@moodlenet/component-library'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
 import { BookmarkButtonContainer } from '../ui/components/atoms/BookmarkButton/BookmarkButtonContainer.js'
@@ -91,24 +90,29 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
   useRightItems(headerRightAddons)
 })
 
-export type ItemWithoutKey = Omit<AddonItem, 'key'>
-
-const socialButtonsGetter = (): PkgAddOns<ItemWithoutKey> | null => ({
-  likeButton: { Item: LikeButtonContainer },
-  bookMarkButton: { Item: BookmarkButtonContainer },
-})
-
 ResourceCardPlugins.register(function useRegisterCardPlugin({
   useTopRightItems, //  useTopLeftItems,
 }) {
-  const socialButtons = useMemo(socialButtonsGetter, [])
+  const socialButtons = useMemo(
+    () => ({
+      likeButton: { Item: LikeButtonContainer },
+      bookMarkButton: { Item: BookmarkButtonContainer },
+    }),
+    [],
+  )
   useTopRightItems(socialButtons)
 })
 
 CollectionCardPlugins.register(function useRegisterCardPlugin({
   useTopRightItems, //  useTopLeftItems,
 }) {
-  const socialButtons = useMemo(socialButtonsGetter, [])
+  const socialButtons = useMemo(
+    () => ({
+      followButton: { Item: LikeButtonContainer },
+      bookMarkButton: { Item: BookmarkButtonContainer },
+    }),
+    [],
+  )
   useTopRightItems(socialButtons)
 })
 
