@@ -1,9 +1,14 @@
 import type { Href } from '@moodlenet/react-app/common'
 
 export type WebUserEntityNames = 'Profile'
-export type FeaturedEntity = { _id: string; feature: KnownEntityFeature }
 export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
-export type KnownEntityTypes = 'resource' | 'collection' | 'profile'
+export type KnownEntityType = 'resource' | 'collection' | 'profile'
+
+export type KnownFeaturedEntities = {
+  [feat in KnownEntityFeature]: {
+    [entType in KnownEntityType]: { _key: string }[]
+  }
+}
 
 export type ProfileGetRpc = {
   data: Profile
