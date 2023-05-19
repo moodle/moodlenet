@@ -15,7 +15,7 @@ export const useBookmarkButtonProps = ({
     //  if (!pageProgs) return null
     const toggleBookmark = () => {
       shell.rpc.me[
-        'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
+        '_____REMOVE_ME____webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
       ](undefined, { action: `add`, feature: 'bookmark', entity_id: profileKey }).then(() =>
         setBookmarked(!bookmarked),
       )

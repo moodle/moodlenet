@@ -1,4 +1,7 @@
-export { useResourceCardProps } from '../components/organisms/ResourceCard/ResourceCardHook.js'
+export {
+  ResourceCardPlugins,
+  useResourceCardProps,
+} from '../components/organisms/ResourceCard/ResourceCardHook.js'
 export {
   ResourcePagePlugins,
   useResourcePageProps,

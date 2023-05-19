@@ -1,4 +1,5 @@
 import type { PkgIdentifier, RpcArgs } from '@moodlenet/core'
+import { compile } from 'path-to-regexp'
 export const BASE_PKG_URL = '/.pkg'
 
 export function getPkgRpcFetchOpts(
@@ -9,10 +10,12 @@ export function getPkgRpcFetchOpts(
 ) {
   const [bodyArg, params, query] = args
   const searchParams = new URLSearchParams(query ?? {}).toString()
-  const apiPathWithParams = Object.entries(params ?? {}).reduce(
-    (_restPath, [key, val]) => _restPath.replaceAll(`:${key}`, String(val)),
-    apiPath,
-  )
+  const toPath = compile(apiPath, { encode: encodeURIComponent })
+  const apiPathWithParams = toPath(params ?? {})
+  // const apiPathWithParams = Object.entries(params ?? {}).reduce(
+  //   (_restPath, [key, val]) => _restPath.replaceAll(`:${key}`, String(val)),
+  //   apiPath,
+  // )
 
   const url = `${BASE_PKG_URL}/${targetPkgId.name}/${apiPathWithParams}${
     searchParams ? `?${searchParams}` : ''

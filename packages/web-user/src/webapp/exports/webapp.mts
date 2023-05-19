@@ -1,4 +1,7 @@
 export { AuthCtx, useNeedsWebUserLogin } from '../context/AuthContext.js'
+export { BookmarkButtonContainer } from '../ui/components/atoms/BookmarkButton/BookmarkButtonContainer.js'
+export { FollowButtonContainer } from '../ui/components/atoms/FollowButton/FollowButtonContainer.js'
+export { LikeButtonContainer } from '../ui/components/atoms/LikeButton/LikeButtonContainer.js'
 export {
   AddMenuPlugins,
   useAddMenuProps,
