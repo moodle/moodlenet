@@ -19,9 +19,9 @@ import {
 import { useContext, useMemo } from 'react'
 import '../shell.mjs'
 
+import type { AddonItemNoKey } from '@moodlenet/component-library'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
-import { BookmarkButtonContainer } from '../ui/components/atoms/BookmarkButton/BookmarkButtonContainer.js'
 import { LikeButtonContainer } from '../ui/components/atoms/LikeButton/LikeButtonContainer.js'
 import {
   LoginButtonContainer,
@@ -92,24 +92,29 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
 
 ResourceCardPlugins.register(function useRegisterCardPlugin({
   useTopRightItems, //  useTopLeftItems,
+  resourceKey,
 }) {
-  const socialButtons = useMemo(
+  const socialButtons = useMemo<PkgAddOns<AddonItemNoKey>>(
     () => ({
-      likeButton: { Item: LikeButtonContainer },
-      bookMarkButton: { Item: BookmarkButtonContainer },
+      likeButton: {
+        Item: () => <LikeButtonContainer _key={resourceKey} entityType={'resource'} />,
+      },
+      // bookMarkButton: { Item: BookmarkButtonContainer },
     }),
-    [],
+    [resourceKey],
   )
   useTopRightItems(socialButtons)
 })
 
 CollectionCardPlugins.register(function useRegisterCardPlugin({
   useTopRightItems, //  useTopLeftItems,
+  //collectionKey
 }) {
-  const socialButtons = useMemo(
+  const socialButtons = useMemo<PkgAddOns<AddonItemNoKey>>(
     () => ({
-      followButton: { Item: LikeButtonContainer },
-      bookMarkButton: { Item: BookmarkButtonContainer },
+      // likeButton: { Item: () => <LikeButtonContainer _key={resourceKey}  entityType="collection"/> },
+      // followButton: { Item: LikeButtonContainer },
+      // bookMarkButton: { Item: BookmarkButtonContainer },
     }),
     [],
   )

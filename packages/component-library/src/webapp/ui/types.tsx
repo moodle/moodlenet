@@ -10,6 +10,7 @@ export type AddonItem<P = PropsWithChildren> = {
   Item: ComponentType<P>
   key: string | number
 }
+export type AddonItemNoKey = Omit<AddonItem, 'key'>
 
 export type Href = {
   ext: boolean

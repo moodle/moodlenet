@@ -15,7 +15,7 @@ export const useFollowButtonProps = ({
     //  if (!pageProgs) return null
     const toggleFollow = () => {
       shell.rpc.me[
-        'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
+        '_____REMOVE_ME____webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
       ](undefined, { action: `add`, feature: 'follow', entity_id: profileKey }).then(() =>
         setFollowed(!followed),
       )

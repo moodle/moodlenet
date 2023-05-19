@@ -1,7 +1,6 @@
 export {
   ResourceCardPlugins,
   useResourceCardProps,
-  type ItemWithoutKey,
 } from '../components/organisms/ResourceCard/ResourceCardHook.js'
 export {
   ResourcePagePlugins,

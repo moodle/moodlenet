@@ -10,7 +10,7 @@ type PkgAddOnsHandles<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
 }
 type PkgAddOnsRegHooks<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
   [addonName in WithUse<string & keyof PkgAddOnsTypesMap>]: UseRegisterAddOn<
-    PkgAddOnsTypesMap[addonName]
+    PkgAddOnsTypesMap[keyof PkgAddOnsTypesMap & RemoveUse<addonName>]
   >
 }
 
@@ -23,7 +23,7 @@ type MappedPkgAddOnsMap<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
   >['addOn'])[]
 }
 
-// type RemoveUse<S extends string> = S extends `use${infer T}` ? Uncapitalize<T> : never
+type RemoveUse<S extends string> = S extends `use${infer T}` ? Uncapitalize<T> : never
 
 type WithUse<S extends string> = `use${Capitalize<S>}`
 

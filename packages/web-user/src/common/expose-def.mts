@@ -3,6 +3,7 @@ import type {
   ClientSessionDataRpc,
   FeaturedEntity,
   KnownEntityFeature,
+  KnownEntityTypes,
   Profile,
   ProfileGetRpc,
   WebUserData,
@@ -29,7 +30,7 @@ export type WebUserExposeType = PkgExposeDef<{
     ): Promise<string | null>
 
     // social features
-    'webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'(
+    '_____REMOVE_ME____webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'(
       body: void,
       params: {
         action: 'add' | 'remove'
@@ -37,6 +38,25 @@ export type WebUserExposeType = PkgExposeDef<{
         entity_id: string
       },
     ): Promise<void>
+
+    'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key'(
+      body: void,
+      params: {
+        action: 'add' | 'remove'
+        feature: KnownEntityFeature
+        entityType: KnownEntityTypes
+        _key: string
+      },
+    ): Promise<void>
+    'webapp/entity-social-status/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key'(
+      body: void,
+      params: {
+        feature: KnownEntityFeature
+        entityType: KnownEntityTypes
+        _key: string
+      },
+    ): Promise<boolean>
+
     'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id'(
       body: void,
       params: {
