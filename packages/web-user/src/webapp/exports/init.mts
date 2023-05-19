@@ -1,8 +1,8 @@
-import { AddToCollectionButtonByResourceContextContainer } from '@moodlenet/collection/webapp'
-import type {
-  ItemWithoutKey,
-  ResourcePageGeneralActionsAddonItem,
-} from '@moodlenet/ed-resource/webapp'
+import {
+  AddToCollectionButtonByResourceContextContainer,
+  CollectionCardPlugins,
+} from '@moodlenet/collection/webapp'
+import type { ResourcePageGeneralActionsAddonItem } from '@moodlenet/ed-resource/webapp'
 import { ResourceCardPlugins, ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
 import type {
   HeaderAddonRegItem,
@@ -19,6 +19,7 @@ import {
 import { useContext, useMemo } from 'react'
 import '../shell.mjs'
 
+import type { AddonItem } from '@moodlenet/component-library'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
 import { BookmarkButtonContainer } from '../ui/components/atoms/BookmarkButton/BookmarkButtonContainer.js'
@@ -90,18 +91,28 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
   useRightItems(headerRightAddons)
 })
 
+export type ItemWithoutKey = Omit<AddonItem, 'key'>
+
+const socialButtonsGetter = (): PkgAddOns<ItemWithoutKey> | null => ({
+  likeButton: { Item: LikeButtonContainer },
+  bookMarkButton: { Item: BookmarkButtonContainer },
+})
+
 ResourceCardPlugins.register(function useRegisterCardPlugin({
   useTopRightItems, //  useTopLeftItems,
 }) {
-  const socialButtonsGetter = (): PkgAddOns<ItemWithoutKey> | null => ({
-    likeButton: { Item: LikeButtonContainer },
-    bookMarkButton: { Item: BookmarkButtonContainer },
-  })
-
   const socialButtons = useMemo(socialButtonsGetter, [])
   useTopRightItems(socialButtons)
+})
 
-  /* @ETTO example more item
+CollectionCardPlugins.register(function useRegisterCardPlugin({
+  useTopRightItems, //  useTopLeftItems,
+}) {
+  const socialButtons = useMemo(socialButtonsGetter, [])
+  useTopRightItems(socialButtons)
+})
+
+/* @ETTO example more item
    const bottomLeftAddone = useMemo<PkgAddOns<ItemWithoutKey> | null>(() => {
     return {
       pippo: { Item: LikeButtonContainer },
@@ -109,5 +120,4 @@ ResourceCardPlugins.register(function useRegisterCardPlugin({
     }
   }, [])
 */
-  //  useTopLeftItems(bottomLeftAddone)
-})
+//  useTopLeftItems(bottomLeftAddone)
