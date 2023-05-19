@@ -18,7 +18,6 @@ export type MyFeaturedEntitiesHandle = {
   all: KnownFeaturedEntities
   toggle(_: {
     feature: KnownEntityFeature
-    action: 'add' | 'remove'
     _key: string
     entityType: KnownEntityType
   }): Promise<void>
@@ -45,8 +44,16 @@ export function useMyFeaturedEntities() {
     reload()
   }, [reload])
 
+  const isFeatured = useCallback<MyFeaturedEntitiesHandle['isFeatured']>(
+    ({ _key, entityType, feature }) => {
+      return !!all[feature][entityType].find(feat => feat._key === _key)
+    },
+    [all],
+  )
+
   const toggle = useCallback<MyFeaturedEntitiesHandle['toggle']>(
-    async ({ action, _key, entityType, feature }) => {
+    async ({ _key, entityType, feature }) => {
+      const action = isFeatured({ _key, entityType, feature }) ? 'remove' : 'add'
       await shell.rpc.me[
         'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key'
       ](void 0, { action, _key, entityType, feature })
@@ -55,7 +62,7 @@ export function useMyFeaturedEntities() {
         const updatedList: { _key: string }[] =
           action === 'add'
             ? [...currentList, { _key }]
-            : currentList.filter(item => item._key === _key)
+            : currentList.filter(item => item._key !== _key)
 
         return {
           ...featuredEntities,
@@ -66,14 +73,7 @@ export function useMyFeaturedEntities() {
         }
       })
     },
-    [],
-  )
-
-  const isFeatured = useCallback<MyFeaturedEntitiesHandle['isFeatured']>(
-    ({ _key, entityType, feature }) => {
-      return !!all[feature][entityType].find(feat => feat._key === _key)
-    },
-    [all],
+    [isFeatured],
   )
 
   const myFeaturedEntitiesContext = useMemo<MyFeaturedEntitiesHandle>(() => {
