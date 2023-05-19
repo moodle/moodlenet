@@ -1,19 +1,28 @@
-import { Collection } from '@moodlenet/collection/server'
+import { Collection, CollectionEntitiesTools } from '@moodlenet/collection/server'
 import { RpcStatus } from '@moodlenet/core'
-import { Resource } from '@moodlenet/ed-resource/server'
+import { EdResourceEntitiesTools, Resource } from '@moodlenet/ed-resource/server'
 import { webImageResizer } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import { isCreatorOfCurrentEntity, queryEntities, toaql } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
-import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
+import type {
+  ClientSessionDataRpc,
+  KnownEntityFeature,
+  KnownEntityType,
+  KnownFeaturedEntities,
+  Profile,
+  ProfileGetRpc,
+  WebUserData,
+} from '../common/types.mjs'
 import { WebUserEntitiesTools } from './entities.mjs'
 import { publicFiles, publicFilesHttp } from './init.mjs'
 import { shell } from './shell.mjs'
-import type { ProfileDataType } from './types.mjs'
+import type { KnownFeaturedEntityItem, ProfileDataType } from './types.mjs'
 import { loginAsRoot, sendWebUserTokenCookie, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import {
   editProfile,
+  getCurrentProfile,
   getProfileAvatarLogicalFilename,
   getProfileImageLogicalFilename,
   getProfileRecord,
@@ -217,7 +226,7 @@ export const expose = await shell.expose<WebUserExposeType>({
           return
         },
       },
-    'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id': {
+    'webapp/feature-entity/count/:feature(follow|like)/:entity_id': {
       guard: () => void 0,
       async fn(/* _, { entity_id, feature } */) {
         return { count: 1 }
@@ -226,8 +235,12 @@ export const expose = await shell.expose<WebUserExposeType>({
     'webapp/all-my-featured-entities': {
       guard: () => void 0,
       async fn() {
+        const myProfile = await getCurrentProfile()
+        if (!myProfile) {
+          return null
+        }
         return {
-          featuredEntities: [],
+          featuredEntities: reduceToKnownFeaturedEntities(myProfile.knownFeaturedEntities),
         }
       },
     },
@@ -285,4 +298,52 @@ function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
     siteUrl: entity.siteUrl ?? '',
   }
   return profile
+}
+
+function reduceToKnownFeaturedEntities(
+  knownFeaturedEntities: KnownFeaturedEntityItem[],
+): KnownFeaturedEntities {
+  const myFeaturedEntities: KnownFeaturedEntities = {
+    bookmark: {
+      collection: extractFeaturedIdentifiers('Collection', 'bookmark'),
+      profile: extractFeaturedIdentifiers('Profile', 'bookmark'),
+      resource: extractFeaturedIdentifiers('Resource', 'bookmark'),
+    },
+    follow: {
+      collection: extractFeaturedIdentifiers('Collection', 'follow'),
+      profile: extractFeaturedIdentifiers('Profile', 'follow'),
+      resource: extractFeaturedIdentifiers('Resource', 'follow'),
+    },
+    like: {
+      collection: extractFeaturedIdentifiers('Collection', 'like'),
+      profile: extractFeaturedIdentifiers('Profile', 'like'),
+      resource: extractFeaturedIdentifiers('Resource', 'like'),
+    },
+  }
+  return myFeaturedEntities
+
+  function extractFeaturedIdentifiers(
+    extractEntity: Capitalize<KnownEntityType>,
+    extractFeature: KnownEntityFeature,
+  ): { _key: string }[] {
+    const filteredByFeature = (knownFeaturedEntities ?? []).filter(
+      ({ feature }) => extractFeature === feature,
+    )
+    const identifiers =
+      extractEntity === 'Collection'
+        ? CollectionEntitiesTools.mapToIdentifiersFilterType({
+            ids: filteredByFeature,
+            type: extractEntity,
+          })
+        : extractEntity === 'Resource'
+        ? EdResourceEntitiesTools.mapToIdentifiersFilterType({
+            ids: filteredByFeature,
+            type: extractEntity,
+          })
+        : WebUserEntitiesTools.mapToIdentifiersFilterType({
+            ids: filteredByFeature,
+            type: extractEntity,
+          })
+    return identifiers.map(({ entityIdentifier: { _key } }) => ({ _key }))
+  }
 }

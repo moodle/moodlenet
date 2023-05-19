@@ -1,5 +1,6 @@
 import { wrapFetch } from '@moodlenet/react-app/webapp'
 import cookies from 'js-cookie'
+import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Profile } from '../../common/exports.mjs'
@@ -36,6 +37,11 @@ export type AuthCtxT = {
       clientSessionData?: undefined
     }
 )
+
+export const AuthCtxProvider: FC<PropsWithChildren> = ({ children }) => {
+  const authCtx = useAuthCtxValue()
+  return authCtx && <AuthCtx.Provider value={authCtx}>{children}</AuthCtx.Provider>
+}
 
 export const AuthCtx = createContext<AuthCtxT>(null as never)
 

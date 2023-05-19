@@ -1,9 +1,9 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import type {
   ClientSessionDataRpc,
-  FeaturedEntity,
   KnownEntityFeature,
-  KnownEntityTypes,
+  KnownEntityType,
+  KnownFeaturedEntities,
   Profile,
   ProfileGetRpc,
   WebUserData,
@@ -44,7 +44,7 @@ export type WebUserExposeType = PkgExposeDef<{
       params: {
         action: 'add' | 'remove'
         feature: KnownEntityFeature
-        entityType: KnownEntityTypes
+        entityType: KnownEntityType
         _key: string
       },
     ): Promise<void>
@@ -52,20 +52,20 @@ export type WebUserExposeType = PkgExposeDef<{
       body: void,
       params: {
         feature: KnownEntityFeature
-        entityType: KnownEntityTypes
+        entityType: KnownEntityType
         _key: string
       },
     ): Promise<boolean>
 
-    'webapp/feature-entity/count/:feature(bookmark|follow|like)/:entity_id'(
+    'webapp/feature-entity/count/:feature(follow|like)/:entity_id'(
       body: void,
       params: {
-        feature: KnownEntityFeature
+        feature: Exclude<KnownEntityFeature, 'bookmark'>
         entity_id: string
       },
     ): Promise<{ count: number }>
-    'webapp/all-my-featured-entities'(): Promise<{
-      featuredEntities: FeaturedEntity[]
+    'webapp/all-my-featured-entities'(): Promise<null | {
+      featuredEntities: KnownFeaturedEntities
     }>
     'webapp/profile-kudos-count/:profileKey'(
       body: void,
