@@ -42,3 +42,5 @@ async function initIscedGrades() {
     }),
   )
 }
+
+export default 99
