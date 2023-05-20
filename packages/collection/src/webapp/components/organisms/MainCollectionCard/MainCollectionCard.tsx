@@ -72,7 +72,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { collectionId, mnUrl, imageUrl } = data
+  const { id, mnUrl, imageUrl } = data
 
   const {
     isPublished,
@@ -101,10 +101,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const [updatedImage, setUpdatedImage] = useState<string | undefined>(imageUrl)
-  const backupImage: string | undefined = useMemo(
-    () => getBackupImage(collectionId),
-    [collectionId],
-  )
+  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [image] = useImageUrl(imageUrl, backupImage)
   const [imageFromForm] = useImageUrl(imageForm.values.image)
 

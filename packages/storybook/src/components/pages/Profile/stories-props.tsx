@@ -14,8 +14,8 @@ import { profileFormValidationSchema } from '@moodlenet/web-user/common'
 import type { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
-import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
-import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
+import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/story-props.js'
+import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import type { PartialDeep } from 'type-fest'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
@@ -94,16 +94,12 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       data: data,
       access: access,
       validationSchema: profileFormValidationSchema(maxUploadSize),
-      resourceCardPropsList: getResourcesCardStoryProps(5, {
+      resourceCardPropsList: getResourceCardsStoryProps(5, {
         access: { ...access },
-      }).map(resource => {
-        return { key: resource.data.resourceId, resourceCardProps: resource }
       }),
       createResource: linkTo('Pages/New Resource/Default'),
-      collectionCardPropsList: getCollectionsCardStoryProps(5, {
+      collectionCardPropsList: getCollectionCardsStoryProps(5, {
         access: { ...access },
-      }).map(collection => {
-        return { key: collection.data.collectionId, collectionCardProps: collection }
       }),
       createCollection: linkTo('Pages/New Collection/Default'),
       overallCardItems: OverallCardStories.OverallCardStoryProps.items ?? [],

@@ -154,7 +154,7 @@ export const useResourceStoryProps = (
   }
 
   const data: ResourceDataProps = {
-    resourceId: 'qjnwglkd69io-sports',
+    id: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
     contentUrl: 'https://www.africau.edu/images/default/sample.pdf',
     // contentUrl: 'https://moodle.net/profile/d488bc9d51ef-moodle-academy',

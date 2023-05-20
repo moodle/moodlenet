@@ -67,7 +67,7 @@ export const useProfileProps = ({
       profileGetRpc.ownKnownEntities.resources.map(({ _key }) => {
         return {
           key: _key,
-          resourceCardProps: proxyWith(function usePropProxy() {
+          props: proxyWith(function usePropProxy() {
             return { props: useResourceCardProps(_key) }
           }),
         }
@@ -76,7 +76,7 @@ export const useProfileProps = ({
       profileGetRpc.ownKnownEntities.collections.map(({ _key }) => {
         return {
           key: _key,
-          collectionCardProps: proxyWith(function usePropProxy() {
+          props: proxyWith(function usePropProxy() {
             return { props: useCollectionCardProps(_key) }
           }),
         }
