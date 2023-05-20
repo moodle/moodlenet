@@ -16,14 +16,9 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 // import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 // import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import type { AddonItem } from '@moodlenet/component-library'
-import {
-  Card,
-  getThumbnailFromUrl,
-  isEllipsisActive,
-  TertiaryButton,
-} from '@moodlenet/component-library'
+import { Card, getThumbnailFromUrl, isEllipsisActive } from '@moodlenet/component-library'
 import { getBackupImage, Link, withProxy } from '@moodlenet/react-app/ui'
-import { Public } from '@mui/icons-material'
+import { Public, PublicOff } from '@mui/icons-material'
 import { useEffect, useRef, useState } from 'react'
 import type {
   ResourceCardAccess,
@@ -67,11 +62,11 @@ export const ResourceCard = withProxy<ResourceCardProps>(
 
     data,
     state,
-    actions,
+    // actions,
     access,
   }) => {
     const {
-      resourceId,
+      id,
       contentUrl,
       imageUrl,
       title,
@@ -88,12 +83,6 @@ export const ResourceCard = withProxy<ResourceCardProps>(
       // isSelected,
       // selectionMode,
     } = state
-    const {
-      // toggleLike,
-      //  toggleBookmark,
-      publish,
-      unpublish,
-    } = actions
     const {
       canPublish,
       // canLike,
@@ -119,15 +108,13 @@ export const ResourceCard = withProxy<ResourceCardProps>(
     if (orientation === 'horizontal') {
       background = {
         background:
-          'url("' +
-          (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(resourceId)) +
-          '")',
+          'url("' + (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(id)) + '")',
       }
     } else {
       background = {
         background:
           'linear-gradient(0deg, rgba(0, 0, 0, 0.91) 0%, rgba(0, 0, 0, 0.1729) 45.15%, rgba(0, 0, 0, 0) 100%), url(' +
-          (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(resourceId)) +
+          (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(id)) +
           ')',
       }
     }
@@ -141,7 +128,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
     }, [titleRef])
 
     const content = (
-      <div className="content">
+      <div className={`content ${isPublished ? 'published' : ''}`}>
         {orientation === 'horizontal' && <div className={`image ${size}`} style={background} />}
         <div className={`resource-card-content ${orientation ?? ''} ${size}`}>
           <abbr className={`title ${orientation ?? ''}`} {...(showTitleAbbr && { title: title })}>
@@ -181,12 +168,37 @@ export const ResourceCard = withProxy<ResourceCardProps>(
       (item): item is AddonItem | JSX.Element => !!item,
     )
 
-    const updatedTopRightItems = [...(topRightItems ?? [])].filter(
-      (item): item is AddonItem /*  | JSX.Element */ => !!item,
+    const publishState = canPublish ? (
+      isPublished ? (
+        <abbr
+          title="Published"
+          key="publish-state"
+          style={{ cursor: 'initial' }}
+          className="publish-state"
+        >
+          <Public style={{ fill: '#00bd7e' }} />
+        </abbr>
+      ) : (
+        <abbr
+          title="Unpublished"
+          key="publish-state"
+          style={{ cursor: 'initial' }}
+          className="publish-state"
+        >
+          <PublicOff />
+        </abbr>
+      )
+    ) : null
+
+    const updatedTopRightItems = [publishState, ...(topRightItems ?? [])].filter(
+      (item): item is AddonItem | JSX.Element => !!item,
     )
 
     const header = (
-      <div className={`resource-card-header ${orientation} ${size}`} key="resource-card-header">
+      <div
+        className={`resource-card-header ${orientation} ${size} ${isPublished ? 'published' : ''}`}
+        key="resource-card-header"
+      >
         <div className="header-left">
           {updatedTopLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
@@ -217,23 +229,12 @@ export const ResourceCard = withProxy<ResourceCardProps>(
       </Link>
     )
 
-    const pulishButton = canPublish && (
-      <TertiaryButton
-        key="publish-button"
-        onClick={isPublished ? unpublish : publish}
-        className={`publish-button ${isPublished ? 'published' : 'unpublished'}`}
-        abbr={isPublished ? 'Unpublish' : 'Publish'}
-      >
-        <Public />
-      </TertiaryButton>
-    )
-
     const updatedBottomLeftItems = [avatarLabel, ...(bottomLeftItems ?? [])].filter(
       (item): item is AddonItem | JSX.Element => !!item,
     )
 
-    const updatedBottomRightItems = [pulishButton, ...(bottomRightItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
+    const updatedBottomRightItems = [...(bottomRightItems ?? [])].filter(
+      (item): item is AddonItem /* | JSX.Element */ => !!item,
     )
 
     const footer = (
@@ -272,7 +273,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
         ref={resourceCard}
         className={`resource-card ${className} ${
           '' /* isSelected ? 'selected' : '' */
-        } ${orientation} `}
+        } ${orientation} ${isPublished ? 'published' : ''} `}
         hover={true}
         style={orientation === 'vertical' ? background : {}}
       >

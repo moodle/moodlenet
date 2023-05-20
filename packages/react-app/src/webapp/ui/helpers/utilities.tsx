@@ -100,6 +100,13 @@ export const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
+export const transformPropsToObjectWithKey = <T,>(
+  element: T,
+  key: number | string,
+): { props: T; key: string } => {
+  return { props: element, key: key.toString() }
+}
+
 // export const isAddonItem = (
 //   toBeDetermined: AddonItem | undefined | false | null,
 // ): toBeDetermined is AddonItem => {

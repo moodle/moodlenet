@@ -10,8 +10,8 @@ import {
 import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
-import { getCollectionsCardStoryProps } from '../CollectionCard/story-props.js'
-import { getResourcesCardStoryProps } from '../ResourceCard/story-props.js'
+import { getCollectionCardsStoryProps } from '../CollectionCard/story-props.js'
+import { getResourceCardsStoryProps } from '../ResourceCard/story-props.js'
 
 export const useBrowserResourceList = () => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState('Relevant')
@@ -20,7 +20,7 @@ export const useBrowserResourceList = () => {
     Item: ({ showAll, setShowAll }) => {
       const list = useMemo(
         () =>
-          getResourcesCardStoryProps(30, {
+          getResourceCardsStoryProps(30, {
             access: {
               // isAuthenticated,
             },
@@ -32,7 +32,7 @@ export const useBrowserResourceList = () => {
           resourceCardPropsList={list}
           showAll={showAll}
           setShowAll={setShowAll}
-          loadMore={action(`load more subjects`)}
+          loadMore={action(`load more resources`)}
         />
       )
     },
@@ -53,7 +53,7 @@ export const useBrowserCollectionList = () => {
     Item: ({ showAll, setShowAll }) => {
       const list = useMemo(
         () =>
-          getCollectionsCardStoryProps(30, {
+          getCollectionCardsStoryProps(30, {
             access: { canPublish: false },
           }),
         [],

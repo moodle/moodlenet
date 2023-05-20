@@ -35,9 +35,9 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
     } = props
     const { displayName, creatorProfileHref: profileHref, avatarUrl: avatar } = contributor
     const owner = { displayName, avatar, profileHref }
-    const { resourceId, imageUrl, contentType, contentUrl, downloadFilename } = dataProps
+    const { id, imageUrl, contentType, contentUrl, downloadFilename } = dataProps
     const data: ResourceCardDataProps = {
-      resourceId,
+      id,
       imageUrl,
       title,
       contentType,

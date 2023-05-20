@@ -24,7 +24,7 @@ export const useCollectionPageProps = ({
       ({ _key }) => {
         return {
           key: _key,
-          resourceCardProps: proxyWith(function usePropProxy() {
+          props: proxyWith(function usePropProxy() {
             return { props: useResourceCardProps(_key) }
           }),
         }

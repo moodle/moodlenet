@@ -9,7 +9,7 @@ import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
 import './CollectionList.scss'
 
 export type CollectionListProps = {
-  collectionCardPropsList: CollectionCardProps[]
+  collectionCardPropsList: { props: CollectionCardProps; key: string }[]
   newCollectionHref: Href
   isCreator: boolean
 }
@@ -39,7 +39,7 @@ export const CollectionList: FC<CollectionListProps> = ({
       content={useMemo(
         () =>
           collectionCardPropsList.map(collectionCardProps => (
-            <CollectionCard key={collectionCardProps.data.collectionId} {...collectionCardProps} />
+            <CollectionCard key={collectionCardProps.key} {...collectionCardProps.props} />
           )),
         [collectionCardPropsList],
       )}

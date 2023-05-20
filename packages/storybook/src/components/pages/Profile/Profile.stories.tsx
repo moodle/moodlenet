@@ -1,8 +1,8 @@
 import { Profile } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
-import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
+import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/story-props.js'
+import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { useState } from 'react'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 import { useProfileStoryProps } from './stories-props.js'
@@ -41,8 +41,8 @@ export const LoggedOut = () => {
 export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
     access: { isAuthenticated: true },
-    // resourceCardPropsList: getResourcesCardStoryProps(5, {access: {canLike: true}}),
-    // collectionCardPropsList: getCollectionsCardStoryProps(5, {access: {canFollow: true}}),
+    // resourceCardPropsList: getResourceCardsStoryProps(5, {access: {canLike: true}}),
+    // collectionCardPropsList: getCollectionCardsStoryProps(5, {access: {canFollow: true}}),
     mainColumnItems: [],
     sideColumnItems: [],
   })
@@ -53,14 +53,14 @@ export const LoggedIn: ProfileStory = () => {
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
     access: { isAuthenticated: true, canEdit: true, isCreator: true },
-    resourceCardPropsList: getResourcesCardStoryProps(5, {
+    resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,
         canPublish: true,
         isCreator: true,
       },
     }),
-    collectionCardPropsList: getCollectionsCardStoryProps(5, {
+    collectionCardPropsList: getCollectionCardsStoryProps(5, {
       access: {
         canPublish: true,
         isCreator: true,
@@ -85,13 +85,13 @@ export const Owner: ProfileStory = () => {
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
     access: { isAdmin: true, canEdit: true, isCreator: false },
-    resourceCardPropsList: getResourcesCardStoryProps(5, {
+    resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,
         canPublish: true,
       },
     }),
-    collectionCardPropsList: getCollectionsCardStoryProps(5, {
+    collectionCardPropsList: getCollectionCardsStoryProps(5, {
       access: {
         canPublish: true,
         isCreator: true,

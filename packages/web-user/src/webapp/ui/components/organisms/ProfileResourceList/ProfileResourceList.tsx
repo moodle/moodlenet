@@ -8,7 +8,7 @@ import { useMemo } from 'react'
 import './ProfileResourceList.scss'
 
 export type ProfileResourceListProps = {
-  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardProps> }[]
+  resourceCardPropsList: { key: string; props: ProxyProps<ResourceCardProps> }[]
   createResource(): void
   canEdit: boolean
 }
@@ -27,7 +27,7 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
             return (
               <ResourceCard
                 key={resourceCardProps.key}
-                {...resourceCardProps.resourceCardProps}
+                {...resourceCardProps.props}
                 orientation="horizontal"
               />
             )

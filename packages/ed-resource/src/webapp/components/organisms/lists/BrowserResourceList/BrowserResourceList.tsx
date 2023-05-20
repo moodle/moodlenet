@@ -1,4 +1,5 @@
 import { ListCard, TertiaryButton } from '@moodlenet/component-library'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
@@ -6,7 +7,7 @@ import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './BrowserResourceList.scss'
 
 export type BrowserResourceListProps = {
-  resourceCardPropsList: ResourceCardPropsData[]
+  resourceCardPropsList: { props: ProxyProps<ResourceCardPropsData>; key: string }[]
   showAll: boolean
   setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
   loadMore: (() => unknown) | null
@@ -28,8 +29,8 @@ export const BrowserResourceList: FC<BrowserResourceListProps> = ({
           resourceCardPropsList.map(resourceCardProps => {
             return (
               <ResourceCard
-                key={resourceCardProps.data.resourceId}
-                {...resourceCardProps}
+                key={resourceCardProps.key}
+                {...resourceCardProps.props}
                 orientation="horizontal"
               />
             )

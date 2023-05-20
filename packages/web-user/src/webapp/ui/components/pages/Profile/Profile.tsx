@@ -31,8 +31,8 @@ export type ProfileProps = {
   profileForm: ProfileFormValues
   validationSchema: SchemaOf<ProfileFormValues>
 
-  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardProps> }[]
-  collectionCardPropsList: { key: string; collectionCardProps: ProxyProps<CollectionCardProps> }[]
+  resourceCardPropsList: { key: string; props: ProxyProps<ResourceCardProps> }[]
+  collectionCardPropsList: { key: string; props: ProxyProps<CollectionCardProps> }[]
   createResource(): void
   createCollection(): void
   overallCardItems: OverallCardItem[]

@@ -97,7 +97,7 @@ export const expose = await shell.expose<ResourceExposeType>({
               found.entity.content?.kind === 'file'
                 ? found.entity.content.fsItem.rpcFile.name
                 : null,
-            resourceId: found.entity._key,
+            id: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
             imageUrl,
           },

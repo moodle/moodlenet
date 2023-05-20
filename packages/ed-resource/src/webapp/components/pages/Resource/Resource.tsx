@@ -117,8 +117,8 @@ export const Resource: FC<ResourceProps> = ({
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   // const backupImage: AssetInfo | null | undefined = useMemo(
-  //   () => getBackupImage(resourceId),
-  //   [resourceId],
+  //   () => getBackupImage(id),
+  //   [id],
   // )
   //   const [isReporting, setIsReporting] = useState<boolean>(false)
   //   const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
