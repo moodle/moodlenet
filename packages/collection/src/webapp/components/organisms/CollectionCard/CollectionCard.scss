@@ -5,16 +5,11 @@
   position: relative;
   width: 100%;
   height: 185px;
-  background-color: #fff;
+  background-color: transparent;
   border-radius: 10px;
   box-shadow: 0 0 6px #dedede;
   display: flex;
   flex-direction: column;
-  background-size: cover;
-
-  &.unpublished {
-    opacity: 1;
-  }
 
   > .collection-card-background {
     position: absolute;
@@ -22,6 +17,20 @@
     height: 100%;
     background-size: cover;
     transform-origin: top right;
+
+    &.unpublished {
+      opacity: 0.8;
+    }
+
+    > .overlay {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        120% 132px at 50% 55%,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(0, 0, 0, 0.2) 73%
+      );
+    }
   }
 
   > .collection-card-header {
@@ -105,18 +114,8 @@
         }
       }
 
-      > .publish-button {
-        &.published {
-          color: #00bd7e;
-          &:hover {
-            color: #009966;
-          }
-        }
-        &.draft {
-          &:hover {
-            color: #63656a;
-          }
-        }
+      > .publish-state {
+        padding: 0 7px;
       }
     }
   }

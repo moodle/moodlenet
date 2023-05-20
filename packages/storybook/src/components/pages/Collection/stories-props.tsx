@@ -30,9 +30,10 @@ import type { CollectionProps, MainCollectionCardSlots } from '@moodlenet/collec
 import { Collection } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
-import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
+import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,
@@ -143,7 +144,7 @@ export const useCollectionStoryProps = (
   const isAuthenticated = overrides?.isAuthenticated ?? true
 
   const data: CollectionDataProps = {
-    collectionId: 'qjnwglkd69io-sports',
+    id: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
     imageUrl:
       'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
@@ -229,10 +230,10 @@ export const useCollectionStoryProps = (
 
   const accessOverrides = overrides?.access
 
-  const resourceCardPropsList: ResourceCardProps[] =
+  const resourceCardPropsList: { Item: ProxyProps<ResourceCardProps>; key: string }[] =
     overrides?.resourceCardPropsList?.length === 0
       ? []
-      : getResourcesCardStoryProps(6, {
+      : getResourceCardsStoryProps(6, {
           access: {
             ...access,
             ...accessOverrides,
@@ -253,10 +254,7 @@ export const useCollectionStoryProps = (
       sideColumnItems: [],
       wideColumnItems: [],
 
-      resourceCardPropsList: resourceCardPropsList.map((resourceCardProps, i) => ({
-        key: `${i}`,
-        resourceCardProps,
-      })),
+      resourceCardPropsList: resourceCardPropsList,
 
       collectionContributorCardProps:
         CollectionContributorCardStories.CollectionContributorCardStoryProps,

@@ -2,7 +2,7 @@ import { FilterNone } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
 import { getBackupImage, Link, withProxy } from '@moodlenet/react-app/ui'
-import { Public } from '@mui/icons-material'
+import { Public, PublicOff } from '@mui/icons-material'
 import { useEffect, useRef, useState } from 'react'
 import type {
   CollectionCardAccess,
@@ -31,10 +31,9 @@ export const CollectionCard = withProxy<CollectionCardProps>(
 
     data,
     state,
-    actions,
     access,
   }) => {
-    const { collectionId, imageUrl, title, collectionHref } = data
+    const { id, imageUrl, title, collectionHref } = data
     const {
       isPublished,
       // bookmarked,
@@ -42,7 +41,6 @@ export const CollectionCard = withProxy<CollectionCardProps>(
       // numFollowers,
       numResources,
     } = state
-    const { publish, unpublish } = actions
     const {
       // isAuthenticated,
       // isCreator,
@@ -52,10 +50,7 @@ export const CollectionCard = withProxy<CollectionCardProps>(
     } = access
 
     const background = {
-      background:
-        'radial-gradient(120% 132px at 50% 55%, rgba(0, 0, 0, 0.4) 0%,  rgba(0, 0, 0, 0.2) 73%) 0% 0% / cover, url(' +
-        (imageUrl || getBackupImage(collectionId)) +
-        ')',
+      background: 'url(' + (imageUrl || getBackupImage(id)) + ')',
       backgroundSize: 'cover',
     }
 
@@ -71,16 +66,27 @@ export const CollectionCard = withProxy<CollectionCardProps>(
       </TertiaryButton>
     )
 
-    const publishButton = canPublish && (
-      <TertiaryButton
-        key="publish-button"
-        onClick={isPublished ? () => unpublish : publish}
-        className={`publish-button ${isPublished ? 'published' : 'unpublished'}`}
-        abbr={isPublished ? 'Unpublish' : 'Publish'}
-      >
-        <Public />
-      </TertiaryButton>
-    )
+    const publishState = canPublish ? (
+      isPublished ? (
+        <abbr
+          title="Published"
+          key="publish-stat"
+          style={{ cursor: 'initial' }}
+          className="publish-state"
+        >
+          <Public style={{ fill: '#00bd7e' }} />
+        </abbr>
+      ) : (
+        <abbr
+          title="Unpublished"
+          key="publish-stat"
+          style={{ cursor: 'initial' }}
+          className="publish-state"
+        >
+          <PublicOff />
+        </abbr>
+      )
+    ) : null
 
     // const bookmarkButton = canBookmark && (
     //   <TertiaryButton
@@ -120,7 +126,7 @@ export const CollectionCard = withProxy<CollectionCardProps>(
     const updatedTopRightItems = [
       // bookmarkButton,
       // followButton,
-      publishButton,
+      publishState,
       ...(topRightItems ?? []),
     ].filter((item): item is AddonItem | JSX.Element => !!item)
 
@@ -155,11 +161,13 @@ export const CollectionCard = withProxy<CollectionCardProps>(
     )
 
     return (
-      <Card
-        className={`collection-card ${isPublished ? 'published' : 'draft'}`}
-        style={background}
-        hover={true}
-      >
+      <Card className={`collection-card ${isPublished ? 'published' : 'unpublished'}`} hover={true}>
+        <div
+          className={`collection-card-background ${isPublished ? 'published' : 'unpublished'}`}
+          style={background}
+        >
+          <div className="overlay" />
+        </div>
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
     )

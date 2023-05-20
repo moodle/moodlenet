@@ -12,8 +12,8 @@ import { useMemo, useState } from 'react'
 
 export type AddToCollectionButtonProps = {
   collections: SelectOptionsMulti<OptionItemProp>
-  add(collectionId: string): void
-  remove(collectionId: string): void
+  add(id: string): void
+  remove(id: string): void
 }
 
 export const AddToCollectionButton: FC<AddToCollectionButtonProps> = ({

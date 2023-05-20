@@ -9,6 +9,7 @@ import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { ContentBackupImages } from '@moodlenet/react-app/ui'
+import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -40,11 +41,17 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 }
 
 export const getResourceCardStoryProps = (
-  overrides?: PartialDeep<ResourceCardProps>,
+  overrides?: PartialDeep<
+    ResourceCardProps & {
+      isAuthenticated: boolean
+      bookmarkButtonProps: BookmarkButtonProps
+      likeButtonProps: LikeButtonProps
+    }
+  >,
 ): ResourceCardProps => {
   const id = `${Math.floor(Math.random() * ContentBackupImages.length * 10000000)}`
   const data: ResourceCardDataProps = {
-    resourceId: `id-${id}`,
+    id: `id-${id}`,
     // tags: TagListStory,
     title: `Why the  ${
       Math.random() < 0.5 ? 'tropical rainforests are' : 'the oceans are'
@@ -86,6 +93,26 @@ export const getResourceCardStoryProps = (
   const isPublished =
     overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
+  const isAuthenticated = overrides?.isAuthenticated ?? true
+
+  const bookmarkButtonProps: BookmarkButtonProps = {
+    bookmarked: false,
+    canBookmark: true,
+    isAuthenticated,
+    toggleBookmark: action('toggle bookmark'),
+    ...overrides?.bookmarkButtonProps,
+  }
+
+  const likeButtonProps: LikeButtonProps = {
+    liked: false,
+    canLike: true,
+    isAuthenticated,
+    numLikes: 23,
+    isCreator: access.isCreator,
+    toggleLike: action('toggle like'),
+    ...overrides?.likeButtonProps,
+  }
+
   const slots: Pick<
     ResourceCardProps,
     'bottomLeftItems' | 'bottomRightItems' | 'mainColumnItems' | 'topLeftItems' | 'topRightItems'
@@ -97,29 +124,13 @@ export const getResourceCardStoryProps = (
     bottomRightItems: [
       isPublished
         ? {
-            Item: () => (
-              <BookmarkButton
-                canBookmark={access.canBookmark}
-                bookmarked={state.bookmarked}
-                isAuthenticated={access.isAuthenticated}
-                toggleBookmark={actions.toggleBookmark}
-              />
-            ),
+            Item: () => <BookmarkButton {...bookmarkButtonProps} />,
             key: 'like-button',
           }
         : null,
       isPublished
         ? {
-            Item: () => (
-              <LikeButton
-                canLike={access.canLike}
-                liked={state.liked}
-                isAuthenticated={access.isAuthenticated}
-                isCreator={access.isCreator}
-                toggleLike={actions.toggleLike}
-                numLikes={state.numLikes}
-              />
-            ),
+            Item: () => <LikeButton {...likeButtonProps} />,
             key: 'like-button',
           }
         : null,
@@ -138,7 +149,7 @@ export const getResourceCardStoryProps = (
   )
   return overrideDeep<ResourceCardProps>(newResource, {
     data: {
-      resourceId: id,
+      id: id,
     },
   })
 }

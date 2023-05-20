@@ -8,7 +8,7 @@ import { useMemo } from 'react'
 import './ProfileCollectionList.scss'
 
 export type ProfileCollectionListProps = {
-  collectionCardPropsList: { key: string; collectionCardProps: ProxyProps<CollectionCardProps> }[]
+  collectionCardPropsList: { key: string; props: ProxyProps<CollectionCardProps> }[]
   createCollection(): void
   canEdit: boolean
 }
@@ -37,9 +37,7 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
       header={`Curated collections`}
       content={useMemo(
         () =>
-          collectionCardPropsList.map(({ collectionCardProps, key }) => (
-            <CollectionCard key={key} {...collectionCardProps} />
-          )),
+          collectionCardPropsList.map(({ props, key }) => <CollectionCard key={key} {...props} />),
         [collectionCardPropsList],
       )}
       actions={

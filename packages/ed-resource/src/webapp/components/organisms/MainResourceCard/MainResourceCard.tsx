@@ -102,7 +102,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { resourceId, mnUrl, contentType, downloadFilename, imageUrl, contentUrl } = data
+  const { id, mnUrl, contentType, downloadFilename, imageUrl, contentUrl } = data
 
   const { isPublished, uploadProgress } = state
 
@@ -112,7 +112,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: string | undefined = useMemo(() => getBackupImage(resourceId), [resourceId])
+  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const { width } = useWindowDimensions()
 
@@ -448,7 +448,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //               <div
   //                 className="loading"
   //                 style={{
-  //                   visibility: form.isSubmitting ? 'visible' : 'hresourceIdden',
+  //                   visibility: form.isSubmitting ? 'visible' : 'hidden',
   //                 }}
   //               >
   //                 <Loading color="white" />
@@ -456,7 +456,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //               <div
   //                 className="label"
   //                 style={{
-  //                   visibility: form.isSubmitting ? 'hresourceIdden' : 'visible',
+  //                   visibility: form.isSubmitting ? 'hidden' : 'visible',
   //                 }}
   //               >
   //                 <Save />
@@ -738,8 +738,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     //         <div className="main-column">
     //
     //         </div>
-    //         <div className="sresourceIde-column">
-    //           {updatedSresourceIdeColumnItems?.map(i => (
+    //         <div className="side-column">
+    //           {updatedSideColumnItems?.map(i => (
     //             <i.Item key={i.key} />
     //           ))}
     //         </div>

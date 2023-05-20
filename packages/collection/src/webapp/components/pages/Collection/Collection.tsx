@@ -26,7 +26,7 @@ export type CollectionProps = {
   mainLayoutProps: MainLayoutProps
   mainCollectionCardSlots: MainCollectionCardSlots
   collectionContributorCardProps: CollectionContributorCardProps
-  resourceCardPropsList: { key: string; resourceCardProps: ProxyProps<ResourceCardPropsData> }[]
+  resourceCardPropsList: { key: string; props: ProxyProps<ResourceCardPropsData> }[]
 
   wideColumnItems: AddonItem[]
   mainColumnItems: AddonItem[]
@@ -99,8 +99,8 @@ export const Collection: FC<CollectionProps> = ({
       setShouldShowErrors(true)
     }
   }
-  const resourceList = resourceCardPropsList.map(({ key, resourceCardProps }) => (
-    <ResourceCard {...resourceCardProps} orientation={'horizontal'} key={key} />
+  const resourceList = resourceCardPropsList.map(({ key, props }) => (
+    <ResourceCard {...props} orientation={'horizontal'} key={key} />
   ))
 
   const mainCollectionCard = (

@@ -212,7 +212,7 @@ function getCollectionRpc(
       title: found.entity.title,
     },
     data: {
-      collectionId: found.entity._key,
+      id: found.entity._key,
       mnUrl: getWebappUrl(getCollectionHomePageRoutePath({ _key })),
       imageUrl,
     },
