@@ -28,7 +28,7 @@ export type ResourceFormRpc = {
 }
 
 export type ResourceDataRpc = {
-  resourceId: string
+  id: string
   mnUrl: string
   contentType: 'link' | 'file'
   imageUrl: string | null
@@ -108,10 +108,7 @@ export type ResourceCardDataRpc = {
     profileHref: Href
   }
   resourceHomeHref: Href
-} & Pick<
-  ResourceDataProps,
-  'imageUrl' | 'downloadFilename' | 'contentType' | 'resourceId' | 'contentUrl'
-> &
+} & Pick<ResourceDataProps, 'imageUrl' | 'downloadFilename' | 'contentType' | 'id' | 'contentUrl'> &
   Pick<ResourceFormProps, 'title'>
 
 export type ResourceCardState = {

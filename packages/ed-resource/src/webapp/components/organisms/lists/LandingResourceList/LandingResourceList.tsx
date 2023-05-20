@@ -1,5 +1,6 @@
 import type { Href } from '@moodlenet/component-library'
 import { ListCard, SecondaryButton } from '@moodlenet/component-library'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
 import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
 import type { FC } from 'react'
@@ -9,7 +10,7 @@ import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './LandingResourceList.scss'
 
 export type LandingResourceListProps = {
-  resourceCardPropsList: ResourceCardPropsData[]
+  resourceCardPropsList: { props: ProxyProps<ResourceCardPropsData>; key: string }[]
   searchResourcesHref: Href
 }
 
@@ -22,14 +23,8 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
       className="landing-resource-list"
       content={useMemo(
         () =>
-          resourceCardPropsList.map(resourceCardProps => {
-            return (
-              <ResourceCard
-                key={resourceCardProps.data.resourceId}
-                {...resourceCardProps}
-                orientation="vertical"
-              />
-            )
+          resourceCardPropsList.map(({ key, props }) => {
+            return <ResourceCard key={key} {...props} orientation="vertical" />
           }),
         [resourceCardPropsList],
       )}

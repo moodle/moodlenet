@@ -9,9 +9,9 @@ import { CollectionCard } from '@moodlenet/collection/ui'
 import { ContentBackupImages } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
+import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import { linkTo } from '@storybook/addon-links'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 
@@ -40,38 +40,66 @@ const meta: ComponentMeta<typeof CollectionCard> = {
 }
 
 export const getCollectionCardStoryProps = (
-  overrides?: PartialDeep<CollectionCardProps>,
+  overrides?: PartialDeep<
+    CollectionCardProps & {
+      isAuthenticated: boolean
+      bookmarkButtonProps: BookmarkButtonProps
+      smallFollowButtonProps: SmallFollowButtonProps
+    }
+  >,
 ): CollectionCardProps => {
   const data: CollectionCardData = {
-    collectionId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
+    id: `id-${Math.floor(Math.random() * ContentBackupImages.length)}`,
     title: 'Such a great collection',
     imageUrl: 'https://picsum.photos/300/200',
+    ...overrides?.data,
     collectionHref: href('Pages/Collection/Logged In'),
   }
 
   const state: CollectionCardState = {
     numResources: 5,
     isPublished: true,
-    numFollowers: 32,
-    followed: false,
-    bookmarked: false,
+    // numFollowers: 32,
+    // followed: false,
+    // bookmarked: false,
     ...overrides?.state,
   }
 
   const actions: CollectionCardActions = {
     publish: action('publish resource'),
     unpublish: action('unpublish resource'),
-    toggleFollow: linkTo('Molecules/CollectionCard', 'Default'),
-    toggleBookmark: linkTo('Molecules/CollectionCard', 'Default'),
+    // toggleFollow: linkTo('Molecules/CollectionCard', 'Default'),
+    // toggleBookmark: linkTo('Molecules/CollectionCard', 'Default'),
   }
 
   const access: CollectionCardAccess = {
     isCreator: false,
     canPublish: true,
-    canFollow: true,
-    canBookmark: true,
-    isAuthenticated: true,
+    // canFollow: true,
+    // canBookmark: true,
+    // isAuthenticated: true,
     ...overrides?.access,
+  }
+
+  const isAuthenticated = overrides?.isAuthenticated ?? true
+
+  const bookmarkButtonProps: BookmarkButtonProps = {
+    bookmarked: false,
+    canBookmark: true,
+    isAuthenticated,
+    toggleBookmark: action('toggle bookmark'),
+    color: 'white',
+    ...overrides?.bookmarkButtonProps,
+  }
+
+  const smallFollowButtonProps: SmallFollowButtonProps = {
+    canFollow: true,
+    isAuthenticated,
+    isCreator: access.isCreator,
+    toggleFollow: action('toggle follow'),
+    followed: false,
+    numFollowers: 32,
+    ...overrides?.smallFollowButtonProps,
   }
 
   const isPublished =
@@ -82,30 +110,13 @@ export const getCollectionCardStoryProps = (
     topRightItems: [
       isPublished
         ? {
-            Item: () => (
-              <BookmarkButton
-                canBookmark={access.canBookmark}
-                bookmarked={state.bookmarked}
-                isAuthenticated={access.isAuthenticated}
-                toggleBookmark={actions.toggleBookmark}
-                style={{ color: 'white' }}
-              />
-            ),
+            Item: () => <BookmarkButton {...bookmarkButtonProps} />,
             key: 'like-button',
           }
         : null,
       isPublished
         ? {
-            Item: () => (
-              <SmallFollowButton
-                canFollow={access.canFollow}
-                followed={state.followed}
-                isAuthenticated={access.isAuthenticated}
-                isCreator={access.isCreator}
-                toggleFollow={actions.toggleFollow}
-                numFollowers={state.numFollowers}
-              />
-            ),
+            Item: () => <SmallFollowButton {...smallFollowButtonProps} />,
             key: 'follow-button',
           }
         : null,

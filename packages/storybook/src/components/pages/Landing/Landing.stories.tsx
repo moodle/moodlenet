@@ -6,8 +6,8 @@ import { Landing } from '@moodlenet/react-app/ui'
 import { getProfileCardsStoryProps, LandingProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { getCollectionsCardStoryProps } from 'components/organisms/CollectionCard/story-props.js'
-import { getResourcesCardStoryProps } from 'components/organisms/ResourceCard/story-props.js'
+import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/story-props.js'
+import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/story-props.js'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -34,10 +34,13 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Page/Search')}
-          resourceCardPropsList={getResourcesCardStoryProps(15, {
+          resourceCardPropsList={getResourceCardsStoryProps(15, {
             access: {
-              isAuthenticated: false,
+              // isAuthenticated: false,
               canPublish: false,
+            },
+            state: {
+              isPublished: false,
             },
           })}
         />
@@ -48,15 +51,15 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
-          collectionCardPropsList={getCollectionsCardStoryProps(15, {
+          collectionCardPropsList={getCollectionCardsStoryProps(15, {
             state: {
               numResources: 2,
             },
             access: {
-              isAuthenticated: false,
+              // isAuthenticated: false,
               canPublish: false,
-              canBookmark: false,
-              canFollow: false,
+              // canBookmark: false,
+              // canFollow: false,
             },
           })}
         />
@@ -85,10 +88,10 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Page/Search')}
-          resourceCardPropsList={getResourcesCardStoryProps(15, {
+          resourceCardPropsList={getResourceCardsStoryProps(15, {
             state: {
-              liked: true,
-              bookmarked: true,
+              // liked: true,
+              // bookmarked: true,
             },
             access: {
               canDelete: false,
@@ -103,10 +106,10 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingCollectionList
           searchCollectionsHref={href('Page/Search')}
-          collectionCardPropsList={getCollectionsCardStoryProps(15, {
+          collectionCardPropsList={getCollectionCardsStoryProps(15, {
             state: {
-              followed: true,
-              bookmarked: true,
+              // followed: true,
+              // bookmarked: true,
             },
             access: {
               canPublish: false,
@@ -157,15 +160,15 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingResourceList
             searchResourcesHref={href('Page/Search')}
-            resourceCardPropsList={getResourcesCardStoryProps(15, {
+            resourceCardPropsList={getResourceCardsStoryProps(15, {
               state: {
                 isPublished: true,
               },
               access: {
                 canDelete: true,
                 canPublish: true,
-                isAuthenticated: true,
-                canLike: false,
+                // isAuthenticated: true,
+                // canLike: false,
                 isCreator: true,
               },
             })}
@@ -177,15 +180,15 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingCollectionList
             searchCollectionsHref={href('Page/Search')}
-            collectionCardPropsList={getCollectionsCardStoryProps(15, {
+            collectionCardPropsList={getCollectionCardsStoryProps(15, {
               state: {
                 isPublished: true,
               },
               access: {
                 isCreator: true,
                 canPublish: true,
-                canBookmark: true,
-                isAuthenticated: true,
+                // canBookmark: true,
+                // isAuthenticated: true,
               },
             })}
           />

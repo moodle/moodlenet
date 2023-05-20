@@ -1,6 +1,7 @@
 import { ArrowForwardRounded } from '@material-ui/icons'
 import type { Href } from '@moodlenet/component-library'
 import { ListCard, SecondaryButton } from '@moodlenet/component-library'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
 import { Link } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
@@ -10,7 +11,7 @@ import './LandingCollectionList.scss'
 
 export type LandingCollectionListProps = {
   searchCollectionsHref: Href
-  collectionCardPropsList: CollectionCardProps[]
+  collectionCardPropsList: { props: ProxyProps<CollectionCardProps>; key: string }[]
 }
 
 export const LandingCollectionList: FC<LandingCollectionListProps> = ({
@@ -24,12 +25,7 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
         () =>
           collectionCardPropsList
             .slice(0, 20)
-            .map(collectionCardProps => (
-              <CollectionCard
-                key={collectionCardProps.data.collectionId}
-                {...collectionCardProps}
-              />
-            )),
+            .map(({ key, props }) => <CollectionCard key={key} {...props} />),
         [collectionCardPropsList],
       )}
       header={

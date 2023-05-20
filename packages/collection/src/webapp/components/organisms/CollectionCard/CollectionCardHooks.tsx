@@ -22,9 +22,9 @@ export const useCollectionCardProps = (collectionKey: string): CollectionCardPro
     const { props, actions } = _mainProps
 
     const { data: dataProps, state, access, form } = props
-    const { collectionId, imageUrl } = dataProps
+    const { id, imageUrl } = dataProps
     const data: CollectionCardData = {
-      collectionId,
+      id,
       imageUrl,
       title: form.title,
       collectionHref: href(getCollectionHomePageRoutePath({ _key: collectionKey })),

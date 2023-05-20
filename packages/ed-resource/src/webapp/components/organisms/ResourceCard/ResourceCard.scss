@@ -4,6 +4,11 @@
   position: relative;
   border-radius: 10px;
 
+  &:not(.published) {
+    // opacity: 0.5;
+    box-shadow: 0 0 6px #e1dedb73;
+  }
+
   > .resource-card-header {
     pointer-events: none;
     position: absolute;
@@ -14,6 +19,14 @@
     display: flex;
     justify-content: space-between;
     gap: 10px;
+
+    &:not(.published) {
+      > .header-left {
+        > .type {
+          opacity: 0.7;
+        }
+      }
+    }
 
     * {
       border-radius: 16px;
@@ -34,6 +47,7 @@
     }
 
     > .header-right {
+      pointer-events: auto;
       margin-right: -7px;
       flex-grow: 0;
       flex-shrink: 0;
@@ -138,9 +152,9 @@
     &.horizontal {
       left: 170px;
       right: 22px;
-      color: #8c8e95;
+      color: #687082;
       > .footer-left > a > span {
-        color: #8c8e95;
+        color: #687082;
       }
       &.micro {
         left: 40px;
@@ -206,7 +220,8 @@
         }
       }
 
-      > .tertiary-button {
+      > .tertiary-button,
+      > .publish-state {
         display: flex;
         align-items: center;
         gap: 4px;
@@ -234,17 +249,10 @@
         cursor: pointer;
       }
 
-      > .publish-button {
-        &.published {
-          color: #00bd7e;
-          &:hover {
-            color: #009966;
-          }
-        }
-        &.unpublished {
-          &:hover {
-            color: #63656a;
-          }
+      > .publish-state {
+        > svg {
+          width: 18px;
+          height: 18px;
         }
       }
     }
@@ -261,6 +269,12 @@
       height: inherit;
       display: flex;
       justify-content: flex-start;
+
+      &:not(.published) {
+        > .image {
+          opacity: 0.6;
+        }
+      }
 
       > .image {
         object-fit: cover;

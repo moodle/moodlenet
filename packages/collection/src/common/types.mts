@@ -25,7 +25,7 @@ export type CollectionAccessRpc = {
 }
 
 export type CollectionDataRpc = {
-  collectionId: string
+  id: string
   mnUrl: string
   imageUrl: string | undefined
 }
@@ -103,7 +103,7 @@ export type CollectionMainProps = {
 
 export type CollectionCardData = { collectionHref: Href } & Pick<
   CollectionDataProps,
-  'collectionId' | 'imageUrl'
+  'id' | 'imageUrl'
 > &
   Pick<CollectionFormProps, 'title'>
 
