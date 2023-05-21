@@ -16,7 +16,7 @@ import type {
   WebUserData,
 } from '../common/types.mjs'
 import { WebUserEntitiesTools } from './entities.mjs'
-import { publicFiles, publicFilesHttp } from './init.mjs'
+import { publicFiles, publicFilesHttp } from './init/fs.mjs'
 import { shell } from './shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType } from './types.mjs'
 import { loginAsRoot, sendWebUserTokenCookie, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'

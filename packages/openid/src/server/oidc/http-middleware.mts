@@ -1,7 +1,7 @@
 import { addMiddlewares } from '@moodlenet/http-server/server'
 import type { EntityUser } from '@moodlenet/system-entities/server'
 import { setCurrentUserFetch } from '@moodlenet/system-entities/server'
-import { Profile } from '@moodlenet/web-user/init'
+import { Profile } from '@moodlenet/web-user/server'
 import { shell } from '../shell.mjs'
 
 const OPENID_HEADER = 'Authorization'

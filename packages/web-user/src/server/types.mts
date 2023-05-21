@@ -22,7 +22,7 @@ type ImageField =
   | undefined
   | null
 
-export type Profile = ProfileDataType & { _key: string }
+// export type Profile = ProfileDataType & { _key: string }
 
 export type WebUserDataType = {
   displayName: string

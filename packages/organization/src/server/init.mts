@@ -1,2 +1,2 @@
-import './persistence/initPersistence.mjs'
-import './publicFiles.mjs'
+await import('./init/persistence-upgrade.mjs')
+await import('./init/fs.mjs')

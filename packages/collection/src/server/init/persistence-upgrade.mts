@@ -1,4 +1,4 @@
-import { kvStore } from '../kvStore.mjs'
+import { kvStore } from './kvStore.mjs'
 
 const PERSISTENCE_VERSION = -99
 let currentPersistentVersion = (await kvStore.get('persistence-version', '')).value?.v ?? NaN
@@ -9,6 +9,8 @@ if (currentPersistentVersion > PERSISTENCE_VERSION) {
 }
 
 while (currentPersistentVersion !== PERSISTENCE_VERSION) {
-  currentPersistentVersion = (await import(`./v${currentPersistentVersion}/init.mjs`)).default
+  currentPersistentVersion = (
+    await import(`./persistence-upgrades/@${currentPersistentVersion}/up.mjs`)
+  ).default
   await kvStore.set('persistence-version', '', { v: currentPersistentVersion })
 }
