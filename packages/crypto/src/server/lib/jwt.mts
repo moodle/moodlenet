@@ -1,6 +1,7 @@
 import { instanceDomain } from '@moodlenet/core'
 import * as jose from 'jose'
-import { env } from '../init.mjs'
+import { env } from '../init/env.mjs'
+import { keyLikes } from '../init/keys.mjs'
 import { shell } from '../shell.mjs'
 import type { JwtPayloadCustomClaims, JwtStdClaims, JwtToken, JwtVerifyResult } from '../types.mjs'
 
@@ -35,7 +36,7 @@ export async function sign(
   if (stdClaims.notBefore !== undefined) {
     signingJwt.setNotBefore(stdClaims.notBefore)
   }
-  const jwt = await signingJwt.sign(env.keyLikes.private, opts)
+  const jwt = await signingJwt.sign(keyLikes.private, opts)
 
   return jwt
 }
@@ -45,7 +46,7 @@ async function rawVerify(
   opts: jose.JWTVerifyOptions = {},
 ): Promise<undefined | jose.JWTVerifyResult> {
   try {
-    const jwtRawVerifyResult = await jose.jwtVerify(token, env.keyLikes.private, {
+    const jwtRawVerifyResult = await jose.jwtVerify(token, keyLikes.private, {
       ...opts,
       issuer: 'issuer' in opts ? opts.issuer : instanceDomain,
     })

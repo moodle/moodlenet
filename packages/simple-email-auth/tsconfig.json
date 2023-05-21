@@ -28,6 +28,9 @@
     },
     {
       "path": "../web-user"
+    },
+    {
+      "path": "../key-value-store"
     }
   ]
 }

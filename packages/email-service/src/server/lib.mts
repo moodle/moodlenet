@@ -1,7 +1,8 @@
 import assert from 'assert'
 import { createTransport } from 'nodemailer'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport/index.js'
-import { env, kvStore } from './init.mjs'
+import { env } from './init/env.mjs'
+import { kvStore } from './init/kvStore.mjs'
 import type { EmailObj, NodemailerTransport, SendResp } from './types.mjs'
 export type { SentMessageInfo } from 'nodemailer'
 
