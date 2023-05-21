@@ -15,7 +15,7 @@ import {
   queryMyEntities,
   toaql,
 } from '@moodlenet/system-entities/server'
-import { Collection } from './init.mjs'
+import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { CollectionDataType, CollectionEntityDoc } from './types.mjs'
 
