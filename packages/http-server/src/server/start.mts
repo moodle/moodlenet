@@ -3,7 +3,7 @@ import express from 'express'
 import gracefulShutdown from 'http-graceful-shutdown'
 import { BASE_PKG_URL } from '../common/pub-lib.mjs'
 import { makeExtPortsApp } from './ext-ports-app/make.mjs'
-import { env } from './init.mjs'
+import { env } from './init/env.mjs'
 import { getMiddlewares, httpContextMW, mountedApps } from './lib.mjs'
 
 export let shutdownGracefullyLocalServer: () => Promise<void>
