@@ -48,7 +48,7 @@ export type WebUserExposeType = PkgExposeDef<{
         _key: string
       },
     ): Promise<void>
-    'webapp/entity-social-status/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key'(
+    '____REMOVE_ME____webapp/entity-social-status/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key'(
       body: void,
       params: {
         feature: KnownEntityFeature

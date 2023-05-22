@@ -1,34 +1,31 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useMemo } from 'react'
+import type { KnownEntityType } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { shell } from '../../../../shell.mjs'
+import { useMyFeaturedEntity } from '../../../../MyProfile/MyFeaturedEntities.js'
 import type { BookmarkButtonProps } from './BookmarkButton.js'
 
 export const useBookmarkButtonProps = ({
-  profileKey,
+  _key,
+  entityType,
 }: {
-  profileKey: string
+  _key: string
+  entityType: KnownEntityType
 }): BookmarkButtonProps | null => {
   const { isAuthenticated } = useContext(AuthCtx)
-  const [bookmarked, setBookmarked] = useState(false)
+  const { isFeatured, toggle } = useMyFeaturedEntity({ _key, entityType, feature: 'follow' })
   const props = useMemo(() => {
     //  if (!pageProgs) return null
-    const toggleBookmark = () => {
-      shell.rpc.me[
-        '_____REMOVE_ME____webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id'
-      ](undefined, { action: `add`, feature: 'bookmark', entity_id: profileKey }).then(() =>
-        setBookmarked(!bookmarked),
-      )
-    }
+    const toggleBookmark = toggle
     const props: BookmarkButtonProps = {
-      bookmarked,
+      bookmarked: isFeatured,
       canBookmark: true,
       isAuthenticated,
       toggleBookmark,
     }
 
     return props
-  }, [bookmarked, isAuthenticated, profileKey])
+  }, [isAuthenticated, isFeatured, toggle])
 
   return props
 }

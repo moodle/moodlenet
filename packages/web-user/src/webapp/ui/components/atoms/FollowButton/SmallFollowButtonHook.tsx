@@ -13,14 +13,12 @@ export const useSmallFollowButtonProps = ({
   entityType: KnownEntityType
 }): SmallFollowButtonProps | null => {
   const { isAuthenticated } = useContext(AuthCtx)
-  const [numFollowers, setNumFollowers] = useState(0)
+  const [numFollowers, setNumFollowers] = useState(0) // @ETTO use the service
   const { isFeatured, toggle } = useMyFeaturedEntity({ _key, entityType, feature: 'follow' })
 
   const props = useMemo<SmallFollowButtonProps | null>(() => {
-    const followed = isFeatured
-
     const props: SmallFollowButtonProps = {
-      followed,
+      followed: isFeatured,
       canFollow: true,
       isCreator: false,
       isAuthenticated,
@@ -30,7 +28,7 @@ export const useSmallFollowButtonProps = ({
     return props
 
     function toggleFollow() {
-      const deltaNumFollowers = followed ? -1 : 1
+      const deltaNumFollowers = isFeatured ? -1 : 1
       toggle().then(() => setNumFollowers(num => num + deltaNumFollowers))
     }
   }, [isFeatured, isAuthenticated, numFollowers, toggle])
