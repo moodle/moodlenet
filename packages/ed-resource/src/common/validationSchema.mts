@@ -8,12 +8,12 @@ export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   subject: string().required(/* t */ `Please select a subject`),
   license: string().required(/* t */ `Please provide a license`),
-  language: string().optional(),
-  level: string().optional(),
-  month: string().optional(),
-  type: string().optional(),
+  language: string().required(),
+  level: string().required(),
+  month: string().required(),
+  type: string().required(),
   year: string().when('month', (month, schema) => {
-    return month ? schema.required(/* t */ `Please select a year`) : schema.optional()
+    return month ? schema.required(/* t */ `Please select a year`) : schema.required()
   }),
 })
 

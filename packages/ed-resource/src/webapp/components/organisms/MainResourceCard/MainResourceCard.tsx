@@ -167,7 +167,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       isTextarea
       key="title"
       textAreaAutoSize
-      displayMode
+      noBorder
       className="title underline"
       value={form.values.title}
       placeholder="Title"
@@ -606,7 +606,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       key="description"
       isTextarea
       textAreaAutoSize
-      displayMode
+      noBorder
       placeholder="Description"
       value={form.values.description}
       onChange={form.handleChange}
