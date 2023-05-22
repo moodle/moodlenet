@@ -266,7 +266,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         },
       },
 
-    'webapp/entity-social-status/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key':
+    '____REMOVE_ME____webapp/entity-social-status/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key':
       {
         guard: () => void 0,
         async fn(/* _,{profileKey} */) {
