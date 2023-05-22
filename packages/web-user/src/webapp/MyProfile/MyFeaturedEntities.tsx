@@ -13,7 +13,7 @@ const emptyFeaturedEntities: KnownFeaturedEntities = {
   like: { collection: [], profile: [], resource: [] },
 }
 
-export type MyFeaturedEntitiesHandle = {
+export type AllMyFeaturedEntitiesHandle = {
   reload(): Promise<void>
   all: KnownFeaturedEntities
   toggle(_: {
@@ -24,7 +24,7 @@ export type MyFeaturedEntitiesHandle = {
   isFeatured(_: { entityType: KnownEntityType; _key: string; feature: KnownEntityFeature }): boolean
 }
 
-export function useMyFeaturedEntities() {
+export function useAllMyFeaturedEntities() {
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
 
@@ -44,14 +44,14 @@ export function useMyFeaturedEntities() {
     reload()
   }, [reload])
 
-  const isFeatured = useCallback<MyFeaturedEntitiesHandle['isFeatured']>(
+  const isFeatured = useCallback<AllMyFeaturedEntitiesHandle['isFeatured']>(
     ({ _key, entityType, feature }) => {
       return !!all[feature][entityType].find(feat => feat._key === _key)
     },
     [all],
   )
 
-  const toggle = useCallback<MyFeaturedEntitiesHandle['toggle']>(
+  const toggle = useCallback<AllMyFeaturedEntitiesHandle['toggle']>(
     async ({ _key, entityType, feature }) => {
       const action = isFeatured({ _key, entityType, feature }) ? 'remove' : 'add'
       await shell.rpc.me[
@@ -76,8 +76,8 @@ export function useMyFeaturedEntities() {
     [isFeatured],
   )
 
-  const myFeaturedEntitiesContext = useMemo<MyFeaturedEntitiesHandle>(() => {
-    const myFeaturedEntitiesContext: MyFeaturedEntitiesHandle = {
+  const myFeaturedEntitiesContext = useMemo<AllMyFeaturedEntitiesHandle>(() => {
+    const myFeaturedEntitiesContext: AllMyFeaturedEntitiesHandle = {
       all,
       isFeatured,
       reload,
@@ -87,4 +87,32 @@ export function useMyFeaturedEntities() {
   }, [all, isFeatured, reload, toggle])
 
   return myFeaturedEntitiesContext
+}
+
+export type MyFeaturedEntityHandle = {
+  toggle(): Promise<void>
+  isFeatured: boolean
+}
+export function useMyFeaturedEntity({
+  _key,
+  feature,
+  entityType,
+}: {
+  entityType: KnownEntityType
+  feature: KnownEntityFeature
+  _key: string
+}) {
+  const allFeatsHandle = useAllMyFeaturedEntities()
+  const myFeaturedEntityHandle: MyFeaturedEntityHandle = useMemo<MyFeaturedEntityHandle>(() => {
+    const isFeatured = allFeatsHandle.isFeatured({ entityType, _key, feature })
+    const toggle = () => allFeatsHandle.toggle({ entityType, _key, feature })
+    const handle: MyFeaturedEntityHandle = {
+      isFeatured,
+      toggle,
+    }
+
+    return handle
+  }, [_key, allFeatsHandle, entityType, feature])
+
+  return myFeaturedEntityHandle
 }

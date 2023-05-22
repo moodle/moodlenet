@@ -1,11 +1,10 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo, useState } from 'react'
-import type { KnownEntityFeature, KnownEntityType } from '../../../../../common/types.mjs'
+import type { KnownEntityType } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { useMyProfileContext } from '../../../../MyProfile/MyProfileContext.js'
+import { useMyFeaturedEntity } from '../../../../MyProfile/MyFeaturedEntities.js'
 import type { SmallFollowButtonProps } from './FollowButton.js'
 
-const feature: KnownEntityFeature = 'follow'
 export const useSmallFollowButtonProps = ({
   _key,
   entityType,
@@ -15,20 +14,10 @@ export const useSmallFollowButtonProps = ({
 }): SmallFollowButtonProps | null => {
   const { isAuthenticated } = useContext(AuthCtx)
   const [numFollowers, setNumFollowers] = useState(0)
-  const feats = useMyProfileContext()?.myFeaturedEntities
+  const { isFeatured, toggle } = useMyFeaturedEntity({ _key, entityType, feature: 'follow' })
 
   const props = useMemo<SmallFollowButtonProps | null>(() => {
-    if (!feats) {
-      return null
-    }
-    const followed = feats.isFeatured({ _key, entityType, feature })
-
-    const toggleFollow = () => {
-      const numFollowersInc = followed ? -1 : 1
-      feats
-        .toggle({ _key, entityType, feature })
-        .then(() => setNumFollowers(num => num + numFollowersInc))
-    }
+    const followed = isFeatured
 
     const props: SmallFollowButtonProps = {
       followed,
@@ -38,9 +27,13 @@ export const useSmallFollowButtonProps = ({
       toggleFollow,
       numFollowers,
     }
-
     return props
-  }, [feats, _key, entityType, isAuthenticated, numFollowers])
+
+    function toggleFollow() {
+      const deltaNumFollowers = followed ? -1 : 1
+      toggle().then(() => setNumFollowers(num => num + deltaNumFollowers))
+    }
+  }, [isFeatured, isAuthenticated, numFollowers, toggle])
 
   return props
 }
