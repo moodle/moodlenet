@@ -31,7 +31,7 @@ import {
 import { AddMenuContainer } from '../ui/components/molecules/AddMenu/AddMenuContainer.js'
 import { AvatarMenuContainer } from '../ui/components/molecules/AvatarMenu/AvatarMenuContainer.js'
 import { UsersContainer, UsersMenu } from '../ui/components/organisms/Roles/UsersContainer.js'
-import { AuthCtx } from './webapp.mjs'
+import { AuthCtx, BookmarkButtonContainer } from './webapp.mjs'
 
 registerAppRoutes(pkgRoutes)
 
@@ -100,7 +100,9 @@ ResourceCardPlugins.register(function useRegisterCardPlugin({
       likeButton: {
         Item: () => <LikeButtonContainer _key={resourceKey} entityType={'resource'} />,
       },
-      // bookMarkButton: { Item: BookmarkButtonContainer },
+      bookMarkButton: {
+        Item: () => <BookmarkButtonContainer _key={resourceKey} entityType="resource" />,
+      },
     }),
     [resourceKey],
   )
@@ -113,11 +115,12 @@ CollectionCardPlugins.register(function useRegisterCardPlugin({
 }) {
   const socialButtons = useMemo<PkgAddOns<AddonItemNoKey>>(
     () => ({
-      // likeButton: { Item: () => <LikeButtonContainer _key={resourceKey}  entityType="collection"/> },
       followButton: {
         Item: () => <SmallFollowButtonContainer _key={collectionKey} entityType="collection" />,
       },
-      // bookMarkButton: { Item: BookmarkButtonContainer },
+      bookMarkButton: {
+        Item: () => <BookmarkButtonContainer _key={collectionKey} entityType="collection" />,
+      },
     }),
     [collectionKey],
   )
