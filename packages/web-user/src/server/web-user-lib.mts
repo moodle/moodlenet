@@ -1,10 +1,24 @@
 import type { DocumentMetadata } from '@moodlenet/arangodb/server'
 import type { EntityAccess, Patch } from '@moodlenet/system-entities/server'
-import { create, getEntity, patchEntity } from '@moodlenet/system-entities/server'
+import {
+  create,
+  currentEntityVar,
+  getEntity,
+  patchEntity,
+  toaql,
+} from '@moodlenet/system-entities/server'
 import assert from 'assert'
+import type { KnownEntityFeature } from '../common/types.mjs'
 import { db, WebUserCollection } from './init/arangodb.mjs'
 import { Profile } from './init/sys-entities.mjs'
-import type { CreateRequest, ProfileDataType, ProfileEntity, WebUserDataType } from './types.mjs'
+import { shell } from './shell.mjs'
+import type {
+  CreateRequest,
+  KnownFeaturedEntityItem,
+  ProfileDataType,
+  ProfileEntity,
+  WebUserDataType,
+} from './types.mjs'
 import { signWebUserJwt, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 
 export async function getCurrentProfile(): Promise<ProfileEntity | undefined> {
@@ -85,6 +99,38 @@ export async function editProfile(
   }
 
   return mUpdated
+}
+
+export async function entitySocialAction({
+  _id,
+  action,
+  feature,
+}: {
+  action: 'add' | 'remove'
+  feature: KnownEntityFeature
+  _id: string
+}) {
+  const current = await getCurrentProfile()
+  assert(current)
+
+  const knownFeaturedEntityItem = toaql<KnownFeaturedEntityItem>({
+    _id,
+    feature,
+  })
+
+  const aqlAction =
+    action === 'remove'
+      ? `REMOVE_VALUE( ${currentEntityVar}.knownFeaturedEntities, ${knownFeaturedEntityItem} , 1 )`
+      : `        PUSH( ${currentEntityVar}.knownFeaturedEntities, ${knownFeaturedEntityItem} , true )`
+  const updateResult = await shell.call(patchEntity)(
+    Profile.entityClass,
+    current._key,
+    `{ 
+    knownFeaturedEntities: ${aqlAction}
+  }`,
+  )
+
+  return updateResult
 }
 
 export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }) {
