@@ -1,6 +1,5 @@
-import { href } from '@moodlenet/react-app/common'
+import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { Profile } from '@moodlenet/web-user/ui'
-import { People } from '@mui/icons-material'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/story-props.js'
@@ -35,11 +34,7 @@ export const LoggedOut = () => {
     access: { isAuthenticated: false, canBookmark: false, canFollow: false },
     mainColumnItems: [],
     sideColumnItems: [],
-    overallCardItems: [
-      { Icon: () => <People />, name: 'Followers', value: 3, href: href('Pages/Followers') },
-      { Icon: () => <People />, name: 'Kudos', value: 15 },
-      { Icon: () => <People />, name: 'Resources', value: 4 },
-    ],
+    overallCardItems: OverallCardStories.OverallCardNoCardStoryProps.items,
   })
 
   return <Profile {...props} />
