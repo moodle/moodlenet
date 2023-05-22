@@ -17,6 +17,7 @@ export * from '../ui/components/organisms/Header/Minimalistic/MinimalisticHeader
 export * from '../ui/components/pages/Bookmarks/Bookmarks.js'
 export * from '../ui/components/pages/Extra/Fallback/Fallback.js'
 export * from '../ui/components/pages/Extra/Maintenance/Maintenance.js'
+export * from '../ui/components/pages/Followers/Followers.js'
 export * from '../ui/components/pages/Following/Following.js'
 export * from '../ui/components/pages/Landing/Landing.js'
 export * from '../ui/components/pages/Search/Ctrl/SearchCtrl.js'

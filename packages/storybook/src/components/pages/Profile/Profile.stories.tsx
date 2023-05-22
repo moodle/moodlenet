@@ -1,3 +1,4 @@
+import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { Profile } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -33,6 +34,7 @@ export const LoggedOut = () => {
     access: { isAuthenticated: false, canBookmark: false, canFollow: false },
     mainColumnItems: [],
     sideColumnItems: [],
+    overallCardItems: OverallCardStories.OverallCardNoCardStoryProps.items,
   })
 
   return <Profile {...props} />

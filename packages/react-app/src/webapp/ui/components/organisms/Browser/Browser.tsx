@@ -4,22 +4,31 @@ import type { ComponentType, FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
 
+export type BrowserMainColumnItemBase = {
+  showAll: boolean
+  setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
+  showHeader?: boolean
+}
+
 export type MainColumItem = {
-  Item: ComponentType<{
-    showAll: boolean
-    setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
-  }>
+  Item: ComponentType<BrowserMainColumnItemBase>
   name: string
   filters: AddonItem[]
   key: number | string
 }
 
-export type BrowserProps = {
+export type BrowserProps = BrowserPropsData & BrowserPropsUI
+
+export type BrowserPropsData = {
   mainColumnItems: MainColumItem[]
+}
+
+export type BrowserPropsUI = {
+  showFilters?: boolean
   title?: string
 }
 
-export const Browser: FC<BrowserProps> = ({ mainColumnItems, title }) => {
+export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | undefined>(undefined)
 
@@ -94,14 +103,19 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title }) => {
       </>
     ) : null
 
+  console.log('lenght ', mainColumnItems?.length)
+  console.log('lenght ', mainColumnItems?.length > 1)
+
   return (
-    <div className="browser">
-      <div className="filter-bar">
-        <div className="filter-bar-content">
-          <div className="content-type-filters">{filterByItemType.filter(e => !!e)}</div>
-          {extraFilters}
+    <div className={`browser ${showFilters ? 'show-filters' : ''}`}>
+      {showFilters && (
+        <div className="filter-bar">
+          <div className="filter-bar-content">
+            <div className="content-type-filters">{filterByItemType.filter(e => !!e)}</div>
+            {extraFilters}
+          </div>
         </div>
-      </div>
+      )}
       <div className="content">
         <div className={`main-column ${currentMainFilter ? 'full-width' : ''}`} ref={mainColumnRef}>
           {title && <div className="title">{title}</div>}
@@ -112,15 +126,16 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title }) => {
                   'Item' in i ? (
                     <i.Item
                       key={i.key}
-                      showAll={i.name === currentMainFilter}
+                      showAll={i.name === currentMainFilter || mainColumnItems?.length === 1}
                       setShowAll={() => setCurrentMainFilter(i.name)}
+                      showHeader={mainColumnItems?.length > 1}
                     />
                   ) : (
                     i
                   )
                 ) : null,
               ),
-            [updatedMainColumnItems, currentMainFilter],
+            [updatedMainColumnItems, currentMainFilter, mainColumnItems?.length],
           )}
         </div>
       </div>
@@ -128,7 +143,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title }) => {
   )
 }
 
-Browser.defaultProps = {}
+Browser.defaultProps = { showFilters: true }
 Browser.displayName = 'Browser'
 
 export default Browser
