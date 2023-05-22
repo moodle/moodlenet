@@ -6,7 +6,7 @@ import './Browser.scss'
 
 export type BrowserMainColumnItemBase = {
   showAll: boolean
-  setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
+  setShowAll(): void
   showHeader?: boolean
 }
 

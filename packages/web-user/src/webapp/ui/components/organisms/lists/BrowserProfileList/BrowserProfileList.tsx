@@ -60,9 +60,7 @@ export const BrowserProfileList: FC<BrowserProfileListProps> = ({
             <TertiaryButton onClick={loadMore}>Load more</TertiaryButton>
           ) : null
         ) : (
-          <TertiaryButton onClick={() => setShowAll('people-list')}>
-            See all people results
-          </TertiaryButton>
+          <TertiaryButton onClick={setShowAll}>See all people results</TertiaryButton>
         )
       }
       minGrid={170}

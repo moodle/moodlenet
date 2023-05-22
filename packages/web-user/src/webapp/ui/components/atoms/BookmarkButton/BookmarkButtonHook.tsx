@@ -13,7 +13,7 @@ export const useBookmarkButtonProps = ({
   entityType: KnownEntityType
 }): BookmarkButtonProps | null => {
   const { isAuthenticated } = useContext(AuthCtx)
-  const { isFeatured, toggle } = useMyFeaturedEntity({ _key, entityType, feature: 'follow' })
+  const { isFeatured, toggle } = useMyFeaturedEntity({ _key, entityType, feature: 'bookmark' })
   const props = useMemo(() => {
     //  if (!pageProgs) return null
     const toggleBookmark = toggle
