@@ -6,19 +6,28 @@ import { useMyProfileContext } from '../../../MyProfile/MyProfileContext.js'
 
 export function useMyBookmarkedBrowserCollectionListDataProps() {
   const bookmarkedCollections = useMyProfileContext()?.myFeaturedEntities.all.bookmark.collection
-  const browserCollectionListProps = useMemo<BrowserCollectionListDataProps>(() => {
-    const props: BrowserCollectionListDataProps = {
-      collectionCardPropsList: (bookmarkedCollections ?? []).map(({ _key }) => ({
+
+  const collectionCardPropsList = useMemo<
+    BrowserCollectionListDataProps['collectionCardPropsList']
+  >(
+    () =>
+      (bookmarkedCollections ?? []).map(({ _key }) => ({
         key: _key,
         props: proxyWith(function useBrowserCollectionCardPropsList() {
           const props = useCollectionCardProps(_key)
           return { props }
         }),
       })),
+    [bookmarkedCollections],
+  )
+
+  const browserCollectionListProps = useMemo<BrowserCollectionListDataProps>(() => {
+    const props: BrowserCollectionListDataProps = {
+      collectionCardPropsList,
       loadMore: null,
     }
     return props
-  }, [bookmarkedCollections])
+  }, [collectionCardPropsList])
 
   return browserCollectionListProps
 }
