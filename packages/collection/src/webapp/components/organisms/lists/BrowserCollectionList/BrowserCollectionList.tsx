@@ -6,10 +6,11 @@ import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js
 import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
 import './BrowserCollectionList.scss'
 
-export type BrowserCollectionListProps = {
+export type BrowserCollectionListDataProps = {
   collectionCardPropsList: { props: ProxyProps<CollectionCardProps>; key: string }[]
   loadMore: (() => unknown) | null
-} & BrowserMainColumnItemBase
+}
+export type BrowserCollectionListProps = BrowserCollectionListDataProps & BrowserMainColumnItemBase
 
 export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
   collectionCardPropsList,
@@ -41,9 +42,7 @@ export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
             <TertiaryButton onClick={loadMore}>Load more</TertiaryButton>
           ) : null
         ) : (
-          <TertiaryButton onClick={() => setShowAll('collection-list')}>
-            See all collection results
-          </TertiaryButton>
+          <TertiaryButton onClick={setShowAll}>See all collection results</TertiaryButton>
         )
       }
       minGrid={showAll ? 300 : 240}

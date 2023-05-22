@@ -4,6 +4,7 @@ import {
   MY_PROFILE_HOME_PAGE_ROUTE_PATH,
   PROFILE_HOME_PAGE_ROUTE_PATH,
 } from '../common/webapp-routes.mjs'
+import { BookmarksPageContainer } from './rt/page/Bookmarks/BookmarksPageContainer.js'
 import LoginPanelContainer from './ui/components/pages/Access/Login/LoginPageContainer.js'
 import { RootLoginContainer } from './ui/components/pages/Access/RootLogin/RootLoginContainer.js'
 import { SignUpContainer } from './ui/components/pages/Access/Signup/SignupContainer.js'
@@ -13,6 +14,7 @@ import { ProfilePageRoute } from './ui/components/pages/Profile/ProfilePageRoute
 export const pkgRoutes: PkgRoutes = {
   routes: (
     <>
+      <Route path="bookmarks" index element={<BookmarksPageContainer />} />
       <Route path="login">
         <Route index element={<LoginPanelContainer />} />
         <Route path="root" element={<RootLoginContainer />} />
