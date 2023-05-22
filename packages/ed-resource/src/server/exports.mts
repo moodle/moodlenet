@@ -1,2 +1,2 @@
 export { EdResourceEntitiesTools } from './entities.mjs'
-export { Resource } from './init.mjs'
+export { Resource } from './init/sys-entities.mjs'

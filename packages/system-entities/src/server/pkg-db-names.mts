@@ -2,7 +2,7 @@ import type { PkgName } from '@moodlenet/core'
 import assert from 'assert'
 import { getEntityFullTypename } from '../common/entity-identification.mjs'
 import type { EntityClass, SomeEntityDataType } from '../common/types.mjs'
-import { db } from './init.mjs'
+import { db } from './init/arangodb.mjs'
 import type { AqlVal, EntityDocFullData } from './types.mjs'
 
 export async function getEntityCollection<EntityDataType extends SomeEntityDataType>(

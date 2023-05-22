@@ -37,6 +37,9 @@
     },
     {
       "path": "../simple-file-store"
+    },
+    {
+      "path": "../key-value-store"
     }
   ]
 }

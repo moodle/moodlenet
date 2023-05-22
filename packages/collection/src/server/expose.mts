@@ -16,7 +16,7 @@ import type { CollectionExposeType } from '../common/expose-def.mjs'
 import type { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { publicFiles, publicFilesHttp } from './init.mjs'
+import { publicFiles, publicFilesHttp } from './init/fs.mjs'
 import {
   createCollection,
   delCollection,
@@ -26,6 +26,7 @@ import {
   patchCollection,
   updateCollectionContent,
 } from './lib.mjs'
+
 import type { CollectionDataType } from './types.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({

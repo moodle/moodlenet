@@ -7,7 +7,8 @@ import type {
   Patch,
 } from '@moodlenet/system-entities/server'
 import { create, delEntity, getEntity, patchEntity } from '@moodlenet/system-entities/server'
-import { Resource, resourceFiles } from './init.mjs'
+import { resourceFiles } from './init/fs.mjs'
+import { Resource } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { ResourceDataType, ResourceEntityDoc } from './types.mjs'
 
