@@ -2,7 +2,7 @@
 import { useContext, useMemo } from 'react'
 import type { KnownEntityType } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { useMyFeaturedEntity } from '../../../../MyProfile/MyFeaturedEntities.js'
+import { useMyFeaturedEntity } from '../../../../MyProfile/useMyFeaturedEntity.js'
 import type { BookmarkButtonProps } from './BookmarkButton.js'
 
 export const useBookmarkButtonProps = ({
