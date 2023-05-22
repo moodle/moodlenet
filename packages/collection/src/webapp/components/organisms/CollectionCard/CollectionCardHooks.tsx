@@ -8,14 +8,19 @@ import { getCollectionHomePageRoutePath } from '../../../../common/webapp-routes
 import { useMainHook } from '../../../MainHooks.js'
 import type { CollectionCardProps } from './CollectionCard.js'
 
-export const CollectionCardPlugins = createHookPlugin<{
-  topRightItems: AddonItemNoKey
-  // topLeftItems: ItemWithoutKey,
-}>({ topRightItems: null })
+export const CollectionCardPlugins = createHookPlugin<
+  {
+    topRightItems: AddonItemNoKey
+    // topLeftItems: ItemWithoutKey,
+  },
+  {
+    collectionKey: string
+  }
+>({ topRightItems: null })
 
 export const useCollectionCardProps = (collectionKey: string): CollectionCardProps | null => {
   const _mainProps = useMainHook({ collectionKey })
-  const [addons] = CollectionCardPlugins.useHookPlugin()
+  const [addons] = CollectionCardPlugins.useHookPlugin({ collectionKey })
 
   const collectionProps = useMemo(() => {
     if (!_mainProps) return null

@@ -1,8 +1,8 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useContext, useMemo, useState } from 'react'
-import type { KnownEntityTypes } from '../../../../../common/types.mjs'
+import type { KnownEntityType } from '../../../../../common/types.mjs'
 import { AuthCtx } from '../../../../context/AuthContext.js'
-import { useSocialActionHook } from '../../../../SocialActionHook.js'
+import { useSocialActionHook } from '../../../../FeaturedEntitiesHook.js'
 import type { LikeButtonProps } from './LikeButton.js'
 
 export const useLikeButtonProps = ({
@@ -10,7 +10,7 @@ export const useLikeButtonProps = ({
   entityType,
 }: {
   _key: string
-  entityType: KnownEntityTypes
+  entityType: KnownEntityType
 }): LikeButtonProps | null => {
   const { isAuthenticated } = useContext(AuthCtx)
   const [liked, toggleLiked] = useSocialActionHook({ _key, entityType, feature: 'like' })
