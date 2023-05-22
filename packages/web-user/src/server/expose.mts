@@ -22,6 +22,7 @@ import type { KnownFeaturedEntityItem, ProfileDataType } from './types.mjs'
 import { loginAsRoot, sendWebUserTokenCookie, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import {
   editProfile,
+  entitySocialAction,
   getCurrentProfile,
   getProfileAvatarLogicalFilename,
   getProfileImageLogicalFilename,
@@ -37,7 +38,7 @@ export const expose = await shell.expose<WebUserExposeType>({
       guard: () => void 0,
       async fn() {
         const verifiedCtx = await verifyCurrentTokenCtx()
-        console.log('getCurrentClientSessionDataRpc', { verifiedCtx })
+        // console.log('getCurrentClientSessionDataRpc', { verifiedCtx })
         if (!verifiedCtx) {
           sendWebUserTokenCookie(undefined)
           return
@@ -261,7 +262,19 @@ export const expose = await shell.expose<WebUserExposeType>({
     'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key':
       {
         guard: () => void 0,
-        async fn(/* _,{profileKey} */) {
+        async fn(_, { _key, action, entityType, feature }) {
+          action === 'add' && assert(isAllowedKnownEntityFeature({ entityType, feature }))
+          const _id =
+            entityType === 'collection'
+              ? CollectionEntitiesTools.getIdentifiersByKey({ _key, type: 'Collection' })._id
+              : entityType === 'resource'
+              ? EdResourceEntitiesTools.getIdentifiersByKey({ _key, type: 'Resource' })._id
+              : entityType === 'profile'
+              ? WebUserEntitiesTools.getIdentifiersByKey({ _key, type: 'Profile' })._id
+              : null
+          assert(_id)
+          await entitySocialAction({ _id, action, feature })
+
           return
         },
       },
@@ -276,6 +289,20 @@ export const expose = await shell.expose<WebUserExposeType>({
   },
 })
 
+function isAllowedKnownEntityFeature({
+  entityType,
+  feature,
+}: {
+  feature: KnownEntityFeature
+  entityType: KnownEntityType
+}) {
+  const allowedFeature: { [feat in KnownEntityFeature]: KnownEntityType[] } = {
+    bookmark: ['collection', 'resource'],
+    follow: ['collection', 'profile'],
+    like: ['resource'],
+  }
+  return allowedFeature[feature].find(allowedType => allowedType === entityType)
+}
 function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
   const backgroundUrl = entity.backgroundImage
     ? publicFilesHttp.getFileUrl({
@@ -344,6 +371,7 @@ function reduceToKnownFeaturedEntities(
             ids: filteredByFeature,
             type: extractEntity,
           })
+
     return identifiers.map(({ entityIdentifier: { _key } }) => ({ _key }))
   }
 }
