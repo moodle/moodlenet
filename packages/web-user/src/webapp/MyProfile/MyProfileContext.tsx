@@ -1,11 +1,11 @@
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 import { AuthCtx } from '../context/AuthContext.js'
-import type { MyFeaturedEntitiesHandle } from './MyFeaturedEntities.js'
-import { useMyFeaturedEntities } from './MyFeaturedEntities.js'
+import type { AllMyFeaturedEntitiesHandle } from './MyFeaturedEntities.js'
+import { useAllMyFeaturedEntities } from './MyFeaturedEntities.js'
 
 export type MyProfileContextT = {
-  myFeaturedEntities: MyFeaturedEntitiesHandle
+  myFeaturedEntities: AllMyFeaturedEntitiesHandle
 }
 export const MyProfileContext = createContext<MyProfileContextT | null>(null)
 export function useMyProfileContext() {
@@ -20,7 +20,7 @@ export const MyProfileContextProvider: FC<PropsWithChildren> = ({ children }) =>
 function useMyProfileContextValue() {
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
-  const myFeaturedEntities = useMyFeaturedEntities()
+  const myFeaturedEntities = useAllMyFeaturedEntities()
 
   const myProfileContext = useMemo<MyProfileContextT | null>(() => {
     if (!myProfile) {
