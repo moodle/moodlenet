@@ -18,7 +18,7 @@
     box-shadow: 0 0 6px #dedede;
     border-radius: 7px;
 
-    &.display-mode {
+    &.no-border {
       padding: 0;
       background: none;
       box-shadow: none;
@@ -44,7 +44,7 @@
     font-weight: 500;
     font-size: 14px;
 
-    &.display-mode {
+    &.no-border {
       padding: 0;
       background: none;
     }
@@ -90,8 +90,8 @@
       height: 100%;
       line-height: 22px;
       resize: none;
-      &:not(.display-mode):focus,
-      &:not(.display-mode):not(:focus) {
+      &:not(.no-border):focus,
+      &:not(.no-border):not(:focus) {
         padding: 0 12px;
       }
     }

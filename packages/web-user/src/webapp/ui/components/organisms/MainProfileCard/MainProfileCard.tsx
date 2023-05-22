@@ -218,7 +218,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       onChange={form.handleChange}
       name="displayName"
       key="display-name"
-      displayMode={true}
+      noBorder={true}
       edit={isEditing}
       disabled={form.isSubmitting}
       error={isEditing && shouldShowErrors && form.errors.displayName}
@@ -235,7 +235,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       value={form.values.aboutMe}
       onChange={form.handleChange}
       isTextarea
-      displayMode
+      noBorder={true}
       placeholder={/* t */ `What should others know about you?`}
       className="description"
       key="description"
@@ -272,7 +272,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         placeholder="Location"
         value={form.values.location}
         onChange={form.handleChange}
-        displayMode={true}
+        noBorder
         name="location"
         edit={isEditing}
         disabled={form.isSubmitting}
@@ -289,7 +289,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         className="underline"
         value={form.values.siteUrl}
         onChange={form.handleChange}
-        displayMode={true}
+        noBorder
         placeholder="Website"
         name="siteUrl"
         edit={isEditing}
