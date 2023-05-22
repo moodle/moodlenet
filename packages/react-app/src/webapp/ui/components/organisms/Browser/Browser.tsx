@@ -103,8 +103,8 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
       </>
     ) : null
 
-  console.log('lenght ', mainColumnItems?.length)
-  console.log('lenght ', mainColumnItems?.length > 1)
+  // console.log('lenght ', mainColumnItems?.length)
+  // console.log('lenght ', mainColumnItems?.length > 1)
 
   return (
     <div className={`browser ${showFilters ? 'show-filters' : ''}`}>

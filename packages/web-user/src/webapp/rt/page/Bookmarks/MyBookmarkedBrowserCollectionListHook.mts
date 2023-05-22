@@ -1,17 +1,13 @@
-import type { BrowserCollectionListProps } from '@moodlenet/collection/ui'
+import type { BrowserCollectionListDataProps } from '@moodlenet/collection/ui'
 import { useCollectionCardProps } from '@moodlenet/collection/webapp'
-import type { BrowserMainColumnItemBase } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { useMemo } from 'react'
 import { useMyProfileContext } from '../../../MyProfile/MyProfileContext.js'
 
-export function useMyBookmarkedBrowserCollectionListProps(
-  browserMainColumnItemBase: BrowserMainColumnItemBase,
-) {
+export function useMyBookmarkedBrowserCollectionListDataProps() {
   const bookmarkedCollections = useMyProfileContext()?.myFeaturedEntities.all.bookmark.collection
-  console.log({ myProfileCtx: useMyProfileContext() })
-  const browserCollectionListProps = useMemo<BrowserCollectionListProps>(() => {
-    const props: BrowserCollectionListProps = {
+  const browserCollectionListProps = useMemo<BrowserCollectionListDataProps>(() => {
+    const props: BrowserCollectionListDataProps = {
       collectionCardPropsList: (bookmarkedCollections ?? []).map(({ _key }) => ({
         key: _key,
         props: proxyWith(function useBrowserCollectionCardPropsList() {
@@ -20,10 +16,9 @@ export function useMyBookmarkedBrowserCollectionListProps(
         }),
       })),
       loadMore: null,
-      ...browserMainColumnItemBase,
     }
     return props
-  }, [browserMainColumnItemBase, bookmarkedCollections])
+  }, [bookmarkedCollections])
 
   return browserCollectionListProps
 }
