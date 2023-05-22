@@ -1,5 +1,5 @@
 import { ListCard, TertiaryButton } from '@moodlenet/component-library'
-import type { ProxyProps } from '@moodlenet/react-app/ui'
+import type { BrowserMainColumnItemBase, ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
@@ -8,16 +8,15 @@ import './BrowserCollectionList.scss'
 
 export type BrowserCollectionListProps = {
   collectionCardPropsList: { props: ProxyProps<CollectionCardProps>; key: string }[]
-  showAll: boolean
-  setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
   loadMore: (() => unknown) | null
-}
+} & BrowserMainColumnItemBase
 
 export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
   collectionCardPropsList,
   showAll,
   setShowAll,
   loadMore,
+  showHeader,
 }) => {
   return (
     <ListCard
@@ -30,9 +29,11 @@ export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
         [collectionCardPropsList],
       )}
       header={
-        <div className="card-header">
-          <div className="title">Collections</div>
-        </div>
+        showHeader && (
+          <div className="card-header">
+            <div className="title">Collections</div>
+          </div>
+        )
       }
       footer={
         showAll ? (
@@ -51,6 +52,6 @@ export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
   )
 }
 
-BrowserCollectionList.defaultProps = {}
+BrowserCollectionList.defaultProps = { showHeader: true }
 
 export default BrowserCollectionList

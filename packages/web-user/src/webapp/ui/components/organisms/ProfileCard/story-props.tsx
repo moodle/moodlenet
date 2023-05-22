@@ -3,6 +3,8 @@ import { getRandomSortedArrayElements, peopleFactory } from '@moodlenet/componen
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
+import { transformPropsToObjectWithKey } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import type { PartialDeep } from 'type-fest'
 import type { ProfileCardProps } from './ProfileCard.js'
@@ -54,11 +56,12 @@ export const getProfileCardFactory = (
 export const getProfileCardsStoryProps = (
   amount = 8,
   overrides?: PartialDeep<ProfileCardProps>,
-): ProfileCardProps[] => {
+): { props: ProxyProps<ProfileCardProps>; key: string }[] => {
   return getRandomSortedArrayElements(
     peopleFactory.map(profile => getProfileCardFactory(profile)),
     amount,
   ).map(profile => {
-    return overrideDeep<ProfileCardProps>(profile, { ...overrides })
+    const newProfile = overrideDeep<ProfileCardProps>(profile, { ...overrides })
+    return transformPropsToObjectWithKey(newProfile, profile.data?.userId ?? '')
   })
 }

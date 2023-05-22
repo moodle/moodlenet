@@ -1,5 +1,5 @@
 import { ListCard, TertiaryButton } from '@moodlenet/component-library'
-import type { ProxyProps } from '@moodlenet/react-app/ui'
+import type { BrowserMainColumnItemBase, ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
@@ -8,16 +8,15 @@ import './BrowserResourceList.scss'
 
 export type BrowserResourceListProps = {
   resourceCardPropsList: { props: ProxyProps<ResourceCardPropsData>; key: string }[]
-  showAll: boolean
-  setShowAll: React.Dispatch<React.SetStateAction<string | undefined>>
   loadMore: (() => unknown) | null
-}
+} & BrowserMainColumnItemBase
 
 export const BrowserResourceList: FC<BrowserResourceListProps> = ({
   resourceCardPropsList,
   showAll,
   setShowAll,
   loadMore,
+  showHeader,
 }) => {
   const listCard = (
     <ListCard
@@ -26,21 +25,17 @@ export const BrowserResourceList: FC<BrowserResourceListProps> = ({
       }`}
       content={useMemo(
         () =>
-          resourceCardPropsList.map(resourceCardProps => {
-            return (
-              <ResourceCard
-                key={resourceCardProps.key}
-                {...resourceCardProps.props}
-                orientation="horizontal"
-              />
-            )
+          resourceCardPropsList.map(({ key, props }) => {
+            return <ResourceCard key={key} {...props} orientation="horizontal" />
           }),
         [resourceCardPropsList],
       )}
       header={
-        <div className="card-header">
-          <div className="title">Resources</div>
-        </div>
+        showHeader && (
+          <div className="card-header">
+            <div className="title">Resources</div>
+          </div>
+        )
       }
       footer={
         showAll ? (
@@ -61,6 +56,6 @@ export const BrowserResourceList: FC<BrowserResourceListProps> = ({
   return listCard
 }
 
-BrowserResourceList.defaultProps = {}
+BrowserResourceList.defaultProps = { showHeader: true }
 
 export default BrowserResourceList

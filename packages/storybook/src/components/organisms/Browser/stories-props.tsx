@@ -77,7 +77,7 @@ export const useBrowserCollectionList = () => {
   }
 }
 
-export const useBrowserProfileList = () => {
+export const useBrowserProfileList = (showHeader?: boolean) => {
   const [currentProfileSortBy, setCurrentProfileSortBy] = useState('Relevant')
 
   return {
@@ -97,6 +97,7 @@ export const useBrowserProfileList = () => {
           showAll={showAll}
           setShowAll={setShowAll}
           loadMore={action(`load more profiles`)}
+          showHeader={showHeader ?? true}
         />
       )
     },
