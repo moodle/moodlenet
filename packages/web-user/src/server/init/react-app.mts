@@ -4,7 +4,7 @@ import { expose as myExpose } from '../expose.mjs'
 import { shell } from '../shell.mjs'
 
 await shell.call(plugin)<MyWebAppDeps>({
-  initModuleLoc: ['dist', 'webapp', 'exports', 'init.js'],
+  initModuleLoc: ['dist', 'webapp', 'rt', 'init.js'],
   deps: {
     me: myExpose,
   },
