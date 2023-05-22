@@ -59,6 +59,6 @@ export async function plugin<Deps extends WebPkgDeps>(pluginDef: WebappPluginDef
   await addWebappPluginItem(webappPluginItem)
 }
 
-export function getWebappUrl(path?: string) {
-  return `${httpApp.baseUrl}${path ?? ''}`
+export function getWebappUrl(path = '') {
+  return `${httpApp.baseUrl}${path.replace(/^\//, '')}`
 }
