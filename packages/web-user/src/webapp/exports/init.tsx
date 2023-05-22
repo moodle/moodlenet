@@ -22,6 +22,9 @@ import '../shell.mjs'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
+import type { BrowserPluginItem } from '../rt/page/Bookmarks/BookmarksPageHook.mjs'
+import { BookmarksPagePlugin } from '../rt/page/Bookmarks/BookmarksPageHook.mjs'
+import { MyBookmarkedBrowserCollectionListContainer } from '../rt/page/Bookmarks/MyBookmarkedBrowserCollectionListContainer.js'
 import { SmallFollowButtonContainer } from '../ui/components/atoms/FollowButton/SmallFollowButtonContainer.js'
 import { LikeButtonContainer } from '../ui/components/atoms/LikeButton/LikeButtonContainer.js'
 import {
@@ -125,6 +128,20 @@ CollectionCardPlugins.register(function useRegisterCardPlugin({
     [collectionKey],
   )
   useTopRightItems(socialButtons)
+})
+
+BookmarksPagePlugin.register(function useRegisterBookmarksPagePlugin({ useBrowserItems }) {
+  const browserPluginItems = useMemo<PkgAddOns<BrowserPluginItem>>(() => {
+    const items: PkgAddOns<BrowserPluginItem> = {
+      collections: {
+        Item: MyBookmarkedBrowserCollectionListContainer,
+        filters: [],
+        name: 'Collections',
+      },
+    }
+    return items
+  }, [])
+  useBrowserItems(browserPluginItems)
 })
 
 /* @ETTO example more item
