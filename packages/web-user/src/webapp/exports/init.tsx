@@ -19,12 +19,13 @@ import {
 import { useContext, useMemo } from 'react'
 import '../shell.mjs'
 
+import { BrowserCollectionList } from '@moodlenet/collection/ui'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
 import type { BrowserPluginItem } from '../rt/page/Bookmarks/BookmarksPageHook.mjs'
 import { BookmarksPagePlugin } from '../rt/page/Bookmarks/BookmarksPageHook.mjs'
-import { MyBookmarkedBrowserCollectionListContainer } from '../rt/page/Bookmarks/MyBookmarkedBrowserCollectionListContainer.js'
+import { useMyBookmarkedBrowserCollectionListDataProps } from '../rt/page/Bookmarks/MyBookmarkedBrowserCollectionListHook.mjs'
 import { SmallFollowButtonContainer } from '../ui/components/atoms/FollowButton/SmallFollowButtonContainer.js'
 import { LikeButtonContainer } from '../ui/components/atoms/LikeButton/LikeButtonContainer.js'
 import {
@@ -134,7 +135,16 @@ BookmarksPagePlugin.register(function useRegisterBookmarksPagePlugin({ useBrowse
   const browserPluginItems = useMemo<PkgAddOns<BrowserPluginItem>>(() => {
     const items: PkgAddOns<BrowserPluginItem> = {
       collections: {
-        Item: MyBookmarkedBrowserCollectionListContainer,
+        Item: browserMainColumnItemBase => {
+          const myBookmarkedBrowserCollectionListDataProps =
+            useMyBookmarkedBrowserCollectionListDataProps()
+          return (
+            <BrowserCollectionList
+              {...myBookmarkedBrowserCollectionListDataProps}
+              {...browserMainColumnItemBase}
+            />
+          )
+        },
         filters: [],
         name: 'Collections',
       },
