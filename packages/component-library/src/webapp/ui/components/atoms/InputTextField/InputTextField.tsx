@@ -7,7 +7,7 @@ import './InputTextField.scss'
 export type InputTextFieldProps = {
   label?: string
   edit?: boolean
-  displayMode?: boolean
+  noBorder?: boolean
   textAreaAutoSize?: boolean
   highlight?: boolean
   error?: ReactNode
@@ -28,7 +28,7 @@ export const InputTextField = forwardRef<
   const {
     label,
     edit,
-    displayMode,
+    noBorder,
     textAreaAutoSize,
     isTextarea,
     highlight,
@@ -44,7 +44,7 @@ export const InputTextField = forwardRef<
 
   const fieldElementRef = useForwardedRef(forwRef)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const [errorLeaves, setErrorLeave] = useState<boolean>(false)
+  const [errorLeave, setErrorLeave] = useState<boolean>(false)
   const [currentError, setcurrentError] = useState<ReactNode>(undefined)
 
   const currTextAreaValue = fieldElementRef
@@ -86,25 +86,27 @@ export const InputTextField = forwardRef<
     }
   }, [error, label, disabled, setErrorLeave, currentError])
 
+  console.log('noBorder', noBorder)
+
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        isTextarea ? ' textarea' : 'text'
-      } ${highlight || error ? ' highlight' : ''} ${
-        !disabled && !errorLeaves && error ? 'enter-error' : ''
-      } ${!disabled && errorLeaves ? 'leave-error' : ''}`}
+        noBorder ? 'no-border' : ''
+      } ${isTextarea ? ' textarea' : 'text'} ${highlight || error ? ' highlight' : ''} ${
+        !disabled && !errorLeave && error ? 'enter-error' : ''
+      } ${!disabled && errorLeave ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
       {label ? <label>{label}</label> : <></>}
       {isTextarea ? (
-        <div className={`textarea-container ${displayMode && 'display-mode'} ${edit && 'editing'}`}>
+        <div className={`textarea-container ${noBorder ? 'no-border' : ''} ${edit && 'editing'}`}>
           <textarea
             ref={(fieldElementRef as React.RefObject<HTMLTextAreaElement>) ?? textAreaRef}
             cols={40}
             rows={textAreaAutoSize ? 1 : 5}
             {..._removeTextAreaProp(fieldProps)}
-            className={`${className} ${displayMode && 'display-mode'} 
+            className={`${className} ${noBorder && 'no-border'} 
                ${edit && 'editing'}
             `}
             disabled={disabled || !edit}
@@ -112,11 +114,11 @@ export const InputTextField = forwardRef<
           {action}
         </div>
       ) : (
-        <div className={`input-container ${displayMode && 'display-mode'} ${edit && 'editing'}`}>
+        <div className={`input-container ${noBorder ? 'no-border' : ''} ${edit && 'editing'}`}>
           <input
             ref={fieldElementRef as React.RefObject<HTMLInputElement>}
             {..._removeTextAreaProp(fieldProps)}
-            className={`${className} ${displayMode && 'display-mode'} ${edit && 'editing'}`}
+            className={`${className} ${noBorder ? 'no-border' : ''} ${edit && 'editing'}`}
             disabled={disabled || !edit}
             style={{ backgroundColor: 'inherit' }}
           />

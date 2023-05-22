@@ -99,9 +99,13 @@ export const Collection: FC<CollectionProps> = ({
       setShouldShowErrors(true)
     }
   }
-  const resourceList = resourceCardPropsList.map(({ key, props }) => (
-    <ResourceCard {...props} orientation={'horizontal'} key={key} />
-  ))
+  const resourceList = (
+    <div className="resource-list">
+      {resourceCardPropsList.map(({ key, props }) => (
+        <ResourceCard {...props} orientation={'horizontal'} key={key} />
+      ))}
+    </div>
+  )
 
   const mainCollectionCard = (
     <MainCollectionCard
@@ -166,9 +170,11 @@ export const Collection: FC<CollectionProps> = ({
     ...(sideColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedWideColumnItems = [mainCollectionCard, ...(wideColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
+  const updatedWideColumnItems = [
+    mainCollectionCard,
+    resourceList,
+    ...(wideColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
 
   const updatedMainColumnItems = [resourceList, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,

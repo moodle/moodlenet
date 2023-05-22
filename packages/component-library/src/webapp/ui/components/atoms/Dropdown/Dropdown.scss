@@ -13,6 +13,15 @@
     margin-bottom: 2px;
   }
 
+  &.enter-error:not(.disabled),
+  &.leave-error:not(.disabled) {
+    > .input-container {
+      animation: none;
+      border: none;
+      box-shadow: none;
+    }
+  }
+
   > .input-container {
     height: 46px;
     width: 100%;
@@ -256,10 +265,14 @@
     }
   }
 
-  > .error-msg {
-    margin: 0;
-    padding: 4px 0 10px 0;
-    border-top: 2px solid rgb(255, 49, 49);
+  &.enter-error:not(.disabled),
+  &.leave-error:not(.disabled) {
+    > .error-msg {
+      margin: 0;
+      padding: 4px 0 0 0;
+      height: fit-content;
+      border-top: 2px solid rgb(255, 49, 49);
+    }
   }
 }
 
