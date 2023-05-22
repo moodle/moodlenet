@@ -1,11 +1,11 @@
 import type { FC } from 'react'
-import type { KnownEntityTypes } from '../../../../../common/types.mjs'
+import type { KnownEntityType } from '../../../../../common/types.mjs'
 import { LikeButton } from './LikeButton.js'
 import { useLikeButtonProps } from './LikeButtonHook.js'
 
 export const LikeButtonContainer: FC<{
   _key: string
-  entityType: KnownEntityTypes
+  entityType: KnownEntityType
 }> = props => {
   const { _key, entityType } = props
   const panelProps = useLikeButtonProps({ _key, entityType })

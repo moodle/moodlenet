@@ -22,6 +22,7 @@ import '../shell.mjs'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
+import { SmallFollowButtonContainer } from '../ui/components/atoms/FollowButton/SmallFollowButtonContainer.js'
 import { LikeButtonContainer } from '../ui/components/atoms/LikeButton/LikeButtonContainer.js'
 import {
   LoginButtonContainer,
@@ -108,15 +109,17 @@ ResourceCardPlugins.register(function useRegisterCardPlugin({
 
 CollectionCardPlugins.register(function useRegisterCardPlugin({
   useTopRightItems, //  useTopLeftItems,
-  //collectionKey
+  collectionKey,
 }) {
   const socialButtons = useMemo<PkgAddOns<AddonItemNoKey>>(
     () => ({
       // likeButton: { Item: () => <LikeButtonContainer _key={resourceKey}  entityType="collection"/> },
-      // followButton: { Item: LikeButtonContainer },
+      followButton: {
+        Item: () => <SmallFollowButtonContainer _key={collectionKey} entityType="collection" />,
+      },
       // bookMarkButton: { Item: BookmarkButtonContainer },
     }),
-    [],
+    [collectionKey],
   )
   useTopRightItems(socialButtons)
 })

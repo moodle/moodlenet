@@ -1,6 +1,6 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useEffect, useMemo, useState } from 'react'
-import type { KnownEntityFeature, KnownEntityTypes } from '../common/types.mjs'
+import type { KnownEntityFeature, KnownEntityType } from '../common/types.mjs'
 import { shell } from './shell.mjs'
 
 export const useSocialActionHook = ({
@@ -9,7 +9,7 @@ export const useSocialActionHook = ({
   feature,
 }: {
   _key: string
-  entityType: KnownEntityTypes
+  entityType: KnownEntityType
   feature: KnownEntityFeature
 }) => {
   const [isFeatured, setFeatured] = useState(false)

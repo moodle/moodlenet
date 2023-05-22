@@ -1,17 +1,13 @@
 import type { MainAppPluginWrapper } from '@moodlenet/react-app/webapp'
+import { AuthCtxProvider } from './context/AuthContext.js'
 
-import { AuthCtx, useAuthCtxValue } from './context/AuthContext.js'
-import { MyProfileContextProvider } from './MyProfileContext.js'
+import { MyProfileContextProvider } from './MyProfile/MyProfileContext.js'
 
 const MainComponent: MainAppPluginWrapper = ({ children }) => {
-  const authCtx = useAuthCtxValue()
-
   return (
-    authCtx && (
-      <AuthCtx.Provider value={authCtx}>
-        <MyProfileContextProvider>{children}</MyProfileContextProvider>
-      </AuthCtx.Provider>
-    )
+    <AuthCtxProvider>
+      <MyProfileContextProvider>{children}</MyProfileContextProvider>
+    </AuthCtxProvider>
   )
 }
 export default MainComponent
