@@ -126,7 +126,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       name="title"
       isTextarea
       textAreaAutoSize
-      displayMode
       className="title underline"
       value={form.values.title}
       placeholder="Title"
@@ -454,7 +453,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
           isTextarea
           ref={descriptionEditRef}
           textAreaAutoSize
-          displayMode
           key="description"
           placeholder="Description"
           value={form.values.description}
