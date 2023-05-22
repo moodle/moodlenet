@@ -1,0 +1,80 @@
+// import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
+import { Followers } from '@moodlenet/react-app/ui'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
+import {
+  useBrowserProfileList,
+  useBrowserStoryProps,
+} from 'components/organisms/Browser/stories-props.js'
+
+const meta: ComponentMeta<typeof Followers> = {
+  title: 'Pages/Followers',
+  component: Followers,
+  argTypes: {
+    // backgroundColor: { control: 'color' },
+  },
+  parameters: { layout: 'fullscreen' },
+  excludeStories: [
+    'FollowersStoryProps',
+    'FollowersLoggedOutStoryProps',
+    'FollowersLoggedInStoryProps',
+  ],
+}
+
+type FollowersStory = ComponentStory<typeof Followers>
+// const FollowersStory: ComponentStory<typeof Followers> = args => <Followers {...args} />
+
+export const LoggedIn: FollowersStory = () => {
+  const props = {
+    mainLayoutProps: MainLayoutLoggedInStoryProps,
+    browserProps: useBrowserStoryProps({
+      mainColumnItems: [useBrowserProfileList(false)], //@ETTO check that on this page you only show profiles
+    }),
+    profileName: 'Eduard Stromberg',
+  }
+  return <Followers {...props} />
+}
+
+// export const FollowersStoryProps: FollowersProps = {
+//   mainLayoutProps: MainLayoutLoggedInStoryProps,
+
+//   // headerPageTemplateProps: {
+//   //   headerPageProps: HeaderPageLoggedInStoryProps,
+//   //   isAuthenticated: true,
+//   //   mainPageWrapperProps: {
+//   //     userAcceptsPolicies: null,
+//   //     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+//   //   },
+//   // },
+//   browserProps: BrowserLoggedInStoryProps
+// }
+
+// export const FollowersLoggedOutStoryProps: FollowersProps = {
+//   ...FollowersStoryProps,
+//   mainLayoutProps: MainLayoutLoggedOutStoryProps,
+//   // headerPageTemplateProps: {
+//   //   isAuthenticated: false,
+//   //   headerPageProps: {
+//   //     // isAuthenticated: false,
+//   //     headerProps: HeaderLoggedOutStoryProps,
+//   //     // subHeaderProps: { tags: [] },
+//   //   },
+//   //   mainPageWrapperProps: {
+//   //     userAcceptsPolicies: null,
+//   //     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+//   //   },
+//   // },
+//   browserProps: BrowserLoggedOutStoryProps,
+// }
+
+// export const FollowersLoggedInStoryProps: FollowersProps = {
+//   ...FollowersStoryProps,
+// }
+
+// export const LoggedOut = FollowersStory.bind({})
+// LoggedOut.args = FollowersLoggedOutStoryProps
+
+// export const LoggedIn = FollowersStory.bind({})
+// LoggedIn.args = FollowersLoggedInStoryProps
+
+export default meta
