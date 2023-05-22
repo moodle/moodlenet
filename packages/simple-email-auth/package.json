@@ -40,6 +40,7 @@
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/crypto": "^0.2.0",
     "@moodlenet/email-service": "^0.2.0",
+    "@moodlenet/key-value-store": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",
     "@moodlenet/web-user": "^0.2.0"
@@ -49,6 +50,7 @@
     "@moodlenet/component-library": "^0.2.0",
     "@moodlenet/core": "^0.2.0",
     "@moodlenet/crypto": "^0.2.0",
+    "@moodlenet/key-value-store": "^0.2.0",
     "@moodlenet/email-service": "^0.2.0",
     "@moodlenet/http-server": "^0.2.0",
     "@moodlenet/react-app": "^0.2.0",

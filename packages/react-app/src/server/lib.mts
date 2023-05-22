@@ -8,7 +8,8 @@ import type {
   WebappPluginItem,
   WebPkgDeps,
 } from '../common/types.mjs'
-import { httpApp, kvStore } from './init.mjs'
+import { httpApp } from './init/http-server.mjs'
+import { kvStore } from './init/kvStore.mjs'
 import { shell } from './shell.mjs'
 import { addWebappPluginItem } from './webapp-plugins.mjs'
 

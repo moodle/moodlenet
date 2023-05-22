@@ -25,6 +25,9 @@
     },
     {
       "path": "../ed-meta"
+    },
+    {
+      "path": "../key-value-store"
     }
   ]
 }

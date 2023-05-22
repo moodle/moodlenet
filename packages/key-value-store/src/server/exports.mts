@@ -1,4 +1,3 @@
-import type { DocumentMetadata } from '@moodlenet/arangodb/server'
 import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import type { Shell } from '@moodlenet/core'
 import type { KVStore, KVSTypeMap, ValueObj } from './types.js'
@@ -10,7 +9,7 @@ export default async function kvStoreFactory<TMap extends KVSTypeMap>(
 ): Promise<KVStore<TMap>> {
   const { collection: KVCollection /* , newlyCreated  */ } = await shell.call(
     ensureDocumentCollection,
-  )(KV_COLLECTION_NAME)
+  )<DBRecord>(KV_COLLECTION_NAME)
 
   const kvStore: KVStore<TMap> = {
     set: shell.call(set),
@@ -33,7 +32,7 @@ export default async function kvStoreFactory<TMap extends KVSTypeMap>(
       return unset(type, key)
     }
     await KVCollection.save(
-      { _key: fullKeyOf(type, key), value },
+      { _key: fullKeyOf(type, key), value, at: new Date().toISOString() },
 
       { overwriteMode: 'update' },
     )
@@ -45,7 +44,10 @@ export default async function kvStoreFactory<TMap extends KVSTypeMap>(
   }
 }
 
-type DBRecord = { value?: any } & DocumentMetadata
-function valObj(_: DBRecord | null | undefined): ValueObj {
-  return { value: _ ? _.value : undefined }
+type DBRecord = { value: any; at: string }
+function valObj(doc: DBRecord | null | undefined): ValueObj {
+  if (!doc) {
+    return { value: undefined }
+  }
+  return { value: doc.value, at: doc.at }
 }

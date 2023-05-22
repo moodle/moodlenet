@@ -11,7 +11,7 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { publicFiles, publicFilesHttp, resourceFiles } from './init.mjs'
+import { publicFiles, publicFilesHttp, resourceFiles } from './init/fs.mjs'
 import {
   createResource,
   delResource,
