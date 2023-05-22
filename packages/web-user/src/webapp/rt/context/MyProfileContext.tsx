@@ -67,9 +67,9 @@ function useAllMyFeaturedEntities() {
       setAll(emptyFeaturedEntities)
     }
 
-    const myFeaturedEntitiesRes = await shell.rpc.me['webapp/all-my-featured-entities']()
+    const rpcResponse = await shell.rpc.me['webapp/all-my-featured-entities']()
 
-    setAll(myFeaturedEntitiesRes?.featuredEntities ?? emptyFeaturedEntities)
+    setAll(rpcResponse?.featuredEntities ?? emptyFeaturedEntities)
   }, [myProfile])
 
   useEffect(() => {

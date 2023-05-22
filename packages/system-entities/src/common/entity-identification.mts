@@ -19,7 +19,7 @@ export function entityIdentifierById(_id: string) {
   const [type, basePkgName, pkgNamespace] = fullName.split('__').reverse()
   assert(type && basePkgName)
   const hasPkgNamespace = !!pkgNamespace
-  const pkgName = hasPkgNamespace ? `${pkgNamespace}/${basePkgName}` : basePkgName
+  const pkgName = hasPkgNamespace ? `@${pkgNamespace}/${basePkgName}` : basePkgName
   const entityIdentifier: EntityIdentifier = {
     _key,
     entityClass: {
