@@ -24,5 +24,3 @@ export const { IscedField, IscedGrade } = await shell.call(registerEntities)<
 // }>({
 //   IscedGrade: {},
 // })
-
-console.log({ IscedField, IscedGrade })
