@@ -1,19 +1,19 @@
 import type { ComponentType, FC } from 'react'
 import { useState } from 'react'
-import type { MainLayoutProps } from '../../../layout/MainLayout/MainLayout.js'
-import MainLayout from '../../../layout/MainLayout/MainLayout.js'
+import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
+import MainLayout from '../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { Card } from '@moodlenet/component-library'
-import './Settings.scss'
+import './AdminSettings.scss'
 
-export type SettingsItem = { key: string; Content: ComponentType; Menu: ComponentType }
-export type SettingsProps = {
+export type AdminSettingsItem = { key: string; Content: ComponentType; Menu: ComponentType }
+export type AdminSettingsProps = {
   mainLayoutProps: MainLayoutProps
-  settingsItems: SettingsItem[]
+  settingsItems: AdminSettingsItem[]
 }
 
-export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) => {
+export const AdminSettings: FC<AdminSettingsProps> = ({ mainLayoutProps, settingsItems }) => {
   const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0])
 
   return (
@@ -24,17 +24,17 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
         ...mainLayoutProps.headerProps,
       }}
     >
-      <div className={`settings`}>
+      <div className={`admin-settings`}>
         {
           <div className="left-menu" role="navigation">
             <Card role="navigation">
-              {settingsItems.map(settingsEntry => {
-                const isCurrent = JSON.stringify(settingsEntry) === JSON.stringify(currSettingsItem)
-                const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsEntry)
+              {settingsItems.map(settingsItem => {
+                const isCurrent = JSON.stringify(settingsItem) === JSON.stringify(currSettingsItem)
+                const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsItem)
 
                 return (
                   <div
-                    key={settingsEntry.key}
+                    key={settingsItem.key}
                     className={`section ${isCurrent ? 'selected' : ''}`}
                     onClick={onClick}
                   >
@@ -42,7 +42,7 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
                       <div className={`border ${isCurrent ? 'selected' : ''}`} />
                     </div>
                     <div className={`content ${isCurrent ? 'selected' : ''}`}>
-                      {<settingsEntry.Menu />}
+                      {<settingsItem.Menu />}
                     </div>
                   </div>
                 )
@@ -61,4 +61,4 @@ export const Settings: FC<SettingsProps> = ({ mainLayoutProps, settingsItems }) 
   )
 }
 
-Settings.displayName = 'SettingsPage'
+AdminSettings.displayName = 'AdminSettingsPage'

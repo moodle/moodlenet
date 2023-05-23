@@ -36,7 +36,7 @@ export const MainLayout: FC<PropsWithChildren<MainLayoutProps & MainLayoutUIProp
 
   // const stateContext = useContext(StateContext)
 
-  // const styleContext = useContext(SettingsCtx)
+  // const styleContext = useContext(AdminSettingsCtx)
   const mainHeaderContextValue = useSimpleMainHeaderContextController(defaultHideSearchbox)
 
   return (

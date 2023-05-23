@@ -15,7 +15,7 @@ export const LayoutContainer: FC<LayoutContainerProps> = ({ style, children }) =
 
   // const stateContext = useContext(StateContext)
 
-  // const styleContext = useContext(SettingsCtx)
+  // const styleContext = useContext(AdminSettingsCtx)
 
   return (
     <div
