@@ -138,6 +138,8 @@ export const getResourceDomainName = (url: string): string => {
       return 'youtube'
     case 'vimeo.com':
       return 'vimeo'
+    case undefined:
+      return 'invalid-link'
     default:
       return 'link'
   }
@@ -225,7 +227,7 @@ export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
 
 export const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> =
   object({
-    content: string().required(`Please upload a content or a link`),
+    content: string().required(`Please provide a file or a link`),
   })
 
 export const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({

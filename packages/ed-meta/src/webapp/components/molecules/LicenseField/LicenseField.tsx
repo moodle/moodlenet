@@ -62,12 +62,16 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       position={{ top: 50, bottom: 25 }}
       pills={
         updatedLicenses.selected && (
-          <IconPill key={updatedLicenses.selected.value} icon={updatedLicenses.selected.icon} />
+          <IconPill
+            key={updatedLicenses.selected.value}
+            icon={updatedLicenses.selected.icon}
+            abbr={updatedLicenses.selected.label}
+          />
         )
       }
     >
       {updatedLicenses.opts.map(({ icon, label, value }) => (
-        <IconTextOption icon={icon} label={label} value={value} key={value} />
+        <IconTextOption icon={icon} label={label} value={value} key={value} abbr={label} />
       ))}
     </Dropdown>
   ) : license ? (

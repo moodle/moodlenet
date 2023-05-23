@@ -163,6 +163,10 @@ export const getThumbnailFromUrl = (url: string): ThumbnailType => {
   }
 }
 
-export const getDomainUrl = (url: string): string => {
-  return new URL(url).hostname.replace('www.', '')
+export const getDomainUrl = (url: string): string | undefined => {
+  try {
+    return new URL(url).hostname.replace('www.', '')
+  } catch (e) {
+    return undefined
+  }
 }
