@@ -1,5 +1,5 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
-import { Followers } from '@moodlenet/react-app/ui'
+import { Followers } from '@moodlenet/web-user/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
 import {

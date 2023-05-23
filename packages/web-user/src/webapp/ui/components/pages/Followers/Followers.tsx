@@ -1,12 +1,10 @@
+import type { BrowserPropsData, MainLayoutProps } from '@moodlenet/react-app/ui'
+import { Browser, MainLayout } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
-import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
-import MainLayout from '../../layout/MainLayout/MainLayout.js'
-import type { BrowserProps } from '../../organisms/Browser/Browser.js'
-import Browser from '../../organisms/Browser/Browser.js'
 
 export type FollowersProps = {
   mainLayoutProps: MainLayoutProps
-  browserProps: BrowserProps
+  browserProps: BrowserPropsData
   profileName: string
 }
 export const Followers: FC<FollowersProps> = ({ mainLayoutProps, browserProps, profileName }) => {
