@@ -1,5 +1,5 @@
+import type { TextOptionProps } from '@moodlenet/component-library'
 import { Dropdown, SimplePill, SimpleTextOption, TextOption } from '@moodlenet/component-library'
-import { DropdownFieldsDataStories } from '@moodlenet/component-library/stories'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import { YearsProps } from '../../../../common/MOCK_DATA.js'
@@ -14,7 +14,20 @@ export type DateFieldProps = {
   editMonth(month: string): void
   editYear(year: string): void
 }
-
+const MonthTextOptionProps: TextOptionProps[] = [
+  { value: `0`, label: /* t */ `January` },
+  { value: `1`, label: /* t */ `February` },
+  { value: `2`, label: /* t */ `March` },
+  { value: `3`, label: /* t */ `April` },
+  { value: `4`, label: /* t */ `May` },
+  { value: `5`, label: /* t */ `June` },
+  { value: `6`, label: /* t */ `July` },
+  { value: `7`, label: /* t */ `August` },
+  { value: `8`, label: /* t */ `September` },
+  { value: `9`, label: /* t */ `October` },
+  { value: `10`, label: /* t */ `November` },
+  { value: `11`, label: /* t */ `December` },
+]
 export const DateField: FC<DateFieldProps> = ({
   month,
   year,
@@ -25,7 +38,6 @@ export const DateField: FC<DateFieldProps> = ({
   editMonth,
   editYear,
 }) => {
-  const { MonthTextOptionProps } = DropdownFieldsDataStories
   const months = {
     opts: MonthTextOptionProps,
     selected: MonthTextOptionProps.find(({ value }) => value === month),
@@ -37,7 +49,7 @@ export const DateField: FC<DateFieldProps> = ({
       opts: MonthTextOptionProps,
       selected: MonthTextOptionProps.find(({ value }) => value === month),
     })
-  }, [MonthTextOptionProps, month])
+  }, [month])
   useEffect(() => {
     setUpdatedMonths({
       opts: months.opts.filter(o => o.value.toUpperCase().includes(searchTextMonth.toUpperCase())),
@@ -46,7 +58,7 @@ export const DateField: FC<DateFieldProps> = ({
           value === month && value.toUpperCase().includes(searchTextMonth.toUpperCase()),
       ),
     })
-  }, [searchTextMonth, month, months.opts, MonthTextOptionProps])
+  }, [searchTextMonth, month, months.opts])
 
   const years = {
     opts: YearsProps,

@@ -5,15 +5,15 @@ import {
 import type { ResourcePageGeneralActionsAddonItem } from '@moodlenet/ed-resource/webapp'
 import { ResourceCardPlugins, ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
 import type {
+  AdminSettingsSectionItem,
   HeaderAddonRegItem,
   PkgAddOns,
-  SettingsSectionItem,
 } from '@moodlenet/react-app/webapp'
 import {
+  AdminSettingsPagePlugins,
   HeaderPlugins,
   registerAppRoutes,
   registerMainAppPluginHook,
-  SettingsPagePlugins,
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
@@ -46,8 +46,10 @@ registerMainAppPluginHook(function useMainAppContext() {
   return mainAppPlugin
 })
 
-SettingsPagePlugins.register(function useSettingsPagePluregisterAddOn({ useSettingsSection }) {
-  const addons = useMemo<PkgAddOns<SettingsSectionItem>>(
+AdminSettingsPagePlugins.register(function useSettingsPagePluregisterAddOn({
+  useAdminSettingsSection,
+}) {
+  const addons = useMemo<PkgAddOns<AdminSettingsSectionItem>>(
     () => ({
       default: {
         Content: UsersContainer,
@@ -56,7 +58,7 @@ SettingsPagePlugins.register(function useSettingsPagePluregisterAddOn({ useSetti
     }),
     [],
   )
-  useSettingsSection(addons)
+  useAdminSettingsSection(addons)
 })
 
 ResourcePagePlugins.register(function useResourcePage({ useGeneralAction }) {
