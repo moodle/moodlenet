@@ -187,24 +187,24 @@ abbr {
   }
 
   > .error-msg {
-    height: 0;
+    // height: 0;
     opacity: 0;
-    animation: leave 0.5s ease-out;
+    // animation: leave 0.5s ease-out;
 
-    @keyframes leave {
-      from {
-        height: 14px;
-        opacity: 1;
-        font-size: 12px;
-        color: $error-color;
-      }
-      to {
-        height: 0;
-        opacity: 0;
-        font-size: 12px;
-        margin-top: -5px;
-      }
-    }
+    // @keyframes leave {
+    //   from {
+    //     height: 14px;
+    //     opacity: 1;
+    //     font-size: 12px;
+    //     color: $error-color;
+    //   }
+    //   to {
+    //     height: 0;
+    //     opacity: 0;
+    //     font-size: 12px;
+    //     margin-top: -5px;
+    //   }
+    // }
   }
 
   &.underline {
