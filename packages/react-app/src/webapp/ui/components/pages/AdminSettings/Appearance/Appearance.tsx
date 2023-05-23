@@ -18,7 +18,7 @@ export type AppearanceProps = {
 export const AppearanceMenu = () => <span>Appearance</span>
 
 export const Appearance: FC<AppearanceProps> = ({ form }) => {
-  // const styleContext = useContext(SettingsCtx)
+  // const styleContext = useContext(AdminSettingsCtx)
   // const [logo, setLogo] = useState(true)
   // const [compactLogo, setCompactLogo] = useState(true)
 

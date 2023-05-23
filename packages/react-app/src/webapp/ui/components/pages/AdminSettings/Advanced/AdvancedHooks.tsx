@@ -1,10 +1,10 @@
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
-import { SettingsCtx } from '../../../../../context/SettingsContext.js'
+import { AdminSettingsCtx } from '../../../../../context/AdminSettingsContext.js'
 import type { AdvancedFormValues, AdvancedProps } from './Advanced.js'
 
 export const useAdvancedProps = (): AdvancedProps => {
-  const { devMode, toggleDevMode } = useContext(SettingsCtx)
+  const { devMode, toggleDevMode } = useContext(AdminSettingsCtx)
 
   const form = useFormik<AdvancedFormValues>({
     initialValues: { devMode },

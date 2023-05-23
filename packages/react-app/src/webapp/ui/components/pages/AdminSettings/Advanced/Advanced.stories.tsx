@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import type { SettingsItem } from '../Settings/Settings.js'
+import { AdminSettingsItem } from '../AdminSettings.js'
 import type { AdvancedFormValues, AdvancedProps } from './Advanced.js'
 import { Advanced, AdvancedMenu } from './Advanced.js'
 
@@ -23,7 +23,7 @@ export const useAdvancedStoryProps = (overrides?: {
 }
 
 const AdvancedItem: FC = () => <Advanced {...useAdvancedStoryProps()} />
-export const useElements = (): SettingsItem => {
+export const useElements = (): AdminSettingsItem => {
   return {
     Menu: AdvancedMenu,
     Content: AdvancedItem,

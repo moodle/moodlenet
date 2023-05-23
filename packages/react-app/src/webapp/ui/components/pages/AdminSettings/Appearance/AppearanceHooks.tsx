@@ -1,11 +1,11 @@
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
 import type { AppearanceData } from '../../../../../../common/types.mjs'
-import { SettingsCtx } from '../../../../../context/SettingsContext.js'
+import { AdminSettingsCtx } from '../../../../../context/AdminSettingsContext.js'
 import type { AppearanceProps } from './Appearance.js'
 
 export const useAppearanceProps = (): AppearanceProps => {
-  const { appearanceData, saveAppearanceData } = useContext(SettingsCtx)
+  const { appearanceData, saveAppearanceData } = useContext(AdminSettingsCtx)
 
   const form = useFormik<AppearanceData>({
     initialValues: appearanceData,

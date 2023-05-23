@@ -28,7 +28,7 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
 
   // const stateContext = useContext(StateContext)
 
-  // const styleContext = useContext(SettingsCtx)
+  // const styleContext = useContext(AdminSettingsCtx)
 
   return (
     <LayoutContainer>

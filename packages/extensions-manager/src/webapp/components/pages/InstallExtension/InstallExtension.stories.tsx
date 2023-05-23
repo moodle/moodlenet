@@ -1,4 +1,4 @@
-import type { SettingsItem } from '@moodlenet/react-app/ui'
+import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -111,7 +111,7 @@ export const SettingsInstallItem: FC = () => (
   <InstallExtension {...useInstallExtensionStoryProps()} />
 )
 
-export const useElements = (): SettingsItem => {
+export const useElements = (): AdminSettingsItem => {
   return {
     Menu: InstallExtensionMenu,
     Content: SettingsInstallItem,
