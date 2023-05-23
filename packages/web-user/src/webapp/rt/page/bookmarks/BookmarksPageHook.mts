@@ -1,6 +1,7 @@
-import type { BookmarksProps, MainColumItem } from '@moodlenet/react-app/ui'
+import { MainColumItem } from '@moodlenet/react-app/ui'
 import { createHookPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
+import { BookmarksProps } from '../../../ui/exports/ui.mjs'
 
 export type BrowserPluginItem = Omit<MainColumItem, 'key'>
 export const BookmarksPagePlugin = createHookPlugin<{
