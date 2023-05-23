@@ -7,9 +7,9 @@ import {
 import LoginPanelContainer from './page/access/LoginPageContainer.js'
 import { RootLoginContainer } from './page/access/RootLoginContainer.js'
 import { SignUpContainer } from './page/access/SignupContainer.js'
-import { BookmarksPageContainer } from './page/Bookmarks/BookmarksPageContainer.js'
-import { MyProfilePageRoute } from './page/Profile/MyProfilePageRoute.js'
-import { ProfilePageRoute } from './page/Profile/ProfilePageRoute.js'
+import { BookmarksPageContainer } from './page/bookmarks/BookmarksPageContainer.js'
+import { MyProfilePageRoute } from './page/profile/MyProfilePageRoute.js'
+import { ProfilePageRoute } from './page/profile/ProfilePageRoute.js'
 
 export const pkgRoutes: PkgRoutes = {
   routes: (
