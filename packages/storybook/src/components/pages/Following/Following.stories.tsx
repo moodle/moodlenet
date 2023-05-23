@@ -6,7 +6,7 @@ import {
   useBrowserCollectionList,
   useBrowserProfileList,
   useBrowserStoryProps,
-} from 'components/organisms/Browser/stories-props.js'
+} from 'components/organisms/Browser/BrowserProps.stories.js'
 
 const meta: ComponentMeta<typeof Following> = {
   title: 'Pages/Following',

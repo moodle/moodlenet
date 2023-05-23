@@ -1,5 +1,6 @@
 import type { Href } from '@moodlenet/component-library'
 import { ListCard, SecondaryButton } from '@moodlenet/component-library'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
 import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForwardRounded } from '@mui/icons-material'
 import type { FC } from 'react'
@@ -10,7 +11,7 @@ import './LandingProfileList.scss'
 
 export type LandingProfileListProps = {
   searchAuthorsHref: Href
-  profilesPropsList: ProfileCardProps[]
+  profilesPropsList: { props: ProxyProps<ProfileCardProps>; key: string }[]
 }
 
 export const LandingProfileList: FC<LandingProfileListProps> = ({
@@ -25,7 +26,7 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
           profilesPropsList
             .slice(0, 11)
             .map(profilePropsList => (
-              <ProfileCard key={profilePropsList.data.userId} {...profilePropsList} />
+              <ProfileCard key={profilePropsList.key} {...profilePropsList.props} />
             )),
         [profilesPropsList],
       )}

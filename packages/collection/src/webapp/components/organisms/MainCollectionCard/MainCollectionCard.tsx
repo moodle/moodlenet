@@ -130,6 +130,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       value={form.values.title}
       placeholder="Title"
       key="title"
+      noBorder
       onChange={form.handleChange}
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
@@ -453,6 +454,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
           isTextarea
           ref={descriptionEditRef}
           textAreaAutoSize
+          noBorder
           key="description"
           placeholder="Description"
           value={form.values.description}

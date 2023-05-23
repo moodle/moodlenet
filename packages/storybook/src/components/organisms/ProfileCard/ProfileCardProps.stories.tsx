@@ -6,7 +6,7 @@ import { action } from '@storybook/addon-actions'
 import {
   profileStoriesValidationSchema,
   useProfileStoryProps,
-} from 'components/pages/Profile/stories-props.js'
+} from 'components/pages/Profile/props.stories.js'
 import { useFormik } from 'formik'
 import type { PartialDeep } from 'type-fest'
 

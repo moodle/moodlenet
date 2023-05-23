@@ -64,6 +64,10 @@ const meta: ComponentMeta<typeof Resource> = {
     'ResourceOwnerStoryProps',
     'ResourceAdminStoryProps',
     'validationSchema',
+    'useResourceForm',
+    'useResourceStoryProps',
+    'CollectionTextOptionProps',
+    'ResourceFormValues',
   ],
 }
 

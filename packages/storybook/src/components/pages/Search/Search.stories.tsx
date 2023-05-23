@@ -2,7 +2,7 @@
 import { Search } from '@moodlenet/react-app/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
-import { useBrowserStoryProps } from 'components/organisms/Browser/stories-props.js'
+import { useBrowserStoryProps } from 'components/organisms/Browser/BrowserProps.stories.js'
 
 const meta: ComponentMeta<typeof Search> = {
   title: 'Pages/Search',
