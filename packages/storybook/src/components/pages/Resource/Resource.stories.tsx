@@ -2,7 +2,7 @@ import type { ResourceFormProps } from '@moodlenet/ed-resource/common'
 import type { ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useResourceStoryProps } from './stories-props.js'
+import { useResourceStoryProps } from './ResourceProps.stories.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Resource> = {
@@ -12,7 +12,7 @@ const meta: ComponentMeta<typeof Resource> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['NewResourceProps'],
+  excludeStories: ['NewResourceProps', 'useResourceForm'],
 }
 
 type ResourceStory = ComponentStory<typeof Resource>

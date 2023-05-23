@@ -3,7 +3,8 @@ import type {
   SimpleTextOptionProps,
   TextOptionProps,
 } from '@moodlenet/component-library'
-import { getYearList, LicenseNodes } from '@moodlenet/component-library'
+import { getYearList } from '@moodlenet/component-library'
+import { DropdownFieldsDataStories } from '@moodlenet/component-library/stories'
 
 // const newEl = el.map(e => ({value: e}))
 
@@ -77,37 +78,37 @@ export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
   {
     label: 'CC-0 (Public domain)',
     value: 'CC-0 (Public domain)',
-    icon: LicenseNodes['0'],
+    icon: DropdownFieldsDataStories.LicenseNodes['0'],
   },
   {
     label: 'CC-BY (Attribution)',
     value: 'CC-BY (Attribution)',
-    icon: LicenseNodes['by'],
+    icon: DropdownFieldsDataStories.LicenseNodes['by'],
   },
   {
     label: 'CC-BY-SA (Attribution-ShareAlike)',
     value: 'CC-BY-SA (Attribution-ShareAlike)',
-    icon: LicenseNodes['by-sa'],
+    icon: DropdownFieldsDataStories.LicenseNodes['by-sa'],
   },
   {
     label: 'CC-BY-NC (Attribution-NonCommercial)',
     value: 'CC-BY-NC (Attribution-NonCommercial)',
-    icon: LicenseNodes['by-nc'],
+    icon: DropdownFieldsDataStories.LicenseNodes['by-nc'],
   },
   {
     label: 'CC-BY-NC-SA (Attribution-NonCommercial-ShareAlike)',
     value: 'CC-BY-NC-SA (Attribution-NonCommercial-ShareAlike)',
-    icon: LicenseNodes['by-nc-sa'],
+    icon: DropdownFieldsDataStories.LicenseNodes['by-nc-sa'],
   },
   {
     label: 'CC-BY-ND (Attribution-NoDerivatives)',
     value: 'CC-BY-ND (Attribution-NoDerivatives)',
-    icon: LicenseNodes['by-nd'],
+    icon: DropdownFieldsDataStories.LicenseNodes['by-nd'],
   },
   {
     label: 'CC-BY-NC-ND (Attribution-NonCommercial-NoDerivatives)',
     value: 'CC-BY-NC-ND (Attribution-NonCommercial-NoDerivatives)',
-    icon: LicenseNodes['by-nc-nd'],
+    icon: DropdownFieldsDataStories.LicenseNodes['by-nc-nd'],
   },
 ]
 

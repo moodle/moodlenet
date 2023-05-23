@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { by, cc, nc, nd, sa, zero } from './FieldsData.js'
+import { by, cc, nc, nd, sa, zero } from './DropdownFieldsData.stories.js'
 
 export const LevelDropdown = {
   label: `Level`,

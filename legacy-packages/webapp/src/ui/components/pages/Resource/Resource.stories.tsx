@@ -80,6 +80,7 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
     return month ? schema.required(t`Please select a year`) : schema.optional()
   }),
 })
+
 export const resourceFormValues: ResourceFormValues = {
   isFile: true,
   visibility: VisbilityIconTextOptionProps[0]!.value,

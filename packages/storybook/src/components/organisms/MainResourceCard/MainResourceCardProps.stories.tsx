@@ -14,7 +14,7 @@
 // // import { useFormik } from 'formik'
 // import { ResourceFormValues } from '@moodlenet/ed-resource/common'
 // import { MainResourceCard, MainResourceCardProps, Resource } from '@moodlenet/ed-resource/ui'
-// import { useResourceForm } from 'components/pages/Resource/stories-props.js'
+// import { useResourceForm } from 'components/pages/Resource/props.stories.js'
 // const maxUploadSize = 1024 * 1024 * 50
 
 // const meta: ComponentMeta<typeof Resource> = {

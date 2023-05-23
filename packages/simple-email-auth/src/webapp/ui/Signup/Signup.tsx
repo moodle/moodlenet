@@ -22,7 +22,6 @@ export const SignupIcon: FC = () => {
 export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
-  const disable = emailSent || form.isSubmitting
   return (
     <>
       <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
@@ -31,7 +30,6 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
           placeholder={`Display name`}
           name="displayName"
           edit
-          disabled={disable}
           value={form.values.displayName}
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.displayName}
@@ -42,7 +40,6 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
           placeholder={`Email`}
           name="email"
           edit
-          disabled={disable}
           value={form.values.email}
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.email}
@@ -53,7 +50,6 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
           placeholder={`Password`}
           name="password"
           edit
-          disabled={disable}
           value={form.values.password}
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.password}

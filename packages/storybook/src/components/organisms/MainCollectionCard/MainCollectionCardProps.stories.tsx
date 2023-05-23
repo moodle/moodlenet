@@ -10,14 +10,14 @@ import { boolean, mixed, object, string } from 'yup'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { CollectionTextOptionProps } from '../NewCollection/AddToCollections/storiesData'
 import type { OptionItemProp } from '@moodlenet/component-library'
-import { TypeTextOptionProps } from '@moodlenet/component-library'
 // import {
 // import { Collection, CollectionProps } from '@moodlenet/collection/ui'
 // import { useFormik } from 'formik'
 import type { CollectionFormProps } from '@moodlenet/collection/common'
 import type { MainCollectionCardProps } from '@moodlenet/collection/ui'
 import { Collection, MainCollectionCard } from '@moodlenet/collection/ui'
-import { useCollectionForm } from 'components/pages/Collection/stories-props.js'
+import { DropdownFieldsDataStories } from '@moodlenet/component-library/stories'
+import { useCollectionForm } from 'components/pages/Collection/CollectionProps.stories.js'
 const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof Collection> = {
@@ -38,6 +38,8 @@ const meta: ComponentMeta<typeof Collection> = {
     'CollectionOwnerStoryProps',
     'CollectionAdminStoryProps',
     'validationSchema',
+    'CollectionTextOptionProps',
+    'useMainCollectionCardStoryProps',
   ],
 }
 
@@ -85,7 +87,7 @@ export const collectionFormValues: CollectionFormProps = {
   // year: YearsProps[20],
   name: '',
   // name: 'The Best Collection Ever',
-  type: TypeTextOptionProps[2]!.value,
+  type: DropdownFieldsDataStories.TypeTextOptionProps[2]!.value,
 }
 
 export const CollectionTextOptionProps: OptionItemProp[] = [
@@ -120,7 +122,7 @@ export const useMainCollectionCardStoryProps = (overrides?: {
     // license: LicenseIconTextOptionProps[2]?.value,
     // month: MonthTextOptionProps[8]?.value,
     // year: YearsProps[20],
-    type: TypeTextOptionProps[2]?.value,
+    type: DropdownFieldsDataStories.TypeTextOptionProps[2]?.value,
     image: {
       location:
         'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
