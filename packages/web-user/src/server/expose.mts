@@ -21,6 +21,7 @@ import {
   editProfile,
   entityFeatureAction,
   getCurrentProfile,
+  getEntityFeatureCount,
   getProfileAvatarLogicalFilename,
   getProfileImageLogicalFilename,
   getProfileRecord,
@@ -228,8 +229,14 @@ export const expose = await shell.expose<WebUserExposeType>({
     'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource)/:_key':
       {
         guard: () => void 0,
-        async fn(/* _, { entity_id, feature } */) {
-          return { count: 10 }
+        async fn(_, { _key, entityType, feature }) {
+          if (!isAllowedKnownEntityFeature({ entityType, feature })) {
+            return { count: 0 }
+          }
+          const countRes = await getEntityFeatureCount({ _key, entityType, feature })
+          console.log({ countRes })
+
+          return countRes ?? { count: 0 }
         },
       },
     'webapp/all-my-featured-entities': {
