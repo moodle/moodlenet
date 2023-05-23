@@ -51,6 +51,31 @@ export const LoggedIn: CollectionStory = () => {
   return <Collection {...props} />
 }
 
+export const New: CollectionStory = () => {
+  const props = useCollectionStoryProps({
+    mainColumnItems: [],
+    data: {
+      mnUrl: 'moodle.com',
+      imageUrl: undefined,
+    },
+    collectionForm: NewCollectionProps,
+    state: {
+      isPublished: false,
+    },
+    actions: {},
+    access: {
+      canDelete: true,
+      canPublish: true,
+
+      isCreator: true,
+      canEdit: true,
+    },
+    resourceCardPropsList: [],
+  })
+
+  return <Collection {...props} />
+}
+
 export const Creator: CollectionStory = () => {
   const props = useCollectionStoryProps({
     data: {
@@ -87,42 +112,24 @@ export const NewCollectionProps: CollectionFormProps = {
   // visibility: 'Private',
 }
 
-export const New: CollectionStory = () => {
-  const props = useCollectionStoryProps({
-    mainColumnItems: [],
-    data: {
-      mnUrl: 'moodle.com',
-      imageUrl: undefined,
-    },
-    collectionForm: NewCollectionProps,
-    state: {
-      isPublished: false,
-    },
-    actions: {},
-    access: {
-      canDelete: true,
-      canPublish: true,
-
-      isCreator: true,
-      canEdit: true,
-    },
-    resourceCardPropsList: [],
-  })
-
-  return <Collection {...props} />
-}
-
 export const Admin: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    data: {},
-    state: {},
+    data: {
+      imageUrl:
+        'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
+    },
+    state: {
+      isPublished: true,
+    },
     actions: {},
     access: {
-      canEdit: true,
-      canPublish: true,
       canDelete: true,
+      canPublish: true,
+      canEdit: true,
     },
+    isSaving: false,
   })
+
   return <Collection {...props} />
 }
 

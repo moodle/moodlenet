@@ -235,7 +235,7 @@ export const useCollectionStoryProps = (
 
   const accessOverrides = overrides?.access
 
-  const resourceCardPropsList: { Item: ProxyProps<ResourceCardProps>; key: string }[] =
+  const resourceCardPropsList: { props: ProxyProps<ResourceCardProps>; key: string }[] =
     overrides?.resourceCardPropsList?.length === 0
       ? []
       : getResourceCardsStoryProps(6, {
