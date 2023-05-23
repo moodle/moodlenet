@@ -220,7 +220,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       key="display-name"
       noBorder={true}
       edit={isEditing}
-      disabled={form.isSubmitting}
       error={isEditing && shouldShowErrors && form.errors.displayName}
     />
   ) : (
@@ -241,7 +240,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       key="description"
       name="aboutMe"
       edit={isEditing}
-      disabled={form.isSubmitting}
       error={isEditing && shouldShowErrors && form.errors.aboutMe}
     />
   ) : (
@@ -275,7 +273,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         noBorder
         name="location"
         edit={isEditing}
-        disabled={form.isSubmitting}
         error={isEditing && shouldShowErrors && form.errors.location}
       />
     </span>
@@ -293,7 +290,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         placeholder="Website"
         name="siteUrl"
         edit={isEditing}
-        disabled={form.isSubmitting}
         error={isEditing && shouldShowErrors && form.errors.siteUrl}
       />
     </span>

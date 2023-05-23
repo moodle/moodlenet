@@ -5,7 +5,7 @@ import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainL
 import {
   useBrowserProfileList,
   useBrowserStoryProps,
-} from 'components/organisms/Browser/stories-props.js'
+} from 'components/organisms/Browser/BrowserProps.stories.js'
 
 const meta: ComponentMeta<typeof Followers> = {
   title: 'Pages/Followers',

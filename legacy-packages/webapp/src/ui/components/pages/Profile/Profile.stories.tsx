@@ -10,7 +10,7 @@ import {
   CollectionCardStoryProps,
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import { OverallCardStoryProps } from '../../molecules/cards/OverallCard/OverallCard.stories'
-import { useProfileCardStoryProps } from '../../molecules/cards/ProfileCard/stories-props'
+import { useProfileCardStoryProps } from '../../molecules/cards/ProfileCard/props.stories'
 import {
   ResourceCardLoggedInStoryProps,
   ResourceCardLoggedOutStoryProps,

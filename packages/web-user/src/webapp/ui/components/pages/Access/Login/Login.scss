@@ -3,14 +3,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-
-  @media (max-height: 600px) {
-    height: min-content;
-
-    > content {
-      margin-top: 5%;
-    }
-  }
+  margin-top: 30px;
 
   > .content {
     display: flex;
@@ -22,9 +15,6 @@
     @media (max-width: 650px) {
       justify-content: center;
       margin: 0 25px;
-    }
-    @media (max-height: 750px) {
-      margin-bottom: 5%;
     }
 
     > .card {

@@ -1,10 +1,5 @@
-import {
-  Dropdown,
-  MonthTextOptionProps,
-  SimplePill,
-  SimpleTextOption,
-  TextOption,
-} from '@moodlenet/component-library'
+import { Dropdown, SimplePill, SimpleTextOption, TextOption } from '@moodlenet/component-library'
+import { DropdownFieldsDataStories } from '@moodlenet/component-library/stories'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import { YearsProps } from '../../../../common/MOCK_DATA.js'
@@ -30,6 +25,7 @@ export const DateField: FC<DateFieldProps> = ({
   editMonth,
   editYear,
 }) => {
+  const { MonthTextOptionProps } = DropdownFieldsDataStories
   const months = {
     opts: MonthTextOptionProps,
     selected: MonthTextOptionProps.find(({ value }) => value === month),
@@ -41,7 +37,7 @@ export const DateField: FC<DateFieldProps> = ({
       opts: MonthTextOptionProps,
       selected: MonthTextOptionProps.find(({ value }) => value === month),
     })
-  }, [month])
+  }, [MonthTextOptionProps, month])
   useEffect(() => {
     setUpdatedMonths({
       opts: months.opts.filter(o => o.value.toUpperCase().includes(searchTextMonth.toUpperCase())),
@@ -50,7 +46,7 @@ export const DateField: FC<DateFieldProps> = ({
           value === month && value.toUpperCase().includes(searchTextMonth.toUpperCase()),
       ),
     })
-  }, [searchTextMonth, month, months.opts])
+  }, [searchTextMonth, month, months.opts, MonthTextOptionProps])
 
   const years = {
     opts: YearsProps,

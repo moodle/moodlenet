@@ -3,11 +3,12 @@ import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
-import { getProfileCardsStoryProps, LandingProfileList } from '@moodlenet/web-user/ui'
+import { ProfileCardPropsStories } from '@moodlenet/web-user/stories'
+import { LandingProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/story-props.js'
-import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/story-props.js'
+import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/CollectionCardProps.stories.js'
+import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -70,7 +71,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          profilesPropsList={getProfileCardsStoryProps(15, {
+          profilesPropsList={ProfileCardPropsStories.getProfileCardsStoryProps(15, {
             access: { isAuthenticated: false },
           })}
         />
@@ -123,7 +124,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          profilesPropsList={getProfileCardsStoryProps(15, {
+          profilesPropsList={ProfileCardPropsStories.getProfileCardsStoryProps(15, {
             state: {
               // followed: true,
             },
@@ -199,7 +200,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingProfileList
             searchAuthorsHref={href('Page/Search')}
-            profilesPropsList={getProfileCardsStoryProps(15, {
+            profilesPropsList={ProfileCardPropsStories.getProfileCardsStoryProps(15, {
               access: {
                 isCreator: true,
               },

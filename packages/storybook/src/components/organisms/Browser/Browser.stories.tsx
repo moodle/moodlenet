@@ -1,7 +1,7 @@
 import type { BrowserProps } from '@moodlenet/react-app/ui'
 import { Browser } from '@moodlenet/react-app/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useBrowserStoryProps } from './stories-props.js'
+import { useBrowserStoryProps } from './BrowserProps.stories.js'
 
 const meta: ComponentMeta<typeof Browser> = {
   title: 'Organisms/Browser',

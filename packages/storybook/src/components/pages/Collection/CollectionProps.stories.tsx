@@ -33,7 +33,7 @@ import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
-import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/story-props.js'
+import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
 import { useFormik } from 'formik'
 import {
   MainLayoutLoggedInStoryProps,
@@ -60,6 +60,11 @@ const meta: ComponentMeta<typeof Collection> = {
     'CollectionOwnerStoryProps',
     'CollectionAdminStoryProps',
     'validationSchema',
+    'CollectionTextOptionProps',
+    'useCollectionForm',
+    'useCollectionStoryProps',
+    'collectionFormProps',
+    'useMainCollectionCardStoryProps',
   ],
 }
 
@@ -230,7 +235,7 @@ export const useCollectionStoryProps = (
 
   const accessOverrides = overrides?.access
 
-  const resourceCardPropsList: { Item: ProxyProps<ResourceCardProps>; key: string }[] =
+  const resourceCardPropsList: { props: ProxyProps<ResourceCardProps>; key: string }[] =
     overrides?.resourceCardPropsList?.length === 0
       ? []
       : getResourceCardsStoryProps(6, {

@@ -45,8 +45,8 @@ export const SimpleLayout: FC<SimpleLayoutProps> = ({
       </div> */}
         <div style={contentStyle} className="content">
           {children}
-          <MainFooter {...footerProps} />
         </div>
+        <MainFooter {...footerProps} />
       </div>
     </LayoutContainer>
   )
