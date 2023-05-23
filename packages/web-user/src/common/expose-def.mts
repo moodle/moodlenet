@@ -57,11 +57,12 @@ export type WebUserExposeType = PkgExposeDef<{
       },
     ): Promise<boolean>
 
-    'webapp/feature-entity/count/:feature(follow|like)/:entity_id'(
+    'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource)/:_key'(
       body: void,
       params: {
         feature: Exclude<KnownEntityFeature, 'bookmark'>
-        entity_id: string
+        entityType: KnownEntityType
+        _key: string
       },
     ): Promise<{ count: number }>
     'webapp/all-my-featured-entities'(): Promise<null | {
