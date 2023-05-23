@@ -1,22 +1,18 @@
-import { Collection, CollectionEntitiesTools } from '@moodlenet/collection/server'
+import { Collection } from '@moodlenet/collection/server'
 import { RpcStatus } from '@moodlenet/core'
-import { EdResourceEntitiesTools, Resource } from '@moodlenet/ed-resource/server'
+import { Resource } from '@moodlenet/ed-resource/server'
 import { webImageResizer } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import { isCreatorOfCurrentEntity, queryEntities, toaql } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
-import type {
-  ClientSessionDataRpc,
-  KnownEntityFeature,
-  KnownEntityType,
-  KnownFeaturedEntities,
-  Profile,
-  ProfileGetRpc,
-  WebUserData,
-} from '../common/types.mjs'
+import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
 import { WebUserEntitiesTools } from './entities.mjs'
 import { publicFiles, publicFilesHttp } from './init/fs.mjs'
+import {
+  isAllowedKnownEntityFeature,
+  reduceToKnownFeaturedEntities,
+} from './lib/known-features.mjs'
 import {
   editProfile,
   entityFeatureAction,
@@ -35,7 +31,7 @@ import {
   verifyCurrentTokenCtx,
 } from './lib/web-user.mjs'
 import { shell } from './shell.mjs'
-import type { KnownFeaturedEntityItem, ProfileDataType } from './types.mjs'
+import type { ProfileDataType } from './types.mjs'
 
 export const expose = await shell.expose<WebUserExposeType>({
   rpc: {
@@ -269,38 +265,13 @@ export const expose = await shell.expose<WebUserExposeType>({
       {
         guard: () => void 0,
         async fn(_, { _key, action, entityType, feature }) {
-          action === 'add' && assert(isAllowedKnownEntityFeature({ entityType, feature }))
-          const _id =
-            entityType === 'collection'
-              ? CollectionEntitiesTools.getIdentifiersByKey({ _key, type: 'Collection' })._id
-              : entityType === 'resource'
-              ? EdResourceEntitiesTools.getIdentifiersByKey({ _key, type: 'Resource' })._id
-              : entityType === 'profile'
-              ? WebUserEntitiesTools.getIdentifiersByKey({ _key, type: 'Profile' })._id
-              : null
-          assert(_id)
-          await entityFeatureAction({ _id, action, feature })
-
+          await entityFeatureAction({ _key, action, entityType, feature })
           return
         },
       },
   },
 })
 
-function isAllowedKnownEntityFeature({
-  entityType,
-  feature,
-}: {
-  feature: KnownEntityFeature
-  entityType: KnownEntityType
-}) {
-  const allowedFeature: { [feat in KnownEntityFeature]: KnownEntityType[] } = {
-    bookmark: ['collection', 'resource'],
-    follow: ['collection', 'profile'],
-    like: ['resource'],
-  }
-  return allowedFeature[feature].find(allowedType => allowedType === entityType)
-}
 function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
   const backgroundUrl = entity.backgroundImage
     ? publicFilesHttp.getFileUrl({
@@ -323,53 +294,4 @@ function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
     siteUrl: entity.siteUrl ?? '',
   }
   return profile
-}
-
-function reduceToKnownFeaturedEntities(
-  knownFeaturedEntities: KnownFeaturedEntityItem[],
-): KnownFeaturedEntities {
-  const myFeaturedEntities: KnownFeaturedEntities = {
-    bookmark: {
-      collection: extractFeaturedIdentifiers('Collection', 'bookmark'),
-      profile: extractFeaturedIdentifiers('Profile', 'bookmark'),
-      resource: extractFeaturedIdentifiers('Resource', 'bookmark'),
-    },
-    follow: {
-      collection: extractFeaturedIdentifiers('Collection', 'follow'),
-      profile: extractFeaturedIdentifiers('Profile', 'follow'),
-      resource: extractFeaturedIdentifiers('Resource', 'follow'),
-    },
-    like: {
-      collection: extractFeaturedIdentifiers('Collection', 'like'),
-      profile: extractFeaturedIdentifiers('Profile', 'like'),
-      resource: extractFeaturedIdentifiers('Resource', 'like'),
-    },
-  }
-  return myFeaturedEntities
-
-  function extractFeaturedIdentifiers(
-    extractEntity: Capitalize<KnownEntityType>,
-    extractFeature: KnownEntityFeature,
-  ): { _key: string }[] {
-    const filteredByFeature = (knownFeaturedEntities ?? []).filter(
-      ({ feature }) => extractFeature === feature,
-    )
-    const identifiers =
-      extractEntity === 'Collection'
-        ? CollectionEntitiesTools.mapToIdentifiersFilterType({
-            ids: filteredByFeature,
-            type: extractEntity,
-          })
-        : extractEntity === 'Resource'
-        ? EdResourceEntitiesTools.mapToIdentifiersFilterType({
-            ids: filteredByFeature,
-            type: extractEntity,
-          })
-        : WebUserEntitiesTools.mapToIdentifiersFilterType({
-            ids: filteredByFeature,
-            type: extractEntity,
-          })
-
-    return identifiers.map(({ entityIdentifier: { _key } }) => ({ _key }))
-  }
 }
