@@ -3,7 +3,7 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { defaultAppearanceData } from '../../../../../../common/exports.mjs'
 import type { AppearanceData } from '../../../../../../common/types.mjs'
-import type { SettingsItem } from '../Settings/Settings.js'
+import { AdminSettingsItem } from '../AdminSettings.js'
 import type { AppearanceProps } from './Appearance.js'
 import { Appearance, AppearanceMenu } from './Appearance.js'
 
@@ -25,7 +25,7 @@ export const useAppearanceStoryProps = (overrides?: {
 }
 
 const AppearanceItem: FC = () => <Appearance {...useAppearanceStoryProps()} />
-export const useElements = (): SettingsItem => {
+export const useElements = (): AdminSettingsItem => {
   return {
     Menu: AppearanceMenu,
     Content: AppearanceItem,

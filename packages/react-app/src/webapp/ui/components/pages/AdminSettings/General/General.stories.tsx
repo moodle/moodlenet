@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import type { SchemaOf } from 'yup'
 import { object, string } from 'yup'
-import type { SettingsItem } from '../Settings/Settings.js'
+import { AdminSettingsItem } from '../AdminSettings.js'
 import type { GeneralProps } from './General.js'
 import { General, GeneralMenu } from './General.js'
 
@@ -36,7 +36,7 @@ export const useGeneralStoryProps = (overrides?: {
 }
 
 const GeneralItem: FC = () => <General {...useGeneralStoryProps()} />
-export const useElements = (): SettingsItem => {
+export const useElements = (): AdminSettingsItem => {
   return {
     Menu: GeneralMenu,
     Content: GeneralItem,

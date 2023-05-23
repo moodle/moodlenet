@@ -1,7 +1,7 @@
-import type { PkgAddOns, SettingsSectionItem } from '@moodlenet/react-app/webapp'
+import type { AdminSettingsSectionItem, PkgAddOns } from '@moodlenet/react-app/webapp'
 import {
+  AdminSettingsPagePlugins,
   registerMainAppPluginHook,
-  SettingsPagePlugins,
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
@@ -21,8 +21,8 @@ registerMainAppPluginHook(function useMainAppContext() {
   return mainAppPlugin
 })
 
-SettingsPagePlugins.register(function useSettingsPagePluginHook({ useSettingsSection }) {
-  const addons = useMemo<PkgAddOns<SettingsSectionItem>>(
+AdminSettingsPagePlugins.register(function useSettingsPagePluginHook({ useAdminSettingsSection }) {
+  const addons = useMemo<PkgAddOns<AdminSettingsSectionItem>>(
     () => ({
       default: {
         Menu: ExtensionsMenu,
@@ -31,5 +31,5 @@ SettingsPagePlugins.register(function useSettingsPagePluginHook({ useSettingsSec
     }),
     [],
   )
-  useSettingsSection(addons)
+  useAdminSettingsSection(addons)
 })

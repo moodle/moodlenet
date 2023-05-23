@@ -1,4 +1,4 @@
-import type { SettingsItem } from '@moodlenet/react-app/ui'
+import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useInstallExtensionStoryProps } from '../InstallExtension/InstallExtension.stories.js'
 import { useManageExtensionsStoryProps } from '../ManageExtensions/ManageExtensions.stories.js'
@@ -19,7 +19,7 @@ export const useExtensionsStoryProps = (overrides?: {
 
 export const ExtensionsItem: FC = () => <Extensions {...useExtensionsStoryProps()} />
 
-export const useElements = (): SettingsItem => {
+export const useElements = (): AdminSettingsItem => {
   return {
     Menu: ExtensionsMenu,
     Content: ExtensionsItem,

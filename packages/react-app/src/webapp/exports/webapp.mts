@@ -1,5 +1,5 @@
 export * from '../app-routes.js'
-export * from '../context/SettingsContext.js'
+export * from '../context/AdminSettingsContext.js'
 export { getMyShell } from '../getMyShell.mjs'
 export {
   registerMainAppPluginHook,
@@ -18,9 +18,9 @@ export {
 } from '../ui/components/organisms/Header/MainHeader/MainHeaderHooks.mjs'
 export { useMinimalisticHeaderProps } from '../ui/components/organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 export {
-  SettingsPagePlugins,
-  type SettingsSectionItem,
-} from '../ui/components/pages/Settings/Settings/Hook/SettingsHooks.js'
+  AdminSettingsPagePlugins,
+  type AdminSettingsSectionItem,
+} from '../ui/components/pages/AdminSettings/Hook/AdminSettingsHook.js'
 export {
   usePkgAddOns,
   type PkgAddOn,
