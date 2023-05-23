@@ -11,7 +11,7 @@ import type { KnownEntityFeature, KnownEntityType } from '../../common/types.mjs
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType, ProfileEntity } from '../types.mjs'
-import { getEntityIdByKnownEntity } from './known-features.mjs'
+import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
 import { getWebUserByProfileKey, patchWebUser, verifyCurrentTokenCtx } from './web-user.mjs'
 
 export async function editProfile(
@@ -39,17 +39,20 @@ export async function editProfile(
 }
 
 export async function entityFeatureAction({
-  _id,
+  _key,
   action,
+  entityType,
   feature,
 }: {
   action: 'add' | 'remove'
   feature: KnownEntityFeature
-  _id: string
+  entityType: KnownEntityType
+  _key: string
 }) {
+  action === 'add' && assert(isAllowedKnownEntityFeature({ entityType, feature }))
   const current = await getCurrentProfile()
   assert(current)
-
+  const _id = getEntityIdByKnownEntity({ _key, entityType })
   const knownFeaturedEntityItem = toaql<KnownFeaturedEntityItem>({
     _id,
     feature,
