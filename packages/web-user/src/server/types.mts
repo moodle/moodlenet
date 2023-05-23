@@ -15,6 +15,7 @@ export type ProfileDataType = {
   backgroundImage: ImageField | undefined | null
   avatarImage: ImageField | undefined | null
   knownFeaturedEntities: KnownFeaturedEntityItem[]
+  kudos: number
 }
 type ImageField =
   | { kind: 'file'; directAccessId: string }

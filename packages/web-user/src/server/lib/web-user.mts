@@ -153,6 +153,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     organizationName: '',
     siteUrl: '',
     knownFeaturedEntities: [],
+    kudos: 0,
     ...profileData,
   }
   const newProfile = await create(Profile.entityClass, createData, { pkgCreator: true })

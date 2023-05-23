@@ -44,6 +44,12 @@ export const currentEntityMeta = entityMeta(currentEntityVar)
 export const currentEntityKey = entityKey(currentEntityVar)
 export const currentEntityId: AqlVal<string> = entityId(currentEntityVar)
 
+export function creatorEntityIdentifier(
+  entityVal: AqlVal<EntityDocFullData<SomeEntityDataType>>,
+): AqlVal<EntityIdentifier> {
+  return `( ${entityVal}.creator.entityIdentifier )`
+}
+
 export function isCurrentUserCreatorOfCurrentEntity(): AqlVal<boolean> {
   return `( ${currentEntityMeta}.creator.entityIdentifier == ${currentUserIdentifier} )`
 }
