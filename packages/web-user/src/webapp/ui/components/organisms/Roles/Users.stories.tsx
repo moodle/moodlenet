@@ -1,4 +1,4 @@
-import type { SettingsItem } from '@moodlenet/react-app/ui'
+import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import { action } from '@storybook/addon-actions'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
@@ -65,7 +65,7 @@ const UsersItem: FC = () => {
 
   return <Users users={currentUsers} search={setSearchText} />
 }
-export const useElements = (): SettingsItem => {
+export const useElements = (): AdminSettingsItem => {
   return {
     Menu: UsersMenu,
     Content: UsersItem,

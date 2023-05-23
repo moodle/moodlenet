@@ -1,5 +1,5 @@
-import type { PkgAddOns, SettingsSectionItem } from '@moodlenet/react-app/webapp'
-import { SettingsPagePlugins } from '@moodlenet/react-app/webapp'
+import type { AdminSettingsSectionItem, PkgAddOns } from '@moodlenet/react-app/webapp'
+import { AdminSettingsPagePlugins } from '@moodlenet/react-app/webapp'
 import { LoginPlugins, SignupPlugins } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
 import '../shell.mjs'
@@ -27,12 +27,12 @@ SignupPlugins.register(function useSignupMethod({ useSignupMethod }) {
   useSignupMethod(addons)
 })
 
-SettingsPagePlugins.register(function useSettingsPageHook({ useSettingsSection }) {
-  const addons = useMemo<PkgAddOns<SettingsSectionItem>>(
+AdminSettingsPagePlugins.register(function useSettingsPageHook({ useAdminSettingsSection }) {
+  const addons = useMemo<PkgAddOns<AdminSettingsSectionItem>>(
     () => ({
       default: { Content: SettingsContent, Menu: SettingsMenu },
     }),
     [],
   )
-  useSettingsSection(addons)
+  useAdminSettingsSection(addons)
 })
