@@ -5,7 +5,7 @@ import type { AppearanceData } from '../../common/types.mjs'
 import { shell } from '../shell.mjs'
 // import lib from '../../../../main-lib'
 
-export type SettingsCtxT = {
+export type AdminSettingsCtxT = {
   saveAppearanceData(data: AppearanceData): unknown
   appearanceData: AppearanceData
   devMode: boolean
@@ -13,9 +13,9 @@ export type SettingsCtxT = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const SettingsCtx = createContext<SettingsCtxT>(null as any)
+export const AdminSettingsCtx = createContext<AdminSettingsCtxT>(null as any)
 
-export const ProvideSettingsContext: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideAdminSettingsContext: FC<PropsWithChildren> = ({ children }) => {
   const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(async (newAppearanceData: AppearanceData) => {
@@ -32,7 +32,7 @@ export const ProvideSettingsContext: FC<PropsWithChildren> = ({ children }) => {
       .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
   }, [])
 
-  const ctx = useMemo<SettingsCtxT>(() => {
+  const ctx = useMemo<AdminSettingsCtxT>(() => {
     return {
       saveAppearanceData,
       appearanceData,
@@ -41,5 +41,5 @@ export const ProvideSettingsContext: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [saveAppearanceData, appearanceData, devMode])
 
-  return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
+  return <AdminSettingsCtx.Provider value={ctx}>{children}</AdminSettingsCtx.Provider>
 }

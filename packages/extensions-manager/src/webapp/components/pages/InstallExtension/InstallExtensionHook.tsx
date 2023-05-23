@@ -1,4 +1,4 @@
-import { SettingsCtx } from '@moodlenet/react-app/webapp'
+import { AdminSettingsCtx } from '@moodlenet/react-app/webapp'
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
 import { shell } from '../../../shell.mjs'
@@ -19,7 +19,7 @@ export const useInstallExtensionProps = (): InstallExtensionPropsControlled => {
       ])
     },
   })
-  const { devMode } = useContext(SettingsCtx)
+  const { devMode } = useContext(AdminSettingsCtx)
 
   const installExtensionPropsControlled = useMemo<InstallExtensionPropsControlled>(() => {
     const props: InstallExtensionPropsControlled = {

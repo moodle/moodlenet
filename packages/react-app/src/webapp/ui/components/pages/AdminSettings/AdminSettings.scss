@@ -1,0 +1,242 @@
+@import '../../../styles/application.scss';
+
+.admin-settings {
+  width: 100%;
+  margin-top: 30px;
+  // gap: 40px;
+  display: grid;
+  grid-template-columns: 240px repeat(1, auto) 170px;
+  grid-column-gap: 40px;
+  justify-items: center;
+
+  @media screen and (min-width: 800px) and (max-width: 1400px) {
+    grid-template-columns: 240px repeat(1, auto);
+  }
+
+  > * {
+    display: flex;
+  }
+
+  > .left-menu {
+    margin-right: auto;
+    min-width: 300px;
+    height: fit-content;
+
+    > .card {
+      padding: 30px 0;
+      display: flex;
+      flex-direction: column;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      > .section {
+        display: flex;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 500;
+        color: black;
+
+        > .border-container {
+          width: 6px;
+          height: 100%;
+
+          &.selected {
+            background-color: var(--primary-background-color);
+          }
+          > .border {
+            width: 100%;
+            height: 100%;
+            border-radius: 0 4px 4px 0;
+            transition: background-color 150ms ease-in;
+            &.selected {
+              background-color: var(--primary-color);
+            }
+          }
+        }
+
+        &:hover {
+          > .border-container > .border {
+            &:not(.selected) {
+              background-color: #e8e8e8;
+            }
+          }
+        }
+
+        > .content {
+          width: 100%;
+          padding: 14px 48px 14px 42px;
+          transition: background-color 150ms ease-in;
+          &.selected {
+            background-color: var(--primary-background-color);
+          }
+        }
+      }
+    }
+  }
+
+  > .content {
+    // max-width: 1100px;
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+
+    > *:not(.snackbar) {
+      width: 100%;
+      max-width: 800px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      @media (max-width: 450px) {
+        &,
+        > * {
+          gap: 0;
+        }
+      }
+
+      > .card:not(.snackbar),
+      > * > .card {
+        padding: 24px;
+        @media (max-width: 450px) {
+          box-shadow: none;
+          border-radius: 0;
+          margin-top: 0;
+          padding: 12px 0;
+        }
+      }
+
+      > .column,
+      > .card > .section {
+        &,
+        > form {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          > .parameter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            > .name {
+              font-weight: bold;
+            }
+          }
+        }
+
+        > .title {
+          display: flex;
+          justify-content: space-between;
+          font-size: 23px;
+          font-weight: bold;
+        }
+
+        > .subtitle {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        > .option,
+        > * .option {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          > .name {
+            font-weight: bold;
+          }
+
+          > .input-text-field {
+            height: 36px;
+            width: 100%;
+          }
+        }
+
+        > .parameter {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          height: fit-content;
+
+          > .name {
+            font-weight: bold;
+          }
+          > .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 22px;
+
+            > .input-text-field {
+              width: 100%;
+              &.text {
+                height: 36px;
+              }
+              &.textarea {
+                height: 62px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1000px) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 4px;
+
+    > .left-menu {
+      justify-content: center;
+      margin-right: inherit;
+      box-shadow: 0px 6px 4px -5px #e1dedb;
+      margin: 0 -25px;
+      > .card {
+        padding: 0;
+        flex-direction: row;
+        box-shadow: none;
+        overflow-x: scroll;
+        padding: 0 8px;
+        border-radius: 0;
+
+        > .section {
+          flex-direction: column-reverse;
+          > .border-container {
+            width: 100%;
+            height: 6px;
+            padding: 0 24px;
+            &.selected {
+              background: none;
+            }
+            > .border {
+              width: 100%;
+              height: 100%;
+              border-radius: 4px 4px 0px 0px;
+            }
+          }
+          > .content {
+            font-size: 15px;
+            padding: 14px 18px 10px 18px;
+            &.selected {
+              background: none;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 450px) {
+    > .left-menu {
+      > .card {
+        > .section {
+          > .content {
+            padding: 4px 18px 10px 18px;
+          }
+        }
+      }
+    }
+  }
+}
