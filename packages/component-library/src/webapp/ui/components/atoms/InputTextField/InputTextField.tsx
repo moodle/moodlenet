@@ -86,8 +86,6 @@ export const InputTextField = forwardRef<
     }
   }, [error, label, disabled, setErrorLeave, currentError])
 
-  console.log('noBorder', noBorder)
-
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${

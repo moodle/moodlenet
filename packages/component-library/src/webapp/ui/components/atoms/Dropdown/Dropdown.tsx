@@ -198,56 +198,79 @@ export const SimplePill: FC<{
   value: string
   label: ReactNode
   edit?: boolean
-}> = ({ label, value, edit }) => {
+  abbr?: string
+}> = ({ label, value, edit, abbr }) => {
   const { toggle } = useSelectorOption(value) ?? {}
+  const title = abbr ? abbr : typeof label === 'string' ? label : undefined
   return (
-    <div className="dropdown-pill">
+    <abbr title={title} className="dropdown-pill">
       <div className="label">{label}</div>
       {edit && <RoundButton onClick={toggle} />}
-    </div>
+    </abbr>
   )
 }
 
 export const IconPill: FC<{
   icon: ReactNode
-}> = ({ icon }) => {
-  return <div className="dropdown-pill icon">{icon}</div>
+  abbr?: string
+}> = ({ icon, abbr }) => {
+  return (
+    <abbr title={abbr} className="dropdown-pill icon">
+      {icon}
+    </abbr>
+  )
 }
 
 export const IconTextPill: FC<{
   icon: ReactNode
   label: string
-}> = ({ icon, label }) => {
+  abbr?: string
+}> = ({ icon, label, abbr }) => {
+  const title = abbr ? abbr : typeof label === 'string' ? label : undefined
   return (
-    <div className="dropdown-pill icon-text">
+    <abbr className="dropdown-pill icon-text" title={title}>
       {icon}
       <span>{label}</span>
-    </div>
+    </abbr>
   )
 }
 
 export type SimpleTextOptionProps = {
   value: string
+  abbr?: string
 }
-export const SimpleTextOption: FC<SimpleTextOptionProps> = ({ value }) => {
+export const SimpleTextOption: FC<SimpleTextOptionProps> = ({ value, abbr }) => {
   const { toggle, selected } = useSelectorOption(value) ?? {}
+  const title = abbr ? abbr : typeof value === 'string' ? value : undefined
   return (
-    <div key={value} className={`${selected ? 'selected ' : ''}option only-text`} onClick={toggle}>
+    <abbr
+      title={title}
+      key={value}
+      className={`${selected ? 'selected ' : ''}option only-text`}
+      onClick={toggle}
+    >
       {value}
-    </div>
+    </abbr>
   )
 }
 
 export type TextOptionProps = {
   value: string
   label: string
+  abbr?: string
 }
-export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
+export const TextOption: FC<TextOptionProps> = ({ value, label, abbr }) => {
   const { toggle, selected } = useSelectorOption(value) ?? {}
+  const title = abbr ? abbr : typeof label === 'string' ? label : undefined
   return (
-    <div key={value} className={`${selected ? 'selected ' : ''}option only-text`} onClick={toggle}>
+    <abbr
+      key={value}
+      title={title}
+      className={`${selected ? 'selected ' : ''} option only-text`}
+      onClick={toggle}
+    >
       {label}
-    </div>
+    </abbr>
   )
 }
 
@@ -255,17 +278,20 @@ export type IconTextOptionProps = {
   value: string
   label: string
   icon: ReactNode
+  abbr?: string
 }
-export const IconTextOption: FC<IconTextOptionProps> = ({ value, label, icon }) => {
+export const IconTextOption: FC<IconTextOptionProps> = ({ value, label, icon, abbr }) => {
   const { toggle, selected } = useSelectorOption(value) ?? {}
+  const title = abbr ? abbr : typeof label === 'string' ? label : undefined
   return (
-    <div
+    <abbr
+      title={title}
       key={value}
       className={`${selected ? 'selected ' : ''} option icon-and-text`}
       onClick={toggle}
     >
       {icon}
       <span>{label}</span>
-    </div>
+    </abbr>
   )
 }
