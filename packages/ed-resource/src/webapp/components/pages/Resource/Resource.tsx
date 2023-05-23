@@ -132,24 +132,16 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
-    console.log('checking forms')
-    console.log('form.isValid', form.isValid)
     if (form.isValid && contentForm.isValid && imageForm.isValid) {
       form.submitForm()
       contentForm.submitForm()
       imageForm.submitForm()
       setShouldShowErrors(false)
       publish()
-      console.log('should NOT show errors')
     } else {
       setShouldShowErrors(true)
-      console.log('should SHOW errors')
     }
   }
-
-  useEffect(() => {
-    console.log('shouldShowErrors', shouldShowErrors)
-  }, [shouldShowErrors])
 
   const mainResourceCard = (
     <MainResourceCard
@@ -294,8 +286,6 @@ export const Resource: FC<ResourceProps> = ({
     languageField,
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
-
-  console.log('errors ', form.errors)
 
   const extraDetailsContainer =
     updatedExtraDetailsItems.length > 0 ? (

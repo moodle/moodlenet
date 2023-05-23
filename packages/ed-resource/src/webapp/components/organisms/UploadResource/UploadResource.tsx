@@ -102,7 +102,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
   const addLink = () => {
-    contentForm.setFieldValue('content', addLinkFieldRef.current?.value, true)
+    contentForm.setFieldValue('content', addLinkFieldRef.current?.value)
     // .then(_ => setShouldShowErrors(!!_?.content))
     contentForm.submitForm()
   }
@@ -298,7 +298,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const uploader = (type: 'file' | 'image') => {
     return (
       <div
-        className={`uploader ${isToDrop ? 'hover' : ''} 
+        className={`uploader ${isToDrop ? 'hover' : ''} ${
+          shouldShowErrors &&
+          // !(contentForm.values.content instanceof Blob) &&
+          contentForm.errors.content
+            ? 'show-error'
+            : ''
+        }
         `}
         //  ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
         id="drop_zone"
@@ -353,7 +359,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
             action={<PrimaryButton onClick={addLink}>Add</PrimaryButton>}
             error={
               shouldShowErrors &&
-              !(contentForm.values.content instanceof Blob) &&
+              // !(contentForm.values.content instanceof Blob) &&
               contentForm.errors.content
             }
           />
