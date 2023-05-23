@@ -227,12 +227,13 @@ export const expose = await shell.expose<WebUserExposeType>({
           return
         },
       },
-    'webapp/feature-entity/count/:feature(follow|like)/:entity_id': {
-      guard: () => void 0,
-      async fn(/* _, { entity_id, feature } */) {
-        return { count: 1 }
+    'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource)/:_key':
+      {
+        guard: () => void 0,
+        async fn(/* _, { entity_id, feature } */) {
+          return { count: 10 }
+        },
       },
-    },
     'webapp/all-my-featured-entities': {
       guard: () => void 0,
       async fn() {
