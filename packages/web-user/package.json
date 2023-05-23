@@ -30,7 +30,7 @@
     "./init": "./dist/server/init.mjs",
     "./server": "./dist/server/exports.mjs",
     "./common": "./dist/common/exports.mjs",
-    "./ui": "./dist/webapp/exports/ui.mjs",
+    "./ui": "./dist/webapp/ui/exports/ui.mjs",
     "./stories": "./dist/webapp/ui/exports/stories.mjs",
     "./webapp": "./dist/webapp/rt/exports.mjs"
   },
