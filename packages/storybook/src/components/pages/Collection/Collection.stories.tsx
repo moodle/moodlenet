@@ -1,7 +1,7 @@
 import type { CollectionFormProps } from '@moodlenet/collection/common'
 import { Collection } from '@moodlenet/collection/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useCollectionStoryProps } from './stories-props.js'
+import { useCollectionStoryProps } from './CollectionProps.stories.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Collection> = {

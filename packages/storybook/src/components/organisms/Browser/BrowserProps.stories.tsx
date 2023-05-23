@@ -2,16 +2,13 @@ import { BrowserCollectionFilters, BrowserCollectionList } from '@moodlenet/coll
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
 import type { BrowserProps, MainColumItem } from '@moodlenet/react-app/ui'
-import {
-  BrowserProfileFilters,
-  BrowserProfileList,
-  getProfileCardsStoryProps,
-} from '@moodlenet/web-user/ui'
+import { ProfileCardPropsStories } from '@moodlenet/web-user/stories'
+import { BrowserProfileFilters, BrowserProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
-import { getCollectionCardsStoryProps } from '../CollectionCard/story-props.js'
-import { getResourceCardsStoryProps } from '../ResourceCard/story-props.js'
+import { getCollectionCardsStoryProps } from '../CollectionCard/CollectionCardProps.stories.js'
+import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.stories.js'
 
 export const useBrowserResourceList = () => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState('Relevant')
@@ -85,7 +82,7 @@ export const useBrowserProfileList = (showHeader?: boolean) => {
     Item: ({ showAll, setShowAll }) => {
       const list = useMemo(
         () =>
-          getProfileCardsStoryProps(30, {
+          ProfileCardPropsStories.getProfileCardsStoryProps(30, {
             access: {},
             state: {},
           }),

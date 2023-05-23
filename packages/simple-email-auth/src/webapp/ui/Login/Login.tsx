@@ -29,7 +29,6 @@ export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form }) => {
 */
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
-  const disable = form.isSubmitting
   return (
     <>
       <form onSubmit={form.handleSubmit}>
@@ -39,7 +38,6 @@ export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form }) => {
           type="email"
           name="email"
           edit
-          disabled={disable}
           value={form.values.email}
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.email}
@@ -50,7 +48,6 @@ export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form }) => {
           type="password"
           name="password"
           edit
-          disabled={disable}
           value={form.values.password}
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.password}
