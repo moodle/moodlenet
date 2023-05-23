@@ -45,29 +45,6 @@ export const LoggedIn: ResourceStory = () => {
   return <Resource {...props} />
 }
 
-export const Creator: ResourceStory = () => {
-  const props = useResourceStoryProps({
-    data: {},
-    state: {
-      isPublished: true,
-    },
-    actions: {},
-    access: {
-      isCreator: true,
-      canEdit: true,
-      canPublish: true,
-      canDelete: true,
-    },
-    likeButtonProps: {
-      liked: false,
-    },
-    bookmarkButtonProps: {
-      bookmarked: false,
-    },
-  })
-  return <Resource {...props} />
-}
-
 export const NewResourceProps: Partial<ResourceFormProps> = {
   title: '',
   description: '',
@@ -93,6 +70,29 @@ export const New: ResourceStory = () => {
       isCreator: true,
       canEdit: true,
       canPublish: true,
+    },
+  })
+  return <Resource {...props} />
+}
+
+export const Creator: ResourceStory = () => {
+  const props = useResourceStoryProps({
+    data: {},
+    state: {
+      isPublished: true,
+    },
+    actions: {},
+    access: {
+      isCreator: true,
+      canEdit: true,
+      canPublish: true,
+      canDelete: true,
+    },
+    likeButtonProps: {
+      liked: false,
+    },
+    bookmarkButtonProps: {
+      bookmarked: false,
     },
   })
   return <Resource {...props} />

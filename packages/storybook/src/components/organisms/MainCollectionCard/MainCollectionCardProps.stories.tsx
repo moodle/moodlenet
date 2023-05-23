@@ -21,7 +21,7 @@ import { useCollectionForm } from 'components/pages/Collection/CollectionProps.s
 const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof Collection> = {
-  title: 'Pages/Collection',
+  title: 'Molecules/MainCollectionCard',
   component: Collection,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -40,6 +40,9 @@ const meta: ComponentMeta<typeof Collection> = {
     'validationSchema',
     'CollectionTextOptionProps',
     'useMainCollectionCardStoryProps',
+    'LoggedIn',
+    'Owner',
+    'Admin',
   ],
 }
 
