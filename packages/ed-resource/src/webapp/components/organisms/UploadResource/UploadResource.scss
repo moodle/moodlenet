@@ -81,23 +81,9 @@
         }
       }
 
-      &.error {
-        animation: border-blink 6s ease-out;
-
-        @keyframes border-blink {
-          0% {
-            border: 4px dashed #d1d4e0;
-          }
-          3% {
-            border: 4px dashed var(--error-color);
-          }
-          97% {
-            border: 4px dashed var(--error-color);
-          }
-          100% {
-            border: 4px dashed #d1d4e0;
-          }
-        }
+      &.show-error {
+        border: 3px dashed rgb(255, 49, 49);
+        transition: border-width 0.6s linear;
       }
     }
     > .image-container {
@@ -150,6 +136,10 @@
         > :last-child:not(input) {
           margin-right: 10px;
         }
+      }
+
+      > .error-msg {
+        margin: 5px 0 -4px 0px;
       }
     }
 

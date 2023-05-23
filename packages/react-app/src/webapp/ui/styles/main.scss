@@ -170,39 +170,76 @@ abbr {
   }
 }
 
+// .leave-error:not(.disabled) {
+//   > .input-container,
+//   > .textarea-container {
+//     box-shadow: 0 0 6px #dedede;
+//     animation: shadow-fade-out 0.5s ease-out;
+
+//     @keyframes shadow-fade-out {
+//       from {
+//         box-shadow: inherit;
+//       }
+//       to {
+//         box-shadow: inherit;
+//       }
+//     }
+//   }
+
+//   > .error-msg {
+//     // height: 0;
+//     opacity: 0;
+//     // animation: leave 0.5s ease-out;
+
+//     // @keyframes leave {
+//     //   from {
+//     //     height: 14px;
+//     //     opacity: 1;
+//     //     font-size: 12px;
+//     //     color: $error-color;
+//     //   }
+//     //   to {
+//     //     height: 0;
+//     //     opacity: 0;
+//     //     font-size: 12px;
+//     //     margin-top: -5px;
+//     //   }
+//     // }
+//   }
+
 .leave-error:not(.disabled) {
   > .input-container,
   > .textarea-container {
-    box-shadow: 0 0 6px #dedede;
     animation: shadow-fade-out 0.5s ease-out;
+    box-shadow: 0 0 0 2px $error-color;
 
     @keyframes shadow-fade-out {
-      from {
-        box-shadow: inherit;
-      }
+      // from {
+      //   box-shadow: 0 0 6px #dedede;
+      // }
       to {
-        box-shadow: inherit;
+        box-shadow: 0 0 0 2px transparent;
       }
     }
   }
 
   > .error-msg {
+    animation: leave-move 0.5s ease-out;
+    font-size: 12px;
+    color: transparent;
     height: 0;
-    opacity: 0;
-    animation: leave 0.5s ease-out;
 
-    @keyframes leave {
+    @keyframes leave-move {
       from {
+        font-size: 12px;
         height: 14px;
         opacity: 1;
-        font-size: 12px;
-        color: $error-color;
       }
       to {
+        font-size: 0;
+        color: transparent;
         height: 0;
         opacity: 0;
-        font-size: 12px;
-        margin-top: -5px;
       }
     }
   }

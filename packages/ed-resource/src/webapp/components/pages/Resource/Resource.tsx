@@ -287,8 +287,6 @@ export const Resource: FC<ResourceProps> = ({
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  console.log('errors ', form.errors)
-
   const extraDetailsContainer =
     updatedExtraDetailsItems.length > 0 ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true} key="extra-details-container">

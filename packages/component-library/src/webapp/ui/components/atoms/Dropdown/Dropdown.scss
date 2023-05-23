@@ -85,6 +85,9 @@
         font-weight: 500;
         font-size: 14px;
         color: #72777c;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
       &.input::-ms-.search-field-placeholder {
         visibility: visible;
