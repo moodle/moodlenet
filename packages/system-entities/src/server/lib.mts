@@ -2,7 +2,6 @@ import type { Patch } from '@moodlenet/arangodb/server'
 import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
-import { inspect } from 'util'
 import { entityIdByIdentifier, getEntityFullTypename } from '../common/entity-identification.mjs'
 import type { EntityClass, SomeEntityDataType } from '../common/types.mjs'
 import {
@@ -247,7 +246,7 @@ export async function getEntity<
     projectAccess: opts?.projectAccess,
   })
   const getRecord = await getCursor.next()
-  console.log(inspect({ getRecord }, false, 10, true))
+  // console.log(inspect({ getRecord }, false, 10, true))
   return getRecord
 }
 

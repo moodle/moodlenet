@@ -1,13 +1,15 @@
-import type { EntityAccess } from '@moodlenet/system-entities/server'
+import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
+import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
   currentEntityVar,
   getEntity,
   patchEntity,
+  setPkgCurrentUser,
   sysEntitiesDB,
-  toaql,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { KnownEntityFeature, KnownEntityType } from '../../common/types.mjs'
+import { WebUserEntitiesTools } from '../entities.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType, ProfileEntity } from '../types.mjs'
@@ -49,26 +51,67 @@ export async function entityFeatureAction({
   entityType: KnownEntityType
   _key: string
 }) {
-  action === 'add' && assert(isAllowedKnownEntityFeature({ entityType, feature }))
+  const adding = action === 'add'
+  adding && assert(isAllowedKnownEntityFeature({ entityType, feature }))
   const current = await getCurrentProfile()
   assert(current)
-  const _id = getEntityIdByKnownEntity({ _key, entityType })
-  const knownFeaturedEntityItem = toaql<KnownFeaturedEntityItem>({
-    _id,
+  const targetEntityId = getEntityIdByKnownEntity({ _key, entityType })
+  const targetEntityDoc = await (
+    await sysEntitiesDB.query<EntityFullDocument<SomeEntityDataType>>({
+      query: 'RETURN DOCUMENT(@targetEntityId)',
+      bindVars: { targetEntityId },
+    })
+  ).next()
+  if (!targetEntityDoc) {
+    return
+  }
+  const profileCreatorIdentifiers = targetEntityDoc._meta.creatorEntityId
+    ? WebUserEntitiesTools.getIdentifiersById({
+        _id: targetEntityDoc._meta.creatorEntityId,
+        type: 'Profile',
+      })
+    : undefined
+
+  const iAmCreator = profileCreatorIdentifiers?._id === current._id
+  if (adding && (feature === 'like' || feature === 'follow') && iAmCreator) {
+    return
+  }
+
+  const knownFeaturedEntityItem: KnownFeaturedEntityItem = {
+    _id: targetEntityId,
     feature,
-  })
+  }
 
   const aqlAction =
     action === 'remove'
-      ? `REMOVE_VALUE( ${currentEntityVar}.knownFeaturedEntities, ${knownFeaturedEntityItem} , 1 )`
-      : `        PUSH( ${currentEntityVar}.knownFeaturedEntities, ${knownFeaturedEntityItem} , true )`
+      ? `REMOVE_VALUE( ${currentEntityVar}.knownFeaturedEntities, @knownFeaturedEntityItem , 1 )`
+      : `        PUSH( ${currentEntityVar}.knownFeaturedEntities, @knownFeaturedEntityItem , true )`
+
   const updateResult = await shell.call(patchEntity)(
     Profile.entityClass,
     current._key,
     `{ 
     knownFeaturedEntities: ${aqlAction}
   }`,
+    {
+      bindVars: {
+        knownFeaturedEntityItem,
+      },
+    },
   )
+  if (profileCreatorIdentifiers) {
+    const delta = adding ? '+ 1' : '- 1'
+    await shell.initiateCall(async () => {
+      await setPkgCurrentUser()
+      /* const patchResult = */
+      await patchEntity(
+        Profile.entityClass,
+        profileCreatorIdentifiers.entityIdentifier._key,
+        `{ kudos: ${currentEntityVar}.kudos ${delta} }`,
+      )
+      // console.log({ profileCreatorIdentifiers, patchResult })
+    })
+  }
 
   return updateResult
 }
