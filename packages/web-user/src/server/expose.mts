@@ -17,20 +17,24 @@ import type {
 } from '../common/types.mjs'
 import { WebUserEntitiesTools } from './entities.mjs'
 import { publicFiles, publicFilesHttp } from './init/fs.mjs'
-import { shell } from './shell.mjs'
-import type { KnownFeaturedEntityItem, ProfileDataType } from './types.mjs'
-import { loginAsRoot, sendWebUserTokenCookie, verifyCurrentTokenCtx } from './web-user-auth-lib.mjs'
 import {
   editProfile,
-  entitySocialAction,
+  entityFeatureAction,
   getCurrentProfile,
   getProfileAvatarLogicalFilename,
   getProfileImageLogicalFilename,
   getProfileRecord,
+} from './lib/profile.mjs'
+import {
   getWebUser,
+  loginAsRoot,
   searchUsers,
+  sendWebUserTokenCookie,
   toggleWebUserIsAdmin,
-} from './web-user-lib.mjs'
+  verifyCurrentTokenCtx,
+} from './lib/web-user.mjs'
+import { shell } from './shell.mjs'
+import type { KnownFeaturedEntityItem, ProfileDataType } from './types.mjs'
 
 export const expose = await shell.expose<WebUserExposeType>({
   rpc: {
@@ -220,13 +224,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         },
       },
     },
-    '_____REMOVE_ME____webapp/feature-entity/:action(add|remove)/:feature(bookmark|follow|like)/:entity_id':
-      {
-        guard: () => void 0,
-        async fn(/* _,{action,entity_id,feature} */) {
-          return
-        },
-      },
+
     'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource)/:_key':
       {
         guard: () => void 0,
@@ -274,17 +272,9 @@ export const expose = await shell.expose<WebUserExposeType>({
               ? WebUserEntitiesTools.getIdentifiersByKey({ _key, type: 'Profile' })._id
               : null
           assert(_id)
-          await entitySocialAction({ _id, action, feature })
+          await entityFeatureAction({ _id, action, feature })
 
           return
-        },
-      },
-
-    '____REMOVE_ME____webapp/entity-social-status/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key':
-      {
-        guard: () => void 0,
-        async fn(/* _,{profileKey} */) {
-          return Math.random() > 0.5
         },
       },
   },

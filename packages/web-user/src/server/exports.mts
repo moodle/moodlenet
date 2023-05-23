@@ -1,10 +1,6 @@
 export * from './aql.mjs'
 export { Profile } from './init/sys-entities.mjs'
+export { getCurrentProfile, getProfileRecord } from './lib/profile.mjs'
+export * from './lib/web-user.mjs'
+export { createWebUser, signWebUserJwtToken } from './lib/web-user.mjs'
 export * from './types.mjs'
-export * from './web-user-auth-lib.mjs'
-export {
-  createWebUser,
-  getCurrentProfile,
-  getProfileRecord,
-  signWebUserJwtToken,
-} from './web-user-lib.mjs'
