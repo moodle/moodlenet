@@ -1,10 +1,17 @@
 import type { EntityAccess } from '@moodlenet/system-entities/server'
-import { currentEntityVar, getEntity, patchEntity, toaql } from '@moodlenet/system-entities/server'
+import {
+  currentEntityVar,
+  getEntity,
+  patchEntity,
+  sysEntitiesDB,
+  toaql,
+} from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import type { KnownEntityFeature } from '../../common/types.mjs'
+import type { KnownEntityFeature, KnownEntityType } from '../../common/types.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType, ProfileEntity } from '../types.mjs'
+import { getEntityIdByKnownEntity } from './known-features.mjs'
 import { getWebUserByProfileKey, patchWebUser, verifyCurrentTokenCtx } from './web-user.mjs'
 
 export async function editProfile(
@@ -87,6 +94,35 @@ export async function getProfileRecord(
     projectAccess: opts?.projectAccess,
   })
   return record
+}
+
+export async function getEntityFeatureCount({
+  _key,
+  entityType,
+  feature,
+}: {
+  feature: Exclude<KnownEntityFeature, 'bookmark'>
+  entityType: KnownEntityType
+  _key: string
+}) {
+  const _id = getEntityIdByKnownEntity({ _key, entityType })
+  const needle: KnownFeaturedEntityItem = {
+    _id,
+    feature,
+  }
+  const bindVars = { '@collection': Profile.collection.name, needle }
+  const query = `
+  FOR profile IN @@collection
+  FILTER POSITION(profile.knownFeaturedEntities,@needle)
+  COLLECT WITH COUNT INTO count
+  RETURN { count } 
+  `
+  const cursor = await sysEntitiesDB.query<{ count: number }>({
+    query,
+    bindVars,
+  })
+
+  return cursor.next()
 }
 
 export function getProfileImageLogicalFilename(profileKey: string) {

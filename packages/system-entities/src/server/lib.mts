@@ -436,7 +436,7 @@ ${projectAqlRawProps}
 `
 
   const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
-  console.log(q, inspect({ bindVars }, false, 10, true))
+  // console.log(q, inspect({ bindVars }, false, 10, true))
   const queryCursor = await db.query<
     AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>
   >(q, bindVars)
