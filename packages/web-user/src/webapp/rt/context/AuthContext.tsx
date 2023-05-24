@@ -1,3 +1,4 @@
+import type { PkgAddOns } from '@moodlenet/react-app/webapp'
 import { wrapFetch } from '@moodlenet/react-app/webapp'
 import cookies from 'js-cookie'
 import type { FC, PropsWithChildren } from 'react'
@@ -175,6 +176,17 @@ export function useNeedsWebUserLogin(): {
         myProfile: authCtx.clientSessionData.myProfile,
       }
     : null
+}
+
+export const useSwichAddonsWithAuth = <T,>(
+  guestItems: PkgAddOns<T>,
+  authItems: PkgAddOns<T>,
+  rootItems?: PkgAddOns<T>,
+): PkgAddOns<T> | null => {
+  const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
+  const isRoot = !!clientSessionData?.isRoot
+  const comp = isRoot ? rootItems || authItems : isAuthenticated ? authItems : guestItems
+  return useMemo<PkgAddOns<T> | null>(() => comp, [comp])
 }
 
 // const STATE_SYM = Symbol('NeedsWebUserLogin state')
