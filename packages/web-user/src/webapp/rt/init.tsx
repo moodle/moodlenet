@@ -36,13 +36,7 @@ function useMainAppContext() {
 }
 
 function useAddBrowserMainColumnItemBase(browserMainColumnItemBase: BrowserMainColumnItemBase) {
-  const myBookmarkedBrowserCollectionListDataProps = useBrowseBookCollection()
-  return (
-    <BrowserCollectionList
-      {...myBookmarkedBrowserCollectionListDataProps}
-      {...browserMainColumnItemBase}
-    />
-  )
+  return <BrowserCollectionList {...useBrowseBookCollection()} {...browserMainColumnItemBase} />
 }
 
 registerAppRoutes(pkgRoutes)
