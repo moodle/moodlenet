@@ -29,16 +29,8 @@ import {
   useLikeAndBookMarkButtons,
 } from './social-actions/SocialButtons.js'
 
-function useMainAppContext() {
-  return useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), [])
-}
-
-function useAddBrowserMainColumnItemBase(browserMainColumnItemBase: BrowserMainColumnItemBase) {
-  return <BrowserCollectionList {...useBrowseBookCollection()} {...browserMainColumnItemBase} />
-}
-
 registerAppRoutes(pkgRoutes)
-registerMainAppPluginHook(useMainAppContext)
+registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))
 
 const menuAddonsHeaderButtons = {
   loginButton: { Item: LoginButtonContainer },
@@ -47,7 +39,7 @@ const menuAddonsHeaderButtons = {
   addMenu: { Item: AddMenuContainer },
 }
 
-HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
+HeaderPlugins.register(({ useRightItems }) => {
   const { loginButton, signupButton, avatarMenu, addMenu } = menuAddonsHeaderButtons
   const addons = useSwichAddonsByAuth({
     guest: { loginButton, signupButton },
@@ -59,18 +51,12 @@ HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
 })
 
 const menuAddonsDefaultSetting = { default: { Content: UsersContainer, Menu: UsersMenu } }
-AdminSettingsPagePlugins.register(function useSettingsPagePluregisterAddOn({
-  useAdminSettingsSection,
-}) {
+AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) => {
   const addons = useMemo(() => menuAddonsDefaultSetting, [])
   useAdminSettingsSection(addons)
 })
 
-ResourcePagePlugins.register(function useResourcePage({
-  useGeneralAction,
-  useTopRightHeaderItems,
-  resourceKey,
-}) {
+ResourcePagePlugins.register(({ useGeneralAction, useTopRightHeaderItems, resourceKey }) => {
   const authItems = { addToCollectionButton: { Item: addResourceToCollectionButton } }
   const emptyItems = { addToCollectionButton: null }
 
@@ -91,7 +77,11 @@ CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) =>
   useTopRightHeaderItems(useFollowAndBookMarkButtons(collectionKey, 'collection')),
 )
 
-BookmarksPagePlugin.register(function useRegisterBookmarksPagePlugin({ useBrowserItems }) {
+function useAddBrowserMainColumnItemBase(browserMainColumnItemBase: BrowserMainColumnItemBase) {
+  return <BrowserCollectionList {...useBrowseBookCollection()} {...browserMainColumnItemBase} />
+}
+
+BookmarksPagePlugin.register(({ useBrowserItems }) => {
   const browserPluginItems = useMemo(() => {
     const addones = { Item: useAddBrowserMainColumnItemBase, filters: [], name: 'Collections' }
     return { collections: addones }
