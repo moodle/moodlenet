@@ -1,12 +1,23 @@
 import { useResourceCardProps } from '@moodlenet/ed-resource/webapp'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createHookPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
+import type { AddonItemNoKey } from '@moodlenet/component-library'
 import { useMemo } from 'react'
 import { validationSchema } from '../../../../common/validationSchema.mjs'
 import { useMainHook } from '../../../MainHooks.js'
 import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.jsx'
 import type { CollectionProps } from './Collection.js'
+
+export const CollectionPagePlugins = createHookPlugin<
+  {
+    generalAction: AddonItemNoKey
+    topRightHeaderItems: AddonItemNoKey
+  },
+  {
+    collectionKey: string
+  }
+>({ generalAction: null, topRightHeaderItems: null })
 
 export const useCollectionPageProps = ({
   collectionKey,
@@ -16,6 +27,7 @@ export const useCollectionPageProps = ({
   // const { isAuthenticated } = useContext(AuthCtx)
   const _mainProps = useMainHook({ collectionKey })
   const mainLayoutProps = useMainLayoutProps()
+  const [addons] = CollectionPagePlugins.useHookPlugin({ collectionKey })
 
   const collectionProps = useMemo(() => {
     if (!_mainProps || !mainLayoutProps) return null
@@ -43,7 +55,7 @@ export const useCollectionPageProps = ({
     const mainCollectionCardSlots: MainCollectionCardSlots = {
       mainColumnItems: [],
       topLeftHeaderItems: [],
-      topRightHeaderItems: [],
+      topRightHeaderItems: addons.topRightHeaderItems,
       footerRowItems: [],
       headerColumnItems: [],
       moreButtonItems: [],
@@ -68,7 +80,7 @@ export const useCollectionPageProps = ({
     }
 
     return propsPage
-  }, [_mainProps, mainLayoutProps])
+  }, [_mainProps, addons.topRightHeaderItems, mainLayoutProps])
 
   return collectionProps
 }
