@@ -178,14 +178,19 @@ export function useNeedsWebUserLogin(): {
     : null
 }
 
-export const useSwichAddonsWithAuth = <T,>(
-  guestItems: PkgAddOns<T>,
-  authItems: PkgAddOns<T>,
-  rootItems?: PkgAddOns<T>,
-): PkgAddOns<T> | null => {
+export type AddonsByUserRule<T> = {
+  guest: PkgAddOns<T> | null
+  auth: PkgAddOns<T> | null
+  root?: PkgAddOns<T> | null
+}
+export const useSwichAddonsByAuth = <T,>({
+  guest,
+  auth,
+  root,
+}: AddonsByUserRule<T>): PkgAddOns<T> | null => {
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const isRoot = !!clientSessionData?.isRoot
-  const comp = isRoot ? rootItems || authItems : isAuthenticated ? authItems : guestItems
+  const comp = isRoot ? root || null : isAuthenticated ? auth : guest
   return useMemo<PkgAddOns<T> | null>(() => comp, [comp])
 }
 

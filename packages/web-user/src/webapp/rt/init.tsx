@@ -4,7 +4,6 @@ import {
   CollectionPagePlugins,
 } from '@moodlenet/collection/webapp'
 import { ResourceCardPlugins, ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
-import type { HeaderAddonRegItem, PkgAddOns } from '@moodlenet/react-app/webapp'
 import {
   HeaderPlugins,
   registerAppRoutes,
@@ -16,12 +15,11 @@ import './shell.mjs'
 
 import { BrowserCollectionList } from '@moodlenet/collection/ui'
 import type { BrowserMainColumnItemBase } from '@moodlenet/react-app/ui'
-import { useSwichAddonsWithAuth } from './context/AuthContext.js'
+import { useSwichAddonsByAuth } from './context/AuthContext.js'
 import MainWrapper from './MainWrapper.js'
 import { AddMenuContainer } from './menus/AddMenuContainer.js'
 import { AvatarMenuContainer } from './menus/AvatarMenuContainer.js'
 import { LoginButtonContainer, SignupButtonContainer } from './page/access/AccessContainers.js'
-import type { BrowserPluginItem } from './page/bookmarks/BookmarksPageHook.mjs'
 import { BookmarksPagePlugin } from './page/bookmarks/BookmarksPageHook.mjs'
 import { useMyBookmarkedBrowserCollectionListDataProps as useBrowseBookCollection } from './page/bookmarks/MyBookmarkedBrowserCollectionListHook.mjs'
 import { UsersContainer, UsersMenu } from './page/settings/UsersContainer.js'
@@ -42,27 +40,30 @@ function useAddBrowserMainColumnItemBase(browserMainColumnItemBase: BrowserMainC
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(useMainAppContext)
 
-const menuDefaultSetting = { default: { Content: UsersContainer, Menu: UsersMenu } }
-SettingsPagePlugins.register(function useSettingsPagePluregisterAddOn({ useSettingsSection }) {
-  const addons = useMemo<PkgAddOns<SettingsSectionItem>>(() => menuDefaultSetting, [])
-  useSettingsSection(addons)
-})
+const menuAddonsHeaderButtons = {
+  loginButton: { Item: LoginButtonContainer },
+  signupButton: { Item: SignupButtonContainer },
+  avatarMenu: { Item: AvatarMenuContainer },
+  addMenu: { Item: AddMenuContainer },
+}
 
 HeaderPlugins.register(function useRegisterMainHeader({ useRightItems }) {
-  const guestItems: PkgAddOns<HeaderAddonRegItem> = {
-    loginButton: { Item: LoginButtonContainer },
-    signupButton: { Item: SignupButtonContainer },
-  }
-  const authItems: PkgAddOns<HeaderAddonRegItem> = {
-    addMenu: { Item: AddMenuContainer },
-    avatarMenu: { Item: AvatarMenuContainer },
-  }
-  const rootItems: PkgAddOns<HeaderAddonRegItem> = {
-    addMenu: null,
-    avatarMenu: { Item: AvatarMenuContainer },
-  }
-  const addOns = useSwichAddonsWithAuth(guestItems, authItems, rootItems)
-  useRightItems(addOns)
+  const { loginButton, signupButton, avatarMenu, addMenu } = menuAddonsHeaderButtons
+  const addons = useSwichAddonsByAuth({
+    guest: { loginButton, signupButton },
+    auth: { addMenu, avatarMenu },
+    root: { addMenu: null, avatarMenu },
+  })
+
+  useRightItems(addons)
+})
+
+const menuAddonsDefaultSetting = { default: { Content: UsersContainer, Menu: UsersMenu } }
+AdminSettingsPagePlugins.register(function useSettingsPagePluregisterAddOn({
+  useAdminSettingsSection,
+}) {
+  const addons = useMemo(() => menuAddonsDefaultSetting, [])
+  useAdminSettingsSection(addons)
 })
 
 ResourcePagePlugins.register(function useResourcePage({
@@ -71,9 +72,10 @@ ResourcePagePlugins.register(function useResourcePage({
   resourceKey,
 }) {
   const authItems = { addToCollectionButton: { Item: addResourceToCollectionButton } }
-  const empityItems = { addToCollectionButton: null }
-  const addOns = useSwichAddonsWithAuth(empityItems, authItems, empityItems)
-  useGeneralAction(addOns)
+  const emptyItems = { addToCollectionButton: null }
+
+  const addons = useSwichAddonsByAuth({ guest: emptyItems, root: emptyItems, auth: authItems })
+  useGeneralAction(addons)
   useTopRightHeaderItems(useLikeAndBookMarkButtons(resourceKey, 'resource'))
 })
 
@@ -90,20 +92,10 @@ CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) =>
 )
 
 BookmarksPagePlugin.register(function useRegisterBookmarksPagePlugin({ useBrowserItems }) {
-  const browserPluginItems = useMemo<PkgAddOns<BrowserPluginItem>>(() => {
-    const addOnes = { Item: useAddBrowserMainColumnItemBase, filters: [], name: 'Collections' }
-    return { collections: addOnes }
+  const browserPluginItems = useMemo(() => {
+    const addones = { Item: useAddBrowserMainColumnItemBase, filters: [], name: 'Collections' }
+    return { collections: addones }
   }, [])
 
   useBrowserItems(browserPluginItems)
 })
-
-/* @ETTO example more item
-   const bottomLeftAddone = useMemo<PkgAddOns<ItemWithoutKey> | null>(() => {
-    return {
-      pippo: { Item: LikeButtonContainer },
-      ciccio: { Item: BookmarkButtonContainer },
-    }
-  }, [])
-*/
-//  useTopLeftItems(bottomLeftAddone)
