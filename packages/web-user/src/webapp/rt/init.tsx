@@ -15,7 +15,7 @@ import './shell.mjs'
 
 import { BrowserCollectionList } from '@moodlenet/collection/ui'
 import type { BrowserMainColumnItemBase } from '@moodlenet/react-app/ui'
-import { useSwichAddonsByAuth } from './context/AuthContext.js'
+import { useSwichAddonsByAuth } from './init/AddonsByUserRule.js'
 import MainWrapper from './MainWrapper.js'
 import { AddMenuContainer } from './menus/AddMenuContainer.js'
 import { AvatarMenuContainer } from './menus/AvatarMenuContainer.js'
@@ -38,29 +38,28 @@ const menuAddonsHeaderButtons = {
   avatarMenu: { Item: AvatarMenuContainer },
   addMenu: { Item: AddMenuContainer },
 }
-
+const { loginButton, signupButton, avatarMenu, addMenu } = menuAddonsHeaderButtons
+const _ = {
+  guest: { loginButton, signupButton },
+  auth: { addMenu, avatarMenu },
+  root: { addMenu: null, avatarMenu },
+}
 HeaderPlugins.register(({ useRightItems }) => {
-  const { loginButton, signupButton, avatarMenu, addMenu } = menuAddonsHeaderButtons
-  const addons = useSwichAddonsByAuth({
-    guest: { loginButton, signupButton },
-    auth: { addMenu, avatarMenu },
-    root: { addMenu: null, avatarMenu },
-  })
+  const addons = useSwichAddonsByAuth(_)
 
   useRightItems(addons)
 })
 
 const menuAddonsDefaultSetting = { default: { Content: UsersContainer, Menu: UsersMenu } }
 AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) => {
-  const addons = useMemo(() => menuAddonsDefaultSetting, [])
-  useAdminSettingsSection(addons)
+  useAdminSettingsSection(menuAddonsDefaultSetting)
 })
 
+const authItems = { addToCollectionButton: { Item: addResourceToCollectionButton } }
+const emptyItems = { addToCollectionButton: null }
+const __ = { guest: emptyItems, root: emptyItems, auth: authItems }
 ResourcePagePlugins.register(({ useGeneralAction, useTopRightHeaderItems, resourceKey }) => {
-  const authItems = { addToCollectionButton: { Item: addResourceToCollectionButton } }
-  const emptyItems = { addToCollectionButton: null }
-
-  const addons = useSwichAddonsByAuth({ guest: emptyItems, root: emptyItems, auth: authItems })
+  const addons = useSwichAddonsByAuth(__)
   useGeneralAction(addons)
   useTopRightHeaderItems(useLikeAndBookMarkButtons(resourceKey, 'resource'))
 })
@@ -77,15 +76,13 @@ CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) =>
   useTopRightHeaderItems(useFollowAndBookMarkButtons(collectionKey, 'collection')),
 )
 
-function useAddBrowserMainColumnItemBase(browserMainColumnItemBase: BrowserMainColumnItemBase) {
+function BrowserCollectionListItem(browserMainColumnItemBase: BrowserMainColumnItemBase) {
   return <BrowserCollectionList {...useBrowseBookCollection()} {...browserMainColumnItemBase} />
 }
 
+const bookmarksPageAddons = {
+  collections: { Item: BrowserCollectionListItem, filters: [], name: 'Collections' },
+}
 BookmarksPagePlugin.register(({ useBrowserItems }) => {
-  const browserPluginItems = useMemo(() => {
-    const addones = { Item: useAddBrowserMainColumnItemBase, filters: [], name: 'Collections' }
-    return { collections: addones }
-  }, [])
-
-  useBrowserItems(browserPluginItems)
+  useBrowserItems(bookmarksPageAddons)
 })
