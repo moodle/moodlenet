@@ -13,11 +13,14 @@ export type EntityKey = FC<{
 }>
 
 export const useSocialButtons = (key: string, entityType: KnownEntityType) => {
-  const withProps = (Fc: EntityKey) => ({ Item: () => <Fc _key={key} entityType={entityType} /> })
+  const withProps = (Fc: EntityKey, name: string) => ({
+    name,
+    Item: () => <Fc _key={key} entityType={entityType} />,
+  })
   return {
-    followButton: withProps(SmallFollowButtonContainer),
-    bookMarkButton: withProps(BookmarkButtonContainer),
-    likeButton: withProps(LikeButtonContainer),
+    followButton: withProps(SmallFollowButtonContainer, 'Follow'),
+    bookMarkButton: withProps(BookmarkButtonContainer, 'BookMark'),
+    likeButton: withProps(LikeButtonContainer, 'Like'),
   }
 }
 
