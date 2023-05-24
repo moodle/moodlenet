@@ -27,7 +27,7 @@ SignupPlugins.register(function useSignupMethod({ useSignupMethod }) {
   useSignupMethod(addons)
 })
 
-AdminSettingsPagePlugins.register(function useSettingsPageHook({ useAdminSettingsSection }) {
+AdminSettingsPagePlugins.register(function useAdminSettingsPageHook({ useAdminSettingsSection }) {
   const addons = useMemo<PkgAddOns<AdminSettingsSectionItem>>(
     () => ({
       default: { Content: SettingsContent, Menu: SettingsMenu },
