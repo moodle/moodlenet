@@ -1,1 +1,1 @@
-export { confirm, signup } from './lib.mjs'
+export { changePassword, createUser } from './lib.mjs'
