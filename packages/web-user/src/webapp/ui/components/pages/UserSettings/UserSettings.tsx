@@ -1,20 +1,20 @@
 import type { ComponentType, FC } from 'react'
 import { useState } from 'react'
-import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
-import MainLayout from '../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { Card } from '@moodlenet/component-library'
 // import '@moodlenet/component-library/ui/scss/application'
-import './AdminSettings.scss'
+import type { MainLayoutProps } from '@moodlenet/react-app/ui'
+import { MainLayout } from '@moodlenet/react-app/ui'
+import './UserSettings.scss'
 
-export type AdminSettingsItem = { key: string; Content: ComponentType; Menu: ComponentType }
-export type AdminSettingsProps = {
+export type UserSettingsItem = { key: string; Content: ComponentType; Menu: ComponentType }
+export type UserSettingsProps = {
   mainLayoutProps: MainLayoutProps
-  settingsItems: AdminSettingsItem[]
+  settingsItems: UserSettingsItem[]
 }
 
-export const AdminSettings: FC<AdminSettingsProps> = ({ mainLayoutProps, settingsItems }) => {
+export const UserSettings: FC<UserSettingsProps> = ({ mainLayoutProps, settingsItems }) => {
   const [currSettingsItem, chooseSettingsItem] = useState(settingsItems[0])
 
   return (
@@ -25,7 +25,7 @@ export const AdminSettings: FC<AdminSettingsProps> = ({ mainLayoutProps, setting
         ...mainLayoutProps.headerProps,
       }}
     >
-      <div className={`admin-settings`}>
+      <div className={`user-settings`}>
         {
           <div className="menu-container" role="navigation">
             <Card role="navigation" className="menu">
@@ -62,4 +62,4 @@ export const AdminSettings: FC<AdminSettingsProps> = ({ mainLayoutProps, setting
   )
 }
 
-AdminSettings.displayName = 'AdminSettingsPage'
+UserSettings.displayName = 'UserSettingsPage'
