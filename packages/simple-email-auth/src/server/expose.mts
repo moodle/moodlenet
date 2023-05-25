@@ -7,19 +7,28 @@ export const expose = await shell.expose<SimpleEmailAuthExposeType>({
     login: {
       guard: () => void 0,
       async fn({ email, password }) {
-        return login({ email, password })
+        const resp = await login({ email, password })
+        return { success: resp.success }
       },
     },
     signup: {
       guard: () => void 0,
       async fn(signupReq) {
-        return signup(signupReq)
+        const resp = await signup(signupReq)
+        if (!resp.success) {
+          return { success: resp.success, msg: resp.msg }
+        }
+        return { success: resp.success }
       },
     },
     confirm: {
       guard: () => void 0,
       async fn({ confirmToken }) {
-        return confirm({ confirmToken })
+        const resp = await confirm({ confirmToken })
+        if (!resp.success) {
+          return { success: resp.success, msg: resp.msg }
+        }
+        return { success: resp.success, emailPwdUser: resp.emailPwdUser }
       },
     },
   },
