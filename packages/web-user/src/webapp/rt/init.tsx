@@ -43,16 +43,15 @@ ResourcePagePlugins.register(({ useGeneralAction, useTopRightHeaderItems, resour
 
 ResourceCardPlugins.register(({ useTopRightItems, resourceKey }) => {
   useTopRightItems(useLikeAndBookMarkButtons(resourceKey, 'resource'))
-  // useTopRightItems({bookMarkButton: bookMarkButton(resourceKey) })
 })
 
-CollectionCardPlugins.register(({ collectionKey, useTopRightItems }) =>
-  useTopRightItems(useFollowAndBookMarkButtons(collectionKey, 'collection')),
-)
+CollectionCardPlugins.register(({ collectionKey, useTopRightItems }) => {
+  useTopRightItems(useFollowAndBookMarkButtons(collectionKey, 'collection'))
+})
 
-CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) =>
-  useTopRightHeaderItems(useFollowAndBookMarkButtons(collectionKey, 'collection')),
-)
+CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) => {
+  useTopRightHeaderItems(useFollowAndBookMarkButtons(collectionKey, 'collection'))
+})
 
 function BrowserCollectionListItem(browserMainColumnItemBase: BrowserMainColumnItemBase) {
   return <BrowserCollectionList {...useBrowseBookCollection()} {...browserMainColumnItemBase} />
