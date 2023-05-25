@@ -12,6 +12,7 @@ import { entityDocument2Aql, pkgMetaOf2Aql } from './aql-lib/by-proc-values.mjs'
 import { userInfoAqlProvider } from './aql-lib/userInfo.mjs'
 import type { EntityInfo, EntityInfoProviderItem } from './entity-info.mjs'
 import { ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
+import { SysEntitiesEvents } from './events.mjs'
 import { db } from './init/arangodb.mjs'
 import { env } from './init/env.mjs'
 import { getEntityCollection } from './pkg-db-names.mjs'
@@ -147,6 +148,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
     { returnNew: true },
   )
   assert(newEntity)
+  SysEntitiesEvents.emit('created-new', { newEntity, creator: currentUser })
   return newEntity
 }
 export async function patchEntity<EntityDataType extends SomeEntityDataType>(
