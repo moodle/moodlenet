@@ -8,6 +8,7 @@ import {
 } from '@moodlenet/web-user/server'
 import assert from 'assert'
 import { send } from '../../../email-service/dist/server/exports.mjs'
+import { EmailPwdUserCollection } from './init/arangodb.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
 import type { ConfirmEmailPayload, SignupReq } from './types.mjs'
@@ -75,6 +76,32 @@ export async function confirm({ confirmToken }: { confirmToken: JwtToken }) {
     return { success: false, msg: 'email registered' } as const
   }
 
+  return createUser({
+    displayName,
+    email,
+    hashedPassword: password,
+  })
+  async function getConfirmEmailPayload() {
+    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ConfirmEmailPayload>(confirmToken)
+    if (!jwtVerifyResp) {
+      return
+    }
+
+    const { payload: confirmEmailPayload } = jwtVerifyResp
+
+    return confirmEmailPayload
+  }
+}
+
+export async function createUser({
+  displayName,
+  email,
+  hashedPassword,
+}: {
+  displayName: string
+  email: string
+  hashedPassword: string
+}) {
   const createNewWebUserResp = await shell.call(createWebUser)({
     displayName: displayName,
     isAdmin: false,
@@ -87,18 +114,18 @@ export async function confirm({ confirmToken }: { confirmToken: JwtToken }) {
   const { jwtToken, newWebUser, newProfile } = createNewWebUserResp
   shell.call(sendWebUserTokenCookie)(jwtToken)
 
-  const emailPwdUser = await store.create({ email, password, webUserKey: newWebUser._key })
+  const emailPwdUser = await store.create({
+    email,
+    password: hashedPassword,
+    webUserKey: newWebUser._key,
+  })
 
   return { success: true, emailPwdUser, newWebUser, newProfile } as const
-
-  async function getConfirmEmailPayload() {
-    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ConfirmEmailPayload>(confirmToken)
-    if (!jwtVerifyResp) {
-      return
-    }
-
-    const { payload: confirmEmailPayload } = jwtVerifyResp
-
-    return confirmEmailPayload
-  }
+}
+export async function changePassword(
+  { _key, newPassword }: { newPassword: string; _key: string },
+  opts?: Partial<{ dontHash: boolean }>,
+) {
+  const password = opts?.dontHash ? newPassword : await crypto.argon.hashPwd(newPassword)
+  await EmailPwdUserCollection.update({ _key }, { password })
 }
