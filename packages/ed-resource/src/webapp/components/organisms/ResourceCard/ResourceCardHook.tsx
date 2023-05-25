@@ -9,13 +9,8 @@ import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { ResourceCardPropsData } from './ResourceCard.js'
 
 export const ResourceCardPlugins = createHookPlugin<
-  {
-    topRightItems: AddonItemNoKey
-    // topLeftItems: ItemWithoutKey,
-  },
-  {
-    resourceKey: string
-  }
+  { topRightItems: AddonItemNoKey },
+  { resourceKey: string }
 >({ topRightItems: null })
 
 export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData | null => {
@@ -23,7 +18,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
 
   const [addons] = ResourceCardPlugins.useHookPlugin({ resourceKey })
 
-  const collectionProps = useMemo(() => {
+  const dataProps = useMemo(() => {
     if (!_mainProps) return null
     const { props, actions } = _mainProps
     const {
@@ -33,6 +28,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
       resourceForm: { title },
       contributor,
     } = props
+
     const { displayName, creatorProfileHref: profileHref, avatarUrl: avatar } = contributor
     const owner = { displayName, avatar, profileHref }
     const { id, imageUrl, contentType, contentUrl, downloadFilename } = dataProps
@@ -46,7 +42,12 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
       owner,
       resourceHomeHref: href(getResourceHomePageRoutePath({ _key: resourceKey })),
     }
+    return { data, state, access, actions }
+  }, [_mainProps, resourceKey])
 
+  const collectionProps = useMemo(() => {
+    if (!dataProps) return null
+    const { data, state, access, actions } = dataProps
     const propsPage: ResourceCardPropsData = {
       mainColumnItems: [],
       topLeftItems: [],
@@ -60,7 +61,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
     }
 
     return propsPage
-  }, [_mainProps, addons.topRightItems, resourceKey])
+  }, [addons.topRightItems, dataProps])
 
   return collectionProps
 }
