@@ -9,6 +9,8 @@ const noNodeDev = !(nodeDev ?? true)
 const execaOpts = {
   cwd: mnDevDir,
   stdout: process.stdout,
+  stderr: process.stderr,
+  stdin: process.stdin,
   env: {
     MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES: 'true',
     NODE_ENV: 'development',

@@ -15,7 +15,7 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./init": "./dist/init.mjs"
+    "./init": "./dist/server/init.mjs"
   },
   "readme": "",
   "files": [
