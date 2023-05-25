@@ -10,4 +10,6 @@ export * as UsersStories from '../components/organisms/Roles/Users.stories.js'
 export * as MessageReceivedEmailStories from '../components/pages/emails/MessageReceivedEmail/MessageReceivedEmail.stories.js'
 export * as NewUserRequestEmailStories from '../components/pages/emails/NewUserRequestEmail/NewUserRequestEmail.stories.js'
 export * as RecoverPasswordEmailStories from '../components/pages/emails/RecoverPasswordEmail/RecoverPasswordEmail.stories.js'
+export * as AdvancedStories from '../components/pages/UserSettings/Advanced/Advanced.stories.js'
+export * as GeneralStories from '../components/pages/UserSettings/General/General.stories.js'
 // @endindex
