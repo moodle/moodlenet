@@ -20,10 +20,7 @@ import { BookmarksPagePlugin } from './page/bookmarks/BookmarksPageHook.mjs'
 import { useMyBookmarkedBrowserCollectionListDataProps as useBrowseBookCollection } from './page/bookmarks/MyBookmarkedBrowserCollectionListHook.mjs'
 import { pkgRoutes } from './routes.js'
 import './shell.mjs'
-import {
-  useFollowAndBookMarkButtons,
-  useLikeAndBookMarkButtons,
-} from './social-actions/SocialButtons.js'
+import { useSocialButtonsAddons } from './social-actions/SocialButtons.js'
 
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))
@@ -38,19 +35,19 @@ AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) =>
 
 ResourcePagePlugins.register(({ useGeneralAction, useTopRightHeaderItems, resourceKey }) => {
   useGeneralAction(useSwichAddonsByAuth(resourcePageAddonsByAuth))
-  useTopRightHeaderItems(useLikeAndBookMarkButtons(resourceKey, 'resource'))
+  useTopRightHeaderItems(useSocialButtonsAddons(resourceKey, 'resource').likeAndBookmark)
 })
 
 ResourceCardPlugins.register(({ useTopRightItems, resourceKey }) => {
-  useTopRightItems(useLikeAndBookMarkButtons(resourceKey, 'resource'))
+  useTopRightItems(useSocialButtonsAddons(resourceKey, 'resource').likeAndBookmark)
 })
 
 CollectionCardPlugins.register(({ collectionKey, useTopRightItems }) => {
-  useTopRightItems(useFollowAndBookMarkButtons(collectionKey, 'collection'))
+  useTopRightItems(useSocialButtonsAddons(collectionKey, 'collection').followAndBookMark)
 })
 
 CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) => {
-  useTopRightHeaderItems(useFollowAndBookMarkButtons(collectionKey, 'collection'))
+  useTopRightHeaderItems(useSocialButtonsAddons(collectionKey, 'collection').followAndBookMark)
 })
 
 function BrowserCollectionListItem(browserMainColumnItemBase: BrowserMainColumnItemBase) {

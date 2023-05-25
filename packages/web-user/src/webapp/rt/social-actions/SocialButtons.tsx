@@ -11,34 +11,41 @@ export type EntityAndKey = {
   _key: string
   entityType: KnownEntityType
 }
+
 export type EntityKey = FC<EntityAndKey>
 
-const entityKeyToItemNoKey =
-  (props: EntityAndKey) =>
-  (Fc: EntityKey): AddonItemNoKey => ({ Item: () => <Fc {...props} /> })
+// @ALE move where ??
+const objectMap = <T, V>(obj: T, fn: (val: T[keyof T], key: keyof T) => V) =>
+  Object.entries(obj as Record<keyof T, V>).reduce(
+    (acc, [key, val]) => ((acc[key as keyof T] = fn(val as T[keyof T], key as keyof T)), acc),
+    {} as Record<keyof T, V>,
+  )
 
-export const useSocialButtons = (_key: string, entityType: KnownEntityType) => {
-  return useMemo(() => {
-    const toItemEntity = entityKeyToItemNoKey({ _key, entityType })
+const mapToItemEntity = (props: EntityAndKey) => (Fc: FC<EntityAndKey>) => ({
+  Item: () => <Fc {...props} />,
+})
+
+const socialButtonsContainer = {
+  followButton: SmallFollowButtonContainer,
+  bookMarkButton: BookmarkButtonContainer,
+  likeButton: LikeButtonContainer,
+}
+
+export const socialButtonsAddonsProps = (props: EntityAndKey) =>
+  objectMap(socialButtonsContainer, mapToItemEntity(props))
+
+type SocialButtonsAddons = {
+  likeAndBookmark: PkgAddOns<AddonItemNoKey>
+  followAndBookMark: PkgAddOns<AddonItemNoKey>
+}
+
+export const useSocialButtonsAddons = (_key: string, entityType: KnownEntityType) => {
+  return useMemo<SocialButtonsAddons>(() => {
+    const props = { _key, entityType }
+    const { likeButton, bookMarkButton, followButton } = socialButtonsAddonsProps(props)
     return {
-      followButton: toItemEntity(SmallFollowButtonContainer),
-      bookMarkButton: toItemEntity(BookmarkButtonContainer),
-      likeButton: toItemEntity(LikeButtonContainer),
+      likeAndBookmark: { likeButton, bookMarkButton },
+      followAndBookMark: { followButton, bookMarkButton },
     }
   }, [_key, entityType])
-}
-
-export const useLikeAndBookMarkButtons = (key: string, entityType: KnownEntityType) => {
-  const { likeButton, bookMarkButton } = useSocialButtons(key, entityType)
-  return useMemo<PkgAddOns<AddonItemNoKey>>(
-    () => ({ likeButton, bookMarkButton }),
-    [likeButton, bookMarkButton],
-  )
-}
-export const useFollowAndBookMarkButtons = (key: string, entityType: KnownEntityType) => {
-  const { followButton, bookMarkButton } = useSocialButtons(key, entityType)
-  return useMemo<PkgAddOns<AddonItemNoKey>>(
-    () => ({ followButton, bookMarkButton }),
-    [bookMarkButton, followButton],
-  )
 }
