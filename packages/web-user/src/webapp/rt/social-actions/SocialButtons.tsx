@@ -7,21 +7,25 @@ import { BookmarkButtonContainer } from './BookmarkButtonContainer.js'
 import { LikeButtonContainer } from './LikeButtonContainer.js'
 import { SmallFollowButtonContainer } from './SmallFollowButtonContainer.js'
 
-export type EntityKey = FC<{
+export type EntityAndKey = {
   _key: string
   entityType: KnownEntityType
-}>
+}
+export type EntityKey = FC<EntityAndKey>
 
-export const useSocialButtons = (key: string, entityType: KnownEntityType) => {
-  const withProps = (Fc: EntityKey, name: string) => ({
-    name,
-    Item: () => <Fc _key={key} entityType={entityType} />,
-  })
-  return {
-    followButton: withProps(SmallFollowButtonContainer, 'Follow'),
-    bookMarkButton: withProps(BookmarkButtonContainer, 'BookMark'),
-    likeButton: withProps(LikeButtonContainer, 'Like'),
-  }
+const entityKeyToItemNoKey =
+  (props: EntityAndKey) =>
+  (Fc: EntityKey): AddonItemNoKey => ({ Item: () => <Fc {...props} /> })
+
+export const useSocialButtons = (_key: string, entityType: KnownEntityType) => {
+  return useMemo(() => {
+    const toItemEntity = entityKeyToItemNoKey({ _key, entityType })
+    return {
+      followButton: toItemEntity(SmallFollowButtonContainer),
+      bookMarkButton: toItemEntity(BookmarkButtonContainer),
+      likeButton: toItemEntity(LikeButtonContainer),
+    }
+  }, [_key, entityType])
 }
 
 export const useLikeAndBookMarkButtons = (key: string, entityType: KnownEntityType) => {
