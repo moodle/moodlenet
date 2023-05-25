@@ -51,3 +51,17 @@ await shell.call(registerAccessController)({
     return true
   },
 })
+
+// SysEntitiesEvents.addListener('created-new', ({ creator, newEntity }) => {
+//   const isProfileCreator =
+//     creator.type === 'entity' &&
+//     WebUserEntitiesTools.isIdOfType({ id: creator.entityIdentifier, type: 'Profile' })
+//   const isResource = EdResourceEntitiesTools.isIdOfType({ id: newEntity._id, type: 'Resource' })
+//   const isCollection = CollectionEntitiesTools.isIdOfType({
+//     id: newEntity._id,
+//     type: 'Collection',
+//   })
+//   if (!(isProfileCreator && (isResource || isCollection))) {
+//     return
+//   }
+// })
