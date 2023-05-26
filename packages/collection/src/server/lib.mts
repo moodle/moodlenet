@@ -1,3 +1,5 @@
+import type { RpcFile } from '@moodlenet/core'
+import { webImageResizer } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesCustomProject,
   AqlVal,
@@ -15,6 +17,7 @@ import {
   queryMyEntities,
   toaql,
 } from '@moodlenet/system-entities/server'
+import { publicFiles } from './init/fs.mjs'
 import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { CollectionDataType, CollectionEntityDoc } from './types.mjs'
@@ -83,4 +86,22 @@ export async function delCollection(_key: string) {
 
 export function getImageLogicalFilename(collectionKey: string) {
   return `image/${collectionKey}`
+}
+
+export async function setCollectionImage(_key: string, image: RpcFile | null | undefined) {
+  const imageLogicalFilename = getImageLogicalFilename(_key)
+  if (!image) {
+    await publicFiles.del(imageLogicalFilename)
+    await patchCollection(_key, {
+      image: null,
+    })
+    return null
+  }
+  const resizedRpcFile = await webImageResizer(image, 'image')
+
+  const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+
+  return patchCollection(_key, {
+    image: { kind: 'file', directAccessId },
+  })
 }

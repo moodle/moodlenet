@@ -1,5 +1,6 @@
 import type { RpcFile } from '@moodlenet/core'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
+import { webImageResizer } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesCustomProject,
   EntityAccess,
@@ -7,7 +8,7 @@ import type {
   Patch,
 } from '@moodlenet/system-entities/server'
 import { create, delEntity, getEntity, patchEntity } from '@moodlenet/system-entities/server'
-import { resourceFiles } from './init/fs.mjs'
+import { publicFiles, resourceFiles } from './init/fs.mjs'
 import { Resource } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { ResourceDataType, ResourceEntityDoc } from './types.mjs'
@@ -70,6 +71,23 @@ export async function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcF
   return `${myRpcBaseUrl}${resourcePath}`
 }
 
+export async function setResourceImage(_key: string, image: RpcFile | null | undefined) {
+  const imageLogicalFilename = getImageLogicalFilename(_key)
+  if (!image) {
+    await publicFiles.del(imageLogicalFilename)
+    await patchResource(_key, {
+      image: null,
+    })
+    return null
+  }
+  const resizedRpcFile = await webImageResizer(image, 'image')
+
+  const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+
+  return patchResource(_key, {
+    image: { kind: 'file', directAccessId },
+  })
+}
 export async function setResourceContent(_key: string, resourceContent: RpcFile | string) {
   const content =
     typeof resourceContent === 'string'

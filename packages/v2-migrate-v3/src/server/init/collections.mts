@@ -1,9 +1,9 @@
-import { createCollection } from '@moodlenet/collection/server'
+import { createCollection, setCollectionImage } from '@moodlenet/collection/server'
 import assert from 'assert'
 import cliProgress from 'cli-progress'
 import type * as v2 from '../v2-types/v2.mjs'
-import { initiateCallForProfileKey } from './initiate-call-for-profile.mjs'
 import { Resource_v2v3_IdMapping } from './resources.mjs'
+import { getRpcFileByV2AssetLcation, initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
 import { Profile_v2v3_IdMapping } from './web-users.mjs'
 
@@ -13,7 +13,7 @@ export const Collection_v3v2_IdMapping: Record<string, string> = {}
 export async function user_collections() {
   const BAR = new cliProgress.SingleBar(
     {
-      format: `{bar} {percentage}% | {value}/{total} creating Collections for {v3ProfileId} | [{collection}]`,
+      format: `{bar} {percentage}% | {value}/{total} creating Collections for {v3ProfileId} | {collection}`,
     },
     cliProgress.Presets.shades_grey,
   )
@@ -28,7 +28,7 @@ export async function user_collections() {
     const [v2_profile_type, v2_profile_key] = v2_profile_id.split('/')
     assert(v2_profile_type && v2_profile_key)
     await initiateCallForProfileKey({
-      _key: v3ProfileId,
+      _id: v3ProfileId,
       async exec() {
         const ownCollectionsCursor = await v2_DB_ContentGraph.query<
           v2.Collection & { resourceIds: string[] }
@@ -43,7 +43,7 @@ export async function user_collections() {
         while (ownCollectionsCursor.hasNext) {
           const v2_collection = await ownCollectionsCursor.next()
           assert(v2_collection, `NO COLLECTION FROM QUERY CAN'T HAPPEN`)
-          BAR.update({ collection: v2_collection.name })
+          BAR.update({ collection: `[${v2_collection._key}]:${v2_collection.name}` })
 
           const resourceList = v2_collection.resourceIds
             .map(v2_resId => {
@@ -77,6 +77,13 @@ export async function user_collections() {
             resourceList,
           })
           assert(newCollection)
+
+          if (v2_collection.image) {
+            if (v2_collection.image.ext === false) {
+              const imageFile = await getRpcFileByV2AssetLcation(v2_collection.image.location)
+              imageFile && (await setCollectionImage(newCollection._key, imageFile))
+            }
+          }
 
           Collection_v2v3_IdMapping[v2_collection._id] = newCollection._id
           Collection_v3v2_IdMapping[newCollection._id] = v2_collection._id

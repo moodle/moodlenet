@@ -3,7 +3,7 @@ import { editProfile } from '@moodlenet/web-user/server'
 import assert from 'assert'
 import cliProgress from 'cli-progress'
 import type * as v2 from '../v2-types/v2.mjs'
-import { initiateCallForProfileKey } from './initiate-call-for-profile.mjs'
+import { initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph, v2_DB_UserAuth } from './v2-db.mjs'
 
 export const EmailUser_v2v3_IdMapping: Record<string, string> = {}
@@ -19,7 +19,7 @@ export async function user_profiles() {
 
   const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile>(
     `FOR p in Profile 
-  FILTER p._published // LIMIT 0, 100
+  FILTER p._published // LIMIT 0, 20
   RETURN p`,
     {},
     { count: true, batchSize: 100 },
@@ -47,7 +47,7 @@ export async function user_profiles() {
     assert(createEmailUserResp.success)
     const { newProfile, newWebUser } = createEmailUserResp
     await initiateCallForProfileKey({
-      _key: newProfile._key,
+      _id: newProfile._id,
       async exec() {
         await editProfile(newProfile._key, {
           aboutMe: v2_profile.description,
