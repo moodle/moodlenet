@@ -13,13 +13,16 @@ export const Profile_v3v2_IdMapping: Record<string, string> = {}
 
 export async function user_profiles() {
   const BAR = new cliProgress.SingleBar(
-    { format: '{bar} {percentage}% | {value}/{total} Users | {email} [{status}]' },
+    {
+      format:
+        '{bar} {percentage}% | {value}/{total} {eta_formatted} | creating user | {email} [{status}]',
+    },
     cliProgress.Presets.shades_grey,
   )
 
   const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile>(
     `FOR p in Profile 
-  FILTER p._published // LIMIT 0, 20
+  // FILTER p._published // LIMIT 0, 20
   RETURN p`,
     {},
     { count: true, batchSize: 100 },
