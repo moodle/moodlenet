@@ -20,7 +20,14 @@ import { BookmarksPagePlugin } from './page/bookmarks/BookmarksPageHook.mjs'
 import { useMyBookmarkedBrowserCollectionListDataProps as useBrowseBookCollection } from './page/bookmarks/MyBookmarkedBrowserCollectionListHook.mjs'
 import { pkgRoutes } from './routes.js'
 import './shell.mjs'
-import { useSocialButtonsAddons } from './social-actions/SocialButtons.js'
+import type { SocialAddonsConfig } from './social-actions/SocialButtons.js'
+import { getUseSocialButtonsAddons } from './social-actions/SocialButtons.js'
+
+const addonsByEnity: SocialAddonsConfig = {
+  resource: ['bookmark', 'like'],
+  collection: ['bookmark', 'follow'],
+}
+const { useSocialButtonsAddons } = getUseSocialButtonsAddons(addonsByEnity)
 
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))
@@ -35,27 +42,27 @@ AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) =>
 
 ResourcePagePlugins.register(({ useGeneralAction, useTopRightHeaderItems, resourceKey }) => {
   useGeneralAction(useSwichAddonsByAuth(resourcePageAddonsByAuth))
-  useTopRightHeaderItems(useSocialButtonsAddons(resourceKey, 'resource').likeAndBookmark)
+  useTopRightHeaderItems(useSocialButtonsAddons(resourceKey, 'resource'))
 })
 
 ResourceCardPlugins.register(({ useTopRightItems, resourceKey }) => {
-  useTopRightItems(useSocialButtonsAddons(resourceKey, 'resource').likeAndBookmark)
+  useTopRightItems(useSocialButtonsAddons(resourceKey, 'resource'))
 })
 
 CollectionCardPlugins.register(({ collectionKey, useTopRightItems }) => {
-  useTopRightItems(useSocialButtonsAddons(collectionKey, 'collection').followAndBookMark)
+  useTopRightItems(useSocialButtonsAddons(collectionKey, 'collection'))
 })
 
 CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) => {
-  useTopRightHeaderItems(useSocialButtonsAddons(collectionKey, 'collection').followAndBookMark)
+  useTopRightHeaderItems(useSocialButtonsAddons(collectionKey, 'collection'))
 })
 
-function BrowserCollectionListItem(browserMainColumnItemBase: BrowserMainColumnItemBase) {
+function BrowserCollectionLstItem(browserMainColumnItemBase: BrowserMainColumnItemBase) {
   return <BrowserCollectionList {...useBrowseBookCollection()} {...browserMainColumnItemBase} />
 }
 
 const bookmarksPageAddons = {
-  collections: { Item: BrowserCollectionListItem, filters: [], name: 'Collections' },
+  collections: { Item: BrowserCollectionLstItem, filters: [], name: 'Collections' },
 }
 BookmarksPagePlugin.register(({ useBrowserItems }) => {
   useBrowserItems(bookmarksPageAddons)
