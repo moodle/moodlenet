@@ -3,7 +3,7 @@ import assert from 'assert'
 import cliProgress from 'cli-progress'
 import type * as v2 from '../v2-types/v2.mjs'
 import { Resource_v2v3_IdMapping } from './resources.mjs'
-import { getRpcFileByV2AssetLcation, initiateCallForProfileKey } from './util.mjs'
+import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
 import { Profile_v2v3_IdMapping } from './web-users.mjs'
 
@@ -13,7 +13,7 @@ export const Collection_v3v2_IdMapping: Record<string, string> = {}
 export async function user_collections() {
   const BAR = new cliProgress.SingleBar(
     {
-      format: `{bar} {percentage}% | {value}/{total} creating Collections for {v3ProfileId} | {collection}`,
+      format: `{bar} {percentage}% | {value}/{total} {eta_formatted} | creating Collections for {v3ProfileId} | {collection}`,
     },
     cliProgress.Presets.shades_grey,
   )
@@ -80,7 +80,10 @@ export async function user_collections() {
 
           if (v2_collection.image) {
             if (v2_collection.image.ext === false) {
-              const imageFile = await getRpcFileByV2AssetLcation(v2_collection.image.location)
+              const imageFile = await getRpcFileByV2AssetLocation(
+                v2_collection.image.location,
+                `for image of collection id v2:${v2_collection._id} v3:${newCollection._id}`,
+              )
               imageFile && (await setCollectionImage(newCollection._key, imageFile))
             }
           }

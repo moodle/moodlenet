@@ -22,13 +22,14 @@ export function initiateCallForProfileKey({ _id, exec }: { _id: string; exec(): 
   })
 }
 
-export async function getRpcFileByV2AssetLcation(v2AssetLocation: string) {
+export async function getRpcFileByV2AssetLocation(v2AssetLocation: string, warn: string) {
   const filePath = resolve(env.v2AssetFolder, 'assets', v2AssetLocation)
   const fileDescPath = `${filePath}.desc.json`
   const [statsFile, statsDesc] = await Promise.all([stat(filePath), stat(fileDescPath)]).catch(
     () => [null, null],
   )
   if (!(statsFile && statsDesc)) {
+    console.warn(`couldn't find file for V2AssetLocation: ${v2AssetLocation} - ${warn}`)
     return null
   }
   const fileDesc = JSON.parse(await readFile(fileDescPath, 'utf-8'))

@@ -9,7 +9,7 @@ import {
 import assert from 'assert'
 import cliProgress from 'cli-progress'
 import type * as v2 from '../v2-types/v2.mjs'
-import { getRpcFileByV2AssetLcation, initiateCallForProfileKey } from './util.mjs'
+import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
 import { Profile_v2v3_IdMapping } from './web-users.mjs'
 export const Resource_v2v3_IdMapping: Record<string, string> = {}
@@ -18,7 +18,7 @@ export const Resource_v3v2_IdMapping: Record<string, string> = {}
 export async function user_resources() {
   const BAR = new cliProgress.SingleBar(
     {
-      format: `{bar} {percentage}% | {value}/{total} creating Resources for {v3ProfileId} | {resource}`,
+      format: `{bar} {percentage}% | {value}/{total} {eta_formatted} | creating Resources for {v3ProfileId} | {resource}`,
     },
     cliProgress.Presets.shades_grey,
   )
@@ -73,13 +73,19 @@ export async function user_resources() {
 
           const resourceContent: RpcFile | string | null = v2_resource.content.ext
             ? v2_resource.content.location
-            : await getRpcFileByV2AssetLcation(v2_resource.content.location)
+            : await getRpcFileByV2AssetLocation(
+                v2_resource.content.location,
+                `for content of resource id v2:${v2_resource._id} v3:${newResource._id}`,
+              )
 
           resourceContent && (await setResourceContent(newResource._key, resourceContent))
 
           if (v2_resource.image) {
             if (v2_resource.image.ext === false) {
-              const imageFile = await getRpcFileByV2AssetLcation(v2_resource.image.location)
+              const imageFile = await getRpcFileByV2AssetLocation(
+                v2_resource.image.location,
+                `for image of resource id v2:${v2_resource._id} v3:${newResource._id}`,
+              )
               imageFile && (await setResourceImage(newResource._key, imageFile))
             }
           }
