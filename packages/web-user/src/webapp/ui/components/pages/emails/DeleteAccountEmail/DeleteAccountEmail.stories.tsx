@@ -79,8 +79,8 @@ function html() {
     
           /* What it does: A work-around for email clients meddling in triggered links. */
           *[x-apple-data-detectors],  /* iOS */
-      .unstyle-auto-detected-links *,
-      .aBn {
+          .unstyle-auto-detected-links *,
+          .aBn {
             border-bottom: 0 !important;
             cursor: default !important;
             color: inherit !important;
@@ -160,7 +160,7 @@ function html() {
           }
           .btn.btn-primary {
             border-radius: 45px;
-            background: #f88012;
+            background: #ff0000;
             color: #ffffff;
           }
           .btn.btn-white {
@@ -244,6 +244,24 @@ function html() {
             color: #282828;
             border-radius: 15px;
             box-shadow: 2px 2px #0000003b;
+            text-align: left;
+          }
+    
+          .dialog ul {
+            text-align: left;
+            margin: 22px 22px;
+          }
+    
+          .dialog ul li {
+            width: fit-content;
+            text-align: left;
+          }
+
+          .dialog ul li span {
+            border-radius:5px;
+            padding: 3px 6px;
+            background: #ff0000b5;
+            color: #ffffff;
           }
     
           .disclaimer {
@@ -365,7 +383,7 @@ function html() {
                     <tr>
                       <td style="padding: 0 2.5em; text-align: center">
                         <div class="text">
-                          <h2>Ready to change your password 🔑</h2>
+                          <h2>Confirm account deletion 🥀</h2>
                         </div>
                       </td>
                     </tr>
@@ -373,13 +391,17 @@ function html() {
                       <td style="text-align: center">
                         <div class="text-author">
                           <div class="dialog">
-                            Someone (probably you) requested a password change on MoodleNet. If that was
-                            you, please click on the button below and choose a new password for your
-                            account.
+                            The deletion of your MoodleNet account means that:<br />
+                            <ul>
+                              <li>All your personal information <span>will be removed.</span></li>
+                              <li>Your contributions will be kept as anonymous.</li>
+                            </ul>
+                            Feel free to remove any content you don't want to be kept.
                           </div>
-    
                           <p style="margin: 25px 0">
-                            <a href="{{=it.link}}" class="btn btn-primary">Change password</a>
+                            <a href="{{=it.link}}" class="btn btn-primary"
+                              >Delete account permanently</a
+                            >
                           </p>
                           <span class="position disclaimer">Not you? Just ignore this message.</span>
                         </div>
@@ -450,8 +472,8 @@ function html() {
                         >
                           Copyright © 2021 Moodle Pty Ltd, All rights reserved.<br />
                           This email was intended for
-                          <a href="mailto:{{=it.email}}" target="_blank">caterine.z.pons@temail.com</a>. This is a
-                          service email.
+                          <a href="mailto:{{=it.email}}" target="_blank">caterine.z.pons@temail.com</a>.
+                          This is a service email.
                         </p>
                       </td>
                     </tr>
@@ -472,15 +494,14 @@ export const Email: FC = () => {
   return <div style={{ width: '100%', height: '100%' }} dangerouslySetInnerHTML={html()} />
 }
 
-export default {
-  title: 'Pages/Emails/Access/RecoverPassword',
-  component: Email,
-  argTypes: {},
-  parameters: { layout: 'fullscreen' },
+const meta: ComponentMeta<typeof Email> = {
+  title: 'Pages/Emails/Access/DeleteAccountEmail',
   excludeStories: ['Email'],
-} as ComponentMeta<typeof Email>
+  parameters: { layout: 'fullscreen' },
+}
 
-const Template: ComponentStory<typeof Email> = () => <Email />
+const DeleteAccountEmailStory: ComponentStory<typeof Email> = () => <Email />
 
-export const Default = Template.bind({})
-Default.args = {}
+export const Default = DeleteAccountEmailStory.bind({})
+
+export default meta

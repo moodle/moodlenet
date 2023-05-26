@@ -4,18 +4,20 @@ import type { ComponentType, FC } from 'react'
 import { useMemo } from 'react'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import type {
+  AdminSettingsLinkAvatarMenuComponentProps,
   BookmarksLinkAvatarMenuComponentProps,
   FollowingLinkAvatarMenuComponentProps,
   ProfileLinkAvatarMenuComponentProps,
-  SettingsLinkAvatarMenuComponentProps,
   SignoutAvatarMenuComponentProps,
+  UserSettingsLinkAvatarMenuComponentProps,
 } from './webUserAvatarMenuComponents.js'
 import {
+  AdminSettingsLinkAvatarMenuComponent,
   BookmarksLinkAvatarMenuComponent,
   FollowingLinkAvatarMenuComponent,
   ProfileLinkAvatarMenuComponent,
-  SettingsLinkAvatarMenuComponent,
   SignoutAvatarMenuComponent,
+  UserSettingsLinkAvatarMenuComponent,
 } from './webUserAvatarMenuComponents.js'
 
 export type AvatarMenuItem = {
@@ -29,25 +31,22 @@ export type AvatarMenuProps = {
   profileMenuProps: null | Pick<ProfileLinkAvatarMenuComponentProps, 'profileHref'>
   bookmarksMenuProps: null | Pick<BookmarksLinkAvatarMenuComponentProps, 'bookmarksHref'>
   followingMenuProps: null | Pick<FollowingLinkAvatarMenuComponentProps, 'followingHref'>
-  settingsMenuProps: null | SettingsLinkAvatarMenuComponentProps
+  adminSettingsMenuProps: null | AdminSettingsLinkAvatarMenuComponentProps
+  userSettingsMenuProps: null | UserSettingsLinkAvatarMenuComponentProps
   signoutMenuProps: SignoutAvatarMenuComponentProps
 }
 
 export const AvatarMenu: FC<AvatarMenuProps> = ({
   menuItems,
   avatarUrl = defaultAvatar,
-  settingsMenuProps,
+  adminSettingsMenuProps,
+  userSettingsMenuProps,
   profileMenuProps,
   bookmarksMenuProps,
   followingMenuProps,
   signoutMenuProps,
 }) => {
   const allMenuItems = useMemo(() => {
-    const settingsLinkAvatarMenuItem: AvatarMenuItem | null = settingsMenuProps && {
-      Component: () => <SettingsLinkAvatarMenuComponent {...settingsMenuProps} />,
-      key: 'settings',
-    }
-
     const profileLinkAvatarMenuItem: AvatarMenuItem | null = profileMenuProps && {
       Component: () => (
         <ProfileLinkAvatarMenuComponent {...profileMenuProps} avatarUrl={avatarUrl} />
@@ -65,6 +64,16 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
       key: 'following',
     }
 
+    const userSettingsLinkAvatarMenuItem: AvatarMenuItem | null = userSettingsMenuProps && {
+      Component: () => <UserSettingsLinkAvatarMenuComponent {...userSettingsMenuProps} />,
+      key: 'admin-settings',
+    }
+
+    const adminSettingsLinkAvatarMenuItem: AvatarMenuItem | null = adminSettingsMenuProps && {
+      Component: () => <AdminSettingsLinkAvatarMenuComponent {...adminSettingsMenuProps} />,
+      key: 'admin-settings',
+    }
+
     const signoutAvatarMenuItem: AvatarMenuItem = {
       Component: () => <SignoutAvatarMenuComponent {...signoutMenuProps} />,
       key: 'signout',
@@ -75,7 +84,8 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
       ...(bookmarksAvatarMenuItem ? [bookmarksAvatarMenuItem] : []),
       ...(followingAvatarMenuItem ? [followingAvatarMenuItem] : []),
       ...menuItems,
-      ...(settingsLinkAvatarMenuItem ? [settingsLinkAvatarMenuItem] : []),
+      ...(adminSettingsLinkAvatarMenuItem ? [adminSettingsLinkAvatarMenuItem] : []),
+      ...(userSettingsLinkAvatarMenuItem ? [userSettingsLinkAvatarMenuItem] : []),
       signoutAvatarMenuItem,
     ]
   }, [
@@ -84,7 +94,8 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
     followingMenuProps,
     menuItems,
     profileMenuProps,
-    settingsMenuProps,
+    adminSettingsMenuProps,
+    userSettingsMenuProps,
     signoutMenuProps,
   ])
 

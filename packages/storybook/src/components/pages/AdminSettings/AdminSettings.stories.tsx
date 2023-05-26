@@ -9,7 +9,7 @@ import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof AdminSettings> = {
-  title: 'Pages/AdminSettings',
+  title: 'Pages/Admin',
   component: AdminSettings,
   argTypes: {
     // backgroundColor: { control: 'color' },

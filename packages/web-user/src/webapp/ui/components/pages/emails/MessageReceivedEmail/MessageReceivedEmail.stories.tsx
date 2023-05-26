@@ -366,7 +366,7 @@ function html() {
                     <tr>
                       <td style="padding: 0 2.5em; text-align: center">
                         <div class="text">
-                          <h2>Nelson Candela sent you a message</h2>
+                          <h2>Nelson Candela sent you a message 📨</h2>
                           <!-- //TODO //@ETTO //@ALE fillout the senderDisplayName -->
                         </div>
                       </td>

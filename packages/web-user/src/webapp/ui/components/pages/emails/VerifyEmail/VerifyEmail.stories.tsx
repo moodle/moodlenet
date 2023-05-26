@@ -365,7 +365,7 @@ function html() {
                     <tr>
                       <td style="padding: 0 2.5em; text-align: center">
                         <div class="text">
-                          <h2>Ready to change your password 🔑</h2>
+                          <h2>Verify your new email ✉️✨</h2>
                         </div>
                       </td>
                     </tr>
@@ -373,13 +373,11 @@ function html() {
                       <td style="text-align: center">
                         <div class="text-author">
                           <div class="dialog">
-                            Someone (probably you) requested a password change on MoodleNet. If that was
-                            you, please click on the button below and choose a new password for your
-                            account.
+                          Your requested an email change.
+                            Verify your new email address by clicking the button below.
                           </div>
-    
                           <p style="margin: 25px 0">
-                            <a href="{{=it.link}}" class="btn btn-primary">Change password</a>
+                            <a href="{{=it.link}}" class="btn btn-primary">Verify email</a>
                           </p>
                           <span class="position disclaimer">Not you? Just ignore this message.</span>
                         </div>
@@ -472,15 +470,14 @@ export const Email: FC = () => {
   return <div style={{ width: '100%', height: '100%' }} dangerouslySetInnerHTML={html()} />
 }
 
-export default {
-  title: 'Pages/Emails/Access/RecoverPassword',
-  component: Email,
-  argTypes: {},
-  parameters: { layout: 'fullscreen' },
+const meta: ComponentMeta<typeof Email> = {
+  title: 'Pages/Emails/Access/VerifyEmail',
   excludeStories: ['Email'],
-} as ComponentMeta<typeof Email>
+  parameters: { layout: 'fullscreen' },
+}
 
-const Template: ComponentStory<typeof Email> = () => <Email />
+const VerifyEmailStory: ComponentStory<typeof Email> = () => <Email />
 
-export const Default = Template.bind({})
-Default.args = {}
+export const Default = VerifyEmailStory.bind({})
+
+export default meta

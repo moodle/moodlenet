@@ -1,106 +1,168 @@
 /* eslint-disable prettier/prettier */
-import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import type { OrganizationData } from '@moodlenet/organization/common'
-import type { useFormik } from 'formik'
+import type { AddonItem } from '@moodlenet/component-library'
+import {
+  Card,
+  InputTextField,
+  Modal,
+  PrimaryButton,
+  SecondaryButton,
+  Snackbar,
+  SnackbarStack,
+} from '@moodlenet/component-library'
+import { useFormik } from 'formik'
 import type { FC } from 'react'
+import { useState } from 'react'
 import './General.scss'
 
+export type GeneralSettingsData = {
+  email: string
+  password: string
+}
+
 export type GeneralProps = {
-  form: ReturnType<typeof useFormik<OrganizationData>>
-  updateSuccess?: boolean
-  updateExtensions?: () => void
+  data: GeneralSettingsData
+  saveSuccess: boolean
+  mainColumnItems: (AddonItem | null)[]
+  emailChangedSuccess: boolean
+  passwordChangedSuccess: boolean
+  editData: (values: GeneralSettingsData) => void
+  deleteAccount: () => void
+  deleteAccountSuccess: boolean
 }
 
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
-export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtensions }) => {
-  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
-  const shouldShowErrors = !!form.submitCount
+export const General: FC<GeneralProps> = ({
+  data,
+  editData,
+  deleteAccount,
+  mainColumnItems,
+  deleteAccountSuccess,
+  emailChangedSuccess,
+  passwordChangedSuccess,
+}) => {
+  const form = useFormik<GeneralSettingsData>({
+    initialValues: data,
+    // validationSchema: resourceValidationSchema,
+    onSubmit: values => {
+      return editData(values)
+    },
+  })
 
-  const update = updateExtensions && (
-    <Card className="update">
-      <div className="left">
-        <div className="title">New update available!</div>
-        <div className="description">Get the newest features and improvements in one click</div>
-      </div>
-      <div className="right">
-        <PrimaryButton onClick={updateExtensions} className="update-btn">
-          Update
-        </PrimaryButton>
-      </div>
-    </Card>
+  const canSubmit =
+    form.dirty &&
+    form.isValid &&
+    !form.isSubmitting &&
+    !form.isValidating &&
+    (form.values.email !== data.email || form.values.password !== data.password)
+
+  const shouldShowErrors = !!form.submitCount
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
+
+  const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
   )
-  const updatedSuccessfully = updateSuccess && (
-    <Card className="update">
-      <div className="left">
-        <div className="title">Updated successfully!</div>
-        <div className="description">
-          Your app is up and running on the lastest release. Have fun!{' '}
-        </div>
-      </div>
-      <div className="right">
-        <div className="confetti">🎉</div>
-      </div>
-    </Card>
+
+  const snackbars = (
+    <SnackbarStack
+      snackbarList={[
+        emailChangedSuccess ? (
+          <Snackbar type="success">Check your old email inbox to continue</Snackbar>
+        ) : null,
+        passwordChangedSuccess ? <Snackbar type="success">Password changed</Snackbar> : null,
+        deleteAccountSuccess ? (
+          <Snackbar type="success">Check your email to confirm the deletion</Snackbar>
+        ) : null,
+      ]}
+    ></SnackbarStack>
+  )
+
+  const modals = (
+    <>
+      {showDeleteAccountModal && (
+        <Modal
+          title={`Alert`}
+          actions={
+            <PrimaryButton
+              onClick={() => {
+                deleteAccount()
+                setShowDeleteAccountModal(false)
+              }}
+              color="red"
+            >
+              Delete account
+            </PrimaryButton>
+          }
+          onClose={() => setShowDeleteAccountModal(false)}
+          style={{ maxWidth: '400px' }}
+          className="delete-message"
+        >
+          {/* Your account will be deleted. <br /> */}
+          {/* Your personal details will be removed. <br /> */}
+          {/* Your contributions will be kept as anonymous. <br /> */}
+          An email will be send to confirm the deletion of your account.
+        </Modal>
+      )}
+    </>
   )
 
   return (
     <div className="general" key="general">
-      {update}
-      {updatedSuccessfully}
+      {modals}
+      {snackbars}
       <Card className="column">
         <div className="title">
           {/* <Trans> */}
           General
           {/* </Trans> */}
-          <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
+          <PrimaryButton
+            onClick={() => form.submitForm()}
+            disabled={!canSubmit}
+            className="save-btn"
+          >
             Save
           </PrimaryButton>
         </div>
       </Card>
+      {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       <Card className="column">
         <div className="parameter">
-          <div className="name">Site name</div>
+          <div className="name">Email</div>
           <div className="actions">
             <InputTextField
-              className="instance-name"
-              placeholder="Give a name to your site"
-              defaultValue={form.values.instanceName}
+              className="email"
+              placeholder="Enter your account email"
+              defaultValue={form.values.email}
               onChange={form.handleChange}
-              name="instanceName"
-              key="instance-name"
-              error={shouldShowErrors && form.errors.instanceName}
+              name="email"
+              key="email"
+              error={shouldShowErrors && form.errors.email}
             />
           </div>
         </div>
         <div className="parameter">
-          <div className="name">Landing page title</div>
+          <div className="name">Password</div>
           <div className="actions">
             <InputTextField
-              isTextarea
-              className="landing-title"
-              placeholder="Give a title to the landing page"
-              value={form.values.landingTitle}
+              className="password"
+              placeholder="Enter your new password"
+              defaultValue={form.values.password}
               onChange={form.handleChange}
-              name="landingTitle"
-              edit
-              // error={shouldShowErrors && editForm.errors.displayName}
+              type="password"
+              name="password"
+              key="password"
+              error={shouldShowErrors && form.errors.password}
             />
           </div>
         </div>
+      </Card>
+      <Card className="column">
         <div className="parameter">
-          <div className="name">Landing page subtitle</div>
+          <div className="name">More</div>
           <div className="actions">
-            <InputTextField
-              isTextarea
-              className="landing-subtitle"
-              placeholder="Give a subtitle to the landing page"
-              value={form.values.landingSubtitle}
-              onChange={form.handleChange}
-              name="landingSubtitle"
-              edit
-              // error={shouldShowErrors && editForm.errors.displayName}
-            />
+            <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}>
+              Delete account
+            </SecondaryButton>
           </div>
         </div>
       </Card>

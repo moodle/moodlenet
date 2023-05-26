@@ -7,6 +7,7 @@ export * as MainProfileCardPropsStories from '../components/organisms/MainProfil
 export * as ProfileCardStories from '../components/organisms/ProfileCard/ProfileCard.stories.js'
 export * as ProfileCardPropsStories from '../components/organisms/ProfileCard/ProfileCardProps.stories.js'
 export * as UsersStories from '../components/organisms/Roles/Users.stories.js'
+export * as DeleteAccountEmailStories from '../components/pages/emails/DeleteAccountEmail/DeleteAccountEmail.stories.js'
 export * as MessageReceivedEmailStories from '../components/pages/emails/MessageReceivedEmail/MessageReceivedEmail.stories.js'
 export * as NewUserRequestEmailStories from '../components/pages/emails/NewUserRequestEmail/NewUserRequestEmail.stories.js'
 export * as RecoverPasswordEmailStories from '../components/pages/emails/RecoverPasswordEmail/RecoverPasswordEmail.stories.js'

@@ -1,6 +1,5 @@
 // import { UserSettings as PassportAuthSettins } from '@moodlenet/passport-auth/ui'
-import { GeneralStories } from '@moodlenet/react-app/stories'
-import { AdvancedStories } from '@moodlenet/web-user/stories'
+import { AdvancedStories, GeneralStories } from '@moodlenet/web-user/stories'
 import type { UserSettingsProps } from '@moodlenet/web-user/ui'
 import { UserSettings } from '@moodlenet/web-user/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -8,7 +7,7 @@ import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof UserSettings> = {
-  title: 'Pages/UserSettings',
+  title: 'Pages/Settings',
   component: UserSettings,
   argTypes: {
     // backgroundColor: { control: 'color' },
