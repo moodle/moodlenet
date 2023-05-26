@@ -9,7 +9,8 @@ import {
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
-import { useSwichAddonsByAuth } from './init/AddonsByUserRule.js'
+import { BookmarkButtonContainer, LikeButtonContainer } from './exports.mjs'
+import { useSwichAddonsByAuth } from './lib/AddonsByUserRule.js'
 import MainWrapper from './MainWrapper.js'
 import {
   menuAddonsDefaultSetting,
@@ -20,14 +21,21 @@ import { BookmarksPagePlugin } from './page/bookmarks/BookmarksPageHook.mjs'
 import { useMyBookmarkedBrowserCollectionListDataProps as useBrowseBookCollection } from './page/bookmarks/MyBookmarkedBrowserCollectionListHook.mjs'
 import { pkgRoutes } from './routes.js'
 import './shell.mjs'
-import type { SocialAddonsConfig } from './social-actions/SocialButtons.js'
-import { getUseSocialButtonsAddons } from './social-actions/SocialButtons.js'
+import { SmallFollowButtonContainer } from './social-actions/SmallFollowButtonContainer.js'
+import type { SocialActions, SocialActionsConfig } from './social-actions/SocialActions.js'
+import { getUseSocialActions } from './social-actions/SocialActions.js'
 
-const addonsByEnity: SocialAddonsConfig = {
+const socialActions: SocialActions = {
+  follow: SmallFollowButtonContainer,
+  bookmark: BookmarkButtonContainer,
+  like: LikeButtonContainer,
+}
+
+const addonsByEnity: SocialActionsConfig = {
   resource: ['bookmark', 'like'],
   collection: ['bookmark', 'follow'],
 }
-const { useSocialButtonsAddons } = getUseSocialButtonsAddons(addonsByEnity)
+const { useSocialActions } = getUseSocialActions(socialActions, addonsByEnity)
 
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))
@@ -42,19 +50,19 @@ AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) =>
 
 ResourcePagePlugins.register(({ useGeneralAction, useTopRightHeaderItems, resourceKey }) => {
   useGeneralAction(useSwichAddonsByAuth(resourcePageAddonsByAuth))
-  useTopRightHeaderItems(useSocialButtonsAddons(resourceKey, 'resource'))
+  useTopRightHeaderItems(useSocialActions(resourceKey, 'resource'))
 })
 
 ResourceCardPlugins.register(({ useTopRightItems, resourceKey }) => {
-  useTopRightItems(useSocialButtonsAddons(resourceKey, 'resource'))
+  useTopRightItems(useSocialActions(resourceKey, 'resource'))
 })
 
 CollectionCardPlugins.register(({ collectionKey, useTopRightItems }) => {
-  useTopRightItems(useSocialButtonsAddons(collectionKey, 'collection'))
+  useTopRightItems(useSocialActions(collectionKey, 'collection'))
 })
 
 CollectionPagePlugins.register(({ useTopRightHeaderItems, collectionKey }) => {
-  useTopRightHeaderItems(useSocialButtonsAddons(collectionKey, 'collection'))
+  useTopRightHeaderItems(useSocialActions(collectionKey, 'collection'))
 })
 
 function BrowserCollectionLstItem(browserMainColumnItemBase: BrowserMainColumnItemBase) {

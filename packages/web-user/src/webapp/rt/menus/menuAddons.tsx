@@ -1,6 +1,6 @@
 import { AddToCollectionButtonByResourceContextContainer as addResourceToCollectionButton } from '@moodlenet/collection/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
-import type { AddonsByUserRule } from '../init/AddonsByUserRule.js'
+import type { AddonsByUserRule } from '../lib/AddonsByUserRule.js'
 import { LoginButtonContainer, SignupButtonContainer } from '../page/access/AccessContainers.js'
 import { UsersContainer, UsersMenu } from '../page/settings/UsersContainer.js'
 import { AddMenuContainer } from './AddMenuContainer.js'
