@@ -20,7 +20,7 @@ export const UserSettings: FC<UserSettingsProps> = ({ mainLayoutProps, settingsI
   return (
     <MainLayout
       {...mainLayoutProps}
-      streched={true}
+      // streched={true}
       headerProps={{
         ...mainLayoutProps.headerProps,
       }}

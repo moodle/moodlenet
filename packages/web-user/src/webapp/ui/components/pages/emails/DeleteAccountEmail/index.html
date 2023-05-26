@@ -74,8 +74,8 @@
 
       /* What it does: A work-around for email clients meddling in triggered links. */
       *[x-apple-data-detectors],  /* iOS */
-      .unstyle-auto-detected-links *,
-      .aBn {
+          .unstyle-auto-detected-links *,
+          .aBn {
         border-bottom: 0 !important;
         cursor: default !important;
         color: inherit !important;
@@ -155,7 +155,7 @@
       }
       .btn.btn-primary {
         border-radius: 45px;
-        background: #f88012;
+        background: #ff0000;
         color: #ffffff;
       }
       .btn.btn-white {
@@ -239,6 +239,24 @@
         color: #282828;
         border-radius: 15px;
         box-shadow: 2px 2px #0000003b;
+        text-align: left;
+      }
+
+      .dialog ul {
+        text-align: left;
+        margin: 22px 22px;
+      }
+
+      .dialog ul li {
+        width: fit-content;
+        text-align: left;
+      }
+
+      .dialog ul li span {
+        border-radius: 5px;
+        padding: 3px 6px;
+        background: #ff0000b5;
+        color: #ffffff;
       }
 
       .disclaimer {
@@ -360,7 +378,7 @@
                 <tr>
                   <td style="padding: 0 2.5em; text-align: center">
                     <div class="text">
-                      <h2>Welcome to MoodleNet 🎉</h2>
+                      <h2>Confirm account deletion 🥀</h2>
                     </div>
                   </td>
                 </tr>
@@ -368,11 +386,17 @@
                   <td style="text-align: center">
                     <div class="text-author">
                       <div class="dialog">
-                        Thanks for signing up to MoodleNet! Click the button below to activate your
-                        account.
+                        The deletion of your MoodleNet account means that:<br />
+                        <ul>
+                          <li>All your personal information <span>will be removed.</span></li>
+                          <li>Your contributions will be kept as anonymous.</li>
+                        </ul>
+                        Feel free to remove any content you don't want to be kept.
                       </div>
                       <p style="margin: 25px 0">
-                        <a href="{{=it.link}}" class="btn btn-primary">Activate account</a>
+                        <a href="{{=it.link}}" class="btn btn-primary"
+                          >Delete account permanently</a
+                        >
                       </p>
                       <span class="position disclaimer">Not you? Just ignore this message.</span>
                     </div>

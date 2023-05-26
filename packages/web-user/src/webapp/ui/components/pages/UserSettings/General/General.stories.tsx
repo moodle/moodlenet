@@ -1,6 +1,5 @@
 import type { OrganizationData } from '@moodlenet/organization/common'
 import { action } from '@storybook/addon-actions'
-import { useFormik } from 'formik'
 import type { FC } from 'react'
 import type { SchemaOf } from 'yup'
 import { object, string } from 'yup'
@@ -19,16 +18,17 @@ export const useGeneralStoryProps = (overrides?: {
   props?: Partial<GeneralProps>
 }): GeneralProps => {
   return {
-    form: useFormik<OrganizationData>({
-      onSubmit: action('submit edit'),
-      validationSchema,
-      initialValues: {
-        instanceName: 'MoodleNet',
-        landingTitle: 'Find, share and curate open educational resources',
-        landingSubtitle: 'Search for resources, subjects, collections or people',
-        ...overrides?.editFormValues,
-      },
-    }),
+    data: {
+      email: 'youremail@nice.com',
+      password: 'yourpassword',
+    },
+    editData: action('edit data'),
+    emailChangedSuccess: false,
+    passwordChangedSuccess: false,
+    saveSuccess: false,
+    deleteAccount: action('delete account'),
+    deleteAccountSuccess: false,
+    mainColumnItems: [],
     // updateExtensions: action('Updating extensions'),
     // updateSuccess: true,
     ...overrides?.props,

@@ -29,7 +29,8 @@ export function useAvatarMenuProps(): AvatarMenuProps {
       bookmarksMenuProps: hasProfile ? { bookmarksHref: href('/bookmarks') } : null,
       profileMenuProps: hasProfile ? { profileHref: href('/my-profile') } : null,
       signoutMenuProps: { signout: authCtx.logout },
-      settingsMenuProps: isAdmin ? { settingsHref: href('/settings') } : null,
+      userSettingsMenuProps: hasProfile ? { settingsHref: href('/settings') } : null,
+      adminSettingsMenuProps: isAdmin ? { settingsHref: href('/admin') } : null,
     }
     return avatarMenuProps
   }, [addons.menuItems, authCtx.logout, avatarUrl, hasProfile, isAdmin])

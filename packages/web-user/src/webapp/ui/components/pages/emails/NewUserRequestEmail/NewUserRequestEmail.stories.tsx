@@ -365,7 +365,7 @@ function html() {
                     <tr>
                       <td style="padding: 0 2.5em; text-align: center">
                         <div class="text">
-                          <h2>Welcome to MoodleNet</h2>
+                          <h2>Welcome to MoodleNet 🎉</h2>
                         </div>
                       </td>
                     </tr>

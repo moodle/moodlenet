@@ -15,15 +15,18 @@ export const AvatarMenuHeaderItem: AddonItem = {
         profileHref: href('Pages/Profile/Logged In'),
       }}
       bookmarksMenuProps={{
-        bookmarksHref: href('Pages/Bookmarks/LoggedIn'),
+        bookmarksHref: href('Pages/Bookmarks/Logged In'),
       }}
       followingMenuProps={{
-        followingHref: href('Pages/Following/LoggedIn'),
+        followingHref: href('Pages/Following/Logged In'),
       }}
       signoutMenuProps={{
         signout: linkTo('Pages/Landing', 'Logged In'),
       }}
-      settingsMenuProps={null}
+      userSettingsMenuProps={{
+        settingsHref: href('Pages/Settings/Default'),
+      }}
+      adminSettingsMenuProps={null}
     />
   ),
   key: 'avatar-menu',
