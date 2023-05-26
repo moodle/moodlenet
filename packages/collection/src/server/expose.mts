@@ -1,7 +1,7 @@
 import { shell } from './shell.mjs'
 
 import { RpcStatus } from '@moodlenet/core'
-import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
+import { getWebappUrl } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesRecordType,
   AqlVal,
@@ -24,6 +24,7 @@ import {
   getImageLogicalFilename,
   getMyCollections,
   patchCollection,
+  setCollectionImage,
   updateCollectionContent,
 } from './lib.mjs'
 
@@ -167,22 +168,10 @@ export const expose = await shell.expose<CollectionExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const imageLogicalFilename = getImageLogicalFilename(_key)
-        if (!uploadedRpcFile) {
-          await publicFiles.del(imageLogicalFilename)
-          await patchCollection(_key, {
-            image: null,
-          })
-          return null
-        }
-        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
 
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
-
-        await patchCollection(_key, {
-          image: { kind: 'file', directAccessId },
-        })
-        return publicFilesHttp.getFileUrl({ directAccessId })
+        const patched = await setCollectionImage(_key, uploadedRpcFile)
+        const directAccessId = patched?.entity.image?.directAccessId ?? null
+        return directAccessId && publicFilesHttp.getFileUrl({ directAccessId })
       },
       bodyWithFiles: {
         fields: {

@@ -1,9 +1,15 @@
-import type { ResourceDataType } from '@moodlenet/ed-resource/server'
-import { createResource } from '@moodlenet/ed-resource/server'
+import type { RpcFile } from '@moodlenet/core'
+import {
+  createResource,
+  setResourceContent,
+  setResourceImage,
+  type ResourceDataType,
+} from '@moodlenet/ed-resource/server'
+
 import assert from 'assert'
 import cliProgress from 'cli-progress'
 import type * as v2 from '../v2-types/v2.mjs'
-import { initiateCallForProfileKey } from './initiate-call-for-profile.mjs'
+import { getRpcFileByV2AssetLcation, initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
 import { Profile_v2v3_IdMapping } from './web-users.mjs'
 export const Resource_v2v3_IdMapping: Record<string, string> = {}
@@ -12,7 +18,7 @@ export const Resource_v3v2_IdMapping: Record<string, string> = {}
 export async function user_resources() {
   const BAR = new cliProgress.SingleBar(
     {
-      format: `{bar} {percentage}% | {value}/{total} creating Resources for {v3ProfileId} | [{resource}]`,
+      format: `{bar} {percentage}% | {value}/{total} creating Resources for {v3ProfileId} | {resource}`,
     },
     cliProgress.Presets.shades_grey,
   )
@@ -27,7 +33,7 @@ export async function user_resources() {
     const [v2_profile_type, v2_profile_key] = v2_profile_id.split('/')
     assert(v2_profile_type && v2_profile_key)
     await initiateCallForProfileKey({
-      _key: v3ProfileId,
+      _id: v3ProfileId,
       async exec() {
         const ownResourcesCursor = await v2_DB_ContentGraph.query<
           v2.Resource & { featIds: string[] }
@@ -42,7 +48,7 @@ export async function user_resources() {
         while (ownResourcesCursor.hasNext) {
           const v2_resource = await ownResourcesCursor.next()
           assert(v2_resource, `NO RESOURCE FROM QUERY CAN'T HAPPEN`)
-          BAR.update({ resource: v2_resource.name })
+          BAR.update({ resource: `[${v2_resource._key}]:${v2_resource.name}` })
 
           const featsMap = mapResourceFeats(v2_resource)
 
@@ -64,6 +70,19 @@ export async function user_resources() {
             ...featsMap,
           })
           assert(newResource)
+
+          const resourceContent: RpcFile | string | null = v2_resource.content.ext
+            ? v2_resource.content.location
+            : await getRpcFileByV2AssetLcation(v2_resource.content.location)
+
+          resourceContent && (await setResourceContent(newResource._key, resourceContent))
+
+          if (v2_resource.image) {
+            if (v2_resource.image.ext === false) {
+              const imageFile = await getRpcFileByV2AssetLcation(v2_resource.image.location)
+              imageFile && (await setResourceImage(newResource._key, imageFile))
+            }
+          }
 
           Resource_v2v3_IdMapping[v2_resource._id] = newResource._id
           Resource_v3v2_IdMapping[newResource._id] = v2_resource._id
