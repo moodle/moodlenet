@@ -21,12 +21,12 @@ export const socialItemsAddons = (
   props: EntityAndKey,
 ) => {
   const pkgAddons = mapSocialActionsToPkgAddons(socialKeyItems, props)
-  const mapButtonAddons = (acc: MyPkgAddOns, name: SocialActionsName) => ({
+  const mapSocialActionDef = (acc: MyPkgAddOns, name: SocialActionsName) => ({
     ...acc,
     ...pkgAddons[name],
   })
   const itemELemStrList = addonsByEnity[props.entityType]
-  return !itemELemStrList ? null : itemELemStrList.reduce(mapButtonAddons, {})
+  return !itemELemStrList ? null : itemELemStrList.reduce(mapSocialActionDef, {})
 }
 
 export function getUseSocialActions(actions: SocialActions, config: SocialActionsConfig) {
