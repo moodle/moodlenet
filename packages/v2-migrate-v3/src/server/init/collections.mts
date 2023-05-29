@@ -14,7 +14,7 @@ export const Collection_v3v2_IdMapping: Record<string, string> = {}
 export async function user_collections() {
   const BAR = new cliProgress.SingleBar(
     {
-      format: `{bar} {percentage}% | {value}/{total} {eta_formatted} | creating Collections for {v3ProfileId} | {collection}`,
+      format: `{bar} {percentage}% | {value}/{total} {duration_formatted}/{eta_formatted} | creating Collections for {v2_profile_id} | {collection}`,
     },
     cliProgress.Presets.shades_grey,
   )
@@ -25,7 +25,7 @@ export async function user_collections() {
     const v3ProfileId = Profile_v2v3_IdMapping[v2_profile_id]
 
     assert(v3ProfileId)
-    BAR.update({ v3ProfileId, collection: 'no own collections' })
+    BAR.update({ v2_profile_id, collection: 'no own collections' })
     const [v2_profile_type, v2_profile_key] = v2_profile_id.split('/')
     assert(v2_profile_type && v2_profile_key)
     await initiateCallForProfileKey({
@@ -39,7 +39,7 @@ export async function user_collections() {
           let resourceIds = (FOR feat IN Features FILTER feat._from == coll._id RETURN feat._to)
           RETURN MERGE(coll, {resourceIds})`,
           {},
-          { count: true, batchSize: 100 },
+          { count: true, batchSize: 1 },
         )
         while (ownCollectionsCursor.hasNext) {
           const v2_collection = await ownCollectionsCursor.next()

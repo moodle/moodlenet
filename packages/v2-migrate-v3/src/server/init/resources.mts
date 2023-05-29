@@ -19,7 +19,7 @@ export const Resource_v3v2_IdMapping: Record<string, string> = {}
 export async function user_resources() {
   const BAR = new cliProgress.SingleBar(
     {
-      format: `{bar} {percentage}% | {value}/{total} {eta_formatted} | creating Resources for {v3ProfileId} | {resource}`,
+      format: `{bar} {percentage}% | {value}/{total} {duration_formatted}/{eta_formatted} | creating Resources for {v2_profile_id} | {resource}`,
     },
     cliProgress.Presets.shades_grey,
   )
@@ -30,7 +30,7 @@ export async function user_resources() {
     const v3ProfileId = Profile_v2v3_IdMapping[v2_profile_id]
 
     assert(v3ProfileId)
-    BAR.update({ v3ProfileId, resource: 'no own resources' })
+    BAR.update({ v2_profile_id, resource: 'no own resources' })
     const [v2_profile_type, v2_profile_key] = v2_profile_id.split('/')
     assert(v2_profile_type && v2_profile_key)
     await initiateCallForProfileKey({
@@ -44,7 +44,7 @@ export async function user_resources() {
           let featIds = (FOR feat IN Features FILTER feat._from == res._id RETURN feat._to)
           RETURN MERGE(res, {featIds})`,
           {},
-          { count: true, batchSize: 100 },
+          { count: true, batchSize: 1 },
         )
         while (ownResourcesCursor.hasNext) {
           const v2_resource = await ownResourcesCursor.next()

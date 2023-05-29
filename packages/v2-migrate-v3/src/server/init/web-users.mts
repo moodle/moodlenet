@@ -20,7 +20,7 @@ export async function user_profiles() {
   const BAR = new cliProgress.SingleBar(
     {
       format:
-        '{bar} {percentage}% | {value}/{total} {eta_formatted} | creating user | {email} [{status}]',
+        '{bar} {percentage}% | {value}/{total} {duration_formatted}/{eta_formatted} | creating user | {email} [{status}]',
     },
     cliProgress.Presets.shades_grey,
   )
