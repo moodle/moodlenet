@@ -44,7 +44,7 @@ export async function user_profiles() {
     //    ])
     // return pp`,
     {},
-    { count: true, batchSize: 100 },
+    { count: true, batchSize: 1 },
   )
 
   BAR.start(allProfilesCursor.count ?? 0, 0)
