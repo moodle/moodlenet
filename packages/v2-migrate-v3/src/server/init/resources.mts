@@ -8,6 +8,7 @@ import {
 
 import assert from 'assert'
 import cliProgress from 'cli-progress'
+import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
 import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
@@ -59,6 +60,7 @@ export async function user_resources() {
             ? [`${pubDate.getFullYear()}`, `${pubDate.getMonth() + 1}`]
             : ['', '']
 
+          shell.setNow(v2_resource._created)
           const newResource = await createResource({
             description: v2_resource.description,
             title: v2_resource.name,

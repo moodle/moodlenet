@@ -2,6 +2,7 @@ import { createUser } from '@moodlenet/simple-email-auth/server'
 import { editProfile } from '@moodlenet/web-user/server'
 import assert from 'assert'
 import cliProgress from 'cli-progress'
+import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
 import { initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph, v2_DB_UserAuth } from './v2-db.mjs'
@@ -21,9 +22,23 @@ export async function user_profiles() {
   )
 
   const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile>(
-    `FOR p in Profile 
-  // FILTER p._published // LIMIT 0, 20
-  RETURN p`,
+    `
+      FOR p in Profile 
+      RETURN p
+    `,
+    // `
+    // FOR pp IN UNION_DISTINCT(
+    //   FOR p in Profile
+    //     FILTER p._published
+    //     LIMIT 0, 10
+    //   RETURN p
+    //   ,[
+    //       Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alec */),
+    //       Document("Profile/Wn4IUjm2K2PFwoKFsC0xByxYlPcykg" /* etto */),
+    //       Document("Profile/KiL7cfGqzRGDi9mG7M7AARXl4zQKtW" /* Bru 1*/),
+    //       Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* Bru 2*/)
+    //    ])
+    // return pp`,
     {},
     { count: true, batchSize: 100 },
   )
@@ -41,14 +56,18 @@ export async function user_profiles() {
     assert(v2_user, `NO USER FOR PROFILE ${v2_profile._key}`)
     const email = v2_user.email
     BAR.update({ email, status: 'creating' })
+    const { newProfile, newWebUser } = await shell.initiateCall(async () => {
+      shell.setNow(v2_profile._created)
 
-    const createEmailUserResp = await createUser({
-      displayName: v2_profile.name,
-      email,
-      hashedPassword: v2_user.password,
+      const createEmailUserResp = await createUser({
+        displayName: v2_profile.name,
+        email,
+        hashedPassword: v2_user.password,
+      })
+      assert(createEmailUserResp.success)
+      return createEmailUserResp
     })
-    assert(createEmailUserResp.success)
-    const { newProfile, newWebUser } = createEmailUserResp
+
     await initiateCallForProfileKey({
       _id: newProfile._id,
       async exec() {

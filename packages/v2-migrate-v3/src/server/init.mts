@@ -1,6 +1,7 @@
 import { stat, writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import { user_collections } from './init/collections.mjs'
+import { featured_entities } from './init/featured-entities.mjs'
 import { organization } from './init/organizaton.mjs'
 import { user_resources } from './init/resources.mjs'
 import { user_profiles } from './init/web-users.mjs'
@@ -13,6 +14,7 @@ if (!migration_done) {
   await user_profiles()
   await user_resources()
   await user_collections()
+  await featured_entities()
 }
 
 await writeFile(migration_done_file, '', 'utf-8')
