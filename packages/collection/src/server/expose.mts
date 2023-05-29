@@ -16,7 +16,7 @@ import type { CollectionExposeType } from '../common/expose-def.mjs'
 import type { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { publicFiles, publicFilesHttp } from './init/fs.mjs'
+import { publicFiles } from './init/fs.mjs'
 import {
   createCollection,
   delCollection,
@@ -26,8 +26,9 @@ import {
   patchCollection,
   setCollectionImage,
   updateCollectionContent,
-} from './lib.mjs'
+} from './services.mjs'
 
+import { getImageUrl } from './lib.mjs'
 import type { CollectionDataType } from './types.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({
@@ -170,8 +171,8 @@ export const expose = await shell.expose<CollectionExposeType>({
         }
 
         const patched = await setCollectionImage(_key, uploadedRpcFile)
-        const directAccessId = patched?.entity.image?.directAccessId ?? null
-        return directAccessId && publicFilesHttp.getFileUrl({ directAccessId })
+        const imageUrl = patched?.entity.image ? getImageUrl(patched?.entity.image) : null
+        return imageUrl
       },
       bodyWithFiles: {
         fields: {
@@ -191,9 +192,7 @@ function getCollectionRpc(
     'u' | 'd'
   >,
 ) {
-  const imageUrl = found.entity.image
-    ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
-    : ''
+  const imageUrl = found.entity.image ? getImageUrl(found.entity.image) : undefined
   const _key = found.entity._key
   const collectionRpc: Omit<CollectionRpc, 'contributor'> = {
     resourceList: found.entity.resourceList,
