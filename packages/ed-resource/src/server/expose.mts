@@ -78,7 +78,7 @@ export const expose = await shell.expose<ResourceExposeType>({
             //   ext: true,
             // },
             // displayName: 'contributor.name',
-            // timeSinceCreation: new Date().toString(),
+            // timeSinceCreation: shell.now().toString(),
           },
           resourceForm: {
             description: found.entity.description,

@@ -121,7 +121,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     await del(logicalName)
     const sanitizedFileName = getSanitizedFileName(_rpcFile.name)
 
-    const fsFileRelativePath = newFsFileRelativePath(sanitizedFileName)
+    const fsFileRelativePath = newFsFileRelativePath(sanitizedFileName, shell.now())
     const storeInDir = resolve(storeBaseFsFolder, ...fsFileRelativePath.slice(0, -1))
 
     await mkdir(storeInDir, { recursive: true })
@@ -144,7 +144,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
       logicalPath,
       directAccessId,
       logicalPathLength: logicalPath.length,
-      created: new Date().toISOString(),
+      created: shell.now().toISOString(),
     }
 
     // // console.log('create', { partRawDbRecord })
@@ -261,8 +261,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
   }
 }
 
-function newFsFileRelativePath(filename: string) {
-  const now = new Date()
+function newFsFileRelativePath(filename: string, now: Date) {
   return [
     String(now.getFullYear()),
     String(now.getMonth() + 1).padStart(2, '0'),
