@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import type { SchemaOf } from 'yup'
 import { object, string } from 'yup'
-import { AdminSettingsItem } from '../AdminSettings.js'
+import type { AdminSettingsItem } from '../AdminSettings.js'
 import type { GeneralProps } from './General.js'
 import { General, GeneralMenu } from './General.js'
 
