@@ -76,11 +76,16 @@ export async function confirm({ confirmToken }: { confirmToken: JwtToken }) {
     return { success: false, msg: 'email registered' } as const
   }
 
-  return createUser({
+  const createResponse = await createSimpleEmailUser({
     displayName,
     email,
     hashedPassword: password,
   })
+
+  createResponse.sendHttpJwtToken?.()
+
+  return createResponse
+
   async function getConfirmEmailPayload() {
     const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ConfirmEmailPayload>(confirmToken)
     if (!jwtVerifyResp) {
@@ -93,26 +98,31 @@ export async function confirm({ confirmToken }: { confirmToken: JwtToken }) {
   }
 }
 
-export async function createUser({
+export async function createSimpleEmailUser({
   displayName,
   email,
   hashedPassword,
+  publisher = false,
+  isAdmin = false,
 }: {
   displayName: string
   email: string
   hashedPassword: string
+  publisher?: boolean
+  isAdmin?: boolean
 }) {
   const createNewWebUserResp = await shell.call(createWebUser)({
-    displayName: displayName,
-    isAdmin: false,
+    displayName,
+    isAdmin,
+    publisher,
     contacts: { email },
   })
 
   if (!createNewWebUserResp) {
     return { success: false, msg: 'could not create new WebUser' } as const
   }
+
   const { jwtToken, newWebUser, newProfile } = createNewWebUserResp
-  shell.call(sendWebUserTokenCookie)(jwtToken)
 
   const emailPwdUser = await store.create({
     email,
@@ -120,7 +130,15 @@ export async function createUser({
     webUserKey: newWebUser._key,
   })
 
-  return { success: true, emailPwdUser, newWebUser, newProfile } as const
+  return {
+    success: true,
+    emailPwdUser,
+    newWebUser,
+    newProfile,
+    sendHttpJwtToken() {
+      shell.call(sendWebUserTokenCookie)(jwtToken)
+    },
+  } as const
 }
 export async function changePassword(
   { _key, newPassword }: { newPassword: string; _key: string },

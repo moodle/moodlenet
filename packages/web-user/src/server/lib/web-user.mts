@@ -146,6 +146,7 @@ export async function getWebUserByProfileKey({
 export async function createWebUser(createRequest: CreateRequest) {
   const { contacts, isAdmin, ...profileData } = createRequest
   const createData: ProfileDataType = {
+    publisher: false,
     aboutMe: '',
     avatarImage: undefined,
     backgroundImage: undefined,

@@ -1,4 +1,4 @@
-import { createUser } from '@moodlenet/simple-email-auth/server'
+import { createSimpleEmailUser } from '@moodlenet/simple-email-auth/server'
 import {
   editProfile,
   setProfileAvatar,
@@ -63,10 +63,11 @@ export async function user_profiles() {
     const { newProfile, newWebUser } = await shell.initiateCall(async () => {
       shell.setNow(v2_profile._created)
 
-      const createEmailUserResp = await createUser({
+      const createEmailUserResp = await createSimpleEmailUser({
         displayName: v2_profile.name,
         email,
         hashedPassword: v2_user.password,
+        publisher: v2_profile._published,
       })
       assert(createEmailUserResp.success)
       return createEmailUserResp
@@ -75,6 +76,7 @@ export async function user_profiles() {
     await initiateCallForProfileKey({
       _id: newProfile._id,
       async exec() {
+        shell.setNow(v2_profile._edited)
         await editProfile(newProfile._key, {
           aboutMe: v2_profile.description,
           siteUrl: v2_profile.siteUrl,
