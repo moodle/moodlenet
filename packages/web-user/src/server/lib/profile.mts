@@ -105,7 +105,7 @@ export async function entityFeatureAction({
       },
     },
   )
-  if (profileCreatorIdentifiers) {
+  if (feature === 'like' && profileCreatorIdentifiers) {
     const delta = adding ? '+ 1' : '- 1'
     await shell.initiateCall(async () => {
       await setPkgCurrentUser()

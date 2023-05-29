@@ -27,15 +27,33 @@ export async function featured_entities() {
     const [v2_profile_type, v2_profile_key] = v2_profile_id.split('/')
     assert(v2_profile_type && v2_profile_key)
     const knownFeaturedEntityItems = await getKnownFeaturedEntitiesFor(v2_profile_key)
+
+    const kudosCursor = await v2_DB_ContentGraph.query<{ kudos: number }>({
+      query: `
+    for lk in Likes
+      filter lk._fromType == "Profile"
+      let res = Document(lk._to)
+      let resCr = Document(CONCAT(res._creator._type, "/", res._creator._permId))
+      filter @targetProfileId == resCr._id 
+      collect with count into kudos 
+
+      return {
+        kudos,
+      }`,
+      bindVars: { targetProfileId: v2_profile_id },
+    })
+
+    const { kudos } = (await kudosCursor.next()) ?? { kudos: 0 }
     await initiateCallForProfileKey({
       _id: v3ProfileId,
       async exec() {
         await sysEntitiesDB.query({
-          query: `UPDATE PARSE_IDENTIFIER(@v3ProfileId).key WITH { knownFeaturedEntities: UNIQUE(@knownFeaturedEntityItems) } IN @@ProfileCollection`,
+          query: `UPDATE PARSE_IDENTIFIER(@v3ProfileId).key WITH { kudos:@kudos, knownFeaturedEntities: UNIQUE(@knownFeaturedEntityItems) } IN @@ProfileCollection`,
           bindVars: {
             v3ProfileId,
             '@ProfileCollection': Profile.collection.name,
             knownFeaturedEntityItems,
+            kudos,
           },
         })
       },
