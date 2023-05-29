@@ -66,7 +66,15 @@ export async function user_resources() {
             title: v2_resource.name,
             published: v2_resource._published,
             content: null, //{ kind: 'link', url: '' },
-            image: null, //{ kind: 'file', directAccessId: '' },
+            image:
+              v2_resource.image?.ext === true
+                ? {
+                    kind: 'url',
+                    url: v2_resource.image.location,
+                    credits: v2_resource.image.credits,
+                  }
+                : null,
+
             month,
             year,
             ...featsMap,
@@ -82,14 +90,12 @@ export async function user_resources() {
 
           resourceContent && (await setResourceContent(newResource._key, resourceContent))
 
-          if (v2_resource.image) {
-            if (v2_resource.image.ext === false) {
-              const imageFile = await getRpcFileByV2AssetLocation(
-                v2_resource.image.location,
-                `for image of resource id v2:${v2_resource._id} v3:${newResource._id}`,
-              )
-              imageFile && (await setResourceImage(newResource._key, imageFile))
-            }
+          if (v2_resource.image?.ext === false) {
+            const imageFile = await getRpcFileByV2AssetLocation(
+              v2_resource.image.location,
+              `for image of resource id v2:${v2_resource._id} v3:${newResource._id}`,
+            )
+            imageFile && (await setResourceImage(newResource._key, imageFile))
           }
 
           Resource_v2v3_IdMapping[v2_resource._id] = newResource._id

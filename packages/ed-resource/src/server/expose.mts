@@ -11,7 +11,8 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { publicFiles, publicFilesHttp, resourceFiles } from './init/fs.mjs'
+import { publicFiles, resourceFiles } from './init/fs.mjs'
+import { getImageUrl } from './lib.mjs'
 import {
   createResource,
   delResource,
@@ -24,7 +25,7 @@ import {
   RESOURCE_DOWNLOAD_ENDPOINT,
   setResourceContent,
   setResourceImage,
-} from './lib.mjs'
+} from './services.mjs'
 
 export const expose = await shell.expose<ResourceExposeType>({
   rpc: {
@@ -52,9 +53,7 @@ export const expose = await shell.expose<ResourceExposeType>({
         if (!found) {
           return
         }
-        const imageUrl = found.entity.image
-          ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
-          : ''
+        const imageUrl = found.entity.image && getImageUrl(found.entity.image)
 
         const contentUrl = !found.entity.content
           ? null
@@ -220,8 +219,8 @@ export const expose = await shell.expose<ResourceExposeType>({
           throw RpcStatus('Unauthorized')
         }
         const patched = await setResourceImage(_key, uploadedRpcFile)
-        const directAccessId = patched?.entity.image?.directAccessId ?? null
-        return directAccessId && publicFilesHttp.getFileUrl({ directAccessId })
+        const imageUrl = patched?.entity.image && getImageUrl(patched?.entity.image)
+        return imageUrl ?? null
       },
       bodyWithFiles: {
         fields: {

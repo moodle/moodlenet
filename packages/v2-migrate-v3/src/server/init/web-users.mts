@@ -23,14 +23,14 @@ export async function user_profiles() {
 
   const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile>(
     `
-      FOR p in Profile 
+      FOR p in Profile
       RETURN p
     `,
     // `
     // FOR pp IN UNION_DISTINCT(
     //   FOR p in Profile
     //     FILTER p._published
-    //     LIMIT 0, 10
+    //     LIMIT 0, 50
     //   RETURN p
     //   ,[
     //       Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alec */),

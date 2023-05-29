@@ -74,19 +74,24 @@ export async function user_collections() {
             description: v2_collection.description,
             title: v2_collection.name,
             published: v2_collection._published,
-            image: null, // { kind: 'file', directAccessId: '' },
+            image:
+              v2_collection.image?.ext === true
+                ? {
+                    kind: 'url',
+                    url: v2_collection.image.location,
+                    credits: v2_collection.image.credits,
+                  }
+                : null,
             resourceList,
           })
           assert(newCollection)
 
-          if (v2_collection.image) {
-            if (v2_collection.image.ext === false) {
-              const imageFile = await getRpcFileByV2AssetLocation(
-                v2_collection.image.location,
-                `for image of collection id v2:${v2_collection._id} v3:${newCollection._id}`,
-              )
-              imageFile && (await setCollectionImage(newCollection._key, imageFile))
-            }
+          if (v2_collection.image?.ext === false) {
+            const imageFile = await getRpcFileByV2AssetLocation(
+              v2_collection.image.location,
+              `for image of collection id v2:${v2_collection._id} v3:${newCollection._id}`,
+            )
+            imageFile && (await setCollectionImage(newCollection._key, imageFile))
           }
 
           Collection_v2v3_IdMapping[v2_collection._id] = newCollection._id
