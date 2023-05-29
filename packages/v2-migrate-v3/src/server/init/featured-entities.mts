@@ -12,7 +12,7 @@ import { Profile_v2v3_IdMapping } from './web-users.mjs'
 export async function featured_entities() {
   const BAR = new cliProgress.SingleBar(
     {
-      format: `{bar} {percentage}% | {value}/{total} {eta_formatted} | featured-entities for {v3ProfileId}`,
+      format: `{bar} {percentage}% | {value}/{total} {duration_formatted}/{eta_formatted} | featured-entities for {v3ProfileId}`,
     },
     cliProgress.Presets.shades_grey,
   )
