@@ -16,6 +16,7 @@ export type ProfileDataType = {
   avatarImage: Image | undefined | null
   knownFeaturedEntities: KnownFeaturedEntityItem[]
   kudos: number
+  publisher: boolean
 }
 type Image = ImageUploaded
 export type ImageUploaded = { kind: 'file'; directAccessId: string }
