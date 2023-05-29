@@ -1,14 +1,13 @@
 import { Collection } from '@moodlenet/collection/server'
 import { RpcStatus } from '@moodlenet/core'
 import { Resource } from '@moodlenet/ed-resource/server'
-import { webImageResizer } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import { isCreatorOfCurrentEntity, queryEntities, toaql } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
 import { WebUserEntitiesTools } from './entities.mjs'
-import { publicFiles, publicFilesHttp } from './init/fs.mjs'
+import { publicFilesHttp } from './init/fs.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
@@ -22,6 +21,8 @@ import {
   getProfileAvatarLogicalFilename,
   getProfileImageLogicalFilename,
   getProfileRecord,
+  setProfileAvatar,
+  setProfileBackgroundImage,
 } from './lib/profile.mjs'
 import {
   getWebUser,
@@ -166,23 +167,13 @@ export const expose = await shell.expose<WebUserExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const avatarLogicalFilename = getProfileAvatarLogicalFilename(_key)
-        if (!uploadedRpcFile) {
-          await publicFiles.del(avatarLogicalFilename)
-          await editProfile(_key, {
-            avatarImage: null,
-          })
+        const patched = await setProfileAvatar({ _key, rpcFile: uploadedRpcFile })
+        if (!patched?.entity.avatarImage) {
           return null
         }
-
-        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
-
-        const { directAccessId } = await publicFiles.store(avatarLogicalFilename, resizedRpcFile)
-
-        await editProfile(_key, {
-          avatarImage: { kind: 'file', directAccessId },
+        return publicFilesHttp.getFileUrl({
+          directAccessId: patched.entity.avatarImage.directAccessId,
         })
-        return publicFilesHttp.getFileUrl({ directAccessId })
       },
       bodyWithFiles: {
         fields: {
@@ -198,23 +189,14 @@ export const expose = await shell.expose<WebUserExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const imageLogicalFilename = getProfileImageLogicalFilename(_key)
-        if (!uploadedRpcFile) {
-          await publicFiles.del(imageLogicalFilename)
-          await editProfile(_key, {
-            backgroundImage: null,
-          })
+
+        const patched = await setProfileBackgroundImage({ _key, rpcFile: uploadedRpcFile })
+        if (!patched?.entity.backgroundImage) {
           return null
         }
-
-        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
-
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
-
-        await editProfile(_key, {
-          backgroundImage: { kind: 'file', directAccessId },
+        return publicFilesHttp.getFileUrl({
+          directAccessId: patched.entity.backgroundImage.directAccessId,
         })
-        return publicFilesHttp.getFileUrl({ directAccessId })
       },
       bodyWithFiles: {
         fields: {

@@ -1,5 +1,7 @@
 import { Collection } from '@moodlenet/collection/server'
 import { Resource } from '@moodlenet/ed-resource/server'
+import type { RpcFile } from '@moodlenet/core'
+import { webImageResizer } from '@moodlenet/react-app/server'
 import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
@@ -13,6 +15,7 @@ import {
 import assert from 'assert'
 import type { KnownEntityFeature, KnownEntityType } from '../../common/types.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
+import { publicFiles } from '../init/fs.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType, ProfileEntity } from '../types.mjs'
@@ -174,6 +177,59 @@ export async function getEntityFeatureCount({
   return cursor.next()
 }
 
+export async function setProfileAvatar({
+  _key,
+  rpcFile,
+}: {
+  _key: string
+  rpcFile: RpcFile | null | undefined
+}) {
+  const avatarLogicalFilename = getProfileAvatarLogicalFilename(_key)
+  if (!rpcFile) {
+    await publicFiles.del(avatarLogicalFilename)
+    await editProfile(_key, {
+      avatarImage: null,
+    })
+    return null
+  }
+
+  const resizedRpcFile = await webImageResizer(rpcFile, 'image')
+
+  const { directAccessId } = await publicFiles.store(avatarLogicalFilename, resizedRpcFile)
+
+  const patched = await editProfile(_key, {
+    avatarImage: { kind: 'file', directAccessId },
+  })
+
+  return patched
+}
+
+export async function setProfileBackgroundImage({
+  _key,
+  rpcFile,
+}: {
+  _key: string
+  rpcFile: RpcFile | null | undefined
+}) {
+  const imageLogicalFilename = getProfileImageLogicalFilename(_key)
+  if (!rpcFile) {
+    await publicFiles.del(imageLogicalFilename)
+    await editProfile(_key, {
+      backgroundImage: null,
+    })
+    return null
+  }
+
+  const resizedRpcFile = await webImageResizer(rpcFile, 'image')
+
+  const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+
+  const patched = await editProfile(_key, {
+    backgroundImage: { kind: 'file', directAccessId },
+  })
+
+  return patched
+}
 export function getProfileImageLogicalFilename(profileKey: string) {
   return `profile-image/${profileKey}`
 }
