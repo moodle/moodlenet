@@ -2,30 +2,18 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import {
   Card,
-  InputTextField,
   Modal,
   PrimaryButton,
   SecondaryButton,
   Snackbar,
   SnackbarStack,
 } from '@moodlenet/component-library'
-import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useState } from 'react'
 import './General.scss'
 
-export type GeneralSettingsData = {
-  email: string
-  password: string
-}
-
 export type GeneralProps = {
-  data: GeneralSettingsData
-  saveSuccess: boolean
   mainColumnItems: (AddonItem | null)[]
-  emailChangedSuccess: boolean
-  passwordChangedSuccess: boolean
-  editData: (values: GeneralSettingsData) => void
   deleteAccount: () => void
   deleteAccountSuccess: boolean
 }
@@ -33,30 +21,10 @@ export type GeneralProps = {
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
 export const General: FC<GeneralProps> = ({
-  data,
-  editData,
   deleteAccount,
   mainColumnItems,
   deleteAccountSuccess,
-  emailChangedSuccess,
-  passwordChangedSuccess,
 }) => {
-  const form = useFormik<GeneralSettingsData>({
-    initialValues: data,
-    // validationSchema: resourceValidationSchema,
-    onSubmit: values => {
-      return editData(values)
-    },
-  })
-
-  const canSubmit =
-    form.dirty &&
-    form.isValid &&
-    !form.isSubmitting &&
-    !form.isValidating &&
-    (form.values.email !== data.email || form.values.password !== data.password)
-
-  const shouldShowErrors = !!form.submitCount
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
 
   const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
@@ -66,10 +34,6 @@ export const General: FC<GeneralProps> = ({
   const snackbars = (
     <SnackbarStack
       snackbarList={[
-        emailChangedSuccess ? (
-          <Snackbar type="success">Check your old email inbox to continue</Snackbar>
-        ) : null,
-        passwordChangedSuccess ? <Snackbar type="success">Password changed</Snackbar> : null,
         deleteAccountSuccess ? (
           <Snackbar type="success">Check your email to confirm the deletion</Snackbar>
         ) : null,
@@ -115,47 +79,9 @@ export const General: FC<GeneralProps> = ({
           {/* <Trans> */}
           General
           {/* </Trans> */}
-          <PrimaryButton
-            onClick={() => form.submitForm()}
-            disabled={!canSubmit}
-            className="save-btn"
-          >
-            Save
-          </PrimaryButton>
         </div>
       </Card>
       {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      <Card className="column">
-        <div className="parameter">
-          <div className="name">Email</div>
-          <div className="actions">
-            <InputTextField
-              className="email"
-              placeholder="Enter your account email"
-              defaultValue={form.values.email}
-              onChange={form.handleChange}
-              name="email"
-              key="email"
-              error={shouldShowErrors && form.errors.email}
-            />
-          </div>
-        </div>
-        <div className="parameter">
-          <div className="name">Password</div>
-          <div className="actions">
-            <InputTextField
-              className="password"
-              placeholder="Enter your new password"
-              defaultValue={form.values.password}
-              onChange={form.handleChange}
-              type="password"
-              name="password"
-              key="password"
-              error={shouldShowErrors && form.errors.password}
-            />
-          </div>
-        </div>
-      </Card>
       <Card className="column">
         <div className="parameter">
           <div className="name">More</div>
