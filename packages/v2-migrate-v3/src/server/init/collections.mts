@@ -1,6 +1,7 @@
 import { createCollection, setCollectionImage } from '@moodlenet/collection/server'
 import assert from 'assert'
 import cliProgress from 'cli-progress'
+import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
 import { Resource_v2v3_IdMapping } from './resources.mjs'
 import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
@@ -68,7 +69,7 @@ export async function user_collections() {
               return { _key: v3_resKey }
             })
             .filter(Boolean)
-
+          shell.setNow(v2_collection._created)
           const newCollection = await createCollection({
             description: v2_collection.description,
             title: v2_collection.name,
