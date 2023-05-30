@@ -95,7 +95,7 @@ export async function user_resources() {
               v2_resource.image.location,
               `for image of resource id v2:${v2_resource._id} v3:${newResource._id}`,
             )
-            imageFile && (await setResourceImage(newResource._key, imageFile))
+            imageFile && (await setResourceImage(newResource._key, imageFile, { noResize: true }))
           }
 
           Resource_v2v3_IdMapping[v2_resource._id] = newResource._id

@@ -91,7 +91,8 @@ export async function user_collections() {
               v2_collection.image.location,
               `for image of collection id v2:${v2_collection._id} v3:${newCollection._id}`,
             )
-            imageFile && (await setCollectionImage(newCollection._key, imageFile))
+            imageFile &&
+              (await setCollectionImage(newCollection._key, imageFile, { noResize: true }))
           }
 
           Collection_v2v3_IdMapping[v2_collection._id] = newCollection._id

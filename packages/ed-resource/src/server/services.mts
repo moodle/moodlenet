@@ -71,7 +71,13 @@ export async function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcF
   return `${myRpcBaseUrl}${resourcePath}`
 }
 
-export async function setResourceImage(_key: string, image: RpcFile | null | undefined) {
+export async function setResourceImage(
+  _key: string,
+  image: RpcFile | null | undefined,
+  opts?: {
+    noResize?: boolean
+  },
+) {
   const imageLogicalFilename = getImageLogicalFilename(_key)
   if (!image) {
     await publicFiles.del(imageLogicalFilename)
@@ -80,7 +86,7 @@ export async function setResourceImage(_key: string, image: RpcFile | null | und
     })
     return null
   }
-  const resizedRpcFile = await webImageResizer(image, 'image')
+  const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
 
   const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 

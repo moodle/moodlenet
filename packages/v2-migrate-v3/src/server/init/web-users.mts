@@ -85,25 +85,31 @@ export async function user_profiles() {
         })
 
         if (v2_profile.avatar?.ext === false) {
-          await setProfileAvatar({
-            _key: newProfile._key,
-            rpcFile: await getRpcFileByV2AssetLocation(
-              v2_profile.avatar.location,
-              `for profile avatar
+          await setProfileAvatar(
+            {
+              _key: newProfile._key,
+              rpcFile: await getRpcFileByV2AssetLocation(
+                v2_profile.avatar.location,
+                `for profile avatar
           id v2:${v2_profile._id} v3:${newProfile._id}`,
-            ),
-          })
+              ),
+            },
+            { noResize: true },
+          )
         }
 
         if (v2_profile.image?.ext === false) {
-          await setProfileBackgroundImage({
-            _key: newProfile._key,
-            rpcFile: await getRpcFileByV2AssetLocation(
-              v2_profile.image.location,
-              `for profile background image
+          await setProfileBackgroundImage(
+            {
+              _key: newProfile._key,
+              rpcFile: await getRpcFileByV2AssetLocation(
+                v2_profile.image.location,
+                `for profile background image
           id v2:${v2_profile._id} v3:${newProfile._id}`,
-            ),
-          })
+              ),
+            },
+            { noResize: true },
+          )
         }
       },
     })
