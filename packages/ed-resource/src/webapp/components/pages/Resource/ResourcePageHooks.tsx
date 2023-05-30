@@ -1,12 +1,10 @@
-import type { AddonItem, OptionItemProp } from '@moodlenet/component-library'
+import type { AddonItem, AddonItemNoKey, OptionItemProp } from '@moodlenet/component-library'
 import { createHookPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import { maxUploadSize } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import type { ResourceProps } from './Resource.js'
-
-export type ResourcePageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 
 export const collectionTextOptionProps: OptionItemProp[] = [
   { label: 'Education', value: 'Education' },
@@ -17,9 +15,18 @@ export const collectionTextOptionProps: OptionItemProp[] = [
   { label: 'Sociology', value: 'Sociology' },
   { label: 'English Literature', value: 'English Literature' },
 ]
-export const ResourcePagePlugins = createHookPlugin<{
-  generalAction: ResourcePageGeneralActionsAddonItem
-}>({ generalAction: null })
+
+export type ResourcePageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
+
+export const ResourcePagePlugins = createHookPlugin<
+  {
+    generalAction: AddonItemNoKey
+    topRightHeaderItems: AddonItemNoKey
+  },
+  {
+    resourceKey: string
+  }
+>({ generalAction: null, topRightHeaderItems: null })
 
 type ResourcePageHookArg = {
   resourceKey: string
@@ -29,7 +36,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const mainLayoutProps = useMainLayoutProps()
   const _baseProps = useResourceBaseProps({ resourceKey })
 
-  const [addons] = ResourcePagePlugins.useHookPlugin()
+  const [addons] = ResourcePagePlugins.useHookPlugin({ resourceKey })
 
   return useMemo<ResourceProps | null>((): ResourceProps | null => {
     if (!_baseProps) return null
@@ -40,7 +47,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
       mainColumnItems: [],
       headerColumnItems: [],
       topLeftHeaderItems: [],
-      topRightHeaderItems: [],
+      topRightHeaderItems: addons.topRightHeaderItems,
       moreButtonItems: [],
       footerRowItems: [],
     }
@@ -62,5 +69,5 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
       fileMaxSize: maxUploadSize,
       isSaving,
     }
-  }, [_baseProps, mainLayoutProps, addons.generalAction])
+  }, [_baseProps, mainLayoutProps, addons.topRightHeaderItems, addons.generalAction])
 }

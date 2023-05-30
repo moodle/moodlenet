@@ -176,9 +176,3 @@ export function useNeedsWebUserLogin(): {
       }
     : null
 }
-
-// const STATE_SYM = Symbol('NeedsWebUserLogin state')
-// type State = {
-//   _: typeof STATE_SYM
-//   redirectToAfterLogin: string
-// }
