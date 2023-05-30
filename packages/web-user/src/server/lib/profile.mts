@@ -1,9 +1,12 @@
+import { Collection } from '@moodlenet/collection/server'
+import { Resource } from '@moodlenet/ed-resource/server'
 import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
   currentEntityVar,
   getEntity,
   patchEntity,
+  queryEntities,
   setPkgCurrentUser,
   sysEntitiesDB,
 } from '@moodlenet/system-entities/server'
@@ -177,4 +180,19 @@ export function getProfileImageLogicalFilename(profileKey: string) {
 
 export function getProfileAvatarLogicalFilename(profileKey: string) {
   return `profile-avatar/${profileKey}`
+}
+
+export async function getLandingPageList(entity: 'collections' | 'profiles' | 'resources') {
+  const entityClass = {
+    collections: Collection,
+    profiles: Profile,
+    resources: Resource,
+  }[entity].entityClass
+
+  const cursor = await shell.call(queryEntities)(entityClass, {
+    limit: 6,
+    preAccessBody: 'SORT RAND()',
+  })
+
+  return cursor.all()
 }
