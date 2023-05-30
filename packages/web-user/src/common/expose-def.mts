@@ -57,5 +57,12 @@ export type WebUserExposeType = PkgExposeDef<{
       params: { profileKey: string },
     ): Promise<void>
     // --
+    // LANDING
+    'webapp/landing/get-list/:entityType(collections|resources|profiles)'(
+      body: void,
+      params: {
+        entityType: 'collections' | 'resources' | 'profiles'
+      },
+    ): Promise<{ _key: string }[]>
   }
 }>
