@@ -18,6 +18,7 @@ import {
   entityFeatureAction,
   getCurrentProfile,
   getEntityFeatureCount,
+  getLandingPageList,
   getProfileAvatarLogicalFilename,
   getProfileImageLogicalFilename,
   getProfileRecord,
@@ -269,6 +270,13 @@ export const expose = await shell.expose<WebUserExposeType>({
           return
         },
       },
+    'webapp/landing/get-list/:entityType(collections|resources|profiles)': {
+      guard: () => void 0,
+      async fn(_, { entityType }) {
+        const entities = await getLandingPageList(entityType)
+        return entities.map(({ entity: { _key } }) => ({ _key }))
+      },
+    },
   },
 })
 

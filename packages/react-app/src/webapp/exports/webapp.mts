@@ -21,6 +21,7 @@ export {
   AdminSettingsPagePlugins,
   type AdminSettingsSectionItem,
 } from '../ui/components/pages/AdminSettings/Hook/AdminSettingsHook.js'
+export { LandingHookPlugin } from '../ui/components/pages/Landing/LandingHook.mjs'
 export {
   usePkgAddOns,
   type PkgAddOn,
