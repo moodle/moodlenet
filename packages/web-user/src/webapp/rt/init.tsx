@@ -1,10 +1,14 @@
-import { BrowserCollectionList } from '@moodlenet/collection/ui'
+import { BrowserCollectionList, LandingCollectionList } from '@moodlenet/collection/ui'
 import { CollectionCardPlugins, CollectionPagePlugins } from '@moodlenet/collection/webapp'
+import type { AddonItemNoKey } from '@moodlenet/component-library'
+import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { ResourceCardPlugins, ResourcePagePlugins } from '@moodlenet/ed-resource/webapp'
 import type { BrowserMainColumnItemBase } from '@moodlenet/react-app/ui'
+import type { PkgAddOns } from '@moodlenet/react-app/webapp'
 import {
   AdminSettingsPagePlugins,
   HeaderPlugins,
+  LandingHookPlugin,
   registerAppRoutes,
   registerMainAppPluginHook,
   type MainAppPluginHookResult,
@@ -20,6 +24,8 @@ import {
 } from './menus/menuAddons.js'
 import { BookmarksPagePlugin } from './page/bookmarks/BookmarksPageHook.mjs'
 import { useMyBookmarkedBrowserCollectionListDataProps as useBrowseBookCollection } from './page/bookmarks/MyBookmarkedBrowserCollectionListHook.mjs'
+import { useMyLandingPageCollectionListDataProps } from './page/my-landing-page/MyLandingPageCollectionListHook.mjs'
+import { useMyLandingPageResourceListDataProps } from './page/my-landing-page/MyLandingPageResourceListHook.mjs'
 import { pkgRoutes } from './routes.js'
 import './shell.mjs'
 import { SmallFollowButtonContainer } from './social-actions/SmallFollowButtonContainer.js'
@@ -40,6 +46,24 @@ const { useSocialActions } = getUseSocialActions(socialActions, addonsByEnity)
 
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))
+
+const landingPageMainColumnItems: PkgAddOns<AddonItemNoKey> = {
+  collectionList: {
+    Item: () => {
+      const props = useMyLandingPageCollectionListDataProps()
+      return <LandingCollectionList {...props} />
+    },
+  },
+  resourceList: {
+    Item: () => {
+      const props = useMyLandingPageResourceListDataProps()
+      return <LandingResourceList {...props} />
+    },
+  },
+}
+LandingHookPlugin.register(function useLandingPagePlugin({ useMainColumnItems }) {
+  useMainColumnItems(landingPageMainColumnItems)
+})
 
 HeaderPlugins.register(({ useRightItems }) =>
   useRightItems(useSwichAddonsByAuth(menuHeaderButtonsAuthAddons)),
