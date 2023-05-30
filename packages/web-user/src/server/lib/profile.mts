@@ -177,13 +177,18 @@ export async function getEntityFeatureCount({
   return cursor.next()
 }
 
-export async function setProfileAvatar({
-  _key,
-  rpcFile,
-}: {
-  _key: string
-  rpcFile: RpcFile | null | undefined
-}) {
+export async function setProfileAvatar(
+  {
+    _key,
+    rpcFile,
+  }: {
+    _key: string
+    rpcFile: RpcFile | null | undefined
+  },
+  opts?: {
+    noResize?: boolean
+  },
+) {
   const avatarLogicalFilename = getProfileAvatarLogicalFilename(_key)
   if (!rpcFile) {
     await publicFiles.del(avatarLogicalFilename)
@@ -193,7 +198,7 @@ export async function setProfileAvatar({
     return null
   }
 
-  const resizedRpcFile = await webImageResizer(rpcFile, 'image')
+  const resizedRpcFile = opts?.noResize ? rpcFile : await webImageResizer(rpcFile, 'icon')
 
   const { directAccessId } = await publicFiles.store(avatarLogicalFilename, resizedRpcFile)
 
@@ -204,13 +209,18 @@ export async function setProfileAvatar({
   return patched
 }
 
-export async function setProfileBackgroundImage({
-  _key,
-  rpcFile,
-}: {
-  _key: string
-  rpcFile: RpcFile | null | undefined
-}) {
+export async function setProfileBackgroundImage(
+  {
+    _key,
+    rpcFile,
+  }: {
+    _key: string
+    rpcFile: RpcFile | null | undefined
+  },
+  opts?: {
+    noResize?: boolean
+  },
+) {
   const imageLogicalFilename = getProfileImageLogicalFilename(_key)
   if (!rpcFile) {
     await publicFiles.del(imageLogicalFilename)
@@ -220,7 +230,7 @@ export async function setProfileBackgroundImage({
     return null
   }
 
-  const resizedRpcFile = await webImageResizer(rpcFile, 'image')
+  const resizedRpcFile = opts?.noResize ? rpcFile : await webImageResizer(rpcFile, 'image')
 
   const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 

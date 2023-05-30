@@ -88,7 +88,13 @@ export function getImageLogicalFilename(collectionKey: string) {
   return `image/${collectionKey}`
 }
 
-export async function setCollectionImage(_key: string, image: RpcFile | null | undefined) {
+export async function setCollectionImage(
+  _key: string,
+  image: RpcFile | null | undefined,
+  opts?: {
+    noResize?: boolean
+  },
+) {
   const imageLogicalFilename = getImageLogicalFilename(_key)
   if (!image) {
     await publicFiles.del(imageLogicalFilename)
@@ -97,7 +103,7 @@ export async function setCollectionImage(_key: string, image: RpcFile | null | u
     })
     return null
   }
-  const resizedRpcFile = await webImageResizer(image, 'image')
+  const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
 
   const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 
