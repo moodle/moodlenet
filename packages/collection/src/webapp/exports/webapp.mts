@@ -4,4 +4,5 @@ export {
   CollectionCardPlugins,
   useCollectionCardProps,
 } from '../components/organisms/CollectionCard/CollectionCardHooks.js'
+export { CollectionPagePlugins } from '../components/pages/Collection/CollectionPageHooks.js'
 export { CollectionEntitiesTools } from '../entities.mjs'
