@@ -6,7 +6,7 @@ export type ResourceDataType = {
   title: string
   description: string
   content: null | { kind: 'file'; fsItem: FsItem } | { kind: 'link'; url: string }
-  image: null | { kind: 'file'; directAccessId: string } // | { kind: 'url'; url: string }
+  image: null | Image
   published: boolean
   license: string
   subject: string
@@ -16,3 +16,12 @@ export type ResourceDataType = {
   year: string
   type: string
 }
+
+export type Credits = {
+  owner: { url: string; name: string }
+  provider?: { name: string; url: string }
+}
+
+export type Image = ImageUploaded | ImageUrl
+export type ImageUploaded = { kind: 'file'; directAccessId: string }
+export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }

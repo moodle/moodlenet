@@ -1,6 +1,7 @@
 import assert from 'assert'
 import type { DocumentSelector } from '../../../arangodb/dist/server/exports.mjs'
 import { db, EmailPwdUserCollection } from './init/arangodb.mjs'
+import { shell } from './shell.mjs'
 import type { Email, EmailPwdUser, EmailPwdUserData, EmailPwdUserDoc } from './store/types.mjs'
 
 // await arangoPkg.api('ensureCollections')({ defs: { User: { kind: 'node' } } })
@@ -35,7 +36,7 @@ export async function create(
 ): Promise<EmailPwdUser> {
   const newUserData: EmailPwdUserData = {
     ..._newUserData,
-    created: new Date().toISOString(),
+    created: shell.now().toISOString(),
   }
   const { new: oldUserDoc } = await EmailPwdUserCollection.save(newUserData, { returnNew: true })
   const newUser = _user(oldUserDoc)

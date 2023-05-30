@@ -1,3 +1,4 @@
+export type { now, setNow } from './async-context/lib.mjs'
 export * from './async-context/types.mjs'
 export { pkgDepGraph } from './ignite.mjs'
 export {

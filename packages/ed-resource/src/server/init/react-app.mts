@@ -2,9 +2,9 @@ import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import type { MyWebDeps } from '../../common/types.mjs'
 import { matchResourceHomePageRoutePathKey } from '../../common/webapp-routes.mjs'
 import { expose as me } from '../expose.mjs'
-import { getResource } from '../lib.mjs'
+import { getImageUrl } from '../lib.mjs'
+import { getResource } from '../services.mjs'
 import { shell } from '../shell.mjs'
-import { publicFilesHttp } from './fs.mjs'
 
 shell.call(plugin)<MyWebDeps>({
   initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
@@ -20,9 +20,8 @@ shell.call(registerOpenGraphProvider)({
     if (!resourceRecord) {
       return
     }
-    const image = resourceRecord.entity.image
-      ? publicFilesHttp.getFileUrl({ directAccessId: resourceRecord.entity.image.directAccessId })
-      : ''
+    const image = resourceRecord.entity.image ? getImageUrl(resourceRecord.entity.image) : undefined
+
     return {
       description: resourceRecord.entity.description,
       image: image,

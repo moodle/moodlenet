@@ -41,6 +41,23 @@ export function getCallInitiator() {
   return initiator
 }
 
+export function setNow(now: Date | number) {
+  getSetCoreAsyncContext.set(coreCtx => {
+    const deltaNow = Number(now) - Number(new Date())
+    return {
+      ...coreCtx,
+      deltaNow,
+    }
+  })
+}
+
+export function now() {
+  const realNowTs = Number(new Date())
+  const deltaNow = getSetCoreAsyncContext.get()?.deltaNow ?? 0
+  const now = new Date(realNowTs + deltaNow)
+  return now
+}
+
 // export function pkgInitiateCall<R>(pkgId: PkgIdentifier, exec: () => Promise<R>): Promise<R> {
 //   return asyncContext.run({}, () => {
 //     getSetCoreAsyncContext.set(_ => ({ ..._, initiator: { pkgId } }))

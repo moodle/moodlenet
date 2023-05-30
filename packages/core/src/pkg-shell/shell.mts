@@ -5,7 +5,9 @@ import {
   getCallInitiator,
   getSetCoreAsyncContext,
   mainAsyncContext,
+  now,
   pkgAsyncContext,
+  setNow,
 } from '../async-context/lib.mjs'
 import { getConfig, pkgDepGraph } from '../ignite.mjs'
 import { coreConfigs } from '../main/env.mjs'
@@ -47,6 +49,8 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
     call,
     callers,
     pkgDepGraph,
+    now,
+    setNow,
   }
 
   function initiateCall<R>(exec: () => R, forcewipeout = false): R {

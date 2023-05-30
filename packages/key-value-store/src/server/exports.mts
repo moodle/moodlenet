@@ -32,7 +32,7 @@ export default async function kvStoreFactory<TMap extends KVSTypeMap>(
       return unset(type, key)
     }
     await KVCollection.save(
-      { _key: fullKeyOf(type, key), value, at: new Date().toISOString() },
+      { _key: fullKeyOf(type, key), value, at: shell.now().toISOString() },
 
       { overwriteMode: 'update' },
     )

@@ -12,16 +12,15 @@ export type ProfileDataType = {
   organizationName: string | undefined | null
   location: string | undefined | null
   siteUrl: string | undefined | null
-  backgroundImage: ImageField | undefined | null
-  avatarImage: ImageField | undefined | null
+  backgroundImage: Image | undefined | null
+  avatarImage: Image | undefined | null
   knownFeaturedEntities: KnownFeaturedEntityItem[]
   kudos: number
+  publisher: boolean
 }
-type ImageField =
-  | { kind: 'file'; directAccessId: string }
-  // | { kind: 'url'; url: string }
-  | undefined
-  | null
+type Image = ImageUploaded
+export type ImageUploaded = { kind: 'file'; directAccessId: string }
+// export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
 // export type Profile = ProfileDataType & { _key: string }
 

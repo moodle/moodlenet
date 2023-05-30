@@ -127,7 +127,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
     return
   }
 
-  const now = new Date().toISOString()
+  const now = shell.now().toISOString()
 
   const collection = await getEntityCollection(entityClass)
   const { new: newEntity } = await collection.save(
