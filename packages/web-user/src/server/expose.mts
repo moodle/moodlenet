@@ -18,8 +18,6 @@ import {
   getCurrentProfile,
   getEntityFeatureCount,
   getLandingPageList,
-  getProfileAvatarLogicalFilename,
-  getProfileImageLogicalFilename,
   getProfileRecord,
   setProfileAvatar,
   setProfileBackgroundImage,

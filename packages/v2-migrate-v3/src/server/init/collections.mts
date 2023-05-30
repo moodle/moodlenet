@@ -39,7 +39,7 @@ export async function user_collections() {
           let resourceIds = (FOR feat IN Features FILTER feat._from == coll._id RETURN feat._to)
           RETURN MERGE(coll, {resourceIds})`,
           {},
-          { count: true, batchSize: 1 },
+          { count: true, batchSize: 1, ttl: 60 * 30 },
         )
         while (ownCollectionsCursor.hasNext) {
           const v2_collection = await ownCollectionsCursor.next()

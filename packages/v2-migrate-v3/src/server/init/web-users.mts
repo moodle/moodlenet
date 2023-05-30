@@ -34,7 +34,7 @@ export async function user_profiles() {
     // FOR pp IN UNION_DISTINCT(
     //   FOR p in Profile
     //     FILTER p._published
-    //     LIMIT 0, 50
+    //     LIMIT 0, 500
     //   RETURN p
     //   ,[
     //       Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alec */),
@@ -44,7 +44,7 @@ export async function user_profiles() {
     //    ])
     // return pp`,
     {},
-    { count: true, batchSize: 1 },
+    { count: true, batchSize: 1, ttl: 60 * 30 },
   )
 
   BAR.start(allProfilesCursor.count ?? 0, 0)
