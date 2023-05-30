@@ -44,7 +44,7 @@ export async function user_resources() {
           let featIds = (FOR feat IN Features FILTER feat._from == res._id RETURN feat._to)
           RETURN MERGE(res, {featIds})`,
           {},
-          { count: true, batchSize: 1 },
+          { count: true, batchSize: 1, ttl: 60 * 30 },
         )
         while (ownResourcesCursor.hasNext) {
           const v2_resource = await ownResourcesCursor.next()

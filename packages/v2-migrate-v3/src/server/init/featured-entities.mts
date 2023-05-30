@@ -89,7 +89,7 @@ export async function featured_entities() {
         query,
         bindVars: {},
       },
-      { count: true, batchSize: 100 },
+      { count: true },
     )
     const featV2TargetIdTypes = await featCursor.all()
 
