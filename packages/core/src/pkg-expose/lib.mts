@@ -1,6 +1,6 @@
 import assert from 'assert'
 import type { Readable } from 'stream'
-import { assertCallInitiator, getSetCoreAsyncContext } from '../async-context/lib.mjs'
+import { getSetCoreAsyncContext } from '../async-context/lib.mjs'
 import type { RpcStatusType } from '../exports.mjs'
 import { ensureRegisterPkg } from '../pkg-registry/lib.mjs'
 import type { PkgIdentifier, PkgModuleRef } from '../types.mjs'
@@ -87,8 +87,8 @@ export async function getMaybeRpcFileReadable(rpcFile: RpcFile): Promise<undefin
 export function setRpcStatusCode(status: RpcStatusName | number, payload?: any) {
   const rpcStatus = RpcStatus(status, payload)
 
-  const initiator = assertCallInitiator()
-  getSetCoreAsyncContext.set(_ => ({ ..._, initiator, rpcStatus }))
+  // const initiator = assertCallInitiator()
+  getSetCoreAsyncContext.set(_ => ({ ..._, /* initiator, */ rpcStatus }))
 }
 
 export function RpcStatus(status: RpcStatusName | number, payload?: any): RpcStatusType {

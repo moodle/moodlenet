@@ -1,7 +1,7 @@
 import { shell } from './shell.mjs'
 
 import { RpcStatus, setRpcStatusCode } from '@moodlenet/core'
-import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
+import { getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
   isCurrentUserCreatorOfCurrentEntity,
@@ -11,7 +11,8 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { publicFiles, publicFilesHttp, resourceFiles } from './init/fs.mjs'
+import { publicFiles, resourceFiles } from './init/fs.mjs'
+import { getImageUrl } from './lib.mjs'
 import {
   createResource,
   delResource,
@@ -23,7 +24,8 @@ import {
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
   setResourceContent,
-} from './lib.mjs'
+  setResourceImage,
+} from './services.mjs'
 
 export const expose = await shell.expose<ResourceExposeType>({
   rpc: {
@@ -51,9 +53,7 @@ export const expose = await shell.expose<ResourceExposeType>({
         if (!found) {
           return
         }
-        const imageUrl = found.entity.image
-          ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
-          : ''
+        const imageUrl = found.entity.image && getImageUrl(found.entity.image)
 
         const contentUrl = !found.entity.content
           ? null
@@ -77,7 +77,7 @@ export const expose = await shell.expose<ResourceExposeType>({
             //   ext: true,
             // },
             // displayName: 'contributor.name',
-            // timeSinceCreation: new Date().toString(),
+            // timeSinceCreation: shell.now().toString(),
           },
           resourceForm: {
             description: found.entity.description,
@@ -218,22 +218,9 @@ export const expose = await shell.expose<ResourceExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const imageLogicalFilename = getImageLogicalFilename(_key)
-        if (!uploadedRpcFile) {
-          await publicFiles.del(imageLogicalFilename)
-          await patchResource(_key, {
-            image: null,
-          })
-          return null
-        }
-        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
-
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
-
-        await patchResource(_key, {
-          image: { kind: 'file', directAccessId },
-        })
-        return publicFilesHttp.getFileUrl({ directAccessId })
+        const patched = await setResourceImage(_key, uploadedRpcFile)
+        const imageUrl = patched?.entity.image && getImageUrl(patched?.entity.image)
+        return imageUrl ?? null
       },
       bodyWithFiles: {
         fields: {

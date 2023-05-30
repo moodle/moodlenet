@@ -1,7 +1,7 @@
 import { shell } from './shell.mjs'
 
 import { RpcStatus } from '@moodlenet/core'
-import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
+import { getWebappUrl } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesRecordType,
   AqlVal,
@@ -16,7 +16,7 @@ import type { CollectionExposeType } from '../common/expose-def.mjs'
 import type { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { publicFiles, publicFilesHttp } from './init/fs.mjs'
+import { publicFiles } from './init/fs.mjs'
 import {
   createCollection,
   delCollection,
@@ -24,9 +24,11 @@ import {
   getImageLogicalFilename,
   getMyCollections,
   patchCollection,
+  setCollectionImage,
   updateCollectionContent,
-} from './lib.mjs'
+} from './services.mjs'
 
+import { getImageUrl } from './lib.mjs'
 import type { CollectionDataType } from './types.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({
@@ -167,22 +169,10 @@ export const expose = await shell.expose<CollectionExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const imageLogicalFilename = getImageLogicalFilename(_key)
-        if (!uploadedRpcFile) {
-          await publicFiles.del(imageLogicalFilename)
-          await patchCollection(_key, {
-            image: null,
-          })
-          return null
-        }
-        const resizedRpcFile = await webImageResizer(uploadedRpcFile, 'image')
 
-        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
-
-        await patchCollection(_key, {
-          image: { kind: 'file', directAccessId },
-        })
-        return publicFilesHttp.getFileUrl({ directAccessId })
+        const patched = await setCollectionImage(_key, uploadedRpcFile)
+        const imageUrl = patched?.entity.image ? getImageUrl(patched?.entity.image) : null
+        return imageUrl
       },
       bodyWithFiles: {
         fields: {
@@ -202,9 +192,7 @@ function getCollectionRpc(
     'u' | 'd'
   >,
 ) {
-  const imageUrl = found.entity.image
-    ? publicFilesHttp.getFileUrl({ directAccessId: found.entity.image.directAccessId })
-    : ''
+  const imageUrl = found.entity.image ? getImageUrl(found.entity.image) : undefined
   const _key = found.entity._key
   const collectionRpc: Omit<CollectionRpc, 'contributor'> = {
     resourceList: found.entity.resourceList,

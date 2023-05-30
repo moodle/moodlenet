@@ -1,0 +1,45 @@
+{
+  "name": "@moodlenet/v2-migrate-v3",
+  "version": "0.2.0",
+  "author": "MoodleNet",
+  "description": "Migrate v2 to v3",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/moodlenet3-dev/packages/web-user"
+  },
+  "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8",
+    "yarn": "please-use-npm"
+  },
+  "exports": {
+    "./init": "./dist/server/init.mjs"
+  },
+  "readme": "",
+  "files": [
+    "dist/",
+    "src/"
+  ],
+  "devDependencies": {
+    "@moodlenet/arangodb": "^0.2.0",
+    "@moodlenet/collection": "^0.2.0",
+    "@moodlenet/component-library": "^0.2.0",
+    "@moodlenet/core": "^0.2.0",
+    "@moodlenet/crypto": "^0.2.0",
+    "@moodlenet/ed-meta": "^0.2.0",
+    "@moodlenet/ed-resource": "^0.2.0",
+    "@moodlenet/http-server": "^0.2.0",
+    "@moodlenet/key-value-store": "^0.2.0",
+    "@moodlenet/react-app": "^0.2.0",
+    "@moodlenet/simple-email-auth": "^0.2.0",
+    "@moodlenet/simple-file-store": "^0.2.0",
+    "@moodlenet/system-entities": "^0.2.0",
+    "@moodlenet/web-user": "^0.2.0",
+    "@types/cli-progress": "^3.11.0",
+    "@types/node": "^17.0.35",
+    "arangojs": "^8.3.0",
+    "cli-progress": "^3.12.0"
+  }
+}

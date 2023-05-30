@@ -4,7 +4,15 @@ export type CollectionEntityDoc = EntityDocument<CollectionDataType>
 export type CollectionDataType = {
   title: string
   description: string
-  image: null | { kind: 'file'; directAccessId: string } // | { kind: 'url'; url: string }
+  image: null | Image
   published: boolean
   resourceList: { _key: string }[]
 }
+
+export type Credits = {
+  owner: { url: string; name: string }
+  provider?: { name: string; url: string }
+}
+export type Image = ImageUploaded | ImageUrl
+export type ImageUploaded = { kind: 'file'; directAccessId: string }
+export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }

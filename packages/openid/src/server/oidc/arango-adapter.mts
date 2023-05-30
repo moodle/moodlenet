@@ -26,7 +26,7 @@ export class ArangoAdapter implements Adapter {
     let expiresAt
 
     if (expiresIn) {
-      expiresAt = new Date(Date.now() + expiresIn * 1000)
+      expiresAt = new Date(Number(shell.now()) + expiresIn * 1000)
     }
 
     const coll = await this.coll()
@@ -106,7 +106,7 @@ export class ArangoAdapter implements Adapter {
       { _key },
       {
         payload: {
-          consumed: Math.floor(Date.now() / 1000),
+          consumed: Math.floor(Number(shell.now()) / 1000),
         },
       },
       { silent: true, waitForSync: true },
