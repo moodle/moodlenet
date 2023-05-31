@@ -74,20 +74,10 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const { id, mnUrl, imageUrl } = data
 
-  const {
-    isPublished,
-    // bookmarked,
-  } = state
+  const { isPublished } = state
 
   const { unpublish, deleteCollection, setImage } = actions
-  const {
-    canPublish,
-    canDelete,
-    canEdit,
-    //  canBookmark,
-    //  isCreator,
-    //  isAuthenticated
-  } = access
+  const { canPublish, canDelete, canEdit } = access
 
   const imageForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: imageUrl },
@@ -186,28 +176,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const empty = !form.values.title && !form.values.description && !imageForm.values.image
 
-  // const bookmarkButtonSmallScreen =
-  //   !empty && width < 800
-  //     ? {
-  //         key: 'bookmark-button',
-  //         className: `bookmark ${bookmarked && 'bookmarked'}`,
-  //         onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
-  //         text: bookmarked ? 'Remove bookmark' : 'Bookmark',
-  //         Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
-  //       }
-  //     : null
-
-  // const bookmarkButtonBigScreen = !empty && width > 800 && (
-  //   <TertiaryButton
-  //     key="bookmark-button"
-  //     className={`bookmark ${bookmarked && 'bookmarked'}`}
-  //     abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-  //     onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
-  //   >
-  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-  //   </TertiaryButton>
-  // )
-
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {
         Element: (
@@ -255,13 +223,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         }
       : null
 
-  // const publishingButton =
-  //   canPublish && !isPublished ? (
-  //     <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
-  //       <HourglassBottom style={{ fill: '#d0d1db' }} />
-  //     </abbr>
-  //   ) : null
-
   const publishedButton =
     canEdit && isPublished ? (
       <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
@@ -276,66 +237,16 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       </abbr>
     ) : null
 
-  // const addToCollectionButton: AddonItem | null =
-  //   width < 800 && form.values.content && isAuthenticated
-  //     ? {
-  //         Item: () => (
-  //           <div key="add-to-collection-button" tabIndex={0} onClick={() => setisPublished(false)}>
-  //             <AddToPhotos />
-  //             Add to collection
-  //           </div>
-  //         ),
-  //         key: 'add-to-collection-button',
-  //       }
-  //     : null
-
-  // const openLinkOrDownloadFile: AddonItem | null =
-  //   width < 800 && form.values.content
-  //     ? {
-  //         Item: () => (
-  //           <abbr
-  //             key="open-link-or-download-file-button"
-  //             tabIndex={0}
-  //             onClick={() => setIsPublished(false)}
-  //             title={form.values.content instanceof File ? 'Download file' : 'Open link'}
-  //           >
-  //             {form.values.content instanceof File ? (
-  //               <>
-  //                 <InsertDriveFile />
-  //                 Download file
-  //               </>
-  //             ) : (
-  //               <>
-  //                 <LinkIcon />
-  //                 Open link
-  //               </>
-  //             )}
-  //           </abbr>
-  //         ),
-  //         key: '"open-link-or-download-file-button',
-  //       }
-  //     : null
-
   const updatedMoreButtonItems = [
     publishButton,
     unpublishButton,
     shareButton,
-    // bookmarkButtonSmallScreen,
-    // sendToMoodleButton,
-    // addToCollectionButton,
     deleteButton,
     ...(moreButtonItems ?? []),
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
   const moreButton =
     updatedMoreButtonItems.length > 0 ? (
-      // updatedMoreButtonItems.length === 1 ? (
-      //   updatedMoreButtonItems.map(i => (
-      //     <TertiaryButton key={i.key} abbr={i.text} onClick={i.onClick}>
-      //       {i.Icon}
-      //     </TertiaryButton>
-      //   ))
-      // ) : (
       <FloatingMenu
         className="more-button"
         key="more-button"
@@ -352,8 +263,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const updatedTopRightHeaderItems = [
     publishedButton,
     unpublishedButton,
-    // publishingButton,
-    // bookmarkButtonBigScreen,
     ...(topRightHeaderItems ?? []),
     moreButton,
   ].filter((item): item is AddonItem => !!item)
@@ -408,16 +317,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ) : null
   ) : null
 
-  // const searchImageComponent = isSearchingImage && (
-  //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
-  // )
-
   const descriptionEditRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLDivElement>(null)
 
   const [alwaysFullDescription, setAlwaysFullDescription] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState(true)
-  // const [isSmallDescription, setIsSmallDescription] = useState(false)
 
   useEffect(() => {
     const fieldElem = descriptionRef.current ?? descriptionEditRef.current
@@ -433,7 +337,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   ])
 
   const description = (
-    // form.values.content ? (
     <div
       className="description-container"
       key="description-container"
@@ -511,7 +414,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const modals = (
     <>
-      {isShowingImage /* && image */ && (
+      {isShowingImage && (
         <Modal
           className="image-modal"
           closeButton={false}
