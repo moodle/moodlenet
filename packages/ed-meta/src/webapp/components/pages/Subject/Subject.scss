@@ -13,8 +13,41 @@
 
   .main-column {
     display: flex;
-    gap: 25px;
+    flex-direction: column;
+    gap: 20px;
 
+    > .collections,
+    > .resources {
+      > .list-card-header {
+        font-size: 20px;
+        margin-right: 16px;
+      }
+    }
+
+    > .collections > .content {
+      max-height: 395px;
+      overflow: hidden;
+    }
+
+    @media (min-width: 450px) and (max-width: 800px) {
+    }
+
+    @media screen and (max-width: 450px) {
+      > .resources > .content {
+        > .resource-card {
+          font-size: 15px;
+          width: 100%;
+        }
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      > .resources > .content {
+        > .resource-card {
+          font-size: 15px;
+        }
+      }
+    }
     > .main-subject-card {
       width: 100%;
       display: flex;
@@ -86,12 +119,6 @@
         }
       }
 
-      // @media screen and (min-width: 850px) {
-      //   > .info {
-      //     max-width: calc(100% - 95px);
-      //   }
-      // }
-
       @media screen and (min-width: 450px) {
         flex-direction: column;
         align-items: start;
@@ -131,7 +158,7 @@
       }
     }
 
-    .category-overall-card {
+    > .category-overall-card {
       width: 35%;
     }
 
@@ -143,56 +170,6 @@
 
     > .actions {
       width: fit-content;
-    }
-  }
-
-  > .main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-    > .collections,
-    > .resources {
-      > .title > .card-header {
-        display: flex;
-        align-items: center;
-        > .title {
-          font-size: 20px;
-          margin-right: 16px;
-        }
-        > .secondary-button {
-          height: 26px;
-          padding: 8px 10px;
-          border-radius: 15px;
-          border: 1px solid #757575;
-          color: #757575;
-        }
-      }
-    }
-
-    > .collections > .content {
-      max-height: 395px;
-      overflow: hidden;
-    }
-
-    @media (min-width: 450px) and (max-width: 800px) {
-    }
-
-    @media screen and (max-width: 450px) {
-      .resources > .content {
-        > .resource-card {
-          font-size: 15px;
-          width: 100%;
-        }
-      }
-    }
-
-    @media screen and (max-width: 800px) {
-      > .resources > .content {
-        > .resource-card {
-          font-size: 15px;
-        }
-      }
     }
   }
 }

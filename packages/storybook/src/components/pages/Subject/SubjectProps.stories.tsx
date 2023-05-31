@@ -5,9 +5,11 @@ import {
   SubjectOverallProps,
   SubjectProps,
 } from '@moodlenet/ed-meta/ui'
+import { SimpleResourceList, SimpleResourceListProps } from '@moodlenet/ed-resource/ui'
 import { BookmarkButtonProps, FollowButton, FollowButtonProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta } from '@storybook/react'
+import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
 import type { PartialDeep } from 'type-fest'
 import {
   MainLayoutLoggedInStoryProps,
@@ -100,6 +102,14 @@ export const useSubjectStoryProps = (
     },
   ]
 
+  const resourceList: SimpleResourceListProps = {
+    title: 'Resources',
+    resourceCardPropsList: getResourceCardsStoryProps(6, {
+      access: {},
+      orientation: 'horizontal',
+    }),
+  }
+
   return overrideDeep<SubjectProps>(
     {
       mainLayoutProps: isAuthenticated
@@ -107,14 +117,15 @@ export const useSubjectStoryProps = (
         : MainLayoutLoggedOutStoryProps,
 
       mainSubjectCardSlots: mainSubjectCardSlots,
-      mainColumnItems: [],
+      mainColumnItems: [
+        { Item: () => <SimpleResourceList {...resourceList} />, key: 'resource-list' },
+      ],
 
       title: 'Engineering, manufacturing and construction',
       overallItems: overallItems,
       isIsced: true,
-      iscedUrl: null,
-      // iscedUrl:
-      //   'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
+      iscedUrl:
+        'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
     },
     { ...overrides },
   )
