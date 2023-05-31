@@ -56,7 +56,15 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
       mainLayoutProps,
       mainResourceCardSlots,
       resourceContributorCardProps: contributor,
-
+      edMetaOptions: {
+        languageOptions: [],
+        levelOptions: [],
+        licenseOptions: [],
+        monthOptions: [],
+        subjectOptions: [],
+        typeOptions: [],
+        yearOptions: [],
+      },
       mainColumnItems: [],
       sideColumnItems: [],
       extraDetailsItems: [],
