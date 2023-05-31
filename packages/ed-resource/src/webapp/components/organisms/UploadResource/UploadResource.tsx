@@ -139,11 +139,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
         //   setShouldShowErrors(!!errors?.content)
         // } else if (isImage) {
         // } else if (isImage && !errors?.content ) {
-        if (isImage && !errors?.content) {
+        if (!errors?.content) {
           if (file) {
             contentForm.submitForm()
-            imageForm.setFieldValue('image', file)
-            imageForm.submitForm()
+            if (isImage) {
+              imageForm.setFieldValue('image', file)
+              imageForm.submitForm()
+            }
           }
         }
       })
