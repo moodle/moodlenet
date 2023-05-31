@@ -2,7 +2,7 @@ import { AddToCollectionButtonByResourceContextContainer as addResourceToCollect
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddonsByUserRule } from '../lib/AddonsByUserRule.js'
 import { LoginButtonContainer, SignupButtonContainer } from '../page/access/AccessContainers.js'
-import { UsersContainer, UsersMenu } from '../page/settings/UsersContainer.js'
+import { AdminUsersContainer, AdminUsersMenu } from '../page/admin/AdminUsersContainer.js'
 import { AddMenuContainer } from './AddMenuContainer.js'
 import { AvatarMenuContainer } from './AvatarMenuContainer.js'
 
@@ -19,7 +19,9 @@ export const menuHeaderButtonsAuthAddons: AddonsByUserRule<AddonItemNoKey> = {
   root: { addMenu: null, avatarMenu },
 }
 
-export const menuAddonsDefaultSetting = { default: { Content: UsersContainer, Menu: UsersMenu } }
+export const menuAddonsDefaultSetting = {
+  default: { Content: AdminUsersContainer, Menu: AdminUsersMenu },
+}
 
 export const resourcePageAddonsByAuth: AddonsByUserRule<AddonItemNoKey> = {
   guest: { addToCollectionButton: null },
