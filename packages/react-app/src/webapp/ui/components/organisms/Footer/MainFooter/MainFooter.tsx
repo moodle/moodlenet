@@ -1,4 +1,4 @@
-import type { AddonItem, FooterProps } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 import { Footer } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useMemo } from 'react'
@@ -8,24 +8,19 @@ export type MainFooterProps = {
   leftItems?: AddonItem[]
   centerItems?: AddonItem[]
   rightItems?: AddonItem[]
-} & FooterProps
+}
 
-export const MainFooter: FC<MainFooterProps> = ({
-  leftItems,
-  centerItems,
-  rightItems,
-  ...props
-}) => {
+export const MainFooter: FC<MainFooterProps> = ({ leftItems, centerItems, rightItems }) => {
   const updatedLeftItems = useMemo(() => {
-    return [...(leftItems ?? [])].filter(Boolean)
+    return [...(leftItems ?? []).map(({ Item, key }) => <Item key={key} />)].filter(Boolean)
   }, [leftItems])
 
   const updatedCenterItems = useMemo(() => {
-    return [...(centerItems ?? [])].filter(Boolean)
+    return [...(centerItems ?? []).map(({ Item, key }) => <Item key={key} />)].filter(Boolean)
   }, [centerItems])
 
   const updatedRightItems = useMemo(() => {
-    return [...(rightItems ?? [])].filter(Boolean)
+    return [...(rightItems ?? []).map(({ Item, key }) => <Item key={key} />)].filter(Boolean)
   }, [rightItems])
 
   return (
@@ -33,7 +28,6 @@ export const MainFooter: FC<MainFooterProps> = ({
       leftItems={updatedLeftItems}
       centerItems={updatedCenterItems}
       rightItems={updatedRightItems}
-      {...props}
     ></Footer>
   )
 }

@@ -47,47 +47,57 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   signoutMenuProps,
 }) => {
   const allMenuItems = useMemo(() => {
-    const profileLinkAvatarMenuItem: AvatarMenuItem | null = profileMenuProps && {
-      Component: () => (
-        <ProfileLinkAvatarMenuComponent {...profileMenuProps} avatarUrl={avatarUrl} />
+    const profileLinkAvatarMenuItem: FloatingMenuContentItem | null = profileMenuProps && {
+      Element: (
+        <ProfileLinkAvatarMenuComponent key="profile" {...profileMenuProps} avatarUrl={avatarUrl} />
       ),
-      key: 'profile',
     }
 
-    const bookmarksAvatarMenuItem: AvatarMenuItem | null = bookmarksMenuProps && {
-      Component: () => <BookmarksLinkAvatarMenuComponent {...bookmarksMenuProps} />,
-      key: 'bookmarks',
+    const bookmarksAvatarMenuItem: FloatingMenuContentItem | null = bookmarksMenuProps && {
+      Element: <BookmarksLinkAvatarMenuComponent key="bookmarks" {...bookmarksMenuProps} />,
     }
 
-    const followingAvatarMenuItem: AvatarMenuItem | null = followingMenuProps && {
-      Component: () => <FollowingLinkAvatarMenuComponent {...followingMenuProps} />,
-      key: 'following',
+    const followingAvatarMenuItem: FloatingMenuContentItem | null = followingMenuProps && {
+      Element: <FollowingLinkAvatarMenuComponent key="following" {...followingMenuProps} />,
     }
 
-    const userSettingsLinkAvatarMenuItem: AvatarMenuItem | null = userSettingsMenuProps && {
-      Component: () => <UserSettingsLinkAvatarMenuComponent {...userSettingsMenuProps} />,
-      key: 'admin-settings',
+    const userSettingsLinkAvatarMenuItem: FloatingMenuContentItem | null =
+      userSettingsMenuProps && {
+        Element: (
+          <UserSettingsLinkAvatarMenuComponent key="admin-settings" {...userSettingsMenuProps} />
+        ),
+      }
+
+    const adminSettingsLinkAvatarMenuItem: FloatingMenuContentItem | null =
+      adminSettingsMenuProps && {
+        Element: (
+          <AdminSettingsLinkAvatarMenuComponent key="admin-settings" {...adminSettingsMenuProps} />
+        ),
+      }
+
+    const signoutAvatarMenuItem: FloatingMenuContentItem | null = {
+      Element: <SignoutAvatarMenuComponent key="signout" {...signoutMenuProps} />,
     }
 
-    const adminSettingsLinkAvatarMenuItem: AvatarMenuItem | null = adminSettingsMenuProps && {
-      Component: () => <AdminSettingsLinkAvatarMenuComponent {...adminSettingsMenuProps} />,
-      key: 'admin-settings',
-    }
-
-    const signoutAvatarMenuItem: AvatarMenuItem = {
-      Component: () => <SignoutAvatarMenuComponent {...signoutMenuProps} />,
-      key: 'signout',
-    }
+    const menuItemsElement = menuItems.map<FloatingMenuContentItem>(
+      ({ Component, key, className }) => ({
+        Element: <Component key={key} />,
+        wrapperClassName: `avatar-menu-item ${className}`,
+      }),
+    )
 
     return [
       ...(profileLinkAvatarMenuItem ? [profileLinkAvatarMenuItem] : []),
       ...(bookmarksAvatarMenuItem ? [bookmarksAvatarMenuItem] : []),
       ...(followingAvatarMenuItem ? [followingAvatarMenuItem] : []),
-      ...menuItems,
       ...(adminSettingsLinkAvatarMenuItem ? [adminSettingsLinkAvatarMenuItem] : []),
       ...(userSettingsLinkAvatarMenuItem ? [userSettingsLinkAvatarMenuItem] : []),
+      ...menuItemsElement,
       signoutAvatarMenuItem,
-    ]
+    ].map<FloatingMenuContentItem>(({ Element, wrapperClassName = '' }) => ({
+      Element,
+      wrapperClassName: `avatar-menu-item ${wrapperClassName}`,
+    }))
   }, [
     avatarUrl,
     bookmarksMenuProps,
@@ -100,14 +110,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   ])
 
   const floatingMenuContentItems = useMemo(() => {
-    return allMenuItems.map(({ Component, key, className = '' }) => {
-      const floatingMenuContentItem: FloatingMenuContentItem = {
-        Component,
-        key,
-        className: `avatar-menu-item ${className}`,
-      }
-      return floatingMenuContentItem
-    })
+    return allMenuItems
   }, [allMenuItems])
 
   const avatarStyle = {
