@@ -1,5 +1,6 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type {
+  EdMetaOptionsProps,
   ResourceAccessProps,
   ResourceActions,
   ResourceDataProps,
@@ -19,21 +20,13 @@ import { addMethod, MixedSchema } from 'yup'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
-import type { AddonItem, OptionItemProp } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
 // import { useFormik } from 'formik'
 import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
-import {
-  LanguagesTextOptionProps,
-  LevelTextOptionProps,
-  LicenseIconTextOptionProps,
-  MonthTextOptionProps,
-  SubjectsTextOptionProps,
-  TypeSimpleTextOptionProps,
-  YearsProps,
-} from '@moodlenet/ed-meta/common'
+import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
@@ -83,13 +76,13 @@ export const ResourceFormValues: ResourceFormProps = {
   title: '',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  subject: SubjectsTextOptionProps[2]!.value,
-  language: LanguagesTextOptionProps[2]!.value,
-  level: LevelTextOptionProps[2]!.value,
-  license: LicenseIconTextOptionProps[2]!.value,
-  month: MonthTextOptionProps[8]!.value,
-  year: YearsProps[20],
-  type: TypeSimpleTextOptionProps[1]!.value,
+  subject: FieldsDataStories.SubjectsTextOptionProps[2]!.value,
+  language: FieldsDataStories.LanguagesTextOptionProps[2]!.value,
+  level: FieldsDataStories.LevelTextOptionProps[2]!.value,
+  license: FieldsDataStories.LicenseIconTextOptionProps[2]!.value,
+  month: FieldsDataStories.MonthTextOptionProps[8]!.value,
+  year: FieldsDataStories.YearsProps[20],
+  type: FieldsDataStories.TypeTextOptionProps[1]!.value,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
@@ -112,15 +105,15 @@ export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
   })
 }
 
-export const CollectionTextOptionProps: OptionItemProp[] = [
-  { label: 'Education', value: 'Education' },
-  { label: 'Biology', value: 'Biology' },
-  { label: 'Algebra', value: 'Algebra' },
-  { label: 'Phycology', value: 'Phycology' },
-  { label: 'Phylosophy', value: 'Phylosophy' },
-  { label: 'Sociology', value: 'Sociology' },
-  { label: 'English Literature', value: 'English Literature' },
-]
+// export const CollectionTextOptionProps: OptionItemProp[] = [
+//   { label: 'Education', value: 'Education' },
+//   { label: 'Biology', value: 'Biology' },
+//   { label: 'Algebra', value: 'Algebra' },
+//   { label: 'Phycology', value: 'Phycology' },
+//   { label: 'Phylosophy', value: 'Phylosophy' },
+//   { label: 'Sociology', value: 'Sociology' },
+//   { label: 'English Literature', value: 'English Literature' },
+// ]
 
 export const useResourceStoryProps = (
   overrides?: PartialDeep<
@@ -201,6 +194,16 @@ export const useResourceStoryProps = (
     ...overrides?.access,
   }
 
+  const edMetaOptions: EdMetaOptionsProps = {
+    subjectOptions: FieldsDataStories.SubjectsTextOptionProps,
+    languageOptions: FieldsDataStories.LanguagesTextOptionProps,
+    levelOptions: FieldsDataStories.LevelTextOptionProps,
+    licenseOptions: FieldsDataStories.LicenseIconTextOptionProps,
+    monthOptions: FieldsDataStories.MonthTextOptionProps,
+    yearOptions: FieldsDataStories.YearsProps,
+    typeOptions: FieldsDataStories.TypeTextOptionProps,
+  }
+
   const likeButtonProps: LikeButtonProps = {
     liked: true,
     canLike: true,
@@ -268,6 +271,7 @@ export const useResourceStoryProps = (
       state: state,
       actions: actions,
       access: access,
+      edMetaOptions: edMetaOptions,
 
       extraDetailsItems: extraDetailsItems,
 
