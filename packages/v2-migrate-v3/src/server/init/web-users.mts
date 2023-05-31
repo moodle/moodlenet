@@ -39,17 +39,26 @@ export async function user_profiles() {
     // `
     // FOR pp IN UNION_DISTINCT(
     //   FOR p in Profile
+    //     SORT RAND()
     //     FILTER p._published
-    //     LIMIT 0, 500
+    //     LIMIT 0, 15
     //   RETURN p
-    //   ,[
-    //     Document("Profile/vJpFfdtNbaNwPL51ipmSfbZmxyUMTf" /* martin@moodle.com [Profile] */)
-    //     Document("Profile/TPsKc3VGFi05J486LbRkX9uHh9HxXc" /* liz@moodle.com [Profile] */)
-    //     Document("Profile/V8haMOx8YYxMLnOYcWRdYpecvzFtWp" /* anna@moodle.com [Profile] */)
-    //     Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alessandro@moodle.com [Profile] */)
-    //     Document("Organization/wDsoiVDyDIIGrLTu3P26kc6QRg1PYG" /* moodlenet@moodle.com [Organization] */)
-    //     Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* bru.mas@moodle.com [Profile] */)
-    //    ])
+    //   ,
+    //   FOR p in Profile
+    //     SORT RAND()
+    //     FILTER !p._published
+    //     LIMIT 0, 5
+    //   RETURN p
+    //   ,
+    //   [
+    //     Document("Profile/vJpFfdtNbaNwPL51ipmSfbZmxyUMTf" /* martin@moodle.com[Profile] */),
+    //     Document("Profile/TPsKc3VGFi05J486LbRkX9uHh9HxXc" /* liz@moodle.com[Profile] */),
+    //     Document("Profile/V8haMOx8YYxMLnOYcWRdYpecvzFtWp" /* anna@moodle.com[Profile] */),
+    //     Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alessandro@moodle.com[Profile] */),
+    //     Document("Organization/wDsoiVDyDIIGrLTu3P26kc6QRg1PYG" /* moodlenet@moodle.com[Organization] */),
+    //     Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* bru.mas@moodle.com[Profile] */),
+    //     Document("Profile/Wn4IUjm2K2PFwoKFsC0xByxYlPcykg" /* ettorebevilacqua@gmail.com[Profile] */),
+    //   ])
     // return pp`,
     {},
     { count: true, batchSize: 1, ttl: 60 * 30 },
