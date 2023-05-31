@@ -6,10 +6,10 @@ import type {
   WebappPluginMainModule,
   WebAppShellOf,
 } from '../../../react-app/dist/root-export.mjs'
-import type { PassportConfigs } from '../store/types'
-import * as loginComponents from './Login'
-import AuthRoutes from './routes'
-import * as settingsComponents from './Settings'
+import type { PassportConfigs } from '../store/types.js'
+import * as settingsComponents from './AdminSettings.js'
+import * as loginComponents from './Login.js'
+import AuthRoutes from './routes.js'
 
 export type PassportAuthExtWebappPlugin = WebappPluginMainModule<
   PassportAuthExt,

@@ -1,8 +1,8 @@
 import lib from 'moodlenet-react-app-lib'
 import type { FC } from 'react'
 import React from 'react'
-import FormConfig from './FormConfig'
-import type { ConfigApiKey, ErrorMsg } from './types'
+import FormConfig from './FormConfig.js'
+import type { ConfigApiKey, ErrorMsg } from './types.js'
 
 const { MainLayout } = lib.ui.components.layout
 
@@ -49,6 +49,7 @@ export const ListConfig: FC = () => {
 
     const _list = [...list]
     _list[foundIdx] = configVals
+
     lib.priHttp
       .fetch<any>(
         'moodlenet-passport-auth',
@@ -62,7 +63,7 @@ export const ListConfig: FC = () => {
     return [null, configVals]
   }
   return (
-    <MainLayout>
+    <div>
       <h3>Config Api Key</h3>
 
       {
@@ -74,7 +75,7 @@ export const ListConfig: FC = () => {
       <button onClick={addSocial} style={{}}>
         addSocial
       </button>
-    </MainLayout>
+    </div>
   )
 }
 
