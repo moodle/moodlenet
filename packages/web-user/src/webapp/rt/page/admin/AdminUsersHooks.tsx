@@ -3,7 +3,7 @@ import type { User, WebUserData } from '../../../../common/types.mjs'
 import type { UsersProps } from '../../../ui/components/organisms/Roles/Users.js'
 import { shell } from '../../shell.mjs'
 
-export const useUsersProps = (): UsersProps => {
+export const useAdminUsersProps = (): UsersProps => {
   const [search, setSearch] = useState<string>('')
   const [usersCache, setUsersCache] = useState<WebUserData[]>([])
 
