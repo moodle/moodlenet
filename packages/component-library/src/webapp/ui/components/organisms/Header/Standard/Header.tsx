@@ -1,8 +1,8 @@
-import type { ComponentType, FC, PropsWithChildren, ReactElement } from 'react'
+import type { FC, PropsWithChildren, ReactElement } from 'react'
 import './Header.scss'
 
 export type HeaderIconType = {
-  icon: ComponentType | string
+  icon: ReactElement | string
   href: string
 }
 

@@ -25,26 +25,25 @@ export const AddMenu: FC<AddMenuProps> = ({
   createCollectionProps,
   createResourceProps,
 }) => {
-  const menuContent = useMemo(() => {
-    const createCollectionItem: AddMenuItem = {
-      Component: () => <CreateCollectionAddMenuItem {...createCollectionProps} />,
-      key: 'new collection',
+  const menuContent = useMemo<FloatingMenuContentItem[]>(() => {
+    const createCollectionItem: FloatingMenuContentItem = {
+      Element: <CreateCollectionAddMenuItem key="new collection" {...createCollectionProps} />,
     }
-    const createResourceItem: AddMenuItem = {
-      Component: () => <CreateResourceAddMenuItem {...createResourceProps} />,
-      key: 'new resource',
+    const createResourceItem: FloatingMenuContentItem = {
+      Element: <CreateResourceAddMenuItem key="new resource" {...createResourceProps} />,
     }
-    return [createResourceItem, createCollectionItem, ...menuItems].map(
-      ({ Component, key, className = '' }) => {
+    return [
+      createResourceItem,
+      createCollectionItem,
+      ...menuItems.map(({ Component, key, className = '' }) => {
         const floatingMenuContentItem: FloatingMenuContentItem = {
-          Component,
-          key,
-          className: `add-menu-item ${className}`,
+          Element: <Component key={key} />,
+          wrapperClassName: `add-menu-item ${className}`,
         }
         // reoderedmenuItems.map((menuItem, i) => {
         return floatingMenuContentItem
-      },
-    )
+      }),
+    ]
   }, [createCollectionProps, createResourceProps, menuItems])
 
   return (
