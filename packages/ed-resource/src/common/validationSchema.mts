@@ -29,7 +29,15 @@ export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
 
 export const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> =
   object({
-    content: string().required(`Please upload a content or a link`),
+    content: mixed()
+      .test((v, { createError }) =>
+        v instanceof Blob && v.size > maxUploadSize
+          ? createError({
+              message: /* t */ `The file is too big, reduce the size or provide a url`,
+            })
+          : true,
+      )
+      .required(`Please upload a content or a link`),
   })
 
 export const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
