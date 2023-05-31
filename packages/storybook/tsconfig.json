@@ -19,7 +19,11 @@
     "baseUrl": "./src"
   },
 
-  "include": ["src", "src/lib/SBLinkComponent.tsx"],
+  "include": [
+    "src",
+    "src/lib/SBLinkComponent.tsx",
+    "../ed-meta/src/webapp/components/molecules/fields/ResourceData.stories.tsx"
+  ],
   "references": [
     { "path": "./tsconfig.node.json" },
     {

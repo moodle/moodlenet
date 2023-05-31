@@ -1,55 +1,57 @@
+import type { TextOptionProps } from '@moodlenet/component-library'
 import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { LanguagesTextOptionProps } from '../../../../common/MOCK_DATA.js'
 
-export type LanguageFieldProps = {
-  language: string | undefined
+export type LevelFieldProps = {
+  level: string | undefined
+  levelOptions: TextOptionProps[]
   canEdit: boolean
   error: string | undefined
   shouldShowErrors: boolean
-  editLanguage(language: string): void
+  editLevel(level: string): void
 }
 
-export const LanguageField: FC<LanguageFieldProps> = ({
-  language,
+export const LevelField: FC<LevelFieldProps> = ({
+  level,
+  levelOptions,
   canEdit,
   error,
   shouldShowErrors,
-  editLanguage,
+  editLevel,
 }) => {
-  const languages = {
-    opts: LanguagesTextOptionProps,
-    selected: LanguagesTextOptionProps.find(({ value }) => value === language),
+  const levels = {
+    opts: levelOptions,
+    selected: levelOptions.find(({ value }) => value === level),
   }
-  const [updatedTypes, setUpdatedTypes] = useState(languages)
+  const [updatedTypes, setUpdatedTypes] = useState(levels)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
     setUpdatedTypes({
-      opts: LanguagesTextOptionProps,
-      selected: LanguagesTextOptionProps.find(({ value }) => value === language),
+      opts: levelOptions,
+      selected: levelOptions.find(({ value }) => value === level),
     })
-  }, [language])
+  }, [level, levelOptions])
 
   useEffect(() => {
     setUpdatedTypes({
-      opts: languages.opts.filter(o => o.value.toUpperCase().includes(searchText.toUpperCase())),
-      selected: LanguagesTextOptionProps.find(
-        ({ value }) => value === language && value.toUpperCase().includes(searchText.toUpperCase()),
+      opts: levels.opts.filter(o => o.value.toUpperCase().includes(searchText.toUpperCase())),
+      selected: levelOptions.find(
+        ({ value }) => value === level && value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
-  }, [searchText, language, languages.opts])
+  }, [searchText, level, levels.opts, levelOptions])
 
   return canEdit ? (
     <Dropdown
-      name="language"
-      value={language}
+      name="level"
+      value={level}
       onChange={e => {
-        e.currentTarget.value !== language && editLanguage(e.currentTarget.value)
+        e.currentTarget.value !== level && editLevel(e.currentTarget.value)
       }}
-      label="Language"
-      placeholder="Content language"
+      label="Level"
+      placeholder="Education level"
       edit
       highlight={shouldShowErrors && !!error}
       error={error}
@@ -79,14 +81,14 @@ export const LanguageField: FC<LanguageFieldProps> = ({
           ),
       )}
     </Dropdown>
-  ) : language ? (
-    <div className="detail language">
-      <div className="title">Language</div>
-      <abbr className="value" title={languages.selected?.label}>
-        {languages.selected?.label}
+  ) : level ? (
+    <div className="detail level">
+      <div className="title">Level</div>
+      <abbr className="value" title={levels.selected?.label}>
+        {levels.selected?.label}
       </abbr>
     </div>
   ) : null
 }
 
-export default LanguageField
+export default LevelField
