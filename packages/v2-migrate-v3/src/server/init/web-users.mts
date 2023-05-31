@@ -37,10 +37,12 @@ export async function user_profiles() {
     //     LIMIT 0, 500
     //   RETURN p
     //   ,[
-    //       Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alec */),
-    //       Document("Profile/Wn4IUjm2K2PFwoKFsC0xByxYlPcykg" /* etto */),
-    //       Document("Profile/KiL7cfGqzRGDi9mG7M7AARXl4zQKtW" /* Bru 1*/),
-    //       Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* Bru 2*/)
+    //     Document("Profile/vJpFfdtNbaNwPL51ipmSfbZmxyUMTf" /* martin@moodle.com [Profile] */)
+    //     Document("Profile/TPsKc3VGFi05J486LbRkX9uHh9HxXc" /* liz@moodle.com [Profile] */)
+    //     Document("Profile/V8haMOx8YYxMLnOYcWRdYpecvzFtWp" /* anna@moodle.com [Profile] */)
+    //     Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alessandro@moodle.com [Profile] */)
+    //     Document("Organization/wDsoiVDyDIIGrLTu3P26kc6QRg1PYG" /* moodlenet@moodle.com [Organization] */)
+    //     Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* bru.mas@moodle.com [Profile] */)
     //    ])
     // return pp`,
     {},
@@ -64,6 +66,7 @@ export async function user_profiles() {
       shell.setNow(v2_profile._created)
 
       const createEmailUserResp = await createSimpleEmailUser({
+        isAdmin: (v2_user.authId as any)._type === 'Organization',
         displayName: v2_profile.name,
         email,
         hashedPassword: v2_user.password,
