@@ -24,8 +24,8 @@ export const FloatingMenuStoryProps: FloatingMenuProps = {
   hoverElement: <img className="add-icon" src={addIcon} alt="Add" />,
   menuContent: [
     {
-      Component: () => (
-        <div>
+      Element: (
+        <div key="__">
           <div>
             <NoteAddIcon />
             New Resource
@@ -36,7 +36,6 @@ export const FloatingMenuStoryProps: FloatingMenuProps = {
           </div>
         </div>
       ),
-      key: '__',
     },
   ],
 }

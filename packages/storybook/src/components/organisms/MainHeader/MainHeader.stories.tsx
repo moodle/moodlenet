@@ -53,6 +53,8 @@ const AddMenuItem: AddonItem = {
           key: 'create collection',
         },
       ]}
+      createCollectionProps={{ createCollection: action('create collection from add menu') }}
+      createResourceProps={{ createResource: action('create resource from add menu') }}
     />
   ),
   key: 'add-menu',

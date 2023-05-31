@@ -1,16 +1,15 @@
-import type { ComponentType, FC, PropsWithChildren } from 'react'
-import type { AddonItem } from '../../../../types.js'
+import type { FC, PropsWithChildren, ReactElement } from 'react'
 import './Header.scss'
 
 export type HeaderIconType = {
-  icon: ComponentType | string
+  icon: ReactElement | string
   href: string
 }
 
 export type HeaderProps = {
-  leftItems?: AddonItem[]
-  centerItems?: AddonItem[]
-  rightItems?: AddonItem[]
+  leftItems?: ReactElement[]
+  centerItems?: ReactElement[]
+  rightItems?: ReactElement[]
 }
 
 export const Header: FC<PropsWithChildren<HeaderProps>> = ({
@@ -22,19 +21,13 @@ export const Header: FC<PropsWithChildren<HeaderProps>> = ({
     <div className="header">
       <div className="content">
         <div className="left" key="left">
-          {leftItems?.map(i => (
-            <i.Item key={i.key} />
-          ))}
+          {leftItems}
         </div>
         <div className="center" key="center">
-          {centerItems?.map(i => (
-            <i.Item key={i.key} />
-          ))}
+          {centerItems}
         </div>
         <div className="right" key="right">
-          {rightItems?.map(i => (
-            <i.Item key={i.key} />
-          ))}
+          {rightItems}
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { ArrowDropDown } from '@material-ui/icons'
 import type { FC } from 'react'
+import { Fragment } from 'react'
 import type { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.js'
 import FloatingMenu from '../FloatingMenu/FloatingMenu.js'
 import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
@@ -30,18 +31,18 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
     const isCurrent = selected.indexOf(e) > -1
     isCurrent && currentName.push(e)
     const floatingMenuContentItem: FloatingMenuContentItem = {
-      Component: () => (
-        <>
+      Element: (
+        <Fragment key={e}>
           <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
             <div className={`border ${isCurrent ? 'selected' : ''}`} />
           </div>
           <div onClick={() => onClick(e)} className={`content ${isCurrent ? 'selected' : ''}`}>
             {e}
           </div>
-        </>
+        </Fragment>
       ),
-      key: e,
-      className: 'section',
+
+      wrapperClassName: 'section',
     }
     return floatingMenuContentItem
   })

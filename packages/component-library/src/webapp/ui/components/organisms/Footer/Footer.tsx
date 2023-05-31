@@ -1,11 +1,10 @@
-import type { FC, PropsWithChildren } from 'react'
-import type { AddonItem } from '../../../types.js'
+import type { FC, PropsWithChildren, ReactElement } from 'react'
 import './Footer.scss'
 
 export type FooterProps = {
-  leftItems?: AddonItem[]
-  centerItems?: AddonItem[]
-  rightItems?: AddonItem[]
+  leftItems?: ReactElement[]
+  centerItems?: ReactElement[]
+  rightItems?: ReactElement[]
 }
 
 export const Footer: FC<PropsWithChildren<FooterProps>> = ({
@@ -17,19 +16,13 @@ export const Footer: FC<PropsWithChildren<FooterProps>> = ({
     <div className="footer">
       <div className="content">
         <div className="left" key="left">
-          {leftItems?.map(i => (
-            <i.Item key={i.key} />
-          ))}
+          {leftItems}
         </div>
         <div className="center" key="center">
-          {centerItems?.map(i => (
-            <i.Item key={i.key} />
-          ))}
+          {centerItems}
         </div>
         <div className="right" key="right">
-          {rightItems?.map(i => (
-            <i.Item key={i.key} />
-          ))}
+          {rightItems}
         </div>
       </div>
     </div>

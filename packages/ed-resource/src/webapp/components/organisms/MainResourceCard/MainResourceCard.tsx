@@ -276,21 +276,19 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const shareButton: FloatingMenuContentItem | null =
     !empty && isPublished
       ? {
-          Component: () => (
-            <div onClick={copyUrl}>
+          Element: (
+            <div key="share-button" onClick={copyUrl}>
               <Share /> Share
             </div>
           ),
-          key: 'share-button',
         }
       : null
 
   const deleteButton: FloatingMenuContentItem | null =
     canDelete && !empty
       ? {
-          key: 'delete-button',
-          Component: () => (
-            <div onClick={() => setIsToDelete(true)}>
+          Element: (
+            <div key="delete-button" onClick={() => setIsToDelete(true)}>
               <Delete /> Delete,
             </div>
           ),
@@ -300,29 +298,27 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const publishButton: FloatingMenuContentItem | null =
     canPublish && !isPublished
       ? {
-          Component: () => (
-            <div onClick={publish}>
+          Element: (
+            <div key="publish-button" onClick={publish}>
               <Public style={{ fill: '#00bd7e' }} />
               Publish
             </div>
           ),
 
-          className: 'publish-button',
-          key: 'publish-button',
+          wrapperClassName: 'publish-button',
         }
       : null
 
   const unpublishButton: FloatingMenuContentItem | null =
     canPublish && isPublished
       ? {
-          Component: () => (
-            <div onClick={unpublish}>
+          Element: (
+            <div key="unpublish-button" onClick={unpublish}>
               <PublicOff />
               Unpublish
             </div>
           ),
-          className: 'unpublish-button',
-          key: 'unpublish-button',
+          wrapperClassName: 'unpublish-button',
         }
       : null
 
@@ -376,21 +372,24 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const openLinkOrDownloadFile: FloatingMenuContentItem | null =
     width < 800 && contentUrl
       ? {
-          Component:
-            contentType === 'file'
-              ? () => (
-                  <div onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
-                    <InsertDriveFile />
-                    Download
-                  </div>
-                )
-              : () => (
-                  <div onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
-                    <LinkIcon />
-                    Open link
-                  </div>
-                ),
-          key: 'open-link-or-download-file-button',
+          Element:
+            contentType === 'file' ? (
+              <div
+                key="open-link-or-download-file-button"
+                onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}
+              >
+                <InsertDriveFile />
+                Download
+              </div>
+            ) : (
+              <div
+                key="open-link-or-download-file-button"
+                onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}
+              >
+                <LinkIcon />
+                Open link
+              </div>
+            ),
         }
       : null
 
