@@ -8,6 +8,7 @@ import assert from 'assert'
 import cliProgress from 'cli-progress'
 import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
+import { v2_org } from './organizaton.mjs'
 import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph, v2_DB_UserAuth } from './v2-db.mjs'
 
@@ -25,9 +26,15 @@ export async function user_profiles() {
     cliProgress.Presets.shades_grey,
   )
 
-  const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile>(
+  const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile | v2.Organization>(
     `
-      FOR p in Profile
+      FOR p IN UNION_DISTINCT(
+        FOR pr in Profile
+        LIMIT 10
+        RETURN pr
+        ,
+        [ Document("${v2_org._id}") ]
+      )
       RETURN p
     `,
     // `
@@ -63,10 +70,10 @@ export async function user_profiles() {
     const email = v2_user.email
     BAR.update({ email, status: 'creating' })
     const { newProfile, newWebUser } = await shell.initiateCall(async () => {
+      const isOrg = isOrganization(v2_profile)
       shell.setNow(v2_profile._created)
-
       const createEmailUserResp = await createSimpleEmailUser({
-        isAdmin: (v2_user.authId as any)._type === 'Organization',
+        isAdmin: isOrg,
         displayName: v2_profile.name,
         email,
         hashedPassword: v2_user.password,
@@ -79,20 +86,21 @@ export async function user_profiles() {
     await initiateCallForProfileKey({
       _id: newProfile._id,
       async exec() {
+        const isOrg = isOrganization(v2_profile)
         shell.setNow(v2_profile._edited)
         await editProfile(newProfile._key, {
           aboutMe: v2_profile.description,
-          siteUrl: v2_profile.siteUrl,
-          location: v2_profile.location,
+          siteUrl: isOrg ? undefined : v2_profile.siteUrl,
+          location: isOrg ? undefined : v2_profile.location,
           kudos: 1e6,
         })
-
-        if (v2_profile.avatar?.ext === false) {
+        const avatarV2Field = isOrg ? v2_profile.smallLogo : v2_profile.avatar
+        if (avatarV2Field?.ext === false) {
           await setProfileAvatar(
             {
               _key: newProfile._key,
               rpcFile: await getRpcFileByV2AssetLocation(
-                v2_profile.avatar.location,
+                avatarV2Field.location,
                 `for profile avatar
           id v2:${v2_profile._id} v3:${newProfile._id}`,
               ),
@@ -100,13 +108,13 @@ export async function user_profiles() {
             { noResize: true },
           )
         }
-
-        if (v2_profile.image?.ext === false) {
+        const imageV2Field = isOrg ? v2_profile.logo : v2_profile.image
+        if (imageV2Field?.ext === false) {
           await setProfileBackgroundImage(
             {
               _key: newProfile._key,
               rpcFile: await getRpcFileByV2AssetLocation(
-                v2_profile.image.location,
+                imageV2Field.location,
                 `for profile background image
           id v2:${v2_profile._id} v3:${newProfile._id}`,
               ),
@@ -124,4 +132,7 @@ export async function user_profiles() {
     BAR.increment()
   }
   BAR.stop()
+}
+function isOrganization(_: v2.Profile | v2.Organization): _ is v2.Organization {
+  return _._id.startsWith('Organization')
 }
