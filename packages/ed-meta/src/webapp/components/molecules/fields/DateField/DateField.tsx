@@ -2,10 +2,11 @@ import type { TextOptionProps } from '@moodlenet/component-library'
 import { Dropdown, SimplePill, SimpleTextOption, TextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { YearsProps } from '../../../../common/MOCK_DATA.js'
 
 export type DateFieldProps = {
   month: string | undefined
+  monthOptions: TextOptionProps[]
+  yearOptions: string[]
   year: string | undefined
   canEdit: boolean
   errorMonth: string | undefined
@@ -14,23 +15,12 @@ export type DateFieldProps = {
   editMonth(month: string): void
   editYear(year: string): void
 }
-const MonthTextOptionProps: TextOptionProps[] = [
-  { value: `0`, label: /* t */ `January` },
-  { value: `1`, label: /* t */ `February` },
-  { value: `2`, label: /* t */ `March` },
-  { value: `3`, label: /* t */ `April` },
-  { value: `4`, label: /* t */ `May` },
-  { value: `5`, label: /* t */ `June` },
-  { value: `6`, label: /* t */ `July` },
-  { value: `7`, label: /* t */ `August` },
-  { value: `8`, label: /* t */ `September` },
-  { value: `9`, label: /* t */ `October` },
-  { value: `10`, label: /* t */ `November` },
-  { value: `11`, label: /* t */ `December` },
-]
+
 export const DateField: FC<DateFieldProps> = ({
   month,
+  monthOptions,
   year,
+  yearOptions,
   canEdit,
   shouldShowErrors,
   errorMonth,
@@ -39,47 +29,47 @@ export const DateField: FC<DateFieldProps> = ({
   editYear,
 }) => {
   const months = {
-    opts: MonthTextOptionProps,
-    selected: MonthTextOptionProps.find(({ value }) => value === month),
+    opts: monthOptions,
+    selected: monthOptions.find(({ value }) => value === month),
   }
   const [updatedMonths, setUpdatedMonths] = useState(months)
   const [searchTextMonth, setSearchTextMonth] = useState('')
   useEffect(() => {
     setUpdatedMonths({
-      opts: MonthTextOptionProps,
-      selected: MonthTextOptionProps.find(({ value }) => value === month),
+      opts: monthOptions,
+      selected: monthOptions.find(({ value }) => value === month),
     })
-  }, [month])
+  }, [month, monthOptions])
   useEffect(() => {
     setUpdatedMonths({
       opts: months.opts.filter(o => o.value.toUpperCase().includes(searchTextMonth.toUpperCase())),
-      selected: MonthTextOptionProps.find(
+      selected: monthOptions.find(
         ({ value }) =>
           value === month && value.toUpperCase().includes(searchTextMonth.toUpperCase()),
       ),
     })
-  }, [searchTextMonth, month, months.opts])
+  }, [searchTextMonth, month, months.opts, monthOptions])
 
   const years = {
-    opts: YearsProps,
-    selected: YearsProps.find(value => value === month),
+    opts: yearOptions,
+    selected: yearOptions.find(value => value === month),
   }
   const [updatedYears, setUpdatedYears] = useState(years)
   const [searchTextYear, setSearchTextYear] = useState('')
   useEffect(() => {
     setUpdatedYears({
-      opts: YearsProps,
-      selected: YearsProps.find(value => value === month),
+      opts: yearOptions,
+      selected: yearOptions.find(value => value === month),
     })
-  }, [month])
+  }, [month, yearOptions])
   useEffect(() => {
     setUpdatedYears({
       opts: years.opts.filter(o => o.toUpperCase().includes(searchTextYear.toUpperCase())),
-      selected: YearsProps.find(
+      selected: yearOptions.find(
         value => value === year && value.toUpperCase().includes(searchTextYear.toUpperCase()),
       ),
     })
-  }, [searchTextYear, year, years.opts])
+  }, [searchTextYear, year, yearOptions, years.opts])
 
   return canEdit ? (
     <div className="date">
@@ -158,11 +148,9 @@ export const DateField: FC<DateFieldProps> = ({
       <div className="title">Original creation date</div>
       <abbr
         className={`value date`}
-        title={`${MonthTextOptionProps.find(({ value }) => value === month)?.label ?? ''} ${
-          year ?? ''
-        }`}
+        title={`${monthOptions.find(({ value }) => value === month)?.label ?? ''} ${year ?? ''}`}
       >
-        <span>{MonthTextOptionProps.find(({ value }) => value === month)?.label ?? ''}</span>
+        <span>{monthOptions.find(({ value }) => value === month)?.label ?? ''}</span>
         <span>{year ?? ''}</span>
       </abbr>
     </div>

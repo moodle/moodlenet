@@ -8,15 +8,15 @@ import type {
 import {
   Card,
   FloatingMenu,
-  getPreviewFromUrl,
   InputTextField,
   Modal,
   PrimaryButton,
   Snackbar,
   TertiaryButton,
+  getPreviewFromUrl,
   useWindowDimensions,
 } from '@moodlenet/component-library'
-import { SubjectsTextOptionProps } from '@moodlenet/ed-meta/common'
+import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import {
   capitalizeFirstLetter,
@@ -494,7 +494,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const selectedSubject: TextOptionProps | undefined = SubjectsTextOptionProps.find(e => {
+  const selectedSubject: TextOptionProps | undefined = FieldsDataStories.SubjectsTextOptionProps.find(e => { //@ETTO this should no use the stories data
     return e.value === form.values.subject
   })
   const tags: FollowTag[] = [

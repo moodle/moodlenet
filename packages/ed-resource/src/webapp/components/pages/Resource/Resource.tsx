@@ -15,6 +15,7 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import type {
+  EdMetaOptionsProps,
   ResourceAccessProps,
   ResourceActions,
   ResourceDataProps,
@@ -47,6 +48,7 @@ export type ResourceProps = {
   state: ResourceStateProps
   actions: ResourceActions
   access: ResourceAccessProps
+  edMetaOptions: EdMetaOptionsProps
 
   fileMaxSize: number
   isSaving: boolean
@@ -64,6 +66,7 @@ export const Resource: FC<ResourceProps> = ({
 
   data,
   resourceForm,
+  edMetaOptions,
 
   state,
   actions,
@@ -76,6 +79,15 @@ export const Resource: FC<ResourceProps> = ({
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish, canEdit } = access
   const { isPublished } = state
+  const {
+    languageOptions,
+    levelOptions,
+    licenseOptions,
+    monthOptions,
+    subjectOptions,
+    typeOptions,
+    yearOptions,
+  } = edMetaOptions
 
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
@@ -201,6 +213,7 @@ export const Resource: FC<ResourceProps> = ({
       key="subject-field"
       canEdit={canEdit}
       subject={form.values.subject}
+      subjectOptions={subjectOptions}
       error={form.errors.subject}
       editSubject={e => form.setFieldValue('subject', e)}
       shouldShowErrors={shouldShowErrors}
@@ -212,6 +225,7 @@ export const Resource: FC<ResourceProps> = ({
       key="license-field"
       canEdit={canEdit}
       license={form.values.license}
+      licenseOptions={licenseOptions}
       editLicense={e => {
         form.setFieldValue('license', e)
       }}
@@ -225,6 +239,7 @@ export const Resource: FC<ResourceProps> = ({
       key="type-field"
       canEdit={canEdit}
       type={form.values.type}
+      typeOptions={typeOptions}
       editType={e => {
         form.setFieldValue('type', e)
       }}
@@ -238,6 +253,7 @@ export const Resource: FC<ResourceProps> = ({
       key="level-field"
       canEdit={canEdit}
       level={form.values.level}
+      levelOptions={levelOptions}
       editLevel={e => {
         form.setFieldValue('level', e)
       }}
@@ -251,7 +267,9 @@ export const Resource: FC<ResourceProps> = ({
       key="date-field"
       canEdit={canEdit}
       month={form.values.month}
+      monthOptions={monthOptions}
       year={form.values.year}
+      yearOptions={yearOptions}
       editMonth={e => {
         form.setFieldValue('month', e)
       }}
@@ -269,6 +287,7 @@ export const Resource: FC<ResourceProps> = ({
       key="language-field"
       canEdit={canEdit}
       language={form.values.language}
+      languageOptions={languageOptions}
       editLanguage={e => {
         form.setFieldValue('language', e)
       }}

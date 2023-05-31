@@ -1,10 +1,11 @@
+import type { IconTextOptionProps } from '@moodlenet/component-library'
 import { Dropdown, IconPill, IconTextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { LicenseIconTextOptionProps } from '../../../../common/MOCK_DATA.js'
 
 export type LicenseFieldProps = {
   license: string
+  licenseOptions: IconTextOptionProps[]
   canEdit: boolean
   error: string | undefined
   shouldShowErrors: boolean
@@ -13,24 +14,25 @@ export type LicenseFieldProps = {
 
 export const LicenseField: FC<LicenseFieldProps> = ({
   license,
+  licenseOptions,
   canEdit,
   error,
   shouldShowErrors,
   editLicense,
 }) => {
   const licenses = {
-    opts: LicenseIconTextOptionProps,
-    selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
+    opts: licenseOptions,
+    selected: licenseOptions.find(({ value }) => value === license),
   }
   const [updatedLicenses, setUpdatedLicenses] = useState(licenses)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
     setUpdatedLicenses({
-      opts: LicenseIconTextOptionProps,
-      selected: LicenseIconTextOptionProps.find(({ value }) => value === license),
+      opts: licenseOptions,
+      selected: licenseOptions.find(({ value }) => value === license),
     })
-  }, [license])
+  }, [license, licenseOptions])
 
   useEffect(() => {
     setUpdatedLicenses({
@@ -39,11 +41,11 @@ export const LicenseField: FC<LicenseFieldProps> = ({
           o.label.toUpperCase().includes(searchText.toUpperCase()) ||
           o.value.toUpperCase().includes(searchText.toUpperCase()),
       ),
-      selected: LicenseIconTextOptionProps.find(
+      selected: licenseOptions.find(
         ({ value }) => value === license && value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
-  }, [searchText, license, licenses.opts])
+  }, [searchText, license, licenses.opts, licenseOptions])
 
   const licenseDropdown = canEdit ? (
     <Dropdown

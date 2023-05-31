@@ -1,6 +1,92 @@
 import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
-import { LicenseNodes, VisibilityNodes } from '@moodlenet/component-library'
-// import { VisibilityNodes } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
+import { getYearList, LicenseNodes } from '@moodlenet/component-library'
+
+export const TypeTextOptionProps: TextOptionProps[] = [
+  {
+    value: '0',
+    label: 'Assessment',
+  },
+  {
+    value: '1',
+    label: 'Concept map',
+  },
+  {
+    value: '2',
+    label: 'Course',
+  },
+  {
+    value: '3',
+    label: 'Curriculum',
+  },
+  {
+    value: '4',
+    label: 'Data set',
+  },
+  {
+    value: '5',
+    label: 'Experiment',
+  },
+  {
+    value: '6',
+    label: 'Game',
+  },
+  {
+    value: '7',
+    label: 'Glossary',
+  },
+  {
+    value: '8',
+    label: 'Graph',
+  },
+  {
+    value: '9',
+    label: 'Guides and Tutorials',
+  },
+  {
+    value: '10',
+    label: 'Interactive learning object',
+  },
+  {
+    value: '11',
+    label: 'Map',
+  },
+  {
+    value: '12',
+    label: 'Online courses site',
+  },
+  {
+    value: '13',
+    label: 'Project',
+  },
+  {
+    value: '14',
+    label: 'Questionnaire',
+  },
+  {
+    value: '15',
+    label: 'Reading',
+  },
+  {
+    value: '16',
+    label: 'References',
+  },
+  {
+    value: '17',
+    label: 'Report',
+  },
+  {
+    value: '18',
+    label: 'Repository',
+  },
+  {
+    value: '19',
+    label: 'Simulation',
+  },
+  {
+    value: '20',
+    label: 'Unit of study',
+  },
+]
 
 export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
   {
@@ -40,24 +126,7 @@ export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
   },
 ]
 
-type VisbilityIconTextOptionPropsT = IconTextOptionProps & {
-  value: 'Private' | 'Public'
-}
-
-export const VisbilityIconTextOptionProps: VisbilityIconTextOptionPropsT[] = [
-  {
-    label: 'Private',
-    value: 'Private',
-    icon: VisibilityNodes.Private,
-  },
-  {
-    label: 'Public',
-    value: 'Public',
-    icon: VisibilityNodes.Public,
-  },
-]
-
-export const CategoriesTextOptionProps: TextOptionProps[] = [
+export const SubjectsTextOptionProps: TextOptionProps[] = [
   {
     value: `0000`,
     label: `Generic programmes and qualifications not further defined`,
@@ -337,4 +406,40 @@ export const CategoriesTextOptionProps: TextOptionProps[] = [
   },
   { value: `1099`, label: `Services not elsewhere classified` },
   { value: `9999`, label: `Field unknown` },
+]
+
+export const MonthTextOptionProps: TextOptionProps[] = [
+  { value: `0`, label: `January` },
+  { value: `1`, label: `February` },
+  { value: `2`, label: `March` },
+  { value: `3`, label: `April` },
+  { value: `4`, label: `May` },
+  { value: `5`, label: `June` },
+  { value: `6`, label: `July` },
+  { value: `7`, label: `August` },
+  { value: `8`, label: `September` },
+  { value: `9`, label: `October` },
+  { value: `10`, label: `November` },
+  { value: `11`, label: `December` },
+]
+export const YearsProps: string[] = getYearList(1750)
+
+export const LevelTextOptionProps: TextOptionProps[] = [
+  { value: '0.1', label: `Early childhood educational development` },
+  { value: '0.2', label: `Pre-primary education` },
+  { value: '1', label: `Primary education` },
+  { value: '2', label: `Lower secondary education` },
+  { value: '3', label: `Upper secondary education` },
+  { value: '4', label: `Post-secondary non-tertiary education` },
+  { value: '5', label: `Short-cycle tertiary education` },
+  { value: '6', label: `Bachelor or equivalent` },
+  { value: '7', label: `Master or equivalent` },
+  { value: '8', label: `Doctoral or equivalent` },
+]
+
+export const LanguagesTextOptionProps: TextOptionProps[] = [
+  { value: 'English', label: `English` },
+  { value: 'Italian', label: `Italian` },
+  { value: 'Greek', label: `Greek` },
+  { value: 'German', label: `German` },
 ]
