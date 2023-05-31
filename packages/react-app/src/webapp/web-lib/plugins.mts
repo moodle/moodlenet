@@ -14,6 +14,10 @@ type PkgAddOnsRegHooks<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
   >
 }
 
+type PkgMapOfPkgAddOnsRegHooks<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
+  [pkgName in string]: PkgAddOnsRegHooks<PkgAddOnsTypesMap>
+}
+
 type PkgAddOnsMap<PkgAddOnsTypesMap extends PkgAddOnsTypesMapT> = {
   [addonName in keyof PkgAddOnsTypesMap]: PkgAddOn<PkgAddOnsTypesMap[addonName]>[]
 }
@@ -51,18 +55,20 @@ export function createHookPlugin<
         )),
     )
 
-    const { current: addonsRegHooks } = useRef({} as PkgAddOnsRegHooks<PkgAddOnsTypesMap>)
+    const { current: addonsRegHooks } = useRef({} as PkgMapOfPkgAddOnsRegHooks<PkgAddOnsTypesMap>)
     registeredEntries.forEach(({ pkgId }) => {
+      const useRegisterAddOnForPkg = {} as PkgMapOfPkgAddOnsRegHooks<PkgAddOnsTypesMap>[string]
+      addonsRegHooks[pkgId.name] = useRegisterAddOnForPkg
       Object.entries(addonsHandles).forEach(([addonName, [, getRegHook]]) => {
         const regHookName = (`use` +
           addonName.substring(0, 1).toUpperCase() +
-          addonName.substring(1)) as keyof PkgAddOnsRegHooks<PkgAddOnsTypesMap>
-        addonsRegHooks[regHookName] = getRegHook(pkgId)
+          addonName.substring(1)) as keyof PkgMapOfPkgAddOnsRegHooks<PkgAddOnsTypesMap>[string]
+        useRegisterAddOnForPkg[regHookName] = getRegHook(pkgId)
       })
     })
 
     const results = registeredEntries.map(({ pkgId, hook }) => {
-      const res = hook({ ...addonsRegHooks, ...moreArg })
+      const res = hook({ ...addonsRegHooks[pkgId.name]!, ...moreArg })
       return { res, pkgId }
     })
 
