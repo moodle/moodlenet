@@ -2,9 +2,9 @@
 import { Card } from '@moodlenet/component-library'
 import type { FC } from 'react'
 
-export const SettingsMenu: FC = () => <span>Email Auth</span>
+export const AdminSettingsMenu: FC = () => <span>Email Auth</span>
 
-export const SettingsContent: FC = () => (
+export const AdminSettingsContent: FC = () => (
   <div className="simple-auth" key="simple-auth">
     <Card className="column">
       <div className="title">Email Auth</div>

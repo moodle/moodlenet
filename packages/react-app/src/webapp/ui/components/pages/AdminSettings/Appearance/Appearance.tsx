@@ -15,7 +15,7 @@ export type AppearanceProps = {
   form: ReturnType<typeof useFormik<AppearanceData>>
 }
 
-export const AppearanceMenu = () => <span>Appearance</span>
+export const AppearanceMenu = () => <abbr title="Appearance">Appearance</abbr>
 
 export const Appearance: FC<AppearanceProps> = ({ form }) => {
   // const styleContext = useContext(AdminSettingsCtx)

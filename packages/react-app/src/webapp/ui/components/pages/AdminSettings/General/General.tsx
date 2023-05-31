@@ -11,7 +11,7 @@ export type GeneralProps = {
   updateExtensions?: () => void
 }
 
-export const GeneralMenu = () => <span>General</span>
+export const GeneralMenu = () => <abbr title="General">General</abbr>
 
 export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtensions }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating

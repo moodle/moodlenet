@@ -1,0 +1,27 @@
+.access {
+  > .update {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    > .left {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      > .title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      > .description {
+        font-size: 15px;
+      }
+    }
+    > .right {
+      > .confetti {
+        font-size: 38px;
+      }
+    }
+  }
+  > .card {
+  }
+}

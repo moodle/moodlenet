@@ -4,18 +4,28 @@
 .snackbar-stack {
   z-index: 9;
   display: flex;
+  width: 100%;
+  height: fit-content;
   gap: 12px;
   position: fixed;
   align-items: center;
-  height: fit-content;
   flex-direction: column;
-  width: 100%;
+  top: 0;
+  left: 0;
 
   &.position-top {
     top: 68px;
   }
 
   &.position-bottom {
+    top: auto;
     bottom: 20px;
+  }
+  > :not(.nothing).snackbar {
+    position: unset;
+    transform: none;
+    left: auto;
+    padding: 6px 6px 6px 14px;
+    bottom: auto;
   }
 }

@@ -1,4 +1,4 @@
-import { MainLayout } from '@moodlenet/react-app/lib/webapp/ui/components'
+import { MainLayout } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useSearchParams } from 'react-router-dom'
 

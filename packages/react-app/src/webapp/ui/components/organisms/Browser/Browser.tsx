@@ -30,13 +30,13 @@ export type BrowserPropsUI = {
 
 export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
-  const [currentMainFilter, setCurrentMainFilter] = useState<string | undefined>(undefined)
+  const [currentMainFilter, setCurrentMainFilter] = useState<string | number | undefined>(undefined)
 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
       ? mainColumnItems
           .map(e => {
-            const isCurrent = e.name === currentMainFilter
+            const isCurrent = e.key === currentMainFilter
 
             const list = mainColumnItems.map(i => i.name)
             list.push('All')
@@ -47,14 +47,14 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
                   list={list}
                   selected={[e.name]}
                   label={e.name}
-                  onClick={name => setCurrentMainFilter(name === 'All' ? undefined : name)}
+                  onClick={(key: string) => setCurrentMainFilter(key === 'All' ? undefined : key)}
                 />
               ) : (
                 <SecondaryButton
                   key={e.key}
                   className={`filter-element ${isCurrent ? 'selected' : ''}`}
                   onClick={() => {
-                    setCurrentMainFilter(e.name)
+                    setCurrentMainFilter(e.key)
                   }}
                   color="grey"
                 >
@@ -122,12 +122,12 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
           {useMemo(
             () =>
               updatedMainColumnItems.map(i =>
-                !currentMainFilter || i.name === currentMainFilter ? (
+                !currentMainFilter || i.key === currentMainFilter ? (
                   'Item' in i ? (
                     <i.Item
                       key={i.key}
                       showAll={i.name === currentMainFilter || mainColumnItems?.length === 1}
-                      setShowAll={() => setCurrentMainFilter(i.name)}
+                      setShowAll={() => setCurrentMainFilter(i.key)}
                       showHeader={mainColumnItems?.length > 1}
                     />
                   ) : (

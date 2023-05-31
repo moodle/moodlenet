@@ -27,7 +27,7 @@ export type ExtensionsFormValues = {
   localPath: string
 }
 
-export const ExtensionsMenu: FC = () => <span>Extensions</span>
+export const ExtensionsMenu: FC = () => <abbr title="Extensions">Extensions</abbr>
 
 export type ExtensionsProps = {
   installExtensionProps: InstallExtensionPropsControlled
