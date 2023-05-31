@@ -30,7 +30,6 @@ export async function user_profiles() {
     `
       FOR p IN UNION_DISTINCT(
         FOR pr in Profile
-        LIMIT 10
         RETURN pr
         ,
         [ Document("${v2_org._id}") ]
