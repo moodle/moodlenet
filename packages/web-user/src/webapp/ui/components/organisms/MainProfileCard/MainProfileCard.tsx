@@ -520,9 +520,8 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       key="more-button-menu"
       menuContent={[
         {
-          key: 'share-button',
-          Component: () => (
-            <div tabIndex={0} onClick={copyUrl}>
+          Element: (
+            <div key="share-button" tabIndex={0} onClick={copyUrl}>
               <Share />
               Share
             </div>

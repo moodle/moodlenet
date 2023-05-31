@@ -210,9 +210,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {
-        key: 'share-button',
-        Component: () => (
-          <div onClick={copyUrl}>
+        Element: (
+          <div key="share-button" onClick={copyUrl}>
             <Share />
             Share
           </div>
@@ -223,9 +222,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const deleteButton: FloatingMenuContentItem | null =
     !empty && canDelete
       ? {
-          key: 'delete-button',
-          Component: () => (
-            <div onClick={() => setIsToDelete(true)}>
+          Element: (
+            <div key="delete-button" onClick={() => setIsToDelete(true)}>
               <Delete />
               Delete
             </div>
@@ -236,26 +234,24 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const unpublishButton: FloatingMenuContentItem | null =
     canPublish && isPublished
       ? {
-          Component: () => (
-            <div onClick={unpublish}>
+          Element: (
+            <div key="unpublish-button" onClick={unpublish}>
               <PublicOff />
               Unpublish
             </div>
           ),
-          key: 'unpublish-button',
         }
       : null
 
   const publishButton: FloatingMenuContentItem | null =
     canPublish && !isPublished
       ? {
-          Component: () => (
-            <div onClick={publish}>
+          Element: (
+            <div key="publish-button" onClick={publish}>
               <Public style={{ fill: '#00bd7e' }} />
               Publish
             </div>
           ),
-          key: 'publish-button',
         }
       : null
 

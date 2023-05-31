@@ -1,13 +1,12 @@
 import type React from 'react'
-import type { ComponentType, FC, KeyboardEvent } from 'react'
+import type { FC, KeyboardEvent, ReactElement } from 'react'
 import { useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
 
 export type FloatingMenuContentItem = {
-  Component: ComponentType
-  key: string
-  className?: string
+  Element: ReactElement
+  wrapperClassName?: string
 }
 
 export type FloatingMenuProps = {
@@ -57,34 +56,39 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }
 
   const updatedMenuContent = Array.isArray(menuContent)
-    ? menuContent.map(({ Component, key, className }, i) => {
+    ? menuContent.map(({ Element, wrapperClassName }, i) => {
         if (menuContent.length === 1) {
           return (
             <div
-              className={`${className}`}
-              key={key}
+              className={`${wrapperClassName}`}
+              key={Element.key}
               tabIndex={i + 1}
               onKeyDown={oneElementActions}
             >
-              <Component />
+              {Element}
             </div>
           )
         } else if (i === 0) {
           return (
-            <div className={`${className}`} key={key} tabIndex={i + 1} onKeyDown={closeMenuUp}>
-              <Component />
+            <div
+              className={`${wrapperClassName}`}
+              key={Element.key}
+              tabIndex={i + 1}
+              onKeyDown={closeMenuUp}
+            >
+              {Element}
             </div>
           )
         } else if (menuContent.length - 1 === i) {
           return (
-            <div className={`last element ${className}`} key={key} tabIndex={i + 1}>
-              <Component />
+            <div className={`last element ${wrapperClassName}`} key={Element.key} tabIndex={i + 1}>
+              {Element}
             </div>
           )
         } else {
           return (
-            <div className={`${className}`} key={key} tabIndex={i + 1}>
-              <Component />
+            <div className={`${wrapperClassName}`} key={Element.key} tabIndex={i + 1}>
+              {Element}
             </div>
           )
         }
