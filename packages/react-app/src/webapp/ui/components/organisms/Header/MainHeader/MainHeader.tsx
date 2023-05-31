@@ -1,6 +1,6 @@
-import type { AddonItem, HeaderProps } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 import { Header, Searchbox } from '@moodlenet/component-library'
-import type { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, ReactElement, SetStateAction } from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { HeaderTitle } from '../../../atoms/HeaderTitle/HeaderTitle.js'
@@ -32,7 +32,7 @@ export type MainHeaderProps = {
   rightItems: AddonItem[]
   headerTitleProps: HeaderTitleProps
   search(text: string): unknown
-} & HeaderProps
+}
 
 export const MainHeader: FC<MainHeaderProps> = ({
   leftItems,
@@ -40,7 +40,6 @@ export const MainHeader: FC<MainHeaderProps> = ({
   rightItems,
   headerTitleProps,
   search,
-  ...props
 }) => {
   const [pageRendered, setPageRendered] = useState(false)
   const { hideSearchbox } = useContext(MainHeaderContext)
@@ -54,41 +53,37 @@ export const MainHeader: FC<MainHeaderProps> = ({
 
   const updatedLeftItems = useMemo(() => {
     return [
-      {
-        Item: () => <HeaderTitle logo={logo} smallLogo={smallLogo} url={url} />,
-        key: 'header-title',
-      },
-      ...(leftItems ?? []),
+      <HeaderTitle key="header-title" logo={logo} smallLogo={smallLogo} url={url} />,
+      ...(leftItems ?? []).map(({ Item, key }) => <Item key={key} />),
     ].filter(Boolean)
   }, [leftItems, logo, smallLogo, url])
 
   const updatedCenterItems = useMemo(() => {
     const searchbox =
-      pageRendered && !hideSearchbox
-        ? {
-            Item: () => (
-              <Searchbox
-                placeholder="Search for open education content"
-                searchText={searchText}
-                setSearchText={setSearchText}
-                search={search}
-              />
-            ),
-            key: 'searchbox',
-          }
-        : null
-    return [searchbox, ...(centerItems ?? [])].filter((item): item is AddonItem => !!item)
+      pageRendered && !hideSearchbox ? (
+        <Searchbox
+          key="searchbox"
+          placeholder="Search for open education content"
+          searchText={searchText}
+          setSearchText={setSearchText}
+          search={search}
+        />
+      ) : null
+    return [searchbox, ...(centerItems ?? []).map(({ Item, key }) => <Item key={key} />)].filter(
+      (item): item is ReactElement => !!item,
+    )
   }, [centerItems, searchText, search, hideSearchbox, pageRendered])
 
-  const updatedRightItems: AddonItem[] = useMemo(() => {
-    return rightItems.filter((item): item is AddonItem => !!item)
+  const updatedRightItems: ReactElement[] = useMemo(() => {
+    return rightItems
+      .map(({ Item, key }) => <Item key={key} />)
+      .filter((item): item is ReactElement => !!item)
   }, [rightItems])
   return (
     <Header
       leftItems={updatedLeftItems}
       centerItems={updatedCenterItems}
       rightItems={updatedRightItems}
-      {...props}
     ></Header>
   )
 }
