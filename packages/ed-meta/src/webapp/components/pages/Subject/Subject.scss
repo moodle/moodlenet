@@ -1,0 +1,175 @@
+.subject {
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media screen and (max-width: 450px) {
+    padding: 20px;
+  }
+
+  .main-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    > .collections,
+    > .resources {
+      > .list-card-header {
+        font-size: 20px;
+        margin-right: 16px;
+      }
+    }
+
+    > .collections > .content {
+      max-height: 395px;
+      overflow: hidden;
+    }
+
+    @media (min-width: 450px) and (max-width: 800px) {
+    }
+
+    @media screen and (max-width: 450px) {
+      > .resources > .content {
+        > .resource-card {
+          font-size: 15px;
+          width: 100%;
+        }
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      > .resources > .content {
+        > .resource-card {
+          font-size: 15px;
+        }
+      }
+    }
+    > .main-subject-card {
+      width: 100%;
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      justify-content: space-between;
+      align-items: center;
+
+      > .subject-header {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+        flex-direction: column;
+        > .title {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          > .name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: bold;
+            font-size: 26px;
+          }
+
+          > .isced-pill {
+            > .primary-button {
+              height: auto;
+              font-weight: initial;
+              cursor: pointer;
+              font-size: 10px;
+              padding: 4px 8px;
+              border-radius: 5px;
+            }
+            &.disabled {
+              pointer-events: none;
+              cursor: default;
+            }
+          }
+        }
+      }
+
+      > .overall {
+        display: flex;
+        font-size: 14px;
+        gap: 20px;
+        > .data {
+          display: flex;
+          gap: 5px;
+          > :first-child {
+            font-weight: bold;
+          }
+        }
+      }
+
+      > .subject-footer {
+        > .follow-button {
+          > svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        > .following-button {
+          gap: 2px;
+          > svg {
+            width: 17px;
+            height: 17px;
+          }
+        }
+      }
+
+      @media screen and (min-width: 450px) {
+        flex-direction: column;
+        align-items: start;
+        gap: 10px;
+      }
+
+      @media screen and (max-width: 450px) {
+        justify-content: center;
+        padding: 0;
+        > .info {
+          > .title {
+            flex-direction: column-reverse;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+            gap: 7px;
+            > .isced-pill {
+              margin-top: 0;
+              margin-left: auto;
+            }
+          }
+          > .overall {
+            justify-content: center;
+            > .data {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+          }
+        }
+
+        > .actions {
+          width: 100%;
+          justify-content: center;
+          display: flex;
+        }
+      }
+    }
+
+    > .category-overall-card {
+      width: 35%;
+    }
+
+    @media screen and (max-width: 850px) {
+    }
+
+    @media screen and (min-width: 850px) {
+    }
+
+    > .actions {
+      width: fit-content;
+    }
+  }
+}
