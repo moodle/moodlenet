@@ -19,6 +19,7 @@ export const parameters = {
     sidebar: {
       collapsedRoots: ['atoms', 'molecules', 'organisms', 'templates', 'pages', 'emails'],
     },
+    showPanel: false,
   },
   controls: {
     expanded: false,
