@@ -31,7 +31,6 @@ export async function featured_entities() {
     const kudosCursor = await v2_DB_ContentGraph.query<{ kudos: number }>({
       query: `
     for lk in Likes
-      filter lk._fromType == "Profile"
       let res = Document(lk._to)
       let resCr = Document(CONCAT(res._creator._type, "/", res._creator._permId))
       filter @targetProfileId == resCr._id 
@@ -70,7 +69,7 @@ export async function featured_entities() {
         FeatColl =>
           `
         (FOR feat IN ${FeatColl} 
-          FILTER feat._creator._permId == "${v2_profile_key}" && feat._creator._type == "Profile"
+          FILTER feat._creator._permId == "${v2_profile_key}"
         RETURN feat)
         `,
       )
@@ -109,7 +108,7 @@ export async function featured_entities() {
             ? Resource_v2v3_IdMapping[v2TargetId]
             : v2targetType === 'Collection'
             ? Collection_v2v3_IdMapping[v2TargetId]
-            : v2targetType === 'Profile'
+            : v2targetType === 'Profile' || v2targetType === 'Organization'
             ? Profile_v2v3_IdMapping[v2TargetId]
             : undefined
 
