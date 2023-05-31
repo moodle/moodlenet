@@ -1,10 +1,11 @@
+import type { TextOptionProps } from '@moodlenet/component-library'
 import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { SubjectsTextOptionProps } from '../../../../common/MOCK_DATA.js'
 
 export type SubjectFieldProps = {
   subject: string
+  subjectOptions: TextOptionProps[]
   canEdit: boolean
   shouldShowErrors: boolean
   error: string | undefined
@@ -13,24 +14,25 @@ export type SubjectFieldProps = {
 
 export const SubjectField: FC<SubjectFieldProps> = ({
   subject,
+  subjectOptions,
   canEdit,
   error,
   shouldShowErrors,
   editSubject,
 }) => {
   const subjects = {
-    opts: SubjectsTextOptionProps,
-    selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+    opts: subjectOptions,
+    selected: subjectOptions.find(({ value }) => value === subject),
   }
   const [updatedSubjects, setUpdatedSubjects] = useState(subjects)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
     setUpdatedSubjects({
-      opts: SubjectsTextOptionProps,
-      selected: SubjectsTextOptionProps.find(({ value }) => value === subject),
+      opts: subjectOptions,
+      selected: subjectOptions.find(({ value }) => value === subject),
     })
-  }, [subject])
+  }, [subject, subjectOptions])
 
   useEffect(() => {
     setUpdatedSubjects({
@@ -39,11 +41,11 @@ export const SubjectField: FC<SubjectFieldProps> = ({
           o.label.toUpperCase().includes(searchText.toUpperCase()) ||
           o.value.toUpperCase().includes(searchText.toUpperCase()),
       ),
-      selected: SubjectsTextOptionProps.find(
+      selected: subjectOptions.find(
         ({ value }) => value === subject && value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
-  }, [searchText, subject, subjects.opts])
+  }, [searchText, subject, subjectOptions, subjects.opts])
 
   return canEdit ? (
     <Dropdown

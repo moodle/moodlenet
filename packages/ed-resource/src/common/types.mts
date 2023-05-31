@@ -1,3 +1,4 @@
+import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
 import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
@@ -62,6 +63,7 @@ export type ResourceDataProps = ResourceDataRpc
 export type ResourceStateProps = ResourceStateRpc
 export type ResourceCardDataProps = ResourceCardDataRpc
 export type ResourceAccessProps = ResourceAccessRpc
+export type EdMetaOptionsProps = EdMetaOptionsRpc
 export type ResourceContributorProps = ResourceContributorRpc
 
 export type ResourceProps = {
@@ -98,6 +100,16 @@ export type ResourceAccessRpc = {
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
+}
+
+export type EdMetaOptionsRpc = {
+  typeOptions: TextOptionProps[]
+  monthOptions: TextOptionProps[]
+  yearOptions: string[]
+  languageOptions: TextOptionProps[]
+  levelOptions: TextOptionProps[]
+  licenseOptions: IconTextOptionProps[]
+  subjectOptions: TextOptionProps[]
 }
 
 export type ResourceCardDataRpc = {

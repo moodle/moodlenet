@@ -1,10 +1,11 @@
-import { Dropdown, SimplePill, SimpleTextOption } from '@moodlenet/component-library'
+import type { TextOptionProps } from '@moodlenet/component-library'
+import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { TypeSimpleTextOptionProps } from '../../../../common/MOCK_DATA.js'
 
 export type TypeFieldProps = {
   type: string | undefined
+  typeOptions: TextOptionProps[]
   canEdit: boolean
   error: string | undefined
   shouldShowErrors: boolean
@@ -13,33 +14,34 @@ export type TypeFieldProps = {
 
 export const TypeField: FC<TypeFieldProps> = ({
   type,
+  typeOptions,
   canEdit,
   error,
   shouldShowErrors,
   editType,
 }) => {
   const types = {
-    opts: TypeSimpleTextOptionProps,
-    selected: TypeSimpleTextOptionProps.find(({ value }) => value === type),
+    opts: typeOptions,
+    selected: typeOptions.find(({ value }) => value === type),
   }
   const [updatedTypes, setUpdatedTypes] = useState(types)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
     setUpdatedTypes({
-      opts: TypeSimpleTextOptionProps,
-      selected: TypeSimpleTextOptionProps.find(({ value }) => value === type),
+      opts: typeOptions,
+      selected: typeOptions.find(({ value }) => value === type),
     })
-  }, [type])
+  }, [type, typeOptions])
 
   useEffect(() => {
     setUpdatedTypes({
       opts: types.opts.filter(o => o.value.toUpperCase().includes(searchText.toUpperCase())),
-      selected: TypeSimpleTextOptionProps.find(
+      selected: typeOptions.find(
         ({ value }) => value === type && value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
-  }, [searchText, type, types.opts])
+  }, [searchText, type, typeOptions, types.opts])
 
   return canEdit ? (
     <Dropdown
@@ -66,11 +68,17 @@ export const TypeField: FC<TypeFieldProps> = ({
       }
     >
       {updatedTypes.selected && (
-        <SimpleTextOption key={updatedTypes.selected.value} value={updatedTypes.selected.value} />
+        <TextOption
+          key={updatedTypes.selected.value}
+          value={updatedTypes.selected.value}
+          label={updatedTypes.selected.label}
+        />
       )}
       {updatedTypes.opts.map(
-        ({ value }) =>
-          updatedTypes.selected?.value !== value && <SimpleTextOption key={value} value={value} />,
+        ({ value, label }) =>
+          updatedTypes.selected?.value !== value && (
+            <TextOption key={value} value={value} label={label} />
+          ),
       )}
     </Dropdown>
   ) : type ? (
