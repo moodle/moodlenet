@@ -20,7 +20,7 @@ const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" index element={<LandingContainer />} />
-      <Route path="settings" element={<AdminSettingsPageRoute />} />
+      <Route path="admin" element={<AdminSettingsPageRoute />} />
       {appRoutesContextPlugins.map(({ pkgId, pkgRoutes: { routes } }) => {
         return (
           <Route path={`/`} key={pkgId.name}>

@@ -10,10 +10,12 @@ import { SignUpContainer } from './page/access/SignupContainer.js'
 import { BookmarksPageContainer } from './page/bookmarks/BookmarksPageContainer.js'
 import { MyProfilePageRoute } from './page/profile/MyProfilePageRoute.js'
 import { ProfilePageRoute } from './page/profile/ProfilePageRoute.js'
+import { UserSettingsRoute } from './page/settings/UserSettingsRoute.js'
 
 export const pkgRoutes: PkgRoutes = {
   routes: (
     <>
+      <Route path="settings" element={<UserSettingsRoute />} />
       <Route path="bookmarks" index element={<BookmarksPageContainer />} />
       <Route path="login">
         <Route index element={<LoginPanelContainer />} />
