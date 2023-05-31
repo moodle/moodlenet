@@ -5,7 +5,6 @@ import Moodle from './MoodleTheme'
 addons.setConfig({
   theme: Moodle,
   showPanel: false,
-  panelPosition: 'bottom',
   sidebar: {
     collapsedRoots: ['Atoms', 'Molecules', 'Organisms', 'Templates', 'Pages', 'Emails'],
   },
