@@ -1,7 +1,7 @@
 import { Bookmarks } from '@material-ui/icons'
 import type { Href } from '@moodlenet/react-app/common'
 import { Link, withProxy } from '@moodlenet/react-app/ui'
-import { ExitToApp } from '@mui/icons-material'
+import { DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
 import { ReactComponent as ArrowsIcon } from '../../../assets/icons/arrows.svg'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 
@@ -39,12 +39,27 @@ export const SignoutAvatarMenuComponent = withProxy<SignoutAvatarMenuComponentPr
   },
 )
 
-export type SettingsLinkAvatarMenuComponentProps = { settingsHref: Href }
-export const SettingsLinkAvatarMenuComponent = withProxy<SettingsLinkAvatarMenuComponentProps>(
-  ({ settingsHref }) => {
-    return <Link href={settingsHref}>Settings</Link>
-  },
-)
+export type UserSettingsLinkAvatarMenuComponentProps = { settingsHref: Href }
+export const UserSettingsLinkAvatarMenuComponent =
+  withProxy<UserSettingsLinkAvatarMenuComponentProps>(({ settingsHref }) => {
+    return (
+      <Link href={settingsHref}>
+        <Settings />
+        Settings
+      </Link>
+    )
+  })
+
+export type AdminSettingsLinkAvatarMenuComponentProps = { settingsHref: Href }
+export const AdminSettingsLinkAvatarMenuComponent =
+  withProxy<AdminSettingsLinkAvatarMenuComponentProps>(({ settingsHref }) => {
+    return (
+      <Link href={settingsHref}>
+        <DisplaySettings />
+        Admin
+      </Link>
+    )
+  })
 
 export type BookmarksLinkAvatarMenuComponentProps = { bookmarksHref: Href }
 export const BookmarksLinkAvatarMenuComponent = withProxy<BookmarksLinkAvatarMenuComponentProps>(

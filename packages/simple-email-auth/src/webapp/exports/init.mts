@@ -6,7 +6,7 @@ import '../shell.mjs'
 import { LoginIcon } from '../ui/Login/Login.js'
 import { LoginPanelContainer } from '../ui/Login/LoginContainer.js'
 import { SignUpPanelContainer } from '../ui/Signup/SignUpHooks.js'
-import { SettingsContent, SettingsMenu, SignupIcon } from './ui.mjs'
+import { AdminSettingsContent, AdminSettingsMenu, SignupIcon } from './ui.mjs'
 
 LoginPlugins.register(function useLoginMethod({ useLoginMethod }) {
   const addons = useMemo(
@@ -27,10 +27,10 @@ SignupPlugins.register(function useSignupMethod({ useSignupMethod }) {
   useSignupMethod(addons)
 })
 
-AdminSettingsPagePlugins.register(function useSettingsPageHook({ useAdminSettingsSection }) {
+AdminSettingsPagePlugins.register(function useAdminSettingsPageHook({ useAdminSettingsSection }) {
   const addons = useMemo<PkgAddOns<AdminSettingsSectionItem>>(
     () => ({
-      default: { Content: SettingsContent, Menu: SettingsMenu },
+      default: { Content: AdminSettingsContent, Menu: AdminSettingsMenu },
     }),
     [],
   )

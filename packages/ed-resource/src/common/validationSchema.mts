@@ -5,7 +5,16 @@ export const maxUploadSize = 1024 * 1024 * 50
 
 export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
   title: string().max(160).min(3).required(/* t */ `Please provide a title`),
-  description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
+  description: string()
+    .max(4000, obj => {
+      const length = obj.value.length
+      return `Please provide a shorter description (${length} / 4000)`
+    })
+    .min(40, obj => {
+      const length = obj.value.length
+      return `Please provide a longer description (${length} < 40)`
+    })
+    .required(/* t */ `Please provide a description`),
   subject: string().required(/* t */ `Please select a subject`),
   license: string().required(/* t */ `Please provide a license`),
   language: string().required('Please provide a language'),

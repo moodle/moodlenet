@@ -33,7 +33,9 @@
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "react-dom": "^18.1.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "formik": "^2.2.9",
+    "yup": "^0.32.11"
   },
   "peerDependencies": {
     "@moodlenet/component-library": "^0.2.0",

@@ -17,7 +17,7 @@ export type UsersProps = {
   search(str: string): unknown
 }
 
-export const UsersMenu = () => <span>Users</span>
+export const UsersMenu = () => <abbr title="Users">Users</abbr>
 
 const Row: FC<{
   user: User

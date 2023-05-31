@@ -365,7 +365,7 @@ function html() {
                     <tr>
                       <td style="padding: 0 2.5em; text-align: center">
                         <div class="text">
-                          <h2>Ready to change your password</h2>
+                          <h2>Ready to change your password 🔑</h2>
                         </div>
                       </td>
                     </tr>
@@ -473,10 +473,11 @@ export const Email: FC = () => {
 }
 
 export default {
-  title: 'Pages/Emails/Access/RecoverPassoword',
+  title: 'Pages/Emails/Access/RecoverPassword',
   component: Email,
   argTypes: {},
   parameters: { layout: 'fullscreen' },
+  excludeStories: ['Email'],
 } as ComponentMeta<typeof Email>
 
 const Template: ComponentStory<typeof Email> = () => <Email />

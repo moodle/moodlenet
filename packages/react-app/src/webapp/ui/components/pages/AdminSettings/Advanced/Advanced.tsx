@@ -12,7 +12,7 @@ export type AdvancedProps = {
   form: ReturnType<typeof useFormik<AdvancedFormValues>>
 }
 
-export const AdvancedMenu = () => <span>Advanced</span>
+export const AdvancedMenu = () => <abbr title="Advanced">Advanced</abbr>
 
 export const Advanced: FC<AdvancedProps> = ({ form }) => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating

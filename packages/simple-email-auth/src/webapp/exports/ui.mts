@@ -2,4 +2,5 @@
 export * from '../ui/AdminSettings.js'
 export * from '../ui/Login/Login.js'
 export * from '../ui/Signup/Signup.js'
+export * from '../ui/UserSettings.js'
 // @endindex

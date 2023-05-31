@@ -5,6 +5,7 @@ import MainLayout from '../../layout/MainLayout/MainLayout.js'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { Card } from '@moodlenet/component-library'
+// import '@moodlenet/component-library/ui/scss/application'
 import './AdminSettings.scss'
 
 export type AdminSettingsItem = { key: string; Content: ComponentType; Menu: ComponentType }
@@ -26,8 +27,8 @@ export const AdminSettings: FC<AdminSettingsProps> = ({ mainLayoutProps, setting
     >
       <div className={`admin-settings`}>
         {
-          <div className="left-menu" role="navigation">
-            <Card role="navigation">
+          <div className="menu-container" role="navigation">
+            <Card role="navigation" className="menu">
               {settingsItems.map(settingsItem => {
                 const isCurrent = JSON.stringify(settingsItem) === JSON.stringify(currSettingsItem)
                 const onClick = isCurrent ? undefined : () => chooseSettingsItem(settingsItem)
