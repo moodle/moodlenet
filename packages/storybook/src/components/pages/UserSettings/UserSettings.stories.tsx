@@ -4,6 +4,7 @@ import type { UserSettingsProps } from '@moodlenet/web-user/ui'
 import { UserSettings } from '@moodlenet/web-user/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+import { useUserSettingsAccessElements } from './Sections/Access.stories.js'
 import { useUserSettingsGeneralElements } from './Sections/General.stories.js'
 // import { href } from '../../../elements/link'
 
@@ -24,6 +25,11 @@ export const UserSettingsDefaultStoryProps = (): UserSettingsProps => {
         Menu: useUserSettingsGeneralElements().Menu,
         Content: useUserSettingsGeneralElements().Content,
         key: 'general',
+      },
+      {
+        Menu: useUserSettingsAccessElements().Menu,
+        Content: useUserSettingsAccessElements().Content,
+        key: 'access',
       },
       {
         Menu: AdvancedStories.useElements().Menu,
