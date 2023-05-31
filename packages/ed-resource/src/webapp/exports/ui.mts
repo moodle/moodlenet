@@ -3,6 +3,7 @@ export * from '../components/molecules/ResourceContributorCard/ResourceContribut
 export * from '../components/organisms/lists/BrowserResourceList/BrowserResourceFilters.js'
 export * from '../components/organisms/lists/BrowserResourceList/BrowserResourceList.js'
 export * from '../components/organisms/lists/LandingResourceList/LandingResourceList.js'
+export * from '../components/organisms/lists/SimpleResourceList/SimpleResourceList.js'
 export * from '../components/organisms/MainResourceCard/MainResourceCard.js'
 export * from '../components/organisms/ResourceCard/ResourceCard.js'
 export * from '../components/organisms/UploadResource/UploadResource.js'
