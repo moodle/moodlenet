@@ -9,9 +9,9 @@ import './SimpleDropdown.scss'
 
 export type SimpleDropdownProps = {
   label: string
-  list: string[]
-  selected: string[]
-  onClick: (e: string) => void
+  list: { name: string; key: string | number }[]
+  selected: (string | number)[]
+  onClick: (e: string | number) => void
   className?: string
   initialSelection?: string
   notHighlightInitialSelection?: boolean
@@ -27,17 +27,17 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
   initialSelection,
 }) => {
   const currentName: string[] = []
-  const menuContent = list.map(e => {
-    const isCurrent = selected.indexOf(e) > -1
-    isCurrent && currentName.push(e)
+  const menuContent = list.map(({ name, key }) => {
+    const isCurrent = selected.indexOf(key) > -1
+    isCurrent && currentName.push(name)
     const floatingMenuContentItem: FloatingMenuContentItem = {
       Element: (
-        <Fragment key={e}>
+        <Fragment key={key}>
           <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
             <div className={`border ${isCurrent ? 'selected' : ''}`} />
           </div>
-          <div onClick={() => onClick(e)} className={`content ${isCurrent ? 'selected' : ''}`}>
-            {e}
+          <div onClick={() => onClick(key)} className={`content ${isCurrent ? 'selected' : ''}`}>
+            {name}
           </div>
         </Fragment>
       ),
