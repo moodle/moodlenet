@@ -20,20 +20,5 @@ export type ResourceExposeType = PkgExposeDef<{
       params: { _key: string },
     ): Promise<string | null>
     // OTHER
-    'dl/ed-resource/:_key/:filename'(
-      body: null,
-      params: { _key: string; filename: string },
-    ): Promise<RpcFile>
-    'basic/v1/create'(body: {
-      name: string
-      description: string
-      resource: string | [RpcFile]
-    }): Promise<{
-      _key: string
-      name: string
-      description: string
-      url: string
-      homepage: string
-    }>
   }
 }>
