@@ -72,25 +72,26 @@ export function makeExtPortsApp() {
           httpResp.send(err)
           return
         }
-
         await rpcDefItem
           .fn(...rpcArgs)
-          .then(async rpcResponse => {
-            const mReadable = await getMaybeRpcFileReadable(rpcResponse)
+          .then(async _rpcResponse => {
+            const rpcResponse = await getRpcResponse(_rpcResponse)
             const { rpcStatusCode: statusCode } = getCurrentRpcStatusCode() ?? {
               rpcStatusCode: 200,
             }
             httpResp.status(statusCode)
-            if (mReadable) {
-              const rpcFile: RpcFile = rpcResponse
-              rpcFile.name && httpResp.header('x-rpc-file-name', `${rpcFile.name}`)
-              rpcFile.size && httpResp.header('Content-Length', `${rpcFile.size}`)
-              rpcFile.type && httpResp.contentType(`${rpcFile.type}`)
-              mReadable.pipe(httpResp)
+            if (rpcResponse.type === 'stream') {
+              if (rpcResponse.rpcFile) {
+                const { rpcFile } = rpcResponse
+                rpcFile.name && httpResp.header('x-rpc-file-name', `${rpcFile.name}`)
+                rpcFile.size && httpResp.header('Content-Length', `${rpcFile.size}`)
+                rpcFile.type && httpResp.contentType(`${rpcFile.type}`)
+              }
+              rpcResponse.stream.pipe(httpResp)
               return
             } else {
               httpResp.contentType('application/json')
-              httpResp.json(rpcResponse)
+              httpResp.json(rpcResponse.json)
               return
             }
           })
@@ -200,4 +201,15 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
   }
 
   throw new Error(`Unsupported contentType: ${contentTypeHeader}`)
+}
+
+async function getRpcResponse(rpcResponse: any) {
+  const mReadable = await getMaybeRpcFileReadable(rpcResponse)
+  if (mReadable) {
+    return { type: 'stream', stream: mReadable, rpcFile: rpcResponse as RpcFile } as const
+  } else if (rpcResponse instanceof Readable) {
+    return { type: 'stream', stream: rpcResponse } as const
+  } else {
+    return { type: 'json', json: rpcResponse } as const
+  }
 }
