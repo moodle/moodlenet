@@ -23,6 +23,10 @@ export {
 } from '../ui/components/pages/AdminSettings/Hook/AdminSettingsHook.js'
 export { LandingHookPlugin } from '../ui/components/pages/Landing/LandingHook.mjs'
 export {
+  SearchPagePlugin,
+  type SearchEntitySectionAddon,
+} from '../ui/components/pages/Search/SearchPageHook.mjs'
+export {
   usePkgAddOns,
   type PkgAddOn,
   type PkgAddOns,

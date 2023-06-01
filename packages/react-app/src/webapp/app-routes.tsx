@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import { getCurrentInitPkg } from './plugin-initializer.mjs'
 import { AdminSettingsPageRoute } from './ui/components/pages/AdminSettings/Hook/AdminSettingsPageRoute.js'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
+import { SearchPageRoute } from './ui/components/pages/Search/SearchPageRoute.js'
 
 export type PkgRoutes = { routes: ReactElement }
 
@@ -20,7 +21,9 @@ const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" index element={<LandingContainer />} />
+      <Route path="search" element={<SearchPageRoute />} />
       <Route path="admin" element={<AdminSettingsPageRoute />} />
+
       {appRoutesContextPlugins.map(({ pkgId, pkgRoutes: { routes } }) => {
         return (
           <Route path={`/`} key={pkgId.name}>
