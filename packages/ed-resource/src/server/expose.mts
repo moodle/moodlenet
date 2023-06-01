@@ -1,12 +1,14 @@
 import { shell } from './shell.mjs'
 
-import { RpcStatus, setRpcStatusCode } from '@moodlenet/core'
+import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import { assertRpcFileReadable, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
+import type { Readable } from 'stream'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
@@ -27,7 +29,9 @@ import {
   setResourceImage,
 } from './services.mjs'
 
-export const expose = await shell.expose<ResourceExposeType>({
+export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
+
+export const expose = await shell.expose<FullResourceExposeType>({
   rpc: {
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
@@ -61,7 +65,6 @@ export const expose = await shell.expose<ResourceExposeType>({
           ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.fsItem.rpcFile })
           : found.entity.content.url
 
-        console.log({ found })
         const resourceRpc: ResourceRpc = {
           contributor: {
             avatarUrl: found.contributor.iconUrl,
@@ -264,8 +267,33 @@ export const expose = await shell.expose<ResourceExposeType>({
         if (!fsItem) {
           throw RpcStatus('Not Found')
         }
-        return fsItem.rpcFile
+        const readable = await assertRpcFileReadable(fsItem.rpcFile)
+
+        readable.on('end', () => {
+          console.log('resource download stream ended, can increment download count')
+        })
+        return readable
       },
     },
   },
 })
+
+type ServerResourceExposeType = {
+  rpc: {
+    [RESOURCE_DOWNLOAD_ENDPOINT](
+      body: null,
+      params: { _key: string; filename: string },
+    ): Promise<Readable>
+    'basic/v1/create'(body: {
+      name: string
+      description: string
+      resource: string | [RpcFile]
+    }): Promise<{
+      _key: string
+      name: string
+      description: string
+      url: string
+      homepage: string
+    }>
+  }
+}
