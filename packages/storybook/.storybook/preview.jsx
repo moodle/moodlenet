@@ -1,5 +1,6 @@
 import { MemoryRouter } from 'react-router-dom'
 import { ProvideStorybookLinkComponent } from '../src/lib/SBLinkComponent'
+import { ProvideSBMainSearchBoxCtx } from '../src/MainSearchBoxCtxProvider'
 import { Wrapper } from '../src/Wrapper'
 
 export const parameters = {
@@ -36,7 +37,9 @@ export const decorators = [
     <MemoryRouter>
       <ProvideStorybookLinkComponent>
         <Wrapper>
-          <Story />
+          <ProvideSBMainSearchBoxCtx>
+            <Story />
+          </ProvideSBMainSearchBoxCtx>
         </Wrapper>
       </ProvideStorybookLinkComponent>
     </MemoryRouter>
