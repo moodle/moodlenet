@@ -1,5 +1,6 @@
 import { BrowserCollectionFilters, BrowserCollectionList } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
+import { BrowserSubjectList } from '@moodlenet/ed-meta/ui'
 import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
 import type { BrowserProps, MainColumItem } from '@moodlenet/react-app/ui'
 import { ProfileCardPropsStories } from '@moodlenet/web-user/stories'
@@ -9,6 +10,7 @@ import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
 import { getCollectionCardsStoryProps } from '../CollectionCard/CollectionCardProps.stories.js'
 import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.stories.js'
+import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.js'
 
 export const useBrowserResourceList = () => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState('Relevant')
@@ -108,6 +110,27 @@ export const useBrowserProfileList = (showHeader?: boolean) => {
   }
 }
 
+export const useBrowserSubjectList = (showHeader?: boolean) => {
+  return {
+    name: 'Subject',
+    Item: ({ showAll, setShowAll }) => {
+      const list = useMemo(() => getSubjectCardsStoryProps(30, {}), [])
+      return (
+        <BrowserSubjectList
+          subjectCardPropsList={list}
+          showAll={showAll}
+          setShowAll={setShowAll}
+          loadMore={action(`load more subjects`)}
+          showHeader={showHeader ?? true}
+          key="subject-list"
+        />
+      )
+    },
+    filters: [],
+    key: 'subject-list',
+  }
+}
+
 export const useBrowserStoryProps = (
   overrides?: PartialDeep<BrowserProps & { isAuthenticated: boolean }>,
 ): BrowserProps => {
@@ -115,6 +138,7 @@ export const useBrowserStoryProps = (
     useBrowserResourceList(),
     useBrowserCollectionList(),
     useBrowserProfileList(),
+    useBrowserSubjectList(),
   ]
   const overrideMainColumnItems = overrides?.mainColumnItems
     ? overrides?.mainColumnItems.filter((item): item is MainColumItem => !!item)
