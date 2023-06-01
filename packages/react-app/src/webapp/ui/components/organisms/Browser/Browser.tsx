@@ -38,16 +38,20 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
           .map(e => {
             const isCurrent = e.key === currentMainFilter
 
-            const list = mainColumnItems.map(i => i.name)
-            list.push('All')
+            const list = mainColumnItems.map(i => {
+              return { name: i.name, key: i.key }
+            })
+            list.push({ name: 'All', key: 'all' })
 
             return isCurrent || !currentMainFilter ? (
               isCurrent ? (
                 <SimpleDropdown
                   list={list}
-                  selected={[e.name]}
+                  selected={[e.key]}
                   label={e.name}
-                  onClick={(key: string) => setCurrentMainFilter(key === 'All' ? undefined : key)}
+                  onClick={(key: string | number) => {
+                    setCurrentMainFilter(key === 'all' ? undefined : key)
+                  }}
                 />
               ) : (
                 <SecondaryButton
@@ -126,7 +130,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
                   'Item' in i ? (
                     <i.Item
                       key={i.key}
-                      showAll={i.name === currentMainFilter || mainColumnItems?.length === 1}
+                      showAll={i.key === currentMainFilter || mainColumnItems?.length === 1}
                       setShowAll={() => setCurrentMainFilter(i.key)}
                       showHeader={mainColumnItems?.length > 1}
                     />
