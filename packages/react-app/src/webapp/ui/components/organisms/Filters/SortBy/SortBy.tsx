@@ -8,10 +8,14 @@ export type SortByProps = {
   setSelection: (e: SortType) => void
 }
 const sortTypes: SortType[] = ['Relevant', 'Popular', 'Recent']
+const sortTypesList = sortTypes.map(name => ({
+  name,
+  key: name,
+}))
 export const SortBy: FC<SortByProps> = ({ selected, setSelection }) => {
   return (
     <SimpleDropdown
-      list={sortTypes}
+      list={sortTypesList}
       selected={[selected]}
       label="Sort by"
       onClick={name => setSelection(name as SortType)}
