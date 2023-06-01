@@ -1,14 +1,15 @@
 import type { FC } from 'react'
 import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import MainLayout from '../../layout/MainLayout/MainLayout.js'
-import type { BrowserProps } from '../../organisms/Browser/Browser.js'
+import type { BrowserPropsData } from '../../organisms/Browser/Browser.js'
 import Browser from '../../organisms/Browser/Browser.js'
 import './Search.scss'
 
 export type SearchProps = {
   mainLayoutProps: MainLayoutProps
-  browserProps: BrowserProps
+  browserProps: BrowserPropsData
 }
+
 export const Search: FC<SearchProps> = ({ mainLayoutProps, browserProps }) => {
   // const props = useMemo(() => browserProps, [browserProps])
   // console.log('browserProps', props)
@@ -16,7 +17,7 @@ export const Search: FC<SearchProps> = ({ mainLayoutProps, browserProps }) => {
   return (
     <MainLayout {...mainLayoutProps}>
       <div className="search">
-        <Browser {...browserProps} />
+        <Browser {...browserProps} showFilters />
       </div>
     </MainLayout>
   )

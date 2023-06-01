@@ -2,7 +2,7 @@ import { BrowserCollectionFilters, BrowserCollectionList } from '@moodlenet/coll
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { BrowserSubjectList } from '@moodlenet/ed-meta/ui'
 import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
-import type { BrowserProps, MainColumItem } from '@moodlenet/react-app/ui'
+import type { BrowserProps, MainColumItem, SortType } from '@moodlenet/react-app/ui'
 import { ProfileCardPropsStories } from '@moodlenet/web-user/stories'
 import { BrowserProfileFilters, BrowserProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
@@ -13,7 +13,7 @@ import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.st
 import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.js'
 
 export const useBrowserResourceList = () => {
-  const [currentResourceSortBy, setCurrentResourceSortBy] = useState('relevant')
+  const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType>('Relevant')
   return {
     name: 'Resources',
     Item: ({ showAll, setShowAll }) => {
@@ -36,7 +36,10 @@ export const useBrowserResourceList = () => {
       )
     },
     filters: [
-      BrowserResourceFilters.SortByItem(currentResourceSortBy, setCurrentResourceSortBy),
+      BrowserResourceFilters.SortByItem({
+        selected: currentResourceSortBy,
+        setSelection: setCurrentResourceSortBy,
+      }),
     ].map(e => ({
       Item: () => e,
       key: e.key,
@@ -46,7 +49,7 @@ export const useBrowserResourceList = () => {
 }
 
 export const useBrowserCollectionList = () => {
-  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState('relevant')
+  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState<SortType>('Relevant')
   return {
     name: 'Collections',
     Item: ({ showAll, setShowAll }) => {
@@ -67,7 +70,10 @@ export const useBrowserCollectionList = () => {
       )
     },
     filters: [
-      BrowserCollectionFilters.SortByItem(currentCollectionSortBy, setCurrentCollectionSortBy),
+      BrowserCollectionFilters.SortByItem({
+        selected: currentCollectionSortBy,
+        setSelection: setCurrentCollectionSortBy,
+      }),
     ].map(e => ({
       Item: () => e,
       key: e.key,
@@ -77,7 +83,7 @@ export const useBrowserCollectionList = () => {
 }
 
 export const useBrowserProfileList = (showHeader?: boolean) => {
-  const [currentProfileSortBy, setCurrentProfileSortBy] = useState('relevant')
+  const [currentProfileSortBy, setCurrentProfileSortBy] = useState<SortType>('Relevant')
 
   return {
     name: 'People',
@@ -100,12 +106,15 @@ export const useBrowserProfileList = (showHeader?: boolean) => {
         />
       )
     },
-    filters: [BrowserProfileFilters.SortByItem(currentProfileSortBy, setCurrentProfileSortBy)].map(
-      e => ({
-        Item: () => e,
-        key: e.key,
+    filters: [
+      BrowserProfileFilters.SortByItem({
+        selected: currentProfileSortBy,
+        setSelection: setCurrentProfileSortBy,
       }),
-    ),
+    ].map(e => ({
+      Item: () => e,
+      key: e.key,
+    })),
     key: 'profile-list',
   }
 }
