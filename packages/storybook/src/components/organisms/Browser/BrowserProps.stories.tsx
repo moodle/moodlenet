@@ -13,7 +13,7 @@ import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.st
 import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.js'
 
 export const useBrowserResourceList = () => {
-  const [currentResourceSortBy, setCurrentResourceSortBy] = useState('Relevant')
+  const [currentResourceSortBy, setCurrentResourceSortBy] = useState('relevant')
   return {
     name: 'Resources',
     Item: ({ showAll, setShowAll }) => {
@@ -46,7 +46,7 @@ export const useBrowserResourceList = () => {
 }
 
 export const useBrowserCollectionList = () => {
-  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState('Relevant')
+  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState('relevant')
   return {
     name: 'Collections',
     Item: ({ showAll, setShowAll }) => {
@@ -77,7 +77,7 @@ export const useBrowserCollectionList = () => {
 }
 
 export const useBrowserProfileList = (showHeader?: boolean) => {
-  const [currentProfileSortBy, setCurrentProfileSortBy] = useState('Relevant')
+  const [currentProfileSortBy, setCurrentProfileSortBy] = useState('relevant')
 
   return {
     name: 'People',
