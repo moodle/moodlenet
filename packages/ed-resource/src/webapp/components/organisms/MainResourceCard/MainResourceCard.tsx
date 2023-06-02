@@ -2,18 +2,17 @@ import { Link as LinkIcon, Share } from '@material-ui/icons'
 import type {
   AddonItem,
   FloatingMenuContentItem,
-  FollowTag,
   TextOptionProps,
 } from '@moodlenet/component-library'
 import {
   Card,
   FloatingMenu,
+  getPreviewFromUrl,
   InputTextField,
   Modal,
   PrimaryButton,
   Snackbar,
   TertiaryButton,
-  getPreviewFromUrl,
   useWindowDimensions,
 } from '@moodlenet/component-library'
 import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
@@ -102,7 +101,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { id, mnUrl, contentType, downloadFilename, imageUrl, contentUrl } = data
+  const { id, mnUrl, contentType, downloadFilename, imageUrl, contentUrl, tags } = data
 
   const { isPublished, uploadProgress } = state
 
@@ -494,25 +493,17 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const selectedSubject: TextOptionProps | undefined = FieldsDataStories.SubjectsTextOptionProps.find(e => { //@ETTO this should no use the stories data
-    return e.value === form.values.subject
-  })
-  const tags: FollowTag[] = [
-    selectedSubject
-      ? {
-          type: 'subject',
-          name: selectedSubject ? selectedSubject.label : undefined,
-          // href:
-        }
-      : null,
-  ].filter((item): item is FollowTag => !!item)
+  const selectedSubject: TextOptionProps | undefined =
+    FieldsDataStories.SubjectsTextOptionProps.find(e => {
+      //@ETTO this should no use the stories data
+      return e.value === form.values.subject
+    })
 
-  const tagsContainer =
-    tags.length > 0 ? (
-      <div className="tags scroll" key="tags">
-        {getTagList(tags, 'medium')}
-      </div>
-    ) : null
+  const tagsContainer = tags ? (
+    <div className="tags scroll" key="tags">
+      {getTagList(tags, 'medium')}
+    </div>
+  ) : null
 
   const updatedHeaderColumnItems = [
     topHeaderRow,

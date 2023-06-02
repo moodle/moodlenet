@@ -1,9 +1,9 @@
-import { AddonItem } from '@moodlenet/component-library'
-import { MainLayout, MainLayoutProps } from '@moodlenet/react-app/ui'
-import { FC } from 'react'
-import MainSubjectCard, {
-  MainSubjectCardSlots,
-} from '../../molecules/MainSubjectCard/MainSubjectCard.js'
+import type { AddonItem } from '@moodlenet/component-library'
+import type { MainLayoutProps } from '@moodlenet/react-app/ui'
+import { MainLayout } from '@moodlenet/react-app/ui'
+import type { FC } from 'react'
+import type { MainSubjectCardSlots } from '../../molecules/MainSubjectCard/MainSubjectCard.js'
+import MainSubjectCard from '../../molecules/MainSubjectCard/MainSubjectCard.js'
 import './Subject.scss'
 
 export type SubjectOverallProps = {
@@ -48,7 +48,7 @@ export const Subject: FC<SubjectProps> = ({
 
   return (
     <MainLayout {...mainLayoutProps}>
-      <div className="subject">
+      <div className="subject-page">
         <div className="main-column">
           {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
