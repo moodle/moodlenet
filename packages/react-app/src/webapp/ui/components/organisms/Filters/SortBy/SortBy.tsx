@@ -4,18 +4,22 @@ import './SortBy.scss'
 
 export type SortByProps = {
   selected: string
-  setSelection: (e: string) => void
+  setSelected: (e: string) => void
 }
 
-export const SortBy: FC<SortByProps> = ({ selected, setSelection }) => {
+export const SortBy: FC<SortByProps> = ({ selected, setSelected }) => {
   return (
     <SimpleDropdown
-      list={['Relevant', 'Popular', 'Recent']}
+      list={[
+        { name: 'Relevant', key: 'relevant' },
+        { name: 'Popular', key: 'popular' },
+        { name: 'Recent', key: 'recent' },
+      ]}
       selected={[selected]}
       label="Sort by"
-      onClick={name => setSelection(name)}
+      onClick={key => setSelected(key)}
       notHighlightInitialSelection={true}
-      initialSelection="Relevant"
+      initialSelection="relevant"
     />
   )
 }

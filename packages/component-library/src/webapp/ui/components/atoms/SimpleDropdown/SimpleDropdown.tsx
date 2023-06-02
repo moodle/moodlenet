@@ -9,9 +9,9 @@ import './SimpleDropdown.scss'
 
 export type SimpleDropdownProps = {
   label: string
-  list: { name: string; key: string | number }[]
-  selected: (string | number)[]
-  onClick: (e: string | number) => void
+  list: { name: string; key: string }[]
+  selected: string[]
+  onClick: (e: string) => void
   className?: string
   initialSelection?: string
   notHighlightInitialSelection?: boolean

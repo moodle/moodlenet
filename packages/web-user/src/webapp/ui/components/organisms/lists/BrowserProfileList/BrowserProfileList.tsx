@@ -18,7 +18,6 @@ export const BrowserProfileList: FC<BrowserProfileListProps> = ({
   loadMore,
   showHeader,
 }) => {
-  console.log('showHeader', showHeader)
   return (
     <ListCard
       noCard={showAll && !showHeader}
