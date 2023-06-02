@@ -20,7 +20,7 @@ import { addMethod, MixedSchema } from 'yup'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
-import type { AddonItem } from '@moodlenet/component-library'
+import type { AddonItem, FollowTag } from '@moodlenet/component-library'
 
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
@@ -30,6 +30,7 @@ import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
+import { href } from '@moodlenet/react-app/common'
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
@@ -150,6 +151,14 @@ export const useResourceStoryProps = (
     ...overrides?.resourceForm,
   }
 
+  const tags: FollowTag[] = [
+    {
+      type: 'subject',
+      name: 'Climate Change',
+      href: href('Pages/subject/Logged In'),
+    },
+  ]
+
   const data: ResourceDataProps = {
     id: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
@@ -163,6 +172,7 @@ export const useResourceStoryProps = (
     contentType: 'file',
     // contentType: 'link',
     ...overrides?.data,
+    tags: tags,
   }
 
   const state: ResourceStateProps = {

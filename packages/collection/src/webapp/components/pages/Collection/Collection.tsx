@@ -28,10 +28,16 @@ export type CollectionProps = {
   collectionContributorCardProps: CollectionContributorCardProps
   resourceCardPropsList: { key: string; props: ProxyProps<ResourceCardPropsData> }[]
 
-  wideColumnItems: AddonItem[]
-  mainColumnItems: AddonItem[]
-  sideColumnItems: AddonItem[]
-  moreButtonItems: AddonItem[]
+  smallScreenColumnItems: AddonItem[]
+
+  mediumScreenWideColumnItems: AddonItem[]
+  mediumScreenMainColumnItems: AddonItem[]
+  mediumScreenSideColumnItems: AddonItem[]
+
+  bigScreenWideColumnItems: AddonItem[]
+  bigScreenMainColumnItems: AddonItem[]
+  bigScreenSideColumnItems: AddonItem[]
+
   extraDetailsItems: AddonItem[]
 
   data: CollectionDataProps
@@ -49,9 +55,16 @@ export const Collection: FC<CollectionProps> = ({
   collectionContributorCardProps,
   resourceCardPropsList,
 
-  wideColumnItems,
-  mainColumnItems,
-  sideColumnItems,
+  smallScreenColumnItems,
+
+  mediumScreenWideColumnItems,
+  mediumScreenMainColumnItems,
+  mediumScreenSideColumnItems,
+
+  bigScreenWideColumnItems,
+  bigScreenMainColumnItems,
+  bigScreenSideColumnItems,
+
   extraDetailsItems,
 
   data,
@@ -163,22 +176,48 @@ export const Collection: FC<CollectionProps> = ({
       </Card>
     ) : null
 
-  const updatedSideColumnItems = [
+  const updatedBigScreenWideColumnItems = [
+    mainCollectionCard,
+    ...(bigScreenWideColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const updatedBigScreenMainColumnItems = [
+    resourceList,
+    ...(bigScreenMainColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const updatedBigScreenSideColumnItems = [
     contributorCard,
     editorActionsContainer,
     extraDetailsContainer,
-    ...(sideColumnItems ?? []),
+    ...(bigScreenSideColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedWideColumnItems = [
+  const updatedSmallScreenWideColumnItems = [
     mainCollectionCard,
     resourceList,
-    ...(wideColumnItems ?? []),
+    ...(mediumScreenWideColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedMainColumnItems = [resourceList, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
+  const updatedSmallScreenMainColumnItems = [
+    contributorCard,
+    ...(mediumScreenMainColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const updatedSmallScreenSideColumnItems = [
+    editorActionsContainer,
+    extraDetailsContainer,
+    ...(mediumScreenSideColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const updatedSmallScreenColumnItems = [
+    mainCollectionCard,
+    resourceList,
+    contributorCard,
+    editorActionsContainer,
+    extraDetailsContainer,
+    ...(smallScreenColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
 
   const snackbars = <></>
 
@@ -213,16 +252,44 @@ export const Collection: FC<CollectionProps> = ({
       {snackbars}
       <div className="collection">
         <div className="content">
-          <div className="wide-column">
-            {updatedWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          <div className="big-screen">
+            <div className="wide-column">
+              {updatedBigScreenWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+            </div>
+            <div className="main-and-side-columns">
+              <div className="main-column">
+                {updatedBigScreenMainColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+              <div className="side-column">
+                {updatedBigScreenSideColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+            </div>
           </div>
-          <div className="main-and-side-columns">
-            <div className="main-column">
-              {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          <div className="medium-screen">
+            <div className="wide-column">
+              {updatedSmallScreenWideColumnItems.map(i =>
+                'Item' in i ? <i.Item key={i.key} /> : i,
+              )}
             </div>
-            <div className="side-column">
-              {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+            <div className="main-and-side-columns">
+              <div className="main-column">
+                {updatedSmallScreenMainColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+              <div className="side-column">
+                {updatedSmallScreenSideColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
             </div>
+          </div>
+          <div className="small-screen">
+            {updatedSmallScreenColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
         </div>
       </div>
