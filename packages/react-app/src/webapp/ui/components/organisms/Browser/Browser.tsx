@@ -73,7 +73,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
 
   const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
   useEffect(() => {
-    mainColumnItems?.map(e => e.name === currentMainFilter && setCurrentFilters(e.filters))
+    mainColumnItems?.map(e => e.key === currentMainFilter && setCurrentFilters(e.filters))
   }, [currentMainFilter, mainColumnItems])
 
   const filters =
@@ -106,9 +106,6 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
         {/* <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton> */}
       </>
     ) : null
-
-  // console.log('lenght ', mainColumnItems?.length)
-  // console.log('lenght ', mainColumnItems?.length > 1)
 
   return (
     <div className={`browser ${showFilters ? 'show-filters' : ''}`}>
