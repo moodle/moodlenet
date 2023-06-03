@@ -3,10 +3,10 @@ import { SortBy } from '@moodlenet/react-app/ui'
 
 export const SortByItem = ({
   selected,
-  setSelection,
+  setSelected,
 }: {
   selected: SortType
-  setSelection: (e: SortType) => void
-}) => <SortBy selected={selected} setSelection={setSelection} />
+  setSelected: (e: SortType) => void
+}) => <SortBy selected={selected} setSelected={setSelected} />
 
 export const BrowserResourceFilters = { SortByItem }
