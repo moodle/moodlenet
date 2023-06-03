@@ -8,7 +8,9 @@ export type PkgAddOnsEntry<AddOnType> = {
   pkgId: PkgIdentifier
   addOns: PkgAddOns<AddOnType> | null | undefined
 }
-export type PkgAddOns<AddOnType> = { [pkgAddOnName: string]: AddOnType | null | undefined }
+export type PkgAddOns<AddOnType> = {
+  [pkgAddOnName in string]?: AddOnType /*  | null */ | undefined
+}
 type PkgAddOnsEntries<AddOnType> = { [pkgName: string]: PkgAddOnsEntry<AddOnType> }
 export type PkgAddOn<AddOnType> = {
   pkgId: PkgIdentifier
