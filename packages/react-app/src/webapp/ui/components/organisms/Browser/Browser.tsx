@@ -14,7 +14,7 @@ export type MainColumItem = {
   Item: ComponentType<BrowserMainColumnItemBase>
   name: string
   filters: AddonItem[]
-  key: number | string
+  key: string // | number
 }
 
 export type BrowserProps = BrowserPropsData & BrowserPropsUI
