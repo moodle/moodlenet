@@ -48,7 +48,7 @@ const searchCollectionAddons: PkgAddOns<SearchEntitySectionAddon> = {
         Item: () => {
           const [selected, setSelection] = useState<SortType>('Popular')
           return (
-            <BrowserCollectionFilters.SortByItem selected={selected} setSelection={setSelection} />
+            <BrowserCollectionFilters.SortByItem selected={selected} setSelected={setSelection} />
           )
         },
       },
@@ -71,7 +71,7 @@ const searchCollectionAddons: PkgAddOns<SearchEntitySectionAddon> = {
         Item: () => {
           const [selected, setSelection] = useState<SortType>('Popular')
           return (
-            <BrowserCollectionFilters.SortByItem selected={selected} setSelection={setSelection} />
+            <BrowserCollectionFilters.SortByItem selected={selected} setSelected={setSelection} />
           )
         },
       },

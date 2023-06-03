@@ -7,6 +7,6 @@ export const SortByItem = ({
 }: {
   selected: SortType
   setSelection: (e: SortType) => void
-}) => <SortBy selected={selected} setSelection={setSelection} />
+}) => <SortBy selected={selected} setSelected={setSelection} />
 
 export const BrowserCollectionFilters = { SortByItem }
