@@ -78,5 +78,5 @@ Searchbox.defaultProps = {
   size: 'small',
 }
 
-Searchbox.displayName = 'LandingPage'
+Searchbox.displayName = 'Searchbox'
 export default Searchbox
