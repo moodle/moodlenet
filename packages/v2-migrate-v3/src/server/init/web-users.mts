@@ -8,7 +8,6 @@ import assert from 'assert'
 import cliProgress from 'cli-progress'
 import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
-import { v2_org } from './organizaton.mjs'
 import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
 import { v2_DB_ContentGraph, v2_DB_UserAuth } from './v2-db.mjs'
 
@@ -27,39 +26,39 @@ export async function user_profiles() {
   )
 
   const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile | v2.Organization>(
-    `
-      FOR p IN UNION_DISTINCT(
-        FOR pr in Profile
-        RETURN pr
-        ,
-        [ Document("${v2_org._id}") ]
-      )
-      RETURN p
-    `,
     // `
-    // FOR pp IN UNION_DISTINCT(
-    //   FOR p in Profile
-    //     SORT RAND()
-    //     FILTER p._published
-    //     LIMIT 0, 15
+    //   FOR p IN UNION_DISTINCT(
+    //     FOR pr in Profile
+    //     RETURN pr
+    //     ,
+    //     [ Document("${v2_org._id}") ]
+    //   )
     //   RETURN p
-    //   ,
-    //   FOR p in Profile
-    //     SORT RAND()
-    //     FILTER !p._published
-    //     LIMIT 0, 5
-    //   RETURN p
-    //   ,
-    //   [
-    //     Document("Profile/vJpFfdtNbaNwPL51ipmSfbZmxyUMTf" /* martin@moodle.com[Profile] */),
-    //     Document("Profile/TPsKc3VGFi05J486LbRkX9uHh9HxXc" /* liz@moodle.com[Profile] */),
-    //     Document("Profile/V8haMOx8YYxMLnOYcWRdYpecvzFtWp" /* anna@moodle.com[Profile] */),
-    //     Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alessandro@moodle.com[Profile] */),
-    //     Document("Organization/wDsoiVDyDIIGrLTu3P26kc6QRg1PYG" /* moodlenet@moodle.com[Organization] */),
-    //     Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* bru.mas@moodle.com[Profile] */),
-    //     Document("Profile/Wn4IUjm2K2PFwoKFsC0xByxYlPcykg" /* ettorebevilacqua@gmail.com[Profile] */),
-    //   ])
-    // return pp`,
+    // `,
+    `
+    FOR pp IN UNION_DISTINCT(
+      FOR p in Profile
+        SORT RAND()
+        FILTER p._published
+        LIMIT 0, 15
+      RETURN p
+      ,
+      FOR p in Profile
+        SORT RAND()
+        FILTER !p._published
+        LIMIT 0, 5
+      RETURN p
+      ,
+      [
+        Document("Profile/vJpFfdtNbaNwPL51ipmSfbZmxyUMTf" /* martin@moodle.com[Profile] */),
+        Document("Profile/TPsKc3VGFi05J486LbRkX9uHh9HxXc" /* liz@moodle.com[Profile] */),
+        Document("Profile/V8haMOx8YYxMLnOYcWRdYpecvzFtWp" /* anna@moodle.com[Profile] */),
+        Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alessandro@moodle.com[Profile] */),
+        Document("Organization/wDsoiVDyDIIGrLTu3P26kc6QRg1PYG" /* moodlenet@moodle.com[Organization] */),
+        Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* bru.mas@moodle.com[Profile] */),
+        Document("Profile/Wn4IUjm2K2PFwoKFsC0xByxYlPcykg" /* ettorebevilacqua@gmail.com[Profile] */),
+      ])
+    return pp`,
     {},
     { count: true, batchSize: 1, ttl: 60 * 30 },
   )
