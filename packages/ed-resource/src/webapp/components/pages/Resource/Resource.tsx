@@ -38,8 +38,15 @@ export type ResourceProps = {
   mainResourceCardSlots: MainResourceCardSlots
   resourceContributorCardProps: ResourceContributorCardProps
 
-  mainColumnItems: AddonItem[]
-  sideColumnItems: AddonItem[]
+  smallScreenColumnItems: AddonItem[]
+
+  mediumScreenWideColumnItems: AddonItem[]
+  mediumScreenLeftColumnItems: AddonItem[]
+  mediumScreenRightColumnItems: AddonItem[]
+
+  bigScreenMainColumnItems: AddonItem[]
+  bigScreenSideColumnItems: AddonItem[]
+
   extraDetailsItems: AddonItem[]
   generalActionsItems: AddonItem[]
 
@@ -58,8 +65,13 @@ export const Resource: FC<ResourceProps> = ({
   mainLayoutProps,
   resourceContributorCardProps,
 
-  mainColumnItems,
-  sideColumnItems,
+  smallScreenColumnItems,
+  mediumScreenLeftColumnItems,
+  mediumScreenRightColumnItems,
+  mediumScreenWideColumnItems,
+  bigScreenMainColumnItems,
+  bigScreenSideColumnItems,
+
   extraDetailsItems,
   generalActionsItems,
   mainResourceCardSlots,
@@ -356,17 +368,41 @@ export const Resource: FC<ResourceProps> = ({
     </Card>
   )
 
-  const updatedSideColumnItems = [
+  const updatedBigScreenSideColumnItems = [
     contributorCard,
-    // editorActionsContainer,
     generalActionsContainer,
     extraDetailsContainer,
-    ...(sideColumnItems ?? []),
+    ...(bigScreenSideColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const updatedMainColumnItems = [mainResourceCard, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
-  )
+  const updatedBigScreenMainColumnItems = [
+    mainResourceCard,
+    ...(bigScreenMainColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  const updatedMediumScreenWideColumnItems = [
+    mainResourceCard,
+    ...(mediumScreenWideColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  const updatedMediumScreenLeftColumnItems = [
+    contributorCard,
+    generalActionsContainer,
+    ...(mediumScreenLeftColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  const updatedMediumScreenRightColumnItems = [
+    extraDetailsContainer,
+    ...(mediumScreenRightColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+  const updatedSmallScreenColumnItems = [
+    mainResourceCard,
+    contributorCard,
+    generalActionsContainer,
+    extraDetailsContainer,
+    ...(smallScreenColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const snackbars = <></>
 
@@ -401,11 +437,41 @@ export const Resource: FC<ResourceProps> = ({
       {snackbars}
       <div className="resource">
         <div className="content">
-          <div className="main-column">
-            {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          <div className="big-screen">
+            <div className="main-and-side-columns">
+              <div className="main-column">
+                {updatedBigScreenMainColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+              <div className="side-column">
+                {updatedBigScreenSideColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+            </div>
           </div>
-          <div className="side-column">
-            {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          <div className="medium-screen">
+            <div className="wide-column">
+              {updatedMediumScreenWideColumnItems.map(i =>
+                'Item' in i ? <i.Item key={i.key} /> : i,
+              )}
+            </div>
+            <div className="left-and-right-columns">
+              <div className="left-column">
+                {updatedMediumScreenLeftColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+              <div className="right-column">
+                {updatedMediumScreenRightColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="small-screen">
+            {updatedSmallScreenColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>
         </div>
       </div>

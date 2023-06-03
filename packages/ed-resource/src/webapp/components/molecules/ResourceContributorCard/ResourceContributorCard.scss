@@ -21,6 +21,8 @@
     font-weight: bold;
     font-size: 19px;
     color: #757575;
+    overflow: hidden;
+    text-overflow: ellipsis;
     > a {
       color: #212529;
     }

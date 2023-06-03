@@ -52,6 +52,16 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
       footerRowItems: [],
     }
 
+    const layoutProps = {
+      bigScreenMainColumnItems: [],
+      bigScreenSideColumnItems: [],
+      mediumScreenLeftColumnItems: [],
+      mediumScreenRightColumnItems: [],
+      mediumScreenWideColumnItems: [],
+      smallScreenColumnItems: [],
+      extraDetailsItems: [],
+    }
+
     return {
       mainLayoutProps,
       mainResourceCardSlots,
@@ -65,9 +75,8 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
         typeOptions: [],
         yearOptions: [],
       },
-      mainColumnItems: [],
-      sideColumnItems: [],
-      extraDetailsItems: [],
+      ...layoutProps,
+
       generalActionsItems: addons.generalAction,
       data,
       resourceForm,

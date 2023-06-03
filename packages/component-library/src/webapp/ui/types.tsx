@@ -21,7 +21,7 @@ export type Href = {
 export type FollowTag = {
   type: 'subject' | 'collection' | 'type'
   name: string
-  href?: Href
+  href: Href | null
 }
 
 export type PeopleFactory = {
