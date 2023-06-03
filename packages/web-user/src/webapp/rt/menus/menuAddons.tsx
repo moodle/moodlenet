@@ -16,7 +16,7 @@ const { loginButton, signupButton, avatarMenu, addMenu } = menuHeaderButtonsItem
 export const menuHeaderButtonsAuthAddons: AddonsByUserRule<AddonItemNoKey> = {
   guest: { loginButton, signupButton },
   auth: { addMenu, avatarMenu },
-  root: { addMenu: null, avatarMenu },
+  root: { addMenu: undefined, avatarMenu },
 }
 
 export const menuAddonsDefaultSetting = {
@@ -24,7 +24,7 @@ export const menuAddonsDefaultSetting = {
 }
 
 export const resourcePageAddonsByAuth: AddonsByUserRule<AddonItemNoKey> = {
-  guest: { addToCollectionButton: null },
-  root: { addToCollectionButton: null },
+  guest: { addToCollectionButton: undefined },
+  root: { addToCollectionButton: undefined },
   auth: { addToCollectionButton: { Item: addResourceToCollectionButton } },
 }
