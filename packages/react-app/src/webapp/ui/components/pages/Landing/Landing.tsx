@@ -1,17 +1,13 @@
 import type { FC } from 'react'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
 // import { ArrowForward, NoteAdd } from '@material-ui/icons'
-import type { AddonItem, SearchboxProps } from '@moodlenet/component-library'
-import {
-  // Modal,
-  // PrimaryButton,
-  Searchbox,
-} from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 // import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
 import { MainHeaderContext } from '../../../../exports/ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 // import { Href, Link } from '../../elements/link.js'
+import { MainSearchBox } from '../../atoms/MainSearchBox/MainSearchBox.js'
 import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
 import MainLayout from '../../layout/MainLayout/MainLayout.js'
 import './Landing.scss'
@@ -34,24 +30,9 @@ export type LandingProps = {
   // searchAuthorsHref: Href
 }
 
-const LandingSearchBox: FC<Pick<SearchboxProps, 'setSearchText' | 'searchText' | 'search'>> = ({
-  setSearchText,
-  search,
-  searchText,
-}) => {
+const LandingSearchBox: FC = () => {
   const { setHideSearchbox } = useContext(MainHeaderContext)
-
-  return (
-    <Searchbox
-      size="big"
-      setSearchText={setSearchText}
-      searchText={searchText}
-      search={search}
-      placeholder={`Search for open educational content`}
-      setIsSearchboxInViewport={setHideSearchbox}
-      marginTop={12}
-    />
-  )
+  return <MainSearchBox size="big" setIsSearchboxInViewport={setHideSearchbox} marginTop={12} />
 }
 
 export const Landing: FC<LandingProps> = ({
@@ -59,7 +40,6 @@ export const Landing: FC<LandingProps> = ({
   mainColumnItems,
   title,
   subtitle,
-  search,
   // {
   //   // searchResourcesHref,
   //   // searchAuthorsHref,
@@ -78,7 +58,6 @@ export const Landing: FC<LandingProps> = ({
   //   import.meta.url,
   // ).href
   // const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
-  const [searchText, setSearchText] = useState('')
 
   const background = {
     backgroundImage: 'url("' + /* imageUrl ||  */ defaultBackground + '")',
@@ -93,7 +72,7 @@ export const Landing: FC<LandingProps> = ({
         {/* <div className="subtitle">{organization.subtitle}</div> */}
       </div>
 
-      <LandingSearchBox setSearchText={setSearchText} searchText={searchText} search={search} />
+      <LandingSearchBox />
       {/* <PrimaryButton
         className="share-content"
         color="blue"

@@ -22,7 +22,6 @@ export const useHeaderProps = (): MainHeaderProps => {
       centerItems: addons.centerItems,
       leftItems: addons.leftItems,
       rightItems: addons.rightItems,
-      search: () => undefined, //TODO //@ETTO: to be changed ASAP
     }
     return mainHeaderProps
   }, [addons.centerItems, addons.leftItems, addons.rightItems, headerTitleProps])

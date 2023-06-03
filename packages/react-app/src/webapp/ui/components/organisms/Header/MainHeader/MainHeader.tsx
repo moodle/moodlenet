@@ -1,9 +1,10 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import { Header, Searchbox } from '@moodlenet/component-library'
+import { Header } from '@moodlenet/component-library'
 import type { Dispatch, FC, ReactElement, SetStateAction } from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
 import { HeaderTitle } from '../../../atoms/HeaderTitle/HeaderTitle.js'
+import { MainSearchBox } from '../../../atoms/MainSearchBox/MainSearchBox.js'
 import './MainHeader.scss'
 
 export type MainHeaderContextT = {
@@ -31,7 +32,6 @@ export type MainHeaderProps = {
   centerItems: AddonItem[]
   rightItems: AddonItem[]
   headerTitleProps: HeaderTitleProps
-  search(text: string): unknown
 }
 
 export const MainHeader: FC<MainHeaderProps> = ({
@@ -39,11 +39,9 @@ export const MainHeader: FC<MainHeaderProps> = ({
   centerItems,
   rightItems,
   headerTitleProps,
-  search,
 }) => {
   const [pageRendered, setPageRendered] = useState(false)
   const { hideSearchbox } = useContext(MainHeaderContext)
-  const [searchText, setSearchText] = useState('')
 
   const { logo, smallLogo, url } = headerTitleProps
 
@@ -59,20 +57,11 @@ export const MainHeader: FC<MainHeaderProps> = ({
   }, [leftItems, logo, smallLogo, url])
 
   const updatedCenterItems = useMemo(() => {
-    const searchbox =
-      pageRendered && !hideSearchbox ? (
-        <Searchbox
-          key="searchbox"
-          placeholder="Search for open education content"
-          searchText={searchText}
-          setSearchText={setSearchText}
-          search={search}
-        />
-      ) : null
+    const searchbox = pageRendered && !hideSearchbox ? <MainSearchBox key="searchbox" /> : null
     return [searchbox, ...(centerItems ?? []).map(({ Item, key }) => <Item key={key} />)].filter(
       (item): item is ReactElement => !!item,
     )
-  }, [centerItems, searchText, search, hideSearchbox, pageRendered])
+  }, [centerItems, hideSearchbox, pageRendered])
 
   const updatedRightItems: ReactElement[] = useMemo(() => {
     return rightItems
