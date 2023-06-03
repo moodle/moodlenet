@@ -31,8 +31,8 @@ export type CollectionProps = {
   smallScreenColumnItems: AddonItem[]
 
   mediumScreenWideColumnItems: AddonItem[]
-  mediumScreenMainColumnItems: AddonItem[]
-  mediumScreenSideColumnItems: AddonItem[]
+  mediumScreenLeftColumnItems: AddonItem[]
+  mediumScreenRightColumnItems: AddonItem[]
 
   bigScreenWideColumnItems: AddonItem[]
   bigScreenMainColumnItems: AddonItem[]
@@ -58,8 +58,8 @@ export const Collection: FC<CollectionProps> = ({
   smallScreenColumnItems,
 
   mediumScreenWideColumnItems,
-  mediumScreenMainColumnItems,
-  mediumScreenSideColumnItems,
+  mediumScreenLeftColumnItems,
+  mediumScreenRightColumnItems,
 
   bigScreenWideColumnItems,
   bigScreenMainColumnItems,
@@ -193,21 +193,21 @@ export const Collection: FC<CollectionProps> = ({
     ...(bigScreenSideColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedSmallScreenWideColumnItems = [
+  const updatedMediumScreenWideColumnItems = [
     mainCollectionCard,
     resourceList,
     ...(mediumScreenWideColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedSmallScreenMainColumnItems = [
+  const updatedMediumScreenLeftColumnItems = [
     contributorCard,
-    ...(mediumScreenMainColumnItems ?? []),
+    ...(mediumScreenLeftColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedSmallScreenSideColumnItems = [
+  const updatedMediumScreenRightColumnItems = [
     editorActionsContainer,
     extraDetailsContainer,
-    ...(mediumScreenSideColumnItems ?? []),
+    ...(mediumScreenRightColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
   const updatedSmallScreenColumnItems = [
@@ -271,18 +271,18 @@ export const Collection: FC<CollectionProps> = ({
           </div>
           <div className="medium-screen">
             <div className="wide-column">
-              {updatedSmallScreenWideColumnItems.map(i =>
+              {updatedMediumScreenWideColumnItems.map(i =>
                 'Item' in i ? <i.Item key={i.key} /> : i,
               )}
             </div>
-            <div className="main-and-side-columns">
-              <div className="main-column">
-                {updatedSmallScreenMainColumnItems.map(i =>
+            <div className="left-and-right-columns">
+              <div className="left-column">
+                {updatedMediumScreenLeftColumnItems.map(i =>
                   'Item' in i ? <i.Item key={i.key} /> : i,
                 )}
               </div>
-              <div className="side-column">
-                {updatedSmallScreenSideColumnItems.map(i =>
+              <div className="right-column">
+                {updatedMediumScreenRightColumnItems.map(i =>
                   'Item' in i ? <i.Item key={i.key} /> : i,
                 )}
               </div>

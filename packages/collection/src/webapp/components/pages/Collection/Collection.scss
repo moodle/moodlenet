@@ -60,12 +60,13 @@
         gap: 20px;
       }
 
-      > .main-and-side-columns {
+      > .main-and-side-columns,
+      > .left-and-right-columns {
         display: flex;
         gap: 20px;
         justify-content: space-between;
 
-        > .main-column {
+        > * {
           display: flex;
           flex-direction: column;
           gap: 12px;
@@ -73,7 +74,8 @@
         }
       }
 
-      .collection-action-card,
+      > .collection-action-card,
+      > .left-and-right-columns > .right-column > .collection-action-card,
       > .main-and-side-columns > .side-column > .collection-action-card {
         width: 100%;
         height: fit-content;
@@ -130,12 +132,12 @@
     }
 
     > .medium-screen {
-      > .main-and-side-columns {
-        > .main-column {
-          width: 58%;
+      > .left-and-right-columns {
+        > .left-column {
+          width: 50%;
         }
-        > .side-column {
-          width: 42%;
+        > .right-column {
+          width: 50%;
         }
       }
     }
