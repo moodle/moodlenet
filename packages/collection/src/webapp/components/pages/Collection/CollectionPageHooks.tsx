@@ -44,10 +44,13 @@ export const useCollectionPageProps = ({
     )
 
     const layoutProps = {
-      wideColumnItems: [],
-      mainColumnItems: [],
-      sideColumnItems: [],
-      moreButtonItems: [],
+      bigScreenMainColumnItems: [],
+      bigScreenSideColumnItems: [],
+      bigScreenWideColumnItems: [],
+      mediumScreenLeftColumnItems: [],
+      mediumScreenRightColumnItems: [],
+      mediumScreenWideColumnItems: [],
+      smallScreenColumnItems: [],
       extraDetailsItems: [],
     }
     const { contributor, form: collectionForm } = props

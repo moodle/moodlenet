@@ -1,12 +1,10 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import {
-  MainSubjectCardSlots,
-  Subject,
-  SubjectOverallProps,
-  SubjectProps,
-} from '@moodlenet/ed-meta/ui'
-import { SimpleResourceList, SimpleResourceListProps } from '@moodlenet/ed-resource/ui'
-import { BookmarkButtonProps, FollowButton, FollowButtonProps } from '@moodlenet/web-user/ui'
+import type { MainSubjectCardSlots, SubjectOverallProps, SubjectProps } from '@moodlenet/ed-meta/ui'
+import { Subject } from '@moodlenet/ed-meta/ui'
+import type { SimpleResourceListProps } from '@moodlenet/ed-resource/ui'
+import { SimpleResourceList } from '@moodlenet/ed-resource/ui'
+import type { BookmarkButtonProps, FollowButtonProps } from '@moodlenet/web-user/ui'
+import { FollowButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta } from '@storybook/react'
 import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
@@ -90,11 +88,11 @@ export const useSubjectStoryProps = (
       value: 13,
       key: 'followers',
     },
-    {
-      name: 'Collections',
-      value: 31,
-      key: 'collections',
-    },
+    // {
+    //   name: 'Collections',
+    //   value: 31,
+    //   key: 'collections',
+    // },
     {
       name: 'Resources',
       value: 92,
