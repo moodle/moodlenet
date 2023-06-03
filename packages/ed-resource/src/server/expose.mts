@@ -103,6 +103,16 @@ export const expose = await shell.expose<FullResourceExposeType>({
             id: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
             imageUrl,
+            tags: [
+              {
+                name: found.entity.subject,
+                href: {
+                  ext: true,
+                  url: 'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
+                },
+                type: 'subject',
+              },
+            ], //@ETTO This need to be implemented
           },
           state: { isPublished: found.entity.published },
           access: {
