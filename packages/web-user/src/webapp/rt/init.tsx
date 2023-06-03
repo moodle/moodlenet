@@ -65,9 +65,9 @@ LandingHookPlugin.register(function useLandingPagePlugin({ useMainColumnItems })
   useMainColumnItems(landingPageMainColumnItems)
 })
 
-HeaderPlugins.register(({ useRightItems }) =>
-  useRightItems(useSwichAddonsByAuth(menuHeaderButtonsAuthAddons)),
-)
+HeaderPlugins.register(() => ({
+  rightItems: useSwichAddonsByAuth(menuHeaderButtonsAuthAddons),
+}))
 
 AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) =>
   useAdminSettingsSection(menuAddonsDefaultSetting),
