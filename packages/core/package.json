@@ -22,7 +22,8 @@
   ],
   "exports": {
     ".": "./dist/exports.mjs",
-    "./ignite": "./dist/ignite.mjs"
+    "./ignite": "./dist/ignite.mjs",
+    "./lib": "./dist/exports/lib.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
