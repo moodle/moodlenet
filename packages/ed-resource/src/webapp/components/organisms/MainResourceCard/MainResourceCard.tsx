@@ -1,9 +1,5 @@
 import { Link as LinkIcon, Share } from '@material-ui/icons'
-import type {
-  AddonItem,
-  FloatingMenuContentItem,
-  TextOptionProps,
-} from '@moodlenet/component-library'
+import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
 import {
   Card,
   FloatingMenu,
@@ -15,7 +11,6 @@ import {
   TertiaryButton,
   useWindowDimensions,
 } from '@moodlenet/component-library'
-import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import {
   capitalizeFirstLetter,
@@ -492,12 +487,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </div>
     </div>
   )
-
-  const selectedSubject: TextOptionProps | undefined =
-    FieldsDataStories.SubjectsTextOptionProps.find(e => {
-      //@ETTO this should no use the stories data
-      return e.value === form.values.subject
-    })
 
   const tagsContainer = tags ? (
     <div className="tags scroll" key="tags">
