@@ -6,10 +6,11 @@ import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
 import ResourceCard from '../../ResourceCard/ResourceCard.js'
 import './BrowserResourceList.scss'
 
-export type BrowserResourceListProps = {
+export type BrowserResourceListDataProps = {
   resourceCardPropsList: { props: ProxyProps<ResourceCardPropsData>; key: string }[]
   loadMore: (() => unknown) | null
-} & BrowserMainColumnItemBase
+}
+export type BrowserResourceListProps = BrowserResourceListDataProps & BrowserMainColumnItemBase
 
 export const BrowserResourceList: FC<BrowserResourceListProps> = ({
   resourceCardPropsList,
