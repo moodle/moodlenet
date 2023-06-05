@@ -14,9 +14,11 @@ import {
   delEntity,
   getEntity,
   patchEntity,
+  queryEntities,
   queryMyEntities,
   toaql,
 } from '@moodlenet/system-entities/server'
+import type { SortTypeRpc } from '../common/types.mjs'
 import { publicFiles } from './init/fs.mjs'
 import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
@@ -110,4 +112,19 @@ export async function setCollectionImage(
   return patchCollection(_key, {
     image: { kind: 'file', directAccessId },
   })
+}
+
+export async function searchCollections(_: /* {limit,sortType,text,after,} */ {
+  sortType?: SortTypeRpc
+  text?: string
+  after?: string
+  limit?: number
+}) {
+  _
+  const cursor = await shell.call(queryEntities)(Collection.entityClass, {
+    limit: 6,
+    preAccessBody: 'SORT RAND()',
+  })
+
+  return cursor.all()
 }

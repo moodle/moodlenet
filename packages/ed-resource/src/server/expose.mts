@@ -25,6 +25,7 @@ import {
   getResourceLogicalFilename,
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
+  searchCollections,
   setResourceContent,
   setResourceImage,
 } from './services.mjs'
@@ -283,6 +284,21 @@ export const expose = await shell.expose<FullResourceExposeType>({
           console.log('resource download stream ended, can increment download count')
         })
         return readable
+      },
+    },
+    'webapp/search': {
+      guard: () => void 0,
+      async fn(_, __, { limit, sortType, text, after }) {
+        console.log({ limit, sortType, text, after })
+        const found = await searchCollections({ limit, sortType, text, after })
+        return {
+          list: found.map(({ entity: { _key } }) => ({ _key })),
+        }
+      },
+      bodyWithFiles: {
+        fields: {
+          '.file': 1,
+        },
       },
     },
   },

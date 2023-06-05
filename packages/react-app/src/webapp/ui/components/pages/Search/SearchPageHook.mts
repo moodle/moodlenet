@@ -6,9 +6,10 @@ import type { MainColumItem } from '../../organisms/Browser/Browser.js'
 import type { SearchProps } from './Search.js'
 
 export type SearchEntitySectionAddon = Omit<MainColumItem, 'key'>
+export type SearchEntityPageWrapper = { Wrapper: ComponentType<PropsWithChildren> }
 export const SearchPagePlugin = createHookPlugin<{
   searchEntitySections: SearchEntitySectionAddon
-  wrappers: { Wrapper: ComponentType<PropsWithChildren> }
+  wrappers: SearchEntityPageWrapper
 }>({ searchEntitySections: null, wrappers: null })
 
 export function useSearchProps() {

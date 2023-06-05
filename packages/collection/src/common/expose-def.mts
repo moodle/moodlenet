@@ -1,5 +1,10 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import type { CollectionFormRpc, CollectionRpc } from './types.mjs'
+import type {
+  CollectionFormRpc,
+  CollectionRpc,
+  CollectionSearchResultRpc,
+  SortTypeRpc,
+} from './types.mjs'
 
 export type CollectionExposeType = PkgExposeDef<{
   rpc: {
@@ -30,5 +35,10 @@ export type CollectionExposeType = PkgExposeDef<{
       body: { file: [RpcFile | undefined | null] },
       params: { _key: string },
     ): Promise<string | null>
+    'webapp/search'(
+      body: null,
+      params: null,
+      query: { sortType?: SortTypeRpc; text?: string; after?: string; limit?: number },
+    ): Promise<CollectionSearchResultRpc>
   }
 }>

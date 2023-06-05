@@ -7,7 +7,14 @@ import type {
   GetEntityOpts,
   Patch,
 } from '@moodlenet/system-entities/server'
-import { create, delEntity, getEntity, patchEntity } from '@moodlenet/system-entities/server'
+import {
+  create,
+  delEntity,
+  getEntity,
+  patchEntity,
+  queryEntities,
+} from '@moodlenet/system-entities/server'
+import type { SortTypeRpc } from '../common/types.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
 import { Resource } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
@@ -121,4 +128,19 @@ export async function setResourceContent(_key: string, resourceContent: RpcFile 
     ? content
     : getResourceFileUrl({ _key, rpcFile: content.rpcFile }))
   return { patchedDoc, contentUrl }
+}
+
+export async function searchCollections(_: /* {limit,sortType,text,after,} */ {
+  sortType?: SortTypeRpc
+  text?: string
+  after?: string
+  limit?: number
+}) {
+  _
+  const cursor = await shell.call(queryEntities)(Resource.entityClass, {
+    limit: 6,
+    preAccessBody: 'SORT RAND()',
+  })
+
+  return cursor.all()
 }

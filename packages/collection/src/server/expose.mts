@@ -24,6 +24,7 @@ import {
   getImageLogicalFilename,
   getMyCollections,
   patchCollection,
+  searchCollections,
   setCollectionImage,
   updateCollectionContent,
 } from './services.mjs'
@@ -173,6 +174,21 @@ export const expose = await shell.expose<CollectionExposeType>({
         const patched = await setCollectionImage(_key, uploadedRpcFile)
         const imageUrl = patched?.entity.image ? getImageUrl(patched?.entity.image) : null
         return imageUrl
+      },
+      bodyWithFiles: {
+        fields: {
+          '.file': 1,
+        },
+      },
+    },
+    'webapp/search': {
+      guard: () => void 0,
+      async fn(_, __, { limit, sortType, text, after }) {
+        console.log({ limit, sortType, text, after })
+        const found = await searchCollections({ limit, sortType, text, after })
+        return {
+          list: found.map(({ entity: { _key } }) => ({ _key })),
+        }
       },
       bodyWithFiles: {
         fields: {
