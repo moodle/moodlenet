@@ -1,7 +1,7 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Modal, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
 import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
-import { MainLayout } from '@moodlenet/react-app/ui'
+import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
@@ -75,6 +75,7 @@ export const Collection: FC<CollectionProps> = ({
   access,
   isSaving,
 }) => {
+  const viewport = useViewport()
   const { imageUrl } = data
   const { isPublished } = state
   const { editData, deleteCollection, publish, unpublish } = actions
@@ -252,45 +253,53 @@ export const Collection: FC<CollectionProps> = ({
       {snackbars}
       <div className="collection">
         <div className="content">
-          <div className="big-screen">
-            <div className="wide-column">
-              {updatedBigScreenWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-            </div>
-            <div className="main-and-side-columns">
-              <div className="main-column">
-                {updatedBigScreenMainColumnItems.map(i =>
+          {viewport.screen.big && (
+            <div className="big-screen">
+              <div className="wide-column">
+                {updatedBigScreenWideColumnItems.map(i =>
                   'Item' in i ? <i.Item key={i.key} /> : i,
                 )}
               </div>
-              <div className="side-column">
-                {updatedBigScreenSideColumnItems.map(i =>
+              <div className="main-and-side-columns">
+                <div className="main-column">
+                  {updatedBigScreenMainColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
+                <div className="side-column">
+                  {updatedBigScreenSideColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          {viewport.screen.medium && (
+            <div className="medium-screen">
+              <div className="wide-column">
+                {updatedMediumScreenWideColumnItems.map(i =>
                   'Item' in i ? <i.Item key={i.key} /> : i,
                 )}
               </div>
-            </div>
-          </div>
-          <div className="medium-screen">
-            <div className="wide-column">
-              {updatedMediumScreenWideColumnItems.map(i =>
-                'Item' in i ? <i.Item key={i.key} /> : i,
-              )}
-            </div>
-            <div className="left-and-right-columns">
-              <div className="left-column">
-                {updatedMediumScreenLeftColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
-              </div>
-              <div className="right-column">
-                {updatedMediumScreenRightColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
+              <div className="left-and-right-columns">
+                <div className="left-column">
+                  {updatedMediumScreenLeftColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
+                <div className="right-column">
+                  {updatedMediumScreenRightColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          <div className="small-screen">
-            {updatedSmallScreenColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-          </div>
+          )}
+          {viewport.screen.small && (
+            <div className="small-screen">
+              {updatedSmallScreenColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+            </div>
+          )}
         </div>
       </div>
     </MainLayout>

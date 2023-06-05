@@ -1,3 +1,4 @@
+import { ProvideViewport } from '@moodlenet/react-app/ui'
 import { MemoryRouter } from 'react-router-dom'
 import { ProvideStorybookLinkComponent } from '../src/lib/SBLinkComponent'
 import { ProvideSBMainSearchBoxCtx } from '../src/MainSearchBoxCtxProvider'
@@ -34,14 +35,16 @@ export const parameters = {
 
 export const decorators = [
   Story => (
-    <MemoryRouter>
-      <ProvideStorybookLinkComponent>
-        <Wrapper>
-          <ProvideSBMainSearchBoxCtx>
-            <Story />
-          </ProvideSBMainSearchBoxCtx>
-        </Wrapper>
-      </ProvideStorybookLinkComponent>
-    </MemoryRouter>
+    <ProvideViewport>
+      <MemoryRouter>
+        <ProvideStorybookLinkComponent>
+          <Wrapper>
+            <ProvideSBMainSearchBoxCtx>
+              <Story />
+            </ProvideSBMainSearchBoxCtx>
+          </Wrapper>
+        </ProvideStorybookLinkComponent>
+      </MemoryRouter>
+    </ProvideViewport>
   ),
 ]

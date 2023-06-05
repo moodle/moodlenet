@@ -289,7 +289,6 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/search': {
       guard: () => void 0,
       async fn(_, __, { limit, sortType, text, after }) {
-        console.log({ limit, sortType, text, after })
         const found = await searchCollections({ limit, sortType, text, after })
         return {
           list: found.map(({ entity: { _key } }) => ({ _key })),

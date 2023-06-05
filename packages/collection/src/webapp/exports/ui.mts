@@ -4,6 +4,7 @@ export * from '../components/molecules/CollectionContributorCard/CollectionContr
 export * from '../components/organisms/CollectionCard/CollectionCard.js'
 export * from '../components/organisms/lists/BrowserCollectionList/BrowserCollectionFilters.js'
 export * from '../components/organisms/lists/BrowserCollectionList/BrowserCollectionList.js'
+export * from '../components/organisms/lists/BrowserCollectionList/CollectionSearchPageAdddon.js'
 export * from '../components/organisms/lists/CollectionList/CollectionList.js'
 export * from '../components/organisms/lists/LandingCollectionList/LandingCollectionList.js'
 export * from '../components/organisms/MainCollectionCard/MainCollectionCard.js'
