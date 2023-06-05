@@ -18,6 +18,7 @@ import {
   queryMyEntities,
   toaql,
 } from '@moodlenet/system-entities/server'
+import type { SortTypeRpc } from '../common/types.mjs'
 import { publicFiles } from './init/fs.mjs'
 import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
@@ -114,7 +115,7 @@ export async function setCollectionImage(
 }
 
 export async function searchCollections(_: /* {limit,sortType,text,after,} */ {
-  sortType?: SortType
+  sortType?: SortTypeRpc
   text?: string
   after?: string
   limit?: number
@@ -127,4 +128,3 @@ export async function searchCollections(_: /* {limit,sortType,text,after,} */ {
 
   return cursor.all()
 }
-export type SortType = 'Relevant' | 'Popular' | 'Recent'

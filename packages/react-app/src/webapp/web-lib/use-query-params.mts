@@ -3,16 +3,18 @@ import { useSearchParams } from 'react-router-dom'
 
 export function useUrlQueryString<PNames extends string>(
   pNames: readonly PNames[],
+  _prefix = '',
 ): Handle<PNames> {
+  const prefix = _prefix ? `${_prefix.replace(/\W/g, '_')}-` : ''
   const [q, setQ] = useSearchParams()
-  const pNamesString = pNames.join('&')
+  const pNamesString = pNames.map(_ => `${prefix}${_}`).join('&')
   const makeParams = useCallback(() => {
     const updatedParams = pNamesString.split('&').reduce((_acc, name) => {
       const paramValue = q.get(name) ?? undefined
-      return { ..._acc, [name]: paramValue }
+      return { ..._acc, [name.substring(prefix.length)]: paramValue }
     }, {} as Params<PNames>)
     return updatedParams
-  }, [pNamesString, q])
+  }, [pNamesString, q, prefix])
 
   const [strictParams, setStrictParams] = useState<Params<PNames>>(makeParams)
 
@@ -23,13 +25,18 @@ export function useUrlQueryString<PNames extends string>(
           acc[key] = curr.getAll(key)
           return acc
         }, {} as Record<string, string[]>)
+        const prefixedParams = Object.entries(params).reduce((acc, [key, val]) => {
+          typeof val === 'string' && (acc[`${prefix}${key}`] = val)
+          return acc
+        }, {} as Record<string, string>)
+
         return {
           ...current,
-          ...params,
+          ...prefixedParams,
         }
       })
     },
-    [setQ],
+    [setQ, prefix],
   )
 
   useEffect(() => {

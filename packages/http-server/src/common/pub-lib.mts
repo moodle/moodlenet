@@ -9,7 +9,7 @@ export function getPkgRpcFetchOpts(
   args: RpcArgs,
 ) {
   const [bodyArg, params, query] = args
-  const searchParams = new URLSearchParams(query ?? {}).toString()
+  const searchParams = new URLSearchParams(JSON.parse(JSON.stringify(query ?? {}))).toString()
   const toPath = compile(apiPath, { encode: encodeURIComponent })
   const apiPathWithParams = toPath(params ?? {})
   // const apiPathWithParams = Object.entries(params ?? {}).reduce(
