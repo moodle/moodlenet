@@ -1,70 +1,55 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-export function useQueryParams<Def extends ParamsDef>(paramsOpts: AllParamOpts<Def>): Handle<Def> {
-  const [stableParamsOpts, setStableParamsOpts] = useState(paramsOpts)
-  !Object.keys(stableParamsOpts).every(
-    key => String(stableParamsOpts[key]) === String(paramsOpts[key]),
-  ) && setStableParamsOpts(paramsOpts)
-
+export function useUrlQueryString<PNames extends string>(
+  pNames: readonly PNames[],
+): Handle<PNames> {
   const [q, setQ] = useSearchParams()
-  const [strictParams, setStrictParams] = useState<Partial<Params<Def>>>({})
+  const pNamesString = pNames.join('&')
+  const makeParams = useCallback(() => {
+    const updatedParams = pNamesString.split('&').reduce((_acc, name) => {
+      const paramValue = q.get(name) ?? undefined
+      return { ..._acc, [name]: paramValue }
+    }, {} as Params<PNames>)
+    return updatedParams
+  }, [pNamesString, q])
 
-  const setParams = useCallback<Handle<Def>[1]>(
+  const [strictParams, setStrictParams] = useState<Params<PNames>>(makeParams)
+
+  const setParams = useCallback<Handle<PNames>[1]>(
     params => {
-      setQ(curr => ({
-        ...[...curr.keys()].reduce((acc, key) => {
+      setQ(curr => {
+        const current = [...curr.keys()].reduce((acc, key) => {
           acc[key] = curr.getAll(key)
           return acc
-        }, {} as Record<string, string[]>),
-        ...params,
-      }))
+        }, {} as Record<string, string[]>)
+        return {
+          ...current,
+          ...params,
+        }
+      })
     },
     [setQ],
   )
 
   useEffect(() => {
-    const updatedParams = Object.keys(stableParamsOpts).reduce((_acc, name) => {
-      const pOpts = stableParamsOpts[name]
-
-      const _url_has_at_least_one_param = q.has(name)
-
-      const paramValue = _url_has_at_least_one_param
-        ? (isArrayParamOpts(pOpts) ? q.getAll(name) : q.get(name)) ?? undefined
-        : undefined
-
-      return { ..._acc, [name]: paramValue }
-    }, {} as Partial<Params<Def>>)
+    const updatedParams = makeParams()
     setStrictParams(updatedParams)
-  }, [q, stableParamsOpts])
+  }, [makeParams])
 
-  const handle = useMemo<Handle<Def>>(() => {
-    const handle: Handle<Def> = [strictParams, setParams]
+  const handle = useMemo<Handle<PNames>>(() => {
+    const handle: Handle<PNames> = [strictParams, setParams]
     return handle
   }, [strictParams, setParams])
 
   return handle
 }
 
-function isArrayParamOpts(
-  opts: undefined | StringParamOpts | ArrayParamOpts,
-): opts is ArrayParamOpts {
-  return Array.isArray(opts) || opts === 'a'
+type Params<PNames extends string> = {
+  [k in PNames]?: string
 }
 
-type ArrayParamOpts = 'a' | never[]
-type StringParamOpts = null | 's'
-
-type AllParamOpts<Def extends ParamsDef> = {
-  [k in keyof Def]: Def[k] extends string[] ? ArrayParamOpts : StringParamOpts
-}
-type ParamsDef = Record<string, string | string[]>
-
-type Params<Def extends ParamsDef> = {
-  [k in keyof Def]?: undefined | Def[k]
-}
-
-type Handle<Def extends ParamsDef> = [
-  params: Partial<Def>,
-  setParams: (params: Partial<Def>) => void,
+type Handle<PNames extends string> = [
+  params: Params<PNames>,
+  setParams: (params: Params<PNames>) => void,
 ]

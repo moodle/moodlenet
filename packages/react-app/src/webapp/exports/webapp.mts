@@ -24,6 +24,7 @@ export {
 export { LandingHookPlugin } from '../ui/components/pages/Landing/LandingHook.mjs'
 export {
   SearchPagePlugin,
+  type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
 } from '../ui/components/pages/Search/SearchPageHook.mjs'
 export {
@@ -37,3 +38,4 @@ export {
 } from '../web-lib/add-ons.js'
 export { createHookPlugin } from '../web-lib/plugins.mjs'
 export { wrapFetch } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
+export { useUrlQueryString } from '../web-lib/use-query-params.mjs'
