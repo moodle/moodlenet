@@ -33,4 +33,5 @@ export * from '../ui/lib/proxy-props.js'
 export * from '../ui/lib/types.js'
 export * from '../ui/lib/useForwardedRef.mjs'
 export * from '../ui/lib/useImageUrl.mjs'
+export * from '../ui/lib/viewport.js'
 // @endindex
