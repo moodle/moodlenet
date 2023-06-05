@@ -10,7 +10,7 @@ import {
   TypeField,
 } from '@moodlenet/ed-meta/ui'
 import type { MainLayoutProps } from '@moodlenet/react-app/ui'
-import { MainLayout } from '@moodlenet/react-app/ui'
+import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
@@ -87,6 +87,7 @@ export const Resource: FC<ResourceProps> = ({
   fileMaxSize,
   isSaving,
 }) => {
+  const viewport = useViewport()
   const { downloadFilename, contentUrl, contentType, imageUrl } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish, canEdit } = access
@@ -437,42 +438,48 @@ export const Resource: FC<ResourceProps> = ({
       {snackbars}
       <div className="resource">
         <div className="content">
-          <div className="big-screen">
-            <div className="main-and-side-columns">
-              <div className="main-column">
-                {updatedBigScreenMainColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
-              </div>
-              <div className="side-column">
-                {updatedBigScreenSideColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="medium-screen">
-            <div className="wide-column">
-              {updatedMediumScreenWideColumnItems.map(i =>
-                'Item' in i ? <i.Item key={i.key} /> : i,
-              )}
-            </div>
-            <div className="left-and-right-columns">
-              <div className="left-column">
-                {updatedMediumScreenLeftColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
-              </div>
-              <div className="right-column">
-                {updatedMediumScreenRightColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
+          {viewport.screen.big && (
+            <div className="big-screen">
+              <div className="main-and-side-columns">
+                <div className="main-column">
+                  {updatedBigScreenMainColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
+                <div className="side-column">
+                  {updatedBigScreenSideColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          <div className="small-screen">
-            {updatedSmallScreenColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-          </div>
+          )}
+          {viewport.screen.medium && (
+            <div className="medium-screen">
+              <div className="wide-column">
+                {updatedMediumScreenWideColumnItems.map(i =>
+                  'Item' in i ? <i.Item key={i.key} /> : i,
+                )}
+              </div>
+              <div className="left-and-right-columns">
+                <div className="left-column">
+                  {updatedMediumScreenLeftColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
+                <div className="right-column">
+                  {updatedMediumScreenRightColumnItems.map(i =>
+                    'Item' in i ? <i.Item key={i.key} /> : i,
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          {viewport.screen.small && (
+            <div className="small-screen">
+              {updatedSmallScreenColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+            </div>
+          )}
         </div>
       </div>
     </MainLayout>
