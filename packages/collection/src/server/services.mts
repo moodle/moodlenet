@@ -14,6 +14,7 @@ import {
   delEntity,
   getEntity,
   patchEntity,
+  queryEntities,
   queryMyEntities,
   toaql,
 } from '@moodlenet/system-entities/server'
@@ -111,3 +112,19 @@ export async function setCollectionImage(
     image: { kind: 'file', directAccessId },
   })
 }
+
+export async function searchCollections(_: /* {limit,sortType,text,after,} */ {
+  sortType?: SortType
+  text?: string
+  after?: string
+  limit?: number
+}) {
+  _
+  const cursor = await shell.call(queryEntities)(Collection.entityClass, {
+    limit: 6,
+    preAccessBody: 'SORT RAND()',
+  })
+
+  return cursor.all()
+}
+export type SortType = 'Relevant' | 'Popular' | 'Recent'

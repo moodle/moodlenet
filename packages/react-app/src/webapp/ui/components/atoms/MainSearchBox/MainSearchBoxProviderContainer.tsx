@@ -1,15 +1,20 @@
 import type { FC, PropsWithChildren } from 'react'
 import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useUrlQueryString } from '../../../../web-lib/use-query-params.mjs'
 import { ProvideMainSearchBoxCtx } from './MainSearchBox.js'
 
 export const MainSearchBoxCtxProviderContainer: FC<PropsWithChildren> = ({ children }) => {
-  const nav = useNavigate()
+  const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['q'])
   const search = useCallback(
     (text: string) => {
-      nav(`/search?q=${text}`)
+      setQueryUrlParams({ q: text })
     },
-    [nav],
+    [setQueryUrlParams],
   )
-  return <ProvideMainSearchBoxCtx search={search}>{children}</ProvideMainSearchBoxCtx>
+
+  return (
+    <ProvideMainSearchBoxCtx initSearchText={queryUrlParams.q ?? ''} search={search}>
+      {children}
+    </ProvideMainSearchBoxCtx>
+  )
 }
