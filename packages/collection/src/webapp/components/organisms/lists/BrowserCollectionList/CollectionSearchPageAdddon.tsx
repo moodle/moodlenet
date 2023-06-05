@@ -35,7 +35,7 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren> = ({ children
   const [collectionList, collectionListAction] = useReducer(reducer, [])
   const [collectionSearchResult, setCollectionSearchResult] = useState<CollectionSearchResultRpc>()
   const { q } = useContext(MainSearchBoxCtx)
-  const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['sortType'])
+  const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['sortType'], shell.pkgId.name)
   const sortType: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
     ? queryUrlParams.sortType
     : 'Popular'
