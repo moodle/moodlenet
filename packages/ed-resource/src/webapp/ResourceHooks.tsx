@@ -35,6 +35,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const [isPublished, setIsPublish] = useState(false)
 
   useEffect(() => {
+    setResource(null)
     rpcCaller.get(resourceKey).then(res => {
       res && setIsPublish(res.state.isPublished)
       setResource(res)
