@@ -37,8 +37,18 @@
     }
 
     @media screen and (max-width: 450px) {
+      gap: 30px;
+
       > .main-and-right-columns {
         flex-direction: column;
+        gap: 30px;
+
+        > .main-column {
+          gap: 30px;
+          > .collection-contributor-card {
+            padding: 0;
+          }
+        }
       }
     }
 
@@ -68,7 +78,6 @@
       }
     }
 
-    > .collection-action-card,
     > .main-and-right-columns > .right-column > .collection-action-card {
       width: 100%;
       height: fit-content;
