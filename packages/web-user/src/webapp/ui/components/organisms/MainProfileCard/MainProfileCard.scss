@@ -178,50 +178,11 @@
           text-overflow: ellipsis;
         }
 
-        > .approved-icon {
-          height: 22px;
-          display: flex;
-          align-items: center;
-          > svg {
-            height: 18px;
-            width: 18px;
-            &.zooom-in-enter-animation {
-              animation: enter 1s;
-            }
-
-            @keyframes enter {
-              0% {
-                position: absolute;
-                transform: scale(25);
-                z-index: 10;
-              }
-              50% {
-                transform: scale(0.5);
-                position: absolute;
-                z-index: 10;
-              }
-              74% {
-                transform: scaleX(1);
-                opacity: 1;
-              }
-              75% {
-                transform: scaleX(-1);
-                opacity: 0.3;
-              }
-              100% {
-                opacity: 1;
-                position: relative;
-                height: 18px;
-                z-index: inherit;
-              }
-            }
-          }
-        }
-
         > .user-id {
           > .copy-id {
             font-weight: normal;
-            padding: 5px 12px;
+            color: #687082e8;
+            padding: 6px 12px 5px 12px;
             margin: -5px 0;
             height: fit-content;
           }
