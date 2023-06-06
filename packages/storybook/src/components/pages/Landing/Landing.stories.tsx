@@ -3,11 +3,11 @@ import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
-import { ProfileCardPropsStories } from '@moodlenet/web-user/stories'
 import { LandingProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/CollectionCardProps.stories.js'
+import { getProfileCardsStoryProps } from 'components/organisms/ProfileCard/ProfileCardProps.stories.js'
 import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
 import {
   MainLayoutLoggedInStoryProps,
@@ -71,7 +71,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          profilesPropsList={ProfileCardPropsStories.getProfileCardsStoryProps(15, {
+          profilesPropsList={getProfileCardsStoryProps(15, {
             access: { isAuthenticated: false },
           })}
         />
@@ -124,7 +124,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Page/Search')}
-          profilesPropsList={ProfileCardPropsStories.getProfileCardsStoryProps(15, {
+          profilesPropsList={getProfileCardsStoryProps(15, {
             state: {
               // followed: true,
             },
@@ -200,7 +200,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingProfileList
             searchAuthorsHref={href('Page/Search')}
-            profilesPropsList={ProfileCardPropsStories.getProfileCardsStoryProps(15, {
+            profilesPropsList={getProfileCardsStoryProps(15, {
               access: {
                 isCreator: true,
               },
