@@ -1,5 +1,5 @@
+import { MainProfileCard } from '@moodlenet/web-user/ui'
 import type { ComponentMeta } from '@storybook/react'
-import { MainProfileCard } from './MainProfileCard.js'
 import { useMainProfileCardStoryProps } from './MainProfileCardProps.stories.jsx'
 
 const meta: ComponentMeta<typeof MainProfileCard> = {
