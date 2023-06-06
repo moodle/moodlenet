@@ -8,6 +8,7 @@ import {
   RoundButton,
   SecondaryButton,
   Snackbar,
+  TertiaryButton,
   useImageUrl,
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
@@ -63,7 +64,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   toggleIsEditing,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
-  const { avatarUrl, backgroundUrl } = data
+  const { avatarUrl, backgroundUrl, userId } = data
   const { canEdit, isCreator, isAuthenticated, canFollow } = access
   const { followed } = state
   const { toggleFollow, sendMessage, setAvatar, setBackground } = actions
@@ -80,6 +81,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
   const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+  const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
   const [showMessageSentAlert, setShowMessageSentAlert] = useState<boolean>(false)
 
   const avatarForm = useFormik<{ image: File | string | null | undefined }>({
@@ -179,6 +181,14 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     backgroundSize: 'cover',
   }
 
+  const copyId = () => {
+    navigator.clipboard.writeText(userId)
+    setShowUserIdCopiedAlert(false)
+    setTimeout(() => {
+      setShowUserIdCopiedAlert(true)
+    }, 100)
+  }
+
   const copyUrl = () => {
     navigator.clipboard.writeText(profileUrl)
     setShowUrlCopiedAlert(false)
@@ -213,7 +223,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const title = isEditing ? (
     <InputTextField
       className="display-name underline"
-      placeholder={/* t */ `Display name`}
+      placeholder={`Display name`}
       value={form.values.displayName}
       onChange={form.handleChange}
       name="displayName"
@@ -228,6 +238,14 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     </div>
   )
 
+  const copyIdButton = !isEditing && isCreator && (
+    <abbr className={`user-id`} title={`Click to copy your ID to the clipboard`}>
+      <TertiaryButton className="copy-id" onClick={copyId}>
+        Copy ID
+      </TertiaryButton>
+    </abbr>
+  )
+
   const description = isEditing ? (
     <InputTextField
       textAreaAutoSize
@@ -235,7 +253,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       onChange={form.handleChange}
       isTextarea
       noBorder={true}
-      placeholder={/* t */ `What should others know about you?`}
+      placeholder={`What should others know about you?`}
       className="description"
       key="description"
       name="aboutMe"
@@ -259,7 +277,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       </div>
     ) : null
 
-  const updatedTitleItems = [title, ...(titleItems ?? [])].filter(
+  const updatedTitleItems = [title, copyIdButton, ...(titleItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
@@ -327,7 +345,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     <RoundButton
       className="change-avatar-button"
       type="edit"
-      abbrTitle={/* t */ `Edit profile picture`}
+      abbrTitle={`Edit profile picture`}
       onClick={selectAvatar}
       key="edit-avatar-btn"
     />,
@@ -345,7 +363,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     <RoundButton
       className="change-background-button"
       type="edit"
-      abbrTitle={/* t */ `Edit background`}
+      abbrTitle={`Edit background`}
       key="edit-background-btn"
       onClick={selectBackground}
     />,
@@ -428,6 +446,11 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   )
 
   const snackbars = [
+    showUserIdCopiedAlert && (
+      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+        User ID copied to the clipboard, use it to connect with Moodle LMS
+      </Snackbar>
+    ),
     showUrlCopiedAlert && (
       <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
         Copied to clipoard
