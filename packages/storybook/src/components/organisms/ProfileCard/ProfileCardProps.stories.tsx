@@ -1,39 +1,67 @@
-// import { t } from '@lingui/macro'
+import type { PeopleFactory } from '@moodlenet/component-library'
+import { getRandomSortedArrayElements, peopleFactory } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import type { ProfileFormValues } from '@moodlenet/web-user/common'
-import { profileFormValidationSchema } from '@moodlenet/web-user/common'
-import type { MainProfileCardProps } from '@moodlenet/web-user/ui'
+import { href } from '@moodlenet/react-app/common'
+import { OverallCardStories } from '@moodlenet/react-app/stories'
+import type { ProxyProps } from '@moodlenet/react-app/ui'
+import { transformPropsToObjectWithKey } from '@moodlenet/react-app/ui'
+import type { ProfileCardProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import { useProfileStoryProps } from 'components/pages/Profile/ProfileProps.stories.js'
-import { useFormik } from 'formik'
 import type { PartialDeep } from 'type-fest'
 
-export const useMainProfileCardStoryProps = (
-  overrides?: PartialDeep<MainProfileCardProps>,
-): MainProfileCardProps => {
-  const profileProps = useProfileStoryProps()
-  const { access, actions, data, state, profileForm, mainProfileCardSlots } = profileProps
-  const { editProfile } = actions
-  const form = useFormik<ProfileFormValues>({
-    initialValues: profileForm,
-    validationSchema: profileFormValidationSchema(340000),
-    onSubmit: values => {
-      return editProfile(values)
-    },
-  })
-  return overrideDeep<MainProfileCardProps>(
+export const getProfileCardFactory = (
+  profileFactory?: PeopleFactory,
+  overrides?: PartialDeep<ProfileCardProps>,
+): ProfileCardProps => {
+  const profile = profileFactory ?? peopleFactory[Math.floor(Math.random() * peopleFactory.length)]
+  return overrideDeep<ProfileCardProps>(
     {
-      access: access,
-      form: form,
-      isEditing: false,
-      slots: mainProfileCardSlots,
-      actions,
-      data,
-      profileUrl: 'moodle.net/profile',
-      state,
-      toggleIsEditing: action('toggle is editting'),
+      mainColumnItems: [],
+      bottomTouchColumnItems: [],
+      overallCardProps: OverallCardStories.OverallCardNoCardStoryProps,
+      data: {
+        userId: 'saddsadsa-21321312',
+        backgroundUrl: profile?.backgroundUrl,
+        avatarUrl: profile?.avatarUrl,
+        profileHref: href('Pages/Profile/Logged In'),
+        displayName: profile?.displayName ?? '',
+        // organizationName: profile?.organization ?? '',
+      },
+      state: {
+        profileUrl: 'https://moodle.net/profile',
+        followed: false,
+        numFollowers: 13,
+      },
+      actions: {
+        editProfile: action('edit profile'),
+        sendMessage: action('send message'),
+        toggleFollow: action('toogleFollow'),
+        setAvatar: action('set avatar image'),
+        setBackground: action('set background image'),
+      },
+      access: {
+        isAdmin: false,
+        canEdit: false,
+        isCreator: false,
+        canPublish: false,
+        isAuthenticated: true,
+        canFollow: true,
+        canBookmark: true,
+      },
     },
-
     { ...overrides },
   )
+}
+
+export const getProfileCardsStoryProps = (
+  amount = 8,
+  overrides?: PartialDeep<ProfileCardProps>,
+): { props: ProxyProps<ProfileCardProps>; key: string }[] => {
+  return getRandomSortedArrayElements(
+    peopleFactory.map(profile => getProfileCardFactory(profile)),
+    amount,
+  ).map(profile => {
+    const newProfile = overrideDeep<ProfileCardProps>(profile, { ...overrides })
+    return transformPropsToObjectWithKey(newProfile, profile.data?.userId ?? '')
+  })
 }

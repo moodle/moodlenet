@@ -28,15 +28,9 @@ export type CollectionProps = {
   collectionContributorCardProps: CollectionContributorCardProps
   resourceCardPropsList: { key: string; props: ProxyProps<ResourceCardPropsData> }[]
 
-  smallScreenColumnItems: AddonItem[]
-
-  mediumScreenWideColumnItems: AddonItem[]
-  mediumScreenLeftColumnItems: AddonItem[]
-  mediumScreenRightColumnItems: AddonItem[]
-
-  bigScreenWideColumnItems: AddonItem[]
-  bigScreenMainColumnItems: AddonItem[]
-  bigScreenSideColumnItems: AddonItem[]
+  wideColumnItems: AddonItem[]
+  mainColumnItems: AddonItem[]
+  rightColumnItems: AddonItem[]
 
   extraDetailsItems: AddonItem[]
 
@@ -55,15 +49,9 @@ export const Collection: FC<CollectionProps> = ({
   collectionContributorCardProps,
   resourceCardPropsList,
 
-  smallScreenColumnItems,
-
-  mediumScreenWideColumnItems,
-  mediumScreenLeftColumnItems,
-  mediumScreenRightColumnItems,
-
-  bigScreenWideColumnItems,
-  bigScreenMainColumnItems,
-  bigScreenSideColumnItems,
+  wideColumnItems,
+  mainColumnItems,
+  rightColumnItems,
 
   extraDetailsItems,
 
@@ -146,11 +134,6 @@ export const Collection: FC<CollectionProps> = ({
       hideBorderWhenSmall={true}
       key="editor-actions-container"
     >
-      {/* {isPublished && (
-        <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
-          Published
-        </PrimaryButton>
-      )} */}
       {canPublish && !isPublished /*  && !isEditing */ && (
         <PrimaryButton onClick={checkFormAndPublish} color="green">
           Publish
@@ -177,47 +160,23 @@ export const Collection: FC<CollectionProps> = ({
       </Card>
     ) : null
 
-  const updatedBigScreenWideColumnItems = [
+  const updatedWideColumnItems = [
     mainCollectionCard,
-    ...(bigScreenWideColumnItems ?? []),
+    viewport.screen.medium && resourceList,
+    ...(wideColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedBigScreenMainColumnItems = [
-    resourceList,
-    ...(bigScreenMainColumnItems ?? []),
+  const updatedMainColumnItems = [
+    !viewport.screen.medium && resourceList,
+    !viewport.screen.big && contributorCard,
+    ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const updatedBigScreenSideColumnItems = [
-    contributorCard,
+  const updatedRightColumnItems = [
+    viewport.screen.big && contributorCard,
     editorActionsContainer,
     extraDetailsContainer,
-    ...(bigScreenSideColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const updatedMediumScreenWideColumnItems = [
-    mainCollectionCard,
-    resourceList,
-    ...(mediumScreenWideColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const updatedMediumScreenLeftColumnItems = [
-    contributorCard,
-    ...(mediumScreenLeftColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const updatedMediumScreenRightColumnItems = [
-    editorActionsContainer,
-    extraDetailsContainer,
-    ...(mediumScreenRightColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const updatedSmallScreenColumnItems = [
-    mainCollectionCard,
-    resourceList,
-    contributorCard,
-    editorActionsContainer,
-    extraDetailsContainer,
-    ...(smallScreenColumnItems ?? []),
+    ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
   const snackbars = <></>
@@ -253,53 +212,17 @@ export const Collection: FC<CollectionProps> = ({
       {snackbars}
       <div className="collection">
         <div className="content">
-          {viewport.screen.big && (
-            <div className="big-screen">
-              <div className="wide-column">
-                {updatedBigScreenWideColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
-              </div>
-              <div className="main-and-side-columns">
-                <div className="main-column">
-                  {updatedBigScreenMainColumnItems.map(i =>
-                    'Item' in i ? <i.Item key={i.key} /> : i,
-                  )}
-                </div>
-                <div className="side-column">
-                  {updatedBigScreenSideColumnItems.map(i =>
-                    'Item' in i ? <i.Item key={i.key} /> : i,
-                  )}
-                </div>
-              </div>
+          <div className="wide-column">
+            {updatedWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          </div>
+          <div className="main-and-right-columns">
+            <div className="main-column">
+              {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
             </div>
-          )}
-          {viewport.screen.medium && (
-            <div className="medium-screen">
-              <div className="wide-column">
-                {updatedMediumScreenWideColumnItems.map(i =>
-                  'Item' in i ? <i.Item key={i.key} /> : i,
-                )}
-              </div>
-              <div className="left-and-right-columns">
-                <div className="left-column">
-                  {updatedMediumScreenLeftColumnItems.map(i =>
-                    'Item' in i ? <i.Item key={i.key} /> : i,
-                  )}
-                </div>
-                <div className="right-column">
-                  {updatedMediumScreenRightColumnItems.map(i =>
-                    'Item' in i ? <i.Item key={i.key} /> : i,
-                  )}
-                </div>
-              </div>
+            <div className="right-column">
+              {updatedRightColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
             </div>
-          )}
-          {viewport.screen.small && (
-            <div className="small-screen">
-              {updatedSmallScreenColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </MainLayout>
