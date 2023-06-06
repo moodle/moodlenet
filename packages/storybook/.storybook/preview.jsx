@@ -1,5 +1,5 @@
-import { ProvideViewport } from '@moodlenet/react-app/ui'
 import { MemoryRouter } from 'react-router-dom'
+import { ProvideViewport } from '../../react-app/src/webapp/ui/lib/viewport'
 import { ProvideStorybookLinkComponent } from '../src/lib/SBLinkComponent'
 import { ProvideSBMainSearchBoxCtx } from '../src/MainSearchBoxCtxProvider'
 import { Wrapper } from '../src/Wrapper'
