@@ -43,14 +43,13 @@ export const useCollectionPageProps = ({
       },
     )
 
-    const layoutProps = {
-      bigScreenMainColumnItems: [],
-      bigScreenSideColumnItems: [],
-      bigScreenWideColumnItems: [],
-      mediumScreenLeftColumnItems: [],
-      mediumScreenRightColumnItems: [],
-      mediumScreenWideColumnItems: [],
-      smallScreenColumnItems: [],
+    const layoutProps: Pick<
+      CollectionProps,
+      'wideColumnItems' | 'mainColumnItems' | 'rightColumnItems' | 'extraDetailsItems'
+    > = {
+      wideColumnItems: [],
+      mainColumnItems: [],
+      rightColumnItems: [],
       extraDetailsItems: [],
     }
     const { contributor, form: collectionForm } = props
@@ -76,7 +75,6 @@ export const useCollectionPageProps = ({
       actions,
       access: {
         ...props.access,
-        // isAuthenticated,
         isCreator: _mainProps.props.access.isCreator,
       },
       isSaving,

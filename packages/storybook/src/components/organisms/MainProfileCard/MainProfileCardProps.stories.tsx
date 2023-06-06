@@ -1,15 +1,15 @@
 // import { t } from '@lingui/macro'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
+import { fileExceedsMaxUploadSize, randomIntFromInterval } from '@moodlenet/react-app/ui'
+import type { ProfileFormValues } from '@moodlenet/web-user/common'
+import type { MainProfileCardProps } from '@moodlenet/web-user/ui'
+import { people } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import type { PartialDeep } from 'type-fest'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
-import type { ProfileFormValues } from '../../../../../common/types.mjs'
-import { people } from '../../../helpers/factories.js'
-import { fileExceedsMaxUploadSize, randomIntFromInterval } from '../../../helpers/utilities.js'
-import type { MainProfileCardProps } from './MainProfileCard.js'
 // import { people } from '../../../../../helpers/factories'
 // import { fileExceedsMaxUploadSize, people, randomIntFromInterval } from '@moodlenet/component-library/ui.mjs'
 
@@ -57,9 +57,7 @@ export const useMainProfileCardStoryProps = (
       toggleIsEditing: action('toggle Is Editing'),
 
       profileUrl: 'https://iuri.is/',
-      // state: {
-      //   followed: false,
-      // },
+
       actions: {
         sendMessage: action('send message'),
         setAvatar: action('set avatar image'),

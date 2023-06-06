@@ -52,13 +52,13 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
       footerRowItems: [],
     }
 
-    const layoutProps = {
-      bigScreenMainColumnItems: [],
-      bigScreenSideColumnItems: [],
-      mediumScreenLeftColumnItems: [],
-      mediumScreenRightColumnItems: [],
-      mediumScreenWideColumnItems: [],
-      smallScreenColumnItems: [],
+    const layoutProps: Pick<
+      ResourceProps,
+      'wideColumnItems' | 'mainColumnItems' | 'rightColumnItems' | 'extraDetailsItems'
+    > = {
+      wideColumnItems: [],
+      mainColumnItems: [],
+      rightColumnItems: [],
       extraDetailsItems: [],
     }
 
