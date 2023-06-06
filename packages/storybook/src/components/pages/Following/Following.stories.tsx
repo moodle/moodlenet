@@ -6,6 +6,7 @@ import {
   useBrowserCollectionList,
   useBrowserProfileList,
   useBrowserStoryProps,
+  useBrowserSubjectList,
 } from 'components/organisms/Browser/BrowserProps.stories.js'
 
 const meta: ComponentMeta<typeof Following> = {
@@ -29,7 +30,11 @@ export const LoggedIn: FollowingStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     browserProps: useBrowserStoryProps({
-      mainColumnItems: [useBrowserProfileList(), useBrowserCollectionList()], //@ETTO check that on this page you only show the profiles and collection, on that order, with profiles first
+      mainColumnItems: [
+        useBrowserSubjectList(),
+        useBrowserProfileList(),
+        useBrowserCollectionList(),
+      ], //@ETTO check that on this page you only show the profiles and collection, on that order, with profiles first
     }),
   }
   return <Following {...props} />
