@@ -3,12 +3,12 @@ import { overrideDeep } from '@moodlenet/component-library/common'
 import { BrowserSubjectList } from '@moodlenet/ed-meta/ui'
 import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
 import type { BrowserProps, MainColumItem, SortType } from '@moodlenet/react-app/ui'
-import { ProfileCardPropsStories } from '@moodlenet/web-user/stories'
 import { BrowserProfileFilters, BrowserProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
 import { getCollectionCardsStoryProps } from '../CollectionCard/CollectionCardProps.stories.js'
+import { getProfileCardsStoryProps } from '../ProfileCard/ProfileCardProps.stories.js'
 import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.stories.js'
 import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.js'
 
@@ -38,7 +38,7 @@ export const useBrowserResourceList = () => {
     filters: [
       BrowserResourceFilters.SortByItem({
         selected: currentResourceSortBy,
-        setSelection: setCurrentResourceSortBy,
+        setSelected: setCurrentResourceSortBy,
       }),
     ].map(e => ({
       Item: () => e,
@@ -72,7 +72,7 @@ export const useBrowserCollectionList = () => {
     filters: [
       BrowserCollectionFilters.SortByItem({
         selected: currentCollectionSortBy,
-        setSelection: setCurrentCollectionSortBy,
+        setSelected: setCurrentCollectionSortBy,
       }),
     ].map(e => ({
       Item: () => e,
@@ -90,7 +90,7 @@ export const useBrowserProfileList = (showHeader?: boolean) => {
     Item: ({ showAll, setShowAll }) => {
       const list = useMemo(
         () =>
-          ProfileCardPropsStories.getProfileCardsStoryProps(30, {
+          getProfileCardsStoryProps(30, {
             access: {},
             state: {},
           }),
@@ -109,7 +109,7 @@ export const useBrowserProfileList = (showHeader?: boolean) => {
     filters: [
       BrowserProfileFilters.SortByItem({
         selected: currentProfileSortBy,
-        setSelection: setCurrentProfileSortBy,
+        setSelected: setCurrentProfileSortBy,
       }),
     ].map(e => ({
       Item: () => e,

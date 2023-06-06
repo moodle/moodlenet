@@ -34,13 +34,8 @@ export const getSubjectCardStoryProps = (
   return overrideDeep<SubjectCardProps>(
     {
       mainColumnItems: [],
-      organization:
-        Math.random() > 0.5
-          ? {
-              color: '#f98109',
-              url: 'moodle.net',
-            }
-          : null,
+      numFollowers: Math.floor(Math.random() * Math.random() * 1000),
+      numResources: Math.floor(Math.random() * Math.random() * 1000),
       subjectHomeHref: href('Pages/Subject/Logged In'),
       title: 'Building and civil engineering',
     },

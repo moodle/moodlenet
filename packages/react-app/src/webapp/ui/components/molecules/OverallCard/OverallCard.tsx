@@ -39,7 +39,7 @@ export const OverallCard: FC<OverallCardProps> = ({
           ? items?.map(item => {
               return (
                 <div className="data" key="item.name">
-                  <abbr title={/* t */ `${item.name}`}>
+                  <abbr title={`${item.name}`}>
                     <item.Icon />
                   </abbr>
                   {item.value}
@@ -50,20 +50,12 @@ export const OverallCard: FC<OverallCardProps> = ({
               return item.href ? (
                 <Link href={item.href} className="data" key={item.name}>
                   {item.value}
-                  <span>
-                    {/* <Trans> */}
-                    {item.name}
-                    {/* </Trans> */}
-                  </span>
+                  <span>{item.name}</span>
                 </Link>
               ) : (
                 <div className="data" key={item.name}>
                   {item.value}
-                  <span>
-                    {/* <Trans> */}
-                    {item.name}
-                    {/* </Trans> */}
-                  </span>
+                  <span>{item.name}</span>
                 </div>
               )
             })}

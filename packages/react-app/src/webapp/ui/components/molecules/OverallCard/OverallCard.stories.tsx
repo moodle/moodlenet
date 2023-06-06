@@ -1,7 +1,8 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 // import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
-import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
+import { Grade, PermIdentity } from '@material-ui/icons'
+import { FilterNone } from '@mui/icons-material'
 import { href } from '../../../../../common/lib.mjs'
 import type { OverallCardProps } from './OverallCard.js'
 import { OverallCard } from './OverallCard.js'
@@ -30,7 +31,7 @@ export const OverallCardStoryProps: OverallCardProps = {
   items: [
     { Icon: PermIdentity, href: href('Pages/Followers/Default'), name: 'Followers', value: 25 },
     { Icon: Grade, name: 'Kudos', value: 121 },
-    { Icon: LibraryBooks, name: 'Resource', value: 23 },
+    { Icon: FilterNone, name: 'Resources', value: 23 },
   ],
 }
 

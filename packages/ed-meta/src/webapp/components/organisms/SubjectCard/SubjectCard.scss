@@ -33,21 +33,28 @@
     }
   }
 
-  .subtitle {
+  > .stats {
     display: flex;
     align-items: center;
     margin-top: 10px;
+    gap: 10px;
 
-    > .url {
-      font-weight: normal;
-      font-size: 17px;
+    > * {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 15px;
     }
 
-    > .color {
-      width: 26px;
-      height: 13px;
-      margin-left: 17px;
-      border-radius: 7px;
+    > .followers {
+      > svg {
+        height: 20px;
+      }
+    }
+    > .resources {
+      > svg {
+        height: 16px;
+      }
     }
   }
 }
