@@ -10,7 +10,7 @@ import '../shell.mjs'
 import {
   SearchResourceSectionAddon,
   SearchResourceWrapperAddon,
-} from '../components/organisms/lists/BrowserResourceList/ResourceSearchPageAdddon.js'
+} from '../components/organisms/lists/BrowserResourceList/ResourceSearchPageAddonHooks.js'
 import MainWrapper from '../MainWrapper.js'
 import { pkgRoutes } from '../routes.js'
 
