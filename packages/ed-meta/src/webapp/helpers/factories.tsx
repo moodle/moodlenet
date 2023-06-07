@@ -5,19 +5,19 @@ import type { SubjectCardProps } from '../components/organisms/SubjectCard/Subje
 export const subjectsCardFactory: PartialDeep<SubjectCardProps>[] = [
   {
     mainColumnItems: [],
-    organization: {
-      color: '#f98109',
-      url: 'moodle.net',
-    },
+    // organization: {
+    //   color: '#f98109',
+    //   url: 'moodle.net',
+    // },
     subjectHomeHref: href('Pages/Subject/Logged In'),
     title: 'Building and civil engineering',
   },
   {
     mainColumnItems: [],
-    organization: {
-      color: '#f98109',
-      url: 'moodle.net',
-    },
+    // organization: {
+    //   color: '#f98109',
+    //   url: 'moodle.net',
+    // },
     subjectHomeHref: href('Pages/Subject/Logged In'),
     title: 'Mathematics',
   },
