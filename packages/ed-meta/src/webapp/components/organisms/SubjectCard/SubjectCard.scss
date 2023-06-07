@@ -1,12 +1,13 @@
 .subject-card {
   cursor: pointer;
   width: fit-content;
-  min-height: 95px;
+  // min-height: 95px;
   border-radius: 16px;
   box-shadow: 0 0 6px #dedede;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  gap: 10px;
   align-items: flex-start;
   padding: 16px;
   color: #636363;
@@ -36,13 +37,13 @@
   > .stats {
     display: flex;
     align-items: center;
-    margin-top: 10px;
-    gap: 10px;
+    // margin-top: 10px;
+    gap: 12px;
 
     > * {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 3px;
       font-size: 15px;
     }
 

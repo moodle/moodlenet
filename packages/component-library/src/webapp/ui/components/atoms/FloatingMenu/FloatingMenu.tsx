@@ -4,17 +4,42 @@ import { useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
 
-export type FloatingMenuContentItem = {
-  Element: ReactElement
+export type FloatingMenuContentNameIconItem = {
+  name: string
+  Icon: ReactElement
+  onClick: () => void
+  abbr?: string
+  disabled?: boolean
+  key: string
   wrapperClassName?: string
 }
 
+export type FloatingMenuContentElementItem = {
+  Element: ReactElement
+  wrapperClassName?: string
+}
+// export type FloatingMenuContentItem =
+//   | FloatingMenuContentNameIconItem
+//   | FloatingMenuContentElementItem
+
 export type FloatingMenuProps = {
-  menuContent: FloatingMenuContentItem[]
+  menuContent: FloatingMenuContentNameIconItem[] | FloatingMenuContentElementItem[]
   hoverElement: React.ReactNode
   abbr?: string
   hover?: boolean
   className?: string
+}
+
+export const checkIfTypeFloatingMenuContentElementItem = (
+  item: FloatingMenuContentNameIconItem | FloatingMenuContentElementItem,
+): item is FloatingMenuContentElementItem => {
+  return 'Element' in item
+}
+
+export const checkIfTypeFloatingMenuContentNameIconItem = (
+  item: FloatingMenuContentNameIconItem | FloatingMenuContentElementItem,
+): item is FloatingMenuContentNameIconItem => {
+  return 'name' in item && 'Icon' in item && 'key' in item && 'onClick' in item
 }
 
 export const FloatingMenu: FC<FloatingMenuProps> = ({
@@ -55,45 +80,100 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
     currentVisible && setCurrentVisible(false)
   }
 
+  const isFloatingMenuContentElementItemArray =
+    menuContent && menuContent.length > 0 && menuContent[0]
+      ? checkIfTypeFloatingMenuContentElementItem(menuContent[0])
+      : false
+
   const updatedMenuContent = Array.isArray(menuContent)
-    ? menuContent.map(({ Element, wrapperClassName }, i) => {
-        if (menuContent.length === 1) {
-          return (
-            <div
-              className={`${wrapperClassName}`}
-              key={Element.key}
-              tabIndex={i + 1}
-              onKeyDown={oneElementActions}
-            >
-              {Element}
-            </div>
+    ? isFloatingMenuContentElementItemArray
+      ? menuContent.map((item, i) => {
+          const { Element, wrapperClassName } = checkIfTypeFloatingMenuContentElementItem(item)
+            ? item
+            : { Element: null, wrapperClassName: null }
+          if (menuContent.length === 1) {
+            return (
+              <div
+                className={`${wrapperClassName}`}
+                key={Element && Element.key}
+                tabIndex={i + 1}
+                onKeyDown={oneElementActions}
+              >
+                {Element}
+              </div>
+            )
+          } else if (i === 0) {
+            return (
+              <div
+                className={`${wrapperClassName}`}
+                key={Element && Element.key}
+                tabIndex={i + 1}
+                onKeyDown={closeMenuUp}
+              >
+                {Element}
+              </div>
+            )
+          } else if (menuContent.length - 1 === i) {
+            return (
+              <div
+                className={`last element ${wrapperClassName}`}
+                key={Element && Element.key}
+                tabIndex={i + 1}
+              >
+                {Element}
+              </div>
+            )
+          } else {
+            return (
+              <div className={`${wrapperClassName}`} key={Element && Element.key} tabIndex={i + 1}>
+                {Element}
+              </div>
+            )
+          }
+        })
+      : menuContent.map((item, i) => {
+          const { name, Icon, key, wrapperClassName } = checkIfTypeFloatingMenuContentNameIconItem(
+            item,
           )
-        } else if (i === 0) {
-          return (
-            <div
-              className={`${wrapperClassName}`}
-              key={Element.key}
-              tabIndex={i + 1}
-              onKeyDown={closeMenuUp}
-            >
-              {Element}
-            </div>
-          )
-        } else if (menuContent.length - 1 === i) {
-          return (
-            <div className={`last element ${wrapperClassName}`} key={Element.key} tabIndex={i + 1}>
-              {Element}
-            </div>
-          )
-        } else {
-          return (
-            <div className={`${wrapperClassName}`} key={Element.key} tabIndex={i + 1}>
-              {Element}
-            </div>
-          )
-        }
-      })
-    : menuContent
+            ? item
+            : { name: null, Icon: null, key: null, wrapperClassName: null }
+          if (menuContent.length === 1) {
+            return (
+              <div
+                className={`${wrapperClassName}`}
+                key={key}
+                tabIndex={i + 1}
+                onKeyDown={oneElementActions}
+              >
+                {Icon} {name}
+              </div>
+            )
+          } else if (i === 0) {
+            return (
+              <div
+                className={`${wrapperClassName}`}
+                key={key}
+                tabIndex={i + 1}
+                onKeyDown={closeMenuUp}
+              >
+                {Icon} {name}
+              </div>
+            )
+          } else if (menuContent.length - 1 === i) {
+            return (
+              <div className={`last element ${wrapperClassName}`} key={key} tabIndex={i + 1}>
+                {Icon} {name}
+              </div>
+            )
+          } else {
+            return (
+              <div className={`${wrapperClassName}`} key={key} tabIndex={i + 1}>
+                {Icon} {name}
+              </div>
+            )
+          }
+        })
+    : null
 
   const handleBlur = (e: React.FocusEvent<HTMLDivElement, Element>) => {
     const currentTarget = e.currentTarget

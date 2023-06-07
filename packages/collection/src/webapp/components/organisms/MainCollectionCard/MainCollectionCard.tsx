@@ -1,5 +1,5 @@
 import { Share } from '@material-ui/icons'
-import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
+import type { AddonItem, FloatingMenuContentElementItem } from '@moodlenet/component-library'
 import {
   Card,
   FloatingMenu,
@@ -30,7 +30,7 @@ export type MainCollectionCardSlots = {
   headerColumnItems: (AddonItem | null)[]
   topLeftHeaderItems: (AddonItem | null)[]
   topRightHeaderItems: (AddonItem | null)[]
-  moreButtonItems: (FloatingMenuContentItem | null)[]
+  moreButtonItems: (FloatingMenuContentElementItem | null)[]
   footerRowItems: (AddonItem | null)[]
 }
 
@@ -176,7 +176,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const empty = !form.values.title && !form.values.description && !imageForm.values.image
 
-  const shareButton: FloatingMenuContentItem | null = isPublished
+  const shareButton: FloatingMenuContentElementItem | null = isPublished
     ? {
         Element: (
           <div key="share-button" onClick={copyUrl}>
@@ -187,7 +187,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       }
     : null
 
-  const deleteButton: FloatingMenuContentItem | null =
+  const deleteButton: FloatingMenuContentElementItem | null =
     !empty && canDelete
       ? {
           Element: (
@@ -199,7 +199,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         }
       : null
 
-  const unpublishButton: FloatingMenuContentItem | null =
+  const unpublishButton: FloatingMenuContentElementItem | null =
     canPublish && isPublished
       ? {
           Element: (
@@ -211,7 +211,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         }
       : null
 
-  const publishButton: FloatingMenuContentItem | null =
+  const publishButton: FloatingMenuContentElementItem | null =
     canPublish && !isPublished
       ? {
           Element: (
@@ -243,7 +243,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     shareButton,
     deleteButton,
     ...(moreButtonItems ?? []),
-  ].filter((item): item is FloatingMenuContentItem => !!item)
+  ].filter((item): item is FloatingMenuContentElementItem => !!item)
 
   const moreButton =
     updatedMoreButtonItems.length > 0 ? (

@@ -1,4 +1,4 @@
-import type { FloatingMenuContentItem } from '@moodlenet/component-library'
+import type { FloatingMenuContentElementItem } from '@moodlenet/component-library'
 import { FloatingMenu } from '@moodlenet/component-library'
 import type { ComponentType, FC } from 'react'
 import { useMemo } from 'react'
@@ -25,18 +25,18 @@ export const AddMenu: FC<AddMenuProps> = ({
   createCollectionProps,
   createResourceProps,
 }) => {
-  const menuContent = useMemo<FloatingMenuContentItem[]>(() => {
-    const createCollectionItem: FloatingMenuContentItem = {
+  const menuContent = useMemo<FloatingMenuContentElementItem[]>(() => {
+    const createCollectionItem: FloatingMenuContentElementItem = {
       Element: <CreateCollectionAddMenuItem key="new collection" {...createCollectionProps} />,
     }
-    const createResourceItem: FloatingMenuContentItem = {
+    const createResourceItem: FloatingMenuContentElementItem = {
       Element: <CreateResourceAddMenuItem key="new resource" {...createResourceProps} />,
     }
     return [
       createResourceItem,
       createCollectionItem,
       ...menuItems.map(({ Component, key, className = '' }) => {
-        const floatingMenuContentItem: FloatingMenuContentItem = {
+        const floatingMenuContentItem: FloatingMenuContentElementItem = {
           Element: <Component key={key} />,
           wrapperClassName: `add-menu-item ${className}`,
         }

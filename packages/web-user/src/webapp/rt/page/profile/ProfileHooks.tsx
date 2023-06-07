@@ -131,6 +131,7 @@ export const useProfileProps = ({
         footerItems: [],
         subtitleItems: [],
         titleItems: [],
+        moreButtonItems: [],
       },
       createCollection: () =>
         collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),

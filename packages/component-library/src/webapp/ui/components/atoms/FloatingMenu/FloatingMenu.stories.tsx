@@ -1,4 +1,5 @@
 import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@material-ui/icons'
+import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import addIcon from '../../../assets/icons/add-round.svg'
 import type { FloatingMenuProps } from './FloatingMenu.js'
@@ -24,19 +25,31 @@ export const FloatingMenuStoryProps: FloatingMenuProps = {
   hoverElement: <img className="add-icon" src={addIcon} alt="Add" />,
   menuContent: [
     {
-      Element: (
-        <div key="__">
-          <div>
-            <NoteAddIcon />
-            New Resource
-          </div>
-          <div>
-            <LibraryAddIcon />
-            New Collection
-          </div>
-        </div>
-      ),
+      key: '1',
+      name: 'New Resource',
+      Icon: <NoteAddIcon />,
+      onClick: action('new resource'),
     },
+    {
+      key: '2',
+      name: 'New Collection',
+      Icon: <LibraryAddIcon />,
+      onClick: action('new collection'),
+    },
+    // {
+    //   Element: (
+    //     <div key="__">
+    //       <div>
+    //         <NoteAddIcon />
+    //         New Resource
+    //       </div>
+    //       <div>
+    //         <LibraryAddIcon />
+    //         New Collection
+    //       </div>
+    //     </div>
+    //   ),
+    // },
   ],
 }
 

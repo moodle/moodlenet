@@ -1,7 +1,7 @@
 import { ArrowDropDown } from '@material-ui/icons'
 import type { FC } from 'react'
 import { Fragment } from 'react'
-import type { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.js'
+import type { FloatingMenuContentElementItem } from '../FloatingMenu/FloatingMenu.js'
 import FloatingMenu from '../FloatingMenu/FloatingMenu.js'
 import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
 import SecondaryButton from '../SecondaryButton/SecondaryButton.js'
@@ -30,7 +30,7 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
   const menuContent = list.map(({ name, key }) => {
     const isCurrent = selected.indexOf(key) > -1
     isCurrent && currentName.push(name)
-    const floatingMenuContentItem: FloatingMenuContentItem = {
+    const floatingMenuContentItem: FloatingMenuContentElementItem = {
       Element: (
         <Fragment key={key}>
           <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
@@ -63,7 +63,7 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
               <>
                 label <div className="num-selected-elements">{currentName.length}</div>
               </>
-            )}{' '}
+            )}
             <ArrowDropDown />
           </PrimaryButton>
         ) : (

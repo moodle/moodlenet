@@ -1,5 +1,5 @@
 import { Link as LinkIcon, Share } from '@material-ui/icons'
-import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
+import type { AddonItem, FloatingMenuContentElementItem } from '@moodlenet/component-library'
 import {
   Card,
   FloatingMenu,
@@ -46,7 +46,7 @@ export type MainResourceCardSlots = {
   headerColumnItems: (AddonItem | null)[]
   topLeftHeaderItems: (AddonItem | null)[]
   topRightHeaderItems: (AddonItem | null)[]
-  moreButtonItems: FloatingMenuContentItem[]
+  moreButtonItems: (FloatingMenuContentElementItem | null)[]
   footerRowItems: (AddonItem | null)[]
 }
 
@@ -245,7 +245,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     !contentForm.values.content &&
     !imageForm.values.image
 
-  // const bookmarkButtonSmallScreen: FloatingMenuContentItem | null =
+  // const bookmarkButtonSmallScreen: FloatingMenuContentElementItem | null =
   //   !empty && width < 800
   //     ? {
   //         key: 'bookmark-button',
@@ -267,7 +267,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //   </TertiaryButton>
   // )
 
-  const shareButton: FloatingMenuContentItem | null =
+  const shareButton: FloatingMenuContentElementItem | null =
     !empty && isPublished
       ? {
           Element: (
@@ -278,7 +278,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const deleteButton: FloatingMenuContentItem | null =
+  const deleteButton: FloatingMenuContentElementItem | null =
     canDelete && !empty
       ? {
           Element: (
@@ -289,7 +289,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const publishButton: FloatingMenuContentItem | null =
+  const publishButton: FloatingMenuContentElementItem | null =
     canPublish && !isPublished
       ? {
           Element: (
@@ -303,7 +303,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const unpublishButton: FloatingMenuContentItem | null =
+  const unpublishButton: FloatingMenuContentElementItem | null =
     canPublish && isPublished
       ? {
           Element: (
@@ -363,7 +363,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //       }
   //     : null
 
-  const openLinkOrDownloadFile: FloatingMenuContentItem | null =
+  const openLinkOrDownloadFile: FloatingMenuContentElementItem | null =
     width < 800 && contentUrl
       ? {
           Element:
@@ -397,7 +397,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     // sendToMoodleButton,
     // addToCollectionButton,
     ...(moreButtonItems ?? []),
-  ].filter((item): item is FloatingMenuContentItem => !!item)
+  ].filter((item): item is FloatingMenuContentElementItem => !!item)
 
   const moreButton =
     !empty && updatedMoreButtonItems.length > 0 ? (

@@ -71,8 +71,6 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     ...overrides?.access,
   }
 
-  console.log('access', access)
-
   const profileForm: ProfileFormValues = {
     displayName: person ? person.displayName : '',
     aboutMe:

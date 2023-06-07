@@ -1,6 +1,12 @@
 import { Edit, Save } from '@material-ui/icons'
-import type { AddonItem } from '@moodlenet/component-library'
+import type {
+  AddonItem,
+  FloatingMenuContentElementItem,
+  FloatingMenuContentNameIconItem,
+} from '@moodlenet/component-library'
 import {
+  checkIfTypeFloatingMenuContentElementItem,
+  checkIfTypeFloatingMenuContentNameIconItem,
   FloatingMenu,
   InputTextField,
   Modal,
@@ -13,7 +19,7 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 
-import { Share } from '@mui/icons-material'
+import { Flag, Share } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { messageFormValidationSchema } from '../../../../../common/exports.mjs'
@@ -29,11 +35,12 @@ import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {
-  mainColumnItems: AddonItem[]
-  topItems: AddonItem[]
-  titleItems: AddonItem[]
-  subtitleItems: AddonItem[]
-  footerItems: AddonItem[]
+  mainColumnItems: (AddonItem | null)[]
+  topItems: (AddonItem | null)[]
+  moreButtonItems: (FloatingMenuContentElementItem | null)[]
+  titleItems: (AddonItem | null)[]
+  subtitleItems: (AddonItem | null)[]
+  footerItems: (AddonItem | null)[]
 }
 
 export type MainProfileCardPropsControlled = Omit<
@@ -63,7 +70,8 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   profileUrl,
   toggleIsEditing,
 }) => {
-  const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
+  const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems, moreButtonItems } =
+    slots
   const { avatarUrl, backgroundUrl, userId } = data
   const { canEdit, isCreator, isAuthenticated, canFollow } = access
   const { followed } = state
@@ -463,116 +471,156 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     ),
   ]
 
-  const footerButtons = [
-    // isCreator && !isApproved && !isWaitingApproval && (
-    //   <PrimaryButton
-    //     disabled={!isElegibleForApproval}
-    //     onClick={requestApprovalForm.submitForm}
-    //   >
-    //     Request approval
-    //   </PrimaryButton>
-    // ),
-    // isCreator && isWaitingApproval && (
-    //   <SecondaryButton disabled={true}>
-    //     Waiting for approval
-    //   </SecondaryButton>
-    // ),
-    // isAdmin && !isApproved && (
-    //   <PrimaryButton onClick={approveUserForm.submitForm} color="green">
-    //     Approve
-    //   </PrimaryButton>
-    // ),
-    // isAdmin && isApproved && (
-    //   <SecondaryButton
-    //     onClick={unapproveUserForm.submitForm}
-    //     color="red"
-    //   >
-    //     Unapprove
-    //   </SecondaryButton>
-    // ),
-    // !isCreator && !isFollowing && (
-    //   <PrimaryButton
-    //     disabled={!isAuthenticated}
-    //     onClick={toggleFollowForm.submitForm}
-    //     className="following-button"
-    //   >
-    //     {/* <AddIcon /> */}
-    //     Follow
-    //   </PrimaryButton>
-    // ),
-    // !isCreator && isFollowing && (
-    //   <SecondaryButton
-    //     disabled={!isAuthenticated}
-    //     onClick={toggleFollowForm.submitForm}
-    //     className="following-button"
-    //     color="orange"
-    //   >
-    //     {/* <CheckIcon /> */}
-    //     Following
-    //   </SecondaryButton>
-    // ),
-    !isCreator && (
-      <FollowButton
-        canFollow={canFollow}
-        followed={followed}
-        isAuthenticated={isAuthenticated}
-        isCreator={isCreator}
-        toggleFollow={toggleFollow}
-        key="follow-button"
-      />
-    ),
-    !isCreator && (
-      <SecondaryButton
-        color="grey"
-        className={`message`}
-        disabled={!isAuthenticated}
-        onClick={() => setIsSendingMessage(true)}
-        abbr={!isAuthenticated ? 'Login or signup to send messages' : 'Send a message'}
-      >
-        Message
-      </SecondaryButton>
-      // <TertiaryButton
-      //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
-      //   onClick={openSendMessage}
-      // >
-      //   <MailOutlineIcon />
-      // </TertiaryButton>
-    ),
+  const shareButton: FloatingMenuContentNameIconItem = {
+    name: 'Share',
+    Icon: <Share />,
+    key: 'share-button',
+    onClick: copyUrl,
+  }
 
-    <FloatingMenu
-      key="more-button-menu"
-      menuContent={[
-        {
-          Element: (
-            <div key="share-button" tabIndex={0} onClick={copyUrl}>
-              <Share />
-              Share
-            </div>
-          ),
-        },
+  const reportButton: FloatingMenuContentNameIconItem | null =
+    !isCreator && isAuthenticated
+      ? {
+          name: 'Report',
+          Icon: <Flag />,
+          key: 'report-button',
+          onClick: () => undefined, // () => setIsReporting(true)
+        }
+      : null
 
-        // !isCreator && <div tabIndex={0} onClick={() => setIsReporting(true)}>
-        //   <FlagIcon />
-        //   Report
-        // </div>,
-      ]}
-      hoverElement={
-        isShowingSmallCard ? (
-          <SecondaryButton color="grey" className={`more small`} abbr="More actions">
-            <div className="three-dots">...</div>
-          </SecondaryButton>
-        ) : (
-          <SecondaryButton color="grey" className={`more big`} abbr="More actions">
-            <div className="text">More</div>
-          </SecondaryButton>
-        )
-      }
-    />,
-  ]
+  // isCreator && !isApproved && !isWaitingApproval && (
+  //   <PrimaryButton
+  //     disabled={!isElegibleForApproval}
+  //     onClick={requestApprovalForm.submitForm}
+  //   >
+  //     Request approval
+  //   </PrimaryButton>
+  // ),
+  // isCreator && isWaitingApproval && (
+  //   <SecondaryButton disabled={true}>
+  //     Waiting for approval
+  //   </SecondaryButton>
+  // ),
+  // isAdmin && !isApproved && (
+  //   <PrimaryButton onClick={approveUserForm.submitForm} color="green">
+  //     Approve
+  //   </PrimaryButton>
+  // ),
+  // isAdmin && isApproved && (
+  //   <SecondaryButton
+  //     onClick={unapproveUserForm.submitForm}
+  //     color="red"
+  //   >
+  //     Unapprove
+  //   </SecondaryButton>
+  // ),
+  const followButton = !isCreator && isAuthenticated && (
+    <FollowButton
+      canFollow={canFollow}
+      followed={followed}
+      isAuthenticated={isAuthenticated}
+      isCreator={isCreator}
+      toggleFollow={toggleFollow}
+      key="follow-button"
+    />
+  )
+  const messageButton = !isCreator && isAuthenticated && (
+    <SecondaryButton
+      color="grey"
+      className={`message`}
+      disabled={!isAuthenticated}
+      onClick={() => setIsSendingMessage(true)}
+      abbr={'Send a message'}
+    >
+      Message
+    </SecondaryButton>
+  )
 
-  const updatedFooterItems = [...footerButtons, ...(footerItems ?? [])].filter(
+  const updatedFooterItems = [followButton, messageButton, ...(footerItems ?? [])].filter(
     (item): item is AddonItem /* | JSX.Element */ => !!item,
   )
+
+  const updatedMoreButtonItems = [shareButton, reportButton, ...(moreButtonItems ?? [])].filter(
+    (item): item is FloatingMenuContentElementItem | FloatingMenuContentNameIconItem => !!item,
+  )
+
+  const singleItem = updatedMoreButtonItems.length === 1 && updatedMoreButtonItems[0]
+
+  const moreButton =
+    updatedFooterItems.length > 1 ? (
+      updatedMoreButtonItems.length > 0 ? (
+        singleItem ? (
+          checkIfTypeFloatingMenuContentElementItem(singleItem) ? (
+            singleItem.Element
+          ) : checkIfTypeFloatingMenuContentNameIconItem(singleItem) ? (
+            <SecondaryButton
+              color="grey"
+              className={singleItem.wrapperClassName}
+              disabled={singleItem.disabled}
+              onClick={singleItem.onClick}
+              abbr={singleItem.abbr}
+            >
+              {singleItem.name}
+            </SecondaryButton>
+          ) : null
+        ) : (
+          <FloatingMenu
+            key="more-button-menu"
+            menuContent={updatedMoreButtonItems
+              .map(item => {
+                return checkIfTypeFloatingMenuContentElementItem(item)
+                  ? item
+                  : checkIfTypeFloatingMenuContentNameIconItem(item)
+                  ? {
+                      Element: (
+                        <div key={item.key} tabIndex={0} onClick={item.onClick}>
+                          {item.Icon} {item.name}
+                        </div>
+                      ),
+                      wrapperClassName: item.wrapperClassName,
+                    }
+                  : null
+              })
+              .filter((item): item is FloatingMenuContentElementItem => !!item)}
+            hoverElement={
+              isShowingSmallCard ? (
+                <SecondaryButton color="grey" className={`more small`} abbr="More actions">
+                  <div className="three-dots">...</div>
+                </SecondaryButton>
+              ) : (
+                <SecondaryButton color="grey" className={`more big`} abbr="More actions">
+                  <div className="text">More</div>
+                </SecondaryButton>
+              )
+            }
+          />
+        )
+      ) : null
+    ) : (
+      updatedMoreButtonItems.map(item => {
+        return checkIfTypeFloatingMenuContentElementItem(item) ? (
+          item.Element
+        ) : checkIfTypeFloatingMenuContentNameIconItem(item) ? (
+          <SecondaryButton
+            color="grey"
+            className={item.wrapperClassName}
+            disabled={item.disabled}
+            onClick={item.onClick}
+            abbr={item.abbr}
+          >
+            {item.name}
+          </SecondaryButton>
+        ) : null
+      })
+    )
+
+  moreButton
+    ? Array.isArray(moreButton)
+      ? moreButton
+          .filter((item): item is JSX.Element => !!item)
+          .map(item => updatedFooterItems.push({ Item: () => item, key: item.key ? item.key : '' }))
+      : updatedFooterItems.push({ Item: () => moreButton, key: 'more-button' })
+    : null
 
   const footer =
     updatedFooterItems.length > 0 ? (

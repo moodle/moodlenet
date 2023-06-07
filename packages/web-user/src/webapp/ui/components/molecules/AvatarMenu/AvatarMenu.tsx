@@ -1,4 +1,4 @@
-import type { FloatingMenuContentItem } from '@moodlenet/component-library'
+import type { FloatingMenuContentElementItem } from '@moodlenet/component-library'
 import { FloatingMenu } from '@moodlenet/component-library'
 import type { ComponentType, FC } from 'react'
 import { useMemo } from 'react'
@@ -47,39 +47,39 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   signoutMenuProps,
 }) => {
   const allMenuItems = useMemo(() => {
-    const profileLinkAvatarMenuItem: FloatingMenuContentItem | null = profileMenuProps && {
+    const profileLinkAvatarMenuItem: FloatingMenuContentElementItem | null = profileMenuProps && {
       Element: (
         <ProfileLinkAvatarMenuComponent key="profile" {...profileMenuProps} avatarUrl={avatarUrl} />
       ),
     }
 
-    const bookmarksAvatarMenuItem: FloatingMenuContentItem | null = bookmarksMenuProps && {
+    const bookmarksAvatarMenuItem: FloatingMenuContentElementItem | null = bookmarksMenuProps && {
       Element: <BookmarksLinkAvatarMenuComponent key="bookmarks" {...bookmarksMenuProps} />,
     }
 
-    const followingAvatarMenuItem: FloatingMenuContentItem | null = followingMenuProps && {
+    const followingAvatarMenuItem: FloatingMenuContentElementItem | null = followingMenuProps && {
       Element: <FollowingLinkAvatarMenuComponent key="following" {...followingMenuProps} />,
     }
 
-    const userSettingsLinkAvatarMenuItem: FloatingMenuContentItem | null =
+    const userSettingsLinkAvatarMenuItem: FloatingMenuContentElementItem | null =
       userSettingsMenuProps && {
         Element: (
           <UserSettingsLinkAvatarMenuComponent key="admin-settings" {...userSettingsMenuProps} />
         ),
       }
 
-    const adminSettingsLinkAvatarMenuItem: FloatingMenuContentItem | null =
+    const adminSettingsLinkAvatarMenuItem: FloatingMenuContentElementItem | null =
       adminSettingsMenuProps && {
         Element: (
           <AdminSettingsLinkAvatarMenuComponent key="admin-settings" {...adminSettingsMenuProps} />
         ),
       }
 
-    const signoutAvatarMenuItem: FloatingMenuContentItem | null = {
+    const signoutAvatarMenuItem: FloatingMenuContentElementItem | null = {
       Element: <SignoutAvatarMenuComponent key="signout" {...signoutMenuProps} />,
     }
 
-    const menuItemsElement = menuItems.map<FloatingMenuContentItem>(
+    const menuItemsElement = menuItems.map<FloatingMenuContentElementItem>(
       ({ Component, key, className }) => ({
         Element: <Component key={key} />,
         wrapperClassName: `avatar-menu-item ${className}`,
@@ -94,7 +94,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
       ...(userSettingsLinkAvatarMenuItem ? [userSettingsLinkAvatarMenuItem] : []),
       ...menuItemsElement,
       signoutAvatarMenuItem,
-    ].map<FloatingMenuContentItem>(({ Element, wrapperClassName = '' }) => ({
+    ].map<FloatingMenuContentElementItem>(({ Element, wrapperClassName = '' }) => ({
       Element,
       wrapperClassName: `avatar-menu-item ${wrapperClassName}`,
     }))
