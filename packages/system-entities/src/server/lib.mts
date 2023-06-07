@@ -36,7 +36,7 @@ import type {
 } from './types.mjs'
 import type { CurrentUserFetchedCtx, FetchCurrentUser } from './types.private.mjs'
 const DEFAULT_QUERY_LIMIT = 25
-const DEFAULT_MAX_QUERY_LIMIT = 100
+const DEFAULT_MAX_QUERY_LIMIT = 200
 export async function registerEntities<
   Defs extends EntityCollectionDefs<EntityNames>,
   EntityNames extends string, // = string,
@@ -269,8 +269,8 @@ export async function queryEntities<
   const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
     preAccessBody: opts?.preAccessBody,
     postAccessBody: `
-      LIMIT ${skip}, ${limit}
       ${opts?.postAccessBody ?? ''}
+      LIMIT ${skip}, ${limit}
     `,
     project: opts?.project,
     projectAccess: opts?.projectAccess,
@@ -437,7 +437,7 @@ ${projectAqlRawProps}
 `
 
   const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
-  // console.log(q, inspect({ bindVars }, false, 10, true))
+  // console.log(q, JSON.stringify({ bindVars }, null, 2))
   const queryCursor = await db.query<
     AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>
   >(q, bindVars)

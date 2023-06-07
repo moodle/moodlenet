@@ -72,6 +72,12 @@ export const licenseIconMap = {
 }
 export type LicenseTypes = keyof typeof licenseIconMap
 
+export function getLicenseNode(license: any) {
+  return (
+    LicenseNodes[license.replace(/^cc-/i, '') as LicenseNodeKey] ??
+    LicenseNodes[license as LicenseNodeKey] ?? <div>{license}</div>
+  )
+}
 export type LicenseNodeKey = keyof typeof LicenseNodes
 export const LicenseNodes = {
   0: (
