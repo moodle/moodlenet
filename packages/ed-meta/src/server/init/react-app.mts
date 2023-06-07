@@ -4,6 +4,6 @@ import { expose as me } from '../expose.mjs'
 import { shell } from '../shell.mjs'
 
 shell.call(plugin)<MyWebDeps>({
-  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
+  initModuleLoc: ['dist', 'webapp', 'rt', 'init.mjs'],
   deps: { me },
 })
