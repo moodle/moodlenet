@@ -14,7 +14,7 @@ export function useResourceContextValue() {
   const createResource = useCallback<ResourceContextT['createResource']>(
     async function create() {
       const { _key } = await mainContext.rpcCaller.create()
-      return { homePath: getResourceHomePageRoutePath({ _key }) }
+      return { homePath: getResourceHomePageRoutePath({ _key, title: 'no-name' }) }
     },
     [mainContext.rpcCaller],
   )

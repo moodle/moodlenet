@@ -1,9 +1,12 @@
 import type { FC } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { matchResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { ResourcePageContainer } from './ResourcePageContainer.js'
 
 export const ResourcePageRoute: FC = () => {
-  const { key } = useParams()
+  const { pathname } = useLocation()
 
-  return <ResourcePageContainer resourceKey={key ?? ''} />
+  const key = matchResourceHomePageRoutePath(pathname)?.params.key
+  if (!key) return null
+  return <ResourcePageContainer resourceKey={key} />
 }

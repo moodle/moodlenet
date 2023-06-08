@@ -14,7 +14,7 @@ export function useCollectionContextValue() {
   const createCollection = useCallback<CollectionContextT['createCollection']>(
     async function createCollection() {
       const { _key } = await rpcCaller.create()
-      return { homePath: getCollectionHomePageRoutePath({ _key }) }
+      return { homePath: getCollectionHomePageRoutePath({ _key, title: 'no name' }) }
     },
     [rpcCaller],
   )

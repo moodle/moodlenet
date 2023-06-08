@@ -1,9 +1,12 @@
 import type { FC } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { matchProfileHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { ProfileContainer } from './ProfileContainer.js'
 
 export const ProfilePageRoute: FC = () => {
-  const { key } = useParams()
+  const { pathname } = useLocation()
 
-  return <ProfileContainer profileKey={key ?? ''} />
+  const key = matchProfileHomePageRoutePath(pathname)?.params.key
+  if (!key) return null
+  return <ProfileContainer profileKey={key} />
 }

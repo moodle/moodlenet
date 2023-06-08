@@ -1,6 +1,7 @@
 import { Collection } from '@moodlenet/collection/server'
-import { Resource } from '@moodlenet/ed-resource/server'
 import type { RpcFile } from '@moodlenet/core'
+import { Resource } from '@moodlenet/ed-resource/server'
+import { webSlug } from '@moodlenet/react-app/common'
 import { webImageResizer } from '@moodlenet/react-app/server'
 import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
@@ -20,7 +21,11 @@ import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType, ProfileEntity } from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
-import { getWebUserByProfileKey, patchWebUser, verifyCurrentTokenCtx } from './web-user.mjs'
+import {
+  getWebUserByProfileKey,
+  patchWebUserDisplayName,
+  verifyCurrentTokenCtx,
+} from './web-user.mjs'
 
 export async function editProfile(
   key: string,
@@ -31,7 +36,9 @@ export async function editProfile(
 ) {
   const webUser = await getWebUserByProfileKey({ profileKey: key })
   assert(webUser, `couldn't find associated WebUser for profileKey ${key}`)
-
+  updateWithData = updateWithData.displayName
+    ? { ...updateWithData, webslug: webSlug(updateWithData.displayName) }
+    : updateWithData
   const mUpdated = await patchEntity(Profile.entityClass, key, updateWithData, opts)
 
   if (!mUpdated) {
@@ -40,7 +47,7 @@ export async function editProfile(
   const { entity, patched /* ,meta */ } = mUpdated
   const displayNameChanged = patched.displayName && entity.displayName !== patched.displayName
   if (displayNameChanged) {
-    await patchWebUser({ _key: webUser._key }, { displayName: patched.displayName })
+    await patchWebUserDisplayName({ _key: webUser._key, displayName: patched.displayName })
   }
 
   return mUpdated

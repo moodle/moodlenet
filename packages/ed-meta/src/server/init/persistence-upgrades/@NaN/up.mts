@@ -11,8 +11,8 @@ await Promise.all([initIscedFields(), initIscedGrades()])
 
 async function initIscedFields() {
   const IscedFieldDataDocs = EdMetaIscedFields.map(({ _key, published, codePath, name }) => {
-    const IscedFieldDataDoc: IscedFieldDataType & { _key: string } = {
-      _key,
+    const IscedFieldDataDoc: IscedFieldDataType & { _key: never } = {
+      _key: _key as never,
       published,
       codePath,
       name,
@@ -28,8 +28,8 @@ async function initIscedFields() {
 
 async function initIscedGrades() {
   const IscedGradeDataDocs = EdMetaIscedGrades.map(({ _key, published, codePath, name }) => {
-    const IscedGradeDataDoc: IscedGradeDataType & { _key: string } = {
-      _key,
+    const IscedGradeDataDoc: IscedGradeDataType & { _key: never } = {
+      _key: _key as never,
       published,
       codePath,
       name,

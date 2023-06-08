@@ -1,9 +1,15 @@
-export const RESOURCE_HOME_PAGE_ROUTE_PATH = '/resource/:key'
+import { compile, match, webSlug } from '@moodlenet/react-app/common'
 
-export function getResourceHomePageRoutePath({ _key }: { _key: string }) {
-  return RESOURCE_HOME_PAGE_ROUTE_PATH.replace(':key', _key)
+export const RESOURCE_HOME_PAGE_ROUTE_PATH = '/resource/:key/:slug'
+type P = { key: string; slug: string }
+export const resourceHomePageRoutePath = compile<P>(RESOURCE_HOME_PAGE_ROUTE_PATH)
+
+export function getResourceHomePageRoutePath({ _key, title }: { _key: string; title: string }) {
+  const slug = webSlug(title)
+  return resourceHomePageRoutePath({ key: _key, slug })
 }
 
-export function matchResourceHomePageRoutePathKey(path: string) {
-  return path.match(new RegExp(`${RESOURCE_HOME_PAGE_ROUTE_PATH.replace(':key', '([0-z]+)')}`))?.[1]
+const _matchResourceHomePageRoutePath = match<P>(RESOURCE_HOME_PAGE_ROUTE_PATH)
+export function matchResourceHomePageRoutePath(path: string) {
+  return _matchResourceHomePageRoutePath(path) || null
 }

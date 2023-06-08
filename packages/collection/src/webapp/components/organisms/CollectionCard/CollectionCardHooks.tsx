@@ -32,7 +32,9 @@ export const useCollectionCardProps = (collectionKey: string): CollectionCardPro
       id,
       imageUrl,
       title: form.title,
-      collectionHref: href(getCollectionHomePageRoutePath({ _key: collectionKey })),
+      collectionHref: href(
+        getCollectionHomePageRoutePath({ _key: collectionKey, title: form.title }),
+      ),
     }
     const propsPage: CollectionCardProps = {
       mainColumnItems: [],

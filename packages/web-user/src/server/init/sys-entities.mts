@@ -24,7 +24,7 @@ export const { Profile } = await shell.call(registerEntities)<
 registerEntityInfoProvider({
   entityClass: Profile.entityClass,
   aqlProvider(entityDocVar) {
-    const homepagePath = `SUBSTITUTE( "${PROFILE_HOME_PAGE_ROUTE_PATH}" , ":key" , ${entityDocVar}._key )`
+    const homepagePath = `SUBSTITUTE( '${PROFILE_HOME_PAGE_ROUTE_PATH}' , ':key/:slug' , CONCAT(${entityDocVar}._key, '/', ${entityDocVar}.webslug) )`
     return `{ 
       iconUrl: ${publicFilesHttp.getFileUrlAql({
         directAccessIdVar: `${entityDocVar}.avatarImage.directAccessId`,
