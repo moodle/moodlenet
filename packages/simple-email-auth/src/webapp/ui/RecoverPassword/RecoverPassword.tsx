@@ -6,6 +6,7 @@ import { MailOutline } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { ComponentType, FC } from 'react'
 import { Link } from 'react-router-dom'
+import { recoverPasswordValidationSchema } from '../../../common/types.mjs'
 import './RecoverPassword.scss'
 
 export type RecoverPasswordFormValues = { name: string; email: string; password: string }
@@ -25,7 +26,7 @@ export const RecoverPassword: FC<RecoverPasswordProps> = ({
 }) => {
   const form = useFormik<{ email: string }>({
     initialValues: { email: '' },
-    // validationSchema: messageFormValidationSchema,
+    validationSchema: recoverPasswordValidationSchema,
     onSubmit: (values, { resetForm }) => {
       resetForm()
       requestPasswordChange(values.email)

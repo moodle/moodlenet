@@ -1,62 +1,68 @@
-// import { t, Trans } from '@lingui/macro'
-// import { CP, withCtrl } from '../../../../lib/ctrl'
-// import { FormikHandle } from '../../../../lib/formik'
-// import Card from '../../../atoms/Card/Card'
-// import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
-// import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-// import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/MainPageWrapper'
-// import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
-// import './NewPassword.scss'
+import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
+import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
+import { SimpleLayout } from '@moodlenet/react-app/ui'
+import { useFormik } from 'formik'
+import type { ComponentType, FC } from 'react'
+import { newPasswordValidationSchema } from '../../../common/types.mjs'
+import './NewPassword.scss'
 
-// export type NewPasswordFormValues = { newPassword: string }
-// export type NewPasswordProps = {
-//   mainPageWrapperProps: CP<MainPageWrapperProps>
-//   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-//   form: FormikHandle<NewPasswordFormValues>
-//   newPasswordErrorMessage: string | null
-// }
+export type NewPasswordFormValues = { name: string; email: string; password: string }
+export type NewPasswordItem = { Icon: ComponentType; Panel: ComponentType; key: string }
+export type NewPasswordProps = {
+  headerProps: MinimalisticHeaderProps
+  footerProps: MainFooterProps
+  changePassword: (newPassowrd: string) => void
+}
 
-// export const NewPassword = withCtrl<NewPasswordProps>(
-//   ({ mainPageWrapperProps, accessHeaderProps, newPasswordErrorMessage, form }) => {
-//     const shouldShowErrors = !!form.submitCount && (newPasswordErrorMessage || !form.isValid)
+export const NewPassword: FC<NewPasswordProps> = ({ headerProps, footerProps, changePassword }) => {
+  const form = useFormik<{ newPassword: string }>({
+    initialValues: { newPassword: '' },
+    validationSchema: newPasswordValidationSchema,
+    onSubmit: (values, { resetForm }) => {
+      resetForm()
+      changePassword(values.newPassword)
+    },
+  })
 
-//     return (
-//       <MainPageWrapper {...mainPageWrapperProps}>
-//         <div className="new-password-page">
-//           <AccessHeader {...accessHeaderProps} page={'login'} />
-//           <div className="main-content">
-//             <Card>
-//               <div className="content">
-//                 <div className="title">
-//                   <Trans>Update password</Trans>
-//                 </div>
-//                 <form onSubmit={form.handleSubmit}>
-//                   <InputTextField
-//                     className="password"
-//                     type="password"
-//                     name="newPassword"
-//                     edit
-//                     value={form.values.newPassword}
-//                     onChange={form.handleChange}
-//                     placeholder={t`New password`}
-//                     error={shouldShowErrors && form.errors.newPassword}
-//                   />
-//                 </form>
-//                 <div className="bottom">
-//                   <div className="left">
-//                     <PrimaryButton
-//                       onClick={form.isSubmitting || form.isValidating ? undefined : form.submitForm}
-//                     >
-//                       <Trans>Change password</Trans>
-//                     </PrimaryButton>
-//                   </div>
-//                 </div>
-//               </div>
-//             </Card>
-//           </div>
-//         </div>
-//       </MainPageWrapper>
-//     )
-//   },
-// )
-// NewPassword.displayName = 'SignUpPage'
+  const shouldShowErrors = !!form.submitCount
+
+  return (
+    <SimpleLayout
+      footerProps={footerProps}
+      headerProps={headerProps}
+      style={{ height: '100%' }}
+      contentStyle={{ padding: '0' }}
+    >
+      <div className="new-password-page">
+        <div className="main-content">
+          <Card>
+            <div className="content">
+              <div className="title">Update password</div>
+              <form onSubmit={form.handleSubmit}>
+                <InputTextField
+                  className="password"
+                  type="password"
+                  name="newPassword"
+                  edit
+                  value={form.values.newPassword}
+                  onChange={form.handleChange}
+                  placeholder={`New password`}
+                  error={shouldShowErrors && form.errors.newPassword}
+                />
+              </form>
+              <div className="bottom">
+                <div className="left">
+                  <PrimaryButton
+                    onClick={form.isSubmitting || form.isValidating ? undefined : form.submitForm}
+                  >
+                    Change password
+                  </PrimaryButton>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </SimpleLayout>
+  )
+}

@@ -40,7 +40,7 @@ export const useRecoverPasswordStoryProps = (
         MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
           showLoginButton: true,
           loginHref: href('Pages/Access/Login/Default'),
-          showSignupButton: true,
+          showSignupButton: false,
           signupHref: href('Pages/Access/Signup/Default'),
           showLearnMoreButton: true,
         }),
