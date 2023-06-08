@@ -2,6 +2,7 @@ import type { Patch } from '@moodlenet/arangodb/server'
 import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
+import { customAlphabet } from 'nanoid'
 import { entityIdByIdentifier, getEntityFullTypename } from '../common/entity-identification.mjs'
 import type { EntityClass, SomeEntityDataType } from '../common/types.mjs'
 import {
@@ -116,11 +117,11 @@ export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataTyp
 
 export async function create<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
-  newEntityData: EntityDataType & { _key?: string },
+  newEntityData: EntityDataType & { _key?: never },
   opts?: { pkgCreator?: boolean },
 ) {
   const currentUser = opts?.pkgCreator ? await setPkgCurrentUser() : await getCurrentSystemUser()
-
+  const _key = newEntityData._key ?? createEntityKey()
   // console.log({ currentUser })
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
@@ -133,6 +134,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
   const { new: newEntity } = await collection.save(
     {
       ...newEntityData,
+      _key,
       _meta: {
         creator: currentUser,
         creatorEntityId:
@@ -599,3 +601,8 @@ export async function setPkgCurrentUser() {
 export function registerEntityInfoProvider(providerItem: EntityInfoProviderItem) {
   ENTITY_INFO_PROVIDERS.push({ providerItem })
 }
+
+const createEntityKey = customAlphabet(
+  `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
+  8,
+)

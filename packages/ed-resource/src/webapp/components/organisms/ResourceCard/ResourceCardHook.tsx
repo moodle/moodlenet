@@ -40,7 +40,7 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
       contentUrl,
       downloadFilename,
       owner,
-      resourceHomeHref: href(getResourceHomePageRoutePath({ _key: resourceKey })),
+      resourceHomeHref: href(getResourceHomePageRoutePath({ _key: resourceKey, title })),
     }
     return { data, state, access, actions }
   }, [_mainProps, resourceKey])

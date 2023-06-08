@@ -2,6 +2,7 @@ import type { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import { jwt } from '@moodlenet/crypto/server'
 import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
+import { webSlug } from '@moodlenet/react-app/common'
 import { create, matchRootPassword } from '@moodlenet/system-entities/server'
 import type { CookieOptions } from 'express'
 import {
@@ -155,6 +156,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     siteUrl: '',
     knownFeaturedEntities: [],
     kudos: 0,
+    webslug: webSlug(profileData.displayName),
     ...profileData,
   }
   const newProfile = await create(Profile.entityClass, createData, { pkgCreator: true })
@@ -206,9 +208,25 @@ export async function getWebUser({
   return foundUser
 }
 
+export async function patchWebUserDisplayName({
+  _key,
+  displayName,
+}: {
+  _key: string
+  displayName: string
+}) {
+  const { new: patchedUser } = await WebUserCollection.update(
+    { _key },
+    { displayName },
+    { returnNew: true },
+  )
+
+  return patchedUser
+}
+
 export async function patchWebUser(
   { _key }: { _key: string },
-  patch: Patch<WebUserDataType>, // | string,
+  patch: Patch<Omit<WebUserDataType, 'displayName'>>, // | string,
 ) {
   const { new: patchedUser } = await WebUserCollection.update({ _key }, patch, { returnNew: true })
 

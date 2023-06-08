@@ -1,6 +1,6 @@
 import { plugin, registerOpenGraphProvider } from '@moodlenet/react-app/server'
 import type { MyWebDeps } from '../../common/types.mjs'
-import { matchResourceHomePageRoutePathKey } from '../../common/webapp-routes.mjs'
+import { matchResourceHomePageRoutePath } from '../../common/webapp-routes.mjs'
 import { expose as me } from '../expose.mjs'
 import { getImageUrl } from '../lib.mjs'
 import { getResource } from '../services.mjs'
@@ -12,7 +12,7 @@ shell.call(plugin)<MyWebDeps>({
 })
 shell.call(registerOpenGraphProvider)({
   async provider(webappPath) {
-    const key = matchResourceHomePageRoutePathKey(webappPath)
+    const key = matchResourceHomePageRoutePath(webappPath)?.params.key
     if (!key) {
       return
     }

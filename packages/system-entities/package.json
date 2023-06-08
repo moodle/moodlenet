@@ -42,5 +42,8 @@
     "typed-emitter": "^2.1.0",
     "typescript": "^4.7.2"
   },
-  "scripts": {}
+  "scripts": {},
+  "dependencies": {
+    "nanoid": "^4.0.2"
+  }
 }

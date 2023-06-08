@@ -17,6 +17,7 @@ export type ProfileDataType = {
   knownFeaturedEntities: KnownFeaturedEntityItem[]
   kudos: number
   publisher: boolean
+  webslug: string
 }
 type Image = ImageUploaded
 export type ImageUploaded = { kind: 'file'; directAccessId: string }
