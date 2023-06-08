@@ -62,7 +62,7 @@ export const TypeField: FC<TypeFieldProps> = ({
           <SimplePill
             key={updatedTypes.selected.value}
             value={updatedTypes.selected.value}
-            label={updatedTypes.selected.value}
+            label={updatedTypes.selected.label}
           />
         )
       }
@@ -85,7 +85,7 @@ export const TypeField: FC<TypeFieldProps> = ({
     <div className="detail type">
       <div className="title">Type</div>
       <abbr className="value" title={types.selected?.value}>
-        {types.selected?.value}
+        {types.selected?.label}
       </abbr>
     </div>
   ) : null
