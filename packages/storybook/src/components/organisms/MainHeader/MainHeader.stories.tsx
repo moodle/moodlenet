@@ -1,4 +1,3 @@
-import { linkTo } from '@storybook/addon-links'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 
 // import { href } from '../../../../elements/link'
@@ -8,11 +7,7 @@ import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import type { MainHeaderProps } from '@moodlenet/react-app/ui'
 import { MainHeader } from '@moodlenet/react-app/ui'
 import { AccessButtonsStories, AvatarMenuStories } from '@moodlenet/web-user/stories'
-import {
-  AddMenu,
-  CreateCollectionAddMenuItem,
-  CreateResourceAddMenuItem,
-} from '@moodlenet/web-user/ui'
+import { AddMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 
 const meta: ComponentMeta<typeof MainHeader> = {
@@ -39,20 +34,7 @@ const meta: ComponentMeta<typeof MainHeader> = {
 const AddMenuItem: AddonItem = {
   Item: () => (
     <AddMenu
-      menuItems={[
-        {
-          Component: () => (
-            <CreateResourceAddMenuItem createResource={linkTo('Pages', 'Resource/New')} />
-          ),
-          key: 'create resource',
-        },
-        {
-          Component: () => (
-            <CreateCollectionAddMenuItem createCollection={linkTo('Pages', 'Collection/New')} />
-          ),
-          key: 'create collection',
-        },
-      ]}
+      menuItems={[]}
       createCollectionProps={{ createCollection: action('create collection from add menu') }}
       createResourceProps={{ createResource: action('create resource from add menu') }}
     />

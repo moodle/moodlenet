@@ -311,12 +311,23 @@ export const Resource: FC<ResourceProps> = ({
     ...(extraDetailsItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const extraDetailsContainer =
-    updatedExtraDetailsItems.length > 0 ? (
-      <Card className="extra-details-card" hideBorderWhenSmall={true} key="extra-details-container">
-        {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </Card>
-    ) : null
+  const shouldShowExtraDetails =
+    (isEditing && updatedExtraDetailsItems.length > 0) ||
+    (!isEditing &&
+      (form.values.subject ||
+        form.values.license ||
+        form.values.type ||
+        form.values.level ||
+        form.values.month ||
+        form.values.year ||
+        form.values.language ||
+        (extraDetailsItems && extraDetailsItems.length > 0)))
+
+  const extraDetailsContainer = shouldShowExtraDetails ? (
+    <Card className="extra-details-card" hideBorderWhenSmall={true} key="extra-details-container">
+      {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+    </Card>
+  ) : null
 
   const downloadOrOpenLink =
     contentUrl || contentForm.values.content ? (
