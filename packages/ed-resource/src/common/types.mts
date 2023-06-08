@@ -88,12 +88,13 @@ export type RpcCaller = {
   create: () => Promise<{ _key: string }>
 }
 export type ResourceActions = {
-  publish: () => void
-  unpublish: () => void
-  editData: (values: ResourceFormProps) => void
-  setImage: (file: File | undefined | null) => void
-  setContent: (content: File | string | undefined | null) => void
+  publish(): void
+  unpublish(): void
+  editData(values: ResourceFormProps): void
+  setImage(file: File | undefined | null): void
+  setContent(content: File | string | undefined | null): void
   deleteResource(): void
+  reportResource(comment: string): void
 }
 
 export type ResourceAccessRpc = {
@@ -101,6 +102,7 @@ export type ResourceAccessRpc = {
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
+  canReport: boolean
 }
 
 export type EdMetaOptionsRpc = {

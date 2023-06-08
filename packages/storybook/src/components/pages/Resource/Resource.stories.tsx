@@ -34,7 +34,9 @@ export const LoggedIn: ResourceStory = () => {
     data: {},
     state: {},
     actions: {},
-    access: {},
+    access: {
+      canReport: true,
+    },
     likeButtonProps: {
       liked: true,
     },
@@ -107,6 +109,7 @@ export const Admin: ResourceStory = () => {
     access: {
       canEdit: true,
       canPublish: true,
+      canReport: true,
     },
   })
   return <Resource {...props} />

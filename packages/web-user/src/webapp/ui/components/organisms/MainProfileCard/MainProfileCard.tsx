@@ -1,12 +1,6 @@
 import { Edit, Save } from '@material-ui/icons'
-import type {
-  AddonItem,
-  FloatingMenuContentElementItem,
-  FloatingMenuContentNameIconItem,
-} from '@moodlenet/component-library'
+import type { AddonItem, FloatingMenuContentNameIconItem } from '@moodlenet/component-library'
 import {
-  checkIfTypeFloatingMenuContentElementItem,
-  checkIfTypeFloatingMenuContentNameIconItem,
   FloatingMenu,
   InputTextField,
   Modal,
@@ -19,6 +13,7 @@ import {
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 
+import { ReportModal } from '@moodlenet/react-app/ui'
 import { Flag, Share } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -37,7 +32,7 @@ import './MainProfileCard.scss'
 export type MainProfileCardSlots = {
   mainColumnItems: (AddonItem | null)[]
   topItems: (AddonItem | null)[]
-  moreButtonItems: (FloatingMenuContentElementItem | null)[]
+  moreButtonItems: (FloatingMenuContentNameIconItem | null)[]
   titleItems: (AddonItem | null)[]
   subtitleItems: (AddonItem | null)[]
   footerItems: (AddonItem | null)[]
@@ -73,9 +68,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems, moreButtonItems } =
     slots
   const { avatarUrl, backgroundUrl, userId } = data
-  const { canEdit, isCreator, isAuthenticated, canFollow } = access
+  const { canEdit, isCreator, isAuthenticated, canFollow, canReport } = access
   const { followed } = state
-  const { toggleFollow, sendMessage, setAvatar, setBackground } = actions
+  const { toggleFollow, sendMessage, setAvatar, setBackground, reportProfile } = actions
 
   const [updatedAvatar, setUpdatedAvatar] = useState<string | undefined | null>(avatarUrl)
   const [updatedBackground, setUpdatedBackground] = useState<string | undefined | null>(
@@ -88,6 +83,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [shouldShowMessageErrors, setShouldShowMessageErrors] = useState<boolean>(false)
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
   const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
+  const [isReporting, setIsReporting] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
   const [showMessageSentAlert, setShowMessageSentAlert] = useState<boolean>(false)
@@ -408,50 +404,55 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     </div>
   )
 
-  const modals = (
-    <>
-      {isShowingBackground && backgroundImageUrl && (
-        <Modal
-          className="image-modal"
-          closeButton={false}
-          onClose={() => setIsShowingBackground(false)}
-          style={{ maxWidth: '90%', maxHeight: '90%' }}
-          key="background-modal"
-        >
-          <img src={backgroundImageUrl} alt="Background" />
-        </Modal>
-      )}
-      {isShowingAvatar && avatarImageUrl && (
-        <Modal
-          className="image-modal"
-          closeButton={false}
-          onClose={() => setIsShowingAvatar(false)}
-          style={{ maxWidth: '90%', maxHeight: '90%' }}
-          key="avatar-modal"
-        >
-          <img src={avatarImageUrl} alt="Avatar" />
-        </Modal>
-      )}
-      {isSendingMessage && (
-        <Modal
-          title={`${`Send a message to`} ${form.values.displayName}`}
-          actions={<PrimaryButton onClick={checkAndSendMessage}>Send</PrimaryButton>}
-          onClose={() => {
-            setIsSendingMessage(false)
-            setShouldShowMessageErrors(false)
-          }}
-          style={{ maxWidth: '400px' }}
-        >
-          <InputTextField
-            isTextarea={true}
-            name="msg"
-            onChange={messageForm.handleChange}
-            error={shouldShowMessageErrors && messageForm.errors.msg}
-          />
-        </Modal>
-      )}
-    </>
-  )
+  const modals = [
+    isShowingBackground && backgroundImageUrl && (
+      <Modal
+        className="image-modal"
+        closeButton={false}
+        onClose={() => setIsShowingBackground(false)}
+        style={{ maxWidth: '90%', maxHeight: '90%' }}
+        key="background-modal"
+      >
+        <img src={backgroundImageUrl} alt="Background" />
+      </Modal>
+    ),
+    isShowingAvatar && avatarImageUrl && (
+      <Modal
+        className="image-modal"
+        closeButton={false}
+        onClose={() => setIsShowingAvatar(false)}
+        style={{ maxWidth: '90%', maxHeight: '90%' }}
+        key="avatar-modal"
+      >
+        <img src={avatarImageUrl} alt="Avatar" />
+      </Modal>
+    ),
+    isSendingMessage && (
+      <Modal
+        title={`${`Send a message to`} ${form.values.displayName}`}
+        actions={<PrimaryButton onClick={checkAndSendMessage}>Send</PrimaryButton>}
+        onClose={() => {
+          setIsSendingMessage(false)
+          setShouldShowMessageErrors(false)
+        }}
+        style={{ maxWidth: '400px' }}
+      >
+        <InputTextField
+          isTextarea={true}
+          name="msg"
+          onChange={messageForm.handleChange}
+          error={shouldShowMessageErrors && messageForm.errors.msg}
+        />
+      </Modal>
+    ),
+    isReporting && (
+      <ReportModal
+        title={`Confirm reporting this profile`}
+        setIsReporting={setIsReporting}
+        report={reportProfile}
+      />
+    ),
+  ]
 
   const snackbars = [
     showUserIdCopiedAlert && (
@@ -479,12 +480,12 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   }
 
   const reportButton: FloatingMenuContentNameIconItem | null =
-    !isCreator && isAuthenticated
+    isAuthenticated && canReport
       ? {
           name: 'Report',
           Icon: <Flag />,
           key: 'report-button',
-          onClick: () => undefined, // () => setIsReporting(true)
+          onClick: () => setIsReporting(true),
         }
       : null
 
@@ -526,7 +527,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   )
   const messageButton = !isCreator && isAuthenticated && (
     <SecondaryButton
-      color="grey"
       className={`message`}
       disabled={!isAuthenticated}
       onClick={() => setIsSendingMessage(true)}
@@ -541,54 +541,43 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   )
 
   const updatedMoreButtonItems = [shareButton, reportButton, ...(moreButtonItems ?? [])].filter(
-    (item): item is FloatingMenuContentElementItem | FloatingMenuContentNameIconItem => !!item,
+    (item): item is FloatingMenuContentNameIconItem => !!item,
   )
 
-  const singleItem = updatedMoreButtonItems.length === 1 && updatedMoreButtonItems[0]
+  const singleItem = updatedMoreButtonItems.length === 1 ? updatedMoreButtonItems[0] ?? null : null
 
   const moreButton =
     updatedFooterItems.length > 1 ? (
       updatedMoreButtonItems.length > 0 ? (
         singleItem ? (
-          checkIfTypeFloatingMenuContentElementItem(singleItem) ? (
-            singleItem.Element
-          ) : checkIfTypeFloatingMenuContentNameIconItem(singleItem) ? (
-            <SecondaryButton
-              color="grey"
-              className={singleItem.wrapperClassName}
-              disabled={singleItem.disabled}
-              onClick={singleItem.onClick}
-              abbr={singleItem.abbr}
-            >
-              {singleItem.name}
-            </SecondaryButton>
-          ) : null
+          <SecondaryButton
+            className={singleItem.wrapperClassName}
+            disabled={singleItem.disabled}
+            onClick={singleItem.onClick}
+            abbr={singleItem.abbr}
+          >
+            {singleItem.name}
+          </SecondaryButton>
         ) : (
           <FloatingMenu
             key="more-button-menu"
-            menuContent={updatedMoreButtonItems
-              .map(item => {
-                return checkIfTypeFloatingMenuContentElementItem(item)
-                  ? item
-                  : checkIfTypeFloatingMenuContentNameIconItem(item)
-                  ? {
-                      Element: (
-                        <div key={item.key} tabIndex={0} onClick={item.onClick}>
-                          {item.Icon} {item.name}
-                        </div>
-                      ),
-                      wrapperClassName: item.wrapperClassName,
-                    }
-                  : null
-              })
-              .filter((item): item is FloatingMenuContentElementItem => !!item)}
+            menuContent={updatedMoreButtonItems.map(item => {
+              return {
+                Element: (
+                  <div key={item.key} tabIndex={0} onClick={item.onClick}>
+                    {item.Icon} {item.name}
+                  </div>
+                ),
+                wrapperClassName: item.wrapperClassName,
+              }
+            })}
             hoverElement={
               isShowingSmallCard ? (
-                <SecondaryButton color="grey" className={`more small`} abbr="More actions">
+                <SecondaryButton className={`more small`} abbr="More actions">
                   <div className="three-dots">...</div>
                 </SecondaryButton>
               ) : (
-                <SecondaryButton color="grey" className={`more big`} abbr="More actions">
+                <SecondaryButton className={`more big`} abbr="More actions">
                   <div className="text">More</div>
                 </SecondaryButton>
               )
@@ -598,19 +587,17 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       ) : null
     ) : (
       updatedMoreButtonItems.map(item => {
-        return checkIfTypeFloatingMenuContentElementItem(item) ? (
-          item.Element
-        ) : checkIfTypeFloatingMenuContentNameIconItem(item) ? (
+        return (
           <SecondaryButton
-            color="grey"
             className={item.wrapperClassName}
             disabled={item.disabled}
             onClick={item.onClick}
             abbr={item.abbr}
+            key={item.key}
           >
             {item.name}
           </SecondaryButton>
-        ) : null
+        )
       })
     )
 

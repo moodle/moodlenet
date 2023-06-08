@@ -22,6 +22,7 @@ export type CollectionAccessRpc = {
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
+  canReport: boolean
 }
 
 export type CollectionDataRpc = {
@@ -91,6 +92,7 @@ export type CollectionActions = {
   editData: (values: CollectionFormProps) => void
   deleteCollection(): void
   setImage: (file: File | undefined | null) => void
+  reportCollection(comment: string): void
 }
 
 export type CollectionMainProps = {

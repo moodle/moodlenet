@@ -39,7 +39,7 @@ export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
 
   const canSubmit =
     form.dirty &&
-    form.isValid &&
+    // form.isValid &&
     !form.isSubmitting &&
     !form.isValidating &&
     (form.values.email !== data.email || form.values.password !== data.password)

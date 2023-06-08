@@ -84,6 +84,7 @@ export type ProfileActions = {
   toggleFollow(): void
   editProfile(values: ProfileFormValues): void
   sendMessage(msg: string): void
+  reportProfile(comment: string): void
   setAvatar(file: File | undefined | null): void
   setBackground: (file: File | undefined | null) => void
 }
@@ -96,4 +97,5 @@ export type ProfileAccess = {
   canFollow: boolean
   canBookmark: boolean
   canPublish: boolean
+  canReport: boolean
 }

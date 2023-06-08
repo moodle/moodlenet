@@ -81,7 +81,8 @@ export const Resource: FC<ResourceProps> = ({
 }) => {
   const viewport = useViewport()
   const { downloadFilename, contentUrl, contentType, imageUrl } = data
-  const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
+  const { editData, deleteResource, publish, unpublish, setContent, setImage, reportResource } =
+    actions
   const { canPublish, canEdit } = access
   const { isPublished } = state
   const {
@@ -418,31 +419,30 @@ export const Resource: FC<ResourceProps> = ({
 
   const snackbars = <></>
 
-  const modals = (
-    <>
-      {isToDelete && deleteResource && (
-        <Modal
-          title={`Alert`}
-          actions={
-            <PrimaryButton
-              onClick={() => {
-                deleteResource()
-                setIsToDelete(false)
-              }}
-              color="red"
-            >
-              Delete
-            </PrimaryButton>
-          }
-          onClose={() => setIsToDelete(false)}
-          style={{ maxWidth: '400px' }}
-          className="delete-message"
-        >
-          The resource will be deleted
-        </Modal>
-      )}
-    </>
-  )
+  const modals = [
+    isToDelete && deleteResource && (
+      <Modal
+        title={`Alert`}
+        actions={
+          <PrimaryButton
+            onClick={() => {
+              deleteResource()
+              setIsToDelete(false)
+            }}
+            color="red"
+          >
+            Delete
+          </PrimaryButton>
+        }
+        onClose={() => setIsToDelete(false)}
+        style={{ maxWidth: '400px' }}
+        className="delete-message"
+      >
+        The resource will be deleted
+      </Modal>
+    ),
+  ]
+
   return (
     <MainLayout {...mainLayoutProps}>
       {modals}

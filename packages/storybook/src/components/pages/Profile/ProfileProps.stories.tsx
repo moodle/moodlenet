@@ -35,6 +35,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     titleItems: [],
     subtitleItems: [],
     footerItems: [],
+    moreButtonItems: [],
   }
 
   const data: ProfileData = {
@@ -58,6 +59,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     toggleFollow: action('toggle follow'),
     setAvatar: action('set avatar image'),
     setBackground: action('set background image'),
+    reportProfile: action('report profile'),
   }
 
   const access: ProfileAccess = {

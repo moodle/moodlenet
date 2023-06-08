@@ -46,6 +46,9 @@ export const LoggedIn: CollectionStory = () => {
     },
     actions: {},
     access: {},
+    smallFollowButtonProps: {
+      isCreator: false,
+    },
   })
 
   return <Collection {...props} />
@@ -91,6 +94,7 @@ export const Creator: CollectionStory = () => {
       canPublish: true,
       isCreator: true,
       canEdit: true,
+      canReport: false,
     },
     isSaving: false,
   })
@@ -128,6 +132,9 @@ export const Admin: CollectionStory = () => {
       canEdit: true,
     },
     isSaving: false,
+    smallFollowButtonProps: {
+      isCreator: false,
+    },
   })
 
   return <Collection {...props} />

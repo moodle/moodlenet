@@ -193,6 +193,7 @@ export const useResourceStoryProps = (
     unpublish: action('unpublish'),
     setContent: setContent,
     setImage: action('set image'),
+    reportResource: action('report resource'),
     ...overrides?.actions,
   }
 
@@ -270,7 +271,8 @@ export const useResourceStoryProps = (
         : MainLayoutLoggedOutStoryProps,
 
       mainColumnItems: [],
-      sideColumnItems: [],
+      rightColumnItems: [],
+      wideColumnItems: [],
       generalActionsItems: generalActionsItems,
       mainResourceCardSlots: mainResourceCardSlots,
       resourceContributorCardProps:

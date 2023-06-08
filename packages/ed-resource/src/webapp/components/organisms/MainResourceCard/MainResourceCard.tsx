@@ -17,11 +17,13 @@ import {
   downloadOrOpenURL,
   getBackupImage,
   getTagList,
+  ReportModal,
   useImageUrl,
 } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
   Delete,
+  Flag,
   InsertDriveFile,
   MoreVert,
   Public,
@@ -100,14 +102,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { isPublished, uploadProgress } = state
 
-  const { unpublish, deleteResource } = actions
+  const { unpublish, deleteResource, reportResource } = actions
 
-  const { canEdit, canPublish, canDelete } = access
+  const { canEdit, canPublish, canDelete, canReport } = access
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+  const [isReporting, setIsReporting] = useState<boolean>(false)
+
   const { width } = useWindowDimensions()
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
@@ -226,53 +230,30 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  // const likeButton =
-  //   isPublished || numLikes > 0 ? (
-  //     <TertiaryButton
-  //       className={`like ${!canLike ? '' : 'disabled'} ${liked && 'liked'}`}
-  //       onClick={canLike ? toggleLike : () => undefined}
-  //       abbr={isCreator ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
-  //       key="like-button"
-  //     >
-  //       {liked ? <Favorite /> : <FavoriteBorder />}
-  //       <span>{numLikes}</span>
-  //     </TertiaryButton>
-  //   ) : null
-
   const empty =
     (!form.values.title || form.values.title === '') &&
     (!form.values.description || form.values.description === '') &&
     !contentForm.values.content &&
     !imageForm.values.image
 
-  // const bookmarkButtonSmallScreen: FloatingMenuContentElementItem | null =
-  //   !empty && width < 800
-  //     ? {
-  //         key: 'bookmark-button',
-  //         className: `bookmark ${bookmarked && 'bookmarked'}`,
-  //         onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
-  //         text: bookmarked ? 'Remove bookmark' : 'Bookmark',
-  //         Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
-  //       }
-  //     : null
-
-  // const bookmarkButtonBigScreen = !empty && width > 800 && (
-  //   <TertiaryButton
-  //     key="bookmark-button"
-  //     className={`bookmark ${bookmarked && 'bookmarked'}`}
-  //     abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-  //     onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
-  //   >
-  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-  //   </TertiaryButton>
-  // )
-
   const shareButton: FloatingMenuContentElementItem | null =
     !empty && isPublished
       ? {
           Element: (
-            <div key="share-button" onClick={copyUrl}>
+            <div key="share-button" onClick={copyUrl} tabIndex={0}>
               <Share /> Share
+            </div>
+          ),
+        }
+      : null
+
+  const reportButton: FloatingMenuContentElementItem | null =
+    !empty && isPublished && canReport
+      ? {
+          Element: (
+            <div key={'report-button'} tabIndex={0} onClick={() => setIsReporting(true)}>
+              <Flag />
+              Report
             </div>
           ),
         }
@@ -283,7 +264,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       ? {
           Element: (
             <div key="delete-button" onClick={() => setIsToDelete(true)}>
-              <Delete /> Delete,
+              <Delete /> Delete
             </div>
           ),
         }
@@ -337,32 +318,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </abbr>
     ) : null
 
-  // const sendToMoodleButton: (AddonItem | null) | null =
-  //   width < 800 && form.values.content
-  //     ? {
-  //         Item: () => (
-  //           <div key="send-to-moodle-button" tabIndex={0} onClick={() => setIsPublished(false)}>
-  //             <MoodleIcon />
-  //             Send to Moodle
-  //           </div>
-  //         ),
-  //         key: 'send-to-moodle-button',
-  //       }
-  //     : null
-
-  // const addToCollectionButton: (AddonItem | null) | null =
-  //   width < 800 && form.values.content && isAuthenticated
-  //     ? {
-  //         Item: () => (
-  //           <div key="add-to-collection-button" tabIndex={0} onClick={() => setIsPublished(false)}>
-  //             <AddToPhotos />
-  //             Add to collection
-  //           </div>
-  //         ),
-  //         key: 'add-to-collection-button',
-  //       }
-  //     : null
-
   const openLinkOrDownloadFile: FloatingMenuContentElementItem | null =
     width < 800 && contentUrl
       ? {
@@ -392,6 +347,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     unpublishButton,
     openLinkOrDownloadFile,
     shareButton,
+    reportButton,
     deleteButton,
     // bookmarkButtonSmallScreen,
     // sendToMoodleButton,
@@ -656,48 +612,53 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </>
   )
 
-  const modals = (
-    <>
-      {isShowingImage && imageUrl && (
-        <Modal
-          className="image-modal"
-          closeButton={false}
-          onClose={() => setIsShowingImage(false)}
-          style={{
-            maxWidth: '90%',
-            maxHeight: 'calc(90% + 20px)',
-            // maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
-          }}
-          key="image-modal"
-        >
-          <img src={imageUrl} alt="Resource" />
-          {/* {getImageCredits(form.values.image)} */}
-        </Modal>
-      )}
-      {isToDelete && deleteResource && (
-        <Modal
-          title={`Alert`}
-          actions={
-            <PrimaryButton
-              onClick={() => {
-                deleteResource()
-                setIsToDelete(false)
-              }}
-              color="red"
-            >
-              Delete
-            </PrimaryButton>
-          }
-          onClose={() => setIsToDelete(false)}
-          style={{ maxWidth: '400px' }}
-          className="delete-message"
-          key="delete-message-modal"
-        >
-          The resource will be deleted
-        </Modal>
-      )}
-    </>
-  )
+  const modals = [
+    isShowingImage && imageUrl && (
+      <Modal
+        className="image-modal"
+        closeButton={false}
+        onClose={() => setIsShowingImage(false)}
+        style={{
+          maxWidth: '90%',
+          maxHeight: 'calc(90% + 20px)',
+          // maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
+        }}
+        key="image-modal"
+      >
+        <img src={imageUrl} alt="Resource" />
+        {/* {getImageCredits(form.values.image)} */}
+      </Modal>
+    ),
+    isToDelete && deleteResource && (
+      <Modal
+        title={`Alert`}
+        actions={
+          <PrimaryButton
+            onClick={() => {
+              deleteResource()
+              setIsToDelete(false)
+            }}
+            color="red"
+          >
+            Delete
+          </PrimaryButton>
+        }
+        onClose={() => setIsToDelete(false)}
+        style={{ maxWidth: '400px' }}
+        className="delete-message"
+        key="delete-message-modal"
+      >
+        The resource will be deleted
+      </Modal>
+    ),
+    isReporting && (
+      <ReportModal
+        report={reportResource}
+        title={`${`Confirm reporting this resource`}`}
+        setIsReporting={setIsReporting}
+      />
+    ),
+  ]
   return (
     <>
       {modals}

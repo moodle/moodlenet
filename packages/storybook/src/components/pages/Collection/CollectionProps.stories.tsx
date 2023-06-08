@@ -174,6 +174,7 @@ export const useCollectionStoryProps = (
     publish: action('publish'),
     unpublish: action('unpublish'),
     setImage: action('setImage'),
+    reportCollection: action('reportCollection'),
     ...overrides?.actions,
   }
 
@@ -255,8 +256,7 @@ export const useCollectionStoryProps = (
       mainCollectionCardSlots: mainCollectionCardSlots,
       mainColumnItems: [],
       extraDetailsItems: [],
-      moreButtonItems: [],
-      sideColumnItems: [],
+      rightColumnItems: [],
       wideColumnItems: [],
 
       resourceCardPropsList: resourceCardPropsList,

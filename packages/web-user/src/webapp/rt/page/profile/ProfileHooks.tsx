@@ -125,6 +125,7 @@ export const useProfileProps = ({
         sendMessage: (message: string) =>
           shell.rpc.me['webapp/send-message-to-user/:profileKey']({ message }, { profileKey }),
       },
+      //@ETTO Add reportProfile
       mainProfileCardSlots: {
         mainColumnItems: [],
         topItems: [],

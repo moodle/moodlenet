@@ -10,8 +10,16 @@ import {
   TertiaryButton,
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
-import { CloudDoneOutlined, Delete, MoreVert, Public, PublicOff, Sync } from '@mui/icons-material'
+import { getBackupImage, ReportModal, useImageUrl } from '@moodlenet/react-app/ui'
+import {
+  CloudDoneOutlined,
+  Delete,
+  Flag,
+  MoreVert,
+  Public,
+  PublicOff,
+  Sync,
+} from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -76,8 +84,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const { isPublished } = state
 
-  const { unpublish, deleteCollection, setImage } = actions
-  const { canPublish, canDelete, canEdit } = access
+  const { unpublish, deleteCollection, setImage, reportCollection } = actions
+  const { canPublish, canDelete, canEdit, canReport } = access
 
   const imageForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: imageUrl },
@@ -94,6 +102,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [image] = useImageUrl(imageUrl, backupImage)
   const [imageFromForm] = useImageUrl(imageForm.values.image)
+  const [isReporting, setIsReporting] = useState<boolean>(false)
 
   useEffect(() => {
     setUpdatedImage(imageUrl)
@@ -187,6 +196,18 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       }
     : null
 
+  const reportButton: FloatingMenuContentElementItem | null =
+    !empty && isPublished && canReport
+      ? {
+          Element: (
+            <div key={'report-button'} tabIndex={0} onClick={() => setIsReporting(true)}>
+              <Flag />
+              Report
+            </div>
+          ),
+        }
+      : null
+
   const deleteButton: FloatingMenuContentElementItem | null =
     !empty && canDelete
       ? {
@@ -241,6 +262,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     publishButton,
     unpublishButton,
     shareButton,
+    reportButton,
     deleteButton,
     ...(moreButtonItems ?? []),
   ].filter((item): item is FloatingMenuContentElementItem => !!item)
@@ -412,46 +434,51 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </>
   )
 
-  const modals = (
-    <>
-      {isShowingImage && (
-        <Modal
-          className="image-modal"
-          closeButton={false}
-          onClose={() => setIsShowingImage(false)}
-          style={{
-            maxWidth: '90%',
-            maxHeight: '90%',
-            // maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
-          }}
-        >
-          <img src={updatedImage ?? image} alt="Collection" />
-          {/* {getImageCredits(form.values.image)} */}
-        </Modal>
-      )}
-      {isToDelete && deleteCollection && (
-        <Modal
-          title={`Alert`}
-          actions={
-            <PrimaryButton
-              onClick={() => {
-                deleteCollection()
-                setIsToDelete(false)
-              }}
-              color="red"
-            >
-              Delete
-            </PrimaryButton>
-          }
-          onClose={() => setIsToDelete(false)}
-          style={{ maxWidth: '400px' }}
-          className="delete-message"
-        >
-          The collection will be deleted
-        </Modal>
-      )}
-    </>
-  )
+  const modals = [
+    isShowingImage && (
+      <Modal
+        className="image-modal"
+        closeButton={false}
+        onClose={() => setIsShowingImage(false)}
+        style={{
+          maxWidth: '90%',
+          maxHeight: '90%',
+          // maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
+        }}
+      >
+        <img src={updatedImage ?? image} alt="Collection" />
+        {/* {getImageCredits(form.values.image)} */}
+      </Modal>
+    ),
+    isToDelete && deleteCollection && (
+      <Modal
+        title={`Alert`}
+        actions={
+          <PrimaryButton
+            onClick={() => {
+              deleteCollection()
+              setIsToDelete(false)
+            }}
+            color="red"
+          >
+            Delete
+          </PrimaryButton>
+        }
+        onClose={() => setIsToDelete(false)}
+        style={{ maxWidth: '400px' }}
+        className="delete-message"
+      >
+        The collection will be deleted
+      </Modal>
+    ),
+    isReporting && (
+      <ReportModal
+        report={reportCollection}
+        title={`${`Confirm reporting this collection`}`}
+        setIsReporting={setIsReporting}
+      />
+    ),
+  ]
   return (
     <>
       {modals}

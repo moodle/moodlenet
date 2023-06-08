@@ -42,7 +42,7 @@ export const LoggedOut = () => {
 
 export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true },
+    access: { isAuthenticated: true, canReport: true },
     // resourceCardPropsList: getResourceCardsStoryProps(5, {access: {canLike: true}}),
     // collectionCardPropsList: getCollectionCardsStoryProps(5, {access: {canFollow: true}}),
     mainColumnItems: [],
@@ -54,7 +54,7 @@ export const LoggedIn: ProfileStory = () => {
 
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true, canEdit: true, isCreator: true },
+    access: { isAuthenticated: true, canEdit: true, isCreator: true, canReport: false },
     resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,
@@ -86,7 +86,7 @@ export const Owner: ProfileStory = () => {
 
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAdmin: true, canEdit: true, isCreator: false },
+    access: { isAdmin: true, canEdit: true, isCreator: false, canReport: true },
     resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,
