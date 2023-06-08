@@ -11,8 +11,8 @@ await Promise.all([initLicenses(), initLanguages(), initEdAssetTypes()])
 async function initLanguages() {
   const LanguageDataDocs = ISO_639_3_Data.map<LanguageDataType>(
     ({ id, name, part1, part2b, part2t, scope, type }) => {
-      const LanguageDataDoc: LanguageDataType & { _key: string } = {
-        _key: id,
+      const LanguageDataDoc: LanguageDataType & { _key: never } = {
+        _key: id as never,
         code: id,
         name,
         part1,
@@ -34,8 +34,8 @@ async function initLanguages() {
 
 async function initLicenses() {
   const LicensesDataDocs = License_Data.map(({ code, description, published }) => {
-    const LicenseDataDoc: LicenseDataType & { _key: string } = {
-      _key: code,
+    const LicenseDataDoc: LicenseDataType & { _key: never } = {
+      _key: code as never,
       code,
       description,
       published,
@@ -51,8 +51,8 @@ async function initLicenses() {
 
 async function initEdAssetTypes() {
   const EdAssetTypeDataDocs = EdAssetType_Data.map(({ code, description }) => {
-    const EdAssetTypeDataDoc: EdAssetTypeDataType & { _key: string } = {
-      _key: code,
+    const EdAssetTypeDataDoc: EdAssetTypeDataType & { _key: never } = {
+      _key: code as never,
       code,
       description,
       published: true,

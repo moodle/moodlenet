@@ -1,11 +1,15 @@
-export const COLLECTION_HOME_PAGE_ROUTE_PATH = '/collection/:key'
+import { compile, match, webSlug } from '@moodlenet/react-app/common'
 
-export function matchCollectionHomePageRoutePathKey(path: string) {
-  return path.match(
-    new RegExp(`${COLLECTION_HOME_PAGE_ROUTE_PATH.replace(':key', '([0-z]+)')}`),
-  )?.[1]
+export const COLLECTION_HOME_PAGE_ROUTE_PATH = '/collection/:key/:slug'
+type P = { key: string; slug: string }
+export const collectionHomePageRoutePath = compile<P>(COLLECTION_HOME_PAGE_ROUTE_PATH)
+
+export function getCollectionHomePageRoutePath({ _key, title }: { _key: string; title: string }) {
+  const slug = webSlug(title)
+  return collectionHomePageRoutePath({ key: _key, slug })
 }
 
-export function getCollectionHomePageRoutePath({ _key }: { _key: string }) {
-  return COLLECTION_HOME_PAGE_ROUTE_PATH.replace(':key', _key)
+const _matchCollectionHomePageRoutePath = match<P>(COLLECTION_HOME_PAGE_ROUTE_PATH)
+export function matchCollectionHomePageRoutePath(path: string) {
+  return _matchCollectionHomePageRoutePath(path) || null
 }

@@ -208,7 +208,6 @@ function getCollectionRpc(
   >,
 ) {
   const imageUrl = found.entity.image ? getImageUrl(found.entity.image) : undefined
-  const _key = found.entity._key
   const collectionRpc: Omit<CollectionRpc, 'contributor'> = {
     resourceList: found.entity.resourceList,
     form: {
@@ -217,7 +216,9 @@ function getCollectionRpc(
     },
     data: {
       id: found.entity._key,
-      mnUrl: getWebappUrl(getCollectionHomePageRoutePath({ _key })),
+      mnUrl: getWebappUrl(
+        getCollectionHomePageRoutePath({ _key: found.entity._key, title: found.entity.title }),
+      ),
       imageUrl,
     },
     state: {

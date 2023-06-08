@@ -102,7 +102,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
                 ? found.entity.content.fsItem.rpcFile.name
                 : null,
             id: found.entity._key,
-            mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key })),
+            mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key, title: found.entity.title })),
             imageUrl,
             tags: [
               {
@@ -173,7 +173,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
         return {
           _key: createResult._key,
           description: createResult.description,
-          homepage: getWebappUrl(getResourceHomePageRoutePath({ _key: createResult._key })),
+          homepage: getWebappUrl(
+            getResourceHomePageRoutePath({ _key: createResult._key, title: createResult.title }),
+          ),
           name: createResult.title,
           url: setResourceResult.contentUrl,
         }
