@@ -269,8 +269,9 @@ export const useResourceStoryProps = (
         ? MainLayoutLoggedInStoryProps
         : MainLayoutLoggedOutStoryProps,
 
+      wideColumnItems: [],
       mainColumnItems: [],
-      sideColumnItems: [],
+      rightColumnItems: [],
       generalActionsItems: generalActionsItems,
       mainResourceCardSlots: mainResourceCardSlots,
       resourceContributorCardProps:
