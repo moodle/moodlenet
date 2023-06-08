@@ -132,15 +132,12 @@ export const Resource: FC<ResourceProps> = ({
   //     useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
   // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   // const backupImage: AssetInfo | null | undefined = useMemo(
   //   () => getBackupImage(id),
   //   [id],
   // )
-  //   const [isReporting, setIsReporting] = useState<boolean>(false)
-  //   const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
-  // const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  // const [isEditing, setIsEditing] = useReducer(_ => !_, false)
 
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
@@ -174,7 +171,10 @@ export const Resource: FC<ResourceProps> = ({
       slots={mainResourceCardSlots}
       fileMaxSize={fileMaxSize}
       isSaving={isSaving}
+      isEditing={isEditing}
+      setIsEditing={setIsEditing}
       shouldShowErrors={shouldShowErrors}
+      setShouldShowErrors={setShouldShowErrors}
     />
   )
 
@@ -216,7 +216,7 @@ export const Resource: FC<ResourceProps> = ({
   const subjectField = (
     <SubjectField
       key="subject-field"
-      canEdit={canEdit}
+      canEdit={canEdit && isEditing}
       subject={form.values.subject}
       subjectOptions={subjectOptions}
       error={form.errors.subject}
@@ -228,7 +228,7 @@ export const Resource: FC<ResourceProps> = ({
   const licenseField = (
     <LicenseField
       key="license-field"
-      canEdit={canEdit}
+      canEdit={canEdit && isEditing}
       license={form.values.license}
       licenseOptions={licenseOptions}
       editLicense={e => {
@@ -242,7 +242,7 @@ export const Resource: FC<ResourceProps> = ({
   const typeField = (
     <TypeField
       key="type-field"
-      canEdit={canEdit}
+      canEdit={canEdit && isEditing}
       type={form.values.type}
       typeOptions={typeOptions}
       editType={e => {
@@ -256,7 +256,7 @@ export const Resource: FC<ResourceProps> = ({
   const levelField = (
     <LevelField
       key="level-field"
-      canEdit={canEdit}
+      canEdit={canEdit && isEditing}
       level={form.values.level}
       levelOptions={levelOptions}
       editLevel={e => {
@@ -270,7 +270,7 @@ export const Resource: FC<ResourceProps> = ({
   const dateField = (
     <DateField
       key="date-field"
-      canEdit={canEdit}
+      canEdit={canEdit && isEditing}
       month={form.values.month}
       monthOptions={monthOptions}
       year={form.values.year}
@@ -290,7 +290,7 @@ export const Resource: FC<ResourceProps> = ({
   const languageField = (
     <LanguageField
       key="language-field"
-      canEdit={canEdit}
+      canEdit={canEdit && isEditing}
       language={form.values.language}
       languageOptions={languageOptions}
       editLanguage={e => {

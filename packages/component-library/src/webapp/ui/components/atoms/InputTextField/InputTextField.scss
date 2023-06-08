@@ -50,13 +50,13 @@
     }
 
     &:not(.editing) {
-      color: #212121;
+      color: #4d5156;
       pointer-events: none;
       cursor: default;
     }
 
     .editing:not(:focus) {
-      color: #212121;
+      color: #4d5156;
     }
 
     &::placeholder {

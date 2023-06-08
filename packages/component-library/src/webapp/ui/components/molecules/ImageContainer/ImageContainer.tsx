@@ -10,8 +10,9 @@ export type ImageContainerProps = {
   imageUrl?: string
   style?: CSSProperties
   link?: string
-  contentUrl?: string
+  // contentUrl?: string
   imageCover?: boolean
+  displayOnly?: boolean
   imageOnClick?: () => unknown
 }
 
@@ -24,7 +25,8 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       imageUrl,
       style,
       link,
-      contentUrl,
+      // contentUrl,
+      displayOnly,
       imageOnClick,
     } = props
 
@@ -63,7 +65,7 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
         ref={imageContainerRef as React.RefObject<HTMLDivElement>}
       >
         {link ? (
-          <a href={contentUrl} target="_blank" rel="noreferrer">
+          <a href={link} target="_blank" rel="noreferrer">
             {imageDiv}
           </a>
         ) : (
@@ -94,7 +96,7 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
         abbrTitle={`Upload an image`}
         onClick={selectImage}
       /> */}
-          {deleteImage && (
+          {!displayOnly && deleteImage && (
             <RoundButton
               className={`delete-image`}
               type="cross"
