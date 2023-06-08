@@ -1,4 +1,6 @@
 import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
+import { Href } from '@moodlenet/react-app/common'
+import { Link } from '@moodlenet/react-app/ui'
 import type { useFormik } from 'formik'
 import type { FC } from 'react'
 
@@ -17,10 +19,11 @@ export const LoginIcon: FC = () => {
 
 export type LoginProps = {
   form: ReturnType<typeof useFormik<LoginFormValues>>
+  recoverPasswordHref: Href
   wrongCreds: boolean
 }
 
-export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form }) => {
+export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form, recoverPasswordHref }) => {
   /* const { pkgs } = useContext(MainContext)
   const [authPkgApis] = pkgs
 
@@ -59,9 +62,9 @@ export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form }) => {
         <div className="content">
           <div className="left">
             <PrimaryButton onClick={canSubmit ? form.submitForm : undefined}>Log in</PrimaryButton>
-            {/* <Link href={``}> */}
-            <TertiaryButton>or recover password</TertiaryButton>
-            {/* </Link> */}
+            <Link href={recoverPasswordHref}>
+              <TertiaryButton>or recover password</TertiaryButton>
+            </Link>
           </div>
           {/* <div className="right" hidden>
                     <div className="icon">

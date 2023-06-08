@@ -24,6 +24,10 @@
   align-items: center;
   max-width: None;
   background-color: #f6f5f4;
+
+  @media screen and (max-width: 450px) {
+    background: white;
+  }
   // background-color: var(--color-light-gray-14);
 
   > .minimalistic-header {
