@@ -250,9 +250,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-
+        console.log({ uploadedContent })
         if (!uploadedContent) {
-          await publicFiles.del(getResourceLogicalFilename(_key))
+          await delResourceFile(_key)
           await patchResource(_key, {
             content: null,
           })
