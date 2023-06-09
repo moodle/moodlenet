@@ -9,6 +9,7 @@ import type {
 } from '@moodlenet/system-entities/server'
 import {
   create,
+  currentEntityVar,
   delEntity,
   entityMeta,
   getEntity,
@@ -148,8 +149,7 @@ export async function searchResources({
       : sortType === 'Relevant'
       ? '0'
       : sortType === 'Recent'
-      ? `
-  ${entityMeta('created')} DESC`
+      ? `${entityMeta(currentEntityVar, 'created')} DESC`
       : '0'
   const skip = Number(after)
   const cursor = await shell.call(searchEntities)(
