@@ -8,10 +8,11 @@ import {
 } from '@moodlenet/web-user/server'
 import assert from 'assert'
 import { send } from '../../../email-service/dist/server/exports.mjs'
+import { SET_NEW_PASSWORD_PATH } from '../common/webapp-routes.mjs'
 import { EmailPwdUserCollection } from './init/arangodb.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
-import type { ConfirmEmailPayload, SignupReq } from './types.mjs'
+import type { ChangePasswordEmailPayload, ConfirmEmailPayload, SignupReq } from './types.mjs'
 
 export async function login({ email, password }: { email: string; password: string }) {
   const user = await store.getByEmail(email)
@@ -140,10 +141,63 @@ export async function createSimpleEmailUser({
     },
   } as const
 }
+
+export async function changeMyPasswordUsingToken({
+  newPassword,
+  token,
+}: {
+  newPassword: string
+  token: string
+}) {
+  const changePasswordEmailPayload = await getChangePasswordEmailPayload()
+  if (!changePasswordEmailPayload) {
+    return false
+  }
+  const user = await store.getByEmail(changePasswordEmailPayload.email)
+  if (!user) {
+    return false
+  }
+
+  await changePassword({ _key: user._key, newPassword })
+  return true
+
+  async function getChangePasswordEmailPayload() {
+    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ChangePasswordEmailPayload>(token)
+    if (!jwtVerifyResp) {
+      return
+    }
+
+    const { payload: confirmEmailPayload } = jwtVerifyResp
+
+    return confirmEmailPayload
+  }
+}
+
 export async function changePassword(
   { _key, newPassword }: { newPassword: string; _key: string },
   opts?: Partial<{ dontHash: boolean }>,
 ) {
   const password = opts?.dontHash ? newPassword : await crypto.argon.hashPwd(newPassword)
   await EmailPwdUserCollection.update({ _key }, { password })
+}
+
+export async function sendChangePasswordRequestEmail({ email }: { email: string }) {
+  const user = await store.getByEmail(email)
+
+  if (!user) {
+    return false
+  }
+  // console.log({ req })
+  const changePasswordEmailPayload: ChangePasswordEmailPayload = { email }
+  const changePasswordToken = await shell.call(crypto.jwt.sign)(changePasswordEmailPayload, {
+    expirationTime: '1h',
+  })
+
+  shell.call(send)({
+    emailObj: {
+      to: email,
+      text: `Follow the link to change your password ${instanceDomain}${SET_NEW_PASSWORD_PATH}?token=${changePasswordToken}`,
+    },
+  })
+  return true
 }

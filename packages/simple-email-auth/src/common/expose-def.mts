@@ -11,5 +11,10 @@ export type SimpleEmailAuthExposeType = PkgExposeDef<{
     confirm(body: {
       confirmToken: string
     }): Promise<{ success: true; emailPwdUser: EmailPwdUser } | { success: false; msg: string }>
+    'webapp/request-password-change'(body: { email: string }): Promise<void>
+    'webapp/change-password'(body: {
+      password: string
+      token: string
+    }): Promise<{ success: boolean }>
   }
 }>
