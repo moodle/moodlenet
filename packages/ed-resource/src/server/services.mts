@@ -10,9 +10,10 @@ import type {
 import {
   create,
   delEntity,
+  entityMeta,
   getEntity,
   patchEntity,
-  queryEntities,
+  searchEntities,
 } from '@moodlenet/system-entities/server'
 import type { SortTypeRpc } from '../common/types.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
@@ -130,17 +131,43 @@ export async function setResourceContent(_key: string, resourceContent: RpcFile 
   return { patchedDoc, contentUrl }
 }
 
-export async function searchCollections(_: /* {limit,sortType,text,after,} */ {
+export async function searchResources({
+  limit = 20,
+  sortType = 'Recent',
+  text = '',
+  after = '0',
+}: {
   sortType?: SortTypeRpc
   text?: string
   after?: string
   limit?: number
 }) {
-  _
-  const cursor = await shell.call(queryEntities)(Resource.entityClass, {
-    limit: 6,
-    preAccessBody: 'SORT RAND()',
-  })
+  const sort =
+    sortType === 'Popular'
+      ? '0'
+      : sortType === 'Relevant'
+      ? '0'
+      : sortType === 'Recent'
+      ? `
+  ${entityMeta('created')} DESC`
+      : '0'
+  const skip = Number(after)
+  const cursor = await shell.call(searchEntities)(
+    Resource.entityClass,
+    text,
+    [{ name: 'title', factor: 5 }, { name: 'description' }],
+    {
+      limit,
+      skip,
+      //forOptions: `OPTIONS { indexHint:"${TEXT_SEARCH_INDEX_NAME}", forceIndexHint: true }`,
+      postAccessBody: `
+    SORT ${sort}`,
+    },
+  )
 
-  return cursor.all()
+  const list = await cursor.all()
+  return {
+    list,
+    endCursor: list.length < limit ? undefined : String(skip + list.length),
+  }
 }

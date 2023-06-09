@@ -17,3 +17,22 @@ RETURN ${returnStatement}`,
     options,
   )
 }
+
+export const SEARCH_ALIAS_VIEW_NAME = 'SearchView'
+export const SearchAliasView = (await db.view(SEARCH_ALIAS_VIEW_NAME).exists())
+  ? db.view(SEARCH_ALIAS_VIEW_NAME)
+  : await db.createView(SEARCH_ALIAS_VIEW_NAME, {
+      type: 'arangosearch',
+    })
+
+const textAnalyzer = db.analyzer('global-text-search')
+await textAnalyzer.create({
+  type: 'text',
+  properties: {
+    case: 'upper',
+    locale: 'en',
+    stemming: true,
+    edgeNgram: { max: 8, min: 3, preserveOriginal: true },
+  },
+  features: ['frequency', 'norm', 'position'],
+})

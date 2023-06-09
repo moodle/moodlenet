@@ -41,7 +41,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren> = ({ children }
   const load = useCallback(
     async (cursor?: string) => {
       const res = await shell.rpc.me['webapp/search'](null, null, {
-        limit: 20,
+        limit: 10,
         sortType,
         text: q,
         after: cursor,
@@ -58,10 +58,14 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren> = ({ children }
     })
   }, [load])
 
+  const hasNoMore = !!resourceSearchResult && !resourceSearchResult.endCursor
   const loadMore = useCallback(async () => {
+    if (hasNoMore) {
+      return
+    }
     const res = await load(resourceSearchResult?.endCursor)
     resourceListAction(['more', res.list])
-  }, [resourceSearchResult?.endCursor, load])
+  }, [hasNoMore, load, resourceSearchResult?.endCursor])
 
   const setSortType = useCallback<SearchResourceContextT['setSortType']>(
     sortType => {
