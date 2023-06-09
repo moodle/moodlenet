@@ -1,4 +1,4 @@
-import type { Patch } from '@moodlenet/arangodb/server'
+import type { ArangoSearchViewLinkOptions, Patch } from '@moodlenet/arangodb/server'
 import { ensureDocumentCollection } from '@moodlenet/arangodb/server'
 import type { PkgIdentifier } from '@moodlenet/core'
 import assert from 'assert'
@@ -6,15 +6,18 @@ import { customAlphabet } from 'nanoid'
 import { entityIdByIdentifier, getEntityFullTypename } from '../common/entity-identification.mjs'
 import type { EntityClass, SomeEntityDataType } from '../common/types.mjs'
 import {
+  currentEntityClass,
+  currentEntityVar,
   entityIdentifier2EntityIdAql,
   isCurrentUserCreatorOfCurrentEntity,
+  toaql,
 } from './aql-lib/aql.mjs'
 import { entityDocument2Aql, pkgMetaOf2Aql } from './aql-lib/by-proc-values.mjs'
 import { userInfoAqlProvider } from './aql-lib/userInfo.mjs'
 import type { EntityInfo, EntityInfoProviderItem } from './entity-info.mjs'
 import { ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { SysEntitiesEvents } from './events.mjs'
-import { db } from './init/arangodb.mjs'
+import { db, SearchAliasView, SEARCH_ALIAS_VIEW_NAME } from './init/arangodb.mjs'
 import { env } from './init/env.mjs'
 import { getEntityCollection } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
@@ -45,7 +48,7 @@ export async function registerEntities<
   [name in keyof Defs]: EntityCollectionDefOpts
 }): Promise<EntityCollectionHandles<Defs>> {
   const namesAndHandles = await Promise.all(
-    Object.entries(entities).map(([entityName, defOpt]) =>
+    Object.entries<EntityCollectionDefOpts>(entities).map(([entityName, defOpt]) =>
       registerEntity(entityName, defOpt).then(handle => ({ entityName, handle })),
     ),
   )
@@ -96,6 +99,26 @@ export async function registerEntity<EntityDataType extends SomeEntityDataType>(
     entityClass,
   }
 }
+export async function addTextSearchFields(collectionName: string, filedNames: string[]) {
+  const props = await SearchAliasView.properties()
+  assert(props.type === 'arangosearch')
+
+  SearchAliasView.updateProperties({
+    links: {
+      [collectionName]: {
+        analyzers: ['text_en', 'global-text-search'],
+        fields: filedNames.reduce(
+          (_acc, fieldName) => ({ ..._acc, [fieldName]: {} }),
+          {} as Record<string, ArangoSearchViewLinkOptions>,
+        ),
+        includeAllFields: false,
+        storeValues: 'none',
+        trackListPositions: false,
+      },
+    },
+  })
+}
+
 export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataType>) {
   const currentUser = await getCurrentSystemUser()
   if (currentUser.type === 'root') {
@@ -265,17 +288,18 @@ export async function queryEntities<
   EntityDataType extends SomeEntityDataType,
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
->(entityClass: EntityClass<EntityDataType>, opts?: QueryEntitiesOpts<Project, ProjectAccess>) {
+>(
+  entityClassOrCollectionName: EntityClass<EntityDataType> | string,
+  opts?: QueryEntitiesOpts<Project, ProjectAccess>,
+) {
   const limit = Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT)
   const skip = opts?.skip ?? 0
-  const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
-    preAccessBody: opts?.preAccessBody,
+  const queryEntitiesCursor = await accessEntities(entityClassOrCollectionName, 'r', {
+    ...opts,
     postAccessBody: `
       ${opts?.postAccessBody ?? ''}
       LIMIT ${skip}, ${limit}
     `,
-    project: opts?.project,
-    projectAccess: opts?.projectAccess,
   })
   return queryEntitiesCursor
 }
@@ -332,6 +356,7 @@ export type AccessEntitiesOpts<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 > = {
+  forOptions?: string
   preAccessBody?: string
   postAccessBody?: string
   project?: Project
@@ -356,24 +381,85 @@ export async function getCurrentUserInfo() {
   return entityInfo
 }
 
-export async function accessEntities<
+export async function searchEntities<
   EntityDataType extends SomeEntityDataType,
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(
   entityClass: EntityClass<EntityDataType>,
+  givenSearchTerm: string,
+  fields: { name: string; factor?: number }[],
+  _opts?: QueryEntitiesOpts<Project, ProjectAccess>,
+) {
+  const PERFORM_SEARCH_ANALIZERS = fields.length && givenSearchTerm
+  if (!PERFORM_SEARCH_ANALIZERS) {
+    return emptyCursor()
+  }
+  const searchTermAql = toaql(givenSearchTerm)
+  const allSearchstatements = fields
+    .map(
+      ({ name, factor = 1 }) => `
+  BOOST(
+        PHRASE(
+                ${currentEntityVar}.${name}, 
+                ${searchTermAql}
+              ),
+        ${10 * factor})
+  OR
+  BOOST(
+        ${currentEntityVar}.${name} IN TOKENS(${searchTermAql}),
+        ${3 * factor})
+  OR
+  BOOST(
+        NGRAM_MATCH( ${currentEntityVar}.${name}, 
+                      ${searchTermAql}, 
+                      0.05, 
+                      "global-text-search"
+                    ), 
+        ${0.2 * factor})
+  `,
+    )
+    .join(`OR`)
+
+  const preAccessBody = `
+    FILTER ${currentEntityClass}==${toaql(entityClass)}
+    ${_opts?.preAccessBody ?? ''}`
+
+  const postAccessBody = `
+    let rank =  TFIDF(${currentEntityVar})
+    SORT rank desc`
+
+  const forOptions = `
+  SEARCH ANALYZER(${allSearchstatements}, "text_en")`
+
+  const opts: AccessEntitiesOpts<Project, ProjectAccess> = {
+    ..._opts,
+    forOptions,
+    preAccessBody,
+    postAccessBody,
+  }
+  return queryEntities(SEARCH_ALIAS_VIEW_NAME, opts)
+}
+
+export async function accessEntities<
+  EntityDataType extends SomeEntityDataType,
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(
+  entityClassOrCollectionName: EntityClass<EntityDataType> | string,
   access: EntityAccess,
   opts?: AccessEntitiesOpts<Project, ProjectAccess>,
 ) {
   const isRead = access === 'r'
   const currentUser = await getCurrentSystemUser()
   if (!isRead && currentUser.type === 'anon') {
-    return db.query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(
-      'for x in [] return x',
-    )
+    return emptyCursor<EntityDataType, Project, ProjectAccess>()
   }
 
-  const entityCollectionName = getEntityFullTypename(entityClass)
+  const entityCollectionName =
+    typeof entityClassOrCollectionName === 'string'
+      ? entityClassOrCollectionName
+      : getEntityFullTypename(entityClassOrCollectionName)
 
   const entityAccessesToCompute = [
     ...new Set<EntityAccess>([
@@ -413,7 +499,7 @@ LET currentUserEntity = ${currentUserEntityAql}
 // if currentUser.type === 'entity' && currentUserEntity === null
 // the query should fail early with error !
 
-FOR entity in @@collection
+FOR entity in @@collection ${opts?.forOptions ?? ''}
 LET creatorEntityId=entity._meta.creator.type == 'entity' ? ${entityIdentifier2EntityIdAql(
     'entity._meta.creator.entityIdentifier',
   )} : null
@@ -440,11 +526,24 @@ ${projectAqlRawProps}
 
   const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
   // console.log(q, JSON.stringify({ bindVars }, null, 2))
-  const queryCursor = await db.query<
-    AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>
-  >(q, bindVars)
+  const queryCursor = await db
+    .query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(q, bindVars)
+    .catch(e => {
+      console.log(q, JSON.stringify({ bindVars }, null, 2))
+      throw e
+    })
 
   return queryCursor
+}
+
+function emptyCursor<
+  EntityDataType extends SomeEntityDataType,
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>() {
+  return db.query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(
+    'for x in [] return x',
+  )
 }
 
 // export function docIsOfClass<EntityDataType extends SomeEntityDataType>(

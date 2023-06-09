@@ -25,7 +25,7 @@ import {
   getResourceLogicalFilename,
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
-  searchCollections,
+  searchResources,
   setResourceContent,
   setResourceImage,
 } from './services.mjs'
@@ -291,9 +291,10 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/search': {
       guard: () => void 0,
       async fn(_, __, { limit, sortType, text, after }) {
-        const found = await searchCollections({ limit, sortType, text, after })
+        const { endCursor, list } = await searchResources({ limit, sortType, text, after })
         return {
-          list: found.map(({ entity: { _key } }) => ({ _key })),
+          list: list.map(({ entity: { _key } }) => ({ _key })),
+          endCursor,
         }
       },
       bodyWithFiles: {

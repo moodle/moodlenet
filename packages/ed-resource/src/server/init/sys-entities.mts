@@ -9,6 +9,7 @@ import {
 import type { EdResourceEntityNames } from '../../common/types.mjs'
 import { shell } from '../shell.mjs'
 import type { ResourceDataType } from '../types.mjs'
+export const TEXT_SEARCH_INDEX_NAME = 'text_search'
 
 export const { Resource } = await shell.call(registerEntities)<
   {
@@ -18,6 +19,7 @@ export const { Resource } = await shell.call(registerEntities)<
 >({
   Resource: {},
 })
+
 await shell.call(registerAccessController)({
   u() {
     return `(${isCurrentOfEntityClass2Aql(

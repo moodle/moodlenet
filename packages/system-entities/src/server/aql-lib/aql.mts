@@ -29,8 +29,9 @@ export const currentUserIdentifier: AqlVal<EntityIdentifier | null> =
 export const currentEntityVar: AqlVal<EntityFullDocument<SomeEntityDataType>> = 'entity'
 export function entityMeta(
   entityVal: AqlVal<EntityDocFullData<SomeEntityDataType>>,
+  prop?: keyof EntityMetadata,
 ): AqlVal<EntityMetadata> {
-  return `${entityVal}._meta`
+  return `${entityVal}._meta${prop ? `.${prop}` : ''}`
 }
 export function entityKey(
   entityVal: AqlVal<EntityDocFullData<SomeEntityDataType>>,
@@ -40,6 +41,7 @@ export function entityKey(
 export function entityId(entityVal: AqlVal<EntityDocFullData<SomeEntityDataType>>): AqlVal<string> {
   return `${entityVal}._id`
 }
+export const currentEntityClass = entityMeta(currentEntityVar, 'entityClass')
 export const currentEntityMeta = entityMeta(currentEntityVar)
 export const currentEntityKey = entityKey(currentEntityVar)
 export const currentEntityId: AqlVal<string> = entityId(currentEntityVar)

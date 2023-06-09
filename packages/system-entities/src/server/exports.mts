@@ -1,4 +1,4 @@
-export type { Patch } from '@moodlenet/arangodb/server'
+export * from '@moodlenet/arangodb/server'
 export * from './aql-lib/aql.mjs'
 export * from './aql-lib/by-proc-values.mjs'
 export * from './aql-lib/userInfo.mjs'
