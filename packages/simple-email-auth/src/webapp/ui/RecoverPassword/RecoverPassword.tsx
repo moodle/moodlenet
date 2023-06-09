@@ -87,8 +87,8 @@ export const RecoverPassword: FC<RecoverPasswordProps> = ({
               <div className="content">
                 <MailOutline className="icon" />
                 <div className="subtitle">
-                  If the email you provided corresponds to a MoodleNet user, you'll receive an email
-                  with a change password link
+                  If the email you provided corresponds to a MoodleNet user, you&apos;ll receive an
+                  email with a change password link
                 </div>
               </div>
             </Card>

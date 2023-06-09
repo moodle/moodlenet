@@ -1,5 +1,7 @@
+import { href } from '@moodlenet/react-app/common'
 import { useFormik } from 'formik'
 import { useMemo, useState } from 'react'
+import { RECOVER_PASSWORD_PATH } from '../../../common/webapp-routes.mjs'
 import { shell } from '../../shell.mjs'
 import type { LoginFormValues, LoginProps } from './Login.js'
 
@@ -29,6 +31,7 @@ export const usePanelProps = (): LoginProps => {
     const props: LoginProps = {
       form,
       wrongCreds,
+      recoverPasswordHref: href(RECOVER_PASSWORD_PATH),
     }
 
     return props
