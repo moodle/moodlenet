@@ -427,7 +427,8 @@ export async function searchEntities<
 
   const postAccessBody = `
     let rank =  TFIDF(${currentEntityVar})
-    SORT rank desc`
+    SORT rank desc
+    ${_opts?.postAccessBody ?? ''}`
 
   const forOptions = `
   SEARCH ANALYZER(${allSearchstatements}, "text_en")`
