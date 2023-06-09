@@ -69,6 +69,7 @@ export const Collection: FC<CollectionProps> = ({
   const { editData, deleteCollection, publish, unpublish } = actions
   const { canPublish } = access
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(imageUrl)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
@@ -119,7 +120,10 @@ export const Collection: FC<CollectionProps> = ({
       actions={actions}
       access={access}
       slots={mainCollectionCardSlots}
+      isEditing={isEditing}
+      setIsEditing={setIsEditing}
       shouldShowErrors={shouldShowErrors}
+      setShouldShowErrors={setShouldShowErrors}
       isSaving={isSaving}
     />
   )

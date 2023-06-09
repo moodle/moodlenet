@@ -18,7 +18,6 @@ import {
   downloadOrOpenURL,
   getBackupImage,
   getTagList,
-  useImageUrl,
 } from '@moodlenet/react-app/ui'
 import {
   CloudDoneOutlined,
@@ -119,7 +118,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const { width } = useWindowDimensions()
 
@@ -144,9 +142,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
 
-  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined | null>(imageUrl)
-  const [image] = useImageUrl(currentImageUrl, backupImage)
-  const [imageFromForm] = useImageUrl(imageForm.values.image)
+  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
 
   const handleOnEditClick = () => {
     setIsEditing(true)
@@ -161,14 +157,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       setShouldShowErrors(true)
     }
   }
-
-  useEffect(() => {
-    setCurrentImageUrl(imageUrl)
-  }, [imageUrl])
-
-  useEffect(() => {
-    setCurrentImageUrl(imageFromForm)
-  }, [imageFromForm])
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)
@@ -550,6 +538,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       fileMaxSize={fileMaxSize}
       downloadFilename={downloadFilename}
       uploadProgress={uploadProgress}
+      backupImage={backupImage}
       shouldShowErrors={shouldShowErrors}
       contentType={contentType}
       imageOnClick={() => setIsShowingImage(true)}

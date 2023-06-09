@@ -23,6 +23,7 @@ import './UploadImage.scss'
 export type UploadImageProps = {
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
   imageUrl: string | undefined
+  displayOnly?: boolean
   imageOnClick?: () => void
 }
 
@@ -36,7 +37,12 @@ export type UploadImageProps = {
 //   'content',
 // ]
 
-export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOnClick }) => {
+export const UploadImage: FC<UploadImageProps> = ({
+  imageForm,
+  imageUrl,
+  displayOnly,
+  imageOnClick,
+}) => {
   // const { nextForm, imageForm } = useNewCollectionPageCtx()
   // const isValid = usingFields.reduce(
   //   (valid, fldName) => valid && !imageForm.errors[fldName],
@@ -107,6 +113,7 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, imageUrl, imageOn
       imageUrl={image}
       deleteImage={deleteImage}
       uploadImage={uploadImage}
+      displayOnly={displayOnly}
       imageCover
       imageOnClick={imageOnClick}
     />

@@ -4,14 +4,25 @@ import {
   Card,
   FloatingMenu,
   InputTextField,
+  Loading,
   Modal,
   PrimaryButton,
+  SecondaryButton,
   Snackbar,
   TertiaryButton,
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
-import { CloudDoneOutlined, Delete, MoreVert, Public, PublicOff, Sync } from '@mui/icons-material'
+import {
+  CloudDoneOutlined,
+  Delete,
+  Edit,
+  MoreVert,
+  Public,
+  PublicOff,
+  Save,
+  Sync,
+} from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -44,9 +55,14 @@ export type MainCollectionCardProps = {
   actions: CollectionActions
   access: CollectionAccessProps
 
-  shouldShowErrors: boolean
   publish: () => void
   isSaving: boolean
+
+  isEditing: boolean
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+
+  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
+  shouldShowErrors: boolean
 }
 
 export const MainCollectionCard: FC<MainCollectionCardProps> = ({
@@ -59,9 +75,14 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   actions,
   access,
 
-  shouldShowErrors,
   publish,
   isSaving,
+
+  isEditing,
+  setIsEditing,
+
+  setShouldShowErrors,
+  shouldShowErrors,
 }) => {
   const {
     mainColumnItems,
@@ -95,6 +116,19 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const [image] = useImageUrl(imageUrl, backupImage)
   const [imageFromForm] = useImageUrl(imageForm.values.image)
 
+  const handleOnEditClick = () => {
+    setIsEditing(true)
+  }
+  const handleOnSaveClick = () => {
+    if (form.isValid) {
+      form.submitForm()
+      setShouldShowErrors(false)
+      setIsEditing(false)
+    } else {
+      setShouldShowErrors(true)
+    }
+  }
+
   useEffect(() => {
     setUpdatedImage(imageUrl)
   }, [imageUrl])
@@ -120,6 +154,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       value={form.values.title}
       placeholder="Title"
       key="title"
+      edit={isEditing}
       noBorder
       onChange={form.handleChange}
       style={{
@@ -260,11 +295,50 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ) : // )
     null
 
+  const editSaveButton = canEdit
+    ? {
+        Item: () => (
+          <div className="edit-save">
+            {isEditing ? (
+              <PrimaryButton
+                className={`${form.isSubmitting ? 'loading' : ''}`}
+                color="green"
+                onClick={handleOnSaveClick}
+              >
+                <div
+                  className="loading"
+                  style={{
+                    visibility: form.isSubmitting ? 'visible' : 'hidden',
+                  }}
+                >
+                  <Loading color="white" />
+                </div>
+                <div
+                  className="label"
+                  style={{
+                    visibility: form.isSubmitting ? 'hidden' : 'visible',
+                  }}
+                >
+                  <Save />
+                </div>
+              </PrimaryButton>
+            ) : (
+              <SecondaryButton onClick={handleOnEditClick} color="orange">
+                <Edit />
+              </SecondaryButton>
+            )}
+          </div>
+        ),
+        key: 'edit-save-button',
+      }
+    : null
+
   const updatedTopRightHeaderItems = [
     publishedButton,
     unpublishedButton,
     ...(topRightHeaderItems ?? []),
     moreButton,
+    editSaveButton,
   ].filter((item): item is AddonItem => !!item)
 
   const topHeaderRow = (
@@ -293,6 +367,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const collectionUploader = canEdit ? (
     <UploadImage
+      displayOnly={(canEdit && !isEditing) || !canEdit}
       imageForm={imageForm}
       imageUrl={updatedImage}
       imageOnClick={() => setIsShowingImage(true)}
@@ -354,6 +429,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
           ref={descriptionEditRef}
           textAreaAutoSize
           noBorder
+          edit={isEditing}
           key="description"
           placeholder="Description"
           value={form.values.description}

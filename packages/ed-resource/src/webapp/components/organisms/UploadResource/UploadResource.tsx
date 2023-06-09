@@ -34,6 +34,7 @@ export type UploadResourceProps = {
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
   downloadFilename: string | null
   contentType: 'file' | 'link' | null
+  backupImage?: string
   uploadProgress?: number
   shouldShowErrors?: boolean
   displayOnly?: boolean
@@ -57,19 +58,14 @@ export const UploadResource: FC<UploadResourceProps> = ({
   imageForm,
   downloadFilename,
   contentType,
+  backupImage,
 
   displayOnly,
   shouldShowErrors,
   uploadProgress,
   imageOnClick,
 }) => {
-  // const { nextForm, form } = useNewResourcePageCtx()
-  // const isValid = usingFields.reduce(
-  //   (valid, fldName) => valid && !form.errors[fldName],
-  //   true
-  // )
-
-  const [image] = useImageUrl(imageForm.values.image)
+  const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
 
   const contentIsFile = contentForm.values.content instanceof File
   const contentName = downloadFilename
