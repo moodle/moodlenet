@@ -21,7 +21,6 @@ import {
   Public,
   PublicOff,
   Save,
-  Sync,
 } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -168,12 +167,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  //   const tagsDiv: AddonItem = {
-  //     Item: () =>
-  //       tags.length > 0 ? <div className="tags scroll">{getTagList(tags, 'medium')}</div> : <></>,
-  //     key: 'type-and-actions',
-  //   }
-
   const collectionLabel = (
     <div className="collection-label" key="collection-label">
       Collection
@@ -193,7 +186,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const savingFeedback = isSaving ? (
     <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-      <Sync />
+      <Loading color="#8f8f8f" />
       Saving...
     </abbr>
   ) : saved ? (

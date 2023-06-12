@@ -41,13 +41,23 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       selectedFile && uploadImage && uploadImage(selectedFile)
     }
 
+    console.log('imageURL: ', imageUrl)
+    console.log('imageCover: ', imageCover)
     const imageDiv = imageCover ? (
-      <div
+      <img
         className="image"
-        style={{ backgroundImage: `url(${imageUrl})` }}
+        src={imageUrl}
+        alt="Background"
         onClick={imageOnClick}
+        // style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
+        style={{ maxHeight: 'fit-content', pointerEvents: imageOnClick ? 'auto' : 'none' }}
       />
     ) : (
+      // <div
+      //   className="image"
+      //   style={{ backgroundImage: `url(${imageUrl})` }}
+      //   onClick={imageOnClick}
+      // />
       <img
         className="image"
         src={imageUrl}

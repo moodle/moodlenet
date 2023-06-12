@@ -65,7 +65,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
   uploadProgress,
   imageOnClick,
 }) => {
+  console.log('backupImage', backupImage)
+  console.log('imageForm.values.image', imageForm.values.image)
   const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
+  const [backupImageUrl] = useImageUrl(backupImage)
+  console.log('image', image)
+  console.log('backupImageUrl', backupImageUrl)
 
   const contentIsFile = contentForm.values.content instanceof File
   const contentName = downloadFilename
@@ -339,6 +344,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
       {!contentAvailable && !displayOnly && uploader('file')}
       {!contentAvailable && imageAvailable && simpleImageContainer}
       {contentAvailable && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
+      {contentAvailable && displayOnly && (embed ?? (!imageAvailable && simpleImageContainer))}
       {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}
     </>
   )
