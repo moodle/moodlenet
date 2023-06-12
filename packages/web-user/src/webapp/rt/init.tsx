@@ -48,16 +48,16 @@ registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))
 
 const landingPageMainColumnItems: PkgAddOns<AddonItemNoKey> = {
-  collectionList: {
-    Item: () => {
-      const props = useMyLandingPageCollectionListDataProps()
-      return <LandingCollectionList {...props} />
-    },
-  },
   resourceList: {
     Item: () => {
       const props = useMyLandingPageResourceListDataProps()
       return <LandingResourceList {...props} />
+    },
+  },
+  collectionList: {
+    Item: () => {
+      const props = useMyLandingPageCollectionListDataProps()
+      return <LandingCollectionList {...props} />
     },
   },
 }
