@@ -78,8 +78,8 @@ ResourcePagePlugins.register(({ useGeneralAction, useTopRightHeaderItems, resour
   useTopRightHeaderItems(useSocialActions(resourceKey, 'resource'))
 })
 
-ResourceCardPlugins.register(({ useTopRightItems, resourceKey }) => {
-  useTopRightItems(useSocialActions(resourceKey, 'resource'))
+ResourceCardPlugins.register(({ useBottomRightItems, resourceKey }) => {
+  useBottomRightItems(useSocialActions(resourceKey, 'resource'))
 })
 
 CollectionCardPlugins.register(({ collectionKey, useTopRightItems }) => {
