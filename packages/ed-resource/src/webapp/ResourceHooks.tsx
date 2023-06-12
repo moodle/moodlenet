@@ -1,4 +1,3 @@
-import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ResourceActions, ResourceFormProps, ResourceProps } from '../common/types.mjs'
 
@@ -50,13 +49,6 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const actions = useMemo<ResourceActions>(() => {
     const { edit: editRpc, setImage: _setImage, setIsPublished, setContent, _delete } = rpcCaller
 
-    const edit = debounce((res: ResourceFormProps) => {
-      editRpc(resourceKey, res).then(() => {
-        console.log('form xxx', res)
-        setterSave('form', false)
-      })
-    }, 1000)
-
     const updateResource = <T,>(key: string, val: T): T => (
       resource && setResource({ ...resource, [key]: val }), val
     )
@@ -72,7 +64,9 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
         setterSave('form', true)
-        edit(res) // .then(form => updateResource('form', 'resourceForm', form)),
+        editRpc(resourceKey, res).then(() => {
+          setterSave('form', false)
+        }) // .then(form => updateResource('form', 'resourceForm', form)),
       },
       async setImage(file: File | undefined | null) {
         setterSave('image', true)

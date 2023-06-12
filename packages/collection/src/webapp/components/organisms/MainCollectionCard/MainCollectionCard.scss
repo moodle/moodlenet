@@ -159,6 +159,40 @@
           //   background-color: #009966;
           // }
         }
+
+        > .edit-save {
+          width: 40px;
+          margin: 0 6px;
+          > * {
+            width: 100%;
+            > svg,
+            * > svg {
+              width: 18px;
+              height: 18px;
+            }
+          }
+          > .primary-button {
+            display: grid;
+            grid-template-columns: 1fr;
+            > div {
+              grid-row-start: 1;
+              grid-column-start: 1;
+              display: flex;
+
+              &.loading {
+                display: flex;
+                visibility: visible;
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+              }
+            }
+
+            &.loading {
+              pointer-events: none;
+            }
+          }
+        }
       }
     }
 

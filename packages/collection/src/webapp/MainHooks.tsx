@@ -1,4 +1,3 @@
-import debounce from 'lodash/debounce.js'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type {
@@ -40,11 +39,6 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     ) */
 
     const { _delete, edit: editRpc, setIsPublished, setImage } = rpcCaller
-    const edit = debounce((res: CollectionFormProps) => {
-      editRpc(collectionKey, res).then(() => {
-        setterSave('form', false)
-      })
-    }, 1000)
 
     const updateData = <T,>(key: string, val: T): typeof collection =>
       collection && { ...collection, data: { ...collection.data, [key]: val } }
@@ -56,7 +50,9 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     return {
       async editData(res: CollectionFormProps) {
         setterSave('form', true)
-        edit(res)
+        editRpc(collectionKey, res).then(() => {
+          setterSave('form', false)
+        })
       },
       async setImage(file: File | null | undefined) {
         //@ETTO make sure this null // undefined is useful for deleting images

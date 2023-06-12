@@ -7,7 +7,7 @@ import {
   RoundButton,
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { checkIfURL, useImageUrl } from '@moodlenet/react-app/ui'
+import { useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
 import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -33,8 +33,11 @@ export type UploadResourceProps = {
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
   downloadFilename: string | null
+  contentType: 'file' | 'link' | null
+  backupImage?: string
   uploadProgress?: number
   shouldShowErrors?: boolean
+  displayOnly?: boolean
   imageOnClick?(): unknown
 }
 
@@ -54,18 +57,15 @@ export const UploadResource: FC<UploadResourceProps> = ({
   contentForm,
   imageForm,
   downloadFilename,
+  contentType,
+  backupImage,
 
+  displayOnly,
   shouldShowErrors,
   uploadProgress,
   imageOnClick,
 }) => {
-  // const { nextForm, form } = useNewResourcePageCtx()
-  // const isValid = usingFields.reduce(
-  //   (valid, fldName) => valid && !form.errors[fldName],
-  //   true
-  // )
-
-  const [image] = useImageUrl(imageForm.values.image)
+  const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
 
   const contentIsFile = contentForm.values.content instanceof File
   const contentName = downloadFilename
@@ -160,7 +160,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
       ? contentForm.values.content.name
       : null
 
-  const embed = contentValue && checkIfURL(contentValue) ? getPreviewFromUrl(contentValue) : null
+  // const embed = contentValue && checkIfURL(contentValue) ? getPreviewFromUrl(contentValue) : null
+  const embed = contentValue
+    ? getPreviewFromUrl(contentValue)
+    : typeof contentForm.values.content === 'string'
+    ? getPreviewFromUrl(contentForm.values.content)
+    : null
 
   const dropHandler = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -214,18 +219,28 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const imageRef = useRef<HTMLDivElement>(null)
 
+  const shouldOpenImage =
+    contentForm.values.content === imageForm.values.image || contentType === 'file'
+
   const imageContainer = (
     <ImageContainer
       imageUrl={image}
       ref={imageRef}
       deleteImage={deleteImage}
       uploadImage={uploadImage}
-      imageOnClick={imageOnClick}
-      link={typeof contentForm.values.content === 'string' ? contentForm.values.content : undefined}
+      imageOnClick={shouldOpenImage && displayOnly ? imageOnClick : undefined}
+      displayOnly={displayOnly}
+      link={
+        contentType === 'link' && typeof contentForm.values.content === 'string'
+          ? contentForm.values.content
+          : undefined
+      }
     />
   )
 
-  const simpleImageContainer = <ImageContainer imageUrl={image} ref={imageRef} />
+  const simpleImageContainer = (
+    <ImageContainer imageUrl={image} ref={imageRef} displayOnly={displayOnly} />
+  )
 
   const [imageHeight, setImageHeight] = useState<string | number>('initial')
 
@@ -321,9 +336,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const uploaderDiv = (
     <>
-      {!contentAvailable && uploader('file')}
+      {!contentAvailable && !displayOnly && uploader('file')}
       {!contentAvailable && imageAvailable && simpleImageContainer}
-      {contentAvailable && (embed ?? (!imageAvailable && uploader('image')))}
+      {contentAvailable && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
       {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}
     </>
   )
@@ -345,44 +360,48 @@ export const UploadResource: FC<UploadResourceProps> = ({
       >
         {uploaderDiv}
       </div>
-      <div className="bottom-container">
-        {subStep === 'AddFileOrLink' ? (
-          <InputTextField
-            className="link"
-            name="content"
-            placeholder={`Paste or type a link`}
-            ref={addLinkFieldRef}
-            edit
-            defaultValue={
-              typeof contentForm.values.content === 'string' ? contentForm.values.content : ''
-            }
-            onChange={shouldShowErrors ? () => contentForm.validateField('content') : undefined}
-            onKeyDown={e => e.key === 'Enter' && addLink()}
-            action={<PrimaryButton onClick={addLink}>Add</PrimaryButton>}
-            error={
-              shouldShowErrors &&
-              // !(contentForm.values.content instanceof Blob) &&
-              contentForm.errors.content
-            }
-          />
-        ) : (
-          <div
-            className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'}`}
-            style={{ background: uploadedNameBackground }}
-          >
-            <div className="content-icon">{contentIsFile ? <InsertDriveFile /> : <LinkIcon />}</div>
-            <abbr className="scroll" title={contentName}>
-              {contentName}
-            </abbr>
-            <RoundButton
-              onClick={deleteFileOrLink}
-              tabIndex={0}
-              abbrTitle={contentIsFile ? 'Delete file' : 'Delete link'}
-              onKeyUp={{ key: 'Enter', func: deleteFileOrLink }}
+      {!displayOnly && (
+        <div className="bottom-container">
+          {subStep === 'AddFileOrLink' ? (
+            <InputTextField
+              className="link"
+              name="content"
+              placeholder={`Paste or type a link`}
+              ref={addLinkFieldRef}
+              edit
+              defaultValue={
+                typeof contentForm.values.content === 'string' ? contentForm.values.content : ''
+              }
+              onChange={shouldShowErrors ? () => contentForm.validateField('content') : undefined}
+              onKeyDown={e => e.key === 'Enter' && addLink()}
+              action={<PrimaryButton onClick={addLink}>Add</PrimaryButton>}
+              error={
+                shouldShowErrors &&
+                // !(contentForm.values.content instanceof Blob) &&
+                contentForm.errors.content
+              }
             />
-          </div>
-        )}
-      </div>
+          ) : (
+            <div
+              className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'}`}
+              style={{ background: uploadedNameBackground }}
+            >
+              <div className="content-icon">
+                {contentIsFile ? <InsertDriveFile /> : <LinkIcon />}
+              </div>
+              <abbr className="scroll" title={contentName}>
+                {contentName}
+              </abbr>
+              <RoundButton
+                onClick={deleteFileOrLink}
+                tabIndex={0}
+                abbrTitle={contentIsFile ? 'Delete file' : 'Delete link'}
+                onKeyUp={{ key: 'Enter', func: deleteFileOrLink }}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
