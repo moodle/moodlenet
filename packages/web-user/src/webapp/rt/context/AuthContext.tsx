@@ -87,7 +87,10 @@ export function useAuthCtxValue() {
       const webUserClientSessionData: ClientSessionData = {
         isAdmin: sessionDataRpc.isAdmin,
         isRoot: false,
-        userDisplay: { name: sessionDataRpc.myProfile.displayName, avatarUrl: defaultAvatarUrl }, //sessionDataRpc.myProfile.avatarUrl},
+        userDisplay: {
+          name: sessionDataRpc.myProfile.displayName,
+          avatarUrl: sessionDataRpc.myProfile.avatarUrl ?? defaultAvatarUrl,
+        }, //sessionDataRpc.myProfile.avatarUrl},
         myProfile: sessionDataRpc.myProfile,
       }
       return webUserClientSessionData
