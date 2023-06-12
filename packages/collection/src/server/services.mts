@@ -12,10 +12,11 @@ import {
   create,
   currentEntityVar,
   delEntity,
+  entityMeta,
   getEntity,
   patchEntity,
-  queryEntities,
   queryMyEntities,
+  searchEntities,
   toaql,
 } from '@moodlenet/system-entities/server'
 import type { SortTypeRpc } from '../common/types.mjs'
@@ -114,17 +115,42 @@ export async function setCollectionImage(
   })
 }
 
-export async function searchCollections(_: /* {limit,sortType,text,after,} */ {
+export async function searchCollections({
+  limit = 20,
+  sortType = 'Recent',
+  text = '',
+  after = '0',
+}: {
   sortType?: SortTypeRpc
   text?: string
   after?: string
   limit?: number
 }) {
-  _
-  const cursor = await shell.call(queryEntities)(Collection.entityClass, {
-    limit: 6,
-    preAccessBody: 'SORT RAND()',
-  })
+  const sort =
+    sortType === 'Popular'
+      ? '0'
+      : sortType === 'Relevant'
+      ? '0'
+      : sortType === 'Recent'
+      ? `${entityMeta(currentEntityVar, 'created')} DESC`
+      : '0'
+  const skip = Number(after)
+  const cursor = await shell.call(searchEntities)(
+    Collection.entityClass,
+    text,
+    [{ name: 'title', factor: 5 }, { name: 'description' }],
+    {
+      limit,
+      skip,
+      //forOptions: `OPTIONS { indexHint:"${TEXT_SEARCH_INDEX_NAME}", forceIndexHint: true }`,
+      postAccessBody: `
+  SORT ${sort}`,
+    },
+  )
 
-  return cursor.all()
+  const list = await cursor.all()
+  return {
+    list,
+    endCursor: list.length < limit ? undefined : String(skip + list.length),
+  }
 }

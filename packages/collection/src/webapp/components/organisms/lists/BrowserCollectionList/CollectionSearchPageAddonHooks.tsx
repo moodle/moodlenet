@@ -10,6 +10,7 @@ import { createContext, useCallback, useContext, useEffect, useReducer, useState
 import type { CollectionSearchResultRpc, SortTypeRpc } from '../../../../../common/types.mjs'
 import { isSortTypeRpc } from '../../../../../common/types.mjs'
 import { shell } from '../../../../shell.mjs'
+
 import { useCollectionCardProps } from '../../CollectionCard/CollectionCardHooks.js'
 import { BrowserCollectionFilters } from './BrowserCollectionFilters.js'
 import type { BrowserCollectionListDataProps } from './BrowserCollectionList.js'
@@ -43,7 +44,7 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren> = ({ children
   const load = useCallback(
     async (cursor?: string) => {
       const res = await shell.rpc.me['webapp/search'](null, null, {
-        limit: 20,
+        limit: 10,
         sortType,
         text: q,
         after: cursor,
@@ -60,10 +61,14 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren> = ({ children
     })
   }, [load])
 
+  const hasNoMore = !!collectionSearchResult && !collectionSearchResult.endCursor
   const loadMore = useCallback(async () => {
+    if (hasNoMore) {
+      return
+    }
     const res = await load(collectionSearchResult?.endCursor)
     collectionListAction(['more', res.list])
-  }, [collectionSearchResult?.endCursor, load])
+  }, [hasNoMore, load, collectionSearchResult?.endCursor])
 
   const setSortType = useCallback<SearchCollectionContextT['setSortType']>(
     sortType => {

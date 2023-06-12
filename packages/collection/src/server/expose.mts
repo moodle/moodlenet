@@ -184,15 +184,11 @@ export const expose = await shell.expose<CollectionExposeType>({
     'webapp/search': {
       guard: () => void 0,
       async fn(_, __, { limit, sortType, text, after }) {
-        const found = await searchCollections({ limit, sortType, text, after })
+        const { endCursor, list } = await searchCollections({ limit, sortType, text, after })
         return {
-          list: found.map(({ entity: { _key } }) => ({ _key })),
+          list: list.map(({ entity: { _key } }) => ({ _key })),
+          endCursor,
         }
-      },
-      bodyWithFiles: {
-        fields: {
-          '.file': 1,
-        },
       },
     },
   },
