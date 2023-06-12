@@ -10,13 +10,14 @@ import type { CollectionCardProps } from './CollectionCard.js'
 
 export const CollectionCardPlugins = createHookPlugin<
   {
+    topLeftItems: AddonItemNoKey
     topRightItems: AddonItemNoKey
-    // topLeftItems: ItemWithoutKey,
+    mainColumnItems: AddonItemNoKey
   },
   {
     collectionKey: string
   }
->({ topRightItems: null })
+>({ topRightItems: null, mainColumnItems: null, topLeftItems: null })
 
 export const useCollectionCardProps = (collectionKey: string): CollectionCardProps | null => {
   const _mainProps = useMainHook({ collectionKey })
@@ -37,8 +38,8 @@ export const useCollectionCardProps = (collectionKey: string): CollectionCardPro
       ),
     }
     const propsPage: CollectionCardProps = {
-      mainColumnItems: [],
-      topLeftItems: [],
+      mainColumnItems: addons.mainColumnItems,
+      topLeftItems: addons.topLeftItems,
       topRightItems: addons.topRightItems,
       data,
       state,
@@ -47,7 +48,7 @@ export const useCollectionCardProps = (collectionKey: string): CollectionCardPro
     }
 
     return propsPage
-  }, [_mainProps, addons.topRightItems, collectionKey])
+  }, [_mainProps, addons.mainColumnItems, addons.topLeftItems, addons.topRightItems, collectionKey])
 
   return collectionProps
 }

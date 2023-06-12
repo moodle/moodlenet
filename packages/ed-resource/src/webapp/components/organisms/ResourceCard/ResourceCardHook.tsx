@@ -9,9 +9,21 @@ import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { ResourceCardPropsData } from './ResourceCard.js'
 
 export const ResourceCardPlugins = createHookPlugin<
-  { topRightItems: AddonItemNoKey },
+  {
+    mainColumnItems: AddonItemNoKey
+    topLeftItems: AddonItemNoKey
+    bottomLeftItems: AddonItemNoKey
+    bottomRightItems: AddonItemNoKey
+    topRightItems: AddonItemNoKey
+  },
   { resourceKey: string }
->({ topRightItems: null })
+>({
+  topRightItems: null,
+  bottomLeftItems: null,
+  bottomRightItems: null,
+  mainColumnItems: null,
+  topLeftItems: null,
+})
 
 export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData | null => {
   const _mainProps = useResourceBaseProps({ resourceKey })
@@ -49,11 +61,11 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
     if (!dataProps) return null
     const { data, state, access, actions } = dataProps
     const propsPage: ResourceCardPropsData = {
-      mainColumnItems: [],
-      topLeftItems: [],
+      mainColumnItems: addons.mainColumnItems,
+      topLeftItems: addons.topLeftItems,
       topRightItems: addons.topRightItems,
-      bottomLeftItems: [],
-      bottomRightItems: [],
+      bottomLeftItems: addons.bottomLeftItems,
+      bottomRightItems: addons.bottomRightItems,
       data,
       state,
       actions,
@@ -61,7 +73,14 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
     }
 
     return propsPage
-  }, [addons.topRightItems, dataProps])
+  }, [
+    addons.bottomLeftItems,
+    addons.bottomRightItems,
+    addons.mainColumnItems,
+    addons.topLeftItems,
+    addons.topRightItems,
+    dataProps,
+  ])
 
   return collectionProps
 }
