@@ -297,11 +297,6 @@ export const expose = await shell.expose<FullResourceExposeType>({
           endCursor,
         }
       },
-      bodyWithFiles: {
-        fields: {
-          '.file': 1,
-        },
-      },
     },
   },
 })
