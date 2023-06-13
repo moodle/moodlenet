@@ -4,7 +4,6 @@ import { aqlGetPkgNamespace } from '../pkg-db-names.mjs'
 import type {
   AqlVal,
   EntityDocFullData,
-  EntityDocument,
   EntityFullDocument,
   EntityMetadata,
   SystemUser,
@@ -70,9 +69,8 @@ export function isAuthenticated(): AqlVal<boolean> {
   return `( currentUser.type != 'anon' )`
 }
 
-export function creatorEntityDoc<T extends SomeEntityDataType>(): AqlVal<EntityDocument<T>> {
-  return `DOCUMENT(${currentEntityMeta}.creatorEntityId )`
-}
+export const creatorEntityIdVar = 'creatorEntityId'
+export const creatorEntityDocVar = `creatorEntityDoc`
 
 export function toaql<T>(any: T): AqlVal<T> {
   return `(${JSON.stringify(any ?? null)})`

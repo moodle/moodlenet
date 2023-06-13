@@ -50,7 +50,10 @@ export type AccessControllers = {
 }
 export type EntityAccess = 'r' | 'u' | 'd'
 
-export type AqlAccessController = (_: { myPkgMeta: AqlVal }) => AqlAccessControllerResp
+export type AqlAccessController = (_: {
+  myPkgMeta: AqlVal
+  entityClass: EntityClass<SomeEntityDataType>
+}) => AqlAccessControllerResp
 
 type AqlAccessControllerResp = AqlAccessControllerRespValue | Promise<AqlAccessControllerRespValue>
 type AqlAccessControllerRespValue = AqlVal<null | boolean> | null | undefined | boolean

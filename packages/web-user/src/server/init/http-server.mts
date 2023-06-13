@@ -31,7 +31,7 @@ await shell.call(addMiddlewares)({
           sendWebUserTokenCookie(undefined)
           return ANON_SYSTEM_USER
         }
-        const { currentWebUser } = verifyResult
+        const { payload: currentWebUser } = verifyResult
         if (currentWebUser.isRoot) {
           return ROOT_SYSTEM_USER
         }
@@ -39,7 +39,7 @@ await shell.call(addMiddlewares)({
           type: 'entity',
           entityIdentifier: {
             entityClass: Profile.entityClass,
-            _key: currentWebUser.profileKey,
+            _key: currentWebUser.profile._key,
           },
           restrictToScopes: false,
         }

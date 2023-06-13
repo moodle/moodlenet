@@ -25,12 +25,19 @@ import type {
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
   const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {
     expirationTime: '2w',
-    subject: !webUserJwtPayload.isRoot ? webUserJwtPayload.profileKey : undefined,
+    subject: webUserJwtPayload.isRoot ? undefined : webUserJwtPayload.webUser._key,
     scope: [/* 'full-user',  */ 'openid'],
   })
   return sessionToken
 }
 
+export async function getCurrentProfileIds() {
+  const tokenCtx = await verifyCurrentTokenCtx()
+  if (!tokenCtx || tokenCtx.payload.isRoot) {
+    return
+  }
+  return tokenCtx.payload.profile
+}
 export async function verifyCurrentTokenCtx() {
   const currentCtx = shell.myAsyncCtx.get()
   if (!currentCtx?.tokenCtx) {
@@ -45,11 +52,11 @@ export async function verifyCurrentTokenCtx() {
     shell.myAsyncCtx.unset()
     return
   }
-  const { payload: currentWebUser } = jwtVerifyResult
+  const { payload } = jwtVerifyResult
   const verifiedTokenCtx: VerifiedTokenCtx = {
     type: 'verified-token',
     currentJwtToken,
-    currentWebUser,
+    payload,
   }
 
   return verifiedTokenCtx
@@ -99,7 +106,7 @@ export function sendWebUserTokenCookie(jwtToken: JwtToken | undefined) {
   const { pkgId } = shell.assertCallInitiator()
   const httpCtx = getCurrentHttpCtx()
   const httpResponse = httpCtx?.response
-
+  // console.log({ httpResponse, jwtToken, jwtTokenL: jwtToken?.length })
   if (!httpResponse) {
     return
   }
@@ -109,10 +116,6 @@ export function sendWebUserTokenCookie(jwtToken: JwtToken | undefined) {
       /** FIXME: set proper options !!! */
     }
     httpResponse.clearCookie(WEB_USER_SESSION_TOKEN_COOKIE_NAME, clearCookieOptions)
-    httpResponse.clearCookie(
-      WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
-      clearCookieOptions,
-    )
     return
   }
   const setCookieOptions: CookieOptions = {
@@ -178,8 +181,15 @@ export async function createWebUser(createRequest: CreateRequest) {
     return
   }
   const jwtToken = await signWebUserJwt({
-    webUserKey: newWebUser._key,
-    profileKey: newProfile._key,
+    webUser: {
+      _key: newWebUser._key,
+      displayName: newWebUser.displayName,
+      isAdmin: newWebUser.isAdmin,
+    },
+    profile: {
+      _id: newProfile._id,
+      _key: newProfile._key,
+    },
   })
 
   return {
@@ -193,9 +203,21 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
   if (!webUser) {
     return
   }
+  const profile = await Profile.collection.document({ _key: webUser.profileKey })
+
+  if (!profile) {
+    return
+  }
   const jwtToken = await signWebUserJwt({
-    webUserKey: webUser._key,
-    profileKey: webUser.profileKey,
+    webUser: {
+      _key: webUser._key,
+      displayName: webUser.displayName,
+      isAdmin: webUser.isAdmin,
+    },
+    profile: {
+      _id: profile._id,
+      _key: profile._key,
+    },
   })
   return jwtToken
 }

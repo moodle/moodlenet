@@ -6,6 +6,8 @@ import { customAlphabet } from 'nanoid'
 import { entityIdByIdentifier, getEntityFullTypename } from '../common/entity-identification.mjs'
 import type { EntityClass, SomeEntityDataType } from '../common/types.mjs'
 import {
+  creatorEntityDocVar,
+  creatorEntityIdVar,
   currentEntityClass,
   currentEntityVar,
   entityIdentifier2EntityIdAql,
@@ -17,7 +19,7 @@ import { userInfoAqlProvider } from './aql-lib/userInfo.mjs'
 import type { EntityInfo, EntityInfoProviderItem } from './entity-info.mjs'
 import { ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
 import { SysEntitiesEvents } from './events.mjs'
-import { db, SearchAliasView, SEARCH_ALIAS_VIEW_NAME } from './init/arangodb.mjs'
+import { db, SearchAliasView, SEARCH_VIEW_NAME } from './init/arangodb.mjs'
 import { env } from './init/env.mjs'
 import { getEntityCollection } from './pkg-db-names.mjs'
 import { shell } from './shell.mjs'
@@ -288,13 +290,10 @@ export async function queryEntities<
   EntityDataType extends SomeEntityDataType,
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
->(
-  entityClassOrCollectionName: EntityClass<EntityDataType> | string,
-  opts?: QueryEntitiesOpts<Project, ProjectAccess>,
-) {
+>(entityClass: EntityClass<EntityDataType>, opts?: QueryEntitiesOpts<Project, ProjectAccess>) {
   const limit = Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT)
   const skip = opts?.skip ?? 0
-  const queryEntitiesCursor = await accessEntities(entityClassOrCollectionName, 'r', {
+  const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
     ...opts,
     postAccessBody: `
       ${opts?.postAccessBody ?? ''}
@@ -362,6 +361,7 @@ export type AccessEntitiesOpts<
   project?: Project
   bindVars?: BindVars
   projectAccess?: ProjectAccess[]
+  viaSearchView?: boolean
 }
 
 export async function getCurrentUserInfo() {
@@ -416,13 +416,12 @@ export async function searchEntities<
                       0.05, 
                       "global-text-search"
                     ), 
-        ${0.2 * factor})
+        ${0.1 * factor})
   `,
     )
     .join(`OR`)
 
   const preAccessBody = `
-    FILTER ${currentEntityClass}==${toaql(entityClass)}
     ${_opts?.preAccessBody ?? ''}`
 
   const postAccessBody = `
@@ -438,8 +437,9 @@ export async function searchEntities<
     forOptions,
     preAccessBody,
     postAccessBody,
+    viaSearchView: true,
   }
-  return queryEntities(SEARCH_ALIAS_VIEW_NAME, opts)
+  return queryEntities(entityClass, opts)
 }
 
 export async function accessEntities<
@@ -447,7 +447,7 @@ export async function accessEntities<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(
-  entityClassOrCollectionName: EntityClass<EntityDataType> | string,
+  entityClass: EntityClass<EntityDataType>,
   access: EntityAccess,
   opts?: AccessEntitiesOpts<Project, ProjectAccess>,
 ) {
@@ -457,10 +457,9 @@ export async function accessEntities<
     return emptyCursor<EntityDataType, Project, ProjectAccess>()
   }
 
-  const entityCollectionName =
-    typeof entityClassOrCollectionName === 'string'
-      ? entityClassOrCollectionName
-      : getEntityFullTypename(entityClassOrCollectionName)
+  const accessCollectionName = opts?.viaSearchView
+    ? SEARCH_VIEW_NAME
+    : getEntityFullTypename(entityClass)
 
   const entityAccessesToCompute = [
     ...new Set<EntityAccess>([
@@ -473,7 +472,11 @@ export async function accessEntities<
   const accessControlsAqlRawProps = (
     await Promise.all(
       entityAccessesToCompute.map(async _entityAccess => {
-        const accessStr = await getAQLAccessControlObjectDefString(currentUser, _entityAccess)
+        const accessStr = await getAQLAccessControlObjectDefString(
+          currentUser,
+          _entityAccess,
+          entityClass,
+        )
         return `${_entityAccess}: ${accessStr}`
       }),
     )
@@ -501,10 +504,15 @@ LET currentUserEntity = ${currentUserEntityAql}
 // the query should fail early with error !
 
 FOR entity in @@collection ${opts?.forOptions ?? ''}
-LET creatorEntityId=entity._meta.creator.type == 'entity' ? ${entityIdentifier2EntityIdAql(
+
+${opts?.viaSearchView ? `FILTER ${currentEntityClass}==${toaql(entityClass)}` : ``}
+
+LET ${creatorEntityIdVar}=entity._meta.creator.type == 'entity' ? ${entityIdentifier2EntityIdAql(
     'entity._meta.creator.entityIdentifier',
   )} : null
-    
+
+LET ${creatorEntityDocVar} = DOCUMENT(${creatorEntityIdVar})
+
 ${opts?.preAccessBody ?? '// NO PRE_ACCESS_BODY'}
 LET accessControls = {
   ${accessControlsAqlRawProps}
@@ -525,7 +533,7 @@ ${projectAqlRawProps}
 }
 `
 
-  const bindVars = { '@collection': entityCollectionName, currentUser, ...opts?.bindVars }
+  const bindVars = { '@collection': accessCollectionName, currentUser, ...opts?.bindVars }
   // console.log(q, JSON.stringify({ bindVars }, null, 2))
   const queryCursor = await db
     .query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(q, bindVars)
@@ -611,7 +619,11 @@ export function includesAnySameClass(
 //   return targets.map(target => includesSameClass(target, someClasses)).includes(true)
 // }
 
-async function getAQLAccessControlObjectDefString(systemUser: SystemUser, access: EntityAccess) {
+async function getAQLAccessControlObjectDefString(
+  systemUser: SystemUser,
+  access: EntityAccess,
+  entityClass: EntityClass<SomeEntityDataType>,
+) {
   if (systemUser.type === 'root') {
     return `[ true ] /* ROOT ALWAYS CONSENT ACCESS */`
   }
@@ -622,17 +634,20 @@ async function getAQLAccessControlObjectDefString(systemUser: SystemUser, access
     return `[ false ] /* ANON CANNOT WRITE SYSTEM ENTITIES */`
   }
 
-  const accessElemsString = await getAqlEntityAccessControlArrayElemsString(access)
+  const accessElemsString = await getAqlEntityAccessControlArrayElemsString(access, entityClass)
 
   return `[
     ${accessElemsString} 
   ]`
 }
 
-async function getAqlEntityAccessControlArrayElemsString(access: EntityAccess) {
+async function getAqlEntityAccessControlArrayElemsString(
+  access: EntityAccess,
+  entityClass: EntityClass<SomeEntityDataType>,
+) {
   const entityAccessControlResponses = await Promise.all(
     accessControllerRegistry.map(({ accessControllers, pkgId }) =>
-      accessControllers[access]?.({ myPkgMeta: pkgMetaOf2Aql(pkgId.name) }),
+      accessControllers[access]?.({ myPkgMeta: pkgMetaOf2Aql(pkgId.name), entityClass }),
     ),
   )
 

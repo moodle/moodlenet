@@ -15,7 +15,6 @@ import {
 import {
   editProfile,
   entityFeatureAction,
-  getCurrentProfile,
   getEntityFeatureCount,
   getLandingPageList,
   getProfileRecord,
@@ -23,6 +22,7 @@ import {
   setProfileBackgroundImage,
 } from './lib/profile.mjs'
 import {
+  getCurrentProfileIds,
   getWebUser,
   loginAsRoot,
   searchUsers,
@@ -39,32 +39,31 @@ export const expose = await shell.expose<WebUserExposeType>({
       guard: () => void 0,
       async fn() {
         const verifiedCtx = await verifyCurrentTokenCtx()
-        // console.log('getCurrentClientSessionDataRpc', { verifiedCtx })
+        // console.log('getCurrentClientSessionDataRpc', verifiedCtx?.payload)
         if (!verifiedCtx) {
           sendWebUserTokenCookie(undefined)
           return
         }
-        const { currentWebUser } = verifiedCtx
-        if (currentWebUser.isRoot) {
+        if (verifiedCtx.payload.isRoot) {
           return {
             isRoot: true,
           }
         }
         // await setCurrentVerifiedJwtToken(verifiedCtx, false)
 
-        const webUser = await getWebUser({ _key: currentWebUser.webUserKey })
+        const webUser = await getWebUser({ _key: verifiedCtx.payload.webUser._key })
         if (!webUser) {
           sendWebUserTokenCookie(undefined)
           return
         }
         assert(
-          webUser.profileKey === currentWebUser.profileKey,
-          `webUser.profileKey:${webUser.profileKey} not equals currentWebUser.profileKey:${currentWebUser.profileKey}`,
+          webUser.profileKey === verifiedCtx.payload.profile._key,
+          `webUser.profileKey:${webUser.profileKey} not equals verifiedCtx.payload.profile._key:${verifiedCtx.payload.profile._key}`,
         )
-        const profileRecord = await getProfileRecord(currentWebUser.profileKey)
+        const profileRecord = await getProfileRecord(webUser.profileKey)
         assert(
           profileRecord,
-          `couldn't find Profile#${currentWebUser.profileKey} associated with WebUser#${currentWebUser.webUserKey}:${webUser.displayName}`,
+          `couldn't find Profile#${webUser.profileKey} associated with WebUser#${webUser._key}:${webUser.displayName}`,
         )
 
         const myProfile = profileDoc2Profile(profileRecord.entity)
@@ -219,12 +218,16 @@ export const expose = await shell.expose<WebUserExposeType>({
     'webapp/all-my-featured-entities': {
       guard: () => void 0,
       async fn() {
-        const myProfile = await getCurrentProfile()
+        const myProfile = await getCurrentProfileIds()
         if (!myProfile) {
           return null
         }
+        const profileRec = await getProfileRecord(myProfile._key)
+        if (!profileRec) {
+          return null
+        }
         return {
-          featuredEntities: reduceToKnownFeaturedEntities(myProfile.knownFeaturedEntities),
+          featuredEntities: reduceToKnownFeaturedEntities(profileRec.entity.knownFeaturedEntities),
         }
       },
     },
