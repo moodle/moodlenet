@@ -1,5 +1,5 @@
 import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { Document, EntityDocument } from '@moodlenet/system-entities/server'
 import type { KnownEntityFeature } from '../common/types.mjs'
 
 // TODO: ProfileEntity _meta { webUserKey }
@@ -46,8 +46,8 @@ export type WebUserJwtPayload =
     }
   | {
       isRoot?: false
-      webUserKey: string
-      profileKey: string
+      webUser: Pick<Document<WebUserDataType>, '_key' | 'isAdmin' | 'displayName'>
+      profile: Pick<ProfileEntity, '_key' | '_id'>
     }
 
 export type WebUserCtxType = {
@@ -58,7 +58,7 @@ export type TokenCtx = VerifiedTokenCtx | UnverifiedTokenCtx
 export type VerifiedTokenCtx = {
   type: 'verified-token'
   currentJwtToken: JwtToken
-  currentWebUser: JwtVerifyResult<WebUserJwtPayload>['payload']
+  payload: JwtVerifyResult<WebUserJwtPayload>['payload']
 }
 
 export type UnverifiedTokenCtx = {

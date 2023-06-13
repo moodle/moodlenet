@@ -1,4 +1,4 @@
-import { getCurrentProfile } from '@moodlenet/web-user/server'
+import { getCurrentProfileIds } from '@moodlenet/web-user/server'
 import type { OpenIdExposeType } from '../common/expose-def.mjs'
 import { shell } from './shell.mjs'
 
@@ -8,7 +8,7 @@ export const expose = await shell.expose<OpenIdExposeType>({
       guard: () => void 0,
       async fn({ interactionId }) {
         const { openIdProvider } = await import('./oidc/provider.mjs')
-        const currentWebUserProfile = await getCurrentProfile()
+        const currentWebUserProfile = await getCurrentProfileIds()
         if (!currentWebUserProfile) {
           return
         }

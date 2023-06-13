@@ -18,10 +18,10 @@ RETURN ${returnStatement}`,
   )
 }
 
-export const SEARCH_ALIAS_VIEW_NAME = 'SearchView'
-export const SearchAliasView = (await db.view(SEARCH_ALIAS_VIEW_NAME).exists())
-  ? db.view(SEARCH_ALIAS_VIEW_NAME)
-  : await db.createView(SEARCH_ALIAS_VIEW_NAME, {
+export const SEARCH_VIEW_NAME = 'SearchView'
+export const SearchAliasView = (await db.view(SEARCH_VIEW_NAME).exists())
+  ? db.view(SEARCH_VIEW_NAME)
+  : await db.createView(SEARCH_VIEW_NAME, {
       type: 'arangosearch',
     })
 

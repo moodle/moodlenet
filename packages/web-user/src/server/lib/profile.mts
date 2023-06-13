@@ -19,12 +19,12 @@ import { WebUserEntitiesTools } from '../entities.mjs'
 import { publicFiles } from '../init/fs.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
-import type { KnownFeaturedEntityItem, ProfileDataType, ProfileEntity } from '../types.mjs'
+import type { KnownFeaturedEntityItem, ProfileDataType } from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
 import {
+  getCurrentProfileIds,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
-  verifyCurrentTokenCtx,
 } from './web-user.mjs'
 
 export async function editProfile(
@@ -66,8 +66,8 @@ export async function entityFeatureAction({
 }) {
   const adding = action === 'add'
   adding && assert(isAllowedKnownEntityFeature({ entityType, feature }))
-  const current = await getCurrentProfile()
-  assert(current)
+  const currentProfileIds = await getCurrentProfileIds()
+  assert(currentProfileIds)
   const targetEntityId = getEntityIdByKnownEntity({ _key, entityType })
   const targetEntityDoc = await (
     await sysEntitiesDB.query<EntityFullDocument<SomeEntityDataType>>({
@@ -85,7 +85,7 @@ export async function entityFeatureAction({
       })
     : undefined
 
-  const iAmCreator = profileCreatorIdentifiers?._id === current._id
+  const iAmCreator = profileCreatorIdentifiers?._id === currentProfileIds._id
   if (adding && (feature === 'like' || feature === 'follow') && iAmCreator) {
     return
   }
@@ -102,7 +102,7 @@ export async function entityFeatureAction({
 
   const updateResult = await shell.call(patchEntity)(
     Profile.entityClass,
-    current._key,
+    currentProfileIds._key,
     `{ 
     knownFeaturedEntities: ${aqlAction}
   }`,
@@ -127,20 +127,6 @@ export async function entityFeatureAction({
   }
 
   return updateResult
-}
-
-export async function getCurrentProfile(): Promise<ProfileEntity | undefined> {
-  const verifiedCtx = await verifyCurrentTokenCtx()
-  if (!verifiedCtx) {
-    return
-  }
-  const { currentWebUser } = verifiedCtx
-  if (currentWebUser.isRoot) {
-    return
-  }
-
-  const myProfileRecord = await getProfileRecord(currentWebUser.profileKey)
-  return myProfileRecord?.entity
 }
 
 export async function getProfileRecord(
