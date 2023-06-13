@@ -7,7 +7,12 @@ export type CollectionDataType = {
   image: null | Image
   published: boolean
   resourceList: { _key: string }[]
+  popularity?: {
+    overall: number
+    items: { [key: string]: CollectionPopularityItem }
+  }
 }
+export type CollectionPopularityItem = { value: number }
 
 export type Credits = {
   owner: { url: string; name: string }

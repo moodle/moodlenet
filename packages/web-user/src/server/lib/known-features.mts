@@ -1,4 +1,5 @@
 import { CollectionEntitiesTools } from '@moodlenet/collection/server'
+import { EdMetaEntitiesTools } from '@moodlenet/ed-meta/server'
 import { EdResourceEntitiesTools } from '@moodlenet/ed-resource/server'
 import assert from 'assert'
 import type {
@@ -23,6 +24,8 @@ export function getEntityIdByKnownEntity({
       ? EdResourceEntitiesTools.getIdentifiersByKey({ _key, type: 'Resource' })._id
       : entityType === 'profile'
       ? WebUserEntitiesTools.getIdentifiersByKey({ _key, type: 'Profile' })._id
+      : entityType === 'subject'
+      ? EdMetaEntitiesTools.getIdentifiersByKey({ _key, type: 'IscedField' })._id
       : null
 
   assert(_id)
@@ -38,7 +41,7 @@ export function isAllowedKnownEntityFeature({
 }) {
   const allowedFeature: { [feat in KnownEntityFeature]: KnownEntityType[] } = {
     bookmark: ['collection', 'resource'],
-    follow: ['collection', 'profile'],
+    follow: ['collection', 'profile', 'subject'],
     like: ['resource'],
   }
   return allowedFeature[feature].find(allowedType => allowedType === entityType)
@@ -52,16 +55,19 @@ export function reduceToKnownFeaturedEntities(
       collection: extractFeaturedIdentifiers('Collection', 'bookmark'),
       profile: extractFeaturedIdentifiers('Profile', 'bookmark'),
       resource: extractFeaturedIdentifiers('Resource', 'bookmark'),
+      subject: extractFeaturedIdentifiers('Subject', 'bookmark'),
     },
     follow: {
       collection: extractFeaturedIdentifiers('Collection', 'follow'),
       profile: extractFeaturedIdentifiers('Profile', 'follow'),
       resource: extractFeaturedIdentifiers('Resource', 'follow'),
+      subject: extractFeaturedIdentifiers('Subject', 'follow'),
     },
     like: {
       collection: extractFeaturedIdentifiers('Collection', 'like'),
       profile: extractFeaturedIdentifiers('Profile', 'like'),
       resource: extractFeaturedIdentifiers('Resource', 'like'),
+      subject: extractFeaturedIdentifiers('Subject', 'like'),
     },
   }
   return myFeaturedEntities
@@ -84,10 +90,17 @@ export function reduceToKnownFeaturedEntities(
             ids: filteredByFeature,
             type: extractEntity,
           })
-        : WebUserEntitiesTools.mapToIdentifiersFilterType({
+        : extractEntity === 'Subject'
+        ? EdMetaEntitiesTools.mapToIdentifiersFilterType({
+            ids: filteredByFeature,
+            type: 'IscedField',
+          })
+        : extractEntity === 'Profile'
+        ? WebUserEntitiesTools.mapToIdentifiersFilterType({
             ids: filteredByFeature,
             type: extractEntity,
           })
+        : []
 
     return identifiers.map(({ entityIdentifier: { _key } }) => ({ _key }))
   }

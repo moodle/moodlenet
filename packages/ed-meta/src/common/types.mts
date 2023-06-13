@@ -1,6 +1,6 @@
 import type { EdMetaExposeType } from './expose-def.mjs'
 
-export type EdMetaEntityNames = 'IscedField' | 'IscedGrade'
+export type EdMetaEntityNames = 'IscedField' | 'IscedGrade' | 'Language' | 'License' | 'EdAssetType'
 export type MyWebDeps = {
   me: EdMetaExposeType
 }

@@ -18,7 +18,13 @@ export type ProfileDataType = {
   kudos: number
   publisher: boolean
   webslug: string
+  popularity?: {
+    overall: number
+    items: { [key: string]: ProfilePopularityItem }
+  }
 }
+export type ProfilePopularityItem = { value: number }
+
 type Image = ImageUploaded
 export type ImageUploaded = { kind: 'file'; directAccessId: string }
 // export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }

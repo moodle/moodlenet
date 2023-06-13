@@ -15,6 +15,7 @@ import {
   getEntity,
   patchEntity,
   searchEntities,
+  sysEntitiesDB,
 } from '@moodlenet/system-entities/server'
 import type { SortTypeRpc } from '../common/types.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
@@ -22,8 +23,22 @@ import { Resource } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { ResourceDataType, ResourceEntityDoc } from './types.mjs'
 
-export async function createResource(resourceData: ResourceDataType) {
-  const newResource = await shell.call(create)(Resource.entityClass, resourceData)
+export async function createResource(resourceData: Partial<ResourceDataType>) {
+  const newResource = await shell.call(create)(Resource.entityClass, {
+    description: '',
+    title: '',
+    content: null,
+    image: null,
+    published: false,
+    license: '',
+    subject: '',
+    language: '',
+    level: '',
+    month: '',
+    year: '',
+    type: '',
+    ...resourceData,
+  })
 
   return newResource
 }
@@ -37,6 +52,38 @@ export async function getResource<
     project: opts?.project,
   })
   return foundResource
+}
+
+export async function incrementResourceDownloads({ _key }: { _key: string }) {
+  return deltaResourcePopularityItem({ _key, itemName: 'downloads', delta: 1 })
+}
+
+export async function deltaResourcePopularityItem({
+  _key,
+  itemName,
+  delta,
+}: {
+  _key: string
+  itemName: string
+  delta: number
+}) {
+  const updatePopularityResult = await sysEntitiesDB.query<ResourceDataType>({
+    query: `FOR res in @@resourceCollection 
+      FILTER res._key == @_key
+      LIMIT 1
+      UPDATE res WITH {
+        popularity:{
+          overall: res.popularity.overall + ( ${delta} ),
+          items:{
+            "${itemName}": (res.popularity.items["${itemName}"] || 0) + ( ${delta} )
+          }
+        }
+      } IN @@resourceCollection 
+      RETURN NEW`,
+    bindVars: { '@resourceCollection': Resource.collection.name, _key },
+  })
+  const updated = await updatePopularityResult.next()
+  return updated?.popularity?.overall
 }
 
 export async function patchResource(_key: string, patch: Patch<ResourceEntityDoc>) {
@@ -145,12 +192,12 @@ export async function searchResources({
 }) {
   const sort =
     sortType === 'Popular'
-      ? '0'
+      ? `${currentEntityVar}.popularity.overall DESC, rank DESC`
       : sortType === 'Relevant'
-      ? '0'
+      ? 'rank DESC'
       : sortType === 'Recent'
       ? `${entityMeta(currentEntityVar, 'created')} DESC`
-      : '0'
+      : 'rank DESC'
   const skip = Number(after)
   const cursor = await shell.call(searchEntities)(
     Resource.entityClass,
@@ -159,9 +206,8 @@ export async function searchResources({
     {
       limit,
       skip,
+      sort,
       //forOptions: `OPTIONS { indexHint:"${TEXT_SEARCH_INDEX_NAME}", forceIndexHint: true }`,
-      postAccessBody: `
-    SORT ${sort}`,
     },
   )
 

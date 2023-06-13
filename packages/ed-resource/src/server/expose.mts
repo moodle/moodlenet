@@ -23,6 +23,7 @@ import {
   getResource,
   getResourceFileUrl,
   getResourceLogicalFilename,
+  incrementResourceDownloads,
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
   searchResources,
@@ -148,16 +149,6 @@ export const expose = await shell.expose<FullResourceExposeType>({
         const createResult = await createResource({
           description,
           title: name,
-          content: null,
-          image: null,
-          published: false,
-          license: '',
-          subject: '',
-          language: '',
-          level: '',
-          month: '',
-          year: '',
-          type: '',
         })
         if (!createResult) {
           throw RpcStatus('Unauthorized')
@@ -189,20 +180,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/create': {
       guard: () => void 0,
       fn: async () => {
-        const createResult = await createResource({
-          description: '',
-          title: '',
-          content: null,
-          image: null,
-          published: false,
-          license: '',
-          subject: '',
-          language: '',
-          level: '',
-          month: '',
-          year: '',
-          type: '',
-        })
+        const createResult = await createResource({})
         if (!createResult) {
           throw RpcStatus('Unauthorized')
         }
@@ -284,6 +262,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         readable.on('end', () => {
           console.log('resource download stream ended, can increment download count')
+          incrementResourceDownloads({ _key })
         })
         return readable
       },

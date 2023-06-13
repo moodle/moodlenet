@@ -40,9 +40,9 @@ function useMyProfileContextValue() {
 }
 
 const emptyFeaturedEntities: KnownFeaturedEntities = {
-  bookmark: { collection: [], profile: [], resource: [] },
-  follow: { collection: [], profile: [], resource: [] },
-  like: { collection: [], profile: [], resource: [] },
+  bookmark: { subject: [], collection: [], profile: [], resource: [] },
+  follow: { subject: [], collection: [], profile: [], resource: [] },
+  like: { subject: [], collection: [], profile: [], resource: [] },
 }
 
 export type AllMyFeaturedEntitiesHandle = {
@@ -87,7 +87,7 @@ function useAllMyFeaturedEntities() {
     async ({ _key, entityType, feature }) => {
       const action = isFeatured({ _key, entityType, feature }) ? 'remove' : 'add'
       await shell.rpc.me[
-        'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key'
+        'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key'
       ](void 0, { action, _key, entityType, feature })
       setAll(featuredEntities => {
         const currentList = featuredEntities[feature][entityType]

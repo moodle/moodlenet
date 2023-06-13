@@ -134,13 +134,7 @@ export const expose = await shell.expose<CollectionExposeType>({
     'webapp/create': {
       guard: () => void 0,
       async fn() {
-        const createResult = await createCollection({
-          description: '',
-          title: '',
-          image: null,
-          published: false,
-          resourceList: [],
-        })
+        const createResult = await createCollection({})
         if (!createResult) {
           throw RpcStatus('Unauthorized')
         }
