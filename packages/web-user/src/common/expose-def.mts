@@ -28,7 +28,7 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
     ): Promise<string | null>
-    'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key'(
+    'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key'(
       body: void,
       params: {
         action: 'add' | 'remove'
@@ -37,7 +37,7 @@ export type WebUserExposeType = PkgExposeDef<{
         _key: string
       },
     ): Promise<void>
-    'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource)/:_key'(
+    'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key'(
       body: void,
       params: {
         feature: Exclude<KnownEntityFeature, 'bookmark'>

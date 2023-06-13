@@ -15,8 +15,14 @@ export type ResourceDataType = {
   month: string
   year: string
   type: string
+  popularity?: {
+    overall: number
+    items: {
+      downloads: ResourcePopularityItem
+    } & { [key: string]: ResourcePopularityItem }
+  }
 }
-
+export type ResourcePopularityItem = { value: number }
 export type Credits = {
   owner: { url: string; name: string }
   provider?: { name: string; url: string }

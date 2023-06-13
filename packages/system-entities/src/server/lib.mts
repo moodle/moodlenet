@@ -285,6 +285,7 @@ export type QueryEntitiesOpts<
 > = AccessEntitiesOpts<Project, ProjectAccess> & {
   skip?: number
   limit?: number
+  sort?: string
 }
 export async function queryEntities<
   EntityDataType extends SomeEntityDataType,
@@ -293,10 +294,12 @@ export async function queryEntities<
 >(entityClass: EntityClass<EntityDataType>, opts?: QueryEntitiesOpts<Project, ProjectAccess>) {
   const limit = Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT)
   const skip = opts?.skip ?? 0
+  const sort = opts?.sort ? `SORT ${opts.sort}` : ''
   const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
     ...opts,
     postAccessBody: `
       ${opts?.postAccessBody ?? ''}
+      ${sort}
       LIMIT ${skip}, ${limit}
     `,
   })
@@ -426,18 +429,18 @@ export async function searchEntities<
 
   const postAccessBody = `
     let rank =  TFIDF(${currentEntityVar})
-    SORT rank desc
     ${_opts?.postAccessBody ?? ''}`
 
   const forOptions = `
   SEARCH ANALYZER(${allSearchstatements}, "text_en")`
 
-  const opts: AccessEntitiesOpts<Project, ProjectAccess> = {
+  const opts: QueryEntitiesOpts<Project, ProjectAccess> = {
     ..._opts,
     forOptions,
     preAccessBody,
     postAccessBody,
     viaSearchView: true,
+    sort: _opts?.sort ?? 'rank',
   }
   return queryEntities(entityClass, opts)
 }

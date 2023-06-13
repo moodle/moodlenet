@@ -202,7 +202,7 @@ export const expose = await shell.expose<WebUserExposeType>({
       },
     },
 
-    'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource)/:_key':
+    'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key':
       {
         guard: () => void 0,
         async fn(_, { _key, entityType, feature }) {
@@ -245,7 +245,7 @@ export const expose = await shell.expose<WebUserExposeType>({
       },
     },
 
-    'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection)/:_key':
+    'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key':
       {
         guard: () => void 0,
         async fn(_, { _key, action, entityType, feature }) {

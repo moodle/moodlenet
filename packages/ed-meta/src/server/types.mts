@@ -5,7 +5,12 @@ export type IscedFieldDataType = {
   codePath: string[]
   name: string
   published: boolean
+  popularity?: {
+    overall: number
+    items: { [key: string]: IscedFieldPopularityItem }
+  }
 }
+export type IscedFieldPopularityItem = { value: number }
 
 export type IscedGradeEntityDoc = EntityDocument<IscedGradeDataType>
 export type IscedGradeDataType = {

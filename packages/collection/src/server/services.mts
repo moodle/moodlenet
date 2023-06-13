@@ -17,6 +17,7 @@ import {
   patchEntity,
   queryMyEntities,
   searchEntities,
+  sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
 import type { SortTypeRpc } from '../common/types.mjs'
@@ -25,12 +26,46 @@ import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { CollectionDataType, CollectionEntityDoc } from './types.mjs'
 
-export async function createCollection(collectionData: CollectionDataType) {
-  const newCollection = await shell.call(create)(Collection.entityClass, collectionData)
+export async function createCollection(collectionData: Partial<CollectionDataType>) {
+  const newCollection = await shell.call(create)(Collection.entityClass, {
+    description: '',
+    title: '',
+    image: null,
+    published: false,
+    resourceList: [],
+    ...collectionData,
+  })
 
   return newCollection
 }
 
+export async function deltaCollectionPopularityItem({
+  _key,
+  itemName,
+  delta,
+}: {
+  _key: string
+  itemName: string
+  delta: number
+}) {
+  const updatePopularityResult = await sysEntitiesDB.query<CollectionDataType>({
+    query: `FOR res in @@collections 
+      FILTER res._key == @_key
+      LIMIT 1
+      UPDATE res WITH {
+        popularity:{
+          overall: res.popularity.overall + ( ${delta} ),
+          items:{
+            "${itemName}": (res.popularity.items["${itemName}"] || 0) + ( ${delta} )
+          }
+        }
+      } IN @@collections 
+      RETURN NEW`,
+    bindVars: { '@collections': Collection.collection.name, _key },
+  })
+  const updated = await updatePopularityResult.next()
+  return updated?.popularity?.overall
+}
 export async function getMyCollections<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
@@ -128,12 +163,12 @@ export async function searchCollections({
 }) {
   const sort =
     sortType === 'Popular'
-      ? '0'
+      ? `${currentEntityVar}.popularity.overall DESC, rank DESC`
       : sortType === 'Relevant'
-      ? '0'
+      ? 'rank DESC'
       : sortType === 'Recent'
       ? `${entityMeta(currentEntityVar, 'created')} DESC`
-      : '0'
+      : 'rank DESC'
   const skip = Number(after)
   const cursor = await shell.call(searchEntities)(
     Collection.entityClass,
@@ -142,9 +177,8 @@ export async function searchCollections({
     {
       limit,
       skip,
+      sort,
       //forOptions: `OPTIONS { indexHint:"${TEXT_SEARCH_INDEX_NAME}", forceIndexHint: true }`,
-      postAccessBody: `
-  SORT ${sort}`,
     },
   )
 

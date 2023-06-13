@@ -1,6 +1,7 @@
-import { Collection } from '@moodlenet/collection/server'
+import { Collection, deltaCollectionPopularityItem } from '@moodlenet/collection/server'
 import type { RpcFile } from '@moodlenet/core'
-import { Resource } from '@moodlenet/ed-resource/server'
+import { deltaIscedFieldPopularityItem } from '@moodlenet/ed-meta/server'
+import { deltaResourcePopularityItem, Resource } from '@moodlenet/ed-resource/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import { webImageResizer } from '@moodlenet/react-app/server'
 import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
@@ -112,18 +113,32 @@ export async function entityFeatureAction({
       },
     },
   )
-  if (feature === 'like' && profileCreatorIdentifiers) {
-    const delta = adding ? '+ 1' : '- 1'
-    await shell.initiateCall(async () => {
-      await setPkgCurrentUser()
-      /* const patchResult = */
-      await patchEntity(
-        Profile.entityClass,
-        profileCreatorIdentifiers.entityIdentifier._key,
-        `{ kudos: ${currentEntityVar}.kudos ${delta} }`,
-      )
-      // console.log({ profileCreatorIdentifiers, patchResult })
-    })
+  if (feature === 'like') {
+    const delta = adding ? 1 : -1
+    if (profileCreatorIdentifiers) {
+      await shell.initiateCall(async () => {
+        await setPkgCurrentUser()
+        /* const patchResult = */
+        await patchEntity(
+          Profile.entityClass,
+          profileCreatorIdentifiers.entityIdentifier._key,
+          `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
+        )
+        // console.log({ profileCreatorIdentifiers, patchResult })
+      })
+    }
+    if (entityType === 'resource') {
+      await deltaResourcePopularityItem({ _key, itemName: 'likes', delta })
+    }
+  } else if (feature === 'follow') {
+    const delta = adding ? 1 : -1
+    if (entityType === 'collection') {
+      await deltaCollectionPopularityItem({ _key, itemName: 'followers', delta })
+    } else if (entityType === 'profile') {
+      await deltaProfilePopularityItem({ _key, itemName: 'followers', delta })
+    } else if (entityType === 'subject') {
+      await deltaIscedFieldPopularityItem({ _key, itemName: 'followers', delta })
+    }
   }
 
   return updateResult
@@ -254,4 +269,32 @@ export async function getLandingPageList(entity: 'collections' | 'profiles' | 'r
   })
 
   return cursor.all()
+}
+
+export async function deltaProfilePopularityItem({
+  _key,
+  itemName,
+  delta,
+}: {
+  _key: string
+  itemName: string
+  delta: number
+}) {
+  const updatePopularityResult = await sysEntitiesDB.query<ProfileDataType>({
+    query: `FOR res in @@profileCollection 
+      FILTER res._key == @_key
+      LIMIT 1
+      UPDATE res WITH {
+        popularity:{
+          overall: res.popularity.overall + ( ${delta} ),
+          items:{
+            "${itemName}": (res.popularity.items["${itemName}"] || 0) + ( ${delta} )
+          }
+        }
+      } IN @@profileCollection 
+      RETURN NEW`,
+    bindVars: { '@profileCollection': Profile.collection.name, _key },
+  })
+  const updated = await updatePopularityResult.next()
+  return updated?.popularity?.overall
 }
