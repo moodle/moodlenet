@@ -8,8 +8,8 @@ import './Searchbox.scss'
 export type SearchboxProps = {
   searchText: string
   placeholder: string
-  setSearchText(text: string): unknown
-  search(text: string): unknown
+  setSearchText(text: string): void
+  search(text: string): void
   setIsSearchboxInViewport?: Dispatch<SetStateAction<boolean>>
   size?: 'small' | 'big'
   marginTop?: number

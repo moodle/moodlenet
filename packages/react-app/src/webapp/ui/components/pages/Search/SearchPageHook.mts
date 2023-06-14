@@ -1,6 +1,8 @@
 import type { ComponentType, PropsWithChildren } from 'react'
-import { useMemo } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { createHookPlugin } from '../../../../web-lib/plugins.mjs'
+import { MainSearchBoxCtx } from '../../atoms/MainSearchBox/MainSearchBox.js'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { MainColumItem } from '../../organisms/Browser/Browser.js'
 import type { SearchProps } from './Search.js'
@@ -22,5 +24,14 @@ export function useSearchProps() {
     }
     return props
   }, [addons.searchEntitySections, mainLayoutProps])
+  const { setSearchText } = useContext(MainSearchBoxCtx)
+  const { pathname } = useLocation()
+  useEffect(
+    () => () => {
+      setSearchText('')
+    },
+    [pathname, setSearchText],
+  )
+
   return { searchProps, wrappers: addons.wrappers }
 }
