@@ -26,7 +26,7 @@ const meta: ComponentMeta<typeof Loading> = {
   ],
 }
 
-export const LoadingStoryProps: LoadingProps = { color: 'orange', size: 40 }
+export const LoadingStoryProps: LoadingProps = { color: 'orange', size: '40px' }
 
 const LoadingStory: ComponentStory<typeof Loading> = args => <Loading {...args}></Loading>
 

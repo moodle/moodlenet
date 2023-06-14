@@ -28,7 +28,6 @@ import {
   Public,
   PublicOff,
   Save,
-  Sync,
 } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -212,20 +211,24 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </div>
     ) : null
 
+  const [currentlySaving, setCurrentlySaving] = useState(false)
   const [showSavedText, setShowSavedText] = useState(false)
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    isSaving && setSaved(true)
-    if (!isSaving && saved) {
+    isSaving && setCurrentlySaving(true)
+    if (!isSaving && currentlySaving) {
+      setSaved(true)
+      setCurrentlySaving(false)
       setShowSavedText(true)
       setTimeout(() => setShowSavedText(false), 3000)
     }
-  }, [isSaving, setShowSavedText, saved])
+  }, [currentlySaving, isSaving, saved])
 
   const savingFeedback = isSaving ? (
     <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-      <Sync />
+      <Loading type="circular" color="#8f8f8f" size="19px" />
+      {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
       Saving...
     </abbr>
   ) : saved ? (
@@ -242,46 +245,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  // const likeButton =
-  //   isPublished || numLikes > 0 ? (
-  //     <TertiaryButton
-  //       className={`like ${!canLike ? '' : 'disabled'} ${liked && 'liked'}`}
-  //       onClick={canLike ? toggleLike : () => undefined}
-  //       abbr={isCreator ? 'Creators cannot like their own content' : liked ? 'Unlike' : 'Like'}
-  //       key="like-button"
-  //     >
-  //       {liked ? <Favorite /> : <FavoriteBorder />}
-  //       <span>{numLikes}</span>
-  //     </TertiaryButton>
-  //   ) : null
-
   const empty =
     (!form.values.title || form.values.title === '') &&
     (!form.values.description || form.values.description === '') &&
     !contentForm.values.content &&
     !imageForm.values.image
-
-  // const bookmarkButtonSmallScreen: FloatingMenuContentItem | null =
-  //   !empty && width < 800
-  //     ? {
-  //         key: 'bookmark-button',
-  //         className: `bookmark ${bookmarked && 'bookmarked'}`,
-  //         onClick: toggleBookmark ? () => toggleBookmark : () => undefined,
-  //         text: bookmarked ? 'Remove bookmark' : 'Bookmark',
-  //         Icon: bookmarked ? <Bookmark /> : <BookmarkBorder />,
-  //       }
-  //     : null
-
-  // const bookmarkButtonBigScreen = !empty && width > 800 && (
-  //   <TertiaryButton
-  //     key="bookmark-button"
-  //     className={`bookmark ${bookmarked && 'bookmarked'}`}
-  //     abbr={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-  //     onClick={toggleBookmark ? () => toggleBookmark : () => undefined}
-  //   >
-  //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-  //   </TertiaryButton>
-  // )
 
   const shareButton: FloatingMenuContentItem | null =
     !empty && isPublished
@@ -331,13 +299,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           wrapperClassName: 'unpublish-button',
         }
       : null
-
-  // const publishingButton =
-  //   canPublish && !isPublished ? (
-  //     <abbr key="publishing-button" title="Publish requested" style={{ cursor: 'initial' }}>
-  //       <HourglassBottom style={{ fill: '#d0d1db' }} />
-  //     </abbr>
-  //   ) : null
 
   const publishedButton =
     canPublish && isPublished ? (
@@ -449,27 +410,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         Item: () => (
           <div className="edit-save">
             {isEditing ? (
-              <PrimaryButton
-                className={`${form.isSubmitting ? 'loading' : ''}`}
-                color="green"
-                onClick={handleOnSaveClick}
-              >
-                <div
-                  className="loading"
-                  style={{
-                    visibility: form.isSubmitting ? 'visible' : 'hidden',
-                  }}
-                >
-                  <Loading color="white" />
-                </div>
-                <div
-                  className="label"
-                  style={{
-                    visibility: form.isSubmitting ? 'hidden' : 'visible',
-                  }}
-                >
-                  <Save />
-                </div>
+              <PrimaryButton className={``} color="green" onClick={handleOnSaveClick}>
+                <Save />
               </PrimaryButton>
             ) : (
               <SecondaryButton onClick={handleOnEditClick} color="orange">

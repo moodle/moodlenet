@@ -255,7 +255,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
             )}
           </div>
 
-          {unsplashImages?.length !== 0 && !showImages && <Loading size={30} />}
+          {unsplashImages?.length !== 0 && !showImages && <Loading size={'30px'} />}
           {!unsplashImages ||
             (unsplashImages?.length === 0 && (
               <div className="error-msg">No matching images, try with another word</div>

@@ -79,6 +79,7 @@
     "react-router-dom": "^6.3.0"
   },
   "dependencies": {
-    "@material-ui/icons": "^4.11.3"
+    "@material-ui/icons": "^4.11.3",
+    "lottie-react": "^2.4.0"
   }
 }
