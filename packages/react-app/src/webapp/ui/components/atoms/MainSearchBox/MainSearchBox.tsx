@@ -28,6 +28,7 @@ export const ProvideMainSearchBoxCtx: FC<PropsWithChildren<MainSearchBoxCtxValue
   return <MainSearchBoxCtx.Provider value={ctxValue}>{children}</MainSearchBoxCtx.Provider>
 }
 
+const defaultPlaceholder = 'Search for open education content'
 export type MainSearchBoxCtxValueDeps = { search(text: string): void; initSearchText: string }
 export function useMainSearchBoxCtxValue({
   search,
@@ -35,9 +36,6 @@ export function useMainSearchBoxCtxValue({
 }: MainSearchBoxCtxValueDeps): MainSearchBoxCtxT {
   const [searchText, setSearchText] = useState(initSearchText)
   const [q, setQ] = useState(initSearchText)
-  const [defaultPlaceholder /* , setDefaultPlaceholder */] = useState(
-    'Search for open education content',
-  )
 
   const mainSearchBoxCtxT = useMemo<MainSearchBoxCtxT>(() => {
     const ctx: MainSearchBoxCtxT = {
@@ -51,6 +49,6 @@ export function useMainSearchBoxCtxValue({
       q,
     }
     return ctx
-  }, [q, defaultPlaceholder, search, searchText])
+  }, [q, search, searchText])
   return mainSearchBoxCtxT
 }
