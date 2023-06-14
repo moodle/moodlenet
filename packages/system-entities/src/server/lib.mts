@@ -394,9 +394,10 @@ export async function searchEntities<
   fields: { name: string; factor?: number }[],
   _opts?: QueryEntitiesOpts<Project, ProjectAccess>,
 ) {
+  givenSearchTerm = givenSearchTerm.trim()
   const PERFORM_SEARCH_ANALIZERS = fields.length && givenSearchTerm
   if (!PERFORM_SEARCH_ANALIZERS) {
-    return emptyCursor()
+    return queryEntities(entityClass, _opts)
   }
   const searchTermAql = toaql(givenSearchTerm)
   const allSearchstatements = fields
@@ -424,9 +425,6 @@ export async function searchEntities<
     )
     .join(`OR`)
 
-  const preAccessBody = `
-    ${_opts?.preAccessBody ?? ''}`
-
   const postAccessBody = `
     let rank =  TFIDF(${currentEntityVar})
     ${_opts?.postAccessBody ?? ''}`
@@ -437,7 +435,6 @@ export async function searchEntities<
   const opts: QueryEntitiesOpts<Project, ProjectAccess> = {
     ..._opts,
     forOptions,
-    preAccessBody,
     postAccessBody,
     viaSearchView: true,
     sort: _opts?.sort ?? 'rank',

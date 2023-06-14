@@ -269,8 +269,15 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'webapp/search': {
       guard: () => void 0,
-      async fn(_, __, { limit, sortType, text, after }) {
-        const { endCursor, list } = await searchResources({ limit, sortType, text, after })
+      async fn(body = {}, __, { limit, sortType, text, after }) {
+        const { filters } = body
+        const { endCursor, list } = await searchResources({
+          limit,
+          sortType,
+          text,
+          after,
+          filters,
+        })
         return {
           list: list.map(({ entity: { _key } }) => ({ _key })),
           endCursor,

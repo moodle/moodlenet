@@ -1,4 +1,9 @@
-import { currentEntityVar, queryEntities, sysEntitiesDB } from '@moodlenet/system-entities/server'
+import {
+  currentEntityVar,
+  getEntity,
+  queryEntities,
+  sysEntitiesDB,
+} from '@moodlenet/system-entities/server'
 import { EdAssetType, IscedField, IscedGrade, Language, License } from './init/sys-entities.mjs'
 import type { IscedFieldDataType } from './types.mjs'
 
@@ -13,6 +18,11 @@ export async function getAllPublishedMeta() {
     (await queryEntities(IscedField.entityClass, { preAccessBody, limit })).all(),
   ])
   return { licenses, edAssetTypes, languages, iscedGrades, iscedFields }
+}
+
+export async function getIscedFieldRecord(_key: string) {
+  const foundIscedField = await getEntity(IscedField.entityClass, _key)
+  return foundIscedField
 }
 
 export async function deltaIscedFieldPopularityItem({
