@@ -1,5 +1,11 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, Modal, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
+import {
+  Card,
+  Modal,
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from '@moodlenet/component-library'
 import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
@@ -9,6 +15,7 @@ import type { SchemaOf } from 'yup'
 
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
+import { CloseRounded } from '@mui/icons-material'
 import type {
   CollectionAccessProps,
   CollectionActions,
@@ -66,8 +73,8 @@ export const Collection: FC<CollectionProps> = ({
   const viewport = useViewport()
   const { imageUrl } = data
   const { isPublished } = state
-  const { editData, deleteCollection, publish, unpublish } = actions
-  const { canPublish } = access
+  const { editData, deleteCollection, publish, unpublish, removeResource } = actions
+  const { canPublish, canEdit } = access
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(imageUrl)
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
@@ -102,10 +109,27 @@ export const Collection: FC<CollectionProps> = ({
       setShouldShowErrors(true)
     }
   }
+
   const resourceList = (
     <div className="resource-list">
       {resourceCardPropsList.map(({ key, props }) => (
-        <ResourceCard {...props} orientation={'horizontal'} key={key} />
+        <ResourceCard
+          {...props}
+          orientation={'horizontal'}
+          key={key}
+          topRightItems={[
+            canEdit
+              ? {
+                  Item: () => (
+                    <TertiaryButton onClick={() => removeResource(key)} className="delete">
+                      <CloseRounded />
+                    </TertiaryButton>
+                  ),
+                  key: 'remove-resource-button',
+                }
+              : null,
+          ]}
+        />
       ))}
     </div>
   )
