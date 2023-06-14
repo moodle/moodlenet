@@ -89,6 +89,7 @@ export type CollectionActions = {
   publish: () => void
   unpublish: () => void
   editData: (values: CollectionFormProps) => void
+  removeResource: (key: string) => void
   deleteCollection(): void
   setImage: (file: File | undefined | null) => void
 }

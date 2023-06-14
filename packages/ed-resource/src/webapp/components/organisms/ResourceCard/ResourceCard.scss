@@ -47,6 +47,7 @@
     }
 
     > .header-right {
+      display: flex;
       pointer-events: auto;
       margin-right: -7px;
       flex-grow: 0;
