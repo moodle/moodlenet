@@ -1,11 +1,14 @@
 import { Collection } from '@moodlenet/collection/server'
 import { RpcStatus } from '@moodlenet/core'
 import { Resource } from '@moodlenet/ed-resource/server'
+import { href } from '@moodlenet/react-app/common'
+import { getWebappUrl } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import { isCreatorOfCurrentEntity, queryEntities, toaql } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
+import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { WebUserEntitiesTools } from './entities.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import {
@@ -108,7 +111,10 @@ export const expose = await shell.expose<WebUserExposeType>({
             })
           ).all()
         ).map(({ entity: { _key } }) => ({ _key }))
-
+        const profileHomePagePath = getProfileHomePageRoutePath({
+          _key,
+          title: profileRecord.entity.displayName,
+        })
         const resources = (
           await (
             await shell.call(queryEntities)(Resource.entityClass, {
@@ -116,9 +122,13 @@ export const expose = await shell.expose<WebUserExposeType>({
             })
           ).all()
         ).map(({ entity: { _key } }) => ({ _key }))
-
+        const currentProfileIds = await getCurrentProfileIds()
         const profileGetRpc: ProfileGetRpc = {
           canEdit: !!profileRecord.access.u,
+          canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
+          numFollowers: profileRecord.entity.popularity?.items.followers?.value ?? 0,
+          profileHref: href(profileHomePagePath),
+          profileUrl: getWebappUrl(profileHomePagePath),
           data,
           ownKnownEntities: {
             collections,
@@ -210,7 +220,7 @@ export const expose = await shell.expose<WebUserExposeType>({
             return { count: 0 }
           }
           const countRes = await getEntityFeatureCount({ _key, entityType, feature })
-          console.log({ countRes })
+          // console.log([countRes?.count ?? 0, _key, entityType, feature])
 
           return countRes ?? { count: 0 }
         },

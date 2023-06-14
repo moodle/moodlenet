@@ -4,10 +4,10 @@ export type PluginHook<C, R> = (context: C) => R
 type KeydAddon<T> = T & { key: string }
 type KeydMappedAddon<A> = A extends AddOnMap<infer T> ? KeydAddon<T> : KeydAddon<A>
 
-export function hookPluginCreator(getPluginOwnerId: (hook: PluginHook<any, any>) => string) {
-  return createHookPlugin
+export function pluginHookCreator(getPluginOwnerId: (hook: PluginHook<any, any>) => string) {
+  return createPluginHook
 
-  function createHookPlugin<R = void, C = void>() {
+  function createPluginHook<R = void, C = void>() {
     const plugins: { hook: PluginHook<C, R>; ownerId: string }[] = []
 
     return {

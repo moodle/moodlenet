@@ -1,17 +1,31 @@
 import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection/webapp'
+import type { AddonItemNoKey } from '@moodlenet/component-library'
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
-import { href } from '@moodlenet/react-app/common'
+import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { profileFormValidationSchema } from '../../../../common/profile/data.mjs'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
+import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
 import { shell } from '../../shell.mjs'
 
 const __should_be_from_server_maxUploadSize = 1024 * 1024 * 50
+
+export const ProfilePagePlugins = createPluginHook<{
+  main_mainColumnItems?: AddOnMap<AddonItemNoKey>
+  main_topItems?: AddOnMap<AddonItemNoKey>
+  main_footerItems?: AddOnMap<AddonItemNoKey>
+  main_subtitleItems?: AddOnMap<AddonItemNoKey>
+  main_titleItems?: AddOnMap<AddonItemNoKey>
+  mainColumnItems?: AddOnMap<AddonItemNoKey>
+  sideColumnItems?: AddOnMap<AddonItemNoKey>
+  overallCardItems?: AddOnMap<Omit<OverallCardItem, 'key'>>
+}>()
 
 export const useProfileProps = ({
   profileKey,
@@ -19,6 +33,7 @@ export const useProfileProps = ({
   profileKey: string
 }): ProfileProps | undefined => {
   const nav = useNavigate()
+  const plugins = ProfilePagePlugins.usePluginHooks()
 
   const resourceCtx = useContext(ResourceContext)
   const collectionCtx = useContext(CollectionContext)
@@ -26,9 +41,6 @@ export const useProfileProps = ({
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
   const [profileGetRpc, setProfileGetRpc] = useState<ProfileGetRpc>()
 
-  // const toggleFollow = useCallback<ProfileProps['actions']['toggleFollow']>(async () => {
-  //   throw new Error('not Implemented')
-  // }, [])
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
@@ -55,6 +67,7 @@ export const useProfileProps = ({
   }, [profileKey])
 
   const mainLayoutProps = useMainLayoutProps()
+  const follow = useMyFeaturedEntity({ _key: profileKey, entityType: 'profile', feature: 'follow' })
 
   const profileProps = useMemo<ProfileProps | undefined>(() => {
     if (!profileGetRpc) {
@@ -62,7 +75,6 @@ export const useProfileProps = ({
     }
     const isAdmin = !!clientSessionData?.isAdmin
     const isCreator = clientSessionData?.myProfile?._key === profileKey
-
     const resourceCardPropsList: ProfileProps['resourceCardPropsList'] =
       profileGetRpc.ownKnownEntities.resources.map(({ _key }) => {
         return {
@@ -89,25 +101,25 @@ export const useProfileProps = ({
         isAdmin,
         isAuthenticated,
         isCreator,
-        canPublish: false, //@ETTO Needs to be implemented
-        canFollow: true, //@ETTO Needs to be implemented
-        canBookmark: true, //@ETTO Needs to be implemented
+        canFollow: profileGetRpc.canFollow,
       },
       data: {
-        userId: '12sadsadsad', //@ETTO Needs to be implemented
-        displayName: profileGetRpc.data.displayName, //@ETTO Needs to be implemented
+        userId: profileKey,
+        displayName: profileGetRpc.data.displayName,
         avatarUrl: profileGetRpc.data.avatarUrl,
         backgroundUrl: profileGetRpc.data.backgroundUrl,
-        profileHref: href('/profile'), //@ETTO Needs to be implemented
+        profileHref: profileGetRpc.profileHref,
       },
       state: {
-        profileUrl: 'https://moodle.net/profile', //@ETTO Needs to be implemented
-        followed: false, //@ETTO Needs to be implemented
-        numFollowers: 13, //@ETTO Needs to be implemented
+        profileUrl: profileGetRpc.profileUrl,
+        followed: follow.isFeatured,
+        numFollowers: profileGetRpc.numFollowers,
       },
       actions: {
         editProfile,
-        toggleFollow: () => alert('Needs to be implemented'), //@ETTO Needs to be implemented
+        toggleFollow: () => {
+          follow.toggle()
+        },
         setAvatar: (avatar: File | undefined | null) => {
           console.log('setAvatar', avatar)
           shell.rpc.me['webapp/upload-profile-avatar/:_key'](
@@ -126,20 +138,20 @@ export const useProfileProps = ({
           shell.rpc.me['webapp/send-message-to-user/:profileKey']({ message }, { profileKey }),
       },
       mainProfileCardSlots: {
-        mainColumnItems: [],
-        topItems: [],
-        footerItems: [],
-        subtitleItems: [],
-        titleItems: [],
+        mainColumnItems: plugins.getKeyedAddons('main_mainColumnItems'),
+        topItems: plugins.getKeyedAddons('main_topItems'),
+        footerItems: plugins.getKeyedAddons('main_footerItems'),
+        subtitleItems: plugins.getKeyedAddons('main_subtitleItems'),
+        titleItems: plugins.getKeyedAddons('main_titleItems'),
       },
       createCollection: () =>
         collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),
       createResource: () => resourceCtx.createResource().then(({ homePath }) => nav(homePath)),
       resourceCardPropsList,
       collectionCardPropsList,
-      mainColumnItems: [], //@ETTO Needs to be implemented - create registry for it
-      sideColumnItems: [], //@ETTO Needs to be implemented - create registry for it
-      overallCardItems: [],
+      mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
+      sideColumnItems: plugins.getKeyedAddons('sideColumnItems'),
+      overallCardItems: plugins.getKeyedAddons('overallCardItems'),
       profileForm: profileGetRpc.data,
       // state: {
       //   followed: false,
@@ -148,15 +160,17 @@ export const useProfileProps = ({
     }
     return props
   }, [
+    profileGetRpc,
     clientSessionData?.isAdmin,
     clientSessionData?.myProfile?._key,
-    collectionCtx,
-    editProfile,
-    isAuthenticated,
-    mainLayoutProps,
-    nav,
     profileKey,
-    profileGetRpc,
+    mainLayoutProps,
+    isAuthenticated,
+    follow,
+    editProfile,
+    plugins,
+    collectionCtx,
+    nav,
     resourceCtx,
   ])
   return profileProps

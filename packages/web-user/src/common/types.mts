@@ -13,6 +13,10 @@ export type KnownFeaturedEntities = {
 export type ProfileGetRpc = {
   data: Profile
   canEdit: boolean
+  canFollow: boolean
+  profileHref: Href
+  profileUrl: string
+  numFollowers: number
   ownKnownEntities: {
     resources: { _key: string }[]
     collections: { _key: string }[]
@@ -94,6 +98,4 @@ export type ProfileAccess = {
   isAdmin: boolean
   canEdit: boolean
   canFollow: boolean
-  canBookmark: boolean
-  canPublish: boolean
 }

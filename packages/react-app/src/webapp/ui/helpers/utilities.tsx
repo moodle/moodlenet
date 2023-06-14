@@ -67,7 +67,7 @@ export const getNumberFromString = (s: string) =>
 
 export const getBackupImage = (id: string): string | undefined => {
   const numId = getNumberFromString(id)
-  console.log('IMAGE', ContentBackupImages[numId % ContentBackupImages.length])
+  // console.log('IMAGE', ContentBackupImages[numId % ContentBackupImages.length])
   const location = ContentBackupImages[numId % ContentBackupImages.length]?.location
   return typeof location === 'string' ? location : undefined
 }

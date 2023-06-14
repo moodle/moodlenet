@@ -7,5 +7,5 @@ export const CollectionPageRoute: FC = () => {
   const { pathname } = useLocation()
   const key = matchCollectionHomePageRoutePath(pathname)?.params.key
   if (!key) return null
-  return <CollectionContainer collectionKey={key} />
+  return <CollectionContainer collectionKey={key} key={key} />
 }

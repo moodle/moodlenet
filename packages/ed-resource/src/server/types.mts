@@ -18,7 +18,7 @@ export type ResourceDataType = {
   popularity?: {
     overall: number
     items: {
-      downloads: ResourcePopularityItem
+      downloads?: ResourcePopularityItem
     } & { [key: string]: ResourcePopularityItem }
   }
 }

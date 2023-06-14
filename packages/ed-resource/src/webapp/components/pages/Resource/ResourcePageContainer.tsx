@@ -7,7 +7,7 @@ export const ResourcePageContainer: FC<{ resourceKey: string }> = ({ resourceKey
   const panelProps = useResourcePageProps({ resourceKey })
   return (
     panelProps && (
-      <ProvideCurrentResourceContext _key={resourceKey}>
+      <ProvideCurrentResourceContext _key={resourceKey} key={resourceKey}>
         <ResourcePage {...panelProps} key={resourceKey} />
       </ProvideCurrentResourceContext>
     )

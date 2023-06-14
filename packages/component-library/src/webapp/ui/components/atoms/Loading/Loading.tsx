@@ -2,7 +2,7 @@
 import { CircularProgress } from '@material-ui/core'
 import Lottie from 'lottie-react'
 import type { FC } from 'react'
-import uploadingAnimation from '../../../assets/animations/uploading.json' //@ALE //@ETTO I tried adding {"resolveJsonModule": true, "esModuleInterop": true} to the compilerOptions of tsconfig.json of this package, but it keeps throwing the build error.
+import uploadingAnimation from '../../../assets/animations/uploading.mjs'
 import './Loading.scss'
 
 export type LoadingProps = {
@@ -39,7 +39,8 @@ export const Loading: FC<LoadingProps> = ({ color, size, type }) => {
         </div>
       )}
       {type === 'uploading' && (
-        <Lottie //@ALE //@ETTO this display a build error but I actually works well in the app
+        //@ts-expect-error: because of lottie-react type signature
+        <Lottie
           className="loading uploading-progress"
           animationData={uploadingAnimation}
           loop={true}

@@ -13,7 +13,12 @@ export type PkgAddOnsByName = Record<SocialActionsName, PkgAddOns<AddonItemNoKey
 // test if type work const pakElem: PkgAddOns<AddonItemNoKey> = { aaa: { Item: () => <LikeButtonContainer _key="dd" entityType="collection" /> }
 
 const mapSocialActionsToPkgAddons = (sc: SocialActions, props: EntityAndKey) =>
-  objectMap(sc, (Fc, name) => ({ [name]: { Item: () => (!Fc ? null : <Fc {...props} />) } }))
+  objectMap(sc, (Fc, name) => ({
+    [name]: {
+      Item: () =>
+        !Fc ? null : <Fc {...props} key={`${props.entityType}#${props._key}::${name}`} />,
+    },
+  }))
 
 const mapSocialActionElements =
   (pkgAddons: PkgAddOnsByName) => (acc: MyPkgAddOns, name: SocialActionsName) => ({
