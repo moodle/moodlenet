@@ -16,6 +16,7 @@ import {
   patchEntity,
   searchEntities,
   sysEntitiesDB,
+  toaql,
 } from '@moodlenet/system-entities/server'
 import type { SortTypeRpc } from '../common/types.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
@@ -179,16 +180,20 @@ export async function setResourceContent(_key: string, resourceContent: RpcFile 
   return { patchedDoc, contentUrl }
 }
 
+export type SearchFilterType = [prop: 'subject', equals: string][]
+
 export async function searchResources({
   limit = 20,
   sortType = 'Recent',
   text = '',
   after = '0',
+  filters = [],
 }: {
   sortType?: SortTypeRpc
   text?: string
   after?: string
   limit?: number
+  filters?: SearchFilterType
 }) {
   const sort =
     sortType === 'Popular'
@@ -198,6 +203,7 @@ export async function searchResources({
       : sortType === 'Recent'
       ? `${entityMeta(currentEntityVar, 'created')} DESC`
       : 'rank DESC'
+  const filter = filters.map(([p, val]) => `${currentEntityVar}.${p} == ${toaql(val)}`).join(' OR ')
   const skip = Number(after)
   const cursor = await shell.call(searchEntities)(
     Resource.entityClass,
@@ -207,6 +213,7 @@ export async function searchResources({
       limit,
       skip,
       sort,
+      preAccessBody: filter ? `FILTER ${filter}` : undefined,
       //forOptions: `OPTIONS { indexHint:"${TEXT_SEARCH_INDEX_NAME}", forceIndexHint: true }`,
     },
   )

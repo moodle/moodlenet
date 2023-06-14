@@ -17,3 +17,9 @@ export type PublishedMeta = {
   subjects: Subject[]
   levels: Level[]
 }
+
+export type SubjectPageData = {
+  iscedUrl: string | null
+  isIsced: boolean
+  title: string
+}

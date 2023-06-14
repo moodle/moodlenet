@@ -1,9 +1,4 @@
-import {
-  getLicenseNode,
-  type AddonItem,
-  type AddonItemNoKey,
-  type OptionItemProp,
-} from '@moodlenet/component-library'
+import { getLicenseNode, type AddonItem, type AddonItemNoKey } from '@moodlenet/component-library'
 import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
 import { createHookPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import moment from 'moment'
@@ -12,16 +7,6 @@ import { maxUploadSize } from '../../../../common/validationSchema.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import type { ResourceProps } from './Resource.js'
-
-export const collectionTextOptionProps: OptionItemProp[] = [
-  { label: 'Education', value: 'Education' },
-  { label: 'Biology', value: 'Biology' },
-  { label: 'Algebra', value: 'Algebra' },
-  { label: 'Phycology', value: 'Phycology' },
-  { label: 'Phylosophy', value: 'Phylosophy' },
-  { label: 'Sociology', value: 'Sociology' },
-  { label: 'English Literature', value: 'English Literature' },
-]
 
 export type ResourcePageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 

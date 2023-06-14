@@ -40,7 +40,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren> = ({ children }
 
   const load = useCallback(
     async (cursor?: string) => {
-      const res = await shell.rpc.me['webapp/search'](null, null, {
+      const res = await shell.rpc.me['webapp/search'](undefined, undefined, {
         limit: 10,
         sortType,
         text: q,

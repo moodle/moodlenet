@@ -7,7 +7,7 @@ import { getResource } from '../services.mjs'
 import { shell } from '../shell.mjs'
 
 shell.call(plugin)<MyWebDeps>({
-  initModuleLoc: ['dist', 'webapp', 'exports', 'init.mjs'],
+  initModuleLoc: ['dist', 'webapp', 'exports', 'init.js'],
   deps: { me },
 })
 shell.call(registerOpenGraphProvider)({
