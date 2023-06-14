@@ -146,7 +146,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
 
-  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
+  const backupImage: string | undefined = useMemo(
+    () => (imageForm.values.image ? undefined : getBackupImage(id)),
+    [id, imageForm.values.image],
+  )
 
   const handleOnEditClick = () => {
     setIsEditing(true)

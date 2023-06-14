@@ -65,12 +65,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   uploadProgress,
   imageOnClick,
 }) => {
-  console.log('backupImage', backupImage)
-  console.log('imageForm.values.image', imageForm.values.image)
   const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
-  const [backupImageUrl] = useImageUrl(backupImage)
-  console.log('image', image)
-  console.log('backupImageUrl', backupImageUrl)
 
   const contentIsFile = contentForm.values.content instanceof File
   const contentName = downloadFilename
@@ -78,6 +73,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
     : contentForm.values.content instanceof File
     ? contentForm.values.content.name
     : contentForm.values.content ?? ''
+
+  console.log('backupImage', backupImage)
 
   // const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   // const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -244,7 +241,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
   )
 
   const simpleImageContainer = (
-    <ImageContainer imageUrl={image} ref={imageRef} displayOnly={displayOnly} />
+    <ImageContainer
+      imageUrl={image}
+      ref={imageRef}
+      displayOnly={displayOnly}
+      style={{ maxHeight: backupImage ? '200px' : 'initial', overflow: 'hidden' }}
+    />
   )
 
   const [imageHeight, setImageHeight] = useState<string | number>('initial')
