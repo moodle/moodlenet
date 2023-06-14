@@ -8,9 +8,15 @@ export type MainFooterProps = {
   leftItems?: AddonItem[]
   centerItems?: AddonItem[]
   rightItems?: AddonItem[]
+  showCopyright?: boolean
 }
 
-export const MainFooter: FC<MainFooterProps> = ({ leftItems, centerItems, rightItems }) => {
+export const MainFooter: FC<MainFooterProps> = ({
+  leftItems,
+  centerItems,
+  rightItems,
+  showCopyright,
+}) => {
   const updatedLeftItems = useMemo(() => {
     return [...(leftItems ?? []).map(({ Item, key }) => <Item key={key} />)].filter(Boolean)
   }, [leftItems])
@@ -28,6 +34,7 @@ export const MainFooter: FC<MainFooterProps> = ({ leftItems, centerItems, rightI
       leftItems={updatedLeftItems}
       centerItems={updatedCenterItems}
       rightItems={updatedRightItems}
+      showCopyright={showCopyright}
     ></Footer>
   )
 }
