@@ -1,4 +1,4 @@
-import type { FollowTag, IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
+import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
 import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
@@ -33,7 +33,7 @@ export type ResourceDataRpc = {
   mnUrl: string
   contentType: 'link' | 'file'
   imageUrl: string | null
-  tags: FollowTag[] | null
+  subjectHref: Href
 
   contentUrl: string | null
   downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...
@@ -114,7 +114,6 @@ export type EdMetaOptionsRpc = {
 }
 
 export type ResourceCardDataRpc = {
-  // tags?: FollowTag[]
   owner: {
     displayName: string
     avatar: string | null

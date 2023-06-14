@@ -172,7 +172,7 @@ export const useResourceStoryProps = (
     contentType: 'file',
     // contentType: 'link',
     ...overrides?.data,
-    tags: tags,
+    subjectHref: href('Pages/subject/Logged In'),
   }
 
   const state: ResourceStateProps = {

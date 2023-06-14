@@ -32,6 +32,7 @@ import {
 import type { FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type {
+  EdMetaOptionsProps,
   ResourceAccessProps,
   ResourceActions,
   ResourceDataProps,
@@ -55,6 +56,7 @@ export type MainResourceCardProps = {
   slots: MainResourceCardSlots
 
   data: ResourceDataProps
+  edMetaOptions: EdMetaOptionsProps
   form: FormikHandle<ResourceFormProps>
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
@@ -79,6 +81,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   slots,
 
   data,
+  edMetaOptions,
   form,
   contentForm,
   imageForm,
@@ -107,7 +110,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { id, mnUrl, contentType, downloadFilename, imageUrl, contentUrl, tags } = data
+  const { id, mnUrl, contentType, downloadFilename, imageUrl, contentUrl, subjectHref } = data
+
+  const { subjectOptions } = edMetaOptions
 
   const { isPublished, uploadProgress } = state
 
@@ -447,9 +452,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const tagsContainer = tags ? (
+  const subjectLabel = subjectOptions.find(
+    ({ ['value']: value }) => value && value === form.values.subject,
+  )
+
+  const tagsContainer = subjectLabel ? (
     <div className="tags scroll" key="tags">
-      {getTagList(tags, 'medium')}
+      {getTagList([{ name: subjectLabel.label, href: subjectHref, type: 'subject' }], 'medium')}
     </div>
   ) : null
 
