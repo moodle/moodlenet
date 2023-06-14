@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { forwardRef, useRef } from 'react'
 import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
+import Loading from '../../atoms/Loading/Loading.js'
 import RoundButton from '../../atoms/RoundButton/RoundButton.js'
 import './ImageContainer.scss'
 
@@ -10,10 +11,11 @@ export type ImageContainerProps = {
   imageUrl?: string
   style?: CSSProperties
   link?: string
-  // contentUrl?: string
   imageCover?: boolean
   displayOnly?: boolean
   imageOnClick?: () => unknown
+  isUploading?: boolean
+  // contentUrl?: string
 }
 
 export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, ImageContainerProps>(
@@ -28,6 +30,7 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       // contentUrl,
       displayOnly,
       imageOnClick,
+      isUploading,
     } = props
 
     const imageContainerRef = useForwardedRef(forwRef)
@@ -41,8 +44,6 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       selectedFile && uploadImage && uploadImage(selectedFile)
     }
 
-    console.log('imageURL: ', imageUrl)
-    console.log('imageCover: ', imageCover)
     const imageDiv = imageCover ? (
       <img
         className="image"
@@ -68,13 +69,21 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       />
     )
 
+    const uploading = (
+      <div className="uploading">
+        <Loading type="uploading" color="gray" size="70px" />
+      </div>
+    )
+
     return (
       <div
         className="image-container"
         style={style}
         ref={imageContainerRef as React.RefObject<HTMLDivElement>}
       >
-        {link ? (
+        {isUploading ? (
+          uploading
+        ) : link ? (
           <a href={link} target="_blank" rel="noreferrer">
             {imageDiv}
           </a>

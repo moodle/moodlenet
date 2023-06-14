@@ -173,20 +173,24 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
+  const [currentlySaving, setCurrentlySaving] = useState(false)
   const [showSavedText, setShowSavedText] = useState(false)
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    isSaving && setSaved(true)
-    if (!isSaving && saved) {
+    isSaving && setCurrentlySaving(true)
+    if (!isSaving && currentlySaving) {
+      setSaved(true)
+      setCurrentlySaving(false)
       setShowSavedText(true)
       setTimeout(() => setShowSavedText(false), 3000)
     }
-  }, [isSaving, setShowSavedText, saved])
+  }, [currentlySaving, isSaving, saved])
 
   const savingFeedback = isSaving ? (
     <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-      <Loading color="#8f8f8f" />
+      <Loading type="circular" color="#8f8f8f" size="19px" />
+      {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
       Saving...
     </abbr>
   ) : saved ? (
@@ -293,27 +297,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         Item: () => (
           <div className="edit-save">
             {isEditing ? (
-              <PrimaryButton
-                className={`${form.isSubmitting ? 'loading' : ''}`}
-                color="green"
-                onClick={handleOnSaveClick}
-              >
-                <div
-                  className="loading"
-                  style={{
-                    visibility: form.isSubmitting ? 'visible' : 'hidden',
-                  }}
-                >
-                  <Loading color="white" />
-                </div>
-                <div
-                  className="label"
-                  style={{
-                    visibility: form.isSubmitting ? 'hidden' : 'visible',
-                  }}
-                >
-                  <Save />
-                </div>
+              <PrimaryButton className={``} color="green" onClick={handleOnSaveClick}>
+                <Save />
               </PrimaryButton>
             ) : (
               <SecondaryButton onClick={handleOnEditClick} color="orange">
