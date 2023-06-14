@@ -162,6 +162,7 @@ export const Resource: FC<ResourceProps> = ({
       key="main-resource-card"
       publish={checkFormAndPublish}
       data={data}
+      edMetaOptions={edMetaOptions}
       form={form}
       contentForm={contentForm}
       imageForm={imageForm}
