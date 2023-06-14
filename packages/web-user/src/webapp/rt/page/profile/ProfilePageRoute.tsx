@@ -7,6 +7,7 @@ export const ProfilePageRoute: FC = () => {
   const { pathname } = useLocation()
 
   const key = matchProfileHomePageRoutePath(pathname)?.params.key
+  console.log({ key })
   if (!key) return null
-  return <ProfileContainer profileKey={key} />
+  return <ProfileContainer profileKey={key} key={key} />
 }

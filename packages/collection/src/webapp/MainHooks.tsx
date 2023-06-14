@@ -69,6 +69,10 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
           nav('/')
         })
       },
+      removeResource: (resourceKey: string) => {
+        resourceKey
+        alert('removeResource to be implemented')
+      },
       publish: () => {
         setIsPublish(true)
         setIsPublished(collectionKey, true)

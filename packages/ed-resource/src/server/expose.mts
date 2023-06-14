@@ -8,6 +8,8 @@ import {
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
+import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
+import { href } from '@moodlenet/react-app/common'
 import type { Readable } from 'stream'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
@@ -105,16 +107,14 @@ export const expose = await shell.expose<FullResourceExposeType>({
             id: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key, title: found.entity.title })),
             imageUrl,
-            tags: [
-              {
-                name: found.entity.subject,
-                href: {
-                  ext: true,
-                  url: 'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
-                },
-                type: 'subject',
-              },
-            ], //@ETTO This need to be implemented
+            subjectHref: found.entity.subject
+              ? href(
+                  getSubjectHomePageRoutePath({
+                    _key: found.entity.subject,
+                    title: found.entity.subject,
+                  }),
+                )
+              : null,
           },
           state: { isPublished: found.entity.published },
           access: {

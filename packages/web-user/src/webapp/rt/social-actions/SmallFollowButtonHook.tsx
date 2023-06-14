@@ -1,8 +1,8 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useMemo } from 'react'
 import type { KnownEntityType } from '../../../common/types.mjs'
 import type { SmallFollowButtonProps } from '../../ui/exports/ui.mjs'
-import { useMyFeaturedEntity } from '../context/useMyFeaturedEntity.js'
+import { useMyFeaturedEntityWitnCount } from '../context/useMyFeaturedEntityWithCount.js'
 import { AuthCtx } from '../exports.mjs'
 
 export const useSmallFollowButtonProps = ({
@@ -13,25 +13,22 @@ export const useSmallFollowButtonProps = ({
   entityType: KnownEntityType
 }): SmallFollowButtonProps | null => {
   const { isAuthenticated } = useContext(AuthCtx)
-  const [numFollowers, setNumFollowers] = useState(0) // @ETTO use the service
-  const { isFeatured, toggle } = useMyFeaturedEntity({ _key, entityType, feature: 'follow' })
+  const featuredHandle = useMyFeaturedEntityWitnCount({ _key, entityType, feature: 'follow' })
 
   const props = useMemo<SmallFollowButtonProps | null>(() => {
+    if (!featuredHandle) {
+      return null
+    }
     const props: SmallFollowButtonProps = {
-      followed: isFeatured,
+      followed: featuredHandle.isFeatured,
       canFollow: true,
       isCreator: false,
       isAuthenticated,
-      toggleFollow,
-      numFollowers,
+      toggleFollow: featuredHandle.toggle,
+      numFollowers: featuredHandle.count,
     }
     return props
-
-    function toggleFollow() {
-      const deltaNumFollowers = isFeatured ? -1 : 1
-      toggle().then(() => setNumFollowers(num => num + deltaNumFollowers))
-    }
-  }, [isFeatured, isAuthenticated, numFollowers, toggle])
+  }, [featuredHandle, isAuthenticated])
 
   return props
 }

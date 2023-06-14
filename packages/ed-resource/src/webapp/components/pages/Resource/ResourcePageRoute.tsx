@@ -8,5 +8,5 @@ export const ResourcePageRoute: FC = () => {
 
   const key = matchResourceHomePageRoutePath(pathname)?.params.key
   if (!key) return null
-  return <ResourcePageContainer resourceKey={key} />
+  return <ResourcePageContainer resourceKey={key} key={key} />
 }

@@ -33,7 +33,7 @@ export type ResourceDataRpc = {
   mnUrl: string
   contentType: 'link' | 'file'
   imageUrl: string | null
-  subjectHref: Href
+  subjectHref: Href | null
 
   contentUrl: string | null
   downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...

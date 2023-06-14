@@ -6,11 +6,11 @@ import type { ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
 import { ProfileCard } from '../../ProfileCard/ProfileCard.js'
 import './BrowserProfileList.scss'
 
-export type BrowserProfileListProps = {
+export type BrowserProfileListDataProps = {
   profilesCardPropsList: { props: ProxyProps<ProfileCardProps>; key: string }[]
   loadMore: (() => unknown) | null
-} & BrowserMainColumnItemBase
-
+}
+export type BrowserProfileListProps = BrowserProfileListDataProps & BrowserMainColumnItemBase
 export const BrowserProfileList: FC<BrowserProfileListProps> = ({
   profilesCardPropsList,
   showAll,

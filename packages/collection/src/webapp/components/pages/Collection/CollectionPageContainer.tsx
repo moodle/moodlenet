@@ -4,6 +4,8 @@ import { useCollectionPageProps } from './CollectionPageHooks.js'
 
 export const CollectionContainer: FC<{ collectionKey: string }> = ({ collectionKey }) => {
   const panelProps = useCollectionPageProps({ collectionKey })
-
-  return panelProps ? <Collection key={collectionKey} {...panelProps} /> : null
+  if (!panelProps) {
+    return null
+  }
+  return <Collection key={collectionKey} {...panelProps} />
 }

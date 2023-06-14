@@ -20,7 +20,9 @@ export type ProfileDataType = {
   webslug: string
   popularity?: {
     overall: number
-    items: { [key: string]: ProfilePopularityItem }
+    items: {
+      followers?: ProfilePopularityItem
+    } & { [key: string]: ProfilePopularityItem }
   }
 }
 export type ProfilePopularityItem = { value: number }

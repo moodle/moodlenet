@@ -11,5 +11,5 @@ export const SmallFollowButtonContainer: FC<{
   if (!smallFollowButtonProps) {
     return null
   }
-  return <SmallFollowButton {...smallFollowButtonProps} />
+  return <SmallFollowButton {...smallFollowButtonProps} key={`${entityType}#${_key}`} />
 }
