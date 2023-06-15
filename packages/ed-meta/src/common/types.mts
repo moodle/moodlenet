@@ -18,8 +18,19 @@ export type PublishedMeta = {
   levels: Level[]
 }
 
-export type SubjectPageData = {
+export type SubjectData = {
   iscedUrl: string | null
   isIsced: boolean
   title: string
+  numFollowers: number
+  numResources: number
+}
+
+export type SubjectSearchResultRpc = {
+  endCursor?: string
+  list: { _key: string }[]
+}
+export type SortTypeRpc = 'Relevant' | 'Popular' | 'Recent'
+export function isSortTypeRpc(_: any): _ is SortTypeRpc {
+  return ['Relevant', 'Popular', 'Recent'].includes(_)
 }

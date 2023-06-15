@@ -1,5 +1,5 @@
 import type { EdMetaExposeType } from '../common/expose-def.mjs'
-import { getAllPublishedMeta, getIscedFieldRecord } from './services.mjs'
+import { getAllPublishedMeta, getIscedFieldRecord, searchIscedFields } from './services.mjs'
 import { shell } from './shell.mjs'
 
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
@@ -18,6 +18,8 @@ export const expose = await shell.expose<EdMetaExposeType>({
             'https://ec.europa.eu/eurostat/statistics-explained/index.php?title=International_Standard_Classification_of_Education_(ISCED)',
           isIsced: true,
           title: iscedField.entity.name,
+          numFollowers: 0, //TODO //FIXME //@ALE
+          numResources: 0, //TODO //FIXME //@ALE
         }
       },
     },
@@ -47,6 +49,16 @@ export const expose = await shell.expose<EdMetaExposeType>({
             label: description,
             value: _key,
           })),
+        }
+      },
+    },
+    'webapp/search': {
+      guard: () => void 0,
+      async fn(_, __, { limit, sortType, text, after }) {
+        const { endCursor, list } = await searchIscedFields({ limit, sortType, text, after })
+        return {
+          list: list.map(({ entity: { _key } }) => ({ _key })),
+          endCursor,
         }
       },
     },
