@@ -55,7 +55,6 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         })
       },
       async setImage(file: File | null | undefined) {
-        //@ETTO make sure this null // undefined is useful for deleting images
         setterSave('image', true)
         setImage(collectionKey, file).then(imageUrl => {
           updateImageUrl(imageUrl)

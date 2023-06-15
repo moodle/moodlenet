@@ -46,7 +46,7 @@ export const MainLayout: FC<PropsWithChildren<MainLayoutProps & MainLayoutUIProp
           className={`main-layout ${streched ? 'streched' : ''}`}
           style={{
             ...style,
-            // TODO //@ETTO Send context to higher levels
+            // TODO //@ALE Send context to higher levels
             // ...getColorPalette(styleContext.appearanceData.color),
             // ...styleContext.style,
           }}

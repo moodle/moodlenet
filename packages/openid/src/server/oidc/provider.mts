@@ -19,7 +19,7 @@ export async function setupOpenIdProvider() {
     return next()
   })
 
-  // BEWARE: this setting should be explicitely configured or derived from http-server (#start.mts) ?
+  // BEWARE //@ALE this setting should be explicitely configured or derived from http-server (#start.mts) ?
   openidProvider.proxy = true
   return openidProvider
 }
@@ -30,7 +30,7 @@ export async function setupDiscoveryProvider() {
     ctx.path = '/.well-known/openid-configuration'
     return next()
   })
-  // BEWARE: this setting should be explicitely configured or derived from http-server (#start.mts) ?
+  // BEWARE //@ALE this setting should be explicitely configured or derived from http-server (#start.mts) ?
   wellKnownProvider.proxy = true
   return wellKnownProvider
 }

@@ -28,7 +28,7 @@ export const LoggedIn: FollowersStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     browserProps: useBrowserStoryProps({
-      mainColumnItems: [useBrowserProfileList(false)], //@ETTO check that on this page you only show profiles
+      mainColumnItems: [useBrowserProfileList(false)], //@ETTO Followers check that on this page you only show profiles
     }),
     profileName: 'Eduard Stromberg',
   }

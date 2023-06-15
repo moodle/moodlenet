@@ -34,7 +34,7 @@ export const LoggedIn: FollowingStory = () => {
         useBrowserSubjectList(),
         useBrowserProfileList(),
         useBrowserCollectionList(),
-      ], //@ETTO check that on this page you only show the profiles and collection, on that order, with profiles first
+      ], //@ETTO Following check that on this page you only show the profiles and collection, on that order, with profiles first
     }),
   }
   return <Following {...props} />
