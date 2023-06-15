@@ -8,14 +8,16 @@ import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
   currentEntityVar,
+  entityMeta,
   getEntity,
   patchEntity,
   queryEntities,
+  searchEntities,
   setPkgCurrentUser,
   sysEntitiesDB,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import type { KnownEntityFeature, KnownEntityType } from '../../common/types.mjs'
+import type { KnownEntityFeature, KnownEntityType, SortTypeRpc } from '../../common/types.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
 import { publicFiles } from '../init/fs.mjs'
 import { Profile } from '../init/sys-entities.mjs'
@@ -297,4 +299,43 @@ export async function deltaProfilePopularityItem({
   })
   const updated = await updatePopularityResult.next()
   return updated?.popularity?.overall
+}
+
+export async function searchProfiles({
+  limit = 20,
+  sortType = 'Popular',
+  text = '',
+  after = '0',
+}: {
+  sortType?: SortTypeRpc
+  text?: string
+  after?: string
+  limit?: number
+}) {
+  const sort =
+    sortType === 'Popular'
+      ? `${currentEntityVar}.kudos + ( ${currentEntityVar}.popularity.followers || 0 ) DESC
+          , rank DESC`
+      : sortType === 'Relevant'
+      ? 'rank DESC'
+      : sortType === 'Recent'
+      ? `${entityMeta(currentEntityVar, 'created')} DESC`
+      : 'rank DESC'
+  const skip = Number(after)
+  const cursor = await shell.call(searchEntities)(
+    Profile.entityClass,
+    text,
+    [{ name: 'displayName', factor: 5 }, { name: 'aboutMe' }],
+    {
+      limit,
+      skip,
+      sort,
+    },
+  )
+
+  const list = await cursor.all()
+  return {
+    list,
+    endCursor: list.length < limit ? undefined : String(skip + list.length),
+  }
 }

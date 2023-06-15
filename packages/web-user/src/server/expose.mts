@@ -21,6 +21,7 @@ import {
   getEntityFeatureCount,
   getLandingPageList,
   getProfileRecord,
+  searchProfiles,
   setProfileAvatar,
   setProfileBackgroundImage,
 } from './lib/profile.mjs'
@@ -270,6 +271,21 @@ export const expose = await shell.expose<WebUserExposeType>({
       async fn(_, { entityType }) {
         const entities = await getLandingPageList(entityType)
         return entities.map(({ entity: { _key } }) => ({ _key }))
+      },
+    },
+    'webapp/search': {
+      guard: () => void 0,
+      async fn(_, __, { limit, sortType, text, after }) {
+        const { endCursor, list } = await searchProfiles({
+          limit,
+          sortType,
+          text,
+          after,
+        })
+        return {
+          list: list.map(({ entity: { _key } }) => ({ _key })),
+          endCursor,
+        }
       },
     },
   },
