@@ -11,7 +11,7 @@ import type { PkgIdentifier } from '../../types.mjs'
 import type { InstallPkgReq } from '../types.mjs'
 
 export async function uninstall(pkgIds: PkgIdentifier[]) {
-  // TODO ALE: any check on pkgIds ? (active / version)
+  // TODO @ALE: any check on pkgIds ? (active / version)
   const uninstallPkgsArgs = pkgIds.map(({ name }) => name)
   await execa('npm', ['uninstall', ...uninstallPkgsArgs], {
     cwd: ignites.rootDir,

@@ -9,8 +9,6 @@ import type {
   SystemUser,
 } from '../types.mjs'
 
-// TODO: export a set of const for known vars for safer AQL construction ? (entity, entityClass, _meta, creator, currentUser)
-
 export const currentSystemUserVar: AqlVal<SystemUser> = 'currentUser'
 export function systemUserMeta(systemUserVal: AqlVal<SystemUser>): AqlVal<EntityMetadata> {
   return `${systemUserVal}._meta`

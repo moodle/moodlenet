@@ -2,7 +2,7 @@ import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
 import type { Document, EntityDocument } from '@moodlenet/system-entities/server'
 import type { KnownEntityFeature } from '../common/types.mjs'
 
-// TODO: ProfileEntity _meta { webUserKey }
+// TODO //@ALE ProfileEntity _meta { webUserKey }
 
 export type KnownFeaturedEntityItem = { _id: string; feature: KnownEntityFeature }
 export type ProfileEntity = EntityDocument<ProfileDataType>

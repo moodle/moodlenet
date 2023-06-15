@@ -19,7 +19,6 @@ export const useGeneralProps = (): GeneralProps => {
   const generalProps = useMemo<GeneralProps>(() => {
     return {
       form,
-      //FIXME: @Bru: can we put this updateAll UI in @moodlenet/extension-manager ?
       updateExtensions: shell.rpc.me.updateAllPkgs,
       updateSuccess: false,
     }

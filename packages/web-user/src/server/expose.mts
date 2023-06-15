@@ -242,6 +242,7 @@ export const expose = await shell.expose<WebUserExposeType>({
       },
     },
     'webapp/profile-kudos-count/:profileKey': {
+      // REMOVE? ( kudos in entity data )
       guard: () => void 0,
       async fn(/* _, { profileKey } */) {
         return { count: 10 }
@@ -249,6 +250,7 @@ export const expose = await shell.expose<WebUserExposeType>({
     },
 
     'webapp/send-message-to-user/:profileKey': {
+      //@ALE TODO
       guard: () => void 0,
       async fn(/* _,{profileKey} */) {
         return

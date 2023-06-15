@@ -39,7 +39,7 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
         rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
 
       setImage: async (key: string, file: File | null | undefined) =>
-        rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }), //@ETTO Needs to be fixed
+        rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }),
 
       create: () => rpc['webapp/create'](),
     }
