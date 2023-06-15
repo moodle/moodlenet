@@ -60,7 +60,6 @@ export type MainCollectionCardProps = {
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 
-  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
   shouldShowErrors: boolean
 }
 
@@ -80,7 +79,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   isEditing,
   setIsEditing,
 
-  setShouldShowErrors,
   shouldShowErrors,
 }) => {
   const {

@@ -148,7 +148,6 @@ export const Collection: FC<CollectionProps> = ({
       isEditing={isEditing}
       setIsEditing={setIsEditing}
       shouldShowErrors={shouldShowErrors}
-      setShouldShowErrors={setShouldShowErrors}
       isSaving={isSaving}
     />
   )

@@ -176,7 +176,6 @@ export const Resource: FC<ResourceProps> = ({
       isEditing={isEditing}
       setIsEditing={setIsEditing}
       shouldShowErrors={shouldShowErrors}
-      setShouldShowErrors={setShouldShowErrors}
     />
   )
 

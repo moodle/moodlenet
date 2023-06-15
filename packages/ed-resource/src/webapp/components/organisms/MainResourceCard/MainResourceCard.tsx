@@ -71,7 +71,6 @@ export type MainResourceCardProps = {
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 
-  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
   shouldShowErrors: boolean
 
   fileMaxSize: number
@@ -97,7 +96,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   setIsEditing,
 
   shouldShowErrors,
-  setShouldShowErrors,
 
   fileMaxSize,
 }) => {
