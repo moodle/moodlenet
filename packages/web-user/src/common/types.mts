@@ -4,6 +4,15 @@ export type WebUserEntityNames = 'Profile'
 export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
 export type KnownEntityType = 'resource' | 'collection' | 'profile' | 'subject'
 
+export type ProfileSearchResultRpc = {
+  endCursor?: string
+  list: { _key: string }[]
+}
+export type SortTypeRpc = 'Relevant' | 'Popular' | 'Recent'
+export function isSortTypeRpc(_: any): _ is SortTypeRpc {
+  return ['Relevant', 'Popular', 'Recent'].includes(_)
+}
+
 export type KnownFeaturedEntities = {
   [feat in KnownEntityFeature]: {
     [entType in KnownEntityType]: { _key: string }[]

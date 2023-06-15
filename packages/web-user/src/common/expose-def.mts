@@ -6,6 +6,8 @@ import type {
   KnownFeaturedEntities,
   Profile,
   ProfileGetRpc,
+  ProfileSearchResultRpc,
+  SortTypeRpc,
   WebUserData,
 } from './types.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
@@ -64,5 +66,15 @@ export type WebUserExposeType = PkgExposeDef<{
         entityType: 'collections' | 'resources' | 'profiles'
       },
     ): Promise<{ _key: string }[]>
+    'webapp/search'(
+      body: undefined,
+      params: undefined,
+      query: {
+        sortType?: SortTypeRpc
+        text?: string
+        after?: string
+        limit?: number
+      },
+    ): Promise<ProfileSearchResultRpc>
   }
 }>

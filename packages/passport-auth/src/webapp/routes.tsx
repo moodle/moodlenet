@@ -1,7 +1,7 @@
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import { Route } from 'react-router-dom'
-const LoginSuccess = lazy(() => import('./LoginSuccess'))
-const LoginFail = lazy(() => import('./LoginFail'))
+import LoginFail from './LoginFail.js'
+import LoginSuccess from './LoginSuccess.js'
 
 const AuthRoutes = (
   <>
