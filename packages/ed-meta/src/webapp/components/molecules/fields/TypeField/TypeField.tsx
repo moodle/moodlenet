@@ -27,6 +27,8 @@ export const TypeField: FC<TypeFieldProps> = ({
   const [updatedTypes, setUpdatedTypes] = useState(types)
   const [searchText, setSearchText] = useState('')
 
+  console.log('shoudlShowErrors Type', shouldShowErrors)
+
   useEffect(() => {
     setUpdatedTypes({
       opts: typeOptions,
@@ -54,7 +56,7 @@ export const TypeField: FC<TypeFieldProps> = ({
       placeholder="Content type"
       edit
       highlight={shouldShowErrors && !!error}
-      error={error}
+      error={shouldShowErrors && error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={

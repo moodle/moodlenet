@@ -13,6 +13,7 @@ export type SearchboxProps = {
   setIsSearchboxInViewport?: Dispatch<SetStateAction<boolean>>
   size?: 'small' | 'big'
   marginTop?: number
+  showSearchButton?: boolean
 }
 
 export const Searchbox: FC<SearchboxProps> = ({
@@ -20,6 +21,7 @@ export const Searchbox: FC<SearchboxProps> = ({
   placeholder,
   size,
   marginTop,
+  showSearchButton,
   search,
   setSearchText,
   setIsSearchboxInViewport,
@@ -63,19 +65,22 @@ export const Searchbox: FC<SearchboxProps> = ({
         onChange={setSearchTextCB}
         onKeyDown={e => e.code === 'Enter' && search(searchText)}
       />
-      <PrimaryButton
-        onClick={() => search(searchText)}
-        // {...(size === 'small' ? { color: 'blue' } : {})}
-      >
-        <span>Search</span>
-        <SearchIcon />
-      </PrimaryButton>
+      {showSearchButton && (
+        <PrimaryButton
+          onClick={() => search(searchText)}
+          // {...(size === 'small' ? { color: 'blue' } : {})}
+        >
+          <span>Search</span>
+          <SearchIcon />
+        </PrimaryButton>
+      )}
     </div>
   )
 }
 
 Searchbox.defaultProps = {
   size: 'small',
+  showSearchButton: true,
 }
 
 Searchbox.displayName = 'Searchbox'

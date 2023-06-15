@@ -54,7 +54,7 @@ export const LevelField: FC<LevelFieldProps> = ({
       placeholder="Education level"
       edit
       highlight={shouldShowErrors && !!error}
-      error={error}
+      error={shouldShowErrors && error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={

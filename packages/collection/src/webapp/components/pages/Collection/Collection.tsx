@@ -106,6 +106,7 @@ export const Collection: FC<CollectionProps> = ({
       setShouldShowErrors(false)
       publish()
     } else {
+      setIsEditing(true)
       setShouldShowErrors(true)
     }
   }
@@ -240,17 +241,25 @@ export const Collection: FC<CollectionProps> = ({
       {snackbars}
       <div className="collection">
         <div className="content">
-          <div className="wide-column">
-            {updatedWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-          </div>
-          <div className="main-and-right-columns">
-            <div className="main-column">
-              {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          {updatedWideColumnItems.length > 0 && (
+            <div className="wide-column">
+              {updatedWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
             </div>
-            <div className="right-column">
-              {updatedRightColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          )}
+          {(updatedMainColumnItems.length > 0 || updatedRightColumnItems.length > 0) && (
+            <div className="main-and-right-columns">
+              {updatedMainColumnItems.length > 0 && (
+                <div className="main-column">
+                  {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+                </div>
+              )}
+              {updatedRightColumnItems.length > 0 && (
+                <div className="right-column">
+                  {updatedRightColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </MainLayout>

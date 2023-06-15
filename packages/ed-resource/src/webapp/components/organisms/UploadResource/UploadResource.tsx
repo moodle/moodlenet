@@ -351,6 +351,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
     </>
   )
 
+  console.log('contentForm errors', contentForm.errors)
+
   return (
     <div className="upload-resource">
       <div
