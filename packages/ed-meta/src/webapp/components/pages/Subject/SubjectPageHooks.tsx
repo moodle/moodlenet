@@ -1,10 +1,9 @@
 import { type AddonItem, type AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
-import { useEffect, useMemo, useState } from 'react'
-import type { SubjectPageData } from '../../../../common/types.mjs'
-import { shell } from '../../../rt/shell.mjs'
+import { useMemo } from 'react'
 import type { SubjectOverallProps, SubjectProps } from './Subject.js'
+import { useSubjectData } from './SubjectDataHooks.js'
 
 export type SubjectPageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 
@@ -25,23 +24,18 @@ type SubjectPageHookArg = {
 
 export const useSubjectPageProps = ({ subjectKey }: SubjectPageHookArg) => {
   const mainLayoutProps = useMainLayoutProps()
-  const [subjectPageData, setSubjectPageData] = useState<SubjectPageData | null>(null)
-  useEffect(() => {
-    shell.rpc.me['webapp/subject-page-data/:_key'](undefined, { _key: subjectKey }).then(
-      setSubjectPageData,
-    )
-  }, [subjectKey])
+  const subjectData = useSubjectData({ subjectKey })
   const plugins = SubjectPagePlugins.usePluginHooks({ subjectKey })
 
   return useMemo<SubjectProps | null>((): SubjectProps | null => {
-    if (!subjectPageData) {
+    if (!subjectData) {
       return null
     }
     const subjectProps: SubjectProps = {
       mainLayoutProps,
-      iscedUrl: subjectPageData.iscedUrl,
-      isIsced: subjectPageData.isIsced,
-      title: subjectPageData.title,
+      iscedUrl: subjectData.iscedUrl,
+      isIsced: subjectData.isIsced,
+      title: subjectData.title,
       mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
       overallItems: plugins.getKeyedAddons('overallItems'),
       mainSubjectCardSlots: {
@@ -51,5 +45,5 @@ export const useSubjectPageProps = ({ subjectKey }: SubjectPageHookArg) => {
       },
     }
     return subjectProps
-  }, [subjectPageData, mainLayoutProps, plugins])
+  }, [subjectData, mainLayoutProps, plugins])
 }
