@@ -119,13 +119,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     setIsEditing(true)
   }
   const handleOnSaveClick = () => {
-    if (form.isValid) {
-      form.submitForm()
-      setShouldShowErrors(false)
-      setIsEditing(false)
-    } else {
-      setShouldShowErrors(true)
-    }
+    form.submitForm()
+    setIsEditing(false)
   }
 
   useEffect(() => {

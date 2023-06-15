@@ -33,7 +33,7 @@ export const contentValidationSchema: SchemaOf<{ content: File | string | undefi
       .test((v, { createError }) =>
         v instanceof Blob && v.size > maxUploadSize
           ? createError({
-              message: /* t */ `The file is too big, reduce the size or provide a url`,
+              message: `The file is too big, reduce the size or provide a url`,
             })
           : true,
       )

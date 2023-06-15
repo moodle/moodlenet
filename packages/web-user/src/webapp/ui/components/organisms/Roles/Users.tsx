@@ -67,6 +67,7 @@ export const Users: FC<UsersProps> = ({ users, search }) => {
           searchText={''}
           setSearchText={search}
           search={search}
+          showSearchButton={false}
         />
         <table className="users-table">
           <thead>

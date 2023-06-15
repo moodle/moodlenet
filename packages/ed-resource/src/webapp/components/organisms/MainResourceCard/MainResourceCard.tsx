@@ -156,13 +156,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   }
 
   const handleOnSaveClick = () => {
-    if (form.isValid) {
-      form.submitForm()
-      setShouldShowErrors(false)
-      setIsEditing(false)
-    } else {
-      setShouldShowErrors(true)
-    }
+    form.submitForm()
+    setIsEditing(false)
   }
 
   const copyUrl = () => {
@@ -192,7 +187,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
       }}
-      error={shouldShowErrors && form.errors.title && capitalizeFirstLetter(form.errors.title)}
+      error={
+        shouldShowErrors &&
+        isEditing &&
+        form.errors.title &&
+        capitalizeFirstLetter(form.errors.title)
+      }
     />
   ) : (
     <div className="title" key="resource-title">
@@ -568,7 +568,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       style={{
         pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
       }}
-      error={shouldShowErrors && form.errors.description}
+      error={shouldShowErrors && isEditing && form.errors.description}
     />
   ) : (
     <div className="description" key="description-container">
