@@ -4,6 +4,7 @@ import {
   Modal,
   PrimaryButton,
   SecondaryButton,
+  Snackbar,
   TertiaryButton,
 } from '@moodlenet/component-library'
 import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
@@ -183,7 +184,7 @@ export const Collection: FC<CollectionProps> = ({
 
   const extraDetailsContainer =
     updatedExtraDetailsItems.length > 0 ? (
-      <Card className="extra-details-card" key="extra-edtails-container" hideBorderWhenSmall={true}>
+      <Card className="extra-details-card" key="extra-details-container" hideBorderWhenSmall={true}>
         {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
     ) : null
@@ -207,7 +208,17 @@ export const Collection: FC<CollectionProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const snackbars = <></>
+  const snackbars = isSaving && (
+    <Snackbar
+      position="bottom"
+      type="info"
+      waitDuration={1500}
+      autoHideDuration={6000}
+      showCloseButton={false}
+    >
+      {`Content uploading, please don't close the tab`}
+    </Snackbar>
+  )
 
   const modals = (
     <>

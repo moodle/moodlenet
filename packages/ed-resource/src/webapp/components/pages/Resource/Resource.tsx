@@ -1,6 +1,6 @@
 import { InsertDriveFile, Link } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, Modal, PrimaryButton, SecondaryButton } from '@moodlenet/component-library'
+import { Card, Modal, PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
 import {
   DateField,
   LanguageField,
@@ -428,7 +428,19 @@ export const Resource: FC<ResourceProps> = ({
   //   ...(smallScreenColumnItems ?? []),
   // ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const snackbars = <></>
+  const snackbars = [
+    isSaving && (
+      <Snackbar
+        position="bottom"
+        type="info"
+        waitDuration={1500}
+        autoHideDuration={6000}
+        showCloseButton={false}
+      >
+        {`Content uploading, please don't close the tab`}
+      </Snackbar>
+    ),
+  ]
 
   const modals = (
     <>

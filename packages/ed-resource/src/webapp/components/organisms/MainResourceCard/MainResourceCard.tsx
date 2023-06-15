@@ -20,7 +20,6 @@ import {
   getTagList,
 } from '@moodlenet/react-app/ui'
 import {
-  CloudDoneOutlined,
   Delete,
   Edit,
   InsertDriveFile,
@@ -155,7 +154,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const handleOnSaveClick = () => {
     form.submitForm()
-    setIsEditing(false)
   }
 
   const copyUrl = () => {
@@ -183,7 +181,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       placeholder="Title"
       onChange={form.handleChange}
       style={{
-        pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+        pointerEvents: `${isSaving ? 'none' : 'inherit'}`,
       }}
       error={
         shouldShowErrors &&
@@ -218,36 +216,37 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : null
 
   const [currentlySaving, setCurrentlySaving] = useState(false)
-  const [showSavedText, setShowSavedText] = useState(false)
-  const [saved, setSaved] = useState(false)
+  // const [showSavedText, setShowSavedText] = useState(false)
+  // const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     isSaving && setCurrentlySaving(true)
     if (!isSaving && currentlySaving) {
-      setSaved(true)
       setCurrentlySaving(false)
-      setShowSavedText(true)
-      setTimeout(() => setShowSavedText(false), 3000)
+      setIsEditing(false)
+      // setSaved(true)
+      // setShowSavedText(true)
+      // setTimeout(() => setShowSavedText(false), 3000)
     }
-  }, [currentlySaving, isSaving, saved])
+  }, [currentlySaving, isSaving, setIsEditing])
 
-  const savingFeedback = isSaving ? (
-    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-      <Loading type="circular" color="#8f8f8f" size="19px" />
-      {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
-      Saving...
-    </abbr>
-  ) : saved ? (
-    <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-      <CloudDoneOutlined />
-      {showSavedText && 'Saved'}
-    </abbr>
-  ) : null
+  // const savingFeedback = isSaving ? (
+  //   <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+  //     <Loading type="circular" color="#8f8f8f" size="19px" />
+  //     {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
+  //     Saving...
+  //   </abbr>
+  // ) : saved ? (
+  //   <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+  //     <CloudDoneOutlined />
+  //     {showSavedText && 'Saved'}
+  //   </abbr>
+  // ) : null
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
     typePill,
-    savingFeedback,
+    // savingFeedback,
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
@@ -416,8 +415,27 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         Item: () => (
           <div className="edit-save">
             {isEditing ? (
-              <PrimaryButton className={``} color="green" onClick={handleOnSaveClick}>
-                <Save />
+              <PrimaryButton
+                className={`${isSaving ? 'loading' : ''}`}
+                color="green"
+                onClick={isSaving ? handleOnEditClick : handleOnSaveClick}
+              >
+                <div
+                  className="loading"
+                  style={{
+                    visibility: isSaving ? 'visible' : 'hidden',
+                  }}
+                >
+                  <Loading color="white" />
+                </div>
+                <div
+                  className="label"
+                  style={{
+                    visibility: isSaving ? 'hidden' : 'visible',
+                  }}
+                >
+                  <Save />
+                </div>
               </PrimaryButton>
             ) : (
               <SecondaryButton onClick={handleOnEditClick} color="orange">
@@ -564,7 +582,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       value={form.values.description}
       onChange={form.handleChange}
       style={{
-        pointerEvents: `${form.isSubmitting ? 'none' : 'inherit'}`,
+        pointerEvents: `${isSaving ? 'none' : 'inherit'}`,
       }}
       error={shouldShowErrors && isEditing && form.errors.description}
     />

@@ -13,15 +13,7 @@ import {
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
-import {
-  CloudDoneOutlined,
-  Delete,
-  Edit,
-  MoreVert,
-  Public,
-  PublicOff,
-  Save,
-} from '@mui/icons-material'
+import { Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -118,7 +110,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   }
   const handleOnSaveClick = () => {
     form.submitForm()
-    setIsEditing(false)
   }
 
   useEffect(() => {
@@ -167,35 +158,36 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   )
 
   const [currentlySaving, setCurrentlySaving] = useState(false)
-  const [showSavedText, setShowSavedText] = useState(false)
-  const [saved, setSaved] = useState(false)
+  // const [showSavedText, setShowSavedText] = useState(false)
+  // const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     isSaving && setCurrentlySaving(true)
     if (!isSaving && currentlySaving) {
-      setSaved(true)
       setCurrentlySaving(false)
-      setShowSavedText(true)
-      setTimeout(() => setShowSavedText(false), 3000)
+      setIsEditing(false)
+      // setSaved(true)
+      // setShowSavedText(true)
+      // setTimeout(() => setShowSavedText(false), 3000)
     }
-  }, [currentlySaving, isSaving, saved])
+  }, [currentlySaving, isSaving, setIsEditing])
 
-  const savingFeedback = isSaving ? (
-    <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-      <Loading type="circular" color="#8f8f8f" size="19px" />
-      {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
-      Saving...
-    </abbr>
-  ) : saved ? (
-    <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-      <CloudDoneOutlined />
-      {showSavedText && 'Saved'}
-    </abbr>
-  ) : null
+  // const savingFeedback = isSaving ? (
+  //   <abbr className="saving-feedback" key="saving-feedback" title="Saving">
+  //     <Loading type="circular" color="#8f8f8f" size="19px" />
+  //     {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
+  //     Saving...
+  //   </abbr>
+  // ) : saved ? (
+  //   <abbr className="saved-feedback" key="saved-feedback" title="Saved">
+  //     <CloudDoneOutlined />
+  //     {showSavedText && 'Saved'}
+  //   </abbr>
+  // ) : null
 
   const updatedTopLeftHeaderItems = [
     collectionLabel,
-    savingFeedback,
+    // savingFeedback,
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
@@ -290,8 +282,27 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
         Item: () => (
           <div className="edit-save">
             {isEditing ? (
-              <PrimaryButton className={``} color="green" onClick={handleOnSaveClick}>
-                <Save />
+              <PrimaryButton
+                className={`${form.isSubmitting ? 'loading' : ''}`}
+                color="green"
+                onClick={form.isSubmitting ? handleOnEditClick : handleOnSaveClick}
+              >
+                <div
+                  className="loading"
+                  style={{
+                    visibility: form.isSubmitting ? 'visible' : 'hidden',
+                  }}
+                >
+                  <Loading color="white" />
+                </div>
+                <div
+                  className="label"
+                  style={{
+                    visibility: form.isSubmitting ? 'hidden' : 'visible',
+                  }}
+                >
+                  <Save />
+                </div>
               </PrimaryButton>
             ) : (
               <SecondaryButton onClick={handleOnEditClick} color="orange">
