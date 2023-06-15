@@ -156,13 +156,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   }
 
   const handleOnSaveClick = () => {
-    if (form.isValid) {
-      form.submitForm()
-      setShouldShowErrors(false)
-      setIsEditing(false)
-    } else {
-      setShouldShowErrors(true)
-    }
+    form.submitForm()
+    setIsEditing(false)
   }
 
   const copyUrl = () => {
