@@ -22,6 +22,7 @@ import {
   getLandingPageList,
   getProfileRecord,
   searchProfiles,
+  sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
 } from './lib/profile.mjs'
@@ -253,8 +254,8 @@ export const expose = await shell.expose<WebUserExposeType>({
     'webapp/send-message-to-user/:profileKey': {
       //@ALE TODO
       guard: () => void 0,
-      async fn(/* _,{profileKey} */) {
-        return
+      async fn({ message }, { profileKey }) {
+        sendMessageToProfileIntent({ message, profileKey })
       },
     },
 

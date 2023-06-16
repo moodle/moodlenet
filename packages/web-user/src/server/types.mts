@@ -73,3 +73,14 @@ export type UnverifiedTokenCtx = {
   type: 'unverified-token'
   currentJwtToken: JwtToken
 }
+
+export interface WebUserEvents {
+  'send-message-to-profile-intent': {
+    message: {
+      text: string
+      html: string
+    }
+    fromWebUserKey: string
+    toWebUserKey: string
+  }
+}

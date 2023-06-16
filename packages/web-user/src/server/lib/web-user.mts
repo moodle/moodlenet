@@ -38,6 +38,7 @@ export async function getCurrentProfileIds() {
   }
   return tokenCtx.payload.profile
 }
+
 export async function verifyCurrentTokenCtx() {
   const currentCtx = shell.myAsyncCtx.get()
   if (!currentCtx?.tokenCtx) {

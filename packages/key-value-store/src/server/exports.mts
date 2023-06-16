@@ -5,7 +5,7 @@ export * from './types.js'
 export const KV_COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 
 export default async function kvStoreFactory<TMap extends KVSTypeMap>(
-  shell: Shell<any>,
+  shell: Shell<any, any>,
 ): Promise<KVStore<TMap>> {
   const { collection: KVCollection /* , newlyCreated  */ } = await shell.call(
     ensureDocumentCollection,

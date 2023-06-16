@@ -10,6 +10,7 @@ import {
   pkgAsyncContext,
   setNow,
 } from '../async-context/lib.mjs'
+import { pkgEmitter } from '../events/main-event-emitter.mjs'
 import { getConfig, pkgDepGraph } from '../ignite.mjs'
 import { getChildLogger, type LogLevel } from '../logger/init-logger.mjs'
 import { coreConfigs } from '../main/env.mjs'
@@ -23,7 +24,9 @@ import { ensureRegisterPkg, listEntries, pkgEntryByPkgIdValue } from '../pkg-reg
 import type { PkgModuleRef } from '../types.mjs'
 
 // FIXME: maintain a registry for shells (for pkg singletons)
-export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleRef) {
+export async function getMyShell<PkgAsyncCtx = never, Events = never>(
+  pkg_module_ref: PkgModuleRef,
+) {
   const { pkgId: myId, pkgInfo } = await ensureRegisterPkg(pkg_module_ref)
   const config = getConfig(myId.name)
   const myAsyncCtx = pkgAsyncContext<PkgAsyncCtx>(myId.name)
@@ -31,7 +34,9 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
   const myBaseFsFolder = join(coreConfigs.baseFsFolder, ...myId.name.split('/'))
   await mkdir(myBaseFsFolder, { recursive: true })
   const logger = getChildLogger(myId)
+  const event = pkgEmitter<Events>(myId)
   const pkgShell = {
+    event,
     log(level: LogLevel, msg: any) {
       const message = msg instanceof Error ? msg : inspect(msg, true, 5, true)
       logger.log(level, message)

@@ -28,6 +28,7 @@ import {
   getCurrentProfileIds,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
+  verifyCurrentTokenCtx,
 } from './web-user.mjs'
 
 export async function editProfile(
@@ -338,4 +339,29 @@ export async function searchProfiles({
     list,
     endCursor: list.length < limit ? undefined : String(skip + list.length),
   }
+}
+
+export async function sendMessageToProfile({
+  message,
+  profileKey,
+}: {
+  message: string
+  profileKey: string
+}) {
+  const tokenCtx = await verifyCurrentTokenCtx()
+  if (!tokenCtx || tokenCtx.payload.isRoot || !tokenCtx.payload.webUser) return
+
+  const fromWebUserKey = tokenCtx.payload.webUser._key
+  const toWebUser = await getWebUserByProfileKey({ profileKey })
+  if (!toWebUser) return
+
+  const toWebUserKey = toWebUser._key
+  shell.event.emit('send-message-to-profile-intent', {
+    message: {
+      text: message,
+      html: message,
+    },
+    fromWebUserKey,
+    toWebUserKey,
+  })
 }
