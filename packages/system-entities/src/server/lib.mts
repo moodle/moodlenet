@@ -541,8 +541,10 @@ ${projectAqlRawProps}
   const queryCursor = await db
     .query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(q, bindVars)
     .catch(e => {
-      shell.log('error', { q, bindVars })
-      console.error(q, JSON.stringify({ bindVars }, null, 2))
+      shell.log('error', e)
+      shell.log('debug', q)
+      shell.log('debug', JSON.stringify({ bindVars }))
+      //
       throw e
     })
 

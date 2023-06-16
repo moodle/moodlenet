@@ -32,23 +32,23 @@ await Promise.all(
       return
     }
     if (mountOnAbsPath) {
-      shell.log('info', `HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
+      shell.log('info', `mounting ${mountOnAbsPath} for ${pkgId.name}`)
       app.use(mountOnAbsPath, pkgApp)
     } else {
       const pkgBaseRoute = `/${pkgId.name}`
-      shell.log('info', `HTTP: mounting ${BASE_PKG_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)
+      shell.log('info', `mounting ${BASE_PKG_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)
       pkgAppContainer.use(pkgBaseRoute, ...getMiddlewares(), pkgApp)
     }
   }),
 )
 await new Promise<void>((resolve, reject) => {
-  shell.log('info', `HTTP: starting server on port ${env.port}`)
+  shell.log('info', `starting server on port ${env.port}`)
   const server = app.listen(env.port, (...args: any[]) => (args[0] ? reject(args[0]) : resolve()))
-  server.on('error', err => shell.log('info', { 'HTTP: server error': err }))
+  server.on('error', err => shell.log('info', { 'server error': err }))
   shutdownGracefullyLocalServer = gracefulShutdown(server, {
     development: false,
     forceExit: false,
     timeout: 1000,
   })
-  shell.log('info', `HTTP: listening on port ${env.port} :)`)
+  shell.log('info', `listening on port ${env.port} :)`)
 })

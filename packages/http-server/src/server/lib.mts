@@ -13,7 +13,7 @@ export function getMiddlewares() {
 
 export async function mountApp(mountItem: Pick<MountAppItem, 'getApp' | 'mountOnAbsPath'>) {
   const { pkgId: callerPkgId } = shell.assertCallInitiator()
-  shell.log('info', `HTTP: register mountApp for ${callerPkgId.name}`)
+  shell.log('info', `register mountApp for ${callerPkgId.name}`)
   mountedApps.push({ ...mountItem, pkgId: callerPkgId })
   const baseUrl = `${instanceDomain}${mountItem.mountOnAbsPath ?? `/.pkg/${callerPkgId.name}`}`
   return {
@@ -23,7 +23,7 @@ export async function mountApp(mountItem: Pick<MountAppItem, 'getApp' | 'mountOn
 
 export async function addMiddlewares(mwItem: Pick<MiddlewareItem, 'handlers'>) {
   const { pkgId: callerPkgId } = shell.assertCallInitiator()
-  shell.log('info', `HTTP: register Middleware for ${callerPkgId.name}`)
+  shell.log('info', `register Middleware for ${callerPkgId.name}`)
   middlewares.push({ ...mwItem, pkgId: callerPkgId })
 }
 

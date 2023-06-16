@@ -1,7 +1,8 @@
 import winston from 'winston'
+import DailyRotateFile from 'winston-daily-rotate-file'
 import { coreConfigs } from '../main/env.mjs'
 import type { PkgIdentifier } from '../types.mjs'
-//https://datatracker.ietf.org/doc/html/rfc5424 + "event"
+//https://datatracker.ietf.org/doc/html/rfc5424
 export type LogLevel = keyof typeof logLevelMap
 export const logLevelMap = {
   emergency: 0,
@@ -9,46 +10,56 @@ export const logLevelMap = {
   critical: 2,
   error: 3,
   warn: 4,
-  event: 4,
   notice: 5,
   info: 6,
   debug: 7,
 }
 const mainLoggerConfigs = coreConfigs.mainLogger
 
-const transports: winston.transport[] = []
-
-transports.push(
-  new winston.transports.Console({
-    level: mainLoggerConfigs?.consoleLevel ?? 'debug',
-    format: winston.format.combine(
-      winston.format.padLevels(),
-      winston.format.timestamp(),
-      winston.format.colorize({ all: true }),
-      winston.format.printf(({ level, message, label, timestamp }) => {
-        return `${timestamp} [${label}] ${level}: ${message}`
-      }),
-    ),
-  }),
-)
-
-mainLoggerConfigs?.file &&
-  transports.push(
-    new winston.transports.File({
-      filename: mainLoggerConfigs.file.path,
-      level: mainLoggerConfigs.file.level,
+const colors: Record<LogLevel, string> = {
+  emergency: 'red',
+  alert: 'red',
+  critical: 'red',
+  error: 'red',
+  warn: 'yellow',
+  notice: 'green',
+  info: 'blue',
+  debug: 'cyan',
+}
+export const mainLogger = winston.createLogger({
+  transports: [
+    new winston.transports.Console({
+      level: mainLoggerConfigs.consoleLevel,
       format: winston.format.combine(
-        winston.format.padLevels(),
         winston.format.timestamp(),
-        winston.format.uncolorize(),
+        winston.format.colorize({ colors }),
         winston.format.printf(({ level, message, label, timestamp }) => {
-          return `${timestamp} [${label}] ${level}: ${message}`
+          return `${timestamp} [${level}] [${label}]: ${message}`
         }),
       ),
     }),
-  )
+  ],
+  levels: logLevelMap,
+})
 
-export const mainLogger = winston.createLogger({ transports, levels: logLevelMap })
+mainLoggerConfigs.file &&
+  mainLogger.configure({
+    transports: [
+      ...mainLogger.transports,
+      new DailyRotateFile({
+        filename: mainLoggerConfigs.file.path,
+        level: mainLoggerConfigs.file.level,
+        format: winston.format.combine(
+          winston.format.padLevels(),
+          winston.format.timestamp(),
+          winston.format.uncolorize(),
+          winston.format.printf(({ level, message, label, timestamp }) => {
+            return `${timestamp} [${level}] [${label}]: ${message}`
+          }),
+        ),
+      }),
+    ],
+  })
 
 export function getChildLogger(pkgId: PkgIdentifier): winston.Logger {
   const label = `${pkgId.name}@${pkgId.version}`

@@ -75,7 +75,7 @@ async function defaultConfigJson() {
         mainLogger: {
           consoleLevel: 'info',
           file: {
-            path: './moodlenet.log',
+            path: './moodlenet.%DATE%.log',
             level: 'info',
           },
         },

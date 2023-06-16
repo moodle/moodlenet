@@ -32,8 +32,9 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
   await mkdir(myBaseFsFolder, { recursive: true })
   const logger = getChildLogger(myId)
   const pkgShell = {
-    log(type: LogLevel, msg: any) {
-      logger.log(type, inspect(msg, true, 5, true))
+    log(level: LogLevel, msg: any) {
+      const message = msg instanceof Error ? msg : inspect(msg, true, 5, true)
+      logger.log(level, message)
     },
     getExposes: () => getExposes(),
     // the previous props needs to be explicitely defined, otherways tsc complains `shell(import.meta)` all aroud with:
