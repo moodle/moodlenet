@@ -87,7 +87,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
     const searchInLogicalPath = getLogicalPath(opts.path)
     const logicalPathMinLength = searchInLogicalPath.length + 1
     const logicalPathMaxLength = logicalPathMinLength + opts.maxDepth
-    // console.log({ opts, pOpts, logicalPathMinLength, logicalPathMaxLength })
+    // shell.log('info', { opts, pOpts, logicalPathMinLength, logicalPathMaxLength })
     const pathLengthFilter = opts.maxDepth
       ? [
           `fileRecord.logicalPathLength >= @logicalPathMinLength`,
@@ -104,7 +104,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
       FOR fileRecord in @@BucketCollection
         FILTER ${allFilters}
       RETURN fileRecord`
-    // console.log(lsQuery)
+    // shell.log('info', lsQuery)
     const rawDbRecords = await db
       .query<DbRecord>(lsQuery, {
         '@BucketCollection': BucketCollection.name,
@@ -147,7 +147,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
       created: shell.now().toISOString(),
     }
 
-    // // console.log('create', { partRawDbRecord })
+    // // shell.log('info', 'create', { partRawDbRecord })
     const { new: newRawDbRecord } = await BucketCollection.save(dbRecordData, {
       returnNew: true,
     }).catch(async err => {
@@ -189,7 +189,7 @@ export default async function fileStoreFactory(shell: Shell, bucketName: string)
 
     const fsFileAbsolutePath = getFsAbsolutePathByDirectAccessId(rawDbRecord.directAccessId)
     const fsFileMetaAbsolutePath = itemInfoFileName(fsFileAbsolutePath)
-    console.log(`del ${logicalName}`, { maybeRawDbRecord, fsFileAbsolutePath })
+    shell.log('info', { del: { logicalName, maybeRawDbRecord, fsFileAbsolutePath } })
 
     await Promise.all([
       rimraf(fsFileMetaAbsolutePath, { maxRetries: 3 }).catch(() => false),

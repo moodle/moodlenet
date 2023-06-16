@@ -29,11 +29,11 @@ export async function getRpcFileByV2AssetLocation(v2AssetLocation: string, warn:
     () => [null, null],
   )
   if (!(statsFile && statsDesc)) {
-    console.warn(`couldn't find file for V2AssetLocation: ${v2AssetLocation} - ${warn}`)
+    shell.log('warn', `couldn't find file for V2AssetLocation: ${v2AssetLocation} - ${warn}`)
     return null
   }
   const fileDesc = JSON.parse(await readFile(fileDescPath, 'utf-8'))
-  // console.log({ filePath, fileDescPath, fileDesc })
+  // shell.log('info', { filePath, fileDescPath, fileDesc })
   const rpcFile = readableRpcFile(
     {
       type: fileDesc.tempFileDesc.mimetype,

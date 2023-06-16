@@ -147,7 +147,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
 ) {
   const currentUser = opts?.pkgCreator ? await setPkgCurrentUser() : await getCurrentSystemUser()
   const _key = newEntityData._key ?? createEntityKey()
-  // console.log({ currentUser })
+  // shell.log('info', { currentUser })
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
     return
@@ -275,7 +275,7 @@ export async function getEntity<
     projectAccess: opts?.projectAccess,
   })
   const getRecord = await getCursor.next()
-  // console.log(inspect({ getRecord }, false, 10, true))
+  // shell.log('info', inspect({ getRecord }, false, 10, true))
   return getRecord
 }
 
@@ -334,7 +334,7 @@ export async function queryMyEntities<
 //     `FILTER entity._key == "${key}" LIMIT 1`,
 //   )
 //   const get_findResult = (await cursor.all())[0]
-//   console.log(inspect({ get_findResult }, false, 10, true))
+//   shell.log('info', inspect({ get_findResult }, false, 10, true))
 //   return get_findResult
 // }
 export type AccessEntitiesCustomProject<P extends Record<string, AqlVal<any>>> = P
@@ -370,8 +370,11 @@ export type AccessEntitiesOpts<
 export async function getCurrentUserInfo() {
   const currentUser = await getCurrentSystemUser()
   const entityInfoAql = userInfoAqlProvider('currentUser')
-  console.log(`LET currentUser = @currentUser 
-  RETURN ${entityInfoAql}`)
+  shell.log(
+    'info',
+    `LET currentUser = @currentUser 
+  RETURN ${entityInfoAql}`,
+  )
   const cursor = await db.query<EntityInfo>(
     `LET currentUser = @currentUser 
     RETURN ${entityInfoAql}`,
@@ -468,7 +471,7 @@ export async function accessEntities<
       ...(opts?.projectAccess ?? []),
     ]),
   ]
-  // console.log({ entityAccessesToCompute, access, opts_projectAccess: opts?.projectAccess })
+  // shell.log('info', { entityAccessesToCompute, access, opts_projectAccess: opts?.projectAccess })
   const accessControlsAqlRawProps = (
     await Promise.all(
       entityAccessesToCompute.map(async _entityAccess => {
@@ -534,11 +537,14 @@ ${projectAqlRawProps}
 `
 
   const bindVars = { '@collection': accessCollectionName, currentUser, ...opts?.bindVars }
-  // console.log(q, JSON.stringify({ bindVars }, null, 2))
+  // shell.log('info', q, JSON.stringify({ bindVars }, null, 2))
   const queryCursor = await db
     .query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(q, bindVars)
     .catch(e => {
-      console.log(q, JSON.stringify({ bindVars }, null, 2))
+      shell.log('error', e)
+      shell.log('debug', q)
+      shell.log('debug', JSON.stringify({ bindVars }))
+      //
       throw e
     })
 

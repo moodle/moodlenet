@@ -41,7 +41,7 @@ export async function signup(req: SignupReq) {
   if (mUser) {
     return { success: false, msg: 'email exists' } as const
   }
-  // console.log({ req })
+  // shell.log('info', { req })
   const confirmEmailPayload: ConfirmEmailPayload = {
     req: {
       email: req.email,
@@ -187,7 +187,7 @@ export async function sendChangePasswordRequestEmail({ email }: { email: string 
   if (!user) {
     return false
   }
-  // console.log({ req })
+  // shell.log('info', { req })
   const changePasswordEmailPayload: ChangePasswordEmailPayload = { email }
   const changePasswordToken = await shell.call(crypto.jwt.sign)(changePasswordEmailPayload, {
     expirationTime: '1h',

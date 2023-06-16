@@ -58,7 +58,7 @@ export function makeExtPortsApp() {
         try {
           rpcArgs = getRpcArgs(httpReq)
         } catch (err) {
-          console.log(err)
+          shell.log('info', err)
           httpResp.status(400)
           httpResp.send(err)
           return
@@ -67,7 +67,7 @@ export function makeExtPortsApp() {
         try {
           rpcDefItem.guard(...rpcArgs)
         } catch (err) {
-          console.log(err)
+          shell.log('info', err)
           httpResp.status(400)
           httpResp.send(err)
           return
@@ -119,7 +119,7 @@ function getRpcArgs(req: Request): RpcArgs {
 
 function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart' | 'none'] {
   const contentTypeHeader = req.headers['content-type']
-  // console.log({ HHH: req.headers })
+  // shell.log('info', { HHH: req.headers })
   const type = !contentTypeHeader
     ? 'none'
     : /^application\/json/i.test(contentTypeHeader)

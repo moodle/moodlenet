@@ -106,7 +106,7 @@ export function sendWebUserTokenCookie(jwtToken: JwtToken | undefined) {
   const { pkgId } = shell.assertCallInitiator()
   const httpCtx = getCurrentHttpCtx()
   const httpResponse = httpCtx?.response
-  // console.log({ httpResponse, jwtToken, jwtTokenL: jwtToken?.length })
+  // shell.log('info', { httpResponse, jwtToken, jwtTokenL: jwtToken?.length })
   if (!httpResponse) {
     return
   }

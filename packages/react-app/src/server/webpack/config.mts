@@ -72,7 +72,7 @@ export async function getWp(
           },
           proxy: {
             path: (pathname, _req) => {
-              // console.log({ pathname, test: /\/\..*/.test(pathname) })
+              // shell.log('info', { pathname, test: /\/\..*/.test(pathname) })
               return /\/\..*/.test(pathname)
             },
             target: cfg.proxy,
@@ -243,7 +243,7 @@ export async function getWp(
               }, 'node_modules\\/') + '.*'
             const excludeRegex = new RegExp(regexStr)
             const excluded = excludeRegex.test(val)
-            // !excluded && console.log(` notExcluding: ${val} `)
+            // !excluded && shell.log('info', ` notExcluding: ${val} `)
             return excluded
           },
           use: [
@@ -288,7 +288,7 @@ export async function getWp(
         // resource.request = resource.request.replace(/^node:/, '')
         const url = resource.request
         const newUrl = require.resolve(url.replace(/^node:/, '') + '/')
-        console.log({ url, newUrl })
+        //console.log('info', { url, newUrl })
         resource.request = newUrl
       }),
       // new webpack.NormalModuleReplacementPlugin(/.mjs$/, resource => {
@@ -296,7 +296,7 @@ export async function getWp(
       //   const url = resource.request
       //   // const newUrl = url.endsWith('.mjs') ? require.resolve(url.replace(/.mjs$/, '.mts')) : url
       //   const newUrl = url.endsWith('.mjs') ? require.resolve(url.replace(/.mjs$/, '')) : url
-      //   console.log({ url, newUrl })
+      //   shell.log('info', { url, newUrl })
       //   resource.request = newUrl
       // }),
       isDevServer && new ReactRefreshWebpackPlugin(),

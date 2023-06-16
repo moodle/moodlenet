@@ -49,6 +49,7 @@ export function getCoreConfigs(): CoreConfigs {
     baseFsFolder: coreConfigs.baseFsFolder,
     npmRegistry: coreConfigs.npmRegistry,
     instanceDomain: coreConfigs.instanceDomain,
+    mainLogger: coreConfigs.mainLogger,
   }
 }
 

@@ -28,7 +28,7 @@ export async function setupOpenIdProvider() {
   openidProvider.use((ctx, next) => {
     const op = ctx.path
     ctx.path = ctx.path.replace(/^\/\.openid/, '')
-    console.log('openidProvider', op, ctx.path)
+    shell.log('info', 'openidProvider', op, ctx.path)
     return next()
   })
   return openidProvider
@@ -58,7 +58,7 @@ export function getProviderConfig() {
       openid: ['scope', 'isAdmin', 'webUserKey', 'accountId', 'exp', 'iss', 'aud'],
     },
     async findAccount(ctx, sub, token) {
-      console.log(`\n\nOAUTH findAccount()`, { ctx, sub, token })
+      shell.log('info', `\n\nOAUTH findAccount()`, { ctx, sub, token })
       // if (!token) {
       //   return
       // }
@@ -72,7 +72,7 @@ export function getProviderConfig() {
         accountId: profile._key,
         name: profile.displayName,
         claims(use, scope, claims, rejected) {
-          console.log(`\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
+          shell.log('info', `\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
           return {
             sub: profile._key, // it is essential to always return a sub claim
             name: profile.displayName,
@@ -97,20 +97,20 @@ export function getProviderConfig() {
     },
     interactions: {
       url(ctx, interaction) {
-        console.log('interactions url', interaction, ctx)
+        shell.log('info', 'interactions url', interaction, ctx)
         return `/@moodlenet/openid/interaction/${interaction.uid}`
       },
     },
     adapter(model) {
       return {
         async destroy(id) {
-          console.log(`\n\nOAUTH ${model} destroy(id) {`, { id, model })
+          shell.log('info', `\n\nOAUTH ${model} destroy(id) {`, { id, model })
 
           await kvStore.unset(model, id)
         },
 
         async consume(id) {
-          console.log(`\n\nOAUTH ${model} consume(id) {`, { id, model })
+          shell.log('info', `\n\nOAUTH ${model} consume(id) {`, { id, model })
 
           const item = (await kvStore.get(model, id)).value
           if (!item) {
@@ -120,10 +120,10 @@ export function getProviderConfig() {
         },
 
         async find(id) {
-          console.log(`\n\nOAUTH ${model} find(id) {`, { id, model })
+          shell.log('info', `\n\nOAUTH ${model} find(id) {`, { id, model })
 
           const item = (await kvStore.get(model, id)).value
-          console.log(`\n\nOAUTH ${model} find(id) {`, { found: item })
+          shell.log('info', `\n\nOAUTH ${model} find(id) {`, { found: item })
           // const payload = item && { ...item.payload, session: { accountId: FAKE_ACCOUNT_ID } } // FIXME: set correct sessionAccoutId (maybe depends on model ? 'Interaction' ? ??)
           const payload = item?.payload
 
@@ -131,7 +131,7 @@ export function getProviderConfig() {
         },
 
         async findByUid(uid) {
-          console.log(`\n\nOAUTH ${model} findByUid(uid) {`, { uid, model })
+          shell.log('info', `\n\nOAUTH ${model} findByUid(uid) {`, { uid, model })
 
           const id = await (await kvStore.get(SESSION_UID_KEY, uid)).value
           if ('string' !== typeof id) {
@@ -141,7 +141,7 @@ export function getProviderConfig() {
         },
 
         async findByUserCode(userCode) {
-          console.log(`\n\nOAUTH ${model} findByUserCode(userCode) {`, { userCode, model })
+          shell.log('info', `\n\nOAUTH ${model} findByUserCode(userCode) {`, { userCode, model })
 
           const id = (await kvStore.get(USER_CODE_KEY, userCode)).value
           if ('string' !== typeof id) {
@@ -151,7 +151,7 @@ export function getProviderConfig() {
         },
 
         async upsert(id, payload, expiresIn) {
-          console.log(`\n\nOAUTH ${model} upsert(id, payload, expiresIn) {`, {
+          shell.log('info', `\n\nOAUTH ${model} upsert(id, payload, expiresIn) {`, {
             id,
             payload,
             expiresIn,
@@ -187,7 +187,7 @@ export function getProviderConfig() {
         },
 
         async revokeByGrantId(grantId) {
-          console.log(`\n\nOAUTH ${model} revokeByGrantId(grantId) {`, { grantId, model })
+          shell.log('info', `\n\nOAUTH ${model} revokeByGrantId(grantId) {`, { grantId, model })
 
           // eslint-disable-line class-methods-use-this
           const grant = (await kvStore.get(GRANT_KEY, grantId)).value

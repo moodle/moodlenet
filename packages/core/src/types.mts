@@ -12,4 +12,11 @@ export type CoreConfigs = {
   npmRegistry: string
   baseFsFolder: string
   instanceDomain: string
+  mainLogger: {
+    consoleLevel: string
+    file?: {
+      path: string
+      level: string
+    }
+  }
 }

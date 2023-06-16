@@ -126,7 +126,7 @@ export async function entityFeatureAction({
           profileCreatorIdentifiers.entityIdentifier._key,
           `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
         )
-        // console.log({ profileCreatorIdentifiers, patchResult })
+        // shell.log('info', { profileCreatorIdentifiers, patchResult })
       })
     }
     if (entityType === 'resource') {

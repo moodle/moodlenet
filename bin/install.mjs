@@ -31,23 +31,7 @@ async function generateInstanceConfigFile() {
   const configJsonFilename = resolve(mnDevDir, 'default.config.json')
 
   const defaultConfigJsonTemplate = await defaultConfigJson()
-  await writeFile(
-    configJsonFilename,
-    JSON.stringify(
-      {
-        ...defaultConfigJsonTemplate,
-        pkgs: {
-          ...defaultConfigJsonTemplate.pkgs,
-          '@moodlenet/core': {
-            ...defaultConfigJsonTemplate.pkgs['@moodlenet/core'],
-            baseFsFolder: resolve(mnDevDir, 'fs'),
-          },
-        },
-      },
-      null,
-      2,
-    ),
-  )
+  await writeFile(configJsonFilename, JSON.stringify(defaultConfigJsonTemplate, null, 2))
 }
 
 async function ensureDefaultKeypairs() {
@@ -85,8 +69,16 @@ async function defaultConfigJson() {
   return {
     pkgs: {
       '@moodlenet/core': {
+        baseFsFolder: resolve(mnDevDir, 'fs'),
         instanceDomain: 'http://localhost:8080',
         npmRegistry,
+        mainLogger: {
+          consoleLevel: 'info',
+          file: {
+            path: './moodlenet.%DATE%.log',
+            level: 'info',
+          },
+        },
       },
       '@moodlenet/crypto': {
         keys: {

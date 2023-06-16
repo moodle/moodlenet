@@ -1,5 +1,6 @@
+import { shell } from './shell.mjs'
 import { shutdownGracefullyLocalServer } from './start.mjs'
 
-console.info(`HTTP: stopping server`)
+shell.log('info', `stopping server`)
 const err = await shutdownGracefullyLocalServer().catch(err => err)
-console.info(`HTTP: server stopped ${err ? 'error:' : 'successfully'}`, err ?? '')
+shell.log('info', { 'server stopped': !err ? 'successfully' : 'with error', err })

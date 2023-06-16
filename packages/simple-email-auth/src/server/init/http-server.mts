@@ -8,7 +8,7 @@ shell.call(mountApp)({
     app.get('/confirm-email/:confirmToken', async (req, res) => {
       const { confirmToken } = req.params
       const confirmResp = await confirm({ confirmToken }).catch(e => {
-        console.log(e)
+        shell.log('info', e)
         res.status(500).send(e)
         throw e
       })
