@@ -1,10 +1,11 @@
 import { watchFile } from 'fs'
+import { shell } from '../shell.mjs'
 import { getWp } from './config.mjs'
 import { getAliases, _resolve_alias_json_filename } from './generated-files.mjs'
 
 const port = 3000
 const proxy = 'http://localhost:8080'
-console.log({ port, proxy, _resolve_alias_json_filename })
+shell.log('info', { port, proxy, _resolve_alias_json_filename })
 
 const wp = await getWp({
   mode: 'dev-server',
@@ -22,6 +23,6 @@ async function invalidate() {
   }
   wp.options.resolve.alias = alias
   wp.watching.invalidate(() => {
-    // console.log('INVALIDATED')
+    // shell.log('info', 'INVALIDATED')
   })
 }

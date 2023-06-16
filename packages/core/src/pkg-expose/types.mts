@@ -2,6 +2,8 @@ import type { PkgIdentifier } from '../types.mjs'
 import type { RpcDefItem, RpcFn } from './types-rpc.mjs'
 export * from './types-rpc.mjs'
 
+export type LogLevel = 'error' | 'warn' | 'info' | 'http' | 'verbose' | 'debug' | 'silly'
+
 export type PkgRpcDefs = Record<string, RpcFn>
 export type PkgExposeDef<Def extends { rpc: PkgRpcDefs } = { rpc: PkgRpcDefs }> = Def
 

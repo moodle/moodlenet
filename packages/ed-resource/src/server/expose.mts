@@ -230,7 +230,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        console.log({ uploadedContent })
+        shell.log('info', { uploadedContent })
         if (!uploadedContent) {
           await delResourceFile(_key)
           await patchResource(_key, {
@@ -261,7 +261,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         const readable = await assertRpcFileReadable(fsItem.rpcFile)
 
         readable.on('end', () => {
-          console.log('resource download stream ended, can increment download count')
+          shell.log('info', 'resource download stream ended, can increment download count')
           incrementResourceDownloads({ _key })
         })
         return readable

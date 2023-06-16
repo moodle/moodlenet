@@ -19,7 +19,7 @@ shell.call(mountApp)({
     // app.set('trust proxy', true)
 
     app.post('/interaction/:uid/login', setNoCache, body, async (req, res, next) => {
-      // console.log('-/interaction/:uid/login LOGIN   ', req.params.uid)
+      // shell.log('info', '-/interaction/:uid/login LOGIN   ', req.params.uid)
       try {
         const currentWebUserProfile = await getCurrentProfileIds()
         assert(currentWebUserProfile, 'not authenticated')
@@ -39,13 +39,13 @@ shell.call(mountApp)({
           mergeWithLastSubmission: false,
         })
       } catch (err) {
-        // console.log('-/interaction/:uid/login LOGIN ERR', err)
+        // shell.log('info', '-/interaction/:uid/login LOGIN ERR', err)
         next(err)
       }
     })
 
     app.post('/interaction/:uid/confirm', setNoCache, body, async (req, res, next) => {
-      // console.log('-/interaction/:uid/confirm CONFIRM   ', req.params.uid)
+      // shell.log('info', '-/interaction/:uid/confirm CONFIRM   ', req.params.uid)
       try {
         const interactionDetails = await openIdProvider.interactionDetails(req, res)
         const {
@@ -99,16 +99,16 @@ shell.call(mountApp)({
           mergeWithLastSubmission: true,
         })
       } catch (err) {
-        // console.log('-/interaction/:uid/confirm CONFIRM ERR', err)
+        // shell.log('info', '-/interaction/:uid/confirm CONFIRM ERR', err)
         next(err)
       }
     })
 
     app.get('/interaction/:uid/abort', setNoCache, async (req, res, next) => {
-      // console.log('-/interaction/:uid/abort ABORT   ', req.params.uid)
+      // shell.log('info', '-/interaction/:uid/abort ABORT   ', req.params.uid)
       // const details = await openIdProvider.interactionDetails(req, res)
 
-      // console.log('-/interaction/:uid/abort ABORT   ', details)
+      // shell.log('info', '-/interaction/:uid/abort ABORT   ', details)
       try {
         const result = {
           error: 'access_denied',
@@ -124,7 +124,7 @@ shell.call(mountApp)({
 
     // const ErrorRequestHandler: ErrorRequestHandler = (err, _req, _res, next) => {
     //   if (err instanceof AssertionError) {
-    //     // console.log('OIDC interaction-endpoints Error Handler', req.url, err)
+    //     // shell.log('info', 'OIDC interaction-endpoints Error Handler', req.url, err)
     //     // handle interaction expired / session not found error
     //   }
     //   next(err)

@@ -9,7 +9,9 @@ import {
   pkgAsyncContext,
   setNow,
 } from '../async-context/lib.mjs'
+import type { LogLevel } from '../exports.mjs'
 import { getConfig, pkgDepGraph } from '../ignite.mjs'
+import { getChildLogger } from '../logger/init-logger.mjs'
 import { coreConfigs } from '../main/env.mjs'
 import {
   getExposedByPkgIdentifier,
@@ -28,7 +30,11 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
   const expose = pkgExpose(pkg_module_ref)
   const myBaseFsFolder = join(coreConfigs.baseFsFolder, ...myId.name.split('/'))
   await mkdir(myBaseFsFolder, { recursive: true })
-  return {
+  const logger = getChildLogger(myId)
+  const pkgShell = {
+    log(type: LogLevel, msg: any) {
+      logger.log(type, msg)
+    },
     getExposes: () => getExposes(),
     // the previous props needs to be explicitely defined, otherways tsc complains `shell(import.meta)` all aroud with:
     // ** The inferred type of 'default' cannot be named without a reference to '../node_modules/@moodlenet/core/dist/pkg-expose/lib.mjs'. This is likely not portable. A type annotation is necessary. **
@@ -52,6 +58,8 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
     now,
     setNow,
   }
+
+  return pkgShell
 
   function initiateCall<R>(exec: () => R, forcewipeout = false): R {
     const baseCtx = forcewipeout ? {} : mainAsyncContext.getStore() ?? {}

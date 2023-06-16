@@ -5,6 +5,7 @@ import { BASE_PKG_URL } from '../common/pub-lib.mjs'
 import { makeExtPortsApp } from './ext-ports-app/make.mjs'
 import { env } from './init/env.mjs'
 import { getMiddlewares, httpContextMW, mountedApps } from './lib.mjs'
+import { shell } from './shell.mjs'
 
 export let shutdownGracefullyLocalServer: () => Promise<void>
 
@@ -31,23 +32,24 @@ await Promise.all(
       return
     }
     if (mountOnAbsPath) {
-      console.log(`HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
+      shell.log('info', `HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
+      shell.log('info', `HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
       app.use(mountOnAbsPath, pkgApp)
     } else {
       const pkgBaseRoute = `/${pkgId.name}`
-      console.log(`HTTP: mounting ${BASE_PKG_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)
+      shell.log('info', `HTTP: mounting ${BASE_PKG_URL}/${pkgBaseRoute}/ for ${pkgId.name}`)
       pkgAppContainer.use(pkgBaseRoute, ...getMiddlewares(), pkgApp)
     }
   }),
 )
 await new Promise<void>((resolve, reject) => {
-  console.info(`HTTP: starting server on port ${env.port}`)
+  shell.log('info', `HTTP: starting server on port ${env.port}`)
   const server = app.listen(env.port, (...args: any[]) => (args[0] ? reject(args[0]) : resolve()))
-  server.on('error', err => console.log('HTTP: server error:', err))
+  server.on('error', err => shell.log('info', { 'HTTP: server error': err }))
   shutdownGracefullyLocalServer = gracefulShutdown(server, {
     development: false,
     forceExit: false,
     timeout: 1000,
   })
-  console.info(`HTTP: listening on port ${env.port} :)`)
+  shell.log('info', `HTTP: listening on port ${env.port} :)`)
 })

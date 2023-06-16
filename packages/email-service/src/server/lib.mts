@@ -3,6 +3,7 @@ import { createTransport } from 'nodemailer'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport/index.js'
 import { env } from './init/env.mjs'
 import { kvStore } from './init/kvStore.mjs'
+import { shell } from './shell.mjs'
 import type { EmailObj, NodemailerTransport, SendResp } from './types.mjs'
 export type { SentMessageInfo } from 'nodemailer'
 
@@ -36,10 +37,13 @@ function logWarnTransportIsJsonTransport(
   ) {
     return
   }
-  console.log(`@moodlenet/email-service:
+  shell.log(
+    'info',
+    `@moodlenet/email-service:
   missing configuration
   couldn't really send the following message #${messageInfo.messageId}
   ${JSON.stringify(messageInfo.envelope, null, 4)}
   ${emailObj.text}
-  `)
+  `,
+  )
 }

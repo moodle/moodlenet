@@ -5,5 +5,5 @@
     "incremental": true,
     "assumeChangesOnlyAffectDirectDependencies": true
   },
-  "buildOptions": { "assumeChangesOnlyAffectDirectDependencies": true }
+  "buildOptions": { "assumeChangesOnlyAffectDirectDependencies": true, "incremental": true }
 }
