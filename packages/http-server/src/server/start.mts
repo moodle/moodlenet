@@ -33,7 +33,6 @@ await Promise.all(
     }
     if (mountOnAbsPath) {
       shell.log('info', `HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
-      shell.log('info', `HTTP: mounting ${mountOnAbsPath} for ${pkgId.name}`)
       app.use(mountOnAbsPath, pkgApp)
     } else {
       const pkgBaseRoute = `/${pkgId.name}`

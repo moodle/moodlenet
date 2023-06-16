@@ -1,5 +1,6 @@
 import { mkdir } from 'fs/promises'
 import { join } from 'path'
+import { inspect } from 'util'
 import {
   assertCallInitiator,
   getCallInitiator,
@@ -9,9 +10,8 @@ import {
   pkgAsyncContext,
   setNow,
 } from '../async-context/lib.mjs'
-import type { LogLevel } from '../exports.mjs'
 import { getConfig, pkgDepGraph } from '../ignite.mjs'
-import { getChildLogger } from '../logger/init-logger.mjs'
+import { getChildLogger, type LogLevel } from '../logger/init-logger.mjs'
 import { coreConfigs } from '../main/env.mjs'
 import {
   getExposedByPkgIdentifier,
@@ -33,7 +33,7 @@ export async function getMyShell<PkgAsyncCtx = never>(pkg_module_ref: PkgModuleR
   const logger = getChildLogger(myId)
   const pkgShell = {
     log(type: LogLevel, msg: any) {
-      logger.log(type, msg)
+      logger.log(type, inspect(msg, true, 5, true))
     },
     getExposes: () => getExposes(),
     // the previous props needs to be explicitely defined, otherways tsc complains `shell(import.meta)` all aroud with:

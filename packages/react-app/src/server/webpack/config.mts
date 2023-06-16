@@ -8,7 +8,6 @@ import { fileURLToPath } from 'url'
 import type { Configuration } from 'webpack'
 import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
-import { shell } from '../shell.mjs'
 import { getAliases, getPkgPlugins } from './generated-files.mjs'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
@@ -289,7 +288,7 @@ export async function getWp(
         // resource.request = resource.request.replace(/^node:/, '')
         const url = resource.request
         const newUrl = require.resolve(url.replace(/^node:/, '') + '/')
-        shell.log('info', { url, newUrl })
+        //console.log('info', { url, newUrl })
         resource.request = newUrl
       }),
       // new webpack.NormalModuleReplacementPlugin(/.mjs$/, resource => {
