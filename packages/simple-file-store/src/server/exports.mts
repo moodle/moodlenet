@@ -13,7 +13,7 @@ export const BASE_COLLECTION_NAME = 'Moodlenet_simple_file_store'
 
 export type FSStore = Awaited<ReturnType<typeof fileStoreFactory>>
 
-export default async function fileStoreFactory(shell: Shell, bucketName: string) {
+export default async function fileStoreFactory(shell: Shell<any, any>, bucketName: string) {
   const storeBaseFsFolder = resolve(shell.baseFsFolder, 'simple-file-store', bucketName)
   const BUCKET_COLLECTION_NAME = `${BASE_COLLECTION_NAME}_${bucketName}`
 

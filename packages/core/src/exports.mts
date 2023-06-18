@@ -44,6 +44,7 @@ import { coreConfigs } from './main/env.mjs'
 // } from 'winston'
 export type { now, setNow } from './async-context/lib.mjs'
 export * from './async-context/types.mjs'
+export type { EventPayload, mainEmitter, pkgEmitter } from './events/main-event-emitter.mjs'
 export { pkgDepGraph } from './ignite.mjs'
 export {
   assertRpcFileReadable,

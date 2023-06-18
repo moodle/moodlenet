@@ -1,3 +1,5 @@
+import { shell } from './shell.mjs'
+
 export * from './aql.mjs'
 export { WebUserEntitiesTools } from './entities.mjs'
 export { Profile } from './init/sys-entities.mjs'
@@ -15,3 +17,5 @@ export {
   verifyCurrentTokenCtx,
 } from './lib/web-user.mjs'
 export * from './types.mjs'
+
+export const on = shell.events.on

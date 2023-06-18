@@ -73,3 +73,14 @@ export type UnverifiedTokenCtx = {
   type: 'unverified-token'
   currentJwtToken: JwtToken
 }
+
+export interface WebUserEvents {
+  'web-user-request-send-message-to-web-user': {
+    message: {
+      text: string
+      html: string
+    }
+    fromWebUserKey: string
+    toWebUserKey: string
+  }
+}
