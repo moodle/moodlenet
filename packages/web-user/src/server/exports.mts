@@ -18,4 +18,4 @@ export {
 } from './lib/web-user.mjs'
 export * from './types.mjs'
 
-export const on = shell.event.on
+export const on = shell.events.on

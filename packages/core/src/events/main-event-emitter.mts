@@ -1,34 +1,48 @@
 import EventEmitter from 'events'
+import { inspect } from 'util'
+import { mainLogger } from '../logger/init-logger.mjs'
 import type { PkgIdentifier } from '../types.mjs'
 
+const _event_ = `event`
 export const mainEmitter = new EventEmitter()
 
-export type EventPayload<Events, Type extends keyof Events> = {
+mainEmitter.on(_event_, payload => {
+  mainLogger.log('event', inspect(payload, true, 5, true), { pkgId: payload.pkgId })
+})
+
+export type EventPayload<EventTypeMap, Name extends keyof EventTypeMap> = {
   pkgId: PkgIdentifier
-  event: Type
-  data: Events[Type]
+  event: Name
+  data: EventTypeMap[Name]
   at: string
 }
-export function pkgEmitter<Events>(pkgId: PkgIdentifier) {
-  const pkgEventName = `${pkgId.name}::event`
+export function pkgEmitter<EventTypeMap>(pkgId: PkgIdentifier) {
   return {
-    emit<Type extends keyof Events>(event: Type, data: Events[Type]) {
-      const payload: EventPayload<Events, Type> = {
-        pkgId,
-        event,
-        data,
-        at: new Date(Date.now()).toISOString(),
-      }
-      mainEmitter.emit(pkgEventName, payload)
-    },
-    on<Type extends keyof Events>(event: Type, listener: (data: Events[Type]) => void) {
-      mainEmitter.on(pkgEventName, _listener)
-      return () => mainEmitter.off(pkgEventName, _listener)
+    emit,
+    on,
+    any,
+  }
 
-      function _listener(payload: EventPayload<Events, Type>) {
-        if (payload.event !== event) return
-        listener(payload.data)
-      }
-    },
+  function emit<Type extends keyof EventTypeMap>(event: Type, data: EventTypeMap[Type]) {
+    const payload: EventPayload<EventTypeMap, Type> = {
+      pkgId,
+      event,
+      data,
+      at: new Date(Date.now()).toISOString(),
+    }
+    mainEmitter.emit(_event_, payload)
+  }
+  function on<Name extends keyof EventTypeMap>(
+    eventName: Name,
+    listener: (payload: EventPayload<EventTypeMap, Name>) => void,
+  ) {
+    return any(
+      payload =>
+        payload.event === eventName && listener(payload as EventPayload<EventTypeMap, Name>),
+    )
+  }
+  function any(listener: (payload: EventPayload<EventTypeMap, keyof EventTypeMap>) => void) {
+    mainEmitter.on(_event_, listener)
+    return () => mainEmitter.off(_event_, listener)
   }
 }

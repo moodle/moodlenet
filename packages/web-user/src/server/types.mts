@@ -75,7 +75,7 @@ export type UnverifiedTokenCtx = {
 }
 
 export interface WebUserEvents {
-  'send-message-to-profile-intent': {
+  'web-user-request-send-message-to-web-user': {
     message: {
       text: string
       html: string

@@ -356,7 +356,7 @@ export async function sendMessageToProfile({
   if (!toWebUser) return
 
   const toWebUserKey = toWebUser._key
-  shell.event.emit('send-message-to-profile-intent', {
+  shell.events.emit('web-user-request-send-message-to-web-user', {
     message: {
       text: message,
       html: message,

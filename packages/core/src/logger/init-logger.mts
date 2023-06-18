@@ -3,8 +3,19 @@ import DailyRotateFile from 'winston-daily-rotate-file'
 import { coreConfigs } from '../main/env.mjs'
 import type { PkgIdentifier } from '../types.mjs'
 //https://datatracker.ietf.org/doc/html/rfc5424
-export type LogLevel = keyof typeof logLevelMap
-export const logLevelMap = {
+export type LogLevel =
+  | 'event'
+  | 'emergency'
+  | 'alert'
+  | 'critical'
+  | 'error'
+  | 'warn'
+  | 'notice'
+  | 'info'
+  | 'debug'
+type AllLogLevel = LogLevel | 'event'
+export const logLevelMap: Record<AllLogLevel, number> = {
+  event: 0,
   emergency: 0,
   alert: 1,
   critical: 2,
@@ -16,7 +27,8 @@ export const logLevelMap = {
 }
 const mainLoggerConfigs = coreConfigs.mainLogger
 
-const colors: Record<LogLevel, string> = {
+const colors: Record<AllLogLevel, string> = {
+  event: 'blue',
   emergency: 'red',
   alert: 'red',
   critical: 'red',
@@ -26,15 +38,16 @@ const colors: Record<LogLevel, string> = {
   info: 'blue',
   debug: 'cyan',
 }
+
 export const mainLogger = winston.createLogger({
   transports: [
     new winston.transports.Console({
       level: mainLoggerConfigs.consoleLevel,
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.colorize({ colors }),
-        winston.format.printf(({ level, message, label, timestamp }) => {
-          return `${timestamp} [${level}] [${label}]: ${message}`
+        winston.format.colorize({ colors, message: false }),
+        winston.format.printf(({ level, message, pkgId, timestamp }) => {
+          return `${timestamp} [${level}] [${label(pkgId)}]: ${message}`
         }),
       ),
     }),
@@ -53,8 +66,8 @@ mainLoggerConfigs.file &&
           winston.format.padLevels(),
           winston.format.timestamp(),
           winston.format.uncolorize(),
-          winston.format.printf(({ level, message, label, timestamp }) => {
-            return `${timestamp} [${level}] [${label}]: ${message}`
+          winston.format.printf(({ level, message, pkgId, timestamp }) => {
+            return `${timestamp} [${level}] [${label(pkgId)}]: ${message}`
           }),
         ),
       }),
@@ -62,6 +75,8 @@ mainLoggerConfigs.file &&
   })
 
 export function getChildLogger(pkgId: PkgIdentifier): winston.Logger {
-  const label = `${pkgId.name}@${pkgId.version}`
-  return mainLogger.child({ label })
+  return mainLogger.child({ pkgId })
+}
+function label(pkgId: PkgIdentifier) {
+  return `${pkgId.name}@${pkgId.version}`
 }
