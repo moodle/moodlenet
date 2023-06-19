@@ -245,7 +245,7 @@ export const Resource: FC<ResourceProps> = ({
   //   </Card>
   // ) : null
 
-  const subjectField = (
+  const subjectField = (isEditing || canEdit) && (
     <SubjectField
       key="subject-field"
       canEdit={canEdit && isEditing}

@@ -17,37 +17,37 @@ export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtension
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   const shouldShowErrors = !!form.submitCount
 
-  const update = updateExtensions && (
-    <Card className="update">
-      <div className="left">
-        <div className="title">New update available!</div>
-        <div className="description">Get the newest features and improvements in one click</div>
-      </div>
-      <div className="right">
-        <PrimaryButton onClick={updateExtensions} className="update-btn">
-          Update
-        </PrimaryButton>
-      </div>
-    </Card>
-  )
-  const updatedSuccessfully = updateSuccess && (
-    <Card className="update">
-      <div className="left">
-        <div className="title">Updated successfully!</div>
-        <div className="description">
-          Your app is up and running on the lastest release. Have fun!{' '}
-        </div>
-      </div>
-      <div className="right">
-        <div className="confetti">🎉</div>
-      </div>
-    </Card>
-  )
+  // const update = updateExtensions && (
+  //   <Card className="update">
+  //     <div className="left">
+  //       <div className="title">New update available!</div>
+  //       <div className="description">Get the newest features and improvements in one click</div>
+  //     </div>
+  //     <div className="right">
+  //       <PrimaryButton onClick={updateExtensions} className="update-btn">
+  //         Update
+  //       </PrimaryButton>
+  //     </div>
+  //   </Card>
+  // )
+  // const updatedSuccessfully = updateSuccess && (
+  //   <Card className="update">
+  //     <div className="left">
+  //       <div className="title">Updated successfully!</div>
+  //       <div className="description">
+  //         Your app is up and running on the lastest release. Have fun!{' '}
+  //       </div>
+  //     </div>
+  //     <div className="right">
+  //       <div className="confetti">🎉</div>
+  //     </div>
+  //   </Card>
+  // )
 
   return (
     <div className="general" key="general">
-      {update}
-      {updatedSuccessfully}
+      {/* {update}
+      {updatedSuccessfully} */}
       <Card className="column">
         <div className="title">
           {/* <Trans> */}

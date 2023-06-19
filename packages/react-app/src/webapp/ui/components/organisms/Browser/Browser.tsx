@@ -14,6 +14,7 @@ export type MainColumItem = {
   Item: ComponentType<BrowserMainColumnItemBase>
   name: string
   filters: AddonItem[]
+  numElements: number // the amount of elements in the Item list
   key: string
 }
 
@@ -32,13 +33,16 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | number | undefined>(undefined)
 
+  const filteredMainColumItems = mainColumnItems?.filter(e => e.numElements !== 0)
+
   const filterByItemType = useMemo(() => {
-    return mainColumnItems
-      ? mainColumnItems
+    return filteredMainColumItems
+      ? filteredMainColumItems
           .map(e => {
+            if (e.numElements === 0) return null
             const isCurrent = e.key === currentMainFilter
 
-            const list = mainColumnItems.map(i => {
+            const list = filteredMainColumItems.map(i => {
               return { name: i.name, key: i.key }
             })
             list.push({ name: 'All', key: 'all' })
@@ -69,12 +73,12 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
           })
           .filter(item => !!item)
       : []
-  }, [mainColumnItems, currentMainFilter, setCurrentMainFilter])
+  }, [filteredMainColumItems, currentMainFilter])
 
   const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
   useEffect(() => {
-    mainColumnItems?.map(e => e.key === currentMainFilter && setCurrentFilters(e.filters))
-  }, [currentMainFilter, mainColumnItems])
+    filteredMainColumItems?.map(e => e.key === currentMainFilter && setCurrentFilters(e.filters))
+  }, [currentMainFilter, filteredMainColumItems])
 
   const filters =
     currentFilters && currentFilters.length > 0 ? (
@@ -85,7 +89,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
       </div>
     ) : null
 
-  const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
+  const updatedMainColumnItems = [...(filteredMainColumItems ?? [])].filter(
     (item): item is MainColumItem /* | JSX.Element */ => !!item,
   )
 
@@ -127,16 +131,16 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
                   'Item' in i ? (
                     <i.Item
                       key={i.key}
-                      showAll={i.key === currentMainFilter || mainColumnItems?.length === 1}
+                      showAll={i.key === currentMainFilter || filteredMainColumItems?.length === 1}
                       setShowAll={() => setCurrentMainFilter(i.key)}
-                      showHeader={mainColumnItems?.length > 1}
+                      showHeader={filteredMainColumItems?.length > 1}
                     />
                   ) : (
                     i
                   )
                 ) : null,
               ),
-            [updatedMainColumnItems, currentMainFilter, mainColumnItems?.length],
+            [updatedMainColumnItems, currentMainFilter, filteredMainColumItems?.length],
           )}
         </div>
       </div>

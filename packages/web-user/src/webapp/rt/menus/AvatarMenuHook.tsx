@@ -32,7 +32,7 @@ export function useAvatarMenuProps(): AvatarMenuProps {
       followingMenuProps: hasProfile ? { followingHref: href('/following') } : null,
       bookmarksMenuProps: hasProfile ? { bookmarksHref: href('/bookmarks') } : null,
       profileMenuProps: hasProfile ? { profileHref: myProfileHref } : null,
-      signoutMenuProps: { signout: authCtx.logout },
+      logoutMenuProps: { logout: authCtx.logout },
       userSettingsMenuProps: hasProfile ? { settingsHref: href('/settings') } : null,
       adminSettingsMenuProps: isAdmin ? { settingsHref: href('/admin') } : null,
     }
