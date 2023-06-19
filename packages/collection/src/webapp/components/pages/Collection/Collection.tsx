@@ -164,7 +164,7 @@ export const Collection: FC<CollectionProps> = ({
     <MainCollectionCard
       key="main-collection-card"
       data={{ ...data, imageUrl: currentImageUrl }}
-      collectionForm={collectionForm}
+      // collectionForm={collectionForm}
       form={form}
       imageForm={imageForm}
       publish={checkFormAndPublish}
