@@ -1,6 +1,6 @@
 // import { AdminSettings as PassportAuthSettins } from '@moodlenet/passport-auth/ui'
 import { ExtensionsStories } from '@moodlenet/extensions-manager/stories'
-import { AdvancedStories, AppearanceStories, GeneralStories } from '@moodlenet/react-app/stories'
+import { AppearanceStories, GeneralStories } from '@moodlenet/react-app/stories'
 import type { AdminSettingsProps } from '@moodlenet/react-app/ui'
 import { AdminSettings } from '@moodlenet/react-app/ui'
 import { UsersStories } from '@moodlenet/web-user/stories'
@@ -45,11 +45,11 @@ export const AdminSettingsDefaultStoryProps = (): AdminSettingsProps => {
         Content: UsersStories.useElements().Content,
         key: 'users',
       },
-      {
-        Menu: AdvancedStories.useElements().Menu,
-        Content: AdvancedStories.useElements().Content,
-        key: 'advanced',
-      },
+      // {
+      //   Menu: AdvancedStories.useElements().Menu,
+      //   Content: AdvancedStories.useElements().Content,
+      //   key: 'advanced',
+      // },
       // { Menu: SimpleEmailAuthAdminSettings.Menu, Content: SimpleEmailAuthAdminSettings.Content },
       // { Menu: PassportAuthSettins.Menu, Content: PassportAuthSettins.Content },
     ],

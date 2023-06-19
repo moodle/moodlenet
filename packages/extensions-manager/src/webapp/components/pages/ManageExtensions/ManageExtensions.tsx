@@ -35,7 +35,7 @@ const ManageExtensions: FC<ManageExtensionsProps> = ({ extensions, setShowInstal
         className="title"
         // onClick={() => setShowManageExtensions(!showManageExtensions)}
       >
-        <div className="title">Manage extensions</div>
+        <div className="title">Extensions</div>
         {/* {showManageExtensions ? <KeyboardArrowUpRounded /> : <KeyboardArrowLeftRounded />} */}
       </Card>
       {showManageExtensions && (

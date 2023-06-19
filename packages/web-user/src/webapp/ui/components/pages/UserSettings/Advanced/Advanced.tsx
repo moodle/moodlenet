@@ -1,63 +1,90 @@
 /* eslint-disable prettier/prettier */
-import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import type { useFormik } from 'formik'
-import type { FC } from 'react'
+import type { AddonItem } from '@moodlenet/component-library'
+import {
+  Card,
+  Modal,
+  PrimaryButton,
+  SecondaryButton,
+  Snackbar,
+  SnackbarStack,
+} from '@moodlenet/component-library'
+import { useState, type FC } from 'react'
 import './Advanced.scss'
 
 export type AdvancedProps = {
-  form: ReturnType<typeof useFormik<{ instanceName: string }>>
-  updateSuccess?: boolean
-  updateExtensions?: () => void
+  mainColumnItems: (AddonItem | null)[]
+  deleteAccount: () => void
+  deleteAccountSuccess: boolean
+  instanceName: string
 }
 
-export const AdvancedMenu = () => <abbr title="Advanced">LMS</abbr>
+export const AdvancedMenu = () => <abbr title="Advanced">Advanced</abbr>
 
-export const Advanced: FC<AdvancedProps> = ({ form, updateSuccess, updateExtensions }) => {
-  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
-  const shouldShowErrors = !!form.submitCount
+export const Advanced: FC<AdvancedProps> = ({
+  mainColumnItems,
+  deleteAccount,
+  deleteAccountSuccess,
+  instanceName,
+}) => {
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
 
-  const update = updateExtensions && (
-    <Card className="update">
-      <div className="left">
-        <div className="title">New update available!</div>
-        <div className="description">Get the newest features and improvements in one click</div>
-      </div>
-      <div className="right">
-        <PrimaryButton onClick={updateExtensions} className="update-btn">
-          Update
-        </PrimaryButton>
-      </div>
-    </Card>
+  const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
   )
-  const updatedSuccessfully = updateSuccess && (
-    <Card className="update">
-      <div className="left">
-        <div className="title">Updated successfully!</div>
-        <div className="description">
-          Your app is up and running on the lastest release. Have fun!{' '}
-        </div>
-      </div>
-      <div className="right">
-        <div className="confetti">🎉</div>
-      </div>
-    </Card>
+
+  const snackbars = (
+    <SnackbarStack
+      snackbarList={[
+        deleteAccountSuccess ? (
+          <Snackbar type="success">Check your email to confirm the deletion</Snackbar>
+        ) : null,
+      ]}
+    ></SnackbarStack>
+  )
+
+  const modals = (
+    <>
+      {showDeleteAccountModal && (
+        <Modal
+          title={`Alert`}
+          actions={
+            <PrimaryButton
+              onClick={() => {
+                deleteAccount()
+                setShowDeleteAccountModal(false)
+              }}
+              color="red"
+            >
+              Delete account
+            </PrimaryButton>
+          }
+          onClose={() => setShowDeleteAccountModal(false)}
+          style={{ maxWidth: '400px' }}
+          className="delete-message"
+        >
+          {/* Your account will be deleted. <br /> */}
+          {/* Your personal details will be removed. <br /> */}
+          {/* Your contributions will be kept as anonymous. <br /> */}
+          An email will be send to confirm the deletion of your account.
+        </Modal>
+      )}
+    </>
   )
 
   return (
     <div className="advanced" key="advanced">
-      {update}
-      {updatedSuccessfully}
+      {modals}
+      {snackbars}
       <Card className="column">
         <div className="title">
-          {/* <Trans> */}
-          LMS
-          {/* </Trans> */}
-          <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
+          Advanced
+          {/* <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
             Save
-          </PrimaryButton>
+          </PrimaryButton> */}
         </div>
       </Card>
-      <Card className="column">
+      {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      {/* <Card className="column">
         <div className="parameter">
           <div className="name"> Platform name</div>
           <div className="actions">
@@ -70,6 +97,16 @@ export const Advanced: FC<AdvancedProps> = ({ form, updateSuccess, updateExtensi
               key="instance-name"
               error={shouldShowErrors && form.errors.instanceName}
             />
+          </div>
+        </div>
+      </Card> */}
+      <Card className="column">
+        <div className="parameter">
+          <div className="name">Leave {instanceName}</div>
+          <div className="actions">
+            <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}>
+              Delete account
+            </SecondaryButton>
           </div>
         </div>
       </Card>
