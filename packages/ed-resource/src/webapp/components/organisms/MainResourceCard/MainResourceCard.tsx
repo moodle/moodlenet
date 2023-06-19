@@ -55,6 +55,7 @@ export type MainResourceCardProps = {
   slots: MainResourceCardSlots
 
   data: ResourceDataProps
+  resourceForm: ResourceFormProps
   edMetaOptions: EdMetaOptionsProps
   form: FormikHandle<ResourceFormProps>
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
@@ -70,6 +71,8 @@ export type MainResourceCardProps = {
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 
+  setShouldValidate: React.Dispatch<React.SetStateAction<boolean>>
+  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
   shouldShowErrors: boolean
 
   fileMaxSize: number
@@ -79,6 +82,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   slots,
 
   data,
+  resourceForm,
   edMetaOptions,
   form,
   contentForm,
@@ -94,6 +98,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   isEditing,
   setIsEditing,
 
+  setShouldValidate,
+  setShouldShowErrors,
   shouldShowErrors,
 
   fileMaxSize,
@@ -150,10 +156,23 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const handleOnEditClick = () => {
     setIsEditing(true)
+    setShouldShowErrors(false)
+    setIsCurrentlySaving(false)
+    setisWaitingForSaving(false)
   }
 
   const handleOnSaveClick = () => {
+    setisWaitingForSaving(true)
+
+    setShouldValidate(false)
+    setShouldShowErrors(false)
+
     form.submitForm()
+    form.resetForm({ values: form.values })
+    imageForm.submitForm()
+    imageForm.setTouched({ image: false })
+    contentForm.submitForm()
+    contentForm.setTouched({ content: false })
   }
 
   const copyUrl = () => {
@@ -163,10 +182,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       setShowUrlCopiedAlert(true)
     }, 100)
   }
-
-  // const setImage = (image: AssetInfo | undefined) => {
-  //   form.setFieldValue('image', image)
-  // }
 
   const title = canEdit ? (
     <InputTextField
@@ -181,7 +196,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       placeholder="Title"
       onChange={form.handleChange}
       style={{
-        pointerEvents: `${isSaving ? 'none' : 'inherit'}`,
+        pointerEvents: `${isEditing ? 'inherit' : 'none'}`,
       }}
       error={
         shouldShowErrors &&
@@ -215,20 +230,45 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </div>
     ) : null
 
-  const [currentlySaving, setCurrentlySaving] = useState(false)
-  // const [showSavedText, setShowSavedText] = useState(false)
-  // const [saved, setSaved] = useState(false)
+  const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
+  const [isWaitingForSaving, setisWaitingForSaving] = useState(false)
+
+  const formValuesChanged =
+    (form.dirty &&
+      (form.values.title !== resourceForm.title ||
+        form.values.description !== resourceForm.description ||
+        form.values.subject !== resourceForm.subject ||
+        form.values.license !== resourceForm.license ||
+        form.values.type !== resourceForm.type ||
+        form.values.language !== resourceForm.language ||
+        form.values.level !== resourceForm.level ||
+        form.values.month !== resourceForm.month ||
+        form.values.year !== resourceForm.year)) ||
+    imageForm.touched.image ||
+    contentForm.touched.content
 
   useEffect(() => {
-    isSaving && setCurrentlySaving(true)
-    if (!isSaving && currentlySaving) {
-      setCurrentlySaving(false)
-      setIsEditing(false)
-      // setSaved(true)
-      // setShowSavedText(true)
-      // setTimeout(() => setShowSavedText(false), 3000)
+    if (isWaitingForSaving && isSaving) {
+      setisWaitingForSaving(false)
+      setIsCurrentlySaving(true)
     }
-  }, [currentlySaving, isSaving, setIsEditing])
+    if (!isSaving && isCurrentlySaving && !formValuesChanged) {
+      setIsCurrentlySaving(false)
+      setIsEditing(false)
+    }
+    if ((isWaitingForSaving || isCurrentlySaving) && formValuesChanged) {
+      setIsCurrentlySaving(false)
+    }
+  }, [
+    contentForm.isSubmitting,
+    form.isSubmitting,
+    formValuesChanged,
+    imageForm.isSubmitting,
+    isCurrentlySaving,
+    isSaving,
+    isWaitingForSaving,
+    setIsEditing,
+  ])
 
   // const savingFeedback = isSaving ? (
   //   <abbr className="saving-feedback" key="saving-feedback" title="Saving">
@@ -414,16 +454,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ? {
         Item: () => (
           <div className="edit-save">
-            {isEditing ? (
+            {isEditing && !isCurrentlySaving && (
               <PrimaryButton
-                className={`${isSaving ? 'loading' : ''}`}
+                className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
-                onClick={isSaving ? handleOnEditClick : handleOnSaveClick}
+                onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
               >
                 <div
                   className="loading"
                   style={{
-                    visibility: isSaving ? 'visible' : 'hidden',
+                    visibility: isCurrentlySaving ? 'visible' : 'hidden',
                   }}
                 >
                   <Loading color="white" />
@@ -431,13 +471,21 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                 <div
                   className="label"
                   style={{
-                    visibility: isSaving ? 'hidden' : 'visible',
+                    visibility: isCurrentlySaving ? 'hidden' : 'visible',
                   }}
                 >
                   <Save />
                 </div>
               </PrimaryButton>
-            ) : (
+            )}
+            {isEditing && isCurrentlySaving && (
+              <PrimaryButton className={`${'loading'}`} onClick={handleOnEditClick}>
+                <div className="loading">
+                  <Loading color="white" />
+                </div>
+              </PrimaryButton>
+            )}
+            {!isEditing && (
               <SecondaryButton onClick={handleOnEditClick} color="orange">
                 <Edit />
               </SecondaryButton>
@@ -477,7 +525,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const tagsContainer = subjectLabel ? (
     <div className="tags scroll" key="tags">
-      {getTagList([{ name: subjectLabel.label, href: subjectHref, type: 'subject' }], 'medium')}
+      {getTagList([{ name: subjectLabel.label, href: subjectHref, type: 'subject' }], 'small')}
     </div>
   ) : null
 
@@ -582,7 +630,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       value={form.values.description}
       onChange={form.handleChange}
       style={{
-        pointerEvents: `${isSaving ? 'none' : 'inherit'}`,
+        pointerEvents: `${isEditing ? 'inherit' : 'none'}`,
       }}
       error={shouldShowErrors && isEditing && form.errors.description}
     />

@@ -14,21 +14,23 @@ import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useState } from 'react'
-import type {
-  EdMetaOptionsProps,
-  ResourceAccessProps,
-  ResourceActions,
-  ResourceDataProps,
-  ResourceFormProps,
-  ResourceStateProps,
+import {
+  type EdMetaOptionsProps,
+  type ResourceAccessProps,
+  type ResourceActions,
+  type ResourceDataProps,
+  type ResourceFormProps,
+  type ResourceStateProps,
 } from '../../../../common/types.mjs'
 import {
   contentValidationSchema,
   imageValidationSchema,
   resourceValidationSchema,
 } from '../../../../common/validationSchema.mjs'
-import type { ResourceContributorCardProps } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
-import { ResourceContributorCard } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
+import {
+  ResourceContributorCard,
+  type ResourceContributorCardProps,
+} from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
@@ -94,43 +96,12 @@ export const Resource: FC<ResourceProps> = ({
     yearOptions,
   } = edMetaOptions
 
-  const form = useFormik<ResourceFormProps>({
-    initialValues: resourceForm,
-    validationSchema: resourceValidationSchema,
-    onSubmit: values => {
-      return editData(values)
-    },
-  })
-
-  const contentForm = useFormik<{ content: File | string | undefined | null }>({
-    initialValues: { content: contentUrl },
-    validationSchema: contentValidationSchema,
-    // validateOnMount: true,
-    // validateOnChange: true,
-    onSubmit: values => {
-      return setContent(values.content)
-    },
-  })
-
-  const imageForm = useFormik<{ image: File | string | undefined | null }>({
-    initialValues: { image: imageUrl },
-    validationSchema: imageValidationSchema,
-    onSubmit: values => {
-      return typeof values.image !== 'string' ? setImage(values.image) : undefined
-    },
-  })
-
-  // useEffect(() => {
-  //   if (form.dirty) {
-  //     editData(form.values)
-  //   }
-  // }, [form.values, form.dirty, editData])
-
   //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
   //     useState<boolean>(false)
   //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
   //     useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+  const [shouldValidate, setShouldValidate] = useState<boolean>(true)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
@@ -139,6 +110,58 @@ export const Resource: FC<ResourceProps> = ({
   //   [id],
   // )
 
+  const form = useFormik<ResourceFormProps>({
+    initialValues: resourceForm,
+    validateOnMount: true,
+    validationSchema: shouldValidate ? resourceValidationSchema : undefined,
+    validateOnChange: shouldValidate,
+    onSubmit: values => {
+      return editData(values)
+    },
+  })
+
+  const contentForm = useFormik<{ content: File | string | undefined | null }>({
+    initialValues: { content: contentUrl },
+    validateOnMount: true,
+    validationSchema: shouldValidate ? contentValidationSchema : undefined,
+    validateOnChange: shouldValidate,
+    onSubmit: values => {
+      return setContent(values.content)
+    },
+  })
+
+  const imageForm = useFormik<{ image: File | string | undefined | null }>({
+    initialValues: { image: imageUrl },
+    validateOnMount: true,
+    validationSchema: shouldValidate ? imageValidationSchema : undefined,
+    validateOnChange: shouldValidate,
+    onSubmit: values => {
+      return typeof values.image !== 'string' ? setImage(values.image) : undefined
+    },
+  })
+
+  const setFieldsAsTouched = () => {
+    form.setTouched({
+      title: true,
+      description: true,
+      type: true,
+      language: true,
+      license: true,
+      level: true,
+      subject: true,
+      year: true,
+      month: true,
+    })
+    contentForm.setTouched({ content: true })
+    imageForm.setTouched({ image: true })
+  }
+
+  // useEffect(() => {
+  //   if (form.dirty) {
+  //     editData(form.values)
+  //   }
+  // }, [form.values, form.dirty, editData])
+
   // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
 
   const contributorCard = isPublished && (
@@ -146,6 +169,11 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
+    setShouldValidate(true)
+    setFieldsAsTouched()
+    form.validateForm
+    contentForm.validateForm
+    imageForm.validateForm
     if (form.isValid && contentForm.isValid && imageForm.isValid) {
       form.submitForm()
       contentForm.submitForm()
@@ -163,6 +191,7 @@ export const Resource: FC<ResourceProps> = ({
       key="main-resource-card"
       publish={checkFormAndPublish}
       data={data}
+      resourceForm={resourceForm}
       edMetaOptions={edMetaOptions}
       form={form}
       contentForm={contentForm}
@@ -175,6 +204,8 @@ export const Resource: FC<ResourceProps> = ({
       isSaving={isSaving}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
+      setShouldValidate={setShouldValidate}
+      setShouldShowErrors={setShouldShowErrors}
       shouldShowErrors={shouldShowErrors}
     />
   )
@@ -338,7 +369,7 @@ export const Resource: FC<ResourceProps> = ({
         rel="noreferrer"
         download={downloadFilename}
       >
-        <SecondaryButton key="donwload-or-open-link-button">
+        <SecondaryButton key="download-or-open-link-button">
           {contentType === 'file' ? (
             <>
               <InsertDriveFile />

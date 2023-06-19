@@ -20,7 +20,7 @@ import { addMethod, MixedSchema } from 'yup'
 // import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 // import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { ResourceTextOptionProps } from '../NewResource/AddToResources/storiesData'
-import type { AddonItem, FollowTag } from '@moodlenet/component-library'
+import type { AddonItem } from '@moodlenet/component-library'
 
 // import {
 // import { Resource, ResourceProps } from '@moodlenet/ed-resource/ui'
@@ -151,14 +151,6 @@ export const useResourceStoryProps = (
     ...overrides?.resourceForm,
   }
 
-  const tags: FollowTag[] = [
-    {
-      type: 'subject',
-      name: 'Climate Change',
-      href: href('Pages/subject/Logged In'),
-    },
-  ]
-
   const data: ResourceDataProps = {
     id: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
@@ -181,8 +173,11 @@ export const useResourceStoryProps = (
   }
 
   const setContent = (e: File | string | undefined | null) => {
-    console.log('set content')
-    typeof e === 'string' ? setFilename(null) : e ? setFilename(e.name) : null
+    if (typeof e === 'string') {
+      setFilename(null)
+    } else {
+      e ? setFilename(e.name) : setFilename(null)
+    }
     action('set content')(e)
   }
 

@@ -27,8 +27,6 @@ export const TypeField: FC<TypeFieldProps> = ({
   const [updatedTypes, setUpdatedTypes] = useState(types)
   const [searchText, setSearchText] = useState('')
 
-  console.log('shoudlShowErrors Type', shouldShowErrors)
-
   useEffect(() => {
     setUpdatedTypes({
       opts: typeOptions,

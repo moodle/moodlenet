@@ -83,7 +83,7 @@ export const Creator: CollectionStory = () => {
         'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
     },
     state: {
-      isPublished: true,
+      isPublished: false,
     },
     actions: {},
     access: {
@@ -93,6 +93,7 @@ export const Creator: CollectionStory = () => {
       canEdit: true,
     },
     isSaving: false,
+    resourceCardPropsList: [],
   })
   // const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
 
