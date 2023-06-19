@@ -1,12 +1,13 @@
 import type { AdminSettingsSectionItem, PkgAddOns } from '@moodlenet/react-app/webapp'
 import { AdminSettingsPagePlugins, registerAppRoutes } from '@moodlenet/react-app/webapp'
-import { LoginPlugins, SignupPlugins } from '@moodlenet/web-user/webapp'
+import { GeneralSettingsPlugin, LoginPlugins, SignupPlugins } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
 import { routes } from '../routes.js'
 import '../shell.mjs'
 import { LoginIcon } from '../ui/Login/Login.js'
 import { LoginPanelContainer } from '../ui/Login/LoginContainer.js'
 import { SignUpPanelContainer } from '../ui/Signup/SignUpHooks.js'
+import { SimpleEmailUserSettingsContainer } from '../ui/SimpleEmailUserSettingsContainer.js'
 import { AdminSettingsContent, AdminSettingsMenu, SignupIcon } from './ui.mjs'
 
 registerAppRoutes({ routes })
@@ -38,4 +39,12 @@ AdminSettingsPagePlugins.register(function useAdminSettingsPageHook({ useAdminSe
     [],
   )
   useAdminSettingsSection(addons)
+})
+
+GeneralSettingsPlugin.register(function useGeneralSettingsPlugin() {
+  return {
+    mainColumn: {
+      emailAuthentication: { Item: SimpleEmailUserSettingsContainer },
+    },
+  }
 })

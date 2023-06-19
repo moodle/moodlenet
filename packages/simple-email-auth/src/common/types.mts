@@ -19,3 +19,4 @@ export const newPasswordValidationSchema: SchemaOf<{ newPassword: string }> = ob
 export const recoverPasswordValidationSchema: SchemaOf<{ email: string }> = object({
   email: string().email().required(`Please provide your email`),
 })
+export type GetMySettingsDataRpc = { email: string }
