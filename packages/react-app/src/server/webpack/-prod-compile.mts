@@ -2,7 +2,7 @@ import { cp } from 'fs/promises'
 // import { tmpdir } from 'os'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
-import { shell } from '../shell.mjs'
+import { inspect } from 'util'
 import { getWp } from './config.mjs'
 import { buildFolder, latestBuildFolder } from './generated-files.mjs'
 
@@ -12,8 +12,6 @@ const wp = await getWp({ mode: 'prod', buildFolder })
 // process.on('SIGTERM', () => wp.close(() => void 0))
 
 wp.hooks.afterDone.tap('swap folders', async wpStats => {
-  shell.log('info', `webpack compiled`)
-
   if (wpStats?.hasErrors()) {
     errorExit(wpStats.toString())
   }
@@ -27,6 +25,6 @@ wp.hooks.afterDone.tap('swap folders', async wpStats => {
 })
 
 function errorExit(err: any) {
-  shell.log('info', `Webpack error: ${err}`)
+  console.error(`Webpack error`, inspect(err, false, 4, true))
   process.exit(1)
 }
