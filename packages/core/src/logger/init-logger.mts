@@ -42,7 +42,7 @@ const colors: Record<AllLogLevel, string> = {
 export const mainLogger = winston.createLogger({
   transports: [
     new winston.transports.Console({
-      level: mainLoggerConfigs.consoleLevel,
+      level: mainLoggerConfigs?.consoleLevel ?? 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.colorize({ colors, message: false }),
@@ -55,7 +55,7 @@ export const mainLogger = winston.createLogger({
   levels: logLevelMap,
 })
 
-mainLoggerConfigs.file &&
+mainLoggerConfigs?.file &&
   mainLogger.configure({
     transports: [
       ...mainLogger.transports,
