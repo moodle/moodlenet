@@ -10,13 +10,13 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 
 export type SimpleEmailUserSettingsData = {
-  email: string
+  // email: string
   password: string
 }
 
 export type SimpleEmailUserSettingsProps = {
   data: SimpleEmailUserSettingsData
-  emailChangedSuccess: boolean
+  // emailChangedSuccess: boolean
   passwordChangedSuccess: boolean
   editData: (values: SimpleEmailUserSettingsData) => void
 }
@@ -26,7 +26,7 @@ export const GeneralMenu = () => <abbr title="General">General</abbr>
 export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
   data,
   editData,
-  emailChangedSuccess,
+  // emailChangedSuccess,
   passwordChangedSuccess,
 }) => {
   const form = useFormik<SimpleEmailUserSettingsData>({
@@ -42,16 +42,17 @@ export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
     form.isValid &&
     !form.isSubmitting &&
     !form.isValidating &&
-    (form.values.email !== data.email || form.values.password !== data.password)
+    // form.values.email !== data.email ||
+    form.values.password !== data.password
 
   const shouldShowErrors = !!form.submitCount
 
   const snackbars = (
     <SnackbarStack
       snackbarList={[
-        emailChangedSuccess ? (
-          <Snackbar type="success">Check your old email inbox to continue</Snackbar>
-        ) : null,
+        // emailChangedSuccess ? (
+        //   <Snackbar type="success">Check your old email inbox to continue</Snackbar>
+        // ) : null,
         passwordChangedSuccess ? <Snackbar type="success">Password changed</Snackbar> : null,
       ]}
     ></SnackbarStack>
@@ -60,7 +61,7 @@ export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
   return (
     <Card className="column">
       {snackbars}
-      <div className="parameter">
+      {/* <div className="parameter">
         <div className="name">Email</div>
         <div className="actions">
           <InputTextField
@@ -73,7 +74,7 @@ export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
             error={shouldShowErrors && form.errors.email}
           />
         </div>
-      </div>
+      </div> */}
       <div className="parameter">
         <div className="name">Password</div>
         <div className="actions">

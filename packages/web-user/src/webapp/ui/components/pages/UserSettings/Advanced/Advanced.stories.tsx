@@ -1,6 +1,5 @@
 import type { OrganizationData } from '@moodlenet/organization/common'
 import { action } from '@storybook/addon-actions'
-import { useFormik } from 'formik'
 import type { FC } from 'react'
 import type { SchemaOf } from 'yup'
 import { object, string } from 'yup'
@@ -19,14 +18,10 @@ export const useAdvancedStoryProps = (overrides?: {
   props?: Partial<AdvancedProps>
 }): AdvancedProps => {
   return {
-    form: useFormik<{ instanceName: string }>({
-      onSubmit: action('submit edit'),
-      validationSchema,
-      initialValues: {
-        instanceName: '',
-        ...overrides?.editFormValues,
-      },
-    }),
+    instanceName: 'MoodleNet',
+    deleteAccount: action('Deleting account'),
+    deleteAccountSuccess: false,
+    mainColumnItems: [],
     // updateExtensions: action('Updating extensions'),
     // updateSuccess: true,
     ...overrides?.props,

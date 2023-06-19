@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import { createHookPlugin } from '../../../../../web-lib/plugins.mjs'
 import { useMainLayoutProps } from '../../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { AdminSettingsItem, AdminSettingsProps } from '../AdminSettings.js'
-import { AdvancedContainer } from '../Advanced/AdvancedContainer.js'
 import { AppearanceContainer } from '../Appearance/AppearanceContainer.js'
 import { GeneralContainer } from '../General/GeneralContainer.js'
 
@@ -20,11 +19,11 @@ const localAdminSettingsItems: AdminSettingsItem[] = [
     Content: AppearanceContainer,
     Menu: () => <span>Appearance</span>,
   },
-  {
-    key: `@moodlenet/react-app/advanced-admin-settings`,
-    Content: AdvancedContainer,
-    Menu: () => <span>Advanced</span>,
-  },
+  // {
+  //   key: `@moodlenet/react-app/advanced-admin-settings`,
+  //   Content: AdvancedContainer,
+  //   Menu: () => <span>Advanced</span>,
+  // },
 ]
 
 export const AdminSettingsPagePlugins = createHookPlugin<{
