@@ -1,5 +1,4 @@
-import type { AdminSettingsSectionItem, PkgAddOns } from '@moodlenet/react-app/webapp'
-import { AdminSettingsPagePlugins, registerAppRoutes } from '@moodlenet/react-app/webapp'
+import { registerAppRoutes } from '@moodlenet/react-app/webapp'
 import { GeneralSettingsPlugin, LoginPlugins, SignupPlugins } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
 import { routes } from '../routes.js'
@@ -8,7 +7,7 @@ import { LoginIcon } from '../ui/Login/Login.js'
 import { LoginPanelContainer } from '../ui/Login/LoginContainer.js'
 import { SignUpPanelContainer } from '../ui/Signup/SignUpHooks.js'
 import { SimpleEmailUserSettingsContainer } from '../ui/SimpleEmailUserSettingsContainer.js'
-import { AdminSettingsContent, AdminSettingsMenu, SignupIcon } from './ui.mjs'
+import { SignupIcon } from './ui.mjs'
 
 registerAppRoutes({ routes })
 
@@ -31,15 +30,15 @@ SignupPlugins.register(function useSignupMethod({ useSignupMethod }) {
   useSignupMethod(addons)
 })
 
-AdminSettingsPagePlugins.register(function useAdminSettingsPageHook({ useAdminSettingsSection }) {
-  const addons = useMemo<PkgAddOns<AdminSettingsSectionItem>>(
-    () => ({
-      default: { Content: AdminSettingsContent, Menu: AdminSettingsMenu },
-    }),
-    [],
-  )
-  useAdminSettingsSection(addons)
-})
+// AdminSettingsPagePlugins.register(function useAdminSettingsPageHook({ useAdminSettingsSection }) {
+//   const addons = useMemo<PkgAddOns<AdminSettingsSectionItem>>(
+//     () => ({
+//       default: { Content: AdminSettingsContent, Menu: AdminSettingsMenu },
+//     }),
+//     [],
+//   )
+//   useAdminSettingsSection(addons)
+// })
 
 GeneralSettingsPlugin.register(function useGeneralSettingsPlugin() {
   return {
