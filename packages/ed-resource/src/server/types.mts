@@ -1,5 +1,5 @@
 import type { FsItem } from '@moodlenet/simple-file-store/server'
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument, SystemUser } from '@moodlenet/system-entities/server'
 
 export type ResourceEntityDoc = EntityDocument<ResourceDataType>
 export type ResourceDataType = {
@@ -31,3 +31,10 @@ export type Credits = {
 export type Image = ImageUploaded | ImageUrl
 export type ImageUploaded = { kind: 'file'; directAccessId: string }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
+
+export type ResourceEvents = {
+  'resource:downloaded': {
+    resourceKey: string
+    currentSysUser: SystemUser
+  }
+}

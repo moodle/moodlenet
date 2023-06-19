@@ -1,2 +1,3 @@
 import { getMyShell } from '@moodlenet/core'
-export const shell = await getMyShell<unknown>(import.meta)
+import type { ResourceEvents } from './types.mjs'
+export const shell = await getMyShell<void, ResourceEvents>(import.meta)

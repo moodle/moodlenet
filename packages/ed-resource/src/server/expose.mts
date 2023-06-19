@@ -5,6 +5,7 @@ import { assertRpcFileReadable, RpcStatus, setRpcStatusCode } from '@moodlenet/c
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
+  getCurrentSystemUser,
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
@@ -260,8 +261,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
         const readable = await assertRpcFileReadable(fsItem.rpcFile)
 
-        readable.on('end', () => {
-          shell.log('info', 'resource download stream ended, can increment download count')
+        readable.on('end', async () => {
+          const currentSysUser = await getCurrentSystemUser()
+          shell.events.emit('resource:downloaded', { resourceKey: _key, currentSysUser })
           incrementResourceDownloads({ _key })
         })
         return readable
