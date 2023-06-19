@@ -14,7 +14,7 @@ export type TagProps = {
 export const Tag: FC<TagProps> = ({ tag, size, index = 0, click = true, style }) => {
   return click && tag.href ? (
     <Link href={tag.href} className="tag-container" key={index}>
-      <div className={`tag ${tag.type} hover ${size}`} style={style}>
+      <div className={`tag ${tag.type} ${tag.href ? 'hover' : ''} ${size}`} style={style}>
         <abbr title={tag.name}>{tag.name}</abbr>
       </div>
     </Link>

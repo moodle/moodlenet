@@ -4,7 +4,7 @@ import type { ResourceFormProps } from './types.mjs'
 export const maxUploadSize = 1024 * 1024 * 50
 
 export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
-  title: string().max(160).min(3).required(/* t */ `Please provide a title`),
+  title: string().max(160).min(3).required(`Please provide a title`),
   description: string()
     .max(4000, obj => {
       const length = obj.value.length
@@ -14,16 +14,16 @@ export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
       const length = obj.value.length
       return `Please provide a longer description (${length} < 40)`
     })
-    .required(/* t */ `Please provide a description`),
-  subject: string().required(/* t */ `Please select a subject`),
-  license: string().required(/* t */ `Please provide a license`),
+    .required(`Please provide a description`),
+  subject: string().required(`Please select a subject`),
+  license: string().required(`Please provide a license`),
   language: string().required('Please provide a language'),
   level: string().required('Please provide a level'),
   month: string().required('Please provide a month'),
   year: string().required('Please provide a year'),
   type: string().required('Please provide a type'),
   // year: string().when('month', (month, schema) => {
-  //   return month ? schema.required(/* t */ `Please select a year`) : schema.required()
+  //   return month ? schema.required( `Please select a year`) : schema.required()
   // }),
 })
 
@@ -45,7 +45,7 @@ export const imageValidationSchema: SchemaOf<{ image: File | string | undefined 
     .test((v, { createError }) =>
       v instanceof Blob && v.size > maxUploadSize
         ? createError({
-            message: /* t */ `The file is too big, reduce the size or provide a url`,
+            message: `The file is too big, reduce the size or provide a url`,
           })
         : true,
     )

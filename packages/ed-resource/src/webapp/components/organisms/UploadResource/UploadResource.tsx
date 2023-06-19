@@ -41,16 +41,6 @@ export type UploadResourceProps = {
   imageOnClick?(): unknown
 }
 
-// const usingFields: (keyof NewResourceFormValues)[] = [
-//   'name',
-//   'description',
-//   'category',
-//   'license',
-//   'visibility',
-//   'image',
-//   'content',
-// ]
-
 export const UploadResource: FC<UploadResourceProps> = ({
   fileMaxSize,
 
@@ -68,58 +58,57 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
 
   const contentIsFile = contentForm.values.content instanceof File
+  console.log('donwloadFilename', downloadFilename)
   const contentName = downloadFilename
     ? downloadFilename
     : contentForm.values.content instanceof File
     ? contentForm.values.content.name
     : contentForm.values.content ?? ''
 
-  console.log('backupImage', backupImage)
-
-  // const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
-  // const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
 
   const [subStep, setSubStep] = useState<'AddFileOrLink' | 'AddImage'>(
     contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
   )
 
-  const [deleteFileLinkPressed, setDeleteFileLinkPressed] = useState(false)
-
   const contentAvailable = !!contentForm.values.content
   const imageAvailable = !!imageForm.values.image
 
   useEffect(() => {
-    if (deleteFileLinkPressed) {
-      // setShouldShowErrors(false)
-      setDeleteFileLinkPressed(false)
-    }
     // contentForm.values.content && !contentForm.errors.content && setShouldShowErrors(false)
-
     setSubStep(
       contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
     )
-  }, [contentForm, deleteFileLinkPressed, subStep, setSubStep, setDeleteFileLinkPressed])
+  }, [contentForm, subStep, setSubStep])
 
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
   const addLink = () => {
+    setSubStep('AddImage')
     contentForm.setFieldValue('content', addLinkFieldRef.current?.value)
+    contentForm.setTouched({ content: true })
+    contentForm.validateForm()
     // .then(_ => setShouldShowErrors(!!_?.content))
-    contentForm.submitForm()
+    // contentForm.submitForm()
   }
 
   const deleteImage = useCallback(() => {
-    setDeleteFileLinkPressed(true)
     imageForm.setFieldValue('image', null)
-    imageForm.submitForm()
+    imageForm.setTouched({ image: true })
+    imageForm.validateForm()
+    imageForm.validateForm()
+    // imageForm.submitForm()
   }, [imageForm])
 
   const deleteFileOrLink = useCallback(() => {
-    setDeleteFileLinkPressed(true)
+    console.log('deleting file or link')
     setSubStep('AddFileOrLink')
     contentForm.setFieldValue('content', null)
-    contentForm.submitForm()
+    contentForm.setTouched({ content: true })
+    contentForm.validateForm()
+    contentForm.validateForm()
+
+    // contentForm.submitForm()
     // setShouldShowErrors(false)
   }, [contentForm])
 
@@ -137,19 +126,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
     (file: File | undefined) => {
       const isImage = file?.type.toLowerCase().startsWith('image')
       contentForm.setFieldValue('content', file).then(errors => {
-        // if (errors?.content) {
-        //   setShouldShowErrors(!!errors?.content)
-        // } else if (isImage) {
-        // } else if (isImage && !errors?.content ) {
-        if (!errors?.content) {
-          if (file) {
-            contentForm.submitForm()
-            if (isImage) {
-              imageForm.setFieldValue('image', file)
-              imageForm.submitForm()
-            }
-          }
-        }
+        !errors?.content && file && isImage && imageForm.setFieldValue('image', file)
+        imageForm.setTouched({ image: true })
       })
     },
     [contentForm, imageForm],
@@ -200,7 +178,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
       } else {
         if (selectedFile) {
           imageForm.setFieldValue('image', selectedFile)
-          imageForm.submitForm()
+          imageForm.setTouched({ image: true })
+          // imageForm.submitForm()
         }
       }
     },
@@ -216,7 +195,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const uploadImage = (file: File) => {
     imageForm.setFieldValue('image', file)
-    imageForm.submitForm()
+    imageForm.setTouched({ image: true })
+    // imageForm.submitForm()
   }
 
   const imageRef = useRef<HTMLDivElement>(null)
@@ -351,17 +331,15 @@ export const UploadResource: FC<UploadResourceProps> = ({
     </>
   )
 
-  console.log('contentForm errors', contentForm.errors)
-
   return (
     <div className="upload-resource">
       <div
         className={`main-container ${
-          imageAvailable && !contentAvailable ? 'no-file-but-image' : ''
+          imageAvailable && !contentAvailable && !displayOnly ? 'no-file-but-image' : ''
         }`}
         style={{
           height:
-            imageAvailable && !contentAvailable
+            imageAvailable && !contentAvailable && !displayOnly
               ? (typeof imageHeight === 'number' && imageHeight < 250) || imageHeight === 'initial'
                 ? 250
                 : imageHeight

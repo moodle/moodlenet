@@ -4,13 +4,25 @@ import type { CollectionFormProps } from './types.mjs'
 import { maxUploadSize } from './types.mjs'
 
 export const validationSchema: SchemaOf<CollectionFormProps> = object({
-  description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   title: string().max(160).min(3).required(/* t */ `Please provide a title`),
+  description: string()
+    .max(4000, obj => {
+      const length = obj.value.length
+      return `Please provide a shorter description (${length} / 4000)`
+    })
+    .min(40, obj => {
+      const length = obj.value.length
+      return `Please provide a longer description (${length} < 40)`
+    })
+    .required(`Please provide a description`),
+})
+
+export const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && v.size > maxUploadSize
         ? createError({
-            message: /* t */ `The file is too big, reduce the size or provide a url`,
+            message: `The file is too big, reduce the size or provide a url`,
           })
         : true,
     )

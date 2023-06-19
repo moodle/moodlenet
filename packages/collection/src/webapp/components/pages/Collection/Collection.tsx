@@ -24,6 +24,7 @@ import type {
   CollectionFormProps,
   CollectionStateProps,
 } from '../../../../common/types.mjs'
+import { imageValidationSchema } from '../../../../common/validationSchema.mjs'
 import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
 import { CollectionContributorCard } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
 import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
@@ -74,25 +75,32 @@ export const Collection: FC<CollectionProps> = ({
   const viewport = useViewport()
   const { imageUrl } = data
   const { isPublished } = state
-  const { editData, deleteCollection, publish, unpublish, removeResource } = actions
+  const { editData, deleteCollection, publish, unpublish, removeResource, setImage } = actions
   const { canPublish, canEdit } = access
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(imageUrl)
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [shouldValidate, setShouldValidate] = useState<boolean>(true)
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
-    enableReinitialize: true,
-    validationSchema: validationSchema,
+    validateOnMount: true,
+    validationSchema: shouldValidate ? validationSchema : undefined,
+    validateOnChange: shouldValidate,
     onSubmit: values => {
       return editData(values)
     },
   })
 
-  // useEffect(() => {
-  //   if (form.dirty) {
-  //     editData(form.values)
-  //   }
-  // }, [form.values, form.dirty, editData])
+  const imageForm = useFormik<{ image: File | string | null | undefined }>({
+    initialValues: { image: imageUrl },
+    validateOnMount: true,
+    validationSchema: shouldValidate ? imageValidationSchema : undefined,
+    validateOnChange: shouldValidate,
+    // validationSchema: validationSchema //@ALE for some reason this validation is avoidind the onSubmit, I tried to investigate but couldn't find a reason
+    onSubmit: values => {
+      return typeof values.image !== 'string' ? setImage(values.image) : undefined
+    },
+  })
 
   useEffect(() => {
     setCurrentImageUrl(imageUrl)
@@ -101,9 +109,25 @@ export const Collection: FC<CollectionProps> = ({
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
 
+  const setFieldsAsTouched = () => {
+    form.setTouched({
+      title: true,
+      description: true,
+    })
+    imageForm.setTouched({ image: true })
+  }
+
   const checkFormAndPublish = () => {
-    if (form.isValid) {
+    setShouldValidate(true)
+    setFieldsAsTouched()
+    // form.validateForm
+    // imageForm.validateForm
+    console.log('form.isValid', form.isValid)
+    console.log('imageForm.isValid', imageForm.isValid)
+    if (form.isValid && imageForm.isValid) {
+      console.log('getting in all valid')
       form.submitForm()
+      imageForm.submitForm()
       setShouldShowErrors(false)
       publish()
     } else {
@@ -120,7 +144,7 @@ export const Collection: FC<CollectionProps> = ({
           orientation={'horizontal'}
           key={key}
           topRightItems={[
-            canEdit
+            canEdit && isEditing
               ? {
                   Item: () => (
                     <TertiaryButton onClick={() => removeResource(key)} className="delete">
@@ -140,7 +164,9 @@ export const Collection: FC<CollectionProps> = ({
     <MainCollectionCard
       key="main-collection-card"
       data={{ ...data, imageUrl: currentImageUrl }}
+      collectionForm={collectionForm}
       form={form}
+      imageForm={imageForm}
       publish={checkFormAndPublish}
       state={state}
       actions={actions}
@@ -149,6 +175,7 @@ export const Collection: FC<CollectionProps> = ({
       isEditing={isEditing}
       setIsEditing={setIsEditing}
       shouldShowErrors={shouldShowErrors}
+      setShouldShowErrors={setShouldShowErrors}
       isSaving={isSaving}
     />
   )

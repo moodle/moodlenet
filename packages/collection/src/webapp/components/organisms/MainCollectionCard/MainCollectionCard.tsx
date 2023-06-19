@@ -14,7 +14,6 @@ import {
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
 import { Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
-import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type {
@@ -40,7 +39,9 @@ export type MainCollectionCardProps = {
   slots: MainCollectionCardSlots
 
   data: CollectionDataProps
+  collectionForm: CollectionFormProps
   form: FormikHandle<CollectionFormProps>
+  imageForm: FormikHandle<{ image: File | string | undefined | null }>
 
   state: CollectionStateProps
   actions: CollectionActions
@@ -53,13 +54,16 @@ export type MainCollectionCardProps = {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 
   shouldShowErrors: boolean
+  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   slots,
 
   data,
+  collectionForm,
   form,
+  imageForm,
 
   state,
   actions,
@@ -72,6 +76,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   setIsEditing,
 
   shouldShowErrors,
+  setShouldShowErrors,
 }) => {
   const {
     mainColumnItems,
@@ -86,16 +91,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const { isPublished } = state
 
-  const { unpublish, deleteCollection, setImage } = actions
+  const { unpublish, deleteCollection } = actions
   const { canPublish, canDelete, canEdit } = access
-
-  const imageForm = useFormik<{ image: File | string | null | undefined }>({
-    initialValues: { image: imageUrl },
-    // validationSchema: validationSchema //@ALE for some reason this validation is avoidind the onSubmit, I tried to investigate but couldn't find a reason
-    onSubmit: values => {
-      return typeof values.image !== 'string' ? setImage(values.image) : undefined
-    },
-  })
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -104,13 +101,43 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
   const [image] = useImageUrl(imageUrl, backupImage)
   const [imageFromForm] = useImageUrl(imageForm.values.image)
+  const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
+  const [isWaitingForSaving, setisWaitingForSaving] = useState(false)
 
   const handleOnEditClick = () => {
     setIsEditing(true)
+    setShouldShowErrors(false)
+    setIsCurrentlySaving(false)
+    setisWaitingForSaving(false)
   }
+
   const handleOnSaveClick = () => {
+    setisWaitingForSaving(true)
+    setShouldShowErrors(false)
     form.submitForm()
+    imageForm.submitForm()
   }
+
+  console.log('isCurrentlySaving', isCurrentlySaving)
+  console.log('isWaitingForSaving', isWaitingForSaving)
+
+  useEffect(() => {
+    if (isWaitingForSaving && isSaving) {
+      setisWaitingForSaving(false)
+      setIsCurrentlySaving(true)
+    }
+    if (!isSaving && isCurrentlySaving) {
+      setIsCurrentlySaving(false)
+      setIsEditing(false)
+    }
+  }, [
+    form.isSubmitting,
+    imageForm.isSubmitting,
+    isCurrentlySaving,
+    isSaving,
+    isWaitingForSaving,
+    setIsEditing,
+  ])
 
   useEffect(() => {
     setUpdatedImage(imageUrl)
@@ -156,34 +183,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       Collection
     </div>
   )
-
-  const [currentlySaving, setCurrentlySaving] = useState(false)
-  // const [showSavedText, setShowSavedText] = useState(false)
-  // const [saved, setSaved] = useState(false)
-
-  useEffect(() => {
-    isSaving && setCurrentlySaving(true)
-    if (!isSaving && currentlySaving) {
-      setCurrentlySaving(false)
-      setIsEditing(false)
-      // setSaved(true)
-      // setShowSavedText(true)
-      // setTimeout(() => setShowSavedText(false), 3000)
-    }
-  }, [currentlySaving, isSaving, setIsEditing])
-
-  // const savingFeedback = isSaving ? (
-  //   <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-  //     <Loading type="circular" color="#8f8f8f" size="19px" />
-  //     {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
-  //     Saving...
-  //   </abbr>
-  // ) : saved ? (
-  //   <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-  //     <CloudDoneOutlined />
-  //     {showSavedText && 'Saved'}
-  //   </abbr>
-  // ) : null
 
   const updatedTopLeftHeaderItems = [
     collectionLabel,
@@ -281,16 +280,16 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ? {
         Item: () => (
           <div className="edit-save">
-            {isEditing ? (
+            {isEditing && !isCurrentlySaving && (
               <PrimaryButton
-                className={`${form.isSubmitting ? 'loading' : ''}`}
+                className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
-                onClick={form.isSubmitting ? handleOnEditClick : handleOnSaveClick}
+                onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
               >
                 <div
                   className="loading"
                   style={{
-                    visibility: form.isSubmitting ? 'visible' : 'hidden',
+                    visibility: isCurrentlySaving ? 'visible' : 'hidden',
                   }}
                 >
                   <Loading color="white" />
@@ -298,13 +297,21 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
                 <div
                   className="label"
                   style={{
-                    visibility: form.isSubmitting ? 'hidden' : 'visible',
+                    visibility: isCurrentlySaving ? 'hidden' : 'visible',
                   }}
                 >
                   <Save />
                 </div>
               </PrimaryButton>
-            ) : (
+            )}
+            {isEditing && isCurrentlySaving && (
+              <PrimaryButton className={`${'loading'}`} onClick={handleOnEditClick}>
+                <div className="loading">
+                  <Loading color="white" />
+                </div>
+              </PrimaryButton>
+            )}
+            {!isEditing && (
               <SecondaryButton onClick={handleOnEditClick} color="orange">
                 <Edit />
               </SecondaryButton>
