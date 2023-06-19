@@ -28,16 +28,14 @@ export const ProfileLinkAvatarMenuComponent = withProxy<ProfileLinkAvatarMenuCom
   },
 )
 
-export type SignoutAvatarMenuComponentProps = { signout(): void }
-export const SignoutAvatarMenuComponent = withProxy<SignoutAvatarMenuComponentProps>(
-  ({ signout }) => {
-    return (
-      <span onClick={signout}>
-        <ExitToApp /> Signout
-      </span>
-    )
-  },
-)
+export type LogoutAvatarMenuComponentProps = { logout(): void }
+export const LogoutAvatarMenuComponent = withProxy<LogoutAvatarMenuComponentProps>(({ logout }) => {
+  return (
+    <span onClick={logout}>
+      <ExitToApp /> Logout
+    </span>
+  )
+})
 
 export type UserSettingsLinkAvatarMenuComponentProps = { settingsHref: Href }
 export const UserSettingsLinkAvatarMenuComponent =

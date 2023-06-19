@@ -1,8 +1,5 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import type { FC } from 'react'
-import { useState } from 'react'
-import type { InstallExtensionPropsControlled } from '../InstallExtension/InstallExtension.js'
-import InstallExtension from '../InstallExtension/InstallExtension.js'
 import type { ManageExtensionsPropsControlled } from '../ManageExtensions/ManageExtensions.js'
 import ManageExtensions from '../ManageExtensions/ManageExtensions.js'
 import './Extensions.scss'
@@ -30,27 +27,30 @@ export type ExtensionsFormValues = {
 export const ExtensionsMenu: FC = () => <abbr title="Extensions">Extensions</abbr>
 
 export type ExtensionsProps = {
-  installExtensionProps: InstallExtensionPropsControlled
+  // installExtensionProps: InstallExtensionPropsControlled
   manageExtensionsProps: ManageExtensionsPropsControlled
 }
 
-const Extensions: FC<ExtensionsProps> = ({ installExtensionProps, manageExtensionsProps }) => {
-  const [showInstallExtension, setShowInstallExtension] = useState(true)
-  const [showManageExtensions, setShowManageExtensions] = useState(true)
+const Extensions: FC<ExtensionsProps> = ({
+  // installExtensionProps,
+  manageExtensionsProps,
+}) => {
+  // const [showInstallExtension, setShowInstallExtension] = useState(true)
+  // const [showManageExtensions, setShowManageExtensions] = useState(true)
   return (
     <div className="extensions">
-      {showInstallExtension && (
+      {/* {showInstallExtension && (
         <InstallExtension
           {...installExtensionProps}
           setShowManageExtensions={setShowManageExtensions}
         />
-      )}
-      {showManageExtensions && (
-        <ManageExtensions
-          {...manageExtensionsProps}
-          setShowInstallExtension={setShowInstallExtension}
-        />
-      )}
+      )} */}
+      {/* {showManageExtensions && ( */}
+      <ManageExtensions
+        {...manageExtensionsProps}
+        // setShowInstallExtension={setShowInstallExtension}
+      />
+      {/* )} */}
     </div>
   )
 }

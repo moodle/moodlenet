@@ -7,16 +7,16 @@ import type {
   AdminSettingsLinkAvatarMenuComponentProps,
   BookmarksLinkAvatarMenuComponentProps,
   FollowingLinkAvatarMenuComponentProps,
+  LogoutAvatarMenuComponentProps,
   ProfileLinkAvatarMenuComponentProps,
-  SignoutAvatarMenuComponentProps,
   UserSettingsLinkAvatarMenuComponentProps,
 } from './webUserAvatarMenuComponents.js'
 import {
   AdminSettingsLinkAvatarMenuComponent,
   BookmarksLinkAvatarMenuComponent,
   FollowingLinkAvatarMenuComponent,
+  LogoutAvatarMenuComponent,
   ProfileLinkAvatarMenuComponent,
-  SignoutAvatarMenuComponent,
   UserSettingsLinkAvatarMenuComponent,
 } from './webUserAvatarMenuComponents.js'
 
@@ -33,7 +33,7 @@ export type AvatarMenuProps = {
   followingMenuProps: null | Pick<FollowingLinkAvatarMenuComponentProps, 'followingHref'>
   adminSettingsMenuProps: null | AdminSettingsLinkAvatarMenuComponentProps
   userSettingsMenuProps: null | UserSettingsLinkAvatarMenuComponentProps
-  signoutMenuProps: SignoutAvatarMenuComponentProps
+  logoutMenuProps: LogoutAvatarMenuComponentProps
 }
 
 export const AvatarMenu: FC<AvatarMenuProps> = ({
@@ -44,7 +44,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
   profileMenuProps,
   bookmarksMenuProps,
   followingMenuProps,
-  signoutMenuProps,
+  logoutMenuProps,
 }) => {
   const allMenuItems = useMemo(() => {
     const profileLinkAvatarMenuItem: FloatingMenuContentItem | null = profileMenuProps && {
@@ -75,8 +75,8 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
         ),
       }
 
-    const signoutAvatarMenuItem: FloatingMenuContentItem | null = {
-      Element: <SignoutAvatarMenuComponent key="signout" {...signoutMenuProps} />,
+    const logoutAvatarMenuItem: FloatingMenuContentItem | null = {
+      Element: <LogoutAvatarMenuComponent key="logout" {...logoutMenuProps} />,
     }
 
     const menuItemsElement = menuItems.map<FloatingMenuContentItem>(
@@ -93,7 +93,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
       ...(adminSettingsLinkAvatarMenuItem ? [adminSettingsLinkAvatarMenuItem] : []),
       ...(userSettingsLinkAvatarMenuItem ? [userSettingsLinkAvatarMenuItem] : []),
       ...menuItemsElement,
-      signoutAvatarMenuItem,
+      logoutAvatarMenuItem,
     ].map<FloatingMenuContentItem>(({ Element, wrapperClassName = '' }) => ({
       Element,
       wrapperClassName: `avatar-menu-item ${wrapperClassName}`,
@@ -106,7 +106,7 @@ export const AvatarMenu: FC<AvatarMenuProps> = ({
     profileMenuProps,
     adminSettingsMenuProps,
     userSettingsMenuProps,
-    signoutMenuProps,
+    logoutMenuProps,
   ])
 
   const floatingMenuContentItems = useMemo(() => {

@@ -93,7 +93,7 @@ export const Creator: CollectionStory = () => {
       canEdit: true,
     },
     isSaving: false,
-    resourceCardPropsList: [],
+    // resourceCardPropsList: [],
   })
   // const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
 

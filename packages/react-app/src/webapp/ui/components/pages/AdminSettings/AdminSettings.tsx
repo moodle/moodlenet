@@ -20,7 +20,6 @@ export const AdminSettings: FC<AdminSettingsProps> = ({ mainLayoutProps, setting
   return (
     <MainLayout
       {...mainLayoutProps}
-      streched={true}
       headerProps={{
         ...mainLayoutProps.headerProps,
       }}

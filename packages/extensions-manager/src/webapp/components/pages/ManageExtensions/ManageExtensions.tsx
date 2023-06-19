@@ -1,6 +1,5 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { Card } from '@moodlenet/component-library'
-import { KeyboardArrowLeftRounded, KeyboardArrowUpRounded } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useState } from 'react'
 import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
@@ -32,9 +31,12 @@ const ManageExtensions: FC<ManageExtensionsProps> = ({ extensions, setShowInstal
 
   const manageExtensions = !selectedExt && (
     <div className="manage-extensions">
-      <Card className="title" onClick={() => setShowManageExtensions(!showManageExtensions)}>
+      <Card
+        className="title"
+        // onClick={() => setShowManageExtensions(!showManageExtensions)}
+      >
         <div className="title">Manage extensions</div>
-        {showManageExtensions ? <KeyboardArrowUpRounded /> : <KeyboardArrowLeftRounded />}
+        {/* {showManageExtensions ? <KeyboardArrowUpRounded /> : <KeyboardArrowLeftRounded />} */}
       </Card>
       {showManageExtensions && (
         <ExtensionsList

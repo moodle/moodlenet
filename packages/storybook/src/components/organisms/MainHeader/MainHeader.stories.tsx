@@ -72,7 +72,7 @@ const MainHeaderStoryProps: MainHeaderProps = {
   //   avatarUrl: avatarPicture,
   //   menuItems: [
   //     HeaderProfileStories.HeaderProfileAvatarMenuStoryProps(avatarPicture),
-  //     HeaderProfileStories.HeaderSignoutAvatarMenuStoryProps,
+  //     HeaderProfileStories.HeaderLogoutAvatarMenuStoryProps,
   //   ],
   // },
   headerTitleProps: HeaderTitleStories.HeaderTitleStoryProps,

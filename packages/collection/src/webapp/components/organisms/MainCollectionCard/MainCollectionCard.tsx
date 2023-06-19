@@ -118,9 +118,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     imageForm.submitForm()
   }
 
-  console.log('isCurrentlySaving', isCurrentlySaving)
-  console.log('isWaitingForSaving', isWaitingForSaving)
-
   useEffect(() => {
     if (isWaitingForSaving && isSaving) {
       setisWaitingForSaving(false)
