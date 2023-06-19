@@ -1,8 +1,13 @@
 import { on } from '@moodlenet/web-user/server'
-import { shell } from '../shell.mjs'
+import { sendMessageToWebUser } from '../lib.mjs'
 on(
-  'web-user-request-send-message-to-web-user',
-  ({ data: { message, fromWebUserKey, toWebUserKey } }) => {
-    shell.log('debug', { 'WILL SEND EMAIL:': { message, fromWebUserKey, toWebUserKey } })
+  'send-message-to-web-user',
+  ({
+    data: {
+      message: { html, text },
+      webUserKey,
+    },
+  }) => {
+    sendMessageToWebUser({ message: html ?? text, webUserKey })
   },
 )

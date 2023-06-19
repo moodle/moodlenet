@@ -37,13 +37,10 @@ function logWarnTransportIsJsonTransport(
   ) {
     return
   }
-  shell.log(
-    'info',
-    `@moodlenet/email-service:
-  missing configuration
-  couldn't really send the following message #${messageInfo.messageId}
-  ${JSON.stringify(messageInfo.envelope, null, 4)}
-  ${emailObj.text}
-  `,
-  )
+  shell.log('warn', {
+    'missing configuration': `couldn't really send the following message #${messageInfo.messageId}`,
+    emailObj,
+    'envelope': messageInfo.envelope,
+    'id': messageInfo.messageId,
+  })
 }

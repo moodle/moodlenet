@@ -351,17 +351,17 @@ export async function sendMessageToProfile({
   const tokenCtx = await verifyCurrentTokenCtx()
   if (!tokenCtx || tokenCtx.payload.isRoot || !tokenCtx.payload.webUser) return
 
-  const fromWebUserKey = tokenCtx.payload.webUser._key
+  // const fromWebUserKey = tokenCtx.payload.webUser._key
+  //TODO //@ALE prepare formatted messages
   const toWebUser = await getWebUserByProfileKey({ profileKey })
   if (!toWebUser) return
 
-  const toWebUserKey = toWebUser._key
-  shell.events.emit('web-user-request-send-message-to-web-user', {
+  const webUserKey = toWebUser._key
+  shell.events.emit('send-message-to-web-user', {
     message: {
       text: message,
       html: message,
     },
-    fromWebUserKey,
-    toWebUserKey,
+    webUserKey,
   })
 }

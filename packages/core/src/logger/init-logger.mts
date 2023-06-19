@@ -15,12 +15,12 @@ export type LogLevel =
   | 'debug'
 type AllLogLevel = LogLevel | 'event'
 export const logLevelMap: Record<AllLogLevel, number> = {
-  event: 0,
   emergency: 0,
   alert: 1,
   critical: 2,
   error: 3,
   warn: 4,
+  event: 4.5,
   notice: 5,
   info: 6,
   debug: 7,

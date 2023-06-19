@@ -19,6 +19,19 @@ export async function getByEmail(email: Email): Promise<EmailPwdUser | undefined
   return _user(userDoc)
 }
 
+export async function getByWebUserKey(webUserKey: string): Promise<EmailPwdUser | undefined> {
+  const cursor = await db.query<EmailPwdUserDoc | null>(
+    `FOR u in @@EmailPwdUserCollection 
+          FILTER u.webUserKey == @webUserKey
+          LIMIT 1
+        RETURN u`,
+    { '@EmailPwdUserCollection': EmailPwdUserCollection.name, webUserKey },
+  )
+
+  const [userDoc] = await cursor.all()
+  return _user(userDoc)
+}
+
 export async function getById(sel: DocumentSelector): Promise<EmailPwdUser | undefined> {
   const userDoc = await EmailPwdUserCollection.document(sel, true)
 
