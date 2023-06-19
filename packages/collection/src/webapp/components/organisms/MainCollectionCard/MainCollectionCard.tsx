@@ -39,7 +39,7 @@ export type MainCollectionCardProps = {
   slots: MainCollectionCardSlots
 
   data: CollectionDataProps
-  collectionForm: CollectionFormProps
+  // collectionForm: CollectionFormProps
   form: FormikHandle<CollectionFormProps>
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
 
@@ -61,7 +61,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   slots,
 
   data,
-  collectionForm,
+  // collectionForm,
   form,
   imageForm,
 
