@@ -1,7 +1,9 @@
 import type { SimpleEmailAuthExposeType } from '../common/expose-def.mjs'
 import {
   changeMyPasswordUsingToken,
+  changePassword,
   confirm,
+  getCurrentEmailPwdUser,
   login,
   sendChangePasswordRequestEmail,
   signup,
@@ -37,14 +39,35 @@ export const expose = await shell.expose<SimpleEmailAuthExposeType>({
         return { success: resp.success, emailPwdUser: resp.emailPwdUser }
       },
     },
-    'webapp/change-password': {
+    'webapp/change-password-using-token': {
       guard: () => void 0,
       async fn({ password, token }) {
         const done = await changeMyPasswordUsingToken({ newPassword: password, token })
         return { success: done }
       },
     },
-    'webapp/request-password-change': {
+    'webapp/set-password': {
+      guard: () => void 0,
+      async fn({ password }) {
+        const currentEmailPwdUser = await getCurrentEmailPwdUser()
+        if (!currentEmailPwdUser) {
+          return false
+        }
+        await changePassword({ newPassword: password, _key: currentEmailPwdUser._key })
+        return true
+      },
+    },
+    'webapp/get-my-settings-data': {
+      guard: () => void 0,
+      async fn() {
+        const currentEmailPwdUser = await getCurrentEmailPwdUser()
+        if (!currentEmailPwdUser) {
+          return null
+        }
+        return { email: currentEmailPwdUser.email }
+      },
+    },
+    'webapp/request-password-change-by-email-link': {
       guard: () => void 0,
       async fn({ email }) {
         sendChangePasswordRequestEmail({ email })

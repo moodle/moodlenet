@@ -5,6 +5,7 @@ import {
   createWebUser,
   sendWebUserTokenCookie,
   signWebUserJwtToken,
+  verifyCurrentTokenCtx,
 } from '@moodlenet/web-user/server'
 import assert from 'assert'
 import { send } from '../../../email-service/dist/server/exports.mjs'
@@ -217,4 +218,13 @@ export async function sendMessageToWebUser({
     emailObj: { text: message, to: emailPwdUser.email },
   })
   return true
+}
+
+export async function getCurrentEmailPwdUser() {
+  const tokenCtx = await verifyCurrentTokenCtx()
+  if (!tokenCtx || tokenCtx.payload.isRoot) {
+    return
+  }
+  const currentEmailPwdUser = store.getByWebUserKey(tokenCtx.payload.webUser._key)
+  return currentEmailPwdUser
 }

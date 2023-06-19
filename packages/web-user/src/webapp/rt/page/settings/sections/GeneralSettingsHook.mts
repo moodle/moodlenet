@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react'
 import type { GeneralProps } from '../../../../ui/exports/ui.mjs'
 import { shell } from '../../../shell.mjs'
 
-const GeneralSettingsPlugin = createPluginHook<{
+export const GeneralSettingsPlugin = createPluginHook<{
   mainColumn: AddOnMap<AddonItemNoKey>
 }>()
 
