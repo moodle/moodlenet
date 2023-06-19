@@ -4,6 +4,7 @@ import type {
   KnownEntityFeature,
   KnownEntityType,
   KnownFeaturedEntities,
+  LMSSettingsRpc,
   Profile,
   ProfileGetRpc,
   ProfileSearchResultRpc,
@@ -76,5 +77,8 @@ export type WebUserExposeType = PkgExposeDef<{
         limit?: number
       },
     ): Promise<ProfileSearchResultRpc>
+    'webapp/web-user/settings/lms/set'(body: LMSSettingsRpc): Promise<void>
+    'webapp/web-user/settings/lms/get'(): Promise<LMSSettingsRpc | null>
+    'webapp/web-user/delete-account-request'(): Promise<void>
   }
 }>

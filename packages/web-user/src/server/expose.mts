@@ -289,6 +289,24 @@ export const expose = await shell.expose<WebUserExposeType>({
         }
       },
     },
+    'webapp/web-user/delete-account-request': {
+      guard: () => void 0,
+      async fn() {
+        return
+      },
+    },
+    'webapp/web-user/settings/lms/set': {
+      guard: () => void 0,
+      async fn(lmsSettings) {
+        lmsSettings
+      },
+    },
+    'webapp/web-user/settings/lms/get': {
+      guard: () => void 0,
+      async fn() {
+        return null
+      },
+    },
   },
 })
 

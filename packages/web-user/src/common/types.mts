@@ -108,3 +108,7 @@ export type ProfileAccess = {
   canEdit: boolean
   canFollow: boolean
 }
+
+export type LMSSettingsRpc = {
+  defaultInstanceDomain?: string
+}
