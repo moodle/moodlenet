@@ -201,3 +201,20 @@ export async function sendChangePasswordRequestEmail({ email }: { email: string 
   })
   return true
 }
+
+export async function sendMessageToWebUser({
+  webUserKey,
+  message,
+}: {
+  webUserKey: string
+  message: string
+}) {
+  const emailPwdUser = await store.getByWebUserKey(webUserKey)
+  if (!emailPwdUser) {
+    return false
+  }
+  await shell.call(send)({
+    emailObj: { text: message, to: emailPwdUser.email },
+  })
+  return true
+}

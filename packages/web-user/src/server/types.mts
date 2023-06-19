@@ -75,12 +75,11 @@ export type UnverifiedTokenCtx = {
 }
 
 export interface WebUserEvents {
-  'web-user-request-send-message-to-web-user': {
+  'send-message-to-web-user': {
     message: {
       text: string
       html: string
     }
-    fromWebUserKey: string
-    toWebUserKey: string
+    webUserKey: string
   }
 }
