@@ -23,14 +23,8 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
       className="resources"
       content={useMemo(
         () =>
-          resourceCardPropsList.map(resourceCardProps => {
-            return (
-              <ResourceCard
-                key={resourceCardProps.key}
-                {...resourceCardProps.props}
-                orientation="horizontal"
-              />
-            )
+          resourceCardPropsList.map(({ key, props }) => {
+            return { key, el: <ResourceCard key={key} {...props} orientation="horizontal" /> }
           }),
         [resourceCardPropsList],
       )}

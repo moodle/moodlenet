@@ -37,7 +37,10 @@ export const ProfileCollectionList: FC<ProfileCollectionListProps> = ({
       header={`Curated collections`}
       content={useMemo(
         () =>
-          collectionCardPropsList.map(({ props, key }) => <CollectionCard key={key} {...props} />),
+          collectionCardPropsList.map(({ props, key }) => ({
+            key,
+            el: <CollectionCard key={key} {...props} />,
+          })),
         [collectionCardPropsList],
       )}
       actions={

@@ -27,7 +27,7 @@ export const BrowserResourceList: FC<BrowserResourceListProps> = ({
       content={useMemo(
         () =>
           resourceCardPropsList.map(({ key, props }) => {
-            return <ResourceCard key={key} {...props} orientation="horizontal" />
+            return { key, el: <ResourceCard key={key} {...props} orientation="horizontal" /> }
           }),
         [resourceCardPropsList],
       )}

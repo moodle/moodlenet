@@ -15,11 +15,10 @@ export const ProfileList: FC<ProfileListProps> = ({ smallProfileCardPropsList, t
     <ListCard
       content={useMemo(
         () =>
-          smallProfileCardPropsList
-            .slice(0, 11)
-            .map(smallProfileCardProps => (
-              <ProfileCard key={smallProfileCardProps.data.userId} {...smallProfileCardProps} />
-            )),
+          smallProfileCardPropsList.slice(0, 11).map(smallProfileCardProps => ({
+            key: smallProfileCardProps.data.userId,
+            el: <ProfileCard key={smallProfileCardProps.data.userId} {...smallProfileCardProps} />,
+          })),
         [smallProfileCardPropsList],
       )}
       {...(title

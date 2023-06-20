@@ -295,18 +295,6 @@ export const expose = await shell.expose<WebUserExposeType>({
         return
       },
     },
-    'webapp/web-user/settings/lms/set': {
-      guard: () => void 0,
-      async fn(lmsSettings) {
-        lmsSettings
-      },
-    },
-    'webapp/web-user/settings/lms/get': {
-      guard: () => void 0,
-      async fn() {
-        return null
-      },
-    },
   },
 })
 

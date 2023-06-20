@@ -26,7 +26,10 @@ export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
       }`}
       content={useMemo(
         () =>
-          collectionCardPropsList.map(({ key, props }) => <CollectionCard key={key} {...props} />),
+          collectionCardPropsList.map(({ key, props }) => ({
+            key,
+            el: <CollectionCard key={key} {...props} />,
+          })),
         [collectionCardPropsList],
       )}
       header={

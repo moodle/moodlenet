@@ -25,7 +25,7 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
         () =>
           collectionCardPropsList
             .slice(0, 20)
-            .map(({ key, props }) => <CollectionCard key={key} {...props} />),
+            .map(({ key, props }) => ({ key, el: <CollectionCard key={key} {...props} /> })),
         [collectionCardPropsList],
       )}
       header={

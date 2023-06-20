@@ -24,7 +24,7 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
       content={useMemo(
         () =>
           resourceCardPropsList.map(({ key, props }) => {
-            return <ResourceCard key={key} {...props} orientation="vertical" />
+            return { key, el: <ResourceCard key={key} {...props} orientation="vertical" /> }
           }),
         [resourceCardPropsList],
       )}

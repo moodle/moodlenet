@@ -23,7 +23,11 @@ export const BrowserSubjectList: FC<BrowserSubjectListProps> = ({
     <ListCard
       className={`browser-subject-list ${showAll ? 'show-all' : ''} ${loadMore ? 'load-more' : ''}`}
       content={useMemo(
-        () => subjectCardPropsList.map(({ key, props }) => <SubjectCard key={key} {...props} />),
+        () =>
+          subjectCardPropsList.map(({ key, props }) => ({
+            key,
+            el: <SubjectCard key={key} {...props} />,
+          })),
         [subjectCardPropsList],
       )}
       direction="horizontal"
