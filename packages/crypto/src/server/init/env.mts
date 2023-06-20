@@ -2,7 +2,7 @@ import { shell } from '../shell.mjs'
 
 export const env = await getEnv()
 
-// shell.log('info', inspect({ pr: env.keyLikes.private, pu: env.keyLikes.public }, true, 10, true))
+// shell.log('debug', inspect({ pr: env.keyLikes.private, pu: env.keyLikes.public }, true, 10, true))
 type Env = {
   keys: {
     alg: string

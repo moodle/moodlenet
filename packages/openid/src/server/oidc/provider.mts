@@ -3,7 +3,6 @@ import { jwk } from '@moodlenet/crypto/server'
 import { getProfileRecord } from '@moodlenet/web-user/server'
 import type { Account, Configuration } from 'oidc-provider'
 import Provider from 'oidc-provider'
-import { shell } from '../shell.mjs'
 import { ArangoAdapter } from './arango-adapter.mjs'
 export const ___DEV_INTERACTIONS_ENABLED = false
 
@@ -16,7 +15,7 @@ export async function setupOpenIdProvider() {
   const openidProvider = new Provider(instanceDomain, providerConfig)
   openidProvider.use((ctx, next) => {
     ctx.path = ctx.path.replace(/^\/\.openid/, '')
-    // shell.log('info', 'openidProvider', op, ctx.path)
+    // shell.log('debug', 'openidProvider', op, ctx.path)
     return next()
   })
 
@@ -38,7 +37,7 @@ export async function setupDiscoveryProvider() {
 
 function getProviderConfig() {
   const registeredScopes = getPkgScopes().map(({ scope }) => scope)
-  // shell.log('info', { registeredScopes })
+  // shell.log('debug', { registeredScopes })
   const config: Configuration = {
     adapter: ArangoAdapter,
     ttl: {
@@ -67,7 +66,7 @@ function getProviderConfig() {
       openid: ['scope', 'isAdmin', 'webUserKey', 'accountId', 'exp', 'iss', 'aud'],
     },
     async findAccount(_ctx, sub /* , token */) {
-      // shell.log('info', `\n\nOAUTH findAccount()`, { ctx, sub, token })
+      // shell.log('debug', `\n\nOAUTH findAccount()`, { ctx, sub, token })
       // if (!token) {
       //   return
       // }
@@ -84,7 +83,7 @@ function getProviderConfig() {
         given_name: profile.displayName,
 
         claims(/* use, scope, claims, rejected */) {
-          // shell.log('info', `\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
+          // shell.log('debug', `\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
           return {
             sub: profile._key, // it is essential to always return a sub claim
             given_name: profile.displayName,
@@ -110,7 +109,7 @@ function getProviderConfig() {
     },
     interactions: {
       url(_ctx, interaction) {
-        // shell.log('info', 'interactions url', interaction, ctx)
+        // shell.log('debug', 'interactions url', interaction, ctx)
         return `/openid/interaction/${interaction.uid}`
       },
     },
@@ -128,8 +127,8 @@ function getProviderConfig() {
       devInteractions: { enabled: ___DEV_INTERACTIONS_ENABLED },
       deviceFlow: { enabled: true },
     },
-    issueRefreshToken(ctx, client, code) {
-      shell.log('info', { issueRefreshToken: { ctx, client, code } })
+    issueRefreshToken(/* ctx, client, code */) {
+      // shell.log('debug', { issueRefreshToken: { ctx, client, code } })
       return true
     },
     responseTypes: [

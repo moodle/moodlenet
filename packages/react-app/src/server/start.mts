@@ -11,7 +11,7 @@ await writeGenerated()
 if (!env.noWebappServer) {
   const wp_compile_process = fork(resolve(__dirname, 'webpack', '-prod-compile.mjs'))
   wp_compile_process.once('error', err => {
-    shell.log('info', `webpack compiler error ... ${err}`)
+    shell.log('error', `webpack compiler error ... ${err}`)
   })
   wp_compile_process.once('exit', sig => {
     shell.log(

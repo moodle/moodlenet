@@ -72,7 +72,7 @@ export async function getWp(
           },
           proxy: {
             path: (pathname, _req) => {
-              // shell.log('info', { pathname, test: /\/\..*/.test(pathname) })
+              // shell.log('debug', { pathname, test: /\/\..*/.test(pathname) })
               return /\/\..*/.test(pathname)
             },
             target: cfg.proxy,

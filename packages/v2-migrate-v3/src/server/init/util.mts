@@ -33,7 +33,7 @@ export async function getRpcFileByV2AssetLocation(v2AssetLocation: string, warn:
     return null
   }
   const fileDesc = JSON.parse(await readFile(fileDescPath, 'utf-8'))
-  // shell.log('info', { filePath, fileDescPath, fileDesc })
+  // shell.log('debug', { filePath, fileDescPath, fileDesc })
   const rpcFile = readableRpcFile(
     {
       type: fileDesc.tempFileDesc.mimetype,

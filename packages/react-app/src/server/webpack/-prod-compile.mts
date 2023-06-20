@@ -7,7 +7,7 @@ import { getWp } from './config.mjs'
 import { buildFolder, latestBuildFolder } from './generated-files.mjs'
 
 const wp = await getWp({ mode: 'prod', buildFolder })
-// shell.log('info', { baseResolveAlias, latestBuildFolder, buildFolder })
+// shell.log('debug', { baseResolveAlias, latestBuildFolder, buildFolder })
 
 // process.on('SIGTERM', () => wp.close(() => void 0))
 

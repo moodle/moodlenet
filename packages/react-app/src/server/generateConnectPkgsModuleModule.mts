@@ -94,5 +94,5 @@ export function generateConnectPkgModulesModule({
 // `,
 //     )
 //     .join('')}
-// shell.log('info', '\\n--------- all pkgs connected ---------\\n\\n')
+// shell.log('debug', '\\n--------- all pkgs connected ---------\\n\\n')
 // `
