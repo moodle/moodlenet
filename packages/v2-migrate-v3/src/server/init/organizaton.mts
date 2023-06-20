@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
 
@@ -12,6 +11,6 @@ export async function organization() {
 
   v2_org = _v2_org
 
-  shell.log('info', `Migrating organization ${v2_org.name}`)
+  // shell.log('debug', `Migrating organization ${v2_org.name}`)
   return { v2_org }
 }

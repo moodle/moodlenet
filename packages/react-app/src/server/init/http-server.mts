@@ -40,7 +40,7 @@ export const httpApp = await shell.call(mountApp)({
         ...openGraphDataProvided,
       }
 
-      shell.log('info', { webappPath, openGraphDataProvided, openGraphData })
+      // shell.log('debug', { webappPath, openGraphDataProvided, openGraphData })
 
       const _html = await readFile(resolve(latestBuildFolder, 'index.html'), 'utf-8')
       const headReplace = openGraphData

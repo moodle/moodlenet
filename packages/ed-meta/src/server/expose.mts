@@ -27,7 +27,7 @@ export const expose = await shell.expose<EdMetaExposeType>({
       guard: async () => true,
       async fn() {
         const pubMetas = await getAllPublishedMeta()
-        // shell.log('info', { pubMetas })
+        // shell.log('debug', { pubMetas })
         return {
           languages: pubMetas.languages.map(({ entity: { _key, name } }) => ({
             label: name,

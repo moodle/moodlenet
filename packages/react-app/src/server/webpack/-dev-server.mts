@@ -22,6 +22,6 @@ async function invalidate() {
   }
   wp.options.resolve.alias = alias
   wp.watching.invalidate(() => {
-    // shell.log('info', 'INVALIDATED')
+    // shell.log('debug', 'INVALIDATED')
   })
 }

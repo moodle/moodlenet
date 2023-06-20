@@ -44,7 +44,7 @@ export const expose = await shell.expose<WebUserExposeType>({
       guard: () => void 0,
       async fn() {
         const verifiedCtx = await verifyCurrentTokenCtx()
-        // shell.log('info', 'getCurrentClientSessionDataRpc', verifiedCtx?.payload)
+        // shell.log('debug', 'getCurrentClientSessionDataRpc', verifiedCtx?.payload)
         if (!verifiedCtx) {
           sendWebUserTokenCookie(undefined)
           return
@@ -222,7 +222,7 @@ export const expose = await shell.expose<WebUserExposeType>({
             return { count: 0 }
           }
           const countRes = await getEntityFeatureCount({ _key, entityType, feature })
-          // shell.log('info', [countRes?.count ?? 0, _key, entityType, feature])
+          // shell.log('debug', [countRes?.count ?? 0, _key, entityType, feature])
 
           return countRes ?? { count: 0 }
         },
