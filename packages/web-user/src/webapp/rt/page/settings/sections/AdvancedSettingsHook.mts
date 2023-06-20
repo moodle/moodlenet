@@ -1,7 +1,7 @@
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
-import { createPluginHook } from '@moodlenet/react-app/webapp'
-import { useCallback, useState } from 'react'
+import { createPluginHook, OrganizationCtx } from '@moodlenet/react-app/webapp'
+import { useCallback, useContext, useState } from 'react'
 import type { AdvancedProps } from '../../../../ui/exports/ui.mjs'
 import { shell } from '../../../shell.mjs'
 
@@ -10,6 +10,7 @@ export const AdvancedSettingsPlugin = createPluginHook<{
 }>()
 
 export function useAdvancedSettingsProps() {
+  const org = useContext(OrganizationCtx)
   const [deleteAccountSuccess, setDeleteAccountSuccess] = useState(false)
   const deleteAccount = useCallback(async () => {
     await shell.rpc.me['webapp/web-user/delete-account-request']()
@@ -17,7 +18,7 @@ export function useAdvancedSettingsProps() {
   }, [])
   const plugins = AdvancedSettingsPlugin.usePluginHooks()
   const advancedProps: AdvancedProps = {
-    instanceName: 'Moodlenet',
+    instanceName: org.organizationData.instanceName,
     deleteAccount,
     deleteAccountSuccess,
     mainColumnItems: plugins.getKeyedAddons('mainColumn'),
