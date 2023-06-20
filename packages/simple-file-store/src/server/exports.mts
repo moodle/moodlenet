@@ -87,7 +87,7 @@ export default async function fileStoreFactory(shell: Shell<any, any>, bucketNam
     const searchInLogicalPath = getLogicalPath(opts.path)
     const logicalPathMinLength = searchInLogicalPath.length + 1
     const logicalPathMaxLength = logicalPathMinLength + opts.maxDepth
-    // shell.log('info', { opts, pOpts, logicalPathMinLength, logicalPathMaxLength })
+    // shell.log('debug', { opts, pOpts, logicalPathMinLength, logicalPathMaxLength })
     const pathLengthFilter = opts.maxDepth
       ? [
           `fileRecord.logicalPathLength >= @logicalPathMinLength`,
@@ -104,7 +104,7 @@ export default async function fileStoreFactory(shell: Shell<any, any>, bucketNam
       FOR fileRecord in @@BucketCollection
         FILTER ${allFilters}
       RETURN fileRecord`
-    // shell.log('info', lsQuery)
+    // shell.log('debug', lsQuery)
     const rawDbRecords = await db
       .query<DbRecord>(lsQuery, {
         '@BucketCollection': BucketCollection.name,
@@ -147,7 +147,7 @@ export default async function fileStoreFactory(shell: Shell<any, any>, bucketNam
       created: shell.now().toISOString(),
     }
 
-    // // shell.log('info', 'create', { partRawDbRecord })
+    // // shell.log('debug', 'create', { partRawDbRecord })
     const { new: newRawDbRecord } = await BucketCollection.save(dbRecordData, {
       returnNew: true,
     }).catch(async err => {
@@ -179,6 +179,9 @@ export default async function fileStoreFactory(shell: Shell<any, any>, bucketNam
                 REMOVE fileRecord IN @@BucketCollection
               RETURN OLD`,
           { logicalName, '@BucketCollection': BucketCollection.name },
+          {
+            retryOnConflict: 5,
+          },
         )
         .then(_ => _.all())
     )[0]

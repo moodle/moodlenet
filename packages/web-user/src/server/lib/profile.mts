@@ -127,7 +127,7 @@ export async function entityFeatureAction({
           profileCreatorIdentifiers.entityIdentifier._key,
           `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
         )
-        // shell.log('info', { profileCreatorIdentifiers, patchResult })
+        // shell.log('debug', { profileCreatorIdentifiers, patchResult })
       })
     }
     if (entityType === 'resource') {
@@ -283,8 +283,9 @@ export async function deltaProfilePopularityItem({
   itemName: string
   delta: number
 }) {
-  const updatePopularityResult = await sysEntitiesDB.query<ProfileDataType>({
-    query: `FOR res in @@profileCollection 
+  const updatePopularityResult = await sysEntitiesDB.query<ProfileDataType>(
+    {
+      query: `FOR res in @@profileCollection 
       FILTER res._key == @_key
       LIMIT 1
       UPDATE res WITH {
@@ -296,8 +297,12 @@ export async function deltaProfilePopularityItem({
         }
       } IN @@profileCollection 
       RETURN NEW`,
-    bindVars: { '@profileCollection': Profile.collection.name, _key },
-  })
+      bindVars: { '@profileCollection': Profile.collection.name, _key },
+    },
+    {
+      retryOnConflict: 5,
+    },
+  )
   const updated = await updatePopularityResult.next()
   return updated?.popularity?.overall
 }

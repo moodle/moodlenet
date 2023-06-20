@@ -147,7 +147,7 @@ export async function create<EntityDataType extends SomeEntityDataType>(
 ) {
   const currentUser = opts?.pkgCreator ? await setPkgCurrentUser() : await getCurrentSystemUser()
   const _key = newEntityData._key ?? createEntityKey()
-  // shell.log('info', { currentUser })
+  // shell.log('debug', { currentUser })
   const canCreate = await canCreateEntity(entityClass)
   if (!canCreate) {
     return
@@ -275,7 +275,7 @@ export async function getEntity<
     projectAccess: opts?.projectAccess,
   })
   const getRecord = await getCursor.next()
-  // shell.log('info', inspect({ getRecord }, false, 10, true))
+  // shell.log('debug', inspect({ getRecord }, false, 10, true))
   return getRecord
 }
 
@@ -471,7 +471,7 @@ export async function accessEntities<
       ...(opts?.projectAccess ?? []),
     ]),
   ]
-  // shell.log('info', { entityAccessesToCompute, access, opts_projectAccess: opts?.projectAccess })
+  // shell.log('debug', { entityAccessesToCompute, access, opts_projectAccess: opts?.projectAccess })
   const accessControlsAqlRawProps = (
     await Promise.all(
       entityAccessesToCompute.map(async _entityAccess => {
@@ -537,13 +537,15 @@ ${projectAqlRawProps}
 `
 
   const bindVars = { '@collection': accessCollectionName, currentUser, ...opts?.bindVars }
-  // shell.log('info', q, JSON.stringify({ bindVars }, null, 2))
+  // shell.log('debug', q, JSON.stringify({ bindVars }, null, 2))
   const queryCursor = await db
-    .query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(q, bindVars)
+    .query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(q, bindVars, {
+      retryOnConflict: 5,
+    })
     .catch(e => {
       shell.log('error', e)
-      shell.log('debug', q)
-      shell.log('debug', JSON.stringify({ bindVars }))
+      // shell.log('debug', q)
+      // shell.log('debug', JSON.stringify({ bindVars }))
       //
       throw e
     })

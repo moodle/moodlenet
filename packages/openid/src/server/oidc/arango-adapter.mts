@@ -96,7 +96,9 @@ export class ArangoAdapter implements Adapter {
     RETURN record._key
   `,
       { grantId, '@ModelCollection': ModelCollection.name },
-      //  {count:true}
+      {
+        retryOnConflict: 5,
+      },
     )
   }
 
