@@ -7,13 +7,13 @@ import './General.scss'
 
 export type GeneralProps = {
   form: ReturnType<typeof useFormik<OrganizationData>>
-  updateSuccess?: boolean
-  updateExtensions?: () => void
+  // updateSuccess?: boolean
+  // updateExtensions?: () => void
 }
 
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
-export const General: FC<GeneralProps> = ({ form, updateSuccess, updateExtensions }) => {
+export const General: FC<GeneralProps> = ({ form /* , updateSuccess, updateExtensions  */ }) => {
   const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   const shouldShowErrors = !!form.submitCount
 

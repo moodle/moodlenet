@@ -18,7 +18,7 @@ export type ManageExtensionsProps = {
 }
 const ManageExtensions: FC<ManageExtensionsProps> = ({ extensions, setShowInstallExtension }) => {
   const [selectedExt, setSelectedExt] = useState<ExtensionType | undefined>()
-  const [showManageExtensions, setShowManageExtensions] = useState(true)
+  const [showManageExtensions /* , setShowManageExtensions */] = useState(true)
 
   const selectExtension = (ext: ExtensionType) => {
     setSelectedExt(ext)
