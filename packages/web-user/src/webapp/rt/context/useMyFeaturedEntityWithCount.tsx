@@ -18,18 +18,19 @@ export function useMyFeaturedEntityWithCount({
 }) {
   const [count, setCount] = useState<number>()
 
+  const undefinedCount = count === undefined
   useEffect(() => {
-    if (!count === undefined) return
+    if (!undefinedCount) return
     shell.rpc.me[
       'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key'
     ](undefined, { feature, entityType, _key }).then(({ count }) => setCount(count))
-  }, [_key, count, entityType, feature])
+  }, [_key, undefinedCount, entityType, feature])
   const myFeaturedEntityHandle = useMyFeaturedEntity({ feature, _key, entityType })
   const featuredEntityWithCountHandle = useMemo<MyFeaturedEntityWithCountHandle>(() => {
     const featuredEntityWithCountHandle: MyFeaturedEntityWithCountHandle = {
       ...myFeaturedEntityHandle,
       toggle: async () => {
-        if (count === undefined) return
+        if (undefinedCount) return
         const delta = myFeaturedEntityHandle.isFeatured ? -1 : 1
         await myFeaturedEntityHandle.toggle()
         setCount(curr => curr ?? 0 + delta)
@@ -37,6 +38,6 @@ export function useMyFeaturedEntityWithCount({
       count: count ?? 0,
     }
     return featuredEntityWithCountHandle
-  }, [count, myFeaturedEntityHandle])
+  }, [count, myFeaturedEntityHandle, undefinedCount])
   return featuredEntityWithCountHandle
 }

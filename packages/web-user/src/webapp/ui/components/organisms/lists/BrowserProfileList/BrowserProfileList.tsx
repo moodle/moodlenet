@@ -29,7 +29,7 @@ export const BrowserProfileList: FC<BrowserProfileListProps> = ({
           profilesCardPropsList
             // .slice(0, 11)
             .map(({ props, key }) => {
-              return <ProfileCard key={key} {...props} />
+              return { key, el: <ProfileCard key={key} {...props} /> }
             }),
         [profilesCardPropsList],
       )}

@@ -22,8 +22,13 @@ function BrowserResourceListItem(browserMainColumnItemBase: BrowserMainColumnIte
   )
 }
 const bookmarksPageAddons = {
-  collections: { Item: BrowserCollectionListItem, filters: [], name: 'Collections' },
-  resources: { Item: BrowserResourceListItem, filters: [], name: 'Resources' },
+  collections: {
+    Item: BrowserCollectionListItem,
+    filters: [],
+    name: 'Collections',
+    numElements: NaN,
+  },
+  resources: { Item: BrowserResourceListItem, filters: [], name: 'Resources', numElements: NaN },
 }
 BookmarksPagePlugin.register(({ useBrowserItems }) => {
   useBrowserItems(bookmarksPageAddons)

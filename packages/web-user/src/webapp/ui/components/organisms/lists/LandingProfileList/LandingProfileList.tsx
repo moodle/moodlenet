@@ -25,9 +25,7 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
         () =>
           profilesPropsList
             .slice(0, 11)
-            .map(profilePropsList => (
-              <ProfileCard key={profilePropsList.key} {...profilePropsList.props} />
-            )),
+            .map(({ key, props }) => ({ key, el: <ProfileCard key={key} {...props} /> })),
         [profilesPropsList],
       )}
       header={

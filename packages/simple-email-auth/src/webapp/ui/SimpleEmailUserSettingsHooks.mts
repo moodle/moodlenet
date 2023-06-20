@@ -3,12 +3,11 @@ import { shell } from '../shell.mjs'
 import type { SimpleEmailUserSettingsData, SimpleEmailUserSettingsProps } from './UserSettings.js'
 
 export function useSimpleEmailUserSettingsProps() {
-  const [emailChangedSuccess /* , setEmailChangedSuccess */] = useState(false)
   const [passwordChangedSuccess, setPasswordChangedSuccess] = useState(false)
   const [data, setData] = useState<SimpleEmailUserSettingsData | null>()
   useEffect(() => {
     shell.rpc.me['webapp/get-my-settings-data']().then(resp => {
-      setData(resp ? { email: resp?.email, password: '' } : null)
+      setData(resp ? { password: '' } : null)
     })
   }, [])
   const setPassword = useCallback<SimpleEmailUserSettingsProps['editData']>(({ password }) => {
@@ -22,7 +21,6 @@ export function useSimpleEmailUserSettingsProps() {
   const simpleEmailUserSettingsProps: SimpleEmailUserSettingsProps = {
     data,
     editData: setPassword,
-    emailChangedSuccess,
     passwordChangedSuccess,
   }
   return simpleEmailUserSettingsProps

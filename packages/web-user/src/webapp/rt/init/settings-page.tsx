@@ -1,7 +1,7 @@
 import { GeneralMenu } from '@moodlenet/react-app/ui'
 import { AdvancedMenu } from '../../ui/exports/ui.mjs'
+import { AdvancedSettingsContainer } from '../page/settings/sections/AdvancedSettingsContainer.js'
 import { GeneralSettingsContainer } from '../page/settings/sections/GeneralSettingsContainer.js'
-import { LMSSettingsContainer } from '../page/settings/sections/LMSSettingsContainer.js'
 import { UserSettingsPagePlugin } from '../page/settings/UserSettingsHooks.js'
 
 UserSettingsPagePlugin.register(function useUserSettingsPagePlugin() {
@@ -11,8 +11,8 @@ UserSettingsPagePlugin.register(function useUserSettingsPagePlugin() {
         Content: GeneralSettingsContainer,
         Menu: GeneralMenu,
       },
-      lms: {
-        Content: LMSSettingsContainer,
+      advanced: {
+        Content: AdvancedSettingsContainer,
         Menu: AdvancedMenu,
       },
     },

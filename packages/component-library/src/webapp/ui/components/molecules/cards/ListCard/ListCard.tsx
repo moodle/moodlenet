@@ -8,7 +8,7 @@ export type ListCardProps = {
   className?: string
   header?: string | ReactNode | undefined
   footer?: string | ReactNode | undefined
-  content: ReactNode[]
+  content: { el: ReactNode; key: string }[]
   minGrid?: number
   noCard?: boolean
   maxRows?: number
@@ -31,12 +31,13 @@ export const ListCard: FC<ListCardProps> = ({
   const element = useRef<HTMLDivElement>(null)
   const contentWithKeys = useMemo(
     () =>
-      content.map((el, i) => {
-        const elementWithKey = [
-          <div className={'element'} key={i} {...(i === 0 && { ref: element })}>
+      content.map(({ el, key }, i) => {
+        const elementWithKey = (
+          <div className={'element'} key={key} {...(i === 0 && { ref: element })}>
             {el}
-          </div>,
-        ]
+          </div>
+        )
+
         return elementWithKey
       }),
     [content],

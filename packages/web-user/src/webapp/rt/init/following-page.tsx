@@ -22,8 +22,13 @@ function BrowserCollectionListItem(browserMainColumnItemBase: BrowserMainColumnI
   )
 }
 const followingPageAddons = {
-  collections: { Item: BrowserCollectionListItem, filters: [], name: 'Collections' },
-  profiles: { Item: BrowserProfileListItem, filters: [], name: 'People' },
+  collections: {
+    Item: BrowserCollectionListItem,
+    filters: [],
+    name: 'Collections',
+    numElements: NaN,
+  },
+  profiles: { Item: BrowserProfileListItem, filters: [], name: 'People', numElements: NaN },
 }
 FollowingPagePlugin.register(({ useBrowserItems }) => {
   useBrowserItems(followingPageAddons)

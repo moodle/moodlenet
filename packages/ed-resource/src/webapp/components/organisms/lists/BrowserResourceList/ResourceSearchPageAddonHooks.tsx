@@ -79,6 +79,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren> = ({ children }
 
 export const SearchResourceSectionAddon: PkgAddOns<SearchEntitySectionAddon> = {
   resources: {
+    numElements: NaN,
     Item: browserMainColumnItemBase => {
       const { resourceList, loadMore } = useContext(SearchResourceContext)
 
