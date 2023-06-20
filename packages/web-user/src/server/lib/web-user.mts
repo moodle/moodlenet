@@ -107,7 +107,7 @@ export function sendWebUserTokenCookie(jwtToken: JwtToken | undefined) {
   const { pkgId } = shell.assertCallInitiator()
   const httpCtx = getCurrentHttpCtx()
   const httpResponse = httpCtx?.response
-  // shell.log('info', { httpResponse, jwtToken, jwtTokenL: jwtToken?.length })
+  // shell.log('debug', { httpResponse, jwtToken, jwtTokenL: jwtToken?.length })
   if (!httpResponse) {
     return
   }
@@ -271,6 +271,9 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
       RETURN NEW
     `,
     { key, '@WebUserCollection': WebUserCollection.name },
+    {
+      retryOnConflict: 5,
+    },
   )
 
   const [patchedUser] = await patchedCursor.all()

@@ -38,8 +38,9 @@ export async function deltaIscedFieldPopularityItem({
   itemName: string
   delta: number
 }) {
-  const updatePopularityResult = await sysEntitiesDB.query<IscedFieldDataType>({
-    query: `FOR res in @@iscedFieldCollection
+  const updatePopularityResult = await sysEntitiesDB.query<IscedFieldDataType>(
+    {
+      query: `FOR res in @@iscedFieldCollection
       FILTER res._key == @_key
       LIMIT 1
       UPDATE res WITH {
@@ -51,8 +52,12 @@ export async function deltaIscedFieldPopularityItem({
         }
       } IN @@iscedFieldCollection
       RETURN NEW`,
-    bindVars: { '@iscedFieldCollection': IscedField.collection.name, _key },
-  })
+      bindVars: { '@iscedFieldCollection': IscedField.collection.name, _key },
+    },
+    {
+      retryOnConflict: 5,
+    },
+  )
   const updated = await updatePopularityResult.next()
   return updated?.popularity?.overall
 }

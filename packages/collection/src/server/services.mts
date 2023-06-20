@@ -48,8 +48,9 @@ export async function deltaCollectionPopularityItem({
   itemName: string
   delta: number
 }) {
-  const updatePopularityResult = await sysEntitiesDB.query<CollectionDataType>({
-    query: `FOR res in @@collections 
+  const updatePopularityResult = await sysEntitiesDB.query<CollectionDataType>(
+    {
+      query: `FOR res in @@collections 
       FILTER res._key == @_key
       LIMIT 1
       UPDATE res WITH {
@@ -61,8 +62,12 @@ export async function deltaCollectionPopularityItem({
         }
       } IN @@collections 
       RETURN NEW`,
-    bindVars: { '@collections': Collection.collection.name, _key },
-  })
+      bindVars: { '@collections': Collection.collection.name, _key },
+    },
+    {
+      retryOnConflict: 5,
+    },
+  )
   const updated = await updatePopularityResult.next()
   return updated?.popularity?.overall
 }
