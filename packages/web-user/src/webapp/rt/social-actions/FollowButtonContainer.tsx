@@ -6,8 +6,9 @@ import { useFollowButtonProps } from './FollowButtonHook.js'
 export const FollowButtonContainer: FC<{
   _key: string
   entityType: KnownEntityType
-}> = ({ _key, entityType }) => {
-  const FollowButtonProps = useFollowButtonProps({ _key, entityType })
+  info: null | { name: string; isCreator: boolean }
+}> = ({ _key, entityType, info }) => {
+  const FollowButtonProps = useFollowButtonProps({ _key, entityType, info })
   if (!FollowButtonProps) {
     return null
   }

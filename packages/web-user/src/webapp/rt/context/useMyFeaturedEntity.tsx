@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import type { KnownEntityFeature, KnownEntityType } from '../../../common/types.mjs'
 import { useMyProfileContext } from './MyProfileContext.js'
 
@@ -7,27 +7,36 @@ export type MyFeaturedEntityHandle = {
   isFeatured: boolean
 }
 export function useMyFeaturedEntity({
-  _key,
   feature,
+  _key,
   entityType,
 }: {
-  entityType: KnownEntityType
   feature: KnownEntityFeature
   _key: string
+  entityType: KnownEntityType
 }) {
   const allFeatsHandle = useMyProfileContext()?.myFeaturedEntities
-  const myFeaturedEntityHandle: MyFeaturedEntityHandle = useMemo<MyFeaturedEntityHandle>(() => {
-    const isFeatured = !!allFeatsHandle?.isFeatured({ entityType, _key, feature })
-    const toggle = async () => {
-      allFeatsHandle?.toggle({ entityType, _key, feature })
-    }
+  const isFeatured = !!allFeatsHandle?.isFeatured({
+    entityType,
+    _key,
+    feature,
+  })
+  const toggle = useCallback(async () => {
+    allFeatsHandle?.toggle({
+      entityType,
+      _key,
+      feature,
+    })
+  }, [_key, allFeatsHandle, entityType, feature])
+
+  const myFeaturedEntityHandle = useMemo(() => {
     const handle: MyFeaturedEntityHandle = {
       isFeatured,
       toggle,
     }
 
     return handle
-  }, [_key, allFeatsHandle, entityType, feature])
+  }, [isFeatured, toggle])
 
   return myFeaturedEntityHandle
 }

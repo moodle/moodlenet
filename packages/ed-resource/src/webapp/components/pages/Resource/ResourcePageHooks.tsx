@@ -1,6 +1,7 @@
 import { getLicenseNode, type AddonItem, type AddonItemNoKey } from '@moodlenet/component-library'
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
-import { createHookPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import moment from 'moment'
 import { useContext, useMemo } from 'react'
 import { maxUploadSize } from '../../../../common/validationSchema.mjs'
@@ -10,15 +11,16 @@ import type { ResourceProps } from './Resource.js'
 
 export type ResourcePageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 
-export const ResourcePagePlugins = createHookPlugin<
+export const ResourcePagePlugins = createPluginHook<
   {
-    generalAction: AddonItemNoKey
-    topRightHeaderItems: AddonItemNoKey
+    generalAction?: AddOnMap<AddonItemNoKey>
+    topRightHeaderItems?: AddOnMap<AddonItemNoKey>
   },
   {
     resourceKey: string
+    info: null | { name: string; isCreator: boolean }
   }
->({ generalAction: null, topRightHeaderItems: null })
+>()
 
 type ResourcePageHookArg = {
   resourceKey: string
@@ -26,77 +28,77 @@ type ResourcePageHookArg = {
 
 export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const mainLayoutProps = useMainLayoutProps()
-  const _baseProps = useResourceBaseProps({ resourceKey })
+  const resourceCommonProps = useResourceBaseProps({ resourceKey })
 
-  const [addons] = ResourcePagePlugins.useHookPlugin({ resourceKey })
+  const info = useMemo(
+    () =>
+      resourceCommonProps && {
+        name: resourceCommonProps.props.resourceForm.title,
+        isCreator: resourceCommonProps.props.access.isCreator,
+      },
+    [resourceCommonProps],
+  )
+
+  const plugins = ResourcePagePlugins.usePluginHooks({
+    resourceKey,
+    info,
+  })
 
   const { publishedMeta } = useContext(EdMetaContext)
 
-  return useMemo<ResourceProps | null>((): ResourceProps | null => {
-    if (!_baseProps) return null
-    const { actions, props, isSaving } = _baseProps
-    const { data, resourceForm, state, access, contributor } = props
+  if (!resourceCommonProps) return null
+  const { actions, props, isSaving } = resourceCommonProps
+  const { data, resourceForm, state, access, contributor } = props
 
-    const mainResourceCardSlots: MainResourceCardSlots = {
-      mainColumnItems: [],
-      headerColumnItems: [],
-      topLeftHeaderItems: [],
-      topRightHeaderItems: addons.topRightHeaderItems,
-      moreButtonItems: [],
-      footerRowItems: [],
-    }
+  const mainResourceCardSlots: MainResourceCardSlots = {
+    mainColumnItems: [],
+    headerColumnItems: [],
+    topLeftHeaderItems: [],
+    topRightHeaderItems: plugins.getKeyedAddons('topRightHeaderItems'),
+    moreButtonItems: [],
+    footerRowItems: [],
+  }
 
-    const layoutProps: Pick<
-      ResourceProps,
-      'wideColumnItems' | 'mainColumnItems' | 'rightColumnItems' | 'extraDetailsItems'
-    > = {
-      wideColumnItems: [],
-      mainColumnItems: [],
-      rightColumnItems: [],
-      extraDetailsItems: [],
-    }
-    return {
-      mainLayoutProps,
-      mainResourceCardSlots,
-      resourceContributorCardProps: contributor,
-      edMetaOptions: {
-        languageOptions: publishedMeta.languages,
-        levelOptions: publishedMeta.levels,
-        licenseOptions: publishedMeta.licenses.map(({ label, value }) => ({
-          icon: getLicenseNode(value),
-          label,
-          value,
-        })),
-        subjectOptions: publishedMeta.subjects,
-        typeOptions: publishedMeta.types,
-        monthOptions: moment
-          .months()
-          .map((month, index) => ({ label: month, value: `${index + 1}` })),
-        yearOptions: Array.from({ length: 100 }, (_, i) => {
-          const year = new Date().getFullYear() - i
-          return `${year}` //{ label: `${year}`, value: `${year}` }
-        }),
-      },
-      ...layoutProps,
-
-      generalActionsItems: addons.generalAction,
-      data,
-      resourceForm,
-      state,
-      actions,
-      access,
-      fileMaxSize: maxUploadSize,
-      isSaving,
-    }
-  }, [
-    _baseProps,
-    addons.topRightHeaderItems,
-    addons.generalAction,
+  const layoutProps: Pick<
+    ResourceProps,
+    'wideColumnItems' | 'mainColumnItems' | 'rightColumnItems' | 'extraDetailsItems'
+  > = {
+    wideColumnItems: [],
+    mainColumnItems: [],
+    rightColumnItems: [],
+    extraDetailsItems: [],
+  }
+  return {
     mainLayoutProps,
-    publishedMeta.languages,
-    publishedMeta.levels,
-    publishedMeta.licenses,
-    publishedMeta.subjects,
-    publishedMeta.types,
-  ])
+    mainResourceCardSlots,
+    resourceContributorCardProps: contributor,
+    edMetaOptions: {
+      languageOptions: publishedMeta.languages,
+      levelOptions: publishedMeta.levels,
+      licenseOptions: publishedMeta.licenses.map(({ label, value }) => ({
+        icon: getLicenseNode(value),
+        label,
+        value,
+      })),
+      subjectOptions: publishedMeta.subjects,
+      typeOptions: publishedMeta.types,
+      monthOptions: moment
+        .months()
+        .map((month, index) => ({ label: month, value: `${index + 1}` })),
+      yearOptions: Array.from({ length: 100 }, (_, i) => {
+        const year = new Date().getFullYear() - i
+        return `${year}` //{ label: `${year}`, value: `${year}` }
+      }),
+    },
+    ...layoutProps,
+
+    generalActionsItems: plugins.getKeyedAddons('generalAction'),
+    data,
+    resourceForm,
+    state,
+    actions,
+    access,
+    fileMaxSize: maxUploadSize,
+    isSaving,
+  }
 }

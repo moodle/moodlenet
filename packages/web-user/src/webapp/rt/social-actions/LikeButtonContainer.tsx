@@ -6,9 +6,10 @@ import { useLikeButtonProps } from './LikeButtonHook.js'
 export const LikeButtonContainer: FC<{
   _key: string
   entityType: KnownEntityType
+  info: null | { name: string; isCreator: boolean }
 }> = props => {
-  const { _key, entityType } = props
-  const panelProps = useLikeButtonProps({ _key, entityType })
+  const { _key, entityType, info } = props
+  const panelProps = useLikeButtonProps({ _key, entityType, info })
   if (!panelProps) {
     return null
   }
