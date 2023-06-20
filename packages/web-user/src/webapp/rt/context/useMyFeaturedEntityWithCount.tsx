@@ -33,7 +33,7 @@ export function useMyFeaturedEntityWithCount({
         if (undefinedCount) return
         const delta = myFeaturedEntityHandle.isFeatured ? -1 : 1
         await myFeaturedEntityHandle.toggle()
-        setCount(curr => curr ?? 0 + delta)
+        setCount(curr => (curr ?? 0) + delta)
       },
       count: count ?? 0,
     }
