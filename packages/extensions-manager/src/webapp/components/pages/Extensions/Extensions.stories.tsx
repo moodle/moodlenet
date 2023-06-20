@@ -1,6 +1,6 @@
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
-import { useInstallExtensionStoryProps } from '../InstallExtension/InstallExtension.stories.js'
+// import { useInstallExtensionStoryProps } from '../InstallExtension/InstallExtension.stories.js'
 import { useManageExtensionsStoryProps } from '../ManageExtensions/ManageExtensions.stories.js'
 
 import type { ExtensionsProps } from './Extensions.js'
@@ -11,7 +11,7 @@ export const useExtensionsStoryProps = (overrides?: {
   props?: Partial<ExtensionsProps>
 }): ExtensionsProps => {
   return {
-    installExtensionProps: useInstallExtensionStoryProps(),
+    // installExtensionProps: useInstallExtensionStoryProps(),
     manageExtensionsProps: useManageExtensionsStoryProps(),
     ...overrides?.props,
   }
