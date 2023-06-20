@@ -1,34 +1,33 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import type { KnownEntityType } from '../../../common/types.mjs'
 import type { SmallFollowButtonProps } from '../../ui/exports/ui.mjs'
-import { useMyFeaturedEntityWitnCount } from '../context/useMyFeaturedEntityWithCount.js'
+import { useMyFeaturedEntityWithCount } from '../context/useMyFeaturedEntityWithCount.js'
 import { AuthCtx } from '../exports.mjs'
 
 export const useSmallFollowButtonProps = ({
   _key,
   entityType,
+  info,
 }: {
   _key: string
   entityType: KnownEntityType
-}): SmallFollowButtonProps | null => {
+  info: null | { name: string; isCreator: boolean }
+}): SmallFollowButtonProps => {
   const { isAuthenticated } = useContext(AuthCtx)
-  const featuredHandle = useMyFeaturedEntityWitnCount({ _key, entityType, feature: 'follow' })
+  const featuredHandle = useMyFeaturedEntityWithCount({
+    feature: 'follow',
+    _key,
+    entityType,
+  })
 
-  const props = useMemo<SmallFollowButtonProps | null>(() => {
-    if (!featuredHandle) {
-      return null
-    }
-    const props: SmallFollowButtonProps = {
-      followed: featuredHandle.isFeatured,
-      canFollow: true,
-      isCreator: false,
-      isAuthenticated,
-      toggleFollow: featuredHandle.toggle,
-      numFollowers: featuredHandle.count,
-    }
-    return props
-  }, [featuredHandle, isAuthenticated])
-
-  return props
+  const smallFollowButtonProps: SmallFollowButtonProps = {
+    followed: featuredHandle.isFeatured,
+    canFollow: !info ? false : !info.isCreator,
+    isCreator: !!info?.isCreator,
+    isAuthenticated,
+    toggleFollow: featuredHandle.toggle,
+    numFollowers: featuredHandle.count,
+  }
+  return smallFollowButtonProps
 }

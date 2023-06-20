@@ -1,38 +1,44 @@
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { href } from '@moodlenet/react-app/common'
-import { createHookPlugin } from '@moodlenet/react-app/webapp'
+import { createPluginHook } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { ResourceCardDataProps } from '../../../../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { ResourceCardPropsData } from './ResourceCard.js'
 
-export const ResourceCardPlugins = createHookPlugin<
+export const ResourceCardPlugins = createPluginHook<
   {
-    mainColumnItems: AddonItemNoKey
-    topLeftItems: AddonItemNoKey
-    bottomLeftItems: AddonItemNoKey
-    bottomRightItems: AddonItemNoKey
-    topRightItems: AddonItemNoKey
+    mainColumnItems?: AddOnMap<AddonItemNoKey>
+    topLeftItems?: AddOnMap<AddonItemNoKey>
+    bottomLeftItems?: AddOnMap<AddonItemNoKey>
+    bottomRightItems?: AddOnMap<AddonItemNoKey>
+    topRightItems?: AddOnMap<AddonItemNoKey>
   },
-  { resourceKey: string }
->({
-  topRightItems: null,
-  bottomLeftItems: null,
-  bottomRightItems: null,
-  mainColumnItems: null,
-  topLeftItems: null,
-})
+  { resourceKey: string; info: null | { name: string; isCreator: boolean } }
+>()
 
 export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData | null => {
-  const _mainProps = useResourceBaseProps({ resourceKey })
+  const resourceCommonProps = useResourceBaseProps({ resourceKey })
 
-  const [addons] = ResourceCardPlugins.useHookPlugin({ resourceKey })
+  const info = useMemo(
+    () =>
+      resourceCommonProps && {
+        name: resourceCommonProps.props.resourceForm.title,
+        isCreator: resourceCommonProps.props.access.isCreator,
+      },
+    [resourceCommonProps],
+  )
+  const plugins = ResourceCardPlugins.usePluginHooks({
+    resourceKey,
+    info,
+  })
 
   const dataProps = useMemo(() => {
-    if (!_mainProps) return null
-    const { props, actions } = _mainProps
+    if (!resourceCommonProps) return null
+    const { props, actions } = resourceCommonProps
     const {
       data: dataProps,
       state,
@@ -55,32 +61,21 @@ export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData
       resourceHomeHref: href(getResourceHomePageRoutePath({ _key: resourceKey, title })),
     }
     return { data, state, access, actions }
-  }, [_mainProps, resourceKey])
+  }, [resourceCommonProps, resourceKey])
 
-  const collectionProps = useMemo(() => {
-    if (!dataProps) return null
-    const { data, state, access, actions } = dataProps
-    const propsPage: ResourceCardPropsData = {
-      mainColumnItems: addons.mainColumnItems,
-      topLeftItems: addons.topLeftItems,
-      topRightItems: addons.topRightItems,
-      bottomLeftItems: addons.bottomLeftItems,
-      bottomRightItems: addons.bottomRightItems,
-      data,
-      state,
-      actions,
-      access,
-    }
-
-    return propsPage
-  }, [
-    addons.bottomLeftItems,
-    addons.bottomRightItems,
-    addons.mainColumnItems,
-    addons.topLeftItems,
-    addons.topRightItems,
-    dataProps,
-  ])
+  if (!dataProps) return null
+  const { data, state, access, actions } = dataProps
+  const collectionProps: ResourceCardPropsData = {
+    mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
+    topLeftItems: plugins.getKeyedAddons('topLeftItems'),
+    topRightItems: plugins.getKeyedAddons('topRightItems'),
+    bottomLeftItems: plugins.getKeyedAddons('bottomLeftItems'),
+    bottomRightItems: plugins.getKeyedAddons('bottomRightItems'),
+    data,
+    state,
+    actions,
+    access,
+  }
 
   return collectionProps
 }

@@ -9,7 +9,7 @@ export type LikeButtonPropsData = {
   liked: boolean
   canLike: boolean
   numLikes: number
-  isCreator: boolean
+  isCreator?: boolean
   isAuthenticated: boolean
   toggleLike: () => void
 }
