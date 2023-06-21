@@ -54,7 +54,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
   uploadProgress,
 }) => {
   const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
-  const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
 
   const contentIsFile = contentForm.values.content instanceof File
   console.log('donwloadFilename', downloadFilename)

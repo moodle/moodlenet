@@ -26,7 +26,6 @@ const bookmarksPageAddons = {
     Item: BrowserCollectionListItem,
     filters: [],
     name: 'Collections',
-    numElements: NaN,
   },
   resources: { Item: BrowserResourceListItem, filters: [], name: 'Resources', numElements: NaN },
 }

@@ -91,6 +91,7 @@ export const useCollectionPageProps = ({
       isCreator: collectionMainProps.props.access.isCreator,
     },
     isSaving,
+    isEditing: false,
   }
 
   return collectionProps

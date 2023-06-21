@@ -108,7 +108,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { id, mnUrl, contentType, downloadFilename, imageUrl, contentUrl, subjectHref } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
 
   const { subjectOptions } = edMetaOptions
 

@@ -77,7 +77,6 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren> = ({ children })
 
 export const SearchProfileSectionAddon: PkgAddOns<SearchEntitySectionAddon> = {
   profiles: {
-    numElements: NaN,
     Item: browserMainColumnItemBase => {
       const { profileList, loadMore } = useContext(SearchProfileContext)
 
