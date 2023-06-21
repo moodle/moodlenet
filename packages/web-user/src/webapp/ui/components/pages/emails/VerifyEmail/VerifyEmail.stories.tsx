@@ -373,11 +373,11 @@ function html() {
                       <td style="text-align: center">
                         <div class="text-author">
                           <div class="dialog">
-                          Your requested an email change.
+                          You requested an email change.
                             Verify your new email address by clicking the button below.
                           </div>
                           <p style="margin: 25px 0">
-                            <a href="{{=it.link}}" class="btn btn-primary">Verify email</a>
+                            <a href={{=it.action-button-url}} class="btn btn-primary" target="_blank">Verify email</a>
                           </p>
                           <span class="position disclaimer">Not you? Just ignore this message.</span>
                         </div>
@@ -475,7 +475,8 @@ function html() {
       )
       .replace('{{=it.location}}', 'PO Box 303, West Perth WA 6872, Australia')
       .replace('{{=it.copyright}}', 'Copyright © 2021 Moodle Pty Ltd, All rights reserved.')
-      .replaceAll('{{=it.receiver-email}}', 'caterine.z.pons@temail.com'),
+      .replaceAll('{{=it.receiver-email}}', 'caterine.z.pons@temail.com')
+      .replace('{{=it.action-button-url}}', 'https://moodle.net'),
   }
 }
 

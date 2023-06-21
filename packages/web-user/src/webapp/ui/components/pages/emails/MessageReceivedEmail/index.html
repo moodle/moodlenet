@@ -371,7 +371,13 @@
                     <div class="text-author">
                       <div class="dialog">{{=it.message}}</div>
                       <p style="margin: 25px 0">
-                        <a href="#" class="btn btn-primary">Reply at {{=it.instance-name}}</a>
+                        <a
+                          href="{{"
+                          ="it.action-button-url}}"
+                          class="btn btn-primary"
+                          target="_blank"
+                          >Reply at {{=it.instance-name}}</a
+                        >
                       </p>
                     </div>
                   </td>
