@@ -51,7 +51,7 @@ export async function verifyCurrentTokenCtx() {
   }
   const { currentJwtToken } = currentCtx.tokenCtx
   const jwtVerifyResult = await shell.call(jwt.verify)<WebUserJwtPayload>(currentJwtToken)
-  if (!jwtVerifyResult) {
+  if (jwtVerifyResult?.payload?.v !== VALID_JWT_VERSION) {
     shell.myAsyncCtx.unset()
     return
   }
@@ -98,14 +98,15 @@ export async function setCurrentUnverifiedJwtToken(currentJwtToken: JwtToken) {
 //   await setCurrentTokenCtx(verifiedTokenCtx, sendCookie)
 // }
 
-export async function verifyWebUserToken(token: JwtToken) {
-  const jwtVerifyResult = await shell.call(jwt.verify)<WebUserJwtPayload>(token)
-  if (!(jwtVerifyResult && jwtVerifyResult.payload.v === VALID_JWT_VERSION)) {
-    return
-  }
+// export async function verifyWebUserToken(token: JwtToken) {
+//   const jwtVerifyResult = await shell.call(jwt.verify)<WebUserJwtPayload>(token)
+//   shell.log('debug', { jwtVerifyResult })
+//   if (!(jwtVerifyResult && jwtVerifyResult.payload.v === VALID_JWT_VERSION)) {
+//     return
+//   }
 
-  return jwtVerifyResult.payload
-}
+//   return jwtVerifyResult.payload
+// }
 
 ////
 
