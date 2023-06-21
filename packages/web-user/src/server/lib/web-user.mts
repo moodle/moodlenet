@@ -16,12 +16,14 @@ import type {
   CreateRequest,
   ProfileDataType,
   TokenCtx,
+  TokenVersion,
   UnverifiedTokenCtx,
   VerifiedTokenCtx,
   WebUserDataType,
   WebUserJwtPayload,
 } from '../types.mjs'
 
+const VALID_JWT_VERSION: TokenVersion = 1
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
   const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {
     expirationTime: '2w',
@@ -68,7 +70,7 @@ export async function loginAsRoot(rootPassword: string): Promise<boolean> {
   if (!rootPasswordMatch) {
     return false
   }
-  const jwtToken = await signWebUserJwt({ isRoot: true })
+  const jwtToken = await signWebUserJwt({ isRoot: true, v: VALID_JWT_VERSION })
   shell.call(sendWebUserTokenCookie)(jwtToken)
   return true
 }
@@ -98,7 +100,11 @@ export async function setCurrentUnverifiedJwtToken(currentJwtToken: JwtToken) {
 
 export async function verifyWebUserToken(token: JwtToken) {
   const jwtVerifyResult = await shell.call(jwt.verify)<WebUserJwtPayload>(token)
-  return jwtVerifyResult?.payload
+  if (!(jwtVerifyResult && jwtVerifyResult.payload.v === VALID_JWT_VERSION)) {
+    return
+  }
+
+  return jwtVerifyResult.payload
 }
 
 ////
@@ -182,6 +188,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     return
   }
   const jwtToken = await signWebUserJwt({
+    v: VALID_JWT_VERSION,
     webUser: {
       _key: newWebUser._key,
       displayName: newWebUser.displayName,
@@ -210,6 +217,7 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
     return
   }
   const jwtToken = await signWebUserJwt({
+    v: VALID_JWT_VERSION,
     webUser: {
       _key: webUser._key,
       displayName: webUser.displayName,

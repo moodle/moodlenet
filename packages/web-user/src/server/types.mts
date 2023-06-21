@@ -48,7 +48,8 @@ export type CreateRequest = Pick<WebUserDataType, 'contacts' | 'isAdmin'> &
   Pick<ProfileDataType, 'displayName'> &
   Partial<ProfileDataType>
 
-export type WebUserJwtPayload =
+export type TokenVersion = 1
+export type WebUserJwtPayload = { v: TokenVersion & 1 } & (
   | {
       isRoot: true
     }
@@ -57,12 +58,12 @@ export type WebUserJwtPayload =
       webUser: Pick<Document<WebUserDataType>, '_key' | 'isAdmin' | 'displayName'>
       profile: Pick<ProfileEntity, '_key' | '_id'>
     }
+)
 
 export type WebUserCtxType = {
   tokenCtx?: TokenCtx
 }
 export type TokenCtx = VerifiedTokenCtx | UnverifiedTokenCtx
-
 export type VerifiedTokenCtx = {
   type: 'verified-token'
   currentJwtToken: JwtToken
