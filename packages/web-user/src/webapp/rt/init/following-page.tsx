@@ -26,7 +26,6 @@ const followingPageAddons = {
     Item: BrowserCollectionListItem,
     filters: [],
     name: 'Collections',
-    numElements: NaN,
   },
   profiles: { Item: BrowserProfileListItem, filters: [], name: 'People', numElements: NaN },
 }
