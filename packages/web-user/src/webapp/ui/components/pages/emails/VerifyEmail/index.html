@@ -369,11 +369,17 @@
                   <td style="text-align: center">
                     <div class="text-author">
                       <div class="dialog">
-                        Your requested an email change. Verify your new email address by clicking
-                        the button below.
+                        You requested an email change. Verify your new email address by clicking the
+                        button below.
                       </div>
                       <p style="margin: 25px 0">
-                        <a href="{{=it.link}}" class="btn btn-primary">Verify email</a>
+                        <a
+                          href="{{"
+                          ="it.action-button-url}}"
+                          class="btn btn-primary"
+                          target="_blank"
+                          >Verify email</a
+                        >
                       </p>
                       <span class="position disclaimer">Not you? Just ignore this message.</span>
                     </div>

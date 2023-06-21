@@ -377,7 +377,7 @@ function html() {
                             {{=it.message}}
                           </div>
                           <p style="margin: 25px 0">
-                            <a href="#" class="btn btn-primary">Reply at {{=it.instance-name}}</a>
+                            <a href={{=it.action-button-url}} class="btn btn-primary" target="_blank">Reply at {{=it.instance-name}}</a>
                           </p>
                         </div>
                       </td>
@@ -480,7 +480,11 @@ function html() {
       )
       .replace('{{=it.location}}', 'PO Box 303, West Perth WA 6872, Australia')
       .replace('{{=it.copyright}}', 'Copyright © 2021 Moodle Pty Ltd, All rights reserved.')
-      .replaceAll('{{=it.receiver-email}}', 'caterine.z.pons@temail.com'),
+      .replaceAll('{{=it.receiver-email}}', 'caterine.z.pons@temail.com')
+      .replaceAll(
+        '{{=it.action-button-url}}',
+        'https://moodle.net/profile/7pg2ied7z3dy-carlo-cavicchioli',
+      ),
   }
 }
 
