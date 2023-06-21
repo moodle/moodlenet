@@ -21,7 +21,7 @@ function html() {
         <!-- Disable auto-scale in iOS 10 Mail entirely -->
         <meta name="color-scheme" content="light dark" />
         <meta name="supported-color-schemes" content="light dark" />
-        <title>MoodleNet</title>
+        <title>{{=it.instance-name}}</title>
         <!-- The title tag shows in email notifications, like Android 4.4. -->
     
         <!-- CSS Reset : BEGIN -->
@@ -335,10 +335,10 @@ function html() {
                     <tr>
                       <td class="logo" style="text-align: center">
                         <h1>
-                          <a href="https://moodle.net/" target="_blank"
+                           <a href={{=it.domain-url}} target="_blank"
                             ><img
-                              src="https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png"
-                              alt=""
+                              src={{=it.instance-logo-url}}
+                              alt="Domain logo"
                               style="width: 162px; margin: auto; display: block"
                           /></a>
                         </h1>
@@ -365,7 +365,7 @@ function html() {
                     <tr>
                       <td style="padding: 0 2.5em; text-align: center">
                         <div class="text">
-                          <h2>Welcome to MoodleNet 🎉</h2>
+                          <h2>Welcome to {{=it.instance-name}} 🎉</h2>
                         </div>
                       </td>
                     </tr>
@@ -373,7 +373,7 @@ function html() {
                       <td style="text-align: center">
                         <div class="text-author">
                           <div class="dialog">
-                            Thanks for signing up to MoodleNet! Click the button below to activate your
+                            Thanks for signing up to {{=it.instance-name}}! Click the button below to activate your
                             account.
                           </div>
                           <p style="margin: 25px 0">
@@ -428,10 +428,10 @@ function html() {
                           "
                         >
                           <a
-                            href="http://mailsend.moodle.com/track/click/30829846/www.google.com?p=eyJzIjoia2ZVN0M2eHBsV2VxVGxfQkVMbmxRcEhNVWpBIiwidiI6MSwicCI6IntcInVcIjozMDgyOTg0NixcInZcIjoxLFwidXJsXCI6XCJodHRwczpcXFwvXFxcL3d3dy5nb29nbGUuY29tXFxcL21hcHNcXFwvcGxhY2VcXFwvTW9vZGxlXFxcL0AtMzEuOTQ4OTkxOSwxMTUuODQwMzkyMywxNXpcXFwvZGF0YT0hNG01ITNtNCExczB4MDoweDJiZmY3YmVkZjQzYjRmYzchOG0yITNkLTMxLjk0ODk5MTkhNGQxMTUuODQwMzkyM1wiLFwiaWRcIjpcIjgwYjI4NzUzNGFmMDQ5ZGY4NjhiNjBkYjRjZDg2OGNkXCIsXCJ1cmxfaWRzXCI6W1wiNjdhMmU4MjRhOTNkOGNhODE3YzhiYmY1YTliNzhiMTM0NzczM2MxYVwiXX0ifQ"
+                            href={{=it.location-url}}
                             target="_blank"
-                            data-saferedirecturl="https://www.google.com/url?q=http://mailsend.moodle.com/track/click/30829846/www.google.com?p%3DeyJzIjoia2ZVN0M2eHBsV2VxVGxfQkVMbmxRcEhNVWpBIiwidiI6MSwicCI6IntcInVcIjozMDgyOTg0NixcInZcIjoxLFwidXJsXCI6XCJodHRwczpcXFwvXFxcL3d3dy5nb29nbGUuY29tXFxcL21hcHNcXFwvcGxhY2VcXFwvTW9vZGxlXFxcL0AtMzEuOTQ4OTkxOSwxMTUuODQwMzkyMywxNXpcXFwvZGF0YT0hNG01ITNtNCExczB4MDoweDJiZmY3YmVkZjQzYjRmYzchOG0yITNkLTMxLjk0ODk5MTkhNGQxMTUuODQwMzkyM1wiLFwiaWRcIjpcIjgwYjI4NzUzNGFmMDQ5ZGY4NjhiNjBkYjRjZDg2OGNkXCIsXCJ1cmxfaWRzXCI6W1wiNjdhMmU4MjRhOTNkOGNhODE3YzhiYmY1YTliNzhiMTM0NzczM2MxYVwiXX0ifQ&amp;source=gmail&amp;ust=1633007097416000&amp;usg=AFQjCNFOB3LkJpcgTW0jlZ2ctIj-wl95kw"
-                            >PO Box 303, West Perth WA 6872, Australia</a
+                            data-saferedirecturl={{=it.location-url}}
+                            >{{=it.location}}</a
                           >
                         </p>
     
@@ -446,10 +446,10 @@ function html() {
                             text-align: center;
                           "
                         >
-                          Copyright © 2021 Moodle Pty Ltd, All rights reserved.<br />
+                        {{=it.copyright}}<br />
                           This email was intended for
-                          <a href="mailto:{{=it.email}}" target="_blank">caterine.z.pons@temail.com</a>. This is a
-                          service email.
+                          <a href="mailto:{{=it.receiver-email}}" target="_blank">{{=it.receiver-email}}</a>.
+                          This is a service email.
                         </p>
                       </td>
                     </tr>
@@ -462,7 +462,20 @@ function html() {
         </center>
       </body>
     </html>
-    `,
+    `
+      .replaceAll('{{=it.instance-name}}', 'MoodleNet')
+      .replaceAll(
+        '{{=it.instance-logo-url}}',
+        'https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png',
+      )
+      .replaceAll('{{=it.domain-url}}', 'https://moodle.net')
+      .replaceAll(
+        '{{=it.location-url}}',
+        'http://mailsend.moodle.com/track/click/30829846/www.google.com?p=eyJzIjoia2ZVN0M2eHBsV2VxVGxfQkVMbmxRcEhNVWpBIiwidiI6MSwicCI6IntcInVcIjozMDgyOTg0NixcInZcIjoxLFwidXJsXCI6XCJodHRwczpcXFwvXFxcL3d3dy5nb29nbGUuY29tXFxcL21hcHNcXFwvcGxhY2VcXFwvTW9vZGxlXFxcL0AtMzEuOTQ4OTkxOSwxMTUuODQwMzkyMywxNXpcXFwvZGF0YT0hNG01ITNtNCExczB4MDoweDJiZmY3YmVkZjQzYjRmYzchOG0yITNkLTMxLjk0ODk5MTkhNGQxMTUuODQwMzkyM1wiLFwiaWRcIjpcIjgwYjI4NzUzNGFmMDQ5ZGY4NjhiNjBkYjRjZDg2OGNkXCIsXCJ1cmxfaWRzXCI6W1wiNjdhMmU4MjRhOTNkOGNhODE3YzhiYmY1YTliNzhiMTM0NzczM2MxYVwiXX0ifQ',
+      )
+      .replace('{{=it.location}}', 'PO Box 303, West Perth WA 6872, Australia')
+      .replace('{{=it.copyright}}', 'Copyright © 2021 Moodle Pty Ltd, All rights reserved.')
+      .replaceAll('{{=it.receiver-email}}', 'caterine.z.pons@temail.com'),
   }
 }
 
