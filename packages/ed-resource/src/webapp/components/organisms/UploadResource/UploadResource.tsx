@@ -38,7 +38,6 @@ export type UploadResourceProps = {
   uploadProgress?: number
   shouldShowErrors?: boolean
   displayOnly?: boolean
-  imageOnClick?(): unknown
 }
 
 export const UploadResource: FC<UploadResourceProps> = ({
@@ -53,9 +52,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
   displayOnly,
   shouldShowErrors,
   uploadProgress,
-  imageOnClick,
 }) => {
   const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
+  const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
 
   const contentIsFile = contentForm.values.content instanceof File
   console.log('donwloadFilename', downloadFilename)
@@ -201,8 +200,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const imageRef = useRef<HTMLDivElement>(null)
 
-  const shouldOpenImage =
-    contentForm.values.content === imageForm.values.image || contentType === 'file'
+  // const shouldOpenImage =
+  //   contentForm.values.content === imageForm.values.image || contentType === 'file'
 
   const imageContainer = (
     <ImageContainer
@@ -210,7 +209,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
       ref={imageRef}
       deleteImage={deleteImage}
       uploadImage={uploadImage}
-      imageOnClick={shouldOpenImage && displayOnly ? imageOnClick : undefined}
       displayOnly={displayOnly}
       link={
         contentType === 'link' && typeof contentForm.values.content === 'string'

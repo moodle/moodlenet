@@ -50,6 +50,7 @@ export type CollectionProps = {
   actions: CollectionActions
   access: CollectionAccessProps
   isSaving: boolean
+  isEditing: boolean
 }
 
 export const Collection: FC<CollectionProps> = ({
@@ -71,6 +72,7 @@ export const Collection: FC<CollectionProps> = ({
   actions,
   access,
   isSaving,
+  isEditing: isEditingProp,
 }) => {
   const viewport = useViewport()
   const { imageUrl } = data
@@ -78,7 +80,7 @@ export const Collection: FC<CollectionProps> = ({
   const { editData, deleteCollection, publish, unpublish, removeResource, setImage } = actions
   const { canPublish, canEdit } = access
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(imageUrl)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [isEditing, setIsEditing] = useState<boolean>(isEditingProp)
   const [shouldValidate, setShouldValidate] = useState<boolean>(true)
 
   const form = useFormik<CollectionFormProps>({

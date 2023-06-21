@@ -19,7 +19,7 @@ export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
   loadMore,
   showHeader,
 }) => {
-  return (
+  const listCard = (
     <ListCard
       className={`browser-collection-list ${showAll ? 'show-all' : ''} ${
         loadMore ? 'load-more' : ''
@@ -52,6 +52,8 @@ export const BrowserCollectionList: FC<BrowserCollectionListProps> = ({
       maxRows={showAll ? undefined : 2}
     />
   )
+
+  return collectionCardPropsList.length > 0 ? listCard : null
 }
 
 BrowserCollectionList.defaultProps = { showHeader: true }

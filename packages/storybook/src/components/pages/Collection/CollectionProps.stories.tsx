@@ -243,6 +243,9 @@ export const useCollectionStoryProps = (
             ...access,
             ...accessOverrides,
           },
+          state: {
+            isPublished: true,
+          },
           orientation: 'horizontal',
         })
 
@@ -253,11 +256,10 @@ export const useCollectionStoryProps = (
         : MainLayoutLoggedOutStoryProps,
 
       mainCollectionCardSlots: mainCollectionCardSlots,
-      mainColumnItems: [],
-      extraDetailsItems: [],
-      moreButtonItems: [],
-      sideColumnItems: [],
       wideColumnItems: [],
+      mainColumnItems: [],
+      rightColumnItems: [],
+      extraDetailsItems: [],
 
       resourceCardPropsList: resourceCardPropsList,
 

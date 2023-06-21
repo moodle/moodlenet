@@ -1,4 +1,4 @@
-import { ImageContainer } from '@moodlenet/component-library'
+import { ImageContainer, Modal } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
@@ -23,8 +23,9 @@ import './UploadImage.scss'
 export type UploadImageProps = {
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
   imageUrl: string | undefined
+  backupImage?: string
   displayOnly?: boolean
-  imageOnClick?: () => void
+  OnClick?: () => void
 }
 
 // const usingFields: (keyof NewCollectionFormValues)[] = [
@@ -40,8 +41,8 @@ export type UploadImageProps = {
 export const UploadImage: FC<UploadImageProps> = ({
   imageForm,
   imageUrl,
+  backupImage,
   displayOnly,
-  imageOnClick,
 }) => {
   // const { nextForm, imageForm } = useNewCollectionPageCtx()
   // const isValid = usingFields.reduce(
@@ -49,7 +50,10 @@ export const UploadImage: FC<UploadImageProps> = ({
   //   true
   // )
 
-  const [image] = useImageUrl(imageUrl, imageForm.values.image)
+  const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
+  const [image] = useImageUrl(imageForm.values.image, backupImage)
+
+  console.log('image', image)
 
   // const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
@@ -108,20 +112,39 @@ export const UploadImage: FC<UploadImageProps> = ({
     imageForm.submitForm()
   }
 
+  console.log('displayOnly', displayOnly)
+
   const imageContainer = (
     <ImageContainer
       imageUrl={image}
       deleteImage={deleteImage}
       uploadImage={uploadImage}
       displayOnly={displayOnly}
-      imageCover
-      imageOnClick={imageOnClick}
     />
   )
+  const modals = [
+    isShowingImage && imageUrl && (
+      <Modal
+        className="image-modal"
+        closeButton={false}
+        onClose={() => setIsShowingImage(false)}
+        style={{
+          maxWidth: '90%',
+          maxHeight: 'calc(90% + 20px)',
+          // maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
+        }}
+        key="image-modal"
+      >
+        <img src={imageUrl} alt="Resource" />
+        {/* {getImageCredits(form.values.image)} */}
+      </Modal>
+    ),
+  ]
 
   return (
     <div className="upload-image">
-      {!image ? (
+      {modals}
+      {!image && !displayOnly ? (
         <div className={`uploader `}>
           <div
             className={`image upload ${isToDrop ? 'hover' : ''} ${
