@@ -13,7 +13,7 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -122,7 +122,7 @@ export const Resource: FC<ResourceProps> = ({
   })
 
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
-    initialValues: { content: contentUrl },
+    initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
     validateOnMount: true,
     validationSchema: contentValidationSchema,
     // validateOnChange: shouldValidate,
@@ -132,7 +132,7 @@ export const Resource: FC<ResourceProps> = ({
   })
 
   const imageForm = useFormik<{ image: File | string | undefined | null }>({
-    initialValues: { image: imageUrl },
+    initialValues: useMemo(() => ({ image: imageUrl }), [imageUrl]),
     validateOnMount: true,
     validationSchema: imageValidationSchema,
     // validateOnChange: shouldValidate,

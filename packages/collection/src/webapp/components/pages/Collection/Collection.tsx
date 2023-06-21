@@ -11,7 +11,7 @@ import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { SchemaOf } from 'yup'
 
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
@@ -92,9 +92,8 @@ export const Collection: FC<CollectionProps> = ({
       return editData(values)
     },
   })
-
   const imageForm = useFormik<{ image: File | string | null | undefined }>({
-    initialValues: { image: imageUrl },
+    initialValues: useMemo(() => ({ image: imageUrl }), [imageUrl]),
     validateOnMount: true,
     validationSchema: shouldValidate ? imageValidationSchema : undefined,
     validateOnChange: shouldValidate,
