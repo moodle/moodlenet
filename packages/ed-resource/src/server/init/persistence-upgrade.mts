@@ -10,7 +10,7 @@ if (currentPersistentVersion > PERSISTENCE_VERSION) {
 
 while (currentPersistentVersion !== PERSISTENCE_VERSION) {
   currentPersistentVersion = (
-    await import(`./persistence-upgrades/@${currentPersistentVersion}/up.mjs`)
+    await import(`./persistence-upgrades/from-${currentPersistentVersion}/up.mjs`)
   ).default
   await kvStore.set('persistence-version', '', { v: currentPersistentVersion })
 }
