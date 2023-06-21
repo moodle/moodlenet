@@ -28,11 +28,35 @@ export type SendResp =
 export type MailerCfg = {
   defaultFrom: EmailAddr
   defaultReplyTo: EmailAddr
+  baseEmailLayoutTemplateVars: BaseEmailLayoutTemplateVars
 }
 
 export type EmailAddr = string
 
 export type EmailObj = {
-  to: string | EmailAddr | Array<string | EmailAddr>
-  text: string
+  subject: string
+  title: string
+  to: EmailAddr
+  html: string
 }
+
+export type EmailLayoutTemplateVars = Record<
+  | 'instanceName'
+  | 'domainUrl'
+  | 'instanceLogoUrl'
+  | 'locationUrl'
+  | 'location'
+  | 'copyright'
+  | 'emailTitle'
+  | 'receiverEmail'
+  | 'emailBody',
+  string
+>
+export type DynEmailLayoutTemplateVars = Pick<
+  EmailLayoutTemplateVars,
+  'emailTitle' | 'receiverEmail' | 'emailBody'
+>
+export type BaseEmailLayoutTemplateVars = Pick<
+  EmailLayoutTemplateVars,
+  'instanceName' | 'domainUrl' | 'instanceLogoUrl' | 'locationUrl' | 'location' | 'copyright'
+>

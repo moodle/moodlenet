@@ -81,6 +81,7 @@ export interface WebUserEvents {
       text: string
       html: string
     }
-    webUserKey: string
+    fromWebUser: { _key: string; displayName: string }
+    toWebUser: { _key: string; displayName: string }
   }
 }

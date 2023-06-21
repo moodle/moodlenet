@@ -356,17 +356,22 @@ export async function sendMessageToProfile({
   const tokenCtx = await verifyCurrentTokenCtx()
   if (!tokenCtx || tokenCtx.payload.isRoot || !tokenCtx.payload.webUser) return
 
-  // const fromWebUserKey = tokenCtx.payload.webUser._key
   //TODO //@ALE prepare formatted messages
   const toWebUser = await getWebUserByProfileKey({ profileKey })
   if (!toWebUser) return
 
-  const webUserKey = toWebUser._key
   shell.events.emit('send-message-to-web-user', {
     message: {
       text: message,
       html: message,
     },
-    webUserKey,
+    fromWebUser: {
+      displayName: tokenCtx.payload.webUser.displayName,
+      _key: tokenCtx.payload.webUser._key,
+    },
+    toWebUser: {
+      _key: toWebUser._key,
+      displayName: toWebUser.displayName,
+    },
   })
 }

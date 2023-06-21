@@ -1,6 +1,7 @@
 import { instanceDomain } from '@moodlenet/core'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import * as crypto from '@moodlenet/crypto/server'
+import type { WebUserEvents } from '@moodlenet/web-user/server'
 import {
   createWebUser,
   sendWebUserTokenCookie,
@@ -56,8 +57,10 @@ export async function signup(req: SignupReq) {
 
   shell.call(send)({
     emailObj: {
+      title: 'Confirm your email in Moodlenet',
+      subject: 'Welcome to Moodlenet 🎉',
       to: req.email,
-      text: `hey ${req.displayName} confirm your email on ${instanceDomain}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+      html: `hey ${req.displayName} confirm your email on ${instanceDomain}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
     },
   })
   return { success: true, confirmEmailToken } as const
@@ -196,26 +199,56 @@ export async function sendChangePasswordRequestEmail({ email }: { email: string 
 
   shell.call(send)({
     emailObj: {
+      subject: 'recover your password in Moodlenet',
+      title: 'Ready to change your password 🔑',
       to: email,
-      text: `Follow the link to change your password ${instanceDomain}${SET_NEW_PASSWORD_PATH}?token=${changePasswordToken}`,
+      html: `Follow the link to change your password ${instanceDomain}${SET_NEW_PASSWORD_PATH}?token=${changePasswordToken}`,
     },
   })
   return true
 }
 
 export async function sendMessageToWebUser({
-  webUserKey,
+  toWebUserKey,
   message,
+  subject,
+  title,
 }: {
-  webUserKey: string
+  toWebUserKey: string
+  subject: string
   message: string
+  title: string
 }) {
-  const emailPwdUser = await store.getByWebUserKey(webUserKey)
+  if (!message) {
+    return
+  }
+
+  const emailPwdUser = await store.getByWebUserKey(toWebUserKey)
   if (!emailPwdUser) {
     return false
   }
   await shell.call(send)({
-    emailObj: { text: message, to: emailPwdUser.email },
+    emailObj: {
+      subject,
+      title,
+      html: message,
+      to: emailPwdUser.email,
+    },
+  })
+  return true
+}
+
+export async function userSendsMessageToWebUser({
+  fromWebUser,
+  message,
+  toWebUser,
+}: WebUserEvents['send-message-to-web-user']) {
+  const messageBody = message.html || message.text
+  await sendMessageToWebUser({
+    subject: `Message from ${fromWebUser.displayName}@Moodlenet`,
+    title: `${fromWebUser.displayName} sent you a message 📨`,
+    message: messageBody,
+    toWebUserKey: toWebUser._key,
   })
   return true
 }
