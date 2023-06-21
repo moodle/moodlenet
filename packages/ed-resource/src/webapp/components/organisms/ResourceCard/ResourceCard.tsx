@@ -185,7 +185,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
           style={{ cursor: 'initial' }}
           className="publish-state"
         >
-          <PublicOff />
+          <PublicOff style={{ fill: 'rgb(167, 167, 167)' }} />
         </abbr>
       )
     ) : null

@@ -12,10 +12,10 @@ import {
   TertiaryButton,
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { getBackupImage, useImageUrl } from '@moodlenet/react-app/ui'
+import { useImageUrl } from '@moodlenet/react-app/ui'
 import { Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
 import type { FC } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type {
   CollectionAccessProps,
   CollectionActions,
@@ -87,7 +87,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     footerRowItems,
   } = slots
 
-  const { id, mnUrl, imageUrl } = data
+  const {
+    // id,
+    mnUrl,
+    imageUrl,
+  } = data
 
   const { isPublished } = state
 
@@ -96,10 +100,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const [updatedImage, setUpdatedImage] = useState<string | undefined>(imageUrl)
-  const backupImage: string | undefined = useMemo(() => getBackupImage(id), [id])
-  const [image] = useImageUrl(imageUrl, backupImage)
+  // const backupImage: string | undefined = useMemo(
+  //   () => (imageForm.values.image ? undefined : getBackupImage(id)),
+  //   [id, imageForm.values.image],
+  // )
   const [imageFromForm] = useImageUrl(imageForm.values.image)
   const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
   const [isWaitingForSaving, setisWaitingForSaving] = useState(false)
@@ -351,32 +356,33 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  const collectionUploader = canEdit ? (
-    <UploadImage
-      displayOnly={(canEdit && !isEditing) || !canEdit}
-      imageForm={imageForm}
-      imageUrl={updatedImage}
-      imageOnClick={() => setIsShowingImage(true)}
-      key="collection-uploader"
-    />
-  ) : null
-
-  const imageDiv = (
-    <div
-      className="image"
-      onClick={() => setIsShowingImage(true)}
-      // style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
-      style={{ backgroundImage: `url(${image})` }}
-    />
-  )
-
-  const imageContainer = !canEdit ? (
-    imageForm.values.image || imageUrl ? (
-      <div className="image-container" key="image-container">
-        {imageDiv}
-      </div>
+  const collectionUploader =
+    isEditing || imageForm.values.image ? (
+      <UploadImage
+        displayOnly={(canEdit && !isEditing) || !canEdit}
+        imageForm={imageForm}
+        imageUrl={updatedImage}
+        // backupImage={backupImage}
+        key="collection-uploader"
+      />
     ) : null
-  ) : null
+
+  // const imageDiv = (
+  //   <div
+  //     className="image"
+  //     onClick={() => setIsShowingImage(true)}
+  //     // style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
+  //     style={{ backgroundImage: `url(${image})` }}
+  //   />
+  // )
+
+  // const imageContainer = !canEdit ? (
+  //   imageForm.values.image || imageUrl ? (
+  //     <div className="image-container" key="image-container">
+  //       {imageDiv}
+  //     </div>
+  //   ) : null
+  // ) : null
 
   const descriptionEditRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLDivElement>(null)
@@ -456,7 +462,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ) : null
 
   const updatedMainColumnItems = [
-    imageContainer,
+    // imageContainer,
     collectionUploader,
     collectionHeader,
     description,
@@ -474,46 +480,30 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </>
   )
 
-  const modals = (
-    <>
-      {isShowingImage && (
-        <Modal
-          className="image-modal"
-          closeButton={false}
-          onClose={() => setIsShowingImage(false)}
-          style={{
-            maxWidth: '90%',
-            maxHeight: '90%',
-            // maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
-          }}
-        >
-          <img src={updatedImage ?? image} alt="Collection" />
-          {/* {getImageCredits(form.values.image)} */}
-        </Modal>
-      )}
-      {isToDelete && deleteCollection && (
-        <Modal
-          title={`Alert`}
-          actions={
-            <PrimaryButton
-              onClick={() => {
-                deleteCollection()
-                setIsToDelete(false)
-              }}
-              color="red"
-            >
-              Delete
-            </PrimaryButton>
-          }
-          onClose={() => setIsToDelete(false)}
-          style={{ maxWidth: '400px' }}
-          className="delete-message"
-        >
-          The collection will be deleted
-        </Modal>
-      )}
-    </>
-  )
+  const modals = [
+    isToDelete && deleteCollection && (
+      <Modal
+        title={`Alert`}
+        actions={
+          <PrimaryButton
+            onClick={() => {
+              deleteCollection()
+              setIsToDelete(false)
+            }}
+            color="red"
+          >
+            Delete
+          </PrimaryButton>
+        }
+        onClose={() => setIsToDelete(false)}
+        style={{ maxWidth: '400px' }}
+        className="delete-message"
+      >
+        The collection will be deleted
+      </Modal>
+    ),
+  ]
+
   return (
     <>
       {modals}

@@ -56,6 +56,7 @@ export type ResourceProps = {
 
   fileMaxSize: number
   isSaving: boolean
+  isEditing: boolean
 }
 
 export const Resource: FC<ResourceProps> = ({
@@ -80,6 +81,7 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
   isSaving,
+  isEditing: isEditingProp,
 }) => {
   const viewport = useViewport()
   const { downloadFilename, contentUrl, contentType, imageUrl } = data
@@ -101,9 +103,8 @@ export const Resource: FC<ResourceProps> = ({
   //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
   //     useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
-  const [shouldValidate, setShouldValidate] = useState<boolean>(true)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [isEditing, setIsEditing] = useState<boolean>(isEditingProp)
   // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   // const backupImage: AssetInfo | null | undefined = useMemo(
   //   () => getBackupImage(id),
@@ -113,8 +114,8 @@ export const Resource: FC<ResourceProps> = ({
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
     validateOnMount: true,
-    validationSchema: shouldValidate ? resourceValidationSchema : undefined,
-    validateOnChange: shouldValidate,
+    validationSchema: resourceValidationSchema,
+    // validateOnChange: shouldValidate,
     onSubmit: values => {
       return editData(values)
     },
@@ -123,8 +124,8 @@ export const Resource: FC<ResourceProps> = ({
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: { content: contentUrl },
     validateOnMount: true,
-    validationSchema: shouldValidate ? contentValidationSchema : undefined,
-    validateOnChange: shouldValidate,
+    validationSchema: contentValidationSchema,
+    // validateOnChange: shouldValidate,
     onSubmit: values => {
       return setContent(values.content)
     },
@@ -133,8 +134,8 @@ export const Resource: FC<ResourceProps> = ({
   const imageForm = useFormik<{ image: File | string | undefined | null }>({
     initialValues: { image: imageUrl },
     validateOnMount: true,
-    validationSchema: shouldValidate ? imageValidationSchema : undefined,
-    validateOnChange: shouldValidate,
+    validationSchema: imageValidationSchema,
+    // validateOnChange: shouldValidate,
     onSubmit: values => {
       return typeof values.image !== 'string' ? setImage(values.image) : undefined
     },
@@ -156,6 +157,23 @@ export const Resource: FC<ResourceProps> = ({
     imageForm.setTouched({ image: true })
   }
 
+  const save = () => {
+    if (form.dirty) {
+      editData(form.values)
+      form.resetForm({ values: form.values })
+    }
+
+    if (imageForm.dirty) {
+      typeof imageForm.values.image !== 'string' && setImage(imageForm.values.image)
+      imageForm.setTouched({ image: false })
+    }
+
+    if (contentForm.dirty) {
+      setContent(contentForm.values.content)
+      contentForm.setTouched({ content: false })
+    }
+  }
+
   // useEffect(() => {
   //   if (form.dirty) {
   //     editData(form.values)
@@ -169,7 +187,6 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
-    setShouldValidate(true)
     setFieldsAsTouched()
     form.validateForm
     contentForm.validateForm
@@ -201,10 +218,10 @@ export const Resource: FC<ResourceProps> = ({
       access={access}
       slots={mainResourceCardSlots}
       fileMaxSize={fileMaxSize}
+      save={save}
       isSaving={isSaving}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
-      setShouldValidate={setShouldValidate}
       setShouldShowErrors={setShouldShowErrors}
       shouldShowErrors={shouldShowErrors}
     />

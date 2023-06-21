@@ -52,7 +52,7 @@ export const BrowserResourceList: FC<BrowserResourceListProps> = ({
     />
   )
 
-  return listCard
+  return resourceCardPropsList.length > 0 ? listCard : null
 }
 
 BrowserResourceList.defaultProps = { showHeader: true }

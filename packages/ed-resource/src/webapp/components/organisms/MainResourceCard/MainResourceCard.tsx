@@ -13,12 +13,7 @@ import {
   useWindowDimensions,
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import {
-  capitalizeFirstLetter,
-  downloadOrOpenURL,
-  getBackupImage,
-  getTagList,
-} from '@moodlenet/react-app/ui'
+import { capitalizeFirstLetter, downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
   Delete,
   Edit,
@@ -29,7 +24,7 @@ import {
   Save,
 } from '@mui/icons-material'
 import type { FC } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type {
   EdMetaOptionsProps,
   ResourceAccessProps,
@@ -67,11 +62,11 @@ export type MainResourceCardProps = {
 
   isSaving: boolean
   publish: () => void
+  save: () => void
 
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 
-  setShouldValidate: React.Dispatch<React.SetStateAction<boolean>>
   setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
   shouldShowErrors: boolean
 
@@ -93,12 +88,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   access,
 
   isSaving,
+  save,
   publish,
 
   isEditing,
   setIsEditing,
 
-  setShouldValidate,
   setShouldShowErrors,
   shouldShowErrors,
 
@@ -124,7 +119,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const { canEdit, canPublish, canDelete } = access
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const { width } = useWindowDimensions()
 
@@ -149,10 +143,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
 
-  const backupImage: string | undefined = useMemo(
-    () => (imageForm.values.image ? undefined : getBackupImage(id)),
-    [id, imageForm.values.image],
-  )
+  // const backupImage: string | undefined = useMemo(
+  //   () => (imageForm.values.image ? undefined : getBackupImage(id)),
+  //   [id, imageForm.values.image],
+  // )
 
   const handleOnEditClick = () => {
     setIsEditing(true)
@@ -163,16 +157,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const handleOnSaveClick = () => {
     setisWaitingForSaving(true)
-
-    setShouldValidate(false)
     setShouldShowErrors(false)
 
-    form.submitForm()
-    form.resetForm({ values: form.values })
-    imageForm.submitForm()
-    imageForm.setTouched({ image: false })
-    contentForm.submitForm()
-    contentForm.setTouched({ content: false })
+    save()
   }
 
   const copyUrl = () => {
@@ -556,10 +543,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       fileMaxSize={fileMaxSize}
       downloadFilename={downloadFilename}
       uploadProgress={uploadProgress}
-      backupImage={backupImage}
+      // backupImage={backupImage}
       shouldShowErrors={shouldShowErrors}
       contentType={contentType}
-      imageOnClick={() => setIsShowingImage(true)}
       key="resource-uploader"
     />
   )
@@ -696,48 +682,31 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </>
   )
 
-  const modals = (
-    <>
-      {isShowingImage && imageUrl && (
-        <Modal
-          className="image-modal"
-          closeButton={false}
-          onClose={() => setIsShowingImage(false)}
-          style={{
-            maxWidth: '90%',
-            maxHeight: 'calc(90% + 20px)',
-            // maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
-          }}
-          key="image-modal"
-        >
-          <img src={imageUrl} alt="Resource" />
-          {/* {getImageCredits(form.values.image)} */}
-        </Modal>
-      )}
-      {isToDelete && deleteResource && (
-        <Modal
-          title={`Alert`}
-          actions={
-            <PrimaryButton
-              onClick={() => {
-                deleteResource()
-                setIsToDelete(false)
-              }}
-              color="red"
-            >
-              Delete
-            </PrimaryButton>
-          }
-          onClose={() => setIsToDelete(false)}
-          style={{ maxWidth: '400px' }}
-          className="delete-message"
-          key="delete-message-modal"
-        >
-          The resource will be deleted
-        </Modal>
-      )}
-    </>
-  )
+  const modals = [
+    isToDelete && deleteResource && (
+      <Modal
+        title={`Alert`}
+        actions={
+          <PrimaryButton
+            onClick={() => {
+              deleteResource()
+              setIsToDelete(false)
+            }}
+            color="red"
+          >
+            Delete
+          </PrimaryButton>
+        }
+        onClose={() => setIsToDelete(false)}
+        style={{ maxWidth: '400px' }}
+        className="delete-message"
+        key="delete-message-modal"
+      >
+        The resource will be deleted
+      </Modal>
+    ),
+  ]
+
   return (
     <>
       {modals}

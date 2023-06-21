@@ -19,7 +19,7 @@ export const BrowserSubjectList: FC<BrowserSubjectListProps> = ({
   loadMore,
   showHeader,
 }) => {
-  return (
+  const listCard = (
     <ListCard
       className={`browser-subject-list ${showAll ? 'show-all' : ''} ${loadMore ? 'load-more' : ''}`}
       content={useMemo(
@@ -51,6 +51,8 @@ export const BrowserSubjectList: FC<BrowserSubjectListProps> = ({
       maxRows={showAll ? undefined : 3}
     />
   )
+
+  return subjectCardPropsList.length > 0 ? listCard : null
 }
 
 BrowserSubjectList.defaultProps = { showHeader: true }

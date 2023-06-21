@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
-import { forwardRef, useRef } from 'react'
+import { forwardRef, useRef, useState } from 'react'
 import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
-import Loading from '../../atoms/Loading/Loading.js'
+import Modal from '../../atoms/Modal/Modal.js'
 import RoundButton from '../../atoms/RoundButton/RoundButton.js'
 import './ImageContainer.scss'
 
@@ -11,11 +11,8 @@ export type ImageContainerProps = {
   imageUrl?: string
   style?: CSSProperties
   link?: string
-  imageCover?: boolean
   displayOnly?: boolean
-  imageOnClick?: () => unknown
-  isUploading?: boolean
-  // contentUrl?: string
+  // isUploading?: boolean
 }
 
 export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, ImageContainerProps>(
@@ -23,18 +20,16 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
     const {
       uploadImage,
       deleteImage,
-      imageCover,
       imageUrl,
       style,
       link,
-      // contentUrl,
       displayOnly,
-      imageOnClick,
-      isUploading,
+      // isUploading
     } = props
 
     const imageContainerRef = useForwardedRef(forwRef)
     const uploadImageRef = useRef<HTMLInputElement>(null)
+    const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
     // const selectImage = () => {
     //   uploadImageRef.current?.click()
     // }
@@ -44,36 +39,40 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       selectedFile && uploadImage && uploadImage(selectedFile)
     }
 
-    const imageDiv = imageCover ? (
+    const imageDiv = imageUrl && (
       <img
         className="image"
         src={imageUrl}
         alt="Background"
-        onClick={imageOnClick}
-        // style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
-        style={{ maxHeight: 'fit-content', pointerEvents: imageOnClick ? 'auto' : 'none' }}
-      />
-    ) : (
-      // <div
-      //   className="image"
-      //   style={{ backgroundImage: `url(${imageUrl})` }}
-      //   onClick={imageOnClick}
-      // />
-      <img
-        className="image"
-        src={imageUrl}
-        alt="Background"
-        onClick={imageOnClick}
-        // style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
-        style={{ maxHeight: 'fit-content', pointerEvents: imageOnClick ? 'auto' : 'none' }}
+        onClick={() => (link ? undefined : setIsShowingImage(true))}
+        style={{ maxHeight: 'fit-content', pointerEvents: displayOnly ? 'auto' : 'none' }}
       />
     )
 
-    const uploading = (
-      <div className="uploading">
-        <Loading type="uploading" color="gray" size="70px" />
-      </div>
-    )
+    // const uploading = (
+    //   <div className="uploading">
+    //     <Loading type="uploading" color="gray" size="70px" />
+    //   </div>
+    // )
+
+    const modals = [
+      isShowingImage && imageUrl && (
+        <Modal
+          className="image-modal"
+          closeButton={false}
+          onClose={() => setIsShowingImage(false)}
+          style={{
+            maxWidth: '90%',
+            maxHeight: 'calc(90% + 20px)',
+            // maxHeight: specificContentType !== '' ? 'calc(90% + 20px)' : '90%',
+          }}
+          key="image-modal"
+        >
+          <img src={imageUrl} alt="Resource" />
+          {/* {getImageCredits(form.values.image)} */}
+        </Modal>
+      ),
+    ]
 
     return (
       <div
@@ -81,15 +80,19 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
         style={style}
         ref={imageContainerRef as React.RefObject<HTMLDivElement>}
       >
-        {isUploading ? (
-          uploading
-        ) : link ? (
-          <a href={link} target="_blank" rel="noreferrer">
-            {imageDiv}
-          </a>
-        ) : (
-          <>{imageDiv}</>
-        )}
+        {modals}
+        {
+          // isUploading ? (
+          //   uploading
+          // ) :
+          link ? (
+            <a href={link} target="_blank" rel="noreferrer">
+              {imageDiv}
+            </a>
+          ) : (
+            <>{imageDiv}</>
+          )
+        }
         {/* {getImageCredits(form.values.image)} */}
         <div className="image-actions">
           <input
@@ -115,7 +118,7 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
         abbrTitle={`Upload an image`}
         onClick={selectImage}
       /> */}
-          {!displayOnly && deleteImage && (
+          {!displayOnly && imageUrl && deleteImage && (
             <RoundButton
               className={`delete-image`}
               type="cross"

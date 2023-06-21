@@ -18,7 +18,7 @@ export const BrowserProfileList: FC<BrowserProfileListProps> = ({
   loadMore,
   showHeader,
 }) => {
-  return (
+  const listCard = (
     <ListCard
       noCard={showAll && !showHeader}
       className={`browser-profile-list ${showAll ? 'show-all' : ''}  ${
@@ -66,6 +66,8 @@ export const BrowserProfileList: FC<BrowserProfileListProps> = ({
       maxRows={showAll ? undefined : 2}
     />
   )
+
+  return profilesCardPropsList.length > 0 ? listCard : null
 }
 
 BrowserProfileList.defaultProps = { showHeader: true }

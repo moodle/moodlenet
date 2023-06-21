@@ -31,7 +31,10 @@ export const LoggedOut: ResourceStory = () => {
 
 export const LoggedIn: ResourceStory = () => {
   const props = useResourceStoryProps({
-    data: {},
+    data: {
+      contentType: 'link',
+      contentUrl: 'https://www.google.com',
+    },
     state: {},
     actions: {},
     access: {},
