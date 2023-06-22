@@ -1,11 +1,11 @@
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
-import { createPluginHook, OrganizationCtx } from '@moodlenet/react-app/webapp'
+import { createPlugin, OrganizationCtx } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useState } from 'react'
 import type { AdvancedProps } from '../../../../ui/exports/ui.mjs'
 import { shell } from '../../../shell.mjs'
 
-export const AdvancedSettingsPlugin = createPluginHook<{
+export const AdvancedSettingsPlugin = createPlugin<{
   mainColumn: AddOnMap<AddonItemNoKey>
 }>()
 

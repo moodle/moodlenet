@@ -1,13 +1,13 @@
 import { type AddonItem, type AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
-import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { SubjectOverallProps, SubjectProps } from './Subject.js'
 import { useSubjectData } from './SubjectDataHooks.js'
 
 export type SubjectPageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 
-export const SubjectPagePlugins = createPluginHook<
+export const SubjectPagePlugins = createPlugin<
   {
     mainColumnItems?: AddOnMap<AddonItemNoKey>
     overallItems?: AddOnMap<SubjectOverallProps>

@@ -1,9 +1,9 @@
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
-import { createPluginHook } from '@moodlenet/react-app/webapp'
+import { createPlugin } from '@moodlenet/react-app/webapp'
 import type { GeneralProps } from '../../../../ui/exports/ui.mjs'
 
-export const GeneralSettingsPlugin = createPluginHook<{
+export const GeneralSettingsPlugin = createPlugin<{
   mainColumn: AddOnMap<AddonItemNoKey>
 }>()
 

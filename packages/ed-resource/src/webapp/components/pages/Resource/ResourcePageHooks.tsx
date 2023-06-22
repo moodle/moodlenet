@@ -1,7 +1,7 @@
 import { getLicenseNode, type AddonItem, type AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
-import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import moment from 'moment'
 import { useContext, useMemo } from 'react'
 import { maxUploadSize } from '../../../../common/validationSchema.mjs'
@@ -11,7 +11,7 @@ import type { ResourceProps } from './Resource.js'
 
 export type ResourcePageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 
-export const ResourcePagePlugins = createPluginHook<
+export const ResourcePagePlugins = createPlugin<
   {
     generalAction?: AddOnMap<AddonItemNoKey>
     topRightHeaderItems?: AddOnMap<AddonItemNoKey>

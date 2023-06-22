@@ -1,6 +1,6 @@
 import type { ComponentType, PropsWithChildren } from 'react'
 import { useMemo } from 'react'
-import { createHookPlugin } from '../../../../web-lib/plugins.mjs'
+import { createHookPlugin } from '../../../../web-lib/hook-plugin.mjs'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { MainColumItem } from '../../organisms/Browser/Browser.js'
 import type { SearchProps } from './Search.js'

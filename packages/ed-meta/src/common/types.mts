@@ -22,8 +22,6 @@ export type SubjectData = {
   iscedUrl: string | null
   isIsced: boolean
   title: string
-  numFollowers: number
-  numResources: number
 }
 
 export type SubjectSearchResultRpc = {

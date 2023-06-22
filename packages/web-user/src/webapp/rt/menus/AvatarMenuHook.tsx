@@ -22,7 +22,9 @@ export function useAvatarMenuProps(): AvatarMenuProps {
   const isAdmin = !!authCtx.clientSessionData?.isAdmin
 
   const myProfileHref = hasProfile
-    ? href(getProfileHomePageRoutePath({ _key: hasProfile._key, title: hasProfile.displayName }))
+    ? href(
+        getProfileHomePageRoutePath({ _key: hasProfile._key, displayName: hasProfile.displayName }),
+      )
     : href('/')
   const [addons] = AvatarMenuPlugins.useHookPlugin()
   const avatarMenuProps = useMemo<AvatarMenuProps>(() => {

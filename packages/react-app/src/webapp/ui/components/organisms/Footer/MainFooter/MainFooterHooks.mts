@@ -1,6 +1,6 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { useMemo } from 'react'
-import { createHookPlugin } from '../../../../../web-lib/plugins.mjs'
+import { createHookPlugin } from '../../../../../web-lib/hook-plugin.mjs'
 import type { MainFooterProps } from './MainFooter.js'
 export type FooterComponentRegItem = Omit<AddonItem, 'key'>
 

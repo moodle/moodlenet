@@ -2,13 +2,15 @@ import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
+import { href } from '@moodlenet/react-app/common'
 import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { profileFormValidationSchema } from '../../../../common/profile/data.mjs'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
+import { getFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
@@ -16,7 +18,7 @@ import { shell } from '../../shell.mjs'
 
 const __should_be_from_server_maxUploadSize = 1024 * 1024 * 50
 
-export const ProfilePagePlugins = createPluginHook<{
+export const ProfilePagePlugins = createPlugin<{
   main_mainColumnItems?: AddOnMap<AddonItemNoKey>
   main_topItems?: AddOnMap<AddonItemNoKey>
   main_footerItems?: AddOnMap<AddonItemNoKey>
@@ -96,6 +98,12 @@ export const useProfileProps = ({
 
     const props: ProfileProps = {
       mainLayoutProps,
+      followersHref: href(
+        getFollowersRoutePath({
+          key: profileKey,
+          displayName: profileGetRpc.data.displayName,
+        }),
+      ),
       access: {
         canEdit: profileGetRpc.canEdit,
         isAdmin,
