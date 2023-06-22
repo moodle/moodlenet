@@ -2,14 +2,14 @@
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { href } from '@moodlenet/react-app/common'
-import { createPluginHook } from '@moodlenet/react-app/webapp'
+import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { ResourceCardDataProps } from '../../../../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { ResourceCardPropsData } from './ResourceCard.js'
 
-export const ResourceCardPlugins = createPluginHook<
+export const ResourceCardPlugins = createPlugin<
   {
     mainColumnItems?: AddOnMap<AddonItemNoKey>
     topLeftItems?: AddOnMap<AddonItemNoKey>

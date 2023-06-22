@@ -18,8 +18,6 @@ export const expose = await shell.expose<EdMetaExposeType>({
             'https://ec.europa.eu/eurostat/statistics-explained/index.php?title=International_Standard_Classification_of_Education_(ISCED)',
           isIsced: true,
           title: iscedField.entity.name,
-          numFollowers: 0, //TODO //FIXME //@ALE
-          numResources: 0, //TODO //FIXME //@ALE
         }
       },
     },

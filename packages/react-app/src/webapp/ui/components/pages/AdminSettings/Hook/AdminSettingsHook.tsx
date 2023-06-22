@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { createHookPlugin } from '../../../../../web-lib/plugins.mjs'
+import { createHookPlugin } from '../../../../../web-lib/hook-plugin.mjs'
 import { useMainLayoutProps } from '../../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { AdminSettingsItem, AdminSettingsProps } from '../AdminSettings.js'
 import { AppearanceContainer } from '../Appearance/AppearanceContainer.js'

@@ -1,6 +1,6 @@
 import { useResourceCardProps } from '@moodlenet/ed-resource/webapp'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 // import { AuthCtx } from '@moodlenet/web-user/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
@@ -10,7 +10,7 @@ import { useMainHook } from '../../../MainHooks.js'
 import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.jsx'
 import type { CollectionProps } from './Collection.js'
 
-export const CollectionPagePlugins = createPluginHook<
+export const CollectionPagePlugins = createPlugin<
   {
     generalAction?: AddOnMap<AddonItemNoKey>
     topRightHeaderItems?: AddOnMap<AddonItemNoKey>

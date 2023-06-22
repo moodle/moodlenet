@@ -115,7 +115,7 @@ export const expose = await shell.expose<WebUserExposeType>({
         ).map(({ entity: { _key } }) => ({ _key }))
         const profileHomePagePath = getProfileHomePageRoutePath({
           _key,
-          title: profileRecord.entity.displayName,
+          displayName: profileRecord.entity.displayName,
         })
         const resources = (
           await (

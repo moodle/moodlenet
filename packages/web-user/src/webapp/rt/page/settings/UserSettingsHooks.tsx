@@ -1,8 +1,8 @@
 import type { AddOnMap } from '@moodlenet/core/lib'
-import { createPluginHook, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import type { UserSettingsItem, UserSettingsProps } from '../../../ui/exports/ui.mjs'
 
-export const UserSettingsPagePlugin = createPluginHook<{
+export const UserSettingsPagePlugin = createPlugin<{
   settingsItems: AddOnMap<Omit<UserSettingsItem, 'key'>>
 }>()
 

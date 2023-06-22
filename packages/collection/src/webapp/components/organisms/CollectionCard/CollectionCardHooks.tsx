@@ -2,14 +2,14 @@
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { href } from '@moodlenet/react-app/common'
-import { createPluginHook } from '@moodlenet/react-app/webapp'
+import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { CollectionCardData } from '../../../../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
 import { useMainHook } from '../../../MainHooks.js'
 import type { CollectionCardProps } from './CollectionCard.js'
 
-export const CollectionCardPlugins = createPluginHook<
+export const CollectionCardPlugins = createPlugin<
   {
     topLeftItems?: AddOnMap<AddonItemNoKey>
     topRightItems?: AddOnMap<AddonItemNoKey>

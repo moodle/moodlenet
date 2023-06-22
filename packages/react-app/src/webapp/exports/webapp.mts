@@ -37,7 +37,7 @@ export {
   type UsePkgAddOns,
   type UseRegisterAddOn,
 } from '../web-lib/add-ons.js'
-export { createPluginHook } from '../web-lib/hook-plugin.mjs'
-export { createHookPlugin } from '../web-lib/plugins.mjs'
+export { createPlugin } from '../web-lib/create-plugin.mjs'
+export { createHookPlugin } from '../web-lib/hook-plugin.mjs'
 export { wrapFetch } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 export { useUrlQueryString } from '../web-lib/use-query-params.mjs'
