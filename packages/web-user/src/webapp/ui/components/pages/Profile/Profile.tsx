@@ -13,8 +13,10 @@ import type {
   ProfileState,
 } from '../../../../../common/types.mjs'
 
+import { FilterNone, Grade, PermIdentity } from '@material-ui/icons'
 import type { CollectionCardProps } from '@moodlenet/collection/ui'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import type { Href } from '@moodlenet/react-app/common'
 import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import ProfileCollectionList from '../../organisms/ProfileCollectionList/ProfileCollectionList.js'
@@ -35,6 +37,8 @@ export type ProfileProps = {
   collectionCardPropsList: { key: string; props: ProxyProps<CollectionCardProps> }[]
   createResource(): void
   createCollection(): void
+
+  followersHref: Href
   overallCardItems: OverallCardItem[]
 
   data: ProfileData
@@ -56,6 +60,8 @@ export const Profile: FC<ProfileProps> = ({
   createResource,
   collectionCardPropsList,
   createCollection,
+
+  followersHref,
   overallCardItems,
 
   data,
@@ -100,7 +106,18 @@ export const Profile: FC<ProfileProps> = ({
     />
   )
 
-  const overallCard = <OverallCard items={overallCardItems} />
+  const followersStat = { Icon: PermIdentity, href: followersHref, name: 'Followers', value: 25 }
+  const kudosStat = { Icon: Grade, name: 'Kudos', value: 121 }
+  const resourcesStat = { Icon: FilterNone, name: 'Resources', value: 23 }
+
+  const updateOverallCardItems = [
+    followersStat,
+    kudosStat,
+    resourcesStat,
+    ...(overallCardItems ?? []),
+  ].filter((item): item is OverallCardItem => !!item)
+
+  const overallCard = <OverallCard items={updateOverallCardItems} />
 
   // const modals = [
   //   isReporting && (
