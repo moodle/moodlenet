@@ -1,9 +1,12 @@
-import type { DocumentMetadata, Patch } from '@moodlenet/arangodb/server'
+import type { Patch } from '@moodlenet/arangodb/server'
+import { instanceDomain } from '@moodlenet/core'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import { jwt } from '@moodlenet/crypto/server'
-import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
+import { getCurrentHttpCtx, getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import { create, matchRootPassword } from '@moodlenet/system-entities/server'
+import assert from 'assert'
+import dot from 'dot'
 import type { CookieOptions } from 'express'
 import {
   WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
@@ -11,6 +14,7 @@ import {
 } from '../../common/exports.mjs'
 import { Profile } from '../exports.mjs'
 import { db, WebUserCollection } from '../init/arangodb.mjs'
+import { kvStore } from '../init/kvStore.mjs'
 import { shell } from '../shell.mjs'
 import type {
   CreateRequest,
@@ -19,8 +23,10 @@ import type {
   TokenVersion,
   UnverifiedTokenCtx,
   VerifiedTokenCtx,
+  WebUserAccountDeletionToken,
   WebUserDataType,
   WebUserJwtPayload,
+  WebUserRecord,
 } from '../types.mjs'
 
 const VALID_JWT_VERSION: TokenVersion = 1
@@ -41,6 +47,14 @@ export async function getCurrentProfileIds() {
   return tokenCtx.payload.profile
 }
 
+export async function getCurrentWebUserIds() {
+  const tokenCtx = await verifyCurrentTokenCtx()
+  if (!tokenCtx || tokenCtx.payload.isRoot) {
+    return
+  }
+  return tokenCtx.payload.webUser
+}
+
 export async function verifyCurrentTokenCtx() {
   const currentCtx = shell.myAsyncCtx.get()
   if (!currentCtx?.tokenCtx) {
@@ -50,8 +64,11 @@ export async function verifyCurrentTokenCtx() {
     return currentCtx.tokenCtx
   }
   const { currentJwtToken } = currentCtx.tokenCtx
-  const jwtVerifyResult = await shell.call(jwt.verify)<WebUserJwtPayload>(currentJwtToken)
-  if (jwtVerifyResult?.payload?.v !== VALID_JWT_VERSION) {
+  const jwtVerifyResult = await shell.call(jwt.verify)<WebUserJwtPayload>(
+    currentJwtToken,
+    isWebUserJwtPayload,
+  )
+  if (!jwtVerifyResult) {
     shell.myAsyncCtx.unset()
     return
   }
@@ -142,8 +159,8 @@ export async function getWebUserByProfileKey({
   profileKey,
 }: {
   profileKey: string
-}): Promise<(WebUserDataType & DocumentMetadata) | undefined> {
-  const foundUsersCursor = await db.query<WebUserDataType & DocumentMetadata>(
+}): Promise<WebUserRecord | undefined> {
+  const foundUsersCursor = await db.query<WebUserRecord>(
     `
       FOR user in @@WebUserCollection
         FILTER user.profileKey == @profileKey
@@ -231,11 +248,7 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
   })
   return jwtToken
 }
-export async function getWebUser({
-  _key,
-}: {
-  _key: string
-}): Promise<(WebUserDataType & DocumentMetadata) | undefined> {
+export async function getWebUser({ _key }: { _key: string }): Promise<WebUserRecord | undefined> {
   const foundUser = await WebUserCollection.document({ _key }, { graceful: true })
   return foundUser
 }
@@ -288,7 +301,7 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
   const [patchedUser] = await patchedCursor.all()
   return patchedUser
 }
-export async function searchUsers(search: string): Promise<(WebUserDataType & DocumentMetadata)[]> {
+export async function searchUsers(search: string): Promise<WebUserRecord[]> {
   const cursor = await db.query(
     `
     FOR webUser in @@WebUserCollection
@@ -305,4 +318,81 @@ export async function searchUsers(search: string): Promise<(WebUserDataType & Do
   const webUsers = await cursor.all()
 
   return webUsers
+}
+
+export async function currentWebUserDeletionAccountRequest() {
+  //Confirm account deletion 🥀
+
+  const currWebUser = await getCurrentWebUserIds()
+  if (!currWebUser) {
+    return
+  }
+  const msgTemplateStr = (await kvStore.get('delete-account-html-message-template', '')).value
+  assert(msgTemplateStr, 'missing emailTemplateStr:: record in KeyValueStore')
+  const token = await signWebUserAccountDeletionToken(currWebUser._key)
+
+  const msgVars: DelAccountMsgVars = {
+    actionButtonUrl: `${await shell.call(
+      getMyRpcBaseUrl,
+    )()}webapp/web-user/delete-account-request/confirm/${token}`,
+    instanceName: instanceDomain,
+  }
+  const html = dot.compile(msgTemplateStr)(msgVars)
+
+  shell.events.emit('send-message-to-web-user', {
+    message: { html, text: html },
+    subject: 'Confirm account deletion 🥀',
+    title: 'Confirm account deletion 🥀',
+    toWebUser: {
+      _key: currWebUser._key,
+      displayName: currWebUser.displayName,
+    },
+  })
+
+  return
+
+  type DelAccountMsgVars = {
+    instanceName: string
+    actionButtonUrl: string
+  }
+}
+
+export async function deleteWebUserAccountConfirmedByToken(token: string) {
+  const webUserAccountDeletionToken = await jwt.verify<WebUserAccountDeletionToken>(
+    token,
+    isWebUserAccountDeletionToken,
+  )
+  if (!webUserAccountDeletionToken) {
+    return
+  }
+
+  return deleteWebUserAccountNow(webUserAccountDeletionToken.payload.webUserKey)
+}
+
+export async function deleteWebUserAccountNow(webUserKey: string) {
+  shell.events.emit('deleted-web-user-account', {
+    displayName: '',
+    profileKey: '',
+    webUserKey,
+    leftCollections: [],
+    leftResources: [],
+  })
+  return webUserKey && void 0
+}
+
+export async function signWebUserAccountDeletionToken(webUserKey: string) {
+  const webUserAccountDeletionToken: WebUserAccountDeletionToken = {
+    scope: 'web-user-account-deletion',
+    webUserKey,
+  }
+  return jwt.sign(webUserAccountDeletionToken, { expirationTime: '1d' })
+}
+
+function isWebUserAccountDeletionToken(payload: any): payload is WebUserAccountDeletionToken {
+  return payload?.scope === 'web-user-account-deletion'
+}
+
+function isWebUserJwtPayload(_: any): _ is WebUserJwtPayload {
+  // TODO: better validation
+  return _?.v === VALID_JWT_VERSION && [true, false, undefined].some(__ => _?.isRoot === __)
 }
