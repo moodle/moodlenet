@@ -1,3 +1,4 @@
+import { validURL } from '@moodlenet/react-app/ui'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { ResourceFormProps } from './types.mjs'
@@ -30,6 +31,15 @@ export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
 export const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> =
   object({
     content: mixed()
+      .test((v, { createError }) =>
+        typeof v === 'string'
+          ? validURL(v)
+            ? true
+            : createError({
+                message: `Url not valid`,
+              })
+          : true,
+      )
       .test((v, { createError }) =>
         v instanceof Blob && v.size > maxUploadSize
           ? createError({

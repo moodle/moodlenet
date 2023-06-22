@@ -1,6 +1,7 @@
-import { AddonItem, Card, PrimaryButton } from '@moodlenet/component-library'
-import { FC } from 'react'
-import { SubjectOverallProps } from '../../pages/Subject/Subject.js'
+import type { AddonItem } from '@moodlenet/component-library'
+import { Card, PrimaryButton } from '@moodlenet/component-library'
+import type { FC } from 'react'
+import type { SubjectOverallProps } from '../../pages/Subject/Subject.js'
 
 export type MainSubjectCardSlots = {
   mainColumnItems: (AddonItem | null)[]
@@ -44,18 +45,19 @@ export const MainSubjectCard: FC<MainSubjectCardProps> = ({
     </div>
   )
 
-  const overall = (
-    <div className="overall">
-      {overallItems.map(({ key, name, value }) => {
-        return (
-          <div className="data" key={key}>
-            <span>{value}</span>
-            <span>{name}</span>
-          </div>
-        )
-      })}
-    </div>
-  )
+  const overall =
+    overallItems.length > 0 ? (
+      <div className="overall">
+        {overallItems.map(({ key, name, value }) => {
+          return (
+            <div className="data" key={key}>
+              <span>{value}</span>
+              <span>{name}</span>
+            </div>
+          )
+        })}
+      </div>
+    ) : null
 
   const updatedHeaderItems = [titleDiv, ...(headerItems ?? [])].filter(
     (item): item is AddonItem => !!item,

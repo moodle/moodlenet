@@ -125,7 +125,7 @@ export const Resource: FC<ResourceProps> = ({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
     validateOnMount: true,
     validationSchema: contentValidationSchema,
-    // validateOnChange: shouldValidate,
+    validateOnChange: true,
     onSubmit: values => {
       return setContent(values.content)
     },
