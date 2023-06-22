@@ -359,16 +359,14 @@ export async function sendMessageToProfile({
   //TODO //@ALE prepare formatted messages
   const toWebUser = await getWebUserByProfileKey({ profileKey })
   if (!toWebUser) return
-
+  const fromDisplayName = tokenCtx.payload.webUser.displayName
   shell.events.emit('send-message-to-web-user', {
     message: {
       text: message,
       html: message,
     },
-    fromWebUser: {
-      displayName: tokenCtx.payload.webUser.displayName,
-      _key: tokenCtx.payload.webUser._key,
-    },
+    subject: `Message from ${fromDisplayName}@Moodlenet`,
+    title: `${fromDisplayName} sent you a message 📨`,
     toWebUser: {
       _key: toWebUser._key,
       displayName: toWebUser.displayName,

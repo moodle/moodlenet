@@ -1,5 +1,5 @@
 import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
-import type { Document, EntityDocument } from '@moodlenet/system-entities/server'
+import type { Document, DocumentMetadata, EntityDocument } from '@moodlenet/system-entities/server'
 import type { KnownEntityFeature } from '../common/types.mjs'
 
 // TODO //@ALE ProfileEntity _meta { webUserKey }
@@ -33,6 +33,7 @@ export type ImageUploaded = { kind: 'file'; directAccessId: string }
 
 // export type Profile = ProfileDataType & { _key: string }
 
+export type WebUserRecord = WebUserDataType & DocumentMetadata
 export type WebUserDataType = {
   displayName: string
   contacts: Contacts
@@ -81,7 +82,20 @@ export interface WebUserEvents {
       text: string
       html: string
     }
-    fromWebUser: { _key: string; displayName: string }
-    toWebUser: { _key: string; displayName: string }
+    toWebUser: Pick<WebUserRecord, '_key' | 'displayName'>
+    subject: string
+    title: string
   }
+  'deleted-web-user-account': {
+    webUserKey: string
+    profileKey: string
+    displayName: string
+    leftResources: { _key: string }[]
+    leftCollections: { _key: string }[]
+  }
+}
+
+export type WebUserAccountDeletionToken = {
+  webUserKey: string
+  scope: 'web-user-account-deletion'
 }

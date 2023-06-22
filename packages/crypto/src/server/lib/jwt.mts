@@ -58,7 +58,8 @@ async function rawVerify(
 
 export async function verify<CustomClaims extends JwtPayloadCustomClaims>(
   token: JwtToken,
-  opts?: Omit<jose.JWTVerifyOptions, 'issuer' | 'audience'>,
+  validate: (_: any) => _ is CustomClaims,
+  opts?: Partial<Omit<jose.JWTVerifyOptions, 'issuer' | 'audience'>>,
 ): Promise<undefined | JwtVerifyResult<CustomClaims>> {
   const caller = shell.assertCallInitiator()
   const jwtVerifyResult = await rawVerify(token, {
@@ -69,7 +70,9 @@ export async function verify<CustomClaims extends JwtPayloadCustomClaims>(
   if (!jwtVerifyResult) {
     return
   }
-
+  if (!validate(jwtVerifyResult.payload)) {
+    return
+  }
   return jwtVerifyResult as JwtVerifyResult<CustomClaims>
 }
 

@@ -92,7 +92,10 @@ export async function confirm({ confirmToken }: { confirmToken: JwtToken }) {
   return createResponse
 
   async function getConfirmEmailPayload() {
-    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ConfirmEmailPayload>(confirmToken)
+    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ConfirmEmailPayload>(
+      confirmToken,
+      isConfirmEmailPayload,
+    )
     if (!jwtVerifyResp) {
       return
     }
@@ -103,6 +106,13 @@ export async function confirm({ confirmToken }: { confirmToken: JwtToken }) {
   }
 }
 
+function isConfirmEmailPayload(_: any): _ is ConfirmEmailPayload {
+  return (
+    typeof _?.req?.email === 'string' &&
+    typeof _?.req?.password === 'string' &&
+    typeof _?.req?.displayName === 'string'
+  )
+}
 export async function createSimpleEmailUser({
   displayName,
   email,
@@ -166,7 +176,10 @@ export async function changeMyPasswordUsingToken({
   return true
 
   async function getChangePasswordEmailPayload() {
-    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ChangePasswordEmailPayload>(token)
+    const jwtVerifyResp = await shell.call(crypto.jwt.verify)<ChangePasswordEmailPayload>(
+      token,
+      isChangePasswordEmailPayload,
+    )
     if (!jwtVerifyResp) {
       return
     }
@@ -176,7 +189,9 @@ export async function changeMyPasswordUsingToken({
     return confirmEmailPayload
   }
 }
-
+function isChangePasswordEmailPayload(_: any): _ is ChangePasswordEmailPayload {
+  return typeof _?.email === 'string'
+}
 export async function changePassword(
   { _key, newPassword }: { newPassword: string; _key: string },
   opts?: Partial<{ dontHash: boolean }>,
@@ -239,14 +254,15 @@ export async function sendMessageToWebUser({
 }
 
 export async function userSendsMessageToWebUser({
-  fromWebUser,
+  subject,
+  title,
   message,
   toWebUser,
 }: WebUserEvents['send-message-to-web-user']) {
   const messageBody = message.html || message.text
   await sendMessageToWebUser({
-    subject: `Message from ${fromWebUser.displayName}@Moodlenet`,
-    title: `${fromWebUser.displayName} sent you a message 📨`,
+    subject,
+    title,
     message: messageBody,
     toWebUserKey: toWebUser._key,
   })

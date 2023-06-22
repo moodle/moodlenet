@@ -1,4 +1,5 @@
 import { Collection } from '@moodlenet/collection/server'
+import type { PkgExposeDef } from '@moodlenet/core'
 import { RpcStatus } from '@moodlenet/core'
 import { Resource } from '@moodlenet/ed-resource/server'
 import { href } from '@moodlenet/react-app/common'
@@ -27,6 +28,8 @@ import {
   setProfileBackgroundImage,
 } from './lib/profile.mjs'
 import {
+  currentWebUserDeletionAccountRequest,
+  deleteWebUserAccountConfirmedByToken,
   getCurrentProfileIds,
   getWebUser,
   loginAsRoot,
@@ -38,7 +41,7 @@ import {
 import { shell } from './shell.mjs'
 import type { ProfileDataType } from './types.mjs'
 
-export const expose = await shell.expose<WebUserExposeType>({
+export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
   rpc: {
     'getCurrentClientSessionDataRpc': {
       guard: () => void 0,
@@ -292,11 +295,27 @@ export const expose = await shell.expose<WebUserExposeType>({
     'webapp/web-user/delete-account-request': {
       guard: () => void 0,
       async fn() {
+        currentWebUserDeletionAccountRequest()
+      },
+    },
+    'webapp/web-user/delete-account-request/confirm/:token': {
+      guard: () => void 0,
+      async fn(_, { token }) {
+        await deleteWebUserAccountConfirmedByToken(token)
         return
       },
     },
   },
 })
+
+type ServiceRpc = PkgExposeDef<{
+  rpc: {
+    'webapp/web-user/delete-account-request/confirm/:token'(
+      body: void,
+      params: { token: string },
+    ): Promise<void>
+  }
+}>
 
 function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
   const backgroundUrl = entity.backgroundImage
