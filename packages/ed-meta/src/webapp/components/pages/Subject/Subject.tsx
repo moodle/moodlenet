@@ -9,7 +9,7 @@ import './Subject.scss'
 export type SubjectOverallProps = {
   name: string
   value: number
-  key: string | number
+  key: string
 }
 
 export type SubjectProps = {

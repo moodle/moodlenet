@@ -2,19 +2,25 @@ import type { AddonItem } from '@moodlenet/component-library'
 import { Card } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 import { Link, withProxy } from '@moodlenet/react-app/ui'
-import { FilterNone, PermIdentity } from '@mui/icons-material'
+import type { ReactElement } from 'react'
 import './SubjectCard.scss'
+
+export type SubjectCardOverallProps = {
+  name: string
+  value: number
+  Icon: ReactElement
+  key: string
+}
 
 export type SubjectCardProps = {
   mainColumnItems: (AddonItem | null)[]
   title: string
   subjectHomeHref: Href
-  numFollowers: number
-  numResources: number
+  overallItems: SubjectCardOverallProps[]
 }
 
 export const SubjectCard = withProxy<SubjectCardProps>(
-  ({ mainColumnItems, title, subjectHomeHref, numFollowers, numResources }) => {
+  ({ mainColumnItems, title, subjectHomeHref, overallItems }) => {
     const titleDiv = (
       <div className="title">
         <Link href={subjectHomeHref}>
@@ -23,14 +29,15 @@ export const SubjectCard = withProxy<SubjectCardProps>(
       </div>
     )
 
-    const stats = (
+    const stats = overallItems.length > 0 && (
       <div className="stats">
-        <abbr className="followers" title="Followers">
-          <PermIdentity /> {numFollowers}
-        </abbr>
-        <abbr className="resources" title="Resources">
-          <FilterNone /> {numResources}
-        </abbr>
+        {overallItems.map(({ Icon, key, name, value }) => {
+          return (
+            <abbr className={key} title={name} key={key}>
+              {Icon} {value}
+            </abbr>
+          )
+        })}
       </div>
     )
 

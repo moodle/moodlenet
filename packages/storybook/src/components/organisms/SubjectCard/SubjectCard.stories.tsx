@@ -1,3 +1,4 @@
+import { FilterNone, PermIdentity } from '@material-ui/icons'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type { SubjectCardProps } from '@moodlenet/ed-meta/ui'
 import { SubjectCard } from '@moodlenet/ed-meta/ui'
@@ -34,8 +35,20 @@ export const getSubjectCardStoryProps = (
   return overrideDeep<SubjectCardProps>(
     {
       mainColumnItems: [],
-      numFollowers: Math.floor(Math.random() * Math.random() * 1000),
-      numResources: Math.floor(Math.random() * Math.random() * 1000),
+      overallItems: [
+        {
+          Icon: <PermIdentity />,
+          key: 'followers',
+          name: 'Followers',
+          value: Math.floor(Math.random() * Math.random() * 1000),
+        },
+        {
+          Icon: <FilterNone />,
+          key: 'resources',
+          name: 'Resources',
+          value: Math.floor(Math.random() * Math.random() * 1000),
+        },
+      ],
       subjectHomeHref: href('Pages/Subject/Logged In'),
       title: 'Building and civil engineering',
     },
