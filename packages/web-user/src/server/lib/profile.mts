@@ -1,9 +1,9 @@
 import { Collection, deltaCollectionPopularityItem } from '@moodlenet/collection/server'
-import type { RpcFile } from '@moodlenet/core'
+import { instanceDomain, type RpcFile } from '@moodlenet/core'
 import { deltaIscedFieldPopularityItem } from '@moodlenet/ed-meta/server'
 import { deltaResourcePopularityItem, Resource } from '@moodlenet/ed-resource/server'
 import { webSlug } from '@moodlenet/react-app/common'
-import { webImageResizer } from '@moodlenet/react-app/server'
+import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
@@ -17,9 +17,12 @@ import {
   sysEntitiesDB,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
+import dot from 'dot'
 import type { KnownEntityFeature, KnownEntityType, SortTypeRpc } from '../../common/types.mjs'
+import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
 import { publicFiles } from '../init/fs.mjs'
+import { kvStore } from '../init/kvStore.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType } from '../types.mjs'
@@ -355,21 +358,35 @@ export async function sendMessageToProfile({
 }) {
   const tokenCtx = await verifyCurrentTokenCtx()
   if (!tokenCtx || tokenCtx.payload.isRoot || !tokenCtx.payload.webUser) return
+  const templates = (await kvStore.get('message-templates', '')).value
+  assert(templates)
 
   //TODO //@ALE prepare formatted messages
   const toWebUser = await getWebUserByProfileKey({ profileKey })
   if (!toWebUser) return
-  const fromDisplayName = tokenCtx.payload.webUser.displayName
+  const fromProfile = (await getProfileRecord(tokenCtx.payload.profile._key))?.entity
+  assert(fromProfile)
+  const msgVars: SendMsgToUserVars = {
+    actionButtonUrl: getWebappUrl(
+      getProfileHomePageRoutePath({ _key: fromProfile._key, displayName: fromProfile.displayName }),
+    ),
+    instanceName: instanceDomain,
+    message,
+  }
+  const html = dot.compile(templates.messageFromUser)(msgVars)
+
   shell.events.emit('send-message-to-web-user', {
     message: {
-      text: message,
-      html: message,
+      text: html,
+      html: html,
     },
-    subject: `Message from ${fromDisplayName}@Moodlenet`,
-    title: `${fromDisplayName} sent you a message 📨`,
+    subject: `${fromProfile.displayName} sent you a message 📨`,
+    title: `${fromProfile.displayName} sent you a message 📨`,
     toWebUser: {
       _key: toWebUser._key,
       displayName: toWebUser.displayName,
     },
   })
+
+  type SendMsgToUserVars = Record<'actionButtonUrl' | 'instanceName' | 'message', string>
 }
