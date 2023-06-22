@@ -327,8 +327,8 @@ export async function currentWebUserDeletionAccountRequest() {
   if (!currWebUser) {
     return
   }
-  const msgTemplateStr = (await kvStore.get('delete-account-html-message-template', '')).value
-  assert(msgTemplateStr, 'missing emailTemplateStr:: record in KeyValueStore')
+  const msgTemplates = (await kvStore.get('message-templates', '')).value
+  assert(msgTemplates, 'missing message-templates:: record in KeyValueStore')
   const token = await signWebUserAccountDeletionToken(currWebUser._key)
 
   const msgVars: DelAccountMsgVars = {
@@ -337,7 +337,7 @@ export async function currentWebUserDeletionAccountRequest() {
     )()}webapp/web-user/delete-account-request/confirm/${token}`,
     instanceName: instanceDomain,
   }
-  const html = dot.compile(msgTemplateStr)(msgVars)
+  const html = dot.compile(msgTemplates.deleteAccountConfirmation)(msgVars)
 
   shell.events.emit('send-message-to-web-user', {
     message: { html, text: html },
