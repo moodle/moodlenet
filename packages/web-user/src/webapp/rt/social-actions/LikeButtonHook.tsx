@@ -12,7 +12,7 @@ export const useLikeButtonProps = ({
 }: {
   _key: string
   entityType: KnownEntityType
-  info: null | { name: string; isCreator: boolean }
+  info: null | undefined | { name: string; isCreator: boolean }
 }): LikeButtonProps => {
   const currentWebUser = useContext(AuthCtx)
   const featuredHandle = useMyFeaturedEntityWithCount({ feature: 'like', _key, entityType })
