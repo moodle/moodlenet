@@ -6,7 +6,7 @@ import { useSmallFollowButtonProps } from './SmallFollowButtonHook.js'
 export const SmallFollowButtonContainer: FC<{
   _key: string
   entityType: KnownEntityType
-  info: null | { name: string; isCreator: boolean }
+  info: null | undefined | { name: string; isCreator: boolean }
 }> = ({ _key, entityType, info }) => {
   const smallFollowButtonProps = useSmallFollowButtonProps({ _key, entityType, info })
   if (!smallFollowButtonProps) {

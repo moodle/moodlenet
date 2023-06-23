@@ -9,7 +9,7 @@ export type SocialActionsName = 'follow' | 'like' | 'bookmark'
 export type EntityAndKeyAndIsCreator = {
   _key: string
   entityType: KnownEntityType
-  info: null | { name: string; isCreator: boolean }
+  info: null | undefined | { name: string; isCreator: boolean }
 }
 export type SocialActions = Partial<Record<SocialActionsName, FC<EntityAndKeyAndIsCreator>>>
 export type SocialActionsConfig = Partial<Record<KnownEntityType, SocialActionsName[]>>
@@ -47,7 +47,7 @@ export function getUseComposeSocialActions(actions: SocialActions, config: Socia
   const useComposeSocialActions = (
     _key: string,
     entityType: KnownEntityType,
-    info: null | { name: string; isCreator: boolean },
+    info: null | undefined | { name: string; isCreator: boolean },
   ): MyPkgAddOns =>
     useMemo(
       () => socialItemsAddons(actions, config, { _key, entityType, info }),

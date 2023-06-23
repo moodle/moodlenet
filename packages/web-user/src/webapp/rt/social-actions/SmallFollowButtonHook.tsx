@@ -12,7 +12,7 @@ export const useSmallFollowButtonProps = ({
 }: {
   _key: string
   entityType: KnownEntityType
-  info: null | { name: string; isCreator: boolean }
+  info: null | undefined | { name: string; isCreator: boolean }
 }): SmallFollowButtonProps => {
   const { isAuthenticated } = useContext(AuthCtx)
   const featuredHandle = useMyFeaturedEntityWithCount({
