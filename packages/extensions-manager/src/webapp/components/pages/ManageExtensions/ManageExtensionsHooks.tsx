@@ -10,13 +10,16 @@ export const useManageExtensionsProps = (
   overrides?: Partial<ManageExtensionsPropsControlled>,
 ): ManageExtensionsPropsControlled => {
   const [extensions, setExtensions] = useState<ExtensionType[]>([])
-  const [installUninstallSucces, toggleInstallUninstallSucces] = useReducer(_ => !_, false)
-  const [isInstallingUninstalling, toggleIsInstallingUninstalling] = useReducer(_ => !_, false)
+  const [installUninstallSucces /* , toggleInstallUninstallSucces */] = useReducer(_ => !_, false)
+  const [isInstallingUninstalling /* , toggleIsInstallingUninstalling */] = useReducer(
+    _ => !_,
+    false,
+  )
 
   useEffect(() => {
     shell.rpc.me.listDeployed().then(resp =>
       setExtensions(
-        resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A', pkgId }) => {
+        resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A' /* , pkgId */ }) => {
           const repositoryUrl =
             typeof packageJson.repository === 'string'
               ? packageJson.repository
@@ -34,14 +37,14 @@ export const useManageExtensionsProps = (
             installUninstallSucces,
             isInstallingUninstalling,
             toggleInstallingUninstalling: () => {
-              if (isInstallingUninstalling) {
-                return
-              }
-              toggleIsInstallingUninstalling()
-              shell.rpc.me.uninstall([pkgId]).then(() => {
-                toggleInstallUninstallSucces()
-                toggleIsInstallingUninstalling()
-              })
+              // if (isInstallingUninstalling) {
+              //   return
+              // }
+              // toggleIsInstallingUninstalling()
+              // shell.rpc.me.uninstall([pkgId]).then(() => {
+              //   toggleInstallUninstallSucces()
+              //   toggleIsInstallingUninstalling()
+              // })
             },
           }
           return extensionType
