@@ -17,7 +17,7 @@ export function registerMainAppPluginHook(mainAppPluginHook: MainAppPluginHook) 
 }
 
 export const MainApp: FC<PropsWithChildren> = ({ children }) => {
-  const Main = mainAppPluginPlugins.reduce((_children, { pkgId, mainAppPluginHook }) => {
+  const Main = mainAppPluginPlugins.reduceRight((_children, { pkgId, mainAppPluginHook }) => {
     const { MainWrapper } = mainAppPluginHook() ?? {}
 
     return MainWrapper ? (
