@@ -2,6 +2,7 @@ import { instanceDomain } from '@moodlenet/core'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import * as crypto from '@moodlenet/crypto/server'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
+import { getOrgData } from '@moodlenet/organization/server'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import type { WebUserEvents } from '@moodlenet/web-user/server'
 import {
@@ -63,9 +64,10 @@ export async function signup(req: SignupReq) {
 
   const templates = (await kvStore.get('email-templates', '')).value
   assert(templates)
+  const orgData = await getOrgData()
 
   const newUserRequestEmailTemplateVars: NewUserRequestEmailTemplateVars = {
-    instanceName: instanceDomain,
+    instanceName: orgData.data.instanceName,
     actionButtonUrl: `${myBaseRpcHttpUrl}confirm-email/${confirmEmailToken}`,
   }
   const html = dot.compile(templates['new-user-request'])(newUserRequestEmailTemplateVars)
@@ -245,9 +247,10 @@ export async function sendChangePasswordRequestEmail({ email }: { email: string 
 
   const templates = (await kvStore.get('email-templates', '')).value
   assert(templates)
+  const orgData = await getOrgData()
 
   const recoverPasswordEmailTemplateVars: RecoverPasswordEmailTemplateVars = {
-    instanceName: instanceDomain,
+    instanceName: orgData.data.instanceName,
     actionButtonUrl: `${getWebappUrl(SET_NEW_PASSWORD_PATH)}?token=${changePasswordToken}`,
   }
   const html = dot.compile(templates['recover-password'])(recoverPasswordEmailTemplateVars)

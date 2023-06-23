@@ -1,7 +1,8 @@
 import { Collection, deltaCollectionPopularityItem } from '@moodlenet/collection/server'
-import { instanceDomain, type RpcFile } from '@moodlenet/core'
+import { type RpcFile } from '@moodlenet/core'
 import { deltaIscedFieldPopularityItem } from '@moodlenet/ed-meta/server'
 import { deltaResourcePopularityItem, Resource } from '@moodlenet/ed-resource/server'
+import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
 import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
@@ -366,11 +367,13 @@ export async function sendMessageToProfile({
   if (!toWebUser) return
   const fromProfile = (await getProfileRecord(tokenCtx.payload.profile._key))?.entity
   assert(fromProfile)
+  const orgData = await getOrgData()
+
   const msgVars: SendMsgToUserVars = {
     actionButtonUrl: getWebappUrl(
       getProfileHomePageRoutePath({ _key: fromProfile._key, displayName: fromProfile.displayName }),
     ),
-    instanceName: instanceDomain,
+    instanceName: orgData.data.instanceName,
     message,
   }
   const html = dot.compile(templates.messageFromUser)(msgVars)
