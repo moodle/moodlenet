@@ -34,7 +34,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const [isPublished, setIsPublish] = useState(false)
 
   useEffect(() => {
-    setResource(null)
+    setResource(undefined)
     rpcCaller.get(resourceKey).then(res => {
       res && setIsPublish(res.state.isPublished)
       setResource(res)
@@ -100,10 +100,10 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     return resourceActions
   }, [nav, resource, resourceKey, rpcCaller, setterSave])
 
-  return useMemo<ResourceCommonProps | null>(
+  return useMemo<ResourceCommonProps | null | undefined>(
     () =>
       !resource
-        ? null
+        ? resource
         : {
             actions,
             props: { ...resource, state: { ...resource.state, isPublished } },

@@ -60,7 +60,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           },
         })
         if (!found) {
-          return
+          return null
         }
         const imageUrl = found.entity.image && getImageUrl(found.entity.image)
 

@@ -17,7 +17,7 @@ export const ResourceCardPlugins = createPlugin<
     bottomRightItems?: AddOnMap<AddonItemNoKey>
     topRightItems?: AddOnMap<AddonItemNoKey>
   },
-  { resourceKey: string; info: null | { name: string; isCreator: boolean } }
+  { resourceKey: string; info: undefined | null | { name: string; isCreator: boolean } }
 >()
 
 export const useResourceCardProps = (resourceKey: string): ResourceCardPropsData | null => {

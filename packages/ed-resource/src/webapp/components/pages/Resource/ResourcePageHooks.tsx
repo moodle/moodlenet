@@ -18,7 +18,7 @@ export const ResourcePagePlugins = createPlugin<
   },
   {
     resourceKey: string
-    info: null | { name: string; isCreator: boolean }
+    info: null | undefined | { name: string; isCreator: boolean }
   }
 >()
 
@@ -46,7 +46,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
 
   const { publishedMeta } = useContext(EdMetaContext)
 
-  if (!resourceCommonProps) return null
+  if (!resourceCommonProps) return resourceCommonProps
   const { actions, props, isSaving } = resourceCommonProps
   const { data, resourceForm, state, access, contributor } = props
 
