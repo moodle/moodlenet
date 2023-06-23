@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { forwardRef, useRef, useState } from 'react'
+import type { Credits } from '../../../../../common.mjs'
 import { useForwardedRef } from '../../../lib/useForwardedRef.mjs'
 import Modal from '../../atoms/Modal/Modal.js'
 import RoundButton from '../../atoms/RoundButton/RoundButton.js'
@@ -8,10 +9,12 @@ import './ImageContainer.scss'
 export type ImageContainerProps = {
   uploadImage?(image: File): unknown
   deleteImage?: () => unknown
-  imageUrl?: string
+  imageUrl?: string | null
+  credits?: Credits | null
   style?: CSSProperties
   link?: string
   displayOnly?: boolean
+  overlayCredits?: boolean
   // isUploading?: boolean
 }
 
@@ -24,6 +27,8 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       style,
       link,
       displayOnly,
+      credits,
+      overlayCredits,
       // isUploading
     } = props
 
@@ -49,6 +54,21 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
       />
     )
 
+    const imageCredits = credits && (
+      <div className={`image-credits ${overlayCredits ? 'overlay' : ''}`}>
+        Photo by
+        <a href={credits.owner.url} target="_blank" rel="noreferrer">
+          {credits.owner.name}
+        </a>
+        on
+        {
+          <a href={credits.provider?.url} target="_blank" rel="noreferrer">
+            {credits.provider?.name}
+          </a>
+        }
+      </div>
+    )
+
     // const uploading = (
     //   <div className="uploading">
     //     <Loading type="uploading" color="gray" size="70px" />
@@ -69,7 +89,7 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
           key="image-modal"
         >
           <img src={imageUrl} alt="Resource" />
-          {/* {getImageCredits(form.values.image)} */}
+          {imageCredits}
         </Modal>
       ),
     ]
@@ -93,7 +113,7 @@ export const ImageContainer = forwardRef<HTMLDivElement | null | undefined, Imag
             <>{imageDiv}</>
           )
         }
-        {/* {getImageCredits(form.values.image)} */}
+        {imageCredits}
         <div className="image-actions">
           <input
             ref={uploadImageRef}

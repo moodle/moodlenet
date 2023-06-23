@@ -151,9 +151,15 @@ export const useCollectionStoryProps = (
   const data: CollectionDataProps = {
     id: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
-    imageUrl:
-      'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
     ...overrides?.data,
+    image: {
+      location:
+        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+      credits: {
+        owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
+        provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+      },
+    },
   }
 
   const collectionForm: CollectionFormProps = {
@@ -174,6 +180,7 @@ export const useCollectionStoryProps = (
     publish: action('publish'),
     unpublish: action('unpublish'),
     setImage: action('setImage'),
+    removeResource: action('removeResource'),
     ...overrides?.actions,
   }
 
@@ -274,6 +281,7 @@ export const useCollectionStoryProps = (
       actions: actions,
       access: access,
       isSaving: false,
+      isEditingAtStart: false,
     },
     { ...overrides },
   )

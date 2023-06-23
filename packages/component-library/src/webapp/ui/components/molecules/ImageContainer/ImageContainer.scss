@@ -1,3 +1,19 @@
+.image-modal > .modal > .content {
+  > .image-credits {
+    bottom: 9px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    right: 5px;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 11px;
+    gap: 3px;
+    > a:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .image-container {
   position: relative;
   width: 100%;
@@ -39,6 +55,23 @@
     gap: 3px;
     > a:hover {
       text-decoration: underline;
+    }
+
+    &.overlay {
+      position: absolute;
+      bottom: 9px;
+      color: white;
+      background: #00000054;
+      padding: 2px 7px;
+      border-radius: 6px;
+      right: 15px;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 11px;
+      gap: 3px;
+      > a:hover {
+        text-decoration: underline;
+      }
     }
   }
 

@@ -5,5 +5,5 @@ export type Credits = {
 
 export type AssetInfo = {
   location: string | File
-  credits?: Credits | null
+  credits: Credits | null
 }

@@ -17,50 +17,26 @@ import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-
 // import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 // import { useNewCollectionPageCtx } from '../NewCollection'
 // import { NewCollectionFormValues } from '../types'
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import './UploadImage.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadImageProps = {
-  imageForm: FormikHandle<{ image: File | string | undefined | null }>
-  imageUrl: string | undefined
-  backupImage?: string
+  imageForm: FormikHandle<{ image: AssetInfo | undefined | null }>
+  backupImage?: AssetInfo
   displayOnly?: boolean
   OnClick?: () => void
 }
 
-// const usingFields: (keyof NewCollectionFormValues)[] = [
-//   'name',
-//   'description',
-//   'category',
-//   'license',
-//   'visibility',
-//   'image',
-//   'content',
-// ]
-
-export const UploadImage: FC<UploadImageProps> = ({
-  imageForm,
-  imageUrl,
-  backupImage,
-  displayOnly,
-}) => {
-  // const { nextForm, imageForm } = useNewCollectionPageCtx()
-  // const isValid = usingFields.reduce(
-  //   (valid, fldName) => valid && !imageForm.errors[fldName],
-  //   true
-  // )
-
+export const UploadImage: FC<UploadImageProps> = ({ imageForm, backupImage, displayOnly }) => {
   const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  const [image] = useImageUrl(imageForm.values.image, backupImage)
+  const [imageUrl] = useImageUrl(imageForm.values.image?.location, backupImage?.location)
+  const credits = imageForm.values.image?.credits ?? backupImage?.credits
 
-  console.log('image', image)
-
-  // const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
 
   const deleteImage = useCallback(() => {
     imageForm.setFieldValue('image', undefined)
-    imageForm.submitForm()
   }, [imageForm])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
@@ -94,8 +70,7 @@ export const UploadImage: FC<UploadImageProps> = ({
           item && (selectedFile = item)
         }
       }
-      imageForm.setFieldValue('image', selectedFile)
-      imageForm.submitForm()
+      imageForm.setFieldValue('image', { location: selectedFile })
     },
     [imageForm],
   )
@@ -108,18 +83,17 @@ export const UploadImage: FC<UploadImageProps> = ({
   }, [])
 
   const uploadImage = (file: File) => {
-    imageForm.setFieldValue('image', file)
-    imageForm.submitForm()
+    imageForm.setFieldValue('image', { location: file })
   }
-
-  console.log('displayOnly', displayOnly)
 
   const imageContainer = (
     <ImageContainer
-      imageUrl={image}
+      imageUrl={imageUrl}
+      credits={credits}
       deleteImage={deleteImage}
       uploadImage={uploadImage}
       displayOnly={displayOnly}
+      overlayCredits={true}
     />
   )
   const modals = [
@@ -144,7 +118,7 @@ export const UploadImage: FC<UploadImageProps> = ({
   return (
     <div className="upload-image">
       {modals}
-      {!image && !displayOnly ? (
+      {!imageUrl && !displayOnly ? (
         <div className={`uploader `}>
           <div
             className={`image upload ${isToDrop ? 'hover' : ''} ${
@@ -167,8 +141,7 @@ export const UploadImage: FC<UploadImageProps> = ({
               onChange={({ target }) => {
                 const file = target.files?.[0]
                 if (file) {
-                  imageForm.setFieldValue('image', file)
-                  imageForm.submitForm()
+                  imageForm.setFieldValue('image', { location: file })
                 }
               }}
               hidden

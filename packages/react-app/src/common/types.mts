@@ -31,10 +31,10 @@ export type AppearanceData = {
 
 export type AssetInfo = {
   location: string | File
-  credits?: Credits | null
+  credits: Credits | null
 }
 
 export type Credits = {
-  owner: { url: string; name: string }
-  provider?: { name: string; url: string }
+  owner: { name: string; url: string | null }
+  provider: { name: string; url: string | null } | null
 }

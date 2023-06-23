@@ -1,6 +1,7 @@
 import { InsertDriveFile, Link } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Modal, PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import {
   DateField,
   LanguageField,
@@ -56,7 +57,7 @@ export type ResourceProps = {
 
   fileMaxSize: number
   isSaving: boolean
-  isEditing: boolean
+  isEditingAtStart: boolean
 }
 
 export const Resource: FC<ResourceProps> = ({
@@ -81,10 +82,10 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
   isSaving,
-  isEditing: isEditingProp,
+  isEditingAtStart,
 }) => {
   const viewport = useViewport()
-  const { downloadFilename, contentUrl, contentType, imageUrl } = data
+  const { downloadFilename, contentUrl, contentType, image } = data
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish, canEdit } = access
   const { isPublished } = state
@@ -104,7 +105,7 @@ export const Resource: FC<ResourceProps> = ({
   //     useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [isEditing, setIsEditing] = useState<boolean>(isEditingProp)
+  const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
   // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
   // const backupImage: AssetInfo | null | undefined = useMemo(
   //   () => getBackupImage(id),
@@ -131,13 +132,13 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
 
-  const imageForm = useFormik<{ image: File | string | undefined | null }>({
-    initialValues: useMemo(() => ({ image: imageUrl }), [imageUrl]),
+  const imageForm = useFormik<{ image: AssetInfo | undefined | null }>({
+    initialValues: useMemo(() => ({ image: image }), [image]),
     validateOnMount: true,
     validationSchema: imageValidationSchema,
     // validateOnChange: shouldValidate,
     onSubmit: values => {
-      return typeof values.image !== 'string' ? setImage(values.image) : undefined
+      return values.image !== image ? setImage(values.image) : undefined
     },
   })
 

@@ -1,3 +1,4 @@
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import type { Href } from '@moodlenet/react-app/common'
 import type { CollectionExposeType } from './expose-def.mjs'
 
@@ -27,7 +28,7 @@ export type CollectionAccessRpc = {
 export type CollectionDataRpc = {
   id: string
   mnUrl: string
-  imageUrl: string | undefined
+  image: AssetInfo | null
 }
 
 export type CollectionStateRpc = {
@@ -92,7 +93,7 @@ export type CollectionActions = {
   editData: (values: CollectionFormProps) => void
   removeResource: (key: string) => void
   deleteCollection(): void
-  setImage: (file: File | undefined | null) => void
+  setImage: (image: AssetInfo | undefined | null) => void
 }
 
 export type CollectionMainProps = {
@@ -105,7 +106,7 @@ export type CollectionMainProps = {
 
 export type CollectionCardData = { collectionHref: Href } & Pick<
   CollectionDataProps,
-  'id' | 'imageUrl'
+  'id' | 'image'
 > &
   Pick<CollectionFormProps, 'title'>
 

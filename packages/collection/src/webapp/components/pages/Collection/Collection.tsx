@@ -11,9 +11,10 @@ import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { SchemaOf } from 'yup'
 
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import { CloseRounded } from '@mui/icons-material'
@@ -50,7 +51,7 @@ export type CollectionProps = {
   actions: CollectionActions
   access: CollectionAccessProps
   isSaving: boolean
-  isEditing: boolean
+  isEditingAtStart: boolean
 }
 
 export const Collection: FC<CollectionProps> = ({
@@ -72,40 +73,33 @@ export const Collection: FC<CollectionProps> = ({
   actions,
   access,
   isSaving,
-  isEditing: isEditingProp,
+  isEditingAtStart,
 }) => {
   const viewport = useViewport()
-  const { imageUrl } = data
+  const { image } = data
   const { isPublished } = state
   const { editData, deleteCollection, publish, unpublish, removeResource, setImage } = actions
   const { canPublish, canEdit } = access
-  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(imageUrl)
-  const [isEditing, setIsEditing] = useState<boolean>(isEditingProp)
-  const [shouldValidate, setShouldValidate] = useState<boolean>(true)
+  const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
     validateOnMount: true,
-    validationSchema: shouldValidate ? validationSchema : undefined,
-    validateOnChange: shouldValidate,
+    validationSchema: validationSchema,
+    validateOnChange: true,
     onSubmit: values => {
       return editData(values)
     },
   })
-  const imageForm = useFormik<{ image: File | string | null | undefined }>({
-    initialValues: useMemo(() => ({ image: imageUrl }), [imageUrl]),
+  const imageForm = useFormik<{ image: AssetInfo | null | undefined }>({
+    initialValues: useMemo(() => ({ image: image }), [image]),
     validateOnMount: true,
-    validationSchema: shouldValidate ? imageValidationSchema : undefined,
-    validateOnChange: shouldValidate,
-    // validationSchema: validationSchema //@ALE for some reason this validation is avoidind the onSubmit, I tried to investigate but couldn't find a reason
+    validationSchema: imageValidationSchema,
+    validateOnChange: true,
     onSubmit: values => {
-      return typeof values.image !== 'string' ? setImage(values.image) : undefined
+      return values.image !== image ? setImage(values.image) : undefined
     },
   })
-
-  useEffect(() => {
-    setCurrentImageUrl(imageUrl)
-  }, [imageUrl])
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -119,14 +113,10 @@ export const Collection: FC<CollectionProps> = ({
   }
 
   const checkFormAndPublish = () => {
-    setShouldValidate(true)
     setFieldsAsTouched()
     // form.validateForm
     // imageForm.validateForm
-    console.log('form.isValid', form.isValid)
-    console.log('imageForm.isValid', imageForm.isValid)
     if (form.isValid && imageForm.isValid) {
-      console.log('getting in all valid')
       form.submitForm()
       imageForm.submitForm()
       setShouldShowErrors(false)
@@ -164,7 +154,7 @@ export const Collection: FC<CollectionProps> = ({
   const mainCollectionCard = (
     <MainCollectionCard
       key="main-collection-card"
-      data={{ ...data, imageUrl: currentImageUrl }}
+      data={data}
       // collectionForm={collectionForm}
       form={form}
       imageForm={imageForm}
