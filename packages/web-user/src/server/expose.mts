@@ -1,9 +1,10 @@
 import { Collection } from '@moodlenet/collection/server'
 import type { PkgExposeDef } from '@moodlenet/core'
-import { RpcStatus } from '@moodlenet/core'
+import { npm, RpcStatus } from '@moodlenet/core'
 import { Resource } from '@moodlenet/ed-resource/server'
+import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { getAppearance, getWebappUrl, setAppearance } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import { isCreatorOfCurrentEntity, queryEntities, toaql } from '@moodlenet/system-entities/server'
 import assert from 'assert'
@@ -304,6 +305,26 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         await deleteWebUserAccountConfirmedByToken(token)
         return
       },
+    },
+    'webapp/admin/general/get-org-data': {
+      guard: () => void 0,
+      fn: getOrgData,
+    },
+    'webapp/admin/general/set-org-data': {
+      guard: () => void 0,
+      fn: setOrgData,
+    },
+    'webapp/admin/general/get-appearance': {
+      guard: () => void 0,
+      fn: getAppearance,
+    },
+    'webapp/admin/general/set-appearance': {
+      guard: () => void 0,
+      fn: setAppearance,
+    },
+    'webapp/admin/packages/update-all-pkgs': {
+      guard: () => void 0,
+      fn: () => npm.updateAll(),
     },
   },
 })
