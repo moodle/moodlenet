@@ -77,7 +77,7 @@ export type ResourceProps = {
 
 export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
-  get: (resourceKey: string) => Promise<ResourceProps | undefined>
+  get: (resourceKey: string) => Promise<ResourceProps | null>
   _delete: (resourceKey: string) => Promise<void>
   setImage: (resourceKey: string, file: File | undefined | null) => Promise<string | null>
   setContent: (

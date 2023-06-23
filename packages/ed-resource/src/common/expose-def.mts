@@ -13,7 +13,7 @@ export type ResourceExposeType = PkgExposeDef<{
       body: { publish: boolean },
       params: { _key: string },
     ): Promise<void>
-    'webapp/get/:_key'(body: null, params: { _key: string }): Promise<ResourceRpc | undefined>
+    'webapp/get/:_key'(body: null, params: { _key: string }): Promise<ResourceRpc | null>
     'webapp/edit/:_key'(body: { values: ResourceFormRpc }, params: { _key: string }): Promise<void>
     'webapp/create'(): Promise<{ _key: string }>
     'webapp/delete/:_key'(body: null, params: { _key: string }): Promise<void>
