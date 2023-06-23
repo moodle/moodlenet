@@ -58,5 +58,9 @@ export type DynEmailLayoutTemplateVars = Pick<
 >
 export type BaseEmailLayoutTemplateVars = Pick<
   EmailLayoutTemplateVars,
-  'instanceName' | 'domainUrl' | 'instanceLogoUrl' | 'locationUrl' | 'location' | 'copyright'
+  'instanceLogoUrl' | 'locationUrl' | 'location' | 'copyright'
+>
+export type EmailLayoutTemplateSystemVars = Omit<
+  EmailLayoutTemplateVars,
+  keyof DynEmailLayoutTemplateVars | keyof BaseEmailLayoutTemplateVars
 >

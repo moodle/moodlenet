@@ -17,8 +17,6 @@ assert(mailerCfgVNaN)
 const mailerCfg: MailerCfg = {
   ...mailerCfgVNaN,
   baseEmailLayoutTemplateVars: {
-    instanceName: 'MoodleNet',
-    domainUrl: 'https://moodle.net',
     instanceLogoUrl: 'https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png',
     copyright: 'Copyright © 2021 Moodle Pty Ltd, All rights reserved.',
     location: 'PO Box 303, West Perth WA 6872, Australia',

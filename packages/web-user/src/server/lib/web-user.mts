@@ -1,8 +1,8 @@
 import type { Patch } from '@moodlenet/arangodb/server'
-import { instanceDomain } from '@moodlenet/core'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import { jwt } from '@moodlenet/crypto/server'
 import { getCurrentHttpCtx, getMyRpcBaseUrl } from '@moodlenet/http-server/server'
+import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import { create, matchRootPassword } from '@moodlenet/system-entities/server'
 import assert from 'assert'
@@ -330,12 +330,13 @@ export async function currentWebUserDeletionAccountRequest() {
   const msgTemplates = (await kvStore.get('message-templates', '')).value
   assert(msgTemplates, 'missing message-templates:: record in KeyValueStore')
   const token = await signWebUserAccountDeletionToken(currWebUser._key)
+  const orgData = await getOrgData()
 
   const msgVars: DelAccountMsgVars = {
     actionButtonUrl: `${await shell.call(
       getMyRpcBaseUrl,
     )()}webapp/web-user/delete-account-request/confirm/${token}`,
-    instanceName: instanceDomain,
+    instanceName: orgData.data.instanceName,
   }
   const html = dot.compile(msgTemplates.deleteAccountConfirmation)(msgVars)
 
