@@ -1,12 +1,12 @@
-import type { InstallPkgReq, PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
-import type { DeployedPkgInfo, SearchPackagesResponse } from './data.mjs'
+import type { PkgExposeDef } from '@moodlenet/core'
+import type { DeployedPkgInfo } from './data.mjs'
 
 export type ExtMngrExposeType = PkgExposeDef<{
   rpc: {
-    searchPackages(body: { searchText: string }): Promise<SearchPackagesResponse>
+    // searchPackages(body: { searchText: string }): Promise<SearchPackagesResponse>
     listDeployed(): Promise<{ pkgInfos: DeployedPkgInfo[] }>
-    uninstall(body: PkgIdentifier[]): Promise<void>
-    install(body: InstallPkgReq[]): Promise<void>
-    getDefaultRegistry(): Promise<string>
+    // uninstall(body: PkgIdentifier[]): Promise<void>
+    // install(body: InstallPkgReq[]): Promise<void>
+    // getDefaultRegistry(): Promise<string>
   }
 }>
