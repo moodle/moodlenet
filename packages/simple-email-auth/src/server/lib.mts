@@ -1,6 +1,8 @@
 import { instanceDomain } from '@moodlenet/core'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import * as crypto from '@moodlenet/crypto/server'
+import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
+import { getWebappUrl } from '@moodlenet/react-app/server'
 import type { WebUserEvents } from '@moodlenet/web-user/server'
 import {
   createWebUser,
@@ -9,12 +11,16 @@ import {
   verifyCurrentTokenCtx,
 } from '@moodlenet/web-user/server'
 import assert from 'assert'
+import dot from 'dot'
 import { send } from '../../../email-service/dist/server/exports.mjs'
 import { SET_NEW_PASSWORD_PATH } from '../common/webapp-routes.mjs'
 import { EmailPwdUserCollection } from './init/arangodb.mjs'
+import { kvStore } from './init/kvStore.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
 import type { ChangePasswordEmailPayload, ConfirmEmailPayload, SignupReq } from './types.mjs'
+
+const myBaseRpcHttpUrl = await shell.call(getMyRpcBaseUrl)()
 
 export async function login({ email, password }: { email: string; password: string }) {
   const user = await store.getByEmail(email)
@@ -55,15 +61,24 @@ export async function signup(req: SignupReq) {
     expirationTime: '1w',
   })
 
+  const templates = (await kvStore.get('email-templates', '')).value
+  assert(templates)
+
+  const newUserRequestEmailTemplateVars: NewUserRequestEmailTemplateVars = {
+    instanceName: instanceDomain,
+    actionButtonUrl: `${myBaseRpcHttpUrl}confirm-email/${confirmEmailToken}`,
+  }
+  const html = dot.compile(templates['new-user-request'])(newUserRequestEmailTemplateVars)
   shell.call(send)({
     emailObj: {
-      title: 'Confirm your email in Moodlenet',
-      subject: 'Welcome to Moodlenet 🎉',
+      title: `Welcome to ${instanceDomain} 🎉`,
+      subject: `Welcome to ${instanceDomain} 🎉`,
       to: req.email,
-      html: `hey ${req.displayName} confirm your email on ${instanceDomain}/.pkg/@moodlenet/simple-email-auth/confirm-email/${confirmEmailToken}`,
+      html,
     },
   })
   return { success: true, confirmEmailToken } as const
+  type NewUserRequestEmailTemplateVars = Record<'instanceName' | 'actionButtonUrl', string>
 }
 
 export async function confirm({ confirmToken }: { confirmToken: JwtToken }) {
@@ -197,7 +212,23 @@ export async function changePassword(
   opts?: Partial<{ dontHash: boolean }>,
 ) {
   const password = opts?.dontHash ? newPassword : await crypto.argon.hashPwd(newPassword)
-  await EmailPwdUserCollection.update({ _key }, { password })
+
+  const resp = await EmailPwdUserCollection.update({ _key }, { password }, { returnNew: true })
+  if (!resp.new) {
+    return false
+  }
+  const templates = (await kvStore.get('email-templates', '')).value
+  assert(templates)
+  const html = dot.compile(templates['password-changed'])({})
+  shell.call(send)({
+    emailObj: {
+      subject: 'Password changed 🔒💫',
+      title: 'Password changed 🔒💫',
+      to: resp.new.email,
+      html,
+    },
+  })
+  return true
 }
 
 export async function sendChangePasswordRequestEmail({ email }: { email: string }) {
@@ -212,15 +243,24 @@ export async function sendChangePasswordRequestEmail({ email }: { email: string 
     expirationTime: '1h',
   })
 
+  const templates = (await kvStore.get('email-templates', '')).value
+  assert(templates)
+
+  const recoverPasswordEmailTemplateVars: RecoverPasswordEmailTemplateVars = {
+    instanceName: instanceDomain,
+    actionButtonUrl: `${getWebappUrl(SET_NEW_PASSWORD_PATH)}?token=${changePasswordToken}`,
+  }
+  const html = dot.compile(templates['recover-password'])(recoverPasswordEmailTemplateVars)
   shell.call(send)({
     emailObj: {
-      subject: 'recover your password in Moodlenet',
+      subject: 'Ready to change your password 🔑',
       title: 'Ready to change your password 🔑',
       to: email,
-      html: `Follow the link to change your password ${instanceDomain}${SET_NEW_PASSWORD_PATH}?token=${changePasswordToken}`,
+      html,
     },
   })
   return true
+  type RecoverPasswordEmailTemplateVars = Record<'instanceName' | 'actionButtonUrl', string>
 }
 
 export async function sendMessageToWebUser({
@@ -242,6 +282,10 @@ export async function sendMessageToWebUser({
   if (!emailPwdUser) {
     return false
   }
+
+  const templates = (await kvStore.get('email-templates', '')).value
+  assert(templates)
+
   await shell.call(send)({
     emailObj: {
       subject,
