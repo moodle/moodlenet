@@ -7,8 +7,10 @@ export {
   assertRpcFileReadable,
   getCurrentRpcStatusCode,
   getMaybeRpcFileReadable,
+  isRpcNext,
   isRpcStatusType,
   readableRpcFile,
+  RpcNext,
   RpcStatus,
   setRpcStatusCode,
 } from './pkg-expose/lib.mjs'

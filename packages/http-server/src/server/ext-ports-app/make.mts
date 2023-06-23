@@ -3,6 +3,7 @@ import {
   getCurrentRpcStatusCode,
   getMaybeRpcFileReadable,
   instanceDomain,
+  isRpcNext,
   isRpcStatusType,
   readableRpcFile,
 } from '@moodlenet/core'
@@ -48,7 +49,7 @@ export function makeExtPortsApp() {
 
       const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
 
-      pkgApp.all(`/${rpcRoute}`, multerMw, ...getMiddlewares(), async (httpReq, httpResp) => {
+      pkgApp.all(`/${rpcRoute}`, multerMw, ...getMiddlewares(), async (httpReq, httpResp, next) => {
         if (!['get', 'post'].includes(httpReq.method.toLowerCase())) {
           httpResp.status(405).send('unsupported ${req.method} method for rpc')
           return
@@ -96,6 +97,9 @@ export function makeExtPortsApp() {
             }
           })
           .catch(err => {
+            if (isRpcNext(err)) {
+              return next()
+            }
             const { rpcStatusCode, payload } = isRpcStatusType(err)
               ? err
               : {

@@ -96,6 +96,14 @@ export function RpcStatus(status: RpcStatusName | number, payload?: any): RpcSta
   return { rpcStatusCode, payload: payload ?? getRpcStatusName(status) }
 }
 
+const RPCNext = Symbol('RPCNext')
+export function RpcNext() {
+  return RPCNext
+}
+export function isRpcNext(_: any) {
+  return _ === RPCNext
+}
+
 export function getRpcStatusName(status: RpcStatusName | number, defaultName?: string) {
   const mRpcStatusName =
     typeof status === 'string'
