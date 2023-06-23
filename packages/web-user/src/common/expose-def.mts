@@ -1,4 +1,6 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import type { OrganizationData } from '@moodlenet/organization/common'
+import type { AppearanceData } from '@moodlenet/react-app/common'
 import type {
   ClientSessionDataRpc,
   KnownEntityFeature,
@@ -77,5 +79,14 @@ export type WebUserExposeType = PkgExposeDef<{
       },
     ): Promise<ProfileSearchResultRpc>
     'webapp/web-user/delete-account-request'(): Promise<void>
+    'webapp/admin/general/set-org-data'(body: {
+      orgData: OrganizationData
+    }): Promise<{ valid: boolean }>
+    'webapp/admin/general/get-org-data'(): Promise<{ data: OrganizationData }>
+    'webapp/admin/general/get-appearance'(): Promise<{ data: AppearanceData }>
+    'webapp/admin/general/set-appearance'(body: {
+      appearanceData: AppearanceData
+    }): Promise<{ valid: boolean }>
+    'webapp/admin/packages/update-all-pkgs'(): Promise<{ updatePkgs: Record<string, string> }>
   }
 }>

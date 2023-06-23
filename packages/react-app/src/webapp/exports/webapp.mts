@@ -1,6 +1,6 @@
 export * from '../app-routes.js'
 export * from '../context/AdminSettingsContext.js'
-export { OrganizationCtx } from '../context/OrganizationCtx.js'
+export * from '../context/OrganizationCtx.js'
 export { getMyShell } from '../getMyShell.mjs'
 export {
   registerMainAppPluginHook,
