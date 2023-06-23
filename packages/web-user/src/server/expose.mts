@@ -1,6 +1,6 @@
 import { Collection } from '@moodlenet/collection/server'
 import type { PkgExposeDef } from '@moodlenet/core'
-import { npm, RpcStatus } from '@moodlenet/core'
+import { npm, RpcNext, RpcStatus } from '@moodlenet/core'
 import { Resource } from '@moodlenet/ed-resource/server'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
@@ -41,6 +41,7 @@ import {
 } from './lib/web-user.mjs'
 import { shell } from './shell.mjs'
 import type { ProfileDataType } from './types.mjs'
+import { betterTokenContext } from './util.mjs'
 
 export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
   rpc: {
@@ -306,17 +307,27 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         return
       },
     },
-    'webapp/admin/general/get-org-data': {
+    'webapp/react-app/get-org-data': {
       guard: () => void 0,
       fn: getOrgData,
+    },
+    'webapp/react-app/get-appearance': {
+      guard: () => void 0,
+      fn: getAppearance,
+    },
+    'webapp/admin/*': {
+      guard: () => void 0,
+      fn: async () => {
+        const _ = await betterTokenContext()
+        if (!_.isRootOrAdmin) {
+          throw RpcStatus('Unauthorized')
+        }
+        throw RpcNext()
+      },
     },
     'webapp/admin/general/set-org-data': {
       guard: () => void 0,
       fn: setOrgData,
-    },
-    'webapp/admin/general/get-appearance': {
-      guard: () => void 0,
-      fn: getAppearance,
     },
     'webapp/admin/general/set-appearance': {
       guard: () => void 0,
@@ -326,11 +337,13 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: () => npm.updateAll(),
     },
+
   },
 })
 
 type ServiceRpc = PkgExposeDef<{
   rpc: {
+    'webapp/admin/*'(): Promise<never>
     'webapp/web-user/delete-account-request/confirm/:token'(
       body: void,
       params: { token: string },

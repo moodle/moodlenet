@@ -23,7 +23,7 @@ const ProvideAdminSettingsContext: FC<PropsWithChildren> = ({ children }) => {
     await shell.rpc.me['webapp/admin/packages/update-all-pkgs']()
   }, [])
   useEffect(() => {
-    shell.rpc.me['webapp/admin/general/get-appearance']().then(({ data: appearanceData }) =>
+    shell.rpc.me['webapp/react-app/get-appearance']().then(({ data: appearanceData }) =>
       setAppareanceData(appearanceData),
     )
   }, [])
@@ -60,7 +60,7 @@ const ProvideOrganizationContext: FC<PropsWithChildren> = ({ children }) => {
   )
 
   useEffect(() => {
-    shell.rpc.me['webapp/admin/general/get-org-data']().then(
+    shell.rpc.me['webapp/react-app/get-org-data']().then(
       ({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData),
     )
   }, [])

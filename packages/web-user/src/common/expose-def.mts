@@ -82,8 +82,8 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/admin/general/set-org-data'(body: {
       orgData: OrganizationData
     }): Promise<{ valid: boolean }>
-    'webapp/admin/general/get-org-data'(): Promise<{ data: OrganizationData }>
-    'webapp/admin/general/get-appearance'(): Promise<{ data: AppearanceData }>
+    'webapp/react-app/get-org-data'(): Promise<{ data: OrganizationData }>
+    'webapp/react-app/get-appearance'(): Promise<{ data: AppearanceData }>
     'webapp/admin/general/set-appearance'(body: {
       appearanceData: AppearanceData
     }): Promise<{ valid: boolean }>
