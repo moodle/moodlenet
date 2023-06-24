@@ -57,6 +57,7 @@
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
+    "prepublish": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "create-components-index": "vgis src/webapp/exports/ui.mts",
     "create-stories-index": "vgis src/webapp/exports/stories.mts"
@@ -92,5 +93,6 @@
     "./ui": "./dist/webapp/exports/ui.mjs",
     "./stories": "./dist/webapp/exports/stories.mjs",
     "./webapp": "./dist/webapp/exports/webapp.mjs"
-  }
+  },
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }

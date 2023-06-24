@@ -39,6 +39,7 @@
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
+    "prepublish": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "create-ui-index": "vgis src/ui.mts",
     "create-stories-index": "vgis src/stories.mts"
@@ -81,5 +82,6 @@
   "dependencies": {
     "@material-ui/icons": "^4.11.3",
     "lottie-react": "^2.4.0"
-  }
+  },
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }

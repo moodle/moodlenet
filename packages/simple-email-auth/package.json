@@ -68,6 +68,7 @@
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",
     "dev-init": "npm run copy-assets",
+    "prepublish": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "create-components-index": "vgis src/webapp/ui.mts"
   },
@@ -87,5 +88,6 @@
       "ignore": "**/*.*ts*",
       "delay": 300
     }
-  }
+  },
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }
