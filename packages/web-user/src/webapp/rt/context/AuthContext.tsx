@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import type { Profile } from '../../../common/exports.mjs'
 import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../../common/exports.mjs'
 import defaultAvatarUrl from '../../ui/assets/img/default-avatar.svg'
-import rootAvatarUrl from '../../ui/assets/img/root-avatar.png'
+import rootAvatarUrl from '../../ui/assets/img/root-avatar.svg'
 import { shell } from '../shell.mjs'
 
 export type UserDisplay = { name: string; avatarUrl: string }
