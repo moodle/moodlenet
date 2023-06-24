@@ -26,7 +26,7 @@
     "jose": "4.11.4"
   },
   "peerDependencies": {
-    "@moodlenet/core": "0.2.0"
+    "@moodlenet/core": "^0.2.3"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.2.3",

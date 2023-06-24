@@ -46,14 +46,14 @@
     "typescript": "4.7.2"
   },
   "peerDependencies": {
-    "@moodlenet/arangodb": "0.2.0",
-    "@moodlenet/component-library": "0.2.0",
-    "@moodlenet/core": "0.2.0",
-    "@moodlenet/crypto": "0.2.0",
-    "@moodlenet/http-server": "0.2.0",
-    "@moodlenet/react-app": "0.2.0",
-    "@moodlenet/system-entities": "0.2.0",
-    "@moodlenet/web-user": "0.2.0"
+    "@moodlenet/arangodb": "^0.2.3",
+    "@moodlenet/component-library": "^0.2.3",
+    "@moodlenet/core": "^0.2.3",
+    "@moodlenet/crypto": "^0.2.3",
+    "@moodlenet/http-server": "^0.2.3",
+    "@moodlenet/react-app": "^0.2.3",
+    "@moodlenet/system-entities": "^0.2.3",
+    "@moodlenet/web-user": "^0.2.3"
   },
   "scripts": {},
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"

@@ -36,7 +36,7 @@
     "typescript": "4.7.2"
   },
   "peerDependencies": {
-    "@moodlenet/core": "0.2.0"
+    "@moodlenet/core": "^0.2.3"
   },
   "scripts": {},
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"

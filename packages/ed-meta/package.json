@@ -30,11 +30,11 @@
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/component-library": "0.2.0",
-    "@moodlenet/core": "0.2.0",
-    "@moodlenet/key-value-store": "0.2.0",
-    "@moodlenet/react-app": "0.2.0",
-    "@moodlenet/system-entities": "0.2.0"
+    "@moodlenet/component-library": "^0.2.3",
+    "@moodlenet/core": "^0.2.3",
+    "@moodlenet/key-value-store": "^0.2.3",
+    "@moodlenet/react-app": "^0.2.3",
+    "@moodlenet/system-entities": "^0.2.3"
   },
   "devDependencies": {
     "@lingui/macro": "3.14.0",

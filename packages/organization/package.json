@@ -28,11 +28,11 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "peerDependencies": {
-    "@moodlenet/core": "0.2.0"
+    "@moodlenet/core": "^0.2.3"
   },
   "dependencies": {
-    "@moodlenet/key-value-store": "0.2.0",
-    "@moodlenet/simple-file-store": "0.2.0"
+    "@moodlenet/key-value-store": "^0.2.3",
+    "@moodlenet/simple-file-store": "^0.2.3"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.2.3",
