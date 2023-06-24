@@ -1,8 +1,11 @@
 import { DepGraph } from 'dependency-graph'
 
 import assert from 'assert'
+import execa from 'execa'
 import type { PackageJson } from 'type-fest'
 import type { CoreConfigs } from './types.mjs'
+export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES =
+  process.env.MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES === 'true'
 
 type Reboot = () => unknown
 type Shutdown = () => unknown
@@ -54,15 +57,27 @@ export function getCoreConfigs(): CoreConfigs {
 }
 
 async function orderDeps() {
+  const depgraph = MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES
+    ? _ignites.rootPkgLockJson
+    : JSON.parse(
+        (
+          await execa('npm', ['ls', '--all', '--json', '--package-lock-only', '--depth', '1'], {
+            cwd: _ignites.rootDir,
+            stdio: 'ignore',
+          })
+        ).stdout,
+      )
   const pkgjson = _ignites.rootPkgJson
-  const pkglock = _ignites.rootPkgLockJson
   assert(pkgjson.dependencies)
   const deps = Object.keys(pkgjson.dependencies)
+
   deps.forEach(pkgName => {
     pkgDepGraph.addNode(pkgName)
-    const lockDepItem = pkglock.dependencies[pkgName]
+    const lockDepItem = depgraph.dependencies[pkgName]
     assert(lockDepItem)
-    const lockdeps = Object.keys(lockDepItem.requires)
+    const lockdeps = Object.keys(
+      lockDepItem[MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? 'requires' : 'dependencies'],
+    )
     const filteredLockdeps = lockdeps.filter(lockDep => !!deps.find(_ => _ === lockDep))
     filteredLockdeps.forEach(lockdep => {
       pkgDepGraph.hasNode(lockdep) || pkgDepGraph.addNode(lockdep)
