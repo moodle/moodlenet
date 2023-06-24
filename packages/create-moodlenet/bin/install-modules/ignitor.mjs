@@ -1,5 +1,4 @@
 import ignite from '@moodlenet/core/ignite'
-import 'dotenv-expand/config'
 import { readFile } from 'fs/promises'
 import { createRequire } from 'module'
 import { resolve } from 'path'
