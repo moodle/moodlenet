@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/react-app",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "MoodleNet",
   "description": "Frontend interface to interact with the backend",
   "moodlenet": {
@@ -82,12 +82,12 @@
     "@moodlenet/organization": "^0.2.0"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "^0.2.1",
-    "@moodlenet/component-library": "^0.2.1",
-    "@moodlenet/core": "^0.2.1",
-    "@moodlenet/http-server": "^0.2.1",
-    "@moodlenet/key-value-store": "^0.2.1",
-    "@moodlenet/organization": "^0.2.1",
+    "@moodlenet/arangodb": "^0.2.2",
+    "@moodlenet/component-library": "^0.2.2",
+    "@moodlenet/core": "^0.2.2",
+    "@moodlenet/http-server": "^0.2.2",
+    "@moodlenet/key-value-store": "^0.2.2",
+    "@moodlenet/organization": "^0.2.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/jest": "^27.5.1",
     "@types/lodash": "^4.14.182",
