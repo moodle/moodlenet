@@ -1,11 +1,11 @@
 {
   "name": "@moodlenet/http-server",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": ">=16",
-    "npm": ">=8",
+    "node": "16",
+    "npm": "8",
     "yarn": "please-use-npm"
   },
   "exports": {
@@ -29,22 +29,22 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
-    "express": "^4.18.1",
-    "http-graceful-shutdown": "^3.1.7",
-    "multer": "^1.4.5-lts.1",
-    "path-to-regexp": "^6.2.1"
+    "cookie-parser": "1.4.6",
+    "express": "4.18.1",
+    "http-graceful-shutdown": "3.1.7",
+    "multer": "1.4.5-lts.1",
+    "path-to-regexp": "6.2.1"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.2.0"
+    "@moodlenet/core": "0.2.0"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.2.2",
-    "@types/cookie-parser": "^1.4.3",
-    "@types/express": "^4.17.14",
-    "@types/multer": "^1.4.7",
-    "@types/node": "^17.0.35",
-    "typescript": "^4.7.2"
+    "@moodlenet/core": "^0.2.3",
+    "@types/cookie-parser": "1.4.3",
+    "@types/express": "4.17.14",
+    "@types/multer": "1.4.7",
+    "@types/node": "17.0.35",
+    "typescript": "4.7.2"
   },
   "scripts": {},
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"

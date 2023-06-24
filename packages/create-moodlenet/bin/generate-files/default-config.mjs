@@ -1,7 +1,6 @@
-import { execa } from 'execa'
 import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
-import { crypto, devInstallLocalRepoSymlinks, installDir } from '../env.mjs'
+import { crypto, devInstallLocalRepoSymlinks, installDir, npmRegistry } from '../env.mjs'
 
 const config = await defaultConfigJson(installDir)
 const configJsonFilename = resolve(installDir, 'default.config.json')
@@ -9,8 +8,6 @@ await writeFile(configJsonFilename, JSON.stringify(config, null, 2))
 
 async function defaultConfigJson() {
   const { defaultKeyFilenames, alg, type } = crypto
-  const npmRegistry = await getNpmRegistry()
-
   return {
     pkgs: {
       '@moodlenet/core': {
@@ -47,26 +44,11 @@ async function defaultConfigJson() {
         },
       },
       '@moodlenet/system-entities': {
-        rootPassword: 'root',
+        rootPassword: devInstallLocalRepoSymlinks ? 'root' : Math.random().toString(36).slice(2),
       },
       '@moodlenet/react-app': {
         noWebappServer: devInstallLocalRepoSymlinks ? true : undefined,
       },
     },
   }
-}
-
-async function getNpmRegistry() {
-  return (
-    process.env.npm_config_registry ??
-    process.env.NPM_CONFIG_REGISTRY ??
-    (() => {
-      const randomCasedEnvVarName = Object.keys(process.env).find(
-        _ => _.toLowerCase() === 'npm_config_registry',
-      )
-      return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
-    })() ??
-    ((await execa('npm', ['get', 'registry'], { timeout: 10e3 })).stdout ||
-      'https://registry.npmjs.org/')
-  ).replace(/\/$/, '')
 }

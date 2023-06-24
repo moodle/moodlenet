@@ -1,3 +1,4 @@
+import { execa } from 'execa'
 import { mkdir, readFile } from 'fs/promises'
 import { basename, dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
@@ -49,3 +50,19 @@ export const configJsonFilename = resolve(installDir, 'default.config.json')
 console.log(`
 installing Moodlenet${myPkgJson.version} in directory:\`${installDir}\`
 `)
+export const npmRegistry = await getNpmRegistry()
+
+async function getNpmRegistry() {
+  return (
+    process.env.npm_config_registry ??
+    process.env.NPM_CONFIG_REGISTRY ??
+    (() => {
+      const randomCasedEnvVarName = Object.keys(process.env).find(
+        _ => _.toLowerCase() === 'npm_config_registry',
+      )
+      return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
+    })() ??
+    ((await execa('npm', ['get', 'registry'], { timeout: 10e3 })).stdout ||
+      'https://registry.npmjs.org/')
+  ).replace(/\/$/, '')
+}

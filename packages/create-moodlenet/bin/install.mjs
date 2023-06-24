@@ -1,12 +1,7 @@
 #!/usr/bin/env node
 
 import { execa } from 'execa'
-import {
-  configJsonFilename,
-  crypto,
-  installDir,
-  myPkgJson /* devInstallLocalRepoSymlinks */,
-} from './env.mjs'
+import { configJsonFilename, crypto, installDir, myPkgJson } from './env.mjs'
 import './generate-files/main.mjs'
 
 console.log(`
