@@ -32,7 +32,7 @@ function reducer(
   return [...keepList, ...list]
 }
 export const SearchCollectionContext = createContext<SearchCollectionContextT>(null as any)
-export const ProvideSearchCollectionContext: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideSearchCollectionContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [collectionList, collectionListAction] = useReducer(reducer, [])
   const [collectionSearchResult, setCollectionSearchResult] = useState<CollectionSearchResultRpc>()
   const { q } = useContext(MainSearchBoxCtx)

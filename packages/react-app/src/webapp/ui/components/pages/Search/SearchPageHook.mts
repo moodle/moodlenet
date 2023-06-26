@@ -8,7 +8,7 @@ import type { SearchProps } from './Search.js'
 // import { MainSearchBoxCtx } from '../../atoms/MainSearchBox/MainSearchBox.js'
 
 export type SearchEntitySectionAddon = Omit<MainColumItem, 'key'>
-export type SearchEntityPageWrapper = { Wrapper: ComponentType<PropsWithChildren> }
+export type SearchEntityPageWrapper = { Wrapper: ComponentType<PropsWithChildren<unknown>> }
 export const SearchPagePlugin = createHookPlugin<{
   searchEntitySections: SearchEntitySectionAddon
   wrappers: SearchEntityPageWrapper

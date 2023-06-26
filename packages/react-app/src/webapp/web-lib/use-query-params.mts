@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 export function useUrlQueryString<PNames extends string>(
@@ -18,23 +18,25 @@ export function useUrlQueryString<PNames extends string>(
 
   const [strictParams, setStrictParams] = useState<Params<PNames>>(makeParams)
 
+  const currentQRef = useRef(q)
+  currentQRef.current = q
   const setParams = useCallback<Handle<PNames>[1]>(
     params => {
-      setQ(curr => {
-        const current = [...curr.keys()].reduce((acc, key) => {
-          acc[key] = curr.getAll(key)
-          return acc
-        }, {} as Record<string, string[]>)
-        const prefixedParams = Object.entries(params).reduce((acc, [key, val]) => {
-          typeof val === 'string' && (acc[`${prefix}${key}`] = val)
-          return acc
-        }, {} as Record<string, string>)
+      const current = [...currentQRef.current.keys()].reduce((acc, key) => {
+        acc[key] = currentQRef.current.getAll(key)
+        return acc
+      }, {} as Record<string, string[]>)
+      const prefixedParams = Object.entries(params).reduce((acc, [key, val]) => {
+        typeof val === 'string' && (acc[`${prefix}${key}`] = val)
+        return acc
+      }, {} as Record<string, string>)
 
-        return {
-          ...current,
-          ...prefixedParams,
-        }
-      })
+      const nextQ = {
+        ...current,
+        ...prefixedParams,
+      }
+
+      setQ(nextQ)
     },
     [setQ, prefix],
   )

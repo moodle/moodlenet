@@ -38,7 +38,7 @@ export type AuthCtxT = {
     }
 )
 
-export const AuthCtxProvider: FC<PropsWithChildren> = ({ children }) => {
+export const AuthCtxProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const authCtx = useAuthCtxValue()
   return authCtx && <AuthCtx.Provider value={authCtx}>{children}</AuthCtx.Provider>
 }

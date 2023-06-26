@@ -7,7 +7,7 @@ import type { FC, PropsWithChildren } from 'react'
 // HACK: it seems '@storybook/addon-links/react.js' typings are not accurate
 const SBLinkTo = LinkTo as any as FC<PropsWithChildren<Record<string, unknown>>>
 
-export const ProvideStorybookLinkComponent: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideStorybookLinkComponent: FC<PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <LinkComponentCtx.Provider value={{ LinkComp: StorybookLinkComponent }}>
       {/* <X>{children}</X> */}

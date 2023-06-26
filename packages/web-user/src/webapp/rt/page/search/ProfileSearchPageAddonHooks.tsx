@@ -27,7 +27,7 @@ function reducer(prev: ProfileListItem[], [action, list]: ['set' | 'more', Profi
   return [...keepList, ...list]
 }
 export const SearchProfileContext = createContext<SearchProfileContextT>(null as any)
-export const ProvideSearchProfileContext: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [profileList, profileListAction] = useReducer(reducer, [])
   const [profileSearchResult, setProfileSearchResult] = useState<ProfileSearchResultRpc>()
   const { q } = useContext(MainSearchBoxCtx)

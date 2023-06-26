@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useUrlQueryString } from '../../../../web-lib/use-query-params.mjs'
 import { ProvideMainSearchBoxCtx } from './MainSearchBox.js'
 
-export const MainSearchBoxCtxProviderContainer: FC<PropsWithChildren> = ({ children }) => {
+export const MainSearchBoxCtxProviderContainer: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const nav = useNavigate()
   const loc = useLocation()
   const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['q'])

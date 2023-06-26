@@ -2,7 +2,7 @@ import type { PkgIdentifier } from '@moodlenet/core'
 import type { ComponentType, FC, PropsWithChildren } from 'react'
 import { getCurrentInitPkg } from './plugin-initializer.mjs'
 
-export type MainAppPluginWrapper = ComponentType<PropsWithChildren>
+export type MainAppPluginWrapper = ComponentType<PropsWithChildren<unknown>>
 export type MainAppPluginHookResult = { MainWrapper?: MainAppPluginWrapper }
 export type MainAppPluginHook = () => void | MainAppPluginHookResult
 
@@ -16,7 +16,7 @@ export function registerMainAppPluginHook(mainAppPluginHook: MainAppPluginHook) 
   mainAppPluginPlugins.push({ mainAppPluginHook, pkgId })
 }
 
-export const MainApp: FC<PropsWithChildren> = ({ children }) => {
+export const MainApp: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const Main = mainAppPluginPlugins.reduceRight((_children, { pkgId, mainAppPluginHook }) => {
     const { MainWrapper } = mainAppPluginHook() ?? {}
 

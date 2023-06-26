@@ -29,7 +29,7 @@ function reducer(prev: SubjectListItem[], [action, list]: ['set' | 'more', Subje
   return [...keepList, ...list]
 }
 export const SearchSubjectContext = createContext<SearchSubjectContextT>(null as any)
-export const ProvideSearchSubjectContext: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [subjectList, subjectListAction] = useReducer(reducer, [])
   const [subjectSearchResult, setSubjectSearchResult] = useState<SubjectSearchResultRpc>()
   const { q } = useContext(MainSearchBoxCtx)

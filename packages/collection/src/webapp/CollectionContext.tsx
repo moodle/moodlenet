@@ -29,7 +29,7 @@ export function useCollectionContextValue() {
   return collectionContext
 }
 
-export const CollectionContextProvider: FC<PropsWithChildren> = ({ children }) => {
+export const CollectionContextProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const collectionContext = useCollectionContextValue()
   return (
     <CollectionContext.Provider value={collectionContext}>{children}</CollectionContext.Provider>

@@ -26,6 +26,6 @@ export function useEdMetaCtxValue() {
   return ctx
 }
 
-export const ProvideEdMetaContext: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideEdMetaContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   return <EdMetaContext.Provider value={useEdMetaCtxValue()}>{children}</EdMetaContext.Provider>
 }
