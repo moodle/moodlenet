@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
 import Card from '../Card/Card.js'
 import './Modal.scss'
 
-class Portal extends React.Component<PropsWithChildren> {
+class Portal extends React.Component<PropsWithChildren<unknown>> {
   static el = (() => {
     const _el = document.createElement('div')
     _el.setAttribute('class', 'modal-portal')
