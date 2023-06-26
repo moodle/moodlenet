@@ -180,7 +180,7 @@ export async function getEntityFeatureCount({
   const bindVars = { '@collection': Profile.collection.name, needle }
   const query = `
   FOR profile IN @@collection
-  FILTER POSITION(profile.knownFeaturedEntities,@needle)
+  FILTER profile.publisher && POSITION(profile.knownFeaturedEntities,@needle)
   COLLECT WITH COUNT INTO count
   RETURN { count } 
   `
