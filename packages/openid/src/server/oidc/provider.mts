@@ -2,8 +2,12 @@ import { getPkgScopes, instanceDomain } from '@moodlenet/core'
 import { jwk } from '@moodlenet/crypto/server'
 import { getProfileRecord } from '@moodlenet/web-user/server'
 import type { Account, Configuration } from 'oidc-provider'
-import Provider from 'oidc-provider'
+import _Provider from 'oidc-provider'
 import { ArangoAdapter } from './arango-adapter.mjs'
+
+//HACK seems some `oidc-provider` typings are incorrect
+const Provider = _Provider as any as typeof _Provider.default
+
 export const ___DEV_INTERACTIONS_ENABLED = false
 
 export const providerConfig = await getProviderConfig()
