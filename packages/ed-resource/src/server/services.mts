@@ -242,3 +242,19 @@ export async function searchResources({
     endCursor: list.length < limit ? undefined : String(skip + list.length),
   }
 }
+
+export async function getResourcesCountInSubject({ subjectKey }: { subjectKey: string }) {
+  const bindVars = { '@collection': Resource.collection.name, subjectKey }
+  const query = `
+  FOR resource IN @@collection
+  FILTER resource.published && resource.subject==@subjectKey
+  COLLECT WITH COUNT INTO count
+  RETURN { count } 
+  `
+  const cursor = await sysEntitiesDB.query<{ count: number }>({
+    query,
+    bindVars,
+  })
+
+  return cursor.next()
+}

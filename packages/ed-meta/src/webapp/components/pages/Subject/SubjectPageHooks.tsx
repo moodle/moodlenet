@@ -10,7 +10,7 @@ export type SubjectPageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 export const SubjectPagePlugins = createPlugin<
   {
     mainColumnItems?: AddOnMap<AddonItemNoKey>
-    overallItems?: AddOnMap<SubjectOverallProps>
+    overallItems?: AddOnMap<Omit<SubjectOverallProps, 'key'>>
     main_footerRowItems?: AddOnMap<AddonItemNoKey>
     main_headerItems?: AddOnMap<AddonItemNoKey>
     main_mainColumnItems?: AddOnMap<AddonItemNoKey>
