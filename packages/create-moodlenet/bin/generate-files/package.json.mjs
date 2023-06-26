@@ -21,7 +21,7 @@ async function freshInstallPkgJson() {
       const fullPkgName = `@moodlenet/${pkgName}`
       const version = devInstallLocalRepoSymlinks
         ? `file:${resolve(myPkgDir, '..', pkgName)}`
-        : (await execa('npm', ['view', fullPkgName, 'dist-tags.latest'])).stdout
+        : (await execa('npx', ['-y', 'npm@8', 'view', fullPkgName, 'dist-tags.latest'])).stdout
       return {
         fullPkgName,
         version,
