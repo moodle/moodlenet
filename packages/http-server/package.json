@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/http-server",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
@@ -36,10 +36,10 @@
     "path-to-regexp": "6.2.1"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.2.3"
+    "@moodlenet/core": "^0.2.5"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.2.4",
+    "@moodlenet/core": "^0.2.5",
     "@types/cookie-parser": "1.4.3",
     "@types/express": "4.17.14",
     "@types/multer": "1.4.7",
