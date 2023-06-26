@@ -21,10 +21,24 @@ import {
   toaql,
 } from '@moodlenet/system-entities/server'
 import type { SortTypeRpc } from '../common/types.mjs'
+import { canPublish } from './aql.mjs'
 import { publicFiles } from './init/fs.mjs'
 import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { CollectionDataType, CollectionEntityDoc } from './types.mjs'
+
+export async function setPublished(key: string, published: boolean) {
+  const patchResult = await shell.call(patchEntity)(
+    Collection.entityClass,
+    key,
+    { published },
+    published ? { preAccessBody: `FILTER ${canPublish()}` } : {},
+  )
+  if (!patchResult) {
+    return
+  }
+  return patchResult
+}
 
 export async function createCollection(collectionData: Partial<CollectionDataType>) {
   const newCollection = await shell.call(create)(Collection.entityClass, {

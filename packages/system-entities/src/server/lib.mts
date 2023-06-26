@@ -178,25 +178,30 @@ export async function create<EntityDataType extends SomeEntityDataType>(
   SysEntitiesEvents.emit('created-new', { newEntity, creator: currentUser })
   return newEntity
 }
-export async function patchEntity<EntityDataType extends SomeEntityDataType>(
+
+export type PatchEntityOpts<
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = AccessEntitiesOpts<Project, ProjectAccess>
+export async function patchEntity<
+  EntityDataType extends SomeEntityDataType,
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+>(
   entityClass: EntityClass<EntityDataType>,
   key: string,
   entityDataPatch: Patch<EntityDataType> | AqlVal<Patch<EntityDataType>>,
-  opts?: {
-    bindVars?: BindVars
-    meta?: AqlVal
-    projectAccess?: EntityAccess[]
-  },
+  opts?: PatchEntityOpts<Project, ProjectAccess>,
 ) {
   const isAqlEntityDataPatch = typeof entityDataPatch === 'string'
-  const aqlPatchVar = isAqlEntityDataPatch ? entityDataPatch : '@patchBindVar'
-  const patchBindVar = isAqlEntityDataPatch ? undefined : entityDataPatch
+  const aqlPatchVar = isAqlEntityDataPatch ? entityDataPatch : toaql(entityDataPatch)
   const patchCursor = await accessEntities(entityClass, 'u', {
-    preAccessBody: `FILTER entity._key == @key LIMIT 1`,
-    postAccessBody: `UPDATE entity WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
-    bindVars: { ...opts?.bindVars, key, patchBindVar },
+    ...opts,
+    preAccessBody: `${opts?.preAccessBody ?? ''} 
+    FILTER entity._key == "${key}" LIMIT 1`,
+    postAccessBody: `${opts?.postAccessBody ?? ''} 
+    UPDATE entity WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
     project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
-    projectAccess: opts?.projectAccess,
   })
   const patchRecord = await patchCursor.next()
   return patchRecord
@@ -258,7 +263,7 @@ export async function delEntity<EntityDataType extends SomeEntityDataType>(
 export type GetEntityOpts<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
-> = Pick<AccessEntitiesOpts<Project, ProjectAccess>, 'project' | 'projectAccess'>
+> = AccessEntitiesOpts<Project, ProjectAccess>
 export async function getEntity<
   EntityDataType extends SomeEntityDataType,
   Project extends AccessEntitiesCustomProject<any>,
@@ -541,15 +546,17 @@ ${projectAqlRawProps}
 
   const bindVars = { '@collection': accessCollectionName, currentUser, ...opts?.bindVars }
   // shell.log('debug', q, JSON.stringify({ bindVars }, null, 2))
+  // console.debug(q)
+  // console.debug(JSON.stringify({ bindVars }))
+
   const queryCursor = await db
     .query<AccessEntitiesRecordType<EntityDataType, Project, ProjectAccess>>(q, bindVars, {
       retryOnConflict: 5,
     })
     .catch(e => {
       shell.log('error', e)
-      // shell.log('debug', q)
-      // shell.log('debug', JSON.stringify({ bindVars }))
-      //
+      shell.log('debug', q)
+      shell.log('debug', JSON.stringify({ bindVars }))
       throw e
     })
 
