@@ -7,7 +7,7 @@ export type Organization = {
   color: string
 }
 
-export type AddonItem<P = PropsWithChildren> = {
+export type AddonItem<P = PropsWithChildren<unknown>> = {
   Item: ComponentType<P>
   key: string | number
 }
