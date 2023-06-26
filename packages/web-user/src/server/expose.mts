@@ -133,7 +133,9 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         const profileGetRpc: ProfileGetRpc = {
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
-          numFollowers: profileRecord.entity.popularity?.items.followers?.value ?? 0,
+          numFollowers:
+            (await getEntityFeatureCount({ _key, entityType: 'profile', feature: 'follow' }))
+              ?.count ?? 0,
           numKudos: profileRecord.entity.kudos,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
