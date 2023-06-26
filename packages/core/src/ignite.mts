@@ -66,7 +66,6 @@ async function orderDeps() {
             ['-y', 'npm@8', 'ls', '--all', '--json', '--package-lock-only', '--depth', '1'],
             {
               cwd: _ignites.rootDir,
-              stdio: 'ignore',
             },
           )
         ).stdout,
