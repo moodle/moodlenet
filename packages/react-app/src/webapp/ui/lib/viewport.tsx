@@ -13,7 +13,7 @@ type Viewport = {
     small: boolean
   }
 }
-export const ProvideViewport: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideViewport: FC<PropsWithChildren<unknown>> = ({ children }) => {
   return <ViewportCtx.Provider value={useViewportValue()}>{children}</ViewportCtx.Provider>
 }
 

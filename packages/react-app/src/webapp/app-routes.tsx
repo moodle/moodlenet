@@ -20,7 +20,7 @@ export function registerAppRoutes(pkgRoutes: PkgRoutes) {
 const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/" index element={<LandingContainer />} />
+      <Route index element={<LandingContainer />} />
       <Route path="search" element={<SearchPageRoute />} />
       <Route path="admin" element={<AdminSettingsPageRoute />} />
 

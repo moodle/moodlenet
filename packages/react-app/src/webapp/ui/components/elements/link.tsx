@@ -66,6 +66,6 @@ export type LinkComponentCtxType = { LinkComp: LinkComponentType }
 export const LinkComponentCtx = createContext<LinkComponentCtxType>(null as any)
 
 const ctxValue: LinkComponentCtxType = { LinkComp: ReactRouterLinkComponent }
-export const ProvideLinkComponentCtx: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideLinkComponentCtx: FC<PropsWithChildren<unknown>> = ({ children }) => {
   return <LinkComponentCtx.Provider value={ctxValue}>{children}</LinkComponentCtx.Provider>
 }

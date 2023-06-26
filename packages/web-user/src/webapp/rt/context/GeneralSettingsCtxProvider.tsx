@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { shell } from '../shell.mjs'
 // import lib from '../../../../main-lib'
 
-const ProvideAdminSettingsContext: FC<PropsWithChildren> = ({ children }) => {
+const ProvideAdminSettingsContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(async (newAppearanceData: AppearanceData) => {
@@ -47,7 +47,7 @@ const EmptyOrganizationData = {
   smallLogo: '',
   logo: '',
 }
-const ProvideOrganizationContext: FC<PropsWithChildren> = ({ children }) => {
+const ProvideOrganizationContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [organizationData, setDataOrg] = useState<OrganizationData>(EmptyOrganizationData)
 
   const saveOrganization = useCallback(

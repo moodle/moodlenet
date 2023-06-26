@@ -29,7 +29,7 @@ export function useResourceContextValue() {
   return resourceContext
 }
 
-export const ProvideResourceContext: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideResourceContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const resourceContext = useResourceContextValue()
   return <ResourceContext.Provider value={resourceContext}>{children}</ResourceContext.Provider>
 }

@@ -16,7 +16,7 @@ export function useMyProfileContext() {
   return useContext(MyProfileContext)
 }
 
-export const MyProfileContextProvider: FC<PropsWithChildren> = ({ children }) => {
+export const MyProfileContextProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const myProfileContext = useMyProfileContextValue()
   return <MyProfileContext.Provider value={myProfileContext}>{children}</MyProfileContext.Provider>
 }

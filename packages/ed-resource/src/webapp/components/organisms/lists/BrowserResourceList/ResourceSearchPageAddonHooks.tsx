@@ -29,7 +29,7 @@ function reducer(prev: ResourceListItem[], [action, list]: ['set' | 'more', Reso
   return [...keepList, ...list]
 }
 export const SearchResourceContext = createContext<SearchResourceContextT>(null as any)
-export const ProvideSearchResourceContext: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [resourceList, resourceListAction] = useReducer(reducer, [])
   const [resourceSearchResult, setResourceSearchResult] = useState<ResourceSearchResultRpc>()
   const { q } = useContext(MainSearchBoxCtx)
