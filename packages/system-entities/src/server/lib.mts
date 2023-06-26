@@ -400,7 +400,10 @@ export async function searchEntities<
   givenSearchTerm = givenSearchTerm.trim()
   const PERFORM_SEARCH_ANALIZERS = fields.length && givenSearchTerm
   if (!PERFORM_SEARCH_ANALIZERS) {
-    return queryEntities(entityClass, _opts)
+    const postAccessBody = `
+    let rank = 1
+    ${_opts?.postAccessBody ?? ''}`
+    return queryEntities(entityClass, { ..._opts, postAccessBody })
   }
   const searchTermAql = toaql(givenSearchTerm)
   const allSearchstatements = fields

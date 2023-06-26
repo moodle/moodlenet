@@ -26,6 +26,7 @@ export type ProfileGetRpc = {
   profileHref: Href
   profileUrl: string
   numFollowers: number
+  numKudos: number
   ownKnownEntities: {
     resources: { _key: string }[]
     collections: { _key: string }[]
