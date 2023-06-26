@@ -40,5 +40,9 @@ export type ResourceExposeType = PkgExposeDef<{
         limit?: number
       },
     ): Promise<ResourceSearchResultRpc>
+    'webapp/get-resources-count-in-subject/:subjectKey'(
+      body: null,
+      params: { subjectKey: string },
+    ): Promise<{ count: number }>
   }
 }>

@@ -11,8 +11,8 @@ import type { SubjectCardOverallProps, SubjectCardProps } from './SubjectCard.js
 
 export const SubjectCardPlugins = createPlugin<
   {
-    mainColumnItems: AddOnMap<AddonItemNoKey>
-    overallItems: AddOnMap<SubjectCardOverallProps>
+    mainColumnItems?: AddOnMap<AddonItemNoKey>
+    overallItems?: AddOnMap<Omit<SubjectCardOverallProps, 'key'>>
   },
   { subjectKey: string }
 >()

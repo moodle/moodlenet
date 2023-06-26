@@ -26,6 +26,7 @@ import {
   getResource,
   getResourceFileUrl,
   getResourceLogicalFilename,
+  getResourcesCountInSubject,
   incrementResourceDownloads,
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
@@ -250,6 +251,13 @@ export const expose = await shell.expose<FullResourceExposeType>({
         fields: {
           '.content': 1,
         },
+      },
+    },
+    'webapp/get-resources-count-in-subject/:subjectKey': {
+      guard: () => void 0,
+      async fn(_, { subjectKey }) {
+        const count = await getResourcesCountInSubject({ subjectKey })
+        return count ?? { count: 0 }
       },
     },
     [RESOURCE_DOWNLOAD_ENDPOINT]: {
