@@ -30,6 +30,7 @@ import {
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
   searchResources,
+  setPublished,
   setResourceContent,
   setResourceImage,
 } from './services.mjs'
@@ -41,9 +42,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
       fn: async ({ publish }, { _key }) => {
-        const patchResult = await patchResource(_key, { published: publish })
+        const patchResult = await setPublished(_key, publish)
         if (!patchResult) {
-          return //throw ?
+          return
         }
         return
       },

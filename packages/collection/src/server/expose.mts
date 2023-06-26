@@ -26,6 +26,7 @@ import {
   patchCollection,
   searchCollections,
   setCollectionImage,
+  setPublished,
   updateCollectionContent,
 } from './services.mjs'
 
@@ -90,7 +91,7 @@ export const expose = await shell.expose<CollectionExposeType>({
     'webapp/set-is-published/:_key': {
       guard: () => void 0,
       async fn({ publish }, { _key }) {
-        const patchResult = await patchCollection(_key, { published: publish })
+        const patchResult = await setPublished(_key, publish)
         if (!patchResult) {
           return //throw ?
         }
