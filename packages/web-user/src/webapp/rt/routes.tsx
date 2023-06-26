@@ -21,8 +21,8 @@ export const pkgRoutes: PkgRoutes = {
   routes: (
     <>
       <Route path={SETTINGS_PAGE_ROUTE_PATH} element={<UserSettingsRoute />} />
-      <Route path={BOOKMARKS_PAGE_ROUTE_PATH} index element={<BookmarksPageContainer />} />
-      <Route path={FOLLOWING_PAGE_ROUTE_PATH} index element={<FollowingPageContainer />} />
+      <Route path={BOOKMARKS_PAGE_ROUTE_PATH} element={<BookmarksPageContainer />} />
+      <Route path={FOLLOWING_PAGE_ROUTE_PATH} element={<FollowingPageContainer />} />
       <Route path={LOGIN_PAGE_ROUTE_BASE_PATH}>
         <Route index element={<LoginPanelContainer />} />
         <Route path={LOGIN_ROOT_PAGE_ROUTE_SUB_PATH} element={<RootLoginContainer />} />

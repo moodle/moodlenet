@@ -80,7 +80,7 @@ shell.call(mountApp)({
         }
         if (details.missingResourceScopes) {
           for (const [indicator, scopes] of Object.entries(details.missingResourceScopes)) {
-            grant.addResourceScope(indicator, scopes.join(' '))
+            grant.addResourceScope(indicator, [scopes].flat().join(' '))
           }
         }
 

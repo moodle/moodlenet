@@ -79,7 +79,7 @@ const ProvideOrganizationContext: FC<PropsWithChildren<unknown>> = ({ children }
   } */
 }
 
-export function GeneralSettingsCtxProvider({ children }: PropsWithChildren) {
+export function GeneralSettingsCtxProvider({ children }: PropsWithChildren<unknown>) {
   return (
     <ProvideOrganizationContext>
       <ProvideAdminSettingsContext>{children}</ProvideAdminSettingsContext>
