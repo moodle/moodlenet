@@ -134,6 +134,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
           numFollowers: profileRecord.entity.popularity?.items.followers?.value ?? 0,
+          numKudos: profileRecord.entity.kudos,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
           data,
@@ -337,7 +338,6 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: () => npm.updateAll(),
     },
-
   },
 })
 

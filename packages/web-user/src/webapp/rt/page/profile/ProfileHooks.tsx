@@ -1,8 +1,8 @@
+import { FilterNone, Grade, PermIdentity } from '@material-ui/icons'
 import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
-import { href } from '@moodlenet/react-app/common'
 import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
@@ -10,7 +10,6 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { profileFormValidationSchema } from '../../../../common/profile/data.mjs'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
-import { getFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
@@ -98,12 +97,12 @@ export const useProfileProps = ({
 
     const props: ProfileProps = {
       mainLayoutProps,
-      followersHref: href(
-        getFollowersRoutePath({
-          key: profileKey,
-          displayName: profileGetRpc.data.displayName,
-        }),
-      ),
+      // followersHref: href(
+      //   getFollowersRoutePath({
+      //     key: profileKey,
+      //     displayName: profileGetRpc.data.displayName,
+      //   }),
+      // ),
       access: {
         canEdit: profileGetRpc.canEdit,
         isAdmin,
@@ -159,7 +158,17 @@ export const useProfileProps = ({
       collectionCardPropsList,
       mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
       sideColumnItems: plugins.getKeyedAddons('sideColumnItems'),
-      overallCardItems: plugins.getKeyedAddons('overallCardItems'),
+      overallCardItems: [
+        { Icon: PermIdentity, name: 'Followers', value: profileGetRpc.numFollowers },
+        { Icon: Grade, name: 'Kudos', value: profileGetRpc.numKudos },
+        {
+          Icon: FilterNone,
+          name: 'Resources',
+          value: profileGetRpc.ownKnownEntities.resources.length,
+        },
+
+        ...plugins.getKeyedAddons('overallCardItems'),
+      ],
       profileForm: profileGetRpc.data,
       // state: {
       //   followed: false,
