@@ -1,14 +1,14 @@
-import execa from 'execa'
+import { execa } from 'execa'
+import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import {
-  myModuleDir,
-  installationName,
-  myPkgJson,
-  devInstallLocalRepoSymlinks,
   defaultCorePackages,
+  devInstallLocalRepoSymlinks,
+  installationName,
   installDir,
-} from './env.mjs'
-import { writeFile } from 'fs/promises'
+  myPkgDir,
+  myPkgJson,
+} from '../env.mjs'
 
 const installPkgJson = await freshInstallPkgJson()
 await writeFile(resolve(installDir, 'package.json'), JSON.stringify(installPkgJson, null, 2), {
@@ -20,8 +20,10 @@ async function freshInstallPkgJson() {
     defaultCorePackages.map(async pkgName => {
       const fullPkgName = `@moodlenet/${pkgName}`
       const version = devInstallLocalRepoSymlinks
-        ? `file:${resolve(myModuleDir, '..', '..', pkgName)}`
-        : (await execa('npm', ['view', fullPkgName, 'dist-tags.latest'])).stdout
+        ? `file:${resolve(myPkgDir, '..', pkgName)}`
+        : `^${(await execa('npx', ['-y', 'npm@8', 'view', fullPkgName, 'dist-tags.latest'])).stdout
+        }`
+
       return {
         fullPkgName,
         version,
@@ -39,14 +41,10 @@ async function freshInstallPkgJson() {
   return {
     name: installationName,
     version: '1',
-    installTimeVersion: myPkgJson.version,
+    creatorVersion: myPkgJson.version,
     scripts: {
       start: `node start.mjs`,
     },
     dependencies,
-    devDependencies: {
-      'dotenv': '^16.0.3',
-      'dotenv-expand': '^10.0.0',
-    },
   }
 }

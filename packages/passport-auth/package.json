@@ -1,15 +1,16 @@
 {
   "name": "@moodlenet/passport-auth",
-  "version": "0.2.0",
+  "version": "0.2.5",
   "license": "AGPL-3.0",
+  "private": true,
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Passport Auth"
   },
   "type": "module",
   "engines": {
-    "node": ">=16",
-    "npm": ">=8",
+    "node": "16",
+    "npm": "8",
     "yarn": "please-use-npm"
   },
   "keywords": [
@@ -30,32 +31,33 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "passport": "^0.6.0",
-    "passport-google-oauth20": "^2.0.0",
-    "formik": "^2.2.9",
-    "yup": "^0.32.11"
+    "formik": "2.2.9",
+    "passport": "0.6.0",
+    "passport-google-oauth20": "2.0.0",
+    "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/component-library": "^0.2.0",
-    "@moodlenet/core": "^0.2.0",
-    "@moodlenet/http-server": "^0.2.0",
-    "@moodlenet/react-app": "^0.2.0"
+    "@moodlenet/component-library": "^0.2.5",
+    "@moodlenet/core": "^0.2.5",
+    "@moodlenet/http-server": "^0.2.5",
+    "@moodlenet/react-app": "^0.2.5"
   },
   "devDependencies": {
-    "@moodlenet/component-library": "^0.2.0",
-    "@moodlenet/core": "^0.2.0",
-    "@moodlenet/http-server": "^0.2.0",
-    "@moodlenet/react-app": "^0.2.0",
-    "@types/node": "^17.0.35",
-    "@types/passport": "^1.0.9",
-    "@types/passport-google-oauth20": "^2.0.11",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.5",
-    "react-dom": "^18.1.0",
-    "react-router-dom": "^6.3.0",
-    "typescript": "^4.7.2"
+    "@moodlenet/component-library": "^0.2.5",
+    "@moodlenet/core": "^0.2.5",
+    "@moodlenet/http-server": "^0.2.5",
+    "@moodlenet/react-app": "^0.2.5",
+    "@types/node": "17.0.35",
+    "@types/passport": "1.0.9",
+    "@types/passport-google-oauth20": "2.0.11",
+    "@types/react": "18.0.9",
+    "@types/react-dom": "18.0.5",
+    "react-dom": "18.1.0",
+    "react-router-dom": "6.3.0",
+    "typescript": "4.7.2"
   },
   "scripts": {
     "buildx": "tsc --build"
-  }
+  },
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }

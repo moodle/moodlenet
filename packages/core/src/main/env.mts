@@ -2,10 +2,13 @@ import { writeFile } from 'fs/promises'
 
 import { resolve } from 'path'
 import type { PackageJson } from 'type-fest'
-import { getCoreConfigs, getIgnites } from '../ignite.mjs'
+import {
+  getCoreConfigs,
+  getIgnites,
+  MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES as _MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES,
+} from '../ignite.mjs'
 
-export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES =
-  process.env.MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES === 'true'
+export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES = _MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES
 
 export const ignites = getIgnites()
 

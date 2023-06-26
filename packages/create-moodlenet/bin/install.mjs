@@ -1,18 +1,13 @@
 #!/usr/bin/env node
 
-import execa from 'execa'
-import { cp } from 'fs/promises'
-import { resolve } from 'path'
-import { installDir, myPkgJson /* devInstallLocalRepoSymlinks */ } from './env.mjs'
-import './package.json.mjs'
+import { execa } from 'execa'
+import { configJsonFilename, crypto, installDir, myPkgJson } from './env.mjs'
+import './generate-files/main.mjs'
 
 console.log(`
 installing moodlenet@${myPkgJson.version} core packages in ${installDir}
 may take some time...
 `)
-
-await cp(resolve('bin', 'install-modules', 'start.mjs'), resolve(installDir, 'start.mjs'))
-await cp(resolve('bin', 'install-modules', 'ignitor.mjs'), resolve(installDir, 'ignitor.mjs'))
 
 await execa('npx', ['-y', 'npm@8', 'install'], {
   cwd: installDir,
@@ -21,5 +16,17 @@ await execa('npx', ['-y', 'npm@8', 'install'], {
   console.error(`install error`, err)
   process.exit(1)
 })
+
+console.log(`
+installed Moodlenet${myPkgJson.version} in directory:\`${installDir}\`
+
+generated crypto-keys files 
+  private:\`${crypto.defaultKeyFilenames.private}\` 
+  public:\`${crypto.defaultKeyFilenames.public}\`
+
+system config-file:\`${configJsonFilename}\`
+
+have fun with moodlenet!
+`)
 
 process.exit(0)

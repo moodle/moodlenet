@@ -1,11 +1,11 @@
 {
   "name": "@moodlenet/core",
-  "version": "0.2.0",
+  "version": "0.2.5",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": ">=16",
-    "npm": ">=8",
+    "node": "16",
+    "npm": "8",
     "yarn": "please-use-npm"
   },
   "moodlenet": {
@@ -28,21 +28,22 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "dependency-graph": "^0.11.0",
-    "execa": "^5.1.1",
-    "npm-check-updates": "^16.3.18",
-    "pkg-dir": "^7.0.0",
-    "rimraf": "^3.0.2",
-    "semver": "^7.3.6",
-    "winston": "^3.9.0",
-    "winston-daily-rotate-file": "^4.7.1",
-    "yargs": "^17.5.1"
+    "dependency-graph": "0.11.0",
+    "execa": "5.1.1",
+    "npm-check-updates": "16.3.18",
+    "pkg-dir": "7.0.0",
+    "rimraf": "3.0.2",
+    "semver": "7.3.6",
+    "winston": "3.9.0",
+    "winston-daily-rotate-file": "4.7.1",
+    "yargs": "17.5.1"
   },
   "devDependencies": {
-    "@types/node": "^17.0.35",
-    "@types/semver": "^7.3.9",
-    "@types/yargs": "^17.0.10",
-    "typescript": "^4.7.2"
+    "@types/node": "17.0.35",
+    "@types/semver": "7.3.9",
+    "@types/yargs": "17.0.10",
+    "typescript": "4.7.2"
   },
-  "scripts": {}
+  "scripts": {},
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }

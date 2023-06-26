@@ -1,11 +1,11 @@
 {
   "name": "@moodlenet/create",
-  "version": "3.0.0-alpha.10",
+  "version": "3.0.0-alpha-14",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": ">=16",
-    "npm": ">=8",
+    "node": "16",
+    "npm": "8",
     "yarn": "please-use-npm"
   },
   "description": "MoodleNet installer",
@@ -19,7 +19,9 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "execa": "^5.1.1",
-    "yargs": "^17.5.1"
-  }
+    "execa": "7.1.1",
+    "jose": "4.11.4",
+    "yargs": "17.5.1"
+  },
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }

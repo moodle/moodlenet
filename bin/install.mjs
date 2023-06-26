@@ -121,7 +121,7 @@ async function getNpmRegistry() {
       )
       return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
     })() ??
-    ((await execa('npm', ['get', 'registry'], { timeout: 10e3 })).stdout ||
+    ((await execa('npx', ['-y', 'npm@8', 'get', 'registry'], { timeout: 10e3 })).stdout ||
       'https://registry.npmjs.org/')
   ).replace(/\/$/, '')
 }

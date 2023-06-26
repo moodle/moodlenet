@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/ed-resource",
-  "version": "0.2.0",
+  "version": "0.2.5",
   "author": "MoodleNet",
   "moodlenet": {
     "displayName": "Resource page",
@@ -17,8 +17,8 @@
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": ">=16",
-    "npm": ">=8",
+    "node": "16",
+    "npm": "8",
     "yarn": "please-use-npm"
   },
   "readme": "",
@@ -26,40 +26,39 @@
     "dist/"
   ],
   "dependencies": {
-    "formik": "^2.2.9",
-    "moment": "^2.29.4",
-    "yup": "^0.32.11"
+    "@moodlenet/key-value-store": "^0.2.5",
+    "@moodlenet/simple-file-store": "^0.2.5",
+    "formik": "2.2.9",
+    "moment": "2.29.4",
+    "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/component-library": "^0.2.0",
-    "@moodlenet/core": "^0.2.0",
-    "@moodlenet/ed-meta": "^0.2.0",
-    "@moodlenet/key-value-store": "^0.2.0",
-    "@moodlenet/http-server": "^0.2.0",
-    "@moodlenet/react-app": "^0.2.0",
-    "@moodlenet/simple-file-store": "^0.2.0",
-    "@moodlenet/system-entities": "^0.2.0"
+    "@moodlenet/component-library": "^0.2.5",
+    "@moodlenet/core": "^0.2.5",
+    "@moodlenet/ed-meta": "^0.2.5",
+    "@moodlenet/http-server": "^0.2.5",
+    "@moodlenet/react-app": "^0.2.5",
+    "@moodlenet/system-entities": "^0.2.5"
   },
   "devDependencies": {
-    "@lingui/macro": "^3.14.0",
-    "@moodlenet/component-library": "^0.2.0",
-    "@moodlenet/core": "^0.2.0",
-    "@moodlenet/ed-meta": "^0.2.0",
-    "@moodlenet/key-value-store": "^0.2.0",
-    "@moodlenet/http-server": "^0.2.0",
-    "@moodlenet/react-app": "^0.2.0",
-    "@moodlenet/simple-file-store": "^0.2.0",
-    "@moodlenet/system-entities": "^0.2.0",
-    "@types/node": "^17.0.35",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.5",
-    "react-router-dom": "^6.3.0",
-    "typed-emitter": "^2.1.0",
-    "typescript": "^4.7.2"
+    "@lingui/macro": "3.14.0",
+    "@moodlenet/component-library": "^0.2.5",
+    "@moodlenet/core": "^0.2.5",
+    "@moodlenet/ed-meta": "^0.2.5",
+    "@moodlenet/http-server": "^0.2.5",
+    "@moodlenet/react-app": "^0.2.5",
+    "@moodlenet/system-entities": "^0.2.5",
+    "@types/node": "17.0.35",
+    "@types/react": "18.0.9",
+    "@types/react-dom": "18.0.5",
+    "react-router-dom": "6.3.0",
+    "typed-emitter": "2.1.0",
+    "typescript": "4.7.2"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
     "dev-init": "npm run copy-assets",
+    "prepublish": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "create-components-index": "vgis src/webapp/exports/ui.mts",
     "create-stories-index": "vgis src/webapp/exports/stories.mts"
@@ -96,5 +95,6 @@
     "./stories": "./dist/webapp/exports/stories.mjs",
     "./webapp": "./dist/webapp/exports/webapp.mjs",
     "./@moodlenet/react-app/init": "./dist/webapp/exports/init.mjs"
-  }
+  },
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }
