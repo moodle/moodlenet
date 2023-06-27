@@ -52,10 +52,6 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/all-my-featured-entities'(): Promise<null | {
       featuredEntities: KnownFeaturedEntities
     }>
-    'webapp/profile-kudos-count/:profileKey'(
-      body: void,
-      params: { profileKey: string },
-    ): Promise<{ count: number }>
     'webapp/send-message-to-user/:profileKey'(
       body: { message: string },
       params: { profileKey: string },
