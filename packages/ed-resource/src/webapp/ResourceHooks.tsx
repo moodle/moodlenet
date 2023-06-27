@@ -93,7 +93,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         setIsToDelete(true)
         return _delete(resourceKey).then(() => {
           setIsToDelete(false)
-          nav('/')
+          nav(-1)
         })
       },
     }

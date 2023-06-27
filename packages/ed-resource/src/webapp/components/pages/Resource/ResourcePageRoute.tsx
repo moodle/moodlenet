@@ -4,9 +4,9 @@ import { matchResourceHomePageRoutePath } from '../../../../common/webapp-routes
 import { ResourcePageContainer } from './ResourcePageContainer.js'
 
 export const ResourcePageRoute: FC = () => {
-  const { pathname } = useLocation()
+  const { pathname, state } = useLocation()
 
   const key = matchResourceHomePageRoutePath(pathname)?.params.key
   if (!key) return null
-  return <ResourcePageContainer resourceKey={key} key={key} />
+  return <ResourcePageContainer resourceKey={key} key={key} editMode={!!(state as any)?.editMode} />
 }
