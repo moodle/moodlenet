@@ -5,7 +5,10 @@ import { ProvideCurrentResourceContext } from '../../../CurrentResourceContext.j
 import ResourcePage from './Resource.js'
 import { useResourcePageProps } from './ResourcePageHooks.js'
 
-export const ResourcePageContainer: FC<{ resourceKey: string }> = ({ resourceKey }) => {
+export const ResourcePageContainer: FC<{ resourceKey: string; editMode: boolean }> = ({
+  resourceKey,
+  editMode,
+}) => {
   const panelProps = useResourcePageProps({ resourceKey })
   const mainLayoutProps = useMainLayoutProps()
   if (panelProps === null) {
@@ -16,7 +19,7 @@ export const ResourcePageContainer: FC<{ resourceKey: string }> = ({ resourceKey
 
   return (
     <ProvideCurrentResourceContext _key={resourceKey} key={resourceKey}>
-      <ResourcePage {...panelProps} key={resourceKey} />
+      <ResourcePage {...panelProps} key={resourceKey} isEditing={editMode} />
     </ProvideCurrentResourceContext>
   )
 }

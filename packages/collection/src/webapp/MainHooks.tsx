@@ -65,7 +65,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         setIsToDelete(true)
         return _delete(collectionKey).then(() => {
           setIsToDelete(true)
-          nav('/')
+          nav(-1)
         })
       },
       removeResource: (resourceKey: string) => {

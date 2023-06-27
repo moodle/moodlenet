@@ -7,7 +7,6 @@ import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { profileFormValidationSchema } from '../../../../common/profile/data.mjs'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
@@ -33,7 +32,6 @@ export const useProfileProps = ({
 }: {
   profileKey: string
 }): ProfileProps | undefined => {
-  const nav = useNavigate()
   const plugins = ProfilePagePlugins.usePluginHooks()
 
   const resourceCtx = useContext(ResourceContext)
@@ -151,9 +149,8 @@ export const useProfileProps = ({
         subtitleItems: plugins.getKeyedAddons('main_subtitleItems'),
         titleItems: plugins.getKeyedAddons('main_titleItems'),
       },
-      createCollection: () =>
-        collectionCtx.createCollection().then(({ homePath }) => nav(homePath)),
-      createResource: () => resourceCtx.createResource().then(({ homePath }) => nav(homePath)),
+      createCollection: () => collectionCtx.createCollection(),
+      createResource: () => resourceCtx.createResource(),
       resourceCardPropsList,
       collectionCardPropsList,
       mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
@@ -187,7 +184,6 @@ export const useProfileProps = ({
     editProfile,
     plugins,
     collectionCtx,
-    nav,
     resourceCtx,
   ])
   return profileProps
