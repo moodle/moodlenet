@@ -55,9 +55,9 @@
     "vscode-generate-index-standalone": "^1.6.0"
   },
   "scripts": {
-    "postinstall": "npm run prj-init",
-    "prepublish": "npm run prj-cleanup-build && npm run prj-build",
-    "prj-init": "npm run prj-husky-init && npm run prj-bs && lerna run dev-init --parallel --stream && npm run prj-build",
+    "postinstall": "npm run prj-cleanup-build && npm run prj-husky-init && npm run prj-bs",
+    "prepublishOnly": "npm run prj-cleanup-build",
+    "prepare": "npm run prj-build",
     "prj-husky-init": "rimraf .husky && husky install && husky add .husky/pre-commit \"npm run pre-commit\"",
     "prj-bs": "lerna bootstrap",
     "dev-assistant": "lerna run dev-assistant --parallel --stream --",
