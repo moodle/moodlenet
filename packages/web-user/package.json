@@ -36,8 +36,7 @@
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
-    "dev-init": "npm run copy-assets",
-    "prepublish": "npm run copy-assets",
+    "prepare": "npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
     "create-stories-index": "vgis src/webapp/ui/exports/stories.mts",
     "create-components-index": "vgis src/webapp/ui/exports/ui.mts"
