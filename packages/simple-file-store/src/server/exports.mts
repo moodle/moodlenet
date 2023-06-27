@@ -192,7 +192,7 @@ export default async function fileStoreFactory(shell: Shell<any, any>, bucketNam
 
     const fsFileAbsolutePath = getFsAbsolutePathByDirectAccessId(rawDbRecord.directAccessId)
     const fsFileMetaAbsolutePath = itemInfoFileName(fsFileAbsolutePath)
-    shell.log('info', { del: { logicalName, maybeRawDbRecord, fsFileAbsolutePath } })
+    //shell.log('info', { del: { logicalName, maybeRawDbRecord, fsFileAbsolutePath } })
 
     await Promise.all([
       rimraf(fsFileMetaAbsolutePath, { maxRetries: 3 }).catch(() => false),
