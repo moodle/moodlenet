@@ -1,4 +1,5 @@
 import type { RpcFile } from '@moodlenet/core'
+import { instanceDomain } from '@moodlenet/core'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { webImageResizer } from '@moodlenet/react-app/server'
 import type {
@@ -176,7 +177,9 @@ export async function setResourceContent(_key: string, resourceContent: RpcFile 
       : await storeResourceFile(_key, resourceContent)
 
   const isUrlContent = typeof content === 'string'
-
+  if (isUrlContent && content.startsWith(instanceDomain)) {
+    return
+  }
   const contentProp: ResourceDataType['content'] = isUrlContent
     ? {
         kind: 'link',

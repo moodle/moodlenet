@@ -375,11 +375,7 @@ export type AccessEntitiesOpts<
 export async function getCurrentUserInfo() {
   const currentUser = await getCurrentSystemUser()
   const entityInfoAql = userInfoAqlProvider('currentUser')
-  shell.log(
-    'info',
-    `LET currentUser = @currentUser 
-  RETURN ${entityInfoAql}`,
-  )
+
   const cursor = await db.query<EntityInfo>(
     `LET currentUser = @currentUser 
     RETURN ${entityInfoAql}`,
