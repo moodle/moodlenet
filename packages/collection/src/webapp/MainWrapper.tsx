@@ -19,6 +19,13 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
     const rpcCaller: RpcCaller = {
       collectionsResorce: (containingResourceKey: string) =>
         rpc['webapp/my-collections/:containingResourceKey'](null, { containingResourceKey }),
+      removeResource(collectionKey, resourceKey) {
+        return rpc['webapp/in-collection/:collectionKey/:action-resource/:resourceKey'](null, {
+          collectionKey,
+          resourceKey,
+          action: 'remove',
+        })
+      },
 
       actionResorce: (collectionKey: string, action: 'remove' | 'add', resourceKey: string) =>
         rpc['webapp/in-collection/:collectionKey/:action-resource/:resourceKey'](null, {

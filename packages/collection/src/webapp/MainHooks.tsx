@@ -69,8 +69,17 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         })
       },
       removeResource: (resourceKey: string) => {
-        resourceKey
-        alert('removeResource to be implemented')
+        return rpcCaller.removeResource(collectionKey, resourceKey).then(() => {
+          setCollection(curr => {
+            if (!curr) {
+              return curr
+            }
+            return {
+              ...curr,
+              resourceList: curr.resourceList.filter(item => item._key !== resourceKey),
+            }
+          })
+        })
       },
       publish: () => {
         setIsPublish(true)
