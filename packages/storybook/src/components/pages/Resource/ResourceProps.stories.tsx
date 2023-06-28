@@ -300,6 +300,7 @@ export const useResourceStoryProps = (
       fileMaxSize: 343243,
       isSaving: false,
       isEditingAtStart: false,
+      isEditing: false,
     },
     overrides,
   )
