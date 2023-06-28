@@ -37,6 +37,13 @@ async function defaultConfigJson() {
       },
       '@moodlenet/http-server': {
         port: 8080,
+        defaultRpcUploadMaxSize: '5MB',
+      },
+      '@moodlenet/ed-resource': {
+        resourceUploadMaxSize: '1.2GB',
+      },
+      '@moodlenet/simple-email-auth': {
+        newUserNotPublisher: false,
       },
       '@moodlenet/email-service': {
         nodemailerTransport: {

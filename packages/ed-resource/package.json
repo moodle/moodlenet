@@ -30,6 +30,7 @@
     "@moodlenet/simple-file-store": "^0.2.5",
     "formik": "2.2.9",
     "moment": "2.29.4",
+    "xbytes": "^1.8.0",
     "yup": "0.32.11"
   },
   "peerDependencies": {

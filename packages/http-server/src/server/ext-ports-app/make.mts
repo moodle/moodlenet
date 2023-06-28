@@ -15,6 +15,7 @@ import type { Field } from 'multer'
 import multer from 'multer'
 import { Readable } from 'stream'
 import { format } from 'util'
+import { env } from '../init/env.mjs'
 // import { HttpRpcResponse } from '../../common/pub-lib.mjs'
 import { getMiddlewares } from '../lib.mjs'
 import { shell } from '../shell.mjs'
@@ -43,7 +44,7 @@ export function makeExtPortsApp() {
       const multipartMW = multer({
         limits: {
           files: multerFields.reduce((acc, { maxCount }) => acc + (maxCount ?? 0), 0),
-          fileSize: rpcDefItem.bodyWithFiles?.maxFileSize,
+          fileSize: rpcDefItem.bodyWithFiles?.maxFileSize ?? env.defaultRpcUploadMaxSize,
         },
       })
 
