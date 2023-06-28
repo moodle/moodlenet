@@ -16,6 +16,7 @@ import dot from 'dot'
 import { send } from '../../../email-service/dist/server/exports.mjs'
 import { SET_NEW_PASSWORD_PATH } from '../common/webapp-routes.mjs'
 import { EmailPwdUserCollection } from './init/arangodb.mjs'
+import { env } from './init/env.mjs'
 import { kvStore } from './init/kvStore.mjs'
 import { shell } from './shell.mjs'
 import * as store from './store.mjs'
@@ -134,7 +135,7 @@ export async function createSimpleEmailUser({
   displayName,
   email,
   hashedPassword,
-  publisher = false,
+  publisher = !env.newUserNotPublisher,
   isAdmin = false,
 }: {
   displayName: string

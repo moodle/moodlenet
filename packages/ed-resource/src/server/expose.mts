@@ -16,6 +16,7 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
+import { env } from './init/env.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
 import { getImageUrl } from './lib.mjs'
 import {
@@ -251,6 +252,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         fields: {
           '.content': 1,
         },
+        maxFileSize: env.resourceUploadMaxSize,
       },
     },
     'webapp/get-resources-count-in-subject/:subjectKey': {

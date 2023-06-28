@@ -6,16 +6,12 @@ export const env = await getEnv()
 console.log('ENV:', env)
 
 type Env = {
-  port: number
-  defaultRpcUploadMaxSize: number
-  // secure?: SecureHttpConfig
+  resourceUploadMaxSize: number
 }
 function getEnv(): Env {
   const config: Env = {
-    port: shell.config.port,
-    defaultRpcUploadMaxSize: parseSize(shell.config.defaultRpcUploadMaxSize),
+    resourceUploadMaxSize: parseSize(shell.config.resourceUploadMaxSize),
   }
-  //FIXME: validate configs
   const env: Env = config
   return env
 }
