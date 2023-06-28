@@ -44,8 +44,8 @@ async function ensureDefaultKeypairs() {
   const type = 'PKCS8'
   try {
     await Promise.all([
-      open(defaultKeyFilenames.private, 'r'),
-      open(defaultKeyFilenames.public, 'r'),
+      open(defaultKeyFilenames.private, 'r').then(_ => _.close()),
+      open(defaultKeyFilenames.public, 'r').then(_ => _.close()),
     ])
   } catch {
     const keysLike = await jose.generateKeyPair(alg, { modulusLength: 2048 /* minimum */ })
@@ -73,10 +73,10 @@ async function defaultConfigJson() {
         instanceDomain: 'http://localhost:8080',
         npmRegistry,
         mainLogger: {
-          consoleLevel: 'info',
+          consoleLevel: 'debug',
           file: {
             path: './log/moodlenet.%DATE%.log',
-            level: 'info',
+            level: 'debug',
           },
         },
       },
@@ -95,6 +95,13 @@ async function defaultConfigJson() {
       },
       '@moodlenet/http-server': {
         port: 8080,
+        defaultRpcUploadMaxSize: '5MB',
+      },
+      '@moodlenet/ed-resource': {
+        resourceUploadMaxSize: '1.2GB',
+      },
+      '@moodlenet/simple-email-auth': {
+        newUserNotPublisher: false,
       },
       '@moodlenet/email-service': {
         nodemailerTransport: {

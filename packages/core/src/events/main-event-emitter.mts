@@ -1,5 +1,6 @@
 import EventEmitter from 'events'
 import { inspect } from 'util'
+import { PHASE } from '../ignite.mjs'
 import { mainLogger } from '../logger/init-logger.mjs'
 import type { PkgIdentifier } from '../types.mjs'
 
@@ -24,6 +25,9 @@ export function pkgEmitter<EventTypeMap>(pkgId: PkgIdentifier) {
   }
 
   function emit<Type extends keyof EventTypeMap>(event: Type, data: EventTypeMap[Type]) {
+    if (PHASE !== 'running') {
+      return
+    }
     const payload: EventPayload<EventTypeMap, Type> = {
       pkgId,
       event,

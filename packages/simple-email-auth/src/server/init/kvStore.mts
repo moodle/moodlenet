@@ -7,8 +7,3 @@ export type KeyValueStoreData = {
 }
 
 export const kvStore = await kvStoreFactory<KeyValueStoreData>(shell)
-
-/*
-Welcome to {{=it.instance-name}} 🎉
-
-*/

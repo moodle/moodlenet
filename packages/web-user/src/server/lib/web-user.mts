@@ -61,6 +61,7 @@ export async function getCurrentWebUserIds() {
   return tokenCtx.payload.webUser
 }
 
+//BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
 export async function verifyCurrentTokenCtx() {
   const currentCtx = shell.myAsyncCtx.get()
   if (!currentCtx?.tokenCtx) {

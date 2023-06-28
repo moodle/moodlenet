@@ -3,6 +3,7 @@ export { WebUserEntitiesTools } from './entities.mjs'
 export { Profile } from './init/sys-entities.mjs'
 export {
   editProfile,
+  entityFeatureAction,
   getProfileRecord,
   setProfileAvatar,
   setProfileBackgroundImage,

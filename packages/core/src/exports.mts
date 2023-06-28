@@ -1,8 +1,7 @@
-import { coreConfigs } from './main/env.mjs'
 export type { now, setNow } from './async-context/lib.mjs'
 export * from './async-context/types.mjs'
 export type { EventPayload, mainEmitter, pkgEmitter } from './events/main-event-emitter.mjs'
-export { pkgDepGraph } from './ignite.mjs'
+export { PHASE, pkgDepGraph } from './ignite.mjs'
 export {
   assertRpcFileReadable,
   getCurrentRpcStatusCode,
@@ -25,4 +24,5 @@ export { getPkgScopes, registerScopes } from './pkg-scopes/lib.mjs'
 export * from './pkg-shell/shell.mjs'
 export * from './pkg-shell/types.mjs'
 export * from './types.mjs'
+import { coreConfigs } from './main/env.mjs'
 export const { instanceDomain, npmRegistry } = coreConfigs
