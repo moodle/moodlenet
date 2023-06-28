@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/simple-email-auth",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "publishConfig": {
     "access": "public"
   },
@@ -21,7 +21,7 @@
   "description": "Email authentication\nBasic authentication using email and password",
   "files": [
     "dist/",
-    "src/"
+    "email-templates/"
   ],
   "exports": {
     "./init": "./dist/server/init.mjs",

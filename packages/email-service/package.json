@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/email-service",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "publishConfig": {
     "access": "public"
   },
@@ -29,7 +29,8 @@
   "description": "Email service\na package to send emails",
   "readme": "",
   "files": [
-    "dist/"
+    "dist/",
+    "email-templates/"
   ],
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

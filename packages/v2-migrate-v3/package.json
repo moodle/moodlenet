@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/v2-migrate-v3",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "publishConfig": {
     "access": "public"
   },
@@ -30,12 +30,12 @@
     "@types/node": "17.0.35"
   },
   "peerDependencies": {
-    "@moodlenet/core": "0.2.6",
-    "@moodlenet/ed-resource": "0.2.6",
-    "@moodlenet/key-value-store": "0.2.6",
-    "@moodlenet/simple-email-auth": "0.2.6",
-    "@moodlenet/system-entities": "0.2.7",
-    "@moodlenet/web-user": "0.2.6"
+    "@moodlenet/core": "^0.2.6",
+    "@moodlenet/ed-resource": "^0.2.6",
+    "@moodlenet/key-value-store": "^0.2.6",
+    "@moodlenet/simple-email-auth": "^0.2.7",
+    "@moodlenet/system-entities": "^0.2.7",
+    "@moodlenet/web-user": "^0.2.7"
   },
   "dependencies": {
     "arangojs": "8.3.0",

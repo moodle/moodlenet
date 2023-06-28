@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/web-user",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "publishConfig": {
     "access": "public"
   },
@@ -24,7 +24,7 @@
   "readme": "",
   "files": [
     "dist/",
-    "src/"
+    "user-messages-templates/"
   ],
   "keywords": [
     "moodlenetPackage"
