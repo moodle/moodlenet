@@ -1,6 +1,9 @@
 {
   "name": "@moodlenet/web-user",
   "version": "0.2.6",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "MoodleNet",
   "description": "Web User features",
   "moodlenet": {
