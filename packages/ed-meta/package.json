@@ -1,6 +1,9 @@
 {
   "name": "@moodlenet/ed-meta",
   "version": "0.2.6",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "MoodleNet",
   "moodlenet": {
     "displayName": "Ed-Meta package",

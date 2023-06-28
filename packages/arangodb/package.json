@@ -1,6 +1,9 @@
 {
   "name": "@moodlenet/arangodb",
   "version": "0.2.6",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "MoodleNet",
   "moodlenet": {
     "displayName": "MoodleNet Arango database",

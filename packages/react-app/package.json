@@ -1,6 +1,9 @@
 {
   "name": "@moodlenet/react-app",
   "version": "0.2.6",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "MoodleNet",
   "description": "Frontend interface to interact with the backend",
   "moodlenet": {
