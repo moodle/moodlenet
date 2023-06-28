@@ -89,6 +89,7 @@ async function orderDeps() {
   })
 }
 
+export let PHASE: 'init' | 'starting' | 'running' | 'stopping'
 export default async function ignite(ignites: Ignites) {
   _ignites = ignites
   process.once('SIGTERM', stopAllAndExit)
@@ -96,9 +97,11 @@ export default async function ignite(ignites: Ignites) {
   await orderDeps()
   await initAll()
   await startAll()
+  PHASE = 'running'
 }
 
 async function initAll() {
+  PHASE = 'init'
   console.info('\nInit all packages\n')
   const pkgList = pkgDepGraph.overallOrder()
   for (const pkgEntry of pkgList) {
@@ -115,6 +118,7 @@ async function initAll() {
 }
 
 async function startAll() {
+  PHASE = 'starting'
   console.info('\nStart all packages\n')
   for (const pkgEntry of pkgDepGraph.overallOrder()) {
     await rootImportLog(pkgEntry, 'start')
@@ -122,6 +126,7 @@ async function startAll() {
 }
 
 export async function stopAll() {
+  PHASE = 'stopping'
   console.info('\nStop all packages\n')
   for (const pkgEntry of pkgDepGraph.overallOrder().reverse()) {
     await rootImportLog(pkgEntry, 'stop').catch(() => void 0)

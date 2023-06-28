@@ -8,13 +8,15 @@ import assert from 'assert'
 import cliProgress from 'cli-progress'
 import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
-import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
+import { v2_org } from './organizaton.mjs'
+import { getRpcFileByV2AssetLocation, initiateCallForV3ProfileId } from './util.mjs'
 import { v2_DB_ContentGraph, v2_DB_UserAuth } from './v2-db.mjs'
 
 export const EmailUser_v2v3_IdMapping: Record<string, string> = {}
 export const Profile_v2v3_IdMapping: Record<string, string> = {}
 export const EmailUser_v3v2_IdMapping: Record<string, string> = {}
 export const Profile_v3v2_IdMapping: Record<string, string> = {}
+export const ProfileIdV3_IsPublisher: Record<string, boolean> = {}
 
 export async function user_profiles() {
   const BAR = new cliProgress.SingleBar(
@@ -26,41 +28,17 @@ export async function user_profiles() {
   )
 
   const allProfilesCursor = await v2_DB_ContentGraph.query<v2.Profile | v2.Organization>(
-    // `
-    //   FOR p IN UNION_DISTINCT(
-    //     FOR pr in Profile
-    //     RETURN pr
-    //     ,
-    //     [ Document("${v2_org._id}") ]
-    //   )
-    //   RETURN p
-    // `,
     `
-    FOR pp IN UNION_DISTINCT(
-      FOR p in Profile
-        SORT RAND()
-        FILTER p._published
-        LIMIT 0, 15
+      FOR p IN UNION_DISTINCT(
+        FOR pr in Profile
+        RETURN pr
+        ,
+        [ Document("${v2_org._id}") ]
+      )
       RETURN p
-      ,
-      FOR p in Profile
-        SORT RAND()
-        FILTER !p._published
-        LIMIT 0, 5
-      RETURN p
-      ,
-      [
-        Document("Profile/vJpFfdtNbaNwPL51ipmSfbZmxyUMTf" /* martin@moodle.com[Profile] */),
-        Document("Profile/TPsKc3VGFi05J486LbRkX9uHh9HxXc" /* liz@moodle.com[Profile] */),
-        Document("Profile/V8haMOx8YYxMLnOYcWRdYpecvzFtWp" /* anna@moodle.com[Profile] */),
-        Document("Profile/qFrZA4VJ8ba4uvkmEPxp8DpGeCofKS" /* alessandro@moodle.com[Profile] */),
-        Document("Organization/wDsoiVDyDIIGrLTu3P26kc6QRg1PYG" /* moodlenet@moodle.com[Organization] */),
-        Document("Profile/IOz4Q52ddl1JleKwHIrrhrLucz1A30" /* bru.mas@moodle.com[Profile] */),
-        Document("Profile/Wn4IUjm2K2PFwoKFsC0xByxYlPcykg" /* ettorebevilacqua@gmail.com[Profile] */),
-      ])
-    return pp`,
+    `,
     {},
-    { count: true, batchSize: 1, ttl: 60 * 30 },
+    { count: true, batchSize: 1, ttl: 60 * 60 },
   )
 
   BAR.start(allProfilesCursor.count ?? 0, 0)
@@ -90,7 +68,7 @@ export async function user_profiles() {
       return createEmailUserResp
     })
 
-    await initiateCallForProfileKey({
+    await initiateCallForV3ProfileId({
       _id: newProfile._id,
       async exec() {
         const isOrg = isOrganization(v2_profile)
@@ -99,7 +77,6 @@ export async function user_profiles() {
           aboutMe: v2_profile.description,
           siteUrl: isOrg ? undefined : v2_profile.siteUrl,
           location: isOrg ? undefined : v2_profile.location,
-          kudos: 1e6,
         })
         const avatarV2Field = isOrg ? v2_profile.smallLogo : v2_profile.avatar
         if (avatarV2Field?.ext === false) {
@@ -136,6 +113,7 @@ export async function user_profiles() {
     EmailUser_v2v3_IdMapping[v2_user.id] = newWebUser._id
     Profile_v3v2_IdMapping[newProfile._id] = v2_profile._id
     EmailUser_v3v2_IdMapping[newWebUser._id] = v2_user.id
+    ProfileIdV3_IsPublisher[newProfile._id] = newProfile.publisher
     BAR.increment()
   }
   BAR.stop()

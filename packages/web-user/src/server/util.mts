@@ -9,6 +9,7 @@ export function fixModuleLocForWebpackByOS(moduleLoc: string) {
   }
 }
 
+//BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
 export async function betterTokenContext() {
   const mTokenCtx = await verifyCurrentTokenCtx()
 

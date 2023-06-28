@@ -4,9 +4,9 @@ import cliProgress from 'cli-progress'
 import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
 import { Resource_v2v3_IdMapping } from './resources.mjs'
-import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
+import { getRpcFileByV2AssetLocation, initiateCallForV3ProfileId } from './util.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
-import { Profile_v2v3_IdMapping } from './web-users.mjs'
+import { ProfileIdV3_IsPublisher, Profile_v2v3_IdMapping } from './web-users.mjs'
 
 export const Collection_v2v3_IdMapping: Record<string, string> = {}
 export const Collection_v3v2_IdMapping: Record<string, string> = {}
@@ -23,12 +23,17 @@ export async function user_collections() {
 
   for (const v2_profile_id in Profile_v2v3_IdMapping) {
     const v3ProfileId = Profile_v2v3_IdMapping[v2_profile_id]
-
     assert(v3ProfileId)
+    const isPublisher = ProfileIdV3_IsPublisher[v3ProfileId]
+    assert(
+      typeof isPublisher === 'boolean',
+      `${v3ProfileId} publisher is not boolean : ${isPublisher}`,
+    )
+
     BAR.update({ v2_profile_id, collection: 'no own collections' })
     const [v2_profile_type, v2_profile_key] = v2_profile_id.split('/')
     assert(v2_profile_type && v2_profile_key)
-    await initiateCallForProfileKey({
+    await initiateCallForV3ProfileId({
       _id: v3ProfileId,
       async exec() {
         const ownCollectionsCursor = await v2_DB_ContentGraph.query<
@@ -51,29 +56,25 @@ export async function user_collections() {
               assert(v2_resId.startsWith('Resource'))
               const v3_resId = Resource_v2v3_IdMapping[v2_resId]
               if (!v3_resId) {
-                // REMOVE ME !!!!
-                // REMOVE ME !!!!
-                // REMOVE ME !!!!
-                // REMOVE ME !!!!
-                // REMOVE ME !!!!
-                // REMOVE ME !!!!
-                // REMOVE ME !!!!
-                return null as any
+                shell.log(
+                  'warn',
+                  `
+couldn't find v3 resource id from v2resource_id: ${v2_resId} in v2collection_id : ${v2_collection._key}
+...skipping this resource in collection`,
+                )
+                return null as any as { _key: string }
               }
-              assert(
-                v3_resId,
-                `couldn't find v3 resource id from v2: ${v2_resId} in collection v2: ${v2_collection._key}`,
-              )
               const v3_resKey = v3_resId.split('/')[1]
               assert(v3_resKey)
               return { _key: v3_resKey }
             })
             .filter(Boolean)
+
           shell.setNow(v2_collection._created)
           const newCollection = await createCollection({
             description: v2_collection.description,
             title: v2_collection.name,
-            published: v2_collection._published,
+            published: isPublisher && v2_collection._published,
             image:
               v2_collection.image?.ext === true
                 ? {

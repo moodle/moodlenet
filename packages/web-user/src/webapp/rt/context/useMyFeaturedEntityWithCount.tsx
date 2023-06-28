@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { KnownEntityFeature, KnownEntityType } from '../../../common/types.mjs'
 import { shell } from '../shell.mjs'
+import { useMyProfileContext } from './MyProfileContext.js'
 import type { MyFeaturedEntityHandle } from './useMyFeaturedEntity.js'
 import { useMyFeaturedEntity } from './useMyFeaturedEntity.js'
 
@@ -17,6 +18,7 @@ export function useMyFeaturedEntityWithCount({
   entityType: KnownEntityType
 }) {
   const [count, setCount] = useState<number>()
+  const myProfileContext = useMyProfileContext()
 
   const undefinedCount = count === undefined
   useEffect(() => {
@@ -30,14 +32,14 @@ export function useMyFeaturedEntityWithCount({
     const featuredEntityWithCountHandle: MyFeaturedEntityWithCountHandle = {
       ...myFeaturedEntityHandle,
       toggle: async () => {
-        if (undefinedCount) return
+        if (undefinedCount || !myProfileContext) return
         const delta = myFeaturedEntityHandle.isFeatured ? -1 : 1
         await myFeaturedEntityHandle.toggle()
-        setCount(curr => (curr ?? 0) + delta)
+        myProfileContext.myProfile.publisher && setCount(curr => (curr ?? 0) + delta)
       },
       count: count ?? 0,
     }
     return featuredEntityWithCountHandle
-  }, [count, myFeaturedEntityHandle, undefinedCount])
+  }, [count, myFeaturedEntityHandle, undefinedCount, myProfileContext])
   return featuredEntityWithCountHandle
 }

@@ -6,7 +6,13 @@ import { resolve } from 'path'
 import { shell } from '../shell.mjs'
 import { env } from './env.mjs'
 
-export function initiateCallForProfileKey({ _id, exec }: { _id: string; exec(): any }) {
+export function initiateCallForV3ProfileId<E extends () => any>({
+  _id,
+  exec,
+}: {
+  _id: string
+  exec: E
+}): Promise<ReturnType<E>> {
   return shell.initiateCall(async () => {
     await setCurrentUserFetch(async () => {
       return {

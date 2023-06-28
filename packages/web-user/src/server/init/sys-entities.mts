@@ -53,71 +53,63 @@ function isContributionClass(entityClass: EntityClass<any>) {
 }
 await shell.call(registerAccessController)({
   async u({ entityClass }) {
-    const { isRootOrAdmin, anon } = await betterTokenContext()
+    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
     if (isRootOrAdmin) {
       return true
-    } else if (anon) {
-      return false
-    } else if (isSameClass(Profile.entityClass, entityClass)) {
+    }
+    if (isSameClass(Profile.entityClass, entityClass)) {
       return isCurrentUserEntity()
-    } else if (isContributionClass(entityClass)) {
+    }
+    if (isContributionClass(entityClass)) {
       return isCurrentUserCreatorOfCurrentEntity()
-    } else if (isEdMetaClass(entityClass)) {
+    }
+    if (isEdMetaClass(entityClass)) {
       return false
     }
     return false
   },
   async d({ entityClass }) {
-    const { isRootOrAdmin, anon } = await betterTokenContext()
+    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
     if (isRootOrAdmin) {
       return true
-    } else if (anon) {
-      return false
-    } else if (isContributionClass(entityClass)) {
+    }
+    if (isContributionClass(entityClass)) {
       return isCurrentUserCreatorOfCurrentEntity()
+    }
+    if (isEdMetaClass(entityClass)) {
+      return false
     }
     return false
   },
   async r({ entityClass }) {
-    const { isRootOrAdmin } = await betterTokenContext()
+    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
     const published_and_publisher = `${currentEntityVar}.published && (!${creatorEntityDocVar} || ${creatorEntityDocVar}.publisher)`
     if (isRootOrAdmin) {
       return true
-    } else if (isSameClass(Profile.entityClass, entityClass)) {
+    }
+    if (isSameClass(Profile.entityClass, entityClass)) {
       return `${isCurrentUserEntity()} || ${currentEntityVar}.publisher`
-    } else if (isContributionClass(entityClass)) {
+    }
+    if (isContributionClass(entityClass)) {
       return `${isCurrentUserCreatorOfCurrentEntity()} 
           || ${published_and_publisher}`
-    } else if (isEdMetaClass(entityClass)) {
+    }
+    if (isEdMetaClass(entityClass)) {
       return `${currentEntityVar}.published`
     }
     return false
   },
   async c(entityClass) {
-    const { isRootOrAdmin, anon } = await betterTokenContext()
+    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
     if (isRootOrAdmin) {
       return true
-    }
-    if (anon) {
-      return false
     }
     if (isContributionClass(entityClass)) {
       return true
     }
+    if (isEdMetaClass(entityClass)) {
+      return false
+    }
     return false
   },
 })
-
-// SysEntitiesEvents.addListener('created-new', ({ creator, newEntity }) => {
-//   const isProfileCreator =
-//     creator.type === 'entity' &&
-//     WebUserEntitiesTools.isIdOfType({ id: creator.entityIdentifier, type: 'Profile' })
-//   const isResource = EdResourceEntitiesTools.isIdOfType({ id: newEntity._id, type: 'Resource' })
-//   const isCollection = CollectionEntitiesTools.isIdOfType({
-//     id: newEntity._id,
-//     type: 'Collection',
-//   })
-//   if (!(isProfileCreator && (isResource || isCollection))) {
-//     return
-//   }
-// })

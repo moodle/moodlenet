@@ -365,7 +365,7 @@ function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
         directAccessId: entity.avatarImage.directAccessId,
       })
     : undefined
-  const profile: Profile = {
+  const profile: Profile & { publisher: boolean } = {
     _key: entity._key,
     aboutMe: entity.aboutMe ?? '',
     avatarUrl,
@@ -374,6 +374,7 @@ function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
     location: entity.location ?? '',
     organizationName: entity.organizationName ?? '',
     siteUrl: entity.siteUrl ?? '',
+    publisher: entity.publisher,
   }
   return profile
 }
