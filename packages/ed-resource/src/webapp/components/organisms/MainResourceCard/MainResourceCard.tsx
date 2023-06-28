@@ -44,6 +44,7 @@ export type MainResourceCardSlots = {
   topRightHeaderItems: (AddonItem | null)[]
   moreButtonItems: FloatingMenuContentItem[]
   footerRowItems: (AddonItem | null)[]
+  uploadOptionsItems: (AddonItem | null)[]
 }
 
 export type MainResourceCardProps = {
@@ -106,6 +107,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     topRightHeaderItems,
     moreButtonItems,
     footerRowItems,
+    uploadOptionsItems,
   } = slots
 
   const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
@@ -535,15 +537,15 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   //   ? getPreviewFromUrl(contentForm.values.content)
   //   : null
 
-  const resourceUploader = (
+  const resourceUploader = (imageForm.values.image || isEditing) && (
     <UploadResource
       displayOnly={(canEdit && !isEditing) || !canEdit}
       contentForm={contentForm}
       imageForm={imageForm}
+      uploadOptionsItems={uploadOptionsItems}
       fileMaxSize={fileMaxSize}
       downloadFilename={downloadFilename}
       uploadProgress={uploadProgress}
-      // backupImage={backupImage}
       shouldShowErrors={shouldShowErrors}
       contentType={contentType}
       key="resource-uploader"

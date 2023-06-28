@@ -31,6 +31,8 @@ import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
+import { Unsplash } from '../../../../../unsplash/dist/webapp/ui/Unsplash.js'
+
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
@@ -251,6 +253,12 @@ export const useResourceStoryProps = (
     ],
     moreButtonItems: [],
     footerRowItems: [],
+    uploadOptionsItems: [
+      {
+        Item: () => <Unsplash />,
+        key: 'unsplash-open-button',
+      },
+    ],
   }
 
   const extraDetailsItems: AddonItem[] = []
@@ -283,6 +291,7 @@ export const useResourceStoryProps = (
 
       fileMaxSize: 343243,
       isSaving: false,
+      isEditing: false,
     },
     overrides,
   )
