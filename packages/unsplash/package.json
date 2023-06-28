@@ -2,6 +2,7 @@
   "name": "@moodlenet/unsplash",
   "version": "0.2.0",
   "license": "AGPL-3.0",
+  "private": true,
   "type": "module",
   "engines": {
     "node": ">=16",
