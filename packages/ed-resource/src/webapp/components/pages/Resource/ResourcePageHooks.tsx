@@ -57,6 +57,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     topRightHeaderItems: plugins.getKeyedAddons('topRightHeaderItems'),
     moreButtonItems: [],
     footerRowItems: [],
+    uploadOptionsItems: [],
   }
 
   const layoutProps: Pick<

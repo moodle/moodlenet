@@ -53,6 +53,11 @@ export const NewResourceProps: Partial<ResourceFormProps> = {
   description: '',
   subject: '',
   license: '',
+  language: '',
+  level: '',
+  month: '',
+  year: '',
+  type: '',
 }
 
 export const New: ResourceStory = () => {

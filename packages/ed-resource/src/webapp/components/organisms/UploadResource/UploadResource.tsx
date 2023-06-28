@@ -1,4 +1,5 @@
 import { InsertDriveFile, Link as LinkIcon } from '@material-ui/icons'
+import type { AddonItem } from '@moodlenet/component-library'
 import {
   getPreviewFromUrl,
   ImageContainer,
@@ -33,6 +34,7 @@ export type UploadResourceProps = {
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
   imageForm: FormikHandle<{ image: File | string | undefined | null }>
   downloadFilename: string | null
+  uploadOptionsItems: (AddonItem | null)[]
   contentType: 'file' | 'link' | null
   backupImage?: string
   uploadProgress?: number
@@ -42,6 +44,7 @@ export type UploadResourceProps = {
 
 export const UploadResource: FC<UploadResourceProps> = ({
   fileMaxSize,
+  uploadOptionsItems,
 
   contentForm,
   imageForm,
@@ -297,25 +300,33 @@ export const UploadResource: FC<UploadResourceProps> = ({
   )
 
   const uploader = (type: 'file' | 'image') => {
-    return (
-      <div
-        className={`uploader ${isToDrop ? 'hover' : ''} ${
-          shouldShowErrors &&
-          // !(contentForm.values.content instanceof Blob) &&
-          contentForm.errors.content
-            ? 'show-error'
-            : ''
-        }
+    const updatedUploadOptionsItems = [
+      type === 'file' ? fileUploader : imageUploader,
+      ...(uploadOptionsItems ?? []),
+    ].filter((item): item is AddonItem | JSX.Element => !!item)
+
+    return [
+      <>
+        <div
+          className={`uploader ${isToDrop ? 'hover' : ''} ${
+            shouldShowErrors &&
+            // !(contentForm.values.content instanceof Blob) &&
+            contentForm.errors.content
+              ? 'show-error'
+              : ''
+          }
         `}
-        //  ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
-        id="drop_zone"
-        onDrop={dropHandler}
-        onDragOver={dragOverHandler}
-        onDragLeave={() => setIsToDrop(false)}
-      >
-        {type === 'file' ? fileUploader : imageUploader}
-      </div>
-    )
+          //  ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
+          id="drop_zone"
+          onClick={selectFile}
+          onDrop={dropHandler}
+          onDragOver={dragOverHandler}
+          onDragLeave={() => setIsToDrop(false)}
+        >
+          {updatedUploadOptionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+        </div>
+      </>,
+    ]
   }
 
   const uploaderDiv = (
