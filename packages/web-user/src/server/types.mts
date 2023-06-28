@@ -39,6 +39,7 @@ export type WebUserDataType = {
   contacts: Contacts
   isAdmin: boolean
   profileKey: string
+  deleting?: boolean
 }
 
 export type Contacts = {
@@ -92,6 +93,8 @@ export interface WebUserEvents {
     displayName: string
     leftResources: { _key: string }[]
     leftCollections: { _key: string }[]
+    deletedCollections: { _key: string }[]
+    deletedResources: { _key: string }[]
   }
 }
 

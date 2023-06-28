@@ -300,6 +300,15 @@ export async function sendMessageToWebUser({
   return true
 }
 
+export async function webUserDeleted({ webUserKey }: { webUserKey: string }) {
+  const emailPwdUser = await store.getByWebUserKey(webUserKey)
+  if (!emailPwdUser) {
+    return
+  }
+  await EmailPwdUserCollection.remove({ _key: emailPwdUser._key })
+  return emailPwdUser
+}
+
 export async function userSendsMessageToWebUser({
   subject,
   title,

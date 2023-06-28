@@ -1,21 +1,25 @@
+import type { CollectionDataType } from '@moodlenet/collection/server'
 import { Collection, deltaCollectionPopularityItem } from '@moodlenet/collection/server'
 import { type RpcFile } from '@moodlenet/core'
 import { deltaIscedFieldPopularityItem } from '@moodlenet/ed-meta/server'
+import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import { deltaResourcePopularityItem, Resource } from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
-import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
+import type { EntityClass, SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
   currentEntityVar,
   entityMeta,
   getEntity,
+  isCreatorOfCurrentEntity,
   patchEntity,
   queryEntities,
   searchEntities,
   setPkgCurrentUser,
   sysEntitiesDB,
+  toaql,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
@@ -29,7 +33,6 @@ import { shell } from '../shell.mjs'
 import type { KnownFeaturedEntityItem, ProfileDataType } from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
 import {
-  getCurrentProfileIds,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
   verifyCurrentTokenCtx,
@@ -62,11 +65,13 @@ export async function editProfile(
 }
 
 export async function entityFeatureAction({
+  profileKey,
   _key,
   action,
   entityType,
   feature,
 }: {
+  profileKey: string
   action: 'add' | 'remove'
   feature: KnownEntityFeature
   entityType: KnownEntityType
@@ -74,8 +79,7 @@ export async function entityFeatureAction({
 }) {
   const adding = action === 'add'
   adding && assert(isAllowedKnownEntityFeature({ entityType, feature }))
-  const currentProfileIds = await getCurrentProfileIds()
-  assert(currentProfileIds)
+
   const targetEntityId = getEntityIdByKnownEntity({ _key, entityType })
   const targetEntityDoc = await (
     await sysEntitiesDB.query<EntityFullDocument<SomeEntityDataType>>({
@@ -93,7 +97,11 @@ export async function entityFeatureAction({
       })
     : undefined
 
-  const iAmCreator = profileCreatorIdentifiers?._id === currentProfileIds._id
+  const profileId = WebUserEntitiesTools.getIdentifiersByKey({
+    _key: profileKey,
+    type: 'Profile',
+  })._id
+  const iAmCreator = profileCreatorIdentifiers?._id === profileId
   if (adding && (feature === 'like' || feature === 'follow') && iAmCreator) {
     return
   }
@@ -110,7 +118,7 @@ export async function entityFeatureAction({
 
   const updateResult = await shell.call(patchEntity)(
     Profile.entityClass,
-    currentProfileIds._key,
+    profileKey,
     `{ 
     knownFeaturedEntities: ${aqlAction}
   }`,
@@ -120,34 +128,36 @@ export async function entityFeatureAction({
       },
     },
   )
-  if (feature === 'like') {
-    const delta = adding ? 1 : -1
-    if (profileCreatorIdentifiers) {
-      await shell.initiateCall(async () => {
-        await setPkgCurrentUser()
-        /* const patchResult = */
-        await patchEntity(
-          Profile.entityClass,
-          profileCreatorIdentifiers.entityIdentifier._key,
-          `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
-        )
-        // shell.log('debug', { profileCreatorIdentifiers, patchResult })
-      })
-    }
-    if (entityType === 'resource') {
-      await deltaResourcePopularityItem({ _key, itemName: 'likes', delta })
-    }
-  } else if (feature === 'follow') {
-    const delta = adding ? 1 : -1
-    if (entityType === 'collection') {
-      await deltaCollectionPopularityItem({ _key, itemName: 'followers', delta })
-    } else if (entityType === 'profile') {
-      await deltaProfilePopularityItem({ _key, itemName: 'followers', delta })
-    } else if (entityType === 'subject') {
-      await deltaIscedFieldPopularityItem({ _key, itemName: 'followers', delta })
+  assert(updateResult)
+  if (updateResult.entity.publisher) {
+    if (feature === 'like') {
+      const delta = adding ? 1 : -1
+      if (profileCreatorIdentifiers) {
+        await shell.initiateCall(async () => {
+          await setPkgCurrentUser()
+          /* const patchResult = */
+          await patchEntity(
+            Profile.entityClass,
+            profileCreatorIdentifiers.entityIdentifier._key,
+            `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
+          )
+          // shell.log('debug', { profileCreatorIdentifiers, patchResult })
+        })
+      }
+      if (entityType === 'resource') {
+        await deltaResourcePopularityItem({ _key, itemName: 'likes', delta })
+      }
+    } else if (feature === 'follow') {
+      const delta = adding ? 1 : -1
+      if (entityType === 'collection') {
+        await deltaCollectionPopularityItem({ _key, itemName: 'followers', delta })
+      } else if (entityType === 'profile') {
+        await deltaProfilePopularityItem({ _key, itemName: 'followers', delta })
+      } else if (entityType === 'subject') {
+        await deltaIscedFieldPopularityItem({ _key, itemName: 'followers', delta })
+      }
     }
   }
-
   return updateResult
 }
 
@@ -392,4 +402,30 @@ export async function sendMessageToProfile({
   })
 
   type SendMsgToUserVars = Record<'actionButtonUrl' | 'instanceName' | 'message', string>
+}
+
+export async function getProfileOwnKnownEntities({
+  profileKey,
+  knownEntity,
+}: {
+  profileKey: string
+  knownEntity: Exclude<KnownEntityType, 'profile' | 'subject'>
+}) {
+  const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
+    _key: profileKey,
+    type: 'Profile',
+  })
+  const entityClass: EntityClass<ResourceDataType | CollectionDataType> | null =
+    knownEntity === 'resource'
+      ? Resource.entityClass
+      : knownEntity === 'collection'
+      ? Collection.entityClass
+      : null
+  assert(entityClass)
+  const list = await (
+    await shell.call(queryEntities)(entityClass, {
+      preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
+    })
+  ).all()
+  return list
 }
