@@ -235,7 +235,6 @@ export async function searchResources({
       skip,
       sort,
       preAccessBody: filter ? `FILTER ${filter}` : undefined,
-      //forOptions: `OPTIONS { indexHint:"${TEXT_SEARCH_INDEX_NAME}", forceIndexHint: true }`,
     },
   )
 

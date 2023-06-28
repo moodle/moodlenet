@@ -8,4 +8,4 @@ await kvStore.set('configs', '', {
 
 await kvStore.set('appearanceData', '', defaultAppearanceData)
 
-export default -99
+export default 1

@@ -6,4 +6,4 @@ await kvStore.set('organizationData', '', {
   landingTitle: 'Search for resources, subjects, collections or people',
 })
 
-export default -99
+export default 1
