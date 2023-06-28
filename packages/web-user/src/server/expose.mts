@@ -1,17 +1,13 @@
-import { Collection } from '@moodlenet/collection/server'
 import type { PkgExposeDef } from '@moodlenet/core'
 import { npm, RpcNext, RpcStatus } from '@moodlenet/core'
-import { Resource } from '@moodlenet/ed-resource/server'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
 import { getAppearance, getWebappUrl, setAppearance } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
-import { isCreatorOfCurrentEntity, queryEntities, toaql } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
-import { WebUserEntitiesTools } from './entities.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import {
   isAllowedKnownEntityFeature,
@@ -22,6 +18,7 @@ import {
   entityFeatureAction,
   getEntityFeatureCount,
   getLandingPageList,
+  getProfileOwnKnownEntities,
   getProfileRecord,
   searchProfiles,
   sendMessageToProfile as sendMessageToProfileIntent,
@@ -107,28 +104,26 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           return
         }
         const data = profileDoc2Profile(profileRecord.entity)
-        const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
-          _key,
-          type: 'Profile',
-        })
+
         const collections = (
-          await (
-            await shell.call(queryEntities)(Collection.entityClass, {
-              preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
-            })
-          ).all()
+          await getProfileOwnKnownEntities({
+            knownEntity: 'collection',
+            profileKey: _key,
+          })
         ).map(({ entity: { _key } }) => ({ _key }))
+
+        const resources = (
+          await getProfileOwnKnownEntities({
+            knownEntity: 'resource',
+            profileKey: _key,
+          })
+        ).map(({ entity: { _key } }) => ({ _key }))
+
         const profileHomePagePath = getProfileHomePageRoutePath({
           _key,
           displayName: profileRecord.entity.displayName,
         })
-        const resources = (
-          await (
-            await shell.call(queryEntities)(Resource.entityClass, {
-              preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
-            })
-          ).all()
-        ).map(({ entity: { _key } }) => ({ _key }))
+
         const currentProfileIds = await getCurrentProfileIds()
         const profileGetRpc: ProfileGetRpc = {
           canEdit: !!profileRecord.access.u,
@@ -263,7 +258,15 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       {
         guard: () => void 0,
         async fn(_, { _key, action, entityType, feature }) {
-          await entityFeatureAction({ _key, action, entityType, feature })
+          const currentProfileIds = await getCurrentProfileIds()
+          assert(currentProfileIds)
+          await entityFeatureAction({
+            _key,
+            action,
+            entityType,
+            feature,
+            profileKey: currentProfileIds._key,
+          })
           return
         },
       },
@@ -298,8 +301,14 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/web-user/delete-account-request/confirm/:token': {
       guard: () => void 0,
       async fn(_, { token }) {
-        await deleteWebUserAccountConfirmedByToken(token)
-        return
+        const result = await deleteWebUserAccountConfirmedByToken(token)
+        if (!result) {
+          throw RpcStatus('Unauthorized')
+        }
+        if (result.status === 'done') {
+          return
+        }
+        throw RpcStatus('Unprocessable Entity', result.status)
       },
     },
     'webapp/react-app/get-org-data': {

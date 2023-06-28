@@ -1,10 +1,13 @@
 import type { Patch } from '@moodlenet/arangodb/server'
+import { isArangoError } from '@moodlenet/arangodb/server'
+import { delCollection } from '@moodlenet/collection/server'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import { jwt } from '@moodlenet/crypto/server'
+import { delResource } from '@moodlenet/ed-resource/server'
 import { getCurrentHttpCtx, getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
-import { create, matchRootPassword } from '@moodlenet/system-entities/server'
+import { create, matchRootPassword, setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
 import type { CookieOptions } from 'express'
@@ -25,9 +28,12 @@ import type {
   VerifiedTokenCtx,
   WebUserAccountDeletionToken,
   WebUserDataType,
+  WebUserEvents,
   WebUserJwtPayload,
   WebUserRecord,
 } from '../types.mjs'
+import { reduceToKnownFeaturedEntities } from './known-features.mjs'
+import { entityFeatureAction, getProfileOwnKnownEntities, getProfileRecord } from './profile.mjs'
 
 const VALID_JWT_VERSION: TokenVersion = 1
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
@@ -273,9 +279,17 @@ export async function patchWebUser(
   { _key }: { _key: string },
   patch: Patch<Omit<WebUserDataType, 'displayName'>>, // | string,
 ) {
-  const { new: patchedUser } = await WebUserCollection.update({ _key }, patch, { returnNew: true })
-
-  return patchedUser
+  return WebUserCollection.update({ _key }, patch, { returnNew: true, returnOld: true }).catch(
+    err => {
+      if (isArangoError(err) && err.errorNum === 1202) {
+        return {
+          new: undefined,
+          old: undefined,
+        }
+      }
+      throw err
+    },
+  )
 }
 
 export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKey: string }) {
@@ -367,18 +381,105 @@ export async function deleteWebUserAccountConfirmedByToken(token: string) {
     return
   }
 
-  return deleteWebUserAccountNow(webUserAccountDeletionToken.payload.webUserKey)
+  return _deleteWebUserAccountNow(webUserAccountDeletionToken.payload.webUserKey)
 }
 
-export async function deleteWebUserAccountNow(webUserKey: string) {
-  shell.events.emit('deleted-web-user-account', {
-    displayName: '',
-    profileKey: '',
-    webUserKey,
-    leftCollections: [],
-    leftResources: [],
+async function _deleteWebUserAccountNow(webUserKey: string) {
+  return await shell.initiateCall(async () => {
+    await setPkgCurrentUser()
+    const { old: webUser } = await patchWebUser({ _key: webUserKey }, { deleting: true })
+    if (!webUser) {
+      return { status: 'not-found' } as const
+    }
+    if (webUser.deleting) {
+      return { status: 'deleting' } as const
+    }
+    const profile = (await getProfileRecord(webUser.profileKey))?.entity
+    assert(profile, '_deleteWebUserAccountNow: profile#${webUser.profileKey} not found')
+    if (profile.publisher) {
+      const knownFeaturedEntities = reduceToKnownFeaturedEntities(profile.knownFeaturedEntities)
+      const allDiscardingFeatures = [
+        ...knownFeaturedEntities.follow.collection.map(
+          ({ _key }) => ({ entityType: 'collection', feature: 'follow', _key } as const),
+        ),
+        ...knownFeaturedEntities.follow.profile.map(
+          ({ _key }) => ({ entityType: 'profile', feature: 'follow', _key } as const),
+        ),
+        ...knownFeaturedEntities.follow.subject.map(
+          ({ _key }) => ({ entityType: 'subject', feature: 'follow', _key } as const),
+        ),
+        ...knownFeaturedEntities.like.resource.map(
+          ({ _key }) => ({ entityType: 'resource', feature: 'like', _key } as const),
+        ),
+      ]
+
+      await Promise.all(
+        allDiscardingFeatures.map(
+          ({ _key, entityType, feature }) =>
+            entityFeatureAction({
+              _key,
+              entityType,
+              feature,
+              action: 'remove',
+              profileKey: profile._key,
+            }),
+          // shell.log('debug', `remove entityFeatureAction ${entityType} ${feature} ${_key}`),
+        ),
+      )
+    }
+    const ownCollections = await getProfileOwnKnownEntities({
+      knownEntity: 'collection',
+      profileKey: profile._key,
+    })
+
+    const ownResources = await getProfileOwnKnownEntities({
+      knownEntity: 'resource',
+      profileKey: profile._key,
+    })
+
+    const leftCollections = ownCollections
+      .filter(({ entity: { published } }) => published)
+      .map(({ entity: { _key } }) => ({ _key }))
+    const leftResources = ownResources
+      .filter(({ entity: { published } }) => published)
+      .map(({ entity: { _key } }) => ({ _key }))
+    const deletedCollections = ownCollections
+      .filter(({ entity: { published } }) => !published)
+      .map(({ entity: { _key } }) => ({ _key }))
+    const deletedResources = ownResources
+      .filter(({ entity: { published } }) => !published)
+      .map(({ entity: { _key } }) => ({ _key }))
+
+    await Promise.all(
+      deletedCollections.map(async ({ _key }) => {
+        await delCollection(_key)
+        // shell.log('debug', { delCollection: _key })
+        return { _key }
+      }),
+    )
+    await Promise.all(
+      deletedResources.map(async ({ _key }) => {
+        await delResource(_key)
+        // shell.log('debug', { delResource: _key })
+        return { _key }
+      }),
+    )
+
+    await Profile.collection.remove(profile._key)
+    await WebUserCollection.remove(webUser._key)
+
+    const event: WebUserEvents['deleted-web-user-account'] = {
+      displayName: profile.displayName,
+      profileKey: profile._key,
+      webUserKey: webUser._key,
+      deletedCollections,
+      deletedResources,
+      leftCollections,
+      leftResources,
+    }
+    shell.events.emit('deleted-web-user-account', event)
+    return { status: 'done', event } as const
   })
-  return webUserKey && void 0
 }
 
 export async function signWebUserAccountDeletionToken(webUserKey: string) {

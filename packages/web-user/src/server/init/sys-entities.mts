@@ -80,7 +80,7 @@ await shell.call(registerAccessController)({
   },
   async r({ entityClass }) {
     const { isRootOrAdmin } = await betterTokenContext()
-    const published_and_publisher = `${currentEntityVar}.published && ${creatorEntityDocVar}.publisher`
+    const published_and_publisher = `${currentEntityVar}.published && (!${creatorEntityDocVar} || ${creatorEntityDocVar}.publisher)`
     if (isRootOrAdmin) {
       return true
     } else if (isSameClass(Profile.entityClass, entityClass)) {
