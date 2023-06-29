@@ -1,3 +1,4 @@
+import { IscedField } from '@moodlenet/ed-meta/server'
 import type { KnownEntityFeature, KnownEntityType } from '@moodlenet/web-user/common'
 import { entityFeatureAction } from '@moodlenet/web-user/server'
 import assert from 'assert'
@@ -35,9 +36,9 @@ export async function featured_entities() {
           .map(
             V2FeatColl =>
               `
-      (FOR feat IN ${V2FeatColl} 
-        FILTER feat._creator._permId == "${v2_profile_key}"
-      RETURN feat)
+        (FOR feat IN ${V2FeatColl}
+          FILTER feat._from == "${v2_profile_id}"
+        RETURN feat)
       `,
           )
           .join(',')
@@ -60,7 +61,7 @@ export async function featured_entities() {
         const featV2TargetIdTypes = await featCursor.all()
 
         for (const { v2FeatType, v2TargetId } of featV2TargetIdTypes) {
-          const [v2targetEntitiyType /* , v2TargetEntitiyKey */] = v2TargetId.split('/')
+          const [v2targetEntitiyType, v2TargetEntitiyKey] = v2TargetId.split('/')
           const v3KnownEntityFeature: KnownEntityFeature =
             v2FeatType === 'Likes'
               ? 'like'
@@ -82,6 +83,11 @@ export async function featured_entities() {
                 }
               : v2targetEntitiyType === 'Profile' || v2targetEntitiyType === 'Organization'
               ? { toV3EntityId: Profile_v2v3_IdMapping[v2TargetId], knownEntityType: 'profile' }
+              : v2targetEntitiyType === 'IscedField'
+              ? {
+                  toV3EntityId: `${IscedField.collection.name}/${v2TargetEntitiyKey}`,
+                  knownEntityType: 'subject',
+                }
               : null
 
           if (!(v3KnownEntityFeature && v3Target?.toV3EntityId)) {
