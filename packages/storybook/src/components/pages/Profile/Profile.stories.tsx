@@ -31,7 +31,7 @@ type ProfileStory = ComponentStory<typeof Profile>
 export const LoggedOut = () => {
   const props = useProfileStoryProps({
     mainLayoutProps: MainLayoutLoggedOutStoryProps,
-    access: { isAuthenticated: false, canBookmark: false, canFollow: false },
+    access: { isAuthenticated: false, canFollow: false },
     mainColumnItems: [],
     sideColumnItems: [],
     overallCardItems: OverallCardStories.OverallCardNoCardStoryProps.items,

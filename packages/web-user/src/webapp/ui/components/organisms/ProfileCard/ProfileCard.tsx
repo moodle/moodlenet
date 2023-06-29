@@ -44,7 +44,7 @@ export const ProfileCard = withProxy<ProfileCardProps>(
     const { isCreator, canFollow, isAuthenticated } = access
 
     const { toggleFollow } = actions
-    const { followed } = state
+    const { followed, isApproved } = state
 
     const header = (
       <div className="profile-card-header" key="header">
@@ -83,7 +83,7 @@ export const ProfileCard = withProxy<ProfileCardProps>(
     )
 
     return (
-      <Card className="profile-card" hover={true} key={userId}>
+      <Card className={`profile-card ${isApproved ? 'approved' : ''}`} hover={true} key={userId}>
         <Link className="profile-card-content" href={profileHref}>
           <div className="images">
             <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />

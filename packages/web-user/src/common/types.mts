@@ -92,6 +92,7 @@ export type ProfileState = {
   profileUrl: string
   followed: boolean
   numFollowers: number
+  isApproved: boolean
 }
 
 export type ProfileActions = {
