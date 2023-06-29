@@ -17,7 +17,7 @@ export const CollectionCardPlugins = createPlugin<
   },
   {
     collectionKey: string
-    info: null | { name: string; isCreator: boolean }
+    info: null | undefined | { name: string; isCreator: boolean }
   }
 >()
 

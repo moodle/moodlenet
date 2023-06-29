@@ -10,7 +10,7 @@ import type {
 import { MainContext } from './MainContext.js'
 
 type myProps = { collectionKey: string }
-export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null => {
+export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null | undefined => {
   const { rpcCaller } = useContext(MainContext)
   const nav = useNavigate()
   const [collection, setCollection] = useState<CollectionProps | null>()
@@ -92,7 +92,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     }
   }, [collection, collectionKey, nav, rpcCaller, setterSave])
 
-  return useMemo<CollectionMainProps | null>(
+  return useMemo<CollectionMainProps | null | undefined>(
     () =>
       !collection
         ? null

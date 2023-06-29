@@ -110,7 +110,7 @@ export const expose = await shell.expose<CollectionExposeType>({
           },
         })
         if (!found) {
-          return
+          return null
         }
 
         const contributor: CollectionContributorRpc = getRpcContributor(found.contributor)
