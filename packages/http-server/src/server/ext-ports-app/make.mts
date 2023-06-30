@@ -27,7 +27,7 @@ export async function getMyRpcBaseUrl() {
 export function makeExtPortsApp() {
   const exposes = shell.getExposes()
   const srvApp = express()
-  srvApp.use(json())
+  srvApp.use(json({ strict: false, limit: '10kb' }))
   exposes.forEach(({ expose, pkgId }) => {
     const pkgApp = express()
     srvApp.use(`/${pkgId.name}`, pkgApp)

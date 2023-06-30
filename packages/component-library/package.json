@@ -1,6 +1,9 @@
 {
   "name": "@moodlenet/component-library",
-  "version": "0.2.5",
+  "version": "0.3.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "MoodleNet",
   "moodlenet": {
     "displayName": "MoodleNet Component Library",

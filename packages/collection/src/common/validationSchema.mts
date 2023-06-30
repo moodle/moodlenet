@@ -1,7 +1,6 @@
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { CollectionFormProps } from './types.mjs'
-import { maxUploadSize } from './types.mjs'
 
 export const validationSchema: SchemaOf<CollectionFormProps> = object({
   title: string().max(160).min(3).required(/* t */ `Please provide a title`),
@@ -20,7 +19,7 @@ export const validationSchema: SchemaOf<CollectionFormProps> = object({
 export const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > maxUploadSize
+      v instanceof Blob && v.size > 5 * 1024 ** 2
         ? createError({
             message: `The file is too big, reduce the size or provide a url`,
           })

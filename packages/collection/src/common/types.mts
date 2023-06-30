@@ -179,5 +179,3 @@ export const getCollectionTypeInfo = (type: string): { typeName: string; typeCol
       return { typeName: type, typeColor: '#15845A' }
   }
 }
-
-export const maxUploadSize = 1024 * 1024 * 50

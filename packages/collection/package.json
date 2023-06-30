@@ -1,6 +1,9 @@
 {
   "name": "@moodlenet/collection",
-  "version": "0.2.5",
+  "version": "0.3.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "MoodleNet",
   "moodlenet": {
     "displayName": "collection page",
@@ -26,25 +29,25 @@
     "dist/"
   ],
   "dependencies": {
-    "@moodlenet/key-value-store": "^0.2.5",
-    "@moodlenet/simple-file-store": "^0.2.5",
+    "@moodlenet/key-value-store": "^0.3.0",
+    "@moodlenet/simple-file-store": "^0.3.0",
     "formik": "2.2.9",
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/component-library": "^0.2.5",
-    "@moodlenet/core": "^0.2.5",
-    "@moodlenet/ed-resource": "^0.2.5",
-    "@moodlenet/react-app": "^0.2.5",
-    "@moodlenet/system-entities": "^0.2.5"
+    "@moodlenet/component-library": "^0.3.0",
+    "@moodlenet/core": "^0.3.0",
+    "@moodlenet/ed-resource": "^0.3.0",
+    "@moodlenet/react-app": "^0.3.0",
+    "@moodlenet/system-entities": "^0.3.0"
   },
   "devDependencies": {
     "@lingui/macro": "3.14.0",
-    "@moodlenet/component-library": "^0.2.5",
-    "@moodlenet/core": "^0.2.5",
-    "@moodlenet/ed-resource": "^0.2.5",
-    "@moodlenet/react-app": "^0.2.5",
-    "@moodlenet/system-entities": "^0.2.5",
+    "@moodlenet/component-library": "^0.3.0",
+    "@moodlenet/core": "^0.3.0",
+    "@moodlenet/ed-resource": "^0.3.0",
+    "@moodlenet/react-app": "^0.3.0",
+    "@moodlenet/system-entities": "^0.3.0",
     "@types/node": "17.0.35",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",

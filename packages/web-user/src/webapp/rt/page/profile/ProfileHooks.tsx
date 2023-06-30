@@ -14,8 +14,6 @@ import { AuthCtx } from '../../context/AuthContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
 import { shell } from '../../shell.mjs'
 
-const __should_be_from_server_maxUploadSize = 1024 * 1024 * 50
-
 export const ProfilePagePlugins = createPlugin<{
   main_mainColumnItems?: AddOnMap<AddonItemNoKey>
   main_topItems?: AddOnMap<AddonItemNoKey>
@@ -170,7 +168,7 @@ export const useProfileProps = ({
       // state: {
       //   followed: false,
       // },
-      validationSchema: profileFormValidationSchema(__should_be_from_server_maxUploadSize), // FIXME
+      validationSchema: profileFormValidationSchema,
     }
     return props
   }, [

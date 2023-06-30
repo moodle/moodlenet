@@ -1,6 +1,9 @@
 {
   "name": "@moodlenet/http-server",
-  "version": "0.2.5",
+  "version": "0.3.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
@@ -37,10 +40,10 @@
     "xbytes": "^1.8.0"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.2.5"
+    "@moodlenet/core": "^0.3.0"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.2.5",
+    "@moodlenet/core": "^0.3.0",
     "@types/cookie-parser": "1.4.3",
     "@types/express": "4.17.14",
     "@types/multer": "1.4.7",

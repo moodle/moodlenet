@@ -12,7 +12,7 @@ import { getAliases, getPkgPlugins } from './generated-files.mjs'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const require = createRequire(import.meta.url)
-
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 // const ResolveTypeScriptPlugin = require('resolve-typescript-plugin').default
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 // const ReactRefreshTypeScript = require('react-refresh-typescript')
@@ -284,6 +284,9 @@ export async function getWp(
       ],
     },
     plugins: [
+      new NodePolyfillPlugin({
+        includeAliases: ['console', 'process'],
+      }),
       new webpack.NormalModuleReplacementPlugin(/^node:/, resource => {
         // resource.request = resource.request.replace(/^node:/, '')
         const url = resource.request

@@ -1,4 +1,4 @@
-import type { DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
+import type { Document, DocumentCollection, DocumentMetadata } from '@moodlenet/arangodb/server'
 import type { PkgName } from '@moodlenet/core'
 import type { EntityClass, EntityIdentifier, SomeEntityDataType } from '../common/types.mjs'
 
@@ -76,4 +76,11 @@ export type AnonUser = {
 export type PkgUser = {
   type: 'pkg'
   pkgName: PkgName
+}
+
+export type PkgEvents = {
+  'created-new': {
+    newEntity: Document<EntityDocFullData<SomeEntityDataType>>
+    creator: SystemUser
+  }
 }

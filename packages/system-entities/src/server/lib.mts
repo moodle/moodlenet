@@ -18,7 +18,6 @@ import { entityDocument2Aql, pkgMetaOf2Aql } from './aql-lib/by-proc-values.mjs'
 import { userInfoAqlProvider } from './aql-lib/userInfo.mjs'
 import type { EntityInfo, EntityInfoProviderItem } from './entity-info.mjs'
 import { ENTITY_INFO_PROVIDERS } from './entity-info.mjs'
-import { SysEntitiesEvents } from './events.mjs'
 import { db, SearchAliasView, SEARCH_VIEW_NAME } from './init/arangodb.mjs'
 import { env } from './init/env.mjs'
 import { getEntityCollection } from './pkg-db-names.mjs'
@@ -174,8 +173,16 @@ export async function create<EntityDataType extends SomeEntityDataType>(
     },
     { returnNew: true },
   )
-  assert(newEntity)
-  SysEntitiesEvents.emit('created-new', { newEntity, creator: currentUser })
+  assert(
+    newEntity,
+    `failed to create entity although user passed canCreateEntity check
+entity:
+${JSON.stringify(newEntityData, null, 2)}
+user:
+${JSON.stringify(currentUser, null, 2)}
+`,
+  )
+  shell.events.emit('created-new', { newEntity, creator: currentUser })
   return newEntity
 }
 

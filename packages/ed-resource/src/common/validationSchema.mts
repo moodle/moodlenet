@@ -41,7 +41,7 @@ export const contentValidationSchema: SchemaOf<{ content: File | string | undefi
           : true,
       )
       .test((v, { createError }) =>
-        v instanceof Blob && v.size > maxUploadSize
+        v instanceof Blob && v.size > 1.2 * 1024 ** 3
           ? createError({
               message: `The file is too big, reduce the size or provide a url`,
             })
@@ -53,7 +53,7 @@ export const contentValidationSchema: SchemaOf<{ content: File | string | undefi
 export const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > maxUploadSize
+      v instanceof Blob && v.size > 5 * 1024 ** 2
         ? createError({
             message: `The file is too big, reduce the size or provide a url`,
           })

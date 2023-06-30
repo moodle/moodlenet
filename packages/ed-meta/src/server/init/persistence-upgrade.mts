@@ -1,6 +1,6 @@
 import { kvStore } from './kvStore.mjs'
 
-const PERSISTENCE_VERSION = -97
+const PERSISTENCE_VERSION = 1
 let currentPersistentVersion = (await kvStore.get('persistence-version', '')).value?.v ?? NaN
 if (currentPersistentVersion > PERSISTENCE_VERSION) {
   throw new Error(

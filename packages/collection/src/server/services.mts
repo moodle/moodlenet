@@ -197,7 +197,6 @@ export async function searchCollections({
       limit,
       skip,
       sort,
-      //forOptions: `OPTIONS { indexHint:"${TEXT_SEARCH_INDEX_NAME}", forceIndexHint: true }`,
     },
   )
 

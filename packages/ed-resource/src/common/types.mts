@@ -229,8 +229,6 @@ export const getResourceTypeInfo = (
   }
 }
 
-export const maxUploadSize = 1024 * 1024 * 50
-
 export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
   subject: string().required(/* t */ `Please select a subject`),
   content: string().required(/* t */ `Please upload a content`),
@@ -255,7 +253,7 @@ export const contentValidationSchema: SchemaOf<{ content: File | string | undefi
 export const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > maxUploadSize
+      v instanceof Blob && v.size > 5 * 1024 ** 2
         ? createError({
             message: /* t */ `The file is too big, reduce the size or provide a url`,
           })

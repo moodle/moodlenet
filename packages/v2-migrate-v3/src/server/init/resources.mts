@@ -10,9 +10,9 @@ import assert from 'assert'
 import cliProgress from 'cli-progress'
 import { shell } from '../shell.mjs'
 import type * as v2 from '../v2-types/v2.mjs'
-import { getRpcFileByV2AssetLocation, initiateCallForProfileKey } from './util.mjs'
+import { getRpcFileByV2AssetLocation, initiateCallForV3ProfileId } from './util.mjs'
 import { v2_DB_ContentGraph } from './v2-db.mjs'
-import { Profile_v2v3_IdMapping } from './web-users.mjs'
+import { ProfileIdV3_IsPublisher, Profile_v2v3_IdMapping } from './web-users.mjs'
 export const Resource_v2v3_IdMapping: Record<string, string> = {}
 export const Resource_v3v2_IdMapping: Record<string, string> = {}
 
@@ -28,12 +28,16 @@ export async function user_resources() {
 
   for (const v2_profile_id in Profile_v2v3_IdMapping) {
     const v3ProfileId = Profile_v2v3_IdMapping[v2_profile_id]
-
     assert(v3ProfileId)
+    const isPublisher = ProfileIdV3_IsPublisher[v3ProfileId]
+    assert(
+      typeof isPublisher === 'boolean',
+      `${v3ProfileId} publisher is not boolean : ${isPublisher}`,
+    )
     BAR.update({ v2_profile_id, resource: 'no own resources' })
     const [v2_profile_type, v2_profile_key] = v2_profile_id.split('/')
     assert(v2_profile_type && v2_profile_key)
-    await initiateCallForProfileKey({
+    await initiateCallForV3ProfileId({
       _id: v3ProfileId,
       async exec() {
         const ownResourcesCursor = await v2_DB_ContentGraph.query<
@@ -61,10 +65,10 @@ export async function user_resources() {
             : ['', '']
 
           shell.setNow(v2_resource._created)
-          const newResource = await createResource({
+          const resourceData: ResourceDataType = {
             description: v2_resource.description,
             title: v2_resource.name,
-            published: v2_resource._published,
+            published: isPublisher && v2_resource._published,
             content: null, //{ kind: 'link', url: '' },
             image:
               v2_resource.image?.ext === true
@@ -78,8 +82,9 @@ export async function user_resources() {
             month,
             year,
             ...featsMap,
-          })
-          assert(newResource)
+          }
+          const newResource = await createResource(resourceData)
+          assert(newResource, `Resource not created !`)
 
           const resourceContent: RpcFile | string | null = v2_resource.content.ext
             ? v2_resource.content.location
@@ -128,9 +133,9 @@ function mapResourceFeats(
       : featId.startsWith('ResourceType')
       ? 'type'
       : (null as never)
-    assert(field)
+    assert(field, `no field found for featId ${featId}`)
     const featkey = featId.split('/')[1]
-    assert(featkey)
+    assert(featkey, `no featkey found for featId ${featId}`)
     return { ..._acc, [field]: featkey }
   }, {} as Pick<ResourceDataType, V3_Props_From_FeatureEdge>)
 

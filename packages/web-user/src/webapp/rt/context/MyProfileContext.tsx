@@ -4,12 +4,14 @@ import type {
   KnownEntityFeature,
   KnownEntityType,
   KnownFeaturedEntities,
+  Profile,
 } from '../../../common/types.mjs'
 import { shell } from '../shell.mjs'
 import { AuthCtx } from './AuthContext.js'
 
 export type MyProfileContextT = {
   myFeaturedEntities: AllMyFeaturedEntitiesHandle
+  myProfile: Profile & { publisher: boolean }
 }
 export const MyProfileContext = createContext<MyProfileContextT | null>(null)
 export function useMyProfileContext() {
@@ -32,6 +34,7 @@ function useMyProfileContextValue() {
     }
     const myProfileContext: MyProfileContextT = {
       myFeaturedEntities,
+      myProfile,
     }
     return myProfileContext
   }, [myFeaturedEntities, myProfile])

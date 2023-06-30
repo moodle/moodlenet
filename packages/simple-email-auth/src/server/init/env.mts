@@ -1,7 +1,6 @@
 import { shell } from '../shell.mjs'
 
 export const env = await getEnv()
-console.log('ENV:', env)
 
 type Env = {
   newUserNotPublisher: boolean
