@@ -9,5 +9,15 @@ export type KeyValueData = {
     webImageSize: [number, number]
     webIconSize: [number, number]
   }
+  'build-info':
+    | {
+        status: 'built'
+        lastBuild: string
+        pluginsHash: string
+      }
+    | {
+        status: 'building'
+        pluginsHash: string
+      }
 }
 export const kvStore = await kvStoreFactory<KeyValueData>(shell)

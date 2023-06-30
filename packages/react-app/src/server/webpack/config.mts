@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import type { Configuration } from 'webpack'
 import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
-import { getAliases, getPkgPlugins } from './generated-files.mjs'
+import type { WebappPluginItem } from '../../common/types.mjs'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -22,7 +22,10 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 // const { jsonBeautify } = require('beautify-json');
 
 export async function getWp(
-  cfg:
+  cfg: {
+    alias: any
+    pkgPlugins: WebappPluginItem<any>[]
+  } & (
     | {
         mode: 'prod'
         buildFolder: string
@@ -31,12 +34,13 @@ export async function getWp(
         mode: 'dev-server'
         port: number
         proxy: string
-      },
+      }
+  ),
 ) {
   const isDevServer = cfg.mode === 'dev-server'
   const mode: Configuration['mode'] = isDevServer ? 'development' : 'production'
-  const alias = await getAliases()
-  const pkgPlugins = await getPkgPlugins()
+  const alias = cfg.alias
+  const pkgPlugins = cfg.pkgPlugins
   const config: Configuration = {
     stats: isDevServer ? 'normal' : 'errors-only',
     mode,

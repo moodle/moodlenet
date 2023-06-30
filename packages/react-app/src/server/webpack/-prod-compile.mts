@@ -3,10 +3,17 @@ import { cp } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
 import { inspect } from 'util'
+import { getBuildContext } from '../get-build-context.mjs'
 import { getWp } from './config.mjs'
-import { buildFolder, latestBuildFolder } from './generated-files.mjs'
 
-const wp = await getWp({ mode: 'prod', buildFolder })
+const buildContext = await getBuildContext({ baseBuildFolder: process.cwd() })
+const { buildFolder, latestBuildFolder } = buildContext
+const wp = await getWp({
+  alias: await buildContext.getAliases(),
+  pkgPlugins: await buildContext.getPkgPlugins(),
+  mode: 'prod',
+  buildFolder,
+})
 // shell.log('debug', { baseResolveAlias, latestBuildFolder, buildFolder })
 
 // process.on('SIGTERM', () => wp.close(() => void 0))
