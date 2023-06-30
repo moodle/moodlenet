@@ -93,6 +93,10 @@ export type ProfileState = {
   followed: boolean
   numFollowers: number
   isApproved: boolean
+  isElegibleForApproval: boolean
+  isWaitingApproval: boolean
+  showAccountApprovedSuccessAlert: boolean
+  showApprovalRequestedSuccessAlert: boolean
 }
 
 export type ProfileActions = {
@@ -101,6 +105,9 @@ export type ProfileActions = {
   sendMessage(msg: string): void
   setAvatar(file: File | undefined | null): void
   setBackground: (file: File | undefined | null) => void
+  requestApproval: () => void
+  approveUser: () => void
+  unapproveUser: () => void
 }
 
 export type ProfileAccess = {
@@ -109,6 +116,7 @@ export type ProfileAccess = {
   isAdmin: boolean
   canEdit: boolean
   canFollow: boolean
+  canApprove: boolean
 }
 
 export type LMSSettingsRpc = {

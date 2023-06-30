@@ -203,6 +203,7 @@ export const useCollectionStoryProps = (
     ...overrides?.smallFollowButtonProps,
     isAuthenticated,
   }
+
   const bookmarkButtonProps: BookmarkButtonProps = {
     bookmarked: true,
     canBookmark: true,
@@ -210,6 +211,7 @@ export const useCollectionStoryProps = (
     ...overrides?.bookmarkButtonProps,
     isAuthenticated,
   }
+  
   const isPublished =
     overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 

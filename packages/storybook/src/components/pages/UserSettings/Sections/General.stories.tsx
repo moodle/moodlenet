@@ -10,22 +10,19 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
 }): GeneralProps => {
   const simpleEmailUserSettingsProps: SimpleEmailUserSettingsProps = {
     data: {
-      email: 'myemail@domain.com',
       password: 'mypassword',
     },
-    emailChangedSuccess: false,
     passwordChangedSuccess: false,
     editData: action('edit data'),
   }
   return {
-    deleteAccount: action('delete account'),
-    deleteAccountSuccess: false,
     mainColumnItems: [
       {
         Item: () => <SimpleEmailUserSettings {...simpleEmailUserSettingsProps} />,
         key: 'simple-email-auth',
       },
     ],
+    userId: 'john-cake-21321312',
     // updateExtensions: action('Updating extensions'),
     // updateSuccess: true,
     ...overrides?.props,

@@ -91,7 +91,6 @@ export const ProfileCard = withProxy<ProfileCardProps>(
               <img src={avatarUrl || defaultAvatar} alt="Avatar" />
             </div>
           </div>
-
           <div className="info">
             {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
           </div>

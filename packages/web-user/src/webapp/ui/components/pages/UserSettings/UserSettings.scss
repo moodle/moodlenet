@@ -207,11 +207,17 @@
     }
   }
 
+  @media (max-width: 675px) {
+  }
+
+  @media (min-width: 675px) {
+    margin-top: -40px;
+  }
+
   @media (max-width: 1000px) {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin-top: -30px;
 
     > .menu-container {
       justify-content: center;
