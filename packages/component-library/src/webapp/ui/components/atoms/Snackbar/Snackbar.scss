@@ -1,16 +1,19 @@
 @import '../../../styles/application';
 
+.snackbar-portal {
+  justify-content: center;
+}
+
 .snackbar.card {
   display: flex;
   flex-direction: row;
   width: fit-content;
   min-height: 40px;
+  max-width: 650px;
   color: #fff;
   font-size: 0.875rem;
   font-weight: bold;
   background-color: #7b7b7b;
-  left: 50%;
-  transform: translateX(-50%);
   align-items: center;
   justify-content: space-between;
   padding: 6px 6px 6px 14px;

@@ -109,11 +109,11 @@ export const ApprovalInfo: FC<ApprovalInfoProps> = ({
         <>
           Looks like you are starting to upload some resources!
           <br /> <br />
-          Feel free to request approval to make the published ones public.
+          Feel free to request approval so others can see your content.
         </>
       ) : (
         <>
-          We need to approve your account to make your published content public.
+          We need to approve your account for others to see your content.
           <br /> <br />
           Upload 5 good-quality resources and click the button below for account approval.
         </>
@@ -136,9 +136,11 @@ export const ApprovalBadge: FC<ApprovalBadgeProps> = ({
   showAccountApprovedSuccessAlert,
 }) => {
   return !isEditing && canEdit && isApproved ? (
-    <abbr className={`approved-icon`} title={`Approved, your published content is visible to all`}>
+    <abbr className={`approved-badge`} title={`Approved, your published content is visible to all`}>
       <ApprovedIcon
-        className={`${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`}
+        className={`approved-icon ${
+          showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''
+        }`}
       />
     </abbr>
   ) : null
