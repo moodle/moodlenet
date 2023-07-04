@@ -19,7 +19,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
   const [isPublished, setIsPublish] = useState(false)
 
   useEffect(() => {
-    setCollection(null)
+    setCollection(undefined)
     rpcCaller.get(collectionKey).then(res => {
       res && setIsPublish(res.state.isPublished)
       setCollection(res)

@@ -101,7 +101,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       async fn({ _key }) {
         const profileRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
         if (!profileRecord) {
-          return
+          return null
         }
         const data = profileDoc2Profile(profileRecord.entity)
 

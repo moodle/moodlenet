@@ -19,7 +19,7 @@ export type WebUserExposeType = PkgExposeDef<{
     'getCurrentClientSessionDataRpc'(): Promise<ClientSessionDataRpc | undefined>
     'loginAsRoot'(body: { rootPassword: string }): Promise<boolean>
     'webapp/profile/edit'(body: Omit<Profile, 'avatarUrl' | 'backgroundUrl'>): Promise<void>
-    'webapp/profile/get'(body: { _key: string }): Promise<ProfileGetRpc | undefined>
+    'webapp/profile/get'(body: { _key: string }): Promise<ProfileGetRpc | null>
     'webapp/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
     'webapp/roles/toggleIsAdmin'(
       body: { profileKey: string } | { userKey: string },

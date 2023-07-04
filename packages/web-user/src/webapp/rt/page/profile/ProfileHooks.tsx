@@ -29,14 +29,14 @@ export const useProfileProps = ({
   profileKey,
 }: {
   profileKey: string
-}): ProfileProps | undefined => {
+}): ProfileProps | null | undefined => {
   const plugins = ProfilePagePlugins.usePluginHooks()
 
   const resourceCtx = useContext(ResourceContext)
   const collectionCtx = useContext(CollectionContext)
 
   const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
-  const [profileGetRpc, setProfileGetRpc] = useState<ProfileGetRpc>()
+  const [profileGetRpc, setProfileGetRpc] = useState<ProfileGetRpc | null>()
 
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
@@ -55,10 +55,8 @@ export const useProfileProps = ({
   )
 
   useEffect(() => {
+    setProfileGetRpc(undefined)
     shell.rpc.me['webapp/profile/get']({ _key: profileKey }).then(res => {
-      if (!res) {
-        return
-      }
       setProfileGetRpc(res)
     })
   }, [profileKey])
@@ -66,9 +64,9 @@ export const useProfileProps = ({
   const mainLayoutProps = useMainLayoutProps()
   const follow = useMyFeaturedEntity({ _key: profileKey, entityType: 'profile', feature: 'follow' })
 
-  const profileProps = useMemo<ProfileProps | undefined>(() => {
+  const profileProps = useMemo<ProfileProps | null | undefined>(() => {
     if (!profileGetRpc) {
-      return
+      return profileGetRpc
     }
     const isAdmin = !!clientSessionData?.isAdmin
     const isCreator = clientSessionData?.myProfile?._key === profileKey
