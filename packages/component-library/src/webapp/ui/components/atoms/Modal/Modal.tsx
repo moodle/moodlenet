@@ -1,29 +1,29 @@
 import { CloseRounded as CloseRoundedIcon } from '@material-ui/icons'
+import type React from 'react'
 import type { PropsWithChildren, ReactNode } from 'react'
-import React, { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useLayoutEffect } from 'react'
 import ReactDOM from 'react-dom'
 import Card from '../Card/Card.js'
 import './Modal.scss'
 
-class Portal extends React.Component<PropsWithChildren<unknown>> {
-  static el = (() => {
-    const _el = document.createElement('div')
-    _el.setAttribute('class', 'modal-portal')
-    _el.style.display = 'none'
-    document.body.prepend(_el)
-    return _el
-  })()
-  componentDidMount() {
-    Portal.el.style.display = 'block'
-  }
+const portalElement = document.createElement('div')
+portalElement.setAttribute('class', 'modal-portal')
+portalElement.style.display = 'none'
+export function setPortalParentElement(parentElem?: HTMLElement) {
+  portalElement.remove()
+  parentElem?.prepend(portalElement)
+}
+setPortalParentElement(document.body)
 
-  componentWillUnmount() {
-    Portal.el.style.display = 'none'
-  }
+function Portal({ children }: PropsWithChildren<unknown>) {
+  useLayoutEffect(() => {
+    portalElement.style.display = 'block'
+    return () => {
+      portalElement.style.display = 'none'
+    }
+  }, [])
 
-  render() {
-    return ReactDOM.createPortal(this.props.children, Portal.el)
-  }
+  return ReactDOM.createPortal(children, portalElement)
 }
 
 // export type PortalProps = {
