@@ -1,7 +1,7 @@
 import { InsertDriveFile, Link } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Modal, PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import {
   DateField,
   LanguageField,
@@ -132,7 +132,7 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
 
-  const imageForm = useFormik<{ image: AssetInfo | undefined | null }>({
+  const imageForm = useFormik<{ image: AssetInfoForm | undefined | null }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
     validateOnMount: true,
     validationSchema: imageValidationSchema,

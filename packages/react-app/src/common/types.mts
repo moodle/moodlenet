@@ -28,13 +28,3 @@ export type AppearanceData = {
   //TODO //@BRU //@ETTO decide if having this as optional
   customStyle?: CustomStyleType
 }
-
-export type AssetInfo = {
-  location: string | File
-  credits: Credits | null
-}
-
-export type Credits = {
-  owner: { name: string; url: string | null }
-  provider: { name: string; url: string | null } | null
-}

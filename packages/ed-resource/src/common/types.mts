@@ -2,7 +2,7 @@ import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-
 import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { ResourceExposeType } from './expose-def.mjs'
@@ -92,7 +92,7 @@ export type ResourceActions = {
   publish: () => void
   unpublish: () => void
   editData: (values: ResourceFormProps) => void
-  setImage: (image: AssetInfo | undefined | null) => void
+  setImage: (image: AssetInfoForm | undefined | null) => void
   setContent: (content: File | string | undefined | null) => void
   deleteResource(): void
 }

@@ -14,7 +14,7 @@ import type { FC } from 'react'
 import { useMemo, useState } from 'react'
 import type { SchemaOf } from 'yup'
 
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
 import { ResourceCard } from '@moodlenet/ed-resource/ui'
 import { CloseRounded } from '@mui/icons-material'
@@ -91,7 +91,7 @@ export const Collection: FC<CollectionProps> = ({
       return editData(values)
     },
   })
-  const imageForm = useFormik<{ image: AssetInfo | null | undefined }>({
+  const imageForm = useFormik<{ image: AssetInfoForm | null | undefined }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
     validateOnMount: true,
     validationSchema: imageValidationSchema,

@@ -1,4 +1,4 @@
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 import type { Href } from '@moodlenet/react-app/common'
 import type { CollectionExposeType } from './expose-def.mjs'
 
@@ -93,7 +93,7 @@ export type CollectionActions = {
   editData: (values: CollectionFormProps) => void
   removeResource: (key: string) => void
   deleteCollection(): void
-  setImage: (image: AssetInfo | undefined | null) => void
+  setImage: (image: AssetInfoForm | undefined | null) => void
 }
 
 export type CollectionMainProps = {
