@@ -27,9 +27,9 @@ export const useSubjectPageProps = ({ subjectKey }: SubjectPageHookArg) => {
   const subjectData = useSubjectData({ subjectKey })
   const plugins = SubjectPagePlugins.usePluginHooks({ subjectKey })
 
-  return useMemo<SubjectProps | null>((): SubjectProps | null => {
+  return useMemo<SubjectProps | null | undefined>(() => {
     if (!subjectData) {
-      return null
+      return subjectData
     }
     const subjectProps: SubjectProps = {
       mainLayoutProps,
