@@ -11,7 +11,7 @@ import {
   Snackbar,
   TertiaryButton,
 } from '@moodlenet/component-library'
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
 import type { FC } from 'react'
@@ -41,7 +41,7 @@ export type MainCollectionCardProps = {
   data: CollectionDataProps
   // collectionForm: CollectionFormProps
   form: FormikHandle<CollectionFormProps>
-  imageForm: FormikHandle<{ image: AssetInfo | undefined | null }>
+  imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
 
   state: CollectionStateProps
   actions: CollectionActions
@@ -90,7 +90,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const {
     // id,
     mnUrl,
-    image,
+    // image,
   } = data
 
   const { isPublished } = state
@@ -118,7 +118,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     setisWaitingForSaving(true)
     setShouldShowErrors(false)
     editData(form.values)
-    setImage(imageForm.values.image)
+    typeof imageForm.values.image?.location !== 'string' &&
+      setImage(imageForm.values.image?.location)
   }
 
   useEffect(() => {

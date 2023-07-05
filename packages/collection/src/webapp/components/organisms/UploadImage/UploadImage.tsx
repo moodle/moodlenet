@@ -17,13 +17,13 @@ import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-
 // import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 // import { useNewCollectionPageCtx } from '../NewCollection'
 // import { NewCollectionFormValues } from '../types'
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import './UploadImage.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadImageProps = {
-  imageForm: FormikHandle<{ image: AssetInfo | undefined | null }>
-  backupImage?: AssetInfo
+  imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
+  backupImage?: AssetInfoForm
   displayOnly?: boolean
   OnClick?: () => void
 }

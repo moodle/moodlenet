@@ -10,5 +10,5 @@ export const CollectionContainer: FC<{ collectionKey: string; editMode: boolean 
   if (!panelProps) {
     return null
   }
-  return <Collection key={collectionKey} {...panelProps} isEditing={editMode} />
+  return <Collection key={collectionKey} {...panelProps} isEditingAtStart={editMode} />
 }

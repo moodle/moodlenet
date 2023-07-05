@@ -12,7 +12,7 @@ import {
   TertiaryButton,
   useWindowDimensions,
 } from '@moodlenet/component-library'
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { capitalizeFirstLetter, downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
@@ -56,7 +56,7 @@ export type MainResourceCardProps = {
   edMetaOptions: EdMetaOptionsProps
   form: FormikHandle<ResourceFormProps>
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
-  imageForm: FormikHandle<{ image: AssetInfo | undefined | null }>
+  imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
 
   state: ResourceStateProps
   actions: ResourceActions
@@ -111,7 +111,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadOptionsItems,
   } = slots
 
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref, id } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
 
   const { subjectOptions } = edMetaOptions
 

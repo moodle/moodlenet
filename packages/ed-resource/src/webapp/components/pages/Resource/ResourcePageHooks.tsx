@@ -69,7 +69,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     rightColumnItems: [],
     extraDetailsItems: [],
   }
-  const resourceProps: ResourceProps = {
+  const resourceProps: Omit<ResourceProps, 'isEditingAtStart'> = {
     mainLayoutProps,
     mainResourceCardSlots,
     resourceContributorCardProps: contributor,
@@ -101,7 +101,6 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     access,
     fileMaxSize: maxUploadSize,
     isSaving,
-    isEditing: false,
   }
   return resourceProps
 }

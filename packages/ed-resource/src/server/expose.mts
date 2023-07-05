@@ -18,7 +18,7 @@ import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { env } from './init/env.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
-import { getImageUrl } from './lib.mjs'
+import { getImageAssetInfo, getImageUrl } from './lib.mjs'
 import {
   createResource,
   delResource,
@@ -65,7 +65,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!found) {
           return null
         }
-        const imageUrl = found.entity.image && getImageUrl(found.entity.image)
+        const image = getImageAssetInfo(found.entity.image)
 
         const contentUrl = !found.entity.content
           ? null
@@ -110,7 +110,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
                 : null,
             id: found.entity._key,
             mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key, title: found.entity.title })),
-            imageUrl,
+            image,
             subjectHref: found.entity.subject
               ? href(
                   getSubjectHomePageRoutePath({

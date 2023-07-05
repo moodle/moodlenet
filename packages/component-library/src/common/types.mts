@@ -10,6 +10,7 @@ export type AssetInfo = {
   credits: Credits | null
 }
 
-export type AssetInfoForm = AssetInfo & {
+export type AssetInfoForm = {
   location: Location | File
+  credits: Credits | null
 }

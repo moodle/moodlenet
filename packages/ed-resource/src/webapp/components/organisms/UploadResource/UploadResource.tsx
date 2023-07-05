@@ -26,14 +26,14 @@ import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-
 // import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 // import { useNewResourcePageCtx } from '../NewResource'
 // import { NewResourceFormValues } from '../types'
-import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 import './UploadResource.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadResourceProps = {
   fileMaxSize: number | null
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
-  imageForm: FormikHandle<{ image: AssetInfo | undefined | null }>
+  imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
   downloadFilename: string | null
   uploadOptionsItems: (AddonItem | null)[]
   contentType: 'file' | 'link' | null

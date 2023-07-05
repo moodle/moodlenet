@@ -1,4 +1,4 @@
-import type { AssetInfo } from '../../../../common/types.mjs'
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import ashleywhitlatch from '../img/contentBackup/ashleywhitlatch.jpg'
 import dvlden from '../img/contentBackup/dvlden.jpg'
 import dvlden2 from '../img/contentBackup/dvlden2.jpg'
@@ -20,7 +20,7 @@ export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>
 }
 
-export const ContentBackupImages: AssetInfo[] = [
+export const ContentBackupImages: AssetInfoForm[] = [
   {
     location: solenfeyisa,
     credits: {

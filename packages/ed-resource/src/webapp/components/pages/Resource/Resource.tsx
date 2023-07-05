@@ -138,7 +138,10 @@ export const Resource: FC<ResourceProps> = ({
     validationSchema: imageValidationSchema,
     // validateOnChange: shouldValidate,
     onSubmit: values => {
-      return values.image !== image ? setImage(values.image) : undefined
+      return values.image?.location !== image?.location &&
+        typeof values.image?.location !== 'string'
+        ? setImage(values.image?.location)
+        : undefined
     },
   })
 
@@ -165,7 +168,8 @@ export const Resource: FC<ResourceProps> = ({
     }
 
     if (imageForm.dirty) {
-      typeof imageForm.values.image !== 'string' && setImage(imageForm.values.image)
+      typeof imageForm.values.image?.location !== 'string' &&
+        setImage(imageForm.values.image?.location)
       imageForm.setTouched({ image: false })
     }
 

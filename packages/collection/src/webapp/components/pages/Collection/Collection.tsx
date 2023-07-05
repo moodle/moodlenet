@@ -97,7 +97,9 @@ export const Collection: FC<CollectionProps> = ({
     validationSchema: imageValidationSchema,
     validateOnChange: true,
     onSubmit: values => {
-      return values.image !== image ? setImage(values.image) : undefined
+      return values.image !== image && typeof values.image?.location !== 'string'
+        ? setImage(values.image?.location)
+        : undefined
     },
   })
 
