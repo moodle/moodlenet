@@ -30,7 +30,7 @@ import {
   updateCollectionContent,
 } from './services.mjs'
 
-import { getImageUrl } from './lib.mjs'
+import { getImageAssetInfo, getImageUrl } from './lib.mjs'
 import type { CollectionDataType } from './types.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({
@@ -198,7 +198,7 @@ function getCollectionRpc(
     'u' | 'd'
   >,
 ) {
-  const imageUrl = found.entity.image ? getImageUrl(found.entity.image) : undefined
+  const image = getImageAssetInfo(found.entity.image)
   const collectionRpc: Omit<CollectionRpc, 'contributor'> = {
     resourceList: found.entity.resourceList,
     form: {
@@ -210,7 +210,7 @@ function getCollectionRpc(
       mnUrl: getWebappUrl(
         getCollectionHomePageRoutePath({ _key: found.entity._key, title: found.entity.title }),
       ),
-      imageUrl,
+      image,
     },
     state: {
       numResources: found.entity.resourceList.length,

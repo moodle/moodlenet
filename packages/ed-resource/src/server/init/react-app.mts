@@ -20,7 +20,7 @@ shell.call(registerOpenGraphProvider)({
     if (!resourceRecord) {
       return
     }
-    const image = resourceRecord.entity.image ? getImageUrl(resourceRecord.entity.image) : undefined
+    const image = getImageUrl(resourceRecord.entity.image) ?? undefined
 
     return {
       description: resourceRecord.entity.description,

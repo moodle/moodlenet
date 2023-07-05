@@ -3,7 +3,14 @@ export type Credits = {
   provider?: { name: string; url: string }
 }
 
+export type Location = string
+
 export type AssetInfo = {
-  location: string | File
-  credits?: Credits | null
+  location: Location
+  credits: Credits | null
+}
+
+export type AssetInfoForm = {
+  location: Location | File
+  credits: Credits | null
 }

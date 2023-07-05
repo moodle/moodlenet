@@ -19,5 +19,5 @@ export type Credits = {
   provider?: { name: string; url: string }
 }
 export type Image = ImageUploaded | ImageUrl
-export type ImageUploaded = { kind: 'file'; directAccessId: string }
+export type ImageUploaded = { kind: 'file'; directAccessId: string; credits?: Credits | null }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }

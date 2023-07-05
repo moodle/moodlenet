@@ -26,17 +26,18 @@ import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-
 // import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 // import { useNewResourcePageCtx } from '../NewResource'
 // import { NewResourceFormValues } from '../types'
+import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 import './UploadResource.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadResourceProps = {
   fileMaxSize: number | null
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
-  imageForm: FormikHandle<{ image: File | string | undefined | null }>
+  imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
   downloadFilename: string | null
   uploadOptionsItems: (AddonItem | null)[]
   contentType: 'file' | 'link' | null
-  backupImage?: string
+  backupImage?: AssetInfo
   uploadProgress?: number
   shouldShowErrors?: boolean
   displayOnly?: boolean
@@ -56,10 +57,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
   shouldShowErrors,
   uploadProgress,
 }) => {
-  const [image] = useImageUrl(imageForm.values.image, displayOnly ? backupImage : undefined)
+  const [imageUrl] = useImageUrl(
+    imageForm.values.image?.location,
+    displayOnly ? backupImage?.location : undefined,
+  )
+  const credits = imageForm.values.image?.credits ?? backupImage?.credits
 
   const contentIsFile = contentForm.values.content instanceof File
-  console.log('donwloadFilename', downloadFilename)
   const contentName = downloadFilename
     ? downloadFilename
     : contentForm.values.content instanceof File
@@ -207,7 +211,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const imageContainer = (
     <ImageContainer
-      imageUrl={image}
+      imageUrl={imageUrl}
+      credits={credits}
       ref={imageRef}
       deleteImage={deleteImage}
       uploadImage={uploadImage}
@@ -222,7 +227,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const simpleImageContainer = (
     <ImageContainer
-      imageUrl={image}
+      imageUrl={imageUrl}
+      credits={credits}
       ref={imageRef}
       displayOnly={displayOnly}
       style={{ maxHeight: backupImage ? '200px' : 'initial', overflow: 'hidden' }}

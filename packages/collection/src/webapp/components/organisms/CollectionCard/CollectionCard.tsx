@@ -33,7 +33,7 @@ export const CollectionCard = withProxy<CollectionCardProps>(
     state,
     access,
   }) => {
-    const { id, imageUrl, title, collectionHref } = data
+    const { id, image, title, collectionHref } = data
     const {
       isPublished,
       // bookmarked,
@@ -48,7 +48,7 @@ export const CollectionCard = withProxy<CollectionCardProps>(
       // canBookmark,
       canPublish,
     } = access
-
+    const imageUrl = image?.location
     const background = {
       background: 'url(' + (imageUrl || getBackupImage(id)) + ')',
       backgroundSize: 'cover',

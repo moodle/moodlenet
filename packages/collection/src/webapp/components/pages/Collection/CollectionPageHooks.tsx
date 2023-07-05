@@ -25,7 +25,7 @@ export const useCollectionPageProps = ({
   collectionKey,
 }: {
   collectionKey: string
-}): CollectionProps | null => {
+}): Omit<CollectionProps, 'isEditingAtStart'> | null => {
   // const { isAuthenticated } = useContext(AuthCtx)
   const collectionMainProps = useMainHook({ collectionKey })
   const mainLayoutProps = useMainLayoutProps()
@@ -76,7 +76,7 @@ export const useCollectionPageProps = ({
     moreButtonItems: [],
   }
 
-  const collectionProps: CollectionProps = {
+  const collectionProps: Omit<CollectionProps, 'isEditingAtStart'> = {
     mainLayoutProps,
     mainCollectionCardSlots,
     resourceCardPropsList,
@@ -91,7 +91,6 @@ export const useCollectionPageProps = ({
       isCreator: collectionMainProps.props.access.isCreator,
     },
     isSaving,
-    isEditing: false,
   }
 
   return collectionProps

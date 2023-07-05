@@ -21,9 +21,7 @@ shell.call(registerOpenGraphProvider)({
     if (!collectionRecord) {
       return
     }
-    const image = collectionRecord.entity.image
-      ? getImageUrl(collectionRecord.entity.image)
-      : undefined
+    const image = getImageUrl(collectionRecord.entity.image) ?? undefined
 
     return {
       description: collectionRecord.entity.description,

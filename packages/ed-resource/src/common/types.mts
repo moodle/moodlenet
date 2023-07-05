@@ -2,6 +2,7 @@ import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-
 import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { ResourceExposeType } from './expose-def.mjs'
@@ -32,7 +33,7 @@ export type ResourceDataRpc = {
   id: string
   mnUrl: string
   contentType: 'link' | 'file'
-  imageUrl: string | null
+  image: AssetInfo | null
   subjectHref: Href | null
 
   contentUrl: string | null
@@ -91,7 +92,7 @@ export type ResourceActions = {
   publish: () => void
   unpublish: () => void
   editData: (values: ResourceFormProps) => void
-  setImage: (file: File | undefined | null) => void
+  setImage: (image: File | undefined | null) => void
   setContent: (content: File | string | undefined | null) => void
   deleteResource(): void
 }
@@ -120,7 +121,7 @@ export type ResourceCardDataRpc = {
     profileHref: Href
   }
   resourceHomeHref: Href
-} & Pick<ResourceDataProps, 'imageUrl' | 'downloadFilename' | 'contentType' | 'id' | 'contentUrl'> &
+} & Pick<ResourceDataProps, 'image' | 'downloadFilename' | 'contentType' | 'id' | 'contentUrl'> &
   Pick<ResourceFormProps, 'title'>
 
 export type ResourceCardState = {

@@ -11,8 +11,8 @@ import {
   Snackbar,
   TertiaryButton,
 } from '@moodlenet/component-library'
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { useImageUrl } from '@moodlenet/react-app/ui'
 import { Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
@@ -41,7 +41,7 @@ export type MainCollectionCardProps = {
   data: CollectionDataProps
   // collectionForm: CollectionFormProps
   form: FormikHandle<CollectionFormProps>
-  imageForm: FormikHandle<{ image: File | string | undefined | null }>
+  imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
 
   state: CollectionStateProps
   actions: CollectionActions
@@ -90,22 +90,20 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const {
     // id,
     mnUrl,
-    imageUrl,
+    // image,
   } = data
 
   const { isPublished } = state
 
-  const { unpublish, deleteCollection } = actions
+  const { unpublish, deleteCollection, editData, setImage } = actions
   const { canPublish, canDelete, canEdit } = access
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [updatedImage, setUpdatedImage] = useState<string | undefined>(imageUrl)
   // const backupImage: string | undefined = useMemo(
   //   () => (imageForm.values.image ? undefined : getBackupImage(id)),
   //   [id, imageForm.values.image],
   // )
-  const [imageFromForm] = useImageUrl(imageForm.values.image)
   const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
   const [isWaitingForSaving, setisWaitingForSaving] = useState(false)
 
@@ -119,8 +117,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const handleOnSaveClick = () => {
     setisWaitingForSaving(true)
     setShouldShowErrors(false)
-    form.submitForm()
-    imageForm.submitForm()
+    editData(form.values)
+    typeof imageForm.values.image?.location !== 'string' &&
+      setImage(imageForm.values.image?.location)
   }
 
   useEffect(() => {
@@ -140,14 +139,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     isWaitingForSaving,
     setIsEditing,
   ])
-
-  useEffect(() => {
-    setUpdatedImage(imageUrl)
-  }, [imageUrl])
-
-  useEffect(() => {
-    setUpdatedImage(imageFromForm)
-  }, [imageFromForm])
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)
@@ -361,7 +352,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       <UploadImage
         displayOnly={(canEdit && !isEditing) || !canEdit}
         imageForm={imageForm}
-        imageUrl={updatedImage}
         // backupImage={backupImage}
         key="collection-uploader"
       />

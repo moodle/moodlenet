@@ -68,7 +68,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
     const {
       id,
       contentUrl,
-      imageUrl,
+      image,
       title,
       // numLikes,
       owner,
@@ -89,7 +89,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
       // isCreator,
       // isAuthenticated,
     } = access
-
+    const imageUrl = image?.location
     const resourceCard = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState<'micro' | 'tiny' | 'small' | 'medium' | 'big'>('medium')
 

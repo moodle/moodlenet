@@ -137,6 +137,8 @@ export const useResourceStoryProps = (
 ): ResourceProps => {
   const [filename, setFilename] = useState<string | null>('filename.pdf')
 
+  // setInterval(() => setIsSaving(!isSaving), 1000)
+
   const isAuthenticated = overrides?.isAuthenticated ?? true
 
   const resourceForm: ResourceFormProps = {
@@ -160,13 +162,19 @@ export const useResourceStoryProps = (
     // contentUrl: 'https://moodle.net/profile/d488bc9d51ef-moodle-academy',
     // contentUrl: 'https://youtu.be/dZNC5kIvM00',
     // contentUrl: 'https://vimeo.com/204467192',
-    imageUrl:
-      'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
     downloadFilename: filename,
     contentType: 'file',
     // contentType: 'link',
     ...overrides?.data,
     subjectHref: href('Pages/subject/Logged In'),
+    image: {
+      credits: {
+        owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
+        provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+      },
+      location:
+        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+    },
   }
 
   const state: ResourceStateProps = {
@@ -291,7 +299,7 @@ export const useResourceStoryProps = (
 
       fileMaxSize: 343243,
       isSaving: false,
-      isEditing: false,
+      isEditingAtStart: false,
     },
     overrides,
   )

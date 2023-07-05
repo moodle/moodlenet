@@ -19,7 +19,7 @@ export const ResourcePageContainer: FC<{ resourceKey: string; editMode: boolean 
 
   return (
     <ProvideCurrentResourceContext _key={resourceKey} key={resourceKey}>
-      <ResourcePage {...panelProps} key={resourceKey} isEditing={editMode} />
+      <ResourcePage {...panelProps} key={resourceKey} isEditingAtStart={editMode} />
     </ProvideCurrentResourceContext>
   )
 }

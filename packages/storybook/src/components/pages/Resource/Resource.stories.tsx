@@ -65,7 +65,7 @@ export const New: ResourceStory = () => {
     data: {
       downloadFilename: undefined,
       contentUrl: undefined,
-      imageUrl: undefined,
+      image: undefined,
       // numLikes: 0,
     },
     resourceForm: NewResourceProps,
