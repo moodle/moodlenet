@@ -39,9 +39,9 @@ export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ ch
     : 'Popular'
 
   const load = useCallback(
-    async (cursor?: string) => {
+    async (limit: number, cursor?: string) => {
       const res = await shell.rpc.me['webapp/search'](null, null, {
-        limit: 10,
+        limit,
         sortType,
         text: q,
         after: cursor,
@@ -53,7 +53,7 @@ export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ ch
   )
 
   useEffect(() => {
-    load().then(res => {
+    load(10).then(res => {
       subjectListAction(['set', res.list])
     })
   }, [load])
@@ -63,7 +63,7 @@ export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ ch
     if (hasNoMore) {
       return
     }
-    const res = await load(subjectSearchResult?.endCursor)
+    const res = await load(30, subjectSearchResult?.endCursor)
     subjectListAction(['more', res.list])
   }, [hasNoMore, load, subjectSearchResult?.endCursor])
 
