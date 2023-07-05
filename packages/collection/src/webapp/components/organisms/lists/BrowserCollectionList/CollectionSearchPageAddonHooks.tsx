@@ -42,9 +42,9 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren<unknown>> = ({
     : 'Popular'
 
   const load = useCallback(
-    async (cursor?: string) => {
+    async (limit: number, cursor?: string) => {
       const res = await shell.rpc.me['webapp/search'](null, null, {
-        limit: 10,
+        limit,
         sortType,
         text: q,
         after: cursor,
@@ -56,7 +56,7 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren<unknown>> = ({
   )
 
   useEffect(() => {
-    load().then(res => {
+    load(12).then(res => {
       collectionListAction(['set', res.list])
     })
   }, [load])
@@ -66,7 +66,7 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren<unknown>> = ({
     if (hasNoMore) {
       return
     }
-    const res = await load(collectionSearchResult?.endCursor)
+    const res = await load(36, collectionSearchResult?.endCursor)
     collectionListAction(['more', res.list])
   }, [hasNoMore, load, collectionSearchResult?.endCursor])
 

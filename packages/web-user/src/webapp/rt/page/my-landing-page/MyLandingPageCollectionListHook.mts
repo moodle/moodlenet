@@ -9,9 +9,13 @@ export function useMyLandingPageCollectionListDataProps() {
   const [collections, setCollections] = useState<{ _key: string }[]>([])
 
   useEffect(() => {
-    shell.rpc.me['webapp/landing/get-list/:entityType(collections|resources|profiles)'](undefined, {
-      entityType: 'collections',
-    }).then(setCollections)
+    shell.rpc.me['webapp/landing/get-list/:entityType(collections|resources|profiles)'](
+      undefined,
+      {
+        entityType: 'collections',
+      },
+      { limit: 8 },
+    ).then(setCollections)
   }, [])
   const collectionCardPropsList = useMemo<LandingCollectionListProps['collectionCardPropsList']>(
     () =>

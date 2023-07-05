@@ -272,8 +272,8 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       },
     'webapp/landing/get-list/:entityType(collections|resources|profiles)': {
       guard: () => void 0,
-      async fn(_, { entityType }) {
-        const entities = await getLandingPageList(entityType)
+      async fn(_, { entityType }, { limit }) {
+        const entities = await getLandingPageList(entityType, limit)
         return entities.map(({ entity: { _key } }) => ({ _key }))
       },
     },

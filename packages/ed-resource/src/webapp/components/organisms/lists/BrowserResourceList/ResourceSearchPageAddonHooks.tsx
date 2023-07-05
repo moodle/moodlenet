@@ -39,9 +39,9 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
     : 'Popular'
 
   const load = useCallback(
-    async (cursor?: string) => {
+    async (limit: number, cursor?: string) => {
       const res = await shell.rpc.me['webapp/search'](undefined, undefined, {
-        limit: 10,
+        limit,
         sortType,
         text: q,
         after: cursor,
@@ -53,7 +53,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
   )
 
   useEffect(() => {
-    load().then(res => {
+    load(12).then(res => {
       resourceListAction(['set', res.list])
     })
   }, [load])
@@ -63,7 +63,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
     if (hasNoMore) {
       return
     }
-    const res = await load(resourceSearchResult?.endCursor)
+    const res = await load(36, resourceSearchResult?.endCursor)
     resourceListAction(['more', res.list])
   }, [hasNoMore, load, resourceSearchResult?.endCursor])
 

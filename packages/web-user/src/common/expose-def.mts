@@ -63,6 +63,7 @@ export type WebUserExposeType = PkgExposeDef<{
       params: {
         entityType: 'collections' | 'resources' | 'profiles'
       },
+      q: { limit: number },
     ): Promise<{ _key: string }[]>
     'webapp/search'(
       body: undefined,

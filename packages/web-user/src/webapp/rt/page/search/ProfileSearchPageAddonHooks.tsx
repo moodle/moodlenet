@@ -37,9 +37,9 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
     : 'Popular'
 
   const load = useCallback(
-    async (cursor?: string) => {
+    async (limit: number, cursor?: string) => {
       const res = await shell.rpc.me['webapp/search'](undefined, undefined, {
-        limit: 10,
+        limit,
         sortType,
         text: q,
         after: cursor,
@@ -51,7 +51,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
   )
 
   useEffect(() => {
-    load().then(res => {
+    load(10).then(res => {
       profileListAction(['set', res.list])
     })
   }, [load])
@@ -61,7 +61,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
     if (hasNoMore) {
       return
     }
-    const res = await load(profileSearchResult?.endCursor)
+    const res = await load(30, profileSearchResult?.endCursor)
     profileListAction(['more', res.list])
   }, [hasNoMore, load, profileSearchResult?.endCursor])
 

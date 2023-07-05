@@ -273,15 +273,17 @@ export function getProfileAvatarLogicalFilename(profileKey: string) {
   return `profile-avatar/${profileKey}`
 }
 
-export async function getLandingPageList(entity: 'collections' | 'profiles' | 'resources') {
+export async function getLandingPageList(
+  entity: 'collections' | 'profiles' | 'resources',
+  limit: number,
+) {
   const entityClass = {
     collections: Collection,
     profiles: Profile,
     resources: Resource,
   }[entity].entityClass
-
   const cursor = await shell.call(queryEntities)(entityClass, {
-    limit: 6,
+    limit,
     preAccessBody: 'SORT RAND()',
   })
 
