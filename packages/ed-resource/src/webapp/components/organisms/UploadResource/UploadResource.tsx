@@ -199,7 +199,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   }, [])
 
   const uploadImage = (file: File) => {
-    imageForm.setFieldValue('image', file)
+    imageForm.setFieldValue('image', { location: file })
     imageForm.setTouched({ image: true })
     // imageForm.submitForm()
   }
