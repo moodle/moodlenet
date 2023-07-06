@@ -17,7 +17,7 @@ export const CollectionPagePlugins = createPlugin<
   },
   {
     collectionKey: string
-    info: null | { name: string; isCreator: boolean }
+    info: null | undefined | { name: string; isCreator: boolean }
   }
 >()
 
@@ -25,7 +25,7 @@ export const useCollectionPageProps = ({
   collectionKey,
 }: {
   collectionKey: string
-}): Omit<CollectionProps, 'isEditingAtStart'> | null => {
+}): Omit<CollectionProps, 'isEditingAtStart'> | null | undefined => {
   // const { isAuthenticated } = useContext(AuthCtx)
   const collectionMainProps = useMainHook({ collectionKey })
   const mainLayoutProps = useMainLayoutProps()
@@ -43,7 +43,7 @@ export const useCollectionPageProps = ({
     info,
   })
 
-  if (!collectionMainProps || !mainLayoutProps) return null
+  if (!collectionMainProps) return collectionMainProps
   const { actions, props, isSaving } = collectionMainProps
   const resourceCardPropsList: CollectionProps['resourceCardPropsList'] = props.resourceList.map(
     ({ _key }) => {
