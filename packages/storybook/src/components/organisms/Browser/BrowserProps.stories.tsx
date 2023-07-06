@@ -144,9 +144,9 @@ export const useBrowserStoryProps = (
   overrides?: PartialDeep<BrowserProps & { isAuthenticated: boolean }>,
 ): BrowserProps => {
   const mainColumnItems = [
-    // useBrowserResourceList(),
-    // useBrowserCollectionList(),
-    // useBrowserProfileList(),
+    useBrowserResourceList(),
+    useBrowserCollectionList(),
+    useBrowserProfileList(),
     useBrowserSubjectList(),
   ]
   const overrideMainColumnItems = overrides?.mainColumnItems
