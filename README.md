@@ -19,6 +19,6 @@ Our main documentation with everythinng you need to know is here:  [MoodleNet Do
 ## Quick install tip
 
 The easiest way to install and update your own instance is via NPM:  
-'''
+```
 npm create @moodlenet@latest path/to/installation/folder
-'''
+```
