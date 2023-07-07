@@ -16,6 +16,9 @@ We are now focussed on MoodleNet 4.0 which is focussed on a number of systems (i
 
 Our main documentation with everythinng you need to know is here:  [MoodleNet Docs](https://docs.moodle.org/dev/MoodleNet)
 
-## Quick install
+## Quick install tip
 
-The easiest way to install and update your own instance is via NPM:  [@moodlenet/ce-platform](https://www.npmjs.com/package/@moodlenet/ce-platform)
+The easiest way to install and update your own instance is via NPM:  
+'''
+npm create @moodlenet@latest path/to/installation/folder
+'''
