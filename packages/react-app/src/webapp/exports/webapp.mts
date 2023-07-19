@@ -22,6 +22,7 @@ export {
   AdminSettingsPagePlugins,
   type AdminSettingsSectionItem,
 } from '../ui/components/pages/AdminSettings/Hook/AdminSettingsHook.js'
+export { FallbackContainer } from '../ui/components/pages/Extra/Fallback/FallbackContainer.js'
 export { LandingHookPlugin } from '../ui/components/pages/Landing/LandingHook.mjs'
 export {
   SearchPagePlugin,

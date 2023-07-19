@@ -291,14 +291,15 @@ export async function getEntity<
   return getRecord
 }
 
-export type QueryEntitiesOpts<
-  Project extends AccessEntitiesCustomProject<any>,
-  ProjectAccess extends EntityAccess,
-> = AccessEntitiesOpts<Project, ProjectAccess> & {
+export type QueryEntitiesPageOpts = {
   skip?: number
   limit?: number
   sort?: string
 }
+export type QueryEntitiesOpts<
+  Project extends AccessEntitiesCustomProject<any>,
+  ProjectAccess extends EntityAccess,
+> = AccessEntitiesOpts<Project, ProjectAccess> & QueryEntitiesPageOpts
 export async function queryEntities<
   EntityDataType extends SomeEntityDataType,
   Project extends AccessEntitiesCustomProject<any>,
