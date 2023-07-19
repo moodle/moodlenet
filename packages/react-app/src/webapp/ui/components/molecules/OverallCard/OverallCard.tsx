@@ -38,7 +38,7 @@ export const OverallCard: FC<OverallCardProps> = ({
         {items && items.length > 0 && showIcons
           ? items?.map(item => {
               return (
-                <div className="data" key="item.name">
+                <div className="data" key={item.name}>
                   <abbr title={`${item.name}`}>
                     <item.Icon />
                   </abbr>
