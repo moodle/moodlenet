@@ -27,6 +27,6 @@ HeaderPlugins.register(() => ({
   rightItems: useSwichAddonsByAuth(menuHeaderButtonsAuthAddons),
 }))
 
-AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) =>
-  useAdminSettingsSection(menuAddonsDefaultSetting),
-)
+AdminSettingsPagePlugins.register(() => {
+  return { adminSettingsSection: menuAddonsDefaultSetting }
+})

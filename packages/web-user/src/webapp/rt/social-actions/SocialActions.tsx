@@ -1,6 +1,5 @@
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
-import type { PkgAddOns } from '@moodlenet/react-app/webapp'
 import { useMemo, type FC } from 'react'
 import type { KnownEntityType } from '../../../common/types.mjs'
 import { objectMap } from '../lib/helper.mjs'
@@ -13,7 +12,7 @@ export type EntityAndKeyAndIsCreator = {
 }
 export type SocialActions = Partial<Record<SocialActionsName, FC<EntityAndKeyAndIsCreator>>>
 export type SocialActionsConfig = Partial<Record<KnownEntityType, SocialActionsName[]>>
-export type PkgAddOnsByName = Record<SocialActionsName, PkgAddOns<AddonItemNoKey>>
+export type PkgAddOnsByName = Record<SocialActionsName, AddOnMap<AddonItemNoKey>>
 // test if type work const pakElem: PkgAddOns<AddonItemNoKey> = { aaa: { Item: () => <LikeButtonContainer _key="dd" entityType="collection" /> }
 
 const mapSocialActionsToPkgAddons = (sc: SocialActions, props: EntityAndKeyAndIsCreator) =>

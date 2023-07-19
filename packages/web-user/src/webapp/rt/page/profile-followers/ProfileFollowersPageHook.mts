@@ -1,5 +1,5 @@
+import type { AddOnMap } from '@moodlenet/core/lib'
 import type { MainColumItem } from '@moodlenet/react-app/ui'
-import type { PkgAddOns } from '@moodlenet/react-app/webapp'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { FollowersProps } from '../../../ui/exports/ui.mjs'
@@ -8,7 +8,7 @@ import { shell } from '../../shell.mjs'
 export type BrowserPluginItem = Omit<MainColumItem, 'key'>
 export const ProfileFollowersPagePlugin = createPlugin<
   {
-    browserItems_mainColumnItems: PkgAddOns<BrowserPluginItem>
+    browserItems_mainColumnItems: AddOnMap<BrowserPluginItem>
   },
   {
     profileKey: string

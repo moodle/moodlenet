@@ -1,6 +1,7 @@
+import type { AddOnMap } from '@moodlenet/core/lib'
 import type { ComponentType, PropsWithChildren } from 'react'
 import { useMemo } from 'react'
-import { createHookPlugin } from '../../../../web-lib/hook-plugin.mjs'
+import { createPlugin } from '../../../../web-lib/create-plugin.mjs'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { MainColumItem } from '../../organisms/Browser/Browser.js'
 import type { SearchProps } from './Search.js'
@@ -9,21 +10,21 @@ import type { SearchProps } from './Search.js'
 
 export type SearchEntitySectionAddon = Omit<MainColumItem, 'key'>
 export type SearchEntityPageWrapper = { Wrapper: ComponentType<PropsWithChildren<unknown>> }
-export const SearchPagePlugin = createHookPlugin<{
-  searchEntitySections: SearchEntitySectionAddon
-  wrappers: SearchEntityPageWrapper
-}>({ searchEntitySections: null, wrappers: null })
+export const SearchPagePlugin = createPlugin<{
+  searchEntitySections: AddOnMap<SearchEntitySectionAddon>
+  wrappers: AddOnMap<SearchEntityPageWrapper>
+}>()
 
 export function useSearchProps() {
-  const [addons] = SearchPagePlugin.useHookPlugin()
+  const plugins = SearchPagePlugin.usePluginHooks()
   const mainLayoutProps = useMainLayoutProps()
   const searchProps = useMemo<SearchProps>(() => {
     const props: SearchProps = {
-      browserProps: { mainColumnItems: addons.searchEntitySections },
+      browserProps: { mainColumnItems: plugins.getKeyedAddons('searchEntitySections') },
       mainLayoutProps,
     }
     return props
-  }, [addons.searchEntitySections, mainLayoutProps])
+  }, [plugins, mainLayoutProps])
   // const { setSearchText } = useContext(MainSearchBoxCtx)
   // const { pathname } = useLocation()
   // useEffect(
@@ -33,5 +34,5 @@ export function useSearchProps() {
   //   [pathname, setSearchText],
   // )
 
-  return { searchProps, wrappers: addons.wrappers }
+  return { searchProps, wrappers: plugins.getKeyedAddons('wrappers') }
 }

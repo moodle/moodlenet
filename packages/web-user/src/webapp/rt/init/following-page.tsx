@@ -29,6 +29,8 @@ const followingPageAddons = {
   },
   profiles: { Item: BrowserProfileListItem, filters: [], name: 'People', numElements: NaN },
 }
-FollowingPagePlugin.register(({ useBrowserItems }) => {
-  useBrowserItems(followingPageAddons)
+FollowingPagePlugin.register(() => {
+  return {
+    browserItems: followingPageAddons,
+  }
 })
