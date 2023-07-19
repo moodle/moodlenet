@@ -51,7 +51,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
   )
 
   useEffect(() => {
-    load(10).then(res => {
+    load(12).then(res => {
       profileListAction(['set', res.list])
     })
   }, [load])
