@@ -14,7 +14,7 @@ export function useMyLandingPageCollectionListDataProps() {
       {
         entityType: 'collections',
       },
-      { limit: 8 },
+      { limit: 12 },
     ).then(setCollections)
   }, [])
   const collectionCardPropsList = useMemo<LandingCollectionListProps['collectionCardPropsList']>(

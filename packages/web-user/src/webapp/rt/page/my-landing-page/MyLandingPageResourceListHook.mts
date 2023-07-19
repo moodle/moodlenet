@@ -14,7 +14,7 @@ export function useMyLandingPageResourceListDataProps() {
       {
         entityType: 'resources',
       },
-      { limit: 8 },
+      { limit: 12 },
     ).then(setResources)
   }, [])
   const resourceCardPropsList = useMemo<LandingResourceListProps['resourceCardPropsList']>(

@@ -14,7 +14,7 @@ export function useMyLandingPageProfileListDataProps() {
       {
         entityType: 'profiles',
       },
-      { limit: 8 },
+      { limit: 10 },
     ).then(setProfiles)
   }, [])
   const profilesPropsList = useMemo<LandingProfileListProps['profilesPropsList']>(
