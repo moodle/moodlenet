@@ -202,6 +202,32 @@ export async function getEntityFeatureCount({
   return cursor.next()
 }
 
+export async function getEntityFeatureProfiles({
+  _key,
+  entityType,
+  feature,
+  paging: { after = '0', limit },
+}: {
+  feature: Exclude<KnownEntityFeature, 'bookmark'>
+  entityType: KnownEntityType
+  _key: string
+  paging: { after?: string; limit?: number }
+}) {
+  const _id = getEntityIdByKnownEntity({ _key, entityType })
+  const needle: KnownFeaturedEntityItem = {
+    _id,
+    feature,
+  }
+  const skip = Number(after)
+  const cursor = await queryEntities(Profile.entityClass, {
+    skip,
+    limit,
+    postAccessBody: `FILTER ${currentEntityVar}.publisher && POSITION(${currentEntityVar}.knownFeaturedEntities,@needle)`,
+    bindVars: { needle },
+  })
+
+  return cursor
+}
 export async function setProfileAvatar(
   {
     _key,

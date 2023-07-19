@@ -49,6 +49,19 @@ export type WebUserExposeType = PkgExposeDef<{
         _key: string
       },
     ): Promise<{ count: number }>
+    'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key'(
+      body: void,
+      params: {
+        feature: Exclude<KnownEntityFeature, 'bookmark'>
+        entityType: KnownEntityType
+        _key: string
+      },
+      query: {
+        // sortType?: SortTypeRpc
+        after?: string
+        limit?: number
+      },
+    ): Promise<{ profiles: { _key: string }[] }>
     'webapp/all-my-featured-entities'(): Promise<null | {
       featuredEntities: KnownFeaturedEntities
     }>

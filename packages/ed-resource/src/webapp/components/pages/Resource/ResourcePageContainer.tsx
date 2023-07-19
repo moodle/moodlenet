@@ -1,5 +1,4 @@
-import { Fallback } from '@moodlenet/react-app/ui'
-import { useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { FallbackContainer } from '@moodlenet/react-app/webapp'
 import type { FC } from 'react'
 import { ProvideCurrentResourceContext } from '../../../CurrentResourceContext.js'
 import ResourcePage from './Resource.js'
@@ -10,9 +9,8 @@ export const ResourcePageContainer: FC<{ resourceKey: string; editMode: boolean 
   editMode,
 }) => {
   const panelProps = useResourcePageProps({ resourceKey })
-  const mainLayoutProps = useMainLayoutProps()
   if (panelProps === null) {
-    return <Fallback mainLayoutProps={mainLayoutProps} />
+    return <FallbackContainer />
   } else if (panelProps === undefined) {
     return null
   }
