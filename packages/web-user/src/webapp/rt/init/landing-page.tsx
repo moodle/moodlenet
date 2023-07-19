@@ -1,12 +1,12 @@
 import { LandingCollectionList } from '@moodlenet/collection/ui'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { LandingResourceList } from '@moodlenet/ed-resource/ui'
-import type { PkgAddOns } from '@moodlenet/react-app/webapp'
 import { LandingHookPlugin } from '@moodlenet/react-app/webapp'
 import { useMyLandingPageCollectionListDataProps } from '../page/my-landing-page/MyLandingPageCollectionListHook.mjs'
 import { useMyLandingPageResourceListDataProps } from '../page/my-landing-page/MyLandingPageResourceListHook.mjs'
 
-const landingPageMainColumnItems: PkgAddOns<AddonItemNoKey> = {
+const landingPageMainColumnItems: AddOnMap<AddonItemNoKey> = {
   resourceList: {
     Item: () => {
       const props = useMyLandingPageResourceListDataProps()
@@ -20,6 +20,8 @@ const landingPageMainColumnItems: PkgAddOns<AddonItemNoKey> = {
     },
   },
 }
-LandingHookPlugin.register(function useLandingPagePlugin({ useMainColumnItems }) {
-  useMainColumnItems(landingPageMainColumnItems)
+LandingHookPlugin.register(function useLandingPagePlugin() {
+  return {
+    mainColumnItems: landingPageMainColumnItems,
+  }
 })

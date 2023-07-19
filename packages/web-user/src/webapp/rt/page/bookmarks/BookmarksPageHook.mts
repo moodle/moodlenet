@@ -1,23 +1,24 @@
+import type { AddOnMap } from '@moodlenet/core/lib'
 import type { MainColumItem } from '@moodlenet/react-app/ui'
-import { createHookPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { BookmarksProps } from '../../../ui/exports/ui.mjs'
 
 export type BrowserPluginItem = Omit<MainColumItem, 'key'>
-export const BookmarksPagePlugin = createHookPlugin<{
-  browserItems: BrowserPluginItem
-}>({ browserItems: null })
+export const BookmarksPagePlugin = createPlugin<{
+  browserItems: AddOnMap<BrowserPluginItem>
+}>()
 
 export function useBookmarksPageProps(): BookmarksProps {
   const mainLayoutProps = useMainLayoutProps()
-  const [{ browserItems }] = BookmarksPagePlugin.useHookPlugin()
+  const plugins = BookmarksPagePlugin.usePluginHooks()
 
   const bookmarksProps = useMemo<BookmarksProps>(() => {
     const props: BookmarksProps = {
-      browserProps: { mainColumnItems: browserItems },
+      browserProps: { mainColumnItems: plugins.getKeyedAddons('browserItems') },
       mainLayoutProps,
     }
     return props
-  }, [browserItems, mainLayoutProps])
+  }, [plugins, mainLayoutProps])
   return bookmarksProps
 }

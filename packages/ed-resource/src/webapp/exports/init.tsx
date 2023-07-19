@@ -33,9 +33,11 @@ registerMainAppPluginHook(function useMainAppContext() {
   return mainAppPlugin
 })
 
-SearchPagePlugin.register(({ useSearchEntitySections, useWrappers }) => {
-  useSearchEntitySections(SearchResourceSectionAddon)
-  useWrappers(SearchResourceWrapperAddon)
+SearchPagePlugin.register(() => {
+  return {
+    searchEntitySections: SearchResourceSectionAddon,
+    wrappers: SearchResourceWrapperAddon,
+  }
 })
 
 SubjectCardPlugins.register(({ subjectKey }) => {

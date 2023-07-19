@@ -1,27 +1,28 @@
+import type { AddOnMap } from '@moodlenet/core/lib'
 import {
-  createHookPlugin,
+  createPlugin,
   useFooterProps,
   useMinimalisticHeaderProps,
 } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { SignupItem, SignupProps } from '../../../ui/exports/ui.mjs'
 export type SignupMethodItem = Omit<SignupItem, 'key'>
-export const SignupPlugins = createHookPlugin<{
-  signupMethod: SignupMethodItem
-}>({ signupMethod: null })
+export const SignupPlugins = createPlugin<{
+  signupMethod: AddOnMap<SignupMethodItem>
+}>()
 
 export const useSignUpProps = (): SignupProps => {
   const headerProps = useMinimalisticHeaderProps()
   const footerProps = useFooterProps()
-  const [addons] = SignupPlugins.useHookPlugin()
+  const plugins = SignupPlugins.usePluginHooks()
 
   const signupProps = useMemo<SignupProps>(() => {
     const signupProps: SignupProps = {
       headerProps,
       footerProps,
-      signupItems: addons.signupMethod,
+      signupItems: plugins.getKeyedAddons('signupMethod'),
     }
     return signupProps
-  }, [headerProps, footerProps, addons.signupMethod])
+  }, [headerProps, footerProps, plugins])
   return signupProps
 }

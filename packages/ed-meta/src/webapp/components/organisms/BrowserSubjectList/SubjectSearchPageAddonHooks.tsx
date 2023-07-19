@@ -1,7 +1,7 @@
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { MainSearchBoxCtx, proxyWith, type SortType } from '@moodlenet/react-app/ui'
 import {
   useUrlQueryString,
-  type PkgAddOns,
   type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
 } from '@moodlenet/react-app/webapp'
@@ -77,7 +77,7 @@ export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ ch
   return <SearchSubjectContext.Provider value={ctx}>{children}</SearchSubjectContext.Provider>
 }
 
-export const SearchSubjectSectionAddon: PkgAddOns<SearchEntitySectionAddon> = {
+export const SearchSubjectSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   subjects: {
     Item: browserMainColumnItemBase => {
       const { subjectList, loadMore } = useContext(SearchSubjectContext)
@@ -109,6 +109,6 @@ export const SearchSubjectSectionAddon: PkgAddOns<SearchEntitySectionAddon> = {
   },
 }
 
-export const SearchSubjectWrapperAddon: PkgAddOns<SearchEntityPageWrapper> = {
+export const SearchSubjectWrapperAddon: AddOnMap<SearchEntityPageWrapper> = {
   default: { Wrapper: ProvideSearchSubjectContext },
 }
