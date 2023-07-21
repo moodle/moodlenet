@@ -35,6 +35,7 @@ export const defaultCorePackages = [
   'collection',
   'web-user',
   'ed-meta',
+  'moodle-lms-integration',
 ]
 
 export const crypto = {
