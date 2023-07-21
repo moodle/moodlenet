@@ -1,7 +1,12 @@
 import { shell } from './shell.mjs'
 
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
-import { assertRpcFileReadable, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
+import {
+  assertRpcFileReadable,
+  readableRpcFile,
+  RpcStatus,
+  setRpcStatusCode,
+} from '@moodlenet/core'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
@@ -11,7 +16,6 @@ import {
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
-import type { Readable } from 'stream'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
@@ -277,7 +281,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           shell.events.emit('resource:downloaded', { resourceKey: _key, currentSysUser })
           incrementResourceDownloads({ _key })
         })
-        return readable
+        return readableRpcFile({ ...fsItem.rpcFile }, () => readable)
       },
     },
     'webapp/search': {
@@ -305,7 +309,7 @@ type ServerResourceExposeType = {
     [RESOURCE_DOWNLOAD_ENDPOINT](
       body: null,
       params: { _key: string; filename: string },
-    ): Promise<Readable>
+    ): Promise<RpcFile>
     'basic/v1/create'(body: {
       name: string
       description: string
