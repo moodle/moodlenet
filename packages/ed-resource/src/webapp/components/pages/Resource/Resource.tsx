@@ -416,12 +416,6 @@ export const Resource: FC<ResourceProps> = ({
 
   const generalActionsContainer = (
     <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
-      {/* <PrimaryButton
-            // onClick={() => setIsAddingToMoodleLms(true)}
-            >
-              Send to Moodle
-            </PrimaryButton> */}
-      {/* {isAuthenticated && ( */}
       {updatedGeneralActionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </Card>
   )

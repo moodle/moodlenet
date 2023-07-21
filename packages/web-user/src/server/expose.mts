@@ -78,7 +78,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         const clientSessionDataRpc: ClientSessionDataRpc = {
           isAdmin: webUser.isAdmin,
           isRoot: false,
-          myProfile,
+          myProfile: { ...myProfile, webUserKey: webUser._key },
         }
         return clientSessionDataRpc
       },

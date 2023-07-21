@@ -66,7 +66,7 @@ export type ClientSessionDataRpc =
   | {
       isRoot: false
       isAdmin: boolean
-      myProfile: Profile & { publisher: boolean }
+      myProfile: Profile & { publisher: boolean; webUserKey: string }
     }
   | {
       isRoot: true

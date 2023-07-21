@@ -76,7 +76,7 @@ export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
         </div>
       </div> */}
       <div className="parameter">
-        <div className="name">Password</div>
+        <div className="name">Change password</div>
         <div className="actions">
           <InputTextField
             className="password"

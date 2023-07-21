@@ -5,6 +5,7 @@ export {
 export {
   ResourcePagePlugins,
   useResourcePageProps,
+  type ProxiedResourceProps,
   type ResourcePageGeneralActionsAddonItem,
 } from '../components/pages/Resource/ResourcePageHooks.js'
 export { CurrentResourceContext } from '../CurrentResourceContext.js'

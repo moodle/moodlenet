@@ -4,6 +4,7 @@ export {
   createResource,
   delResource,
   deltaResourcePopularityItem,
+  getResource,
   patchResource,
   setResourceContent,
   setResourceImage,

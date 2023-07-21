@@ -1,0 +1,19 @@
+.send-to-moodle-modal {
+  > .modal {
+    > .content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      > .user-id-div {
+        display: flex;
+        align-items: center;
+        min-height: 32px;
+        font-size: 12px;
+        gap: 2px;
+        > .user-id > .copy-id {
+          padding: 5px 8px;
+        }
+      }
+    }
+  }
+}
