@@ -22,10 +22,10 @@ export const ResourcePagePlugins = createPlugin<
   }
 >()
 
-type ResourcePageHookArg = {
+export type ResourcePageHookArg = {
   resourceKey: string
 }
-
+export type ProxiedResourceProps = Omit<ResourceProps, 'isEditingAtStart'>
 export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const mainLayoutProps = useMainLayoutProps()
   const resourceCommonProps = useResourceBaseProps({ resourceKey })
@@ -69,7 +69,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     rightColumnItems: [],
     extraDetailsItems: [],
   }
-  const resourceProps: Omit<ResourceProps, 'isEditingAtStart'> = {
+  const resourceProps: ProxiedResourceProps = {
     mainLayoutProps,
     mainResourceCardSlots,
     resourceContributorCardProps: contributor,

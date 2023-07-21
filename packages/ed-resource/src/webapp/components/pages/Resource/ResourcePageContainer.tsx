@@ -8,16 +8,20 @@ export const ResourcePageContainer: FC<{ resourceKey: string; editMode: boolean 
   resourceKey,
   editMode,
 }) => {
-  const panelProps = useResourcePageProps({ resourceKey })
-  if (panelProps === null) {
+  const resourceProps = useResourcePageProps({ resourceKey })
+  if (resourceProps === null) {
     return <FallbackContainer />
-  } else if (panelProps === undefined) {
+  } else if (resourceProps === undefined) {
     return null
   }
 
   return (
-    <ProvideCurrentResourceContext _key={resourceKey} key={resourceKey}>
-      <ResourcePage {...panelProps} key={resourceKey} isEditingAtStart={editMode} />
+    <ProvideCurrentResourceContext
+      _key={resourceKey}
+      key={resourceKey}
+      resourceProps={resourceProps}
+    >
+      <ResourcePage {...resourceProps} key={resourceKey} isEditingAtStart={editMode} />
     </ProvideCurrentResourceContext>
   )
 }
