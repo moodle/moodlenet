@@ -32,17 +32,13 @@ function getLmsResourceData(
   }
 }
 export const useSendToLMS = () => {
-  const { defaultSiteTarget, addSiteTarget, canSend } = useContext(MyLmsContext)
+  const { defaultSiteTarget, addSiteTarget /* , canSend  */ } = useContext(MyLmsContext)
   const { resourceProps } = useContext(CurrentResourceContext)
   const lmsResourceData = getLmsResourceData(resourceProps)
-  const canSendThis = canSend && !!lmsResourceData
   const sendToLMS = useCallback(
     (_siteTarget?: SiteTarget) => {
-      if (!lmsResourceData) {
-        return
-      }
       const siteTarget = _siteTarget ?? defaultSiteTarget
-      if (!(canSendThis && siteTarget)) {
+      if (!(lmsResourceData && siteTarget)) {
         return false
       }
       if (_siteTarget && _siteTarget !== defaultSiteTarget) {
@@ -52,15 +48,15 @@ export const useSendToLMS = () => {
       sendToMoodleInNewWindow({ siteTarget, lmsResourceData })
       return true
     },
-    [addSiteTarget, canSendThis, defaultSiteTarget, lmsResourceData],
+    [addSiteTarget, defaultSiteTarget, lmsResourceData],
   )
 
   return useMemo(
     () => ({
-      canSend: canSendThis,
+      canSend: !!lmsResourceData,
       sendToLMS,
     }),
-    [canSendThis, sendToLMS],
+    [lmsResourceData, sendToLMS],
   )
 }
 
