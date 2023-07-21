@@ -29,7 +29,7 @@ import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
-import { Resource } from '@moodlenet/ed-resource/ui'
+import { Resource, SendToMoodle } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { Unsplash } from '../../../../../unsplash/dist/webapp/ui/Unsplash.js'
 
@@ -270,7 +270,20 @@ export const useResourceStoryProps = (
   }
 
   const extraDetailsItems: AddonItem[] = []
+
+  const sendToMoodle = {
+    Item: () => (
+      <SendToMoodle
+        site="https://moodle.technion.ac.il"
+        // userId="1234"
+        sendToMoodle={() => undefined}
+      />
+    ),
+    key: 'send-to-moodle',
+  }
+
   const generalActionsItems: AddonItem[] = [
+    sendToMoodle,
     AddToCollectionButtonStories.useAddToCollectionButtonStory(),
   ]
 
