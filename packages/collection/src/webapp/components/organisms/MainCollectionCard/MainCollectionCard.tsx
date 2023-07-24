@@ -277,6 +277,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
                 className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
                 onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
+                disabled={empty}
               >
                 <div
                   className="loading"

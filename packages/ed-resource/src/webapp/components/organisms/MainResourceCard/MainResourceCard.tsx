@@ -410,7 +410,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
   const moreButton =
-    !empty && updatedMoreButtonItems.length > 0 ? (
+    updatedMoreButtonItems.length > 0 ? (
       // updatedMoreButtonItems.length === 1 ? (
       //   updatedMoreButtonItems.map(i => {
       //     return (
@@ -447,6 +447,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                 className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
                 onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
+                disabled={empty}
               >
                 <div
                   className="loading"
