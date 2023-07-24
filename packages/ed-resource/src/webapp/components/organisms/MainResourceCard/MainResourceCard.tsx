@@ -161,7 +161,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const handleOnSaveClick = () => {
     setisWaitingForSaving(true)
     setShouldShowErrors(false)
-
     save()
   }
 
@@ -297,16 +296,15 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const deleteButton: FloatingMenuContentItem | null =
-    canDelete && !empty
-      ? {
-          Element: (
-            <div key="delete-button" onClick={() => setIsToDelete(true)}>
-              <Delete /> Delete
-            </div>
-          ),
-        }
-      : null
+  const deleteButton: FloatingMenuContentItem | null = canDelete
+    ? {
+        Element: (
+          <div key="delete-button" onClick={() => setIsToDelete(true)}>
+            <Delete /> Delete
+          </div>
+        ),
+      }
+    : null
 
   const publishButton: FloatingMenuContentItem | null =
     canPublish && !isPublished

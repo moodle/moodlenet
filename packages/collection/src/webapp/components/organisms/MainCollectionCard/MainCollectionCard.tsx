@@ -196,17 +196,16 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       }
     : null
 
-  const deleteButton: FloatingMenuContentItem | null =
-    !empty && canDelete
-      ? {
-          Element: (
-            <div key="delete-button" onClick={() => setIsToDelete(true)}>
-              <Delete />
-              Delete
-            </div>
-          ),
-        }
-      : null
+  const deleteButton: FloatingMenuContentItem | null = canDelete
+    ? {
+        Element: (
+          <div key="delete-button" onClick={() => setIsToDelete(true)}>
+            <Delete />
+            Delete
+          </div>
+        ),
+      }
+    : null
 
   const unpublishButton: FloatingMenuContentItem | null =
     canPublish && isPublished
