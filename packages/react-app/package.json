@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/react-app",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publishConfig": {
     "access": "public"
   },
@@ -76,18 +76,18 @@
     }
   },
   "peerDependencies": {
-    "@moodlenet/arangodb": "^0.3.0",
-    "@moodlenet/component-library": "^0.3.0",
-    "@moodlenet/core": "^0.3.0",
-    "@moodlenet/http-server": "^0.3.0",
-    "@moodlenet/organization": "^0.3.0"
+    "@moodlenet/arangodb": "^0.4.0",
+    "@moodlenet/component-library": "^0.4.0",
+    "@moodlenet/core": "^0.4.0",
+    "@moodlenet/http-server": "^0.4.0",
+    "@moodlenet/organization": "^0.4.0"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "^0.3.0",
-    "@moodlenet/component-library": "^0.3.0",
-    "@moodlenet/core": "^0.3.0",
-    "@moodlenet/http-server": "^0.3.0",
-    "@moodlenet/organization": "^0.3.0",
+    "@moodlenet/arangodb": "^0.4.0",
+    "@moodlenet/component-library": "^0.4.0",
+    "@moodlenet/core": "^0.4.0",
+    "@moodlenet/http-server": "^0.4.0",
+    "@moodlenet/organization": "^0.4.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.7",
     "@types/jest": "27.5.1",
     "@types/lodash": "4.14.182",
@@ -114,7 +114,7 @@
     "@babel/preset-env": "7.18.0",
     "@babel/preset-react": "7.17.12",
     "@material-ui/icons": "4.11.3",
-    "@moodlenet/key-value-store": "^0.3.0",
+    "@moodlenet/key-value-store": "^0.4.0",
     "@svgr/webpack": "6.2.1",
     "babel-eslint": "10.1.0",
     "babel-loader": "8.2.5",
