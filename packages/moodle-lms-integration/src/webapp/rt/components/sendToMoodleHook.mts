@@ -15,8 +15,8 @@ export function useSendToMoodle(): SendToMoodleProps {
     },
     [defaultSiteTarget, sendToLMS],
   )
-  const webUserKey = auth?.clientSessionData?.myProfile?.webUserKey
-  const userId = webUserKey && `@${webUserKey}@${location.hostname}`
+  const myProfileKey = auth?.clientSessionData?.myProfile?._key
+  const userId = myProfileKey && `@${myProfileKey}@${location.hostname}`
   return {
     sendToMoodle,
     site: defaultSiteTarget?.site,
