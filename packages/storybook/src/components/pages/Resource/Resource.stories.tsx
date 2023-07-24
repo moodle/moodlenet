@@ -62,6 +62,7 @@ export const NewResourceProps: Partial<ResourceFormProps> = {
 
 export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
+    isEditingAtStart: true,
     data: {
       downloadFilename: undefined,
       contentUrl: undefined,
