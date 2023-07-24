@@ -6,7 +6,7 @@ export const CollectionTextOptionProps: OptionItemProp[] = [
   { label: 'Algebra', value: 'Algebra' },
   { label: 'Phycology', value: 'Phycology' },
   { label: 'Phylosophy', value: 'Phylosophy' },
-  { label: '', value: '' },
+  { label: '', value: 'FwPKtNlm' },
   { label: 'Sociology', value: 'Sociology' },
   { label: 'English Literature', value: 'English Literature' },
 ]
