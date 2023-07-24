@@ -28,6 +28,7 @@
     "@moodlenet/extensions-manager": "^0.3.0",
     "@moodlenet/passport-auth": "^0.2.6",
     "@moodlenet/react-app": "^0.3.0",
+    "@moodlenet/moodle-lms-integration": "^0.3.0",
     "@moodlenet/unsplash": "^0.2.0",
     "@moodlenet/simple-email-auth": "^0.3.0",
     "@moodlenet/ed-resource": "^0.3.0",

@@ -29,8 +29,9 @@ import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
-import { Resource, SendToMoodle } from '@moodlenet/ed-resource/ui'
+import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
+import { SendToMoodle } from '../../../../../moodle-lms-integration/dist/webapp/ui/components/SendToMoodle.js'
 import { Unsplash } from '../../../../../unsplash/dist/webapp/ui/Unsplash.js'
 
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
@@ -275,7 +276,7 @@ export const useResourceStoryProps = (
     Item: () => (
       <SendToMoodle
         site="https://moodle.technion.ac.il"
-        // userId="1234"
+        userId="1234"
         sendToMoodle={() => undefined}
       />
     ),
