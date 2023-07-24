@@ -50,11 +50,7 @@ export const AddToCollectionButton: FC<AddToCollectionButtonProps> = ({
         value={selectedValues}
       >
         {collections.opts.map(({ label, value }) => (
-          <OptionItem
-            key={value}
-            label={label !== '' ? label : value !== '' ? value : 'Unnamed'}
-            value={value}
-          />
+          <OptionItem key={value} label={label !== '' ? label : 'Unnamed'} value={value} />
         ))}
       </AddToCollectionsCard>
     </Modal>
