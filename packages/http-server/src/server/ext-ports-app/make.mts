@@ -51,10 +51,11 @@ export function makeExtPortsApp() {
       const multerMw = multerFields.length ? multipartMW.fields(multerFields) : multipartMW.none()
 
       pkgApp.all(`/${rpcRoute}`, multerMw, ...getMiddlewares(), async (httpReq, httpResp, next) => {
-        if (!['get', 'post'].includes(httpReq.method.toLowerCase())) {
+        if (!['get', 'post', 'head'].includes(httpReq.method.toLowerCase())) {
           httpResp.status(405).send('unsupported ${req.method} method for rpc')
           return
         }
+        const isHead = 'head' === httpReq.method.toLowerCase()
         let rpcArgs: RpcArgs
 
         try {
@@ -89,10 +90,16 @@ export function makeExtPortsApp() {
                 rpcFile.size && httpResp.header('Content-Length', `${rpcFile.size}`)
                 rpcFile.type && httpResp.contentType(`${rpcFile.type}`)
               }
+              if (isHead) {
+                return httpResp.end()
+              }
               rpcResponse.stream.pipe(httpResp)
               return
             } else {
               httpResp.contentType('application/json')
+              if (isHead) {
+                return httpResp.end()
+              }
               httpResp.json(rpcResponse.json)
               return
             }
@@ -137,7 +144,7 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
     throw new Error(`Unsupported content-type: ${contentTypeHeader}`)
   }
 
-  if ('get' === req.method.toLowerCase()) {
+  if (['get', 'head'].includes(req.method.toLowerCase())) {
     return [undefined, type]
   }
 

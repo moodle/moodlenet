@@ -21,7 +21,7 @@ export type ClientSessionData = {
   | {
       isAdmin: boolean
       isRoot: false
-      myProfile: Profile & { publisher: boolean }
+      myProfile: Profile & { publisher: boolean; webUserKey: string }
     }
 )
 export type AuthCtxT = {

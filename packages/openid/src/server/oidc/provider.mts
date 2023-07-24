@@ -1,5 +1,6 @@
 import { getPkgScopes, instanceDomain } from '@moodlenet/core'
 import { jwk } from '@moodlenet/crypto/server'
+import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import { getProfileRecord } from '@moodlenet/web-user/server'
 import type { Account, Configuration } from 'oidc-provider'
 import _Provider from 'oidc-provider'
@@ -76,6 +77,7 @@ function getProviderConfig() {
       // }
       // token
       //const webUser = await verifyWebUserToken(token)
+      await setPkgCurrentUser()
       const record = await getProfileRecord(sub)
       if (!record) {
         throw new Error(`could not find profile for accountId ${sub}`)

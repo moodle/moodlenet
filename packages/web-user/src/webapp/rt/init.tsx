@@ -9,9 +9,11 @@ import { useMemo } from 'react'
 import './init/bookmark-page.js'
 import './init/following-page.js'
 import './init/landing-page.js'
+import './init/profile-followers-page.js'
 import './init/search-page.js'
 import './init/settings-page.js'
 import './init/social-actions.js'
+
 import { useSwichAddonsByAuth } from './lib/AddonsByUserRule.js'
 import MainWrapper from './MainWrapper.js'
 import { menuAddonsDefaultSetting, menuHeaderButtonsAuthAddons } from './menus/menuAddons.js'
@@ -25,6 +27,6 @@ HeaderPlugins.register(() => ({
   rightItems: useSwichAddonsByAuth(menuHeaderButtonsAuthAddons),
 }))
 
-AdminSettingsPagePlugins.register(({ useAdminSettingsSection }) =>
-  useAdminSettingsSection(menuAddonsDefaultSetting),
-)
+AdminSettingsPagePlugins.register(() => {
+  return { adminSettingsSection: menuAddonsDefaultSetting }
+})

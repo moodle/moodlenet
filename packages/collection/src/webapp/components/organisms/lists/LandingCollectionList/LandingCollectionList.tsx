@@ -34,12 +34,12 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
             <div className="title">Featured collections</div>
             <div className="subtitle">Great collections of curated resources</div>
           </div>
-          {
+          {null && (
             <SecondaryButton className="more" color="dark-blue">
               <Link href={searchCollectionsHref}>See more collections</Link>
               <ArrowForwardRounded />
             </SecondaryButton>
-          }
+          )}
         </div>
       }
       minGrid={245}

@@ -1,7 +1,8 @@
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { useMemo } from 'react'
+import { createPlugin } from '../../../../../web-lib/create-plugin.mjs'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
-import { createHookPlugin } from '../../../../../web-lib/hook-plugin.mjs'
 import { useMainLayoutProps } from '../../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { AdminSettingsItem, AdminSettingsProps } from '../AdminSettings.js'
 import { AppearanceContainer } from '../Appearance/AppearanceContainer.js'
@@ -26,17 +27,17 @@ const localAdminSettingsItems: AdminSettingsItem[] = [
   // },
 ]
 
-export const AdminSettingsPagePlugins = createHookPlugin<{
-  adminSettingsSection: AdminSettingsSectionItem
-}>({ adminSettingsSection: null })
+export const AdminSettingsPagePlugins = createPlugin<{
+  adminSettingsSection?: AddOnMap<AdminSettingsSectionItem>
+}>()
 
 export const useAdminSettingsProps = (): AdminSettingsProps => {
-  const [addons] = AdminSettingsPagePlugins.useHookPlugin()
+  const plugins = AdminSettingsPagePlugins.usePluginHooks()
   const mainLayoutProps = useMainLayoutProps()
 
   const settingsItems = useMemo<AdminSettingsItem[]>(() => {
-    return localAdminSettingsItems.concat(addons.adminSettingsSection)
-  }, [addons.adminSettingsSection])
+    return localAdminSettingsItems.concat(plugins.getKeyedAddons('adminSettingsSection'))
+  }, [plugins])
 
   const settingsProps = useMemo<AdminSettingsProps>(() => {
     return {

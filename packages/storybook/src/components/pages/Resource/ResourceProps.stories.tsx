@@ -31,7 +31,7 @@ import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
-import { Unsplash } from '../../../../../unsplash/dist/webapp/ui/Unsplash.js'
+import { SendToMoodle } from '../../../../../moodle-lms-integration/dist/webapp/ui/components/SendToMoodle.js'
 
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
@@ -167,14 +167,16 @@ export const useResourceStoryProps = (
     // contentType: 'link',
     ...overrides?.data,
     subjectHref: href('Pages/subject/Logged In'),
-    image: {
-      credits: {
-        owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
-        provider: { name: 'Unsplash', url: 'https://unsplash.com' },
-      },
-      location:
-        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-    },
+    image: overrides?.data?.image
+      ? {
+          credits: {
+            owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
+            provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+          },
+          location:
+            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+        }
+      : undefined,
   }
 
   const state: ResourceStateProps = {
@@ -262,15 +264,28 @@ export const useResourceStoryProps = (
     moreButtonItems: [],
     footerRowItems: [],
     uploadOptionsItems: [
-      {
-        Item: () => <Unsplash />,
-        key: 'unsplash-open-button',
-      },
+      // {
+      //   Item: () => <Unsplash />,
+      //   key: 'unsplash-open-button',
+      // },
     ],
   }
 
   const extraDetailsItems: AddonItem[] = []
+
+  const sendToMoodle = {
+    Item: () => (
+      <SendToMoodle
+        site="https://moodle.technion.ac.il"
+        userId="1234"
+        sendToMoodle={() => undefined}
+      />
+    ),
+    key: 'send-to-moodle',
+  }
+
   const generalActionsItems: AddonItem[] = [
+    sendToMoodle,
     AddToCollectionButtonStories.useAddToCollectionButtonStory(),
   ]
 

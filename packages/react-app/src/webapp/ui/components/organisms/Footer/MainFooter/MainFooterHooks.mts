@@ -1,25 +1,26 @@
 import type { AddonItem } from '@moodlenet/component-library'
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { useMemo } from 'react'
-import { createHookPlugin } from '../../../../../web-lib/hook-plugin.mjs'
+import { createPlugin } from '../../../../../web-lib/create-plugin.mjs'
 import type { MainFooterProps } from './MainFooter.js'
 export type FooterComponentRegItem = Omit<AddonItem, 'key'>
 
-export const FooterPlugins = createHookPlugin<{
-  leftComponent: FooterComponentRegItem
-  centerComponent: FooterComponentRegItem
-  rightComponent: FooterComponentRegItem
-}>({ centerComponent: null, leftComponent: null, rightComponent: null })
+export const FooterPlugins = createPlugin<{
+  leftComponent: AddOnMap<FooterComponentRegItem>
+  centerComponent: AddOnMap<FooterComponentRegItem>
+  rightComponent: AddOnMap<FooterComponentRegItem>
+}>()
 
 export const useFooterProps = (): MainFooterProps => {
-  const [addons] = FooterPlugins.useHookPlugin()
+  const plugins = FooterPlugins.usePluginHooks()
 
   const mainFooterProps = useMemo<MainFooterProps>(() => {
     const mainFooterProps: MainFooterProps = {
-      leftItems: addons.leftComponent,
-      centerItems: addons.centerComponent,
-      rightItems: addons.rightComponent,
+      leftItems: plugins.getKeyedAddons('leftComponent'),
+      centerItems: plugins.getKeyedAddons('centerComponent'),
+      rightItems: plugins.getKeyedAddons('rightComponent'),
     }
     return mainFooterProps
-  }, [addons.leftComponent, addons.centerComponent, addons.rightComponent])
+  }, [plugins])
   return mainFooterProps
 }

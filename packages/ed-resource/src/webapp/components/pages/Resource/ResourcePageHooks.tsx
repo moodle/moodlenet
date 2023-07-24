@@ -5,6 +5,7 @@ import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import moment from 'moment'
 import { useContext, useMemo } from 'react'
 import { maxUploadSize } from '../../../../common/validationSchema.mjs'
+import type { ResourceCommonProps } from '../../../ResourceHooks.js'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import type { ResourceProps } from './Resource.js'
@@ -19,13 +20,14 @@ export const ResourcePagePlugins = createPlugin<
   {
     resourceKey: string
     info: null | undefined | { name: string; isCreator: boolean }
+    resourceCommonProps: null | undefined | ResourceCommonProps
   }
 >()
 
-type ResourcePageHookArg = {
+export type ResourcePageHookArg = {
   resourceKey: string
 }
-
+export type ProxiedResourceProps = Omit<ResourceProps, 'isEditingAtStart'>
 export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const mainLayoutProps = useMainLayoutProps()
   const resourceCommonProps = useResourceBaseProps({ resourceKey })
@@ -42,6 +44,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const plugins = ResourcePagePlugins.usePluginHooks({
     resourceKey,
     info,
+    resourceCommonProps,
   })
 
   const { publishedMeta } = useContext(EdMetaContext)
@@ -69,7 +72,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     rightColumnItems: [],
     extraDetailsItems: [],
   }
-  const resourceProps: Omit<ResourceProps, 'isEditingAtStart'> = {
+  const resourceProps: ProxiedResourceProps = {
     mainLayoutProps,
     mainResourceCardSlots,
     resourceContributorCardProps: contributor,

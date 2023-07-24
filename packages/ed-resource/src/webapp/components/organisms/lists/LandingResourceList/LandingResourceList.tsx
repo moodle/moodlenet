@@ -34,12 +34,12 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
             <div className="title">Featured resources</div>
             <div className="subtitle">Highlights on top quality content</div>
           </div>
-          {
+          {null && (
             <SecondaryButton className="more" color="dark-blue">
               <Link href={searchResourcesHref}>See more resources</Link>
               <ArrowForwardRounded />
             </SecondaryButton>
-          }
+          )}
         </div>
       }
       noCard={true}

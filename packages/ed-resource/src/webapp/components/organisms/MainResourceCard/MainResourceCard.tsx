@@ -161,7 +161,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const handleOnSaveClick = () => {
     setisWaitingForSaving(true)
     setShouldShowErrors(false)
-
     save()
   }
 
@@ -297,16 +296,15 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       : null
 
-  const deleteButton: FloatingMenuContentItem | null =
-    canDelete && !empty
-      ? {
-          Element: (
-            <div key="delete-button" onClick={() => setIsToDelete(true)}>
-              <Delete /> Delete
-            </div>
-          ),
-        }
-      : null
+  const deleteButton: FloatingMenuContentItem | null = canDelete
+    ? {
+        Element: (
+          <div key="delete-button" onClick={() => setIsToDelete(true)}>
+            <Delete /> Delete
+          </div>
+        ),
+      }
+    : null
 
   const publishButton: FloatingMenuContentItem | null =
     canPublish && !isPublished
@@ -412,7 +410,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
   const moreButton =
-    !empty && updatedMoreButtonItems.length > 0 ? (
+    updatedMoreButtonItems.length > 0 ? (
       // updatedMoreButtonItems.length === 1 ? (
       //   updatedMoreButtonItems.map(i => {
       //     return (
@@ -449,6 +447,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                 className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
                 onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
+                disabled={empty}
               >
                 <div
                   className="loading"

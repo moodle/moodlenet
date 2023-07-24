@@ -1,7 +1,7 @@
+import type { AddOnMap } from '@moodlenet/core/lib'
 import { MainSearchBoxCtx, proxyWith, type SortType } from '@moodlenet/react-app/ui'
 import {
   useUrlQueryString,
-  type PkgAddOns,
   type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
 } from '@moodlenet/react-app/webapp'
@@ -51,7 +51,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
   )
 
   useEffect(() => {
-    load(10).then(res => {
+    load(12).then(res => {
       profileListAction(['set', res.list])
     })
   }, [load])
@@ -75,7 +75,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
   return <SearchProfileContext.Provider value={ctx}>{children}</SearchProfileContext.Provider>
 }
 
-export const SearchProfileSectionAddon: PkgAddOns<SearchEntitySectionAddon> = {
+export const SearchProfileSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   profiles: {
     Item: browserMainColumnItemBase => {
       const { profileList, loadMore } = useContext(SearchProfileContext)
@@ -107,6 +107,6 @@ export const SearchProfileSectionAddon: PkgAddOns<SearchEntitySectionAddon> = {
   },
 }
 
-export const SearchProfileWrapperAddon: PkgAddOns<SearchEntityPageWrapper> = {
+export const SearchProfileWrapperAddon: AddOnMap<SearchEntityPageWrapper> = {
   default: { Wrapper: ProvideSearchProfileContext },
 }

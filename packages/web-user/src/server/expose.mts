@@ -17,6 +17,7 @@ import {
   editProfile,
   entityFeatureAction,
   getEntityFeatureCount,
+  getEntityFeatureProfiles,
   getLandingPageList,
   getProfileOwnKnownEntities,
   getProfileRecord,
@@ -77,7 +78,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         const clientSessionDataRpc: ClientSessionDataRpc = {
           isAdmin: webUser.isAdmin,
           isRoot: false,
-          myProfile,
+          myProfile: { ...myProfile, webUserKey: webUser._key },
         }
         return clientSessionDataRpc
       },
@@ -228,6 +229,20 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           // shell.log('debug', [countRes?.count ?? 0, _key, entityType, feature])
 
           return countRes ?? { count: 0 }
+        },
+      },
+    'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key':
+      {
+        guard: () => void 0,
+        async fn(_, { _key, entityType, feature }, paging) {
+          if (!isAllowedKnownEntityFeature({ entityType, feature })) {
+            return { profiles: [] }
+          }
+          const cursor = await getEntityFeatureProfiles({ _key, entityType, feature, paging })
+          const all = await cursor.all()
+          return {
+            profiles: all.map(({ entity: { _key } }) => ({ _key })),
+          }
         },
       },
     'webapp/all-my-featured-entities': {

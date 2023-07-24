@@ -34,12 +34,12 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
             <div className="title">Featured authors</div>
             <div className="subtitle">Authors with outstanding contributions</div>
           </div>
-          {
+          {null && (
             <SecondaryButton className="more" color="dark-blue">
               <Link href={searchAuthorsHref}>See more authors</Link>
               <ArrowForwardRounded />
             </SecondaryButton>
-          }
+          )}
         </div>
       }
       noCard={true}

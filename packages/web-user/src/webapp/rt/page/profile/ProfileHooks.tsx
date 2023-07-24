@@ -3,12 +3,14 @@ import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
+import { href } from '@moodlenet/react-app/common'
 import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { profileFormValidationSchema } from '../../../../common/profile/data.mjs'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
+import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
@@ -152,7 +154,17 @@ export const useProfileProps = ({
       mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
       sideColumnItems: plugins.getKeyedAddons('sideColumnItems'),
       overallCardItems: [
-        { Icon: PermIdentity, name: 'Followers', value: profileGetRpc.numFollowers },
+        {
+          Icon: PermIdentity,
+          name: 'Followers',
+          value: profileGetRpc.numFollowers,
+          href: href(
+            getProfileFollowersRoutePath({
+              displayName: profileGetRpc.data.displayName,
+              key: profileKey,
+            }),
+          ),
+        },
         { Icon: Grade, name: 'Kudos', value: profileGetRpc.numKudos },
         {
           Icon: FilterNone,
