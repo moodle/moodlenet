@@ -3,7 +3,7 @@ import { mountApp } from '@moodlenet/http-server/server'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import { getProfileHomePageRoutePath } from '@moodlenet/web-user/common'
-import { getProfileRecord, getWebUser } from '@moodlenet/web-user/server'
+import { getProfileRecord, getWebUserByProfileKey } from '@moodlenet/web-user/server'
 import { shell } from '../shell.mjs'
 
 export type WebFingerResp = {
@@ -34,9 +34,9 @@ shell.call(mountApp)({
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const acct = resParam.split(':')[1]!
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const webUserKey = acct.split('@')[0]!
+        const profileKey = acct.split('@')[0]!
         await setPkgCurrentUser()
-        const webUser = await getWebUser({ _key: webUserKey })
+        const webUser = await getWebUserByProfileKey({ profileKey })
         if (!webUser) return notFound()
         const profile = await getProfileRecord(webUser.profileKey)
         if (!profile) return notFound()
