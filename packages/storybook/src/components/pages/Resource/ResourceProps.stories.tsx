@@ -354,6 +354,7 @@ export const useResourceStoryProps = (
         site="https://moodle.technion.ac.il"
         userId="1234"
         sendToMoodle={() => undefined}
+        // canSendToMoodle={}
       />
     ),
     key: 'send-to-moodle',

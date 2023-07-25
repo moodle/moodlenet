@@ -15,6 +15,7 @@ import './SendToMoodle.scss'
 export type SendToMoodleForm = { site: string | undefined }
 
 export type SendToMoodleProps = {
+  canSendToMoodle: boolean
   site: string | undefined
   userId: string | undefined
   sendToMoodle: (site: string | undefined) => void
@@ -24,7 +25,12 @@ export const lmsValidationSchema: SchemaOf<SendToMoodleForm> = object({
   site: string().url().required(),
 })
 
-export const SendToMoodle: FC<SendToMoodleProps> = ({ site, userId, sendToMoodle }) => {
+export const SendToMoodle: FC<SendToMoodleProps> = ({
+  site,
+  userId,
+  canSendToMoodle,
+  sendToMoodle,
+}) => {
   const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
     useState<boolean>(false)
@@ -70,7 +76,13 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({ site, userId, sendToMoodle
 
   const snackbars = [
     showUserIdCopiedAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar
+        type="success"
+        position="bottom"
+        autoHideDuration={6000}
+        showCloseButton={false}
+        onClose={() => setShowUserIdCopiedAlert(false)}
+      >
         User ID copied to the clipboard, use it to connect with Moodle LMS
       </Snackbar>
     ),
@@ -120,7 +132,13 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({ site, userId, sendToMoodle
   return (
     <>
       {modal}
-      <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>Send to Moodle</PrimaryButton>
+      <PrimaryButton
+        onClick={() => setIsAddingToMoodleLms(true)}
+        disabled={!canSendToMoodle}
+        title={!canSendToMoodle ? 'Please, upload a file or add a link first' : ''}
+      >
+        Send to Moodle
+      </PrimaryButton>
     </>
   )
 }

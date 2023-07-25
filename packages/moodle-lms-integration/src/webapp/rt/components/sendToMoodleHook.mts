@@ -21,5 +21,6 @@ export function useSendToMoodle(): SendToMoodleProps {
     sendToMoodle,
     site: defaultSiteTarget?.site,
     userId,
+    canSendToMoodle: true, //@ALE to implement
   }
 }

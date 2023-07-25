@@ -91,7 +91,7 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    > * {
+    > *:not(.snackbar) {
       width: 100%;
       max-width: 1100px;
     }
