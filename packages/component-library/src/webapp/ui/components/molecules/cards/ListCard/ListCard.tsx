@@ -44,13 +44,11 @@ export const ListCard: FC<ListCardProps> = ({
   )
 
   const [maxHeight, setMaxHeight] = useState<undefined | number>(undefined)
-  // const [paddingTop, setPaddingTop] = useState<number | undefined>(undefined)
-  // const [paddingBottom, setPaddingBottom] = useState<number | undefined>(undefined)
 
   const parent = contentDiv.current
   const computedStyle = parent && window.getComputedStyle(parent)
   const childHeight = parent?.children[0]?.clientHeight
-  const gap = Number((parent ? computedStyle.gap : '').replace('px', ''))
+  const gap = Number((computedStyle ? computedStyle.gap : '').replace('px', ''))
   const paddingTop = Number((computedStyle ? computedStyle.paddingTop : '').replace('px', ''))
   const paddingBottom = Number((computedStyle ? computedStyle.paddingBottom : '').replace('px', ''))
 

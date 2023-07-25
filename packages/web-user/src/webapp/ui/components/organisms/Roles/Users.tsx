@@ -61,7 +61,7 @@ export const Users: FC<UsersProps> = ({ users, search }) => {
         </div>
       </Card>
       <Card className="column">
-        <div className="subtitle">User types</div>
+        {/* <div className="subtitle">User types</div> */}
         <Searchbox
           key="users-searchbox"
           placeholder="Search by display name or email"
