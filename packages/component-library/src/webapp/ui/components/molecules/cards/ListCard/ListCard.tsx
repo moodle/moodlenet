@@ -1,5 +1,5 @@
 import type { FC, ReactElement, ReactNode } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import './ListCard.scss'
 
 export type ListActionsType = { element: ReactElement; position: 'start' | 'end' }
@@ -47,23 +47,18 @@ export const ListCard: FC<ListCardProps> = ({
   // const [paddingTop, setPaddingTop] = useState<number | undefined>(undefined)
   // const [paddingBottom, setPaddingBottom] = useState<number | undefined>(undefined)
 
-  useEffect(() => {
-    const parent = contentDiv.current
-    const childHeight = parent?.children[0]?.clientHeight
-    const gap = Number((parent ? window.getComputedStyle(parent).gap : '').replace('px', ''))
-    const paddingTop = Number(
-      (parent ? window.getComputedStyle(parent).paddingTop : '').replace('px', ''),
-    )
-    const paddingBottom = Number(
-      (parent ? window.getComputedStyle(parent).paddingBottom : '').replace('px', ''),
-    )
+  const parent = contentDiv.current
+  const computedStyle = parent && window.getComputedStyle(parent)
+  const childHeight = parent?.children[0]?.clientHeight
+  const gap = Number((parent ? computedStyle.gap : '').replace('px', ''))
+  const paddingTop = Number((computedStyle ? computedStyle.paddingTop : '').replace('px', ''))
+  const paddingBottom = Number((computedStyle ? computedStyle.paddingBottom : '').replace('px', ''))
 
-    const newMaxHeight =
-      childHeight &&
-      maxRows &&
-      childHeight * maxRows + (maxRows - 1) * gap + paddingTop + paddingBottom
-    newMaxHeight && setMaxHeight(newMaxHeight)
-  }, [contentDiv, maxRows, className])
+  const newMaxHeight =
+    childHeight &&
+    maxRows &&
+    childHeight * maxRows + (maxRows - 1) * gap + paddingTop + paddingBottom
+  newMaxHeight && setMaxHeight(newMaxHeight)
 
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
