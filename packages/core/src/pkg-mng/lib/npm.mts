@@ -13,7 +13,7 @@ import type { InstallPkgReq } from '../types.mjs'
 export async function uninstall(pkgIds: PkgIdentifier[]) {
   // TODO @ALE: any check on pkgIds ? (active / version)
   const uninstallPkgsArgs = pkgIds.map(({ name }) => name)
-  await execa('npx', ['-y', 'npm@8', 'uninstall', ...uninstallPkgsArgs], {
+  await execa('npm', ['uninstall', ...uninstallPkgsArgs], {
     cwd: ignites.rootDir,
     timeout: 600000,
   })
@@ -32,9 +32,8 @@ export async function install(installPkgReqs: InstallPkgReq[]) {
     }),
   )
   await execa(
-    MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? 'npx' : 'npm',
+    'npm',
     [
-      ...(MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES ? ['-y', 'npm@8'] : []),
       'install',
       '--registry',
       coreConfigs.npmRegistry,

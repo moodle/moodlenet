@@ -1,9 +1,9 @@
 import { mkdir, readFile } from 'fs/promises'
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import type { WebappPluginItem } from '../../common/types.mjs'
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export const _resolve_alias_json_filename = resolve(
   __dirname,
