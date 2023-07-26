@@ -13,13 +13,13 @@ export const displayNameSchema = string()
 export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) {
   const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
     image: mixed()
-      .test((v, { createError }) =>
-        v instanceof Blob && v.size > imageMaxUploadSize
+      .test((v, { createError }) => {
+        return v instanceof Blob && v.size > imageMaxUploadSize
           ? createError({
-              message: `The file is too big, reduce the size or provide a url`,
+              message: `The image file is too big, please reduce the size`,
             })
-          : true,
-      )
+          : true
+      })
       .optional(),
   })
 
