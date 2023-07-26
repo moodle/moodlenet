@@ -78,7 +78,7 @@ export const expose = await shell.expose<CollectionExposeType>({
           })
       },
     },
-    'webapp/in-collection/:collectionKey/:action-resource/:resourceKey': {
+    'webapp/in-collection/:collectionKey/:action(add|remove)/:resourceKey': {
       guard: () => void 0,
       async fn(_, { action, collectionKey, resourceKey }) {
         const updateResult = await updateCollectionContent(collectionKey, action, resourceKey)

@@ -6,13 +6,16 @@ export const expose = await shell.expose<OpenIdExposeType>({
   rpc: {
     'webapp/getInteractionDetails': {
       guard: () => void 0,
-      async fn({ interactionId }) {
+      async fn(body) {
+        if (!(body?.interactionId && typeof body.interactionId === 'string')) {
+          return
+        }
         const { openIdProvider } = await import('./oidc/provider.mjs')
         const currentWebUserProfile = await getCurrentProfileIds()
         if (!currentWebUserProfile) {
           return
         }
-
+        const interactionId = String(body?.interactionId)
         const found = await openIdProvider.Interaction.find(interactionId)
         if (!found) {
           return

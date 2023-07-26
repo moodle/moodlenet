@@ -37,7 +37,6 @@ async function defaultConfigJson() {
       },
       '@moodlenet/http-server': {
         port: 8080,
-        defaultRpcUploadMaxSize: '5MB',
       },
       '@moodlenet/ed-resource': {
         resourceUploadMaxSize: '1.2GB',
@@ -54,6 +53,7 @@ async function defaultConfigJson() {
         rootPassword: devInstallLocalRepoSymlinks ? 'root' : Math.random().toString(36).slice(2),
       },
       '@moodlenet/react-app': {
+        defaultImageUploadMaxSize: '3MB',
         noWebappServer: devInstallLocalRepoSymlinks ? true : undefined,
       },
     },

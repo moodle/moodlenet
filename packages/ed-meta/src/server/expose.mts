@@ -7,7 +7,7 @@ import { shell } from './shell.mjs'
 export const expose = await shell.expose<EdMetaExposeType>({
   rpc: {
     'webapp/subject-page-data/:_key': {
-      guard: async () => true,
+      guard: () => void 0,
       async fn(_, { _key }) {
         const iscedField = await getIscedFieldRecord(_key)
         if (!iscedField) {
@@ -22,7 +22,7 @@ export const expose = await shell.expose<EdMetaExposeType>({
       },
     },
     'webapp/get-all-published-meta': {
-      guard: async () => true,
+      guard: () => void 0,
       async fn() {
         const pubMetas = await getAllPublishedMeta()
         // shell.log('debug', { pubMetas })

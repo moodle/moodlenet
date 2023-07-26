@@ -95,7 +95,6 @@ async function defaultConfigJson() {
       },
       '@moodlenet/http-server': {
         port: 8080,
-        defaultRpcUploadMaxSize: '5MB',
       },
       '@moodlenet/ed-resource': {
         resourceUploadMaxSize: '1.2GB',
@@ -113,6 +112,7 @@ async function defaultConfigJson() {
       },
       '@moodlenet/react-app': {
         noWebappServer: true,
+        defaultImageUploadMaxSize: '5MB',
       },
     },
   }

@@ -7,7 +7,7 @@ import {
   RpcStatus,
   setRpcStatusCode,
 } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { defaultImageUploadMaxSize, getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
   getCurrentSystemUser,
@@ -16,8 +16,10 @@ import {
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
+import { boolean, object, string } from 'yup'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
+import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { env } from './init/env.mjs'
@@ -43,10 +45,18 @@ import {
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
 
+const { contentValidationSchema, imageValidationSchema, resourcePublishValidationSchema } =
+  getValidationSchemas({
+    contentMaxUploadSize: env.resourceUploadMaxSize,
+    imageMaxUploadSize: defaultImageUploadMaxSize,
+  })
 export const expose = await shell.expose<FullResourceExposeType>({
   rpc: {
     'webapp/set-is-published/:_key': {
-      guard: () => void 0,
+      guard: _ =>
+        object({
+          publish: boolean().required(),
+        }).isValid(_),
       fn: async ({ publish }, { _key }) => {
         const patchResult = await setPublished(_key, publish)
         if (!patchResult) {
@@ -137,7 +147,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'webapp/edit/:_key': {
-      guard: () => void 0,
+      guard: _ => resourcePublishValidationSchema.isValid(_),
       fn: async ({ values }, { _key }) => {
         const patchResult = await patchResource(_key, values)
         if (!patchResult) {
@@ -147,7 +157,13 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'basic/v1/create': {
-      guard: () => void 0,
+      guard: _ => {
+        contentValidationSchema.isValidSync({ content: _?.resource }) &&
+          object({
+            name: string(),
+            description: string(),
+          }).isValidSync({ name: _?.name, description: _?.description })
+      },
       fn: async ({ name, description, resource }) => {
         const resourceContent = [resource].flat()[0]
         if (!resourceContent) {
@@ -183,6 +199,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         fields: {
           '.resource': 1,
         },
+        maxSize: env.resourceUploadMaxSize,
       },
     },
     'webapp/create': {
@@ -228,6 +245,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         fields: {
           '.file': 1,
         },
+        maxSize: defaultImageUploadMaxSize,
       },
     },
     'webapp/upload-content/:_key': {
@@ -256,7 +274,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         fields: {
           '.content': 1,
         },
-        maxFileSize: env.resourceUploadMaxSize,
+        maxSize: env.resourceUploadMaxSize,
       },
     },
     'webapp/get-resources-count-in-subject/:subjectKey': {

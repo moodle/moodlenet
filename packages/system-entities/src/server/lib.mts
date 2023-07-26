@@ -305,8 +305,8 @@ export async function queryEntities<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(entityClass: EntityClass<EntityDataType>, opts?: QueryEntitiesOpts<Project, ProjectAccess>) {
-  const limit = Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT)
-  const skip = opts?.skip ?? 0
+  const limit = Math.floor(Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT))
+  const skip = Math.floor(opts?.skip ?? 0)
   const sort = opts?.sort ? `SORT ${opts.sort}` : ''
   const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
     ...opts,

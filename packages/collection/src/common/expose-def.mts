@@ -16,7 +16,7 @@ export type CollectionExposeType = PkgExposeDef<{
       body: { publish: boolean },
       params: { _key: string },
     ): Promise<void>
-    'webapp/in-collection/:collectionKey/:action-resource/:resourceKey'(
+    'webapp/in-collection/:collectionKey/:action(add|remove)/:resourceKey'(
       body: null,
       params: { collectionKey: string; resourceKey: string; action: 'remove' | 'add' },
     ): Promise<void>

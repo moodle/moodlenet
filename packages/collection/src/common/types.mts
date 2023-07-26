@@ -84,7 +84,6 @@ export type RpcCaller = {
   setIsPublished: (key: string, publish: boolean) => Promise<void>
   setImage: (key: string, file: File | null | undefined) => Promise<string | null>
   create: () => Promise<{ _key: string }>
-  removeResource: (collectionKey: string, resourceKey: string) => Promise<void>
 }
 
 export type CollectionActions = {

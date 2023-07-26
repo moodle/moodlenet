@@ -69,7 +69,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         })
       },
       removeResource: (resourceKey: string) => {
-        return rpcCaller.removeResource(collectionKey, resourceKey).then(() => {
+        return rpcCaller.actionResorce(collectionKey, 'remove', resourceKey).then(() => {
           setCollection(curr => {
             if (!curr) {
               return curr
