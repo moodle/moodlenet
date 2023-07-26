@@ -2,7 +2,7 @@ import CompressionPlugin from 'compression-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { createRequire } from 'module'
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 // import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 import { fileURLToPath } from 'url'
 import type { Configuration } from 'webpack'
@@ -10,7 +10,8 @@ import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 import { getAliases, getPkgPlugins } from './generated-files.mjs'
 // import VirtualModulesPlugin from 'webpack-virtual-modules'
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const require = createRequire(import.meta.url)
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 // const ResolveTypeScriptPlugin = require('resolve-typescript-plugin').default

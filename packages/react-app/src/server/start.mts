@@ -1,10 +1,10 @@
 import { fork } from 'child_process'
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { env } from './init/env.mjs'
 import { shell } from './shell.mjs'
 import { writeGenerated } from './webapp-plugins.mjs'
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 await writeGenerated()
 

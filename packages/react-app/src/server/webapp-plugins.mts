@@ -2,7 +2,7 @@ import { writeFile } from 'fs/promises'
 import { createRequire } from 'module'
 import { packageDirectorySync } from 'pkg-dir'
 // import { tmpdir } from 'os'
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import type { ResolveOptions } from 'webpack'
 import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
@@ -13,7 +13,7 @@ import { shell } from './shell.mjs'
 // const config: Configuration = wpcfg({}, { mode: 'development' })
 const require = createRequire(import.meta.url)
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url))
 // const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
 const connectPkgModulesFile = {
   alias: '_connect-moodlenet-pkg-modules_',
