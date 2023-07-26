@@ -12,7 +12,6 @@ import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useMemo, useState } from 'react'
-import type { SchemaOf } from 'yup'
 
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
@@ -25,7 +24,7 @@ import type {
   CollectionFormProps,
   CollectionStateProps,
 } from '../../../../common/types.mjs'
-import { imageValidationSchema } from '../../../../common/validationSchema.mjs'
+import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
 import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
 import { CollectionContributorCard } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
 import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
@@ -46,12 +45,12 @@ export type CollectionProps = {
 
   data: CollectionDataProps
   collectionForm: CollectionFormProps
-  validationSchema: SchemaOf<CollectionFormProps>
   state: CollectionStateProps
   actions: CollectionActions
   access: CollectionAccessProps
   isSaving: boolean
   isEditingAtStart: boolean
+  validationSchemas: ValidationSchemas
 }
 
 export const Collection: FC<CollectionProps> = ({
@@ -68,12 +67,16 @@ export const Collection: FC<CollectionProps> = ({
 
   data,
   collectionForm,
-  validationSchema,
   state,
   actions,
   access,
   isSaving,
   isEditingAtStart,
+  validationSchemas: {
+    draftCollectionValidationSchema,
+    imageValidationSchema,
+    publishedCollectionValidationSchema,
+  },
 }) => {
   const viewport = useViewport()
   const { image } = data
@@ -85,7 +88,9 @@ export const Collection: FC<CollectionProps> = ({
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
     validateOnMount: true,
-    validationSchema: validationSchema,
+    validationSchema: isPublished
+      ? publishedCollectionValidationSchema
+      : draftCollectionValidationSchema,
     validateOnChange: true,
     onSubmit: values => {
       return editData(values)

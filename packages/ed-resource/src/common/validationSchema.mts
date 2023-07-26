@@ -1,40 +1,19 @@
-import { validURL } from '@moodlenet/react-app/ui'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { ResourceFormProps } from './types.mjs'
 
-export type ValidationConfig = {
+export type ValidationsConfig = {
   contentMaxUploadSize: number
   imageMaxUploadSize: number
 }
+
+export type ValidationSchemas = ReturnType<typeof getValidationSchemas>
 export function getValidationSchemas({
   contentMaxUploadSize,
   imageMaxUploadSize,
-}: ValidationConfig) {
-  const resourcePublishValidationSchema: SchemaOf<ResourceFormProps> = object({
-    title: string().max(160).min(3).required(`Please provide a title`),
-    description: string()
-      .max(4000, obj => {
-        const length = obj.value.length
-        return `Please provide a shorter description (${length} / 4000)`
-      })
-      .min(40, obj => {
-        const length = obj.value.length
-        return `Please provide a longer description (${length} < 40)`
-      })
-      .required(`Please provide a description`),
-    subject: string().required(`Please select a subject`),
-    license: string().required(`Please provide a license`),
-    language: string().required('Please provide a language'),
-    level: string().required('Please provide a level'),
-    month: string().required('Please provide a month'),
-    year: string().required('Please provide a year'),
-    type: string().required('Please provide a type'),
-    // year: string().when('month', (month, schema) => {
-    //   return month ? schema.required( `Please select a year`) : schema.required()
-    // }),
-  })
-
+}: ValidationsConfig) {
+  const publishedResourceValidationSchema = getResourceValidationSchema({ type: 'publish' })
+  const draftResourceValidationSchema = getResourceValidationSchema({ type: 'draft' })
   const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> = object({
     content: mixed()
       .test((v, { createError }) =>
@@ -69,8 +48,72 @@ export function getValidationSchemas({
   })
 
   return {
-    resourcePublishValidationSchema,
+    publishedResourceValidationSchema,
+    draftResourceValidationSchema,
     contentValidationSchema,
     imageValidationSchema,
   }
+
+  function getResourceValidationSchema({ type }: { type: 'publish' | 'draft' }) {
+    const forPublish = type === 'publish'
+    const schema: SchemaOf<ResourceFormProps> = object({
+      title: string()
+        .max(160)
+        .withMutation(s => (forPublish ? s.min(3).required(`Please provide a title`) : s))
+        .default(''),
+      description: string()
+        .max(4000, obj => {
+          const length = obj.value.length
+          return `Please provide a shorter description (${length} / 4000)`
+        })
+        .withMutation(s =>
+          forPublish
+            ? s
+                .min(40, obj => {
+                  const length = obj.value.length
+                  return `Please provide a longer description (${length} < 40)`
+                })
+                .required(`Please provide a description`)
+            : s,
+        )
+        .default(''),
+      subject: string()
+        .withMutation(s => (forPublish ? s.required(`Please select a subject`) : s))
+        .default(''),
+      license: string()
+        .withMutation(s => (forPublish ? s.required(`Please provide a license`) : s))
+        .default(''),
+      language: string()
+        .withMutation(s => (forPublish ? s.required('Please provide a language') : s))
+        .default(''),
+      level: string()
+        .withMutation(s => (forPublish ? s.required('Please provide a level') : s))
+        .default(''),
+      month: string()
+        .withMutation(s => (forPublish ? s.required('Please provide a month') : s))
+        .default(''),
+      year: string()
+        .when('month', (month, schema) => {
+          return month ? schema.required(`Please select a year`) : schema
+        })
+        .default(''),
+      type: string()
+        .withMutation(s => (forPublish ? s.required('Please provide a type') : s))
+        .default(''),
+    })
+    return schema
+  }
+}
+
+export const validURL = (str: string) => {
+  const pattern = new RegExp(
+    '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$',
+    'i',
+  ) // fragment locator
+  return !!pattern.test(str)
 }

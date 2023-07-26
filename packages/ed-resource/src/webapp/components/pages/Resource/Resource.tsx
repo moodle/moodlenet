@@ -23,11 +23,7 @@ import {
   type ResourceFormProps,
   type ResourceStateProps,
 } from '../../../../common/types.mjs'
-import {
-  contentValidationSchema,
-  imageValidationSchema,
-  resourceValidationSchema,
-} from '../../../../common/validationSchema.mjs'
+import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
 import {
   ResourceContributorCard,
   type ResourceContributorCardProps,
@@ -58,6 +54,8 @@ export type ResourceProps = {
   fileMaxSize: number
   isSaving: boolean
   isEditingAtStart: boolean
+
+  validationSchemas: ValidationSchemas
 }
 
 export const Resource: FC<ResourceProps> = ({
@@ -83,6 +81,12 @@ export const Resource: FC<ResourceProps> = ({
   fileMaxSize,
   isSaving,
   isEditingAtStart,
+  validationSchemas: {
+    contentValidationSchema,
+    draftResourceValidationSchema,
+    imageValidationSchema,
+    publishedResourceValidationSchema,
+  },
 }) => {
   const viewport = useViewport()
   const { downloadFilename, contentUrl, contentType, image } = data
@@ -115,7 +119,9 @@ export const Resource: FC<ResourceProps> = ({
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
     validateOnMount: true,
-    validationSchema: resourceValidationSchema,
+    validationSchema: isPublished
+      ? publishedResourceValidationSchema
+      : draftResourceValidationSchema,
     // validateOnChange: shouldValidate,
     onSubmit: values => {
       return editData(values)

@@ -2,12 +2,18 @@ import type { PkgExposeDef } from '@moodlenet/core'
 import { npm, RpcNext, RpcStatus } from '@moodlenet/core'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
-import { getAppearance, getWebappUrl, setAppearance } from '@moodlenet/react-app/server'
+import {
+  defaultImageUploadMaxSize,
+  getAppearance,
+  getWebappUrl,
+  setAppearance,
+} from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
+import { validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import {
   isAllowedKnownEntityFeature,
@@ -43,6 +49,12 @@ import { betterTokenContext } from './util.mjs'
 
 export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
   rpc: {
+    'webapp/get-configs': {
+      guard: () => void 0,
+      async fn() {
+        return { validations: validationsConfig }
+      },
+    },
     'getCurrentClientSessionDataRpc': {
       guard: () => void 0,
       async fn() {
@@ -87,19 +99,18 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
-    'webapp/profile/edit': {
+    'webapp/profile/:_key/edit': {
       guard: () => void 0,
-      async fn(profileFormValues) {
-        const { _key, ...editRequest } = profileFormValues
-        const patchRecord = await editProfile(_key, editRequest)
+      async fn(profileFormValues, { _key }) {
+        const patchRecord = await editProfile(_key, profileFormValues)
         if (!patchRecord) {
           return
         }
       },
     },
-    'webapp/profile/get': {
+    'webapp/profile/:_key/get': {
       guard: () => void 0,
-      async fn({ _key }) {
+      async fn(_, { _key }) {
         const profileRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
         if (!profileRecord) {
           return null
@@ -189,6 +200,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         })
       },
       bodyWithFiles: {
+        maxSize: defaultImageUploadMaxSize,
         fields: {
           '.file': 1,
         },
@@ -212,6 +224,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         })
       },
       bodyWithFiles: {
+        maxSize: defaultImageUploadMaxSize,
         fields: {
           '.file': 1,
         },

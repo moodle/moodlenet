@@ -1,11 +1,14 @@
 import type { MainAppPluginWrapper } from '@moodlenet/react-app/webapp'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { WebappConfigsRpc } from '../common/expose-def.mjs'
 import type {
   MainContextResource,
   ResourceFormProps,
   ResourceFormRpc,
   RpcCaller,
 } from '../common/types.mjs'
+import type { ValidationSchemas } from '../common/validationSchema.mjs'
+import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { MainContext } from './MainContext.js'
 import { ProvideResourceContext } from './ResourceContext.js'
 import { shell } from './shell.mjs'
@@ -50,9 +53,27 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
     return rpcItem
   }, [])
 
-  const mainValue: MainContextResource = {
-    rpcCaller,
-  }
+  const [configs, setConfigs] = useState<WebappConfigsRpc>({
+    validations: { contentMaxUploadSize: 0, imageMaxUploadSize: 0 },
+  })
+
+  useEffect(() => {
+    shell.rpc.me['webapp/get-configs']().then(setConfigs)
+  }, [])
+
+  const validationSchemas = useMemo<ValidationSchemas>(
+    () => getValidationSchemas(configs.validations),
+    [configs.validations],
+  )
+
+  const mainValue = useMemo<MainContextResource>(
+    () => ({
+      rpcCaller,
+      configs,
+      validationSchemas,
+    }),
+    [configs, rpcCaller, validationSchemas],
+  )
 
   return (
     <MainContext.Provider value={mainValue}>

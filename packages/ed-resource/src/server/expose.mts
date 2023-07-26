@@ -16,9 +16,10 @@ import {
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
-import { boolean, object, string } from 'yup'
+import { boolean, object } from 'yup'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
+import type { ValidationsConfig } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
@@ -45,13 +46,25 @@ import {
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
 
-const { contentValidationSchema, imageValidationSchema, resourcePublishValidationSchema } =
-  getValidationSchemas({
-    contentMaxUploadSize: env.resourceUploadMaxSize,
-    imageMaxUploadSize: defaultImageUploadMaxSize,
-  })
+const validationsConfig: ValidationsConfig = {
+  contentMaxUploadSize: env.resourceUploadMaxSize,
+  imageMaxUploadSize: defaultImageUploadMaxSize,
+}
+const {
+  contentValidationSchema,
+  // imageValidationSchema,
+  draftResourceValidationSchema,
+  // publishedResourceValidationSchema,
+} = getValidationSchemas(validationsConfig)
+
 export const expose = await shell.expose<FullResourceExposeType>({
   rpc: {
+    'webapp/get-configs': {
+      guard: () => void 0,
+      async fn() {
+        return { validations: validationsConfig }
+      },
+    },
     'webapp/set-is-published/:_key': {
       guard: _ =>
         object({
@@ -147,7 +160,10 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'webapp/edit/:_key': {
-      guard: _ => resourcePublishValidationSchema.isValid(_),
+      guard: body =>
+        (body.values = draftResourceValidationSchema.validateSync(body.values, {
+          stripUnknown: true,
+        })),
       fn: async ({ values }, { _key }) => {
         const patchResult = await patchResource(_key, values)
         if (!patchResult) {
@@ -157,12 +173,12 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'basic/v1/create': {
-      guard: _ => {
-        contentValidationSchema.isValidSync({ content: _?.resource }) &&
-          object({
-            name: string(),
-            description: string(),
-          }).isValidSync({ name: _?.name, description: _?.description })
+      guard: body => {
+        contentValidationSchema.validateSync({ content: body?.resource })
+        draftResourceValidationSchema.validateSync({
+          description: body.description,
+          title: body.name,
+        })
       },
       fn: async ({ name, description, resource }) => {
         const resourceContent = [resource].flat()[0]
@@ -171,9 +187,10 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
 
         const createResult = await createResource({
-          description,
           title: name,
+          description,
         })
+
         if (!createResult) {
           throw RpcStatus('Unauthorized')
         }
@@ -184,6 +201,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           await delResource(createResult._key)
           throw RpcStatus('Unauthorized')
         }
+
         setRpcStatusCode('Created')
         return {
           _key: createResult._key,

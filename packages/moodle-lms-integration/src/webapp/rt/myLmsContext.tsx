@@ -1,5 +1,6 @@
+import { AuthCtx } from '@moodlenet/web-user/webapp'
 import type { PropsWithChildren } from 'react'
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { LmsWebUserConfig, SiteTarget } from '../../common/types.mjs'
 import { shell } from './shell.mjs'
 
@@ -14,6 +15,7 @@ export const MyLmsContext = createContext<MyLmsContextT>(null as any)
 
 export function MyLmsContextProvider({ children }: PropsWithChildren<unknown>) {
   const [myLmsWebUserConfig, setMyLmsWebUserConfig] = useState<LmsWebUserConfig>()
+  const auth = useContext(AuthCtx)
   // const canSend = !!auth.clientSessionData?.myProfile
 
   const addSiteTarget: MyLmsContextT['addSiteTarget'] = useCallback(
@@ -36,15 +38,10 @@ export function MyLmsContextProvider({ children }: PropsWithChildren<unknown>) {
       importTarget: defaultSite.importTargets[0],
     }
   }, [myLmsWebUserConfig?.sites])
-  useEffect(
-    () => {
-      // if (!canSend) return
-      shell.rpc.me['webapp/get-my-config']().then(setMyLmsWebUserConfig)
-    },
-    [
-      /* canSend */
-    ],
-  )
+  useEffect(() => {
+    if (!auth.clientSessionData) return
+    shell.rpc.me['webapp/get-my-config']().then(setMyLmsWebUserConfig)
+  }, [auth.clientSessionData])
 
   const ctx = useMemo<MyLmsContextT>(
     () => ({ addSiteTarget, myLmsWebUserConfig, defaultSiteTarget /* , canSend */ }),

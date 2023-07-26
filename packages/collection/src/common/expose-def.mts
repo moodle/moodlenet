@@ -5,9 +5,12 @@ import type {
   CollectionSearchResultRpc,
   SortTypeRpc,
 } from './types.mjs'
+import type { ValidationsConfig } from './validationSchema.mjs'
 
+export type WebappConfigsRpc = { validations: ValidationsConfig }
 export type CollectionExposeType = PkgExposeDef<{
   rpc: {
+    'webapp/get-configs'(): Promise<WebappConfigsRpc>
     'webapp/my-collections'(): Promise<{
       collections: Omit<CollectionRpc, 'contributor'>[]
       contributor: CollectionRpc['contributor']

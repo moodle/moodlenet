@@ -6,9 +6,12 @@ import type {
   ResourceSearchResultRpc,
   SortTypeRpc,
 } from './types.mjs'
+import type { ValidationsConfig } from './validationSchema.mjs'
+export type WebappConfigsRpc = { validations: ValidationsConfig }
 export type ResourceExposeType = PkgExposeDef<{
   rpc: {
     // WEBAPP specific
+    'webapp/get-configs'(): Promise<WebappConfigsRpc>
     'webapp/set-is-published/:_key'(
       body: { publish: boolean },
       params: { _key: string },

@@ -1,7 +1,7 @@
 import { shell } from './shell.mjs'
 
 import { RpcStatus } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { defaultImageUploadMaxSize, getWebappUrl } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesRecordType,
   AqlVal,
@@ -30,11 +30,26 @@ import {
   updateCollectionContent,
 } from './services.mjs'
 
+import type { ValidationsConfig } from '../common/validationSchema.mjs'
 import { getImageAssetInfo, getImageUrl } from './lib.mjs'
 import type { CollectionDataType } from './types.mjs'
+const validationsConfig: ValidationsConfig = {
+  imageMaxUploadSize: defaultImageUploadMaxSize,
+}
+// const {
+//   draftCollectionValidationSchema,
+//   imageValidationSchema,
+//   publishedCollectionValidationSchema,
+// } = getValidationSchemas(validationsConfig)
 
 export const expose = await shell.expose<CollectionExposeType>({
   rpc: {
+    'webapp/get-configs': {
+      guard: () => void 0,
+      async fn() {
+        return { validations: validationsConfig }
+      },
+    },
     'webapp/my-collections': {
       guard: () => void 0,
       async fn() {
@@ -171,6 +186,7 @@ export const expose = await shell.expose<CollectionExposeType>({
         return imageUrl
       },
       bodyWithFiles: {
+        maxSize: defaultImageUploadMaxSize,
         fields: {
           '.file': 1,
         },

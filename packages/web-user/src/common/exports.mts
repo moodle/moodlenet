@@ -1,7 +1,7 @@
 export * from './my-webapp/types.mjs'
 export * from './profile/data.mjs'
 export * from './types.mjs'
-export * from './validations.mjs'
+export * from './validationSchema.mjs'
 export * from './webapp-routes.mjs'
 
 export const WEB_USER_SESSION_TOKEN_COOKIE_NAME = 'web-user-session-token'

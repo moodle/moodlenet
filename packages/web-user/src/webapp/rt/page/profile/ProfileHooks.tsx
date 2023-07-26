@@ -44,21 +44,23 @@ export const useProfileProps = ({
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
 
-      await shell.rpc.me['webapp/profile/edit']({
-        _key: profileKey,
-        displayName,
-        aboutMe,
-        location,
-        organizationName,
-        siteUrl,
-      })
+      await shell.rpc.me['webapp/profile/:_key/edit'](
+        {
+          displayName,
+          aboutMe,
+          location,
+          organizationName,
+          siteUrl,
+        },
+        { _key: profileKey },
+      )
     },
     [profileKey],
   )
 
   useEffect(() => {
     setProfileGetRpc(undefined)
-    shell.rpc.me['webapp/profile/get']({ _key: profileKey }).then(res => {
+    shell.rpc.me['webapp/profile/:_key/get'](void 0, { _key: profileKey }).then(res => {
       setProfileGetRpc(res)
     })
   }, [profileKey])

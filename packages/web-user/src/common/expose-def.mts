@@ -12,14 +12,18 @@ import type {
   SortTypeRpc,
   WebUserData,
 } from './types.mjs'
+import type { ValidationsConfig } from './validationSchema.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
 
+export type WebappConfigsRpc = { validations: ValidationsConfig }
+export type EditProfileDataRpc = Omit<Profile, 'avatarUrl' | 'backgroundUrl' | '_key'>
 export type WebUserExposeType = PkgExposeDef<{
   rpc: {
+    'webapp/get-configs'(): Promise<WebappConfigsRpc>
     'getCurrentClientSessionDataRpc'(): Promise<ClientSessionDataRpc | undefined>
     'loginAsRoot'(body: { rootPassword: string }): Promise<boolean>
-    'webapp/profile/edit'(body: Omit<Profile, 'avatarUrl' | 'backgroundUrl'>): Promise<void>
-    'webapp/profile/get'(body: { _key: string }): Promise<ProfileGetRpc | null>
+    'webapp/profile/:_key/edit'(body: EditProfileDataRpc, params: { _key: string }): Promise<void>
+    'webapp/profile/:_key/get'(body: void, params: { _key: string }): Promise<ProfileGetRpc | null>
     'webapp/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
     'webapp/roles/toggleIsAdmin'(
       body: { profileKey: string } | { userKey: string },
