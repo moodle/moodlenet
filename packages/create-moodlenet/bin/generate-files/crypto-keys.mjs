@@ -4,8 +4,8 @@ import { crypto } from '../env.mjs'
 
 try {
   await Promise.all([
-    open(crypto.defaultKeyFilenames.private, 'r'),
-    open(crypto.defaultKeyFilenames.public, 'r'),
+    open(crypto.defaultKeyFilenames.private, 'r').then(_ => _.close()),
+    open(crypto.defaultKeyFilenames.public, 'r').then(_ => _.close()),
   ])
 } catch {
   const keysLike = await jose.generateKeyPair(crypto.alg, { modulusLength: 2048 /* minimum */ })
