@@ -8,11 +8,11 @@ import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { profileFormValidationSchema } from '../../../../common/profile/data.mjs'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
+import { useProfileContext } from '../../context/ProfileContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
 import { shell } from '../../shell.mjs'
 
@@ -32,6 +32,7 @@ export const useProfileProps = ({
 }: {
   profileKey: string
 }): ProfileProps | null | undefined => {
+  const { validationSchemas } = useProfileContext()
   const plugins = ProfilePagePlugins.usePluginHooks()
 
   const resourceCtx = useContext(ResourceContext)
@@ -180,7 +181,7 @@ export const useProfileProps = ({
       // state: {
       //   followed: false,
       // },
-      validationSchema: profileFormValidationSchema,
+      validationSchemas,
     }
     return props
   }, [
@@ -195,6 +196,7 @@ export const useProfileProps = ({
     plugins,
     collectionCtx,
     resourceCtx,
+    validationSchemas,
   ])
   return profileProps
 }

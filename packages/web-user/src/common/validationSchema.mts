@@ -11,12 +11,24 @@ export const displayNameSchema = string()
   .required(/* t */ `Please provide a display name`)
 
 export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) {
-  const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
+  const avatarImageValidation: SchemaOf<{ image: File | string | undefined | null }> = object({
     image: mixed()
       .test((v, { createError }) => {
         return v instanceof Blob && v.size > imageMaxUploadSize
           ? createError({
-              message: `The image file is too big, please reduce the size`,
+              message: `The image file is too big, please reduce the size or use another image`,
+            })
+          : true
+      })
+      .optional(),
+  })
+
+  const backgroundImageValidation: SchemaOf<{ image: File | string | undefined | null }> = object({
+    image: mixed()
+      .test((v, { createError }) => {
+        return v instanceof Blob && v.size > imageMaxUploadSize
+          ? createError({
+              message: `The image file is too big, please reduce the size or use another image`,
             })
           : true
       })
@@ -25,11 +37,16 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
 
   const profileValidationSchema: SchemaOf<EditProfileDataRpc> = object({
     displayName: displayNameSchema,
-    aboutMe: string().min(3).max(4000).required(),
-    location: string().max(4000),
-    organizationName: string().max(4000),
-    siteUrl: string().max(4000),
+    location: string().optional(),
+    organizationName: string().max(30).min(3).optional(),
+    siteUrl: string().url().optional(),
+    aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   })
 
-  return { displayNameSchema, imageValidationSchema, profileValidationSchema }
+  return {
+    displayNameSchema,
+    backgroundImageValidation,
+    avatarImageValidation,
+    profileValidationSchema,
+  }
 }

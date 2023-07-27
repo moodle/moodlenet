@@ -5,5 +5,9 @@ import { getValidationSchemas } from '../common/validationSchema.mjs'
 export const validationsConfig: ValidationsConfig = {
   imageMaxUploadSize: defaultImageUploadMaxSize,
 }
-export const { imageValidationSchema, profileValidationSchema, displayNameSchema } =
-  getValidationSchemas(validationsConfig)
+export const {
+  avatarImageValidation,
+  backgroundImageValidation,
+  profileValidationSchema,
+  displayNameSchema,
+} = getValidationSchemas(validationsConfig)

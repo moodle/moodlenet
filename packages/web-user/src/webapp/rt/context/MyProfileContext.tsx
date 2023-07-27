@@ -1,22 +1,17 @@
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import type { WebappConfigsRpc } from '../../../common/expose-def.mjs'
 import type {
   KnownEntityFeature,
   KnownEntityType,
   KnownFeaturedEntities,
   Profile,
 } from '../../../common/types.mjs'
-import type { ValidationSchemas } from '../../../common/validationSchema.mjs'
-import { getValidationSchemas } from '../../../common/validationSchema.mjs'
 import { shell } from '../shell.mjs'
 import { AuthCtx } from './AuthContext.js'
 
 export type MyProfileContextT = {
   myFeaturedEntities: AllMyFeaturedEntitiesHandle
   myProfile: Profile & { publisher: boolean }
-  configs: WebappConfigsRpc
-  validationSchemas: ValidationSchemas
 }
 export const MyProfileContext = createContext<MyProfileContextT | null>(null)
 export function useMyProfileContext() {
@@ -29,21 +24,10 @@ export const MyProfileContextProvider: FC<PropsWithChildren<unknown>> = ({ child
 }
 
 function useMyProfileContextValue() {
-  const [configs, setConfigs] = useState<WebappConfigsRpc>({
-    validations: { imageMaxUploadSize: 0 },
-  })
-
-  useEffect(() => {
-    shell.rpc.me['webapp/get-configs']().then(setConfigs)
-  }, [])
-
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
   const myFeaturedEntities = useAllMyFeaturedEntities()
-  const validationSchemas = useMemo<ValidationSchemas>(
-    () => getValidationSchemas(configs.validations),
-    [configs.validations],
-  )
+
   const myProfileContext = useMemo<MyProfileContextT | null>(() => {
     if (!myProfile) {
       return null
@@ -51,11 +35,9 @@ function useMyProfileContextValue() {
     const myProfileContext: MyProfileContextT = {
       myFeaturedEntities,
       myProfile,
-      configs,
-      validationSchemas,
     }
     return myProfileContext
-  }, [myFeaturedEntities, myProfile, configs, validationSchemas])
+  }, [myFeaturedEntities, myProfile])
 
   return myProfileContext
 }
