@@ -52,9 +52,9 @@ SubjectCardPlugins.register(({ subjectKey }) => {
 function useSubjectResourceCount(subjectKey: string) {
   const [numResources, setNumResources] = useState(0)
   useEffect(() => {
-    shell.rpc.me['webapp/get-resources-count-in-subject/:subjectKey'](null, { subjectKey }).then(
-      res => setNumResources(res.count),
-    )
+    shell.rpc
+      .me('webapp/get-resources-count-in-subject/:subjectKey')(null, { subjectKey })
+      .then(res => setNumResources(res.count))
   }, [subjectKey])
   return { numResources }
 }
@@ -82,12 +82,14 @@ SubjectPagePlugins.register(({ subjectKey }) => {
 function SubjectPageSimpleResourceList({ subjectKey }: { subjectKey: string }) {
   const [resourceKeys, setResourceKeys] = useState<{ _key: string }[]>([])
   useEffect(() => {
-    shell.rpc.me['webapp/search']({ filters: [['subject', subjectKey]] }, undefined, {
-      sortType: 'Recent',
-      limit: 50,
-    }).then(res => {
-      setResourceKeys(res.list)
-    })
+    shell.rpc
+      .me('webapp/search')({ filters: [['subject', subjectKey]] }, undefined, {
+        sortType: 'Recent',
+        limit: 50,
+      })
+      .then(res => {
+        setResourceKeys(res.list)
+      })
   }, [subjectKey])
   const resourceCardPropsList = resourceKeys.map(({ _key }) => {
     const props = proxyWith<ResourceCardProps>(function useResourceCardProxy() {

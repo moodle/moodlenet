@@ -12,7 +12,7 @@ const ProvideAdminSettingsContext: FC<PropsWithChildren<unknown>> = ({ children 
   const [appearanceData, setAppareanceData] = useState<AppearanceData>(defaultAppearanceData)
 
   const saveAppearanceData = useCallback(async (newAppearanceData: AppearanceData) => {
-    await shell.rpc.me['webapp/admin/general/set-appearance']({ appearanceData: newAppearanceData })
+    await shell.rpc.me('webapp/admin/general/set-appearance')({ appearanceData: newAppearanceData })
 
     setAppareanceData(newAppearanceData)
   }, [])
@@ -20,12 +20,12 @@ const ProvideAdminSettingsContext: FC<PropsWithChildren<unknown>> = ({ children 
   const [devMode, toggleDevMode] = useReducer(prev => !prev, false)
 
   const updateAllPackages = useCallback(async () => {
-    await shell.rpc.me['webapp/admin/packages/update-all-pkgs']()
+    await shell.rpc.me('webapp/admin/packages/update-all-pkgs')()
   }, [])
   useEffect(() => {
-    shell.rpc.me['webapp/react-app/get-appearance']().then(({ data: appearanceData }) =>
-      setAppareanceData(appearanceData),
-    )
+    shell.rpc
+      .me('webapp/react-app/get-appearance')()
+      .then(({ data: appearanceData }) => setAppareanceData(appearanceData))
   }, [])
 
   const ctx = useMemo<AdminSettingsCtxT>(() => {
@@ -53,16 +53,16 @@ const ProvideOrganizationContext: FC<PropsWithChildren<unknown>> = ({ children }
   const saveOrganization = useCallback(
     // WE CAN NOT USE IT IS CALLED 1 TIME ONLY
     (data: OrganizationData) => {
-      shell.rpc.me['webapp/admin/general/set-org-data']({ orgData: data })
+      shell.rpc.me('webapp/admin/general/set-org-data')({ orgData: data })
       setDataOrg(data)
     },
     [],
   )
 
   useEffect(() => {
-    shell.rpc.me['webapp/react-app/get-org-data']().then(
-      ({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData),
-    )
+    shell.rpc
+      .me('webapp/react-app/get-org-data')()
+      .then(({ data: orgData }: { data: OrganizationData }) => setDataOrg(orgData))
   }, [])
 
   const ctx: TOrganizationCtx = {

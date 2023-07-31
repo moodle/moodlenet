@@ -21,37 +21,42 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
   })
 
   useEffect(() => {
-    shell.rpc.me['webapp/get-configs']().then(setConfigs)
+    shell.rpc.me('webapp/get-configs')().then(setConfigs)
   }, [])
 
   const rpc = shell.rpc.me
 
   const rpcCaller: RpcCaller = {
     collectionsResorce: (containingResourceKey: string) =>
-      rpc['webapp/my-collections/:containingResourceKey'](null, { containingResourceKey }),
+      rpc('webapp/my-collections/:containingResourceKey')(null, { containingResourceKey }),
 
     actionResorce: (collectionKey: string, action: 'remove' | 'add', resourceKey: string) =>
-      rpc['webapp/in-collection/:collectionKey/:action(add|remove)/:resourceKey'](null, {
+      rpc('webapp/in-collection/:collectionKey/:action(add|remove)/:resourceKey')(null, {
         collectionKey,
         action,
         resourceKey,
       }),
 
     edit: (key: string, values: CollectionFormProps) =>
-      rpc['webapp/edit/:_key']({ values: toFormRpc(values) }, { _key: key }),
+      rpc('webapp/edit/:_key', {
+        replacePending: true,
+        idOpts: { excludeKeys: _ => _ === 'body' },
+      })({ values: toFormRpc(values) }, { _key: key }),
 
-    get: (_key: string) => rpc['webapp/get/:_key'](null, { _key }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
-    // get: (_key: string) => addAuth(rpc['webapp/get/:_key'](null, { _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
+    get: (_key: string) => rpc('webapp/get/:_key')(null, { _key }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
+    // get: (_key: string) => addAuth(rpc('webapp/get/:_key')(null, { _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
 
-    _delete: async (key: string) => rpc['webapp/delete/:_key'](null, { _key: key }),
+    _delete: async (key: string) => rpc('webapp/delete/:_key')(null, { _key: key }),
 
     setIsPublished: async (key: string, publish: boolean) =>
-      rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
+      rpc('webapp/set-is-published/:_key')({ publish }, { _key: key }),
 
     setImage: async (key: string, file: File | null | undefined) =>
-      rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }),
-
-    create: () => rpc['webapp/create'](),
+      rpc('webapp/upload-image/:_key', {
+        replacePending: true,
+        idOpts: { excludeKeys: _ => _ === 'body' },
+      })({ file: [file] }, { _key: key }),
+    create: () => rpc('webapp/create')(),
   }
 
   const validationSchemas = useMemo<ValidationSchemas>(

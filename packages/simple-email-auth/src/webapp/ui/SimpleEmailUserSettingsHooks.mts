@@ -6,14 +6,18 @@ export function useSimpleEmailUserSettingsProps() {
   const [passwordChangedSuccess, setPasswordChangedSuccess] = useState(false)
   const [data, setData] = useState<SimpleEmailUserSettingsData | null>()
   useEffect(() => {
-    shell.rpc.me['webapp/get-my-settings-data']().then(resp => {
-      setData(resp ? { password: '' } : null)
-    })
+    shell.rpc
+      .me('webapp/get-my-settings-data')()
+      .then(resp => {
+        setData(resp ? { password: '' } : null)
+      })
   }, [])
   const setPassword = useCallback<SimpleEmailUserSettingsProps['editData']>(({ password }) => {
-    shell.rpc.me['webapp/set-password']({ password }).then(success => {
-      setPasswordChangedSuccess(success)
-    })
+    shell.rpc
+      .me('webapp/set-password')({ password })
+      .then(success => {
+        setPasswordChangedSuccess(success)
+      })
   }, [])
   if (!data) {
     return null

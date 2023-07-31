@@ -9,7 +9,9 @@ export const useRootLoginProps = (): RootLoginProps => {
   const [loginFailed, setLoginFailed] = useState(false)
   const submitLogin = useCallback<RootLoginProps['submitLogin']>(
     rootPassword =>
-      shell.rpc.me.loginAsRoot({ rootPassword }).then(success => setLoginFailed(!success)),
+      shell.rpc
+        .me('loginAsRoot')({ rootPassword })
+        .then(success => setLoginFailed(!success)),
     [],
   )
 

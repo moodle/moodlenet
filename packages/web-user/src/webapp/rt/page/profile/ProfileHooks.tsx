@@ -45,7 +45,7 @@ export const useProfileProps = ({
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
 
-      await shell.rpc.me['webapp/profile/:_key/edit'](
+      await shell.rpc.me('webapp/profile/:_key/edit')(
         {
           editData: {
             displayName,
@@ -63,9 +63,11 @@ export const useProfileProps = ({
 
   useEffect(() => {
     setProfileGetRpc(undefined)
-    shell.rpc.me['webapp/profile/:_key/get'](void 0, { _key: profileKey }).then(res => {
-      setProfileGetRpc(res)
-    })
+    shell.rpc
+      .me('webapp/profile/:_key/get')(void 0, { _key: profileKey })
+      .then(res => {
+        setProfileGetRpc(res)
+      })
   }, [profileKey])
 
   const mainLayoutProps = useMainLayoutProps()
@@ -130,20 +132,20 @@ export const useProfileProps = ({
         },
         setAvatar: (avatar: File | undefined | null) => {
           console.log('setAvatar', avatar)
-          shell.rpc.me['webapp/upload-profile-avatar/:_key'](
+          shell.rpc.me('webapp/upload-profile-avatar/:_key')(
             { file: [avatar] },
             { _key: profileKey },
           )
         },
         setBackground: (background: File | undefined | null) => {
           console.log('setBackground', background)
-          shell.rpc.me['webapp/upload-profile-background/:_key'](
+          shell.rpc.me('webapp/upload-profile-background/:_key')(
             { file: [background] },
             { _key: profileKey },
           )
         },
         sendMessage: (message: string) =>
-          shell.rpc.me['webapp/send-message-to-user/:profileKey']({ message }, { profileKey }),
+          shell.rpc.me('webapp/send-message-to-user/:profileKey')({ message }, { profileKey }),
       },
       mainProfileCardSlots: {
         mainColumnItems: plugins.getKeyedAddons('main_mainColumnItems'),

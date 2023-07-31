@@ -69,7 +69,7 @@ export function useAuthCtxValue() {
         return
       }
 
-      const sessionDataRpc = await shell.rpc.me.getCurrentClientSessionDataRpc()
+      const sessionDataRpc = await shell.rpc.me('getCurrentClientSessionDataRpc')()
 
       if (!sessionDataRpc) {
         return

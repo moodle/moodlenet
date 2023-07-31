@@ -10,9 +10,9 @@ export const useSubjectData = ({
   const [subjectData, setSubjectData] = useState<SubjectData | null | undefined>(undefined)
   useEffect(() => {
     setSubjectData(undefined)
-    shell.rpc.me['webapp/subject-page-data/:_key'](undefined, { _key: subjectKey }).then(
-      setSubjectData,
-    )
+    shell.rpc
+      .me('webapp/subject-page-data/:_key')(undefined, { _key: subjectKey })
+      .then(setSubjectData)
   }, [subjectKey])
 
   return subjectData

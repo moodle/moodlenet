@@ -1,5 +1,7 @@
 import type { PkgIdentifier, PkgRpcDefs } from '@moodlenet/core'
 import { getPkgRpcFetchOpts } from '@moodlenet/http-server/common'
+import type { NormalOption } from 'object-hash'
+import objHash from 'object-hash'
 
 export type Opts = Record<string, never>
 
@@ -15,81 +17,80 @@ export function wrapFetch(wrapper: FetchWrapper) {
   FETCH_WRAPPERS.push({ wrapper })
 }
 
-export function GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgRpcDefs extends PkgRpcDefs>(
-  targetPkgId: PkgIdentifier,
-) {
-  return UNIMPLEMENTED_OR_REVIEW_RPC
-  function UNIMPLEMENTED_OR_REVIEW_RPC<
-    R = void,
-    B = void,
-    P = void,
-    Q = void,
-    UNIMPL_TYPE extends 'REVIEW' | 'TO IMPLEMENT' = 'TO IMPLEMENT',
-  >(
-    UNIMPL_TYPE: UNIMPL_TYPE,
-    RPC_ENDPOINT: UNIMPL_TYPE extends 'REVIEW' ? keyof TargetPkgRpcDefs : string,
-    mockRpcFn: (body: B, params: P, query: Q) => R | Promise<R>,
-  ) {
-    return async (body: B, params: P, query: Q) => {
-      const line = '*'.repeat(50)
-      console.error(`
-${line}
-****  DEV BEWARE ${UNIMPL_TYPE} RPC[${targetPkgId.name}::${String(RPC_ENDPOINT)}]
-${line}
-`)
-      return mockRpcFn(body, params, query)
-    }
+export type RpcOpts = {
+  idOpts?: NormalOption
+  cache?: {
+    ctx?: string
+    ttlSec?: number
   }
+  replacePending?: boolean
 }
 
+const cache: Record<string, { rpcResponse: any }> = {}
+const pending: Record<string, { pendingPromise: Promise<any>; controller: AbortController }> = {}
 export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
   targetPkgId: PkgIdentifier,
   userPkgId: PkgIdentifier,
-  rpcPaths: string[],
+  //rpcPaths: string[],
 ): PkgRpcHandle<TargetPkgRpcDefs> {
-  return rpcPaths.reduce(
-    (_rpc, path) => ({
-      ..._rpc,
-      [path]: locateRpc(path),
-    }),
-    {
-      '@UNIMPLEMENTED_OR_REVIEW_RPC':
-        GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgRpcDefs>(targetPkgId),
-    } as PkgRpcHandle<TargetPkgRpcDefs>,
-  )
+  return locateRpc as PkgRpcHandle<TargetPkgRpcDefs>
 
-  function locateRpc(path: string) {
+  function locateRpc(path: string, opts?: RpcOpts) {
     return async function (body: unknown, params: unknown, query: unknown) {
-      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [
-        body,
-        params,
-        query,
-      ])
-      const fetchExecutor: FetchWrapper2 = (url, requestInit) => fetch(url, requestInit)
-      const response = await FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {
-        const currentWrapper: FetchWrapper2 = (url, requestInit) =>
-          wrapper(url, requestInit, nextWrapper)
-        return currentWrapper
-      }, fetchExecutor)(url, requestInit)
-      const responseText = await response.text()
-      if (response.status !== 200) {
-        throw new Error(responseText)
+      const controller = new AbortController()
+
+      const hash = objHash({ path, body, params, query, ctx: opts?.cache?.ctx }, opts?.idOpts)
+      if (opts?.replacePending) {
+        pending[hash]?.controller.abort()
+        delete pending[hash]
       }
-      if (!responseText) {
-        return undefined
+      const cached = cache[hash]
+      if (cached) {
+        return cached.rpcResponse
       }
-      const responseJson = JSON.parse(responseText)
-      return responseJson
+      const pendingPromise = new Promise((resolve, reject) => {
+        const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [
+          body,
+          params,
+          query,
+        ])
+        const fetchExecutor: FetchWrapper2 = (url, requestInit) =>
+          fetch(url, { ...requestInit, signal: controller.signal })
+        FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {
+          const currentWrapper: FetchWrapper2 = (url, requestInit) =>
+            wrapper(url, requestInit, nextWrapper)
+          return currentWrapper
+        }, fetchExecutor)(url, requestInit)
+          .then(async response => {
+            const responseText = await response.text()
+            if (response.status !== 200) {
+              reject(new Error(responseText))
+            }
+            const rpcResponse = !responseText ? undefined : JSON.parse(responseText)
+            if (opts?.cache) {
+              cache[hash] = { rpcResponse }
+              if (opts.cache.ttlSec) {
+                setTimeout(() => delete cache[hash], opts.cache.ttlSec * 1000)
+              }
+            }
+
+            resolve(rpcResponse)
+          })
+          .catch(reject)
+      })
+      pending[hash] = { controller, pendingPromise }
+      pendingPromise.finally(() => {
+        delete pending[hash]
+      })
+
+      return pendingPromise
     }
   }
 }
 
-export type PkgRpcHandle<TargetPkgRpcDefs extends PkgRpcDefs> = LocateRpc<TargetPkgRpcDefs> & {
-  '@UNIMPLEMENTED_OR_REVIEW_RPC': ReturnType<
-    typeof GET_UNIMPLEMENTED_OR_REVIEW_RPC<TargetPkgRpcDefs>
-  >
-}
-
-export type LocateRpc<TargetPkgRpcDefs extends PkgRpcDefs> = {
-  [path in keyof TargetPkgRpcDefs]: TargetPkgRpcDefs[path]
-}
+export type PkgRpcHandle<TargetPkgRpcDefs extends PkgRpcDefs> = <
+  Path extends keyof TargetPkgRpcDefs,
+>(
+  path: Path,
+  opts?: RpcOpts,
+) => TargetPkgRpcDefs[Path]

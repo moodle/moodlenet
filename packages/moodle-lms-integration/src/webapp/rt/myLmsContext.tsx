@@ -21,9 +21,9 @@ export function MyLmsContextProvider({ children }: PropsWithChildren<unknown>) {
   const addSiteTarget: MyLmsContextT['addSiteTarget'] = useCallback(
     async siteTarget => {
       // if (!canSend) return
-      await shell.rpc.me['webapp/add-my-lms-site-target']({ siteTarget }).then(
-        setMyLmsWebUserConfig,
-      )
+      await shell.rpc
+        .me('webapp/add-my-lms-site-target')({ siteTarget })
+        .then(setMyLmsWebUserConfig)
     },
     [
       /* canSend */
@@ -40,7 +40,7 @@ export function MyLmsContextProvider({ children }: PropsWithChildren<unknown>) {
   }, [myLmsWebUserConfig?.sites])
   useEffect(() => {
     if (!auth.clientSessionData) return
-    shell.rpc.me['webapp/get-my-config']().then(setMyLmsWebUserConfig)
+    shell.rpc.me('webapp/get-my-config')().then(setMyLmsWebUserConfig)
   }, [auth.clientSessionData])
 
   const ctx = useMemo<MyLmsContextT>(

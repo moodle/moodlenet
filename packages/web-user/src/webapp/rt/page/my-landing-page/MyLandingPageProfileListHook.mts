@@ -9,13 +9,15 @@ export function useMyLandingPageProfileListDataProps() {
   const [profiles, setProfiles] = useState<{ _key: string }[]>([])
 
   useEffect(() => {
-    shell.rpc.me['webapp/landing/get-list/:entityType(collections|resources|profiles)'](
-      undefined,
-      {
-        entityType: 'profiles',
-      },
-      { limit: 10 },
-    ).then(setProfiles)
+    shell.rpc
+      .me('webapp/landing/get-list/:entityType(collections|resources|profiles)')(
+        undefined,
+        {
+          entityType: 'profiles',
+        },
+        { limit: 10 },
+      )
+      .then(setProfiles)
   }, [])
   const profilesPropsList = useMemo<LandingProfileListProps['profilesPropsList']>(
     () =>

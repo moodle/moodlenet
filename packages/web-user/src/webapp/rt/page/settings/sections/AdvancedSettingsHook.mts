@@ -13,7 +13,7 @@ export function useAdvancedSettingsProps() {
   const org = useContext(OrganizationCtx)
   const [deleteAccountSuccess, setDeleteAccountSuccess] = useState(false)
   const deleteAccount = useCallback(async () => {
-    await shell.rpc.me['webapp/web-user/delete-account-request']()
+    await shell.rpc.me('webapp/web-user/delete-account-request')()
     setDeleteAccountSuccess(true)
   }, [])
   const plugins = AdvancedSettingsPlugin.usePluginHooks()

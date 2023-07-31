@@ -37,17 +37,17 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
 
     const rpcItem: RpcCaller = {
       edit: (key: string, values: ResourceFormProps) =>
-        rpc['webapp/edit/:_key']({ values: toFormRpc(values) }, { _key: key }),
-      get: (key: string) => rpc['webapp/get/:_key'](null, { _key: key }),
-      // get: (key: string) => addAuth(rpc['webapp/get/:_key'](null, { _key: key })),
-      _delete: (key: string) => rpc['webapp/delete/:_key'](null, { _key: key }),
+        rpc('webapp/edit/:_key')({ values: toFormRpc(values) }, { _key: key }),
+      get: (key: string) => rpc('webapp/get/:_key')(null, { _key: key }),
+      // get: (key: string) => addAuth(rpc('webapp/get/:_key')(null, { _key: key })),
+      _delete: (key: string) => rpc('webapp/delete/:_key')(null, { _key: key }),
       setImage: (key: string, file: File | undefined | null) =>
-        rpc['webapp/upload-image/:_key']({ file: [file] }, { _key: key }),
+        rpc('webapp/upload-image/:_key')({ file: [file] }, { _key: key }),
       setContent: (key: string, content: File | string | undefined | null) =>
-        rpc['webapp/upload-content/:_key']({ content: [content] }, { _key: key }),
+        rpc('webapp/upload-content/:_key')({ content: [content] }, { _key: key }),
       setIsPublished: (key, publish) =>
-        rpc['webapp/set-is-published/:_key']({ publish }, { _key: key }),
-      create: () => rpc['webapp/create'](),
+        rpc('webapp/set-is-published/:_key')({ publish }, { _key: key }),
+      create: () => rpc('webapp/create')(),
     }
 
     return rpcItem
@@ -58,7 +58,7 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
   })
 
   useEffect(() => {
-    shell.rpc.me['webapp/get-configs']().then(setConfigs)
+    shell.rpc.me('webapp/get-configs')().then(setConfigs)
   }, [])
 
   const validationSchemas = useMemo<ValidationSchemas>(

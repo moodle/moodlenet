@@ -23,7 +23,7 @@ export const ProfileContextProvider: FC<PropsWithChildren<unknown>> = ({ childre
   })
 
   useEffect(() => {
-    shell.rpc.me['webapp/get-configs']().then(setConfigs)
+    shell.rpc.me('webapp/get-configs')().then(setConfigs)
   }, [])
 
   const validationSchemas = useMemo<ValidationSchemas>(
