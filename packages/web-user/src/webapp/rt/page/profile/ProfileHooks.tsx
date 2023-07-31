@@ -47,11 +47,13 @@ export const useProfileProps = ({
 
       await shell.rpc.me['webapp/profile/:_key/edit'](
         {
-          displayName,
-          aboutMe,
-          location,
-          organizationName,
-          siteUrl,
+          editData: {
+            displayName,
+            aboutMe,
+            location,
+            organizationName,
+            siteUrl,
+          },
         },
         { _key: profileKey },
       )

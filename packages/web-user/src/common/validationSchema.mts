@@ -38,7 +38,7 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
   const profileValidationSchema: SchemaOf<EditProfileDataRpc> = object({
     displayName: displayNameSchema,
     location: string().optional(),
-    organizationName: string().max(30).min(3).optional(),
+    organizationName: string().max(30).optional(),
     siteUrl: string().url().optional(),
     aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   })

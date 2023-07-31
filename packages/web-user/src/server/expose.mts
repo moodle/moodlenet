@@ -13,7 +13,7 @@ import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
-import { validationsConfig } from './env.mjs'
+import { profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import {
   isAllowedKnownEntityFeature,
@@ -100,9 +100,11 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
     'webapp/profile/:_key/edit': {
-      guard: () => void 0,
-      async fn(profileFormValues, { _key }) {
-        const patchRecord = await editProfile(_key, profileFormValues)
+      guard: _ => {
+        _.editData = profileValidationSchema.validateSync(_?.editData, { stripUnknown: true })
+      },
+      async fn({ editData }, { _key }) {
+        const patchRecord = await editProfile(_key, editData)
         if (!patchRecord) {
           return
         }
@@ -230,7 +232,6 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         },
       },
     },
-
     'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key':
       {
         guard: () => void 0,
@@ -281,7 +282,6 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         sendMessageToProfileIntent({ message, profileKey })
       },
     },
-
     'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key':
       {
         guard: () => void 0,
