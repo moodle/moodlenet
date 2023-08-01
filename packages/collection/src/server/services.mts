@@ -1,5 +1,5 @@
 import type { RpcFile } from '@moodlenet/core'
-import { webImageResizer } from '@moodlenet/react-app/server'
+import { defaultImageUploadMaxSize, webImageResizer } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesCustomProject,
   AqlVal,
@@ -20,20 +20,88 @@ import {
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
-import type { SortTypeRpc } from '../common/types.mjs'
+import type { CollectionFormProps, SortTypeRpc } from '../common/types.mjs'
+import type { ValidationsConfig } from '../common/validationSchema.mjs'
+import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles } from './init/fs.mjs'
 import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { CollectionDataType, CollectionEntityDoc } from './types.mjs'
 
+export async function getValidations() {
+  const config: ValidationsConfig = {
+    imageMaxUploadSize: defaultImageUploadMaxSize,
+  }
+  const {
+    draftCollectionValidationSchema,
+    imageValidationSchema,
+    publishedCollectionValidationSchema,
+  } = getValidationSchemas(config)
+  return {
+    draftCollectionValidationSchema,
+    imageValidationSchema,
+    publishedCollectionValidationSchema,
+    config,
+  }
+}
+
 export async function setPublished(key: string, published: boolean) {
+  let matchRev: string | undefined = undefined
+  if (published) {
+    const collection = await shell.call(getEntity)(Collection.entityClass, key)
+    if (!collection) {
+      return null
+    }
+    const { publishedCollectionValidationSchema } = await getValidations()
+    const collectionFormProps: CollectionFormProps = {
+      description: collection.entity.description,
+      title: collection.entity.title,
+    }
+    const isValid = await publishedCollectionValidationSchema.isValid(collectionFormProps)
+    if (!isValid) {
+      return false
+    }
+    matchRev = collection.entity._rev
+  }
   const patchResult = await shell.call(patchEntity)(
     Collection.entityClass,
     key,
     { published },
-    published ? { preAccessBody: `FILTER ${canPublish()}` } : {},
+    {
+      matchRev,
+      preAccessBody: published ? `FILTER ${canPublish()}` : undefined,
+    },
   )
+  if (!patchResult) {
+    return
+  }
+  return patchResult
+}
+
+export async function patchCollection(key: string, patch: Patch<CollectionEntityDoc>) {
+  const collection = await shell.call(getEntity)(Collection.entityClass, key)
+  if (!collection) {
+    return null
+  }
+  const { draftCollectionValidationSchema, publishedCollectionValidationSchema } =
+    await getValidations()
+  const collectionFormProps: CollectionFormProps = {
+    description: patch.description ?? collection.entity.description,
+    title: patch.title ?? collection.entity.title,
+  }
+  const isValid = await (collection.entity.published
+    ? publishedCollectionValidationSchema
+    : draftCollectionValidationSchema
+  ).isValid(collectionFormProps)
+
+  if (!isValid) {
+    return false
+  }
+
+  const patchResult = await shell.call(patchEntity)(Collection.entityClass, key, patch, {
+    matchRev: collection.entity._rev,
+  })
   if (!patchResult) {
     return
   }
@@ -43,7 +111,7 @@ export async function setPublished(key: string, published: boolean) {
 export async function createCollection(collectionData: Partial<CollectionDataType>) {
   const newCollection = await shell.call(create)(Collection.entityClass, {
     description: '',
-    title: '',
+    title: 'no name',
     image: null,
     published: false,
     resourceList: [],
@@ -105,11 +173,6 @@ export async function getCollection<
     project: opts?.project,
   })
   return foundCollection
-}
-
-export async function patchCollection(_key: string, patch: Patch<CollectionEntityDoc>) {
-  const patchResult = await shell.call(patchEntity)(Collection.entityClass, _key, patch)
-  return patchResult
 }
 
 export async function updateCollectionContent(

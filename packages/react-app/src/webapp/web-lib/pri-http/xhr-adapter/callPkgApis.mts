@@ -19,15 +19,17 @@ export function wrapFetch(wrapper: FetchWrapper) {
 
 export type RpcOpts = {
   idOpts?: NormalOption
+  ctx?: string
   cache?: {
-    ctx?: string
     ttlSec?: number
   }
   replacePending?: boolean
 }
 
 const cache: Record<string, { rpcResponse: any }> = {}
+
 const pending: Record<string, { pendingPromise: Promise<any>; controller: AbortController }> = {}
+// setInterval(() => console.log('pending', pending), 1000)
 export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
   targetPkgId: PkgIdentifier,
   userPkgId: PkgIdentifier,
@@ -39,7 +41,7 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
     return async function (body: unknown, params: unknown, query: unknown) {
       const controller = new AbortController()
 
-      const hash = objHash({ path, body, params, query, ctx: opts?.cache?.ctx }, opts?.idOpts)
+      const hash = objHash({ path, body, params, query, ctx: opts?.ctx }, opts?.idOpts)
       if (opts?.replacePending) {
         pending[hash]?.controller.abort()
         delete pending[hash]
@@ -79,8 +81,11 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
           .catch(reject)
       })
       pending[hash] = { controller, pendingPromise }
+
       pendingPromise.finally(() => {
-        delete pending[hash]
+        if (!controller.signal.aborted) {
+          delete pending[hash]
+        }
       })
 
       return pendingPromise

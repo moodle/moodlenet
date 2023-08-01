@@ -13,7 +13,11 @@ import {
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 import type { CollectionExposeType } from '../common/expose-def.mjs'
-import type { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
+import type {
+  CollectionContributorRpc,
+  CollectionFormRpc,
+  CollectionRpc,
+} from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles } from './init/fs.mjs'
@@ -23,6 +27,7 @@ import {
   getCollection,
   getImageLogicalFilename,
   getMyCollections,
+  getValidations,
   patchCollection,
   searchCollections,
   setCollectionImage,
@@ -30,24 +35,16 @@ import {
   updateCollectionContent,
 } from './services.mjs'
 
-import type { ValidationsConfig } from '../common/validationSchema.mjs'
 import { getImageAssetInfo, getImageUrl } from './lib.mjs'
 import type { CollectionDataType } from './types.mjs'
-const validationsConfig: ValidationsConfig = {
-  imageMaxUploadSize: defaultImageUploadMaxSize,
-}
-// const {
-//   draftCollectionValidationSchema,
-//   imageValidationSchema,
-//   publishedCollectionValidationSchema,
-// } = getValidationSchemas(validationsConfig)
 
 export const expose = await shell.expose<CollectionExposeType>({
   rpc: {
     'webapp/get-configs': {
       guard: () => void 0,
       async fn() {
-        return { validations: validationsConfig }
+        const { config } = await getValidations()
+        return { validations: config }
       },
     },
     'webapp/my-collections': {
@@ -108,7 +105,13 @@ export const expose = await shell.expose<CollectionExposeType>({
       async fn({ publish }, { _key }) {
         const patchResult = await setPublished(_key, publish)
         if (!patchResult) {
-          return //throw ?
+          if (patchResult === null) {
+            throw RpcStatus('Not Found')
+          }
+          if (patchResult === undefined) {
+            throw RpcStatus('Unauthorized')
+          }
+          throw RpcStatus('Precondition Failed')
         }
         return
       },
@@ -138,13 +141,18 @@ export const expose = await shell.expose<CollectionExposeType>({
       },
     },
     'webapp/edit/:_key': {
-      guard: () => void 0,
-      async fn({ values }, { _key }) {
-        const patchResult = await patchCollection(_key, values)
-        if (!patchResult) {
-          return
+      guard: async body => {
+        const { draftCollectionValidationSchema } = await getValidations()
+        const formValues: CollectionFormRpc = {
+          description: body?.values?.description,
+          title: body?.values?.title,
         }
-        return
+        body.values = await draftCollectionValidationSchema.validate(formValues, {
+          stripUnknown: true,
+        })
+      },
+      async fn({ values }, { _key }) {
+        await patchCollection(_key, values)
       },
     },
     'webapp/create': {
@@ -182,6 +190,9 @@ export const expose = await shell.expose<CollectionExposeType>({
         }
 
         const patched = await setCollectionImage(_key, uploadedRpcFile)
+        if (patched === false) {
+          throw RpcStatus('Expectation Failed')
+        }
         const imageUrl = patched?.entity.image ? getImageUrl(patched?.entity.image) : null
         return imageUrl
       },
