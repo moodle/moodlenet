@@ -170,11 +170,11 @@ export const getResourceDomainName = (url: string): string => {
 }
 
 export const getResourceTypeInfo = (
-  isLikeOrFile: 'link' | 'file',
+  isLinkOrFile: 'link' | 'file',
   filenameOrUrl: string | null,
 ): { typeName: string | null; typeColor: string | null } => {
   const resourceType =
-    (isLikeOrFile === 'file'
+    (isLinkOrFile === 'file'
       ? filenameOrUrl?.split('.').pop()
       : filenameOrUrl
       ? getResourceDomainName(filenameOrUrl)

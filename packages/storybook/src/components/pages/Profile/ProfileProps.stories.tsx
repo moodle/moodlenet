@@ -99,7 +99,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       actions: actions,
       data: data,
       access: access,
-      validationSchema: profileFormValidationSchema(maxUploadSize),
+      validationSchema: profileFormValidationSchema,
       resourceCardPropsList: getResourceCardsStoryProps(5, {
         access: { ...access },
       }),
