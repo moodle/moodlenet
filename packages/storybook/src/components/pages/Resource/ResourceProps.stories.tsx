@@ -7,7 +7,7 @@ import type {
   ResourceFormProps,
   ResourceStateProps,
 } from '@moodlenet/ed-resource/common'
-import { resourceValidationSchema } from '@moodlenet/ed-resource/common'
+import { getValidationSchemas } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
@@ -84,13 +84,16 @@ export const ResourceFormValues: ResourceFormProps = {
   level: FieldsDataStories.LevelTextOptionProps[2]!.value,
   license: FieldsDataStories.LicenseIconTextOptionProps[2]!.value,
   month: FieldsDataStories.MonthTextOptionProps[8]!.value,
-  year: FieldsDataStories.YearsProps[20],
+  year: FieldsDataStories.YearsProps[20]!.value,
   type: FieldsDataStories.TypeTextOptionProps[1]!.value,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
   return useFormik<ResourceFormProps>({
-    validationSchema: resourceValidationSchema,
+    validationSchema: getValidationSchemas({
+      contentMaxUploadSize: 1000000000,
+      imageMaxUploadSize: 1000000000,
+    }).publishedResourceValidationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
       title: 'Best resource ever',
@@ -147,11 +150,11 @@ export const useResourceStoryProps = (
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     subject: '0011',
     license: 'CC-0 (Public domain)',
-    type: undefined, //'Course',
-    language: undefined,
-    level: undefined,
-    month: undefined,
-    year: undefined,
+    type: 'Presentation', //'Course',
+    language: 'English',
+    level: 'Primary',
+    month: 'April',
+    year: '2022',
     ...overrides?.resourceForm,
   }
 
@@ -309,6 +312,10 @@ export const useResourceStoryProps = (
       actions: actions,
       access: access,
       edMetaOptions: edMetaOptions,
+      validationSchemas: getValidationSchemas({
+        contentMaxUploadSize: 300000,
+        imageMaxUploadSize: 300000,
+      }),
 
       extraDetailsItems: extraDetailsItems,
 

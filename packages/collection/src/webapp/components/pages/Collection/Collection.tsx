@@ -84,11 +84,13 @@ export const Collection: FC<CollectionProps> = ({
   const { editData, deleteCollection, publish, unpublish, removeResource, setImage } = actions
   const { canPublish, canEdit } = access
   const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
+  const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
+  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
     validateOnMount: true,
-    validationSchema: isPublished
+    validationSchema: isPublishValidating
       ? publishedCollectionValidationSchema
       : draftCollectionValidationSchema,
     validateOnChange: true,
@@ -132,6 +134,17 @@ export const Collection: FC<CollectionProps> = ({
       publish()
     } else {
       setIsEditing(true)
+      setShouldShowErrors(true)
+    }
+  }
+
+  const publishCheck = () => {
+    setIsPublishValidating(true)
+    setFieldsAsTouched()
+    if (form.isValid && imageForm.isValid) {
+      setShowCheckPublishSuccess(true)
+      setShouldShowErrors(false)
+    } else {
       setShouldShowErrors(true)
     }
   }
@@ -184,23 +197,32 @@ export const Collection: FC<CollectionProps> = ({
     <CollectionContributorCard {...collectionContributorCardProps} key="contributor-card" />
   ) : null
 
+  const publishButton = !isEditing && canPublish && !isPublished /*  && !isEditing */ && (
+    <PrimaryButton onClick={checkFormAndPublish} color="green">
+      Publish
+    </PrimaryButton>
+  )
+
+  const publishCheckButton = isEditing && canPublish && !isPublished /*  && !isEditing */ && (
+    <PrimaryButton onClick={publishCheck} color="green">
+      Publish check
+    </PrimaryButton>
+  )
+
+  const unpublishButton =
+    canPublish && isPublished ? (
+      <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
+    ) : null
+
   const editorActionsContainer = canPublish ? (
     <Card
       className="collection-action-card"
       hideBorderWhenSmall={true}
       key="editor-actions-container"
     >
-      {canPublish && !isPublished /*  && !isEditing */ && (
-        <PrimaryButton onClick={checkFormAndPublish} color="green">
-          Publish
-        </PrimaryButton>
-      )}
-
-      {canPublish && isPublished ? (
-        <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
-      ) : (
-        <></>
-      )}
+      {publishButton}
+      {publishCheckButton}
+      {unpublishButton}
     </Card>
   ) : null
 
@@ -235,7 +257,7 @@ export const Collection: FC<CollectionProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const snackbars = isSaving && (
+  const isSavingSnackbar = isSaving && (
     <Snackbar
       position="bottom"
       type="info"
@@ -246,6 +268,20 @@ export const Collection: FC<CollectionProps> = ({
       {`Content uploading, please don't close the tab`}
     </Snackbar>
   )
+
+  const checkPublishSnackbar = showCheckPublishSuccess && (
+    <Snackbar
+      position="bottom"
+      type="success"
+      autoHideDuration={6000}
+      showCloseButton={false}
+      onClose={() => setShowCheckPublishSuccess(false)}
+    >
+      {`Check success, save to publish`}
+    </Snackbar>
+  )
+
+  const snackbars = [isSavingSnackbar, checkPublishSnackbar]
 
   const modals = (
     <>
