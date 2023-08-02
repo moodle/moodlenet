@@ -113,7 +113,7 @@ export function createTaskManager<Awaiting, Ctx>(name = 'noname') {
         setResolve(id)
       }
     }, [id, resolve])
-    const current = getTask(id)
+    const current = getTask(id) as PendingTask<Awaiting, Ctx>
     // console.log({ current, id })
     return [_setTask, current] as const
   }

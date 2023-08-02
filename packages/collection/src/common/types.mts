@@ -1,4 +1,4 @@
-import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import type { Href } from '@moodlenet/react-app/common'
 import type { CollectionExposeType, WebappConfigsRpc } from './expose-def.mjs'
 import type { ValidationSchemas } from './validationSchema.mjs'
@@ -54,7 +54,7 @@ export type CollectionRpc = {
 }
 
 export type CollectionAccessProps = CollectionAccessRpc
-export type CollectionDataProps = Omit<CollectionDataRpc, 'image'> & { image: null | AssetInfoForm }
+export type CollectionDataProps = CollectionDataRpc
 export type CollectionStateProps = CollectionStateRpc
 export type CollectionFormProps = CollectionFormRpc
 export type CollectionContributorProps = CollectionContributorRpc

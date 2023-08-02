@@ -1,3 +1,4 @@
+import { useImageUrl } from '@moodlenet/react-app/ui'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type {
@@ -114,7 +115,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     }
   }, [collectionKey, nav, rpcCaller, setterSave, upImageTaskSet])
 
-  const upImageTaskCurrentFile = upImageTaskCurrent?.ctx.file
+  const [upImageTaskCurrentObjectUrl] = useImageUrl(upImageTaskCurrent?.ctx.file)
   return useMemo<CollectionMainProps | null | undefined>(
     () =>
       !collection
@@ -126,8 +127,8 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
               state: { ...collection.state, isPublished },
               data: {
                 ...collection.data,
-                image: upImageTaskCurrentFile
-                  ? { location: upImageTaskCurrentFile, credits: null }
+                image: upImageTaskCurrentObjectUrl
+                  ? { location: upImageTaskCurrentObjectUrl, credits: null }
                   : collection.data.image,
               },
             },
@@ -135,6 +136,6 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
             isToDelete,
             isSaving: saveState.form || saveState.image,
           },
-    [actions, collection, isPublished, isToDelete, saveState, upImageTaskCurrentFile],
+    [actions, collection, isPublished, isToDelete, saveState, upImageTaskCurrentObjectUrl],
   )
 }
