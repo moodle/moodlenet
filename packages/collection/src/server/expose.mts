@@ -193,7 +193,7 @@ export const expose = await shell.expose<CollectionExposeType>({
         if (updateRes === false) {
           throw RpcStatus('Expectation Failed')
         }
-        console.log({ patched: updateRes?.patched.image, got: got.entity.image })
+        // console.log({ patched: updateRes?.patched.image, got: got.entity.image })
         const imageUrl = updateRes?.patched.image ? getImageUrl(updateRes.patched.image) : null
         return imageUrl
       },

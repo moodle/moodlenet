@@ -1,105 +1,120 @@
 import { useCallback, useEffect } from 'react'
-import { shell } from './shell.mjs'
 
-type TaskResult<Awaiting> = TaskResolved<Awaiting> | TaskRejected | TaskAborted<Awaiting>
-type TaskResolved<Awaiting> = {
+type TaskResult<Awaiting, Ctx> =
+  | TaskResolved<Awaiting, Ctx>
+  | TaskRejected<Ctx>
+  | TaskAborted<Awaiting, Ctx>
+type TaskResolved<Awaiting, Ctx> = {
   type: 'resolved'
   value: Awaiting
+  ctx: Ctx
 }
-type TaskRejected = {
+type TaskRejected<Ctx> = {
   type: 'rejected'
   reason: any
+  ctx: Ctx
 }
-type TaskAborted<Awaiting> = {
+type TaskAborted<Awaiting, Ctx> = {
   type: 'aborted'
   promise: Promise<Awaiting>
+  ctx: Ctx
 }
 // type TaskPromise<Awaiting, Ctx> = Promise<TaskResult<Awaiting, Ctx>>
 type Task<Awaiting, Ctx> = {
   id: string
   promise: Promise<Awaiting>
   ctx: Ctx
-  resolver?: TaskResolver<Awaiting, Ctx>
+  resolve?: TaskResolve<Awaiting, Ctx>
+  noUnloadConfim: boolean
 }
-type TaskResolver<Awaiting, Ctx> = (_: TaskResult<Awaiting> & { ctx: Ctx }) => void
+type TaskResolve<Awaiting, Ctx> = (_: TaskResult<Awaiting, Ctx> & { ctx: Ctx }) => void
 
 type PendingTask<Awaiting, Ctx> = Task<Awaiting, Ctx>
-export function createTasker<Awaiting, Ctx>() {
-  const pendingTasks: Record<string, PendingTask<Awaiting, Ctx>> = {}
-  return {
-    setTask,
-    setResolver,
-    getTask,
-    // resolveTask,
+const pendingTasks = new Map<string, PendingTask<any, any>>()
+window.addEventListener('unload', () => {
+  for (const { promise, ctx, resolve } of pendingTasks.values()) {
+    resolve?.({ type: 'aborted', promise, ctx })
   }
-  function getTask(id: string) {
-    return pendingTasks[id]
+})
+window.addEventListener('beforeunload', e => {
+  const awaitingTasks = [...pendingTasks.values()].filter(({ noUnloadConfim }) => !noUnloadConfim)
+  if (awaitingTasks.length) {
+    e.returnValue = `there are ${awaitingTasks.length} pending tasks, are you sure to leave?`
+    return e.returnValue
   }
-
-  function setResolver(id: string, resolver?: TaskResolver<Awaiting, Ctx>) {
-    const currentPending = getTask(id)
-    if (!currentPending) return false
-    currentPending.resolver = resolver
-    return true
-  }
-
-  function resolveTask(id: string, result: TaskResult<Awaiting>) {
-    const currentPending = getTask(id)
-    console.log('resolveTask', { result, currentPending })
-    if (!currentPending) return false
-    currentPending.resolver?.({ ...result, ctx: currentPending.ctx })
-    delete pendingTasks[id]
-    return true
-  }
-
-  function setTask(id: string, promise: Promise<Awaiting>, ctx: Ctx) {
-    const currentPending = getTask(id)
-
-    if (currentPending) {
-      currentPending.resolver?.({
-        type: 'aborted',
-        promise: currentPending.promise,
-        ctx: currentPending.ctx,
-      })
-      shell.abortRpc(currentPending.promise)
-    }
-
-    pendingTasks[id] = {
-      id,
-      promise,
-      ctx,
-    }
-    promise
-      .then(value => {
-        if (getTask(id)?.promise !== promise) return
-        resolveTask(id, { type: 'resolved', value })
-      })
-      .catch(reason => {
-        if (getTask(id)?.promise !== promise) return
-        resolveTask(id, { type: 'rejected', reason })
-      })
-    return pendingTasks[id]
-  }
+})
+function getTask(id: string) {
+  return pendingTasks.get(id)
 }
 
-export function createTaskerHook<Awaiting, Ctx>() {
-  const tasker = createTasker<Awaiting, Ctx>()
+function setResolve<Awaiting, Ctx>(id: string, resolve?: TaskResolve<Awaiting, Ctx>) {
+  const currentPending = getTask(id)
+  if (!currentPending) return false
+  currentPending.resolve = resolve
+  return true
+}
+function setTask<Awaiting, Ctx>(
+  id: string,
+  promise: Promise<Awaiting>,
+  ctx: Ctx,
+  noUnloadConfim = false,
+) {
+  const currentPending = getTask(id)
+
+  if (currentPending) {
+    currentPending.resolve?.({
+      type: 'aborted',
+      promise: currentPending.promise,
+      ctx: currentPending.ctx,
+    })
+  }
+
+  const pendingTask: PendingTask<Awaiting, Ctx> = {
+    id,
+    promise,
+    ctx,
+    noUnloadConfim,
+  }
+  pendingTasks.set(id, pendingTask)
+  promise
+    .then(value => {
+      const currentPending = getTask(id)
+      if (currentPending?.promise !== promise) return
+      currentPending.resolve?.({ type: 'resolved', value, ctx: currentPending.ctx })
+      return currentPending
+    })
+    .catch(reason => {
+      const currentPending = getTask(id)
+      if (currentPending?.promise !== promise) return
+      currentPending.resolve?.({ type: 'rejected', reason, ctx: currentPending.ctx })
+      return currentPending
+    })
+    .then(currentPending => {
+      currentPending && pendingTasks.delete(currentPending.id)
+    })
+    .catch(() => void 0)
+  return pendingTask
+}
+
+export function createTaskManager<Awaiting, Ctx>(name = 'noname') {
+  const bucketId = `${name}::${Math.random().toString(36).slice(2)}-${Date.now()}`
   return [useTasker] as const
-  function useTasker(id: string, resolver: TaskResolver<Awaiting, Ctx>) {
-    const setTask = useCallback(
+  function useTasker(_id: string, resolve: TaskResolve<Awaiting, Ctx>) {
+    const id = `${_id}@${bucketId}`
+    const _setTask = useCallback(
       (promise: Promise<Awaiting>, ctx: Ctx) => {
-        return tasker.setTask(id, promise, ctx)
+        return setTask<Awaiting, Ctx>(id, promise, ctx)
       },
       [id],
     )
     useEffect(() => {
-      tasker.setResolver(id, resolver)
+      setResolve(id, resolve)
       return () => {
-        tasker.setResolver(id)
+        setResolve(id)
       }
-    }, [id, resolver])
-    const current = tasker.getTask(id)
-    console.log({ current, id })
-    return [setTask, current] as const
+    }, [id, resolve])
+    const current = getTask(id)
+    // console.log({ current, id })
+    return [_setTask, current] as const
   }
 }

@@ -9,13 +9,14 @@ import type {
   SaveState,
 } from '../common/types.mjs'
 import { MainContext } from './MainContext.js'
-import { createTaskerHook } from './pending-tasks.mjs'
+import { createTaskManager } from './pending-tasks.mjs'
+import { shell } from './shell.mjs'
 
 // type PendingImage = {
 //   pendingPromise: Promise<string | null>
 //   file: File
 // }
-const [useUpImageTasker] = createTaskerHook<string | null, { file: File }>()
+const [useUpImageTasks] = createTaskManager<string | null, { file: File }>()
 
 type myProps = { collectionKey: string }
 export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null | undefined => {
@@ -40,12 +41,14 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       setSaved(currentSaved => ({ ...currentSaved, [key]: val })),
     [],
   )
-  const [upImageTaskSet, upImageTaskCurrent] = useUpImageTasker(collectionKey, res => {
+  const [upImageTaskSet, upImageTaskCurrent] = useUpImageTasks(collectionKey, res => {
     console.log('hook task resolve', res)
-    if (res.type === 'resolved') {
-      updateImageUrl(res.value)
-      setterSave('image', false)
-    }
+    res.type === 'aborted'
+      ? shell.abortRpc(res.promise)
+      : res.type === 'resolved'
+      ? updateImageUrl(res.value)
+      : void 0
+    setterSave('image', false)
   })
   const [saveState, setSaved] = useState(() => ({ form: false, image: !!upImageTaskCurrent }))
 
