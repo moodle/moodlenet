@@ -2,61 +2,52 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type {
   CollectionActions,
+  CollectionDataProps,
   CollectionFormProps,
   CollectionMainProps,
   CollectionRpc,
   SaveState,
 } from '../common/types.mjs'
 import { MainContext } from './MainContext.js'
+import { createTaskerHook } from './pending-tasks.mjs'
 
-type PendingImage = {
-  p: Promise<string | null>
-  file: File
-}
-const pendingImages: Record<string, PendingImage> = {}
-// window.addEventListener('beforeunload', e => {
-//   if (Object.keys(pendingImages).length) {
-//     e.preventDefault()
-//     e.returnValue = 'you have pending images to upload. if you leave now you will loose them.'
-//     return e.returnValue
-//   }
-//   return
-// })
+// type PendingImage = {
+//   pendingPromise: Promise<string | null>
+//   file: File
+// }
+const [useUpImageTasker] = createTaskerHook<string | null, { file: File }>()
 
-// setInterval(() => console.log('pendingUpl', pendingImages['H16thtg4']?.image.file.name), 1000)
 type myProps = { collectionKey: string }
 export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null | undefined => {
-  const pendingImage = pendingImages[collectionKey]
   const { rpcCaller } = useContext(MainContext)
   const nav = useNavigate()
   const [collection, setCollection] = useState<CollectionRpc | null>()
-  const [saveState, setSaved] = useState({ form: false, image: !!pendingImage })
   const [isToDelete, setIsToDelete] = useState(false)
   const [isPublished, setIsPublish] = useState(false)
 
-  const updateData = useCallback(
-    <T,>(key: string, val: T): typeof collection =>
-      collection && { ...collection, data: { ...collection.data, [key]: val } },
-    [collection],
+  const updateDataProp = useCallback(
+    <K extends keyof CollectionDataProps>(k: K, v: CollectionDataProps[K]) =>
+      setCollection(coll => coll && { ...coll, data: { ...coll.data, [k]: v } }),
+    [],
   )
   const updateImageUrl = useCallback(
-    (imageUrl: string | null) => {
-      setCollection(updateData('imageUrl', imageUrl))
-    },
-    [updateData],
+    (imageUrl: string | null) =>
+      updateDataProp('image', imageUrl ? { credits: null, location: imageUrl } : null),
+    [updateDataProp],
   )
   const setterSave = useCallback(
     (key: keyof SaveState, val: boolean) =>
       setSaved(currentSaved => ({ ...currentSaved, [key]: val })),
     [],
   )
-
-  useEffect(() => {
-    pendingImage?.p.then(imageUrl => {
-      updateImageUrl(imageUrl)
+  const [upImageTaskSet, upImageTaskCurrent] = useUpImageTasker(collectionKey, res => {
+    console.log('hook task resolve', res)
+    if (res.type === 'resolved') {
+      updateImageUrl(res.value)
       setterSave('image', false)
-    })
-  }, [pendingImage, setterSave, updateImageUrl])
+    }
+  })
+  const [saveState, setSaved] = useState(() => ({ form: false, image: !!upImageTaskCurrent }))
 
   useEffect(() => {
     setCollection(undefined)
@@ -78,24 +69,16 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
     return {
       async editData(res: CollectionFormProps) {
         setterSave('form', true)
-        editRpc(collectionKey, res).then(() => {
-          setterSave('form', false)
-        })
+        editRpc(collectionKey, res)
+          .then(() => {
+            setterSave('form', false)
+          })
+          .catch(() => void 0)
       },
       async setImage(file: File | null | undefined) {
         setterSave('image', true)
-        const editPromise = setImage(collectionKey, file)
-          .then(imageUrl => {
-            delete pendingImages[collectionKey]
-            updateImageUrl(imageUrl)
-            setterSave('image', false)
-            return imageUrl
-          })
-          .catch(e =>
-            //     e?.name === 'AbortError' ? null : null /* Promise.reject(e) */
-            e?.code === DOMException.ABORT_ERR ? null : Promise.reject(e),
-          )
-        file && (pendingImages[collectionKey] = { file, p: editPromise })
+        const setImagePromise = setImage(collectionKey, file)
+        file && upImageTaskSet(setImagePromise, { file })
       },
       deleteCollection: () => {
         setIsToDelete(true)
@@ -126,8 +109,9 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         setIsPublished(collectionKey, false)
       },
     }
-  }, [collectionKey, nav, rpcCaller, setterSave, updateImageUrl])
+  }, [collectionKey, nav, rpcCaller, setterSave, upImageTaskSet])
 
+  const upImageTaskCurrentFile = upImageTaskCurrent?.ctx.file
   return useMemo<CollectionMainProps | null | undefined>(
     () =>
       !collection
@@ -139,8 +123,8 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
               state: { ...collection.state, isPublished },
               data: {
                 ...collection.data,
-                image: pendingImage?.file
-                  ? { location: pendingImage.file, credits: null }
+                image: upImageTaskCurrentFile
+                  ? { location: upImageTaskCurrentFile, credits: null }
                   : collection.data.image,
               },
             },
@@ -148,6 +132,6 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
             isToDelete,
             isSaving: saveState.form || saveState.image,
           },
-    [actions, collection, isPublished, isToDelete, pendingImage?.file, saveState],
+    [actions, collection, isPublished, isToDelete, saveState, upImageTaskCurrentFile],
   )
 }

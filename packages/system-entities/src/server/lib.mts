@@ -208,13 +208,16 @@ export async function patchEntity<
   const patchCursor = await accessEntities(entityClass, 'u', {
     ...opts,
     preAccessBody: `${opts?.preAccessBody ?? ''} 
-    FILTER ${matchRevFilter} ${currentEntityVar}._key == "${key}" LIMIT 1`,
+    FILTER ${matchRevFilter} ${currentEntityVar}._key == ${toaql(key)} LIMIT 1`,
     postAccessBody: `${opts?.postAccessBody ?? ''} 
     UPDATE ${currentEntityVar} WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
     project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
   })
   const patchRecord = await patchCursor.next()
-  return patchRecord
+  if (!patchRecord) {
+    return
+  }
+  return { patched: patchRecord.patched, old: patchRecord.entity }
 }
 
 /* export async function patchEntity<EntityDataType extends SomeEntityDataType>(

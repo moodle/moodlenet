@@ -23,13 +23,34 @@ export type RpcOpts = {
   cache?: {
     ttlSec?: number
   }
-  replacePending?: boolean
+  singleton?: boolean
+  confirmUnload?: boolean
 }
 
 const cache: Record<string, { rpcResponse: any }> = {}
+const FETCH_STATUS_SYM = Symbol('FETCH_STATUS_SYM')
+const pendingRequests: Record<
+  string,
+  { pendingPromise: Promise<any>; controller: AbortController; rpcOpts?: RpcOpts }
+> = {}
+window.addEventListener('beforeunload', e => {
+  if (Object.values(pendingRequests).filter(({ rpcOpts }) => !!rpcOpts?.confirmUnload).length) {
+    e.preventDefault()
+    e.returnValue = 'You have pending requests. if you leave now you may loose some of your job.'
+    return e.returnValue
+  }
+  return
+})
 
-const pending: Record<string, { pendingPromise: Promise<any>; controller: AbortController }> = {}
-// setInterval(() => console.log('pending', pending), 1000)
+export function abortRpc(p: Promise<any>) {
+  const found = Object.entries(pendingRequests).find(([_, req]) => req.pendingPromise === p)
+  if (!found) return false
+  const [id, pending] = found
+  if (pending.controller.signal.aborted) return false
+  pending.controller.abort()
+  delete pendingRequests[id]
+  return true
+}
 export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
   targetPkgId: PkgIdentifier,
   userPkgId: PkgIdentifier,
@@ -41,16 +62,16 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
     return async function (body: unknown, params: unknown, query: unknown) {
       const controller = new AbortController()
 
-      const hash = objHash({ path, body, params, query, ctx: opts?.ctx }, opts?.idOpts)
-      if (opts?.replacePending) {
-        pending[hash]?.controller.abort()
-        delete pending[hash]
+      const hash = rpcHash(path, body, params, query, opts)
+      if (opts?.singleton) {
+        pendingRequests[hash]?.controller.abort()
+        delete pendingRequests[hash]
       }
       const cached = cache[hash]
       if (cached) {
         return cached.rpcResponse
       }
-      const pendingPromise = new Promise((resolve, reject) => {
+      const pendingPromise = (async () => {
         const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [
           body,
           params,
@@ -58,38 +79,51 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
         ])
         const fetchExecutor: FetchWrapper2 = (url, requestInit) =>
           fetch(url, { ...requestInit, signal: controller.signal })
-        FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {
+        const response = await FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {
           const currentWrapper: FetchWrapper2 = (url, requestInit) =>
             wrapper(url, requestInit, nextWrapper)
           return currentWrapper
         }, fetchExecutor)(url, requestInit)
-          .then(async response => {
-            const responseText = await response.text()
-            if (response.status !== 200) {
-              reject(new Error(responseText))
-            }
-            const rpcResponse = !responseText ? undefined : JSON.parse(responseText)
-            if (opts?.cache) {
-              cache[hash] = { rpcResponse }
-              if (opts.cache.ttlSec) {
-                setTimeout(() => delete cache[hash], opts.cache.ttlSec * 1000)
-              }
-            }
-
-            resolve(rpcResponse)
-          })
-          .catch(reject)
-      })
-      pending[hash] = { controller, pendingPromise }
-
-      pendingPromise.finally(() => {
-        if (!controller.signal.aborted) {
-          delete pending[hash]
+        const responseText = await response.text()
+        if (response.status !== 200) {
+          throw new Error(responseText)
         }
-      })
+        const rpcResponse = !responseText ? undefined : JSON.parse(responseText)
+        if (opts?.cache) {
+          cache[hash] = { rpcResponse }
+          if (opts.cache.ttlSec) {
+            setTimeout(() => delete cache[hash], opts.cache.ttlSec * 1000)
+          }
+        }
+
+        return rpcResponse
+      })()
+
+      const currentPending =
+        ((pendingPromise as any)[FETCH_STATUS_SYM] =
+        pendingRequests[hash] =
+          { controller, pendingPromise, rpcOpts: opts })
+
+      pendingPromise
+        .catch(() => void 0)
+        .finally(() => {
+          if (pendingRequests[hash] === currentPending) {
+            delete pendingRequests[hash]
+          }
+        })
 
       return pendingPromise
     }
+  }
+
+  function rpcHash(
+    path: string,
+    body: unknown,
+    params: unknown,
+    query: unknown,
+    opts: RpcOpts | undefined,
+  ) {
+    return objHash({ path, body, params, query, ctx: opts?.ctx }, opts?.idOpts)
   }
 }
 

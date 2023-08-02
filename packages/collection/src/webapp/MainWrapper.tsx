@@ -1,19 +1,12 @@
 import type { MainAppPluginWrapper } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { WebappConfigsRpc } from '../common/expose-def.mjs'
-import type {
-  CollectionFormProps,
-  CollectionFormRpc,
-  MainContextCollection,
-  RpcCaller,
-} from '../common/types.mjs'
+import type { CollectionFormProps, MainContextCollection, RpcCaller } from '../common/types.mjs'
 import type { ValidationSchemas } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { CollectionContextProvider } from './CollectionContext.js'
 import { MainContext } from './MainContext.js'
 import { shell } from './shell.mjs'
-
-const toFormRpc = (r: CollectionFormProps): CollectionFormRpc => r
 
 const MainWrapper: MainAppPluginWrapper = ({ children }) => {
   const [configs, setConfigs] = useState<WebappConfigsRpc>({
@@ -39,9 +32,10 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
 
     edit: (key: string, values: CollectionFormProps) =>
       rpc('webapp/edit/:_key', {
-        replacePending: true,
-        idOpts: { excludeKeys: _ => _ === 'body' },
-      })({ values: toFormRpc(values) }, { _key: key }),
+        // singleton: true,
+        confirmUnload: true,
+        // idOpts: { excludeKeys: _ => _ === 'body' },
+      })({ values }, { _key: key }),
 
     get: (_key: string) => rpc('webapp/get/:_key')(null, { _key }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
     // get: (_key: string) => addAuth(rpc('webapp/get/:_key')(null, { _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
@@ -53,7 +47,8 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
 
     setImage: async (key: string, file: File | null | undefined) =>
       rpc('webapp/upload-image/:_key', {
-        replacePending: true,
+        singleton: true,
+        confirmUnload: true,
         idOpts: { excludeKeys: _ => _ === 'body' },
       })({ file: [file] }, { _key: key }),
     create: () => rpc('webapp/create')(),

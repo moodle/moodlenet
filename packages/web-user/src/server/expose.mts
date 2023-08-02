@@ -193,12 +193,12 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const patched = await setProfileAvatar({ _key, rpcFile: uploadedRpcFile })
-        if (!patched?.entity.avatarImage) {
+        const updateRes = await setProfileAvatar({ _key, rpcFile: uploadedRpcFile })
+        if (!updateRes?.patched.avatarImage) {
           return null
         }
         return publicFilesHttp.getFileUrl({
-          directAccessId: patched.entity.avatarImage.directAccessId,
+          directAccessId: updateRes.patched.avatarImage.directAccessId,
         })
       },
       bodyWithFiles: {
@@ -217,12 +217,12 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           throw RpcStatus('Unauthorized')
         }
 
-        const patched = await setProfileBackgroundImage({ _key, rpcFile: uploadedRpcFile })
-        if (!patched?.entity.backgroundImage) {
+        const updateRes = await setProfileBackgroundImage({ _key, rpcFile: uploadedRpcFile })
+        if (!updateRes?.patched.backgroundImage) {
           return null
         }
         return publicFilesHttp.getFileUrl({
-          directAccessId: patched.entity.backgroundImage.directAccessId,
+          directAccessId: updateRes.patched.backgroundImage.directAccessId,
         })
       },
       bodyWithFiles: {

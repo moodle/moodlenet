@@ -226,7 +226,6 @@ export async function setCollectionImage(
   const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
 
   const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
-
   return patchCollection(_key, {
     image: { kind: 'file', directAccessId },
   })

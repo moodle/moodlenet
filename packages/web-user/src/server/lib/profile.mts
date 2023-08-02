@@ -50,18 +50,22 @@ export async function editProfile(
   updateWithData = updateWithData.displayName
     ? { ...updateWithData, webslug: webSlug(updateWithData.displayName) }
     : updateWithData
-  const mUpdated = await patchEntity(Profile.entityClass, key, updateWithData, opts)
 
-  if (!mUpdated) {
+  const updateRes = await patchEntity(Profile.entityClass, key, updateWithData, opts)
+
+  if (!updateRes) {
     return
   }
-  const { entity, patched /* ,meta */ } = mUpdated
-  const displayNameChanged = patched.displayName && entity.displayName !== patched.displayName
+
+  const displayNameChanged = updateRes.old.displayName !== updateRes.patched.displayName
   if (displayNameChanged) {
-    await patchWebUserDisplayName({ _key: webUser._key, displayName: patched.displayName })
+    await patchWebUserDisplayName({
+      _key: webUser._key,
+      displayName: updateRes.patched.displayName,
+    })
   }
 
-  return mUpdated
+  return updateRes
 }
 
 export async function entityFeatureAction({
@@ -129,7 +133,7 @@ export async function entityFeatureAction({
     },
   )
   assert(updateResult)
-  if (updateResult.entity.publisher) {
+  if (updateResult.patched.publisher) {
     if (feature === 'like') {
       const delta = adding ? 1 : -1
       if (profileCreatorIdentifiers) {

@@ -255,8 +255,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const patched = await setResourceImage(_key, uploadedRpcFile)
-        const imageUrl = patched?.entity.image && getImageUrl(patched?.entity.image)
+        const updateRes = await setResourceImage(_key, uploadedRpcFile)
+        const imageUrl = updateRes?.patched.image && getImageUrl(updateRes.patched.image)
         return imageUrl ?? null
       },
       bodyWithFiles: {

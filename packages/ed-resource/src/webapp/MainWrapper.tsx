@@ -1,34 +1,12 @@
 import type { MainAppPluginWrapper } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { WebappConfigsRpc } from '../common/expose-def.mjs'
-import type {
-  MainContextResource,
-  ResourceFormProps,
-  ResourceFormRpc,
-  RpcCaller,
-} from '../common/types.mjs'
+import type { MainContextResource, ResourceFormProps, RpcCaller } from '../common/types.mjs'
 import type { ValidationSchemas } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { MainContext } from './MainContext.js'
 import { ProvideResourceContext } from './ResourceContext.js'
 import { shell } from './shell.mjs'
-
-// const addAuthMissing =
-//   (missing: { isAuthenticated: boolean }) =>
-//   (rpcResource: Promise<ResourceRpc | undefined>): Promise<ResourceProps | undefined> =>
-//     rpcResource.then(res => res && ModelRpcToProps(missing, res))
-
-const toFormRpc = (r: ResourceFormProps): ResourceFormRpc => r
-// const toFormProps = (r: ResourceFormRpc): ResourceFormProps => r
-
-// const menuItems = {
-//   create: (onClick: () => void): HeaderMenuItem => ({
-//     Icon: '(icon)',
-//     text: `New Resource`,
-//     key: 'newResource1',
-//     onClick,
-//   }),
-// }
 
 const MainWrapper: MainAppPluginWrapper = ({ children }) => {
   const rpcCaller = useMemo((): RpcCaller => {
@@ -37,7 +15,7 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
 
     const rpcItem: RpcCaller = {
       edit: (key: string, values: ResourceFormProps) =>
-        rpc('webapp/edit/:_key')({ values: toFormRpc(values) }, { _key: key }),
+        rpc('webapp/edit/:_key')({ values }, { _key: key }),
       get: (key: string) => rpc('webapp/get/:_key')(null, { _key: key }),
       // get: (key: string) => addAuth(rpc('webapp/get/:_key')(null, { _key: key })),
       _delete: (key: string) => rpc('webapp/delete/:_key')(null, { _key: key }),

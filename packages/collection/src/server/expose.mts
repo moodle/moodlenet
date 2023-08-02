@@ -101,7 +101,7 @@ export const expose = await shell.expose<CollectionExposeType>({
       },
     },
     'webapp/set-is-published/:_key': {
-      guard: () => void 0,
+      guard: body => typeof body.publish === 'boolean',
       async fn({ publish }, { _key }) {
         const patchResult = await setPublished(_key, publish)
         if (!patchResult) {
@@ -189,11 +189,12 @@ export const expose = await shell.expose<CollectionExposeType>({
           throw RpcStatus('Unauthorized')
         }
 
-        const patched = await setCollectionImage(_key, uploadedRpcFile)
-        if (patched === false) {
+        const updateRes = await setCollectionImage(_key, uploadedRpcFile)
+        if (updateRes === false) {
           throw RpcStatus('Expectation Failed')
         }
-        const imageUrl = patched?.entity.image ? getImageUrl(patched?.entity.image) : null
+        console.log({ patched: updateRes?.patched.image, got: got.entity.image })
+        const imageUrl = updateRes?.patched.image ? getImageUrl(updateRes.patched.image) : null
         return imageUrl
       },
       bodyWithFiles: {
