@@ -1,4 +1,4 @@
-import { adjustColor, randomColor, setOpacity } from './utilities.js'
+import { setOpacity } from './utilities.js'
 
 export const baseMoodleColor = '#F88012'
 export const primaryColor = 'var(--base-moodle-color)'
@@ -25,13 +25,13 @@ export const baseStyle = () => {
   }
 }
 
-export const randomStyle = () => {
-  const newColor = randomColor()
-  return {
-    '--primary-color': `${newColor}`,
-    '--primary-background-color': `${adjustColor(newColor, 95)}`,
-    '--primary-color-hover': `${adjustColor(newColor, -10)}`,
-    '--primary-color-active': `${adjustColor(newColor, -20)}`,
-    '--header-background': `${adjustColor(newColor, 95)}`,
-  }
-}
+// export const randomStyle = () => {
+//   const newColor = randomColor()
+//   return {
+//     '--primary-color': `${newColor}`,
+//     '--primary-background-color': `${adjustColor(newColor, 95)}`,
+//     '--primary-color-hover': `${adjustColor(newColor, -10)}`,
+//     '--primary-color-active': `${adjustColor(newColor, -20)}`,
+//     '--header-background': `${adjustColor(newColor, 95)}`,
+//   }
+// }

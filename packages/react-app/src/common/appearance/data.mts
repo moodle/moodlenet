@@ -1,5 +1,5 @@
 import type { AppearanceData } from '../types.mjs'
-import { adjustColor, getColorPalette, randomColor, setOpacity } from './colorUtilities.mjs'
+import { getColorPalette, setOpacity } from './colorUtilities.mjs'
 
 export const baseMoodleColor = '#F88012'
 export const primaryColor = 'var(--base-moodle-color)'
@@ -14,6 +14,7 @@ export type BaseStyleType = {
   '--primary-color-hover': string
   '--primary-color-active': string
   '--header-background': string
+  '--error-color': string
 }
 
 export const baseStyle = ({ baseColor }: { baseColor: string }): BaseStyleType => {
@@ -23,19 +24,20 @@ export const baseStyle = ({ baseColor }: { baseColor: string }): BaseStyleType =
     '--primary-color-hover': primaryColorHover,
     '--primary-color-active': primaryColorActive,
     '--header-background': headerBackgroundColor,
+    '--error-color': '#ff3131',
   }
 }
 
-export const randomStyle = (): BaseStyleType => {
-  const newColor = randomColor()
-  return {
-    '--primary-color': `${newColor}`,
-    '--primary-background-color': `${adjustColor(newColor, 95)}`,
-    '--primary-color-hover': `${adjustColor(newColor, -10)}`,
-    '--primary-color-active': `${adjustColor(newColor, -20)}`,
-    '--header-background': `${adjustColor(newColor, 95)}`,
-  }
-}
+// export const randomStyle = (): BaseStyleType => {
+//   const newColor = randomColor()
+//   return {
+//     '--primary-color': `${newColor}`,
+//     '--primary-background-color': `${adjustColor(newColor, 95)}`,
+//     '--primary-color-hover': `${adjustColor(newColor, -10)}`,
+//     '--primary-color-active': `${adjustColor(newColor, -20)}`,
+//     '--header-background': `${adjustColor(newColor, 95)}`,
+//   }
+// }
 
 export const getAppearanceStyle = (
   baseColor: string,

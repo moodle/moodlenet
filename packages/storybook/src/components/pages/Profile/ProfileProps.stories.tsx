@@ -10,7 +10,7 @@ import type {
   ProfileFormValues,
   ProfileState,
 } from '@moodlenet/web-user/common'
-import { profileFormValidationSchema } from '@moodlenet/web-user/common'
+import { getValidationSchemas } from '@moodlenet/web-user/common'
 import type { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
@@ -99,7 +99,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
       actions: actions,
       data: data,
       access: access,
-      validationSchema: profileFormValidationSchema,
+      validationSchemas: getValidationSchemas({ imageMaxUploadSize: maxUploadSize }),
       resourceCardPropsList: getResourceCardsStoryProps(5, {
         access: { ...access },
       }),

@@ -4,6 +4,7 @@ import type { ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
 // import * as SimpleEmailAuth from '../../../../../../../../simple-email-auth/dist/webapp/Signup.js'
 
+import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import { SignupPropsStories } from '@moodlenet/simple-email-auth/stories'
 import { SignupIcon, SignupPanel } from '@moodlenet/simple-email-auth/ui'
@@ -11,6 +12,7 @@ import { MinimalisticAccessButtonsStories } from '@moodlenet/web-user/stories'
 import type { SignupProps } from '@moodlenet/web-user/ui'
 import { Signup } from '@moodlenet/web-user/ui'
 import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
+import type { PartialDeep } from 'type-fest'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
 // import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
@@ -30,48 +32,53 @@ const meta: ComponentMeta<typeof Signup> = {
 //   password: string().required(t`Please provide a password`),
 // })
 
-export const SignupStoryProps = (): // override?: {
+export const SignupStoryProps = (
+  overrides?: PartialDeep<SignupProps>,
+): // override?: {
 // props?: Partial<SignupProps>
 // formValues?: Partial<SignupFormValues>
 // formConfig?: Partial<FormikConfig<SignupFormValues>>
 // }
 SignupProps => {
-  return {
-    signupItems: [
-      {
-        Icon: SignupIcon,
-        Panel: () => <SignupPanel {...SignupPropsStories.useSignupPanelProps()} />,
-        key: 'email-auth',
-      },
-      // { Icon: PrimaryButton, Panel: FileUploader },
-      // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
-    ],
-    headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
-      MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
-        loginHref: href('Pages/Access/Login/Default'),
-        signupHref: href('Pages/Access/SignUp/Default'),
-        showLearnMoreButton: true,
-        showLoginButton: true,
-        showSignupButton: false,
-      }),
-    ),
-    footerProps: FooterStoryProps,
-    // accessHeaderProps: AccessHeaderStoryProps,
-    // form: useFormik<SignupFormValues>({
-    //   validationSchema,
-    //   initialValues: { email: '', password: '', ...override?.formValues },
-    //   onSubmit: action('submit Signup'),
-    //   ...override?.formConfig,
-    // }),
-    // wrongCreds: false,
-    // signupHref: href('Pages/Access/SignUp/Default'),
-    // recoverPasswordHref: href('Pages/Recover Password/Recover'),
-    // mainPageWrapperProps: {
-    //   userAcceptsPolicies: null,
-    //   cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-    // },
-    // ...override?.props,
-  }
+  return overrideDeep<SignupProps>(
+    {
+      signupItems: [
+        {
+          Icon: SignupIcon,
+          Panel: () => <SignupPanel {...SignupPropsStories.useSignupPanelProps()} />,
+          key: 'email-auth',
+        },
+        // { Icon: PrimaryButton, Panel: FileUploader },
+        // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
+      ],
+      headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
+        MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
+          loginHref: href('Pages/Access/Login/Default'),
+          signupHref: href('Pages/Access/SignUp/Default'),
+          showLearnMoreButton: true,
+          showLoginButton: true,
+          showSignupButton: false,
+        }),
+      ),
+      footerProps: FooterStoryProps,
+      // accessHeaderProps: AccessHeaderStoryProps,
+      // form: useFormik<SignupFormValues>({
+      //   validationSchema,
+      //   initialValues: { email: '', password: '', ...override?.formValues },
+      //   onSubmit: action('submit Signup'),
+      //   ...override?.formConfig,
+      // }),
+      // wrongCreds: false,
+      // signupHref: href('Pages/Access/SignUp/Default'),
+      // recoverPasswordHref: href('Pages/Recover Password/Recover'),
+      // mainPageWrapperProps: {
+      //   userAcceptsPolicies: null,
+      //   cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+      // },
+      // ...override?.props,
+    },
+    overrides,
+  )
 }
 // export const SignupStoryProps: SignupP = {
 //   page: 'Signup',
@@ -86,7 +93,9 @@ export const Default = () => {
 }
 
 export const Error = () => {
-  const props = SignupStoryProps()
+  const props = SignupStoryProps({
+    signupItems: [],
+  })
   // {
   // formConfig: {
   //   initialErrors: {
