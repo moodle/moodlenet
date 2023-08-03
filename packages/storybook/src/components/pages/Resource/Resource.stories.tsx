@@ -66,7 +66,7 @@ export const New: ResourceStory = () => {
     data: {
       downloadFilename: undefined,
       contentUrl: undefined,
-      image: undefined,
+      image: null,
       // numLikes: 0,
     },
     resourceForm: NewResourceProps,
@@ -79,6 +79,7 @@ export const New: ResourceStory = () => {
       isCreator: true,
       canEdit: true,
       canPublish: true,
+      canDelete: true,
     },
   })
   return <Resource {...props} />

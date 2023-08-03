@@ -16,6 +16,7 @@ import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { capitalizeFirstLetter, downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
+  Check,
   Delete,
   Edit,
   InsertDriveFile,
@@ -64,13 +65,15 @@ export type MainResourceCardProps = {
 
   isSaving: boolean
   publish: () => void
+  publishCheck: () => void
   save: () => void
 
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 
-  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
+  emptyOnStart: boolean
   shouldShowErrors: boolean
+  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
 
   fileMaxSize: number
 }
@@ -90,12 +93,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   access,
 
   isSaving,
-  save,
   publish,
+  publishCheck,
+  save,
 
   isEditing,
   setIsEditing,
 
+  emptyOnStart,
   setShouldShowErrors,
   shouldShowErrors,
 
@@ -299,7 +304,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const deleteButton: FloatingMenuContentItem | null = canDelete
     ? {
         Element: (
-          <div key="delete-button" onClick={() => setIsToDelete(true)}>
+          <div
+            className={`delete-button ${emptyOnStart ? 'disabled' : ''}`}
+            key="delete-button"
+            onClick={() => !emptyOnStart && setIsToDelete(true)}
+          >
             <Delete /> Delete
           </div>
         ),
@@ -307,7 +316,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     : null
 
   const publishButton: FloatingMenuContentItem | null =
-    canPublish && !isPublished
+    !isEditing && canPublish && !isPublished
       ? {
           Element: (
             <div key="publish-button" onClick={publish}>
@@ -317,6 +326,18 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           ),
 
           wrapperClassName: 'publish-button',
+        }
+      : null
+
+  const publishCheckButton: FloatingMenuContentItem | null =
+    isEditing && canPublish && !isPublished
+      ? {
+          Element: (
+            <div key="publish-button" onClick={publishCheck}>
+              <Check style={{ fill: '#00bd7e' }} />
+              Publish check
+            </div>
+          ),
         }
       : null
 
@@ -399,6 +420,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const updatedMoreButtonItems = [
     publishButton,
+    publishCheckButton,
     unpublishButton,
     openLinkOrDownloadFile,
     shareButton,
@@ -447,7 +469,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                 className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
                 onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
-                disabled={empty}
+                disabled={empty && emptyOnStart}
               >
                 <div
                   className="loading"

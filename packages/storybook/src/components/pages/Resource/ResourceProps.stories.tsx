@@ -170,16 +170,17 @@ export const useResourceStoryProps = (
     // contentType: 'link',
     ...overrides?.data,
     subjectHref: href('Pages/subject/Logged In'),
-    image: overrides?.data?.image
-      ? {
-          credits: {
-            owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
-            provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+    image:
+      overrides?.data?.image === null
+        ? null
+        : {
+            credits: {
+              owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
+              provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+            },
+            location:
+              'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
           },
-          location:
-            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-        }
-      : null,
   }
 
   const state: ResourceStateProps = {

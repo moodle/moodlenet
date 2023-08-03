@@ -110,16 +110,26 @@ export const Resource: FC<ResourceProps> = ({
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
-  // const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-  // const backupImage: AssetInfo | null | undefined = useMemo(
-  //   () => getBackupImage(id),
-  //   [id],
-  // )
+  const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
+  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
+
+  const emptyOnStart =
+    !resourceForm.title &&
+    !resourceForm.description &&
+    !image &&
+    !contentUrl &&
+    !resourceForm.type &&
+    !resourceForm.language &&
+    !resourceForm.license &&
+    !resourceForm.level &&
+    !resourceForm.subject &&
+    !resourceForm.year &&
+    !resourceForm.month
 
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
     validateOnMount: true,
-    validationSchema: isPublished
+    validationSchema: isPublishValidating
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
     // validateOnChange: shouldValidate,
@@ -198,6 +208,7 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
+    setIsPublishValidating(isPublished)
     setFieldsAsTouched()
     form.validateForm
     contentForm.validateForm
@@ -214,10 +225,22 @@ export const Resource: FC<ResourceProps> = ({
     }
   }
 
+  const publishCheck = () => {
+    setIsPublishValidating(true)
+    setFieldsAsTouched()
+    if (form.isValid && contentForm.isValid && imageForm.isValid) {
+      setShowCheckPublishSuccess(true)
+      setShouldShowErrors(false)
+    } else {
+      setShouldShowErrors(true)
+    }
+  }
+
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
       publish={checkFormAndPublish}
+      publishCheck={publishCheck}
       data={data}
       resourceForm={resourceForm}
       edMetaOptions={edMetaOptions}
@@ -233,14 +256,21 @@ export const Resource: FC<ResourceProps> = ({
       isSaving={isSaving}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
+      emptyOnStart={emptyOnStart}
       setShouldShowErrors={setShouldShowErrors}
       shouldShowErrors={shouldShowErrors}
     />
   )
 
-  const publishButton = canPublish && !isPublished && (
+  const publishButton = !isEditing && canPublish && !isPublished && (
     <PrimaryButton onClick={checkFormAndPublish} color="green" key="publish-button">
       Publish
+    </PrimaryButton>
+  )
+
+  const publishCheckButton = isEditing && canPublish && !isPublished && (
+    <PrimaryButton onClick={publishCheck} color="green">
+      Publish check
     </PrimaryButton>
   )
 
@@ -249,29 +279,6 @@ export const Resource: FC<ResourceProps> = ({
       Unpublish
     </SecondaryButton>
   )
-
-  // const editorActionsContainer = canPublish ? (
-  //   <Card
-  //     className="resource-action-card"
-  //     hideBorderWhenSmall={true}
-  //     key="editor-actions-container"
-  //   >
-  //     {/* {isPublished && (
-  //       <PrimaryButton color={'green'} style={{ pointerEvents: 'none' }}>
-  //         Published
-  //       </PrimaryButton>
-  //     )} */}
-
-  //     {/* {!isPublished && (
-  //       <PrimaryButton disabled={true}>Publish requested</PrimaryButton>
-  //     )} */}
-  //     {/* {isPublished ? (
-  //       <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
-  //     ) : (
-  //       <></>
-  //     )} */}
-  //   </Card>
-  // ) : null
 
   const subjectField = (isEditing || canEdit) && (
     <SubjectField
@@ -415,6 +422,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const updatedGeneralActionsItems = [
     publishButton,
+    publishCheckButton,
     unpublishButton,
     ...(generalActionsItems ?? []),
     downloadOrOpenLink,
@@ -481,19 +489,31 @@ export const Resource: FC<ResourceProps> = ({
   //   ...(smallScreenColumnItems ?? []),
   // ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const snackbars = [
-    isSaving && (
-      <Snackbar
-        position="bottom"
-        type="info"
-        waitDuration={1500}
-        autoHideDuration={6000}
-        showCloseButton={false}
-      >
-        {`Content uploading, please don't close the tab`}
-      </Snackbar>
-    ),
-  ]
+  const isSavingSnackbar = isSaving && (
+    <Snackbar
+      position="bottom"
+      type="info"
+      waitDuration={1500}
+      autoHideDuration={6000}
+      showCloseButton={false}
+    >
+      {`Content uploading, please don't close the tab`}
+    </Snackbar>
+  )
+
+  const checkPublishSnackbar = showCheckPublishSuccess && (
+    <Snackbar
+      position="bottom"
+      type="success"
+      autoHideDuration={6000}
+      showCloseButton={false}
+      onClose={() => setShowCheckPublishSuccess(false)}
+    >
+      {`Check success, save to publish`}
+    </Snackbar>
+  )
+
+  const snackbars = [isSavingSnackbar, checkPublishSnackbar]
 
   const modals = (
     <>

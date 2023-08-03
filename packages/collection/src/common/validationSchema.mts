@@ -30,8 +30,20 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
     const forPublish = type === 'publish'
     const schema: SchemaOf<CollectionFormProps> = object({
       title: string()
-        .max(160)
-        .withMutation(s => (forPublish ? s.min(3).required(`Please provide a title`) : s))
+        .max(160, obj => {
+          const length = obj.value.length
+          return `Please provide a shorter description (${length} / 160)`
+        })
+        .withMutation(s =>
+          forPublish
+            ? s
+                .min(3, obj => {
+                  const length = obj.value.length
+                  return `Please provide a longer title (${length} < 3)`
+                })
+                .required(`Please provide a title`)
+            : s,
+        )
         .default(''),
       description: string()
         .max(4000, obj => {

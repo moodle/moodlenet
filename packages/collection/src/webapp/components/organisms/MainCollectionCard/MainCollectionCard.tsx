@@ -203,9 +203,12 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const deleteButton: FloatingMenuContentItem | null = canDelete
     ? {
         Element: (
-          <div key="delete-button" onClick={() => setIsToDelete(true)}>
-            <Delete />
-            Delete
+          <div
+            className={`delete-button ${emptyOnStart ? 'disabled' : ''}`}
+            key="delete-button"
+            onClick={() => !emptyOnStart && setIsToDelete(true)}
+          >
+            <Delete /> Delete
           </div>
         ),
       }

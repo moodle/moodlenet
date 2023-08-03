@@ -69,22 +69,28 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
   const { avatarUrl, backgroundUrl } = data
-  const { canEdit, isCreator, isAuthenticated, canFollow, canApprove } = access
+  const {
+    canEdit,
+    isCreator,
+    isAuthenticated,
+    canFollow,
+    // canApprove
+  } = access
   const {
     followed,
-    isApproved,
-    isElegibleForApproval,
-    isWaitingApproval,
-    showAccountApprovedSuccessAlert,
+    // isApproved,
+    // isElegibleForApproval,
+    // isWaitingApproval,
+    // showAccountApprovedSuccessAlert,
   } = state
   const {
     toggleFollow,
     sendMessage,
     setAvatar,
     setBackground,
-    approveUser,
-    requestApproval,
-    unapproveUser,
+    // approveUser,
+    // requestApproval,
+    // unapproveUser,
   } = actions
 
   const [updatedAvatar, setUpdatedAvatar] = useState<string | undefined | null>(avatarUrl)
@@ -550,14 +556,14 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       </div>
     ) : null
 
-  const approvalInfo = (
-    <ApprovalInfo
-      isApproved={isApproved}
-      isWaitingApproval={isWaitingApproval}
-      isCreator={isCreator}
-      isElegibleForApproval={isElegibleForApproval}
-    />
-  )
+  // const approvalInfo = (
+  //   <ApprovalInfo
+  //     isApproved={isApproved}
+  //     isWaitingApproval={isWaitingApproval}
+  //     isCreator={isCreator}
+  //     isElegibleForApproval={isElegibleForApproval}
+  //   />
+  // )
 
   const updatedMainColumnItems = [
     backgroundContainer,
@@ -565,7 +571,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     topItemsContainer,
     header,
     description,
-    approvalInfo,
+    // approvalInfo,
     footer,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
