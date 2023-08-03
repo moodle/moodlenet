@@ -41,8 +41,8 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
     setIsPublished: (key: string, publish: boolean) =>
       rpc('webapp/set-is-published/:_key')({ publish }, { _key: key }),
 
-    setImage: (key: string, file: File | null | undefined) =>
-      rpc('webapp/upload-image/:_key')({ file: [file] }, { _key: key }),
+    setImage: (key: string, file: File | null | undefined, rpcId: string) =>
+      rpc('webapp/upload-image/:_key', { rpcId })({ file: [file] }, { _key: key }),
     create: () => rpc('webapp/create')(),
   }
 

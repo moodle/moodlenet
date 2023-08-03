@@ -11,13 +11,12 @@ import type {
 } from '../common/types.mjs'
 import { MainContext } from './MainContext.js'
 import { createTaskManager } from './pending-tasks.mjs'
-import { shell } from './shell.mjs'
 
 // type PendingImage = {
 //   pendingPromise: Promise<string | null>
 //   file: File
 // }
-const [useUpImageTasks] = createTaskManager<string | null, { file: File }>()
+const [useUpImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
 
 type myProps = { collectionKey: string }
 export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null | undefined => {
@@ -42,15 +41,15 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       setSaved(currentSaved => ({ ...currentSaved, [key]: val })),
     [],
   )
-  const [upImageTaskSet, upImageTaskCurrent] = useUpImageTasks(collectionKey, res => {
-    console.log('hook task resolve', res)
-    res.type === 'aborted'
-      ? shell.abortRpc(res.promise)
-      : res.type === 'resolved'
-      ? updateImageUrl(res.value)
-      : void 0
-    setterSave('image', false)
-  })
+  const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUpImageTasks(
+    collectionKey,
+    res => {
+      console.log('hook task resolve', res)
+
+      res.type === 'resolved' && updateImageUrl(res.value)
+      res.type !== 'aborted' && setterSave('image', false)
+    },
+  )
   const [saveState, setSaved] = useState(() => ({ form: false, image: !!upImageTaskCurrent }))
 
   useEffect(() => {
@@ -81,8 +80,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       },
       async setImage(file: File | null | undefined) {
         setterSave('image', true)
-        const setImagePromise = setImage(collectionKey, file)
-        file && upImageTaskSet(setImagePromise, { file })
+        upImageTaskSet(setImage(collectionKey, file, upImageTaskId), { file })
       },
       deleteCollection: () => {
         setIsToDelete(true)
@@ -113,7 +111,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
         setIsPublished(collectionKey, false)
       },
     }
-  }, [collectionKey, nav, rpcCaller, setterSave, upImageTaskSet])
+  }, [collectionKey, nav, rpcCaller, setterSave, upImageTaskId, upImageTaskSet])
 
   const [upImageTaskCurrentObjectUrl] = useImageUrl(upImageTaskCurrent?.ctx.file)
   return useMemo<CollectionMainProps | null | undefined>(

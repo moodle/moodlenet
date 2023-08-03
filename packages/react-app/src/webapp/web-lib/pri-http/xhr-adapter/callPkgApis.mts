@@ -18,10 +18,10 @@ export function wrapFetch(wrapper: FetchWrapper) {
 // const FETCH_STATUS_SYM = Symbol('FETCH_STATUS_SYM')
 type PendingRpcHandle = { controller: AbortController }
 
-const pendingRpcs = new Map<Promise<any>, PendingRpcHandle>()
-export function abortRpc(p: Promise<any>) {
-  const handle = pendingRpcs.get(p)
-  // console.log('abortRpc', p, handle)
+type PendingRpcItem = [Promise<any>, PendingRpcHandle]
+const pendingRpcs = new Map<string, PendingRpcItem>()
+export function abortRpc(id: string) {
+  const [, handle] = pendingRpcs.get(id) ?? []
   if (!handle) return false
   handle.controller.abort()
   return true
@@ -31,40 +31,47 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
   userPkgId: PkgIdentifier,
   //rpcPaths: string[],
 ): PkgRpcHandle<TargetPkgRpcDefs> {
-  return locateRpc as PkgRpcHandle<TargetPkgRpcDefs>
+  const locateRpc: PkgRpcHandle<any> = (path, opts) => (body: any, params: any, query: any) => {
+    const rpcId = opts?.rpcId ?? Math.random().toString(36).slice(2)
+    abortRpc(rpcId)
+    const controller = new AbortController()
+    const pendingPromise = (async () => {
+      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path as string, [
+        body,
+        params,
+        query,
+      ])
+      const fetchExecutor: FetchWrapper2 = (url, requestInit) =>
+        fetch(url, { ...requestInit, signal: controller.signal })
+      const response = await FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {
+        const currentWrapper: FetchWrapper2 = (url, requestInit) =>
+          wrapper(url, requestInit, nextWrapper)
+        return currentWrapper
+      }, fetchExecutor)(url, requestInit)
 
-  function locateRpc(path: string) {
-    return function (body: unknown, params: unknown, query: unknown) {
-      const controller = new AbortController()
-      const pendingPromise = (async () => {
-        const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path, [
-          body,
-          params,
-          query,
-        ])
-        const fetchExecutor: FetchWrapper2 = (url, requestInit) =>
-          fetch(url, { ...requestInit, signal: controller.signal })
-        const response = await FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {
-          const currentWrapper: FetchWrapper2 = (url, requestInit) =>
-            wrapper(url, requestInit, nextWrapper)
-          return currentWrapper
-        }, fetchExecutor)(url, requestInit)
+      const responseText = await response.text()
+      if (response.status !== 200) {
+        throw new Error(responseText)
+      }
+      const rpcResponse = !responseText ? undefined : JSON.parse(responseText)
 
-        const responseText = await response.text()
-        if (response.status !== 200) {
-          throw new Error(responseText)
+      return rpcResponse
+    })()
+
+    const pendingRpcItem: PendingRpcItem = [pendingPromise, { controller }]
+    pendingRpcs.set(rpcId, pendingRpcItem)
+
+    pendingPromise
+      .catch(() => void 0)
+      .finally(() => {
+        if (pendingRpcs.get(rpcId) === pendingRpcItem) {
+          pendingRpcs.delete(rpcId)
         }
-        const rpcResponse = !responseText ? undefined : JSON.parse(responseText)
+      })
 
-        return rpcResponse
-      })()
-
-      pendingRpcs.set(pendingPromise, { controller })
-      pendingPromise.finally(() => pendingRpcs.delete(pendingPromise)).catch(() => void 0)
-
-      return pendingPromise
-    }
+    return pendingPromise
   }
+  return locateRpc
 }
 // function setPendingRpcHandler(p: any, handler: PendingRpcHandler) {
 //   p[FETCH_STATUS_SYM] = handler
@@ -77,4 +84,8 @@ export type PkgRpcHandle<TargetPkgRpcDefs extends PkgRpcDefs> = <
   Path extends keyof TargetPkgRpcDefs,
 >(
   path: Path,
+  opts?: RpcOpts,
 ) => TargetPkgRpcDefs[Path]
+type RpcOpts = {
+  rpcId?: string
+}

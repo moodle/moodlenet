@@ -8,16 +8,19 @@ type TaskResolved<Awaiting, Ctx> = {
   type: 'resolved'
   value: Awaiting
   ctx: Ctx
+  id: string
 }
 type TaskRejected<Ctx> = {
   type: 'rejected'
   reason: any
   ctx: Ctx
+  id: string
 }
 type TaskAborted<Awaiting, Ctx> = {
   type: 'aborted'
   promise: Promise<Awaiting>
   ctx: Ctx
+  id: string
 }
 // type TaskPromise<Awaiting, Ctx> = Promise<TaskResult<Awaiting, Ctx>>
 type Task<Awaiting, Ctx> = {
@@ -32,8 +35,8 @@ type TaskResolve<Awaiting, Ctx> = (_: TaskResult<Awaiting, Ctx> & { ctx: Ctx }) 
 type PendingTask<Awaiting, Ctx> = Task<Awaiting, Ctx>
 const pendingTasks = new Map<string, PendingTask<any, any>>()
 window.addEventListener('unload', () => {
-  for (const { promise, ctx, resolve } of pendingTasks.values()) {
-    resolve?.({ type: 'aborted', promise, ctx })
+  for (const { promise, ctx, resolve, id } of pendingTasks.values()) {
+    resolve?.({ type: 'aborted', promise, ctx, id })
   }
 })
 window.addEventListener('beforeunload', e => {
@@ -64,6 +67,7 @@ function setTask<Awaiting, Ctx>(
   if (currentPending) {
     currentPending.resolve?.({
       type: 'aborted',
+      id,
       promise: currentPending.promise,
       ctx: currentPending.ctx,
     })
@@ -80,13 +84,13 @@ function setTask<Awaiting, Ctx>(
     .then(value => {
       const currentPending = getTask(id)
       if (currentPending?.promise !== promise) return
-      currentPending.resolve?.({ type: 'resolved', value, ctx: currentPending.ctx })
+      currentPending.resolve?.({ type: 'resolved', id, value, ctx: currentPending.ctx })
       return currentPending
     })
     .catch(reason => {
       const currentPending = getTask(id)
       if (currentPending?.promise !== promise) return
-      currentPending.resolve?.({ type: 'rejected', reason, ctx: currentPending.ctx })
+      currentPending.resolve?.({ type: 'rejected', id, reason, ctx: currentPending.ctx })
       return currentPending
     })
     .then(currentPending => {
@@ -97,10 +101,10 @@ function setTask<Awaiting, Ctx>(
 }
 
 export function createTaskManager<Awaiting, Ctx>(name = 'noname') {
-  const bucketId = `${name}::${Math.random().toString(36).slice(2)}-${Date.now()}`
+  const bucketName = `${name}::${Math.random().toString(36).slice(2)}-${Date.now()}`
   return [useTasker] as const
-  function useTasker(_id: string, resolve: TaskResolve<Awaiting, Ctx>) {
-    const id = `${_id}@${bucketId}`
+  function useTasker(localId: string, resolve: TaskResolve<Awaiting, Ctx>) {
+    const id = `${localId}@${bucketName}`
     const _setTask = useCallback(
       (promise: Promise<Awaiting>, ctx: Ctx) => {
         return setTask<Awaiting, Ctx>(id, promise, ctx)
@@ -115,6 +119,6 @@ export function createTaskManager<Awaiting, Ctx>(name = 'noname') {
     }, [id, resolve])
     const current = getTask(id) as PendingTask<Awaiting, Ctx>
     // console.log({ current, id })
-    return [_setTask, current] as const
+    return [_setTask, id, current] as const
   }
 }

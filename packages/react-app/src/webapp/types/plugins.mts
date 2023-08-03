@@ -4,7 +4,7 @@ import type { PkgRpcHandle } from '../web-lib/pri-http/xhr-adapter/callPkgApis.m
 
 export type WebappShell<UsesPkgDeps extends WebPkgDeps> = {
   pkgId: PkgIdentifier
-  abortRpc(id: Promise<any>): boolean
+  abortRpc(id: string): boolean
   rpc: {
     [key in keyof UsesPkgDeps]: PkgRpcHandle<UsesPkgDeps[key]['rpc']>
   }

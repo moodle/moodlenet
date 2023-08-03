@@ -85,7 +85,7 @@ export type RpcCaller = {
   get: (key: string) => Promise<CollectionRpc | null>
   _delete: (key: string) => Promise<void>
   setIsPublished: (key: string, publish: boolean) => Promise<void>
-  setImage: (key: string, file: File | null | undefined) => Promise<string | null>
+  setImage: (key: string, file: File | null | undefined, rpcId: string) => Promise<string | null>
   create: () => Promise<{ _key: string }>
 }
 
