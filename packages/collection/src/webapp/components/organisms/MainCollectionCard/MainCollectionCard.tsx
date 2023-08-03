@@ -121,9 +121,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const handleOnSaveClick = () => {
     setisWaitingForSaving(true)
     setShouldShowErrors(false)
-    editData(form.values)
-    typeof imageForm.values.image?.location !== 'string' &&
-      setImage(imageForm.values.image?.location)
+    form.submitForm()
+    typeof imageForm.values.image?.location !== 'string' && imageForm.submitForm()
   }
 
   useEffect(() => {

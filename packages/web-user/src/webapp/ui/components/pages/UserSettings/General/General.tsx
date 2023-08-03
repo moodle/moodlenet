@@ -1,18 +1,18 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, SecondaryButton, Snackbar, SnackbarStack } from '@moodlenet/component-library'
-import { useState, type FC } from 'react'
+import { Card /* , Snackbar, SnackbarStack */ } from '@moodlenet/component-library'
+import { /* useState, */ type FC } from 'react'
 import './General.scss'
 
 export type GeneralProps = {
   mainColumnItems: (AddonItem | null)[]
-  userId: string
+  // userId: string
 }
 
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
-export const General: FC<GeneralProps> = ({ mainColumnItems, userId }) => {
-  const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
+export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) => {
+  /* const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
 
   const copyId = () => {
     navigator.clipboard.writeText(userId)
@@ -20,7 +20,7 @@ export const General: FC<GeneralProps> = ({ mainColumnItems, userId }) => {
     setTimeout(() => {
       setShowUserIdCopiedAlert(true)
     }, 100)
-  }
+  } 
 
   const detailsSection = (
     <Card className="column details-section">
@@ -41,10 +41,6 @@ export const General: FC<GeneralProps> = ({ mainColumnItems, userId }) => {
     </Card>
   )
 
-  const updatedMainColumnItems = [detailsSection, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
-
   const snackbars = (
     <SnackbarStack
       snackbarList={[
@@ -60,6 +56,10 @@ export const General: FC<GeneralProps> = ({ mainColumnItems, userId }) => {
         ) : null,
       ]}
     ></SnackbarStack>
+  ) */
+
+  const updatedMainColumnItems = [/* detailsSection, */ ...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
   )
 
   const modals = [<></>]
@@ -67,7 +67,7 @@ export const General: FC<GeneralProps> = ({ mainColumnItems, userId }) => {
   return (
     <div className="general" key="general">
       {modals}
-      {snackbars}
+      {/* snackbars */}
       <Card className="column">
         <div className="title">General</div>
       </Card>
