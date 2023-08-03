@@ -34,13 +34,11 @@
   }
 
   &.disabled {
+    cursor: default;
+
     &:not(.abbr) {
       user-select: none;
       pointer-events: none;
-    }
-
-    &.abbr {
-      cursor: initial;
     }
   }
 

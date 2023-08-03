@@ -86,6 +86,10 @@ export const Collection: FC<CollectionProps> = ({
   const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
   const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
+  const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+  const [isToDelete, setIsToDelete] = useState<boolean>(false)
+
+  const emptyOnStart = !collectionForm.title && !collectionForm.description && !image
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
@@ -112,9 +116,6 @@ export const Collection: FC<CollectionProps> = ({
     },
   })
 
-  const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
-  const [isToDelete, setIsToDelete] = useState<boolean>(false)
-
   const setFieldsAsTouched = () => {
     form.setTouched({
       title: true,
@@ -124,9 +125,8 @@ export const Collection: FC<CollectionProps> = ({
   }
 
   const checkFormAndPublish = () => {
+    setIsPublishValidating(isPublished)
     setFieldsAsTouched()
-    // form.validateForm
-    // imageForm.validateForm
     if (form.isValid && imageForm.isValid) {
       form.submitForm()
       imageForm.submitForm()
@@ -181,12 +181,14 @@ export const Collection: FC<CollectionProps> = ({
       form={form}
       imageForm={imageForm}
       publish={checkFormAndPublish}
+      publishCheck={publishCheck}
       state={state}
       actions={actions}
       access={access}
       slots={mainCollectionCardSlots}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
+      emptyOnStart={emptyOnStart}
       shouldShowErrors={shouldShowErrors}
       setShouldShowErrors={setShouldShowErrors}
       isSaving={isSaving}

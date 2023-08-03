@@ -24,11 +24,11 @@ import type {
   ProfileState,
 } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
-import {
-  ApprovalBadge,
-  ApprovalButton,
-  ApprovalInfo,
-} from '../../atoms/ApproveButton/ApproveButton.js'
+// import {
+//   ApprovalBadge,
+//   ApprovalButton,
+//   ApprovalInfo,
+// } from '../../atoms/ApproveButton/ApproveButton.js'
 import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
@@ -278,18 +278,20 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       </div>
     ) : null
 
-  const approvedBadge = (
-    <ApprovalBadge
-      canEdit={canEdit}
-      isApproved={isApproved}
-      isEditing={isEditing}
-      showAccountApprovedSuccessAlert={showAccountApprovedSuccessAlert}
-    />
-  )
+  // const approvedBadge = (
+  //   <ApprovalBadge
+  //     canEdit={canEdit}
+  //     isApproved={isApproved}
+  //     isEditing={isEditing}
+  //     showAccountApprovedSuccessAlert={showAccountApprovedSuccessAlert}
+  //   />
+  // )
 
-  const updatedTitleItems = [title, approvedBadge, ...(titleItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
-  )
+  const updatedTitleItems = [
+    title,
+    // approvedBadge,
+    ...(titleItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const location = isEditing ? (
     <span key="edit-location">
@@ -529,13 +531,13 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     />
   ) : null
 
-  const approvalButton = (
-    <ApprovalButton access={access} state={state} actions={actions} key={'approval-button'} />
-  )
+  // const approvalButton = (
+  //   <ApprovalButton access={access} state={state} actions={actions} key={'approval-button'} />
+  // )
 
   const updatedFooterItems = [
     followButton,
-    approvalButton,
+    // approvalButton,
     sendMessageButton,
     ...(footerItems ?? []),
     moreButton,

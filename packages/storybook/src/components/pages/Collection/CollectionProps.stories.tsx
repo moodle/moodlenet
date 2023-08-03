@@ -11,7 +11,7 @@ import type { ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
 import type { AnySchema, SchemaOf } from 'yup'
-import { addMethod, boolean, mixed, MixedSchema, object, string } from 'yup'
+import { MixedSchema, addMethod, boolean, mixed, object, string } from 'yup'
 // import { href } from '../../../elements/link'
 // import { TagListStory } from '../../../elements/tags'
 // import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
@@ -153,16 +153,17 @@ export const useCollectionStoryProps = (
     id: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
     ...overrides?.data,
-    image: !overrides?.data?.image
-      ? {
-          location:
-            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-          credits: {
-            owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
-            provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+    image:
+      overrides?.data?.image === null
+        ? null
+        : {
+            location:
+              'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+            credits: {
+              owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
+              provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+            },
           },
-        }
-      : null,
   }
 
   const collectionForm: CollectionFormProps = {
@@ -286,7 +287,7 @@ export const useCollectionStoryProps = (
       actions: actions,
       access: access,
       isSaving: false,
-      isEditingAtStart: true,
+      isEditingAtStart: false,
     },
     { ...overrides },
   )

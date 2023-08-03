@@ -13,7 +13,7 @@ import {
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
+import { Check, Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import type {
@@ -47,12 +47,14 @@ export type MainCollectionCardProps = {
   actions: CollectionActions
   access: CollectionAccessProps
 
-  publish: () => void
   isSaving: boolean
+  publish: () => void
+  publishCheck: () => void
 
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 
+  emptyOnStart: boolean
   shouldShowErrors: boolean
   setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -70,11 +72,13 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   access,
 
   publish,
+  publishCheck,
   isSaving,
 
   isEditing,
   setIsEditing,
 
+  emptyOnStart,
   shouldShowErrors,
   setShouldShowErrors,
 }) => {
@@ -220,12 +224,24 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       : null
 
   const publishButton: FloatingMenuContentItem | null =
-    canPublish && !isPublished
+    !isEditing && canPublish && !isPublished
       ? {
           Element: (
             <div key="publish-button" onClick={publish}>
               <Public style={{ fill: '#00bd7e' }} />
               Publish
+            </div>
+          ),
+        }
+      : null
+
+  const publishCheckButton: FloatingMenuContentItem | null =
+    isEditing && canPublish && !isPublished
+      ? {
+          Element: (
+            <div key="publish-button" onClick={publishCheck}>
+              <Check style={{ fill: '#00bd7e' }} />
+              Publish check
             </div>
           ),
         }
@@ -247,6 +263,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const updatedMoreButtonItems = [
     publishButton,
+    publishCheckButton,
     unpublishButton,
     shareButton,
     deleteButton,
@@ -277,7 +294,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
                 className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
                 onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
-                disabled={empty}
+                disabled={empty && emptyOnStart}
               >
                 <div
                   className="loading"
