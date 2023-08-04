@@ -149,7 +149,6 @@ export const useProfileProps = ({
 
     const props: ProfileProps = {
       saveState,
-      isSaving: Object.values(saveState).some(Boolean),
       mainLayoutProps,
       // followersHref: href(
       //   getFollowersRoutePath({
