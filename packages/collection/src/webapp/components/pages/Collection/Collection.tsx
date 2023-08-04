@@ -23,6 +23,7 @@ import type {
   CollectionDataProps,
   CollectionFormProps,
   CollectionStateProps,
+  SaveState,
 } from '../../../../common/types.mjs'
 import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
 import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
@@ -49,6 +50,7 @@ export type CollectionProps = {
   actions: CollectionActions
   access: CollectionAccessProps
   isSaving: boolean
+  saveState: SaveState
   isEditingAtStart: boolean
   validationSchemas: ValidationSchemas
 }
