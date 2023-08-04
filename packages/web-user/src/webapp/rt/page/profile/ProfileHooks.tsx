@@ -1,16 +1,17 @@
 import { FilterNone, Grade, PermIdentity } from '@material-ui/icons'
 import { CollectionContext, useCollectionCardProps } from '@moodlenet/collection/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
+import { useImageUrl } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/webapp'
 import { href } from '@moodlenet/react-app/common'
 import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import { createPlugin, createTaskManager, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
-import type { ProfileProps } from '../../../ui/exports/ui.mjs'
+import type { ProfileProps, SaveState } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useProfileContext } from '../../context/ProfileContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
@@ -27,6 +28,9 @@ export const ProfilePagePlugins = createPlugin<{
   overallCardItems?: AddOnMap<Omit<OverallCardItem, 'key'>>
 }>()
 
+const [useUpBgImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
+const [useUpAvatarTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
+
 export const useProfileProps = ({
   profileKey,
 }: {
@@ -38,8 +42,44 @@ export const useProfileProps = ({
   const resourceCtx = useContext(ResourceContext)
   const collectionCtx = useContext(CollectionContext)
 
-  const { isAuthenticated, clientSessionData } = useContext(AuthCtx)
+  const { isAuthenticated, clientSessionData, updateMyLocalProfile } = useContext(AuthCtx)
   const [profileGetRpc, setProfileGetRpc] = useState<ProfileGetRpc | null>()
+
+  const updateDataProp = useCallback(
+    <K extends keyof ProfileGetRpc['data']>(k: K, v: ProfileGetRpc['data'][K]) =>
+      setProfileGetRpc(rpcData => rpcData && { ...rpcData, data: { ...rpcData.data, [k]: v } }),
+    [],
+  )
+
+  const [upBgImageTaskSet, upBgImageTaskId, upBgImageTaskCurrent] = useUpBgImageTasks(
+    profileKey,
+    res => {
+      if (res.type === 'resolved') {
+        updateDataProp('backgroundUrl', res.value ?? undefined)
+      }
+      setterSave('image', false)
+    },
+  )
+
+  const [upAvatarTaskSet, upAvatarTaskId, upAvatarTaskCurrent] = useUpAvatarTasks(
+    profileKey,
+    res => {
+      if (res.type === 'resolved') {
+        updateDataProp('avatarUrl', res.value ?? undefined)
+      }
+      setterSave('avatar', false)
+    },
+  )
+  const setterSave = useCallback(
+    (key: keyof SaveState, val: boolean) =>
+      setSaved(currentSaved => ({ ...currentSaved, [key]: val })),
+    [],
+  )
+  const [saveState, setSaved] = useState<SaveState>(() => ({
+    form: false,
+    image: !!upBgImageTaskCurrent,
+    avatar: !!upAvatarTaskCurrent,
+  }))
 
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
@@ -57,8 +97,15 @@ export const useProfileProps = ({
         },
         { _key: profileKey },
       )
+      updateMyLocalProfile({
+        aboutMe,
+        displayName,
+        organizationName,
+        siteUrl,
+        location,
+      })
     },
-    [profileKey],
+    [profileKey, updateMyLocalProfile],
   )
 
   useEffect(() => {
@@ -73,6 +120,8 @@ export const useProfileProps = ({
   const mainLayoutProps = useMainLayoutProps()
   const follow = useMyFeaturedEntity({ _key: profileKey, entityType: 'profile', feature: 'follow' })
 
+  const [upBgImageTaskCurrentObjectUrl] = useImageUrl(upBgImageTaskCurrent?.ctx.file)
+  const [upAvatarTaskCurrentObjectUrl] = useImageUrl(upAvatarTaskCurrent?.ctx.file)
   const profileProps = useMemo<ProfileProps | null | undefined>(() => {
     if (!profileGetRpc) {
       return profileGetRpc
@@ -99,6 +148,8 @@ export const useProfileProps = ({
       })
 
     const props: ProfileProps = {
+      saveState,
+      isSaving: Object.values(saveState).some(Boolean),
       mainLayoutProps,
       // followersHref: href(
       //   getFollowersRoutePath({
@@ -119,6 +170,16 @@ export const useProfileProps = ({
         avatarUrl: profileGetRpc.data.avatarUrl,
         backgroundUrl: profileGetRpc.data.backgroundUrl,
         profileHref: profileGetRpc.profileHref,
+        ...(upBgImageTaskCurrent
+          ? {
+              backgroundUrl: upBgImageTaskCurrentObjectUrl,
+            }
+          : {}),
+        ...(upAvatarTaskCurrent
+          ? {
+              avatarUrl: upAvatarTaskCurrentObjectUrl,
+            }
+          : {}),
       },
       state: {
         profileUrl: profileGetRpc.profileUrl,
@@ -131,17 +192,26 @@ export const useProfileProps = ({
           follow.toggle()
         },
         setAvatar: (avatar: File | undefined | null) => {
-          console.log('setAvatar', avatar)
-          shell.rpc.me('webapp/upload-profile-avatar/:_key')(
-            { file: [avatar] },
-            { _key: profileKey },
+          upAvatarTaskSet(
+            shell.rpc.me('webapp/upload-profile-avatar/:_key', { rpcId: upAvatarTaskId })(
+              { file: [avatar] },
+              { _key: profileKey },
+            ),
+            { file: avatar },
+          ).promise.then(
+            res => {
+              updateMyLocalProfile({ avatarUrl: res ?? undefined })
+            },
+            () => void 0,
           )
         },
         setBackground: (background: File | undefined | null) => {
-          console.log('setBackground', background)
-          shell.rpc.me('webapp/upload-profile-background/:_key')(
-            { file: [background] },
-            { _key: profileKey },
+          upBgImageTaskSet(
+            shell.rpc.me('webapp/upload-profile-background/:_key', { rpcId: upBgImageTaskId })(
+              { file: [background] },
+              { _key: profileKey },
+            ),
+            { file: background },
           )
         },
         sendMessage: (message: string) =>
@@ -193,14 +263,24 @@ export const useProfileProps = ({
     clientSessionData?.isAdmin,
     clientSessionData?.myProfile?._key,
     profileKey,
+    saveState,
     mainLayoutProps,
     isAuthenticated,
+    upBgImageTaskCurrent,
+    upBgImageTaskCurrentObjectUrl,
+    upAvatarTaskCurrent,
+    upAvatarTaskCurrentObjectUrl,
     follow,
     editProfile,
     plugins,
+    validationSchemas,
+    upAvatarTaskSet,
+    upAvatarTaskId,
+    updateMyLocalProfile,
+    upBgImageTaskSet,
+    upBgImageTaskId,
     collectionCtx,
     resourceCtx,
-    validationSchemas,
   ])
   return profileProps
 }

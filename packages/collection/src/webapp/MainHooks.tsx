@@ -31,24 +31,24 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
       setCollection(coll => coll && { ...coll, data: { ...coll.data, [k]: v } }),
     [],
   )
-  const updateImageUrl = useCallback(
-    (imageUrl: string | null) =>
-      updateDataProp('image', imageUrl ? { credits: null, location: imageUrl } : null),
-    [updateDataProp],
+  const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUpImageTasks(
+    collectionKey,
+    res => {
+      if (res.type === 'resolved') {
+        updateDataProp('image', res.value ? { credits: null, location: res.value } : null)
+      }
+      setterSave('image', false)
+    },
   )
+  const [saveState, setSaved] = useState<SaveState>(() => ({
+    form: false,
+    image: !!upImageTaskCurrent,
+  }))
   const setterSave = useCallback(
     (key: keyof SaveState, val: boolean) =>
       setSaved(currentSaved => ({ ...currentSaved, [key]: val })),
     [],
   )
-  const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUpImageTasks(
-    collectionKey,
-    res => {
-      res.type === 'resolved' && updateImageUrl(res.value)
-      setterSave('image', false)
-    },
-  )
-  const [saveState, setSaved] = useState(() => ({ form: false, image: !!upImageTaskCurrent }))
 
   useEffect(() => {
     setCollection(undefined)
@@ -76,7 +76,7 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
           })
           .catch(() => void 0)
       },
-      async setImage(file: File | null | undefined) {
+      setImage(file: File | null | undefined) {
         setterSave('image', true)
         upImageTaskSet(setImage(collectionKey, file, upImageTaskId), { file })
       },
@@ -123,15 +123,27 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
               state: { ...collection.state, isPublished },
               data: {
                 ...collection.data,
-                image: upImageTaskCurrentObjectUrl
-                  ? { location: upImageTaskCurrentObjectUrl, credits: null }
-                  : collection.data.image,
+                ...(upImageTaskCurrent
+                  ? {
+                      image: upImageTaskCurrentObjectUrl
+                        ? { location: upImageTaskCurrentObjectUrl, credits: null }
+                        : null,
+                    }
+                  : {}),
               },
             },
             saveState,
             isToDelete,
             isSaving: saveState.form || saveState.image,
           },
-    [actions, collection, isPublished, isToDelete, saveState, upImageTaskCurrentObjectUrl],
+    [
+      actions,
+      collection,
+      isPublished,
+      isToDelete,
+      saveState,
+      upImageTaskCurrent,
+      upImageTaskCurrentObjectUrl,
+    ],
   )
 }

@@ -25,6 +25,7 @@ export type ClientSessionData = {
     }
 )
 export type AuthCtxT = {
+  updateMyLocalProfile(patch: Partial<Profile>): void
   logout(): void
   readSessionTokenCookie(): string | undefined
 } & (
@@ -52,6 +53,25 @@ export function useAuthCtxValue() {
   const [clientSessionData, setClientSessionData] = useState<ClientSessionData | null | undefined>(
     null,
   )
+  const updateMyLocalProfile = useCallback((patch: Partial<Profile>) => {
+    setClientSessionData(curr => {
+      const myProfile = curr?.myProfile
+      if (!myProfile) {
+        return curr
+      }
+      return {
+        ...curr,
+        userDisplay: {
+          name: patch.displayName ?? curr.userDisplay.name,
+          avatarUrl: patch.avatarUrl ?? curr.userDisplay.avatarUrl,
+        },
+        myProfile: {
+          ...myProfile,
+          ...patch,
+        },
+      }
+    })
+  }, [])
 
   const logout = useCallback<AuthCtxT['logout']>(() => {
     lastSessionTokenCookie = undefined
@@ -112,6 +132,7 @@ export function useAuthCtxValue() {
     }
 
     const authCtxT: AuthCtxT = {
+      updateMyLocalProfile,
       readSessionTokenCookie,
       logout,
 
@@ -126,7 +147,7 @@ export function useAuthCtxValue() {
           }),
     }
     return authCtxT
-  }, [clientSessionData, logout])
+  }, [clientSessionData, logout, updateMyLocalProfile])
 
   if (!ctx) {
     fetchClientSessionDataRpc()

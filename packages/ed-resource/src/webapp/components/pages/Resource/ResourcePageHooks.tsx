@@ -51,7 +51,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const { publishedMeta } = useContext(EdMetaContext)
 
   if (!resourceCommonProps) return resourceCommonProps
-  const { actions, props, isSaving } = resourceCommonProps
+  const { actions, props, isSaving, saveState } = resourceCommonProps
   const { data, resourceForm, state, access, contributor } = props
 
   const mainResourceCardSlots: MainResourceCardSlots = {
@@ -74,6 +74,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     extraDetailsItems: [],
   }
   const resourceProps: ProxiedResourceProps = {
+    saveState,
     mainLayoutProps,
     mainResourceCardSlots,
     resourceContributorCardProps: contributor,

@@ -27,7 +27,6 @@ function useMyProfileContextValue() {
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
   const myFeaturedEntities = useAllMyFeaturedEntities()
-
   const myProfileContext = useMemo<MyProfileContextT | null>(() => {
     if (!myProfile) {
       return null

@@ -19,10 +19,10 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
       get: (key: string) => rpc('webapp/get/:_key')(null, { _key: key }),
       // get: (key: string) => addAuth(rpc('webapp/get/:_key')(null, { _key: key })),
       _delete: (key: string) => rpc('webapp/delete/:_key')(null, { _key: key }),
-      setImage: (key: string, file: File | undefined | null) =>
-        rpc('webapp/upload-image/:_key')({ file: [file] }, { _key: key }),
-      setContent: (key: string, content: File | string | undefined | null) =>
-        rpc('webapp/upload-content/:_key')({ content: [content] }, { _key: key }),
+      setImage: (key: string, file: File | undefined | null, rpcId) =>
+        rpc('webapp/upload-image/:_key', { rpcId })({ file: [file] }, { _key: key }),
+      setContent: (key: string, content: File | string | undefined | null, rpcId) =>
+        rpc('webapp/upload-content/:_key', { rpcId })({ content: [content] }, { _key: key }),
       setIsPublished: (key, publish) =>
         rpc('webapp/set-is-published/:_key')({ publish }, { _key: key }),
       create: () => rpc('webapp/create')(),

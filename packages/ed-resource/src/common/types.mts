@@ -81,10 +81,15 @@ export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
   get: (resourceKey: string) => Promise<ResourceProps | null>
   _delete: (resourceKey: string) => Promise<void>
-  setImage: (resourceKey: string, file: File | undefined | null) => Promise<string | null>
+  setImage: (
+    resourceKey: string,
+    file: File | undefined | null,
+    rpcId: string,
+  ) => Promise<string | null>
   setContent: (
     resourceKey: string,
     file: File | string | undefined | null,
+    rpcId: string,
   ) => Promise<string | null>
   setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
   create: () => Promise<{ _key: string }>

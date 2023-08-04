@@ -31,8 +31,10 @@ import {
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
+export type SaveState = { form: boolean; image: boolean; content: boolean }
 
 export type ResourceProps = {
+  saveState: SaveState
   mainLayoutProps: MainLayoutProps
   mainResourceCardSlots: MainResourceCardSlots
   resourceContributorCardProps: ResourceContributorCardProps
