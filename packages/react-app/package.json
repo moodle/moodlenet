@@ -157,7 +157,7 @@
     "webpack-dev-server": "4.9.0",
     "webpack-virtual-modules": "0.4.3",
     "xbytes": "^1.8.0",
-    "ysup": "0.32.11"
+    "yup": "0.32.11"
   },
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }
