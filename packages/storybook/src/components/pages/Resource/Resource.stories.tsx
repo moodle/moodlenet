@@ -2,6 +2,7 @@ import type { ResourceFormProps } from '@moodlenet/ed-resource/common'
 import type { ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useState } from 'react'
 import { useResourceStoryProps } from './ResourceProps.stories.js'
 // import { href } from '../../../elements/link'
 
@@ -86,12 +87,29 @@ export const New: ResourceStory = () => {
 }
 
 export const Creator: ResourceStory = () => {
+  const [isPublished, setIsPublished] = useState(true)
+  const [isSaving, setIsSaving] = useState(true)
   const props = useResourceStoryProps({
+    isSaving: isSaving,
     data: {},
     state: {
-      isPublished: false,
+      isPublished: isPublished,
     },
-    actions: {},
+    actions: {
+      editData: () => {
+        setIsSaving(true)
+        setTimeout(() => {
+          setIsSaving(false)
+        }, 1000)
+      },
+      publish: () => {
+        setIsPublished(true)
+      },
+      unpublish: () => {
+        console.log('unpublish')
+        setIsPublished(false)
+      },
+    },
     access: {
       isCreator: true,
       canEdit: true,

@@ -66,7 +66,6 @@ export type MainResourceCardProps = {
   isSaving: boolean
   publish: () => void
   publishCheck: () => void
-  save: () => void
 
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
@@ -95,7 +94,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   isSaving,
   publish,
   publishCheck,
-  save,
 
   isEditing,
   setIsEditing,
@@ -116,7 +114,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadOptionsItems,
   } = slots
 
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref, image } = data
 
   const { subjectOptions } = edMetaOptions
 
@@ -166,7 +164,23 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const handleOnSaveClick = () => {
     setisWaitingForSaving(true)
     setShouldShowErrors(false)
-    save()
+
+    if (form.dirty) {
+      form.submitForm()
+      form.resetForm({ values: form.values })
+    }
+
+    if (imageForm.dirty) {
+      imageForm.values.image !== image &&
+        typeof imageForm.values.image?.location !== 'string' &&
+        imageForm.submitForm()
+      imageForm.setTouched({ image: false })
+    }
+
+    if (contentForm.dirty) {
+      contentForm.values.content !== contentUrl && contentForm.submitForm()
+      contentForm.setTouched({ content: false })
+    }
   }
 
   const copyUrl = () => {

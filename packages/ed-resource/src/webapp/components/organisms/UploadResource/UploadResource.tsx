@@ -338,7 +338,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const uploaderDiv = (
     <>
       {!contentAvailable && !displayOnly && uploader('file')}
-      {!contentAvailable && imageAvailable && simpleImageContainer}
+      {/* {!contentAvailable && imageAvailable && simpleImageContainer} */}
       {contentAvailable && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
       {contentAvailable && displayOnly && (embed ?? (!imageAvailable && simpleImageContainer))}
       {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}

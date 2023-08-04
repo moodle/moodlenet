@@ -14,7 +14,7 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -134,7 +134,6 @@ export const Resource: FC<ResourceProps> = ({
     validationSchema: isPublishValidating
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
-    // validateOnChange: shouldValidate,
     onSubmit: values => {
       return editData(values)
     },
@@ -144,7 +143,6 @@ export const Resource: FC<ResourceProps> = ({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
     validateOnMount: true,
     validationSchema: contentValidationSchema,
-    // validateOnChange: true,
     onSubmit: values => {
       return setContent(values.content)
     },
@@ -154,7 +152,6 @@ export const Resource: FC<ResourceProps> = ({
     initialValues: useMemo(() => ({ image: image }), [image]),
     validateOnMount: true,
     validationSchema: imageValidationSchema,
-    // validateOnChange: shouldValidate,
     onSubmit: values => {
       return values.image?.location !== image?.location &&
         typeof values.image?.location !== 'string'
@@ -177,24 +174,6 @@ export const Resource: FC<ResourceProps> = ({
     })
     contentForm.setTouched({ content: true })
     imageForm.setTouched({ image: true })
-  }
-
-  const save = () => {
-    if (form.dirty) {
-      editData(form.values)
-      form.resetForm({ values: form.values })
-    }
-
-    if (imageForm.dirty) {
-      typeof imageForm.values.image?.location !== 'string' &&
-        setImage(imageForm.values.image?.location)
-      imageForm.setTouched({ image: false })
-    }
-
-    if (contentForm.dirty) {
-      setContent(contentForm.values.content)
-      contentForm.setTouched({ content: false })
-    }
   }
 
   // useEffect(() => {
@@ -236,7 +215,12 @@ export const Resource: FC<ResourceProps> = ({
     } else {
       setShouldShowErrors(true)
     }
+    setIsPublishValidating(false)
   }
+
+  useEffect(() => {
+    setIsPublishValidating(isPublished)
+  }, [isPublished])
 
   const mainResourceCard = (
     <MainResourceCard
@@ -254,7 +238,6 @@ export const Resource: FC<ResourceProps> = ({
       access={access}
       slots={mainResourceCardSlots}
       fileMaxSize={fileMaxSize}
-      save={save}
       isSaving={isSaving}
       isEditing={isEditing}
       setIsEditing={setIsEditing}

@@ -94,12 +94,13 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const {
     // id,
     mnUrl,
-    // image,
+    image,
   } = data
 
   const { isPublished } = state
 
   const { unpublish, deleteCollection } = actions
+
   const { canPublish, canDelete, canEdit } = access
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -121,8 +122,18 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const handleOnSaveClick = () => {
     setisWaitingForSaving(true)
     setShouldShowErrors(false)
-    form.submitForm()
-    typeof imageForm.values.image?.location !== 'string' && imageForm.submitForm()
+
+    if (form.dirty) {
+      form.submitForm()
+      form.resetForm({ values: form.values })
+    }
+
+    if (imageForm.dirty) {
+      imageForm.values.image !== image &&
+        typeof imageForm.values.image?.location !== 'string' &&
+        imageForm.submitForm()
+      imageForm.setTouched({ image: false })
+    }
   }
 
   useEffect(() => {

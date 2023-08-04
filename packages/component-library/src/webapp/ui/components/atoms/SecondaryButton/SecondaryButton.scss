@@ -32,8 +32,8 @@
     }
 
     &.orange {
-      color: $primary-color;
-      border: 2px solid $primary-color;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
     }
 
     &.grey {
@@ -55,8 +55,8 @@
 
       &.orange,
       &.hover-orange {
-        color: $primary-color-hover;
-        border: 2px solid $primary-color-hover;
+        color: var(--primary-color-hover);
+        border: 2px solid var(--primary-color-hover);
       }
 
       &.grey &.hover-grey {
@@ -102,8 +102,8 @@
 
       &.orange,
       &.hover-orange {
-        color: $primary-color-active;
-        border: 2px solid $primary-color-active;
+        color: var(--primary-color-active);
+        border: 2px solid var(--primary-color-active);
       }
 
       &.grey,

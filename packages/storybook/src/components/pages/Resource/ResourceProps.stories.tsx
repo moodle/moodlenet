@@ -84,7 +84,7 @@ export const ResourceFormValues: ResourceFormProps = {
   level: FieldsDataStories.LevelTextOptionProps[2]!.value,
   license: FieldsDataStories.LicenseIconTextOptionProps[2]!.value,
   month: FieldsDataStories.MonthTextOptionProps[8]!.value,
-  year: FieldsDataStories.YearsProps[20]!.value,
+  year: FieldsDataStories.YearsProps[20]!.valueOf(),
   type: FieldsDataStories.TypeTextOptionProps[1]!.value,
 }
 
@@ -150,10 +150,10 @@ export const useResourceStoryProps = (
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     subject: '0011',
     license: 'CC-0 (Public domain)',
-    type: 'Presentation', //'Course',
+    type: '0', //'Course',
     language: 'English',
-    level: 'Primary',
-    month: 'April',
+    level: '3',
+    month: '5',
     year: '2022',
     ...overrides?.resourceForm,
   }
@@ -292,6 +292,8 @@ export const useResourceStoryProps = (
     sendToMoodle,
     AddToCollectionButtonStories.useAddToCollectionButtonStory(),
   ]
+
+  console.log(actions)
 
   return overrideDeep<ResourceProps>(
     {

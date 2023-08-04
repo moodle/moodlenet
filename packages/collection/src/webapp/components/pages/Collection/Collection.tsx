@@ -11,7 +11,7 @@ import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
@@ -147,7 +147,12 @@ export const Collection: FC<CollectionProps> = ({
     } else {
       setShouldShowErrors(true)
     }
+    setIsPublishValidating(false)
   }
+
+  useEffect(() => {
+    setIsPublishValidating(isPublished)
+  }, [isPublished])
 
   const resourceList = (
     <div className="resource-list">

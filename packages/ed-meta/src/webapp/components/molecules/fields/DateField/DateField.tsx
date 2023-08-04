@@ -71,6 +71,7 @@ export const DateField: FC<DateFieldProps> = ({
     })
   }, [searchTextYear, year, yearOptions, years.opts])
 
+  const monthLabel = monthOptions.find(({ value }) => value === month)?.label
   return canEdit ? (
     <div className="date">
       <label>Original creation date</label>
@@ -146,12 +147,9 @@ export const DateField: FC<DateFieldProps> = ({
   ) : month || year ? (
     <div className="detail">
       <div className="title">Original creation date</div>
-      <abbr
-        className={`value date`}
-        title={`${monthOptions.find(({ value }) => value === month)?.label ?? ''} ${year ?? ''}`}
-      >
-        <span>{monthOptions.find(({ value }) => value === month)?.label ?? ''}</span>
-        <span>{year ?? ''}</span>
+      <abbr className={`value date`} title={`${monthLabel ?? ''} ${year ?? ''}`}>
+        {monthLabel && <span>{monthLabel}</span>}
+        {year && <span>{year}</span>}
       </abbr>
     </div>
   ) : null
