@@ -1,6 +1,6 @@
 // import { getColorPalette, setOpacity } from './colorUtilities.mjs'
 
-import { baseMoodleColor, baseStyle, getColorPalette } from '@moodlenet/component-library'
+import { baseMoodleColor, baseStyle, getColorPalette } from '@moodlenet/component-library/common'
 import type { AppearanceData } from '../types.mjs'
 
 export const getAppearanceStyle = (

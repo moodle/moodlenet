@@ -1,4 +1,4 @@
-import type { BaseStyleType } from '@moodlenet/component-library'
+import type { BaseStyleType } from '@moodlenet/component-library/common'
 import type { PackageInfo, PkgExpose, PkgExposeDef, PkgIdentifier } from '@moodlenet/core'
 import type { CSSProperties } from 'react'
 
