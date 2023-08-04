@@ -33,12 +33,6 @@ const [useUpResourceTasks] = createTaskManager<
   { content: string | File | null | undefined }
 >()
 
-const [useUpImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
-const [useUpResourceTasks] = createTaskManager<
-  string | null,
-  { content: string | File | null | undefined }
->()
-
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)

@@ -25,6 +25,7 @@ export type SaveState = { form: boolean; image: boolean; avatar: boolean }
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
   saveState: SaveState
+  isSaving: boolean
 
   mainColumnItems: AddonItem[]
   sideColumnItems: AddonItem[]
