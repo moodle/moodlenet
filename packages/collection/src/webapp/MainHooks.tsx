@@ -1,4 +1,5 @@
 import { useImageUrl } from '@moodlenet/react-app/ui'
+import { createTaskManager } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type {
@@ -10,7 +11,6 @@ import type {
   SaveState,
 } from '../common/types.mjs'
 import { MainContext } from './MainContext.js'
-import { createTaskManager } from './pending-tasks.mjs'
 
 // type PendingImage = {
 //   pendingPromise: Promise<string | null>
@@ -44,10 +44,8 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
   const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUpImageTasks(
     collectionKey,
     res => {
-      console.log('hook task resolve', res)
-
       res.type === 'resolved' && updateImageUrl(res.value)
-      res.type !== 'aborted' && setterSave('image', false)
+      setterSave('image', false)
     },
   )
   const [saveState, setSaved] = useState(() => ({ form: false, image: !!upImageTaskCurrent }))

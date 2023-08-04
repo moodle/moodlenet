@@ -99,7 +99,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const { isPublished } = state
 
-  const { unpublish, deleteCollection, editData, setImage } = actions
+  const { unpublish, deleteCollection } = actions
   const { canPublish, canDelete, canEdit } = access
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)

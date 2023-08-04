@@ -31,4 +31,5 @@ export {
 } from '../ui/components/pages/Search/SearchPageHook.mjs'
 export { createPlugin } from '../web-lib/create-plugin.mjs'
 export { wrapFetch } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
+export { createTaskManager } from '../web-lib/task-manager.mjs'
 export { useUrlQueryString } from '../web-lib/use-query-params.mjs'
