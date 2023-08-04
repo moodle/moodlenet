@@ -38,11 +38,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const { rpcCaller } = useContext(MainContext)
   const nav = useNavigate()
   const [resource, setResource] = useState<ResourceProps | null>()
-  const [saveState, setSaveState] = useState<SaveState>({
-    form: false,
-    image: false,
-    content: false,
-  })
+
   const [isToDelete, setIsToDelete] = useState(false)
   const [isPublished, setIsPublish] = useState(false)
 
@@ -85,6 +81,13 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       setterSave('content', false)
     },
   )
+
+  const [saveState, setSaveState] = useState<SaveState>({
+    form: false,
+    image: !!upImageTaskCurrent,
+    content: !!upResourceTaskCurrent,
+  })
+
   const actions = useMemo<ResourceActions>(() => {
     const { edit: editRpc, setImage, setIsPublished, setContent, _delete } = rpcCaller
 
