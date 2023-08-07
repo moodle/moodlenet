@@ -23,7 +23,6 @@ export type ResourceCommonProps = {
   actions: ResourceActions
   props: ResourceProps
   saveState: SaveState
-  isSaving: boolean
   isToDelete: boolean
 }
 
@@ -171,7 +170,6 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
               },
             },
             saveState,
-            isSaving: saveState.form || saveState.image || saveState.content,
             isToDelete,
           },
     [

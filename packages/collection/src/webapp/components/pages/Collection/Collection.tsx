@@ -286,7 +286,7 @@ export const Collection: FC<CollectionProps> = ({
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
-      {`Check success, save to publish`}
+      {`Check success, save before publishing`}
     </Snackbar>
   )
 

@@ -14,7 +14,7 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -54,7 +54,6 @@ export type ResourceProps = {
   edMetaOptions: EdMetaOptionsProps
 
   fileMaxSize: number
-  isSaving: boolean
   isEditingAtStart: boolean
 
   validationSchemas: ValidationSchemas
@@ -79,9 +78,9 @@ export const Resource: FC<ResourceProps> = ({
   state,
   actions,
   access,
+  saveState,
 
   fileMaxSize,
-  isSaving,
   isEditingAtStart,
   validationSchemas: {
     contentValidationSchema,
@@ -95,6 +94,7 @@ export const Resource: FC<ResourceProps> = ({
   const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
   const { canPublish, canEdit } = access
   const { isPublished } = state
+  const { content: isSavingContent, form: isSavingForm, image: isSavingImage } = saveState
   const {
     languageOptions,
     levelOptions,
@@ -135,6 +135,7 @@ export const Resource: FC<ResourceProps> = ({
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
     onSubmit: values => {
+      console.log('editData')
       return editData(values)
     },
   })
@@ -160,7 +161,7 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
 
-  const setFieldsAsTouched = () => {
+  const setFieldsAsTouched = useCallback(() => {
     form.setTouched({
       title: true,
       description: true,
@@ -174,7 +175,7 @@ export const Resource: FC<ResourceProps> = ({
     })
     contentForm.setTouched({ content: true })
     imageForm.setTouched({ image: true })
-  }
+  }, [contentForm, form, imageForm])
 
   // useEffect(() => {
   //   if (form.dirty) {
@@ -189,11 +190,11 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const checkFormAndPublish = () => {
-    setIsPublishValidating(isPublished)
+    setIsPublishValidating(true)
     setFieldsAsTouched()
-    form.validateForm
-    contentForm.validateForm
-    imageForm.validateForm
+    form.validateForm()
+    contentForm.validateForm()
+    imageForm.validateForm()
     if (form.isValid && contentForm.isValid && imageForm.isValid) {
       form.submitForm()
       contentForm.submitForm()
@@ -206,21 +207,39 @@ export const Resource: FC<ResourceProps> = ({
     }
   }
 
+  useEffect(() => {
+    console.log('Now Publish validation is', isPublishValidating ? 'ON' : 'OFF')
+  }, [isPublishValidating])
+
   const publishCheck = () => {
+    console.log('Checking to publish')
     setIsPublishValidating(true)
+    setTimeout(() => {
+      applyPublishCheck()
+    }, 100)
+  }
+
+  const applyPublishCheck = () => {
     setFieldsAsTouched()
+    form.validateForm()
+    contentForm.validateForm()
+    imageForm.validateForm()
+    console.log('### isPublishValidating', isPublishValidating)
+    console.log(
+      'form.isValid',
+      form.isValid,
+      '\ncontentForm.isValid',
+      contentForm.isValid,
+      '\nimageForm.isValid',
+      imageForm.isValid,
+    )
     if (form.isValid && contentForm.isValid && imageForm.isValid) {
       setShowCheckPublishSuccess(true)
       setShouldShowErrors(false)
     } else {
       setShouldShowErrors(true)
     }
-    setIsPublishValidating(false)
   }
-
-  useEffect(() => {
-    setIsPublishValidating(isPublished)
-  }, [isPublished])
 
   const mainResourceCard = (
     <MainResourceCard
@@ -237,13 +256,15 @@ export const Resource: FC<ResourceProps> = ({
       actions={actions}
       access={access}
       slots={mainResourceCardSlots}
-      fileMaxSize={fileMaxSize}
-      isSaving={isSaving}
+      isSaving={isSavingForm}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
+      setIsPublishValidating={setIsPublishValidating}
       emptyOnStart={emptyOnStart}
       setShouldShowErrors={setShouldShowErrors}
       shouldShowErrors={shouldShowErrors}
+      setFieldsAsTouched={setFieldsAsTouched}
+      fileMaxSize={fileMaxSize}
     />
   )
 
@@ -260,7 +281,14 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const unpublishButton = canPublish && isPublished && (
-    <SecondaryButton onClick={unpublish} key="unpublish-button">
+    <SecondaryButton
+      onClick={() => {
+        console.log('unpublish')
+        unpublish()
+        setIsPublishValidating(false)
+      }}
+      key="unpublish-button"
+    >
       Unpublish
     </SecondaryButton>
   )
@@ -474,7 +502,7 @@ export const Resource: FC<ResourceProps> = ({
   //   ...(smallScreenColumnItems ?? []),
   // ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const isSavingSnackbar = isSaving && (
+  const isSavingSnackbar = (isSavingContent || isSavingImage) && (
     <Snackbar
       position="bottom"
       type="info"
@@ -494,7 +522,7 @@ export const Resource: FC<ResourceProps> = ({
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
-      {`Check success, save to publish`}
+      {`Check success, save before publishing`}
     </Snackbar>
   )
 

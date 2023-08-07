@@ -51,7 +51,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const { publishedMeta } = useContext(EdMetaContext)
 
   if (!resourceCommonProps) return resourceCommonProps
-  const { actions, props, isSaving, saveState } = resourceCommonProps
+  const { actions, props, saveState } = resourceCommonProps
   const { data, resourceForm, state, access, contributor } = props
 
   const mainResourceCardSlots: MainResourceCardSlots = {
@@ -104,7 +104,6 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     state,
     actions,
     access,
-    isSaving,
     fileMaxSize: configs.validations.contentMaxUploadSize,
     validationSchemas,
   }

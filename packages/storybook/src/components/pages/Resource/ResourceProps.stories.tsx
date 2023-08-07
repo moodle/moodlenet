@@ -28,7 +28,7 @@ import type { AddonItem } from '@moodlenet/component-library'
 import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
-import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
+import type { MainResourceCardSlots, ResourceProps, SaveState } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { SendToMoodle } from '../../../../../moodle-lms-integration/dist/webapp/ui/components/SendToMoodle.js'
@@ -183,11 +183,6 @@ export const useResourceStoryProps = (
           },
   }
 
-  const state: ResourceStateProps = {
-    isPublished: true,
-    ...overrides?.state,
-  }
-
   const setContent = (e: File | string | undefined | null) => {
     if (typeof e === 'string') {
       setFilename(null)
@@ -197,14 +192,34 @@ export const useResourceStoryProps = (
     action('set content')(e)
   }
 
+  const [isPublished, setIsPublished] = useState(
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
+  )
+  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
+
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: action('editing resource submited'),
-    publish: action('publish'),
-    unpublish: action('unpublish'),
+    editData: () => {
+      console.log('action edit data')
+      setIsSaving(true)
+      setTimeout(() => {
+        setIsSaving(false)
+      }, 1000)
+    },
+    publish: () => {
+      setIsPublished(true)
+    },
+    unpublish: () => {
+      setIsPublished(false)
+    },
     setContent: setContent,
     setImage: action('set image'),
     ...overrides?.actions,
+  }
+
+  const state: ResourceStateProps = {
+    isPublished: isPublished,
+    ...overrides?.state,
   }
 
   const access: ResourceAccessProps = {
@@ -242,9 +257,6 @@ export const useResourceStoryProps = (
     ...overrides?.bookmarkButtonProps,
     isAuthenticated,
   }
-
-  const isPublished =
-    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
   const mainResourceCardSlots: MainResourceCardSlots = {
     mainColumnItems: [],
@@ -293,7 +305,11 @@ export const useResourceStoryProps = (
     AddToCollectionButtonStories.useAddToCollectionButtonStory(),
   ]
 
-  console.log(actions)
+  const saveState: SaveState = {
+    form: isSaving,
+    content: false,
+    image: false,
+  }
 
   return overrideDeep<ResourceProps>(
     {
@@ -323,7 +339,7 @@ export const useResourceStoryProps = (
       extraDetailsItems: extraDetailsItems,
 
       fileMaxSize: 343243,
-      isSaving: false,
+      saveState: saveState,
       isEditingAtStart: false,
     },
     overrides,

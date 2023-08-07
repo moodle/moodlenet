@@ -69,11 +69,13 @@ export type MainResourceCardProps = {
 
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  setIsPublishValidating: React.Dispatch<React.SetStateAction<boolean>>
 
   emptyOnStart: boolean
   shouldShowErrors: boolean
   setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
 
+  setFieldsAsTouched: () => void
   fileMaxSize: number
 }
 
@@ -97,11 +99,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   isEditing,
   setIsEditing,
+  setIsPublishValidating,
 
   emptyOnStart,
   setShouldShowErrors,
   shouldShowErrors,
 
+  setFieldsAsTouched,
   fileMaxSize,
 }) => {
   const {
@@ -162,10 +166,50 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   }
 
   const handleOnSaveClick = () => {
-    setisWaitingForSaving(true)
+    console.log('comming to handleOnSaveClick')
+
+    console.log(
+      'form.dirty',
+      form.dirty,
+      '\nimageForm.dirty',
+      imageForm.dirty,
+      '\ncontentForm.dirty',
+      contentForm.dirty,
+    )
+
+    if (!form.dirty && !imageForm.dirty && !contentForm.dirty) {
+      console.log('Nothing to save')
+      setIsEditing(false)
+      return
+    }
+
+    setTimeout(() => {
+      setFieldsAsTouched()
+      form.validateForm()
+      contentForm.validateForm()
+      imageForm.validateForm()
+    }, 1000)
+
+    console.log(
+      'formIsValid',
+      form.isValid,
+      '\ncontentFormIsValid',
+      contentForm.isValid,
+      '\nimageFormIsValid',
+      imageForm.isValid,
+    )
+
+    if (isPublished && (!form.isValid || !contentForm.isValid || !imageForm.isValid)) {
+      console.log('Published form is not valid')
+      setShouldShowErrors(true)
+      return
+    }
+
     setShouldShowErrors(false)
+    setisWaitingForSaving(true)
 
     if (form.dirty) {
+      console.log('submiting form dirty')
       form.submitForm()
       form.resetForm({ values: form.values })
     }
@@ -260,13 +304,17 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       setisWaitingForSaving(false)
       setIsCurrentlySaving(true)
     }
-    if (!isSaving && isCurrentlySaving && !formValuesChanged) {
+    if (
+      !isSaving &&
+      isCurrentlySaving
+      // && !formValuesChanged
+    ) {
       setIsCurrentlySaving(false)
       setIsEditing(false)
     }
-    if ((isWaitingForSaving || isCurrentlySaving) && formValuesChanged) {
-      setIsCurrentlySaving(false)
-    }
+    // if ((isWaitingForSaving || isCurrentlySaving) && formValuesChanged) {
+    //   setIsCurrentlySaving(false)
+    // }
   }, [
     contentForm.isSubmitting,
     form.isSubmitting,
@@ -277,19 +325,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     isWaitingForSaving,
     setIsEditing,
   ])
-
-  // const savingFeedback = isSaving ? (
-  //   <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-  //     <Loading type="circular" color="#8f8f8f" size="19px" />
-  //     {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
-  //     Saving...
-  //   </abbr>
-  // ) : saved ? (
-  //   <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-  //     <CloudDoneOutlined />
-  //     {showSavedText && 'Saved'}
-  //   </abbr>
-  // ) : null
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
@@ -359,7 +394,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     canPublish && isPublished
       ? {
           Element: (
-            <div key="unpublish-button" onClick={unpublish}>
+            <div
+              key="unpublish-button"
+              onClick={() => {
+                unpublish()
+                setIsPublishValidating(false)
+              }}
+            >
               <PublicOff />
               Unpublish
             </div>
