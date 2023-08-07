@@ -194,7 +194,8 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           throw RpcStatus('Unauthorized')
         }
         const updateRes = await setProfileAvatar({ _key, rpcFile: uploadedRpcFile })
-        if (!updateRes?.patched.avatarImage) {
+
+        if (!updateRes || !updateRes.patched.avatarImage) {
           return null
         }
         return publicFilesHttp.getFileUrl({
@@ -218,7 +219,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         }
 
         const updateRes = await setProfileBackgroundImage({ _key, rpcFile: uploadedRpcFile })
-        if (!updateRes?.patched.backgroundImage) {
+        if (!updateRes || !updateRes.patched.backgroundImage) {
           return null
         }
         return publicFilesHttp.getFileUrl({

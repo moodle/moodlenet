@@ -13,11 +13,7 @@ import {
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 import type { CollectionExposeType } from '../common/expose-def.mjs'
-import type {
-  CollectionContributorRpc,
-  CollectionFormRpc,
-  CollectionRpc,
-} from '../common/types.mjs'
+import type { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { publicFiles } from './init/fs.mjs'
@@ -143,11 +139,8 @@ export const expose = await shell.expose<CollectionExposeType>({
     'webapp/edit/:_key': {
       guard: async body => {
         const { draftCollectionValidationSchema } = await getValidations()
-        const formValues: CollectionFormRpc = {
-          description: body?.values?.description,
-          title: body?.values?.title,
-        }
-        body.values = await draftCollectionValidationSchema.validate(formValues, {
+
+        body.values = await draftCollectionValidationSchema.validate(body?.values, {
           stripUnknown: true,
         })
       },
@@ -181,7 +174,14 @@ export const expose = await shell.expose<CollectionExposeType>({
       },
     },
     'webapp/upload-image/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { imageValidationSchema } = await getValidations()
+        const validatedImageOrNullish = await imageValidationSchema.validate(
+          { image: body?.file?.[0] },
+          { stripUnknown: true },
+        )
+        body.file = [validatedImageOrNullish]
+      },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getCollection(_key, { projectAccess: ['u'] })
 

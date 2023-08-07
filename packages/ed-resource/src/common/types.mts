@@ -91,7 +91,7 @@ export type RpcCaller = {
     file: File | string | undefined | null,
     rpcId: string,
   ) => Promise<string | null>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<boolean | null | undefined>
   create: () => Promise<{ _key: string }>
 }
 export type ResourceActions = {

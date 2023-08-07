@@ -1,12 +1,16 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import { Collection, deltaCollectionPopularityItem } from '@moodlenet/collection/server'
-import { type RpcFile } from '@moodlenet/core'
+import { RpcStatus, type RpcFile } from '@moodlenet/core'
 import { deltaIscedFieldPopularityItem } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import { deltaResourcePopularityItem, Resource } from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
-import { getWebappUrl, webImageResizer } from '@moodlenet/react-app/server'
+import {
+  defaultImageUploadMaxSize,
+  getWebappUrl,
+  webImageResizer,
+} from '@moodlenet/react-app/server'
 import type { EntityClass, SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
@@ -23,7 +27,10 @@ import {
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
+import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
 import type { KnownEntityFeature, KnownEntityType, SortTypeRpc } from '../../common/types.mjs'
+import type { ValidationsConfig } from '../../common/validationSchema.mjs'
+import { getValidationSchemas } from '../../common/validationSchema.mjs'
 import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
 import { publicFiles } from '../init/fs.mjs'
@@ -38,19 +45,57 @@ import {
   verifyCurrentTokenCtx,
 } from './web-user.mjs'
 
+export async function getValidations() {
+  const config: ValidationsConfig = {
+    imageMaxUploadSize: defaultImageUploadMaxSize,
+  }
+  const {
+    avatarImageValidation,
+    backgroundImageValidation,
+    displayNameSchema,
+    profileValidationSchema,
+  } = getValidationSchemas(config)
+
+  return {
+    avatarImageValidation,
+    backgroundImageValidation,
+    displayNameSchema,
+    profileValidationSchema,
+    config,
+  }
+}
+
 export async function editProfile(
   key: string,
-  updateWithData: Partial<ProfileDataType>,
+  editData: Partial<ProfileDataType>,
   opts?: {
     projectAccess?: EntityAccess[]
   },
 ) {
   const webUser = await getWebUserByProfileKey({ profileKey: key })
   assert(webUser, `couldn't find associated WebUser for profileKey ${key}`)
-  updateWithData = updateWithData.displayName
-    ? { ...updateWithData, webslug: webSlug(updateWithData.displayName) }
-    : updateWithData
+  const profileRec = await getProfileRecord(key)
+  if (!profileRec) {
+    throw RpcStatus('Not Found')
+  }
+  editData = editData.displayName
+    ? { ...editData, webslug: webSlug(editData.displayName) }
+    : editData
 
+  const { profileValidationSchema } = await getValidations()
+
+  const updateWithData: EditProfileDataRpc = {
+    aboutMe: editData.aboutMe ?? profileRec.entity.aboutMe ?? '',
+    displayName: editData.displayName ?? profileRec.entity.displayName,
+    location: editData.location ?? profileRec.entity.location ?? undefined,
+    organizationName: editData.organizationName ?? profileRec.entity.organizationName ?? undefined,
+    siteUrl: editData.siteUrl ?? profileRec.entity.siteUrl ?? undefined,
+  }
+
+  const isValid = await profileValidationSchema.isValid(updateWithData)
+  if (!isValid) {
+    return false
+  }
   const updateRes = await patchEntity(Profile.entityClass, key, updateWithData, opts)
 
   if (!updateRes) {
