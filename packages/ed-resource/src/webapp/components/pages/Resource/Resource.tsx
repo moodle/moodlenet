@@ -189,8 +189,19 @@ export const Resource: FC<ResourceProps> = ({
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
   )
 
-  const checkFormAndPublish = () => {
+  useEffect(() => {
+    console.log('Now Publish validation is', isPublishValidating ? 'ON' : 'OFF')
+  }, [isPublishValidating])
+
+  const checkFormsAndPublish = () => {
+    console.log('Checking to forms and publish')
     setIsPublishValidating(true)
+    setTimeout(() => {
+      applyFormsAndPublish()
+    }, 100)
+  }
+
+  const applyFormsAndPublish = () => {
     setFieldsAsTouched()
     form.validateForm()
     contentForm.validateForm()
@@ -206,10 +217,6 @@ export const Resource: FC<ResourceProps> = ({
       setShouldShowErrors(true)
     }
   }
-
-  useEffect(() => {
-    console.log('Now Publish validation is', isPublishValidating ? 'ON' : 'OFF')
-  }, [isPublishValidating])
 
   const publishCheck = () => {
     console.log('Checking to publish')
@@ -244,7 +251,7 @@ export const Resource: FC<ResourceProps> = ({
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
-      publish={checkFormAndPublish}
+      publish={checkFormsAndPublish}
       publishCheck={publishCheck}
       data={data}
       resourceForm={resourceForm}
@@ -269,7 +276,7 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const publishButton = !isEditing && canPublish && !isPublished && (
-    <PrimaryButton onClick={checkFormAndPublish} color="green" key="publish-button">
+    <PrimaryButton onClick={checkFormsAndPublish} color="green" key="publish-button">
       Publish
     </PrimaryButton>
   )
