@@ -175,7 +175,7 @@ export const getResourceDomainName = (url: string): string => {
 }
 
 export const getResourceTypeInfo = (
-  isLinkOrFile: 'link' | 'file',
+  isLinkOrFile: 'link' | 'file' | null,
   filenameOrUrl: string | null,
 ): { typeName: string | null; typeColor: string | null } => {
   const resourceType =
