@@ -183,19 +183,26 @@ export const useResourceStoryProps = (
           },
   }
 
+  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
+
   const setContent = (e: File | string | undefined | null) => {
+    console.log('filename', typeof e === 'string' ? undefined : e?.name)
     if (typeof e === 'string') {
       setFilename(null)
     } else {
       e ? setFilename(e.name) : setFilename(null)
     }
+    setIsSaving(true)
+    setTimeout(() => {
+      setIsSaving(false)
+    }, 1000)
+
     action('set content')(e)
   }
 
   const [isPublished, setIsPublished] = useState(
     overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
   )
-  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
 
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
@@ -332,7 +339,7 @@ export const useResourceStoryProps = (
       access: access,
       edMetaOptions: edMetaOptions,
       validationSchemas: getValidationSchemas({
-        contentMaxUploadSize: 300000,
+        contentMaxUploadSize: 30000000,
         imageMaxUploadSize: 300000,
       }),
 

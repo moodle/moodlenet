@@ -53,6 +53,7 @@ export type MainCollectionCardProps = {
 
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  setIsPublishValidating: React.Dispatch<React.SetStateAction<boolean>>
 
   emptyOnStart: boolean
   shouldShowErrors: boolean
@@ -63,7 +64,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   slots,
 
   data,
-  // collectionForm,
   form,
   imageForm,
 
@@ -77,6 +77,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   isEditing,
   setIsEditing,
+  setIsPublishValidating,
 
   emptyOnStart,
   shouldShowErrors,
@@ -228,7 +229,14 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     canPublish && isPublished
       ? {
           Element: (
-            <div key="unpublish-button" onClick={unpublish}>
+            <div
+              key="unpublish-button"
+              onClick={() => {
+                console.log('unpublish')
+                unpublish()
+                setIsPublishValidating(false)
+              }}
+            >
               <PublicOff />
               Unpublish
             </div>

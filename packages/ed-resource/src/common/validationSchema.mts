@@ -14,26 +14,8 @@ export function getValidationSchemas({
 }: ValidationsConfig) {
   const publishedResourceValidationSchema = getResourceValidationSchema({ type: 'publish' })
   const draftResourceValidationSchema = getResourceValidationSchema({ type: 'draft' })
-  const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> = object({
-    content: mixed()
-      .test((v, { createError }) =>
-        typeof v === 'string'
-          ? validURL(v)
-            ? true
-            : createError({
-                message: `Url not valid`,
-              })
-          : true,
-      )
-      .test((v, { createError }) =>
-        v instanceof Blob && v.size > contentMaxUploadSize
-          ? createError({
-              message: `The file is too big, please reduce the size or provide a url`,
-            })
-          : true,
-      )
-      .required(`Please upload a content or a link`),
-  })
+  const publishedContentValidationSchema = getContentValidationSchema({ type: 'publish' })
+  const draftContentValidationSchema = getContentValidationSchema({ type: 'draft' })
 
   const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
     image: mixed()
@@ -50,8 +32,36 @@ export function getValidationSchemas({
   return {
     publishedResourceValidationSchema,
     draftResourceValidationSchema,
-    contentValidationSchema,
+    publishedContentValidationSchema,
+    draftContentValidationSchema,
     imageValidationSchema,
+  }
+
+  function getContentValidationSchema({ type }: { type: 'publish' | 'draft' }) {
+    const forPublish = type === 'publish'
+    const schema: SchemaOf<{ content: File | string | undefined | null }> = object({
+      content: mixed()
+        .test((v, { createError }) =>
+          typeof v === 'string'
+            ? validURL(v)
+              ? true
+              : createError({
+                  message: `Url not valid`,
+                })
+            : true,
+        )
+        .test((v, { createError }) =>
+          v instanceof Blob && v.size > contentMaxUploadSize
+            ? createError({
+                message: `The file is too big, please reduce the size or provide a url`,
+              })
+            : true,
+        )
+        .withMutation(s =>
+          forPublish ? s.required(`Please upload a content or a link`) : s.optional(),
+        ),
+    })
+    return schema
   }
 
   function getResourceValidationSchema({ type }: { type: 'publish' | 'draft' }) {

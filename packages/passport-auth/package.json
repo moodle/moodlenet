@@ -25,11 +25,11 @@
     "src/"
   ],
   "exports": {
-    "./server": "./dist/server/exports.mjs",
-    "./common": "./dist/common/exports.mjs",
-    "./ui": "./dist/webapp/exports/ui.mjs",
-    "./stories": "./dist/webapp/exports/stories.mjs",
-    "./webapp": "./dist/webapp/exports/webapp.mjs"
+    "./server": "./src/server/exports.mjs",
+    "./common": "./src/common/exports.mjs",
+    "./ui": "./src/webapp/exports/ui.mjs",
+    "./stories": "./src/webapp/exports/stories.mjs",
+    "./webapp": "./src/webapp/exports/webapp.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",

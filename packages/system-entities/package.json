@@ -12,9 +12,9 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./server": "./dist/server/exports.mjs",
-    "./common": "./dist/common/exports.mjs",
-    "./webapp/rt": "./dist/webapp/rt/exports.mjs"
+    "./server": "./src/server/exports.mjs",
+    "./common": "./src/common/exports.mjs",
+    "./webapp/rt": "./src/webapp/rt/exports.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",

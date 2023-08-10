@@ -70,12 +70,7 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({ site, userId, sendToMoodle
 
   const snackbars = [
     showUserIdCopiedAlert && (
-      <Snackbar
-        type="success"
-        position="bottom"
-        autoHideDuration={600000000}
-        showCloseButton={false}
-      >
+      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
         User ID copied to the clipboard, use it to connect with Moodle LMS
       </Snackbar>
     ),

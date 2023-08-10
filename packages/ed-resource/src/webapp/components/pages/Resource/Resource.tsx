@@ -14,7 +14,7 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -83,7 +83,8 @@ export const Resource: FC<ResourceProps> = ({
   fileMaxSize,
   isEditingAtStart,
   validationSchemas: {
-    contentValidationSchema,
+    draftContentValidationSchema,
+    publishedContentValidationSchema,
     draftResourceValidationSchema,
     imageValidationSchema,
     publishedResourceValidationSchema,
@@ -91,7 +92,14 @@ export const Resource: FC<ResourceProps> = ({
 }) => {
   const viewport = useViewport()
   const { downloadFilename, contentUrl, contentType, image } = data
-  const { editData, deleteResource, publish, unpublish, setContent, setImage } = actions
+  const {
+    editData,
+    deleteResource,
+    publish,
+    unpublish: setUnpublish,
+    setContent,
+    setImage,
+  } = actions
   const { canPublish, canEdit } = access
   const { isPublished } = state
   const { content: isSavingContent, form: isSavingForm, image: isSavingImage } = saveState
@@ -105,10 +113,6 @@ export const Resource: FC<ResourceProps> = ({
     yearOptions,
   } = edMetaOptions
 
-  //   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
-  //     useState<boolean>(false)
-  //   const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
-  //     useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
@@ -130,20 +134,23 @@ export const Resource: FC<ResourceProps> = ({
 
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
+    enableReinitialize: true,
     validateOnMount: true,
     validationSchema: isPublishValidating
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
     onSubmit: values => {
-      console.log('editData')
       return editData(values)
     },
   })
 
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
+    enableReinitialize: true,
     validateOnMount: true,
-    validationSchema: contentValidationSchema,
+    validationSchema: isPublishValidating
+      ? publishedContentValidationSchema
+      : draftContentValidationSchema,
     onSubmit: values => {
       return setContent(values.content)
     },
@@ -151,6 +158,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const imageForm = useFormik<{ image: AssetInfoForm | undefined | null }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
+    enableReinitialize: true,
     validateOnMount: true,
     validationSchema: imageValidationSchema,
     onSubmit: values => {
@@ -161,7 +169,7 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
 
-  const setFieldsAsTouched = useCallback(() => {
+  const setFieldsAsTouched = () => {
     form.setTouched({
       title: true,
       description: true,
@@ -175,33 +183,20 @@ export const Resource: FC<ResourceProps> = ({
     })
     contentForm.setTouched({ content: true })
     imageForm.setTouched({ image: true })
-  }, [contentForm, form, imageForm])
-
-  // useEffect(() => {
-  //   if (form.dirty) {
-  //     editData(form.values)
-  //   }
-  // }, [form.values, form.dirty, editData])
-
-  // const [imageUrl] = useImageUrl(form.values?.image?.location, backupImage?.location)
+  }
 
   const contributorCard = isPublished && (
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
   )
 
-  useEffect(() => {
-    console.log('Now Publish validation is', isPublishValidating ? 'ON' : 'OFF')
-  }, [isPublishValidating])
-
   const checkFormsAndPublish = () => {
-    console.log('Checking to forms and publish')
     setIsPublishValidating(true)
     setTimeout(() => {
-      applyFormsAndPublish()
+      applyCheckFormsAndPublish()
     }, 100)
   }
 
-  const applyFormsAndPublish = () => {
+  const applyCheckFormsAndPublish = () => {
     setFieldsAsTouched()
     form.validateForm()
     contentForm.validateForm()
@@ -210,36 +205,28 @@ export const Resource: FC<ResourceProps> = ({
       form.submitForm()
       contentForm.submitForm()
       imageForm.submitForm()
+      setIsPublishValidating(true)
       setShouldShowErrors(false)
       publish()
     } else {
       setIsEditing(true)
+      setIsPublishValidating(true)
       setShouldShowErrors(true)
     }
   }
 
   const publishCheck = () => {
-    console.log('Checking to publish')
     setIsPublishValidating(true)
-    setTimeout(() => {
-      applyPublishCheck()
-    }, 100)
+    applyPublishCheck()
   }
 
   const applyPublishCheck = () => {
     setFieldsAsTouched()
+
     form.validateForm()
     contentForm.validateForm()
     imageForm.validateForm()
-    console.log('### isPublishValidating', isPublishValidating)
-    console.log(
-      'form.isValid',
-      form.isValid,
-      '\ncontentForm.isValid',
-      contentForm.isValid,
-      '\nimageForm.isValid',
-      imageForm.isValid,
-    )
+
     if (form.isValid && contentForm.isValid && imageForm.isValid) {
       setShowCheckPublishSuccess(true)
       setShouldShowErrors(false)
@@ -248,10 +235,17 @@ export const Resource: FC<ResourceProps> = ({
     }
   }
 
+  const unpublish = () => {
+    setIsPublishValidating(false)
+    setShouldShowErrors(false)
+    setUnpublish()
+  }
+
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
       publish={checkFormsAndPublish}
+      unpublish={unpublish}
       publishCheck={publishCheck}
       data={data}
       resourceForm={resourceForm}
@@ -290,7 +284,6 @@ export const Resource: FC<ResourceProps> = ({
   const unpublishButton = canPublish && isPublished && (
     <SecondaryButton
       onClick={() => {
-        console.log('unpublish')
         unpublish()
         setIsPublishValidating(false)
       }}
@@ -514,7 +507,7 @@ export const Resource: FC<ResourceProps> = ({
       position="bottom"
       type="info"
       waitDuration={1500}
-      autoHideDuration={6000}
+      // autoHideDuration={6000}
       showCloseButton={false}
     >
       {`Content uploading, please don't close the tab`}
@@ -525,11 +518,11 @@ export const Resource: FC<ResourceProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={6000}
+      autoHideDuration={4000}
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
-      {`Check success, save before publishing`}
+      {`Success, save before publishing`}
     </Snackbar>
   )
 

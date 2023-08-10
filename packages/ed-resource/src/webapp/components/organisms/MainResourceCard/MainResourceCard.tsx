@@ -65,6 +65,7 @@ export type MainResourceCardProps = {
 
   isSaving: boolean
   publish: () => void
+  unpublish: () => void
   publishCheck: () => void
 
   isEditing: boolean
@@ -95,6 +96,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   isSaving,
   publish,
+  unpublish,
   publishCheck,
 
   isEditing,
@@ -124,7 +126,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { isPublished, uploadProgress } = state
 
-  const { unpublish, deleteResource } = actions
+  const { deleteResource } = actions
 
   const { canEdit, canPublish, canDelete } = access
 
@@ -162,54 +164,36 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setIsEditing(true)
     setShouldShowErrors(false)
     setIsCurrentlySaving(false)
-    setisWaitingForSaving(false)
+    setIsWaitingForSaving(false)
   }
 
   const handleOnSaveClick = () => {
-    console.log('comming to handleOnSaveClick')
-
-    console.log(
-      'form.dirty',
-      form.dirty,
-      '\nimageForm.dirty',
-      imageForm.dirty,
-      '\ncontentForm.dirty',
-      contentForm.dirty,
-    )
-
     if (!form.dirty && !imageForm.dirty && !contentForm.dirty) {
-      console.log('Nothing to save')
       setIsEditing(false)
       return
     }
 
+    setIsPublishValidating(isPublished)
     setTimeout(() => {
-      setFieldsAsTouched()
-      form.validateForm()
-      contentForm.validateForm()
-      imageForm.validateForm()
-    }, 1000)
+      applySave()
+    }, 100)
+  }
 
-    console.log(
-      'formIsValid',
-      form.isValid,
-      '\ncontentFormIsValid',
-      contentForm.isValid,
-      '\nimageFormIsValid',
-      imageForm.isValid,
-    )
+  const applySave = () => {
+    setFieldsAsTouched()
+    form.validateForm()
+    contentForm.validateForm()
+    imageForm.validateForm()
 
-    if (isPublished && (!form.isValid || !contentForm.isValid || !imageForm.isValid)) {
-      console.log('Published form is not valid')
+    if (!form.isValid || !contentForm.isValid || !imageForm.isValid) {
       setShouldShowErrors(true)
       return
     }
 
     setShouldShowErrors(false)
-    setisWaitingForSaving(true)
+    setIsWaitingForSaving(true)
 
     if (form.dirty) {
-      console.log('submiting form dirty')
       form.submitForm()
       form.resetForm({ values: form.values })
     }
@@ -283,7 +267,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : null
 
   const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
-  const [isWaitingForSaving, setisWaitingForSaving] = useState(false)
+  const [isWaitingForSaving, setIsWaitingForSaving] = useState(false)
 
   const formValuesChanged =
     (form.dirty &&
@@ -301,7 +285,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   useEffect(() => {
     if (isWaitingForSaving && isSaving) {
-      setisWaitingForSaving(false)
+      setIsWaitingForSaving(false)
       setIsCurrentlySaving(true)
     }
     if (

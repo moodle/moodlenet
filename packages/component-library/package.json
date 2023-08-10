@@ -34,10 +34,10 @@
     "moodlenet-component-library-dist.d.ts"
   ],
   "exports": {
-    ".": "./dist/ui.mjs",
-    "./stories": "./dist/stories.mjs",
-    "./common": "./dist/common.mjs",
-    "./ui/scss/application": "./dist/webapp/ui/styles/application.scss"
+    ".": "./src/ui.mjs",
+    "./stories": "./src/stories.mjs",
+    "./common": "./src/common.mjs",
+    "./ui/scss/application": "./src/webapp/ui/styles/application.scss"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",

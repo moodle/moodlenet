@@ -64,8 +64,10 @@ export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
     isEditingAtStart: true,
     data: {
-      downloadFilename: undefined,
-      contentUrl: undefined,
+      downloadFilename: null,
+      contentType: undefined,
+      // downloadFilename: undefined,
+      contentUrl: null,
       image: null,
       // numLikes: 0,
     },
@@ -73,6 +75,7 @@ export const New: ResourceStory = () => {
 
     state: {
       isPublished: false,
+      // uploadProgress: 74,
     },
     actions: {},
     access: {

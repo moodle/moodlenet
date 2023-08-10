@@ -11,7 +11,7 @@ import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
@@ -126,8 +126,15 @@ export const Collection: FC<CollectionProps> = ({
     imageForm.setTouched({ image: true })
   }
 
-  const checkFormAndPublish = () => {
-    setIsPublishValidating(isPublished)
+  const checkFormsAndPublish = () => {
+    console.log('Checking to forms and publish')
+    setIsPublishValidating(true)
+    setTimeout(() => {
+      applyFormsAndPublish()
+    }, 100)
+  }
+
+  const applyFormsAndPublish = () => {
     setFieldsAsTouched()
     if (form.isValid && imageForm.isValid) {
       form.submitForm()
@@ -141,7 +148,14 @@ export const Collection: FC<CollectionProps> = ({
   }
 
   const publishCheck = () => {
+    console.log('Checking to publish')
     setIsPublishValidating(true)
+    setTimeout(() => {
+      applyPublishCheck()
+    }, 100)
+  }
+
+  const applyPublishCheck = () => {
     setFieldsAsTouched()
     if (form.isValid && imageForm.isValid) {
       setShowCheckPublishSuccess(true)
@@ -151,10 +165,6 @@ export const Collection: FC<CollectionProps> = ({
     }
     setIsPublishValidating(false)
   }
-
-  useEffect(() => {
-    setIsPublishValidating(isPublished)
-  }, [isPublished])
 
   const resourceList = (
     <div className="resource-list">
@@ -187,7 +197,7 @@ export const Collection: FC<CollectionProps> = ({
       // collectionForm={collectionForm}
       form={form}
       imageForm={imageForm}
-      publish={checkFormAndPublish}
+      publish={checkFormsAndPublish}
       publishCheck={publishCheck}
       state={state}
       actions={actions}
@@ -195,6 +205,7 @@ export const Collection: FC<CollectionProps> = ({
       slots={mainCollectionCardSlots}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
+      setIsPublishValidating={setIsPublishValidating}
       emptyOnStart={emptyOnStart}
       shouldShowErrors={shouldShowErrors}
       setShouldShowErrors={setShouldShowErrors}
@@ -207,7 +218,7 @@ export const Collection: FC<CollectionProps> = ({
   ) : null
 
   const publishButton = !isEditing && canPublish && !isPublished /*  && !isEditing */ && (
-    <PrimaryButton onClick={checkFormAndPublish} color="green">
+    <PrimaryButton onClick={checkFormsAndPublish} color="green">
       Publish
     </PrimaryButton>
   )
@@ -220,7 +231,15 @@ export const Collection: FC<CollectionProps> = ({
 
   const unpublishButton =
     canPublish && isPublished ? (
-      <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
+      <SecondaryButton
+        onClick={() => {
+          console.log('unpublish')
+          unpublish()
+          setIsPublishValidating(false)
+        }}
+      >
+        Unpublish
+      </SecondaryButton>
     ) : null
 
   const editorActionsContainer = canPublish ? (
@@ -286,7 +305,7 @@ export const Collection: FC<CollectionProps> = ({
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
-      {`Check success, save before publishing`}
+      {`Success, save before publishing`}
     </Snackbar>
   )
 

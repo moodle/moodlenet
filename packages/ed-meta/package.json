@@ -84,13 +84,13 @@
     }
   },
   "exports": {
-    "./server": "./dist/server/exports.mjs",
-    "./init": "./dist/server/init.mjs",
-    "./common": "./dist/common/exports.mjs",
-    "./ui": "./dist/webapp/exports/ui.mjs",
-    "./stories": "./dist/webapp/exports/stories.mjs",
-    "./webapp": "./dist/webapp/rt/exports.mjs",
-    "./@moodlenet/react-app/init": "./dist/webapp/exports/init.mjs"
+    "./server": "./src/server/exports.mjs",
+    "./init": "./src/server/init.mjs",
+    "./common": "./src/common/exports.mjs",
+    "./ui": "./src/webapp/exports/ui.mjs",
+    "./stories": "./src/webapp/exports/stories.mjs",
+    "./webapp": "./src/webapp/rt/exports.mjs",
+    "./@moodlenet/react-app/init": "./src/webapp/exports/init.mjs"
   },
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
 }
