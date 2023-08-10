@@ -245,7 +245,10 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const fileUploader = (
     <div
       className="file upload"
-      onClick={selectFile}
+      onClick={e => {
+        e.stopPropagation()
+        selectFile()
+      }}
       onKeyUp={e => e.key === 'Enter' && selectFile()}
       tabIndex={0}
       // style={{ ...uploadHeight }}

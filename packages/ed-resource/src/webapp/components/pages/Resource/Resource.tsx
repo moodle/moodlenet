@@ -409,8 +409,8 @@ export const Resource: FC<ResourceProps> = ({
     </Card>
   ) : null
 
-  const downloadOrOpenLink =
-    contentUrl || contentForm.values.content ? (
+  const downloadOrOpenLinkButton =
+    contentType && (contentUrl || contentForm.values.content) ? (
       <a
         href={contentUrl ?? undefined}
         target="_blank"
@@ -418,12 +418,13 @@ export const Resource: FC<ResourceProps> = ({
         download={downloadFilename}
       >
         <SecondaryButton key="download-or-open-link-button">
-          {contentType === 'file' ? (
+          {contentType === 'file' && (
             <>
               <InsertDriveFile />
               Download file
             </>
-          ) : (
+          )}
+          {contentType === 'link' && (
             <>
               <Link />
               Open link
@@ -438,7 +439,7 @@ export const Resource: FC<ResourceProps> = ({
     publishCheckButton,
     unpublishButton,
     ...(generalActionsItems ?? []),
-    downloadOrOpenLink,
+    downloadOrOpenLinkButton,
   ].filter((item): item is AddonItem => !!item)
 
   const generalActionsContainer = (

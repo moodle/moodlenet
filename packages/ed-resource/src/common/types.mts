@@ -178,6 +178,7 @@ export const getResourceTypeInfo = (
   isLinkOrFile: 'link' | 'file' | null,
   filenameOrUrl: string | null,
 ): { typeName: string | null; typeColor: string | null } => {
+  if (!isLinkOrFile) return { typeName: null, typeColor: null }
   const resourceType =
     (isLinkOrFile === 'file'
       ? filenameOrUrl?.split('.').pop()
