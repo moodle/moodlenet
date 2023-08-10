@@ -161,7 +161,10 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
                 ...(upResourceTaskCurrent
                   ? {
                       contentUrl: upResourceTaskCurrentObjectUrl,
-                      downloadFilename: upResourceTaskCurrentObjectUrl,
+                      downloadFilename:
+                        upResourceTaskCurrentContent instanceof Blob
+                          ? upResourceTaskCurrentContent.name
+                          : null,
                       contentType: upResourceTaskCurrentContent instanceof Blob ? 'file' : 'link',
                     }
                   : {}),

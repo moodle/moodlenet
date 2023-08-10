@@ -33,7 +33,7 @@ export type ResourceFormRpc = {
 export type ResourceDataRpc = {
   id: string
   mnUrl: string
-  contentType: 'link' | 'file'
+  contentType: 'link' | 'file' | null
   image: AssetInfo | null
   subjectHref: Href | null
 

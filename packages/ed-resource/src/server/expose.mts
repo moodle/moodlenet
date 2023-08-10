@@ -118,7 +118,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
             type: found.entity.type,
           },
           data: {
-            contentType: found.entity.content?.kind ?? 'link',
+            contentType: found.entity.content?.kind ?? null,
             contentUrl,
             downloadFilename:
               found.entity.content?.kind === 'file'
