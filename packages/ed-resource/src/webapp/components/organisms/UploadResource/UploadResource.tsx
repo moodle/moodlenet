@@ -251,7 +251,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
       }}
       onKeyUp={e => e.key === 'Enter' && selectFile()}
       tabIndex={0}
-      // style={{ ...uploadHeight }}
     >
       <input
         ref={uploadFileRef}

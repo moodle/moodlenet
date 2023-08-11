@@ -49,7 +49,6 @@ export type CollectionProps = {
   state: CollectionStateProps
   actions: CollectionActions
   access: CollectionAccessProps
-  isSaving: boolean
   saveState: SaveState
   isEditingAtStart: boolean
   validationSchemas: ValidationSchemas
@@ -72,7 +71,8 @@ export const Collection: FC<CollectionProps> = ({
   state,
   actions,
   access,
-  isSaving,
+  saveState,
+
   isEditingAtStart,
   validationSchemas: {
     draftCollectionValidationSchema,
@@ -85,6 +85,8 @@ export const Collection: FC<CollectionProps> = ({
   const { isPublished } = state
   const { editData, deleteCollection, publish, unpublish, removeResource, setImage } = actions
   const { canPublish, canEdit } = access
+  const { form: isSavingForm, image: isSavingImage } = saveState
+
   const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
   const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
@@ -209,7 +211,7 @@ export const Collection: FC<CollectionProps> = ({
       emptyOnStart={emptyOnStart}
       shouldShowErrors={shouldShowErrors}
       setShouldShowErrors={setShouldShowErrors}
-      isSaving={isSaving}
+      isSaving={isSavingForm}
     />
   )
 
@@ -285,7 +287,7 @@ export const Collection: FC<CollectionProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const isSavingSnackbar = isSaving && (
+  const isSavingSnackbar = isSavingImage && (
     <Snackbar
       position="bottom"
       type="info"

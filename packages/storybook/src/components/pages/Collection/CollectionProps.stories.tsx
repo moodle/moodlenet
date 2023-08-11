@@ -1,3 +1,4 @@
+import type { SaveState } from '@moodlenet/collection/common'
 import {
   getValidationSchemas,
   type CollectionAccessProps,
@@ -8,10 +9,10 @@ import {
 } from '@moodlenet/collection/common'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta } from '@storybook/react'
+import { useState } from 'react'
 import type { PartialDeep } from 'type-fest'
-// import { useEffect } from 'react'
 import type { AnySchema, SchemaOf } from 'yup'
-import { MixedSchema, addMethod, boolean, mixed, object, string } from 'yup'
+import { addMethod, boolean, mixed, MixedSchema, object, string } from 'yup'
 // import { href } from '../../../elements/link'
 // import { TagListStory } from '../../../elements/tags'
 // import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
@@ -178,11 +179,26 @@ export const useCollectionStoryProps = (
     numResources: 12,
   }
 
+  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
+  const [isPublished, setIsPublished] = useState(
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
+  )
+
   const actions: CollectionActions = {
     deleteCollection: action('deleteCollection'),
-    editData: action('editData'),
-    publish: action('publish'),
-    unpublish: action('unpublish'),
+    editData: () => {
+      console.log('action edit data')
+      setIsSaving(true)
+      setTimeout(() => {
+        setIsSaving(false)
+      }, 1000)
+    },
+    publish: () => {
+      setIsPublished(true)
+    },
+    unpublish: () => {
+      setIsPublished(false)
+    },
     setImage: action('setImage'),
     removeResource: action('removeResource'),
     ...overrides?.actions,
@@ -194,6 +210,11 @@ export const useCollectionStoryProps = (
     canDelete: false,
     canPublish: false,
     ...overrides?.access,
+  }
+
+  const saveState: SaveState = {
+    form: isSaving,
+    image: false,
   }
 
   const smallFollowButtonProps: SmallFollowButtonProps = {
@@ -213,9 +234,6 @@ export const useCollectionStoryProps = (
     ...overrides?.bookmarkButtonProps,
     isAuthenticated,
   }
-
-  const isPublished =
-    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
   const mainCollectionCardSlots: MainCollectionCardSlots = {
     mainColumnItems: [],
@@ -286,7 +304,7 @@ export const useCollectionStoryProps = (
       state: state,
       actions: actions,
       access: access,
-      isSaving: false,
+      saveState: saveState,
       isEditingAtStart: false,
     },
     { ...overrides },
