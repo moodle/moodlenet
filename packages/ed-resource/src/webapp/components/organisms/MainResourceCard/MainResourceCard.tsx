@@ -26,7 +26,7 @@ import {
   Save,
 } from '@mui/icons-material'
 import type { FC } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   EdMetaOptionsProps,
   ResourceAccessProps,
@@ -47,6 +47,13 @@ export type MainResourceCardSlots = {
   moreButtonItems: FloatingMenuContentItem[]
   footerRowItems: (AddonItem | null)[]
   uploadOptionsItems: (AddonItem | null)[]
+}
+
+export type ValidForms = {
+  isDraftFormValid: boolean
+  isPublishedFormValid: boolean
+  isPublishedContentValid: boolean
+  isDraftContentValid: boolean
 }
 
 export type MainResourceCardProps = {
@@ -73,6 +80,7 @@ export type MainResourceCardProps = {
   setIsPublishValidating: React.Dispatch<React.SetStateAction<boolean>>
 
   emptyOnStart: boolean
+  areFormsValid: ValidForms
   shouldShowErrors: boolean
   setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
 
@@ -104,6 +112,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   setIsPublishValidating,
 
   emptyOnStart,
+  areFormsValid,
   setShouldShowErrors,
   shouldShowErrors,
 
@@ -130,6 +139,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { canEdit, canPublish, canDelete } = access
 
+  const { isDraftFormValid, isPublishedFormValid, isPublishedContentValid, isDraftContentValid } =
+    areFormsValid
+
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const { width } = useWindowDimensions()
@@ -155,11 +167,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
 
-  // const backupImage: AssetInfo | undefined = useMemo(
-  //   () => (imageForm.values.image ? undefined : getBackupImage(id)),
-  //   [id, imageForm.values.image],
-  // )
-
   const handleOnEditClick = () => {
     setIsEditing(true)
     setIsPublishValidating(isPublished)
@@ -168,6 +175,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setIsWaitingForSaving(false)
   }
 
+  const form_submitForm = form.submitForm
+  const contentForm_submitForm = contentForm.submitForm
+  const imageForm_submitForm = imageForm.submitForm
+  const imageForm_validateForm = imageForm.validateForm
+
+  const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
+
   const handleOnSaveClick = () => {
     if (!form.dirty && !imageForm.dirty && !contentForm.dirty) {
       setIsEditing(false)
@@ -175,18 +189,17 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }
 
     setIsPublishValidating(isPublished)
-    setTimeout(() => {
-      applySave()
-    }, 100)
+    setIsHandlingSaving(true)
   }
 
-  const applySave = () => {
-    setFieldsAsTouched()
-    form.validateForm()
-    contentForm.validateForm()
-    imageForm.validateForm()
+  const applySave = useCallback(() => {
+    const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
+    const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
 
-    if (!form.isValid || !contentForm.isValid || !imageForm.isValid) {
+    setFieldsAsTouched()
+    imageForm_validateForm()
+
+    if (!isFormValid || !isContentValid || !imageForm.isValid) {
       setShouldShowErrors(true)
       return
     }
@@ -195,22 +208,49 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setIsWaitingForSaving(true)
 
     if (form.dirty) {
-      form.submitForm()
-      form.resetForm({ values: form.values })
+      form_submitForm()
+      // form.resetForm({ values: form.values })
+    }
+
+    if (contentForm.dirty) {
+      contentForm.values.content !== contentUrl && contentForm_submitForm()
+      // contentForm.setTouched({ content: false })
     }
 
     if (imageForm.dirty) {
       imageForm.values.image !== image &&
         typeof imageForm.values.image?.location !== 'string' &&
-        imageForm.submitForm()
-      imageForm.setTouched({ image: false })
+        imageForm_submitForm()
+      // imageForm.setTouched({ image: false })
     }
+  }, [
+    contentForm.dirty,
+    contentForm.values.content,
+    contentForm_submitForm,
+    contentUrl,
+    form.dirty,
+    form_submitForm,
+    image,
+    imageForm.dirty,
+    imageForm.isValid,
+    imageForm.values.image,
+    imageForm_submitForm,
+    imageForm_validateForm,
+    isDraftContentValid,
+    isDraftFormValid,
+    isPublished,
+    isPublishedContentValid,
+    isPublishedFormValid,
+    setFieldsAsTouched,
+    setShouldShowErrors,
+  ])
 
-    if (contentForm.dirty) {
-      contentForm.values.content !== contentUrl && contentForm.submitForm()
-      contentForm.setTouched({ content: false })
+  useEffect(() => {
+    if (isHandlingSaving) {
+      applySave()
+      setIsHandlingSaving(false)
     }
-  }
+  }, [isHandlingSaving, applySave])
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)

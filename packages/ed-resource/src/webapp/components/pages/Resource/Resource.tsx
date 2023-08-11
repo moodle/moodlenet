@@ -28,7 +28,10 @@ import {
   ResourceContributorCard,
   type ResourceContributorCardProps,
 } from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
-import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
+import type {
+  MainResourceCardSlots,
+  ValidForms,
+} from '../../organisms/MainResourceCard/MainResourceCard.js'
 import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
 export type SaveState = { form: boolean; image: boolean; content: boolean }
@@ -144,7 +147,7 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
-  // const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
+  const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
 
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
@@ -159,7 +162,7 @@ export const Resource: FC<ResourceProps> = ({
   })
 
   const isPublishedContentValid = publishedContentValidationSchema.isValidSync(contentForm.values)
-  // const isDraftContentValid = draftContentValidationSchema.isValidSync(contentForm.values)
+  const isDraftContentValid = draftContentValidationSchema.isValidSync(contentForm.values)
 
   const imageForm = useFormik<{ image: AssetInfoForm | undefined | null }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
@@ -197,20 +200,24 @@ export const Resource: FC<ResourceProps> = ({
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
   )
 
+  const imageForm_validateForm = imageForm.validateForm
+  const form_validateForm = form.validateForm
+  const contentForm_validateForm = contentForm.validateForm
+
+  const [isCheckingAndPublishing, setIsCheckingAndPublishing] = useState<boolean>(false)
+
   const checkFormsAndPublish = () => {
     setIsPublishValidating(true)
-    // setTimeout(() => {
     applyCheckFormsAndPublish()
-    // }, 100)
   }
 
-  const applyCheckFormsAndPublish = () => {
+  const applyCheckFormsAndPublish = useCallback(() => {
     setFieldsAsTouched()
-    imageForm.validateForm()
+
+    imageForm_validateForm()
     if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
-      form.submitForm()
-      contentForm.submitForm()
-      imageForm.submitForm()
+      form_validateForm()
+      contentForm_validateForm()
       setShouldShowErrors(false)
       publish()
     } else {
@@ -218,19 +225,31 @@ export const Resource: FC<ResourceProps> = ({
       setIsPublishValidating(false)
       setShouldShowErrors(true)
     }
-  }
+  }, [
+    contentForm_validateForm,
+    form_validateForm,
+    imageForm.isValid,
+    imageForm_validateForm,
+    isPublishedContentValid,
+    isPublishedFormValid,
+    publish,
+    setFieldsAsTouched,
+  ])
+
+  useEffect(() => {
+    if (isCheckingAndPublishing) {
+      applyCheckFormsAndPublish()
+      setIsCheckingAndPublishing(false)
+    }
+  }, [isCheckingAndPublishing, applyCheckFormsAndPublish])
+
+  const [isPublishChecking, setIsPublishChecking] = useState<boolean>(false)
 
   const publishCheck = () => {
     setIsPublishValidating(true)
-    setIsValidating(true)
-    // setTimeout(() => {
+    setIsPublishChecking(true)
     applyPublishCheck()
-    // }, 100)
   }
-
-  const imageForm_validateForm = imageForm.validateForm
-  const form_validateForm = form.validateForm
-  const contentForm_validateForm = contentForm.validateForm
 
   const applyPublishCheck = useCallback(() => {
     setFieldsAsTouched()
@@ -255,18 +274,24 @@ export const Resource: FC<ResourceProps> = ({
     setFieldsAsTouched,
   ])
 
-  const [isValidating, setIsValidating] = useState<boolean>(false)
   useEffect(() => {
-    if (isValidating) {
+    if (isPublishChecking) {
       applyPublishCheck()
-      setIsValidating(false)
+      setIsPublishChecking(false)
     }
-  }, [isValidating, applyPublishCheck])
+  }, [isPublishChecking, applyPublishCheck])
 
   const unpublish = () => {
     setIsPublishValidating(false)
     setShouldShowErrors(false)
     setUnpublish()
+  }
+
+  const areFormsValid: ValidForms = {
+    isDraftFormValid: isDraftFormValid,
+    isPublishedFormValid: isPublishedFormValid,
+    isDraftContentValid: isDraftContentValid,
+    isPublishedContentValid: isPublishedContentValid,
   }
 
   const mainResourceCard = (
@@ -290,6 +315,7 @@ export const Resource: FC<ResourceProps> = ({
       setIsEditing={setIsEditing}
       setIsPublishValidating={setIsPublishValidating}
       emptyOnStart={emptyOnStart}
+      areFormsValid={areFormsValid}
       setShouldShowErrors={setShouldShowErrors}
       shouldShowErrors={shouldShowErrors}
       setFieldsAsTouched={setFieldsAsTouched}

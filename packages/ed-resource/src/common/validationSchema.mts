@@ -77,7 +77,7 @@ export function getValidationSchemas({
             ? s
                 .min(3, obj => {
                   const length = obj.value.length
-                  return `Please provide a longer title (${length} < 30)`
+                  return `Please provide a longer title (${length} < 3)`
                 })
                 .required(`Please provide a title`)
             : s,
