@@ -14,7 +14,7 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -143,6 +143,8 @@ export const Resource: FC<ResourceProps> = ({
       return editData(values)
     },
   })
+  const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
+  // const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
 
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
@@ -155,6 +157,9 @@ export const Resource: FC<ResourceProps> = ({
       return setContent(values.content)
     },
   })
+
+  const isPublishedContentValid = publishedContentValidationSchema.isValidSync(contentForm.values)
+  // const isDraftContentValid = draftContentValidationSchema.isValidSync(contentForm.values)
 
   const imageForm = useFormik<{ image: AssetInfoForm | undefined | null }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
@@ -169,8 +174,11 @@ export const Resource: FC<ResourceProps> = ({
     },
   })
 
-  const setFieldsAsTouched = () => {
-    form.setTouched({
+  const contentForm_setTouched = contentForm.setTouched
+  const imageForm_setTouched = imageForm.setTouched
+  const form_setTouched = form.setTouched
+  const setFieldsAsTouched = useCallback(() => {
+    form_setTouched({
       title: true,
       description: true,
       type: true,
@@ -181,9 +189,9 @@ export const Resource: FC<ResourceProps> = ({
       year: true,
       month: true,
     })
-    contentForm.setTouched({ content: true })
-    imageForm.setTouched({ image: true })
-  }
+    contentForm_setTouched({ content: true })
+    imageForm_setTouched({ image: true })
+  }, [contentForm_setTouched, form_setTouched, imageForm_setTouched])
 
   const contributorCard = isPublished && (
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
@@ -191,51 +199,69 @@ export const Resource: FC<ResourceProps> = ({
 
   const checkFormsAndPublish = () => {
     setIsPublishValidating(true)
-    setTimeout(() => {
-      applyCheckFormsAndPublish()
-    }, 100)
+    // setTimeout(() => {
+    applyCheckFormsAndPublish()
+    // }, 100)
   }
 
   const applyCheckFormsAndPublish = () => {
     setFieldsAsTouched()
-    form.validateForm()
-    contentForm.validateForm()
     imageForm.validateForm()
-    if (form.isValid && contentForm.isValid && imageForm.isValid) {
+    if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
       form.submitForm()
       contentForm.submitForm()
       imageForm.submitForm()
-      setIsPublishValidating(true)
       setShouldShowErrors(false)
       publish()
     } else {
       setIsEditing(true)
-      setIsPublishValidating(true)
+      setIsPublishValidating(false)
       setShouldShowErrors(true)
     }
   }
 
   const publishCheck = () => {
     setIsPublishValidating(true)
-    setTimeout(() => {
-      applyPublishCheck()
-    }, 100)
+    setIsValidating(true)
+    // setTimeout(() => {
+    applyPublishCheck()
+    // }, 100)
   }
 
-  const applyPublishCheck = () => {
+  const imageForm_validateForm = imageForm.validateForm
+  const form_validateForm = form.validateForm
+  const contentForm_validateForm = contentForm.validateForm
+
+  const applyPublishCheck = useCallback(() => {
     setFieldsAsTouched()
 
-    form.validateForm()
-    contentForm.validateForm()
-    imageForm.validateForm()
+    imageForm_validateForm()
 
-    if (form.isValid && contentForm.isValid && imageForm.isValid) {
+    if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
       setShowCheckPublishSuccess(true)
       setShouldShowErrors(false)
     } else {
+      form_validateForm()
+      contentForm_validateForm()
       setShouldShowErrors(true)
     }
-  }
+  }, [
+    contentForm_validateForm,
+    form_validateForm,
+    imageForm.isValid,
+    imageForm_validateForm,
+    isPublishedContentValid,
+    isPublishedFormValid,
+    setFieldsAsTouched,
+  ])
+
+  const [isValidating, setIsValidating] = useState<boolean>(false)
+  useEffect(() => {
+    if (isValidating) {
+      applyPublishCheck()
+      setIsValidating(false)
+    }
+  }, [isValidating, applyPublishCheck])
 
   const unpublish = () => {
     setIsPublishValidating(false)
