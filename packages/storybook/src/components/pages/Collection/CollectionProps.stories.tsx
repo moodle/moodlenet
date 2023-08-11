@@ -174,15 +174,16 @@ export const useCollectionStoryProps = (
     // ...overrides?.collectionForm,
   }
 
+  const [isPublished, setIsPublished] = useState(
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
+  )
+
   const state: CollectionStateProps = {
-    isPublished: true,
+    isPublished: isPublished,
     numResources: 12,
   }
 
   const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
-  const [isPublished, setIsPublished] = useState(
-    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
-  )
 
   const actions: CollectionActions = {
     deleteCollection: action('deleteCollection'),

@@ -137,8 +137,8 @@ export const Resource: FC<ResourceProps> = ({
 
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
-    enableReinitialize: true,
     validateOnMount: true,
+    enableReinitialize: true,
     validationSchema: isPublishValidating
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
@@ -151,8 +151,8 @@ export const Resource: FC<ResourceProps> = ({
 
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
-    enableReinitialize: true,
     validateOnMount: true,
+    enableReinitialize: true,
     validationSchema: isPublishValidating
       ? publishedContentValidationSchema
       : draftContentValidationSchema,
@@ -166,8 +166,8 @@ export const Resource: FC<ResourceProps> = ({
 
   const imageForm = useFormik<{ image: AssetInfoForm | undefined | null }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
-    enableReinitialize: true,
     validateOnMount: true,
+    enableReinitialize: true,
     validationSchema: imageValidationSchema,
     onSubmit: values => {
       return values.image?.location !== image?.location &&
@@ -180,6 +180,7 @@ export const Resource: FC<ResourceProps> = ({
   const contentForm_setTouched = contentForm.setTouched
   const imageForm_setTouched = imageForm.setTouched
   const form_setTouched = form.setTouched
+
   const setFieldsAsTouched = useCallback(() => {
     form_setTouched({
       title: true,
@@ -208,13 +209,13 @@ export const Resource: FC<ResourceProps> = ({
 
   const checkFormsAndPublish = () => {
     setIsPublishValidating(true)
-    applyCheckFormsAndPublish()
+    setIsCheckingAndPublishing(true)
   }
 
   const applyCheckFormsAndPublish = useCallback(() => {
     setFieldsAsTouched()
-
     imageForm_validateForm()
+
     if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
       form_validateForm()
       contentForm_validateForm()
@@ -248,12 +249,10 @@ export const Resource: FC<ResourceProps> = ({
   const publishCheck = () => {
     setIsPublishValidating(true)
     setIsPublishChecking(true)
-    applyPublishCheck()
   }
 
   const applyPublishCheck = useCallback(() => {
     setFieldsAsTouched()
-
     imageForm_validateForm()
 
     if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
@@ -264,6 +263,7 @@ export const Resource: FC<ResourceProps> = ({
       contentForm_validateForm()
       setShouldShowErrors(true)
     }
+    setIsPublishValidating(false)
   }, [
     contentForm_validateForm,
     form_validateForm,

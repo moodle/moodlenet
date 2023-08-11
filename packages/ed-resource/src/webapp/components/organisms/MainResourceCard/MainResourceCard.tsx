@@ -14,7 +14,7 @@ import {
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { capitalizeFirstLetter, downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
+import { downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
   Check,
   Delete,
@@ -187,7 +187,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       setIsEditing(false)
       return
     }
-
     setIsPublishValidating(isPublished)
     setIsHandlingSaving(true)
   }
@@ -263,24 +262,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const title = canEdit ? (
     <InputTextField
       name="title"
-      isTextarea
       key="title"
-      textAreaAutoSize
-      noBorder
-      edit={isEditing}
       className="title underline"
+      isTextarea
+      edit={isEditing}
       value={form.values.title}
       placeholder="Title"
       onChange={form.handleChange}
-      style={{
-        pointerEvents: `${isEditing ? 'inherit' : 'none'}`,
-      }}
-      error={
-        shouldShowErrors &&
-        isEditing &&
-        form.errors.title &&
-        capitalizeFirstLetter(form.errors.title)
-      }
+      error={shouldShowErrors && isEditing && form.errors.title}
+      textAreaAutoSize
+      noBorder
     />
   ) : (
     <div className="title" key="resource-title">
@@ -310,46 +301,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
   const [isWaitingForSaving, setIsWaitingForSaving] = useState(false)
 
-  const formValuesChanged =
-    (form.dirty &&
-      (form.values.title !== resourceForm.title ||
-        form.values.description !== resourceForm.description ||
-        form.values.subject !== resourceForm.subject ||
-        form.values.license !== resourceForm.license ||
-        form.values.type !== resourceForm.type ||
-        form.values.language !== resourceForm.language ||
-        form.values.level !== resourceForm.level ||
-        form.values.month !== resourceForm.month ||
-        form.values.year !== resourceForm.year)) ||
-    imageForm.touched.image ||
-    contentForm.touched.content
-
   useEffect(() => {
     if (isWaitingForSaving && isSaving) {
       setIsWaitingForSaving(false)
       setIsCurrentlySaving(true)
     }
-    if (
-      !isSaving &&
-      isCurrentlySaving
-      // && !formValuesChanged
-    ) {
+    if (!isSaving && isCurrentlySaving) {
       setIsCurrentlySaving(false)
       setIsEditing(false)
     }
-    // if ((isWaitingForSaving || isCurrentlySaving) && formValuesChanged) {
-    //   setIsCurrentlySaving(false)
-    // }
-  }, [
-    contentForm.isSubmitting,
-    form.isSubmitting,
-    formValuesChanged,
-    imageForm.isSubmitting,
-    isCurrentlySaving,
-    isSaving,
-    isWaitingForSaving,
-    setIsEditing,
-  ])
+  }, [isCurrentlySaving, isSaving, isWaitingForSaving, setIsEditing])
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
@@ -713,9 +674,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       placeholder="Description"
       value={form.values.description}
       onChange={form.handleChange}
-      style={{
-        pointerEvents: `${isEditing ? 'inherit' : 'none'}`,
-      }}
       error={shouldShowErrors && isEditing && form.errors.description}
     />
   ) : (

@@ -11,7 +11,7 @@ import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
@@ -28,7 +28,10 @@ import type {
 import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
 import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
 import { CollectionContributorCard } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
-import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
+import type {
+  MainCollectionCardSlots,
+  ValidForms,
+} from '../../organisms/MainCollectionCard/MainCollectionCard.js'
 import { MainCollectionCard } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
 import './Collection.scss'
 
@@ -83,7 +86,14 @@ export const Collection: FC<CollectionProps> = ({
   const viewport = useViewport()
   const { image } = data
   const { isPublished } = state
-  const { editData, deleteCollection, publish, unpublish, removeResource, setImage } = actions
+  const {
+    editData,
+    deleteCollection,
+    publish,
+    unpublish: setUnpublish,
+    removeResource,
+    setImage,
+  } = actions
   const { canPublish, canEdit } = access
   const { form: isSavingForm, image: isSavingImage } = saveState
 
@@ -98,21 +108,23 @@ export const Collection: FC<CollectionProps> = ({
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
     validateOnMount: true,
+    enableReinitialize: true,
     validationSchema: isPublishValidating
       ? publishedCollectionValidationSchema
       : draftCollectionValidationSchema,
-    validateOnChange: true,
     onSubmit: values => {
       return editData(values)
     },
   })
+  const isPublishedFormValid = publishedCollectionValidationSchema.isValidSync(form.values)
+  const isDraftFormValid = draftCollectionValidationSchema.isValidSync(form.values)
+
   const imageForm = useFormik<{ image: AssetInfoForm | null | undefined }>({
     // initialValues: useMemo(() => ({ image: image }), [image]),
     initialValues: { image },
-    enableReinitialize: true,
     validateOnMount: true,
+    enableReinitialize: true,
     validationSchema: imageValidationSchema,
-    validateOnChange: true,
     onSubmit: values => {
       return values.image !== image && typeof values.image?.location !== 'string'
         ? setImage(values.image?.location)
@@ -120,53 +132,90 @@ export const Collection: FC<CollectionProps> = ({
     },
   })
 
-  const setFieldsAsTouched = () => {
-    form.setTouched({
+  const imageForm_setTouched = imageForm.setTouched
+  const form_setTouched = form.setTouched
+
+  const setFieldsAsTouched = useCallback(() => {
+    form_setTouched({
       title: true,
       description: true,
     })
-    imageForm.setTouched({ image: true })
-  }
+    imageForm_setTouched({ image: true })
+  }, [form_setTouched, imageForm_setTouched])
+
+  const imageForm_validateForm = imageForm.validateForm
+  const form_validateForm = form.validateForm
+
+  const [isCheckingAndPublishing, setIsCheckingAndPublishing] = useState<boolean>(false)
 
   const checkFormsAndPublish = () => {
-    console.log('Checking to forms and publish')
     setIsPublishValidating(true)
-    setTimeout(() => {
-      applyFormsAndPublish()
-    }, 100)
+    setIsCheckingAndPublishing(true)
+    applyCheckFormsAndPublish()
   }
 
-  const applyFormsAndPublish = () => {
+  const applyCheckFormsAndPublish = useCallback(() => {
     setFieldsAsTouched()
-    if (form.isValid && imageForm.isValid) {
-      form.submitForm()
-      imageForm.submitForm()
+    imageForm_validateForm()
+
+    if (isPublishedFormValid && imageForm.isValid) {
+      form_validateForm()
       setShouldShowErrors(false)
       publish()
     } else {
       setIsEditing(true)
+      setIsPublishValidating(false)
       setShouldShowErrors(true)
     }
-  }
+  }, [
+    form_validateForm,
+    imageForm.isValid,
+    imageForm_validateForm,
+    isPublishedFormValid,
+    publish,
+    setFieldsAsTouched,
+  ])
+
+  useEffect(() => {
+    if (isCheckingAndPublishing) {
+      applyCheckFormsAndPublish()
+      setIsCheckingAndPublishing(false)
+    }
+  }, [isCheckingAndPublishing, applyCheckFormsAndPublish])
+
+  const [isPublishChecking, setIsPublishChecking] = useState<boolean>(false)
 
   const publishCheck = () => {
-    console.log('Checking to publish')
     setIsPublishValidating(true)
-    setTimeout(() => {
-      applyPublishCheck()
-    }, 100)
+    setIsPublishChecking(true)
   }
 
-  const applyPublishCheck = () => {
+  const applyPublishCheck = useCallback(() => {
     setFieldsAsTouched()
-    if (form.isValid && imageForm.isValid) {
+    imageForm_validateForm()
+
+    if (isPublishedFormValid && imageForm.isValid) {
       setShowCheckPublishSuccess(true)
       setShouldShowErrors(false)
     } else {
+      form_validateForm()
       setShouldShowErrors(true)
     }
     setIsPublishValidating(false)
-  }
+  }, [
+    form_validateForm,
+    imageForm.isValid,
+    imageForm_validateForm,
+    isPublishedFormValid,
+    setFieldsAsTouched,
+  ])
+
+  useEffect(() => {
+    if (isPublishChecking) {
+      applyPublishCheck()
+      setIsPublishChecking(false)
+    }
+  }, [isPublishChecking, applyPublishCheck])
 
   const resourceList = (
     <div className="resource-list">
@@ -192,6 +241,17 @@ export const Collection: FC<CollectionProps> = ({
     </div>
   )
 
+  const unpublish = () => {
+    setIsPublishValidating(false)
+    setShouldShowErrors(false)
+    setUnpublish()
+  }
+
+  const isFormValid: ValidForms = {
+    isDraftFormValid: isDraftFormValid,
+    isPublishedFormValid: isPublishedFormValid,
+  }
+
   const mainCollectionCard = (
     <MainCollectionCard
       key="main-collection-card"
@@ -209,6 +269,8 @@ export const Collection: FC<CollectionProps> = ({
       setIsEditing={setIsEditing}
       setIsPublishValidating={setIsPublishValidating}
       emptyOnStart={emptyOnStart}
+      isFormValid={isFormValid}
+      setFieldsAsTouched={setFieldsAsTouched}
       shouldShowErrors={shouldShowErrors}
       setShouldShowErrors={setShouldShowErrors}
       isSaving={isSavingForm}
@@ -233,15 +295,7 @@ export const Collection: FC<CollectionProps> = ({
 
   const unpublishButton =
     canPublish && isPublished ? (
-      <SecondaryButton
-        onClick={() => {
-          console.log('unpublish')
-          unpublish()
-          setIsPublishValidating(false)
-        }}
-      >
-        Unpublish
-      </SecondaryButton>
+      <SecondaryButton onClick={unpublish}>Unpublish</SecondaryButton>
     ) : null
 
   const editorActionsContainer = canPublish ? (
