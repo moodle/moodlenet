@@ -84,7 +84,7 @@ export const DateField: FC<DateFieldProps> = ({
           }}
           placeholder="Month"
           edit
-          highlight={shouldShowErrors && !!errorMonth}
+          highlight={shouldShowErrors}
           error={shouldShowErrors && errorMonth}
           position={{ top: 30, bottom: 25 }}
           searchByText={setSearchTextMonth}
@@ -120,7 +120,7 @@ export const DateField: FC<DateFieldProps> = ({
           }}
           placeholder="Year"
           edit
-          highlight={shouldShowErrors && !!errorYear}
+          highlight={shouldShowErrors}
           error={shouldShowErrors && errorYear}
           position={{ top: 30, bottom: 25 }}
           searchByText={setSearchTextYear}

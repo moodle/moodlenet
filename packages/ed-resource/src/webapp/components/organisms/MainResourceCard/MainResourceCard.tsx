@@ -162,6 +162,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const handleOnEditClick = () => {
     setIsEditing(true)
+    setIsPublishValidating(isPublished)
     setShouldShowErrors(false)
     setIsCurrentlySaving(false)
     setIsWaitingForSaving(false)
@@ -378,13 +379,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     canPublish && isPublished
       ? {
           Element: (
-            <div
-              key="unpublish-button"
-              onClick={() => {
-                unpublish()
-                setIsPublishValidating(false)
-              }}
-            >
+            <div key="unpublish-button" onClick={unpublish}>
               <PublicOff />
               Unpublish
             </div>

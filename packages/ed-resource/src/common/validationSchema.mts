@@ -115,9 +115,7 @@ export function getValidationSchemas({
         .withMutation(s => (forPublish ? s.required('Please provide a month') : s))
         .default(''),
       year: string()
-        .when('month', (month, schema) => {
-          return month ? schema.required(`Please select a year`) : schema
-        })
+        .withMutation(s => (forPublish ? s.required('Please provide a year') : s))
         .default(''),
       type: string()
         .withMutation(s => (forPublish ? s.required('Please provide a type') : s))

@@ -165,8 +165,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'basic/v1/create': {
       guard: async body => {
-        const { draftResourceValidationSchema, contentValidationSchema } = await getValidations()
-        await contentValidationSchema.validate({ content: body?.resource })
+        const { draftResourceValidationSchema, draftContentValidationSchema } =
+          await getValidations()
+        await draftContentValidationSchema.validate({ content: body?.resource })
         await draftResourceValidationSchema.validate(body, {
           stripUnknown: true,
         })
@@ -272,8 +273,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'webapp/upload-content/:_key': {
       guard: async body => {
-        const { contentValidationSchema } = await getValidations()
-        const validatedContentOrNullish = await contentValidationSchema.validate(
+        const { publishedContentValidationSchema } = await getValidations()
+        const validatedContentOrNullish = await publishedContentValidationSchema.validate(
           { content: body?.content?.[0] },
           { stripUnknown: true },
         )

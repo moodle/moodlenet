@@ -45,7 +45,7 @@ export const useCollectionPageProps = ({
   })
 
   if (!collectionMainProps) return collectionMainProps
-  const { actions, props, isSaving } = collectionMainProps
+  const { actions, props } = collectionMainProps
   const resourceCardPropsList: CollectionProps['resourceCardPropsList'] = props.resourceList.map(
     ({ _key }) => {
       return {
@@ -90,7 +90,6 @@ export const useCollectionPageProps = ({
       ...props.access,
       isCreator: collectionMainProps.props.access.isCreator,
     },
-    isSaving,
     saveState: collectionMainProps.saveState,
     validationSchemas,
   }

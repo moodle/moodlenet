@@ -217,7 +217,9 @@ export const Resource: FC<ResourceProps> = ({
 
   const publishCheck = () => {
     setIsPublishValidating(true)
-    applyPublishCheck()
+    setTimeout(() => {
+      applyPublishCheck()
+    }, 100)
   }
 
   const applyPublishCheck = () => {
@@ -282,13 +284,7 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const unpublishButton = canPublish && isPublished && (
-    <SecondaryButton
-      onClick={() => {
-        unpublish()
-        setIsPublishValidating(false)
-      }}
-      key="unpublish-button"
-    >
+    <SecondaryButton onClick={unpublish} key="unpublish-button">
       Unpublish
     </SecondaryButton>
   )

@@ -35,17 +35,19 @@ export async function getValidations() {
     imageMaxUploadSize: defaultImageUploadMaxSize,
   }
   const {
-    contentValidationSchema,
-    imageValidationSchema,
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
+    draftContentValidationSchema,
+    publishedContentValidationSchema,
+    imageValidationSchema,
   } = getValidationSchemas(config)
 
   return {
-    contentValidationSchema,
-    imageValidationSchema,
+    draftContentValidationSchema,
+    publishedContentValidationSchema,
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
+    imageValidationSchema,
     config,
   }
 }
