@@ -12,10 +12,10 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./start": "./src/server/start.mjs",
-    "./stop": "./src/server/stop.mjs",
-    "./server": "./src/server/exports.mjs",
-    "./common": "./src/common/exports.mjs"
+    "./start": "./dist/server/start.mjs",
+    "./stop": "./dist/server/stop.mjs",
+    "./server": "./dist/server/exports.mjs",
+    "./common": "./dist/common/exports.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",

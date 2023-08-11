@@ -12,8 +12,8 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./server": "./src/server/exports.mjs",
-    "./init": "./src/server/init.mjs"
+    "./server": "./dist/server/exports.mjs",
+    "./init": "./dist/server/init.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",

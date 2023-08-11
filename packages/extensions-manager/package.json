@@ -12,13 +12,13 @@
     "yarn": "please-use-npm"
   },
   "exports": {
-    "./init": "./src/server/init.mjs",
-    "./server": "./src/server/exports.mjs",
-    "./common": "./src/common/exports.mjs",
-    "./ui": "./src/webapp/exports/ui.mjs",
-    "./stories": "./src/webapp/exports/stories.mjs",
-    "./webapp": "./src/webapp/exports/webapp.mjs",
-    "./@moodlenet/react-app/init": "./src/webapp/exports/init.mjs"
+    "./init": "./dist/server/init.mjs",
+    "./server": "./dist/server/exports.mjs",
+    "./common": "./dist/common/exports.mjs",
+    "./ui": "./dist/webapp/exports/ui.mjs",
+    "./stories": "./dist/webapp/exports/stories.mjs",
+    "./webapp": "./dist/webapp/exports/webapp.mjs",
+    "./@moodlenet/react-app/init": "./dist/webapp/exports/init.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",

@@ -404,7 +404,6 @@ export const Resource: FC<ResourceProps> = ({
       {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </Card>
   ) : null
-
   const downloadOrOpenLinkButton =
     contentType && (contentUrl || contentForm.values.content) ? (
       <a
