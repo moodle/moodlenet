@@ -31,7 +31,7 @@ type ProfileStory = ComponentStory<typeof Profile>
 export const LoggedOut = () => {
   const props = useProfileStoryProps({
     mainLayoutProps: MainLayoutLoggedOutStoryProps,
-    access: { isAuthenticated: false, canBookmark: false, canFollow: false },
+    access: { isAuthenticated: false, canFollow: false },
     mainColumnItems: [],
     sideColumnItems: [],
     overallCardItems: OverallCardStories.OverallCardNoCardStoryProps.items,
@@ -42,7 +42,7 @@ export const LoggedOut = () => {
 
 export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true },
+    access: { isAuthenticated: true, canApprove: false },
     // resourceCardPropsList: getResourceCardsStoryProps(5, {access: {canLike: true}}),
     // collectionCardPropsList: getCollectionCardsStoryProps(5, {access: {canFollow: true}}),
     mainColumnItems: [],
@@ -54,7 +54,13 @@ export const LoggedIn: ProfileStory = () => {
 
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true, canEdit: true, isCreator: true },
+    access: { isAuthenticated: true, canEdit: true, isCreator: true, canApprove: false },
+    state: {
+      // isApproved: false,
+      // isWaitingApproval: false,
+      // isElegibleForApproval: false,
+      showAccountApprovedSuccessAlert: true,
+    },
     resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,
@@ -86,7 +92,8 @@ export const Owner: ProfileStory = () => {
 
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAdmin: true, canEdit: true, isCreator: false },
+    access: { isAdmin: true, canEdit: true, isCreator: false, canApprove: true },
+    state: { isApproved: false },
     resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,

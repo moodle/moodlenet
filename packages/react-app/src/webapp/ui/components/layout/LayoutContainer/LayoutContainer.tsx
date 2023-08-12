@@ -1,4 +1,5 @@
-import { baseStyle, setPortalParentElement } from '@moodlenet/component-library'
+import { setPortalParentElement } from '@moodlenet/component-library'
+import { baseStyle } from '@moodlenet/component-library/common'
 import type { CSSProperties, FC, ReactNode } from 'react'
 import { useLayoutEffect, useRef } from 'react'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'

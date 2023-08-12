@@ -13,7 +13,7 @@ export const usePanelProps = (): SignupProps => {
     initialValues: { email: '', password: '', displayName: '' },
     async onSubmit({ email, password, displayName }) {
       setErrMsg('')
-      const res = await shell.rpc.me.signup({
+      const res = await shell.rpc.me('signup')({
         displayName,
         email,
         password,

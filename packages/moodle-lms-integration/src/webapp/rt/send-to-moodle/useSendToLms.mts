@@ -15,7 +15,7 @@ type LmsResourceData = { resourceInfo: LmsResourceInfo; type: 'link' | 'file'; r
 function getLmsResourceData(
   resourceProps: ProxiedResourceProps | null | undefined,
 ): LmsResourceData | undefined {
-  if (!(resourceProps && resourceProps.data.contentUrl)) {
+  if (!(resourceProps && resourceProps.data.contentUrl && resourceProps.data.contentType)) {
     return
   }
   const resourceInfo: LmsResourceInfo = {

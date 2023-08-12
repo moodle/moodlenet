@@ -189,7 +189,7 @@ ${JSON.stringify(currentUser, null, 2)}
 export type PatchEntityOpts<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
-> = AccessEntitiesOpts<Project, ProjectAccess>
+> = AccessEntitiesOpts<Project, ProjectAccess> & { matchRev?: string }
 export async function patchEntity<
   EntityDataType extends SomeEntityDataType,
   Project extends AccessEntitiesCustomProject<any>,
@@ -202,16 +202,22 @@ export async function patchEntity<
 ) {
   const isAqlEntityDataPatch = typeof entityDataPatch === 'string'
   const aqlPatchVar = isAqlEntityDataPatch ? entityDataPatch : toaql(entityDataPatch)
+  const matchRevFilter = opts?.matchRev
+    ? `${currentEntityVar}._rev == ${toaql(opts.matchRev)} && `
+    : ''
   const patchCursor = await accessEntities(entityClass, 'u', {
     ...opts,
     preAccessBody: `${opts?.preAccessBody ?? ''} 
-    FILTER entity._key == "${key}" LIMIT 1`,
+    FILTER ${matchRevFilter} ${currentEntityVar}._key == ${toaql(key)} LIMIT 1`,
     postAccessBody: `${opts?.postAccessBody ?? ''} 
-    UPDATE entity WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
+    UPDATE ${currentEntityVar} WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
     project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
   })
   const patchRecord = await patchCursor.next()
-  return patchRecord
+  if (!patchRecord) {
+    return
+  }
+  return { patched: patchRecord.patched, old: patchRecord.entity }
 }
 
 /* export async function patchEntity<EntityDataType extends SomeEntityDataType>(
@@ -305,8 +311,8 @@ export async function queryEntities<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(entityClass: EntityClass<EntityDataType>, opts?: QueryEntitiesOpts<Project, ProjectAccess>) {
-  const limit = Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT)
-  const skip = opts?.skip ?? 0
+  const limit = Math.floor(Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT))
+  const skip = Math.floor(opts?.skip ?? 0)
   const sort = opts?.sort ? `SORT ${opts.sort}` : ''
   const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
     ...opts,

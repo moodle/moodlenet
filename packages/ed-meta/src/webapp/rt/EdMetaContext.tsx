@@ -19,7 +19,7 @@ export function useEdMetaCtxValue() {
   })
 
   useEffect(() => {
-    shell.rpc.me['webapp/get-all-published-meta']().then(setPublishedMeta)
+    shell.rpc.me('webapp/get-all-published-meta')().then(setPublishedMeta)
   }, [])
 
   const ctx = useMemo<EdMetaContextT>(() => ({ publishedMeta }), [publishedMeta])

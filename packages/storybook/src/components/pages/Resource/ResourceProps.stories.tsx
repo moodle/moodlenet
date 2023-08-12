@@ -7,7 +7,7 @@ import type {
   ResourceFormProps,
   ResourceStateProps,
 } from '@moodlenet/ed-resource/common'
-import { resourceValidationSchema } from '@moodlenet/ed-resource/common'
+import { getValidationSchemas } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
@@ -28,7 +28,7 @@ import type { AddonItem } from '@moodlenet/component-library'
 import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
-import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
+import type { MainResourceCardSlots, ResourceProps, SaveState } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { SendToMoodle } from '../../../../../moodle-lms-integration/dist/webapp/ui/components/SendToMoodle.js'
@@ -84,13 +84,16 @@ export const ResourceFormValues: ResourceFormProps = {
   level: FieldsDataStories.LevelTextOptionProps[2]!.value,
   license: FieldsDataStories.LicenseIconTextOptionProps[2]!.value,
   month: FieldsDataStories.MonthTextOptionProps[8]!.value,
-  year: FieldsDataStories.YearsProps[20],
+  year: FieldsDataStories.YearsProps[20]!.valueOf(),
   type: FieldsDataStories.TypeTextOptionProps[1]!.value,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
   return useFormik<ResourceFormProps>({
-    validationSchema: resourceValidationSchema,
+    validationSchema: getValidationSchemas({
+      contentMaxUploadSize: 1000000000,
+      imageMaxUploadSize: 1000000000,
+    }).publishedResourceValidationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
       title: 'Best resource ever',
@@ -147,11 +150,11 @@ export const useResourceStoryProps = (
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     subject: '0011',
     license: 'CC-0 (Public domain)',
-    type: undefined, //'Course',
-    language: undefined,
-    level: undefined,
-    month: undefined,
-    year: undefined,
+    type: '0', //'Course',
+    language: 'English',
+    level: '3',
+    month: '5',
+    year: '2022',
     ...overrides?.resourceForm,
   }
 
@@ -167,40 +170,63 @@ export const useResourceStoryProps = (
     // contentType: 'link',
     ...overrides?.data,
     subjectHref: href('Pages/subject/Logged In'),
-    image: overrides?.data?.image
-      ? {
-          credits: {
-            owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
-            provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+    image:
+      overrides?.data?.image === null
+        ? null
+        : {
+            credits: {
+              owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
+              provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+            },
+            location:
+              'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
           },
-          location:
-            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-        }
-      : undefined,
   }
 
-  const state: ResourceStateProps = {
-    isPublished: true,
-    ...overrides?.state,
-  }
+  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
 
   const setContent = (e: File | string | undefined | null) => {
+    console.log('filename', typeof e === 'string' ? undefined : e?.name)
     if (typeof e === 'string') {
       setFilename(null)
     } else {
       e ? setFilename(e.name) : setFilename(null)
     }
+    setIsSaving(true)
+    setTimeout(() => {
+      setIsSaving(false)
+    }, 1000)
+
     action('set content')(e)
   }
 
+  const [isPublished, setIsPublished] = useState(
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
+  )
+
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: action('editing resource submited'),
-    publish: action('publish'),
-    unpublish: action('unpublish'),
+    editData: () => {
+      console.log('action edit data')
+      setIsSaving(true)
+      setTimeout(() => {
+        setIsSaving(false)
+      }, 1000)
+    },
+    publish: () => {
+      setIsPublished(true)
+    },
+    unpublish: () => {
+      setIsPublished(false)
+    },
     setContent: setContent,
     setImage: action('set image'),
     ...overrides?.actions,
+  }
+
+  const state: ResourceStateProps = {
+    isPublished: isPublished,
+    ...overrides?.state,
   }
 
   const access: ResourceAccessProps = {
@@ -238,9 +264,6 @@ export const useResourceStoryProps = (
     ...overrides?.bookmarkButtonProps,
     isAuthenticated,
   }
-
-  const isPublished =
-    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
   const mainResourceCardSlots: MainResourceCardSlots = {
     mainColumnItems: [],
@@ -289,6 +312,12 @@ export const useResourceStoryProps = (
     AddToCollectionButtonStories.useAddToCollectionButtonStory(),
   ]
 
+  const saveState: SaveState = {
+    form: isSaving,
+    content: false,
+    image: false,
+  }
+
   return overrideDeep<ResourceProps>(
     {
       mainLayoutProps: isAuthenticated
@@ -309,11 +338,15 @@ export const useResourceStoryProps = (
       actions: actions,
       access: access,
       edMetaOptions: edMetaOptions,
+      validationSchemas: getValidationSchemas({
+        contentMaxUploadSize: 30000000,
+        imageMaxUploadSize: 300000,
+      }),
 
       extraDetailsItems: extraDetailsItems,
 
       fileMaxSize: 343243,
-      isSaving: false,
+      saveState: saveState,
       isEditingAtStart: false,
     },
     overrides,

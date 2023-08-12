@@ -57,7 +57,7 @@ export const New: CollectionStory = () => {
     mainColumnItems: [],
     data: {
       mnUrl: 'moodle.com',
-      imageUrl: undefined,
+      image: null,
     },
     collectionForm: NewCollectionProps,
     state: {
@@ -80,11 +80,11 @@ export const New: CollectionStory = () => {
 export const Creator: CollectionStory = () => {
   const props = useCollectionStoryProps({
     data: {
-      imageUrl:
-        'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
+      // imageUrl:
+      //   'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
     },
     state: {
-      isPublished: false,
+      isPublished: true,
     },
     actions: {},
     access: {
@@ -117,8 +117,8 @@ export const NewCollectionProps: CollectionFormProps = {
 export const Admin: CollectionStory = () => {
   const props = useCollectionStoryProps({
     data: {
-      imageUrl:
-        'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
+      // image:
+      // 'https://images.unsplash.com/photo-1575699914911-0027c7b95fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDQ5NjR8MHwxfHNlYXJjaHwxfHxrYW5nYXJvb3xlbnwwfDB8fHwxNjU3MjYxMzYy&ixlib=rb-1.2.1&q=80&w=1080',
     },
     state: {
       isPublished: true,

@@ -1,5 +1,13 @@
 import type { SimpleEmailAuthExposeType } from '../common/expose-def.mjs'
 import {
+  changePasswordUsingTokenSchema,
+  confirmSignupEmailValidationSchema,
+  loginValidationSchema,
+  requestPasswordChangeByEmailLinkSchema,
+  setPasswordSchema,
+  signupValidationSchema,
+} from '../common/validations.mjs'
+import {
   changeMyPasswordUsingToken,
   changePassword,
   confirm,
@@ -13,14 +21,14 @@ import { shell } from './shell.mjs'
 export const expose = await shell.expose<SimpleEmailAuthExposeType>({
   rpc: {
     'login': {
-      guard: () => void 0,
+      guard: _ => loginValidationSchema.isValid(_),
       async fn({ email, password }) {
         const resp = await login({ email, password })
         return { success: resp.success }
       },
     },
     'signup': {
-      guard: () => void 0,
+      guard: _ => signupValidationSchema.isValid(_),
       async fn(signupReq) {
         const resp = await signup(signupReq)
         if (!resp.success) {
@@ -30,7 +38,7 @@ export const expose = await shell.expose<SimpleEmailAuthExposeType>({
       },
     },
     'confirm': {
-      guard: () => void 0,
+      guard: _ => confirmSignupEmailValidationSchema.isValid(_),
       async fn({ confirmToken }) {
         const resp = await confirm({ confirmToken })
         if (!resp.success) {
@@ -40,14 +48,14 @@ export const expose = await shell.expose<SimpleEmailAuthExposeType>({
       },
     },
     'webapp/change-password-using-token': {
-      guard: () => void 0,
+      guard: _ => changePasswordUsingTokenSchema.isValid(_),
       async fn({ password, token }) {
         const done = await changeMyPasswordUsingToken({ newPassword: password, token })
         return { success: done }
       },
     },
     'webapp/set-password': {
-      guard: () => void 0,
+      guard: _ => setPasswordSchema.isValid(_),
       async fn({ password }) {
         const currentEmailPwdUser = await getCurrentEmailPwdUser()
         if (!currentEmailPwdUser) {
@@ -68,7 +76,7 @@ export const expose = await shell.expose<SimpleEmailAuthExposeType>({
       },
     },
     'webapp/request-password-change-by-email-link': {
-      guard: () => void 0,
+      guard: _ => requestPasswordChangeByEmailLinkSchema.isValid(_),
       async fn({ email }) {
         sendChangePasswordRequestEmail({ email })
       },

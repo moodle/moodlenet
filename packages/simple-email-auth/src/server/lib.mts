@@ -49,7 +49,7 @@ export async function signup(req: SignupReq) {
   const mUser = await store.getByEmail(req.email)
 
   if (mUser) {
-    return { success: false, msg: 'email exists' } as const
+    return { success: false, msg: 'Email already exists' } as const
   }
   // shell.log('debug', { req })
   const confirmEmailPayload: ConfirmEmailPayload = {

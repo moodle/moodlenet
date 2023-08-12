@@ -92,6 +92,14 @@
             width: 21px;
             height: 21px;
           }
+
+          .delete-button.disabled {
+            color: #e8e8e8;
+            cursor: default;
+            > svg {
+              fill: #e8e8e8;
+            }
+          }
         }
 
         > .tertiary-button,
@@ -169,10 +177,6 @@
           line-height: 30px;
           font-weight: bold;
         }
-      }
-
-      > .textarea-container {
-        min-height: 40px;
       }
 
       > .error-msg {

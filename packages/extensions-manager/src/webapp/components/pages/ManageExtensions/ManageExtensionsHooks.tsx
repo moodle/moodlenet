@@ -17,40 +17,42 @@ export const useManageExtensionsProps = (
   )
 
   useEffect(() => {
-    shell.rpc.me.listDeployed().then(resp =>
-      setExtensions(
-        resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A' /* , pkgId */ }) => {
-          const repositoryUrl =
-            typeof packageJson.repository === 'string'
-              ? packageJson.repository
-              : packageJson.repository?.url ?? 'N/A'
-          const developedByMoodleNet = packageJson.name.startsWith('@moodlenet/')
-          const extensionType: ExtensionType = {
-            description: packageJson.description ?? 'N/A',
-            displayName: packageJson.name,
-            installed: true,
-            repositoryUrl,
-            name: packageJson.name,
-            readme,
-            developedByMoodleNet,
-            mandatory: developedByMoodleNet,
-            installUninstallSucces,
-            isInstallingUninstalling,
-            toggleInstallingUninstalling: () => {
-              // if (isInstallingUninstalling) {
-              //   return
-              // }
-              // toggleIsInstallingUninstalling()
-              // shell.rpc.me.uninstall([pkgId]).then(() => {
-              //   toggleInstallUninstallSucces()
-              //   toggleIsInstallingUninstalling()
-              // })
-            },
-          }
-          return extensionType
-        }),
-      ),
-    )
+    shell.rpc
+      .me('listDeployed')()
+      .then(resp =>
+        setExtensions(
+          resp.pkgInfos.map<ExtensionType>(({ packageJson, readme = 'N/A' /* , pkgId */ }) => {
+            const repositoryUrl =
+              typeof packageJson.repository === 'string'
+                ? packageJson.repository
+                : packageJson.repository?.url ?? 'N/A'
+            const developedByMoodleNet = packageJson.name.startsWith('@moodlenet/')
+            const extensionType: ExtensionType = {
+              description: packageJson.description ?? 'N/A',
+              displayName: packageJson.name,
+              installed: true,
+              repositoryUrl,
+              name: packageJson.name,
+              readme,
+              developedByMoodleNet,
+              mandatory: developedByMoodleNet,
+              installUninstallSucces,
+              isInstallingUninstalling,
+              toggleInstallingUninstalling: () => {
+                // if (isInstallingUninstalling) {
+                //   return
+                // }
+                // toggleIsInstallingUninstalling()
+                // shell.rpc.me.uninstall([pkgId]).then(() => {
+                //   toggleInstallUninstallSucces()
+                //   toggleIsInstallingUninstalling()
+                // })
+              },
+            }
+            return extensionType
+          }),
+        ),
+      )
   }, [installUninstallSucces, isInstallingUninstalling])
 
   const manageExtensionsPropsControlled = useMemo<ManageExtensionsPropsControlled>(() => {

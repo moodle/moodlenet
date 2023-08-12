@@ -8,7 +8,7 @@ export const useAdminUsersProps = (): UsersProps => {
   const [usersCache, setUsersCache] = useState<WebUserData[]>([])
 
   const searchUser = useCallback((str: string) => {
-    shell.rpc.me['webapp/roles/searchUsers']({ search: str }).then(setUsersCache)
+    shell.rpc.me('webapp/roles/searchUsers')({ search: str }).then(setUsersCache)
     setSearch(str)
   }, [])
 
@@ -19,7 +19,7 @@ export const useAdminUsersProps = (): UsersProps => {
   const userProps = useMemo<UsersProps>(() => {
     const users: UsersProps['users'] = usersCache.map(({ _key, name: title, email, isAdmin }) => {
       const toggleIsAdmin = async () => {
-        return shell.rpc.me['webapp/roles/toggleIsAdmin']({ userKey: _key }).then(() =>
+        return shell.rpc.me('webapp/roles/toggleIsAdmin')({ userKey: _key }).then(() =>
           searchUser(search),
         )
       }

@@ -11,6 +11,7 @@ const SnackbarStory: ComponentStory<typeof Snackbar> = args => <Snackbar {...arg
 
 export const Default = SnackbarStory.bind({})
 Default.args = {
+  autoHideDuration: 9999999999,
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }
@@ -18,6 +19,7 @@ Default.args = {
 export const Success = SnackbarStory.bind({})
 Success.args = {
   type: 'success',
+  autoHideDuration: 9999999999,
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }
@@ -25,6 +27,7 @@ Success.args = {
 export const Warning = SnackbarStory.bind({})
 Warning.args = {
   type: 'warning',
+  autoHideDuration: 9999999999,
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }
@@ -32,6 +35,7 @@ Warning.args = {
 export const Error = SnackbarStory.bind({})
 Error.args = {
   type: 'error',
+  autoHideDuration: 9999999999,
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }
@@ -39,6 +43,7 @@ Error.args = {
 export const Info = SnackbarStory.bind({})
 Info.args = {
   type: 'info',
+  autoHideDuration: 9999999999,
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }

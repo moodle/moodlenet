@@ -24,9 +24,11 @@ export function useProfileFollowersPageProps({
   const plugins = ProfileFollowersPagePlugin.usePluginHooks({ profileKey })
   const [profileName, setProfileName] = useState<string | null>()
   useEffect(() => {
-    shell.rpc.me['webapp/profile/get']({ _key: profileKey }).then(profile => {
-      setProfileName(profile?.data.displayName)
-    })
+    shell.rpc
+      .me('webapp/profile/:_key/get')(void 0, { _key: profileKey })
+      .then(profile => {
+        setProfileName(profile?.data.displayName)
+      })
   }, [profileKey])
   const followersProps = useMemo<FollowersProps | undefined | null>(() => {
     if (typeof profileName !== 'string') {

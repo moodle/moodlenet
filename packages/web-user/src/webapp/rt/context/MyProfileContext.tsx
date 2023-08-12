@@ -27,7 +27,6 @@ function useMyProfileContextValue() {
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
   const myFeaturedEntities = useAllMyFeaturedEntities()
-
   const myProfileContext = useMemo<MyProfileContextT | null>(() => {
     if (!myProfile) {
       return null
@@ -70,7 +69,7 @@ function useAllMyFeaturedEntities() {
       setAll(emptyFeaturedEntities)
     }
 
-    const rpcResponse = await shell.rpc.me['webapp/all-my-featured-entities']()
+    const rpcResponse = await shell.rpc.me('webapp/all-my-featured-entities')()
 
     setAll(rpcResponse?.featuredEntities ?? emptyFeaturedEntities)
   }, [myProfile])
@@ -89,9 +88,9 @@ function useAllMyFeaturedEntities() {
   const toggle = useCallback<AllMyFeaturedEntitiesHandle['toggle']>(
     async ({ _key, entityType, feature }) => {
       const action = isFeatured({ _key, entityType, feature }) ? 'remove' : 'add'
-      await shell.rpc.me[
-        'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key'
-      ](void 0, { action, _key, entityType, feature })
+      await shell.rpc.me(
+        'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key',
+      )(void 0, { action, _key, entityType, feature })
       setAll(featuredEntities => {
         const currentList = featuredEntities[feature][entityType]
         const updatedList: { _key: string }[] =

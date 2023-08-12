@@ -1,3 +1,10 @@
+.main-layout:has(> .content > .fallback-page) {
+  height: 100%;
+  > .content {
+    height: 100%;
+  }
+}
+
 .fallback-page {
   height: 100%;
   width: 100%;

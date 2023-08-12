@@ -4,7 +4,6 @@ import { MainLayout, OverallCard } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useReducer } from 'react'
-import type { SchemaOf } from 'yup'
 import type {
   ProfileAccess,
   ProfileActions,
@@ -15,21 +14,25 @@ import type {
 
 import type { CollectionCardProps } from '@moodlenet/collection/ui'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
 import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import ProfileCollectionList from '../../organisms/ProfileCollectionList/ProfileCollectionList.js'
 import ProfileResourceList from '../../organisms/ProfileResourceList/ProfileResourceList.js'
 import './Profile.scss'
+export type SaveState = { form: boolean; image: boolean; avatar: boolean }
 
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
+  saveState: SaveState
+  isSaving: boolean
 
   mainColumnItems: AddonItem[]
   sideColumnItems: AddonItem[]
 
   mainProfileCardSlots: MainProfileCardSlots
   profileForm: ProfileFormValues
-  validationSchema: SchemaOf<ProfileFormValues>
+  validationSchemas: ValidationSchemas
 
   resourceCardPropsList: { key: string; props: ProxyProps<ResourceCardProps> }[]
   collectionCardPropsList: { key: string; props: ProxyProps<CollectionCardProps> }[]
@@ -51,7 +54,7 @@ export const Profile: FC<ProfileProps> = ({
 
   mainProfileCardSlots,
   profileForm,
-  validationSchema,
+  validationSchemas,
 
   resourceCardPropsList,
   createResource,
@@ -78,7 +81,7 @@ export const Profile: FC<ProfileProps> = ({
 
   const form = useFormik<ProfileFormValues>({
     initialValues: profileForm,
-    validationSchema: validationSchema,
+    validationSchema: validationSchemas.profileValidationSchema,
     onSubmit: values => {
       return editProfile(values)
     },

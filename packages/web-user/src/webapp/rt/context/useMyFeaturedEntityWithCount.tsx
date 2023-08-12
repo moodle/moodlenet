@@ -23,9 +23,11 @@ export function useMyFeaturedEntityWithCount({
   const undefinedCount = count === undefined
   useEffect(() => {
     if (!undefinedCount) return
-    shell.rpc.me[
-      'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key'
-    ](undefined, { feature, entityType, _key }).then(({ count }) => setCount(count))
+    shell.rpc
+      .me(
+        'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key',
+      )(undefined, { feature, entityType, _key })
+      .then(({ count }) => setCount(count))
   }, [_key, undefinedCount, entityType, feature])
   const myFeaturedEntityHandle = useMyFeaturedEntity({ feature, _key, entityType })
   const featuredEntityWithCountHandle = useMemo<MyFeaturedEntityWithCountHandle>(() => {

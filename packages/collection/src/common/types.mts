@@ -1,6 +1,7 @@
 import type { AssetInfo } from '@moodlenet/component-library/common'
 import type { Href } from '@moodlenet/react-app/common'
-import type { CollectionExposeType } from './expose-def.mjs'
+import type { CollectionExposeType, WebappConfigsRpc } from './expose-def.mjs'
+import type { ValidationSchemas } from './validationSchema.mjs'
 
 export type CollectionEntityNames = 'Collection'
 
@@ -10,6 +11,8 @@ export type MyWebDeps = {
 export type SaveState = { form: boolean; image: boolean }
 export type MainContextCollection = {
   rpcCaller: RpcCaller
+  configs: WebappConfigsRpc
+  validationSchemas: ValidationSchemas
 }
 
 export type CollectionContributorRpc = {
@@ -79,12 +82,11 @@ export type RpcCaller = {
   ) => Promise<void>
 
   edit: (key: string, values: CollectionFormProps) => Promise<void>
-  get: (key: string) => Promise<CollectionProps | null>
+  get: (key: string) => Promise<CollectionRpc | null>
   _delete: (key: string) => Promise<void>
   setIsPublished: (key: string, publish: boolean) => Promise<void>
-  setImage: (key: string, file: File | null | undefined) => Promise<string | null>
+  setImage: (key: string, file: File | null | undefined, rpcId: string) => Promise<string | null>
   create: () => Promise<{ _key: string }>
-  removeResource: (collectionKey: string, resourceKey: string) => Promise<void>
 }
 
 export type CollectionActions = {

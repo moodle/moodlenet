@@ -14,8 +14,9 @@ import {
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { capitalizeFirstLetter, downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
+import { downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
+  Check,
   Delete,
   Edit,
   InsertDriveFile,
@@ -25,7 +26,7 @@ import {
   Save,
 } from '@mui/icons-material'
 import type { FC } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   EdMetaOptionsProps,
   ResourceAccessProps,
@@ -48,6 +49,13 @@ export type MainResourceCardSlots = {
   uploadOptionsItems: (AddonItem | null)[]
 }
 
+export type ValidForms = {
+  isDraftFormValid: boolean
+  isPublishedFormValid: boolean
+  isPublishedContentValid: boolean
+  isDraftContentValid: boolean
+}
+
 export type MainResourceCardProps = {
   slots: MainResourceCardSlots
 
@@ -64,14 +72,19 @@ export type MainResourceCardProps = {
 
   isSaving: boolean
   publish: () => void
-  save: () => void
+  unpublish: () => void
+  publishCheck: () => void
 
   isEditing: boolean
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  setIsPublishValidating: React.Dispatch<React.SetStateAction<boolean>>
 
-  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
+  emptyOnStart: boolean
+  areFormsValid: ValidForms
   shouldShowErrors: boolean
+  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
 
+  setFieldsAsTouched: () => void
   fileMaxSize: number
 }
 
@@ -90,15 +103,20 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   access,
 
   isSaving,
-  save,
   publish,
+  unpublish,
+  publishCheck,
 
   isEditing,
   setIsEditing,
+  setIsPublishValidating,
 
+  emptyOnStart,
+  areFormsValid,
   setShouldShowErrors,
   shouldShowErrors,
 
+  setFieldsAsTouched,
   fileMaxSize,
 }) => {
   const {
@@ -111,15 +129,18 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadOptionsItems,
   } = slots
 
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref, image } = data
 
   const { subjectOptions } = edMetaOptions
 
   const { isPublished, uploadProgress } = state
 
-  const { unpublish, deleteResource } = actions
+  const { deleteResource } = actions
 
   const { canEdit, canPublish, canDelete } = access
+
+  const { isDraftFormValid, isPublishedFormValid, isPublishedContentValid, isDraftContentValid } =
+    areFormsValid
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -146,23 +167,89 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
 
-  // const backupImage: AssetInfo | undefined = useMemo(
-  //   () => (imageForm.values.image ? undefined : getBackupImage(id)),
-  //   [id, imageForm.values.image],
-  // )
-
   const handleOnEditClick = () => {
     setIsEditing(true)
+    setIsPublishValidating(isPublished)
     setShouldShowErrors(false)
     setIsCurrentlySaving(false)
-    setisWaitingForSaving(false)
+    setIsWaitingForSaving(false)
   }
 
+  const form_submitForm = form.submitForm
+  const contentForm_submitForm = contentForm.submitForm
+  const imageForm_submitForm = imageForm.submitForm
+  const imageForm_validateForm = imageForm.validateForm
+
+  const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
+
   const handleOnSaveClick = () => {
-    setisWaitingForSaving(true)
-    setShouldShowErrors(false)
-    save()
+    if (!form.dirty && !imageForm.dirty && !contentForm.dirty) {
+      setIsEditing(false)
+      return
+    }
+    setIsPublishValidating(isPublished)
+    setIsHandlingSaving(true)
   }
+
+  const applySave = useCallback(() => {
+    const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
+    const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
+
+    setFieldsAsTouched()
+    imageForm_validateForm()
+
+    if (!isFormValid || !isContentValid || !imageForm.isValid) {
+      setShouldShowErrors(true)
+      return
+    }
+
+    setShouldShowErrors(false)
+    setIsWaitingForSaving(true)
+
+    if (form.dirty) {
+      form_submitForm()
+      // form.resetForm({ values: form.values })
+    }
+
+    if (contentForm.dirty) {
+      contentForm.values.content !== contentUrl && contentForm_submitForm()
+      // contentForm.setTouched({ content: false })
+    }
+
+    if (imageForm.dirty) {
+      imageForm.values.image !== image &&
+        typeof imageForm.values.image?.location !== 'string' &&
+        imageForm_submitForm()
+      // imageForm.setTouched({ image: false })
+    }
+  }, [
+    contentForm.dirty,
+    contentForm.values.content,
+    contentForm_submitForm,
+    contentUrl,
+    form.dirty,
+    form_submitForm,
+    image,
+    imageForm.dirty,
+    imageForm.isValid,
+    imageForm.values.image,
+    imageForm_submitForm,
+    imageForm_validateForm,
+    isDraftContentValid,
+    isDraftFormValid,
+    isPublished,
+    isPublishedContentValid,
+    isPublishedFormValid,
+    setFieldsAsTouched,
+    setShouldShowErrors,
+  ])
+
+  useEffect(() => {
+    if (isHandlingSaving) {
+      applySave()
+      setIsHandlingSaving(false)
+    }
+  }, [isHandlingSaving, applySave])
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)
@@ -175,24 +262,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const title = canEdit ? (
     <InputTextField
       name="title"
-      isTextarea
       key="title"
-      textAreaAutoSize
-      noBorder
-      edit={isEditing}
       className="title underline"
+      isTextarea
+      edit={isEditing}
       value={form.values.title}
       placeholder="Title"
       onChange={form.handleChange}
-      style={{
-        pointerEvents: `${isEditing ? 'inherit' : 'none'}`,
-      }}
-      error={
-        shouldShowErrors &&
-        isEditing &&
-        form.errors.title &&
-        capitalizeFirstLetter(form.errors.title)
-      }
+      error={shouldShowErrors && isEditing && form.errors.title}
+      textAreaAutoSize
+      noBorder
     />
   ) : (
     <div className="title" key="resource-title">
@@ -220,57 +299,18 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : null
 
   const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
-  const [isWaitingForSaving, setisWaitingForSaving] = useState(false)
-
-  const formValuesChanged =
-    (form.dirty &&
-      (form.values.title !== resourceForm.title ||
-        form.values.description !== resourceForm.description ||
-        form.values.subject !== resourceForm.subject ||
-        form.values.license !== resourceForm.license ||
-        form.values.type !== resourceForm.type ||
-        form.values.language !== resourceForm.language ||
-        form.values.level !== resourceForm.level ||
-        form.values.month !== resourceForm.month ||
-        form.values.year !== resourceForm.year)) ||
-    imageForm.touched.image ||
-    contentForm.touched.content
+  const [isWaitingForSaving, setIsWaitingForSaving] = useState(false)
 
   useEffect(() => {
     if (isWaitingForSaving && isSaving) {
-      setisWaitingForSaving(false)
+      setIsWaitingForSaving(false)
       setIsCurrentlySaving(true)
     }
-    if (!isSaving && isCurrentlySaving && !formValuesChanged) {
+    if (!isSaving && isCurrentlySaving) {
       setIsCurrentlySaving(false)
       setIsEditing(false)
     }
-    if ((isWaitingForSaving || isCurrentlySaving) && formValuesChanged) {
-      setIsCurrentlySaving(false)
-    }
-  }, [
-    contentForm.isSubmitting,
-    form.isSubmitting,
-    formValuesChanged,
-    imageForm.isSubmitting,
-    isCurrentlySaving,
-    isSaving,
-    isWaitingForSaving,
-    setIsEditing,
-  ])
-
-  // const savingFeedback = isSaving ? (
-  //   <abbr className="saving-feedback" key="saving-feedback" title="Saving">
-  //     <Loading type="circular" color="#8f8f8f" size="19px" />
-  //     {/* <Loading type="uploading" color="#8f8f8f" size="21px" /> */}
-  //     Saving...
-  //   </abbr>
-  // ) : saved ? (
-  //   <abbr className="saved-feedback" key="saved-feedback" title="Saved">
-  //     <CloudDoneOutlined />
-  //     {showSavedText && 'Saved'}
-  //   </abbr>
-  // ) : null
+  }, [isCurrentlySaving, isSaving, isWaitingForSaving, setIsEditing])
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
@@ -299,7 +339,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const deleteButton: FloatingMenuContentItem | null = canDelete
     ? {
         Element: (
-          <div key="delete-button" onClick={() => setIsToDelete(true)}>
+          <div
+            className={`delete-button ${emptyOnStart ? 'disabled' : ''}`}
+            key="delete-button"
+            onClick={() => !emptyOnStart && setIsToDelete(true)}
+          >
             <Delete /> Delete
           </div>
         ),
@@ -307,7 +351,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     : null
 
   const publishButton: FloatingMenuContentItem | null =
-    canPublish && !isPublished
+    !isEditing && canPublish && !isPublished
       ? {
           Element: (
             <div key="publish-button" onClick={publish}>
@@ -317,6 +361,18 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           ),
 
           wrapperClassName: 'publish-button',
+        }
+      : null
+
+  const publishCheckButton: FloatingMenuContentItem | null =
+    isEditing && canPublish && !isPublished
+      ? {
+          Element: (
+            <div key="publish-button" onClick={publishCheck}>
+              <Check style={{ fill: '#00bd7e' }} />
+              Publish check
+            </div>
+          ),
         }
       : null
 
@@ -399,6 +455,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const updatedMoreButtonItems = [
     publishButton,
+    publishCheckButton,
     unpublishButton,
     openLinkOrDownloadFile,
     shareButton,
@@ -447,7 +504,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                 className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
                 onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
-                disabled={empty}
+                disabled={empty && emptyOnStart}
               >
                 <div
                   className="loading"
@@ -617,9 +674,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       placeholder="Description"
       value={form.values.description}
       onChange={form.handleChange}
-      style={{
-        pointerEvents: `${isEditing ? 'inherit' : 'none'}`,
-      }}
       error={shouldShowErrors && isEditing && form.errors.description}
     />
   ) : (

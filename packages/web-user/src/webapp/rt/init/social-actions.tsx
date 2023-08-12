@@ -55,11 +55,11 @@ CollectionPagePlugins.register(({ collectionKey, info }) => {
 function useSubjectFollowersCount(subjectKey: string) {
   const [numFollowers, setNumFollowers] = useState(0)
   useEffect(() => {
-    shell.rpc.me[
-      'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key'
-    ](undefined, { _key: subjectKey, entityType: 'subject', feature: 'follow' }).then(res =>
-      setNumFollowers(res.count),
-    )
+    shell.rpc
+      .me(
+        'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key',
+      )(undefined, { _key: subjectKey, entityType: 'subject', feature: 'follow' })
+      .then(res => setNumFollowers(res.count))
   }, [subjectKey])
   return { numFollowers }
 }

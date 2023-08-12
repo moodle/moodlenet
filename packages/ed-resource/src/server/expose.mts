@@ -7,7 +7,7 @@ import {
   RpcStatus,
   setRpcStatusCode,
 } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { defaultImageUploadMaxSize, getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
   getCurrentSystemUser,
@@ -16,6 +16,7 @@ import {
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
+import { boolean, object } from 'yup'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
@@ -32,6 +33,7 @@ import {
   getResourceFileUrl,
   getResourceLogicalFilename,
   getResourcesCountInSubject,
+  getValidations,
   incrementResourceDownloads,
   patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
@@ -45,14 +47,24 @@ export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerRes
 
 export const expose = await shell.expose<FullResourceExposeType>({
   rpc: {
-    'webapp/set-is-published/:_key': {
+    'webapp/get-configs': {
       guard: () => void 0,
+      async fn() {
+        const { config } = await getValidations()
+        return { validations: config }
+      },
+    },
+    'webapp/set-is-published/:_key': {
+      guard: _ =>
+        object({
+          publish: boolean().required(),
+        }).isValid(_),
       fn: async ({ publish }, { _key }) => {
         const patchResult = await setPublished(_key, publish)
         if (!patchResult) {
-          return
+          return patchResult
         }
-        return
+        return true
       },
     },
     'webapp/get/:_key': {
@@ -106,7 +118,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
             type: found.entity.type,
           },
           data: {
-            contentType: found.entity.content?.kind ?? 'link',
+            contentType: found.entity.content?.kind ?? null,
             contentUrl,
             downloadFilename:
               found.entity.content?.kind === 'file'
@@ -137,7 +149,12 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'webapp/edit/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { draftResourceValidationSchema } = await getValidations()
+        body.values = await draftResourceValidationSchema.validate(body?.values, {
+          stripUnknown: true,
+        })
+      },
       fn: async ({ values }, { _key }) => {
         const patchResult = await patchResource(_key, values)
         if (!patchResult) {
@@ -147,7 +164,14 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'basic/v1/create': {
-      guard: () => void 0,
+      guard: async body => {
+        const { draftResourceValidationSchema, draftContentValidationSchema } =
+          await getValidations()
+        await draftContentValidationSchema.validate({ content: body?.resource })
+        await draftResourceValidationSchema.validate(body, {
+          stripUnknown: true,
+        })
+      },
       fn: async ({ name, description, resource }) => {
         const resourceContent = [resource].flat()[0]
         if (!resourceContent) {
@@ -155,9 +179,10 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
 
         const createResult = await createResource({
-          description,
           title: name,
+          description,
         })
+
         if (!createResult) {
           throw RpcStatus('Unauthorized')
         }
@@ -168,6 +193,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           await delResource(createResult._key)
           throw RpcStatus('Unauthorized')
         }
+
         setRpcStatusCode('Created')
         return {
           _key: createResult._key,
@@ -183,6 +209,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         fields: {
           '.resource': 1,
         },
+        maxSize: env.resourceUploadMaxSize,
       },
     },
     'webapp/create': {
@@ -213,36 +240,61 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'webapp/upload-image/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { imageValidationSchema } = await getValidations()
+        const validatedImageOrNullish = await imageValidationSchema.validate(
+          { image: body?.file?.[0] },
+          { stripUnknown: true },
+        )
+        body.file = [validatedImageOrNullish]
+      },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getResource(_key, { projectAccess: ['u'] })
 
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const patched = await setResourceImage(_key, uploadedRpcFile)
-        const imageUrl = patched?.entity.image && getImageUrl(patched?.entity.image)
-        return imageUrl ?? null
+        const updateRes = await setResourceImage(_key, uploadedRpcFile)
+        if (updateRes === false) {
+          throw RpcStatus('Bad Request')
+        }
+        if (!updateRes) {
+          throw null
+        }
+        const imageUrl = updateRes.patched.image && getImageUrl(updateRes.patched.image)
+        return imageUrl
       },
       bodyWithFiles: {
         fields: {
           '.file': 1,
         },
+        maxSize: defaultImageUploadMaxSize,
       },
     },
     'webapp/upload-content/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { publishedContentValidationSchema } = await getValidations()
+        const validatedContentOrNullish = await publishedContentValidationSchema.validate(
+          { content: body?.content?.[0] },
+          { stripUnknown: true },
+        )
+        body.content = [validatedContentOrNullish]
+      },
       async fn({ content: [uploadedContent] }, { _key }) {
         const got = await getResource(_key, { projectAccess: ['u'] })
 
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
+        if (got.entity.published && !uploadedContent) {
+          throw RpcStatus('Precondition Failed')
+        }
         // shell.log('info', { uploadedContent })
         if (!uploadedContent) {
           await delResourceFile(_key)
           await patchResource(_key, {
             content: null,
+            published: false,
           })
           return null
         }
@@ -256,7 +308,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         fields: {
           '.content': 1,
         },
-        maxFileSize: env.resourceUploadMaxSize,
+        maxSize: env.resourceUploadMaxSize,
       },
     },
     'webapp/get-resources-count-in-subject/:subjectKey': {

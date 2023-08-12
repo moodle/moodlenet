@@ -70,7 +70,9 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
         </a>
         {/* </Link> */}
       </div>
-      <div hidden={!errMsg}>Signup error: {errMsg}</div>
+      <div className="general-error" hidden={!errMsg}>
+        {errMsg}
+      </div>
       {/* <div className={`success-content`} hidden={!emailSent}> */}
       {/* <div className={`success-content ${requestSent ? 'success' : ''}`}> */}
       {/* <Card>

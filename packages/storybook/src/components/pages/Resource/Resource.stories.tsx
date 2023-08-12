@@ -64,21 +64,25 @@ export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
     isEditingAtStart: true,
     data: {
-      downloadFilename: undefined,
-      contentUrl: undefined,
-      image: undefined,
+      downloadFilename: null,
+      contentType: undefined,
+      // downloadFilename: undefined,
+      contentUrl: null,
+      image: null,
       // numLikes: 0,
     },
     resourceForm: NewResourceProps,
 
     state: {
       isPublished: false,
+      // uploadProgress: 74,
     },
     actions: {},
     access: {
       isCreator: true,
       canEdit: true,
       canPublish: true,
+      canDelete: true,
     },
   })
   return <Resource {...props} />
@@ -86,10 +90,12 @@ export const New: ResourceStory = () => {
 
 export const Creator: ResourceStory = () => {
   const props = useResourceStoryProps({
+    saveState: {},
     data: {},
-    state: {
-      isPublished: false,
+    resourceForm: {
+      level: undefined,
     },
+    state: {},
     actions: {},
     access: {
       isCreator: true,

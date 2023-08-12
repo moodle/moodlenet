@@ -4,7 +4,7 @@ import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import moment from 'moment'
 import { useContext, useMemo } from 'react'
-import { maxUploadSize } from '../../../../common/validationSchema.mjs'
+import { MainContext } from '../../../MainContext.js'
 import type { ResourceCommonProps } from '../../../ResourceHooks.js'
 import { useResourceBaseProps } from '../../../ResourceHooks.js'
 import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
@@ -29,6 +29,7 @@ export type ResourcePageHookArg = {
 }
 export type ProxiedResourceProps = Omit<ResourceProps, 'isEditingAtStart'>
 export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
+  const { configs, validationSchemas } = useContext(MainContext)
   const mainLayoutProps = useMainLayoutProps()
   const resourceCommonProps = useResourceBaseProps({ resourceKey })
 
@@ -50,7 +51,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const { publishedMeta } = useContext(EdMetaContext)
 
   if (!resourceCommonProps) return resourceCommonProps
-  const { actions, props, isSaving } = resourceCommonProps
+  const { actions, props, saveState } = resourceCommonProps
   const { data, resourceForm, state, access, contributor } = props
 
   const mainResourceCardSlots: MainResourceCardSlots = {
@@ -73,6 +74,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     extraDetailsItems: [],
   }
   const resourceProps: ProxiedResourceProps = {
+    saveState,
     mainLayoutProps,
     mainResourceCardSlots,
     resourceContributorCardProps: contributor,
@@ -102,8 +104,8 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     state,
     actions,
     access,
-    fileMaxSize: maxUploadSize,
-    isSaving,
+    fileMaxSize: configs.validations.contentMaxUploadSize,
+    validationSchemas,
   }
   return resourceProps
 }

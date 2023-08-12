@@ -79,7 +79,7 @@ a {
     }
   }
 
-  &:active {
+  &:active:not(.disabled) {
     background-color: var(--primary-color-active);
 
     &.green {
@@ -108,7 +108,7 @@ a {
     }
   }
 
-  &:focus-visible {
+  &:focus-visible:not(.disabled) {
     border: none;
     outline: none;
     transition: 0.1s;
@@ -119,6 +119,7 @@ a {
     user-select: none;
     pointer-events: none;
     background-color: #e8e8e8;
+    cursor: default;
   }
 
   a {

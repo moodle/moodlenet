@@ -63,7 +63,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   )
   const credits = imageForm.values.image?.credits ?? backupImage?.credits
 
-  const contentIsFile = contentForm.values.content instanceof File
+  const contentIsFile = contentForm.values.content instanceof File || contentType === 'file'
   const contentName = downloadFilename
     ? downloadFilename
     : contentForm.values.content instanceof File
@@ -235,13 +235,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
     />
   )
 
-  const [imageHeight, setImageHeight] = useState<string | number>('initial')
-
-  useEffect(() => {
-    const currentImageHeight = imageRef.current?.clientHeight
-    imageAvailable && contentAvailable && currentImageHeight && setImageHeight(currentImageHeight)
-  }, [imageAvailable, contentAvailable, imageRef])
-
   const uploadedNameBackground =
     contentIsFile && uploadProgress
       ? `linear-gradient(to right, #1a6aff33 ${uploadProgress}% , #ffffff00 ${
@@ -252,10 +245,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const fileUploader = (
     <div
       className="file upload"
-      onClick={selectFile}
+      onClick={e => {
+        e.stopPropagation()
+        selectFile()
+      }}
       onKeyUp={e => e.key === 'Enter' && selectFile()}
       tabIndex={0}
-      // style={{ ...uploadHeight }}
     >
       <input
         ref={uploadFileRef}
@@ -338,7 +333,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const uploaderDiv = (
     <>
       {!contentAvailable && !displayOnly && uploader('file')}
-      {!contentAvailable && imageAvailable && simpleImageContainer}
+      {/* {!contentAvailable && imageAvailable && simpleImageContainer} */}
       {contentAvailable && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
       {contentAvailable && displayOnly && (embed ?? (!imageAvailable && simpleImageContainer))}
       {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}
@@ -347,21 +342,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   return (
     <div className="upload-resource">
-      <div
-        className={`main-container ${
-          imageAvailable && !contentAvailable && !displayOnly ? 'no-file-but-image' : ''
-        }`}
-        style={{
-          height:
-            imageAvailable && !contentAvailable && !displayOnly
-              ? (typeof imageHeight === 'number' && imageHeight < 250) || imageHeight === 'initial'
-                ? 250
-                : imageHeight
-              : 'fit-content',
-        }}
-      >
-        {uploaderDiv}
-      </div>
+      <div className={`main-container `}>{uploaderDiv}</div>
       {!displayOnly && (
         <div className="bottom-container">
           {subStep === 'AddFileOrLink' ? (

@@ -32,8 +32,8 @@
     }
 
     &.orange {
-      color: $primary-color;
-      border: 2px solid $primary-color;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
     }
 
     &.grey {
@@ -50,13 +50,13 @@
       border: 2px solid #194866;
     }
 
-    &:hover {
+    &:hover:not(.disabled) {
       box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 
       &.orange,
       &.hover-orange {
-        color: $primary-color-hover;
-        border: 2px solid $primary-color-hover;
+        color: var(--primary-color-hover);
+        border: 2px solid var(--primary-color-hover);
       }
 
       &.grey &.hover-grey {
@@ -89,7 +89,7 @@
       }
     }
 
-    &:active {
+    &:active:not(.disabled) {
       // box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%), 0px 2px 6px 2px rgb(60 64 67 / 15%);
 
       &.black,
@@ -102,8 +102,8 @@
 
       &.orange,
       &.hover-orange {
-        color: $primary-color-active;
-        border: 2px solid $primary-color-active;
+        color: var(--primary-color-active);
+        border: 2px solid var(--primary-color-active);
       }
 
       &.grey,
@@ -126,7 +126,7 @@
     }
   }
 
-  &:focus-visible {
+  &:focus-visible:not(.disabled) {
     border: none;
     outline: none;
     transition: 0.1s;
@@ -138,5 +138,6 @@
     pointer-events: none;
     color: #e8e8e8;
     border: 2px solid #e8e8e8;
+    cursor: default;
   }
 }

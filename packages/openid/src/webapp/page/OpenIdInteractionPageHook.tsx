@@ -20,7 +20,7 @@ export function useOpenIdInteractionPage({
   }, [interactionId, interactionDetails?.needsLogin, webUser])
 
   useEffect(() => {
-    shell.rpc.me['webapp/getInteractionDetails']({ interactionId }).then(setInteractionDetails)
+    shell.rpc.me('webapp/getInteractionDetails')({ interactionId }).then(setInteractionDetails)
   }, [interactionId])
 
   const authorize = useCallback<OpenIdInteractionPageProps['authorize']>(async () => {

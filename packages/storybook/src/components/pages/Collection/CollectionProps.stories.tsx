@@ -1,14 +1,16 @@
-import type {
-  CollectionAccessProps,
-  CollectionActions,
-  CollectionDataProps,
-  CollectionFormProps,
-  CollectionStateProps,
+import type { SaveState } from '@moodlenet/collection/common'
+import {
+  getValidationSchemas,
+  type CollectionAccessProps,
+  type CollectionActions,
+  type CollectionDataProps,
+  type CollectionFormProps,
+  type CollectionStateProps,
 } from '@moodlenet/collection/common'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta } from '@storybook/react'
+import { useState } from 'react'
 import type { PartialDeep } from 'type-fest'
-// import { useEffect } from 'react'
 import type { AnySchema, SchemaOf } from 'yup'
 import { addMethod, boolean, mixed, MixedSchema, object, string } from 'yup'
 // import { href } from '../../../elements/link'
@@ -152,16 +154,17 @@ export const useCollectionStoryProps = (
     id: 'qjnwglkd69io-sports',
     mnUrl: 'collection.url',
     ...overrides?.data,
-    image: overrides?.data?.image
-      ? {
-          location:
-            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-          credits: {
-            owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
-            provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+    image:
+      overrides?.data?.image === null
+        ? null
+        : {
+            location:
+              'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+            credits: {
+              owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
+              provider: { name: 'Unsplash', url: 'https://unsplash.com' },
+            },
           },
-        }
-      : undefined,
   }
 
   const collectionForm: CollectionFormProps = {
@@ -171,16 +174,32 @@ export const useCollectionStoryProps = (
     // ...overrides?.collectionForm,
   }
 
+  const [isPublished, setIsPublished] = useState(
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
+  )
+
   const state: CollectionStateProps = {
-    isPublished: true,
+    isPublished: isPublished,
     numResources: 12,
   }
 
+  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
+
   const actions: CollectionActions = {
     deleteCollection: action('deleteCollection'),
-    editData: action('editData'),
-    publish: action('publish'),
-    unpublish: action('unpublish'),
+    editData: () => {
+      console.log('action edit data')
+      setIsSaving(true)
+      setTimeout(() => {
+        setIsSaving(false)
+      }, 1000)
+    },
+    publish: () => {
+      setIsPublished(true)
+    },
+    unpublish: () => {
+      setIsPublished(false)
+    },
     setImage: action('setImage'),
     removeResource: action('removeResource'),
     ...overrides?.actions,
@@ -194,6 +213,11 @@ export const useCollectionStoryProps = (
     ...overrides?.access,
   }
 
+  const saveState: SaveState = {
+    form: isSaving,
+    image: false,
+  }
+
   const smallFollowButtonProps: SmallFollowButtonProps = {
     canFollow: true,
     followed: false,
@@ -203,6 +227,7 @@ export const useCollectionStoryProps = (
     ...overrides?.smallFollowButtonProps,
     isAuthenticated,
   }
+
   const bookmarkButtonProps: BookmarkButtonProps = {
     bookmarked: true,
     canBookmark: true,
@@ -210,8 +235,6 @@ export const useCollectionStoryProps = (
     ...overrides?.bookmarkButtonProps,
     isAuthenticated,
   }
-  const isPublished =
-    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
   const mainCollectionCardSlots: MainCollectionCardSlots = {
     mainColumnItems: [],
@@ -277,12 +300,12 @@ export const useCollectionStoryProps = (
 
       data: data,
       collectionForm: collectionForm,
-      validationSchema: validationSchema,
+      validationSchemas: getValidationSchemas({ imageMaxUploadSize: 300000 }),
 
       state: state,
       actions: actions,
       access: access,
-      isSaving: false,
+      saveState: saveState,
       isEditingAtStart: false,
     },
     { ...overrides },

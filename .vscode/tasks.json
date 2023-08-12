@@ -55,10 +55,18 @@
     {
       "group": "build",
       "type": "shell",
-      "command": "npm run start",
+      "command": "npm run dev-start-webapp dev",
       "isBackground": true,
       "problemMatcher": ["$tsc"],
-      "label": "npm-start"
+      "label": "dev-start-webapp"
+    },
+    {
+      "group": "build",
+      "type": "shell",
+      "command": "npm run dev-start-backend dev",
+      "isBackground": true,
+      "problemMatcher": ["$tsc"],
+      "label": "dev-start-backend"
     },
     {
       "group": "build",
@@ -80,9 +88,25 @@
       "group": "build",
       "type": "shell",
       "problemMatcher": [],
+      "label": "backend-tasks",
+      "dependsOrder": "sequence",
+      "dependsOn": ["arangodb", "dev-start-backend", "dev-start-webapp"],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "group": "build",
+      "type": "shell",
+      "problemMatcher": [],
       "label": "fullstack-tasks",
-      // "dependsOrder": "parallel",
-      "dependsOn": ["arangodb", "npm-start"],
+      "dependsOrder": "parallel",
+      "dependsOn": ["prj-build-watch", "backend-tasks"],
       "presentation": {
         "echo": true,
         "reveal": "always",

@@ -9,9 +9,11 @@ export function useRecoverPasswordProps() {
   const headerProps = useMinimalisticHeaderProps()
   const requestPasswordChange = useCallback<RecoverPasswordProps['requestPasswordChange']>(
     email => {
-      shell.rpc.me['webapp/request-password-change-by-email-link']({ email }).then(() => {
-        setRequestSent(true)
-      })
+      shell.rpc
+        .me('webapp/request-password-change-by-email-link')({ email })
+        .then(() => {
+          setRequestSent(true)
+        })
     },
     [],
   )

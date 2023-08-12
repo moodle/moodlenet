@@ -6,7 +6,7 @@ export const profileFormValidationSchema = object({
     .test((v, { createError }) =>
       v instanceof Blob && v.size > 5 * 1024 ** 2
         ? createError({
-            message: /* t */ `The image is too big, reduce the size or use another image`,
+            message: /* t */ `The image is too big, please reduce the size or use another image`,
           })
         : true,
     )
@@ -15,7 +15,7 @@ export const profileFormValidationSchema = object({
     .test((v, { createError }) =>
       v instanceof Blob && v.size > 5 * 1024 ** 2
         ? createError({
-            message: /* t */ `The image is too big, reduce the size or use another image`,
+            message: /* t */ `The image is too big, please reduce the size or use another image`,
           })
         : true,
     )
