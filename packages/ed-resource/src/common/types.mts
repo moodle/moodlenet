@@ -76,6 +76,8 @@ export type ResourceProps = {
   data: ResourceDataProps
   contributor: ResourceContributorProps
 }
+type SavingState = 'not-saving' | 'saving' | 'save-done'
+export type SaveState = { form: SavingState; image: SavingState; content: SavingState }
 
 export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>

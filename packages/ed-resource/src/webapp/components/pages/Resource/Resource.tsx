@@ -15,6 +15,7 @@ import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -34,7 +35,6 @@ import type {
 } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
-export type SaveState = { form: boolean; image: boolean; content: boolean }
 
 export type ResourceProps = {
   saveState: SaveState

@@ -4,12 +4,12 @@ import type {
   ResourceDataProps,
   ResourceFormProps,
   ResourceProps,
+  SaveState,
 } from '../common/types.mjs'
 
 import { useImageUrl } from '@moodlenet/react-app/ui'
 import { createTaskManager } from '@moodlenet/react-app/webapp'
 import { useNavigate } from 'react-router-dom'
-import type { SaveState } from './exports/ui.mjs'
 import { MainContext } from './MainContext.js'
 
 export type Actions = {

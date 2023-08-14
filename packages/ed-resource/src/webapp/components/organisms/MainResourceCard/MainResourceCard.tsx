@@ -34,6 +34,7 @@ import type {
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
+  SaveState,
 } from '../../../../common/types.mjs'
 import { getResourceTypeInfo } from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
@@ -69,7 +70,7 @@ export type MainResourceCardProps = {
   actions: ResourceActions
   access: ResourceAccessProps
 
-  isSaving: boolean
+  isSaving: SaveState
   publish: () => void
   unpublish: () => void
   publishCheck: () => void
@@ -296,18 +297,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </div>
     ) : null
 
-  const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
-  const [isWaitingForSaving, setIsWaitingForSaving] = useState(false)
-
   useEffect(() => {
-    if (isWaitingForSaving && isSaving) {
-      setIsWaitingForSaving(false)
-      setIsCurrentlySaving(true)
-    }
-    if (!isSaving && isCurrentlySaving) {
-      setIsCurrentlySaving(false)
-      setIsEditing(false)
-    }
+    if (isSaving === 'save-done') setIsEditing(false)
   }, [isCurrentlySaving, isSaving, isWaitingForSaving, setIsEditing])
 
   const updatedTopLeftHeaderItems = [
