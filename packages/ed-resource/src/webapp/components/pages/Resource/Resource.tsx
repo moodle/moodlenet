@@ -138,6 +138,7 @@ export const Resource: FC<ResourceProps> = ({
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
     validateOnMount: true,
+    validateOnChange: true,
     enableReinitialize: true,
     validationSchema: isPublishValidating
       ? publishedResourceValidationSchema
@@ -152,6 +153,7 @@ export const Resource: FC<ResourceProps> = ({
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
     validateOnMount: true,
+    validateOnChange: true,
     enableReinitialize: true,
     validationSchema: isPublishValidating
       ? publishedContentValidationSchema
@@ -167,6 +169,7 @@ export const Resource: FC<ResourceProps> = ({
   const imageForm = useFormik<{ image: AssetInfoForm | undefined | null }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
     validateOnMount: true,
+    validateOnChange: true,
     enableReinitialize: true,
     validationSchema: imageValidationSchema,
     onSubmit: values => {
@@ -223,7 +226,6 @@ export const Resource: FC<ResourceProps> = ({
       publish()
     } else {
       setIsEditing(true)
-      setIsPublishValidating(false)
       setShouldShowErrors(true)
     }
   }, [
@@ -263,7 +265,6 @@ export const Resource: FC<ResourceProps> = ({
       contentForm_validateForm()
       setShouldShowErrors(true)
     }
-    setIsPublishValidating(false)
   }, [
     contentForm_validateForm,
     form_validateForm,
@@ -513,50 +514,8 @@ export const Resource: FC<ResourceProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  // const updatedBigScreenSideColumnItems = [
-  //   contributorCard,
-  //   generalActionsContainer,
-  //   extraDetailsContainer,
-  //   ...(bigScreenSideColumnItems ?? []),
-  // ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-  // const updatedBigScreenMainColumnItems = [
-  //   mainResourceCard,
-  //   ...(bigScreenMainColumnItems ?? []),
-  // ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-  // const updatedMediumScreenWideColumnItems = [
-  //   mainResourceCard,
-  //   ...(mediumScreenWideColumnItems ?? []),
-  // ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-  // const updatedMediumScreenLeftColumnItems = [
-  //   contributorCard,
-  //   generalActionsContainer,
-  //   ...(mediumScreenLeftColumnItems ?? []),
-  // ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-  // const updatedMediumScreenRightColumnItems = [
-  //   extraDetailsContainer,
-  //   ...(mediumScreenRightColumnItems ?? []),
-  // ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-  // const updatedSmallScreenColumnItems = [
-  //   mainResourceCard,
-  //   contributorCard,
-  //   generalActionsContainer,
-  //   extraDetailsContainer,
-  //   ...(smallScreenColumnItems ?? []),
-  // ].filter((item): item is AddonItem | JSX.Element => !!item)
-
   const isSavingSnackbar = (isSavingContent || isSavingImage) && (
-    <Snackbar
-      position="bottom"
-      type="info"
-      waitDuration={1500}
-      // autoHideDuration={6000}
-      showCloseButton={false}
-    >
+    <Snackbar position="bottom" type="info" waitDuration={1500} showCloseButton={false}>
       {`Content uploading, please don't close the tab`}
     </Snackbar>
   )
@@ -565,7 +524,7 @@ export const Resource: FC<ResourceProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={4000}
+      autoHideDuration={6000}
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
