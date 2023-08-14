@@ -301,7 +301,6 @@ export const Resource: FC<ResourceProps> = ({
       unpublish={unpublish}
       publishCheck={publishCheck}
       data={data}
-      resourceForm={resourceForm}
       edMetaOptions={edMetaOptions}
       form={form}
       contentForm={contentForm}

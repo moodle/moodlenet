@@ -60,7 +60,6 @@ export type MainResourceCardProps = {
   slots: MainResourceCardSlots
 
   data: ResourceDataProps
-  resourceForm: ResourceFormProps
   edMetaOptions: EdMetaOptionsProps
   form: FormikHandle<ResourceFormProps>
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
@@ -92,7 +91,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   slots,
 
   data,
-  resourceForm,
   edMetaOptions,
   form,
   contentForm,
