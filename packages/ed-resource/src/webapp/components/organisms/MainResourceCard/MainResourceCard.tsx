@@ -34,6 +34,7 @@ import type {
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
+  SavingState,
 } from '../../../../common/types.mjs'
 import { getResourceTypeInfo } from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
@@ -69,7 +70,7 @@ export type MainResourceCardProps = {
   actions: ResourceActions
   access: ResourceAccessProps
 
-  isSaving: boolean
+  savingState: SavingState
   publish: () => void
   unpublish: () => void
   publishCheck: () => void
@@ -100,7 +101,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   actions,
   access,
 
-  isSaving,
+  savingState,
   publish,
   unpublish,
   publishCheck,
@@ -140,6 +141,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const { isDraftFormValid, isPublishedFormValid, isPublishedContentValid, isDraftContentValid } =
     areFormsValid
 
+  const isSaving = savingState === 'saving'
+
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const { width } = useWindowDimensions()
@@ -169,8 +172,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setIsEditing(true)
     setIsPublishValidating(isPublished)
     setShouldShowErrors(false)
-    setIsCurrentlySaving(false)
-    setIsWaitingForSaving(false)
   }
 
   const form_submitForm = form.submitForm
@@ -202,23 +203,19 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }
 
     setShouldShowErrors(false)
-    setIsWaitingForSaving(true)
 
     if (form.dirty) {
       form_submitForm()
-      // form.resetForm({ values: form.values })
     }
 
     if (contentForm.dirty) {
       contentForm.values.content !== contentUrl && contentForm_submitForm()
-      // contentForm.setTouched({ content: false })
     }
 
     if (imageForm.dirty) {
       imageForm.values.image !== image &&
         typeof imageForm.values.image?.location !== 'string' &&
         imageForm_submitForm()
-      // imageForm.setTouched({ image: false })
     }
   }, [
     contentForm.dirty,
@@ -296,19 +293,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </div>
     ) : null
 
-  const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
-  const [isWaitingForSaving, setIsWaitingForSaving] = useState(false)
-
   useEffect(() => {
-    if (isWaitingForSaving && isSaving) {
-      setIsWaitingForSaving(false)
-      setIsCurrentlySaving(true)
-    }
-    if (!isSaving && isCurrentlySaving) {
-      setIsCurrentlySaving(false)
-      setIsEditing(false)
-    }
-  }, [isCurrentlySaving, isSaving, isWaitingForSaving, setIsEditing])
+    if (savingState === 'save-done') setIsEditing(false)
+  }, [savingState, setIsEditing])
 
   const updatedTopLeftHeaderItems = [
     resourceLabel,
@@ -317,22 +304,15 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const empty =
-    (!form.values.title || form.values.title === '') &&
-    (!form.values.description || form.values.description === '') &&
-    !contentForm.values.content &&
-    !imageForm.values.image
-
-  const shareButton: FloatingMenuContentItem | null =
-    !empty && isPublished
-      ? {
-          Element: (
-            <div key="share-button" onClick={copyUrl}>
-              <Share /> Share
-            </div>
-          ),
-        }
-      : null
+  const shareButton: FloatingMenuContentItem | null = isPublished
+    ? {
+        Element: (
+          <div key="share-button" onClick={copyUrl}>
+            <Share /> Share
+          </div>
+        ),
+      }
+    : null
 
   const deleteButton: FloatingMenuContentItem | null = canDelete
     ? {
@@ -401,32 +381,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </abbr>
     ) : null
 
-  // const sendToMoodleButton: (AddonItem | null) | null =
-  //   width < 800 && form.values.content
-  //     ? {
-  //         Item: () => (
-  //           <div key="send-to-moodle-button" tabIndex={0} onClick={() => setIsPublished(false)}>
-  //             <MoodleIcon />
-  //             Send to Moodle
-  //           </div>
-  //         ),
-  //         key: 'send-to-moodle-button',
-  //       }
-  //     : null
-
-  // const addToCollectionButton: (AddonItem | null) | null =
-  //   width < 800 && form.values.content && isAuthenticated
-  //     ? {
-  //         Item: () => (
-  //           <div key="add-to-collection-button" tabIndex={0} onClick={() => setIsPublished(false)}>
-  //             <AddToPhotos />
-  //             Add to collection
-  //           </div>
-  //         ),
-  //         key: 'add-to-collection-button',
-  //       }
-  //     : null
-
   const openLinkOrDownloadFile: FloatingMenuContentItem | null =
     width < 800 && contentUrl
       ? {
@@ -458,9 +412,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     openLinkOrDownloadFile,
     shareButton,
     deleteButton,
-    // bookmarkButtonSmallScreen,
-    // sendToMoodleButton,
-    // addToCollectionButton,
     ...(moreButtonItems ?? []),
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
@@ -497,32 +448,19 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ? {
         Item: () => (
           <div className="edit-save">
-            {isEditing && !isCurrentlySaving && (
+            {isEditing && !isSaving && (
               <PrimaryButton
-                className={`${isCurrentlySaving ? 'loading' : ''}`}
+                className={`save-button`}
                 color="green"
-                onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
-                disabled={empty && emptyOnStart}
+                onClick={handleOnSaveClick}
+                disabled={emptyOnStart}
               >
-                <div
-                  className="loading"
-                  style={{
-                    visibility: isCurrentlySaving ? 'visible' : 'hidden',
-                  }}
-                >
-                  <Loading color="white" />
-                </div>
-                <div
-                  className="label"
-                  style={{
-                    visibility: isCurrentlySaving ? 'hidden' : 'visible',
-                  }}
-                >
+                <div className="label">
                   <Save />
                 </div>
               </PrimaryButton>
             )}
-            {isEditing && isCurrentlySaving && (
+            {isEditing && isSaving && (
               <PrimaryButton className={`${'loading'}`} onClick={handleOnEditClick}>
                 <div className="loading">
                   <Loading color="white" />
@@ -530,7 +468,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
               </PrimaryButton>
             )}
             {!isEditing && (
-              <SecondaryButton onClick={handleOnEditClick} color="orange">
+              <SecondaryButton className="edit-button" onClick={handleOnEditClick} color="orange">
                 <Edit />
               </SecondaryButton>
             )}
@@ -541,12 +479,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     : null
 
   const updatedTopRightHeaderItems = [
-    // likeButton,
     publishedButton,
-    // publishingButton,
     unpublishedButton,
-    // bookmarkButtonBigScreen,
-    // editSaveButton,
     ...(topRightHeaderItems ?? []),
     moreButton,
     editSaveButton,
@@ -586,12 +520,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  // const embed = contentUrl
-  //   ? getPreviewFromUrl(contentUrl)
-  //   : typeof contentForm.values.content === 'string'
-  //   ? getPreviewFromUrl(contentForm.values.content)
-  //   : null
-
   const resourceUploader = (imageForm.values.image || isEditing) && (
     <UploadResource
       displayOnly={(canEdit && !isEditing) || !canEdit}
@@ -607,55 +535,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     />
   )
 
-  // const imageDiv = (
-  //   <img
-  //     className="image"
-  //     key="image"
-  //     src={image}
-  //     alt="Background"
-  //     {...(contentType === 'file' &&
-  //       typeName === 'Image' && {
-  //         onClick: () => setIsShowingImage(true),
-  //       })}
-  //     style={{
-  //       maxHeight: image ? 'fit-content' : '150px',
-  //       cursor: contentType === 'file' && typeName !== 'Image' ? 'initial' : 'pointer',
-  //     }}
-  //   />
-  // )
-
-  // const imageContainer =
-  //   !canEdit || !isEditing
-  //     ? embed ??
-  //       ((contentForm.values.content || contentUrl) && (imageForm.values.image || imageUrl) ? (
-  //         <div className="image-container" key="image-container">
-  //           {contentType === 'link' && contentUrl ? (
-  //             <a href={contentUrl} target="_blank" rel="noreferrer">
-  //               {imageDiv}
-  //             </a>
-  //           ) : (
-  //             <>{imageDiv}</>
-  //           )}
-  //           {/* {getImageCredits(form.values.image)} */}
-  //         </div>
-  //       ) : null)
-  //     : null
-
-  // const searchImageComponent = isSearchingImage && (
-  //   <SearchImage onClose={() => setIsSearchingImage(false)} setImage={setImage} />
-  // )
-
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [showFullDescription, setShowFullDescription] = useState(true)
-  // const [isSmallDescription, setIsSmallDescription] = useState(false)
 
   useEffect(() => {
     const fieldElem = descriptionRef.current
     if (fieldElem) {
       {
         fieldElem.scrollHeight > 70 && setShowFullDescription(false)
-        // fieldElem.scrollHeight > 70 ? setShowFullDescription(false) : setIsSmallDescription(true)
-        // fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'}
       }
     }
   }, [descriptionRef])
@@ -682,7 +569,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         style={{
           height: showFullDescription ? 'fit-content' : '66px',
           overflow: showFullDescription ? 'auto' : 'hidden',
-          // paddingBottom: showFullDescription && !isSmallDescription ? '20px' : 0,
         }}
       >
         {form.values.description}
@@ -692,11 +578,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           ...see more
         </div>
       )}
-      {/* {showFullDescription && !isSmallDescription && (
-              <div className="see-more" onClick={() => setShowFullDescription(false)}>
-                see less
-              </div>
-            )} */}
     </div>
   )
 
@@ -714,7 +595,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const updatedMainColumnItems = [
     resourceHeader,
     resourceUploader,
-    // imageContainer,
     description,
     resourceFooter,
     ...(mainColumnItems ?? []),
@@ -765,29 +645,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <>
       {modals}
       {snackbars}
-      {/* {searchImageComponent} */}
       <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>
     </>
-
-    //   <MainLayout {...mainLayoutProps}>
-    //     {modals}
-    //     {snackbars}
-    //     {searchImageComponent}
-    //     <div className="resource">
-    //       <div className="content">
-    //         <div className="main-column">
-    //
-    //         </div>
-    //         <div className="side-column">
-    //           {updatedSideColumnItems?.map(i => (
-    //             <i.Item key={i.key} />
-    //           ))}
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </MainLayout>
   )
 }
 MainResourceCard.displayName = 'MainResourceCard'

@@ -14,7 +14,8 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -34,7 +35,6 @@ import type {
 } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard.js'
 import './Resource.scss'
-export type SaveState = { form: boolean; image: boolean; content: boolean }
 
 export type ResourceProps = {
   saveState: SaveState
@@ -57,8 +57,6 @@ export type ResourceProps = {
   edMetaOptions: EdMetaOptionsProps
 
   fileMaxSize: number
-  isEditingAtStart: boolean
-
   validationSchemas: ValidationSchemas
 }
 
@@ -84,7 +82,6 @@ export const Resource: FC<ResourceProps> = ({
   saveState,
 
   fileMaxSize,
-  isEditingAtStart,
   validationSchemas: {
     draftContentValidationSchema,
     publishedContentValidationSchema,
@@ -116,24 +113,25 @@ export const Resource: FC<ResourceProps> = ({
     yearOptions,
   } = edMetaOptions
 
+  const emptyOnStart = useRef<boolean>(
+    !resourceForm.title &&
+      !resourceForm.description &&
+      !image &&
+      !contentUrl &&
+      !resourceForm.type &&
+      !resourceForm.language &&
+      !resourceForm.license &&
+      !resourceForm.level &&
+      !resourceForm.subject &&
+      !resourceForm.year &&
+      !resourceForm.month,
+  ).current
+
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
   const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
-
-  const emptyOnStart =
-    !resourceForm.title &&
-    !resourceForm.description &&
-    !image &&
-    !contentUrl &&
-    !resourceForm.type &&
-    !resourceForm.language &&
-    !resourceForm.license &&
-    !resourceForm.level &&
-    !resourceForm.subject &&
-    !resourceForm.year &&
-    !resourceForm.month
+  const [isEditing, setIsEditing] = useState<boolean>(emptyOnStart)
 
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
@@ -310,7 +308,7 @@ export const Resource: FC<ResourceProps> = ({
       actions={actions}
       access={access}
       slots={mainResourceCardSlots}
-      isSaving={isSavingForm}
+      savingState={isSavingForm}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
       setIsPublishValidating={setIsPublishValidating}
@@ -514,7 +512,7 @@ export const Resource: FC<ResourceProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const isSavingSnackbar = (isSavingContent || isSavingImage) && (
+  const isSavingSnackbar = (isSavingContent === 'saving' || isSavingImage === 'saving') && (
     <Snackbar position="bottom" type="info" waitDuration={1500} showCloseButton={false}>
       {`Content uploading, please don't close the tab`}
     </Snackbar>
