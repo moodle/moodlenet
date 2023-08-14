@@ -44,7 +44,6 @@ export type MainCollectionCardProps = {
   slots: MainCollectionCardSlots
 
   data: CollectionDataProps
-  // collectionForm: CollectionFormProps
   form: FormikHandle<CollectionFormProps>
   imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
 

@@ -6,6 +6,7 @@ import type {
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
+  SaveState,
 } from '@moodlenet/ed-resource/common'
 import { getValidationSchemas } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
@@ -28,10 +29,9 @@ import type { AddonItem } from '@moodlenet/component-library'
 import { AddToCollectionButtonStories } from '@moodlenet/collection/stories'
 import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
-import type { MainResourceCardSlots, ResourceProps, SaveState } from '@moodlenet/ed-resource/ui'
+import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
-import { SendToMoodle } from '../../../../../moodle-lms-integration/dist/webapp/ui/components/SendToMoodle.js'
 
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
@@ -41,6 +41,8 @@ import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
+
+import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -183,18 +185,17 @@ export const useResourceStoryProps = (
           },
   }
 
-  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
+  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? 'not-saving')
 
   const setContent = (e: File | string | undefined | null) => {
-    console.log('filename', typeof e === 'string' ? undefined : e?.name)
     if (typeof e === 'string') {
       setFilename(null)
     } else {
       e ? setFilename(e.name) : setFilename(null)
     }
-    setIsSaving(true)
+    setIsSaving('saving')
     setTimeout(() => {
-      setIsSaving(false)
+      setIsSaving('not-saving')
     }, 1000)
 
     action('set content')(e)
@@ -207,10 +208,9 @@ export const useResourceStoryProps = (
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
     editData: () => {
-      console.log('action edit data')
-      setIsSaving(true)
+      setIsSaving('saving')
       setTimeout(() => {
-        setIsSaving(false)
+        setIsSaving('not-saving')
       }, 1000)
     },
     publish: () => {
@@ -314,8 +314,8 @@ export const useResourceStoryProps = (
 
   const saveState: SaveState = {
     form: isSaving,
-    content: false,
-    image: false,
+    content: 'not-saving',
+    image: 'not-saving',
   }
 
   return overrideDeep<ResourceProps>(
@@ -347,7 +347,6 @@ export const useResourceStoryProps = (
 
       fileMaxSize: 343243,
       saveState: saveState,
-      isEditingAtStart: false,
     },
     overrides,
   )
