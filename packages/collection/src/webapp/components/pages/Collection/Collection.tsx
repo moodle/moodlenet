@@ -11,7 +11,7 @@ import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
@@ -120,8 +120,7 @@ export const Collection: FC<CollectionProps> = ({
   const isDraftFormValid = draftCollectionValidationSchema.isValidSync(form.values)
 
   const imageForm = useFormik<{ image: AssetInfoForm | null | undefined }>({
-    // initialValues: useMemo(() => ({ image: image }), [image]),
-    initialValues: { image },
+    initialValues: useMemo(() => ({ image: image }), [image]),
     validateOnMount: true,
     enableReinitialize: true,
     validationSchema: imageValidationSchema,
@@ -164,7 +163,6 @@ export const Collection: FC<CollectionProps> = ({
       publish()
     } else {
       setIsEditing(true)
-      setIsPublishValidating(false)
       setShouldShowErrors(true)
     }
   }, [
@@ -201,7 +199,6 @@ export const Collection: FC<CollectionProps> = ({
       form_validateForm()
       setShouldShowErrors(true)
     }
-    setIsPublishValidating(false)
   }, [
     form_validateForm,
     imageForm.isValid,
@@ -256,7 +253,6 @@ export const Collection: FC<CollectionProps> = ({
     <MainCollectionCard
       key="main-collection-card"
       data={data}
-      // collectionForm={collectionForm}
       form={form}
       imageForm={imageForm}
       publish={checkFormsAndPublish}
@@ -310,10 +306,9 @@ export const Collection: FC<CollectionProps> = ({
     </Card>
   ) : null
 
-  const updatedExtraDetailsItems = [
-    // license,
-    ...(extraDetailsItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  const updatedExtraDetailsItems = [...(extraDetailsItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
+  )
 
   const extraDetailsContainer =
     updatedExtraDetailsItems.length > 0 ? (

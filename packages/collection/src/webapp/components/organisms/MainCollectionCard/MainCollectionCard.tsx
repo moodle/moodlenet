@@ -103,11 +103,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     footerRowItems,
   } = slots
 
-  const {
-    // id,
-    mnUrl,
-    image,
-  } = data
+  const { mnUrl, image } = data
 
   const { isPublished } = state
 
@@ -119,16 +115,8 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  // const backupImage: string | undefined = useMemo(
-  //   () => (imageForm.values.image ? undefined : getBackupImage(id)),
-  //   [id, imageForm.values.image],
-  // )
   const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
   const [isWaitingForSaving, setIsWaitingForSaving] = useState(false)
-
-  console.log('shouldShowErrors', shouldShowErrors)
-  console.log('isEditing', isEditing)
-  console.log('form.errors.description', form.errors.description)
 
   const handleOnEditClick = () => {
     setIsEditing(true)
