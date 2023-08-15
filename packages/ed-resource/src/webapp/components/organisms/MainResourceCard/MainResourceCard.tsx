@@ -293,16 +293,21 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       </div>
     ) : null
 
-  useEffect(() => {
-    if (savingState === 'save-done') setIsEditing(false)
-  }, [savingState, setIsEditing])
-
   const updatedTopLeftHeaderItems = [
     resourceLabel,
     typePill,
     // savingFeedback,
     ...(topLeftHeaderItems ?? []),
   ].filter((item): item is AddonItem => !!item)
+
+  const empty =
+    (!form.values.title || form.values.title === '') &&
+    (!form.values.description || form.values.description === '') &&
+    !contentForm.values.content &&
+    !imageForm.values.image
+
+  console.log('emptyOnStart', emptyOnStart)
+  console.log('empty', empty)
 
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {
@@ -453,7 +458,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                 className={`save-button`}
                 color="green"
                 onClick={handleOnSaveClick}
-                disabled={emptyOnStart}
+                disabled={empty && emptyOnStart}
               >
                 <div className="label">
                   <Save />

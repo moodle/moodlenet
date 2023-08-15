@@ -14,7 +14,7 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
@@ -113,7 +113,7 @@ export const Resource: FC<ResourceProps> = ({
     yearOptions,
   } = edMetaOptions
 
-  const emptyOnStart = useRef<boolean>(
+  const [emptyOnStart, setEmptyOnStart] = useState<boolean>(
     !resourceForm.title &&
       !resourceForm.description &&
       !image &&
@@ -125,7 +125,7 @@ export const Resource: FC<ResourceProps> = ({
       !resourceForm.subject &&
       !resourceForm.year &&
       !resourceForm.month,
-  ).current
+  )
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -145,6 +145,7 @@ export const Resource: FC<ResourceProps> = ({
       return editData(values)
     },
   })
+
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
   const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
 
@@ -177,6 +178,13 @@ export const Resource: FC<ResourceProps> = ({
         : undefined
     },
   })
+
+  useEffect(() => {
+    if (isSavingForm === 'save-done') {
+      setIsEditing(false)
+      setEmptyOnStart(false)
+    }
+  }, [isSavingForm, setIsEditing])
 
   const contentForm_setTouched = contentForm.setTouched
   const imageForm_setTouched = imageForm.setTouched
@@ -454,8 +462,9 @@ export const Resource: FC<ResourceProps> = ({
       {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </Card>
   ) : null
-  const downloadOrOpenLinkButton =
-    contentType && (contentUrl || contentForm.values.content) ? (
+
+  const downloadButton =
+    contentType === 'file' && contentUrl && contentForm.values.content ? (
       <a
         href={contentUrl ?? undefined}
         target="_blank"
@@ -463,18 +472,18 @@ export const Resource: FC<ResourceProps> = ({
         download={downloadFilename}
       >
         <SecondaryButton key="download-or-open-link-button">
-          {contentType === 'file' && (
-            <>
-              <InsertDriveFile />
-              Download file
-            </>
-          )}
-          {contentType === 'link' && (
-            <>
-              <Link />
-              Open link
-            </>
-          )}
+          <InsertDriveFile />
+          Download file
+        </SecondaryButton>
+      </a>
+    ) : null
+
+  const openLinkButton =
+    contentType === 'link' && contentUrl && contentForm.values.content ? (
+      <a href={contentUrl ?? undefined} target="_blank" rel="noreferrer">
+        <SecondaryButton key="download-or-open-link-button">
+          <Link />
+          Open link
         </SecondaryButton>
       </a>
     ) : null
@@ -484,7 +493,8 @@ export const Resource: FC<ResourceProps> = ({
     publishCheckButton,
     unpublishButton,
     ...(generalActionsItems ?? []),
-    downloadOrOpenLinkButton,
+    downloadButton,
+    openLinkButton,
   ].filter((item): item is AddonItem => !!item)
 
   const generalActionsContainer = (

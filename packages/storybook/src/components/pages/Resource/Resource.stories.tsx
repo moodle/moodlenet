@@ -19,7 +19,10 @@ type ResourceStory = ComponentStory<typeof Resource>
 
 export const LoggedOut: ResourceStory = () => {
   const props: ResourceProps = useResourceStoryProps({
-    data: {},
+    data: {
+      contentType: 'link',
+      contentUrl: 'https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328',
+    },
     state: {},
     actions: {},
     access: {},
@@ -33,7 +36,7 @@ export const LoggedIn: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {
       contentType: 'link',
-      contentUrl: 'https://www.google.com',
+      contentUrl: 'https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328',
     },
     state: {},
     actions: {},
@@ -62,14 +65,8 @@ export const NewResourceProps: Partial<ResourceFormProps> = {
 
 export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
-    isEditingAtStart: true,
     data: {
-      downloadFilename: null,
-      contentType: undefined,
-      // downloadFilename: undefined,
-      contentUrl: null,
       image: null,
-      // numLikes: 0,
     },
     resourceForm: NewResourceProps,
 
@@ -91,7 +88,12 @@ export const New: ResourceStory = () => {
 export const Creator: ResourceStory = () => {
   const props = useResourceStoryProps({
     saveState: {},
-    data: {},
+    data: {
+      contentType: 'file',
+      contentUrl:
+        'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
+      downloadFilename: '557_Sujeto_y_Predicado.pdf',
+    },
     resourceForm: {
       level: undefined,
     },
