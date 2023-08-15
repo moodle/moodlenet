@@ -111,7 +111,7 @@ export async function patchCollection(key: string, patch: Patch<CollectionEntity
 export async function createCollection(collectionData: Partial<CollectionDataType>) {
   const newCollection = await shell.call(create)(Collection.entityClass, {
     description: '',
-    title: 'no name',
+    title: '',
     image: null,
     published: false,
     resourceList: [],

@@ -140,7 +140,11 @@ export const useResourceStoryProps = (
   //   mainResourceCardSlots?: Partial<MainResourceCardSlots>
   // }
 ): ResourceProps => {
-  const [filename, setFilename] = useState<string | null>('filename.pdf')
+  const [contentUrl, setContentUrl] = useState<string | null>(overrides?.data?.contentUrl ?? null)
+  const [filename, setFilename] = useState<string | null>(overrides?.data?.downloadFilename ?? null)
+  const [contentType, setContentType] = useState<'link' | 'file' | null>(
+    overrides?.data?.contentType ?? null,
+  )
 
   // setInterval(() => setIsSaving(!isSaving), 1000)
 
@@ -163,13 +167,9 @@ export const useResourceStoryProps = (
   const data: ResourceDataProps = {
     id: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
-    contentUrl: 'https://www.africau.edu/images/default/sample.pdf',
-    // contentUrl: 'https://moodle.net/profile/d488bc9d51ef-moodle-academy',
-    // contentUrl: 'https://youtu.be/dZNC5kIvM00',
-    // contentUrl: 'https://vimeo.com/204467192',
+    contentUrl: contentUrl,
     downloadFilename: filename,
-    contentType: 'file',
-    // contentType: 'link',
+    contentType: contentType,
     ...overrides?.data,
     subjectHref: href('Pages/subject/Logged In'),
     image:
@@ -189,13 +189,26 @@ export const useResourceStoryProps = (
 
   const setContent = (e: File | string | undefined | null) => {
     if (typeof e === 'string') {
+      setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
       setFilename(null)
+      setContentType('link')
+    } else if (e) {
+      setContentUrl(
+        'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
+      )
+      setContentType('file')
+      setFilename(e.name)
     } else {
-      e ? setFilename(e.name) : setFilename(null)
+      setContentUrl(null)
+      setContentType(null)
+      setFilename(null)
     }
     setIsSaving('saving')
     setTimeout(() => {
-      setIsSaving('not-saving')
+      setIsSaving('save-done')
+      setTimeout(() => {
+        setIsSaving('not-saving')
+      }, 100)
     }, 1000)
 
     action('set content')(e)
