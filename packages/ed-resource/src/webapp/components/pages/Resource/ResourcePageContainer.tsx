@@ -4,10 +4,7 @@ import { ProvideCurrentResourceContext } from '../../../CurrentResourceContext.j
 import ResourcePage from './Resource.js'
 import { useResourcePageProps } from './ResourcePageHooks.js'
 
-export const ResourcePageContainer: FC<{ resourceKey: string; editMode: boolean }> = ({
-  resourceKey,
-  editMode,
-}) => {
+export const ResourcePageContainer: FC<{ resourceKey: string }> = ({ resourceKey }) => {
   const resourceProps = useResourcePageProps({ resourceKey })
   if (resourceProps === null) {
     return <FallbackContainer />
@@ -21,7 +18,7 @@ export const ResourcePageContainer: FC<{ resourceKey: string; editMode: boolean 
       key={resourceKey}
       resourceProps={resourceProps}
     >
-      <ResourcePage {...resourceProps} key={resourceKey} isEditingAtStart={editMode} />
+      <ResourcePage {...resourceProps} key={resourceKey} />
     </ProvideCurrentResourceContext>
   )
 }

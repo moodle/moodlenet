@@ -5,6 +5,7 @@ import type {
   ResourceFormProps,
   ResourceProps,
   SaveState,
+  SavingState,
 } from '../common/types.mjs'
 
 import { useImageUrl } from '@moodlenet/react-app/ui'
@@ -50,7 +51,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   }, [resourceKey, rpcCaller])
 
   const setterSave = useCallback(
-    (key: keyof SaveState, val: boolean) =>
+    (key: keyof SaveState, val: SavingState) =>
       setSaveState(currentSaved => ({ ...currentSaved, [key]: val })),
     [],
   )
@@ -64,7 +65,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     if (res.type === 'resolved') {
       updateDataProp('image', res.value ? { credits: null, location: res.value } : null)
     }
-    setterSave('image', false)
+    setterSave('image', 'not-saving')
   })
 
   const [upResourceTaskSet, upResourceTaskId, upResourceTaskCurrent] = useUpResourceTasks(
@@ -77,14 +78,14 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         updateDataProp('contentUrl', res.value)
         updateDataProp('downloadFilename', isFile ? newContent.name : null)
       }
-      setterSave('content', false)
+      setterSave('content', 'not-saving')
     },
   )
 
   const [saveState, setSaveState] = useState<SaveState>({
-    form: false,
-    image: !!upImageTaskCurrent,
-    content: !!upResourceTaskCurrent,
+    form: 'not-saving',
+    image: upImageTaskCurrent ? 'saving' : 'not-saving',
+    content: upResourceTaskCurrent ? 'saving' : 'not-saving',
   })
 
   const actions = useMemo<ResourceActions>(() => {
@@ -92,17 +93,18 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
-        setterSave('form', true)
+        setterSave('form', 'saving')
         editRpc(resourceKey, res).then(() => {
-          setterSave('form', false)
+          setterSave('form', 'save-done')
+          setTimeout(() => setterSave('form', 'not-saving'), 0)
         }) // .then(form => updateResource('form', 'resourceForm', form)),
       },
       setImage(file: File | undefined | null) {
-        setterSave('image', true)
+        setterSave('image', 'saving')
         upImageTaskSet(setImage(resourceKey, file, upImageTaskId), { file })
       },
       async setContent(content: File | string | undefined | null) {
-        setterSave('content', true)
+        setterSave('content', 'saving')
 
         upResourceTaskSet(setContent(resourceKey, content, upResourceTaskId), { content })
         // await setContent(resourceKey, content).then(updateDataProp('contentUrl'))
