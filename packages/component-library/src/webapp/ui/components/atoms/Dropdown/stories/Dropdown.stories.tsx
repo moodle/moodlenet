@@ -4,7 +4,7 @@ import { LevelDropdown, LicenseDropdown } from './DropdownProps.stories.js'
 import { useStoriesDDCtrl } from './DropdownUtil.stories.js'
 
 const meta: ComponentMeta<typeof Dropdown> = {
-  title: 'Atoms/DropdownNew',
+  title: 'Atoms/Dropdown',
   component: Dropdown,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -122,7 +122,7 @@ export const TextMulti: ComponentStory<typeof Dropdown> = () => {
       searchByText={setFilter}
       value={value}
       multiple
-      multilines={false}
+      multilines={true}
       edit={edit}
     >
       {selectedOpts &&

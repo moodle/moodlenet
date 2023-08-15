@@ -60,6 +60,17 @@
       }
     }
 
+    &.no-shadow {
+      box-shadow: none;
+      border: none;
+      background-color: transparent;
+    }
+
+    &.multilines {
+      height: fit-content;
+      min-height: 46px;
+    }
+
     > .dropdown-button {
       width: 100%;
       display: flex;

@@ -61,6 +61,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       placeholder="License category"
       searchByText={setSearchText}
       highlight={shouldShowErrors && !!error}
+      noShadow
       error={shouldShowErrors && error}
       position={{ top: 50, bottom: 25 }}
       pills={

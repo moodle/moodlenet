@@ -70,7 +70,7 @@ const DropdownComp: FC<DropdownProps> = props => {
     position,
   } = props
 
-  const [showContentFlag, toggleOpen] = useReducer(_ => !_, false)
+  const [isShowingContent, toggleIsShowingContent] = useReducer(_ => !_, false)
   const [isHoveringOptions, setHoveringOptions] = useState(false)
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
   const [currentError, setcurrentError] = useState<ReactNode>(undefined)
@@ -90,8 +90,16 @@ const DropdownComp: FC<DropdownProps> = props => {
     return () => window.removeEventListener('click', clickOutListener)
   }, [divRef, showContent])
 
+  // useEffect(() => {
+  //   const clickOutListener = () => {
+  //     isShowingContent && toggleIsShowingContent()
+  //   }
+  //   window.addEventListener('click', clickOutListener)
+  //   return () => window.removeEventListener('click', clickOutListener)
+  // }, [isShowingContent])
+
   const setLayout = useCallback(() => {
-    showContent &&
+    isShowingContent &&
       setListPosition({
         dropdownButton,
         dropdownContent,
@@ -100,24 +108,24 @@ const DropdownComp: FC<DropdownProps> = props => {
         window,
         label: !!label,
       })
-  }, [showContent, position, label])
+  }, [isShowingContent, position, label])
 
   useLayoutEffect(() => {
-    showContent && setLayout()
+    isShowingContent && setLayout()
     window.addEventListener('scroll', setLayout)
     window.addEventListener('resize', setLayout)
     return () => {
       window.removeEventListener('scroll', setLayout)
       window.removeEventListener('resize', setLayout)
     }
-  }, [setLayout, showContent])
+  }, [setLayout, isShowingContent])
 
   useLayoutEffect(() => {
-    showContent && dropdownButton.current?.focus()
-  }, [showContent])
+    isShowingContent && dropdownButton.current?.focus()
+  }, [isShowingContent])
   useEffect(() => {
-    !showContent && searchByText?.('')
-  }, [showContent, searchByText])
+    !isShowingContent && searchByText?.('')
+  }, [isShowingContent, searchByText])
 
   useEffect(() => {
     if (error) {
@@ -154,26 +162,26 @@ const DropdownComp: FC<DropdownProps> = props => {
     >
       {label && <label>{label}</label>}
       <div
-        onClick={showContent ? undefined : toggleOpen}
-        onFocus={showContent ? undefined : toggleOpen}
-        className={`input-container${disabled || !edit ? ' not-editing' : ''}${
+        onClick={isShowingContent ? undefined : toggleIsShowingContent}
+        onFocus={isShowingContent ? undefined : toggleIsShowingContent}
+        className={`input-container${disabled || !edit ? ' not-editing' : ''} ${
           highlight ? ' highlight' : ''
         }${noBorder ? ' no-border' : ''}`}
-        tabIndex={!disabled && !showContent ? 0 : undefined}
+        tabIndex={!disabled && !isShowingContent ? 0 : undefined}
       >
-        {showContent ? (
+        {isShowingContent ? (
           <>
             <input
               ref={dropdownButton}
               className={`dropdown-button search-field  ${disabled || !edit ? 'not-editing' : ''}`}
               placeholder={placeholder}
               onInput={({ currentTarget }) => searchByText?.(currentTarget.value)}
-              onClick={showContent ? _ => _.stopPropagation() : undefined}
-              onBlur={showContent && isHoveringOptions ? undefined : toggleOpen}
+              onClick={isShowingContent ? _ => _.stopPropagation() : undefined}
+              onBlur={isShowingContent && isHoveringOptions ? undefined : toggleIsShowingContent}
               disabled={disabled || !edit}
               defaultValue={searchText}
             />
-            <ExpandLessIcon onClickCapture={toggleOpen} />
+            <ExpandLessIcon onClickCapture={toggleIsShowingContent} />
           </>
         ) : (
           <>
@@ -191,7 +199,7 @@ const DropdownComp: FC<DropdownProps> = props => {
       </div>
       {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}
 
-      {showContent && (
+      {isShowingContent && (
         // contentLength > 0 &&
         <div
           ref={dropdownContent}
@@ -201,7 +209,7 @@ const DropdownComp: FC<DropdownProps> = props => {
           tabIndex={-1}
           onClick={_ => {
             _.stopPropagation()
-            !multiple && toggleOpen()
+            !multiple && toggleIsShowingContent()
           }}
         >
           {children}
@@ -222,7 +230,7 @@ export const SimplePill: FC<{
   return (
     <abbr title={title} className="dropdown-pill">
       <div className="label">{label}</div>
-      {edit && <RoundButton onClick={toggle} />}
+      {edit && <RoundButton className="remove" onClick={toggle} />}
     </abbr>
   )
 }

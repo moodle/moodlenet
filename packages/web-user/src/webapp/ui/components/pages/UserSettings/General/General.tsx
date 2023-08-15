@@ -1,17 +1,36 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card /* , Snackbar, SnackbarStack */ } from '@moodlenet/component-library'
+import { Card } from '@moodlenet/component-library'
+import { SubjectMultipleField } from '@moodlenet/ed-meta/ui'
+import type { EdMetaOptionsProps, ResourceFormProps } from '@moodlenet/ed-resource/common'
+import { useFormik } from 'formik'
 import { /* useState, */ type FC } from 'react'
 import './General.scss'
 
 export type GeneralProps = {
   mainColumnItems: (AddonItem | null)[]
+  edMetaOptions: EdMetaOptionsProps
+  resourceForm: ResourceFormProps
   // userId: string
 }
 
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
-export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) => {
+export const General: FC<GeneralProps> = ({
+  mainColumnItems,
+  edMetaOptions,
+  resourceForm,
+  //userId
+}) => {
+  const {
+    languageOptions,
+    levelOptions,
+    licenseOptions,
+    monthOptions,
+    subjectOptions,
+    typeOptions,
+    yearOptions,
+  } = edMetaOptions
   /* const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
 
   const copyId = () => {
@@ -39,27 +58,39 @@ export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) =>
         </div>
       </div>
     </Card>
+  )*/
+
+  const form = useFormik<ResourceFormProps>({
+    initialValues: resourceForm,
+    validateOnMount: true,
+    validateOnChange: true,
+    enableReinitialize: true,
+    onSubmit: () => {
+      // values => {
+      console.log('changes saved')
+      // return editData(values)
+    },
+  })
+
+  const subjectField = (
+    <SubjectMultipleField
+      canEdit={true}
+      key="subject-field"
+      subjects={[form.values.subject]}
+      subjectOptions={subjectOptions}
+      error={form.errors.subject}
+      editSubject={e => form.setFieldValue('subject', e)}
+      shouldShowErrors={true}
+    />
   )
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        showUserIdCopiedAlert ? (
-          <Snackbar
-            type="success"
-            position="bottom"
-            autoHideDuration={6000}
-            showCloseButton={false}
-          >
-            User ID copied to the clipboard
-          </Snackbar>
-        ) : null,
-      ]}
-    ></SnackbarStack>
-  ) */
-
-  const updatedMainColumnItems = [/* detailsSection, */ ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
+  const interestsSection = (
+    <Card className="column interests-section">
+      <div className="parameter">
+        <div className="name">Interests</div>
+        {subjectField}
+      </div>
+    </Card>
   )
 
   const snackbars = [
@@ -82,8 +113,30 @@ export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) =>
     <></>,
   ]
 
-  const modals = [<></>]
+  // const snackbarsStack =
+  // <SnackbarStack
+  // snackbarList=        [
+  // showUserIdCopiedAlert ? (
+  //   <Snackbar
+  //     type="success"
+  //     position="bottom"
+  //     autoHideDuration={6000}
+  //     showCloseButton={false}
+  //   >
+  //     User ID copied to the clipboard
+  //   </Snackbar>
+  // ) : null,
 
+  // }
+  // ></SnackbarStack>
+
+  const updatedMainColumnItems = [
+    //detailsSection,
+    interestsSection,
+    ...(mainColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const modals = [<></>]
   return (
     <div className="general" key="general">
       {modals}
