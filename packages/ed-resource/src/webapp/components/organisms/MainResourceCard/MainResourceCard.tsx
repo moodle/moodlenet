@@ -204,9 +204,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
     setShouldShowErrors(false)
 
-    if (form.dirty) {
-      form_submitForm()
-    }
+    // if (form.dirty) {
+    form_submitForm()
+    // }
 
     if (contentForm.dirty) {
       contentForm.values.content !== contentUrl && contentForm_submitForm()
@@ -222,7 +222,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentForm.values.content,
     contentForm_submitForm,
     contentUrl,
-    form.dirty,
+    // form.dirty,
     form_submitForm,
     image,
     imageForm.dirty,

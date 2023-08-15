@@ -195,14 +195,38 @@ export const useResourceStoryProps = (
     image,
   }
 
-  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? 'not-saving')
+  const [isSavingForm, setIsSavingForm] = useState(overrides?.saveState?.form ?? 'not-saving')
+  const [isSavingContent, setIsSavingContent] = useState(
+    overrides?.saveState?.content ?? 'not-saving',
+  )
+  const [isSavingImage, setIsSavingImage] = useState(overrides?.saveState?.image ?? 'not-saving')
 
-  const save = () => {
-    setIsSaving('saving')
+  const saveForm = () => {
+    setIsSavingForm('saving')
     setTimeout(() => {
-      setIsSaving('save-done')
+      setIsSavingForm('save-done')
       setTimeout(() => {
-        setIsSaving('not-saving')
+        setIsSavingForm('not-saving')
+      }, 100)
+    }, 1000)
+  }
+
+  const saveContent = () => {
+    setIsSavingContent('saving')
+    setTimeout(() => {
+      setIsSavingContent('save-done')
+      setTimeout(() => {
+        setIsSavingContent('not-saving')
+      }, 100)
+    }, 1000)
+  }
+
+  const saveImage = () => {
+    setIsSavingImage('saving')
+    setTimeout(() => {
+      setIsSavingImage('save-done')
+      setTimeout(() => {
+        setIsSavingImage('not-saving')
       }, 100)
     }, 1000)
   }
@@ -225,7 +249,7 @@ export const useResourceStoryProps = (
         setFilename(null)
       }
     }, 1000)
-    save()
+    saveContent()
 
     action('set content')(e)
   }
@@ -240,7 +264,7 @@ export const useResourceStoryProps = (
         setImageData(null)
       }
     }, 1000)
-    save()
+    saveImage()
 
     action('set image')(e)
   }
@@ -251,7 +275,7 @@ export const useResourceStoryProps = (
 
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: () => save,
+    editData: saveForm,
     publish: () => {
       setIsPublished(true)
     },
@@ -352,9 +376,9 @@ export const useResourceStoryProps = (
   ]
 
   const saveState: SaveState = {
-    form: isSaving,
-    content: 'not-saving',
-    image: 'not-saving',
+    form: isSavingForm,
+    content: isSavingContent,
+    image: isSavingImage,
   }
 
   return overrideDeep<ResourceProps>(
