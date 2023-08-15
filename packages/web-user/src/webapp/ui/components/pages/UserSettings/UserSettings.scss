@@ -147,8 +147,8 @@
           font-weight: bold;
         }
 
-        > .option,
-        > * .option {
+        > .option:not(.checkmark),
+        > * .option:not(.checkmark) {
           display: flex;
           flex-direction: column;
           gap: 10px;

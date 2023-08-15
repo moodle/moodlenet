@@ -1,5 +1,5 @@
 import type { TextOptionProps } from '@moodlenet/component-library'
-import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
+import { CheckmarkOption, Dropdown, SimplePill } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 
@@ -8,30 +8,32 @@ export type SubjectMultipleFieldProps = {
   subjectOptions: TextOptionProps[]
   canEdit: boolean
   shouldShowErrors: boolean
-  error: string | undefined
-  editSubject(subject: string): void
+  errors: string[] | string | undefined
+  editSubjects(subjects: string[]): void
 }
 
 export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
   subjects,
   subjectOptions,
   canEdit,
-  error,
+  errors,
   shouldShowErrors,
-  editSubject,
+  editSubjects,
 }) => {
   const newSubjects = {
     opts: subjectOptions,
-    selected: subjectOptions.find(({ value }) => subjects.includes(value)),
+    selected: subjectOptions.filter(({ value }) => subjects.includes(value)),
   }
   const [updatedSubjects, setUpdatedSubjects] = useState(newSubjects)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
-    setUpdatedSubjects({
-      opts: subjectOptions,
-      selected: subjectOptions.find(({ value }) => subjects.includes(value)),
-    })
+    const selected = subjectOptions.filter(({ value }) => subjects.includes(value))
+    selected &&
+      setUpdatedSubjects({
+        opts: subjectOptions,
+        selected: selected,
+      })
   }, [subjectOptions, subjects])
 
   useEffect(() => {
@@ -41,61 +43,66 @@ export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
           o.label.toUpperCase().includes(searchText.toUpperCase()) ||
           o.value.toUpperCase().includes(searchText.toUpperCase()),
       ),
-      selected: subjectOptions.find(
+      selected: subjectOptions.filter(
         ({ value }) =>
-          subjects.includes(value) && value.toUpperCase().includes(searchText.toUpperCase()),
+          subjects &&
+          subjects.includes(value) &&
+          value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
   }, [newSubjects.opts, searchText, subjectOptions, subjects])
+
+  const updateSubjects = (subject: string) => {
+    console.log('subject ', subject)
+    console.log('subjects ', subjects)
+    if (subjects.includes(subject)) {
+      editSubjects(subjects.filter(s => s !== subject))
+    } else {
+      editSubjects([...subjects, subject])
+    }
+  }
 
   return canEdit ? (
     <Dropdown
       name="subject"
       multiple
-      // onItemSelect={(value: string)=> console.log(value)}
-      // onItemDeselect={(value: string)=> console.log(value)}
       multilines={true}
       value={subjects}
-      onChange={e => {
-        !subjects.includes(e.currentTarget.value) && editSubject(e.currentTarget.value)
-      }}
+      onChange={e => updateSubjects(e.target.value)}
       label="Subject"
       placeholder="Content category"
       edit
-      highlight={shouldShowErrors && !!error}
-      error={shouldShowErrors && error}
-      position={{ top: 50, bottom: 25 }}
+      highlight={shouldShowErrors && !!errors}
+      error={shouldShowErrors && errors}
+      position={{ top: 77, bottom: 25 }}
       searchByText={setSearchText}
       pills={
-        updatedSubjects.selected && (
-          <SimplePill
-            edit
-            key={updatedSubjects.selected.value}
-            value={updatedSubjects.selected.value}
-            label={updatedSubjects.selected.label}
-          />
-        )
+        updatedSubjects.selected &&
+        updatedSubjects.selected.map(selected => (
+          <SimplePill edit key={selected.value} value={selected.value} label={selected.label} />
+        ))
       }
     >
-      {updatedSubjects.selected && (
-        <TextOption
-          key={updatedSubjects.selected.value}
-          value={updatedSubjects.selected.value}
-          label={updatedSubjects.selected.label}
-        />
-      )}
+      {updatedSubjects.selected &&
+        updatedSubjects.selected.map(selected => (
+          <CheckmarkOption key={selected.value} value={selected.value} label={selected.label} />
+        ))}
       {updatedSubjects.opts.map(
         ({ label, value }) =>
-          updatedSubjects.selected?.value !== value && (
-            <TextOption key={value} label={label} value={value} />
+          updatedSubjects.selected &&
+          updatedSubjects.selected.map(
+            selected =>
+              selected?.value !== value && (
+                <CheckmarkOption key={value} label={label} value={value} />
+              ),
           ),
       )}
     </Dropdown>
   ) : subjects ? (
     <div className="detail subject">
       <div className="title">Subject</div>
-      <abbr className="value" title={updatedSubjects.selected?.label}>
-        {updatedSubjects.selected?.label}
+      <abbr className="value" title={updatedSubjects.selected[0]?.label}>
+        {updatedSubjects.selected[0]?.label}
       </abbr>
     </div>
   ) : null

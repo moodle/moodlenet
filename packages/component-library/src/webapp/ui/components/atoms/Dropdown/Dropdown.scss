@@ -244,18 +244,42 @@
       font-size: 14px;
       &:hover,
       &:focus {
-        background-color: rgba(0, 0, 0, 0.04);
+        background-color: #0000000a;
       }
       &:active {
-        background-color: rgba(0, 0, 0, 0.12);
+        background-color: #0000001f;
       }
       &.selected {
-        background-color: rgba(25, 118, 210, 0.08);
+        background-color: #1976d214;
         &:hover {
-          background-color: rgba(25, 118, 210, 0.12);
+          background-color: #1976d21f;
         }
         &:active {
-          background-color: rgba(25, 118, 210, 0.24);
+          background-color: #1976d23d;
+        }
+        &.checkmark > svg {
+          color: #1976d2c2;
+          &:hover {
+            color: #1976d2d6;
+          }
+          &:active {
+            color: #1976d2f2;
+          }
+        }
+      }
+      &.checkmark {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        > svg {
+          color: #747474;
+          &:hover {
+            color: #5c5c5c;
+          }
+          &:active {
+            color: #434343;
+          }
         }
       }
       &.icon-and-text {

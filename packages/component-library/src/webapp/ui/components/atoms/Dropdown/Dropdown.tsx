@@ -6,6 +6,7 @@ import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState }
 import type { SelectorProps } from '../../../lib/selector.js'
 import { Selector, useSelectorOption } from '../../../lib/selector.js'
 
+import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material'
 import RoundButton from '../RoundButton/RoundButton.js'
 import './Dropdown.scss'
 import { setListPosition } from './utils.js'
@@ -294,6 +295,26 @@ export const TextOption: FC<TextOptionProps> = ({ value, label, abbr }) => {
       className={`${selected ? 'selected ' : ''} option only-text`}
       onClick={toggle}
     >
+      {label}
+    </abbr>
+  )
+}
+export type CheckmarkOptionProps = {
+  value: string
+  label: string
+  abbr?: string
+}
+export const CheckmarkOption: FC<CheckmarkOptionProps> = ({ value, label, abbr }) => {
+  const { toggle, selected } = useSelectorOption(value) ?? {}
+  const title = abbr ? abbr : typeof label === 'string' ? label : undefined
+  return (
+    <abbr
+      key={value}
+      title={title}
+      className={`${selected ? 'selected ' : ''} option checkmark`}
+      onClick={toggle}
+    >
+      {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
       {label}
     </abbr>
   )

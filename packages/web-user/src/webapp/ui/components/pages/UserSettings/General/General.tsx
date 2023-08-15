@@ -2,15 +2,17 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card } from '@moodlenet/component-library'
 import { SubjectMultipleField } from '@moodlenet/ed-meta/ui'
-import type { EdMetaOptionsProps, ResourceFormProps } from '@moodlenet/ed-resource/common'
+import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
 import { useFormik } from 'formik'
 import { /* useState, */ type FC } from 'react'
+import { UserInterests } from '../../../../../../common/types.mjs'
 import './General.scss'
 
 export type GeneralProps = {
   mainColumnItems: (AddonItem | null)[]
   edMetaOptions: EdMetaOptionsProps
-  resourceForm: ResourceFormProps
+  interests: UserInterests
+  editInterests: (values: UserInterests) => void
   // userId: string
 }
 
@@ -19,7 +21,8 @@ export const GeneralMenu = () => <abbr title="General">General</abbr>
 export const General: FC<GeneralProps> = ({
   mainColumnItems,
   edMetaOptions,
-  resourceForm,
+  interests,
+  editInterests,
   //userId
 }) => {
   const {
@@ -60,14 +63,14 @@ export const General: FC<GeneralProps> = ({
     </Card>
   )*/
 
-  const form = useFormik<ResourceFormProps>({
-    initialValues: resourceForm,
+  const form = useFormik<UserInterests>({
+    initialValues: interests,
     validateOnMount: true,
     validateOnChange: true,
     enableReinitialize: true,
-    onSubmit: () => {
-      // values => {
+    onSubmit: values => {
       console.log('changes saved')
+      editInterests(values)
       // return editData(values)
     },
   })
@@ -76,10 +79,10 @@ export const General: FC<GeneralProps> = ({
     <SubjectMultipleField
       canEdit={true}
       key="subject-field"
-      subjects={[form.values.subject]}
+      subjects={form.values.subjects}
       subjectOptions={subjectOptions}
-      error={form.errors.subject}
-      editSubject={e => form.setFieldValue('subject', e)}
+      errors={form.errors.subjects}
+      editSubjects={e => form.setFieldValue('subjects', e)}
       shouldShowErrors={true}
     />
   )
