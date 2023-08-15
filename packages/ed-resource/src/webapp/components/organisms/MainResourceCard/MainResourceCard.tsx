@@ -281,7 +281,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   )
 
   const typePill =
-    typeName && typeColor ? (
+    contentForm.values.content && typeName && typeColor ? (
       <div
         className="type-pill"
         key="type-pill"
@@ -305,9 +305,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     (!form.values.description || form.values.description === '') &&
     !contentForm.values.content &&
     !imageForm.values.image
-
-  console.log('emptyOnStart', emptyOnStart)
-  console.log('empty', empty)
 
   const shareButton: FloatingMenuContentItem | null = isPublished
     ? {

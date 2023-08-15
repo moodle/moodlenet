@@ -80,7 +80,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const imageAvailable = !!imageForm.values.image
 
   useEffect(() => {
-    // contentForm.values.content && !contentForm.errors.content && setShouldShowErrors(false)
     setSubStep(
       contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
     )
@@ -102,19 +101,14 @@ export const UploadResource: FC<UploadResourceProps> = ({
     imageForm.setTouched({ image: true })
     imageForm.validateForm()
     imageForm.validateForm()
-    // imageForm.submitForm()
   }, [imageForm])
 
   const deleteFileOrLink = useCallback(() => {
-    console.log('deleting file or link')
     setSubStep('AddFileOrLink')
     contentForm.setFieldValue('content', null)
     contentForm.setTouched({ content: true })
     contentForm.validateForm()
     contentForm.validateForm()
-
-    // contentForm.submitForm()
-    // setShouldShowErrors(false)
   }, [contentForm])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
@@ -131,7 +125,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
     (file: File | undefined) => {
       const isImage = file?.type.toLowerCase().startsWith('image')
       contentForm.setFieldValue('content', file).then(errors => {
-        !errors?.content && file && isImage && imageForm.setFieldValue('image', file)
+        if (!errors?.content && file && isImage) {
+          imageForm.setFieldValue('image', { location: file })
+        }
         imageForm.setTouched({ image: true })
       })
     },
@@ -182,9 +178,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
         setContent(selectedFile)
       } else {
         if (selectedFile) {
-          imageForm.setFieldValue('image', selectedFile)
+          imageForm.setFieldValue('image', { location: selectedFile })
           imageForm.setTouched({ image: true })
-          // imageForm.submitForm()
         }
       }
     },
@@ -201,7 +196,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const uploadImage = (file: File) => {
     imageForm.setFieldValue('image', { location: file })
     imageForm.setTouched({ image: true })
-    // imageForm.submitForm()
   }
 
   const imageRef = useRef<HTMLDivElement>(null)

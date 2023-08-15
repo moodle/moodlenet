@@ -96,7 +96,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         setterSave('form', 'saving')
         editRpc(resourceKey, res).then(() => {
           setterSave('form', 'save-done')
-          setTimeout(() => setterSave('form', 'not-saving'), 0)
+          setTimeout(() => setterSave('form', 'not-saving'), 100)
         }) // .then(form => updateResource('form', 'resourceForm', form)),
       },
       setImage(file: File | undefined | null) {

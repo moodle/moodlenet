@@ -1,3 +1,4 @@
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type {
   EdMetaOptionsProps,
@@ -141,6 +142,25 @@ export const useResourceStoryProps = (
   // }
 ): ResourceProps => {
   const [contentUrl, setContentUrl] = useState<string | null>(overrides?.data?.contentUrl ?? null)
+  const [image, setImageData] = useState<AssetInfo | null>(
+    overrides?.data?.image?.location || overrides?.data?.image?.location === undefined
+      ? {
+          credits: {
+            owner: {
+              name: overrides?.data?.image?.credits?.owner?.name ?? 'Leonard Rush',
+              url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com/@lennyrush',
+            },
+            provider: {
+              name: overrides?.data?.image?.credits?.owner?.name ?? 'Unsplash',
+              url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com',
+            },
+          },
+          location:
+            overrides?.data?.image?.location ??
+            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+        }
+      : null,
+  )
   const [filename, setFilename] = useState<string | null>(overrides?.data?.downloadFilename ?? null)
   const [contentType, setContentType] = useState<'link' | 'file' | null>(
     overrides?.data?.contentType ?? null,
@@ -172,37 +192,12 @@ export const useResourceStoryProps = (
     contentType: contentType,
     ...overrides?.data,
     subjectHref: href('Pages/subject/Logged In'),
-    image:
-      overrides?.data?.image === null
-        ? null
-        : {
-            credits: {
-              owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
-              provider: { name: 'Unsplash', url: 'https://unsplash.com' },
-            },
-            location:
-              'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-          },
+    image,
   }
 
   const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? 'not-saving')
 
-  const setContent = (e: File | string | undefined | null) => {
-    if (typeof e === 'string') {
-      setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
-      setFilename(null)
-      setContentType('link')
-    } else if (e) {
-      setContentUrl(
-        'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
-      )
-      setContentType('file')
-      setFilename(e.name)
-    } else {
-      setContentUrl(null)
-      setContentType(null)
-      setFilename(null)
-    }
+  const save = () => {
     setIsSaving('saving')
     setTimeout(() => {
       setIsSaving('save-done')
@@ -210,8 +205,44 @@ export const useResourceStoryProps = (
         setIsSaving('not-saving')
       }, 100)
     }, 1000)
+  }
+
+  const setContent = (e: File | string | undefined | null) => {
+    setTimeout(() => {
+      if (typeof e === 'string') {
+        setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
+        setFilename(null)
+        setContentType('link')
+      } else if (e) {
+        setContentUrl(
+          'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
+        )
+        setContentType('file')
+        setFilename(e.name)
+      } else {
+        setContentUrl(null)
+        setContentType(null)
+        setFilename(null)
+      }
+    }, 1000)
+    save()
 
     action('set content')(e)
+  }
+
+  const setImage = (e: File | string | undefined | null) => {
+    setTimeout(() => {
+      if (typeof e === 'string') {
+        setImageData({ location: e, credits: null })
+      } else if (e) {
+        setImageData({ location: URL.createObjectURL(e), credits: null })
+      } else {
+        setImageData(null)
+      }
+    }, 1000)
+    save()
+
+    action('set image')(e)
   }
 
   const [isPublished, setIsPublished] = useState(
@@ -220,12 +251,7 @@ export const useResourceStoryProps = (
 
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: () => {
-      setIsSaving('saving')
-      setTimeout(() => {
-        setIsSaving('not-saving')
-      }, 1000)
-    },
+    editData: () => save,
     publish: () => {
       setIsPublished(true)
     },
@@ -233,7 +259,7 @@ export const useResourceStoryProps = (
       setIsPublished(false)
     },
     setContent: setContent,
-    setImage: action('set image'),
+    setImage: setImage,
     ...overrides?.actions,
   }
 
