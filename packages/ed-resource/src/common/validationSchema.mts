@@ -52,7 +52,7 @@ export function getValidationSchemas({
       content: mixed()
         .test(
           (v: File | string | undefined | null, { createError }) =>
-            !!v &&
+            !v ||
             (typeof v === 'string'
               ? validURL(v) ||
                 createError({
