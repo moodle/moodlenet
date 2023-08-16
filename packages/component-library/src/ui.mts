@@ -1,6 +1,7 @@
 // @index(['./webapp/ui/styles/application.scsss'], f => `export * from '${f.path}.scss'`)
 
 // @endindex
+export * from './common/utilities.js'
 export * from './webapp/ui/assets/data/images.js'
 export * from './webapp/ui/components/atoms/Card/Card.js'
 export * from './webapp/ui/components/atoms/Colorpicker/Colorpicker.js'
@@ -39,6 +40,5 @@ export * from './webapp/ui/lib/selector.js'
 export * from './webapp/ui/lib/useForwardedRef.mjs'
 export * from './webapp/ui/lib/useImageUrl.mjs'
 export * from './webapp/ui/styles/Style.js'
-export * from './common/utilities.js'
 export * from './webapp/ui/types.js'
 // @endindex
