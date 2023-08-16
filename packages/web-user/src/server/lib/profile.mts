@@ -96,7 +96,7 @@ export async function editProfile(
   if (!isValid) {
     return false
   }
-  const updateRes = await patchEntity(Profile.entityClass, key, updateWithData, opts)
+  const updateRes = await patchEntity(Profile.entityClass, key, editData, opts)
 
   if (!updateRes) {
     return

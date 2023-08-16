@@ -13,24 +13,38 @@ export const displayNameSchema = string()
 export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) {
   const avatarImageValidation: SchemaOf<{ image: File | string | undefined | null }> = object({
     image: mixed()
-      .test((v, { createError }) => {
-        return v instanceof Blob && v.size > imageMaxUploadSize
-          ? createError({
-              message: `The image file is too big, please reduce the size or use another image`,
-            })
-          : true
+      .test((loc: string | File | undefined | null, { createError }) => {
+        return (
+          !loc ||
+          (typeof loc === 'string'
+            ? validURL(loc) ||
+              createError({
+                message: `Url not valid`,
+              })
+            : loc.size <= imageMaxUploadSize ||
+              createError({
+                message: `The image file is too big, please reduce the size`,
+              }))
+        )
       })
       .optional(),
   })
 
   const backgroundImageValidation: SchemaOf<{ image: File | string | undefined | null }> = object({
     image: mixed()
-      .test((v, { createError }) => {
-        return v instanceof Blob && v.size > imageMaxUploadSize
-          ? createError({
-              message: `The image file is too big, please reduce the size or use another image`,
-            })
-          : true
+      .test((loc: string | File | undefined | null, { createError }) => {
+        return (
+          !loc ||
+          (typeof loc === 'string'
+            ? validURL(loc) ||
+              createError({
+                message: `Url not valid`,
+              })
+            : loc.size <= imageMaxUploadSize ||
+              createError({
+                message: `The image file is too big, please reduce the size`,
+              }))
+        )
       })
       .optional(),
   })
@@ -43,10 +57,29 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
     aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
   })
 
+  const messageFormValidationSchema: SchemaOf<{ msg: string }> = object({
+    msg: string().min(3).max(3000).required(/* t */ `Please provide a message`),
+  })
+
   return {
     displayNameSchema,
     backgroundImageValidation,
     avatarImageValidation,
     profileValidationSchema,
+    messageFormValidationSchema,
   }
+}
+
+export const validURL = (str: string) => {
+  const pattern = new RegExp(
+    '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))|' + // OR ip (v4) address
+      'localhost|' + // OR localhost
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$',
+    'i',
+  ) // fragment locator
+  return !!pattern.test(str)
 }

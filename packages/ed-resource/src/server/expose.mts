@@ -259,7 +259,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           throw RpcStatus('Bad Request')
         }
         if (!updateRes) {
-          throw null
+          return null
         }
         const imageUrl = updateRes.patched.image && getImageUrl(updateRes.patched.image)
         return imageUrl

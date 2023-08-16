@@ -1,3 +1,4 @@
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { ResourceFormProps } from './types.mjs'
@@ -17,15 +18,23 @@ export function getValidationSchemas({
   const publishedContentValidationSchema = getContentValidationSchema({ type: 'publish' })
   const draftContentValidationSchema = getContentValidationSchema({ type: 'draft' })
 
-  const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
+  const imageValidationSchema: SchemaOf<{ image: AssetInfoForm | undefined | null }> = object({
     image: mixed()
-      .test((v, { createError }) =>
-        v instanceof Blob && v.size > imageMaxUploadSize
-          ? createError({
-              message: `The image file is too big, please reduce the size`,
-            })
-          : true,
-      )
+      .test((v, { createError }) => {
+        const loc: string | File | undefined | null = v?.location
+        return (
+          !loc ||
+          (typeof loc === 'string'
+            ? validURL(v) ||
+              createError({
+                message: `Url not valid`,
+              })
+            : loc.size <= imageMaxUploadSize ||
+              createError({
+                message: `The image file is too big, please reduce the size`,
+              }))
+        )
+      })
       .optional(),
   })
 
@@ -41,21 +50,18 @@ export function getValidationSchemas({
     const forPublish = type === 'publish'
     const schema: SchemaOf<{ content: File | string | undefined | null }> = object({
       content: mixed()
-        .test((v, { createError }) =>
-          typeof v === 'string'
-            ? validURL(v)
-              ? true
-              : createError({
+        .test(
+          (v: File | string | undefined | null, { createError }) =>
+            !!v &&
+            (typeof v === 'string'
+              ? validURL(v) ||
+                createError({
                   message: `Url not valid`,
                 })
-            : true,
-        )
-        .test((v, { createError }) =>
-          v instanceof Blob && v.size > contentMaxUploadSize
-            ? createError({
-                message: `The file is too big, please reduce the size or provide a url`,
-              })
-            : true,
+              : v.size <= contentMaxUploadSize ||
+                createError({
+                  message: `The file is too big, please reduce the size or provide a url`,
+                })),
         )
         .withMutation(s =>
           forPublish ? s.required(`Please upload a content or a link`) : s.optional(),

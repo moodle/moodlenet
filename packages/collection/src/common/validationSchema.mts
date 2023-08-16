@@ -1,3 +1,4 @@
+import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { CollectionFormProps } from './types.mjs'
@@ -8,14 +9,22 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
   const publishedCollectionValidationSchema = getCollectionValidationSchema({ type: 'publish' })
   const draftCollectionValidationSchema = getCollectionValidationSchema({ type: 'draft' })
 
-  const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
+  const imageValidationSchema: SchemaOf<{ image: AssetInfoForm | undefined | null }> = object({
     image: mixed()
       .test((v, { createError }) => {
-        return v?.location instanceof Blob && v?.location.size > imageMaxUploadSize
-          ? createError({
-              message: `The image file is too big, please reduce the size`,
-            })
-          : true
+        const loc: string | File | undefined | null = v?.location
+        return (
+          !loc ||
+          (typeof loc === 'string'
+            ? validURL(loc) ||
+              createError({
+                message: `Url not valid`,
+              })
+            : loc.size <= imageMaxUploadSize ||
+              createError({
+                message: `The image file is too big, please reduce the size`,
+              }))
+        )
       })
       .optional(),
   })
@@ -64,4 +73,18 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
     })
     return schema
   }
+}
+
+export const validURL = (str: string) => {
+  const pattern = new RegExp(
+    '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))|' + // OR ip (v4) address
+      'localhost|' + // OR localhost
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$',
+    'i',
+  ) // fragment locator
+  return !!pattern.test(str)
 }
