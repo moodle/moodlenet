@@ -15,7 +15,6 @@ import { useFormik } from 'formik'
 import { Share } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { messageFormValidationSchema } from '../../../../../common/exports.mjs'
 import type {
   ProfileAccess,
   ProfileActions,
@@ -29,6 +28,7 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 //   ApprovalButton,
 //   ApprovalInfo,
 // } from '../../atoms/ApproveButton/ApproveButton.js'
+import type { SchemaOf } from 'yup'
 import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
@@ -54,6 +54,7 @@ export type MainProfileCardProps = {
   actions: ProfileActions
   profileUrl: string
   toggleIsEditing(): unknown
+  messageFormValidationSchema: SchemaOf<{ msg: string }>
 }
 
 export const MainProfileCard: FC<MainProfileCardProps> = ({
@@ -66,6 +67,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   isEditing,
   profileUrl,
   toggleIsEditing,
+  messageFormValidationSchema,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
   const { avatarUrl, backgroundUrl } = data

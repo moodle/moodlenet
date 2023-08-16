@@ -27,6 +27,7 @@ import {
   getLandingPageList,
   getProfileOwnKnownEntities,
   getProfileRecord,
+  getValidations,
   searchProfiles,
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
@@ -186,7 +187,14 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       },
     },
     'webapp/upload-profile-avatar/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { avatarImageValidation } = await getValidations()
+        const validatedImageOrNullish = await avatarImageValidation.validate(
+          { image: body?.file?.[0] },
+          { stripUnknown: true },
+        )
+        body.file = [validatedImageOrNullish]
+      },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getProfileRecord(_key, { projectAccess: ['u'] })
 
@@ -210,7 +218,14 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       },
     },
     'webapp/upload-profile-background/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { backgroundImageValidation } = await getValidations()
+        const validatedImageOrNullish = await backgroundImageValidation.validate(
+          { image: body?.file?.[0] },
+          { stripUnknown: true },
+        )
+        body.file = [validatedImageOrNullish]
+      },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getProfileRecord(_key, { projectAccess: ['u'] })
 

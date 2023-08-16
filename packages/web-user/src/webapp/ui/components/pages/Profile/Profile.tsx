@@ -182,6 +182,7 @@ export const Profile: FC<ProfileProps> = ({
   const mainProfileCard = (
     <MainProfileCard
       key="main-profile-card"
+      messageFormValidationSchema={validationSchemas.messageFormValidationSchema}
       slots={mainProfileCardSlots}
       data={data}
       form={form}
