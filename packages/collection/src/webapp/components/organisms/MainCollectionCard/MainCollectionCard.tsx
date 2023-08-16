@@ -4,7 +4,6 @@ import {
   Card,
   FloatingMenu,
   InputTextField,
-  Loading,
   Modal,
   PrimaryButton,
   SecondaryButton,
@@ -51,7 +50,6 @@ export type MainCollectionCardProps = {
   actions: CollectionActions
   access: CollectionAccessProps
 
-  isSaving: boolean
   publish: () => void
   publishCheck: () => void
 
@@ -60,6 +58,8 @@ export type MainCollectionCardProps = {
   setIsPublishValidating: React.Dispatch<React.SetStateAction<boolean>>
 
   emptyOnStart: boolean
+  setEmptyOnStart: React.Dispatch<React.SetStateAction<boolean>>
+
   isFormValid: ValidForms
   setFieldsAsTouched: () => void
 
@@ -80,13 +80,14 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   publish,
   publishCheck,
-  isSaving,
 
   isEditing,
   setIsEditing,
   setIsPublishValidating,
 
   emptyOnStart,
+  setEmptyOnStart,
+
   isFormValid,
   setFieldsAsTouched,
 
@@ -114,14 +115,10 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [isCurrentlySaving, setIsCurrentlySaving] = useState(false)
-  const [isWaitingForSaving, setIsWaitingForSaving] = useState(false)
 
   const handleOnEditClick = () => {
     setIsEditing(true)
     setShouldShowErrors(false)
-    setIsCurrentlySaving(false)
-    setIsWaitingForSaving(false)
   }
 
   const form_submitForm = form.submitForm
@@ -151,19 +148,19 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     }
 
     setShouldShowErrors(false)
-    setIsWaitingForSaving(true)
 
     if (form.dirty) {
       form_submitForm()
-      // form.resetForm({ values: form.values })
     }
 
     if (imageForm.dirty) {
       imageForm.values.image !== image &&
         typeof imageForm.values.image?.location !== 'string' &&
         imageForm_submitForm()
-      // imageForm.setTouched({ image: false })
     }
+
+    setEmptyOnStart(false)
+    setIsEditing(false)
   }, [
     form.dirty,
     form_submitForm,
@@ -176,7 +173,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     isDraftFormValid,
     isPublished,
     isPublishedFormValid,
+    setEmptyOnStart,
     setFieldsAsTouched,
+    setIsEditing,
     setShouldShowErrors,
   ])
 
@@ -186,24 +185,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
       setIsHandlingSaving(false)
     }
   }, [isHandlingSaving, applySave])
-
-  useEffect(() => {
-    if (isWaitingForSaving && isSaving) {
-      setIsWaitingForSaving(false)
-      setIsCurrentlySaving(true)
-    }
-    if (!isSaving && isCurrentlySaving) {
-      setIsCurrentlySaving(false)
-      setIsEditing(false)
-    }
-  }, [
-    form.isSubmitting,
-    imageForm.isSubmitting,
-    isCurrentlySaving,
-    isSaving,
-    isWaitingForSaving,
-    setIsEditing,
-  ])
 
   const copyUrl = () => {
     navigator.clipboard.writeText(mnUrl)
@@ -239,11 +220,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     </div>
   )
 
-  const updatedTopLeftHeaderItems = [
-    collectionLabel,
-    // savingFeedback,
-    ...(topLeftHeaderItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
+  const updatedTopLeftHeaderItems = [collectionLabel, ...(topLeftHeaderItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
+  )
 
   const empty = !form.values.title && !form.values.description && !imageForm.values.image
 
@@ -279,7 +258,6 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
             <div
               key="unpublish-button"
               onClick={() => {
-                console.log('unpublish')
                 unpublish()
                 setIsPublishValidating(false)
               }}
@@ -357,38 +335,24 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     ? {
         Item: () => (
           <div className="edit-save">
-            {isEditing && !isCurrentlySaving && (
+            {isEditing && (
               <PrimaryButton
-                className={`${isCurrentlySaving ? 'loading' : ''}`}
                 color="green"
-                onClick={isCurrentlySaving ? handleOnEditClick : handleOnSaveClick}
+                onClick={handleOnSaveClick}
                 disabled={empty && emptyOnStart}
               >
-                <div
-                  className="loading"
-                  style={{
-                    visibility: isCurrentlySaving ? 'visible' : 'hidden',
-                  }}
-                >
-                  <Loading color="white" />
-                </div>
-                <div
-                  className="label"
-                  style={{
-                    visibility: isCurrentlySaving ? 'hidden' : 'visible',
-                  }}
-                >
+                <div className="label">
                   <Save />
                 </div>
               </PrimaryButton>
             )}
-            {isEditing && isCurrentlySaving && (
+            {/* {isEditing && isCurrentlySaving && (
               <PrimaryButton className={`${'loading'}`} onClick={handleOnEditClick}>
                 <div className="loading">
                   <Loading color="white" />
                 </div>
               </PrimaryButton>
-            )}
+            )} */}
             {!isEditing && (
               <SecondaryButton onClick={handleOnEditClick} color="orange">
                 <Edit />

@@ -4,7 +4,6 @@ import {
   Card,
   FloatingMenu,
   InputTextField,
-  Loading,
   Modal,
   PrimaryButton,
   SecondaryButton,
@@ -34,7 +33,6 @@ import type {
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
-  SavingState,
 } from '../../../../common/types.mjs'
 import { getResourceTypeInfo } from '../../../../common/types.mjs'
 import { UploadResource } from '../UploadResource/UploadResource.js'
@@ -70,7 +68,6 @@ export type MainResourceCardProps = {
   actions: ResourceActions
   access: ResourceAccessProps
 
-  savingState: SavingState
   publish: () => void
   unpublish: () => void
   publishCheck: () => void
@@ -80,6 +77,8 @@ export type MainResourceCardProps = {
   setIsPublishValidating: React.Dispatch<React.SetStateAction<boolean>>
 
   emptyOnStart: boolean
+  setEmptyOnStart: React.Dispatch<React.SetStateAction<boolean>>
+
   areFormsValid: ValidForms
   shouldShowErrors: boolean
   setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
@@ -101,7 +100,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   actions,
   access,
 
-  savingState,
   publish,
   unpublish,
   publishCheck,
@@ -111,6 +109,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   setIsPublishValidating,
 
   emptyOnStart,
+  setEmptyOnStart,
+
   areFormsValid,
   setShouldShowErrors,
   shouldShowErrors,
@@ -140,8 +140,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { isDraftFormValid, isPublishedFormValid, isPublishedContentValid, isDraftContentValid } =
     areFormsValid
-
-  const isSaving = savingState === 'saving'
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -204,9 +202,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
     setShouldShowErrors(false)
 
-    // if (form.dirty) {
-    form_submitForm()
-    // }
+    if (form.dirty) {
+      form_submitForm()
+    }
 
     if (contentForm.dirty) {
       contentForm.values.content !== contentUrl && contentForm_submitForm()
@@ -217,6 +215,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         typeof imageForm.values.image?.location !== 'string' &&
         imageForm_submitForm()
     }
+
+    setIsEditing(false)
+    setEmptyOnStart(false)
   }, [
     contentForm.dirty,
     contentForm.values.content,
@@ -450,7 +451,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ? {
         Item: () => (
           <div className="edit-save">
-            {isEditing && !isSaving && (
+            {isEditing && (
               <PrimaryButton
                 className={`save-button`}
                 color="green"
@@ -459,13 +460,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
               >
                 <div className="label">
                   <Save />
-                </div>
-              </PrimaryButton>
-            )}
-            {isEditing && isSaving && (
-              <PrimaryButton className={`${'loading'}`} onClick={handleOnEditClick}>
-                <div className="loading">
-                  <Loading color="white" />
                 </div>
               </PrimaryButton>
             )}

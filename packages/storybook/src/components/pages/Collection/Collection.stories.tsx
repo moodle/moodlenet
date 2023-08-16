@@ -53,7 +53,6 @@ export const LoggedIn: CollectionStory = () => {
 
 export const New: CollectionStory = () => {
   const props = useCollectionStoryProps({
-    isEditingAtStart: true,
     mainColumnItems: [],
     data: {
       mnUrl: 'moodle.com',

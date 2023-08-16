@@ -195,21 +195,10 @@ export const useResourceStoryProps = (
     image,
   }
 
-  const [isSavingForm, setIsSavingForm] = useState(overrides?.saveState?.form ?? 'not-saving')
   const [isSavingContent, setIsSavingContent] = useState(
     overrides?.saveState?.content ?? 'not-saving',
   )
   const [isSavingImage, setIsSavingImage] = useState(overrides?.saveState?.image ?? 'not-saving')
-
-  const saveForm = () => {
-    setIsSavingForm('saving')
-    setTimeout(() => {
-      setIsSavingForm('save-done')
-      setTimeout(() => {
-        setIsSavingForm('not-saving')
-      }, 100)
-    }, 1000)
-  }
 
   const saveContent = () => {
     setIsSavingContent('saving')
@@ -218,7 +207,7 @@ export const useResourceStoryProps = (
       setTimeout(() => {
         setIsSavingContent('not-saving')
       }, 100)
-    }, 1000)
+    }, 4000)
   }
 
   const saveImage = () => {
@@ -275,7 +264,7 @@ export const useResourceStoryProps = (
 
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: saveForm,
+    editData: action('edit data'),
     publish: () => {
       setIsPublished(true)
     },
@@ -376,7 +365,7 @@ export const useResourceStoryProps = (
   ]
 
   const saveState: SaveState = {
-    form: isSavingForm,
+    form: overrides?.saveState?.form ?? 'not-saving',
     content: isSavingContent,
     image: isSavingImage,
   }

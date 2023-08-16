@@ -53,7 +53,6 @@ export type CollectionProps = {
   actions: CollectionActions
   access: CollectionAccessProps
   saveState: SaveState
-  isEditingAtStart: boolean
   validationSchemas: ValidationSchemas
 }
 
@@ -76,7 +75,6 @@ export const Collection: FC<CollectionProps> = ({
   access,
   saveState,
 
-  isEditingAtStart,
   validationSchemas: {
     draftCollectionValidationSchema,
     imageValidationSchema,
@@ -95,15 +93,16 @@ export const Collection: FC<CollectionProps> = ({
     setImage,
   } = actions
   const { canPublish, canEdit } = access
-  const { form: isSavingForm, image: isSavingImage } = saveState
+  const { image: isSavingImage } = saveState
 
-  const [isEditing, setIsEditing] = useState<boolean>(isEditingAtStart)
+  const [emptyOnStart, setEmptyOnStart] = useState<boolean>(
+    !collectionForm.title && !collectionForm.description && !image,
+  )
+  const [isEditing, setIsEditing] = useState<boolean>(emptyOnStart)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
   const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
-
-  const emptyOnStart = !collectionForm.title && !collectionForm.description && !image
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
@@ -265,11 +264,11 @@ export const Collection: FC<CollectionProps> = ({
       setIsEditing={setIsEditing}
       setIsPublishValidating={setIsPublishValidating}
       emptyOnStart={emptyOnStart}
+      setEmptyOnStart={setEmptyOnStart}
       isFormValid={isFormValid}
       setFieldsAsTouched={setFieldsAsTouched}
       shouldShowErrors={shouldShowErrors}
       setShouldShowErrors={setShouldShowErrors}
-      isSaving={isSavingForm}
     />
   )
 

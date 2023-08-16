@@ -102,7 +102,7 @@ export const Resource: FC<ResourceProps> = ({
   } = actions
   const { canPublish, canEdit } = access
   const { isPublished } = state
-  const { content: isSavingContent, form: isSavingForm, image: isSavingImage } = saveState
+  const { content: isSavingContent, image: isSavingImage } = saveState
   const {
     languageOptions,
     levelOptions,
@@ -178,13 +178,6 @@ export const Resource: FC<ResourceProps> = ({
         : undefined
     },
   })
-
-  useEffect(() => {
-    if (isSavingForm === 'save-done') {
-      setIsEditing(false)
-      setEmptyOnStart(false)
-    }
-  }, [isSavingForm, setIsEditing])
 
   const contentForm_setTouched = contentForm.setTouched
   const imageForm_setTouched = imageForm.setTouched
@@ -316,11 +309,11 @@ export const Resource: FC<ResourceProps> = ({
       actions={actions}
       access={access}
       slots={mainResourceCardSlots}
-      savingState={isSavingForm}
       isEditing={isEditing}
       setIsEditing={setIsEditing}
       setIsPublishValidating={setIsPublishValidating}
       emptyOnStart={emptyOnStart}
+      setEmptyOnStart={setEmptyOnStart}
       areFormsValid={areFormsValid}
       setShouldShowErrors={setShouldShowErrors}
       shouldShowErrors={shouldShowErrors}
