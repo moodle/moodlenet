@@ -183,17 +183,9 @@ export const useCollectionStoryProps = (
     numResources: 12,
   }
 
-  const [isSaving, setIsSaving] = useState(overrides?.saveState?.form ?? false)
-
   const actions: CollectionActions = {
     deleteCollection: action('deleteCollection'),
-    editData: () => {
-      console.log('action edit data')
-      setIsSaving(true)
-      setTimeout(() => {
-        setIsSaving(false)
-      }, 1000)
-    },
+    editData: action('editData'),
     publish: () => {
       setIsPublished(true)
     },
@@ -214,7 +206,7 @@ export const useCollectionStoryProps = (
   }
 
   const saveState: SaveState = {
-    form: isSaving,
+    form: overrides.saveState?.form ?? 'not-saving',
     image: false,
   }
 
@@ -300,13 +292,12 @@ export const useCollectionStoryProps = (
 
       data: data,
       collectionForm: collectionForm,
-      validationSchemas: getValidationSchemas({ imageMaxUploadSize: 300000 }),
+      validationSchemas: getValidationSchemas({ imageMaxUploadSize: 300000000 }),
 
       state: state,
       actions: actions,
       access: access,
       saveState: saveState,
-      isEditingAtStart: false,
     },
     { ...overrides },
   )
