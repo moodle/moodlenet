@@ -1,8 +1,39 @@
 import defaultsDeep from 'lodash/defaultsDeep.js'
+import type { PropsWithChildren } from 'react'
+import { Component } from 'react'
+import ReactDOM from 'react-dom'
 import type { PartialDeep } from 'type-fest'
 
 export const overrideDeep = <T>(base: T, overrides: PartialDeep<T> | undefined): T => {
   return defaultsDeep(overrides, base)
+}
+
+export class Portal extends Component<
+  PropsWithChildren<{ className?: string; parentQuery?: string }>
+> {
+  el = document.createElement('div')
+  constructor(props: PropsWithChildren<{ className?: string; parentQuery?: string }>) {
+    super(props)
+    this.el.style.display = 'none'
+    this.el.remove()
+  }
+
+  componentDidMount() {
+    const parent = this.props?.parentQuery
+      ? document.querySelector(this.props?.parentQuery) ?? document.body
+      : document.body
+    this.el.setAttribute('class', this.props.className ?? 'portal')
+    this.el.style.display = 'flex'
+    parent.append(this.el)
+  }
+
+  componentWillUnmount() {
+    this.el.style.display = 'none'
+  }
+
+  render() {
+    return ReactDOM.createPortal(this.props.children, this.el)
+  }
 }
 
 export const adjustColor = (color: string, amount: number) => {

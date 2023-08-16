@@ -7,32 +7,10 @@ import {
 } from '@material-ui/icons'
 import type { CSSProperties, ReactNode } from 'react'
 import React, { useCallback, useEffect, useState } from 'react'
-import ReactDOM from 'react-dom'
 import Card from '../Card/Card.js'
 import './Snackbar.scss'
 
-import type { PropsWithChildren } from 'react'
-
-class Portal extends React.Component<PropsWithChildren<unknown>> {
-  static el = (() => {
-    const _el = document.createElement('div')
-    _el.setAttribute('class', 'snackbar-portal')
-    _el.style.display = 'none'
-    document.body.prepend(_el)
-    return _el
-  })()
-  componentDidMount() {
-    Portal.el.style.display = 'flex'
-  }
-
-  componentWillUnmount() {
-    Portal.el.style.display = 'none'
-  }
-
-  render() {
-    return ReactDOM.createPortal(this.props.children, Portal.el)
-  }
-}
+import { Portal } from '../../../../../common.mjs'
 
 export type SnackbarProps = {
   actions?: ReactNode
@@ -105,7 +83,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   }, [autoHideDuration, waitDuration, handleonClose])
 
   return (
-    <Portal>
+    <Portal className="snackbar-portal" parentQuery=".layout-container#layout-container">
       <Card
         className={`snackbar ${className} type-${type} state-${movementState} position-${position}`}
         onClick={stopPropagation}
