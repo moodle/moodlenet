@@ -4,8 +4,8 @@ import { matchCollectionHomePageRoutePath } from '../../../../common/webapp-rout
 import { CollectionContainer } from './CollectionPageContainer.js'
 
 export const CollectionPageRoute: FC = () => {
-  const { pathname, state } = useLocation()
+  const { pathname } = useLocation()
   const key = matchCollectionHomePageRoutePath(pathname)?.params.key
   if (!key) return null
-  return <CollectionContainer collectionKey={key} key={key} editMode={!!(state as any)?.editMode} />
+  return <CollectionContainer collectionKey={key} key={key} />
 }

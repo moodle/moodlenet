@@ -223,7 +223,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentForm.values.content,
     contentForm_submitForm,
     contentUrl,
-    // form.dirty,
+    form.dirty,
     form_submitForm,
     image,
     imageForm.dirty,
@@ -236,7 +236,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     isPublished,
     isPublishedContentValid,
     isPublishedFormValid,
+    setEmptyOnStart,
     setFieldsAsTouched,
+    setIsEditing,
     setShouldShowErrors,
   ])
 
