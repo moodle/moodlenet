@@ -21,7 +21,6 @@ export const ProfileContextProvider: FC<PropsWithChildren<unknown>> = ({ childre
   const [configs, setConfigs] = useState<WebappConfigsRpc>({
     validations: { imageMaxUploadSize: 0 },
   })
-
   useEffect(() => {
     shell.rpc.me('webapp/get-configs')().then(setConfigs)
   }, [])
