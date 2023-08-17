@@ -53,6 +53,7 @@ export type ValidForms = {
   isPublishedFormValid: boolean
   isPublishedContentValid: boolean
   isDraftContentValid: boolean
+  isImageValid: boolean
 }
 
 export type MainResourceCardProps = {
@@ -138,8 +139,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { canEdit, canPublish, canDelete } = access
 
-  const { isDraftFormValid, isPublishedFormValid, isPublishedContentValid, isDraftContentValid } =
-    areFormsValid
+  const {
+    isDraftFormValid,
+    isPublishedFormValid,
+    isPublishedContentValid,
+    isDraftContentValid,
+    isImageValid,
+  } = areFormsValid
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -175,7 +181,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const form_submitForm = form.submitForm
   const contentForm_submitForm = contentForm.submitForm
   const imageForm_submitForm = imageForm.submitForm
-  const imageForm_validateForm = imageForm.validateForm
+  const imageForm_setFieldValue = imageForm.setFieldValue
 
   const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
 
@@ -193,9 +199,11 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
 
     setFieldsAsTouched()
-    imageForm_validateForm()
 
-    if (!isFormValid || !isContentValid || !imageForm.isValid) {
+    console.log('image error', imageForm.errors)
+    console.log('content error', contentForm.errors)
+
+    if (!isFormValid || !isContentValid || !isImageValid) {
       setShouldShowErrors(true)
       return
     }
@@ -211,15 +219,20 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }
 
     if (imageForm.dirty) {
-      imageForm.values.image !== image &&
-        typeof imageForm.values.image?.location !== 'string' &&
-        imageForm_submitForm()
+      if (isImageValid) {
+        imageForm.values.image !== image &&
+          typeof imageForm.values.image?.location !== 'string' &&
+          imageForm_submitForm()
+      } else {
+        imageForm_setFieldValue('image', null)
+      }
     }
 
     setIsEditing(false)
     setEmptyOnStart(false)
   }, [
     contentForm.dirty,
+    contentForm.errors,
     contentForm.values.content,
     contentForm_submitForm,
     contentUrl,
@@ -227,12 +240,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     form_submitForm,
     image,
     imageForm.dirty,
-    imageForm.isValid,
+    imageForm.errors,
     imageForm.values.image,
+    imageForm_setFieldValue,
     imageForm_submitForm,
-    imageForm_validateForm,
     isDraftContentValid,
     isDraftFormValid,
+    isImageValid,
     isPublished,
     isPublishedContentValid,
     isPublishedFormValid,

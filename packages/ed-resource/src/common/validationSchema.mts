@@ -1,4 +1,4 @@
-import type { AssetInfoForm } from '@moodlenet/component-library/common'
+import { humanFileSize, type AssetInfoForm } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { ResourceFormProps } from './types.mjs'
@@ -20,18 +20,20 @@ export function getValidationSchemas({
 
   const imageValidationSchema: SchemaOf<{ image: AssetInfoForm | undefined | null }> = object({
     image: mixed()
-      .test((v, { createError }) => {
+      .test((v: AssetInfoForm, { createError }) => {
         const loc: string | File | undefined | null = v?.location
         return (
           !loc ||
           (typeof loc === 'string'
-            ? validURL(v) ||
+            ? validURL(loc) ||
               createError({
                 message: `Url not valid`,
               })
             : loc.size <= imageMaxUploadSize ||
               createError({
-                message: `The image file is too big, please reduce the size`,
+                message: `Image too big ${humanFileSize(loc.size)}, max ${humanFileSize(
+                  imageMaxUploadSize,
+                )}`,
               }))
         )
       })
@@ -60,7 +62,9 @@ export function getValidationSchemas({
                 })
               : v.size <= contentMaxUploadSize ||
                 createError({
-                  message: `The file is too big, please reduce the size or provide a url`,
+                  message: `File too big ${humanFileSize(v.size)}, max ${humanFileSize(
+                    contentMaxUploadSize,
+                  )}`,
                 })),
         )
         .withMutation(s =>

@@ -391,8 +391,8 @@ export const useResourceStoryProps = (
       access: access,
       edMetaOptions: edMetaOptions,
       validationSchemas: getValidationSchemas({
-        contentMaxUploadSize: 30000000,
-        imageMaxUploadSize: 300000,
+        contentMaxUploadSize: 1024 * 1024 * 1024,
+        imageMaxUploadSize: 300,
       }),
 
       extraDetailsItems: extraDetailsItems,

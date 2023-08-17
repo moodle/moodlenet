@@ -28,7 +28,7 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 //   ApprovalButton,
 //   ApprovalInfo,
 // } from '../../atoms/ApproveButton/ApproveButton.js'
-import type { SchemaOf } from 'yup'
+import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
 import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
@@ -54,7 +54,7 @@ export type MainProfileCardProps = {
   actions: ProfileActions
   profileUrl: string
   toggleIsEditing(): unknown
-  messageFormValidationSchema: SchemaOf<{ msg: string }>
+  validationSchemas: ValidationSchemas
 }
 
 export const MainProfileCard: FC<MainProfileCardProps> = ({
@@ -65,9 +65,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   state,
   actions,
   isEditing,
+  validationSchemas,
   profileUrl,
   toggleIsEditing,
-  messageFormValidationSchema,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
   const { avatarUrl, backgroundUrl } = data
@@ -111,7 +111,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const avatarForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: avatarUrl },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchemas.avatarImageValidation,
     onSubmit: values => {
       return typeof values.image !== 'string' ? setAvatar(values.image) : undefined
     },
@@ -125,12 +125,12 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   }, [avatarUrl])
 
   useEffect(() => {
-    setUpdatedAvatar(avatarFromForm)
-  }, [avatarFromForm])
+    avatarForm.isValid && setUpdatedAvatar(avatarFromForm)
+  }, [avatarForm, avatarFromForm])
 
   const backgroundForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: backgroundUrl },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchemas.backgroundImageValidation,
     onSubmit: values => {
       return typeof values.image !== 'string' ? setBackground(values.image) : undefined
     },
@@ -144,12 +144,12 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   }, [backgroundUrl])
 
   useEffect(() => {
-    setUpdatedBackground(backgroundFromForm)
-  }, [backgroundFromForm])
+    backgroundForm.isValid && setUpdatedBackground(backgroundFromForm)
+  }, [backgroundForm.isValid, backgroundFromForm])
 
   const messageForm = useFormik<{ msg: string }>({
     initialValues: { msg: '' },
-    validationSchema: messageFormValidationSchema,
+    validationSchema: validationSchemas.messageFormValidationSchema,
     onSubmit: (values, { resetForm }) => {
       resetForm()
       return sendMessage(values.msg)
@@ -221,9 +221,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           color="green"
           onClick={() => {
             form.submitForm()
-            avatarForm.submitForm()
-            backgroundForm.submitForm()
-            form.isValid && avatarForm.isValid && backgroundForm.isValid && toggleIsEditing()
+            avatarForm.isValid && avatarForm.submitForm()
+            backgroundForm.isValid && backgroundForm.submitForm()
+            form.isValid && toggleIsEditing()
           }}
           key="save-button"
         >
@@ -474,6 +474,16 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     showMessageSentAlert && (
       <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
         Message sent
+      </Snackbar>
+    ),
+    avatarForm.errors.image && (
+      <Snackbar type="error" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+        {avatarForm.errors.image}
+      </Snackbar>
+    ),
+    backgroundForm.errors.image && (
+      <Snackbar type="error" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+        {backgroundForm.errors.image}
       </Snackbar>
     ),
   ]

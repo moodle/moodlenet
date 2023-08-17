@@ -19,7 +19,7 @@ import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/Re
 import type { PartialDeep } from 'type-fest'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
-const maxUploadSize = 1024 * 1024 * 50
+const maxUploadSize = 1024 * 1024 * 0.001
 
 export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): ProfileProps => {
   const person = peopleFactory[randomIntFromInterval(0, 3)]
@@ -49,11 +49,11 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     profileUrl: 'https://moodle.net/profile',
     followed: false,
     numFollowers: 13,
-    isApproved: true,
-    isWaitingApproval: false,
-    isElegibleForApproval: false,
-    showAccountApprovedSuccessAlert: false,
-    showApprovalRequestedSuccessAlert: false,
+    // isApproved: true,
+    // isWaitingApproval: false,
+    // isElegibleForApproval: false,
+    // showAccountApprovedSuccessAlert: false,
+    // showApprovalRequestedSuccessAlert: false,
   }
 
   const actions: ProfileActions = {
@@ -62,9 +62,9 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     toggleFollow: action('toggle follow'),
     setAvatar: action('set avatar image'),
     setBackground: action('set background image'),
-    approveUser: action('approve user'),
-    unapproveUser: action('unapprove user'),
-    requestApproval: action('request approval'),
+    // approveUser: action('approve user'),
+    // unapproveUser: action('unapprove user'),
+    // requestApproval: action('request approval'),
   }
 
   const access: ProfileAccess = {
@@ -73,7 +73,7 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     isCreator: false,
     isAdmin: false,
     canFollow: true,
-    canApprove: false,
+    // canApprove: false,
     ...overrides?.access,
   }
 

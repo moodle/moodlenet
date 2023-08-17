@@ -145,7 +145,6 @@ export const Resource: FC<ResourceProps> = ({
       return editData(values)
     },
   })
-
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
   const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
 
@@ -161,7 +160,6 @@ export const Resource: FC<ResourceProps> = ({
       return setContent(values.content)
     },
   })
-
   const isPublishedContentValid = publishedContentValidationSchema.isValidSync(contentForm.values)
   const isDraftContentValid = draftContentValidationSchema.isValidSync(contentForm.values)
 
@@ -178,6 +176,7 @@ export const Resource: FC<ResourceProps> = ({
         : undefined
     },
   })
+  const isImageValid = imageValidationSchema.isValidSync(imageForm.values)
 
   const contentForm_setTouched = contentForm.setTouched
   const imageForm_setTouched = imageForm.setTouched
@@ -204,6 +203,7 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const imageForm_validateForm = imageForm.validateForm
+  const imageForm_setFieldValue = imageForm.setFieldValue
   const form_validateForm = form.validateForm
   const contentForm_validateForm = contentForm.validateForm
 
@@ -216,11 +216,11 @@ export const Resource: FC<ResourceProps> = ({
 
   const applyCheckFormsAndPublish = useCallback(() => {
     setFieldsAsTouched()
-    imageForm_validateForm()
 
-    if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
+    if (isPublishedFormValid && isPublishedContentValid && isImageValid) {
       form_validateForm()
       contentForm_validateForm()
+      imageForm_validateForm()
       setShouldShowErrors(false)
       publish()
     } else {
@@ -230,8 +230,8 @@ export const Resource: FC<ResourceProps> = ({
   }, [
     contentForm_validateForm,
     form_validateForm,
-    imageForm.isValid,
     imageForm_validateForm,
+    isImageValid,
     isPublishedContentValid,
     isPublishedFormValid,
     publish,
@@ -243,7 +243,13 @@ export const Resource: FC<ResourceProps> = ({
       applyCheckFormsAndPublish()
       setIsCheckingAndPublishing(false)
     }
-  }, [isCheckingAndPublishing, applyCheckFormsAndPublish])
+  }, [
+    isCheckingAndPublishing,
+    applyCheckFormsAndPublish,
+    isImageValid,
+    imageForm_setFieldValue,
+    imageForm_validateForm,
+  ])
 
   const [isPublishChecking, setIsPublishChecking] = useState<boolean>(false)
 
@@ -254,21 +260,21 @@ export const Resource: FC<ResourceProps> = ({
 
   const applyPublishCheck = useCallback(() => {
     setFieldsAsTouched()
-    imageForm_validateForm()
 
-    if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
+    if (isPublishedFormValid && isPublishedContentValid && isImageValid) {
       setShowCheckPublishSuccess(true)
       setShouldShowErrors(false)
     } else {
       form_validateForm()
       contentForm_validateForm()
+      imageForm_validateForm()
       setShouldShowErrors(true)
     }
   }, [
     contentForm_validateForm,
     form_validateForm,
-    imageForm.isValid,
     imageForm_validateForm,
+    isImageValid,
     isPublishedContentValid,
     isPublishedFormValid,
     setFieldsAsTouched,
@@ -276,10 +282,25 @@ export const Resource: FC<ResourceProps> = ({
 
   useEffect(() => {
     if (isPublishChecking) {
-      applyPublishCheck()
-      setIsPublishChecking(false)
+      if (!isImageValid) {
+        imageForm_setFieldValue('image', null).then(errors => {
+          !!errors?.image && imageForm_setFieldValue('image', null)
+          imageForm_validateForm()
+          applyPublishCheck()
+          setIsPublishChecking(false)
+        })
+      } else {
+        applyPublishCheck()
+        setIsPublishChecking(false)
+      }
     }
-  }, [isPublishChecking, applyPublishCheck])
+  }, [
+    isPublishChecking,
+    applyPublishCheck,
+    isImageValid,
+    imageForm_validateForm,
+    imageForm_setFieldValue,
+  ])
 
   const unpublish = () => {
     setIsPublishValidating(false)
@@ -292,6 +313,7 @@ export const Resource: FC<ResourceProps> = ({
     isPublishedFormValid: isPublishedFormValid,
     isDraftContentValid: isDraftContentValid,
     isPublishedContentValid: isPublishedContentValid,
+    isImageValid: isImageValid,
   }
 
   const mainResourceCard = (

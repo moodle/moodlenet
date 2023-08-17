@@ -1,4 +1,4 @@
-import type { AssetInfoForm } from '@moodlenet/component-library/common'
+import { humanFileSize, type AssetInfoForm } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { CollectionFormProps } from './types.mjs'
@@ -22,7 +22,9 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
               })
             : loc.size <= imageMaxUploadSize ||
               createError({
-                message: `The image file is too big, please reduce the size`,
+                message: `Image too big ${humanFileSize(loc.size)}, max ${humanFileSize(
+                  imageMaxUploadSize,
+                )}`,
               }))
         )
       })
