@@ -8,7 +8,6 @@ export type CollectionEntityNames = 'Collection'
 export type MyWebDeps = {
   me: CollectionExposeType
 }
-export type SaveState = { form: boolean; image: boolean }
 export type MainContextCollection = {
   rpcCaller: RpcCaller
   configs: WebappConfigsRpc

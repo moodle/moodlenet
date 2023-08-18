@@ -114,7 +114,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
   )
 
   useEffect(() => {
-    console.log('being called')
     subStep === 'AddFileOrLink' && imageForm.errors.image && setImage(null)
   }, [imageForm.errors.image, imageForm.values.image, setImage, subStep])
 

@@ -1,4 +1,3 @@
-import type { SaveState } from '@moodlenet/collection/common'
 import {
   getValidationSchemas,
   type CollectionAccessProps,
@@ -205,11 +204,6 @@ export const useCollectionStoryProps = (
     ...overrides?.access,
   }
 
-  const saveState: SaveState = {
-    form: overrides.saveState?.form ?? 'not-saving',
-    image: false,
-  }
-
   const smallFollowButtonProps: SmallFollowButtonProps = {
     canFollow: true,
     followed: false,
@@ -292,12 +286,11 @@ export const useCollectionStoryProps = (
 
       data: data,
       collectionForm: collectionForm,
-      validationSchemas: getValidationSchemas({ imageMaxUploadSize: 300000000 }),
+      validationSchemas: getValidationSchemas({ imageMaxUploadSize: 1024 * 1024 * 0.5 }),
 
       state: state,
       actions: actions,
       access: access,
-      saveState: saveState,
     },
     { ...overrides },
   )
