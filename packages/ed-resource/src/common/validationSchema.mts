@@ -1,4 +1,4 @@
-import type { AssetInfoForm } from '@moodlenet/component-library/common'
+import { humanFileSize, type AssetInfoForm } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { ResourceFormProps } from './types.mjs'
@@ -20,18 +20,20 @@ export function getValidationSchemas({
 
   const imageValidationSchema: SchemaOf<{ image: AssetInfoForm | undefined | null }> = object({
     image: mixed()
-      .test((v, { createError }) => {
+      .test((v: AssetInfoForm, { createError }) => {
         const loc: string | File | undefined | null = v?.location
         return (
           !loc ||
           (typeof loc === 'string'
-            ? validURL(v) ||
+            ? validURL(loc) ||
               createError({
                 message: `Url not valid`,
               })
             : loc.size <= imageMaxUploadSize ||
               createError({
-                message: `The image file is too big, please reduce the size`,
+                message: `Image too big ${humanFileSize(loc.size)}, max ${humanFileSize(
+                  imageMaxUploadSize,
+                )}`,
               }))
         )
       })
@@ -50,19 +52,22 @@ export function getValidationSchemas({
     const forPublish = type === 'publish'
     const schema: SchemaOf<{ content: File | string | undefined | null }> = object({
       content: mixed()
-        .test(
-          (v: File | string | undefined | null, { createError }) =>
+        .test((v: File | string | undefined | null, { createError }) => {
+          const errors =
             !v ||
             (typeof v === 'string'
               ? validURL(v) ||
                 createError({
-                  message: `Url not valid`,
+                  message: `Link not valid`,
                 })
               : v.size <= contentMaxUploadSize ||
                 createError({
-                  message: `The file is too big, please reduce the size or provide a url`,
-                })),
-        )
+                  message: `File too big ${humanFileSize(v.size)}, max ${humanFileSize(
+                    contentMaxUploadSize,
+                  )}`,
+                }))
+          return errors
+        })
         .withMutation(s =>
           forPublish ? s.required(`Please upload a content or a link`) : s.optional(),
         ),
@@ -132,15 +137,11 @@ export function getValidationSchemas({
 }
 
 export const validURL = (str: string) => {
-  const pattern = new RegExp(
-    '^(https?:\\/\\/)?' + // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))|' + // OR ip (v4) address
-      'localhost|' + // OR localhost
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$',
-    'i',
-  ) // fragment locator
-  return !!pattern.test(str)
+  try {
+    new URL(str)
+    return true
+  } catch (err) {
+    return false
+  }
+  // This oculd also be done using @diegoperini regex, the most complete accordint to https://mathiasbynens.be/demo/url-regex
 }

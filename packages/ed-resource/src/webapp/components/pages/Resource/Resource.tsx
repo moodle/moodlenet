@@ -145,7 +145,6 @@ export const Resource: FC<ResourceProps> = ({
       return editData(values)
     },
   })
-
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
   const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
 
@@ -161,7 +160,6 @@ export const Resource: FC<ResourceProps> = ({
       return setContent(values.content)
     },
   })
-
   const isPublishedContentValid = publishedContentValidationSchema.isValidSync(contentForm.values)
   const isDraftContentValid = draftContentValidationSchema.isValidSync(contentForm.values)
 
@@ -178,6 +176,7 @@ export const Resource: FC<ResourceProps> = ({
         : undefined
     },
   })
+  const isImageValid = imageValidationSchema.isValidSync(imageForm.values)
 
   const contentForm_setTouched = contentForm.setTouched
   const imageForm_setTouched = imageForm.setTouched
@@ -204,8 +203,19 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const imageForm_validateForm = imageForm.validateForm
+  const imageForm_setFieldValue = imageForm.setFieldValue
   const form_validateForm = form.validateForm
   const contentForm_validateForm = contentForm.validateForm
+
+  const setImageField = useCallback(
+    (image: AssetInfoForm | undefined | null) => {
+      imageForm_setFieldValue('image', image).then(() => {
+        imageForm_validateForm()
+        imageForm_setTouched({ image: true })
+      })
+    },
+    [imageForm_setFieldValue, imageForm_setTouched, imageForm_validateForm],
+  )
 
   const [isCheckingAndPublishing, setIsCheckingAndPublishing] = useState<boolean>(false)
 
@@ -216,9 +226,8 @@ export const Resource: FC<ResourceProps> = ({
 
   const applyCheckFormsAndPublish = useCallback(() => {
     setFieldsAsTouched()
-    imageForm_validateForm()
 
-    if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
+    if (isPublishedFormValid && isPublishedContentValid) {
       form_validateForm()
       contentForm_validateForm()
       setShouldShowErrors(false)
@@ -230,8 +239,6 @@ export const Resource: FC<ResourceProps> = ({
   }, [
     contentForm_validateForm,
     form_validateForm,
-    imageForm.isValid,
-    imageForm_validateForm,
     isPublishedContentValid,
     isPublishedFormValid,
     publish,
@@ -243,20 +250,26 @@ export const Resource: FC<ResourceProps> = ({
       applyCheckFormsAndPublish()
       setIsCheckingAndPublishing(false)
     }
-  }, [isCheckingAndPublishing, applyCheckFormsAndPublish])
+  }, [
+    isCheckingAndPublishing,
+    applyCheckFormsAndPublish,
+    isImageValid,
+    imageForm_setFieldValue,
+    imageForm_validateForm,
+  ])
 
   const [isPublishChecking, setIsPublishChecking] = useState<boolean>(false)
 
   const publishCheck = () => {
     setIsPublishValidating(true)
     setIsPublishChecking(true)
+    !isImageValid && setImageField(null)
   }
 
   const applyPublishCheck = useCallback(() => {
     setFieldsAsTouched()
-    imageForm_validateForm()
 
-    if (isPublishedFormValid && isPublishedContentValid && imageForm.isValid) {
+    if (isPublishedFormValid && isPublishedContentValid) {
       setShowCheckPublishSuccess(true)
       setShouldShowErrors(false)
     } else {
@@ -267,8 +280,6 @@ export const Resource: FC<ResourceProps> = ({
   }, [
     contentForm_validateForm,
     form_validateForm,
-    imageForm.isValid,
-    imageForm_validateForm,
     isPublishedContentValid,
     isPublishedFormValid,
     setFieldsAsTouched,
@@ -279,7 +290,13 @@ export const Resource: FC<ResourceProps> = ({
       applyPublishCheck()
       setIsPublishChecking(false)
     }
-  }, [isPublishChecking, applyPublishCheck])
+  }, [
+    isPublishChecking,
+    applyPublishCheck,
+    isImageValid,
+    imageForm_validateForm,
+    imageForm_setFieldValue,
+  ])
 
   const unpublish = () => {
     setIsPublishValidating(false)
@@ -292,6 +309,7 @@ export const Resource: FC<ResourceProps> = ({
     isPublishedFormValid: isPublishedFormValid,
     isDraftContentValid: isDraftContentValid,
     isPublishedContentValid: isPublishedContentValid,
+    isImageValid: isImageValid,
   }
 
   const mainResourceCard = (
@@ -515,8 +533,16 @@ export const Resource: FC<ResourceProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const isSavingSnackbar = (isSavingContent === 'saving' || isSavingImage === 'saving') && (
-    <Snackbar position="bottom" type="info" waitDuration={1500} showCloseButton={false}>
+  const isSavingSnackbar = ((typeof contentForm.values.content !== 'string' &&
+    isSavingContent === 'saving') ||
+    isSavingImage === 'saving') && (
+    <Snackbar
+      position="bottom"
+      type="info"
+      waitDuration={1500}
+      showCloseButton={false}
+      autoHideDuration={6000}
+    >
       {`Content uploading, please don't close the tab`}
     </Snackbar>
   )

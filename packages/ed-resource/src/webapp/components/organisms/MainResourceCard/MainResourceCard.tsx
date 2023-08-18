@@ -53,6 +53,7 @@ export type ValidForms = {
   isPublishedFormValid: boolean
   isPublishedContentValid: boolean
   isDraftContentValid: boolean
+  isImageValid: boolean
 }
 
 export type MainResourceCardProps = {
@@ -128,7 +129,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadOptionsItems,
   } = slots
 
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref, image } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
 
   const { subjectOptions } = edMetaOptions
 
@@ -138,14 +139,22 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { canEdit, canPublish, canDelete } = access
 
-  const { isDraftFormValid, isPublishedFormValid, isPublishedContentValid, isDraftContentValid } =
-    areFormsValid
+  const {
+    isDraftFormValid,
+    isPublishedFormValid,
+    isPublishedContentValid,
+    isDraftContentValid,
+    isImageValid,
+  } = areFormsValid
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const { width } = useWindowDimensions()
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
+
+  const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
+  const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
 
   useEffect(() => {
     setCurrentContentUrl(contentUrl)
@@ -166,16 +175,28 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
 
+  const form_submitForm = form.submitForm
+  const contentForm_submitForm = contentForm.submitForm
+  const imageForm_submitForm = imageForm.submitForm
+  const imageForm_validateForm = imageForm.validateForm
+  const imageForm_setFieldValue = imageForm.setFieldValue
+  const imageForm_setTouched = imageForm.setTouched
+
+  const setImageField = useCallback(
+    (image: AssetInfoForm | undefined | null) => {
+      imageForm_setFieldValue('image', image).then(() => {
+        imageForm_validateForm()
+        imageForm_setTouched({ image: true })
+      })
+    },
+    [imageForm_setFieldValue, imageForm_validateForm, imageForm_setTouched],
+  )
+
   const handleOnEditClick = () => {
     setIsEditing(true)
     setIsPublishValidating(isPublished)
     setShouldShowErrors(false)
   }
-
-  const form_submitForm = form.submitForm
-  const contentForm_submitForm = contentForm.submitForm
-  const imageForm_submitForm = imageForm.submitForm
-  const imageForm_validateForm = imageForm.validateForm
 
   const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
 
@@ -189,18 +210,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   }
 
   const applySave = useCallback(() => {
-    const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
-    const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
-
     setFieldsAsTouched()
-    imageForm_validateForm()
+    !isImageValid && setImageField(null)
 
-    if (!isFormValid || !isContentValid || !imageForm.isValid) {
-      setShouldShowErrors(true)
-      return
-    }
-
-    setShouldShowErrors(false)
+    setShouldShowErrors(!isFormValid || !isContentValid)
 
     if (form.dirty) {
       form_submitForm()
@@ -211,9 +224,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }
 
     if (imageForm.dirty) {
-      imageForm.values.image !== image &&
-        typeof imageForm.values.image?.location !== 'string' &&
-        imageForm_submitForm()
+      isImageValid && imageForm_submitForm()
     }
 
     setIsEditing(false)
@@ -225,19 +236,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentUrl,
     form.dirty,
     form_submitForm,
-    image,
     imageForm.dirty,
-    imageForm.isValid,
-    imageForm.values.image,
     imageForm_submitForm,
-    imageForm_validateForm,
-    isDraftContentValid,
-    isDraftFormValid,
-    isPublished,
-    isPublishedContentValid,
-    isPublishedFormValid,
+    isContentValid,
+    isFormValid,
+    isImageValid,
     setEmptyOnStart,
     setFieldsAsTouched,
+    setImageField,
     setIsEditing,
     setShouldShowErrors,
   ])

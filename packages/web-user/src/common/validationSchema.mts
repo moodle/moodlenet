@@ -1,3 +1,4 @@
+import { humanFileSize } from '@moodlenet/component-library'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { EditProfileDataRpc } from './expose-def.mjs'
@@ -14,7 +15,7 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
   const avatarImageValidation: SchemaOf<{ image: File | string | undefined | null }> = object({
     image: mixed()
       .test((loc: string | File | undefined | null, { createError }) => {
-        return (
+        const errors =
           !loc ||
           (typeof loc === 'string'
             ? validURL(loc) ||
@@ -23,9 +24,12 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
               })
             : loc.size <= imageMaxUploadSize ||
               createError({
-                message: `The image file is too big, please reduce the size`,
+                message: `Image too big ${humanFileSize(loc.size)}, max ${humanFileSize(
+                  imageMaxUploadSize,
+                )}`,
               }))
-        )
+        console.log('errors: ', errors)
+        return errors
       })
       .optional(),
   })
@@ -42,7 +46,9 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
               })
             : loc.size <= imageMaxUploadSize ||
               createError({
-                message: `The image file is too big, please reduce the size`,
+                message: `Image too big ${humanFileSize(loc.size)}, max ${humanFileSize(
+                  imageMaxUploadSize,
+                )}`,
               }))
         )
       })

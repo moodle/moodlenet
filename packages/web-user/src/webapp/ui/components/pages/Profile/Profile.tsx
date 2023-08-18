@@ -20,12 +20,9 @@ import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard
 import ProfileCollectionList from '../../organisms/ProfileCollectionList/ProfileCollectionList.js'
 import ProfileResourceList from '../../organisms/ProfileResourceList/ProfileResourceList.js'
 import './Profile.scss'
-export type SaveState = { form: boolean; image: boolean; avatar: boolean }
 
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
-  saveState: SaveState
-  isSaving: boolean
 
   mainColumnItems: AddonItem[]
   sideColumnItems: AddonItem[]
@@ -182,7 +179,7 @@ export const Profile: FC<ProfileProps> = ({
   const mainProfileCard = (
     <MainProfileCard
       key="main-profile-card"
-      messageFormValidationSchema={validationSchemas.messageFormValidationSchema}
+      validationSchemas={validationSchemas}
       slots={mainProfileCardSlots}
       data={data}
       form={form}

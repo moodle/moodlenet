@@ -23,7 +23,6 @@ import type {
   CollectionDataProps,
   CollectionFormProps,
   CollectionStateProps,
-  SaveState,
 } from '../../../../common/types.mjs'
 import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
 import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
@@ -52,7 +51,6 @@ export type CollectionProps = {
   state: CollectionStateProps
   actions: CollectionActions
   access: CollectionAccessProps
-  saveState: SaveState
   validationSchemas: ValidationSchemas
 }
 
@@ -73,7 +71,6 @@ export const Collection: FC<CollectionProps> = ({
   state,
   actions,
   access,
-  saveState,
 
   validationSchemas: {
     draftCollectionValidationSchema,
@@ -93,7 +90,6 @@ export const Collection: FC<CollectionProps> = ({
     setImage,
   } = actions
   const { canPublish, canEdit } = access
-  const { image: isSavingImage } = saveState
 
   const [emptyOnStart, setEmptyOnStart] = useState<boolean>(
     !collectionForm.title && !collectionForm.description && !image,
@@ -335,18 +331,6 @@ export const Collection: FC<CollectionProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const isSavingSnackbar = isSavingImage && (
-    <Snackbar
-      position="bottom"
-      type="info"
-      waitDuration={1500}
-      autoHideDuration={6000}
-      showCloseButton={false}
-    >
-      {`Content uploading, please don't close the tab`}
-    </Snackbar>
-  )
-
   const checkPublishSnackbar = showCheckPublishSuccess && (
     <Snackbar
       position="bottom"
@@ -359,7 +343,7 @@ export const Collection: FC<CollectionProps> = ({
     </Snackbar>
   )
 
-  const snackbars = [isSavingSnackbar, checkPublishSnackbar]
+  const snackbars = [checkPublishSnackbar]
 
   const modals = (
     <>
