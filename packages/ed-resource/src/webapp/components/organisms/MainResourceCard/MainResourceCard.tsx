@@ -129,7 +129,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadOptionsItems,
   } = slots
 
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref, image } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
 
   const { subjectOptions } = edMetaOptions
 
@@ -153,6 +153,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
 
+  const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
+  const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
+
   useEffect(() => {
     setCurrentContentUrl(contentUrl)
   }, [contentUrl])
@@ -172,16 +175,28 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     contentType === 'file' ? downloadFilename : currentContentUrl,
   )
 
+  const form_submitForm = form.submitForm
+  const contentForm_submitForm = contentForm.submitForm
+  const imageForm_submitForm = imageForm.submitForm
+  const imageForm_validateForm = imageForm.validateForm
+  const imageForm_setFieldValue = imageForm.setFieldValue
+  const imageForm_setTouched = imageForm.setTouched
+
+  const setImageField = useCallback(
+    (image: AssetInfoForm | undefined | null) => {
+      imageForm_setFieldValue('image', image).then(() => {
+        imageForm_validateForm()
+        imageForm_setTouched({ image: true })
+      })
+    },
+    [imageForm_setFieldValue, imageForm_validateForm, imageForm_setTouched],
+  )
+
   const handleOnEditClick = () => {
     setIsEditing(true)
     setIsPublishValidating(isPublished)
     setShouldShowErrors(false)
   }
-
-  const form_submitForm = form.submitForm
-  const contentForm_submitForm = contentForm.submitForm
-  const imageForm_submitForm = imageForm.submitForm
-  const imageForm_setFieldValue = imageForm.setFieldValue
 
   const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
 
@@ -195,20 +210,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   }
 
   const applySave = useCallback(() => {
-    const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
-    const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
-
     setFieldsAsTouched()
+    !isImageValid && setImageField(null)
 
-    console.log('image error', imageForm.errors)
-    console.log('content error', contentForm.errors)
+    console.log('🖼️ image error', imageForm.errors.image)
+    console.log('📁 content error', contentForm.errors.content)
 
-    if (!isFormValid || !isContentValid || !isImageValid) {
-      setShouldShowErrors(true)
-      return
-    }
-
-    setShouldShowErrors(false)
+    setShouldShowErrors(!isFormValid || !isContentValid)
 
     if (form.dirty) {
       form_submitForm()
@@ -219,39 +227,28 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }
 
     if (imageForm.dirty) {
-      if (isImageValid) {
-        imageForm.values.image !== image &&
-          typeof imageForm.values.image?.location !== 'string' &&
-          imageForm_submitForm()
-      } else {
-        imageForm_setFieldValue('image', null)
-      }
+      isImageValid && imageForm_submitForm()
     }
 
     setIsEditing(false)
     setEmptyOnStart(false)
   }, [
     contentForm.dirty,
-    contentForm.errors,
+    contentForm.errors.content,
     contentForm.values.content,
     contentForm_submitForm,
     contentUrl,
     form.dirty,
     form_submitForm,
-    image,
     imageForm.dirty,
-    imageForm.errors,
-    imageForm.values.image,
-    imageForm_setFieldValue,
+    imageForm.errors.image,
     imageForm_submitForm,
-    isDraftContentValid,
-    isDraftFormValid,
+    isContentValid,
+    isFormValid,
     isImageValid,
-    isPublished,
-    isPublishedContentValid,
-    isPublishedFormValid,
     setEmptyOnStart,
     setFieldsAsTouched,
+    setImageField,
     setIsEditing,
     setShouldShowErrors,
   ])
