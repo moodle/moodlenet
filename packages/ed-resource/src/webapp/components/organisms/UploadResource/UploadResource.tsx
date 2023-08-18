@@ -2,16 +2,16 @@ import { InsertDriveFile, Link as LinkIcon } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
   ErrorMessage,
-  getPreviewFromUrl,
   ImageContainer,
   InputTextField,
   PrimaryButton,
   RoundButton,
+  getPreviewFromUrl,
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
-import type { default as React, FC } from 'react'
+import type { FC, default as React } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import { SelectOptions } from '../../../../lib/types'
@@ -78,6 +78,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
   )
   const [showContentErrors, setShowContentErrors] = useState(false)
+  const [showLinkErrors, setShowLinkErrors] = useState(false)
   const [showImageErrors, setShowImageErrors] = useState(false)
 
   const contentAvailable = contentForm.values.content && !contentForm.errors.content
@@ -103,8 +104,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
   const setImage = useCallback(
-    (image: AssetInfoForm | undefined | null) => {
+    (image: AssetInfoForm | undefined | null, fromContent?: boolean) => {
       imageForm_setFieldValue('image', image).then(errors => {
+        if (fromContent && !!errors?.image) {
+          imageForm_setFieldValue('image', null)
+          return
+        }
         setShowImageErrors(!!errors?.image)
         imageForm_validateForm()
         imageForm_setTouched({ image: true })
@@ -117,16 +122,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
     subStep === 'AddFileOrLink' && imageForm.errors.image && setImage(null)
   }, [imageForm.errors.image, imageForm.values.image, setImage, subStep])
 
-  const addLink = () => {
-    contentForm.setFieldValue('content', addLinkFieldRef.current?.value).then(errors => {
-      console.log('addLinkFieldRef.current?.value', addLinkFieldRef.current?.value)
-      console.log('errors.content', errors?.content)
-      setShowContentErrors(!!errors?.content)
-      !!errors?.content && setSubStep('AddImage')
+  const addLink = useCallback(() => {
+    const link = addLinkFieldRef.current?.value
+    contentForm_setFieldValue('content', link).then(errors => {
+      setShowLinkErrors(!!errors?.content)
     })
-    contentForm.validateForm()
-    contentForm.setTouched({ content: true })
-  }
+  }, [contentForm_setFieldValue])
 
   const deleteImage = useCallback(() => {
     setImage(null)
@@ -157,7 +158,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
       contentForm_setFieldValue('content', file).then(errors => {
         setShowContentErrors(!!errors?.content)
         if (!errors?.content && file && isImage) {
-          setImage({ location: file, credits: null })
+          setImage({ location: file, credits: null }, true)
         }
         imageForm_setTouched({ image: true })
       })
@@ -358,8 +359,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const uploaderDiv = (
     <>
-      {!contentAvailable && !displayOnly && uploader('file')}
-      {contentAvailable && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
+      {subStep === 'AddFileOrLink' && !displayOnly && uploader('file')}
+      {subStep === 'AddImage' && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
       {contentAvailable && displayOnly && (embed ?? (!imageAvailable && simpleImageContainer))}
       {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}
     </>
@@ -384,8 +385,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
               onKeyDown={e => e.key === 'Enter' && addLink()}
               action={<PrimaryButton onClick={addLink}>Add</PrimaryButton>}
               error={
-                (shouldShowErrors || showContentErrors) &&
-                // !(contentForm.values.content instanceof Blob) &&
+                (shouldShowErrors || showContentErrors || showLinkErrors) &&
                 contentForm.errors.content
               }
             />

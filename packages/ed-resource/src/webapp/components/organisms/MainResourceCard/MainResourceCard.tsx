@@ -213,9 +213,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setFieldsAsTouched()
     !isImageValid && setImageField(null)
 
-    console.log('🖼️ image error', imageForm.errors.image)
-    console.log('📁 content error', contentForm.errors.content)
-
     setShouldShowErrors(!isFormValid || !isContentValid)
 
     if (form.dirty) {
@@ -234,14 +231,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setEmptyOnStart(false)
   }, [
     contentForm.dirty,
-    contentForm.errors.content,
     contentForm.values.content,
     contentForm_submitForm,
     contentUrl,
     form.dirty,
     form_submitForm,
     imageForm.dirty,
-    imageForm.errors.image,
     imageForm_submitForm,
     isContentValid,
     isFormValid,
