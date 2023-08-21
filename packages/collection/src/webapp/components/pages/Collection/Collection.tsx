@@ -5,13 +5,14 @@ import {
   PrimaryButton,
   SecondaryButton,
   Snackbar,
+  SnackbarStack,
   TertiaryButton,
 } from '@moodlenet/component-library'
 import type { MainLayoutProps, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { ResourceCardPropsData } from '@moodlenet/ed-resource/ui'
@@ -97,8 +98,22 @@ export const Collection: FC<CollectionProps> = ({
   const [isEditing, setIsEditing] = useState<boolean>(emptyOnStart)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
   const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
+  const [showPublishSuccess, setShowPublishSuccess] = useState<boolean>(false)
+  const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
+
+  const prevIsPublishedRef = useRef(isPublished)
+
+  useEffect(() => {
+    if (prevIsPublishedRef.current === false && isPublished === true) {
+      setShowPublishSuccess(true)
+    }
+    if (prevIsPublishedRef.current === true && isPublished === false) {
+      setShowUnpublishSuccess(true)
+    }
+    prevIsPublishedRef.current = isPublished
+  }, [isPublished])
 
   const form = useFormik<CollectionFormProps>({
     initialValues: collectionForm,
@@ -331,19 +346,45 @@ export const Collection: FC<CollectionProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem => !!item)
 
-  const checkPublishSnackbar = showCheckPublishSuccess && (
+  const checkPublishSnackbar = showCheckPublishSuccess ? (
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={6000}
+      autoHideDuration={4000}
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
       {`Success, save before publishing`}
     </Snackbar>
-  )
+  ) : null
 
-  const snackbars = [checkPublishSnackbar]
+  const publishSnackbar = showPublishSuccess ? (
+    <Snackbar
+      position="bottom"
+      type="success"
+      autoHideDuration={4000}
+      showCloseButton={false}
+      onClose={() => setShowPublishSuccess(false)}
+    >
+      {`Collection published`}
+    </Snackbar>
+  ) : null
+
+  const unpublishSnackbar = showUnpublishSuccess ? (
+    <Snackbar
+      position="bottom"
+      type="success"
+      autoHideDuration={4000}
+      showCloseButton={false}
+      onClose={() => setShowUnpublishSuccess(false)}
+    >
+      {`Collection unpublished`}
+    </Snackbar>
+  ) : null
+
+  const snackbars = (
+    <SnackbarStack snackbarList={[checkPublishSnackbar, publishSnackbar, unpublishSnackbar]} />
+  )
 
   const modals = (
     <>

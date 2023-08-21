@@ -2,7 +2,7 @@ import { CloseRounded as CloseRoundedIcon } from '@material-ui/icons'
 import type React from 'react'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect } from 'react'
-import { Portal } from '../../../../../common.mjs'
+import { createPortal } from 'react-dom'
 import Card from '../Card/Card.js'
 import './Modal.scss'
 
@@ -44,8 +44,8 @@ export const Modal: React.FC<ModalProps> = ({
     document.addEventListener('keyup', handleEvent)
     return () => document.removeEventListener('keyup', handleEvent)
   }, [onClose])
-  return (
-    <Portal className="modal-portal" parentQuery=".layout-container#layout-container">
+  return createPortal(
+    <div className="modal-portal">
       <div className={`modal-container ${className}`} onMouseDown={handleonClose}>
         <Card
           className={`modal`}
@@ -66,7 +66,8 @@ export const Modal: React.FC<ModalProps> = ({
           {actions && <div className="actions">{actions}</div>}
         </Card>
       </div>
-    </Portal>
+    </div>,
+    document.querySelector('.layout-container#layout-container') ?? document.body,
   )
 }
 Modal.defaultProps = {
