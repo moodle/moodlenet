@@ -1,11 +1,10 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card } from '@moodlenet/component-library'
-import { SubjectMultipleField } from '@moodlenet/ed-meta/ui'
+import { Card, MultipeSelectDropdown } from '@moodlenet/component-library'
 import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
 import { useFormik } from 'formik'
 import { /* useState, */ type FC } from 'react'
-import { UserInterests } from '../../../../../../common/types.mjs'
+import type { UserInterests } from '../../../../../../common/types.mjs'
 import './General.scss'
 
 export type GeneralProps = {
@@ -75,23 +74,53 @@ export const General: FC<GeneralProps> = ({
     },
   })
 
-  const subjectField = (
-    <SubjectMultipleField
+  const subjectsField = (
+    <MultipeSelectDropdown
+      label="Subjects"
+      placeholder="Content category"
       canEdit={true}
       key="subject-field"
-      subjects={form.values.subjects}
-      subjectOptions={subjectOptions}
+      selections={form.values.subjects}
+      options={subjectOptions}
       errors={form.errors.subjects}
-      editSubjects={e => form.setFieldValue('subjects', e)}
+      edit={e => form.setFieldValue('subjects', e)}
       shouldShowErrors={true}
     />
   )
+
+  const levelsField = (
+    <MultipeSelectDropdown
+      label="Levels"
+      canEdit={true}
+      key="level-field"
+      selections={form.values.levels}
+      options={levelOptions}
+      errors={form.errors.subjects}
+      edit={e => form.setFieldValue('levels', e)}
+      shouldShowErrors={true}
+    />
+  )
+
+  const languagesField = (
+    <MultipeSelectDropdown
+      label="Languages"
+      canEdit={true}
+      key="level-field"
+      selections={form.values.languages}
+      options={languageOptions}
+      errors={form.errors.languages}
+      edit={e => form.setFieldValue('languages', e)}
+      shouldShowErrors={true}
+    />
+  )
+
+  const interestsFields = [subjectsField, levelsField, languagesField]
 
   const interestsSection = (
     <Card className="column interests-section">
       <div className="parameter">
         <div className="name">Interests</div>
-        {subjectField}
+        {interestsFields}
       </div>
     </Card>
   )

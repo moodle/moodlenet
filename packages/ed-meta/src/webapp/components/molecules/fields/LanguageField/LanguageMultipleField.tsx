@@ -3,42 +3,42 @@ import { CheckmarkOption, Dropdown, SimplePill } from '@moodlenet/component-libr
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 
-export type SubjectMultipleFieldProps = {
+export type LanguageMultipleFieldProps = {
   selections: string[]
   options: TextOptionProps[]
   canEdit: boolean
   shouldShowErrors: boolean
   errors: string[] | string | undefined
-  editSubjects(selections: string[]): void
+  edit(selections: string[]): void
 }
 
-export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
+export const LanguageMultipleField: FC<LanguageMultipleFieldProps> = ({
   selections,
   options,
   canEdit,
   errors,
   shouldShowErrors,
-  editSubjects,
+  edit,
 }) => {
-  const newSubjects = {
+  const newLanguages = {
     opts: options,
     selected: options.filter(({ value }) => selections.includes(value)),
   }
-  const [updatedSubjects, setUpdatedSubjects] = useState(newSubjects)
+  const [updatedLanguages, setUpdatedLanguages] = useState(newLanguages)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
     const selected = options.filter(({ value }) => selections.includes(value))
     selected &&
-      setUpdatedSubjects({
+      setUpdatedLanguages({
         opts: options,
         selected: selected,
       })
   }, [options, selections])
 
   useEffect(() => {
-    setUpdatedSubjects({
-      opts: newSubjects.opts.filter(
+    setUpdatedLanguages({
+      opts: newLanguages.opts.filter(
         o =>
           o.label.toUpperCase().includes(searchText.toUpperCase()) ||
           o.value.toUpperCase().includes(searchText.toUpperCase()),
@@ -50,26 +50,26 @@ export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
           value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
-  }, [newSubjects.opts, searchText, options, selections])
+  }, [newLanguages.opts, searchText, options, selections])
 
-  const updateSubjects = (subject: string) => {
-    console.log('subject ', subject)
+  const updateLanguages = (language: string) => {
+    console.log('language ', language)
     console.log('selections ', selections)
-    if (selections.includes(subject)) {
-      editSubjects(selections.filter(s => s !== subject))
+    if (selections.includes(language)) {
+      edit(selections.filter(s => s !== language))
     } else {
-      editSubjects([...selections, subject])
+      edit([...selections, language])
     }
   }
 
   return canEdit ? (
     <Dropdown
-      name="selections"
+      name="language"
       multiple
       multilines={true}
       value={selections}
-      onChange={e => updateSubjects(e.target.value)}
-      label="Subjects"
+      onChange={e => updateLanguages(e.target.value)}
+      label="Languages"
       placeholder="Content category"
       edit
       highlight={shouldShowErrors && !!errors}
@@ -77,30 +77,35 @@ export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
       position={{ top: 77, bottom: 25 }}
       searchByText={setSearchText}
       pills={
-        updatedSubjects.selected &&
-        updatedSubjects.selected.map(selected => (
+        updatedLanguages.selected &&
+        updatedLanguages.selected.map(selected => (
           <SimplePill edit key={selected.value} value={selected.value} label={selected.label} />
         ))
       }
     >
-      {updatedSubjects.selected &&
-        updatedSubjects.selected.map(selected => (
+      {updatedLanguages.selected &&
+        updatedLanguages.selected.map(selected => (
           <CheckmarkOption key={selected.value} value={selected.value} label={selected.label} />
         ))}
-      {updatedSubjects.opts
-        .filter(subject => !updatedSubjects.selected.includes(subject))
-        .map(selected => (
-          <CheckmarkOption key={selected.value} label={selected.label} value={selected.value} />
-        ))}
+      {updatedLanguages.opts.map(
+        ({ label, value }) =>
+          updatedLanguages.selected &&
+          updatedLanguages.selected.map(
+            selected =>
+              selected?.value !== value && (
+                <CheckmarkOption key={value} label={label} value={value} />
+              ),
+          ),
+      )}
     </Dropdown>
   ) : selections ? (
-    <div className="detail subject">
-      <div className="title">Subject</div>
-      <abbr className="value" title={updatedSubjects.selected[0]?.label}>
-        {updatedSubjects.selected[0]?.label}
+    <div className="detail language">
+      <div className="title">Language</div>
+      <abbr className="value" title={updatedLanguages.selected[0]?.label}>
+        {updatedLanguages.selected[0]?.label}
       </abbr>
     </div>
   ) : null
 }
 
-export default SubjectMultipleField
+export default LanguageMultipleField

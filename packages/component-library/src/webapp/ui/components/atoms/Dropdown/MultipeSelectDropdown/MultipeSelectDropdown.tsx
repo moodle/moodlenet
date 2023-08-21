@@ -1,30 +1,37 @@
-import type { TextOptionProps } from '@moodlenet/component-library'
-import { CheckmarkOption, Dropdown, SimplePill } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
+import { toKebabCase } from '../../../../../../common.mjs'
+import type { TextOptionProps } from '../Dropdown.js'
+import { CheckmarkOption, Dropdown, SimplePill } from '../Dropdown.js'
 
-export type SubjectMultipleFieldProps = {
+export type MultipeSelectDropdownProps = {
   selections: string[]
   options: TextOptionProps[]
   canEdit: boolean
-  shouldShowErrors: boolean
+  label: string
+  className?: string
+  placeholder?: string
+  shouldShowErrors?: boolean
   errors: string[] | string | undefined
-  editSubjects(selections: string[]): void
+  edit(selections: string[]): void
 }
 
-export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
+export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = ({
   selections,
   options,
+  label,
+  className,
+  placeholder,
   canEdit,
   errors,
   shouldShowErrors,
-  editSubjects,
+  edit,
 }) => {
-  const newSubjects = {
+  const elements = {
     opts: options,
     selected: options.filter(({ value }) => selections.includes(value)),
   }
-  const [updatedSubjects, setUpdatedSubjects] = useState(newSubjects)
+  const [updatedElements, setUpdatedSubjects] = useState(elements)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
@@ -38,7 +45,7 @@ export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
 
   useEffect(() => {
     setUpdatedSubjects({
-      opts: newSubjects.opts.filter(
+      opts: elements.opts.filter(
         o =>
           o.label.toUpperCase().includes(searchText.toUpperCase()) ||
           o.value.toUpperCase().includes(searchText.toUpperCase()),
@@ -50,57 +57,57 @@ export const SubjectMultipleField: FC<SubjectMultipleFieldProps> = ({
           value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
-  }, [newSubjects.opts, searchText, options, selections])
+  }, [elements.opts, searchText, options, selections])
 
   const updateSubjects = (subject: string) => {
     console.log('subject ', subject)
     console.log('selections ', selections)
     if (selections.includes(subject)) {
-      editSubjects(selections.filter(s => s !== subject))
+      edit(selections.filter(s => s !== subject))
     } else {
-      editSubjects([...selections, subject])
+      edit([...selections, subject])
     }
   }
 
   return canEdit ? (
     <Dropdown
-      name="selections"
+      name={`multiple-select-dropdown ${className ?? toKebabCase(label)}`}
       multiple
       multilines={true}
       value={selections}
       onChange={e => updateSubjects(e.target.value)}
-      label="Subjects"
-      placeholder="Content category"
+      label={label}
+      placeholder={placeholder}
       edit
       highlight={shouldShowErrors && !!errors}
       error={shouldShowErrors && errors}
       position={{ top: 77, bottom: 25 }}
       searchByText={setSearchText}
       pills={
-        updatedSubjects.selected &&
-        updatedSubjects.selected.map(selected => (
+        updatedElements.selected &&
+        updatedElements.selected.map(selected => (
           <SimplePill edit key={selected.value} value={selected.value} label={selected.label} />
         ))
       }
     >
-      {updatedSubjects.selected &&
-        updatedSubjects.selected.map(selected => (
+      {updatedElements.selected &&
+        updatedElements.selected.map(selected => (
           <CheckmarkOption key={selected.value} value={selected.value} label={selected.label} />
         ))}
-      {updatedSubjects.opts
-        .filter(subject => !updatedSubjects.selected.includes(subject))
+      {updatedElements.opts
+        .filter(subject => !updatedElements.selected.includes(subject))
         .map(selected => (
           <CheckmarkOption key={selected.value} label={selected.label} value={selected.value} />
         ))}
     </Dropdown>
   ) : selections ? (
     <div className="detail subject">
-      <div className="title">Subject</div>
-      <abbr className="value" title={updatedSubjects.selected[0]?.label}>
-        {updatedSubjects.selected[0]?.label}
+      <div className="label">{label}</div>
+      <abbr className="value" title={updatedElements.selected[0]?.label}>
+        {updatedElements.selected[0]?.label}
       </abbr>
     </div>
   ) : null
 }
 
-export default SubjectMultipleField
+export default MultipeSelectDropdown

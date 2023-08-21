@@ -144,8 +144,25 @@ const DropdownComp: FC<DropdownProps> = props => {
     }
   }, [error, setErrorLeave, currentError])
 
+  useEffect(() => {
+    const inputContainerCurrent = inputContainer.current
+    inputContainerCurrent &&
+      inputContainerCurrent.addEventListener(
+        'focusin',
+        isShowingContent ? () => undefined : toggleIsShowingContent,
+      )
+    return () => {
+      inputContainerCurrent &&
+        inputContainerCurrent.removeEventListener(
+          'focusin',
+          isShowingContent ? () => undefined : toggleIsShowingContent,
+        )
+    }
+  }, [setLayout, isShowingContent])
+
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLInputElement>(null)
+  const inputContainer = useRef<HTMLDivElement>(null)
 
   // const contentLength: number = children && Array.isArray(children) && children[1].length
 
@@ -163,8 +180,9 @@ const DropdownComp: FC<DropdownProps> = props => {
     >
       {label && <label>{label}</label>}
       <div
+        ref={inputContainer}
         onClick={isShowingContent ? undefined : toggleIsShowingContent}
-        onFocus={isShowingContent ? undefined : toggleIsShowingContent}
+        // onFocusIn={isShowingContent ? undefined : toggleIsShowingContent}
         className={`input-container${disabled || !edit ? ' not-editing' : ''} ${
           highlight ? ' highlight' : ''
         }${noBorder ? ' no-border' : ''}`}
@@ -231,7 +249,15 @@ export const SimplePill: FC<{
   return (
     <abbr title={title} className="dropdown-pill">
       <div className="label">{label}</div>
-      {edit && <RoundButton className="remove" onClick={toggle} />}
+      {edit && (
+        <RoundButton
+          className="remove"
+          onClick={e => {
+            toggle && toggle()
+            console.log('deleting')
+          }}
+        />
+      )}
     </abbr>
   )
 }
