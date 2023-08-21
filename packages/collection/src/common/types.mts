@@ -100,7 +100,7 @@ export type CollectionActions = {
 export type CollectionMainProps = {
   actions: CollectionActions
   props: CollectionProps
-  saveState: SaveState
+  // saveState: SaveState
   isSaving: boolean
   isToDelete: boolean
 }

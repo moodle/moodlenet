@@ -90,7 +90,7 @@ export const useCollectionPageProps = ({
       ...props.access,
       isCreator: collectionMainProps.props.access.isCreator,
     },
-    saveState: collectionMainProps.saveState,
+    // saveState: collectionMainProps.saveState,
     validationSchemas,
   }
 

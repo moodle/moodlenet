@@ -1,4 +1,4 @@
-import { humanFileSize } from '@moodlenet/component-library'
+import { humanFileSize } from '@moodlenet/component-library/common'
 import type { SchemaOf } from 'yup'
 import { mixed, object, string } from 'yup'
 import type { EditProfileDataRpc } from './expose-def.mjs'
