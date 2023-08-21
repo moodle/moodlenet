@@ -8,7 +8,6 @@ import type {
   CollectionFormProps,
   CollectionMainProps,
   CollectionRpc,
-  SaveState,
 } from '../common/types.mjs'
 import { MainContext } from './MainContext.js'
 
@@ -18,6 +17,10 @@ import { MainContext } from './MainContext.js'
 // }
 const [useUpImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
 
+type SaveState = {
+  form: boolean
+  image: boolean
+}
 type myProps = { collectionKey: string }
 export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | null | undefined => {
   const { rpcCaller } = useContext(MainContext)

@@ -11,7 +11,7 @@ import { createPlugin, createTaskManager, useMainLayoutProps } from '@moodlenet/
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
-import type { ProfileProps, SaveState } from '../../../ui/exports/ui.mjs'
+import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useProfileContext } from '../../context/ProfileContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
@@ -30,7 +30,11 @@ export const ProfilePagePlugins = createPlugin<{
 
 const [useUpBgImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
 const [useUpAvatarTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
-
+type SaveState = {
+  form: boolean
+  image: boolean
+  avatar: boolean
+}
 export const useProfileProps = ({
   profileKey,
 }: {
@@ -75,7 +79,7 @@ export const useProfileProps = ({
       setSaved(currentSaved => ({ ...currentSaved, [key]: val })),
     [],
   )
-  const [saveState, setSaved] = useState<SaveState>(() => ({
+  const [, /* saveState */ setSaved] = useState<SaveState>(() => ({
     form: false,
     image: !!upBgImageTaskCurrent,
     avatar: !!upAvatarTaskCurrent,
@@ -148,8 +152,8 @@ export const useProfileProps = ({
       })
 
     const props: ProfileProps = {
-      saveState,
-      isSaving: Object.values(saveState).some(Boolean),
+      // saveState,
+      // isSaving: Object.values(saveState).some(Boolean),
       mainLayoutProps,
       // followersHref: href(
       //   getFollowersRoutePath({
@@ -263,7 +267,6 @@ export const useProfileProps = ({
     clientSessionData?.isAdmin,
     clientSessionData?.myProfile?._key,
     profileKey,
-    saveState,
     mainLayoutProps,
     isAuthenticated,
     upBgImageTaskCurrent,
