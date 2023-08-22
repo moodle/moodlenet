@@ -8,7 +8,7 @@ export function useSendToMoodle(): SendToMoodleProps {
   const auth = useContext(AuthCtx)
 
   const { defaultSiteTarget } = useContext(MyLmsContext)
-  const { sendToLMS } = useSendToLMS()
+  const { sendToLMS, canSend } = useSendToLMS()
   const sendToMoodle = useCallback<SendToMoodleProps['sendToMoodle']>(
     site => {
       sendToLMS(site ? { site } : defaultSiteTarget)
@@ -21,5 +21,6 @@ export function useSendToMoodle(): SendToMoodleProps {
     sendToMoodle,
     site: defaultSiteTarget?.site,
     userId,
+    canSendToMoodle: canSend,
   }
 }

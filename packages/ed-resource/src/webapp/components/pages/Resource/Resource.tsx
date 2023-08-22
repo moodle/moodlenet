@@ -1,6 +1,13 @@
 import { InsertDriveFile, Link } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, Modal, PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
+import {
+  Card,
+  Modal,
+  PrimaryButton,
+  SecondaryButton,
+  Snackbar,
+  SnackbarStack,
+} from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import {
   DateField,
@@ -14,7 +21,7 @@ import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
@@ -131,7 +138,21 @@ export const Resource: FC<ResourceProps> = ({
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
   const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
+  const [showPublishSuccess, setShowPublishSuccess] = useState<boolean>(false)
+  const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(emptyOnStart)
+
+  const prevIsPublishedRef = useRef(isPublished)
+
+  useEffect(() => {
+    if (prevIsPublishedRef.current === false && isPublished === true) {
+      setShowPublishSuccess(true)
+    }
+    if (prevIsPublishedRef.current === true && isPublished === false) {
+      setShowUnpublishSuccess(true)
+    }
+    prevIsPublishedRef.current = isPublished
+  }, [isPublished])
 
   const form = useFormik<ResourceFormProps>({
     initialValues: resourceForm,
@@ -533,33 +554,61 @@ export const Resource: FC<ResourceProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const isSavingSnackbar = ((typeof contentForm.values.content !== 'string' &&
-    isSavingContent === 'saving') ||
-    isSavingImage === 'saving') && (
-    <Snackbar
-      position="bottom"
-      type="info"
-      waitDuration={1500}
-      showCloseButton={false}
-      autoHideDuration={6000}
-    >
-      {`Content uploading, please don't close the tab`}
-    </Snackbar>
-  )
+  const isSavingSnackbar =
+    (typeof contentForm.values.content !== 'string' && isSavingContent === 'saving') ||
+    isSavingImage === 'saving' ? (
+      <Snackbar
+        position="bottom"
+        type="info"
+        waitDuration={1500}
+        showCloseButton={false}
+        autoHideDuration={6000}
+      >
+        {`Content uploading, please don't close the tab`}
+      </Snackbar>
+    ) : null
 
-  const checkPublishSnackbar = showCheckPublishSuccess && (
+  const checkPublishSnackbar = showCheckPublishSuccess ? (
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={6000}
+      autoHideDuration={4000}
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
       {`Success, save before publishing`}
     </Snackbar>
-  )
+  ) : null
 
-  const snackbars = [isSavingSnackbar, checkPublishSnackbar]
+  const publishSnackbar = showPublishSuccess ? (
+    <Snackbar
+      position="bottom"
+      type="success"
+      autoHideDuration={4000}
+      showCloseButton={false}
+      onClose={() => setShowPublishSuccess(false)}
+    >
+      {`Resource published`}
+    </Snackbar>
+  ) : null
+
+  const unpublishSnackbar = showUnpublishSuccess ? (
+    <Snackbar
+      position="bottom"
+      type="success"
+      autoHideDuration={4000}
+      showCloseButton={false}
+      onClose={() => setShowUnpublishSuccess(false)}
+    >
+      {`Resource unpublished`}
+    </Snackbar>
+  ) : null
+
+  const snackbars = (
+    <SnackbarStack
+      snackbarList={[isSavingSnackbar, checkPublishSnackbar, publishSnackbar, unpublishSnackbar]}
+    />
+  )
 
   const modals = (
     <>

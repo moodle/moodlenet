@@ -1,6 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="105" height="111" viewBox='0 0 100 100' preserveAspectRatio="xMidYMid meet"><rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="none" stroke="none"/>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  version="1.0"
+  width="100"
+  height="100"
+  viewBox="0 0 100 105"
+  preserveAspectRatio="xMidYMid meet"
+>
+  <rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="none" stroke="none" />
 
-
-<g class="currentLayer" style=""><title>Layer 1</title><g transform="translate(0,111) scale(0.10000000149011612,-0.10000000149011612) " fill="#919191" stroke="none" id="svg_1" class="selected" fill-opacity="1">
-<path d="M395 1040 c-120 -21 -227 -90 -293 -190 -115 -171 -97 -389 45 -541 109 -117 271 -165 424 -124 54 13 116 44 149 71 14 12 30 -1 115 -86 98 -99 126 -115 153 -88 27 27 11 55 -87 152 l-99 98 30 45 c105 155 85 378 -45 521 -101 110 -254 165 -392 142z m156 -96 c201 -59 309 -268 237 -461 -29 -80 -121 -172 -201 -201 -111 -42 -243 -22 -340 52 -52 40 -104 124 -123 198 -46 177 75 369 260 414 70 17 103 17 167 -2z" id="svg_2" fill="#919191" fill-opacity="1"/>
-</g></g></svg>
+  <g class="currentLayer" style="">
+    <title>Layer 1</title>
+    <g
+      transform="translate(0,111) scale(0.10000000149011612,-0.10000000149011612) "
+      fill="#919191"
+      stroke="none"
+      id="svg_1"
+      class="selected"
+      fill-opacity="1"
+    >
+      <path
+        d="M395 1040 c-120 -21 -227 -90 -293 -190 -115 -171 -97 -389 45 -541 109 -117 271 -165 424 -124 54 13 116 44 149 71 14 12 30 -1 115 -86 98 -99 126 -115 153 -88 27 27 11 55 -87 152 l-99 98 30 45 c105 155 85 378 -45 521 -101 110 -254 165 -392 142z m156 -96 c201 -59 309 -268 237 -461 -29 -80 -121 -172 -201 -201 -111 -42 -243 -22 -340 52 -52 40 -104 124 -123 198 -46 177 75 369 260 414 70 17 103 17 167 -2z"
+        id="svg_2"
+        fill="#919191"
+        fill-opacity="1"
+      />
+    </g>
+  </g>
+</svg>
