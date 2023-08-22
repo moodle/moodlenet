@@ -17,6 +17,7 @@ export type SendToMoodleForm = { site: string | undefined }
 export type SendToMoodleProps = {
   site: string | undefined
   userId: string | undefined
+  canSendToMoodle: boolean
   sendToMoodle: (site: string | undefined) => void
 }
 
@@ -24,7 +25,12 @@ export const lmsValidationSchema: SchemaOf<SendToMoodleForm> = object({
   site: string().url().required(),
 })
 
-export const SendToMoodle: FC<SendToMoodleProps> = ({ site, userId, sendToMoodle }) => {
+export const SendToMoodle: FC<SendToMoodleProps> = ({
+  site,
+  userId,
+  canSendToMoodle,
+  sendToMoodle,
+}) => {
   const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
     useState<boolean>(false)
@@ -123,12 +129,12 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({ site, userId, sendToMoodle
     </Modal>
   )
 
-  return (
+  return canSendToMoodle ? (
     <>
       {modal}
       <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>Send to Moodle</PrimaryButton>
     </>
-  )
+  ) : null
 }
 
 SendToMoodle.defaultProps = {}
