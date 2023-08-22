@@ -11,7 +11,6 @@ import type { FC, ReactNode } from 'react'
 import './RoundButton.scss'
 
 export type RoundButtonProps = {
-  onClick?(arg0: unknown): unknown
   onKeyUp?: { key: string; func: () => void }
   className?: string
   tabIndex?: number
@@ -20,7 +19,7 @@ export type RoundButtonProps = {
   onHoverColor?: 'gray' | 'red' | 'fill-red'
   abbrTitle?: string
   icon?: ReactNode
-}
+} & React.HTMLAttributes<HTMLDivElement>
 
 export const RoundButton: FC<RoundButtonProps> = ({
   className,
@@ -31,16 +30,16 @@ export const RoundButton: FC<RoundButtonProps> = ({
   abbrTitle,
   onKeyUp,
   icon,
-  onClick,
+  ...props
 }) => {
   const svgClassName = `color-${color} hover-${onHoverColor}`
   return (
     <abbr className={`round-button ${className}`} title={abbrTitle}>
       <div
         className={`content`}
-        onClick={onClick}
         onKeyUp={e => e.key === onKeyUp?.key && onKeyUp.func()}
         tabIndex={tabIndex}
+        {...props}
       >
         {icon && icon}
         {!icon && (

@@ -8,24 +8,26 @@ export type MultipeSelectDropdownProps = {
   selections: string[]
   options: TextOptionProps[]
   canEdit: boolean
+  edit?: boolean
   label: string
   className?: string
   placeholder?: string
   shouldShowErrors?: boolean
   errors: string[] | string | undefined
-  edit(selections: string[]): void
+  setData(selections: string[]): void
 }
 
 export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = ({
   selections,
   options,
   label,
+  edit,
   className,
   placeholder,
   canEdit,
   errors,
   shouldShowErrors,
-  edit,
+  setData,
 }) => {
   const elements = {
     opts: options,
@@ -63,9 +65,9 @@ export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = ({
     console.log('subject ', subject)
     console.log('selections ', selections)
     if (selections.includes(subject)) {
-      edit(selections.filter(s => s !== subject))
+      setData(selections.filter(s => s !== subject))
     } else {
-      edit([...selections, subject])
+      setData([...selections, subject])
     }
   }
 
@@ -78,22 +80,24 @@ export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = ({
       onChange={e => updateSubjects(e.target.value)}
       label={label}
       placeholder={placeholder}
-      edit
+      edit={edit}
       highlight={shouldShowErrors && !!errors}
       error={shouldShowErrors && errors}
       position={{ top: 77, bottom: 25 }}
       searchByText={setSearchText}
       pills={
-        updatedElements.selected &&
+        // updatedElements.selected &&
         updatedElements.selected.map(selected => (
           <SimplePill edit key={selected.value} value={selected.value} label={selected.label} />
         ))
       }
     >
-      {updatedElements.selected &&
+      {
+        // updatedElements.selected &&
         updatedElements.selected.map(selected => (
           <CheckmarkOption key={selected.value} value={selected.value} label={selected.label} />
-        ))}
+        ))
+      }
       {updatedElements.opts
         .filter(subject => !updatedElements.selected.includes(subject))
         .map(selected => (
@@ -108,6 +112,10 @@ export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = ({
       </abbr>
     </div>
   ) : null
+}
+
+MultipeSelectDropdown.defaultProps = {
+  edit: true,
 }
 
 export default MultipeSelectDropdown

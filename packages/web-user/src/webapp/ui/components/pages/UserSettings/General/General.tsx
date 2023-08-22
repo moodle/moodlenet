@@ -24,15 +24,7 @@ export const General: FC<GeneralProps> = ({
   editInterests,
   //userId
 }) => {
-  const {
-    languageOptions,
-    levelOptions,
-    licenseOptions,
-    monthOptions,
-    subjectOptions,
-    typeOptions,
-    yearOptions,
-  } = edMetaOptions
+  const { languageOptions, levelOptions, subjectOptions } = edMetaOptions
   /* const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
 
   const copyId = () => {
@@ -64,9 +56,9 @@ export const General: FC<GeneralProps> = ({
 
   const form = useFormik<UserInterests>({
     initialValues: interests,
-    validateOnMount: true,
-    validateOnChange: true,
-    enableReinitialize: true,
+    // validateOnMount: true,
+    // validateOnChange: true,
+    // enableReinitialize: true,
     onSubmit: values => {
       console.log('changes saved')
       editInterests(values)
@@ -83,38 +75,41 @@ export const General: FC<GeneralProps> = ({
       selections={form.values.subjects}
       options={subjectOptions}
       errors={form.errors.subjects}
-      edit={e => form.setFieldValue('subjects', e)}
+      setData={e => form.setFieldValue('subjects', e)}
       shouldShowErrors={true}
     />
   )
 
-  const levelsField = (
-    <MultipeSelectDropdown
-      label="Levels"
-      canEdit={true}
-      key="level-field"
-      selections={form.values.levels}
-      options={levelOptions}
-      errors={form.errors.subjects}
-      edit={e => form.setFieldValue('levels', e)}
-      shouldShowErrors={true}
-    />
-  )
+  // const levelsField = (
+  //   <MultipeSelectDropdown
+  //     label="Levels"
+  //     canEdit={true}
+  //     key="level-field"
+  //     selections={form.values.levels}
+  //     options={levelOptions}
+  //     errors={form.errors.subjects}
+  //     setData={e => form.setFieldValue('levels', e)}
+  //     shouldShowErrors={true}
+  //   />
+  // )
 
-  const languagesField = (
-    <MultipeSelectDropdown
-      label="Languages"
-      canEdit={true}
-      key="level-field"
-      selections={form.values.languages}
-      options={languageOptions}
-      errors={form.errors.languages}
-      edit={e => form.setFieldValue('languages', e)}
-      shouldShowErrors={true}
-    />
-  )
+  // const languagesField = (
+  //   <MultipeSelectDropdown
+  //     label="Languages"
+  //     canEdit={true}
+  //     key="level-field"
+  //     selections={form.values.languages}
+  //     options={languageOptions}
+  //     errors={form.errors.languages}
+  //     setData={e => form.setFieldValue('languages', e)}
+  //     shouldShowErrors={true}
+  //   />
+  // )
 
-  const interestsFields = [subjectsField, levelsField, languagesField]
+  const interestsFields = [
+    subjectsField,
+    // levelsField, languagesField
+  ]
 
   const interestsSection = (
     <Card className="column interests-section">

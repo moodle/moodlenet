@@ -28,7 +28,6 @@
     min-height: 44px;
     background: #ffffff;
     border: none;
-    box-shadow: 0 0 6px #dedede;
     border-radius: 7px;
     display: flex;
     justify-content: space-between;
@@ -38,6 +37,11 @@
     outline: none;
     font-weight: 500;
     font-size: 14px;
+    cursor: pointer;
+
+    &:not(:focus-visible) {
+      box-shadow: 0 0 6px #dedede;
+    }
 
     > svg {
       display: block;
