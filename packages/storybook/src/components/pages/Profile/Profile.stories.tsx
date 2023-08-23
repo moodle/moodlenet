@@ -1,4 +1,5 @@
 import { OverallCardStories } from '@moodlenet/react-app/stories'
+// import { Profile } from '@moodlenet/web-user/ui'
 import { Profile } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -56,7 +57,7 @@ export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
     access: { isAuthenticated: true, canEdit: true, isCreator: true, canApprove: false },
     state: {
-      // isApproved: false,
+      // isPublisher: false,
       // isWaitingApproval: false,
       // isElegibleForApproval: false,
       showAccountApprovedSuccessAlert: true,
@@ -93,7 +94,7 @@ export const Owner: ProfileStory = () => {
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
     access: { isAdmin: true, canEdit: true, isCreator: false, canApprove: true },
-    state: { isApproved: false },
+    state: { isPublisher: false },
     resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,

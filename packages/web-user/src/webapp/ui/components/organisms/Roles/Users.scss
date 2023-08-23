@@ -22,18 +22,26 @@
       > tbody {
         > tr {
           > .user-types {
+            display: flex;
+            gap: 10px;
             > * {
               cursor: pointer;
-              &.on {
-                fill: var(--primary-color);
+              &.off {
+                color: #8c8e95;
                 &:hover {
-                  fill: var(--primary-color-hover);
+                  color: #63656a;
                 }
               }
-              &.off {
-                fill: #8c8e95;
+            }
+            > .admin,
+            > .publisher {
+              &.on {
+                color: var(--primary-color);
                 &:hover {
-                  fill: #63656a;
+                  color: var(--primary-color-hover);
+                }
+                &:active {
+                  color: var(--primary-color-active);
                 }
               }
             }

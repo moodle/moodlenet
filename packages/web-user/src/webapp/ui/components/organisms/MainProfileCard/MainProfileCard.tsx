@@ -8,6 +8,7 @@ import {
   RoundButton,
   SecondaryButton,
   Snackbar,
+  SnackbarStack,
   useImageUrl,
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
@@ -29,6 +30,7 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 //   ApprovalInfo,
 // } from '../../atoms/ApproveButton/ApproveButton.js'
 import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
+import { ApprovalButton } from '../../atoms/ApproveButton/ApproveButton.js'
 import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
@@ -80,7 +82,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   } = access
   const {
     followed,
-    // isApproved,
+    // isPublisher,
     // isElegibleForApproval,
     // isWaitingApproval,
     // showAccountApprovedSuccessAlert,
@@ -289,7 +291,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   // const approvedBadge = (
   //   <ApprovalBadge
   //     canEdit={canEdit}
-  //     isApproved={isApproved}
+  //     isPublisher={isPublisher}
   //     isEditing={isEditing}
   //     showAccountApprovedSuccessAlert={showAccountApprovedSuccessAlert}
   //   />
@@ -465,28 +467,42 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     </>
   )
 
-  const snackbars = [
-    showUrlCopiedAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
-        Copied to clipoard
-      </Snackbar>
-    ),
-    showMessageSentAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
-        Message sent
-      </Snackbar>
-    ),
-    avatarForm.errors.image && (
-      <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
-        {avatarForm.errors.image}
-      </Snackbar>
-    ),
-    backgroundForm.errors.image && (
-      <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
-        {backgroundForm.errors.image}
-      </Snackbar>
-    ),
-  ]
+  const snackbars = (
+    <SnackbarStack
+      snackbarList={[
+        showUrlCopiedAlert ? (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={3000}
+            showCloseButton={false}
+          >
+            Copied to clipoard
+          </Snackbar>
+        ) : null,
+        showMessageSentAlert ? (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={3000}
+            showCloseButton={false}
+          >
+            Message sent
+          </Snackbar>
+        ) : null,
+        avatarForm.errors.image ? (
+          <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
+            {avatarForm.errors.image}
+          </Snackbar>
+        ) : null,
+        backgroundForm.errors.image ? (
+          <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
+            {backgroundForm.errors.image}
+          </Snackbar>
+        ) : null,
+      ]}
+    />
+  )
 
   const followButton = !isCreator && (
     <FollowButton
@@ -549,13 +565,13 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     />
   ) : null
 
-  // const approvalButton = (
-  //   <ApprovalButton access={access} state={state} actions={actions} key={'approval-button'} />
-  // )
+  const approvalButton = (
+    <ApprovalButton access={access} state={state} actions={actions} key={'approval-button'} />
+  )
 
   const updatedFooterItems = [
     followButton,
-    // approvalButton,
+    approvalButton,
     sendMessageButton,
     ...(footerItems ?? []),
     moreButton,
@@ -570,7 +586,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   // const approvalInfo = (
   //   <ApprovalInfo
-  //     isApproved={isApproved}
+  //     isPublisher={isPublisher}
   //     isWaitingApproval={isWaitingApproval}
   //     isCreator={isCreator}
   //     isElegibleForApproval={isElegibleForApproval}
