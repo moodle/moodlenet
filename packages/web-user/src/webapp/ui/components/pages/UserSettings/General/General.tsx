@@ -68,14 +68,15 @@ export const General: FC<GeneralProps> = ({
 
   const subjectsField = (
     <MultipeSelectDropdown
+      name="subjects"
+      onChange={form.handleChange}
       label="Subjects"
       placeholder="Content category"
       canEdit={true}
       key="subject-field"
-      selections={form.values.subjects}
+      value={form.values.subjects}
       options={subjectOptions}
       errors={form.errors.subjects}
-      setData={e => form.setFieldValue('subjects', e)}
       shouldShowErrors={true}
     />
   )
