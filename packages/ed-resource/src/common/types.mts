@@ -161,7 +161,7 @@ export function isSortTypeRpc(_: any): _ is SortTypeRpc {
   return ['Relevant', 'Popular', 'Recent'].includes(_)
 }
 
-export const getResourceDomainName = (url: string): string => {
+export const getResourceDomainName = (url: string): string | undefined => {
   const domain = getDomainUrl(url)
   switch (domain) {
     case 'youtube.com':
@@ -170,7 +170,7 @@ export const getResourceDomainName = (url: string): string => {
     case 'vimeo.com':
       return 'vimeo'
     case undefined:
-      return 'invalid-link'
+      return 'unknown'
     default:
       return 'link'
   }
