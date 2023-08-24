@@ -391,7 +391,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
                 onClick={deleteFileOrLink}
                 tabIndex={0}
                 abbrTitle={contentIsFile ? 'Delete file' : 'Delete link'}
-                onKeyUp={{ key: 'Enter', func: deleteFileOrLink }}
+                onKeyUp={e => e.key === 'Enter' && deleteFileOrLink()}
               />
             </div>
           )}
