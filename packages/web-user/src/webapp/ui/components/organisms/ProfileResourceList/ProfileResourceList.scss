@@ -1,2 +1,11 @@
 .profile-resource-list {
+  > .action {
+    > .primary-button {
+      display: flex;
+      gap: 6px;
+      > svg {
+        font-size: 20px;
+      }
+    }
+  }
 }

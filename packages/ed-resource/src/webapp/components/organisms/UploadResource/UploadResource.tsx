@@ -1,17 +1,16 @@
 import { InsertDriveFile, Link as LinkIcon } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
-  ErrorMessage,
+  getPreviewFromUrl,
   ImageContainer,
   InputTextField,
   PrimaryButton,
   RoundButton,
-  getPreviewFromUrl,
 } from '@moodlenet/component-library'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
-import type { FC, default as React } from 'react'
+import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
 // import { SelectOptions } from '../../../../lib/types'
@@ -29,6 +28,7 @@ import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-
 // import { NewResourceFormValues } from '../types'
 import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 // import { ErrorMessage } from '../../../../../../component-library/src/ui.mjs'
+import ErrorMessage from '../../atoms/ErrorMessage/ErrorMessage.js'
 import './UploadResource.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'

@@ -20,7 +20,7 @@ export const ProfileResourceList: FC<ProfileResourceListProps> = ({
 }) => {
   const listCard = (
     <ListCard
-      className="resources"
+      className="profile-resource-list"
       content={useMemo(
         () =>
           resourceCardPropsList.map(({ key, props }) => {
