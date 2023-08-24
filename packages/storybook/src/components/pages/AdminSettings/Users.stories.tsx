@@ -4,7 +4,6 @@ import type { TableItem, UsersProps } from '@moodlenet/web-user/ui'
 import { Users, UsersMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { FC } from 'react'
-import { useEffect, useState } from 'react'
 
 export const useUsersStoryProps = (overrides?: {
   props?: Partial<UsersProps>
@@ -13,7 +12,7 @@ export const useUsersStoryProps = (overrides?: {
     head: JiraButtonHead,
     body: {
       email: 'maria.anders@school.edu',
-      element: JiraButtonBody('https://jira.moodle.net/browse/MDL-1234'),
+      element: JiraButtonBody('https://tracker.moodle.org/browse/MNM-647'),
     },
   }
   return {
@@ -66,24 +65,26 @@ export const useUsersStoryProps = (overrides?: {
 
 const UsersItem: FC = () => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
-  const [searchText, setSearchText] = useState('')
-  const [currentUsers, setCurrentUsers] = useState(useUsersStoryProps().users)
+  // const [searchText, setSearchText] = useState('')
+  // const [currentUsers, setCurrentUsers] = useState(useUsersStoryProps().users)
 
-  useEffect(() => {
-    setCurrentUsers(
-      currentUsers.filter(
-        ({ user }) =>
-          user.title.toLowerCase().includes(searchText.toLowerCase()) ||
-          user.email?.toLowerCase().includes(searchText.toLowerCase()) ||
-          searchText === '',
-      ),
-    )
-  }, [searchText, currentUsers])
+  // useEffect(() => {
+  //   setCurrentUsers(
+  //     currentUsers.filter(
+  //       ({ user }) =>
+  //         user.title.toLowerCase().includes(searchText.toLowerCase()) ||
+  //         user.email?.toLowerCase().includes(searchText.toLowerCase()) ||
+  //         searchText === '',
+  //     ),
+  //   )
+  // }, [searchText, currentUsers])
 
   return (
     <Users
-      users={currentUsers}
-      search={setSearchText}
+      users={useUsersStoryProps().users}
+      search={action('Searching users')}
+      // users={currentUsers}
+      // search={setSearchText}
       tableItems={useUsersStoryProps().tableItems}
     />
   )
@@ -91,7 +92,7 @@ const UsersItem: FC = () => {
 export const useUserAdminSettingsElements = (): AdminSettingsItem => {
   return {
     Menu: UsersMenu,
-    Content: UsersItem,
+    Content: () => <UsersItem />,
     key: 'content-Users',
   }
 }

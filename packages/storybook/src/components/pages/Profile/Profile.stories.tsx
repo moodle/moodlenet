@@ -43,7 +43,10 @@ export const LoggedOut = () => {
 
 export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true, canApprove: false },
+    access: {
+      isAuthenticated: true,
+      canApprove: false,
+    },
     // resourceCardPropsList: getResourceCardsStoryProps(5, {access: {canLike: true}}),
     // collectionCardPropsList: getCollectionCardsStoryProps(5, {access: {canFollow: true}}),
     mainColumnItems: [],
@@ -55,7 +58,13 @@ export const LoggedIn: ProfileStory = () => {
 
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true, canEdit: true, isCreator: true, canApprove: false },
+    access: {
+      isAuthenticated: true,
+      canEdit: true,
+      isCreator: true,
+      canApprove: false,
+      isPublisher: false,
+    },
     state: {
       // isPublisher: false,
       // isWaitingApproval: false,
@@ -77,6 +86,10 @@ export const Owner: ProfileStory = () => {
     }),
     mainColumnItems: [],
     sideColumnItems: [],
+    jiraApprovalButton: {
+      isElegibleForApproval: true,
+      isWaitingApproval: false,
+    },
   })
 
   const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)

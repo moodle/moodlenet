@@ -35,11 +35,11 @@ import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {
-  mainColumnItems: AddonItem[]
-  topItems: AddonItem[]
-  titleItems: AddonItem[]
-  subtitleItems: AddonItem[]
-  footerItems: AddonItem[]
+  mainColumnItems: (AddonItem | null)[]
+  topItems: (AddonItem | null)[]
+  titleItems: (AddonItem | null)[]
+  subtitleItems: (AddonItem | null)[]
+  footerItems: (AddonItem | null)[]
 }
 
 export type MainProfileCardPropsControlled = Omit<

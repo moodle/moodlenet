@@ -59,7 +59,7 @@ const Row: FC<{
       </td>
       {bodyItems.map((item, i) => {
         return (
-          <td key={(item && item.key) ?? i}>
+          <td key={(item && item.key) ?? i} id={item ? item.key.toString() : ''}>
             {item && item.Item ? <item.Item key={item.key} /> : null}
           </td>
         )
@@ -109,7 +109,7 @@ export const Users: FC<UsersProps> = ({ users, search, tableItems }) => {
               {tableItems &&
                 tableItems.map((item, i) => {
                   return item && item.head ? (
-                    <td key={i}>
+                    <td key={i} id={item ? item.head.key.toString() : ''}>
                       <item.head.Item key={item.head.key} />
                     </td>
                   ) : null

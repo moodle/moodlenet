@@ -3,22 +3,26 @@ import type { ProfileAccess, ProfileActions, ProfileState } from '@moodlenet/web
 import type { FC } from 'react'
 import './JiraApproveButton.scss'
 
-export type ProfileJiraApproveActionsProps = ProfileActions & {
+export type ProfileJiraRequestApprovalActionsProps = ProfileActions & {
   requestApproval: () => void
 }
-export type ProfileJiraApproveStateProps = ProfileState & {
+export type ProfileJiraRequestApprovalStateProps = ProfileState & {
   isElegibleForApproval: boolean
   isWaitingApproval: boolean
   showApprovalRequestedSuccessAlert: boolean
 }
 
-export type JiraApproveButtonProps = {
+export type JiraRequestApprovalButtonProps = {
   access: ProfileAccess
-  state: ProfileJiraApproveStateProps
-  actions: ProfileJiraApproveActionsProps
+  state: ProfileJiraRequestApprovalStateProps
+  actions: ProfileJiraRequestApprovalActionsProps
 }
 
-export const JiraApproveButton: FC<JiraApproveButtonProps> = ({ access, state, actions }) => {
+export const JiraRequestApprovalButton: FC<JiraRequestApprovalButtonProps> = ({
+  access,
+  state,
+  actions,
+}) => {
   const { isCreator, isPublisher } = access
   const { isWaitingApproval, isElegibleForApproval, showApprovalRequestedSuccessAlert } = state
   const { requestApproval } = actions
@@ -37,7 +41,7 @@ export const JiraApproveButton: FC<JiraApproveButtonProps> = ({ access, state, a
     ),
   ]
 
-  const requestJiraApproveButton = isCreator && !isPublisher && !isWaitingApproval && (
+  const requestJiraRequestApprovalButton = isCreator && !isPublisher && !isWaitingApproval && (
     <PrimaryButton
       className="request-jira-approve-button"
       disabled={!isElegibleForApproval}
@@ -50,7 +54,7 @@ export const JiraApproveButton: FC<JiraApproveButtonProps> = ({ access, state, a
     </PrimaryButton>
   )
 
-  const waitingJiraApproveButton = isCreator && !isPublisher && isWaitingApproval && (
+  const waitingJiraRequestApprovalButton = isCreator && !isPublisher && isWaitingApproval && (
     <SecondaryButton className="wating-for-jira-approve-button" disabled={true}>
       Waiting for approval
     </SecondaryButton>
@@ -60,42 +64,41 @@ export const JiraApproveButton: FC<JiraApproveButtonProps> = ({ access, state, a
     <>
       {isCreator && !isPublisher
         ? isWaitingApproval
-          ? waitingJiraApproveButton
-          : requestJiraApproveButton
+          ? waitingJiraRequestApprovalButton
+          : requestJiraRequestApprovalButton
         : null}
       {snackbars}
     </>
   )
 }
 
-export type ApprovalInfoProps = {
+export type JiraRequestApprovalInfoProps = {
   isWaitingApproval: boolean
   isPublisher: boolean
   isElegibleForApproval: boolean
   isCreator: boolean
 }
 
-export const ApprovalInfo: FC<ApprovalInfoProps> = ({
+export const JiraRequestApprovalInfo: FC<JiraRequestApprovalInfoProps> = ({
   isWaitingApproval,
   isPublisher,
   isElegibleForApproval,
   isCreator,
 }) => {
   return isCreator && !isPublisher && !isWaitingApproval ? (
-    <div className="not-approved-warning">
-      {isElegibleForApproval ? (
-        <>
-          Looks like you are starting to upload some resources!
-          <br /> <br />
-          Feel free to request approval so others can see your content.
-        </>
-      ) : (
-        <>
-          We need to approve your account for others to see your content.
-          <br /> <br />
-          Upload 5 good-quality resources and click the button below for account approval.
-        </>
-      )}
-    </div>
+    isElegibleForApproval ? (
+      <div className="not-approved-warning elegible">
+        Looks like you are starting to upload some resources!
+        <br /> <br />
+        Feel free to request approval so others can see your content.
+      </div>
+    ) : (
+      <div className="not-approved-warning not-elegible">
+        Become an approved publisher so that others can see your content.
+        {/* We need to approve your account for others to see your content. */}
+        <br /> <br />
+        Upload 5 good-quality resources and click the button below for account approval.
+      </div>
+    )
   ) : null
 }

@@ -1,6 +1,13 @@
 import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { JiraApproveButton } from '@moodlenet/mn-central-jira-simple-moderations/ui'
+import type {
+  JiraRequestApprovalInfoProps,
+  ProfileJiraApproveStateProps,
+} from '@moodlenet/mn-central-jira-simple-moderations/ui'
+import {
+  JiraRequestApprovalButton,
+  JiraRequestApprovalInfo,
+} from '@moodlenet/mn-central-jira-simple-moderations/ui'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
 import { OverallCard } from '@moodlenet/react-app/ui'
@@ -22,7 +29,9 @@ import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout
 
 const maxUploadSize = 1024 * 1024 * 0.001
 
-export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): ProfileProps => {
+export const useProfileStoryProps = (
+  overrides?: PartialDeep<ProfileProps & { jiraApprovalButton: ProfileJiraApproveStateProps }>,
+): ProfileProps => {
   const person = peopleFactory[randomIntFromInterval(0, 3)]
 
   const overallCard = {
@@ -80,29 +89,53 @@ export const useProfileStoryProps = (overrides?: PartialDeep<ProfileProps>): Pro
     siteUrl: 'https://iuri.is/',
   }
 
+  const jiraRequestApprovalButton =
+    access.isCreator && !access.isPublisher
+      ? {
+          Item: () => (
+            <JiraRequestApprovalButton
+              key="jira-approve-button"
+              access={access}
+              state={{
+                isWaitingApproval: false,
+                isElegibleForApproval: false,
+                showApprovalRequestedSuccessAlert: false,
+                ...access,
+                ...state,
+                ...overrides?.jiraApprovalButton,
+              }}
+              actions={{ requestApproval: action('request approval'), ...actions }}
+            />
+          ),
+          key: 'jira-approve-button',
+        }
+      : null
+
+  const jiraApprovalInfoProps: JiraRequestApprovalInfoProps = {
+    isWaitingApproval: false,
+    isElegibleForApproval: false,
+    showApprovalRequestedSuccessAlert: false,
+    ...state,
+    ...access,
+    ...overrides?.jiraApprovalButton,
+  }
+
+  const jiraApprovalInfo =
+    access.isCreator && !access.isPublisher
+      ? {
+          Item: () => (
+            <JiraRequestApprovalInfo key="jira-request-approval-info" {...jiraApprovalInfoProps} />
+          ),
+          key: 'jira-request-approval-info',
+        }
+      : null
+
   const profileCardSlots: MainProfileCardSlots = {
     topItems: [],
-    mainColumnItems: [],
+    mainColumnItems: [jiraApprovalInfo],
     titleItems: [],
     subtitleItems: [],
-    footerItems: [
-      {
-        Item: () => (
-          <JiraApproveButton
-            key="jira-approve-button"
-            access={access}
-            state={{
-              isWaitingApproval: false,
-              isElegibleForApproval: false,
-              showApprovalRequestedSuccessAlert: false,
-              ...state,
-            }}
-            actions={{ requestApproval: action('request approval'), ...actions }}
-          />
-        ),
-        key: 'jira-approve-button',
-      },
-    ],
+    footerItems: [jiraRequestApprovalButton],
   }
 
   return overrideDeep<ProfileProps>(
