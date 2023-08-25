@@ -125,7 +125,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
   const form_submitForm = form.submitForm
   const imageForm_submitForm = imageForm.submitForm
   const imageForm_setFieldValue = imageForm.setFieldValue
-  const imageForm_validateForm = imageForm.validateForm
+  // const imageForm_validateForm = imageForm.validateForm
 
   const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
 
