@@ -75,6 +75,7 @@ const DropdownComp: FC<DropdownProps> = props => {
   const [isHoveringOptions, setHoveringOptions] = useState(false)
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
   const [currentError, setcurrentError] = useState<ReactNode>(undefined)
+  const [multilineHeight, setMultilineHeight] = useState(0)
 
   const showContent = edit && isShowingContent
 
@@ -102,6 +103,14 @@ const DropdownComp: FC<DropdownProps> = props => {
   const dropdownButtonRef = useRef<HTMLInputElement>(null)
   const dropdownContentRef = useRef<HTMLInputElement>(null)
   const inputContainerRef = useRef<HTMLDivElement>(null)
+  const multilinesRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const height = multilinesRef.current?.clientHeight
+    if (multilines && height && height !== 0) {
+      height < 46 ? 46 : setMultilineHeight(height)
+    }
+  }, [multilines, multilinesRef.current?.clientHeight, isShowingContent])
 
   // const handleClickOutside = (event: MouseEvent) => {
   //   if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -166,6 +175,7 @@ const DropdownComp: FC<DropdownProps> = props => {
     }
   }, [error, setErrorLeave, currentError])
 
+  console.log('pills', pills)
   return (
     <abbr
       // ref={dropdownRef}
@@ -175,7 +185,10 @@ const DropdownComp: FC<DropdownProps> = props => {
         errorLeaves ? 'leave-error' : ''
       }`}
       ref={divRef ?? dropdownContainerRef}
-      style={{ visibility: hidden ? 'hidden' : 'visible' }}
+      style={{
+        visibility: hidden ? 'hidden' : 'visible',
+        height: multilines ? `${28 + multilineHeight}px` : undefined,
+      }}
       hidden={hidden}
       title={abbr}
     >
@@ -221,12 +234,17 @@ const DropdownComp: FC<DropdownProps> = props => {
         ) : (
           <>
             <div
+              ref={multilinesRef}
               className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
               ${multilines ? 'multilines' : ''} 
               ${multiple && !multilines ? 'scroll' : ''}
               `}
             >
-              {pills ? pills : <div className="placeholder">{placeholder}</div>}
+              {pills && !(Array.isArray(pills) && pills.length === 0) ? (
+                pills
+              ) : (
+                <div className="placeholder">{placeholder}</div>
+              )}
             </div>
             {!disabled && edit && <ExpandMoreIcon />}
           </>
