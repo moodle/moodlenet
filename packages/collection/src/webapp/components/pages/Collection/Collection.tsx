@@ -141,6 +141,8 @@ export const Collection: FC<CollectionProps> = ({
     },
   })
 
+  const isImageValid = imageValidationSchema.isValidSync(imageForm.values)
+
   const imageForm_setTouched = imageForm.setTouched
   const form_setTouched = form.setTouched
 
@@ -257,6 +259,7 @@ export const Collection: FC<CollectionProps> = ({
   const isFormValid: ValidForms = {
     isDraftFormValid: isDraftFormValid,
     isPublishedFormValid: isPublishedFormValid,
+    isImageValid: isImageValid,
   }
 
   const mainCollectionCard = (
