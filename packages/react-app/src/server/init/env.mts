@@ -8,6 +8,7 @@ type Env = {
   noWebappServer: boolean
   defaultImageUploadMaxSize: number
   baseBuildFolder: string
+  noWebappBuilder: boolean
 }
 function getEnv(): Env {
   const config = shell.config
@@ -15,7 +16,8 @@ function getEnv(): Env {
   const env: Env = {
     defaultImageUploadMaxSize: parseSize(config.defaultImageUploadMaxSize ?? '3MB'),
     noWebappServer: !!(config.noWebappServer ?? false),
-    baseBuildFolder: config?.baseBuildFolder ?? resolve(shell.baseFsFolder, 'webapp-build'),
+    baseBuildFolder: config.baseBuildFolder ?? resolve(shell.baseFsFolder, 'webapp-build'),
+    noWebappBuilder: !!config.noWebappBuilder,
   }
 
   return env

@@ -11,7 +11,7 @@ import type {
 import { httpApp } from './init/http-server.mjs'
 import { kvStore } from './init/kvStore.mjs'
 import { shell } from './shell.mjs'
-import { addWebappPluginItem } from './webapp-plugins.mjs'
+import { addWebappPluginItem } from './webpack/webapp-plugins.mjs'
 
 export type ImageKind = 'image' | 'icon'
 export async function webImageResizer(original: RpcFile, imageKind: ImageKind): Promise<RpcFile> {

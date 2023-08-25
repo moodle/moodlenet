@@ -3,30 +3,24 @@ import { cp } from 'fs/promises'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
 import { inspect } from 'util'
-import { getBuildContext } from '../get-build-context.mjs'
 import { getWp } from './config.mjs'
+import { getBuildContext } from './get-build-context.mjs'
 
 const buildContext = await getBuildContext({ baseBuildFolder: process.cwd() })
 const { buildFolder, latestBuildFolder } = buildContext
+rimraf.sync(resolve(latestBuildFolder, '*'), { disableGlob: true })
+rimraf.sync(resolve(buildFolder, '*'), { disableGlob: true })
 const wp = await getWp({
   alias: await buildContext.getAliases(),
   pkgPlugins: await buildContext.getPkgPlugins(),
   mode: 'prod',
   buildFolder,
 })
-// shell.log('debug', { baseResolveAlias, latestBuildFolder, buildFolder })
-
-// process.on('SIGTERM', () => wp.close(() => void 0))
 
 wp.hooks.afterDone.tap('swap folders', async wpStats => {
   if (wpStats?.hasErrors()) {
     errorExit(wpStats.toString())
   }
-  await new Promise<void>((rimrafResolve, rimrafReject) =>
-    rimraf(resolve(latestBuildFolder, '*'), { disableGlob: true }, e =>
-      e ? rimrafReject(e) : rimrafResolve(),
-    ),
-  )
   await cp(buildFolder, latestBuildFolder, { recursive: true })
   wp.close(() => process.exit(0))
 })

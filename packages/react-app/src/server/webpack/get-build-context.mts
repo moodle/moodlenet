@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
-import type { WebappPluginItem } from '../common/types.mjs'
+import type { WebappPluginItem } from '../../common/types.mjs'
 
 export function getBuildContext({ baseBuildFolder }: { baseBuildFolder: string }) {
   const connectPkgModulesFileTarget = resolve(

@@ -1,8 +1,8 @@
 import { watchFile } from 'fs'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
-import { getBuildContext } from '../get-build-context.mjs'
 import { getWp } from './config.mjs'
+import { getBuildContext } from './get-build-context.mjs'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const baseBuildFolder = resolve(

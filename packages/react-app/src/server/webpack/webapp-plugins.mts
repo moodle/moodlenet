@@ -3,10 +3,10 @@ import { createRequire } from 'module'
 import { packageDirectorySync } from 'pkg-dir'
 // import { tmpdir } from 'os'
 import type { ResolveOptions } from 'webpack'
-import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
-import { buildContext } from './build-context.mjs'
+import type { WebappPluginItem, WebPkgDeps } from '../../common/types.mjs'
+import { buildContext } from '../build-context.mjs'
+import { shell } from '../shell.mjs'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
-import { shell } from './shell.mjs'
 
 const require = createRequire(import.meta.url)
 
