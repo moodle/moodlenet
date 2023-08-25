@@ -37,6 +37,7 @@ export type MainCollectionCardSlots = {
 export type ValidForms = {
   isDraftFormValid: boolean
   isPublishedFormValid: boolean
+  isImageValid: boolean
 }
 
 export type MainCollectionCardProps = {
@@ -111,7 +112,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const { canPublish, canDelete, canEdit } = access
 
-  const { isDraftFormValid, isPublishedFormValid } = isFormValid
+  const { isDraftFormValid, isPublishedFormValid, isImageValid } = isFormValid
 
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -123,6 +124,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
 
   const form_submitForm = form.submitForm
   const imageForm_submitForm = imageForm.submitForm
+  const imageForm_setFieldValue = imageForm.setFieldValue
   const imageForm_validateForm = imageForm.validateForm
 
   const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
@@ -140,9 +142,9 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
 
     setFieldsAsTouched()
-    imageForm_validateForm()
+    !isImageValid && imageForm_setFieldValue('image', null)
 
-    if (!isFormValid || !imageForm.isValid) {
+    if (!isFormValid) {
       setShouldShowErrors(true)
       return
     }
@@ -166,11 +168,11 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     form_submitForm,
     image,
     imageForm.dirty,
-    imageForm.isValid,
     imageForm.values.image,
+    imageForm_setFieldValue,
     imageForm_submitForm,
-    imageForm_validateForm,
     isDraftFormValid,
+    isImageValid,
     isPublished,
     isPublishedFormValid,
     setEmptyOnStart,

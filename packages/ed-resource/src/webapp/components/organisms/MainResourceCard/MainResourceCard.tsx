@@ -213,7 +213,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setFieldsAsTouched()
     !isImageValid && setImageField(null)
 
-    setShouldShowErrors(!isFormValid || !isContentValid)
+    if (!isFormValid || !isContentValid) {
+      setShouldShowErrors(true)
+      return
+    }
 
     if (form.dirty) {
       form_submitForm()
