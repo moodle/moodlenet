@@ -21,7 +21,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
 
-export async function getWp(
+export function getWp(
   cfg: {
     alias: any
     pkgPlugins: WebappPluginItem<any>[]
@@ -329,13 +329,14 @@ export async function getWp(
       // virtualModules,
     ].filter(Boolean),
   }
-  const wp = webpack(config, _err => {
-    // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
+  const wp = webpack(config, err => {
+    console.error(`WP ERROR`, err)
   })
 
   if (isDevServer) {
     const server = new WebpackDevServer(config.devServer, wp)
     server.startCallback(() => void 0)
   }
+
   return wp
 }

@@ -77,14 +77,12 @@
   },
   "peerDependencies": {
     "@moodlenet/arangodb": "^0.4.0",
-    "@moodlenet/component-library": "^0.4.0",
     "@moodlenet/core": "^0.4.0",
     "@moodlenet/http-server": "^0.4.0",
     "@moodlenet/organization": "^0.4.0"
   },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.4.0",
-    "@moodlenet/component-library": "^0.4.0",
     "@moodlenet/core": "^0.4.0",
     "@moodlenet/http-server": "^0.4.0",
     "@moodlenet/organization": "^0.4.0",
@@ -115,6 +113,7 @@
     "@babel/preset-env": "7.18.0",
     "@babel/preset-react": "7.17.12",
     "@material-ui/icons": "4.11.3",
+    "@moodlenet/component-library": "^0.4.0",
     "@moodlenet/key-value-store": "^0.4.0",
     "@svgr/webpack": "6.2.1",
     "babel-eslint": "10.1.0",
