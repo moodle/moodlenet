@@ -37,9 +37,11 @@ export async function getMyShell<PkgAsyncCtx = never, Events = any>(pkg_module_r
 
   const pkgShell = {
     events,
-    log(level: LogLevel, msg: any) {
-      const message = msg instanceof Error ? msg : inspect(msg, true, 5, true)
-      logger.log(level, message)
+    log(level: LogLevel, ...msgs: any[]) {
+      msgs.forEach(msg => {
+        const message = msg instanceof Error ? msg : inspect(msg, true, 5, true)
+        logger.log(level, message)
+      })
     },
     getExposes: () => getExposes(),
     // the previous props needs to be explicitely defined, otherways tsc complains `shell(import.meta)` all aroud with:

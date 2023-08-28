@@ -2,27 +2,23 @@ import { writeFile } from 'fs/promises'
 import { createRequire } from 'module'
 import { packageDirectorySync } from 'pkg-dir'
 // import { tmpdir } from 'os'
-import { dirname, resolve } from 'path'
-import { fileURLToPath } from 'url'
 import type { ResolveOptions } from 'webpack'
-import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
+import type { WebappPluginItem, WebPkgDeps } from '../../common/types.mjs'
+import { buildContext } from '../build-context.mjs'
+import { shell } from '../shell.mjs'
 import { generateConnectPkgModulesModule } from './generateConnectPkgsModuleModule.mjs'
-import { shell } from './shell.mjs'
 
-// const wpcfg = require('../webpack.config')
-// const config: Configuration = wpcfg({}, { mode: 'development' })
 const require = createRequire(import.meta.url)
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
 // const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
+
 const connectPkgModulesFile = {
   alias: '_connect-moodlenet-pkg-modules_',
-  target: resolve(__dirname, '..', '..', '_connect-moodlenet-pkg-modules_.mjs'),
+  target: buildContext.connectPkgModulesFileTarget,
   // target: resolve(__dirname, '..', '_connect-moodlenet-pkg-modules_.mts'),
   // target: resolve(tmpDir, 'ConnectPkgModules.tsx'),
 }
 
-// await mkdir(tmpDir, { recursive: true })
 const pkgPlugins: WebappPluginItem<any>[] = []
 const baseResolveAlias: ResolveOptions['alias'] = {
   'react': packageDirectorySync({ cwd: require.resolve('react') })!,
@@ -32,21 +28,18 @@ const baseResolveAlias: ResolveOptions['alias'] = {
 
   [connectPkgModulesFile.alias]: connectPkgModulesFile.target,
 }
-export function writeGenerated() {
-  return Promise.all([
-    writeFile(
-      connectPkgModulesFile.target,
-      generateConnectPkgModulesModule({ plugins: pkgPlugins }),
-    ),
-    writeFile(
-      resolve(__dirname, '..', '..', '_resolve-alias_.json'),
-      JSON.stringify(baseResolveAlias, null, 4),
-    ),
-    writeFile(
-      resolve(__dirname, '..', '..', '_pkg_plugins_.json'),
-      JSON.stringify(pkgPlugins, null, 4),
-    ),
+export async function writeGenerated() {
+  const generatedConnectPkgModulesModule = generateConnectPkgModulesModule({ plugins: pkgPlugins })
+  await Promise.all([
+    writeFile(connectPkgModulesFile.target, generatedConnectPkgModulesModule),
+    writeFile(buildContext._resolve_alias_json, JSON.stringify(baseResolveAlias, null, 4)),
+    writeFile(buildContext._pkg_plugins_json, JSON.stringify(pkgPlugins, null, 4)),
   ])
+  return {
+    generatedConnectPkgModulesModule,
+    baseResolveAlias,
+    pkgPlugins,
+  }
 }
 
 export function addWebappPluginItem<Deps extends WebPkgDeps = never>(

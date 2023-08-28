@@ -565,8 +565,7 @@ ${projectAqlRawProps}
     })
     .catch(e => {
       shell.log('error', e)
-      shell.log('debug', q)
-      shell.log('debug', JSON.stringify({ bindVars }))
+      shell.log('debug', q, JSON.stringify({ bindVars }))
       throw e
     })
 

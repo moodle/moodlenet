@@ -1,30 +1,33 @@
-import { cp } from 'fs/promises'
-// import { tmpdir } from 'os'
-import { resolve } from 'path'
-import rimraf from 'rimraf'
+import { cpSync } from 'fs'
+import { mkdtemp } from 'fs/promises'
+import { tmpdir } from 'os'
+import { join } from 'path'
 import { inspect } from 'util'
 import { getWp } from './config.mjs'
-import { buildFolder, latestBuildFolder } from './generated-files.mjs'
+import { getBuildContext } from './get-build-context.mjs'
 
-const wp = await getWp({ mode: 'prod', buildFolder })
-// shell.log('debug', { baseResolveAlias, latestBuildFolder, buildFolder })
+const baseBuildFolder = process.cwd()
+const buildFolder_tmp = await mkdtemp(join(tmpdir(), 'moodlenet-webapp-build-'))
+const buildContext = await getBuildContext({ baseBuildFolder })
 
-// process.on('SIGTERM', () => wp.close(() => void 0))
-
-wp.hooks.afterDone.tap('swap folders', async wpStats => {
-  if (wpStats?.hasErrors()) {
-    errorExit(wpStats.toString())
-  }
-  await new Promise<void>((rimrafResolve, rimrafReject) =>
-    rimraf(resolve(latestBuildFolder, '*'), { disableGlob: true }, e =>
-      e ? rimrafReject(e) : rimrafResolve(),
-    ),
-  )
-  await cp(buildFolder, latestBuildFolder, { recursive: true })
-  wp.close(() => process.exit(0))
+const wp = getWp({
+  alias: await buildContext.getAliases(),
+  pkgPlugins: await buildContext.getPkgPlugins(),
+  mode: 'prod',
+  buildFolder: buildFolder_tmp,
 })
 
-function errorExit(err: any) {
-  console.error(`Webpack error`, inspect(err, false, 4, true))
-  process.exit(1)
-}
+wp.hooks.done.tap('copy build in latest build folder', async wpStats => {
+  if (wpStats?.hasErrors()) {
+    console.error(`Webpack error`, inspect(wpStats, false, 4, true))
+    process.exit(1)
+  }
+  console.log(
+    `Webpack compilation done`,
+    wpStats.toString(),
+    `copying from ${buildFolder_tmp} to ${buildContext.latestBuildFolder}`,
+  )
+
+  cpSync(buildFolder_tmp, buildContext.latestBuildFolder, { recursive: true })
+  wp.close(() => process.exit(0))
+})
