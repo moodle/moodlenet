@@ -353,7 +353,7 @@ export const Collection: FC<CollectionProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
@@ -365,7 +365,7 @@ export const Collection: FC<CollectionProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       showCloseButton={false}
       onClose={() => setShowPublishSuccess(false)}
     >
@@ -377,7 +377,7 @@ export const Collection: FC<CollectionProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       showCloseButton={false}
       onClose={() => setShowUnpublishSuccess(false)}
     >

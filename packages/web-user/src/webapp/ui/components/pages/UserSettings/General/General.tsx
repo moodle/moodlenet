@@ -62,12 +62,32 @@ export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) =>
     (item): item is AddonItem => !!item,
   )
 
+  const snackbars = [
+    // <SnackbarStack
+    //   snackbarList={[
+    //     <Snackbar
+    //       key="csds"
+    //       type="success"
+    //       position="bottom"
+    //       autoHideDuration={3000}
+    //       showCloseButton={false}
+    //     >
+    //       User ID copied to the clipboard
+    //     </Snackbar>,
+    //     <Snackbar key={'sd'} autoHideDuration={3000} type="success">
+    //       Heyy
+    //     </Snackbar>,
+    //   ]}
+    // ></SnackbarStack>,
+    <></>,
+  ]
+
   const modals = [<></>]
 
   return (
     <div className="general" key="general">
       {modals}
-      {/* snackbars */}
+      {snackbars}
       <Card className="column">
         <div className="title">General</div>
       </Card>

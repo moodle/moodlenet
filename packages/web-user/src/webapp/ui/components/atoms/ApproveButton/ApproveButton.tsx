@@ -26,7 +26,7 @@
 //       <Snackbar
 //         position="bottom"
 //         type="success"
-//         autoHideDuration={6000}
+//         autoHideDuration={3000}
 //         waitDuration={1000}
 //         showCloseButton={false}
 //       >
@@ -37,7 +37,7 @@
 //       <Snackbar
 //         position="bottom"
 //         type="success"
-//         autoHideDuration={6000}
+//         autoHideDuration={3000}
 //         waitDuration={1000}
 //         showCloseButton={false}
 //       >

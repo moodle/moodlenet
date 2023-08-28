@@ -467,22 +467,22 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const snackbars = [
     showUrlCopiedAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
         Copied to clipoard
       </Snackbar>
     ),
     showMessageSentAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
         Message sent
       </Snackbar>
     ),
     avatarForm.errors.image && (
-      <Snackbar type="error" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
         {avatarForm.errors.image}
       </Snackbar>
     ),
     backgroundForm.errors.image && (
-      <Snackbar type="error" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
         {backgroundForm.errors.image}
       </Snackbar>
     ),

@@ -128,7 +128,7 @@ export const UploadImage: FC<UploadImageProps> = ({ imageForm, backupImage, disp
 
   const snackbars = [
     imageErrors && (
-      <Snackbar type="error" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
         {imageErrors}
       </Snackbar>
     ),
