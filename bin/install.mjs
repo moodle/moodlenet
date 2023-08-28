@@ -112,6 +112,7 @@ async function defaultConfigJson() {
       },
       '@moodlenet/react-app': {
         noWebappServer: true,
+        noWebappBuilder: true,
         defaultImageUploadMaxSize: '5MB',
       },
     },

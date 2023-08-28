@@ -1,8 +1,7 @@
 import { cpSync } from 'fs'
 import { mkdtemp } from 'fs/promises'
 import { tmpdir } from 'os'
-import { join, resolve } from 'path'
-import rimraf from 'rimraf'
+import { join } from 'path'
 import { inspect } from 'util'
 import { getWp } from './config.mjs'
 import { getBuildContext } from './get-build-context.mjs'
@@ -10,8 +9,6 @@ import { getBuildContext } from './get-build-context.mjs'
 const baseBuildFolder = process.cwd()
 const buildFolder_tmp = await mkdtemp(join(tmpdir(), 'moodlenet-webapp-build-'))
 const buildContext = await getBuildContext({ baseBuildFolder })
-
-rimraf.sync(resolve(buildContext.latestBuildFolder, '*'), { disableGlob: true })
 
 const wp = getWp({
   alias: await buildContext.getAliases(),

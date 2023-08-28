@@ -9,7 +9,6 @@ export function getBuildContext({ baseBuildFolder }: { baseBuildFolder: string }
   )
   const _resolve_alias_json = resolve(baseBuildFolder, '_resolve-alias_.json')
   const _pkg_plugins_json = resolve(baseBuildFolder, '_pkg_plugins_.json')
-  // const buildFolder = resolve(baseBuildFolder, 'build')
   const latestBuildFolder = resolve(baseBuildFolder, 'latest-build')
 
   return {
@@ -19,7 +18,6 @@ export function getBuildContext({ baseBuildFolder }: { baseBuildFolder: string }
     connectPkgModulesFileTarget,
     _resolve_alias_json,
     _pkg_plugins_json,
-    // buildFolder,
     latestBuildFolder,
   }
 

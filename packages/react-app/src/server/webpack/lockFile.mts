@@ -8,7 +8,6 @@ export function lockFileName(baseBuildFolder: string) {
 }
 export function lockFile(baseBuildFolder: string, set: boolean) {
   const LOCKFILE = lockFileName(baseBuildFolder)
-  // console.log({ LOCKFILE, set })
   set ? writeFileSync(LOCKFILE, '', { encoding: 'utf-8' }) : unlinkSync(LOCKFILE)
 }
 
@@ -18,6 +17,5 @@ export async function isLockFilePresent(baseBuildFolder: string) {
     () => true,
     () => false,
   )
-  // console.log({ LOCKFILE, isPresent, baseBuildFolder })
   return isPresent
 }

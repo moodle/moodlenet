@@ -1,5 +1,5 @@
 import { fork } from 'child_process'
-import { access, readdir } from 'fs/promises'
+import { access, mkdir, readdir, rm } from 'fs/promises'
 import objHash from 'object-hash'
 import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
@@ -11,6 +11,7 @@ import { shell } from './shell.mjs'
 import { isLockFilePresent, lockFile } from './webpack/lockFile.mjs'
 import { writeGenerated } from './webpack/webapp-plugins.mjs'
 
+const MIN_AMOUNT_OF_FILES_FOR_HEURISTIC_EVALUATION_OF_LATEST_BUILD_FOLDER_CONTENT = 10
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 if (!env.noWebappBuilder) {
@@ -26,17 +27,26 @@ if (!env.noWebappBuilder) {
 
   const shouldBuild_heruistic =
     !foundBuildInfo ||
-    // foundBuildInfo.pluginsHash !== pluginsHash ||
+    foundBuildInfo.pluginsHash !== pluginsHash ||
     (await access(buildContext.latestBuildFolder).then(
       async () =>
         foundBuildInfo.status === 'building'
           ? !(await isLockFilePresent(buildContext.latestBuildFolder))
-          : (await readdir(buildContext.latestBuildFolder)).length < 5,
+          : (await readdir(buildContext.latestBuildFolder)).length <
+            MIN_AMOUNT_OF_FILES_FOR_HEURISTIC_EVALUATION_OF_LATEST_BUILD_FOLDER_CONTENT,
       () => true,
     ))
 
   if (shouldBuild_heruistic) {
     shell.log('info', `starting webapp build process`)
+    shell.log('info', `removing files from  latestBuildFolder ${buildContext.latestBuildFolder}`)
+    await rm(buildContext.latestBuildFolder, {
+      force: true,
+      recursive: true,
+      maxRetries: 10,
+      retryDelay: 100,
+    })
+    await mkdir(buildContext.latestBuildFolder, { recursive: true })
     _lockFile(true)
     const wp_compile_process = fork(resolve(__dirname, 'webpack', '-prod-compile.mjs'), {
       cwd: buildContext.baseBuildFolder,
