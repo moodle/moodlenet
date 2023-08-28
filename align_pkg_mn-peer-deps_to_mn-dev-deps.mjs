@@ -18,6 +18,9 @@ packagesDirs.forEach(pkgDir => {
   if (!pkgJsonFileExists) return
 
   const pkgJson = JSON.parse(readFileSync(pkgJsonFile, 'utf8'))
+  if (pkgJson.name === 'storybook-vite') {
+    return
+  }
   const hasMNDevDeps = !!Object.keys(pkgJson.devDependencies ?? {}).find(depName =>
     depName.startsWith('@moodlenet/'),
   )
