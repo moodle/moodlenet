@@ -79,7 +79,7 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({
       <Snackbar
         type="success"
         position="bottom"
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         showCloseButton={false}
         onClose={() => setShowUserIdCopiedAlert(false)}
       >

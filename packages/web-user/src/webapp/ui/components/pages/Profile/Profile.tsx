@@ -121,28 +121,28 @@ export const Profile: FC<ProfileProps> = ({
 
   // const snackbars = [
   //   showReportedAlert && (
-  //     <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+  //     <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
   //       {/* <Trans> */}
   //       Reported
   //       {/* </Trans> */}
   //     </Snackbar>
   //   ),
   //   showUrlCopiedAlert && (
-  //     <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+  //     <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
   //       {/* <Trans> */}
   //       Copied to clipoard
   //       {/* </Trans> */}
   //     </Snackbar>
   //   ),
   //   showUserIdCopiedAlert && (
-  //     <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+  //     <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
   //       {/* <Trans> */}
   //       User ID copied to the clipboard, use it to connect with Moodle LMS
   //       {/* </Trans> */}
   //     </Snackbar>
   //   ),
   //   showAccountCreationSuccessAlert && (
-  //     <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+  //     <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
   //       {/* <Trans> */}
   //       Account activated! Feel free to complete your profile
   //       {/* </Trans> */}
@@ -152,7 +152,7 @@ export const Profile: FC<ProfileProps> = ({
   //     <Snackbar
   //       position="bottom"
   //       type="success"
-  //       autoHideDuration={6000}
+  //       autoHideDuration={3000}
   //       waitDuration={1000}
   //       showCloseButton={false}
   //     >
@@ -166,7 +166,7 @@ export const Profile: FC<ProfileProps> = ({
   //     position="bottom"
   //     type="info"
   //     waitDuration={200}
-  //     autoHideDuration={6000}
+  //     autoHideDuration={3000}
   //     showCloseButton={false}
   //   >
   //     {/* <Trans> */}

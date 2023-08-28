@@ -562,7 +562,7 @@ export const Resource: FC<ResourceProps> = ({
         type="info"
         waitDuration={1500}
         showCloseButton={false}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
       >
         {`Content uploading, please don't close the tab`}
       </Snackbar>
@@ -572,7 +572,7 @@ export const Resource: FC<ResourceProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       showCloseButton={false}
       onClose={() => setShowCheckPublishSuccess(false)}
     >
@@ -584,7 +584,7 @@ export const Resource: FC<ResourceProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       showCloseButton={false}
       onClose={() => setShowPublishSuccess(false)}
     >
@@ -596,7 +596,7 @@ export const Resource: FC<ResourceProps> = ({
     <Snackbar
       position="bottom"
       type="success"
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       showCloseButton={false}
       onClose={() => setShowUnpublishSuccess(false)}
     >

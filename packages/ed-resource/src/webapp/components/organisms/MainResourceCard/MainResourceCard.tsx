@@ -613,7 +613,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         <Snackbar
           type="success"
           position="bottom"
-          autoHideDuration={6000}
+          autoHideDuration={3000}
           showCloseButton={false}
           key="url-copy-snackbar"
         >
