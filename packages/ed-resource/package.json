@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/ed-resource",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "publishConfig": {
     "access": "public"
   },
@@ -29,29 +29,28 @@
     "dist/"
   ],
   "dependencies": {
-    "@moodlenet/key-value-store": "^0.4.0",
-    "@moodlenet/simple-file-store": "^0.4.0",
+    "@moodlenet/component-library": "^0.5.0",
+    "@moodlenet/key-value-store": "^0.5.0",
+    "@moodlenet/simple-file-store": "^0.5.0",
     "formik": "2.2.9",
     "moment": "2.29.4",
     "xbytes": "^1.8.0",
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/component-library": "^0.4.0",
-    "@moodlenet/core": "^0.4.0",
-    "@moodlenet/ed-meta": "^0.4.0",
-    "@moodlenet/http-server": "^0.4.0",
-    "@moodlenet/react-app": "^0.4.0",
-    "@moodlenet/system-entities": "^0.4.0"
+    "@moodlenet/core": "^0.5.0",
+    "@moodlenet/ed-meta": "^0.5.0",
+    "@moodlenet/http-server": "^0.5.0",
+    "@moodlenet/react-app": "^0.5.0",
+    "@moodlenet/system-entities": "^0.5.0"
   },
   "devDependencies": {
     "@lingui/macro": "3.14.0",
-    "@moodlenet/component-library": "^0.4.0",
-    "@moodlenet/core": "^0.4.0",
-    "@moodlenet/ed-meta": "^0.4.0",
-    "@moodlenet/http-server": "^0.4.0",
-    "@moodlenet/react-app": "^0.4.0",
-    "@moodlenet/system-entities": "^0.4.0",
+    "@moodlenet/core": "^0.5.0",
+    "@moodlenet/ed-meta": "^0.5.0",
+    "@moodlenet/http-server": "^0.5.0",
+    "@moodlenet/react-app": "^0.5.0",
+    "@moodlenet/system-entities": "^0.5.0",
     "@types/node": "17.0.35",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",

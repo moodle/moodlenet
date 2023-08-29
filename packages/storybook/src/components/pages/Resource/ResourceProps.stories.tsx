@@ -1,3 +1,4 @@
+import type { AssetInfo } from '@moodlenet/component-library/common'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type {
   EdMetaOptionsProps,
@@ -6,8 +7,9 @@ import type {
   ResourceDataProps,
   ResourceFormProps,
   ResourceStateProps,
+  SaveState,
 } from '@moodlenet/ed-resource/common'
-import { resourceValidationSchema } from '@moodlenet/ed-resource/common'
+import { getValidationSchemas } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
@@ -31,7 +33,6 @@ import { ResourceContributorCardStories } from '@moodlenet/ed-resource/stories'
 import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
-import { SendToMoodle } from '../../../../../moodle-lms-integration/dist/webapp/ui/components/SendToMoodle.js'
 
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
@@ -41,6 +42,8 @@ import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
+
+import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -84,13 +87,16 @@ export const ResourceFormValues: ResourceFormProps = {
   level: FieldsDataStories.LevelTextOptionProps[2]!.value,
   license: FieldsDataStories.LicenseIconTextOptionProps[2]!.value,
   month: FieldsDataStories.MonthTextOptionProps[8]!.value,
-  year: FieldsDataStories.YearsProps[20],
+  year: FieldsDataStories.YearsProps[20]!.valueOf(),
   type: FieldsDataStories.TypeTextOptionProps[1]!.value,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
   return useFormik<ResourceFormProps>({
-    validationSchema: resourceValidationSchema,
+    validationSchema: getValidationSchemas({
+      contentMaxUploadSize: 1000000000,
+      imageMaxUploadSize: 1000000000,
+    }).publishedResourceValidationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
       title: 'Best resource ever',
@@ -135,7 +141,30 @@ export const useResourceStoryProps = (
   //   mainResourceCardSlots?: Partial<MainResourceCardSlots>
   // }
 ): ResourceProps => {
-  const [filename, setFilename] = useState<string | null>('filename.pdf')
+  const [contentUrl, setContentUrl] = useState<string | null>(overrides?.data?.contentUrl ?? null)
+  const [image, setImageData] = useState<AssetInfo | null>(
+    overrides?.data?.image?.location || overrides?.data?.image?.location === undefined
+      ? {
+          credits: {
+            owner: {
+              name: overrides?.data?.image?.credits?.owner?.name ?? 'Leonard Rush',
+              url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com/@lennyrush',
+            },
+            provider: {
+              name: overrides?.data?.image?.credits?.owner?.name ?? 'Unsplash',
+              url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com',
+            },
+          },
+          location:
+            overrides?.data?.image?.location ??
+            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+        }
+      : null,
+  )
+  const [filename, setFilename] = useState<string | null>(overrides?.data?.downloadFilename ?? null)
+  const [contentType, setContentType] = useState<'link' | 'file' | null>(
+    overrides?.data?.contentType ?? null,
+  )
 
   // setInterval(() => setIsSaving(!isSaving), 1000)
 
@@ -147,60 +176,109 @@ export const useResourceStoryProps = (
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     subject: '0011',
     license: 'CC-0 (Public domain)',
-    type: undefined, //'Course',
-    language: undefined,
-    level: undefined,
-    month: undefined,
-    year: undefined,
+    type: '0', //'Course',
+    language: 'English',
+    level: '3',
+    month: '5',
+    year: '2022',
     ...overrides?.resourceForm,
   }
 
   const data: ResourceDataProps = {
     id: 'qjnwglkd69io-sports',
     mnUrl: 'resource.url',
-    contentUrl: 'https://www.africau.edu/images/default/sample.pdf',
-    // contentUrl: 'https://moodle.net/profile/d488bc9d51ef-moodle-academy',
-    // contentUrl: 'https://youtu.be/dZNC5kIvM00',
-    // contentUrl: 'https://vimeo.com/204467192',
+    contentUrl: contentUrl,
     downloadFilename: filename,
-    contentType: 'file',
-    // contentType: 'link',
+    contentType: contentType,
     ...overrides?.data,
     subjectHref: href('Pages/subject/Logged In'),
-    image: overrides?.data?.image
-      ? {
-          credits: {
-            owner: { name: 'Leonard Rush', url: 'https://unsplash.com/@lennyrush' },
-            provider: { name: 'Unsplash', url: 'https://unsplash.com' },
-          },
-          location:
-            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-        }
-      : undefined,
+    image,
   }
 
-  const state: ResourceStateProps = {
-    isPublished: true,
-    ...overrides?.state,
+  const [isSavingContent, setIsSavingContent] = useState(
+    overrides?.saveState?.content ?? 'not-saving',
+  )
+  const [isSavingImage, setIsSavingImage] = useState(overrides?.saveState?.image ?? 'not-saving')
+
+  const saveContent = () => {
+    setIsSavingContent('saving')
+    setTimeout(() => {
+      setIsSavingContent('save-done')
+      setTimeout(() => {
+        setIsSavingContent('not-saving')
+      }, 100)
+    }, 4000)
+  }
+
+  const saveImage = () => {
+    setIsSavingImage('saving')
+    setTimeout(() => {
+      setIsSavingImage('save-done')
+      setTimeout(() => {
+        setIsSavingImage('not-saving')
+      }, 100)
+    }, 1000)
   }
 
   const setContent = (e: File | string | undefined | null) => {
-    if (typeof e === 'string') {
-      setFilename(null)
-    } else {
-      e ? setFilename(e.name) : setFilename(null)
-    }
+    setTimeout(() => {
+      if (typeof e === 'string') {
+        setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
+        setFilename(null)
+        setContentType('link')
+      } else if (e) {
+        setContentUrl(
+          'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
+        )
+        setContentType('file')
+        setFilename(e.name)
+      } else {
+        setContentUrl(null)
+        setContentType(null)
+        setFilename(null)
+      }
+    }, 1000)
+    saveContent()
+
     action('set content')(e)
   }
 
+  const setImage = (e: File | string | undefined | null) => {
+    setTimeout(() => {
+      if (typeof e === 'string') {
+        setImageData({ location: e, credits: null })
+      } else if (e) {
+        setImageData({ location: URL.createObjectURL(e), credits: null })
+      } else {
+        setImageData(null)
+      }
+    }, 1000)
+    saveImage()
+
+    action('set image')(e)
+  }
+
+  const [isPublished, setIsPublished] = useState(
+    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true,
+  )
+
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: action('editing resource submited'),
-    publish: action('publish'),
-    unpublish: action('unpublish'),
+    editData: action('edit data'),
+    publish: () => {
+      setIsPublished(true)
+    },
+    unpublish: () => {
+      setIsPublished(false)
+    },
     setContent: setContent,
-    setImage: action('set image'),
+    setImage: setImage,
     ...overrides?.actions,
+  }
+
+  const state: ResourceStateProps = {
+    isPublished: isPublished,
+    ...overrides?.state,
   }
 
   const access: ResourceAccessProps = {
@@ -238,9 +316,6 @@ export const useResourceStoryProps = (
     ...overrides?.bookmarkButtonProps,
     isAuthenticated,
   }
-
-  const isPublished =
-    overrides?.state?.isPublished !== undefined ? overrides?.state?.isPublished : true
 
   const mainResourceCardSlots: MainResourceCardSlots = {
     mainColumnItems: [],
@@ -289,6 +364,12 @@ export const useResourceStoryProps = (
     AddToCollectionButtonStories.useAddToCollectionButtonStory(),
   ]
 
+  const saveState: SaveState = {
+    form: overrides?.saveState?.form ?? 'not-saving',
+    content: isSavingContent,
+    image: isSavingImage,
+  }
+
   return overrideDeep<ResourceProps>(
     {
       mainLayoutProps: isAuthenticated
@@ -309,12 +390,15 @@ export const useResourceStoryProps = (
       actions: actions,
       access: access,
       edMetaOptions: edMetaOptions,
+      validationSchemas: getValidationSchemas({
+        contentMaxUploadSize: 1024 * 1024 * 1024,
+        imageMaxUploadSize: 1024 * 1024 * 25,
+      }),
 
       extraDetailsItems: extraDetailsItems,
 
       fileMaxSize: 343243,
-      isSaving: false,
-      isEditingAtStart: false,
+      saveState: saveState,
     },
     overrides,
   )

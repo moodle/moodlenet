@@ -1,7 +1,7 @@
 {
   "name": "storybook-vite",
   "private": true,
-  "version": "0.0.11",
+  "version": "0.1.0",
   "type": "module",
   "engines": {
     "node": "16",
@@ -24,17 +24,17 @@
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",
-    "@moodlenet/component-library": "^0.3.0",
-    "@moodlenet/extensions-manager": "^0.3.0",
+    "@moodlenet/collection": "^0.5.0",
+    "@moodlenet/component-library": "^0.5.0",
+    "@moodlenet/ed-meta": "^0.5.0",
+    "@moodlenet/ed-resource": "^0.5.0",
+    "@moodlenet/extensions-manager": "^0.5.0",
+    "@moodlenet/moodle-lms-integration": "^0.5.0",
     "@moodlenet/passport-auth": "^0.2.6",
-    "@moodlenet/react-app": "^0.3.0",
-    "@moodlenet/moodle-lms-integration": "^0.3.0",
-    "@moodlenet/unsplash": "^0.2.0",
-    "@moodlenet/simple-email-auth": "^0.3.0",
-    "@moodlenet/ed-resource": "^0.3.0",
-    "@moodlenet/ed-meta": "^0.3.0",
-    "@moodlenet/web-user": "^0.3.0",
-    "@moodlenet/collection": "^0.3.0",
+    "@moodlenet/react-app": "^0.5.0",
+    "@moodlenet/simple-email-auth": "^0.5.0",
+    "@moodlenet/unsplash": "^0.3.0",
+    "@moodlenet/web-user": "^0.5.0",
     "@storybook/addon-essentials": "^6.5.15",
     "@storybook/addon-interactions": "^6.5.15",
     "@storybook/addon-links": "^6.5.15",
@@ -55,17 +55,5 @@
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
     "vite-tsconfig-paths": "^3.5.1"
-  },
-  "peerDependencies": {
-    "@moodlenet/component-library": "^0.3.0",
-    "@moodlenet/extensions-manager": "^0.3.0",
-    "@moodlenet/passport-auth": "^0.2.6",
-    "@moodlenet/react-app": "^0.3.0",
-    "@moodlenet/unsplash": "^0.2.0",
-    "@moodlenet/simple-email-auth": "^0.3.0",
-    "@moodlenet/ed-resource": "^0.3.0",
-    "@moodlenet/ed-meta": "^0.3.0",
-    "@moodlenet/web-user": "^0.3.0",
-    "@moodlenet/collection": "^0.3.0"
   }
 }

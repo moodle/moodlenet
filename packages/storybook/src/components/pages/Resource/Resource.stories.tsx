@@ -19,7 +19,10 @@ type ResourceStory = ComponentStory<typeof Resource>
 
 export const LoggedOut: ResourceStory = () => {
   const props: ResourceProps = useResourceStoryProps({
-    data: {},
+    data: {
+      contentType: 'link',
+      contentUrl: 'https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328',
+    },
     state: {},
     actions: {},
     access: {},
@@ -33,7 +36,7 @@ export const LoggedIn: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {
       contentType: 'link',
-      contentUrl: 'https://www.google.com',
+      contentUrl: 'https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328',
     },
     state: {},
     actions: {},
@@ -62,23 +65,21 @@ export const NewResourceProps: Partial<ResourceFormProps> = {
 
 export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
-    isEditingAtStart: true,
     data: {
-      downloadFilename: undefined,
-      contentUrl: undefined,
-      image: undefined,
-      // numLikes: 0,
+      image: null,
     },
     resourceForm: NewResourceProps,
 
     state: {
       isPublished: false,
+      // uploadProgress: 74,
     },
     actions: {},
     access: {
       isCreator: true,
       canEdit: true,
       canPublish: true,
+      canDelete: true,
     },
   })
   return <Resource {...props} />
@@ -86,10 +87,17 @@ export const New: ResourceStory = () => {
 
 export const Creator: ResourceStory = () => {
   const props = useResourceStoryProps({
-    data: {},
-    state: {
-      isPublished: false,
+    saveState: {},
+    data: {
+      contentType: 'file',
+      contentUrl:
+        'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
+      downloadFilename: '557_Sujeto_y_Predicado.pdf',
     },
+    resourceForm: {
+      level: undefined,
+    },
+    state: {},
     actions: {},
     access: {
       isCreator: true,

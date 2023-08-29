@@ -1,6 +1,7 @@
 import { InsertDriveFile, Link as LinkIcon } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
+  ErrorMessage,
   getPreviewFromUrl,
   ImageContainer,
   InputTextField,
@@ -27,6 +28,7 @@ import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-
 // import { useNewResourcePageCtx } from '../NewResource'
 // import { NewResourceFormValues } from '../types'
 import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
+// import { ErrorMessage } from '../../../../../../component-library/src/ui.mjs'
 import './UploadResource.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
@@ -63,7 +65,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   )
   const credits = imageForm.values.image?.credits ?? backupImage?.credits
 
-  const contentIsFile = contentForm.values.content instanceof File
+  const contentIsFile = contentForm.values.content instanceof File || contentType === 'file'
   const contentName = downloadFilename
     ? downloadFilename
     : contentForm.values.content instanceof File
@@ -75,47 +77,70 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const [subStep, setSubStep] = useState<'AddFileOrLink' | 'AddImage'>(
     contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
   )
+  const [showContentErrors, setShowContentErrors] = useState(false)
+  const [showLinkErrors, setShowLinkErrors] = useState(false)
+  const [showImageErrors, setShowImageErrors] = useState(false)
 
-  const contentAvailable = !!contentForm.values.content
-  const imageAvailable = !!imageForm.values.image
+  const contentAvailable = contentForm.values.content && !contentForm.errors.content
+  const imageAvailable = imageForm.values.image && !imageForm.errors.image
+
+  const contentForm_setFieldValue = contentForm.setFieldValue
+  const contentForm_setTouched = contentForm.setTouched
+  const contentForm_validateForm = contentForm.validateForm
+
+  const imageForm_setTouched = imageForm.setTouched
+  const imageForm_setFieldValue = imageForm.setFieldValue
+  const imageForm_validateForm = imageForm.validateForm
 
   useEffect(() => {
-    // contentForm.values.content && !contentForm.errors.content && setShouldShowErrors(false)
     setSubStep(
       contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
     )
   }, [contentForm, subStep, setSubStep])
+  useEffect(() => {
+    subStep === 'AddFileOrLink' && setShowImageErrors(false)
+  }, [subStep])
 
   const addLinkFieldRef = useRef<HTMLInputElement>()
 
-  const addLink = () => {
-    setSubStep('AddImage')
-    contentForm.setFieldValue('content', addLinkFieldRef.current?.value)
-    contentForm.setTouched({ content: true })
-    contentForm.validateForm()
-    // .then(_ => setShouldShowErrors(!!_?.content))
-    // contentForm.submitForm()
-  }
+  const setImage = useCallback(
+    (image: AssetInfoForm | undefined | null, fromContent?: boolean) => {
+      imageForm_setFieldValue('image', image).then(errors => {
+        if (fromContent && !!errors?.image) {
+          imageForm_setFieldValue('image', null)
+          return
+        }
+        setShowImageErrors(!!errors?.image)
+        imageForm_validateForm()
+        imageForm_setTouched({ image: true })
+      })
+    },
+    [imageForm_setFieldValue, imageForm_setTouched, imageForm_validateForm],
+  )
+
+  useEffect(() => {
+    subStep === 'AddFileOrLink' && imageForm.errors.image && setImage(null)
+  }, [imageForm.errors.image, imageForm.values.image, setImage, subStep])
+
+  const addLink = useCallback(() => {
+    const link = addLinkFieldRef.current?.value
+    contentForm_setFieldValue('content', link).then(errors => {
+      setShowLinkErrors(!!errors?.content)
+    })
+  }, [contentForm_setFieldValue])
 
   const deleteImage = useCallback(() => {
-    imageForm.setFieldValue('image', null)
-    imageForm.setTouched({ image: true })
-    imageForm.validateForm()
-    imageForm.validateForm()
-    // imageForm.submitForm()
-  }, [imageForm])
+    setImage(null)
+    imageForm_setTouched({ image: true })
+    imageForm_validateForm()
+  }, [imageForm_setTouched, imageForm_validateForm, setImage])
 
   const deleteFileOrLink = useCallback(() => {
-    console.log('deleting file or link')
     setSubStep('AddFileOrLink')
-    contentForm.setFieldValue('content', null)
-    contentForm.setTouched({ content: true })
-    contentForm.validateForm()
-    contentForm.validateForm()
-
-    // contentForm.submitForm()
-    // setShouldShowErrors(false)
-  }, [contentForm])
+    contentForm_setFieldValue('content', null)
+    contentForm_setTouched({ content: true })
+    contentForm_validateForm()
+  }, [contentForm_setFieldValue, contentForm_setTouched, contentForm_validateForm])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
   const selectImage = () => {
@@ -130,12 +155,15 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const setContent = useCallback(
     (file: File | undefined) => {
       const isImage = file?.type.toLowerCase().startsWith('image')
-      contentForm.setFieldValue('content', file).then(errors => {
-        !errors?.content && file && isImage && imageForm.setFieldValue('image', file)
-        imageForm.setTouched({ image: true })
+      contentForm_setFieldValue('content', file).then(errors => {
+        setShowContentErrors(!!errors?.content)
+        if (!errors?.content && file && isImage) {
+          setImage({ location: file, credits: null }, true)
+        }
+        imageForm_setTouched({ image: true })
       })
     },
-    [contentForm, imageForm],
+    [contentForm_setFieldValue, imageForm_setTouched, setImage],
   )
 
   const contentValue =
@@ -182,13 +210,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
         setContent(selectedFile)
       } else {
         if (selectedFile) {
-          imageForm.setFieldValue('image', selectedFile)
-          imageForm.setTouched({ image: true })
-          // imageForm.submitForm()
+          setImage({ location: selectedFile, credits: null })
+          imageForm_validateForm()
+          imageForm_setTouched({ image: true })
         }
       }
     },
-    [imageForm, setContent, subStep],
+    [imageForm_setTouched, imageForm_validateForm, setContent, setImage, subStep],
   )
 
   const dragOverHandler = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -197,12 +225,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
     // Prevent default behavior (Prevent file from being opened)
     e.preventDefault()
   }, [])
-
-  const uploadImage = (file: File) => {
-    imageForm.setFieldValue('image', { location: file })
-    imageForm.setTouched({ image: true })
-    // imageForm.submitForm()
-  }
 
   const imageRef = useRef<HTMLDivElement>(null)
 
@@ -215,7 +237,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
       credits={credits}
       ref={imageRef}
       deleteImage={deleteImage}
-      uploadImage={uploadImage}
+      uploadImage={file => setImage({ location: file, credits: null })}
       displayOnly={displayOnly}
       link={
         contentType === 'link' && typeof contentForm.values.content === 'string'
@@ -235,13 +257,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
     />
   )
 
-  const [imageHeight, setImageHeight] = useState<string | number>('initial')
-
-  useEffect(() => {
-    const currentImageHeight = imageRef.current?.clientHeight
-    imageAvailable && contentAvailable && currentImageHeight && setImageHeight(currentImageHeight)
-  }, [imageAvailable, contentAvailable, imageRef])
-
   const uploadedNameBackground =
     contentIsFile && uploadProgress
       ? `linear-gradient(to right, #1a6aff33 ${uploadProgress}% , #ffffff00 ${
@@ -252,10 +267,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const fileUploader = (
     <div
       className="file upload"
-      onClick={selectFile}
+      onClick={e => {
+        e.stopPropagation()
+        selectFile()
+      }}
       onKeyUp={e => e.key === 'Enter' && selectFile()}
       tabIndex={0}
-      // style={{ ...uploadHeight }}
     >
       <input
         ref={uploadFileRef}
@@ -281,7 +298,10 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const imageUploader = (
     <div
       className="image upload"
-      onClick={selectImage}
+      onClick={e => {
+        e.stopPropagation()
+        selectImage()
+      }}
       tabIndex={0}
       onKeyUp={e => e.key === 'Enter' && selectImage()}
       // style={{ ...uploadHeight }}
@@ -295,7 +315,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
         onChange={({ target }) => {
           const file = target.files?.[0]
           if (file) {
-            uploadImage(file)
+            setImage({ location: file, credits: null })
           }
         }}
         hidden
@@ -315,31 +335,32 @@ export const UploadResource: FC<UploadResourceProps> = ({
       <>
         <div
           className={`uploader ${isToDrop ? 'hover' : ''} ${
-            shouldShowErrors &&
-            // !(contentForm.values.content instanceof Blob) &&
-            contentForm.errors.content
+            (shouldShowErrors || showContentErrors || showImageErrors) &&
+            (contentForm.errors.content || imageForm.errors.image)
               ? 'show-error'
               : ''
           }
         `}
           //  ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
           id="drop_zone"
-          onClick={selectFile}
+          onClick={type === 'file' ? selectFile : selectImage}
           onDrop={dropHandler}
           onDragOver={dragOverHandler}
           onDragLeave={() => setIsToDrop(false)}
         >
           {updatedUploadOptionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
+        {showImageErrors && imageForm.errors.image && (
+          <ErrorMessage error={imageForm.errors.image} />
+        )}
       </>,
     ]
   }
 
   const uploaderDiv = (
     <>
-      {!contentAvailable && !displayOnly && uploader('file')}
-      {!contentAvailable && imageAvailable && simpleImageContainer}
-      {contentAvailable && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
+      {subStep === 'AddFileOrLink' && !displayOnly && uploader('file')}
+      {subStep === 'AddImage' && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
       {contentAvailable && displayOnly && (embed ?? (!imageAvailable && simpleImageContainer))}
       {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}
     </>
@@ -347,21 +368,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   return (
     <div className="upload-resource">
-      <div
-        className={`main-container ${
-          imageAvailable && !contentAvailable && !displayOnly ? 'no-file-but-image' : ''
-        }`}
-        style={{
-          height:
-            imageAvailable && !contentAvailable && !displayOnly
-              ? (typeof imageHeight === 'number' && imageHeight < 250) || imageHeight === 'initial'
-                ? 250
-                : imageHeight
-              : 'fit-content',
-        }}
-      >
-        {uploaderDiv}
-      </div>
+      <div className={`main-container `}>{uploaderDiv}</div>
       {!displayOnly && (
         <div className="bottom-container">
           {subStep === 'AddFileOrLink' ? (
@@ -378,8 +385,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
               onKeyDown={e => e.key === 'Enter' && addLink()}
               action={<PrimaryButton onClick={addLink}>Add</PrimaryButton>}
               error={
-                shouldShowErrors &&
-                // !(contentForm.values.content instanceof Blob) &&
+                (shouldShowErrors || showContentErrors || showLinkErrors) &&
                 contentForm.errors.content
               }
             />

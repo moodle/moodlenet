@@ -1,3 +1,6 @@
+import type { FC } from 'react'
+import { createPortal } from 'react-dom'
+
 import './SnackbarStack.scss'
 
 export type SnackbarStackProps = {
@@ -6,12 +9,11 @@ export type SnackbarStackProps = {
   position?: 'top' | 'bottom'
 }
 
-export const SnackbarStack: React.FC<SnackbarStackProps> = ({
-  snackbarList,
-  className,
-  position,
-}) => {
-  return <div className={`snackbar-stack ${className} position-${position}`}>{snackbarList}</div>
+export const SnackbarStack: FC<SnackbarStackProps> = ({ snackbarList, className, position }) => {
+  return createPortal(
+    <div className={`snackbar-stack ${className} position-${position}`}>{snackbarList}</div>,
+    document.querySelector('.layout-container#layout-container') ?? document.body,
+  )
 }
 
 export default SnackbarStack

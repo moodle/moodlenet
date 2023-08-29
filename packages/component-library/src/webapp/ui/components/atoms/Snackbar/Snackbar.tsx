@@ -11,6 +11,8 @@ import { useCallback, useEffect, useState } from 'react'
 import Card from '../Card/Card.js'
 import './Snackbar.scss'
 
+import { createPortal } from 'react-dom'
+
 export type SnackbarProps = {
   actions?: ReactNode
   icon?: ReactNode
@@ -81,7 +83,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
     return
   }, [autoHideDuration, waitDuration, handleonClose])
 
-  return (
+  const snackbar = (
     <Card
       className={`snackbar ${className} type-${type} state-${movementState} position-${position}`}
       onClick={stopPropagation}
@@ -116,7 +118,17 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       )}
     </Card>
   )
+
+  const snackbarStack = document.querySelector('.snackbar-stack')
+
+  return snackbarStack
+    ? snackbar
+    : createPortal(
+        <div className="snackbar-portal">{snackbar}</div>,
+        document.querySelector('.layout-container#layout-container') ?? document.body,
+      )
 }
+
 Snackbar.defaultProps = {
   className: '',
   showIcon: true,

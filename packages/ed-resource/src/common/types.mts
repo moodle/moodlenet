@@ -3,9 +3,8 @@ import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { AssetInfo } from '@moodlenet/component-library/common'
-import type { SchemaOf } from 'yup'
-import { mixed, object, string } from 'yup'
-import type { ResourceExposeType } from './expose-def.mjs'
+import type { ResourceExposeType, WebappConfigsRpc } from './expose-def.mjs'
+import type { ValidationSchemas } from './validationSchema.mjs'
 export type EdResourceEntityNames = 'Resource'
 
 export type MyWebDeps = {
@@ -14,6 +13,8 @@ export type MyWebDeps = {
 
 export type MainContextResource = {
   rpcCaller: RpcCaller
+  configs: WebappConfigsRpc
+  validationSchemas: ValidationSchemas
 }
 
 export type ResourceFormRpc = {
@@ -21,18 +22,18 @@ export type ResourceFormRpc = {
   description: string
   subject: string
   license: string
-  type: string | undefined
-  level: string | undefined
-  month: string | undefined
-  year: string | undefined
-  language: string | undefined
+  type: string
+  level: string
+  month: string
+  year: string
+  language: string
   // addToCollections: string[]
 }
 
 export type ResourceDataRpc = {
   id: string
   mnUrl: string
-  contentType: 'link' | 'file'
+  contentType: 'link' | 'file' | null
   image: AssetInfo | null
   subjectHref: Href | null
 
@@ -75,17 +76,24 @@ export type ResourceProps = {
   data: ResourceDataProps
   contributor: ResourceContributorProps
 }
+export type SavingState = 'not-saving' | 'saving' | 'save-done'
+export type SaveState = { form: SavingState; image: SavingState; content: SavingState }
 
 export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
   get: (resourceKey: string) => Promise<ResourceProps | null>
   _delete: (resourceKey: string) => Promise<void>
-  setImage: (resourceKey: string, file: File | undefined | null) => Promise<string | null>
+  setImage: (
+    resourceKey: string,
+    file: File | undefined | null,
+    rpcId: string,
+  ) => Promise<string | null>
   setContent: (
     resourceKey: string,
     file: File | string | undefined | null,
+    rpcId: string,
   ) => Promise<string | null>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<void>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<boolean | null | undefined>
   create: () => Promise<{ _key: string }>
 }
 export type ResourceActions = {
@@ -153,7 +161,7 @@ export function isSortTypeRpc(_: any): _ is SortTypeRpc {
   return ['Relevant', 'Popular', 'Recent'].includes(_)
 }
 
-export const getResourceDomainName = (url: string): string => {
+export const getResourceDomainName = (url: string): string | undefined => {
   const domain = getDomainUrl(url)
   switch (domain) {
     case 'youtube.com':
@@ -162,18 +170,19 @@ export const getResourceDomainName = (url: string): string => {
     case 'vimeo.com':
       return 'vimeo'
     case undefined:
-      return 'invalid-link'
+      return 'unknown'
     default:
       return 'link'
   }
 }
 
 export const getResourceTypeInfo = (
-  isLikeOrFile: 'link' | 'file',
+  isLinkOrFile: 'link' | 'file' | null,
   filenameOrUrl: string | null,
 ): { typeName: string | null; typeColor: string | null } => {
+  if (!isLinkOrFile) return { typeName: null, typeColor: null }
   const resourceType =
-    (isLikeOrFile === 'file'
+    (isLinkOrFile === 'file'
       ? filenameOrUrl?.split('.').pop()
       : filenameOrUrl
       ? getResourceDomainName(filenameOrUrl)
@@ -229,36 +238,3 @@ export const getResourceTypeInfo = (
       return { typeName: resourceType, typeColor: '#15845A' }
   }
 }
-
-export const resourceValidationSchema: SchemaOf<ResourceFormProps> = object({
-  subject: string().required(/* t */ `Please select a subject`),
-  content: string().required(/* t */ `Please upload a content`),
-  license: string().required(/* t */ `Please provide a license`),
-  description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
-  title: string().max(160).min(3).required(/* t */ `Please provide a title`),
-  language: string().optional(),
-  level: string().optional(),
-  month: string().optional(),
-  type: string().optional(),
-  visibility: mixed().required(/* t */ `Visibility is required`),
-  year: string().when('month', (month, schema) => {
-    return month ? schema.required(/* t */ `Please select a year`) : schema.optional()
-  }),
-})
-
-export const contentValidationSchema: SchemaOf<{ content: File | string | undefined | null }> =
-  object({
-    content: string().required(`Please provide a file or a link`),
-  })
-
-export const imageValidationSchema: SchemaOf<{ image: File | string | undefined | null }> = object({
-  image: mixed()
-    .test((v, { createError }) =>
-      v instanceof Blob && v.size > 5 * 1024 ** 2
-        ? createError({
-            message: /* t */ `The file is too big, reduce the size or provide a url`,
-          })
-        : true,
-    )
-    .optional(),
-})

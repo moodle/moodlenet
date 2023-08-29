@@ -9,13 +9,15 @@ export function useMyLandingPageResourceListDataProps() {
   const [resources, setResources] = useState<{ _key: string }[]>([])
 
   useEffect(() => {
-    shell.rpc.me['webapp/landing/get-list/:entityType(collections|resources|profiles)'](
-      undefined,
-      {
-        entityType: 'resources',
-      },
-      { limit: 8 },
-    ).then(setResources)
+    shell.rpc
+      .me('webapp/landing/get-list/:entityType(collections|resources|profiles)')(
+        undefined,
+        {
+          entityType: 'resources',
+        },
+        { limit: 8 },
+      )
+      .then(setResources)
   }, [])
   const resourceCardPropsList = useMemo<LandingResourceListProps['resourceCardPropsList']>(
     () =>

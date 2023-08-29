@@ -10,13 +10,13 @@ export function useNewPasswordProps({ token }: { token: string }) {
   const headerProps = useMinimalisticHeaderProps()
   const changePassword = useCallback(
     (password: string) => {
-      shell.rpc.me['webapp/change-password-using-token']({ password, token }).then(
-        ({ success }) => {
+      shell.rpc
+        .me('webapp/change-password-using-token')({ password, token })
+        .then(({ success }) => {
           if (success) {
             nav('/login')
           }
-        },
-      )
+        })
     },
     [nav, token],
   )

@@ -1,58 +1,10 @@
 import { CloseRounded as CloseRoundedIcon } from '@material-ui/icons'
 import type React from 'react'
-import type { PropsWithChildren, ReactNode } from 'react'
-import { useCallback, useEffect, useLayoutEffect } from 'react'
-import ReactDOM from 'react-dom'
+import type { ReactNode } from 'react'
+import { useCallback, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Card from '../Card/Card.js'
 import './Modal.scss'
-
-const portalElement = document.createElement('div')
-portalElement.setAttribute('class', 'modal-portal')
-portalElement.style.display = 'none'
-export function setPortalParentElement(parentElem?: HTMLElement) {
-  portalElement.remove()
-  parentElem?.prepend(portalElement)
-}
-setPortalParentElement(document.body)
-
-function Portal({ children }: PropsWithChildren<unknown>) {
-  useLayoutEffect(() => {
-    portalElement.style.display = 'block'
-    return () => {
-      portalElement.style.display = 'none'
-    }
-  }, [])
-
-  return ReactDOM.createPortal(children, portalElement)
-}
-
-// export type PortalProps = {
-//   className?: string
-//   el?: string
-//   children?: ReactNode
-// }
-
-// export const Portal: FC<PortalProps> = ({ className = 'modal-portal', el = 'div', children }) => {
-//   const [container] = React.useState(() => {
-//     // This will be executed only on the initial render
-//     // https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
-//     const _el = document.createElement(el)
-//     _el.setAttribute('class', className)
-//     // _el.style.display = 'none'
-//     document.body.prepend(_el)
-//     return _el
-//   })
-
-//   React.useEffect(() => {
-//     container.classList.add(className)
-//     document.body.appendChild(container)
-//     return () => {
-//       document.body.removeChild(container)
-//     }
-//   }, [])
-
-//   return ReactDOM.createPortal(children, container)
-// }
 
 export type ModalProps = {
   title?: string
@@ -92,8 +44,8 @@ export const Modal: React.FC<ModalProps> = ({
     document.addEventListener('keyup', handleEvent)
     return () => document.removeEventListener('keyup', handleEvent)
   }, [onClose])
-  return (
-    <Portal>
+  return createPortal(
+    <div className="modal-portal">
       <div className={`modal-container ${className}`} onMouseDown={handleonClose}>
         <Card
           className={`modal`}
@@ -114,7 +66,8 @@ export const Modal: React.FC<ModalProps> = ({
           {actions && <div className="actions">{actions}</div>}
         </Card>
       </div>
-    </Portal>
+    </div>,
+    document.querySelector('.layout-container#layout-container') ?? document.body,
   )
 }
 Modal.defaultProps = {

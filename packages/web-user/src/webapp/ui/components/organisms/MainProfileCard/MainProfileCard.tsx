@@ -8,7 +8,6 @@ import {
   RoundButton,
   SecondaryButton,
   Snackbar,
-  TertiaryButton,
   useImageUrl,
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
@@ -16,7 +15,6 @@ import { useFormik } from 'formik'
 import { Share } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { messageFormValidationSchema } from '../../../../../common/exports.mjs'
 import type {
   ProfileAccess,
   ProfileActions,
@@ -25,6 +23,12 @@ import type {
   ProfileState,
 } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
+// import {
+//   ApprovalBadge,
+//   ApprovalButton,
+//   ApprovalInfo,
+// } from '../../atoms/ApproveButton/ApproveButton.js'
+import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
 import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
 import './MainProfileCard.scss'
 
@@ -50,6 +54,7 @@ export type MainProfileCardProps = {
   actions: ProfileActions
   profileUrl: string
   toggleIsEditing(): unknown
+  validationSchemas: ValidationSchemas
 }
 
 export const MainProfileCard: FC<MainProfileCardProps> = ({
@@ -60,14 +65,35 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   state,
   actions,
   isEditing,
+  validationSchemas,
   profileUrl,
   toggleIsEditing,
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
-  const { avatarUrl, backgroundUrl, userId } = data
-  const { canEdit, isCreator, isAuthenticated, canFollow } = access
-  const { followed } = state
-  const { toggleFollow, sendMessage, setAvatar, setBackground } = actions
+  const { avatarUrl, backgroundUrl } = data
+  const {
+    canEdit,
+    isCreator,
+    isAuthenticated,
+    canFollow,
+    // canApprove
+  } = access
+  const {
+    followed,
+    // isApproved,
+    // isElegibleForApproval,
+    // isWaitingApproval,
+    // showAccountApprovedSuccessAlert,
+  } = state
+  const {
+    toggleFollow,
+    sendMessage,
+    setAvatar,
+    setBackground,
+    // approveUser,
+    // requestApproval,
+    // unapproveUser,
+  } = actions
 
   const [updatedAvatar, setUpdatedAvatar] = useState<string | undefined | null>(avatarUrl)
   const [updatedBackground, setUpdatedBackground] = useState<string | undefined | null>(
@@ -81,12 +107,11 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
   const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
   const [showMessageSentAlert, setShowMessageSentAlert] = useState<boolean>(false)
 
   const avatarForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: avatarUrl },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchemas.avatarImageValidation,
     onSubmit: values => {
       return typeof values.image !== 'string' ? setAvatar(values.image) : undefined
     },
@@ -100,12 +125,12 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   }, [avatarUrl])
 
   useEffect(() => {
-    setUpdatedAvatar(avatarFromForm)
-  }, [avatarFromForm])
+    avatarForm.isValid && setUpdatedAvatar(avatarFromForm)
+  }, [avatarForm, avatarFromForm])
 
   const backgroundForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: backgroundUrl },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchemas.backgroundImageValidation,
     onSubmit: values => {
       return typeof values.image !== 'string' ? setBackground(values.image) : undefined
     },
@@ -119,12 +144,12 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   }, [backgroundUrl])
 
   useEffect(() => {
-    setUpdatedBackground(backgroundFromForm)
-  }, [backgroundFromForm])
+    backgroundForm.isValid && setUpdatedBackground(backgroundFromForm)
+  }, [backgroundForm.isValid, backgroundFromForm])
 
   const messageForm = useFormik<{ msg: string }>({
     initialValues: { msg: '' },
-    validationSchema: messageFormValidationSchema,
+    validationSchema: validationSchemas.messageFormValidationSchema,
     onSubmit: (values, { resetForm }) => {
       resetForm()
       return sendMessage(values.msg)
@@ -181,14 +206,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     backgroundSize: 'cover',
   }
 
-  const copyId = () => {
-    navigator.clipboard.writeText(userId)
-    setShowUserIdCopiedAlert(false)
-    setTimeout(() => {
-      setShowUserIdCopiedAlert(true)
-    }, 100)
-  }
-
   const copyUrl = () => {
     navigator.clipboard.writeText(profileUrl)
     setShowUrlCopiedAlert(false)
@@ -204,9 +221,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           color="green"
           onClick={() => {
             form.submitForm()
-            avatarForm.submitForm()
-            backgroundForm.submitForm()
-            form.isValid && avatarForm.isValid && backgroundForm.isValid && toggleIsEditing()
+            avatarForm.isValid && avatarForm.submitForm()
+            backgroundForm.isValid && backgroundForm.submitForm()
+            form.isValid && toggleIsEditing()
           }}
           key="save-button"
         >
@@ -236,14 +253,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     <div className="display-name" key="display-name">
       {form.values.displayName}
     </div>
-  )
-
-  const copyIdButton = !isEditing && isCreator && (
-    <abbr className={`user-id`} title={`Click to copy your ID to the clipboard`}>
-      <TertiaryButton className="copy-id" onClick={copyId}>
-        Copy ID
-      </TertiaryButton>
-    </abbr>
   )
 
   const description = isEditing ? (
@@ -277,9 +286,20 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       </div>
     ) : null
 
-  const updatedTitleItems = [title, copyIdButton, ...(titleItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
-  )
+  // const approvedBadge = (
+  //   <ApprovalBadge
+  //     canEdit={canEdit}
+  //     isApproved={isApproved}
+  //     isEditing={isEditing}
+  //     showAccountApprovedSuccessAlert={showAccountApprovedSuccessAlert}
+  //   />
+  // )
+
+  const updatedTitleItems = [
+    title,
+    // approvedBadge,
+    ...(titleItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const location = isEditing ? (
     <span key="edit-location">
@@ -446,99 +466,58 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   )
 
   const snackbars = [
-    showUserIdCopiedAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
-        User ID copied to the clipboard, use it to connect with Moodle LMS
-      </Snackbar>
-    ),
     showUrlCopiedAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
         Copied to clipoard
       </Snackbar>
     ),
     showMessageSentAlert && (
-      <Snackbar type="success" position="bottom" autoHideDuration={6000} showCloseButton={false}>
+      <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
         Message sent
+      </Snackbar>
+    ),
+    avatarForm.errors.image && (
+      <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
+        {avatarForm.errors.image}
+      </Snackbar>
+    ),
+    backgroundForm.errors.image && (
+      <Snackbar type="error" position="bottom" autoHideDuration={3000} showCloseButton={false}>
+        {backgroundForm.errors.image}
       </Snackbar>
     ),
   ]
 
-  const footerButtons = [
-    // isCreator && !isApproved && !isWaitingApproval && (
-    //   <PrimaryButton
-    //     disabled={!isElegibleForApproval}
-    //     onClick={requestApprovalForm.submitForm}
-    //   >
-    //     Request approval
-    //   </PrimaryButton>
-    // ),
-    // isCreator && isWaitingApproval && (
-    //   <SecondaryButton disabled={true}>
-    //     Waiting for approval
-    //   </SecondaryButton>
-    // ),
-    // isAdmin && !isApproved && (
-    //   <PrimaryButton onClick={approveUserForm.submitForm} color="green">
-    //     Approve
-    //   </PrimaryButton>
-    // ),
-    // isAdmin && isApproved && (
-    //   <SecondaryButton
-    //     onClick={unapproveUserForm.submitForm}
-    //     color="red"
-    //   >
-    //     Unapprove
-    //   </SecondaryButton>
-    // ),
-    // !isCreator && !isFollowing && (
-    //   <PrimaryButton
-    //     disabled={!isAuthenticated}
-    //     onClick={toggleFollowForm.submitForm}
-    //     className="following-button"
-    //   >
-    //     {/* <AddIcon /> */}
-    //     Follow
-    //   </PrimaryButton>
-    // ),
-    // !isCreator && isFollowing && (
-    //   <SecondaryButton
-    //     disabled={!isAuthenticated}
-    //     onClick={toggleFollowForm.submitForm}
-    //     className="following-button"
-    //     color="orange"
-    //   >
-    //     {/* <CheckIcon /> */}
-    //     Following
-    //   </SecondaryButton>
-    // ),
-    !isCreator && (
-      <FollowButton
-        canFollow={canFollow}
-        followed={followed}
-        isAuthenticated={isAuthenticated}
-        isCreator={isCreator}
-        toggleFollow={toggleFollow}
-        key="follow-button"
-      />
-    ),
-    !isCreator && (
-      <SecondaryButton
-        color="grey"
-        className={`message`}
-        disabled={!isAuthenticated}
-        onClick={() => setIsSendingMessage(true)}
-        abbr={!isAuthenticated ? 'Login or signup to send messages' : 'Send a message'}
-      >
-        Message
-      </SecondaryButton>
-      // <TertiaryButton
-      //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
-      //   onClick={openSendMessage}
-      // >
-      //   <MailOutlineIcon />
-      // </TertiaryButton>
-    ),
+  const followButton = !isCreator && (
+    <FollowButton
+      canFollow={canFollow}
+      followed={followed}
+      isAuthenticated={isAuthenticated}
+      isCreator={isCreator}
+      toggleFollow={toggleFollow}
+      key="follow-button"
+    />
+  )
 
+  const sendMessageButton = !isCreator && (
+    <SecondaryButton
+      color="grey"
+      className={`message`}
+      disabled={!isAuthenticated}
+      onClick={() => setIsSendingMessage(true)}
+      abbr={!isAuthenticated ? 'Login or signup to send messages' : 'Send a message'}
+    >
+      Message
+    </SecondaryButton>
+    // <TertiaryButton
+    //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+    //   onClick={openSendMessage}
+    // >
+    //   <MailOutlineIcon />
+    // </TertiaryButton>
+  )
+
+  const moreButton = !isCreator ? (
     <FloatingMenu
       key="more-button-menu"
       menuContent={[
@@ -567,12 +546,20 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
           </SecondaryButton>
         )
       }
-    />,
-  ]
+    />
+  ) : null
 
-  const updatedFooterItems = [...footerButtons, ...(footerItems ?? [])].filter(
-    (item): item is AddonItem /* | JSX.Element */ => !!item,
-  )
+  // const approvalButton = (
+  //   <ApprovalButton access={access} state={state} actions={actions} key={'approval-button'} />
+  // )
+
+  const updatedFooterItems = [
+    followButton,
+    // approvalButton,
+    sendMessageButton,
+    ...(footerItems ?? []),
+    moreButton,
+  ].filter((item): item is AddonItem /* | JSX.Element */ => !!item)
 
   const footer =
     updatedFooterItems.length > 0 ? (
@@ -581,12 +568,22 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       </div>
     ) : null
 
+  // const approvalInfo = (
+  //   <ApprovalInfo
+  //     isApproved={isApproved}
+  //     isWaitingApproval={isWaitingApproval}
+  //     isCreator={isCreator}
+  //     isElegibleForApproval={isElegibleForApproval}
+  //   />
+  // )
+
   const updatedMainColumnItems = [
     backgroundContainer,
     avatarContainer,
     topItemsContainer,
     header,
     description,
+    // approvalInfo,
     footer,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)

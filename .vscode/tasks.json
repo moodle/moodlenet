@@ -40,6 +40,36 @@
     },
     {
       "group": "build",
+      "type": "npm",
+      "script": "prj-build-watch",
+      "problemMatcher": [],
+      "label": "npm: prj-build-watch",
+      "detail": "npm run prj-build -- --watch"
+    },
+    {
+      "group": "build",
+      "type": "shell",
+      "command": "docker start mn-3-db",
+      "label": "arangodb"
+    },
+    {
+      "group": "build",
+      "type": "shell",
+      "command": "npm run dev-start-webapp dev",
+      "isBackground": true,
+      "problemMatcher": ["$tsc"],
+      "label": "dev-start-webapp"
+    },
+    {
+      "group": "build",
+      "type": "shell",
+      "command": "npm run dev-start-backend dev",
+      "isBackground": true,
+      "problemMatcher": ["$tsc"],
+      "label": "dev-start-backend"
+    },
+    {
+      "group": "build",
       "type": "shell",
       "problemMatcher": [],
       "label": "frontend-tasks",
@@ -56,11 +86,35 @@
     },
     {
       "group": "build",
-      "type": "npm",
-      "script": "prj-build-watch",
+      "type": "shell",
       "problemMatcher": [],
-      "label": "npm: prj-build-watch",
-      "detail": "npm run prj-build -- --watch"
+      "label": "backend-tasks",
+      "dependsOrder": "sequence",
+      "dependsOn": ["arangodb", "dev-start-backend", "dev-start-webapp"],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "group": "build",
+      "type": "shell",
+      "problemMatcher": [],
+      "label": "fullstack-tasks",
+      "dependsOrder": "parallel",
+      "dependsOn": ["prj-build-watch", "backend-tasks"],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     }
   ]
 }

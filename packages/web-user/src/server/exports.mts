@@ -1,5 +1,6 @@
 export * from './aql.mjs'
 export { WebUserEntitiesTools } from './entities.mjs'
+export { displayNameSchema } from './env.mjs'
 export { Profile } from './init/sys-entities.mjs'
 export {
   editProfile,

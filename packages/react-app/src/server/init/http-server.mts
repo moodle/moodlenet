@@ -2,10 +2,10 @@ import { instanceDomain } from '@moodlenet/core'
 import { mountApp } from '@moodlenet/http-server/server'
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
+import { buildContext } from '../build-context.mjs'
 import type { OpenGraphData, OpenGraphDataProvided } from '../opengraph.mjs'
 import { getDefaultOpenGraphData, OpenGraphProviderItems } from '../opengraph.mjs'
 import { shell } from '../shell.mjs'
-import { latestBuildFolder } from '../webpack/generated-files.mjs'
 import { env } from './env.mjs'
 
 export const httpApp = await shell.call(mountApp)({
@@ -14,7 +14,7 @@ export const httpApp = await shell.call(mountApp)({
       return
     }
     const mountApp = express()
-    const staticWebApp = express.static(latestBuildFolder, { index: false })
+    const staticWebApp = express.static(buildContext.latestBuildFolder, { index: false })
     mountApp.use(staticWebApp)
     //cookieParser(secret?: string | string[] | undefined, options?: cookieParser.CookieParseOptions | undefined)
     mountApp.get(`*`, async (req, res, next) => {
@@ -42,7 +42,7 @@ export const httpApp = await shell.call(mountApp)({
 
       // shell.log('debug', { webappPath, openGraphDataProvided, openGraphData })
 
-      const _html = await readFile(resolve(latestBuildFolder, 'index.html'), 'utf-8')
+      const _html = await readFile(resolve(buildContext.latestBuildFolder, 'index.html'), 'utf-8')
       const headReplace = openGraphData
         ? `<head>
 <title>${openGraphData.title}</title>

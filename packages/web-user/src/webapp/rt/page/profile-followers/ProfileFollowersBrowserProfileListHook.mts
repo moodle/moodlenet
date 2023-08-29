@@ -14,13 +14,11 @@ export function useProfileFollowersBrowserProfileListDataProps({
   })
 
   useEffect(() => {
-    shell.rpc.me[
-      'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key'
-    ](
-      undefined,
-      { feature: 'follow', entityType: 'profile', _key: profileKey },
-      { limit: 100 },
-    ).then(setResult)
+    shell.rpc
+      .me(
+        'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key',
+      )(undefined, { feature: 'follow', entityType: 'profile', _key: profileKey }, { limit: 100 })
+      .then(setResult)
   }, [profileKey])
   const profilesCardPropsList = useMemo<BrowserProfileListDataProps['profilesCardPropsList']>(
     () =>

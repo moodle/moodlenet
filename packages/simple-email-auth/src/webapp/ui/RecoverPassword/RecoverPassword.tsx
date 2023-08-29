@@ -6,7 +6,7 @@ import { MailOutline } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { ComponentType, FC } from 'react'
 import { Link } from 'react-router-dom'
-import { recoverPasswordValidationSchema } from '../../../common/types.mjs'
+import { recoverPasswordValidationSchema } from '../../../common/validations.mjs'
 import './RecoverPassword.scss'
 
 export type RecoverPasswordFormValues = { name: string; email: string; password: string }

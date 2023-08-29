@@ -1,16 +1,20 @@
 @import '../../../styles/application';
 
+.snackbar-portal {
+  justify-content: center;
+  display: flex;
+}
+
 .snackbar.card {
   display: flex;
   flex-direction: row;
   width: fit-content;
   min-height: 40px;
+  max-width: 650px;
   color: #fff;
   font-size: 0.875rem;
   font-weight: bold;
   background-color: #7b7b7b;
-  left: 50%;
-  transform: translateX(-50%);
   align-items: center;
   justify-content: space-between;
   padding: 6px 6px 6px 14px;
@@ -48,19 +52,19 @@
   }
 
   &.type-success {
-    background-color: $success-color;
+    background-color: var(--success-color);
   }
 
   &.type-error {
-    background-color: $error-color;
+    background-color: var(--error-color);
   }
 
   &.type-warning {
-    background-color: $warning-color;
+    background-color: var(--warning-color);
   }
 
   &.type-info {
-    background-color: $info-color;
+    background-color: var(--info-color);
   }
 
   &.state-opening {

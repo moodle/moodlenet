@@ -38,7 +38,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
 
   const load = useCallback(
     async (limit: number, cursor?: string) => {
-      const res = await shell.rpc.me['webapp/search'](undefined, undefined, {
+      const res = await shell.rpc.me('webapp/search')(undefined, undefined, {
         limit,
         sortType,
         text: q,

@@ -5,9 +5,12 @@ import type {
   CollectionSearchResultRpc,
   SortTypeRpc,
 } from './types.mjs'
+import type { ValidationsConfig } from './validationSchema.mjs'
 
+export type WebappConfigsRpc = { validations: ValidationsConfig }
 export type CollectionExposeType = PkgExposeDef<{
   rpc: {
+    'webapp/get-configs'(): Promise<WebappConfigsRpc>
     'webapp/my-collections'(): Promise<{
       collections: Omit<CollectionRpc, 'contributor'>[]
       contributor: CollectionRpc['contributor']
@@ -16,7 +19,7 @@ export type CollectionExposeType = PkgExposeDef<{
       body: { publish: boolean },
       params: { _key: string },
     ): Promise<void>
-    'webapp/in-collection/:collectionKey/:action-resource/:resourceKey'(
+    'webapp/in-collection/:collectionKey/:action(add|remove)/:resourceKey'(
       body: null,
       params: { collectionKey: string; resourceKey: string; action: 'remove' | 'add' },
     ): Promise<void>

@@ -17,7 +17,7 @@ export function useResourceContextValue() {
     async function create(opts?: { noNav?: boolean }) {
       const { _key } = await mainContext.rpcCaller.create()
       const homePath = getResourceHomePageRoutePath({ _key, title: 'no-name' })
-      !opts?.noNav && nav(homePath, { state: { editMode: true } })
+      !opts?.noNav && nav(homePath)
       return { homePath, key: _key }
     },
     [mainContext.rpcCaller, nav],

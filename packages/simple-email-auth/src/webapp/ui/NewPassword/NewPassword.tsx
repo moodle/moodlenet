@@ -3,7 +3,7 @@ import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-
 import { SimpleLayout } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { ComponentType, FC } from 'react'
-import { newPasswordValidationSchema } from '../../../common/types.mjs'
+import { newPasswordValidationSchema } from '../../../common/validations.mjs'
 import './NewPassword.scss'
 
 export type NewPasswordFormValues = { name: string; email: string; password: string }

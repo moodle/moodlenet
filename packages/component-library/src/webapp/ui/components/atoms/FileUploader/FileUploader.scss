@@ -58,10 +58,10 @@
         border: 4px dashed #d1d4e0;
       }
       3% {
-        border: 4px dashed $error-color;
+        border: 4px dashed var(--error-color);
       }
       97% {
-        border: 4px dashed $error-color;
+        border: 4px dashed var(--error-color);
       }
       100% {
         border: 4px dashed #d1d4e0;

@@ -2,12 +2,18 @@ import type { PkgExposeDef } from '@moodlenet/core'
 import { npm, RpcNext, RpcStatus } from '@moodlenet/core'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
-import { getAppearance, getWebappUrl, setAppearance } from '@moodlenet/react-app/server'
+import {
+  defaultImageUploadMaxSize,
+  getAppearance,
+  getWebappUrl,
+  setAppearance,
+} from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
+import { profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import {
   isAllowedKnownEntityFeature,
@@ -21,6 +27,7 @@ import {
   getLandingPageList,
   getProfileOwnKnownEntities,
   getProfileRecord,
+  getValidations,
   searchProfiles,
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
@@ -43,6 +50,12 @@ import { betterTokenContext } from './util.mjs'
 
 export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
   rpc: {
+    'webapp/get-configs': {
+      guard: () => void 0,
+      async fn() {
+        return { validations: validationsConfig }
+      },
+    },
     'getCurrentClientSessionDataRpc': {
       guard: () => void 0,
       async fn() {
@@ -87,19 +100,20 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
-    'webapp/profile/edit': {
-      guard: () => void 0,
-      async fn(profileFormValues) {
-        const { _key, ...editRequest } = profileFormValues
-        const patchRecord = await editProfile(_key, editRequest)
+    'webapp/profile/:_key/edit': {
+      guard: _ => {
+        _.editData = profileValidationSchema.validateSync(_?.editData, { stripUnknown: true })
+      },
+      async fn({ editData }, { _key }) {
+        const patchRecord = await editProfile(_key, editData)
         if (!patchRecord) {
           return
         }
       },
     },
-    'webapp/profile/get': {
+    'webapp/profile/:_key/get': {
       guard: () => void 0,
-      async fn({ _key }) {
+      async fn(_, { _key }) {
         const profileRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
         if (!profileRecord) {
           return null
@@ -173,29 +187,45 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       },
     },
     'webapp/upload-profile-avatar/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { avatarImageValidation } = await getValidations()
+        const validatedImageOrNullish = await avatarImageValidation.validate(
+          { image: body?.file?.[0] },
+          { stripUnknown: true },
+        )
+        body.file = [validatedImageOrNullish]
+      },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getProfileRecord(_key, { projectAccess: ['u'] })
 
         if (!got?.access.u) {
           throw RpcStatus('Unauthorized')
         }
-        const patched = await setProfileAvatar({ _key, rpcFile: uploadedRpcFile })
-        if (!patched?.entity.avatarImage) {
+        const updateRes = await setProfileAvatar({ _key, rpcFile: uploadedRpcFile })
+
+        if (!updateRes || !updateRes.patched.avatarImage) {
           return null
         }
         return publicFilesHttp.getFileUrl({
-          directAccessId: patched.entity.avatarImage.directAccessId,
+          directAccessId: updateRes.patched.avatarImage.directAccessId,
         })
       },
       bodyWithFiles: {
+        maxSize: defaultImageUploadMaxSize,
         fields: {
           '.file': 1,
         },
       },
     },
     'webapp/upload-profile-background/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { backgroundImageValidation } = await getValidations()
+        const validatedImageOrNullish = await backgroundImageValidation.validate(
+          { image: body?.file?.[0] },
+          { stripUnknown: true },
+        )
+        body.file = [validatedImageOrNullish]
+      },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getProfileRecord(_key, { projectAccess: ['u'] })
 
@@ -203,21 +233,21 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           throw RpcStatus('Unauthorized')
         }
 
-        const patched = await setProfileBackgroundImage({ _key, rpcFile: uploadedRpcFile })
-        if (!patched?.entity.backgroundImage) {
+        const updateRes = await setProfileBackgroundImage({ _key, rpcFile: uploadedRpcFile })
+        if (!updateRes || !updateRes.patched.backgroundImage) {
           return null
         }
         return publicFilesHttp.getFileUrl({
-          directAccessId: patched.entity.backgroundImage.directAccessId,
+          directAccessId: updateRes.patched.backgroundImage.directAccessId,
         })
       },
       bodyWithFiles: {
+        maxSize: defaultImageUploadMaxSize,
         fields: {
           '.file': 1,
         },
       },
     },
-
     'webapp/feature-entity/count/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key':
       {
         guard: () => void 0,
@@ -268,7 +298,6 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         sendMessageToProfileIntent({ message, profileKey })
       },
     },
-
     'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key':
       {
         guard: () => void 0,

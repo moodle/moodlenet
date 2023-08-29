@@ -1,7 +1,7 @@
 import { resolve } from 'path'
-import type { WebappPluginItem, WebPkgDeps } from '../common/types.mjs'
-import { shell } from './shell.mjs'
-import { fixModuleLocForWebpackByOS } from './util.mjs'
+import type { WebappPluginItem, WebPkgDeps } from '../../common/types.mjs'
+import { shell } from '../shell.mjs'
+import { fixModuleLocForWebpackByOS } from '../util.mjs'
 
 export function generateConnectPkgModulesModule({
   plugins,

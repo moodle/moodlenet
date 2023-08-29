@@ -1,7 +1,7 @@
 import { shell } from './shell.mjs'
 
 import { RpcStatus } from '@moodlenet/core'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { defaultImageUploadMaxSize, getWebappUrl } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesRecordType,
   AqlVal,
@@ -23,6 +23,7 @@ import {
   getCollection,
   getImageLogicalFilename,
   getMyCollections,
+  getValidations,
   patchCollection,
   searchCollections,
   setCollectionImage,
@@ -35,6 +36,13 @@ import type { CollectionDataType } from './types.mjs'
 
 export const expose = await shell.expose<CollectionExposeType>({
   rpc: {
+    'webapp/get-configs': {
+      guard: () => void 0,
+      async fn() {
+        const { config } = await getValidations()
+        return { validations: config }
+      },
+    },
     'webapp/my-collections': {
       guard: () => void 0,
       async fn() {
@@ -78,7 +86,7 @@ export const expose = await shell.expose<CollectionExposeType>({
           })
       },
     },
-    'webapp/in-collection/:collectionKey/:action-resource/:resourceKey': {
+    'webapp/in-collection/:collectionKey/:action(add|remove)/:resourceKey': {
       guard: () => void 0,
       async fn(_, { action, collectionKey, resourceKey }) {
         const updateResult = await updateCollectionContent(collectionKey, action, resourceKey)
@@ -89,11 +97,17 @@ export const expose = await shell.expose<CollectionExposeType>({
       },
     },
     'webapp/set-is-published/:_key': {
-      guard: () => void 0,
+      guard: body => typeof body.publish === 'boolean',
       async fn({ publish }, { _key }) {
         const patchResult = await setPublished(_key, publish)
         if (!patchResult) {
-          return //throw ?
+          if (patchResult === null) {
+            throw RpcStatus('Not Found')
+          }
+          if (patchResult === undefined) {
+            throw RpcStatus('Unauthorized')
+          }
+          throw RpcStatus('Precondition Failed')
         }
         return
       },
@@ -123,13 +137,15 @@ export const expose = await shell.expose<CollectionExposeType>({
       },
     },
     'webapp/edit/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { draftCollectionValidationSchema } = await getValidations()
+
+        body.values = await draftCollectionValidationSchema.validate(body?.values, {
+          stripUnknown: true,
+        })
+      },
       async fn({ values }, { _key }) {
-        const patchResult = await patchCollection(_key, values)
-        if (!patchResult) {
-          return
-        }
-        return
+        await patchCollection(_key, values)
       },
     },
     'webapp/create': {
@@ -158,7 +174,14 @@ export const expose = await shell.expose<CollectionExposeType>({
       },
     },
     'webapp/upload-image/:_key': {
-      guard: () => void 0,
+      guard: async body => {
+        const { imageValidationSchema } = await getValidations()
+        const validatedImageOrNullish = await imageValidationSchema.validate(
+          { image: body?.file?.[0] },
+          { stripUnknown: true },
+        )
+        body.file = [validatedImageOrNullish]
+      },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getCollection(_key, { projectAccess: ['u'] })
 
@@ -166,11 +189,16 @@ export const expose = await shell.expose<CollectionExposeType>({
           throw RpcStatus('Unauthorized')
         }
 
-        const patched = await setCollectionImage(_key, uploadedRpcFile)
-        const imageUrl = patched?.entity.image ? getImageUrl(patched?.entity.image) : null
+        const updateRes = await setCollectionImage(_key, uploadedRpcFile)
+        if (updateRes === false) {
+          throw RpcStatus('Expectation Failed')
+        }
+        // console.log({ patched: updateRes?.patched.image, got: got.entity.image })
+        const imageUrl = updateRes?.patched.image ? getImageUrl(updateRes.patched.image) : null
         return imageUrl
       },
       bodyWithFiles: {
+        maxSize: defaultImageUploadMaxSize,
         fields: {
           '.file': 1,
         },

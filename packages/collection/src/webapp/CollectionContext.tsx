@@ -17,8 +17,8 @@ export function useCollectionContextValue() {
   const createCollection = useCallback<CollectionContextT['createCollection']>(
     async function createCollection(opts?: { noNav?: boolean }) {
       const { _key } = await rpcCaller.create()
-      const homePath = getCollectionHomePageRoutePath({ _key, title: 'no name' })
-      !opts?.noNav && nav(homePath, { state: { editMode: true } })
+      const homePath = getCollectionHomePageRoutePath({ _key, title: 'no-name' })
+      !opts?.noNav && nav(homePath)
       return { homePath, key: _key }
     },
     [rpcCaller, nav],

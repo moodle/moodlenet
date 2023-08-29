@@ -95,7 +95,6 @@ async function defaultConfigJson() {
       },
       '@moodlenet/http-server': {
         port: 8080,
-        defaultRpcUploadMaxSize: '5MB',
       },
       '@moodlenet/ed-resource': {
         resourceUploadMaxSize: '1.2GB',
@@ -113,6 +112,8 @@ async function defaultConfigJson() {
       },
       '@moodlenet/react-app': {
         noWebappServer: true,
+        noWebappBuilder: true,
+        defaultImageUploadMaxSize: '5MB',
       },
     },
   }
@@ -128,7 +129,7 @@ async function getNpmRegistry() {
       )
       return randomCasedEnvVarName ? process.env[randomCasedEnvVarName] : undefined
     })() ??
-    ((await execa('npx', ['-y', 'npm@8', 'get', 'registry'], { timeout: 10e3 })).stdout ||
+    ((await execa('npm', ['get', 'registry'], { timeout: 10e3 })).stdout ||
       'https://registry.npmjs.org/')
   ).replace(/\/$/, '')
 }
