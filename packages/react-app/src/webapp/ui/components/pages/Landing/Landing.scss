@@ -37,12 +37,10 @@
     @media screen and (min-width: 450px) and (max-width: 675px) {
       margin: 0 -25px;
     }
-    @media screen and (min-width: 675px) and (max-width: 900px) {
-      margin: 0 -100px;
-    }
 
     @media screen and (min-width: 675px) and (max-width: 900px) {
       gap: 45px;
+      margin: -10px -100px;
       padding: 80px 80px 90px 80px;
     }
 
