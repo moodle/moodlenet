@@ -39,7 +39,6 @@ if (!env.noWebappBuilder) {
 
   if (shouldBuild_heruistic) {
     shell.log('info', `starting webapp build process`)
-    shell.log('info', `removing files from  latestBuildFolder ${buildContext.latestBuildFolder}`)
     await rm(buildContext.latestBuildFolder, {
       force: true,
       recursive: true,
