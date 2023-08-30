@@ -40,7 +40,6 @@ module.exports = {
     '../../react-app/src/webapp/ui/components/**/*.stories.tsx',
     '../../ed-resource/src/webapp/components/**/*.stories.tsx',
     '../../ed-meta/src/webapp/components/**/*.stories.tsx',
-    '../../email-service/**/*.stories.tsx',
     '../../web-user/src/webapp/ui/components/**/*.stories.tsx',
     // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     //'../src/stories/*.stories.tsx',
