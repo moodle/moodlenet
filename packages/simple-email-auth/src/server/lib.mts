@@ -1,4 +1,3 @@
-import { instanceDomain } from '@moodlenet/core'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import * as crypto from '@moodlenet/crypto/server'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
@@ -74,8 +73,8 @@ export async function signup(req: SignupReq) {
   const html = dot.compile(templates['new-user-request'])(newUserRequestEmailTemplateVars)
   shell.call(send)({
     emailObj: {
-      title: `Welcome to ${instanceDomain} 🎉`,
-      subject: `Welcome to ${instanceDomain} 🎉`,
+      title: `Welcome to ${orgData.data.instanceName} 🎉`,
+      subject: `Welcome to ${orgData.data.instanceName} 🎉`,
       to: req.email,
       html,
     },
