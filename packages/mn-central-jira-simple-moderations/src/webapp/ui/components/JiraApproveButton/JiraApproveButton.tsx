@@ -1,19 +1,19 @@
 import { PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
-import type { ProfileAccess, ProfileActions, ProfileState } from '@moodlenet/web-user/common'
+import type { ProfileAccess } from '@moodlenet/web-user/common'
 import type { FC } from 'react'
 import './JiraApproveButton.scss'
 
-export type ProfileJiraRequestApprovalActionsProps = ProfileActions & {
+export type ProfileJiraRequestApprovalActionsProps = {
   requestApproval: () => void
 }
-export type ProfileJiraRequestApprovalStateProps = ProfileState & {
+export type ProfileJiraRequestApprovalStateProps = {
   isElegibleForApproval: boolean
   isWaitingApproval: boolean
   showApprovalRequestedSuccessAlert: boolean
 }
 
 export type JiraRequestApprovalButtonProps = {
-  access: ProfileAccess
+  access: Pick<ProfileAccess, 'isCreator' | 'isPublisher'>
   state: ProfileJiraRequestApprovalStateProps
   actions: ProfileJiraRequestApprovalActionsProps
 }
