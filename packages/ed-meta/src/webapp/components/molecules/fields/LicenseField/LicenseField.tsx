@@ -55,6 +55,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
         e.currentTarget.value !== license && editLicense(e.currentTarget.value)
       }}
       edit
+      noBorder
       value={license}
       label={`License`}
       placeholder="License category"

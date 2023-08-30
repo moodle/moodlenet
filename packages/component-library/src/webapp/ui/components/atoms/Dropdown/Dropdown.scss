@@ -45,7 +45,7 @@
       color: #b6bacb;
     }
 
-    &.display-mode {
+    &.no-border {
       padding: 0;
       background: none;
       box-shadow: none;
@@ -162,7 +162,7 @@
         }
       }
 
-      &.display-mode {
+      &.no-border {
         padding: 0;
         height: 24px;
         color: #212121;

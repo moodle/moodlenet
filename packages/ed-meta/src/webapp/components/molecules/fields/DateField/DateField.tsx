@@ -2,6 +2,7 @@ import type { TextOptionProps } from '@moodlenet/component-library'
 import { Dropdown, SimplePill, SimpleTextOption, TextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
+import './DateField.scss'
 
 export type DateFieldProps = {
   month: string | undefined
@@ -75,7 +76,7 @@ export const DateField: FC<DateFieldProps> = ({
   return canEdit ? (
     <div className="date">
       <label>Original creation date</label>
-      <div className="fields">
+      <div className="fields date-field">
         <Dropdown
           name="month"
           value={month}
@@ -84,6 +85,7 @@ export const DateField: FC<DateFieldProps> = ({
           }}
           placeholder="Month"
           edit
+          noBorder
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorMonth}
           position={{ top: 30, bottom: 25 }}
@@ -120,6 +122,7 @@ export const DateField: FC<DateFieldProps> = ({
           }}
           placeholder="Year"
           edit
+          noBorder
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorYear}
           position={{ top: 30, bottom: 25 }}
