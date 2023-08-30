@@ -9,14 +9,7 @@ import {
   SnackbarStack,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
-import {
-  DateField,
-  LanguageField,
-  LevelField,
-  LicenseField,
-  SubjectField,
-  TypeField,
-} from '@moodlenet/ed-meta/ui'
+import { DateField, DropdownField, LicenseField } from '@moodlenet/ed-meta/ui'
 import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
@@ -380,13 +373,15 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const subjectField = (isEditing || canEdit) && (
-    <SubjectField
+    <DropdownField
       key="subject-field"
+      title="Subject"
+      placeholder="Content category"
       canEdit={canEdit && isEditing}
-      subject={form.values.subject}
-      subjectOptions={subjectOptions}
+      selection={form.values.subject}
+      options={subjectOptions}
       error={form.errors.subject}
-      editSubject={e => form.setFieldValue('subject', e)}
+      edit={e => form.setFieldValue('subject', e)}
       shouldShowErrors={shouldShowErrors}
     />
   )
@@ -406,12 +401,14 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const typeField = (
-    <TypeField
+    <DropdownField
       key="type-field"
+      title="Type"
+      placeholder="Content type"
       canEdit={canEdit && isEditing}
-      type={form.values.type}
-      typeOptions={typeOptions}
-      editType={e => {
+      selection={form.values.type}
+      options={typeOptions}
+      edit={e => {
         form.setFieldValue('type', e)
       }}
       error={form.errors.type}
@@ -420,12 +417,14 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const levelField = (
-    <LevelField
+    <DropdownField
       key="level-field"
+      title="Level"
+      placeholder="Education level"
       canEdit={canEdit && isEditing}
-      level={form.values.level}
-      levelOptions={levelOptions}
-      editLevel={e => {
+      selection={form.values.level}
+      options={levelOptions}
+      edit={e => {
         form.setFieldValue('level', e)
       }}
       error={form.errors.level}
@@ -454,12 +453,14 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const languageField = (
-    <LanguageField
+    <DropdownField
       key="language-field"
+      title="Language"
+      placeholder="Content language"
       canEdit={canEdit && isEditing}
-      language={form.values.language}
-      languageOptions={languageOptions}
-      editLanguage={e => {
+      selection={form.values.language}
+      options={languageOptions}
+      edit={e => {
         form.setFieldValue('language', e)
       }}
       error={form.errors.language}
