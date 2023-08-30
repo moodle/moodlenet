@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.1.0]
+
 ### Added
 
 - shared data validation schemas (server+webapp)
@@ -32,5 +34,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - extensible modular architecture
 - oauth + openid specs implementation
 
-[unreleased]: https://github.com/moodle/moodlenet/compare/v3.0.0...HEAD
+[unreleased]: https://github.com/moodle/moodlenet/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/moodle/moodlenet/releases/tag/v3.1.0
 [3.0.0]: https://github.com/moodle/moodlenet/releases/tag/v3.0.0
