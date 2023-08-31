@@ -1,0 +1,125 @@
+.learning-outcomes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  --category-knowledge-color: var(--info-color);
+  --category-comprehension-color: var(--success-color);
+  --category-application-color: #ff8000;
+  --category-analysis-color: #bd00ff;
+  --category-synthesis-color: #ff0084;
+  --category-evaluation-color: #00bbff;
+
+  > .title {
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    > .find-out-more {
+      height: fit-content;
+      > a {
+        > svg {
+          width: 17px;
+          height: 17px;
+          color: #b4b4b4;
+          display: flex;
+        }
+      }
+    }
+  }
+  > .subtitle {
+    font-size: 14px;
+  }
+  > .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    > .dropdown {
+      width: fit-content;
+      > .input-container {
+        gap: 0;
+        height: 36px;
+        min-height: 36px;
+        width: fit-content;
+        border-radius: 25px;
+        > .dropdown-button {
+          width: fit-content;
+          padding: 0 12px;
+        }
+        > svg {
+          display: none;
+        }
+        > .search-field {
+          width: fit-content;
+          width: 30px;
+          width: 100%;
+        }
+      }
+
+      > .dropdown-content {
+        // width: 150px;
+      }
+
+      &.active.knowledge > .input-container {
+        box-shadow: 0 0 6px var(--category-knowledge-color);
+      }
+      &.active.comprehension > .input-container {
+        box-shadow: 0 0 6px var(--category-comprehension-color);
+      }
+      &.active.application > .input-container {
+        box-shadow: 0 0 6px var(--category-application-color);
+      }
+      &.active.analysis > .input-container {
+        box-shadow: 0 0 6px var(--category-analysis-color);
+      }
+      &.active.synthesis > .input-container {
+        box-shadow: 0 0 6px var(--category-synthesis-color);
+      }
+      &.active.evaluation > .input-container {
+        box-shadow: 0 0 6px var(--category-evaluation-color);
+      }
+    }
+  }
+
+  > .learning-outcomes-list {
+    > .learning-outcome {
+      > .input-container {
+        border-radius: 10px;
+        > .verb-pill {
+          color: white;
+          padding: 4px 8px;
+          border-radius: 8px;
+          margin-left: 10px;
+          &.knowledge {
+            background-color: var(--category-knowledge-color);
+          }
+          &.comprehension {
+            background-color: var(--category-comprehension-color);
+          }
+          &.application {
+            background-color: var(--category-application-color);
+          }
+          &.analysis {
+            background-color: var(--category-analysis-color);
+          }
+          &.synthesis {
+            background-color: var(--category-synthesis-color);
+          }
+          &.evaluation {
+            background-color: var(--category-evaluation-color);
+          }
+        }
+
+        > input.learning-outcome {
+          flex: 1;
+          padding: 0 8px;
+        }
+      }
+    }
+
+    > .learning-outcome-read-only {
+      font-size: 14px;
+    }
+  }
+}

@@ -124,7 +124,8 @@ export const Resource: FC<ResourceProps> = ({
       !resourceForm.level &&
       !resourceForm.subject &&
       !resourceForm.year &&
-      !resourceForm.month,
+      !resourceForm.month &&
+      !(resourceForm.learningOutcomes.length > 0),
   )
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
@@ -156,6 +157,9 @@ export const Resource: FC<ResourceProps> = ({
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
     onSubmit: values => {
+      values.learningOutcomes = values.learningOutcomes.filter(
+        learningOutcome => learningOutcome.sentence !== '',
+      )
       return editData(values)
     },
   })

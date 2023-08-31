@@ -3,6 +3,7 @@ import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { LearningOutcome } from '@moodlenet/ed-meta/ui'
 import type { ResourceExposeType, WebappConfigsRpc } from './expose-def.mjs'
 import type { ValidationSchemas } from './validationSchema.mjs'
 export type EdResourceEntityNames = 'Resource'
@@ -27,6 +28,7 @@ export type ResourceFormRpc = {
   month: string
   year: string
   language: string
+  learningOutcomes: LearningOutcome[]
   // addToCollections: string[]
 }
 

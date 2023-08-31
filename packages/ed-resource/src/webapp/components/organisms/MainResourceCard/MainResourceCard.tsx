@@ -12,6 +12,7 @@ import {
   useWindowDimensions,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
+import { LearningOutcomes } from '@moodlenet/ed-meta/ui'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
@@ -315,6 +316,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const empty =
     (!form.values.title || form.values.title === '') &&
     (!form.values.description || form.values.description === '') &&
+    !(form.values.learningOutcomes.length > 0) &&
     !contentForm.values.content &&
     !imageForm.values.image
 
@@ -588,6 +590,15 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
+  const learningOutcomes =
+    isEditing || form.values.learningOutcomes.length > 0 ? (
+      <LearningOutcomes
+        learningOutcomes={form.values.learningOutcomes}
+        isEditing={isEditing}
+        edit={values => form.setFieldValue('learningOutcomes', values)}
+      />
+    ) : null
+
   const updatedFooterRowItems = [...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
@@ -603,6 +614,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     resourceHeader,
     resourceUploader,
     description,
+    learningOutcomes,
     resourceFooter,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)

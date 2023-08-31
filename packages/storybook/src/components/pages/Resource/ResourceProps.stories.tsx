@@ -43,6 +43,7 @@ import {
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
 
+import type { LearningOutcome } from '@moodlenet/ed-meta/ui'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
 
 const meta: ComponentMeta<typeof Resource> = {
@@ -78,17 +79,26 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
   )
 })
 
+const learningOutcomes: LearningOutcome[] = [
+  {
+    category: 'Knowledge',
+    verb: 'Analyze',
+    sentence: 'the data to determine the best course of action.',
+  },
+]
+
 export const ResourceFormValues: ResourceFormProps = {
   title: '',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  subject: FieldsDataStories.SubjectsTextOptionProps[2]!.value,
-  language: FieldsDataStories.LanguagesTextOptionProps[2]!.value,
-  level: FieldsDataStories.LevelTextOptionProps[2]!.value,
-  license: FieldsDataStories.LicenseIconTextOptionProps[2]!.value,
-  month: FieldsDataStories.MonthTextOptionProps[8]!.value,
-  year: FieldsDataStories.YearsProps[20]!.valueOf(),
-  type: FieldsDataStories.TypeTextOptionProps[1]!.value,
+  subject: FieldsDataStories.SubjectsTextOptionProps[2]?.value ?? '',
+  language: FieldsDataStories.LanguagesTextOptionProps[2]?.value ?? '',
+  level: FieldsDataStories.LevelTextOptionProps[2]?.value ?? '',
+  license: FieldsDataStories.LicenseIconTextOptionProps[2]?.value ?? '',
+  month: FieldsDataStories.MonthTextOptionProps[8]?.value ?? '',
+  year: FieldsDataStories.YearsProps[20]?.valueOf() ?? '',
+  type: FieldsDataStories.TypeTextOptionProps[1]?.value ?? '',
+  learningOutcomes: learningOutcomes,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
@@ -109,6 +119,7 @@ export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
       level: '',
       month: '',
       year: '',
+      learningOutcomes: [],
     },
     ...overrides,
   })
@@ -182,7 +193,10 @@ export const useResourceStoryProps = (
     month: '5',
     year: '2022',
     ...overrides?.resourceForm,
+    learningOutcomes: learningOutcomes,
   }
+
+  const [formData, setFormData] = useState(resourceForm)
 
   const data: ResourceDataProps = {
     id: 'qjnwglkd69io-sports',
@@ -264,7 +278,7 @@ export const useResourceStoryProps = (
 
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: action('edit data'),
+    editData: setFormData,
     publish: () => {
       setIsPublished(true)
     },
@@ -354,6 +368,7 @@ export const useResourceStoryProps = (
         site="https://moodle.technion.ac.il"
         userId="1234"
         sendToMoodle={() => undefined}
+        canSendToMoodle={true}
       />
     ),
     key: 'send-to-moodle',
@@ -385,7 +400,7 @@ export const useResourceStoryProps = (
         ResourceContributorCardStories.ResourceContributorCardStoryProps,
 
       data: data,
-      resourceForm: resourceForm,
+      resourceForm: formData,
       state: state,
       actions: actions,
       access: access,

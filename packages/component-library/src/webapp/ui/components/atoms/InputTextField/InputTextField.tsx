@@ -11,7 +11,8 @@ export type InputTextFieldProps = {
   textAreaAutoSize?: boolean
   highlight?: boolean
   error?: ReactNode
-  action?: ReactNode
+  rightSlot?: ReactNode
+  leftSlot?: ReactNode
 } & (
   | ({
       isTextarea?: undefined | false
@@ -33,7 +34,8 @@ export const InputTextField = forwardRef<
     isTextarea,
     highlight,
     error,
-    action,
+    rightSlot,
+    leftSlot,
     ...fieldProps
   } = props
 
@@ -98,6 +100,7 @@ export const InputTextField = forwardRef<
       {label ? <label>{label}</label> : <></>}
       {isTextarea ? (
         <div className={`textarea-container ${noBorder ? 'no-border' : ''} ${edit && 'editing'}`}>
+          {leftSlot}
           <textarea
             ref={(fieldElementRef as React.RefObject<HTMLTextAreaElement>) ?? textAreaRef}
             cols={40}
@@ -108,10 +111,11 @@ export const InputTextField = forwardRef<
             `}
             disabled={disabled || !edit}
           />
-          {action}
+          {rightSlot}
         </div>
       ) : (
         <div className={`input-container ${noBorder ? 'no-border' : ''} ${edit && 'editing'}`}>
+          {leftSlot}
           <input
             ref={fieldElementRef as React.RefObject<HTMLInputElement>}
             {..._removeTextAreaProp(fieldProps)}
@@ -119,7 +123,7 @@ export const InputTextField = forwardRef<
             disabled={disabled || !edit}
             style={{ backgroundColor: 'inherit' }}
           />
-          {action}
+          {rightSlot}
         </div>
       )}
       {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}
