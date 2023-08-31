@@ -40,13 +40,13 @@ async function userRequestState2RpcApprovalRequestState(
   if (!userRequestState) {
     return {
       type: 'no-request',
-      isEligible: false,
+      canPrompt: false,
       minimumResourceAmount,
     }
   } else if (userRequestState.type == 'no-request') {
     return {
       type: 'no-request',
-      isEligible: userRequestState.isEligible,
+      canPrompt: userRequestState.isEligible,
       minimumResourceAmount,
     }
   } else if (userRequestState.type == 'in-charge') {

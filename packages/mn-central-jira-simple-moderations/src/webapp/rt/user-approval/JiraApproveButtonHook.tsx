@@ -17,13 +17,15 @@ export function useJiraApproveButtonProps({
     shell.rpc.me('webapp/user-approval/request-approval')().then(setRpcApprovalRequestState)
   }, [])
   useEffect(() => {
+    if (!profileGetRpc || profileGetRpc.isPublisher) {
+      return
+    }
     shell.rpc.me('webapp/user-approval/get-my-status')().then(setRpcApprovalRequestState)
-  }, [])
+  }, [profileGetRpc])
   return useMemo<JiraRequestApprovalButtonProps | null>(() => {
     if (!(rpcApprovalRequestState && profileGetRpc)) {
       return null
     }
-    const statusInCharge = rpcApprovalRequestState.type == 'in-charge'
     return {
       access: {
         isCreator,
@@ -33,7 +35,7 @@ export function useJiraApproveButtonProps({
         requestApproval,
       },
       state: {
-        isElegibleForApproval: statusInCharge,
+        isElegibleForApproval: rpcApprovalRequestState.canPrompt,
         isWaitingApproval: rpcApprovalRequestState.type === 'in-charge',
         showApprovalRequestedSuccessAlert: false,
         minimumResourceAmount: rpcApprovalRequestState.minimumResourceAmount,

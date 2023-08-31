@@ -168,7 +168,7 @@ export async function fetchJiraIssueMetaEntity({ jiraIssueId }: { jiraIssueId: s
   if (!issueResponse) {
     return null
   }
-  console.log('issueResponse', issueResponse)
+  // console.log('issueResponse', issueResponse)
   const jiraIssueMetaEntity = jiraResponse2JiraIssueEntityMeta(issueResponse)
   return jiraIssueMetaEntity
 }
