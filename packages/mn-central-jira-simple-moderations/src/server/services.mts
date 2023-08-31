@@ -1,13 +1,17 @@
 import { instanceDomain } from '@moodlenet/core'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import { getProfileHomePageRoutePath } from '@moodlenet/web-user/common'
-import { getCurrentProfileIds, getProfileRecord } from '@moodlenet/web-user/server'
+import {
+  getCurrentProfileIds,
+  getProfileOwnKnownEntities,
+  getProfileRecord,
+} from '@moodlenet/web-user/server'
 import assert from 'assert'
 import JiraApi from 'jira-client'
 import { env } from './init/env.mjs'
 import { kvStore } from './init/kvStore.mjs'
 import { approvalJiraIssueObject, jiraResponse2JiraIssueEntityMeta } from './lib.mjs'
-import type { UserApprovalRequest } from './types.mjs'
+import type { JiraIssueMetaEntity, ServiceConfigs, UserApprovalRequest } from './types.mjs'
 const jira = new JiraApi(env.jiraApiOptions)
 await jira.getCurrentUser().catch(err => {
   throw new Error(`jira authentication failed`, { cause: err })
@@ -23,26 +27,59 @@ export async function getUserRequestState_currentUser() {
   if (!profileIds) return null
   return getUserRequestState({ profileKey: profileIds._key })
 }
-export async function getUserRequestState({ profileKey }: { profileKey: string }) {
+export type UserRequestState =
+  | {
+      type: 'in-charge'
+      canPrompt: boolean
+      userApprovalRequest: UserApprovalRequest
+      jiraIssueMetaEntity: JiraIssueMetaEntity
+    }
+  | {
+      type: 'no-request'
+      isEligible: boolean
+    }
+
+export async function getUserRequestState({
+  profileKey,
+}: {
+  profileKey: string
+}): Promise<UserRequestState> {
   const userApprovalRequest = (await kvStore.get('user-approval-request', profileKey)).value
-  if (!userApprovalRequest) return null
+  const serviceConfigs = await getServiceConfigs()
+  if (!userApprovalRequest) {
+    const ownResources = await getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' })
+
+    return {
+      type: 'no-request',
+      isEligible: isEligible(ownResources.length, serviceConfigs),
+    }
+  }
   const jiraIssueMetaEntity = await fetchJiraIssueMetaEntity({
     jiraIssueId: userApprovalRequest.jiraIssueId,
   })
   if (!jiraIssueMetaEntity) {
     kvStore.unset('user-approval-request', profileKey)
-    return null
+    const ownResources = await getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' })
+
+    return {
+      type: 'no-request',
+      isEligible: isEligible(ownResources.length, serviceConfigs),
+    }
   }
-  const serviceConfigs = await getServiceConfigs()
   const canPrompt =
     new Date(userApprovalRequest.lastRequest).valueOf() +
       1000 * 60 * 60 * 24 * serviceConfigs.publishingApproval.daysIntervalBeforeRequests <
     Date.now()
   return {
+    type: 'in-charge',
     userApprovalRequest,
     canPrompt,
     jiraIssueMetaEntity,
-  }
+  } as const
+}
+
+function isEligible(ownResouorceAmount: number, serviceConfigs: ServiceConfigs): boolean {
+  return ownResouorceAmount >= serviceConfigs.publishingApproval.resourceAmount
 }
 
 export async function promptReopenOrCreateJiraIssue_currentUser() {
@@ -53,7 +90,7 @@ export async function promptReopenOrCreateJiraIssue_currentUser() {
 export async function promptReopenOrCreateJiraIssue({ profileKey }: { profileKey: string }) {
   const userRequestState = await getUserRequestState({ profileKey })
   const lastRequest = new Date().toISOString()
-  if (!userRequestState) {
+  if (userRequestState.type === 'no-request' && userRequestState.isEligible) {
     const jiraCreated = await createJiraIssue({ profileKey })
     const userApprovalRequest: UserApprovalRequest = {
       jiraIssueId: jiraCreated.id,
@@ -61,10 +98,8 @@ export async function promptReopenOrCreateJiraIssue({ profileKey }: { profileKey
       profileKey,
     }
     await kvStore.set('user-approval-request', profileKey, userApprovalRequest)
-
-    return userApprovalRequest
   }
-  if (userRequestState.canPrompt) {
+  if (userRequestState.type === 'in-charge' && userRequestState.canPrompt) {
     await reopenJiraIssue({
       jiraIssueId: userRequestState.jiraIssueMetaEntity.id,
     })
@@ -75,9 +110,8 @@ export async function promptReopenOrCreateJiraIssue({ profileKey }: { profileKey
       lastRequest,
     }
     await kvStore.set('user-approval-request', profileKey, userApprovalRequest)
-    return userApprovalRequest
   }
-  return false
+  return getUserRequestState({ profileKey })
 }
 
 export async function reopenJiraIssue({ jiraIssueId }: { jiraIssueId: string }) {
@@ -139,7 +173,7 @@ export async function fetchJiraIssueMetaEntity({ jiraIssueId }: { jiraIssueId: s
   return jiraIssueMetaEntity
 }
 
-async function getServiceConfigs() {
+export async function getServiceConfigs() {
   const config = (await kvStore.get('service-configs', '')).value
   assert(config)
   return config

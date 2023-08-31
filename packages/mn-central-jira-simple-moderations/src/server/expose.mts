@@ -1,11 +1,14 @@
-import type { UserApprovalExposeType } from '../common/expose-def.mjs'
+import type { MNMExposeType } from '../common/expose-def.mjs'
+import type { RpcApprovalRequestState } from '../common/types.mjs'
+import type { UserRequestState } from './services.mjs'
 import {
+  getServiceConfigs,
   getUserRequestState_currentUser,
   promptReopenOrCreateJiraIssue_currentUser,
 } from './services.mjs'
 import { shell } from './shell.mjs'
 
-export const expose = await shell.expose<UserApprovalExposeType>({
+export const expose = await shell.expose<MNMExposeType>({
   rpc: {
     'webapp/user-approval/get-my-status': {
       guard() {
@@ -13,11 +16,7 @@ export const expose = await shell.expose<UserApprovalExposeType>({
       },
       async fn() {
         const userRequestState = await getUserRequestState_currentUser()
-        if (!userRequestState) return { type: 'none' }
-        return {
-          type: 'in-charge',
-          canPrompt: userRequestState.canPrompt,
-        }
+        return userRequestState2RpcApprovalRequestState(userRequestState)
       },
     },
     'webapp/user-approval/request-approval': {
@@ -25,10 +24,37 @@ export const expose = await shell.expose<UserApprovalExposeType>({
         return true
       },
       async fn() {
-        const response = await promptReopenOrCreateJiraIssue_currentUser()
-        if (!response) return response
-        return true
+        const userRequestState = await promptReopenOrCreateJiraIssue_currentUser()
+        return userRequestState2RpcApprovalRequestState(userRequestState)
       },
     },
   },
 })
+
+async function userRequestState2RpcApprovalRequestState(
+  userRequestState: UserRequestState | null,
+): Promise<RpcApprovalRequestState> {
+  const serviceConfigs = await getServiceConfigs()
+  const minimumResourceAmount = serviceConfigs.publishingApproval.resourceAmount
+
+  if (!userRequestState) {
+    return {
+      type: 'no-request',
+      isEligible: false,
+      minimumResourceAmount,
+    }
+  } else if (userRequestState.type == 'no-request') {
+    return {
+      type: 'no-request',
+      isEligible: userRequestState.isEligible,
+      minimumResourceAmount,
+    }
+  } else if (userRequestState.type == 'in-charge') {
+    return {
+      type: 'in-charge',
+      canPrompt: userRequestState.canPrompt,
+      minimumResourceAmount,
+    }
+  }
+  throw new Error('unreachable')
+}

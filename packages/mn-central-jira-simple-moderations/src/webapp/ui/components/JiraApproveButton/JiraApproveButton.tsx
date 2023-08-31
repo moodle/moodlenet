@@ -1,5 +1,4 @@
 import { PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
-import type { ProfileAccess } from '@moodlenet/web-user/common'
 import type { FC } from 'react'
 import './JiraApproveButton.scss'
 
@@ -10,10 +9,14 @@ export type ProfileJiraRequestApprovalStateProps = {
   isElegibleForApproval: boolean
   isWaitingApproval: boolean
   showApprovalRequestedSuccessAlert: boolean
+  minimumResourceAmount: number
 }
 
 export type JiraRequestApprovalButtonProps = {
-  access: Pick<ProfileAccess, 'isCreator' | 'isPublisher'>
+  access: {
+    isCreator: boolean
+    isPublisher: boolean
+  }
   state: ProfileJiraRequestApprovalStateProps
   actions: ProfileJiraRequestApprovalActionsProps
 }
@@ -24,7 +27,12 @@ export const JiraRequestApprovalButton: FC<JiraRequestApprovalButtonProps> = ({
   actions,
 }) => {
   const { isCreator, isPublisher } = access
-  const { isWaitingApproval, isElegibleForApproval, showApprovalRequestedSuccessAlert } = state
+  const {
+    isWaitingApproval,
+    isElegibleForApproval,
+    showApprovalRequestedSuccessAlert,
+    minimumResourceAmount,
+  } = state
   const { requestApproval } = actions
 
   const snackbars = [
@@ -47,7 +55,9 @@ export const JiraRequestApprovalButton: FC<JiraRequestApprovalButtonProps> = ({
       disabled={!isElegibleForApproval}
       onClick={requestApproval}
       abbr={
-        isElegibleForApproval ? undefined : 'Upload 5 good-quality resources to request approval'
+        isElegibleForApproval
+          ? undefined
+          : `Upload ${minimumResourceAmount} good-quality resources to request approval`
       }
     >
       Request approval

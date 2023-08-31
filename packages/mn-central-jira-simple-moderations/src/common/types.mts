@@ -1,9 +1,11 @@
-export type RpcApprovalRequestResponse = boolean
-export type RpcApprovalRequestState =
+export type RpcApprovalRequestResponse = RpcApprovalRequestState
+export type RpcApprovalRequestState = { minimumResourceAmount: number } & (
   | {
       type: 'in-charge'
       canPrompt: boolean
     }
   | {
-      type: 'none'
+      type: 'no-request'
+      isEligible: boolean
     }
+)
