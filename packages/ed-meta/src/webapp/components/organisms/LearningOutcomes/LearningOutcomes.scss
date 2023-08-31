@@ -120,6 +120,50 @@
 
     > .learning-outcome-read-only {
       font-size: 14px;
+
+      > .verb > a > u {
+        font-weight: bold;
+        &.knowledge {
+          text-decoration-color: var(--category-knowledge-color);
+          &:hover {
+            color: var(--category-knowledge-color);
+          }
+        }
+        &.comprehension {
+          text-decoration-color: var(--category-comprehension-color);
+          &:hover {
+            color: var(--category-comprehension-color);
+          }
+        }
+        &.application {
+          text-decoration-color: var(--category-application-color);
+          &:hover {
+            color: var(--category-application-color);
+          }
+        }
+        &.analysis {
+          text-decoration-color: var(--category-analysis-color);
+          &:hover {
+            color: var(--category-analysis-color);
+          }
+        }
+        &.synthesis {
+          text-decoration-color: var(--category-synthesis-color);
+          &:hover {
+            color: var(--category-synthesis-color);
+          }
+        }
+        &.evaluation {
+          text-decoration-color: var(--category-evaluation-color);
+          &:hover {
+            color: var(--category-evaluation-color);
+          }
+        }
+
+        // &:hover {
+        //   text-decoration-color: transparent;
+        // }
+      }
     }
   }
 }

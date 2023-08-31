@@ -279,7 +279,20 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
           />
         ) : (
           <div className="learning-outcome-read-only">
-            • {verb} {sentence}
+            •{' '}
+            <abbr
+              className={`verb ${category.toLowerCase()}`}
+              title={`${category} Bloom's category`}
+            >
+              <a
+                href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <u className={`${category.toLowerCase()}`}>{verb}</u>
+              </a>
+            </abbr>{' '}
+            {sentence}
           </div>
         )}
       </div>
