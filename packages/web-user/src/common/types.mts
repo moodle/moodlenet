@@ -21,6 +21,8 @@ export type KnownFeaturedEntities = {
 
 export type ProfileGetRpc = {
   data: Profile
+  canApprove: boolean
+  isPublisher: boolean
   canEdit: boolean
   canFollow: boolean
   profileHref: Href
@@ -52,9 +54,11 @@ export type User = {
 
 export type WebUserData = {
   _key: string
+  profileKey: string
   name: string
   email: string
   isAdmin: boolean
+  isPublisher: boolean
 }
 
 export type AuthDataRpc = {

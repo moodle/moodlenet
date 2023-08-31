@@ -40,6 +40,7 @@ export const useProfileProps = ({
 }: {
   profileKey: string
 }): ProfileProps | null | undefined => {
+  const showAccountApprovedSuccessAlert = false
   const { validationSchemas } = useProfileContext()
   const plugins = ProfilePagePlugins.usePluginHooks()
 
@@ -84,7 +85,14 @@ export const useProfileProps = ({
     image: !!upBgImageTaskCurrent,
     avatar: !!upAvatarTaskCurrent,
   }))
-
+  const toggleIsPublisher = useCallback(async () => {
+    return shell.rpc
+      .me('webapp/admin/roles/toggleIsPublisher')({ profileKey })
+      .then(
+        done =>
+          done && setProfileGetRpc(curr => curr && { ...curr, isPublisher: !curr.isPublisher }),
+      )
+  }, [profileKey])
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
@@ -162,6 +170,8 @@ export const useProfileProps = ({
       //   }),
       // ),
       access: {
+        canApprove: profileGetRpc.canApprove,
+        isPublisher: profileGetRpc.isPublisher,
         canEdit: profileGetRpc.canEdit,
         isAdmin,
         isAuthenticated,
@@ -186,11 +196,15 @@ export const useProfileProps = ({
           : {}),
       },
       state: {
+        isPublisher: profileGetRpc.isPublisher,
+        showAccountApprovedSuccessAlert,
         profileUrl: profileGetRpc.profileUrl,
         followed: follow.isFeatured,
         numFollowers: profileGetRpc.numFollowers,
       },
       actions: {
+        approveUser: toggleIsPublisher,
+        unapproveUser: toggleIsPublisher,
         editProfile,
         toggleFollow: () => {
           follow.toggle()
@@ -273,7 +287,9 @@ export const useProfileProps = ({
     upBgImageTaskCurrentObjectUrl,
     upAvatarTaskCurrent,
     upAvatarTaskCurrentObjectUrl,
+    showAccountApprovedSuccessAlert,
     follow,
+    toggleIsPublisher,
     editProfile,
     plugins,
     validationSchemas,

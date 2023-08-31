@@ -77,15 +77,23 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           sendWebUserTokenCookie(undefined)
           return
         }
-        assert(
-          webUser.profileKey === verifiedCtx.payload.profile._key,
-          `webUser.profileKey:${webUser.profileKey} not equals verifiedCtx.payload.profile._key:${verifiedCtx.payload.profile._key}`,
-        )
+        if (webUser.profileKey !== verifiedCtx.payload.profile._key) {
+          shell.log(
+            'warn',
+            `webUser.profileKey:${webUser.profileKey} not equals verifiedCtx.payload.profile._key:${verifiedCtx.payload.profile._key}`,
+          )
+          sendWebUserTokenCookie(undefined)
+          return
+        }
         const profileRecord = await getProfileRecord(webUser.profileKey)
-        assert(
-          profileRecord,
-          `couldn't find Profile#${webUser.profileKey} associated with WebUser#${webUser._key}:${webUser.displayName}`,
-        )
+        if (!profileRecord) {
+          shell.log(
+            'warn',
+            `couldn't find Profile#${webUser.profileKey} associated with WebUser#${webUser._key}:${webUser.displayName}`,
+          )
+          sendWebUserTokenCookie(undefined)
+          return
+        }
 
         const myProfile = profileDoc2Profile(profileRecord.entity)
         const clientSessionDataRpc: ClientSessionDataRpc = {
@@ -140,7 +148,13 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         })
 
         const currentProfileIds = await getCurrentProfileIds()
+        const currToken = await verifyCurrentTokenCtx()
+        const canApprove =
+          !!currToken && (currToken.payload.isRoot || currToken.payload.webUser.isAdmin)
+
         const profileGetRpc: ProfileGetRpc = {
+          canApprove,
+          isPublisher: profileRecord.entity.publisher,
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
           numFollowers:
@@ -159,31 +173,52 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         return profileGetRpc
       },
     },
-    'webapp/roles/searchUsers': {
+    'webapp/admin/roles/searchUsers': {
       guard: () => void 0,
       async fn({ search }) {
-        const users = await searchUsers(search)
-        const webUsers = users.map<WebUserData>(user => {
-          return {
-            _key: user._key,
-            isAdmin: user.isAdmin,
-            name: user.displayName,
-            //@BRU actually email *could* not be defined for a web-user,
-            // using our email authentication it will always be indeed..
-            // but with some other auth system it may not
-            // indeed a web user would need to have at least 1 contact/message/notification method
-            // be it an email or something else ...
-            email: user.contacts.email ?? '',
-          }
-        })
+        const users_and_profiles = await searchUsers(search)
+        const webUsers = Promise.all(
+          users_and_profiles.map(user => {
+            return getProfileRecord(user.profileKey).then(profile => {
+              assert(
+                profile,
+                `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,
+              )
+
+              const webUserData: WebUserData = {
+                _key: user._key,
+                isAdmin: user.isAdmin,
+                name: user.displayName,
+                isPublisher: profile.entity.publisher,
+                profileKey: user.profileKey,
+                //@BRU actually email *could* not be defined for a web-user,
+                // using our email authentication it will always be indeed..
+                // but with some other auth system it may not
+                // indeed a web user would need to have at least 1 contact/message/notification method
+                // be it an email or something else ...
+                email: user.contacts.email ?? 'N/A',
+              }
+              return webUserData
+            })
+          }),
+        )
         return webUsers
       },
     },
-    'webapp/roles/toggleIsAdmin': {
+    'webapp/admin/roles/toggleIsAdmin': {
       guard: () => void 0,
       async fn(by) {
         const patchedUser = await toggleWebUserIsAdmin(by)
         return !!patchedUser
+      },
+    },
+    'webapp/admin/roles/toggleIsPublisher': {
+      guard: () => void 0,
+      async fn({ profileKey }) {
+        const profile = await getProfileRecord(profileKey)
+        const patchedProfile =
+          profile && (await editProfile(profileKey, { publisher: !profile.entity.publisher }))
+        return !!patchedProfile
       },
     },
     'webapp/upload-profile-avatar/:_key': {

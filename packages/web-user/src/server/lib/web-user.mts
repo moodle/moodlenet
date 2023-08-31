@@ -50,6 +50,7 @@ export async function getCurrentProfileIds() {
   if (!tokenCtx || tokenCtx.payload.isRoot) {
     return
   }
+
   return tokenCtx.payload.profile
 }
 
@@ -316,6 +317,7 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
   const [patchedUser] = await patchedCursor.all()
   return patchedUser
 }
+
 export async function searchUsers(search: string): Promise<WebUserRecord[]> {
   const cursor = await db.query(
     `

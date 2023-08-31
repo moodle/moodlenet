@@ -8,7 +8,7 @@ export const useAdminUsersProps = (): UsersProps => {
   const [usersCache, setUsersCache] = useState<WebUserData[]>([])
 
   const searchUser = useCallback((str: string) => {
-    shell.rpc.me('webapp/roles/searchUsers')({ search: str }).then(setUsersCache)
+    shell.rpc.me('webapp/admin/roles/searchUsers')({ search: str }).then(setUsersCache)
     setSearch(str)
   }, [])
 
@@ -17,22 +17,27 @@ export const useAdminUsersProps = (): UsersProps => {
   }, [searchUser])
 
   const userProps = useMemo<UsersProps>(() => {
-    const users: UsersProps['users'] = usersCache.map(({ _key, name: title, email, isAdmin }) => {
-      const toggleIsAdmin = async () => {
-        return shell.rpc.me('webapp/roles/toggleIsAdmin')({ userKey: _key }).then(() =>
-          searchUser(search),
-        )
-      }
-      const user: User = { title, email, isAdmin }
-      return {
-        user,
-        toggleIsAdmin,
-      }
-    })
-    return {
-      users,
-      search: searchUser,
-    }
+    const users: UsersProps['users'] = usersCache.map(
+      ({ isPublisher, _key, name: title, email, isAdmin, profileKey }) => {
+        const toggleIsAdmin = async () => {
+          return shell.rpc
+            .me('webapp/admin/roles/toggleIsAdmin')({ userKey: _key })
+            .then(() => searchUser(search))
+        }
+        const toggleIsPublisher = async () => {
+          return shell.rpc
+            .me('webapp/admin/roles/toggleIsPublisher')({ profileKey })
+            .then(() => searchUser(search))
+        }
+        const user: User = { title, email, isAdmin, isPublisher }
+        return {
+          user,
+          toggleIsAdmin,
+          toggleIsPublisher,
+        }
+      },
+    )
+    return { tableItems: [], users, search: searchUser }
   }, [search, searchUser, usersCache])
 
   return userProps
