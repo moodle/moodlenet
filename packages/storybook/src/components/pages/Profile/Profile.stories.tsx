@@ -1,4 +1,5 @@
 import { OverallCardStories } from '@moodlenet/react-app/stories'
+// import { Profile } from '@moodlenet/web-user/ui'
 import { Profile } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
@@ -42,7 +43,10 @@ export const LoggedOut = () => {
 
 export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true, canApprove: false },
+    access: {
+      isAuthenticated: true,
+      canApprove: false,
+    },
     // resourceCardPropsList: getResourceCardsStoryProps(5, {access: {canLike: true}}),
     // collectionCardPropsList: getCollectionCardsStoryProps(5, {access: {canFollow: true}}),
     mainColumnItems: [],
@@ -54,9 +58,15 @@ export const LoggedIn: ProfileStory = () => {
 
 export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
-    access: { isAuthenticated: true, canEdit: true, isCreator: true, canApprove: false },
+    access: {
+      isAuthenticated: true,
+      canEdit: true,
+      isCreator: true,
+      canApprove: false,
+      isPublisher: false,
+    },
     state: {
-      // isApproved: false,
+      // isPublisher: false,
       // isWaitingApproval: false,
       // isElegibleForApproval: false,
       showAccountApprovedSuccessAlert: true,
@@ -76,6 +86,10 @@ export const Owner: ProfileStory = () => {
     }),
     mainColumnItems: [],
     sideColumnItems: [],
+    jiraApprovalButton: {
+      isElegibleForApproval: true,
+      isWaitingApproval: false,
+    },
   })
 
   const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
@@ -93,7 +107,7 @@ export const Owner: ProfileStory = () => {
 export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
     access: { isAdmin: true, canEdit: true, isCreator: false, canApprove: true },
-    state: { isApproved: false },
+    state: { isPublisher: false },
     resourceCardPropsList: getResourceCardsStoryProps(5, {
       access: {
         canDelete: true,

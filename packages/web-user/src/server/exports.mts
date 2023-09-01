@@ -5,6 +5,7 @@ export { Profile } from './init/sys-entities.mjs'
 export {
   editProfile,
   entityFeatureAction,
+  getProfileOwnKnownEntities,
   getProfileRecord,
   setProfileAvatar,
   setProfileBackgroundImage,

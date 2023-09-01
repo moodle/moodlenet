@@ -1,38 +1,42 @@
+import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Searchbox } from '@moodlenet/component-library'
+import {
+  HowToReg,
+  HowToRegOutlined,
+  ManageAccounts,
+  ManageAccountsOutlined,
+} from '@mui/icons-material'
 import type { FC } from 'react'
 import type { User } from '../../../../../common/types.mjs'
-import { ReactComponent as AdminIconOff } from '../../../assets/icons/admin-settings-outlined.svg'
-import { ReactComponent as AdminIconOn } from '../../../assets/icons/admin-settings.svg'
 import './Users.scss'
 
 /**
  search, filter non devono stare 
  */
 
+export type TableItem = {
+  head: AddonItem
+  body: { email: string; element: AddonItem }
+}
+
 export type UsersProps = {
   users: {
     user: User
     toggleIsAdmin(): unknown
+    toggleIsPublisher(): unknown
   }[]
   search(str: string): unknown
+  tableItems: (TableItem | null)[]
 }
 
 export const UsersMenu = () => <abbr title="Users">Users</abbr>
 
 const Row: FC<{
   user: User
-  // editUser: (User: User) =>  void | Promise<any>
+  bodyItems: (AddonItem | null)[]
   toggleIsAdmin: () => unknown | Promise<unknown>
-}> = ({ /* editUser */ toggleIsAdmin, user }) => {
-  // const form = useFormik<User>({
-  //   initialValues: user,
-  //   // validate:yup,
-  //   onSubmit: (/* values */) => {
-  //     ///
-  //     // return editUser(values)
-  //   },
-  // })
-
+  toggleIsPublisher: () => unknown | Promise<unknown>
+}> = ({ toggleIsAdmin, toggleIsPublisher, bodyItems, user }) => {
   return (
     <tr>
       <td>{user.title}</td>
@@ -43,14 +47,40 @@ const Row: FC<{
           className={`admin ${user.isAdmin ? 'on' : 'off'}`}
           title="Admin"
         >
-          {user.isAdmin ? <AdminIconOn /> : <AdminIconOff />}
+          {user.isAdmin ? <ManageAccounts /> : <ManageAccountsOutlined />}
+        </abbr>
+        <abbr
+          onClick={toggleIsPublisher}
+          className={`publisher ${user.isPublisher ? 'on' : 'off'}`}
+          title="Publisher"
+        >
+          {user.isPublisher ? <HowToReg /> : <HowToRegOutlined />}
         </abbr>
       </td>
+      {bodyItems.map((item, i) => {
+        return (
+          <td key={(item && item.key) ?? i} id={item ? item.key.toString() : ''}>
+            {item && item.Item ? <item.Item key={item.key} /> : null}
+          </td>
+        )
+      })}
     </tr>
   )
 }
 
-export const Users: FC<UsersProps> = ({ users, search }) => {
+export const Users: FC<UsersProps> = ({ users, search, tableItems }) => {
+  const usersTableItems: (AddonItem | null)[][] = users.map(() => [])
+  users.map(({ user }, i) /* user */ => {
+    const newUserTableItem = usersTableItems && usersTableItems[i]
+    tableItems.map(tableItem => {
+      const email = tableItem ? tableItem.body.email : null
+      tableItem &&
+        tableItem.body &&
+        newUserTableItem &&
+        newUserTableItem.push(email === user.email ? tableItem.body.element : null)
+    })
+  })
+
   return (
     <div className="users" key="Users">
       <Card className="column">
@@ -76,11 +106,28 @@ export const Users: FC<UsersProps> = ({ users, search }) => {
               <td>Display name</td>
               <td>Email</td>
               <td className="user-types">User types</td>
+              {tableItems &&
+                tableItems.map((item, i) => {
+                  return item && item.head ? (
+                    <td key={i} id={item ? item.head.key.toString() : ''}>
+                      <item.head.Item key={item.head.key} />
+                    </td>
+                  ) : null
+                })}
             </tr>
           </thead>
           <tbody>
-            {users.map(({ user, toggleIsAdmin }, i) /* user */ => {
-              return <Row user={user} toggleIsAdmin={toggleIsAdmin} key={i} />
+            {}
+            {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
+              return (
+                <Row
+                  user={user}
+                  toggleIsAdmin={toggleIsAdmin}
+                  bodyItems={usersTableItems[i] ?? []}
+                  toggleIsPublisher={toggleIsPublisher}
+                  key={i}
+                />
+              )
             })}
           </tbody>
         </table>

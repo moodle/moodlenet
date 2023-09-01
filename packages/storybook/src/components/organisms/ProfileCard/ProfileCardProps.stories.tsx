@@ -30,7 +30,7 @@ export const getProfileCardFactory = (
         profileUrl: 'https://moodle.net/profile',
         followed: false,
         numFollowers: 13,
-        isApproved: true,
+        isPublisher: true,
       },
       actions: {
         editProfile: action('edit profile'),

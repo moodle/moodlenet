@@ -27,10 +27,6 @@ export type WebUserExposeType = PkgExposeDef<{
       params: { _key: string },
     ): Promise<void>
     'webapp/profile/:_key/get'(body: void, params: { _key: string }): Promise<ProfileGetRpc | null>
-    'webapp/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
-    'webapp/roles/toggleIsAdmin'(
-      body: { profileKey: string } | { userKey: string },
-    ): Promise<boolean>
     'webapp/upload-profile-background/:_key'(
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },
@@ -105,5 +101,10 @@ export type WebUserExposeType = PkgExposeDef<{
       appearanceData: AppearanceData
     }): Promise<{ valid: boolean }>
     'webapp/admin/packages/update-all-pkgs'(): Promise<{ updatePkgs: Record<string, string> }>
+    'webapp/admin/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
+    'webapp/admin/roles/toggleIsAdmin'(
+      body: { profileKey: string } | { userKey: string },
+    ): Promise<boolean>
+    'webapp/admin/roles/toggleIsPublisher'(body: { profileKey: string }): Promise<boolean>
   }
 }>

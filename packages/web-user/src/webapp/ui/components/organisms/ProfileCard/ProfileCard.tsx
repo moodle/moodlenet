@@ -46,7 +46,7 @@ export const ProfileCard = withProxy<ProfileCardProps>(
     const { toggleFollow } = actions
     const {
       followed,
-      // isApproved
+      // isPublisher
     } = state
 
     const header = (
@@ -88,7 +88,7 @@ export const ProfileCard = withProxy<ProfileCardProps>(
     return (
       <Card
         className={`profile-card 
-      ${/* isApproved ? 'approved' : '' */ ''}
+      ${/* isPublisher ? 'approved' : '' */ ''}
       `}
         hover={true}
         key={userId}

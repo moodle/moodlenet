@@ -498,7 +498,7 @@ export async function getProfileOwnKnownEntities({
       : knownEntity === 'collection'
       ? Collection.entityClass
       : null
-  assert(entityClass)
+  assert(entityClass, `getProfileOwnKnownEntities: unknown knownEntity ${knownEntity}`)
   const list = await (
     await shell.call(queryEntities)(entityClass, {
       preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
