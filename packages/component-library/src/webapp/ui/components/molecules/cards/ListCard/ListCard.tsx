@@ -1,5 +1,5 @@
 import type { FC, ReactElement, ReactNode } from 'react'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './ListCard.scss'
 
 export type ListActionsType = { element: ReactElement; position: 'start' | 'end' }
@@ -56,8 +56,10 @@ export const ListCard: FC<ListCardProps> = ({
     childHeight &&
     maxRows &&
     childHeight * maxRows + (maxRows - 1) * gap + paddingTop + paddingBottom
-  newMaxHeight && setMaxHeight(newMaxHeight)
-
+  const newMaxHeightToSet = newMaxHeight && (newMaxHeight === maxHeight ? undefined : newMaxHeight)
+  useEffect(() => {
+    newMaxHeightToSet && setMaxHeight(newMaxHeightToSet)
+  }, [newMaxHeightToSet])
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
       {header && <div className="list-card-header">{header}</div>}
