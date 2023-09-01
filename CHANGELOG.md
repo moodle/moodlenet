@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.1.1]
+
+### Fixed
+
+- web-user: delete cookie on any authentication incosistence
+
+### Security
+
+- secured access to admin RPCs
+
 ## [3.1.0]
 
 ### Added
