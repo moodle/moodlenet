@@ -21,6 +21,8 @@ export type KnownFeaturedEntities = {
 
 export type ProfileGetRpc = {
   data: Profile
+  canApprove: boolean
+  isPublisher: boolean
   canEdit: boolean
   canFollow: boolean
   profileHref: Href
@@ -47,13 +49,16 @@ export type User = {
   title: string
   email: string
   isAdmin: boolean
+  isPublisher: boolean
 }
 
 export type WebUserData = {
   _key: string
+  profileKey: string
   name: string
   email: string
   isAdmin: boolean
+  isPublisher: boolean
 }
 
 export type AuthDataRpc = {
@@ -92,10 +97,10 @@ export type ProfileState = {
   profileUrl: string
   followed: boolean
   numFollowers: number
-  // isApproved: boolean
+  isPublisher: boolean
+  showAccountApprovedSuccessAlert: boolean
   // isElegibleForApproval: boolean
   // isWaitingApproval: boolean
-  // showAccountApprovedSuccessAlert: boolean
   // showApprovalRequestedSuccessAlert: boolean
 }
 
@@ -106,17 +111,18 @@ export type ProfileActions = {
   setAvatar(file: File | undefined | null): void
   setBackground: (file: File | undefined | null) => void
   // requestApproval: () => void
-  // approveUser: () => void
-  // unapproveUser: () => void
+  approveUser: () => void
+  unapproveUser: () => void
 }
 
 export type ProfileAccess = {
   isCreator: boolean
+  isPublisher: boolean
   isAuthenticated: boolean
   isAdmin: boolean
   canEdit: boolean
   canFollow: boolean
-  // canApprove: boolean
+  canApprove: boolean
 }
 
 export type LMSSettingsRpc = {

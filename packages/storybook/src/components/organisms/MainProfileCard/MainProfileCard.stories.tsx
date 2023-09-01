@@ -40,7 +40,7 @@ export const Owner = () => {
       isCreator: true,
       canEdit: true,
       // showAccountApprovedSuccessAlert: true,
-      // isApproved: true,
+      // isPublisher: true,
     },
   })
   return <MainProfileCard {...props} />
@@ -54,7 +54,7 @@ export const Editing = () => {
     },
     isEditing: true,
     // showAccountApprovedSuccessAlert: true,
-    // isApproved: true,
+    // isPublisher: true,
   })
   return <MainProfileCard {...props} />
 }
@@ -64,7 +64,7 @@ export const Editing = () => {
 //       isCreator: true,
 //       isElegibleForApproval: true,
 //       showAccountApprovedSuccessAlert: true,
-//       isApproved: true,
+//       isPublisher: true,
 //     },
 //   })
 //   return <MainProfileCard {...props} />

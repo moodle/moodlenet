@@ -3,9 +3,9 @@ import { ExtensionsStories } from '@moodlenet/extensions-manager/stories'
 import { AppearanceStories, GeneralStories } from '@moodlenet/react-app/stories'
 import type { AdminSettingsProps } from '@moodlenet/react-app/ui'
 import { AdminSettings } from '@moodlenet/react-app/ui'
-import { UsersStories } from '@moodlenet/web-user/stories'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+import { useUserAdminSettingsElements } from './Users.stories.jsx'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof AdminSettings> = {
@@ -41,8 +41,8 @@ export const AdminSettingsDefaultStoryProps = (): AdminSettingsProps => {
       //   Content: ManageExtensionsStories.useElements().Content,
       // },
       {
-        Menu: UsersStories.useElements().Menu,
-        Content: UsersStories.useElements().Content,
+        Menu: useUserAdminSettingsElements().Menu,
+        Content: useUserAdminSettingsElements().Content,
         key: 'users',
       },
       // {

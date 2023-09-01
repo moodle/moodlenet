@@ -18,6 +18,7 @@ export type DropdownProps = SelectorProps & {
   error?: ReactNode
   highlight?: boolean
   multilines?: boolean
+  noBorder?: boolean
   position?: { top?: number; bottom?: number }
 }
 export const Dropdown: FC<DropdownProps> = props => {
@@ -30,6 +31,7 @@ export const Dropdown: FC<DropdownProps> = props => {
     edit: _edit,
     error: _error,
     highlight: _highlight,
+    noBorder: _noBorder,
     multilines: _multilines,
     position: _position,
     ...selectorProps
@@ -45,6 +47,7 @@ const DropdownComp: FC<DropdownProps> = props => {
   const {
     pills,
     highlight,
+    noBorder,
     error,
     multilines,
     edit,
@@ -141,7 +144,7 @@ const DropdownComp: FC<DropdownProps> = props => {
         onFocus={showContent ? undefined : toggleOpen}
         className={`input-container${disabled || !edit ? ' not-editing' : ''}${
           highlight ? ' highlight' : ''
-        }`}
+        }${noBorder ? ' no-border' : ''}`}
         tabIndex={!disabled && !showContent ? 0 : undefined}
       >
         {showContent ? (
@@ -156,7 +159,7 @@ const DropdownComp: FC<DropdownProps> = props => {
               disabled={disabled || !edit}
               defaultValue={searchText}
             />
-            <ExpandMoreIcon onClickCapture={toggleOpen} />
+            <ExpandLessIcon onClickCapture={toggleOpen} />
           </>
         ) : (
           <>
@@ -168,7 +171,7 @@ const DropdownComp: FC<DropdownProps> = props => {
             >
               {pills ? pills : !disabled && <div className="placeholder">{placeholder}</div>}
             </div>
-            {!disabled && edit && <ExpandLessIcon />}
+            {!disabled && edit && <ExpandMoreIcon />}
           </>
         )}
       </div>

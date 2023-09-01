@@ -1,13 +1,9 @@
 .admin-settings {
   width: 100%;
   display: flex;
-  // gap: 40px;
-  // grid-template-columns: 240px repeat(1, auto) 170px;
-  // grid-column-gap: 40px;
-  // justify-items: center;
 
-  @media screen and (min-width: 800px) and (max-width: 1400px) {
-    // grid-template-columns: 240px repeat(1, auto);
+  @media screen and (max-width: 1000px) {
+    margin-top: -40px;
   }
 
   > * {

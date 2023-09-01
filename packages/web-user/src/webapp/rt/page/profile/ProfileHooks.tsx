@@ -17,7 +17,7 @@ import { useProfileContext } from '../../context/ProfileContext.js'
 import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
 import { shell } from '../../shell.mjs'
 
-export const ProfilePagePlugins = createPlugin<{
+export type ProfilePagePluginMap = {
   main_mainColumnItems?: AddOnMap<AddonItemNoKey>
   main_topItems?: AddOnMap<AddonItemNoKey>
   main_footerItems?: AddOnMap<AddonItemNoKey>
@@ -26,7 +26,15 @@ export const ProfilePagePlugins = createPlugin<{
   mainColumnItems?: AddOnMap<AddonItemNoKey>
   sideColumnItems?: AddOnMap<AddonItemNoKey>
   overallCardItems?: AddOnMap<Omit<OverallCardItem, 'key'>>
-}>()
+}
+
+export type ProfilePagePluginCtx = {
+  profileKey: string
+  profileGetRpc: ProfileGetRpc | null | undefined
+  isCreator: boolean
+}
+
+export const ProfilePagePlugins = createPlugin<ProfilePagePluginMap, ProfilePagePluginCtx>()
 
 const [useUpBgImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
 const [useUpAvatarTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
@@ -40,8 +48,8 @@ export const useProfileProps = ({
 }: {
   profileKey: string
 }): ProfileProps | null | undefined => {
+  const showAccountApprovedSuccessAlert = false
   const { validationSchemas } = useProfileContext()
-  const plugins = ProfilePagePlugins.usePluginHooks()
 
   const resourceCtx = useContext(ResourceContext)
   const collectionCtx = useContext(CollectionContext)
@@ -84,7 +92,14 @@ export const useProfileProps = ({
     image: !!upBgImageTaskCurrent,
     avatar: !!upAvatarTaskCurrent,
   }))
-
+  const toggleIsPublisher = useCallback(async () => {
+    return shell.rpc
+      .me('webapp/admin/roles/toggleIsPublisher')({ profileKey })
+      .then(
+        done =>
+          done && setProfileGetRpc(curr => curr && { ...curr, isPublisher: !curr.isPublisher }),
+      )
+  }, [profileKey])
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values
@@ -126,12 +141,15 @@ export const useProfileProps = ({
 
   const [upBgImageTaskCurrentObjectUrl] = useImageUrl(upBgImageTaskCurrent?.ctx.file)
   const [upAvatarTaskCurrentObjectUrl] = useImageUrl(upAvatarTaskCurrent?.ctx.file)
+
+  const isAdmin = !!clientSessionData?.isAdmin
+  const isCreator = clientSessionData?.myProfile?._key === profileKey
+  const plugins = ProfilePagePlugins.usePluginHooks({ profileKey, profileGetRpc, isCreator })
+
   const profileProps = useMemo<ProfileProps | null | undefined>(() => {
     if (!profileGetRpc) {
       return profileGetRpc
     }
-    const isAdmin = !!clientSessionData?.isAdmin
-    const isCreator = clientSessionData?.myProfile?._key === profileKey
     const resourceCardPropsList: ProfileProps['resourceCardPropsList'] =
       profileGetRpc.ownKnownEntities.resources.map(({ _key }) => {
         return {
@@ -162,6 +180,8 @@ export const useProfileProps = ({
       //   }),
       // ),
       access: {
+        canApprove: profileGetRpc.canApprove,
+        isPublisher: profileGetRpc.isPublisher,
         canEdit: profileGetRpc.canEdit,
         isAdmin,
         isAuthenticated,
@@ -186,11 +206,15 @@ export const useProfileProps = ({
           : {}),
       },
       state: {
+        isPublisher: profileGetRpc.isPublisher,
+        showAccountApprovedSuccessAlert,
         profileUrl: profileGetRpc.profileUrl,
         followed: follow.isFeatured,
         numFollowers: profileGetRpc.numFollowers,
       },
       actions: {
+        approveUser: toggleIsPublisher,
+        unapproveUser: toggleIsPublisher,
         editProfile,
         toggleFollow: () => {
           follow.toggle()
@@ -264,16 +288,18 @@ export const useProfileProps = ({
     return props
   }, [
     profileGetRpc,
-    clientSessionData?.isAdmin,
-    clientSessionData?.myProfile?._key,
-    profileKey,
     mainLayoutProps,
+    isAdmin,
     isAuthenticated,
+    isCreator,
+    profileKey,
     upBgImageTaskCurrent,
     upBgImageTaskCurrentObjectUrl,
     upAvatarTaskCurrent,
     upAvatarTaskCurrentObjectUrl,
+    showAccountApprovedSuccessAlert,
     follow,
+    toggleIsPublisher,
     editProfile,
     plugins,
     validationSchemas,
