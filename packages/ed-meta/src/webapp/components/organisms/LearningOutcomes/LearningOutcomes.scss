@@ -127,62 +127,66 @@
       > svg {
         width: 7px;
         height: 7px;
-        // margin-right: 6px;
       }
 
       > .verb > a > u {
-        // font-weight: bold;
         border-radius: 5px;
         padding: 1px 5px;
-        // color: white;
         text-decoration-color: transparent;
         &.knowledge {
           background-color: rgb(var(--category-knowledge-color), 0.15);
-          // text-decoration-color: var(--category-knowledge-color);
           &:hover {
-            color: var(--category-knowledge-color);
+            background-color: rgb(var(--category-knowledge-color), 0.25);
+          }
+          &:active {
+            background-color: rgb(var(--category-knowledge-color), 0.4);
           }
         }
         &.comprehension {
           background-color: rgb(var(--category-comprehension-color), 0.15);
-
-          // text-decoration-color: var(--category-comprehension-color);
           &:hover {
-            color: var(--category-comprehension-color);
+            background-color: rgb(var(--category-comprehension-color), 0.25);
+          }
+          &:active {
+            background-color: rgb(var(--category-comprehension-color), 0.4);
           }
         }
         &.application {
           background-color: rgb(var(--category-application-color), 0.15);
-          // text-decoration-color: var(--category-application-color);
           &:hover {
-            color: var(--category-application-color);
+            background-color: rgb(var(--category-application-color), 0.25);
+          }
+          &:active {
+            background-color: rgb(var(--category-application-color), 0.4);
           }
         }
         &.analysis {
           background-color: rgb(var(--category-analysis-color), 0.15);
-          // text-decoration-color: var(--category-analysis-color);
           &:hover {
-            color: var(--category-analysis-color);
+            background-color: rgb(var(--category-analysis-color), 0.25);
+          }
+          &:active {
+            background-color: rgb(var(--category-analysis-color), 0.4);
           }
         }
         &.synthesis {
           background-color: rgb(var(--category-synthesis-color), 0.15);
-          // text-decoration-color: var(--category-synthesis-color);
           &:hover {
-            color: var(--category-synthesis-color);
+            background-color: rgb(var(--category-synthesis-color), 0.25);
+          }
+          &:active {
+            background-color: rgb(var(--category-synthesis-color), 0.4);
           }
         }
         &.evaluation {
           background-color: rgb(var(--category-evaluation-color), 0.15);
-          // text-decoration-color: var(--category-evaluation-color);
           &:hover {
-            color: var(--category-evaluation-color);
+            background-color: rgb(var(--category-evaluation-color), 0.25);
+          }
+          &:active {
+            background-color: rgb(var(--category-evaluation-color), 0.4);
           }
         }
-
-        // &:hover {
-        //   text-decoration-color: transparent;
-        // }
       }
     }
   }
