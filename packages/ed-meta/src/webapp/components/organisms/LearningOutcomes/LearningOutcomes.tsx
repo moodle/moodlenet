@@ -4,7 +4,7 @@ import {
   RoundButton,
   SimpleTextOption,
 } from '@moodlenet/component-library'
-import { HelpOutline } from '@mui/icons-material'
+import { Circle, HelpOutline } from '@mui/icons-material'
 import { useState, type FC } from 'react'
 import './LearningOutcomes.scss'
 
@@ -279,7 +279,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
           />
         ) : (
           <div className="learning-outcome-read-only">
-            •{' '}
+            <Circle />
             <abbr
               className={`verb ${category.toLowerCase()}`}
               title={`${category} Bloom's category`}

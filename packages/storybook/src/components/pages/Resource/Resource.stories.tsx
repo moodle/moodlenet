@@ -95,7 +95,7 @@ export const Creator: ResourceStory = () => {
       downloadFilename: '557_Sujeto_y_Predicado.pdf',
     },
     resourceForm: {
-      level: undefined,
+      // level: undefined,
     },
     state: {},
     actions: {},
