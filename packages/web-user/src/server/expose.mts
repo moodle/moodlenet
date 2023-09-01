@@ -173,55 +173,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         return profileGetRpc
       },
     },
-    'webapp/admin/roles/searchUsers': {
-      guard: () => void 0,
-      async fn({ search }) {
-        const users_and_profiles = await searchUsers(search)
-        const webUsers = Promise.all(
-          users_and_profiles.map(user => {
-            return getProfileRecord(user.profileKey).then(profile => {
-              console.log({ user, profile })
-              assert(
-                profile,
-                `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,
-              )
 
-              const webUserData: WebUserData = {
-                _key: user._key,
-                isAdmin: user.isAdmin,
-                name: user.displayName,
-                isPublisher: profile.entity.publisher,
-                profileKey: user.profileKey,
-                //@BRU actually email *could* not be defined for a web-user,
-                // using our email authentication it will always be indeed..
-                // but with some other auth system it may not
-                // indeed a web user would need to have at least 1 contact/message/notification method
-                // be it an email or something else ...
-                email: user.contacts.email ?? 'N/A',
-              }
-              return webUserData
-            })
-          }),
-        )
-        return webUsers
-      },
-    },
-    'webapp/admin/roles/toggleIsAdmin': {
-      guard: () => void 0,
-      async fn(by) {
-        const patchedUser = await toggleWebUserIsAdmin(by)
-        return !!patchedUser
-      },
-    },
-    'webapp/admin/roles/toggleIsPublisher': {
-      guard: () => void 0,
-      async fn({ profileKey }) {
-        const profile = await getProfileRecord(profileKey)
-        const patchedProfile =
-          profile && (await editProfile(profileKey, { publisher: !profile.entity.publisher }))
-        return !!patchedProfile
-      },
-    },
     'webapp/upload-profile-avatar/:_key': {
       guard: async body => {
         const { avatarImageValidation } = await getValidations()
@@ -407,6 +359,55 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           throw RpcStatus('Unauthorized')
         }
         throw RpcNext()
+      },
+    },
+    'webapp/admin/roles/searchUsers': {
+      guard: () => void 0,
+      async fn({ search }) {
+        const users_and_profiles = await searchUsers(search)
+        const webUsers = Promise.all(
+          users_and_profiles.map(user => {
+            return getProfileRecord(user.profileKey).then(profile => {
+              console.log({ user, profile })
+              assert(
+                profile,
+                `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,
+              )
+
+              const webUserData: WebUserData = {
+                _key: user._key,
+                isAdmin: user.isAdmin,
+                name: user.displayName,
+                isPublisher: profile.entity.publisher,
+                profileKey: user.profileKey,
+                //@BRU actually email *could* not be defined for a web-user,
+                // using our email authentication it will always be indeed..
+                // but with some other auth system it may not
+                // indeed a web user would need to have at least 1 contact/message/notification method
+                // be it an email or something else ...
+                email: user.contacts.email ?? 'N/A',
+              }
+              return webUserData
+            })
+          }),
+        )
+        return webUsers
+      },
+    },
+    'webapp/admin/roles/toggleIsAdmin': {
+      guard: () => void 0,
+      async fn(by) {
+        const patchedUser = await toggleWebUserIsAdmin(by)
+        return !!patchedUser
+      },
+    },
+    'webapp/admin/roles/toggleIsPublisher': {
+      guard: () => void 0,
+      async fn({ profileKey }) {
+        const profile = await getProfileRecord(profileKey)
+        const patchedProfile =
+          profile && (await editProfile(profileKey, { publisher: !profile.entity.publisher }))
+        return !!patchedProfile
       },
     },
     'webapp/admin/general/set-org-data': {
