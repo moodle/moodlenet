@@ -10,7 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- web-user: delete cookie on any authentication incosistence
+- web-user: delete cookie on any authentication incosistency
+- webapp: fix too may renders issue on landing page lists
+- webapp: fix plugin component key generation
 
 ### Security
 
