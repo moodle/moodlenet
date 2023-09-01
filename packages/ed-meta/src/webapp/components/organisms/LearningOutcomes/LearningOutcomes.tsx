@@ -5,7 +5,8 @@ import {
   SimpleTextOption,
 } from '@moodlenet/component-library'
 import { Circle, HelpOutline } from '@mui/icons-material'
-import { useState, type FC } from 'react'
+import type { RefObject } from 'react'
+import { createRef, useEffect, useState, type FC } from 'react'
 import './LearningOutcomes.scss'
 
 export type LearningOutcomeCategoryName =
@@ -227,18 +228,6 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
     edit(learningOutcomes.filter((_, i) => i !== index))
   }
 
-  const findOutMore = (
-    <abbr className="find-out-more" title="Find out more">
-      <a
-        href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <HelpOutline />
-      </a>
-    </abbr>
-  )
-
   const learningOutcome = learningOutcomes.map(({ category, verb, sentence }, i) => {
     return (
       <div className="learning-outcomes-list" key="learning-outcomes-list">
@@ -289,7 +278,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <u className={`${category.toLowerCase()}`}>{verb}</u>
+                {verb}
               </a>
             </abbr>{' '}
             {sentence}
@@ -301,13 +290,24 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const [searchText, setSearchText] = useState('')
 
-  const categories = learningOutcomeCategories.map(category => {
+  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = learningOutcomeCategories.map(
+    () => createRef(),
+  )
+
+  const categories = learningOutcomeCategories.map((category, i) => {
     const selectedVerb = learningOutcomes.find(outcome => outcome.category === category.name)
+    const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
     return (
       <Dropdown
         key={category.name}
-        className={`category ${category.name.toLowerCase()} ${selectedVerb ? 'active' : ''}`}
+        divRef={dropdownRef}
+        className={`category ${category.name.toLowerCase()} ${selectedVerb ? 'active' : ''}
+        ${learningOutcomes.length > 4 ? 'max-reached' : ''}`}
         pills={false}
+        disabled={learningOutcomes.length > 4}
+        abbr={
+          learningOutcomes.length > 4 ? 'Max learning outcomes reached' : 'Add learning outcome'
+        }
         placeholder={category.name}
         searchByText={setSearchText}
         onChange={value => {
@@ -330,6 +330,25 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
       </Dropdown>
     )
   })
+
+  useEffect(() => {
+    learningOutcomeCategoriesRefs.forEach(ref => {
+      const element = ref.current
+      if (element) element.style.width = `${ref.current?.clientWidth}px`
+    })
+  }, [learningOutcomeCategoriesRefs])
+
+  const findOutMore = (
+    <abbr className="find-out-more" title="Find out more">
+      <a
+        href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <HelpOutline />
+      </a>
+    </abbr>
+  )
 
   return (
     <div className="learning-outcomes-section">

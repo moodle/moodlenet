@@ -85,26 +85,26 @@ const learningOutcomes: LearningOutcome[] = [
     verb: 'Analyze',
     sentence: 'the data to determine the best course of action.',
   },
-  {
-    category: 'Comprehension',
-    verb: 'Classify',
-    sentence: 'the different types of data.',
-  },
+  // {
+  //   category: 'Comprehension',
+  //   verb: 'Classify',
+  //   sentence: 'the different types of data.',
+  // },
   {
     category: 'Application',
     verb: 'Apply',
     sentence: 'the data to resolve the issue.',
   },
-  {
-    category: 'Analysis',
-    verb: 'Break down',
-    sentence: 'the data into its component parts.',
-  },
-  {
-    category: 'Synthesis',
-    verb: 'Create',
-    sentence: 'a new data set that can be used to resolve the issue.',
-  },
+  // {
+  //   category: 'Analysis',
+  //   verb: 'Break down',
+  //   sentence: 'the data into its component parts.',
+  // },
+  // {
+  //   category: 'Synthesis',
+  //   verb: 'Create',
+  //   sentence: 'a new data set that can be used to resolve the issue.',
+  // },
   {
     category: 'Evaluation',
     verb: 'Judge',

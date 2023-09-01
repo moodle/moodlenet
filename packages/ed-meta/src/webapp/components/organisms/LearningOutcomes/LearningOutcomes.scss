@@ -37,6 +37,7 @@
     gap: 10px;
     > .dropdown {
       width: fit-content;
+      cursor: pointer;
       > .input-container {
         gap: 0;
         height: 36px;
@@ -51,33 +52,35 @@
           display: none;
         }
         > .search-field {
-          width: fit-content;
-          width: 30px;
           width: 100%;
         }
       }
 
       > .dropdown-content {
-        // width: 150px;
+        width: 200px;
+        margin-top: -9px;
       }
 
       &.active.knowledge > .input-container {
-        box-shadow: 0 0 6px rgb(var(--category-knowledge-color));
+        box-shadow: 0 0 0 2px rgb(var(--category-knowledge-color), 0.7);
       }
       &.active.comprehension > .input-container {
-        box-shadow: 0 0 6px rgb(var(--category-comprehension-color));
+        box-shadow: 0 0 0 2px rgb(var(--category-comprehension-color), 0.7);
       }
       &.active.application > .input-container {
-        box-shadow: 0 0 6px rgb(var(--category-application-color));
+        box-shadow: 0 0 0 2px rgb(var(--category-application-color), 0.7);
       }
       &.active.analysis > .input-container {
-        box-shadow: 0 0 6px rgb(var(--category-analysis-color));
+        box-shadow: 0 0 0 2px rgb(var(--category-analysis-color), 0.7);
       }
       &.active.synthesis > .input-container {
-        box-shadow: 0 0 6px rgb(var(--category-synthesis-color));
+        box-shadow: 0 0 0 2px rgb(var(--category-synthesis-color), 0.7);
       }
       &.active.evaluation > .input-container {
-        box-shadow: 0 0 6px rgb(var(--category-evaluation-color));
+        box-shadow: 0 0 0 2px rgb(var(--category-evaluation-color), 0.7);
+      }
+      &.max-reached {
+        cursor: auto;
       }
     }
   }
@@ -129,9 +132,9 @@
         height: 7px;
       }
 
-      > .verb > a > u {
+      > .verb {
         border-radius: 5px;
-        padding: 1px 5px;
+        padding: 1px 5px 3px;
         text-decoration-color: transparent;
         &.knowledge {
           background-color: rgb(var(--category-knowledge-color), 0.15);
