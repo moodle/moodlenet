@@ -206,10 +206,19 @@ export const useResourceStoryProps = (
 
   const isAuthenticated = overrides?.isAuthenticated ?? true
 
+  //const transforming overrides.resourceForm.learningOutcomes to an array of LearningOutcome
+
+  const updatedLearningOutcomes =
+    overrides && overrides.resourceForm && overrides.resourceForm.learningOutcomes
+      ? overrides.resourceForm.learningOutcomes
+          .filter(outcome => outcome !== undefined)
+          .map(outcome => outcome as LearningOutcome)
+      : learningOutcomes
+
   const resourceForm: ResourceFormProps = {
     title: 'Best resource ever',
     description:
-      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will find.',
     subject: '0011',
     license: 'CC-0 (Public domain)',
     type: '0', //'Course',
@@ -218,7 +227,7 @@ export const useResourceStoryProps = (
     month: '5',
     year: '2022',
     ...overrides?.resourceForm,
-    learningOutcomes: learningOutcomes,
+    learningOutcomes: updatedLearningOutcomes,
   }
 
   const [formData, setFormData] = useState(resourceForm)

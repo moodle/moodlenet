@@ -61,6 +61,7 @@ export const NewResourceProps: Partial<ResourceFormProps> = {
   month: '',
   year: '',
   type: '',
+  learningOutcomes: [],
 }
 
 export const New: ResourceStory = () => {
@@ -69,7 +70,6 @@ export const New: ResourceStory = () => {
       image: null,
     },
     resourceForm: NewResourceProps,
-
     state: {
       isPublished: false,
       // uploadProgress: 74,

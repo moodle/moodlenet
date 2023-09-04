@@ -47,6 +47,9 @@
         > .dropdown-button {
           width: fit-content;
           padding: 0 12px;
+          > .placeholder {
+            color: black;
+          }
         }
         > svg {
           display: none;
@@ -62,22 +65,22 @@
       }
 
       &.active.knowledge > .input-container {
-        box-shadow: 0 0 0 2px rgb(var(--category-knowledge-color), 0.7);
+        box-shadow: 0 0 0 2px rgb(var(--category-knowledge-color));
       }
       &.active.comprehension > .input-container {
-        box-shadow: 0 0 0 2px rgb(var(--category-comprehension-color), 0.7);
+        box-shadow: 0 0 0 2px rgb(var(--category-comprehension-color));
       }
       &.active.application > .input-container {
-        box-shadow: 0 0 0 2px rgb(var(--category-application-color), 0.7);
+        box-shadow: 0 0 0 2px rgb(var(--category-application-color));
       }
       &.active.analysis > .input-container {
-        box-shadow: 0 0 0 2px rgb(var(--category-analysis-color), 0.7);
+        box-shadow: 0 0 0 2px rgb(var(--category-analysis-color));
       }
       &.active.synthesis > .input-container {
-        box-shadow: 0 0 0 2px rgb(var(--category-synthesis-color), 0.7);
+        box-shadow: 0 0 0 2px rgb(var(--category-synthesis-color));
       }
       &.active.evaluation > .input-container {
-        box-shadow: 0 0 0 2px rgb(var(--category-evaluation-color), 0.7);
+        box-shadow: 0 0 0 2px rgb(var(--category-evaluation-color));
       }
       &.max-reached {
         cursor: auto;
@@ -86,6 +89,9 @@
   }
 
   > .learning-outcomes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     > .learning-outcome {
       > .input-container {
         border-radius: 10px;
@@ -125,11 +131,12 @@
       font-size: 14px;
       gap: 6px;
       display: flex;
-      align-items: center;
+      align-items: start;
 
       > svg {
         width: 7px;
         height: 7px;
+        margin-top: 8px;
       }
 
       > .verb {
@@ -190,6 +197,11 @@
             background-color: rgb(var(--category-evaluation-color), 0.4);
           }
         }
+      }
+
+      > .sentence {
+        margin-top: 1px;
+        word-break: break-word;
       }
     }
   }

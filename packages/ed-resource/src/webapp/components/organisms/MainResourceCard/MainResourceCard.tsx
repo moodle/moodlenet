@@ -8,6 +8,7 @@ import {
   PrimaryButton,
   SecondaryButton,
   Snackbar,
+  SnackbarStack,
   TertiaryButton,
   useWindowDimensions,
 } from '@moodlenet/component-library'
@@ -150,6 +151,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+  const [showSaveError, setShowSaveError] = useState<boolean>(false)
   const { width } = useWindowDimensions()
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
@@ -216,6 +218,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
     if (!isFormValid || !isContentValid) {
       setShouldShowErrors(true)
+      setShowSaveError(true)
       return
     }
 
@@ -590,11 +593,24 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
+  const outcomeErrors = form.errors.learningOutcomes
+
   const learningOutcomes =
-    isEditing || form.values.learningOutcomes.length > 0 ? (
+    (isEditing && form.values.learningOutcomes.length > 0) ||
+    (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0) ? (
       <LearningOutcomes
         learningOutcomes={form.values.learningOutcomes}
         isEditing={isEditing}
+        error={
+          shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
+            ? outcomeErrors
+            : Array.isArray(outcomeErrors)
+            ? outcomeErrors.map(item =>
+                typeof item !== 'string' && item.sentence ? item.sentence : '',
+              )
+            : undefined
+        }
+        shouldShowErrors={shouldShowErrors}
         edit={values => form.setFieldValue('learningOutcomes', values)}
       />
     ) : null
@@ -620,19 +636,32 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const snackbars = (
-    <>
-      {showUrlCopiedAlert && (
-        <Snackbar
-          type="success"
-          position="bottom"
-          autoHideDuration={3000}
-          showCloseButton={false}
-          key="url-copy-snackbar"
-        >
-          Copied to clipoard
-        </Snackbar>
-      )}
-    </>
+    <SnackbarStack
+      snackbarList={[
+        showUrlCopiedAlert ? (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={3000}
+            showCloseButton={false}
+            key="url-copy-snackbar"
+          >
+            Copied to clipoard
+          </Snackbar>
+        ) : null,
+        showSaveError ? (
+          <Snackbar
+            position="bottom"
+            type="error"
+            autoHideDuration={3000}
+            showCloseButton={false}
+            onClose={() => setShowSaveError(false)}
+          >
+            Failed, fix the errors and try again
+          </Snackbar>
+        ) : null,
+      ]}
+    />
   )
 
   const modals = [

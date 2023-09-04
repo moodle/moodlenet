@@ -1,5 +1,6 @@
 import {
   Dropdown,
+  ErrorMessage,
   InputTextField,
   RoundButton,
   SimpleTextOption,
@@ -216,24 +217,29 @@ export type LearningOutcome = {
 export type LearningOutcomesProps = {
   isEditing: boolean
   learningOutcomes: LearningOutcome[]
+  error?: string | string[]
+  shouldShowErrors: boolean
   edit: (learningOutcomes: LearningOutcome[]) => unknown
 }
 
 export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   learningOutcomes,
   isEditing,
+  error,
+  shouldShowErrors,
   edit,
 }) => {
   const deleteOutcome = (index: number) => {
     edit(learningOutcomes.filter((_, i) => i !== index))
   }
 
-  const learningOutcome = learningOutcomes.map(({ category, verb, sentence }, i) => {
-    return (
-      <div className="learning-outcomes-list" key="learning-outcomes-list">
-        {isEditing ? (
+  const learningOutcomesList = learningOutcomes.length > 0 && (
+    <div className="learning-outcomes-list" key="learning-outcomes-list">
+      {learningOutcomes.map(({ category, verb, sentence }, i) =>
+        isEditing ? (
           <InputTextField
             className="learning-outcome"
+            key={`${category}-${verb}-${i}`}
             name="content"
             placeholder={`a problem using the systemic conceptual method`}
             edit
@@ -247,12 +253,15 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
               newLearningOutcome.sentence = value.target.value
               edit(newLearningOutcomes)
             }}
-            // defaultValue={
-            //   typeof contentForm.values.content === 'string' ? contentForm.values.content : ''
-            // }
-            // onChange={shouldShowErrors ? () => contentForm.validateField('content') : undefined}
-            // onKeyDown={e => e.key === 'Enter' && addLink()}
-            leftSlot={<div className={`verb-pill ${category.toLowerCase()}`}>{verb}</div>}
+            defaultValue={sentence}
+            leftSlot={
+              <abbr
+                className={`verb-pill ${category.toLowerCase()}`}
+                title={`${category} Bloom's category`}
+              >
+                {verb}
+              </abbr>
+            }
             rightSlot={
               <RoundButton
                 onClick={() => deleteOutcome(i)}
@@ -261,32 +270,35 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
                 onKeyUp={{ key: 'Enter', func: () => deleteOutcome(i) }}
               />
             }
-            // error={
-            //   (oshouldShowErrors || showContentErrors || showLinkErrors) &&
-            //   contentForm.errors.content
-            // }
+            error={
+              shouldShowErrors && isEditing && Array.isArray(error) && error[i] !== ''
+                ? error[i]
+                : undefined
+            }
           />
         ) : (
-          <div className="learning-outcome-read-only">
-            <Circle />
-            <abbr
-              className={`verb ${category.toLowerCase()}`}
-              title={`${category} Bloom's category`}
-            >
-              <a
-                href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
-                target="_blank"
-                rel="noopener noreferrer"
+          sentence !== '' && (
+            <div className="learning-outcome-read-only">
+              <Circle />
+              <abbr
+                className={`verb ${category.toLowerCase()}`}
+                title={`${category} Bloom's category`}
               >
-                {verb}
-              </a>
-            </abbr>{' '}
-            {sentence}
-          </div>
-        )}
-      </div>
-    )
-  })
+                <a
+                  href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {verb}
+                </a>
+              </abbr>{' '}
+              <div className="sentence">{sentence}</div>
+            </div>
+          )
+        ),
+      )}
+    </div>
+  )
 
   const [searchText, setSearchText] = useState('')
 
@@ -294,42 +306,46 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
     () => createRef(),
   )
 
-  const categories = learningOutcomeCategories.map((category, i) => {
-    const selectedVerb = learningOutcomes.find(outcome => outcome.category === category.name)
-    const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
-    return (
-      <Dropdown
-        key={category.name}
-        divRef={dropdownRef}
-        className={`category ${category.name.toLowerCase()} ${selectedVerb ? 'active' : ''}
+  const categories = isEditing && (
+    <div className="categories">
+      {learningOutcomeCategories.map((category, i) => {
+        const selectedVerb = learningOutcomes.find(outcome => outcome.category === category.name)
+        const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
+        return (
+          <Dropdown
+            key={category.name}
+            divRef={dropdownRef}
+            className={`category ${category.name.toLowerCase()} ${selectedVerb ? 'active' : ''}
         ${learningOutcomes.length > 4 ? 'max-reached' : ''}`}
-        pills={false}
-        disabled={learningOutcomes.length > 4}
-        abbr={
-          learningOutcomes.length > 4 ? 'Max learning outcomes reached' : 'Add learning outcome'
-        }
-        placeholder={category.name}
-        searchByText={setSearchText}
-        onChange={value => {
-          edit([
-            ...learningOutcomes,
-            {
-              category: category.name,
-              verb: value.target.value,
-              sentence: '',
-            },
-          ])
-        }}
-        edit
-      >
-        {category.verbs
-          .filter(verb => verb.toUpperCase().includes(searchText.toUpperCase()))
-          .map(verb => {
-            return <SimpleTextOption key={verb} value={verb} />
-          })}
-      </Dropdown>
-    )
-  })
+            pills={false}
+            disabled={learningOutcomes.length > 4}
+            abbr={
+              learningOutcomes.length > 4 ? 'Max learning outcomes reached' : 'Add learning outcome'
+            }
+            placeholder={category.name}
+            searchByText={setSearchText}
+            onChange={value => {
+              edit([
+                ...learningOutcomes,
+                {
+                  category: category.name,
+                  verb: value.target.value,
+                  sentence: '',
+                },
+              ])
+            }}
+            edit
+          >
+            {category.verbs
+              .filter(verb => verb.toUpperCase().includes(searchText.toUpperCase()))
+              .map(verb => {
+                return <SimpleTextOption key={verb} value={verb} />
+              })}
+          </Dropdown>
+        )
+      })}
+    </div>
+  )
 
   useEffect(() => {
     learningOutcomeCategoriesRefs.forEach(ref => {
@@ -350,15 +366,32 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
     </abbr>
   )
 
+  const title = (
+    <div className="title">
+      Learning outcomes
+      {isEditing && findOutMore}
+    </div>
+  )
+
+  const subtitle = (
+    <div className="subtitle">
+      {isEditing
+        ? 'Choose 1 to 5 outcomes from the different categories:'
+        : 'By reviewing this resource, learners will be able to:'}
+    </div>
+  )
+
+  const errorDiv = isEditing && shouldShowErrors && error && typeof error === 'string' && (
+    <ErrorMessage error={error} />
+  )
+
   return (
     <div className="learning-outcomes-section">
-      <div className="title">
-        Learning outcomes
-        {isEditing && findOutMore}
-      </div>
-      <div className="subtitle">By reviewing this resource, learners will be able to:</div>
-      {isEditing && <div className="categories">{categories}</div>}
-      {learningOutcome ?? null}
+      {title}
+      {errorDiv}
+      {subtitle}
+      {categories}
+      {learningOutcomesList}
     </div>
   )
 }
