@@ -32,8 +32,8 @@ export function approvalJiraIssueObject({
       },
       project: { id: projectId },
       issuetype: { id: createIssueTypeId },
-      summary: `_______TEST_________ Publishing approval request for user : ${profileMeta.profileName}@${profileMeta.instanceDomain}`,
-      description: `${profileMeta.profileName} requested publishing approval
+      summary: `Publishing approval request for user ${profileMeta.profileName}@${profileMeta.instanceDomain}`,
+      description: `${profileMeta.profileName} requested publishing rights
 user's profile homepage: ${profileMeta.profileHomePage}
 
 ${issueDescriptionTag(profileMeta.profileKey)}
