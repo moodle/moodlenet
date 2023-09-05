@@ -1,16 +1,10 @@
 .user-settings {
   width: 100%;
   display: flex;
-  // gap: 40px;
-  // grid-template-columns: 240px repeat(1, auto) 170px;
-  // grid-column-gap: 40px;
-  // justify-items: center;
 
-  // @media screen and (min-width: 800px) and (max-width: 1400px) {
-  // grid-template-columns: 240px repeat(1, auto);
-  // }
+  grid-column-gap: 40px;
 
-  @media screen and (max-width: 1000px) {
+  @media screen and (min-width: 675px) and (max-width: 1000px) {
     margin-top: -40px;
   }
 
@@ -20,7 +14,7 @@
 
   > .menu-container {
     width: 300px;
-    height: 100%;
+    height: fit-content;
     position: fixed;
 
     > .menu {
@@ -200,8 +194,13 @@
   }
 
   @media (max-width: 675px) {
+    margin-top: -30px;
+
     > .menu-container {
       margin-left: -25px;
+    }
+    > .content {
+      margin-top: 68px;
     }
   }
 
@@ -209,14 +208,10 @@
     > .menu-container {
       margin-left: -100px;
     }
+    > .content {
+      margin-top: 84px;
+    }
   }
-
-  @media (max-width: 675px) {
-  }
-
-  // @media (min-width: 675px) {
-  //   margin-top: -40px;
-  // }
 
   @media (max-width: 1000px) {
     display: flex;
@@ -272,7 +267,6 @@
     > .content {
       width: 100%;
       margin-left: 0;
-      margin-top: 84px;
     }
   }
 
