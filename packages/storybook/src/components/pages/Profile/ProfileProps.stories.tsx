@@ -1,12 +1,10 @@
 import { peopleFactory, randomIntFromInterval } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import type {
-  JiraRequestApprovalInfoProps,
-  ProfileJiraApproveStateProps,
-} from '@moodlenet/mn-central-jira-simple-moderations/ui'
+import type { ProfileJiraRequestApprovalStateProps } from '@moodlenet/mn-central-jira-simple-moderations/ui'
 import {
   JiraRequestApprovalButton,
   JiraRequestApprovalInfo,
+  type JiraRequestApprovalInfoProps,
 } from '@moodlenet/mn-central-jira-simple-moderations/ui'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
@@ -30,7 +28,9 @@ import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout
 const maxUploadSize = 1024 * 1024 * 0.001
 
 export const useProfileStoryProps = (
-  overrides?: PartialDeep<ProfileProps & { jiraApprovalButton: ProfileJiraApproveStateProps }>,
+  overrides?: PartialDeep<
+    ProfileProps & { jiraApprovalButton: ProfileJiraRequestApprovalStateProps }
+  >,
 ): ProfileProps => {
   const person = peopleFactory[randomIntFromInterval(0, 3)]
 

@@ -35,7 +35,6 @@ export const UserSettingsDefaultStoryProps = (): UserSettingsProps => {
         Content: AdvancedStories.useElements().Content,
         key: 'advanced',
       },
-
       // {
       //   Menu: ManageExtensionsStories.useElements().Menu,
       //   Content: ManageExtensionsStories.useElements().Content,

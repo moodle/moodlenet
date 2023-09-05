@@ -20,3 +20,4 @@ build-storybook.log*
 tsconfig.tsbuildinfo
 /.husky
 /packages/*/dist
+package.json.lerna_backup
