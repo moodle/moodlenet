@@ -25,7 +25,7 @@ import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/Re
 import type { PartialDeep } from 'type-fest'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
 
-const maxUploadSize = 1024 * 1024 * 0.001
+const maxUploadSize = 1024 * 1024 * 10
 
 export const useProfileStoryProps = (
   overrides?: PartialDeep<
@@ -100,6 +100,7 @@ export const useProfileStoryProps = (
                 isWaitingApproval: false,
                 isElegibleForApproval: false,
                 showApprovalRequestedSuccessAlert: false,
+                minimumResourceAmount: 5,
                 ...access,
                 ...state,
                 ...overrides?.jiraApprovalButton,
