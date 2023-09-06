@@ -198,16 +198,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
     avatarForm.setFieldValue('image', e.currentTarget.files?.item(0))
 
-  const background = {
-    backgroundImage: 'url("' + updatedBackground + '")',
-    backgroundSize: 'cover',
-  }
-
-  const avatar = {
-    backgroundImage: 'url("' + updatedAvatar + '")',
-    backgroundSize: 'cover',
-  }
-
   const copyUrl = () => {
     navigator.clipboard.writeText(profileUrl)
     setShowUrlCopiedAlert(false)
@@ -403,7 +393,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         className={`background`}
         key="background"
         style={{
-          ...background,
+          backgroundImage: 'url("' + updatedBackground + '")',
           pointerEvents:
             backgroundForm.isSubmitting || !backgroundForm.values.image ? 'none' : 'inherit',
           cursor: backgroundForm.isSubmitting || !backgroundForm.values.image ? 'auto' : 'pointer',
@@ -419,7 +409,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       <div
         className={`avatar`}
         style={{
-          ...avatar,
+          backgroundImage: 'url("' + updatedAvatar + '")',
           pointerEvents: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'inherit',
           cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
         }}
