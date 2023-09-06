@@ -100,6 +100,7 @@ export const useProfileStoryProps = (
                 isWaitingApproval: false,
                 isElegibleForApproval: false,
                 showApprovalRequestedSuccessAlert: false,
+                minimumResourceAmount: 5,
                 ...access,
                 ...state,
                 ...overrides?.jiraApprovalButton,

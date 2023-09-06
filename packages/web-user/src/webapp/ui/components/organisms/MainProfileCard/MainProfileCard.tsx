@@ -317,7 +317,8 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       />
     </span>
   ) : (
-    <span key="location">{form.values.location}</span>
+    form.values.location &&
+    form.values.location !== '' && <span key="location">{form.values.location}</span>
   )
 
   const siteUrl = isEditing ? (
@@ -334,9 +335,12 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       />
     </span>
   ) : (
-    <a key="site-url" href={form.values.siteUrl} target="_blank" rel="noreferrer">
-      {form.values.siteUrl}
-    </a>
+    form.values.siteUrl &&
+    form.values.siteUrl !== '' && (
+      <a key="site-url" href={form.values.siteUrl} target="_blank" rel="noreferrer">
+        {form.values.siteUrl}
+      </a>
+    )
   )
 
   const updatedSubtitleItems = [location, siteUrl, ...(subtitleItems ?? [])].filter(
@@ -349,9 +353,11 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         {updatedTitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
 
-      <div className={`subtitle ${isEditing ? 'edit' : ''}`} key="subtitle-row">
-        {updatedSubtitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </div>
+      {updatedSubtitleItems.length > 0 && (
+        <div className={`subtitle ${isEditing ? 'edit' : ''}`} key="subtitle-row">
+          {updatedSubtitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+        </div>
+      )}
     </div>
   )
 
