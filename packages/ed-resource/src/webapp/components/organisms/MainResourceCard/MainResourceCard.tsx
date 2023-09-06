@@ -596,7 +596,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const outcomeErrors = form.errors.learningOutcomes
 
   const learningOutcomes =
-    (isEditing && form.values.learningOutcomes.length > 0) ||
+    isEditing ||
     (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0) ? (
       <LearningOutcomes
         learningOutcomes={form.values.learningOutcomes}

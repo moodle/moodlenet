@@ -376,7 +376,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   const subtitle = (
     <div className="subtitle">
       {isEditing
-        ? 'Choose 1 to 5 outcomes from the different categories:'
+        ? 'Write 1 to 5 learning outcomes, selecting the right category and action verb:'
         : 'By reviewing this resource, learners will be able to:'}
     </div>
   )

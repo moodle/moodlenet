@@ -80,36 +80,36 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
 })
 
 const learningOutcomes: LearningOutcome[] = [
-  {
-    category: 'Knowledge',
-    verb: 'Analyze',
-    sentence: 'the data to determine the best course of action.',
-  },
   // {
-  //   category: 'Comprehension',
-  //   verb: 'Classify',
-  //   sentence: 'the different types of data.',
+  //   category: 'Knowledge',
+  //   verb: 'Define',
+  //   sentence: 'the concept of ecological balance within ecosystems.',
   // },
+  {
+    category: 'Comprehension',
+    verb: 'Explain',
+    sentence: 'the consequences of habitat fragmentation on biodiversity.',
+  },
   {
     category: 'Application',
     verb: 'Apply',
-    sentence: 'the data to resolve the issue.',
+    sentence: 'conservation principles to protect specific habitats.',
   },
   // {
   //   category: 'Analysis',
-  //   verb: 'Break down',
-  //   sentence: 'the data into its component parts.',
-  // },
-  // {
-  //   category: 'Synthesis',
-  //   verb: 'Create',
-  //   sentence: 'a new data set that can be used to resolve the issue.',
+  //   verb: 'Analyze',
+  //   sentence: ' species data to identify ecosystem decline patterns.',
   // },
   {
-    category: 'Evaluation',
-    verb: 'Judge',
-    sentence: 'the data to determine the best course of action.',
+    category: 'Synthesis',
+    verb: 'Develop',
+    sentence: 'a comprehensive plan for ecosystem restoration.',
   },
+  // {
+  //   category: 'Evaluation',
+  //   verb: 'Assess',
+  //   sentence: ' the impact and success of conservation projects on biodiversity.',
+  // },
 ]
 
 export const ResourceFormValues: ResourceFormProps = {
@@ -183,8 +183,10 @@ export const useResourceStoryProps = (
       ? {
           credits: {
             owner: {
-              name: overrides?.data?.image?.credits?.owner?.name ?? 'Leonard Rush',
-              url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com/@lennyrush',
+              name: overrides?.data?.image?.credits?.owner?.name ?? 'Ivan Bandura',
+              url:
+                overrides?.data?.image?.credits?.owner?.url ??
+                'https://unsplash.com/@unstable_affliction',
             },
             provider: {
               name: overrides?.data?.image?.credits?.owner?.name ?? 'Unsplash',
@@ -193,7 +195,7 @@ export const useResourceStoryProps = (
           },
           location:
             overrides?.data?.image?.location ??
-            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+            'https://images.unsplash.com/photo-1593259996642-a62989601967?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
         }
       : null,
   )
@@ -216,14 +218,14 @@ export const useResourceStoryProps = (
       : learningOutcomes
 
   const resourceForm: ResourceFormProps = {
-    title: 'Best resource ever',
+    title: 'Protecting and restoring endangered ecosystems',
     description:
-      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will find.',
-    subject: '0011',
+      'This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization.',
+    subject: '0522',
     license: 'CC-0 (Public domain)',
-    type: '0', //'Course',
+    type: '2',
     language: 'English',
-    level: '3',
+    level: '6',
     month: '5',
     year: '2022',
     ...overrides?.resourceForm,

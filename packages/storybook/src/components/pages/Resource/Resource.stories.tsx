@@ -92,7 +92,7 @@ export const Creator: ResourceStory = () => {
       contentType: 'file',
       contentUrl:
         'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
-      downloadFilename: '557_Sujeto_y_Predicado.pdf',
+      downloadFilename: 'Ecosystem_Conservation_Restoration.mbz',
     },
     resourceForm: {
       // level: undefined,
