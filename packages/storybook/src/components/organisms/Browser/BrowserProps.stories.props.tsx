@@ -2,7 +2,12 @@ import { BrowserCollectionFilters, BrowserCollectionList } from '@moodlenet/coll
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { BrowserSubjectList } from '@moodlenet/ed-meta/ui'
 import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
-import type { BrowserProps, MainColumItem, SortType } from '@moodlenet/react-app/ui'
+import type {
+  BrowserProps,
+  MainColumItem,
+  SortByLanguageType,
+  SortType,
+} from '@moodlenet/react-app/ui'
 import { BrowserProfileFilters, BrowserProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
@@ -14,6 +19,9 @@ import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stori
 
 export const useBrowserResourceList = (): MainColumItem => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType>('Relevant')
+  const [currentResourceSortByLanguage, setCurrentResourceSortByLanguage] = useState<
+    SortByLanguageType[]
+  >([])
   return {
     name: 'Resources',
     Item: ({ showAll, setShowAll }) => {
@@ -40,9 +48,13 @@ export const useBrowserResourceList = (): MainColumItem => {
         selected: currentResourceSortBy,
         setSelected: setCurrentResourceSortBy,
       }),
-    ].map(e => ({
+      BrowserResourceFilters.SortByLanguageItem({
+        selected: currentResourceSortByLanguage,
+        setSelected: setCurrentResourceSortByLanguage,
+      }),
+    ].map((e, i) => ({
       Item: () => e,
-      key: `${e.key}`,
+      key: e.key ? `${e.key}` : 'resource filter ' + i,
     })),
     key: 'resource-list',
   }
@@ -74,9 +86,9 @@ export const useBrowserCollectionList = (): MainColumItem => {
         selected: currentCollectionSortBy,
         setSelected: setCurrentCollectionSortBy,
       }),
-    ].map(e => ({
+    ].map((e, i) => ({
       Item: () => e,
-      key: `${e.key}`,
+      key: e.key ? `${e.key}` : 'resource filter ' + i,
     })),
     key: 'collection-list',
   }
@@ -111,9 +123,9 @@ export const useBrowserProfileList = (showHeader?: boolean): MainColumItem => {
         selected: currentProfileSortBy,
         setSelected: setCurrentProfileSortBy,
       }),
-    ].map(e => ({
+    ].map((e, i) => ({
       Item: () => e,
-      key: `${e.key}`,
+      key: e.key ? `${e.key}` : 'resource filter ' + i,
     })),
     key: 'profile-list',
   }

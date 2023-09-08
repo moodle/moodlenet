@@ -1,6 +1,5 @@
 import { SimpleDropdown } from '@moodlenet/component-library'
 import type { FC } from 'react'
-import './SortBy.scss'
 
 export type SortType = 'Relevant' | 'Popular' | 'Recent'
 export type SortByProps = {

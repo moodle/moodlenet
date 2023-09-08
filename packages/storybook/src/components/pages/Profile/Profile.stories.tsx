@@ -63,7 +63,7 @@ export const Owner: ProfileStory = () => {
       canEdit: true,
       isCreator: true,
       canApprove: false,
-      isPublisher: false,
+      isPublisher: true,
     },
     data: {
       // avatarUrl: undefined,

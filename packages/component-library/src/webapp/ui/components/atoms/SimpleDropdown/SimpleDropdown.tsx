@@ -27,16 +27,31 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
   initialSelection,
 }) => {
   const currentName: string[] = []
-  const menuContent = list.map(({ name, key }) => {
+  const menuContent = list.map(({ name, key }, i) => {
     const isCurrent = selected.indexOf(key) > -1
     isCurrent && currentName.push(name)
+    const previousKey = list[i - 1] ? list[i - 1]?.key : null
+    const prevSelected = previousKey && selected.indexOf(previousKey) > -1 && isCurrent
+    const nextKey = list[i + 1] ? list[i + 1]?.key : null
+    const nextSelected = nextKey && selected.indexOf(nextKey) > -1 && isCurrent
+
     const floatingMenuContentItem: FloatingMenuContentItem = {
       Element: (
         <Fragment key={key}>
           <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
-            <div className={`border ${isCurrent ? 'selected' : ''}`} />
+            <div
+              className={`border ${isCurrent ? 'selected' : ''} ${
+                prevSelected ? 'prev-selected' : ''
+              } ${nextSelected ? 'next-selected' : ''}
+               `}
+            />
           </div>
-          <div onClick={() => onClick(key)} className={`content ${isCurrent ? 'selected' : ''}`}>
+          <div
+            onClick={() => onClick(key)}
+            className={`content ${isCurrent ? 'selected' : ''} 
+            ${prevSelected ? 'prev-selected' : ''}
+          `}
+          >
             {name}
           </div>
         </Fragment>
@@ -61,7 +76,7 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
               <>{currentName[0]}</>
             ) : (
               <>
-                label <div className="num-selected-elements">{currentName.length}</div>
+                {label} <div className="num-selected-elements">{currentName.length}</div>
               </>
             )}{' '}
             <ArrowDropDown />
