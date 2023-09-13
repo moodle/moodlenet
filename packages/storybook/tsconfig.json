@@ -26,33 +26,18 @@
   ],
   "references": [
     { "path": "./tsconfig.node.json" },
-    {
-      "path": "../ed-resource"
-    },
-    {
-      "path": "../web-user"
-    },
-    {
-      "path": "../extensions-manager"
-    },
-    {
-      "path": "../component-library"
-    },
-    {
-      "path": "../passport-auth"
-    },
-    {
-      "path": "../simple-email-auth"
-    },
-    {
-      "path": "../ed-meta"
-    },
-    {
-      "path": "../collection"
-    },
-    {
-      "path": "../react-app"
-    }
+    { "path": "../collection" },
+    { "path": "../component-library" },
+    { "path": "../ed-meta" },
+    { "path": "../ed-resource" },
+    { "path": "../extensions-manager" },
+    { "path": "../moodle-lms-integration" },
+    { "path": "../passport-auth" },
+    { "path": "../react-app" },
+    { "path": "../simple-email-auth" },
+    { "path": "../unsplash" },
+    { "path": "../web-user" },
+    { "path": "../mn-central-jira-simple-moderations" }
   ],
   "paths": {
     "@/*": ["src/*"]
