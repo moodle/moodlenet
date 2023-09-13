@@ -56,7 +56,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             className="learning-outcome"
             key={`${code}-${verb}-${i}`}
             name="content"
-            placeholder={`a problem using the systemic conceptual method`}
+            placeholder={`a concept...`}
             edit
             value={sentence}
             onChange={value => {
@@ -100,7 +100,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
                 title={`${learningOutcomeName} Bloom's category`}
               >
                 <a
-                  href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
+                  href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -177,7 +177,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   const findOutMore = (
     <abbr className="find-out-more" title="Find out more">
       <a
-        href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
+        href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy"
         target="_blank"
         rel="noopener noreferrer"
       >

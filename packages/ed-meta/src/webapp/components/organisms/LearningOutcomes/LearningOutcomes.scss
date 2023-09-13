@@ -44,6 +44,7 @@
         min-height: 36px;
         width: fit-content;
         border-radius: 25px;
+        box-shadow: inset 0 0 0 1px #b2b2b2;
         > .dropdown-button {
           width: fit-content;
           padding: 0 12px;
@@ -56,6 +57,9 @@
         }
         > .search-field {
           width: 100%;
+        }
+        &:not(:has(input)):hover {
+          background-color: #f1f1f1;
         }
       }
 
