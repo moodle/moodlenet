@@ -45,6 +45,7 @@ import {
 
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
+import { learningOutcomeOptions } from './ResourceData.stories.js'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -81,27 +82,27 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
 
 const learningOutcomes: LearningOutcome[] = [
   // {
-  //   category: 'Knowledge',
+  //   category: '1',
   //   verb: 'Define',
   //   sentence: 'the concept of ecological balance within ecosystems.',
   // },
   {
-    code: 'Comprehension',
+    code: '2',
     verb: 'Explain',
     sentence: 'the consequences of habitat fragmentation on biodiversity.',
   },
   {
-    code: 'Application',
+    code: '3',
     verb: 'Apply',
     sentence: 'conservation principles to protect specific habitats.',
   },
   // {
-  //   category: 'Analysis',
+  //   category: '4',
   //   verb: 'Analyze',
   //   sentence: ' species data to identify ecosystem decline patterns.',
   // },
   {
-    code: 'Synthesis',
+    code: '5',
     verb: 'Develop',
     sentence: 'a comprehensive plan for ecosystem restoration.',
   },
@@ -347,7 +348,7 @@ export const useResourceStoryProps = (
     monthOptions: FieldsDataStories.MonthTextOptionProps,
     yearOptions: FieldsDataStories.YearsProps,
     typeOptions: FieldsDataStories.TypeTextOptionProps,
-    learningOutcomeOptions: [{ code: '1', name: 'Knowledge', verbs: ['x', 'y'] }],
+    learningOutcomeOptions: learningOutcomeOptions,
   }
 
   const likeButtonProps: LikeButtonProps = {
@@ -442,6 +443,7 @@ export const useResourceStoryProps = (
       actions: actions,
       access: access,
       edMetaOptions: edMetaOptions,
+
       validationSchemas: getValidationSchemas({
         contentMaxUploadSize: 1024 * 1024 * 1024,
         imageMaxUploadSize: 1024 * 1024 * 25,
