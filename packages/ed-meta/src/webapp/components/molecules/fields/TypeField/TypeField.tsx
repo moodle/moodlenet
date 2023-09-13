@@ -54,7 +54,6 @@ export const TypeField: FC<TypeFieldProps> = ({
       placeholder="Content type"
       edit
       highlight={shouldShowErrors && !!error}
-      noShadow
       error={shouldShowErrors && error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}

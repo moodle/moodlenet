@@ -54,7 +54,6 @@ export const LanguageField: FC<LanguageFieldProps> = ({
       placeholder="Content language"
       edit
       highlight={shouldShowErrors && !!error}
-      noShadow
       error={shouldShowErrors && error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}

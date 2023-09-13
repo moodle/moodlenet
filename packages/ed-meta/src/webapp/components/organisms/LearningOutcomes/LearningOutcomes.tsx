@@ -82,7 +82,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
                 onClick={() => deleteOutcome(i)}
                 tabIndex={0}
                 abbrTitle={'Remove learning outcome'}
-                onKeyUp={{ key: 'Enter', func: () => deleteOutcome(i) }}
+                onKeyUp={e => e.key === 'enter' && deleteOutcome(i)}
               />
             }
             error={

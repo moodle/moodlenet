@@ -87,7 +87,6 @@ export const DateField: FC<DateFieldProps> = ({
           edit
           noBorder
           highlight={shouldShowErrors}
-          noShadow
           error={shouldShowErrors && errorMonth}
           position={{ top: 30, bottom: 25 }}
           searchByText={setSearchTextMonth}
@@ -125,7 +124,6 @@ export const DateField: FC<DateFieldProps> = ({
           edit
           noBorder
           highlight={shouldShowErrors}
-          noShadow
           error={shouldShowErrors && errorYear}
           position={{ top: 30, bottom: 25 }}
           searchByText={setSearchTextYear}

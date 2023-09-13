@@ -99,7 +99,7 @@ const DropdownComp: FC<DropdownProps> = props => {
   //   window.addEventListener('click', clickOutListener)
   //   return () => window.removeEventListener('click', clickOutListener)
   // }, [isShowingContent])
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  // const dropdownRef = useRef<HTMLDivElement>(null)
   const dropdownButtonRef = useRef<HTMLInputElement>(null)
   const dropdownContentRef = useRef<HTMLInputElement>(null)
   const inputContainerRef = useRef<HTMLDivElement>(null)
@@ -206,7 +206,8 @@ const DropdownComp: FC<DropdownProps> = props => {
         onBlur={isShowingContent ? undefined : () => setShowingContent(false)}
         className={`input-container${disabled || !edit ? ' not-editing' : ''} ${
           highlight ? ' highlight' : ''
-        }${noBorder ? ' no-border' : ''}`}
+        }${noBorder ? ' no-border' : ''}
+        ${multilines ? ' multilines' : ''}`}
         tabIndex={!disabled && !isShowingContent ? 0 : undefined}
       >
         {isShowingContent ? (
