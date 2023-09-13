@@ -13,6 +13,7 @@ import {
   useWindowDimensions,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
+import type { LearningOutcomeOption } from '@moodlenet/ed-meta/common'
 import { LearningOutcomes } from '@moodlenet/ed-meta/ui'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
@@ -66,6 +67,7 @@ export type MainResourceCardProps = {
   form: FormikHandle<ResourceFormProps>
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
   imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
+  learningOutcomeOptions: LearningOutcomeOption[]
 
   state: ResourceStateProps
   actions: ResourceActions
@@ -92,7 +94,7 @@ export type MainResourceCardProps = {
 
 export const MainResourceCard: FC<MainResourceCardProps> = ({
   slots,
-
+  learningOutcomeOptions,
   data,
   edMetaOptions,
   form,
@@ -599,6 +601,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     isEditing ||
     (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0) ? (
       <LearningOutcomes
+        learningOutcomeOptions={learningOutcomeOptions}
         learningOutcomes={form.values.learningOutcomes}
         isEditing={isEditing}
         error={

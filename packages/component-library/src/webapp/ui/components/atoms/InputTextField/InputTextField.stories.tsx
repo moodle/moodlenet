@@ -1,7 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useState } from 'react'
-import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
 import type { InputTextFieldProps } from './InputTextField.js'
 import { InputTextField } from './InputTextField.js'
 
@@ -42,10 +41,7 @@ export const InputTextFieldErrorStoryProps: InputTextFieldProps = {
 }
 
 export const InputButton: ComponentStory<typeof InputTextField> = () => (
-  <InputTextField
-    {...InputTextFieldStoryProps}
-    action={<PrimaryButton onClick={action('Primary button click')}>Add</PrimaryButton>}
-  />
+  <InputTextField {...InputTextFieldStoryProps} />
 )
 
 const InputTextFieldStory: ComponentStory<typeof InputTextField> = args => (

@@ -16,6 +16,7 @@ export function useEdMetaCtxValue() {
     types: [],
     levels: [],
     subjects: [],
+    learningOutcomes: [],
   })
 
   useEffect(() => {

@@ -79,6 +79,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     mainResourceCardSlots,
     resourceContributorCardProps: contributor,
     edMetaOptions: {
+      learningOutcomeOptions: publishedMeta.learningOutcomes,
       languageOptions: publishedMeta.languages,
       levelOptions: publishedMeta.levels,
       licenseOptions: publishedMeta.licenses.map(({ label, value }) => ({

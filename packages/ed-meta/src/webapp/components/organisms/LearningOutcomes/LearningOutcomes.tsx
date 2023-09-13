@@ -8,221 +8,34 @@ import {
 import { Circle, HelpOutline } from '@mui/icons-material'
 import type { RefObject } from 'react'
 import { createRef, useEffect, useState, type FC } from 'react'
+import type { LearningOutcome, LearningOutcomeOption } from '../../../../common/types.mjs'
 import './LearningOutcomes.scss'
-
-export type LearningOutcomeCategoryName =
-  | 'Knowledge'
-  | 'Comprehension'
-  | 'Application'
-  | 'Analysis'
-  | 'Synthesis'
-  | 'Evaluation'
-
-export type LearningOutcomeCategory = {
-  name: LearningOutcomeCategoryName
-  verbs: string[]
-}
-const learningOutcomeCategories: LearningOutcomeCategory[] = [
-  {
-    name: 'Knowledge',
-    verbs: [
-      'Define',
-      'Describe',
-      'Identify',
-      'Label',
-      'List',
-      'Match',
-      'Name',
-      'Outline',
-      'Recall',
-      'Recognize',
-      'Relate',
-      'Reproduce',
-      'Select',
-      'State',
-    ],
-  },
-  {
-    name: 'Comprehension',
-    verbs: [
-      'Classify',
-      'Convert',
-      'Defend',
-      'Describe',
-      'Discuss',
-      'Distinguish',
-      'Estimate',
-      'Explain',
-      'Express',
-      'Extend',
-      'Generalize',
-      'Give examples',
-      'Identify',
-      'Indicate',
-      'Infer',
-      'Interpret',
-      'Paraphrase',
-      'Predict',
-      'Rewrite',
-      'Summarize',
-      'Translate',
-      'Visualize',
-    ],
-  },
-  {
-    name: 'Application',
-    verbs: [
-      'Apply',
-      'Change',
-      'Choose',
-      'Compute',
-      'Construct',
-      'Develop',
-      'Discover',
-      'Dramatize',
-      'Employ',
-      'Illustrate',
-      'Interpret',
-      'Manipulate',
-      'Modify',
-      'Operate',
-      'Practice',
-      'Predict',
-      'Prepare',
-      'Produce',
-      'Relate',
-      'Schedule',
-      'Show',
-      'Sketch',
-      'Solve',
-      'Use',
-    ],
-  },
-  {
-    name: 'Analysis',
-    verbs: [
-      'Analyze',
-      'Appraise',
-      'Break down',
-      'Calculate',
-      'Categorize',
-      'Compare',
-      'Contrast',
-      'Criticize',
-      'Diagram',
-      'Differentiate',
-      'Discriminate',
-      'Distinguish',
-      'Examine',
-      'Experiment',
-      'Identify',
-      'Illustrate',
-      'Infer',
-      'Inquire',
-      'Inspect',
-      'Inventory',
-      'Investigate',
-      'Outline',
-      'Question',
-      'Relate',
-      'Select',
-      'Separate',
-      'Subdivide',
-    ],
-  },
-  {
-    name: 'Synthesis',
-    verbs: [
-      'Arrange',
-      'Assemble',
-      'Categorize',
-      'Collect',
-      'Combine',
-      'Comply',
-      'Compose',
-      'Construct',
-      'Create',
-      'Design',
-      'Develop',
-      'Devise',
-      'Explain',
-      'Formulate',
-      'Generate',
-      'Integrate',
-      'Manage',
-      'Modify',
-      'Organize',
-      'Plan',
-      'Prepare',
-      'Propose',
-      'Rearrange',
-      'Reconstruct',
-      'Relate',
-      'Reorganize',
-      'Revise',
-      'Rewrite',
-      'Set up',
-      'Summarize',
-      'Tell',
-      'Write',
-    ],
-  },
-  {
-    name: 'Evaluation',
-    verbs: [
-      'Appraise',
-      'Argue',
-      'Assess',
-      'Choose',
-      'Compare',
-      'Conclude',
-      'Contrast',
-      'Criticize',
-      'Critique',
-      'Debate',
-      'Decide',
-      'Deduce',
-      'Defend',
-      'Determine',
-      'Disprove',
-      'Estimate',
-      'Evaluate',
-      'Explain',
-      'Interpret',
-      'Judge',
-      'Justify',
-      'Measure',
-      'Predict',
-      'Prioritize',
-      'Prove',
-      'Rank',
-      'Rate',
-      'Recommend',
-      'Relate',
-      'Revise',
-      'Score',
-      'Select',
-      'Summarize',
-      'Support',
-      'Value',
-    ],
-  },
-]
-export type LearningOutcome = {
-  category: LearningOutcomeCategoryName
-  verb: string
-  sentence: string
-}
 
 export type LearningOutcomesProps = {
   isEditing: boolean
   learningOutcomes: LearningOutcome[]
+  learningOutcomeOptions: LearningOutcomeOption[]
   error?: string | string[]
   shouldShowErrors: boolean
   edit: (learningOutcomes: LearningOutcome[]) => unknown
 }
 
+const MAX_LEARNING_OUTCOME_ITEMS = 4
+function getBloomClassName(bloomCode: string) {
+  return (
+    {
+      '1': 'knowledge',
+      '2': 'comprehension',
+      '3': 'application',
+      '4': 'analysis',
+      '5': 'synthesis',
+      '6': 'evaluation',
+    }[bloomCode] ?? ''
+  )
+}
+
 export const LearningOutcomes: FC<LearningOutcomesProps> = ({
+  learningOutcomeOptions,
   learningOutcomes,
   isEditing,
   error,
@@ -235,11 +48,13 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const learningOutcomesList = learningOutcomes.length > 0 && (
     <div className="learning-outcomes-list" key="learning-outcomes-list">
-      {learningOutcomes.map(({ category, verb, sentence }, i) =>
-        isEditing ? (
+      {learningOutcomes.map(({ code, verb, sentence }, i) => {
+        const learningOutcomeName = getLearningOutcomeName(code)
+        const bloomUIClassName = getBloomClassName(code)
+        return isEditing ? (
           <InputTextField
             className="learning-outcome"
-            key={`${category}-${verb}-${i}`}
+            key={`${code}-${verb}-${i}`}
             name="content"
             placeholder={`a problem using the systemic conceptual method`}
             edit
@@ -256,8 +71,8 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             defaultValue={sentence}
             leftSlot={
               <abbr
-                className={`verb-pill ${category.toLowerCase()}`}
-                title={`${category} Bloom's category`}
+                className={`verb-pill ${bloomUIClassName}`}
+                title={`${learningOutcomeName} Bloom's category`}
               >
                 {verb}
               </abbr>
@@ -281,8 +96,8 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             <div className="learning-outcome-read-only">
               <Circle />
               <abbr
-                className={`verb ${category.toLowerCase()}`}
-                title={`${category} Bloom's category`}
+                className={`verb ${bloomUIClassName}`}
+                title={`${learningOutcomeName} Bloom's category`}
               >
                 <a
                   href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#:~:text=Bloom's%20taxonomy%20is%20a%20set,cognitive%2C%20affective%20and%20psychomotor%20domains."
@@ -295,48 +110,53 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
               <div className="sentence">{sentence}</div>
             </div>
           )
-        ),
-      )}
+        )
+      })}
     </div>
   )
 
   const [searchText, setSearchText] = useState('')
 
-  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = learningOutcomeCategories.map(
+  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = learningOutcomeOptions.map(
     () => createRef(),
   )
 
   const categories = isEditing && (
     <div className="categories">
-      {learningOutcomeCategories.map((category, i) => {
-        const selectedVerb = learningOutcomes.find(outcome => outcome.category === category.name)
+      {learningOutcomeOptions.map((learningOutcomeOption, i) => {
+        const selectedVerb = learningOutcomes.find(
+          outcome => outcome.code === learningOutcomeOption.code,
+        )
         const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
+        const maxLearningOutcomesReached = learningOutcomes.length > MAX_LEARNING_OUTCOME_ITEMS
         return (
           <Dropdown
-            key={category.name}
+            key={learningOutcomeOption.code}
             divRef={dropdownRef}
-            className={`category ${category.name.toLowerCase()} ${selectedVerb ? 'active' : ''}
-        ${learningOutcomes.length > 4 ? 'max-reached' : ''}`}
-            pills={false}
-            disabled={learningOutcomes.length > 4}
-            abbr={
-              learningOutcomes.length > 4 ? 'Max learning outcomes reached' : 'Add learning outcome'
+            className={`category ${getBloomClassName(learningOutcomeOption.code)} ${
+              selectedVerb ? 'active' : ''
             }
-            placeholder={category.name}
+        ${maxLearningOutcomesReached ? 'max-reached' : ''}`}
+            pills={false}
+            disabled={maxLearningOutcomesReached}
+            abbr={
+              maxLearningOutcomesReached ? 'Max learning outcomes reached' : 'Add learning outcome'
+            }
+            placeholder={learningOutcomeOption.name}
             searchByText={setSearchText}
-            onChange={value => {
+            onChange={changeEvent => {
               edit([
                 ...learningOutcomes,
                 {
-                  category: category.name,
-                  verb: value.target.value,
+                  code: learningOutcomeOption.code,
+                  verb: changeEvent.target.value,
                   sentence: '',
                 },
               ])
             }}
             edit
           >
-            {category.verbs
+            {learningOutcomeOption.verbs
               .filter(verb => verb.toUpperCase().includes(searchText.toUpperCase()))
               .map(verb => {
                 return <SimpleTextOption key={verb} value={verb} />
@@ -394,6 +214,9 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
       {learningOutcomesList}
     </div>
   )
+  function getLearningOutcomeName(byCode: string) {
+    return learningOutcomeOptions.find(({ code }) => code === byCode)?.name ?? 'N/A'
+  }
 }
 
 LearningOutcomes.displayName = 'LearningOutcomes'
