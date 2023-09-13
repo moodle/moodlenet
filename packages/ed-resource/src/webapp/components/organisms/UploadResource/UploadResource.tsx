@@ -383,7 +383,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
               }
               onChange={shouldShowErrors ? () => contentForm.validateField('content') : undefined}
               onKeyDown={e => e.key === 'Enter' && addLink()}
-              action={<PrimaryButton onClick={addLink}>Add</PrimaryButton>}
+              rightSlot={<PrimaryButton onClick={addLink}>Add</PrimaryButton>}
               error={
                 (shouldShowErrors || showContentErrors || showLinkErrors) &&
                 contentForm.errors.content

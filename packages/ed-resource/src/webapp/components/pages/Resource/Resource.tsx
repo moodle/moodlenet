@@ -111,6 +111,7 @@ export const Resource: FC<ResourceProps> = ({
     subjectOptions,
     typeOptions,
     yearOptions,
+    learningOutcomeOptions,
   } = edMetaOptions
 
   const [emptyOnStart, setEmptyOnStart] = useState<boolean>(
@@ -124,14 +125,19 @@ export const Resource: FC<ResourceProps> = ({
       !resourceForm.level &&
       !resourceForm.subject &&
       !resourceForm.year &&
-      !resourceForm.month,
+      !resourceForm.month &&
+      !(resourceForm.learningOutcomes.length > 0),
   )
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
-  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
-  const [showPublishSuccess, setShowPublishSuccess] = useState<boolean>(false)
+  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<
+    'success' | 'failed' | 'idle'
+  >('idle')
+  const [showPublishSuccess, setShowPublishSuccess] = useState<'success' | 'failed' | 'idle'>(
+    'idle',
+  )
   const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(emptyOnStart)
 
@@ -139,7 +145,7 @@ export const Resource: FC<ResourceProps> = ({
 
   useEffect(() => {
     if (prevIsPublishedRef.current === false && isPublished === true) {
-      setShowPublishSuccess(true)
+      setShowPublishSuccess('success')
     }
     if (prevIsPublishedRef.current === true && isPublished === false) {
       setShowUnpublishSuccess(true)
@@ -155,9 +161,7 @@ export const Resource: FC<ResourceProps> = ({
     validationSchema: isPublishValidating
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
-    onSubmit: values => {
-      return editData(values)
-    },
+    onSubmit: editData,
   })
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
   const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
@@ -248,6 +252,7 @@ export const Resource: FC<ResourceProps> = ({
       publish()
     } else {
       setIsEditing(true)
+      setShowPublishSuccess('failed')
       setShouldShowErrors(true)
     }
   }, [
@@ -284,11 +289,12 @@ export const Resource: FC<ResourceProps> = ({
     setFieldsAsTouched()
 
     if (isPublishedFormValid && isPublishedContentValid) {
-      setShowCheckPublishSuccess(true)
+      setShowCheckPublishSuccess('success')
       setShouldShowErrors(false)
     } else {
       form_validateForm()
       contentForm_validateForm()
+      setShowCheckPublishSuccess('failed')
       setShouldShowErrors(true)
     }
   }, [
@@ -329,6 +335,7 @@ export const Resource: FC<ResourceProps> = ({
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
+      learningOutcomeOptions={learningOutcomeOptions}
       publish={checkFormsAndPublish}
       unpublish={unpublish}
       publishCheck={publishCheck}
@@ -569,29 +576,35 @@ export const Resource: FC<ResourceProps> = ({
       </Snackbar>
     ) : null
 
-  const checkPublishSnackbar = showCheckPublishSuccess ? (
-    <Snackbar
-      position="bottom"
-      type="success"
-      autoHideDuration={3000}
-      showCloseButton={false}
-      onClose={() => setShowCheckPublishSuccess(false)}
-    >
-      {`Success, save before publishing`}
-    </Snackbar>
-  ) : null
+  const checkPublishSnackbar =
+    showCheckPublishSuccess !== 'idle' ? (
+      <Snackbar
+        position="bottom"
+        type={showCheckPublishSuccess === 'success' ? 'success' : 'error'}
+        autoHideDuration={3000}
+        showCloseButton={false}
+        onClose={() => setShowCheckPublishSuccess('idle')}
+      >
+        {showCheckPublishSuccess === 'success'
+          ? `Success, save before publishing`
+          : `Failed, fix the errors and try again`}
+      </Snackbar>
+    ) : null
 
-  const publishSnackbar = showPublishSuccess ? (
-    <Snackbar
-      position="bottom"
-      type="success"
-      autoHideDuration={3000}
-      showCloseButton={false}
-      onClose={() => setShowPublishSuccess(false)}
-    >
-      {`Resource published`}
-    </Snackbar>
-  ) : null
+  const publishSnackbar =
+    showPublishSuccess !== 'idle' ? (
+      <Snackbar
+        position="bottom"
+        type={showPublishSuccess === 'success' ? 'success' : 'error'}
+        autoHideDuration={3000}
+        showCloseButton={false}
+        onClose={() => setShowPublishSuccess('idle')}
+      >
+        {showPublishSuccess === 'success'
+          ? `Resource published`
+          : `Failed, fix the errors and try again`}
+      </Snackbar>
+    ) : null
 
   const unpublishSnackbar = showUnpublishSuccess ? (
     <Snackbar

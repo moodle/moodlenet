@@ -42,6 +42,7 @@ import {
   setResourceContent,
   setResourceImage,
 } from './services.mjs'
+import type { ResourceDataType } from './types.mjs'
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
 
@@ -116,6 +117,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
             month: found.entity.month,
             year: found.entity.year,
             type: found.entity.type,
+            learningOutcomes: found.entity.learningOutcomes,
           },
           data: {
             contentType: found.entity.content?.kind ?? null,
@@ -156,7 +158,19 @@ export const expose = await shell.expose<FullResourceExposeType>({
         })
       },
       fn: async ({ values }, { _key }) => {
-        const patchResult = await patchResource(_key, values)
+        const patch: Partial<ResourceDataType> = {
+          description: values.description,
+          language: values.language,
+          learningOutcomes: values.learningOutcomes.filter(({ sentence }) => !!sentence),
+          level: values.level,
+          license: values.license,
+          month: values.month,
+          year: values.year,
+          title: values.title,
+          subject: values.subject,
+          type: values.type,
+        }
+        const patchResult = await patchResource(_key, patch)
         if (!patchResult) {
           return //throw ?
         }

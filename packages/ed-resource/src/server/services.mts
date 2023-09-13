@@ -6,7 +6,6 @@ import type {
   AccessEntitiesCustomProject,
   EntityAccess,
   GetEntityOpts,
-  Patch,
 } from '@moodlenet/system-entities/server'
 import {
   create,
@@ -74,6 +73,7 @@ export async function setPublished(key: string, published: boolean) {
       type: resource.entity.type,
       month: resource.entity.month,
       year: resource.entity.year,
+      learningOutcomes: resource.entity.learningOutcomes,
     }
     const isValid = await publishedResourceValidationSchema.isValid(resourceFormProps)
     if (!isValid) {
@@ -109,6 +109,7 @@ export async function createResource(resourceData: Partial<ResourceDataType>) {
     month: '',
     year: '',
     type: '',
+    learningOutcomes: [],
     ...resourceData,
   })
 
@@ -163,7 +164,7 @@ export async function deltaResourcePopularityItem({
   return updated?.popularity?.overall
 }
 
-export async function patchResource(_key: string, patch: Patch<ResourceEntityDoc>) {
+export async function patchResource(_key: string, patch: Partial<ResourceEntityDoc>) {
   const resource = await shell.call(getEntity)(Resource.entityClass, _key)
   if (!resource) {
     return null
@@ -180,6 +181,7 @@ export async function patchResource(_key: string, patch: Patch<ResourceEntityDoc
     subject: patch.subject ?? resource.entity.subject,
     type: patch.type ?? resource.entity.type,
     year: patch.year ?? resource.entity.year,
+    learningOutcomes: patch.learningOutcomes ?? resource.entity.learningOutcomes,
   }
   const isValid = await (resource.entity.published
     ? publishedResourceValidationSchema

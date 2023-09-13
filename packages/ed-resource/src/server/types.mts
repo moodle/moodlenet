@@ -1,3 +1,4 @@
+import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import type { FsItem } from '@moodlenet/simple-file-store/server'
 import type { EntityDocument, SystemUser } from '@moodlenet/system-entities/server'
 
@@ -15,6 +16,7 @@ export type ResourceDataType = {
   month: string
   year: string
   type: string
+  learningOutcomes: LearningOutcome[]
   popularity?: {
     overall: number
     items: {

@@ -3,10 +3,10 @@ import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { LearningOutcome, LearningOutcomeOption } from '@moodlenet/ed-meta/common'
 import type { ResourceExposeType, WebappConfigsRpc } from './expose-def.mjs'
 import type { ValidationSchemas } from './validationSchema.mjs'
 export type EdResourceEntityNames = 'Resource'
-
 export type MyWebDeps = {
   me: ResourceExposeType
 }
@@ -27,6 +27,7 @@ export type ResourceFormRpc = {
   month: string
   year: string
   language: string
+  learningOutcomes: LearningOutcome[]
   // addToCollections: string[]
 }
 
@@ -120,6 +121,7 @@ export type EdMetaOptionsRpc = {
   levelOptions: TextOptionProps[]
   licenseOptions: IconTextOptionProps[]
   subjectOptions: TextOptionProps[]
+  learningOutcomeOptions: LearningOutcomeOption[]
 }
 
 export type ResourceCardDataRpc = {

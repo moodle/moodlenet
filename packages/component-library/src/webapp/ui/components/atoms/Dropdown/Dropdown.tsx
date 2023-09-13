@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import { SvgIconTypeMap } from '@material-ui/core'
 import { ExpandLess as ExpandLessIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
 import type { FC, ReactNode } from 'react'
@@ -19,6 +20,8 @@ export type DropdownProps = SelectorProps & {
   highlight?: boolean
   multilines?: boolean
   noBorder?: boolean
+  divRef?: React.RefObject<HTMLDivElement>
+  abbr?: string
   position?: { top?: number; bottom?: number }
 }
 export const Dropdown: FC<DropdownProps> = props => {
@@ -33,6 +36,8 @@ export const Dropdown: FC<DropdownProps> = props => {
     highlight: _highlight,
     noBorder: _noBorder,
     multilines: _multilines,
+    divRef: _divRef,
+    abbr: _abbr,
     position: _position,
     ...selectorProps
   } = props
@@ -60,6 +65,8 @@ const DropdownComp: FC<DropdownProps> = props => {
     multiple,
     searchText,
     placeholder,
+    divRef,
+    abbr,
     position,
   } = props
 
@@ -70,13 +77,18 @@ const DropdownComp: FC<DropdownProps> = props => {
 
   const showContent = edit && showContentFlag
 
+  const dropdownContainerRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    const clickOutListener = () => {
-      showContent && toggleOpen()
+    const clickOutListener = (event: MouseEvent) => {
+      const div = divRef ? divRef.current : dropdownContainerRef.current
+      !((div && div.contains(event.target as Node)) || div === event.target) &&
+        showContent &&
+        toggleOpen()
     }
     window.addEventListener('click', clickOutListener)
     return () => window.removeEventListener('click', clickOutListener)
-  }, [showContent])
+  }, [divRef, showContent])
 
   const setLayout = useCallback(() => {
     showContent &&
@@ -129,14 +141,16 @@ const DropdownComp: FC<DropdownProps> = props => {
   // const contentLength: number = children && Array.isArray(children) && children[1].length
 
   return (
-    <div
+    <abbr
       className={`dropdown ${className ? className : ''} ${searchByText ? 'search' : ''}${
         disabled ? ' disabled' : ''
       } ${highlight || error ? ' highlight' : ''} ${!errorLeaves && error ? 'enter-error' : ''} ${
         errorLeaves ? 'leave-error' : ''
       }`}
+      ref={divRef ?? dropdownContainerRef}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
+      title={abbr}
     >
       {label && <label>{label}</label>}
       <div
@@ -169,7 +183,7 @@ const DropdownComp: FC<DropdownProps> = props => {
               ${multiple && !multilines ? 'scroll' : ''}
               `}
             >
-              {pills ? pills : !disabled && <div className="placeholder">{placeholder}</div>}
+              {pills ? pills : <div className="placeholder">{placeholder}</div>}
             </div>
             {!disabled && edit && <ExpandMoreIcon />}
           </>
@@ -193,7 +207,7 @@ const DropdownComp: FC<DropdownProps> = props => {
           {children}
         </div>
       )}
-    </div>
+    </abbr>
   )
 }
 

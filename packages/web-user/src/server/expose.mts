@@ -368,7 +368,6 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         const webUsers = Promise.all(
           users_and_profiles.map(user => {
             return getProfileRecord(user.profileKey).then(profile => {
-              console.log({ user, profile })
               assert(
                 profile,
                 `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,

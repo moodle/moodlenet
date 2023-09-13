@@ -27,6 +27,11 @@ export const expose = await shell.expose<EdMetaExposeType>({
         const pubMetas = await getAllPublishedMeta()
         // shell.log('debug', { pubMetas })
         return {
+          learningOutcomes: pubMetas.bloomCognitives.map(({ entity: { _key, name, verbs } }) => ({
+            name,
+            code: _key,
+            verbs,
+          })),
           languages: pubMetas.languages.map(({ entity: { _key, name } }) => ({
             label: name,
             value: _key,

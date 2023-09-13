@@ -28,7 +28,6 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
                   imageMaxUploadSize,
                 )}`,
               }))
-        console.log('errors: ', errors)
         return errors
       })
       .optional(),
