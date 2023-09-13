@@ -1,5 +1,12 @@
 import { Collection } from '@moodlenet/collection/server'
-import { EdAssetType, IscedField, IscedGrade, Language, License } from '@moodlenet/ed-meta/server'
+import {
+  BloomCognitive,
+  EdAssetType,
+  IscedField,
+  IscedGrade,
+  Language,
+  License,
+} from '@moodlenet/ed-meta/server'
 import { Resource } from '@moodlenet/ed-resource/server'
 import type { EntityClass } from '@moodlenet/system-entities/common'
 import type { EntityCollectionDef } from '@moodlenet/system-entities/server'
@@ -43,7 +50,7 @@ registerEntityInfoProvider({
 })
 
 function isEdMetaClass(entityClass: EntityClass<any>) {
-  return [IscedField, IscedGrade, Language, EdAssetType, License].some(entity =>
+  return [IscedField, IscedGrade, Language, EdAssetType, License, BloomCognitive].some(entity =>
     isSameClass(entity.entityClass, entityClass),
   )
 }

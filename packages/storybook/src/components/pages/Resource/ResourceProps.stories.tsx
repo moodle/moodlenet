@@ -86,12 +86,12 @@ const learningOutcomes: LearningOutcome[] = [
   //   sentence: 'the concept of ecological balance within ecosystems.',
   // },
   {
-    category: 'Comprehension',
+    code: 'Comprehension',
     verb: 'Explain',
     sentence: 'the consequences of habitat fragmentation on biodiversity.',
   },
   {
-    category: 'Application',
+    code: 'Application',
     verb: 'Apply',
     sentence: 'conservation principles to protect specific habitats.',
   },
@@ -101,7 +101,7 @@ const learningOutcomes: LearningOutcome[] = [
   //   sentence: ' species data to identify ecosystem decline patterns.',
   // },
   {
-    category: 'Synthesis',
+    code: 'Synthesis',
     verb: 'Develop',
     sentence: 'a comprehensive plan for ecosystem restoration.',
   },

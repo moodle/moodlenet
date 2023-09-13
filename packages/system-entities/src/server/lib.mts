@@ -141,7 +141,7 @@ export async function canCreateEntity(entityClass: EntityClass<SomeEntityDataTyp
 
 export async function create<EntityDataType extends SomeEntityDataType>(
   entityClass: EntityClass<EntityDataType>,
-  newEntityData: EntityDataType & { _key?: never },
+  newEntityData: EntityDataType & { _key?: string },
   opts?: { pkgCreator?: boolean },
 ) {
   const currentUser = opts?.pkgCreator ? await setPkgCurrentUser() : await getCurrentSystemUser()
@@ -311,7 +311,8 @@ export async function queryEntities<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
 >(entityClass: EntityClass<EntityDataType>, opts?: QueryEntitiesOpts<Project, ProjectAccess>) {
-  const limit = Math.floor(Math.min(opts?.limit ?? DEFAULT_QUERY_LIMIT, DEFAULT_MAX_QUERY_LIMIT))
+  const _reqLimit = opts?.limit ?? DEFAULT_QUERY_LIMIT
+  const limit = _reqLimit > DEFAULT_MAX_QUERY_LIMIT ? DEFAULT_MAX_QUERY_LIMIT : _reqLimit
   const skip = Math.floor(opts?.skip ?? 0)
   const sort = opts?.sort ? `SORT ${opts.sort}` : ''
   const queryEntitiesCursor = await accessEntities(entityClass, 'r', {
@@ -556,7 +557,6 @@ ${projectAqlRawProps}
 
   const bindVars = { '@collection': accessCollectionName, currentUser, ...opts?.bindVars }
   // shell.log('debug', q, JSON.stringify({ bindVars }, null, 2))
-  // console.debug(q)
   // console.debug(JSON.stringify({ bindVars }))
 
   const queryCursor = await db

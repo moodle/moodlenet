@@ -26,8 +26,8 @@ export default 1
 
 async function initIscedFields() {
   const IscedFieldDataDocs = EdMetaIscedFields.map(({ _key, published, codePath, name }) => {
-    const IscedFieldDataDoc: IscedFieldDataType & { _key: never } = {
-      _key: _key as never,
+    const IscedFieldDataDoc: IscedFieldDataType & { _key: string } = {
+      _key,
       published,
       codePath,
       name,
@@ -44,8 +44,8 @@ async function initIscedFields() {
 
 async function initIscedGrades() {
   const IscedGradeDataDocs = EdMetaIscedGrades.map(({ _key, published, codePath, name }) => {
-    const IscedGradeDataDoc: IscedGradeDataType & { _key: never } = {
-      _key: _key as never,
+    const IscedGradeDataDoc: IscedGradeDataType & { _key: string } = {
+      _key,
       published,
       codePath,
       name,
@@ -62,7 +62,7 @@ async function initIscedGrades() {
 async function initLanguages() {
   const LanguageDataDocs = ISO_639_3_Data.map<LanguageDataType>(
     ({ id, name, part1, part2b, part2t, scope, type }) => {
-      const LanguageDataDoc: LanguageDataType & { _key: never } = {
+      const LanguageDataDoc: LanguageDataType & { _key: string } = {
         _key: id as never,
         code: id,
         name,
@@ -85,7 +85,7 @@ async function initLanguages() {
 
 async function initLicenses() {
   const LicensesDataDocs = License_Data.map(({ code, description, published }) => {
-    const LicenseDataDoc: LicenseDataType & { _key: never } = {
+    const LicenseDataDoc: LicenseDataType & { _key: string } = {
       _key: code as never,
       code,
       description,
@@ -102,7 +102,7 @@ async function initLicenses() {
 
 async function initEdAssetTypes() {
   const EdAssetTypeDataDocs = EdAssetType_Data.map(({ code, description }) => {
-    const EdAssetTypeDataDoc: EdAssetTypeDataType & { _key: never } = {
+    const EdAssetTypeDataDoc: EdAssetTypeDataType & { _key: string } = {
       _key: code as never,
       code,
       description,

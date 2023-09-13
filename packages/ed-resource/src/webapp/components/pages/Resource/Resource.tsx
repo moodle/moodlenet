@@ -111,6 +111,7 @@ export const Resource: FC<ResourceProps> = ({
     subjectOptions,
     typeOptions,
     yearOptions,
+    learningOutcomeOptions,
   } = edMetaOptions
 
   const [emptyOnStart, setEmptyOnStart] = useState<boolean>(
@@ -334,6 +335,7 @@ export const Resource: FC<ResourceProps> = ({
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
+      learningOutcomeOptions={learningOutcomeOptions}
       publish={checkFormsAndPublish}
       unpublish={unpublish}
       publishCheck={publishCheck}
