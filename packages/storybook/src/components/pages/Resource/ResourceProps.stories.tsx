@@ -43,7 +43,7 @@ import {
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
 
-import type { LearningOutcome } from '@moodlenet/ed-meta/ui'
+import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
 
 const meta: ComponentMeta<typeof Resource> = {
@@ -347,6 +347,7 @@ export const useResourceStoryProps = (
     monthOptions: FieldsDataStories.MonthTextOptionProps,
     yearOptions: FieldsDataStories.YearsProps,
     typeOptions: FieldsDataStories.TypeTextOptionProps,
+    learningOutcomeOptions: [],
   }
 
   const likeButtonProps: LikeButtonProps = {
