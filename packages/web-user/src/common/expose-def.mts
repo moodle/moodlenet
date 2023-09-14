@@ -70,9 +70,9 @@ export type WebUserExposeType = PkgExposeDef<{
       featuredEntities: KnownFeaturedEntities
     }>
     'webapp/get-my-interests'(): Promise<null | {
-      userInterests: UserInterests
+      myInterests: UserInterests
     }>
-    'webapp/save-my-interests'(body: { myInterests: UserInterests }): Promise<boolean>
+    'webapp/save-my-interests'(body: { myInterests: UserInterests }): Promise<boolean | undefined>
     'webapp/send-message-to-user/:profileKey'(
       body: { message: string },
       params: { profileKey: string },

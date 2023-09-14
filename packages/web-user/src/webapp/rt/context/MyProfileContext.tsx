@@ -150,7 +150,7 @@ function useMyInterests() {
 
     const rpcResponse = await shell.rpc.me('webapp/get-my-interests')()
 
-    setMyInterests(rpcResponse?.userInterests ?? emptyUserInterests)
+    setMyInterests(rpcResponse?.myInterests ?? emptyUserInterests)
   }, [myProfile])
 
   useEffect(() => {

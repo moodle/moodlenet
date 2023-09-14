@@ -10,16 +10,26 @@ import {
 } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
+import type { SchemaOf } from 'yup'
+import { array, object, string } from 'yup'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
-import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
+import type {
+  ClientSessionDataRpc,
+  Profile,
+  ProfileGetRpc,
+  UserInterests,
+  WebUserData,
+} from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
+import { shell } from './shell.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
-} from './lib/known-features.mjs'
+} from './srv/known-features.mjs'
 import {
+  editMyProfileInterests,
   editProfile,
   entityFeatureAction,
   getEntityFeatureCount,
@@ -32,7 +42,7 @@ import {
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
-} from './lib/profile.mjs'
+} from './srv/profile.mjs'
 import {
   currentWebUserDeletionAccountRequest,
   deleteWebUserAccountConfirmedByToken,
@@ -43,8 +53,7 @@ import {
   sendWebUserTokenCookie,
   toggleWebUserIsAdmin,
   verifyCurrentTokenCtx,
-} from './lib/web-user.mjs'
-import { shell } from './shell.mjs'
+} from './srv/web-user.mjs'
 import type { ProfileDataType } from './types.mjs'
 import { betterTokenContext } from './util.mjs'
 
@@ -291,28 +300,25 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           return null
         }
         return {
-          userInterests: {
-            languages: [], //TODO
-            levels: [], //TODO
-            licenses: [], //TODO
-            subjects: [], //TODO
-          },
+          myInterests: profileRec.entity.profileInterests,
         }
       },
     },
     'webapp/save-my-interests': {
-      guard: () => void 0,
-      async fn() {
-        const myProfileIds = await getCurrentProfileIds()
-        if (!myProfileIds) {
-          return false
-        }
-        const profileRec = await getProfileRecord(myProfileIds._key)
-        if (!profileRec) {
-          return false
-        }
-        //TODO
-        return true
+      guard: body => {
+        const schema: SchemaOf<{ myInterests: UserInterests }> = object({
+          myInterests: object({
+            subjects: array().of(string().required()).required(),
+            licenses: array().of(string().required()).required(),
+            levels: array().of(string().required()).required(),
+            languages: array().of(string().required()).required(),
+          }).required(),
+        }).required()
+        const { myInterests } = schema.validateSync(body, { stripUnknown: true })
+        body.myInterests = myInterests
+      },
+      async fn({ myInterests }) {
+        return editMyProfileInterests({ myInterests })
       },
     },
     'webapp/send-message-to-user/:profileKey': {

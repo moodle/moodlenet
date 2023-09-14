@@ -193,6 +193,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     knownFeaturedEntities: [],
     kudos: 0,
     webslug: webSlug(profileData.displayName),
+    profileInterests: { languages: [], levels: [], licenses: [], subjects: [] },
     ...profileData,
   }
   const newProfile = await create(Profile.entityClass, createData, { pkgCreator: true })
