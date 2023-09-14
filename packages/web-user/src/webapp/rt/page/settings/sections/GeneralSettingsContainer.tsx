@@ -3,5 +3,5 @@ import { useGeneralSettingsProps } from './GeneralSettingsHook.mjs'
 
 export function GeneralSettingsContainer() {
   const generalSettingsProps = useGeneralSettingsProps()
-  return <General {...generalSettingsProps} />
+  return generalSettingsProps && <General {...generalSettingsProps} />
 }

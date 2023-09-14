@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, MultipeSelectDropdown } from '@moodlenet/component-library'
+import { Card, MultipeSelectDropdown, PrimaryButton } from '@moodlenet/component-library'
 import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
 import { useFormik } from 'formik'
 import { /* useState, */ type FC } from 'react'
@@ -9,7 +9,10 @@ import './General.scss'
 
 export type GeneralProps = {
   mainColumnItems: (AddonItem | null)[]
-  edMetaOptions: EdMetaOptionsProps
+  edMetaOptions: Pick<
+    EdMetaOptionsProps,
+    'languageOptions' | 'levelOptions' | 'licenseOptions' | 'subjectOptions'
+  >
   interests: UserInterests
   editInterests: (values: UserInterests) => void
   // userId: string
@@ -58,7 +61,7 @@ export const General: FC<GeneralProps> = ({
     initialValues: interests,
     // validateOnMount: true,
     // validateOnChange: true,
-    // enableReinitialize: true,
+    enableReinitialize: true,
     onSubmit: values => {
       editInterests(values)
       // return editData(values)
@@ -132,6 +135,14 @@ export const General: FC<GeneralProps> = ({
         <div className="name">Interests</div>
         {interestsFields}
       </div>
+      <PrimaryButton
+        disabled={!form.dirty}
+        onClick={() => {
+          form.submitForm()
+        }}
+      >
+        Save
+      </PrimaryButton>
     </Card>
   )
 

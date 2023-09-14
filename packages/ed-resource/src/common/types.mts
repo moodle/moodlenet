@@ -67,7 +67,16 @@ export type ResourceDataProps = ResourceDataRpc
 export type ResourceStateProps = ResourceStateRpc
 export type ResourceCardDataProps = ResourceCardDataRpc
 export type ResourceAccessProps = ResourceAccessRpc
-export type EdMetaOptionsProps = EdMetaOptionsRpc
+export type EdMetaOptionsProps = {
+  typeOptions: TextOptionProps[]
+  monthOptions: TextOptionProps[]
+  yearOptions: string[]
+  languageOptions: TextOptionProps[]
+  levelOptions: TextOptionProps[]
+  licenseOptions: IconTextOptionProps[]
+  subjectOptions: TextOptionProps[]
+  learningOutcomeOptions: LearningOutcomeOption[]
+}
 export type ResourceContributorProps = ResourceContributorRpc
 
 export type ResourceProps = {
@@ -111,17 +120,6 @@ export type ResourceAccessRpc = {
   canEdit: boolean
   canPublish: boolean
   canDelete: boolean
-}
-
-export type EdMetaOptionsRpc = {
-  typeOptions: TextOptionProps[]
-  monthOptions: TextOptionProps[]
-  yearOptions: string[]
-  languageOptions: TextOptionProps[]
-  levelOptions: TextOptionProps[]
-  licenseOptions: IconTextOptionProps[]
-  subjectOptions: TextOptionProps[]
-  learningOutcomeOptions: LearningOutcomeOption[]
 }
 
 export type ResourceCardDataRpc = {

@@ -10,6 +10,7 @@ import type {
   ProfileGetRpc,
   ProfileSearchResultRpc,
   SortTypeRpc,
+  UserInterests,
   WebUserData,
 } from './types.mjs'
 import type { ValidationsConfig } from './validationSchema.mjs'
@@ -68,6 +69,10 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/all-my-featured-entities'(): Promise<null | {
       featuredEntities: KnownFeaturedEntities
     }>
+    'webapp/get-my-interests'(): Promise<null | {
+      myInterests: UserInterests
+    }>
+    'webapp/save-my-interests'(body: { myInterests: UserInterests }): Promise<boolean | undefined>
     'webapp/send-message-to-user/:profileKey'(
       body: { message: string },
       params: { profileKey: string },
