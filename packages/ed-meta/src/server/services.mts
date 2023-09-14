@@ -19,15 +19,45 @@ import { shell } from './shell.mjs'
 import type { IscedFieldDataType } from './types.mjs'
 
 export async function getAllPublishedMeta() {
-  const preAccessBody = `FILTER ${currentEntityVar}.published`
+  const filterPublished = `FILTER ${currentEntityVar}.published`
   const [licenses, edAssetTypes, languages, iscedGrades, iscedFields, bloomCognitives] =
     await Promise.all([
-      (await accessEntities(License.entityClass, 'r', { preAccessBody })).all(),
-      (await accessEntities(EdAssetType.entityClass, 'r', { preAccessBody })).all(),
-      (await accessEntities(Language.entityClass, 'r', { preAccessBody })).all(),
-      (await accessEntities(IscedGrade.entityClass, 'r', { preAccessBody })).all(),
-      (await accessEntities(IscedField.entityClass, 'r', { preAccessBody })).all(),
-      (await accessEntities(BloomCognitive.entityClass, 'r', { preAccessBody })).all(),
+      (
+        await accessEntities(License.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}.restrictiveness`,
+        })
+      ).all(),
+      (
+        await accessEntities(EdAssetType.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}.description`,
+        })
+      ).all(),
+      (
+        await accessEntities(Language.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}.name`,
+        })
+      ).all(),
+      (
+        await accessEntities(IscedGrade.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}._key == 'ADT' ? 'ZZZ' : ${currentEntityVar}._key`,
+        })
+      ).all(),
+      (
+        await accessEntities(IscedField.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}._key`,
+        })
+      ).all(),
+      (
+        await accessEntities(BloomCognitive.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}._key`,
+        })
+      ).all(),
     ])
   return { licenses, edAssetTypes, languages, iscedGrades, iscedFields, bloomCognitives }
 }
