@@ -21,7 +21,7 @@ export function useGeneralSettingsProps() {
     const generalProps: GeneralProps = {
       mainColumnItems: plugins.getKeyedAddons('mainColumn'),
       interests: myProfileCtx.myInterests.current,
-      edMetaOptions: {
+      interestsOptions: {
         languageOptions: publishedMetaOptions.languages,
         levelOptions: publishedMetaOptions.levels,
         licenseOptions: publishedMetaOptions.licenses,

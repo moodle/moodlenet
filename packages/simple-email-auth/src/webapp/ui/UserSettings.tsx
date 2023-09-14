@@ -3,41 +3,37 @@ import { Card, InputTextField, PrimaryButton, Snackbar } from '@moodlenet/compon
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 
-export type SimpleEmailUserSettingsData = {
+export type SetPasswordData = {
   // email: string
   password: string
 }
 
 export type SimpleEmailUserSettingsProps = {
-  data: SimpleEmailUserSettingsData
+  // data: SimpleEmailUserSettingsData
   // emailChangedSuccess: boolean
   passwordChangedSuccess: boolean
-  editData: (values: SimpleEmailUserSettingsData) => void
+  setPassword: (values: SetPasswordData) => void
 }
 
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
 export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
-  data,
-  editData,
+  // data,
+  setPassword,
   // emailChangedSuccess,
   passwordChangedSuccess,
 }) => {
-  const form = useFormik<SimpleEmailUserSettingsData>({
-    initialValues: data,
+  const form = useFormik<SetPasswordData>({
+    initialValues: { password: '' },
     // validationSchema: resourceValidationSchema,
     onSubmit: values => {
-      return editData(values)
+      return setPassword(values)
     },
   })
 
-  const canSubmit =
-    form.dirty &&
-    form.isValid &&
-    !form.isSubmitting &&
-    !form.isValidating &&
-    // form.values.email !== data.email ||
-    form.values.password !== data.password
+  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating // &&
+  // form.values.email !== data.email ||
+  // form.values.password !== data.password
 
   const shouldShowErrors = !!form.submitCount
 

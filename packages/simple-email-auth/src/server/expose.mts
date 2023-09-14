@@ -65,16 +65,16 @@ export const expose = await shell.expose<SimpleEmailAuthExposeType>({
         return true
       },
     },
-    'webapp/get-my-settings-data': {
-      guard: () => void 0,
-      async fn() {
-        const currentEmailPwdUser = await getCurrentEmailPwdUser()
-        if (!currentEmailPwdUser) {
-          return null
-        }
-        return { email: currentEmailPwdUser.email }
-      },
-    },
+    // 'webapp/get-my-settings-data': {
+    //   guard: () => void 0,
+    //   async fn() {
+    //     const currentEmailPwdUser = await getCurrentEmailPwdUser()
+    //     if (!currentEmailPwdUser) {
+    //       return null
+    //     }
+    //     return { email: currentEmailPwdUser.email }
+    //   },
+    // },
     'webapp/request-password-change-by-email-link': {
       guard: _ => requestPasswordChangeByEmailLinkSchema.isValid(_),
       async fn({ email }) {
