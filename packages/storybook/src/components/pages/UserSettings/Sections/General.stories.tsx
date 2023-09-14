@@ -1,9 +1,8 @@
 import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
-import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
 import type { SimpleEmailUserSettingsProps } from '@moodlenet/simple-email-auth/ui'
 import { SimpleEmailUserSettings } from '@moodlenet/simple-email-auth/ui'
 import type { UserInterests } from '@moodlenet/web-user/common'
-import type { GeneralProps, UserSettingsItem } from '@moodlenet/web-user/ui'
+import type { GeneralProps, InterestsOptions, UserSettingsItem } from '@moodlenet/web-user/ui'
 import { General, GeneralMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useState } from 'react'
@@ -26,24 +25,21 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     ],
     levels: [FieldsDataStories.LevelTextOptionProps[2]!.value],
     licenses: [FieldsDataStories.LicenseIconTextOptionProps[2]!.value],
-    types: [FieldsDataStories.TypeTextOptionProps[1]!.value],
+    // types: [FieldsDataStories.TypeTextOptionProps[1]!.value],
   }
 
-  const edMetaOptions: EdMetaOptionsProps = {
+  const interestsOptions: InterestsOptions = {
     subjectOptions: FieldsDataStories.SubjectsTextOptionProps,
     languageOptions: FieldsDataStories.LanguagesTextOptionProps,
     levelOptions: FieldsDataStories.LevelTextOptionProps,
     licenseOptions: FieldsDataStories.LicenseIconTextOptionProps,
-    monthOptions: FieldsDataStories.MonthTextOptionProps,
-    yearOptions: FieldsDataStories.YearsProps,
-    typeOptions: FieldsDataStories.TypeTextOptionProps,
   }
   const simpleEmailUserSettingsProps: SimpleEmailUserSettingsProps = {
-    data: {
-      password: 'mypassword',
-    },
+    // data: {
+    //   password: 'mypassword',
+    // },
     passwordChangedSuccess: false,
-    editData: action('edit data'),
+    setPassword: action('set password'),
   }
 
   const editInterests = (values: UserInterests) => {
@@ -57,8 +53,8 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
       },
     ],
     interests: interests,
-    edMetaOptions: edMetaOptions,
-    editInterests: editInterests,
+    interestsOptions,
+    editInterests,
 
     // userId: 'john-cake-21321312',
     // updateExtensions: action('Updating extensions'),

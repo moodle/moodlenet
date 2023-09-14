@@ -1,7 +1,7 @@
 import type { PkgExposeDef } from '@moodlenet/core'
 import type { EmailPwdUser } from '../server/store/types.mjs'
 import type { SignupReq } from '../server/types.mjs'
-import type { GetMySettingsDataRpc } from './types.mjs'
+// import type { GetMySettingsDataRpc } from './types.mjs'
 export type SimpleEmailAuthExposeType = PkgExposeDef<{
   rpc: {
     login(body: {
@@ -17,7 +17,7 @@ export type SimpleEmailAuthExposeType = PkgExposeDef<{
       password: string
       token: string
     }): Promise<{ success: boolean }>
-    'webapp/get-my-settings-data'(): Promise<GetMySettingsDataRpc | null>
+    // 'webapp/get-my-settings-data'(): Promise<GetMySettingsDataRpc | null>
     'webapp/set-password'(body: { password: string }): Promise<boolean>
   }
 }>

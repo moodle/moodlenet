@@ -7,12 +7,13 @@ import { /* useState, */ type FC } from 'react'
 import type { UserInterests } from '../../../../../../common/types.mjs'
 import './General.scss'
 
+export type InterestsOptions = Pick<
+  EdMetaOptionsProps,
+  'languageOptions' | 'levelOptions' | 'licenseOptions' | 'subjectOptions'
+>
 export type GeneralProps = {
   mainColumnItems: (AddonItem | null)[]
-  edMetaOptions: Pick<
-    EdMetaOptionsProps,
-    'languageOptions' | 'levelOptions' | 'licenseOptions' | 'subjectOptions'
-  >
+  interestsOptions: InterestsOptions
   interests: UserInterests
   editInterests: (values: UserInterests) => void
   // userId: string
@@ -22,12 +23,12 @@ export const GeneralMenu = () => <abbr title="General">General</abbr>
 
 export const General: FC<GeneralProps> = ({
   mainColumnItems,
-  edMetaOptions,
+  interestsOptions,
   interests,
   editInterests,
   //userId
 }) => {
-  const { languageOptions, levelOptions, subjectOptions, licenseOptions } = edMetaOptions
+  const { languageOptions, levelOptions, subjectOptions, licenseOptions } = interestsOptions
   /* const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
 
   const copyId = () => {
