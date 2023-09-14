@@ -38,7 +38,7 @@ export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = props => {
       error={shouldShowErrors && errors}
       multilines
       multiple
-      position={{ top: 77, bottom: 25 }}
+      position={{ top: 77, bottom: 55 }}
       searchByText={setSearchText}
       pills={updatedElements.selected.map(selected => (
         <SimplePill edit key={selected.value} value={selected.value} label={selected.label} />

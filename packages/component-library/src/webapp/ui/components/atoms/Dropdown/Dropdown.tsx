@@ -186,7 +186,7 @@ const DropdownComp: FC<DropdownProps> = props => {
       ref={divRef ?? dropdownContainerRef}
       style={{
         visibility: hidden ? 'hidden' : 'visible',
-        height: multilines ? `${28 + multilineHeight}px` : undefined,
+        // height: multilines ? `${28 + multilineHeight}px` : undefined,
       }}
       hidden={hidden}
       title={abbr}

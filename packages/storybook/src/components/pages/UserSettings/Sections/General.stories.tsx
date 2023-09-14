@@ -24,8 +24,9 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
       FieldsDataStories.LanguagesTextOptionProps[2]!.value,
     ],
     levels: [FieldsDataStories.LevelTextOptionProps[2]!.value],
-    licenses: [FieldsDataStories.LicenseIconTextOptionProps[2]!.value],
-    // types: [FieldsDataStories.TypeTextOptionProps[1]!.value],
+    licenses: [
+      // FieldsDataStories.LicenseIconTextOptionProps[2]!.value
+    ],
   }
 
   const interestsOptions: InterestsOptions = {
