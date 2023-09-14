@@ -90,6 +90,8 @@ async function initLicenses() {
       code,
       description,
       published,
+      // added restrictiveness on v3
+      restrictiveness: undefined as never,
     }
     return LicenseDataDoc
   })
