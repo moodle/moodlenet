@@ -21,10 +21,10 @@ const meta: ComponentMeta<typeof SimpleDropdown> = {
 
 export const SimpleDropdownStoryProps: SimpleDropdownProps = {
   label: 'Label',
-  list: [
-    { name: 'Item 1', key: '1' },
-    { name: 'Item 2', key: '2' },
-    { name: 'Item 3', key: '3' },
+  options: [
+    { label: 'Item 1', value: '1' },
+    { label: 'Item 2', value: '2' },
+    { label: 'Item 3', value: '3' },
   ],
   selected: ['Item 1'],
   onClick: () => undefined,

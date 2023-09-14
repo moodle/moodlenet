@@ -1,5 +1,7 @@
-import type { SortByLanguageType, SortType } from '@moodlenet/react-app/ui'
-import { SortBy, SortByLanguage } from '@moodlenet/react-app/ui'
+import type { TextOptionProps } from '@moodlenet/component-library'
+import { DropdownFilterField } from '@moodlenet/ed-meta/ui'
+import type { SortType } from '@moodlenet/react-app/ui'
+import { SortBy } from '@moodlenet/react-app/ui'
 
 export const SortByItem = ({
   selected,
@@ -12,9 +14,75 @@ export const SortByItem = ({
 export const SortByLanguageItem = ({
   selected,
   setSelected,
+  options,
 }: {
-  selected: SortByLanguageType[]
-  setSelected: (e: SortByLanguageType[]) => void
-}) => <SortByLanguage selected={selected} setSelected={setSelected} />
+  selected: string[]
+  setSelected: (e: string[]) => void
+  options: TextOptionProps[]
+}) => (
+  <DropdownFilterField
+    title={'Language'}
+    selection={selected}
+    setselection={setSelected}
+    options={options}
+  />
+)
 
-export const BrowserResourceFilters = { SortByItem, SortByLanguageItem }
+export const SortByLicenseItem = ({
+  selected,
+  setSelected,
+  options,
+}: {
+  selected: string[]
+  setSelected: (e: string[]) => void
+  options: TextOptionProps[]
+}) => (
+  <DropdownFilterField
+    title={'License'}
+    selection={selected}
+    setselection={setSelected}
+    options={options}
+  />
+)
+
+export const SortByLevelItem = ({
+  selected,
+  setSelected,
+  options,
+}: {
+  selected: string[]
+  setSelected: (e: string[]) => void
+  options: TextOptionProps[]
+}) => (
+  <DropdownFilterField
+    title={'Level'}
+    selection={selected}
+    setselection={setSelected}
+    options={options}
+  />
+)
+
+export const SortByTypeItem = ({
+  selected,
+  setSelected,
+  options,
+}: {
+  selected: string[]
+  setSelected: (e: string[]) => void
+  options: TextOptionProps[]
+}) => (
+  <DropdownFilterField
+    title={'Type'}
+    selection={selected}
+    setselection={setSelected}
+    options={options}
+  />
+)
+
+export const BrowserResourceFilters = {
+  SortByItem,
+  SortByLanguageItem,
+  SortByLicenseItem,
+  SortByLevelItem,
+  SortByTypeItem,
+}

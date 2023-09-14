@@ -1,4 +1,37 @@
-import type { LearningOutcomeOption } from '@moodlenet/ed-meta/common'
+import type { LearningOutcome, LearningOutcomeOption } from '@moodlenet/ed-meta/common'
+
+export const learningOutcomesSelection: LearningOutcome[] = [
+  // {
+  //   category: '1',
+  //   verb: 'Define',
+  //   sentence: 'the concept of ecological balance within ecosystems.',
+  // },
+  {
+    code: '2',
+    verb: 'Explain',
+    sentence: 'the consequences of habitat fragmentation on biodiversity.',
+  },
+  {
+    code: '3',
+    verb: 'Apply',
+    sentence: 'conservation principles to protect specific habitats.',
+  },
+  // {
+  //   category: '4',
+  //   verb: 'Analyze',
+  //   sentence: ' species data to identify ecosystem decline patterns.',
+  // },
+  {
+    code: '5',
+    verb: 'Develop',
+    sentence: 'a comprehensive plan for ecosystem restoration.',
+  },
+  // {
+  //   category: 'Evaluation',
+  //   verb: 'Assess',
+  //   sentence: ' the impact and success of conservation projects on biodiversity.',
+  // },
+]
 
 export const learningOutcomeOptions: LearningOutcomeOption[] = [
   {

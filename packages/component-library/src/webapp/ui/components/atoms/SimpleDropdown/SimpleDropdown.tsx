@@ -1,6 +1,7 @@
 import { ArrowDropDown } from '@mui/icons-material'
 import type { FC } from 'react'
 import { Fragment } from 'react'
+import type { TextOptionProps } from '../Dropdown/Dropdown.js'
 import type { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.js'
 import FloatingMenu from '../FloatingMenu/FloatingMenu.js'
 import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
@@ -9,7 +10,7 @@ import './SimpleDropdown.scss'
 
 export type SimpleDropdownProps = {
   label: string
-  list: { name: string; key: string }[]
+  options: TextOptionProps[]
   selected: string[]
   onClick: (e: string) => void
   className?: string
@@ -18,7 +19,7 @@ export type SimpleDropdownProps = {
 }
 
 export const SimpleDropdown: FC<SimpleDropdownProps> = ({
-  list,
+  options,
   className,
   selected,
   onClick,
@@ -27,17 +28,17 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
   initialSelection,
 }) => {
   const currentName: string[] = []
-  const menuContent = list.map(({ name, key }, i) => {
-    const isCurrent = selected.indexOf(key) > -1
-    isCurrent && currentName.push(name)
-    const previousKey = list[i - 1] ? list[i - 1]?.key : null
+  const menuContent = options.map(({ value, label }, i) => {
+    const isCurrent = selected.indexOf(value) > -1
+    isCurrent && currentName.push(label)
+    const previousKey = options[i - 1] ? options[i - 1]?.value : null
     const prevSelected = previousKey && selected.indexOf(previousKey) > -1 && isCurrent
-    const nextKey = list[i + 1] ? list[i + 1]?.key : null
+    const nextKey = options[i + 1] ? options[i + 1]?.value : null
     const nextSelected = nextKey && selected.indexOf(nextKey) > -1 && isCurrent
 
     const floatingMenuContentItem: FloatingMenuContentItem = {
       Element: (
-        <Fragment key={key}>
+        <Fragment key={value}>
           <div className={`border-container ${isCurrent ? 'selected' : ''}`}>
             <div
               className={`border ${isCurrent ? 'selected' : ''} ${
@@ -47,12 +48,12 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
             />
           </div>
           <div
-            onClick={() => onClick(key)}
+            onClick={() => onClick(value)}
             className={`content ${isCurrent ? 'selected' : ''} 
             ${prevSelected ? 'prev-selected' : ''}
           `}
           >
-            {name}
+            {label}
           </div>
         </Fragment>
       ),
@@ -78,7 +79,7 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
               <>
                 {label} <div className="num-selected-elements">{currentName.length}</div>
               </>
-            )}{' '}
+            )}
             <ArrowDropDown />
           </PrimaryButton>
         ) : (

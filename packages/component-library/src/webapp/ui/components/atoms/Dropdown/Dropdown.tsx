@@ -23,6 +23,7 @@ export type DropdownProps = SelectorProps & {
   divRef?: React.RefObject<HTMLDivElement>
   abbr?: string
   position?: { top?: number; bottom?: number }
+  dropdownButton?: ReactNode
 }
 export const Dropdown: FC<DropdownProps> = props => {
   const {
@@ -39,6 +40,7 @@ export const Dropdown: FC<DropdownProps> = props => {
     divRef: _divRef,
     abbr: _abbr,
     position: _position,
+    dropdownButton: _dropdownButton,
     ...selectorProps
   } = props
   return (
@@ -68,6 +70,7 @@ const DropdownComp: FC<DropdownProps> = props => {
     divRef,
     abbr,
     position,
+    dropdownButton: DropdownButton,
   } = props
 
   const [isShowingContent, setShowingContent] = useState(false)
@@ -204,8 +207,11 @@ const DropdownComp: FC<DropdownProps> = props => {
         onBlur={isShowingContent ? undefined : () => setShowingContent(false)}
         className={`input-container${disabled || !edit ? ' not-editing' : ''} ${
           highlight ? ' highlight' : ''
-        }${noBorder ? ' no-border' : ''}
-        ${multilines ? ' multilines' : ''}`}
+        }
+          ${multilines ? ' multilines' : ''} 
+         ${noBorder ? ' no-border' : ''}
+        ${showContent ? ' showing-content' : ''}
+        `}
         tabIndex={!disabled && !isShowingContent ? 0 : undefined}
       >
         {isShowingContent ? (
@@ -228,25 +234,27 @@ const DropdownComp: FC<DropdownProps> = props => {
               disabled={disabled || !edit}
               defaultValue={searchText}
             />
-            <ExpandLess onClickCapture={() => setShowingContent(false)} />
+            <ExpandLess className="less-arrow" onClickCapture={() => setShowingContent(false)} />
           </>
         ) : (
-          <>
-            <div
-              ref={multilinesRef}
-              className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
+          DropdownButton ?? (
+            <>
+              <div
+                ref={multilinesRef}
+                className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
               ${multilines ? 'multilines' : ''} 
               ${multiple && !multilines ? 'scroll' : ''}
               `}
-            >
-              {pills && !(Array.isArray(pills) && pills.length === 0) ? (
-                pills
-              ) : (
-                <div className="placeholder">{placeholder}</div>
-              )}
-            </div>
-            {!disabled && edit && <ExpandMoreIcon />}
-          </>
+              >
+                {pills && !(Array.isArray(pills) && pills.length === 0) ? (
+                  pills
+                ) : (
+                  <div className="placeholder">{placeholder}</div>
+                )}
+              </div>
+              {!disabled && edit && <ExpandMoreIcon className="open-arrow" />}
+            </>
+          )
         )}
       </div>
       {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}

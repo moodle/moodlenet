@@ -1,13 +1,9 @@
 import { BrowserCollectionFilters, BrowserCollectionList } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
+import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { BrowserSubjectList } from '@moodlenet/ed-meta/ui'
 import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
-import type {
-  BrowserProps,
-  MainColumItem,
-  SortByLanguageType,
-  SortType,
-} from '@moodlenet/react-app/ui'
+import type { BrowserProps, MainColumItem, SortType } from '@moodlenet/react-app/ui'
 import { BrowserProfileFilters, BrowserProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
@@ -19,9 +15,11 @@ import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stori
 
 export const useBrowserResourceList = (): MainColumItem => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType>('Relevant')
-  const [currentResourceSortByLanguage, setCurrentResourceSortByLanguage] = useState<
-    SortByLanguageType[]
-  >([])
+  const [currentResourceSortByLanguage, setCurrentResourceSortByLanguage] = useState<string[]>([])
+  const [currentResourceSortByLevel, setCurrentResourceSortByLevel] = useState<string[]>([])
+  const [currentResourceSortByType, setCurrentResourceSortByType] = useState<string[]>([])
+  const [currentResourceSortByLicense, setCurrentResourceSortByLicense] = useState<string[]>([])
+
   return {
     name: 'Resources',
     Item: ({ showAll, setShowAll }) => {
@@ -51,6 +49,22 @@ export const useBrowserResourceList = (): MainColumItem => {
       BrowserResourceFilters.SortByLanguageItem({
         selected: currentResourceSortByLanguage,
         setSelected: setCurrentResourceSortByLanguage,
+        options: FieldsDataStories.LanguagesTextOptionProps,
+      }),
+      BrowserResourceFilters.SortByLevelItem({
+        selected: currentResourceSortByLevel,
+        setSelected: setCurrentResourceSortByLevel,
+        options: FieldsDataStories.LevelTextOptionProps,
+      }),
+      BrowserResourceFilters.SortByTypeItem({
+        selected: currentResourceSortByType,
+        setSelected: setCurrentResourceSortByType,
+        options: FieldsDataStories.TypeTextOptionProps,
+      }),
+      BrowserResourceFilters.SortByLicenseItem({
+        selected: currentResourceSortByLicense,
+        setSelected: setCurrentResourceSortByLicense,
+        options: FieldsDataStories.LicenseIconTextOptionProps,
       }),
     ].map((e, i) => ({
       Item: () => e,

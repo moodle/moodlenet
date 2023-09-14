@@ -32,8 +32,7 @@ export type BrowserPropsUI = {
 export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | number | undefined>(undefined)
-
-  // const filteredMainColumItems = mainColumnItems?.filter(e => e.numElements !== 0)
+  const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
@@ -42,15 +41,16 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
             // if (e.numElements === 0) return null
             const isCurrent = e.key === currentMainFilter
 
-            const list = mainColumnItems.map(i => {
-              return { name: i.name, key: i.key }
+            const options = mainColumnItems.map(i => {
+              return { label: i.name, value: i.key }
             })
-            list.push({ name: 'All', key: 'all' })
+            options.push({ label: 'All', value: 'all' })
 
             return isCurrent || !currentMainFilter ? (
               isCurrent ? (
                 <SimpleDropdown
-                  list={list}
+                  className={`content-type-filter`}
+                  options={options}
                   selected={[e.key]}
                   label={e.name}
                   onClick={(key: string | number) => {
@@ -60,7 +60,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
               ) : (
                 <SecondaryButton
                   key={e.key}
-                  className={`filter-element ${isCurrent ? 'selected' : ''}`}
+                  className={`content-type-filter filter-element ${isCurrent ? 'selected' : ''}`}
                   onClick={() => {
                     setCurrentMainFilter(e.key)
                   }}
@@ -75,18 +75,17 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
       : []
   }, [mainColumnItems, currentMainFilter])
 
-  const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
   useEffect(() => {
     mainColumnItems?.map(e => e.key === currentMainFilter && setCurrentFilters(e.filters))
   }, [currentMainFilter, mainColumnItems])
 
   const filters =
     currentFilters && currentFilters.length > 0 ? (
-      <div className="filters">
+      <>
         {currentFilters.map(i => (
           <i.Item key={i.key} />
         ))}
-      </div>
+      </>
     ) : null
 
   const updatedMainColumnItems = [...(mainColumnItems ?? [])].filter(
@@ -116,7 +115,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
       {showFilters && (
         <div className="filter-bar">
           <div className="filter-bar-content">
-            <div className="content-type-filters">{filterByItemType.filter(e => !!e)}</div>
+            {filterByItemType.filter(e => !!e)}
             {extraFilters}
           </div>
         </div>
