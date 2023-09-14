@@ -40,11 +40,13 @@ export const DropdownFilterField: FC<DropdownFilterFieldProps> = props => {
     if (element) element.style.width = `${buttonWidth}px`
   }, [buttonWidth, dropdownRef])
 
+  const selectedLabel = options.find(opt => opt.value === selection[0])?.label
+
   const dropdownButton =
     selection.length > 0 || highlightInitialSelection ? (
       <PrimaryButton innerRef={dropdownButtonRef}>
-        {selection.length === 1 ? (
-          <>{selection[0]}</>
+        {selection.length === 1 && selectedLabel && selectedLabel?.length < 9 ? (
+          <>{selectedLabel}</>
         ) : (
           <>
             {title} <div className="num-selected-elements">{selection.length}</div>

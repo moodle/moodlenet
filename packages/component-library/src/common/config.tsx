@@ -25,9 +25,11 @@ export type BaseStyleType = {
   '--base-grey-color': string
 
   '--primary-color': string
-  '--primary-background-color': string
   '--primary-color-hover': string
   '--primary-color-active': string
+  '--primary-background-color': string
+  '--primary-background-color-hover': string
+  '--primary-background-color-active': string
   '--header-background': string
   '--error-color': string
   '--warning-color': string
@@ -47,9 +49,11 @@ export const baseStyle = (baseColor = baseMoodleColor): BaseStyleType => {
     '--base-grey-color': baseGreyColor,
 
     '--primary-color': baseColor,
-    '--primary-background-color': setOpacity(baseColor, 0.12),
     '--primary-color-hover': primaryColorHover,
     '--primary-color-active': primaryColorActive,
+    '--primary-background-color': setOpacity(baseColor, 0.12),
+    '--primary-background-color-hover': setOpacity(baseColor, 0.18),
+    '--primary-background-color-active': setOpacity(baseColor, 0.28),
     '--header-background': baseWhiteColor,
     '--error-color': baseLightRedColor,
     '--warning-color': baseMoodleColor,

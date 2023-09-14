@@ -9,6 +9,22 @@
     > .less-arrow {
       display: none;
     }
+
+    > .primary-button,
+    > .secondary-button {
+      padding: 6px 6px 6px 18px;
+      > .num-selected-elements {
+        background-color: #ffffff;
+        color: #959595;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 4px;
+      }
+    }
   }
 
   > .dropdown-content {
