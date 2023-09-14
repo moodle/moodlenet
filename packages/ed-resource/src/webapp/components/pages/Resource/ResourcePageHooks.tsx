@@ -1,4 +1,4 @@
-import { getLicenseNode, type AddonItem, type AddonItemNoKey } from '@moodlenet/component-library'
+import { type AddonItem, type AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
@@ -48,7 +48,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     resourceCommonProps,
   })
 
-  const { publishedMeta } = useContext(EdMetaContext)
+  const { publishedMetaOptions } = useContext(EdMetaContext)
 
   if (!resourceCommonProps) return resourceCommonProps
   const { actions, props, saveState } = resourceCommonProps
@@ -79,16 +79,12 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     mainResourceCardSlots,
     resourceContributorCardProps: contributor,
     edMetaOptions: {
-      learningOutcomeOptions: publishedMeta.learningOutcomes,
-      languageOptions: publishedMeta.languages,
-      levelOptions: publishedMeta.levels,
-      licenseOptions: publishedMeta.licenses.map(({ label, value }) => ({
-        icon: getLicenseNode(value),
-        label,
-        value,
-      })),
-      subjectOptions: publishedMeta.subjects,
-      typeOptions: publishedMeta.types,
+      learningOutcomeOptions: publishedMetaOptions.learningOutcomes,
+      languageOptions: publishedMetaOptions.languages,
+      levelOptions: publishedMetaOptions.levels,
+      licenseOptions: publishedMetaOptions.licenses,
+      subjectOptions: publishedMetaOptions.subjects,
+      typeOptions: publishedMetaOptions.types,
       monthOptions: moment
         .months()
         .map((month, index) => ({ label: month, value: `${index + 1}` })),

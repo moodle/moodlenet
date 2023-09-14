@@ -266,17 +266,53 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/all-my-featured-entities': {
       guard: () => void 0,
       async fn() {
-        const myProfile = await getCurrentProfileIds()
-        if (!myProfile) {
+        const myProfileIds = await getCurrentProfileIds()
+        if (!myProfileIds) {
           return null
         }
-        const profileRec = await getProfileRecord(myProfile._key)
+        const profileRec = await getProfileRecord(myProfileIds._key)
         if (!profileRec) {
           return null
         }
         return {
           featuredEntities: reduceToKnownFeaturedEntities(profileRec.entity.knownFeaturedEntities),
         }
+      },
+    },
+    'webapp/get-my-interests': {
+      guard: () => void 0,
+      async fn() {
+        const myProfileIds = await getCurrentProfileIds()
+        if (!myProfileIds) {
+          return null
+        }
+        const profileRec = await getProfileRecord(myProfileIds._key)
+        if (!profileRec) {
+          return null
+        }
+        return {
+          userInterests: {
+            languages: [], //TODO
+            levels: [], //TODO
+            licenses: [], //TODO
+            subjects: [], //TODO
+          },
+        }
+      },
+    },
+    'webapp/save-my-interests': {
+      guard: () => void 0,
+      async fn() {
+        const myProfileIds = await getCurrentProfileIds()
+        if (!myProfileIds) {
+          return false
+        }
+        const profileRec = await getProfileRecord(myProfileIds._key)
+        if (!profileRec) {
+          return false
+        }
+        //TODO
+        return true
       },
     },
     'webapp/send-message-to-user/:profileKey': {

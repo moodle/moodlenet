@@ -132,7 +132,7 @@ export type LMSSettingsRpc = {
 export type UserInterests = {
   subjects: string[]
   licenses: string[]
-  types: string[]
+  // types: string[]
   levels: string[]
   languages: string[]
 }

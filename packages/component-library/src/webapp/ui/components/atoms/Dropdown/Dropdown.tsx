@@ -175,7 +175,6 @@ const DropdownComp: FC<DropdownProps> = props => {
     }
   }, [error, setErrorLeave, currentError])
 
-  console.log('pills', pills)
   return (
     <abbr
       // ref={dropdownRef}
