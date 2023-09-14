@@ -6,6 +6,14 @@ import type { KnownEntityFeature } from '../common/types.mjs'
 
 export type KnownFeaturedEntityItem = { _id: string; feature: KnownEntityFeature }
 export type ProfileEntity = EntityDocument<ProfileDataType>
+
+export type ProfileInterests = {
+  subjects: string[]
+  licenses: string[]
+  levels: string[]
+  languages: string[]
+}
+
 export type ProfileDataType = {
   displayName: string
   aboutMe: string | undefined | null
@@ -18,6 +26,7 @@ export type ProfileDataType = {
   kudos: number
   publisher: boolean
   webslug: string
+  profileInterests: ProfileInterests
   popularity?: {
     overall: number
     items: {

@@ -24,17 +24,12 @@ export type MyWebDeps = {
   me: EdMetaExposeType
 }
 
-export type Subject = TextOptionProps //{ label: string; value: string }
-export type Level = TextOptionProps //{ label: string; value: string }
-export type Type = TextOptionProps //{ label: string; value: string }
-export type Langauge = TextOptionProps //{ label: string; value: string }
-export type License = TextOptionProps //{ label: string; value: string }
 export type PublishedMeta = {
-  types: Type[]
-  languages: Langauge[]
-  licenses: License[]
-  subjects: Subject[]
-  levels: Level[]
+  types: TextOptionProps[]
+  languages: TextOptionProps[]
+  licenses: TextOptionProps[]
+  subjects: TextOptionProps[]
+  levels: TextOptionProps[]
   learningOutcomes: LearningOutcomeOption[]
 }
 

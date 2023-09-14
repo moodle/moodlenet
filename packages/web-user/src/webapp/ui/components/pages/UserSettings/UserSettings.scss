@@ -16,6 +16,7 @@
     width: 300px;
     height: fit-content;
     position: fixed;
+    z-index: 1;
 
     > .menu {
       padding: 30px 0;
@@ -147,8 +148,8 @@
           font-weight: bold;
         }
 
-        > .option,
-        > * .option {
+        > .option:not(.checkmark),
+        > * .option:not(.checkmark) {
           display: flex;
           flex-direction: column;
           gap: 10px;

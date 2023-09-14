@@ -8,27 +8,14 @@ import {
   PrimaryButton,
   RoundButton,
 } from '@moodlenet/component-library'
+import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
 // import prettyBytes from 'pretty-bytes'
 import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-// import { withCtrl } from '../../../../lib/ctrl'
-// import { SelectOptions } from '../../../../lib/types'
-// import { useImageUrl } from '../../../../lib/useImageUrl'
 import { ReactComponent as UploadFileIcon } from '../../../assets/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-image.svg'
-
-// import InputTextField from '../../../atoms/InputTextField/InputTextField'
-// import Modal from '../../../atoms/Modal/Modal'
-// import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-// import RoundButton from '../../../atoms/RoundButton/RoundButton'
-// import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-// import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
-// import { useNewResourcePageCtx } from '../NewResource'
-// import { NewResourceFormValues } from '../types'
-import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
-// import { ErrorMessage } from '../../../../../../component-library/src/ui.mjs'
 import './UploadResource.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
@@ -404,7 +391,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
                 onClick={deleteFileOrLink}
                 tabIndex={0}
                 abbrTitle={contentIsFile ? 'Delete file' : 'Delete link'}
-                onKeyUp={{ key: 'Enter', func: deleteFileOrLink }}
+                onKeyUp={e => e.key === 'Enter' && deleteFileOrLink()}
               />
             </div>
           )}

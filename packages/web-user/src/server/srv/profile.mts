@@ -37,9 +37,10 @@ import { publicFiles } from '../init/fs.mjs'
 import { kvStore } from '../init/kvStore.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
-import type { KnownFeaturedEntityItem, ProfileDataType } from '../types.mjs'
+import type { KnownFeaturedEntityItem, ProfileDataType, ProfileInterests } from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
 import {
+  getCurrentProfileIds,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
   verifyCurrentTokenCtx,
@@ -505,4 +506,22 @@ export async function getProfileOwnKnownEntities({
     })
   ).all()
   return list
+}
+
+export async function editProfileInterests({
+  profileInterests,
+  profileKey,
+}: {
+  profileKey: string
+  profileInterests: ProfileInterests
+}) {
+  const res = await editProfile(profileKey, { profileInterests })
+
+  return res ? true : res
+}
+
+export async function editMyProfileInterests({ myInterests }: { myInterests: ProfileInterests }) {
+  const profileIds = await getCurrentProfileIds()
+  if (!profileIds) return false
+  return editProfileInterests({ profileKey: profileIds._key, profileInterests: myInterests })
 }

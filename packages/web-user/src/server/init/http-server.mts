@@ -6,12 +6,12 @@ import {
   setCurrentUserFetch,
 } from '@moodlenet/system-entities/server'
 import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../common/exports.mjs'
+import { shell } from '../shell.mjs'
 import {
   sendWebUserTokenCookie,
   setCurrentUnverifiedJwtToken,
   verifyCurrentTokenCtx,
-} from '../lib/web-user.mjs'
-import { shell } from '../shell.mjs'
+} from '../srv/web-user.mjs'
 import { Profile } from './sys-entities.mjs'
 
 await shell.call(addMiddlewares)({

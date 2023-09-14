@@ -1,17 +1,33 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card /* , Snackbar, SnackbarStack */ } from '@moodlenet/component-library'
+import { Card, MultipeSelectDropdown, PrimaryButton } from '@moodlenet/component-library'
+import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
+import { useFormik } from 'formik'
 import { /* useState, */ type FC } from 'react'
+import type { UserInterests } from '../../../../../../common/types.mjs'
 import './General.scss'
 
 export type GeneralProps = {
   mainColumnItems: (AddonItem | null)[]
+  edMetaOptions: Pick<
+    EdMetaOptionsProps,
+    'languageOptions' | 'levelOptions' | 'licenseOptions' | 'subjectOptions'
+  >
+  interests: UserInterests
+  editInterests: (values: UserInterests) => void
   // userId: string
 }
 
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
-export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) => {
+export const General: FC<GeneralProps> = ({
+  mainColumnItems,
+  edMetaOptions,
+  interests,
+  editInterests,
+  //userId
+}) => {
+  const { languageOptions, levelOptions, subjectOptions, licenseOptions } = edMetaOptions
   /* const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
 
   const copyId = () => {
@@ -39,27 +55,95 @@ export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) =>
         </div>
       </div>
     </Card>
+  )*/
+
+  const form = useFormik<UserInterests>({
+    initialValues: interests,
+    // validateOnMount: true,
+    // validateOnChange: true,
+    enableReinitialize: true,
+    onSubmit: values => {
+      editInterests(values)
+      // return editData(values)
+    },
+  })
+
+  const subjectsField = (
+    <MultipeSelectDropdown
+      name="subjects"
+      onChange={form.handleChange}
+      label="Subjects"
+      placeholder="Content category"
+      canEdit={true}
+      key="subject-field"
+      value={form.values.subjects}
+      options={subjectOptions}
+      errors={form.errors.subjects}
+      shouldShowErrors={true}
+    />
+  )
+  const levelsField = (
+    <MultipeSelectDropdown
+      name="levels"
+      onChange={form.handleChange}
+      label="Levels"
+      placeholder="Content level"
+      canEdit={true}
+      key="level-field"
+      value={form.values.levels}
+      options={levelOptions}
+      errors={form.errors.levels}
+      shouldShowErrors={true}
+    />
   )
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        showUserIdCopiedAlert ? (
-          <Snackbar
-            type="success"
-            position="bottom"
-            autoHideDuration={6000}
-            showCloseButton={false}
-          >
-            User ID copied to the clipboard
-          </Snackbar>
-        ) : null,
-      ]}
-    ></SnackbarStack>
-  ) */
+  const languagesField = (
+    <MultipeSelectDropdown
+      name="languages"
+      onChange={form.handleChange}
+      label="Languages"
+      placeholder="Content language"
+      canEdit={true}
+      key="language-field"
+      value={form.values.languages}
+      options={languageOptions}
+      errors={form.errors.languages}
+      shouldShowErrors={true}
+    />
+  )
 
-  const updatedMainColumnItems = [/* detailsSection, */ ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
+  const licensesField = (
+    <MultipeSelectDropdown
+      name="licenses"
+      onChange={form.handleChange}
+      label="Licences"
+      placeholder="Content license"
+      canEdit={true}
+      key="license-field"
+      value={form.values.licenses}
+      options={licenseOptions}
+      errors={form.errors.licenses}
+      shouldShowErrors={true}
+    />
+  )
+
+  const interestsFields = [subjectsField, levelsField, languagesField, licensesField]
+
+  const interestsSection = (
+    <Card className="column interests-section">
+      <div className="parameter">
+        <div className="name">Interests</div>
+        {interestsFields}
+      </div>
+      <PrimaryButton
+        disabled={!form.dirty}
+        onClick={() => {
+          form.submitForm()
+        }}
+      >
+        Save
+      </PrimaryButton>
+    </Card>
   )
 
   const snackbars = [
@@ -82,8 +166,30 @@ export const General: FC<GeneralProps> = ({ mainColumnItems /* , userId */ }) =>
     <></>,
   ]
 
-  const modals = [<></>]
+  // const snackbarsStack =
+  // <SnackbarStack
+  // snackbarList=        [
+  // showUserIdCopiedAlert ? (
+  //   <Snackbar
+  //     type="success"
+  //     position="bottom"
+  //     autoHideDuration={6000}
+  //     showCloseButton={false}
+  //   >
+  //     User ID copied to the clipboard
+  //   </Snackbar>
+  // ) : null,
 
+  // }
+  // ></SnackbarStack>
+
+  const updatedMainColumnItems = [
+    //detailsSection,
+    interestsSection,
+    ...(mainColumnItems ?? []),
+  ].filter((item): item is AddonItem => !!item)
+
+  const modals = [<></>]
   return (
     <div className="general" key="general">
       {modals}

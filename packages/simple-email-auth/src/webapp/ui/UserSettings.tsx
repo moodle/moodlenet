@@ -1,11 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {
-  Card,
-  InputTextField,
-  PrimaryButton,
-  Snackbar,
-  SnackbarStack,
-} from '@moodlenet/component-library'
+import { Card, InputTextField, PrimaryButton, Snackbar } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 
@@ -47,19 +41,20 @@ export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
 
   const shouldShowErrors = !!form.submitCount
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        // emailChangedSuccess ? (
-        //   <Snackbar type="success">Check your old email inbox to continue</Snackbar>
-        // ) : null,
-        passwordChangedSuccess ? <Snackbar type="success">Password changed</Snackbar> : null,
-      ]}
-    ></SnackbarStack>
-  )
+  const snackbars =
+    // <SnackbarStack
+    // snackbarList={
+    [
+      // emailChangedSuccess ? (
+      //   <Snackbar type="success">Check your old email inbox to continue</Snackbar>
+      // ) : null,
+      passwordChangedSuccess ? <Snackbar type="success">Password changed</Snackbar> : null,
+    ]
+  // }
+  // ></SnackbarStack>
 
   return (
-    <Card className="column">
+    <Card className="column change-password-section">
       {snackbars}
       {/* <div className="parameter">
         <div className="name">Email</div>
