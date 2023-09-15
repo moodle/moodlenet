@@ -44,6 +44,7 @@ export const useProfileStoryProps = (
     displayName: person ? person.displayName : '',
     avatarUrl: person && person.avatarUrl,
     backgroundUrl: person && person.backgroundUrl,
+    ...overrides?.data,
     profileHref: href('Page/Profile/Default'),
   }
 
