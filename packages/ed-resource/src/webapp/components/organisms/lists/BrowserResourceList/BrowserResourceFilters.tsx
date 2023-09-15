@@ -22,8 +22,8 @@ export const SortByLanguageItem = ({
 }) => (
   <DropdownFilterField
     title={'Language'}
-    selection={selected}
-    setselection={setSelected}
+    selected={selected}
+    setSelected={setSelected}
     options={options}
   />
 )
@@ -39,8 +39,8 @@ export const SortByLicenseItem = ({
 }) => (
   <DropdownFilterField
     title={'License'}
-    selection={selected}
-    setselection={setSelected}
+    selected={selected}
+    setSelected={setSelected}
     options={options}
   />
 )
@@ -56,8 +56,8 @@ export const SortByLevelItem = ({
 }) => (
   <DropdownFilterField
     title={'Level'}
-    selection={selected}
-    setselection={setSelected}
+    selected={selected}
+    setSelected={setSelected}
     options={options}
   />
 )
@@ -73,8 +73,8 @@ export const SortByTypeItem = ({
 }) => (
   <DropdownFilterField
     title={'Type'}
-    selection={selected}
-    setselection={setSelected}
+    selected={selected}
+    setSelected={setSelected}
     options={options}
   />
 )

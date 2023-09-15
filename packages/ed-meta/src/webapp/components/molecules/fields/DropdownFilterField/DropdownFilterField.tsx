@@ -1,8 +1,13 @@
-import type { DropdownProps, TextOptionProps } from '@moodlenet/component-library'
+import type {
+  DropdownProps,
+  IconTextOptionProps,
+  TextOptionProps,
+} from '@moodlenet/component-library'
 import { Dropdown, PrimaryButton, SecondaryButton, TextOption } from '@moodlenet/component-library'
 import { ArrowDropDown } from '@mui/icons-material'
+import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { isValidElement, useCallback, useRef, useState } from 'react'
 import './DropdownFilterField.scss'
 
 export type DropdownFilterFieldProps = Omit<
@@ -10,46 +15,57 @@ export type DropdownFilterFieldProps = Omit<
   'multiple' | 'value' | 'defaultValue' | 'pills'
 > & {
   defaultValue?: string[]
-  selection: string[]
-  options: TextOptionProps[]
+  selected: string[]
+  options: (TextOptionProps | IconTextOptionProps)[]
   highlightInitialSelection?: boolean
   title: string
-  setselection(selection: string[]): void
+  setSelected(selected: string[]): void
 }
 
 export const DropdownFilterField: FC<DropdownFilterFieldProps> = props => {
   const {
     options,
-    selection,
-    setselection,
+    selected,
+    setSelected,
     title,
     highlightInitialSelection = false,
     ...dropdownProps
   } = props
   const [searchText, setSearchText] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const dropdownButtonRef = useRef<HTMLElement>(null)
-  const [buttonWidth, setButtonWidth] = useState('initial')
+  const dropdownButtonRef = useCallback((node: HTMLElement) => {
+    if (!node) return
+    const resizeObserver = new ResizeObserver(() => {
+      const element = dropdownRef.current
+      if (element && node.clientWidth !== 0) element.style.width = `${node.clientWidth}px`
+    })
 
-  useEffect(() => {
-    dropdownButtonRef.current && setButtonWidth(`${dropdownButtonRef.current.clientWidth}`)
-  }, [dropdownButtonRef])
+    resizeObserver.observe(node)
+  }, [])
 
-  useEffect(() => {
-    const element = dropdownRef.current
-    if (element) element.style.width = `${buttonWidth}px`
-  }, [buttonWidth, dropdownRef])
+  const form = useFormik<{ selected: string[] }>({
+    initialValues: { selected },
+    enableReinitialize: true,
+    onSubmit: values => {
+      setSelected(values.selected)
+    },
+  })
 
-  const selectedLabel = options.find(opt => opt.value === selection[0])?.label
+  const currentSelected = options.find(opt => opt.value === form.values.selected[0])
+  const selectedLabel =
+    currentSelected && 'icon' in currentSelected ? currentSelected.icon : currentSelected?.label
 
   const dropdownButton =
-    selection.length > 0 || highlightInitialSelection ? (
+    form.values.selected.length > 0 || highlightInitialSelection ? (
       <PrimaryButton innerRef={dropdownButtonRef}>
-        {selection.length === 1 && selectedLabel && selectedLabel?.length < 9 ? (
-          <>{selectedLabel}</>
+        {form.values.selected.length === 1 &&
+        selectedLabel &&
+        ((typeof selectedLabel === 'string' && selectedLabel.length < 9) ||
+          isValidElement(selectedLabel)) ? (
+          selectedLabel
         ) : (
           <>
-            {title} <div className="num-selected-elements">{selection.length}</div>
+            {title} <div className="num-selected-elements">{form.values.selected.length}</div>
           </>
         )}
         <ArrowDropDown />
@@ -66,9 +82,10 @@ export const DropdownFilterField: FC<DropdownFilterFieldProps> = props => {
         o.label.toUpperCase().includes(searchText.toUpperCase()) ||
         o.value.toUpperCase().includes(searchText.toUpperCase()),
     ),
-    selection: options.filter(
+    selected: options.filter(
       ({ value }) =>
-        props.selection.includes(value) && value.toUpperCase().includes(searchText.toUpperCase()),
+        form.values.selected.includes(value) &&
+        value.toUpperCase().includes(searchText.toUpperCase()),
     ),
   }
 
@@ -77,15 +94,10 @@ export const DropdownFilterField: FC<DropdownFilterFieldProps> = props => {
       {...dropdownProps}
       divRef={dropdownRef}
       dropdownButton={dropdownButton}
-      value={selection}
+      name="selected"
+      value={form.values.selected}
       className="dropdown-filter-field"
-      onChange={e => {
-        setselection(
-          selection.includes(e.currentTarget.value)
-            ? selection.filter(name => e.currentTarget.value !== name)
-            : [...selection, e.currentTarget.value],
-        )
-      }}
+      onChange={form.handleChange}
       multiple
       position={{ top: 38, bottom: 25 }}
       searchByText={setSearchText}
@@ -93,13 +105,13 @@ export const DropdownFilterField: FC<DropdownFilterFieldProps> = props => {
       placeholder={title}
       edit
     >
-      {updatedElements.selection.map(selection => (
-        <TextOption key={selection.value} value={selection.value} label={selection.label} />
+      {updatedElements.selected.map(selected => (
+        <TextOption key={selected.value} value={selected.value} label={selected.label} />
       ))}
       {updatedElements.opts
-        .filter(subject => !updatedElements.selection.includes(subject))
-        .map(selection => (
-          <TextOption key={selection.value} label={selection.label} value={selection.value} />
+        .filter(subject => !updatedElements.selected.includes(subject))
+        .map(selected => (
+          <TextOption key={selected.value} label={selected.label} value={selected.value} />
         ))}
     </Dropdown>
   )
