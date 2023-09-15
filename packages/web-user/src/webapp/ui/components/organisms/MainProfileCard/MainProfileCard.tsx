@@ -123,12 +123,10 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [avatarFromForm] = useImageUrl(avatarForm.values.image)
 
   useEffect(() => {
-    setUpdatedAvatar(avatarUrl)
-  }, [avatarUrl])
-
-  useEffect(() => {
-    avatarForm.isValid && setUpdatedAvatar(avatarFromForm)
-  }, [avatarForm, avatarFromForm])
+    const avatarToChange =
+      avatarForm.isValid && avatarFromForm ? avatarFromForm : avatarImageUrl ?? null
+    avatarToChange && setUpdatedAvatar(avatarToChange)
+  }, [avatarForm.isValid, avatarFromForm, avatarImageUrl, avatarUrl])
 
   const backgroundForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: backgroundUrl },
@@ -142,12 +140,10 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [backgroundFromForm] = useImageUrl(backgroundForm.values.image)
 
   useEffect(() => {
-    setUpdatedBackground(backgroundUrl)
-  }, [backgroundUrl])
-
-  useEffect(() => {
-    backgroundForm.isValid && setUpdatedBackground(backgroundFromForm)
-  }, [backgroundForm.isValid, backgroundFromForm])
+    const backgroundToChange =
+      backgroundForm.isValid && backgroundFromForm ? backgroundFromForm : backgroundImageUrl ?? null
+    backgroundToChange && setUpdatedBackground(backgroundToChange)
+  }, [backgroundForm.isValid, backgroundFromForm, backgroundImageUrl])
 
   const messageForm = useFormik<{ msg: string }>({
     initialValues: { msg: '' },

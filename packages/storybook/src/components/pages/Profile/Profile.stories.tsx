@@ -65,6 +65,10 @@ export const Owner: ProfileStory = () => {
       canApprove: false,
       isPublisher: false,
     },
+    data: {
+      // avatarUrl: undefined,
+      // backgroundUrl: undefined,
+    },
     state: {
       // isPublisher: false,
       // isWaitingApproval: false,
