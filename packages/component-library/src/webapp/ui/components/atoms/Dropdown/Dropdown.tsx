@@ -75,7 +75,7 @@ const DropdownComp: FC<DropdownProps> = props => {
   const [isHoveringOptions, setHoveringOptions] = useState(false)
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
   const [currentError, setcurrentError] = useState<ReactNode>(undefined)
-  const [multilineHeight, setMultilineHeight] = useState(0)
+  // const [multilineHeight, setMultilineHeight] = useState(0)
 
   const showContent = edit && isShowingContent
 
@@ -105,12 +105,12 @@ const DropdownComp: FC<DropdownProps> = props => {
   const inputContainerRef = useRef<HTMLDivElement>(null)
   const multilinesRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const height = multilinesRef.current?.clientHeight
-    if (multilines && height && height !== 0) {
-      height < 46 ? 46 : setMultilineHeight(height)
-    }
-  }, [multilines, multilinesRef.current?.clientHeight, isShowingContent])
+  // useEffect(() => {
+  // const height = multilinesRef.current?.clientHeight
+  // if (multilines && height && height !== 0) {
+  //   height < 46 ? 46 : setMultilineHeight(height)
+  // }
+  // }, [multilines, multilinesRef.current?.clientHeight, isShowingContent])
 
   // const handleClickOutside = (event: MouseEvent) => {
   //   if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
