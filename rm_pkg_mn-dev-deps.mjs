@@ -26,19 +26,14 @@ packagesDirs.forEach(pkgDir => {
   // )
   // if (!hasMNDevDeps) return
 
-  Object.keys(pkgJson.peerDependencies ?? {}).forEach(depName => {
-    if (depName.startsWith('@moodlenet/')) {
-      delete pkgJson.peerDependencies[depName]
-      return
-    }
-    pkgJson.devDependencies = pkgJson.devDependencies ?? {}
-    pkgJson.devDependencies[depName] = pkgJson.peerDependencies[depName]
-  })
-
   Object.keys(pkgJson.devDependencies ?? {}).forEach(depName => {
-    if (!depName.startsWith('@moodlenet/')) return
-    pkgJson.peerDependencies = pkgJson.peerDependencies ?? {}
-    pkgJson.peerDependencies[depName] = pkgJson.devDependencies[depName]
+    if (
+      depName.startsWith('@moodlenet/')
+      || depName == "@mui/icons-material"
+      || depName == "@material-ui/icons"
+    ) {
+      delete pkgJson.devDependencies[depName]
+    }
   })
 
   writeFileSync(pkgJsonFile, JSON.stringify(pkgJson, null, 2) + '\n')

@@ -17,6 +17,8 @@
     "build-deploy": "npm run build-storybook && firebase deploy"
   },
   "dependencies": {
+    "@material-ui/icons": "4.11.3",
+    "@mui/icons-material": "^5.11.0",
     "formik": "2.2.9",
     "react-router-dom": "6.4.1",
     "vite-plugin-svgr": "2.2.1",
@@ -36,14 +38,6 @@
     "@moodlenet/unsplash": "^0.3.0",
     "@moodlenet/web-user": "^0.5.0",
     "@moodlenet/mn-central-jira-simple-moderations": "^0.4.0",
-    "@storybook/addon-essentials": "^6.5.15",
-    "@storybook/addon-interactions": "^6.5.15",
-    "@storybook/addon-links": "^6.5.15",
-    "@storybook/builder-vite": "^0.2.4",
-    "@storybook/core": "^6.5.15",
-    "@storybook/react": "^6.5.15",
-    "@storybook/testing-library": "^0.0.13",
-    "@storybook/theming": "^6.5.15",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.1.0",

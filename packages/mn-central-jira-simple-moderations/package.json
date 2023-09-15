@@ -32,6 +32,7 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "peerDependencies": {
+    "@mui/icons-material": "^5.11.0",
     "@moodlenet/core": "^0.5.0",
     "@moodlenet/react-app": "^0.5.0",
     "@moodlenet/web-user": "^0.5.0"
@@ -52,7 +53,8 @@
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",
     "react-router-dom": "6.3.0",
-    "typescript": "4.7.2"
+    "typescript": "4.7.2",
+    "@mui/icons-material": "^5.11.0"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
