@@ -1,4 +1,3 @@
-import { InsertDriveFile, Link } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
   Card,
@@ -12,6 +11,7 @@ import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import { DateField, DropdownField, LicenseField } from '@moodlenet/ed-meta/ui'
 import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
+import { InsertDriveFile, Link } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'

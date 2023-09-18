@@ -1,4 +1,4 @@
-import { LibraryAdd, NoteAdd } from '@material-ui/icons'
+import { LibraryAdd, NoteAdd } from '@mui/icons-material'
 import type { FC } from 'react'
 
 export type CreateResourceAddMenuItemProps = { createResource(): void }

@@ -1,4 +1,3 @@
-import { Edit, Save } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
   FloatingMenu,
@@ -11,6 +10,7 @@ import {
   SnackbarStack,
   useImageUrl,
 } from '@moodlenet/component-library'
+import { Edit, Save } from '@mui/icons-material'
 import { useFormik } from 'formik'
 
 import { Share } from '@mui/icons-material'

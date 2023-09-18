@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import { useContext } from 'react'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
-// import { ArrowForward, NoteAdd } from '@material-ui/icons'
+// import { ArrowForward, NoteAdd } from '@mui/icons-material'
 import type { AddonItem } from '@moodlenet/component-library'
 // import { LibraryAdd, StreamOutlined } from '@mui/icons-material'
 import { MainHeaderContext } from '../../../../exports/ui.mjs'

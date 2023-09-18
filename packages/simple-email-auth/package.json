@@ -41,8 +41,8 @@
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@material-ui/icons": "4.11.3",
-    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.14.9",
+    "@mui/icons-material": "^5.14.9",
     "@moodlenet/arangodb": "^0.5.1",
     "@moodlenet/core": "^0.5.1",
     "@moodlenet/crypto": "^0.5.1",
@@ -67,8 +67,8 @@
     "@types/react-dom": "18.0.5",
     "react-router-dom": "6.3.0",
     "typescript": "4.7.2",
-    "@material-ui/icons": "4.11.3",
-    "@mui/icons-material": "^5.11.0"
+    "@mui/material": "^5.14.9",
+    "@mui/icons-material": "^5.14.9"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",

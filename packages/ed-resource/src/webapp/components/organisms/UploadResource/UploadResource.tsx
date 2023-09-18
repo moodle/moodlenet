@@ -1,4 +1,3 @@
-import { InsertDriveFile, Link as LinkIcon } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
   ErrorMessage,
@@ -11,6 +10,7 @@ import {
 import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
+import { InsertDriveFile, Link as LinkIcon } from '@mui/icons-material'
 // import prettyBytes from 'pretty-bytes'
 import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'

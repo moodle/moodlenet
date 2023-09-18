@@ -10,7 +10,7 @@
     "npm": ">=8",
     "yarn": "please-use-npm"
   },
-  "dependencies": {
+  "devDependencies": {
     "@storybook/addon-actions": "^6.5.15",
     "@storybook/addon-essentials": "^6.5.15",
     "@storybook/addon-interactions": "^6.5.15",
@@ -52,7 +52,7 @@
     "prepare": "npm run prj-cleanup-build && npm run prj-build",
     "prj-husky-init": "rimraf ./.husky && husky install && husky add .husky/pre-commit \"npm run pre-commit\"",
     "prj-bs": "lerna bootstrap",
-    "dev-assistant": "lerna run dev-assistant --parallel --stream --",
+    "dev-assistant": "lerna run --parallel --stream dev-assistant --",
     "prj-build": "tsc --build ./packages/v2-migrate-v3 ./packages/arangodb ./packages/component-library ./packages/system-entities ./packages/core ./packages/crypto ./packages/email-service ./packages/extensions-manager ./packages/http-server ./packages/key-value-store ./packages/organization ./packages/react-app ./packages/simple-email-auth ./packages/ed-resource ./packages/collection ./packages/ed-meta ./packages/simple-file-store ./packages/openid ./packages/web-user ./packages/unsplash ./packages/moodle-lms-integration ./packages/mn-central-jira-simple-moderations",
     "prj-build-watch": "npm run prj-build -- --watch",
     "prj-build-clean": "npm run prj-build -- --clean",
@@ -60,8 +60,8 @@
     "dev-start-backend": "node bin/boot.mjs",
     "dev-start-webapp": "node bin/dev-webapp.mjs",
     "prj-cleanup-all": "npm run pkg-cleanup-all && rimraf ./.husky && rimraf ./tsconfig.tsbuildinfo && rimraf ./package-lock.json && rimraf ./node_modules",
-    "pkg-cleanup-all": "npm run prj-cleanup-build && lerna run cleanup-all --parallel && rimraf ./packages/*/package-lock.json && rimraf ./packages/*/node_modules",
-    "prj-cleanup-build": "lerna run cleanup-build --parallel && rimraf ./packages/*/dist && rimraf ./packages/*/tsconfig.tsbuildinfo",
+    "pkg-cleanup-all": "npm run prj-cleanup-build && lerna run --parallel cleanup-all && rimraf ./packages/*/package-lock.json && rimraf ./packages/*/node_modules",
+    "prj-cleanup-build": "lerna run --parallel cleanup-build && rimraf ./packages/*/dist && rimraf ./packages/*/tsconfig.tsbuildinfo",
     "dep-graph": "lerna-dependency-graph -f jpg -o dependency-graph.jpg && lerna-dependency-graph -o dependency-graph.dot",
     "pre-commit": "lint-staged"
   }

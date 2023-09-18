@@ -4,7 +4,7 @@ import {
   ErrorOutline as ErrorOutlineIcon,
   InfoOutlined as InfoOutlinedIcon,
   ReportProblemOutlined as ReportProblemOutlinedIcon,
-} from '@material-ui/icons'
+} from '@mui/icons-material'
 import type React from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useState } from 'react'

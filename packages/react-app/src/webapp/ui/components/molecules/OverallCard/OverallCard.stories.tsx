@@ -1,6 +1,6 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-// import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
+// import { Grade, LibraryBooks, PermIdentity } from '@mui/icons-material'
 import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
 import { href } from '../../../../../common/lib.mjs'
 import type { OverallCardProps } from './OverallCard.js'

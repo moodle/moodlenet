@@ -1,9 +1,9 @@
-import { FilterNone, PermIdentity } from '@material-ui/icons'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type { SubjectCardProps } from '@moodlenet/ed-meta/ui'
 import { SubjectCard } from '@moodlenet/ed-meta/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
+import { FilterNone, PermIdentity } from '@mui/icons-material'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 

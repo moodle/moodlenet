@@ -1,7 +1,7 @@
-import { CallMade as CallMadeIcon } from '@material-ui/icons'
 import { Card } from '@moodlenet/component-library'
 import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
 import { SimpleLayout } from '@moodlenet/react-app/ui'
+import { CallMade as CallMadeIcon } from '@mui/icons-material'
 import type { ComponentType, CSSProperties, FC } from 'react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'

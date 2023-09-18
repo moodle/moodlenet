@@ -1,4 +1,3 @@
-import { Link as LinkIcon, Share } from '@material-ui/icons'
 import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
 import {
   Card,
@@ -22,10 +21,12 @@ import {
   Delete,
   Edit,
   InsertDriveFile,
+  Link as LinkIcon,
   MoreVert,
   Public,
   PublicOff,
   Save,
+  Share,
 } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'

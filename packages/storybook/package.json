@@ -17,8 +17,8 @@
     "build-deploy": "npm run build-storybook && firebase deploy"
   },
   "dependencies": {
-    "@material-ui/icons": "4.11.3",
-    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.14.9",
+    "@mui/icons-material": "^5.14.9",
     "formik": "2.2.9",
     "react-router-dom": "6.4.1",
     "vite-plugin-svgr": "2.2.1",
