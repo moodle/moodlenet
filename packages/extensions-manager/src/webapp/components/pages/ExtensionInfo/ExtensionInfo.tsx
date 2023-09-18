@@ -9,9 +9,9 @@ import {
   TertiaryButton,
 } from '@moodlenet/component-library'
 import { ArrowBackIosNew } from '@mui/icons-material'
-import type { FC, ReactNode, ReactPortal } from 'react'
+import type { FC, ReactNode } from 'react'
 import ReactMarkdown from 'react-markdown'
-import SyntaxHighlighter from 'react-syntax-highlighter'
+// import SyntaxHighlighter from 'react-syntax-highlighter'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
 // import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus'
 // import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -44,28 +44,28 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
     toggleInstallingUninstalling,
   } = extension
 
-  type CodeBlockProps = {
-    node: any
-    children: ReactNode & ReactNode[]
-    inline?: boolean | undefined
-    className?: string | undefined
-  }
-  const CodeBlock = {
-    code({ node, inline, className, children, ...props }: CodeBlockProps) {
-      const match = /language-(\w+)/.exec(className || '')
-      return !inline && match ? (
-        <SyntaxHighlighter /* style={vscDarkPlus} */ language={match[1]} PreTag="div" {...props}>
-          {String(children).replace(/\n$/, '')}
-        </SyntaxHighlighter>
-      ) : (
-        ((
-          <code className={className} {...props}>
-            {children}
-          </code>
-        ) as ReactPortal)
-      )
-    },
-  }
+  // type CodeBlockProps = {
+  //   node: any
+  //   children: ReactNode & ReactNode[]
+  //   inline?: boolean | undefined
+  //   className?: string | undefined
+  // }
+  // const CodeBlock = {
+  //   code({ node, inline, className, children, ...props }: CodeBlockProps) {
+  //     const match = /language-(\w+)/.exec(className || '')
+  //     return !inline && match ? (
+  //       <SyntaxHighlighter /* style={vscDarkPlus} */ language={match[1]} PreTag="div" {...props}>
+  //         {String(children).replace(/\n$/, '')}
+  //       </SyntaxHighlighter>
+  //     ) : (
+  //       ((
+  //         <code className={className} {...props}>
+  //           {children}
+  //         </code>
+  //       ) as ReactPortal)
+  //     )
+  //   },
+  // }
 
   const background = icon
     ? { backgroundImage: `url("${icon}")`, backgroundSize: 'cover' }
@@ -183,7 +183,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, children, onClickBac
           </a>
         </div>
         <div className="readme-content">
-          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={undefined /* CodeBlock */}>
             {readme}
           </ReactMarkdown>
         </div>

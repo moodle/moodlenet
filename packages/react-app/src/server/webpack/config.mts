@@ -18,7 +18,7 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 // const ReactRefreshTypeScript = require('react-refresh-typescript')
 // const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 // const { jsonBeautify } = require('beautify-json');
 
 export function getWp(
@@ -274,14 +274,21 @@ export function getWp(
                 presets: [
                   require.resolve('@babel/preset-env'),
                   require.resolve('@babel/preset-modules'),
-                  // require.resolve('@babel/preset-typescript'),
-                  // require.resolve('@babel/plugin-transform-modules-commonjs'),
                   [
                     require.resolve('@babel/preset-react'),
                     { development: isDevServer, runtime: 'automatic' },
                   ],
                 ],
-                plugins: [isDevServer && require.resolve('react-refresh/babel')].filter(Boolean),
+                plugins: [
+                  [
+                    require.resolve('babel-plugin-direct-import'),
+                    {
+                      modules: ['@mui/system', '@mui/material', '@mui/icons-material'],
+                    },
+                  ],
+                  isDevServer && require.resolve('react-refresh/babel'),
+                  // isDevServer && require.resolve('react-hot-loader/babel'),
+                ].filter(Boolean),
               },
             },
           ], //[isDevelopment ? 'reverse' : 'slice'](), //https://github.com/ezolenko/rollup-plugin-typescript2/issues/256#issuecomment-1126969565
@@ -323,9 +330,13 @@ export function getWp(
       new CopyPlugin({
         patterns: [{ from: './_redirects' }],
       }),
-      // new BundleAnalyzerPlugin({
-      //   analyzerMode: 'json',
-      // }),
+      new BundleAnalyzerPlugin({
+        analyzerMode: isDevServer ? 'server' : 'json',
+        openAnalyzer: isDevServer,
+        reportFilename: 'webpack-bundle-analyzer-report.json',
+        generateStatsFile: true,
+        statsFilename: 'webpack-bundle-analyzer-stats.json',
+      }),
       // virtualModules,
     ].filter(Boolean),
   }

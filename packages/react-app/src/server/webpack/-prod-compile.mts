@@ -21,7 +21,7 @@ const wp = getWp({
 
 wp.hooks.done.tap('copy build in latest build folder', async wpStats => {
   if (wpStats?.hasErrors()) {
-    console.error(`Webpack error`, inspect(wpStats, false, 4, true))
+    console.error(`Webpack error`, inspect(wpStats.toString(), false, 4, true))
     process.exit(1)
   }
   console.log(
