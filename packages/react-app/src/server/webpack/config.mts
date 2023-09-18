@@ -20,7 +20,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 // const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 // const { jsonBeautify } = require('beautify-json');
-
+const IS_ENV_DEV = process.env.NODE_ENV === 'development'
 export function getWp(
   cfg: {
     alias: any
@@ -324,17 +324,18 @@ export function getWp(
         filename: 'index.html',
         publicPath: '/',
       }),
-      new CompressionPlugin({
-        test: /\.js(\?.*)?$/i,
-      }),
+      !(isDevServer || IS_ENV_DEV) &&
+        new CompressionPlugin({
+          test: /\.js(\?.*)?$/i,
+        }),
       new CopyPlugin({
         patterns: [{ from: './_redirects' }],
       }),
       new BundleAnalyzerPlugin({
-        analyzerMode: isDevServer ? 'server' : 'json',
+        analyzerMode: isDevServer ? 'server' : 'static',
         openAnalyzer: isDevServer,
-        reportFilename: 'webpack-bundle-analyzer-report.json',
-        generateStatsFile: true,
+        reportFilename: 'webpack-bundle-analyzer-report.html',
+        generateStatsFile: !isDevServer,
         statsFilename: 'webpack-bundle-analyzer-stats.json',
       }),
       // virtualModules,

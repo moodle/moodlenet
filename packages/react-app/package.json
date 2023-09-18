@@ -86,6 +86,8 @@
     "@moodlenet/core": "^0.5.1",
     "@moodlenet/http-server": "^0.5.1",
     "@moodlenet/organization": "^0.5.1",
+    "@storybook/addon-actions": "^6.5.15",
+    "@storybook/react": "^6.5.15",
     "@types/copy-webpack-plugin": "^10.1.0",
     "@types/jest": "27.5.1",
     "@types/lodash": "4.14.182",
