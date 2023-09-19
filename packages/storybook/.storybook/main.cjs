@@ -53,6 +53,7 @@ module.exports = {
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
+    // "@storybook/addon-actions",
     '@storybook/addon-interactions',
   ],
   framework: '@storybook/react',
@@ -66,6 +67,9 @@ module.exports = {
     // Merge custom configuration into the default config
     return mergeConfig(config, {
       plugins: [tsconfigPaths({ projects: packagesDirs }), svgr()],
+      optimizeDeps: {
+        include: ['@emotion/styled'],
+      },
     })
   },
 }

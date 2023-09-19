@@ -297,7 +297,20 @@ export function getWp(
     },
     plugins: [
       new NodePolyfillPlugin({
-        includeAliases: ['console', 'process'],
+        includeAliases: [
+          'console',
+          'process',
+          'assert',
+          'buffer',
+          'events',
+          'querystring',
+          'timers',
+          'util',
+          'path',
+          'url',
+          'constants',
+          'crypto',
+        ],
       }),
       new webpack.NormalModuleReplacementPlugin(/^node:/, resource => {
         // resource.request = resource.request.replace(/^node:/, '')
