@@ -1,7 +1,7 @@
 import type { BrowserProps } from '@moodlenet/react-app/ui'
 import { Browser } from '@moodlenet/react-app/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useBrowserStoryProps } from './BrowserProps.stories.js'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
+import { useBrowserStoryProps } from './BrowserProps.stories.props.js'
 
 const meta: ComponentMeta<typeof Browser> = {
   title: 'Organisms/Browser',
@@ -33,13 +33,13 @@ export const LoggedOut: BrowserStory = () => {
   return <Browser {...props} />
 }
 
-// export const LoggedOut = BrowserStory.bind({})
+// export const LoggedOut: typeof BrowserStory = BrowserStory.bind({})
 // LoggedOut.args = useBrowserLoggedOutStoryProps()
 
-// export const LoggedIn = BrowserStory.bind({})
+// export const LoggedIn: typeof BrowserStory = BrowserStory.bind({})
 // LoggedIn.args = BrowserLoggedInStoryProps
 
-// export const Following = BrowserStory.bind({})
+// export const Following: typeof BrowserStory = BrowserStory.bind({})
 // Following.args = BrowserFollowingStoryProps
 
 export default meta

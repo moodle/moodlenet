@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta } from '@storybook/react'
+import type { Meta as ComponentMeta } from '@storybook/react'
 // import { useEffect } from 'react'
 import type { SchemaOf } from 'yup'
 import { boolean, mixed, object, string } from 'yup'
@@ -17,7 +17,7 @@ import type { CollectionFormProps } from '@moodlenet/collection/common'
 import type { MainCollectionCardProps } from '@moodlenet/collection/ui'
 import { Collection, MainCollectionCard } from '@moodlenet/collection/ui'
 import { DropdownFieldsDataStories } from '@moodlenet/component-library/stories'
-import { useCollectionForm } from 'components/pages/Collection/CollectionProps.stories.js'
+import { useCollectionForm } from '../../../components/pages/Collection/CollectionProps.stories'
 const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof Collection> = {

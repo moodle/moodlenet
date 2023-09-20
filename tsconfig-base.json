@@ -15,11 +15,11 @@
     // "module": "esnext",
     "skipLibCheck": true,
     "target": "ESNext",
-    // "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     // "resolveJsonModule": true,
     "lib": ["dom", "dom.iterable", "esnext"],
-    "moduleResolution": "Node16",
-    "module": "Node16"
+    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "allowSyntheticDefaultImports": true
   }
 }

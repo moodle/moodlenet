@@ -1,5 +1,5 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 import {
   HeaderTitleOrganizationStoryProps,
@@ -40,10 +40,10 @@ const MinimalisticHeaderStory: ComponentStory<typeof MinimalisticHeader> = args 
   <MinimalisticHeader {...args} />
 )
 
-export const Default = MinimalisticHeaderStory.bind({})
+export const Default: typeof MinimalisticHeaderStory = MinimalisticHeaderStory.bind({})
 Default.args = MinimalisticHeaderStoryProps()
 
-export const Organization = MinimalisticHeaderStory.bind({})
+export const Organization: typeof MinimalisticHeaderStory = MinimalisticHeaderStory.bind({})
 Organization.args = MinimalisticHeaderOrganizationStoryProps
 
 export default meta

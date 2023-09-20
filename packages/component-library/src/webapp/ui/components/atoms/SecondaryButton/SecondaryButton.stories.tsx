@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { SecondaryButton } from './SecondaryButton.js'
 
 const meta: ComponentMeta<typeof SecondaryButton> = {
@@ -10,6 +10,6 @@ const SecondaryButtonStory: ComponentStory<typeof SecondaryButton> = () => (
   <SecondaryButton>Secondary Button</SecondaryButton>
 )
 
-export const Default = SecondaryButtonStory.bind({})
+export const Default: typeof SecondaryButtonStory = SecondaryButtonStory.bind({})
 
 export default meta

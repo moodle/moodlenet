@@ -7,7 +7,7 @@ import {
   type CollectionStateProps,
 } from '@moodlenet/collection/common'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta } from '@storybook/react'
+import type { Meta as ComponentMeta } from '@storybook/react'
 import { useState } from 'react'
 import type { PartialDeep } from 'type-fest'
 import type { AnySchema, SchemaOf } from 'yup'
@@ -34,8 +34,8 @@ import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
-import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
 import { useFormik } from 'formik'
+import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,

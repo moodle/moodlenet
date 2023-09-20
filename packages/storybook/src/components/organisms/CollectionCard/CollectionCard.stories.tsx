@@ -7,12 +7,12 @@ import type {
 import type { CollectionCardProps } from '@moodlenet/collection/ui'
 import { CollectionCard } from '@moodlenet/collection/ui'
 import { ContentBackupImages } from '@moodlenet/component-library'
-import { overrideDeep } from '@moodlenet/component-library/common'
+import { AssetInfo, overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 
 const meta: ComponentMeta<typeof CollectionCard> = {
@@ -46,12 +46,12 @@ export const getCollectionCardStoryProps = (
       bookmarkButtonProps: BookmarkButtonProps
       smallFollowButtonProps: SmallFollowButtonProps
     }
-  >,
+  > & { data?: { image?: AssetInfo | null } },
 ): CollectionCardProps => {
   const data: CollectionCardData = {
     id: `id-${Math.floor(Math.random() * ContentBackupImages.length)}`,
     title: 'Such a great collection',
-    imageUrl: 'https://picsum.photos/300/200',
+    image: { location: 'https://picsum.photos/300/200', credits: null },
     ...overrides?.data,
     collectionHref: href('Pages/Collection/Logged In'),
   }
@@ -209,25 +209,25 @@ const CollectionCardStory: ComponentStory<typeof CollectionCard> = args => (
   <CollectionCard {...args} />
 )
 
-export const LoggedIn = CollectionCardStory.bind({})
+export const LoggedIn: typeof CollectionCardStory = CollectionCardStory.bind({})
 LoggedIn.args = CollectionCardLoggedInStoryProps
 
-export const followed = CollectionCardStory.bind({})
+export const followed: typeof CollectionCardStory = CollectionCardStory.bind({})
 followed.args = CollectionCardfollowedStoryProps
 
-export const Bookmarked = CollectionCardStory.bind({})
+export const Bookmarked: typeof CollectionCardStory = CollectionCardStory.bind({})
 Bookmarked.args = CollectionCardBookmarkedStoryProps
 
-export const LoggedOut = CollectionCardStory.bind({})
+export const LoggedOut: typeof CollectionCardStory = CollectionCardStory.bind({})
 LoggedOut.args = CollectionCardLoggedOutStoryProps
 
-export const Owner = CollectionCardStory.bind({})
+export const Owner: typeof CollectionCardStory = CollectionCardStory.bind({})
 Owner.args = CollectionCardOwnerStoryProps
 
-export const Public = CollectionCardStory.bind({})
+export const Public: typeof CollectionCardStory = CollectionCardStory.bind({})
 Public.args = CollectionCardOwnerStoryProps
 
-export const Private = CollectionCardStory.bind({})
+export const Private: typeof CollectionCardStory = CollectionCardStory.bind({})
 Private.args = CollectionCardOwnerPrivateStoryProps
 
 export default meta

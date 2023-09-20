@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 
 import type { FallbackProps } from '@moodlenet/react-app/ui'
 import { Fallback } from '@moodlenet/react-app/ui'

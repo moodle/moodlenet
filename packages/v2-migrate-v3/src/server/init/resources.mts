@@ -81,6 +81,7 @@ export async function user_resources() {
 
             month,
             year,
+            learningOutcomes: [],
             ...featsMap,
           }
           const newResource = await createResource(resourceData)

@@ -11,7 +11,7 @@ import type {
 } from '@moodlenet/ed-resource/common'
 import { getValidationSchemas } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta } from '@storybook/react'
+import type { Meta as ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
 import type { AnySchema } from 'yup'
@@ -45,7 +45,7 @@ import {
 
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
-import { learningOutcomeOptions } from './ResourceData.stories.js'
+import { learningOutcomeOptions } from './ResourceData.stories.props.js'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',

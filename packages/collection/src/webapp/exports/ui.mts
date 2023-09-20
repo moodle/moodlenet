@@ -1,5 +1,6 @@
 // @index(['../(assets|components|helpers)/**/!(*.stories|*Hooks|*Hook|*Container|*Context|*Route)*.{mts,tsx}'], f => f.path.startsWith('./')?'':`export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
 export * from '../components/atoms/AddToCollectionButton/AddToCollectionButtons.js'
+export * from '../components/atoms/AddToCollectionButton/storiesData.mjs'
 export * from '../components/molecules/CollectionContributorCard/CollectionContributorCard.js'
 export * from '../components/organisms/CollectionCard/CollectionCard.js'
 export * from '../components/organisms/lists/BrowserCollectionList/BrowserCollectionFilters.js'

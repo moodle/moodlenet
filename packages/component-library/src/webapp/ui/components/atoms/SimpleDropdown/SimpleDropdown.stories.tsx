@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { SimpleDropdownProps } from './SimpleDropdown.js'
 import { SimpleDropdown } from './SimpleDropdown.js'
 
@@ -31,7 +31,7 @@ export const Template: ComponentStory<typeof SimpleDropdown> = () => (
   <SimpleDropdown {...SimpleDropdownStoryProps} />
 )
 
-export const Default = Template.bind({})
+export const Default: typeof Template = Template.bind({})
 Default.args = SimpleDropdownStoryProps
 
 export default meta

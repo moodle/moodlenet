@@ -10,7 +10,7 @@
     "npm": ">=8",
     "yarn": "please-use-npm"
   },
-  "devDependencies": {
+  "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "copyfiles": "^2.4.1",
@@ -25,6 +25,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "^8.0.0",
     "husky-init": "^8.0.0",
+    "jose": "^4.14.6",
     "lerna": "^6.6.2",
     "lerna-dependency-graph": "^1.1.0",
     "lint-staged": "^13.0.3",

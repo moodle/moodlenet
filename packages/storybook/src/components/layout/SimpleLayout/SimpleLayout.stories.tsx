@@ -1,8 +1,8 @@
 import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
 import type { SimpleLayoutProps } from '@moodlenet/react-app/ui'
 import { SimpleLayout } from '@moodlenet/react-app/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
+import { FooterStoryProps } from '../../../components/organisms/Footer/Footer.stories.js'
 
 const meta: ComponentMeta<typeof SimpleLayout> = {
   title: 'Organisms/SimpleLayout',
@@ -18,7 +18,7 @@ const meta: ComponentMeta<typeof SimpleLayout> = {
 }
 
 export const SimpleLayoutStoryProps: SimpleLayoutProps = {
-  headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps,
+  headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(),
   footerProps: FooterStoryProps,
   //   homeHrpef: href('Landing/Logged In'),
   // organization: { ...SimpleLayoutTitleStoryProps },
@@ -35,10 +35,10 @@ export const SimpleLayoutStory: ComponentStory<typeof SimpleLayout> = args => (
   <SimpleLayout {...args} />
 )
 
-export const Default = SimpleLayoutStory.bind({})
+export const Default: typeof SimpleLayoutStory = SimpleLayoutStory.bind({})
 Default.args = SimpleLayoutStoryProps
 
-export const Organization = SimpleLayoutStory.bind({})
+export const Organization: typeof SimpleLayoutStory = SimpleLayoutStory.bind({})
 Organization.args = SimpleLayoutOrganizationStoryProps
 
 export default meta

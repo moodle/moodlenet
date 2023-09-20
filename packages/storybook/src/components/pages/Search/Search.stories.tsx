@@ -1,8 +1,8 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
 import { Search } from '@moodlenet/react-app/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
-import { useBrowserStoryProps } from 'components/organisms/Browser/BrowserProps.stories.js'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
+import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories.js'
+import { useBrowserStoryProps } from '../../../components/organisms/Browser/BrowserProps.stories.props.js'
 
 const meta: ComponentMeta<typeof Search> = {
   title: 'Pages/Search',
@@ -61,10 +61,10 @@ export const LoggedOut: SearchStory = () => {
 //   ...SearchStoryProps,
 // }
 
-// export const LoggedOut = SearchStory.bind({})
+// export const LoggedOut: typeof SearchStory = SearchStory.bind({})
 // LoggedOut.args = SearchLoggedOutStoryProps
 
-// export const LoggedIn = SearchStory.bind({})
+// export const LoggedIn: typeof SearchStory = SearchStory.bind({})
 // LoggedIn.args = SearchLoggedInStoryProps
 
 export default meta

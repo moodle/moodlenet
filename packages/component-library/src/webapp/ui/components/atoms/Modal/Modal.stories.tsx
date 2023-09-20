@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { Modal } from './Modal.js'
 
 const meta: ComponentMeta<typeof Modal> = {
@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof Modal> = {
 
 const ModalStory: ComponentStory<typeof Modal> = args => <Modal {...args} />
 
-export const Default = ModalStory.bind({})
+export const Default: typeof ModalStory = ModalStory.bind({})
 Default.args = {
   onClose: action('close modal'),
   children: <h1>Modal Content</h1>,
