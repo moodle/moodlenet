@@ -42,7 +42,7 @@ export const useBrowserResourceList = (): MainColumItem => {
       }),
     ].map(e => ({
       Item: () => e,
-      key: e.key,
+      key: `${e.key}`,
     })),
     key: 'resource-list',
   }
@@ -76,7 +76,7 @@ export const useBrowserCollectionList = (): MainColumItem => {
       }),
     ].map(e => ({
       Item: () => e,
-      key: e.key,
+      key: `${e.key}`,
     })),
     key: 'collection-list',
   }
@@ -113,7 +113,7 @@ export const useBrowserProfileList = (showHeader?: boolean): MainColumItem => {
       }),
     ].map(e => ({
       Item: () => e,
-      key: e.key,
+      key: `${e.key}`,
     })),
     key: 'profile-list',
   }

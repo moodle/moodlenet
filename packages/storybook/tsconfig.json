@@ -21,7 +21,7 @@
     "noEmit": true
   },
 
-  "include": ["src", "src/lib/SBLinkComponent.tsx"],
+  "include": ["src", "src/lib/SBLinkComponent.tsx", "vite.config.ts"],
   "references": [
     { "path": "../collection" },
     { "path": "../component-library" },

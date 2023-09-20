@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { by, cc, nc, nd, sa, zero } from '../DropdownFieldsMockData.js'
+export * from '../DropdownFieldsMockData.js'
 
 export const LevelDropdown = {
   label: `Level`,
