@@ -19,7 +19,7 @@
     // "resolveJsonModule": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "moduleResolution": "NodeNext",
-    "module": "ESNext",
+    "module": "NodeNext",
     "allowSyntheticDefaultImports": true
   }
 }
