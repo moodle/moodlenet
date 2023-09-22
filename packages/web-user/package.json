@@ -69,6 +69,8 @@
     }
   },
   "peerDependencies": {
+    "@mui/material": "^5.14.9",
+    "@mui/icons-material": "^5.14.9",
     "@moodlenet/arangodb": "^0.5.1",
     "@moodlenet/collection": "^0.5.1",
     "@moodlenet/core": "^0.5.1",
@@ -91,15 +93,19 @@
     "@moodlenet/organization": "^0.5.1",
     "@moodlenet/react-app": "^0.5.1",
     "@moodlenet/system-entities": "^0.5.1",
+    "@storybook/addon-actions": "^7.4.2",
+    "@storybook/addon-links": "^7.4.2",
+    "@storybook/react": "^7.4.2",
     "@types/dot": "1.1.5",
     "@types/js-cookie": "3.0.2",
-    "@types/react": "18.0.9",
-    "@types/react-dom": "18.0.5",
-    "react-router-dom": "6.3.0",
-    "typed-emitter": "2.1.0"
+    "@types/react": "18.2.22",
+    "@types/react-dom": "18.2.7",
+    "react-router-dom": "6.4.1",
+    "typed-emitter": "2.1.0",
+    "@mui/material": "^5.14.9",
+    "@mui/icons-material": "^5.14.9"
   },
   "dependencies": {
-    "@material-ui/icons": "4.11.3",
     "@moodlenet/component-library": "^0.5.1",
     "@moodlenet/key-value-store": "^0.5.1",
     "@moodlenet/simple-file-store": "^0.5.1",

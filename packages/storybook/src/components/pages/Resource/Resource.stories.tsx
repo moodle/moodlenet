@@ -1,7 +1,7 @@
 import type { ResourceFormProps } from '@moodlenet/ed-resource/common'
 import type { ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useResourceStoryProps } from './ResourceProps.stories.js'
 // import { href } from '../../../elements/link'
 

@@ -1,5 +1,5 @@
 import { Subject } from '@moodlenet/ed-meta/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useSubjectStoryProps } from './SubjectProps.stories.js'
 // import { href } from '../../../elements/link'
 

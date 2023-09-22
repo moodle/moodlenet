@@ -1,4 +1,4 @@
-import { ArrowDropDown } from '@material-ui/icons'
+import { ArrowDropDown } from '@mui/icons-material'
 import type { FC } from 'react'
 import { Fragment } from 'react'
 import type { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.js'

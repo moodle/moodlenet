@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { Snackbar } from './Snackbar.js'
 
 const meta: ComponentMeta<typeof Snackbar> = {
@@ -9,14 +9,14 @@ const meta: ComponentMeta<typeof Snackbar> = {
 
 const SnackbarStory: ComponentStory<typeof Snackbar> = args => <Snackbar {...args} />
 
-export const Default = SnackbarStory.bind({})
+export const Default: typeof SnackbarStory = SnackbarStory.bind({})
 Default.args = {
   autoHideDuration: 9999999999,
   onClose: action('close Snackbar'),
   children: <div>Snackbar Content</div>,
 }
 
-export const Success = SnackbarStory.bind({})
+export const Success: typeof SnackbarStory = SnackbarStory.bind({})
 Success.args = {
   type: 'success',
   autoHideDuration: 9999999999,
@@ -24,7 +24,7 @@ Success.args = {
   children: <div>Snackbar Content</div>,
 }
 
-export const Warning = SnackbarStory.bind({})
+export const Warning: typeof SnackbarStory = SnackbarStory.bind({})
 Warning.args = {
   type: 'warning',
   autoHideDuration: 9999999999,
@@ -32,7 +32,7 @@ Warning.args = {
   children: <div>Snackbar Content</div>,
 }
 
-export const Error = SnackbarStory.bind({})
+export const Error: typeof SnackbarStory = SnackbarStory.bind({})
 Error.args = {
   type: 'error',
   autoHideDuration: 9999999999,
@@ -40,7 +40,7 @@ Error.args = {
   children: <div>Snackbar Content</div>,
 }
 
-export const Info = SnackbarStory.bind({})
+export const Info: typeof SnackbarStory = SnackbarStory.bind({})
 Info.args = {
   type: 'info',
   autoHideDuration: 9999999999,

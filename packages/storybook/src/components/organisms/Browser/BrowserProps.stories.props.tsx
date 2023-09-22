@@ -7,12 +7,12 @@ import { BrowserProfileFilters, BrowserProfileList } from '@moodlenet/web-user/u
 import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
-import { getCollectionCardsStoryProps } from '../CollectionCard/CollectionCardProps.stories.js'
-import { getProfileCardsStoryProps } from '../ProfileCard/ProfileCardProps.stories.js'
-import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.stories.js'
-import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.js'
+import { getCollectionCardsStoryProps } from '../CollectionCard/CollectionCardProps.stories.props.js'
+import { getProfileCardsStoryProps } from '../ProfileCard/ProfileCardProps.stories.props.js'
+import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.stories.props.js'
+import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.props.js'
 
-export const useBrowserResourceList = () => {
+export const useBrowserResourceList = (): MainColumItem => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType>('Relevant')
   return {
     name: 'Resources',
@@ -42,13 +42,13 @@ export const useBrowserResourceList = () => {
       }),
     ].map(e => ({
       Item: () => e,
-      key: e.key,
+      key: `${e.key}`,
     })),
     key: 'resource-list',
   }
 }
 
-export const useBrowserCollectionList = () => {
+export const useBrowserCollectionList = (): MainColumItem => {
   const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState<SortType>('Relevant')
   return {
     name: 'Collections',
@@ -76,13 +76,13 @@ export const useBrowserCollectionList = () => {
       }),
     ].map(e => ({
       Item: () => e,
-      key: e.key,
+      key: `${e.key}`,
     })),
     key: 'collection-list',
   }
 }
 
-export const useBrowserProfileList = (showHeader?: boolean) => {
+export const useBrowserProfileList = (showHeader?: boolean): MainColumItem => {
   const [currentProfileSortBy, setCurrentProfileSortBy] = useState<SortType>('Relevant')
 
   return {
@@ -113,13 +113,13 @@ export const useBrowserProfileList = (showHeader?: boolean) => {
       }),
     ].map(e => ({
       Item: () => e,
-      key: e.key,
+      key: `${e.key}`,
     })),
     key: 'profile-list',
   }
 }
 
-export const useBrowserSubjectList = (showHeader?: boolean) => {
+export const useBrowserSubjectList = (showHeader?: boolean): MainColumItem => {
   return {
     name: 'Subject',
     Item: ({ showAll, setShowAll }) => {
@@ -143,7 +143,7 @@ export const useBrowserSubjectList = (showHeader?: boolean) => {
 export const useBrowserStoryProps = (
   overrides?: PartialDeep<BrowserProps & { isAuthenticated: boolean }>,
 ): BrowserProps => {
-  const mainColumnItems = [
+  const mainColumnItems: MainColumItem[] = [
     useBrowserResourceList(),
     useBrowserCollectionList(),
     useBrowserProfileList(),

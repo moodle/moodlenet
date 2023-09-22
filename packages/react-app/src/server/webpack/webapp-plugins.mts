@@ -1,7 +1,7 @@
 import { writeFile } from 'fs/promises'
+// import { tmpdir } from 'os'
 import { createRequire } from 'module'
 import { packageDirectorySync } from 'pkg-dir'
-// import { tmpdir } from 'os'
 import type { ResolveOptions } from 'webpack'
 import type { WebappPluginItem, WebPkgDeps } from '../../common/types.mjs'
 import { buildContext } from '../build-context.mjs'
@@ -24,8 +24,10 @@ const baseResolveAlias: ResolveOptions['alias'] = {
   'react': packageDirectorySync({ cwd: require.resolve('react') })!,
   'react-router-dom': packageDirectorySync({ cwd: require.resolve('react-router-dom') })!,
   'react-dom': packageDirectorySync({ cwd: require.resolve('react-dom') })!,
-  '@material-ui/icons': '@material-ui/icons/esm',
-
+  '@emotion/react': packageDirectorySync({ cwd: require.resolve('@emotion/react') })!,
+  '@emotion/styled': packageDirectorySync({ cwd: require.resolve('@emotion/styled') })!,
+  '@mui/icons-material': packageDirectorySync({ cwd: require.resolve('@mui/icons-material') })!,
+  '@mui/material': packageDirectorySync({ cwd: require.resolve('@mui/material') })!,
   [connectPkgModulesFile.alias]: connectPkgModulesFile.target,
 }
 export async function writeGenerated() {

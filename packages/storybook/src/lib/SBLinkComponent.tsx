@@ -1,4 +1,4 @@
-import LinkTo from '@storybook/addon-links/react.js'
+import LinkTo from '@storybook/addon-links/react'
 
 import type { LinkComponentType } from '@moodlenet/react-app/ui'
 import { LinkComponentCtx } from '@moodlenet/react-app/ui'

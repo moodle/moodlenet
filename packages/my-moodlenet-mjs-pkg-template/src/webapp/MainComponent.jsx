@@ -5,7 +5,7 @@ import { Route } from 'react-router-dom'
 import { MyContext } from './Context.js'
 import HelloWorldPage from './HelloWorldPage.jsx'
 
-const myRoutes = { routes: <Route index element={<HelloWorldPage />} /> }
+const myRoutes = { routes: <Route index component={HelloWorldPage} /> }
 
 const MyPageLink = () => {
   return <Link href={{ url: '/my-moodlenet-mjs-pkg-template' }}>my page</Link>

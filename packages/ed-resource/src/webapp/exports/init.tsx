@@ -8,9 +8,9 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import '../shell.mjs'
 
-import { FilterNone } from '@material-ui/icons'
 import type { PluginHookResult } from '@moodlenet/core/lib'
 import { proxyWith } from '@moodlenet/react-app/ui'
+import { FilterNone } from '@mui/icons-material'
 import {
   SearchResourceSectionAddon,
   SearchResourceWrapperAddon,

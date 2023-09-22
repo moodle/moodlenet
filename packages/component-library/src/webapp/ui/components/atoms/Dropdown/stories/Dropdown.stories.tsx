@@ -1,7 +1,7 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { Dropdown, IconPill, IconTextOption, SimplePill, TextOption } from '../Dropdown.js'
-import { LevelDropdown, LicenseDropdown } from './DropdownProps.stories.js'
-import { useStoriesDDCtrl } from './DropdownUtil.stories.js'
+import { LevelDropdown, LicenseDropdown } from './DropdownProps.stories.props.js'
+import { useStoriesDDCtrl } from './DropdownUtil.stories.mjs'
 
 const meta: ComponentMeta<typeof Dropdown> = {
   title: 'Atoms/Dropdown',

@@ -1,6 +1,6 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
-// import { Grade, LibraryBooks, PermIdentity } from '@material-ui/icons'
+// import { Grade, LibraryBooks, PermIdentity } from '@mui/icons-material'
 import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
 import { href } from '../../../../../common/lib.mjs'
 import type { OverallCardProps } from './OverallCard.js'
@@ -46,13 +46,13 @@ export const OverallCardIconsStoryProps: OverallCardProps = {
 
 const OverallCardStory: ComponentStory<typeof OverallCard> = args => <OverallCard {...args} />
 
-export const Default = OverallCardStory.bind({})
+export const Default: typeof OverallCardStory = OverallCardStory.bind({})
 Default.args = OverallCardStoryProps
 
-export const NoCard = OverallCardStory.bind({})
+export const NoCard: typeof OverallCardStory = OverallCardStory.bind({})
 NoCard.args = OverallCardNoCardStoryProps
 
-export const Icons = OverallCardStory.bind({})
+export const Icons: typeof OverallCardStory = OverallCardStory.bind({})
 Icons.args = OverallCardIconsStoryProps
 
 export default meta

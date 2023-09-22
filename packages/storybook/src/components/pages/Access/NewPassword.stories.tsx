@@ -5,10 +5,10 @@ import type { NewPasswordProps } from '@moodlenet/simple-email-auth/ui'
 import { NewPassword } from '@moodlenet/simple-email-auth/ui'
 import { MinimalisticAccessButtonsStories } from '@moodlenet/web-user/stories'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta } from '@storybook/react'
-import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
+import type { Meta as ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
 import type { PartialDeep } from 'type-fest'
+import { FooterStoryProps } from '../../../components/organisms/Footer/Footer.stories.js'
 
 const meta: ComponentMeta<typeof NewPassword> = {
   title: 'Pages/Access/NewPassword',

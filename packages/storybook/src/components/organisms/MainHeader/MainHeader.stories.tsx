@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 
 // import { href } from '../../../../elements/link'
 import type { AddonItem } from '@moodlenet/component-library'
@@ -114,13 +114,13 @@ export const HeaderLoggedInStoryProps: MainHeaderProps = {
 
 const HeaderStory: ComponentStory<typeof MainHeader> = args => <MainHeader {...args} />
 
-export const LoggedOut = HeaderStory.bind({})
+export const LoggedOut: typeof HeaderStory = HeaderStory.bind({})
 LoggedOut.args = HeaderLoggedOutStoryProps
 
-export const OrganizationLoggedOut = HeaderStory.bind({})
+export const OrganizationLoggedOut: typeof HeaderStory = HeaderStory.bind({})
 OrganizationLoggedOut.args = HeaderLoggedOutOrganizationStoryProps
 
-export const LoggedIn = HeaderStory.bind({})
+export const LoggedIn: typeof HeaderStory = HeaderStory.bind({})
 LoggedIn.args = HeaderLoggedInStoryProps
 
 export default meta

@@ -1,4 +1,4 @@
-import { LearningOutcomeOption } from '@moodlenet/ed-meta/common'
+import type { LearningOutcomeOption } from '@moodlenet/ed-meta/common'
 
 export const learningOutcomeOptions: LearningOutcomeOption[] = [
   {

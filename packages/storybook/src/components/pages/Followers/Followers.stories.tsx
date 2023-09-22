@@ -1,11 +1,11 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
 import { Followers } from '@moodlenet/web-user/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { MainLayoutLoggedInStoryProps } from 'components/layout/MainLayout/MainLayout.stories.js'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
+import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories.js'
 import {
   useBrowserProfileList,
   useBrowserStoryProps,
-} from 'components/organisms/Browser/BrowserProps.stories.js'
+} from '../../../components/organisms/Browser/BrowserProps.stories.props.js'
 
 const meta: ComponentMeta<typeof Followers> = {
   title: 'Pages/Followers',
@@ -71,10 +71,10 @@ export const LoggedIn: FollowersStory = () => {
 //   ...FollowersStoryProps,
 // }
 
-// export const LoggedOut = FollowersStory.bind({})
+// export const LoggedOut: typeof FollowersStory = FollowersStory.bind({})
 // LoggedOut.args = FollowersLoggedOutStoryProps
 
-// export const LoggedIn = FollowersStory.bind({})
+// export const LoggedIn: typeof FollowersStory = FollowersStory.bind({})
 // LoggedIn.args = FollowersLoggedInStoryProps
 
 export default meta

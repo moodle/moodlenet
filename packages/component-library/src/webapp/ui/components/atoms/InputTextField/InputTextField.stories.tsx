@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useState } from 'react'
 import type { InputTextFieldProps } from './InputTextField.js'
 import { InputTextField } from './InputTextField.js'
@@ -48,10 +48,10 @@ const InputTextFieldStory: ComponentStory<typeof InputTextField> = args => (
   <InputTextField {...args}></InputTextField>
 )
 
-export const Input = InputTextFieldStory.bind({})
+export const Input: typeof InputTextFieldStory = InputTextFieldStory.bind({})
 Input.args = InputTextFieldStoryProps
 
-export const Error = InputTextFieldStory.bind({})
+export const Error: typeof InputTextFieldStory = InputTextFieldStory.bind({})
 Error.args = InputTextFieldErrorStoryProps
 
 export const TextAreaFieldStoryProps: InputTextFieldProps = {
@@ -66,7 +66,7 @@ export const TextAreaFieldStoryProps: InputTextFieldProps = {
   onChange: action('text area change'),
 }
 
-export const TextArea = InputTextFieldStory.bind({})
+export const TextArea: typeof InputTextFieldStory = InputTextFieldStory.bind({})
 TextArea.args = TextAreaFieldStoryProps
 
 export default meta

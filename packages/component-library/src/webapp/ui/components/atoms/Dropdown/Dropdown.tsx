@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// import { SvgIconTypeMap } from '@material-ui/core'
-import { ExpandLess, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
+import { ExpandLess, ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import type { FC, ReactNode } from 'react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { SelectorProps } from '../../../lib/selector.js'

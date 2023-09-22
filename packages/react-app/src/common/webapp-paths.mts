@@ -1,5 +1,3 @@
-// import {  compile,  match,  parse,  pathToRegexp,  regexpToFunction,  tokensToFunction,  tokensToRegexp,} from 'path-to-regexp'
-// import type {  Key,  Match,  MatchFunction,  MatchResult,  ParseOptions,  Path,  PathFunction,  RegexpToFunctionOptions,  Token,  TokensToFunctionOptions,  TokensToRegexpOptions,} from 'path-to-regexp'
 export * from 'path-to-regexp'
 
 import _slugify from 'slugify'

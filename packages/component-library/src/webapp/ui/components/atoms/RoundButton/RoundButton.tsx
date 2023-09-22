@@ -5,8 +5,8 @@ import {
   Edit as EditIcon,
   InsertDriveFile as InsertDriveFileIcon,
   Search as SearchIcon,
-} from '@material-ui/icons'
-import { Upload as UploadIcon } from '@mui/icons-material'
+  Upload as UploadIcon,
+} from '@mui/icons-material'
 import type { FC, ReactNode } from 'react'
 import './RoundButton.scss'
 

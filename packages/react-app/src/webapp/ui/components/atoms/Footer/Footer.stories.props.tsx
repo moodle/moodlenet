@@ -32,7 +32,7 @@
 
 // const FooterStory: ComponentStory<typeof MainFooter> = args => <MainFooter {...args} />
 
-// export const Default = FooterStory.bind({})
+// export const Default: typeof FooterStory = FooterStory.bind({})
 // Default.args = FooterStoryProps
 
 // export default meta

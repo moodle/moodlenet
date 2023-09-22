@@ -1,5 +1,5 @@
 import { href } from '@moodlenet/react-app/common'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { CollectionContributorCardProps } from './CollectionContributorCard.js'
 import { CollectionContributorCard } from './CollectionContributorCard.js'
 
@@ -30,7 +30,9 @@ const CollectionContributorCardStory: ComponentStory<typeof CollectionContributo
   <CollectionContributorCard {...args} />
 )
 
-export const Default = CollectionContributorCardStory.bind({})
+export const Default: typeof CollectionContributorCardStory = CollectionContributorCardStory.bind(
+  {},
+)
 Default.args = CollectionContributorCardStoryProps
 
 export default meta
