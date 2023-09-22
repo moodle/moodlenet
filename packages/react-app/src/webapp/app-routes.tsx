@@ -1,6 +1,8 @@
 import type { PkgIdentifier } from '@moodlenet/core'
 import type { ReactElement } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { Fallback } from './exports/ui.mjs'
+import { useMainLayoutProps } from './exports/webapp.mjs'
 import { getCurrentInitPkg } from './plugin-initializer.mjs'
 import { AdminSettingsPageRoute } from './ui/components/pages/AdminSettings/Hook/AdminSettingsPageRoute.js'
 import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
@@ -31,6 +33,8 @@ const AppRouter = () => {
           </Route>
         )
       })}
+
+      <Route path="*" element={<Fallback mainLayoutProps={useMainLayoutProps()} />} />
     </Routes>
   )
 }
