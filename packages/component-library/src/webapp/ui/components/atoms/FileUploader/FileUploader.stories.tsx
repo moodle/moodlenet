@@ -4,6 +4,9 @@ import { FileUploader } from './FileUploader.js'
 const meta: ComponentMeta<typeof FileUploader> = {
   title: 'Atoms/FileUploader',
   component: FileUploader,
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 const FileUploaderStory: ComponentStory<typeof FileUploader> = () => <FileUploader></FileUploader>

@@ -4,6 +4,9 @@ import { TertiaryButton } from './TertiaryButton.js'
 const meta: ComponentMeta<typeof TertiaryButton> = {
   title: 'Atoms/TertiaryButton',
   component: TertiaryButton,
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 const TertiaryButtonStory: ComponentStory<typeof TertiaryButton> = () => (

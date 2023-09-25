@@ -23,6 +23,9 @@ const meta: ComponentMeta<typeof ImageContainer> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
+  parameters: {
+    layout: 'centered',
+  },
 }
 export default meta
 

@@ -2,7 +2,7 @@
 import { overrideDeep } from '@moodlenet/component-library/common'
 import { href } from '@moodlenet/react-app/common'
 import { fileExceedsMaxUploadSize, randomIntFromInterval } from '@moodlenet/react-app/ui'
-import type { ProfileFormValues } from '@moodlenet/web-user/common'
+import { getValidationSchemas, type ProfileFormValues } from '@moodlenet/web-user/common'
 import type { MainProfileCardProps } from '@moodlenet/web-user/ui'
 import { people } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
@@ -40,9 +40,9 @@ export const profileStoriesValidationSchema: SchemaOf<ProfileFormValues> = objec
   aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 
-export const useMainProfileCardStoryProps = (
+export default function useMainProfileCardStoryProps(
   overrides?: PartialDeep<MainProfileCardProps>,
-): MainProfileCardProps => {
+): MainProfileCardProps {
   const person = people[randomIntFromInterval(0, 3)]
   return overrideDeep<MainProfileCardProps>(
     {
@@ -64,15 +64,17 @@ export const useMainProfileCardStoryProps = (
         setBackground: action('set background image'),
         editProfile: action('edit profile'),
         toggleFollow: action('toogle is following'),
+        approveUser: action('approve user'),
+        unapproveUser: action('unapprove user'),
       },
       access: {
         isAdmin: false,
         isCreator: false,
         isAuthenticated: true,
         canEdit: false,
-        canPublish: false,
         canFollow: true,
-        canBookmark: true,
+        canApprove: false,
+        isPublisher: true,
       },
       form: useFormik<ProfileFormValues>({
         onSubmit: action('submit edit'),
@@ -91,6 +93,8 @@ export const useMainProfileCardStoryProps = (
         followed: false,
         numFollowers: 12,
         profileUrl: 'https://iuri.is/',
+        isPublisher: true,
+        showAccountApprovedSuccessAlert: false,
         ...overrides?.state,
       },
       data: {
@@ -101,6 +105,7 @@ export const useMainProfileCardStoryProps = (
         ...overrides?.data,
         profileHref: href('https://iuri.is/'),
       },
+      validationSchemas: getValidationSchemas({ imageMaxUploadSize: maxUploadSize }),
     },
     overrides,
   )

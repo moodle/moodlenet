@@ -9,6 +9,9 @@ const meta: ComponentMeta<typeof Loading> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['LoadingStoryProps'],
+  parameters: {
+    layout: 'centered',
+  },
   decorators: [
     Story => (
       <div

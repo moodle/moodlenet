@@ -16,6 +16,9 @@ const meta: ComponentMeta<typeof InputTextField> = {
     'InputTextFieldErrorStoryProps',
     'TextAreaFieldStoryProps',
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const TransStory = () => {

@@ -17,6 +17,9 @@ const meta: ComponentMeta<typeof Card> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const CardStoryProps: CardProps = {}

@@ -30,6 +30,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
     'CollectionCardBookmarkedStoryProps',
     'CollectionCardOwnerStoryProps',
     'CollectionCardOwnerPrivateStoryProps',
+    'getCollectionCardStoryProps',
   ],
   decorators: [
     Story => (
@@ -38,6 +39,9 @@ const meta: ComponentMeta<typeof CollectionCard> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const getCollectionCardStoryProps = (

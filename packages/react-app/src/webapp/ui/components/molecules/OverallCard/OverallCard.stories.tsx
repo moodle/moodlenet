@@ -24,6 +24,9 @@ const meta: ComponentMeta<typeof OverallCard> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const OverallCardStoryProps: OverallCardProps = {

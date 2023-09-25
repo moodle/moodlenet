@@ -70,6 +70,9 @@ module.exports = {
     storyStoreV7: true,
   },
 
+  // docs: {
+  //   autodocs: true
+  // }
   async viteFinal(config) {
     // Merge custom configuration into the default config
     return mergeConfig(config, {
@@ -92,7 +95,7 @@ module.exports = {
     })
   },
 
-  // docs: {
-  //   autodocs: true
-  // }
+  core: {
+    disableWhatsNewNotifications: false
+  }
 }

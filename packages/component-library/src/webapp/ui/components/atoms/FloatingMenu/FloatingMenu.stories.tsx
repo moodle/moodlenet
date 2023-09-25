@@ -18,6 +18,9 @@ const meta: ComponentMeta<typeof FloatingMenu> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const FloatingMenuStoryProps: FloatingMenuProps = {
