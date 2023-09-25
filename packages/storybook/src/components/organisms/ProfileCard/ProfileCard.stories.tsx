@@ -23,6 +23,9 @@ const meta: ComponentMeta<typeof ProfileCard> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const ProfileCardLoggedOutStoryProps: ProfileCardProps = {

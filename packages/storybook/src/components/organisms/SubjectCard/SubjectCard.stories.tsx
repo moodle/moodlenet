@@ -21,6 +21,9 @@ const meta: ComponentMeta<typeof SubjectCard> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const getSubjectCardStoryProps = (

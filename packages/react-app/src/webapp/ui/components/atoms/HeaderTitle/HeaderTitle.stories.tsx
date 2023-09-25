@@ -13,6 +13,9 @@ const meta: ComponentMeta<typeof HeaderTitle> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['HeaderTitleStoryProps', 'HeaderTitleOrganizationStoryProps'],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const HeaderTitleStoryProps: HeaderTitleProps = {

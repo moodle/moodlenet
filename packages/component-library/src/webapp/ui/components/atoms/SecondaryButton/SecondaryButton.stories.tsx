@@ -4,6 +4,9 @@ import { SecondaryButton } from './SecondaryButton.js'
 const meta: ComponentMeta<typeof SecondaryButton> = {
   title: 'Atoms/SecondaryButton',
   component: SecondaryButton,
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 const SecondaryButtonStory: ComponentStory<typeof SecondaryButton> = () => (

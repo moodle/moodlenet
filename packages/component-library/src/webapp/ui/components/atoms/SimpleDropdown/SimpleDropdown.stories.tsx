@@ -14,6 +14,9 @@ const meta: ComponentMeta<typeof SimpleDropdown> = {
     'SimpleDropdownErrorStoryProps',
     'TextAreaFieldStoryProps',
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const SimpleDropdownStoryProps: SimpleDropdownProps = {

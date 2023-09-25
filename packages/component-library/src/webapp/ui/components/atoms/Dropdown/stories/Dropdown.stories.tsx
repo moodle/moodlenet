@@ -17,6 +17,9 @@ const meta: ComponentMeta<typeof Dropdown> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const Text: ComponentStory<typeof Dropdown> = () => {

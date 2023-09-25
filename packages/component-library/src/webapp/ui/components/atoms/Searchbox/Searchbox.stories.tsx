@@ -7,6 +7,9 @@ const meta: ComponentMeta<typeof Searchbox> = {
   title: 'Atoms/Searchbox',
   component: Searchbox,
   excludeStories: ['SearchboxStoryProps'],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const SearchboxStoryProps: SearchboxProps = {

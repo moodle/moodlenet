@@ -25,6 +25,9 @@ const meta: ComponentMeta<typeof PrimaryButton> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
+  parameters: {
+    layout: 'centered',
+  },
 }
 export default meta
 

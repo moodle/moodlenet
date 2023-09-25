@@ -21,9 +21,9 @@ import type { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import type { PartialDeep } from 'type-fest'
-import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
-import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+import { getCollectionCardsStoryProps } from '../../organisms/CollectionCard/CollectionCardProps.stories.props.js'
+import { getResourceCardsStoryProps } from '../../organisms/ResourceCard/ResourceCardProps.stories.props.js'
 
 const maxUploadSize = 1024 * 1024 * 10
 

@@ -39,6 +39,9 @@ const meta: ComponentMeta<typeof ResourceCard> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const getResourceCardStoryProps = (

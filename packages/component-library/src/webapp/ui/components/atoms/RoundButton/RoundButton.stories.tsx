@@ -4,6 +4,9 @@ import { RoundButton } from './RoundButton.js'
 const meta: ComponentMeta<typeof RoundButton> = {
   title: 'Atoms/RoundButton',
   component: RoundButton,
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 const RoundButtonStory: ComponentStory<typeof RoundButton> = () => <RoundButton />

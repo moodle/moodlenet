@@ -6,6 +6,9 @@ const meta: ComponentMeta<typeof Colorpicker> = {
   title: 'Atoms/Colorpicker',
   component: Colorpicker,
   excludeStories: ['ColorpickerUnselected', 'ColorpickerSelected'],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 const ColorpickerStory: ComponentStory<typeof Colorpicker> = args => (
