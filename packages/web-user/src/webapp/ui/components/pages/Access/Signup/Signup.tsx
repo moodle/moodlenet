@@ -1,10 +1,10 @@
+import type { Href } from '@moodlenet/component-library'
 import { Card } from '@moodlenet/component-library'
 import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
-import { SimpleLayout } from '@moodlenet/react-app/ui'
+import { Link, SimpleLayout } from '@moodlenet/react-app/ui'
 import { CallMade as CallMadeIcon } from '@mui/icons-material'
 import type { ComponentType, CSSProperties, FC } from 'react'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import './Signup.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
@@ -13,9 +13,10 @@ export type SignupProps = {
   signupItems: SignupItem[]
   headerProps: MinimalisticHeaderProps
   footerProps: MainFooterProps
+  loginHref: Href
 }
 
-export const Signup: FC<SignupProps> = ({ headerProps, signupItems, footerProps }) => {
+export const Signup: FC<SignupProps> = ({ headerProps, signupItems, footerProps, loginHref }) => {
   // const shouldShowErrors =
   //   !!form.submitCount && (!!signupErrorMessage || !form.isValid)
 
@@ -38,7 +39,7 @@ export const Signup: FC<SignupProps> = ({ headerProps, signupItems, footerProps 
         <div className={`signup-content`}>
           {/* <div className={`signup-content ${requestSent ? 'success' : ''}`}> */}
           <Card className="login-card" hover={true}>
-            <Link to={`/login`}>
+            <Link href={loginHref}>
               Log in
               <CallMadeIcon />
             </Link>

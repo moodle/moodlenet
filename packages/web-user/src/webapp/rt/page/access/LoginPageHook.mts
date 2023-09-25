@@ -1,4 +1,5 @@
 import type { AddOnMap } from '@moodlenet/core/lib'
+import { href } from '@moodlenet/react-app/common'
 import {
   createPlugin,
   useFooterProps,
@@ -24,6 +25,7 @@ export const useLoginProps = (): LoginProps => {
       headerProps,
       footerProps,
       loginItems: plugins.getKeyedAddons('loginMethod'),
+      signupHref: href('/signup'),
     }
     return loginProps
   }, [headerProps, footerProps, plugins])

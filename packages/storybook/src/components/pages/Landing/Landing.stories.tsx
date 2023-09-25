@@ -3,8 +3,9 @@ import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
-import { InterestInfo, LandingProfileList } from '@moodlenet/web-user/ui'
+import { InterestInfo, LandingProfileList, ShareContent } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
+import { linkTo } from '@storybook/addon-links'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
 import { getProfileCardsStoryProps } from '../../../components/organisms/ProfileCard/ProfileCardProps.stories.props.js'
@@ -82,6 +83,22 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       key: 'people-card-list',
     },
   ],
+  headerCardItems: [
+    {
+      Item: () => (
+        <ShareContent
+          shareContentHrefs={{
+            loginHref: href('Pages/Access/Login/Default'),
+            signUpHref: href('Pages/Access/SignUp/Default'),
+            createResource: linkTo('Pages/Resource', 'New'),
+            createCollection: linkTo('Pages/Collection', 'New'),
+          }}
+          isAuthenticated={false}
+        />
+      ),
+      key: 'share-content',
+    },
+  ],
 }
 
 export const LandingLoggedInStoryProps: LandingProps = {
@@ -148,6 +165,22 @@ export const LandingLoggedInStoryProps: LandingProps = {
         />
       ),
       key: 'people-card-list',
+    },
+  ],
+  headerCardItems: [
+    {
+      Item: () => (
+        <ShareContent
+          shareContentHrefs={{
+            loginHref: href('Pages/Login'),
+            signUpHref: href('Pages/SignUp'),
+            createResource: linkTo('Pages/Resource', 'New'),
+            createCollection: linkTo('Pages/Collection', 'New'),
+          }}
+          isAuthenticated={true}
+        />
+      ),
+      key: 'share-content',
     },
   ],
 }

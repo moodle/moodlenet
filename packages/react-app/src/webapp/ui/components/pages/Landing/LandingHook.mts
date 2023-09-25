@@ -8,6 +8,7 @@ import type { LandingProps } from './Landing.js'
 
 export type LandingPlugin = {
   mainColumnItems: AddOnMap<AddonItemNoKey>
+  headerCardItems: AddOnMap<AddonItemNoKey>
 }
 
 export const LandingHookPlugin = createPlugin<LandingPlugin>()
@@ -20,6 +21,7 @@ export const useLandingPageProps = (): LandingProps => {
     title: organizationData.landingTitle,
     subtitle: organizationData.landingSubtitle,
     mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
+    headerCardItems: plugins.getKeyedAddons('headerCardItems'),
     search: () => undefined,
   }
 }
