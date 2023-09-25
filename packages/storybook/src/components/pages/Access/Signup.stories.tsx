@@ -61,6 +61,7 @@ SignupProps => {
         }),
       ),
       footerProps: FooterStoryProps,
+      loginHref: href('Pages/Access/Login/Default'),
       // accessHeaderProps: AccessHeaderStoryProps,
       // form: useFormik<SignupFormValues>({
       //   validationSchema,

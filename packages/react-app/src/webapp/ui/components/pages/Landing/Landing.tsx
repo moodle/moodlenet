@@ -15,6 +15,7 @@ import './Landing.scss'
 export type LandingProps = {
   mainLayoutProps: Pick<MainLayoutProps, 'headerProps' | 'footerProps'>
   mainColumnItems: AddonItem[]
+  headerCardItems: AddonItem[]
   title: string
   subtitle: string
   search(text: string): unknown
@@ -38,6 +39,7 @@ const LandingSearchBox: FC = () => {
 export const Landing: FC<LandingProps> = ({
   mainLayoutProps,
   mainColumnItems,
+  headerCardItems,
   title,
   subtitle,
   // {
@@ -57,112 +59,38 @@ export const Landing: FC<LandingProps> = ({
   //   '../../../assets/img/default-landing-background.png',
   //   import.meta.url,
   // ).href
-  // const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
 
   const background = {
     backgroundImage: 'url("' + /* imageUrl ||  */ defaultBackground + '")',
     backgroundSize: 'cover',
   }
+
+  const landingTitle = (
+    <div className="landing-title">
+      <div className="title">{title}</div>
+      {/* <div className="title">{organization.title}</div> */}
+      <div className="subtitle">{subtitle}</div>
+      {/* <div className="subtitle">{organization.subtitle}</div> */}
+    </div>
+  )
+
+  const landingSearchBox = <LandingSearchBox />
+
+  const updatedHeaderCardItems = [
+    landingTitle,
+    landingSearchBox,
+    ...(headerCardItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
   const headerCard = (
     <div className="landing-header" key="landing-header" style={background}>
-      <div className="landing-title">
-        <div className="title">{title}</div>
-        {/* <div className="title">{organization.title}</div> */}
-        <div className="subtitle">{subtitle}</div>
-        {/* <div className="subtitle">{organization.subtitle}</div> */}
-      </div>
-
-      <LandingSearchBox />
-      {/* <PrimaryButton
-        className="share-content"
-        color="blue"
-        onClick={() => setIsShowingContentModal(true)}
-        // onClick={() => setIsCreatingContent(true)}
-      >
-        Share content
-      </PrimaryButton> */}
+      {updatedHeaderCardItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
     </div>
   )
 
   const updatedMainColumnItems = [headerCard, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem | JSX.Element => !!item,
   )
-
-  // const newResource = (
-  //   <Link href={newCollectionHref}>
-  //     <PrimaryButton className="" color="card">
-  //       <LibraryAdd />
-  //       <div className="content">
-  //         <div className="title">Create a new collection</div>
-  //         <div className="subtitle">Collections are groups of resources</div>
-  //       </div>
-  //     </PrimaryButton>
-  //   </Link>
-  // )
-
-  // const newCollection = (
-  //   <Link href={newResourceHref}>
-  //     <PrimaryButton className="" color="card">
-  //       <NoteAdd />
-  //       <div className="content">
-  //         <div className="title">Create a new resource</div>
-  //         <div className="subtitle">A resource is a single item of content</div>
-  //       </div>
-  //     </PrimaryButton>
-  //   </Link>
-  // )
-
-  // const updatedShareContentModalItems = [
-  //   newResource,
-  //   newCollection,
-  //   ...(shareContentModalItems ?? []),
-  // ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-  // const modals = [
-  //   !isAuthenticated && isShowingContentModal && (
-  //     <Modal
-  //       className="create-content-modal"
-  //       title={`Log in or create an account to start sharing content`}
-  //       closeButton={false}
-  //       onClose={() => {
-  //         setIsShowingContentModal(false)
-  //       }}
-  //       style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
-  //     >
-  //       <Link href={loginHref}>
-  //         <PrimaryButton className="" color="card">
-  //           <ArrowForward />
-  //           <div className="content">
-  //             <div className="title">Log in</div>
-  //             <div className="subtitle">Enter to your account</div>
-  //           </div>
-  //         </PrimaryButton>
-  //       </Link>
-  //       <Link href={signUpHref}>
-  //         <PrimaryButton className="" color="card">
-  //           <StreamOutlined />
-  //           <div className="content">
-  //             <div className="title">Join now</div>
-  //             <div className="subtitle">Create a new account</div>
-  //           </div>
-  //         </PrimaryButton>
-  //       </Link>
-  //     </Modal>
-  //   ),
-  //   isAuthenticated && isShowingContentModal && (
-  //     <Modal
-  //       className="create-content-modal"
-  //       title={`What would you like to create?`}
-  //       closeButton={false}
-  //       onClose={() => {
-  //         setIsShowingContentModal(false)
-  //       }}
-  //       style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
-  //     >
-  //       {updatedShareContentModalItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-  //     </Modal>
-  //   ),
-  // ]
 
   return (
     <MainLayout
@@ -173,7 +101,6 @@ export const Landing: FC<LandingProps> = ({
       {/* modals */}
       <div className="landing">
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-
         {/* <ListCard
             className="resources"
             content={resourceCardPropsList

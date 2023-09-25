@@ -18,7 +18,6 @@ const meta: ComponentMeta<typeof LoginPage> = {
   title: 'Pages/Access/Login',
   component: LoginPage,
   excludeStories: ['LoginStoryProps', 'validationSchema'],
-  parameters: { layout: 'fullscreen' },
 }
 
 // const validationSchema: SchemaOf<LoginFormValues> = object({
@@ -54,6 +53,7 @@ LoginProps => {
       }),
     ),
     footerProps: FooterStoryProps,
+    signupHref: href('Pages/Access/SignUp/Default'),
     // accessHeaderProps: AccessHeaderStoryProps,
     // form: useFormik<LoginFormValues>({
     //   validationSchema,

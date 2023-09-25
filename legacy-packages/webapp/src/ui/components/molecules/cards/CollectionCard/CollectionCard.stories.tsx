@@ -1,9 +1,10 @@
 import { linkTo } from '@storybook/addon-links'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import { randomIntFromInterval } from '../../../../../helpers/utilities'
 import { ContentBackupImages } from '../../../../assets/data/images'
 import { href } from '../../../../elements/link'
-import { CollectionCard, CollectionCardProps } from './CollectionCard'
+import type { CollectionCardProps } from './CollectionCard'
+import { CollectionCard } from './CollectionCard'
 
 const meta: ComponentMeta<typeof CollectionCard> = {
   title: 'Molecules/CollectionCard',
@@ -21,7 +22,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
     'CollectionCardOwnerPrivateStoryProps',
   ],
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{ height: 100, width: 300 }}>
         <Story />
       </div>
@@ -32,8 +33,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
 export const CollectionCardStoryProps = (i: 1 | 0): CollectionCardProps => {
   return {
     collectionId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
-    title:
-      'Best collection ever created Best collection ever created Best collection ever created',
+    title: 'Best collection ever created Best collection ever created Best collection ever created',
     imageUrl: i === 0 ? 'https://picsum.photos/300/200' : null,
     collectionHref: href('Pages/Collection/Logged In'),
     bookmarked: false,
@@ -48,15 +48,11 @@ export const CollectionCardStoryProps = (i: 1 | 0): CollectionCardProps => {
   }
 }
 
-export const CollectionCardLoggedInStoryProps = (
-  i: 1 | 0
-): CollectionCardProps => {
+export const CollectionCardLoggedInStoryProps = (i: 1 | 0): CollectionCardProps => {
   return { ...CollectionCardStoryProps(i) }
 }
 
-export const CollectionCardFollowingStoryProps = (
-  i: 0 | 1
-): CollectionCardProps => {
+export const CollectionCardFollowingStoryProps = (i: 0 | 1): CollectionCardProps => {
   return {
     ...CollectionCardLoggedInStoryProps(i),
     following: true,
@@ -64,9 +60,7 @@ export const CollectionCardFollowingStoryProps = (
   }
 }
 
-export const CollectionCardBookmarkedStoryProps = (
-  i: 1 | 0
-): CollectionCardProps => {
+export const CollectionCardBookmarkedStoryProps = (i: 1 | 0): CollectionCardProps => {
   return {
     ...CollectionCardLoggedInStoryProps(i),
     bookmarked: true,
@@ -74,9 +68,7 @@ export const CollectionCardBookmarkedStoryProps = (
   }
 }
 
-export const CollectionCardLoggedOutStoryProps = (
-  i: 1 | 0
-): CollectionCardProps => {
+export const CollectionCardLoggedOutStoryProps = (i: 1 | 0): CollectionCardProps => {
   return {
     ...CollectionCardStoryProps(i),
     collectionHref: href('Pages/Collection/Logged Out'),
@@ -84,9 +76,7 @@ export const CollectionCardLoggedOutStoryProps = (
   }
 }
 
-export const CollectionCardOwnerStoryProps = (
-  i: 1 | 0
-): CollectionCardProps => {
+export const CollectionCardOwnerStoryProps = (i: 1 | 0): CollectionCardProps => {
   return {
     ...CollectionCardLoggedInStoryProps(i),
     collectionHref: href('Pages/Collection/Owner'),
@@ -96,49 +86,33 @@ export const CollectionCardOwnerStoryProps = (
   }
 }
 
-export const CollectionCardOwnerPrivateStoryProps = (
-  i: 1 | 0
-): CollectionCardProps => {
+export const CollectionCardOwnerPrivateStoryProps = (i: 1 | 0): CollectionCardProps => {
   return { ...CollectionCardOwnerStoryProps(i), visibility: 'Private' }
 }
 
-const CollectionCardStory: ComponentStory<typeof CollectionCard> = (args) => (
+const CollectionCardStory: ComponentStory<typeof CollectionCard> = args => (
   <CollectionCard {...args} />
 )
 
 export const LoggedIn = CollectionCardStory.bind({})
-LoggedIn.args = CollectionCardLoggedInStoryProps(
-  randomIntFromInterval(0, 1) === 0 ? 0 : 1
-)
+LoggedIn.args = CollectionCardLoggedInStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)
 
 export const Following = CollectionCardStory.bind({})
-Following.args = CollectionCardFollowingStoryProps(
-  randomIntFromInterval(0, 1) === 0 ? 0 : 1
-)
+Following.args = CollectionCardFollowingStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)
 
 export const Bookmarked = CollectionCardStory.bind({})
-Bookmarked.args = CollectionCardBookmarkedStoryProps(
-  randomIntFromInterval(0, 1) === 0 ? 0 : 1
-)
+Bookmarked.args = CollectionCardBookmarkedStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)
 
 export const LoggedOut = CollectionCardStory.bind({})
-LoggedOut.args = CollectionCardLoggedOutStoryProps(
-  randomIntFromInterval(0, 1) === 0 ? 0 : 1
-)
+LoggedOut.args = CollectionCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)
 
 export const Owner = CollectionCardStory.bind({})
-Owner.args = CollectionCardOwnerStoryProps(
-  randomIntFromInterval(0, 1) === 0 ? 0 : 1
-)
+Owner.args = CollectionCardOwnerStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)
 
 export const Public = CollectionCardStory.bind({})
-Public.args = CollectionCardOwnerStoryProps(
-  randomIntFromInterval(0, 1) === 0 ? 0 : 1
-)
+Public.args = CollectionCardOwnerStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)
 
 export const Private = CollectionCardStory.bind({})
-Private.args = CollectionCardOwnerPrivateStoryProps(
-  randomIntFromInterval(0, 1) === 0 ? 0 : 1
-)
+Private.args = CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)
 
 export default meta

@@ -155,11 +155,11 @@ export const useProfileStoryProps = (
       resourceCardPropsList: getResourceCardsStoryProps(5, {
         access: { ...access },
       }),
-      createResource: linkTo('Pages/New Resource/Default'),
+      createResource: linkTo('Pages/Resource', 'New'),
       collectionCardPropsList: getCollectionCardsStoryProps(5, {
         access: { ...access },
       }),
-      createCollection: linkTo('Pages/New Collection/Default'),
+      createCollection: linkTo('Pages/Collection', 'New'),
       overallCardItems: OverallCardStories.OverallCardStoryProps.items ?? [],
 
       // editForm: ProfileCardStoryProps.editForm,
