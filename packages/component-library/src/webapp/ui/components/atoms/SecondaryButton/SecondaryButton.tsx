@@ -10,7 +10,7 @@ export type SecondaryButtonProps = {
   onHoverColor?: 'blue' | 'grey' | 'red' | 'fill-red'
   noHover?: boolean
   children?: ReactNode
-  innerRef?: React.RefObject<HTMLElement>
+  innerRef?: React.LegacyRef<HTMLElement>
   onClick?(arg0?: unknown): unknown
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
 
