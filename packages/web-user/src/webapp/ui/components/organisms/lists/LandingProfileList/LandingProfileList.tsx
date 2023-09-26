@@ -12,12 +12,26 @@ import './LandingProfileList.scss'
 export type LandingProfileListProps = {
   searchAuthorsHref: Href
   profilesPropsList: { props: ProxyProps<ProfileCardProps>; key: string }[]
+  hasSetInterests: boolean
 }
 
 export const LandingProfileList: FC<LandingProfileListProps> = ({
   profilesPropsList,
   searchAuthorsHref,
+  hasSetInterests,
 }) => {
+  const title = (
+    <div className="title">{hasSetInterests ? 'Authors selection' : 'Featured authors'}</div>
+  )
+
+  const subtitle = (
+    <div className="subtitle">
+      {hasSetInterests
+        ? 'Top contributors you might appreciate'
+        : 'Authors with outstanding contributions'}
+    </div>
+  )
+
   return (
     <ListCard
       className={`landing-profile-list`}
@@ -31,8 +45,8 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
       header={
         <div className="card-header">
           <div className="info">
-            <div className="title">Featured authors</div>
-            <div className="subtitle">Authors with outstanding contributions</div>
+            {title}
+            {subtitle}
           </div>
           {null && (
             <SecondaryButton className="more" color="dark-blue">

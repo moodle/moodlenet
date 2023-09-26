@@ -12,12 +12,27 @@ import './LandingCollectionList.scss'
 export type LandingCollectionListProps = {
   searchCollectionsHref: Href
   collectionCardPropsList: { props: ProxyProps<CollectionCardProps>; key: string }[]
+  hasSetInterests: boolean
 }
 
 export const LandingCollectionList: FC<LandingCollectionListProps> = ({
   collectionCardPropsList,
   searchCollectionsHref,
+  hasSetInterests,
 }) => {
+  const title = (
+    <div className="title">
+      {hasSetInterests ? 'Collections selection' : 'Featured collections'}
+    </div>
+  )
+
+  const subtitle = (
+    <div className="subtitle">
+      {hasSetInterests
+        ? 'High quality collections you might enjoy'
+        : 'Great collections of curated resources'}
+    </div>
+  )
   return (
     <ListCard
       className="landing-collection-list"
@@ -31,8 +46,8 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
       header={
         <div className="card-header">
           <div className="info">
-            <div className="title">Featured collections</div>
-            <div className="subtitle">Great collections of curated resources</div>
+            {title}
+            {subtitle}
           </div>
           {null && (
             <SecondaryButton className="more" color="dark-blue">

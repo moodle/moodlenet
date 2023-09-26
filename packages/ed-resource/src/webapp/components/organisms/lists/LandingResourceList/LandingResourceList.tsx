@@ -12,12 +12,25 @@ import './LandingResourceList.scss'
 export type LandingResourceListProps = {
   resourceCardPropsList: { props: ProxyProps<ResourceCardPropsData>; key: string }[]
   searchResourcesHref: Href
+  hasSetInterests: boolean
 }
 
 export const LandingResourceList: FC<LandingResourceListProps> = ({
   resourceCardPropsList,
   searchResourcesHref,
+  hasSetInterests,
 }) => {
+  const title = (
+    <div className="title">{hasSetInterests ? 'Resources selection' : 'Featured resources'}</div>
+  )
+
+  const subtitle = (
+    <div className="subtitle">
+      {hasSetInterests
+        ? 'Top resource aligned with your interests'
+        : 'Highlights on top quality content'}
+    </div>
+  )
   return (
     <ListCard
       className="landing-resource-list"
@@ -31,8 +44,8 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
       header={
         <div className="card-header">
           <div className="info">
-            <div className="title">Featured resources</div>
-            <div className="subtitle">Highlights on top quality content</div>
+            {title}
+            {subtitle}
           </div>
           <SecondaryButton className="more" color="dark-blue">
             <Link href={searchResourcesHref}>See more resources</Link>
