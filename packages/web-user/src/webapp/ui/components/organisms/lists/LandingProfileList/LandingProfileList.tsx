@@ -48,12 +48,10 @@ export const LandingProfileList: FC<LandingProfileListProps> = ({
             {title}
             {subtitle}
           </div>
-          {null && (
-            <SecondaryButton className="more" color="dark-blue">
-              <Link href={searchAuthorsHref}>See more authors</Link>
-              <ArrowForwardRounded />
-            </SecondaryButton>
-          )}
+          <SecondaryButton className="more" color="dark-blue">
+            <Link href={searchAuthorsHref}>See more authors</Link>
+            <ArrowForwardRounded />
+          </SecondaryButton>
         </div>
       }
       noCard={true}
