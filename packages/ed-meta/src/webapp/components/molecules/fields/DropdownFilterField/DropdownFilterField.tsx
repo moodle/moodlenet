@@ -97,7 +97,10 @@ export const DropdownFilterField: FC<DropdownFilterFieldProps> = props => {
       name="selected"
       value={form.values.selected}
       className="dropdown-filter-field"
-      onChange={form.handleChange}
+      onChange={e => {
+        form.handleChange(e)
+        form.submitForm()
+      }}
       multiple
       position={{ top: 38, bottom: 25 }}
       searchByText={setSearchText}
