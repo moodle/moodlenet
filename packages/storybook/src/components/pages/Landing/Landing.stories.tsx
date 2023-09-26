@@ -104,7 +104,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
   mainLayoutProps: MainLayoutLoggedInStoryProps,
-  showSetInterestsSnackbar: true,
+  // showSetInterestsSnackbar: true,
   mainColumnItems: [
     {
       Item: () => (
