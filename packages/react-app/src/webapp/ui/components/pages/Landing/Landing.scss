@@ -90,6 +90,11 @@
 
     > .searchbox {
       max-width: 585px;
+      @media screen and (max-width: 500px) {
+        > input {
+          font-size: 13px;
+        }
+      }
     }
   }
 
