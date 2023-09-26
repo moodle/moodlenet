@@ -69,7 +69,6 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
     ['sortType', 'subjects', 'languages', 'levels', 'types', 'licenses'],
     shell.pkgId.name,
   )
-  console.log({ queryUrlParams })
   const sortType = useMemo<SearchResourceContextT['sortType']>(() => {
     const type: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
       ? queryUrlParams.sortType
