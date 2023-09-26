@@ -18,7 +18,7 @@ import {
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
-import type { ResourceFormProps, SortTypeRpc } from '../common/types.mjs'
+import type { ResourceFormProps } from '../common/types.mjs'
 import type { ValidationsConfig } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { canPublish } from './aql.mjs'
@@ -286,8 +286,11 @@ export async function setResourceContent(_key: string, resourceContent: RpcFile 
   return { patchedDoc, contentUrl }
 }
 
-export type SearchFilterType = [prop: 'subject', equals: string][]
-
+export type SearchFilterType = [
+  metaProp: 'subject' | 'language' | 'level' | 'type' | 'license',
+  keys: string[],
+][]
+export type SortType = 'Relevant' | 'Popular' | 'Recent'
 export async function searchResources({
   limit = 20,
   sortType = 'Recent',
@@ -295,7 +298,7 @@ export async function searchResources({
   after = '0',
   filters = [],
 }: {
-  sortType?: SortTypeRpc
+  sortType?: SortType
   text?: string
   after?: string
   limit?: number
@@ -309,7 +312,10 @@ export async function searchResources({
       : sortType === 'Recent'
       ? `${entityMeta(currentEntityVar, 'created')} DESC`
       : 'rank DESC'
-  const filter = filters.map(([p, val]) => `${currentEntityVar}.${p} == ${toaql(val)}`).join(' OR ')
+  const filter = filters
+    .filter(([, vals]) => vals.length)
+    .map(([metaPropName, vals]) => `${currentEntityVar}.${metaPropName} IN ${toaql(vals)}`)
+    .join(' AND ')
   const skip = Number(after)
   const cursor = await shell.call(searchEntities)(
     Resource.entityClass,

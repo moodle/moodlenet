@@ -352,14 +352,33 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'webapp/search': {
       guard: () => void 0,
-      async fn(body = {}, __, { limit, sortType, text, after }) {
-        const { filters } = body
+      async fn(
+        _,
+        __,
+        {
+          sortType,
+          filterSubjects,
+          filterLanguages,
+          filterLevels,
+          filterTypes,
+          filterLicenses,
+          limit,
+          text,
+          after,
+        },
+      ) {
         const { endCursor, list } = await searchResources({
           limit,
           sortType,
           text,
           after,
-          filters,
+          filters: [
+            ['subject', filterSubjects ? filterSubjects.split(',') : []],
+            ['language', filterLanguages ? filterLanguages.split(',') : []],
+            ['level', filterLevels ? filterLevels.split(',') : []],
+            ['type', filterTypes ? filterTypes.split(',') : []],
+            ['license', filterLicenses ? filterLicenses.split(',') : []],
+          ],
         })
         return {
           list: list.map(({ entity: { _key } }) => ({ _key })),

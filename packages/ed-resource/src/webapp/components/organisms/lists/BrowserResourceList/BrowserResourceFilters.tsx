@@ -79,10 +79,28 @@ export const SortByTypeItem = ({
   />
 )
 
+export const SortBySubjectItem = ({
+  selected,
+  setSelected,
+  options,
+}: {
+  selected: string[]
+  setSelected: (e: string[]) => void
+  options: TextOptionProps[]
+}) => (
+  <DropdownFilterField
+    title={'Subject'}
+    selected={selected}
+    setSelected={setSelected}
+    options={options}
+  />
+)
+
 export const BrowserResourceFilters = {
   SortByItem,
   SortByLanguageItem,
   SortByLicenseItem,
   SortByLevelItem,
   SortByTypeItem,
+  SortBySubjectItem,
 }
