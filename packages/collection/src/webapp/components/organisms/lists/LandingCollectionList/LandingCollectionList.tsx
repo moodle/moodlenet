@@ -1,8 +1,6 @@
 import type { Href } from '@moodlenet/component-library'
-import { ListCard, SecondaryButton } from '@moodlenet/component-library'
+import { ListCard } from '@moodlenet/component-library'
 import type { ProxyProps } from '@moodlenet/react-app/ui'
-import { Link } from '@moodlenet/react-app/ui'
-import { ArrowForwardRounded } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useMemo } from 'react'
 import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
@@ -49,10 +47,6 @@ export const LandingCollectionList: FC<LandingCollectionListProps> = ({
             {title}
             {subtitle}
           </div>
-          <SecondaryButton className="more" color="dark-blue">
-            <Link href={searchCollectionsHref}>See more collections</Link>
-            <ArrowForwardRounded />
-          </SecondaryButton>
         </div>
       }
       minGrid={245}

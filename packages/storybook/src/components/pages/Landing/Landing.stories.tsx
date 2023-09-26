@@ -4,7 +4,6 @@ import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
 import { LandingProfileList, ShareContent } from '@moodlenet/web-user/ui'
-import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
@@ -30,7 +29,8 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
-  search: action('search'),
+  userSettingsHref: href('Pages/Settings/Default'),
+  showSetInterestsSnackbar: false,
   mainColumnItems: [
     {
       Item: () => (
@@ -104,6 +104,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
   mainLayoutProps: MainLayoutLoggedInStoryProps,
+  showSetInterestsSnackbar: true,
   mainColumnItems: [
     {
       Item: () => (
@@ -156,22 +157,6 @@ export const LandingLoggedInStoryProps: LandingProps = {
         />
       ),
       key: 'people-card-list',
-    },
-  ],
-  headerCardItems: [
-    {
-      Item: () => (
-        <ShareContent
-          shareContentHrefs={{
-            loginHref: href('Pages/Login'),
-            signUpHref: href('Pages/SignUp'),
-            createResource: linkTo('Pages/Resource', 'New'),
-            createCollection: linkTo('Pages/Collection', 'New'),
-          }}
-          isAuthenticated={true}
-        />
-      ),
-      key: 'share-content',
     },
   ],
 }
