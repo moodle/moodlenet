@@ -56,6 +56,7 @@ const emptyUserInterests: UserInterests = {
   levels: [],
   licenses: [],
   subjects: [],
+  useAsDefaultSearchFilter: false,
 }
 
 export type AllMyFeaturedEntitiesHandle = {
@@ -72,6 +73,10 @@ export type MyInterestsHandle = {
   reload(): Promise<void>
   current: UserInterests
   save(_: UserInterests): Promise<void>
+  asDefaultSearchFilters: {
+    use: boolean
+    toggle(): void
+  }
 }
 function useAllMyFeaturedEntities() {
   const authCtx = useContext(AuthCtx)
@@ -148,7 +153,7 @@ function useMyInterests() {
       setMyInterests(emptyUserInterests)
     }
 
-    const rpcResponse = await shell.rpc.me('webapp/get-my-interests')()
+    const rpcResponse = await shell.rpc.me('webapp/my-interests/get')()
 
     setMyInterests(rpcResponse?.myInterests ?? emptyUserInterests)
   }, [myProfile])
@@ -158,18 +163,35 @@ function useMyInterests() {
   }, [reload])
 
   const save = useCallback<MyInterestsHandle['save']>(async myInterests => {
-    await shell.rpc.me('webapp/save-my-interests')({ myInterests })
+    await shell.rpc.me('webapp/my-interests/save')({ myInterests })
     setMyInterests(myInterests)
   }, [])
+
+  const asDefaultSearchFilters = useMemo<MyInterestsHandle['asDefaultSearchFilters']>(() => {
+    const use = myInterests.useAsDefaultSearchFilter
+    return {
+      toggle: togggle,
+      use,
+    }
+    function togggle() {
+      setMyInterests(curr => ({ ...curr, useAsDefaultSearchFilter: !use }))
+      shell.rpc
+        .me('webapp/my-interests/use-as-default-search-filters')({ use: !use })
+        .then(done => {
+          !done && setMyInterests(curr => ({ ...curr, useAsDefaultSearchFilter: use }))
+        })
+    }
+  }, [myInterests.useAsDefaultSearchFilter])
 
   const myFeaturedEntitiesContext = useMemo<MyInterestsHandle>(() => {
     const myFeaturedEntitiesContext: MyInterestsHandle = {
       current: myInterests,
       reload,
       save,
+      asDefaultSearchFilters,
     }
     return myFeaturedEntitiesContext
-  }, [myInterests, reload, save])
+  }, [myInterests, reload, save, asDefaultSearchFilters])
 
   return myFeaturedEntitiesContext
 }

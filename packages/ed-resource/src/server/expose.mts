@@ -373,11 +373,11 @@ export const expose = await shell.expose<FullResourceExposeType>({
           text,
           after,
           filters: [
-            ['subject', filterSubjects ? filterSubjects.split(',') : []],
-            ['language', filterLanguages ? filterLanguages.split(',') : []],
-            ['level', filterLevels ? filterLevels.split(',') : []],
-            ['type', filterTypes ? filterTypes.split(',') : []],
-            ['license', filterLicenses ? filterLicenses.split(',') : []],
+            ['subject', filterSubjects ? filterSubjects.split('|') : []],
+            ['language', filterLanguages ? filterLanguages.split('|') : []],
+            ['level', filterLevels ? filterLevels.split('|') : []],
+            ['type', filterTypes ? filterTypes.split('|') : []],
+            ['license', filterLicenses ? filterLicenses.split('|') : []],
           ],
         })
         return {

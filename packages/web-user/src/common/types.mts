@@ -135,4 +135,5 @@ export type UserInterests = {
   // types: string[]
   levels: string[]
   languages: string[]
+  useAsDefaultSearchFilter: boolean
 }

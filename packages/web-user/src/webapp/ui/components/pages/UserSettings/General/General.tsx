@@ -15,9 +15,9 @@ export type GeneralProps = {
   mainColumnItems: (AddonItem | null)[]
   interestsOptions: InterestsOptions
   interests: UserInterests
-  setDefaultInterests: boolean
   editInterests: (values: UserInterests) => void
-  toggleSetDefaultFilters: () => void
+  useInterestsAsDefaultFilters: boolean
+  toggleUseInterestsAsDefaultFilters: () => void
   // userId: string
 }
 
@@ -27,9 +27,9 @@ export const General: FC<GeneralProps> = ({
   mainColumnItems,
   interestsOptions,
   interests,
-  setDefaultInterests,
+  useInterestsAsDefaultFilters,
   editInterests,
-  toggleSetDefaultFilters,
+  toggleUseInterestsAsDefaultFilters,
   //userId
 }) => {
   const { languageOptions, levelOptions, subjectOptions, licenseOptions } = interestsOptions
@@ -135,7 +135,10 @@ export const General: FC<GeneralProps> = ({
   const setAsDefaultFilters = (
     <div className="set-as-default-filters">
       <div className="title">Use interest as default filters when searching</div>
-      <Switch enabled={setDefaultInterests} toggleSwitch={toggleSetDefaultFilters} />
+      <Switch
+        enabled={useInterestsAsDefaultFilters}
+        toggleSwitch={toggleUseInterestsAsDefaultFilters}
+      />
     </div>
   )
 

@@ -5,7 +5,7 @@ import type { UserInterests } from '@moodlenet/web-user/common'
 import type { GeneralProps, InterestsOptions, UserSettingsItem } from '@moodlenet/web-user/ui'
 import { General, GeneralMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import { useState } from 'react'
+import { useReducer, useState } from 'react'
 
 export const useUserSettingsGeneralStoryProps = (overrides?: {
   props?: Partial<GeneralProps>
@@ -16,6 +16,7 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     FieldsDataStories.SubjectsTextOptionProps[21]!.value,
     // FieldsDataStories.SubjectsTextOptionProps[22]!.value,
   ])
+  const [useAsDefaultSearchFilter, toggleSetDefaultFilters] = useReducer(_ => !_, false)
   const interests: UserInterests = {
     subjects: subjects,
     languages: [
@@ -27,6 +28,7 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     licenses: [
       // FieldsDataStories.LicenseIconTextOptionProps[2]!.value
     ],
+    useAsDefaultSearchFilter,
   }
 
   const interestsOptions: InterestsOptions = {
@@ -56,8 +58,8 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     interests: interests,
     interestsOptions,
     editInterests,
-    setDefaultInterests: false,
-    toggleSetDefaultFilters: action('toggle set default filters'),
+    toggleUseInterestsAsDefaultFilters: toggleSetDefaultFilters,
+    useInterestsAsDefaultFilters: interests.useAsDefaultSearchFilter,
     // userId: 'john-cake-21321312',
     // updateExtensions: action('Updating extensions'),
     // updateSuccess: true,
