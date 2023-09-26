@@ -56,7 +56,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             className="learning-outcome"
             key={`${code}-${verb}-${i}`}
             name="content"
-            placeholder={`a concept...`}
+            placeholder={`the necessary facts...`}
             edit
             value={sentence}
             onChange={value => {

@@ -1,5 +1,6 @@
 import { BrowserCollectionFilters, BrowserCollectionList } from '@moodlenet/collection/ui'
 import { overrideDeep } from '@moodlenet/component-library/common'
+import { FieldsDataStories } from '@moodlenet/ed-meta/stories'
 import { BrowserSubjectList } from '@moodlenet/ed-meta/ui'
 import { BrowserResourceFilters, BrowserResourceList } from '@moodlenet/ed-resource/ui'
 import type { BrowserProps, MainColumItem, SortType } from '@moodlenet/react-app/ui'
@@ -14,6 +15,11 @@ import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stori
 
 export const useBrowserResourceList = (): MainColumItem => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType>('Relevant')
+  const [currentResourceSortByLanguage, setCurrentResourceSortByLanguage] = useState<string[]>([])
+  const [currentResourceSortByLevel, setCurrentResourceSortByLevel] = useState<string[]>([])
+  const [currentResourceSortByType, setCurrentResourceSortByType] = useState<string[]>([])
+  const [currentResourceSortByLicense, setCurrentResourceSortByLicense] = useState<string[]>([])
+
   return {
     name: 'Resources',
     Item: ({ showAll, setShowAll }) => {
@@ -40,9 +46,29 @@ export const useBrowserResourceList = (): MainColumItem => {
         selected: currentResourceSortBy,
         setSelected: setCurrentResourceSortBy,
       }),
-    ].map(e => ({
+      BrowserResourceFilters.SortByLanguageItem({
+        selected: currentResourceSortByLanguage,
+        setSelected: setCurrentResourceSortByLanguage,
+        options: FieldsDataStories.LanguagesTextOptionProps,
+      }),
+      BrowserResourceFilters.SortByLevelItem({
+        selected: currentResourceSortByLevel,
+        setSelected: setCurrentResourceSortByLevel,
+        options: FieldsDataStories.LevelTextOptionProps,
+      }),
+      BrowserResourceFilters.SortByTypeItem({
+        selected: currentResourceSortByType,
+        setSelected: setCurrentResourceSortByType,
+        options: FieldsDataStories.TypeTextOptionProps,
+      }),
+      BrowserResourceFilters.SortByLicenseItem({
+        selected: currentResourceSortByLicense,
+        setSelected: setCurrentResourceSortByLicense,
+        options: FieldsDataStories.LicenseIconTextOptionProps,
+      }),
+    ].map((e, i) => ({
       Item: () => e,
-      key: `${e.key}`,
+      key: e.key ? `${e.key}` : 'resource filter ' + i,
     })),
     key: 'resource-list',
   }
@@ -74,9 +100,9 @@ export const useBrowserCollectionList = (): MainColumItem => {
         selected: currentCollectionSortBy,
         setSelected: setCurrentCollectionSortBy,
       }),
-    ].map(e => ({
+    ].map((e, i) => ({
       Item: () => e,
-      key: `${e.key}`,
+      key: e.key ? `${e.key}` : 'resource filter ' + i,
     })),
     key: 'collection-list',
   }
@@ -111,9 +137,9 @@ export const useBrowserProfileList = (showHeader?: boolean): MainColumItem => {
         selected: currentProfileSortBy,
         setSelected: setCurrentProfileSortBy,
       }),
-    ].map(e => ({
+    ].map((e, i) => ({
       Item: () => e,
-      key: `${e.key}`,
+      key: e.key ? `${e.key}` : 'resource filter ' + i,
     })),
     key: 'profile-list',
   }

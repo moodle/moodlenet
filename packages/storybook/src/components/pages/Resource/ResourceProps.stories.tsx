@@ -45,7 +45,7 @@ import {
 
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
-import { learningOutcomeOptions } from './ResourceData.stories.props.js'
+import { learningOutcomeOptions, learningOutcomesSelection } from './ResourceData.stories.props.js'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -80,39 +80,6 @@ addMethod(MixedSchema, 'oneOfSchemas', function (schemas: AnySchema[]) {
   )
 })
 
-const learningOutcomes: LearningOutcome[] = [
-  // {
-  //   category: '1',
-  //   verb: 'Define',
-  //   sentence: 'the concept of ecological balance within ecosystems.',
-  // },
-  {
-    code: '2',
-    verb: 'Explain',
-    sentence: 'the consequences of habitat fragmentation on biodiversity.',
-  },
-  {
-    code: '3',
-    verb: 'Apply',
-    sentence: 'conservation principles to protect specific habitats.',
-  },
-  // {
-  //   category: '4',
-  //   verb: 'Analyze',
-  //   sentence: ' species data to identify ecosystem decline patterns.',
-  // },
-  {
-    code: '5',
-    verb: 'Develop',
-    sentence: 'a comprehensive plan for ecosystem restoration.',
-  },
-  // {
-  //   category: 'Evaluation',
-  //   verb: 'Assess',
-  //   sentence: ' the impact and success of conservation projects on biodiversity.',
-  // },
-]
-
 export const ResourceFormValues: ResourceFormProps = {
   title: '',
   description:
@@ -124,7 +91,7 @@ export const ResourceFormValues: ResourceFormProps = {
   month: FieldsDataStories.MonthTextOptionProps[8]?.value ?? '',
   year: FieldsDataStories.YearsProps[20]?.valueOf() ?? '',
   type: FieldsDataStories.TypeTextOptionProps[1]?.value ?? '',
-  learningOutcomes: learningOutcomes,
+  learningOutcomes: learningOutcomesSelection,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
@@ -216,7 +183,7 @@ export const useResourceStoryProps = (
       ? overrides.resourceForm.learningOutcomes
           .filter(outcome => outcome !== undefined)
           .map(outcome => outcome as LearningOutcome)
-      : learningOutcomes
+      : learningOutcomesSelection
 
   const resourceForm: ResourceFormProps = {
     title: 'Protecting and restoring endangered ecosystems',

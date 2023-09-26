@@ -205,6 +205,8 @@ export const getColorPalette = (hex: string) => {
   colorPalette['--primary-color-hover'] = hslToHex(darken(pureTone, 10))
   colorPalette['--primary-color-active'] = hslToHex(darken(pureTone, 20))
   colorPalette['--primary-background-color'] = setOpacity(pureToneHex, 0.12)
+  colorPalette['--primary-background-color-hover'] = setOpacity(pureToneHex, 0.18)
+  colorPalette['--primary-background-color-active'] = setOpacity(pureToneHex, 0.3)
   colorPalette = {
     ...colorPalette,
     ...getGrayScale(pureTone),

@@ -155,7 +155,6 @@ export type ResourceSearchResultRpc = {
   endCursor?: string
   list: { _key: string }[]
 }
-export type FilterTypeRpc = [prop: 'subject', equals: string][]
 export type SortTypeRpc = 'Relevant' | 'Popular' | 'Recent'
 export function isSortTypeRpc(_: any): _ is SortTypeRpc {
   return ['Relevant', 'Popular', 'Recent'].includes(_)

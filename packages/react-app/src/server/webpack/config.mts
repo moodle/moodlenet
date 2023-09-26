@@ -54,7 +54,7 @@ export function getWp(
     context: resolve(__dirname, '..', '..', '..'),
     watch: isDevServer,
     watchOptions: {
-      aggregateTimeout: 10,
+      aggregateTimeout: 2000,
       followSymlinks: true,
     },
     // experiments: {

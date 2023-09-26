@@ -83,9 +83,10 @@ function SubjectPageSimpleResourceList({ subjectKey }: { subjectKey: string }) {
   const [resourceKeys, setResourceKeys] = useState<{ _key: string }[]>([])
   useEffect(() => {
     shell.rpc
-      .me('webapp/search')({ filters: [['subject', subjectKey]] }, undefined, {
+      .me('webapp/search')(undefined, undefined, {
         sortType: 'Recent',
         limit: 50,
+        filterSubjects: subjectKey,
       })
       .then(res => {
         setResourceKeys(res.list)
