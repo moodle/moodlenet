@@ -40,7 +40,8 @@
     display: flex;
   }
 
-  .content {
+  > .content,
+  > .actions {
     padding-right: 8px;
   }
 

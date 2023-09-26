@@ -6,7 +6,7 @@
   flex-direction: column;
   justify-content: start;
   gap: 64px;
-  padding-top: 60px;
+  padding-top: 20px;
 
   @media screen and (max-width: 900px) {
     padding-top: 0;
@@ -21,8 +21,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 60px;
-    padding: 110px 60px;
+    gap: 42px;
+    padding: 64px 60px;
     border-radius: 40px;
 
     @media screen and (max-width: 650px) {
@@ -206,4 +206,24 @@
   height: 137px;
   object-fit: cover;
   border-radius: 9px;
+}
+
+.set-interests-snackbar.snackbar {
+  > .content,
+  > .actions {
+    padding-right: 0;
+  }
+
+  > .actions > .navigate-button {
+    padding: 6px 12px;
+    color: white;
+    background-color: #00000029;
+
+    &:hover {
+      background-color: #00000044;
+    }
+    &:active {
+      background-color: #0000005e;
+    }
+  }
 }
