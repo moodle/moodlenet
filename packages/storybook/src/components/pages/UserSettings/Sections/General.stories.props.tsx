@@ -56,7 +56,8 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     interests: interests,
     interestsOptions,
     editInterests,
-
+    setDefaultInterests: false,
+    toggleSetDefaultFilters: action('toggle set default filters'),
     // userId: 'john-cake-21321312',
     // updateExtensions: action('Updating extensions'),
     // updateSuccess: true,
