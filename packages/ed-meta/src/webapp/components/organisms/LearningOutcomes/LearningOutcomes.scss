@@ -149,57 +149,21 @@
         text-decoration-color: transparent;
         &.knowledge {
           background-color: rgb(var(--category-knowledge-color), 0.15);
-          &:hover {
-            background-color: rgb(var(--category-knowledge-color), 0.25);
-          }
-          &:active {
-            background-color: rgb(var(--category-knowledge-color), 0.4);
-          }
         }
         &.comprehension {
           background-color: rgb(var(--category-comprehension-color), 0.15);
-          &:hover {
-            background-color: rgb(var(--category-comprehension-color), 0.25);
-          }
-          &:active {
-            background-color: rgb(var(--category-comprehension-color), 0.4);
-          }
         }
         &.application {
           background-color: rgb(var(--category-application-color), 0.15);
-          &:hover {
-            background-color: rgb(var(--category-application-color), 0.25);
-          }
-          &:active {
-            background-color: rgb(var(--category-application-color), 0.4);
-          }
         }
         &.analysis {
           background-color: rgb(var(--category-analysis-color), 0.15);
-          &:hover {
-            background-color: rgb(var(--category-analysis-color), 0.25);
-          }
-          &:active {
-            background-color: rgb(var(--category-analysis-color), 0.4);
-          }
         }
         &.synthesis {
           background-color: rgb(var(--category-synthesis-color), 0.15);
-          &:hover {
-            background-color: rgb(var(--category-synthesis-color), 0.25);
-          }
-          &:active {
-            background-color: rgb(var(--category-synthesis-color), 0.4);
-          }
         }
         &.evaluation {
           background-color: rgb(var(--category-evaluation-color), 0.15);
-          &:hover {
-            background-color: rgb(var(--category-evaluation-color), 0.25);
-          }
-          &:active {
-            background-color: rgb(var(--category-evaluation-color), 0.4);
-          }
         }
       }
 
