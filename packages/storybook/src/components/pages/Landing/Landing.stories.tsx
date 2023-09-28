@@ -33,16 +33,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainColumnItems: [
     {
       Item: () => (
-        <InterestInfo
-          shouldShowDialog={true}
-          userSettingHref={href('Pages/Settings')}
-          doNotShowAgain={action('doNotShowAgain')}
-        />
-      ),
-      key: 'interest-info',
-    },
-    {
-      Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Pages/Search')}
           resourceCardPropsList={getResourceCardsStoryProps(15, {
@@ -95,6 +85,15 @@ export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
   mainLayoutProps: MainLayoutLoggedInStoryProps,
   mainColumnItems: [
+    {
+      Item: () => (
+        <InterestInfo
+          userSettingHref={href('Pages/Settings/Default')}
+          doNotShowAgain={action('doNotShowAgain')}
+        />
+      ),
+      key: 'interest-info',
+    },
     {
       Item: () => (
         <LandingResourceList
