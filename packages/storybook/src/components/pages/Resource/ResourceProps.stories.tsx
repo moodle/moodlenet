@@ -367,7 +367,7 @@ export const useResourceStoryProps = (
 
   const extraDetailsItems: AddonItem[] = []
 
-  const sendToMoodle = {
+  const sendToMoodle: AddonItem = {
     Item: () => (
       <SendToMoodle
         site="https://moodle.technion.ac.il"
@@ -377,6 +377,7 @@ export const useResourceStoryProps = (
       />
     ),
     key: 'send-to-moodle',
+    position: 1,
   }
 
   const generalActionsItems: AddonItem[] = [
