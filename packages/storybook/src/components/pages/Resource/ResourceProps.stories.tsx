@@ -188,7 +188,7 @@ export const useResourceStoryProps = (
   const resourceForm: ResourceFormProps = {
     title: 'Protecting and restoring endangered ecosystems',
     description:
-      'This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization.',
+      'This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization.',
     subject: '0522',
     license: 'CC-0 (Public domain)',
     type: '2',
