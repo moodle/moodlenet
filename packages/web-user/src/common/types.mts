@@ -50,6 +50,7 @@ export type User = {
   email: string
   isAdmin: boolean
   isPublisher: boolean
+  profileHref: Href
 }
 
 export type WebUserData = {
