@@ -42,8 +42,8 @@ module.exports = {
     '../../component-library/src/webapp/ui/components/**/*.stories.tsx',
     '../../react-app/src/webapp/ui/components/**/*.stories.tsx',
     '../../ed-resource/src/webapp/components/**/*.stories.tsx',
-    '../../ed-meta/src/webapp/components/**/*.stories.tsx',
     '../../web-user/src/webapp/ui/components/**/*.stories.tsx',
+    // '../../ed-meta/src/webapp/components/**/*.stories.tsx',
     // '../../component-library/src/webapp/ui/components/atoms/RoundButton/RoundButton.stories.tsx'
     // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     //'../src/stories/*.stories.tsx',
@@ -62,8 +62,8 @@ module.exports = {
   ],
 
   framework: {
-    name: "@storybook/react-vite",
-    options: {}
+    name: '@storybook/react-vite',
+    options: {},
   },
 
   features: {
@@ -96,6 +96,6 @@ module.exports = {
   },
 
   core: {
-    disableWhatsNewNotifications: false
-  }
+    disableWhatsNewNotifications: false,
+  },
 }

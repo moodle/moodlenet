@@ -99,13 +99,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
                 className={`verb ${bloomUIClassName}`}
                 title={`${learningOutcomeName} Bloom's category`}
               >
-                <a
-                  href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {verb}
-                </a>
+                {verb}
               </abbr>{' '}
               <div className="sentence">{sentence}</div>
             </div>
@@ -189,7 +183,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   const title = (
     <div className="title">
       Learning outcomes
-      {isEditing && findOutMore}
+      {findOutMore}
     </div>
   )
 
