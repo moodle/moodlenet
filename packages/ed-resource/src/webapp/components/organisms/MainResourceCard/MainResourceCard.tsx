@@ -557,7 +557,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     const fieldElem = descriptionRef.current
     if (fieldElem) {
       {
-        fieldElem.scrollHeight > 70 && setShowFullDescription(false)
+        fieldElem.scrollHeight > 114 && setShowFullDescription(false)
       }
     }
   }, [descriptionRef])
@@ -582,7 +582,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         className="description-text"
         ref={descriptionRef}
         style={{
-          height: showFullDescription ? 'fit-content' : '66px',
+          height: showFullDescription ? 'fit-content' : '110px',
           overflow: showFullDescription ? 'auto' : 'hidden',
         }}
       >

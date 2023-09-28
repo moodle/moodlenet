@@ -90,7 +90,7 @@ export function getValidationSchemas({
         )
         .default(''),
       description: string()
-        .max(300, obj => `Please provide a shorter description (${obj.value.length} / 300)`)
+        .max(4000, obj => `Please provide a shorter description (${obj.value.length} / 4000)`)
         .withMutation(s =>
           forPublish
             ? s
