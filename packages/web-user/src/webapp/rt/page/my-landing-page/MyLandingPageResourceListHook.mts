@@ -1,8 +1,9 @@
 import type { LandingResourceListProps } from '@moodlenet/ed-resource/ui'
-import { useResourceCardProps } from '@moodlenet/ed-resource/webapp'
-import { href } from '@moodlenet/react-app/common'
+import { useResourceCardProps, useResourceSearchQuery } from '@moodlenet/ed-resource/webapp'
+import { href, searchPagePath } from '@moodlenet/react-app/common'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { MyProfileContext } from '../../context/MyProfileContext.js'
 import { shell } from '../../shell.mjs'
 
 export function useMyLandingPageResourceListDataProps() {
@@ -30,14 +31,24 @@ export function useMyLandingPageResourceListDataProps() {
       })),
     [resources],
   )
-
+  const myProfileContext = useContext(MyProfileContext)
+  const [, , qStr, { ls2str }] = useResourceSearchQuery()
+  const myCurrentInterests = myProfileContext?.myInterests.current
+  const searchPageQueryString = !myCurrentInterests?.useAsDefaultSearchFilter
+    ? undefined
+    : qStr({
+        languages: ls2str(myCurrentInterests.languages),
+        levels: ls2str(myCurrentInterests.levels),
+        licenses: ls2str(myCurrentInterests.licenses),
+        subjects: ls2str(myCurrentInterests.subjects),
+      }).qString
   const browserResourceListProps = useMemo<LandingResourceListProps>(() => {
     const props: LandingResourceListProps = {
       resourceCardPropsList,
-      searchResourcesHref: href('#'),
+      searchResourcesHref: href(searchPagePath({ q: searchPageQueryString })),
     }
     return props
-  }, [resourceCardPropsList])
+  }, [resourceCardPropsList, searchPageQueryString])
 
   return browserResourceListProps
 }

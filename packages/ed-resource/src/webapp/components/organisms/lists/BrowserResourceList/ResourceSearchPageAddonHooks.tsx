@@ -14,6 +14,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
 } from 'react'
 import type { ResourceSearchResultRpc, SortTypeRpc } from '../../../../../common/types.mjs'
@@ -59,21 +60,31 @@ function reducer(prev: ResourceListItem[], [action, list]: ['set' | 'more', Reso
   const keepList = action === 'set' ? [] : prev
   return [...keepList, ...list]
 }
-//const _________________DEFAULTS_ON_EMPTY_________________ = { languages: 'hun' }
 export const SearchResourceContext = createContext<SearchResourceContextT>(null as any)
+export function useResourceSearchQuery() {
+  return [
+    ...useUrlQueryString(
+      ['sortType', 'subjects', 'languages', 'levels', 'types', 'licenses'],
+      shell.pkgId.name,
+    ),
+    useRef({
+      ls2str,
+      str2ls,
+    }).current,
+  ] as const
+  function ls2str(ls: string[]) {
+    return ls.join('|')
+  }
+  function str2ls(str: string) {
+    return str.split('|')
+  }
+}
 export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const { publishedMetaOptions } = useContext(EdMetaContext)
   const [resourceList, resourceListAction] = useReducer(reducer, [])
   const [resourceSearchResult, setResourceSearchResult] = useState<ResourceSearchResultRpc>()
   const { q } = useContext(MainSearchBoxCtx)
-  const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(
-    ['sortType', 'subjects', 'languages', 'levels', 'types', 'licenses'],
-    shell.pkgId.name,
-    // {
-    // prefix: shell.pkgId.name,
-    // initialDefaults: _________________DEFAULTS_ON_EMPTY_________________,
-    // },
-  )
+  const [queryUrlParams, setQueryUrlParams, , { ls2str, str2ls }] = useResourceSearchQuery()
   const sortType = useMemo<SearchResourceContextT['sortType']>(() => {
     const type: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
       ? queryUrlParams.sortType
@@ -87,69 +98,69 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
 
   const subjectsFilter = useMemo<SearchResourceContextT['subjectsFilter']>(() => {
     const subjectCodes = publishedMetaOptions.subjects.map(({ value }) => value)
-    const selected = (queryUrlParams.subjects ? queryUrlParams.subjects.split('|') : []).filter(
+    const selected = (queryUrlParams.subjects ? str2ls(queryUrlParams.subjects) : []).filter(
       qsubject => subjectCodes.includes(qsubject),
     )
     const select: SearchResourceContextT['subjectsFilter']['select'] = subjectFilter => {
-      setQueryUrlParams({ subjects: subjectFilter.join('|') })
+      setQueryUrlParams({ subjects: ls2str(subjectFilter) })
     }
     return { select, selected }
-  }, [publishedMetaOptions.subjects, queryUrlParams.subjects, setQueryUrlParams])
+  }, [publishedMetaOptions.subjects, ls2str, str2ls, queryUrlParams.subjects, setQueryUrlParams])
 
   const languagesFilter = useMemo<SearchResourceContextT['languagesFilter']>(() => {
     const languageCodes = publishedMetaOptions.languages.map(({ value }) => value)
-    const selected = (queryUrlParams.languages ? queryUrlParams.languages.split('|') : []).filter(
+    const selected = (queryUrlParams.languages ? str2ls(queryUrlParams.languages) : []).filter(
       qlanguage => languageCodes.includes(qlanguage),
     )
     const select: SearchResourceContextT['languagesFilter']['select'] = languageFilter => {
-      setQueryUrlParams({ languages: languageFilter.join('|') })
+      setQueryUrlParams({ languages: ls2str(languageFilter) })
     }
     return { select, selected }
-  }, [publishedMetaOptions.languages, queryUrlParams.languages, setQueryUrlParams])
+  }, [publishedMetaOptions.languages, ls2str, str2ls, queryUrlParams.languages, setQueryUrlParams])
 
   const levelsFilter = useMemo<SearchResourceContextT['subjectsFilter']>(() => {
     const levelCodes = publishedMetaOptions.levels.map(({ value }) => value)
-    const selected = (queryUrlParams.levels ? queryUrlParams.levels.split('|') : []).filter(
-      qlevel => levelCodes.includes(qlevel),
+    const selected = (queryUrlParams.levels ? str2ls(queryUrlParams.levels) : []).filter(qlevel =>
+      levelCodes.includes(qlevel),
     )
     const select: SearchResourceContextT['levelsFilter']['select'] = levelFilter => {
-      setQueryUrlParams({ levels: levelFilter.join('|') })
+      setQueryUrlParams({ levels: ls2str(levelFilter) })
     }
     return { select, selected }
-  }, [publishedMetaOptions.levels, queryUrlParams.levels, setQueryUrlParams])
+  }, [publishedMetaOptions.levels, ls2str, str2ls, queryUrlParams.levels, setQueryUrlParams])
 
   const typesFilter = useMemo<SearchResourceContextT['typesFilter']>(() => {
     const typeCodes = publishedMetaOptions.types.map(({ value }) => value)
-    const selected = (queryUrlParams.types ? queryUrlParams.types.split('|') : []).filter(qtype =>
+    const selected = (queryUrlParams.types ? str2ls(queryUrlParams.types) : []).filter(qtype =>
       typeCodes.includes(qtype),
     )
     const select: SearchResourceContextT['typesFilter']['select'] = typeFilter => {
-      setQueryUrlParams({ types: typeFilter.join('|') })
+      setQueryUrlParams({ types: ls2str(typeFilter) })
     }
     return { select, selected }
-  }, [publishedMetaOptions.types, queryUrlParams.types, setQueryUrlParams])
+  }, [publishedMetaOptions.types, ls2str, str2ls, queryUrlParams.types, setQueryUrlParams])
 
   const licensesFilter = useMemo<SearchResourceContextT['licensesFilter']>(() => {
     const licenseCodes = publishedMetaOptions.licenses.map(({ value }) => value)
-    const selected = (queryUrlParams.licenses ? queryUrlParams.licenses.split('|') : []).filter(
+    const selected = (queryUrlParams.licenses ? str2ls(queryUrlParams.licenses) : []).filter(
       qlicense => licenseCodes.includes(qlicense),
     )
     const select: SearchResourceContextT['licensesFilter']['select'] = licenseFilter => {
-      setQueryUrlParams({ licenses: licenseFilter.join('|') })
+      setQueryUrlParams({ licenses: ls2str(licenseFilter) })
     }
     return { select, selected }
-  }, [publishedMetaOptions.licenses, queryUrlParams.licenses, setQueryUrlParams])
+  }, [publishedMetaOptions.licenses, ls2str, str2ls, queryUrlParams.licenses, setQueryUrlParams])
 
   const load = useCallback(
     async (limit: number, cursor?: string) => {
       const res = await shell.rpc.me('webapp/search')(undefined, undefined, {
         limit,
         sortType: sortType.selected,
-        filterSubjects: subjectsFilter.selected.join('|'),
-        filterLanguages: languagesFilter.selected.join('|'),
-        filterLevels: levelsFilter.selected.join('|'),
-        filterTypes: typesFilter.selected.join('|'),
-        filterLicenses: licensesFilter.selected.join('|'),
+        filterSubjects: ls2str(subjectsFilter.selected),
+        filterLanguages: ls2str(languagesFilter.selected),
+        filterLevels: ls2str(levelsFilter.selected),
+        filterTypes: ls2str(typesFilter.selected),
+        filterLicenses: ls2str(licensesFilter.selected),
         text: q,
         after: cursor,
       })
@@ -160,6 +171,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
       languagesFilter.selected,
       levelsFilter.selected,
       licensesFilter.selected,
+      ls2str,
       q,
       sortType.selected,
       subjectsFilter.selected,

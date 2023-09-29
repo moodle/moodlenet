@@ -1,6 +1,7 @@
 import type { PkgIdentifier } from '@moodlenet/core'
 import type { ReactElement } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { adminPagePath, searchPagePath } from '../common/webapp-paths.mjs'
 import { Fallback } from './exports/ui.mjs'
 import { useMainLayoutProps } from './exports/webapp.mjs'
 import { getCurrentInitPkg } from './plugin-initializer.mjs'
@@ -23,8 +24,8 @@ const AppRouter = () => {
   return (
     <Routes>
       <Route index element={<LandingContainer />} />
-      <Route path="search" element={<SearchPageRoute />} />
-      <Route path="admin" element={<AdminSettingsPageRoute />} />
+      <Route path={searchPagePath()} element={<SearchPageRoute />} />
+      <Route path={adminPagePath()} element={<AdminSettingsPageRoute />} />
 
       {appRoutesContextPlugins.map(({ pkgId, pkgRoutes: { routes } }) => {
         return (
