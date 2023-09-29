@@ -30,7 +30,7 @@ export const SearchProfileContext = createContext<SearchProfileContextT>(null as
 export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [profileList, profileListAction] = useReducer(reducer, [])
   const [profileSearchResult, setProfileSearchResult] = useState<ProfileSearchResultRpc>()
-  const { q } = useContext(MainSearchBoxCtx)
+  const { qText: q } = useContext(MainSearchBoxCtx)
   const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['sortType'], shell.pkgId.name)
   const sortType: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
     ? queryUrlParams.sortType

@@ -28,8 +28,8 @@ export function useGeneralSettingsProps() {
         subjectOptions: publishedMetaOptions.subjects,
       },
       editInterests: myProfileCtx.myInterests.save,
-      useInterestsAsDefaultFilters: myProfileCtx.myInterests.asDefaultSearchFilters.use,
-      toggleUseInterestsAsDefaultFilters: myProfileCtx.myInterests.asDefaultSearchFilters.toggle,
+      useInterestsAsDefaultFilters: myProfileCtx.myInterests.isDefaultSearchFiltersEnabled,
+      toggleUseInterestsAsDefaultFilters: myProfileCtx.myInterests.toggleDefaultSearchFilters,
     }
     return generalProps
   }, [

@@ -83,7 +83,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
   const { publishedMetaOptions } = useContext(EdMetaContext)
   const [resourceList, resourceListAction] = useReducer(reducer, [])
   const [resourceSearchResult, setResourceSearchResult] = useState<ResourceSearchResultRpc>()
-  const { q } = useContext(MainSearchBoxCtx)
+  const { qText: q } = useContext(MainSearchBoxCtx)
   const [queryUrlParams, setQueryUrlParams, , { ls2str, str2ls }] = useResourceSearchQuery()
   const sortType = useMemo<SearchResourceContextT['sortType']>(() => {
     const type: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)

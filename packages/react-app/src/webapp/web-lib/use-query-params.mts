@@ -8,7 +8,7 @@ type Params<PNames extends string> = {
 type Handle<PNames extends string> = [
   params: Params<PNames>,
   setParams: (params: Params<PNames>) => void,
-  qString: (params: Params<PNames>) => {
+  query: (params: Params<PNames>) => {
     qString: string
     qMap: Record<string, string | undefined>
   },

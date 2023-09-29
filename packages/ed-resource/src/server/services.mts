@@ -338,7 +338,7 @@ export async function searchResources({
       .join(' + ') || '1'
 
   const sort =
-    `/*DEBUG*/ ((${filterSortFactor}) * ` +
+    `((${filterSortFactor}) * ` +
     (sortType === 'Popular'
       ? `${currentEntityVar}.popularity.overall) DESC, rank DESC`
       : sortType === 'Relevant'
