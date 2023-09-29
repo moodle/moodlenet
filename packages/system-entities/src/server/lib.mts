@@ -556,7 +556,7 @@ ${projectAqlRawProps}
 `
 
   const bindVars = { '@collection': accessCollectionName, currentUser, ...opts?.bindVars }
-  // shell.log('debug', q, JSON.stringify({ bindVars }, null, 2))
+  q.includes('/*DEBUG*/') && console.log(q, JSON.stringify(bindVars))
   // console.debug(JSON.stringify({ bindVars }))
 
   const queryCursor = await db
