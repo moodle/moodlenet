@@ -1,14 +1,16 @@
 export type AddOnMap<T> = { [name in string]: T | null | undefined }
 export type PluginHook<C, R> = (context: C) => R
+type PluginHandle<R> = {
+  results: {
+    ownerId: string
+    result: R
+  }[]
+  getKeyedAddons: <F extends keyof R>(field: F) => KeydMappedAddon<R[F]>[]
+}
+
 export type Plugin<R = void, C = void> = {
   register: (hook: PluginHook<C, R>) => void
-  usePluginHooks: (context: C) => {
-    results: {
-      ownerId: string
-      result: R
-    }[]
-    getKeyedAddons: <F extends keyof R>(field: F) => KeydMappedAddon<R[F]>[]
-  }
+  usePluginHooks: (context: C) => PluginHandle<R>
 }
 type KeydAddon<T> = T & { key: string }
 type KeydMappedAddon<A> = A extends AddOnMap<infer T> ? KeydAddon<T> : KeydAddon<A>

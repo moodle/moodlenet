@@ -1,4 +1,5 @@
 export { AuthCtx, useNeedsWebUserLogin } from './context/AuthContext.js'
+export { useMyProfileContext } from './context/MyProfileContext.js'
 export { AddMenuPlugins, useAddMenuProps, type AddMenuPluginItem } from './menus/AddMenuHook.js'
 export {
   AvatarMenuPlugins,
