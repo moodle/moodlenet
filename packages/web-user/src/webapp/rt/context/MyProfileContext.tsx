@@ -214,22 +214,16 @@ function useMyInterests() {
 
   const defaultSearchHref = href(searchPagePath({ q: defaultSearchPageQuery?.qString }))
 
+  const mainSearchBoxCtxSetDefaultQuery = mainSearchBoxCtx.setDefaultQuery
   useEffect(() => {
-    // console.log('***', [
-    //   defaultSearchPageQuery?.qMap,
-    //   mainSearchBoxCtx,
-    //   mainSearchBoxCtx.setDefaultQuery,
-    //   myInterests?.useAsDefaultSearchFilter,
-    // ])
-    mainSearchBoxCtx.setDefaultQuery(
+    mainSearchBoxCtxSetDefaultQuery(
       defaultSearchPageQuery?.qMap && myInterests?.useAsDefaultSearchFilter
         ? defaultSearchPageQuery.qMap
         : {},
     )
   }, [
     defaultSearchPageQuery?.qMap,
-    mainSearchBoxCtx,
-    mainSearchBoxCtx.setDefaultQuery,
+    mainSearchBoxCtxSetDefaultQuery,
     myInterests?.useAsDefaultSearchFilter,
   ])
   const myFeaturedEntitiesContext = useMemo<MyInterestsHandle>(() => {
