@@ -71,7 +71,6 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
       })
 
     return pendingPromise.catch(err => {
-      console.info(`pendingPromise.catch abort`, err, controller)
       if (controller.signal.aborted && controller.signal.reason === APP_ABORT_SYMBOL) {
         throw controller
       }
@@ -97,7 +96,6 @@ type RpcOpts = {
   rpcId?: string
 }
 export function silentCatchAbort(err: any) {
-  console.info(`silentCatchAbort`, err)
   if (err instanceof AbortController && err.signal.aborted) {
     console.info(`RPC aborted by user`)
     return err
