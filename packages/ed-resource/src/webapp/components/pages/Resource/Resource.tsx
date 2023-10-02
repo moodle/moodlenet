@@ -6,6 +6,7 @@ import {
   SecondaryButton,
   Snackbar,
   SnackbarStack,
+  sortAddonItems,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import { DateField, DropdownField, LicenseField } from '@moodlenet/ed-meta/ui'
@@ -361,11 +362,18 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
-  const publishButton = !isEditing && canPublish && !isPublished && (
-    <PrimaryButton onClick={checkFormsAndPublish} color="green" key="publish-button">
-      Publish
-    </PrimaryButton>
-  )
+  const publishButton: AddonItem | null =
+    !isEditing && canPublish && !isPublished
+      ? {
+          Item: () => (
+            <PrimaryButton onClick={checkFormsAndPublish} color="green" key="publish-button">
+              Publish
+            </PrimaryButton>
+          ),
+          key: 'publish-button',
+          position: 0,
+        }
+      : null
 
   const publishCheckButton = isEditing && canPublish && !isPublished && (
     <PrimaryButton onClick={publishCheck} color="green">
@@ -373,11 +381,18 @@ export const Resource: FC<ResourceProps> = ({
     </PrimaryButton>
   )
 
-  const unpublishButton = canPublish && isPublished && (
-    <SecondaryButton onClick={unpublish} key="unpublish-button">
-      Unpublish
-    </SecondaryButton>
-  )
+  const unpublishButton: AddonItem | null =
+    canPublish && isPublished
+      ? {
+          Item: () => (
+            <SecondaryButton onClick={unpublish} key="unpublish-button">
+              Unpublish
+            </SecondaryButton>
+          ),
+          key: 'unpublish-button',
+          position: 0,
+        }
+      : null
 
   const subjectField = (isEditing || canEdit) && (
     <DropdownField
@@ -528,14 +543,14 @@ export const Resource: FC<ResourceProps> = ({
       </a>
     ) : null
 
-  const updatedGeneralActionsItems = [
+  const updatedGeneralActionsItems = sortAddonItems([
     publishButton,
     publishCheckButton,
     unpublishButton,
     ...(generalActionsItems ?? []),
     downloadButton,
     openLinkButton,
-  ].filter((item): item is AddonItem => !!item)
+  ])
 
   const generalActionsContainer = (
     <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
