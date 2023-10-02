@@ -1,5 +1,6 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Searchbox } from '@moodlenet/component-library'
+import { Link } from '@moodlenet/react-app/ui'
 import {
   HowToReg,
   HowToRegOutlined,
@@ -39,8 +40,12 @@ const Row: FC<{
 }> = ({ toggleIsAdmin, toggleIsPublisher, bodyItems, user }) => {
   return (
     <tr>
-      <td>{user.title}</td>
-      <td>{user.email}</td>
+      <td>
+        <Link href={user.profileHref}>{user.title}</Link>
+      </td>
+      <td>
+        <Link href={user.profileHref}>{user.email}</Link>
+      </td>
       <td className="user-types">
         <abbr
           onClick={toggleIsAdmin}

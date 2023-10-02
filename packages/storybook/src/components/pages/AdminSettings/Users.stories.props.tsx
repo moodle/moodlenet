@@ -1,4 +1,5 @@
 import { JiraButtonBody, JiraButtonHead } from '@moodlenet/mn-central-jira-simple-moderations/ui'
+import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import type { TableItem, UsersProps } from '@moodlenet/web-user/ui'
 import { Users, UsersMenu } from '@moodlenet/web-user/ui'
@@ -21,6 +22,7 @@ export const useUsersStoryProps = (overrides?: {
         user: {
           title: 'Maria Anders',
           email: 'maria.anders@school.edu',
+          profileHref: href('Pages/Profile/Admin'),
           isAdmin: false,
           isPublisher: false,
         },
@@ -31,6 +33,7 @@ export const useUsersStoryProps = (overrides?: {
         user: {
           title: 'Josef Stevenson',
           email: 'josef.stevenson@university.edu',
+          profileHref: href('Pages/Profile/Admin'),
           isAdmin: true,
           isPublisher: true,
         },
@@ -41,6 +44,7 @@ export const useUsersStoryProps = (overrides?: {
         user: {
           title: 'Veronica Velazquez',
           email: 'vero.velazquez@next-school.edu',
+          profileHref: href('Pages/Profile/Admin'),
           isAdmin: true,
           isPublisher: true,
         },
@@ -51,6 +55,7 @@ export const useUsersStoryProps = (overrides?: {
         user: {
           title: 'Alfred Nobel Tschekov',
           email: 'alfrednt@old-university.edu',
+          profileHref: href('Pages/Profile/Admin'),
           isAdmin: false,
           isPublisher: true,
         },

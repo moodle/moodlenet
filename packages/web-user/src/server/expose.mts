@@ -431,6 +431,10 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
                 name: user.displayName,
                 isPublisher: profile.entity.publisher,
                 profileKey: user.profileKey,
+                profileHomePath: getProfileHomePageRoutePath({
+                  _key: profile.entity._key,
+                  displayName: profile.entity.displayName,
+                }),
                 //@BRU actually email *could* not be defined for a web-user,
                 // using our email authentication it will always be indeed..
                 // but with some other auth system it may not

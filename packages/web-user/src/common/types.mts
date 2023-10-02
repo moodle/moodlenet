@@ -50,6 +50,7 @@ export type User = {
   email: string
   isAdmin: boolean
   isPublisher: boolean
+  profileHref: Href
 }
 
 export type WebUserData = {
@@ -59,6 +60,7 @@ export type WebUserData = {
   email: string
   isAdmin: boolean
   isPublisher: boolean
+  profileHomePath: string
 }
 
 export type AuthDataRpc = {
