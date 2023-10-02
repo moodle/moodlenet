@@ -27,6 +27,7 @@ export type ProfileDataType = {
   publisher: boolean
   webslug: string
   profileInterests: ProfileInterests
+  useMyProfileInterestsAsDefaultFilters?: boolean | null
   popularity?: {
     overall: number
     items: {

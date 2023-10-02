@@ -304,19 +304,51 @@ export async function searchResources({
   limit?: number
   filters?: SearchFilterType
 }) {
+  const filterSortFactor =
+    filters
+      .filter(([, vals]) => vals.length)
+      .map(
+        // ([metaPropName, vals]) => `+(${currentEntityVar}.${metaPropName} IN ${toaql(vals)} ? 1 : 0)`,
+        ([metaPropName, vals]) => {
+          const factors: Record<SearchFilterType[number][0], number> = {
+            language: 1,
+            level: 0.8,
+            type: 0.7,
+            license: 0.9,
+            subject: 0.9,
+          }
+
+          const returnExpr =
+            metaPropName === 'subject'
+              ? `1 / (1 + 
+                ((STARTS_WITH(propVal , searchVal) || STARTS_WITH(searchVal, propVal ) )
+                    ? ABS(LENGTH(propVal)-LENGTH(searchVal))
+                    : 10*LEVENSHTEIN_DISTANCE(propVal,searchVal)
+                ))`
+              : `searchVal == propVal ? 1 : 0`
+
+          return `${factors[metaPropName]} * AVG(
+          FOR searchVal IN ${toaql(vals)}
+            LET propVal = ${currentEntityVar}.${metaPropName}
+            RETURN ${returnExpr}
+          )
+        `
+        },
+      )
+      .join(' + ') || '1'
+
   const sort =
-    sortType === 'Popular'
-      ? `${currentEntityVar}.popularity.overall DESC, rank DESC`
+    `((${filterSortFactor}) * ` +
+    (sortType === 'Popular'
+      ? `${currentEntityVar}.popularity.overall) DESC, rank DESC`
       : sortType === 'Relevant'
-      ? 'rank DESC'
+      ? 'rank) DESC'
       : sortType === 'Recent'
-      ? `${entityMeta(currentEntityVar, 'created')} DESC`
-      : 'rank DESC'
-  const filter = filters
-    .filter(([, vals]) => vals.length)
-    .map(([metaPropName, vals]) => `${currentEntityVar}.${metaPropName} IN ${toaql(vals)}`)
-    .join(' AND ')
+      ? `${entityMeta(currentEntityVar, 'created')}) DESC`
+      : 'rank) DESC')
+
   const skip = Number(after)
+
   const cursor = await shell.call(searchEntities)(
     Resource.entityClass,
     text,
@@ -325,7 +357,7 @@ export async function searchResources({
       limit,
       skip,
       sort,
-      preAccessBody: filter ? `FILTER ${filter}` : undefined,
+      //preAccessBody: filter ? `SORT 100*(${filter}) DESC` : undefined,
     },
   )
 

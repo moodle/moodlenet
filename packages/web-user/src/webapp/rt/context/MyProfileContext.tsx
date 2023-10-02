@@ -1,3 +1,7 @@
+import { useResourceSearchQuery } from '@moodlenet/ed-resource/webapp'
+import type { Href } from '@moodlenet/react-app/common'
+import { href, searchPagePath } from '@moodlenet/react-app/common'
+import { MainSearchBoxCtx } from '@moodlenet/react-app/ui'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type {
@@ -56,6 +60,7 @@ const emptyUserInterests: UserInterests = {
   levels: [],
   licenses: [],
   subjects: [],
+  useAsDefaultSearchFilter: false,
 }
 
 export type AllMyFeaturedEntitiesHandle = {
@@ -72,7 +77,19 @@ export type MyInterestsHandle = {
   reload(): Promise<void>
   current: UserInterests
   save(_: UserInterests): Promise<void>
+  isDefaultSearchFiltersEnabled: boolean
+  toggleDefaultSearchFilters(): void
+  searchPageDefaults: {
+    query:
+      | {
+          qString: string
+          qMap: Record<string, string | undefined>
+        }
+      | undefined
+    href: Href
+  }
 }
+
 function useAllMyFeaturedEntities() {
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
@@ -148,7 +165,7 @@ function useMyInterests() {
       setMyInterests(emptyUserInterests)
     }
 
-    const rpcResponse = await shell.rpc.me('webapp/get-my-interests')()
+    const rpcResponse = await shell.rpc.me('webapp/my-interests/get')()
 
     setMyInterests(rpcResponse?.myInterests ?? emptyUserInterests)
   }, [myProfile])
@@ -157,19 +174,86 @@ function useMyInterests() {
     reload()
   }, [reload])
 
-  const save = useCallback<MyInterestsHandle['save']>(async myInterests => {
-    await shell.rpc.me('webapp/save-my-interests')({ myInterests })
-    setMyInterests(myInterests)
-  }, [])
+  const save = useCallback<MyInterestsHandle['save']>(
+    async myInterests => {
+      const done = await shell.rpc.me('webapp/my-interests/save')({ myInterests })
+      done ? setMyInterests(myInterests) : reload()
+    },
+    [reload],
+  )
 
+  const isDefaultSearchFiltersEnabled = myInterests.useAsDefaultSearchFilter
+  const toggleDefaultSearchFilters = useCallback<
+    MyInterestsHandle['toggleDefaultSearchFilters']
+  >(() => {
+    setMyInterests(curr => ({ ...curr, useAsDefaultSearchFilter: !isDefaultSearchFiltersEnabled }))
+    shell.rpc
+      .me('webapp/my-interests/use-as-default-search-filters')({
+        use: !isDefaultSearchFiltersEnabled,
+      })
+      .then(done => {
+        if (!done) {
+          reload()
+        }
+      })
+  }, [isDefaultSearchFiltersEnabled, reload])
+
+  const mainSearchBoxCtx = useContext(MainSearchBoxCtx)
+  const [, , makeSearchQuery, { ls2str }] = useResourceSearchQuery()
+
+  const defaultSearchPageQuery = useMemo(() => {
+    return !myInterests?.useAsDefaultSearchFilter
+      ? undefined
+      : makeSearchQuery({
+          languages: ls2str(myInterests.languages),
+          levels: ls2str(myInterests.levels),
+          licenses: ls2str(myInterests.licenses),
+          subjects: ls2str(myInterests.subjects),
+        })
+  }, [ls2str, myInterests, makeSearchQuery])
+
+  const defaultSearchHref = href(searchPagePath({ q: defaultSearchPageQuery?.qString }))
+
+  useEffect(() => {
+    console.log('***', [
+      defaultSearchPageQuery?.qMap,
+      mainSearchBoxCtx,
+      mainSearchBoxCtx.setDefaultQuery,
+      myInterests?.useAsDefaultSearchFilter,
+    ])
+    mainSearchBoxCtx.setDefaultQuery(
+      defaultSearchPageQuery?.qMap && myInterests?.useAsDefaultSearchFilter
+        ? defaultSearchPageQuery.qMap
+        : {},
+    )
+  }, [
+    defaultSearchPageQuery?.qMap,
+    mainSearchBoxCtx,
+    mainSearchBoxCtx.setDefaultQuery,
+    myInterests?.useAsDefaultSearchFilter,
+  ])
   const myFeaturedEntitiesContext = useMemo<MyInterestsHandle>(() => {
     const myFeaturedEntitiesContext: MyInterestsHandle = {
       current: myInterests,
       reload,
       save,
+      isDefaultSearchFiltersEnabled,
+      toggleDefaultSearchFilters,
+      searchPageDefaults: {
+        query: defaultSearchPageQuery,
+        href: defaultSearchHref,
+      },
     }
     return myFeaturedEntitiesContext
-  }, [myInterests, reload, save])
+  }, [
+    myInterests,
+    reload,
+    save,
+    isDefaultSearchFiltersEnabled,
+    toggleDefaultSearchFilters,
+    defaultSearchPageQuery,
+    defaultSearchHref,
+  ])
 
   return myFeaturedEntitiesContext
 }

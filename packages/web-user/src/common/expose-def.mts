@@ -69,10 +69,15 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/all-my-featured-entities'(): Promise<null | {
       featuredEntities: KnownFeaturedEntities
     }>
-    'webapp/get-my-interests'(): Promise<null | {
+    'webapp/my-interests/get'(): Promise<null | {
       myInterests: UserInterests
     }>
-    'webapp/save-my-interests'(body: { myInterests: UserInterests }): Promise<boolean | undefined>
+    'webapp/my-interests/save'(body: {
+      myInterests: Omit<UserInterests, 'useAsDefaultSearchFilter'>
+    }): Promise<boolean | undefined>
+    'webapp/my-interests/use-as-default-search-filters'(body: {
+      use: boolean
+    }): Promise<boolean | undefined>
     'webapp/send-message-to-user/:profileKey'(
       body: { message: string },
       params: { profileKey: string },

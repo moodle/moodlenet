@@ -32,7 +32,7 @@ export const SearchSubjectContext = createContext<SearchSubjectContextT>(null as
 export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [subjectList, subjectListAction] = useReducer(reducer, [])
   const [subjectSearchResult, setSubjectSearchResult] = useState<SubjectSearchResultRpc>()
-  const { q } = useContext(MainSearchBoxCtx)
+  const { qText: q } = useContext(MainSearchBoxCtx)
   const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['sortType'], shell.pkgId.name)
   const sortType: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
     ? queryUrlParams.sortType

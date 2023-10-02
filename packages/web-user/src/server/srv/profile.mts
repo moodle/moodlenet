@@ -37,7 +37,7 @@ import { publicFiles } from '../init/fs.mjs'
 import { kvStore } from '../init/kvStore.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
-import type { KnownFeaturedEntityItem, ProfileDataType, ProfileInterests } from '../types.mjs'
+import type { KnownFeaturedEntityItem, ProfileDataType } from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
 import {
   getCurrentProfileIds,
@@ -510,18 +510,27 @@ export async function getProfileOwnKnownEntities({
 
 export async function editProfileInterests({
   profileInterests,
+  useMyProfileInterestsAsDefaultFilters,
   profileKey,
-}: {
+}: Partial<Pick<ProfileDataType, 'profileInterests' | 'useMyProfileInterestsAsDefaultFilters'>> & {
   profileKey: string
-  profileInterests: ProfileInterests
 }) {
-  const res = await editProfile(profileKey, { profileInterests })
-
+  const res = await editProfile(profileKey, {
+    profileInterests,
+    useMyProfileInterestsAsDefaultFilters,
+  })
   return res ? true : res
 }
 
-export async function editMyProfileInterests({ myInterests }: { myInterests: ProfileInterests }) {
+export async function editMyProfileInterests({
+  profileInterests,
+  useMyProfileInterestsAsDefaultFilters,
+}: Partial<Pick<ProfileDataType, 'profileInterests' | 'useMyProfileInterestsAsDefaultFilters'>>) {
   const profileIds = await getCurrentProfileIds()
   if (!profileIds) return false
-  return editProfileInterests({ profileKey: profileIds._key, profileInterests: myInterests })
+  return editProfileInterests({
+    profileKey: profileIds._key,
+    profileInterests,
+    useMyProfileInterestsAsDefaultFilters,
+  })
 }

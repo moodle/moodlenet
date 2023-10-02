@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, MultipeSelectDropdown, PrimaryButton } from '@moodlenet/component-library'
+import { Card, MultipeSelectDropdown, PrimaryButton, Switch } from '@moodlenet/component-library'
 import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
 import { useFormik } from 'formik'
 import { /* useState, */ type FC } from 'react'
@@ -16,6 +16,8 @@ export type GeneralProps = {
   interestsOptions: InterestsOptions
   interests: UserInterests
   editInterests: (values: UserInterests) => void
+  useInterestsAsDefaultFilters: boolean
+  toggleUseInterestsAsDefaultFilters: () => void
   // userId: string
 }
 
@@ -25,7 +27,9 @@ export const General: FC<GeneralProps> = ({
   mainColumnItems,
   interestsOptions,
   interests,
+  useInterestsAsDefaultFilters,
   editInterests,
+  toggleUseInterestsAsDefaultFilters,
   //userId
 }) => {
   const { languageOptions, levelOptions, subjectOptions, licenseOptions } = interestsOptions
@@ -128,7 +132,23 @@ export const General: FC<GeneralProps> = ({
     />
   )
 
-  const interestsFields = [subjectsField, levelsField, languagesField, licensesField]
+  const setAsDefaultFilters = (
+    <div className="set-as-default-filters">
+      <div className="title">Use interest as default filters when searching</div>
+      <Switch
+        enabled={useInterestsAsDefaultFilters}
+        toggleSwitch={toggleUseInterestsAsDefaultFilters}
+      />
+    </div>
+  )
+
+  const interestsFields = [
+    subjectsField,
+    levelsField,
+    languagesField,
+    licensesField,
+    setAsDefaultFilters,
+  ]
 
   const interestsSection = (
     <Card className="column interests-section">

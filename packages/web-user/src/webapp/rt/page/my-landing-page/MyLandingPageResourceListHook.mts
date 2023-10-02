@@ -1,13 +1,14 @@
 import type { LandingResourceListProps } from '@moodlenet/ed-resource/ui'
 import { useResourceCardProps } from '@moodlenet/ed-resource/webapp'
-import { href } from '@moodlenet/react-app/common'
+import { href, searchPagePath } from '@moodlenet/react-app/common'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { MyProfileContext } from '../../context/MyProfileContext.js'
 import { shell } from '../../shell.mjs'
 
 export function useMyLandingPageResourceListDataProps() {
   const [resources, setResources] = useState<{ _key: string }[]>([])
-
+  const myProfileContext = useContext(MyProfileContext)
   useEffect(() => {
     shell.rpc
       .me('webapp/landing/get-list/:entityType(collections|resources|profiles)')(
@@ -34,10 +35,11 @@ export function useMyLandingPageResourceListDataProps() {
   const browserResourceListProps = useMemo<LandingResourceListProps>(() => {
     const props: LandingResourceListProps = {
       resourceCardPropsList,
-      searchResourcesHref: href('#'),
+      searchResourcesHref:
+        myProfileContext?.myInterests.searchPageDefaults.href ?? href(searchPagePath()),
     }
     return props
-  }, [resourceCardPropsList])
+  }, [myProfileContext?.myInterests.searchPageDefaults.href, resourceCardPropsList])
 
   return browserResourceListProps
 }
