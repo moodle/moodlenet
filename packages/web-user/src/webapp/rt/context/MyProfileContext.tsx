@@ -215,12 +215,12 @@ function useMyInterests() {
   const defaultSearchHref = href(searchPagePath({ q: defaultSearchPageQuery?.qString }))
 
   useEffect(() => {
-    console.log('***', [
-      defaultSearchPageQuery?.qMap,
-      mainSearchBoxCtx,
-      mainSearchBoxCtx.setDefaultQuery,
-      myInterests?.useAsDefaultSearchFilter,
-    ])
+    // console.log('***', [
+    //   defaultSearchPageQuery?.qMap,
+    //   mainSearchBoxCtx,
+    //   mainSearchBoxCtx.setDefaultQuery,
+    //   myInterests?.useAsDefaultSearchFilter,
+    // ])
     mainSearchBoxCtx.setDefaultQuery(
       defaultSearchPageQuery?.qMap && myInterests?.useAsDefaultSearchFilter
         ? defaultSearchPageQuery.qMap
