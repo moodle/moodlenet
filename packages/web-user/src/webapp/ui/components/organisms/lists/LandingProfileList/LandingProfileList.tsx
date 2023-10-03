@@ -15,8 +15,8 @@ export type LandingProfileListProps = {
 
 export const LandingProfileList: FC<LandingProfileListProps> = ({
   profilesPropsList,
-  searchAuthorsHref,
   hasSetInterests,
+  // searchAuthorsHref,
 }) => {
   const title = (
     <div className="title">{hasSetInterests ? 'Authors selection' : 'Featured authors'}</div>

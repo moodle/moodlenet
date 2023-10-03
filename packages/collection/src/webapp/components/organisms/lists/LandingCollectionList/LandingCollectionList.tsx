@@ -15,7 +15,7 @@ export type LandingCollectionListProps = {
 
 export const LandingCollectionList: FC<LandingCollectionListProps> = ({
   collectionCardPropsList,
-  searchCollectionsHref,
+  // searchCollectionsHref,
   hasSetInterests,
 }) => {
   const title = (
