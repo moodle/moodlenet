@@ -300,35 +300,37 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           return null
         }
         return {
-          myInterests: {
-            languages: profileRec.entity.profileInterests.languages,
-            levels: profileRec.entity.profileInterests.levels,
-            licenses: profileRec.entity.profileInterests.licenses,
-            subjects: profileRec.entity.profileInterests.subjects,
-            useAsDefaultSearchFilter: !!profileRec.entity.useMyProfileInterestsAsDefaultFilters,
-          },
+          interests: !profileRec.entity.settings.interests?.items
+            ? undefined
+            : {
+                languages: profileRec.entity.settings.interests.items.languages,
+                levels: profileRec.entity.settings.interests.items.levels,
+                licenses: profileRec.entity.settings.interests.items.licenses,
+                subjects: profileRec.entity.settings.interests.items.subjects,
+              },
+          asDefaultFilters: profileRec.entity.settings.interests?.asDefaultFilters,
         }
       },
     },
     'webapp/my-interests/save': {
       guard: body => {
-        const schema: SchemaOf<Omit<UserInterests, 'useAsDefaultSearchFilter'>> = object({
+        const schema: SchemaOf<UserInterests> = object({
           subjects: array().of(string().required()).required(),
           licenses: array().of(string().required()).required(),
           levels: array().of(string().required()).required(),
           languages: array().of(string().required()).required(),
         }).required()
-        const myInterests = schema.validateSync(body.myInterests, { stripUnknown: true })
-        body.myInterests = myInterests
+        const interests = schema.validateSync(body.interests, { stripUnknown: true })
+        body.interests = interests
       },
-      async fn({ myInterests }) {
-        return editMyProfileInterests({ profileInterests: myInterests })
+      async fn({ interests }) {
+        return editMyProfileInterests({ items: interests })
       },
     },
     'webapp/my-interests/use-as-default-search-filters': {
       guard: body => typeof body.use === 'boolean',
       async fn({ use }) {
-        return editMyProfileInterests({ useMyProfileInterestsAsDefaultFilters: use })
+        return editMyProfileInterests({ asDefaultFilters: use })
       },
     },
     'webapp/send-message-to-user/:profileKey': {

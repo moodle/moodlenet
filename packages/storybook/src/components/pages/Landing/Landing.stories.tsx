@@ -3,7 +3,7 @@ import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
-import { LandingProfileList } from '@moodlenet/web-user/ui'
+import { InterestInfo, LandingProfileList } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
@@ -85,6 +85,15 @@ export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
   mainLayoutProps: MainLayoutLoggedInStoryProps,
   mainColumnItems: [
+    {
+      Item: () => (
+        <InterestInfo
+          userSettingHref={href('Pages/Settings/Default')}
+          doNotShowAgain={action('doNotShowAgain')}
+        />
+      ),
+      key: 'interest-info',
+    },
     {
       Item: () => (
         <LandingResourceList

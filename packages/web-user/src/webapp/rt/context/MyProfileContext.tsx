@@ -60,7 +60,6 @@ const emptyUserInterests: UserInterests = {
   levels: [],
   licenses: [],
   subjects: [],
-  useAsDefaultSearchFilter: false,
 }
 
 export type AllMyFeaturedEntitiesHandle = {
@@ -76,7 +75,8 @@ export type AllMyFeaturedEntitiesHandle = {
 export type MyInterestsHandle = {
   reload(): Promise<void>
   current: UserInterests
-  save(_: UserInterests): Promise<void>
+  unset: boolean
+  save(_: UserInterests | 'empty'): Promise<void>
   isDefaultSearchFiltersEnabled: boolean
   toggleDefaultSearchFilters(): void
   searchPageDefaults: {
@@ -158,16 +158,19 @@ function useMyInterests() {
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
 
-  const [myInterests, setMyInterests] = useState<UserInterests>(emptyUserInterests)
+  const [myInterests, setMyInterests] = useState<UserInterests | undefined | 'loading'>('loading')
+  const [myInterestsAsDefaultFilters, setMyInterestsAsDefaultFilters] = useState<
+    boolean | 'loading' | undefined
+  >('loading')
 
   const reload = useCallback(async () => {
     if (!myProfile) {
-      setMyInterests(emptyUserInterests)
+      setMyInterests(undefined)
     }
 
     const rpcResponse = await shell.rpc.me('webapp/my-interests/get')()
-
-    setMyInterests(rpcResponse?.myInterests ?? emptyUserInterests)
+    setMyInterests(rpcResponse?.interests)
+    setMyInterestsAsDefaultFilters(!!rpcResponse?.asDefaultFilters)
   }, [myProfile])
 
   useEffect(() => {
@@ -175,34 +178,36 @@ function useMyInterests() {
   }, [reload])
 
   const save = useCallback<MyInterestsHandle['save']>(
-    async myInterests => {
-      const done = await shell.rpc.me('webapp/my-interests/save')({ myInterests })
-      done ? setMyInterests(myInterests) : reload()
+    async choosenInterestsToSave => {
+      const myInterestsToSave =
+        choosenInterestsToSave === 'empty' ? emptyUserInterests : choosenInterestsToSave
+      const done = await shell.rpc.me('webapp/my-interests/save')({
+        interests: myInterestsToSave,
+      })
+      done ? setMyInterests(myInterestsToSave) : reload()
     },
     [reload],
   )
 
-  const isDefaultSearchFiltersEnabled = myInterests.useAsDefaultSearchFilter
   const toggleDefaultSearchFilters = useCallback<
     MyInterestsHandle['toggleDefaultSearchFilters']
   >(() => {
-    setMyInterests(curr => ({ ...curr, useAsDefaultSearchFilter: !isDefaultSearchFiltersEnabled }))
+    setMyInterestsAsDefaultFilters(!myInterestsAsDefaultFilters)
     shell.rpc
       .me('webapp/my-interests/use-as-default-search-filters')({
-        use: !isDefaultSearchFiltersEnabled,
+        use: !myInterestsAsDefaultFilters,
       })
       .then(done => {
         if (!done) {
           reload()
         }
       })
-  }, [isDefaultSearchFiltersEnabled, reload])
+  }, [myInterestsAsDefaultFilters, reload])
 
   const mainSearchBoxCtx = useContext(MainSearchBoxCtx)
   const [, , makeSearchQuery, { ls2str }] = useResourceSearchQuery()
-
   const defaultSearchPageQuery = useMemo(() => {
-    return !myInterests?.useAsDefaultSearchFilter
+    return !myInterests || myInterests === 'loading'
       ? undefined
       : makeSearchQuery({
           languages: ls2str(myInterests.languages),
@@ -210,28 +215,25 @@ function useMyInterests() {
           licenses: ls2str(myInterests.licenses),
           subjects: ls2str(myInterests.subjects),
         })
-  }, [ls2str, myInterests, makeSearchQuery])
+  }, [myInterests, makeSearchQuery, ls2str])
 
   const defaultSearchHref = href(searchPagePath({ q: defaultSearchPageQuery?.qString }))
 
   const mainSearchBoxCtxSetDefaultQuery = mainSearchBoxCtx.setDefaultQuery
   useEffect(() => {
     mainSearchBoxCtxSetDefaultQuery(
-      defaultSearchPageQuery?.qMap && myInterests?.useAsDefaultSearchFilter
+      defaultSearchPageQuery?.qMap && myInterestsAsDefaultFilters
         ? defaultSearchPageQuery.qMap
         : {},
     )
-  }, [
-    defaultSearchPageQuery?.qMap,
-    mainSearchBoxCtxSetDefaultQuery,
-    myInterests?.useAsDefaultSearchFilter,
-  ])
+  }, [defaultSearchPageQuery?.qMap, mainSearchBoxCtxSetDefaultQuery, myInterestsAsDefaultFilters])
   const myFeaturedEntitiesContext = useMemo<MyInterestsHandle>(() => {
     const myFeaturedEntitiesContext: MyInterestsHandle = {
-      current: myInterests,
+      current: !myInterests || myInterests === 'loading' ? emptyUserInterests : myInterests,
+      unset: myInterests === 'loading' ? false : !myInterests,
       reload,
       save,
-      isDefaultSearchFiltersEnabled,
+      isDefaultSearchFiltersEnabled: !!myInterestsAsDefaultFilters,
       toggleDefaultSearchFilters,
       searchPageDefaults: {
         query: defaultSearchPageQuery,
@@ -243,7 +245,7 @@ function useMyInterests() {
     myInterests,
     reload,
     save,
-    isDefaultSearchFiltersEnabled,
+    myInterestsAsDefaultFilters,
     toggleDefaultSearchFilters,
     defaultSearchPageQuery,
     defaultSearchHref,

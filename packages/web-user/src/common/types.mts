@@ -136,5 +136,4 @@ export type UserInterests = {
   licenses: string[]
   levels: string[]
   languages: string[]
-  useAsDefaultSearchFilter: boolean
 }

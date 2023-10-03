@@ -8,10 +8,13 @@ export type KnownFeaturedEntityItem = { _id: string; feature: KnownEntityFeature
 export type ProfileEntity = EntityDocument<ProfileDataType>
 
 export type ProfileInterests = {
-  subjects: string[]
-  licenses: string[]
-  levels: string[]
-  languages: string[]
+  items?: {
+    subjects: string[]
+    licenses: string[]
+    levels: string[]
+    languages: string[]
+  }
+  asDefaultFilters?: boolean
 }
 
 export type ProfileDataType = {
@@ -26,8 +29,9 @@ export type ProfileDataType = {
   kudos: number
   publisher: boolean
   webslug: string
-  profileInterests: ProfileInterests
-  useMyProfileInterestsAsDefaultFilters?: boolean | null
+  settings: {
+    interests?: null | ProfileInterests
+  }
   popularity?: {
     overall: number
     items: {

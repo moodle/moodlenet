@@ -70,11 +70,10 @@ export type WebUserExposeType = PkgExposeDef<{
       featuredEntities: KnownFeaturedEntities
     }>
     'webapp/my-interests/get'(): Promise<null | {
-      myInterests: UserInterests
+      asDefaultFilters?: boolean
+      interests?: UserInterests
     }>
-    'webapp/my-interests/save'(body: {
-      myInterests: Omit<UserInterests, 'useAsDefaultSearchFilter'>
-    }): Promise<boolean | undefined>
+    'webapp/my-interests/save'(body: { interests: UserInterests }): Promise<boolean | undefined>
     'webapp/my-interests/use-as-default-search-filters'(body: {
       use: boolean
     }): Promise<boolean | undefined>

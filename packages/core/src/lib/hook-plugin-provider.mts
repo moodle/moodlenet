@@ -1,4 +1,4 @@
-export type AddOnMap<T> = { [name in string]: T | null | undefined }
+export type AddOnMap<T> = { [name in string]: T | null | undefined | false }
 export type PluginHook<C, R> = (context: C) => R
 type PluginHandle<R> = {
   results: {
@@ -48,7 +48,9 @@ export function pluginCreator(getPluginOwnerId: (hook: PluginHook<any, any>) => 
             const addonsMap = result[field]
             if (typeof addonsMap !== 'object' || !addonsMap) return []
             return Object.entries(addonsMap).reduce((acc, [addonName, addon]) => {
-              addon && acc.push({ ...addon, key: `${ownerId}::${addonName}` })
+              if (addon) {
+                acc.push({ ...addon, key: `${ownerId}::${addonName}` })
+              }
               return acc
             }, [] as KeydMappedAddon<R[F]>[])
           })

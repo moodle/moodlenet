@@ -16,7 +16,10 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     FieldsDataStories.SubjectsTextOptionProps[21]!.value,
     // FieldsDataStories.SubjectsTextOptionProps[22]!.value,
   ])
-  const [useAsDefaultSearchFilter, toggleSetDefaultFilters] = useReducer(_ => !_, false)
+  const [useInterestsAsDefaultFilters, toggleUseInterestsAsDefaultFilters] = useReducer(
+    _ => !_,
+    false,
+  )
   const interests: UserInterests = {
     subjects: subjects,
     languages: [
@@ -28,7 +31,6 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     licenses: [
       // FieldsDataStories.LicenseIconTextOptionProps[2]!.value
     ],
-    useAsDefaultSearchFilter,
   }
 
   const interestsOptions: InterestsOptions = {
@@ -58,8 +60,8 @@ export const useUserSettingsGeneralStoryProps = (overrides?: {
     interests: interests,
     interestsOptions,
     editInterests,
-    toggleUseInterestsAsDefaultFilters: toggleSetDefaultFilters,
-    useInterestsAsDefaultFilters: interests.useAsDefaultSearchFilter,
+    toggleUseInterestsAsDefaultFilters: toggleUseInterestsAsDefaultFilters,
+    useInterestsAsDefaultFilters,
     // userId: 'john-cake-21321312',
     // updateExtensions: action('Updating extensions'),
     // updateSuccess: true,

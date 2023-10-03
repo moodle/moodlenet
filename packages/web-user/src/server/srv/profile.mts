@@ -66,9 +66,10 @@ export async function getValidations() {
   }
 }
 
+export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> }
 export async function editProfile(
   key: string,
-  editData: Partial<ProfileDataType>,
+  editData: RecursivePartial<ProfileDataType>,
   opts?: {
     projectAccess?: EntityAccess[]
   },
@@ -509,28 +510,32 @@ export async function getProfileOwnKnownEntities({
 }
 
 export async function editProfileInterests({
-  profileInterests,
-  useMyProfileInterestsAsDefaultFilters,
+  asDefaultFilters,
+  items,
   profileKey,
-}: Partial<Pick<ProfileDataType, 'profileInterests' | 'useMyProfileInterestsAsDefaultFilters'>> & {
+}: Partial<ProfileDataType['settings']['interests']> & {
   profileKey: string
 }) {
   const res = await editProfile(profileKey, {
-    profileInterests,
-    useMyProfileInterestsAsDefaultFilters,
+    settings: {
+      interests: {
+        asDefaultFilters,
+        items,
+      },
+    },
   })
   return res ? true : res
 }
 
 export async function editMyProfileInterests({
-  profileInterests,
-  useMyProfileInterestsAsDefaultFilters,
-}: Partial<Pick<ProfileDataType, 'profileInterests' | 'useMyProfileInterestsAsDefaultFilters'>>) {
+  asDefaultFilters,
+  items,
+}: Partial<ProfileDataType['settings']['interests'] & object>) {
   const profileIds = await getCurrentProfileIds()
   if (!profileIds) return false
   return editProfileInterests({
     profileKey: profileIds._key,
-    profileInterests,
-    useMyProfileInterestsAsDefaultFilters,
+    asDefaultFilters,
+    items,
   })
 }
