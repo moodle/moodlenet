@@ -35,6 +35,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Pages/Search')}
+          hasSetInterests={false}
           resourceCardPropsList={getResourceCardsStoryProps(15, {
             access: {
               // isAuthenticated: false,
@@ -52,6 +53,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingCollectionList
           searchCollectionsHref={href('Pages/Search')}
+          hasSetInterests={false}
           collectionCardPropsList={getCollectionCardsStoryProps(15, {
             state: {
               numResources: 2,
@@ -71,6 +73,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Pages/Search')}
+          hasSetInterests={false}
           profilesPropsList={getProfileCardsStoryProps(15, {
             access: { isAuthenticated: false },
           })}
@@ -98,6 +101,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Pages/Search')}
+          hasSetInterests={true}
           resourceCardPropsList={getResourceCardsStoryProps(15, {
             state: {
               // liked: true,
@@ -116,6 +120,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingCollectionList
           searchCollectionsHref={href('Pages/Search')}
+          hasSetInterests={true}
           collectionCardPropsList={getCollectionCardsStoryProps(15, {
             state: {
               // followed: true,
@@ -133,6 +138,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Pages/Search')}
+          hasSetInterests={true}
           profilesPropsList={getProfileCardsStoryProps(15, {
             state: {
               // followed: true,
@@ -170,6 +176,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingResourceList
             searchResourcesHref={href('Pages/Search')}
+            hasSetInterests={true}
             resourceCardPropsList={getResourceCardsStoryProps(15, {
               state: {
                 isPublished: true,
@@ -190,6 +197,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingCollectionList
             searchCollectionsHref={href('Pages/Search')}
+            hasSetInterests={true}
             collectionCardPropsList={getCollectionCardsStoryProps(15, {
               state: {
                 isPublished: true,
@@ -209,6 +217,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingProfileList
             searchAuthorsHref={href('Pages/Search')}
+            hasSetInterests={true}
             profilesPropsList={getProfileCardsStoryProps(15, {
               access: {
                 isCreator: true,

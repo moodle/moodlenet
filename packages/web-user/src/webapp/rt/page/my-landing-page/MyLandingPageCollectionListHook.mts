@@ -1,13 +1,13 @@
 import type { LandingCollectionListProps } from '@moodlenet/collection/ui'
 import { useCollectionCardProps } from '@moodlenet/collection/webapp'
-import { href } from '@moodlenet/react-app/common'
+import { href, searchPagePath } from '@moodlenet/react-app/common'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { useEffect, useMemo, useState } from 'react'
+import { useMyProfileContext } from '../../context/MyProfileContext.js'
 import { shell } from '../../shell.mjs'
 
 export function useMyLandingPageCollectionListDataProps() {
   const [collections, setCollections] = useState<{ _key: string }[]>([])
-
   useEffect(() => {
     shell.rpc
       .me('webapp/landing/get-list/:entityType(collections|resources|profiles)')(
@@ -31,13 +31,21 @@ export function useMyLandingPageCollectionListDataProps() {
     [collections],
   )
 
+  const myProfileContext = useMyProfileContext()
+  const hasSetInterests = !!myProfileContext?.myInterests.current
   const browserCollectionListProps = useMemo<LandingCollectionListProps>(() => {
     const props: LandingCollectionListProps = {
       collectionCardPropsList,
-      searchCollectionsHref: href('#'),
+      searchCollectionsHref:
+        myProfileContext?.myInterests.searchPageDefaults.href ?? href(searchPagePath()),
+      hasSetInterests,
     }
     return props
-  }, [collectionCardPropsList])
+  }, [
+    collectionCardPropsList,
+    hasSetInterests,
+    myProfileContext?.myInterests.searchPageDefaults.href,
+  ])
 
   return browserCollectionListProps
 }
