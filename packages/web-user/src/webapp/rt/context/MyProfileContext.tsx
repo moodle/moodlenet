@@ -1,3 +1,4 @@
+import type { SortTypeRpc } from '@moodlenet/ed-resource/common'
 import { useResourceSearchQuery } from '@moodlenet/ed-resource/webapp'
 import type { Href } from '@moodlenet/react-app/common'
 import { href, searchPagePath } from '@moodlenet/react-app/common'
@@ -207,9 +208,11 @@ function useMyInterests() {
   const mainSearchBoxCtx = useContext(MainSearchBoxCtx)
   const [, , makeSearchQuery, { ls2str }] = useResourceSearchQuery()
   const defaultSearchPageQuery = useMemo(() => {
+    const relevanceSort: SortTypeRpc = 'Relevant'
     return !myInterests || myInterests === 'loading'
       ? undefined
       : makeSearchQuery({
+          sortType: relevanceSort,
           languages: ls2str(myInterests.languages),
           levels: ls2str(myInterests.levels),
           licenses: ls2str(myInterests.licenses),
