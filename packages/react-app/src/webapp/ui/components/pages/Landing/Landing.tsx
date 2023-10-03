@@ -1,13 +1,7 @@
-import type { Href } from '@moodlenet/component-library'
-import {
-  Snackbar,
-  SnackbarStack,
-  TertiaryButton,
-  type AddonItem,
-} from '@moodlenet/component-library'
+import { SnackbarStack, type AddonItem } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useContext } from 'react'
-import { Link, MainHeaderContext } from '../../../../exports/ui.mjs'
+import { MainHeaderContext } from '../../../../exports/ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 import { MainSearchBox } from '../../atoms/MainSearchBox/MainSearchBox.js'
 import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
@@ -20,8 +14,6 @@ export type LandingProps = {
   headerCardItems: AddonItem[]
   title: string
   subtitle: string
-  userSettingsHref: Href
-  showSetInterestsSnackbar: boolean
 }
 
 const LandingSearchBox: FC = () => {
@@ -35,8 +27,6 @@ export const Landing: FC<LandingProps> = ({
   headerCardItems,
   title,
   subtitle,
-  userSettingsHref,
-  showSetInterestsSnackbar,
 }) => {
   const background = {
     backgroundImage: 'url("' + defaultBackground + '")',
@@ -68,28 +58,7 @@ export const Landing: FC<LandingProps> = ({
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        showSetInterestsSnackbar ? (
-          <Snackbar
-            className="set-interests-snackbar"
-            key="interests-snackbar"
-            type="info"
-            actions={
-              <TertiaryButton className="navigate-button" abbr="Navigate to settings">
-                <Link href={userSettingsHref}>Navigate</Link>
-              </TertiaryButton>
-            }
-            showCloseButton
-            autoHideDuration={999999999}
-          >
-            Select your interests for a better experience
-          </Snackbar>
-        ) : null,
-      ]}
-    />
-  )
+  const snackbars = <SnackbarStack snackbarList={[]} />
 
   return (
     <MainLayout

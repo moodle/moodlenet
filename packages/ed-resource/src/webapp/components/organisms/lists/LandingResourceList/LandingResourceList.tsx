@@ -15,8 +15,8 @@ export type LandingResourceListProps = {
 
 export const LandingResourceList: FC<LandingResourceListProps> = ({
   resourceCardPropsList,
-  searchResourcesHref,
   hasSetInterests,
+  // searchResourcesHref,
 }) => {
   const title = (
     <div className="title">{hasSetInterests ? 'Resources selection' : 'Featured resources'}</div>
@@ -45,10 +45,10 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
             {title}
             {subtitle}
           </div>
-          <SecondaryButton className="more" color="dark-blue">
+          {/* <SecondaryButton className="more" color="dark-blue">
             <Link href={searchResourcesHref}>See more resources</Link>
             <ArrowForwardRounded />
-          </SecondaryButton>
+          </SecondaryButton> */}
         </div>
       }
       noCard={true}

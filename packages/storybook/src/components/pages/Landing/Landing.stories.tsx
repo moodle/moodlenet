@@ -29,8 +29,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
-  userSettingsHref: href('Pages/Settings/Default'),
-  showSetInterestsSnackbar: false,
   mainColumnItems: [
     {
       Item: () => (
@@ -104,7 +102,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
   mainLayoutProps: MainLayoutLoggedInStoryProps,
-  // showSetInterestsSnackbar: true,
   mainColumnItems: [
     {
       Item: () => (
