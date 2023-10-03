@@ -4,12 +4,7 @@ import { Profile } from '../../sys-entities.mjs'
 const cursor = await sysEntitiesDB.query(
   `FOR profile IN @@ProfileCollection
     UPDATE profile WITH { 
-        profileInterests: {
-          subjects: [],
-          licenses: [],
-          levels: [],
-          languages: []
-        }  
+        settings: {}  
       } IN @@ProfileCollection
     RETURN null`,
   { '@ProfileCollection': Profile.collection.name },
