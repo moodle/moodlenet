@@ -13,6 +13,7 @@ import type {
   UserInterests,
 } from '../../../common/types.mjs'
 import { shell } from '../shell.mjs'
+import type { AuthCtxT } from './AuthContext.js'
 import { AuthCtx } from './AuthContext.js'
 
 export type MyProfileContextT = {
@@ -34,7 +35,7 @@ function useMyProfileContextValue() {
   const authCtx = useContext(AuthCtx)
   const myProfile = authCtx.clientSessionData?.myProfile
   const myFeaturedEntities = useAllMyFeaturedEntities()
-  const myInterests = useMyInterests()
+  const myInterests = useMyInterests(authCtx)
   const myProfileContext = useMemo<MyProfileContextT | null>(() => {
     if (!myProfile) {
       return null
@@ -76,7 +77,7 @@ export type AllMyFeaturedEntitiesHandle = {
 export type MyInterestsHandle = {
   reload(): Promise<void>
   current: UserInterests
-  unset: boolean
+  promptUserSetInterests: boolean
   save(_: UserInterests | 'empty'): Promise<void>
   isDefaultSearchFiltersEnabled: boolean
   toggleDefaultSearchFilters(): void
@@ -98,18 +99,15 @@ function useAllMyFeaturedEntities() {
   const [all, setAll] = useState<KnownFeaturedEntities>(emptyFeaturedEntities)
 
   const reload = useCallback(async () => {
-    if (!myProfile) {
-      setAll(emptyFeaturedEntities)
-    }
-
     const rpcResponse = await shell.rpc.me('webapp/all-my-featured-entities')()
 
     setAll(rpcResponse?.featuredEntities ?? emptyFeaturedEntities)
-  }, [myProfile])
+  }, [])
 
   useEffect(() => {
+    setAll(emptyFeaturedEntities)
     reload()
-  }, [reload])
+  }, [reload, myProfile])
 
   const isFeatured = useCallback<AllMyFeaturedEntitiesHandle['isFeatured']>(
     ({ _key, entityType, feature }) => {
@@ -155,28 +153,27 @@ function useAllMyFeaturedEntities() {
   return myFeaturedEntitiesContext
 }
 
-function useMyInterests() {
-  const authCtx = useContext(AuthCtx)
+function useMyInterests(authCtx: AuthCtxT) {
   const myProfile = authCtx.clientSessionData?.myProfile
 
-  const [myInterests, setMyInterests] = useState<UserInterests | undefined | 'loading'>('loading')
+  const [myInterests, setMyInterests] = useState<UserInterests | undefined | 'loading' | 'anon'>(
+    'loading',
+  )
   const [myInterestsAsDefaultFilters, setMyInterestsAsDefaultFilters] = useState<
-    boolean | 'loading' | undefined
+    boolean | 'loading' | 'anon' | undefined
   >('loading')
 
   const reload = useCallback(async () => {
-    if (!myProfile) {
-      setMyInterests(undefined)
-    }
-
     const rpcResponse = await shell.rpc.me('webapp/my-interests/get')()
-    setMyInterests(rpcResponse?.interests)
-    setMyInterestsAsDefaultFilters(!!rpcResponse?.asDefaultFilters)
-  }, [myProfile])
+    setMyInterests(!rpcResponse ? 'anon' : rpcResponse.interests)
+    setMyInterestsAsDefaultFilters(!rpcResponse ? 'anon' : !!rpcResponse.asDefaultFilters)
+  }, [])
 
   useEffect(() => {
+    setMyInterests('loading')
+    setMyInterestsAsDefaultFilters('loading')
     reload()
-  }, [reload])
+  }, [myProfile, reload])
 
   const save = useCallback<MyInterestsHandle['save']>(
     async choosenInterestsToSave => {
@@ -209,7 +206,7 @@ function useMyInterests() {
   const [, , makeSearchQuery, { ls2str }] = useResourceSearchQuery()
   const defaultSearchPageQuery = useMemo(() => {
     const relevanceSort: SortTypeRpc = 'Relevant'
-    return !myInterests || myInterests === 'loading'
+    return !myInterests || myInterests === 'loading' || myInterests === 'anon'
       ? undefined
       : makeSearchQuery({
           sortType: relevanceSort,
@@ -230,10 +227,23 @@ function useMyInterests() {
         : {},
     )
   }, [defaultSearchPageQuery?.qMap, mainSearchBoxCtxSetDefaultQuery, myInterestsAsDefaultFilters])
-  const myFeaturedEntitiesContext = useMemo<MyInterestsHandle>(() => {
-    const myFeaturedEntitiesContext: MyInterestsHandle = {
-      current: !myInterests || myInterests === 'loading' ? emptyUserInterests : myInterests,
-      unset: myInterests === 'loading' ? false : !myInterests,
+  const useAsCurrentInterests =
+    !myInterests || myInterests === 'loading' || myInterests === 'anon'
+      ? emptyUserInterests
+      : myInterests
+  const promptUserSetInterests = (() => {
+    if (!myProfile || myInterests === 'loading' || myInterests === 'anon') {
+      return false
+    } else if (myInterests) {
+      return false
+    } else {
+      return true
+    }
+  })()
+  const myInterestsHandle = useMemo<MyInterestsHandle>(() => {
+    const myInterestsHandle: MyInterestsHandle = {
+      current: useAsCurrentInterests,
+      promptUserSetInterests,
       reload,
       save,
       isDefaultSearchFiltersEnabled: !!myInterestsAsDefaultFilters,
@@ -243,9 +253,10 @@ function useMyInterests() {
         href: defaultSearchHref,
       },
     }
-    return myFeaturedEntitiesContext
+    return myInterestsHandle
   }, [
-    myInterests,
+    useAsCurrentInterests,
+    promptUserSetInterests,
     reload,
     save,
     myInterestsAsDefaultFilters,
@@ -254,5 +265,5 @@ function useMyInterests() {
     defaultSearchHref,
   ])
 
-  return myFeaturedEntitiesContext
+  return myInterestsHandle
 }

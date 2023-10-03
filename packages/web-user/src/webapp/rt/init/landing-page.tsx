@@ -14,7 +14,7 @@ import { useMyLandingPageCollectionListDataProps } from '../page/my-landing-page
 import { useMyLandingPageProfileListDataProps } from '../page/my-landing-page/MyLandingPageProfileListHook.mjs'
 import { useMyLandingPageResourceListDataProps } from '../page/my-landing-page/MyLandingPageResourceListHook.mjs'
 
-const setInterestsAlert: AddonItemNoKey = {
+const promptSetInterestsBanner: AddonItemNoKey = {
   Item: () => {
     const myProfileContext = useMyProfileContext()
     const interestInfoProps = useMemo<InterestInfoProps | null>(() => {
@@ -54,16 +54,17 @@ const landingPageMainColumnItems: AddOnMap<AddonItemNoKey> = {
 }
 LandingHookPlugin.register(function useLandingPagePlugin() {
   const myProfileContext = useMyProfileContext()
-  const showSetInterestsAlert = !!(myProfileContext && myProfileContext.myInterests.unset)
+  const promptUserSetInterests = !!myProfileContext?.myInterests.promptUserSetInterests
+
   const addons = useMemo(() => {
     const plugin: LandingPlugin = {
       mainColumnItems: {
-        setInterestsAlert: showSetInterestsAlert && setInterestsAlert,
+        promptSetInterestsBanner: promptUserSetInterests && promptSetInterestsBanner,
         ...landingPageMainColumnItems,
       },
     }
     return plugin
-  }, [showSetInterestsAlert])
+  }, [promptUserSetInterests])
 
   return addons
 })
