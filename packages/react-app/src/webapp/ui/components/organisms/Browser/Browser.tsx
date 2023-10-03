@@ -1,5 +1,5 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import { SecondaryButton, SimpleDropdown } from '@moodlenet/component-library'
+import { SecondaryButton, SimpleDropdown, sortAddonItems } from '@moodlenet/component-library'
 import type { ComponentType, FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
@@ -10,12 +10,11 @@ export type BrowserMainColumnItemBase = {
   showHeader?: boolean
 }
 
-export type MainColumItem = {
+export type MainColumItem = Omit<AddonItem, 'Item'> & {
   Item: ComponentType<BrowserMainColumnItemBase>
   name: string
   filters: AddonItem[]
   // numElements: number // the amount of elements in the Item list
-  key: string
 }
 
 export type BrowserProps = BrowserPropsData & BrowserPropsUI
@@ -36,13 +35,13 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
-      ? mainColumnItems
-          .map(e => {
+      ? sortAddonItems(
+          mainColumnItems.map(e => {
             // if (e.numElements === 0) return null
             const isCurrent = e.key === currentMainFilter
 
             const options = mainColumnItems.map(i => {
-              return { label: i.name, value: i.key }
+              return { label: i.name, value: i.key.toString() }
             })
             options.push({ label: 'All', value: 'all' })
 
@@ -51,7 +50,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
                 <SimpleDropdown
                   className={`content-type-filter`}
                   options={options}
-                  selected={[e.key]}
+                  selected={[e.key.toString()]}
                   label={e.name}
                   onClick={(key: string | number) => {
                     setCurrentMainFilter(key === 'all' ? undefined : key)
@@ -70,8 +69,8 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
                 </SecondaryButton>
               )
             ) : null
-          })
-          .filter(item => !!item)
+          }),
+        )
       : []
   }, [mainColumnItems, currentMainFilter])
 

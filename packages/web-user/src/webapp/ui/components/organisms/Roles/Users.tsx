@@ -41,10 +41,14 @@ const Row: FC<{
   return (
     <tr>
       <td>
-        <Link href={user.profileHref}>{user.title}</Link>
+        <Link href={user.profileHref} target="_blank">
+          {user.title}
+        </Link>
       </td>
       <td>
-        <Link href={user.profileHref}>{user.email}</Link>
+        <Link href={user.profileHref} target="_blank">
+          {user.email}
+        </Link>
       </td>
       <td className="user-types">
         <abbr

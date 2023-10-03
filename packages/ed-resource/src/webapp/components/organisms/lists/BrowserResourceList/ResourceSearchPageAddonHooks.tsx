@@ -222,6 +222,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
 
 export const SearchResourceSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   resources: {
+    position: 0,
     Item: browserMainColumnItemBase => {
       const { resourceList, loadMore } = useContext(SearchResourceContext)
 

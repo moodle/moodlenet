@@ -38,18 +38,21 @@ const landingPageMainColumnItems: AddOnMap<AddonItemNoKey> = {
       const props = useMyLandingPageResourceListDataProps()
       return <LandingResourceList {...props} />
     },
+    position: 0,
   },
   collectionList: {
     Item: () => {
       const props = useMyLandingPageCollectionListDataProps()
       return <LandingCollectionList {...props} />
     },
+    position: 1,
   },
   profileList: {
     Item: () => {
       const props = useMyLandingPageProfileListDataProps()
       return <LandingProfileList {...props} />
     },
+    position: 2,
   },
 }
 LandingHookPlugin.register(function useLandingPagePlugin() {

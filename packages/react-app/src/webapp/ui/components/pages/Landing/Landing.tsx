@@ -1,4 +1,4 @@
-import { SnackbarStack, type AddonItem } from '@moodlenet/component-library'
+import { SnackbarStack, sortAddonItems, type AddonItem } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useContext } from 'react'
 import { MainHeaderContext } from '../../../../exports/ui.mjs'
@@ -54,9 +54,7 @@ export const Landing: FC<LandingProps> = ({
     </div>
   )
 
-  const updatedMainColumnItems = [headerCard, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
-  )
+  const updatedMainColumnItems = sortAddonItems([headerCard, ...(mainColumnItems ?? [])])
 
   const snackbars = <SnackbarStack snackbarList={[]} />
 
