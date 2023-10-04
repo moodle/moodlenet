@@ -15,6 +15,7 @@ import { useMyLandingPageProfileListDataProps } from '../page/my-landing-page/My
 import { useMyLandingPageResourceListDataProps } from '../page/my-landing-page/MyLandingPageResourceListHook.mjs'
 
 const promptSetInterestsBanner: AddonItemNoKey = {
+  position: 1,
   Item: () => {
     const myProfileContext = useMyProfileContext()
     const interestInfoProps = useMemo<InterestInfoProps | null>(() => {
@@ -38,21 +39,21 @@ const landingPageMainColumnItems: AddOnMap<AddonItemNoKey> = {
       const props = useMyLandingPageResourceListDataProps()
       return <LandingResourceList {...props} />
     },
-    position: 0,
+    position: 2,
   },
   collectionList: {
     Item: () => {
       const props = useMyLandingPageCollectionListDataProps()
       return <LandingCollectionList {...props} />
     },
-    position: 1,
+    position: 3,
   },
   profileList: {
     Item: () => {
       const props = useMyLandingPageProfileListDataProps()
       return <LandingProfileList {...props} />
     },
-    position: 2,
+    position: 4,
   },
 }
 LandingHookPlugin.register(function useLandingPagePlugin() {

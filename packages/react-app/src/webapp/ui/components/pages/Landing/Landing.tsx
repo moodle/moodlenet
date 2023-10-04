@@ -48,11 +48,15 @@ export const Landing: FC<LandingProps> = ({
     ...(headerCardItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const headerCard = (
-    <div className="landing-header" key="landing-header" style={background}>
-      {updatedHeaderCardItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </div>
-  )
+  const headerCard: AddonItem = {
+    position: 0,
+    Item: () => (
+      <div className="landing-header" key="landing-header" style={background}>
+        {updatedHeaderCardItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    ),
+    key: 'landing-header',
+  }
 
   const updatedMainColumnItems = sortAddonItems([headerCard, ...(mainColumnItems ?? [])])
 
