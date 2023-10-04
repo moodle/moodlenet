@@ -22,6 +22,5 @@ export const useLandingPageProps = (): LandingProps => {
     subtitle: organizationData.landingSubtitle,
     mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
     headerCardItems: plugins.getKeyedAddons('headerCardItems'),
-    search: () => undefined,
   }
 }

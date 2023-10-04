@@ -114,9 +114,11 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
       {showFilters && (
         <div className="filter-bar">
           <div className="filter-bar-content">
-            {filterByItemType.filter(e => !!e)}
-            {extraFilters && <div className="separator" />}
-            {extraFilters}
+            <>
+              {filterByItemType.filter(e => !!e)}
+              {extraFilters && <div className="separator" />}
+              {extraFilters}
+            </>
           </div>
         </div>
       )}
