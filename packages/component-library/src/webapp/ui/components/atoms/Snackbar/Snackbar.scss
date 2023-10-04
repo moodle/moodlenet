@@ -6,6 +6,7 @@
 }
 
 .snackbar.card {
+  position: fixed;
   display: flex;
   flex-direction: row;
   width: fit-content;
@@ -24,24 +25,20 @@
   z-index: 11;
   box-shadow: 0px 1px 2px 0px rgb(36 39 41 / 5%), 0px 2px 6px 2px rgb(41 44 46 / 5%);
 
-  &:not(.inside-snackbar) {
-    &.position-top {
-      top: 68px;
-    }
+  &.position-top {
+    top: 68px;
+  }
 
-    &.position-bottom {
-      bottom: 20px;
-    }
-
-    position: fixed;
+  &.position-bottom {
+    bottom: 20px;
   }
 
   > * {
     display: flex;
   }
 
-  > .content,
-  > .actions {
+  > .content:last-child,
+  > .actions:last-child {
     padding-right: 8px;
   }
 
