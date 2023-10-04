@@ -1,15 +1,21 @@
 import { LandingCollectionList } from '@moodlenet/collection/ui'
+import { CollectionContext } from '@moodlenet/collection/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { LandingResourceList } from '@moodlenet/ed-resource/ui'
+import { ResourceContext } from '@moodlenet/ed-resource/webapp'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingPlugin } from '@moodlenet/react-app/webapp'
 import { LandingHookPlugin } from '@moodlenet/react-app/webapp'
-import { useMemo } from 'react'
-import { SETTINGS_PAGE_ROUTE_PATH } from '../../../common/webapp-routes.mjs'
-import type { InterestInfoProps } from '../../ui/exports/ui.mjs'
-import { InterestInfo, LandingProfileList } from '../../ui/exports/ui.mjs'
-import { useMyProfileContext } from '../exports.mjs'
+import { useContext, useMemo } from 'react'
+import {
+  LOGIN_PAGE_ROUTE_BASE_PATH,
+  SETTINGS_PAGE_ROUTE_PATH,
+  SIGNUP_PAGE_ROUTE_BASE_PATH,
+} from '../../../common/webapp-routes.mjs'
+import type { InterestInfoProps, ShareContentProps } from '../../ui/exports/ui.mjs'
+import { InterestInfo, LandingProfileList, ShareContent } from '../../ui/exports/ui.mjs'
+import { AuthCtx, useMyProfileContext } from '../exports.mjs'
 import { useMyLandingPageCollectionListDataProps } from '../page/my-landing-page/MyLandingPageCollectionListHook.mjs'
 import { useMyLandingPageProfileListDataProps } from '../page/my-landing-page/MyLandingPageProfileListHook.mjs'
 import { useMyLandingPageResourceListDataProps } from '../page/my-landing-page/MyLandingPageResourceListHook.mjs'
@@ -56,6 +62,28 @@ const landingPageMainColumnItems: AddOnMap<AddonItemNoKey> = {
     position: 4,
   },
 }
+
+const shareContentPanelAddon: AddonItemNoKey = {
+  Item: () => {
+    const { createResource } = useContext(ResourceContext)
+    const { createCollection } = useContext(CollectionContext)
+    const { isAuthenticated } = useContext(AuthCtx)
+    const shareContentProps = useMemo(() => {
+      const props: ShareContentProps = {
+        shareContentHrefs: {
+          loginHref: href(LOGIN_PAGE_ROUTE_BASE_PATH),
+          signUpHref: href(SIGNUP_PAGE_ROUTE_BASE_PATH),
+          createResource,
+          createCollection,
+        },
+        isAuthenticated,
+      }
+      return props
+    }, [createCollection, createResource, isAuthenticated])
+
+    return <ShareContent {...shareContentProps} />
+  },
+}
 LandingHookPlugin.register(function useLandingPagePlugin() {
   const myProfileContext = useMyProfileContext()
   const promptUserSetInterests = !!myProfileContext?.myInterests.promptUserSetInterests
@@ -65,6 +93,9 @@ LandingHookPlugin.register(function useLandingPagePlugin() {
       mainColumnItems: {
         promptSetInterestsBanner: promptUserSetInterests && promptSetInterestsBanner,
         ...landingPageMainColumnItems,
+      },
+      headerCardItems: {
+        shareContentPanelAddon,
       },
     }
     return plugin
