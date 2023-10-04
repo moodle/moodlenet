@@ -79,6 +79,7 @@ export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ ch
 
 export const SearchSubjectSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   subjects: {
+    position: 3,
     Item: browserMainColumnItemBase => {
       const { subjectList, loadMore } = useContext(SearchSubjectContext)
 

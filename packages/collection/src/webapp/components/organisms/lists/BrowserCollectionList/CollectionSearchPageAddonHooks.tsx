@@ -82,6 +82,7 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren<unknown>> = ({
 
 export const SearchCollectionSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   collections: {
+    position: 1,
     Item: browserMainColumnItemBase => {
       const { collectionList, loadMore } = useContext(SearchCollectionContext)
 

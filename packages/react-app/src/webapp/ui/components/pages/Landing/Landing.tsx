@@ -1,4 +1,4 @@
-import { SnackbarStack, type AddonItem } from '@moodlenet/component-library'
+import { SnackbarStack, sortAddonItems, type AddonItem } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useContext } from 'react'
 import { MainHeaderContext } from '../../../../exports/ui.mjs'
@@ -48,15 +48,17 @@ export const Landing: FC<LandingProps> = ({
     ...(headerCardItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const headerCard = (
-    <div className="landing-header" key="landing-header" style={background}>
-      {updatedHeaderCardItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </div>
-  )
+  const headerCard: AddonItem = {
+    position: 0,
+    Item: () => (
+      <div className="landing-header" key="landing-header" style={background}>
+        {updatedHeaderCardItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    ),
+    key: 'landing-header',
+  }
 
-  const updatedMainColumnItems = [headerCard, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem | JSX.Element => !!item,
-  )
+  const updatedMainColumnItems = sortAddonItems([headerCard, ...(mainColumnItems ?? [])])
 
   const snackbars = <SnackbarStack snackbarList={[]} />
 

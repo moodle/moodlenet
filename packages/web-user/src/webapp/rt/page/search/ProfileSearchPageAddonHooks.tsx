@@ -77,6 +77,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
 
 export const SearchProfileSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   profiles: {
+    position: 2,
     Item: browserMainColumnItemBase => {
       const { profileList, loadMore } = useContext(SearchProfileContext)
 

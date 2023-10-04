@@ -62,14 +62,13 @@ export const General: FC<GeneralProps> = ({
     </Card>
   )*/
 
-  const form = useFormik<UserInterests>({
-    initialValues: interests,
-    // validateOnMount: true,
-    // validateOnChange: true,
+  const form = useFormik<UserInterests & { useInterestsAsDefaultFilters: boolean }>({
+    initialValues: { ...interests, useInterestsAsDefaultFilters },
     enableReinitialize: true,
     onSubmit: values => {
       editInterests(values)
-      // return editData(values)
+      values.useInterestsAsDefaultFilters !== useInterestsAsDefaultFilters &&
+        toggleUseInterestsAsDefaultFilters()
     },
   })
 
@@ -134,10 +133,15 @@ export const General: FC<GeneralProps> = ({
 
   const setAsDefaultFilters = (
     <div className="set-as-default-filters">
-      <div className="title">Use interest as default filters when searching</div>
+      <div className="title">Use interests as default filters when searching</div>
       <Switch
-        enabled={useInterestsAsDefaultFilters}
-        toggleSwitch={toggleUseInterestsAsDefaultFilters}
+        enabled={form.values.useInterestsAsDefaultFilters}
+        toggleSwitch={() =>
+          form.setFieldValue(
+            'useInterestsAsDefaultFilters',
+            !form.values.useInterestsAsDefaultFilters,
+          )
+        }
       />
     </div>
   )
