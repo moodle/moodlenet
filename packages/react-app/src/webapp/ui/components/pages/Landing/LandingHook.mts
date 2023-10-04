@@ -7,8 +7,8 @@ import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { LandingProps } from './Landing.js'
 
 export type LandingPlugin = {
-  mainColumnItems: AddOnMap<AddonItemNoKey>
-  headerCardItems: AddOnMap<AddonItemNoKey>
+  mainColumnItems?: AddOnMap<AddonItemNoKey>
+  headerCardItems?: AddOnMap<AddonItemNoKey>
 }
 
 export const LandingHookPlugin = createPlugin<LandingPlugin>()
