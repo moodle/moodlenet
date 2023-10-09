@@ -6,7 +6,12 @@ import { ResourceContext, useResourceCardProps } from '@moodlenet/ed-resource/we
 import { href } from '@moodlenet/react-app/common'
 import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { proxyWith } from '@moodlenet/react-app/ui'
-import { createPlugin, createTaskManager, useMainLayoutProps } from '@moodlenet/react-app/webapp'
+import {
+  createPlugin,
+  createTaskManager,
+  silentCatchAbort,
+  useMainLayoutProps,
+} from '@moodlenet/react-app/webapp'
 import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
@@ -130,10 +135,13 @@ export const useProfileProps = ({
   useEffect(() => {
     setProfileGetRpc(undefined)
     shell.rpc
-      .me('webapp/profile/:_key/get')(void 0, { _key: profileKey })
+      .me('webapp/profile/:_key/get', { rpcId: `profile/get#${profileKey}` })(void 0, {
+        _key: profileKey,
+      })
       .then(res => {
         setProfileGetRpc(res)
       })
+      .catch(silentCatchAbort)
   }, [profileKey])
 
   const mainLayoutProps = useMainLayoutProps()

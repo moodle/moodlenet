@@ -1,5 +1,5 @@
 import { useImageUrl } from '@moodlenet/react-app/ui'
-import { createTaskManager } from '@moodlenet/react-app/webapp'
+import { createTaskManager, silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type {
@@ -55,10 +55,13 @@ export const useMainHook = ({ collectionKey }: myProps): CollectionMainProps | n
 
   useEffect(() => {
     setCollection(undefined)
-    rpcCaller.get(collectionKey).then(res => {
-      res && setIsPublish(res.state.isPublished)
-      setCollection(res)
-    })
+    rpcCaller
+      .get(collectionKey)
+      .then(res => {
+        res && setIsPublish(res.state.isPublished)
+        setCollection(res)
+      })
+      .catch(silentCatchAbort)
   }, [collectionKey, rpcCaller])
 
   // const formSaved = useCallback((form: boolean): void => setterSave('form', form), [setterSave])
