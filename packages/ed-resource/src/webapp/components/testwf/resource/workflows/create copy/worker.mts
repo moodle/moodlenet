@@ -1,15 +1,30 @@
-import type { ChoosenContentErrors, DraftResourceDocument } from '../../documents.mjs'
+import type { ChoosenContentErrors, DraftResourceDocument } from '../../types/documents.mjs'
 import type { ChoosenContent, Progress } from './types.mjs'
-
+import type { CreateResourceActivityState } from './ui-states-intents.mjs'
+declare module './reducer.mjs' {
+  export interface K {
+    currentState: CreateResourceActivityState
+  }
+}
 export interface Worker {
   uploadContent(resourceContent: File | string): void
   cancelUpload(): void
   cancelAiAutofill(): void
-  checkChoosenResource(
+  isChoosenContentValidCheck(
     content: File | string,
   ):
-    | { success: true; choosenContent: ChoosenContent }
-    | { success: false; choosenContentErrors: ChoosenContentErrors }
+    | { isValid: true; choosenContent: ChoosenContent }
+    | { isValid: false; choosenContentErrors: ChoosenContentErrors }
+  getAcceptableContentRules(): AcceptableContentRules
+}
+
+export type AcceptableContentRules = {
+  file: {
+    maxSizeBytes: number
+  }
+  link: {
+    ruleDescription: string
+  }
 }
 
 export type WorkerEvents =
@@ -31,6 +46,6 @@ export interface AiAutofillProgressEvent {
   progress: Progress
 }
 export interface AutofillDoneEvent {
-  type: 'Autofill done'
+  type: 'Ai autofill done'
   draftResourceDocument: DraftResourceDocument
 }

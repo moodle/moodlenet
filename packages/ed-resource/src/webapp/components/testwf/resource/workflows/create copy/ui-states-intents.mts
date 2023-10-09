@@ -1,5 +1,6 @@
-import type { ChoosenContentErrors, DraftResourceDocument } from '../../documents.mjs'
+import type { ChoosenContentErrors, DraftResourceDocument } from '../../types/documents.mjs'
 import type { ChoosenContent, Progress } from './types.mjs'
+import type { AcceptableContentRules } from './worker.mjs'
 
 export type CreateResourceActivityState =
   | ChooseContentState
@@ -11,13 +12,16 @@ export type CreateResourceUserIntents =
   | CancelUploadIntent
   | CancelAutofillIntent
 
+type Url = string
 export interface ChooseContentIntent {
   type: 'Choose content'
-  choosenContent: File | string
+  choosenContent: File | Url
 }
+
 export interface CancelUploadIntent {
   type: 'Cancel upload'
 }
+
 export interface CancelAutofillIntent {
   type: 'Cancel autofill'
 }
@@ -26,11 +30,8 @@ export interface ChooseContentState {
   activity: 'Create resource'
   type: 'Choose content'
   choosenContent: null | ChoosenContent
-  acceptableContentRules: {
-    file: { maxSizeBytes: number }
-    link: { ruleDescription: string }
-  }
-  choosenContentErrors: ChoosenContentErrors
+  acceptableContentRules: AcceptableContentRules
+  choosenContentErrors: null | ChoosenContentErrors
 }
 
 export interface UploadingContentState {
