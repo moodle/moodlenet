@@ -9,7 +9,7 @@ import type {
 } from '../common/types.mjs'
 
 import { useImageUrl } from '@moodlenet/react-app/ui'
-import { createTaskManager } from '@moodlenet/react-app/webapp'
+import { createTaskManager, silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useNavigate } from 'react-router-dom'
 import { MainContext } from './MainContext.js'
 
@@ -44,10 +44,13 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
   useEffect(() => {
     setResource(undefined)
-    rpcCaller.get(resourceKey).then(res => {
-      res && setIsPublish(res.state.isPublished)
-      setResource(res)
-    })
+    rpcCaller
+      .get(resourceKey)
+      .then(res => {
+        res && setIsPublish(res.state.isPublished)
+        setResource(res)
+      })
+      .catch(silentCatchAbort)
   }, [resourceKey, rpcCaller])
 
   const setterSave = useCallback(
