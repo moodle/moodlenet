@@ -33,7 +33,7 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
   //rpcPaths: string[],
 ): PkgRpcHandle<TargetPkgRpcDefs> {
   const locateRpc: PkgRpcHandle<any> = (path, opts) => (body: any, params: any, query: any) => {
-    const rpcId = opts?.rpcId ?? Math.random().toString(36).slice(2)
+    const rpcId = `${userPkgId.name}::${opts?.rpcId ?? Math.random().toString(36).slice(2)}`
     abortRpc(rpcId)
     const controller = new AbortController()
     const pendingPromise = (async () => {
