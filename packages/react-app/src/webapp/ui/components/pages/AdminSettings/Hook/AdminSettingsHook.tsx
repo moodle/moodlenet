@@ -29,9 +29,13 @@ const localAdminSettingsItems: AdminSettingsItem[] = [
 
 export const AdminSettingsPagePlugins = createPlugin<{
   adminSettingsSection?: AddOnMap<AdminSettingsSectionItem>
+  denyAccess?: boolean
 }>()
 
-export const useAdminSettingsProps = (): AdminSettingsProps => {
+export const useAdminSettingsProps = (): {
+  adminSettingsProps: AdminSettingsProps
+  denyAccess: boolean
+} => {
   const plugins = AdminSettingsPagePlugins.usePluginHooks()
   const mainLayoutProps = useMainLayoutProps()
 
@@ -39,11 +43,13 @@ export const useAdminSettingsProps = (): AdminSettingsProps => {
     return localAdminSettingsItems.concat(plugins.getKeyedAddons('adminSettingsSection'))
   }, [plugins])
 
-  const settingsProps = useMemo<AdminSettingsProps>(() => {
-    return {
+  const denyAccess = plugins.results.map(({ result: { denyAccess } }) => denyAccess).includes(true)
+  const adminSettings = useMemo(() => {
+    const adminSettingsProps: AdminSettingsProps = {
       mainLayoutProps,
       settingsItems,
     }
-  }, [mainLayoutProps, settingsItems])
-  return settingsProps
+    return { adminSettingsProps, denyAccess }
+  }, [mainLayoutProps, settingsItems, denyAccess])
+  return adminSettings
 }

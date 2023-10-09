@@ -5,7 +5,8 @@ import {
   registerMainAppPluginHook,
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
+import { AuthCtx } from './exports.mjs'
 import './init/bookmark-page.js'
 import './init/following-page.js'
 import './init/landing-page.js'
@@ -27,6 +28,11 @@ HeaderPlugins.register(() => ({
   rightItems: useSwichAddonsByAuth(menuHeaderButtonsAuthAddons),
 }))
 
-AdminSettingsPagePlugins.register(() => {
-  return { adminSettingsSection: menuAddonsDefaultSetting }
+AdminSettingsPagePlugins.register(function useAdminSettingsPagePlugin() {
+  const authCtx = useContext(AuthCtx)
+
+  return {
+    adminSettingsSection: menuAddonsDefaultSetting,
+    denyAccess: !(authCtx.clientSessionData?.isAdmin || authCtx.clientSessionData?.isRoot),
+  }
 })
