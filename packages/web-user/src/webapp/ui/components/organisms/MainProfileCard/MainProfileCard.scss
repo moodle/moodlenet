@@ -147,7 +147,7 @@
     > .profile-card-header > .title > .enter-error,
     > .profile-card-header > .subtitle > span > .enter-error {
       > .error-msg {
-        font-weight: initial;
+        font-weight: normal;
       }
     }
 
@@ -170,7 +170,7 @@
         }
 
         > .display-name {
-          width: fit-content;
+          width: 100%;
           font-weight: 700;
           overflow: hidden;
           white-space: nowrap;

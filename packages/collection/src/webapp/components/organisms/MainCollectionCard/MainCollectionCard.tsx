@@ -199,7 +199,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     <InputTextField
       name="title"
       key="title"
-      className="title underline"
+      className="title"
       isTextarea
       value={form.values.title}
       placeholder="Title"
@@ -454,7 +454,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     >
       {canEdit ? (
         <InputTextField
-          className="description underline"
+          className="description"
           name="description"
           isTextarea
           ref={descriptionEditRef}
