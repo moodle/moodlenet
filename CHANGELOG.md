@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- resource learning outcomes (blooms cognitives) features
+- resource search filters
+- user interests settings with default resoure filtering option
+- user profilelink in admin user list
+- user-customized landing page lists
+- prompt user to fill interests
+
+### Improvements
+
+- query performances
+- http calls
+
+### Fixed
+
+- missing checks for webapp routes
+
+### Security
+
+- upgraded project level dependencies (lerna, storybook, webpack)
+
 ## [3.1.1]
 
 ### Fixed
