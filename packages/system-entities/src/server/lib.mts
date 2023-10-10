@@ -10,7 +10,6 @@ import {
   creatorEntityIdVar,
   currentEntityClass,
   currentEntityVar,
-  entityIdentifier2EntityIdAql,
   isCurrentUserCreatorOfCurrentEntity,
   toaql,
 } from './aql-lib/aql.mjs'
@@ -529,9 +528,7 @@ FOR entity in @@collection ${opts?.forOptions ?? ''}
 
 ${opts?.viaSearchView ? `FILTER ${currentEntityClass}==${toaql(entityClass)}` : ``}
 
-LET ${creatorEntityIdVar}=entity._meta.creator.type == 'entity' ? ${entityIdentifier2EntityIdAql(
-    'entity._meta.creator.entityIdentifier',
-  )} : null
+LET ${creatorEntityIdVar}=entity._meta.creator.type == 'entity' ? entity._meta.creatorEntityId : null
 
 LET ${creatorEntityDocVar} = DOCUMENT(${creatorEntityIdVar})
 
