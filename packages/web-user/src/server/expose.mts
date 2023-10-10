@@ -137,27 +137,29 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         }
         const data = profileDoc2Profile(profileRecord.entity)
 
-        const collections = (
-          await getProfileOwnKnownEntities({
-            knownEntity: 'collection',
-            profileKey: _key,
-          })
-        ).map(({ entity: { _key } }) => ({ _key }))
+        const [collections, resources, currentProfileIds, currToken, numFollowers] =
+          await Promise.all([
+            getProfileOwnKnownEntities({
+              knownEntity: 'collection',
+              profileKey: _key,
+            }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
 
-        const resources = (
-          await getProfileOwnKnownEntities({
-            knownEntity: 'resource',
-            profileKey: _key,
-          })
-        ).map(({ entity: { _key } }) => ({ _key }))
+            getProfileOwnKnownEntities({
+              knownEntity: 'resource',
+              profileKey: _key,
+            }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
+            getCurrentProfileIds(),
+            verifyCurrentTokenCtx(),
+            getEntityFeatureCount({ _key, entityType: 'profile', feature: 'follow' }).then(
+              _ => _?.count ?? 0,
+            ),
+          ])
 
         const profileHomePagePath = getProfileHomePageRoutePath({
           _key,
           displayName: profileRecord.entity.displayName,
         })
 
-        const currentProfileIds = await getCurrentProfileIds()
-        const currToken = await verifyCurrentTokenCtx()
         const canApprove =
           !!currToken && (currToken.payload.isRoot || currToken.payload.webUser.isAdmin)
 
@@ -166,9 +168,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           isPublisher: profileRecord.entity.publisher,
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
-          numFollowers:
-            (await getEntityFeatureCount({ _key, entityType: 'profile', feature: 'follow' }))
-              ?.count ?? 0,
+          numFollowers,
           numKudos: profileRecord.entity.kudos,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
