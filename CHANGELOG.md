@@ -22,10 +22,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - query performances
 - http calls
+- extra validation on profile page
 
 ### Fixed
 
 - missing checks for webapp routes
+- profile page
+  - backed up empty avatar and background images
+  - fix errors styling
 
 ### Security
 
