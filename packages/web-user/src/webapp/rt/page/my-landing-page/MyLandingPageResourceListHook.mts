@@ -13,7 +13,7 @@ export function useMyLandingPageResourceListDataProps() {
   const myInterests = myProfileCtx?.myInterests
   useEffect(() => {
     resourceCtx
-      .rpc('webapp/search', { rpcId: 'landing search collections' })(undefined, undefined, {
+      .rpc('webapp/search', { rpcId: 'landing search resources' })(undefined, undefined, {
         limit: 8,
         ...(myInterests //?.isDefaultSearchFiltersEnabled
           ? {

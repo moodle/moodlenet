@@ -42,6 +42,7 @@ import {
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
+  setProfilePublisherFlag,
 } from './srv/profile.mjs'
 import {
   currentWebUserDeletionAccountRequest,
@@ -461,10 +462,8 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/admin/roles/toggleIsPublisher': {
       guard: () => void 0,
       async fn({ profileKey }) {
-        const profile = await getProfileRecord(profileKey)
-        const patchedProfile =
-          profile && (await editProfile(profileKey, { publisher: !profile.entity.publisher }))
-        return !!patchedProfile
+        const response = await setProfilePublisherFlag({ profileKey, publisher: 'toggle' })
+        return !!response?.ok
       },
     },
     'webapp/admin/general/set-org-data': {

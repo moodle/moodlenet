@@ -12,7 +12,7 @@ export function useMyLandingPageProfileListDataProps() {
 
   useEffect(() => {
     shell.rpc
-      .me('webapp/search', { rpcId: 'landing search collections' })(undefined, undefined, {
+      .me('webapp/search', { rpcId: 'landing search profiles' })(undefined, undefined, {
         limit: 10,
       })
       .then(_ => _.list)
