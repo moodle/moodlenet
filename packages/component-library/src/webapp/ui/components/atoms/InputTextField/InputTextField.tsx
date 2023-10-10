@@ -90,7 +90,7 @@ export const InputTextField = forwardRef<
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        noBorder ? 'no-border' : ''
+        noBorder ? 'no-border underline' : ''
       } ${isTextarea ? ' textarea' : 'text'} ${highlight || error ? ' highlight' : ''} ${
         !disabled && !errorLeave && error ? 'enter-error' : ''
       } ${!disabled && errorLeave ? 'leave-error' : ''}`}

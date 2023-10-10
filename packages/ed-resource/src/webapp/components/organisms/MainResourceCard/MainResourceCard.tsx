@@ -277,7 +277,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <InputTextField
       name="title"
       key="title"
-      className="title underline"
+      className="title"
       isTextarea
       edit={isEditing}
       value={form.values.title}
@@ -564,7 +564,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const description = canEdit ? (
     <InputTextField
-      className="description underline"
+      className="description"
       name="description"
       key="description"
       isTextarea

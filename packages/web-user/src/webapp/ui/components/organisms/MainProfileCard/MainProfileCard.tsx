@@ -245,16 +245,16 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const description = isEditing ? (
     <InputTextField
-      textAreaAutoSize
-      value={form.values.aboutMe}
-      onChange={form.handleChange}
-      isTextarea
-      noBorder={true}
-      placeholder={`What should others know about you?`}
       className="description"
       key="description"
       name="aboutMe"
+      onChange={form.handleChange}
+      isTextarea
+      textAreaAutoSize
+      noBorder
       edit={isEditing}
+      placeholder={`What should others know about you?`}
+      value={form.values.aboutMe}
       error={isEditing && shouldShowErrors && form.errors.aboutMe}
     />
   ) : (
