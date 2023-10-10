@@ -11,7 +11,11 @@ import {
   getWebappUrl,
   webImageResizer,
 } from '@moodlenet/react-app/server'
-import type { EntityClass, SomeEntityDataType } from '@moodlenet/system-entities/common'
+import type {
+  EntityClass,
+  EntityIdentifiers,
+  SomeEntityDataType,
+} from '@moodlenet/system-entities/common'
 import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
 import {
   currentEntityVar,
@@ -181,35 +185,97 @@ export async function entityFeatureAction({
   )
   assert(updateResult)
   if (updateResult.patched.publisher) {
-    if (feature === 'like') {
-      const delta = adding ? 1 : -1
-      if (profileCreatorIdentifiers) {
-        await shell.initiateCall(async () => {
-          await setPkgCurrentUser()
-          /* const patchResult = */
-          await patchEntity(
-            Profile.entityClass,
-            profileCreatorIdentifiers.entityIdentifier._key,
-            `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
-          )
-          // shell.log('debug', { profileCreatorIdentifiers, patchResult })
-        })
-      }
-      if (entityType === 'resource') {
-        await deltaResourcePopularityItem({ _key, itemName: 'likes', delta })
-      }
-    } else if (feature === 'follow') {
-      const delta = adding ? 1 : -1
-      if (entityType === 'collection') {
-        await deltaCollectionPopularityItem({ _key, itemName: 'followers', delta })
-      } else if (entityType === 'profile') {
-        await deltaProfilePopularityItem({ _key, itemName: 'followers', delta })
-      } else if (entityType === 'subject') {
-        await deltaIscedFieldPopularityItem({ _key, itemName: 'followers', delta })
-      }
-    }
+    await deltaPopularity(adding, {
+      feature,
+      profileCreatorIdentifiers,
+      entityType,
+      entityKey: _key,
+    })
   }
   return updateResult
+}
+
+export async function deltaPopularity(
+  add: boolean,
+  {
+    entityKey,
+    entityType,
+    feature,
+    profileCreatorIdentifiers,
+  }: {
+    feature: KnownEntityFeature
+    profileCreatorIdentifiers: EntityIdentifiers | undefined
+    entityType: KnownEntityType
+    entityKey: string
+  },
+) {
+  if (feature === 'like') {
+    const delta = add ? 1 : -1
+    if (profileCreatorIdentifiers) {
+      await shell.initiateCall(async () => {
+        await setPkgCurrentUser()
+        /* const patchResult = */
+        await patchEntity(
+          Profile.entityClass,
+          profileCreatorIdentifiers.entityIdentifier._key,
+          `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
+        )
+        // shell.log('debug', { profileCreatorIdentifiers, patchResult })
+      })
+    }
+    if (entityType === 'resource') {
+      await deltaResourcePopularityItem({ _key: entityKey, itemName: 'likes', delta })
+    }
+  } else if (feature === 'follow') {
+    const delta = add ? 1 : -1
+    if (entityType === 'collection') {
+      await deltaCollectionPopularityItem({ _key: entityKey, itemName: 'followers', delta })
+    } else if (entityType === 'profile') {
+      await deltaProfilePopularityItem({ _key: entityKey, itemName: 'followers', delta })
+    } else if (entityType === 'subject') {
+      await deltaIscedFieldPopularityItem({ _key: entityKey, itemName: 'followers', delta })
+    }
+  }
+}
+
+export async function setProfilePublisherFlag({
+  profileKey,
+  publisher,
+}: {
+  profileKey: string
+  publisher: boolean | 'toggle'
+}) {
+  const profile = await getProfileRecord(profileKey)
+  if (!profile) return { type: 'not-found', ok: false }
+  const newPublisherFlag = publisher === 'toggle' ? !profile.entity.publisher : publisher
+  await editProfile(profileKey, { publisher: newPublisherFlag })
+  if (profile.entity.publisher === publisher) return { type: 'no-change', ok: true }
+  await Promise.all(
+    profile.entity.knownFeaturedEntities.map(async ({ _id: targetEntityId, feature }) => {
+      const targetEntityDoc = await (
+        await sysEntitiesDB.query<EntityFullDocument<SomeEntityDataType>>({
+          query: 'RETURN DOCUMENT(@targetEntityId)',
+          bindVars: { targetEntityId },
+        })
+      ).next()
+      if (!targetEntityDoc) {
+        return
+      }
+      const profileCreatorIdentifiers = targetEntityDoc._meta.creatorEntityId
+        ? WebUserEntitiesTools.getIdentifiersById({
+            _id: targetEntityDoc._meta.creatorEntityId,
+            type: 'Profile',
+          })
+        : undefined
+      return deltaPopularity(newPublisherFlag, {
+        feature,
+        profileCreatorIdentifiers,
+        entityType: targetEntityDoc._meta.entityClass.type as KnownEntityType,
+        entityKey: targetEntityDoc._key,
+      })
+    }),
+  )
+  return { type: 'done', ok: true }
 }
 
 export async function getProfileRecord(

@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - user profilelink in admin user list
 - user-customized landing page lists
 - prompt user to fill interests
+- profile publisher permissions un/set for admins
+  - on admin's user list section
+  - in profile home page
 
 ### Improvements
 
