@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 
 import type { CardProps } from './Card.js'
 import { Card } from './Card.js'
@@ -17,11 +17,14 @@ const meta: ComponentMeta<typeof Card> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const CardStoryProps: CardProps = {}
 
-const CardStory: ComponentStory<typeof Card> = args => (
+export const CardStory: ComponentStory<typeof Card> = args => (
   <Card {...args}>
     <div style={{ padding: 24 }}>
       Diverse, vibrant, dynamic. The cornerstone values that define our amazing{' '}
@@ -30,7 +33,7 @@ const CardStory: ComponentStory<typeof Card> = args => (
   </Card>
 )
 
-export const Default = CardStory.bind({})
+export const Default: typeof CardStory = CardStory.bind({})
 Default.args = CardStoryProps
 
 export default meta

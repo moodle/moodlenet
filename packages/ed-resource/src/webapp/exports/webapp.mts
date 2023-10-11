@@ -1,3 +1,4 @@
+export { useResourceSearchQuery } from '../components/organisms/lists/BrowserResourceList/ResourceSearchPageAddonHooks.js'
 export {
   ResourceCardPlugins,
   useResourceCardProps,

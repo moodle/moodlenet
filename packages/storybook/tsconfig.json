@@ -1,58 +1,40 @@
 {
   "extends": "../../tsconfig-base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "Node16",
-    "moduleResolution": "Node16",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": "./src"
+    // "target": "ESNext",
+    // "useDefineForClassFields": true,
+    // "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    // "allowJs": false,
+    // "skipLibCheck": true,
+    // "esModuleInterop": false,
+    // "allowSyntheticDefaultImports": true,
+    // "strict": true,
+    // "forceConsistentCasingInFileNames": true,
+    // "moduleResolution": "NodeNext",
+    // "module": "ESNext",
+    // "resolveJsonModule": true,
+    // "isolatedModules": true,
+    // "noEmit": true,
+    // "jsx": "react-jsx",
+    // "baseUrl": "./src"
+    "rootDir": "./src",
+    "noEmit": true
   },
 
-  "include": [
-    "src",
-    "src/lib/SBLinkComponent.tsx",
-    "../ed-meta/src/webapp/components/molecules/fields/ResourceData.stories.tsx"
-  ],
+  "include": ["src", "src/lib/SBLinkComponent.tsx", "vite.config.ts"],
   "references": [
-    { "path": "./tsconfig.node.json" },
-    {
-      "path": "../ed-resource"
-    },
-    {
-      "path": "../web-user"
-    },
-    {
-      "path": "../extensions-manager"
-    },
-    {
-      "path": "../component-library"
-    },
-    {
-      "path": "../passport-auth"
-    },
-    {
-      "path": "../simple-email-auth"
-    },
-    {
-      "path": "../ed-meta"
-    },
-    {
-      "path": "../collection"
-    },
-    {
-      "path": "../react-app"
-    }
+    { "path": "../collection" },
+    { "path": "../component-library" },
+    { "path": "../ed-meta" },
+    { "path": "../ed-resource" },
+    { "path": "../extensions-manager" },
+    { "path": "../moodle-lms-integration" },
+    { "path": "../passport-auth" },
+    { "path": "../react-app" },
+    { "path": "../simple-email-auth" },
+    { "path": "../unsplash" },
+    { "path": "../web-user" },
+    { "path": "../mn-central-jira-simple-moderations" }
   ],
   "paths": {
     "@/*": ["src/*"]

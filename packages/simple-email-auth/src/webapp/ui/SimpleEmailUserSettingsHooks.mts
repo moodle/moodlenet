@@ -1,30 +1,30 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { shell } from '../shell.mjs'
-import type { SimpleEmailUserSettingsData, SimpleEmailUserSettingsProps } from './UserSettings.js'
+import type { SimpleEmailUserSettingsProps } from './UserSettings.js'
 
 export function useSimpleEmailUserSettingsProps() {
   const [passwordChangedSuccess, setPasswordChangedSuccess] = useState(false)
-  const [data, setData] = useState<SimpleEmailUserSettingsData | null>()
-  useEffect(() => {
-    shell.rpc
-      .me('webapp/get-my-settings-data')()
-      .then(resp => {
-        setData(resp ? { password: '' } : null)
-      })
-  }, [])
-  const setPassword = useCallback<SimpleEmailUserSettingsProps['editData']>(({ password }) => {
+  // const [data, setData] = useState<SimpleEmailUserSettingsData | null>()
+  // useEffect(() => {
+  //   shell.rpc
+  //     .me('webapp/get-my-settings-data')()
+  //     .then(resp => {
+  //       setData(resp )
+  //     })
+  // }, [])
+  const setPassword = useCallback<SimpleEmailUserSettingsProps['setPassword']>(({ password }) => {
     shell.rpc
       .me('webapp/set-password')({ password })
       .then(success => {
         setPasswordChangedSuccess(success)
       })
   }, [])
-  if (!data) {
-    return null
-  }
+  // if (!data) {
+  //   return null
+  // }
   const simpleEmailUserSettingsProps: SimpleEmailUserSettingsProps = {
-    data,
-    editData: setPassword,
+    // data,
+    setPassword,
     passwordChangedSuccess,
   }
   return simpleEmailUserSettingsProps

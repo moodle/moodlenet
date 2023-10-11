@@ -1,6 +1,5 @@
-import { PermIdentity } from '@material-ui/icons'
 import { PrimaryButton, SecondaryButton, TertiaryButton } from '@moodlenet/component-library'
-import { Person } from '@mui/icons-material'
+import { PermIdentity, Person } from '@mui/icons-material'
 import type { FC } from 'react'
 import './FollowButton.scss'
 

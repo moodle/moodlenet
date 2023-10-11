@@ -21,16 +21,21 @@ packagesDirs.forEach(pkgDir => {
   if (pkgJson.name === 'storybook-vite') {
     return
   }
-  const hasMNDevDeps = !!Object.keys(pkgJson.devDependencies ?? {}).find(depName =>
-    depName.startsWith('@moodlenet/'),
-  )
-  if (!hasMNDevDeps) return
+  // const hasMNDevDeps = !!Object.keys(pkgJson.devDependencies ?? {}).find(depName =>
+  //   depName.startsWith('@moodlenet/'),
+  // )
+  // if (!hasMNDevDeps) return
 
   Object.keys(pkgJson.peerDependencies ?? {}).forEach(depName => {
-    if (depName.startsWith('@moodlenet/')) delete pkgJson.peerDependencies[depName]
+    if (depName.startsWith('@moodlenet/')) {
+      delete pkgJson.peerDependencies[depName]
+      return
+    }
+    pkgJson.devDependencies = pkgJson.devDependencies ?? {}
+    pkgJson.devDependencies[depName] = pkgJson.peerDependencies[depName]
   })
 
-  Object.keys(pkgJson.devDependencies).forEach(depName => {
+  Object.keys(pkgJson.devDependencies ?? {}).forEach(depName => {
     if (!depName.startsWith('@moodlenet/')) return
     pkgJson.peerDependencies = pkgJson.peerDependencies ?? {}
     pkgJson.peerDependencies[depName] = pkgJson.devDependencies[depName]

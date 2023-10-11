@@ -1,10 +1,11 @@
-// import { SvgIconTypeMap } from '@material-ui/core'
-import { ExpandLess as ExpandLessIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ExpandLess, ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import type { FC, ReactNode } from 'react'
-import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { SelectorProps } from '../../../lib/selector.js'
 import { Selector, useSelectorOption } from '../../../lib/selector.js'
 
+import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material'
 import RoundButton from '../RoundButton/RoundButton.js'
 import './Dropdown.scss'
 import { setListPosition } from './utils.js'
@@ -19,7 +20,10 @@ export type DropdownProps = SelectorProps & {
   highlight?: boolean
   multilines?: boolean
   noBorder?: boolean
+  divRef?: React.RefObject<HTMLDivElement>
+  abbr?: string
   position?: { top?: number; bottom?: number }
+  dropdownButton?: ReactNode
 }
 export const Dropdown: FC<DropdownProps> = props => {
   const {
@@ -33,7 +37,10 @@ export const Dropdown: FC<DropdownProps> = props => {
     highlight: _highlight,
     noBorder: _noBorder,
     multilines: _multilines,
+    divRef: _divRef,
+    abbr: _abbr,
     position: _position,
+    dropdownButton: _dropdownButton,
     ...selectorProps
   } = props
   return (
@@ -60,52 +67,99 @@ const DropdownComp: FC<DropdownProps> = props => {
     multiple,
     searchText,
     placeholder,
+    divRef,
+    abbr,
     position,
+    dropdownButton: DropdownButton,
   } = props
 
-  const [showContentFlag, toggleOpen] = useReducer(_ => !_, false)
+  const [isShowingContent, setShowingContent] = useState(false)
   const [isHoveringOptions, setHoveringOptions] = useState(false)
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
   const [currentError, setcurrentError] = useState<ReactNode>(undefined)
+  // const [multilineHeight, setMultilineHeight] = useState(0)
 
-  const showContent = edit && showContentFlag
+  const showContent = edit && isShowingContent
+
+  const dropdownContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const clickOutListener = () => {
-      showContent && toggleOpen()
+    const clickOutListener = (event: MouseEvent) => {
+      const div = divRef ? divRef.current : dropdownContainerRef.current
+      !((div && div.contains(event.target as Node)) || div === event.target) &&
+        showContent &&
+        setShowingContent(false)
     }
     window.addEventListener('click', clickOutListener)
     return () => window.removeEventListener('click', clickOutListener)
-  }, [showContent])
+  }, [divRef, showContent])
+
+  // useEffect(() => {
+  //   const clickOutListener = () => {
+  //     isShowingContent && toggleIsShowingContent()
+  //   }
+  //   window.addEventListener('click', clickOutListener)
+  //   return () => window.removeEventListener('click', clickOutListener)
+  // }, [isShowingContent])
+  // const dropdownRef = useRef<HTMLDivElement>(null)
+  const dropdownButtonRef = useRef<HTMLInputElement>(null)
+  const dropdownContentRef = useRef<HTMLInputElement>(null)
+  const inputContainerRef = useRef<HTMLDivElement>(null)
+  const multilinesRef = useRef<HTMLDivElement>(null)
+
+  // useEffect(() => {
+  // const height = multilinesRef.current?.clientHeight
+  // if (multilines && height && height !== 0) {
+  //   height < 46 ? 46 : setMultilineHeight(height)
+  // }
+  // }, [multilines, multilinesRef.current?.clientHeight, isShowingContent])
+
+  // const handleClickOutside = (event: MouseEvent) => {
+  //   if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+  //     setShowingContent(false)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   const handleDocumentClick = (event: MouseEvent) => {
+  //     handleClickOutside(event)
+  //   }
+
+  //   document.addEventListener('click', handleDocumentClick)
+
+  //   return () => {
+  //     document.removeEventListener('click', handleDocumentClick)
+  //   }
+  // }, [])
 
   const setLayout = useCallback(() => {
-    showContent &&
+    isShowingContent &&
       setListPosition({
-        dropdownButton,
-        dropdownContent,
+        dropdownButtonRef,
+        dropdownContentRef,
         topPosition: position && position.top,
         bottomPosition: position && position.bottom,
         window,
         label: !!label,
       })
-  }, [showContent, position, label])
+  }, [isShowingContent, position, label])
 
   useLayoutEffect(() => {
-    showContent && setLayout()
+    isShowingContent && setLayout()
     window.addEventListener('scroll', setLayout)
     window.addEventListener('resize', setLayout)
     return () => {
       window.removeEventListener('scroll', setLayout)
       window.removeEventListener('resize', setLayout)
     }
-  }, [setLayout, showContent])
+  }, [setLayout, isShowingContent])
 
   useLayoutEffect(() => {
-    showContent && dropdownButton.current?.focus()
-  }, [showContent])
+    isShowingContent && dropdownButtonRef.current?.focus()
+  }, [isShowingContent])
   useEffect(() => {
-    !showContent && searchByText?.('')
-  }, [showContent, searchByText])
+    !isShowingContent && searchByText?.('')
+  }, [isShowingContent, searchByText])
 
   useEffect(() => {
     if (error) {
@@ -123,77 +177,105 @@ const DropdownComp: FC<DropdownProps> = props => {
     }
   }, [error, setErrorLeave, currentError])
 
-  const dropdownButton = useRef<HTMLInputElement>(null)
-  const dropdownContent = useRef<HTMLInputElement>(null)
-
-  // const contentLength: number = children && Array.isArray(children) && children[1].length
-
   return (
-    <div
+    <abbr
+      // ref={dropdownRef}
       className={`dropdown ${className ? className : ''} ${searchByText ? 'search' : ''}${
         disabled ? ' disabled' : ''
       } ${highlight || error ? ' highlight' : ''} ${!errorLeaves && error ? 'enter-error' : ''} ${
         errorLeaves ? 'leave-error' : ''
       }`}
-      style={{ visibility: hidden ? 'hidden' : 'visible' }}
+      ref={divRef ?? dropdownContainerRef}
+      style={{
+        visibility: hidden ? 'hidden' : 'visible',
+        // height: multilines ? `${28 + multilineHeight}px` : undefined,
+      }}
       hidden={hidden}
+      title={abbr}
     >
       {label && <label>{label}</label>}
       <div
-        onClick={showContent ? undefined : toggleOpen}
-        onFocus={showContent ? undefined : toggleOpen}
-        className={`input-container${disabled || !edit ? ' not-editing' : ''}${
+        ref={inputContainerRef}
+        onClick={e => {
+          if (!isShowingContent) e.stopPropagation()
+          setShowingContent(true)
+        }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && !isShowingContent) e.stopPropagation()
+          setShowingContent(true)
+        }}
+        onBlur={isShowingContent ? undefined : () => setShowingContent(false)}
+        className={`input-container${disabled || !edit ? ' not-editing' : ''} ${
           highlight ? ' highlight' : ''
-        }${noBorder ? ' no-border' : ''}`}
-        tabIndex={!disabled && !showContent ? 0 : undefined}
+        }
+          ${multilines ? ' multilines' : ''} 
+         ${noBorder ? ' no-border' : ''}
+        ${showContent ? ' showing-content' : ''}
+        `}
+        tabIndex={!disabled && !isShowingContent ? 0 : undefined}
       >
-        {showContent ? (
+        {isShowingContent ? (
           <>
             <input
-              ref={dropdownButton}
+              ref={dropdownButtonRef}
               className={`dropdown-button search-field  ${disabled || !edit ? 'not-editing' : ''}`}
               placeholder={placeholder}
               onInput={({ currentTarget }) => searchByText?.(currentTarget.value)}
-              onClick={showContent ? _ => _.stopPropagation() : undefined}
-              onBlur={showContent && isHoveringOptions ? undefined : toggleOpen}
+              onClick={isShowingContent ? _ => _.stopPropagation() : undefined}
+              onBlur={
+                isShowingContent && isHoveringOptions ? undefined : () => setShowingContent(false)
+              }
+              // onKeyDownCapture={e => {
+              //   if (e.key === 'Down') {
+              //     dropdownContentRef.current?.focus()
+              //     console.log('down pressed')
+              //   }
+              // }}
               disabled={disabled || !edit}
               defaultValue={searchText}
             />
-            <ExpandLessIcon onClickCapture={toggleOpen} />
+            <ExpandLess className="less-arrow" onClickCapture={() => setShowingContent(false)} />
           </>
         ) : (
-          <>
-            <div
-              className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
+          DropdownButton ?? (
+            <>
+              <div
+                ref={multilinesRef}
+                className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
               ${multilines ? 'multilines' : ''} 
               ${multiple && !multilines ? 'scroll' : ''}
               `}
-            >
-              {pills ? pills : !disabled && <div className="placeholder">{placeholder}</div>}
-            </div>
-            {!disabled && edit && <ExpandMoreIcon />}
-          </>
+              >
+                {pills && !(Array.isArray(pills) && pills.length === 0) ? (
+                  pills
+                ) : (
+                  <div className="placeholder">{placeholder}</div>
+                )}
+              </div>
+              {!disabled && edit && <ExpandMoreIcon className="open-arrow" />}
+            </>
+          )
         )}
       </div>
       {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}
 
-      {showContent && (
+      {isShowingContent && (
         // contentLength > 0 &&
         <div
-          ref={dropdownContent}
+          ref={dropdownContentRef}
           onMouseEnter={() => setHoveringOptions(true)}
           onMouseLeave={() => setHoveringOptions(false)}
           className="dropdown-content"
           tabIndex={-1}
           onClick={_ => {
             _.stopPropagation()
-            !multiple && toggleOpen()
+            !multiple && setShowingContent(false)
           }}
         >
           {children}
         </div>
       )}
-    </div>
+    </abbr>
   )
 }
 
@@ -208,7 +290,16 @@ export const SimplePill: FC<{
   return (
     <abbr title={title} className="dropdown-pill">
       <div className="label">{label}</div>
-      {edit && <RoundButton onClick={toggle} />}
+      {edit && (
+        <RoundButton
+          className="remove"
+          onClick={e => {
+            toggle && toggle()
+            e.stopPropagation()
+            console.log('deleting')
+          }}
+        />
+      )}
     </abbr>
   )
 }
@@ -272,6 +363,26 @@ export const TextOption: FC<TextOptionProps> = ({ value, label, abbr }) => {
       className={`${selected ? 'selected ' : ''} option only-text`}
       onClick={toggle}
     >
+      {label}
+    </abbr>
+  )
+}
+export type CheckmarkOptionProps = {
+  value: string
+  label: string
+  abbr?: string
+}
+export const CheckmarkOption: FC<CheckmarkOptionProps> = ({ value, label, abbr }) => {
+  const { toggle, selected } = useSelectorOption(value) ?? {}
+  const title = abbr ? abbr : typeof label === 'string' ? label : undefined
+  return (
+    <abbr
+      key={value}
+      title={title}
+      className={`${selected ? 'selected ' : ''} option checkmark`}
+      onClick={toggle}
+    >
+      {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
       {label}
     </abbr>
   )

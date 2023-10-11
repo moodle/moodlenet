@@ -33,7 +33,7 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
     edit: (key: string, values: CollectionFormProps) =>
       rpc('webapp/edit/:_key')({ values }, { _key: key }),
 
-    get: (_key: string) => rpc('webapp/get/:_key')(null, { _key }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
+    get: (_key: string) => rpc('webapp/get/:_key', { rpcId: `get#${_key}` })(null, { _key }), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
     // get: (_key: string) => addAuth(rpc('webapp/get/:_key')(null, { _key })), // RpcArgs accepts 3 arguments : body(an object), url-params:(Record<string,string> ), and an object(Record<string,string>) describing query-string
 
     _delete: (key: string) => rpc('webapp/delete/:_key')(null, { _key: key }),

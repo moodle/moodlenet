@@ -1,6 +1,6 @@
 import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout } from '@moodlenet/react-app/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { FooterStoryProps } from '../../organisms/Footer/Footer.stories.js'
 
 import {
@@ -40,13 +40,13 @@ export const MainLayoutLoggedInStoryProps: MainLayoutProps = {
 
 export const MainLayoutStory: ComponentStory<typeof MainLayout> = args => <MainLayout {...args} />
 
-export const MainLayoutLoggedOut = MainLayoutStory.bind({})
+export const MainLayoutLoggedOut: typeof MainLayoutStory = MainLayoutStory.bind({})
 MainLayoutLoggedOut.args = MainLayoutLoggedOutStoryProps
 
-export const LoggedOutOrganization = MainLayoutStory.bind({})
+export const LoggedOutOrganization: typeof MainLayoutStory = MainLayoutStory.bind({})
 LoggedOutOrganization.args = MainLayoutOrganizationLoggedOutStoryProps
 
-export const LoggedIn = MainLayoutStory.bind({})
+export const LoggedIn: typeof MainLayoutStory = MainLayoutStory.bind({})
 LoggedIn.args = MainLayoutLoggedInStoryProps
 
 export default meta

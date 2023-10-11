@@ -11,12 +11,12 @@ export const expose = await shell.expose<MoodleLMSExposeType>({
       },
       async fn() {
         const currentUserConfigs = await getCurrentUserConfigs()
-        if (currentUserConfigs === false) {
-          throw RpcStatus('Unauthorized')
-        }
+        // if (currentUserConfigs === false) {
+        //   throw RpcStatus('Unauthorized')
+        // }
 
         return (
-          currentUserConfigs ?? {
+          currentUserConfigs || {
             sites: [],
           }
         )

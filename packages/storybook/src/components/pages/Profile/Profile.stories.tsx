@@ -2,12 +2,12 @@ import { OverallCardStories } from '@moodlenet/react-app/stories'
 // import { Profile } from '@moodlenet/web-user/ui'
 import { Profile } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/CollectionCardProps.stories.js'
-import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useState } from 'react'
+import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
+import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
 import { MainLayoutLoggedOutStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
-import { useProfileStoryProps } from './ProfileProps.stories.jsx'
+import { useProfileStoryProps } from './ProfileProps.stories.props.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Profile> = {
@@ -63,7 +63,11 @@ export const Owner: ProfileStory = () => {
       canEdit: true,
       isCreator: true,
       canApprove: false,
-      isPublisher: false,
+      isPublisher: true,
+    },
+    data: {
+      // avatarUrl: undefined,
+      // backgroundUrl: undefined,
     },
     state: {
       // isPublisher: false,

@@ -6,7 +6,6 @@ import type {
   AccessEntitiesCustomProject,
   EntityAccess,
   GetEntityOpts,
-  Patch,
 } from '@moodlenet/system-entities/server'
 import {
   create,
@@ -19,7 +18,7 @@ import {
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
-import type { ResourceFormProps, SortTypeRpc } from '../common/types.mjs'
+import type { ResourceFormProps } from '../common/types.mjs'
 import type { ValidationsConfig } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
 import { canPublish } from './aql.mjs'
@@ -74,6 +73,7 @@ export async function setPublished(key: string, published: boolean) {
       type: resource.entity.type,
       month: resource.entity.month,
       year: resource.entity.year,
+      learningOutcomes: resource.entity.learningOutcomes,
     }
     const isValid = await publishedResourceValidationSchema.isValid(resourceFormProps)
     if (!isValid) {
@@ -109,6 +109,7 @@ export async function createResource(resourceData: Partial<ResourceDataType>) {
     month: '',
     year: '',
     type: '',
+    learningOutcomes: [],
     ...resourceData,
   })
 
@@ -163,7 +164,7 @@ export async function deltaResourcePopularityItem({
   return updated?.popularity?.overall
 }
 
-export async function patchResource(_key: string, patch: Patch<ResourceEntityDoc>) {
+export async function patchResource(_key: string, patch: Partial<ResourceEntityDoc>) {
   const resource = await shell.call(getEntity)(Resource.entityClass, _key)
   if (!resource) {
     return null
@@ -180,6 +181,7 @@ export async function patchResource(_key: string, patch: Patch<ResourceEntityDoc
     subject: patch.subject ?? resource.entity.subject,
     type: patch.type ?? resource.entity.type,
     year: patch.year ?? resource.entity.year,
+    learningOutcomes: patch.learningOutcomes ?? resource.entity.learningOutcomes,
   }
   const isValid = await (resource.entity.published
     ? publishedResourceValidationSchema
@@ -284,8 +286,11 @@ export async function setResourceContent(_key: string, resourceContent: RpcFile 
   return { patchedDoc, contentUrl }
 }
 
-export type SearchFilterType = [prop: 'subject', equals: string][]
-
+export type SearchFilterType = [
+  metaProp: 'subject' | 'language' | 'level' | 'type' | 'license',
+  keys: string[],
+][]
+export type SortType = 'Relevant' | 'Popular' | 'Recent'
 export async function searchResources({
   limit = 20,
   sortType = 'Recent',
@@ -293,22 +298,57 @@ export async function searchResources({
   after = '0',
   filters = [],
 }: {
-  sortType?: SortTypeRpc
+  sortType?: SortType
   text?: string
   after?: string
   limit?: number
   filters?: SearchFilterType
 }) {
+  const filterSortFactor =
+    filters
+      .filter(([, vals]) => vals.length)
+      .map(
+        // ([metaPropName, vals]) => `+(${currentEntityVar}.${metaPropName} IN ${toaql(vals)} ? 1 : 0)`,
+        ([metaPropName, vals]) => {
+          const factors: Record<SearchFilterType[number][0], number> = {
+            language: 1,
+            level: 0.8,
+            type: 0.7,
+            license: 0.9,
+            subject: 0.9,
+          }
+
+          const returnExpr =
+            metaPropName === 'subject'
+              ? `1 / (1 + 
+                ((STARTS_WITH(propVal , searchVal) || STARTS_WITH(searchVal, propVal ) )
+                    ? ABS(LENGTH(propVal)-LENGTH(searchVal))
+                    : 10*LEVENSHTEIN_DISTANCE(propVal,searchVal)
+                ))`
+              : `searchVal == propVal ? 1 : 0`
+
+          return `${factors[metaPropName]} * AVG(
+          FOR searchVal IN ${toaql(vals)}
+            LET propVal = ${currentEntityVar}.${metaPropName}
+            RETURN ${returnExpr}
+          )
+        `
+        },
+      )
+      .join(' + ') || '1'
+
   const sort =
-    sortType === 'Popular'
-      ? `${currentEntityVar}.popularity.overall DESC, rank DESC`
+    `((${filterSortFactor}) * ` +
+    (sortType === 'Popular'
+      ? `${currentEntityVar}.popularity.overall) DESC, rank DESC`
       : sortType === 'Relevant'
-      ? 'rank DESC'
+      ? 'rank) DESC'
       : sortType === 'Recent'
-      ? `${entityMeta(currentEntityVar, 'created')} DESC`
-      : 'rank DESC'
-  const filter = filters.map(([p, val]) => `${currentEntityVar}.${p} == ${toaql(val)}`).join(' OR ')
+      ? `${entityMeta(currentEntityVar, 'created')}) DESC`
+      : 'rank) DESC')
+
   const skip = Number(after)
+
   const cursor = await shell.call(searchEntities)(
     Resource.entityClass,
     text,
@@ -317,7 +357,7 @@ export async function searchResources({
       limit,
       skip,
       sort,
-      preAccessBody: filter ? `FILTER ${filter}` : undefined,
+      //preAccessBody: filter ? `SORT 100*(${filter}) DESC` : undefined,
     },
   )
 

@@ -1,5 +1,5 @@
 // import CircularProgress, { circularProgressClasses } from '@mui/material/CircularProgress'
-import { CircularProgress } from '@material-ui/core'
+import { CircularProgress } from '@mui/material'
 import Lottie from 'lottie-react'
 import type { FC } from 'react'
 import uploadingAnimation from '../../../assets/animations/uploading.mjs'

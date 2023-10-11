@@ -6,7 +6,7 @@
   flex-direction: column;
   justify-content: start;
   gap: 64px;
-  padding-top: 60px;
+  padding-top: 20px;
 
   @media screen and (max-width: 900px) {
     padding-top: 0;
@@ -21,8 +21,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 60px;
-    padding: 110px 60px;
+    gap: 42px;
+    padding: 64px 60px;
     border-radius: 40px;
 
     @media screen and (max-width: 650px) {
@@ -90,14 +90,11 @@
 
     > .searchbox {
       max-width: 585px;
-    }
-
-    > .share-content {
-      height: 50px;
-      padding: 10px 60px;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 16px;
+      @media screen and (max-width: 500px) {
+        > input {
+          font-size: 13px;
+        }
+      }
     }
   }
 
@@ -216,43 +213,22 @@
   border-radius: 9px;
 }
 
-.modal-portal > .create-content-modal.modal-container {
-  > .modal {
-    > .modal-header {
-      > .title {
-        font-size: 16px;
-      }
+.set-interests-snackbar.snackbar {
+  > .content,
+  > .actions {
+    padding-right: 0;
+  }
+
+  > .actions > .navigate-button {
+    padding: 6px 12px;
+    color: white;
+    background-color: #00000029;
+
+    &:hover {
+      background-color: #00000044;
     }
-    > .content {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      > a {
-        > .primary-button {
-          height: 70px;
-          display: flex;
-          justify-content: flex-start;
-          gap: 15px;
-          > .content {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            > .title {
-              font-size: 15px;
-            }
-            > .subtitle {
-              font-size: 13px;
-              color: #707070;
-              font-weight: normal;
-            }
-          }
-          > svg {
-            width: 30px;
-            height: 30px;
-            fill: #a7a7a7;
-          }
-        }
-      }
+    &:active {
+      background-color: #0000005e;
     }
   }
 }

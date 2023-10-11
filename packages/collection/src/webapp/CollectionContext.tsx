@@ -3,9 +3,11 @@ import { createContext, useCallback, useContext, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { MainContext } from './MainContext.js'
+import { shell } from './shell.mjs'
 
 export type CollectionContextT = {
   createCollection(): Promise<{ homePath: string; key: string }>
+  rpc: typeof shell.rpc.me
 }
 export const CollectionContext = createContext<CollectionContextT>(null as any)
 
@@ -27,6 +29,7 @@ export function useCollectionContextValue() {
   const collectionContext = useMemo<CollectionContextT>(() => {
     const collectionContext: CollectionContextT = {
       createCollection,
+      rpc: shell.rpc.me,
     }
     return collectionContext
   }, [createCollection])

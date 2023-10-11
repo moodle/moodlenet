@@ -24,7 +24,7 @@
 //   <Extensions {...args} />
 // )
 
-// export const Default = ExtensionsStory.bind({})
+// export const Default: typeof ExtensionsStory = ExtensionsStory.bind({})
 // Default.args = ExtensionsStoryProps
 
 // export default meta

@@ -1,10 +1,10 @@
-import { FilterNone, PermIdentity } from '@material-ui/icons'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type { SubjectCardProps } from '@moodlenet/ed-meta/ui'
 import { SubjectCard } from '@moodlenet/ed-meta/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import { FilterNone, PermIdentity } from '@mui/icons-material'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 
 const meta: ComponentMeta<typeof SubjectCard> = {
@@ -21,6 +21,9 @@ const meta: ComponentMeta<typeof SubjectCard> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const getSubjectCardStoryProps = (
@@ -62,7 +65,7 @@ export const SubjectCardStoryProps: SubjectCardProps = {
 
 const SubjectCardStory: ComponentStory<typeof SubjectCard> = args => <SubjectCard {...args} />
 
-export const Default = SubjectCardStory.bind({})
+export const Default: typeof SubjectCardStory = SubjectCardStory.bind({})
 Default.args = SubjectCardStoryProps
 
 export default meta

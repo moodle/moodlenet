@@ -94,15 +94,10 @@
         > label {
           margin-bottom: 0;
         }
-        > .input-container {
-          background-color: transparent;
-          border: none;
-        }
 
         &.disabled {
           > .input-container {
             background-color: transparent;
-            border: none;
             > .dropdown-button {
               color: #c6c6c6;
             }

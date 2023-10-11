@@ -1,6 +1,7 @@
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { MainSearchBoxCtx, proxyWith, type SortType } from '@moodlenet/react-app/ui'
 import {
+  silentCatchAbort,
   useUrlQueryString,
   type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
@@ -30,29 +31,33 @@ export const SearchProfileContext = createContext<SearchProfileContextT>(null as
 export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [profileList, profileListAction] = useReducer(reducer, [])
   const [profileSearchResult, setProfileSearchResult] = useState<ProfileSearchResultRpc>()
-  const { q } = useContext(MainSearchBoxCtx)
+  const { qText: q } = useContext(MainSearchBoxCtx)
   const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['sortType'], shell.pkgId.name)
   const sortType: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
     ? queryUrlParams.sortType
     : 'Popular'
 
   const load = useCallback(
-    async (limit: number, cursor?: string) => {
-      const res = await shell.rpc.me('webapp/search')(undefined, undefined, {
-        limit,
-        sortType,
-        text: q,
-        after: cursor,
-      })
-      setProfileSearchResult(res)
-      return res
+    (limit: number, cursor?: string) => {
+      return shell.rpc
+        .me('webapp/search', { rpcId: 'search' })(undefined, undefined, {
+          limit,
+          sortType,
+          text: q,
+          after: cursor,
+        })
+        .then(res => {
+          res && setProfileSearchResult(res)
+          return res
+        })
+        .catch(silentCatchAbort)
     },
     [q, sortType],
   )
 
   useEffect(() => {
     load(12).then(res => {
-      profileListAction(['set', res.list])
+      res && profileListAction(['set', res.list])
     })
   }, [load])
 
@@ -62,7 +67,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
       return
     }
     const res = await load(30, profileSearchResult?.endCursor)
-    profileListAction(['more', res.list])
+    res && profileListAction(['more', res.list])
   }, [hasNoMore, load, profileSearchResult?.endCursor])
 
   const setSortType = useCallback<SearchProfileContextT['setSortType']>(
@@ -77,6 +82,7 @@ export const ProvideSearchProfileContext: FC<PropsWithChildren<unknown>> = ({ ch
 
 export const SearchProfileSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   profiles: {
+    position: 2,
     Item: browserMainColumnItemBase => {
       const { profileList, loadMore } = useContext(SearchProfileContext)
 

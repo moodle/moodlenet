@@ -6,9 +6,9 @@ import { SimpleResourceList } from '@moodlenet/ed-resource/ui'
 import type { BookmarkButtonProps, FollowButtonProps } from '@moodlenet/web-user/ui'
 import { FollowButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta } from '@storybook/react'
-import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
+import type { Meta as ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
+import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,

@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { SearchImage } from './SearchImage.js'
 
 const meta: ComponentMeta<typeof SearchImage> = {
@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof SearchImage> = {
 
 const SearchImageStory: ComponentStory<typeof SearchImage> = args => <SearchImage {...args} />
 
-export const Default = SearchImageStory.bind({})
+export const Default: typeof SearchImageStory = SearchImageStory.bind({})
 Default.args = {
   onClose: action('close SearchImage'),
   // children: <h1>SearchImage Content</h1>,

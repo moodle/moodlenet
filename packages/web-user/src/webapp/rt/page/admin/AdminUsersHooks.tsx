@@ -1,3 +1,5 @@
+import { href } from '@moodlenet/react-app/common'
+import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { User, WebUserData } from '../../../../common/types.mjs'
 import type { UsersProps } from '../../../ui/components/organisms/Roles/Users.js'
@@ -8,7 +10,12 @@ export const useAdminUsersProps = (): UsersProps => {
   const [usersCache, setUsersCache] = useState<WebUserData[]>([])
 
   const searchUser = useCallback((str: string) => {
-    shell.rpc.me('webapp/admin/roles/searchUsers')({ search: str }).then(setUsersCache)
+    shell.rpc
+      .me('webapp/admin/roles/searchUsers', { rpcId: 'webapp/admin/roles/searchUsers' })({
+        search: str,
+      })
+      .then(setUsersCache)
+      .catch(silentCatchAbort)
     setSearch(str)
   }, [])
 
@@ -18,7 +25,7 @@ export const useAdminUsersProps = (): UsersProps => {
 
   const userProps = useMemo<UsersProps>(() => {
     const users: UsersProps['users'] = usersCache.map(
-      ({ isPublisher, _key, name: title, email, isAdmin, profileKey }) => {
+      ({ isPublisher, _key, name: title, email, isAdmin, profileKey, profileHomePath }) => {
         const toggleIsAdmin = async () => {
           return shell.rpc
             .me('webapp/admin/roles/toggleIsAdmin')({ userKey: _key })
@@ -29,7 +36,13 @@ export const useAdminUsersProps = (): UsersProps => {
             .me('webapp/admin/roles/toggleIsPublisher')({ profileKey })
             .then(() => searchUser(search))
         }
-        const user: User = { title, email, isAdmin, isPublisher }
+        const user: User = {
+          title,
+          email,
+          isAdmin,
+          isPublisher,
+          profileHref: href(profileHomePath),
+        }
         return {
           user,
           toggleIsAdmin,

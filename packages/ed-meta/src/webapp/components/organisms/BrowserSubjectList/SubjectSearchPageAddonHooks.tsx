@@ -1,6 +1,7 @@
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { MainSearchBoxCtx, proxyWith, type SortType } from '@moodlenet/react-app/ui'
 import {
+  silentCatchAbort,
   useUrlQueryString,
   type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
@@ -32,29 +33,33 @@ export const SearchSubjectContext = createContext<SearchSubjectContextT>(null as
 export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [subjectList, subjectListAction] = useReducer(reducer, [])
   const [subjectSearchResult, setSubjectSearchResult] = useState<SubjectSearchResultRpc>()
-  const { q } = useContext(MainSearchBoxCtx)
+  const { qText: q } = useContext(MainSearchBoxCtx)
   const [queryUrlParams, setQueryUrlParams] = useUrlQueryString(['sortType'], shell.pkgId.name)
   const sortType: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
     ? queryUrlParams.sortType
     : 'Popular'
 
   const load = useCallback(
-    async (limit: number, cursor?: string) => {
-      const res = await shell.rpc.me('webapp/search')(null, null, {
-        limit,
-        sortType,
-        text: q,
-        after: cursor,
-      })
-      setSubjectSearchResult(res)
-      return res
+    (limit: number, cursor?: string) => {
+      return shell.rpc
+        .me('webapp/search', { rpcId: 'search' })(null, null, {
+          limit,
+          sortType,
+          text: q,
+          after: cursor,
+        })
+        .then(res => {
+          setSubjectSearchResult(res)
+          return res
+        })
+        .catch(silentCatchAbort)
     },
     [q, sortType],
   )
 
   useEffect(() => {
     load(10).then(res => {
-      subjectListAction(['set', res.list])
+      res && subjectListAction(['set', res.list])
     })
   }, [load])
 
@@ -64,7 +69,7 @@ export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ ch
       return
     }
     const res = await load(30, subjectSearchResult?.endCursor)
-    subjectListAction(['more', res.list])
+    res && subjectListAction(['more', res.list])
   }, [hasNoMore, load, subjectSearchResult?.endCursor])
 
   const setSortType = useCallback<SearchSubjectContextT['setSortType']>(
@@ -79,6 +84,7 @@ export const ProvideSearchSubjectContext: FC<PropsWithChildren<unknown>> = ({ ch
 
 export const SearchSubjectSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
   subjects: {
+    position: 3,
     Item: browserMainColumnItemBase => {
       const { subjectList, loadMore } = useContext(SearchSubjectContext)
 

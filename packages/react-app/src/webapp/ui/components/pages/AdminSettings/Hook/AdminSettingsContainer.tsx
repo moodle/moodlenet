@@ -1,9 +1,14 @@
 import type { FC } from 'react'
+import { Fallback } from '../../Extra/Fallback/Fallback.js'
 import { AdminSettings } from '../AdminSettings.js'
 import { useAdminSettingsProps } from './AdminSettingsHook.js'
 
 export const AdminSettingsContainer: FC = () => {
-  const AdminSettingsProps = useAdminSettingsProps()
+  const { adminSettingsProps, denyAccess } = useAdminSettingsProps()
 
-  return <AdminSettings {...AdminSettingsProps} />
+  return denyAccess ? (
+    <Fallback mainLayoutProps={adminSettingsProps.mainLayoutProps} />
+  ) : (
+    <AdminSettings {...adminSettingsProps} />
+  )
 }

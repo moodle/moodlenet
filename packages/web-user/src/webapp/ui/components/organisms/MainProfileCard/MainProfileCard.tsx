@@ -1,4 +1,3 @@
-import { Edit, Save } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
   FloatingMenu,
@@ -11,6 +10,7 @@ import {
   SnackbarStack,
   useImageUrl,
 } from '@moodlenet/component-library'
+import { Edit, Save } from '@mui/icons-material'
 import { useFormik } from 'formik'
 
 import { Share } from '@mui/icons-material'
@@ -123,12 +123,10 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [avatarFromForm] = useImageUrl(avatarForm.values.image)
 
   useEffect(() => {
-    setUpdatedAvatar(avatarUrl)
-  }, [avatarUrl])
-
-  useEffect(() => {
-    avatarForm.isValid && setUpdatedAvatar(avatarFromForm)
-  }, [avatarForm, avatarFromForm])
+    const avatarToChange =
+      avatarForm.isValid && avatarFromForm ? avatarFromForm : avatarImageUrl ?? null
+    avatarToChange && setUpdatedAvatar(avatarToChange)
+  }, [avatarForm.isValid, avatarFromForm, avatarImageUrl, avatarUrl])
 
   const backgroundForm = useFormik<{ image: File | string | null | undefined }>({
     initialValues: { image: backgroundUrl },
@@ -142,12 +140,10 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
   const [backgroundFromForm] = useImageUrl(backgroundForm.values.image)
 
   useEffect(() => {
-    setUpdatedBackground(backgroundUrl)
-  }, [backgroundUrl])
-
-  useEffect(() => {
-    backgroundForm.isValid && setUpdatedBackground(backgroundFromForm)
-  }, [backgroundForm.isValid, backgroundFromForm])
+    const backgroundToChange =
+      backgroundForm.isValid && backgroundFromForm ? backgroundFromForm : backgroundImageUrl ?? null
+    backgroundToChange && setUpdatedBackground(backgroundToChange)
+  }, [backgroundForm.isValid, backgroundFromForm, backgroundImageUrl])
 
   const messageForm = useFormik<{ msg: string }>({
     initialValues: { msg: '' },
@@ -197,16 +193,6 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
     avatarForm.setFieldValue('image', e.currentTarget.files?.item(0))
-
-  const background = {
-    backgroundImage: 'url("' + updatedBackground + '")',
-    backgroundSize: 'cover',
-  }
-
-  const avatar = {
-    backgroundImage: 'url("' + updatedAvatar + '")',
-    backgroundSize: 'cover',
-  }
 
   const copyUrl = () => {
     navigator.clipboard.writeText(profileUrl)
@@ -259,16 +245,16 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 
   const description = isEditing ? (
     <InputTextField
-      textAreaAutoSize
-      value={form.values.aboutMe}
-      onChange={form.handleChange}
-      isTextarea
-      noBorder={true}
-      placeholder={`What should others know about you?`}
       className="description"
       key="description"
       name="aboutMe"
+      onChange={form.handleChange}
+      isTextarea
+      textAreaAutoSize
+      noBorder
       edit={isEditing}
+      placeholder={`What should others know about you?`}
+      value={form.values.aboutMe}
       error={isEditing && shouldShowErrors && form.errors.aboutMe}
     />
   ) : (
@@ -317,7 +303,8 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       />
     </span>
   ) : (
-    <span key="location">{form.values.location}</span>
+    form.values.location &&
+    form.values.location !== '' && <span key="location">{form.values.location}</span>
   )
 
   const siteUrl = isEditing ? (
@@ -334,9 +321,12 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       />
     </span>
   ) : (
-    <a key="site-url" href={form.values.siteUrl} target="_blank" rel="noreferrer">
-      {form.values.siteUrl}
-    </a>
+    form.values.siteUrl &&
+    form.values.siteUrl !== '' && (
+      <a key="site-url" href={form.values.siteUrl} target="_blank" rel="noreferrer">
+        {form.values.siteUrl}
+      </a>
+    )
   )
 
   const updatedSubtitleItems = [location, siteUrl, ...(subtitleItems ?? [])].filter(
@@ -349,9 +339,11 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         {updatedTitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </div>
 
-      <div className={`subtitle ${isEditing ? 'edit' : ''}`} key="subtitle-row">
-        {updatedSubtitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </div>
+      {updatedSubtitleItems.length > 0 && (
+        <div className={`subtitle ${isEditing ? 'edit' : ''}`} key="subtitle-row">
+          {updatedSubtitleItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+        </div>
+      )}
     </div>
   )
 
@@ -397,7 +389,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
         className={`background`}
         key="background"
         style={{
-          ...background,
+          backgroundImage: 'url("' + updatedBackground + '")',
           pointerEvents:
             backgroundForm.isSubmitting || !backgroundForm.values.image ? 'none' : 'inherit',
           cursor: backgroundForm.isSubmitting || !backgroundForm.values.image ? 'auto' : 'pointer',
@@ -413,7 +405,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       <div
         className={`avatar`}
         style={{
-          ...avatar,
+          backgroundImage: 'url("' + updatedAvatar + '")',
           pointerEvents: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'inherit',
           cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
         }}

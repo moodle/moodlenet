@@ -2,5 +2,6 @@
   "packages": ["packages/*"],
   "npmClient": "npm",
   "_useWorkspaces": true,
-  "version": "independent"
+  "version": "independent",
+  "-hoist": "{@moodlenet/*,*react*,@mui*,@material-ui*,vscode-generate-index-standalone,copyfiles,rimraf,npm-watch,*storybook*}"
 }

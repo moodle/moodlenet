@@ -5,6 +5,17 @@
     > .primary-button,
     > .secondary-button {
       padding: 6px 6px 6px 18px;
+      > .num-selected-elements {
+        background-color: #ffffff;
+        color: #959595;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 4px;
+      }
     }
   }
   > .menu {
@@ -43,6 +54,15 @@
             transition: background-color 150ms ease-in;
             &.selected {
               background-color: var(--primary-color);
+            }
+            &.prev-selected {
+              border-radius: 0 0 4px 0;
+            }
+            &.next-selected {
+              border-radius: 0 4px 0 0;
+            }
+            &.next-selected.prev-selected {
+              border-radius: 0;
             }
           }
         }

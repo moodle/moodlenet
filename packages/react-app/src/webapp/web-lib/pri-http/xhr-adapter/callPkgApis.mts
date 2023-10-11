@@ -20,10 +20,11 @@ type PendingRpcHandle = { controller: AbortController }
 
 type PendingRpcItem = [Promise<any>, PendingRpcHandle]
 const pendingRpcs = new Map<string, PendingRpcItem>()
+const APP_ABORT_SYMBOL = Symbol()
 export function abortRpc(id: string) {
   const [, handle] = pendingRpcs.get(id) ?? []
   if (!handle) return false
-  handle.controller.abort()
+  handle.controller.abort(APP_ABORT_SYMBOL)
   return true
 }
 export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
@@ -32,7 +33,7 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
   //rpcPaths: string[],
 ): PkgRpcHandle<TargetPkgRpcDefs> {
   const locateRpc: PkgRpcHandle<any> = (path, opts) => (body: any, params: any, query: any) => {
-    const rpcId = opts?.rpcId ?? Math.random().toString(36).slice(2)
+    const rpcId = `${userPkgId.name}::${opts?.rpcId ?? Math.random().toString(36).slice(2)}`
     abortRpc(rpcId)
     const controller = new AbortController()
     const pendingPromise = (async () => {
@@ -50,8 +51,8 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
       }, fetchExecutor)(url, requestInit)
 
       const responseText = await response.text()
-      if (response.status !== 200) {
-        throw new Error(responseText)
+      if (response.status >= 400 || response.status < 200) {
+        throw new Error(responseText, { cause: { rpcStatus: response.status } })
       }
       const rpcResponse = !responseText ? undefined : JSON.parse(responseText)
 
@@ -62,14 +63,19 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
     pendingRpcs.set(rpcId, pendingRpcItem)
 
     pendingPromise
-      .catch(() => void 0)
+      .catch(() => null)
       .finally(() => {
         if (pendingRpcs.get(rpcId) === pendingRpcItem) {
           pendingRpcs.delete(rpcId)
         }
       })
 
-    return pendingPromise
+    return pendingPromise.catch(err => {
+      if (controller.signal.aborted && controller.signal.reason === APP_ABORT_SYMBOL) {
+        throw controller
+      }
+      throw err
+    })
   }
   return locateRpc
 }
@@ -88,4 +94,11 @@ export type PkgRpcHandle<TargetPkgRpcDefs extends PkgRpcDefs> = <
 ) => TargetPkgRpcDefs[Path]
 type RpcOpts = {
   rpcId?: string
+}
+export function silentCatchAbort(err: any) {
+  if (err instanceof AbortController && err.signal.aborted) {
+    console.info(`RPC aborted by user`)
+    return null
+  }
+  throw err
 }

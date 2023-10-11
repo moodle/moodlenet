@@ -30,18 +30,18 @@ export const DropdownField: FC<DropdownFieldProps> = ({
     opts: options,
     selected: options.find(({ value }) => value === selection),
   }
-  const [updatedTypes, setUpdatedTypes] = useState(elements)
+  const [updatedElements, setUpdatedElements] = useState(elements)
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
-    setUpdatedTypes({
+    setUpdatedElements({
       opts: options,
       selected: options.find(({ value }) => value === selection),
     })
   }, [selection, options])
 
   useEffect(() => {
-    setUpdatedTypes({
+    setUpdatedElements({
       opts: elements.opts.filter(o => o.value.toUpperCase().includes(searchText.toUpperCase())),
       selected: options.find(
         ({ value }) =>
@@ -66,25 +66,25 @@ export const DropdownField: FC<DropdownFieldProps> = ({
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={
-        updatedTypes.selected && (
+        updatedElements.selected && (
           <SimplePill
-            key={updatedTypes.selected.value}
-            value={updatedTypes.selected.value}
-            label={updatedTypes.selected.label}
+            key={updatedElements.selected.value}
+            value={updatedElements.selected.value}
+            label={updatedElements.selected.label}
           />
         )
       }
     >
-      {updatedTypes.selected && (
+      {updatedElements.selected && (
         <TextOption
-          key={updatedTypes.selected.value}
-          value={updatedTypes.selected.value}
-          label={updatedTypes.selected.label}
+          key={updatedElements.selected.value}
+          value={updatedElements.selected.value}
+          label={updatedElements.selected.label}
         />
       )}
-      {updatedTypes.opts.map(
+      {updatedElements.opts.map(
         ({ value, label }) =>
-          updatedTypes.selected?.value !== value && (
+          updatedElements.selected?.value !== value && (
             <TextOption key={value} value={value} label={label} />
           ),
       )}

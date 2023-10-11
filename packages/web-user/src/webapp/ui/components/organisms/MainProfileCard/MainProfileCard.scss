@@ -89,13 +89,12 @@
 
       > .avatar {
         cursor: pointer;
-        // width: 160px;
-        // height: 160px;
         width: 100%;
         height: 100%;
         border-radius: 160px;
         background-position: center center;
         background-size: cover;
+        background-color: #fff;
       }
     }
 
@@ -148,7 +147,7 @@
     > .profile-card-header > .title > .enter-error,
     > .profile-card-header > .subtitle > span > .enter-error {
       > .error-msg {
-        font-weight: initial;
+        font-weight: normal;
       }
     }
 
@@ -171,7 +170,7 @@
         }
 
         > .display-name {
-          width: fit-content;
+          width: 100%;
           font-weight: 700;
           overflow: hidden;
           white-space: nowrap;

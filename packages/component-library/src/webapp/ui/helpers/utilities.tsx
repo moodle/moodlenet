@@ -2,6 +2,7 @@ import assert from 'assert'
 import type { ReactElement } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import type { AssetInfo } from '../../../common/types.mjs'
+import type { AddonItem } from '../../../ui.mjs'
 import { getYouTubeEmbed, getYouTubeThumbnail } from '../../../ui.mjs'
 import { ContentBackupImages } from '../assets/data/images.js'
 import { getVimeoEmbed, getVimeoThumbnail } from '../components/molecules/embeds/Vimeo/Vimeo.js'
@@ -169,4 +170,35 @@ export const getDomainUrl = (url: string): string | undefined => {
   } catch (e) {
     return undefined
   }
+}
+
+export const sortAddonItems = (
+  items: (AddonItem | JSX.Element | null | boolean)[],
+): (AddonItem | JSX.Element)[] => {
+  return items
+    .sort((a, b) => {
+      const aPosition =
+        a && typeof a !== 'boolean' && 'position' in a && a.position !== undefined
+          ? a.position
+          : undefined
+      const bPosition =
+        b && typeof b !== 'boolean' && 'position' in b && b.position !== undefined
+          ? b.position
+          : undefined
+
+      // Check if both objects have the 'position' property
+      if (typeof aPosition === 'number' && typeof bPosition === 'number') {
+        // Compare by 'position' if both have it
+        return aPosition - bPosition
+      }
+
+      // If one of them doesn't have 'position', place it after the one with 'position'
+      if (aPosition === undefined) {
+        return 1 // Move 'a' to a higher index (after 'b')
+      } else {
+        return -1 // Move 'b' to a higher index (after 'a')
+      }
+    })
+
+    .filter((item): item is AddonItem | JSX.Element => !!item)
 }

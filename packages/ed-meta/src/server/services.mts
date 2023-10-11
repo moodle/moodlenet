@@ -1,27 +1,65 @@
 import {
+  accessEntities,
   currentEntityVar,
   entityMeta,
   getEntity,
-  queryEntities,
   searchEntities,
   sysEntitiesDB,
 } from '@moodlenet/system-entities/server'
 import type { SortTypeRpc } from '../common/types.mjs'
-import { EdAssetType, IscedField, IscedGrade, Language, License } from './init/sys-entities.mjs'
+import {
+  BloomCognitive,
+  EdAssetType,
+  IscedField,
+  IscedGrade,
+  Language,
+  License,
+} from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { IscedFieldDataType } from './types.mjs'
 
 export async function getAllPublishedMeta() {
-  const preAccessBody = `FILTER ${currentEntityVar}.published`
-  const limit = 200
-  const [licenses, edAssetTypes, languages, iscedGrades, iscedFields] = await Promise.all([
-    (await queryEntities(License.entityClass, { preAccessBody, limit })).all(),
-    (await queryEntities(EdAssetType.entityClass, { preAccessBody, limit })).all(),
-    (await queryEntities(Language.entityClass, { preAccessBody, limit })).all(),
-    (await queryEntities(IscedGrade.entityClass, { preAccessBody, limit })).all(),
-    (await queryEntities(IscedField.entityClass, { preAccessBody, limit })).all(),
-  ])
-  return { licenses, edAssetTypes, languages, iscedGrades, iscedFields }
+  const filterPublished = `FILTER ${currentEntityVar}.published`
+  const [licenses, edAssetTypes, languages, iscedGrades, iscedFields, bloomCognitives] =
+    await Promise.all([
+      (
+        await accessEntities(License.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}.restrictiveness`,
+        })
+      ).all(),
+      (
+        await accessEntities(EdAssetType.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}.description`,
+        })
+      ).all(),
+      (
+        await accessEntities(Language.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}.name`,
+        })
+      ).all(),
+      (
+        await accessEntities(IscedGrade.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}._key == 'ADT' ? 'ZZZ' : ${currentEntityVar}._key`,
+        })
+      ).all(),
+      (
+        await accessEntities(IscedField.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}._key`,
+        })
+      ).all(),
+      (
+        await accessEntities(BloomCognitive.entityClass, 'r', {
+          preAccessBody: filterPublished,
+          postAccessBody: `SORT ${currentEntityVar}._key`,
+        })
+      ).all(),
+    ])
+  return { licenses, edAssetTypes, languages, iscedGrades, iscedFields, bloomCognitives }
 }
 
 export async function getIscedFieldRecord(_key: string) {

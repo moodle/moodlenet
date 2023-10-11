@@ -8,9 +8,9 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import '../shell.mjs'
 
-import { FilterNone } from '@material-ui/icons'
 import type { PluginHookResult } from '@moodlenet/core/lib'
 import { proxyWith } from '@moodlenet/react-app/ui'
+import { FilterNone } from '@mui/icons-material'
 import {
   SearchResourceSectionAddon,
   SearchResourceWrapperAddon,
@@ -83,9 +83,10 @@ function SubjectPageSimpleResourceList({ subjectKey }: { subjectKey: string }) {
   const [resourceKeys, setResourceKeys] = useState<{ _key: string }[]>([])
   useEffect(() => {
     shell.rpc
-      .me('webapp/search')({ filters: [['subject', subjectKey]] }, undefined, {
+      .me('webapp/search')(undefined, undefined, {
         sortType: 'Recent',
         limit: 50,
+        filterSubjects: subjectKey,
       })
       .then(res => {
         setResourceKeys(res.list)

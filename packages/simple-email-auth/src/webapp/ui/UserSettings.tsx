@@ -1,65 +1,56 @@
 /* eslint-disable prettier/prettier */
-import {
-  Card,
-  InputTextField,
-  PrimaryButton,
-  Snackbar,
-  SnackbarStack,
-} from '@moodlenet/component-library'
+import { Card, InputTextField, PrimaryButton, Snackbar } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 
-export type SimpleEmailUserSettingsData = {
+export type SetPasswordData = {
   // email: string
   password: string
 }
 
 export type SimpleEmailUserSettingsProps = {
-  data: SimpleEmailUserSettingsData
+  // data: SimpleEmailUserSettingsData
   // emailChangedSuccess: boolean
   passwordChangedSuccess: boolean
-  editData: (values: SimpleEmailUserSettingsData) => void
+  setPassword: (values: SetPasswordData) => void
 }
 
 export const GeneralMenu = () => <abbr title="General">General</abbr>
 
 export const SimpleEmailUserSettings: FC<SimpleEmailUserSettingsProps> = ({
-  data,
-  editData,
+  // data,
+  setPassword,
   // emailChangedSuccess,
   passwordChangedSuccess,
 }) => {
-  const form = useFormik<SimpleEmailUserSettingsData>({
-    initialValues: data,
+  const form = useFormik<SetPasswordData>({
+    initialValues: { password: '' },
     // validationSchema: resourceValidationSchema,
     onSubmit: values => {
-      return editData(values)
+      return setPassword(values)
     },
   })
 
-  const canSubmit =
-    form.dirty &&
-    form.isValid &&
-    !form.isSubmitting &&
-    !form.isValidating &&
-    // form.values.email !== data.email ||
-    form.values.password !== data.password
+  const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating // &&
+  // form.values.email !== data.email ||
+  // form.values.password !== data.password
 
   const shouldShowErrors = !!form.submitCount
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        // emailChangedSuccess ? (
-        //   <Snackbar type="success">Check your old email inbox to continue</Snackbar>
-        // ) : null,
-        passwordChangedSuccess ? <Snackbar type="success">Password changed</Snackbar> : null,
-      ]}
-    ></SnackbarStack>
-  )
+  const snackbars =
+    // <SnackbarStack
+    // snackbarList={
+    [
+      // emailChangedSuccess ? (
+      //   <Snackbar type="success">Check your old email inbox to continue</Snackbar>
+      // ) : null,
+      passwordChangedSuccess ? <Snackbar type="success">Password changed</Snackbar> : null,
+    ]
+  // }
+  // ></SnackbarStack>
 
   return (
-    <Card className="column">
+    <Card className="column change-password-section">
       {snackbars}
       {/* <div className="parameter">
         <div className="name">Email</div>

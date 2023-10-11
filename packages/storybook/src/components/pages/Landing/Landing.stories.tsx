@@ -3,12 +3,13 @@ import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
-import { LandingProfileList } from '@moodlenet/web-user/ui'
+import { InterestInfo, LandingProfileList, ShareContent } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
-import { getCollectionCardsStoryProps } from 'components/organisms/CollectionCard/CollectionCardProps.stories.js'
-import { getProfileCardsStoryProps } from 'components/organisms/ProfileCard/ProfileCardProps.stories.js'
-import { getResourceCardsStoryProps } from 'components/organisms/ResourceCard/ResourceCardProps.stories.js'
+import { linkTo } from '@storybook/addon-links'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
+import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
+import { getProfileCardsStoryProps } from '../../../components/organisms/ProfileCard/ProfileCardProps.stories.props.js'
+import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -29,12 +30,12 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   mainLayoutProps: MainLayoutLoggedOutStoryProps,
   title: 'Find, share and curate open educational resources',
   subtitle: 'Search for resources, subjects, collections or people',
-  search: action('search'),
   mainColumnItems: [
     {
       Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Pages/Search')}
+          hasSetInterests={false}
           resourceCardPropsList={getResourceCardsStoryProps(15, {
             access: {
               // isAuthenticated: false,
@@ -52,6 +53,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingCollectionList
           searchCollectionsHref={href('Pages/Search')}
+          hasSetInterests={false}
           collectionCardPropsList={getCollectionCardsStoryProps(15, {
             state: {
               numResources: 2,
@@ -71,12 +73,29 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Pages/Search')}
+          hasSetInterests={false}
           profilesPropsList={getProfileCardsStoryProps(15, {
             access: { isAuthenticated: false },
           })}
         />
       ),
       key: 'people-card-list',
+    },
+  ],
+  headerCardItems: [
+    {
+      Item: () => (
+        <ShareContent
+          shareContentHrefs={{
+            loginHref: href('Pages/Access/Login/Default'),
+            signUpHref: href('Pages/Access/SignUp/Default'),
+            createResource: linkTo('Pages/Resource', 'New'),
+            createCollection: linkTo('Pages/Collection', 'New'),
+          }}
+          isAuthenticated={false}
+        />
+      ),
+      key: 'share-content',
     },
   ],
 }
@@ -87,8 +106,18 @@ export const LandingLoggedInStoryProps: LandingProps = {
   mainColumnItems: [
     {
       Item: () => (
+        <InterestInfo
+          userSettingHref={href('Pages/Settings/Default')}
+          doNotShowAgain={action('doNotShowAgain')}
+        />
+      ),
+      key: 'interest-info',
+    },
+    {
+      Item: () => (
         <LandingResourceList
           searchResourcesHref={href('Pages/Search')}
+          hasSetInterests={true}
           resourceCardPropsList={getResourceCardsStoryProps(15, {
             state: {
               // liked: true,
@@ -107,6 +136,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingCollectionList
           searchCollectionsHref={href('Pages/Search')}
+          hasSetInterests={true}
           collectionCardPropsList={getCollectionCardsStoryProps(15, {
             state: {
               // followed: true,
@@ -124,6 +154,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       Item: () => (
         <LandingProfileList
           searchAuthorsHref={href('Pages/Search')}
+          hasSetInterests={true}
           profilesPropsList={getProfileCardsStoryProps(15, {
             state: {
               // followed: true,
@@ -161,6 +192,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingResourceList
             searchResourcesHref={href('Pages/Search')}
+            hasSetInterests={true}
             resourceCardPropsList={getResourceCardsStoryProps(15, {
               state: {
                 isPublished: true,
@@ -181,6 +213,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingCollectionList
             searchCollectionsHref={href('Pages/Search')}
+            hasSetInterests={true}
             collectionCardPropsList={getCollectionCardsStoryProps(15, {
               state: {
                 isPublished: true,
@@ -200,6 +233,7 @@ export const Owner: LandingStory = () => {
         Item: () => (
           <LandingProfileList
             searchAuthorsHref={href('Pages/Search')}
+            hasSetInterests={true}
             profilesPropsList={getProfileCardsStoryProps(15, {
               access: {
                 isCreator: true,
