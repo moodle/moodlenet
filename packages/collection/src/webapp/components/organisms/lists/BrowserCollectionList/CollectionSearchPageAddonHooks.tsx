@@ -1,6 +1,7 @@
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { MainSearchBoxCtx, proxyWith, type SortType } from '@moodlenet/react-app/ui'
 import {
+  silentCatchAbort,
   useUrlQueryString,
   type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
@@ -42,22 +43,26 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren<unknown>> = ({
     : 'Popular'
 
   const load = useCallback(
-    async (limit: number, cursor?: string) => {
-      const res = await shell.rpc.me('webapp/search')(null, null, {
-        limit,
-        sortType,
-        text: q,
-        after: cursor,
-      })
-      setCollectionSearchResult(res)
-      return res
+    (limit: number, cursor?: string) => {
+      return shell.rpc
+        .me('webapp/search', { rpcId: 'search' })(null, null, {
+          limit,
+          sortType,
+          text: q,
+          after: cursor,
+        })
+        .then(res => {
+          setCollectionSearchResult(res)
+          return res
+        })
+        .catch(silentCatchAbort)
     },
     [q, sortType],
   )
 
   useEffect(() => {
     load(12).then(res => {
-      collectionListAction(['set', res.list])
+      res && collectionListAction(['set', res.list])
     })
   }, [load])
 
@@ -67,7 +72,7 @@ export const ProvideSearchCollectionContext: FC<PropsWithChildren<unknown>> = ({
       return
     }
     const res = await load(36, collectionSearchResult?.endCursor)
-    collectionListAction(['more', res.list])
+    res && collectionListAction(['more', res.list])
   }, [hasNoMore, load, collectionSearchResult?.endCursor])
 
   const setSortType = useCallback<SearchCollectionContextT['setSortType']>(
