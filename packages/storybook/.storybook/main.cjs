@@ -1,14 +1,17 @@
 // const react = require('@vitejs/plugin-react').default
-const svgr = require('vite-plugin-svgr')
-const { default: tsconfigPaths } = require('vite-tsconfig-paths')
+//const svgr = require('vite-plugin-svgr')
 const { mergeConfig } = require('vite')
-const { readdirSync } = require('fs')
 const { hackPackageJsonExports } = require('./hackPackageJsonExports.cjs')
+//const react = require('@vitejs/plugin-react')
+const { readdirSync } = require('fs')
 const path = require('path')
+const svgr = require('vite-plugin-svgr').default
+const tsconfigPaths = require('vite-tsconfig-paths').default
 
 const packagesDirs = readdirSync(path.resolve(__dirname, '..', '..')).map(pkg_name =>
   path.resolve(__dirname, '..', '..', pkg_name),
 )
+
 hackPackageJsonExports()
 
 const recoverHackSignals = [
@@ -39,8 +42,9 @@ module.exports = {
     '../../component-library/src/webapp/ui/components/**/*.stories.tsx',
     '../../react-app/src/webapp/ui/components/**/*.stories.tsx',
     '../../ed-resource/src/webapp/components/**/*.stories.tsx',
-    '../../ed-meta/src/webapp/components/**/*.stories.tsx',
     '../../web-user/src/webapp/ui/components/**/*.stories.tsx',
+    // '../../ed-meta/src/webapp/components/**/*.stories.tsx',
+    // '../../component-library/src/webapp/ui/components/atoms/RoundButton/RoundButton.stories.tsx'
     // '../../packages/component-library/src/webapp/ui/components/**/*.stories.tsx',
     //'../src/stories/*.stories.tsx',
     // '../../component-library/src/webapp/ui/components/atoms/Card/Card.stories.tsx',
@@ -50,22 +54,48 @@ module.exports = {
     // '../src/**/*.stories.mdx',
     // '../../*/src/**/*.stories.@(js|jsx|ts|tsx)',
   ],
+
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
   ],
-  framework: '@storybook/react',
-  core: {
-    builder: '@storybook/builder-vite',
+
+  framework: {
+    name: '@storybook/react-vite',
+    options: {},
   },
+
   features: {
     storyStoreV7: true,
   },
+
+  // docs: {
+  //   autodocs: true
+  // }
   async viteFinal(config) {
     // Merge custom configuration into the default config
     return mergeConfig(config, {
-      plugins: [tsconfigPaths({ projects: packagesDirs }), svgr()],
+      plugins: [
+        tsconfigPaths({ projects: packagesDirs }),
+        // react({
+        //   jsxRuntime: 'automatic',
+        // }),
+        svgr(),
+      ],
+      optimizeDeps: {
+        include: [
+          '@emotion/styled',
+          '@emotion/react',
+          '@mui/icons-material',
+          '@mui/material',
+          'react-router-dom',
+        ],
+      },
     })
+  },
+
+  core: {
+    disableWhatsNewNotifications: false,
   },
 }

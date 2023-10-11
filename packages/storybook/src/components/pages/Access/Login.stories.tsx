@@ -6,9 +6,9 @@ import { LoginIcon, LoginPanel } from '@moodlenet/simple-email-auth/ui'
 import { MinimalisticAccessButtonsStories } from '@moodlenet/web-user/stories'
 import type { LoginProps } from '@moodlenet/web-user/ui'
 import { LoginPage } from '@moodlenet/web-user/ui'
-import type { ComponentMeta } from '@storybook/react'
-import { FooterStoryProps } from 'components/organisms/Footer/Footer.stories.js'
+import type { Meta as ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
+import { FooterStoryProps } from '../../../components/organisms/Footer/Footer.stories.js'
 // import { object, SchemaOf, string } from 'yup'
 // import { href } from '../../../../elements/link'
 // import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
@@ -18,7 +18,6 @@ const meta: ComponentMeta<typeof LoginPage> = {
   title: 'Pages/Access/Login',
   component: LoginPage,
   excludeStories: ['LoginStoryProps', 'validationSchema'],
-  parameters: { layout: 'fullscreen' },
 }
 
 // const validationSchema: SchemaOf<LoginFormValues> = object({
@@ -54,6 +53,7 @@ LoginProps => {
       }),
     ),
     footerProps: FooterStoryProps,
+    signupHref: href('Pages/Access/SignUp/Default'),
     // accessHeaderProps: AccessHeaderStoryProps,
     // form: useFormik<LoginFormValues>({
     //   validationSchema,

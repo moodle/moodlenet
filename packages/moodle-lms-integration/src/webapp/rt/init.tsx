@@ -21,6 +21,7 @@ ResourcePagePlugins.register(function useResourcePagePlugin({ resourceCommonProp
         sendToMoodle: resourceCommonProps
           ? {
               Item: SendToMoodleContainer,
+              position: 1,
             }
           : undefined,
       },

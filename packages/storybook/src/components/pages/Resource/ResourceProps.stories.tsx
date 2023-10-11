@@ -11,7 +11,7 @@ import type {
 } from '@moodlenet/ed-resource/common'
 import { getValidationSchemas } from '@moodlenet/ed-resource/common'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta } from '@storybook/react'
+import type { Meta as ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 // import { useEffect } from 'react'
 import type { AnySchema } from 'yup'
@@ -43,7 +43,9 @@ import {
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
 
+import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
+import { learningOutcomeOptions, learningOutcomesSelection } from './ResourceData.stories.props.js'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -82,13 +84,14 @@ export const ResourceFormValues: ResourceFormProps = {
   title: '',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  subject: FieldsDataStories.SubjectsTextOptionProps[2]!.value,
-  language: FieldsDataStories.LanguagesTextOptionProps[2]!.value,
-  level: FieldsDataStories.LevelTextOptionProps[2]!.value,
-  license: FieldsDataStories.LicenseIconTextOptionProps[2]!.value,
-  month: FieldsDataStories.MonthTextOptionProps[8]!.value,
-  year: FieldsDataStories.YearsProps[20]!.valueOf(),
-  type: FieldsDataStories.TypeTextOptionProps[1]!.value,
+  subject: FieldsDataStories.SubjectsTextOptionProps[2]?.value ?? '',
+  language: FieldsDataStories.LanguagesTextOptionProps[2]?.value ?? '',
+  level: FieldsDataStories.LevelTextOptionProps[2]?.value ?? '',
+  license: FieldsDataStories.LicenseIconTextOptionProps[2]?.value ?? '',
+  month: FieldsDataStories.MonthTextOptionProps[8]?.value ?? '',
+  year: FieldsDataStories.YearsProps[20]?.valueOf() ?? '',
+  type: FieldsDataStories.TypeTextOptionProps[1]?.value ?? '',
+  learningOutcomes: learningOutcomesSelection,
 }
 
 export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
@@ -109,6 +112,7 @@ export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
       level: '',
       month: '',
       year: '',
+      learningOutcomes: [],
     },
     ...overrides,
   })
@@ -147,8 +151,10 @@ export const useResourceStoryProps = (
       ? {
           credits: {
             owner: {
-              name: overrides?.data?.image?.credits?.owner?.name ?? 'Leonard Rush',
-              url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com/@lennyrush',
+              name: overrides?.data?.image?.credits?.owner?.name ?? 'Ivan Bandura',
+              url:
+                overrides?.data?.image?.credits?.owner?.url ??
+                'https://unsplash.com/@unstable_affliction',
             },
             provider: {
               name: overrides?.data?.image?.credits?.owner?.name ?? 'Unsplash',
@@ -157,7 +163,7 @@ export const useResourceStoryProps = (
           },
           location:
             overrides?.data?.image?.location ??
-            'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+            'https://images.unsplash.com/photo-1593259996642-a62989601967?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
         }
       : null,
   )
@@ -170,19 +176,31 @@ export const useResourceStoryProps = (
 
   const isAuthenticated = overrides?.isAuthenticated ?? true
 
+  //const transforming overrides.resourceForm.learningOutcomes to an array of LearningOutcome
+
+  const updatedLearningOutcomes =
+    overrides && overrides.resourceForm && overrides.resourceForm.learningOutcomes
+      ? overrides.resourceForm.learningOutcomes
+          .filter(outcome => outcome !== undefined)
+          .map(outcome => outcome as LearningOutcome)
+      : learningOutcomesSelection
+
   const resourceForm: ResourceFormProps = {
-    title: 'Best resource ever',
+    title: 'Protecting and restoring endangered ecosystems',
     description:
-      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    subject: '0011',
+      'This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization.',
+    subject: '0522',
     license: 'CC-0 (Public domain)',
-    type: '0', //'Course',
+    type: '2',
     language: 'English',
-    level: '3',
+    level: '6',
     month: '5',
     year: '2022',
     ...overrides?.resourceForm,
+    learningOutcomes: updatedLearningOutcomes,
   }
+
+  const [formData, setFormData] = useState(resourceForm)
 
   const data: ResourceDataProps = {
     id: 'qjnwglkd69io-sports',
@@ -264,7 +282,7 @@ export const useResourceStoryProps = (
 
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
-    editData: action('edit data'),
+    editData: setFormData,
     publish: () => {
       setIsPublished(true)
     },
@@ -297,6 +315,7 @@ export const useResourceStoryProps = (
     monthOptions: FieldsDataStories.MonthTextOptionProps,
     yearOptions: FieldsDataStories.YearsProps,
     typeOptions: FieldsDataStories.TypeTextOptionProps,
+    learningOutcomeOptions: learningOutcomeOptions,
   }
 
   const likeButtonProps: LikeButtonProps = {
@@ -348,15 +367,17 @@ export const useResourceStoryProps = (
 
   const extraDetailsItems: AddonItem[] = []
 
-  const sendToMoodle = {
+  const sendToMoodle: AddonItem = {
     Item: () => (
       <SendToMoodle
         site="https://moodle.technion.ac.il"
         userId="1234"
         sendToMoodle={() => undefined}
+        canSendToMoodle={true}
       />
     ),
     key: 'send-to-moodle',
+    position: 1,
   }
 
   const generalActionsItems: AddonItem[] = [
@@ -385,11 +406,12 @@ export const useResourceStoryProps = (
         ResourceContributorCardStories.ResourceContributorCardStoryProps,
 
       data: data,
-      resourceForm: resourceForm,
+      resourceForm: formData,
       state: state,
       actions: actions,
       access: access,
       edMetaOptions: edMetaOptions,
+
       validationSchemas: getValidationSchemas({
         contentMaxUploadSize: 1024 * 1024 * 1024,
         imageMaxUploadSize: 1024 * 1024 * 25,

@@ -1,4 +1,3 @@
-import { Link as LinkIcon, Share } from '@material-ui/icons'
 import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
 import {
   Card,
@@ -8,10 +7,13 @@ import {
   PrimaryButton,
   SecondaryButton,
   Snackbar,
+  SnackbarStack,
   TertiaryButton,
   useWindowDimensions,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
+import type { LearningOutcomeOption } from '@moodlenet/ed-meta/common'
+import { LearningOutcomes } from '@moodlenet/ed-meta/ui'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
@@ -19,10 +21,12 @@ import {
   Delete,
   Edit,
   InsertDriveFile,
+  Link as LinkIcon,
   MoreVert,
   Public,
   PublicOff,
   Save,
+  Share,
 } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -64,6 +68,7 @@ export type MainResourceCardProps = {
   form: FormikHandle<ResourceFormProps>
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
   imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
+  learningOutcomeOptions: LearningOutcomeOption[]
 
   state: ResourceStateProps
   actions: ResourceActions
@@ -90,7 +95,7 @@ export type MainResourceCardProps = {
 
 export const MainResourceCard: FC<MainResourceCardProps> = ({
   slots,
-
+  learningOutcomeOptions,
   data,
   edMetaOptions,
   form,
@@ -149,6 +154,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+  const [showSaveError, setShowSaveError] = useState<boolean>(false)
   const { width } = useWindowDimensions()
 
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
@@ -215,6 +221,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
     if (!isFormValid || !isContentValid) {
       setShouldShowErrors(true)
+      setShowSaveError(true)
       return
     }
 
@@ -270,7 +277,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     <InputTextField
       name="title"
       key="title"
-      className="title underline"
+      className="title"
       isTextarea
       edit={isEditing}
       value={form.values.title}
@@ -315,6 +322,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const empty =
     (!form.values.title || form.values.title === '') &&
     (!form.values.description || form.values.description === '') &&
+    !(form.values.learningOutcomes.length > 0) &&
     !contentForm.values.content &&
     !imageForm.values.image
 
@@ -549,14 +557,14 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     const fieldElem = descriptionRef.current
     if (fieldElem) {
       {
-        fieldElem.scrollHeight > 70 && setShowFullDescription(false)
+        fieldElem.scrollHeight > 114 && setShowFullDescription(false)
       }
     }
   }, [descriptionRef])
 
   const description = canEdit ? (
     <InputTextField
-      className="description underline"
+      className="description"
       name="description"
       key="description"
       isTextarea
@@ -574,7 +582,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         className="description-text"
         ref={descriptionRef}
         style={{
-          height: showFullDescription ? 'fit-content' : '66px',
+          height: showFullDescription ? 'fit-content' : '110px',
           overflow: showFullDescription ? 'auto' : 'hidden',
         }}
       >
@@ -587,6 +595,29 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       )}
     </div>
   )
+
+  const outcomeErrors = form.errors.learningOutcomes
+
+  const learningOutcomes =
+    isEditing ||
+    (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0) ? (
+      <LearningOutcomes
+        learningOutcomeOptions={learningOutcomeOptions}
+        learningOutcomes={form.values.learningOutcomes}
+        isEditing={isEditing}
+        error={
+          shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
+            ? outcomeErrors
+            : Array.isArray(outcomeErrors)
+            ? outcomeErrors.map(item =>
+                typeof item !== 'string' && item.sentence ? item.sentence : '',
+              )
+            : undefined
+        }
+        shouldShowErrors={shouldShowErrors}
+        edit={values => form.setFieldValue('learningOutcomes', values)}
+      />
+    ) : null
 
   const updatedFooterRowItems = [...(footerRowItems ?? [])].filter(
     (item): item is AddonItem => !!item,
@@ -603,24 +634,38 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     resourceHeader,
     resourceUploader,
     description,
+    learningOutcomes,
     resourceFooter,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   const snackbars = (
-    <>
-      {showUrlCopiedAlert && (
-        <Snackbar
-          type="success"
-          position="bottom"
-          autoHideDuration={3000}
-          showCloseButton={false}
-          key="url-copy-snackbar"
-        >
-          Copied to clipoard
-        </Snackbar>
-      )}
-    </>
+    <SnackbarStack
+      snackbarList={[
+        showUrlCopiedAlert ? (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={3000}
+            showCloseButton={false}
+            key="url-copy-snackbar"
+          >
+            Copied to clipoard
+          </Snackbar>
+        ) : null,
+        showSaveError ? (
+          <Snackbar
+            position="bottom"
+            type="error"
+            autoHideDuration={3000}
+            showCloseButton={false}
+            onClose={() => setShowSaveError(false)}
+          >
+            Failed, fix the errors and try again
+          </Snackbar>
+        ) : null,
+      ]}
+    />
   )
 
   const modals = [

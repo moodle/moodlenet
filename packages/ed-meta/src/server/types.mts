@@ -35,4 +35,12 @@ export type EdAssetTypeEntityDoc = EntityDocument<EdAssetTypeDataType>
 export type EdAssetTypeDataType = { code: string; description: string; published: boolean }
 
 export type LicenseEntityDoc = EntityDocument<LicenseDataType>
-export type LicenseDataType = { code: string; description: string; published: boolean }
+export type LicenseDataType = {
+  code: string
+  description: string
+  restrictiveness: number
+  published: boolean
+}
+
+export type BloomCognitiveEntityDoc = EntityDocument<BloomCognitiveDataType>
+export type BloomCognitiveDataType = { name: string; verbs: string[]; published: boolean }

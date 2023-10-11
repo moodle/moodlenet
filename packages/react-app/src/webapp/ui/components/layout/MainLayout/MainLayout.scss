@@ -26,6 +26,10 @@ body {
   height: fit-content;
   min-height: 100vh;
   background-color: #f6f5f4;
+
+  @media (max-width: 450px) {
+    background-color: white;
+  }
   // background-color: var(--color-light-gray-14);
 
   &.streched {

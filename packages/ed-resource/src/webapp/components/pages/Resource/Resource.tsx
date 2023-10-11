@@ -1,4 +1,3 @@
-import { InsertDriveFile, Link } from '@material-ui/icons'
 import type { AddonItem } from '@moodlenet/component-library'
 import {
   Card,
@@ -7,11 +6,13 @@ import {
   SecondaryButton,
   Snackbar,
   SnackbarStack,
+  sortAddonItems,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import { DateField, DropdownField, LicenseField } from '@moodlenet/ed-meta/ui'
 import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
+import { InsertDriveFile, Link } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -111,6 +112,7 @@ export const Resource: FC<ResourceProps> = ({
     subjectOptions,
     typeOptions,
     yearOptions,
+    learningOutcomeOptions,
   } = edMetaOptions
 
   const [emptyOnStart, setEmptyOnStart] = useState<boolean>(
@@ -124,14 +126,19 @@ export const Resource: FC<ResourceProps> = ({
       !resourceForm.level &&
       !resourceForm.subject &&
       !resourceForm.year &&
-      !resourceForm.month,
+      !resourceForm.month &&
+      !(resourceForm.learningOutcomes.length > 0),
   )
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
-  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<boolean>(false)
-  const [showPublishSuccess, setShowPublishSuccess] = useState<boolean>(false)
+  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<
+    'success' | 'failed' | 'idle'
+  >('idle')
+  const [showPublishSuccess, setShowPublishSuccess] = useState<'success' | 'failed' | 'idle'>(
+    'idle',
+  )
   const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(emptyOnStart)
 
@@ -139,7 +146,7 @@ export const Resource: FC<ResourceProps> = ({
 
   useEffect(() => {
     if (prevIsPublishedRef.current === false && isPublished === true) {
-      setShowPublishSuccess(true)
+      setShowPublishSuccess('success')
     }
     if (prevIsPublishedRef.current === true && isPublished === false) {
       setShowUnpublishSuccess(true)
@@ -155,9 +162,7 @@ export const Resource: FC<ResourceProps> = ({
     validationSchema: isPublishValidating
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
-    onSubmit: values => {
-      return editData(values)
-    },
+    onSubmit: editData,
   })
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
   const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
@@ -248,6 +253,7 @@ export const Resource: FC<ResourceProps> = ({
       publish()
     } else {
       setIsEditing(true)
+      setShowPublishSuccess('failed')
       setShouldShowErrors(true)
     }
   }, [
@@ -284,11 +290,12 @@ export const Resource: FC<ResourceProps> = ({
     setFieldsAsTouched()
 
     if (isPublishedFormValid && isPublishedContentValid) {
-      setShowCheckPublishSuccess(true)
+      setShowCheckPublishSuccess('success')
       setShouldShowErrors(false)
     } else {
       form_validateForm()
       contentForm_validateForm()
+      setShowCheckPublishSuccess('failed')
       setShouldShowErrors(true)
     }
   }, [
@@ -329,6 +336,7 @@ export const Resource: FC<ResourceProps> = ({
   const mainResourceCard = (
     <MainResourceCard
       key="main-resource-card"
+      learningOutcomeOptions={learningOutcomeOptions}
       publish={checkFormsAndPublish}
       unpublish={unpublish}
       publishCheck={publishCheck}
@@ -354,11 +362,18 @@ export const Resource: FC<ResourceProps> = ({
     />
   )
 
-  const publishButton = !isEditing && canPublish && !isPublished && (
-    <PrimaryButton onClick={checkFormsAndPublish} color="green" key="publish-button">
-      Publish
-    </PrimaryButton>
-  )
+  const publishButton: AddonItem | null =
+    !isEditing && canPublish && !isPublished
+      ? {
+          Item: () => (
+            <PrimaryButton onClick={checkFormsAndPublish} color="green" key="publish-button">
+              Publish
+            </PrimaryButton>
+          ),
+          key: 'publish-button',
+          position: 0,
+        }
+      : null
 
   const publishCheckButton = isEditing && canPublish && !isPublished && (
     <PrimaryButton onClick={publishCheck} color="green">
@@ -366,11 +381,18 @@ export const Resource: FC<ResourceProps> = ({
     </PrimaryButton>
   )
 
-  const unpublishButton = canPublish && isPublished && (
-    <SecondaryButton onClick={unpublish} key="unpublish-button">
-      Unpublish
-    </SecondaryButton>
-  )
+  const unpublishButton: AddonItem | null =
+    canPublish && isPublished
+      ? {
+          Item: () => (
+            <SecondaryButton onClick={unpublish} key="unpublish-button">
+              Unpublish
+            </SecondaryButton>
+          ),
+          key: 'unpublish-button',
+          position: 0,
+        }
+      : null
 
   const subjectField = (isEditing || canEdit) && (
     <DropdownField
@@ -521,14 +543,14 @@ export const Resource: FC<ResourceProps> = ({
       </a>
     ) : null
 
-  const updatedGeneralActionsItems = [
+  const updatedGeneralActionsItems = sortAddonItems([
     publishButton,
     publishCheckButton,
     unpublishButton,
     ...(generalActionsItems ?? []),
     downloadButton,
     openLinkButton,
-  ].filter((item): item is AddonItem => !!item)
+  ])
 
   const generalActionsContainer = (
     <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
@@ -569,29 +591,35 @@ export const Resource: FC<ResourceProps> = ({
       </Snackbar>
     ) : null
 
-  const checkPublishSnackbar = showCheckPublishSuccess ? (
-    <Snackbar
-      position="bottom"
-      type="success"
-      autoHideDuration={3000}
-      showCloseButton={false}
-      onClose={() => setShowCheckPublishSuccess(false)}
-    >
-      {`Success, save before publishing`}
-    </Snackbar>
-  ) : null
+  const checkPublishSnackbar =
+    showCheckPublishSuccess !== 'idle' ? (
+      <Snackbar
+        position="bottom"
+        type={showCheckPublishSuccess === 'success' ? 'success' : 'error'}
+        autoHideDuration={3000}
+        showCloseButton={false}
+        onClose={() => setShowCheckPublishSuccess('idle')}
+      >
+        {showCheckPublishSuccess === 'success'
+          ? `Success, save before publishing`
+          : `Failed, fix the errors and try again`}
+      </Snackbar>
+    ) : null
 
-  const publishSnackbar = showPublishSuccess ? (
-    <Snackbar
-      position="bottom"
-      type="success"
-      autoHideDuration={3000}
-      showCloseButton={false}
-      onClose={() => setShowPublishSuccess(false)}
-    >
-      {`Resource published`}
-    </Snackbar>
-  ) : null
+  const publishSnackbar =
+    showPublishSuccess !== 'idle' ? (
+      <Snackbar
+        position="bottom"
+        type={showPublishSuccess === 'success' ? 'success' : 'error'}
+        autoHideDuration={3000}
+        showCloseButton={false}
+        onClose={() => setShowPublishSuccess('idle')}
+      >
+        {showPublishSuccess === 'success'
+          ? `Resource published`
+          : `Failed, fix the errors and try again`}
+      </Snackbar>
+    ) : null
 
   const unpublishSnackbar = showUnpublishSuccess ? (
     <Snackbar

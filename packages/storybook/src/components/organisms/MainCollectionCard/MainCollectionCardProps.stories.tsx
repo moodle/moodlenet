@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta } from '@storybook/react'
+import type { Meta as ComponentMeta } from '@storybook/react'
 // import { useEffect } from 'react'
 import type { SchemaOf } from 'yup'
 import { boolean, mixed, object, string } from 'yup'
@@ -16,8 +16,8 @@ import type { OptionItemProp } from '@moodlenet/component-library'
 import type { CollectionFormProps } from '@moodlenet/collection/common'
 import type { MainCollectionCardProps } from '@moodlenet/collection/ui'
 import { Collection, MainCollectionCard } from '@moodlenet/collection/ui'
-import { DropdownFieldsDataStories } from '@moodlenet/component-library/stories'
-import { useCollectionForm } from 'components/pages/Collection/CollectionProps.stories.js'
+import { DropdownPropsStories } from '@moodlenet/component-library/stories'
+import { useCollectionForm } from '../../../components/pages/Collection/CollectionProps.stories.js'
 const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof Collection> = {
@@ -90,7 +90,7 @@ export const collectionFormValues: CollectionFormProps = {
   // year: YearsProps[20],
   name: '',
   // name: 'The Best Collection Ever',
-  type: DropdownFieldsDataStories.TypeTextOptionProps[2]!.value,
+  type: DropdownPropsStories.TypeTextOptionProps[2]!.value,
 }
 
 export const CollectionTextOptionProps: OptionItemProp[] = [
@@ -125,7 +125,7 @@ export const useMainCollectionCardStoryProps = (overrides?: {
     // license: LicenseIconTextOptionProps[2]?.value,
     // month: MonthTextOptionProps[8]?.value,
     // year: YearsProps[20],
-    type: DropdownFieldsDataStories.TypeTextOptionProps[2]?.value,
+    type: DropdownPropsStories.TypeTextOptionProps[2]?.value,
     image: {
       location:
         'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',

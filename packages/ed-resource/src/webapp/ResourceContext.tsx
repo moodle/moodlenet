@@ -3,9 +3,11 @@ import { createContext, useCallback, useContext, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { MainContext } from './MainContext.js'
+import { shell } from './shell.mjs'
 
 export type ResourceContextT = {
   createResource(): Promise<{ homePath: string; key: string }>
+  rpc: typeof shell.rpc.me
 }
 export const ResourceContext = createContext<ResourceContextT>(null as any)
 
@@ -26,6 +28,7 @@ export function useResourceContextValue() {
   const resourceContext = useMemo<ResourceContextT>(() => {
     const resourceContext: ResourceContextT = {
       createResource,
+      rpc: shell.rpc.me,
     }
     return resourceContext
   }, [createResource])

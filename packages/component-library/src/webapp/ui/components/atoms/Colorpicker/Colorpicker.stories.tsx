@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { ColorpickerProps } from './Colorpicker.js'
 import Colorpicker from './Colorpicker.js'
 
@@ -6,6 +6,9 @@ const meta: ComponentMeta<typeof Colorpicker> = {
   title: 'Atoms/Colorpicker',
   component: Colorpicker,
   excludeStories: ['ColorpickerUnselected', 'ColorpickerSelected'],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 const ColorpickerStory: ComponentStory<typeof Colorpicker> = args => (
@@ -14,7 +17,7 @@ const ColorpickerStory: ComponentStory<typeof Colorpicker> = args => (
 
 export const Default: ColorpickerProps = {}
 
-export const Selected = ColorpickerStory.bind({})
+export const Selected: typeof ColorpickerStory = ColorpickerStory.bind({})
 Selected.args = Default
 
 export default meta

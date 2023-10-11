@@ -1,6 +1,5 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import type {
-  FilterTypeRpc,
   ResourceFormRpc,
   ResourceRpc,
   ResourceSearchResultRpc,
@@ -30,14 +29,15 @@ export type ResourceExposeType = PkgExposeDef<{
     ): Promise<string | null>
     // OTHER
     'webapp/search'(
-      body:
-        | undefined
-        | {
-            filters?: FilterTypeRpc
-          },
+      body: undefined,
       params: undefined,
       query: {
         sortType?: SortTypeRpc
+        filterSubjects?: string
+        filterTypes?: string
+        filterLevels?: string
+        filterLanguages?: string
+        filterLicenses?: string
         text?: string
         after?: string
         limit?: number

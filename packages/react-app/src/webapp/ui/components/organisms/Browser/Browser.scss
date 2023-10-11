@@ -7,24 +7,26 @@
     justify-content: center;
     left: 0;
     top: 60px;
-    height: 60px;
+    padding-top: 14px;
+    padding-bottom: 14px;
     width: 100%;
     font-size: 0.7rem;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     background-color: var(--header-background);
 
     @media screen and (max-width: 675px) {
-      padding: 0 25px;
+      padding: 14px 25px;
     }
 
     > .filter-bar-content {
       display: flex;
+      flex-flow: wrap;
       width: 100%;
       align-items: center;
       max-width: 1100px;
       gap: 10px;
 
-      > .content-type-filters > .floating-menu > .menu {
+      > .content-type-filter > .floating-menu > .menu {
         left: 0;
         transform: none;
       }
@@ -32,11 +34,12 @@
       > .separator {
         width: 1px;
         height: 24px;
-        background-color: #abacaf;
+        background-color: #d7d7d7;
       }
       > div {
         display: flex;
         gap: 10px;
+        align-items: center;
       }
     }
   }

@@ -16,7 +16,7 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
     const rpcItem: RpcCaller = {
       edit: (key: string, values: ResourceFormProps) =>
         rpc('webapp/edit/:_key')({ values }, { _key: key }),
-      get: (key: string) => rpc('webapp/get/:_key')(null, { _key: key }),
+      get: (key: string) => rpc('webapp/get/:_key', { rpcId: `get#${key}` })(null, { _key: key }),
       // get: (key: string) => addAuth(rpc('webapp/get/:_key')(null, { _key: key })),
       _delete: (key: string) => rpc('webapp/delete/:_key')(null, { _key: key }),
       setImage: (key: string, file: File | undefined | null, rpcId) =>

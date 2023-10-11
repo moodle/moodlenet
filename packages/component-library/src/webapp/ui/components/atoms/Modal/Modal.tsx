@@ -1,4 +1,4 @@
-import { CloseRounded as CloseRoundedIcon } from '@material-ui/icons'
+import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material'
 import type React from 'react'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect } from 'react'

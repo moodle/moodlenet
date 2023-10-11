@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { SimpleDropdownProps } from './SimpleDropdown.js'
 import { SimpleDropdown } from './SimpleDropdown.js'
 
@@ -14,14 +14,17 @@ const meta: ComponentMeta<typeof SimpleDropdown> = {
     'SimpleDropdownErrorStoryProps',
     'TextAreaFieldStoryProps',
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const SimpleDropdownStoryProps: SimpleDropdownProps = {
   label: 'Label',
-  list: [
-    { name: 'Item 1', key: '1' },
-    { name: 'Item 2', key: '2' },
-    { name: 'Item 3', key: '3' },
+  options: [
+    { label: 'Item 1', value: '1' },
+    { label: 'Item 2', value: '2' },
+    { label: 'Item 3', value: '3' },
   ],
   selected: ['Item 1'],
   onClick: () => undefined,
@@ -31,7 +34,7 @@ export const Template: ComponentStory<typeof SimpleDropdown> = () => (
   <SimpleDropdown {...SimpleDropdownStoryProps} />
 )
 
-export const Default = Template.bind({})
+export const Default: typeof Template = Template.bind({})
 Default.args = SimpleDropdownStoryProps
 
 export default meta

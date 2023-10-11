@@ -7,9 +7,9 @@ export type ValidationsConfig = { imageMaxUploadSize: number }
 export type ValidationSchemas = ReturnType<typeof getValidationSchemas>
 
 export const displayNameSchema = string()
-  .max(160)
-  .min(3)
-  .required(/* t */ `Please provide a display name`)
+  .max(60, obj => `Please provide a shorter display name (${obj.value.length} / 60)`)
+  .min(3, obj => `Please provide a longer display name (${obj.value.length} < 3)`)
+  .required(`Please provide a display name`)
 
 export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) {
   const avatarImageValidation: SchemaOf<{ image: File | string | undefined | null }> = object({
@@ -28,7 +28,6 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
                   imageMaxUploadSize,
                 )}`,
               }))
-        console.log('errors: ', errors)
         return errors
       })
       .optional(),
@@ -57,14 +56,27 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
 
   const profileValidationSchema: SchemaOf<EditProfileDataRpc> = object({
     displayName: displayNameSchema,
-    location: string().optional(),
+    location: string()
+      .max(60, obj => `Please provide a shorter location (${obj.value.length} / 60)`)
+      .min(3, obj => `Please provide a longer location (${obj.value.length} < 3)`)
+      .optional(),
     organizationName: string().max(30).optional(),
-    siteUrl: string().url().optional(),
-    aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
+    siteUrl: string()
+      .max(160, obj => `Please provide a shorter url (${obj.value.length} / 160)`)
+      .min(3, obj => `Please provide a longer url (${obj.value.length} < 3)`)
+      .url()
+      .optional(),
+    aboutMe: string()
+      .max(500, obj => `Please provide a shorter description (${obj.value.length} / 500)`)
+      .min(3, obj => `Please provide a longer description (${obj.value.length} < 3)`)
+      .required(`Please provide a description`),
   })
 
   const messageFormValidationSchema: SchemaOf<{ msg: string }> = object({
-    msg: string().min(3).max(3000).required(/* t */ `Please provide a message`),
+    msg: string()
+      .max(3000, obj => `Please provide a shorter message (${obj.value.length} / 3000)`)
+      .min(3, obj => `Please provide a longer message (${obj.value.length} < 3)`)
+      .required(`Please provide a message`),
   })
 
   return {

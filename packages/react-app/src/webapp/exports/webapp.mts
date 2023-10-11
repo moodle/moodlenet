@@ -23,13 +23,16 @@ export {
   type AdminSettingsSectionItem,
 } from '../ui/components/pages/AdminSettings/Hook/AdminSettingsHook.js'
 export { FallbackContainer } from '../ui/components/pages/Extra/Fallback/FallbackContainer.js'
-export { LandingHookPlugin } from '../ui/components/pages/Landing/LandingHook.mjs'
+export {
+  LandingHookPlugin,
+  type LandingPlugin,
+} from '../ui/components/pages/Landing/LandingHook.mjs'
 export {
   SearchPagePlugin,
   type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
 } from '../ui/components/pages/Search/SearchPageHook.mjs'
 export { createPlugin } from '../web-lib/create-plugin.mjs'
-export { wrapFetch } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
+export { silentCatchAbort, wrapFetch } from '../web-lib/pri-http/xhr-adapter/callPkgApis.mjs'
 export { createTaskManager } from '../web-lib/task-manager.mjs'
 export { useUrlQueryString } from '../web-lib/use-query-params.mjs'

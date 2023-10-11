@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { FC } from 'react'
 
 function html() {
@@ -492,6 +492,6 @@ const meta: ComponentMeta<typeof Email> = {
 
 const VerifyEmailStory: ComponentStory<typeof Email> = () => <Email />
 
-export const Default = VerifyEmailStory.bind({})
+export const Default: typeof VerifyEmailStory = VerifyEmailStory.bind({})
 
 export default meta

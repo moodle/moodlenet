@@ -9,17 +9,19 @@ import { getBuildContext } from './get-build-context.mjs'
 const baseBuildFolder = process.cwd()
 const buildFolder_tmp = await mkdtemp(join(tmpdir(), 'moodlenet-webapp-build-'))
 const buildContext = await getBuildContext({ baseBuildFolder })
-
+const alias = await buildContext.getAliases()
+const pkgPlugins = await buildContext.getPkgPlugins()
+// console.log({ buildContext, alias, pkgPlugins })
 const wp = getWp({
-  alias: await buildContext.getAliases(),
-  pkgPlugins: await buildContext.getPkgPlugins(),
+  alias,
+  pkgPlugins,
   mode: 'prod',
   buildFolder: buildFolder_tmp,
 })
 
 wp.hooks.done.tap('copy build in latest build folder', async wpStats => {
   if (wpStats?.hasErrors()) {
-    console.error(`Webpack error`, inspect(wpStats, false, 4, true))
+    console.error(`Webpack error`, inspect(wpStats.toString(), false, 4, true))
     process.exit(1)
   }
   console.log(
@@ -29,5 +31,5 @@ wp.hooks.done.tap('copy build in latest build folder', async wpStats => {
   )
 
   cpSync(buildFolder_tmp, buildContext.latestBuildFolder, { recursive: true })
-  wp.close(() => process.exit(0))
+  process.exit(0)
 })

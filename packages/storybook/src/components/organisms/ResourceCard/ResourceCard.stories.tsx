@@ -12,7 +12,7 @@ import { ContentBackupImages } from '@moodlenet/react-app/ui'
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
@@ -39,6 +39,9 @@ const meta: ComponentMeta<typeof ResourceCard> = {
       </div>
     ),
   ],
+  parameters: {
+    layout: 'centered',
+  },
 }
 
 export const getResourceCardStoryProps = (
@@ -207,37 +210,37 @@ export const ResourceCardVerticalLoggedOutStoryProps: ResourceCardProps = getRes
 
 const ResourceCardStory: ComponentStory<typeof ResourceCard> = args => <ResourceCard {...args} />
 
-export const LoggedIn = ResourceCardStory.bind({})
+export const LoggedIn: typeof ResourceCardStory = ResourceCardStory.bind({})
 LoggedIn.args = ResourceCardLoggedInStoryProps
 
-export const LoggedOut = ResourceCardStory.bind({})
+export const LoggedOut: typeof ResourceCardStory = ResourceCardStory.bind({})
 LoggedOut.args = ResourceCardLoggedOutStoryProps
 
-export const Owner = ResourceCardStory.bind({})
+export const Owner: typeof ResourceCardStory = ResourceCardStory.bind({})
 Owner.args = ResourceCardOwnerStoryProps
 
-export const Public = ResourceCardStory.bind({})
+export const Public: typeof ResourceCardStory = ResourceCardStory.bind({})
 Public.args = ResourceCardOwnerStoryProps
 
-export const Private = ResourceCardStory.bind({})
+export const Private: typeof ResourceCardStory = ResourceCardStory.bind({})
 Private.args = ResourceCardOwnerPrivateStoryProps
 
-export const VerticalLoggedIn = ResourceCardStory.bind({})
+export const VerticalLoggedIn: typeof ResourceCardStory = ResourceCardStory.bind({})
 VerticalLoggedIn.args = ResourceCardVerticalLoggedInStoryProps
 
-export const VerticalLoggedOut = ResourceCardStory.bind({})
+export const VerticalLoggedOut: typeof ResourceCardStory = ResourceCardStory.bind({})
 VerticalLoggedOut.args = ResourceCardVerticalLoggedOutStoryProps
 
-export const VerticalOwner = ResourceCardStory.bind({})
+export const VerticalOwner: typeof ResourceCardStory = ResourceCardStory.bind({})
 VerticalOwner.args = { ...ResourceCardOwnerStoryProps, orientation: 'vertical' }
 
-export const VerticalPublic = ResourceCardStory.bind({})
+export const VerticalPublic: typeof ResourceCardStory = ResourceCardStory.bind({})
 VerticalPublic.args = getResourceCardStoryProps({
   ...ResourceCardOwnerStoryProps,
   orientation: 'vertical',
 })
 
-export const VerticalPrivate = ResourceCardStory.bind({})
+export const VerticalPrivate: typeof ResourceCardStory = ResourceCardStory.bind({})
 VerticalPrivate.args = getResourceCardStoryProps({
   ...ResourceCardOwnerPrivateStoryProps,
   orientation: 'vertical',

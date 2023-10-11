@@ -1,4 +1,3 @@
-import { Share } from '@material-ui/icons'
 import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
 import {
   Card,
@@ -12,7 +11,7 @@ import {
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { Check, Delete, Edit, MoreVert, Public, PublicOff, Save } from '@mui/icons-material'
+import { Check, Delete, Edit, MoreVert, Public, PublicOff, Save, Share } from '@mui/icons-material'
 import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
@@ -200,7 +199,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     <InputTextField
       name="title"
       key="title"
-      className="title underline"
+      className="title"
       isTextarea
       value={form.values.title}
       placeholder="Title"
@@ -455,7 +454,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     >
       {canEdit ? (
         <InputTextField
-          className="description underline"
+          className="description"
           name="description"
           isTextarea
           ref={descriptionEditRef}

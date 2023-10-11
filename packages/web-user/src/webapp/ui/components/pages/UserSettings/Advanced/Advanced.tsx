@@ -1,13 +1,6 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import {
-  Card,
-  Modal,
-  PrimaryButton,
-  SecondaryButton,
-  Snackbar,
-  SnackbarStack,
-} from '@moodlenet/component-library'
+import { Card, Modal, PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
 import { useState, type FC } from 'react'
 import './Advanced.scss'
 
@@ -45,15 +38,16 @@ export const Advanced: FC<AdvancedProps> = ({
     (item): item is AddonItem => !!item,
   )
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        deleteAccountSuccess ? (
-          <Snackbar type="success">Check your email to confirm the deletion</Snackbar>
-        ) : null,
-      ]}
-    ></SnackbarStack>
-  )
+  const snackbars =
+    // <SnackbarStack
+    // snackbarList={
+    [
+      deleteAccountSuccess ? (
+        <Snackbar type="success">Check your email to confirm the deletion</Snackbar>
+      ) : null,
+    ]
+    // }
+    // ></SnackbarStack>
 
   const modals = (
     <>

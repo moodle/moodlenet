@@ -1,10 +1,10 @@
-import { CallMade as CallMadeIcon } from '@material-ui/icons'
+import type { Href } from '@moodlenet/component-library'
 import { Card } from '@moodlenet/component-library'
 import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
-import { SimpleLayout } from '@moodlenet/react-app/ui'
+import { Link, SimpleLayout } from '@moodlenet/react-app/ui'
+import { CallMade as CallMadeIcon } from '@mui/icons-material'
 import type { ComponentType, CSSProperties, FC } from 'react'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 // import { Link } from '../../../../elements/link'
 import './Login.scss'
 
@@ -13,10 +13,11 @@ export type LoginProps = {
   loginItems: LoginItem[]
   headerProps: MinimalisticHeaderProps
   footerProps: MainFooterProps
+  signupHref: Href
 }
 // Record<string, unknown>
 
-export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps, footerProps }) => {
+export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps, footerProps, signupHref }) => {
   // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
   // const defaultLoginEntry = loginRegs.entries[0]
   const defaultLoginEntry = loginItems[0]
@@ -64,7 +65,7 @@ export const LoginPage: FC<LoginProps> = ({ loginItems, headerProps, footerProps
             </div>
           </Card>
           <Card hover={true}>
-            <Link to={`/signup`}>
+            <Link href={signupHref}>
               Sign up
               <CallMadeIcon />
             </Link>

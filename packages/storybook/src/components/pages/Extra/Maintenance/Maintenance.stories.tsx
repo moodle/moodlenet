@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 
 import type { MaintenanceProps } from '@moodlenet/react-app/ui'
 import { Maintenance } from '@moodlenet/react-app/ui'

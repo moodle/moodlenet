@@ -1,7 +1,7 @@
 import type { ResourceFormProps } from '@moodlenet/ed-resource/common'
 import type { ResourceProps } from '@moodlenet/ed-resource/ui'
 import { Resource } from '@moodlenet/ed-resource/ui'
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useResourceStoryProps } from './ResourceProps.stories.js'
 // import { href } from '../../../elements/link'
 
@@ -61,6 +61,7 @@ export const NewResourceProps: Partial<ResourceFormProps> = {
   month: '',
   year: '',
   type: '',
+  learningOutcomes: [],
 }
 
 export const New: ResourceStory = () => {
@@ -69,7 +70,6 @@ export const New: ResourceStory = () => {
       image: null,
     },
     resourceForm: NewResourceProps,
-
     state: {
       isPublished: false,
       // uploadProgress: 74,
@@ -92,10 +92,10 @@ export const Creator: ResourceStory = () => {
       contentType: 'file',
       contentUrl:
         'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
-      downloadFilename: '557_Sujeto_y_Predicado.pdf',
+      downloadFilename: 'Ecosystem_Conservation_Restoration.mbz',
     },
     resourceForm: {
-      level: undefined,
+      // level: undefined,
     },
     state: {},
     actions: {},

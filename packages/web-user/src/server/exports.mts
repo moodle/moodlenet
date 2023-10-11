@@ -9,14 +9,14 @@ export {
   getProfileRecord,
   setProfileAvatar,
   setProfileBackgroundImage,
-} from './lib/profile.mjs'
-export * from './lib/web-user.mjs'
+} from './srv/profile.mjs'
+export * from './srv/web-user.mjs'
 export {
   createWebUser,
   getCurrentProfileIds,
   signWebUserJwtToken,
   verifyCurrentTokenCtx,
-} from './lib/web-user.mjs'
+} from './srv/web-user.mjs'
 export * from './types.mjs'
 import { shell } from './shell.mjs'
 

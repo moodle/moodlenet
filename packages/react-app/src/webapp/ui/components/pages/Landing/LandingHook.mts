@@ -6,9 +6,12 @@ import { createPlugin } from '../../../../web-lib/create-plugin.mjs'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
 import type { LandingProps } from './Landing.js'
 
-export const LandingHookPlugin = createPlugin<{
-  mainColumnItems: AddOnMap<AddonItemNoKey>
-}>()
+export type LandingPlugin = {
+  mainColumnItems?: AddOnMap<AddonItemNoKey>
+  headerCardItems?: AddOnMap<AddonItemNoKey>
+}
+
+export const LandingHookPlugin = createPlugin<LandingPlugin>()
 
 export const useLandingPageProps = (): LandingProps => {
   const plugins = LandingHookPlugin.usePluginHooks()
@@ -18,6 +21,6 @@ export const useLandingPageProps = (): LandingProps => {
     title: organizationData.landingTitle,
     subtitle: organizationData.landingSubtitle,
     mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
-    search: () => undefined,
+    headerCardItems: plugins.getKeyedAddons('headerCardItems'),
   }
 }

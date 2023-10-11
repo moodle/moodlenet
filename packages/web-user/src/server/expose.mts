@@ -10,16 +10,26 @@ import {
 } from '@moodlenet/react-app/server'
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
+import type { SchemaOf } from 'yup'
+import { array, object, string } from 'yup'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
-import type { ClientSessionDataRpc, Profile, ProfileGetRpc, WebUserData } from '../common/types.mjs'
+import type {
+  ClientSessionDataRpc,
+  Profile,
+  ProfileGetRpc,
+  UserInterests,
+  WebUserData,
+} from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
+import { shell } from './shell.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
-} from './lib/known-features.mjs'
+} from './srv/known-features.mjs'
 import {
+  editMyProfileInterests,
   editProfile,
   entityFeatureAction,
   getEntityFeatureCount,
@@ -32,7 +42,8 @@ import {
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
-} from './lib/profile.mjs'
+  setProfilePublisherFlag,
+} from './srv/profile.mjs'
 import {
   currentWebUserDeletionAccountRequest,
   deleteWebUserAccountConfirmedByToken,
@@ -43,8 +54,7 @@ import {
   sendWebUserTokenCookie,
   toggleWebUserIsAdmin,
   verifyCurrentTokenCtx,
-} from './lib/web-user.mjs'
-import { shell } from './shell.mjs'
+} from './srv/web-user.mjs'
 import type { ProfileDataType } from './types.mjs'
 import { betterTokenContext } from './util.mjs'
 
@@ -128,27 +138,29 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         }
         const data = profileDoc2Profile(profileRecord.entity)
 
-        const collections = (
-          await getProfileOwnKnownEntities({
-            knownEntity: 'collection',
-            profileKey: _key,
-          })
-        ).map(({ entity: { _key } }) => ({ _key }))
+        const [collections, resources, currentProfileIds, currToken, numFollowers] =
+          await Promise.all([
+            getProfileOwnKnownEntities({
+              knownEntity: 'collection',
+              profileKey: _key,
+            }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
 
-        const resources = (
-          await getProfileOwnKnownEntities({
-            knownEntity: 'resource',
-            profileKey: _key,
-          })
-        ).map(({ entity: { _key } }) => ({ _key }))
+            getProfileOwnKnownEntities({
+              knownEntity: 'resource',
+              profileKey: _key,
+            }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
+            getCurrentProfileIds(),
+            verifyCurrentTokenCtx(),
+            getEntityFeatureCount({ _key, entityType: 'profile', feature: 'follow' }).then(
+              _ => _?.count ?? 0,
+            ),
+          ])
 
         const profileHomePagePath = getProfileHomePageRoutePath({
           _key,
           displayName: profileRecord.entity.displayName,
         })
 
-        const currentProfileIds = await getCurrentProfileIds()
-        const currToken = await verifyCurrentTokenCtx()
         const canApprove =
           !!currToken && (currToken.payload.isRoot || currToken.payload.webUser.isAdmin)
 
@@ -157,9 +169,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           isPublisher: profileRecord.entity.publisher,
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
-          numFollowers:
-            (await getEntityFeatureCount({ _key, entityType: 'profile', feature: 'follow' }))
-              ?.count ?? 0,
+          numFollowers,
           numKudos: profileRecord.entity.kudos,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
@@ -266,17 +276,62 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/all-my-featured-entities': {
       guard: () => void 0,
       async fn() {
-        const myProfile = await getCurrentProfileIds()
-        if (!myProfile) {
+        const myProfileIds = await getCurrentProfileIds()
+        if (!myProfileIds) {
           return null
         }
-        const profileRec = await getProfileRecord(myProfile._key)
+        const profileRec = await getProfileRecord(myProfileIds._key)
         if (!profileRec) {
           return null
         }
         return {
           featuredEntities: reduceToKnownFeaturedEntities(profileRec.entity.knownFeaturedEntities),
         }
+      },
+    },
+    'webapp/my-interests/get': {
+      guard: () => void 0,
+      async fn() {
+        const myProfileIds = await getCurrentProfileIds()
+        if (!myProfileIds) {
+          return null
+        }
+        const profileRec = await getProfileRecord(myProfileIds._key)
+        if (!profileRec) {
+          return null
+        }
+        return {
+          interests: !profileRec.entity.settings.interests?.items
+            ? undefined
+            : {
+                languages: profileRec.entity.settings.interests.items.languages,
+                levels: profileRec.entity.settings.interests.items.levels,
+                licenses: profileRec.entity.settings.interests.items.licenses,
+                subjects: profileRec.entity.settings.interests.items.subjects,
+              },
+          asDefaultFilters: profileRec.entity.settings.interests?.asDefaultFilters,
+        }
+      },
+    },
+    'webapp/my-interests/save': {
+      guard: body => {
+        const schema: SchemaOf<UserInterests> = object({
+          subjects: array().of(string().required()).required(),
+          licenses: array().of(string().required()).required(),
+          levels: array().of(string().required()).required(),
+          languages: array().of(string().required()).required(),
+        }).required()
+        const interests = schema.validateSync(body.interests, { stripUnknown: true })
+        body.interests = interests
+      },
+      async fn({ interests }) {
+        return editMyProfileInterests({ items: interests })
+      },
+    },
+    'webapp/my-interests/use-as-default-search-filters': {
+      guard: body => typeof body.use === 'boolean',
+      async fn({ use }) {
+        return editMyProfileInterests({ asDefaultFilters: use })
       },
     },
     'webapp/send-message-to-user/:profileKey': {
@@ -368,7 +423,6 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         const webUsers = Promise.all(
           users_and_profiles.map(user => {
             return getProfileRecord(user.profileKey).then(profile => {
-              console.log({ user, profile })
               assert(
                 profile,
                 `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,
@@ -380,6 +434,10 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
                 name: user.displayName,
                 isPublisher: profile.entity.publisher,
                 profileKey: user.profileKey,
+                profileHomePath: getProfileHomePageRoutePath({
+                  _key: profile.entity._key,
+                  displayName: profile.entity.displayName,
+                }),
                 //@BRU actually email *could* not be defined for a web-user,
                 // using our email authentication it will always be indeed..
                 // but with some other auth system it may not
@@ -404,10 +462,8 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/admin/roles/toggleIsPublisher': {
       guard: () => void 0,
       async fn({ profileKey }) {
-        const profile = await getProfileRecord(profileKey)
-        const patchedProfile =
-          profile && (await editProfile(profileKey, { publisher: !profile.entity.publisher }))
-        return !!patchedProfile
+        const response = await setProfilePublisherFlag({ profileKey, publisher: 'toggle' })
+        return !!response?.ok
       },
     },
     'webapp/admin/general/set-org-data': {

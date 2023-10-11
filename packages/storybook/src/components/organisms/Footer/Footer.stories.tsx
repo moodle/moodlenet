@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react'
+import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 import type { MainFooterProps } from '@moodlenet/react-app/ui'
 import { MainFooter } from '@moodlenet/react-app/ui'
@@ -77,7 +77,7 @@ export const FooterStoryProps: MainFooterProps = {
 
 const FooterStory: ComponentStory<typeof MainFooter> = args => <MainFooter {...args} />
 
-export const Default = FooterStory.bind({})
+export const Default: typeof FooterStory = FooterStory.bind({})
 Default.args = FooterStoryProps
 
 export default meta

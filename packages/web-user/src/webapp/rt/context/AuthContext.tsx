@@ -78,7 +78,7 @@ export function useAuthCtxValue() {
     setClientSessionData(undefined)
     deleteSessionTokenCookie()
     nav('/')
-  }, [setClientSessionData, nav])
+  }, [nav])
 
   const fetchClientSessionDataRpc = useCallback(async () => {
     return fetch().then(_ => {

@@ -1,0 +1,176 @@
+.learning-outcomes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  --category-knowledge-color: 255, 128, 0;
+  --category-comprehension-color: 255, 192, 0;
+  --category-application-color: 0, 189, 126;
+  --category-analysis-color: 26, 106, 255;
+  --category-synthesis-color: 189, 0, 255;
+  --category-evaluation-color: 255, 0, 132;
+
+  > .title {
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    > .find-out-more {
+      height: fit-content;
+      > a {
+        > svg {
+          width: 17px;
+          height: 17px;
+          color: #b4b4b4;
+          display: flex;
+        }
+      }
+    }
+  }
+  > .subtitle {
+    font-size: 14px;
+  }
+  > .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    > .dropdown {
+      width: fit-content;
+      cursor: pointer;
+      > .input-container {
+        gap: 0;
+        height: 36px;
+        min-height: 36px;
+        width: fit-content;
+        border-radius: 25px;
+        box-shadow: inset 0 0 0 1px #b2b2b2;
+        > .dropdown-button {
+          width: fit-content;
+          padding: 0 12px;
+          > .placeholder {
+            color: black;
+          }
+        }
+        > svg {
+          display: none;
+        }
+        > .search-field {
+          width: 100%;
+        }
+        &:not(:has(input)):hover {
+          background-color: #f1f1f1;
+        }
+      }
+
+      > .dropdown-content {
+        width: 200px;
+        margin-top: -9px;
+      }
+
+      &.active.knowledge > .input-container {
+        box-shadow: 0 0 0 2px rgb(var(--category-knowledge-color));
+      }
+      &.active.comprehension > .input-container {
+        box-shadow: 0 0 0 2px rgb(var(--category-comprehension-color));
+      }
+      &.active.application > .input-container {
+        box-shadow: 0 0 0 2px rgb(var(--category-application-color));
+      }
+      &.active.analysis > .input-container {
+        box-shadow: 0 0 0 2px rgb(var(--category-analysis-color));
+      }
+      &.active.synthesis > .input-container {
+        box-shadow: 0 0 0 2px rgb(var(--category-synthesis-color));
+      }
+      &.active.evaluation > .input-container {
+        box-shadow: 0 0 0 2px rgb(var(--category-evaluation-color));
+      }
+      &.max-reached {
+        cursor: auto;
+      }
+    }
+  }
+
+  > .learning-outcomes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    > .learning-outcome {
+      > .input-container {
+        border-radius: 10px;
+        > .verb-pill {
+          color: white;
+          padding: 4px 8px;
+          border-radius: 8px;
+          margin-left: 10px;
+          &.knowledge {
+            background-color: rgb(var(--category-knowledge-color));
+          }
+          &.comprehension {
+            background-color: rgb(var(--category-comprehension-color));
+          }
+          &.application {
+            background-color: rgb(var(--category-application-color));
+          }
+          &.analysis {
+            background-color: rgb(var(--category-analysis-color));
+          }
+          &.synthesis {
+            background-color: rgb(var(--category-synthesis-color));
+          }
+          &.evaluation {
+            background-color: rgb(var(--category-evaluation-color));
+          }
+        }
+
+        > input.learning-outcome {
+          flex: 1;
+          padding: 0 8px;
+        }
+      }
+    }
+
+    > .learning-outcome-read-only {
+      font-size: 14px;
+      gap: 6px;
+      display: flex;
+      align-items: start;
+
+      > svg {
+        width: 7px;
+        height: 7px;
+        margin-top: 8px;
+      }
+
+      > .verb {
+        border-radius: 5px;
+        padding: 1px 5px 3px;
+        text-decoration-color: transparent;
+        &.knowledge {
+          background-color: rgb(var(--category-knowledge-color), 0.15);
+        }
+        &.comprehension {
+          background-color: rgb(var(--category-comprehension-color), 0.15);
+        }
+        &.application {
+          background-color: rgb(var(--category-application-color), 0.15);
+        }
+        &.analysis {
+          background-color: rgb(var(--category-analysis-color), 0.15);
+        }
+        &.synthesis {
+          background-color: rgb(var(--category-synthesis-color), 0.15);
+        }
+        &.evaluation {
+          background-color: rgb(var(--category-evaluation-color), 0.15);
+        }
+      }
+
+      > .sentence {
+        margin-top: 1px;
+        word-break: break-word;
+      }
+    }
+  }
+}
