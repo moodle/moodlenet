@@ -24,15 +24,15 @@ export type PublishContentHrefs = {
 }
 
 export type PublishContentProps = {
-  PublishContentHrefs: PublishContentHrefs
+  publishContentHrefs: PublishContentHrefs
   isAuthenticated: boolean
 }
 
 export const PublishContent: FC<PublishContentProps> = ({
-  PublishContentHrefs,
+  publishContentHrefs,
   isAuthenticated,
 }) => {
-  const { loginHref, signUpHref, createResource, createCollection } = PublishContentHrefs
+  const { loginHref, signUpHref, createResource, createCollection } = publishContentHrefs
   const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
 
   const modals = [
