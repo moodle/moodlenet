@@ -12,7 +12,7 @@ export const CreateResourcePublishContentItem: FC<CreateResourcePublishContentIt
     <PrimaryButton className="" color="card">
       <NoteAdd />
       <div className="content">
-        <div className="title">Create a new resource</div>
+        <div className="title">Publish a new resource</div>
         <div className="subtitle">A resource is a single item of content</div>
       </div>
     </PrimaryButton>
@@ -27,7 +27,7 @@ export const CreateCollectionPublishContentItem: FC<CreateCollectionPublishConte
     <PrimaryButton className="" color="card">
       <LibraryAdd />
       <div className="content">
-        <div className="title">Create a new collection</div>
+        <div className="title">Publish a new collection</div>
         <div className="subtitle">Collections are groups of resources</div>
       </div>
     </PrimaryButton>

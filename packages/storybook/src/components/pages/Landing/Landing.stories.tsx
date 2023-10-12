@@ -3,7 +3,7 @@ import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
-import { InterestInfo, LandingProfileList, ShareContent } from '@moodlenet/web-user/ui'
+import { InterestInfo, LandingProfileList, PublishContent } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
@@ -85,8 +85,8 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   headerCardItems: [
     {
       Item: () => (
-        <ShareContent
-          shareContentHrefs={{
+        <PublishContent
+          publishContentHrefs={{
             loginHref: href('Pages/Access/Login/Default'),
             signUpHref: href('Pages/Access/SignUp/Default'),
             createResource: linkTo('Pages/Resource', 'New'),
@@ -95,7 +95,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
           isAuthenticated={false}
         />
       ),
-      key: 'share-content',
+      key: 'publish-content',
     },
   ],
 }
@@ -164,6 +164,22 @@ export const LandingLoggedInStoryProps: LandingProps = {
         />
       ),
       key: 'people-card-list',
+    },
+  ],
+  headerCardItems: [
+    {
+      Item: () => (
+        <PublishContent
+          publishContentHrefs={{
+            loginHref: href('Pages/Access/Login/Default'),
+            signUpHref: href('Pages/Access/SignUp/Default'),
+            createResource: linkTo('Pages/Resource', 'New'),
+            createCollection: linkTo('Pages/Collection', 'New'),
+          }}
+          isAuthenticated={true}
+        />
+      ),
+      key: 'publish-content',
     },
   ],
 }

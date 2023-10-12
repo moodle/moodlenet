@@ -13,8 +13,8 @@ import {
   SETTINGS_PAGE_ROUTE_PATH,
   SIGNUP_PAGE_ROUTE_BASE_PATH,
 } from '../../../common/webapp-routes.mjs'
-import type { InterestInfoProps, ShareContentProps } from '../../ui/exports/ui.mjs'
-import { InterestInfo, LandingProfileList, ShareContent } from '../../ui/exports/ui.mjs'
+import type { InterestInfoProps, PublishContentProps } from '../../ui/exports/ui.mjs'
+import { InterestInfo, LandingProfileList, PublishContent } from '../../ui/exports/ui.mjs'
 import { AuthCtx, useMyProfileContext } from '../exports.mjs'
 import { useMyLandingPageCollectionListDataProps } from '../page/my-landing-page/MyLandingPageCollectionListHook.mjs'
 import { useMyLandingPageProfileListDataProps } from '../page/my-landing-page/MyLandingPageProfileListHook.mjs'
@@ -63,14 +63,14 @@ const landingPageMainColumnItems: AddOnMap<AddonItemNoKey> = {
   },
 }
 
-const shareContentPanelAddon: AddonItemNoKey = {
+const publishContentPanelAddon: AddonItemNoKey = {
   Item: () => {
     const { createResource } = useContext(ResourceContext)
     const { createCollection } = useContext(CollectionContext)
     const { isAuthenticated } = useContext(AuthCtx)
-    const shareContentProps = useMemo(() => {
-      const props: ShareContentProps = {
-        shareContentHrefs: {
+    const publishContentProps = useMemo(() => {
+      const props: PublishContentProps = {
+        publishContentHrefs: {
           loginHref: href(LOGIN_PAGE_ROUTE_BASE_PATH),
           signUpHref: href(SIGNUP_PAGE_ROUTE_BASE_PATH),
           createResource,
@@ -81,7 +81,7 @@ const shareContentPanelAddon: AddonItemNoKey = {
       return props
     }, [createCollection, createResource, isAuthenticated])
 
-    return <ShareContent {...shareContentProps} />
+    return <PublishContent {...publishContentProps} />
   },
 }
 LandingHookPlugin.register(function useLandingPagePlugin() {
@@ -95,7 +95,7 @@ LandingHookPlugin.register(function useLandingPagePlugin() {
         ...landingPageMainColumnItems,
       },
       headerCardItems: {
-        shareContentPanelAddon,
+        publishContentPanelAddon,
       },
     }
     return plugin
