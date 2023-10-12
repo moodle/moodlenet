@@ -98,7 +98,7 @@ type RpcOpts = {
 export function silentCatchAbort(err: any) {
   if (err instanceof AbortController && err.signal.aborted) {
     console.info(`RPC aborted by user`)
-    return err
+    return null
   }
   throw err
 }

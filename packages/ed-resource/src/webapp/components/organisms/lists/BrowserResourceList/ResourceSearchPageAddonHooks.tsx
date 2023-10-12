@@ -2,6 +2,7 @@ import type { AddOnMap } from '@moodlenet/core/lib'
 import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
 import { MainSearchBoxCtx, proxyWith, type SortType } from '@moodlenet/react-app/ui'
 import {
+  silentCatchAbort,
   useUrlQueryString,
   type SearchEntityPageWrapper,
   type SearchEntitySectionAddon,
@@ -152,20 +153,24 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
   }, [publishedMetaOptions.licenses, ls2str, str2ls, queryUrlParams.licenses, setQueryUrlParams])
 
   const load = useCallback(
-    async (limit: number, cursor?: string) => {
-      const res = await shell.rpc.me('webapp/search')(undefined, undefined, {
-        limit,
-        sortType: sortType.selected,
-        filterSubjects: ls2str(subjectsFilter.selected),
-        filterLanguages: ls2str(languagesFilter.selected),
-        filterLevels: ls2str(levelsFilter.selected),
-        filterTypes: ls2str(typesFilter.selected),
-        filterLicenses: ls2str(licensesFilter.selected),
-        text: q,
-        after: cursor,
-      })
-      setResourceSearchResult(res)
-      return res
+    (limit: number, cursor?: string) => {
+      return shell.rpc
+        .me('webapp/search', { rpcId: '/search' })(undefined, undefined, {
+          limit,
+          sortType: sortType.selected,
+          filterSubjects: ls2str(subjectsFilter.selected),
+          filterLanguages: ls2str(languagesFilter.selected),
+          filterLevels: ls2str(levelsFilter.selected),
+          filterTypes: ls2str(typesFilter.selected),
+          filterLicenses: ls2str(licensesFilter.selected),
+          text: q,
+          after: cursor,
+        })
+        .then(res => {
+          setResourceSearchResult(res)
+          return res
+        })
+        .catch(silentCatchAbort)
     },
     [
       languagesFilter.selected,
@@ -181,7 +186,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
 
   useEffect(() => {
     load(12).then(res => {
-      resourceListAction(['set', res.list])
+      res && resourceListAction(['set', res.list])
     })
   }, [load])
 
@@ -191,7 +196,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
       return
     }
     const res = await load(36, resourceSearchResult?.endCursor)
-    resourceListAction(['more', res.list])
+    res && resourceListAction(['more', res.list])
   }, [hasNoMore, load, resourceSearchResult?.endCursor])
 
   const ctx = useMemo<SearchResourceContextT>(

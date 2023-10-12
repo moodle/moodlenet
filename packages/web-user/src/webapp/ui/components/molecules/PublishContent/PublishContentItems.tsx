@@ -4,8 +4,8 @@ import { Link } from '@moodlenet/react-app/ui'
 import { ArrowForward, LibraryAdd, NoteAdd, StreamOutlined } from '@mui/icons-material'
 import type { FC } from 'react'
 
-export type CreateResourceShareContentItemProps = { createResource(): void }
-export const CreateResourceShareContentItem: FC<CreateResourceShareContentItemProps> = ({
+export type CreateResourcePublishContentItemProps = { createResource(): void }
+export const CreateResourcePublishContentItem: FC<CreateResourcePublishContentItemProps> = ({
   createResource,
 }) => (
   <div onClick={createResource}>
@@ -19,8 +19,8 @@ export const CreateResourceShareContentItem: FC<CreateResourceShareContentItemPr
   </div>
 )
 
-export type CreateCollectionShareContentItemProps = { createCollection(): void }
-export const CreateCollectionShareContentItem: FC<CreateCollectionShareContentItemProps> = ({
+export type CreateCollectionPublishContentItemProps = { createCollection(): void }
+export const CreateCollectionPublishContentItem: FC<CreateCollectionPublishContentItemProps> = ({
   createCollection,
 }) => (
   <div onClick={createCollection}>
@@ -34,8 +34,8 @@ export const CreateCollectionShareContentItem: FC<CreateCollectionShareContentIt
   </div>
 )
 
-export type LoginShareContentItemProps = { loginHref: Href }
-export const LoginShareContentItem: FC<LoginShareContentItemProps> = ({ loginHref }) => (
+export type LoginPublishContentItemProps = { loginHref: Href }
+export const LoginPublishContentItem: FC<LoginPublishContentItemProps> = ({ loginHref }) => (
   <Link href={loginHref}>
     <PrimaryButton className="" color="card">
       <ArrowForward />
@@ -47,8 +47,8 @@ export const LoginShareContentItem: FC<LoginShareContentItemProps> = ({ loginHre
   </Link>
 )
 
-export type SignUpShareContentItemProps = { signUpHref: Href }
-export const SignUpShareContentItem: FC<SignUpShareContentItemProps> = ({ signUpHref }) => (
+export type SignUpPublishContentItemProps = { signUpHref: Href }
+export const SignUpPublishContentItem: FC<SignUpPublishContentItemProps> = ({ signUpHref }) => (
   <Link href={signUpHref}>
     <PrimaryButton className="" color="card">
       <StreamOutlined />

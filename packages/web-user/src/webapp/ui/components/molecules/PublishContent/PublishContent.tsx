@@ -2,63 +2,66 @@ import type { Href } from '@moodlenet/component-library'
 import { Modal, PrimaryButton } from '@moodlenet/component-library'
 import type { ComponentType, FC } from 'react'
 import { useState } from 'react'
-import './ShareContent.scss'
+import './PublishContent.scss'
 import {
-  CreateCollectionShareContentItem,
-  CreateResourceShareContentItem,
-  LoginShareContentItem,
-  SignUpShareContentItem,
-} from './ShareContentItems.js'
+  CreateCollectionPublishContentItem,
+  CreateResourcePublishContentItem,
+  LoginPublishContentItem,
+  SignUpPublishContentItem,
+} from './PublishContentItems.js'
 
-export type ShareContentItem = {
+export type PublishContentItem = {
   Component: ComponentType
   key: string
   className?: string
 }
 
-export type shareContentHrefs = {
+export type PublishContentHrefs = {
   loginHref: Href
   signUpHref: Href
   createResource(): void
   createCollection(): void
 }
 
-export type ShareContentProps = {
-  shareContentHrefs: shareContentHrefs
+export type PublishContentProps = {
+  PublishContentHrefs: PublishContentHrefs
   isAuthenticated: boolean
 }
 
-export const ShareContent: FC<ShareContentProps> = ({ shareContentHrefs, isAuthenticated }) => {
-  const { loginHref, signUpHref, createResource, createCollection } = shareContentHrefs
+export const PublishContent: FC<PublishContentProps> = ({
+  PublishContentHrefs,
+  isAuthenticated,
+}) => {
+  const { loginHref, signUpHref, createResource, createCollection } = PublishContentHrefs
   const [isShowingContentModal, setIsShowingContentModal] = useState<boolean>(false)
 
   const modals = [
     !isAuthenticated && isShowingContentModal && (
       <Modal
         className="create-content-modal"
-        title={`Log in or create an account to start sharing content`}
+        title={`Log in or create an account to start publishing content`}
         closeButton={false}
         onClose={() => {
           setIsShowingContentModal(false)
         }}
         style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
       >
-        <LoginShareContentItem loginHref={loginHref} />
-        <SignUpShareContentItem signUpHref={signUpHref} />
+        <LoginPublishContentItem loginHref={loginHref} />
+        <SignUpPublishContentItem signUpHref={signUpHref} />
       </Modal>
     ),
     isAuthenticated && isShowingContentModal && (
       <Modal
         className="create-content-modal"
-        title={`What would you like to create?`}
+        title={`What would you like to publish?`}
         closeButton={false}
         onClose={() => {
           setIsShowingContentModal(false)
         }}
         style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
       >
-        <CreateResourceShareContentItem createResource={createResource} />
-        <CreateCollectionShareContentItem createCollection={createCollection} />
+        <CreateResourcePublishContentItem createResource={createResource} />
+        <CreateCollectionPublishContentItem createCollection={createCollection} />
       </Modal>
     ),
   ]
@@ -71,7 +74,7 @@ export const ShareContent: FC<ShareContentProps> = ({ shareContentHrefs, isAuthe
         color="blue"
         onClick={() => setIsShowingContentModal(true)}
       >
-        Share content
+        Publish content
       </PrimaryButton>
     </>
   )
