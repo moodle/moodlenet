@@ -10,6 +10,7 @@ export type LicenseFieldProps = {
   error: string | undefined
   shouldShowErrors: boolean
   editLicense: (license: string) => void
+  disabled?: boolean
 }
 
 export const LicenseField: FC<LicenseFieldProps> = ({
@@ -19,6 +20,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
   error,
   shouldShowErrors,
   editLicense,
+  disabled,
 }) => {
   const licenses = {
     opts: licenseOptions,
@@ -56,6 +58,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       }}
       edit
       noBorder
+      disabled={disabled}
       value={license}
       label={`License`}
       placeholder="License category"

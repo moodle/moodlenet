@@ -68,6 +68,7 @@ export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {
       image: null,
+      id: null,
     },
     resourceForm: NewResourceProps,
     state: {

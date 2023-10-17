@@ -1,4 +1,8 @@
-.date-field {
-  display: flex;
-  gap: 10px;
+.date-field-read-mode {
+  > .date {
+    display: flex;
+    gap: 5px;
+  }
+  // display: flex;
+  // gap: 10px;
 }

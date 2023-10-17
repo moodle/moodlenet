@@ -134,7 +134,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadOptionsItems,
   } = slots
 
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref, id } = data
 
   const { subjectOptions } = edMetaOptions
 
@@ -279,6 +279,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       key="title"
       className="title"
       isTextarea
+      disabled={!id}
       edit={isEditing}
       value={form.values.title}
       placeholder="Title"
@@ -567,6 +568,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       className="description"
       name="description"
       key="description"
+      disabled={!id}
       isTextarea
       textAreaAutoSize
       noBorder
@@ -599,8 +601,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const outcomeErrors = form.errors.learningOutcomes
 
   const learningOutcomes =
-    isEditing ||
-    (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0) ? (
+    id &&
+    (isEditing ||
+      (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0)) ? (
       <LearningOutcomes
         learningOutcomeOptions={learningOutcomeOptions}
         learningOutcomes={form.values.learningOutcomes}

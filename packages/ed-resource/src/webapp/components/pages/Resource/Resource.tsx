@@ -16,7 +16,7 @@ import { InsertDriveFile, Link } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { SaveState } from '../../../../common/types.mjs'
+import type { ProcessState, SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -39,6 +39,7 @@ import './Resource.scss'
 
 export type ResourceProps = {
   saveState: SaveState
+  processState: ProcessState
   mainLayoutProps: MainLayoutProps
   mainResourceCardSlots: MainResourceCardSlots
   resourceContributorCardProps: ResourceContributorCardProps
@@ -81,6 +82,7 @@ export const Resource: FC<ResourceProps> = ({
   actions,
   access,
   saveState,
+  processState,
 
   fileMaxSize,
   validationSchemas: {
@@ -92,7 +94,7 @@ export const Resource: FC<ResourceProps> = ({
   },
 }) => {
   const viewport = useViewport()
-  const { downloadFilename, contentUrl, contentType, image } = data
+  const { downloadFilename, contentUrl, contentType, image, id } = data
   const {
     editData,
     deleteResource,
@@ -397,6 +399,7 @@ export const Resource: FC<ResourceProps> = ({
   const subjectField = (isEditing || canEdit) && (
     <DropdownField
       key="subject-field"
+      disabled={!id}
       title="Subject"
       placeholder="Content category"
       canEdit={canEdit && isEditing}
@@ -411,6 +414,7 @@ export const Resource: FC<ResourceProps> = ({
   const licenseField = (
     <LicenseField
       key="license-field"
+      disabled={!id}
       canEdit={canEdit && isEditing}
       license={form.values.license}
       licenseOptions={licenseOptions}
@@ -425,6 +429,7 @@ export const Resource: FC<ResourceProps> = ({
   const typeField = (
     <DropdownField
       key="type-field"
+      disabled={!id}
       title="Type"
       placeholder="Content type"
       canEdit={canEdit && isEditing}
@@ -441,6 +446,7 @@ export const Resource: FC<ResourceProps> = ({
   const levelField = (
     <DropdownField
       key="level-field"
+      disabled={!id}
       title="Level"
       placeholder="Education level"
       canEdit={canEdit && isEditing}
@@ -457,6 +463,7 @@ export const Resource: FC<ResourceProps> = ({
   const dateField = (
     <DateField
       key="date-field"
+      disabled={!id}
       canEdit={canEdit && isEditing}
       month={form.values.month}
       monthOptions={monthOptions}
@@ -477,6 +484,7 @@ export const Resource: FC<ResourceProps> = ({
   const languageField = (
     <DropdownField
       key="language-field"
+      disabled={!id}
       title="Language"
       placeholder="Content language"
       canEdit={canEdit && isEditing}

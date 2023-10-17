@@ -1,6 +1,6 @@
 import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
 import { getDomainUrl } from '@moodlenet/component-library'
-import type { Href } from '@moodlenet/react-app/common'
+import type { Href, IntRange } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { AssetInfo } from '@moodlenet/component-library/common'
 import type { LearningOutcome, LearningOutcomeOption } from '@moodlenet/ed-meta/common'
@@ -88,6 +88,11 @@ export type ResourceProps = {
 }
 export type SavingState = 'not-saving' | 'saving' | 'save-done'
 export type SaveState = { form: SavingState; image: SavingState; content: SavingState }
+
+export type ProcessState = {
+  upload: IntRange<0, 100> | undefined
+  autofill: IntRange<0, 100> | undefined
+}
 
 export type RpcCaller = {
   edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>

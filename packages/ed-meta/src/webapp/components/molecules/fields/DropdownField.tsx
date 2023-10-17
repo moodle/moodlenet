@@ -13,6 +13,7 @@ export type DropdownFieldProps = {
   shouldShowErrors: boolean
   edit(selection: string): void
   noBorder?: boolean
+  disabled?: boolean
 }
 
 export const DropdownField: FC<DropdownFieldProps> = ({
@@ -25,6 +26,7 @@ export const DropdownField: FC<DropdownFieldProps> = ({
   shouldShowErrors,
   edit,
   noBorder,
+  disabled,
 }) => {
   const elements = {
     opts: options,
@@ -54,6 +56,7 @@ export const DropdownField: FC<DropdownFieldProps> = ({
     <Dropdown
       name={title}
       value={selection}
+      disabled={disabled}
       onChange={e => {
         e.currentTarget.value !== selection && edit(e.currentTarget.value)
       }}
@@ -90,7 +93,7 @@ export const DropdownField: FC<DropdownFieldProps> = ({
       )}
     </Dropdown>
   ) : selection ? (
-    <div className="detail selection">
+    <div className={`detail selection ${disabled ? 'disabled' : ''}`}>
       <div className="title">{title}</div>
       <abbr className="value" title={elements.selected?.label}>
         {elements.selected?.label}
