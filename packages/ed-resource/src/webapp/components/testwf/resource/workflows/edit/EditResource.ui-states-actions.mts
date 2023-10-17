@@ -1,10 +1,11 @@
+import type { TextOptionProps } from '@moodlenet/component-library'
 import type { DraftResourceDocument } from '../../types/documents.mjs'
-import type { Progress } from '../create/types.mjs'
+import type { Progress } from '../create/CreateResource.types.mjs'
 // http://link.to/specdocuments (user story, digrams github issue discussions)
 
-export type ModifyResourceActivityState = EditingState
+export type EditResourceActivityState = EditingState
 
-export interface EditingResourceErrors {
+export interface EditResourceErrors {
   title?: string
   description?: string
   subject?: string
@@ -13,41 +14,42 @@ export interface EditingResourceErrors {
   level?: string
   creationDate?: string
 }
-export type CreateResourceUserIntents =
-  | SaveEditsIntent
-  | EditResourceIntent
-  | PublishCheckIntent
-  | GoViewModeIntent
+export type EditResourceUserActions = SaveEditsAction | EditResourceAction | PublishCheckAction
 
-export interface SaveEditsIntent {
+export interface EditResourceAccess {
+  canEdit: boolean
+}
+export interface SaveEditsAction {
   type: 'Save edits'
 }
-export interface EditResourceIntent {
+export interface EditResourceAction {
   type: 'Edit resource'
   draftResourceDocument: DraftResourceDocument
 }
-export interface PublishCheckIntent {
+export interface PublishCheckAction {
   type: 'Publish check'
 }
-export interface GoViewModeIntent {
-  type: 'Go view mode'
-}
-export interface UploadImageIntent {
+export interface UploadImageAction {
   type: 'Upload Image'
   imageFile: File
 }
 
 export interface EditingState {
-  activity: 'Modify resource'
+  activity: 'Edit resource'
   type: 'Editing resource'
+  access: EditResourceAccess
   imageFileMaxSizeBytes: number
   resourceDocument: DraftResourceDocument
   editingResourceDocument: DraftResourceDocument
   resourceEditDirty: boolean
-  editingResourceErrors: EditingResourceErrors
+  editResourceErrors: EditResourceErrors
   snackbars: {
     publishCheckResult?: false | { type: 'success' } | { type: 'failed' }
     imageUploaded?: boolean
+  }
+  options: {
+    languages: TextOptionProps[]
+    subjects: TextOptionProps[]
   }
   isSavingEdits: boolean
   uploadingImage: null | {

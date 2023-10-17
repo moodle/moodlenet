@@ -11,7 +11,7 @@ interface FileContent {
   type: 'upload'
   url: string
   filename: string
-  mimetype: string
+  mimeType: string
   sizeBytes: number
 }
 

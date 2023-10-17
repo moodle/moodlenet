@@ -1,15 +1,15 @@
-import type { EditingState } from '../edit/ui-states-intents.mjs'
+import type { EditingState } from '../edit/EditResource.ui-states-actions.mjs'
 import type {
   AiAutofillResourceMetadataState,
   ChooseContentState,
   CreateResourceActivityState,
-  CreateResourceUserIntents,
+  CreateResourceUserActions,
   UploadingContentState,
-} from './ui-states-intents.mjs'
-import type { Worker, WorkerEvents } from './worker.mjs'
+} from './CreateResource.ui-states-actions.mjs'
+import type { CreateResourceWorker, CreateResourceWorkerEvents } from './CreateResource.worker.mjs'
 
-export type CreateResourceEvents = CreateResourceUserIntents | WorkerEvents
-export function createResourceActivityReducerFactory(worker: Worker) {
+export type CreateResourceEvents = CreateResourceUserActions | CreateResourceWorkerEvents
+export function createResourceActivityReducerFactory(worker: CreateResourceWorker) {
   return function createResourceActivityReducer(
     state: CreateResourceActivityState,
     event: CreateResourceEvents,

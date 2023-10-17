@@ -28,8 +28,8 @@
     "NOTE",
     "TODO",
     "@ALE",
-    "@ETTO",
     "@BRU",
+    // "@NEW_USER",
     "[ ]",
     "[x]"
   ],
@@ -59,18 +59,31 @@
       "background": "#0081ffe6",
       "borderRadius": "2px"
     },
-    "@ETTO": {
-      "icon": "dependabot",
-      "iconColour": "#ff9900",
-      "foreground": "#ffffff",
-      "background": "#ff9900e6"
-    },
     "@BRU": {
       "icon": "dependabot",
       "iconColour": "#00a979",
       "foreground": "#fff",
       "background": "#00a97ae6"
     }
-  }
+    // "@NEW_USER": {
+    //   "icon": "dependabot",
+    //   "iconColour": "#ff9900",
+    //   "foreground": "#ffffff",
+    //   "background": "#ff9900e6"
+    // },
+  },
+  "vsicons.associations.files": [
+    { "extensions": ["reducer.mts"], "icon": "reducer", "format": "png" },
+    { "extensions": ["ui-states-actions.mts"], "icon": "states_actions", "format": "png" },
+    { "extensions": ["types.mts"], "icon": "ts_types", "format": "png" },
+    { "extensions": ["worker.mts"], "icon": "worker", "format": "png" }
+  ],
+  "vsicons.associations.folders": [
+    { "extensions": ["common"], "icon": "api", "format": "FileFormat.svg" },
+    { "extensions": ["webapp"], "icon": "aurelia", "format": "FileFormat.svg" },
+    { "extensions": ["resources"], "icon": "component", "format": "FileFormat.svg" },
+    { "extensions": ["server"], "icon": "docker", "format": "FileFormat.svg" },
+    { "extensions": ["validation"], "icon": "log", "format": "FileFormat.svg" }
+  ]
 }
 // https://github.com/microsoft/vscode-eslint/issues/91

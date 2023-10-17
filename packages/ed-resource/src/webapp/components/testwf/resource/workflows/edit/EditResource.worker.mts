@@ -1,24 +1,15 @@
 import type { DraftResourceDocument } from '../../types/documents.mjs'
-import type { Progress } from './types.mjs'
-import type { EditingResourceErrors } from './ui-states-intents.mjs'
+import type { Progress } from '../create/CreateResource.types.mjs'
+import type { EditingResourceErrors } from './EditResource.ui-states-actions.mjs'
 
-export interface Worker {
+export interface EditResourceWorker {
   saveEdits(draftResourceDocument: DraftResourceDocument): void
   isDraftResourceDocumentValidForPublishing(
     draftResourceDocument: DraftResourceDocument,
   ): { isValid: true; resourceFormErrors: EditingResourceErrors } | { isValid: false }
 }
 
-export type AcceptableContentRules = {
-  file: {
-    maxSizeBytes: number
-  }
-  link: {
-    ruleDescription: string
-  }
-}
-
-export type WorkerEvents = SaveEditsDoneEvent | UploadImageProgressEvent
+export type EditResourceWorkerEvents = SaveEditsDoneEvent | UploadImageProgressEvent
 
 export interface SaveEditsDoneEvent {
   type: 'Save edits done'

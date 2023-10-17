@@ -1,28 +1,28 @@
 import type { ChoosenContentErrors, DraftResourceDocument } from '../../types/documents.mjs'
-import type { ChoosenContent, Progress } from './types.mjs'
-import type { AcceptableContentRules } from './worker.mjs'
+import type { ChoosenContent, Progress } from './CreateResource.types.mjs'
+import type { AcceptableContentRules } from './CreateResource.worker.mjs'
 
 export type CreateResourceActivityState =
   | ChooseContentState
   | UploadingContentState
   | AiAutofillResourceMetadataState
 
-export type CreateResourceUserIntents =
-  | ChooseContentIntent
-  | CancelUploadIntent
-  | CancelAutofillIntent
+export type CreateResourceUserActions =
+  | ChooseContentAction
+  | CancelUploadAction
+  | CancelAutofillAction
 
 type Url = string
-export interface ChooseContentIntent {
+export interface ChooseContentAction {
   type: 'Choose content'
   choosenContent: File | Url
 }
 
-export interface CancelUploadIntent {
+export interface CancelUploadAction {
   type: 'Cancel upload'
 }
 
-export interface CancelAutofillIntent {
+export interface CancelAutofillAction {
   type: 'Cancel autofill'
 }
 

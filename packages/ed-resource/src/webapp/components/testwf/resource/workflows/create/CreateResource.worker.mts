@@ -1,12 +1,7 @@
 import type { ChoosenContentErrors, DraftResourceDocument } from '../../types/documents.mjs'
-import type { ChoosenContent, Progress } from './types.mjs'
-import type { CreateResourceActivityState } from './ui-states-intents.mjs'
-declare module './reducer.mjs' {
-  export interface K {
-    currentState: CreateResourceActivityState
-  }
-}
-export interface Worker {
+import type { ChoosenContent, Progress } from './CreateResource.types.mjs'
+
+export interface CreateResourceWorker {
   uploadContent(resourceContent: File | string): void
   cancelUpload(): void
   cancelAiAutofill(): void
@@ -27,7 +22,7 @@ export type AcceptableContentRules = {
   }
 }
 
-export type WorkerEvents =
+export type CreateResourceWorkerEvents =
   | UploadDoneEvent
   | UploadProgressEvent
   | AutofillDoneEvent
