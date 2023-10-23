@@ -138,7 +138,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { subjectOptions } = edMetaOptions
 
-  const { isPublished, uploadProgress } = state
+  const { isPublished, uploadProgress, autofillProgress } = state
 
   const { deleteResource } = actions
 
@@ -541,10 +541,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       displayOnly={(canEdit && !isEditing) || !canEdit}
       contentForm={contentForm}
       imageForm={imageForm}
+      resourceId={id}
       uploadOptionsItems={uploadOptionsItems}
       fileMaxSize={fileMaxSize}
       downloadFilename={downloadFilename}
       uploadProgress={uploadProgress}
+      autofillProgress={autofillProgress}
       shouldShowErrors={shouldShowErrors}
       contentType={contentType}
       key="resource-uploader"

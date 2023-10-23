@@ -37,7 +37,7 @@ import { href } from '@moodlenet/react-app/common'
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -217,15 +217,21 @@ export const useResourceStoryProps = (
     overrides?.saveState?.content ?? 'not-saving',
   )
   const [isSavingImage, setIsSavingImage] = useState(overrides?.saveState?.image ?? 'not-saving')
+  const [uploadProgress, setUploadProgress] = useState(
+    overrides?.state?.uploadProgress ?? undefined,
+  )
+  const [autofillProgress, setAutofillProgress] = useState(
+    overrides?.state?.autofillProgress ?? undefined,
+  )
 
   const saveContent = () => {
-    setIsSavingContent('saving')
-    setTimeout(() => {
-      setIsSavingContent('save-done')
-      setTimeout(() => {
-        setIsSavingContent('not-saving')
-      }, 100)
-    }, 4000)
+    // setIsSavingContent('saving')
+    // setTimeout(() => {
+    setIsSavingContent('save-done')
+    // setTimeout(() => {
+    // setIsSavingContent('not-saving')
+    // }, 100)
+    // }, 4000)
   }
 
   const saveImage = () => {
@@ -238,26 +244,60 @@ export const useResourceStoryProps = (
     }, 1000)
   }
 
-  const setContent = (e: File | string | undefined | null) => {
-    setTimeout(() => {
-      if (typeof e === 'string') {
-        setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
-        setFilename(null)
-        setContentType('link')
-      } else if (e) {
-        setContentUrl(
-          'https://moodle.net/.pkg/@moodlenet/ed-resource/dl/ed-resource/1Vj2B7Mj/557_Sujeto_y_Predicado.pdf',
-        )
-        setContentType('file')
-        setFilename(e.name)
-      } else {
-        setContentUrl(null)
-        setContentType(null)
-        setFilename(null)
-      }
-    }, 1000)
-    saveContent()
+  const hasStartedRef = useRef<boolean>(false)
 
+  useEffect(() => {
+    const intervalTime = 5000 / 100
+    const timeouts: NodeJS.Timeout[] = []
+
+    if (uploadProgress === 0 && !hasStartedRef.current) {
+      hasStartedRef.current = true // Mark that we've started the sequence
+
+      for (let i = 1; i <= 100; i++) {
+        timeouts.push(
+          setTimeout(() => {
+            setUploadProgress(prev => (typeof prev === 'number' ? prev + 1 : prev))
+          }, intervalTime * i),
+        )
+      }
+
+      timeouts.push(
+        setTimeout(() => {
+          setContentUrl('https://example.com/some_url.pdf')
+          setUploadProgress(undefined)
+          hasStartedRef.current = false // Reset for potential future sequences
+        }, intervalTime * 101),
+      )
+    }
+
+    return () => {
+      if (uploadProgress === undefined) {
+        // Only clear timeouts when uploadProgress becomes undefined
+        timeouts.forEach(t => clearTimeout(t))
+      }
+    }
+  }, [uploadProgress])
+
+  const setContent = (e: File | string | undefined | null) => {
+    if (e === undefined || e === null) {
+      setContentUrl(null)
+      setContentType(null)
+      setFilename(null)
+      setUploadProgress(undefined)
+      setAutofillProgress(undefined)
+      return
+    }
+
+    if (typeof e === 'string') {
+      setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
+      setFilename(null)
+      setContentType('link')
+    } else if (e instanceof File) {
+      setContentType('file')
+      setFilename(e.name)
+      setUploadProgress(0)
+    }
+    saveContent()
     action('set content')(e)
   }
 
@@ -296,6 +336,8 @@ export const useResourceStoryProps = (
 
   const state: ResourceStateProps = {
     isPublished: isPublished,
+    uploadProgress: uploadProgress,
+    autofillProgress: autofillProgress,
     ...overrides?.state,
   }
 

@@ -47,12 +47,13 @@
       align-items: center;
       border: 4px dashed #d1d4e0;
       border-radius: 15px;
-      cursor: pointer;
       z-index: 1;
       background-color: white;
       position: relative;
 
-      &:hover:not(:has(> *:hover:not(.upload:hover))) {
+      &:hover:has(> *:hover.upload:hover) {
+        // &:hover:not(:has(> *:hover:not(.upload:hover))) {
+        cursor: pointer;
         border: 4px dashed #1a6aff;
         color: #1a6aff;
         background-color: #cddffe;
@@ -85,6 +86,25 @@
           color: var(--primary-color);
           text-align: center;
           padding: 0 18px;
+        }
+      }
+
+      > .uploading-animation {
+        @keyframes rotateAnimation {
+          0%,
+          100% {
+            transform: rotate(1deg) translate(0, 8px);
+          }
+          50% {
+            transform: rotate(1deg) translate(0, -8px);
+          }
+        }
+        // height: 200px;
+        > .uploading-img {
+          max-height: 130px;
+          display: inline-block; /* necessary to apply transform */
+          animation: rotateAnimation 1s infinite;
+          animation-timing-function: cubic-bezier(0.45, 0.25, 0.6, 0.95);
         }
       }
 

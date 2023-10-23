@@ -16,7 +16,7 @@ import { InsertDriveFile, Link } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { ProcessState, SaveState } from '../../../../common/types.mjs'
+import type { SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -39,7 +39,6 @@ import './Resource.scss'
 
 export type ResourceProps = {
   saveState: SaveState
-  processState: ProcessState
   mainLayoutProps: MainLayoutProps
   mainResourceCardSlots: MainResourceCardSlots
   resourceContributorCardProps: ResourceContributorCardProps
@@ -82,7 +81,6 @@ export const Resource: FC<ResourceProps> = ({
   actions,
   access,
   saveState,
-  processState,
 
   fileMaxSize,
   validationSchemas: {

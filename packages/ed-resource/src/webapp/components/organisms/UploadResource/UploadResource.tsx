@@ -16,6 +16,7 @@ import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ReactComponent as UploadFileIcon } from '../../../assets/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-image.svg'
+import uploadingFileImg from '../../../assets/img/uploading-file.png'
 import './UploadResource.scss'
 
 // type SubStep = 'AddFileOrLink' | 'AddImage'
@@ -26,8 +27,10 @@ export type UploadResourceProps = {
   downloadFilename: string | null
   uploadOptionsItems: (AddonItem | null)[]
   contentType: 'file' | 'link' | null
+  resourceId: string | undefined
   backupImage?: AssetInfo
-  uploadProgress?: number
+  uploadProgress: number | undefined
+  autofillProgress: number | undefined
   shouldShowErrors?: boolean
   displayOnly?: boolean
 }
@@ -40,11 +43,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
   imageForm,
   downloadFilename,
   contentType,
+  resourceId,
   backupImage,
 
   displayOnly,
   shouldShowErrors,
   uploadProgress,
+  autofillProgress,
 }) => {
   const [imageUrl] = useImageUrl(
     imageForm.values.image?.location,
@@ -61,8 +66,16 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
 
-  const [subStep, setSubStep] = useState<'AddFileOrLink' | 'AddImage'>(
-    contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
+  const [subStep, setSubStep] = useState<
+    'AddFileOrLink' | 'Uploading' | 'Autofilling' | 'AddImage'
+  >(
+    uploadProgress !== undefined
+      ? 'Uploading'
+      : autofillProgress !== undefined
+      ? 'Autofilling'
+      : contentForm.values.content && !contentForm.errors.content
+      ? 'AddImage'
+      : 'AddFileOrLink',
   )
   const [showContentErrors, setShowContentErrors] = useState(false)
   const [showLinkErrors, setShowLinkErrors] = useState(false)
@@ -74,6 +87,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const contentForm_setFieldValue = contentForm.setFieldValue
   const contentForm_setTouched = contentForm.setTouched
   const contentForm_validateForm = contentForm.validateForm
+  const contentForm_submitForm = contentForm.submitForm
 
   const imageForm_setTouched = imageForm.setTouched
   const imageForm_setFieldValue = imageForm.setFieldValue
@@ -81,9 +95,16 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   useEffect(() => {
     setSubStep(
-      contentForm.values.content && !contentForm.errors.content ? 'AddImage' : 'AddFileOrLink',
+      uploadProgress !== undefined
+        ? 'Uploading'
+        : autofillProgress !== undefined
+        ? 'Autofilling'
+        : contentForm.values.content && !contentForm.errors.content
+        ? 'AddImage'
+        : 'AddFileOrLink',
     )
-  }, [contentForm, subStep, setSubStep])
+  }, [contentForm, subStep, setSubStep, uploadProgress, autofillProgress])
+
   useEffect(() => {
     subStep === 'AddFileOrLink' && setShowImageErrors(false)
   }, [subStep])
@@ -124,10 +145,20 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   const deleteFileOrLink = useCallback(() => {
     setSubStep('AddFileOrLink')
-    contentForm_setFieldValue('content', null)
+    contentForm_setFieldValue('content', null).then(errors => {
+      if (!resourceId && !errors?.content) {
+        contentForm_submitForm()
+      }
+    })
     contentForm_setTouched({ content: true })
     contentForm_validateForm()
-  }, [contentForm_setFieldValue, contentForm_setTouched, contentForm_validateForm])
+  }, [
+    contentForm_setFieldValue,
+    contentForm_setTouched,
+    contentForm_submitForm,
+    contentForm_validateForm,
+    resourceId,
+  ])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
   const selectImage = () => {
@@ -143,6 +174,10 @@ export const UploadResource: FC<UploadResourceProps> = ({
     (file: File | undefined) => {
       const isImage = file?.type.toLowerCase().startsWith('image')
       contentForm_setFieldValue('content', file).then(errors => {
+        if (!errors?.content && !resourceId) {
+          contentForm_submitForm()
+          setSubStep('Uploading')
+        }
         setShowContentErrors(!!errors?.content)
         if (!errors?.content && file && isImage) {
           setImage({ location: file, credits: null }, true)
@@ -150,7 +185,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
         imageForm_setTouched({ image: true })
       })
     },
-    [contentForm_setFieldValue, imageForm_setTouched, setImage],
+    [contentForm_setFieldValue, contentForm_submitForm, imageForm_setTouched, resourceId, setImage],
   )
 
   const contentValue =
@@ -244,10 +279,47 @@ export const UploadResource: FC<UploadResourceProps> = ({
     />
   )
 
+  const [uploadPartial, setUploadPartial] = useState<number | undefined>(undefined)
+
+  const lastUpdateTimeRef = useRef<number | undefined>(undefined)
+  const uploadPartialRef = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    uploadPartialRef.current = uploadPartial
+  }, [uploadPartial])
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+
+    if (uploadProgress !== undefined) {
+      const deltaTime = Date.now() - (lastUpdateTimeRef.current || Date.now())
+      const progressDelta = uploadProgress - (uploadPartialRef.current || 0)
+
+      const updateRate = progressDelta / deltaTime // percentage per millisecond
+      interval = setInterval(() => {
+        if (Math.abs((uploadPartialRef.current || 0) - uploadProgress) > 0.1) {
+          setUploadPartial(prev => (prev !== undefined ? prev + updateRate * 10 : 0))
+        } else {
+          clearInterval(interval)
+          setUploadPartial(uploadProgress)
+        }
+      }, 10)
+      lastUpdateTimeRef.current = Date.now()
+    } else {
+      setUploadPartial(undefined)
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [uploadProgress])
+
   const uploadedNameBackground =
-    contentIsFile && uploadProgress
-      ? `linear-gradient(to right, #1a6aff33 ${uploadProgress}% , #ffffff00 ${
-          uploadProgress + 3
+    contentIsFile && uploadPartial
+      ? `linear-gradient(to right, #1a6aff33 ${uploadPartial}% , #ffffff00 ${
+          uploadPartial + 3
         }%, #ffffff00 )`
       : 'none'
 
@@ -282,6 +354,17 @@ export const UploadResource: FC<UploadResourceProps> = ({
     </div>
   )
 
+  const uploadingAnimation = (
+    <div className="uploading-animation">
+      <img
+        className="uploading-img"
+        src={uploadingFileImg}
+        alt="Uploading animation,koala on a rocket wit some documents flying"
+      />
+    </div>
+  )
+  const autofillingAnimation = <div className="autofilling-animation">Autofilling...</div>
+
   const imageUploader = (
     <div
       className="image upload"
@@ -312,16 +395,26 @@ export const UploadResource: FC<UploadResourceProps> = ({
     </div>
   )
 
-  const uploader = (type: 'file' | 'image') => {
-    const updatedUploadOptionsItems = [
-      type === 'file' ? fileUploader : imageUploader,
-      ...(uploadOptionsItems ?? []),
-    ].filter((item): item is AddonItem | JSX.Element => !!item)
+  const uploader = (type: 'file' | 'image' | 'uploading' | 'autofilling') => {
+    const isLoading = type === 'uploading' || type === 'autofilling'
+    const content =
+      type === 'file'
+        ? fileUploader
+        : type === 'image'
+        ? imageUploader
+        : type === 'uploading'
+        ? uploadingAnimation
+        : type === 'autofilling'
+        ? autofillingAnimation
+        : undefined
+    const updatedUploadOptionsItems = [content, ...(uploadOptionsItems ?? [])].filter(
+      (item): item is AddonItem | JSX.Element => !!item,
+    )
 
     return [
       <>
         <div
-          className={`uploader ${isToDrop ? 'hover' : ''} ${
+          className={`uploader ${isToDrop && !isLoading ? 'hover' : ''} ${
             (shouldShowErrors || showContentErrors || showImageErrors) &&
             (contentForm.errors.content || imageForm.errors.image)
               ? 'show-error'
@@ -330,10 +423,10 @@ export const UploadResource: FC<UploadResourceProps> = ({
         `}
           //  ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
           id="drop_zone"
-          onClick={type === 'file' ? selectFile : selectImage}
-          onDrop={dropHandler}
-          onDragOver={dragOverHandler}
-          onDragLeave={() => setIsToDrop(false)}
+          onClick={type === 'file' ? selectFile : type === 'image' ? selectImage : undefined}
+          onDrop={!isLoading ? dropHandler : undefined}
+          onDragOver={!isLoading ? dragOverHandler : undefined}
+          onDragLeave={!isLoading ? () => setIsToDrop(false) : undefined}
         >
           {updatedUploadOptionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
@@ -347,6 +440,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const uploaderDiv = (
     <>
       {subStep === 'AddFileOrLink' && !displayOnly && uploader('file')}
+      {subStep === 'Uploading' && uploader('uploading')}
+      {subStep === 'Autofilling' && uploader('autofilling')}
       {subStep === 'AddImage' && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
       {contentAvailable && displayOnly && (embed ?? (!imageAvailable && simpleImageContainer))}
       {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}

@@ -68,12 +68,11 @@ export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
     data: {
       image: null,
-      id: null,
+      id: undefined,
     },
     resourceForm: NewResourceProps,
     state: {
       isPublished: false,
-      // uploadProgress: 74,
     },
     actions: {},
     access: {
