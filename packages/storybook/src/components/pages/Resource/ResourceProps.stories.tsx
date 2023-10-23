@@ -244,14 +244,14 @@ export const useResourceStoryProps = (
     }, 1000)
   }
 
-  const hasStartedRef = useRef<boolean>(false)
+  const hasStartedUploadRef = useRef<boolean>(false)
 
   useEffect(() => {
-    const intervalTime = 5000 / 100
+    const intervalTime = 3000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
-    if (uploadProgress === 0 && !hasStartedRef.current) {
-      hasStartedRef.current = true // Mark that we've started the sequence
+    if (uploadProgress === 0 && !hasStartedUploadRef.current) {
+      hasStartedUploadRef.current = true // Mark that we've started the sequence
 
       for (let i = 1; i <= 100; i++) {
         timeouts.push(
@@ -265,7 +265,8 @@ export const useResourceStoryProps = (
         setTimeout(() => {
           setContentUrl('https://example.com/some_url.pdf')
           setUploadProgress(undefined)
-          hasStartedRef.current = false // Reset for potential future sequences
+          setAutofillProgress(0)
+          hasStartedUploadRef.current = false // Reset for potential future sequences
         }, intervalTime * 101),
       )
     }
@@ -277,6 +278,40 @@ export const useResourceStoryProps = (
       }
     }
   }, [uploadProgress])
+
+  const hasStartedAutofillRef = useRef<boolean>(false)
+
+  useEffect(() => {
+    const intervalTime = 20000 / 100
+    const timeouts: NodeJS.Timeout[] = []
+
+    if (autofillProgress === 0 && !hasStartedAutofillRef.current) {
+      hasStartedAutofillRef.current = true // Mark that we've started the sequence
+
+      for (let i = 1; i <= 100; i++) {
+        timeouts.push(
+          setTimeout(() => {
+            setAutofillProgress(prev => (typeof prev === 'number' ? prev + 1 : prev))
+          }, intervalTime * i),
+        )
+      }
+
+      timeouts.push(
+        setTimeout(() => {
+          setContentUrl('https://example.com/some_url.pdf')
+          setAutofillProgress(undefined)
+          hasStartedAutofillRef.current = false // Reset for potential future sequences
+        }, intervalTime * 101),
+      )
+    }
+
+    return () => {
+      if (autofillProgress === undefined) {
+        // Only clear timeouts when autofillProgress becomes undefined
+        timeouts.forEach(t => clearTimeout(t))
+      }
+    }
+  }, [autofillProgress])
 
   const setContent = (e: File | string | undefined | null) => {
     if (e === undefined || e === null) {

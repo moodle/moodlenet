@@ -99,12 +99,32 @@
             transform: rotate(1deg) translate(0, -8px);
           }
         }
-        // height: 200px;
+
         > .uploading-img {
           max-height: 130px;
           display: inline-block; /* necessary to apply transform */
           animation: rotateAnimation 1s infinite;
           animation-timing-function: cubic-bezier(0.45, 0.25, 0.6, 0.95);
+        }
+      }
+
+      > .autofilling-animation {
+        padding: 40px 60px 0 0;
+        animation: rotateSelf 8s infinite linear;
+
+        @keyframes rotateSelf {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        > .autofilling-img {
+          max-height: 115px;
+          display: inline-block; /* necessary to apply transform */
+          animation: rotateSelf 10s infinite linear;
         }
       }
 

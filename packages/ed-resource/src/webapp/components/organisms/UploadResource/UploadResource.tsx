@@ -16,6 +16,7 @@ import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ReactComponent as UploadFileIcon } from '../../../assets/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-image.svg'
+import autofillingImg from '../../../assets/img/autofilling.png'
 import uploadingFileImg from '../../../assets/img/uploading-file.png'
 import './UploadResource.scss'
 
@@ -316,11 +317,42 @@ export const UploadResource: FC<UploadResourceProps> = ({
     }
   }, [uploadProgress])
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+
+    if (autofillProgress !== undefined) {
+      const deltaTime = Date.now() - (lastUpdateTimeRef.current || Date.now())
+      const progressDelta = autofillProgress - (uploadPartialRef.current || 0)
+
+      const updateRate = progressDelta / deltaTime // percentage per millisecond
+      interval = setInterval(() => {
+        if (Math.abs((uploadPartialRef.current || 0) - autofillProgress) > 0.1) {
+          setUploadPartial(prev => (prev !== undefined ? prev + updateRate * 10 : 0))
+        } else {
+          clearInterval(interval)
+          setUploadPartial(autofillProgress)
+        }
+      }, 10)
+      lastUpdateTimeRef.current = Date.now()
+    } else {
+      setUploadPartial(undefined)
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [autofillProgress])
+
+  const isUploading = subStep === 'Uploading'
+  const isAutofilling = subStep === 'Autofilling'
+
   const uploadedNameBackground =
     contentIsFile && uploadPartial
-      ? `linear-gradient(to right, #1a6aff33 ${uploadPartial}% , #ffffff00 ${
-          uploadPartial + 3
-        }%, #ffffff00 )`
+      ? `linear-gradient(to right, ${
+          isUploading ? '#1a6aff33' : '#00bd7e33'
+        } ${uploadPartial}% , #ffffff00 ${uploadPartial + 3}%, #ffffff00 )`
       : 'none'
 
   const fileUploader = (
@@ -359,11 +391,19 @@ export const UploadResource: FC<UploadResourceProps> = ({
       <img
         className="uploading-img"
         src={uploadingFileImg}
-        alt="Uploading animation,koala on a rocket wit some documents flying"
+        alt="Uploading animation,koala on a rocket with a document flying"
       />
     </div>
   )
-  const autofillingAnimation = <div className="autofilling-animation">Autofilling...</div>
+  const autofillingAnimation = (
+    <div className="autofilling-animation">
+      <img
+        className="autofilling-img"
+        src={autofillingImg}
+        alt="Autofilling animation, koala wearing an astronaut helmet reading a document"
+      />
+    </div>
+  )
 
   const imageUploader = (
     <div
@@ -443,8 +483,12 @@ export const UploadResource: FC<UploadResourceProps> = ({
       {subStep === 'Uploading' && uploader('uploading')}
       {subStep === 'Autofilling' && uploader('autofilling')}
       {subStep === 'AddImage' && !displayOnly && (embed ?? (!imageAvailable && uploader('image')))}
-      {contentAvailable && displayOnly && (embed ?? (!imageAvailable && simpleImageContainer))}
-      {contentAvailable && (embed ? undefined : imageAvailable && imageContainer)}
+      {!isUploading &&
+        !isAutofilling &&
+        contentAvailable &&
+        displayOnly &&
+        (embed ?? (!imageAvailable && simpleImageContainer))}
+      {!isUploading && !isAutofilling && (embed ? undefined : imageAvailable && imageContainer)}
     </>
   )
 
