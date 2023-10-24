@@ -32,7 +32,7 @@ export type ResourceFormRpc = {
 }
 
 export type ResourceDataRpc = {
-  id: string
+  id: string | null
   mnUrl: string
   contentType: 'link' | 'file' | null
   image: AssetInfo | null
@@ -44,6 +44,7 @@ export type ResourceDataRpc = {
 
 export type ResourceStateRpc = {
   isPublished: boolean
+  isAutofilled: boolean
   uploadProgress: number | undefined
   autofillProgress: number | undefined
 }

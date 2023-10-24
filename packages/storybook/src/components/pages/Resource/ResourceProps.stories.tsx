@@ -146,6 +146,7 @@ export const useResourceStoryProps = (
   // }
 ): ResourceProps => {
   const [contentUrl, setContentUrl] = useState<string | null>(overrides?.data?.contentUrl ?? null)
+  const [id, setId] = useState<string | null>(overrides?.data?.id ?? null)
   const [image, setImageData] = useState<AssetInfo | null>(
     overrides?.data?.image?.location || overrides?.data?.image?.location === undefined
       ? {
@@ -203,7 +204,7 @@ export const useResourceStoryProps = (
   const [formData, setFormData] = useState(resourceForm)
 
   const data: ResourceDataProps = {
-    id: 'qjnwglkd69io-sports',
+    id: id,
     mnUrl: 'resource.url',
     contentUrl: contentUrl,
     downloadFilename: filename,
@@ -223,6 +224,8 @@ export const useResourceStoryProps = (
   const [autofillProgress, setAutofillProgress] = useState(
     overrides?.state?.autofillProgress ?? undefined,
   )
+
+  const [isAutofilled, setIsAutofilled] = useState(overrides?.state?.isAutofilled ?? false)
 
   const saveContent = () => {
     // setIsSavingContent('saving')
@@ -247,7 +250,7 @@ export const useResourceStoryProps = (
   const hasStartedUploadRef = useRef<boolean>(false)
 
   useEffect(() => {
-    const intervalTime = 3000 / 100
+    const intervalTime = 10000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
     if (uploadProgress === 0 && !hasStartedUploadRef.current) {
@@ -263,6 +266,7 @@ export const useResourceStoryProps = (
 
       timeouts.push(
         setTimeout(() => {
+          setId('1234')
           setContentUrl('https://example.com/some_url.pdf')
           setUploadProgress(undefined)
           setAutofillProgress(0)
@@ -282,7 +286,7 @@ export const useResourceStoryProps = (
   const hasStartedAutofillRef = useRef<boolean>(false)
 
   useEffect(() => {
-    const intervalTime = 20000 / 100
+    const intervalTime = 15000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
     if (autofillProgress === 0 && !hasStartedAutofillRef.current) {
@@ -300,6 +304,7 @@ export const useResourceStoryProps = (
         setTimeout(() => {
           setContentUrl('https://example.com/some_url.pdf')
           setAutofillProgress(undefined)
+          setIsAutofilled(true)
           hasStartedAutofillRef.current = false // Reset for potential future sequences
         }, intervalTime * 101),
       )
@@ -320,13 +325,15 @@ export const useResourceStoryProps = (
       setFilename(null)
       setUploadProgress(undefined)
       setAutofillProgress(undefined)
+      setIsAutofilled(false)
       return
     }
 
     if (typeof e === 'string') {
       setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
-      setFilename(null)
       setContentType('link')
+      setFilename(null)
+      setAutofillProgress(0)
     } else if (e instanceof File) {
       setContentType('file')
       setFilename(e.name)
@@ -373,6 +380,7 @@ export const useResourceStoryProps = (
     isPublished: isPublished,
     uploadProgress: uploadProgress,
     autofillProgress: autofillProgress,
+    isAutofilled: isAutofilled,
     ...overrides?.state,
   }
 

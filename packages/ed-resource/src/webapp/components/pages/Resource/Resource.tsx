@@ -102,8 +102,8 @@ export const Resource: FC<ResourceProps> = ({
     setImage,
   } = actions
   const { canPublish, canEdit } = access
-  const { isPublished } = state
-  const { content: isSavingContent, image: isSavingImage } = saveState
+  const { isPublished, uploadProgress, autofillProgress, isAutofilled } = state
+  const { image: isSavingImage } = saveState
   const {
     languageOptions,
     levelOptions,
@@ -394,10 +394,14 @@ export const Resource: FC<ResourceProps> = ({
         }
       : null
 
+  const disableExtraDetails =
+    !id &&
+    (!contentForm.values.content || uploadProgress !== undefined || autofillProgress !== undefined)
+
   const subjectField = (isEditing || canEdit) && (
     <DropdownField
       key="subject-field"
-      disabled={!id}
+      disabled={disableExtraDetails}
       title="Subject"
       placeholder="Content category"
       canEdit={canEdit && isEditing}
@@ -412,7 +416,7 @@ export const Resource: FC<ResourceProps> = ({
   const licenseField = (
     <LicenseField
       key="license-field"
-      disabled={!id}
+      disabled={disableExtraDetails}
       canEdit={canEdit && isEditing}
       license={form.values.license}
       licenseOptions={licenseOptions}
@@ -427,7 +431,7 @@ export const Resource: FC<ResourceProps> = ({
   const typeField = (
     <DropdownField
       key="type-field"
-      disabled={!id}
+      disabled={disableExtraDetails}
       title="Type"
       placeholder="Content type"
       canEdit={canEdit && isEditing}
@@ -444,7 +448,7 @@ export const Resource: FC<ResourceProps> = ({
   const levelField = (
     <DropdownField
       key="level-field"
-      disabled={!id}
+      disabled={disableExtraDetails}
       title="Level"
       placeholder="Education level"
       canEdit={canEdit && isEditing}
@@ -461,7 +465,7 @@ export const Resource: FC<ResourceProps> = ({
   const dateField = (
     <DateField
       key="date-field"
-      disabled={!id}
+      disabled={disableExtraDetails}
       canEdit={canEdit && isEditing}
       month={form.values.month}
       monthOptions={monthOptions}
@@ -482,7 +486,7 @@ export const Resource: FC<ResourceProps> = ({
   const languageField = (
     <DropdownField
       key="language-field"
-      disabled={!id}
+      disabled={disableExtraDetails}
       title="Language"
       placeholder="Content language"
       canEdit={canEdit && isEditing}
@@ -583,19 +587,43 @@ export const Resource: FC<ResourceProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const isSavingSnackbar =
-    (typeof contentForm.values.content !== 'string' && isSavingContent === 'saving') ||
-    isSavingImage === 'saving' ? (
+  const uploadSnackbar =
+    uploadProgress !== undefined || isSavingImage === 'saving' ? (
       <Snackbar
         position="bottom"
         type="info"
-        waitDuration={1500}
+        waitDuration={4000}
         showCloseButton={false}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
       >
-        {`Content uploading, please don't close the tab`}
+        {`Uploading file, feel free to move around the platform just don't close the tab`}
       </Snackbar>
     ) : null
+
+  const [showAutofillSuccess, setShowAutofillSuccess] = useState<boolean>(false)
+  const prevIsAutofilledRef = useRef<boolean>(isAutofilled)
+
+  useEffect(() => {
+    // Check if the value changed from false to true
+    if (!prevIsAutofilledRef.current && isAutofilled) {
+      setShowAutofillSuccess(true)
+    }
+    prevIsAutofilledRef.current = isAutofilled
+  }, [isAutofilled, prevIsAutofilledRef])
+
+  const autofillSuccessSnackbar = showAutofillSuccess ? (
+    <Snackbar
+      position="bottom"
+      type="success"
+      showCloseButton={false}
+      autoHideDuration={6000}
+      onClose={() => setShowAutofillSuccess(false)}
+    >
+      {`Resource ready! Verify and edit any required details`}
+    </Snackbar>
+  ) : null
+
+  console.log('isAutofilled', isAutofilled)
 
   const checkPublishSnackbar =
     showCheckPublishSuccess !== 'idle' ? (
@@ -641,7 +669,13 @@ export const Resource: FC<ResourceProps> = ({
 
   const snackbars = (
     <SnackbarStack
-      snackbarList={[isSavingSnackbar, checkPublishSnackbar, publishSnackbar, unpublishSnackbar]}
+      snackbarList={[
+        uploadSnackbar,
+        autofillSuccessSnackbar,
+        checkPublishSnackbar,
+        publishSnackbar,
+        unpublishSnackbar,
+      ]}
     />
   )
 

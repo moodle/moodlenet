@@ -10,7 +10,7 @@ import {
 import type { AssetInfo, AssetInfoForm } from '@moodlenet/component-library/common'
 import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
-import { InsertDriveFile, Link as LinkIcon } from '@mui/icons-material'
+import { Bolt, InsertDriveFile, Link as LinkIcon, Upload as UploadIcon } from '@mui/icons-material'
 // import prettyBytes from 'pretty-bytes'
 import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -31,6 +31,7 @@ export type UploadResourceProps = {
   resourceId: string | undefined
   backupImage?: AssetInfo
   uploadProgress: number | undefined
+  isAutofilled: boolean
   autofillProgress: number | undefined
   shouldShowErrors?: boolean
   displayOnly?: boolean
@@ -46,6 +47,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   contentType,
   resourceId,
   backupImage,
+  isAutofilled,
 
   displayOnly,
   shouldShowErrors,
@@ -134,9 +136,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const addLink = useCallback(() => {
     const link = addLinkFieldRef.current?.value
     contentForm_setFieldValue('content', link).then(errors => {
+      if (!errors?.content && !resourceId) {
+        contentForm_submitForm()
+        setSubStep('Autofilling')
+      }
       setShowLinkErrors(!!errors?.content)
     })
-  }, [contentForm_setFieldValue])
+  }, [contentForm_setFieldValue, contentForm_submitForm, resourceId])
 
   const deleteImage = useCallback(() => {
     setImage(null)
@@ -283,10 +289,10 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const [uploadPartial, setUploadPartial] = useState<number | undefined>(undefined)
 
   const lastUpdateTimeRef = useRef<number | undefined>(undefined)
-  const uploadPartialRef = useRef<number | undefined>(undefined)
+  const progressPartialRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
-    uploadPartialRef.current = uploadPartial
+    progressPartialRef.current = uploadPartial
   }, [uploadPartial])
 
   useEffect(() => {
@@ -294,11 +300,11 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
     if (uploadProgress !== undefined) {
       const deltaTime = Date.now() - (lastUpdateTimeRef.current || Date.now())
-      const progressDelta = uploadProgress - (uploadPartialRef.current || 0)
+      const progressDelta = uploadProgress - (progressPartialRef.current || 0)
 
       const updateRate = progressDelta / deltaTime // percentage per millisecond
       interval = setInterval(() => {
-        if (Math.abs((uploadPartialRef.current || 0) - uploadProgress) > 0.1) {
+        if (Math.abs((progressPartialRef.current || 0) - uploadProgress) > 0.1) {
           setUploadPartial(prev => (prev !== undefined ? prev + updateRate * 10 : 0))
         } else {
           clearInterval(interval)
@@ -322,11 +328,11 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
     if (autofillProgress !== undefined) {
       const deltaTime = Date.now() - (lastUpdateTimeRef.current || Date.now())
-      const progressDelta = autofillProgress - (uploadPartialRef.current || 0)
+      const progressDelta = autofillProgress - (progressPartialRef.current || 0)
 
       const updateRate = progressDelta / deltaTime // percentage per millisecond
       interval = setInterval(() => {
-        if (Math.abs((uploadPartialRef.current || 0) - autofillProgress) > 0.1) {
+        if (Math.abs((progressPartialRef.current || 0) - autofillProgress) > 0.1) {
           setUploadPartial(prev => (prev !== undefined ? prev + updateRate * 10 : 0))
         } else {
           clearInterval(interval)
@@ -348,12 +354,11 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const isUploading = subStep === 'Uploading'
   const isAutofilling = subStep === 'Autofilling'
 
-  const uploadedNameBackground =
-    contentIsFile && uploadPartial
-      ? `linear-gradient(to right, ${
-          isUploading ? '#1a6aff33' : '#00bd7e33'
-        } ${uploadPartial}% , #ffffff00 ${uploadPartial + 3}%, #ffffff00 )`
-      : 'none'
+  const uploadedNameBackground = uploadPartial
+    ? `linear-gradient(to right, ${
+        isUploading ? '#1a6aff33' : '#00bd7e33'
+      } ${uploadPartial}% , #ffffff00 ${uploadPartial + 3}%, #ffffff00 )`
+    : 'none'
 
   const fileUploader = (
     <div
@@ -488,7 +493,10 @@ export const UploadResource: FC<UploadResourceProps> = ({
         contentAvailable &&
         displayOnly &&
         (embed ?? (!imageAvailable && simpleImageContainer))}
-      {!isUploading && !isAutofilling && (embed ? undefined : imageAvailable && imageContainer)}
+      {!isUploading &&
+        !isAutofilling &&
+        contentAvailable &&
+        (embed ? undefined : imageAvailable && imageContainer)}
     </>
   )
 
@@ -521,10 +529,26 @@ export const UploadResource: FC<UploadResourceProps> = ({
               style={{ background: uploadedNameBackground }}
             >
               <div className="content-icon">
-                {contentIsFile ? <InsertDriveFile /> : <LinkIcon />}
+                {uploadProgress ? (
+                  <UploadIcon />
+                ) : autofillProgress ? (
+                  <Bolt />
+                ) : contentIsFile ? (
+                  <InsertDriveFile />
+                ) : isAutofilled ? (
+                  <LinkIcon />
+                ) : undefined}
               </div>
               <abbr className="scroll" title={contentName}>
-                {contentName}
+                {uploadProgress
+                  ? `Uploading ${contentName}`
+                  : autofillProgress
+                  ? `Autofilling with AI`
+                  : contentIsFile
+                  ? contentName
+                  : isAutofilled
+                  ? contentName
+                  : undefined}
               </abbr>
               <RoundButton
                 onClick={deleteFileOrLink}
