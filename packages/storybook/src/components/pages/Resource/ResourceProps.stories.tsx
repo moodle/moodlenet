@@ -286,7 +286,7 @@ export const useResourceStoryProps = (
   const hasStartedAutofillRef = useRef<boolean>(false)
 
   useEffect(() => {
-    const intervalTime = 15000 / 100
+    const intervalTime = 20000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
     if (autofillProgress === 0 && !hasStartedAutofillRef.current) {
@@ -373,6 +373,10 @@ export const useResourceStoryProps = (
     },
     setContent: setContent,
     setImage: setImage,
+    stopAutofill: () => {
+      setAutofillProgress(undefined)
+      setIsAutofilled(false)
+    },
     ...overrides?.actions,
   }
 

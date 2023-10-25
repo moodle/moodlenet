@@ -14,6 +14,11 @@ import { Bolt, InsertDriveFile, Link as LinkIcon, Upload as UploadIcon } from '@
 // import prettyBytes from 'pretty-bytes'
 import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type {
+  ResourceActions,
+  ResourceDataProps,
+  ResourceStateProps,
+} from '../../../../common/types.mjs'
 import { ReactComponent as UploadFileIcon } from '../../../assets/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-image.svg'
 import autofillingImg from '../../../assets/img/autofilling.png'
@@ -25,14 +30,11 @@ export type UploadResourceProps = {
   fileMaxSize: number | null
   contentForm: FormikHandle<{ content: File | string | undefined | null }>
   imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
-  downloadFilename: string | null
   uploadOptionsItems: (AddonItem | null)[]
-  contentType: 'file' | 'link' | null
-  resourceId: string | undefined
+  data: ResourceDataProps
+  state: ResourceStateProps
+  actions: ResourceActions
   backupImage?: AssetInfo
-  uploadProgress: number | undefined
-  isAutofilled: boolean
-  autofillProgress: number | undefined
   shouldShowErrors?: boolean
   displayOnly?: boolean
 }
@@ -43,17 +45,17 @@ export const UploadResource: FC<UploadResourceProps> = ({
 
   contentForm,
   imageForm,
-  downloadFilename,
-  contentType,
-  resourceId,
+  data,
+  state,
+  actions,
   backupImage,
-  isAutofilled,
 
   displayOnly,
   shouldShowErrors,
-  uploadProgress,
-  autofillProgress,
 }) => {
+  const { contentType, downloadFilename, id } = data
+  const { uploadProgress, autofillProgress, isAutofilled } = state
+  const { stopAutofill } = actions
   const [imageUrl] = useImageUrl(
     imageForm.values.image?.location,
     displayOnly ? backupImage?.location : undefined,
@@ -136,13 +138,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const addLink = useCallback(() => {
     const link = addLinkFieldRef.current?.value
     contentForm_setFieldValue('content', link).then(errors => {
-      if (!errors?.content && !resourceId) {
+      if (!errors?.content && !id) {
         contentForm_submitForm()
         setSubStep('Autofilling')
       }
       setShowLinkErrors(!!errors?.content)
     })
-  }, [contentForm_setFieldValue, contentForm_submitForm, resourceId])
+  }, [contentForm_setFieldValue, contentForm_submitForm, id])
 
   const deleteImage = useCallback(() => {
     setImage(null)
@@ -153,7 +155,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const deleteFileOrLink = useCallback(() => {
     setSubStep('AddFileOrLink')
     contentForm_setFieldValue('content', null).then(errors => {
-      if (!resourceId && !errors?.content) {
+      if (!id && !errors?.content) {
         contentForm_submitForm()
       }
     })
@@ -164,7 +166,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     contentForm_setTouched,
     contentForm_submitForm,
     contentForm_validateForm,
-    resourceId,
+    id,
   ])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
@@ -181,7 +183,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     (file: File | undefined) => {
       const isImage = file?.type.toLowerCase().startsWith('image')
       contentForm_setFieldValue('content', file).then(errors => {
-        if (!errors?.content && !resourceId) {
+        if (!errors?.content && !id) {
           contentForm_submitForm()
           setSubStep('Uploading')
         }
@@ -192,7 +194,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
         imageForm_setTouched({ image: true })
       })
     },
-    [contentForm_setFieldValue, contentForm_submitForm, imageForm_setTouched, resourceId, setImage],
+    [contentForm_setFieldValue, contentForm_submitForm, imageForm_setTouched, id, setImage],
   )
 
   const contentValue =
@@ -551,7 +553,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
                   : undefined}
               </abbr>
               <RoundButton
-                onClick={deleteFileOrLink}
+                onClick={autofillProgress !== undefined ? stopAutofill : deleteFileOrLink}
                 tabIndex={0}
                 abbrTitle={contentIsFile ? 'Delete file' : 'Delete link'}
                 onKeyUp={e => e.key === 'Enter' && deleteFileOrLink()}

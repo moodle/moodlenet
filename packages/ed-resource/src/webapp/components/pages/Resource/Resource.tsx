@@ -395,8 +395,10 @@ export const Resource: FC<ResourceProps> = ({
       : null
 
   const disableExtraDetails =
-    !id &&
-    (!contentForm.values.content || uploadProgress !== undefined || autofillProgress !== undefined)
+    !id ||
+    !contentForm.values.content ||
+    uploadProgress !== undefined ||
+    autofillProgress !== undefined
 
   const subjectField = (isEditing || canEdit) && (
     <DropdownField
@@ -596,7 +598,7 @@ export const Resource: FC<ResourceProps> = ({
         showCloseButton={false}
         autoHideDuration={6000}
       >
-        {`Uploading file, feel free to move around the platform just don't close the tab`}
+        {`Uploading file, feel free to move around the platform, just don't close the tab`}
       </Snackbar>
     ) : null
 

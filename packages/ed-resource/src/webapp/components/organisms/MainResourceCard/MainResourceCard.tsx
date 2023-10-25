@@ -541,14 +541,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       displayOnly={(canEdit && !isEditing) || !canEdit}
       contentForm={contentForm}
       imageForm={imageForm}
-      resourceId={id}
       uploadOptionsItems={uploadOptionsItems}
       fileMaxSize={fileMaxSize}
-      downloadFilename={downloadFilename}
-      uploadProgress={uploadProgress}
-      autofillProgress={autofillProgress}
       shouldShowErrors={shouldShowErrors}
-      contentType={contentType}
+      actions={actions}
+      data={data}
+      state={state}
       key="resource-uploader"
     />
   )
@@ -600,16 +598,22 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
+  const disableLearningOutcomes =
+    !id ||
+    !contentForm.values.content ||
+    uploadProgress !== undefined ||
+    autofillProgress !== undefined
+
   const outcomeErrors = form.errors.learningOutcomes
 
   const learningOutcomes =
-    id &&
-    (isEditing ||
-      (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0)) ? (
+    isEditing ||
+    (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0) ? (
       <LearningOutcomes
         learningOutcomeOptions={learningOutcomeOptions}
         learningOutcomes={form.values.learningOutcomes}
         isEditing={isEditing}
+        disabled={disableLearningOutcomes}
         error={
           shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
             ? outcomeErrors

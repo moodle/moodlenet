@@ -15,6 +15,7 @@ export type LearningOutcomesProps = {
   isEditing: boolean
   learningOutcomes: LearningOutcome[]
   learningOutcomeOptions: LearningOutcomeOption[]
+  disabled?: boolean
   error?: string | string[]
   shouldShowErrors: boolean
   edit: (learningOutcomes: LearningOutcome[]) => unknown
@@ -38,6 +39,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   learningOutcomeOptions,
   learningOutcomes,
   isEditing,
+  disabled,
   error,
   shouldShowErrors,
   edit,
@@ -132,7 +134,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             }
         ${maxLearningOutcomesReached ? 'max-reached' : ''}`}
             pills={false}
-            disabled={maxLearningOutcomesReached}
+            disabled={maxLearningOutcomesReached || disabled}
             abbr={
               maxLearningOutcomesReached ? 'Max learning outcomes reached' : 'Add learning outcome'
             }
@@ -200,7 +202,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   )
 
   return (
-    <div className="learning-outcomes-section">
+    <div className={`learning-outcomes-section ${disabled ? 'disabled' : ''}`}>
       {title}
       {errorDiv}
       {subtitle}

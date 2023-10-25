@@ -173,4 +173,28 @@
       }
     }
   }
+
+  &.disabled {
+    > .title,
+    > .subtitle {
+      color: #c6c6c6;
+    }
+    > .categories {
+      > .dropdown {
+        cursor: default;
+      }
+      > .category > {
+        // cursor: none;
+        // pointer-events: none;
+        .input-container {
+          // pointer-events: none;
+          cursor: default;
+          box-shadow: inset 0 0 0 1px #dedede;
+          > .dropdown-button > .placeholder {
+            color: #c6c6c6;
+          }
+        }
+      }
+    }
+  }
 }

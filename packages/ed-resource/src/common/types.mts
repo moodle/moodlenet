@@ -114,6 +114,7 @@ export type ResourceActions = {
   editData: (values: ResourceFormProps) => void
   setImage: (image: File | undefined | null) => void
   setContent: (content: File | string | undefined | null) => void
+  stopAutofill(): void
   deleteResource(): void
 }
 
