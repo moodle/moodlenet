@@ -17,6 +17,7 @@ export type RoundButtonProps = {
   color?: 'gray' | 'red'
   onHoverColor?: 'gray' | 'red' | 'fill-red'
   abbrTitle?: string
+  disabled?: boolean
   icon?: ReactNode
 } & React.HTMLAttributes<HTMLDivElement>
 
@@ -26,13 +27,18 @@ export const RoundButton: FC<RoundButtonProps> = ({
   color,
   onHoverColor,
   tabIndex,
+  disabled,
   abbrTitle,
   icon,
   ...props
 }) => {
   const svgClassName = `color-${color} hover-${onHoverColor}`
   return (
-    <abbr className={`round-button ${className}`} title={abbrTitle}>
+    <abbr
+      className={`round-button ${className} ${disabled ? 'disabled' : ''} 
+    `}
+      title={abbrTitle}
+    >
       <div className={`content`} tabIndex={tabIndex} {...props}>
         {icon && icon}
         {!icon && (

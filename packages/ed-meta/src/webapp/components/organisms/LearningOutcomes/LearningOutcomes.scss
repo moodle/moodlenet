@@ -183,15 +183,28 @@
       > .dropdown {
         cursor: default;
       }
-      > .category > {
+      > .category {
         // cursor: none;
         // pointer-events: none;
-        .input-container {
+        > .input-container {
+          opacity: 0.4;
           // pointer-events: none;
           cursor: default;
           box-shadow: inset 0 0 0 1px #dedede;
           > .dropdown-button > .placeholder {
-            color: #c6c6c6;
+            color: #252525;
+          }
+          > .verb-pill {
+            opacity: 0.4;
+          }
+        }
+      }
+    }
+    > .learning-outcomes-list {
+      > .learning-outcome {
+        > .input-container {
+          > .verb-pill {
+            opacity: 0.4;
           }
         }
       }

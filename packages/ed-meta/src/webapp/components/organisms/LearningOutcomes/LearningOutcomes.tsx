@@ -60,6 +60,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             name="content"
             placeholder={`the necessary facts...`}
             edit
+            disabled={disabled}
             value={sentence}
             onChange={value => {
               const newLearningOutcomes = [...learningOutcomes]
@@ -83,6 +84,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
               <RoundButton
                 onClick={() => deleteOutcome(i)}
                 tabIndex={0}
+                disabled={disabled}
                 abbrTitle={'Remove learning outcome'}
                 onKeyUp={e => e.key === 'enter' && deleteOutcome(i)}
               />

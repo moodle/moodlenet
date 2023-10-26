@@ -1,6 +1,7 @@
 import type { AssetInfo } from '@moodlenet/component-library/common'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type {
+  AutofillState,
   EdMetaOptionsProps,
   ResourceAccessProps,
   ResourceActions,
@@ -37,7 +38,7 @@ import { href } from '@moodlenet/react-app/common'
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
@@ -134,6 +135,7 @@ export const useResourceStoryProps = (
       isAuthenticated: boolean
       bookmarkButtonProps: BookmarkButtonProps
       likeButtonProps: LikeButtonProps
+      startWithoutImage?: boolean
     }
   >,
   //   {
@@ -147,30 +149,40 @@ export const useResourceStoryProps = (
 ): ResourceProps => {
   const [contentUrl, setContentUrl] = useState<string | null>(overrides?.data?.contentUrl ?? null)
   const [id, setId] = useState<string | null>(overrides?.data?.id ?? null)
-  const [image, setImageData] = useState<AssetInfo | null>(
-    overrides?.data?.image?.location || overrides?.data?.image?.location === undefined
-      ? {
-          credits: {
-            owner: {
-              name: overrides?.data?.image?.credits?.owner?.name ?? 'Ivan Bandura',
-              url:
-                overrides?.data?.image?.credits?.owner?.url ??
-                'https://unsplash.com/@unstable_affliction',
-            },
-            provider: {
-              name: overrides?.data?.image?.credits?.owner?.name ?? 'Unsplash',
-              url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com',
-            },
-          },
-          location:
-            overrides?.data?.image?.location ??
-            'https://images.unsplash.com/photo-1593259996642-a62989601967?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
-        }
-      : null,
-  )
   const [filename, setFilename] = useState<string | null>(overrides?.data?.downloadFilename ?? null)
   const [contentType, setContentType] = useState<'link' | 'file' | null>(
     overrides?.data?.contentType ?? null,
+  )
+  const imageWithCredits = useMemo<AssetInfo | null>(() => {
+    return {
+      credits: {
+        owner: {
+          name: overrides?.data?.image?.credits?.owner?.name ?? 'Ivan Bandura',
+          url:
+            overrides?.data?.image?.credits?.owner?.url ??
+            'https://unsplash.com/@unstable_affliction',
+        },
+        provider: {
+          name: overrides?.data?.image?.credits?.owner?.name ?? 'Unsplash',
+          url: overrides?.data?.image?.credits?.owner?.url ?? 'https://unsplash.com',
+        },
+      },
+      location:
+        overrides?.data?.image?.location ??
+        'https://images.unsplash.com/photo-1593259996642-a62989601967?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
+    }
+  }, [
+    overrides?.data?.image?.credits?.owner?.name,
+    overrides?.data?.image?.credits?.owner?.url,
+    overrides?.data?.image?.location,
+  ])
+
+  const [image, setImageData] = useState<AssetInfo | null>(
+    overrides?.startWithoutImage
+      ? null
+      : overrides?.data?.image?.location || overrides?.data?.image?.location === undefined
+      ? imageWithCredits
+      : null,
   )
 
   // setInterval(() => setIsSaving(!isSaving), 1000)
@@ -186,17 +198,45 @@ export const useResourceStoryProps = (
           .map(outcome => outcome as LearningOutcome)
       : learningOutcomesSelection
 
+  const learningOutcomes: LearningOutcome[] = useMemo(
+    () => [
+      {
+        code: '1',
+        verb: 'Describe',
+        sentence: 'the importance of protecting and restoring endangered ecosystems',
+      },
+      {
+        code: '2',
+        verb: 'Explain',
+        sentence: 'the value in keeping ecosystems healthy and intact',
+      },
+      {
+        code: '3',
+        verb: 'Identify',
+        sentence: 'the causes of ecosystem degradation',
+      },
+    ],
+    [],
+  )
+
+  const filledResourceForm = useMemo<ResourceFormProps>(() => {
+    return {
+      title: 'Protecting and restoring endangered ecosystems',
+      description:
+        'This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization.',
+      subject: '0522',
+      license: 'CC-0 (Public domain)',
+      type: '2',
+      language: 'English',
+      level: '6',
+      month: '5',
+      year: '2022',
+      learningOutcomes: updatedLearningOutcomes,
+    }
+  }, [updatedLearningOutcomes])
+
   const resourceForm: ResourceFormProps = {
-    title: 'Protecting and restoring endangered ecosystems',
-    description:
-      'This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization. This educational resource provides valuable insights into the critical importance of ecosystem preservation and how to take practical steps towards their revitalization.',
-    subject: '0522',
-    license: 'CC-0 (Public domain)',
-    type: '2',
-    language: 'English',
-    level: '6',
-    month: '5',
-    year: '2022',
+    ...filledResourceForm,
     ...overrides?.resourceForm,
     learningOutcomes: updatedLearningOutcomes,
   }
@@ -221,10 +261,8 @@ export const useResourceStoryProps = (
   const [uploadProgress, setUploadProgress] = useState(
     overrides?.state?.uploadProgress ?? undefined,
   )
-  const [autofillProgress, setAutofillProgress] = useState(
-    overrides?.state?.autofillProgress ?? undefined,
-  )
-
+  const [autofillState, setautofillState] = useState(overrides?.state?.autofillState ?? undefined)
+  const [isUploaded, setIsUploaded] = useState(overrides?.state?.isUploaded ?? false)
   const [isAutofilled, setIsAutofilled] = useState(overrides?.state?.isAutofilled ?? false)
 
   const saveContent = () => {
@@ -250,13 +288,13 @@ export const useResourceStoryProps = (
   const hasStartedUploadRef = useRef<boolean>(false)
 
   useEffect(() => {
-    const intervalTime = 10000 / 100
+    const intervalTime = 2000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
     if (uploadProgress === 0 && !hasStartedUploadRef.current) {
       hasStartedUploadRef.current = true // Mark that we've started the sequence
 
-      for (let i = 1; i <= 100; i++) {
+      for (let i = 1; i <= 101; i++) {
         timeouts.push(
           setTimeout(() => {
             setUploadProgress(prev => (typeof prev === 'number' ? prev + 1 : prev))
@@ -269,9 +307,10 @@ export const useResourceStoryProps = (
           setId('1234')
           setContentUrl('https://example.com/some_url.pdf')
           setUploadProgress(undefined)
-          setAutofillProgress(0)
+          setIsUploaded(true)
+          setautofillState('extracting-info')
           hasStartedUploadRef.current = false // Reset for potential future sequences
-        }, intervalTime * 101),
+        }, intervalTime * 102),
       )
     }
 
@@ -283,40 +322,29 @@ export const useResourceStoryProps = (
     }
   }, [uploadProgress])
 
-  const hasStartedAutofillRef = useRef<boolean>(false)
+  const autofillPrevStateRef = useRef<AutofillState>(undefined)
 
   useEffect(() => {
-    const intervalTime = 20000 / 100
-    const timeouts: NodeJS.Timeout[] = []
-
-    if (autofillProgress === 0 && !hasStartedAutofillRef.current) {
-      hasStartedAutofillRef.current = true // Mark that we've started the sequence
-
-      for (let i = 1; i <= 100; i++) {
-        timeouts.push(
-          setTimeout(() => {
-            setAutofillProgress(prev => (typeof prev === 'number' ? prev + 1 : prev))
-          }, intervalTime * i),
-        )
-      }
-
-      timeouts.push(
-        setTimeout(() => {
-          setContentUrl('https://example.com/some_url.pdf')
-          setAutofillProgress(undefined)
-          setIsAutofilled(true)
-          hasStartedAutofillRef.current = false // Reset for potential future sequences
-        }, intervalTime * 101),
-      )
+    if (autofillState === 'extracting-info' && autofillPrevStateRef.current === undefined) {
+      setTimeout(() => {
+        setautofillState('ai-generation')
+      }, 4000)
     }
 
-    return () => {
-      if (autofillProgress === undefined) {
-        // Only clear timeouts when autofillProgress becomes undefined
-        timeouts.forEach(t => clearTimeout(t))
-      }
+    if (autofillState === 'ai-generation' && autofillPrevStateRef.current === 'extracting-info') {
+      setTimeout(() => {
+        setautofillState(undefined)
+        setContentUrl('https://example.com/some_url.pdf')
+        setautofillState(undefined)
+        setFormData({ ...filledResourceForm, learningOutcomes: learningOutcomes })
+        setImageData(imageWithCredits)
+        !id && setId('1234')
+        setIsAutofilled(true)
+      }, 4000)
     }
-  }, [autofillProgress])
+
+    autofillPrevStateRef.current = autofillState
+  }, [autofillState, filledResourceForm, id, imageWithCredits, learningOutcomes])
 
   const setContent = (e: File | string | undefined | null) => {
     if (e === undefined || e === null) {
@@ -324,7 +352,8 @@ export const useResourceStoryProps = (
       setContentType(null)
       setFilename(null)
       setUploadProgress(undefined)
-      setAutofillProgress(undefined)
+      setautofillState(undefined)
+      setIsUploaded(false)
       setIsAutofilled(false)
       return
     }
@@ -332,8 +361,9 @@ export const useResourceStoryProps = (
     if (typeof e === 'string') {
       setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
       setContentType('link')
+      setIsUploaded(false)
       setFilename(null)
-      setAutofillProgress(0)
+      setautofillState('extracting-info')
     } else if (e instanceof File) {
       setContentType('file')
       setFilename(e.name)
@@ -364,6 +394,9 @@ export const useResourceStoryProps = (
 
   const actions: ResourceActions = {
     deleteResource: action('delete resource'),
+    startAutofill: () => {
+      setautofillState('extracting-info')
+    },
     editData: setFormData,
     publish: () => {
       setIsPublished(true)
@@ -374,7 +407,7 @@ export const useResourceStoryProps = (
     setContent: setContent,
     setImage: setImage,
     stopAutofill: () => {
-      setAutofillProgress(undefined)
+      setautofillState(undefined)
       setIsAutofilled(false)
     },
     ...overrides?.actions,
@@ -383,7 +416,8 @@ export const useResourceStoryProps = (
   const state: ResourceStateProps = {
     isPublished: isPublished,
     uploadProgress: uploadProgress,
-    autofillProgress: autofillProgress,
+    autofillState: autofillState,
+    isUploaded: isUploaded,
     isAutofilled: isAutofilled,
     ...overrides?.state,
   }
@@ -495,8 +529,8 @@ export const useResourceStoryProps = (
         ResourceContributorCardStories.ResourceContributorCardStoryProps,
 
       data: data,
-      resourceForm: formData,
       state: state,
+      resourceForm: formData,
       actions: actions,
       access: access,
       edMetaOptions: edMetaOptions,
@@ -511,7 +545,10 @@ export const useResourceStoryProps = (
       fileMaxSize: 343243,
       saveState: saveState,
     },
-    overrides,
+    {
+      ...overrides,
+      resourceForm: formData,
+    },
   )
 }
 

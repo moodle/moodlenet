@@ -2,6 +2,7 @@ import type { IconTextOptionProps } from '@moodlenet/component-library'
 import { Dropdown, IconPill, IconTextOption } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
+import './LicenseField.scss'
 
 export type LicenseFieldProps = {
   license: string
@@ -61,7 +62,7 @@ export const LicenseField: FC<LicenseFieldProps> = ({
       disabled={disabled}
       value={license}
       label={`License`}
-      placeholder="License category"
+      placeholder="License type"
       searchByText={setSearchText}
       highlight={shouldShowErrors && !!error}
       error={shouldShowErrors && error}

@@ -42,11 +42,14 @@ export type ResourceDataRpc = {
   downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...
 }
 
+export type AutofillState = 'extracting-info' | 'ai-generation' | undefined
+
 export type ResourceStateRpc = {
   isPublished: boolean
+  isUploaded: boolean
   isAutofilled: boolean
   uploadProgress: number | undefined
-  autofillProgress: number | undefined
+  autofillState: AutofillState
 }
 
 export type ResourceContributorRpc = {
@@ -114,6 +117,7 @@ export type ResourceActions = {
   editData: (values: ResourceFormProps) => void
   setImage: (image: File | undefined | null) => void
   setContent: (content: File | string | undefined | null) => void
+  startAutofill(): void
   stopAutofill(): void
   deleteResource(): void
 }

@@ -19,6 +19,7 @@ import type {
   ResourceDataProps,
   ResourceStateProps,
 } from '../../../../common/types.mjs'
+import { ReactComponent as ExtractInfoIcon } from '../../../assets/icons/extract-info.svg'
 import { ReactComponent as UploadFileIcon } from '../../../assets/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-image.svg'
 import autofillingImg from '../../../assets/img/autofilling.png'
@@ -54,7 +55,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   shouldShowErrors,
 }) => {
   const { contentType, downloadFilename, id } = data
-  const { uploadProgress, autofillProgress, isAutofilled } = state
+  const { uploadProgress, autofillState, isUploaded } = state
   const { stopAutofill } = actions
   const [imageUrl] = useImageUrl(
     imageForm.values.image?.location,
@@ -76,7 +77,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   >(
     uploadProgress !== undefined
       ? 'Uploading'
-      : autofillProgress !== undefined
+      : autofillState !== undefined
       ? 'Autofilling'
       : contentForm.values.content && !contentForm.errors.content
       ? 'AddImage'
@@ -102,13 +103,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
     setSubStep(
       uploadProgress !== undefined
         ? 'Uploading'
-        : autofillProgress !== undefined
+        : autofillState !== undefined
         ? 'Autofilling'
         : contentForm.values.content && !contentForm.errors.content
         ? 'AddImage'
         : 'AddFileOrLink',
     )
-  }, [contentForm, subStep, setSubStep, uploadProgress, autofillProgress])
+  }, [contentForm, subStep, setSubStep, uploadProgress, autofillState])
 
   useEffect(() => {
     subStep === 'AddFileOrLink' && setShowImageErrors(false)
@@ -138,13 +139,13 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const addLink = useCallback(() => {
     const link = addLinkFieldRef.current?.value
     contentForm_setFieldValue('content', link).then(errors => {
-      if (!errors?.content && !id) {
+      if (!errors?.content) {
         contentForm_submitForm()
         setSubStep('Autofilling')
       }
       setShowLinkErrors(!!errors?.content)
     })
-  }, [contentForm_setFieldValue, contentForm_submitForm, id])
+  }, [contentForm_setFieldValue, contentForm_submitForm])
 
   const deleteImage = useCallback(() => {
     setImage(null)
@@ -155,7 +156,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   const deleteFileOrLink = useCallback(() => {
     setSubStep('AddFileOrLink')
     contentForm_setFieldValue('content', null).then(errors => {
-      if (!id && !errors?.content) {
+      if (!errors?.content) {
         contentForm_submitForm()
       }
     })
@@ -166,7 +167,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
     contentForm_setTouched,
     contentForm_submitForm,
     contentForm_validateForm,
-    id,
   ])
 
   const uploadImageRef = useRef<HTMLInputElement>(null)
@@ -183,7 +183,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     (file: File | undefined) => {
       const isImage = file?.type.toLowerCase().startsWith('image')
       contentForm_setFieldValue('content', file).then(errors => {
-        if (!errors?.content && !id) {
+        if (!errors?.content) {
           contentForm_submitForm()
           setSubStep('Uploading')
         }
@@ -194,7 +194,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
         imageForm_setTouched({ image: true })
       })
     },
-    [contentForm_setFieldValue, contentForm_submitForm, imageForm_setTouched, id, setImage],
+    [contentForm_setFieldValue, contentForm_submitForm, imageForm_setTouched, setImage],
   )
 
   const contentValue =
@@ -325,42 +325,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
     }
   }, [uploadProgress])
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout
-
-    if (autofillProgress !== undefined) {
-      const deltaTime = Date.now() - (lastUpdateTimeRef.current || Date.now())
-      const progressDelta = autofillProgress - (progressPartialRef.current || 0)
-
-      const updateRate = progressDelta / deltaTime // percentage per millisecond
-      interval = setInterval(() => {
-        if (Math.abs((progressPartialRef.current || 0) - autofillProgress) > 0.1) {
-          setUploadPartial(prev => (prev !== undefined ? prev + updateRate * 10 : 0))
-        } else {
-          clearInterval(interval)
-          setUploadPartial(autofillProgress)
-        }
-      }, 10)
-      lastUpdateTimeRef.current = Date.now()
-    } else {
-      setUploadPartial(undefined)
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval)
-      }
-    }
-  }, [autofillProgress])
-
   const isUploading = subStep === 'Uploading'
   const isAutofilling = subStep === 'Autofilling'
-
-  const uploadedNameBackground = uploadPartial
-    ? `linear-gradient(to right, ${
-        isUploading ? '#1a6aff33' : '#00bd7e33'
-      } ${uploadPartial}% , #ffffff00 ${uploadPartial + 3}%, #ffffff00 )`
-    : 'none'
 
   const fileUploader = (
     <div
@@ -502,6 +468,22 @@ export const UploadResource: FC<UploadResourceProps> = ({
     </>
   )
 
+  const uploadBeat =
+    uploadProgress !== undefined ? (
+      <div className="upload-beat beats">
+        <div className="beat" style={{ width: `${uploadPartial}%` }} />
+      </div>
+    ) : null
+
+  const autofillBeats =
+    autofillState !== undefined ? (
+      <div className="autofill-beats beats">
+        <div className="beat beat1" />
+        <div className="beat beat2" />
+        <div className="beat beat3" />
+      </div>
+    ) : null
+
   return (
     <div className="upload-resource">
       <div className={`main-container `}>{uploaderDiv}</div>
@@ -526,34 +508,35 @@ export const UploadResource: FC<UploadResourceProps> = ({
               }
             />
           ) : (
-            <div
-              className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'}`}
-              style={{ background: uploadedNameBackground }}
-            >
+            <div className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'} `}>
               <div className="content-icon">
                 {uploadProgress ? (
                   <UploadIcon />
-                ) : autofillProgress ? (
+                ) : autofillState === 'extracting-info' ? (
+                  <ExtractInfoIcon />
+                ) : autofillState === 'ai-generation' ? (
                   <Bolt />
-                ) : contentIsFile ? (
-                  <InsertDriveFile />
-                ) : isAutofilled ? (
+                ) : contentType === 'link' ? (
                   <LinkIcon />
+                ) : contentType === 'file' ? (
+                  <InsertDriveFile />
                 ) : undefined}
               </div>
               <abbr className="scroll" title={contentName}>
                 {uploadProgress
                   ? `Uploading ${contentName}`
-                  : autofillProgress
+                  : autofillState === 'extracting-info'
+                  ? `Extracting info from ${
+                      contentType === 'file' ? contentName.split('.').pop() : 'link'
+                    }`
+                  : autofillState === 'ai-generation'
                   ? `Autofilling with AI`
-                  : contentIsFile
-                  ? contentName
-                  : isAutofilled
-                  ? contentName
-                  : undefined}
+                  : contentName}
               </abbr>
+              {uploadBeat}
+              {autofillBeats}
               <RoundButton
-                onClick={autofillProgress !== undefined ? stopAutofill : deleteFileOrLink}
+                onClick={autofillState !== undefined ? stopAutofill : deleteFileOrLink}
                 tabIndex={0}
                 abbrTitle={contentIsFile ? 'Delete file' : 'Delete link'}
                 onKeyUp={e => e.key === 'Enter' && deleteFileOrLink()}

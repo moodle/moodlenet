@@ -92,7 +92,7 @@ export const Resource: FC<ResourceProps> = ({
   },
 }) => {
   const viewport = useViewport()
-  const { downloadFilename, contentUrl, contentType, image, id } = data
+  const { downloadFilename, contentUrl, contentType, image } = data
   const {
     editData,
     deleteResource,
@@ -100,9 +100,10 @@ export const Resource: FC<ResourceProps> = ({
     unpublish: setUnpublish,
     setContent,
     setImage,
+    startAutofill,
   } = actions
   const { canPublish, canEdit } = access
-  const { isPublished, uploadProgress, autofillProgress, isAutofilled } = state
+  const { isPublished, uploadProgress, autofillState, isAutofilled } = state
   const { image: isSavingImage } = saveState
   const {
     languageOptions,
@@ -129,6 +130,22 @@ export const Resource: FC<ResourceProps> = ({
       !resourceForm.month &&
       !(resourceForm.learningOutcomes.length > 0),
   )
+
+  const hasAllData =
+    typeof resourceForm.title === 'string' &&
+    resourceForm.title !== '' &&
+    typeof resourceForm.description === 'string' &&
+    resourceForm.description !== '' &&
+    // !image &&
+    typeof contentUrl === 'string' &&
+    typeof resourceForm.type === 'string' &&
+    typeof resourceForm.language === 'string' &&
+    typeof resourceForm.license === 'string' &&
+    typeof resourceForm.level === 'string' &&
+    typeof resourceForm.subject === 'string' &&
+    typeof resourceForm.year === 'string' &&
+    typeof resourceForm.month === 'string' &&
+    resourceForm.learningOutcomes.length > 0
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -166,6 +183,16 @@ export const Resource: FC<ResourceProps> = ({
   })
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
   const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
+
+  const form_setValues = form.setValues
+  const prevResourceFormRef = useRef(resourceForm)
+  useEffect(() => {
+    if (prevResourceFormRef.current !== resourceForm) {
+      console.log('resourceForm changed')
+      form_setValues(resourceForm)
+    }
+    prevResourceFormRef.current = resourceForm
+  }, [form_setValues, resourceForm])
 
   const contentForm = useFormik<{ content: File | string | undefined | null }>({
     initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
@@ -216,6 +243,9 @@ export const Resource: FC<ResourceProps> = ({
     contentForm_setTouched({ content: true })
     imageForm_setTouched({ image: true })
   }, [contentForm_setTouched, form_setTouched, imageForm_setTouched])
+
+  const disableFields =
+    !contentForm.values.content || uploadProgress !== undefined || autofillState !== undefined
 
   const contributorCard = isPublished && (
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
@@ -375,11 +405,21 @@ export const Resource: FC<ResourceProps> = ({
         }
       : null
 
-  const publishCheckButton = isEditing && canPublish && !isPublished && (
-    <PrimaryButton onClick={publishCheck} color="green">
-      Publish check
+  const autofillButton = !hasAllData && isEditing && !disableFields && (
+    <PrimaryButton onClick={startAutofill} color="green">
+      Autofill missing fields
     </PrimaryButton>
   )
+
+  const publishCheckButton = hasAllData &&
+    isEditing &&
+    canPublish &&
+    !isPublished &&
+    !disableFields && (
+      <PrimaryButton onClick={publishCheck} color="green">
+        Publish check
+      </PrimaryButton>
+    )
 
   const unpublishButton: AddonItem | null =
     canPublish && isPublished
@@ -394,16 +434,10 @@ export const Resource: FC<ResourceProps> = ({
         }
       : null
 
-  const disableExtraDetails =
-    !id ||
-    !contentForm.values.content ||
-    uploadProgress !== undefined ||
-    autofillProgress !== undefined
-
   const subjectField = (isEditing || canEdit) && (
     <DropdownField
       key="subject-field"
-      disabled={disableExtraDetails}
+      disabled={disableFields}
       title="Subject"
       placeholder="Content category"
       canEdit={canEdit && isEditing}
@@ -418,7 +452,7 @@ export const Resource: FC<ResourceProps> = ({
   const licenseField = (
     <LicenseField
       key="license-field"
-      disabled={disableExtraDetails}
+      disabled={disableFields}
       canEdit={canEdit && isEditing}
       license={form.values.license}
       licenseOptions={licenseOptions}
@@ -433,7 +467,7 @@ export const Resource: FC<ResourceProps> = ({
   const typeField = (
     <DropdownField
       key="type-field"
-      disabled={disableExtraDetails}
+      disabled={disableFields}
       title="Type"
       placeholder="Content type"
       canEdit={canEdit && isEditing}
@@ -450,7 +484,7 @@ export const Resource: FC<ResourceProps> = ({
   const levelField = (
     <DropdownField
       key="level-field"
-      disabled={disableExtraDetails}
+      disabled={disableFields}
       title="Level"
       placeholder="Education level"
       canEdit={canEdit && isEditing}
@@ -467,7 +501,7 @@ export const Resource: FC<ResourceProps> = ({
   const dateField = (
     <DateField
       key="date-field"
-      disabled={disableExtraDetails}
+      disabled={disableFields}
       canEdit={canEdit && isEditing}
       month={form.values.month}
       monthOptions={monthOptions}
@@ -488,7 +522,7 @@ export const Resource: FC<ResourceProps> = ({
   const languageField = (
     <DropdownField
       key="language-field"
-      disabled={disableExtraDetails}
+      disabled={disableFields}
       title="Language"
       placeholder="Content language"
       canEdit={canEdit && isEditing}
@@ -557,6 +591,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const updatedGeneralActionsItems = sortAddonItems([
     publishButton,
+    autofillButton,
     publishCheckButton,
     unpublishButton,
     ...(generalActionsItems ?? []),
@@ -613,6 +648,19 @@ export const Resource: FC<ResourceProps> = ({
     prevIsAutofilledRef.current = isAutofilled
   }, [isAutofilled, prevIsAutofilledRef])
 
+  const autofillingSnackbar =
+    autofillState !== undefined ? (
+      <Snackbar
+        position="bottom"
+        type="info"
+        showCloseButton={false}
+        autoHideDuration={6000}
+        onClose={() => setShowAutofillSuccess(false)}
+      >
+        {`Using AI to autofill the resource details, it usually takes around 1 min`}
+      </Snackbar>
+    ) : null
+
   const autofillSuccessSnackbar = showAutofillSuccess ? (
     <Snackbar
       position="bottom"
@@ -624,8 +672,6 @@ export const Resource: FC<ResourceProps> = ({
       {`Resource ready! Verify and edit any required details`}
     </Snackbar>
   ) : null
-
-  console.log('isAutofilled', isAutofilled)
 
   const checkPublishSnackbar =
     showCheckPublishSuccess !== 'idle' ? (
@@ -673,6 +719,7 @@ export const Resource: FC<ResourceProps> = ({
     <SnackbarStack
       snackbarList={[
         uploadSnackbar,
+        autofillingSnackbar,
         autofillSuccessSnackbar,
         checkPublishSnackbar,
         publishSnackbar,

@@ -138,7 +138,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { subjectOptions } = edMetaOptions
 
-  const { isPublished, uploadProgress, autofillProgress } = state
+  const { isPublished, uploadProgress, autofillState } = state
 
   const { deleteResource } = actions
 
@@ -273,13 +273,17 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }, 100)
   }
 
+  const disableFields =
+    (!contentForm.values.content || uploadProgress !== undefined || autofillState !== undefined) &&
+    isEditing
+
   const title = canEdit ? (
     <InputTextField
       name="title"
       key="title"
       className="title"
       isTextarea
-      disabled={!id}
+      disabled={disableFields}
       edit={isEditing}
       value={form.values.title}
       placeholder="Title"
@@ -568,7 +572,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       className="description"
       name="description"
       key="description"
-      disabled={!id}
+      disabled={disableFields}
       isTextarea
       textAreaAutoSize
       noBorder
@@ -598,12 +602,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const disableLearningOutcomes =
-    !id ||
-    !contentForm.values.content ||
-    uploadProgress !== undefined ||
-    autofillProgress !== undefined
-
   const outcomeErrors = form.errors.learningOutcomes
 
   const learningOutcomes =
@@ -613,7 +611,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         learningOutcomeOptions={learningOutcomeOptions}
         learningOutcomes={form.values.learningOutcomes}
         isEditing={isEditing}
-        disabled={disableLearningOutcomes}
+        disabled={disableFields}
         error={
           shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
             ? outcomeErrors
