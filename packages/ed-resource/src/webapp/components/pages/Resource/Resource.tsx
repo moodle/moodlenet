@@ -405,21 +405,31 @@ export const Resource: FC<ResourceProps> = ({
         }
       : null
 
-  const autofillButton = !hasAllData && isEditing && !disableFields && (
-    <PrimaryButton onClick={startAutofill} color="green">
-      Autofill missing fields
-    </PrimaryButton>
-  )
+  const autofillButton: AddonItem | null =
+    isEditing && !hasAllData && !disableFields
+      ? {
+          Item: () => (
+            <PrimaryButton onClick={startAutofill} color="green">
+              Autofill missing fields
+            </PrimaryButton>
+          ),
+          key: 'autofill-button',
+          position: 0,
+        }
+      : null
 
-  const publishCheckButton = hasAllData &&
-    isEditing &&
-    canPublish &&
-    !isPublished &&
-    !disableFields && (
-      <PrimaryButton onClick={publishCheck} color="green">
-        Publish check
-      </PrimaryButton>
-    )
+  const publishCheckButton: AddonItem | null =
+    isEditing && canPublish && !isPublished && (hasAllData || disableFields)
+      ? {
+          Item: () => (
+            <PrimaryButton onClick={publishCheck} color="green" disabled={disableFields}>
+              Publish check
+            </PrimaryButton>
+          ),
+          key: 'publish-check-button',
+          position: 0,
+        }
+      : null
 
   const unpublishButton: AddonItem | null =
     canPublish && isPublished
@@ -650,13 +660,7 @@ export const Resource: FC<ResourceProps> = ({
 
   const autofillingSnackbar =
     autofillState !== undefined ? (
-      <Snackbar
-        position="bottom"
-        type="info"
-        showCloseButton={false}
-        autoHideDuration={6000}
-        onClose={() => setShowAutofillSuccess(false)}
-      >
+      <Snackbar position="bottom" type="info" showCloseButton={false} autoHideDuration={6000}>
         {`Using AI to autofill the resource details, it usually takes around 1 min`}
       </Snackbar>
     ) : null

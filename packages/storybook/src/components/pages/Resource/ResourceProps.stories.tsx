@@ -169,7 +169,7 @@ export const useResourceStoryProps = (
       },
       location:
         overrides?.data?.image?.location ??
-        'https://images.unsplash.com/photo-1593259996642-a62989601967?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
+        'https://files.oaiusercontent.com/file-KRf6s71922oHC2mvVSgwL1fK?se=2023-10-26T20%3A16%3A38Z&sp=r&sv=2021-08-06&sr=b&rscc=max-age%3D31536000%2C%20immutable&rscd=attachment%3B%20filename%3Ddae3fa7f-74d5-496f-8a4d-35887a86809e.webp&sig=UBdvZJET5hAcpqSFw67fyaiKfj0wi8%2BhJY1CJNYSuXA%3D',
     }
   }, [
     overrides?.data?.image?.credits?.owner?.name,
@@ -288,7 +288,7 @@ export const useResourceStoryProps = (
   const hasStartedUploadRef = useRef<boolean>(false)
 
   useEffect(() => {
-    const intervalTime = 2000 / 100
+    const intervalTime = 4000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
     if (uploadProgress === 0 && !hasStartedUploadRef.current) {
