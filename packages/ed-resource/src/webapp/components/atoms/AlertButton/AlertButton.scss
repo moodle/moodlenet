@@ -7,10 +7,11 @@
     > .red-dot {
       position: absolute;
       z-index: 1;
+      top: 1px;
       right: 0;
       height: 13.5px;
       width: 14px;
-      background-color: #ff0000;
+      background-color: #ff3131;
       border-radius: 50px;
     }
 
@@ -43,13 +44,19 @@
     }
 
     > .alert-icon-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
       transform-origin: 50% 50%; // Centered scaling
       animation: scaleBell 0.5s cubic-bezier(0.45, 0.25, 0.6, 0.95) forwards;
+
       > svg {
         display: flex;
-        width: 33px;
-        height: 33px;
-        transform-origin: 16.5px 0px; // Swing from the top
+        width: 28px;
+        height: 28px;
+        transform-origin: 14px 0px; // Swing from the top
         animation: swing 0.3s cubic-bezier(0.45, 0.25, 0.6, 0.95) 3 0.5s;
 
         g {

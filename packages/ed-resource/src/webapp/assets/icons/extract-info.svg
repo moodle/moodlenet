@@ -9,6 +9,7 @@
   height="640"
   viewBox="0 0 640 640"
   xml:space="preserve"
+  fill="#757575"
 >
   <desc>Created with Fabric.js 5.3.0</desc>
   <defs></defs>
@@ -25,7 +26,6 @@
         stroke-dashoffset: 0;
         stroke-linejoin: miter;
         stroke-miterlimit: 4;
-        fill: #757575;
         fill-rule: nonzero;
         opacity: 1;
       "
@@ -47,7 +47,6 @@
         stroke-dashoffset: 0;
         stroke-linejoin: miter;
         stroke-miterlimit: 4;
-        fill: #757575;
         fill-rule: nonzero;
         opacity: 1;
       "

@@ -1,3 +1,4 @@
+import type { AddonItem } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
 import type {
   ResourceCardAccess,
@@ -6,7 +7,7 @@ import type {
   ResourceCardState,
 } from '@moodlenet/ed-resource/common'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
-import { ResourceCard } from '@moodlenet/ed-resource/ui'
+import { ResourceCard, VisualResourceAlert } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { ContentBackupImages } from '@moodlenet/react-app/ui'
 import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
@@ -83,6 +84,8 @@ export const getResourceCardStoryProps = (
   }
   const state: ResourceCardState = {
     isPublished: true,
+    autofillState: 'extracting-info',
+    // autofillState: 'ai-generation',
     ...overrides?.state,
   }
   const actions: ResourceCardActions = {
@@ -120,13 +123,18 @@ export const getResourceCardStoryProps = (
     ...overrides?.likeButtonProps,
   }
 
+  const visualAlert: AddonItem = {
+    Item: () => <VisualResourceAlert />,
+    key: 'visual-resource-alert',
+  }
+
   const slots: Pick<
     ResourceCardProps,
     'bottomLeftItems' | 'bottomRightItems' | 'mainColumnItems' | 'topLeftItems' | 'topRightItems'
   > = {
     topLeftItems: [],
     topRightItems: [],
-    mainColumnItems: [],
+    mainColumnItems: [visualAlert],
     bottomLeftItems: [],
     bottomRightItems: [
       isPublished

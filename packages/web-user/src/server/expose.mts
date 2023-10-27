@@ -335,7 +335,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       },
     },
     'webapp/send-message-to-user/:profileKey': {
-      //@ALE TODO
+      //TODO //@ALE
       guard: () => void 0,
       async fn({ message }, { profileKey }) {
         sendMessageToProfileIntent({ message, profileKey })

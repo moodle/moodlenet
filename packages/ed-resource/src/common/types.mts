@@ -142,7 +142,7 @@ export type ResourceCardDataRpc = {
 export type ResourceCardState = {
   // isSelected: boolean
   // selectionMode: boolean // When selection resources to be added to a collection
-} & Pick<ResourceStateProps, 'isPublished'>
+} & Pick<ResourceStateProps, 'isPublished' | 'autofillState'>
 
 export type ResourceCardActions = Pick<ResourceActions, 'publish' | 'unpublish'>
 

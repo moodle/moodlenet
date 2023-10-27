@@ -68,6 +68,19 @@
         }
       }
 
+      > .extracting-info > svg {
+        border-radius: 0;
+        width: 16px;
+        height: 16px;
+        fill: #a1d1ff;
+      }
+
+      > .ai-generation > svg {
+        color: #d074d3;
+        height: 20px;
+        width: 20px;
+      }
+
       > .delete {
         pointer-events: all;
         display: flex;
