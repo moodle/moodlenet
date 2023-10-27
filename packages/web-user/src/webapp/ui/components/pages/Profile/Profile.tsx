@@ -17,6 +17,8 @@ import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
 import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
+import type { UserProgressCardProps } from '../../organisms/OverallCard/UserProgressCard.js'
+import { UserProgressCard } from '../../organisms/OverallCard/UserProgressCard.js'
 import ProfileCollectionList from '../../organisms/ProfileCollectionList/ProfileCollectionList.js'
 import ProfileResourceList from '../../organisms/ProfileResourceList/ProfileResourceList.js'
 import './Profile.scss'
@@ -37,6 +39,7 @@ export type ProfileProps = {
   createCollection(): void
 
   overallCardItems: OverallCardItem[]
+  userProgressCardProps: UserProgressCardProps
 
   data: ProfileData
   state: ProfileState
@@ -59,6 +62,7 @@ export const Profile: FC<ProfileProps> = ({
   createCollection,
 
   overallCardItems,
+  userProgressCardProps,
 
   data,
   state,
@@ -107,6 +111,8 @@ export const Profile: FC<ProfileProps> = ({
   )
 
   const overallCard = <OverallCard items={updateOverallCardItems} />
+
+  const userProgressCard = <UserProgressCard {...userProgressCardProps} />
 
   // const modals = [
   //   isReporting && (
@@ -203,9 +209,12 @@ export const Profile: FC<ProfileProps> = ({
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const updatedSideColumnItems = [overallCard, collectionList, ...(sideColumnItems ?? [])].filter(
-    (item): item is AddonItem /* | JSX.Element */ => !!item,
-  )
+  const updatedSideColumnItems = [
+    userProgressCard,
+    overallCard,
+    collectionList,
+    ...(sideColumnItems ?? []),
+  ].filter((item): item is AddonItem /* | JSX.Element */ => !!item)
 
   return (
     <MainLayout {...mainLayoutProps}>
