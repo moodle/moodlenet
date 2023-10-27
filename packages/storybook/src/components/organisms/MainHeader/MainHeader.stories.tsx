@@ -2,6 +2,7 @@ import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storyboo
 
 // import { href } from '../../../../elements/link'
 import type { AddonItem } from '@moodlenet/component-library'
+import { AlertButton } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import type { MainHeaderProps } from '@moodlenet/react-app/ui'
@@ -42,9 +43,14 @@ const AddMenuItem: AddonItem = {
   key: 'add-menu',
 }
 
+const AlertButtonItem: AddonItem = {
+  Item: () => <AlertButton numResourcesToReview={4} profileHref={href('Pages/Profile/Owner')} />,
+  key: 'alert-button',
+}
+
 const getRightItemsHeader = (isAuthenticated: boolean): AddonItem[] => {
   return isAuthenticated
-    ? [AddMenuItem, AvatarMenuStories.AvatarMenuHeaderItem]
+    ? [AlertButtonItem, AddMenuItem, AvatarMenuStories.AvatarMenuHeaderItem]
     : [
         ...AccessButtonsStories.getAccessButtons({
           loginHref: href('Pages/Access/Login/Default'),
