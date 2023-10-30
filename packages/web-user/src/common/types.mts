@@ -85,6 +85,7 @@ export type ProfileData = {
   avatarUrl: string | undefined
   displayName: string
   profileHref: Href
+  points: number
 }
 
 export type ProfileFormValues = {

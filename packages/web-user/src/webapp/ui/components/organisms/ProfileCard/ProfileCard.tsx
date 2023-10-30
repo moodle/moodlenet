@@ -1,7 +1,9 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card } from '@moodlenet/component-library'
 import type { OverallCardProps } from '@moodlenet/react-app/ui'
-import { Link, OverallCard, withProxy } from '@moodlenet/react-app/ui'
+import { Link, OverallCard } from '@moodlenet/react-app/ui'
+import type { FC } from 'react'
+import { getUserLevelDetails } from '../../../../../common/gamification/user-levels.mjs'
 import type { ProfileCardData } from '../../../../../common/profile/type.mjs'
 import type { ProfileAccess, ProfileActions, ProfileState } from '../../../../../common/types.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
@@ -20,95 +22,101 @@ export type ProfileCardProps = {
   access: ProfileAccess
 }
 
-export const ProfileCard = withProxy<ProfileCardProps>(
-  ({
-    mainColumnItems,
-    bottomTouchColumnItems,
-    overallCardProps,
+export const ProfileCard: FC<ProfileCardProps> = ({
+  mainColumnItems,
+  bottomTouchColumnItems,
+  overallCardProps,
 
-    data,
-    state,
-    actions,
-    access,
-  }) => {
-    const {
-      userId,
-      backgroundUrl,
-      avatarUrl,
-      displayName,
-      profileHref,
-      // organizationName,
-    } = data
-    // const { followed } = state
-    // const { toggleFollow } = actions
-    const { isCreator, canFollow, isAuthenticated } = access
+  data,
+  state,
+  actions,
+  access,
+}) => {
+  const {
+    userId,
+    backgroundUrl,
+    avatarUrl,
+    displayName,
+    profileHref,
+    points,
+    // organizationName,
+  } = data
+  // const { followed } = state
+  // const { toggleFollow } = actions
+  const { isCreator, canFollow, isAuthenticated } = access
 
-    const { toggleFollow } = actions
-    const {
-      followed,
-      // isPublisher
-    } = state
+  const { toggleFollow } = actions
+  const {
+    followed,
+    // isPublisher
+  } = state
 
-    const header = (
-      <div className="profile-card-header" key="header">
-        <div className="title-header">
-          <abbr className="title" title={displayName}>
-            {displayName}
-          </abbr>
-        </div>
-        {/* <abbr className="subtitle" title={organizationName}>
+  const header = (
+    <div className="profile-card-header" key="header">
+      <div className="title-header">
+        <abbr className="title" title={displayName}>
+          {displayName}
+        </abbr>
+      </div>
+      {/* <abbr className="subtitle" title={organizationName}>
       {organizationName}
     </abbr> */}
-      </div>
-    )
+    </div>
+  )
 
-    const overallCard = (
-      <OverallCard noCard={true} showIcons={true} {...overallCardProps} key="overall-card" />
-    )
+  const overallCard = (
+    <OverallCard noCard={true} showIcons={true} {...overallCardProps} key="overall-card" />
+  )
 
-    const followButton = (
-      <FollowButton
-        canFollow={canFollow}
-        followed={followed}
-        isAuthenticated={isAuthenticated}
-        isCreator={isCreator}
-        toggleFollow={toggleFollow}
-        key="follow-button"
-      />
-    )
+  const followButton = (
+    <FollowButton
+      canFollow={canFollow}
+      followed={followed}
+      isAuthenticated={isAuthenticated}
+      isCreator={isCreator}
+      toggleFollow={toggleFollow}
+      key="follow-button"
+    />
+  )
 
-    const updatedMainColumnItems = [header, overallCard, ...(mainColumnItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
-    )
+  const updatedMainColumnItems = [header, overallCard, ...(mainColumnItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
 
-    const updatedBottomTouchColumnItems = [followButton, ...(bottomTouchColumnItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
-    )
+  const updatedBottomTouchColumnItems = [followButton, ...(bottomTouchColumnItems ?? [])].filter(
+    (item): item is AddonItem | JSX.Element => !!item,
+  )
 
-    return (
-      <Card
-        className={`profile-card 
+  const { avatar, level } = getUserLevelDetails(points)
+  const levelAvatar = (
+    <div className={`level-avatar level-${level}`}>
+      <img className="avatar" src={avatar} alt="level avatar" />
+    </div>
+  )
+
+  return (
+    <Card
+      className={`profile-card 
       ${/* isPublisher ? 'approved' : '' */ ''}
       `}
-        hover={true}
-        key={userId}
-      >
-        <Link className="profile-card-content" href={profileHref}>
-          <div className="images">
-            <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />
-            <div className="avatar">
-              <img src={avatarUrl || defaultAvatar} alt="Avatar" />
-            </div>
+      hover={true}
+      key={userId}
+    >
+      <Link className="profile-card-content" href={profileHref}>
+        <div className="images">
+          <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />
+          <div className="avatar">
+            {levelAvatar}
+            <img src={avatarUrl || defaultAvatar} alt="Avatar" />
           </div>
-          <div className="info">
-            {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-          </div>
-        </Link>
-        <div className="bottom-touch">
-          {updatedBottomTouchColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
-      </Card>
-    )
-  },
-  'ProfileCard',
-)
+        <div className="info">
+          {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+        </div>
+      </Link>
+      <div className="bottom-touch">
+        {updatedBottomTouchColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </div>
+    </Card>
+  )
+}
