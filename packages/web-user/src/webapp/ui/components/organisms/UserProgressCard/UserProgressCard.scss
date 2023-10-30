@@ -1,0 +1,197 @@
+.user-progress-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 24px;
+  gap: 12px;
+
+  > .level-avatar {
+    width: 75px;
+    height: 75px;
+    > .avatar {
+      width: 100%;
+      height: 100%;
+      padding: 4px;
+    }
+  }
+
+  > .level-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    > .title {
+    }
+    > .learn-more {
+      display: flex;
+      height: fit-content;
+      cursor: pointer;
+      > svg {
+        width: 17px;
+        height: 17px;
+        color: #b4b4b4;
+        display: flex;
+      }
+    }
+  }
+  > .progress-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    > .progress-bar {
+      width: 100%;
+      background-color: #e0e0e0;
+      height: 10px;
+      border-radius: 10px;
+      > .progress {
+        border-radius: 10px 0 0 10px;
+        height: 100%;
+        background-color: orange;
+        transition: width 0.3s;
+      }
+    }
+    > .points-range {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      > .min,
+      > .current-max > .max {
+        color: gray;
+      }
+      > .current-max {
+        display: flex;
+        align-items: center;
+
+        > svg {
+          margin-right: 4px;
+          height: 13px;
+        }
+        > .current {
+        }
+      }
+    }
+  }
+}
+
+.modal-portal > .user-progress-info-modal {
+  > .modal {
+    > .content {
+      display: flex;
+      gap: 100px;
+      padding: 0 20px 20px 20px;
+
+      > .levels,
+      > .leaves {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        > .title {
+          font-weight: bold;
+        }
+        > .row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 300px;
+          > .level {
+            min-width: 62px;
+          }
+          > .points {
+            width: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            > svg {
+              height: 13px;
+            }
+          }
+          > .level-avatar {
+            width: 50px;
+            height: 50px;
+            margin-left: 20px;
+            > .avatar {
+              width: 100%;
+              height: 100%;
+              padding: 4px;
+            }
+          }
+        }
+      }
+
+      > .leaves {
+        gap: 26px;
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      > .content {
+        flex-wrap: wrap;
+        width: min-content;
+        gap: 30px;
+
+        overflow: scroll;
+
+        &::-webkit-scrollbar {
+          width: 0; /* Remove scrollbar space */
+          background: transparent; /* Optional: just make scrollbar invisible */
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+    }
+  }
+}
+
+.level-avatar {
+  border-radius: 50%;
+  filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.22));
+  // background-color: white;
+
+  &.level-1 {
+    background: linear-gradient(147deg, #ffee58 28.1%, #fad140 86.65%);
+  }
+
+  &.level-2 {
+    background: linear-gradient(147deg, #ff6914 28.1%, #ffc700 86.65%);
+  }
+
+  &.level-3 {
+    background: linear-gradient(153deg, #94ffdc 28.53%, #699dff 162.2%);
+  }
+
+  &.level-4 {
+    background: linear-gradient(147deg, #a8ee96 28.1%, #58e366 86.65%);
+  }
+
+  &.level-5 {
+    background: linear-gradient(154deg, #ff95fb 9.23%, #ffeaea 88.08%);
+  }
+
+  &.level-6 {
+    background: linear-gradient(154deg, #ffe03e 9.23%, #adffc4 88.08%);
+  }
+
+  &.level-7 {
+    background: linear-gradient(154deg, #3ea2ff 9.23%, #adffc9 88.08%);
+  }
+
+  &.level-8 {
+    background: linear-gradient(147deg, #ff8484 28.1%, #fad140 86.65%);
+  }
+
+  &.level-9 {
+    background: linear-gradient(145deg, #bcfffb, #fad140);
+  }
+
+  &.level-10 {
+    background: linear-gradient(145deg, #c8dbff, #ffb878);
+  }
+}

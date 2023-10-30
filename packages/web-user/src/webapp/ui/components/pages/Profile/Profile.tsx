@@ -17,10 +17,10 @@ import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
 import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
-import type { UserProgressCardProps } from '../../organisms/OverallCard/UserProgressCard.js'
-import { UserProgressCard } from '../../organisms/OverallCard/UserProgressCard.js'
 import ProfileCollectionList from '../../organisms/ProfileCollectionList/ProfileCollectionList.js'
 import ProfileResourceList from '../../organisms/ProfileResourceList/ProfileResourceList.js'
+import type { UserProgressCardProps } from '../../organisms/UserProgressCard/UserProgressCard.js'
+import { UserProgressCard } from '../../organisms/UserProgressCard/UserProgressCard.js'
 import './Profile.scss'
 
 export type ProfileProps = {

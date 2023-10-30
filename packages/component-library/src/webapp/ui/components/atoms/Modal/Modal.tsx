@@ -54,7 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
         >
           {(title || closeButton) && (
             <div className="modal-header">
-              {title && <div className="title">{title}</div>}
+              {<div className="title">{title ?? ''}</div>}
               {closeButton && (
                 <div className="close-button" onClick={handleonClose}>
                   <CloseRoundedIcon />
