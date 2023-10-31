@@ -19,7 +19,6 @@ import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainP
 import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import ProfileCollectionList from '../../organisms/ProfileCollectionList/ProfileCollectionList.js'
 import ProfileResourceList from '../../organisms/ProfileResourceList/ProfileResourceList.js'
-import type { UserProgressCardProps } from '../../organisms/UserProgressCard/UserProgressCard.js'
 import { UserProgressCard } from '../../organisms/UserProgressCard/UserProgressCard.js'
 import './Profile.scss'
 
@@ -39,7 +38,6 @@ export type ProfileProps = {
   createCollection(): void
 
   overallCardItems: OverallCardItem[]
-  userProgressCardProps: UserProgressCardProps
 
   data: ProfileData
   state: ProfileState
@@ -62,13 +60,13 @@ export const Profile: FC<ProfileProps> = ({
   createCollection,
 
   overallCardItems,
-  userProgressCardProps,
 
   data,
   state,
   actions,
   access,
 }) => {
+  const { points } = data
   const { editProfile } = actions
   const { canEdit } = access
   const { profileUrl } = state
@@ -112,7 +110,7 @@ export const Profile: FC<ProfileProps> = ({
 
   const overallCard = <OverallCard items={updateOverallCardItems} />
 
-  const userProgressCard = <UserProgressCard {...userProgressCardProps} />
+  const userProgressCard = <UserProgressCard points={points} />
 
   // const modals = [
   //   isReporting && (

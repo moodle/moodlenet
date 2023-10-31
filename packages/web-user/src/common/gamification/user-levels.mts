@@ -29,7 +29,7 @@ export const userLevels: UserLevelDetails[] = [
   { minPoints: 50000, maxPoints: 99999, title: 'Versatile canopy', level: 9, avatar: level9Avatar },
   {
     minPoints: 100000,
-    maxPoints: Infinity,
+    maxPoints: 1000000,
     title: 'Dazzling biome',
     level: 10,
     avatar: level10Avatar,

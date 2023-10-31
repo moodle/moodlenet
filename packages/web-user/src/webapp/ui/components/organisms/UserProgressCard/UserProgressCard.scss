@@ -45,11 +45,15 @@
       background-color: #e0e0e0;
       height: 10px;
       border-radius: 10px;
+      overflow: hidden;
       > .progress {
         border-radius: 10px 0 0 10px;
         height: 100%;
         background-color: orange;
         transition: width 0.3s;
+        &.top-level {
+          background-color: #cc00ff;
+        }
       }
     }
     > .points-range {
@@ -57,19 +61,24 @@
       justify-content: space-between;
       font-size: 14px;
       > .min,
-      > .current-max > .max {
+      > .max {
+        width: 50px;
         color: gray;
+        font-size: 13px;
       }
-      > .current-max {
+      > .current {
         display: flex;
         align-items: center;
+        display: flex;
+        gap: 4px;
 
         > svg {
-          margin-right: 4px;
-          height: 13px;
+          height: 12px;
         }
-        > .current {
-        }
+      }
+      > .max {
+        display: flex;
+        justify-content: flex-end;
       }
     }
   }

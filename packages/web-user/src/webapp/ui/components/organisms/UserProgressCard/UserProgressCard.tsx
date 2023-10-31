@@ -23,7 +23,7 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
 }) => {
   const { level, title, minPoints, maxPoints, avatar } = getUserLevelDetails(points)
 
-  const progressBarWidth = (points / maxPoints) * 100
+  const progressBarWidth = ((points - minPoints) / (maxPoints - minPoints)) * 100
 
   const learnMore = (
     <abbr className="learn-more" title="Learn more" onClick={() => setShowInfoModal(true)}>
@@ -86,15 +86,18 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
         </div>
         <div className="progress-info">
           <div className="progress-bar">
-            <div className="progress" style={{ width: progressBarWidth }} />
+            <div
+              className={`progress ${level === 10 ? 'top-level' : ''}`}
+              style={{ width: `${level < 10 ? progressBarWidth : 100}%` }}
+            />
           </div>
           <div className="points-range">
-            <div className="min">{minPoints}</div>
-            <div className="current-max">
+            <div className="min">{minPoints.toLocaleString()}</div>
+            <div className="current">
+              <span className="current">{points.toLocaleString()}</span>
               <LeafIcon />
-              <span className="current">{points}</span>
-              <span className="max">/{maxPoints}</span>
             </div>
+            <div className="max">{level < 10 ? (maxPoints + 1).toLocaleString() : '\u221E'}</div>
           </div>
         </div>
       </Card>
