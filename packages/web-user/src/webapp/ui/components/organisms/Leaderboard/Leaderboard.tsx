@@ -46,7 +46,7 @@ export const Leaderboard: FC<LeaderboardProps> = ({ contributors }) => {
                 </Link>
               </div>
               <div className="score">
-                {contributor.points}
+                {contributor.points.toLocaleString()}
                 <LeafIcon />
               </div>
               <div className="subject">{contributor.subject}</div>

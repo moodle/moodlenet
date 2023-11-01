@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 46px;
+  padding: 0 25px 6px 25px;
+
   > .leaderboard-header {
     display: flex;
     flex-direction: column;
@@ -30,14 +32,15 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      gap: 10px;
+      height: 72px;
 
       > .contributor-head {
         display: flex;
         align-items: center;
         gap: 10px;
-        width: calc(45% - 76px);
+        width: calc(45% - 80px);
         margin-right: 5%;
+        flex: 1;
 
         > .rank {
           width: 36px;
@@ -113,8 +116,12 @@
 
         > .name {
           margin-left: 4px;
-
           font-weight: bold;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow-wrap: break-word;
         }
       }
 
@@ -123,7 +130,7 @@
         align-items: center;
         justify-content: flex-end;
         gap: 6px;
-        width: 76px;
+        width: 80px;
         font-weight: bold;
         > svg {
           height: 14px;
@@ -132,8 +139,21 @@
 
       > .subject {
         margin-left: 5%;
-        width: calc(45%);
-        max-width: 35%;
+        width: calc(45% - 80px);
+      }
+
+      @media (max-width: 800px) {
+        > .contributor-head {
+          width: calc(100% - 80px);
+          margin-right: 0;
+          font-size: 13px;
+        }
+        > .score {
+          font-size: 13px;
+        }
+        > .subject {
+          display: none;
+        }
       }
     }
   }
