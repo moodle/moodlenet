@@ -84,6 +84,8 @@ export type MainResourceCardProps = {
 
   emptyOnStart: boolean
   setEmptyOnStart: React.Dispatch<React.SetStateAction<boolean>>
+  disableFields: boolean
+  hasAllData: boolean
 
   areFormsValid: ValidForms
   shouldShowErrors: boolean
@@ -116,6 +118,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   emptyOnStart,
   setEmptyOnStart,
+  disableFields,
+  hasAllData,
 
   areFormsValid,
   setShouldShowErrors,
@@ -134,14 +138,13 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     uploadOptionsItems,
   } = slots
 
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref, id } = data
+  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
 
   const { subjectOptions } = edMetaOptions
 
-  const { isPublished, uploadProgress, autofillState } = state
+  const { isPublished } = state
 
   const { deleteResource } = actions
-
   const { canEdit, canPublish, canDelete } = access
 
   const {
@@ -273,10 +276,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     }, 100)
   }
 
-  const disableFields =
-    (!contentForm.values.content || uploadProgress !== undefined || autofillState !== undefined) &&
-    isEditing
-
   const title = canEdit ? (
     <InputTextField
       name="title"
@@ -370,11 +369,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       : null
 
   const publishCheckButton: FloatingMenuContentItem | null =
-    isEditing && canPublish && !isPublished
+    // isEditing && canPublish && !isPublished
+    isEditing && canPublish && !isPublished && (hasAllData || disableFields)
       ? {
           Element: (
-            <div key="publish-button" onClick={publishCheck}>
-              <Check style={{ fill: '#00bd7e' }} />
+            <div
+              className={`publish-check-button ${disableFields ? 'disabled' : ''}`}
+              key="publish-check-button"
+              onClick={publishCheck}
+            >
+              <Check />
               Publish check
             </div>
           ),

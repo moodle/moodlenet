@@ -51,6 +51,7 @@ export const getResourceCardStoryProps = (
       isAuthenticated: boolean
       bookmarkButtonProps: BookmarkButtonProps
       likeButtonProps: LikeButtonProps
+      showVisualAlert: boolean
     }
   >,
 ): ResourceCardProps => {
@@ -84,7 +85,7 @@ export const getResourceCardStoryProps = (
   }
   const state: ResourceCardState = {
     isPublished: true,
-    autofillState: 'extracting-info',
+    autofillState: undefined,
     // autofillState: 'ai-generation',
     ...overrides?.state,
   }
@@ -123,10 +124,12 @@ export const getResourceCardStoryProps = (
     ...overrides?.likeButtonProps,
   }
 
-  const visualAlert: AddonItem = {
-    Item: () => <VisualResourceAlert />,
-    key: 'visual-resource-alert',
-  }
+  const visualAlert: AddonItem | null = overrides?.showVisualAlert
+    ? {
+        Item: () => <VisualResourceAlert />,
+        key: 'visual-resource-alert',
+      }
+    : null
 
   const slots: Pick<
     ResourceCardProps,

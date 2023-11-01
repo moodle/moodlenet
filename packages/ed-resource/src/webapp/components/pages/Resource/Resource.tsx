@@ -16,7 +16,7 @@ import { InsertDriveFile, Link } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { SaveState } from '../../../../common/types.mjs'
+import type { AutofillState, SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -103,7 +103,7 @@ export const Resource: FC<ResourceProps> = ({
     startAutofill,
   } = actions
   const { canPublish, canEdit } = access
-  const { isPublished, uploadProgress, autofillState, isAutofilled } = state
+  const { isPublished, uploadProgress, autofillState } = state
   const { image: isSavingImage } = saveState
   const {
     languageOptions,
@@ -130,22 +130,6 @@ export const Resource: FC<ResourceProps> = ({
       !resourceForm.month &&
       !(resourceForm.learningOutcomes.length > 0),
   )
-
-  const hasAllData =
-    typeof resourceForm.title === 'string' &&
-    resourceForm.title !== '' &&
-    typeof resourceForm.description === 'string' &&
-    resourceForm.description !== '' &&
-    // !image &&
-    typeof contentUrl === 'string' &&
-    typeof resourceForm.type === 'string' &&
-    typeof resourceForm.language === 'string' &&
-    typeof resourceForm.license === 'string' &&
-    typeof resourceForm.level === 'string' &&
-    typeof resourceForm.subject === 'string' &&
-    typeof resourceForm.year === 'string' &&
-    typeof resourceForm.month === 'string' &&
-    resourceForm.learningOutcomes.length > 0
 
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -188,7 +172,6 @@ export const Resource: FC<ResourceProps> = ({
   const prevResourceFormRef = useRef(resourceForm)
   useEffect(() => {
     if (prevResourceFormRef.current !== resourceForm) {
-      console.log('resourceForm changed')
       form_setValues(resourceForm)
     }
     prevResourceFormRef.current = resourceForm
@@ -243,6 +226,22 @@ export const Resource: FC<ResourceProps> = ({
     contentForm_setTouched({ content: true })
     imageForm_setTouched({ image: true })
   }, [contentForm_setTouched, form_setTouched, imageForm_setTouched])
+
+  const hasAllData =
+    typeof form.values.title === 'string' &&
+    form.values.title !== '' &&
+    typeof form.values.description === 'string' &&
+    form.values.description !== '' &&
+    // !image &&
+    typeof contentUrl === 'string' &&
+    typeof form.values.type === 'string' &&
+    typeof form.values.language === 'string' &&
+    typeof form.values.license === 'string' &&
+    typeof form.values.level === 'string' &&
+    typeof form.values.subject === 'string' &&
+    typeof form.values.year === 'string' &&
+    typeof form.values.month === 'string' &&
+    form.values.learningOutcomes.length > 0
 
   const disableFields =
     !contentForm.values.content || uploadProgress !== undefined || autofillState !== undefined
@@ -384,6 +383,8 @@ export const Resource: FC<ResourceProps> = ({
       setIsPublishValidating={setIsPublishValidating}
       emptyOnStart={emptyOnStart}
       setEmptyOnStart={setEmptyOnStart}
+      disableFields={disableFields}
+      hasAllData={hasAllData}
       areFormsValid={areFormsValid}
       setShouldShowErrors={setShouldShowErrors}
       shouldShowErrors={shouldShowErrors}
@@ -648,21 +649,22 @@ export const Resource: FC<ResourceProps> = ({
     ) : null
 
   const [showAutofillSuccess, setShowAutofillSuccess] = useState<boolean>(false)
-  const prevIsAutofilledRef = useRef<boolean>(isAutofilled)
+
+  const prevIsAutofilledRef = useRef<AutofillState>(autofillState)
 
   useEffect(() => {
     // Check if the value changed from false to true
-    if (!prevIsAutofilledRef.current && isAutofilled) {
+    if (prevIsAutofilledRef.current && !autofillState) {
       setShowAutofillSuccess(true)
     }
-    prevIsAutofilledRef.current = isAutofilled
-  }, [isAutofilled, prevIsAutofilledRef])
+    prevIsAutofilledRef.current = autofillState
+  }, [autofillState, prevIsAutofilledRef])
 
   const autofillingSnackbar =
     autofillState !== undefined ? (
       <Snackbar position="bottom" type="info" showCloseButton={false} autoHideDuration={6000}>
         {`Using AI to autofill the resource details, it usually takes around 1 min`}
-      </Snackbar>
+      </Snackbar> //@ALE change time when we know the average one
     ) : null
 
   const autofillSuccessSnackbar = showAutofillSuccess ? (

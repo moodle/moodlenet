@@ -263,16 +263,9 @@ export const useResourceStoryProps = (
   )
   const [autofillState, setautofillState] = useState(overrides?.state?.autofillState ?? undefined)
   const [isUploaded, setIsUploaded] = useState(overrides?.state?.isUploaded ?? false)
-  const [isAutofilled, setIsAutofilled] = useState(overrides?.state?.isAutofilled ?? false)
 
   const saveContent = () => {
-    // setIsSavingContent('saving')
-    // setTimeout(() => {
     setIsSavingContent('save-done')
-    // setTimeout(() => {
-    // setIsSavingContent('not-saving')
-    // }, 100)
-    // }, 4000)
   }
 
   const saveImage = () => {
@@ -286,6 +279,7 @@ export const useResourceStoryProps = (
   }
 
   const hasStartedUploadRef = useRef<boolean>(false)
+  const [uploadTimeoutIds, setUploadTimeoutIds] = useState<NodeJS.Timeout[] | null>(null)
 
   useEffect(() => {
     const intervalTime = 2000 / 100
@@ -312,6 +306,7 @@ export const useResourceStoryProps = (
           hasStartedUploadRef.current = false // Reset for potential future sequences
         }, intervalTime * 102),
       )
+      setUploadTimeoutIds(timeouts)
     }
 
     return () => {
@@ -323,24 +318,28 @@ export const useResourceStoryProps = (
   }, [uploadProgress])
 
   const autofillPrevStateRef = useRef<AutofillState>(undefined)
+  const [autofillTimeoutId, setAutofillTimeoutId] = useState<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (autofillState === 'extracting-info' && autofillPrevStateRef.current === undefined) {
-      setTimeout(() => {
+      const extractTimeoutId = setTimeout(() => {
         setautofillState('ai-generation')
+        setAutofillTimeoutId(null)
       }, 4000)
+      setAutofillTimeoutId(extractTimeoutId)
     }
 
     if (autofillState === 'ai-generation' && autofillPrevStateRef.current === 'extracting-info') {
-      setTimeout(() => {
+      const aiGenerateTimoutId = setTimeout(() => {
         setautofillState(undefined)
+        setAutofillTimeoutId(null)
         setContentUrl('https://example.com/some_url.pdf')
         setautofillState(undefined)
         setFormData({ ...filledResourceForm, learningOutcomes: learningOutcomes })
         setImageData(imageWithCredits)
         !id && setId('1234')
-        setIsAutofilled(true)
       }, 4000)
+      setAutofillTimeoutId(aiGenerateTimoutId)
     }
 
     autofillPrevStateRef.current = autofillState
@@ -348,13 +347,14 @@ export const useResourceStoryProps = (
 
   const setContent = (e: File | string | undefined | null) => {
     if (e === undefined || e === null) {
+      uploadTimeoutIds && uploadTimeoutIds.map(timeoutId => clearTimeout(timeoutId))
+      uploadTimeoutIds && setUploadTimeoutIds(null)
       setContentUrl(null)
       setContentType(null)
       setFilename(null)
       setUploadProgress(undefined)
       setautofillState(undefined)
       setIsUploaded(false)
-      setIsAutofilled(false)
       return
     }
 
@@ -408,7 +408,7 @@ export const useResourceStoryProps = (
     setImage: setImage,
     stopAutofill: () => {
       setautofillState(undefined)
-      setIsAutofilled(false)
+      autofillTimeoutId && clearTimeout(autofillTimeoutId)
     },
     ...overrides?.actions,
   }
@@ -418,7 +418,6 @@ export const useResourceStoryProps = (
     uploadProgress: uploadProgress,
     autofillState: autofillState,
     isUploaded: isUploaded,
-    isAutofilled: isAutofilled,
     ...overrides?.state,
   }
 

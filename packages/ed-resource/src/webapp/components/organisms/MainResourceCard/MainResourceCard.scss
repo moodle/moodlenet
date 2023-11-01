@@ -93,7 +93,8 @@
             height: 21px;
           }
 
-          .delete-button.disabled {
+          .delete-button.disabled,
+          .publish-check-button.disabled {
             color: #e8e8e8;
             cursor: default;
             > svg {

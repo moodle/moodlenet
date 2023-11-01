@@ -12,7 +12,7 @@ import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
 import { Bolt, InsertDriveFile, Link as LinkIcon, Upload as UploadIcon } from '@mui/icons-material'
 // import prettyBytes from 'pretty-bytes'
-import type { default as React, FC } from 'react'
+import type { FC, default as React } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   ResourceActions,
@@ -141,7 +141,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
     contentForm_setFieldValue('content', link).then(errors => {
       if (!errors?.content) {
         contentForm_submitForm()
-        setSubStep('Autofilling')
       }
       setShowLinkErrors(!!errors?.content)
     })
@@ -153,7 +152,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     imageForm_validateForm()
   }, [imageForm_setTouched, imageForm_validateForm, setImage])
 
-  const deleteFileOrLink = useCallback(() => {
+  const stopUpload = useCallback(() => {
     setSubStep('AddFileOrLink')
     contentForm_setFieldValue('content', null).then(errors => {
       if (!errors?.content) {
@@ -185,7 +184,6 @@ export const UploadResource: FC<UploadResourceProps> = ({
       contentForm_setFieldValue('content', file).then(errors => {
         if (!errors?.content) {
           contentForm_submitForm()
-          setSubStep('Uploading')
         }
         setShowContentErrors(!!errors?.content)
         if (!errors?.content && file && isImage) {
@@ -535,12 +533,14 @@ export const UploadResource: FC<UploadResourceProps> = ({
               </abbr>
               {uploadBeat}
               {autofillBeats}
-              <RoundButton
-                onClick={autofillState !== undefined ? stopAutofill : deleteFileOrLink}
-                tabIndex={0}
-                abbrTitle={contentIsFile ? 'Delete file' : 'Delete link'}
-                onKeyUp={e => e.key === 'Enter' && deleteFileOrLink()}
-              />
+              {(uploadProgress !== undefined || autofillState) && (
+                <RoundButton
+                  onClick={autofillState ? stopAutofill : stopUpload}
+                  tabIndex={0}
+                  abbrTitle={autofillState ? 'Stop autofill' : 'Stop upload'}
+                  onKeyUp={e => (e.key === 'Enter' && autofillState ? stopAutofill : stopUpload)}
+                />
+              )}
             </div>
           )}
         </div>

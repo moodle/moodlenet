@@ -152,9 +152,13 @@ export const useProfileStoryProps = (
       data: data,
       access: access,
       validationSchemas: getValidationSchemas({ imageMaxUploadSize: maxUploadSize }),
-      resourceCardPropsList: getResourceCardsStoryProps(5, {
-        access: { ...access },
-      }),
+      resourceCardPropsList: getResourceCardsStoryProps(
+        5,
+        {
+          access: { ...access },
+        },
+        overrides?.access?.isAuthenticated,
+      ),
       createResource: linkTo('Pages/Resource', 'New'),
       collectionCardPropsList: getCollectionCardsStoryProps(5, {
         access: { ...access },

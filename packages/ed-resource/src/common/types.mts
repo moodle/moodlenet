@@ -47,7 +47,6 @@ export type AutofillState = 'extracting-info' | 'ai-generation' | undefined
 export type ResourceStateRpc = {
   isPublished: boolean
   isUploaded: boolean
-  isAutofilled: boolean
   uploadProgress: number | undefined
   autofillState: AutofillState
 }
