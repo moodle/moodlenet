@@ -1,7 +1,7 @@
 // import { t, Trans } from '@lingui/macro'
 import { Card, Modal } from '@moodlenet/component-library'
 // import { Card } from '@moodlenet/react-app'
-import { useState, type FC } from 'react'
+import { useEffect, useRef, useState, type FC } from 'react'
 // import { Href, Link } from '../../../../elements/link'
 import { InfoOutlined } from '@mui/icons-material'
 import {
@@ -32,10 +32,42 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
   )
 
   const [showInfoModal, setShowInfoModal] = useState(false)
+  const infoModalRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const modalEl = infoModalRef.current
+      if (modalEl) {
+        if (modalEl.scrollTop <= 0) {
+          modalEl.parentElement?.classList.add('top-reached')
+        } else {
+          modalEl.parentElement?.classList.remove('top-reached')
+        }
+        if (modalEl.scrollHeight - modalEl.scrollTop === modalEl.clientHeight) {
+          modalEl.parentElement?.classList.add('bottom-reached')
+        } else {
+          modalEl.parentElement?.classList.remove('bottom-reached')
+        }
+      }
+    }
+
+    const modalEl = infoModalRef.current
+    if (modalEl) {
+      modalEl.addEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      if (modalEl) {
+        modalEl.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [])
+
   const infoModal = showInfoModal && (
     <Modal
       className="user-progress-info-modal"
       onClose={() => setShowInfoModal(false)}
+      contentRef={infoModalRef}
       // closeButton={false}
     >
       <div className="levels">
@@ -80,9 +112,10 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
         </div>
         <div className="level-title">
           <div className="title">
-            {title} - Level {level}
+            {title}
+            {learnMore}
           </div>
-          {learnMore}
+          <span className="level">Level {level}</span>
         </div>
         <div className="progress-info">
           <div className="progress-bar">

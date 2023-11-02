@@ -8,7 +8,6 @@ import {
 } from '@moodlenet/mn-central-jira-simple-moderations/ui'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
-import { OverallCard } from '@moodlenet/react-app/ui'
 import type {
   ProfileAccess,
   ProfileActions,
@@ -34,11 +33,6 @@ export const useProfileStoryProps = (
   >,
 ): ProfileProps => {
   const person = peopleFactory[randomIntFromInterval(0, 3)]
-
-  const overallCard = {
-    Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
-    key: 'overall-card',
-  }
 
   const data: ProfileData = {
     userId: (Math.random() * 1000000).toString(),
@@ -145,8 +139,9 @@ export const useProfileStoryProps = (
   return overrideDeep<ProfileProps>(
     {
       mainLayoutProps: MainLayoutLoggedInStoryProps,
+      wideColumnItems: [],
       mainColumnItems: [],
-      sideColumnItems: [overallCard],
+      rightColumnItems: [],
       mainProfileCardSlots: profileCardSlots,
       profileForm: profileForm,
       state: state,

@@ -1,6 +1,6 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import type { MainLayoutProps, OverallCardItem, ProxyProps } from '@moodlenet/react-app/ui'
-import { MainLayout, OverallCard } from '@moodlenet/react-app/ui'
+import { MainLayout, OverallCard, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useReducer } from 'react'
@@ -25,8 +25,9 @@ import './Profile.scss'
 export type ProfileProps = {
   mainLayoutProps: MainLayoutProps
 
+  wideColumnItems: AddonItem[]
   mainColumnItems: AddonItem[]
-  sideColumnItems: AddonItem[]
+  rightColumnItems: AddonItem[]
 
   mainProfileCardSlots: MainProfileCardSlots
   profileForm: ProfileFormValues
@@ -47,8 +48,9 @@ export type ProfileProps = {
 
 export const Profile: FC<ProfileProps> = ({
   mainLayoutProps,
+  wideColumnItems,
   mainColumnItems,
-  sideColumnItems,
+  rightColumnItems,
 
   mainProfileCardSlots,
   profileForm,
@@ -66,6 +68,7 @@ export const Profile: FC<ProfileProps> = ({
   actions,
   access,
 }) => {
+  const viewport = useViewport()
   const { points } = data
   const { editProfile } = actions
   const { canEdit } = access
@@ -200,31 +203,52 @@ export const Profile: FC<ProfileProps> = ({
     />
   )
 
+  const updatedWideColumnItems = [
+    !viewport.screen.big && mainProfileCard,
+    !viewport.screen.big && resourceList,
+    !viewport.screen.big && collectionList,
+    ...(wideColumnItems ?? []),
+  ].filter((item): item is AddonItem | JSX.Element => !!item)
+
   const updatedMainColumnItems = [
-    mainProfileCard,
-    resourceList,
-    collectionList,
+    viewport.screen.big && mainProfileCard,
+    viewport.screen.big && resourceList,
+    !viewport.screen.big && userProgressCard,
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const updatedSideColumnItems = [
-    userProgressCard,
+  const updatedRightColumnItems = [
+    viewport.screen.big && userProgressCard,
     overallCard,
-    collectionList,
-    ...(sideColumnItems ?? []),
+    viewport.screen.big && collectionList,
+    ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem /* | JSX.Element */ => !!item)
 
+  console.log('viewport ', viewport.screen.type)
   return (
     <MainLayout {...mainLayoutProps}>
       {/* {modals} {snackbars} */}
       <div className="profile">
         <div className="content">
-          <div className="main-column">
-            {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-          </div>
-          <div className="side-column">
-            {updatedSideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-          </div>
+          {updatedWideColumnItems.length > 0 && (
+            <div className="wide-column">
+              {updatedWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+            </div>
+          )}
+          {(updatedMainColumnItems.length > 0 || updatedRightColumnItems.length > 0) && (
+            <div className="main-and-right-columns">
+              {updatedMainColumnItems.length > 0 && (
+                <div className="main-column">
+                  {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+                </div>
+              )}
+              {updatedRightColumnItems.length > 0 && (
+                <div className="right-column">
+                  {updatedRightColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </MainLayout>
