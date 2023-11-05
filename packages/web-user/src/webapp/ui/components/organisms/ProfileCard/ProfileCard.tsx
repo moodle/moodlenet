@@ -87,11 +87,11 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     (item): item is AddonItem | JSX.Element => !!item,
   )
 
-  const { avatar, level } = getUserLevelDetails(points)
+  const { avatar, level, title } = getUserLevelDetails(points)
   const levelAvatar = (
-    <div className={`level-avatar level-${level}`}>
+    <abbr className={`level-avatar level-${level}`} title={`Level ${level} - ${title}`}>
       <img className="avatar" src={avatar} alt="level avatar" />
-    </div>
+    </abbr>
   )
 
   return (

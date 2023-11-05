@@ -3,13 +3,7 @@ import { LandingResourceList } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { LandingProps } from '@moodlenet/react-app/ui'
 import { Landing } from '@moodlenet/react-app/ui'
-import {
-  InterestInfo,
-  LandingProfileList,
-  Leaderboard,
-  PublishContent,
-} from '@moodlenet/web-user/ui'
-import { action } from '@storybook/addon-actions'
+import { LandingProfileList, Leaderboard, PublishContent } from '@moodlenet/web-user/ui'
 import { linkTo } from '@storybook/addon-links'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
@@ -160,15 +154,15 @@ export const LandingLoggedInStoryProps: LandingProps = {
     headerProps: getMainHeaderStoryProps({ isAuthenticated: true, hasAlerts: true }),
   },
   mainColumnItems: [
-    {
-      Item: () => (
-        <InterestInfo
-          userSettingHref={href('Pages/Settings/Default')}
-          doNotShowAgain={action('doNotShowAgain')}
-        />
-      ),
-      key: 'interest-info',
-    },
+    // {
+    //   Item: () => (
+    //     <InterestInfo
+    //       userSettingHref={href('Pages/Settings/Default')}
+    //       doNotShowAgain={action('doNotShowAgain')}
+    //     />
+    //   ),
+    //   key: 'interest-info',
+    // },
     {
       Item: () => (
         <LandingResourceList
