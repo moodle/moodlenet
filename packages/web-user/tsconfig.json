@@ -9,6 +9,7 @@
     { "path": "../component-library" },
     { "path": "../system-entities" },
     { "path": "../core" },
+    { "path": "../core-domain" },
     { "path": "../http-server" },
     { "path": "../react-app" },
     { "path": "../crypto" },

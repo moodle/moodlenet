@@ -30,6 +30,7 @@
   ],
   "dependencies": {
     "@moodlenet/component-library": "^0.6.0",
+    "@moodlenet/core-domain": "^0.6.0",
     "@moodlenet/key-value-store": "^0.6.0",
     "@moodlenet/simple-file-store": "^0.6.0",
     "formik": "2.2.9",
@@ -38,13 +39,13 @@
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@mui/icons-material": "^5.14.9",
-    "@mui/material": "^5.14.9",
     "@moodlenet/core": "^0.6.0",
     "@moodlenet/ed-meta": "^0.6.0",
     "@moodlenet/http-server": "^0.6.0",
     "@moodlenet/react-app": "^0.6.0",
-    "@moodlenet/system-entities": "^0.6.0"
+    "@moodlenet/system-entities": "^0.6.0",
+    "@mui/icons-material": "^5.14.9",
+    "@mui/material": "^5.14.9"
   },
   "devDependencies": {
     "@lingui/macro": "3.14.0",

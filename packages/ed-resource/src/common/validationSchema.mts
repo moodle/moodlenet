@@ -6,13 +6,16 @@ import type { ResourceFormProps } from './types.mjs'
 export type ValidationsConfig = {
   contentMaxUploadSize: number
   imageMaxUploadSize: number
+  titleLength: { max: number; min: number }
+  descriptionLength: { max: number; min: number }
+  learningOutcomes: {
+    amount: { min: number; max: number }
+    sentenceLength: { max: number; min: number }
+  }
 }
 
 export type ValidationSchemas = ReturnType<typeof getValidationSchemas>
-export function getValidationSchemas({
-  contentMaxUploadSize,
-  imageMaxUploadSize,
-}: ValidationsConfig) {
+export function getValidationSchemas(validationConfigs: ValidationsConfig) {
   const publishedResourceValidationSchema = getResourceValidationSchema({ type: 'publish' })
   const draftResourceValidationSchema = getResourceValidationSchema({ type: 'draft' })
   const publishedContentValidationSchema = getContentValidationSchema({ type: 'publish' })
@@ -29,10 +32,10 @@ export function getValidationSchemas({
               createError({
                 message: `Url not valid`,
               })
-            : loc.size <= imageMaxUploadSize ||
+            : loc.size <= validationConfigs.imageMaxUploadSize ||
               createError({
                 message: `Image too big ${humanFileSize(loc.size)}, max ${humanFileSize(
-                  imageMaxUploadSize,
+                  validationConfigs.imageMaxUploadSize,
                 )}`,
               }))
         )
@@ -60,10 +63,10 @@ export function getValidationSchemas({
                 createError({
                   message: `Link not valid`,
                 })
-              : v.size <= contentMaxUploadSize ||
+              : v.size <= validationConfigs.contentMaxUploadSize ||
                 createError({
                   message: `File too big ${humanFileSize(v.size)}, max ${humanFileSize(
-                    contentMaxUploadSize,
+                    validationConfigs.contentMaxUploadSize,
                   )}`,
                 }))
           return errors
@@ -77,24 +80,39 @@ export function getValidationSchemas({
 
   function getResourceValidationSchema({ type }: { type: 'publish' | 'draft' }) {
     const forPublish = type === 'publish'
-
     const schema: SchemaOf<ResourceFormProps> = object({
       title: string()
-        .max(160, obj => `Please provide a shorter title (${obj.value.length} / 160)`)
+        .max(
+          validationConfigs.titleLength.max,
+          obj =>
+            `Please provide a shorter title (${obj.value.length} / ${validationConfigs.titleLength.max})`,
+        )
         .withMutation(s =>
           forPublish
             ? s
-                .min(3, obj => `Please provide a longer title (${obj.value.length} < 3)`)
+                .min(
+                  validationConfigs.titleLength.min,
+                  obj =>
+                    `Please provide a longer title (${obj.value.length} < ${validationConfigs.titleLength.min})`,
+                )
                 .required(`Please provide a title`)
             : s,
         )
         .default(''),
       description: string()
-        .max(4000, obj => `Please provide a shorter description (${obj.value.length} / 4000)`)
+        .max(
+          validationConfigs.descriptionLength.max,
+          obj =>
+            `Please provide a shorter description (${obj.value.length} / ${validationConfigs.descriptionLength.max})`,
+        )
         .withMutation(s =>
           forPublish
             ? s
-                .min(40, obj => `Please provide a longer description (${obj.value.length} < 40)`)
+                .min(
+                  validationConfigs.descriptionLength.min,
+                  obj =>
+                    `Please provide a longer description (${obj.value.length} < ${validationConfigs.descriptionLength.min})`,
+                )
                 .required(`Please provide a description`)
             : s,
         )
@@ -124,11 +142,19 @@ export function getValidationSchemas({
         .of(
           object().shape({
             sentence: string()
-              .max(160, obj => `Please provide a shorter sentence (${obj.value.length} / 160)`)
+              .max(
+                validationConfigs.learningOutcomes.sentenceLength.max,
+                obj =>
+                  `Please provide a shorter sentence (${obj.value.length} / validationConfigs.learningOutcomes.sentenceLength.max)`,
+              )
               .withMutation(s =>
                 forPublish
                   ? s
-                      .min(3, obj => `Please provide a longer sentence (${obj.value.length} < 3)`)
+                      .min(
+                        validationConfigs.learningOutcomes.sentenceLength.min,
+                        obj =>
+                          `Please provide a longer sentence (${obj.value.length} < validationConfigs.learningOutcomes.sentenceLength.min)`,
+                      )
                       .required('Please provide a sentence')
                   : s,
               ),
@@ -137,9 +163,17 @@ export function getValidationSchemas({
         .withMutation(s =>
           forPublish
             ? s
-                .min(1, 'Please provide at least one learning outcome')
-                .max(5, 'Please provide at most 5 learning outcomes')
-                .required('Please provide at least one learning outcome')
+                .min(
+                  validationConfigs.learningOutcomes.amount.min,
+                  'Please provide at least ${validationConfigs.learningOutcomes.amount.min} learning outcome',
+                )
+                .max(
+                  validationConfigs.learningOutcomes.amount.max,
+                  'Please provide at most ${validationConfigs.learningOutcomes.amount.max} learning outcomes',
+                )
+                .required(
+                  'Please provide at least ${validationConfigs.learningOutcomes.amount.min} learning outcome',
+                )
             : s,
         )
         .default([]),

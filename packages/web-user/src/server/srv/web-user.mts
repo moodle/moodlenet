@@ -224,6 +224,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     profile: {
       _id: newProfile._id,
       _key: newProfile._key,
+      publisher: newProfile.publisher,
     },
   })
 
@@ -253,6 +254,7 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
     profile: {
       _id: profile._id,
       _key: profile._key,
+      publisher: profile.publisher,
     },
   })
   return jwtToken

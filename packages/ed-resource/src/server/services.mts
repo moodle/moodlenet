@@ -28,18 +28,30 @@ import { Resource } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
 import type { ResourceDataType, ResourceEntityDoc } from './types.mjs'
 
+export const validationsConfigs: ValidationsConfig = {
+  contentMaxUploadSize: env.resourceUploadMaxSize,
+  imageMaxUploadSize: defaultImageUploadMaxSize,
+  titleLength: {
+    min: 3,
+    max: 160,
+  },
+  descriptionLength: {
+    min: 40,
+    max: 4000,
+  },
+  learningOutcomes: {
+    amount: { min: 1, max: 5 },
+    sentenceLength: { min: 3, max: 160 },
+  },
+}
 export async function getValidations() {
-  const config: ValidationsConfig = {
-    contentMaxUploadSize: env.resourceUploadMaxSize,
-    imageMaxUploadSize: defaultImageUploadMaxSize,
-  }
   const {
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
     draftContentValidationSchema,
     publishedContentValidationSchema,
     imageValidationSchema,
-  } = getValidationSchemas(config)
+  } = getValidationSchemas(validationsConfigs)
 
   return {
     draftContentValidationSchema,
@@ -47,7 +59,7 @@ export async function getValidations() {
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
     imageValidationSchema,
-    config,
+    config: validationsConfigs,
   }
 }
 
@@ -95,22 +107,29 @@ export async function setPublished(key: string, published: boolean) {
   }
   return patchResult
 }
-export async function createResource(resourceData: Partial<ResourceDataType>) {
+export const EMPTY_RESOURCE: Omit<ResourceDataType, 'content'> = {
+  description: '',
+  title: '',
+  image: null,
+  published: false,
+  license: '',
+  subject: '',
+  language: '',
+  level: '',
+  month: '',
+  year: '',
+  type: '',
+  learningOutcomes: [],
+  lifecycleState: 'Creating',
+}
+export async function createResource(
+  resourceData: Partial<ResourceDataType>,
+  content: ResourceDataType['content'],
+) {
   const newResource = await shell.call(create)(Resource.entityClass, {
-    description: '',
-    title: '',
-    content: null,
-    image: null,
-    published: false,
-    license: '',
-    subject: '',
-    language: '',
-    level: '',
-    month: '',
-    year: '',
-    type: '',
-    learningOutcomes: [],
+    ...EMPTY_RESOURCE,
     ...resourceData,
+    content,
   })
 
   return newResource

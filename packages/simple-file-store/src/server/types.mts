@@ -17,7 +17,7 @@ export type DbRecordData = FsItem & {
 
 export type DbRecord = DbRecordData & DocumentMetadata
 
-export type FsItem = {
+export interface FsItem {
   logicalName: string
   rpcFile: RpcFile
   created: string

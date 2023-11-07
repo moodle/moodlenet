@@ -1,12 +1,23 @@
+import type { resource } from '@moodlenet/core-domain'
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import type { FsItem } from '@moodlenet/simple-file-store/server'
 import type { EntityDocument, SystemUser } from '@moodlenet/system-entities/server'
 
 export type ResourceEntityDoc = EntityDocument<ResourceDataType>
+export interface FileContent {
+  kind: 'file'
+  fsItem: FsItem
+}
+
+export interface LinkContent {
+  kind: 'link'
+  url: string
+}
+
 export type ResourceDataType = {
   title: string
   description: string
-  content: null | { kind: 'file'; fsItem: FsItem } | { kind: 'link'; url: string }
+  content: FileContent | LinkContent
   image: null | Image
   published: boolean
   license: string
@@ -23,6 +34,7 @@ export type ResourceDataType = {
       downloads?: ResourcePopularityItem
     } & { [key: string]: ResourcePopularityItem }
   }
+  lifecycleState: resource.lifecycle.StateName
 }
 export type ResourcePopularityItem = { value: number }
 export type Credits = {

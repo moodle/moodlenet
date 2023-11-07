@@ -72,7 +72,7 @@ export type WebUserJwtPayload = { v: TokenVersion & 1 } & (
   | {
       isRoot?: false
       webUser: Pick<Document<WebUserDataType>, '_key' | 'isAdmin' | 'displayName'>
-      profile: Pick<ProfileEntity, '_key' | '_id'>
+      profile: Pick<ProfileEntity, '_key' | '_id' | 'publisher'>
     }
 )
 
