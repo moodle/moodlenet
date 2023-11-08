@@ -3,6 +3,7 @@ import { getDomainUrl } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { AssetInfo } from '@moodlenet/component-library/common'
+import type { RpcFile } from '@moodlenet/core'
 import type { LearningOutcome, LearningOutcomeOption } from '@moodlenet/ed-meta/common'
 import type { ResourceExposeType, WebappConfigsRpc } from './expose-def.mjs'
 import type { ValidationSchemas } from './validationSchema.mjs'
@@ -31,6 +32,22 @@ export type ResourceFormRpc = {
   // addToCollections: string[]
 }
 
+export type EditResourceFormRpc = {
+  title: string
+  description: string
+  subject?: string
+  license?: string
+  type?: string
+  level?: string
+  month?: string
+  year?: string
+  language?: string
+  learningOutcomes: LearningOutcome[]
+  image?: { type: 'remove' } | { type: 'no-change' } | { type: 'file'; file: RpcFile }
+}
+export type EditResourceRespRpc = ResourceFormRpc & {
+  image: AssetInfo | null
+}
 export type ResourceDataRpc = {
   id: string
   mnUrl: string
@@ -90,28 +107,27 @@ export type SavingState = 'not-saving' | 'saving' | 'save-done'
 export type SaveState = { form: SavingState; image: SavingState; content: SavingState }
 
 export type RpcCaller = {
-  edit: (resourceKey: string, res: ResourceFormProps) => Promise<void>
+  create: (content: File | string, taskId: string) => Promise<{ _key: string }>
   get: (resourceKey: string) => Promise<ResourceProps | null>
-  _delete: (resourceKey: string) => Promise<void>
-  setImage: (
+  edit: (
     resourceKey: string,
-    file: File | undefined | null,
-    rpcId: string,
-  ) => Promise<string | null>
-  setContent: (
-    resourceKey: string,
-    file: File | string | undefined | null,
-    rpcId: string,
-  ) => Promise<string | null>
-  setIsPublished: (resourceKey: string, approve: boolean) => Promise<boolean | null | undefined>
-  create: () => Promise<{ _key: string }>
+    res: Partial<EditResourceFormRpc>,
+    taskId: string,
+  ) => Promise<EditResourceRespRpc>
+  setIsPublished: (resourceKey: string, approve: boolean) => Promise<{ done: boolean }>
+  trash: (resourceKey: string) => Promise<void>
+  // setImage: (
+  //   resourceKey: string,
+  //   file: File | undefined | null,
+  //   rpcId: string,
+  // ) => Promise<string | null>
 }
 export type ResourceActions = {
   publish: () => void
   unpublish: () => void
   editData: (values: ResourceFormProps) => void
   setImage: (image: File | undefined | null) => void
-  setContent: (content: File | string | undefined | null) => void
+  provideContent: (content: File | string) => void
   deleteResource(): void
 }
 

@@ -1,37 +1,31 @@
 import { SubjectCardPlugins, SubjectPagePlugins } from '@moodlenet/ed-meta/webapp'
-import type { MainAppPluginHookResult } from '@moodlenet/react-app/webapp'
-import {
-  registerAppRoutes,
-  registerMainAppPluginHook,
-  SearchPagePlugin,
-} from '@moodlenet/react-app/webapp'
+import '@moodlenet/ed-resource/ui'
+import { registerAppRoutes, SearchPagePlugin } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
-import '../shell.mjs'
 
 import type { PluginHookResult } from '@moodlenet/core/lib'
-import { proxyWith } from '@moodlenet/react-app/ui'
-import { FilterNone } from '@mui/icons-material'
+import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import {
+  pkgRoutes,
   SearchResourceSectionAddon,
   SearchResourceWrapperAddon,
-} from '../components/organisms/lists/BrowserResourceList/ResourceSearchPageAddonHooks.js'
-import MainWrapper from '../MainWrapper.js'
-import { pkgRoutes } from '../routes.js'
+  SimpleResourceList,
+  useResourceCardProps,
+} from '@moodlenet/ed-resource/ui'
+import { proxyWith } from '@moodlenet/react-app/ui'
+import { FilterNone } from '@mui/icons-material'
 import { shell } from '../shell.mjs'
-import type { ResourceCardProps } from './ui.mjs'
-import { SimpleResourceList } from './ui.mjs'
-import { useResourceCardProps } from './webapp.mjs'
 
 registerAppRoutes(pkgRoutes)
-registerMainAppPluginHook(function useMainAppContext() {
-  const mainAppPlugin = useMemo<MainAppPluginHookResult>(
-    () => ({
-      MainWrapper,
-    }),
-    [],
-  )
-  return mainAppPlugin
-})
+// registerMainAppPluginHook(function useMainAppContext() {
+//   const mainAppPlugin = useMemo<MainAppPluginHookResult>(
+//     () => ({
+//       MainWrapper,
+//     }),
+//     [],
+//   )
+//   return mainAppPlugin
+// })
 
 SearchPagePlugin.register(() => {
   return {

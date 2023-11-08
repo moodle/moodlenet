@@ -6,6 +6,7 @@ import {
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
+import './ed-resource/init.js'
 import { AuthCtx } from './exports.mjs'
 import './init/bookmark-page.js'
 import './init/following-page.js'

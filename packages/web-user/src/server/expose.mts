@@ -1,5 +1,10 @@
-import type { PkgExposeDef } from '@moodlenet/core'
-import { npm, RpcNext, RpcStatus } from '@moodlenet/core'
+import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
+import { npm, RpcNext, RpcStatus, setRpcStatusCode } from '@moodlenet/core'
+import { resource } from '@moodlenet/core-domain'
+import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
+import type { ResourceRpc } from '@moodlenet/ed-resource/common'
+import { getResourceHomePageRoutePath } from '@moodlenet/ed-resource/common'
+import * as EdResource from '@moodlenet/ed-resource/server'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
 import {
@@ -11,7 +16,8 @@ import {
 import type { EntityDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { SchemaOf } from 'yup'
-import { array, object, string } from 'yup'
+import { array, boolean, object, string } from 'yup'
+import type { ResourceExposeType } from '../common/expose-def-ed-resource.mjs'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type {
   ClientSessionDataRpc,
@@ -57,8 +63,11 @@ import {
 } from './srv/web-user.mjs'
 import type { ProfileDataType } from './types.mjs'
 import { betterTokenContext } from './util.mjs'
+import { createNewResource, reviveInterpreterAndMachine } from './xsm/resource/machines.mjs'
 
-export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
+export const expose = await shell.expose<
+  WebUserExposeType & ServiceRpc & ResourceExposeType & ServerResourceExposeType
+>({
   rpc: {
     'webapp/get-configs': {
       guard: () => void 0,
@@ -478,6 +487,287 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: () => npm.updateAll(),
     },
+    // RESOURCE
+    'ed-resource/webapp/get-configs': {
+      guard: () => void 0,
+      async fn() {
+        const { config } = await EdResource.getValidations()
+        return { validations: config }
+      },
+    },
+    'ed-resource/webapp/set-is-published/:_key': {
+      guard: _ =>
+        object({
+          publish: boolean().required(),
+        }).isValid(_),
+      fn: async ({ publish }, { _key }) => {
+        const { interpreter } = await reviveInterpreterAndMachine(_key)
+        let snap = interpreter.getSnapshot()
+        if (!(publish ? snap.can('request-publish') : snap.can('set-draft'))) {
+          return { done: false }
+        }
+        interpreter.send(publish ? 'request-publish' : 'set-draft')
+        snap = interpreter.getSnapshot()
+        if (resource.lifecycle.matchState(snap, 'Publishing-Moderation')) {
+          shell.initiateCall(() => {
+            interpreter.send('accept-publishing')
+          })
+        }
+
+        return { done: true }
+      },
+    },
+    'ed-resource/webapp/get/:_key': {
+      guard: () => void 0,
+      fn: async (_, { _key }) => {
+        const { interpreter, resourceRecord } = await reviveInterpreterAndMachine(_key)
+        const snap = interpreter.getSnapshot()
+        if (!resource.lifecycle.matchState(snap, 'Access-Denied') || !resourceRecord) {
+          return null
+        }
+        const image = EdResource.getImageAssetInfo(snap.context.draft.image?.ref)
+
+        const contentUrl =
+          snap.context.draft.content.kind === 'file'
+            ? await EdResource.getResourceFileUrl({
+                _key,
+                rpcFile: snap.context.draft.content.ref.fsItem.rpcFile,
+              })
+            : snap.context.draft.content.ref.url
+
+        const resourceRpc: ResourceRpc = {
+          contributor: {
+            avatarUrl: resourceRecord.contributor.iconUrl,
+            creatorProfileHref: {
+              url: resourceRecord.contributor.homepagePath,
+              ext: false,
+            },
+            displayName: resourceRecord.contributor.name,
+            timeSinceCreation: resourceRecord.meta.created,
+          },
+          resourceForm: {
+            description: resourceRecord.entity.description,
+            title: resourceRecord.entity.title,
+            license: resourceRecord.entity.license,
+            subject: resourceRecord.entity.subject,
+            language: resourceRecord.entity.language,
+            level: resourceRecord.entity.level,
+            month: resourceRecord.entity.month,
+            year: resourceRecord.entity.year,
+            type: resourceRecord.entity.type,
+            learningOutcomes: resourceRecord.entity.learningOutcomes,
+          },
+          data: {
+            contentType: resourceRecord.entity.content?.kind ?? null,
+            contentUrl,
+            downloadFilename:
+              resourceRecord.entity.content?.kind === 'file'
+                ? resourceRecord.entity.content.fsItem.rpcFile.name
+                : null,
+            id: resourceRecord.entity._key,
+            mnUrl: getWebappUrl(
+              getResourceHomePageRoutePath({ _key, title: resourceRecord.entity.title }),
+            ),
+            image,
+            subjectHref: resourceRecord.entity.subject
+              ? href(
+                  getSubjectHomePageRoutePath({
+                    _key: resourceRecord.entity.subject,
+                    title: resourceRecord.entity.subject,
+                  }),
+                )
+              : null,
+          },
+          state: { isPublished: resourceRecord.entity.published },
+          access: {
+            canDelete: !!resourceRecord.access.d,
+            canEdit: !!resourceRecord.access.u,
+            canPublish: resourceRecord.canPublish,
+            isCreator: resourceRecord.isCreator,
+          },
+        }
+
+        return resourceRpc
+      },
+    },
+    'ed-resource/webapp/edit/:_key': {
+      guard: async body => {
+        const { draftResourceValidationSchema } = await EdResource.getValidations()
+        body.values = await draftResourceValidationSchema.validate(body?.values, {
+          stripUnknown: true,
+        })
+      },
+      fn: async ({ values }, { _key }) => {
+        const { interpreter } = await reviveInterpreterAndMachine(_key)
+        const snap = interpreter.getSnapshot()
+        const updateWith: Partial<resource.lifecycle.EditDraftForm> = {
+          description: values.description,
+          language: values.language,
+          learningOutcomes: values.learningOutcomes.filter(({ sentence }) => !!sentence),
+          level: values.level,
+          license: values.license,
+          month: values.month,
+          year: values.year,
+          title: values.title,
+          subject: values.subject,
+          type: values.type,
+          image:
+            !values.image || values.image.type === 'no-change'
+              ? { type: 'no-change' }
+              : values.image.type === 'remove'
+              ? { type: 'remove' }
+              : values.image.type === 'file'
+              ? {
+                  type: 'update',
+                  provide: { kind: 'file', rpcFile: values.image.file, info: values.image.file },
+                }
+              : { type: 'no-change' },
+        }
+
+        if (!snap.can({ type: 'edit-draft-meta', updateWith })) {
+          return //throw ?
+        }
+        interpreter.send({ type: 'edit-draft-meta', updateWith })
+        return
+      },
+    },
+    'basic/v1/create': {
+      guard: async body => {
+        const { draftResourceValidationSchema, draftContentValidationSchema } =
+          await EdResource.getValidations()
+        await draftContentValidationSchema.validate({ content: body?.resource })
+        await draftResourceValidationSchema.validate(body, {
+          stripUnknown: true,
+        })
+      },
+      fn: async ({ name, description, resource }) => {
+        const resourceContent = [resource].flat()[0]
+        if (!resourceContent) {
+          throw RpcStatus('Bad Request')
+        }
+        const createResponse = await createNewResource(
+          'string' === typeof resourceContent
+            ? { kind: 'link', url: resourceContent }
+            : { kind: 'file', info: resourceContent, rpcFile: resourceContent },
+        )
+        if (createResponse === 'invalid content') {
+          throw RpcStatus('Bad Request')
+        }
+        if (createResponse === 'unauthorized') {
+          throw RpcStatus('Internal Server Error')
+        }
+        if (!createResponse.success) {
+          throw new Error(createResponse.reason)
+        }
+
+        setRpcStatusCode('Created')
+        const snap = createResponse.interpreter.getSnapshot()
+        const content = snap.context.draft.content
+        const url =
+          content.kind === 'file'
+            ? await EdResource.getResourceFileUrl({
+                _key: createResponse.resourceKey,
+                rpcFile: content.ref.fsItem.rpcFile,
+              })
+            : content.ref.url
+
+        return {
+          _key: createResponse.resourceKey,
+          description,
+          homepage: getWebappUrl(
+            getResourceHomePageRoutePath({ _key: createResponse.resourceKey, title: name }),
+          ),
+          name,
+          url,
+        }
+      },
+      bodyWithFiles: {
+        fields: {
+          '.resource': 1,
+        },
+        maxSize: EdResource.validationsConfigs.contentMaxUploadSize,
+      },
+    },
+
+    'ed-resource/webapp/trash/:_key': {
+      guard: () => void 0,
+      fn: async (_, { _key }) => {
+        const { interpreter } = await reviveInterpreterAndMachine(_key)
+        interpreter.send('trash')
+        return
+      },
+    },
+    // 'ed-resource/webapp/set-image/:_key': {
+    //   guard: async body => {
+    //     const { imageValidationSchema } = await EdResource.getValidations()
+    //     const validatedImageOrNullish = await imageValidationSchema.validate(
+    //       { image: body?.file?.[0] },
+    //       { stripUnknown: true },
+    //     )
+    //     body.file = [validatedImageOrNullish]
+    //   },
+    //   async fn({ file: [uploadedRpcFile] }, { _key }) {
+    //     const { interpreter, resourceRecord, machine } = await reviveInterpreterAndMachine(_key)
+    //     if()
+    //     const got = await getResource(_key, { projectAccess: ['u'] })
+
+    //     if (!got?.access.u) {
+    //       throw RpcStatus('Unauthorized')
+    //     }
+    //     const updateRes = await setResourceImage(_key, uploadedRpcFile)
+    //     if (updateRes === false) {
+    //       throw RpcStatus('Bad Request')
+    //     }
+    //     if (!updateRes) {
+    //       return null
+    //     }
+    //     const imageUrl = updateRes.patched.image && getImageUrl(updateRes.patched.image)
+    //     return imageUrl
+    //   },
+    //   bodyWithFiles: {
+    //     fields: {
+    //       '.file': 1,
+    //     },
+    //     maxSize: defaultImageUploadMaxSize,
+    //   },
+    // },
+    'ed-resource/webapp/create': {
+      guard: async body => {
+        const { publishedContentValidationSchema } = await EdResource.getValidations()
+        const validatedContentOrNullish = await publishedContentValidationSchema.validate(
+          { content: body?.content?.[0] },
+          { stripUnknown: true },
+        )
+        body.content = [validatedContentOrNullish]
+      },
+      async fn({ content: [resourceContent] }) {
+        if (!resourceContent) {
+          throw RpcStatus('Bad Request')
+        }
+        const createResponse = await createNewResource(
+          'string' === typeof resourceContent
+            ? { kind: 'link', url: resourceContent }
+            : { kind: 'file', info: resourceContent, rpcFile: resourceContent },
+        )
+        if (createResponse === 'invalid content') {
+          throw RpcStatus('Bad Request')
+        }
+        if (createResponse === 'unauthorized') {
+          throw RpcStatus('Unauthorized')
+        }
+        if (!createResponse.success) {
+          throw new Error(createResponse.reason)
+        }
+
+        return { _key: createResponse.resourceKey }
+      },
+      bodyWithFiles: {
+        fields: {
+          '.content': 1,
+        },
+        maxSize: EdResource.validationsConfigs.contentMaxUploadSize,
+      },
+    },
   },
 })
 
@@ -490,6 +780,21 @@ type ServiceRpc = PkgExposeDef<{
     ): Promise<void>
   }
 }>
+type ServerResourceExposeType = {
+  rpc: {
+    'basic/v1/create'(body: {
+      name: string
+      description: string
+      resource: string | [RpcFile]
+    }): Promise<{
+      _key: string
+      name: string
+      description: string
+      url: string
+      homepage: string
+    }>
+  }
+}
 
 function profileDoc2Profile(entity: EntityDocument<ProfileDataType>) {
   const backgroundUrl = entity.backgroundImage

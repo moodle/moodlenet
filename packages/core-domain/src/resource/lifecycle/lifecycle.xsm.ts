@@ -1,12 +1,12 @@
 import { produce } from 'immer'
 import { assign, createMachine } from 'xstate'
 import { matchStateName } from '../../common/exports'
-import { EdResourceDocument, PublishableMeta, ResourceContent } from './exports'
+import { DraftDocument, EdResourceDocument, PublishableMeta, ResourceContent } from './exports'
 import { Typegen0 } from './lifecycle.xsm.typegen'
 import type * as T from './types/lifecycle.types'
 export const EdResourceMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQBUA2gAwC6ioADprAJYAuTmAdrSAB6IC0AJgDMAVmEA6QQBZBAdgCMANlFKVChcIA0IAJ4CFcwQA4JxwUuHHjCioNVKAnAF9nO1Blg4CxcgppIIAzMbJzcfAhC0krSEtIUSnJyjgnqmjr6kcoUohIK4sbR+VbRru7oWHiEEgDCABZg+ADWTBxQ-ACSHPw1nCxgHCxEEJxgEq0AbphNYx6VPrUNza3tXT19AywIk5j4AIahHJRUx9zBrOxcgRH8CtKaEoqOdxTCggk5ghkGgo6ShsYxL9RNJRACyiA5l4qmN6o0Wm1Ot1eoNNkQwLhcJhcBI6AAbA4AM2xAFsJFDvNU4ctEWsUf1BtsOFN9odjqdAudDuEBI54hI+b8KNIkiKxEpvllhIoBckFCZ3o5RKoIRSYYt4SsketUYMiHt8IQ6Cx+PgNoMOfRGBcwtcDMYVBIVNJxY5rHJVNo9AYKOYJL7RDI3Xy1FZVRVoQtqQjVsjzUNcGAAFaNE1m3UsS1Ba3cu1ZaR++RyQFK8SOd5ezK3BTGCgCmzRB2aZSGcOeSljAAiuD2hKGEB7ff42DoEAOYCzXMuPKylliIpd0vE8Q9Eu9kWVsUENekjkciWSxjkbfm1W7vaGe2wLEwMA4GPH-BJYBYe0nOeneduFiUeSsxhBUExASYxJVuV5HEeFJhBXUQKD3EwT0jM9BwTMAAEdsDgE06GwAAjPEmFgOp3xCT9QBufJ9ykNQxWEZQlFeMD6Lkf0KFeTQchrYULCQjsJHPPsiBYHtiNIm0rgogw7kEMwKGUYE1EYyteUgnJ4mEOwimsEQ+PVelNn4DAU3wfoIGGbCsV0cTcykyJZFiTSFD+UENFEaxHGYv12MPOwTF9GQ9IWAAFfDCOIrUAFlMAgB9Dn1Q0wGNfhcIIoi6hWGzyN4AwjAUf0XjsVQlT5Zi60sJwf1sYti2MILqlCtKIsRaLYp7eLExMnCwvSzLqDOD9bTsoQZFkp54PEJQayMaRJUDCQrHg+5hESFyxHqsZGvChpzNgF9+AHC8sqGnKsmsfK91BGJ93sORhBUyIRFMYRyxgix913ZSNokNYABVRLqIhEzNCYMWOyTTv4Jw6wA+Sa2VGRdy+dchASf1omXRaRX3Y83EhCN+L+gGLNgETMGs-rOUGiGbicNTAyScQl0DSU7kgwN7mSaQMY9eVvq23rEWM1NICIPaTUOvtwZnIRpqdQwGf3FakgeqJJEbN1pVe4w+W+gBBa9bwGOKopfPYiH2DhCDxJ8zf4K8bzvaWvxraw8ju6CdxiVXClkkFAx1jGQWSfXDbvE2WrN-Uw+N9rIFt19neG7dLCdVRud3RRQVEMDy1iTQYOLbcPdkUPHdj8cIH4SKo8lk0RzHfok8h0b8pLYVZF9axZpRqbf1LKx5GVRQ5Gkb6akTA4ViIOgsQmJhYtNeNm8owpWKmlbN4dPzQJR7JTALQoxCPODnNcPGOBiuBuDVHwBrIk6bnseU4gSJIUjUMF0j3mxfzeSxEb3RUMIceSwYzagMoMe+EkZaGDUAtN05gi4fBZnvME5UcjFT+IYUoeNb4oQvNA2ykNND8ickoRSagmIo25rJS6ZZawfxFOPeMRlkwiwgEQ7KNx9z5Q0ABF0o83RyDUGBeUygFoiFBEeZIJhQT8x6s1dorUTYnSnI-Aw91ZKaSMMHK6G8wLvFMJuV4Wkpo6RAXggm6oBbEUgFwjRWRZEChFKIJWzk3E9yrBofKIh2LuTuOgu6ChvpEz2MRBxNMBDQwFN7ERK1dxIzAjEWJvppSJESPKUQuNyjthsYojKQt2GmXsVTB+UTHotikIHOwSsDyq1sL+X4VgYJqHsPdOwZcjb3naqbV8kTYG1nyn5GsdxrCtLXFWRBeR5DK33E4DQSgunhzjlXGu-SykwK-H44xIp7DcwdK9HOKNARNNBHdHWhgNCCG+p2Sy5NSlWnKTLe6rEchLj3JrF6+5JTbnVn8YUfJzBuniKIfWiVYCwH4HcjgTBHnZmeds+QwzBTJFSF-BpIp8pwScHBMEch5IqisXkqMk82BtAGS7AlrF5Tlg3tvQQJgxHUokG4t09hGIcqcOfZwQA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQBUA2gAwC6ioADprAJYAuTmAdrSAB6IC0AJgDMAVmEA6QQBZBAdgCMANlFKVChcIA0IAJ4CFcwQA4JxwUuHHjCioNVKAnAF9nO1Blg4CxcgppIIAzMbJzcfAhC0krSEtIUSnJyjgnqmjr6kcoUohIK4sbR+VbRru7oWHiEEgDCABZg+ADWTBxQ-ACSHPw1nCxgHCxEEJxgEq0AbphNYx6VPrUNza3tXT19AywIk5j4AIahHJRUx9zBrOxcgRH8CtKaEoqOdxTCggk5ghkGgo6ShsYxL9RNJRACyiA5l4qmN6o0Wm1Ot1eoNNkQwLhcJhcBI6AAbA4AM2xAFsJFDvNU4ctEWsUf1BtsOFN9odjqdAudDuEBI54hI+b8KNIkiKxEpvllhIoBckFCZ3o5RKoIRSYYt4SsketUYMiHt8IQ6Cx+PgNoMOfRGBcwtcDMYVBIVNJxY5rHJVNo9AYKOYJL7RDI3Xy1FZVRVoQtqQjVsjzUNcGAAFaNE1m3UsS1Ba3cu1ZaR++RyQFK8SOd5ezK3BTGCgCmzRB2aZSGcOeSljAAiuD2hKGkFY-AgPb7-BJYBYeyzXMuPKyyoUEmECkccisMkKjj+kv4Sge+TUmiUOSShTb82q3d7Qz22BYmBgHAxBzAY4nU+oZxzs7z1cSUkcNQlBsCgjArHdbBdPJ4nLYQ4JSOxRHPSNLxHBMwAAR2wOATTobAACM8SYWA6mnb9bVAG58kAqQ1DFZc1FeHdlzkf0KFeTQchrYULGQjsJCvPsiBYHsSLIkIf0ogw7kEMwKGUYEgKY71Ii3f0QVeOwimsEQ+PVelNn4DAU3wfoIGGHCsV0cSbSuKTIlkWJhHkv5QQ0URrEcZi-XY5Ja0EExfRkPSFgABQIoiSK1ABZTAIGfQ59UNMBjX4PDCOIuoVhs3N7NuIxF3k+JEKcUQ+WYutLCcCw91A4xi2MELqnCjKosRWL4p7RLExM3CIsy7LP05ci7N4AQAtkR4VwoJVhD3eqZElQMl1rPkj2SYQXSQtxIQjfiWsihpzNgCchzQnLJLGrJrEXLdQRiQD7DXStxqsJdYNkJwHuPYQmrGNYABVRLqIhEzNCYMQuiirt3FIzFEeSa2VGRpHLHd3iUf1onEF1axFQC5D+iRAeBizYBEzBrKGq0JOhm4nEcdSi3EaVkclO5GcDe5kmkbGPXlImDoGxFjNTSAiBOk1h2vKHRpuQQa1YvcPXkQC5qSF7IhkSRGzdaVYOMPkiYAQTvB8BgSmL3yIfYOEIPE30nfhb3vR9ZbnW5rFMQxhBSZdChiTX+EKWSQUDQ3sZBZITbNx9Lfa62XfNp8usgR2PwCGnbI9hXLCdVRedRxRQVEHdy1iTRNuLBW10FGPXYt1OIH4aLrYHKW0PT93fxkd5HiVZ49bkOwFB3cRCsSTaXKVeJpCJmpEwOFYiDoLEJiYeLTXjbu8prEUnSPOarGPALjAg49TALQoxHqhGV1cHaODiuBuDVHwv1puXxrBWT4kSZJUhgnSCpT2yglwWAxpYNce4lDzyWDGbUBlBgf2zr+Qwah3o6Wrh8QMEEwSVRyKoLcLFSg7Tfqha8KDcow00PyZyCklRKSDrzWSd0yyrQSCKee8YjLJjFhAKhl0biAUXBoYwIJpSo3qmoCCudwGbQ8kkcshRtrlHbOqIWbV2gdUttDGcdMDBwVks5IwUd7p7iDu8Uwyp4jORkPNcwv0yF7Q0f1EikBBEGKyMkVhIoyqWBXGVaQEENBSGcjkBs+C1wKCJiTPYJFPFf0iE4OsgEXRyCqqjVGXwQExAFBfaUiREjylEITZx6iwpuKyiLPhpkPHDU-jnFsUgI52DVv-IOthMa-CsJtNQ9g4J2HrsneO2j3yJI9txQqAUax3GsH0iUIC3Te3kOrQCTgNCwPKReMYpsG4pxfM3Vuk4Jk92ctYkU9heYOlgqXEBgJumgjXIbQwGhBBE07JZSm9Ss7UJuHBViORWZbj1r7QCkoFY6z+MKPk5g3TxFUbtCp1RjbJVgLAfgnyOBMB+dmRpPd5CFUFAAtQQDOkikXAjUqXFh4HnnovNgbRTm72HqxeU5YLEOjsCYCCrKJBlTdPYE+DgXAPyAA */
     id: 'EdResource',
 
     predictableActionArguments: true,
@@ -74,7 +74,7 @@ export const EdResourceMachine = createMachine(
 
       'Draft': {
         on: {
-          'draft-update': {
+          'edit-draft-meta': {
             target: 'Draft',
             cond: { type: 'issuer is creator and draft-form is formally valid' },
             internal: true,
@@ -176,7 +176,7 @@ export const EdResourceMachine = createMachine(
 
       'Autogenerated-Meta': {
         on: {
-          'draft-update': {
+          'edit-draft-meta': {
             cond: 'issuer is creator and draft-form is formally valid',
             target: 'Draft',
             actions: ['assign-draft'],
@@ -265,8 +265,17 @@ export const EdResourceMachine = createMachine(
     },
     actions: {
       'assign-draft': assign((c, e) => {
-        return produce(c, draft => {
-          draft.draft = e.updateWith
+        return produce(c, proxy => {
+          const { image: providedImage, ...draftMeta } = e.updateWith
+          const image: DraftDocument['image'] =
+            !providedImage || providedImage.type === 'no-change'
+              ? undefined
+              : providedImage.type === 'remove'
+              ? null
+              : providedImage.type === 'update'
+              ? providedImage.provide
+              : undefined
+          proxy.draft = { ...proxy.draft, ...draftMeta, image }
         })
       }),
       'assign-identifiers-and-content': assign((c, { data }) => {

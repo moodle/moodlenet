@@ -6,7 +6,7 @@ import { getImageAssetInfo } from '@moodlenet/ed-resource/server'
 type ResourceEntityDoc = ResourceDataType
 export function draft(
   resourceRecord: ResourceEntityDoc,
-): ['^^^NO-CONTENT^^^', null] | [resource.lifecycle.StateName, resource.lifecycle.DraftMeta] {
+): ['^^^NO-CONTENT^^^', null] | [resource.lifecycle.StateName, resource.lifecycle.DraftDocument] {
   const content = toContent(resourceRecord.content)
 
   // FIXME: this should never happen if db migration
@@ -15,7 +15,7 @@ export function draft(
     return ['^^^NO-CONTENT^^^', null]
   }
   const image = toImage(resourceRecord.image)
-  const draft: resource.lifecycle.DraftMeta = {
+  const draft: resource.lifecycle.DraftDocument = {
     title: resourceRecord.title,
     description: resourceRecord.description,
     content,
@@ -37,9 +37,9 @@ function toContent(
   content: ResourceEntityDoc['content'],
 ): resource.lifecycle.ResourceContent | null {
   if (content.kind === 'file') {
-    return { kind: 'file', content }
+    return { kind: 'file', ref: content }
   } else {
-    return { kind: 'link', url: content.url }
+    return { kind: 'link', ref: content, url: content.url }
   }
 }
 
@@ -52,8 +52,8 @@ function toImage(image: ResourceEntityDoc['image'] | null): resource.lifecycle.I
     if (!assetInfo) {
       return null
     }
-    return { kind: 'file', image }
+    return { kind: 'file', ref: image }
   } else {
-    return { kind: 'url', url: image.url, credits: image.credits }
+    return { kind: 'url', ref: image, credits: image.credits }
   }
 }

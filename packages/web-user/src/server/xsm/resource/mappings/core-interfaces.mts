@@ -1,31 +1,42 @@
-import '@moodlenet/core-domain/resource/lifecycle'
-import type { Credits, FileContent, ImageUploaded } from '@moodlenet/ed-resource/server'
+import type { RpcFile } from '@moodlenet/core'
+//import '@moodlenet/core-domain/resource/lifecycle'
+import type {
+  FileContent,
+  ImageUploaded,
+  ImageUrl,
+  LinkContent,
+} from '@moodlenet/ed-resource/server'
 
 declare module '@moodlenet/core-domain/resource/lifecycle' {
   export interface ResourceFileContent {
-    content: FileContent
+    ref: FileContent
   }
-
   export interface ResourceLinkContent {
-    url: string
+    ref: LinkContent
   }
   export interface FileImage {
-    image: ImageUploaded
+    ref: ImageUploaded
   }
   export interface UrlImage {
-    url: string
-    credits?: null | Credits
-  }
-  export interface ProvidedResourceLinkContent {
-    url: string
+    ref: ImageUrl
   }
   export interface ProvidedResourceFileContent {
-    tmpFsLocation: string
-  }
-  export interface ProvidedUrlImage {
-    url: string
+    rpcFile: RpcFile
   }
   export interface ProvidedFileImage {
-    tmpFsLocation: string
+    rpcFile: RpcFile
   }
 }
+
+// copies from '@moodlenet/ed-resource/server'
+// export interface FileContent {
+//   kind: 'file'
+//   fsItem: FsItem
+// }
+
+// export interface LinkContent {
+//   kind: 'link'
+//   url: string
+// }
+// export type ImageUploaded = { kind: 'file'; directAccessId: string; credits?: Credits }
+// export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }

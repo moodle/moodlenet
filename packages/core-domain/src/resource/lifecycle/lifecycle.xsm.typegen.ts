@@ -41,7 +41,7 @@ export interface Typegen0 {
     services: 'CreateNewResource'
   }
   'eventsCausingActions': {
-    'assign-draft': 'draft-update'
+    'assign-draft': 'edit-draft-meta'
     'assign-identifiers-and-content': 'done.invoke.EdResource.Checking-In-Content:invocation[0]'
     'assign-rejected-content-reason': 'error.platform.EdResource.Checking-In-Content:invocation[0]'
     'cancel_destroy_schedule': '*' | 'destroy' | 'recover' | 'xstate.stop'
@@ -66,7 +66,7 @@ export interface Typegen0 {
   'eventsCausingGuards': {
     'issuer is admin or system': 'accept-publishing' | 'reject-publishing'
     'issuer is creator': 'autogenerate-meta' | 'cancel-meta-autogen' | 'recover' | 'set-draft'
-    'issuer is creator and draft-form is formally valid': 'draft-update'
+    'issuer is creator and draft-form is formally valid': 'edit-draft-meta'
     'issuer is creator or admin': 'set-draft' | 'trash'
     'issuer is creator or admin or system': 'destroy'
     'issuer is creator or system': 'destroy'

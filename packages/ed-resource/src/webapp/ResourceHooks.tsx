@@ -1,5 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type {
+  EditResourceFormRpc,
+  EditResourceRespRpc,
   ResourceActions,
   ResourceDataProps,
   ResourceFormProps,
@@ -27,11 +29,11 @@ export type ResourceCommonProps = {
   isToDelete: boolean
 }
 
-const [useUpImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
-const [useUpResourceTasks] = createTaskManager<
-  string | null,
-  { content: string | File | null | undefined }
+const [useUploadImageTasks] = createTaskManager<
+  EditResourceRespRpc,
+  { file: File | null | undefined }
 >()
+const [useProvideResourceTasks] = createTaskManager<{ _key: string }, { content: string | File }>()
 
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
@@ -64,52 +66,62 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       setResource(res => res && { ...res, data: { ...res.data, [key]: val } }),
     [],
   )
-  const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUpImageTasks(resourceKey, res => {
-    if (res.type === 'resolved') {
-      updateDataProp('image', res.value ? { credits: null, location: res.value } : null)
-    }
-    setterSave('image', 'not-saving')
-  })
-
-  const [upResourceTaskSet, upResourceTaskId, upResourceTaskCurrent] = useUpResourceTasks(
+  const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUploadImageTasks(
     resourceKey,
     res => {
       if (res.type === 'resolved') {
-        const newContent = res.ctx.content
-        const isFile = !!(newContent instanceof Blob && res.value)
-        updateDataProp('contentType', isFile ? 'file' : 'link')
-        updateDataProp('contentUrl', res.value)
-        updateDataProp('downloadFilename', isFile ? newContent.name : null)
+        const { image, ...form } = res.value
+
+        updateDataProp('image', image)
+        setfo
       }
-      setterSave('content', 'not-saving')
+      setterSave('image', 'not-saving')
     },
   )
+  function goToEditPage(_: string) {
+    console.error(`goToEditPage not impl, res key ${_}`)
+  }
+  const [provideResourceTaskSet, provideResourceTaskId, provideResourceTaskCurrent] =
+    useProvideResourceTasks(resourceKey, res => {
+      if (res.type === 'resolved') {
+        // const newContentLocal = res.ctx.content
+        // const isFile = !!(newContentLocal instanceof Blob && res.value)
+        // updateDataProp('contentType', isFile ? 'file' : 'link')
+        // updateDataProp('contentUrl', res.value)
+        // updateDataProp('downloadFilename', isFile ? newContentLocal.name : null)
+        goToEditPage(res.value._key)
+      }
+      setterSave('content', 'not-saving')
+    })
 
   const [saveState, setSaveState] = useState<SaveState>({
     form: 'not-saving',
     image: upImageTaskCurrent ? 'saving' : 'not-saving',
-    content: upResourceTaskCurrent ? 'saving' : 'not-saving',
+    content: provideResourceTaskCurrent ? 'saving' : 'not-saving',
   })
 
   const actions = useMemo<ResourceActions>(() => {
-    const { edit: editRpc, setImage, setIsPublished, setContent, _delete } = rpcCaller
+    const { edit, setIsPublished, create, trash } = rpcCaller
 
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
         setterSave('form', 'saving')
-        editRpc(resourceKey, res).then(() => {
+        edit(resourceKey, res, `edit resource ${resourceKey} form`).then(() => {
           setterSave('form', 'save-done')
           setTimeout(() => setterSave('form', 'not-saving'), 100)
         }) // .then(form => updateResource('form', 'resourceForm', form)),
       },
       setImage(file: File | undefined | null) {
         setterSave('image', 'saving')
-        upImageTaskSet(setImage(resourceKey, file, upImageTaskId), { file })
+        const image: EditResourceFormRpc['image'] = !file
+          ? { type: 'remove' }
+          : { type: 'file', file }
+        upImageTaskSet(edit(resourceKey, { image }, upImageTaskId), { file })
       },
-      async setContent(content: File | string | undefined | null) {
+      async provideContent(content: File | string) {
         setterSave('content', 'saving')
 
-        upResourceTaskSet(setContent(resourceKey, content, upResourceTaskId), { content })
+        provideResourceTaskSet(create(content, provideResourceTaskId), { content })
         // await setContent(resourceKey, content).then(updateDataProp('contentUrl'))
         // setterSave('content', false)
       },
@@ -123,7 +135,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       },
       deleteResource: () => {
         setIsToDelete(true)
-        return _delete(resourceKey).then(() => {
+        return trash(resourceKey).then(() => {
           setIsToDelete(false)
           nav(-1)
         })
@@ -137,13 +149,13 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     setterSave,
     upImageTaskId,
     upImageTaskSet,
-    upResourceTaskId,
-    upResourceTaskSet,
+    provideResourceTaskId,
+    provideResourceTaskSet,
   ])
 
-  const [upResourceTaskCurrentObjectUrl] = useImageUrl(upResourceTaskCurrent?.ctx.content)
+  const [upResourceTaskCurrentObjectUrl] = useImageUrl(provideResourceTaskCurrent?.ctx.content)
   const [upImageTaskCurrentObjectUrl] = useImageUrl(upImageTaskCurrent?.ctx.file)
-  const upResourceTaskCurrentContent = upResourceTaskCurrent?.ctx.content
+  const upResourceTaskCurrentContent = provideResourceTaskCurrent?.ctx.content
   return useMemo<ResourceCommonProps | null | undefined>(
     () =>
       !resource
@@ -162,7 +174,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
                         : null,
                     }
                   : {}),
-                ...(upResourceTaskCurrent
+                ...(provideResourceTaskCurrent
                   ? {
                       contentUrl: upResourceTaskCurrentObjectUrl,
                       downloadFilename:
@@ -185,7 +197,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       saveState,
       upImageTaskCurrent,
       upImageTaskCurrentObjectUrl,
-      upResourceTaskCurrent,
+      provideResourceTaskCurrent,
       upResourceTaskCurrentContent,
       upResourceTaskCurrentObjectUrl,
     ],

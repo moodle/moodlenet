@@ -98,7 +98,7 @@ export const Resource: FC<ResourceProps> = ({
     deleteResource,
     publish,
     unpublish: setUnpublish,
-    setContent,
+    provideContent: setContent,
     setImage,
   } = actions
   const { canPublish, canEdit } = access

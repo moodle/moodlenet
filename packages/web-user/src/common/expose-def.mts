@@ -115,5 +115,6 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { profileKey: string } | { userKey: string },
     ): Promise<boolean>
     'webapp/admin/roles/toggleIsPublisher'(body: { profileKey: string }): Promise<boolean>
+    // RESOURCE
   }
 }>

@@ -1,8 +1,12 @@
-import { readableRpcFile } from '@moodlenet/core'
 import { resource } from '@moodlenet/core-domain'
-import type { ResourceContent } from '@moodlenet/core-domain/resource/lifecycle'
+import type {
+  DraftDocument,
+  EditDraftForm,
+  ResourceContent,
+} from '@moodlenet/core-domain/resource/lifecycle'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import {
+  canPublish,
   createResource,
   delResource,
   delResourceFile,
@@ -11,17 +15,24 @@ import {
   getResource,
   patchResource,
   publicFiles,
+  setResourceImage,
   storeResourceFile,
   validationsConfigs,
 } from '@moodlenet/ed-resource/server'
-import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
+import {
+  createEntityKey,
+  creatorUserInfoAqlProvider,
+  getCurrentSystemUser,
+  isCurrentUserCreatorOfCurrentEntity,
+} from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import { createReadStream } from 'fs'
 import { interpret } from 'xstate'
 import { waitFor } from 'xstate/lib/waitFor.js'
-import { verifyCurrentTokenCtx } from '../../exports.mjs'
+import { shell } from '../../shell.mjs'
+import { verifyCurrentTokenCtx } from '../../srv/web-user.mjs'
 import * as fromXsm from './mappings/from-xsm.mjs'
 import * as toXsm from './mappings/to-xsm.mjs'
+// declare const verifyCurrentTokenCtx :any
 
 export async function createNewResource(content: resource.lifecycle.ProvidedResourceContent) {
   const IDENTIFIERS_CREATING_PLACEHOLDER = {
@@ -56,7 +67,7 @@ export async function createNewResource(content: resource.lifecycle.ProvidedReso
   let snap = interpreter.getSnapshot()
 
   if (resource.lifecycle.matchState(snap, 'Access-Denied')) {
-    return 'cannot create'
+    return 'unauthorized'
   }
   const provideContentEvent: resource.lifecycle.Event = {
     type: 'provide-content',
@@ -86,18 +97,32 @@ export async function createNewResource(content: resource.lifecycle.ProvidedReso
 
   const resourceKey = snap.context.identifiers.resourceKey
 
-  interpreter.send('cancel-meta-autogen')
+  shell.initiateCall(() => {
+    interpreter.send('cancel-meta-autogen')
+  })
   return {
     success: true,
     resourceKey,
+    interpreter,
   } as const
 }
 
-async function reviveStateAndContext(
-  resourceKey: string,
-): Promise<[resource.lifecycle.StateName, resource.lifecycle.Context]> {
+async function reviveStateAndContext(resourceKey: string) /* : Promise<
+  [
+    resource.lifecycle.StateName,
+    resource.lifecycle.Context,
+    AccessEntitiesRecordType<ResourceDataType, unknown, EntityAccess> | undefined,
+  ]
+> */ {
   const validationConfigs = getXsmValidationConfigs()
-  const resourceRecord = await getResource(resourceKey)
+  const resourceRecord = await getResource(resourceKey, {
+    projectAccess: ['u', 'd'],
+    project: {
+      canPublish: canPublish(),
+      isCreator: isCurrentUserCreatorOfCurrentEntity(),
+      contributor: creatorUserInfoAqlProvider(),
+    },
+  })
   const issuer: resource.lifecycle.Issuer = await getIssuer(
     resourceRecord?.meta.creatorEntityId
       ? ['creator-id', resourceRecord.meta.creatorEntityId]
@@ -113,7 +138,8 @@ async function reviveStateAndContext(
         validationConfigs,
         identifiers: { resourceKey },
       },
-    ]
+      undefined,
+    ] as const
   }
 
   const [state, draft] = toXsm.draft(resourceRecord.entity)
@@ -130,7 +156,8 @@ async function reviveStateAndContext(
         validationConfigs,
         identifiers: { resourceKey },
       },
-    ]
+      undefined,
+    ] as const
   }
 
   const { /* draftValid, */ publishable } = resource.lifecycle.draftFormalValidation({
@@ -146,11 +173,12 @@ async function reviveStateAndContext(
       published: publishable,
       identifiers: { resourceKey },
     },
-  ]
+    resourceRecord,
+  ] as const
 }
 
 export async function reviveInterpreterAndMachine(resourceKey: string) {
-  const [state, initialContext] = await reviveStateAndContext(resourceKey)
+  const [state, initialContext, resourceRecord] = await reviveStateAndContext(resourceKey)
   const machine = configureMachine(initialContext)
   const interpreter = interpret(machine, {})
   interpreter.start(state)
@@ -166,8 +194,13 @@ export async function reviveInterpreterAndMachine(resourceKey: string) {
       return
     }
 
+    const { image: maybeImage, ...editMetaPatch } =
+      state._event.data.type === 'edit-draft-meta'
+        ? state._event.data.updateWith
+        : ({} as EditDraftForm)
+    const imagePatch = await getImagePatch(resourceKey, maybeImage)
     const patch = fromXsm.patch(
-      state.context.draft,
+      { ...state.context.draft, ...editMetaPatch, image: imagePatch },
       state.toStrings()[0] as resource.lifecycle.StateName,
     )
     await patchResource(resourceKey, patch)
@@ -175,7 +208,33 @@ export async function reviveInterpreterAndMachine(resourceKey: string) {
   return {
     interpreter,
     machine,
+    resourceRecord,
   }
+}
+async function getImagePatch(
+  resourceKey: string,
+  maybeImage: EditDraftForm['image'],
+): Promise<DraftDocument['image']> {
+  if (!maybeImage || maybeImage.type === 'no-change') {
+    return undefined
+  }
+  if (maybeImage.type === 'remove') {
+    await setResourceImage(resourceKey, null)
+    return null
+  }
+  if (maybeImage.type === 'update') {
+    if (maybeImage.provide.kind === 'file') {
+      const resp = await setResourceImage(resourceKey, maybeImage.provide.rpcFile)
+      if (!resp || resp.patched.image?.kind !== 'file') {
+        // throw 'never' ?
+        return undefined
+      }
+      return { kind: 'file', ref: resp.patched.image }
+    } else {
+      return { kind: 'url', ref: maybeImage.provide }
+    }
+  }
+  throw 'never'
 }
 
 function configureMachine(initialContext: resource.lifecycle.Context) {
@@ -189,17 +248,7 @@ function configureMachine(initialContext: resource.lifecycle.Context) {
               ? { kind: 'link', url: providedContent.url }
               : {
                   kind: 'file',
-                  fsItem: await storeResourceFile(
-                    newResourceKey,
-                    readableRpcFile(
-                      {
-                        name: providedContent.info.name,
-                        size: providedContent.info.size,
-                        type: providedContent.info.type,
-                      },
-                      () => createReadStream(providedContent.tmpFsLocation),
-                    ),
-                  ),
+                  fsItem: await storeResourceFile(newResourceKey, providedContent.rpcFile),
                 }
 
           const created = await createResource(
@@ -210,10 +259,11 @@ function configureMachine(initialContext: resource.lifecycle.Context) {
             resourceContentDb.kind === 'file'
               ? {
                   kind: 'file',
-                  content: resourceContentDb,
+                  ref: resourceContentDb,
                 }
               : {
                   kind: 'link',
+                  ref: resourceContentDb,
                   url: resourceContentDb.url,
                 }
           if (!created) {

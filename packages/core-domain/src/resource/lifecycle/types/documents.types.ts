@@ -4,7 +4,6 @@ export interface ResourceFileContent {
 export interface ResourceLinkContent {
   kind: 'link'
   url: string
-  credits?: Credits | None
 }
 
 export interface FileImage {
@@ -12,6 +11,7 @@ export interface FileImage {
 }
 export interface UrlImage {
   kind: 'url'
+  credits?: Credits | None
 }
 export type ResourceContent = ResourceFileContent | ResourceLinkContent
 export type Image = FileImage | UrlImage
@@ -56,7 +56,14 @@ export interface EdResourceDocument<is_draft extends 'draft' | void = void> {
   type: NullableIfDraft<string, is_draft>
   learningOutcomes: LearningOutcome[]
 }
-export type DraftMeta = EdResourceDocument<'draft'>
+
+export type EditDraftForm = Partial<
+  Omit<DraftDocument, 'image' | 'content'> & {
+    image: { type: 'update'; provide: ProvidedImage } | { type: 'remove' } | { type: 'no-change' }
+  }
+>
+
+export type DraftDocument = EdResourceDocument<'draft'>
 export type PublishableMeta = EdResourceDocument
 
 export interface LearningOutcome {

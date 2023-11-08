@@ -2,7 +2,7 @@ import type { resource } from '@moodlenet/core-domain'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 
 export function patch(
-  draft: resource.lifecycle.DraftMeta,
+  draft: resource.lifecycle.DraftDocument,
   stateName: resource.lifecycle.StateName,
 ) {
   const resData: ResourceDataType = {
@@ -26,17 +26,17 @@ export function patch(
 }
 
 function fromContent(
-  draftContent: resource.lifecycle.DraftMeta['content'],
+  draftContent: resource.lifecycle.DraftDocument['content'],
 ): ResourceDataType['content'] {
   if (draftContent.kind === 'file') {
-    return { kind: 'file', fsItem: draftContent.content.fsItem }
+    return { kind: 'file', fsItem: draftContent.ref.fsItem }
   } else {
     return { kind: 'link', url: draftContent.url }
   }
 }
 
 function toImage(
-  draftImage: resource.lifecycle.DraftMeta['image'],
+  draftImage: resource.lifecycle.DraftDocument['image'],
 ): ResourceDataType['image'] | null {
   if (!draftImage) {
     return null
@@ -44,10 +44,9 @@ function toImage(
   if (draftImage.kind === 'file') {
     return {
       kind: 'file',
-      directAccessId: draftImage.image.directAccessId,
-      credits: draftImage.image.credits,
+      directAccessId: draftImage.ref.directAccessId,
     }
   } else {
-    return { kind: 'url', url: draftImage.url, credits: draftImage.credits }
+    return { kind: 'url', url: draftImage.ref.url, credits: draftImage.credits }
   }
 }
