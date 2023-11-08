@@ -741,7 +741,7 @@ export function registerEntityInfoProvider(providerItem: EntityInfoProviderItem)
   ENTITY_INFO_PROVIDERS.push({ providerItem })
 }
 
-const createEntityKey = customAlphabet(
+export const createEntityKey = customAlphabet(
   `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
   8,
 )

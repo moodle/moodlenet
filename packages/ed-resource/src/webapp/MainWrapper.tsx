@@ -32,7 +32,16 @@ const MainWrapper: MainAppPluginWrapper = ({ children }) => {
   }, [])
 
   const [configs, setConfigs] = useState<WebappConfigsRpc>({
-    validations: { contentMaxUploadSize: 0, imageMaxUploadSize: 0 },
+    validations: {
+      contentMaxUploadSize: 0,
+      imageMaxUploadSize: 0,
+      descriptionLength: { max: 0, min: 0 },
+      titleLength: { max: 0, min: 0 },
+      learningOutcomes: {
+        amount: { min: 0, max: 0 },
+        sentenceLength: { min: 0, max: 0 },
+      },
+    },
   })
 
   useEffect(() => {

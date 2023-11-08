@@ -9,6 +9,7 @@ import {
 } from '@moodlenet/core'
 import { defaultImageUploadMaxSize, getWebappUrl } from '@moodlenet/react-app/server'
 import {
+  createEntityKey,
   creatorUserInfoAqlProvider,
   getCurrentSystemUser,
   isCurrentUserCreatorOfCurrentEntity,
@@ -41,6 +42,7 @@ import {
   setPublished,
   setResourceContent,
   setResourceImage,
+  storeResourceFile,
 } from './services.mjs'
 import type { ResourceDataType } from './types.mjs'
 
@@ -192,10 +194,22 @@ export const expose = await shell.expose<FullResourceExposeType>({
           throw RpcStatus('Bad Request')
         }
 
-        const createResult = await createResource({
-          title: name,
-          description,
-        })
+        const _key = createEntityKey()
+        const content: ResourceDataType['content'] =
+          typeof resourceContent === 'string'
+            ? { kind: 'link', url: resourceContent }
+            : {
+                kind: 'file',
+                fsItem: await storeResourceFile(_key, resourceContent),
+              }
+
+        const createResult = await createResource(
+          {
+            title: name,
+            description,
+          },
+          content,
+        )
 
         if (!createResult) {
           throw RpcStatus('Unauthorized')
@@ -227,9 +241,10 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'webapp/create': {
+      // FIXME: REMOVE ME (this is a temporary endpoint)
       guard: () => void 0,
       fn: async () => {
-        const createResult = await createResource({})
+        const createResult = await createResource({}, { kind: 'link', url: '' })
         if (!createResult) {
           throw RpcStatus('Unauthorized')
         }
@@ -305,11 +320,11 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
         // shell.log('info', { uploadedContent })
         if (!uploadedContent) {
-          await delResourceFile(_key)
-          await patchResource(_key, {
-            content: null,
-            published: false,
-          })
+          // await delResourceFile(_key)
+          // await patchResource(_key, {
+          //   content: null,
+          //   published: false,
+          // })
           return null
         }
         const storeContentResult = await setResourceContent(_key, uploadedContent)
