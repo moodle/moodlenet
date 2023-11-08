@@ -12,7 +12,7 @@ import type { FormikHandle } from '@moodlenet/react-app/ui'
 import { useImageUrl } from '@moodlenet/react-app/ui'
 import { Bolt, InsertDriveFile, Link as LinkIcon, Upload as UploadIcon } from '@mui/icons-material'
 // import prettyBytes from 'pretty-bytes'
-import type { FC, default as React } from 'react'
+import type { default as React, FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   ResourceActions,
@@ -54,8 +54,8 @@ export const UploadResource: FC<UploadResourceProps> = ({
   displayOnly,
   shouldShowErrors,
 }) => {
-  const { contentType, downloadFilename, id } = data
-  const { uploadProgress, autofillState, isUploaded } = state
+  const { contentType, downloadFilename /* , id */ } = data
+  const { uploadProgress, autofillState /* , isUploaded  */ } = state
   const { stopAutofill } = actions
   const [imageUrl] = useImageUrl(
     imageForm.values.image?.location,

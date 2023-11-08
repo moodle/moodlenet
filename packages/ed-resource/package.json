@@ -36,6 +36,7 @@
     "formik": "2.2.9",
     "moment": "2.29.4",
     "xbytes": "^1.8.0",
+    "xstate": "^4.38.3",
     "yup": "0.32.11"
   },
   "peerDependencies": {

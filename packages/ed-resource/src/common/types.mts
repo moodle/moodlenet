@@ -12,7 +12,6 @@ export type MyWebDeps = {
 }
 
 export type MainContextResource = {
-  rpcCaller: RpcCaller
   configs: WebappConfigsRpc
   validationSchemas: ValidationSchemas
 }
@@ -46,7 +45,7 @@ export type AutofillState = 'extracting-info' | 'ai-generation' | undefined
 
 export type ResourceStateRpc = {
   isPublished: boolean
-  isUploaded: boolean
+  // isUploaded: boolean
   uploadProgress: number | undefined
   autofillState: AutofillState
 }
@@ -135,7 +134,7 @@ export type ResourceCardDataRpc = {
     profileHref: Href
   }
   resourceHomeHref: Href
-} & Pick<ResourceDataProps, 'image' | 'downloadFilename' | 'contentType' | 'id' | 'contentUrl'> &
+} & Pick<ResourceDataProps, 'image' | 'downloadFilename' | 'contentType' | 'contentUrl' | 'id'> &
   Pick<ResourceFormProps, 'title'>
 
 export type ResourceCardState = {

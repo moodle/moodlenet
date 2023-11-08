@@ -19,3 +19,4 @@ export {
   validationsConfigs,
 } from './services.mjs'
 export * from './types.mjs'
+export { setEdResourceMachineService } from './xsm/machinery.mjs'

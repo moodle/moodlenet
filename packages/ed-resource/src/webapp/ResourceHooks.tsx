@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type {
   ResourceActions,
   ResourceDataProps,
@@ -11,7 +11,7 @@ import type {
 import { useImageUrl } from '@moodlenet/react-app/ui'
 import { createTaskManager, silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useNavigate } from 'react-router-dom'
-import { MainContext } from './MainContext.js'
+import { shell } from './shell.mjs'
 
 export type Actions = {
   editResource: (res: ResourceFormProps) => Promise<ResourceFormProps>
@@ -35,7 +35,6 @@ const [useUpResourceTasks] = createTaskManager<
 
 type myProps = { resourceKey: string }
 export const useResourceBaseProps = ({ resourceKey }: myProps) => {
-  const { rpcCaller } = useContext(MainContext)
   const nav = useNavigate()
   const [resource, setResource] = useState<ResourceProps | null>()
 
@@ -44,14 +43,15 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
   useEffect(() => {
     setResource(undefined)
-    rpcCaller
-      .get(resourceKey)
+    shell.rpc
+      .me('webapp/get/:_key')(null, { _key: resourceKey })
+
       .then(res => {
         res && setIsPublish(res.state.isPublished)
-        setResource(res)
+        // setResource(res)
       })
       .catch(silentCatchAbort)
-  }, [resourceKey, rpcCaller])
+  }, [resourceKey])
 
   const setterSave = useCallback(
     (key: keyof SaveState, val: SavingState) =>
@@ -92,7 +92,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   })
 
   const actions = useMemo<ResourceActions>(() => {
-    const { edit: editRpc, setImage, setIsPublished, setContent, _delete } = rpcCaller
+    const { edit: editRpc, setImage, setIsPublished, setContent, _delete } = {} as any
 
     const resourceActions: ResourceActions = {
       async editData(res: ResourceFormProps) {
@@ -128,12 +128,17 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
           nav(-1)
         })
       },
+      startAutofill() {
+        return
+      },
+      stopAutofill() {
+        return
+      },
     }
     return resourceActions
   }, [
     nav,
     resourceKey,
-    rpcCaller,
     setterSave,
     upImageTaskId,
     upImageTaskSet,
