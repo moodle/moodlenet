@@ -1,12 +1,12 @@
 import { produce } from 'immer'
 import { assign, createMachine } from 'xstate'
 import { matchStateName } from '../../common/exports'
-import { EdResourceDocument, PublishableMeta, ResourceContent } from './exports'
+import { DraftDocument, PublishableDocument, ResourceContent } from './exports'
 import { Typegen0 } from './lifecycle.xsm.typegen'
 import type * as T from './types/lifecycle.types'
 export const EdResourceMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQBUA2gAwC6ioADprAJYAuTmAdrSAB6IC0AJgDMAVmEA6QQBZBAdgCMANlFKVChcIA0IAJ4CFcwQA4JxwUuHHjCioNVKAnAF9nO1Blg4CxcgppIIAzMbJzcfAhC0krSEtIUSnJyjgnqmjr6kcoUohIK4sbR+VbRru7oWHiEEgDCABZg+ADWTBxQ-ACSHPw1nCxgHCxEEJxgEq0AbphNYx6VPrUNza3tXT19AywIk5j4AIahHJRUx9zBrOxcgRH8CtKaEoqOdxTCggk5ghkGgo6ShsYxL9RNJRACyiA5l4qmN6o0Wm1Ot1eoNNkQwLhcJhcBI6AAbA4AM2xAFsJFDvNU4ctEWsUf1BtsOFN9odjqdAudDuEBI54hI+b8KNIkiKxEpvllhIoBckFCZ3o5RKoIRSYYt4SsketUYMiHt8IQ6Cx+PgNoMOfRGBcwtcDMYVBIVNJxY5rHJVNo9AYKOYJL7RDI3Xy1FZVRVoQtqQjVsjzUNcGAAFaNE1m3UsS1Ba3cu1ZaR++RyQFK8SOd5ezK3BTGCgCmzRB2aZSGcOeSljAAiuD2hKGEB7ff42DoEAOYCzXMuPKylliIpd0vE8Q9Eu9kWVsUENekjkciWSxjkbfm1W7vaGe2wLEwMA4GPH-BJYBYe0nOeneduFiUeSsxhBUExASYxJVuV5HEeFJhBXUQKD3EwT0jM9BwTMAAEdsDgE06GwAAjPEmFgOp3xCT9QBufJ9ykNQxWEZQlFeMD6Lkf0KFeTQchrYULCQjsJHPPsiBYHtiNIm0rgogw7kEMwKGUYE1EYyteUgnJ4mEOwimsEQ+PVelNn4DAU3wfoIGGbCsV0cTcykyJZFiTSFD+UENFEaxHGYv12MPOwTF9GQ9IWAAFfDCOIrUAFlMAgB9Dn1Q0wGNfhcIIoi6hWGzyN4AwjAUf0XjsVQlT5Zi60sJwf1sYti2MILqlCtKIsRaLYp7eLExMnCwvSzLqDOD9bTsoQZFkp54PEJQayMaRJUDCQrHg+5hESFyxHqsZGvChpzNgF9+AHC8sqGnKsmsfK91BGJ93sORhBUyIRFMYRyxgix913ZSNokNYABVRLqIhEzNCYMWOyTTv4Jw6wA+Sa2VGRdy+dchASf1omXRaRX3Y83EhCN+L+gGLNgETMGs-rOUGiGbicNTAyScQl0DSU7kgwN7mSaQMY9eVvq23rEWM1NICIPaTUOvtwZnIRpqdQwGf3FakgeqJJEbN1pVe4w+W+gBBa9bwGOKopfPYiH2DhCDxJ8zf4K8bzvaWvxraw8ju6CdxiVXClkkFAx1jGQWSfXDbvE2WrN-Uw+N9rIFt19neG7dLCdVRud3RRQVEMDy1iTQYOLbcPdkUPHdj8cIH4SKo8lk0RzHfok8h0b8pLYVZF9axZpRqbf1LKx5GVRQ5Gkb6akTA4ViIOgsQmJhYtNeNm8owpWKmlbN4dPzQJR7JTALQoxCPODnNcPGOBiuBuDVHwBrIk6bnseU4gSJIUjUMF0j3mxfzeSxEb3RUMIceSwYzagMoMe+EkZaGDUAtN05gi4fBZnvME5UcjFT+IYUoeNb4oQvNA2ykNND8ickoRSagmIo25rJS6ZZawfxFOPeMRlkwiwgEQ7KNx9z5Q0ABF0o83RyDUGBeUygFoiFBEeZIJhQT8x6s1dorUTYnSnI-Aw91ZKaSMMHK6G8wLvFMJuV4Wkpo6RAXggm6oBbEUgFwjRWRZEChFKIJWzk3E9yrBofKIh2LuTuOgu6ChvpEz2MRBxNMBDQwFN7ERK1dxIzAjEWJvppSJESPKUQuNyjthsYojKQt2GmXsVTB+UTHotikIHOwSsDyq1sL+X4VgYJqHsPdOwZcjb3naqbV8kTYG1nyn5GsdxrCtLXFWRBeR5DK33E4DQSgunhzjlXGu-SykwK-H44xIp7DcwdK9HOKNARNNBHdHWhgNCCG+p2Sy5NSlWnKTLe6rEchLj3JrF6+5JTbnVn8YUfJzBuniKIfWiVYCwH4HcjgTBHnZmeds+QwzBTJFSF-BpIp8pwScHBMEch5IqisXkqMk82BtAGS7AlrF5Tlg3tvQQJgxHUokG4t09hGIcqcOfZwQA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQBUA2gAwC6ioADprAJYAuTmAdrSAB6IC0AJgDMAVmEA6QQBZBAdgCMANlFKVChcIA0IAJ4CFcwQA4JxwUuHHjCioNVKAnAF9nO1Blg4CxcgppIIAzMbJzcfAhC0krSEtIUSnJyjgnqmjr6kcoUohIK4sbR+VbRru7oWHiEEgDCABZg+ADWTBxQ-ACSHPw1nCxgHCxEEJxgEq0AbphNYx6VPrUNza3tXT19AywIk5j4AIahHJRUx9zBrOxcgRH8hhYSVqI2VjYqctIZBsKKEo7JCiZBBRHKJVGUQHMvFUxvVGi02p1ur1BpsiGBcLhMLgJHQADYHABmWIAthJId5qrDlgi1sj+oNthwpvtDsdToFzodwgJHPFfrIUtIkkKxEpPllvgpfv9AcDQUpweToYs4StEesUYMiHt8IQ6Cx+PgNoN2fRGBcwtcDMYVBIVNJRY5rHJVNo9AYKOYJJ7RDInby1FZFRUoQsqfDVkjjUNcGAAFaNA1GzUsU1Bc1cq1ZaRe+RyYzCEHiRxAt2ZW4KYwUX42aI2zTKQzBzwUsYAEVwewJQ0grH4EE73f4xLALD2ac5l25WVBUuECj+VhkhUcjjLAiUmjyDk0ShySUKzfm1Q7XaGe2wLEwMA46IOYGHo-H1DOGanWYriSkjjUShsFCMUtxVuCgHTyeIS2EKCUjsUQj1DE9BxjMAAEdsDgA06GwAAjXEmFgOoJzfS1QBufIfykNQRXnNQKHXSJ5zkb0KDozQckrUCLHg1sJFPbsiBYTsCKIkJ31IgwFFkMwKGUQQQV-OjgNXb1RHiYQ7CKawRG45U6U2fgMATfB+ggYYMMxXQRItK5xMiWRYnUhdhGkUQNCeYxHGApdmOSKtBBMT0ZB0hYAAUcLwgi1QAWUwCA70ObVdTAfV+Cw3D8LqFYrMzWzbiMKUZPiWCnFEXkvOrSwnAsTcAOMfNjGC6owvSyKERiuLOwS2MjMw8KMqyl8OWImzeAEfypMUFIQWETc6pkcVfQeKteV3ZJnLERqxmaiKGlM2BR37JDsrE0asmsKVVxcmIf3sOQoOAkRTELERZCca692ETaJDWAAVIS6iIWMjQmdFjpI07+CcatjFEGTK1BGRpBLB6Em9aJxAdKshR-OQvt+-6zNgQTMEswazVE8GbicRwVLzcRvgR8VJJp31pEMXl0ZdAEvu2-qEUMxNICIfaDQHM8wZGm5BErJjNxdeQfxmpJ6KiSQ6ydb5II86QvoAQUva8Bni6KnyIfYOEIXFHzHfgLyvG8JenW5rFMQxC1YwoYhVwpBAkVTfW1lRVOSPWDZvY22tNu3DdvTrIGt58AnJ6ynelyw7VUaQs7+STQSUmQ8igoVzDd3lBFD+2jbjiB+Ci03e1FpCE8dj8ZCBCRklKhcCzkOwFGA8QCsSZyZNXVTQK+mpYwOFYiDoTEJiYOLDWjFvcsrIU7V3GarD3fzjGA7JTBzQoxDq2GF1cNwQA4WK4G4JUfFfCnJbG1zffiRJklSVz0ndM7lAPAsC8RcCMFTX0fpSJYEZ1R6UGM-FOH5DBqAeE6cw+YgR7l9IfVyFUciqFXIxUoECQw8T4iwBBOUIaaD5I5JQckHAfWAlnX2l1izLQSEKSe0YDLxkFhAShJ0bg-ilBoGGDp3hOjkGoQ+acgHOSeEkEshQ4IkJbMqXmrV2jtWNuDSclMvjCF9upIwwcrqbhVkCUwoI1IaVmuYT6ajjxbT6gRSAgiDFZGSKwoUpVLALlKh8f+FYpQiBYk8XOtg7oKDxt0P6ewCIeNfpEKGvwvbSJmkjJGghgIxDSZ6b4iREgAlELjJxCEXEtUyvzPhxl3FDRfqnRsUhtZ2EVl-FWtglDfisM5NQ9goJ2ArjHCO2inxJKdhxAq-lKySWsH0sUwS0F5HkErH8TgNDgPKOohY+tK6x3vDXOuY4Jmt3UtYoU9gs42kgqIYCBZukyFKVYRwhgNDl3KWQ8yJN6nJyoTcKCTEcgM1XBrQsP5xTSzVmuUCvJzBOniKo7ZziJC6ySrAWA-A2wDCYL89MjTW7yAKmXb+ahf6dKFFKWGJV2K93yFsiEpDdLTzYG0U569e5MQBCWCxNo7AmEPpyv2q5zCqGKk4K+zggA */
     id: 'EdResource',
 
     predictableActionArguments: true,
@@ -52,7 +52,6 @@ export const EdResourceMachine = createMachine(
     states: {
       'Checking-In-Content': {
         exit: 'notify_creator',
-
         on: {
           'accept-content': {
             target: 'Autogenerating-Meta',
@@ -67,17 +66,28 @@ export const EdResourceMachine = createMachine(
 
         invoke: {
           src: 'CreateNewResource',
-          onDone: [{ actions: ['assign-identifiers-and-content'] }],
-          onError: [{ actions: ['assign-rejected-content-reason'], target: 'Content-Rejected' }],
+          onDone: [
+            {
+              actions: ['assign-identifiers-and-content'],
+              internal: false,
+            },
+          ],
+          onError: [
+            {
+              actions: ['assign-rejected-content-reason'],
+              target: 'Content-Rejected',
+              internal: false,
+            },
+          ],
         },
       },
 
       'Draft': {
         on: {
-          'draft-update': {
+          'edit-draft-meta': {
             target: 'Draft',
             cond: { type: 'issuer is creator and draft-form is formally valid' },
-            internal: true,
+            internal: false,
             actions: ['assign-draft'],
           },
 
@@ -176,7 +186,7 @@ export const EdResourceMachine = createMachine(
 
       'Autogenerated-Meta': {
         on: {
-          'draft-update': {
+          'edit-draft-meta': {
             cond: 'issuer is creator and draft-form is formally valid',
             target: 'Draft',
             actions: ['assign-draft'],
@@ -265,8 +275,17 @@ export const EdResourceMachine = createMachine(
     },
     actions: {
       'assign-draft': assign((c, e) => {
-        return produce(c, draft => {
-          draft.draft = e.updateWith
+        return produce(c, proxy => {
+          const { image: providedImage, ...draftMeta } = e.updateWith
+          const image: DraftDocument['image'] =
+            !providedImage || providedImage.type === 'no-change'
+              ? proxy.draft.image
+              : providedImage.type === 'remove'
+              ? null
+              : providedImage.type === 'update'
+              ? providedImage.provide
+              : proxy.draft.image
+          proxy.draft = { ...proxy.draft, ...draftMeta, image }
         })
       }),
       'assign-identifiers-and-content': assign((c, { data }) => {
@@ -290,10 +309,10 @@ export function draftFormalValidation({
   validationConfigs: { descriptionLength, titleLength, learningOutcomes },
 }: Pick<T.Context, 'draft' | 'validationConfigs'>): {
   draftValid: boolean
-  publishable: PublishableMeta | undefined
+  publishable: PublishableDocument | undefined
 } {
   // FIXME: model context|services|? for using a validation lib here
-  const codes: (keyof EdResourceDocument)[] = [
+  const codes: (keyof DraftDocument)[] = [
     'language',
     'level',
     'license',
@@ -330,6 +349,6 @@ export function draftFormalValidation({
 
   return {
     draftValid,
-    publishable: isPublishable ? (draft as any as PublishableMeta) : undefined,
+    publishable: isPublishable ? (draft as any as PublishableDocument) : undefined,
   }
 }

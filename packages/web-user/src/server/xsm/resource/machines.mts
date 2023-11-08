@@ -1,8 +1,26 @@
-import { readableRpcFile } from '@moodlenet/core'
-import { resource } from '@moodlenet/core-domain'
-import type { ResourceContent } from '@moodlenet/core-domain/resource/lifecycle'
+import type {
+  Context,
+  DocFormalValidationConfigs,
+  DraftDocument,
+  EditDraftForm,
+  Event,
+  Issuer,
+  ProvidedResourceContent,
+  ResourceContent,
+  StateName,
+} from '@moodlenet/core-domain/resource/lifecycle'
+import {
+  AnonIssuer,
+  draftFormalValidation,
+  EdResourceMachine,
+  matchState,
+  nameMatcher,
+  stateMatcher,
+  SystemIssuer,
+} from '@moodlenet/core-domain/resource/lifecycle'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import {
+  canPublish,
   createResource,
   delResource,
   delResourceFile,
@@ -11,19 +29,25 @@ import {
   getResource,
   patchResource,
   publicFiles,
+  setResourceImage,
   storeResourceFile,
   validationsConfigs,
 } from '@moodlenet/ed-resource/server'
-import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
+import {
+  createEntityKey,
+  creatorUserInfoAqlProvider,
+  getCurrentSystemUser,
+  isCurrentUserCreatorOfCurrentEntity,
+} from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import { createReadStream } from 'fs'
 import { interpret } from 'xstate'
 import { waitFor } from 'xstate/lib/waitFor.js'
-import { verifyCurrentTokenCtx } from '../../exports.mjs'
+import { verifyCurrentTokenCtx } from '../../srv/web-user.mjs'
 import * as fromXsm from './mappings/from-xsm.mjs'
 import * as toXsm from './mappings/to-xsm.mjs'
+// declare const verifyCurrentTokenCtx :any
 
-export async function createNewResource(content: resource.lifecycle.ProvidedResourceContent) {
+export async function createNewResource(content: ProvidedResourceContent) {
   const IDENTIFIERS_CREATING_PLACEHOLDER = {
     resourceKey: 'resourceKey temp placeholder to keep type consistency',
   } as const
@@ -31,15 +55,15 @@ export async function createNewResource(content: resource.lifecycle.ProvidedReso
     kind: 'link',
     url: 'creating ... temp placeholder to keep type consistency',
   } as const
-  const issuer: resource.lifecycle.Issuer = await getIssuer(['creator', true])
+  const issuer: Issuer = await getIssuer(['creator', true])
   const [state, draft] = toXsm.draft({
     ...EMPTY_RESOURCE,
     content: CONTENT_CREATING_PLACEHOLDER,
   })
-  assert(
-    state !== '^^^NO-CONTENT^^^',
-    `toXsm.draft returned '^^^NO-CONTENT^^^' on create. this should never happen if db migration  and cleanup(delete resources without content) is done correctly, and refactored that bit`,
-  )
+  // assert(
+  //   state !== '^^^NO-CONTENT^^^',
+  //   `toXsm.draft returned '^^^NO-CONTENT^^^' on create. this should never happen if db migration  and cleanup(delete resources without content) is done correctly, and refactored that bit`,
+  // )
   assert(
     state === 'Creating',
     `toXsm.draft did not return state === 'Creating'. this should never happen`,
@@ -50,15 +74,15 @@ export async function createNewResource(content: resource.lifecycle.ProvidedReso
     validationConfigs: getXsmValidationConfigs(),
     identifiers: IDENTIFIERS_CREATING_PLACEHOLDER,
   })
-  const interpreter = interpret(machine, {})
-  interpreter.start(state)
+  const createInterpreter = interpret(machine, {})
+  createInterpreter.start(state)
 
-  let snap = interpreter.getSnapshot()
+  let snap = createInterpreter.getSnapshot()
 
-  if (resource.lifecycle.matchState(snap, 'Access-Denied')) {
-    return 'cannot create'
+  if (matchState(snap, 'Access-Denied')) {
+    return 'unauthorized'
   }
-  const provideContentEvent: resource.lifecycle.Event = {
+  const provideContentEvent: Event = {
     type: 'provide-content',
     providedContent: content,
   }
@@ -66,39 +90,52 @@ export async function createNewResource(content: resource.lifecycle.ProvidedReso
     return 'invalid content'
   }
 
+  createInterpreter.send(provideContentEvent)
+
   await Promise.race([
-    waitFor(interpreter, resource.lifecycle.nameMatcher('Content-Rejected')),
-    waitFor(
-      interpreter,
-      state =>
-        resource.lifecycle.matchState(state, 'Autogenerating-Meta') &&
+    waitFor(createInterpreter, nameMatcher('Content-Rejected')),
+    waitFor(createInterpreter, state => {
+      return (
+        matchState(state, 'Checking-In-Content') &&
         state.context.identifiers !== IDENTIFIERS_CREATING_PLACEHOLDER &&
-        state.context.draft.content !== CONTENT_CREATING_PLACEHOLDER,
-    ),
+        state.context.draft.content !== CONTENT_CREATING_PLACEHOLDER
+      )
+    }),
   ])
-  snap = interpreter.getSnapshot()
-  if (resource.lifecycle.matchState(snap, 'Content-Rejected')) {
+  snap = createInterpreter.getSnapshot()
+  createInterpreter.stop()
+  if (matchState(snap, 'Content-Rejected')) {
     return {
       success: false,
       reason: snap.context.contentRejectedReason ?? 'unknown',
     } as const
   }
 
-  const resourceKey = snap.context.identifiers.resourceKey
-
-  interpreter.send('cancel-meta-autogen')
+  const { interpreter } = await reviveInterpreterAndMachine(snap.context.identifiers.resourceKey)
   return {
     success: true,
-    resourceKey,
+    resourceKey: snap.context.identifiers.resourceKey,
+    interpreter,
   } as const
 }
 
-async function reviveStateAndContext(
-  resourceKey: string,
-): Promise<[resource.lifecycle.StateName, resource.lifecycle.Context]> {
+async function reviveStateAndContext(resourceKey: string) /* : Promise<
+  [
+    StateName,
+    Context,
+    AccessEntitiesRecordType<ResourceDataType, unknown, EntityAccess> | undefined,
+  ]
+> */ {
   const validationConfigs = getXsmValidationConfigs()
-  const resourceRecord = await getResource(resourceKey)
-  const issuer: resource.lifecycle.Issuer = await getIssuer(
+  const resourceRecord = await getResource(resourceKey, {
+    projectAccess: ['u', 'd'],
+    project: {
+      canPublish: canPublish(),
+      isCreator: isCurrentUserCreatorOfCurrentEntity(),
+      contributor: creatorUserInfoAqlProvider(),
+    },
+  })
+  const issuer: Issuer = await getIssuer(
     resourceRecord?.meta.creatorEntityId
       ? ['creator-id', resourceRecord.meta.creatorEntityId]
       : ['creator', false],
@@ -107,33 +144,35 @@ async function reviveStateAndContext(
     return [
       'Access-Denied',
       {
-        draft: null as any,
+        draft: {} as any,
         issuer,
         readAccessDeniedReason: 'not available',
         validationConfigs,
         identifiers: { resourceKey },
       },
-    ]
+      undefined,
+    ] as const
   }
 
   const [state, draft] = toXsm.draft(resourceRecord.entity)
-  // FIXME: this should never happen if db migration
-  // and cleanup(delete resources without content) is done correctly
-  if (state === '^^^NO-CONTENT^^^') {
-    await destroyAllData(resourceKey)
-    return [
-      'Access-Denied',
-      {
-        draft: null as any,
-        issuer,
-        readAccessDeniedReason: 'not available',
-        validationConfigs,
-        identifiers: { resourceKey },
-      },
-    ]
-  }
+  // // FIXME: this should never happen if db migration
+  // // and cleanup(delete resources without content) is done correctly
+  // if (state === '^^^NO-CONTENT^^^') {
+  //   await destroyAllData(resourceKey)
+  //   return [
+  //     'Access-Denied',
+  //     {
+  //       draft: null as any,
+  //       issuer,
+  //       readAccessDeniedReason: 'not available',
+  //       validationConfigs,
+  //       identifiers: { resourceKey },
+  //     },
+  //     undefined,
+  //   ] as const
+  // }
 
-  const { /* draftValid, */ publishable } = resource.lifecycle.draftFormalValidation({
+  const { /* draftValid, */ publishable } = draftFormalValidation({
     draft,
     validationConfigs,
   })
@@ -146,40 +185,73 @@ async function reviveStateAndContext(
       published: publishable,
       identifiers: { resourceKey },
     },
-  ]
+    resourceRecord,
+  ] as const
 }
 
 export async function reviveInterpreterAndMachine(resourceKey: string) {
-  const [state, initialContext] = await reviveStateAndContext(resourceKey)
+  const [state, initialContext, resourceRecord] = await reviveStateAndContext(resourceKey)
   const machine = configureMachine(initialContext)
   const interpreter = interpret(machine, {})
   interpreter.start(state)
   interpreter.subscribe(async state => {
-    const stateMatcher = resource.lifecycle.stateMatcher(state)
-    const noOpStates: resource.lifecycle.StateName[] = ['Creating', 'Access-Denied']
-    if (noOpStates.some(stateMatcher)) {
+    const stateMatches = stateMatcher(state)
+    const noOpStates: StateName[] = ['Creating', 'Access-Denied']
+    if (noOpStates.some(stateMatches)) {
       return // no-op
     }
 
-    if (stateMatcher('Destroyed')) {
+    if (stateMatches('Destroyed')) {
       destroyAllData(resourceKey)
       return
     }
+    const { image: maybeImage, ...editMetaPatch } =
+      state._event.data.type === 'edit-draft-meta'
+        ? state._event.data.updateWith
+        : ({} as EditDraftForm)
+    const imagePatch = await getImagePatch(resourceKey, maybeImage)
 
     const patch = fromXsm.patch(
-      state.context.draft,
-      state.toStrings()[0] as resource.lifecycle.StateName,
+      { ...state.context.draft, ...editMetaPatch, ...imagePatch },
+      state.toStrings()[0] as StateName,
     )
+
     await patchResource(resourceKey, patch)
   })
   return {
     interpreter,
     machine,
+    resourceRecord,
   }
 }
+async function getImagePatch(
+  resourceKey: string,
+  maybeImage: EditDraftForm['image'],
+): Promise<{ image?: DraftDocument['image'] }> {
+  if (!maybeImage || maybeImage.type === 'no-change') {
+    return {}
+  }
+  if (maybeImage.type === 'remove') {
+    await setResourceImage(resourceKey, null)
+    return { image: null }
+  }
 
-function configureMachine(initialContext: resource.lifecycle.Context) {
-  return resource.lifecycle.EdResourceMachine.withConfig(
+  if (maybeImage.type === 'update') {
+    if (maybeImage.provide.kind === 'file') {
+      const resp = await setResourceImage(resourceKey, maybeImage.provide.rpcFile)
+      if (!resp || resp.patched.image?.kind !== 'file') {
+        // throw 'never' ?
+        return {}
+      }
+      return { image: { kind: 'file', ref: resp.patched.image } }
+    } else {
+      return { image: { kind: 'url', ref: maybeImage.provide } }
+    }
+  }
+  throw 'never'
+}
+function configureMachine(initialContext: Context) {
+  return EdResourceMachine.withConfig(
     {
       services: {
         async CreateNewResource({ draft }, { providedContent }) {
@@ -189,31 +261,22 @@ function configureMachine(initialContext: resource.lifecycle.Context) {
               ? { kind: 'link', url: providedContent.url }
               : {
                   kind: 'file',
-                  fsItem: await storeResourceFile(
-                    newResourceKey,
-                    readableRpcFile(
-                      {
-                        name: providedContent.info.name,
-                        size: providedContent.info.size,
-                        type: providedContent.info.type,
-                      },
-                      () => createReadStream(providedContent.tmpFsLocation),
-                    ),
-                  ),
+                  fsItem: await storeResourceFile(newResourceKey, providedContent.rpcFile),
                 }
 
           const created = await createResource(
-            fromXsm.patch(draft, 'Checking-In-Content'),
+            { _key: newResourceKey, ...fromXsm.patch(draft, 'Checking-In-Content') },
             resourceContentDb,
           )
           const content: ResourceContent =
             resourceContentDb.kind === 'file'
               ? {
                   kind: 'file',
-                  content: resourceContentDb,
+                  ref: resourceContentDb,
                 }
               : {
                   kind: 'link',
+                  ref: resourceContentDb,
                   url: resourceContentDb.url,
                 }
           if (!created) {
@@ -258,7 +321,7 @@ async function destroyAllData(resourceKey: string) {
   return
 }
 
-function getXsmValidationConfigs(): resource.lifecycle.DocFormalValidationConfigs {
+function getXsmValidationConfigs(): DocFormalValidationConfigs {
   return {
     imageMaxUploadBytesSize: validationsConfigs.imageMaxUploadSize,
     contentMaxUploadBytesSize: validationsConfigs.contentMaxUploadSize,
@@ -271,18 +334,18 @@ function getXsmValidationConfigs(): resource.lifecycle.DocFormalValidationConfig
 // type ResourceEntityDoc = Awaited<ReturnType<typeof getResource>>
 async function getIssuer([paramType, val]:
   | ['creator-id', string]
-  | ['creator', boolean]): Promise<resource.lifecycle.Issuer> {
+  | ['creator', boolean]): Promise<Issuer> {
   const currentSystemUser = await getCurrentSystemUser()
 
   return currentSystemUser.type === 'root' || currentSystemUser.type === 'pkg'
-    ? resource.lifecycle.SystemIssuer
+    ? SystemIssuer
     : currentSystemUser.type === 'entity'
-    ? await (async (): Promise<resource.lifecycle.Issuer> => {
+    ? await (async (): Promise<Issuer> => {
         const currentWebUser = await verifyCurrentTokenCtx()
         if (!currentWebUser) {
-          return resource.lifecycle.AnonIssuer
+          return AnonIssuer
         } else if (currentWebUser.payload.isRoot) {
-          return resource.lifecycle.SystemIssuer
+          return SystemIssuer
         }
 
         const creator = paramType === 'creator' ? val : currentWebUser.payload.profile._id === val
@@ -295,5 +358,5 @@ async function getIssuer([paramType, val]:
           },
         }
       })()
-    : resource.lifecycle.AnonIssuer
+    : AnonIssuer
 }

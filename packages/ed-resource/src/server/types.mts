@@ -43,7 +43,7 @@ export type Credits = {
 }
 
 export type Image = ImageUploaded | ImageUrl
-export type ImageUploaded = { kind: 'file'; directAccessId: string; credits?: Credits }
+export type ImageUploaded = { kind: 'file'; directAccessId: string }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
 export type ResourceEvents = {

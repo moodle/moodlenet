@@ -1,5 +1,3 @@
-import { shell } from './shell.mjs'
-
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import {
   assertRpcFileReadable,
@@ -7,44 +5,32 @@ import {
   RpcStatus,
   setRpcStatusCode,
 } from '@moodlenet/core'
-import { defaultImageUploadMaxSize, getWebappUrl } from '@moodlenet/react-app/server'
-import {
-  createEntityKey,
-  creatorUserInfoAqlProvider,
-  getCurrentSystemUser,
-  isCurrentUserCreatorOfCurrentEntity,
-} from '@moodlenet/system-entities/server'
+import { getWebappUrl } from '@moodlenet/react-app/server'
+import { getCurrentSystemUser, setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import { waitFor } from 'xstate/lib/waitFor.js'
+import { shell } from './shell.mjs'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
+import type { EditDraftForm } from '@moodlenet/core-domain/resource/lifecycle'
+import { matchState, nameMatcher } from '@moodlenet/core-domain/resource/lifecycle'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
 import { boolean, object } from 'yup'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
-import type { ResourceRpc } from '../common/types.mjs'
+import type { EditResourceRespRpc, ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
-import { canPublish } from './aql.mjs'
-import { env } from './init/env.mjs'
-import { publicFiles, resourceFiles } from './init/fs.mjs'
-import { getImageAssetInfo, getImageUrl } from './lib.mjs'
+import { resourceFiles } from './init/fs.mjs'
+import { getImageAssetInfo } from './lib.mjs'
 import {
-  createResource,
-  delResource,
-  delResourceFile,
-  getImageLogicalFilename,
-  getResource,
   getResourceFileUrl,
   getResourceLogicalFilename,
   getResourcesCountInSubject,
   getValidations,
   incrementResourceDownloads,
-  patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
   searchResources,
-  setPublished,
-  setResourceContent,
-  setResourceImage,
-  storeResourceFile,
+  validationsConfigs,
 } from './services.mjs'
-import type { ResourceDataType } from './types.mjs'
+import xsm from './xsm/machinery.mjs'
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
 
@@ -63,89 +49,104 @@ export const expose = await shell.expose<FullResourceExposeType>({
           publish: boolean().required(),
         }).isValid(_),
       fn: async ({ publish }, { _key }) => {
-        const patchResult = await setPublished(_key, publish)
-        if (!patchResult) {
-          return patchResult
+        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
+        let snap = interpreter.getSnapshot()
+        if (!(publish ? snap.can('request-publish') : snap.can('set-draft'))) {
+          return { done: false }
         }
-        return true
+        interpreter.send(publish ? 'request-publish' : 'set-draft')
+
+        snap = interpreter.getSnapshot()
+        shell.initiateCall(async () => {
+          await setPkgCurrentUser()
+          interpreter.send('accept-publishing')
+        })
+
+        return { done: true }
       },
     },
+    'webapp/:action(cancel|start)/meta-autofill/:_key': {
+      guard: () => void 0,
+      fn: async (_, { _key, action }) => {
+        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
+        const ev = action === 'cancel' ? `cancel-meta-autogen` : `autogenerate-meta`
+        const done = interpreter.getSnapshot().can(ev)
+        interpreter.send(ev)
+        return { done }
+      },
+    },
+
     'webapp/get/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const found = await getResource(_key, {
-          projectAccess: ['u', 'd'],
-          project: {
-            canPublish: canPublish(),
-            isCreator: isCurrentUserCreatorOfCurrentEntity(),
-            contributor: creatorUserInfoAqlProvider(),
-          },
-        })
-        if (!found) {
+        const { interpreter, resourceRecord } = await xsm.reviveInterpreterAndMachine(_key)
+
+        const snap = interpreter.getSnapshot()
+        if (matchState(snap, 'Access-Denied') || !resourceRecord) {
           return null
         }
-        const image = getImageAssetInfo(found.entity.image)
+        const image = getImageAssetInfo(snap.context.draft.image?.ref)
 
-        const contentUrl = !found.entity.content
-          ? null
-          : found.entity.content.kind === 'file'
-          ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.fsItem.rpcFile })
-          : found.entity.content.url
+        const contentUrl =
+          snap.context.draft.content.kind === 'file'
+            ? await getResourceFileUrl({
+                _key,
+                rpcFile: snap.context.draft.content.ref.fsItem.rpcFile,
+              })
+            : snap.context.draft.content.ref.url
 
         const resourceRpc: ResourceRpc = {
           contributor: {
-            avatarUrl: found.contributor.iconUrl,
+            avatarUrl: resourceRecord.contributor.iconUrl,
             creatorProfileHref: {
-              url: found.contributor.homepagePath,
+              url: resourceRecord.contributor.homepagePath,
               ext: false,
             },
-            displayName: found.contributor.name,
-            timeSinceCreation: found.meta.created,
-            // avatarUrl: found.contributor?.iconUrl ?? null,
-            // creatorProfileHref: {
-            //   url: 'google.it',
-            //   ext: true,
-            // },
-            // displayName: 'contributor.name',
-            // timeSinceCreation: shell.now().toString(),
+            displayName: resourceRecord.contributor.name,
+            timeSinceCreation: resourceRecord.meta.created,
           },
           resourceForm: {
-            description: found.entity.description,
-            title: found.entity.title,
-            license: found.entity.license,
-            subject: found.entity.subject,
-            language: found.entity.language,
-            level: found.entity.level,
-            month: found.entity.month,
-            year: found.entity.year,
-            type: found.entity.type,
-            learningOutcomes: found.entity.learningOutcomes,
+            description: resourceRecord.entity.description,
+            title: resourceRecord.entity.title,
+            license: resourceRecord.entity.license,
+            subject: resourceRecord.entity.subject,
+            language: resourceRecord.entity.language,
+            level: resourceRecord.entity.level,
+            month: resourceRecord.entity.month,
+            year: resourceRecord.entity.year,
+            type: resourceRecord.entity.type,
+            learningOutcomes: resourceRecord.entity.learningOutcomes,
           },
           data: {
-            contentType: found.entity.content?.kind ?? null,
+            contentType: resourceRecord.entity.content?.kind ?? null,
             contentUrl,
             downloadFilename:
-              found.entity.content?.kind === 'file'
-                ? found.entity.content.fsItem.rpcFile.name
+              resourceRecord.entity.content?.kind === 'file'
+                ? resourceRecord.entity.content.fsItem.rpcFile.name
                 : null,
-            id: found.entity._key,
-            mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key, title: found.entity.title })),
+            id: resourceRecord.entity._key,
+            mnUrl: getWebappUrl(
+              getResourceHomePageRoutePath({ _key, title: resourceRecord.entity.title }),
+            ),
             image,
-            subjectHref: found.entity.subject
+            subjectHref: resourceRecord.entity.subject
               ? href(
                   getSubjectHomePageRoutePath({
-                    _key: found.entity.subject,
-                    title: found.entity.subject,
+                    _key: resourceRecord.entity.subject,
+                    title: resourceRecord.entity.subject,
                   }),
                 )
               : null,
           },
-          state: { isPublished: found.entity.published },
+          state: {
+            isPublished: resourceRecord.entity.published,
+            autofillState: matchState(snap, 'Autogenerating-Meta') ? 'ai-generation' : undefined,
+          },
           access: {
-            canDelete: !!found.access.d,
-            canEdit: !!found.access.u,
-            canPublish: found.canPublish,
-            isCreator: found.isCreator,
+            canDelete: !!resourceRecord.access.d,
+            canEdit: !!resourceRecord.access.u,
+            canPublish: resourceRecord.canPublish,
+            isCreator: resourceRecord.isCreator,
           },
         }
 
@@ -160,10 +161,12 @@ export const expose = await shell.expose<FullResourceExposeType>({
         })
       },
       fn: async ({ values }, { _key }) => {
-        const patch: Partial<ResourceDataType> = {
+        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
+        const snap = interpreter.getSnapshot()
+        const updateWith: Partial<EditDraftForm> = {
           description: values.description,
           language: values.language,
-          learningOutcomes: values.learningOutcomes.filter(({ sentence }) => !!sentence),
+          learningOutcomes: (values.learningOutcomes ?? []).filter(({ sentence }) => !!sentence),
           level: values.level,
           license: values.license,
           month: values.month,
@@ -171,12 +174,63 @@ export const expose = await shell.expose<FullResourceExposeType>({
           title: values.title,
           subject: values.subject,
           type: values.type,
+          image:
+            !values.image || values.image.type === 'no-change'
+              ? { type: 'no-change' }
+              : values.image.type === 'remove'
+              ? { type: 'remove' }
+              : values.image.type === 'file'
+              ? {
+                  type: 'update',
+                  provide: {
+                    kind: 'file',
+                    rpcFile: values.image.file[0],
+                    info: values.image.file[0],
+                  },
+                }
+              : { type: 'no-change' },
         }
-        const patchResult = await patchResource(_key, patch)
-        if (!patchResult) {
-          return //throw ?
+
+        if (!snap.can({ type: 'edit-draft-meta', updateWith })) {
+          return null
         }
-        return
+        interpreter.send({ type: 'edit-draft-meta', updateWith })
+
+        /* 
+wont work .. 
+        await waitFor(interpreter, state => {
+          console.log(`--`, state.value, state.event, state.context.draft)
+          return state.event.type !== 'edit-draft-meta' && nameMatcher('Draft')(state)
+        })
+ */
+        /* 
+ this neither
+        const editedInterpreter = await xsm.reviveInterpreterAndMachine(_key)
+ */
+        const {
+          context: { draft },
+        } = /* editedI */ interpreter.getSnapshot()
+
+        const editResourceRespRpc: EditResourceRespRpc = {
+          description: draft.description,
+          language: draft.language ?? '',
+          image: getImageAssetInfo(draft.image?.ref),
+          learningOutcomes: draft.learningOutcomes ?? '',
+          level: draft.level ?? '',
+          license: draft.license ?? '',
+          month: draft.month ?? '',
+          subject: draft.subject ?? '',
+          title: draft.title ?? '',
+          type: draft.type ?? '',
+          year: draft.year ?? '',
+        }
+        return editResourceRespRpc
+      },
+      bodyWithFiles: {
+        fields: {
+          '.values.image.file': 1,
+        },
+        maxSize: validationsConfigs.imageMaxUploadSize,
       },
     },
     'basic/v1/create': {
@@ -193,114 +247,100 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceContent) {
           throw RpcStatus('Bad Request')
         }
-
-        const _key = createEntityKey()
-        const content: ResourceDataType['content'] =
-          typeof resourceContent === 'string'
+        const createResponse = await xsm.createNewResource(
+          'string' === typeof resourceContent
             ? { kind: 'link', url: resourceContent }
-            : {
-                kind: 'file',
-                fsItem: await storeResourceFile(_key, resourceContent),
-              }
-
-        const createResult = await createResource(
-          {
-            title: name,
-            description,
-          },
-          content,
+            : { kind: 'file', info: resourceContent, rpcFile: resourceContent },
         )
-
-        if (!createResult) {
-          throw RpcStatus('Unauthorized')
+        if (createResponse === 'invalid content') {
+          throw RpcStatus('Bad Request')
+        }
+        if (createResponse === 'unauthorized') {
+          throw RpcStatus('Internal Server Error')
+        }
+        if (!createResponse.success) {
+          throw new Error(createResponse.reason)
         }
 
-        const setResourceResult = await setResourceContent(createResult._key, resourceContent)
+        shell.initiateCall(async () => {
+          await setPkgCurrentUser()
+          createResponse.interpreter.send('accept-content')
+        })
 
-        if (!setResourceResult) {
-          await delResource(createResult._key)
-          throw RpcStatus('Unauthorized')
-        }
+        const snap = createResponse.interpreter.getSnapshot()
+        const contentUrl =
+          snap.context.draft.content.kind === 'file'
+            ? await getResourceFileUrl({
+                _key: snap.context.identifiers.resourceKey,
+                rpcFile: snap.context.draft.content.ref.fsItem.rpcFile,
+              })
+            : snap.context.draft.content.ref.url
 
         setRpcStatusCode('Created')
         return {
-          _key: createResult._key,
-          description: createResult.description,
+          _key: createResponse.resourceKey,
+          description,
           homepage: getWebappUrl(
-            getResourceHomePageRoutePath({ _key: createResult._key, title: createResult.title }),
+            getResourceHomePageRoutePath({ _key: createResponse.resourceKey, title: name }),
           ),
-          name: createResult.title,
-          url: setResourceResult.contentUrl,
+          name,
+          url: contentUrl,
         }
       },
       bodyWithFiles: {
         fields: {
           '.resource': 1,
         },
-        maxSize: env.resourceUploadMaxSize,
+        maxSize: validationsConfigs.contentMaxUploadSize,
       },
     },
-    'webapp/create': {
-      // FIXME: REMOVE ME (this is a temporary endpoint)
-      guard: () => void 0,
-      fn: async () => {
-        const createResult = await createResource({}, { kind: 'link', url: '' })
-        if (!createResult) {
-          throw RpcStatus('Unauthorized')
-        }
-        return {
-          _key: createResult._key,
-        }
-      },
-    },
-    'webapp/delete/:_key': {
+
+    'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const delResult = await delResource(_key)
-        if (!delResult) {
-          return
-        }
-        const imageLogicalFilename = getImageLogicalFilename(_key)
-        await publicFiles.del(imageLogicalFilename)
-        if (delResult.entity.content?.kind === 'file') {
-          await delResourceFile(_key)
-        }
+        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
+        interpreter.send('trash')
+        waitFor(interpreter, nameMatcher('In-Trash')).finally(() => {
+          interpreter.send('destroy')
+        })
         return
       },
     },
-    'webapp/upload-image/:_key': {
-      guard: async body => {
-        const { imageValidationSchema } = await getValidations()
-        const validatedImageOrNullish = await imageValidationSchema.validate(
-          { image: body?.file?.[0] },
-          { stripUnknown: true },
-        )
-        body.file = [validatedImageOrNullish]
-      },
-      async fn({ file: [uploadedRpcFile] }, { _key }) {
-        const got = await getResource(_key, { projectAccess: ['u'] })
+    // 'webapp/set-image/:_key': {
+    //   guard: async body => {
+    //     const { imageValidationSchema } = await getValidations()
+    //     const validatedImageOrNullish = await imageValidationSchema.validate(
+    //       { image: body?.file?.[0] },
+    //       { stripUnknown: true },
+    //     )
+    //     body.file = [validatedImageOrNullish]
+    //   },
+    //   async fn({ file: [uploadedRpcFile] }, { _key }) {
+    //     const { interpreter, resourceRecord, machine } = await reviveInterpreterAndMachine(_key)
+    //     if()
+    //     const got = await getResource(_key, { projectAccess: ['u'] })
 
-        if (!got?.access.u) {
-          throw RpcStatus('Unauthorized')
-        }
-        const updateRes = await setResourceImage(_key, uploadedRpcFile)
-        if (updateRes === false) {
-          throw RpcStatus('Bad Request')
-        }
-        if (!updateRes) {
-          return null
-        }
-        const imageUrl = updateRes.patched.image && getImageUrl(updateRes.patched.image)
-        return imageUrl
-      },
-      bodyWithFiles: {
-        fields: {
-          '.file': 1,
-        },
-        maxSize: defaultImageUploadMaxSize,
-      },
-    },
-    'webapp/upload-content/:_key': {
+    //     if (!got?.access.u) {
+    //       throw RpcStatus('Unauthorized')
+    //     }
+    //     const updateRes = await setResourceImage(_key, uploadedRpcFile)
+    //     if (updateRes === false) {
+    //       throw RpcStatus('Bad Request')
+    //     }
+    //     if (!updateRes) {
+    //       return null
+    //     }
+    //     const imageUrl = updateRes.patched.image && getImageUrl(updateRes.patched.image)
+    //     return imageUrl
+    //   },
+    //   bodyWithFiles: {
+    //     fields: {
+    //       '.file': 1,
+    //     },
+    //     maxSize: defaultImageUploadMaxSize,
+    //   },
+    // },
+    'webapp/create': {
       guard: async body => {
         const { publishedContentValidationSchema } = await getValidations()
         const validatedContentOrNullish = await publishedContentValidationSchema.validate(
@@ -309,35 +349,41 @@ export const expose = await shell.expose<FullResourceExposeType>({
         )
         body.content = [validatedContentOrNullish]
       },
-      async fn({ content: [uploadedContent] }, { _key }) {
-        const got = await getResource(_key, { projectAccess: ['u'] })
+      async fn({ content: [resourceContent] }) {
+        if (!resourceContent) {
+          throw RpcStatus('Bad Request')
+        }
+        const createResponse = await xsm.createNewResource(
+          'string' === typeof resourceContent
+            ? { kind: 'link', url: resourceContent }
+            : { kind: 'file', info: resourceContent, rpcFile: resourceContent },
+        )
+        if (createResponse === 'invalid content') {
+          throw RpcStatus('Bad Request')
+        }
+        if (createResponse === 'unauthorized') {
+          throw RpcStatus('Unauthorized')
+        }
+        if (!createResponse.success) {
+          throw RpcStatus('Internal Server Error', createResponse.reason)
+        }
 
-        if (!got?.access.u) {
-          throw RpcStatus('Unauthorized')
-        }
-        if (got.entity.published && !uploadedContent) {
-          throw RpcStatus('Precondition Failed')
-        }
-        // shell.log('info', { uploadedContent })
-        if (!uploadedContent) {
-          // await delResourceFile(_key)
-          // await patchResource(_key, {
-          //   content: null,
-          //   published: false,
-          // })
-          return null
-        }
-        const storeContentResult = await setResourceContent(_key, uploadedContent)
-        if (!storeContentResult) {
-          throw RpcStatus('Unauthorized')
-        }
-        return storeContentResult.contentUrl
+        shell.initiateCall(async () => {
+          await setPkgCurrentUser()
+          const { interpreter } = await xsm.reviveInterpreterAndMachine(createResponse.resourceKey)
+          interpreter.send('accept-content')
+          setTimeout(() => {
+            interpreter.send('autogenerated-meta')
+          }, 30000)
+        })
+
+        return { resourceKey: createResponse.resourceKey }
       },
       bodyWithFiles: {
         fields: {
           '.content': 1,
         },
-        maxSize: env.resourceUploadMaxSize,
+        maxSize: validationsConfigs.contentMaxUploadSize,
       },
     },
     'webapp/get-resources-count-in-subject/:subjectKey': {

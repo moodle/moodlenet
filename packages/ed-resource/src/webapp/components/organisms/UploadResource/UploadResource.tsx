@@ -29,7 +29,7 @@ import './UploadResource.scss'
 // type SubStep = 'AddFileOrLink' | 'AddImage'
 export type UploadResourceProps = {
   fileMaxSize: number | null
-  contentForm: FormikHandle<{ content: File | string | undefined | null }>
+  contentForm: FormikHandle<{ content: File | string }>
   imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
   uploadOptionsItems: (AddonItem | null)[]
   data: ResourceDataProps

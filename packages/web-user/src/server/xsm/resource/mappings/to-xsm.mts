@@ -6,16 +6,19 @@ import { getImageAssetInfo } from '@moodlenet/ed-resource/server'
 type ResourceEntityDoc = ResourceDataType
 export function draft(
   resourceRecord: ResourceEntityDoc,
-): ['^^^NO-CONTENT^^^', null] | [resource.lifecycle.StateName, resource.lifecycle.DraftMeta] {
+): /* ['^^^NO-CONTENT^^^', null] |  */ [
+  resource.lifecycle.StateName,
+  resource.lifecycle.DraftDocument,
+] {
   const content = toContent(resourceRecord.content)
 
-  // FIXME: this should never happen if db migration
-  // and cleanup(delete resources without content) is done correctly
-  if (!content) {
-    return ['^^^NO-CONTENT^^^', null]
-  }
+  // // FIXME: this should never happen if db migration
+  // // and cleanup(delete resources without content) is done correctly
+  // if (!content) {
+  //   return ['^^^NO-CONTENT^^^', null]
+  // }
   const image = toImage(resourceRecord.image)
-  const draft: resource.lifecycle.DraftMeta = {
+  const draft: resource.lifecycle.DraftDocument = {
     title: resourceRecord.title,
     description: resourceRecord.description,
     content,
@@ -33,14 +36,14 @@ export function draft(
   return [resourceRecord.lifecycleState, draft]
 }
 
-function toContent(
-  content: ResourceEntityDoc['content'],
-): resource.lifecycle.ResourceContent | null {
-  if (content.kind === 'file') {
-    return { kind: 'file', content }
-  } else {
-    return { kind: 'link', url: content.url }
-  }
+function toContent(content: ResourceEntityDoc['content']): resource.lifecycle.ResourceContent {
+  return content.kind === 'file'
+    ? { kind: 'file', ref: content }
+    : content.kind === 'link'
+    ? { kind: 'link', ref: content, url: content.url }
+    : (() => {
+        throw 'never'
+      })()
 }
 
 function toImage(image: ResourceEntityDoc['image'] | null): resource.lifecycle.Image | null {
@@ -52,8 +55,8 @@ function toImage(image: ResourceEntityDoc['image'] | null): resource.lifecycle.I
     if (!assetInfo) {
       return null
     }
-    return { kind: 'file', image }
+    return { kind: 'file', ref: image }
   } else {
-    return { kind: 'url', url: image.url, credits: image.credits }
+    return { kind: 'url', ref: image, credits: image.credits }
   }
 }

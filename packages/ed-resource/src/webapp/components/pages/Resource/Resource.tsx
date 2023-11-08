@@ -98,7 +98,7 @@ export const Resource: FC<ResourceProps> = ({
     deleteResource,
     publish,
     unpublish: setUnpublish,
-    setContent,
+    provideContent: setContent,
     setImage,
     startAutofill,
   } = actions
@@ -177,8 +177,8 @@ export const Resource: FC<ResourceProps> = ({
     prevResourceFormRef.current = resourceForm
   }, [form_setValues, resourceForm])
 
-  const contentForm = useFormik<{ content: File | string | undefined | null }>({
-    initialValues: useMemo(() => ({ content: contentUrl }), [contentUrl]),
+  const contentForm = useFormik<{ content: File | string }>({
+    initialValues: useMemo(() => ({ content: contentUrl ?? '' }), [contentUrl]),
     validateOnMount: true,
     validateOnChange: true,
     enableReinitialize: true,

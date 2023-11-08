@@ -123,7 +123,7 @@ export const EMPTY_RESOURCE: Omit<ResourceDataType, 'content'> = {
   lifecycleState: 'Creating',
 }
 export async function createResource(
-  resourceData: Partial<ResourceDataType>,
+  resourceData: Partial<ResourceDataType & { _key: string }>,
   content: ResourceDataType['content'],
 ) {
   const newResource = await shell.call(create)(Resource.entityClass, {

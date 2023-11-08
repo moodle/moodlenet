@@ -1,3 +1,4 @@
+export { canPublish } from './aql.mjs'
 export { EdResourceEntitiesTools } from './entities.mjs'
 export { publicFiles } from './init/fs.mjs'
 export { Resource } from './init/sys-entities.mjs'
@@ -20,3 +21,4 @@ export {
 } from './services.mjs'
 export * from './types.mjs'
 export { setEdResourceMachineService } from './xsm/machinery.mjs'
+import './xsm/core-interfaces.mjs'

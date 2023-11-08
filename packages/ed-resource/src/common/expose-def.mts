@@ -1,6 +1,7 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import type {
-  ResourceFormRpc,
+  EditResourceFormRpc,
+  EditResourceRespRpc,
   ResourceRpc,
   ResourceSearchResultRpc,
   SortTypeRpc,
@@ -9,25 +10,22 @@ import type { ValidationsConfig } from './validationSchema.mjs'
 export type WebappConfigsRpc = { validations: ValidationsConfig }
 export type ResourceExposeType = PkgExposeDef<{
   rpc: {
-    // WEBAPP specific
     'webapp/get-configs'(): Promise<WebappConfigsRpc>
     'webapp/set-is-published/:_key'(
       body: { publish: boolean },
       params: { _key: string },
-    ): Promise<boolean | null | undefined>
+    ): Promise<{ done: boolean }>
     'webapp/get/:_key'(body: null, params: { _key: string }): Promise<ResourceRpc | null>
-    'webapp/edit/:_key'(body: { values: ResourceFormRpc }, params: { _key: string }): Promise<void>
-    'webapp/create'(): Promise<{ _key: string }>
-    'webapp/delete/:_key'(body: null, params: { _key: string }): Promise<void>
-    'webapp/upload-image/:_key'(
-      body: { file: [RpcFile | undefined | null] },
+    'webapp/:action(cancel|start)/meta-autofill/:_key'(
+      body: null,
+      params: { _key: string; action: 'cancel' | 'start' },
+    ): Promise<{ done: boolean }>
+    'webapp/edit/:_key'(
+      body: { values: Partial<EditResourceFormRpc> },
       params: { _key: string },
-    ): Promise<string | null>
-    'webapp/upload-content/:_key'(
-      body: { content: [RpcFile | string | null | undefined] },
-      params: { _key: string },
-    ): Promise<string | null>
-    // OTHER
+    ): Promise<EditResourceRespRpc | null>
+    'webapp/trash/:_key'(body: null, params: { _key: string }): Promise<void>
+    'webapp/create'(body: { content: [RpcFile | string] }): Promise<{ resourceKey: string } | null>
     'webapp/search'(
       body: undefined,
       params: undefined,

@@ -66,7 +66,7 @@ export type MainResourceCardProps = {
   data: ResourceDataProps
   edMetaOptions: EdMetaOptionsProps
   form: FormikHandle<ResourceFormProps>
-  contentForm: FormikHandle<{ content: File | string | undefined | null }>
+  contentForm: FormikHandle<{ content: File | string }>
   imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
   learningOutcomeOptions: LearningOutcomeOption[]
 
@@ -475,32 +475,33 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : // )
     null
 
-  const editSaveButton = canEdit
-    ? {
-        Item: () => (
-          <div className="edit-save">
-            {isEditing && (
-              <PrimaryButton
-                className={`save-button`}
-                color="green"
-                onClick={handleOnSaveClick}
-                disabled={empty && emptyOnStart}
-              >
-                <div className="label">
-                  <Save />
-                </div>
-              </PrimaryButton>
-            )}
-            {!isEditing && (
-              <SecondaryButton className="edit-button" onClick={handleOnEditClick} color="orange">
-                <Edit />
-              </SecondaryButton>
-            )}
-          </div>
-        ),
-        key: 'edit-save-button',
-      }
-    : null
+  const editSaveButton =
+    canEdit && !isPublished
+      ? {
+          Item: () => (
+            <div className="edit-save">
+              {isEditing && (
+                <PrimaryButton
+                  className={`save-button`}
+                  color="green"
+                  onClick={handleOnSaveClick}
+                  disabled={empty && emptyOnStart}
+                >
+                  <div className="label">
+                    <Save />
+                  </div>
+                </PrimaryButton>
+              )}
+              {!isEditing && (
+                <SecondaryButton className="edit-button" onClick={handleOnEditClick} color="orange">
+                  <Edit />
+                </SecondaryButton>
+              )}
+            </div>
+          ),
+          key: 'edit-save-button',
+        }
+      : null
 
   const updatedTopRightHeaderItems = [
     publishedButton,

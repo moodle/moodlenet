@@ -10,3 +10,7 @@ export const ResourcePageRoute: FC = () => {
   if (!key) return null
   return <ResourcePageContainer resourceKey={key} key={key} />
 }
+
+export const CreateResourcePageRoute: FC = () => {
+  return <ResourcePageContainer resourceKey={'.'} key={'new-resource'} />
+}

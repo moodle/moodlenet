@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type {
+  EditResourceFormRpc,
+  EditResourceRespRpc,
   ResourceActions,
-  ResourceDataProps,
   ResourceFormProps,
   ResourceProps,
   SaveState,
@@ -11,6 +12,7 @@ import type {
 import { useImageUrl } from '@moodlenet/react-app/ui'
 import { createTaskManager, silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useNavigate } from 'react-router-dom'
+import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { shell } from './shell.mjs'
 
 export type Actions = {
@@ -27,10 +29,13 @@ export type ResourceCommonProps = {
   isToDelete: boolean
 }
 
-const [useUpImageTasks] = createTaskManager<string | null, { file: File | null | undefined }>()
-const [useUpResourceTasks] = createTaskManager<
-  string | null,
-  { content: string | File | null | undefined }
+const [useUploadImageTasks] = createTaskManager<
+  null | EditResourceRespRpc,
+  { file: File | null | undefined }
+>()
+const [useProvideResourceTasks] = createTaskManager<
+  { resourceKey: string } | null,
+  { content: string | File }
 >()
 
 type myProps = { resourceKey: string }
@@ -42,13 +47,41 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const [isPublished, setIsPublish] = useState(false)
 
   useEffect(() => {
+    if (resourceKey === '.') {
+      setResource({
+        access: { canDelete: false, canEdit: true, canPublish: false, isCreator: true },
+        contributor: {} as any,
+        data: {} as any,
+        resourceForm: {
+          learningOutcomes: [],
+          description: '',
+          title: '',
+          language: '',
+          level: '',
+          license: '',
+          month: '',
+          year: '',
+          subject: '',
+          type: '',
+        },
+        state: { autofillState: undefined, isPublished: false, uploadProgress: undefined },
+      })
+      return
+    }
     setResource(undefined)
     shell.rpc
       .me('webapp/get/:_key')(null, { _key: resourceKey })
 
       .then(res => {
         res && setIsPublish(res.state.isPublished)
-        // setResource(res)
+        res &&
+          setResource({
+            data: res.data,
+            access: res.access,
+            contributor: res.contributor,
+            resourceForm: res.resourceForm,
+            state: { ...res.state, uploadProgress: undefined },
+          })
       })
       .catch(silentCatchAbort)
   }, [resourceKey])
@@ -59,96 +92,136 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
     [],
   )
 
-  const updateDataProp = useCallback(
-    <K extends keyof ResourceDataProps>(key: K, val: ResourceDataProps[K]) =>
-      setResource(res => res && { ...res, data: { ...res.data, [key]: val } }),
-    [],
-  )
-  const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUpImageTasks(resourceKey, res => {
-    if (res.type === 'resolved') {
-      updateDataProp('image', res.value ? { credits: null, location: res.value } : null)
-    }
-    setterSave('image', 'not-saving')
-  })
-
-  const [upResourceTaskSet, upResourceTaskId, upResourceTaskCurrent] = useUpResourceTasks(
+  const [upImageTaskSet, upImageTaskId, upImageTaskCurrent] = useUploadImageTasks(
     resourceKey,
     res => {
-      if (res.type === 'resolved') {
-        const newContent = res.ctx.content
-        const isFile = !!(newContent instanceof Blob && res.value)
-        updateDataProp('contentType', isFile ? 'file' : 'link')
-        updateDataProp('contentUrl', res.value)
-        updateDataProp('downloadFilename', isFile ? newContent.name : null)
+      if (res.type === 'resolved' && res.value) {
+        const { image /* , ...form  */ } = res.value
+
+        setResource(res => res && { ...res, data: { ...res.data, image } })
       }
-      setterSave('content', 'not-saving')
+      setterSave('image', 'not-saving')
     },
   )
+  const [provideResourceTaskSet, provideResourceTaskId, provideResourceTaskCurrent] =
+    useProvideResourceTasks(resourceKey, res => {
+      if (res.type === 'resolved') {
+        // const newContentLocal = res.ctx.content
+        // const isFile = !!(newContentLocal instanceof Blob && res.value)
+        // updateDataProp('contentType', isFile ? 'file' : 'link')
+        // updateDataProp('contentUrl', res.value)
+        // updateDataProp('downloadFilename', isFile ? newContentLocal.name : null)
+        if (!res.value) {
+          return
+        }
+        const homePath = getResourceHomePageRoutePath({
+          _key: res.value.resourceKey,
+          title: 'new resource',
+        })
+        nav(homePath)
+      }
+      setterSave('content', 'not-saving')
+    })
 
   const [saveState, setSaveState] = useState<SaveState>({
     form: 'not-saving',
     image: upImageTaskCurrent ? 'saving' : 'not-saving',
-    content: upResourceTaskCurrent ? 'saving' : 'not-saving',
+    content: provideResourceTaskCurrent ? 'saving' : 'not-saving',
   })
 
+  const editData = useCallback(
+    async (res: Partial<EditResourceFormRpc>, rpcId?: string) => {
+      setterSave('form', 'saving')
+      const editResponse = await shell.rpc.me('webapp/edit/:_key', {
+        rpcId,
+      })({ values: res }, { _key: resourceKey })
+      setResource(resource => {
+        return (
+          resource && {
+            ...resource,
+            form: editResponse,
+          }
+        )
+      })
+      setterSave('form', 'save-done')
+      setTimeout(() => setterSave('form', 'not-saving'), 100)
+      return editResponse
+    },
+    [resourceKey, setterSave],
+  )
   const actions = useMemo<ResourceActions>(() => {
-    const { edit: editRpc, setImage, setIsPublished, setContent, _delete } = {} as any
-
     const resourceActions: ResourceActions = {
-      async editData(res: ResourceFormProps) {
-        setterSave('form', 'saving')
-        editRpc(resourceKey, res).then(() => {
-          setterSave('form', 'save-done')
-          setTimeout(() => setterSave('form', 'not-saving'), 100)
-        }) // .then(form => updateResource('form', 'resourceForm', form)),
+      async editData(res) {
+        editData(res, `edit resource ${resourceKey} form`)
       },
-      setImage(file: File | undefined | null) {
-        setterSave('image', 'saving')
-        upImageTaskSet(setImage(resourceKey, file, upImageTaskId), { file })
+      async setImage(image) {
+        upImageTaskSet(
+          !image
+            ? editData({ image: { type: 'remove' } })
+            : editData({ image: { type: 'file', file: [image] } }, upImageTaskId),
+          {
+            file: image,
+          },
+        )
       },
-      async setContent(content: File | string | undefined | null) {
+
+      async provideContent(content: File | string) {
         setterSave('content', 'saving')
 
-        upResourceTaskSet(setContent(resourceKey, content, upResourceTaskId), { content })
+        provideResourceTaskSet(
+          shell.rpc.me('webapp/create', { rpcId: provideResourceTaskId })({ content: [content] }),
+          { content },
+        )
         // await setContent(resourceKey, content).then(updateDataProp('contentUrl'))
         // setterSave('content', false)
       },
       publish: () => {
         setIsPublish(true)
-        setIsPublished(resourceKey, true)
+        shell.rpc.me('webapp/set-is-published/:_key')({ publish: true }, { _key: resourceKey })
       },
       unpublish: () => {
         setIsPublish(false)
-        setIsPublished(resourceKey, false)
+        shell.rpc.me('webapp/set-is-published/:_key')({ publish: false }, { _key: resourceKey })
       },
       deleteResource: () => {
         setIsToDelete(true)
-        return _delete(resourceKey).then(() => {
-          setIsToDelete(false)
-          nav(-1)
-        })
+        return shell.rpc
+          .me('webapp/trash/:_key')(null, { _key: resourceKey })
+          .then(() => {
+            setIsToDelete(false)
+            nav(-1)
+          })
       },
       startAutofill() {
+        shell.rpc.me('webapp/:action(cancel|start)/meta-autofill/:_key')(null, {
+          _key: resourceKey,
+          action: 'start',
+        })
         return
       },
       stopAutofill() {
+        shell.rpc.me('webapp/:action(cancel|start)/meta-autofill/:_key')(null, {
+          _key: resourceKey,
+          action: 'cancel',
+        })
         return
       },
     }
     return resourceActions
   }, [
-    nav,
+    editData,
     resourceKey,
-    setterSave,
-    upImageTaskId,
     upImageTaskSet,
-    upResourceTaskId,
-    upResourceTaskSet,
+    upImageTaskId,
+    setterSave,
+    provideResourceTaskSet,
+    provideResourceTaskId,
+    nav,
   ])
 
-  const [upResourceTaskCurrentObjectUrl] = useImageUrl(upResourceTaskCurrent?.ctx.content)
+  const [upResourceTaskCurrentObjectUrl] = useImageUrl(provideResourceTaskCurrent?.ctx.content)
   const [upImageTaskCurrentObjectUrl] = useImageUrl(upImageTaskCurrent?.ctx.file)
-  const upResourceTaskCurrentContent = upResourceTaskCurrent?.ctx.content
+  const upResourceTaskCurrentContent = provideResourceTaskCurrent?.ctx.content
   return useMemo<ResourceCommonProps | null | undefined>(
     () =>
       !resource
@@ -167,7 +240,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
                         : null,
                     }
                   : {}),
-                ...(upResourceTaskCurrent
+                ...(provideResourceTaskCurrent
                   ? {
                       contentUrl: upResourceTaskCurrentObjectUrl,
                       downloadFilename:
@@ -190,7 +263,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       saveState,
       upImageTaskCurrent,
       upImageTaskCurrentObjectUrl,
-      upResourceTaskCurrent,
+      provideResourceTaskCurrent,
       upResourceTaskCurrentContent,
       upResourceTaskCurrentObjectUrl,
     ],

@@ -4,7 +4,6 @@ export interface ResourceFileContent {
 export interface ResourceLinkContent {
   kind: 'link'
   url: string
-  credits?: Credits | None
 }
 
 export interface FileImage {
@@ -12,6 +11,7 @@ export interface FileImage {
 }
 export interface UrlImage {
   kind: 'url'
+  credits?: Credits | None
 }
 export type ResourceContent = ResourceFileContent | ResourceLinkContent
 export type Image = FileImage | UrlImage
@@ -41,23 +41,40 @@ interface ProvidedFileInfo {
   name: string
 }
 
-type NullableIfDraft<T, Draft> = (Draft extends 'draft' ? None : never) | T
-export interface EdResourceDocument<is_draft extends 'draft' | void = void> {
+export interface PublishableDocument {
   title: string
   description: string
   content: ResourceContent
-  image: NullableIfDraft<Image, is_draft>
-  license: NullableIfDraft<string, is_draft>
-  subject: NullableIfDraft<string, is_draft>
-  language: NullableIfDraft<string, is_draft>
-  level: NullableIfDraft<string, is_draft>
-  month: NullableIfDraft<string, is_draft>
-  year: NullableIfDraft<string, is_draft>
-  type: NullableIfDraft<string, is_draft>
+  image: Image | null
+  license: string
+  subject: string
+  language: string
+  level: string
+  month: string
+  year: string
+  type: string
   learningOutcomes: LearningOutcome[]
 }
-export type DraftMeta = EdResourceDocument<'draft'>
-export type PublishableMeta = EdResourceDocument
+export interface DraftDocument {
+  title: string
+  description: string
+  content: ResourceContent
+  image: Image | null
+  license: string | null
+  subject: string | null
+  language: string | null
+  level: string | null
+  month: string | null
+  year: string | null
+  type: string | null
+  learningOutcomes: LearningOutcome[]
+}
+
+export type EditDraftForm = Partial<
+  Omit<DraftDocument, 'image' | 'content'> & {
+    image: { type: 'update'; provide: ProvidedImage } | { type: 'remove' } | { type: 'no-change' }
+  }
+>
 
 export interface LearningOutcome {
   code: string

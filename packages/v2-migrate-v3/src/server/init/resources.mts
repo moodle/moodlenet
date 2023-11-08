@@ -69,7 +69,8 @@ export async function user_resources() {
             description: v2_resource.description,
             title: v2_resource.name,
             published: isPublisher && v2_resource._published,
-            content: null, //{ kind: 'link', url: '' },
+            content: { kind: 'link', url: '' },
+            lifecycleState: isPublisher && v2_resource._published ? 'Published' : 'Draft',
             image:
               v2_resource.image?.ext === true
                 ? {
@@ -84,6 +85,7 @@ export async function user_resources() {
             learningOutcomes: [],
             ...featsMap,
           }
+          //@ts-ignore
           const newResource = await createResource(resourceData)
           assert(newResource, `Resource not created !`)
 
