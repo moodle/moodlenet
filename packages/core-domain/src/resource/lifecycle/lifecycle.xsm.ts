@@ -1,354 +1,311 @@
 import { produce } from 'immer'
 import { assign, createMachine } from 'xstate'
 import { matchStateName } from '../../common/exports'
-import { DraftDocument, PublishableDocument, ResourceContent } from './exports'
-import { Typegen0 } from './lifecycle.xsm.typegen'
-import type * as T from './types/lifecycle.types'
+import type { Typegen0 } from './lifecycle.xsm.typegen'
+import type { Refs } from './types/document'
+import type * as T from './types/lifecycle'
+const REFS_PLACEHOLDERS_FOR_CREATION: Refs = {
+  content: { kind: 'link' },
+  id: 'ID::RefsPlaceholdersForCreation',
+  image: null,
+}
+export const DEFAULT_CONTEXT: T.Context = {
+  issuer: { type: 'unauthenticated' },
+  meta: {
+    description: '',
+    title: '',
+    learningOutcomes: [],
+    references: REFS_PLACEHOLDERS_FOR_CREATION,
+  },
+}
+
 export const EdResourceMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQBUA2gAwC6ioADprAJYAuTmAdrSAB6IC0AJgDMAVmEA6QQBZBAdgCMANlFKVChcIA0IAJ4CFcwQA4JxwUuHHjCioNVKAnAF9nO1Blg4CxcgppIIAzMbJzcfAhC0krSEtIUSnJyjgnqmjr6kcoUohIK4sbR+VbRru7oWHiEEgDCABZg+ADWTBxQ-ACSHPw1nCxgHCxEEJxgEq0AbphNYx6VPrUNza3tXT19AywIk5j4AIahHJRUx9zBrOxcgRH8hhYSVqI2VjYqctIZBsKKEo7JCiZBBRHKJVGUQHMvFUxvVGi02p1ur1BpsiGBcLhMLgJHQADYHABmWIAthJId5qrDlgi1sj+oNthwpvtDsdToFzodwgJHPFfrIUtIkkKxEpPllvgpfv9AcDQUpweToYs4StEesUYMiHt8IQ6Cx+PgNoN2fRGBcwtcDMYVBIVNJRY5rHJVNo9AYKOYJJ7RDInby1FZFRUoQsqfDVkjjUNcGAAFaNA1GzUsU1Bc1cq1ZaRe+RyYzCEHiRxAt2ZW4KYwUX42aI2zTKQzBzwUsYAEVwewJQ0grH4EE73f4xLALD2ac5l25WVBUuECj+VhkhUcjjLAiUmjyDk0ShySUKzfm1Q7XaGe2wLEwMA46IOYGHo-H1DOGanWYriSkjjUShsFCMUtxVuCgHTyeIS2EKCUjsUQj1DE9BxjMAAEdsDgA06GwAAjXEmFgOoJzfS1QBufIfykNQRXnNQKHXSJ5zkb0KDozQckrUCLHg1sJFPbsiBYTsCKIkJ31IgwFFkMwKGUQQQV-OjgNXb1RHiYQ7CKawRG45U6U2fgMATfB+ggYYMMxXQRItK5xMiWRYnUhdhGkUQNCeYxHGApdmOSKtBBMT0ZB0hYAAUcLwgi1QAWUwCA70ObVdTAfV+Cw3D8LqFYrMzWzbiMKUZPiWCnFEXkvOrSwnAsTcAOMfNjGC6owvSyKERiuLOwS2MjMw8KMqyl8OWImzeAEfypMUFIQWETc6pkcVfQeKteV3ZJnLERqxmaiKGlM2BR37JDsrE0asmsKVVxcmIf3sOQoOAkRTELERZCca692ETaJDWAAVIS6iIWMjQmdFjpI07+CcatjFEGTK1BGRpBLB6Em9aJxAdKshR-OQvt+-6zNgQTMEswazVE8GbicRwVLzcRvgR8VJJp31pEMXl0ZdAEvu2-qEUMxNICIfaDQHM8wZGm5BErJjNxdeQfxmpJ6KiSQ6ydb5II86QvoAQUva8Bni6KnyIfYOEIXFHzHfgLyvG8JenW5rFMQxC1YwoYhVwpBAkVTfW1lRVOSPWDZvY22tNu3DdvTrIGt58AnJ6ynelyw7VUaQs7+STQSUmQ8igoVzDd3lBFD+2jbjiB+Ci03e1FpCE8dj8ZCBCRklKhcCzkOwFGA8QCsSZyZNXVTQK+mpYwOFYiDoTEJiYOLDWjFvcsrIU7V3GarD3fzjGA7JTBzQoxDq2GF1cNwQA4WK4G4JUfFfCnJbG1zffiRJklSVz0ndM7lAPAsC8RcCMFTX0fpSJYEZ1R6UGM-FOH5DBqAeE6cw+YgR7l9IfVyFUciqFXIxUoECQw8T4iwBBOUIaaD5I5JQckHAfWAlnX2l1izLQSEKSe0YDLxkFhAShJ0bg-ilBoGGDp3hOjkGoQ+acgHOSeEkEshQ4IkJbMqXmrV2jtWNuDSclMvjCF9upIwwcrqbhVkCUwoI1IaVmuYT6ajjxbT6gRSAgiDFZGSKwoUpVLALlKh8f+FYpQiBYk8XOtg7oKDxt0P6ewCIeNfpEKGvwvbSJmkjJGghgIxDSZ6b4iREgAlELjJxCEXEtUyvzPhxl3FDRfqnRsUhtZ2EVl-FWtglDfisM5NQ9goJ2ArjHCO2inxJKdhxAq-lKySWsH0sUwS0F5HkErH8TgNDgPKOohY+tK6x3vDXOuY4Jmt3UtYoU9gs42kgqIYCBZukyFKVYRwhgNDl3KWQ8yJN6nJyoTcKCTEcgM1XBrQsP5xTSzVmuUCvJzBOniKo7ZziJC6ySrAWA-A2wDCYL89MjTW7yAKmXb+ahf6dKFFKWGJV2K93yFsiEpDdLTzYG0U569e5MQBCWCxNo7AmEPpyv2q5zCqGKk4K+zggA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMAFgCcAZgB0AdgCsADlGzJ-UQDYVogIySANCACefDcI2zx04XI0qhkoysEBfB7tQZYOAmHEBlJplwMbFC8AHJgAO68AMLsTGBsTEQQ7F6BAG6YANZerlh4hD5+AUGhEdGx8UwI6Zj4AIYs7OQUzZx0jI0cSNyGwvwq4rLCxtKCKmRy0qK6Bgi8GgvSZvwaE2SiNoL8-E4u6Hmehf6BwWGRMQmVSSniNdniue75Xr7HJWfllwnVbBn1nc0SBoqN12sxWF1QDw5hoxpIzLIyMJxpJ1tJJNYZoZpCtlqtpOtNttdiBHh4CgBBbB+GBsMC4BonXgAWTATDq1zpt1+WRy+yehypNPi9MZJVZ7J+f0ZTUorVB9HB7E40PmOKWSK0-EkMi2iJUWJhZAW4jI4ysKmRsiEshUJLJz3EQswtNFLHFbI59TYhAANrwALae3h1aku+Ly2iKzoqwy2jQI1GiTTjQTSaQG-R8OTCcQLQRGbaw9WSe388leACqbBo2AARr6GLAABaQIi4MAAR2wcCYvFrDabzcjIDBMe6qo0OPho0kFhtYg0ycNvGTZgJomRadEkmTZEczlJ5cd1YHjZbbY73d7geDroZAMobWjENjMLTCYmsOESeksLIsgrtsAyiABZBCGoii2MSh4Oocp71uerYQEQkDMLe7IjmOr4ToYxqCIM4GCOBu4qLYWwriY8ILFoYyyAS6a7jssHHvBNaIUObZMAyLZYS+yq4XMwjyGYWgqFYGb8Fu-CUZugxDKMoHmOJ0hlm4FbiAAChxLZMsymAQG6EKcqkPL3HBBTaYOunigZRnsFKtQymwgJPgqHQ4VCcZmqJxpkGQGI-oIGKGvwiLiIIoFhcRGLif5dosepjpWUhel2Q+xnJFydx8klhwpUOaWGRlDk1P8EKAsCz4eQJXkwtaBFbCYsJGEuSg6FmCB7uIO7GPRsLWMFB57HlBQAJJsLwAAqPHNiZ3IZOZrHjZNM11C2jnlbKLRuVGNWQj074SEiBKrPIYgTIBnVLgR8hpvRwwDSoshqQcK3TbN7a9v4YB8ftb68Gm8JWpu4EmNstgdbM8xTuIEMyBo-SCGmFgJSNb1eAVF4oR2ABWYD4H2Z5Dn9SoHaq-AZhIc4-vI+5zqIUyhZIpgXRs+4qFM-nDUeo2YzpyFENg7HWcOu2jvx5N8NsGw9bYoEAVYQwaKF-BkOIloEraIhpisfSvQKlkC7wGD44TbbC8TvHi9htWHQI8gDGozvWOYsWGi14io8mUyqLTyMGxprzFMEEocllpmLblGNHCHLKeptzmuSCe1kwDqxaIMLOtbIU7I+YK44qYKbpkuRgbJageOsHemevNOUPMtLxFLXkplUncpVe5aeCfMxqmJMREAcFfQyZ1gM4oMwhA0u4m5xiVeHGHvDeNgUAwLAnS8BSaR1Awvp1A2xBoX2QaYTbksA2oEiKP5yJiCpO4rrTZi7rnljGpMi8FFErb4JkTIJqfDiAkIgNBcCYDSAwQyvB8AVASKTccdV5hDAGLnCun8dyc0EJRJQ6t+5vyXOYYwpZEox1-gTABJQgEXBAYkcBkDoFgFgfApgQIU4S3+r3NWwxBhLn6JgjEoxKLnVEooBQRDHqkMPGwOy8BugWTANVHuyCwqyAIi7NQlMfxqCAvFU0FhbSU22Bmae38vAhEwNvfAhBYDyNTkg+2etTDiVUORYhJhcFbB6tqEYCg5C63MbHJkHxaGVGUY4yc8hTBbCmEML8YUn7jzLvCFmGxkZMVAhoIJzp7xilDp6CJnl7YmB3HDSQxFNQTGEABK60Mfy5mTKoLWiTLRo15jHBCotIBFLtpORmAw0z7nisFJGdTDC2B6mIYYUxkQVPWKQ9Ght+aiyKvZA6tspYwlEN4xJoFrQ1MUJmWY-QEwzJMTqIiyJVJkOWeIIBa0Wy9K2fMYSWdCSIwCvMzxySwpe38tUw5WgfZBKxshZ5AMVhqCkEMMK9gRAVLHiclmXtQLszGFzfcoLjamwJnECAELuGIlZhsBG-khjCVCv5KQcVNCaFzpFIQQSAAivYIF6B6d3SJhgdlmD6Oo5E7M5ws1CgoU0jNtgBTIs9dY7TFHBI9OyQlyDrCfgxLEzW6JlArkZgmXc4FVCqDNMmOVTdxDL1XuvXsEJt6733ofX0SiuXFNVNPDU6C5DQQzDg8eL90QSI-lOeiQSKH-0AZNMJCRlUlMRPCQQ8TEY7OtAykRc4NYWDohkzcjMnBOCAA */
     id: 'EdResource',
 
     predictableActionArguments: true,
-    preserveActionOrder: true,
-    version: '1',
+    initial: 'Checking-In-Content',
+    context: DEFAULT_CONTEXT,
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-imports
     tsTypes: {} as import('./lifecycle.xsm.typegen').Typegen0,
 
     schema: {
-      context: {} as T.Context,
       events: {} as T.Event,
       services: {} as {
-        CreateNewResource: {
-          data: { resourceKey: string; content: ResourceContent }
-        }
+        StoreNewResource: { data: T.Actor_StoreNewResource_Data }
+        StoreMetaEdits: { data: T.Actor_StoreMetaEdits_Data }
+        MetaGenerator: { data: T.Actor_GenerateMeta_Data }
+        ModeratePublishingResource: { data: T.Actor_ModeratePublishingResource_Data }
+        ScheduleDestroy: { data: T.Actor_ScheduleDestroy_Data }
       },
-    },
-
-    on: {
-      '*': [
-        {
-          cond: 'on creating issuer is not authenticated',
-          target: 'Access-Denied',
-          actions: assign(c => {
-            return produce(c, proxy => {
-              proxy.readAccessDeniedReason = 'unauthorized'
-            })
-          }),
-        },
-        {
-          cond: 'resource is not published and issuer is neither creator, admin or system',
-          target: 'Access-Denied',
-          actions: assign(c => {
-            return produce(c, proxy => {
-              proxy.readAccessDeniedReason = 'unauthorized'
-            })
-          }),
-        },
-      ],
     },
 
     states: {
-      'Checking-In-Content': {
-        exit: 'notify_creator',
-        on: {
-          'accept-content': {
-            target: 'Autogenerating-Meta',
-            cond: 'issuer is system',
-          },
-
-          'reject-content': {
-            target: 'Content-Rejected',
-            cond: 'issuer is system',
-          },
-        },
-
-        invoke: {
-          src: 'CreateNewResource',
-          onDone: [
-            {
-              actions: ['assign-identifiers-and-content'],
-              internal: false,
-            },
-          ],
-          onError: [
-            {
-              actions: ['assign-rejected-content-reason'],
-              target: 'Content-Rejected',
-              internal: false,
-            },
-          ],
-        },
+      'No-Access': {
+        type: 'final',
       },
 
-      'Draft': {
-        on: {
-          'edit-draft-meta': {
-            target: 'Draft',
-            cond: { type: 'issuer is creator and draft-form is formally valid' },
-            internal: false,
-            actions: ['assign-draft'],
+      'Storing-New-Content': {
+        invoke: [
+          {
+            src: 'StoreNewResource',
+
+            onDone: [
+              {
+                target: 'Autogenerating-Meta',
+                actions: ['assign_identifiers'],
+                cond: 'store new resource success',
+              },
+              {
+                target: 'Checking-In-Content',
+                actions: 'assign_provided_content_rejection_reason',
+              },
+            ],
           },
-
-          'autogenerate-meta': {
-            target: 'Autogenerating-Meta',
-            cond: 'issuer is creator',
-          },
-
-          'request-publish': {
-            target: 'Publishing-Moderation',
-            cond: 'issuer is creator+publisher and draft-form is formally valid for publishing',
-          },
-
-          'trash': {
-            target: 'In-Trash',
-            cond: 'issuer is creator or admin',
-          },
-        },
-      },
-
-      'Content-Rejected': {
-        on: {
-          destroy: {
-            target: 'Destroyed',
-            cond: 'issuer is creator or admin or system',
-          },
-        },
-
-        entry: 'schedule_destroy',
-      },
-
-      'Publishing-Moderation': {
-        on: {
-          'accept-publishing': {
-            target: 'Published',
-            cond: 'issuer is admin or system',
-          },
-          'reject-publishing': {
-            target: 'Publishing-Rejected',
-            cond: 'issuer is admin or system',
-          },
-        },
-
-        exit: 'notify_creator',
-      },
-
-      'Published': {
-        on: {
-          'set-draft': {
-            target: 'Draft',
-            cond: 'issuer is creator or admin',
-          },
-        },
-      },
-
-      'In-Trash': {
-        entry: ['notify_creator', 'schedule_destroy'],
-
-        exit: 'cancel_destroy_schedule',
-
-        on: {
-          recover: {
-            target: 'Draft',
-            cond: 'issuer is creator',
-          },
-
-          destroy: {
-            target: 'Destroyed',
-            cond: 'issuer is creator or system',
-          },
-        },
-      },
-
-      'Publishing-Rejected': {
-        on: {
-          'set-draft': {
-            target: 'Draft',
-            cond: 'issuer is creator',
-          },
-        },
+        ],
       },
 
       'Autogenerating-Meta': {
         on: {
           'cancel-meta-autogen': {
-            target: 'Draft',
+            target: 'Unpublished',
             cond: 'issuer is creator',
-            actions: 'cancel_meta_autogen_process',
           },
-          'autogenerated-meta': {
-            target: 'Autogenerated-Meta',
-            cond: 'issuer is system',
+        },
+
+        invoke: {
+          src: 'MetaGenerator',
+          onDone: {
+            target: 'Meta-Suggestion-Available',
+            actions: 'assign_suggested_meta',
           },
         },
       },
 
-      'Autogenerated-Meta': {
+      'Unpublished': {
         on: {
-          'edit-draft-meta': {
-            cond: 'issuer is creator and draft-form is formally valid',
-            target: 'Draft',
-            actions: ['assign-draft'],
+          'request-publish': {
+            target: 'Publishing-Moderation',
+            cond: 'issuer is creator and issuer has publishing permission and meta is formally vallid for publishing',
+            description: `Must contain *all* meta data fiedls (image is optional)`,
+          },
+
+          'request-meta-generation': {
+            target: 'Autogenerating-Meta',
+            cond: 'issuer is creator',
+          },
+
+          'edit-meta': {
+            target: 'Storing-Meta',
+            cond: 'issuer is creator',
+            internal: true,
+          },
+
+          'trash': {
+            target: 'In-Trash',
+            cond: 'issuer is creator',
           },
         },
 
-        entry: 'notify_creator',
+        description: `<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>`,
+      },
+
+      'Publishing-Moderation': {
+        exit: 'notify_creator',
+
+        invoke: {
+          src: 'ModeratePublishingResource',
+          onDone: [
+            {
+              target: 'Published',
+              cond: 'moderation passed',
+            },
+            {
+              target: 'Publish-Rejected',
+              actions: 'assign_last_publishing_moderation_rejection_reason',
+            },
+          ],
+        },
+      },
+
+      'In-Trash': {
+        invoke: {
+          src: 'ScheduleDestroy',
+          onDone: 'Destroyed',
+        },
+
+        on: {
+          restore: {
+            target: 'Unpublished',
+            cond: 'issuer is creator',
+          },
+        },
+      },
+
+      'Published': {
+        on: {
+          'reject-publish': {
+            target: 'Publish-Rejected',
+            cond: 'issuer has moderation permission',
+          },
+
+          'unpublish': {
+            target: 'Unpublished',
+            cond: 'issuer is creator',
+          },
+        },
+      },
+
+      'Publish-Rejected': {
+        on: {
+          unpublish: {
+            target: 'Unpublished',
+            cond: 'issuer is creator',
+          },
+        },
       },
 
       'Destroyed': {
-        type: 'final',
         entry: 'destroy_all_data',
-      },
-
-      'Access-Denied': {
         type: 'final',
       },
 
-      'Creating': {
+      'Storing-Meta': {
+        invoke: {
+          src: 'StoreMetaEdits',
+
+          onDone: [
+            {
+              target: 'Unpublished',
+              cond: 'store meta edits success',
+              actions: 'assign_updated_meta_and_image_ref',
+            },
+            {
+              target: 'Unpublished',
+              actions: ['assign_edit_meta_errors'],
+            },
+          ],
+        },
+
+        description: `Whatever, even empty. Just check upper bound sizes`,
+        entry: 'validate_edit_meta_and_assign_errors',
+      },
+
+      'Meta-Suggestion-Available': {
         on: {
-          'provide-content': {
-            target: 'Checking-In-Content',
-            cond: 'provided content is formally valid',
+          'edit-meta': {
+            target: 'Storing-Meta',
+            cond: 'issuer is creator',
           },
+        },
+      },
+
+      'Checking-In-Content': {
+        on: {
+          'provide-content': [
+            {
+              target: 'Storing-New-Content',
+              cond: 'issuer has creation permission',
+            },
+            {
+              target: 'No-Access',
+              actions: 'assign_unauthorized',
+            },
+          ],
         },
       },
     },
 
-    initial: 'Creating',
+    always: {
+      target: '.No-Access',
+      actions: 'assign_unauthorized',
+      description: `resource is not published and issuer is not creator or admin or system`,
+      cond: 'issuer has no read permission',
+      internal: false,
+    },
   },
   {
     guards: {
-      'issuer is creator and draft-form is formally valid'({ issuer, draft, validationConfigs }) {
-        return (
-          issuer.feats.creator && draftFormalValidation({ draft, validationConfigs }).draftValid
-        )
-      },
-      'issuer is creator+publisher and draft-form is formally valid for publishing'({
+      'issuer is creator and issuer has publishing permission and meta is formally vallid for publishing'({
         issuer,
-        draft,
-        validationConfigs,
+        publishMetaValidationErrors,
       }) {
         return (
+          issuer.type === 'user' &&
           issuer.feats.creator &&
           issuer.feats.publisher &&
-          !!draftFormalValidation({ draft, validationConfigs }).publishable
+          !publishMetaValidationErrors
         )
       },
-      'issuer is admin or system'({ issuer }) {
-        return issuer.feats.admin || issuer.type === 'system'
+      'issuer has creation permission'({ issuer }) {
+        return issuer.type === 'user'
+      },
+      'issuer has moderation permission'({ issuer }) {
+        return issuer.type === 'user' && issuer.feats.admin
       },
       'issuer is creator'({ issuer }) {
-        return issuer.feats.creator
+        return issuer.type === 'user' && issuer.feats.creator
       },
-      'issuer is creator or admin'({ issuer }) {
-        return issuer.feats.creator || issuer.feats.admin
-      },
-      'provided content is formally valid'({ validationConfigs }, { providedContent: content }) {
-        return (
-          content.kind === 'link' ||
-          content.info.size <= validationConfigs.contentMaxUploadBytesSize
+      'issuer has no read permission'({ issuer }, _, { state }) {
+        return !(
+          matchStateName<Typegen0>(state, 'Published') ||
+          (issuer.type === 'user' && (issuer.feats.creator || issuer.feats.admin))
         )
       },
-      'issuer is system'({ issuer }) {
-        return issuer.type === 'system'
+      'moderation passed'(_, { data }) {
+        return data.passed
       },
-      'issuer is creator or admin or system'({ issuer }) {
-        return issuer.feats.creator || issuer.feats.admin || issuer.type === 'system'
+      'store meta edits success'(_, { data }) {
+        return data.success
       },
-      'issuer is creator or system'({ issuer }) {
-        return issuer.feats.creator || issuer.type === 'system'
+      'store new resource success'({}, { data }) {
+        return data.success
       },
-      'resource is not published and issuer is neither creator, admin or system'(
-        { issuer },
-        _,
-        { state },
-      ) {
-        return (
-          !matchStateName<Typegen0>(state, 'Published') &&
-          !(issuer.feats.creator || issuer.feats.admin || issuer.type === 'system')
-        )
-      },
-      'on creating issuer is not authenticated'({ issuer }, _, { state }) {
-        return matchStateName<Typegen0>(state, 'Creating') && issuer.type === 'anonymous'
-      },
+      // 'provided meta edits not formally valid'({ metaEditsValidationErrors }) {
+      //   return !!metaEditsValidationErrors
+      // },
     },
     actions: {
-      'assign-draft': assign((c, e) => {
-        return produce(c, proxy => {
-          const { image: providedImage, ...draftMeta } = e.updateWith
-          const image: DraftDocument['image'] =
-            !providedImage || providedImage.type === 'no-change'
-              ? proxy.draft.image
-              : providedImage.type === 'remove'
-              ? null
-              : providedImage.type === 'update'
-              ? providedImage.provide
-              : proxy.draft.image
-          proxy.draft = { ...proxy.draft, ...draftMeta, image }
+      assign_edit_meta_errors: assign((context, { data }) => {
+        return produce(context, proxy => {
+          proxy.metaEditsValidationErrors = data.success ? undefined : data.validationErrors
         })
       }),
-      'assign-identifiers-and-content': assign((c, { data }) => {
-        return produce(c, proxy => {
-          proxy.identifiers = { resourceKey: data.resourceKey }
-          proxy.draft.content = data.content
+      assign_identifiers: assign((context, { data }) => {
+        return produce(context, proxy => {
+          if (!data.success) return
+          proxy.meta.references = data.refs
         })
       }),
-      'assign-rejected-content-reason': assign((c, { data }) => {
-        return produce(c, proxy => {
-          const err = String(data)
-          proxy.contentRejectedReason = `couldn't create resource for unexpected error: ${err}`
+      assign_last_publishing_moderation_rejection_reason: assign((context, { data }) => {
+        return produce(context, proxy => {
+          proxy.lastPublishingModerationRejectionReason = data.passed ? '' : data.reason
+        })
+      }),
+      assign_suggested_meta: assign((context, { data }) => {
+        return produce(context, proxy => {
+          proxy.generatedMeta = data.generetedMetaEdits
+        })
+      }),
+      assign_unauthorized: assign(context => {
+        return produce(context, proxy => {
+          proxy.noAccessReason = 'unauthorized'
+        })
+      }),
+      assign_updated_meta_and_image_ref: assign((context, { data }) => {
+        return produce(context, proxy => {
+          if (!data.success) return
+          proxy.meta = { ...proxy.meta, ...data.meta }
+          proxy.meta.references.image = data.image
+        })
+      }),
+      assign_provided_content_rejection_reason: assign((context, { data }) => {
+        return produce(context, proxy => {
+          proxy.contentRejectedReason = data.success ? undefined : data.reason
         })
       }),
     },
   },
 )
-
-export function draftFormalValidation({
-  draft,
-  validationConfigs: { descriptionLength, titleLength, learningOutcomes },
-}: Pick<T.Context, 'draft' | 'validationConfigs'>): {
-  draftValid: boolean
-  publishable: PublishableDocument | undefined
-} {
-  // FIXME: model context|services|? for using a validation lib here
-  const codes: (keyof DraftDocument)[] = [
-    'language',
-    'level',
-    'license',
-    'subject',
-    'type',
-    'year',
-    'month',
-  ]
-  const draftValid =
-    draft.title.length <= titleLength.max &&
-    draft.description.length <= descriptionLength.max &&
-    draft.learningOutcomes.length <= learningOutcomes.amount.max &&
-    draft.learningOutcomes.every(
-      ({ sentence }) => sentence.length <= learningOutcomes.sentenceLength.max,
-    ) &&
-    codes.every(code => code.length <= 10)
-
-  const isPublishable =
-    draftValid &&
-    draft.title.length >= titleLength.min &&
-    draft.description.length >= descriptionLength.min &&
-    draft.learningOutcomes.length >= learningOutcomes.amount.min &&
-    draft.learningOutcomes.every(
-      ({ sentence }) => sentence.length >= learningOutcomes.sentenceLength.min,
-    ) &&
-    !!draft.language &&
-    !!draft.level &&
-    !!draft.license &&
-    !!draft.subject &&
-    !!draft.type &&
-    !!draft.year &&
-    !!draft.month &&
-    codes.every(code => !!code)
-
-  return {
-    draftValid,
-    publishable: isPublishable ? (draft as any as PublishableDocument) : undefined,
-  }
-}

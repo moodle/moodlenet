@@ -8,7 +8,7 @@ export type EventOf<
       ? { type: type } & EvMap[type]
       : never
     : never
-  : never
+  : `UNKNOWN EVENT [${Exclude<keyof EvMap, EffEventNames<T>> & string}]`
 
 type EffPrp =
   | 'eventsCausingActions'
