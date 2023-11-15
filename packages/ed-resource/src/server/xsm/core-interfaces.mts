@@ -1,30 +1,32 @@
 import type { RpcFile } from '@moodlenet/core'
 //import '@moodlenet/core-domain/resource/lifecycle'
-import type {
-  FileContent,
-  ImageUploaded,
-  ImageUrl,
-  LinkContent,
-} from '@moodlenet/ed-resource/server'
+import type * as EdTypes from '@moodlenet/ed-meta/common'
+import type * as ResTypes from '@moodlenet/ed-resource/server'
 
-declare module '@moodlenet/core-domain/resource/lifecycle' {
-  export interface ResourceFileContent {
-    ref: FileContent
+declare module '@moodlenet/core-domain/resource' {
+  export interface FileContent {
+    ref: ResTypes.FileContent
   }
-  export interface ResourceLinkContent {
-    ref: LinkContent
+  export interface LinkContent {
+    ref: ResTypes.LinkContent
   }
   export interface FileImage {
-    ref: ImageUploaded
+    ref: ResTypes.ImageUploaded
   }
   export interface UrlImage {
-    ref: ImageUrl
+    ref: ResTypes.ImageUrl
   }
-  export interface ProvidedResourceFileContent {
+  export interface ProvidedCreationFileContent {
     rpcFile: RpcFile
   }
   export interface ProvidedFileImage {
     rpcFile: RpcFile
+  }
+  export interface ID {
+    resourceKey: string
+  }
+  export interface LearningOutcome {
+    value: EdTypes.LearningOutcome
   }
 }
 

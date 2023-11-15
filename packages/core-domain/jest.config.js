@@ -1,7 +1,9 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  preset: 'ts-jest',
+  //preset: 'ts-jest',
   testEnvironment: 'node',
-  //rootDir: 'src', moduleDirectories: ['src']
+  rootDir: 'dist',
+  // rootDir: 'src', 
+  //moduleDirectories: ['src']
 
 };

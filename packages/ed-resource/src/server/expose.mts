@@ -6,21 +6,33 @@ import {
   setRpcStatusCode,
 } from '@moodlenet/core'
 import { getWebappUrl } from '@moodlenet/react-app/server'
-import { getCurrentSystemUser, setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import {
+  creatorUserInfoAqlProvider,
+  getCurrentSystemUser,
+  isCurrentUserCreatorOfCurrentEntity,
+} from '@moodlenet/system-entities/server'
 import { waitFor } from 'xstate/lib/waitFor.js'
 import { shell } from './shell.mjs'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
-import type { EditDraftForm } from '@moodlenet/core-domain/resource/lifecycle'
-import { matchState, nameMatcher } from '@moodlenet/core-domain/resource/lifecycle'
+import type {
+  Event,
+  Event_EditMeta_Data,
+  Event_ProvideContent_Data,
+  StateName,
+} from '@moodlenet/core-domain/resource'
+import { matchState, nameMatcher } from '@moodlenet/core-domain/resource'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
 import { boolean, object } from 'yup'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { EditResourceRespRpc, ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
+import { canPublish } from './aql.mjs'
+import { fromXsm } from './exports.mjs'
 import { resourceFiles } from './init/fs.mjs'
 import { getImageAssetInfo } from './lib.mjs'
 import {
+  getResource,
   getResourceFileUrl,
   getResourceLogicalFilename,
   getResourcesCountInSubject,
@@ -49,29 +61,48 @@ export const expose = await shell.expose<FullResourceExposeType>({
           publish: boolean().required(),
         }).isValid(_),
       fn: async ({ publish }, { _key }) => {
-        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
-        let snap = interpreter.getSnapshot()
-        if (!(publish ? snap.can('request-publish') : snap.can('set-draft'))) {
+        const resourceRecord = await getResource(_key)
+        if (!resourceRecord) {
           return { done: false }
         }
-        interpreter.send(publish ? 'request-publish' : 'set-draft')
+        const { interpreter } = await xsm.interpreterAndMachine({
+          type: 'data',
+          data: resourceRecord,
+        })
+        let snap = interpreter.getSnapshot()
+        if (!snap.can(publish ? 'request-publish' : 'unpublish')) {
+          interpreter.stop()
+          return { done: false }
+        }
+        interpreter.send(publish ? 'request-publish' : 'unpublish')
 
         snap = interpreter.getSnapshot()
-        shell.initiateCall(async () => {
-          await setPkgCurrentUser()
-          interpreter.send('accept-publishing')
-        })
 
+        await waitFor(interpreter, nameMatcher(publish ? 'Published' : 'Unpublished'))
+
+        interpreter.stop()
         return { done: true }
       },
     },
     'webapp/:action(cancel|start)/meta-autofill/:_key': {
       guard: () => void 0,
       fn: async (_, { _key, action }) => {
-        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
-        const ev = action === 'cancel' ? `cancel-meta-autogen` : `autogenerate-meta`
+        const resourceRecord = await getResource(_key, {
+          project: {
+            isCreator: isCurrentUserCreatorOfCurrentEntity(),
+          },
+        })
+        if (!resourceRecord) {
+          return { done: false }
+        }
+        const { interpreter } = await xsm.interpreterAndMachine({
+          type: 'data',
+          data: resourceRecord,
+        })
+        const ev = action === 'cancel' ? `cancel-meta-generation` : `request-meta-generation`
         const done = interpreter.getSnapshot().can(ev)
         interpreter.send(ev)
+        interpreter.stop()
         return { done }
       },
     },
@@ -79,21 +110,34 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/get/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const { interpreter, resourceRecord } = await xsm.reviveInterpreterAndMachine(_key)
-
-        const snap = interpreter.getSnapshot()
-        if (matchState(snap, 'Access-Denied') || !resourceRecord) {
+        const resourceRecord = await getResource(_key, {
+          projectAccess: ['u', 'd'],
+          project: {
+            canPublish: canPublish(),
+            isCreator: isCurrentUserCreatorOfCurrentEntity(),
+            contributor: creatorUserInfoAqlProvider(),
+          },
+        })
+        if (!resourceRecord) {
           return null
         }
-        const image = getImageAssetInfo(snap.context.draft.image?.ref)
+        const { interpreter } = await xsm.interpreterAndMachine({
+          type: 'data',
+          data: resourceRecord,
+        })
+        const snap = interpreter.getSnapshot()
+        if (matchState(snap, 'No-Access') || !resourceRecord) {
+          return null
+        }
+        const image = getImageAssetInfo(snap.context.meta.references.image?.ref)
 
         const contentUrl =
-          snap.context.draft.content.kind === 'file'
+          snap.context.meta.references.content.kind === 'file'
             ? await getResourceFileUrl({
                 _key,
-                rpcFile: snap.context.draft.content.ref.fsItem.rpcFile,
+                rpcFile: snap.context.meta.references.content.ref.fsItem.rpcFile,
               })
-            : snap.context.draft.content.ref.url
+            : snap.context.meta.references.content.ref.url
 
         const resourceRpc: ResourceRpc = {
           contributor: {
@@ -118,7 +162,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
             learningOutcomes: resourceRecord.entity.learningOutcomes,
           },
           data: {
-            contentType: resourceRecord.entity.content?.kind ?? null,
+            contentType: resourceRecord.entity.content.kind,
             contentUrl,
             downloadFilename:
               resourceRecord.entity.content?.kind === 'file'
@@ -161,68 +205,58 @@ export const expose = await shell.expose<FullResourceExposeType>({
         })
       },
       fn: async ({ values }, { _key }) => {
-        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
+        // const resourceRecord = await getResource(_key)
+        // const { interpreter } = await xsm.interpreterAndMachine(resourceRecord)
+        const { interpreter } = await xsm.interpreterAndMachine({ type: 'key', key: _key })
         const snap = interpreter.getSnapshot()
-        const updateWith: Partial<EditDraftForm> = {
-          description: values.description,
-          language: values.language,
-          learningOutcomes: (values.learningOutcomes ?? []).filter(({ sentence }) => !!sentence),
-          level: values.level,
-          license: values.license,
-          month: values.month,
-          year: values.year,
-          title: values.title,
-          subject: values.subject,
-          type: values.type,
-          image:
-            !values.image || values.image.type === 'no-change'
-              ? { type: 'no-change' }
-              : values.image.type === 'remove'
-              ? { type: 'remove' }
-              : values.image.type === 'file'
-              ? {
-                  type: 'update',
-                  provide: {
+
+        const metaEdits: Event_EditMeta_Data = {
+          metaEdits: {
+            title: values.title,
+            description: values.description,
+            language: values.language ? { code: values.language } : undefined,
+            learningOutcomes: (values.learningOutcomes ?? [])
+              .filter(({ sentence }) => !!sentence)
+              .map(value => ({ value })),
+            level: values.level ? { code: values.level } : undefined,
+            license: values.license ? { code: values.license } : undefined,
+            subject: values.subject ? { code: values.subject } : undefined,
+            type: values.type ? { code: values.type } : undefined,
+            originalPublicationInfo: Number(values.year)
+              ? { month: Number(values.month || 1), year: Number(values.year) }
+              : undefined,
+
+            image:
+              !values.image || values.image.type === 'no-change'
+                ? 'no-change'
+                : values.image.type === 'remove'
+                ? 'remove'
+                : values.image.type === 'file'
+                ? {
                     kind: 'file',
                     rpcFile: values.image.file[0],
-                    info: values.image.file[0],
-                  },
-                }
-              : { type: 'no-change' },
+                  }
+                : 'no-change',
+          },
         }
 
-        if (!snap.can({ type: 'edit-draft-meta', updateWith })) {
+        const event: Event = { type: 'edit-meta', ...metaEdits }
+        if (!snap.can(event)) {
           return null
         }
-        interpreter.send({ type: 'edit-draft-meta', updateWith })
+        interpreter.send(event)
 
-        /* 
-wont work .. 
-        await waitFor(interpreter, state => {
-          console.log(`--`, state.value, state.event, state.context.draft)
-          return state.event.type !== 'edit-draft-meta' && nameMatcher('Draft')(state)
-        })
- */
-        /* 
- this neither
-        const editedInterpreter = await xsm.reviveInterpreterAndMachine(_key)
- */
-        const {
-          context: { draft },
-        } = /* editedI */ interpreter.getSnapshot()
+        await waitFor(interpreter, nameMatcher('Unpublished'))
+        const state = interpreter.getSnapshot()
 
+        const { image, lifecycleState, ...resourceData } = fromXsm.resourceData(
+          state.context.meta,
+          String(state.value) as StateName,
+        )
+        lifecycleState
         const editResourceRespRpc: EditResourceRespRpc = {
-          description: draft.description,
-          language: draft.language ?? '',
-          image: getImageAssetInfo(draft.image?.ref),
-          learningOutcomes: draft.learningOutcomes ?? '',
-          level: draft.level ?? '',
-          license: draft.license ?? '',
-          month: draft.month ?? '',
-          subject: draft.subject ?? '',
-          title: draft.title ?? '',
-          type: draft.type ?? '',
-          year: draft.year ?? '',
+          ...resourceData,
+          image: getImageAssetInfo(image),
         }
         return editResourceRespRpc
       },
@@ -247,41 +281,47 @@ wont work ..
         if (!resourceContent) {
           throw RpcStatus('Bad Request')
         }
-        const createResponse = await xsm.createNewResource(
-          'string' === typeof resourceContent
-            ? { kind: 'link', url: resourceContent }
-            : { kind: 'file', info: resourceContent, rpcFile: resourceContent },
-        )
-        if (createResponse === 'invalid content') {
-          throw RpcStatus('Bad Request')
+        const { interpreter } = await xsm.interpreterAndMachine({ type: 'create' })
+        let snap = interpreter.getSnapshot()
+        const contentEventData: Event_ProvideContent_Data = {
+          initialMeta: {
+            title: name,
+            description,
+          },
+          content:
+            'string' === typeof resourceContent
+              ? { kind: 'link', url: resourceContent }
+              : { kind: 'file', rpcFile: resourceContent },
         }
-        if (createResponse === 'unauthorized') {
-          throw RpcStatus('Internal Server Error')
+        const provideContentEvent: Event = { type: 'provide-content', ...contentEventData }
+        if (!snap.can(provideContentEvent)) {
+          interpreter.stop()
+          throw RpcStatus('Unauthorized')
         }
-        if (!createResponse.success) {
-          throw new Error(createResponse.reason)
-        }
+        interpreter.send(provideContentEvent)
 
-        shell.initiateCall(async () => {
-          await setPkgCurrentUser()
-          createResponse.interpreter.send('accept-content')
-        })
+        await waitFor(interpreter, nameMatcher(['Checking-In-Content', 'Autogenerating-Meta']))
+        snap = interpreter.getSnapshot()
 
-        const snap = createResponse.interpreter.getSnapshot()
+        if (matchState(snap, 'Checking-In-Content')) {
+          throw RpcStatus('Bad Request', snap.context.contentRejectedReason)
+        }
+        const newMeta = snap.context.meta
+        const newResourceKey = newMeta.references.id.resourceKey
         const contentUrl =
-          snap.context.draft.content.kind === 'file'
+          newMeta.references.content.kind === 'file'
             ? await getResourceFileUrl({
-                _key: snap.context.identifiers.resourceKey,
-                rpcFile: snap.context.draft.content.ref.fsItem.rpcFile,
+                _key: newResourceKey,
+                rpcFile: newMeta.references.content.ref.fsItem.rpcFile,
               })
-            : snap.context.draft.content.ref.url
+            : newMeta.references.content.url
 
         setRpcStatusCode('Created')
         return {
-          _key: createResponse.resourceKey,
+          _key: newResourceKey,
           description,
           homepage: getWebappUrl(
-            getResourceHomePageRoutePath({ _key: createResponse.resourceKey, title: name }),
+            getResourceHomePageRoutePath({ _key: newResourceKey, title: name }),
           ),
           name,
           url: contentUrl,
@@ -298,11 +338,8 @@ wont work ..
     'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const { interpreter } = await xsm.reviveInterpreterAndMachine(_key)
+        const { interpreter } = await xsm.interpreterAndMachine({ type: 'key', key: _key })
         interpreter.send('trash')
-        waitFor(interpreter, nameMatcher('In-Trash')).finally(() => {
-          interpreter.send('destroy')
-        })
         return
       },
     },
@@ -353,31 +390,33 @@ wont work ..
         if (!resourceContent) {
           throw RpcStatus('Bad Request')
         }
-        const createResponse = await xsm.createNewResource(
-          'string' === typeof resourceContent
-            ? { kind: 'link', url: resourceContent }
-            : { kind: 'file', info: resourceContent, rpcFile: resourceContent },
-        )
-        if (createResponse === 'invalid content') {
-          throw RpcStatus('Bad Request')
+
+        const { interpreter } = await xsm.interpreterAndMachine({ type: 'create' })
+        let snap = interpreter.getSnapshot()
+        const contentEventData: Event_ProvideContent_Data = {
+          content:
+            'string' === typeof resourceContent
+              ? { kind: 'link', url: resourceContent }
+              : { kind: 'file', rpcFile: resourceContent },
         }
-        if (createResponse === 'unauthorized') {
+        const provideContentEvent: Event = { type: 'provide-content', ...contentEventData }
+        if (!snap.can(provideContentEvent)) {
+          interpreter.stop()
           throw RpcStatus('Unauthorized')
         }
-        if (!createResponse.success) {
-          throw RpcStatus('Internal Server Error', createResponse.reason)
+        interpreter.send(provideContentEvent)
+
+        await waitFor(interpreter, nameMatcher(['Checking-In-Content', 'Autogenerating-Meta']))
+        snap = interpreter.getSnapshot()
+
+        if (matchState(snap, 'Checking-In-Content')) {
+          // throw RpcStatus('Bad Request', snap.context.contentRejectedReason)
+          return null
         }
+        const newMeta = snap.context.meta
+        const newResourceKey = newMeta.references.id.resourceKey
 
-        shell.initiateCall(async () => {
-          await setPkgCurrentUser()
-          const { interpreter } = await xsm.reviveInterpreterAndMachine(createResponse.resourceKey)
-          interpreter.send('accept-content')
-          setTimeout(() => {
-            interpreter.send('autogenerated-meta')
-          }, 30000)
-        })
-
-        return { resourceKey: createResponse.resourceKey }
+        return { resourceKey: newResourceKey }
       },
       bodyWithFiles: {
         fields: {

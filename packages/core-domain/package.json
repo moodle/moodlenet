@@ -30,7 +30,7 @@
   "exports": {
     ".": "./dist/exports.js",
     "./common": "./dist/common/exports.js",
-    "./resource/lifecycle": "./dist/resource/lifecycle/exports.js"
+    "./resource": "./dist/resource/exports.js"
   },
   "scripts": {
     "test": "jest"

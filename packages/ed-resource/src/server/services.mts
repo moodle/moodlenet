@@ -120,7 +120,7 @@ export const EMPTY_RESOURCE: Omit<ResourceDataType, 'content'> = {
   year: '',
   type: '',
   learningOutcomes: [],
-  lifecycleState: 'Creating',
+  lifecycleState: 'Destroyed',
 }
 export async function createResource(
   resourceData: Partial<ResourceDataType & { _key: string }>,

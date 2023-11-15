@@ -74,7 +74,7 @@ export async function user_resources() {
             image:
               v2_resource.image?.ext === true
                 ? {
-                    kind: 'url',
+                    kind: 'link',
                     url: v2_resource.image.location,
                     credits: v2_resource.image.credits,
                   }

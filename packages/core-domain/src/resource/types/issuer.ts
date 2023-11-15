@@ -1,5 +1,7 @@
 export type Issuer = SystemIssuer | UnauthenticatedIssuer | UserIssuer
 
+export const UNAUTHENTICATED_ISSUER: UnauthenticatedIssuer = { type: 'unauthenticated' }
+export const SYSTEM_ISSUER: SystemIssuer = { type: 'system' }
 export interface UnauthenticatedIssuer extends BaseIssuer {
   type: 'unauthenticated'
 }

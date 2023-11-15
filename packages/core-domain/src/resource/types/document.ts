@@ -9,22 +9,22 @@ export interface FileContent {
 }
 export interface LinkContent {
   kind: 'link'
+  url: string
 }
 export type Content = FileContent | LinkContent
 
-export type Image = FileImage | LinkImage
+export type Image = FileImage | UrlImage
 
 export interface FileImage {
   kind: 'file'
 }
-export interface LinkImage {
+export interface UrlImage {
   kind: 'link'
-  credits?: ImageCredits
+  url: string
 }
-export interface ImageCredits {}
 
 export interface ResourceMeta {
-  references: Refs
+  references: Refs //TODO: move to context ?
   title: string
   description: string
   license?: License
@@ -41,11 +41,19 @@ export interface OriginalPublicationInfo {
   month: number
 }
 
-export interface License {}
-export interface Subject {}
-export interface Language {}
-export interface Level {}
-export interface Month {}
-export interface Year {}
-export interface Type {}
+export interface License {
+  code: string
+}
+export interface Subject {
+  code: string
+}
+export interface Language {
+  code: string
+}
+export interface Level {
+  code: string
+}
+export interface Type {
+  code: string
+}
 export interface LearningOutcome {}

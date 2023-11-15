@@ -1,14 +1,15 @@
 import { produce } from 'immer'
 import { assign, createMachine } from 'xstate'
-import { matchStateName } from '../../common/exports'
+import { matchStateName } from '../common/xsm-typegen-extract/util'
 import type { Typegen0 } from './lifecycle.xsm.typegen'
 import type { Refs } from './types/document'
 import type * as T from './types/lifecycle'
-const REFS_PLACEHOLDERS_FOR_CREATION: Refs = {
-  content: { kind: 'link' },
-  id: 'ID::RefsPlaceholdersForCreation',
-  image: null,
-}
+// const REFS_PLACEHOLDERS_FOR_CREATION: Refs = {
+//   content: { kind: 'link', url: 'CONTENT URL::RefsPlaceholdersForCreation' },
+//   id: 'ID::RefsPlaceholdersForCreation',
+//   image: null,
+// }
+const REFS_PLACEHOLDERS_FOR_CREATION = null as any as Refs
 export const DEFAULT_CONTEXT: T.Context = {
   issuer: { type: 'unauthenticated' },
   meta: {
@@ -21,7 +22,7 @@ export const DEFAULT_CONTEXT: T.Context = {
 
 export const EdResourceMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMAFgCcAZgB0AdgCsADlGzJ-UQDYVogIySANCACefDcI2zx04XI0qhkoysEBfB7tQZYOAmHEBlJplwMbFC8AHJgAO68AMLsTGBsTEQQ7F6BAG6YANZerlh4hD5+AUGhEdGx8UwI6Zj4AIYs7OQUzZx0jI0cSNyGwvwq4rLCxtKCKmRy0qK6Bgi8GgvSZvwaE2SiNoL8-E4u6Hmehf6BwWGRMQmVSSniNdniue75Xr7HJWfllwnVbBn1nc0SBoqN12sxWF1QDw5hoxpIzLIyMJxpJ1tJJNYZoZpCtlqtpOtNttdiBHh4CgBBbB+GBsMC4BonXgAWTATDq1zpt1+WRy+yehypNPi9MZJVZ7J+f0ZTUorVB9HB7E40PmOKWSK0-EkMi2iJUWJhZAW4jI4ysKmRsiEshUJLJz3EQswtNFLHFbI59TYhAANrwALae3h1aku+Ly2iKzoqwy2jQI1GiTTjQTSaQG-R8OTCcQLQRGbaw9WSe388leACqbBo2AARr6GLAABaQIi4MAAR2wcCYvFrDabzcjIDBMe6qo0OPho0kFhtYg0ycNvGTZgJomRadEkmTZEczlJ5cd1YHjZbbY73d7geDroZAMobWjENjMLTCYmsOESeksLIsgrtsAyiABZBCGoii2MSh4Oocp71uerYQEQkDMLe7IjmOr4ToYxqCIM4GCOBu4qLYWwriY8ILFoYyyAS6a7jssHHvBNaIUObZMAyLZYS+yq4XMwjyGYWgqFYGb8Fu-CUZugxDKMoHmOJ0hlm4FbiAAChxLZMsymAQG6EKcqkPL3HBBTaYOunigZRnsFKtQymwgJPgqHQ4VCcZmqJxpkGQGI-oIGKGvwiLiIIoFhcRGLif5dosepjpWUhel2Q+xnJFydx8klhwpUOaWGRlDk1P8EKAsCz4eQJXkwtaBFbCYsJGEuSg6FmCB7uIO7GPRsLWMFB57HlBQAJJsLwAAqPHNiZ3IZOZrHjZNM11C2jnlbKLRuVGNWQj074SEiBKrPIYgTIBnVLgR8hpvRwwDSoshqQcK3TbN7a9v4YB8ftb68Gm8JWpu4EmNstgdbM8xTuIEMyBo-SCGmFgJSNb1eAVF4oR2ABWYD4H2Z5Dn9SoHaq-AZhIc4-vI+5zqIUyhZIpgXRs+4qFM-nDUeo2YzpyFENg7HWcOu2jvx5N8NsGw9bYoEAVYQwaKF-BkOIloEraIhpisfSvQKlkC7wGD44TbbC8TvHi9htWHQI8gDGozvWOYsWGi14io8mUyqLTyMGxprzFMEEocllpmLblGNHCHLKeptzmuSCe1kwDqxaIMLOtbIU7I+YK44qYKbpkuRgbJageOsHemevNOUPMtLxFLXkplUncpVe5aeCfMxqmJMREAcFfQyZ1gM4oMwhA0u4m5xiVeHGHvDeNgUAwLAnS8BSaR1Awvp1A2xBoX2QaYTbksA2oEiKP5yJiCpO4rrTZi7rnljGpMi8FFErb4JkTIJqfDiAkIgNBcCYDSAwQyvB8AVASKTccdV5hDAGLnCun8dyc0EJRJQ6t+5vyXOYYwpZEox1-gTABJQgEXBAYkcBkDoFgFgfApgQIU4S3+r3NWwxBhLn6JgjEoxKLnVEooBQRDHqkMPGwOy8BugWTANVHuyCwqyAIi7NQlMfxqCAvFU0FhbSU22Bmae38vAhEwNvfAhBYDyNTkg+2etTDiVUORYhJhcFbB6tqEYCg5C63MbHJkHxaGVGUY4yc8hTBbCmEML8YUn7jzLvCFmGxkZMVAhoIJzp7xilDp6CJnl7YmB3HDSQxFNQTGEABK60Mfy5mTKoLWiTLRo15jHBCotIBFLtpORmAw0z7nisFJGdTDC2B6mIYYUxkQVPWKQ9Ght+aiyKvZA6tspYwlEN4xJoFrQ1MUJmWY-QEwzJMTqIiyJVJkOWeIIBa0Wy9K2fMYSWdCSIwCvMzxySwpe38tUw5WgfZBKxshZ5AMVhqCkEMMK9gRAVLHiclmXtQLszGFzfcoLjamwJnECAELuGIlZhsBG-khjCVCv5KQcVNCaFzpFIQQSAAivYIF6B6d3SJhgdlmD6Oo5E7M5ws1CgoU0jNtgBTIs9dY7TFHBI9OyQlyDrCfgxLEzW6JlArkZgmXc4FVCqDNMmOVTdxDL1XuvXsEJt6733ofX0SiuXFNVNPDU6C5DQQzDg8eL90QSI-lOeiQSKH-0AZNMJCRlUlMRPCQQ8TEY7OtAykRc4NYWDohkzcjMnBOCAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMAVgCMAFgB0AZkEBOAGwB2GfxmiF-ABwKANCACeffmUkTZgjcLn81w+aIC+93agywcBMOIDKTTLgZsULwAcmAA7rwAwuxMYGxMRBDsngEAbpgA1p4uWHiE3r7+gSHhUTFxTAhpmPgAhizs5BRNnHSMDRxI3Hy2-HLiGjIywoKicmTmgpK6Bgi8wguC4oL8whPG1gqi-PyOzui5HgV+AUGhEdHxFYnJ4tVZ4jlueZ4+J8XnZVfxVWzpdR0miRhFQum1mKxOqAeHMxDINOIJiMxhpRKIVooZj1NDJEYIJvwFBZJBpJKo9iAnu58gBBbC+GBsMC4eqnXgAWTATFqNyZdz+mWyB2eRzpDLizNZxU53N+-1ZjUoLTB9Ah7E4MPm436ZGG6gUClGmjIcixcxWEkklkEIitMkkfRkFKpL3EYswjMlLGlXJ5dTYhAANrwALa+3ielmAyitVUdDU9DRJ8Q4pQkkRGab6PgmBFjMhGfFE4RCZ3C6meACqbBo2AARoGGLAABaQIi4MAAR2wcCYvFrDabzeVtDjkITsJWCmWahkFsGVskWdmvCXy3xZLk6MkCiXZAcTkp5dd1YHjZbbY73d7ofDkYVbBHIHB8a6mrhuKRohkCmMIlEZAaGaAgrFIgEFmMchaAoJa7IeLpHKe9bnq2EBEJAzC3tyT4vuOb49GQYgDBBBa7ooYj8MBwhaOICzCFsUH4jau5wfsrgVuISGDheaFMCyLY4WO6r4XM8KSMs9FyNaVh2JR2awmSAyDKMkgTPIIxluxroAArIUObLspgEBepCvIpAKDwIfkuncc2BlGSZ7ByjUD5AjGKrtHh0KJiaEmEWQZAKHIP5qKa8nGuIoiqZoAFBVJAVyJphzWXpLb2cZUamUkfL3EKWlHDZKHpY5bDOQCkJAiCsaecJ3mwho1iRasFiiLYwg7oSZp7lISjUf+VhqAebHJZ4ACSbC8AAKvxzZmfy6SWceRzjVNM1la5SruaONVQt0sK-oic7+aS9oTEB8lamBBbKFaowaCsghJSK+QrdNtQtu2vZ+GAgk7ROvDotO8gnQW1E7DBOgXYsKaEoaJZbuic6JfBS0pbZl5gAAVmA+B9meQ6-Wqu2akIcjiUoP6kvuaZTGahIIqdDr7nIUwBUNR75WjKFttgNapcOW3PkJxOGPwDo9e1AUWFBwx00Y4jBfiGhbqoKy9E9HGFUOvAYNjuM83ztmE6+dUCKS-RyJbVtCD+ltmmIwjiEjS5TJIwVEmiGuum8RRBDKPLZeZC15SNxy+xyvrrdGzSC7htV7fMakDMWwwWKMYzAds-BSNatq2A6wVe0cPsGb6c25Y8qOvIUpeytU5WKs0VUeUT-1rOMyz3SRqJKDswEmP0gyA+1UkWEFRf5P7vBeNgUAwLAHS8DSqS1Awga1A2xAYX2YbYbHwtt5oSxaAF8j2lJUyQyuRKD0uA2ATdFgT54kStvgGRsitlyxPERA0LgmBUgMGMrwfA5R4jGy8gnWwvliR9EIpfFmogqJxURNRXcxJZB6kcIeNgDl4BdCsmAaqrcRJm1RArK2lsbZxWAqsHYh1ZAkitIaQCyNhrPU8METAS98CEFgAQ7apDTbWAWArEeMFEapyokgqQhJhhTHuqiFYz8w5sk+N-CoJCTbQMGGQcQQU5waEAqzTqUNRANUoTaH8yhdw7kkKo9095vR+19NoqB74LC4lTA6aWzNzornREsSwFM+i-iUFMVRXFuYQHcfHd80h+jon3AlNQfQLEoMdmSMkc5NxbGMAoVRWs0rSgcpleOccRYKW2CmUkqkGoyEAkFOmUknZzh2IIA0EF5CPRRpzMaE03otjiVU+Y8Jk4bBLIFfJ1EqKaCdgFNSjSx4uyKfzSAIz-qrEtgYwYmgEYhTkrMemTtVJMzGKzfcazbI6yxjjWIsSW46JJsYhmDo4ZSyGAExARh9FBTWIuaiYgHTsyIeIAAIr2ABegNlPI8YmJYsgYryCZkoIkdM1x-h2IFRQUFjDsI5qHEuPpuSbLIVYJYOLtiCEVp0sWmdvwGOim7N2Jo76qKnjPOevZIRLxXmvDegZiFwviT0WQ04TTm3ukaV2wEb4DDvtYB+Ysn59NDq-HGH9ihf3AUwMlptqKBUinoksuZNBiColoXEisURol3PaXpjggA */
     id: 'EdResource',
 
     predictableActionArguments: true,
@@ -65,11 +66,13 @@ export const EdResourceMachine = createMachine(
             ],
           },
         ],
+
+        entry: 'validate_provided_content_and_assign_errors',
       },
 
       'Autogenerating-Meta': {
         on: {
-          'cancel-meta-autogen': {
+          'cancel-meta-generation': {
             target: 'Unpublished',
             cond: 'issuer is creator',
           },
@@ -77,6 +80,7 @@ export const EdResourceMachine = createMachine(
 
         invoke: {
           src: 'MetaGenerator',
+
           onDone: {
             target: 'Meta-Suggestion-Available',
             actions: 'assign_suggested_meta',
@@ -204,16 +208,10 @@ export const EdResourceMachine = createMachine(
 
       'Checking-In-Content': {
         on: {
-          'provide-content': [
-            {
-              target: 'Storing-New-Content',
-              cond: 'issuer has creation permission',
-            },
-            {
-              target: 'No-Access',
-              actions: 'assign_unauthorized',
-            },
-          ],
+          'provide-content': {
+            target: 'Storing-New-Content',
+            cond: 'issuer has creation permission',
+          },
         },
       },
     },

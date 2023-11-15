@@ -40,7 +40,11 @@ export interface Typegen0 {
     StoreNewResource: 'done.invoke.EdResource.Storing-New-Content:invocation[0]'
   }
   'missingImplementations': {
-    actions: 'destroy_all_data' | 'notify_creator' | 'validate_edit_meta_and_assign_errors'
+    actions:
+      | 'destroy_all_data'
+      | 'notify_creator'
+      | 'validate_edit_meta_and_assign_errors'
+      | 'validate_provided_content_and_assign_errors'
     delays: never
     guards:
       | 'issuer has creation permission'
@@ -64,7 +68,7 @@ export interface Typegen0 {
     assign_last_publishing_moderation_rejection_reason: 'done.invoke.EdResource.Publishing-Moderation:invocation[0]'
     assign_provided_content_rejection_reason: 'done.invoke.EdResource.Storing-New-Content:invocation[0]'
     assign_suggested_meta: 'done.invoke.EdResource.Autogenerating-Meta:invocation[0]'
-    assign_unauthorized: '' | 'provide-content'
+    assign_unauthorized: ''
     assign_updated_meta_and_image_ref: 'done.invoke.EdResource.Storing-Meta:invocation[0]'
     destroy_all_data: 'done.invoke.EdResource.In-Trash:invocation[0]'
     notify_creator:
@@ -72,6 +76,7 @@ export interface Typegen0 {
       | 'done.invoke.EdResource.Publishing-Moderation:invocation[0]'
       | 'xstate.stop'
     validate_edit_meta_and_assign_errors: 'edit-meta'
+    validate_provided_content_and_assign_errors: 'provide-content'
   }
   'eventsCausingDelays': {}
   'eventsCausingGuards': {
@@ -79,7 +84,7 @@ export interface Typegen0 {
     'issuer has moderation permission': 'reject-publish'
     'issuer has no read permission': ''
     'issuer is creator':
-      | 'cancel-meta-autogen'
+      | 'cancel-meta-generation'
       | 'edit-meta'
       | 'request-meta-generation'
       | 'restore'

@@ -1,5 +1,5 @@
 import { waitFor } from 'xstate/lib/waitFor'
-import { nameMatcher } from '../../lifecycle/exports'
+import { nameMatcher } from '../exports'
 
 import { getTestableInterpreter, userIssuer } from './configureMachine'
 
@@ -15,7 +15,10 @@ test('authenticated user, but non acceptable content', async () => {
   // console.log(executions, states, snap.value, snap.context)
   const snap = interpreter.getSnapshot()
   expect(snap.value).toBe('Checking-In-Content')
-  expect(executions).toEqual([['StoreNewResource']])
+  expect(executions).toEqual([
+    ['check_and_assign_provided_content_formally_acceptable'],
+    ['StoreNewResource'],
+  ])
   expect(states).toEqual(['Checking-In-Content', 'Storing-New-Content', 'Checking-In-Content'])
   expect(snap.context.contentRejectedReason).toBe('too big')
 })

@@ -1,4 +1,4 @@
-import { matchStateName, nameStateMatcher, stateNameMatcher } from '../../../common/exports'
+import { matchStateName, nameStateMatcher, stateNameMatcher } from '../../common/exports'
 import { Typegen0 } from '../lifecycle.xsm.typegen'
 
 export * from './document'

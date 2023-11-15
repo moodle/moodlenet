@@ -1,7 +1,6 @@
-import type { EventOf, StateOf } from '../../../common/xsm-typegen-extract/types'
+import type { EventOf, StateOf } from '../../common/xsm-typegen-extract/types'
 import type { Typegen0 } from '../lifecycle.xsm.typegen'
 import {
-  ImageCredits,
   Language,
   LearningOutcome,
   Level,
@@ -16,7 +15,9 @@ import { Issuer } from './issuer'
 
 export type StateName = StateOf<Typegen0>
 
-export interface GeneratedMetaEdits extends MetaEdits {}
+export interface GeneratedMeta {
+  metaEdits: MetaEdits
+}
 export interface MetaEdits {
   title?: string
   description?: string
@@ -27,24 +28,24 @@ export interface MetaEdits {
   originalPublicationInfo?: OriginalPublicationInfo
   type?: Type
   learningOutcomes?: LearningOutcome[]
-  image?: ProvideImage
+  image?: ProvidedImage
 }
-export interface ProvideFileImage {
+export interface ProvidedFileImage {
   kind: 'file'
 }
-export interface ProvideLinkImage {
-  kind: 'link'
-  credits?: ImageCredits
+export interface ProvidedUrlImage {
+  kind: 'url'
+  url: string
 }
-export type ProvideImage = ProvideFileImage | ProvideLinkImage | 'remove' | 'no-change'
+export type ProvidedImage = ProvidedFileImage | ProvidedUrlImage | 'remove' | 'no-change'
 
 // CONTEXT
 export interface Context {
   issuer: Issuer
   meta: ResourceMeta
-  contentRejectedReason?: string
+  contentRejectedReason?: string | MetaEditsValidationErrors
   noAccessReason?: 'unauthorized' | 'not available' | 'provided content is not valid'
-  generatedMeta?: GeneratedMetaEdits
+  generatedMeta?: GeneratedMeta
   lastPublishingModerationRejectionReason?: string
   metaEditsValidationErrors?: MetaEditsValidationErrors
   publishMetaValidationErrors?: PublishMetaValidationErrors
@@ -82,7 +83,7 @@ export interface Actor_StoreNewResource_ValidationError {
   reason: string
 }
 export interface Actor_GenerateMeta_Data {
-  generetedMetaEdits: GeneratedMetaEdits
+  generetedMetaEdits: GeneratedMeta
 }
 
 export type Actor_ModeratePublishingResource_Data =
@@ -109,18 +110,19 @@ export type Event = EventOf<
     'reject-publish': Event_RejectPublish_Data
     'trash': Event_Trash_Data
     'request-meta-generation': Event_RequestMetaGeneration_Data
-    'cancel-meta-autogen': Event_CancelMetaAutogen_Data
+    'cancel-meta-generation': Event_CancelMetaAutogen_Data
     'restore': Event_Restore_Data
   }
 >
 
-export interface FileProvidedCreationContent {
+export interface ProvidedCreationFileContent {
   kind: 'file'
 }
-export interface LinkProvidedCreationContent {
+export interface ProvidedCreationLinkContent {
   kind: 'link'
+  url: string
 }
-export type ProvidedCreationContent = FileProvidedCreationContent | LinkProvidedCreationContent
+export type ProvidedCreationContent = ProvidedCreationFileContent | ProvidedCreationLinkContent
 export interface Event_Restore_Data {}
 export interface Event_EditMeta_Data {
   metaEdits: MetaEdits
@@ -133,6 +135,7 @@ export interface Event_RejectPublish_Data {
 export interface Event_Unpublish_Data {}
 export interface Event_ProvideContent_Data {
   content: ProvidedCreationContent
+  initialMeta?: MetaEdits
 }
 
 export interface Event_Trash_Data {}

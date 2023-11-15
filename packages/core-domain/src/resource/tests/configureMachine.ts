@@ -16,7 +16,7 @@ type ServiceResponse<T> = [data: T, timeout?: number]
 type TestMachineConfig = {
   initialContext?: Partial<Context>
   metaEditsValidationErrors?: Context['metaEditsValidationErrors'][]
-  // contentRejectedReason?: Context['contentRejectedReason'][]
+  contentRejectedReason?: Context['contentRejectedReason'][]
   storeNewResource_Data?: ServiceResponse<Actor_StoreNewResource_Data>[]
   storeMetaEdits_Data?: ServiceResponse<Actor_StoreMetaEdits_Data>[]
   generateMeta_Data?: ServiceResponse<Actor_GenerateMeta_Data>[]
@@ -40,6 +40,7 @@ type ExecNames =
   | 'notify_creator'
   | 'destroy_all_data'
   | 'validate_edit_meta_and_assign_errors'
+  | 'contentRejectedReason'
   | 'check_and_assign_provided_content_formally_acceptable'
   | 'StoreNewResource'
   | 'StoreMetaEdits'
@@ -52,7 +53,7 @@ export function configureTestMachine({
   generateMeta_Data = [],
   moderatePublishingResource_Data = [],
   scheduleDestroy_Data = [],
-  // contentRejectedReason = [],
+  contentRejectedReason = [],
   metaEditsValidationErrors = [],
   initialContext,
 }: TestMachineConfig) {
@@ -73,13 +74,12 @@ export function configureTestMachine({
             proxy.metaEditsValidationErrors = metaEditsValidationErrors.shift()
           })
         }),
-
-        // check_and_assign_provided_content_formally_acceptable: assign(context => {
-        //   executions.push(['check_and_assign_provided_content_formally_acceptable'])
-        //   return produce(context, proxy => {
-        //     proxy.contentRejectedReason = contentRejectedReason.shift()
-        //   })
-        // }),
+        validate_provided_content_and_assign_errors: assign(context => {
+          executions.push(['check_and_assign_provided_content_formally_acceptable'])
+          return produce(context, proxy => {
+            proxy.contentRejectedReason = contentRejectedReason.shift()
+          })
+        }),
       },
       services: {
         async StoreNewResource(): Promise<Actor_StoreNewResource_Data> {
