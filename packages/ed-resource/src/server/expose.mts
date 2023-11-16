@@ -28,7 +28,7 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { EditResourceRespRpc, ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { fromXsm } from './exports.mjs'
+import { stateMeta2ResourceData } from './exports.mjs'
 import { resourceFiles } from './init/fs.mjs'
 import { getImageAssetInfo } from './lib.mjs'
 import {
@@ -249,7 +249,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         await waitFor(interpreter, nameMatcher('Unpublished'))
         const state = interpreter.getSnapshot()
 
-        const { image, lifecycleState, ...resourceData } = fromXsm.resourceData(
+        const { image, lifecycleState, ...resourceData } = stateMeta2ResourceData(
           state.context.meta,
           String(state.value) as StateName,
         )

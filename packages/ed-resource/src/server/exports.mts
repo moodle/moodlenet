@@ -5,6 +5,8 @@ export { Resource } from './init/sys-entities.mjs'
 export { getImageAssetInfo } from './lib.mjs'
 export {
   createResource,
+  deleteImageFile,
+  deleteImageFile as deleteResourceFile,
   delResource,
   delResourceFile,
   deltaResourcePopularityItem,
@@ -14,6 +16,7 @@ export {
   getResourceFileUrl,
   getValidations,
   patchResource,
+  saveResourceImage,
   setResourceContent,
   setResourceImage,
   storeResourceFile,

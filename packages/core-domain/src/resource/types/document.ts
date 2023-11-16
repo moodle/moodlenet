@@ -19,7 +19,7 @@ export interface FileImage {
   kind: 'file'
 }
 export interface UrlImage {
-  kind: 'link'
+  kind: 'url'
   url: string
 }
 
@@ -34,6 +34,16 @@ export interface ResourceMeta {
   originalPublicationInfo?: OriginalPublicationInfo
   type?: Type
   learningOutcomes: LearningOutcome[]
+}
+export interface Credits {
+  owner: {
+    url: string
+    name: string
+  }
+  provider?: {
+    name: string
+    url: string
+  }
 }
 
 export interface OriginalPublicationInfo {

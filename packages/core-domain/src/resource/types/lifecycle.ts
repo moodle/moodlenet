@@ -1,6 +1,7 @@
 import type { EventOf, StateOf } from '../../common/xsm-typegen-extract/types'
 import type { Typegen0 } from '../lifecycle.xsm.typegen'
 import {
+  Credits,
   Language,
   LearningOutcome,
   Level,
@@ -28,7 +29,7 @@ export interface MetaEdits {
   originalPublicationInfo?: OriginalPublicationInfo
   type?: Type
   learningOutcomes?: LearningOutcome[]
-  image?: ProvidedImage
+  image?: ProvidedImage | 'remove' | 'no-change'
 }
 export interface ProvidedFileImage {
   kind: 'file'
@@ -36,8 +37,9 @@ export interface ProvidedFileImage {
 export interface ProvidedUrlImage {
   kind: 'url'
   url: string
+  credits?: Credits
 }
-export type ProvidedImage = ProvidedFileImage | ProvidedUrlImage | 'remove' | 'no-change'
+export type ProvidedImage = ProvidedFileImage | ProvidedUrlImage
 
 // CONTEXT
 export interface Context {
@@ -69,6 +71,7 @@ export interface Actor_StoreMetaEdits_Success {
 export interface Actor_StoreMetaEdits_ValidationError {
   success: false
   validationErrors: MetaEditsValidationErrors
+  reason?: 'not found' | 'not valid'
 }
 
 export type Actor_StoreNewResource_Data =

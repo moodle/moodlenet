@@ -2,7 +2,7 @@ import type { Content, Image, ResourceMeta, StateName } from '@moodlenet/core-do
 import { getImageAssetInfo } from '../../lib.mjs'
 import type { ResourceEntityDoc } from '../../types.mjs'
 
-export function resourceMeta(resourceEntity: ResourceEntityDoc): [StateName, ResourceMeta] {
+export function entityDoc2StateMeta(resourceEntity: ResourceEntityDoc): [StateName, ResourceMeta] {
   const resourceMeta: ResourceMeta = {
     references: {
       content: content(resourceEntity.content),
@@ -46,6 +46,6 @@ function image(image: ResourceEntityDoc['image'] | null): Image | null {
     }
     return { kind: 'file', ref: image }
   } else {
-    return { kind: 'link', ref: image, url: image.url }
+    return { kind: 'url', ref: image, url: image.url }
   }
 }

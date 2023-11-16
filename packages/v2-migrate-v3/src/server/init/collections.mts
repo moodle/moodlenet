@@ -78,7 +78,7 @@ couldn't find v3 resource id from v2resource_id: ${v2_resId} in v2collection_id 
             image:
               v2_collection.image?.ext === true
                 ? {
-                    kind: 'link',
+                    kind: 'url',
                     url: v2_collection.image.location,
                     credits: v2_collection.image.credits,
                   }

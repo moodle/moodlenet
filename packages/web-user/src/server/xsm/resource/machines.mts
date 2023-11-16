@@ -1,4 +1,13 @@
-import type { Context, Issuer, MetaEdits, Refs, StateName } from '@moodlenet/core-domain/resource'
+import type { ImageUploaded } from '@moodlenet/collection/server'
+import type {
+  Content,
+  Context,
+  Issuer,
+  MetaEdits,
+  MetaEditsValidationErrors,
+  Refs,
+  StateName,
+} from '@moodlenet/core-domain/resource'
 import {
   DEFAULT_CONTEXT,
   EdResourceMachine,
@@ -9,21 +18,22 @@ import {
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import {
   createResource,
+  deleteImageFile,
   delResource,
   delResourceFile,
   EMPTY_RESOURCE,
-  fromXsm,
-  getImageLogicalFilename,
+  entityDoc2StateMeta,
   getResource,
+  getValidations,
+  metaEdits2ResourceDataMetaEdits,
   patchResource,
-  publicFiles,
-  setResourceImage,
+  saveResourceImage,
   storeResourceFile,
-  toXsm,
 } from '@moodlenet/ed-resource/server'
 import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
 import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
-import { interpret } from 'xstate'
+import { produce } from 'immer'
+import { assign, interpret } from 'xstate'
 import { verifyCurrentTokenCtx } from '../../srv/web-user.mjs'
 
 async function reviveStateAndContext(
@@ -72,7 +82,7 @@ async function reviveStateAndContext(
     ]
   }
 
-  const [state, meta] = toXsm.resourceMeta(resourceRecord.entity)
+  const [state, meta] = entityDoc2StateMeta(resourceRecord.entity)
 
   //   const { /* draftValid, */ publishable } = draftFormalValidation({
   //     draft,
@@ -139,66 +149,155 @@ export async function interpreterAndMachine(
     data: resourceRecord,
   }
 }
-async function getImagePatch(
-  resourceKey: string,
-  maybeImage: MetaEdits['image'],
-): Promise<{ image?: Refs['image'] }> {
-  if (!maybeImage || maybeImage === 'no-change') {
-    return {}
-  }
-  if (maybeImage === 'remove') {
-    await setResourceImage(resourceKey, null)
-    return { image: null }
-  }
+// async function getImagePatch(
+//   resourceKey: string,
+//   maybeImage: MetaEdits['image'],
+// ): Promise<{ image?: Refs['image'] }> {
+//   if (!maybeImage || maybeImage === 'no-change') {
+//     return {}
+//   }
+//   if (maybeImage === 'remove') {
+//  DONT MUTATE HERE ?    await setResourceImage(resourceKey, null)
+//     return { image: null }
+//   }
 
-  if (maybeImage.kind === 'file') {
-    const resp = await setResourceImage(resourceKey, maybeImage.rpcFile)
-    if (!resp || resp.patched.image?.kind !== 'file') {
-      // throw 'never' ?
-      return {}
-    }
-    return { image: { kind: 'file', ref: resp.patched.image } }
-  } else {
-    return { image: { kind: 'link', ref: maybeImage, url: maybeImage.url } }
-  }
-}
+//   if (maybeImage.kind === 'file') {
+//     DONT MUTATE HERE ? const resp = await setResourceImage(resourceKey, maybeImage.rpcFile)
+//     if (!resp || resp.patched.image?.kind !== 'file') {
+//       // throw 'never' ?
+//       return {}
+//     }
+//     return { image: { kind: 'file', ref: resp.patched.image } }
+//   } else {
+//     return { image: { kind: 'url', ref: maybeImage, url: maybeImage.url } }
+//   }
+// }
 function configureMachine(initialContext: Context) {
   return EdResourceMachine.withConfig(
     {
       services: {
         async StoreNewResource(_, createEvent) {
           const newResourceKey = createEntityKey()
-          const resourceContentDb: ResourceDataType['content'] =
+          const contentResourceDataType: ResourceDataType['content'] =
             createEvent.content.kind === 'link'
               ? { kind: 'link', url: createEvent.content.url }
               : {
                   kind: 'file',
                   fsItem: await storeResourceFile(newResourceKey, createEvent.content.rpcFile),
                 }
-
+          const initialImage = createEvent.initialMeta?.image
+          const imageResourceDataType: ResourceDataType['image'] =
+            !initialImage || typeof initialImage === 'string'
+              ? null
+              : initialImage.kind === 'url'
+              ? {
+                  kind: 'url',
+                  url: initialImage.url,
+                  credits: initialImage.credits,
+                }
+              : await saveResourceImage(newResourceKey, initialImage.rpcFile).then<ImageUploaded>(
+                  res => ({
+                    kind: 'file',
+                    directAccessId: res.directAccessId,
+                  }),
+                )
           const created = await createResource(
             {
               _key: newResourceKey,
               ...EMPTY_RESOURCE,
-              ...fromXsm.resourceData(createEvent.initialMeta, 'Checking-In-Content'),
+              ...metaEdits2ResourceDataMetaEdits(createEvent.initialMeta),
+              image: imageResourceDataType,
             },
-            resourceContentDb,
+            contentResourceDataType,
           )
-          const content: ResourceContent =
-            resourceContentDb.kind === 'file'
+          if (!created) {
+            createEvent.content.kind === 'file' && delResourceFile(newResourceKey)
+            imageResourceDataType?.kind === 'file' && deleteImageFile(newResourceKey)
+            throw new Error('resource creation failed for unknown reasons')
+          }
+          const content: Content =
+            contentResourceDataType.kind === 'file'
               ? {
                   kind: 'file',
-                  ref: resourceContentDb,
+                  ref: contentResourceDataType,
                 }
               : {
                   kind: 'link',
-                  ref: resourceContentDb,
-                  url: resourceContentDb.url,
+                  ref: contentResourceDataType,
+                  url: contentResourceDataType.url,
                 }
-          if (!created) {
-            throw new Error('resource creation failed for unknown reasons')
+          const refs: Refs = {
+            id: { resourceKey: created._key },
+            content,
+            image:
+              imageResourceDataType?.kind === 'file'
+                ? { kind: 'file', ref: imageResourceDataType }
+                : imageResourceDataType?.kind === 'url'
+                ? { kind: 'url', url: imageResourceDataType.url, ref: imageResourceDataType }
+                : null,
           }
-          return { resourceKey: created._key, content }
+          return { success: true, refs }
+        },
+        async MetaGenerator() {
+          return {
+            generetedMetaEdits: {
+              metaEdits: {
+                title: 'test generated title',
+                description: 'test generated description',
+              },
+            },
+          }
+        },
+        async ModeratePublishingResource() {
+          return { passed: true }
+        },
+        async ScheduleDestroy(context) {
+          delResource(context.meta.references.id.resourceKey)
+          return true
+        },
+        async StoreMetaEdits(context, { metaEdits }) {
+          const validationSchemas = await getValidations()
+          const patch = metaEdits2ResourceDataMetaEdits(metaEdits)
+          const validatedResp = await validationSchemas.draftResourceValidationSchema
+            .validate(patch, { stripUnknown: true })
+            .then(validatedPatch => ({ valid: true, validatedPatch } as const))
+            .catch((validatedError: { path: keyof MetaEdits; message: string }) => {
+              console.log(['StoreMetaEdits', validatedError])
+              const errors = [validatedError].flat().reduce(
+                (acc, cur) => {
+                  acc.fields[cur.path] = cur.message
+                  return acc
+                },
+                { fields: {} } as MetaEditsValidationErrors,
+              )
+              return { valid: false, errors } as const
+            })
+          if (!validatedResp.valid) {
+            return {
+              success: false,
+              validationErrors: validatedResp.errors,
+              reason: 'not valid',
+            }
+          }
+          const patchRes = await patchResource(
+            context.meta.references.id.resourceKey,
+            validatedResp.validatedPatch,
+          )
+          if (!patchRes) {
+            return { success: false, validationErrors: { fields: {} }, reason: 'not found' }
+          }
+          const [
+            ,
+            {
+              references: { image },
+              ...meta
+            },
+          ] = entityDoc2StateMeta(patchRes.patched)
+          return {
+            success: true,
+            meta,
+            image,
+          }
         },
       },
       actions: {
@@ -209,6 +308,16 @@ function configureMachine(initialContext: Context) {
         destroy_all_data() {
           destroyAllData(initialContext.meta.references.id.resourceKey)
         },
+        validate_edit_meta_and_assign_errors: assign(context => {
+          return produce(context, proxy => {
+            proxy
+          })
+        }),
+        validate_provided_content_and_assign_errors: assign(context => {
+          return produce(context, proxy => {
+            proxy
+          })
+        }),
       },
       guards: {} as any,
     },
@@ -217,16 +326,9 @@ function configureMachine(initialContext: Context) {
 }
 
 async function destroyAllData(resourceKey: string) {
-  const delResult = await delResource(resourceKey)
-  if (!delResult) {
-    return
-  }
-  const imageLogicalFilename = getImageLogicalFilename(resourceKey)
-  await publicFiles.del(imageLogicalFilename)
-  if (delResult.entity.content?.kind === 'file') {
-    await delResourceFile(resourceKey)
-  }
-  return
+  await delResource(resourceKey)
+  await deleteImageFile(resourceKey)
+  await delResourceFile(resourceKey)
 }
 
 async function getIssuer([paramType, val]:

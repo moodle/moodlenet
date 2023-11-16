@@ -251,29 +251,43 @@ export async function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcF
   return `${myRpcBaseUrl}${resourcePath}`
 }
 
-export async function setResourceImage(
+export async function saveResourceImage(
   _key: string,
-  image: RpcFile | null | undefined,
+  image: RpcFile,
   opts?: {
     noResize?: boolean
   },
 ) {
   const imageLogicalFilename = getImageLogicalFilename(_key)
-  if (!image) {
-    await publicFiles.del(imageLogicalFilename)
+  const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
+
+  const saveFileResp = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+  return saveFileResp
+}
+export async function setResourceImage(
+  _key: string,
+  maybeImage: RpcFile | null | undefined,
+  opts?: {
+    noResize?: boolean
+  },
+) {
+  if (!maybeImage) {
+    await deleteImageFile(_key)
     await patchResource(_key, {
       image: null,
     })
     return null
   }
-  const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
-
-  const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+  const { directAccessId } = await saveResourceImage(_key, maybeImage, opts)
 
   return patchResource(_key, {
     image: { kind: 'file', directAccessId },
   })
 }
+export function deleteImageFile(_key: string) {
+  return publicFiles.del(getImageLogicalFilename(_key))
+}
+
 export async function setResourceContent(_key: string, resourceContent: RpcFile | string) {
   const content =
     typeof resourceContent === 'string'
