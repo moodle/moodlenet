@@ -21,7 +21,7 @@ export type ResourceExposeType = PkgExposeDef<{
       params: { _key: string; action: 'cancel' | 'start' },
     ): Promise<{ done: boolean }>
     'webapp/edit/:_key'(
-      body: { values: Partial<EditResourceFormRpc> },
+      body: { form: EditResourceFormRpc },
       params: { _key: string },
     ): Promise<EditResourceRespRpc | null>
     'webapp/trash/:_key'(body: null, params: { _key: string }): Promise<void>

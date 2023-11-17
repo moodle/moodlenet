@@ -17,7 +17,7 @@ export type MainContextResource = {
   validationSchemas: ValidationSchemas
 }
 
-export type ResourceFormRpc = {
+export type ResourceMetaFormRpc = {
   title: string
   description: string
   subject: string
@@ -32,21 +32,10 @@ export type ResourceFormRpc = {
 }
 
 export type EditResourceFormRpc = {
-  title: string
-  description: string
-  subject?: string
-  license?: string
-  type?: string
-  level?: string
-  month?: string
-  year?: string
-  language?: string
-  learningOutcomes: LearningOutcome[]
-  image?: { type: 'remove' } | { type: 'no-change' } | { type: 'file'; file: [RpcFile] }
+  meta?: ResourceMetaFormRpc
+  image?: { kind: 'remove' } | { kind: 'no-change' } | { kind: 'file'; file: [RpcFile] }
 }
-export type EditResourceRespRpc = ResourceFormRpc & {
-  image: AssetInfo | null
-}
+export type EditResourceRespRpc = { meta: ResourceMetaFormRpc; image: AssetInfo | null }
 export type ResourceDataRpc = {
   id: string | null
   mnUrl: string
@@ -75,14 +64,14 @@ export type ResourceContributorRpc = {
 }
 
 export type ResourceRpc = {
-  resourceForm: ResourceFormRpc
+  resourceForm: ResourceMetaFormRpc
   access: ResourceAccessRpc
   state: Pick<ResourceStateRpc, 'isPublished' | 'autofillState'>
   data: ResourceDataRpc
   contributor: ResourceContributorRpc
 }
 
-export type ResourceFormProps = ResourceFormRpc
+export type ResourceFormProps = ResourceMetaFormRpc
 export type ResourceDataProps = ResourceDataRpc
 export type ResourceStateProps = ResourceStateRpc
 export type ResourceCardDataProps = ResourceCardDataRpc
@@ -128,7 +117,7 @@ export type RpcCaller = {
 export type ResourceActions = {
   publish: () => void
   unpublish: () => void
-  editData: (values: ResourceFormProps) => void
+  editData: (values: EditResourceFormRpc) => void
   setImage: (image: File | undefined | null) => void
   provideContent: (content: File | string) => void
   deleteResource(): void

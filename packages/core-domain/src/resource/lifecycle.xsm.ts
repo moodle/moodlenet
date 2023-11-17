@@ -2,27 +2,30 @@ import { produce } from 'immer'
 import { assign, createMachine } from 'xstate'
 import { matchStateName } from '../common/xsm-typegen-extract/util'
 import type { Typegen0 } from './lifecycle.xsm.typegen'
-import type { Refs } from './types/document'
 import type * as T from './types/lifecycle'
-// const REFS_PLACEHOLDERS_FOR_CREATION: Refs = {
-//   content: { kind: 'link', url: 'CONTENT URL::RefsPlaceholdersForCreation' },
-//   id: 'ID::RefsPlaceholdersForCreation',
-//   image: null,
-// }
-const REFS_PLACEHOLDERS_FOR_CREATION = null as any as Refs
 export const DEFAULT_CONTEXT: T.Context = {
   issuer: { type: 'unauthenticated' },
-  meta: {
-    description: '',
-    title: '',
-    learningOutcomes: [],
-    references: REFS_PLACEHOLDERS_FOR_CREATION,
+  doc: {
+    id: Symbol('ID PLACEHOLDER FOR CREATION') as any,
+    content: Symbol('CONTENT PLACEHOLDER FOR CREATION') as any,
+    image: Symbol('IMAGE PLACEHOLDER FOR CREATION') as any,
+    meta: {
+      description: '',
+      title: '',
+      learningOutcomes: [],
+    },
   },
+  contentRejectedReason: null,
+  noAccessReason: null,
+  generatedMeta: null,
+  lastPublishingModerationRejectionReason: null,
+  resourceEditsValidationErrors: null,
+  publishMetaValidationErrors: null,
 }
 
 export const EdResourceMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMAVgCMAFgB0AZkEBOAGwB2GfxmiF-ABwKANCACeffmUkTZgjcLn81w+aIC+93agywcBMOIDKTTLgZsULwAcmAA7rwAwuxMYGxMRBDsngEAbpgA1p4uWHiE3r7+gSHhUTFxTAhpmPgAhizs5BRNnHSMDRxI3Hy2-HLiGjIywoKicmTmgpK6Bgi8wguC4oL8whPG1gqi-PyOzui5HgV+AUGhEdHxFYnJ4tVZ4jlueZ4+J8XnZVfxVWzpdR0miRhFQum1mKxOqAeHMxDINOIJiMxhpRKIVooZj1NDJEYIJvwFBZJBpJKo9iAnu58gBBbC+GBsMC4eqnXgAWTATFqNyZdz+mWyB2eRzpDLizNZxU53N+-1ZjUoLTB9Ah7E4MPm436ZGG6gUClGmjIcixcxWEkklkEIitMkkfRkFKpL3EYswjMlLGlXJ5dTYhAANrwALa+3ielmAyitVUdDU9DRJ8Q4pQkkRGab6PgmBFjMhGfFE4RCZ3C6meACqbBo2AARoGGLAABaQIi4MAAR2wcCYvFrDabzeVtDjkITsJWCmWahkFsGVskWdmvCXy3xZLk6MkCiXZAcTkp5dd1YHjZbbY73d7ofDkYVbBHIHB8a6mrhuKRohkCmMIlEZAaGaAgrFIgEFmMchaAoJa7IeLpHKe9bnq2EBEJAzC3tyT4vuOb49GQYgDBBBa7ooYj8MBwhaOICzCFsUH4jau5wfsrgVuISGDheaFMCyLY4WO6r4XM8KSMs9FyNaVh2JR2awmSAyDKMkgTPIIxluxroAArIUObLspgEBepCvIpAKDwIfkuncc2BlGSZ7ByjUD5AjGKrtHh0KJiaEmEWQZAKHIP5qKa8nGuIoiqZoAFBVJAVyJphzWXpLb2cZUamUkfL3EKWlHDZKHpY5bDOQCkJAiCsaecJ3mwho1iRasFiiLYwg7oSZp7lISjUf+VhqAebHJZ4ACSbC8AAKvxzZmfy6SWceRzjVNM1la5SruaONVQt0sK-oic7+aS9oTEB8lamBBbKFaowaCsghJSK+QrdNtQtu2vZ+GAgk7ROvDotO8gnQW1E7DBOgXYsKaEoaJZbuic6JfBS0pbZl5gAAVmA+B9meQ6-Wqu2akIcjiUoP6kvuaZTGahIIqdDr7nIUwBUNR75WjKFttgNapcOW3PkJxOGPwDo9e1AUWFBwx00Y4jBfiGhbqoKy9E9HGFUOvAYNjuM83ztmE6+dUCKS-RyJbVtCD+ltmmIwjiEjS5TJIwVEmiGuum8RRBDKPLZeZC15SNxy+xyvrrdGzSC7htV7fMakDMWwwWKMYzAds-BSNatq2A6wVe0cPsGb6c25Y8qOvIUpeytU5WKs0VUeUT-1rOMyz3SRqJKDswEmP0gyA+1UkWEFRf5P7vBeNgUAwLAHS8DSqS1Awga1A2xAYX2YbYbHwtt5oSxaAF8j2lJUyQyuRKD0uA2ATdFgT54kStvgGRsitlyxPERA0LgmBUgMGMrwfA5R4jGy8gnWwvliR9EIpfFmogqJxURNRXcxJZB6kcIeNgDl4BdCsmAaqrcRJm1RArK2lsbZxWAqsHYh1BBEhEMMcwO5n7iGCJgJe+BCCwAIdtUhptrALAViPGCiNU5USQVIQkrD0yohWBwkuHxSjfwqCQk20DBhkHEEFOcGhAKs06lDUQDVKE2h-MoXcO5JAcPdPeb0ftfSaKge+CwuJUwOmlszc6K50RLEsBTPov4lBTA4VxbmEBXHx3fNIfo6J9wJTUH0MxKDHZkjJHOTcWxjAKA4VrNK0oHKZXjnHEWCltgplJKpBqMhAJBTplJJ2c4dhMN-NYeQj0UaczGhNN6LYYkVPmPCZOGwSyBVydRKimgnYBTUvUseLsCn80gEM-6qxLZ6MGJoBGIU5KzHpk7VSTMxis33Cs2yOssY41iNEluWiSaGIZg6OGUshh+MQEYXRQU1iLmomIB07MiHiAACK9gAXoNZDy3GJiWLIGK8gmZKCJHTNcf4diBUUFBYwyNhrPWru8Zx3J1lkKsEsLF2xBCKyYWLTO349HRTdm7E0d8OFTxnnPXskIl4rzXhvQMxCYWxJ6LIacJpzb3SNK7YCN8Bh32sA-MWT8emh1fjjD+xQv7gKYKS021FAqRR0SWXMmgxBUS0LiRWKI0S7ntN0xwQA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMAVgCMAFgB0AZkEBOAGwB2GfxmiF-ABwKANCACeffmUkTZgjcLn81w+aIC+93agywcBMOIDKTTLgZsULwAcmAA7rwAwuxMYGxMRBDsngEAbpgA1p4uWHiE3r7+gSHhUTFxTAhpmPgAhizs5BRNnHSMDRxI3Hy2-HLiGjIywoKicmTmgpK6Bgi8wguC4oL8whPG1gqi-PyOzui5HgV+AUGhEdHxFYnJ4tVZ4jlueZ4+J8XnZVfxVWzpdR0miRhFQum1mKxOqAeHMxDINOIJiMxhpRKIVooZj1NDJEYIJvwFBZJBpJKo9iAnu58gBBbC+GBsMC4eqnXgAWTATFqNyZdz+mWyB2eRzpDLizNZxU53N+-1ZjUoLTB9Ah7E4MPm436ZGG6gUClGmjIcixcxWEkklkEIitMkkfRkFKpL3EYswjMlLGlXJ5dTYhAANrwALa+3ielmAyitVUdDU9DRJ8Q4pQkkRGab6PgmBFjMhGfFE4RCZ3C6meACqbBo2AARoGGLAABaQIi4MAAR2wcCYvFrDabzeVtDjkITsJWCmWahkFsGVskWdmvCXy3xZLk6MkCiXZAcTkp5dd1YHjZbbY73d7ofDkYVbBHIHB8a6mrhuKRohkCmMIlEZAaGaAgrFIgEFmMchaAoJa7IeLpHKe9bnq2EBEJAzC3tyT4vuOb49GQYgDBBBa7ooYj8MBwhaOICzCFsUH4jau5wfsrgVuISGDheaFMCyLY4WO6r4XM8KSMs9FyNaVh2JR2awmSAyDKMkgTPIIxluxroAArIUObLspgEBepCvIpAKDwIfkuncc2BlGSZ7ByjUD5AjGKrtHh0KJiaEmEWQZAKHIP5qKa8nGuIoiqZoAFBVJAVyJphzWXpLb2cZUamUkfL3EKWlHDZKHpY5bDOQCkJAiCsaecJ3mwho1iRasFiiLYwg7oSZp7lISjUf+VhqAebHJZ4ACSbC8AAKvxzZmfy6SWceRzjVNM1la5SruaONVQt0sK-oic7+aS9oTEB8lamBBbKFaowaCsghJSK+QrdNtQtu2vZ+GAgk7ROvDotO8gnQW1E7DBOgXYsKaEoaJZbuic6JfBS0pbZl5gAAVmA+B9meQ6-Wqu2akIcjiUoP6kvuaZTGahIIqdDr7nIUwBUNR75WjKFttgNapcOW3PkJxOGPwDo9e1AUWFBwx00Y4jBfiGhbqoKy9E9HGFUOvAYNjuM83ztmE6+dUCKS-RyJbVtCD+ltmmIwjiEjS5TJIwVEmiGuum8RRBDKPLZeZC15SNxy+xyvrrdGzSC7htV7fMakDMWwwWKMYzAds-BSNatq2A6wVe0cPsGb6c25Y8qOvIUpeytU5WKs0VUeUT-1rOMyz3SRqJKDswEmP0gyA+1UkWEFRf5P7vBeNgUAwLAHS8DSqS1Awga1A2xAYX2YbYbHwtt5oSxaAF8j2lJUyQyuRKD0uA2ATdFgT54kStvgGRsitlyxPERA0LgmBUgMGMrwfA5R4jGy8gnWwvliR9EIpfFmogqJxURNRXcxJZB6kcIeNgDl4BdCsmAaqrcRJm1RArK2lsbZxWAqsHYh1BAsxZoaFYmhn7iGCJgJe+BCCwAIdtUhptrALAViPGCiNU5USQVIQkwwpj3VRCsDhJcPilG-hUEhJtoGDDIOIIKc4NCAVZp1KGogGqUJtD+ZQu4dySA4e6e83o-a+i0VA98FhcSpgdNLZm50VzoiWJYCmfRfxKCmBwri3MIBuPju+aQ-R0T7gSmoPo5iUGOzJGSOcm4tjGAUBwrWaVpQOUyvHOOIsFLbBTKSVSDUZCASCnTKSTs5w7EEAaCC8hHoo05mNCab0WyxMqfMeEycNglkCnk6iVFNBOwCmpBpY8XaFP5pAYZ-1ViW30YMTQCMQpyVmPTJ2qkmZjFZvuVZtkdZYxxrEGJLdtEkyMQzB0cMpZDH8YgIweigprEXNRMQDp2ZEPEAAEV7AAvQ6zHnuMTEsWQMV5BMyUESOma4-w7ECooKCxhkbDWetXd4LjuQbLIVYJY2LthMLnB0sWmdvz6Oim7N2Jo74cKnjPOevZIRLxXmvDegZiGwriT0WQ04TTm3ukaV2wEb4DDvtYB+Ysn69NDq-HGH9ihf3AUwMlptqKBUiroksuZNBiColoXEisURol3PaHpjggA */
     id: 'EdResource',
 
     predictableActionArguments: true,
@@ -36,7 +39,7 @@ export const EdResourceMachine = createMachine(
       events: {} as T.Event,
       services: {} as {
         StoreNewResource: { data: T.Actor_StoreNewResource_Data }
-        StoreMetaEdits: { data: T.Actor_StoreMetaEdits_Data }
+        StoreResourceEdits: { data: T.Actor_StoreResourceEdits_Data }
         MetaGenerator: { data: T.Actor_GenerateMeta_Data }
         ModeratePublishingResource: { data: T.Actor_ModeratePublishingResource_Data }
         ScheduleDestroy: { data: T.Actor_ScheduleDestroy_Data }
@@ -56,7 +59,7 @@ export const EdResourceMachine = createMachine(
             onDone: [
               {
                 target: 'Autogenerating-Meta',
-                actions: ['assign_identifiers'],
+                actions: ['assign_doc'],
                 cond: 'store new resource success',
               },
               {
@@ -178,13 +181,13 @@ export const EdResourceMachine = createMachine(
 
       'Storing-Meta': {
         invoke: {
-          src: 'StoreMetaEdits',
+          src: 'StoreResourceEdits',
 
           onDone: [
             {
               target: 'Unpublished',
               cond: 'store meta edits success',
-              actions: 'assign_updated_meta_and_image_ref',
+              actions: 'assign_doc',
             },
             {
               target: 'Unpublished',
@@ -261,20 +264,20 @@ export const EdResourceMachine = createMachine(
       'store new resource success'({}, { data }) {
         return data.success
       },
-      // 'provided meta edits not formally valid'({ metaEditsValidationErrors }) {
-      //   return !!metaEditsValidationErrors
+      // 'provided meta edits not formally valid'({ resourceEditsValidationErrors }) {
+      //   return !!resourceEditsValidationErrors
       // },
     },
     actions: {
       assign_edit_meta_errors: assign((context, { data }) => {
         return produce(context, proxy => {
-          proxy.metaEditsValidationErrors = data.success ? undefined : data.validationErrors
+          proxy.resourceEditsValidationErrors = data.success ? null : data.validationErrors
         })
       }),
-      assign_identifiers: assign((context, { data }) => {
+      assign_doc: assign((context, { data }) => {
         return produce(context, proxy => {
           if (!data.success) return
-          proxy.meta.references = data.refs
+          proxy.doc = data.doc
         })
       }),
       assign_last_publishing_moderation_rejection_reason: assign((context, { data }) => {
@@ -284,7 +287,7 @@ export const EdResourceMachine = createMachine(
       }),
       assign_suggested_meta: assign((context, { data }) => {
         return produce(context, proxy => {
-          proxy.generatedMeta = data.generetedMetaEdits
+          proxy.generatedMeta = data.generetedResourceEdits
         })
       }),
       assign_unauthorized: assign(context => {
@@ -292,16 +295,9 @@ export const EdResourceMachine = createMachine(
           proxy.noAccessReason = 'unauthorized'
         })
       }),
-      assign_updated_meta_and_image_ref: assign((context, { data }) => {
-        return produce(context, proxy => {
-          if (!data.success) return
-          proxy.meta = { ...proxy.meta, ...data.meta }
-          proxy.meta.references.image = data.image
-        })
-      }),
       assign_provided_content_rejection_reason: assign((context, { data }) => {
         return produce(context, proxy => {
-          proxy.contentRejectedReason = data.success ? undefined : data.reason
+          proxy.contentRejectedReason = data.success ? null : data.reason
         })
       }),
     },

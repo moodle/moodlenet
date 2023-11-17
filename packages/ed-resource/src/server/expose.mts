@@ -18,7 +18,6 @@ import type {
   Event,
   Event_EditMeta_Data,
   Event_ProvideContent_Data,
-  StateName,
 } from '@moodlenet/core-domain/resource'
 import { matchState, nameMatcher } from '@moodlenet/core-domain/resource'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
@@ -28,7 +27,6 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { EditResourceRespRpc, ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { stateMeta2ResourceData } from './exports.mjs'
 import { resourceFiles } from './init/fs.mjs'
 import { getImageAssetInfo } from './lib.mjs'
 import {
@@ -43,6 +41,7 @@ import {
   validationsConfigs,
 } from './services.mjs'
 import xsm from './xsm/machinery.mjs'
+import { meta_2_form, resourceMetaForm_2_meta } from './xsm/mappings/rpc.mjs'
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
 
@@ -129,15 +128,15 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (matchState(snap, 'No-Access') || !resourceRecord) {
           return null
         }
-        const image = getImageAssetInfo(snap.context.meta.references.image?.ref)
+        const image = getImageAssetInfo(snap.context.doc.image?.ref)
 
         const contentUrl =
-          snap.context.meta.references.content.kind === 'file'
+          snap.context.doc.content.kind === 'file'
             ? await getResourceFileUrl({
                 _key,
-                rpcFile: snap.context.meta.references.content.ref.fsItem.rpcFile,
+                rpcFile: snap.context.doc.content.ref.fsItem.rpcFile,
               })
-            : snap.context.meta.references.content.ref.url
+            : snap.context.doc.content.ref.url
 
         const resourceRpc: ResourceRpc = {
           contributor: {
@@ -200,63 +199,57 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/edit/:_key': {
       guard: async body => {
         const { draftResourceValidationSchema } = await getValidations()
-        body.values = await draftResourceValidationSchema.validate(body?.values, {
+        body.values = await draftResourceValidationSchema.validate(body?.values.meta, {
           stripUnknown: true,
         })
       },
-      fn: async ({ values }, { _key }) => {
+      fn: async ({ form }, { _key }) => {
         // const resourceRecord = await getResource(_key)
         // const { interpreter } = await xsm.interpreterAndMachine(resourceRecord)
         const { interpreter } = await xsm.interpreterAndMachine({ type: 'key', key: _key })
-        const snap = interpreter.getSnapshot()
+        let snap = interpreter.getSnapshot()
+        if (!(form.meta || form.image)) {
+          const editResourceRespRpc: EditResourceRespRpc = {
+            meta: meta_2_form(snap.context.doc.meta),
+            image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
+          }
+          return editResourceRespRpc
+        }
+        const resourceMeta = form.meta ? resourceMetaForm_2_meta(form.meta) : snap.context.doc.meta
 
-        const metaEdits: Event_EditMeta_Data = {
-          metaEdits: {
-            title: values.title,
-            description: values.description,
-            language: values.language ? { code: values.language } : undefined,
-            learningOutcomes: (values.learningOutcomes ?? [])
-              .filter(({ sentence }) => !!sentence)
-              .map(value => ({ value })),
-            level: values.level ? { code: values.level } : undefined,
-            license: values.license ? { code: values.license } : undefined,
-            subject: values.subject ? { code: values.subject } : undefined,
-            type: values.type ? { code: values.type } : undefined,
-            originalPublicationInfo: Number(values.year)
-              ? { month: Number(values.month || 1), year: Number(values.year) }
-              : undefined,
-
+        const resourceEdits: Event_EditMeta_Data = {
+          edits: {
+            meta: resourceMeta,
             image:
-              !values.image || values.image.type === 'no-change'
-                ? 'no-change'
-                : values.image.type === 'remove'
-                ? 'remove'
-                : values.image.type === 'file'
+              form.image?.kind === 'file'
                 ? {
                     kind: 'file',
-                    rpcFile: values.image.file[0],
+                    rpcFile: form.image.file[0],
                   }
-                : 'no-change',
+                : form.image?.kind === 'no-change'
+                ? {
+                    kind: 'no-change',
+                  }
+                : form.image?.kind === 'remove'
+                ? {
+                    kind: 'remove',
+                  }
+                : { kind: 'no-change' },
           },
         }
 
-        const event: Event = { type: 'edit-meta', ...metaEdits }
+        const event: Event = { type: 'edit-meta', ...resourceEdits }
         if (!snap.can(event)) {
           return null
         }
         interpreter.send(event)
 
         await waitFor(interpreter, nameMatcher('Unpublished'))
-        const state = interpreter.getSnapshot()
+        snap = interpreter.getSnapshot()
 
-        const { image, lifecycleState, ...resourceData } = stateMeta2ResourceData(
-          state.context.meta,
-          String(state.value) as StateName,
-        )
-        lifecycleState
         const editResourceRespRpc: EditResourceRespRpc = {
-          ...resourceData,
-          image: getImageAssetInfo(image),
+          meta: meta_2_form(snap.context.doc.meta),
+          image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
         }
         return editResourceRespRpc
       },
@@ -284,7 +277,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         const { interpreter } = await xsm.interpreterAndMachine({ type: 'create' })
         let snap = interpreter.getSnapshot()
         const contentEventData: Event_ProvideContent_Data = {
-          initialMeta: {
+          meta: {
             title: name,
             description,
           },
@@ -304,26 +297,25 @@ export const expose = await shell.expose<FullResourceExposeType>({
         snap = interpreter.getSnapshot()
 
         if (matchState(snap, 'Checking-In-Content')) {
-          throw RpcStatus('Bad Request', snap.context.contentRejectedReason)
+          throw RpcStatus('Bad Request', snap.context.doc)
         }
-        const newMeta = snap.context.meta
-        const newResourceKey = newMeta.references.id.resourceKey
+        const newDoc = snap.context.doc
         const contentUrl =
-          newMeta.references.content.kind === 'file'
+          newDoc.content.kind === 'file'
             ? await getResourceFileUrl({
-                _key: newResourceKey,
-                rpcFile: newMeta.references.content.ref.fsItem.rpcFile,
+                _key: newDoc.id.resourceKey,
+                rpcFile: newDoc.content.ref.fsItem.rpcFile,
               })
-            : newMeta.references.content.url
+            : newDoc.content.url
 
         setRpcStatusCode('Created')
         return {
-          _key: newResourceKey,
-          description,
+          _key: newDoc.id.resourceKey,
+          name: newDoc.meta.title,
+          description: newDoc.meta.description,
           homepage: getWebappUrl(
-            getResourceHomePageRoutePath({ _key: newResourceKey, title: name }),
+            getResourceHomePageRoutePath({ _key: newDoc.id.resourceKey, title: newDoc.meta.title }),
           ),
-          name,
           url: contentUrl,
         }
       },
@@ -413,10 +405,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
           // throw RpcStatus('Bad Request', snap.context.contentRejectedReason)
           return null
         }
-        const newMeta = snap.context.meta
-        const newResourceKey = newMeta.references.id.resourceKey
+        const updatedDoc = snap.context.doc
 
-        return { resourceKey: newResourceKey }
+        return { resourceKey: updatedDoc.id.resourceKey }
       },
       bodyWithFiles: {
         fields: {

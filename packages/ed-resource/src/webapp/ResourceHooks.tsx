@@ -130,11 +130,11 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   })
 
   const editData = useCallback(
-    async (res: Partial<EditResourceFormRpc>, rpcId?: string) => {
+    async ({ image, meta }: EditResourceFormRpc, rpcId?: string) => {
       setterSave('form', 'saving')
       const editResponse = await shell.rpc.me('webapp/edit/:_key', {
         rpcId,
-      })({ values: res }, { _key: resourceKey })
+      })({ form: { meta, image } }, { _key: resourceKey })
       setResource(resource => {
         return (
           resource && {
@@ -157,8 +157,8 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       async setImage(image) {
         upImageTaskSet(
           !image
-            ? editData({ image: { type: 'remove' } })
-            : editData({ image: { type: 'file', file: [image] } }, upImageTaskId),
+            ? editData({ image: { kind: 'remove' } })
+            : editData({ image: { kind: 'file', file: [image] } }, upImageTaskId),
           {
             file: image,
           },

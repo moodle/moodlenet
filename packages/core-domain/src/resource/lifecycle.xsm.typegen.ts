@@ -36,8 +36,8 @@ export interface Typegen0 {
     MetaGenerator: 'done.invoke.EdResource.Autogenerating-Meta:invocation[0]'
     ModeratePublishingResource: 'done.invoke.EdResource.Publishing-Moderation:invocation[0]'
     ScheduleDestroy: 'done.invoke.EdResource.In-Trash:invocation[0]'
-    StoreMetaEdits: 'done.invoke.EdResource.Storing-Meta:invocation[0]'
     StoreNewResource: 'done.invoke.EdResource.Storing-New-Content:invocation[0]'
+    StoreResourceEdits: 'done.invoke.EdResource.Storing-Meta:invocation[0]'
   }
   'missingImplementations': {
     actions:
@@ -59,17 +59,18 @@ export interface Typegen0 {
       | 'MetaGenerator'
       | 'ModeratePublishingResource'
       | 'ScheduleDestroy'
-      | 'StoreMetaEdits'
       | 'StoreNewResource'
+      | 'StoreResourceEdits'
   }
   'eventsCausingActions': {
+    assign_doc:
+      | 'done.invoke.EdResource.Storing-Meta:invocation[0]'
+      | 'done.invoke.EdResource.Storing-New-Content:invocation[0]'
     assign_edit_meta_errors: 'done.invoke.EdResource.Storing-Meta:invocation[0]'
-    assign_identifiers: 'done.invoke.EdResource.Storing-New-Content:invocation[0]'
     assign_last_publishing_moderation_rejection_reason: 'done.invoke.EdResource.Publishing-Moderation:invocation[0]'
     assign_provided_content_rejection_reason: 'done.invoke.EdResource.Storing-New-Content:invocation[0]'
     assign_suggested_meta: 'done.invoke.EdResource.Autogenerating-Meta:invocation[0]'
     assign_unauthorized: ''
-    assign_updated_meta_and_image_ref: 'done.invoke.EdResource.Storing-Meta:invocation[0]'
     destroy_all_data: 'done.invoke.EdResource.In-Trash:invocation[0]'
     notify_creator:
       | ''
@@ -101,8 +102,8 @@ export interface Typegen0 {
       | 'request-meta-generation'
     ModeratePublishingResource: 'request-publish'
     ScheduleDestroy: 'trash'
-    StoreMetaEdits: 'edit-meta'
     StoreNewResource: 'provide-content'
+    StoreResourceEdits: 'edit-meta'
   }
   'matchesStates':
     | 'Autogenerating-Meta'

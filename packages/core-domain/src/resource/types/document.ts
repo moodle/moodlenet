@@ -1,8 +1,3 @@
-export interface Refs {
-  content: Content
-  image: Image | null
-  id: ID
-}
 export interface ID {}
 export interface FileContent {
   kind: 'file'
@@ -22,9 +17,14 @@ export interface UrlImage {
   kind: 'url'
   url: string
 }
+export type ResourceDoc = {
+  meta: ResourceMeta
+  content: Content
+  image: Image | null
+  id: ID
+}
 
 export interface ResourceMeta {
-  references: Refs //TODO: move to context ?
   title: string
   description: string
   license?: License
@@ -35,6 +35,7 @@ export interface ResourceMeta {
   type?: Type
   learningOutcomes: LearningOutcome[]
 }
+
 export interface Credits {
   owner: {
     url: string

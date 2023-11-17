@@ -1,4 +1,3 @@
 export * from './core-interfaces.mjs'
 export * from './machinery.mjs'
-export * from './mappings/from-xsm.mjs'
-export * from './mappings/to-xsm.mjs'
+export * as map from './mappings/exports.mjs'

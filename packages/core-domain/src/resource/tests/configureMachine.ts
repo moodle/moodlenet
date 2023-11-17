@@ -6,8 +6,8 @@ import {
   Actor_GenerateMeta_Data,
   Actor_ModeratePublishingResource_Data,
   Actor_ScheduleDestroy_Data,
-  Actor_StoreMetaEdits_Data,
   Actor_StoreNewResource_Data,
+  Actor_StoreResourceEdits_Data,
   Context,
   StateName,
 } from '../types/lifecycle'
@@ -15,10 +15,10 @@ import {
 type ServiceResponse<T> = [data: T, timeout?: number]
 type TestMachineConfig = {
   initialContext?: Partial<Context>
-  metaEditsValidationErrors?: Context['metaEditsValidationErrors'][]
+  resourceEditsValidationErrors?: Context['resourceEditsValidationErrors'][]
   contentRejectedReason?: Context['contentRejectedReason'][]
   storeNewResource_Data?: ServiceResponse<Actor_StoreNewResource_Data>[]
-  storeMetaEdits_Data?: ServiceResponse<Actor_StoreMetaEdits_Data>[]
+  storeResourceEdits_Data?: ServiceResponse<Actor_StoreResourceEdits_Data>[]
   generateMeta_Data?: ServiceResponse<Actor_GenerateMeta_Data>[]
   moderatePublishingResource_Data?: ServiceResponse<Actor_ModeratePublishingResource_Data>[]
   scheduleDestroy_Data?: ServiceResponse<Actor_ScheduleDestroy_Data>[]
@@ -43,18 +43,18 @@ type ExecNames =
   | 'contentRejectedReason'
   | 'check_and_assign_provided_content_formally_acceptable'
   | 'StoreNewResource'
-  | 'StoreMetaEdits'
+  | 'StoreResourceEdits'
   | 'MetaGenerator'
   | 'ModeratePublishingResource'
   | 'ScheduleDestroy'
 export function configureTestMachine({
   storeNewResource_Data = [],
-  storeMetaEdits_Data = [],
+  storeResourceEdits_Data = [],
   generateMeta_Data = [],
   moderatePublishingResource_Data = [],
   scheduleDestroy_Data = [],
   contentRejectedReason = [],
-  metaEditsValidationErrors = [],
+  resourceEditsValidationErrors = [],
   initialContext,
 }: TestMachineConfig) {
   let executions: [name: ExecNames, more?: any][] = []
@@ -71,13 +71,13 @@ export function configureTestMachine({
         validate_edit_meta_and_assign_errors: assign(context => {
           executions.push(['validate_edit_meta_and_assign_errors'])
           return produce(context, proxy => {
-            proxy.metaEditsValidationErrors = metaEditsValidationErrors.shift()
+            proxy.resourceEditsValidationErrors = resourceEditsValidationErrors.shift() ?? null
           })
         }),
         validate_provided_content_and_assign_errors: assign(context => {
           executions.push(['check_and_assign_provided_content_formally_acceptable'])
           return produce(context, proxy => {
-            proxy.contentRejectedReason = contentRejectedReason.shift()
+            proxy.contentRejectedReason = contentRejectedReason.shift() ?? null
           })
         }),
       },
@@ -86,9 +86,9 @@ export function configureTestMachine({
           executions.push(['StoreNewResource'])
           return timeoutPromise('StoreNewResource', storeNewResource_Data.shift())
         },
-        async StoreMetaEdits(): Promise<Actor_StoreMetaEdits_Data> {
-          executions.push(['StoreMetaEdits'])
-          return timeoutPromise('StoreMetaEdits', storeMetaEdits_Data.shift())
+        async StoreResourceEdits(): Promise<Actor_StoreResourceEdits_Data> {
+          executions.push(['StoreResourceEdits'])
+          return timeoutPromise('StoreResourceEdits', storeResourceEdits_Data.shift())
         },
         async MetaGenerator(): Promise<Actor_GenerateMeta_Data> {
           executions.push(['MetaGenerator'])

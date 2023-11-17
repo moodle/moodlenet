@@ -266,7 +266,7 @@ export async function saveResourceImage(
 }
 export async function setResourceImage(
   _key: string,
-  maybeImage: RpcFile | null | undefined,
+  maybeImage: RpcFile | null, //| undefined,
   opts?: {
     noResize?: boolean
   },

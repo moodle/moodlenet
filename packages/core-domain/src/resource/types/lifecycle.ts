@@ -1,35 +1,16 @@
 import type { EventOf, StateOf } from '../../common/xsm-typegen-extract/types'
 import type { Typegen0 } from '../lifecycle.xsm.typegen'
-import {
-  Credits,
-  Language,
-  LearningOutcome,
-  Level,
-  License,
-  OriginalPublicationInfo,
-  Refs,
-  ResourceMeta,
-  Subject,
-  Type,
-} from './document'
+import { Credits, ResourceDoc, ResourceMeta } from './document'
 import { Issuer } from './issuer'
 
 export type StateName = StateOf<Typegen0>
 
 export interface GeneratedMeta {
-  metaEdits: MetaEdits
+  resourceEdits: ResourceEdits
 }
-export interface MetaEdits {
-  title?: string
-  description?: string
-  license?: License
-  subject?: Subject
-  language?: Language
-  level?: Level
-  originalPublicationInfo?: OriginalPublicationInfo
-  type?: Type
-  learningOutcomes?: LearningOutcome[]
-  image?: ProvidedImage | 'remove' | 'no-change'
+export interface ResourceEdits {
+  meta?: Partial<ResourceMeta>
+  image?: ProvidedImage
 }
 export interface ProvidedFileImage {
   kind: 'file'
@@ -39,39 +20,46 @@ export interface ProvidedUrlImage {
   url: string
   credits?: Credits
 }
-export type ProvidedImage = ProvidedFileImage | ProvidedUrlImage
+export type ProvidedImage =
+  | ProvidedFileImage
+  | ProvidedUrlImage
+  | { kind: 'remove' }
+  | { kind: 'no-change' }
 
 // CONTEXT
 export interface Context {
   issuer: Issuer
-  meta: ResourceMeta
-  contentRejectedReason?: string | MetaEditsValidationErrors
-  noAccessReason?: 'unauthorized' | 'not available' | 'provided content is not valid'
-  generatedMeta?: GeneratedMeta
-  lastPublishingModerationRejectionReason?: string
-  metaEditsValidationErrors?: MetaEditsValidationErrors
-  publishMetaValidationErrors?: PublishMetaValidationErrors
+  doc: ResourceDoc
+  contentRejectedReason: null | string | ResourceEditsValidationErrors
+  noAccessReason: null | 'unauthorized' | 'not available' | 'provided content is not valid'
+  generatedMeta: null | GeneratedMeta
+  lastPublishingModerationRejectionReason: null | string
+  resourceEditsValidationErrors: null | ResourceEditsValidationErrors
+  publishMetaValidationErrors: null | PublishMetaValidationErrors
   // providedCreationContent?: ProvidedCreationContent
 }
 export interface PublishMetaValidationErrors {
-  fields: { [metaKey in keyof ResourceMeta]?: string }
+  meta: ResourceMetaValidationErrors
 }
-export interface MetaEditsValidationErrors {
-  fields: { [metaKey in keyof MetaEdits]?: string }
+export type ResourceMetaValidationErrors = {
+  [metaKey in keyof ResourceMeta]?: string
 }
 
-export type Actor_StoreMetaEdits_Data =
-  | Actor_StoreMetaEdits_Success
-  | Actor_StoreMetaEdits_ValidationError
-export interface Actor_StoreMetaEdits_Success {
-  success: true
-  meta: Omit<ResourceMeta, 'references'>
-  image: Refs['image']
+export interface ResourceEditsValidationErrors {
+  meta: null | ResourceMetaValidationErrors
+  image: null | string
 }
-export interface Actor_StoreMetaEdits_ValidationError {
+
+export type Actor_StoreResourceEdits_Data =
+  | Actor_StoreResourceEdits_Success
+  | Actor_StoreResourceEdits_ValidationError
+export interface Actor_StoreResourceEdits_Success {
+  success: true
+  doc: ResourceDoc
+}
+export interface Actor_StoreResourceEdits_ValidationError {
   success: false
-  validationErrors: MetaEditsValidationErrors
-  reason?: 'not found' | 'not valid'
+  validationErrors: ResourceEditsValidationErrors
 }
 
 export type Actor_StoreNewResource_Data =
@@ -79,14 +67,14 @@ export type Actor_StoreNewResource_Data =
   | Actor_StoreNewResource_ValidationError
 export interface Actor_StoreNewResource_Success {
   success: true
-  refs: Refs
+  doc: ResourceDoc
 }
 export interface Actor_StoreNewResource_ValidationError {
   success: false
   reason: string
 }
 export interface Actor_GenerateMeta_Data {
-  generetedMetaEdits: GeneratedMeta
+  generetedResourceEdits: GeneratedMeta
 }
 
 export type Actor_ModeratePublishingResource_Data =
@@ -128,7 +116,7 @@ export interface ProvidedCreationLinkContent {
 export type ProvidedCreationContent = ProvidedCreationFileContent | ProvidedCreationLinkContent
 export interface Event_Restore_Data {}
 export interface Event_EditMeta_Data {
-  metaEdits: MetaEdits
+  edits: ResourceEdits
 }
 export interface Event_RequestPublish_Data {}
 
@@ -138,7 +126,8 @@ export interface Event_RejectPublish_Data {
 export interface Event_Unpublish_Data {}
 export interface Event_ProvideContent_Data {
   content: ProvidedCreationContent
-  initialMeta?: MetaEdits
+  meta?: Partial<ResourceMeta>
+  image?: ProvidedImage
 }
 
 export interface Event_Trash_Data {}
