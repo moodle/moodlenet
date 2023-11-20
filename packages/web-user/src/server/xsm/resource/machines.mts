@@ -7,7 +7,7 @@ import type {
 } from '@moodlenet/core-domain/resource'
 import {
   DEFAULT_CONTEXT,
-  EdResourceMachine,
+  getEdResourceMachine,
   stateMatcher,
   SYSTEM_ISSUER,
   UNAUTHENTICATED_ISSUER,
@@ -25,11 +25,11 @@ import {
   saveResourceImage,
   setResourceImage,
   storeResourceFile,
+  validationsConfigs,
 } from '@moodlenet/ed-resource/server'
 import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
 import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
-import { produce } from 'immer'
-import { assign, interpret } from 'xstate'
+import { interpret } from 'xstate'
 import { verifyCurrentTokenCtx } from '../../srv/web-user.mjs'
 
 async function reviveStateAndContext(
@@ -66,7 +66,7 @@ async function reviveStateAndContext(
       {
         ...DEFAULT_CONTEXT,
         issuer: await getIssuer(['creator', false]),
-        noAccessReason: 'not available',
+        noAccess: { reason: 'not available' },
       },
       undefined,
     ]
@@ -103,7 +103,7 @@ export async function interpreterAndMachine(
     const stateMatches = stateMatcher(state)
     const noSaveStates: StateName[] = [
       'Checking-In-Content',
-      'Storing-New-Content',
+      'Storing-New-Resource',
       'No-Access',
       'Destroyed',
     ]
@@ -124,136 +124,134 @@ export async function interpreterAndMachine(
 }
 
 function configureMachine(initialContext: Context) {
-  return EdResourceMachine.withConfig(
-    {
-      services: {
-        async StoreNewResource(_, createEvent) {
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-          const newResourceKey = createEntityKey()
+  return getEdResourceMachine({
+    services: {
+      async StoreNewResource(provideDataEvent) {
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+        const newResourceKey = createEntityKey()
 
-          const contentResourceDataType: ResourceDataType['content'] =
-            createEvent.content.kind === 'link'
-              ? { kind: 'link', url: createEvent.content.url }
-              : {
-                  kind: 'file',
-                  fsItem: await storeResourceFile(newResourceKey, createEvent.content.rpcFile),
-                }
+        const contentResourceDataType: ResourceDataType['content'] =
+          provideDataEvent.content.kind === 'link'
+            ? { kind: 'link', url: provideDataEvent.content.url }
+            : {
+                kind: 'file',
+                fsItem: await storeResourceFile(newResourceKey, provideDataEvent.content.rpcFile),
+              }
 
-          const imageResourceDataType: ResourceDataType['image'] =
-            createEvent.image?.kind === 'file'
-              ? await saveResourceImage(
-                  newResourceKey,
-                  createEvent.image.rpcFile,
-                ).then<ImageUploaded>(res => ({
-                  kind: 'file',
-                  directAccessId: res.directAccessId,
-                }))
-              : map.db.providedImage_2_patchOrRpcFile(createEvent.image) ?? null
+        const imageResourceDataType: ResourceDataType['image'] =
+          provideDataEvent.image?.kind === 'file'
+            ? await saveResourceImage(
+                newResourceKey,
+                provideDataEvent.image.rpcFile,
+              ).then<ImageUploaded>(res => ({
+                kind: 'file',
+                directAccessId: res.directAccessId,
+              }))
+            : map.db.providedImage_2_patchOrRpcFile(provideDataEvent.image) ?? null
 
-          const resourceDataTypeMeta = await map.db.meta_2_db({
-            ...DEFAULT_CONTEXT.doc.meta,
-            ...createEvent.meta,
-          })
-          const created = await createResource(
-            {
-              ...EMPTY_RESOURCE,
-              ...resourceDataTypeMeta,
-              image: imageResourceDataType,
-              _key: newResourceKey,
-            },
-            contentResourceDataType,
-          )
-          if (!created) {
-            createEvent.content.kind === 'file' && delResourceFile(newResourceKey)
-            imageResourceDataType?.kind === 'file' && deleteImageFile(newResourceKey)
-            return {
-              success: false,
-              reason: 'resource creation failed for unknown reasons',
-            }
-          }
+        const resourceDataTypeMeta = await map.db.meta_2_db({
+          ...DEFAULT_CONTEXT.doc.meta,
+          ...provideDataEvent.meta,
+        })
+        const created = await createResource(
+          {
+            ...EMPTY_RESOURCE,
+            ...resourceDataTypeMeta,
+            image: imageResourceDataType,
+            _key: newResourceKey,
+          },
+          contentResourceDataType,
+        )
+        if (!created) {
+          provideDataEvent.content.kind === 'file' && delResourceFile(newResourceKey)
+          imageResourceDataType?.kind === 'file' && deleteImageFile(newResourceKey)
+          throw new Error('resource creation failed for unknown reasons')
+        }
 
-          const [, doc] = map.db.doc_2_xsm(created)
+        const [, doc] = map.db.doc_2_xsm(created)
 
-          return { success: true, doc }
-        },
-        async MetaGenerator() {
-          return {
-            generetedResourceEdits: {
-              resourceEdits: {
-                meta: {
-                  title: 'test generated title',
-                  description: 'test generated description',
-                },
+        return { doc }
+      },
+      async MetaGenerator() {
+        return {
+          generetedResourceEdits: {
+            resourceEdits: {
+              meta: {
+                title: 'test generated title',
+                description: 'test generated description',
               },
             },
-          }
-        },
-        async ModeratePublishingResource() {
-          return { passed: true }
-        },
-        async ScheduleDestroy() {
-          return true
-        },
-        async StoreResourceEdits(context, { edits }) {
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-          // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-
-          const imagePatch =
-            edits.image?.kind === 'file'
-              ? undefined
-              : map.db.providedImage_2_patchOrRpcFile(edits.image)
-
-          const resourceDataTypeMeta = map.db.meta_2_db({ ...context.doc.meta, ...edits.meta })
-          const patchRes = await patchResource(context.doc.id.resourceKey, {
-            ...resourceDataTypeMeta,
-            image: imagePatch,
-          })
-          if (!patchRes) {
-            throw new Error('patchResource failed for unknown reasons')
-          }
-          if (edits.image?.kind === 'file') {
-            await setResourceImage(context.doc.id.resourceKey, edits.image.rpcFile)
-          }
-
-          const [, doc] = map.db.doc_2_xsm(patchRes.patched)
-          const res: Actor_StoreResourceEdits_Data = {
-            success: true,
-            doc,
-          }
-          return res
-        },
+          },
+        }
       },
-      actions: {
-        notify_creator(_, ev) {
-          //@ALE: TBD
-          console.log('notify_creator', ev.type)
-        },
-        destroy_all_data() {
-          const resourceKey = initialContext.doc.id.resourceKey
-          delResource(resourceKey)
-          deleteImageFile(resourceKey)
-          delResourceFile(resourceKey)
-        },
-        validate_edit_meta_and_assign_errors: assign(context => {
-          return produce(context, proxy => {
-            proxy
-          })
-        }),
-        validate_provided_content_and_assign_errors: assign(context => {
-          return produce(context, proxy => {
-            proxy
-          })
-        }),
+      async ModeratePublishingResource() {
+        return { notPassed: false }
       },
-      guards: {} as any,
+      async ScheduleDestroy() {
+        return true
+      },
+      async StoreResourceEdits(context, { edits }) {
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+
+        const imagePatch =
+          edits.image?.kind === 'file'
+            ? undefined
+            : map.db.providedImage_2_patchOrRpcFile(edits.image)
+
+        const resourceDataTypeMeta = map.db.meta_2_db({ ...context.doc.meta, ...edits.meta })
+        const patchRes = await patchResource(context.doc.id.resourceKey, {
+          ...resourceDataTypeMeta,
+          image: imagePatch,
+        })
+        if (!patchRes) {
+          throw new Error('patchResource failed for unknown reasons')
+        }
+        if (edits.image?.kind === 'file') {
+          await setResourceImage(context.doc.id.resourceKey, edits.image.rpcFile)
+        }
+
+        const [, doc] = map.db.doc_2_xsm(patchRes.patched)
+        const res: Actor_StoreResourceEdits_Data = {
+          doc,
+        }
+        return res
+      },
     },
-    initialContext,
-  )
+    actions: {
+      notify_creator(/* _, ev */) {
+        //@ALE: TBD
+        console.log('notify_creator' /* , ev.type */)
+      },
+      destroy_all_data(context) {
+        const resourceKey = context.doc.id.resourceKey
+        if (resourceKey === initialContext.doc.id.resourceKey) {
+          return
+        }
+        delResource(resourceKey)
+        deleteImageFile(resourceKey)
+        delResourceFile(resourceKey)
+      },
+    },
+
+    validationConfigs: {
+      content: { sizeBytes: { max: validationsConfigs.contentMaxUploadSize } },
+      image: { sizeBytes: { max: validationsConfigs.imageMaxUploadSize } },
+      meta: {
+        description: { length: validationsConfigs.descriptionLength },
+        title: { length: validationsConfigs.titleLength },
+        learningOutcomes: {
+          amount: validationsConfigs.learningOutcomes.amount,
+          sentence: { length: validationsConfigs.learningOutcomes.sentenceLength },
+        },
+      },
+    },
+  })
 }
 
 async function getIssuer([paramType, val]:

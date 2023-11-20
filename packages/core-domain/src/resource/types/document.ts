@@ -27,12 +27,12 @@ export type ResourceDoc = {
 export interface ResourceMeta {
   title: string
   description: string
-  license?: License
-  subject?: Subject
-  language?: Language
-  level?: Level
-  originalPublicationInfo?: OriginalPublicationInfo
-  type?: Type
+  license: null | License
+  subject: null | Subject
+  language: null | Language
+  level: null | Level
+  originalPublicationInfo: null | OriginalPublicationInfo
+  type: null | Type
   learningOutcomes: LearningOutcome[]
 }
 
@@ -67,4 +67,7 @@ export interface Level {
 export interface Type {
   code: string
 }
-export interface LearningOutcome {}
+export interface LearningOutcome {
+  sentence: string
+  // add and validae other fields here ?
+}

@@ -33,13 +33,13 @@
     "./resource": "./dist/resource/exports.js"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --watch"
   },
   "dependencies": {
     "dot": "1.1.3",
     "immer": "^10.0.3",
     "xstate": "^4.38.3",
-    "yup": "0.32.11"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/jest": "^29.5.8",

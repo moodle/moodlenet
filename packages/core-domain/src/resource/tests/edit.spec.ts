@@ -1,42 +1,55 @@
+import { interpret } from 'xstate'
 import { waitFor } from 'xstate/lib/waitFor'
-import { nameMatcher } from '../exports'
+import { DEFAULT_CONTEXT, Event, getEdResourceMachine, nameMatcher } from '../exports'
 
-import { getTestableInterpreter, userIssuer } from './configureMachine'
+import { getEdResourceMachineDeps, userIssuer } from './configureMachine'
 
 test('authenticated user, creator, but too long description', async () => {
-  const [interpreter, states, executions] = getTestableInterpreter({
-    initialContext: { issuer: userIssuer({ feats: { creator: true } }) },
-    storeResourceEdits_Data: [
-      [{ success: false, validationErrors: { meta: { description: 'too long' }, image: null } }],
-    ],
+  const deps = getEdResourceMachineDeps()
+  const machine = getEdResourceMachine(deps).withContext({
+    ...DEFAULT_CONTEXT,
+    issuer: userIssuer({ feats: { creator: true } }),
   })
-  interpreter.start('Unpublished')
+  const interpreter = interpret(machine, {})
 
-  interpreter.send({
-    type: 'edit-meta',
-    edits: { image: { kind: 'no-change' }, meta: {} },
-  })
+  interpreter.start('Unpublished')
+  let snap = interpreter.getSnapshot()
+
+  const provideEditsEvent: Event = {
+    type: 'provide-resource-edits',
+    edits: {
+      image: { kind: 'no-change' },
+      meta: {
+        ...snap.context.doc.meta,
+        description: '123456',
+      },
+    },
+  }
+  expect(snap.can(provideEditsEvent)).toBe(true)
+  interpreter.send(provideEditsEvent)
   await waitFor(interpreter, nameMatcher('Unpublished'))
   // console.log(executions, states, snap.value, snap.context)
-  const snap = interpreter.getSnapshot()
+  snap = interpreter.getSnapshot()
   expect(snap.value).toBe('Unpublished')
-  expect(executions).toEqual([['validate_edit_meta_and_assign_errors'], ['StoreResourceEdits']])
-  expect(states).toEqual(['Unpublished', 'Storing-Meta', 'Unpublished'])
-  expect(snap.context.resourceEditsValidationErrors).toStrictEqual({
-    fields: { description: 'too long' },
+  expect(snap.context.resourceEdits?.errors).toStrictEqual({
+    description: ' Please provide a shorter description (6 / 5)',
   })
 })
 
 test('authenticated user, but not creator', async () => {
-  const [interpreter /* , states, executions */] = getTestableInterpreter({
-    initialContext: { issuer: userIssuer({ feats: { creator: false } }) },
+  const deps = getEdResourceMachineDeps()
+  const machine = getEdResourceMachine(deps).withContext({
+    ...DEFAULT_CONTEXT,
+    issuer: userIssuer({ feats: { creator: false } }),
   })
+  const interpreter = interpret(machine, {})
+  interpreter.start()
   interpreter.start('Unpublished')
 
   let snap = interpreter.getSnapshot()
   expect(
     snap.can({
-      type: 'edit-meta',
+      type: 'provide-resource-edits',
       edits: {
         meta: {} as any,
         image: { kind: 'no-change' },

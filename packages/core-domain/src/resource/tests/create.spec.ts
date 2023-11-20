@@ -1,38 +1,33 @@
-import { waitFor } from 'xstate/lib/waitFor'
-import { nameMatcher } from '../exports'
+import { interpret } from 'xstate'
+import { DEFAULT_CONTEXT, getEdResourceMachine } from '../exports'
 
-import { getTestableInterpreter, userIssuer } from './configureMachine'
+import { getEdResourceMachineDeps, userIssuer } from './configureMachine'
 
 test('authenticated user, but non acceptable content', async () => {
-  const [interpreter, states, executions] = getTestableInterpreter({
-    initialContext: { issuer: userIssuer({ feats: { creator: true } }) },
-    storeNewResource_Data: [[{ success: false, reason: 'too big' }, 500]],
+  const deps = getEdResourceMachineDeps()
+  const machine = getEdResourceMachine(deps).withContext({
+    ...DEFAULT_CONTEXT,
+    issuer: userIssuer({ feats: { creator: true } }),
   })
+  const interpreter = interpret(machine, {})
   interpreter.start()
 
-  interpreter.send({ type: 'provide-content', content: { kind: 'file' } })
-  await waitFor(interpreter, nameMatcher('Checking-In-Content'))
-  // console.log(executions, states, snap.value, snap.context)
+  interpreter.send({ type: 'provide-new-resource', content: { kind: 'file', size: 1001 } })
   const snap = interpreter.getSnapshot()
-  expect(snap.value).toBe('Checking-In-Content')
-  expect(executions).toEqual([
-    ['check_and_assign_provided_content_formally_acceptable'],
-    ['StoreNewResource'],
-  ])
-  expect(states).toEqual(['Checking-In-Content', 'Storing-New-Content', 'Checking-In-Content'])
-  expect(snap.context.contentRejectedReason).toBe('too big')
+  expect(snap.context.providedContent).toStrictEqual(null)
+  expect(snap.context.contentRejected).toStrictEqual({
+    reason: 'ValidationError: File too big 1001 B, max 1000 B',
+  })
 })
 
 test('unauthenticated issuer should not be authorized to create', async () => {
-  const [interpreter, states, executions] = getTestableInterpreter({
-    initialContext: { issuer: { type: 'unauthenticated' } },
-  })
+  const deps = getEdResourceMachineDeps()
+  const machine = getEdResourceMachine(deps)
+  const interpreter = interpret(machine, {})
   interpreter.start()
 
   const snap = interpreter.getSnapshot()
   // console.log(executions, states, snap.value, snap.context)
-  expect(snap.context.noAccessReason).toBe('unauthorized')
+  expect(snap.context.noAccess?.reason).toBe('unauthorized')
   expect(snap.value).toBe('No-Access')
-  expect(executions).toEqual([])
-  expect(states).toEqual(['No-Access'])
 })

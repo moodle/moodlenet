@@ -17,7 +17,7 @@ import { shell } from './shell.mjs'
 import type {
   Event,
   Event_EditMeta_Data,
-  Event_ProvideContent_Data,
+  Event_ProvideNewResource_Data,
 } from '@moodlenet/core-domain/resource'
 import { matchState, nameMatcher } from '@moodlenet/core-domain/resource'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
@@ -238,7 +238,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           },
         }
 
-        const event: Event = { type: 'edit-meta', ...resourceEdits }
+        const event: Event = { type: 'store-edits', ...resourceEdits }
         if (!snap.can(event)) {
           return null
         }
@@ -276,7 +276,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
         const { interpreter } = await xsm.interpreterAndMachine({ type: 'create' })
         let snap = interpreter.getSnapshot()
-        const contentEventData: Event_ProvideContent_Data = {
+        const contentEventData: Event_ProvideNewResource_Data = {
           meta: {
             title: name,
             description,
@@ -286,7 +286,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
               ? { kind: 'link', url: resourceContent }
               : { kind: 'file', rpcFile: resourceContent },
         }
-        const provideContentEvent: Event = { type: 'provide-content', ...contentEventData }
+        const provideContentEvent: Event = { type: 'store-new-resource', ...contentEventData }
         if (!snap.can(provideContentEvent)) {
           interpreter.stop()
           throw RpcStatus('Unauthorized')
@@ -385,13 +385,13 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         const { interpreter } = await xsm.interpreterAndMachine({ type: 'create' })
         let snap = interpreter.getSnapshot()
-        const contentEventData: Event_ProvideContent_Data = {
+        const contentEventData: Event_ProvideNewResource_Data = {
           content:
             'string' === typeof resourceContent
               ? { kind: 'link', url: resourceContent }
               : { kind: 'file', rpcFile: resourceContent },
         }
-        const provideContentEvent: Event = { type: 'provide-content', ...contentEventData }
+        const provideContentEvent: Event = { type: 'store-new-resource', ...contentEventData }
         if (!snap.can(provideContentEvent)) {
           interpreter.stop()
           throw RpcStatus('Unauthorized')

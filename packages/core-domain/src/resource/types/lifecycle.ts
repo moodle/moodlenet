@@ -5,87 +5,104 @@ import { Issuer } from './issuer'
 
 export type StateName = StateOf<Typegen0>
 
-export interface GeneratedMeta {
-  resourceEdits: ResourceEdits
+export interface ValidationConfigs {
+  meta: {
+    title: { length: { max: number; min: number } }
+    description: { length: { max: number; min: number } }
+    learningOutcomes: {
+      sentence: { length: { max: number; min: number } }
+      amount: { max: number; min: number }
+    }
+  }
+  image: { sizeBytes: { max: number } }
+  content: { sizeBytes: { max: number } }
 }
-export interface ResourceEdits {
+
+export interface GeneratedData {
   meta?: Partial<ResourceMeta>
   image?: ProvidedImage
 }
+export interface ResourceEdits {
+  meta?: ResourceMeta
+  image?: ImageEdit
+}
 export interface ProvidedFileImage {
   kind: 'file'
+  size: number
 }
 export interface ProvidedUrlImage {
   kind: 'url'
   url: string
   credits?: Credits
 }
-export type ProvidedImage =
-  | ProvidedFileImage
-  | ProvidedUrlImage
-  | { kind: 'remove' }
-  | { kind: 'no-change' }
+export type ProvidedImage = ProvidedFileImage | ProvidedUrlImage
+
+export type ImageEdit = ProvidedImage | { kind: 'remove' } | { kind: 'no-change' }
 
 // CONTEXT
 export interface Context {
+  noAccess: null | ReasonString<'unauthorized' | 'not available'>
+  contentRejected: null | ReasonString
   issuer: Issuer
   doc: ResourceDoc
-  contentRejectedReason: null | string | ResourceEditsValidationErrors
-  noAccessReason: null | 'unauthorized' | 'not available' | 'provided content is not valid'
-  generatedMeta: null | GeneratedMeta
-  lastPublishingModerationRejectionReason: null | string
-  resourceEditsValidationErrors: null | ResourceEditsValidationErrors
-  publishMetaValidationErrors: null | PublishMetaValidationErrors
-  // providedCreationContent?: ProvidedCreationContent
+  generatedMeta: null | GeneratedData
+  resourceEdits: null | {
+    data: ResourceEdits
+    errors: ResourceEditsValidationErrors | null
+  }
+  publishingErrors: null | ResourceMetaValidationErrors
+  publishRejected: null | ReasonString
+  providedContent: null | ProvidedCreationContent
 }
-export interface PublishMetaValidationErrors {
-  meta: ResourceMetaValidationErrors
+
+interface ReasonString<Reason extends string = string> {
+  reason: Reason
 }
+
 export type ResourceMetaValidationErrors = {
   [metaKey in keyof ResourceMeta]?: string
 }
 
-export interface ResourceEditsValidationErrors {
-  meta: null | ResourceMetaValidationErrors
-  image: null | string
+export type ResourceEditsValidationErrors = ResourceMetaValidationErrors & {
+  image?: string
 }
 
-export type Actor_StoreResourceEdits_Data =
-  | Actor_StoreResourceEdits_Success
-  | Actor_StoreResourceEdits_ValidationError
-export interface Actor_StoreResourceEdits_Success {
-  success: true
+export type Actors = {
+  StoreNewResource: {
+    data: Actor_StoreNewResource_Data
+  }
+  StoreResourceEdits: {
+    data: Actor_StoreResourceEdits_Data
+  }
+  MetaGenerator: {
+    data: Actor_MetaGenerator_Data
+  }
+  ModeratePublishingResource: {
+    data: Actor_ModeratePublishingResource_Data
+  }
+  ScheduleDestroy: {
+    data: Actor_ScheduleDestroy_Data
+  }
+}
+
+export interface Actor_StoreResourceEdits_Data {
   doc: ResourceDoc
 }
-export interface Actor_StoreResourceEdits_ValidationError {
-  success: false
-  validationErrors: ResourceEditsValidationErrors
-}
 
-export type Actor_StoreNewResource_Data =
-  | Actor_StoreNewResource_Success
-  | Actor_StoreNewResource_ValidationError
-export interface Actor_StoreNewResource_Success {
-  success: true
+export interface Actor_StoreNewResource_Data {
   doc: ResourceDoc
 }
-export interface Actor_StoreNewResource_ValidationError {
-  success: false
-  reason: string
-}
-export interface Actor_GenerateMeta_Data {
-  generetedResourceEdits: GeneratedMeta
+
+export interface Actor_MetaGenerator_Data {
+  generatedData: GeneratedData
 }
 
-export type Actor_ModeratePublishingResource_Data =
-  | Actor_ModeratePublishingResource_Passed
-  | Actor_ModeratePublishingResource_NotPassed
-export interface Actor_ModeratePublishingResource_Passed {
-  passed: true
-}
-export interface Actor_ModeratePublishingResource_NotPassed {
-  passed: false
-  reason: string
+export interface Actor_ModeratePublishingResource_Data {
+  notPassed:
+    | false
+    | {
+        reason: string
+      }
 }
 
 export interface Actor_ScheduleDestroy_Data {}
@@ -94,8 +111,10 @@ export interface Actor_ScheduleDestroy_Data {}
 export type Event = EventOf<
   Typegen0,
   {
-    'provide-content': Event_ProvideContent_Data
-    'edit-meta': Event_EditMeta_Data
+    'store-new-resource': Event_StoreNewResource_Data
+    'provide-new-resource': Event_ProvideNewResource_Data
+    'store-edits': Event_StoreEdits_Data
+    'provide-resource-edits': Event_ProvideResourceEdits_Data
     'request-publish': Event_RequestPublish_Data
     'unpublish': Event_Unpublish_Data
     'reject-publish': Event_RejectPublish_Data
@@ -103,11 +122,16 @@ export type Event = EventOf<
     'request-meta-generation': Event_RequestMetaGeneration_Data
     'cancel-meta-generation': Event_CancelMetaAutogen_Data
     'restore': Event_Restore_Data
+    'accept-meta-suggestions': Event_AcceptMetaSuggestions_Data
   }
 >
 
+export interface Event_StoreEdits_Data {}
+export interface Event_StoreNewResource_Data {}
+export interface Event_AcceptMetaSuggestions_Data {}
 export interface ProvidedCreationFileContent {
   kind: 'file'
+  size: number
 }
 export interface ProvidedCreationLinkContent {
   kind: 'link'
@@ -115,7 +139,7 @@ export interface ProvidedCreationLinkContent {
 }
 export type ProvidedCreationContent = ProvidedCreationFileContent | ProvidedCreationLinkContent
 export interface Event_Restore_Data {}
-export interface Event_EditMeta_Data {
+export interface Event_ProvideResourceEdits_Data {
   edits: ResourceEdits
 }
 export interface Event_RequestPublish_Data {}
@@ -124,7 +148,7 @@ export interface Event_RejectPublish_Data {
   reason: string
 }
 export interface Event_Unpublish_Data {}
-export interface Event_ProvideContent_Data {
+export interface Event_ProvideNewResource_Data {
   content: ProvidedCreationContent
   meta?: Partial<ResourceMeta>
   image?: ProvidedImage

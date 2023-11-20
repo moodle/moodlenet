@@ -17,6 +17,9 @@
     { "path": "../ed-resource" },
     { "path": "../ed-meta" },
     { "path": "../simple-file-store" },
-    { "path": "../key-value-store" }
+    { "path": "../key-value-store" },
+    {
+      "path": "../core-domain"
+    }
   ]
 }
