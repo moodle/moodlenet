@@ -79,7 +79,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
             data: res.data,
             access: res.access,
             contributor: res.contributor,
-            resourceForm: res.resourceForm,
+            resourceForm: { ...res.resourceForm, ...res.state.autofillSuggestions?.meta },
             state: { ...res.state, uploadProgress: undefined },
           })
       })
@@ -132,6 +132,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const editData = useCallback(
     async ({ image, meta }: EditResourceFormRpc, rpcId?: string) => {
       setterSave('form', 'saving')
+
       const editResponse = await shell.rpc.me('webapp/edit/:_key', {
         rpcId,
       })({ form: { meta, image } }, { _key: resourceKey })

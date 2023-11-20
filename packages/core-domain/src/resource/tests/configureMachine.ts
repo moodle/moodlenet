@@ -28,12 +28,15 @@ export function getEdResourceMachineDeps() {
       notify_creator() {
         console.log('notify_creator')
       },
+      // persist_context() {
+      //   console.log('persistContext')
+      // },
     },
     services: {
       async MetaGenerator() {
         const genMeta: Actor_MetaGenerator_Data = {
           generatedData: {
-            image: { kind: 'file', size: 100 },
+            //   image: { kind: 'file', size: 100 },
             meta: {
               description: 'some generated description',
               title: 'some generated title',

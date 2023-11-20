@@ -14,12 +14,8 @@ import {
 import { waitFor } from 'xstate/lib/waitFor.js'
 import { shell } from './shell.mjs'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
-import type {
-  Event,
-  Event_EditMeta_Data,
-  Event_ProvideNewResource_Data,
-} from '@moodlenet/core-domain/resource'
-import { matchState, nameMatcher } from '@moodlenet/core-domain/resource'
+import type { Event, Event_ProvideResourceEdits_Data } from '@moodlenet/core-domain/resource'
+import { DEFAULT_CONTEXT, matchState, nameMatcher } from '@moodlenet/core-domain/resource'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
 import { boolean, object } from 'yup'
@@ -40,8 +36,8 @@ import {
   searchResources,
   validationsConfigs,
 } from './services.mjs'
-import xsm from './xsm/machinery.mjs'
-import { meta_2_form, resourceMetaForm_2_meta } from './xsm/mappings/rpc.mjs'
+import srv from './xsm/machinery.mjs'
+import * as map from './xsm/mappings/rpc.mjs'
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
 
@@ -64,10 +60,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceRecord) {
           return { done: false }
         }
-        const { interpreter } = await xsm.interpreterAndMachine({
-          type: 'data',
-          data: resourceRecord,
-        })
+        const [interpreter] = await srv.stdEdResourceMachine({ by: 'data', data: resourceRecord })
         let snap = interpreter.getSnapshot()
         if (!snap.can(publish ? 'request-publish' : 'unpublish')) {
           interpreter.stop()
@@ -94,8 +87,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceRecord) {
           return { done: false }
         }
-        const { interpreter } = await xsm.interpreterAndMachine({
-          type: 'data',
+        const [interpreter] = await srv.stdEdResourceMachine({
+          by: 'data',
           data: resourceRecord,
         })
         const ev = action === 'cancel' ? `cancel-meta-generation` : `request-meta-generation`
@@ -120,14 +113,15 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceRecord) {
           return null
         }
-        const { interpreter } = await xsm.interpreterAndMachine({
-          type: 'data',
+        const [interpreter] = await srv.stdEdResourceMachine({
+          by: 'data',
           data: resourceRecord,
         })
         const snap = interpreter.getSnapshot()
         if (matchState(snap, 'No-Access') || !resourceRecord) {
           return null
         }
+
         const image = getImageAssetInfo(snap.context.doc.image?.ref)
 
         const contentUrl =
@@ -184,6 +178,17 @@ export const expose = await shell.expose<FullResourceExposeType>({
           state: {
             isPublished: resourceRecord.entity.published,
             autofillState: matchState(snap, 'Autogenerating-Meta') ? 'ai-generation' : undefined,
+            autofillSuggestions: {
+              meta: snap.context.generatedData?.meta
+                ? map.meta_2_form({
+                    ...snap.context.doc.meta,
+                    ...snap.context.generatedData.meta,
+                  })
+                : null,
+              // image: snap.context.generatedData?.image
+              //   ? await map.image_2_assetInfo(snap.context.generatedData.image,_key)
+              //   : null,
+            },
           },
           access: {
             canDelete: !!resourceRecord.access.d,
@@ -199,31 +204,38 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/edit/:_key': {
       guard: async body => {
         const { draftResourceValidationSchema } = await getValidations()
-        body.values = await draftResourceValidationSchema.validate(body?.values.meta, {
+        body.form = await draftResourceValidationSchema.validate(body?.form.meta, {
           stripUnknown: true,
         })
       },
       fn: async ({ form }, { _key }) => {
         // const resourceRecord = await getResource(_key)
         // const { interpreter } = await xsm.interpreterAndMachine(resourceRecord)
-        const { interpreter } = await xsm.interpreterAndMachine({ type: 'key', key: _key })
+        const [interpreter] = await srv.stdEdResourceMachine({
+          by: 'key',
+          key: _key,
+        })
         let snap = interpreter.getSnapshot()
         if (!(form.meta || form.image)) {
-          const editResourceRespRpc: EditResourceRespRpc = {
-            meta: meta_2_form(snap.context.doc.meta),
-            image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
-          }
-          return editResourceRespRpc
+          // const editResourceRespRpc: EditResourceRespRpc = {
+          //   meta: map.meta_2_form(snap.context.doc.meta),
+          //   image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
+          // }
+          // return editResourceRespRpc
+          return null
         }
-        const resourceMeta = form.meta ? resourceMetaForm_2_meta(form.meta) : snap.context.doc.meta
+        const resourceMeta = form.meta
+          ? map.resourceMetaForm_2_meta(form.meta)
+          : snap.context.doc.meta
 
-        const resourceEdits: Event_EditMeta_Data = {
+        const resourceEdits: Event_ProvideResourceEdits_Data = {
           edits: {
             meta: resourceMeta,
             image:
               form.image?.kind === 'file'
                 ? {
                     kind: 'file',
+                    size: form.image.file[0].size,
                     rpcFile: form.image.file[0],
                   }
                 : form.image?.kind === 'no-change'
@@ -238,17 +250,20 @@ export const expose = await shell.expose<FullResourceExposeType>({
           },
         }
 
-        const event: Event = { type: 'store-edits', ...resourceEdits }
-        if (!snap.can(event)) {
+        const provideEditsEvent: Event = { type: 'provide-resource-edits', ...resourceEdits }
+        if (!snap.can(provideEditsEvent)) {
+          console.log('cannot provide edits', provideEditsEvent, snap.value, snap.context)
           return null
         }
-        interpreter.send(event)
+        interpreter.send(provideEditsEvent)
+        const storeEvent: Event = { type: 'store-edits', ...resourceEdits }
+        interpreter.send(storeEvent)
 
         await waitFor(interpreter, nameMatcher('Unpublished'))
         snap = interpreter.getSnapshot()
 
         const editResourceRespRpc: EditResourceRespRpc = {
-          meta: meta_2_form(snap.context.doc.meta),
+          meta: map.meta_2_form(snap.context.doc.meta),
           image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
         }
         return editResourceRespRpc
@@ -274,31 +289,42 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceContent) {
           throw RpcStatus('Bad Request')
         }
-        const { interpreter } = await xsm.interpreterAndMachine({ type: 'create' })
+        const [interpreter] = await srv.stdEdResourceMachine({ by: 'create' })
         let snap = interpreter.getSnapshot()
-        const contentEventData: Event_ProvideNewResource_Data = {
+        const provideNewResourceEvent: Event = {
+          type: 'provide-new-resource',
           meta: {
+            ...DEFAULT_CONTEXT.doc.meta,
             title: name,
             description,
           },
           content:
             'string' === typeof resourceContent
               ? { kind: 'link', url: resourceContent }
-              : { kind: 'file', rpcFile: resourceContent },
+              : { kind: 'file', rpcFile: resourceContent, size: resourceContent.size },
         }
-        const provideContentEvent: Event = { type: 'store-new-resource', ...contentEventData }
-        if (!snap.can(provideContentEvent)) {
-          interpreter.stop()
-          throw RpcStatus('Unauthorized')
-        }
-        interpreter.send(provideContentEvent)
+        interpreter.send(provideNewResourceEvent)
 
-        await waitFor(interpreter, nameMatcher(['Checking-In-Content', 'Autogenerating-Meta']))
         snap = interpreter.getSnapshot()
 
-        if (matchState(snap, 'Checking-In-Content')) {
-          throw RpcStatus('Bad Request', snap.context.doc)
+        if (matchState(snap, 'No-Access')) {
+          if (snap.context.noAccess?.reason === 'unauthorized') {
+            throw RpcStatus('Unauthorized')
+          }
+          if (snap.context.contentRejected) {
+            throw RpcStatus('Bad Request', snap.context.contentRejected.reason)
+          }
+          if (snap.context.resourceEdits?.errors) {
+            throw RpcStatus('Bad Request', snap.context.resourceEdits.errors)
+          }
+          throw RpcStatus('Unauthorized', 'unknown')
         }
+
+        interpreter.send('store-new-resource')
+
+        await waitFor(interpreter, nameMatcher('Meta-Suggestion-Available'))
+        snap = interpreter.getSnapshot()
+
         const newDoc = snap.context.doc
         const contentUrl =
           newDoc.content.kind === 'file'
@@ -330,45 +356,11 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const { interpreter } = await xsm.interpreterAndMachine({ type: 'key', key: _key })
+        const [interpreter] = await srv.stdEdResourceMachine({ by: 'key', key: _key })
         interpreter.send('trash')
         return
       },
     },
-    // 'webapp/set-image/:_key': {
-    //   guard: async body => {
-    //     const { imageValidationSchema } = await getValidations()
-    //     const validatedImageOrNullish = await imageValidationSchema.validate(
-    //       { image: body?.file?.[0] },
-    //       { stripUnknown: true },
-    //     )
-    //     body.file = [validatedImageOrNullish]
-    //   },
-    //   async fn({ file: [uploadedRpcFile] }, { _key }) {
-    //     const { interpreter, resourceRecord, machine } = await reviveInterpreterAndMachine(_key)
-    //     if()
-    //     const got = await getResource(_key, { projectAccess: ['u'] })
-
-    //     if (!got?.access.u) {
-    //       throw RpcStatus('Unauthorized')
-    //     }
-    //     const updateRes = await setResourceImage(_key, uploadedRpcFile)
-    //     if (updateRes === false) {
-    //       throw RpcStatus('Bad Request')
-    //     }
-    //     if (!updateRes) {
-    //       return null
-    //     }
-    //     const imageUrl = updateRes.patched.image && getImageUrl(updateRes.patched.image)
-    //     return imageUrl
-    //   },
-    //   bodyWithFiles: {
-    //     fields: {
-    //       '.file': 1,
-    //     },
-    //     maxSize: defaultImageUploadMaxSize,
-    //   },
-    // },
     'webapp/create': {
       guard: async body => {
         const { publishedContentValidationSchema } = await getValidations()
@@ -383,31 +375,26 @@ export const expose = await shell.expose<FullResourceExposeType>({
           throw RpcStatus('Bad Request')
         }
 
-        const { interpreter } = await xsm.interpreterAndMachine({ type: 'create' })
+        const [interpreter] = await srv.stdEdResourceMachine({ by: 'create' })
         let snap = interpreter.getSnapshot()
-        const contentEventData: Event_ProvideNewResource_Data = {
+
+        const provideNewResourceEvent: Event = {
+          type: 'provide-new-resource',
           content:
             'string' === typeof resourceContent
               ? { kind: 'link', url: resourceContent }
-              : { kind: 'file', rpcFile: resourceContent },
+              : { kind: 'file', rpcFile: resourceContent, size: resourceContent.size },
         }
-        const provideContentEvent: Event = { type: 'store-new-resource', ...contentEventData }
-        if (!snap.can(provideContentEvent)) {
-          interpreter.stop()
-          throw RpcStatus('Unauthorized')
-        }
-        interpreter.send(provideContentEvent)
-
-        await waitFor(interpreter, nameMatcher(['Checking-In-Content', 'Autogenerating-Meta']))
-        snap = interpreter.getSnapshot()
-
-        if (matchState(snap, 'Checking-In-Content')) {
-          // throw RpcStatus('Bad Request', snap.context.contentRejectedReason)
+        interpreter.send(provideNewResourceEvent)
+        if (matchState(snap, 'No-Access')) {
           return null
         }
-        const updatedDoc = snap.context.doc
+        interpreter.send('store-new-resource')
 
-        return { resourceKey: updatedDoc.id.resourceKey }
+        await waitFor(interpreter, nameMatcher('Autogenerating-Meta'))
+        snap = interpreter.getSnapshot()
+
+        return { resourceKey: snap.context.doc.id.resourceKey }
       },
       bodyWithFiles: {
         fields: {

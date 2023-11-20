@@ -1,4 +1,4 @@
-import type { StateName } from '@moodlenet/core-domain/resource'
+import type { PersistentContext } from '@moodlenet/core-domain/resource'
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import type { FsItem } from '@moodlenet/simple-file-store/server'
 import type { EntityDocument, SystemUser } from '@moodlenet/system-entities/server'
@@ -35,7 +35,7 @@ export type ResourceDataType = {
       downloads?: ResourcePopularityItem
     } & { [key: string]: ResourcePopularityItem }
   }
-  lifecycleState: StateName
+  persistentContext: Omit<PersistentContext, 'doc'>
 }
 export type ResourcePopularityItem = { value: number }
 export type Credits = {

@@ -1,6 +1,11 @@
-import type { ResourceMeta, ResourceMetaValidationErrors } from '@moodlenet/core-domain/resource'
+import type { AssetInfo } from '@moodlenet/component-library/common'
+import type {
+  ProvidedImage,
+  ResourceMeta,
+  ResourceMetaValidationErrors,
+} from '@moodlenet/core-domain/resource'
 import type { ResourceFormProps, ResourceMetaFormRpc } from '../../../common/types.mjs'
-import { getValidations } from '../../services.mjs'
+import { getResourceFileUrl, getValidations } from '../../services.mjs'
 
 export async function validate_xsm_meta(resourceMeta: ResourceMeta) {
   const validationSchemas = await getValidations()
@@ -59,13 +64,16 @@ export function form_2_meta(resourceFormRpc: ResourceMetaFormRpc): ResourceMeta 
     subject: { code: resourceFormRpc.subject },
     level: { code: resourceFormRpc.level },
     type: { code: resourceFormRpc.type },
-    learningOutcomes: resourceFormRpc.learningOutcomes.map(value => ({ value })),
+    learningOutcomes: resourceFormRpc.learningOutcomes.map(value => ({
+      sentence: value.sentence,
+      value,
+    })),
     originalPublicationInfo: resourceFormRpc.year
       ? {
           year: Number(resourceFormRpc.year),
           month: Number(resourceFormRpc.month || 1),
         }
-      : undefined,
+      : null,
   }
   return meta
 }
@@ -74,18 +82,35 @@ export function resourceMetaForm_2_meta(resourceMetaFormRpc: ResourceMetaFormRpc
   const meta: ResourceMeta = {
     description: resourceMetaFormRpc.description,
     title: resourceMetaFormRpc.title,
-    language: resourceMetaFormRpc.language ? { code: resourceMetaFormRpc.language } : undefined,
-    license: resourceMetaFormRpc.license ? { code: resourceMetaFormRpc.license } : undefined,
-    subject: resourceMetaFormRpc.subject ? { code: resourceMetaFormRpc.subject } : undefined,
-    level: resourceMetaFormRpc.level ? { code: resourceMetaFormRpc.level } : undefined,
-    type: resourceMetaFormRpc.type ? { code: resourceMetaFormRpc.type } : undefined,
-    learningOutcomes: resourceMetaFormRpc.learningOutcomes.map(value => ({ value })),
+    language: resourceMetaFormRpc.language ? { code: resourceMetaFormRpc.language } : null,
+    license: resourceMetaFormRpc.license ? { code: resourceMetaFormRpc.license } : null,
+    subject: resourceMetaFormRpc.subject ? { code: resourceMetaFormRpc.subject } : null,
+    level: resourceMetaFormRpc.level ? { code: resourceMetaFormRpc.level } : null,
+    type: resourceMetaFormRpc.type ? { code: resourceMetaFormRpc.type } : null,
+    learningOutcomes: resourceMetaFormRpc.learningOutcomes.map(value => ({
+      sentence: value.sentence,
+      value,
+    })),
     originalPublicationInfo: resourceMetaFormRpc.year
       ? {
           year: Number(resourceMetaFormRpc.year),
           month: Number(resourceMetaFormRpc.month || 1),
         }
-      : undefined,
+      : null,
   }
   return meta
+}
+
+export async function providedImage_2_assetInfo(
+  providedImage: ProvidedImage,
+  resourceKey: string,
+): Promise<AssetInfo> {
+  const assetInfo: AssetInfo = {
+    location:
+      providedImage.kind === 'file'
+        ? await getResourceFileUrl({ _key: resourceKey, rpcFile: providedImage.rpcFile })
+        : providedImage.url,
+    credits: providedImage.kind === 'url' ? providedImage.credits : null,
+  }
+  return assetInfo
 }

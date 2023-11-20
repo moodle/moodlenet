@@ -1,9 +1,10 @@
 import type * as xsm from '@moodlenet/core-domain/resource'
+import { DEFAULT_CONTEXT } from '@moodlenet/core-domain/resource'
 import { getImageAssetInfo } from '../../lib.mjs'
 import type { ImageUrl, ResourceEntityDoc } from '../../types.mjs'
 import type { ResourceDataTypeMeta } from './types.mjs'
 
-export function doc_2_xsm(resourceEntity: ResourceEntityDoc): [xsm.StateName, xsm.ResourceDoc] {
+export function doc_2_persistentContext(resourceEntity: ResourceEntityDoc): xsm.PersistentContext {
   const resourceDoc: xsm.ResourceDoc = {
     content: docContent_2_xsm(resourceEntity.content),
     image: docImage_2_xsm(resourceEntity.image),
@@ -11,22 +12,29 @@ export function doc_2_xsm(resourceEntity: ResourceEntityDoc): [xsm.StateName, xs
     meta: {
       title: resourceEntity.title,
       description: resourceEntity.description,
-      learningOutcomes: resourceEntity.learningOutcomes.map(value => ({ value })),
-      language: resourceEntity.language ? { code: resourceEntity.language } : undefined,
-      level: resourceEntity.level ? { code: resourceEntity.level } : undefined,
-      license: resourceEntity.license ? { code: resourceEntity.license } : undefined,
-      subject: resourceEntity.subject ? { code: resourceEntity.subject } : undefined,
-      type: resourceEntity.type ? { code: resourceEntity.type } : undefined,
+      learningOutcomes: resourceEntity.learningOutcomes.map(value => ({
+        sentence: value.sentence,
+        value,
+      })),
+      language: resourceEntity.language ? { code: resourceEntity.language } : null,
+      level: resourceEntity.level ? { code: resourceEntity.level } : null,
+      license: resourceEntity.license ? { code: resourceEntity.license } : null,
+      subject: resourceEntity.subject ? { code: resourceEntity.subject } : null,
+      type: resourceEntity.type ? { code: resourceEntity.type } : null,
       originalPublicationInfo: Number(resourceEntity.year)
         ? { year: Number(resourceEntity.year), month: Number(resourceEntity.month || 1) }
-        : undefined,
+        : null,
     },
   }
 
-  return [resourceEntity.lifecycleState, resourceDoc]
+  return {
+    ...DEFAULT_CONTEXT,
+    ...resourceEntity.persistentContext,
+    doc: resourceDoc,
+  }
 }
 export function providedImage_2_patchOrRpcFile(
-  image: Exclude<xsm.ProvidedImage, xsm.ProvidedFileImage> | undefined,
+  image: Exclude<xsm.ImageEdit, xsm.ProvidedFileImage> | undefined,
 ): ImageUrl | null | undefined {
   return !image || image.kind === 'no-change'
     ? undefined

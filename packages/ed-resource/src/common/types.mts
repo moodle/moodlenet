@@ -49,11 +49,16 @@ export type ResourceDataRpc = {
 
 export type AutofillState = 'extracting-info' | 'ai-generation' | undefined
 
+export type AutofillSuggestions = {
+  meta: null | Partial<ResourceFormProps>
+}
+
 export type ResourceStateRpc = {
   isPublished: boolean
   // isUploaded: boolean
   uploadProgress: number | undefined
   autofillState: AutofillState
+  autofillSuggestions: null | AutofillSuggestions
 }
 
 export type ResourceContributorRpc = {
@@ -66,16 +71,57 @@ export type ResourceContributorRpc = {
 export type ResourceRpc = {
   resourceForm: ResourceMetaFormRpc
   access: ResourceAccessRpc
-  state: Pick<ResourceStateRpc, 'isPublished' | 'autofillState'>
+  state: Pick<ResourceStateRpc, 'isPublished' | 'autofillState' | 'autofillSuggestions'>
   data: ResourceDataRpc
   contributor: ResourceContributorRpc
 }
 
-export type ResourceFormProps = ResourceMetaFormRpc
-export type ResourceDataProps = ResourceDataRpc
-export type ResourceStateProps = ResourceStateRpc
-export type ResourceCardDataProps = ResourceCardDataRpc
-export type ResourceAccessProps = ResourceAccessRpc
+export type ResourceFormProps = {
+  title: string
+  description: string
+  subject: string
+  license: string
+  type: string
+  level: string
+  month: string
+  year: string
+  language: string
+  learningOutcomes: LearningOutcome[]
+  // addToCollections: string[]
+}
+
+export type ResourceDataProps = {
+  id: string | null
+  mnUrl: string
+  contentType: 'link' | 'file' | null
+  image: AssetInfo | null
+  subjectHref: Href | null
+
+  contentUrl: string | null
+  downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...
+}
+export type ResourceStateProps = {
+  isPublished: boolean
+  // isUploaded: boolean
+  uploadProgress: number | undefined
+  autofillState: AutofillState
+  // autofillSu ggestions: null | AutofillSuggestions
+}
+export type ResourceCardDataProps = {
+  owner: {
+    displayName: string
+    avatar: string | null
+    profileHref: Href
+  }
+  resourceHomeHref: Href
+} & Pick<ResourceDataProps, 'image' | 'downloadFilename' | 'contentType' | 'contentUrl' | 'id'> &
+  Pick<ResourceFormProps, 'title'>
+export type ResourceAccessProps = {
+  isCreator: boolean
+  canEdit: boolean
+  canPublish: boolean
+  canDelete: boolean
+}
 export type EdMetaOptionsProps = {
   typeOptions: TextOptionProps[]
   monthOptions: TextOptionProps[]
@@ -86,7 +132,12 @@ export type EdMetaOptionsProps = {
   subjectOptions: TextOptionProps[]
   learningOutcomeOptions: LearningOutcomeOption[]
 }
-export type ResourceContributorProps = ResourceContributorRpc
+export type ResourceContributorProps = {
+  avatarUrl: string | null
+  displayName: string
+  timeSinceCreation: string
+  creatorProfileHref: Href
+}
 
 export type ResourceProps = {
   resourceForm: ResourceFormProps

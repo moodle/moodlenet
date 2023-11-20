@@ -1,24 +1,27 @@
 import type { ImageUploaded } from '@moodlenet/collection/server'
 import type {
+  Actor_MetaGenerator_Data,
+  Actor_StoreNewResource_Data,
   Actor_StoreResourceEdits_Data,
   Context,
+  EdResourceMachineDeps,
   Issuer,
-  StateName,
 } from '@moodlenet/core-domain/resource'
 import {
   DEFAULT_CONTEXT,
-  getEdResourceMachine,
-  stateMatcher,
   SYSTEM_ISSUER,
   UNAUTHENTICATED_ISSUER,
 } from '@moodlenet/core-domain/resource'
-import type { ResourceDataType } from '@moodlenet/ed-resource/server'
+import type {
+  DepsAndInitializations,
+  ProvideBy,
+  ResourceDataType,
+} from '@moodlenet/ed-resource/server'
 import {
   createResource,
   deleteImageFile,
   delResource,
   delResourceFile,
-  EMPTY_RESOURCE,
   getResource,
   map,
   patchResource,
@@ -27,138 +30,120 @@ import {
   storeResourceFile,
   validationsConfigs,
 } from '@moodlenet/ed-resource/server'
-import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
 import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
-import { interpret } from 'xstate'
 import { verifyCurrentTokenCtx } from '../../srv/web-user.mjs'
 
-async function reviveStateAndContext(
-  reviveBy:
-    | { type: 'create' }
-    | { type: 'data'; data: AccessEntitiesRecordType<ResourceDataType, unknown, any> }
-    | { type: 'key'; key: string },
-): Promise<
-  [StateName, Context, AccessEntitiesRecordType<ResourceDataType, unknown, any> | undefined]
-> {
-  if (reviveBy.type === 'create') {
-    return [
-      'Checking-In-Content',
-      {
-        ...DEFAULT_CONTEXT,
-        issuer: await getIssuer(['creator', true]),
-        // identifiers: { resourceKey: createEntityKey() },
-      },
-      undefined,
-    ] // as const
+export async function provideEdResourceMachineDepsAndInits(
+  reviveBy: ProvideBy,
+): Promise<DepsAndInitializations> {
+  if (reviveBy.by === 'create') {
+    const initialContext: Context = {
+      ...DEFAULT_CONTEXT,
+      state: 'Checking-In-Content',
+      issuer: await getIssuer(['creator', true]),
+    }
+    const deps = getEdResourceMachineDeps()
+    return [deps, initialContext]
   }
   const resourceRecord =
-    reviveBy.type === 'data'
+    reviveBy.by === 'data'
       ? reviveBy.data
-      : reviveBy.type === 'key'
+      : reviveBy.by === 'key'
       ? await getResource(reviveBy.key)
       : (() => {
           throw new TypeError('never')
         })()
 
   if (!resourceRecord) {
-    return [
-      'No-Access',
-      {
-        ...DEFAULT_CONTEXT,
-        issuer: await getIssuer(['creator', false]),
-        noAccess: { reason: 'not available' },
-      },
-      undefined,
-    ]
-  }
-
-  const [state, doc] = map.db.doc_2_xsm(resourceRecord.entity)
-
-  return [
-    state,
-    {
+    const initialContext: Context = {
       ...DEFAULT_CONTEXT,
-      doc,
-      issuer: await getIssuer(
-        resourceRecord.meta.creatorEntityId
-          ? ['creator-id', resourceRecord.meta.creatorEntityId]
-          : ['creator', false],
-      ),
-    },
-    resourceRecord,
-  ]
-}
-
-export async function interpreterAndMachine(
-  res:
-    | { type: 'create' }
-    | { type: 'data'; data: AccessEntitiesRecordType<ResourceDataType, unknown, any> }
-    | { type: 'key'; key: string },
-) {
-  const [state, initialContext, resourceRecord] = await reviveStateAndContext(res)
-  const machine = configureMachine(initialContext)
-  const interpreter = interpret(machine, {})
-  interpreter.start(state)
-  interpreter.subscribe(async state => {
-    const stateMatches = stateMatcher(state)
-    const noSaveStates: StateName[] = [
-      'Checking-In-Content',
-      'Storing-New-Resource',
-      'No-Access',
-      'Destroyed',
-    ]
-    if (noSaveStates.some(stateMatches)) {
-      return // no-op
+      state: 'No-Access',
+      issuer: await getIssuer(['creator', false]),
+      noAccess: { reason: 'not available' },
     }
-
-    await patchResource(initialContext.doc.id.resourceKey, {
-      lifecycleState: state.toStrings()[0] as StateName,
-    })
-  })
-
-  return {
-    interpreter,
-    machine,
-    data: resourceRecord,
+    const deps = getEdResourceMachineDeps()
+    return [deps, initialContext]
   }
+
+  const persistentContext = map.db.doc_2_persistentContext(resourceRecord.entity)
+
+  const initialContext: Context = {
+    ...DEFAULT_CONTEXT,
+    ...persistentContext,
+    issuer: await getIssuer(
+      resourceRecord.meta.creatorEntityId
+        ? ['creator-id', resourceRecord.meta.creatorEntityId]
+        : ['creator', false],
+    ),
+  }
+  const deps = getEdResourceMachineDeps()
+  const depsAndInitializations: DepsAndInitializations = [deps, initialContext]
+  return depsAndInitializations
 }
 
-function configureMachine(initialContext: Context) {
-  return getEdResourceMachine({
+// export async function interpreterAndMachine(by: ProvideBy) {
+//   const [state, initialContext, resourceRecord] = await provideEdResourceMachineDepsAndInits(by)
+//   const machine = configureMachine(initialContext)
+//   const interpreter = interpret(machine, {})
+//   interpreter.start(state)
+//   interpreter.subscribe(async state => {
+//     const stateMatches = stateMatcher(state)
+//     const noSaveStates: StateName[] = [
+//       'Checking-In-Content',
+//       'Storing-New-Resource',
+//       'No-Access',
+//       'Destroyed',
+//     ]
+//     if (noSaveStates.some(stateMatches)) {
+//       return // no-op
+//     }
+
+//     await patchResource(initialContext.doc.id.resourceKey, {
+//       lifecycleState: state.toStrings()[0] as StateName,
+//     })
+//   })
+
+//   return {
+//     interpreter,
+//     machine,
+//     data: resourceRecord,
+//   }
+// }
+
+function getEdResourceMachineDeps(): EdResourceMachineDeps {
+  return {
     services: {
-      async StoreNewResource(provideDataEvent) {
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
+      async StoreNewResource(context) {
+        if (!context.providedContent) {
+          throw new TypeError('StoreNewResource no content provided')
+        }
         const newResourceKey = createEntityKey()
 
         const contentResourceDataType: ResourceDataType['content'] =
-          provideDataEvent.content.kind === 'link'
-            ? { kind: 'link', url: provideDataEvent.content.url }
+          context.providedContent.kind === 'link'
+            ? { kind: 'link', url: context.providedContent.url }
             : {
                 kind: 'file',
-                fsItem: await storeResourceFile(newResourceKey, provideDataEvent.content.rpcFile),
+                fsItem: await storeResourceFile(newResourceKey, context.providedContent.rpcFile),
               }
 
+        const povidedImage = context.resourceEdits?.data?.image
         const imageResourceDataType: ResourceDataType['image'] =
-          provideDataEvent.image?.kind === 'file'
-            ? await saveResourceImage(
-                newResourceKey,
-                provideDataEvent.image.rpcFile,
-              ).then<ImageUploaded>(res => ({
-                kind: 'file',
-                directAccessId: res.directAccessId,
-              }))
-            : map.db.providedImage_2_patchOrRpcFile(provideDataEvent.image) ?? null
+          povidedImage?.kind === 'file'
+            ? await saveResourceImage(newResourceKey, povidedImage.rpcFile).then<ImageUploaded>(
+                res => ({
+                  kind: 'file',
+                  directAccessId: res.directAccessId,
+                }),
+              )
+            : map.db.providedImage_2_patchOrRpcFile(povidedImage) ?? null
 
         const resourceDataTypeMeta = await map.db.meta_2_db({
-          ...DEFAULT_CONTEXT.doc.meta,
-          ...provideDataEvent.meta,
+          ...context.doc.meta,
+          ...context.resourceEdits?.data.meta,
         })
         const created = await createResource(
           {
-            ...EMPTY_RESOURCE,
             ...resourceDataTypeMeta,
             image: imageResourceDataType,
             _key: newResourceKey,
@@ -166,26 +151,31 @@ function configureMachine(initialContext: Context) {
           contentResourceDataType,
         )
         if (!created) {
-          provideDataEvent.content.kind === 'file' && delResourceFile(newResourceKey)
+          contentResourceDataType.kind === 'file' && delResourceFile(newResourceKey)
           imageResourceDataType?.kind === 'file' && deleteImageFile(newResourceKey)
           throw new Error('resource creation failed for unknown reasons')
         }
 
-        const [, doc] = map.db.doc_2_xsm(created)
-
-        return { doc }
-      },
-      async MetaGenerator() {
-        return {
-          generetedResourceEdits: {
-            resourceEdits: {
-              meta: {
-                title: 'test generated title',
-                description: 'test generated description',
-              },
-            },
-          },
+        const persistentContext = map.db.doc_2_persistentContext(created)
+        const response: Actor_StoreNewResource_Data = {
+          doc: persistentContext.doc,
         }
+        return response
+      },
+      async MetaGenerator(/* context */) {
+        return new Promise<Actor_MetaGenerator_Data>(resolve => {
+          setTimeout(() => {
+            const metaGeneratorData: Actor_MetaGenerator_Data = {
+              generatedData: {
+                meta: {
+                  title: 'test generated title',
+                  description: 'test generated description',
+                },
+              },
+            }
+            resolve(metaGeneratorData)
+          }, 20 * 1000)
+        })
       },
       async ModeratePublishingResource() {
         return { notPassed: false }
@@ -193,18 +183,16 @@ function configureMachine(initialContext: Context) {
       async ScheduleDestroy() {
         return true
       },
-      async StoreResourceEdits(context, { edits }) {
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-        // TODO: VALIDATE ( likely in action, with context.validationConfigs? )
-
+      async StoreResourceEdits(context) {
+        const image = context.resourceEdits?.data.image
+        const meta = context.resourceEdits?.data.meta
         const imagePatch =
-          edits.image?.kind === 'file'
-            ? undefined
-            : map.db.providedImage_2_patchOrRpcFile(edits.image)
+          image?.kind === 'file' ? undefined : map.db.providedImage_2_patchOrRpcFile(image)
 
-        const resourceDataTypeMeta = map.db.meta_2_db({ ...context.doc.meta, ...edits.meta })
+        const resourceDataTypeMeta = map.db.meta_2_db({
+          ...context.doc.meta,
+          ...meta,
+        })
         const patchRes = await patchResource(context.doc.id.resourceKey, {
           ...resourceDataTypeMeta,
           image: imagePatch,
@@ -212,13 +200,13 @@ function configureMachine(initialContext: Context) {
         if (!patchRes) {
           throw new Error('patchResource failed for unknown reasons')
         }
-        if (edits.image?.kind === 'file') {
-          await setResourceImage(context.doc.id.resourceKey, edits.image.rpcFile)
+        if (image?.kind === 'file') {
+          await setResourceImage(context.doc.id.resourceKey, image.rpcFile)
         }
 
-        const [, doc] = map.db.doc_2_xsm(patchRes.patched)
+        const persistentContext = map.db.doc_2_persistentContext(patchRes.patched)
         const res: Actor_StoreResourceEdits_Data = {
-          doc,
+          doc: persistentContext.doc,
         }
         return res
       },
@@ -230,7 +218,8 @@ function configureMachine(initialContext: Context) {
       },
       destroy_all_data(context) {
         const resourceKey = context.doc.id.resourceKey
-        if (resourceKey === initialContext.doc.id.resourceKey) {
+        // console.log('destroy_all_data', resourceKey, DEFAULT_CONTEXT.doc.id.resourceKey)
+        if (resourceKey === DEFAULT_CONTEXT.doc.id.resourceKey) {
           return
         }
         delResource(resourceKey)
@@ -251,7 +240,7 @@ function configureMachine(initialContext: Context) {
         },
       },
     },
-  })
+  }
 }
 
 async function getIssuer([paramType, val]:

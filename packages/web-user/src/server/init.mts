@@ -1,5 +1,5 @@
 import { setEdResourceMachineService } from '@moodlenet/ed-resource/server'
-import { interpreterAndMachine } from './xsm/resource/machines.mjs'
+import { provideEdResourceMachineDepsAndInits } from './xsm/resource/machines.mjs'
 
 await import('./init/persistence-upgrade.mjs')
 await import('./init/kvStore.mjs')
@@ -10,6 +10,4 @@ await import('./init/http-server.mjs')
 await import('./init/react-app.mjs')
 await import('./expose.mjs')
 
-setEdResourceMachineService({
-  interpreterAndMachine,
-})
+setEdResourceMachineService(provideEdResourceMachineDepsAndInits)

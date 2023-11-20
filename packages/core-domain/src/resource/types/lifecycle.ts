@@ -18,9 +18,9 @@ export interface ValidationConfigs {
   content: { sizeBytes: { max: number } }
 }
 
-export interface GeneratedData {
-  meta?: Partial<ResourceMeta>
-  image?: ProvidedImage
+export interface ProvidedGeneratedData {
+  meta: null | Partial<ResourceMeta>
+  // image?: ProvidedImage
 }
 export interface ResourceEdits {
   meta?: ResourceMeta
@@ -33,26 +33,35 @@ export interface ProvidedFileImage {
 export interface ProvidedUrlImage {
   kind: 'url'
   url: string
-  credits?: Credits
+  credits: null | Credits
 }
 export type ProvidedImage = ProvidedFileImage | ProvidedUrlImage
 
 export type ImageEdit = ProvidedImage | { kind: 'remove' } | { kind: 'no-change' }
 
 // CONTEXT
-export interface Context {
+export interface Context extends PersistentContext {
   noAccess: null | ReasonString<'unauthorized' | 'not available'>
   contentRejected: null | ReasonString
   issuer: Issuer
-  doc: ResourceDoc
-  generatedMeta: null | GeneratedData
   resourceEdits: null | {
     data: ResourceEdits
     errors: ResourceEditsValidationErrors | null
   }
   publishingErrors: null | ResourceMetaValidationErrors
-  publishRejected: null | ReasonString
   providedContent: null | ProvidedCreationContent
+}
+
+interface GeneratedData {
+  //image: null | ResourceDoc['image']
+  meta: null | Partial<ResourceDoc['meta']>
+}
+
+export interface PersistentContext {
+  doc: ResourceDoc
+  generatedData: null | GeneratedData
+  publishRejected: null | ReasonString
+  state: StateName
 }
 
 interface ReasonString<Reason extends string = string> {
@@ -94,7 +103,7 @@ export interface Actor_StoreNewResource_Data {
 }
 
 export interface Actor_MetaGenerator_Data {
-  generatedData: GeneratedData
+  generatedData: ProvidedGeneratedData
 }
 
 export interface Actor_ModeratePublishingResource_Data {
@@ -122,13 +131,13 @@ export type Event = EventOf<
     'request-meta-generation': Event_RequestMetaGeneration_Data
     'cancel-meta-generation': Event_CancelMetaAutogen_Data
     'restore': Event_Restore_Data
-    'accept-meta-suggestions': Event_AcceptMetaSuggestions_Data
+    // 'accept-meta-suggestions': Event_AcceptMetaSuggestions_Data
   }
 >
 
 export interface Event_StoreEdits_Data {}
 export interface Event_StoreNewResource_Data {}
-export interface Event_AcceptMetaSuggestions_Data {}
+// export interface Event_AcceptMetaSuggestions_Data {}
 export interface ProvidedCreationFileContent {
   kind: 'file'
   size: number

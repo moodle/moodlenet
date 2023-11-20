@@ -107,7 +107,7 @@ export async function setPublished(key: string, published: boolean) {
   }
   return patchResult
 }
-export const EMPTY_RESOURCE: Omit<ResourceDataType, 'content'> = {
+export const EMPTY_RESOURCE: Omit<ResourceDataType, 'content' | 'persistentContext'> = {
   description: '',
   title: '',
   image: null,
@@ -120,7 +120,6 @@ export const EMPTY_RESOURCE: Omit<ResourceDataType, 'content'> = {
   year: '',
   type: '',
   learningOutcomes: [],
-  lifecycleState: 'Destroyed',
 }
 export async function createResource(
   resourceData: Partial<ResourceDataType & { _key: string }>,
@@ -130,6 +129,11 @@ export async function createResource(
     ...EMPTY_RESOURCE,
     ...resourceData,
     content,
+    persistentContext: {
+      state: 'Storing-New-Resource',
+      generatedData: null,
+      publishRejected: null,
+    },
   })
 
   return newResource

@@ -6,7 +6,6 @@ export { getImageAssetInfo } from './lib.mjs'
 export {
   createResource,
   deleteImageFile,
-  deleteImageFile as deleteResourceFile,
   delResource,
   delResourceFile,
   deltaResourcePopularityItem,

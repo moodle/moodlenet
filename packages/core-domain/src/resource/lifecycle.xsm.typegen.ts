@@ -88,7 +88,6 @@ export interface Typegen0 {
     'issuer has no read permission': ''
     'issuer is admin': 'reject-publish'
     'issuer is creator':
-      | 'accept-meta-suggestions'
       | 'cancel-meta-generation'
       | 'provide-resource-edits'
       | 'request-meta-generation'
