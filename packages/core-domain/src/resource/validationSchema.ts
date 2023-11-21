@@ -20,8 +20,8 @@ import {
 export type ValidationSchemas = ReturnType<typeof getValidationSchemas>
 export function getValidationSchemas(validationConfigs: ValidationConfigs) {
   const schemas = {
-    publishing: getResourceMetaValidationSchema({ type: 'publish' }),
-    meta: getResourceMetaValidationSchema({ type: 'draft' }),
+    publishing: getResourceMetaValidationSchema({ type: `publish` }),
+    meta: getResourceMetaValidationSchema({ type: `draft` }),
     providedContent: getContentValidationSchema(),
     providedImage: getImageValidationSchema(),
   }
@@ -88,7 +88,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
         .test((providedImage: ProvidedImage, { createError }) => {
           return (
             !!providedImage &&
-            (providedImage.kind === 'url'
+            (providedImage.kind === `url`
               ? validURL(providedImage.url) ||
                 createError({
                   message: `Url not valid`,
@@ -112,14 +112,14 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
     if (!(e instanceof ValidationError)) {
       throw e
     }
-    // console.log('produceResourceMetaValidationErrorsInCatch', { ...e })
+    // console.log(`produceResourceMetaValidationErrorsInCatch`, { ...e })
     // if (!errs.length) {
     //   return null
     // }
     return e.inner.reduce((acc, err) => {
-      const k = err.path ?? '?'
-      acc[k] = acc[k] ?? ''
-      acc[k] = acc[k] + ' ' + err.message
+      const k = err.path ?? `?`
+      acc[k] = acc[k] ?? ``
+      acc[k] = acc[k] + ` ` + err.message
       return acc
     }, {} as any)
   }
@@ -128,12 +128,12 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
       mixed<ProvidedCreationContent>().test((content, { createError }) => {
         const errors = !content
           ? createError({ message: `Please provide a file or a link` })
-          : content.kind === 'link'
+          : content.kind === `link`
           ? validURL(content.url) ||
             createError({
               message: `Link not valid`,
             })
-          : content.kind === 'file'
+          : content.kind === `file`
           ? content.size <= validationConfigs.content.sizeBytes.max ||
             createError({
               message: `File too big ${humanFileSize(content.size)}, max ${humanFileSize(
@@ -149,8 +149,8 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
     return schema
   }
 
-  function getResourceMetaValidationSchema({ type }: { type: 'publish' | 'draft' }) {
-    const forPublish = type === 'publish'
+  function getResourceMetaValidationSchema({ type }: { type: `publish` | `draft` }) {
+    const forPublish = type === `publish`
     const schema: SchemaOf<ResourceMeta> = object({
       title: string()
         .max(
@@ -169,7 +169,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
                 .required(`Please provide a title`)
             : s,
         )
-        .default(''),
+        .default(``),
       description: string()
         .max(
           validationConfigs.meta.description.length.max,
@@ -187,7 +187,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
                 .required(`Please provide a description`)
             : s,
         )
-        .default(''),
+        .default(``),
       subject: object({
         code: string().required() as StringSchema<string>, // TODO CHECK Codes
       }).withMutation(s =>
@@ -201,24 +201,24 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
       language: object({
         code: string().required() as StringSchema<string>, // TODO CHECK Codes
       }).withMutation(s =>
-        forPublish ? s.required('Please provide a language') : s.default(null).nullable(),
+        forPublish ? s.required(`Please provide a language`) : s.default(null).nullable(),
       ),
       level: object({
         code: string().required() as StringSchema<string>, // TODO CHECK Codes
       }).withMutation(s =>
-        forPublish ? s.required('Please provide a level') : s.default(null).nullable(),
+        forPublish ? s.required(`Please provide a level`) : s.default(null).nullable(),
       ),
       type: object({
         code: string().required() as StringSchema<string>, // TODO CHECK Codes
       }).withMutation(s =>
-        forPublish ? s.required('Please provide a type') : s.default(null).nullable(),
+        forPublish ? s.required(`Please provide a type`) : s.default(null).nullable(),
       ),
       originalPublicationInfo: object({
         month: number().required() as NumberSchema<number>,
         year: number().required() as NumberSchema<number>,
       }).withMutation(s =>
         forPublish
-          ? s.required('Please provide original publication info')
+          ? s.required(`Please provide original publication info`)
           : s.default(null).nullable(),
       ),
       learningOutcomes: array()
@@ -241,7 +241,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
                           obj =>
                             `Please provide a longer sentence (${obj.value.length} < validationConfigs.meta.learningOutcomes.sentence.length.min)`,
                         )
-                        .required('Please provide a sentence')
+                        .required(`Please provide a sentence`)
                     : s,
                 ) as StringSchema<string>, // TODO CHECK Codes,
             }),
@@ -251,14 +251,14 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
             ? s
                 .min(
                   validationConfigs.meta.learningOutcomes.amount.min,
-                  'Please provide at least ${validationConfigs.meta.learningOutcomes.amount.min} learning outcome',
+                  `Please provide at least ${validationConfigs.meta.learningOutcomes.amount.min} learning outcome`,
                 )
                 .max(
                   validationConfigs.meta.learningOutcomes.amount.max,
-                  'Please provide at most ${validationConfigs.meta.learningOutcomes.amount.max} learning outcomes',
+                  `Please provide at most ${validationConfigs.meta.learningOutcomes.amount.max} learning outcomes`,
                 )
                 .required(
-                  'Please provide at least ${validationConfigs.meta.learningOutcomes.amount.min} learning outcome',
+                  `Please provide at least ${validationConfigs.meta.learningOutcomes.amount.min} learning outcome`,
                 )
             : s,
         ),

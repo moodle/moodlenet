@@ -211,11 +211,6 @@ export const expose = await shell.expose<FullResourceExposeType>({
       fn: async ({ form }, { _key }) => {
         // const resourceRecord = await getResource(_key)
         // const { interpreter } = await xsm.interpreterAndMachine(resourceRecord)
-        const [interpreter] = await srv.stdEdResourceMachine({
-          by: 'key',
-          key: _key,
-        })
-        let snap = interpreter.getSnapshot()
         if (!(form.meta || form.image)) {
           // const editResourceRespRpc: EditResourceRespRpc = {
           //   meta: map.meta_2_form(snap.context.doc.meta),
@@ -224,6 +219,11 @@ export const expose = await shell.expose<FullResourceExposeType>({
           // return editResourceRespRpc
           return null
         }
+        const [interpreter] = await srv.stdEdResourceMachine({
+          by: 'key',
+          key: _key,
+        })
+        let snap = interpreter.getSnapshot()
         const resourceMeta = form.meta
           ? map.resourceMetaForm_2_meta(form.meta)
           : snap.context.doc.meta
@@ -253,6 +253,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         const provideEditsEvent: Event = { type: 'provide-resource-edits', ...resourceEdits }
         if (!snap.can(provideEditsEvent)) {
           console.log('cannot provide edits', provideEditsEvent, snap.value, snap.context)
+          interpreter.stop()
           return null
         }
         interpreter.send(provideEditsEvent)
@@ -266,11 +267,12 @@ export const expose = await shell.expose<FullResourceExposeType>({
           meta: map.meta_2_form(snap.context.doc.meta),
           image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
         }
+        interpreter.stop()
         return editResourceRespRpc
       },
       bodyWithFiles: {
         fields: {
-          '.values.image.file': 1,
+          '.form.image.file': 1,
         },
         maxSize: validationsConfigs.imageMaxUploadSize,
       },
@@ -308,6 +310,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         snap = interpreter.getSnapshot()
 
         if (matchState(snap, 'No-Access')) {
+          interpreter.stop()
           if (snap.context.noAccess?.reason === 'unauthorized') {
             throw RpcStatus('Unauthorized')
           }
@@ -335,6 +338,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
             : newDoc.content.url
 
         setRpcStatusCode('Created')
+        interpreter.stop()
         return {
           _key: newDoc.id.resourceKey,
           name: newDoc.meta.title,
@@ -358,6 +362,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
       fn: async (_, { _key }) => {
         const [interpreter] = await srv.stdEdResourceMachine({ by: 'key', key: _key })
         interpreter.send('trash')
+        await waitFor(interpreter, nameMatcher('Destroyed'))
+        interpreter.stop()
         return
       },
     },
@@ -387,6 +393,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
         interpreter.send(provideNewResourceEvent)
         if (matchState(snap, 'No-Access')) {
+          interpreter.stop()
           return null
         }
         interpreter.send('store-new-resource')
@@ -394,6 +401,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         await waitFor(interpreter, nameMatcher('Autogenerating-Meta'))
         snap = interpreter.getSnapshot()
 
+        interpreter.stop()
         return { resourceKey: snap.context.doc.id.resourceKey }
       },
       bodyWithFiles: {

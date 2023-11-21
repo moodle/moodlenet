@@ -81,35 +81,6 @@ export async function provideEdResourceMachineDepsAndInits(
   return depsAndInitializations
 }
 
-// export async function interpreterAndMachine(by: ProvideBy) {
-//   const [state, initialContext, resourceRecord] = await provideEdResourceMachineDepsAndInits(by)
-//   const machine = configureMachine(initialContext)
-//   const interpreter = interpret(machine, {})
-//   interpreter.start(state)
-//   interpreter.subscribe(async state => {
-//     const stateMatches = stateMatcher(state)
-//     const noSaveStates: StateName[] = [
-//       'Checking-In-Content',
-//       'Storing-New-Resource',
-//       'No-Access',
-//       'Destroyed',
-//     ]
-//     if (noSaveStates.some(stateMatches)) {
-//       return // no-op
-//     }
-
-//     await patchResource(initialContext.doc.id.resourceKey, {
-//       lifecycleState: state.toStrings()[0] as StateName,
-//     })
-//   })
-
-//   return {
-//     interpreter,
-//     machine,
-//     data: resourceRecord,
-//   }
-// }
-
 function getEdResourceMachineDeps(): EdResourceMachineDeps {
   return {
     services: {
@@ -218,7 +189,6 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
       },
       destroy_all_data(context) {
         const resourceKey = context.doc.id.resourceKey
-        // console.log('destroy_all_data', resourceKey, DEFAULT_CONTEXT.doc.id.resourceKey)
         if (resourceKey === DEFAULT_CONTEXT.doc.id.resourceKey) {
           return
         }

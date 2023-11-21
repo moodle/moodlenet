@@ -313,7 +313,7 @@ link: url string format`,
     actions: {
       assign_resource_edits_and_validations: assign((context, { edits }) => {
         const validatedResourceEdits = getContextResourceEdits(edits)
-        console.log('assign_resource_edits_and_validations', context, edits, validatedResourceEdits)
+        // console.log('assign_resource_edits_and_validations', context, edits, validatedResourceEdits)
         return produce(context, proxy => {
           proxy.resourceEdits = validatedResourceEdits
         })
