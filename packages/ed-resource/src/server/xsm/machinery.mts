@@ -2,7 +2,7 @@ import type { Context, EdResourceMachineDeps, StateName } from '@moodlenet/core-
 import { getEdResourceMachine } from '@moodlenet/core-domain/resource'
 import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
 import { interpret } from 'xstate'
-import { patchResource } from '../services.mjs'
+import { Resource } from '../exports.mjs'
 import type { ResourceDataType } from '../types.mjs'
 
 export type ProvideBy =
@@ -40,26 +40,34 @@ export async function stdEdResourceMachine(by: ProvideBy) {
     'Published',
     'Meta-Suggestion-Available',
   ]
-  const interpreter = interpret(machine).onTransition(state => {
+  const interpreter = interpret(machine)
+  let tx = false
+  interpreter.onTransition(() => (tx = true))
+  interpreter.onStop(() => {
+    if (!tx) return
+    const state = interpreter.getSnapshot()
     // https://github.com/statelyai/xstate/discussions/1294
     const currentState = state.value as StateName
-    if (!saveOnStates.includes(currentState) || state.changed === undefined) {
+    if (!saveOnStates.includes(currentState)) {
       return
     }
-    if (state.history && !state.history.matches(currentState)) {
-      // console.log('persist_context', state.context)
-      const persistentContext: ResourceDataType['persistentContext'] = {
-        generatedData:
-          currentState === 'Meta-Suggestion-Available' ? state.context.generatedData : null,
-        publishRejected: currentState === 'Publish-Rejected' ? state.context.publishRejected : null,
-        state: currentState,
-      }
-
-      patchResource(state.context.doc.id.resourceKey, {
+    //if (state.history && !state.history.matches(currentState)) {
+    const persistentContext: ResourceDataType['persistentContext'] = {
+      generatedData:
+        currentState === 'Meta-Suggestion-Available' ? state.context.generatedData : null,
+      publishRejected: currentState === 'Publish-Rejected' ? state.context.publishRejected : null,
+      state: currentState,
+      publishingErrors: currentState === 'Unpublished' ? state.context.publishingErrors : null,
+    }
+    Resource.collection.update(
+      state.context.doc.id.resourceKey,
+      {
         persistentContext,
         published: currentState === 'Published',
-      })
-    }
+      },
+      { mergeObjects: false, silent: true, keepNull: true },
+    )
+    //}
   })
   interpreter.start(initializeContext.state)
 

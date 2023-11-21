@@ -149,10 +149,14 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         })
       },
       async ModeratePublishingResource() {
-        return { notPassed: false }
+        return new Promise(resolve => {
+          setTimeout(() => resolve({ notPassed: false }), 100)
+        })
       },
       async ScheduleDestroy() {
-        return true
+        return new Promise(resolve => {
+          setTimeout(() => resolve(true), 100)
+        })
       },
       async StoreResourceEdits(context) {
         const image = context.resourceEdits?.data.image
@@ -185,7 +189,7 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
     actions: {
       notify_creator(/* _, ev */) {
         //@ALE: TBD
-        console.log('notify_creator' /* , ev.type */)
+        // console.log('notify_creator' /* , ev.type */)
       },
       destroy_all_data(context) {
         const resourceKey = context.doc.id.resourceKey

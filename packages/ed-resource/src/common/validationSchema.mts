@@ -124,19 +124,19 @@ export function getValidationSchemas(validationConfigs: ValidationsConfig) {
         .withMutation(s => (forPublish ? s.required(`Please provide a license`) : s))
         .default(''),
       language: string()
-        .withMutation(s => (forPublish ? s.required('Please provide a language') : s))
+        .withMutation(s => (forPublish ? s.required(`Please provide a language`) : s))
         .default(''),
       level: string()
-        .withMutation(s => (forPublish ? s.required('Please provide a level') : s))
+        .withMutation(s => (forPublish ? s.required(`Please provide a level`) : s))
         .default(''),
       month: string()
-        .withMutation(s => (forPublish ? s.required('Please provide a month') : s))
+        .withMutation(s => (forPublish ? s.required(`Please provide a month`) : s))
         .default(''),
       year: string()
-        .withMutation(s => (forPublish ? s.required('Please provide a year') : s))
+        .withMutation(s => (forPublish ? s.required(`Please provide a year`) : s))
         .default(''),
       type: string()
-        .withMutation(s => (forPublish ? s.required('Please provide a type') : s))
+        .withMutation(s => (forPublish ? s.required(`Please provide a type`) : s))
         .default(''),
       learningOutcomes: array()
         .of(
@@ -165,14 +165,14 @@ export function getValidationSchemas(validationConfigs: ValidationsConfig) {
             ? s
                 .min(
                   validationConfigs.learningOutcomes.amount.min,
-                  'Please provide at least ${validationConfigs.learningOutcomes.amount.min} learning outcome',
+                  `Please provide at least ${validationConfigs.learningOutcomes.amount.min} learning outcome`,
                 )
                 .max(
                   validationConfigs.learningOutcomes.amount.max,
-                  'Please provide at most ${validationConfigs.learningOutcomes.amount.max} learning outcomes',
+                  `Please provide at most ${validationConfigs.learningOutcomes.amount.max} learning outcomes`,
                 )
                 .required(
-                  'Please provide at least ${validationConfigs.learningOutcomes.amount.min} learning outcome',
+                  `Please provide at least ${validationConfigs.learningOutcomes.amount.min} learning outcome`,
                 )
             : s,
         )

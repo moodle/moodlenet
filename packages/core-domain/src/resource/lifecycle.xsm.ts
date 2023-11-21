@@ -52,7 +52,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
   const schemas = getValidationSchemas(deps.validationConfigs)
 
   const EdResourceMachine = createMachine({
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMATn4BWAHQB2fgA4RAFgDMEkfzL8ANCACefAIwA2MrskKR0ubom7+EuXP0BfB5tQZYOAmDEBlJplwMbFC8AHJgAO68bh6ERBDsXoEAbpgA1l6uWHiEPn4BQaERUVmeCMmY+ACGLOzkFHWcdIw1HEjcfKoKZGLSgmT6gvqq+voKspo6CLwiZOJCasr69iIKCqJOLuglOQCC2H4wbGC41YHBALJgTJVxCWLl6WKZ7tleewdgRycsBZfXZWwUlUWnUGm0msxWK1QDwpqobGIyEjdGQ1nJpLoRBIFBM9ApBD1LENBMoRJj9BJHM4QM8Ym99phDsdTr8rjcqmxCAAbXgAWzZvCZ3yhYNo9Eh7E4sN4RP0YjGujkEn6IkEZNRuLhinl5kEcnkXRW-FMGxpWxenjEAFU2DRsAAjLkMWAAC0gRFwYAAjtg4ExeHbHc6XaKQBCWlK9FiCYIFEsxkJVmrNfY5GJjfwLEj9Bj9fxTbTXtbbQ6na73Z6fX6+QKhadapRGuKI21pQZ0WIyV1TBY5INpJreAp9Tq+-rFLM1goC+a6cXA2W3RAiEwTq7Q+GoZGpijBNJESjDKMyHvpJnNaICRiRPpMcOT0SRDPokWbQvg+7YHkwLxIMxYBuzZbq2fASMqmpPtShaWm+pYfsuNC4JgSQMBAP6ehahC-hA-6Ac0wEwnoui9PKZgSH0-AoiI8gaNoehkGmax9LosYrIY0jSM+2xeAACnBrpnLw5yYGhwrsLcRz3ICaQZLORZ8UGAm-CJzItACQL1mwoKNuCQGSiBO59AoYi6IaFJWIo1gSJqSxppRhr4rolgYtOUFyZaCmLoJwmiZpEmJNJjzQTknnBt5KliWw6kVJpoK6FQun4fphE7hxxlSAxN6ZvI8hyJqyjGAYLHMQx-AUq5mwvpaACSbC8AAKmuLr+VJKRBe5OS1Q1TXRcCIqUHhErQu0UyyMZTlyKI5jmEMSwQaZYh2KMBirPqxEVWaVWdXVjWVK6Hp+v4YCDS2KW8BI0jGTM0gnsaazZvoF6qoSN5KPiSgqEsXGYbx-FLgdABWYD4P677rjpYpJcN0qiJmYjCCxOWmRdtGTEs-CSKZJ56hd+qCN9c6heWy7YCWikhhDYZ6dDHTGuIIyCHqMjKiSZXzRIi1gb0ioqPIxEE-Jf3FEDIPuqTYMUwlkNDduAiCCxhJkJSQz6keEHKvD6JKv2F1xgLlq+P4gmoP+LUPLJW1eIb+TBCbTCwL1sUDZTm7JSNMqqNZdFammdiyPoqq2H05gbcFXh-JUvDeNgUAwF+UK8DsSSVAwXKVI6xCIchqHodx2G4S71Oy6ogySErRWTbIxH5eIsgWGYIc3fwNj6zkADCbr4KkgldW37BMJ8TBEFnKFobwRyRBhdInQR7uiPYPSxpSxrYisOLezKXQEijdNkNIQyovmbmW2IHfA93BS9-3g-D0ho8-hPvBT68JDxU2UPFxmPS2DdvRmBOIhByYjKvDci5Uzwo04sfbip9O4X2CFfNgA8kFEC-EdceRRn6eBnm7GG1hujDmUJSUyxELpAMsGmXoJ4FAsX9pYUOHUvBny7j3OqfckE3zQZ6DBk9uKvyllTD+BkBCzGMNRJW9l-YrEHGqK8xEHyEKGKsJw1I2AqXgG0MO78ZbCKENiSQMgDTKHhEAnMBI6aM37IYIyrcvAhEwInfAhBYAaOlqdOeZ4MZ7kzHuYcZUTxe0mB7Pci1DBbyGGeYc+NoE-VyEbAoYRIiW20e4mGATQnESMsqZulJBxSHECSNYl0brKmurYsQ7xGSfFUt5NkKTZ5pJoT0GQwwsQrBuo9DeiZETy36NiWYOMGEn1guTSA9TcF4g1vLFi+IFi3U1KZcQKhg5jF7HuSClUYFExdOFXy7jXY0x3BYAkSwlbYmkLYOMeobL9HTFjVQRhTAbM2jArqu1XTjMObwWQ+4sTojAqYFiBhNRJnlEsMCSw9RKF6EMrZf0xmJR0WdZuMh4bWE6DlAYeVvZHkxjQ+ed1OjlO2cLYGA8ICfOLhxbovN1RWEeQOHFk1MZCD7GSeWN1ombNiQAET9EhLQCK3ENL4OYGlk1VjNwuaIGhNk4YqEcoqZQqITQxLnNbY2OF7aUuEfLDmYEf7l2VJZQcsNETUVWDmPemZnLlIjlHGOccWiJ2TqndOXIwA6uRZlUBIxSRYkVHGIB3Rem5VkNjYQZhynMPgbwRByCmBevdsVboxozxYwDWVTpQTrAkjuWoaiyqZC6BUQ4IAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMATn4BWAHQB2fgA4RAFgDMEkfzL8ANCACefAIwA2MrskKR0ubom7+EuXP0BfB5tQZYOAmDEBlJplwMbFC8AHJgAO68bh6ERBDsXoEAbpgA1l6uWHiEPn4BQaERUVmeCMmY+ACGLOzkFHWcdIw1HEjcfKoKZGLSgmT6gvqq+voKspo6CLwiZOJCasr69iIKCqJOLuglOQCC2H4wbGC41YHBALJgTJVxCWLl6WKZ7tleewdgRycsBZfXZWwUlUWnUGm0msxWK1QDwpqobGIyEjdGQ1nJpLoRBIFBM9ApBD1LENBMoRJj9BJHM4QM8Ym99phDsdTr8rjcqmxCAAbXgAWzZvCZ3yhYNo9Eh7E4sN4RP0YjGujkEn6IkEZNRuLhinl5kEcnkXRW-FMGxpWxenjEAFU2DRsAAjLkMWAAC0gRFwYAAjtg4ExeHbHc6XaKQBCWlK9FiCYIFEsxkJVmrNfY5GJjfwLEj9Bj9fxTbTXtbbQ6na73Z6fX6+QKhadapRGuKI21pQZ0WIyV1TBY5INpJreAp9Tq+-rFLM1goC+a6cXA2W3RAiEwTq7Q+GoZGpoI+mI5GRseYLPosbpBJr+CMxIqVAYhtJlHq5DPokWbQvg+7YHkwLxIMwsAbs2W6tnwEjKpqIivtsXgfqWX7LjQuCYEkDAQH+noWoQ-4QIBwHNKBMJ6IqEg3voirokIBhkNIA7aHoZFSKep76gYqoiCsMHYV4AAKCGumcvDnJgGHCuwtxHPcgJpBks5FvxQaCb8onMi0AJAvWbCgo24IgZKYFTOeqI3oaFJWIo1gSJqSxpvwuiGviuiWBi07UoWlqKYuQkiWJWmSYkMmPB5ORecGPmqeJbAaRUWmgroVB6YRBnEUZdEKJIqj6kM47yHImrKMYBjnn0KJyFe2LcXOACSbC8AAKmuLoBdJKTBfJlq1Q1TUxcCIqUARErQu0UykoisyKLIxqHuMDEICo4izLMshxvwa3SG5mxvp1dWNZUroen6-hgINLapbwyoEjM+KnuxxprJe163vZIwyE+dhVQpAlLodABWYD4P6n7rrpYrJcN0qiJmYjCOe8hdhI0gaHNSz8JIDlkLuSrmKqn2ed97rYCWSkhqDYb6RDHTGuIIxY29mPMVBlj7hBvTPfIujSHjoXfcU-2A4TxOLqdREjQIgjnoSh6vdl-RQcqMPokq-aI3G3NeL4-hCaggEtQ8cnbTkmv5MEOtMLAvVxQNZObilYvWIeg6ZmmdiyKeJJ9rRijq2IfyVLw3jYFAMA-lCvA7EklQMFylSOsQyGoehmGwbh+E2xT24CJjcrKlYFHlbInMFeIsgWGY5hjGoNg+wAwm6+CpEJXU1+wTCfEwRAJ2hGG8EckRYXSIt25D8hyr0ShDEopirIOGMEoja2mLRQyovm7kdTkdcA43BTN637edyh3d-n3vAD68JAJU24OZ4vaOPuitFqhXsyzyocokoMR42EjXPr4bXgt4NybnVFubA27gKID+Y6vcijn08EPSmcIHbyiVFiCiChOaI1npYNMvRMaYMEG7Swm0zQALEEAnewQ97gIPtAz0sD+6wUvolMGQ1b6zGMJxQ89kxgiFPDiOavA1QEgxNITGDklSTzctSNgql4BtBCmAa+7DDLi2xJlUuSgVBqFnjmAk1NXJIxJBZH2IRMDh3wIQWACi2FnTFjINaMMkZ9g2uVQwJJZ5CGkPuQwXRBiOOHIIH2xshJhEiAAlR9jIYM18ZzPoSgq6UkHFIcQJI1gbXEcqGYf8tqwTEO8Rknw1I+TZFE0WMTME9EcSqZQld9BO1jIiCW-RsSzD1JVf++T4Ik0gOU4eeIFYS3PPiBYmNkaTAcuIFQfRMm9iIdBLpPExBhWUhcSKWl+lIJlBYAkSxDxHlsHGPUNl+jpgxqoIwphFl5OWV1ParotmZ0pN0ewhgsSjLjEjTU+I0bOVvGMWM-RZgSB9qspcTy1FrRkDDawnR4YDHyijM5VhMGiHKqsToYLeYYH5m3CAkLzoyHEZ2UQ6orBXPopMVG6MhB9jJBLcRwSllzgACJ+hQloPpSVVHnUpPfPMFFFQ5gPFSxAk9fG9AgsIbJu4Ql5G1nhc2hKxYSyYhBR+VhlSWSdioREnFVg5lopmFyPs-YByDiHFo4dI7R1jlyZRPLokdDICOEkIxSRnkUA0oRKJYUTXRDMXcwgzC13rlQ3gNCIFMBVW2Xc3RjRIwxmeK8PrJgyiEGReyahOLKDUBiJwTggA */
     id: 'EdResource',
 
     predictableActionArguments: true,
@@ -109,6 +109,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
 
       'Unpublished': {
         // entry: 'persist_context',
+        entry: 'assign_validations',
         on: {
           'request-publish': {
             target: 'Publishing-Moderation',
@@ -130,7 +131,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
           },
 
           'provide-resource-edits': {
-            actions: ['assign_resource_edits_and_validations'],
+            actions: ['assign_resource_edits'],
             cond: 'issuer is creator',
           },
         },
@@ -230,7 +231,7 @@ image is optional`,
           'provide-resource-edits': {
             target: 'Unpublished',
             cond: 'issuer is creator',
-            actions: 'assign_resource_edits_and_validations',
+            actions: 'assign_resource_edits',
           },
         },
       },
@@ -311,11 +312,26 @@ link: url string format`,
       },
     },
     actions: {
-      assign_resource_edits_and_validations: assign((context, { edits }) => {
-        const validatedResourceEdits = getContextResourceEdits(edits)
-        // console.log('assign_resource_edits_and_validations', context, edits, validatedResourceEdits)
+      assign_validations: assign(context => {
+        const publishingErrors = schemas.publishable(context.doc.meta).errors
+        // console.log(
+        //   // event.type,
+        //   context.resourceEdits,
+        //   // providedResourceEditsValidation_or_currentMetaValidations,
+        //   publishingErrors,
+        //   'assign_validations',
+        // )
+
         return produce(context, proxy => {
-          proxy.resourceEdits = validatedResourceEdits
+          // proxy.resourceEdits = providedResourceEditsValidation_or_currentMetaValidations
+          proxy.publishingErrors = publishingErrors
+        })
+      }),
+      assign_resource_edits: assign((context, { edits }) => {
+        const contextResourceEdits = getContextResourceEdits(edits)
+        // console.log('assign_resource_edits', contextResourceEdits)
+        return produce(context, proxy => {
+          proxy.resourceEdits = contextResourceEdits
         })
       }),
       assign_doc: assign((context, { data }) => {

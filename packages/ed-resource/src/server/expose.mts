@@ -14,7 +14,11 @@ import {
 import { waitFor } from 'xstate/lib/waitFor.js'
 import { shell } from './shell.mjs'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
-import type { Event, Event_ProvideResourceEdits_Data } from '@moodlenet/core-domain/resource'
+import type {
+  Event,
+  Event_ProvideResourceEdits_Data,
+  StateName,
+} from '@moodlenet/core-domain/resource'
 import { DEFAULT_CONTEXT, matchState, nameMatcher } from '@moodlenet/core-domain/resource'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
@@ -62,16 +66,18 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
         const [interpreter] = await srv.stdEdResourceMachine({ by: 'data', data: resourceRecord })
         let snap = interpreter.getSnapshot()
-        if (!snap.can(publish ? 'request-publish' : 'unpublish')) {
+        const { event, awaitNextState } = ((): { event: Event; awaitNextState: StateName } =>
+          publish
+            ? { awaitNextState: 'Published', event: { type: 'request-publish' } }
+            : { awaitNextState: 'Unpublished', event: { type: 'unpublish' } })()
+        if (!snap.can(event)) {
           interpreter.stop()
           return { done: false }
         }
-        interpreter.send(publish ? 'request-publish' : 'unpublish')
+        interpreter.send(event)
 
+        await waitFor(interpreter, nameMatcher(awaitNextState))
         snap = interpreter.getSnapshot()
-
-        await waitFor(interpreter, nameMatcher(publish ? 'Published' : 'Unpublished'))
-
         interpreter.stop()
         return { done: true }
       },
@@ -252,7 +258,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         const provideEditsEvent: Event = { type: 'provide-resource-edits', ...resourceEdits }
         if (!snap.can(provideEditsEvent)) {
-          console.log('cannot provide edits', provideEditsEvent, snap.value, snap.context)
+          // console.log('cannot provide edits', provideEditsEvent, snap.value, snap.context)
           interpreter.stop()
           return null
         }
@@ -369,8 +375,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'webapp/create': {
       guard: async body => {
-        const { publishedContentValidationSchema } = await getValidations()
-        const validatedContentOrNullish = await publishedContentValidationSchema.validate(
+        const { draftContentValidationSchema } = await getValidations()
+        const validatedContentOrNullish = await draftContentValidationSchema.validate(
           { content: body?.content?.[0] },
           { stripUnknown: true },
         )

@@ -133,6 +133,7 @@ export async function createResource(
       state: 'Storing-New-Resource',
       generatedData: null,
       publishRejected: null,
+      publishingErrors: null,
     },
   })
 

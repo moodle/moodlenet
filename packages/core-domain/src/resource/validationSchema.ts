@@ -32,7 +32,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
       try {
         return {
           valid: true,
-          meta: schemas.publishing.validateSync(meta) as ResourceMeta,
+          meta: schemas.publishing.validateSync(meta, { abortEarly: false }) as ResourceMeta,
         } as const
       } catch (e) {
         return {
@@ -58,9 +58,9 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
       try {
         return {
           valid: true,
-          providedContent: schemas.providedContent.validateSync(
-            providedContent,
-          ) as ProvidedCreationContent,
+          providedContent: schemas.providedContent.validateSync(providedContent, {
+            abortEarly: false,
+          }) as ProvidedCreationContent,
         } as const
       } catch (e) {
         return { valid: false, reason: String(e) } as const
@@ -70,7 +70,9 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
       try {
         return {
           valid: true,
-          data: schemas.providedImage.validateSync(providedImage) as unknown as ProvidedImage,
+          data: schemas.providedImage.validateSync(providedImage, {
+            abortEarly: false,
+          }) as unknown as ProvidedImage,
           errors: null,
         } as const
       } catch (e) {
@@ -107,15 +109,13 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
   }
 
   function produceResourceMetaValidationErrorsInCatch(e: any) {
-    //}: MetaValidationErrors {
-
+    // console.log(`produceResourceMetaValidationErrorsInCatch`, e, e instanceof ValidationError)
     if (!(e instanceof ValidationError)) {
       throw e
     }
-    // console.log(`produceResourceMetaValidationErrorsInCatch`, { ...e })
-    // if (!errs.length) {
-    //   return null
-    // }
+    if (!e.inner.length) {
+      return null
+    }
     return e.inner.reduce((acc, err) => {
       const k = err.path ?? `?`
       acc[k] = acc[k] ?? ``

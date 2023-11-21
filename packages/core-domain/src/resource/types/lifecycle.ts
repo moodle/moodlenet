@@ -48,7 +48,6 @@ export interface Context extends PersistentContext {
     data: ResourceEdits
     errors: ResourceEditsValidationErrors | null
   }
-  publishingErrors: null | ResourceMetaValidationErrors
   providedContent: null | ProvidedCreationContent
 }
 
@@ -61,6 +60,7 @@ export interface PersistentContext {
   doc: ResourceDoc
   generatedData: null | GeneratedData
   publishRejected: null | ReasonString
+  publishingErrors: null | ResourceMetaValidationErrors
   state: StateName
 }
 
