@@ -85,26 +85,24 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
   }
 
   function getImageValidationSchema() {
-    const schema: SchemaOf<{ image: ProvidedImage }> = object({
-      image: mixed()
-        .test((providedImage: ProvidedImage, { createError }) => {
-          return (
-            !!providedImage &&
-            (providedImage.kind === `url`
-              ? validURL(providedImage.url) ||
-                createError({
-                  message: `Url not valid`,
-                })
-              : providedImage.size <= validationConfigs.image.sizeBytes.max ||
-                createError({
-                  message: `Image too big ${humanFileSize(providedImage.size)}, max ${humanFileSize(
-                    validationConfigs.image.sizeBytes.max,
-                  )}`,
-                }))
-          )
-        })
-        .optional(),
-    })
+    const schema /* : SchemaOf<ProvidedImage >  */ = mixed<ProvidedImage>()
+      .test((providedImage, { createError }) => {
+        return (
+          !!providedImage &&
+          (providedImage.kind === `url`
+            ? validURL(providedImage.url) ||
+              createError({
+                message: `Url not valid`,
+              })
+            : providedImage.size <= validationConfigs.image.sizeBytes.max ||
+              createError({
+                message: `Image too big ${humanFileSize(providedImage.size)}, max ${humanFileSize(
+                  validationConfigs.image.sizeBytes.max,
+                )}`,
+              }))
+        )
+      })
+      .optional()
     return schema
   }
 

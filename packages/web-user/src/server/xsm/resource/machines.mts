@@ -168,15 +168,15 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
           ...context.doc.meta,
           ...meta,
         })
-        const patchRes = await patchResource(context.doc.id.resourceKey, {
+        let patchRes = await patchResource(context.doc.id.resourceKey, {
           ...resourceDataTypeMeta,
           image: imagePatch,
         })
+        if (image?.kind === 'file') {
+          patchRes = await setResourceImage(context.doc.id.resourceKey, image.rpcFile)
+        }
         if (!patchRes) {
           throw new Error('patchResource failed for unknown reasons')
-        }
-        if (image?.kind === 'file') {
-          await setResourceImage(context.doc.id.resourceKey, image.rpcFile)
         }
 
         const persistentContext = map.db.doc_2_persistentContext(patchRes.patched)
