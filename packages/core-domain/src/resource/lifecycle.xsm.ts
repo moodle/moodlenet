@@ -404,10 +404,17 @@ link: url string format`,
   function getContextResourceEdits(edits: T.ResourceEdits) {
     const resourceMetaResponse = edits.meta ? schemas.resourceMeta(edits.meta) : null
 
-    const imageResponse =
-      edits.image && (edits.image.kind === 'file' || edits.image.kind === 'url')
-        ? schemas.providedImage(edits.image)
-        : null // {valid : true} as const
+    const imageResponse = !edits.image
+      ? null
+      : edits.image.kind === 'no-change' || edits.image.kind === 'remove'
+      ? {
+          valid: true,
+          data: edits.image,
+          errors: undefined,
+        }
+      : edits.image.kind === 'file' || edits.image.kind === 'url'
+      ? schemas.providedImage(edits.image)
+      : null // {valid : true} as const
 
     if (!(resourceMetaResponse || imageResponse)) {
       return null

@@ -1,4 +1,3 @@
-import type { ImageUploaded } from '@moodlenet/collection/server'
 import type {
   Actor_MetaGenerator_Data,
   Actor_StoreNewResource_Data,
@@ -25,9 +24,8 @@ import {
   getResource,
   map,
   patchResource,
-  saveResourceImage,
-  setResourceImage,
   storeResourceFile,
+  updateImage,
   validationsConfigs,
 } from '@moodlenet/ed-resource/server'
 import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
@@ -98,17 +96,6 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
                 fsItem: await storeResourceFile(newResourceKey, context.providedContent.rpcFile),
               }
 
-        const povidedImage = context.resourceEdits?.data?.image
-        const imageResourceDataType: ResourceDataType['image'] =
-          povidedImage?.kind === 'file'
-            ? await saveResourceImage(newResourceKey, povidedImage.rpcFile).then<ImageUploaded>(
-                res => ({
-                  kind: 'file',
-                  directAccessId: res.directAccessId,
-                }),
-              )
-            : map.db.providedImage_2_patchOrRpcFile(povidedImage) ?? null
-
         const resourceDataTypeMeta = await map.db.meta_2_db({
           ...context.doc.meta,
           ...context.resourceEdits?.data.meta,
@@ -116,16 +103,18 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         const created = await createResource(
           {
             ...resourceDataTypeMeta,
-            image: imageResourceDataType,
             _key: newResourceKey,
           },
           contentResourceDataType,
         )
+
         if (!created) {
           contentResourceDataType.kind === 'file' && delResourceFile(newResourceKey)
-          imageResourceDataType?.kind === 'file' && deleteImageFile(newResourceKey)
           throw new Error('resource creation failed for unknown reasons')
         }
+        const image = context.resourceEdits?.data?.image
+        if (image?.kind === 'file' || image?.kind === 'url')
+          await updateImage(newResourceKey, image)
 
         const persistentContext = map.db.doc_2_persistentContext(created)
         const response: Actor_StoreNewResource_Data = {
@@ -159,24 +148,23 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         })
       },
       async StoreResourceEdits(context) {
-        const image = context.resourceEdits?.data.image
+        const resourceKey = context.doc.id.resourceKey
+        const imageEdits = context.resourceEdits?.data.image
         const meta = context.resourceEdits?.data.meta
-        const imagePatch =
-          image?.kind === 'file' ? undefined : map.db.providedImage_2_patchOrRpcFile(image)
 
         const resourceDataTypeMeta = map.db.meta_2_db({
           ...context.doc.meta,
           ...meta,
         })
-        let patchRes = await patchResource(context.doc.id.resourceKey, {
-          ...resourceDataTypeMeta,
-          image: imagePatch,
-        })
-        if (image?.kind === 'file') {
-          patchRes = await setResourceImage(context.doc.id.resourceKey, image.rpcFile)
-        }
+
+        const patchRes =
+          (await updateImage(resourceKey, imageEdits)) &&
+          (await patchResource(resourceKey, {
+            ...resourceDataTypeMeta,
+          }))
+
         if (!patchRes) {
-          throw new Error('patchResource failed for unknown reasons')
+          throw new Error('StoreResourceEdits (patchResource) failed for unknown reasons')
         }
 
         const persistentContext = map.db.doc_2_persistentContext(patchRes.patched)

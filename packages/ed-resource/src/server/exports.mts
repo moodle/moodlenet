@@ -15,10 +15,8 @@ export {
   getResourceFileUrl,
   getValidations,
   patchResource,
-  saveResourceImage,
-  setResourceContent,
-  setResourceImage,
   storeResourceFile,
+  updateImage,
   validationsConfigs,
 } from './services.mjs'
 export * from './types.mjs'

@@ -208,11 +208,11 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'webapp/edit/:_key': {
-      guard: async body => {
-        const { draftResourceValidationSchema } = await getValidations()
-        body.form = await draftResourceValidationSchema.validate(body?.form.meta, {
-          stripUnknown: true,
-        })
+      guard: async () => {
+        // const { draftResourceValidationSchema } = await getValidations()
+        // body.form = await draftResourceValidationSchema.validate(body?.form?.meta, {
+        //   stripUnknown: true,
+        // })
       },
       fn: async ({ form }, { _key }) => {
         // const resourceRecord = await getResource(_key)

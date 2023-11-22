@@ -1,7 +1,7 @@
 import type * as xsm from '@moodlenet/core-domain/resource'
 import { DEFAULT_CONTEXT } from '@moodlenet/core-domain/resource'
 import { getImageAssetInfo } from '../../lib.mjs'
-import type { ImageUrl, ResourceEntityDoc } from '../../types.mjs'
+import type { ResourceEntityDoc } from '../../types.mjs'
 import type { ResourceDataTypeMeta } from './types.mjs'
 
 export function doc_2_persistentContext(resourceEntity: ResourceEntityDoc): xsm.PersistentContext {
@@ -33,19 +33,7 @@ export function doc_2_persistentContext(resourceEntity: ResourceEntityDoc): xsm.
     doc: resourceDoc,
   }
 }
-export function providedImage_2_patchOrRpcFile(
-  image: Exclude<xsm.ImageEdit, xsm.ProvidedFileImage> | undefined,
-): ImageUrl | null | undefined {
-  return !image || image.kind === 'no-change'
-    ? undefined
-    : image.kind === 'remove'
-    ? null
-    : image.kind === 'url'
-    ? { kind: 'url', url: image.url, credits: image.credits }
-    : (() => {
-        throw new TypeError('never')
-      })()
-}
+
 export function meta_2_db(meta: xsm.ResourceMeta): ResourceDataTypeMeta {
   const resourceDataTypeMeta: ResourceDataTypeMeta = {
     title: meta.title,

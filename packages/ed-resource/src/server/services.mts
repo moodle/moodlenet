@@ -1,5 +1,5 @@
 import type { RpcFile } from '@moodlenet/core'
-import { instanceDomain } from '@moodlenet/core'
+import type { ImageEdit } from '@moodlenet/core-domain/resource'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { defaultImageUploadMaxSize, webImageResizer } from '@moodlenet/react-app/server'
 import type {
@@ -189,32 +189,32 @@ export async function deltaResourcePopularityItem({
 }
 
 export async function patchResource(_key: string, patch: Partial<ResourceEntityDoc>) {
-  const resource = await shell.call(getEntity)(Resource.entityClass, _key)
-  if (!resource) {
-    return null
-  }
-  const { draftResourceValidationSchema, publishedResourceValidationSchema } =
-    await getValidations()
-  const resourceFormProps: ResourceFormProps = {
-    description: patch.description ?? resource.entity.description,
-    title: patch.title ?? resource.entity.title,
-    language: patch.language ?? resource.entity.language,
-    level: patch.level ?? resource.entity.level,
-    license: patch.license ?? resource.entity.license,
-    month: patch.month ?? resource.entity.month,
-    subject: patch.subject ?? resource.entity.subject,
-    type: patch.type ?? resource.entity.type,
-    year: patch.year ?? resource.entity.year,
-    learningOutcomes: patch.learningOutcomes ?? resource.entity.learningOutcomes,
-  }
-  const isValid = await (resource.entity.published
-    ? publishedResourceValidationSchema
-    : draftResourceValidationSchema
-  ).isValid(resourceFormProps)
+  // const resource = await shell.call(getEntity)(Resource.entityClass, _key)
+  // if (!resource) {
+  //   return null
+  // }
+  // const { draftResourceValidationSchema, publishedResourceValidationSchema } =
+  //   await getValidations()
+  // const resourceFormProps: ResourceFormProps = {
+  //   description: patch.description ?? resource.entity.description,
+  //   title: patch.title ?? resource.entity.title,
+  //   language: patch.language ?? resource.entity.language,
+  //   level: patch.level ?? resource.entity.level,
+  //   license: patch.license ?? resource.entity.license,
+  //   month: patch.month ?? resource.entity.month,
+  //   subject: patch.subject ?? resource.entity.subject,
+  //   type: patch.type ?? resource.entity.type,
+  //   year: patch.year ?? resource.entity.year,
+  //   learningOutcomes: patch.learningOutcomes ?? resource.entity.learningOutcomes,
+  // }
+  // const isValid = await (resource.entity.published
+  //   ? publishedResourceValidationSchema
+  //   : draftResourceValidationSchema
+  // ).isValid(resourceFormProps)
 
-  if (!isValid) {
-    return false
-  }
+  // if (!isValid) {
+  //   return false
+  // }
 
   const patchResult = await shell.call(patchEntity)(Resource.entityClass, _key, patch)
   return patchResult
@@ -256,72 +256,46 @@ export async function getResourceFileUrl({ rpcFile, _key }: { _key: string; rpcF
   return `${myRpcBaseUrl}${resourcePath}`
 }
 
-export async function saveResourceImage(
-  _key: string,
-  image: RpcFile,
+export async function updateImage(
+  resourceKey: string,
+  imageEdit: ImageEdit | undefined,
   opts?: {
     noResize?: boolean
   },
 ) {
-  const imageLogicalFilename = getImageLogicalFilename(_key)
-  const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
+  if (imageEdit?.kind === 'no-change') return true as const
 
-  const saveFileResp = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
-  return saveFileResp
-}
-export async function setResourceImage(
-  _key: string,
-  maybeImage: RpcFile | null, //| undefined,
-  opts?: {
-    noResize?: boolean
-  },
-) {
-  if (!maybeImage) {
-    await deleteImageFile(_key)
-    await patchResource(_key, {
-      image: null,
-    })
-    return null
-  }
-  const { directAccessId } = await saveResourceImage(_key, maybeImage, opts)
+  const imagePatch: ResourceDataType['image'] | undefined =
+    imageEdit?.kind === 'file'
+      ? {
+          kind: 'file',
+          directAccessId: await (async () => {
+            const imageLogicalFilename = getImageLogicalFilename(resourceKey)
+            const resizedRpcFile = opts?.noResize
+              ? imageEdit.rpcFile
+              : await webImageResizer(imageEdit.rpcFile, 'image')
 
-  return patchResource(_key, {
-    image: { kind: 'file', directAccessId },
+            const saveFileResp = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+            return saveFileResp.directAccessId
+          })(),
+        }
+      : imageEdit?.kind === 'remove'
+      ? (await deleteImageFile(resourceKey), null)
+      : imageEdit?.kind === 'url'
+      ? { kind: 'url', url: imageEdit.url, credits: imageEdit.credits }
+      : !imageEdit
+      ? undefined
+      : (() => {
+          throw new TypeError('never')
+        })()
+
+  return patchResource(resourceKey, {
+    image: imagePatch,
   })
 }
+
 export function deleteImageFile(_key: string) {
   return publicFiles.del(getImageLogicalFilename(_key))
-}
-
-export async function setResourceContent(_key: string, resourceContent: RpcFile | string) {
-  const content =
-    typeof resourceContent === 'string'
-      ? resourceContent
-      : await storeResourceFile(_key, resourceContent)
-
-  const isUrlContent = typeof content === 'string'
-  if (isUrlContent && content.startsWith(instanceDomain)) {
-    return
-  }
-  const contentProp: ResourceDataType['content'] = isUrlContent
-    ? {
-        kind: 'link',
-        url: content,
-      }
-    : {
-        kind: 'file',
-        fsItem: content,
-      }
-
-  const patchedDoc = await patchResource(_key, { content: contentProp })
-  if (!patchedDoc) {
-    await delResourceFile(_key)
-    return
-  }
-  const contentUrl = await (isUrlContent
-    ? content
-    : getResourceFileUrl({ _key, rpcFile: content.rpcFile }))
-  return { patchedDoc, contentUrl }
 }
 
 export type SearchFilterType = [

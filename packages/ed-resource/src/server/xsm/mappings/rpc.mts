@@ -3,14 +3,14 @@ import type { ResourceMetaFormRpc } from '../../../common/types.mjs'
 
 export function meta_2_form(meta: ResourceMeta): ResourceMetaFormRpc {
   const resourceFormRpc: ResourceMetaFormRpc = {
-    description: meta.description ?? '',
-    title: meta.title ?? '',
+    description: meta.description,
+    title: meta.title,
     language: meta.language?.code ?? '',
     license: meta.license?.code ?? '',
     subject: meta.subject?.code ?? '',
     level: meta.level?.code ?? '',
     type: meta.type?.code ?? '',
-    learningOutcomes: (meta.learningOutcomes ?? []).map(({ value }) => value),
+    learningOutcomes: meta.learningOutcomes.map(({ value }) => value),
     ...(meta.originalPublicationInfo
       ? {
           year: String(meta.originalPublicationInfo.year),
