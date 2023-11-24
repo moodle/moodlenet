@@ -240,16 +240,17 @@ export async function deltaPopularity(
 
 export async function setProfilePublisherFlag({
   profileKey,
-  publisher,
+  isPublisher: setIsPublisher,
 }: {
   profileKey: string
-  publisher: boolean | 'toggle'
+  isPublisher: boolean
 }) {
   const profile = await getProfileRecord(profileKey)
   if (!profile) return { type: 'not-found', ok: false }
-  const newPublisherFlag = publisher === 'toggle' ? !profile.entity.publisher : publisher
-  await editProfile(profileKey, { publisher: newPublisherFlag })
-  if (profile.entity.publisher === publisher) return { type: 'no-change', ok: true }
+  if (profile.entity.publisher === setIsPublisher) return { type: 'no-change', ok: true }
+
+  await patchEntity(Profile.entityClass, profileKey, { publisher: setIsPublisher })
+
   await Promise.all(
     profile.entity.knownFeaturedEntities.map(async ({ _id: targetEntityId, feature }) => {
       const targetEntityDoc = await (
@@ -267,7 +268,7 @@ export async function setProfilePublisherFlag({
             type: 'Profile',
           })
         : undefined
-      return deltaPopularity(newPublisherFlag, {
+      return deltaPopularity(setIsPublisher, {
         feature,
         profileCreatorIdentifiers,
         entityType: targetEntityDoc._meta.entityClass.type as KnownEntityType,

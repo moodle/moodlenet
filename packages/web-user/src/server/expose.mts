@@ -52,7 +52,7 @@ import {
   loginAsRoot,
   searchUsers,
   sendWebUserTokenCookie,
-  toggleWebUserIsAdmin,
+  setWebUserIsAdmin,
   verifyCurrentTokenCtx,
 } from './srv/web-user.mjs'
 import type { ProfileDataType } from './types.mjs'
@@ -452,17 +452,17 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         return webUsers
       },
     },
-    'webapp/admin/roles/toggleIsAdmin': {
+    'webapp/admin/roles/setIsAdmin': {
       guard: () => void 0,
       async fn(by) {
-        const patchedUser = await toggleWebUserIsAdmin(by)
+        const patchedUser = await setWebUserIsAdmin(by)
         return !!patchedUser
       },
     },
-    'webapp/admin/roles/toggleIsPublisher': {
+    'webapp/admin/roles/setIsPublisher': {
       guard: () => void 0,
-      async fn({ profileKey }) {
-        const response = await setProfilePublisherFlag({ profileKey, publisher: 'toggle' })
+      async fn({ profileKey, isPublisher }) {
+        const response = await setProfilePublisherFlag({ profileKey, isPublisher })
         return !!response?.ok
       },
     },

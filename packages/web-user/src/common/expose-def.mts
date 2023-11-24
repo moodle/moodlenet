@@ -111,9 +111,12 @@ export type WebUserExposeType = PkgExposeDef<{
     }): Promise<{ valid: boolean }>
     'webapp/admin/packages/update-all-pkgs'(): Promise<{ updatePkgs: Record<string, string> }>
     'webapp/admin/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
-    'webapp/admin/roles/toggleIsAdmin'(
-      body: { profileKey: string } | { userKey: string },
+    'webapp/admin/roles/setIsAdmin'(
+      body: { isAdmin: boolean } & ({ profileKey: string } | { userKey: string }),
     ): Promise<boolean>
-    'webapp/admin/roles/toggleIsPublisher'(body: { profileKey: string }): Promise<boolean>
+    'webapp/admin/roles/setIsPublisher'(body: {
+      profileKey: string
+      isPublisher: boolean
+    }): Promise<boolean>
   }
 }>

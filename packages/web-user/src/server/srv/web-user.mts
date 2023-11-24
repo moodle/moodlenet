@@ -297,9 +297,12 @@ export async function patchWebUser(
   )
 }
 
-export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKey: string }) {
-  const byUserKey = 'userKey' in by
-  const key = byUserKey ? by.userKey : by.profileKey
+export async function setWebUserIsAdmin(
+  req: { isAdmin: boolean } & ({ profileKey: string } | { userKey: string }),
+) {
+  const byUserKey = 'userKey' in req
+  const key = byUserKey ? req.userKey : req.profileKey
+  const isAdmin = req.isAdmin
 
   const patchedCursor = await db.query(
     `
@@ -307,11 +310,11 @@ export async function toggleWebUserIsAdmin(by: { profileKey: string } | { userKe
         FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
         LIMIT 1
         UPDATE user
-        WITH { isAdmin: !user.isAdmin }
+        WITH { isAdmin: @isAdmin }
         INTO @@WebUserCollection
       RETURN NEW
     `,
-    { key, '@WebUserCollection': WebUserCollection.name },
+    { key, '@WebUserCollection': WebUserCollection.name, isAdmin },
     {
       retryOnConflict: 5,
     },
