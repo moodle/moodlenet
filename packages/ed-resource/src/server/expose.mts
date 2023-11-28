@@ -40,7 +40,7 @@ import {
   searchResources,
   validationsConfigs,
 } from './services.mjs'
-import srv from './xsm/machinery.mjs'
+import { stdEdResourceMachine } from './xsm/machines.mjs'
 import * as map from './xsm/mappings/rpc.mjs'
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
@@ -64,7 +64,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceRecord) {
           return { done: false }
         }
-        const [interpreter] = await srv.stdEdResourceMachine({ by: 'data', data: resourceRecord })
+        const [interpreter] = await stdEdResourceMachine({ by: 'data', data: resourceRecord })
         let snap = interpreter.getSnapshot()
         const { event, awaitNextState } = ((): { event: Event; awaitNextState: StateName } =>
           publish
@@ -93,7 +93,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceRecord) {
           return { done: false }
         }
-        const [interpreter] = await srv.stdEdResourceMachine({
+        const [interpreter] = await stdEdResourceMachine({
           by: 'data',
           data: resourceRecord,
         })
@@ -119,11 +119,12 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceRecord) {
           return null
         }
-        const [interpreter] = await srv.stdEdResourceMachine({
+        const [interpreter] = await stdEdResourceMachine({
           by: 'data',
           data: resourceRecord,
         })
         const snap = interpreter.getSnapshot()
+        interpreter.stop()
         if (matchState(snap, 'No-Access') || !resourceRecord) {
           return null
         }
@@ -225,7 +226,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           // return editResourceRespRpc
           return null
         }
-        const [interpreter] = await srv.stdEdResourceMachine({
+        const [interpreter] = await stdEdResourceMachine({
           by: 'key',
           key: _key,
         })
@@ -297,7 +298,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceContent) {
           throw RpcStatus('Bad Request')
         }
-        const [interpreter] = await srv.stdEdResourceMachine({ by: 'create' })
+        const [interpreter] = await stdEdResourceMachine({ by: 'create' })
         let snap = interpreter.getSnapshot()
         const provideNewResourceEvent: Event = {
           type: 'provide-new-resource',
@@ -331,7 +332,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         interpreter.send('store-new-resource')
 
-        await waitFor(interpreter, nameMatcher('Meta-Suggestion-Available'))
+        await waitFor(interpreter, nameMatcher(['Unpublished', 'Autogenerating-Meta']))
         snap = interpreter.getSnapshot()
 
         const newDoc = snap.context.doc
@@ -366,7 +367,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const [interpreter] = await srv.stdEdResourceMachine({ by: 'key', key: _key })
+        const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
         interpreter.send('trash')
         await waitFor(interpreter, nameMatcher('Destroyed'))
         interpreter.stop()
@@ -387,7 +388,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           throw RpcStatus('Bad Request')
         }
 
-        const [interpreter] = await srv.stdEdResourceMachine({ by: 'create' })
+        const [interpreter] = await stdEdResourceMachine({ by: 'create' })
         let snap = interpreter.getSnapshot()
 
         const provideNewResourceEvent: Event = {
@@ -404,7 +405,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         }
         interpreter.send('store-new-resource')
 
-        await waitFor(interpreter, nameMatcher('Autogenerating-Meta'))
+        await waitFor(interpreter, nameMatcher(['Unpublished', 'Autogenerating-Meta']))
         snap = interpreter.getSnapshot()
 
         interpreter.stop()

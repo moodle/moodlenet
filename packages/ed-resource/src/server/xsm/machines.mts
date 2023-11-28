@@ -1,35 +1,47 @@
 import type {
-  Actor_MetaGenerator_Data,
   Actor_StoreNewResource_Data,
   Actor_StoreResourceEdits_Data,
   Context,
   EdResourceMachineDeps,
-  Issuer,
+  StateName,
 } from '@moodlenet/core-domain/resource'
-import {
-  DEFAULT_CONTEXT,
-  SYSTEM_ISSUER,
-  UNAUTHENTICATED_ISSUER,
-} from '@moodlenet/core-domain/resource'
-import type {
-  DepsAndInitializations,
-  ProvideBy,
-  ResourceDataType,
-} from '@moodlenet/ed-resource/server'
+import { DEFAULT_CONTEXT, getEdResourceMachine } from '@moodlenet/core-domain/resource'
+import { interpret } from 'xstate'
+
+import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
+import { createEntityKey } from '@moodlenet/system-entities/server'
+import { Resource } from '../exports.mjs'
+import { env } from '../init/env.mjs'
 import {
   createResource,
   deleteImageFile,
   delResource,
   delResourceFile,
   getResource,
-  map,
   patchResource,
   storeResourceFile,
   updateImage,
   validationsConfigs,
-} from '@moodlenet/ed-resource/server'
-import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
-import { verifyCurrentTokenCtx } from '../../srv/web-user.mjs'
+} from '../services.mjs'
+import { shell } from '../shell.mjs'
+import type { ResourceDataType } from '../types.mjs'
+import * as map from './mappings/exports.mjs'
+import providers from './providers.mjs'
+
+export type ProvideBy =
+  | {
+      by: 'data'
+      data: AccessEntitiesRecordType<ResourceDataType, unknown, any>
+    }
+  | {
+      by: 'key'
+      key: string
+    }
+  | {
+      by: 'create'
+    }
+
+export type DepsAndInitializations = [deps: EdResourceMachineDeps, initializeContext: Context]
 
 export async function provideEdResourceMachineDepsAndInits(
   reviveBy: ProvideBy,
@@ -38,7 +50,8 @@ export async function provideEdResourceMachineDepsAndInits(
     const initialContext: Context = {
       ...DEFAULT_CONTEXT,
       state: 'Checking-In-Content',
-      issuer: await getIssuer(['creator', true]),
+      issuer: await providers.getIssuer(['creator', true]),
+      enableMetaGenerator: env.enableMetaGenerator,
     }
     const deps = getEdResourceMachineDeps()
     return [deps, initialContext]
@@ -56,8 +69,9 @@ export async function provideEdResourceMachineDepsAndInits(
     const initialContext: Context = {
       ...DEFAULT_CONTEXT,
       state: 'No-Access',
-      issuer: await getIssuer(['creator', false]),
+      issuer: await providers.getIssuer(['creator', false]),
       noAccess: { reason: 'not available' },
+      enableMetaGenerator: env.enableMetaGenerator,
     }
     const deps = getEdResourceMachineDeps()
     return [deps, initialContext]
@@ -68,9 +82,9 @@ export async function provideEdResourceMachineDepsAndInits(
   const initialContext: Context = {
     ...DEFAULT_CONTEXT,
     ...persistentContext,
-    issuer: await getIssuer(
+    issuer: await providers.getIssuer(
       resourceRecord.meta.creatorEntityId
-        ? ['creator-id', resourceRecord.meta.creatorEntityId]
+        ? ['current-resource-creator-id', resourceRecord.meta.creatorEntityId]
         : ['creator', false],
     ),
   }
@@ -121,21 +135,6 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
           doc: persistentContext.doc,
         }
         return response
-      },
-      async MetaGenerator(/* context */) {
-        return new Promise<Actor_MetaGenerator_Data>(resolve => {
-          setTimeout(() => {
-            const metaGeneratorData: Actor_MetaGenerator_Data = {
-              generatedData: {
-                meta: {
-                  title: 'test generated title',
-                  description: 'test generated description',
-                },
-              },
-            }
-            resolve(metaGeneratorData)
-          }, 20 * 1000)
-        })
       },
       async ModeratePublishingResource() {
         return new Promise(resolve => {
@@ -188,6 +187,11 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         deleteImageFile(resourceKey)
         delResourceFile(resourceKey)
       },
+      request_generate_meta_suggestions(context) {
+        shell.events.emit('resource:request-metadata-generation', {
+          resourceKey: context.doc.id.resourceKey,
+        })
+      },
     },
 
     validationConfigs: {
@@ -205,31 +209,53 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
   }
 }
 
-async function getIssuer([paramType, val]:
-  | ['creator-id', string]
-  | ['creator', boolean]): Promise<Issuer> {
-  const currentSystemUser = await getCurrentSystemUser()
+export async function stdEdResourceMachine(by: ProvideBy) {
+  const [configs, initializeContext] = await provideEdResourceMachineDepsAndInits(by)
+  const machine = getEdResourceMachine(configs).withContext(initializeContext)
+  const saveOnStates: StateName[] = [
+    'Autogenerating-Meta',
+    'Unpublished',
+    'Publishing-Moderation',
+    'In-Trash',
+    'Published',
+    'Meta-Suggestion-Available',
+    'Publish-Rejected',
+  ]
+  const interpreter = interpret(machine)
+  let tx = false
+  interpreter.onTransition(() => (tx = true))
+  interpreter.onStop(() => {
+    if (!tx) return
+    const state = interpreter.getSnapshot()
+    // https://github.com/statelyai/xstate/discussions/1294
+    const currentState = state.value as StateName
+    if (!saveOnStates.includes(currentState)) {
+      return
+    }
+    //if (state.history && !state.history.matches(currentState)) {
+    const persistentContext: ResourceDataType['persistentContext'] = {
+      generatedData:
+        currentState === 'Meta-Suggestion-Available' ? state.context.generatedData : null,
+      publishRejected: currentState === 'Publish-Rejected' ? state.context.publishRejected : null,
+      state: currentState,
+      publishingErrors: currentState === 'Unpublished' ? state.context.publishingErrors : null,
+    }
+    Resource.collection
+      .update(
+        state.context.doc.id.resourceKey,
+        {
+          persistentContext,
+          published: currentState === 'Published',
+        },
+        { mergeObjects: false, /* silent: true,  */ keepNull: true },
+      )
+      .then(
+        () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),
+        e => console.log(`could not update ${state.context.doc.id.resourceKey} ${currentState}`, e),
+      )
+    //}
+  })
+  interpreter.start(initializeContext.state)
 
-  return currentSystemUser.type === 'root' || currentSystemUser.type === 'pkg'
-    ? SYSTEM_ISSUER
-    : currentSystemUser.type === 'entity'
-    ? await (async (): Promise<Issuer> => {
-        const currentWebUser = await verifyCurrentTokenCtx()
-        if (!currentWebUser) {
-          return UNAUTHENTICATED_ISSUER
-        } else if (currentWebUser.payload.isRoot) {
-          return SYSTEM_ISSUER
-        }
-
-        const creator = paramType === 'creator' ? val : currentWebUser.payload.profile._id === val
-        return {
-          type: 'user',
-          feats: {
-            admin: currentWebUser.payload.webUser.isAdmin,
-            creator,
-            publisher: currentWebUser.payload.profile.publisher,
-          },
-        }
-      })()
-    : UNAUTHENTICATED_ISSUER
+  return [interpreter, initializeContext, machine, configs] as const
 }

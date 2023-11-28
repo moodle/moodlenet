@@ -52,4 +52,7 @@ export type ResourceEvents = {
     resourceKey: string
     currentSysUser: SystemUser
   }
+  'resource:request-metadata-generation': {
+    resourceKey: string
+  }
 }

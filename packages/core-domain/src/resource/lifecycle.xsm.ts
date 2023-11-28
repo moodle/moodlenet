@@ -30,20 +30,21 @@ export const DEFAULT_CONTEXT: T.Context = {
   publishingErrors: null,
   resourceEdits: null,
   state: 'Checking-In-Content',
+  enableMetaGenerator: false,
 }
 
 export interface EdResourceMachineDeps {
   services: {
     StoreNewResource(context: T.Context): Promise<T.Actor_StoreNewResource_Data>
     StoreResourceEdits(context: T.Context): Promise<T.Actor_StoreResourceEdits_Data>
-    MetaGenerator(context: T.Context): Promise<T.Actor_MetaGenerator_Data>
+    // MetaGenerator(context: T.Context): Promise<T.Actor_MetaGenerator_Data>
     ModeratePublishingResource(context: T.Context): Promise<T.Actor_ModeratePublishingResource_Data>
     ScheduleDestroy(context: T.Context): Promise<T.Actor_ScheduleDestroy_Data>
   }
   actions: {
     notify_creator(context: T.Context /*,event:T.Event_????_Data */): unknown
     destroy_all_data(context: T.Context): unknown
-    // persist_context(context: T.Context): unknown
+    request_generate_meta_suggestions(context: T.Context): unknown
   }
   validationConfigs: T.ValidationConfigs
 }
@@ -52,7 +53,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
   const schemas = getValidationSchemas(deps.validationConfigs)
 
   const EdResourceMachine = createMachine({
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQBMATn4BWAHQB2fgA4RAFgDMEkfzL8ANCACefAIwA2MrskKR0ubom7+EuXP0BfB5tQZYOAmDEBlJplwMbFC8AHJgAO68bh6ERBDsXoEAbpgA1l6uWHiEPn4BQaERUVmeCMmY+ACGLOzkFHWcdIw1HEjcfKoKZGLSgmT6gvqq+voKspo6CLwiZOJCasr69iIKCqJOLuglOQCC2H4wbGC41YHBALJgTJVxCWLl6WKZ7tleewdgRycsBZfXZWwUlUWnUGm0msxWK1QDwpqobGIyEjdGQ1nJpLoRBIFBM9ApBD1LENBMoRJj9BJHM4QM8Ym99phDsdTr8rjcqmxCAAbXgAWzZvCZ3yhYNo9Eh7E4sN4RP0YjGujkEn6IkEZNRuLhinl5kEcnkXRW-FMGxpWxenjEAFU2DRsAAjLkMWAAC0gRFwYAAjtg4ExeHbHc6XaKQBCWlK9FiCYIFEsxkJVmrNfY5GJjfwLEj9Bj9fxTbTXtbbQ6na73Z6fX6+QKhadapRGuKI21pQZ0WIyV1TBY5INpJreAp9Tq+-rFLM1goC+a6cXA2W3RAiEwTq7Q+GoZGpoI+mI5GRseYLPosbpBJr+CMxIqVAYhtJlHq5DPokWbQvg+7YHkwLxIMwsAbs2W6tnwEjKpqIivtsXgfqWX7LjQuCYEkDAQH+noWoQ-4QIBwHNKBMJ6IqEg3voirokIBhkNIA7aHoZFSKep76gYqoiCsMHYV4AAKCGumcvDnJgGHCuwtxHPcgJpBks5FvxQaCb8onMi0AJAvWbCgo24IgZKYFTOeqI3oaFJWIo1gSJqSxpvwuiGviuiWBi07UoWlqKYuQkiWJWmSYkMmPB5ORecGPmqeJbAaRUWmgroVB6YRBnEUZdEKJIqj6kM47yHImrKMYBjnn0KJyFe2LcXOACSbC8AAKmuLoBdJKTBfJlq1Q1TUxcCIqUARErQu0UykoisyKLIxqHuMDEICo4izLMshxvwa3SG5mxvp1dWNZUroen6-hgINLapbwyoEjM+KnuxxprJe163vZIwyE+dhVQpAlLodABWYD4P6n7rrpYrJcN0qiJmYjCOe8hdhI0gaHNSz8JIDlkLuSrmKqn2ed97rYCWSkhqDYb6RDHTGuIIxY29mPMVBlj7hBvTPfIujSHjoXfcU-2A4TxOLqdREjQIgjnoSh6vdl-RQcqMPokq-aI3G3NeL4-hCaggEtQ8cnbTkmv5MEOtMLAvVxQNZObilYvWIeg6ZmmdiyKeJJ9rRijq2IfyVLw3jYFAMA-lCvA7EklQMFylSOsQyGoehmGwbh+E2xT24CJjcrKlYFHlbInMFeIsgWGY5hjGoNg+wAwm6+CpEJXU1+wTCfEwRAJ2hGG8EckRYXSIt25D8hyr0ShDEopirIOGMEoja2mLRQyovm7kdTkdcA43BTN637edyh3d-n3vAD68JAJU24OZ4vaOPuitFqhXsyzyocokoMR42EjXPr4bXgt4NybnVFubA27gKID+Y6vcijn08EPSmcIHbyiVFiCiChOaI1npYNMvRMaYMEG7Swm0zQALEEAnewQ97gIPtAz0sD+6wUvolMGQ1b6zGMJxQ89kxgiFPDiOavA1QEgxNITGDklSTzctSNgql4BtBCmAa+7DDLi2xJlUuSgVBqFnjmAk1NXJIxJBZH2IRMDh3wIQWACi2FnTFjINaMMkZ9g2uVQwJJZ5CGkPuQwXRBiOOHIIH2xshJhEiAAlR9jIYM18ZzPoSgq6UkHFIcQJI1gbXEcqGYf8tqwTEO8Rknw1I+TZFE0WMTME9EcSqZQld9BO1jIiCW-RsSzD1JVf++T4Ik0gOU4eeIFYS3PPiBYmNkaTAcuIFQfRMm9iIdBLpPExBhWUhcSKWl+lIJlBYAkSxDxHlsHGPUNl+jpgxqoIwphFl5OWV1ParotmZ0pN0ewhgsSjLjEjTU+I0bOVvGMWM-RZgSB9qspcTy1FrRkDDawnR4YDHyijM5VhMGiHKqsToYLeYYH5m3CAkLzoyHEZ2UQ6orBXPopMVG6MhB9jJBLcRwSllzgACJ+hQloPpSVVHnUpPfPMFFFQ5gPFSxAk9fG9AgsIbJu4Ql5G1nhc2hKxYSyYhBR+VhlSWSdioREnFVg5lopmFyPs-YByDiHFo4dI7R1jlyZRPLokdDICOEkIxSRnkUA0oRKJYUTXRDMXcwgzC13rlQ3gNCIFMBVW2Xc3RjRIwxmeK8PrJgyiEGReyahOLKDUBiJwTggA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQDMARgAcZAHQB2AEzCArABZ+E2VLJSANCACefQQDYyeyf1nD5giYKkT58vQF97m1Blg4CYMQGUmmXAzYoXgA5MAB3Xld3QiIIdk8AgDdMAGtPFyw8Qm9ff0CQ8MjMjwQkzHwAQxZ2cgpazjpGao4kbj4pfnlhMQBOJX5+HtsVQc0dBF5ZCzEpKT0esmlhQUFZPSlHZ3Ri7J8-AKDQiKis4ji2BLZktLEMt1Oc-fyjovuSssrm2pJBKlbG5isFqgHgTfT8KRiUR6CT8PTyOaDCRjPhTCQzOY9axwiyKYSbEB3aKeACC2F8MAuuCqB14AFkwEwKkRKmxCAAbXgAW0ZFV4lLA1K+lAa9EB7E4oN4FmUYiE8h6EjMSsUsn4KImqiM+g6gz0ckVwnWBKJDzJFLAVJp+QZTKIAqFkG5vN4sGwUBgsGasHq-zFzUl7X4al6sPkaiVYb0Gul6zlenW60ESnWEkWJu2b2yAFU2DRsAAjdkMWAAC0gRFwYAAjtg4ExePmiyXS77aP6gYGwbIJD1enC8VI+oNZBq7PIZhDzGRDMt5CoMycPGJc03i2WK1Xa-XnUz+ZbBTSaiK-U1O60pSI42thMI5rIyHflDHZt1ZO+5gY5Ap9Iudp5V0LddywgIgmGpMs2xAAEAwvPgegWMRw1hMxzD0HtBB6DVPzEQR5ykfR1mEZQhnkP8swAvMgJbCsvT8MBeEgZgfRPdszwlOCJgkNMNVkcjiRXKjmw3UCaFwTBEgYCAGKrCjGIgZioJg88QV0PD0X0PCuiHfRH2EGNpmkdD0PnfRZB6d9+H4h4AAVqLLWk6UwaShSBWJ4jEMoblNZc7OE0tHOcw9mlKK5yiPNhvlY6COw41SwQWfhcODNZuLwoRrA1eEJwIlLBhWJVk2s3z7ICm0gtc9h3IuTywu8zMBL84DApciLQuST4gW+X5RXY4E2jBW8kukMh53WecJvkDVlEEXC9EwhZBFGuZYWK7IAEk2F4AAVCDS2qy5rnSBqHk2na9va8LhTqaLlLigbeGUWQxBnBR+DkDpFjkXipGesgH1MNV1lfKynEJE7lzO3aKjLSt63opTYv6qU0z7B89SmdDdQ0bREBwvCVEImQSNsNbPCamjQKrAArMB8AbNcW0Rvqu14X6pAnLFMIUKYlDvLKEUkZMyAQ+QVXMsmxApkSiGwITgOZ8VkfaDpnoTUXiZFozeOmMWlR6AnfvMfEwZ87JpdLIpafpis5cZyDbqR1mdL7ZZFgTDm1kMXi016LoxZ6fUlThSW9jyIJUGYg7aqO24Id2XJaUjphYEuzrjxuv42KV1mrEWF9bCQro1nMmwFjMUGtiXbJbT5Lx3U9ZpeBJRIKgYdkKiLYgxIkqSZP-eTFMdlnOLZ6xXZkMw1SsdZR1xhBfbkcxTAr0RZgkSWAGFy3wFJaTOzf2CYS0mCIHvJOk3gLgiWTiUV2D4rZ0RZuEPoJHWfo1XVefpXlSQ71Vo+dYZAIRbx3nvfIB8j4nzPuJC+DFr68FvqcH4WcYoj0fhzYiUIbCiFfqYRQ-0DLT1DIHFC1g7wmyrv+MQ286YQKCFAtgx9mFEDolWK+hRkEeHvipB6HRZSdGUO-ZMIglQGQsK7BYfRMJyHmqtU28dPB0N3vvLah9mEwPYQgrh-5UG9RzqPT6Rh3yLFynItUMZA4TmWKIA2QiP6gzBmwIK8BWhmzAAYh+D0IQyEkDIN6yhVA43GLGIYk5TAgLhCA42ktgiYGbvgQgsA3HZ28VKYM3Feh3gVMITocwtYGWDElOwICRZEQ6AqUOidniFGrp408hjMH3jEPMKYBtVCKixHPUJoh0TBmTNlaJPQzCS3NJgB01ogi1y8XwqUsxEIIkGDOPoBhVQvksP4uY1glQEQfIISWgF-KQFmfdS8ShxAG0wss6wIsQmIGTM9FQ5d3rmFyXxRR9SpalRasFPhd1lZgnMH2eEiwUI2DhEMLKhgZjC1UGQR5HzqEUTEFDPapzAWPQMEhBM-1YSJX1PchAgxIQrAJu9Pohg8WSwticxp6SVZ+I6aoEwY0oXzwMEYSwGUFDYxATS0qVs6bHwgBi52t5xAqHfEtSwCL3oC0hJYIcCp2kiBFpLAAIvWcSWg6VpLmXwd+kIp5zBWHYMwj4sodBxa-biWI0zmR6NUp4EcFIpzFaPA26JuK4MWBYUaQgXwqBepZOEeCOYWCoeDL5tdeD1w9PWIEzdW7t07uyBp+qzkqwGK0gGCKRnoQKgZcQahlhetUAaecG9Pk0JUQw3gTCWFMA9c0+ck47zCwwplH+cLYVqHfMoUtBzHD2CAA */
     id: 'EdResource',
 
     predictableActionArguments: true,
@@ -77,14 +78,19 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
           {
             src: 'StoreNewResource',
 
-            onDone: {
-              target: 'Autogenerating-Meta',
-              actions: ['assign_doc'],
-            },
+            onDone: [
+              {
+                target: 'Autogenerating-Meta',
+                actions: ['assign_doc'],
+                cond: 'meta generator enabled',
+              },
+              {
+                target: 'Unpublished',
+                actions: 'assign_doc',
+              },
+            ],
           },
         ],
-
-        entry: 'validate_provided_content_and_assign_errors',
       },
 
       'Autogenerating-Meta': {
@@ -93,18 +99,15 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
             target: 'Unpublished',
             cond: 'issuer is creator',
           },
-        },
 
-        invoke: {
-          src: 'MetaGenerator',
-
-          onDone: {
+          'generated-meta-suggestions': {
             target: 'Meta-Suggestion-Available',
             actions: 'assign_suggested_meta',
+            cond: 'issuer is system',
           },
         },
 
-        // entry: 'persist_context',
+        entry: 'request_generate_meta_suggestions',
       },
 
       'Unpublished': {
@@ -117,7 +120,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
           },
           'request-meta-generation': {
             target: 'Autogenerating-Meta',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator and meta generator enabled',
           },
 
           'trash': {
@@ -136,11 +139,11 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
           },
         },
 
-        description: `Whatever data is ok.
+        description: `for Edits: Whatever data is ok.
     
-    even empty. 
+even empty. 
     
-    Just check upper bound sizes`,
+Just check upper bound size`,
       },
 
       'Publishing-Moderation': {
@@ -154,7 +157,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
               cond: 'moderation passed',
             },
             {
-              target: 'Publish-Rejected',
+              target: '#EdResource.Publish-Rejected',
               actions: 'assign_last_publishing_moderation_rejection_reason',
             },
           ],
@@ -182,7 +185,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
       'Published': {
         on: {
           'reject-publish': {
-            target: 'Publish-Rejected',
+            target: '#EdResource.Publish-Rejected',
             cond: 'issuer is admin',
           },
 
@@ -286,8 +289,17 @@ link: url string format`,
           !publishingErrors
         )
       },
+      'issuer is creator and meta generator enabled'({ issuer, enableMetaGenerator }) {
+        return issuer.type === 'user' && issuer.feats.creator && enableMetaGenerator
+      },
+      'issuer is system'({ issuer }) {
+        return issuer.type === 'system'
+      },
       'issuer is not an authenticated user'({ issuer }) {
         return issuer.type !== 'user'
+      },
+      'meta generator enabled'({ enableMetaGenerator }) {
+        return enableMetaGenerator
       },
       'issuer is admin'({ issuer }) {
         return issuer.type === 'user' && issuer.feats.admin
@@ -298,6 +310,7 @@ link: url string format`,
       'issuer has no read permission'({ issuer }, _, { state }) {
         return !(
           matchStateName<Typegen0>(state, 'Published') ||
+          issuer.type === 'system' ||
           (issuer.type === 'user' && (issuer.feats.creator || issuer.feats.admin))
         )
       },
@@ -327,6 +340,9 @@ link: url string format`,
           proxy.publishingErrors = publishingErrors
         })
       }),
+      request_generate_meta_suggestions(context) {
+        deps.actions.request_generate_meta_suggestions(context)
+      },
       assign_resource_edits: assign((context, { edits }) => {
         const contextResourceEdits = getContextResourceEdits(edits)
         // console.log('assign_resource_edits', contextResourceEdits)
@@ -344,9 +360,9 @@ link: url string format`,
           proxy.publishRejected = data.notPassed ? data.notPassed : null
         })
       }),
-      assign_suggested_meta: assign((context, { data }) => {
+      assign_suggested_meta: assign((context, { generatedData }) => {
         return produce(context, proxy => {
-          proxy.generatedData = data.generatedData
+          proxy.generatedData = generatedData
         })
       }),
       assign_unauthorized: assign(context => {
@@ -378,14 +394,11 @@ link: url string format`,
       notify_creator(context) {
         deps.actions.notify_creator(context)
       },
-      validate_provided_content_and_assign_errors() {
-        //TODO: validate content !!!!!!!!!!
-      },
     },
     services: {
-      async MetaGenerator(context /* ,event */) {
-        return deps.services.MetaGenerator(context)
-      },
+      // async MetaGenerator(context /* ,event */) {
+      //   return deps.services.MetaGenerator(context)
+      // },
       async ModeratePublishingResource(context /* , event */) {
         return await deps.services.ModeratePublishingResource(context)
       },

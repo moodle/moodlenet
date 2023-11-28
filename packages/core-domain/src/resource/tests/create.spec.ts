@@ -18,6 +18,7 @@ test('authenticated user, but non acceptable content', async () => {
   expect(snap.context.contentRejected).toStrictEqual({
     reason: 'ValidationError: File too big 1001 B, max 1000 B',
   })
+  interpreter.stop()
 })
 
 test('unauthenticated issuer should not be authorized to create', async () => {
@@ -30,4 +31,5 @@ test('unauthenticated issuer should not be authorized to create', async () => {
   // console.log(executions, states, snap.value, snap.context)
   expect(snap.context.noAccess?.reason).toBe('unauthorized')
   expect(snap.value).toBe('No-Access')
+  interpreter.stop()
 })

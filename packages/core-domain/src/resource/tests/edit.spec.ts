@@ -34,6 +34,7 @@ test('authenticated user, creator, but too long description', async () => {
   expect(snap.context.resourceEdits?.errors).toStrictEqual({
     description: ' Please provide a shorter description (6 / 5)',
   })
+  interpreter.stop()
 })
 
 test('authenticated user, but not creator', async () => {
@@ -56,4 +57,5 @@ test('authenticated user, but not creator', async () => {
       },
     }),
   ).toBe(false)
+  interpreter.stop()
 })

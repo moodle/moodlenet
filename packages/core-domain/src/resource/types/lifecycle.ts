@@ -49,6 +49,7 @@ export interface Context extends PersistentContext {
     errors: ResourceEditsValidationErrors | null
   }
   providedContent: null | ProvidedCreationContent
+  enableMetaGenerator: boolean
 }
 
 interface GeneratedData {
@@ -83,9 +84,9 @@ export type Actors = {
   StoreResourceEdits: {
     data: Actor_StoreResourceEdits_Data
   }
-  MetaGenerator: {
-    data: Actor_MetaGenerator_Data
-  }
+  // MetaGenerator: {
+  //   data: Actor_MetaGenerator_Data
+  // }
   ModeratePublishingResource: {
     data: Actor_ModeratePublishingResource_Data
   }
@@ -102,9 +103,9 @@ export interface Actor_StoreNewResource_Data {
   doc: ResourceDoc
 }
 
-export interface Actor_MetaGenerator_Data {
-  generatedData: ProvidedGeneratedData
-}
+// export interface Actor_MetaGenerator_Data {
+//   generatedData: ProvidedGeneratedData
+// }
 
 export interface Actor_ModeratePublishingResource_Data {
   notPassed:
@@ -131,9 +132,13 @@ export type Event = EventOf<
     'request-meta-generation': Event_RequestMetaGeneration_Data
     'cancel-meta-generation': Event_CancelMetaAutogen_Data
     'restore': Event_Restore_Data
+    'generated-meta-suggestions': Event_GeneratedMetaSuggestions_Data
     // 'accept-meta-suggestions': Event_AcceptMetaSuggestions_Data
   }
 >
+export interface Event_GeneratedMetaSuggestions_Data {
+  generatedData: ProvidedGeneratedData
+}
 
 export interface Event_StoreEdits_Data {}
 export interface Event_StoreNewResource_Data {}

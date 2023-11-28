@@ -1,10 +1,4 @@
-import {
-  Actor_MetaGenerator_Data,
-  Actor_StoreNewResource_Data,
-  Context,
-  ResourceDoc,
-  UserIssuer,
-} from '../exports'
+import { Actor_StoreNewResource_Data, Context, ResourceDoc, UserIssuer } from '../exports'
 import { EdResourceMachineDeps } from '../lifecycle.xsm'
 
 export function userIssuer({ feats }: { feats?: Partial<UserIssuer['feats']> }) {
@@ -28,23 +22,11 @@ export function getEdResourceMachineDeps() {
       notify_creator() {
         console.log('notify_creator')
       },
-      // persist_context() {
-      //   console.log('persistContext')
-      // },
+      request_generate_meta_suggestions() {
+        console.log('request_generate_meta_suggestions')
+      },
     },
     services: {
-      async MetaGenerator() {
-        const genMeta: Actor_MetaGenerator_Data = {
-          generatedData: {
-            //   image: { kind: 'file', size: 100 },
-            meta: {
-              description: 'some generated description',
-              title: 'some generated title',
-            },
-          },
-        }
-        return genMeta
-      },
       async ModeratePublishingResource() {
         return { notPassed: false }
       },

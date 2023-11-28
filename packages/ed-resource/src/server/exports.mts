@@ -21,4 +21,6 @@ export {
 } from './services.mjs'
 export * from './types.mjs'
 export * from './xsm/exports.mjs'
-import './xsm/core-interfaces.mjs'
+export { stdEdResourceMachine } from './xsm/machines.mjs'
+import { shell } from './shell.mjs'
+export const on = shell.events.on
