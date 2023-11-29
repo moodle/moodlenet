@@ -1,0 +1,10 @@
+{
+  "extends": ["../../.eslintrc"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    // do not ban
+    "@typescript-eslint/ban-types": false
+  }
+}

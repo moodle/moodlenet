@@ -88,7 +88,7 @@
       }
 
       > .dropdown,
-      > .date > .fields > .dropdown {
+      > .date-field > .fields > .dropdown {
         gap: 4px;
 
         > label {
@@ -128,7 +128,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
 
-          &.date {
+          &.date-field-read-mode {
             display: flex;
             gap: 8px;
           }
@@ -158,7 +158,7 @@
       }
 
       > *,
-      .date > .fields > * {
+      .date-field > .fields > * {
         > label {
           margin-bottom: 2px;
         }
@@ -179,7 +179,7 @@
         }
       }
 
-      > .date {
+      > .date-field {
         width: 100%;
         display: flex;
         flex-direction: column;

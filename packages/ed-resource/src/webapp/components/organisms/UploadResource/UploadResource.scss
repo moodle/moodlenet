@@ -47,12 +47,13 @@
       align-items: center;
       border: 4px dashed #d1d4e0;
       border-radius: 15px;
-      cursor: pointer;
       z-index: 1;
       background-color: white;
       position: relative;
 
-      &:hover:not(:has(> *:hover:not(.upload:hover))) {
+      // &:hover:has(> *:hover.upload:hover) {
+      &:hover:not(:has(> *:hover:not(.upload:hover))):not(:has(> .uploading-animation, > .autofilling-animation)) {
+        cursor: pointer;
         border: 4px dashed #1a6aff;
         color: #1a6aff;
         background-color: #cddffe;
@@ -85,6 +86,45 @@
           color: var(--primary-color);
           text-align: center;
           padding: 0 18px;
+        }
+      }
+
+      > .uploading-animation {
+        @keyframes rotateAnimation {
+          0%,
+          100% {
+            transform: rotate(1deg) translate(0, 8px);
+          }
+          50% {
+            transform: rotate(1deg) translate(0, -8px);
+          }
+        }
+
+        > .uploading-img {
+          max-height: 130px;
+          display: inline-block; /* necessary to apply transform */
+          animation: rotateAnimation 1s infinite;
+          animation-timing-function: cubic-bezier(0.45, 0.25, 0.6, 0.95);
+        }
+      }
+
+      > .autofilling-animation {
+        padding: 40px 60px 0 0;
+        animation: rotateSelf 8s infinite linear;
+
+        @keyframes rotateSelf {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        > .autofilling-img {
+          max-height: 115px;
+          display: inline-block; /* necessary to apply transform */
+          animation: rotateSelf 10s infinite linear;
         }
       }
 
@@ -159,12 +199,23 @@
       font-weight: 500;
       font-size: 15px;
       color: #757575;
+      position: relative;
+
+      > * {
+        z-index: 1;
+      }
 
       > .content-icon {
         display: flex;
         align-items: center;
         margin: 0 10px 0 16px;
         color: #757575;
+
+        > .extract-info-icon {
+          height: 18px;
+          width: fit-content;
+          fill: #757575;
+        }
       }
       > abbr {
         margin-right: 5px;
@@ -172,6 +223,57 @@
       > .round-button {
         display: flex;
         margin-left: auto;
+      }
+
+      > .beats {
+        z-index: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 10px;
+        background-color: transparent; // Just to ensure the beats contrast well
+      }
+
+      > .upload-beat {
+        width: 100%;
+        > .beat {
+          height: 100%;
+          background: #1a6aff33;
+          position: absolute;
+          border-radius: 10px;
+        }
+      }
+
+      > .autofill-beats {
+        @keyframes moveRight {
+          0% {
+            left: -50%;
+          }
+          100% {
+            left: 100%;
+          }
+        }
+
+        > .beat {
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(to right, transparent 30%, #00bd7e53);
+          position: absolute;
+          border-radius: 10px;
+          left: -50%;
+
+          &.beat1 {
+            animation: moveRight 6s infinite linear;
+          }
+
+          &.beat2 {
+            animation: moveRight 6s 2s infinite linear;
+          }
+          &.beat3 {
+            animation: moveRight 6s 4s infinite linear;
+          }
+        }
       }
     }
 

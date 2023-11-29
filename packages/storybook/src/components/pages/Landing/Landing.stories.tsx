@@ -14,6 +14,7 @@ import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
 } from '../../layout/MainLayout/MainLayout.stories.js'
+import { getMainHeaderStoryProps } from '../../organisms/MainHeader/MainHeaderProps.stories.props.js'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof Landing> = {
@@ -102,7 +103,10 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
-  mainLayoutProps: MainLayoutLoggedInStoryProps,
+  mainLayoutProps: {
+    ...MainLayoutLoggedInStoryProps,
+    headerProps: getMainHeaderStoryProps({ isAuthenticated: true, hasAlerts: true }),
+  },
   mainColumnItems: [
     {
       Item: () => (

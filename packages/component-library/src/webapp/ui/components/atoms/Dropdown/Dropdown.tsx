@@ -252,7 +252,7 @@ const DropdownComp: FC<DropdownProps> = props => {
                   <div className="placeholder">{placeholder}</div>
                 )}
               </div>
-              {!disabled && edit && <ExpandMoreIcon className="open-arrow" />}
+              {edit && <ExpandMoreIcon className="open-arrow" />}
             </>
           )
         )}

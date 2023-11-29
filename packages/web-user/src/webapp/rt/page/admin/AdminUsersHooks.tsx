@@ -28,12 +28,12 @@ export const useAdminUsersProps = (): UsersProps => {
       ({ isPublisher, _key, name: title, email, isAdmin, profileKey, profileHomePath }) => {
         const toggleIsAdmin = async () => {
           return shell.rpc
-            .me('webapp/admin/roles/toggleIsAdmin')({ userKey: _key })
+            .me('webapp/admin/roles/setIsAdmin')({ userKey: _key, isAdmin })
             .then(() => searchUser(search))
         }
         const toggleIsPublisher = async () => {
           return shell.rpc
-            .me('webapp/admin/roles/toggleIsPublisher')({ profileKey })
+            .me('webapp/admin/roles/setIsPublisher')({ profileKey, isPublisher: !isPublisher })
             .then(() => searchUser(search))
         }
         const user: User = {

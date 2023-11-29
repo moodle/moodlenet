@@ -140,7 +140,7 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
     : undefined
 
   if (!type) {
-    throw new Error(`Unsupported content-type: ${contentTypeHeader}`)
+    throw new TypeError(`Unsupported content-type: ${contentTypeHeader}`)
   }
 
   if (['get', 'head'].includes(req.method.toLowerCase())) {
@@ -211,7 +211,7 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
     return [body, type]
   }
 
-  throw new Error(`Unsupported contentType: ${contentTypeHeader}`)
+  throw new TypeError(`Unsupported contentType: ${contentTypeHeader}`)
 }
 
 async function getRpcResponse(rpcResponse: any) {

@@ -98,13 +98,19 @@ export const useProfileProps = ({
     avatar: !!upAvatarTaskCurrent,
   }))
   const toggleIsPublisher = useCallback(async () => {
-    return shell.rpc
-      .me('webapp/admin/roles/toggleIsPublisher')({ profileKey })
-      .then(
-        done =>
-          done && setProfileGetRpc(curr => curr && { ...curr, isPublisher: !curr.isPublisher }),
-      )
-  }, [profileKey])
+    return (
+      profileGetRpc &&
+      shell.rpc
+        .me('webapp/admin/roles/setIsPublisher')({
+          profileKey,
+          isPublisher: !profileGetRpc.isPublisher,
+        })
+        .then(
+          done =>
+            done && setProfileGetRpc(curr => curr && { ...curr, isPublisher: !curr.isPublisher }),
+        )
+    )
+  }, [profileKey, profileGetRpc])
   const editProfile = useCallback<ProfileProps['actions']['editProfile']>(
     async values => {
       const { aboutMe, displayName, location, organizationName, siteUrl } = values

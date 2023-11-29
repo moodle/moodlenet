@@ -26,7 +26,7 @@ export const languageValidationSchema: SchemaOf<{ language: string | undefined }
 })
 
 export const licenseValidationSchema: SchemaOf<{ license: string }> = object({
-  //TODO //@BRU //@ETTO //@ALE Update this validation scheme so is optional for links
+  //TODO //@BRU //@ALE Update this validation scheme so is optional for links
   license: string().required(`Please select a license`),
   // license: string().when('isFile', (isFile, schema) => {
   //   return isFile ? schema.required(`Select a license`) : schema.optional()
