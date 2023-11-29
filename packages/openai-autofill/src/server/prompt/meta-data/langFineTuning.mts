@@ -1,3 +1,5 @@
+import { par } from '../types.mjs'
+
 const data: [name: string, code: string][] = [
   ['Afar', 'aar'],
   ['Abkhazian', 'abk'],
@@ -187,7 +189,7 @@ const data: [name: string, code: string][] = [
 
 const openaiSystem = [
   `you are a specialist in categorizing an educational resource identifying its most suitable language scope`,
-  `use the following standard language code-mapping:
+  `use the following standard ${par('languageCode')} code-mapping:
 ${data.map(([name, code]) => `"${code}": "${name}"`).join('\n')}`,
 ]
 export default {

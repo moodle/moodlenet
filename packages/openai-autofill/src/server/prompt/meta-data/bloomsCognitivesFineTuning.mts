@@ -1,3 +1,5 @@
+import { bcAttr, par } from '../types.mjs'
+
 const data: [name: string, verbs: string[], code: string][] = [
   [
     'Knowledge',
@@ -193,10 +195,16 @@ const data: [name: string, verbs: string[], code: string][] = [
 
 const openaiSystem = [
   `you are a specialist in categorizing an educational resource by inferring a small set (at least one, at most five) of learning outcomes following the "Blooms Cognitive Taxonomy" standard`,
-  `each learning outcome must comprehend three information: the "Blooms Cognitive Taxonomy Level" code, a "verb" and a "description"`,
-  `the "bloomsLevelCode" is the associated code for "Blooms Cognitive Taxonomy Level"`,
-  `the "learningOutcomeVerbCode" must be one of the verbs associated o the selected "bloomsLevelCode", it acts as the first word for the description`,
-  `the "learningOutcomeDescription" must be a one-liner description of the resource learning outcome. It must **IMPLICITLY** start with the selected "learningOutcomeVerbCode" omitting it from the description`,
+  `each learning outcome (${par(
+    'bloomsCognitive',
+  )}" parameter element) must comprehend three information: the "Blooms Cognitive Taxonomy Level" code, a "verb" and a "description"`,
+  `the ${bcAttr('bloomsLevelCode')} is the associated code for "Blooms Cognitive Taxonomy Level"`,
+  `the ${bcAttr(
+    'learningOutcomeVerbCode',
+  )} must be one of the verbs associated o the selected "bloomsLevelCode", it acts as the first word for the description`,
+  `the ${bcAttr(
+    'learningOutcomeDescription',
+  )} must be a one-liner description of the resource learning outcome. It must **IMPLICITLY** start with the selected "learningOutcomeVerbCode" omitting it from the description`,
   `here's the standard "Blooms Cognitive Taxonomy" code and associated verbs mapping:
 
 ${data

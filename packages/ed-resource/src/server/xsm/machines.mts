@@ -212,23 +212,31 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
 export async function stdEdResourceMachine(by: ProvideBy) {
   const [configs, initializeContext] = await provideEdResourceMachineDepsAndInits(by)
   const machine = getEdResourceMachine(configs).withContext(initializeContext)
-  const saveOnStates: StateName[] = [
-    'Autogenerating-Meta',
-    'Unpublished',
-    'Publishing-Moderation',
-    'In-Trash',
-    'Published',
-    'Meta-Suggestion-Available',
-    'Publish-Rejected',
-  ]
+
   const interpreter = interpret(machine)
   let tx = false
-  interpreter.onTransition(() => (tx = true))
+
+  interpreter.onTransition((_, e) => {
+    const ignoreEvents = ['xstate.init']
+    if (ignoreEvents.includes(e.type)) {
+      return
+    }
+    tx = true
+  })
   interpreter.onStop(() => {
     if (!tx) return
     const state = interpreter.getSnapshot()
     // https://github.com/statelyai/xstate/discussions/1294
     const currentState = state.value as StateName
+    const saveOnStates: StateName[] = [
+      'Autogenerating-Meta',
+      'Unpublished',
+      'Publishing-Moderation',
+      'In-Trash',
+      'Published',
+      'Meta-Suggestion-Available',
+      'Publish-Rejected',
+    ]
     if (!saveOnStates.includes(currentState)) {
       return
     }
@@ -247,7 +255,7 @@ export async function stdEdResourceMachine(by: ProvideBy) {
           persistentContext,
           published: currentState === 'Published',
         },
-        { mergeObjects: false, /* silent: true,  */ keepNull: true },
+        { mergeObjects: false, silent: true, keepNull: true },
       )
       .then(
         () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),

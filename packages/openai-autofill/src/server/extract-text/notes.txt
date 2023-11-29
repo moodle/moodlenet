@@ -1,0 +1,7 @@
+file-type mime 'image/jpeg', 'image/png', 'image/webp',
+
+textract.fromUrl()
+
+istextorbinary
+
+https://www.scrapingbee.com/blog/web-scraping-javascript/#3-playwright-the-new-web-scraping-framework

@@ -27,12 +27,11 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { EditResourceRespRpc, ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { resourceFiles } from './init/fs.mjs'
 import { getImageAssetInfo } from './lib.mjs'
 import {
   getResource,
+  getResourceFile,
   getResourceFileUrl,
-  getResourceLogicalFilename,
   getResourcesCountInSubject,
   getValidations,
   incrementResourceDownloads,
@@ -428,8 +427,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
     [RESOURCE_DOWNLOAD_ENDPOINT]: {
       guard: () => void 0,
       async fn(_, { _key }: { _key: string }) {
-        const resourceLogicalFilename = getResourceLogicalFilename(_key)
-        const fsItem = await resourceFiles.get(resourceLogicalFilename)
+        const fsItem = await getResourceFile(_key)
         if (!fsItem) {
           throw RpcStatus('Not Found')
         }

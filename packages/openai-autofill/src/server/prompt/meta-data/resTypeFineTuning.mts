@@ -1,3 +1,4 @@
+import { par } from '../types.mjs'
 const data: [name: string, code: string][] = [
   ['Assessment', 'assessment'],
   ['Concept map', 'concept-map'],
@@ -24,7 +25,7 @@ const data: [name: string, code: string][] = [
 
 const openaiSystem = [
   `you are a specialist in categorizing an educational resource identifying what kind of resource is it`,
-  `use the following resource-type code-mapping:
+  `use the following ${par('resourceTypeCode')} code-mapping:
 ${data.map(([name, code]) => `"${code}": "${name}"`).join('\n')}`,
 ]
 export default {

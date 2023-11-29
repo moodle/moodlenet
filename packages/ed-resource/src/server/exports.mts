@@ -12,6 +12,7 @@ export {
   EMPTY_RESOURCE,
   getImageLogicalFilename,
   getResource,
+  getResourceFile,
   getResourceFileUrl,
   getValidations,
   patchResource,

@@ -1,3 +1,5 @@
+import { par } from '../types.mjs'
+
 const data: [name: string, code: string][] = [
   ['Basic programmes and qualifications', 'F001'],
   ['Literacy and numeracy', 'F002'],
@@ -58,7 +60,7 @@ const data: [name: string, code: string][] = [
 
 const openaiSystem = [
   `you are a specialist in categorizing an educational resource by the most suitable isced-field code`,
-  `use the following standard isced-field code-mapping:
+  `use the following standard ${par('iscedFieldCode')} code-mapping:
 ${data.map(([name, code]) => `"${code}": "${name}"`).join('\n')}`,
 ]
 export default {

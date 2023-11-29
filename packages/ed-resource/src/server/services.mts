@@ -237,6 +237,11 @@ export async function storeResourceFile(resourceKey: string, imageRpcFile: RpcFi
   return fsItem
 }
 
+export async function getResourceFile(resourceKey: string) {
+  const resourceLogicalFilename = getResourceLogicalFilename(resourceKey)
+  const fsItem = await resourceFiles.get(resourceLogicalFilename)
+  return fsItem
+}
 export async function delResourceFile(resourceKey: string) {
   const resourceLogicalFilename = getResourceLogicalFilename(resourceKey)
   const fsItem = await resourceFiles.del(resourceLogicalFilename)
