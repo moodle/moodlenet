@@ -51,7 +51,7 @@ export async function provideEdResourceMachineDepsAndInits(
       ...DEFAULT_CONTEXT,
       state: 'Checking-In-Content',
       issuer: await providers.getIssuer(['creator', true]),
-      enableMetaGenerator: env.enableMetaGenerator,
+      metaGeneratorEnabled: env.enableMetaGenerator,
     }
     const deps = getEdResourceMachineDeps()
     return [deps, initialContext]
@@ -71,7 +71,7 @@ export async function provideEdResourceMachineDepsAndInits(
       state: 'No-Access',
       issuer: await providers.getIssuer(['creator', false]),
       noAccess: { reason: 'not available' },
-      enableMetaGenerator: env.enableMetaGenerator,
+      metaGeneratorEnabled: env.enableMetaGenerator,
     }
     const deps = getEdResourceMachineDeps()
     return [deps, initialContext]
@@ -87,6 +87,7 @@ export async function provideEdResourceMachineDepsAndInits(
         ? ['current-resource-creator-id', resourceRecord.meta.creatorEntityId]
         : ['creator', false],
     ),
+    metaGeneratorEnabled: env.enableMetaGenerator,
   }
   const deps = getEdResourceMachineDeps()
   const depsAndInitializations: DepsAndInitializations = [deps, initialContext]

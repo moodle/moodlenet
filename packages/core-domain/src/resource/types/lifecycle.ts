@@ -49,7 +49,7 @@ export interface Context extends PersistentContext {
     errors: ResourceEditsValidationErrors | null
   }
   providedContent: null | ProvidedCreationContent
-  enableMetaGenerator: boolean
+  metaGeneratorEnabled: boolean
 }
 
 interface GeneratedData {

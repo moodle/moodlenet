@@ -30,7 +30,7 @@ export const DEFAULT_CONTEXT: T.Context = {
   publishingErrors: null,
   resourceEdits: null,
   state: 'Checking-In-Content',
-  enableMetaGenerator: false,
+  metaGeneratorEnabled: false,
 }
 
 export interface EdResourceMachineDeps {
@@ -289,8 +289,8 @@ link: url string format`,
           !publishingErrors
         )
       },
-      'issuer is creator and meta generator enabled'({ issuer, enableMetaGenerator }) {
-        return issuer.type === 'user' && issuer.feats.creator && enableMetaGenerator
+      'issuer is creator and meta generator enabled'({ issuer, metaGeneratorEnabled }) {
+        return issuer.type === 'user' && issuer.feats.creator && metaGeneratorEnabled
       },
       'issuer is system'({ issuer }) {
         return issuer.type === 'system'
@@ -298,8 +298,8 @@ link: url string format`,
       'issuer is not an authenticated user'({ issuer }) {
         return issuer.type !== 'user'
       },
-      'meta generator enabled'({ enableMetaGenerator }) {
-        return enableMetaGenerator
+      'meta generator enabled'({ metaGeneratorEnabled }) {
+        return metaGeneratorEnabled
       },
       'issuer is admin'({ issuer }) {
         return issuer.type === 'user' && issuer.feats.admin
