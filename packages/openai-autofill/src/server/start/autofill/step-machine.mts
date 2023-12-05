@@ -21,6 +21,5 @@ export async function stepMachine(resourceKey: string) {
     })
     interpreter.send({ type: 'generated-meta-suggestions', generatedData })
     interpreter.stop()
-    return generatedData
   })
 }

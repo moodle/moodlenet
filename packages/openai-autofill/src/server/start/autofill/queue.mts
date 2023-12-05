@@ -30,8 +30,8 @@ RETURN res
   }
   shell.log('notice', `[autofill-queue] will stepMachine for resource ${resourceDoc._key}`)
   return await stepMachine(resourceDoc._key).then(
-    meta => {
-      shell.log('notice', `[autofill-queue] generateMetaNow for resource ${resourceDoc._key}`, meta)
+    () => {
+      shell.log('notice', `[autofill-queue] generateMetaNow for resource ${resourceDoc._key}`)
       return 'done one' as const
     },
     err => {

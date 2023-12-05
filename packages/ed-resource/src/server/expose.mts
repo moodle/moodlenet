@@ -183,7 +183,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           },
           state: {
             isPublished: resourceRecord.entity.published,
-            autofillState: matchState(snap, 'Autogenerating-Meta') ? 'ai-generation' : undefined,
+            value: snap.value.toString() as StateName,
             autofillSuggestions: {
               meta: snap.context.generatedData?.meta
                 ? map.meta_2_form({

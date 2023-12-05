@@ -164,7 +164,7 @@ export const Resource: FC<ResourceProps> = ({
       ? publishedResourceValidationSchema
       : draftResourceValidationSchema,
     onSubmit(meta) {
-      return editData({ meta })
+      return editData(meta)
     },
   })
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
