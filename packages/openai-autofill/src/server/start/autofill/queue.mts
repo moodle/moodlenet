@@ -1,3 +1,4 @@
+import type { PersistentContext } from '@moodlenet/core-domain/resource'
 import type { ResourceDataType, ResourceEntityDoc } from '@moodlenet/ed-resource/server'
 import { Resource } from '@moodlenet/ed-resource/server'
 import { sysEntitiesDB } from '@moodlenet/system-entities/server'
@@ -6,19 +7,20 @@ import { stepMachine } from './step-machine.mjs'
 
 async function findOneWaiting() {
   const persistentContextKey: keyof ResourceDataType = 'persistentContext' as const
-  const findByContext: Partial<ResourceDataType[typeof persistentContextKey]> = {
-    state: 'Autogenerating-Meta',
-  }
+  const stateKey: keyof PersistentContext = 'state'
+  const stateVal: ResourceDataType[typeof persistentContextKey][typeof stateKey] =
+    'Autogenerating-Meta'
+
   const cursor = await sysEntitiesDB.query<ResourceEntityDoc>(
     `
 FOR res IN @@ResourceCollection
-FILTER res.${persistentContextKey} == @findByContext
+FILTER res.${persistentContextKey}.${stateKey} == @stateVal
 LIMIT 1
 RETURN res
 `,
     {
       '@ResourceCollection': Resource.collection.name,
-      findByContext,
+      stateVal,
     },
   )
   const resourceDoc = await cursor.next()

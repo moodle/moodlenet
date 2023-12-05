@@ -4,12 +4,14 @@ import type {
   ResourceDoc,
 } from '@moodlenet/core-domain/resource'
 import { extractResourceData } from '../../extract-text/extractResourceText.mjs'
+import { env } from '../../init/env.mjs'
 import { callOpeAI } from '../../prompt/function-call.mjs'
 
 export async function generateMeta(doc: ResourceDoc) {
   const { text } = await extractResourceData(doc)
 
-  const data = await callOpeAI(text)
+  const cutText = text.slice(0, env.cutContentToCharsAmount)
+  const data = await callOpeAI(cutText)
 
   const generatedData: ProvidedGeneratedData = {
     meta: {
