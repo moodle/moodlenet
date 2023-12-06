@@ -11,7 +11,7 @@ export async function generateMeta(doc: ResourceDoc) {
   const { text } = await extractResourceData(doc)
 
   const cutText = text.slice(0, env.cutContentToCharsAmount)
-  const { data, imageUrl } = await callOpenAI(cutText)
+  const { data, imageUrl } = await callOpenAI(cutText, { noImageUrl: !!doc.image })
 
   const generatedData: ProvidedGeneratedData = {
     meta: {
@@ -32,7 +32,10 @@ export async function generateMeta(doc: ResourceDoc) {
       subject: data.iscedFieldCode ? { code: data.iscedFieldCode } : null,
       type: data.resourceTypeCode ? { code: data.resourceTypeCode } : null,
     },
-    image: imageUrl ? { url: imageUrl } : null,
+    // image: imageUrl ? { url: imageUrl } : null,
   }
-  return generatedData
+  return {
+    generatedData,
+    imageUrl,
+  }
 }

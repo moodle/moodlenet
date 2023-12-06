@@ -185,9 +185,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
             isPublished: resourceRecord.entity.published,
             value: snap.value.toString() as StateName,
             autofillSuggestions: {
-              image: snap.context.generatedData?.image
-                ? { credits: null, location: snap.context.generatedData?.image.url }
-                : null,
+              // image: snap.context.generatedData?.image
+              //   ? { credits: null, location: snap.context.generatedData?.image.url }
+              //   : null,
               meta: snap.context.generatedData?.meta
                 ? map.meta_2_form({
                     title:

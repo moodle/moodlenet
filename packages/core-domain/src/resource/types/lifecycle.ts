@@ -20,7 +20,7 @@ export interface ValidationConfigs {
 
 export interface ProvidedGeneratedData {
   meta: null | Partial<ResourceMeta>
-  image: null | { url: string }
+  // image: null | { url: string }
 }
 export interface ResourceEdits {
   meta?: ResourceMeta
@@ -53,7 +53,7 @@ export interface Context extends PersistentContext {
 }
 
 interface GeneratedData {
-  image: null | { url: string }
+  // image: null | { url: string }
   meta: null | Partial<ResourceDoc['meta']>
 }
 

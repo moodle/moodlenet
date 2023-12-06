@@ -7,7 +7,7 @@ import getPromptsAndData from './get-prompts-and-data.mjs'
 import type { ClassifyPars } from './types.mjs'
 import { bcAttr, FN_NAME, par } from './types.mjs'
 
-export async function callOpenAI(textResource: string) {
+export async function callOpenAI(textResource: string, opts: { noImageUrl: boolean }) {
   const prompts = await getPromptsAndData()
   const prompt: ChatCompletionMessageParam = {
     role: `user`,
@@ -158,7 +158,8 @@ and the most suitable natural language for descriptive parameters ("${par(
   data.languageCode = foundLanguageCode
   data.resourceTypeCode = foundResourceTypeCode
 
-  const imagePrompt = `A photorealistic illustration (DO NOT render any text) for an online educational resource:
+  const imageUrl = await (async () => {
+    const imagePrompt = `A photorealistic illustration for an online educational resource:
 ${data.resourceTitle ? `"${data.resourceTitle}"` : ''}
 ${data.resourceSummary ? `"${data.resourceSummary}"` : ''}
 ${foundIscedFieldDesc ? `about "${foundIscedFieldDesc}" subject ` : ''}
@@ -175,15 +176,22 @@ ${
     .join('\n')}`
     : ''
 }
+DO NOT EVER RENDER ANY TEXT !
 `
-  const response = await openAiClient.images.generate({
-    model: 'dall-e-3',
-    prompt: imagePrompt,
-    n: 1,
-    size: '1024x1024',
-  })
-  console.log(response)
-  const imageUrl = response.data[0]?.url
+    return opts.noImageUrl
+      ? undefined
+      : await (async () => {
+          const imageGenResp = await openAiClient.images.generate({
+            model: 'dall-e-3',
+            prompt: imagePrompt,
+            n: 1,
+            size: '1024x1024',
+            style: 'natural',
+          })
+          // console.log(imageGenResp)
+          return imageGenResp.data[0]?.url
+        })()
+  })()
 
   return { data, imageUrl }
 }
