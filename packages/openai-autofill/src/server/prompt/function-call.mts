@@ -2,13 +2,13 @@ import type {
   ChatCompletionCreateParams,
   ChatCompletionMessageParam,
 } from 'openai/resources/index.mjs'
-import openai from '../openai-client.mjs'
-import getPrompts from './prompts.mjs'
+import openAiClient from '../openai-client.mjs'
+import getPromptsAndData from './get-prompts-and-data.mjs'
 import type { ClassifyPars } from './types.mjs'
 import { bcAttr, FN_NAME, par } from './types.mjs'
 
-export async function callOpeAI(textResource: string) {
-  const prompts = await getPrompts()
+export async function callOpenAI(textResource: string) {
+  const prompts = await getPromptsAndData()
   const prompt: ChatCompletionMessageParam = {
     role: `user`,
     content: `categorize the following educational resource:
@@ -117,23 +117,14 @@ and the most suitable natural language for descriptive parameters ("${par(
 
   const messages = [...prompts.systemMessagesJsonl.messages, /*  ...examples, */ prompt]
 
-  const resp = await openai.chat.completions.create({
-    // model: 'gpt-3.4',
-    // model: 'gpt-3.5-turbo-0613',
+  const resp = await openAiClient.chat.completions.create({
     model: 'gpt-3.5-turbo-16k',
-    // model: 'ft:gpt-3.5-turbo-0613:moodle::8DWOHiXi',
     temperature: 0.0,
     messages,
     functions: [classifyResourceFn],
     function_call: { name: FN_NAME },
   })
-  console.log({
-    promptL: prompt.content?.length,
-    messagesL: prompts.systemMessagesJsonl.messages.reduce((_, { content }) => {
-      return _ + (content?.length ?? 0)
-    }, 0),
-    tokens: resp.usage,
-  })
+  // console.log({ promptL: prompt.content?.length,  messagesL: prompts.systemMessagesJsonl.messages.reduce((_, { content }) => {     return _ + (content?.length ?? 0) }, 0), tokens: resp.usage, })
   const data: Partial<ClassifyPars> = JSON.parse(
     resp.choices[0]?.message.function_call?.arguments ?? '{}',
   )
@@ -146,21 +137,53 @@ and the most suitable natural language for descriptive parameters ("${par(
       ),
   )
 
-  data.iscedFieldCode = prompts.iscedFields4CharsFineTuning.data
-    .map(([, code]) => code)
-    .find(code => code === data.iscedFieldCode)
+  const [foundIscedFieldDesc, foundIscedFieldCode] = prompts.iscedFields4CharsFineTuning.data.find(
+    ([, code]) => code === data.iscedFieldCode,
+  ) ?? [undefined, undefined]
 
-  data.iscedGradeCode = prompts.iscedGradesFineTuning.data
-    .map(([, code]) => code)
-    .find(code => code === data.iscedGradeCode)
+  const [foundIscedGradeDesc, foundIscedGradeCode] = prompts.iscedGradesFineTuning.data.find(
+    ([, code]) => code === data.iscedGradeCode,
+  ) ?? [undefined, undefined]
 
-  data.languageCode = prompts.langFineTuning.data
-    .map(([, code]) => code)
-    .find(code => code === data.languageCode)
+  const [, /* foundLanguageDesc */ foundLanguageCode] = prompts.langFineTuning.data.find(
+    ([, code]) => code === data.languageCode,
+  ) ?? [undefined, undefined]
 
-  data.resourceTypeCode = prompts.resTypeFineTuning.data
-    .map(([, code]) => code)
-    .find(code => code === data.resourceTypeCode)
+  const [foundResourceTypeDesc, foundResourceTypeCode] = prompts.resTypeFineTuning.data.find(
+    ([, code]) => code === data.resourceTypeCode,
+  ) ?? [undefined, undefined]
 
-  return data
+  data.iscedFieldCode = foundIscedFieldCode
+  data.iscedGradeCode = foundIscedGradeCode
+  data.languageCode = foundLanguageCode
+  data.resourceTypeCode = foundResourceTypeCode
+
+  const imagePrompt = `A photorealistic illustration (DO NOT render any text) for an online educational resource:
+${data.resourceTitle ? `"${data.resourceTitle}"` : ''}
+${data.resourceSummary ? `"${data.resourceSummary}"` : ''}
+${foundIscedFieldDesc ? `about "${foundIscedFieldDesc}" subject ` : ''}
+${foundIscedGradeDesc ? `for students of "${foundIscedGradeDesc}" grade` : ''}
+${foundResourceTypeDesc ? `of type "${foundResourceTypeDesc}"` : ''}
+${
+  data.bloomsCognitive?.length
+    ? `with learning outcomes:
+  ${data.bloomsCognitive
+    .map(
+      ({ learningOutcomeVerbCode, learningOutcomeDescription }) =>
+        `${learningOutcomeVerbCode} ${learningOutcomeDescription}`,
+    )
+    .join('\n')}`
+    : ''
+}
+`
+  const response = await openAiClient.images.generate({
+    model: 'dall-e-3',
+    prompt: imagePrompt,
+    n: 1,
+    size: '1024x1024',
+  })
+  console.log(response)
+  const imageUrl = response.data[0]?.url
+
+  return { data, imageUrl }
 }

@@ -1,5 +1,6 @@
 import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
 import { getDomainUrl } from '@moodlenet/component-library'
+import type { StateName } from '@moodlenet/core-domain/resource'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
 import type { AssetInfo } from '@moodlenet/component-library/common'
@@ -51,14 +52,15 @@ export type AutofillState = 'extracting-info' | 'ai-generation' | undefined
 
 export type AutofillSuggestions = {
   meta: null | Partial<ResourceFormProps>
+  image: null | AssetInfo
 }
 
 export type ResourceStateRpc = {
   isPublished: boolean
   // isUploaded: boolean
   uploadProgress: number | undefined
-  autofillState: AutofillState
   autofillSuggestions: null | AutofillSuggestions
+  autofillState: AutofillState
 }
 
 export type ResourceContributorRpc = {
@@ -71,7 +73,9 @@ export type ResourceContributorRpc = {
 export type ResourceRpc = {
   resourceForm: ResourceMetaFormRpc
   access: ResourceAccessRpc
-  state: Pick<ResourceStateRpc, 'isPublished' | 'autofillState' | 'autofillSuggestions'>
+  state: {
+    value: StateName
+  } & Pick<ResourceStateRpc, 'isPublished' | 'autofillSuggestions'>
   data: ResourceDataRpc
   contributor: ResourceContributorRpc
 }
@@ -168,7 +172,7 @@ export type RpcCaller = {
 export type ResourceActions = {
   publish: () => void
   unpublish: () => void
-  editData: (values: EditResourceFormRpc) => void
+  editData: (values: ResourceFormProps) => void
   setImage: (image: File | undefined | null) => void
   provideContent: (content: File | string) => void
   deleteResource(): void

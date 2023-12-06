@@ -9,7 +9,9 @@ export async function stepMachine(resourceKey: string) {
     setPkgCurrentUser()
     const [interpreter] = await stdEdResourceMachine({ by: 'key', key: resourceKey })
     const snap = interpreter.getSnapshot()
-    if (!snap.can({ type: 'generated-meta-suggestions', generatedData: { meta: {} } })) {
+    if (
+      !snap.can({ type: 'generated-meta-suggestions', generatedData: { meta: {}, image: null } })
+    ) {
       interpreter.stop()
       throw new Error(`cannot [generated-meta-suggestions] for resource ${resourceKey}`)
     }
@@ -17,10 +19,10 @@ export async function stepMachine(resourceKey: string) {
 
     const generatedData = await generateMeta(doc).catch<ProvidedGeneratedData>(err => {
       shell.log('error', `{Error}[autofill] generateMeta failed for resource ${resourceKey}`, err)
-      return { meta: {} }
+      return { meta: {}, image: null }
     })
+
     interpreter.send({ type: 'generated-meta-suggestions', generatedData })
     interpreter.stop()
-    return generatedData
   })
 }

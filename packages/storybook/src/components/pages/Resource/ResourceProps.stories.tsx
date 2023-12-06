@@ -100,6 +100,9 @@ export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
     validationSchema: getValidationSchemas({
       contentMaxUploadSize: 1000000000,
       imageMaxUploadSize: 1000000000,
+      descriptionLength: { max: 1000, min: 10 },
+      learningOutcomes: { amount: { max: 5, min: 1 }, sentenceLength: { max: 100, min: 10 } },
+      titleLength: { max: 100, min: 10 },
     }).publishedResourceValidationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
@@ -262,7 +265,7 @@ export const useResourceStoryProps = (
     overrides?.state?.uploadProgress ?? undefined,
   )
   const [autofillState, setautofillState] = useState(overrides?.state?.autofillState ?? undefined)
-  const [isUploaded, setIsUploaded] = useState(overrides?.state?.isUploaded ?? false)
+  // const [isUploaded, setIsUploaded] = useState(overrides?.state?.isUploaded ?? false)
 
   const saveContent = () => {
     setIsSavingContent('save-done')
@@ -301,7 +304,7 @@ export const useResourceStoryProps = (
           setId('1234')
           setContentUrl('https://example.com/some_url.pdf')
           setUploadProgress(undefined)
-          setIsUploaded(true)
+          // setIsUploaded(true)
           setautofillState('extracting-info')
           hasStartedUploadRef.current = false // Reset for potential future sequences
         }, intervalTime * 102),
@@ -354,14 +357,14 @@ export const useResourceStoryProps = (
       setFilename(null)
       setUploadProgress(undefined)
       setautofillState(undefined)
-      setIsUploaded(false)
+      // setIsUploaded(false)
       return
     }
 
     if (typeof e === 'string') {
       setContentUrl('https://learngermanwithanja.com/the-german-accusative-case/#t-1632135010328')
       setContentType('link')
-      setIsUploaded(false)
+      //  setIsUploaded(false)
       setFilename(null)
       setautofillState('extracting-info')
     } else if (e instanceof File) {
@@ -393,6 +396,7 @@ export const useResourceStoryProps = (
   )
 
   const actions: ResourceActions = {
+    provideContent: setContent,
     deleteResource: action('delete resource'),
     startAutofill: () => {
       setautofillState('extracting-info')
@@ -404,7 +408,7 @@ export const useResourceStoryProps = (
     unpublish: () => {
       setIsPublished(false)
     },
-    setContent: setContent,
+    // setContent: setContent,
     setImage: setImage,
     stopAutofill: () => {
       setautofillState(undefined)
@@ -417,7 +421,7 @@ export const useResourceStoryProps = (
     isPublished: isPublished,
     uploadProgress: uploadProgress,
     autofillState: autofillState,
-    isUploaded: isUploaded,
+    //    isUploaded: isUploaded,
     ...overrides?.state,
   }
 
@@ -537,6 +541,9 @@ export const useResourceStoryProps = (
       validationSchemas: getValidationSchemas({
         contentMaxUploadSize: 1024 * 1024 * 1024,
         imageMaxUploadSize: 1024 * 1024 * 25,
+        descriptionLength: { max: 1000, min: 10 },
+        learningOutcomes: { amount: { max: 5, min: 1 }, sentenceLength: { max: 100, min: 10 } },
+        titleLength: { max: 100, min: 10 },
       }),
 
       extraDetailsItems: extraDetailsItems,

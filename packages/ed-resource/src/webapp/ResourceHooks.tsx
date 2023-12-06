@@ -69,19 +69,36 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       return
     }
     setResource(undefined)
+
     shell.rpc
       .me('webapp/get/:_key')(null, { _key: resourceKey })
 
       .then(res => {
-        res && setIsPublish(res.state.isPublished)
-        res &&
-          setResource({
-            data: res.data,
-            access: res.access,
-            contributor: res.contributor,
-            resourceForm: { ...res.resourceForm, ...res.state.autofillSuggestions?.meta },
-            state: { ...res.state, uploadProgress: undefined },
-          })
+        if (!res) {
+          return
+        }
+        if (res.state.value === 'Meta-Suggestion-Available') {
+          setTimeout(() => {
+            setResource(res => res && { ...res, state: { ...res.state, autofillState: undefined } })
+          }, 100)
+        }
+        setIsPublish(res.state.isPublished)
+
+        setResource({
+          data: { ...res.data, image: res.state.autofillSuggestions?.image ?? res.data.image },
+          access: res.access,
+          contributor: res.contributor,
+          resourceForm: { ...res.resourceForm, ...res.state.autofillSuggestions?.meta },
+          state: {
+            ...res.state,
+            uploadProgress: undefined,
+            autofillState:
+              res.state.value === 'Autogenerating-Meta' ||
+              res.state.value === 'Meta-Suggestion-Available'
+                ? 'ai-generation'
+                : undefined,
+          },
+        })
       })
       .catch(silentCatchAbort)
   }, [resourceKey])
@@ -153,7 +170,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   const actions = useMemo<ResourceActions>(() => {
     const resourceActions: ResourceActions = {
       async editData(res) {
-        editData(res, `edit resource ${resourceKey} form`)
+        editData({ meta: res }, `edit resource ${resourceKey} form`)
       },
       async setImage(image) {
         upImageTaskSet(
