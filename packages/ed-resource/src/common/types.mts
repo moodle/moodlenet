@@ -52,6 +52,7 @@ export type AutofillState = 'extracting-info' | 'ai-generation' | undefined
 
 export type AutofillSuggestions = {
   meta: null | Partial<ResourceFormProps>
+  image: null | AssetInfo
 }
 
 export type ResourceStateRpc = {

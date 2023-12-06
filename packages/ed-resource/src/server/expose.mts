@@ -185,10 +185,40 @@ export const expose = await shell.expose<FullResourceExposeType>({
             isPublished: resourceRecord.entity.published,
             value: snap.value.toString() as StateName,
             autofillSuggestions: {
+              image: snap.context.generatedData?.image
+                ? { credits: null, location: snap.context.generatedData?.image.url }
+                : null,
               meta: snap.context.generatedData?.meta
                 ? map.meta_2_form({
-                    ...snap.context.doc.meta,
-                    ...snap.context.generatedData.meta,
+                    title:
+                      snap.context.doc.meta.title || snap.context.generatedData.meta.title || '',
+                    description:
+                      snap.context.doc.meta.description ||
+                      snap.context.generatedData.meta.description ||
+                      '',
+                    language:
+                      snap.context.doc.meta.language ??
+                      snap.context.generatedData.meta.language ??
+                      null,
+                    level:
+                      snap.context.doc.meta.level ?? snap.context.generatedData.meta.level ?? null,
+                    license:
+                      snap.context.doc.meta.license ??
+                      snap.context.generatedData.meta.license ??
+                      null,
+                    originalPublicationInfo:
+                      snap.context.doc.meta.originalPublicationInfo ??
+                      snap.context.generatedData.meta.originalPublicationInfo ??
+                      null,
+                    subject:
+                      snap.context.doc.meta.subject ??
+                      snap.context.generatedData.meta.subject ??
+                      null,
+                    type:
+                      snap.context.doc.meta.type ?? snap.context.generatedData.meta.type ?? null,
+                    learningOutcomes: snap.context.doc.meta.learningOutcomes.length
+                      ? snap.context.doc.meta.learningOutcomes
+                      : snap.context.generatedData.meta.learningOutcomes ?? [],
                   })
                 : null,
               // image: snap.context.generatedData?.image

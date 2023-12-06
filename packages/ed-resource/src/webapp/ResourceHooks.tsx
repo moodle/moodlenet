@@ -85,7 +85,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         setIsPublish(res.state.isPublished)
 
         setResource({
-          data: res.data,
+          data: { ...res.data, image: res.state.autofillSuggestions?.image ?? res.data.image },
           access: res.access,
           contributor: res.contributor,
           resourceForm: { ...res.resourceForm, ...res.state.autofillSuggestions?.meta },
