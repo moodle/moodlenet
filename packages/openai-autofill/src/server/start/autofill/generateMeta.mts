@@ -4,14 +4,26 @@ import type {
   ResourceDoc,
 } from '@moodlenet/core-domain/resource'
 import { extractResourceData } from '../../extract-text/extractResourceText.mjs'
-import { env } from '../../init/env.mjs'
 import { callOpenAI } from '../../prompt/function-call.mjs'
+import type { ClassifyPars } from '../../prompt/types.mjs'
+import { shell } from '../../shell.mjs'
 
 export async function generateMeta(doc: ResourceDoc) {
-  const { text } = await extractResourceData(doc)
+  const resourceTextAndDesc = await extractResourceData(doc)
 
-  const cutText = text.slice(0, env.cutContentToCharsAmount)
-  const { data, imageUrl } = await callOpenAI(cutText, { noImageUrl: !!doc.image })
+  const { data, imageUrl } = resourceTextAndDesc
+    ? await callOpenAI(resourceTextAndDesc, { noImageUrl: !!doc.image }).catch(err => {
+        shell.log('warn', 'openai call failed', err)
+        const data: Partial<ClassifyPars> = {}
+        return {
+          data,
+          imageUrl: undefined,
+        }
+      })
+    : {
+        data: {},
+        imageUrl: undefined,
+      }
 
   const generatedData: ProvidedGeneratedData = {
     meta: {

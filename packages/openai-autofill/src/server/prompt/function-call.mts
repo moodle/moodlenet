@@ -2,18 +2,28 @@ import type {
   ChatCompletionCreateParams,
   ChatCompletionMessageParam,
 } from 'openai/resources/index.mjs'
+import type { ResourceTextAndDesc } from '../extract-text/types.mjs'
+import { env } from '../init/env.mjs'
 import openAiClient from '../openai-client.mjs'
+import { shell } from '../shell.mjs'
 import getPromptsAndData from './get-prompts-and-data.mjs'
 import type { ClassifyPars } from './types.mjs'
 import { bcAttr, FN_NAME, par } from './types.mjs'
 
-export async function callOpenAI(textResource: string, opts: { noImageUrl: boolean }) {
+export async function callOpenAI(
+  { contentDesc, text, type }: ResourceTextAndDesc,
+  opts: { noImageUrl: boolean },
+) {
+  shell.log('notice', 'calling openai for', { contentDesc, type })
+
+  const cutText = text.slice(0, env.cutContentToCharsAmount)
+
   const prompts = await getPromptsAndData()
   const prompt: ChatCompletionMessageParam = {
     role: `user`,
-    content: `categorize the following educational resource:
+    content: `please categorize ${type} educational resource with the following ${contentDesc} content,
 
-${textResource}
+${cutText}
 `,
   }
   const classifyResourceFn: ChatCompletionCreateParams.Function = {
@@ -149,22 +159,26 @@ and the most suitable natural language for descriptive parameters ("${par(
     ([, code]) => code === data.languageCode,
   ) ?? [undefined, undefined]
 
-  const [foundResourceTypeDesc, foundResourceTypeCode] = prompts.resTypeFineTuning.data.find(
-    ([, code]) => code === data.resourceTypeCode,
-  ) ?? [undefined, undefined]
+  const [, /* foundResourceTypeDesc, */ foundResourceTypeCode] =
+    prompts.resTypeFineTuning.data.find(([, code]) => code === data.resourceTypeCode) ?? [
+      undefined,
+      undefined,
+    ]
 
   data.iscedFieldCode = foundIscedFieldCode
   data.iscedGradeCode = foundIscedGradeCode
   data.languageCode = foundLanguageCode
   data.resourceTypeCode = foundResourceTypeCode
 
+  // type: ${foundResourceTypeDesc ? `of type "${foundResourceTypeDesc}"` : ''}
   const imageUrl = await (async () => {
-    const imagePrompt = `A photorealistic illustration for an online educational resource:
-${data.resourceTitle ? `"${data.resourceTitle}"` : ''}
+    const imagePrompt = `generate a photorealistic image, for an online educational resource described as follows:
+${data.resourceTitle ? `# "${data.resourceTitle.toUpperCase()}"` : ''}
+${foundIscedFieldDesc ? `about "${foundIscedFieldDesc}" subject ` : ''} ${
+      foundIscedGradeDesc ? `for students of "${foundIscedGradeDesc}" grade` : ''
+    }
+
 ${data.resourceSummary ? `"${data.resourceSummary}"` : ''}
-${foundIscedFieldDesc ? `about "${foundIscedFieldDesc}" subject ` : ''}
-${foundIscedGradeDesc ? `for students of "${foundIscedGradeDesc}" grade` : ''}
-${foundResourceTypeDesc ? `of type "${foundResourceTypeDesc}"` : ''}
 ${
   data.bloomsCognitive?.length
     ? `with learning outcomes:
@@ -176,7 +190,6 @@ ${
     .join('\n')}`
     : ''
 }
-DO NOT EVER RENDER ANY TEXT !
 `
     return opts.noImageUrl
       ? undefined
