@@ -1,14 +1,11 @@
 import type { RpcFile } from '@moodlenet/core'
 import type { Readable } from 'stream'
-import type { ResourceTextAndDesc } from '../types.mjs'
+import type { ResourceExtraction } from '../types.mjs'
 
 export interface FileExtractor {
-  ({
-    compactedFileBuffer,
-    rpcFile,
-  }: {
+  (FileExtractorArgs: {
     readable: Readable
     compactedFileBuffer: Buffer
     rpcFile: RpcFile
-  }): Promise<ResourceTextAndDesc | null>
+  }): Promise<ResourceExtraction | null>
 }

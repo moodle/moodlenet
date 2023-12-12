@@ -1,4 +1,22 @@
+import type { RpcFile } from '@moodlenet/core'
+import { readableRpcFile } from '@moodlenet/core'
+import axios from 'axios'
+import sharp from 'sharp'
 import type { Readable } from 'stream'
+
+export async function urlToRpcFile(imageUrl: string) {
+  const headResp = await axios.head(imageUrl)
+  const size = Number(headResp.headers['content-length'])
+  const type = String(headResp.headers['content-type'])
+  const ext = type.split('/')[1]
+  const _baseRpcFile: RpcFile = { name: `generated.${ext}`, type, size }
+  // console.log({ _baseRpcFile })
+  const rpcFile = readableRpcFile(_baseRpcFile, async () => {
+    const getResp = await axios.get(imageUrl, { responseType: 'stream' })
+    return getResp.data
+  })
+  return rpcFile
+}
 
 export function getCompactBuffer(stream: Readable, nBytes: number) {
   return new Promise<Buffer>((resolve, reject) => {
@@ -53,12 +71,35 @@ export function getCompactBuffer(stream: Readable, nBytes: number) {
   })
 }
 
-export async function streamToString(stream: Readable) {
+export async function streamToBuffer(stream: Readable) {
   const chunks = []
 
   for await (const chunk of stream) {
     chunks.push(Buffer.from(chunk))
   }
 
-  return Buffer.concat(chunks).toString('utf-8')
+  return Buffer.concat(chunks)
+}
+
+export async function imageResizer(readable: Readable, surface: number) {
+  const imagePipeline = sharp({ sequentialRead: true })
+
+  readable.pipe(imagePipeline)
+  const meta = await imagePipeline.metadata()
+  if (!(meta.height && meta.width)) {
+    return { meta, resized: null }
+  }
+  const ratio = 1 / Math.sqrt((meta.height * meta.width) / surface)
+  const width = Math.round(meta.width * ratio)
+  const height = Math.round(meta.height * ratio)
+  // console.log({ meta, width, height, ratio })
+  return {
+    meta,
+    resized: imagePipeline.resize({
+      width,
+      height,
+      fit: 'inside',
+      withoutEnlargement: true,
+    }),
+  }
 }

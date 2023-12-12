@@ -1,35 +1,24 @@
+import type { RpcFile } from '@moodlenet/core'
 import type {
   LearningOutcome,
   ProvidedGeneratedData,
   ResourceDoc,
 } from '@moodlenet/core-domain/resource'
-import { extractResourceData } from '../../extract-text/extractResourceText.mjs'
-import { callOpenAI } from '../../prompt/function-call.mjs'
-import type { ClassifyPars } from '../../prompt/types.mjs'
-import { shell } from '../../shell.mjs'
+import { callOpenAI } from '../../resource-categorize/open-ai-call.mjs'
 
-export async function generateMeta(doc: ResourceDoc) {
-  const resourceTextAndDesc = await extractResourceData(doc)
-
-  const { data, imageUrl } = resourceTextAndDesc
-    ? await callOpenAI(resourceTextAndDesc, { noImageUrl: !!doc.image }).catch(err => {
-        shell.log('warn', 'openai call failed', err)
-        const data: Partial<ClassifyPars> = {}
-        return {
-          data,
-          imageUrl: undefined,
-        }
-      })
-    : {
-        data: {},
-        imageUrl: undefined,
-      }
-
+export async function generateMeta(doc: ResourceDoc): Promise<null | {
+  generatedData: ProvidedGeneratedData
+  provideImage: RpcFile | undefined
+}> {
+  const openAiResponse = await callOpenAI(doc)
+  if (!openAiResponse) {
+    return null
+  }
   const generatedData: ProvidedGeneratedData = {
     meta: {
-      description: data.resourceSummary,
-      title: data.resourceTitle,
-      learningOutcomes: (data.bloomsCognitive ?? []).map<LearningOutcome>(
+      description: openAiResponse.data.resourceSummary,
+      title: openAiResponse.data.resourceTitle,
+      learningOutcomes: (openAiResponse.data.bloomsCognitive ?? []).map<LearningOutcome>(
         ({ learningOutcomeDescription, bloomsLevelCode, learningOutcomeVerbCode }) => ({
           sentence: `${learningOutcomeVerbCode} ${learningOutcomeDescription}`,
           value: {
@@ -39,15 +28,23 @@ export async function generateMeta(doc: ResourceDoc) {
           },
         }),
       ),
-      language: data.languageCode ? { code: data.languageCode } : null,
-      level: data.iscedGradeCode ? { code: data.iscedGradeCode } : null,
-      subject: data.iscedFieldCode ? { code: data.iscedFieldCode } : null,
-      type: data.resourceTypeCode ? { code: data.resourceTypeCode } : null,
+      language: openAiResponse.data.languageCode
+        ? { code: openAiResponse.data.languageCode }
+        : null,
+      level: openAiResponse.data.iscedGradeCode
+        ? { code: openAiResponse.data.iscedGradeCode }
+        : null,
+      subject: openAiResponse.data.iscedFieldCode
+        ? { code: openAiResponse.data.iscedFieldCode }
+        : null,
+      type: openAiResponse.data.resourceTypeCode
+        ? { code: openAiResponse.data.resourceTypeCode }
+        : null,
     },
-    // image: imageUrl ? { url: imageUrl } : null,
   }
+
   return {
     generatedData,
-    imageUrl,
+    provideImage: doc.image ? undefined : openAiResponse.resourceExtraction.provideImage,
   }
 }

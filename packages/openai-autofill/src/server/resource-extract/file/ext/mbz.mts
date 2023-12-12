@@ -1,7 +1,7 @@
 import tar from 'tar-stream'
 import { createGunzip } from 'zlib'
-import { streamToString } from './getCompactBuffer.mjs'
-import type { FileExtractor } from './types.mjs'
+import { streamToBuffer } from '../../util.mjs'
+import type { FileExtractor } from '../types.mjs'
 
 const mbzExtractor: FileExtractor = async ({ readable }) => {
   try {
@@ -10,11 +10,12 @@ const mbzExtractor: FileExtractor = async ({ readable }) => {
 
     for await (const entry of extract) {
       if (entry.header.name === 'moodle_backup.xml') {
-        const moodle_backup_str = await streamToString(entry)
+        const moodle_backup_str = (await streamToBuffer(entry)).toString('utf-8')
         return {
           text: moodle_backup_str,
           type: `Moodle course`,
           contentDesc: `moodle_backup.xml`,
+          provideImage: undefined,
         }
       } else {
         entry.resume()

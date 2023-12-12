@@ -5,7 +5,7 @@ import mbzExtractor from './mbz.mjs'
 const file = ''
 const readable = createReadStream(file)
 const rpcFile: RpcFile = {
-  name: 'The Olympic Games.mbz',
+  name: '',
   type: '',
   size: 0,
 }
