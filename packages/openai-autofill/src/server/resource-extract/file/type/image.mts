@@ -5,7 +5,7 @@ import type { FileExtractor } from '../types.mjs'
 
 const imageExtractor: FileExtractor = async feArgs => {
   const { readable } = feArgs
-  const { meta, resized } = await imageResizer(readable, 1024 * 1024)
+  const { format, resized } = await imageResizer(readable, 1024 * 1024)
   if (!resized) {
     return null
   }
@@ -23,8 +23,8 @@ const imageExtractor: FileExtractor = async feArgs => {
       ] as const)
     : []
 
-  const base64Image = (await streamToBuffer(resized)).toString('base64')
-  const base64ImageUrl = `data:image/${meta.format};base64,${base64Image}`
+  const base64encodedImage = (await streamToBuffer(resized)).toString('base64')
+  const base64encodedImageUrl = `data:image/${format};base64,${base64encodedImage}`
   const chatCompletion = await openAiClient.chat.completions.create({
     model: 'gpt-4-vision-preview',
     messages: [
@@ -49,7 +49,7 @@ const imageExtractor: FileExtractor = async feArgs => {
           {
             type: 'image_url',
             image_url: {
-              url: base64ImageUrl,
+              url: base64encodedImageUrl,
             },
           },
         ],

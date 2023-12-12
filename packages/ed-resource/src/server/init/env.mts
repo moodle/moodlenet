@@ -14,6 +14,6 @@ function getEnv(): Env {
     enableMetaGenerator: shell.config.enableMetaGenerator === true,
   }
   const env: Env = config
-  console.log({ env })
+  // console.log({ env })
   return env
 }
