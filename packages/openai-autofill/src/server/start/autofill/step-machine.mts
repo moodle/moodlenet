@@ -1,5 +1,5 @@
-import type { ProvidedGeneratedData } from '@moodlenet/core-domain/resource'
-import { stdEdResourceMachine } from '@moodlenet/ed-resource/server'
+import type { ProvidedFileImage } from '@moodlenet/core-domain/resource'
+import { stdEdResourceMachine, updateImage } from '@moodlenet/ed-resource/server'
 import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import { shell } from '../../shell.mjs'
 import { generateMeta } from './generateMeta.mjs'
@@ -9,20 +9,28 @@ export async function stepMachine(resourceKey: string) {
     setPkgCurrentUser()
     const [interpreter] = await stdEdResourceMachine({ by: 'key', key: resourceKey })
     const snap = interpreter.getSnapshot()
-    if (
-      !snap.can({ type: 'generated-meta-suggestions', generatedData: { meta: {}, image: null } })
-    ) {
+    if (!snap.can({ type: 'generated-meta-suggestions', generatedData: { meta: {} } })) {
       interpreter.stop()
       throw new Error(`cannot [generated-meta-suggestions] for resource ${resourceKey}`)
     }
     const doc = snap.context.doc
 
-    const generatedData = await generateMeta(doc).catch<ProvidedGeneratedData>(err => {
-      shell.log('error', `{Error}[autofill] generateMeta failed for resource ${resourceKey}`, err)
-      return { meta: {}, image: null }
-    })
+    const generateResult = await generateMeta(doc)
+    const generatedImageEdit: ProvidedFileImage | undefined = generateResult?.provideImage
+      ? {
+          kind: 'file',
+          rpcFile: generateResult.provideImage,
+          size: generateResult.provideImage.size,
+        }
+      : undefined
+    if (!doc.image && generatedImageEdit) {
+      await updateImage(doc.id.resourceKey, generatedImageEdit)
+    }
 
-    interpreter.send({ type: 'generated-meta-suggestions', generatedData })
+    interpreter.send({
+      type: 'generated-meta-suggestions',
+      generatedData: generateResult?.generatedData ?? { meta: {} },
+    })
     interpreter.stop()
   })
 }

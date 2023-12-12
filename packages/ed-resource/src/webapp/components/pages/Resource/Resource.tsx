@@ -658,9 +658,11 @@ export const Resource: FC<ResourceProps> = ({
     // Check if the value changed from false to true
     if (prevIsAutofilledRef.current && !autofillState) {
       setShowAutofillSuccess(true)
+      setIsEditing(true)
+      setFieldsAsTouched()
     }
     prevIsAutofilledRef.current = autofillState
-  }, [autofillState, prevIsAutofilledRef])
+  }, [setFieldsAsTouched, autofillState, prevIsAutofilledRef])
 
   const autofillingSnackbar =
     autofillState !== undefined ? (

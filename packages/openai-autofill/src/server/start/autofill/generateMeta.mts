@@ -1,23 +1,24 @@
+import type { RpcFile } from '@moodlenet/core'
 import type {
   LearningOutcome,
   ProvidedGeneratedData,
   ResourceDoc,
 } from '@moodlenet/core-domain/resource'
-import { extractResourceData } from '../../extract-text/extractResourceText.mjs'
-import { env } from '../../init/env.mjs'
-import { callOpenAI } from '../../prompt/function-call.mjs'
+import { callOpenAI } from '../../resource-categorize/open-ai-call.mjs'
 
-export async function generateMeta(doc: ResourceDoc) {
-  const { text } = await extractResourceData(doc)
-
-  const cutText = text.slice(0, env.cutContentToCharsAmount)
-  const { data, imageUrl } = await callOpenAI(cutText)
-
+export async function generateMeta(doc: ResourceDoc): Promise<null | {
+  generatedData: ProvidedGeneratedData
+  provideImage: RpcFile | undefined
+}> {
+  const openAiResponse = await callOpenAI(doc)
+  if (!openAiResponse) {
+    return null
+  }
   const generatedData: ProvidedGeneratedData = {
     meta: {
-      description: data.resourceSummary,
-      title: data.resourceTitle,
-      learningOutcomes: (data.bloomsCognitive ?? []).map<LearningOutcome>(
+      description: openAiResponse.data.resourceSummary,
+      title: openAiResponse.data.resourceTitle,
+      learningOutcomes: (openAiResponse.data.bloomsCognitive ?? []).map<LearningOutcome>(
         ({ learningOutcomeDescription, bloomsLevelCode, learningOutcomeVerbCode }) => ({
           sentence: `${learningOutcomeVerbCode} ${learningOutcomeDescription}`,
           value: {
@@ -27,12 +28,23 @@ export async function generateMeta(doc: ResourceDoc) {
           },
         }),
       ),
-      language: data.languageCode ? { code: data.languageCode } : null,
-      level: data.iscedGradeCode ? { code: data.iscedGradeCode } : null,
-      subject: data.iscedFieldCode ? { code: data.iscedFieldCode } : null,
-      type: data.resourceTypeCode ? { code: data.resourceTypeCode } : null,
+      language: openAiResponse.data.languageCode
+        ? { code: openAiResponse.data.languageCode }
+        : null,
+      level: openAiResponse.data.iscedGradeCode
+        ? { code: openAiResponse.data.iscedGradeCode }
+        : null,
+      subject: openAiResponse.data.iscedFieldCode
+        ? { code: openAiResponse.data.iscedFieldCode }
+        : null,
+      type: openAiResponse.data.resourceTypeCode
+        ? { code: openAiResponse.data.resourceTypeCode }
+        : null,
     },
-    image: imageUrl ? { url: imageUrl } : null,
   }
-  return generatedData
+
+  return {
+    generatedData,
+    provideImage: doc.image ? undefined : openAiResponse.resourceExtraction.provideImage,
+  }
 }
