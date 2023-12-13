@@ -22,8 +22,9 @@ export function useMyLandingPageResourceListDataProps() {
               filterLicenses: myInterests?.current.licenses.join('|'),
               filterSubjects: myInterests?.current.subjects.join('|'),
               sortType: 'Relevant',
+              filterAs: 'loose',
             }
-          : { sortType: 'Popular' }),
+          : { sortType: 'Popular', filterAs: 'loose' }),
       })
       .then(_ => _.list)
       .then(setResources)

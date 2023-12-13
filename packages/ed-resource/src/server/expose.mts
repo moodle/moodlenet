@@ -486,6 +486,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           limit,
           text,
           after,
+          filterAs,
         },
       ) {
         const { endCursor, list } = await searchResources({
@@ -493,6 +494,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           sortType,
           text,
           after,
+          strictFilters: filterAs === 'strict',
           filters: [
             ['subject', filterSubjects ? filterSubjects.split('|') : []],
             ['language', filterLanguages ? filterLanguages.split('|') : []],

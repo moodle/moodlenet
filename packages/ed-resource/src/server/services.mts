@@ -314,12 +314,14 @@ export async function searchResources({
   text = '',
   after = '0',
   filters = [],
+  strictFilters,
 }: {
   sortType?: SortType
   text?: string
   after?: string
   limit?: number
   filters?: SearchFilterType
+  strictFilters: boolean
 }) {
   const filterSortFactor =
     filters
@@ -337,10 +339,12 @@ export async function searchResources({
 
           const returnExpr =
             metaPropName === 'subject'
-              ? `1 / (1 + 
+              ? `! propVal
+              ? 0 
+              : 1 / (1 + 
                 ((STARTS_WITH(propVal , searchVal) || STARTS_WITH(searchVal, propVal ) )
-                    ? ABS(LENGTH(propVal)-LENGTH(searchVal))
-                    : 10*LEVENSHTEIN_DISTANCE(propVal,searchVal)
+                    ? ABS(LENGTH(propVal)-LENGTH(searchVal)) 
+                    : 10 * LEVENSHTEIN_DISTANCE(propVal,searchVal)
                 ))`
               : `searchVal == propVal ? 1 : 0`
 
@@ -353,6 +357,15 @@ export async function searchResources({
         },
       )
       .join(' + ') || '1'
+
+  const filter = strictFilters
+    ? filters
+        .filter(([, vals]) => vals.length)
+        .map(([metaPropName, vals]) => {
+          return `(${currentEntityVar}.${metaPropName} IN ${toaql(vals)} )`
+        })
+        .join(' && ')
+    : undefined
 
   const sort =
     `((${filterSortFactor}) * ` +
@@ -374,7 +387,7 @@ export async function searchResources({
       limit,
       skip,
       sort,
-      //preAccessBody: filter ? `SORT 100*(${filter}) DESC` : undefined,
+      preAccessBody: filter ? `FILTER ( ${filter} )` : undefined,
     },
   )
 

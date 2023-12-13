@@ -89,7 +89,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
   const sortType = useMemo<SearchResourceContextT['sortType']>(() => {
     const type: SortTypeRpc = isSortTypeRpc(queryUrlParams.sortType)
       ? queryUrlParams.sortType
-      : 'Popular'
+      : 'Relevant'
 
     const setType: SearchResourceContextT['sortType']['select'] = sortType => {
       setQueryUrlParams({ sortType })
@@ -165,6 +165,7 @@ export const ProvideSearchResourceContext: FC<PropsWithChildren<unknown>> = ({ c
           filterLicenses: ls2str(licensesFilter.selected),
           text: q,
           after: cursor,
+          filterAs: 'loose',
         })
         .then(res => {
           setResourceSearchResult(res)
