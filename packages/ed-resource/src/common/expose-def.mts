@@ -39,6 +39,7 @@ export type ResourceExposeType = PkgExposeDef<{
         text?: string
         after?: string
         limit?: number
+        filterAs: 'strict' | 'loose'
       },
     ): Promise<ResourceSearchResultRpc>
     'webapp/get-resources-count-in-subject/:subjectKey'(
