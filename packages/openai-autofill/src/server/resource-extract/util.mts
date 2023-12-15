@@ -85,21 +85,25 @@ export async function imageResizer(readable: Readable, surface: number) {
   const imagePipeline = sharp({ sequentialRead: true })
 
   readable.pipe(imagePipeline)
-  const meta = await imagePipeline.metadata()
-  if (!(meta.height && meta.width)) {
-    return { meta, resized: null }
+  const originalMeta = await imagePipeline.metadata()
+  if (!(originalMeta.height && originalMeta.width)) {
+    return { meta: originalMeta, resized: null }
   }
-  const ratio = 1 / Math.sqrt((meta.height * meta.width) / surface)
-  const width = Math.round(meta.width * ratio)
-  const height = Math.round(meta.height * ratio)
+  const ratio = 1 / Math.sqrt((originalMeta.height * originalMeta.width) / surface)
+  const width = Math.round(originalMeta.width * ratio)
+  const height = Math.round(originalMeta.height * ratio)
+  const DEST_FORMAT = 'jpeg'
   // console.log({ meta, width, height, ratio })
   return {
-    meta,
-    resized: imagePipeline.resize({
-      width,
-      height,
-      fit: 'inside',
-      withoutEnlargement: true,
-    }),
+    originalMeta,
+    format: DEST_FORMAT,
+    resized: imagePipeline
+      .resize({
+        width,
+        height,
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .toFormat(DEST_FORMAT),
   }
 }
