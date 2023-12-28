@@ -612,11 +612,12 @@ export const Resource: FC<ResourceProps> = ({
     openLinkButton,
   ])
 
-  const generalActionsContainer = (
-    <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
-      {updatedGeneralActionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </Card>
-  )
+  const generalActionsContainer =
+    updatedGeneralActionsItems.length > 0 ? (
+      <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
+        {updatedGeneralActionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      </Card>
+    ) : null
 
   const updatedWideColumnItems = [
     !viewport.screen.big && mainResourceCard,
@@ -646,7 +647,7 @@ export const Resource: FC<ResourceProps> = ({
         showCloseButton={false}
         autoHideDuration={6000}
       >
-        {`Uploading file, feel free to move around the platform, just don't close the tab`}
+        {`Uploading file, feel free to move around the platform, just don't close this tab`}
       </Snackbar>
     ) : null
 
@@ -667,7 +668,7 @@ export const Resource: FC<ResourceProps> = ({
   const autofillingSnackbar =
     autofillState !== undefined ? (
       <Snackbar position="bottom" type="info" showCloseButton={false} autoHideDuration={6000}>
-        {`Using AI to autofill the resource details, it usually takes around 1 min`}
+        {`Using AI to autofill the resource details, it usually takes a couple of minutes`}
       </Snackbar> //@ALE change time when we know the average one
     ) : null
 

@@ -142,7 +142,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { subjectOptions } = edMetaOptions
 
-  const { isPublished } = state
+  const { isPublished, autofillState, uploadProgress } = state
 
   const { deleteResource } = actions
   const { canEdit, canPublish, canDelete } = access
@@ -475,6 +475,9 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : // )
     null
 
+  const disableSaveButton =
+    (empty && emptyOnStart) || autofillState !== 'ai-completed' || !autofillState || !uploadProgress
+
   const editSaveButton =
     canEdit && !isPublished
       ? {
@@ -485,7 +488,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
                   className={`save-button`}
                   color="green"
                   onClick={handleOnSaveClick}
-                  disabled={empty && emptyOnStart}
+                  disabled={disableSaveButton}
                 >
                   <div className="label">
                     <Save />
