@@ -14,7 +14,7 @@ import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.st
 import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.props.js'
 
 export const useBrowserResourceList = (): MainColumItem => {
-  const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType>('Relevant')
+  const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType[]>(['Relevant'])
   const [currentResourceSortByLanguage, setCurrentResourceSortByLanguage] = useState<string[]>([])
   const [currentResourceSortByLevel, setCurrentResourceSortByLevel] = useState<string[]>([])
   const [currentResourceSortByType, setCurrentResourceSortByType] = useState<string[]>([])
@@ -66,16 +66,17 @@ export const useBrowserResourceList = (): MainColumItem => {
         setSelected: setCurrentResourceSortByLicense,
         options: FieldsDataStories.LicenseIconTextOptionProps,
       }),
-    ].map((e, i) => ({
-      Item: () => e,
-      key: e.key ? `${e.key}` : 'resource filter ' + i,
-    })),
+    ],
+    // .map((e, i) => ({
+    //   Item: () => e,
+    //    e.key ? `${e.key}` : 'resource filter ' + i,
+    // })),
     key: 'resource-list',
   }
 }
 
 export const useBrowserCollectionList = (): MainColumItem => {
-  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState<SortType>('Relevant')
+  const [currentCollectionSortBy, setCurrentCollectionSortBy] = useState<SortType[]>(['Relevant'])
   return {
     name: 'Collections',
     Item: ({ showAll, setShowAll }) => {
@@ -100,16 +101,17 @@ export const useBrowserCollectionList = (): MainColumItem => {
         selected: currentCollectionSortBy,
         setSelected: setCurrentCollectionSortBy,
       }),
-    ].map((e, i) => ({
-      Item: () => e,
-      key: e.key ? `${e.key}` : 'resource filter ' + i,
-    })),
+    ],
+    // .map((e, i) => ({
+    //   Item: () => e,
+    //   key: e.key ? `${e.key}` : 'resource filter ' + i,
+    // })),
     key: 'collection-list',
   }
 }
 
 export const useBrowserProfileList = (showHeader?: boolean): MainColumItem => {
-  const [currentProfileSortBy, setCurrentProfileSortBy] = useState<SortType>('Relevant')
+  const [currentProfileSortBy, setCurrentProfileSortBy] = useState<SortType[]>(['Relevant'])
 
   return {
     name: 'People',
@@ -137,10 +139,11 @@ export const useBrowserProfileList = (showHeader?: boolean): MainColumItem => {
         selected: currentProfileSortBy,
         setSelected: setCurrentProfileSortBy,
       }),
-    ].map((e, i) => ({
-      Item: () => e,
-      key: e.key ? `${e.key}` : 'resource filter ' + i,
-    })),
+    ],
+    //   .map((e, i) => ({
+    //     Item: () => e,
+    //     key: e.key ? `${e.key}` : 'resource filter ' + i,
+    //   })),
     key: 'profile-list',
   }
 }
