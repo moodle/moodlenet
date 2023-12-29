@@ -108,9 +108,9 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
         {/* <div className="separator" /> */}
         {filters}
         {/* <div className="separator"></div>
-        <SecondaryButton className={`filter-element`} color="grey">
-          All filters
-        </SecondaryButton> */}
+      <SecondaryButton className={`filter-element`} color="grey">
+        All filters
+      </SecondaryButton> */}
         {/* <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton> */}
       </>
     ) : null
@@ -127,10 +127,36 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
     </SecondaryButton>
   )
 
+  const filterBarRef = useRef<HTMLDivElement>(null)
+  const [filterBarHeigh, setFilterBarHeigh] = useState(0)
+
+  useEffect(() => {
+    // Function to update padding based on the div's height
+    const updateHeight = () => {
+      if (filterBarRef.current) {
+        setFilterBarHeigh(filterBarRef.current.clientHeight)
+      }
+    }
+    // Create an observer instance
+    const observer = new MutationObserver(updateHeight)
+
+    // Configuration of the observer
+    const config = { attributes: true, childList: true, subtree: true }
+
+    // Start observing the target node
+    if (filterBarRef.current) {
+      observer.observe(filterBarRef.current, config)
+      updateHeight() // Initial update
+    }
+
+    // Disconnect the observer on cleanup
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <div className={`browser ${showFilters ? 'show-filters' : ''}`}>
       {showFilters && (
-        <div className="filter-bar">
+        <div className="filter-bar" ref={filterBarRef}>
           <div className="filter-bar-content">
             <>
               {filterByItemType.filter(e => !!e)}
@@ -141,7 +167,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
           </div>
         </div>
       )}
-      <div className="content">
+      <div className="content" style={{ paddingTop: filterBarHeigh }}>
         <div className={`main-column ${currentMainFilter ? 'full-width' : ''}`} ref={mainColumnRef}>
           {title && <div className="title">{title}</div>}
           {useMemo(
