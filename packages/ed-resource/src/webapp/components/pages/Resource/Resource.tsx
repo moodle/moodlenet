@@ -16,7 +16,7 @@ import { InsertDriveFile, Link } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { AutofillState, SaveState } from '../../../../common/types.mjs'
+import type { SaveState } from '../../../../common/types.mjs'
 import {
   type EdMetaOptionsProps,
   type ResourceAccessProps,
@@ -141,7 +141,11 @@ export const Resource: FC<ResourceProps> = ({
     'idle',
   )
   const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
-  const [isEditing, setIsEditing] = useState<boolean>(emptyOnStart)
+  const [isEditing, setIsEditing] = useState<boolean>(
+    emptyOnStart ||
+      (!!uploadProgress && uploadProgress >= 0) ||
+      autofillState !== 'ai-saved-generated-data',
+  )
 
   const prevIsPublishedRef = useRef(isPublished)
 
@@ -651,19 +655,9 @@ export const Resource: FC<ResourceProps> = ({
       </Snackbar>
     ) : null
 
-  const [showAutofillSuccess, setShowAutofillSuccess] = useState<boolean>(false)
-
-  const prevIsAutofilledRef = useRef<AutofillState>(autofillState)
-
-  useEffect(() => {
-    // Check if the value changed from false to true
-    if (prevIsAutofilledRef.current && !autofillState) {
-      setShowAutofillSuccess(true)
-      setIsEditing(true)
-      setFieldsAsTouched()
-    }
-    prevIsAutofilledRef.current = autofillState
-  }, [setFieldsAsTouched, autofillState, prevIsAutofilledRef])
+  const [showAutofillSuccess, setShowAutofillSuccess] = useState<boolean>(
+    autofillState === 'ai-completed',
+  )
 
   const autofillingSnackbar =
     autofillState !== undefined ? (
