@@ -48,7 +48,12 @@ export type ResourceDataRpc = {
   downloadFilename: string | null // specificContentType: string // ex: url, pdf, doc...
 }
 
-export type AutofillState = 'extracting-info' | 'ai-generation' | 'ai-completed' | undefined
+export type AutofillState =
+  | 'extracting-info'
+  | 'ai-generation'
+  | 'ai-completed'
+  | 'ai-saved-generated-data'
+  | undefined
 
 export type AutofillSuggestions = {
   meta: null | Partial<ResourceFormProps>

@@ -475,8 +475,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : // )
     null
 
-  const disableSaveButton =
-    (empty && emptyOnStart) || autofillState !== 'ai-completed' || !autofillState || !uploadProgress
+  const disableSaveButton = (empty && emptyOnStart) || autofillState !== 'ai-completed'
 
   const editSaveButton =
     canEdit && !isPublished
