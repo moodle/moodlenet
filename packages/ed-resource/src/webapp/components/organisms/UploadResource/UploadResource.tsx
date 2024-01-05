@@ -19,7 +19,7 @@ import type {
   ResourceDataProps,
   ResourceStateProps,
 } from '../../../../common/types.mjs'
-import { ReactComponent as ExtractInfoIcon } from '../../../assets/icons/extract-info.svg'
+//import { ReactComponent as ExtractInfoIcon } from '../../../assets/icons/extract-info.svg'
 import { ReactComponent as UploadFileIcon } from '../../../assets/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-image.svg'
 import autofillingImg from '../../../assets/img/autofilling.png'
@@ -77,7 +77,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
   >(
     uploadProgress !== undefined
       ? 'Uploading'
-      : autofillState !== undefined
+      : autofillState === 'ai-generation'
       ? 'Autofilling'
       : contentForm.values.content && !contentForm.errors.content
       ? 'AddImage'
@@ -103,7 +103,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     setSubStep(
       uploadProgress !== undefined
         ? 'Uploading'
-        : autofillState !== undefined
+        : autofillState === 'ai-generation'
         ? 'Autofilling'
         : contentForm.values.content && !contentForm.errors.content
         ? 'AddImage'
@@ -474,7 +474,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
     ) : null
 
   const autofillBeats =
-    autofillState !== undefined ? (
+    autofillState === 'ai-generation' ? (
       <div className="autofill-beats beats">
         <div className="beat beat1" />
         <div className="beat beat2" />
@@ -509,9 +509,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
             <div className={`uploaded-name subcontainer ${contentIsFile ? 'file' : 'link'} `}>
               <div className="content-icon">
                 {uploadProgress ? (
-                  <UploadIcon />
-                ) : autofillState === 'extracting-info' ? (
+                  <UploadIcon /> /* : autofillState === 'extracting-info' ? (
                   <ExtractInfoIcon />
+                ) */
                 ) : autofillState === 'ai-generation' ? (
                   <Bolt />
                 ) : contentType === 'link' ? (
@@ -523,11 +523,11 @@ export const UploadResource: FC<UploadResourceProps> = ({
               <abbr className="scroll" title={contentName}>
                 {uploadProgress
                   ? `Uploading ${contentName}`
-                  : autofillState === 'extracting-info'
+                  : /* : autofillState === 'extracting-info'
                   ? `Extracting info from ${
                       contentType === 'file' ? contentName.split('.').pop() : 'link'
-                    }`
-                  : autofillState === 'ai-generation'
+                    }` */
+                  autofillState === 'ai-generation'
                   ? `Autofilling with AI`
                   : contentName}
               </abbr>

@@ -142,7 +142,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { subjectOptions } = edMetaOptions
 
-  const { isPublished, autofillState, uploadProgress } = state
+  const { isPublished, autofillState /* , uploadProgress */ } = state
 
   const { deleteResource } = actions
   const { canEdit, canPublish, canDelete } = access
@@ -210,7 +210,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
 
   const handleOnSaveClick = () => {
-    if (!form.dirty && !imageForm.dirty && !contentForm.dirty) {
+    if (autofillState !== 'ai-completed' && !form.dirty && !imageForm.dirty && !contentForm.dirty) {
       setIsEditing(false)
       return
     }
@@ -227,8 +227,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       setShowSaveError(true)
       return
     }
-
-    if (form.dirty) {
+    if (form.dirty || autofillState === 'ai-completed') {
       form_submitForm()
     }
 
@@ -243,6 +242,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setIsEditing(false)
     setEmptyOnStart(false)
   }, [
+    autofillState,
     contentForm.dirty,
     contentForm.values.content,
     contentForm_submitForm,
@@ -475,7 +475,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : // )
     null
 
-  const disableSaveButton = (empty && emptyOnStart) || autofillState !== 'ai-completed'
+  const disableSaveButton = (empty && emptyOnStart) || autofillState === 'ai-generation'
 
   const editSaveButton =
     canEdit && !isPublished
