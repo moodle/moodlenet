@@ -6,7 +6,7 @@ import { generateMeta } from './generateMeta.mjs'
 
 export async function stepMachine(resourceKey: string) {
   return shell.initiateCall(async () => {
-    setPkgCurrentUser()
+    await setPkgCurrentUser()
     const [interpreter] = await stdEdResourceMachine({ by: 'key', key: resourceKey })
     const snap = interpreter.getSnapshot()
     if (!snap.can({ type: 'generated-meta-suggestions', generatedData: { meta: {} } })) {
