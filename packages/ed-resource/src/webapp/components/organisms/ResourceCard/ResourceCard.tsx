@@ -27,7 +27,7 @@ import type {
   ResourceCardState,
 } from '../../../../common/types.mjs'
 import { getResourceTypeInfo } from '../../../../common/types.mjs'
-import { ReactComponent as ExtractInfoIcon } from '../../../assets/icons/extract-info.svg'
+// import { ReactComponent as ExtractInfoIcon } from '../../../assets/icons/extract-info.svg'
 import './ResourceCard.scss'
 
 export type ResourceCardProps = ResourceCardPropsData & ResourceCardPropsUI
@@ -166,7 +166,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
     )
 
     const autofillingState =
-      autofillState === 'extracting-info' ? (
+      /*  autofillState === 'extracting-info' ? (
         <abbr
           className="extracting-info"
           title={`Extracting info from ${
@@ -179,7 +179,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
         >
           <ExtractInfoIcon />
         </abbr>
-      ) : autofillState === 'ai-generation' ? (
+      ) :  */ autofillState === 'ai-generation' ? (
         <abbr className="ai-generation" title={`Autofilling with AI`}>
           <Bolt />
         </abbr>

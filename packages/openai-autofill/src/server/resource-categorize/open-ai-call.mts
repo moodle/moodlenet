@@ -105,7 +105,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   }
 
   async function generateProvideImage() {
-    const imagePrompt = `generate a photorealistic image, for an online educational resource described as follows:
+    const imagePrompt = `Create a complete uncut image, for an online educational resource described as follows:
       ${data.resourceTitle ? `# "${data.resourceTitle.toUpperCase()}"` : ''}
       ${foundIscedFieldDesc ? `about "${foundIscedFieldDesc}" subject ` : ''} ${
       foundIscedGradeDesc ? `for students of "${foundIscedGradeDesc}" grade` : ''
@@ -123,6 +123,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
           .join('\n')}`
           : ''
       }
+      Note: Please ensure there is no text, writing, or any form of lettering included in the image
       `
     const imageGenResp = await openAiClient.images
       .generate({

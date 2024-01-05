@@ -142,9 +142,7 @@ export const Resource: FC<ResourceProps> = ({
   )
   const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(
-    emptyOnStart ||
-      (!!uploadProgress && uploadProgress >= 0) ||
-      autofillState !== 'ai-saved-generated-data',
+    emptyOnStart || (!!uploadProgress && uploadProgress >= 0) || autofillState !== undefined, // || !(autofillState === undefined || autofillState === 'ai-saved-generated-data'),
   )
 
   const prevIsPublishedRef = useRef(isPublished)
@@ -171,6 +169,7 @@ export const Resource: FC<ResourceProps> = ({
       return editData(meta)
     },
   })
+
   const isPublishedFormValid = publishedResourceValidationSchema.isValidSync(form.values)
   const isDraftFormValid = draftResourceValidationSchema.isValidSync(form.values)
 
@@ -233,6 +232,12 @@ export const Resource: FC<ResourceProps> = ({
     imageForm_setTouched({ image: true })
   }, [contentForm_setTouched, form_setTouched, imageForm_setTouched])
 
+  useEffect(() => {
+    if (autofillState === 'ai-completed') {
+      setFieldsAsTouched()
+    }
+  }, [autofillState, setFieldsAsTouched])
+
   const hasAllData =
     typeof form.values.title === 'string' &&
     form.values.title !== '' &&
@@ -250,7 +255,9 @@ export const Resource: FC<ResourceProps> = ({
     form.values.learningOutcomes.length > 0
 
   const disableFields =
-    !contentForm.values.content || uploadProgress !== undefined || autofillState !== undefined
+    !contentForm.values.content ||
+    uploadProgress !== undefined ||
+    (autofillState !== undefined && autofillState !== 'ai-completed')
 
   const contributorCard = isPublished && (
     <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
@@ -660,7 +667,7 @@ export const Resource: FC<ResourceProps> = ({
   )
 
   const autofillingSnackbar =
-    autofillState !== undefined ? (
+    autofillState === 'ai-generation' ? (
       <Snackbar position="bottom" type="info" showCloseButton={false} autoHideDuration={6000}>
         {`Using AI to autofill the resource details, it usually takes a couple of minutes`}
       </Snackbar> //@ALE change time when we know the average one

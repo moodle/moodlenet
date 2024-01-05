@@ -45,7 +45,8 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
   const [isToDelete, setIsToDelete] = useState(false)
   const [isPublished, setIsPublish] = useState(false)
-
+  // const [pollId,setPollId] = useState()
+  // const schedulePolling = useCallback(() => {})
   useEffect(() => {
     if (resourceKey === '.') {
       setResource({
@@ -77,11 +78,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         if (!res) {
           return
         }
-        if (res.state.value === 'Meta-Suggestion-Available') {
-          setTimeout(() => {
-            setResource(res => res && { ...res, state: { ...res.state, autofillState: undefined } })
-          }, 100)
-        }
+        // res.state.value === 'Autogenerating-Meta' && schedulePolling()
         setIsPublish(res.state.isPublished)
 
         setResource({
@@ -94,9 +91,10 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
             ...res.state,
             uploadProgress: undefined,
             autofillState:
-              res.state.value === 'Autogenerating-Meta' ||
-              res.state.value === 'Meta-Suggestion-Available'
+              res.state.value === 'Autogenerating-Meta'
                 ? 'ai-generation'
+                : res.state.value === 'Meta-Suggestion-Available'
+                ? 'ai-completed'
                 : undefined,
           },
         })
@@ -162,11 +160,14 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
           }
         )
       })
+      if (resource?.state.autofillState === 'ai-completed') {
+        setResource(res => res && { ...res, state: { ...res.state, autofillState: undefined } })
+      }
       setterSave('form', 'save-done')
       setTimeout(() => setterSave('form', 'not-saving'), 100)
       return editResponse
     },
-    [resourceKey, setterSave],
+    [resource?.state.autofillState, resourceKey, setterSave],
   )
   const actions = useMemo<ResourceActions>(() => {
     const resourceActions: ResourceActions = {
