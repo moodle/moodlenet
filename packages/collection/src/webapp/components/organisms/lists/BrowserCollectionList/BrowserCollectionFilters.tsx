@@ -13,6 +13,7 @@ export const SortByItem = ({
       Item: () => <SortBy selected={selected} setSelected={setSelected} />,
       key: 'sort-by',
     },
+    selected: selected,
     setSelected: setSelected,
   }
 }

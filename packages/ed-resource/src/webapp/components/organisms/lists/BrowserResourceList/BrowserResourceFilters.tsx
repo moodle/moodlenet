@@ -20,6 +20,7 @@ export const SortByItem = ({
       Item: () => <SortBy selected={selected} setSelected={setSelected} />,
       key: 'sort-by',
     },
+    selected: selected,
     setSelected: setSelected,
   }
 }
@@ -44,6 +45,7 @@ export const SortByLanguageItem = ({
     ),
     key: 'sort-by-language',
   },
+  selected: selected,
   setSelected: setSelected,
 })
 
@@ -67,6 +69,7 @@ export const SortByLicenseItem = ({
     ),
     key: 'sort-by-license',
   },
+  selected: selected,
   setSelected: setSelected,
 })
 
@@ -90,6 +93,7 @@ export const SortByLevelItem = ({
     ),
     key: 'sort-by-level',
   },
+  selected: selected,
   setSelected: setSelected,
 })
 
@@ -113,6 +117,7 @@ export const SortByTypeItem = ({
     ),
     key: 'sort-by-type',
   },
+  selected: selected,
   setSelected: setSelected,
 })
 
@@ -136,6 +141,7 @@ export const SortBySubjectItem = ({
     ),
     key: 'sort-by-subject',
   },
+  selected: selected,
   setSelected: setSelected,
 })
 
