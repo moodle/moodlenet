@@ -1,8 +1,14 @@
-import type { CollectionCurationEvents } from '@moodlenet/collection/server'
+import type { CollectionActivityEvents } from '@moodlenet/collection/server'
 import type { EventPayload } from '@moodlenet/core'
 import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
-import type { ResourceCurationEvents } from '@moodlenet/ed-resource/server'
-import type { Document, DocumentMetadata, EntityDocument } from '@moodlenet/system-entities/server'
+import type { ResourceActivityEvents } from '@moodlenet/ed-resource/server'
+import type {
+  Document,
+  DocumentMetadata,
+  EntityDocument,
+  EntityUser,
+  PkgUser,
+} from '@moodlenet/system-entities/server'
 import type { KnownEntityFeature } from '../common/types.mjs'
 
 // TODO //@ALE ProfileEntity _meta { webUserKey }
@@ -105,7 +111,17 @@ export type ProfileMeta = Pick<
   'aboutMe' | 'displayName' | 'location' | 'organizationName' | 'siteUrl'
 >
 
-export type WebUserEvents = WebUserActivityEvents & {
+export type WebUserEvents = WebUserActivityEvents //& {}
+export type WebUserActivityEvents = {
+  'entity-activity-event':
+    | {
+        entityType: 'resource'
+        payload: EventPayload<ResourceActivityEvents>
+      }
+    | {
+        entityType: 'collection'
+        payload: EventPayload<CollectionActivityEvents>
+      }
   'request-send-message-to-web-user': {
     message: {
       text: string
@@ -124,18 +140,20 @@ export type WebUserEvents = WebUserActivityEvents & {
     deletedCollections: { _key: string }[]
     deletedResources: { _key: string }[]
   }
-}
-export type WebUserActivityEvents = {
-  'entity-curation-event':
-    | {
-        entityType: 'resource'
-        payload: EventPayload<ResourceCurationEvents>
-      }
-    | {
-        entityType: 'collection'
-        payload: EventPayload<CollectionCurationEvents>
-      }
-
+  'created-web-user-account': {
+    webUserKey: string
+    profileKey: string
+    displayName: string
+  }
+  'web-user-logged-in': {
+    webUserKey: string
+    profileKey: string
+  }
+  'user-publishing-permission-change': {
+    profileKey: string
+    type: 'given' | 'revoked'
+    moderator: EntityUser | PkgUser
+  }
   'feature-entity': {
     profileKey: string
     action: 'add' | 'remove'
@@ -150,7 +168,7 @@ export type WebUserActivityEvents = {
   }
   'edit-profile-meta': {
     profileKey: string
-    data: { meta?: ProfileMeta; backgroundImage: boolean; image: boolean }
+    input: { meta?: ProfileMeta; backgroundImage: boolean; image: boolean }
     profile: ProfileDataType
     profileOld: ProfileDataType
   }

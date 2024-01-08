@@ -78,10 +78,18 @@ export async function setPublished(key: string, published: boolean) {
   if (!patchResult) {
     return
   }
-  shell.events.emit(published ? 'published' : 'unpublished', {
-    collectionDoc: getEntityDoc(patchResult.patched),
+  const collectionDoc = getEntityDoc(patchResult.patched)
+  shell.events.emit(published ? 'request-publishing' : 'unpublished', {
+    collectionDoc,
     systemUser: await getCurrentSystemUser(),
   })
+  if (!published) {
+    shell.events.emit('publishing-acceptance', {
+      collectionDoc,
+      accepted: true,
+      automaticAcceptance: true,
+    })
+  }
   return patchResult
 }
 

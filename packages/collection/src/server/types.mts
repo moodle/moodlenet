@@ -22,8 +22,8 @@ export type Image = ImageUploaded | ImageUrl
 export type ImageUploaded = { kind: 'file'; directAccessId: string; credits?: Credits | null }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
-export type CollectionEvents = CollectionCurationEvents
-export type CollectionCurationEvents = {
+export type CollectionEvents = CollectionActivityEvents
+export type CollectionActivityEvents = {
   'resource-list-curation': {
     collectionDoc: CollectionEntityDoc
     action: 'add' | 'remove'
@@ -43,10 +43,16 @@ export type CollectionCurationEvents = {
     }
     systemUser: SystemUser
   }
-  'published': {
+  'request-publishing': {
     collectionDoc: CollectionEntityDoc
     systemUser: SystemUser
   }
+  'publishing-acceptance': {
+    collectionDoc: CollectionEntityDoc
+    accepted: true
+    automaticAcceptance: true
+  }
+
   'unpublished': {
     collectionDoc: CollectionEntityDoc
     systemUser: SystemUser

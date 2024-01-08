@@ -20,6 +20,7 @@ import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entitie
 import {
   currentEntityVar,
   entityMeta,
+  getCurrentSystemUser,
   getEntity,
   isCreatorOfCurrentEntity,
   patchEntity,
@@ -125,7 +126,7 @@ export async function editProfile(
 
   shell.events.emit('edit-profile-meta', {
     profileKey: key,
-    data: {
+    input: {
       meta: profileMeta,
       backgroundImage: false,
       image: false,
@@ -272,12 +273,19 @@ export async function setProfilePublisherFlag({
   profileKey: string
   isPublisher: boolean
 }) {
+  const moderator = await getCurrentSystemUser()
+  assert(moderator.type === 'pkg' || moderator.type === 'entity')
+
   const profile = await getProfileRecord(profileKey)
   if (!profile) return { type: 'not-found', ok: false }
   if (profile.entity.publisher === setIsPublisher) return { type: 'no-change', ok: true }
 
   await patchEntity(Profile.entityClass, profileKey, { publisher: setIsPublisher })
-
+  shell.events.emit('user-publishing-permission-change', {
+    type: setIsPublisher ? 'given' : 'revoked',
+    profileKey,
+    moderator,
+  })
   await Promise.all(
     profile.entity.knownFeaturedEntities.map(async ({ _id: targetEntityId, feature }) => {
       const targetEntityDoc = await (
@@ -412,7 +420,7 @@ export async function setProfileAvatar(
     profileKey: _key,
     profile: patchResult.patched,
     profileOld: patchResult.old,
-    data: {
+    input: {
       image: true,
       backgroundImage: false,
     },
@@ -455,7 +463,7 @@ export async function setProfileBackgroundImage(
     await publicFiles.del(imageLogicalFilename)
   }
   shell.events.emit('edit-profile-meta', {
-    data: { backgroundImage: true, image: false },
+    input: { backgroundImage: true, image: false },
     profile: patchResult.patched,
     profileOld: patchResult.old,
     profileKey: _key,

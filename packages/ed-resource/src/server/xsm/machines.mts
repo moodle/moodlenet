@@ -286,18 +286,25 @@ export async function stdEdResourceMachine(by: ProvideBy) {
       oldState === currentState
         ? undefined
         : currentState === 'Published'
-        ? 'published'
+        ? 'request-publishing'
         : 'unpublished'
-    console.log('\n*****'.repeat(5), {
-      oldState,
-      currentState,
-      publishEvent,
-    })
+    // console.log('\n*****'.repeat(5), {
+    //   oldState,
+    //   currentState,
+    //   publishEvent,
+    // })
     if (publishEvent) {
       shell.events.emit(publishEvent, {
         resourceDoc: state.context.doc,
         systemUser: await getCurrentSystemUser(),
       })
+      if (publishEvent === 'request-publishing') {
+        shell.events.emit('publishing-acceptance', {
+          resourceDoc: state.context.doc,
+          accepted: true,
+          automaticAcceptance: true,
+        })
+      }
     }
     // .then(
     //   () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),

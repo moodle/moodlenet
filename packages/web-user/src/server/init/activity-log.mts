@@ -7,31 +7,20 @@ import type { WebUserActivityEvents } from '../types.mjs'
 import * as crypto from '@moodlenet/crypto/server'
 import { ActivityLogCollection } from '../init/arangodb.mjs'
 
-console.log('init /*/')
+// console.log('init /*/')
 
-resource.on('created', payload => emit({ payload, entityType: 'resource' }))
-resource.on('updated', payload => emit({ payload, entityType: 'resource' }))
-resource.on('published', payload => emit({ payload, entityType: 'resource' }))
-resource.on('unpublished', payload => emit({ payload, entityType: 'resource' }))
-resource.on('deleted', payload => emit({ payload, entityType: 'resource' }))
+resource.onAny(payload => emitECE({ payload, entityType: 'resource' }))
+collection.onAny(payload => emitECE({ payload, entityType: 'collection' }))
 
-collection.on('created', payload => emit({ payload, entityType: 'collection' }))
-collection.on('updated', payload => emit({ payload, entityType: 'collection' }))
-collection.on('published', payload => emit({ payload, entityType: 'collection' }))
-collection.on('unpublished', payload => emit({ payload, entityType: 'collection' }))
-collection.on('deleted', payload => emit({ payload, entityType: 'collection' }))
-collection.on('resource-list-curation', payload => emit({ payload, entityType: 'collection' }))
-
-function emit(entityCuration: WebUserActivityEvents['entity-curation-event']) {
-  console.log('emitting entity-curation-event /*/')
-  shell.events.emit('entity-curation-event', entityCuration)
+function emitECE(entityCuration: WebUserActivityEvents['entity-activity-event']) {
+  // console.log('emitting entity-activity-event /*/')
+  shell.events.emit('entity-activity-event', entityCuration)
 }
 
-shell.events.on('entity-curation-event', saveWebUserActivity)
-shell.events.on('feature-entity', saveWebUserActivity)
+shell.events.any(saveWebUserActivity)
 
 async function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents>) {
-  console.log(`saveWebUserActivity [${activity.event}] /*/`)
+  // console.log(`saveWebUserActivity [${activity.event}] /*/`)
   const { ulid, now } = crypto.ulid.create()
   const at = now.toISOString()
   return ActivityLogCollection.save({ activity, at, ulid })

@@ -732,12 +732,17 @@ export async function matchRootPassword(matchPassword: string): Promise<boolean>
 }
 
 export async function setPkgCurrentUser() {
+  const currentPkgUser: PkgUser = await getPkgCurrentUser()
+  shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
+  return currentPkgUser
+}
+
+export async function getPkgCurrentUser() {
   const { pkgId } = shell.assertCallInitiator()
   const currentPkgUser: PkgUser = {
     type: 'pkg',
     pkgName: pkgId.name,
   }
-  shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
   return currentPkgUser
 }
 

@@ -47,7 +47,8 @@ export type Image = ImageUploaded | ImageUrl
 export type ImageUploaded = { kind: 'file'; directAccessId: string }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
-export type ResourceEvents = ResourceCurationEvents & {
+export type ResourceEvents = ResourceActivityEvents // & {}
+export type ResourceActivityEvents = {
   'downloaded': {
     resourceKey: string
     currentSysUser: SystemUser
@@ -55,13 +56,11 @@ export type ResourceEvents = ResourceCurationEvents & {
   'request-metadata-generation': {
     resourceKey: string
   }
-}
-export type ResourceCurationEvents = {
-  created: {
+  'created': {
     resourceDoc: ResourceDoc
     systemUser: SystemUser
   }
-  updated: {
+  'updated': {
     resourceDoc: ResourceDoc
     resourceDocOld: ResourceDoc
     input: {
@@ -70,15 +69,20 @@ export type ResourceCurationEvents = {
     }
     systemUser: SystemUser
   }
-  published: {
+  'request-publishing': {
     resourceDoc: ResourceDoc
     systemUser: SystemUser
   }
-  unpublished: {
+  'publishing-acceptance': {
+    resourceDoc: ResourceDoc
+    accepted: true
+    automaticAcceptance: true
+  }
+  'unpublished': {
     resourceDoc: ResourceDoc
     systemUser: SystemUser
   }
-  deleted: {
+  'deleted': {
     systemUser: SystemUser
     resourceDoc: ResourceDoc
   }
