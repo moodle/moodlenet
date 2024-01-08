@@ -45,32 +45,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
   const [isToDelete, setIsToDelete] = useState(false)
   const [isPublished, setIsPublish] = useState(false)
-  // const [pollId,setPollId] = useState()
-  // const schedulePolling = useCallback(() => {})
-  useEffect(() => {
-    if (resourceKey === '.') {
-      setResource({
-        access: { canDelete: false, canEdit: true, canPublish: false, isCreator: true },
-        contributor: {} as any,
-        data: {} as any,
-        resourceForm: {
-          learningOutcomes: [],
-          description: '',
-          title: '',
-          language: '',
-          level: '',
-          license: '',
-          month: '',
-          year: '',
-          subject: '',
-          type: '',
-        },
-        state: { autofillState: undefined, isPublished: false, uploadProgress: undefined },
-      })
-      return
-    }
-    setResource(undefined)
-
+  const loadData = useCallback(() => {
     shell.rpc
       .me('webapp/get/:_key')(null, { _key: resourceKey })
 
@@ -102,6 +77,36 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
       .catch(silentCatchAbort)
   }, [resourceKey])
 
+  useEffect(() => {
+    if (resourceKey === '.') {
+      setResource({
+        access: { canDelete: false, canEdit: true, canPublish: false, isCreator: true },
+        contributor: {} as any,
+        data: {} as any,
+        resourceForm: {
+          learningOutcomes: [],
+          description: '',
+          title: '',
+          language: '',
+          level: '',
+          license: '',
+          month: '',
+          year: '',
+          subject: '',
+          type: '',
+        },
+        state: { autofillState: undefined, isPublished: false, uploadProgress: undefined },
+      })
+      return
+    }
+    setResource(undefined)
+    loadData()
+  }, [resourceKey, loadData])
+  useEffect(() => {
+    if (resource?.state.autofillState === 'ai-generation') {
+      setTimeout(loadData, 10000)
+    }
+  }, [loadData, resource])
   const setterSave = useCallback(
     (key: keyof SaveState, val: SavingState) =>
       setSaveState(currentSaved => ({ ...currentSaved, [key]: val })),
@@ -195,13 +200,19 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
         // await setContent(resourceKey, content).then(updateDataProp('contentUrl'))
         // setterSave('content', false)
       },
-      publish: () => {
-        setIsPublish(true)
-        shell.rpc.me('webapp/set-is-published/:_key')({ publish: true }, { _key: resourceKey })
+      publish: async () => {
+        const { done } = await shell.rpc.me('webapp/set-is-published/:_key')(
+          { publish: true },
+          { _key: resourceKey },
+        )
+        done && setIsPublish(true)
       },
-      unpublish: () => {
-        setIsPublish(false)
-        shell.rpc.me('webapp/set-is-published/:_key')({ publish: false }, { _key: resourceKey })
+      unpublish: async () => {
+        const { done } = await shell.rpc.me('webapp/set-is-published/:_key')(
+          { publish: false },
+          { _key: resourceKey },
+        )
+        done && setIsPublish(false)
       },
       deleteResource: () => {
         setIsToDelete(true)
@@ -212,23 +223,32 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
             nav(-1)
           })
       },
-      startAutofill() {
-        shell.rpc.me('webapp/:action(cancel|start)/meta-autofill/:_key')(null, {
-          _key: resourceKey,
-          action: 'start',
-        })
+      async startAutofill() {
+        const { done } = await shell.rpc.me('webapp/:action(cancel|start)/meta-autofill/:_key')(
+          null,
+          {
+            _key: resourceKey,
+            action: 'start',
+          },
+        )
+        done && loadData()
         return
       },
-      stopAutofill() {
-        shell.rpc.me('webapp/:action(cancel|start)/meta-autofill/:_key')(null, {
-          _key: resourceKey,
-          action: 'cancel',
-        })
+      async stopAutofill() {
+        const { done } = await shell.rpc.me('webapp/:action(cancel|start)/meta-autofill/:_key')(
+          null,
+          {
+            _key: resourceKey,
+            action: 'cancel',
+          },
+        )
+        done && loadData()
         return
       },
     }
     return resourceActions
   }, [
+    loadData,
     editData,
     resourceKey,
     upImageTaskSet,

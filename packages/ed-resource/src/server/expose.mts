@@ -399,6 +399,19 @@ export const expose = await shell.expose<FullResourceExposeType>({
       guard: () => void 0,
       fn: async (_, { _key }) => {
         const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
+        const snap = interpreter.getSnapshot()
+        if (matchState(snap, 'Published')) {
+          interpreter.send('unpublish')
+          await waitFor(interpreter, nameMatcher('Unpublished'))
+        }
+        if (matchState(snap, 'Autogenerating-Meta')) {
+          interpreter.send('cancel-meta-generation')
+          await waitFor(interpreter, nameMatcher('Unpublished'))
+        }
+        if (matchState(snap, 'Meta-Suggestion-Available')) {
+          interpreter.send({ type: 'provide-resource-edits', edits: {} })
+          await waitFor(interpreter, nameMatcher('Unpublished'))
+        }
         interpreter.send('trash')
         await waitFor(interpreter, nameMatcher('Destroyed'))
         interpreter.stop()

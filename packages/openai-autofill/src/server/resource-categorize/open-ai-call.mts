@@ -11,7 +11,7 @@ import type { ResourceExtraction } from '../resource-extract/types.mjs'
 import { urlToRpcFile } from '../resource-extract/util.mjs'
 import { shell } from '../shell.mjs'
 import getPromptsAndData from './get-prompts-and-data.mjs'
-import type { ClassifyPars } from './types.mjs'
+import type { BloomsCognitiveElem, ClassifyPars } from './types.mjs'
 import { bcAttr, FN_NAME, par } from './types.mjs'
 
 interface OpenAiResponse {
@@ -64,13 +64,25 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       chatCompletion.choices[0]?.message.function_call?.arguments ?? '{}',
     )
     // writeFile('_.json', JSON.stringify({ textResource, data, messages, classifyResourceFn }, null, 2))
-    data.bloomsCognitive = data.bloomsCognitive?.filter(
-      ({ bloomsLevelCode, learningOutcomeVerbCode }) =>
-        !!prompts.bloomsCognitivesFineTuning.data.find(
+    data.bloomsCognitive = data.bloomsCognitive
+      ?.map(generatedBloom => {
+        const bloomDef = prompts.bloomsCognitivesFineTuning.data.find(
           ([, verbs, levelCode]) =>
-            levelCode === bloomsLevelCode && verbs.includes(learningOutcomeVerbCode),
-        ),
-    )
+            levelCode === generatedBloom.bloomsLevelCode &&
+            verbs.includes(generatedBloom.learningOutcomeVerbCode),
+        )
+        const sanitizedGeneratedBloom: BloomsCognitiveElem = { ...generatedBloom }
+        if (bloomDef) {
+          // const [name, verbs, code] = bloomDef
+          const [, verbs] = bloomDef
+          const verbNail = new RegExp(`^(${verbs.join('|')})`)
+          sanitizedGeneratedBloom.learningOutcomeDescription =
+            generatedBloom.learningOutcomeDescription.trim().replace(verbNail, '').trim()
+        }
+        return { sanitizedGeneratedBloom, bloomDef }
+      })
+      .filter(({ bloomDef }) => !!bloomDef)
+      .map(({ sanitizedGeneratedBloom }) => sanitizedGeneratedBloom)
 
     const [foundIscedFieldDesc, foundIscedFieldCode] =
       prompts.iscedFields4CharsFineTuning.data.find(([, code]) => code === data.iscedFieldCode) ?? [
