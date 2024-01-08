@@ -33,6 +33,7 @@ import type {
   EntityCollectionHandles,
   EntityDocFullData,
   EntityDocument,
+  EntityFullDocument,
   EntityMetadata,
   PkgUser,
   RootUser,
@@ -210,13 +211,16 @@ export async function patchEntity<
     FILTER ${matchRevFilter} ${currentEntityVar}._key == ${toaql(key)} LIMIT 1`,
     postAccessBody: `${opts?.postAccessBody ?? ''} 
     UPDATE ${currentEntityVar} WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
-    project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
+    project: {
+      patched: 'NEW' as AqlVal<EntityFullDocument<EntityDataType>>,
+      old: 'OLD' as AqlVal<EntityFullDocument<EntityDataType>>,
+    },
   })
   const patchRecord = await patchCursor.next()
   if (!patchRecord) {
     return
   }
-  return { patched: patchRecord.patched, old: patchRecord.entity }
+  return { patched: patchRecord.patched, old: patchRecord.old }
 }
 
 /* export async function patchEntity<EntityDataType extends SomeEntityDataType>(
@@ -745,3 +749,10 @@ export const createEntityKey = customAlphabet(
   `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
   8,
 )
+
+export function getEntityDoc<DataType extends SomeEntityDataType>(
+  fullEntityDoc: EntityFullDocument<DataType>,
+): EntityDocument<DataType> {
+  const { _meta: _1, ...doc } = fullEntityDoc
+  return doc as any as EntityDocument<DataType>
+}

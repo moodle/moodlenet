@@ -11,12 +11,13 @@ mainEmitter.on(_event_, payload => {
   mainLogger.log('event', inspect(payload, true, 5, true), { pkgId: payload.pkgId })
 })
 
-export type EventPayload<EventTypeMap, Name extends keyof EventTypeMap> = {
+export type EventPayload<EventTypeMap, Name extends keyof EventTypeMap = keyof EventTypeMap> = {
   pkgId: PkgIdentifier
   event: Name
   data: EventTypeMap[Name]
   at: string
 }
+
 export function pkgEmitter<EventTypeMap>(pkgId: PkgIdentifier) {
   return {
     emit,
@@ -45,8 +46,17 @@ export function pkgEmitter<EventTypeMap>(pkgId: PkgIdentifier) {
         payload.event === eventName && listener(payload as EventPayload<EventTypeMap, Name>),
     )
   }
-  function any(listener: (payload: EventPayload<EventTypeMap, keyof EventTypeMap>) => void) {
+  function any(_listener: (payload: EventPayload<EventTypeMap>) => void) {
+    function listener(payload: EventPayload<any>) {
+      if (!isPkgEvent(payload)) {
+        return
+      }
+      return _listener(payload as EventPayload<EventTypeMap>)
+    }
     mainEmitter.on(_event_, listener)
     return () => mainEmitter.off(_event_, listener)
+  }
+  function isPkgEvent(payload: EventPayload<any>): payload is EventPayload<EventTypeMap> {
+    return payload.pkgId.name === pkgId.name
   }
 }

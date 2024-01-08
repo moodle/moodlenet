@@ -1,4 +1,7 @@
+import type { CollectionCurationEvents } from '@moodlenet/collection/server'
+import type { EventPayload } from '@moodlenet/core'
 import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
+import type { ResourceCurationEvents } from '@moodlenet/ed-resource/server'
 import type { Document, DocumentMetadata, EntityDocument } from '@moodlenet/system-entities/server'
 import type { KnownEntityFeature } from '../common/types.mjs'
 
@@ -17,6 +20,10 @@ export type ProfileInterests = {
   asDefaultFilters?: boolean
 }
 
+export interface ProfileSettings {
+  interests?: null | ProfileInterests
+}
+
 export type ProfileDataType = {
   displayName: string
   aboutMe: string | undefined | null
@@ -29,9 +36,7 @@ export type ProfileDataType = {
   kudos: number
   publisher: boolean
   webslug: string
-  settings: {
-    interests?: null | ProfileInterests
-  }
+  settings: ProfileSettings
   popularity?: {
     overall: number
     items: {
@@ -91,8 +96,17 @@ export type UnverifiedTokenCtx = {
   currentJwtToken: JwtToken
 }
 
-export interface WebUserEvents {
-  'send-message-to-web-user': {
+export type WebUserAccountDeletionToken = {
+  webUserKey: string
+  scope: 'web-user-account-deletion'
+}
+export type ProfileMeta = Pick<
+  ProfileDataType,
+  'aboutMe' | 'displayName' | 'location' | 'organizationName' | 'siteUrl'
+>
+
+export type WebUserEvents = WebUserActivityEvents & {
+  'request-send-message-to-web-user': {
     message: {
       text: string
       html: string
@@ -111,8 +125,39 @@ export interface WebUserEvents {
     deletedResources: { _key: string }[]
   }
 }
+export type WebUserActivityEvents = {
+  'entity-curation-event':
+    | {
+        entityType: 'resource'
+        payload: EventPayload<ResourceCurationEvents>
+      }
+    | {
+        entityType: 'collection'
+        payload: EventPayload<CollectionCurationEvents>
+      }
 
-export type WebUserAccountDeletionToken = {
-  webUserKey: string
-  scope: 'web-user-account-deletion'
+  'feature-entity': {
+    profileKey: string
+    action: 'add' | 'remove'
+    featuredEntityItem: KnownFeaturedEntityItem
+    featuredEntityItems: KnownFeaturedEntityItem[]
+    oldFeaturedEntityItems: KnownFeaturedEntityItem[]
+  }
+  'edit-profile-interests': {
+    profileKey: string
+    profileInterests: ProfileInterests
+    profileInterestsOld: null | ProfileInterests
+  }
+  'edit-profile-meta': {
+    profileKey: string
+    data: { meta?: ProfileMeta; backgroundImage: boolean; image: boolean }
+    profile: ProfileDataType
+    profileOld: ProfileDataType
+  }
+}
+
+export interface ActivityLogDataType {
+  activity: EventPayload<WebUserActivityEvents>
+  at: string
+  ulid: string
 }

@@ -1,4 +1,4 @@
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument, Patch, SystemUser } from '@moodlenet/system-entities/server'
 
 export type CollectionEntityDoc = EntityDocument<CollectionDataType>
 export type CollectionDataType = {
@@ -21,3 +21,38 @@ export type Credits = {
 export type Image = ImageUploaded | ImageUrl
 export type ImageUploaded = { kind: 'file'; directAccessId: string; credits?: Credits | null }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
+
+export type CollectionEvents = CollectionCurationEvents
+export type CollectionCurationEvents = {
+  'resource-list-curation': {
+    collectionDoc: CollectionEntityDoc
+    action: 'add' | 'remove'
+    resourceKey: string
+    systemUser: SystemUser
+  }
+  'created': {
+    collectionDoc: CollectionEntityDoc
+    systemUser: SystemUser
+  }
+  'updated': {
+    collectionDoc: CollectionEntityDoc
+    collectionDocOld: CollectionEntityDoc
+    input: {
+      meta?: Patch<CollectionDataType>
+      image: boolean
+    }
+    systemUser: SystemUser
+  }
+  'published': {
+    collectionDoc: CollectionEntityDoc
+    systemUser: SystemUser
+  }
+  'unpublished': {
+    collectionDoc: CollectionEntityDoc
+    systemUser: SystemUser
+  }
+  'deleted': {
+    systemUser: SystemUser
+    collectionDoc: CollectionEntityDoc
+  }
+}

@@ -363,7 +363,7 @@ export async function currentWebUserDeletionAccountRequest() {
   }
   const html = dot.compile(msgTemplates.deleteAccountConfirmation)(msgVars)
 
-  shell.events.emit('send-message-to-web-user', {
+  shell.events.emit('request-send-message-to-web-user', {
     message: { html, text: html },
     subject: 'Confirm account deletion 🥀',
     title: 'Confirm account deletion 🥀',

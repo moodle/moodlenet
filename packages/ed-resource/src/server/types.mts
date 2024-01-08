@@ -1,4 +1,4 @@
-import type { PersistentContext } from '@moodlenet/core-domain/resource'
+import type { PersistentContext, ResourceDoc, ResourceMeta } from '@moodlenet/core-domain/resource'
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import type { FsItem } from '@moodlenet/simple-file-store/server'
 import type { EntityDocument, SystemUser } from '@moodlenet/system-entities/server'
@@ -47,12 +47,39 @@ export type Image = ImageUploaded | ImageUrl
 export type ImageUploaded = { kind: 'file'; directAccessId: string }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
-export type ResourceEvents = {
-  'resource:downloaded': {
+export type ResourceEvents = ResourceCurationEvents & {
+  'downloaded': {
     resourceKey: string
     currentSysUser: SystemUser
   }
-  'resource:request-metadata-generation': {
+  'request-metadata-generation': {
     resourceKey: string
+  }
+}
+export type ResourceCurationEvents = {
+  created: {
+    resourceDoc: ResourceDoc
+    systemUser: SystemUser
+  }
+  updated: {
+    resourceDoc: ResourceDoc
+    resourceDocOld: ResourceDoc
+    input: {
+      meta?: ResourceMeta
+      image: boolean
+    }
+    systemUser: SystemUser
+  }
+  published: {
+    resourceDoc: ResourceDoc
+    systemUser: SystemUser
+  }
+  unpublished: {
+    resourceDoc: ResourceDoc
+    systemUser: SystemUser
+  }
+  deleted: {
+    systemUser: SystemUser
+    resourceDoc: ResourceDoc
   }
 }

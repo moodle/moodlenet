@@ -25,3 +25,4 @@ export * from './xsm/exports.mjs'
 export { stdEdResourceMachine } from './xsm/machines.mjs'
 import { shell } from './shell.mjs'
 export const on = shell.events.on
+export const onAny = shell.events.any

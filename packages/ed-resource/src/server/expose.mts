@@ -78,6 +78,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         await waitFor(interpreter, nameMatcher(awaitNextState))
         snap = interpreter.getSnapshot()
         interpreter.stop()
+
         return { done: true }
       },
     },
@@ -375,6 +376,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         setRpcStatusCode('Created')
         interpreter.stop()
+        snap = interpreter.getSnapshot()
         return {
           _key: newDoc.id.resourceKey,
           name: newDoc.meta.title,
@@ -465,7 +467,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         readable.on('end', async () => {
           const currentSysUser = await getCurrentSystemUser()
-          shell.events.emit('resource:downloaded', { resourceKey: _key, currentSysUser })
+          shell.events.emit('downloaded', { resourceKey: _key, currentSysUser })
           incrementResourceDownloads({ _key })
         })
         return readableRpcFile({ ...fsItem.rpcFile }, () => readable)

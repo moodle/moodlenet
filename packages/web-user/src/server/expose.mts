@@ -325,13 +325,15 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         body.interests = interests
       },
       async fn({ interests }) {
-        return editMyProfileInterests({ items: interests })
+        const result = await editMyProfileInterests({ items: interests })
+        return result && !!result
       },
     },
     'webapp/my-interests/use-as-default-search-filters': {
       guard: body => typeof body.use === 'boolean',
       async fn({ use }) {
-        return editMyProfileInterests({ asDefaultFilters: use })
+        const result = await editMyProfileInterests({ asDefaultFilters: use })
+        return result && !!result
       },
     },
     'webapp/send-message-to-user/:profileKey': {
