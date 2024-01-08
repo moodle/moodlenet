@@ -40,7 +40,13 @@ export const OverallCardStoryProps: OverallCardProps = {
       name: 'Followers',
       value: 25,
     },
-    { Icon: LeafIcon, name: 'Leaves', className: 'leaves', value: 43212 },
+    {
+      Icon: PersonIcon,
+      className: 'following',
+      href: href('Pages/Following'),
+      name: 'Following',
+      value: 97,
+    },
     { Icon: FilterNone, className: 'resources', name: 'Resources', value: 23 },
   ],
 }

@@ -35,7 +35,7 @@ export const LoggedOut = () => {
     access: { isAuthenticated: false, canFollow: false },
     mainColumnItems: [],
     rightColumnItems: [],
-    overallCardItems: OverallCardStories.OverallCardNoCardStoryProps.items,
+    overallCardItems: OverallCardStories.OverallCardStoryProps.items,
   })
 
   return <Profile {...props} />

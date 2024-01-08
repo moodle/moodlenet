@@ -12,11 +12,10 @@ import {
   silentCatchAbort,
   useMainLayoutProps,
 } from '@moodlenet/react-app/webapp'
-import { FilterNone, PermIdentity } from '@mui/icons-material'
+import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
-import { ReactComponent as LeafIcon } from '../../../ui/assets/icons/leaf.svg'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useProfileContext } from '../../context/ProfileContext.js'
@@ -284,6 +283,7 @@ export const useProfileProps = ({
         {
           Icon: PermIdentity,
           name: 'Followers',
+          className: 'followers',
           value: profileGetRpc.numFollowers,
           href: href(
             getProfileFollowersRoutePath({
@@ -292,10 +292,22 @@ export const useProfileProps = ({
             }),
           ),
         },
-        { Icon: LeafIcon, name: 'Leaves', className: 'leaves', value: profileGetRpc.points },
+        {
+          Icon: Grade,
+          name: 'Following',
+          value: profileGetRpc.numFollowing,
+          className: 'following',
+          // href: href(
+          //   getProfileFollowingRoutePath({
+          //     displayName: profileGetRpc.data.displayName,
+          //     key: profileKey,
+          //   }),
+          // ),
+        },
         {
           Icon: FilterNone,
           name: 'Resources',
+          className: 'resources',
           value: profileGetRpc.ownKnownEntities.resources.length,
         },
 

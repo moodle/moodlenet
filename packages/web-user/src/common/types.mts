@@ -35,6 +35,7 @@ export type ProfileGetRpc = {
   profileUrl: string
   numFollowers: number
   points: number
+  numFollowing: number
   ownKnownEntities: {
     resources: { _key: string }[]
     collections: { _key: string }[]
