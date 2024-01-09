@@ -286,42 +286,42 @@ export const UploadResource: FC<UploadResourceProps> = ({
     />
   )
 
-  const [uploadPartial, setUploadPartial] = useState<number | undefined>(undefined)
+  // const [uploadPartial, setUploadPartial] = useState<number | undefined>(undefined)
 
-  const lastUpdateTimeRef = useRef<number | undefined>(undefined)
-  const progressPartialRef = useRef<number | undefined>(undefined)
+  // const lastUpdateTimeRef = useRef<number | undefined>(undefined)
+  // const progressPartialRef = useRef<number | undefined>(undefined)
 
-  useEffect(() => {
-    progressPartialRef.current = uploadPartial
-  }, [uploadPartial])
+  // useEffect(() => {
+  //   progressPartialRef.current = uploadPartial
+  // }, [uploadPartial])
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout
+  // useEffect(() => {
+  //   let interval: NodeJS.Timeout
 
-    if (uploadProgress !== undefined) {
-      const deltaTime = Date.now() - (lastUpdateTimeRef.current || Date.now())
-      const progressDelta = uploadProgress - (progressPartialRef.current || 0)
+  //   if (uploadProgress !== undefined) {
+  //     const deltaTime = Date.now() - (lastUpdateTimeRef.current || Date.now())
+  //     const progressDelta = uploadProgress - (progressPartialRef.current || 0)
 
-      const updateRate = progressDelta / deltaTime // percentage per millisecond
-      interval = setInterval(() => {
-        if (Math.abs((progressPartialRef.current || 0) - uploadProgress) > 0.1) {
-          setUploadPartial(prev => (prev !== undefined ? prev + updateRate * 10 : 0))
-        } else {
-          clearInterval(interval)
-          setUploadPartial(uploadProgress)
-        }
-      }, 10)
-      lastUpdateTimeRef.current = Date.now()
-    } else {
-      setUploadPartial(undefined)
-    }
+  //     const updateRate = progressDelta / deltaTime // percentage per millisecond
+  //     interval = setInterval(() => {
+  //       if (Math.abs((progressPartialRef.current || 0) - uploadProgress) > 0.1) {
+  //         setUploadPartial(prev => (prev !== undefined ? prev + updateRate * 10 : 0))
+  //       } else {
+  //         clearInterval(interval)
+  //         setUploadPartial(uploadProgress)
+  //       }
+  //     }, 10)
+  //     lastUpdateTimeRef.current = Date.now()
+  //   } else {
+  //     setUploadPartial(undefined)
+  //   }
 
-    return () => {
-      if (interval) {
-        clearInterval(interval)
-      }
-    }
-  }, [uploadProgress])
+  //   return () => {
+  //     if (interval) {
+  //       clearInterval(interval)
+  //     }
+  //   }
+  // }, [uploadProgress])
 
   const isUploading = subStep === 'Uploading'
   const isAutofilling = subStep === 'Autofilling'
@@ -430,7 +430,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
             (contentForm.errors.content || imageForm.errors.image)
               ? 'show-error'
               : ''
-          }
+          } ${subStep === 'Uploading' || subStep === 'Autofilling' ? 'no-border' : ''}
         `}
           //  ${contentForm.values.content instanceof Blob && form.errors.content ? 'error' : ''}
           id="drop_zone"
@@ -466,10 +466,19 @@ export const UploadResource: FC<UploadResourceProps> = ({
     </>
   )
 
-  const uploadBeat =
+  // const uploadBeat =
+  //   uploadProgress !== undefined ? (
+  //     <div className="upload-beat beats">
+  //       <div className="beat" style={{ width: `${uploadPartial}%` }} />
+  //     </div>
+  //   ) : null
+
+  const uploadBeats =
     uploadProgress !== undefined ? (
-      <div className="upload-beat beats">
-        <div className="beat" style={{ width: `${uploadPartial}%` }} />
+      <div className="upload-beats beats">
+        <div className="beat beat1" />
+        <div className="beat beat2" />
+        <div className="beat beat3" />
       </div>
     ) : null
 
@@ -531,7 +540,7 @@ export const UploadResource: FC<UploadResourceProps> = ({
                   ? `Autofilling with AI`
                   : contentName}
               </abbr>
-              {uploadBeat}
+              {uploadBeats}
               {autofillBeats}
               {(uploadProgress !== undefined || autofillState) && (
                 <RoundButton
