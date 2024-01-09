@@ -221,7 +221,6 @@ export async function createWebUser(createRequest: CreateRequest) {
   }
 
   shell.events.emit('created-web-user-account', {
-    displayName: newProfile.displayName,
     profileKey: newProfile._key,
     webUserKey: newWebUser._key,
   })

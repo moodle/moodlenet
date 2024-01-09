@@ -30,7 +30,7 @@ export interface ProfileSettings {
   interests?: null | ProfileInterests
 }
 
-export type ProfileDataType = {
+export type ProfileMeta = {
   displayName: string
   aboutMe: string | undefined | null
   organizationName: string | undefined | null
@@ -38,6 +38,8 @@ export type ProfileDataType = {
   siteUrl: string | undefined | null
   backgroundImage: Image | undefined | null
   avatarImage: Image | undefined | null
+}
+export type ProfileDataType = ProfileMeta & {
   knownFeaturedEntities: KnownFeaturedEntityItem[]
   kudos: number
   publisher: boolean
@@ -106,22 +108,11 @@ export type WebUserAccountDeletionToken = {
   webUserKey: string
   scope: 'web-user-account-deletion'
 }
-export type ProfileMeta = Pick<
-  ProfileDataType,
-  'aboutMe' | 'displayName' | 'location' | 'organizationName' | 'siteUrl'
->
 
 export type WebUserEvents = WebUserActivityEvents //& {}
 export type WebUserActivityEvents = {
-  'entity-activity-event':
-    | {
-        entityType: 'resource'
-        payload: EventPayload<ResourceActivityEvents>
-      }
-    | {
-        entityType: 'collection'
-        payload: EventPayload<CollectionActivityEvents>
-      }
+  'resource-activity-event': Pick<EventPayload<ResourceActivityEvents>, 'data' | 'event'>
+  'collection-activity-event': Pick<EventPayload<CollectionActivityEvents>, 'data' | 'event'>
   'request-send-message-to-web-user': {
     message: {
       text: string
@@ -143,7 +134,6 @@ export type WebUserActivityEvents = {
   'created-web-user-account': {
     webUserKey: string
     profileKey: string
-    displayName: string
   }
   'web-user-logged-in': {
     webUserKey: string
@@ -157,25 +147,20 @@ export type WebUserActivityEvents = {
   'feature-entity': {
     profileKey: string
     action: 'add' | 'remove'
-    featuredEntityItem: KnownFeaturedEntityItem
-    featuredEntityItems: KnownFeaturedEntityItem[]
-    oldFeaturedEntityItems: KnownFeaturedEntityItem[]
+    item: KnownFeaturedEntityItem
+    currentItemsOfSameType: KnownFeaturedEntityItem[]
   }
   'edit-profile-interests': {
     profileKey: string
     profileInterests: ProfileInterests
-    profileInterestsOld: null | ProfileInterests
   }
   'edit-profile-meta': {
     profileKey: string
-    input: { meta?: ProfileMeta; backgroundImage: boolean; image: boolean }
-    profile: ProfileDataType
-    profileOld: ProfileDataType
+    meta: ProfileMeta
   }
 }
 
-export interface ActivityLogDataType {
-  activity: EventPayload<WebUserActivityEvents>
+export type ActivityLogDataType = Pick<EventPayload<WebUserActivityEvents>, 'event' | 'data'> & {
   at: string
   ulid: string
 }

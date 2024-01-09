@@ -761,3 +761,12 @@ export function getEntityDoc<DataType extends SomeEntityDataType>(
   const { _meta: _1, ...doc } = fullEntityDoc
   return doc as any as EntityDocument<DataType>
 }
+
+export async function getCurrentEntityUserIdentifier() {
+  const sysUser = await getCurrentSystemUser()
+  return getEntityUserIdentifier(sysUser)
+}
+
+export async function getEntityUserIdentifier(sysUser: SystemUser) {
+  return sysUser.type === 'entity' ? sysUser.entityIdentifier : null
+}

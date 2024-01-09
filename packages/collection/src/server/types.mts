@@ -1,10 +1,13 @@
-import type { EntityDocument, Patch, SystemUser } from '@moodlenet/system-entities/server'
+import type { EntityIdentifier } from '@moodlenet/system-entities/common'
+import type { EntityDocument } from '@moodlenet/system-entities/server'
 
 export type CollectionEntityDoc = EntityDocument<CollectionDataType>
-export type CollectionDataType = {
+export type CollectionMeta = {
   title: string
   description: string
   image: null | Image
+}
+export type CollectionDataType = CollectionMeta & {
   published: boolean
   resourceList: { _key: string }[]
   popularity?: {
@@ -25,40 +28,31 @@ export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 export type CollectionEvents = CollectionActivityEvents
 export type CollectionActivityEvents = {
   'resource-list-curation': {
-    collectionDoc: CollectionEntityDoc
+    collectionKey: string
     action: 'add' | 'remove'
     resourceKey: string
-    systemUser: SystemUser
+    userId: EntityIdentifier
   }
   'created': {
-    collectionDoc: CollectionEntityDoc
-    systemUser: SystemUser
+    collectionKey: string
+    meta: CollectionMeta
+    userId: EntityIdentifier
   }
   'updated': {
-    collectionDoc: CollectionEntityDoc
-    collectionDocOld: CollectionEntityDoc
-    input: {
-      meta?: Patch<CollectionDataType>
-      image: boolean
-    }
-    systemUser: SystemUser
+    collectionKey: string
+    newMeta: CollectionMeta
+    userId: EntityIdentifier
   }
-  'request-publishing': {
-    collectionDoc: CollectionEntityDoc
-    systemUser: SystemUser
+  'published': {
+    collectionKey: string
+    userId: EntityIdentifier
   }
-  'publishing-acceptance': {
-    collectionDoc: CollectionEntityDoc
-    accepted: true
-    automaticAcceptance: true
-  }
-
   'unpublished': {
-    collectionDoc: CollectionEntityDoc
-    systemUser: SystemUser
+    collectionKey: string
+    userId: EntityIdentifier
   }
   'deleted': {
-    systemUser: SystemUser
-    collectionDoc: CollectionEntityDoc
+    collectionKey: string
+    userId: EntityIdentifier
   }
 }

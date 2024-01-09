@@ -3,13 +3,14 @@ import type {
   Actor_StoreResourceEdits_Data,
   Context,
   EdResourceMachineDeps,
+  ResourceDoc,
   StateName,
 } from '@moodlenet/core-domain/resource'
 import { DEFAULT_CONTEXT, getEdResourceMachine } from '@moodlenet/core-domain/resource'
 import { interpret } from 'xstate'
 
 import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
-import { createEntityKey, getCurrentSystemUser } from '@moodlenet/system-entities/server'
+import { createEntityKey, getCurrentEntityUserIdentifier } from '@moodlenet/system-entities/server'
 import { Resource } from '../exports.mjs'
 import { env } from '../init/env.mjs'
 import {
@@ -24,7 +25,7 @@ import {
   validationsConfigs,
 } from '../services.mjs'
 import { shell } from '../shell.mjs'
-import type { ResourceDataType } from '../types.mjs'
+import type { EventResourceMeta, ResourceDataType } from '../types.mjs'
 import * as map from './mappings/exports.mjs'
 import providers from './providers.mjs'
 
@@ -94,6 +95,10 @@ export async function provideEdResourceMachineDepsAndInits(
   return depsAndInitializations
 }
 
+function getEventResourceMeta(resourceDoc: ResourceDoc): EventResourceMeta {
+  const { content, image, meta } = resourceDoc
+  return { content, image, ...meta }
+}
 function getEdResourceMachineDeps(): EdResourceMachineDeps {
   return {
     services: {
@@ -136,16 +141,15 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
           doc: persistentContext.doc,
         }
 
-        shell.events.emit('created', {
-          resourceDoc: persistentContext.doc,
-          systemUser: await getCurrentSystemUser(),
-        })
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId) {
+          shell.events.emit('created', {
+            resourceKey: newResourceKey,
+            resourceMeta: getEventResourceMeta(persistentContext.doc),
+            userId,
+          })
+        }
         return response
-      },
-      async ModeratePublishingResource() {
-        return new Promise(resolve => {
-          setTimeout(() => resolve({ notPassed: false }), 100)
-        })
       },
       async ScheduleDestroy() {
         return new Promise(resolve => {
@@ -174,15 +178,14 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         }
         const persistentContext = map.db.doc_2_persistentContext(patchRes.patched)
 
-        shell.events.emit('updated', {
-          input: {
-            image: !inputImage || inputImage.kind !== 'no-change' ? false : true,
-            meta: inputMeta,
-          },
-          resourceDoc: persistentContext.doc,
-          resourceDocOld: oldDoc,
-          systemUser: await getCurrentSystemUser(),
-        })
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId) {
+          shell.events.emit('updated', {
+            newResourceMeta: getEventResourceMeta(persistentContext.doc),
+            resourceKey,
+            userId,
+          })
+        }
         const res: Actor_StoreResourceEdits_Data = {
           doc: persistentContext.doc,
         }
@@ -190,10 +193,9 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
       },
     },
     actions: {
-      notify_creator(/* _, ev */) {
-        //@ALE: TBD
-        // console.log('notify_creator' /* , ev.type */)
-      },
+      // notify_creator(/* _, ev */) {
+      //   // console.log('notify_creator' /* , ev.type */)
+      // },
       async destroy_all_data(context) {
         const resourceKey = context.doc.id.resourceKey
         if (resourceKey === DEFAULT_CONTEXT.doc.id.resourceKey) {
@@ -202,15 +204,22 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         delResource(resourceKey)
         deleteImageFile(resourceKey)
         delResourceFile(resourceKey)
-        shell.events.emit('deleted', {
-          systemUser: await getCurrentSystemUser(),
-          resourceDoc: context.doc,
-        })
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId) {
+          shell.events.emit('deleted', {
+            userId,
+            resourceKey: context.doc.id.resourceKey,
+          })
+        }
       },
-      request_generate_meta_suggestions(context) {
-        shell.events.emit('request-metadata-generation', {
-          resourceKey: context.doc.id.resourceKey,
-        })
+      async request_generate_meta_suggestions(context) {
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId) {
+          shell.events.emit('request-metadata-generation', {
+            resourceKey: context.doc.id.resourceKey,
+            userId,
+          })
+        }
       },
     },
 
@@ -253,7 +262,7 @@ export async function stdEdResourceMachine(by: ProvideBy) {
     const saveOnStates: StateName[] = [
       'Autogenerating-Meta',
       'Unpublished',
-      'Publishing-Moderation',
+      // 'Publishing-Moderation',
       'In-Trash',
       'Published',
       'Meta-Suggestion-Available',
@@ -286,25 +295,22 @@ export async function stdEdResourceMachine(by: ProvideBy) {
       oldState === currentState
         ? undefined
         : currentState === 'Published'
-        ? 'request-publishing'
-        : 'unpublished'
+        ? 'published'
+        : currentState === 'Unpublished'
+        ? 'unpublished'
+        : undefined
     // console.log('\n*****'.repeat(5), {
     //   oldState,
     //   currentState,
     //   publishEvent,
     // })
-    if (publishEvent) {
+    const userId = await getCurrentEntityUserIdentifier()
+
+    if (publishEvent && userId) {
       shell.events.emit(publishEvent, {
-        resourceDoc: state.context.doc,
-        systemUser: await getCurrentSystemUser(),
+        resourceKey: state.context.doc.id.resourceKey,
+        userId,
       })
-      if (publishEvent === 'request-publishing') {
-        shell.events.emit('publishing-acceptance', {
-          resourceDoc: state.context.doc,
-          accepted: true,
-          automaticAcceptance: true,
-        })
-      }
     }
     // .then(
     //   () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),

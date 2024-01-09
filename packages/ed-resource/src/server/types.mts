@@ -1,7 +1,8 @@
 import type { PersistentContext, ResourceDoc, ResourceMeta } from '@moodlenet/core-domain/resource'
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import type { FsItem } from '@moodlenet/simple-file-store/server'
-import type { EntityDocument, SystemUser } from '@moodlenet/system-entities/server'
+import type { EntityIdentifier } from '@moodlenet/system-entities/common'
+import type { EntityDocument } from '@moodlenet/system-entities/server'
 
 export type ResourceEntityDoc = EntityDocument<ResourceDataType>
 export type Content = FileContent | LinkContent
@@ -51,39 +52,34 @@ export type ResourceEvents = ResourceActivityEvents // & {}
 export type ResourceActivityEvents = {
   'downloaded': {
     resourceKey: string
-    currentSysUser: SystemUser
+    userId: EntityIdentifier | null
   }
   'request-metadata-generation': {
     resourceKey: string
+    userId: EntityIdentifier
   }
   'created': {
-    resourceDoc: ResourceDoc
-    systemUser: SystemUser
+    resourceKey: string
+    resourceMeta: EventResourceMeta
+    userId: EntityIdentifier
   }
   'updated': {
-    resourceDoc: ResourceDoc
-    resourceDocOld: ResourceDoc
-    input: {
-      meta?: ResourceMeta
-      image: boolean
-    }
-    systemUser: SystemUser
+    resourceKey: string
+    newResourceMeta: EventResourceMeta
+    userId: EntityIdentifier
   }
-  'request-publishing': {
-    resourceDoc: ResourceDoc
-    systemUser: SystemUser
-  }
-  'publishing-acceptance': {
-    resourceDoc: ResourceDoc
-    accepted: true
-    automaticAcceptance: true
+  'published': {
+    resourceKey: string
+    userId: EntityIdentifier
   }
   'unpublished': {
-    resourceDoc: ResourceDoc
-    systemUser: SystemUser
+    resourceKey: string
+    userId: EntityIdentifier
   }
   'deleted': {
-    systemUser: SystemUser
-    resourceDoc: ResourceDoc
+    resourceKey: string
+    userId: EntityIdentifier
   }
 }
+
+export type EventResourceMeta = ResourceMeta & Pick<ResourceDoc, 'content' | 'image'>

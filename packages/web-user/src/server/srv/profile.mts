@@ -81,7 +81,10 @@ export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> }
 
 export async function editProfile(
   key: string,
-  profileMeta: ProfileMeta,
+  profileMeta: Pick<
+    ProfileMeta,
+    'aboutMe' | 'displayName' | 'location' | 'organizationName' | 'siteUrl'
+  >,
   opts?: {
     projectAccess?: EntityAccess[]
   },
@@ -126,16 +129,22 @@ export async function editProfile(
 
   shell.events.emit('edit-profile-meta', {
     profileKey: key,
-    input: {
-      meta: profileMeta,
-      backgroundImage: false,
-      image: false,
-    },
-    profile: updateRes.patched,
-    profileOld: updateRes.old,
+    meta: getProfileMeta(updateRes.patched),
   })
 
   return updateRes
+}
+
+function getProfileMeta(profileData: ProfileDataType) {
+  return {
+    aboutMe: profileData.aboutMe,
+    avatarImage: profileData.avatarImage,
+    backgroundImage: profileData.backgroundImage,
+    displayName: profileData.displayName,
+    location: profileData.location,
+    organizationName: profileData.organizationName,
+    siteUrl: profileData.siteUrl,
+  }
 }
 
 export async function entityFeatureAction({
@@ -207,9 +216,10 @@ export async function entityFeatureAction({
   shell.events.emit('feature-entity', {
     action,
     profileKey,
-    featuredEntityItem: knownFeaturedEntityItem,
-    featuredEntityItems: updateResult.patched.knownFeaturedEntities,
-    oldFeaturedEntityItems: updateResult.old.knownFeaturedEntities,
+    item: knownFeaturedEntityItem,
+    currentItemsOfSameType: updateResult.patched.knownFeaturedEntities.filter(
+      item => item.feature === feature,
+    ),
   })
 
   if (updateResult.patched.publisher) {
@@ -418,12 +428,7 @@ export async function setProfileAvatar(
   }
   shell.events.emit('edit-profile-meta', {
     profileKey: _key,
-    profile: patchResult.patched,
-    profileOld: patchResult.old,
-    input: {
-      image: true,
-      backgroundImage: false,
-    },
+    meta: getProfileMeta(patchResult.patched),
   })
   return patchResult
 }
@@ -463,9 +468,7 @@ export async function setProfileBackgroundImage(
     await publicFiles.del(imageLogicalFilename)
   }
   shell.events.emit('edit-profile-meta', {
-    input: { backgroundImage: true, image: false },
-    profile: patchResult.patched,
-    profileOld: patchResult.old,
+    meta: getProfileMeta(patchResult.patched),
     profileKey: _key,
   })
   return patchResult
@@ -657,7 +660,6 @@ export async function editMyProfileInterests({
   shell.events.emit('edit-profile-interests', {
     profileKey: profileIds._key,
     profileInterests: interests,
-    profileInterestsOld: updateRes.old.settings.interests ?? null,
   })
 
   return updateRes

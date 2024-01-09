@@ -8,7 +8,7 @@ import {
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
-  getCurrentSystemUser,
+  getCurrentEntityUserIdentifier,
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 import { waitFor } from 'xstate/lib/waitFor.js'
@@ -67,7 +67,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         let snap = interpreter.getSnapshot()
         const { event, awaitNextState } = ((): { event: Event; awaitNextState: StateName } =>
           publish
-            ? { awaitNextState: 'Published', event: { type: 'request-publish' } }
+            ? { awaitNextState: 'Published', event: { type: 'publish' } }
             : { awaitNextState: 'Unpublished', event: { type: 'unpublish' } })()
         if (!snap.can(event)) {
           interpreter.stop()
@@ -479,8 +479,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
         const readable = await assertRpcFileReadable(fsItem.rpcFile)
 
         readable.on('end', async () => {
-          const currentSysUser = await getCurrentSystemUser()
-          shell.events.emit('downloaded', { resourceKey: _key, currentSysUser })
+          const userId = await getCurrentEntityUserIdentifier()
+          shell.events.emit('downloaded', { resourceKey: _key, userId })
           incrementResourceDownloads({ _key })
         })
         return readableRpcFile({ ...fsItem.rpcFile }, () => readable)
