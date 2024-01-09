@@ -316,9 +316,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'basic/v1/create': {
       guard: async body => {
-        const { draftResourceValidationSchema, draftContentValidationSchema } =
-          await getValidations()
-        await draftContentValidationSchema.validate({ content: body?.resource })
+        const { draftResourceValidationSchema, contentValidationSchema } = await getValidations()
+        await contentValidationSchema.validate({ content: body?.resource })
         await draftResourceValidationSchema.validate(body, {
           stripUnknown: true,
         })
@@ -420,12 +419,12 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'webapp/create': {
       guard: async body => {
-        const { draftContentValidationSchema } = await getValidations()
-        const validatedContentOrNullish = await draftContentValidationSchema.validate(
+        const { contentValidationSchema } = await getValidations()
+        const validatedContent = await contentValidationSchema.validate(
           { content: body?.content?.[0] },
           { stripUnknown: true },
         )
-        body.content = [validatedContentOrNullish]
+        body.content = [validatedContent.content]
       },
       async fn({ content: [resourceContent] }) {
         if (!resourceContent) {
@@ -434,7 +433,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         const [interpreter] = await stdEdResourceMachine({ by: 'create' })
         let snap = interpreter.getSnapshot()
-
+        console.log({ resourceContent })
         const provideNewResourceEvent: Event = {
           type: 'provide-new-resource',
           content:

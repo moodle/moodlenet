@@ -84,8 +84,7 @@ export const Resource: FC<ResourceProps> = ({
 
   fileMaxSize,
   validationSchemas: {
-    draftContentValidationSchema,
-    publishedContentValidationSchema,
+    contentValidationSchema,
     draftResourceValidationSchema,
     imageValidationSchema,
     publishedResourceValidationSchema,
@@ -187,15 +186,12 @@ export const Resource: FC<ResourceProps> = ({
     validateOnMount: true,
     validateOnChange: true,
     enableReinitialize: true,
-    validationSchema: isPublishValidating
-      ? publishedContentValidationSchema
-      : draftContentValidationSchema,
+    validationSchema: contentValidationSchema,
     onSubmit: values => {
       return setContent(values.content)
     },
   })
-  const isPublishedContentValid = publishedContentValidationSchema.isValidSync(contentForm.values)
-  const isDraftContentValid = draftContentValidationSchema.isValidSync(contentForm.values)
+  const isContentValid = contentValidationSchema.isValidSync(contentForm.values)
 
   const imageForm = useFormik<{ image: AssetInfoForm | undefined | null }>({
     initialValues: useMemo(() => ({ image: image }), [image]),
@@ -288,7 +284,7 @@ export const Resource: FC<ResourceProps> = ({
   const applyCheckFormsAndPublish = useCallback(() => {
     setFieldsAsTouched()
 
-    if (isPublishedFormValid && isPublishedContentValid) {
+    if (isPublishedFormValid && isContentValid) {
       form_validateForm()
       contentForm_validateForm()
       setShouldShowErrors(false)
@@ -301,7 +297,7 @@ export const Resource: FC<ResourceProps> = ({
   }, [
     contentForm_validateForm,
     form_validateForm,
-    isPublishedContentValid,
+    isContentValid,
     isPublishedFormValid,
     publish,
     setFieldsAsTouched,
@@ -331,7 +327,7 @@ export const Resource: FC<ResourceProps> = ({
   const applyPublishCheck = useCallback(() => {
     setFieldsAsTouched()
 
-    if (isPublishedFormValid && isPublishedContentValid) {
+    if (isPublishedFormValid && isContentValid) {
       setShowCheckPublishSuccess('success')
       setShouldShowErrors(false)
     } else {
@@ -343,7 +339,7 @@ export const Resource: FC<ResourceProps> = ({
   }, [
     contentForm_validateForm,
     form_validateForm,
-    isPublishedContentValid,
+    isContentValid,
     isPublishedFormValid,
     setFieldsAsTouched,
   ])
@@ -370,8 +366,7 @@ export const Resource: FC<ResourceProps> = ({
   const areFormsValid: ValidForms = {
     isDraftFormValid: isDraftFormValid,
     isPublishedFormValid: isPublishedFormValid,
-    isDraftContentValid: isDraftContentValid,
-    isPublishedContentValid: isPublishedContentValid,
+    isContentValid: isContentValid,
     isImageValid: isImageValid,
   }
 

@@ -18,8 +18,8 @@ export type ValidationSchemas = ReturnType<typeof getValidationSchemas>
 export function getValidationSchemas(validationConfigs: ValidationsConfig) {
   const publishedResourceValidationSchema = getResourceValidationSchema({ type: 'publish' })
   const draftResourceValidationSchema = getResourceValidationSchema({ type: 'draft' })
-  const publishedContentValidationSchema = getContentValidationSchema({ type: 'publish' })
-  const draftContentValidationSchema = getContentValidationSchema({ type: 'draft' })
+  const contentValidationSchema = getContentValidationSchema()
+  // const draftContentValidationSchema = getContentValidationSchema({ type: 'draft' })
 
   const imageValidationSchema: SchemaOf<{ image: AssetInfoForm | undefined | null }> = object({
     image: mixed()
@@ -46,16 +46,15 @@ export function getValidationSchemas(validationConfigs: ValidationsConfig) {
   return {
     publishedResourceValidationSchema,
     draftResourceValidationSchema,
-    publishedContentValidationSchema,
-    draftContentValidationSchema,
+    contentValidationSchema,
+    //  draftContentValidationSchema,
     imageValidationSchema,
   }
 
-  function getContentValidationSchema({ type }: { type: 'publish' | 'draft' }) {
-    const forPublish = type === 'publish'
-    const schema: SchemaOf<{ content: File | string | undefined | null }> = object({
+  function getContentValidationSchema() {
+    const schema: SchemaOf<{ content: File | string }> = object({
       content: mixed()
-        .test((v: File | string | undefined | null, { createError }) => {
+        .test((v: File | string, { createError }) => {
           const errors =
             !v ||
             (typeof v === 'string'
@@ -71,9 +70,7 @@ export function getValidationSchemas(validationConfigs: ValidationsConfig) {
                 }))
           return errors
         })
-        .withMutation(s =>
-          forPublish ? s.required(`Please upload a content or a link`) : s.optional(),
-        ),
+        .required(`Please upload a content or a link`),
     })
     return schema
   }

@@ -48,14 +48,12 @@ export async function getValidations() {
   const {
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
-    draftContentValidationSchema,
-    publishedContentValidationSchema,
+    contentValidationSchema,
     imageValidationSchema,
   } = getValidationSchemas(validationsConfigs)
 
   return {
-    draftContentValidationSchema,
-    publishedContentValidationSchema,
+    contentValidationSchema,
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
     imageValidationSchema,
