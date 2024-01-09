@@ -294,7 +294,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       <InputTextField
         className="underline"
         placeholder="Location"
-        value={form.values.location}
+        value={form.values.location ?? undefined}
         onChange={form.handleChange}
         noBorder
         name="location"
@@ -311,7 +311,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     <span key="edit-site-url">
       <InputTextField
         className="underline"
-        value={form.values.siteUrl}
+        value={form.values.siteUrl ?? undefined}
         onChange={form.handleChange}
         noBorder
         placeholder="Website"

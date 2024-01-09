@@ -296,7 +296,7 @@ export async function stdEdResourceMachine(by: ProvideBy) {
         ? undefined
         : currentState === 'Published'
         ? 'published'
-        : currentState === 'Unpublished'
+        : oldState === 'Published' && currentState === 'Unpublished'
         ? 'unpublished'
         : undefined
     // console.log('\n*****'.repeat(5), {

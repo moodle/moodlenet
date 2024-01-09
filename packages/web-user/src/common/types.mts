@@ -39,11 +39,11 @@ export type Profile = {
   _key: string
   displayName: string
   aboutMe: string
-  organizationName: string | undefined
-  location: string | undefined
-  siteUrl: string | undefined
-  backgroundUrl: string | undefined
-  avatarUrl: string | undefined
+  organizationName: string | undefined | null
+  location: string | undefined | null
+  siteUrl: string | undefined | null
+  backgroundUrl: string | undefined | null
+  avatarUrl: string | undefined | null
 }
 export type User = {
   title: string
@@ -90,9 +90,9 @@ export type ProfileData = {
 export type ProfileFormValues = {
   displayName: string
   aboutMe: string
-  organizationName: string | undefined
-  location: string | undefined
-  siteUrl: string | undefined
+  organizationName: string | undefined | null | null | null | null | null
+  location: string | undefined | null | null | null | null | null
+  siteUrl: string | undefined | null | null | null | null | null
 }
 
 export type ProfileState = {

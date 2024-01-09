@@ -381,9 +381,9 @@ link: url string format`,
           image,
         })
         const validatedContent = schemas.providedContent(content)
-        // console.log({ validatedContent })
+        console.log({ content, image, meta, validatedContent })
         const { contentRejected, providedContent } = validatedContent.valid
-          ? { contentRejected: null, providedContent: validatedContent.providedContent }
+          ? { contentRejected: null, providedContent: validatedContent.providedContent ?? null }
           : { contentRejected: { reason: validatedContent.reason }, providedContent: null }
 
         return produce(context, proxy => {
