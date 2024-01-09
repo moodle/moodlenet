@@ -285,7 +285,7 @@ export const useResourceStoryProps = (
   const [uploadTimeoutIds, setUploadTimeoutIds] = useState<NodeJS.Timeout[] | null>(null)
 
   useEffect(() => {
-    const intervalTime = 2000 / 100
+    const intervalTime = 4000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
     if (uploadProgress === 0 && !hasStartedUploadRef.current) {
@@ -305,7 +305,7 @@ export const useResourceStoryProps = (
           setContentUrl('https://example.com/some_url.pdf')
           setUploadProgress(undefined)
           // setIsUploaded(true)
-          setautofillState('extracting-info')
+          setautofillState('ai-generation')
           hasStartedUploadRef.current = false // Reset for potential future sequences
         }, intervalTime * 102),
       )
@@ -324,7 +324,7 @@ export const useResourceStoryProps = (
   const [autofillTimeoutId, setAutofillTimeoutId] = useState<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (autofillState === 'extracting-info' && autofillPrevStateRef.current === undefined) {
+    if (autofillState === 'ai-generation' && autofillPrevStateRef.current === undefined) {
       const extractTimeoutId = setTimeout(() => {
         setautofillState('ai-generation')
         setAutofillTimeoutId(null)
@@ -332,7 +332,7 @@ export const useResourceStoryProps = (
       setAutofillTimeoutId(extractTimeoutId)
     }
 
-    if (autofillState === 'ai-generation' && autofillPrevStateRef.current === 'extracting-info') {
+    if (autofillState === 'ai-generation' && autofillPrevStateRef.current === 'ai-generation') {
       const aiGenerateTimoutId = setTimeout(() => {
         setautofillState(undefined)
         setAutofillTimeoutId(null)
@@ -366,7 +366,7 @@ export const useResourceStoryProps = (
       setContentType('link')
       //  setIsUploaded(false)
       setFilename(null)
-      setautofillState('extracting-info')
+      setautofillState('ai-generation')
     } else if (e instanceof File) {
       setContentType('file')
       setFilename(e.name)
@@ -399,7 +399,7 @@ export const useResourceStoryProps = (
     provideContent: setContent,
     deleteResource: action('delete resource'),
     startAutofill: () => {
-      setautofillState('extracting-info')
+      setautofillState('ai-generation')
     },
     editData: setFormData,
     publish: () => {

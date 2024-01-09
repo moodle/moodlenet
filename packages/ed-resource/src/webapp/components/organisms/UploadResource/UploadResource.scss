@@ -51,6 +51,10 @@
       background-color: white;
       position: relative;
 
+      &.no-border {
+        border: none;
+      }
+
       // &:hover:has(> *:hover.upload:hover) {
       &:hover:not(:has(> *:hover:not(.upload:hover))):not(:has(> .uploading-animation, > .autofilling-animation)) {
         cursor: pointer;
@@ -93,17 +97,17 @@
         @keyframes rotateAnimation {
           0%,
           100% {
-            transform: rotate(1deg) translate(0, 8px);
+            transform: rotate(0deg) translate(0, 45px);
           }
           50% {
-            transform: rotate(1deg) translate(0, -8px);
+            transform: rotate(0deg) translate(0, -45px);
           }
         }
 
         > .uploading-img {
           max-height: 130px;
           display: inline-block; /* necessary to apply transform */
-          animation: rotateAnimation 1s infinite;
+          animation: rotateAnimation 2s infinite;
           animation-timing-function: cubic-bezier(0.45, 0.25, 0.6, 0.95);
         }
       }
@@ -235,17 +239,18 @@
         background-color: transparent; // Just to ensure the beats contrast well
       }
 
-      > .upload-beat {
-        width: 100%;
-        > .beat {
-          height: 100%;
-          background: #1a6aff33;
-          position: absolute;
-          border-radius: 10px;
-        }
-      }
+      // > .upload-beat {
+      //   width: 100%;
+      //   > .beat {
+      //     height: 100%;
+      //     background: #1a6aff33;
+      //     position: absolute;
+      //     border-radius: 10px;
+      //   }
+      // }
 
-      > .autofill-beats {
+      > .autofill-beats,
+      > .upload-beats {
         @keyframes moveRight {
           0% {
             left: -50%;
@@ -258,7 +263,6 @@
         > .beat {
           width: 50%;
           height: 100%;
-          background: linear-gradient(to right, transparent 30%, #00bd7e53);
           position: absolute;
           border-radius: 10px;
           left: -50%;
@@ -273,6 +277,13 @@
           &.beat3 {
             animation: moveRight 6s 4s infinite linear;
           }
+        }
+
+        &.upload-beats > .beat {
+          background: linear-gradient(to right, transparent 30%, #1a6aff33);
+        }
+        &.autofill-beats > .beat {
+          background: linear-gradient(to right, transparent 30%, #00bd7e53);
         }
       }
     }

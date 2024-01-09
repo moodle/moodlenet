@@ -60,7 +60,7 @@ export type AutofillSuggestions = {
 export type ResourceStateRpc = {
   isPublished: boolean
   // isUploaded: boolean
-  uploadProgress: number | undefined
+  uploadProgress: number | 'N/A' | undefined
   autofillSuggestions: null | AutofillSuggestions
   autofillState: AutofillState
 }
@@ -109,7 +109,7 @@ export type ResourceDataProps = {
 export type ResourceStateProps = {
   isPublished: boolean
   // isUploaded: boolean
-  uploadProgress: number | undefined
+  uploadProgress: number | 'N/A' | undefined
   autofillState: AutofillState
   // autofillSu ggestions: null | AutofillSuggestions
 }
