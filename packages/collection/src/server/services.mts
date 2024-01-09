@@ -127,7 +127,7 @@ export async function patchCollection(
   }
 
   const userId = await getCurrentEntityUserIdentifier()
-  if (userId) {
+  if (userId && patchResult.changed) {
     shell.events.emit('updated', {
       collectionKey: key,
       newMeta: getCollectionMeta(patchResult.patched),
@@ -304,7 +304,7 @@ export async function setCollectionImage(
   }
 
   const userId = await getCurrentEntityUserIdentifier()
-  if (userId) {
+  if (userId && patchResult.changed) {
     shell.events.emit('updated', {
       collectionKey: _key,
       newMeta: getCollectionMeta(patchResult.patched),

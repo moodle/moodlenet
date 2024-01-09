@@ -127,10 +127,11 @@ export async function editProfile(
     })
   }
 
-  shell.events.emit('edit-profile-meta', {
-    profileKey: key,
-    meta: getProfileMeta(updateRes.patched),
-  })
+  updateRes.changed &&
+    shell.events.emit('edit-profile-meta', {
+      profileKey: key,
+      meta: getProfileMeta(updateRes.patched),
+    })
 
   return updateRes
 }
@@ -426,10 +427,11 @@ export async function setProfileAvatar(
   if (!rpcFile) {
     await publicFiles.del(avatarLogicalFilename)
   }
-  shell.events.emit('edit-profile-meta', {
-    profileKey: _key,
-    meta: getProfileMeta(patchResult.patched),
-  })
+  patchResult.changed &&
+    shell.events.emit('edit-profile-meta', {
+      profileKey: _key,
+      meta: getProfileMeta(patchResult.patched),
+    })
   return patchResult
 }
 
@@ -467,10 +469,11 @@ export async function setProfileBackgroundImage(
   if (!backgroundImage) {
     await publicFiles.del(imageLogicalFilename)
   }
-  shell.events.emit('edit-profile-meta', {
-    meta: getProfileMeta(patchResult.patched),
-    profileKey: _key,
-  })
+  patchResult.changed &&
+    shell.events.emit('edit-profile-meta', {
+      meta: getProfileMeta(patchResult.patched),
+      profileKey: _key,
+    })
   return patchResult
 }
 export function getProfileImageLogicalFilename(profileKey: string) {

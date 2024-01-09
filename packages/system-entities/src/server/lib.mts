@@ -210,17 +210,26 @@ export async function patchEntity<
     preAccessBody: `${opts?.preAccessBody ?? ''} 
     FILTER ${matchRevFilter} ${currentEntityVar}._key == ${toaql(key)} LIMIT 1`,
     postAccessBody: `${opts?.postAccessBody ?? ''} 
-    UPDATE ${currentEntityVar} WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
+    let providedPatch = UNSET(${aqlPatchVar}, '_meta') 
+    let noChanges = MATCHES( ${currentEntityVar}, providedPatch )
+    let patch = noChanges ? { _rev: ${currentEntityVar}._rev } : providedPatch
+    UPDATE ${currentEntityVar} WITH patch IN @@collection`,
     project: {
       patched: 'NEW' as AqlVal<EntityFullDocument<EntityDataType>>,
       old: 'OLD' as AqlVal<EntityFullDocument<EntityDataType>>,
+      noChanges: 'noChanges' as AqlVal<boolean>,
     },
   })
   const patchRecord = await patchCursor.next()
   if (!patchRecord) {
     return
   }
-  return { patched: patchRecord.patched, old: patchRecord.old }
+  return {
+    patched: patchRecord.patched,
+    old: patchRecord.old,
+    noChanges: patchRecord.noChanges,
+    changed: !patchRecord.noChanges,
+  }
 }
 
 /* export async function patchEntity<EntityDataType extends SomeEntityDataType>(
