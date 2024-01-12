@@ -27,24 +27,23 @@ export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
 export type CollectionEvents = CollectionActivityEvents
 export type CollectionActivityEvents = {
-  'resource-list-curation': {
-    collectionKey: string
-    action: 'add' | 'remove'
-    resourceKey: string
-    userId: EntityIdentifier
-  }
   'created': {
     collectionKey: string
-    meta: CollectionMeta
     userId: EntityIdentifier
   }
   'updated': {
     collectionKey: string
-    newMeta: CollectionMeta
+    updatedMeta: CollectionMeta
     userId: EntityIdentifier
   }
   'published': {
     collectionKey: string
+    userId: EntityIdentifier
+  }
+  'resource-list-curation': {
+    collectionKey: string
+    action: 'add' | 'remove'
+    resourceKey: string
     userId: EntityIdentifier
   }
   'unpublished': {

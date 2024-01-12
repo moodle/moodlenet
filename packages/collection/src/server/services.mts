@@ -130,14 +130,14 @@ export async function patchCollection(
   if (userId && patchResult.changed) {
     shell.events.emit('updated', {
       collectionKey: key,
-      newMeta: getCollectionMeta(patchResult.patched),
+      updatedMeta: getCollectionMeta(patchResult.patched),
       userId,
     })
   }
 
   return patchResult
 }
-function getCollectionMeta(collectionData: CollectionDataType): CollectionMeta {
+export function getCollectionMeta(collectionData: CollectionDataType): CollectionMeta {
   const { description, image, title } = collectionData
   return { description, image, title }
 }
@@ -157,7 +157,6 @@ export async function createCollection(collectionData: Partial<CollectionDataTyp
   if (userId) {
     shell.events.emit('created', {
       collectionKey: newCollection._key,
-      meta: getCollectionMeta(newCollection),
       userId,
     })
   }
@@ -307,7 +306,7 @@ export async function setCollectionImage(
   if (userId && patchResult.changed) {
     shell.events.emit('updated', {
       collectionKey: _key,
-      newMeta: getCollectionMeta(patchResult.patched),
+      updatedMeta: getCollectionMeta(patchResult.patched),
       userId,
     })
   }

@@ -54,21 +54,20 @@ export type ResourceActivityEvents = {
     resourceKey: string
     userId: EntityIdentifier | null
   }
-  'request-metadata-generation': {
-    resourceKey: string
-    userId: EntityIdentifier
-  }
   'created': {
     resourceKey: string
-    resourceMeta: EventResourceMeta
     userId: EntityIdentifier
   }
   'updated': {
     resourceKey: string
-    newResourceMeta: EventResourceMeta
+    updatedMeta: EventResourceMeta
     userId: EntityIdentifier
   }
   'published': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'request-metadata-generation': {
     resourceKey: string
     userId: EntityIdentifier
   }

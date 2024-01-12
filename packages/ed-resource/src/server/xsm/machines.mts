@@ -95,7 +95,7 @@ export async function provideEdResourceMachineDepsAndInits(
   return depsAndInitializations
 }
 
-function getEventResourceMeta(resourceDoc: ResourceDoc): EventResourceMeta {
+export function getEventResourceMeta(resourceDoc: ResourceDoc): EventResourceMeta {
   const { content, image, meta } = resourceDoc
   return { content, image, ...meta }
 }
@@ -145,9 +145,15 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         if (userId) {
           shell.events.emit('created', {
             resourceKey: newResourceKey,
-            resourceMeta: getEventResourceMeta(persistentContext.doc),
             userId,
           })
+          if (context.resourceEdits) {
+            shell.events.emit('updated', {
+              resourceKey: newResourceKey,
+              userId,
+              updatedMeta: getEventResourceMeta(persistentContext.doc),
+            })
+          }
         }
         return response
       },
@@ -181,7 +187,7 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         const userId = await getCurrentEntityUserIdentifier()
         if (userId && patchRes.changed) {
           shell.events.emit('updated', {
-            newResourceMeta: getEventResourceMeta(persistentContext.doc),
+            updatedMeta: getEventResourceMeta(persistentContext.doc),
             resourceKey,
             userId,
           })

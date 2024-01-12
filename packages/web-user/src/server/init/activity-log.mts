@@ -9,21 +9,39 @@ import { ActivityLogCollection } from '../init/arangodb.mjs'
 
 // console.log('init /*/')
 
-resource.onAny(payload => {
-  const { data, event } = payload
-  shell.events.emit('resource-activity-event', { data, event })
-})
-collection.onAny(payload => {
-  const { data, event } = payload
-  shell.events.emit('collection-activity-event', { data, event })
-})
+resource.on('created', ({ data }) => shell.events.emit('resource-created', data))
+resource.on('deleted', ({ data }) => shell.events.emit('resource-deleted', data))
+resource.on('downloaded', ({ data }) => shell.events.emit('resource-downloaded', data))
+resource.on('published', ({ data }) => shell.events.emit('resource-published', data))
+resource.on('request-metadata-generation', ({ data }) =>
+  shell.events.emit('resource-request-metadata-generation', data),
+)
+resource.on('unpublished', ({ data }) => shell.events.emit('resource-unpublished', data))
+resource.on('updated', ({ data }) => shell.events.emit('resource-updated', data))
+
+collection.on('created', ({ data }) => shell.events.emit('collection-created', data))
+collection.on('deleted', ({ data }) => shell.events.emit('collection-deleted', data))
+collection.on('published', ({ data }) => shell.events.emit('collection-published', data))
+collection.on('resource-list-curation', ({ data }) =>
+  shell.events.emit('collection-resource-list-curation', data),
+)
+collection.on('unpublished', ({ data }) => shell.events.emit('collection-unpublished', data))
+collection.on('updated', ({ data }) => shell.events.emit('collection-updated', data))
 
 shell.events.any(saveWebUserActivity)
 
-async function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents>) {
-  // console.log(`saveWebUserActivity [${activity.event}] /*/`)
-  const { ulid, now } = crypto.ulid.create()
-  const at = now.toISOString()
-  const { data, event } = activity
-  return ActivityLogCollection.save({ data, event, at, ulid })
+export async function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents>) {
+  return saveWebUserActivities([activity])
+}
+export async function saveWebUserActivities(activities: EventPayload<WebUserActivityEvents>[]) {
+  return ActivityLogCollection.saveAll(
+    activities.map(activity => {
+      const { ulid } = crypto.ulid.create()
+      return {
+        ulid,
+        ...activity,
+      }
+    }),
+    { silent: true, returnNew: false, waitForSync: false, overwriteMode: 'ignore' },
+  )
 }

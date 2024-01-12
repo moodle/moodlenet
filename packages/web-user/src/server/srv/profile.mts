@@ -136,7 +136,7 @@ export async function editProfile(
   return updateRes
 }
 
-function getProfileMeta(profileData: ProfileDataType) {
+export function getProfileMeta(profileData: ProfileDataType) {
   return {
     aboutMe: profileData.aboutMe,
     avatarImage: profileData.avatarImage,
@@ -193,6 +193,7 @@ export async function entityFeatureAction({
   const knownFeaturedEntityItem: KnownFeaturedEntityItem = {
     _id: targetEntityId,
     feature,
+    at: shell.now().toISOString(),
   }
 
   const aqlAction =
@@ -347,15 +348,14 @@ export async function getEntityFeatureCount({
   _key: string
 }) {
   const _id = getEntityIdByKnownEntity({ _key, entityType })
-  const needle: KnownFeaturedEntityItem = {
+  const needle: Pick<KnownFeaturedEntityItem, '_id' | 'feature'> = {
     _id,
     feature,
   }
   const bindVars = { '@collection': Profile.collection.name, needle }
   const query = `
   FOR profile IN @@collection
-//  FILTER profile.publisher && POSITION(profile.knownFeaturedEntities,@needle)
-  FILTER profile.publisher && @needle IN profile.knownFeaturedEntities[*]
+  FILTER profile.publisher && @needle IN (FOR item in profile.knownFeaturedEntities RETURN { _id:item._id, feature :item.feature })
   COLLECT WITH COUNT INTO count
   RETURN { count } 
   `
@@ -379,7 +379,7 @@ export async function getEntityFeatureProfiles({
   paging: { after?: string; limit?: number }
 }) {
   const _id = getEntityIdByKnownEntity({ _key, entityType })
-  const needle: KnownFeaturedEntityItem = {
+  const needle: Pick<KnownFeaturedEntityItem, '_id' | 'feature'> = {
     _id,
     feature,
   }
@@ -387,7 +387,7 @@ export async function getEntityFeatureProfiles({
   const cursor = await queryEntities(Profile.entityClass, {
     skip,
     limit,
-    postAccessBody: `FILTER ${currentEntityVar}.publisher && POSITION(${currentEntityVar}.knownFeaturedEntities,@needle)`,
+    postAccessBody: `FILTER ${currentEntityVar}.publisher && @needle IN (FOR item in ${currentEntityVar}.knownFeaturedEntities RETURN { _id:item._id, feature :item.feature })  `,
     bindVars: { needle },
   })
 
@@ -660,10 +660,11 @@ export async function editMyProfileInterests({
   })
   if (!updateRes) return updateRes
 
-  shell.events.emit('edit-profile-interests', {
-    profileKey: profileIds._key,
-    profileInterests: interests,
-  })
+  updateRes.patched.settings.interests &&
+    shell.events.emit('edit-profile-interests', {
+      profileKey: profileIds._key,
+      profileInterests: updateRes.patched.settings.interests,
+    })
 
   return updateRes
 }

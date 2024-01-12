@@ -6,9 +6,9 @@ export {
   createCollection,
   delCollection,
   deltaCollectionPopularityItem,
+  getCollectionMeta,
   patchCollection,
   setCollectionImage,
 } from './services.mjs'
 export * from './types.mjs'
 export const on = shell.events.on
-export const onAny = shell.events.any
