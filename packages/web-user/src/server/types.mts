@@ -42,7 +42,7 @@ export type ProfileMeta = {
 }
 export type ProfileDataType = ProfileMeta & {
   knownFeaturedEntities: KnownFeaturedEntityItem[]
-  kudos: number
+  points: number
   publisher: boolean
   webslug: string
   settings: ProfileSettings

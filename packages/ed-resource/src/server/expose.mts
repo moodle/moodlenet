@@ -480,7 +480,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         readable.on('end', async () => {
           const userId = await getCurrentEntityUserIdentifier()
           shell.events.emit('downloaded', { resourceKey: _key, userId })
-          incrementResourceDownloads({ _key })
+          userId && incrementResourceDownloads({ _key })
         })
         return readableRpcFile({ ...fsItem.rpcFile }, () => readable)
       },

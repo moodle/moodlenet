@@ -29,7 +29,8 @@ export type ProfilePagePluginMap = {
   main_subtitleItems?: AddOnMap<AddonItemNoKey>
   main_titleItems?: AddOnMap<AddonItemNoKey>
   mainColumnItems?: AddOnMap<AddonItemNoKey>
-  sideColumnItems?: AddOnMap<AddonItemNoKey>
+  rightColumnItems?: AddOnMap<AddonItemNoKey>
+  wideColumnItems?: AddOnMap<AddonItemNoKey>
   overallCardItems?: AddOnMap<Omit<OverallCardItem, 'key'>>
 }
 
@@ -208,6 +209,7 @@ export const useProfileProps = ({
         avatarUrl: profileGetRpc.data.avatarUrl ?? undefined,
         backgroundUrl: profileGetRpc.data.backgroundUrl ?? undefined,
         profileHref: profileGetRpc.profileHref,
+        points: profileGetRpc.points,
         ...(upBgImageTaskCurrent
           ? {
               backgroundUrl: upBgImageTaskCurrentObjectUrl,
@@ -271,7 +273,8 @@ export const useProfileProps = ({
       resourceCardPropsList,
       collectionCardPropsList,
       mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
-      sideColumnItems: plugins.getKeyedAddons('sideColumnItems'),
+      rightColumnItems: plugins.getKeyedAddons('rightColumnItems'),
+      wideColumnItems: plugins.getKeyedAddons('wideColumnItems'),
       overallCardItems: [
         {
           Icon: PermIdentity,
@@ -284,7 +287,7 @@ export const useProfileProps = ({
             }),
           ),
         },
-        { Icon: Grade, name: 'Kudos', value: profileGetRpc.numKudos },
+        { Icon: Grade, name: 'Kudos', value: profileGetRpc.points },
         {
           Icon: FilterNone,
           name: 'Resources',

@@ -11,7 +11,7 @@ export type OverallCardItem = {
   Icon: ComponentType
   name: string
   value: string | number
-  className: string
+  className?: string
   href?: Href
 }
 

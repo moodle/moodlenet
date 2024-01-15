@@ -196,7 +196,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     organizationName: '',
     siteUrl: '',
     knownFeaturedEntities: [],
-    kudos: 0,
+    points: pointSystem.account.creation,
     webslug: webSlug(profileData.displayName),
     settings: {},
     ...profileData,
