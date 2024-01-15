@@ -190,7 +190,7 @@ export const expose = await shell.expose<CollectionExposeType>({
         }
 
         const updateRes = await setCollectionImage(_key, uploadedRpcFile)
-        if (updateRes === false) {
+        if (!updateRes) {
           throw RpcStatus('Expectation Failed')
         }
         // console.log({ patched: updateRes?.patched.image, got: got.entity.image })

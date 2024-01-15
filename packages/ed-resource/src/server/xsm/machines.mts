@@ -3,13 +3,14 @@ import type {
   Actor_StoreResourceEdits_Data,
   Context,
   EdResourceMachineDeps,
+  ResourceDoc,
   StateName,
 } from '@moodlenet/core-domain/resource'
 import { DEFAULT_CONTEXT, getEdResourceMachine } from '@moodlenet/core-domain/resource'
 import { interpret } from 'xstate'
 
 import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
-import { createEntityKey } from '@moodlenet/system-entities/server'
+import { createEntityKey, getCurrentEntityUserIdentifier } from '@moodlenet/system-entities/server'
 import { Resource } from '../exports.mjs'
 import { env } from '../init/env.mjs'
 import {
@@ -24,7 +25,7 @@ import {
   validationsConfigs,
 } from '../services.mjs'
 import { shell } from '../shell.mjs'
-import type { ResourceDataType } from '../types.mjs'
+import type { EventResourceMeta, ResourceDataType } from '../types.mjs'
 import * as map from './mappings/exports.mjs'
 import providers from './providers.mjs'
 
@@ -94,6 +95,10 @@ export async function provideEdResourceMachineDepsAndInits(
   return depsAndInitializations
 }
 
+export function getEventResourceMeta(resourceDoc: ResourceDoc): EventResourceMeta {
+  const { content, image, meta } = resourceDoc
+  return { content, image, ...meta }
+}
 function getEdResourceMachineDeps(): EdResourceMachineDeps {
   return {
     services: {
@@ -135,12 +140,22 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         const response: Actor_StoreNewResource_Data = {
           doc: persistentContext.doc,
         }
+
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId) {
+          shell.events.emit('created', {
+            resourceKey: newResourceKey,
+            userId,
+          })
+          if (context.resourceEdits) {
+            shell.events.emit('updated', {
+              resourceKey: newResourceKey,
+              userId,
+              updatedMeta: getEventResourceMeta(persistentContext.doc),
+            })
+          }
+        }
         return response
-      },
-      async ModeratePublishingResource() {
-        return new Promise(resolve => {
-          setTimeout(() => resolve({ notPassed: false }), 100)
-        })
       },
       async ScheduleDestroy() {
         return new Promise(resolve => {
@@ -148,17 +163,18 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         })
       },
       async StoreResourceEdits(context) {
-        const resourceKey = context.doc.id.resourceKey
-        const imageEdits = context.resourceEdits?.data.image
-        const meta = context.resourceEdits?.data.meta
+        const oldDoc = context.doc
+        const resourceKey = oldDoc.id.resourceKey
+        const inputImage = context.resourceEdits?.data.image
+        const inputMeta = context.resourceEdits?.data.meta
 
         const resourceDataTypeMeta = map.db.meta_2_db({
-          ...context.doc.meta,
-          ...meta,
+          ...oldDoc.meta,
+          ...inputMeta,
         })
 
         const patchRes =
-          (await updateImage(resourceKey, imageEdits)) &&
+          (await updateImage(resourceKey, inputImage)) &&
           (await patchResource(resourceKey, {
             ...resourceDataTypeMeta,
           }))
@@ -166,8 +182,16 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         if (!patchRes) {
           throw new Error('StoreResourceEdits (patchResource) failed for unknown reasons')
         }
-
         const persistentContext = map.db.doc_2_persistentContext(patchRes.patched)
+
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId && patchRes.changed) {
+          shell.events.emit('updated', {
+            updatedMeta: getEventResourceMeta(persistentContext.doc),
+            resourceKey,
+            userId,
+          })
+        }
         const res: Actor_StoreResourceEdits_Data = {
           doc: persistentContext.doc,
         }
@@ -175,11 +199,10 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
       },
     },
     actions: {
-      notify_creator(/* _, ev */) {
-        //@ALE: TBD
-        // console.log('notify_creator' /* , ev.type */)
-      },
-      destroy_all_data(context) {
+      // notify_creator(/* _, ev */) {
+      //   // console.log('notify_creator' /* , ev.type */)
+      // },
+      async destroy_all_data(context) {
         const resourceKey = context.doc.id.resourceKey
         if (resourceKey === DEFAULT_CONTEXT.doc.id.resourceKey) {
           return
@@ -187,11 +210,22 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         delResource(resourceKey)
         deleteImageFile(resourceKey)
         delResourceFile(resourceKey)
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId) {
+          shell.events.emit('deleted', {
+            userId,
+            resourceKey: context.doc.id.resourceKey,
+          })
+        }
       },
-      request_generate_meta_suggestions(context) {
-        shell.events.emit('resource:request-metadata-generation', {
-          resourceKey: context.doc.id.resourceKey,
-        })
+      async request_generate_meta_suggestions(context) {
+        const userId = await getCurrentEntityUserIdentifier()
+        if (userId) {
+          shell.events.emit('request-metadata-generation', {
+            resourceKey: context.doc.id.resourceKey,
+            userId,
+          })
+        }
       },
     },
 
@@ -224,7 +258,9 @@ export async function stdEdResourceMachine(by: ProvideBy) {
     }
     tx = true
   })
-  interpreter.onStop(() => {
+  const oldState = initializeContext.state
+
+  interpreter.onStop(async () => {
     if (!tx) return
     const state = interpreter.getSnapshot()
     // https://github.com/statelyai/xstate/discussions/1294
@@ -232,7 +268,7 @@ export async function stdEdResourceMachine(by: ProvideBy) {
     const saveOnStates: StateName[] = [
       'Autogenerating-Meta',
       'Unpublished',
-      'Publishing-Moderation',
+      // 'Publishing-Moderation',
       'In-Trash',
       'Published',
       'Meta-Suggestion-Available',
@@ -249,14 +285,39 @@ export async function stdEdResourceMachine(by: ProvideBy) {
       state: currentState,
       publishingErrors: currentState === 'Unpublished' ? state.context.publishingErrors : null,
     }
-    Resource.collection.update(
+
+    const updateResult = await Resource.collection.update(
       state.context.doc.id.resourceKey,
       {
         persistentContext,
         published: currentState === 'Published',
       },
-      { mergeObjects: false, silent: true, keepNull: true },
+      { mergeObjects: false, keepNull: true, returnNew: true, returnOld: true },
     )
+    if (!(updateResult?.new && updateResult?.old)) {
+      throw new Error('update failed for unknown reasons')
+    }
+    const publishEvent =
+      oldState === currentState
+        ? undefined
+        : currentState === 'Published'
+        ? 'published'
+        : oldState === 'Published' && currentState === 'Unpublished'
+        ? 'unpublished'
+        : undefined
+    // console.log('\n*****'.repeat(5), {
+    //   oldState,
+    //   currentState,
+    //   publishEvent,
+    // })
+    const userId = await getCurrentEntityUserIdentifier()
+
+    if (publishEvent && userId) {
+      shell.events.emit(publishEvent, {
+        resourceKey: state.context.doc.id.resourceKey,
+        userId,
+      })
+    }
     // .then(
     //   () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),
     //   e => console.log(`could not update ${state.context.doc.id.resourceKey} ${currentState}`, e),

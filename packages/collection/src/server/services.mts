@@ -13,6 +13,7 @@ import {
   currentEntityVar,
   delEntity,
   entityMeta,
+  getCurrentEntityUserIdentifier,
   getEntity,
   patchEntity,
   queryMyEntities,
@@ -27,7 +28,7 @@ import { canPublish } from './aql.mjs'
 import { publicFiles } from './init/fs.mjs'
 import { Collection } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
-import type { CollectionDataType, CollectionEntityDoc } from './types.mjs'
+import type { CollectionDataType, CollectionMeta } from './types.mjs'
 
 export async function getValidations() {
   const config: ValidationsConfig = {
@@ -53,6 +54,9 @@ export async function setPublished(key: string, published: boolean) {
     if (!collection) {
       return null
     }
+    if (published === collection.entity.published) {
+      return true
+    }
     const { publishedCollectionValidationSchema } = await getValidations()
     const collectionFormProps: CollectionFormProps = {
       description: collection.entity.description,
@@ -76,10 +80,20 @@ export async function setPublished(key: string, published: boolean) {
   if (!patchResult) {
     return
   }
+  const userId = await getCurrentEntityUserIdentifier()
+  if (userId) {
+    shell.events.emit(published ? 'published' : 'unpublished', {
+      collectionKey: key,
+      userId,
+    })
+  }
   return patchResult
 }
 
-export async function patchCollection(key: string, patch: Patch<CollectionEntityDoc>) {
+export async function patchCollection(
+  key: string,
+  patch: Patch<Pick<CollectionDataType, 'description' | 'title'>>,
+) {
   const collection = await shell.call(getEntity)(Collection.entityClass, key)
   if (!collection) {
     return null
@@ -99,15 +113,34 @@ export async function patchCollection(key: string, patch: Patch<CollectionEntity
     return false
   }
 
-  const patchResult = await shell.call(patchEntity)(Collection.entityClass, key, patch, {
-    matchRev: collection.entity._rev,
-  })
+  const patchResult = await shell.call(patchEntity)(
+    Collection.entityClass,
+    key,
+    collectionFormProps,
+    {
+      postAccessBody: `FILTER !MATCHES( ${currentEntityVar}, ${toaql(collectionFormProps)} )`,
+      matchRev: collection.entity._rev,
+    },
+  )
   if (!patchResult) {
     return
   }
+
+  const userId = await getCurrentEntityUserIdentifier()
+  if (userId && patchResult.changed) {
+    shell.events.emit('updated', {
+      collectionKey: key,
+      updatedMeta: getCollectionMeta(patchResult.patched),
+      userId,
+    })
+  }
+
   return patchResult
 }
-
+export function getCollectionMeta(collectionData: CollectionDataType): CollectionMeta {
+  const { description, image, title } = collectionData
+  return { description, image, title }
+}
 export async function createCollection(collectionData: Partial<CollectionDataType>) {
   const newCollection = await shell.call(create)(Collection.entityClass, {
     description: '',
@@ -117,7 +150,16 @@ export async function createCollection(collectionData: Partial<CollectionDataTyp
     resourceList: [],
     ...collectionData,
   })
-
+  if (!newCollection) {
+    return
+  }
+  const userId = await getCurrentEntityUserIdentifier()
+  if (userId) {
+    shell.events.emit('created', {
+      collectionKey: newCollection._key,
+      userId,
+    })
+  }
   return newCollection
 }
 
@@ -153,6 +195,7 @@ export async function deltaCollectionPopularityItem({
   const updated = await updatePopularityResult.next()
   return updated?.popularity?.overall
 }
+
 export async function getMyCollections<
   Project extends AccessEntitiesCustomProject<any>,
   ProjectAccess extends EntityAccess,
@@ -195,13 +238,35 @@ export async function updateCollectionContent(
       resourceList: ${aqlAction}
     }`,
   )
+  if (!updateResult) {
+    return
+  }
 
+  const userId = await getCurrentEntityUserIdentifier()
+  if (userId) {
+    shell.events.emit('resource-list-curation', {
+      collectionKey,
+      action,
+      resourceKey,
+      userId,
+    })
+  }
   return updateResult
 }
 
 export async function delCollection(_key: string) {
-  const patchResult = await shell.call(delEntity)(Collection.entityClass, _key)
-  return patchResult
+  const delResult = await shell.call(delEntity)(Collection.entityClass, _key)
+  if (!delResult) {
+    return
+  }
+  const userId = await getCurrentEntityUserIdentifier()
+  if (userId) {
+    shell.events.emit('deleted', {
+      collectionKey: _key,
+      userId,
+    })
+  }
+  return delResult
 }
 
 export function getImageLogicalFilename(collectionKey: string) {
@@ -216,19 +281,36 @@ export async function setCollectionImage(
   },
 ) {
   const imageLogicalFilename = getImageLogicalFilename(_key)
-  if (!image) {
-    await publicFiles.del(imageLogicalFilename)
-    await patchCollection(_key, {
-      image: null,
-    })
-    return null
-  }
-  const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
+  const imageProp = !image
+    ? null
+    : await (async () => {
+        const resizedRpcFile = opts?.noResize ? image : await webImageResizer(image, 'image')
 
-  const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
-  return patchCollection(_key, {
-    image: { kind: 'file', directAccessId },
+        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+
+        const imageProp = { kind: 'file', directAccessId } as const
+        return imageProp
+      })()
+
+  const patchResult = await shell.call(patchEntity)(Collection.entityClass, _key, {
+    image: imageProp,
   })
+  if (!imageProp || !patchResult) {
+    await publicFiles.del(imageLogicalFilename)
+    if (!patchResult) {
+      return patchResult
+    }
+  }
+
+  const userId = await getCurrentEntityUserIdentifier()
+  if (userId && patchResult.changed) {
+    shell.events.emit('updated', {
+      collectionKey: _key,
+      updatedMeta: getCollectionMeta(patchResult.patched),
+      userId,
+    })
+  }
+  return patchResult
 }
 
 export async function searchCollections({

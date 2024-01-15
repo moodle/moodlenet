@@ -87,9 +87,9 @@ export type Actors = {
   // MetaGenerator: {
   //   data: Actor_MetaGenerator_Data
   // }
-  ModeratePublishingResource: {
-    data: Actor_ModeratePublishingResource_Data
-  }
+  // ModeratePublishingResource: {
+  //   data: Actor_ModeratePublishingResource_Data
+  // }
   ScheduleDestroy: {
     data: Actor_ScheduleDestroy_Data
   }
@@ -107,13 +107,13 @@ export interface Actor_StoreNewResource_Data {
 //   generatedData: ProvidedGeneratedData
 // }
 
-export interface Actor_ModeratePublishingResource_Data {
-  notPassed:
-    | false
-    | {
-        reason: string
-      }
-}
+// export interface Actor_ModeratePublishingResource_Data {
+//   notPassed:
+//     | false
+//     | {
+//         reason: string
+//       }
+// }
 
 export interface Actor_ScheduleDestroy_Data {}
 
@@ -125,8 +125,9 @@ export type Event = EventOf<
     'provide-new-resource': Event_ProvideNewResource_Data
     'store-edits': Event_StoreEdits_Data
     'provide-resource-edits': Event_ProvideResourceEdits_Data
-    'request-publish': Event_RequestPublish_Data
+    // 'request-publish': Event_RequestPublish_Data
     'unpublish': Event_Unpublish_Data
+    'publish': Event_Publish_Data
     'reject-publish': Event_RejectPublish_Data
     'trash': Event_Trash_Data
     'request-meta-generation': Event_RequestMetaGeneration_Data
@@ -156,12 +157,13 @@ export interface Event_Restore_Data {}
 export interface Event_ProvideResourceEdits_Data {
   edits: ResourceEdits
 }
-export interface Event_RequestPublish_Data {}
+// export interface Event_RequestPublish_Data {}
 
 export interface Event_RejectPublish_Data {
   reason: string
 }
 export interface Event_Unpublish_Data {}
+export interface Event_Publish_Data {}
 export interface Event_ProvideNewResource_Data {
   content: ProvidedCreationContent
   meta?: Partial<ResourceMeta>

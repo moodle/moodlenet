@@ -1,10 +1,20 @@
+import type { CollectionMeta } from '@moodlenet/collection/server'
+import type { EventPayload } from '@moodlenet/core'
 import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
-import type { Document, DocumentMetadata, EntityDocument } from '@moodlenet/system-entities/server'
+import type { EventResourceMeta } from '@moodlenet/ed-resource/server'
+import type { EntityIdentifier } from '@moodlenet/system-entities/common'
+import type {
+  Document,
+  DocumentMetadata,
+  EntityDocument,
+  EntityUser,
+  PkgUser,
+} from '@moodlenet/system-entities/server'
 import type { KnownEntityFeature } from '../common/types.mjs'
 
 // TODO //@ALE ProfileEntity _meta { webUserKey }
 
-export type KnownFeaturedEntityItem = { _id: string; feature: KnownEntityFeature }
+export type KnownFeaturedEntityItem = { _id: string; feature: KnownEntityFeature; at: string }
 export type ProfileEntity = EntityDocument<ProfileDataType>
 
 export type ProfileInterests = {
@@ -17,7 +27,11 @@ export type ProfileInterests = {
   asDefaultFilters?: boolean
 }
 
-export type ProfileDataType = {
+export interface ProfileSettings {
+  interests?: null | ProfileInterests
+}
+
+export type ProfileMeta = {
   displayName: string
   aboutMe: string | undefined | null
   organizationName: string | undefined | null
@@ -25,13 +39,13 @@ export type ProfileDataType = {
   siteUrl: string | undefined | null
   backgroundImage: Image | undefined | null
   avatarImage: Image | undefined | null
+}
+export type ProfileDataType = ProfileMeta & {
   knownFeaturedEntities: KnownFeaturedEntityItem[]
   kudos: number
   publisher: boolean
   webslug: string
-  settings: {
-    interests?: null | ProfileInterests
-  }
+  settings: ProfileSettings
   popularity?: {
     overall: number
     items: {
@@ -91,8 +105,96 @@ export type UnverifiedTokenCtx = {
   currentJwtToken: JwtToken
 }
 
-export interface WebUserEvents {
-  'send-message-to-web-user': {
+export type WebUserAccountDeletionToken = {
+  webUserKey: string
+  scope: 'web-user-account-deletion'
+}
+
+export type WebUserEvents = WebUserActivityEvents //& {}
+export type WebUserActivityEvents = {
+  'resource-downloaded': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'resource-created': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'resource-updated': {
+    resourceKey: string
+    updatedMeta: EventResourceMeta
+    userId: EntityIdentifier
+  }
+  'resource-published': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'resource-request-metadata-generation': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'resource-unpublished': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'resource-deleted': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+
+  'collection-created': {
+    collectionKey: string
+    userId: EntityIdentifier
+  }
+  'collection-updated': {
+    collectionKey: string
+    updatedMeta: CollectionMeta
+    userId: EntityIdentifier
+  }
+  'collection-published': {
+    collectionKey: string
+    userId: EntityIdentifier
+  }
+  'collection-resource-list-curation': {
+    collectionKey: string
+    action: 'add' | 'remove'
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'collection-unpublished': {
+    collectionKey: string
+    userId: EntityIdentifier
+  }
+  'collection-deleted': {
+    collectionKey: string
+    userId: EntityIdentifier
+  }
+
+  'created-web-user-account': {
+    webUserKey: string
+    profileKey: string
+  }
+  'user-publishing-permission-change': {
+    profileKey: string
+    type: 'given' | 'revoked'
+    moderator: EntityUser | PkgUser
+  }
+  'feature-entity': {
+    profileKey: string
+    action: 'add' | 'remove'
+    item: KnownFeaturedEntityItem
+    currentItemsOfSameType: KnownFeaturedEntityItem[]
+  }
+  'edit-profile-interests': {
+    profileKey: string
+    profileInterests: ProfileInterests
+  }
+  'edit-profile-meta': {
+    profileKey: string
+    meta: ProfileMeta
+  }
+  ///
+  'request-send-message-to-web-user': {
     message: {
       text: string
       html: string
@@ -110,9 +212,12 @@ export interface WebUserEvents {
     deletedCollections: { _key: string }[]
     deletedResources: { _key: string }[]
   }
+  'web-user-logged-in': {
+    webUserKey: string
+    profileKey: string
+  }
 }
 
-export type WebUserAccountDeletionToken = {
-  webUserKey: string
-  scope: 'web-user-account-deletion'
+export type ActivityLogDataType = EventPayload<WebUserActivityEvents> & {
+  ulid: string
 }

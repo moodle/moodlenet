@@ -26,7 +26,7 @@ import { env } from './init/env.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
 import { Resource } from './init/sys-entities.mjs'
 import { shell } from './shell.mjs'
-import type { ResourceDataType, ResourceEntityDoc } from './types.mjs'
+import type { ResourceDataType } from './types.mjs'
 
 export const validationsConfigs: ValidationsConfig = {
   contentMaxUploadSize: env.resourceUploadMaxSize,
@@ -48,14 +48,12 @@ export async function getValidations() {
   const {
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
-    draftContentValidationSchema,
-    publishedContentValidationSchema,
+    contentValidationSchema,
     imageValidationSchema,
   } = getValidationSchemas(validationsConfigs)
 
   return {
-    draftContentValidationSchema,
-    publishedContentValidationSchema,
+    contentValidationSchema,
     draftResourceValidationSchema,
     publishedResourceValidationSchema,
     imageValidationSchema,
@@ -136,7 +134,7 @@ export async function createResource(
       publishingErrors: null,
     },
   })
-
+  if (!newResource) return
   return newResource
 }
 
@@ -188,7 +186,7 @@ export async function deltaResourcePopularityItem({
   return updated?.popularity?.overall
 }
 
-export async function patchResource(_key: string, patch: Partial<ResourceEntityDoc>) {
+export async function patchResource(_key: string, patch: Partial<ResourceDataType>) {
   // const resource = await shell.call(getEntity)(Resource.entityClass, _key)
   // if (!resource) {
   //   return null
@@ -217,12 +215,15 @@ export async function patchResource(_key: string, patch: Partial<ResourceEntityD
   // }
 
   const patchResult = await shell.call(patchEntity)(Resource.entityClass, _key, patch)
+  if (!patchResult) return
+
   return patchResult
 }
 
 export async function delResource(_key: string) {
-  const patchResult = await shell.call(delEntity)(Resource.entityClass, _key)
-  return patchResult
+  const delResult = await shell.call(delEntity)(Resource.entityClass, _key)
+  if (!delResult) return
+  return delResult
 }
 
 export function getImageLogicalFilename(resourceKey: string) {
@@ -294,9 +295,13 @@ export async function updateImage(
           throw new TypeError('never')
         })()
 
-  return patchResource(resourceKey, {
+  const patchResult = await patchResource(resourceKey, {
     image: imagePatch,
   })
+  if (!patchResult) {
+    return patchResult
+  }
+  return patchResult
 }
 
 export function deleteImageFile(_key: string) {

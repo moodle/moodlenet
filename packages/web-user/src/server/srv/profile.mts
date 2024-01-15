@@ -20,6 +20,7 @@ import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entitie
 import {
   currentEntityVar,
   entityMeta,
+  getCurrentSystemUser,
   getEntity,
   isCreatorOfCurrentEntity,
   patchEntity,
@@ -41,7 +42,13 @@ import { publicFiles } from '../init/fs.mjs'
 import { kvStore } from '../init/kvStore.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
-import type { KnownFeaturedEntityItem, ProfileDataType } from '../types.mjs'
+import type {
+  ImageUploaded,
+  KnownFeaturedEntityItem,
+  ProfileDataType,
+  ProfileInterests,
+  ProfileMeta,
+} from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
 import {
   getCurrentProfileIds,
@@ -71,9 +78,13 @@ export async function getValidations() {
 }
 
 export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> }
+
 export async function editProfile(
   key: string,
-  editData: RecursivePartial<ProfileDataType>,
+  profileMeta: Pick<
+    ProfileMeta,
+    'aboutMe' | 'displayName' | 'location' | 'organizationName' | 'siteUrl'
+  >,
   opts?: {
     projectAccess?: EntityAccess[]
   },
@@ -84,9 +95,9 @@ export async function editProfile(
   if (!profileRec) {
     throw RpcStatus('Not Found')
   }
-  editData = editData.displayName
-    ? { ...editData, webslug: webSlug(editData.displayName) }
-    : editData
+  const editData = profileMeta.displayName
+    ? { ...profileMeta, webslug: webSlug(profileMeta.displayName) }
+    : profileMeta
 
   const { profileValidationSchema } = await getValidations()
 
@@ -116,7 +127,25 @@ export async function editProfile(
     })
   }
 
+  updateRes.changed &&
+    shell.events.emit('edit-profile-meta', {
+      profileKey: key,
+      meta: getProfileMeta(updateRes.patched),
+    })
+
   return updateRes
+}
+
+export function getProfileMeta(profileData: ProfileDataType) {
+  return {
+    aboutMe: profileData.aboutMe,
+    avatarImage: profileData.avatarImage,
+    backgroundImage: profileData.backgroundImage,
+    displayName: profileData.displayName,
+    location: profileData.location,
+    organizationName: profileData.organizationName,
+    siteUrl: profileData.siteUrl,
+  }
 }
 
 export async function entityFeatureAction({
@@ -164,6 +193,7 @@ export async function entityFeatureAction({
   const knownFeaturedEntityItem: KnownFeaturedEntityItem = {
     _id: targetEntityId,
     feature,
+    at: shell.now().toISOString(),
   }
 
   const aqlAction =
@@ -184,6 +214,16 @@ export async function entityFeatureAction({
     },
   )
   assert(updateResult)
+
+  shell.events.emit('feature-entity', {
+    action,
+    profileKey,
+    item: knownFeaturedEntityItem,
+    currentItemsOfSameType: updateResult.patched.knownFeaturedEntities.filter(
+      item => item.feature === feature,
+    ),
+  })
+
   if (updateResult.patched.publisher) {
     await deltaPopularity(adding, {
       feature,
@@ -245,12 +285,19 @@ export async function setProfilePublisherFlag({
   profileKey: string
   isPublisher: boolean
 }) {
+  const moderator = await getCurrentSystemUser()
+  assert(moderator.type === 'pkg' || moderator.type === 'entity')
+
   const profile = await getProfileRecord(profileKey)
   if (!profile) return { type: 'not-found', ok: false }
   if (profile.entity.publisher === setIsPublisher) return { type: 'no-change', ok: true }
 
   await patchEntity(Profile.entityClass, profileKey, { publisher: setIsPublisher })
-
+  shell.events.emit('user-publishing-permission-change', {
+    type: setIsPublisher ? 'given' : 'revoked',
+    profileKey,
+    moderator,
+  })
   await Promise.all(
     profile.entity.knownFeaturedEntities.map(async ({ _id: targetEntityId, feature }) => {
       const targetEntityDoc = await (
@@ -301,15 +348,14 @@ export async function getEntityFeatureCount({
   _key: string
 }) {
   const _id = getEntityIdByKnownEntity({ _key, entityType })
-  const needle: KnownFeaturedEntityItem = {
+  const needle: Pick<KnownFeaturedEntityItem, '_id' | 'feature'> = {
     _id,
     feature,
   }
   const bindVars = { '@collection': Profile.collection.name, needle }
   const query = `
   FOR profile IN @@collection
-//  FILTER profile.publisher && POSITION(profile.knownFeaturedEntities,@needle)
-  FILTER profile.publisher && @needle IN profile.knownFeaturedEntities[*]
+  FILTER profile.publisher && @needle IN (FOR item in profile.knownFeaturedEntities RETURN { _id:item._id, feature :item.feature })
   COLLECT WITH COUNT INTO count
   RETURN { count } 
   `
@@ -333,7 +379,7 @@ export async function getEntityFeatureProfiles({
   paging: { after?: string; limit?: number }
 }) {
   const _id = getEntityIdByKnownEntity({ _key, entityType })
-  const needle: KnownFeaturedEntityItem = {
+  const needle: Pick<KnownFeaturedEntityItem, '_id' | 'feature'> = {
     _id,
     feature,
   }
@@ -341,7 +387,7 @@ export async function getEntityFeatureProfiles({
   const cursor = await queryEntities(Profile.entityClass, {
     skip,
     limit,
-    postAccessBody: `FILTER ${currentEntityVar}.publisher && POSITION(${currentEntityVar}.knownFeaturedEntities,@needle)`,
+    postAccessBody: `FILTER ${currentEntityVar}.publisher && @needle IN (FOR item in ${currentEntityVar}.knownFeaturedEntities RETURN { _id:item._id, feature :item.feature })  `,
     bindVars: { needle },
   })
 
@@ -360,23 +406,33 @@ export async function setProfileAvatar(
   },
 ) {
   const avatarLogicalFilename = getProfileAvatarLogicalFilename(_key)
+
+  const avatarImage = !rpcFile
+    ? null
+    : await (async () => {
+        const resizedRpcFile = opts?.noResize ? rpcFile : await webImageResizer(rpcFile, 'icon')
+
+        const { directAccessId } = await publicFiles.store(avatarLogicalFilename, resizedRpcFile)
+
+        const imageUploaded: ImageUploaded = { kind: 'file', directAccessId }
+        return imageUploaded
+      })()
+
+  const patchResult = await patchEntity(Profile.entityClass, _key, {
+    avatarImage,
+  })
+  if (!patchResult) {
+    return
+  }
   if (!rpcFile) {
     await publicFiles.del(avatarLogicalFilename)
-    await editProfile(_key, {
-      avatarImage: null,
-    })
-    return null
   }
-
-  const resizedRpcFile = opts?.noResize ? rpcFile : await webImageResizer(rpcFile, 'icon')
-
-  const { directAccessId } = await publicFiles.store(avatarLogicalFilename, resizedRpcFile)
-
-  const patched = await editProfile(_key, {
-    avatarImage: { kind: 'file', directAccessId },
-  })
-
-  return patched
+  patchResult.changed &&
+    shell.events.emit('edit-profile-meta', {
+      profileKey: _key,
+      meta: getProfileMeta(patchResult.patched),
+    })
+  return patchResult
 }
 
 export async function setProfileBackgroundImage(
@@ -392,23 +448,33 @@ export async function setProfileBackgroundImage(
   },
 ) {
   const imageLogicalFilename = getProfileImageLogicalFilename(_key)
-  if (!rpcFile) {
-    await publicFiles.del(imageLogicalFilename)
-    await editProfile(_key, {
-      backgroundImage: null,
-    })
-    return null
-  }
 
-  const resizedRpcFile = opts?.noResize ? rpcFile : await webImageResizer(rpcFile, 'image')
+  const backgroundImage = !rpcFile
+    ? null
+    : await (async () => {
+        const resizedRpcFile = opts?.noResize ? rpcFile : await webImageResizer(rpcFile, 'image')
 
-  const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
+        const { directAccessId } = await publicFiles.store(imageLogicalFilename, resizedRpcFile)
 
-  const patched = await editProfile(_key, {
-    backgroundImage: { kind: 'file', directAccessId },
+        const backgroundImage: ImageUploaded = { kind: 'file', directAccessId }
+        return backgroundImage
+      })()
+
+  const patchResult = await patchEntity(Profile.entityClass, _key, {
+    backgroundImage,
   })
-
-  return patched
+  if (!patchResult) {
+    return
+  }
+  if (!backgroundImage) {
+    await publicFiles.del(imageLogicalFilename)
+  }
+  patchResult.changed &&
+    shell.events.emit('edit-profile-meta', {
+      meta: getProfileMeta(patchResult.patched),
+      profileKey: _key,
+    })
+  return patchResult
 }
 export function getProfileImageLogicalFilename(profileKey: string) {
   return `profile-image/${profileKey}`
@@ -535,7 +601,7 @@ export async function sendMessageToProfile({
   }
   const html = dot.compile(templates.messageFromUser)(msgVars)
 
-  shell.events.emit('send-message-to-web-user', {
+  shell.events.emit('request-send-message-to-web-user', {
     message: {
       text: html,
       html: html,
@@ -577,33 +643,28 @@ export async function getProfileOwnKnownEntities({
   return list
 }
 
-export async function editProfileInterests({
-  asDefaultFilters,
-  items,
-  profileKey,
-}: Partial<ProfileDataType['settings']['interests']> & {
-  profileKey: string
-}) {
-  const res = await editProfile(profileKey, {
-    settings: {
-      interests: {
-        asDefaultFilters,
-        items,
-      },
-    },
-  })
-  return res ? true : res
-}
-
 export async function editMyProfileInterests({
   asDefaultFilters,
   items,
-}: Partial<ProfileDataType['settings']['interests'] & object>) {
+}: Partial<ProfileInterests>) {
   const profileIds = await getCurrentProfileIds()
   if (!profileIds) return false
-  return editProfileInterests({
-    profileKey: profileIds._key,
+  const interests: ProfileInterests = {
     asDefaultFilters,
     items,
+  }
+  const updateRes = await patchEntity(Profile.entityClass, profileIds._key, {
+    settings: {
+      interests,
+    },
   })
+  if (!updateRes) return updateRes
+
+  updateRes.patched.settings.interests &&
+    shell.events.emit('edit-profile-interests', {
+      profileKey: profileIds._key,
+      profileInterests: updateRes.patched.settings.interests,
+    })
+
+  return updateRes
 }

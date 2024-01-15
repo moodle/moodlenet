@@ -67,7 +67,7 @@ export function makeExtPortsApp() {
         }
 
         try {
-          rpcDefItem.guard(...rpcArgs)
+          await rpcDefItem.guard(...rpcArgs)
         } catch (err) {
           shell.log('info', err)
           httpResp.status(400)
@@ -113,6 +113,7 @@ export function makeExtPortsApp() {
                   rpcStatusCode: 500,
                   payload: err instanceof Error ? format(err) : String(err),
                 }
+            shell.log('error', err)
             httpResp.status(rpcStatusCode).send(payload)
           })
         return srvApp

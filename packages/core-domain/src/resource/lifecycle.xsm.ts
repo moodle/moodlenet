@@ -38,11 +38,11 @@ export interface EdResourceMachineDeps {
     StoreNewResource(context: T.Context): Promise<T.Actor_StoreNewResource_Data>
     StoreResourceEdits(context: T.Context): Promise<T.Actor_StoreResourceEdits_Data>
     // MetaGenerator(context: T.Context): Promise<T.Actor_MetaGenerator_Data>
-    ModeratePublishingResource(context: T.Context): Promise<T.Actor_ModeratePublishingResource_Data>
+    // ModeratePublishingResource(context: T.Context): Promise<T.Actor_ModeratePublishingResource_Data>
     ScheduleDestroy(context: T.Context): Promise<T.Actor_ScheduleDestroy_Data>
   }
   actions: {
-    notify_creator(context: T.Context /*,event:T.Event_????_Data */): unknown
+    // notify_creator(context: T.Context /*,event:T.Event_????_Data */): unknown
     destroy_all_data(context: T.Context): unknown
     request_generate_meta_suggestions(context: T.Context): unknown
   }
@@ -114,8 +114,12 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
         // entry: 'persist_context',
         entry: 'assign_validations',
         on: {
-          'request-publish': {
-            target: 'Publishing-Moderation',
+          // 'request-publish': {
+          //   target: 'Publishing-Moderation',
+          //   cond: 'issuer is creator and issuer is publisher and meta valid for publishing',
+          // },
+          'publish': {
+            target: 'Published',
             cond: 'issuer is creator and issuer is publisher and meta valid for publishing',
           },
           'request-meta-generation': {
@@ -146,25 +150,25 @@ even empty.
 Just check upper bound size`,
       },
 
-      'Publishing-Moderation': {
-        exit: 'notify_creator',
+      // 'Publishing-Moderation': {
+      //   exit: 'notify_creator',
 
-        invoke: {
-          src: 'ModeratePublishingResource',
-          onDone: [
-            {
-              target: 'Published',
-              cond: 'moderation passed',
-            },
-            {
-              target: '#EdResource.Publish-Rejected',
-              actions: 'assign_last_publishing_moderation_rejection_reason',
-            },
-          ],
-        },
+      //   invoke: {
+      //     src: 'ModeratePublishingResource',
+      //     onDone: [
+      //       {
+      //         target: 'Published',
+      //         cond: 'moderation passed',
+      //       },
+      //       {
+      //         target: '#EdResource.Publish-Rejected',
+      //         actions: 'assign_last_publishing_moderation_rejection_reason',
+      //       },
+      //     ],
+      //   },
 
-        // entry: 'persist_context',
-      },
+      //   // entry: 'persist_context',
+      // },
 
       'In-Trash': {
         invoke: {
@@ -314,9 +318,9 @@ link: url string format`,
           (issuer.type === 'user' && (issuer.feats.creator || issuer.feats.admin))
         )
       },
-      'moderation passed'(_, { data }) {
-        return data.notPassed === false
-      },
+      // 'moderation passed'(_, { data }) {
+      //   return data.notPassed === false
+      // },
       'provided content+meta are not valid'(context) {
         return !!context.contentRejected
       },
@@ -355,11 +359,11 @@ link: url string format`,
           proxy.doc = data.doc
         })
       }),
-      assign_last_publishing_moderation_rejection_reason: assign((context, { data }) => {
-        return produce(context, proxy => {
-          proxy.publishRejected = data.notPassed ? data.notPassed : null
-        })
-      }),
+      // assign_last_publishing_moderation_rejection_reason: assign((context, { data }) => {
+      //   return produce(context, proxy => {
+      //     proxy.publishRejected = data.notPassed ? data.notPassed : null
+      //   })
+      // }),
       assign_suggested_meta: assign((context, { generatedData }) => {
         return produce(context, proxy => {
           proxy.generatedData = generatedData
@@ -377,9 +381,9 @@ link: url string format`,
           image,
         })
         const validatedContent = schemas.providedContent(content)
-        // console.log({ validatedContent })
+        console.log({ content, image, meta, validatedContent })
         const { contentRejected, providedContent } = validatedContent.valid
-          ? { contentRejected: null, providedContent: validatedContent.providedContent }
+          ? { contentRejected: null, providedContent: validatedContent.providedContent ?? null }
           : { contentRejected: { reason: validatedContent.reason }, providedContent: null }
 
         return produce(context, proxy => {
@@ -391,17 +395,17 @@ link: url string format`,
       destroy_all_data(context) {
         deps.actions.destroy_all_data(context)
       },
-      notify_creator(context) {
-        deps.actions.notify_creator(context)
-      },
+      // notify_creator(context) {
+      //   deps.actions.notify_creator(context)
+      // },
     },
     services: {
       // async MetaGenerator(context /* ,event */) {
       //   return deps.services.MetaGenerator(context)
       // },
-      async ModeratePublishingResource(context /* , event */) {
-        return await deps.services.ModeratePublishingResource(context)
-      },
+      // async ModeratePublishingResource(context /* , event */) {
+      //   return await deps.services.ModeratePublishingResource(context)
+      // },
       async ScheduleDestroy(context /* , event */) {
         return deps.services.ScheduleDestroy(context)
       },

@@ -205,8 +205,8 @@ export const useProfileProps = ({
       data: {
         userId: profileKey,
         displayName: profileGetRpc.data.displayName,
-        avatarUrl: profileGetRpc.data.avatarUrl,
-        backgroundUrl: profileGetRpc.data.backgroundUrl,
+        avatarUrl: profileGetRpc.data.avatarUrl ?? undefined,
+        backgroundUrl: profileGetRpc.data.backgroundUrl ?? undefined,
         profileHref: profileGetRpc.profileHref,
         ...(upBgImageTaskCurrent
           ? {

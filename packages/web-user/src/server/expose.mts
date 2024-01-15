@@ -21,7 +21,7 @@ import type {
   WebUserData,
 } from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
-import { profileValidationSchema, validationsConfig } from './env.mjs'
+import { messageFormValidationSchema, profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import { shell } from './shell.mjs'
 import {
@@ -119,8 +119,11 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
     'webapp/profile/:_key/edit': {
-      guard: _ => {
-        _.editData = profileValidationSchema.validateSync(_?.editData, { stripUnknown: true })
+      async guard(_) {
+        const validatedData = await profileValidationSchema.validate(_?.editData, {
+          stripUnknown: true,
+        })
+        _.editData = validatedData
       },
       async fn({ editData }, { _key }) {
         const patchRecord = await editProfile(_key, editData)
@@ -325,18 +328,25 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         body.interests = interests
       },
       async fn({ interests }) {
-        return editMyProfileInterests({ items: interests })
+        const result = await editMyProfileInterests({ items: interests })
+        return result && !!result
       },
     },
     'webapp/my-interests/use-as-default-search-filters': {
       guard: body => typeof body.use === 'boolean',
       async fn({ use }) {
-        return editMyProfileInterests({ asDefaultFilters: use })
+        const result = await editMyProfileInterests({ asDefaultFilters: use })
+        return result && !!result
       },
     },
     'webapp/send-message-to-user/:profileKey': {
-      //TODO //@ALE
-      guard: () => void 0,
+      guard: _ => {
+        const validatedMsgObj = messageFormValidationSchema.validateSync(
+          { msg: _.message },
+          { stripUnknown: true },
+        )
+        _.message = validatedMsgObj.msg
+      },
       async fn({ message }, { profileKey }) {
         sendMessageToProfileIntent({ message, profileKey })
       },

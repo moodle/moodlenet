@@ -1,7 +1,7 @@
 import { on } from '@moodlenet/web-user/server'
 import { userSendsMessageToWebUser, webUserDeleted } from '../lib.mjs'
 import { shell } from '../shell.mjs'
-on('send-message-to-web-user', ({ data }) => {
+on('request-send-message-to-web-user', ({ data }) => {
   userSendsMessageToWebUser(data)
 })
 on('deleted-web-user-account', async ({ data: { webUserKey } }) => {

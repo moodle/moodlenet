@@ -7,7 +7,12 @@ import { delResource } from '@moodlenet/ed-resource/server'
 import { getCurrentHttpCtx, getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
-import { create, matchRootPassword, setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import {
+  create,
+  getPkgCurrentUser,
+  matchRootPassword,
+  setPkgCurrentUser,
+} from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
 import type { CookieOptions } from 'express'
@@ -38,7 +43,7 @@ import { entityFeatureAction, getProfileOwnKnownEntities, getProfileRecord } fro
 const VALID_JWT_VERSION: TokenVersion = 1
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
   const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {
-    expirationTime: '2w',
+    expirationTime: '1w',
     subject: webUserJwtPayload.isRoot ? undefined : webUserJwtPayload.webUser._key,
     scope: [/* 'full-user',  */ 'openid'],
   })
@@ -214,6 +219,18 @@ export async function createWebUser(createRequest: CreateRequest) {
   if (!newWebUser) {
     return
   }
+
+  shell.events.emit('created-web-user-account', {
+    profileKey: newProfile._key,
+    webUserKey: newWebUser._key,
+  })
+  if (newProfile.publisher) {
+    shell.events.emit('user-publishing-permission-change', {
+      type: 'given',
+      profileKey: newProfile._key,
+      moderator: await getPkgCurrentUser(),
+    })
+  }
   const jwtToken = await signWebUserJwt({
     v: VALID_JWT_VERSION,
     webUser: {
@@ -256,6 +273,10 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
       _key: profile._key,
       publisher: profile.publisher,
     },
+  })
+  shell.events.emit('web-user-logged-in', {
+    profileKey: profile._key,
+    webUserKey: webUser._key,
   })
   return jwtToken
 }
@@ -363,7 +384,7 @@ export async function currentWebUserDeletionAccountRequest() {
   }
   const html = dot.compile(msgTemplates.deleteAccountConfirmation)(msgVars)
 
-  shell.events.emit('send-message-to-web-user', {
+  shell.events.emit('request-send-message-to-web-user', {
     message: { html, text: html },
     subject: 'Confirm account deletion 🥀',
     title: 'Confirm account deletion 🥀',

@@ -8,7 +8,7 @@ import {
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
-  getCurrentSystemUser,
+  getCurrentEntityUserIdentifier,
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
 import { waitFor } from 'xstate/lib/waitFor.js'
@@ -67,7 +67,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         let snap = interpreter.getSnapshot()
         const { event, awaitNextState } = ((): { event: Event; awaitNextState: StateName } =>
           publish
-            ? { awaitNextState: 'Published', event: { type: 'request-publish' } }
+            ? { awaitNextState: 'Published', event: { type: 'publish' } }
             : { awaitNextState: 'Unpublished', event: { type: 'unpublish' } })()
         if (!snap.can(event)) {
           interpreter.stop()
@@ -78,6 +78,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
         await waitFor(interpreter, nameMatcher(awaitNextState))
         snap = interpreter.getSnapshot()
         interpreter.stop()
+
         return { done: true }
       },
     },
@@ -315,9 +316,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'basic/v1/create': {
       guard: async body => {
-        const { draftResourceValidationSchema, draftContentValidationSchema } =
-          await getValidations()
-        await draftContentValidationSchema.validate({ content: body?.resource })
+        const { draftResourceValidationSchema, contentValidationSchema } = await getValidations()
+        await contentValidationSchema.validate({ content: body?.resource })
         await draftResourceValidationSchema.validate(body, {
           stripUnknown: true,
         })
@@ -375,6 +375,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         setRpcStatusCode('Created')
         interpreter.stop()
+        snap = interpreter.getSnapshot()
         return {
           _key: newDoc.id.resourceKey,
           name: newDoc.meta.title,
@@ -397,6 +398,19 @@ export const expose = await shell.expose<FullResourceExposeType>({
       guard: () => void 0,
       fn: async (_, { _key }) => {
         const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
+        const snap = interpreter.getSnapshot()
+        if (matchState(snap, 'Published')) {
+          interpreter.send('unpublish')
+          await waitFor(interpreter, nameMatcher('Unpublished'))
+        }
+        if (matchState(snap, 'Autogenerating-Meta')) {
+          interpreter.send('cancel-meta-generation')
+          await waitFor(interpreter, nameMatcher('Unpublished'))
+        }
+        if (matchState(snap, 'Meta-Suggestion-Available')) {
+          interpreter.send({ type: 'provide-resource-edits', edits: {} })
+          await waitFor(interpreter, nameMatcher('Unpublished'))
+        }
         interpreter.send('trash')
         await waitFor(interpreter, nameMatcher('Destroyed'))
         interpreter.stop()
@@ -405,12 +419,12 @@ export const expose = await shell.expose<FullResourceExposeType>({
     },
     'webapp/create': {
       guard: async body => {
-        const { draftContentValidationSchema } = await getValidations()
-        const validatedContentOrNullish = await draftContentValidationSchema.validate(
+        const { contentValidationSchema } = await getValidations()
+        const validatedContent = await contentValidationSchema.validate(
           { content: body?.content?.[0] },
           { stripUnknown: true },
         )
-        body.content = [validatedContentOrNullish]
+        body.content = [validatedContent.content]
       },
       async fn({ content: [resourceContent] }) {
         if (!resourceContent) {
@@ -419,7 +433,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         const [interpreter] = await stdEdResourceMachine({ by: 'create' })
         let snap = interpreter.getSnapshot()
-
+        console.log({ resourceContent })
         const provideNewResourceEvent: Event = {
           type: 'provide-new-resource',
           content:
@@ -464,8 +478,8 @@ export const expose = await shell.expose<FullResourceExposeType>({
         const readable = await assertRpcFileReadable(fsItem.rpcFile)
 
         readable.on('end', async () => {
-          const currentSysUser = await getCurrentSystemUser()
-          shell.events.emit('resource:downloaded', { resourceKey: _key, currentSysUser })
+          const userId = await getCurrentEntityUserIdentifier()
+          shell.events.emit('downloaded', { resourceKey: _key, userId })
           incrementResourceDownloads({ _key })
         })
         return readableRpcFile({ ...fsItem.rpcFile }, () => readable)
