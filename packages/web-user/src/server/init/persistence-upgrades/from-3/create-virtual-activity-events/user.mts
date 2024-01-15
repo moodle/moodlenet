@@ -17,7 +17,7 @@ import { getProfileMeta } from '../../../../srv/profile.mjs'
 import { saveWebUserActivities } from '../../../activity-log.mjs'
 import { Profile } from '../../../sys-entities.mjs'
 import collectionActivityEvents from './collectionActivityEvents.mjs'
-import { randomDate } from './randomDate.mjs'
+import { initialEventsNowISO } from './initialEventsNow.mjs'
 import resourceActivityEvents from './resourceActivityEvents.mjs'
 
 type ProfileRecord = {
@@ -26,7 +26,7 @@ type ProfileRecord = {
   profile: EntityFullDocument<ProfileDataType>
   featuredEntities: {
     item: KnownFeaturedEntityItem
-    maybeFoundTarget: null | EntityFullDocument<SomeEntityDataType>
+    featTarget: EntityFullDocument<SomeEntityDataType>
   }[]
 }
 await shell.initiateCall(async () => {
@@ -44,14 +44,18 @@ let ownCollections = ( FOR collection IN \`${Collection.collection.name}\`
                       )
 
 let featuredEntities = ( FOR item IN profile.knownFeaturedEntities
-                          RETURN { item , maybeFoundTarget: DOCUMENT(item._id) }
+                          LET featTarget = DOCUMENT(item._id)
+                          filter featTarget != null
+                          RETURN { item , featTarget }
                         )
+LET filteredKnownFeaturedEntities = ( FOR rec IN featuredEntities RETURN MERGE(rec.item, { at: "${initialEventsNowISO}" }) )
+UPDATE profile IN \`${Profile.collection.name}\` with { knownFeaturedEntities: filteredKnownFeaturedEntities }
 
 RETURN { 
     ownResources,
     ownCollections,
     featuredEntities,
-    profile
+    profile: NEW
 }
 `,
     {},
@@ -125,7 +129,7 @@ RETURN {
           userActivities.push({
             event: 'user-publishing-permission-change',
             pkgId,
-            at: randomDate(new Date(profile._meta.updated), new Date()).toISOString(),
+            at: initialEventsNowISO,
             data: {
               moderator: thisPkgUser,
               profileKey,
@@ -136,20 +140,11 @@ RETURN {
 
         // feature-entity
         featuredEntities.forEach(
-          /* <Promise<KnownFeaturedEntityItem>> */ ({ item, maybeFoundTarget }, index) => {
-            // const maybeFoundTarget = await (
-            //   await sysEntitiesDB.query<EntityFullDocument<SomeEntityDataType>>(
-            //     `RETURN DOCUMENT("${item._id}")`,
-            //   )
-            // ).next()
-            const targetUpdatedDate = maybeFoundTarget
-              ? new Date(maybeFoundTarget._meta.updated)
-              : randomDate(profileCreatedAtDate, new Date())
-            const featuredAt = randomDate(profileCreatedAtDate, targetUpdatedDate)
+          /* <Promise<KnownFeaturedEntityItem>> */ ({ item, featTarget }, index) => {
             userActivities.push({
               event: 'feature-entity',
               pkgId,
-              at: featuredAt.toISOString(),
+              at: initialEventsNowISO,
               data: {
                 profileKey,
                 action: 'add',

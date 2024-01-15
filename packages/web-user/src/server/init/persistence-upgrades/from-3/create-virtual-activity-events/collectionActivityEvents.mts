@@ -6,7 +6,7 @@ import type { EntityIdentifier } from '@moodlenet/system-entities/common'
 import type { EntityFullDocument } from '@moodlenet/system-entities/server'
 import type { ProfileDataType, WebUserActivityEvents } from '../../../../exports.mjs'
 import { shell } from '../../../../shell.mjs'
-import { randomDate } from './randomDate.mjs'
+import { initialEventsNowISO } from './initialEventsNow.mjs'
 
 export default function collectionActivityEvents(
   profile: EntityFullDocument<ProfileDataType>,
@@ -51,7 +51,7 @@ export default function collectionActivityEvents(
       userActivities.push({
         event: 'collection-published',
         pkgId,
-        at: randomDate(collectionUpdatedAtDate, new Date()).toISOString(),
+        at: initialEventsNowISO,
         data: {
           collectionKey,
           userId,
@@ -63,7 +63,7 @@ export default function collectionActivityEvents(
       userActivities.push({
         event: 'collection-resource-list-curation',
         pkgId,
-        at: randomDate(collectionUpdatedAtDate, new Date()).toISOString(),
+        at: initialEventsNowISO,
         data: {
           collectionKey,
           userId,

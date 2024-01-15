@@ -5,7 +5,7 @@ import type { EntityIdentifier } from '@moodlenet/system-entities/common'
 import type { EntityFullDocument } from '@moodlenet/system-entities/server'
 import type { ProfileDataType, WebUserActivityEvents } from '../../../../exports.mjs'
 import { shell } from '../../../../shell.mjs'
-import { randomDate } from './randomDate.mjs'
+import { initialEventsNowISO } from './initialEventsNow.mjs'
 
 export default function resourceActivityEvents(
   profile: EntityFullDocument<ProfileDataType>,
@@ -52,7 +52,7 @@ export default function resourceActivityEvents(
       userActivities.push({
         event: 'resource-published',
         pkgId,
-        at: randomDate(resourceUpdatedAtDate, new Date()).toISOString(),
+        at: initialEventsNowISO,
         data: {
           resourceKey,
           userId,
@@ -65,7 +65,7 @@ export default function resourceActivityEvents(
     //   userActivities.push({
     //     event: 'resource-downloaded',
     //     pkgId,
-    //     at: randomDate(resourceUpdatedAtDate, new Date()).toISOString(),
+    //     at: initialNowISO,
     //     data: {
     //       resourceKey,
     //       userId: null,
