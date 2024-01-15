@@ -60,18 +60,18 @@ export default function resourceActivityEvents(
       })
     }
 
-    let downloadTimes = ownResource.popularity?.items.downloads?.value ?? 0
-    while (downloadTimes--) {
-      userActivities.push({
-        event: 'resource-downloaded',
-        pkgId,
-        at: randomDate(resourceUpdatedAtDate, new Date()).toISOString(),
-        data: {
-          resourceKey,
-          userId: null,
-        },
-      })
-    }
+    // let downloadTimes = ownResource.popularity?.items.downloads?.value ?? 0
+    // while (downloadTimes--) {
+    //   userActivities.push({
+    //     event: 'resource-downloaded',
+    //     pkgId,
+    //     at: randomDate(resourceUpdatedAtDate, new Date()).toISOString(),
+    //     data: {
+    //       resourceKey,
+    //       userId: null,
+    //     },
+    //   })
+    // }
   }
   return userActivities
 }

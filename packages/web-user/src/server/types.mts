@@ -114,7 +114,7 @@ export type WebUserEvents = WebUserActivityEvents //& {}
 export type WebUserActivityEvents = {
   'resource-downloaded': {
     resourceKey: string
-    userId: EntityIdentifier | null
+    userId: EntityIdentifier
   }
   'resource-created': {
     resourceKey: string

@@ -9,9 +9,15 @@ import { ActivityLogCollection } from '../init/arangodb.mjs'
 
 // console.log('init /*/')
 
+resource.on('downloaded', ({ data }) => {
+  const { resourceKey, userId } = data
+  if (!userId) {
+    return
+  }
+  data.userId && shell.events.emit('resource-downloaded', { resourceKey, userId })
+})
 resource.on('created', ({ data }) => shell.events.emit('resource-created', data))
 resource.on('deleted', ({ data }) => shell.events.emit('resource-deleted', data))
-resource.on('downloaded', ({ data }) => shell.events.emit('resource-downloaded', data))
 resource.on('published', ({ data }) => shell.events.emit('resource-published', data))
 resource.on('request-metadata-generation', ({ data }) =>
   shell.events.emit('resource-request-metadata-generation', data),
