@@ -47,6 +47,9 @@ export const LoggedIn: ProfileStory = () => {
       isAuthenticated: true,
       canApprove: false,
     },
+    state: {
+      showLevelUpAlert: true,
+    },
     // resourceCardPropsList: getResourceCardsStoryProps(5, {access: {canLike: true}}),
     // collectionCardPropsList: getCollectionCardsStoryProps(5, {access: {canFollow: true}}),
     mainColumnItems: [],

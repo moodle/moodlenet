@@ -50,6 +50,7 @@ export const useProfileStoryProps = (
     numFollowers: 13,
     isPublisher: true,
     showAccountApprovedSuccessAlert: false,
+    showLevelUpAlert: false,
     // isWaitingApproval: false,
     // isElegibleForApproval: false,
     // showApprovalRequestedSuccessAlert: false,

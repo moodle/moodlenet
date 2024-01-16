@@ -102,6 +102,7 @@ export type ProfileState = {
   numFollowers: number
   isPublisher: boolean
   showAccountApprovedSuccessAlert: boolean
+  showLevelUpAlert: boolean
   // isElegibleForApproval: boolean
   // isWaitingApproval: boolean
   // showApprovalRequestedSuccessAlert: boolean

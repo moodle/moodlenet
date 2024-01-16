@@ -1,9 +1,9 @@
-import type { AddonItem } from '@moodlenet/component-library'
+import { Modal, type AddonItem } from '@moodlenet/component-library'
 import type { MainLayoutProps, OverallCardItem, ProxyProps } from '@moodlenet/react-app/ui'
 import { MainLayout, OverallCard, useViewport } from '@moodlenet/react-app/ui'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { useReducer } from 'react'
+import { useReducer, useState } from 'react'
 import type {
   ProfileAccess,
   ProfileActions,
@@ -14,6 +14,7 @@ import type {
 
 import type { CollectionCardProps } from '@moodlenet/collection/ui'
 import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
+import { getUserLevelDetails } from '../../../../../common/gamification/user-levels.mjs'
 import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
 import type { MainProfileCardSlots } from '../../organisms/MainProfileCard/MainProfileCard.js'
 import { MainProfileCard } from '../../organisms/MainProfileCard/MainProfileCard.js'
@@ -72,8 +73,9 @@ export const Profile: FC<ProfileProps> = ({
   const { points } = data
   const { editProfile } = actions
   const { canEdit } = access
-  const { profileUrl } = state
+  const { profileUrl, showLevelUpAlert } = state
   const [isEditing, toggleIsEditing] = useReducer(_ => !_, false)
+  const [showLevelUpModal, setShowLevelUpModal] = useState<boolean>(showLevelUpAlert)
   // const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
   // const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
   // const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -126,6 +128,25 @@ export const Profile: FC<ProfileProps> = ({
   //   ),
   // ]
 
+  const { level, title, avatar } = getUserLevelDetails(points)
+
+  const modals = [
+    showLevelUpModal && (
+      <Modal className="level-up-modal" onClose={() => setShowLevelUpModal(false)}>
+        <div className={`level-avatar level-${level}`}>
+          <img className="avatar" src={avatar} alt="level avatar" />
+        </div>
+        <div className="level-title">
+          Congratulations! You've reached
+          <br />
+          <b>
+            Level {level} - {title}
+          </b>
+          !
+        </div>
+      </Modal>
+    ),
+  ]
   // const snackbars = [
   //   showReportedAlert && (
   //     <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
@@ -227,7 +248,8 @@ export const Profile: FC<ProfileProps> = ({
   console.log('viewport ', viewport.screen.type)
   return (
     <MainLayout {...mainLayoutProps}>
-      {/* {modals} {snackbars} */}
+      {modals}
+      {/* {snackbars} */}
       <div className="profile">
         <div className="content">
           {updatedWideColumnItems.length > 0 && (
