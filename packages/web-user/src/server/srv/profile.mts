@@ -1,9 +1,8 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
-import { Collection, deltaCollectionPopularityItem } from '@moodlenet/collection/server'
+import { Collection } from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
-import { deltaIscedFieldPopularityItem } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
-import { deltaResourcePopularityItem, Resource } from '@moodlenet/ed-resource/server'
+import { Resource } from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import {
@@ -11,12 +10,12 @@ import {
   getWebappUrl,
   webImageResizer,
 } from '@moodlenet/react-app/server'
+import type { EntityClass, SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type {
-  EntityClass,
-  EntityIdentifiers,
-  SomeEntityDataType,
-} from '@moodlenet/system-entities/common'
-import type { EntityAccess, EntityFullDocument } from '@moodlenet/system-entities/server'
+  AccessEntitiesRecordType,
+  EntityAccess,
+  EntityFullDocument,
+} from '@moodlenet/system-entities/server'
 import {
   currentEntityVar,
   entityMeta,
@@ -26,7 +25,6 @@ import {
   patchEntity,
   queryEntities,
   searchEntities,
-  setPkgCurrentUser,
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
@@ -50,6 +48,7 @@ import type {
   ProfileMeta,
 } from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
+import { deltaPopularity } from './popularity.mjs'
 import {
   getCurrentProfileIds,
   getWebUserByProfileKey,
@@ -235,49 +234,6 @@ export async function entityFeatureAction({
   return updateResult
 }
 
-export async function deltaPopularity(
-  add: boolean,
-  {
-    entityKey,
-    entityType,
-    feature,
-    profileCreatorIdentifiers,
-  }: {
-    feature: KnownEntityFeature
-    profileCreatorIdentifiers: EntityIdentifiers | undefined
-    entityType: KnownEntityType
-    entityKey: string
-  },
-) {
-  if (feature === 'like') {
-    const delta = add ? 1 : -1
-    if (profileCreatorIdentifiers) {
-      await shell.initiateCall(async () => {
-        await setPkgCurrentUser()
-        /* const patchResult = */
-        await patchEntity(
-          Profile.entityClass,
-          profileCreatorIdentifiers.entityIdentifier._key,
-          `{ kudos: ${currentEntityVar}.kudos + ( ${delta} ) }`,
-        )
-        // shell.log('debug', { profileCreatorIdentifiers, patchResult })
-      })
-    }
-    if (entityType === 'resource') {
-      await deltaResourcePopularityItem({ _key: entityKey, itemName: 'likes', delta })
-    }
-  } else if (feature === 'follow') {
-    const delta = add ? 1 : -1
-    if (entityType === 'collection') {
-      await deltaCollectionPopularityItem({ _key: entityKey, itemName: 'followers', delta })
-    } else if (entityType === 'profile') {
-      await deltaProfilePopularityItem({ _key: entityKey, itemName: 'followers', delta })
-    } else if (entityType === 'subject') {
-      await deltaIscedFieldPopularityItem({ _key: entityKey, itemName: 'followers', delta })
-    }
-  }
-}
-
 export async function setProfilePublisherFlag({
   profileKey,
   isPublisher: setIsPublisher,
@@ -298,31 +254,6 @@ export async function setProfilePublisherFlag({
     profileKey,
     moderator,
   })
-  await Promise.all(
-    profile.entity.knownFeaturedEntities.map(async ({ _id: targetEntityId, feature }) => {
-      const targetEntityDoc = await (
-        await sysEntitiesDB.query<EntityFullDocument<SomeEntityDataType>>({
-          query: 'RETURN DOCUMENT(@targetEntityId)',
-          bindVars: { targetEntityId },
-        })
-      ).next()
-      if (!targetEntityDoc) {
-        return
-      }
-      const profileCreatorIdentifiers = targetEntityDoc._meta.creatorEntityId
-        ? WebUserEntitiesTools.getIdentifiersById({
-            _id: targetEntityDoc._meta.creatorEntityId,
-            type: 'Profile',
-          })
-        : undefined
-      return deltaPopularity(setIsPublisher, {
-        feature,
-        profileCreatorIdentifiers,
-        entityType: targetEntityDoc._meta.entityClass.type as KnownEntityType,
-        entityKey: targetEntityDoc._key,
-      })
-    }),
-  )
   return { type: 'done', ok: true }
 }
 
@@ -501,39 +432,6 @@ export async function getLandingPageList(
   return cursor.all()
 }
 
-export async function deltaProfilePopularityItem({
-  _key,
-  itemName,
-  delta,
-}: {
-  _key: string
-  itemName: string
-  delta: number
-}) {
-  const updatePopularityResult = await sysEntitiesDB.query<ProfileDataType>(
-    {
-      query: `FOR res in @@profileCollection 
-      FILTER res._key == @_key
-      LIMIT 1
-      UPDATE res WITH {
-        popularity:{
-          overall: res.popularity.overall + ( ${delta} ),
-          items:{
-            "${itemName}": (res.popularity.items["${itemName}"] || 0) + ( ${delta} )
-          }
-        }
-      } IN @@profileCollection 
-      RETURN NEW`,
-      bindVars: { '@profileCollection': Profile.collection.name, _key },
-    },
-    {
-      retryOnConflict: 5,
-    },
-  )
-  const updated = await updatePopularityResult.next()
-  return updated?.popularity?.overall
-}
-
 export async function searchProfiles({
   limit = 20,
   sortType = 'Popular',
@@ -547,7 +445,7 @@ export async function searchProfiles({
 }) {
   const sort =
     sortType === 'Popular'
-      ? `${currentEntityVar}.kudos + ( ${currentEntityVar}.popularity.followers || 0 ) DESC
+      ? `${currentEntityVar}.points + ( ${currentEntityVar}.popularity.overall || 0 ) DESC
           , rank DESC`
       : sortType === 'Relevant'
       ? 'rank DESC'
@@ -617,30 +515,38 @@ export async function sendMessageToProfile({
   type SendMsgToUserVars = Record<'actionButtonUrl' | 'instanceName' | 'message', string>
 }
 
-export async function getProfileOwnKnownEntities({
-  profileKey,
-  knownEntity,
-}: {
-  profileKey: string
-  knownEntity: Exclude<KnownEntityType, 'profile' | 'subject'>
-}) {
+export async function getProfileOwnKnownEntities<
+  KT extends Exclude<KnownEntityType, 'profile' | 'subject'>,
+>({ profileKey, knownEntity }: { profileKey: string; knownEntity: KT }) {
   const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
     _key: profileKey,
     type: 'Profile',
   })
-  const entityClass: EntityClass<ResourceDataType | CollectionDataType> | null =
+
+  type _ClassType = KT extends 'collection'
+    ? EntityClass<CollectionDataType>
+    : KT extends 'resource'
+    ? EntityClass<ResourceDataType>
+    : null
+  const entityClass = (
     knownEntity === 'resource'
       ? Resource.entityClass
       : knownEntity === 'collection'
       ? Collection.entityClass
       : null
+  ) as _ClassType
+
   assert(entityClass, `getProfileOwnKnownEntities: unknown knownEntity ${knownEntity}`)
   const list = await (
     await shell.call(queryEntities)(entityClass, {
       preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
     })
   ).all()
-  return list
+  return list as KT extends 'collection'
+    ? AccessEntitiesRecordType<CollectionDataType, unknown, EntityAccess>[]
+    : KT extends 'resource'
+    ? AccessEntitiesRecordType<ResourceDataType, unknown, EntityAccess>[]
+    : never
 }
 
 export async function editMyProfileInterests({

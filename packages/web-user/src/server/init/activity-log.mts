@@ -1,6 +1,7 @@
 import * as collection from '@moodlenet/collection/server'
 import type { EventPayload } from '@moodlenet/core'
 import * as resource from '@moodlenet/ed-resource/server'
+import assert from 'assert'
 import { shell } from '../shell.mjs'
 import type { WebUserActivityEvents } from '../types.mjs'
 
@@ -37,7 +38,10 @@ collection.on('updated', ({ data }) => shell.events.emit('collection-updated', d
 shell.events.any(saveWebUserActivity)
 
 export async function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents>) {
-  return saveWebUserActivities([activity])
+  const resp = (await saveWebUserActivities([activity]))[0]
+  const newRecord = resp?.new
+  assert(newRecord)
+  return newRecord
 }
 export async function saveWebUserActivities(activities: EventPayload<WebUserActivityEvents>[]) {
   return ActivityLogCollection.saveAll(

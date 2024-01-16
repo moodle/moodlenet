@@ -1,9 +1,10 @@
 import type { Patch } from '@moodlenet/arangodb/server'
 import { isArangoError } from '@moodlenet/arangodb/server'
 import { delCollection } from '@moodlenet/collection/server'
+import { nameMatcher } from '@moodlenet/core-domain/resource'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import { jwt } from '@moodlenet/crypto/server'
-import { delResource } from '@moodlenet/ed-resource/server'
+import { stdEdResourceMachine } from '@moodlenet/ed-resource/server'
 import { getCurrentHttpCtx, getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
@@ -11,11 +12,13 @@ import {
   create,
   getPkgCurrentUser,
   matchRootPassword,
+  setCurrentSystemUser,
   setPkgCurrentUser,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
 import type { CookieOptions } from 'express'
+import { waitFor } from 'xstate/lib/waitFor.js'
 import {
   WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
@@ -196,7 +199,7 @@ export async function createWebUser(createRequest: CreateRequest) {
     organizationName: '',
     siteUrl: '',
     knownFeaturedEntities: [],
-    points: pointSystem.account.creation,
+    points: 0,
     webslug: webSlug(profileData.displayName),
     settings: {},
     ...profileData,
@@ -424,8 +427,9 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
     if (webUser.deleting) {
       return { status: 'deleting' } as const
     }
-    const profile = (await getProfileRecord(webUser.profileKey))?.entity
-    assert(profile, '_deleteWebUserAccountNow: profile#${webUser.profileKey} not found')
+    const profileRecord = await getProfileRecord(webUser.profileKey)
+    assert(profileRecord, '_deleteWebUserAccountNow: profile#${webUser.profileKey} not found')
+    const profile = profileRecord.entity
     if (profile.publisher) {
       const knownFeaturedEntities = reduceToKnownFeaturedEntities(profile.knownFeaturedEntities)
       const allDiscardingFeatures = [
@@ -467,33 +471,43 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
       profileKey: profile._key,
     })
 
-    const leftCollections = ownCollections
-      .filter(({ entity: { published } }) => published)
-      .map(({ entity: { _key } }) => ({ _key }))
-    const leftResources = ownResources
-      .filter(({ entity: { published } }) => published)
-      .map(({ entity: { _key } }) => ({ _key }))
-    const deletedCollections = ownCollections
-      .filter(({ entity: { published } }) => !published)
-      .map(({ entity: { _key } }) => ({ _key }))
-    const deletedResources = ownResources
-      .filter(({ entity: { published } }) => !published)
-      .map(({ entity: { _key } }) => ({ _key }))
+    const leftCollectionsRecords = ownCollections.filter(({ entity: { published } }) => published)
+    const leftResourcesRecords = ownResources.filter(({ entity: { published } }) => published)
+    const deletedCollectionsRecords = ownCollections.filter(
+      ({ entity: { published } }) => !published,
+    )
+    const deletedResourcesRecords = ownResources.filter(({ entity: { published } }) => !published)
 
-    await Promise.all(
-      deletedCollections.map(async ({ _key }) => {
-        await delCollection(_key)
-        // shell.log('debug', { delCollection: _key })
-        return { _key }
-      }),
-    )
-    await Promise.all(
-      deletedResources.map(async ({ _key }) => {
-        await delResource(_key)
-        // shell.log('debug', { delResource: _key })
-        return { _key }
-      }),
-    )
+    await shell.initiateCall(async () => {
+      await setCurrentSystemUser({
+        type: 'entity',
+        entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
+        restrictToScopes: false,
+      })
+      await Promise.all(
+        deletedCollectionsRecords.map(async ({ entity: { _key } }) => {
+          await delCollection(_key)
+          // shell.log('debug', { delCollection: _key })
+          return { _key }
+        }),
+      )
+      await Promise.all(
+        deletedResourcesRecords.map(async data => {
+          const [interpreter /* , initializeContext, machine, configs */] =
+            await stdEdResourceMachine({
+              by: 'data',
+              data,
+            })
+          if (interpreter.getSnapshot().can('trash')) {
+            interpreter.send('trash')
+            await waitFor(interpreter, nameMatcher('Destroyed'))
+          }
+          interpreter.stop()
+          // shell.log('debug', { delResource: _key })
+          return { _key: data.entity._key }
+        }),
+      )
+    })
 
     await Profile.collection.remove(profile._key)
     await WebUserCollection.remove(webUser._key)
@@ -502,10 +516,10 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
       displayName: profile.displayName,
       profileKey: profile._key,
       webUserKey: webUser._key,
-      deletedCollections,
-      deletedResources,
-      leftCollections,
-      leftResources,
+      deletedCollections: deletedCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
+      deletedResources: deletedResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
+      leftCollections: leftCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
+      leftResources: leftResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
     }
     shell.events.emit('deleted-web-user-account', event)
     return { status: 'done', event } as const

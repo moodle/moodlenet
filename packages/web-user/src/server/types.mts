@@ -111,6 +111,127 @@ export type WebUserAccountDeletionToken = {
 }
 
 export type WebUserEvents = WebUserActivityEvents //& {}
+export type ActivityLogDataType = EventPayload<WebUserActivityEvents> & {
+  ulid: string
+}
+
+// export type WebUserActivityEvents = {
+//   'resource-downloaded': {
+//     resourceKey: string
+//     userId: EntityIdentifier
+//     // resource: EntityDocFullData<CollectionDataType>
+//   }
+//   'resource-created': {
+//     resourceKey: string
+//     userId: EntityIdentifier
+//     // resource: EntityDocFullData<CollectionDataType>
+//   }
+//   'resource-updated-meta': {
+//     resourceKey: string
+//     meta: EventResourceMeta
+//     oldMeta: EventResourceMeta
+//     userId: EntityIdentifier
+//   }
+//   'resource-published': {
+//     userId: EntityIdentifier
+//     resource: EntityDocFullData<CollectionDataType>
+//   }
+//   'resource-request-metadata-generation': {
+//     resourceKey: string
+//     userId: EntityIdentifier
+//   }
+//   'resource-unpublished': {
+//     userId: EntityIdentifier
+//     resource: EntityDocFullData<CollectionDataType>
+//   }
+//   'resource-deleted': {
+//     userId: EntityIdentifier
+//     resource: EntityDocFullData<CollectionDataType>
+//   }
+
+//   'collection-created': {
+//     collectionKey: string
+//     userId: EntityIdentifier
+//     // collection: EntityDocFullData<CollectionDataType>
+//   }
+//   'collection-updated-meta': {
+//     collectionKey: string
+//     oldMeta: CollectionMeta
+//     meta: CollectionMeta
+//     userId: EntityIdentifier
+//   }
+//   'collection-published': {
+//     userId: EntityIdentifier
+//     collection: EntityDocFullData<CollectionDataType>
+//   }
+//   'collection-resource-list-curation': {
+//     collectionKey: string
+//     action: 'add' | 'remove'
+//     resourceKey: string
+//     userId: EntityIdentifier
+//     resourceList: ResourceListItem[]
+//   }
+//   'collection-unpublished': {
+//     userId: EntityIdentifier
+//     collection: EntityDocFullData<CollectionDataType>
+//   }
+//   'collection-deleted': {
+//     userId: EntityIdentifier
+//     collection: EntityDocFullData<CollectionDataType>
+//   }
+
+//   'created-web-user-account': {
+//     webUserKey: string
+//     profileKey: string
+//     // profile: EntityDocFullData<ProfileDataType>
+//     // webUser: WebUserRecord
+//   }
+//   'user-publishing-permission-change': {
+//     type: 'given' | 'revoked'
+//     moderator: EntityUser | PkgUser
+//     profile: EntityDocFullData<ProfileDataType>
+//     webUser: WebUserRecord
+//   }
+//   'feature-entity': {
+//     profileKey: string
+//     action: 'add' | 'remove'
+//     item: KnownFeaturedEntityItem
+//     knownFeaturedEntities: KnownFeaturedEntityItem[]
+//   }
+//   'edit-profile-interests': {
+//     profileKey: string
+//     profileInterests: ProfileInterests
+//     oldProfileInterests: ProfileInterests | null
+//   }
+//   'edit-profile-meta': {
+//     profileKey: string
+//     meta: ProfileMeta
+//     oldMeta: ProfileMeta
+//   }
+//   ///
+//   'request-send-message-to-web-user': {
+//     message: {
+//       text: string
+//       html: string
+//     }
+//     toWebUser: Pick<WebUserRecord, '_key' | 'displayName'>
+//     subject: string
+//     title: string
+//   }
+//   'deleted-web-user-account': {
+//     displayName: string
+//     profile: EntityDocFullData<ProfileDataType>
+//     webUser: WebUserRecord
+//     leftResources: { _key: string }[]
+//     leftCollections: { _key: string }[]
+//     deletedCollections: { _key: string }[]
+//     deletedResources: { _key: string }[]
+//   }
+//   'web-user-logged-in': {
+//     webUserKey: string
+//     profileKey: string
+//   }
+// }
 export type WebUserActivityEvents = {
   'resource-downloaded': {
     resourceKey: string
@@ -216,8 +337,4 @@ export type WebUserActivityEvents = {
     webUserKey: string
     profileKey: string
   }
-}
-
-export type ActivityLogDataType = EventPayload<WebUserActivityEvents> & {
-  ulid: string
 }

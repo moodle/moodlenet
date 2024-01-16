@@ -125,16 +125,13 @@ export type Event = EventOf<
     'provide-new-resource': Event_ProvideNewResource_Data
     'store-edits': Event_StoreEdits_Data
     'provide-resource-edits': Event_ProvideResourceEdits_Data
-    // 'request-publish': Event_RequestPublish_Data
     'unpublish': Event_Unpublish_Data
     'publish': Event_Publish_Data
     'reject-publish': Event_RejectPublish_Data
     'trash': Event_Trash_Data
     'request-meta-generation': Event_RequestMetaGeneration_Data
     'cancel-meta-generation': Event_CancelMetaAutogen_Data
-    'restore': Event_Restore_Data
     'generated-meta-suggestions': Event_GeneratedMetaSuggestions_Data
-    // 'accept-meta-suggestions': Event_AcceptMetaSuggestions_Data
   }
 >
 export interface Event_GeneratedMetaSuggestions_Data {

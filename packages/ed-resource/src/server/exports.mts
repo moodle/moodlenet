@@ -4,10 +4,10 @@ export { publicFiles } from './init/fs.mjs'
 export { Resource } from './init/sys-entities.mjs'
 export { getImageAssetInfo } from './lib.mjs'
 export {
-  createResource,
-  deleteImageFile,
-  delResource,
-  delResourceFile,
+  // createResource,
+  // deleteImageFile,
+  // delResource,
+  // delResourceFile,
   deltaResourcePopularityItem,
   EMPTY_RESOURCE,
   getImageLogicalFilename,
@@ -15,9 +15,9 @@ export {
   getResourceFile,
   getResourceFileUrl,
   getValidations,
-  patchResource,
-  storeResourceFile,
-  updateImage,
+  // patchResource,
+  // storeResourceFile,
+  updateImage as silentlyUpdateImage,
   validationsConfigs,
 } from './services.mjs'
 export * from './types.mjs'

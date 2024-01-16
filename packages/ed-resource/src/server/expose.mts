@@ -399,7 +399,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
       fn: async (_, { _key }) => {
         const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
         const snap = interpreter.getSnapshot()
-        if (matchState(snap, 'Published')) {
+        if (matchState(snap, 'Published') || matchState(snap, 'Publish-Rejected')) {
           interpreter.send('unpublish')
           await waitFor(interpreter, nameMatcher('Unpublished'))
         }

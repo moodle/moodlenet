@@ -12,7 +12,7 @@ import {
   silentCatchAbort,
   useMainLayoutProps,
 } from '@moodlenet/react-app/webapp'
-import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
+import { FilterNone, PermIdentity } from '@mui/icons-material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
@@ -287,7 +287,7 @@ export const useProfileProps = ({
             }),
           ),
         },
-        { Icon: Grade, name: 'Kudos', value: profileGetRpc.points },
+        // { Icon: Grade, name: 'Kudos', value: profileGetRpc.points },
         {
           Icon: FilterNone,
           name: 'Resources',

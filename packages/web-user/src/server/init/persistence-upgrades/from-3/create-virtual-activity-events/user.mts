@@ -14,7 +14,7 @@ import type {
 import { getWebUserByProfileKey } from '../../../../exports.mjs'
 import { shell } from '../../../../shell.mjs'
 import { getProfileMeta } from '../../../../srv/profile.mjs'
-import { saveWebUserActivities } from '../../../activity-log.mjs'
+import { saveWebUserActivities, saveWebUserActivity } from '../../../activity-log.mjs'
 import { Profile } from '../../../sys-entities.mjs'
 import collectionActivityEvents from './collectionActivityEvents.mjs'
 import { initialEventsNowISO } from './initialEventsNow.mjs'
@@ -43,18 +43,18 @@ let ownCollections = ( FOR collection IN \`${Collection.collection.name}\`
                         RETURN collection 
                       )
 
-let featuredEntities = ( FOR item IN profile.knownFeaturedEntities
+let filteredKnownFeaturedEntities = ( FOR item IN profile.knownFeaturedEntities
                           LET featTarget = DOCUMENT(item._id)
                           filter featTarget != null
                           RETURN { item , featTarget }
                         )
-LET filteredKnownFeaturedEntities = ( FOR rec IN featuredEntities RETURN MERGE(rec.item, { at: "${initialEventsNowISO}" }) )
-UPDATE profile IN \`${Profile.collection.name}\` with { knownFeaturedEntities: filteredKnownFeaturedEntities }
+LET knownFeaturedEntitiesWithDate = ( FOR rec IN filteredKnownFeaturedEntities RETURN MERGE(rec.item, { at: "${initialEventsNowISO}" }) )
+UPDATE profile IN \`${Profile.collection.name}\` with { knownFeaturedEntities: knownFeaturedEntitiesWithDate }
 
 RETURN { 
     ownResources,
     ownCollections,
-    featuredEntities,
+    featuredEntities: knownFeaturedEntitiesWithDate,
     profile: NEW
 }
 `,
@@ -140,7 +140,7 @@ RETURN {
 
         // feature-entity
         featuredEntities.forEach(
-          /* <Promise<KnownFeaturedEntityItem>> */ ({ item, featTarget }, index) => {
+          /* <Promise<KnownFeaturedEntityItem>> */ ({ item /* , featTarget */ }, index) => {
             userActivities.push({
               event: 'feature-entity',
               pkgId,
@@ -163,7 +163,7 @@ RETURN {
         userActivities.push(...resourceActivityEvents(profile, ownResources))
         userActivities.push(...collectionActivityEvents(profile, ownCollections))
 
-        saveWebUserActivities(userActivities)
+        await saveAndDigestWebUserActivities(userActivities)
 
         // ++done
       }),
@@ -171,3 +171,14 @@ RETURN {
   }
   // clearInterval(logInterval)
 })
+async function saveAndDigestWebUserActivities(
+  userActivities: EventPayload<WebUserActivityEvents>[],
+) {
+  ... loop userActivities , fai saveWebUserActivity() e digestEvent() ...
+  for(const userActivity of userActivities){
+    await Promise.all([
+      saveWebUserActivity(userActivity),
+      digestEvent(userActivity) 
+    ])
+  }
+}

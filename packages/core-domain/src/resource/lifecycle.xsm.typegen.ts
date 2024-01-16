@@ -4,11 +4,6 @@ export interface Typegen0 {
   '@@xstate/typegen': true
   'internalEvents': {
     '': { type: '' }
-    'done.invoke.EdResource.In-Trash:invocation[0]': {
-      type: 'done.invoke.EdResource.In-Trash:invocation[0]'
-      data: unknown
-      __tip: 'See the XState TS docs to learn how to strongly type this.'
-    }
     'done.invoke.EdResource.Storing-Edits:invocation[0]': {
       type: 'done.invoke.EdResource.Storing-Edits:invocation[0]'
       data: unknown
@@ -22,7 +17,6 @@ export interface Typegen0 {
     'xstate.init': { type: 'xstate.init' }
   }
   'invokeSrcNameMap': {
-    ScheduleDestroy: 'done.invoke.EdResource.In-Trash:invocation[0]'
     StoreNewResource: 'done.invoke.EdResource.Storing-New-Resource:invocation[0]'
     StoreResourceEdits: 'done.invoke.EdResource.Storing-Edits:invocation[0]'
   }
@@ -48,7 +42,7 @@ export interface Typegen0 {
       | 'issuer is system'
       | 'meta generator enabled'
       | 'provided content+meta are not valid'
-    services: 'ScheduleDestroy' | 'StoreNewResource' | 'StoreResourceEdits'
+    services: 'StoreNewResource' | 'StoreResourceEdits'
   }
   'eventsCausingActions': {
     assign_doc:
@@ -63,9 +57,8 @@ export interface Typegen0 {
       | 'done.invoke.EdResource.Storing-Edits:invocation[0]'
       | 'done.invoke.EdResource.Storing-New-Resource:invocation[0]'
       | 'provide-resource-edits'
-      | 'restore'
       | 'unpublish'
-    destroy_all_data: 'done.invoke.EdResource.In-Trash:invocation[0]'
+    destroy_all_data: 'trash'
     request_generate_meta_suggestions:
       | 'done.invoke.EdResource.Storing-New-Resource:invocation[0]'
       | 'request-meta-generation'
@@ -74,12 +67,7 @@ export interface Typegen0 {
   'eventsCausingGuards': {
     'issuer has no read permission': ''
     'issuer is admin': 'reject-publish'
-    'issuer is creator':
-      | 'cancel-meta-generation'
-      | 'provide-resource-edits'
-      | 'restore'
-      | 'trash'
-      | 'unpublish'
+    'issuer is creator': 'cancel-meta-generation' | 'provide-resource-edits' | 'trash' | 'unpublish'
     'issuer is creator and edits are valid': 'store-edits'
     'issuer is creator and issuer is publisher and meta valid for publishing': 'publish'
     'issuer is creator and meta generator enabled': 'request-meta-generation'
@@ -89,7 +77,6 @@ export interface Typegen0 {
     'provided content+meta are not valid': 'store-new-resource'
   }
   'eventsCausingServices': {
-    ScheduleDestroy: 'trash'
     StoreNewResource: 'store-new-resource'
     StoreResourceEdits: 'store-edits'
   }
@@ -97,7 +84,6 @@ export interface Typegen0 {
     | 'Autogenerating-Meta'
     | 'Checking-In-Content'
     | 'Destroyed'
-    | 'In-Trash'
     | 'Meta-Suggestion-Available'
     | 'No-Access'
     | 'Publish-Rejected'

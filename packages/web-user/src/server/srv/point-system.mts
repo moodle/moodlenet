@@ -1,4 +1,8 @@
 export const pointSystem = {
+  account: {
+    creation: 5,
+    publisherGrant: { gain: 10, loose: -10 },
+  },
   featureEntity: {
     resource: {
       like: {

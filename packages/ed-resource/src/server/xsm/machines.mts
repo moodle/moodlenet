@@ -96,8 +96,8 @@ export async function provideEdResourceMachineDepsAndInits(
 }
 
 export function getEventResourceMeta(resourceDoc: ResourceDoc): EventResourceMeta {
-  const { content, image, meta } = resourceDoc
-  return { content, image, ...meta }
+  const { image, meta } = resourceDoc
+  return { image, ...meta }
 }
 function getEdResourceMachineDeps(): EdResourceMachineDeps {
   return {
@@ -268,8 +268,6 @@ export async function stdEdResourceMachine(by: ProvideBy) {
     const saveOnStates: StateName[] = [
       'Autogenerating-Meta',
       'Unpublished',
-      // 'Publishing-Moderation',
-      'In-Trash',
       'Published',
       'Meta-Suggestion-Available',
       'Publish-Rejected',

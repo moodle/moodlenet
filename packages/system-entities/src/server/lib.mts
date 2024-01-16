@@ -745,6 +745,9 @@ export async function setPkgCurrentUser() {
   shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
   return currentPkgUser
 }
+export async function setCurrentSystemUser(currentUser: SystemUser) {
+  shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser }))
+}
 
 export async function getPkgCurrentUser() {
   const { pkgId } = shell.assertCallInitiator()

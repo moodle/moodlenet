@@ -7,9 +7,13 @@ export type CollectionMeta = {
   description: string
   image: null | Image
 }
+export type ResourceListItem = {
+  _key: string
+}
+
 export type CollectionDataType = CollectionMeta & {
   published: boolean
-  resourceList: { _key: string }[]
+  resourceList: ResourceListItem[]
   popularity?: {
     overall: number
     items: { [key: string]: CollectionPopularityItem }

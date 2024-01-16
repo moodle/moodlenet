@@ -81,4 +81,4 @@ export type ResourceActivityEvents = {
   }
 }
 
-export type EventResourceMeta = ResourceMeta & Pick<ResourceDoc, 'content' | 'image'>
+export type EventResourceMeta = ResourceMeta & Pick<ResourceDoc, 'image'>
