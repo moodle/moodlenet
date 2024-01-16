@@ -86,6 +86,7 @@ export const General: FC<GeneralProps> = ({
       shouldShowErrors={true}
     />
   )
+
   const levelsField = (
     <MultipeSelectDropdown
       name="levels"

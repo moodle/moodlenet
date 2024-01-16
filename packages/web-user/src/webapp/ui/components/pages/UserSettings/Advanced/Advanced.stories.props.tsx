@@ -19,6 +19,8 @@ export const useAdvancedStoryProps = (overrides?: {
 }): AdvancedProps => {
   return {
     instanceName: 'MoodleNet',
+    appearOnLeaderboard: true,
+    setAppearOnLeaderboard: action('Set appear on leaderboard'),
     deleteAccount: action('Deleting account'),
     deleteAccountSuccess: false,
     mainColumnItems: [],

@@ -23,5 +23,16 @@
     }
   }
   > .card {
+    > .parameter {
+      > .switch-parameter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        > .title {
+          font-size: 14px;
+        }
+      }
+    }
   }
 }

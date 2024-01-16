@@ -1,11 +1,22 @@
 /* eslint-disable prettier/prettier */
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, Modal, PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
+import {
+  Card,
+  Modal,
+  PrimaryButton,
+  SecondaryButton,
+  Snackbar,
+  Switch,
+} from '@moodlenet/component-library'
 import { useState, type FC } from 'react'
 import './Advanced.scss'
 
 export type AdvancedProps = {
   mainColumnItems: (AddonItem | null)[]
+  appearOnLeaderboard: boolean
+  setAppearOnLeaderboard: (appearOnLeaderboard: boolean) => void
+  showFollowing: boolean
+  setShowFollowing: (showFollowing: boolean) => void
   deleteAccount: () => void
   deleteAccountSuccess: boolean
   instanceName: string
@@ -15,11 +26,48 @@ export const AdvancedMenu = () => <abbr title="Advanced">Advanced</abbr>
 
 export const Advanced: FC<AdvancedProps> = ({
   mainColumnItems,
+  setAppearOnLeaderboard,
+  appearOnLeaderboard,
+  setShowFollowing,
+  showFollowing,
   deleteAccount,
   deleteAccountSuccess,
   instanceName,
 }) => {
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
+
+  const appearOnLeaderboardField = (
+    <div className="switch-parameter">
+      <div className="title">Appear on user leaderboards</div>
+      <Switch
+        enabled={appearOnLeaderboard}
+        toggleSwitch={() => setAppearOnLeaderboard(appearOnLeaderboard)}
+      />
+    </div>
+  )
+
+  const showFollowingField = (
+    <div className="switch-parameter">
+      <div className="title">Show who and what I'm following</div>
+      <Switch enabled={showFollowing} toggleSwitch={() => setShowFollowing(showFollowing)} />
+    </div>
+  )
+
+  const privacyFields = [appearOnLeaderboardField, showFollowingField]
+
+  const privacySection = (
+    <Card className="column">
+      <div className="parameter">
+        <div className="name">Privacy</div>
+        {/* <div className="actions"> */}
+        {/* <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}> */}
+        {/* Delete account */}
+        {/* </SecondaryButton> */}
+        {/* </div> */}
+        {privacyFields}
+      </div>
+    </Card>
+  )
 
   const leaveSection = (
     <Card className="column">
@@ -34,7 +82,7 @@ export const Advanced: FC<AdvancedProps> = ({
     </Card>
   )
 
-  const updatedMainColumnItems = [leaveSection, ...(mainColumnItems ?? [])].filter(
+  const updatedMainColumnItems = [privacySection, leaveSection, ...(mainColumnItems ?? [])].filter(
     (item): item is AddonItem => !!item,
   )
 
@@ -46,8 +94,8 @@ export const Advanced: FC<AdvancedProps> = ({
         <Snackbar type="success">Check your email to confirm the deletion</Snackbar>
       ) : null,
     ]
-    // }
-    // ></SnackbarStack>
+  // }
+  // ></SnackbarStack>
 
   const modals = (
     <>
