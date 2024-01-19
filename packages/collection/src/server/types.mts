@@ -47,7 +47,7 @@ export type CollectionActivityEvents = {
     collection: EntityFullDocument<CollectionDataType>
   }
   'resource-list-curation': {
-    collectionKey: string
+    collection: EntityFullDocument<CollectionDataType>
     action: 'add' | 'remove'
     resource: EntityFullDocument<ResourceDataType>
     userId: EntityIdentifier

@@ -1,9 +1,9 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
-import { Collection } from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
 import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
-import { Resource } from '@moodlenet/ed-resource/server'
+import * as collection from '@moodlenet/collection/server'
+import * as resource from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import {
@@ -267,12 +267,14 @@ export async function setProfilePublisherFlag({
   if (!patchResult) {
     return { type: 'not-found', ok: false }
   }
-  patchResult.changed &&
+
+  if (patchResult.changed) {
     shell.events.emit('user-publishing-permission-change', {
       type: setIsPublisher ? 'given' : 'revoked',
       profile: { ...profile.entity, _meta: profile.meta },
       moderator,
     })
+  }
   return { type: 'done', ok: true }
 }
 
@@ -451,9 +453,9 @@ export async function getLandingPageList(
   limit: number,
 ) {
   const entityClass = {
-    collections: Collection,
+    collections: collection.Collection,
     profiles: Profile,
-    resources: Resource,
+    resources: resource.Resource,
   }[entity].entityClass
   const cursor = await shell.call(queryEntities)(entityClass, {
     limit,
@@ -561,9 +563,9 @@ export async function getProfileOwnKnownEntities<
     : null
   const entityClass = (
     knownEntity === 'resource'
-      ? Resource.entityClass
+      ? resource.Resource.entityClass
       : knownEntity === 'collection'
-      ? Collection.entityClass
+      ? collection.Collection.entityClass
       : null
   ) as _ClassType
 

@@ -9,7 +9,7 @@ function getEnv(): Env {
   const config = shell.config
   const env: Env = {
     apiKey: config.apiKey,
-    cutContentToCharsAmount: Number(config.cutContentToCharsAmount ?? 35_000),
+    cutContentToCharsAmount: Number(config.cutContentToCharsAmount ?? 20_000),
   }
 
   return env

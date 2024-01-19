@@ -7,7 +7,7 @@ import { Profile } from '../init/sys-entities.mjs'
 import type { ProfileDataType } from '../types.mjs'
 
 export async function deltaPopularity(
-  add: boolean,
+  delta: number,
   {
     entityKey,
     entityType,
@@ -19,12 +19,10 @@ export async function deltaPopularity(
   },
 ) {
   if (feature === 'like') {
-    const delta = add ? 1 : -1
     if (entityType === 'resource') {
       await deltaResourcePopularityItem({ _key: entityKey, itemName: 'likes', delta })
     }
   } else if (feature === 'follow') {
-    const delta = add ? 1 : -1
     if (entityType === 'collection') {
       await deltaCollectionPopularityItem({ _key: entityKey, itemName: 'followers', delta })
     } else if (entityType === 'profile') {

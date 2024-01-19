@@ -71,11 +71,13 @@ export default function collectionActivityEvents(
         pkgId,
         at: initialEventsNowISO,
         data: {
-          collectionKey,
+          collection: {
+            ...ownCollection,
+            resourceList: ownCollection.resourceList.slice(0, index),
+          },
           userId,
           action: 'add',
           resource,
-          resourceList: ownCollection.resourceList.slice(0, index),
         },
       })
     })

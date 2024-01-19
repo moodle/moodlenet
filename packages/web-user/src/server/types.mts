@@ -1,8 +1,4 @@
-import type {
-  CollectionDataType,
-  CollectionMeta,
-  ResourceListItem,
-} from '@moodlenet/collection/server'
+import type { CollectionDataType, CollectionMeta } from '@moodlenet/collection/server'
 import type { EventPayload } from '@moodlenet/core'
 import type { JwtToken, JwtVerifyResult } from '@moodlenet/crypto/server'
 import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
@@ -175,11 +171,10 @@ export type WebUserActivityEvents = {
     collection: EntityFullDocument<CollectionDataType>
   }
   'collection-resource-list-curation': {
-    collectionKey: string
+    collection: EntityFullDocument<CollectionDataType>
     action: 'add' | 'remove'
     resource: EntityFullDocument<ResourceDataType>
     userId: EntityIdentifier
-    resourceList: ResourceListItem[]
   }
   'collection-unpublished': {
     userId: EntityIdentifier

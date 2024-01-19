@@ -9,6 +9,7 @@ export {
   getCollectionMeta,
   patchCollection,
   setCollectionImage,
+  setPublished,
 } from './services.mjs'
 export * from './types.mjs'
 export const on = shell.events.on

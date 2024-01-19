@@ -251,7 +251,7 @@ export async function updateCollectionContent(
   const userId = await getCurrentEntityUserIdentifier()
   if (userId && updateResult.changed) {
     shell.events.emit('resource-list-curation', {
-      collectionKey,
+      collection: updateResult.patched,
       action,
       resource: { ...resource.entity, _meta: resource.meta },
       resourceList: updateResult.patched.resourceList,
