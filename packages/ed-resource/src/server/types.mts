@@ -2,7 +2,7 @@ import type { PersistentContext, ResourceDoc, ResourceMeta } from '@moodlenet/co
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import type { FsItem } from '@moodlenet/simple-file-store/server'
 import type { EntityIdentifier } from '@moodlenet/system-entities/common'
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entities/server'
 
 export type ResourceEntityDoc = EntityDocument<ResourceDataType>
 export type Content = FileContent | LinkContent
@@ -55,29 +55,30 @@ export type ResourceActivityEvents = {
     userId: EntityIdentifier | null
   }
   'created': {
-    resourceKey: string
     userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
   }
-  'updated': {
+  'updated-meta': {
     resourceKey: string
-    updatedMeta: EventResourceMeta
     userId: EntityIdentifier
+    meta: EventResourceMeta
+    oldMeta: EventResourceMeta
   }
   'published': {
-    resourceKey: string
     userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
   }
   'request-metadata-generation': {
     resourceKey: string
     userId: EntityIdentifier
   }
   'unpublished': {
-    resourceKey: string
     userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
   }
   'deleted': {
-    resourceKey: string
     userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
   }
 }
 

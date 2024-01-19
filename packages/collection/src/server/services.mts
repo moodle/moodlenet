@@ -1,4 +1,5 @@
 import type { RpcFile } from '@moodlenet/core'
+import { getResource } from '@moodlenet/ed-resource/server'
 import { defaultImageUploadMaxSize, webImageResizer } from '@moodlenet/react-app/server'
 import type {
   AccessEntitiesCustomProject,
@@ -81,9 +82,9 @@ export async function setPublished(key: string, published: boolean) {
     return
   }
   const userId = await getCurrentEntityUserIdentifier()
-  if (userId) {
+  if (userId && patchResult.changed) {
     shell.events.emit(published ? 'published' : 'unpublished', {
-      collectionKey: key,
+      collection: patchResult.patched,
       userId,
     })
   }
@@ -128,9 +129,10 @@ export async function patchCollection(
 
   const userId = await getCurrentEntityUserIdentifier()
   if (userId && patchResult.changed) {
-    shell.events.emit('updated', {
+    shell.events.emit('updated-meta', {
+      meta: getCollectionMeta(patchResult.patched),
+      oldMeta: getCollectionMeta(patchResult.old),
       collectionKey: key,
-      updatedMeta: getCollectionMeta(patchResult.patched),
       userId,
     })
   }
@@ -156,7 +158,7 @@ export async function createCollection(collectionData: Partial<CollectionDataTyp
   const userId = await getCurrentEntityUserIdentifier()
   if (userId) {
     shell.events.emit('created', {
-      collectionKey: newCollection._key,
+      collection: newCollection,
       userId,
     })
   }
@@ -223,6 +225,10 @@ export async function updateCollectionContent(
   action: 'add' | 'remove',
   resourceKey: string,
 ) {
+  const resource = await getResource(resourceKey)
+  if (!resource) {
+    return
+  }
   const aqlResourceListElem: AqlVal<CollectionDataType['resourceList'][number]> = toaql({
     _key: resourceKey,
   })
@@ -243,11 +249,12 @@ export async function updateCollectionContent(
   }
 
   const userId = await getCurrentEntityUserIdentifier()
-  if (userId) {
+  if (userId && updateResult.changed) {
     shell.events.emit('resource-list-curation', {
       collectionKey,
       action,
-      resourceKey,
+      resource: { ...resource.entity, _meta: resource.meta },
+      resourceList: updateResult.patched.resourceList,
       userId,
     })
   }
@@ -262,7 +269,7 @@ export async function delCollection(_key: string) {
   const userId = await getCurrentEntityUserIdentifier()
   if (userId) {
     shell.events.emit('deleted', {
-      collectionKey: _key,
+      collection: { ...delResult.entity, _meta: delResult.meta },
       userId,
     })
   }
@@ -304,9 +311,10 @@ export async function setCollectionImage(
 
   const userId = await getCurrentEntityUserIdentifier()
   if (userId && patchResult.changed) {
-    shell.events.emit('updated', {
+    shell.events.emit('updated-meta', {
       collectionKey: _key,
-      updatedMeta: getCollectionMeta(patchResult.patched),
+      meta: getCollectionMeta(patchResult.patched),
+      oldMeta: getCollectionMeta(patchResult.old),
       userId,
     })
   }

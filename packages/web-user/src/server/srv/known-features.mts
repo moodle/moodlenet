@@ -52,56 +52,34 @@ export function reduceToKnownFeaturedEntities(
 ): KnownFeaturedEntities {
   const myFeaturedEntities: KnownFeaturedEntities = {
     bookmark: {
-      collection: extractFeaturedIdentifiers('Collection', 'bookmark'),
-      profile: extractFeaturedIdentifiers('Profile', 'bookmark'),
-      resource: extractFeaturedIdentifiers('Resource', 'bookmark'),
-      subject: extractFeaturedIdentifiers('Subject', 'bookmark'),
+      collection: extractFeaturedIdentifiers('collection', 'bookmark'),
+      profile: extractFeaturedIdentifiers('profile', 'bookmark'),
+      resource: extractFeaturedIdentifiers('resource', 'bookmark'),
+      subject: extractFeaturedIdentifiers('subject', 'bookmark'),
     },
     follow: {
-      collection: extractFeaturedIdentifiers('Collection', 'follow'),
-      profile: extractFeaturedIdentifiers('Profile', 'follow'),
-      resource: extractFeaturedIdentifiers('Resource', 'follow'),
-      subject: extractFeaturedIdentifiers('Subject', 'follow'),
+      collection: extractFeaturedIdentifiers('collection', 'follow'),
+      profile: extractFeaturedIdentifiers('profile', 'follow'),
+      resource: extractFeaturedIdentifiers('resource', 'follow'),
+      subject: extractFeaturedIdentifiers('subject', 'follow'),
     },
     like: {
-      collection: extractFeaturedIdentifiers('Collection', 'like'),
-      profile: extractFeaturedIdentifiers('Profile', 'like'),
-      resource: extractFeaturedIdentifiers('Resource', 'like'),
-      subject: extractFeaturedIdentifiers('Subject', 'like'),
+      collection: extractFeaturedIdentifiers('collection', 'like'),
+      profile: extractFeaturedIdentifiers('profile', 'like'),
+      resource: extractFeaturedIdentifiers('resource', 'like'),
+      subject: extractFeaturedIdentifiers('subject', 'like'),
     },
   }
   return myFeaturedEntities
 
   function extractFeaturedIdentifiers(
-    extractEntity: Capitalize<KnownEntityType>,
+    extractEntity: KnownEntityType,
     extractFeature: KnownEntityFeature,
   ): { _key: string }[] {
-    const filteredByFeature = (knownFeaturedEntities ?? []).filter(
-      ({ feature }) => extractFeature === feature,
-    )
-    const identifiers =
-      extractEntity === 'Collection'
-        ? CollectionEntitiesTools.mapToIdentifiersFilterType({
-            ids: filteredByFeature,
-            type: extractEntity,
-          })
-        : extractEntity === 'Resource'
-        ? EdResourceEntitiesTools.mapToIdentifiersFilterType({
-            ids: filteredByFeature,
-            type: extractEntity,
-          })
-        : extractEntity === 'Subject'
-        ? EdMetaEntitiesTools.mapToIdentifiersFilterType({
-            ids: filteredByFeature,
-            type: 'IscedField',
-          })
-        : extractEntity === 'Profile'
-        ? WebUserEntitiesTools.mapToIdentifiersFilterType({
-            ids: filteredByFeature,
-            type: extractEntity,
-          })
-        : []
-
-    return identifiers.map(({ entityIdentifier: { _key } }) => ({ _key }))
+    return (knownFeaturedEntities ?? [])
+      .filter(
+        ({ feature, entityType }) => extractFeature === feature && extractEntity === entityType,
+      )
+      .map(({ _key }) => ({ _key }))
   }
 }

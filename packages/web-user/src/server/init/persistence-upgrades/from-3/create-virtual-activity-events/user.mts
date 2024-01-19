@@ -1,9 +1,10 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import { Collection } from '@moodlenet/collection/server'
 import type { EventPayload } from '@moodlenet/core'
+import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
+import { IscedField } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import { Resource } from '@moodlenet/ed-resource/server'
-import type { SomeEntityDataType } from '@moodlenet/system-entities/common'
 import type { EntityFullDocument } from '@moodlenet/system-entities/server'
 import { getPkgCurrentUser, sysEntitiesDB } from '@moodlenet/system-entities/server'
 import type {
@@ -13,8 +14,9 @@ import type {
 } from '../../../../exports.mjs'
 import { getWebUserByProfileKey } from '../../../../exports.mjs'
 import { shell } from '../../../../shell.mjs'
+import { digestActivityEvent } from '../../../../srv/digestActivities.mjs'
 import { getProfileMeta } from '../../../../srv/profile.mjs'
-import { saveWebUserActivities, saveWebUserActivity } from '../../../activity-log.mjs'
+import { saveWebUserActivities } from '../../../activity-log.mjs'
 import { Profile } from '../../../sys-entities.mjs'
 import collectionActivityEvents from './collectionActivityEvents.mjs'
 import { initialEventsNowISO } from './initialEventsNow.mjs'
@@ -24,14 +26,16 @@ type ProfileRecord = {
   ownResources: EntityFullDocument<ResourceDataType>[]
   ownCollections: EntityFullDocument<CollectionDataType>[]
   profile: EntityFullDocument<ProfileDataType>
-  featuredEntities: {
+  featuredItemsAndTargets: {
     item: KnownFeaturedEntityItem
-    featTarget: EntityFullDocument<SomeEntityDataType>
+    featTarget: EntityFullDocument<
+      ProfileDataType | ResourceDataType | CollectionDataType | IscedFieldDataType
+    >
   }[]
 }
+
 await shell.initiateCall(async () => {
-  const profileCursor = await sysEntitiesDB.query<ProfileRecord>(
-    `
+  const profilesQuery = `
 FOR profile IN \`${Profile.collection.name}\`
 let ownResources = ( FOR resource IN \`${Resource.collection.name}\`
                       FILTER resource._meta.creatorEntityId == profile._id
@@ -43,21 +47,73 @@ let ownCollections = ( FOR collection IN \`${Collection.collection.name}\`
                         RETURN collection 
                       )
 
-let filteredKnownFeaturedEntities = ( FOR item IN profile.knownFeaturedEntities
+let filteredKnownFeaturedItemsAndTargets= ( FOR item IN profile.knownFeaturedEntities
                           LET featTarget = DOCUMENT(item._id)
                           filter featTarget != null
                           RETURN { item , featTarget }
                         )
-LET knownFeaturedEntitiesWithDate = ( FOR rec IN filteredKnownFeaturedEntities RETURN MERGE(rec.item, { at: "${initialEventsNowISO}" }) )
-UPDATE profile IN \`${Profile.collection.name}\` with { knownFeaturedEntities: knownFeaturedEntitiesWithDate }
-
+LET filteredKnownFeaturedItemsAndTargetsWithDateAndMoreProps = ( 
+  FOR rec IN filteredKnownFeaturedItemsAndTargets
+    let featCollName = PARSE_IDENTIFIER(rec.item._id).collection
+    let entityType = featCollName == "${Resource.collection.name}" 
+                      ? "resource"
+                      : featCollName == "${Collection.collection.name}" 
+                      ? "collection"
+                      : featCollName == "${Profile.collection.name}" 
+                      ? "profile"
+                      : featCollName == "${IscedField.collection.name}" 
+                      ? "subject"
+                      : null
+    FILTER entityType != null
+    RETURN {
+      featTarget: rec.featTarget,
+      item: MERGE(
+        rec.item, 
+        { 
+          _key:rec.featTarget._key,
+          entityType,
+          at: "${initialEventsNowISO}" 
+        }
+      )
+    }
+  )
+REPLACE profile 
+        WITH MERGE( 
+            UNSET(profile, 'kudos'), 
+            { 
+              points: 0,
+              knownFeaturedEntities: filteredKnownFeaturedItemsAndTargetsWithDateAndMoreProps[*].item 
+            }
+          )
+          IN \`${Profile.collection.name}\` 
 RETURN { 
     ownResources,
     ownCollections,
-    featuredEntities: knownFeaturedEntitiesWithDate,
+    featuredItemsAndTargets: filteredKnownFeaturedItemsAndTargetsWithDateAndMoreProps,
     profile: NEW
 }
-`,
+`
+  // console.log(profilesQuery)
+
+  shell.log('info', `reset entities popularity`)
+  for (const Ent of [Profile, Resource, Collection, IscedField]) {
+    const collName = Ent.collection.name
+    ;(
+      await sysEntitiesDB.query(`
+  FOR ent IN \`${collName}\`
+    REPLACE ent WITH MERGE(ent, {
+      popularity:{
+        overall: 0,
+        items:{}
+      }
+    }) IN \`${collName}\`
+  `)
+    ).kill()
+  }
+
+  shell.log('info', `Migrating users' data`)
+  const profileCursor = await sysEntitiesDB.query<ProfileRecord>(
+    profilesQuery,
     {},
     {
       batchSize: 100,
@@ -76,6 +132,8 @@ RETURN {
   //   process.stdout.cursorTo(0) // move cursor to beginning of line
   //   process.stdout.write(`User done: ${done} sec:${++sec}`) // write text
   // }, 1000)
+  let done = 0
+
   while (profileCursor.batches.hasNext) {
     const records = (await profileCursor.batches.next()) ?? []
     // console.log('records.length', records.length)
@@ -86,7 +144,7 @@ RETURN {
         if (!record) {
           return
         }
-        const { ownCollections, ownResources, profile, featuredEntities } = record
+        const { ownCollections, ownResources, profile, featuredItemsAndTargets } = record
         const profileKey = profile._key
         const webUser = await getWebUserByProfileKey({ profileKey })
         if (!webUser) {
@@ -119,6 +177,7 @@ RETURN {
             at: profileUpdatedAtDate.toISOString(),
             data: {
               profileKey,
+              oldMeta: getProfileMeta(profile),
               meta: getProfileMeta(profile),
             },
           })
@@ -132,24 +191,27 @@ RETURN {
             at: initialEventsNowISO,
             data: {
               moderator: thisPkgUser,
-              profileKey,
+              profile: { ...profile, knownFeaturedEntities: [] },
               type: 'given',
             },
           })
         }
 
         // feature-entity
-        featuredEntities.forEach(
-          /* <Promise<KnownFeaturedEntityItem>> */ ({ item /* , featTarget */ }, index) => {
+        featuredItemsAndTargets.forEach(
+          /* <Promise<KnownFeaturedEntityItem>> */ ({ item, featTarget }, index) => {
             userActivities.push({
               event: 'feature-entity',
               pkgId,
               at: initialEventsNowISO,
               data: {
-                profileKey,
+                profile: {
+                  ...profile,
+                  knownFeaturedEntities: profile.knownFeaturedEntities.slice(0, index),
+                },
                 action: 'add',
                 item,
-                currentItemsOfSameType: profile.knownFeaturedEntities.slice(0, index),
+                targetEntityDoc: featTarget,
               },
             })
             // return {
@@ -164,6 +226,7 @@ RETURN {
         userActivities.push(...collectionActivityEvents(profile, ownCollections))
 
         await saveAndDigestWebUserActivities(userActivities)
+        ++done % 1000 || shell.log('info', `${done / 1000}K users done`)
 
         // ++done
       }),
@@ -174,11 +237,11 @@ RETURN {
 async function saveAndDigestWebUserActivities(
   userActivities: EventPayload<WebUserActivityEvents>[],
 ) {
-  ... loop userActivities , fai saveWebUserActivity() e digestEvent() ...
-  for(const userActivity of userActivities){
-    await Promise.all([
-      saveWebUserActivity(userActivity),
-      digestEvent(userActivity) 
-    ])
-  }
+  const initialUserActivities = userActivities.map(userActivity => ({
+    ...userActivity,
+    _initial: true as const,
+  }))
+
+  saveWebUserActivities(initialUserActivities),
+    await Promise.all(initialUserActivities.map(digestActivityEvent))
 }

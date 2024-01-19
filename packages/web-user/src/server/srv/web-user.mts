@@ -230,7 +230,7 @@ export async function createWebUser(createRequest: CreateRequest) {
   if (newProfile.publisher) {
     shell.events.emit('user-publishing-permission-change', {
       type: 'given',
-      profileKey: newProfile._key,
+      profile: newProfile,
       moderator: await getPkgCurrentUser(),
     })
   }
@@ -514,8 +514,8 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
 
     const event: WebUserEvents['deleted-web-user-account'] = {
       displayName: profile.displayName,
-      profileKey: profile._key,
-      webUserKey: webUser._key,
+      profile: { ...profileRecord.entity, _meta: profileRecord.meta },
+      webUser: webUser,
       deletedCollections: deletedCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
       deletedResources: deletedResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
       leftCollections: leftCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),

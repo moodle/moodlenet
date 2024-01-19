@@ -1,5 +1,6 @@
+import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import type { EntityIdentifier } from '@moodlenet/system-entities/common'
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entities/server'
 
 export type CollectionEntityDoc = EntityDocument<CollectionDataType>
 export type CollectionMeta = {
@@ -32,30 +33,32 @@ export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 export type CollectionEvents = CollectionActivityEvents
 export type CollectionActivityEvents = {
   'created': {
-    collectionKey: string
+    collection: EntityFullDocument<CollectionDataType>
     userId: EntityIdentifier
   }
-  'updated': {
+  'updated-meta': {
     collectionKey: string
-    updatedMeta: CollectionMeta
     userId: EntityIdentifier
+    oldMeta: CollectionMeta
+    meta: CollectionMeta
   }
   'published': {
-    collectionKey: string
     userId: EntityIdentifier
+    collection: EntityFullDocument<CollectionDataType>
   }
   'resource-list-curation': {
     collectionKey: string
     action: 'add' | 'remove'
-    resourceKey: string
+    resource: EntityFullDocument<ResourceDataType>
     userId: EntityIdentifier
+    resourceList: ResourceListItem[]
   }
   'unpublished': {
-    collectionKey: string
     userId: EntityIdentifier
+    collection: EntityFullDocument<CollectionDataType>
   }
   'deleted': {
-    collectionKey: string
     userId: EntityIdentifier
+    collection: EntityFullDocument<CollectionDataType>
   }
 }

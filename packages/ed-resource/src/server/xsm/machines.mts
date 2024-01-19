@@ -120,7 +120,7 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
           ...context.doc.meta,
           ...context.resourceEdits?.data.meta,
         })
-        const created = await createResource(
+        const resourceDoc = await createResource(
           {
             ...resourceDataTypeMeta,
             _key: newResourceKey,
@@ -128,7 +128,7 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
           contentResourceDataType,
         )
 
-        if (!created) {
+        if (!resourceDoc) {
           contentResourceDataType.kind === 'file' && delResourceFile(newResourceKey)
           throw new Error('resource creation failed for unknown reasons')
         }
@@ -136,7 +136,7 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         if (image?.kind === 'file' || image?.kind === 'url')
           await updateImage(newResourceKey, image)
 
-        const persistentContext = map.db.doc_2_persistentContext(created)
+        const persistentContext = map.db.doc_2_persistentContext(resourceDoc)
         const response: Actor_StoreNewResource_Data = {
           doc: persistentContext.doc,
         }
@@ -144,16 +144,17 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         const userId = await getCurrentEntityUserIdentifier()
         if (userId) {
           shell.events.emit('created', {
-            resourceKey: newResourceKey,
+            resource: resourceDoc,
             userId,
           })
-          if (context.resourceEdits) {
-            shell.events.emit('updated', {
-              resourceKey: newResourceKey,
-              userId,
-              updatedMeta: getEventResourceMeta(persistentContext.doc),
-            })
-          }
+          // if (context.resourceEdits) {
+          //   shell.events.emit('updated-meta', {
+          //     resourceKey: newResourceKey,
+          //     userId,
+          //     meta: getEventResourceMeta(persistentContext.doc),
+          //     oldMeta: getEventResourceMeta({}),
+          //   })
+          // }
         }
         return response
       },
@@ -186,8 +187,9 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
 
         const userId = await getCurrentEntityUserIdentifier()
         if (userId && patchRes.changed) {
-          shell.events.emit('updated', {
-            updatedMeta: getEventResourceMeta(persistentContext.doc),
+          shell.events.emit('updated-meta', {
+            meta: getEventResourceMeta(persistentContext.doc),
+            oldMeta: getEventResourceMeta(persistentContext.doc),
             resourceKey,
             userId,
           })
@@ -207,14 +209,17 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         if (resourceKey === DEFAULT_CONTEXT.doc.id.resourceKey) {
           return
         }
-        delResource(resourceKey)
+        const resource = await delResource(resourceKey)
+        if (!resource) {
+          return
+        }
         deleteImageFile(resourceKey)
         delResourceFile(resourceKey)
         const userId = await getCurrentEntityUserIdentifier()
         if (userId) {
           shell.events.emit('deleted', {
             userId,
-            resourceKey: context.doc.id.resourceKey,
+            resource: { ...resource.entity, _meta: resource.meta },
           })
         }
       },
@@ -312,7 +317,7 @@ export async function stdEdResourceMachine(by: ProvideBy) {
 
     if (publishEvent && userId) {
       shell.events.emit(publishEvent, {
-        resourceKey: state.context.doc.id.resourceKey,
+        resource: updateResult.new,
         userId,
       })
     }

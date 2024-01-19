@@ -2,6 +2,7 @@ import type { CollectionDataType } from '@moodlenet/collection/server'
 import { getCollectionMeta } from '@moodlenet/collection/server'
 import type { EventPayload } from '@moodlenet/core'
 import '@moodlenet/ed-resource/server'
+import { Resource } from '@moodlenet/ed-resource/server'
 import type { EntityIdentifier } from '@moodlenet/system-entities/common'
 import type { EntityFullDocument } from '@moodlenet/system-entities/server'
 import type { ProfileDataType, WebUserActivityEvents } from '../../../../exports.mjs'
@@ -26,7 +27,7 @@ export default function collectionActivityEvents(
       pkgId,
       at: collectionCreatedAtDate.toISOString(),
       data: {
-        collectionKey,
+        collection: ownCollection,
         userId,
       },
     })
@@ -36,13 +37,14 @@ export default function collectionActivityEvents(
       Math.floor(collectionUpdatedAtDate.getTime() / 10000)
     ) {
       userActivities.push({
-        event: 'collection-updated',
+        event: 'collection-updated-meta',
         pkgId,
         at: collectionUpdatedAtDate.toISOString(),
         data: {
           collectionKey,
           userId,
-          updatedMeta: getCollectionMeta(ownCollection),
+          meta: getCollectionMeta(ownCollection),
+          oldMeta: getCollectionMeta(ownCollection),
         },
       })
     }
@@ -53,13 +55,17 @@ export default function collectionActivityEvents(
         pkgId,
         at: initialEventsNowISO,
         data: {
-          collectionKey,
+          collection: ownCollection,
           userId,
         },
       })
     }
 
-    ownCollection.resourceList.forEach(resourceItem => {
+    ownCollection.resourceList.forEach(async (resourceItem, index) => {
+      const resource = await Resource.collection.document({ _key: resourceItem._key })
+      if (!resource) {
+        return
+      }
       userActivities.push({
         event: 'collection-resource-list-curation',
         pkgId,
@@ -68,7 +74,8 @@ export default function collectionActivityEvents(
           collectionKey,
           userId,
           action: 'add',
-          resourceKey: resourceItem._key,
+          resource,
+          resourceList: ownCollection.resourceList.slice(0, index),
         },
       })
     })

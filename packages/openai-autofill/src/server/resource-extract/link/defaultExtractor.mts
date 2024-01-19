@@ -74,7 +74,7 @@ async function puppeteerScrape(
     page.emulateMediaType('screen')
     await page.goto(url, {})
     await new Promise(r => setTimeout(r, 5000))
-    const pdfBuffer = await page.pdf({ path: 'page.pdf', format: 'A4' })
+    const pdfBuffer = await page.pdf({ /* path: 'page.pdf', */ format: 'A4' })
     const quasiName = url.split('/').reverse().slice(0, 1).join('') + '.pdf'
     const text = await promisify<string, Buffer, string>(fromBufferWithName)(quasiName, pdfBuffer)
 

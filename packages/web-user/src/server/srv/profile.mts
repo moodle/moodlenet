@@ -1,6 +1,7 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import { Collection } from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
+import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import { Resource } from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
@@ -10,7 +11,7 @@ import {
   getWebappUrl,
   webImageResizer,
 } from '@moodlenet/react-app/server'
-import type { EntityClass, SomeEntityDataType } from '@moodlenet/system-entities/common'
+import type { EntityClass } from '@moodlenet/system-entities/common'
 import type {
   AccessEntitiesRecordType,
   EntityAccess,
@@ -48,7 +49,6 @@ import type {
   ProfileMeta,
 } from '../types.mjs'
 import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
-import { deltaPopularity } from './popularity.mjs'
 import {
   getCurrentProfileIds,
   getWebUserByProfileKey,
@@ -129,6 +129,7 @@ export async function editProfile(
   updateRes.changed &&
     shell.events.emit('edit-profile-meta', {
       profileKey: key,
+      oldMeta: getProfileMeta(updateRes.old),
       meta: getProfileMeta(updateRes.patched),
     })
 
@@ -165,7 +166,11 @@ export async function entityFeatureAction({
 
   const targetEntityId = getEntityIdByKnownEntity({ _key, entityType })
   const targetEntityDoc = await (
-    await sysEntitiesDB.query<EntityFullDocument<SomeEntityDataType>>({
+    await sysEntitiesDB.query<
+      EntityFullDocument<
+        ProfileDataType | ResourceDataType | CollectionDataType | IscedFieldDataType
+      >
+    >({
       query: 'RETURN DOCUMENT(@targetEntityId)',
       bindVars: { targetEntityId },
     })
@@ -189,48 +194,56 @@ export async function entityFeatureAction({
     return
   }
 
-  const knownFeaturedEntityItem: KnownFeaturedEntityItem = {
+  const featuringEntityItem: KnownFeaturedEntityItem = {
     _id: targetEntityId,
     feature,
     at: shell.now().toISOString(),
+    _key: targetEntityDoc._key,
+    entityType,
   }
-
-  const aqlAction =
-    action === 'remove'
-      ? `REMOVE_VALUE( ${currentEntityVar}.knownFeaturedEntities, @knownFeaturedEntityItem , 1 )`
-      : `        PUSH( ${currentEntityVar}.knownFeaturedEntities, @knownFeaturedEntityItem , true )`
 
   const updateResult = await shell.call(patchEntity)(
     Profile.entityClass,
     profileKey,
     `{ 
-    knownFeaturedEntities: ${aqlAction}
-  }`,
+      knownFeaturedEntities: newKnownFeaturedEntities
+    }`,
     {
+      postAccessBody:
+        `
+        let isPresent = 0 < LENGTH(${currentEntityVar}.knownFeaturedEntities[* FILTER 
+                                                                                CURRENT._id == @featuringEntityItem._id
+                                                                                && CURRENT.feature == @featuringEntityItem.feature
+                                                                            ])
+        let newKnownFeaturedEntities = ` + adding
+          ? `/* adding */    isPresent ? ${currentEntityVar}.knownFeaturedEntities : PUSH( ${currentEntityVar}.knownFeaturedEntities, @featuringEntityItem , true )`
+          : `/* removing */ !isPresent ? ${currentEntityVar}.knownFeaturedEntities : ${currentEntityVar}.knownFeaturedEntities[* FILTER 
+                                                                                                                                  CURRENT._id != @featuringEntityItem._id
+                                                                                                                                  && CURRENT.feature != @featuringEntityItem.feature
+                                                                                                                              ]`,
       bindVars: {
-        knownFeaturedEntityItem,
+        featuringEntityItem,
       },
     },
   )
   assert(updateResult)
 
-  shell.events.emit('feature-entity', {
-    action,
-    profileKey,
-    item: knownFeaturedEntityItem,
-    currentItemsOfSameType: updateResult.patched.knownFeaturedEntities.filter(
-      item => item.feature === feature,
-    ),
-  })
-
-  if (updateResult.patched.publisher) {
-    await deltaPopularity(adding, {
-      feature,
-      profileCreatorIdentifiers,
-      entityType,
-      entityKey: _key,
+  updateResult.changed &&
+    shell.events.emit('feature-entity', {
+      action,
+      profile: updateResult.patched,
+      item: featuringEntityItem,
+      targetEntityDoc,
     })
-  }
+
+  // if (updateResult.patched.publisher) {
+  //   await deltaPopularity(adding, {
+  //     feature,
+  //     profileCreatorIdentifiers,
+  //     entityType,
+  //     entityKey: _key,
+  //   })
+  // }
   return updateResult
 }
 
@@ -248,12 +261,18 @@ export async function setProfilePublisherFlag({
   if (!profile) return { type: 'not-found', ok: false }
   if (profile.entity.publisher === setIsPublisher) return { type: 'no-change', ok: true }
 
-  await patchEntity(Profile.entityClass, profileKey, { publisher: setIsPublisher })
-  shell.events.emit('user-publishing-permission-change', {
-    type: setIsPublisher ? 'given' : 'revoked',
-    profileKey,
-    moderator,
+  const patchResult = await patchEntity(Profile.entityClass, profileKey, {
+    publisher: setIsPublisher,
   })
+  if (!patchResult) {
+    return { type: 'not-found', ok: false }
+  }
+  patchResult.changed &&
+    shell.events.emit('user-publishing-permission-change', {
+      type: setIsPublisher ? 'given' : 'revoked',
+      profile: { ...profile.entity, _meta: profile.meta },
+      moderator,
+    })
   return { type: 'done', ok: true }
 }
 
@@ -278,15 +297,20 @@ export async function getEntityFeatureCount({
   entityType: KnownEntityType
   _key: string
 }) {
-  const _id = getEntityIdByKnownEntity({ _key, entityType })
-  const needle: Pick<KnownFeaturedEntityItem, '_id' | 'feature'> = {
-    _id,
+  const needle: Pick<KnownFeaturedEntityItem, '_key' | 'entityType' | 'feature'> = {
+    _key,
+    entityType,
     feature,
   }
   const bindVars = { '@collection': Profile.collection.name, needle }
   const query = `
   FOR profile IN @@collection
-  FILTER profile.publisher && @needle IN (FOR item in profile.knownFeaturedEntities RETURN { _id:item._id, feature :item.feature })
+  FILTER profile.publisher && @needle IN (FOR item in profile.knownFeaturedEntities 
+                                            RETURN { 
+                                              entityType: item.entityType, 
+                                              _key:       item._key, 
+                                              feature:    item.feature
+                                            })
   COLLECT WITH COUNT INTO count
   RETURN { count } 
   `
@@ -309,16 +333,21 @@ export async function getEntityFeatureProfiles({
   _key: string
   paging: { after?: string; limit?: number }
 }) {
-  const _id = getEntityIdByKnownEntity({ _key, entityType })
-  const needle: Pick<KnownFeaturedEntityItem, '_id' | 'feature'> = {
-    _id,
+  const needle: Pick<KnownFeaturedEntityItem, '_key' | 'entityType' | 'feature'> = {
+    _key,
+    entityType,
     feature,
   }
   const skip = Number(after)
   const cursor = await queryEntities(Profile.entityClass, {
     skip,
     limit,
-    postAccessBody: `FILTER ${currentEntityVar}.publisher && @needle IN (FOR item in ${currentEntityVar}.knownFeaturedEntities RETURN { _id:item._id, feature :item.feature })  `,
+    postAccessBody: `FILTER ${currentEntityVar}.publisher && @needle IN (FOR item in ${currentEntityVar}.knownFeaturedEntities 
+                                                                          RETURN { 
+                                                                            entityType: item.entityType, 
+                                                                            _key:       item._key, 
+                                                                            feature:    item.feature
+                                                                          })`,
     bindVars: { needle },
   })
 
@@ -362,6 +391,7 @@ export async function setProfileAvatar(
     shell.events.emit('edit-profile-meta', {
       profileKey: _key,
       meta: getProfileMeta(patchResult.patched),
+      oldMeta: getProfileMeta(patchResult.old),
     })
   return patchResult
 }
@@ -403,6 +433,7 @@ export async function setProfileBackgroundImage(
   patchResult.changed &&
     shell.events.emit('edit-profile-meta', {
       meta: getProfileMeta(patchResult.patched),
+      oldMeta: getProfileMeta(patchResult.old),
       profileKey: _key,
     })
   return patchResult
@@ -566,9 +597,11 @@ export async function editMyProfileInterests({
   })
   if (!updateRes) return updateRes
 
-  updateRes.patched.settings.interests &&
+  updateRes.changed &&
+    updateRes.patched.settings.interests &&
     shell.events.emit('edit-profile-interests', {
       profileKey: profileIds._key,
+      oldProfileInterests: updateRes.old.settings.interests ?? null,
       profileInterests: updateRes.patched.settings.interests,
     })
 

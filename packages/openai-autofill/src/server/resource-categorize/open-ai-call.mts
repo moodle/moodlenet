@@ -1,4 +1,5 @@
 import type { ResourceDoc } from '@moodlenet/core-domain/resource'
+import domain from 'domain'
 import type {
   ChatCompletion,
   ChatCompletionCreateParams,
@@ -20,7 +21,12 @@ interface OpenAiResponse {
 }
 
 export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | null> {
-  const resourceExtraction = await extractResourceData(doc)
+  const d = domain.create()
+  d.on('error', err => {
+    shell.log('warn', 'TEXT EXTRACTION ERROR ! Aborting', err)
+  })
+  const resourceExtraction = await d.run(() => extractResourceData(doc).catch(() => null))
+  d.exit()
   if (!resourceExtraction) {
     return null
   }

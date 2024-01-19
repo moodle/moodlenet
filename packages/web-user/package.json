@@ -31,6 +31,7 @@
   ],
   "exports": {
     "./init": "./dist/server/init.mjs",
+    "./start": "./dist/server/start.mjs",
     "./server": "./dist/server/exports.mjs",
     "./common": "./dist/common/exports.mjs",
     "./ui": "./dist/webapp/ui/exports/ui.mjs",

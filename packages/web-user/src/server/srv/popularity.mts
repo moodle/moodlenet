@@ -1,7 +1,6 @@
 import { deltaCollectionPopularityItem } from '@moodlenet/collection/server'
 import { deltaIscedFieldPopularityItem } from '@moodlenet/ed-meta/server'
 import { deltaResourcePopularityItem } from '@moodlenet/ed-resource/server'
-import type { EntityIdentifiers } from '@moodlenet/system-entities/common'
 import { sysEntitiesDB } from '@moodlenet/system-entities/server'
 import type { KnownEntityFeature, KnownEntityType } from '../../common/types.mjs'
 import { Profile } from '../init/sys-entities.mjs'
@@ -13,10 +12,8 @@ export async function deltaPopularity(
     entityKey,
     entityType,
     feature,
-    profileCreatorIdentifiers,
   }: {
     feature: KnownEntityFeature
-    profileCreatorIdentifiers: EntityIdentifiers | undefined
     entityType: KnownEntityType
     entityKey: string
   },

@@ -17,6 +17,7 @@ export default function resourceActivityEvents(
   const userId: EntityIdentifier = { _key: profile._key, entityClass: profile._meta.entityClass }
   for (const ownResource of ownResources) {
     const resourceKey = ownResource._key
+
     const resourceCreatedAtDate = new Date(ownResource._meta.created)
     const resourceUpdatedAtDate = new Date(ownResource._meta.updated)
     // resource-activity-event
@@ -25,7 +26,7 @@ export default function resourceActivityEvents(
       pkgId,
       at: resourceCreatedAtDate.toISOString(),
       data: {
-        resourceKey,
+        resource: ownResource,
         userId,
       },
     })
@@ -35,13 +36,14 @@ export default function resourceActivityEvents(
       Math.floor(resourceUpdatedAtDate.getTime() / 10000)
     ) {
       userActivities.push({
-        event: 'resource-updated',
+        event: 'resource-updated-meta',
         pkgId,
         at: resourceUpdatedAtDate.toISOString(),
         data: {
           resourceKey,
           userId,
-          updatedMeta: getEventResourceMeta(
+          meta: getEventResourceMeta(resourceMapping.db.doc_2_persistentContext(ownResource).doc),
+          oldMeta: getEventResourceMeta(
             resourceMapping.db.doc_2_persistentContext(ownResource).doc,
           ),
         },
@@ -54,7 +56,7 @@ export default function resourceActivityEvents(
         pkgId,
         at: initialEventsNowISO,
         data: {
-          resourceKey,
+          resource: ownResource,
           userId,
         },
       })

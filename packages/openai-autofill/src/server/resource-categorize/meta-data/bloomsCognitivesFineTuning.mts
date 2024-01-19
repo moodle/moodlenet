@@ -23,10 +23,10 @@ RETURN [bc.name,bc.verbs,bc._key]
     `the ${bcAttr('bloomsLevelCode')} is the associated code for "Blooms Cognitive Taxonomy Level"`,
     `the ${bcAttr(
       'learningOutcomeVerbCode',
-    )} must be one of the verbs associated o the selected "bloomsLevelCode", it acts as the first word for the description`,
+    )} must be one of the verbs associated to the selected "bloomsLevelCode", it acts as the first word for the description`,
     `the ${bcAttr(
       'learningOutcomeDescription',
-    )} must be a one-liner description of the resource learning outcome. It must **IMPLICITLY** start with the selected "learningOutcomeVerbCode" omitting it from the description`,
+    )} must be a one-liner description of the resource learning outcome. It must IMPLICITLY start with the selected "learningOutcomeVerbCode" omitting it from the description`,
     `here's the standard "Blooms Cognitive Taxonomy" code and associated verbs mapping:
 
 ${data
