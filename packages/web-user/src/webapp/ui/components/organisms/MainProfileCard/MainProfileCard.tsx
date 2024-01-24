@@ -592,8 +592,8 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     header,
     description,
     // approvalInfo,
-    footer,
     ...(mainColumnItems ?? []),
+    footer,
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
   return (
