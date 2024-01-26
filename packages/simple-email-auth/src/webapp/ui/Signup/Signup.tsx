@@ -1,4 +1,6 @@
 import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
+import type { Href } from '@moodlenet/react-app/common'
+import { Link } from '@moodlenet/react-app/ui'
 import { MailOutline } from '@mui/icons-material'
 import type { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -10,12 +12,13 @@ export type SignupProps = {
   form: ReturnType<typeof useFormik<SignupFormValues>>
   errMsg: string
   emailSent: boolean
+  userAgreementHref: Href
 }
 
 export const SignupIcon: FC = () => {
   return <PrimaryButton color="blue">Use email</PrimaryButton>
 }
-export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
+export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form, userAgreementHref }) => {
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
   return (
@@ -62,40 +65,21 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
             >
               Sign up
             </PrimaryButton>
-            <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
+            <Link href={userAgreementHref} target="__blank">
+              <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
+            </Link>
           </div>
           <div className="general-error" hidden={!errMsg}>
             {errMsg}
           </div>
         </>
       )}
-      {/* <div className={`success-content`} hidden={!emailSent}> */}
-      {/* <div className={`success-content ${requestSent ? 'success' : ''}`}> */}
-      {/* <Card>
-          <div className="content">
-            <div className="title">Email sent!</div>
-            <MailOutlineIcon className="icon" />
-            <div className="subtitle">Check out your inbox and activate your account</div>
-          </div>
-        </Card>
-      </div> */}
       {emailSent && (
         <div className="email-sent">
           <MailOutline className="icon" />
           <div className="title">Email sent!</div>
           <div className="subtitle">Check out your inbox and activate your account</div>
         </div>
-        // <div className={`success-content ${emailSent ? 'success' : ''}`}>
-        //   <Card>
-        //     <div className="content">
-        //       <MailOutline className="icon" />
-        //       <div className="subtitle">
-        //         If the email you provided corresponds to a MoodleNet user, you&apos;ll receive an
-        //         email with a change password link
-        //       </div>
-        //     </div>
-        //   </Card>
-        // </div>
       )}
     </>
   )
