@@ -30,7 +30,7 @@ export const getMainHeaderStoryProps = (props?: {
   const AlertButtonItem: AddonItem | null = hasAlerts
     ? {
         Item: () => (
-          <AlertButton numResourcesToReview={4} profileHref={href('Pages/Profile/Owner')} />
+          <AlertButton numResourcesToReview={4} profileHref={href('Pages/Profile/Logged In')} />
         ),
         key: 'alert-button',
       }
