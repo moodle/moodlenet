@@ -1,9 +1,5 @@
-import {
-  InputTextField,
-  PrimaryButton,
-  Snackbar,
-  TertiaryButton,
-} from '@moodlenet/component-library'
+import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
+import { MailOutline } from '@mui/icons-material'
 import type { useFormik } from 'formik'
 import type { FC } from 'react'
 import './Signup.scss'
@@ -24,55 +20,55 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
   const canSubmit = !form.isSubmitting && !form.isValidating
   return (
     <>
-      <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
-        <InputTextField
-          className="display-name"
-          placeholder={`Display name`}
-          name="displayName"
-          edit
-          value={form.values.displayName}
-          onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.displayName}
-        />
-        <InputTextField
-          className="email"
-          type="email"
-          placeholder={`Email`}
-          name="email"
-          edit
-          value={form.values.email}
-          onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.email}
-        />
-        <InputTextField
-          className="password"
-          type="password"
-          placeholder={`Password`}
-          name="password"
-          edit
-          value={form.values.password}
-          onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.password}
-        />
-        <button id="signup-button" type="submit" style={{ display: 'none' }} />
-      </form>
-      <div className="bottom">
-        <PrimaryButton
-          onClick={
-            canSubmit ? () => form.handleSubmit() : undefined
-          } /* onClick={canSubmit ? form.submitForm : undefined} */
-        >
-          Sign up
-        </PrimaryButton>
-        {/* <Link href={userAgreementHref} target="__blank"> */}
-        <a>
-          <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
-        </a>
-        {/* </Link> */}
-      </div>
-      <div className="general-error" hidden={!errMsg}>
-        {errMsg}
-      </div>
+      {!emailSent && (
+        <>
+          <form onSubmit={canSubmit ? form.handleSubmit : undefined}>
+            <InputTextField
+              className="display-name"
+              placeholder={`Display name`}
+              name="displayName"
+              edit
+              value={form.values.displayName}
+              onChange={form.handleChange}
+              error={shouldShowErrors && form.errors.displayName}
+            />
+            <InputTextField
+              className="email"
+              type="email"
+              placeholder={`Email`}
+              name="email"
+              edit
+              value={form.values.email}
+              onChange={form.handleChange}
+              error={shouldShowErrors && form.errors.email}
+            />
+            <InputTextField
+              className="password"
+              type="password"
+              placeholder={`Password`}
+              name="password"
+              edit
+              value={form.values.password}
+              onChange={form.handleChange}
+              error={shouldShowErrors && form.errors.password}
+            />
+            <button id="signup-button" type="submit" style={{ display: 'none' }} />
+          </form>
+          <div className="bottom">
+            <PrimaryButton
+              onClick={
+                canSubmit ? () => form.handleSubmit() : undefined
+              } /* onClick={canSubmit ? form.submitForm : undefined} */
+            >
+              Sign up
+            </PrimaryButton>
+            <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
+          </div>
+          <div className="general-error" hidden={!errMsg}>
+            {errMsg}
+          </div>
+        </>
+      )}
       {/* <div className={`success-content`} hidden={!emailSent}> */}
       {/* <div className={`success-content ${requestSent ? 'success' : ''}`}> */}
       {/* <Card>
@@ -83,7 +79,24 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form }) => {
           </div>
         </Card>
       </div> */}
-      {emailSent && <Snackbar type="success">Signup success! Login to start</Snackbar>}
+      {emailSent && (
+        <div className="email-sent">
+          <MailOutline className="icon" />
+          <div className="title">Email sent!</div>
+          <div className="subtitle">Check out your inbox and activate your account</div>
+        </div>
+        // <div className={`success-content ${emailSent ? 'success' : ''}`}>
+        //   <Card>
+        //     <div className="content">
+        //       <MailOutline className="icon" />
+        //       <div className="subtitle">
+        //         If the email you provided corresponds to a MoodleNet user, you&apos;ll receive an
+        //         email with a change password link
+        //       </div>
+        //     </div>
+        //   </Card>
+        // </div>
+      )}
     </>
   )
 }
