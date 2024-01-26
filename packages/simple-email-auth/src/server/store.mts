@@ -33,7 +33,7 @@ export async function getByWebUserKey(webUserKey: string): Promise<EmailPwdUser 
 }
 
 export async function getById(sel: DocumentSelector): Promise<EmailPwdUser | undefined> {
-  const userDoc = await EmailPwdUserCollection.document(sel, true)
+  const userDoc = await EmailPwdUserCollection.document(sel, { graceful: true })
 
   return _user(userDoc)
 }

@@ -5,7 +5,8 @@ export type IscedFieldDataType = {
   codePath: string[]
   name: string
   published: boolean
-  popularity?: {
+  points?: null | number
+  popularity?: null | {
     overall: number
     items: { [key: string]: IscedFieldPopularityItem }
   }

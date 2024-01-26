@@ -40,7 +40,7 @@ import type {
   WebUserJwtPayload,
   WebUserRecord,
 } from '../types.mjs'
-import { reduceToKnownFeaturedEntities } from './known-features.mjs'
+import { reduceToKnownFeaturedEntities } from './known-entity-types.mjs'
 import { entityFeatureAction, getProfileOwnKnownEntities, getProfileRecord } from './profile.mjs'
 
 const VALID_JWT_VERSION: TokenVersion = 1
@@ -259,7 +259,10 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
   if (!webUser) {
     return
   }
-  const profile = await Profile.collection.document({ _key: webUser.profileKey })
+  const profile = await Profile.collection.document(
+    { _key: webUser.profileKey },
+    { graceful: true },
+  )
 
   if (!profile) {
     return
@@ -283,7 +286,11 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
   })
   return jwtToken
 }
-export async function getWebUser({ _key }: { _key: string }): Promise<WebUserRecord | undefined> {
+export async function getWebUser({
+  _key,
+}: {
+  _key: string
+}): Promise<WebUserRecord | undefined | null> {
   const foundUser = await WebUserCollection.document({ _key }, { graceful: true })
   return foundUser
 }
@@ -446,20 +453,26 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
           ({ _key }) => ({ entityType: 'resource', feature: 'like', _key } as const),
         ),
       ]
-
-      await Promise.all(
-        allDiscardingFeatures.map(
-          ({ _key, entityType, feature }) =>
-            entityFeatureAction({
-              _key,
-              entityType,
-              feature,
-              action: 'remove',
-              profileKey: profile._key,
-            }),
-          // shell.log('debug', `remove entityFeatureAction ${entityType} ${feature} ${_key}`),
-        ),
-      )
+      await shell.initiateCall(async () => {
+        await setCurrentSystemUser({
+          type: 'entity',
+          entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
+          restrictToScopes: false,
+        })
+        await Promise.all(
+          allDiscardingFeatures.map(
+            ({ _key, entityType, feature }) =>
+              entityFeatureAction({
+                _key,
+                entityType,
+                feature,
+                action: 'remove',
+                profileKey: profile._key,
+              }),
+            // shell.log('debug', `remove entityFeatureAction ${entityType} ${feature} ${_key}`),
+          ),
+        )
+      })
     }
     const ownCollections = await getProfileOwnKnownEntities({
       knownEntity: 'collection',

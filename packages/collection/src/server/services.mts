@@ -86,6 +86,10 @@ export async function setPublished(key: string, published: boolean) {
     shell.events.emit(published ? 'published' : 'unpublished', {
       collection: patchResult.patched,
       userId,
+      // resourceListInfo: await getExistingResourcesInCollectionInfo(
+      //   patchResult.patched._meta.creatorEntityId,
+      //   patchResult.patched.resourceList,
+      // ),
     })
   }
   return patchResult
@@ -249,6 +253,7 @@ export async function updateCollectionContent(
   }
 
   const userId = await getCurrentEntityUserIdentifier()
+
   if (userId && updateResult.changed) {
     shell.events.emit('resource-list-curation', {
       collection: updateResult.patched,
@@ -261,19 +266,54 @@ export async function updateCollectionContent(
   return updateResult
 }
 
+// export async function getExistingResourcesInCollectionInfo(
+//   collectionCreatorId: string | undefined,
+//   resourceKeyList: { _key: string }[],
+// ): Promise<ResourceInCollectionInfo[]> {
+//   const exisingResourcesInCollectionInfo = (
+//     await Promise.all(
+//       resourceKeyList.map(({ _key }) => Resource.collection.document({ _key }, { graceful: true })),
+//     )
+//   )
+//     .filter(Boolean)
+//     .map<ResourceInCollectionInfo>(res => {
+//       const creatorId = res._meta.creatorEntityId
+//       assert(creatorId)
+//       return {
+//         key: res._key,
+//         creatorId,
+//         published: res.published,
+//         sameAsCollectionCreator: creatorId === collectionCreatorId,
+//       }
+//     })
+
+//   return exisingResourcesInCollectionInfo
+// }
 export async function delCollection(_key: string) {
-  const delResult = await shell.call(delEntity)(Collection.entityClass, _key)
-  if (!delResult) {
+  const userId = await getCurrentEntityUserIdentifier()
+  if (!userId) {
     return
   }
-  const userId = await getCurrentEntityUserIdentifier()
-  if (userId) {
-    shell.events.emit('deleted', {
-      collection: { ...delResult.entity, _meta: delResult.meta },
+  const found = await shell.call(getEntity)(Collection.entityClass, _key)
+  if (!found) {
+    return
+  }
+  if (!found.entity.published) {
+    shell.events.emit('unpublished', {
+      collection: { ...found.entity, _meta: found.meta },
       userId,
+      // resourceListInfo: await getExistingResourcesInCollectionInfo(
+      //   found.meta.creatorEntityId,
+      //   found.entity.resourceList,
+      // ),
     })
   }
-  return delResult
+  await shell.call(delEntity)(Collection.entityClass, _key)
+  shell.events.emit('deleted', {
+    collection: { ...found.entity, _meta: found.meta },
+    userId,
+  })
+  return found
 }
 
 export function getImageLogicalFilename(collectionKey: string) {

@@ -1,90 +1,49 @@
-import type { EntityFullDocument } from '@moodlenet/system-entities/server'
-import { sysEntitiesDB } from '@moodlenet/system-entities/server'
-import { Profile } from '../init/sys-entities.mjs'
-import type { ProfileDataType } from '../types.mjs'
-
-export async function deltaPoints({ delta, profileKey }: { profileKey: string; delta: number }) {
-  const cursor = await sysEntitiesDB.query<EntityFullDocument<ProfileDataType>>(
-    `
-FOR profile IN \`${Profile.collection.name}\`
-  FILTER profile._key == @profileKey
-  LIMIT 1
-  let updatedPoints = profile.points + @delta
-  UPDATE profile WITH { points: updatedPoints } IN \`${Profile.collection.name}\`
-  RETURN NEW
-`,
-    {
-      delta,
-      profileKey,
-    },
-  )
-  const profile = await cursor.next()
-  return profile
-}
-
 export const pointSystem = {
-  account: {
-    creation: 5,
-  },
-  featureEntity: {
-    resource: {
-      like: {
-        add: { giver: 1, receiver: 1 },
-        remove: { giver: -1, receiver: -1 },
-      },
-      bookmark: {
-        add: { giver: 1, receiver: 1 },
-        remove: { giver: -1, receiver: -1 },
-      },
-      follow: null,
+  curation: {
+    like: {
+      toActor: { points: 1 },
+      toTargetEntityCreator: { points: 1 },
+      toTargetEntity: { popularity: 1 },
     },
-    collection: {
-      bookmark: {
-        add: { giver: 1, receiver: 1 },
-        remove: { giver: -1, receiver: -1 },
-      },
-      follow: null,
-      like: null,
-    },
-    profile: {
-      bookmark: {
-        add: { giver: 1, receiver: 1 },
-        remove: { giver: -1, receiver: -1 },
-      },
-      follow: null,
-      like: null,
-    },
-    subject: {
-      follow: null,
-      bookmark: null,
-      like: null,
+    bookmark: {
+      toActor: { points: 1 },
+      toTargetEntityCreator: { points: 1 },
+      toTargetEntity: { popularity: 1 },
     },
   },
   contribution: {
     resource: {
-      publish: { creator: 20 },
-      unpublish: { creator: -20 },
+      perMetaDataField: { points: 1 },
+      published: { toCreator: { points: 20 } },
     },
     collection: {
-      publish: { creator: 5 },
-      unpublish: { creator: -5 },
-      resourceInCollection: {
-        add: { resourceCreator: 5, collectionCreator: 5 },
-        remove: { resourceCreator: -5, collectionCreator: -5 },
+      published: { toCreator: { points: 5 } },
+      perMetaDataField: { points: 1 },
+      listCuration: {
+        toCollectionCreator: { points: 5 },
+        toResourceCreator: { points: 5 },
+        toResource: { popularity: 1 },
       },
     },
   },
-  engagment: {
-    publisherGrant: { gain: 10, loose: -10 },
+  engagement: {
+    // resource: {
+    //   updateMeta: { toUpdater: { points_: 5 } },
+    // },
+    // collection: {
+    //   updateMeta: { toUpdater: { points_: 5 } },
+    // },
     profile: {
-      updateMeta: { pointsPerField: 1 },
-      interests: { points: 1 },
+      creation: { points: 5 },
+      publisher: { points: 10 },
+      interestsSet: { points: 5 },
+      perMetaDataField: { points: 1 },
     },
-    resource: {
-      updateMeta: { points: 5 },
-    },
-    collection: {
-      updateMeta: { points: 5 },
+    follow: {
+      followerProfile: { points: 5 },
+      followedProfile: { points: 5 },
+      entityCreatorProfile: { points: 5 },
+      entity: { popularity: 1 },
     },
   },
-}
+} as const

@@ -1,6 +1,6 @@
-import { CollectionEntitiesTools } from '@moodlenet/collection/server'
-import { EdMetaEntitiesTools } from '@moodlenet/ed-meta/server'
-import { EdResourceEntitiesTools } from '@moodlenet/ed-resource/server'
+import { Collection, CollectionEntitiesTools } from '@moodlenet/collection/server'
+import { EdMetaEntitiesTools, IscedField } from '@moodlenet/ed-meta/server'
+import { EdResourceEntitiesTools, Resource } from '@moodlenet/ed-resource/server'
 import assert from 'assert'
 import type {
   KnownEntityFeature,
@@ -8,7 +8,28 @@ import type {
   KnownFeaturedEntities,
 } from '../../common/types.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
+import { Profile } from '../exports.mjs'
 import type { KnownFeaturedEntityItem } from '../types.mjs'
+
+export type { CollectionDataType } from '@moodlenet/collection/server'
+export type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
+export type { ResourceDataType } from '@moodlenet/ed-resource/server'
+
+export function getEntityCollectionHandle({ entityType }: { entityType: KnownEntityType }) {
+  const handle =
+    entityType === 'collection'
+      ? Collection
+      : entityType === 'resource'
+      ? Resource
+      : entityType === 'profile'
+      ? Profile
+      : entityType === 'subject'
+      ? IscedField
+      : null
+
+  assert(handle)
+  return handle
+}
 
 export function getEntityIdByKnownEntity({
   entityType,
@@ -26,6 +47,21 @@ export function getEntityIdByKnownEntity({
       ? WebUserEntitiesTools.getIdentifiersByKey({ _key, type: 'Profile' })._id
       : entityType === 'subject'
       ? EdMetaEntitiesTools.getIdentifiersByKey({ _key, type: 'IscedField' })._id
+      : null
+
+  assert(_id)
+  return _id
+}
+export function getEntityToolByKnownEntity({ entityType }: { entityType: KnownEntityType }) {
+  const _id =
+    entityType === 'collection'
+      ? CollectionEntitiesTools
+      : entityType === 'resource'
+      ? EdResourceEntitiesTools
+      : entityType === 'profile'
+      ? WebUserEntitiesTools
+      : entityType === 'subject'
+      ? EdMetaEntitiesTools
       : null
 
   assert(_id)

@@ -1,0 +1,64 @@
+import type { CollectionDataType } from '@moodlenet/collection/server'
+import type { ResourceDataType } from '@moodlenet/ed-resource/server'
+import type { EntityFullDocument } from '@moodlenet/system-entities/server'
+import { sysEntitiesDB } from '@moodlenet/system-entities/server'
+import { Profile } from '../init/sys-entities.mjs'
+import type { ProfileDataType } from '../types.mjs'
+import { pointSystem as P } from './point-system.mjs'
+
+export async function countPoints(profileId: string) {
+  const cursor = await sysEntitiesDB.query<{
+    profile: EntityFullDocument<ProfileDataType>
+    ownPublishedResources: EntityFullDocument<ResourceDataType>[]
+    ownPublishedCollections: EntityFullDocument<CollectionDataType>[]
+  }>(
+    `
+LET profile = DOCUMENT(@profileId)
+
+FILTER !!profile
+
+LET accountCreatedPoints = ${P.engagement.profile.creation.points}
+LET publisherPoints = ${P.engagement.profile.publisher.points}
+LET interestsPoints = // if interests are set give ${P.engagement.profile.interestsSet.points}
+LET profileMetaPoints = // for each profile meta field give ${P.engagement.profile.perMetaDataField.points}
+
+LET ownPublishedResources = FOR IN
+LET publishedResourcePoints = FOR IN // for each ownPublishedResources give ${P.contribution.resource.published.toCreator.points}
+                                // for each in other's published collections add ${P.contribution.collection.forEachResourceInList.IfResourceCreatorIsSomeOneElse.toResourceCreator.points}
+
+LET ownPublishedCollections = FOR IN
+LET publishedCollectionsPoints = FOR IN // for each ownPublishedCollections give ${P.contribution.collection.published.toCreator.points}
+                                      // for each not-owned resource give ${P.contribution.collection.forEachResourceInList.IfResourceCreatorIsSomeOneElse.toCollectionCreator.points}
+LET featuredEntitiesPoints = FOR IN
+// for each featured someone else's published entity 
+//     follow: get ${P.engagement.follow.ifEntityCreatorIsSomeOneElse.toProfile.points}
+//     bookmark: get ${P.curation.bookmark.ifEntityCreatorIsSomeOneElse.toProfile.points}
+//     like: get ${P.curation.likes.IfEntityCreatorIsSomeOneElse.toLiker.points}
+
+LET points = accountCreatedPoints +
+            publisherPoints +
+            interestsPoints +
+            profileMetaPoints +
+            ownPublishedResources +
+            publishedResourcePoints +
+            ownPublishedCollections +
+            publishedCollectionsPoints +
+            featuredEntitiesPoints
+
+UPDATE profile WITH { points, lastPointComputation: { at: NOW, toDo: false }  } in @@profile_collection_name
+
+return {
+  profile,
+  ownPublishedResources,
+  ownPublishedCollections
+}
+`,
+    {
+      profileId,
+      '@profile_collection_name': Profile.collection.name,
+    },
+  )
+  const profile = await cursor.next()
+
+  return profile
+}

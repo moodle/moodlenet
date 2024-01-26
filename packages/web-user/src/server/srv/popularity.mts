@@ -46,14 +46,14 @@ export async function deltaProfilePopularityItem({
       query: `FOR res in @@profileCollection 
       FILTER res._key == @_key
       LIMIT 1
-      UPDATE res WITH {
-        popularity:{
-          overall: res.popularity.overall + ( ${delta} ),
-          items:{
-            "${itemName}": (res.popularity.items["${itemName}"] || 0) + ( ${delta} )
+        UPDATE res WITH {
+          popularity:{
+            overall: res.popularity.overall + ( ${delta} ),
+            items:{
+              "${itemName}": (res.popularity.items["${itemName}"] || 0) + ( ${delta} )
+            }
           }
-        }
-      } IN @@profileCollection 
+        } IN @@profileCollection 
       RETURN NEW`,
       bindVars: { '@profileCollection': Profile.collection.name, _key },
     },

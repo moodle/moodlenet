@@ -14,9 +14,9 @@ import type {
 } from '../../../../exports.mjs'
 import { getWebUserByProfileKey } from '../../../../exports.mjs'
 import { shell } from '../../../../shell.mjs'
-import { digestActivityEvent } from '../../../../srv/digestActivities.mjs'
+import { digestActivityEvent } from '../../../../srv/digestActivities/activity-events-handler.mjs'
 import { getProfileMeta } from '../../../../srv/profile.mjs'
-import { saveWebUserActivities } from '../../../activity-log.mjs'
+import { saveWebUserActivity } from '../../../activity-log.mjs'
 import { Profile } from '../../../sys-entities.mjs'
 import collectionActivityEvents from './collectionActivityEvents.mjs'
 import { initialEventsNowISO } from './initialEventsNow.mjs'
@@ -223,7 +223,7 @@ RETURN {
         )
 
         userActivities.push(...resourceActivityEvents(profile, ownResources))
-        userActivities.push(...collectionActivityEvents(profile, ownCollections))
+        userActivities.push(...(await collectionActivityEvents(profile, ownCollections)))
 
         await saveAndDigestWebUserActivities(userActivities)
         ++done % 1000 || shell.log('info', `${done / 1000}K users done`)
@@ -239,9 +239,12 @@ async function saveAndDigestWebUserActivities(
 ) {
   const initialUserActivities = userActivities.map(userActivity => ({
     ...userActivity,
+    digested: true,
     _initial: true as const,
   }))
 
-  saveWebUserActivities(initialUserActivities),
-    await Promise.all(initialUserActivities.map(digestActivityEvent))
+  for (const activityEvent of initialUserActivities) {
+    saveWebUserActivity(activityEvent)
+    await digestActivityEvent(activityEvent)
+  }
 }

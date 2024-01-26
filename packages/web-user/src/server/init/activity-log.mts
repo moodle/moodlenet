@@ -2,7 +2,6 @@ import * as collection from '@moodlenet/collection/server'
 import type { EventPayload } from '@moodlenet/core'
 import * as crypto from '@moodlenet/crypto/server'
 import * as resource from '@moodlenet/ed-resource/server'
-import assert from 'assert'
 import { shell } from '../shell.mjs'
 import type { ActivityLogDataType, WebUserActivityEvents } from '../types.mjs'
 
@@ -37,24 +36,17 @@ collection.on('updated-meta', ({ data }) => shell.events.emit('collection-update
 
 shell.events.any(saveWebUserActivity)
 
-export async function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents>) {
-  const activityData = (await saveWebUserActivities([activity]))[0]
-  assert(activityData)
-  return activityData
-}
-export async function saveWebUserActivities(activities: EventPayload<WebUserActivityEvents>[]) {
-  const activitiesData = activities.map<ActivityLogDataType>(activity => {
-    const { ulid } = crypto.ulid.create()
-    return {
-      ulid,
-      ...activity,
-    }
-  })
-  ActivityLogCollection.saveAll(activitiesData, {
+export function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents>) {
+  const { ulid } = crypto.ulid.create()
+  const activityData: ActivityLogDataType = {
+    ulid,
+    digested: false,
+    ...activity,
+  }
+  ActivityLogCollection.save(activityData, {
     silent: true,
     returnNew: false,
     waitForSync: false,
     overwriteMode: 'ignore',
   })
-  return activitiesData
 }

@@ -186,6 +186,7 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         const persistentContext = map.db.doc_2_persistentContext(patchRes.patched)
 
         const userId = await getCurrentEntityUserIdentifier()
+        console.log({ patchRes })
         if (userId && patchRes.changed) {
           shell.events.emit('updated-meta', {
             meta: getEventResourceMeta(persistentContext.doc),

@@ -1,0 +1,388 @@
+import type { CollectionDataType } from '@moodlenet/collection/server'
+import type { ResourceDataType } from '@moodlenet/ed-resource/server'
+import type { AqlVal, EntityFullDocument } from '@moodlenet/system-entities/server'
+import { sysEntitiesDB } from '@moodlenet/system-entities/server'
+import assert from 'assert'
+import type { KnownEntityType } from '../../../common/types.mjs'
+import { Profile } from '../../exports.mjs'
+import { DeltaPoints } from '../../init/sys-entities.mjs'
+import type { DeltaPointsDataType, KnownFeaturedEntityItem } from '../../types.mjs'
+import {
+  getEntityCollectionHandle,
+  getEntityIdByKnownEntity,
+  getEntityToolByKnownEntity,
+} from '../known-entity-types.mjs'
+import { pointSystem as P } from '../point-system.mjs'
+
+const q = sysEntitiesDB.query
+
+export function getEntityHandlesByDeltaPointsKey(key: string) {
+  const [_entityType, entityKey] = key.split('::')
+  assert(_entityType && entityKey)
+  const entityType = _entityType as KnownEntityType
+  const handle = getEntityCollectionHandle({ entityType })
+  const tool = getEntityToolByKnownEntity({ entityType })
+  const entityId = getEntityIdByKnownEntity({ entityType, _key: entityKey })
+  return { handle, tool, entityId, entityKey, entityType }
+}
+
+const deltaPointsCollection = DeltaPoints.collection.name
+export async function upsertDeltaPoints({
+  deltaPointsAqlValues,
+}: {
+  deltaPointsAqlValues: AqlVal<DeltaPointsDataType[]>[]
+}) {
+  const aqlDeltaPointsValuesLists = `( ${deltaPointsAqlValues.join(' ),( ') || '[]'} )`
+  const upsertDeltaPointsQuery = `
+FOR deltaPointsElem IN UNION( ${aqlDeltaPointsValuesLists} )
+  LET pointRecordKey = CONCAT(deltaPointsElem.entityType,"::",deltaPointsElem.entityKey)
+  UPSERT { _key: pointRecordKey }
+  INSERT {
+    entityType: deltaPointsElem.entityType,
+    entityKey: deltaPointsElem.entityKey,
+    points: deltaPointsElem.points,
+    popularity: {
+      overall: deltaPointsElem.popularity.overall,
+      items: deltaPointsElem.popularity.items
+    }
+  }
+  UPDATE {
+    points: ( deltaPointsElem.points || 0 ) + ( OLD.points || 0 ),
+    popularity:{
+      overall: ( deltaPointsElem.popularity.overall || 0 ) + ( OLD.popularity.overall || 0 ),
+      items: ZIP(
+        UNION_DISTINCT( ATTRIBUTES(deltaPointsElem.popularity.items), ATTRIBUTES(OLD.popularity.items) ),
+        (
+          FOR itemName IN UNION_DISTINCT( ATTRIBUTES(deltaPointsElem.popularity.items), ATTRIBUTES(OLD.popularity.items) )
+            
+            LET deltaItemAmount = deltaPointsElem.popularity.items[itemName] || 0
+            LET oldItemAmount   = OLD.popularity.items[itemName] || 0
+
+            LET sumItemAmount   = deltaItemAmount + oldItemAmount 
+            return sumItemAmount
+        )
+      )
+    }
+  } IN @@deltaPointsCollection
+`
+  return q(upsertDeltaPointsQuery, {
+    '@deltaPointsCollection': deltaPointsCollection,
+  })
+}
+export async function featuredEntity({
+  feat,
+  profileId,
+  action,
+}: {
+  action: 'add' | 'remove'
+  profileId: string
+  feat:
+    | Pick<KnownFeaturedEntityItem, '_id' | 'entityType' | 'feature'>
+    | { _id: string; feature: 'collection-resource-list-curation'; entityType: 'resource' }
+}) {
+  //- if publisher and entity creator is not current profile
+  //-   add/remove curation/engagement points to/from profile
+  //-   add/remove popularity to/from target entity
+
+  const { entityCreatorPoints, targetPopularity } =
+    feat.feature === 'collection-resource-list-curation'
+      ? {
+          entityCreatorPoints:
+            P.contribution.collection.forEachResourceInList.toResourceCreator.points,
+          targetPopularity: P.contribution.collection.forEachResourceInList.toResource.popularity,
+        }
+      : feat.feature === 'follow'
+      ? {
+          entityCreatorPoints: P.engagement.follow.toProfile.points,
+          targetPopularity: P.engagement.follow.toEntity.popularity,
+        }
+      : {
+          entityCreatorPoints: P.curation[feat.feature].toProfile.points,
+          targetPopularity: P.curation[feat.feature].toEntity.popularity,
+        }
+
+  const FeatCollection = getEntityCollectionHandle({ entityType: feat.entityType }).collection
+  const sign = action === 'add' ? '+' : '-'
+  const entityPopularityCursor = await q<{
+    creatorId: string
+    countOverall: number
+    itemsCount: number
+  }>(
+    `
+LET featDoc = DOCUMENT(@featId)
+
+LET creatorId = featDoc._meta.creatorEntityId
+LET isCreator = creatorId == @profileId
+FILTER !isCreator
+
+LET profileDoc = DOCUMENT(@profileId)
+LET isPublisher =  profileDoc.publisher
+FILTER isPublisher 
+
+LET countOverall = MAX([0, (featDoc.popularity.overall || 0) ${sign} ( ${targetPopularity} )])
+LET itemsCount =   MAX([0, (featDoc.popularity.items["${feat.feature}"] || 0) ${sign} 1])
+UPDATE featDoc WITH {
+                      popularity:{
+                        overall: countOverall,
+                        items:{
+                          "${feat.feature}": itemsCount
+                        }
+                      }
+                    } IN @@featuredEntityCollection
+RETURN { 
+  creatorId,
+  countOverall,
+  itemsCount
+} 
+`,
+    { '@featuredEntityCollection': FeatCollection.name, 'featId': feat._id, profileId },
+    { count: true },
+  )
+  const entityPopularityCursorRes = await entityPopularityCursor.next()
+  if (!entityPopularityCursorRes) return
+
+  const { creatorId, countOverall, itemsCount } = entityPopularityCursorRes
+  const creatorPointsCursor = await q<{ creatorPointsCount: number }>(
+    `
+LET creatorDoc = DOCUMENT(@creatorId)
+
+LET creatorPointsCount = MAX([0, (creatorDoc.points || 0) 
+                                  ${sign} 
+                                  ( ${entityCreatorPoints} )
+                            ])
+UPDATE creatorDoc WITH { points: creatorPointsCount } IN @@profileCollection
+`,
+    { '@profileCollection': Profile.collection.name, creatorId },
+  )
+  const creatorPointsCursorRes = await creatorPointsCursor.next()
+  if (!creatorPointsCursorRes) {
+    return
+  }
+  const { creatorPointsCount } = creatorPointsCursorRes
+  return { countOverall, itemsCount, creatorPointsCount }
+}
+export async function collectionResourceListCuration({
+  action,
+  collectionId,
+  profileId,
+  resourceId,
+}: {
+  action: 'add' | 'remove'
+  collectionId: string
+  resourceId: string
+  profileId: string
+}) {
+  //- if collection is published
+  //-   give/remove list-curation points to/from collection creator
+  //-   if resource creator is not collection creator
+  //-     give/remove list-curation points to/from resource creator
+  //-     give/remove popularity to/from resource
+  const sign = action === 'add' ? '+' : '-'
+  const collectionCreatorPointsCursor = q<{
+    collection: EntityFullDocument<CollectionDataType>
+    resource: EntityFullDocument<ResourceDataType>
+    collectionCreatorPointsCount: number
+  }>(
+    `
+LET collection = DOCUMENT(@collectionId)
+LET resource = DOCUMENT(@resourceId)
+FILTER collection.published && resource.published
+LET collectionCreatorPointsCount = MAX([0, (profile.points || 0) 
+                                            ${sign} 
+                                            ${P.contribution.collection.forEachResourceInList.toCollectionCreator.points}
+                                        ])
+UPDATE profile WITH {
+  points: collectionCreatorPointsCount
+} IN @@profileCollection
+
+RETURN {
+  collection,
+  resource,
+  collectionCreatorPointsCount
+}`,
+    { profileId, collectionId, resourceId, '@profileCollection': Profile.collection.name },
+  )
+  const collectionCreatorPointsRes = await (await collectionCreatorPointsCursor).next()
+  if (!collectionCreatorPointsRes) return
+  const { /* collection, collectionCreatorPointsCount,  */ resource } = collectionCreatorPointsRes
+  const resourceCreatorId = resource._meta.creatorEntityId
+  const isResourceCreator = resourceCreatorId && resourceCreatorId === profileId
+  if (!isResourceCreator) {
+    return
+  }
+
+  await featuredEntity({
+    action,
+    profileId,
+    feat: { _id: resourceId, feature: 'collection-resource-list-curation', entityType: 'resource' },
+  })
+}
+export async function collectionPublishingSwitch({
+  collectionId,
+  published,
+}: {
+  published: boolean
+  collectionId: string
+}) {
+  //- give/remove points to/from publisher
+  //- for each resource in collection (no chech if res pub as points/pop ar hidden anyway)
+  //       vv collectionResourceListCuration() vv
+  //-   give/remove list-curation points to/from collection creator
+  //-   if resource creator is not collection creator
+  //-     give/remove list-curation points to/from resource creator
+  //-     give/remove popularity to/from resource
+  const sign = published ? '+' : '-'
+  const creatorPointsCursor = await q<{
+    creatorPointsCount: number
+    collection: EntityFullDocument<CollectionDataType>
+  }>(
+    `
+LET collection = DOCUMENT(@collectionId)
+FILTER collection 
+LET creatorId = collection._meta.creatorEntityId
+LET creatorDoc = DOCUMENT(creatorId)
+FILTER creatorDoc 
+
+LET creatorPointsCount = MAX([0, (creatorDoc.points || 0) 
+                                  ${sign} 
+                                  ( ${P.contribution.collection.published.toCreator.points} )
+                            ])
+UPDATE creatorDoc WITH { points: creatorPointsCount } IN @@profileCollection
+
+RETURN {
+  collection,
+  creatorPointsCount
+}
+`,
+    { '@profileCollection': Profile.collection.name, collectionId },
+  )
+  const creatorPointsCursorRes = await creatorPointsCursor.next()
+  const creatorEntityId = creatorPointsCursorRes?.collection._meta.creatorEntityId
+  if (!creatorEntityId) {
+    return
+  }
+  const action = published ? 'add' : 'remove'
+  await Promise.all(
+    creatorPointsCursorRes.collection.resourceList.map(({ _key: resourceKey }) => {
+      const resourceId = getEntityIdByKnownEntity({ entityType: 'resource', _key: resourceKey })
+      return collectionResourceListCuration({
+        action,
+        collectionId,
+        profileId: creatorEntityId,
+        resourceId,
+      })
+    }),
+  )
+}
+export async function resourcePublishingSwitch({
+  resourceId,
+  published,
+}: {
+  published: boolean
+  resourceId: string
+}) {
+  //- give/remove points to publisher
+  //- for each collection containing give/remove points to publisher
+  const sign = published ? '+' : '-'
+  const creatorPointsCursor = await q<{
+    creatorPointsCount: number
+    resourceId: EntityFullDocument<CollectionDataType>
+  }>(
+    `
+LET resourceId = DOCUMENT(@resourceIdId)
+FILTER resourceId 
+LET creatorId = resourceId._meta.creatorEntityId
+LET creatorDoc = DOCUMENT(creatorId)
+FILTER creatorDoc 
+
+LET creatorPointsCount = MAX([0, (creatorDoc.points || 0) 
+                                  ${sign} 
+                                  ( ${P.contribution.resource.published.toCreator.points} )
+                            ])
+UPDATE creatorDoc WITH { points: creatorPointsCount } IN @@profileCollection
+
+RETURN {
+  resourceId,
+  creatorPointsCount
+}
+`,
+    { '@profileCollection': Profile.collection.name, 'resourceIdId': resourceId },
+  )
+  const creatorPointsCursorRes = await creatorPointsCursor.next()
+  if (!creatorPointsCursorRes) {
+    return
+  }
+  const all = await q<{
+    creatorPointsCount: number
+    resourceId: EntityFullDocument<CollectionDataType>
+  }>(
+    `
+LET resourceId = DOCUMENT(@resourceIdId)
+FILTER resourceId 
+LET creatorId = resourceId._meta.creatorEntityId
+LET creatorDoc = DOCUMENT(creatorId)
+FILTER creatorDoc 
+
+LET creatorPointsCount = MAX([0, (creatorDoc.points || 0) 
+                                  ${sign} 
+                                  ( ${P.contribution.resource.published.toCreator.points} )
+                            ])
+UPDATE creatorDoc WITH { points: creatorPointsCount } IN @@profileCollection
+
+RETURN {
+  resourceId,
+  creatorPointsCount
+}
+`,
+    { '@profileCollection': Profile.collection.name, 'resourceIdId': resourceId },
+  )
+
+  const action = published ? 'add' : 'remove'
+  await Promise.all(
+    creatorPointsCursorRes.collection.resourceList.map(({ _key: resourceKey }) => {
+      const resourceId = getEntityIdByKnownEntity({ entityType: 'resource', _key: resourceKey })
+      return collectionResourceListCuration({
+        action,
+        collectionId: resourceId,
+        profileId: creatorEntityId,
+        resourceId,
+      })
+    }),
+  )
+}
+export async function collectionUpdatedMeta() {
+  //- give/remove points to/from collection owner based on meta changes
+}
+export async function deletedWebUserAccount() {
+  //- ** do all the followings in the srvevt handler ?
+  //- delete all unpublished contributions
+  //- if publisher
+  //-   revoke publishing permission
+  //--- NO! await unpublishAllProfileContributions(profile._key)
+}
+export async function editProfileInterests() {
+  //- if unset->set give points to profile
+  //- if set->unset remove points from profile
+}
+export async function editProfileMeta() {
+  1
+  //- give/remove points to/from collection owner based on meta changes
+}
+export async function resourceDownloaded() {
+  //- give popularity to resource
+  //- NOPE give points to resource owner
+  //- NOPE give points to downloader
+}
+
+export async function userPublishingPermissionChange() {
+  //- give/remove points to/from profile
+  //- give/remove popularity to/from all featured entities
+  //~- if revoked
+  //~-   unpublish all profile's published contributions (in srv emit?)
+  //~-   remove popularity from all featured entities
+  //~- if given
+  //~-   give popularity to all featured entities
+}
+export async function resourceUpdatedMeta() {
+  //- give/remove points to/from resource owner based on meta changes
+}

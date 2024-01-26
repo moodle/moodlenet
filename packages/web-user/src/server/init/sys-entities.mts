@@ -23,17 +23,19 @@ import {
 import type { WebUserEntityNames } from '../../common/exports.mjs'
 import { PROFILE_HOME_PAGE_ROUTE_PATH } from '../../common/exports.mjs'
 import { shell } from '../shell.mjs'
-import type { ProfileDataType } from '../types.mjs'
+import type { EntityPointsDataType, ProfileDataType } from '../types.mjs'
 import { betterTokenContext } from '../util.mjs'
 import { publicFilesHttp } from './fs.mjs'
 
-export const { Profile } = await shell.call(registerEntities)<
+export const { Profile, EntityPoints } = await shell.call(registerEntities)<
   {
     Profile: EntityCollectionDef<ProfileDataType>
+    EntityPoints: EntityCollectionDef<EntityPointsDataType>
   },
   WebUserEntityNames
 >({
   Profile: {},
+  EntityPoints: {},
 })
 registerEntityInfoProvider({
   entityClass: Profile.entityClass,

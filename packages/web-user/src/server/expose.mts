@@ -27,7 +27,7 @@ import { shell } from './shell.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
-} from './srv/known-features.mjs'
+} from './srv/known-entity-types.mjs'
 import {
   editMyProfileInterests,
   editProfile,
@@ -173,7 +173,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
           numFollowers,
-          points: profileRecord.entity.points,
+          points: profileRecord.entity.points ?? 0,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
           data,

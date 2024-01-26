@@ -1,0 +1,46 @@
+    case 'feature-entity': {
+        //- if publisher and entity creator is not current profile
+        //-   add/remove curation/engagement points to/from profile
+        //-   add/remove popularity to/from target
+    case 'collection-(un)published': {
+      //- give/remove points to/from publisher
+      //- for each resource in collection (no chech if res pub as points/pop ar hidden anyway)
+      //-   (vv 'collection-resource-list-curation' vv)
+      //-   give/remove list-curation points to/from collection creator
+      //-   if resource creator is not collection creator 
+      //-     give/remove list-curation points to/from resource creator
+      //-     give/remove popularity to/from resource
+    case 'collection-resource-list-curation': {
+      //- if collection is published
+      //-   give/remove list-curation points to/from collection creator
+      //-   if resource creator is not collection creator
+      //-     give/remove list-curation points to/from resource creator
+      //-     give/remove popularity to/from resource
+    case 'collection-updated-meta': {
+      //- give/remove points to/from collection owner based on meta changes
+    case 'deleted-web-user-account': {
+      //- ** do all the followings in the srv ?
+      //- delete all unpublished contributions 
+      //- if publisher 
+      //-   revoke publishing permission
+      //--- NO! await unpublishAllProfileContributions(profile._key)
+    case 'edit-profile-interests': {
+      //- if unset->set give points to profile
+      //- if set->unset remove points from profile
+    case 'edit-profile-meta': {1
+      //- give/remove points to/from collection owner based on meta changes
+    case 'resource-downloaded': {
+      //- give popularity to resource
+      //- NOPE give points to resource owner
+      //- NOPE give points to downloader
+    case 'resource-(un)published': {
+      //- give/remove points to publisher
+    case 'user-publishing-permission-change': {
+      //- give/remove points to profile
+      //- if revoked 
+      //-   unpublish all profile contributions
+      //-   remove popularity from all featured entities
+      //- if given 
+      //-   give popularity to all featured entities
+    case 'resource-updated-meta': {
+      //- give/remove points to/from resource owner based on meta changes

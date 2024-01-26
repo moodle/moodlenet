@@ -23,10 +23,9 @@ interface OpenAiResponse {
 export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | null> {
   const d = domain.create()
   d.on('error', err => {
-    shell.log('warn', 'TEXT EXTRACTION ERROR ! Aborting', err)
+    shell.log('error', 'TEXT EXTRACTION OR OPEN AI CALL ERROR ! caught by DOMAIN Aborting', err)
   })
   const resourceExtraction = await d.run(() => extractResourceData(doc).catch(() => null))
-  d.exit()
   if (!resourceExtraction) {
     return null
   }
@@ -55,6 +54,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   // type: ${foundResourceTypeDesc ? `of type "${foundResourceTypeDesc}"` : ''}
 
   const openAiProvideImage = provideImage ?? (await generateProvideImage())
+  d.exit()
   return {
     data,
     resourceExtraction: {

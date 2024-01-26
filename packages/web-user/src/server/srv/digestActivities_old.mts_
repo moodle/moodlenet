@@ -134,9 +134,9 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
       break
     }
     case 'edit-profile-meta': {
-      deltaPoints({
-        profileKey: activity.data.profileKey,
-      })
+      // deltaPoints({
+      //   profileKey: activity.data.profileKey,
+      // })
       break
     }
     case 'request-send-message-to-web-user': {
