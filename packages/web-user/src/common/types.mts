@@ -1,6 +1,6 @@
 import type { Href } from '@moodlenet/react-app/common'
 
-export type WebUserEntityNames = 'Profile'
+export type WebUserEntityNames = 'Profile' | 'EntityPoints'
 export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
 export type KnownEntityType = 'resource' | 'collection' | 'profile' | 'subject'
 
@@ -18,6 +18,12 @@ export type KnownFeaturedEntities = {
     [entType in KnownEntityType]: { _key: string }[]
   }
 }
+export type LeaderBoardContributor = Pick<
+  ProfileData,
+  'displayName' | 'avatarUrl' | 'profileHref' | 'points'
+> /*  & {
+  subject: string
+} */
 
 export type ProfileGetRpc = {
   data: Profile
@@ -28,7 +34,7 @@ export type ProfileGetRpc = {
   profileHref: Href
   profileUrl: string
   numFollowers: number
-  numKudos: number
+  points: number
   ownKnownEntities: {
     resources: { _key: string }[]
     collections: { _key: string }[]
@@ -39,11 +45,11 @@ export type Profile = {
   _key: string
   displayName: string
   aboutMe: string
-  organizationName: string | undefined
-  location: string | undefined
-  siteUrl: string | undefined
-  backgroundUrl: string | undefined
-  avatarUrl: string | undefined
+  organizationName: string | undefined | null
+  location: string | undefined | null
+  siteUrl: string | undefined | null
+  backgroundUrl: string | undefined | null
+  avatarUrl: string | undefined | null
 }
 export type User = {
   title: string
@@ -85,14 +91,15 @@ export type ProfileData = {
   avatarUrl: string | undefined
   displayName: string
   profileHref: Href
+  points: number
 }
 
 export type ProfileFormValues = {
   displayName: string
   aboutMe: string
-  organizationName: string | undefined
-  location: string | undefined
-  siteUrl: string | undefined
+  organizationName: string | undefined | null | null | null | null | null
+  location: string | undefined | null | null | null | null | null
+  siteUrl: string | undefined | null | null | null | null | null
 }
 
 export type ProfileState = {

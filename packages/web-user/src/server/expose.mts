@@ -8,27 +8,29 @@ import {
   getWebappUrl,
   setAppearance,
 } from '@moodlenet/react-app/server'
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { SchemaOf } from 'yup'
 import { array, object, string } from 'yup'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type {
   ClientSessionDataRpc,
+  LeaderBoardContributor,
   Profile,
   ProfileGetRpc,
   UserInterests,
   WebUserData,
 } from '../common/types.mjs'
 import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
-import { profileValidationSchema, validationsConfig } from './env.mjs'
+import { messageFormValidationSchema, profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import { shell } from './shell.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
-} from './srv/known-features.mjs'
+} from './srv/known-entity-types.mjs'
 import {
+  changeProfilePublisherPerm,
   editMyProfileInterests,
   editProfile,
   entityFeatureAction,
@@ -36,13 +38,13 @@ import {
   getEntityFeatureProfiles,
   getLandingPageList,
   getProfileOwnKnownEntities,
+  getProfilePointLeaders,
   getProfileRecord,
   getValidations,
   searchProfiles,
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
-  setProfilePublisherFlag,
 } from './srv/profile.mjs'
 import {
   currentWebUserDeletionAccountRequest,
@@ -118,9 +120,38 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
+    'webapp/profile/leader-board-data': {
+      async guard(_) {
+        return true
+      },
+      async fn() {
+        const profilePointLeaders: EntityFullDocument<ProfileDataType>[] =
+          await getProfilePointLeaders()
+        const contributors = profilePointLeaders.map<LeaderBoardContributor>(profileRecord => {
+          const profileHomePagePath = getProfileHomePageRoutePath({
+            _key: profileRecord._key,
+            displayName: profileRecord.displayName,
+          })
+
+          const profileData = profileDoc2Profile(profileRecord)
+          const leaderBoardContributor: LeaderBoardContributor = {
+            avatarUrl: profileData.avatarUrl ?? undefined,
+            displayName: profileData.displayName,
+            points: profileRecord.points ?? 0,
+            profileHref: href(profileHomePagePath),
+            //subject: profileData.subject,
+          }
+          return leaderBoardContributor
+        })
+        return { contributors }
+      },
+    },
     'webapp/profile/:_key/edit': {
-      guard: _ => {
-        _.editData = profileValidationSchema.validateSync(_?.editData, { stripUnknown: true })
+      async guard(_) {
+        const validatedData = await profileValidationSchema.validate(_?.editData, {
+          stripUnknown: true,
+        })
+        _.editData = validatedData
       },
       async fn({ editData }, { _key }) {
         const patchRecord = await editProfile(_key, editData)
@@ -131,7 +162,11 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     },
     'webapp/profile/:_key/get': {
       guard: () => void 0,
-      async fn(_, { _key }) {
+      async fn(_, { _key }, q) {
+        const ownContribLimit =
+          q?.ownContributionListLimit === undefined
+            ? undefined
+            : parseInt(q.ownContributionListLimit) || 0
         const profileRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
         if (!profileRecord) {
           return null
@@ -143,11 +178,13 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
             getProfileOwnKnownEntities({
               knownEntity: 'collection',
               profileKey: _key,
+              limit: ownContribLimit,
             }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
 
             getProfileOwnKnownEntities({
               knownEntity: 'resource',
               profileKey: _key,
+              limit: ownContribLimit,
             }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
             getCurrentProfileIds(),
             verifyCurrentTokenCtx(),
@@ -170,7 +207,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
           numFollowers,
-          numKudos: profileRecord.entity.kudos,
+          points: profileRecord.entity.points ?? 0,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
           data,
@@ -325,18 +362,25 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         body.interests = interests
       },
       async fn({ interests }) {
-        return editMyProfileInterests({ items: interests })
+        const result = await editMyProfileInterests({ items: interests })
+        return result && !!result
       },
     },
     'webapp/my-interests/use-as-default-search-filters': {
       guard: body => typeof body.use === 'boolean',
       async fn({ use }) {
-        return editMyProfileInterests({ asDefaultFilters: use })
+        const result = await editMyProfileInterests({ asDefaultFilters: use })
+        return result && !!result
       },
     },
     'webapp/send-message-to-user/:profileKey': {
-      //TODO //@ALE
-      guard: () => void 0,
+      guard: _ => {
+        const validatedMsgObj = messageFormValidationSchema.validateSync(
+          { msg: _.message },
+          { stripUnknown: true },
+        )
+        _.message = validatedMsgObj.msg
+      },
       async fn({ message }, { profileKey }) {
         sendMessageToProfileIntent({ message, profileKey })
       },
@@ -462,7 +506,10 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/admin/roles/setIsPublisher': {
       guard: () => void 0,
       async fn({ profileKey, isPublisher }) {
-        const response = await setProfilePublisherFlag({ profileKey, isPublisher })
+        const response = await changeProfilePublisherPerm({
+          profileKey,
+          setIsPublisher: isPublisher,
+        })
         return !!response?.ok
       },
     },

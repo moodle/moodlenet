@@ -57,6 +57,7 @@
 
       > .avatar {
         margin-top: -55px;
+        position: relative;
         > img {
           z-index: 3;
           border: 2px solid white;
@@ -64,6 +65,18 @@
           width: 100px;
           height: 100px;
           object-fit: cover;
+        }
+        > .level-avatar {
+          position: absolute;
+          bottom: 5px;
+          right: 0;
+          width: 28px;
+          height: 28px;
+          > img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
         }
       }
     }

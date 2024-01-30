@@ -25,7 +25,7 @@ export default async function kvStoreFactory<TMap extends KVSTypeMap>(
     return `${type}::${key}`
   }
   async function get(type: string, key: string): Promise<ValueObj> {
-    const doc = await KVCollection.document(fullKeyOf(type, key), true)
+    const doc = await KVCollection.document(fullKeyOf(type, key), { graceful: true })
     return valObj(doc)
   }
 

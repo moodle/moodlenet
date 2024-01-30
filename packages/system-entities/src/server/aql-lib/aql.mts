@@ -70,7 +70,7 @@ export function isAuthenticated(): AqlVal<boolean> {
 export const creatorEntityIdVar = 'creatorEntityId'
 export const creatorEntityDocVar = `creatorEntityDoc`
 
-export function toaql<T>(any: T): AqlVal<T> {
+export function toaql<T extends object | string | number | boolean | null>(any: T): AqlVal<T> {
   return `(${JSON.stringify(any ?? null)})`
 }
 

@@ -57,15 +57,20 @@ export function getValidationSchemas({ imageMaxUploadSize }: ValidationsConfig) 
   const profileValidationSchema: SchemaOf<EditProfileDataRpc> = object({
     displayName: displayNameSchema,
     location: string()
+      .transform(value => value || null)
+      .nullable()
       .max(60, obj => `Please provide a shorter location (${obj.value.length} / 60)`)
-      .min(3, obj => `Please provide a longer location (${obj.value.length} < 3)`)
-      .optional(),
-    organizationName: string().max(30).optional(),
+      .min(3, obj => `Please provide a longer location (${obj.value.length} < 3)`),
+    organizationName: string()
+      .transform(value => value || null)
+      .nullable()
+      .max(30),
     siteUrl: string()
+      .transform(value => value || null)
+      .nullable()
       .max(160, obj => `Please provide a shorter url (${obj.value.length} / 160)`)
       .min(3, obj => `Please provide a longer url (${obj.value.length} < 3)`)
-      .url()
-      .optional(),
+      .url(),
     aboutMe: string()
       .max(500, obj => `Please provide a shorter description (${obj.value.length} / 500)`)
       .min(3, obj => `Please provide a longer description (${obj.value.length} < 3)`)

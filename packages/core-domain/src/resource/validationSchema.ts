@@ -60,7 +60,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
           valid: true,
           providedContent: schemas.providedContent.validateSync(providedContent, {
             abortEarly: false,
-          }) as ProvidedCreationContent,
+          }), //as ProvidedCreationContent,
         } as const
       } catch (e) {
         return { valid: false, reason: String(e) } as const
@@ -124,6 +124,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
   function getContentValidationSchema() {
     const schema /* : SchemaOf<ProvidedCreationContent |undefined>  */ =
       mixed<ProvidedCreationContent>().test((content, { createError }) => {
+        console.log({ content })
         const errors = !content
           ? createError({ message: `Please provide a file or a link` })
           : content.kind === `link`

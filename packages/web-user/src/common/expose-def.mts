@@ -6,7 +6,7 @@ import type {
   KnownEntityFeature,
   KnownEntityType,
   KnownFeaturedEntities,
-  Profile,
+  LeaderBoardContributor,
   ProfileGetRpc,
   ProfileSearchResultRpc,
   SortTypeRpc,
@@ -17,7 +17,18 @@ import type { ValidationsConfig } from './validationSchema.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
 
 export type WebappConfigsRpc = { validations: ValidationsConfig }
-export type EditProfileDataRpc = Omit<Profile, 'avatarUrl' | 'backgroundUrl' | '_key'>
+export type EditProfileDataRpc = {
+  displayName: string
+  aboutMe: string
+  organizationName: string | undefined | null
+  location: string | undefined | null
+  siteUrl: string | undefined | null
+}
+
+export type LeaderBoardData = {
+  contributors: LeaderBoardContributor[]
+}
+
 export type WebUserExposeType = PkgExposeDef<{
   rpc: {
     'webapp/get-configs'(): Promise<WebappConfigsRpc>
@@ -27,7 +38,12 @@ export type WebUserExposeType = PkgExposeDef<{
       body: { editData: EditProfileDataRpc },
       params: { _key: string },
     ): Promise<void>
-    'webapp/profile/:_key/get'(body: void, params: { _key: string }): Promise<ProfileGetRpc | null>
+    'webapp/profile/leader-board-data'(): Promise<LeaderBoardData>
+    'webapp/profile/:_key/get'(
+      body: void,
+      params: { _key: string },
+      query: { ownContributionListLimit: string | undefined },
+    ): Promise<ProfileGetRpc | null>
     'webapp/upload-profile-background/:_key'(
       body: { file: [RpcFile | null | undefined] },
       params: { _key: string },

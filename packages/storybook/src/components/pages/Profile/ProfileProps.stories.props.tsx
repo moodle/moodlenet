@@ -8,7 +8,6 @@ import {
 } from '@moodlenet/mn-central-jira-simple-moderations/ui'
 import { href } from '@moodlenet/react-app/common'
 import { OverallCardStories } from '@moodlenet/react-app/stories'
-import { OverallCard } from '@moodlenet/react-app/ui'
 import type {
   ProfileAccess,
   ProfileActions,
@@ -26,6 +25,7 @@ import { getCollectionCardsStoryProps } from '../../organisms/CollectionCard/Col
 import { getResourceCardsStoryProps } from '../../organisms/ResourceCard/ResourceCardProps.stories.props.js'
 
 const maxUploadSize = 1024 * 1024 * 10
+const pointsArray = [7, 50, 125, 321, 876, 3421, 12567, 43768, 67456, 345678]
 
 export const useProfileStoryProps = (
   overrides?: PartialDeep<
@@ -34,16 +34,12 @@ export const useProfileStoryProps = (
 ): ProfileProps => {
   const person = peopleFactory[randomIntFromInterval(0, 3)]
 
-  const overallCard = {
-    Item: () => <OverallCard {...OverallCardStories.OverallCardStoryProps} />,
-    key: 'overall-card',
-  }
-
   const data: ProfileData = {
     userId: (Math.random() * 1000000).toString(),
     displayName: person ? person.displayName : '',
     avatarUrl: person && person.avatarUrl,
     backgroundUrl: person && person.backgroundUrl,
+    points: pointsArray[Math.floor(Math.random() * pointsArray.length)] ?? 0,
     ...overrides?.data,
     profileHref: href('Page/Profile/Default'),
   }
@@ -143,8 +139,9 @@ export const useProfileStoryProps = (
   return overrideDeep<ProfileProps>(
     {
       mainLayoutProps: MainLayoutLoggedInStoryProps,
+      wideColumnItems: [],
       mainColumnItems: [],
-      sideColumnItems: [overallCard],
+      rightColumnItems: [],
       mainProfileCardSlots: profileCardSlots,
       profileForm: profileForm,
       state: state,

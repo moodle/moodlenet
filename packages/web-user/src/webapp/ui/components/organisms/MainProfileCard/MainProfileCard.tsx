@@ -73,13 +73,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
 }) => {
   const { mainColumnItems, topItems, titleItems, subtitleItems, footerItems } = slots
   const { avatarUrl, backgroundUrl } = data
-  const {
-    canEdit,
-    isCreator,
-    isAuthenticated,
-    canFollow,
-    // canApprove
-  } = access
+  const { canEdit, isCreator, isAuthenticated, canFollow, canApprove } = access
   const {
     followed,
     // isPublisher,
@@ -294,7 +288,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
       <InputTextField
         className="underline"
         placeholder="Location"
-        value={form.values.location}
+        value={form.values.location ?? undefined}
         onChange={form.handleChange}
         noBorder
         name="location"
@@ -311,7 +305,7 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     <span key="edit-site-url">
       <InputTextField
         className="underline"
-        value={form.values.siteUrl}
+        value={form.values.siteUrl ?? undefined}
         onChange={form.handleChange}
         noBorder
         placeholder="Website"
@@ -557,9 +551,9 @@ export const MainProfileCard: FC<MainProfileCardProps> = ({
     />
   ) : null
 
-  const approvalButton = (
+  const approvalButton = canApprove ? (
     <ApprovalButton access={access} state={state} actions={actions} key={'approval-button'} />
-  )
+  ) : null
 
   const updatedFooterItems = [
     followButton,

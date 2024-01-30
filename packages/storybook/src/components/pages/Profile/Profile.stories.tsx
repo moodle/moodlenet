@@ -34,7 +34,7 @@ export const LoggedOut = () => {
     mainLayoutProps: MainLayoutLoggedOutStoryProps,
     access: { isAuthenticated: false, canFollow: false },
     mainColumnItems: [],
-    sideColumnItems: [],
+    rightColumnItems: [],
     overallCardItems: OverallCardStories.OverallCardNoCardStoryProps.items,
   })
 
@@ -50,7 +50,7 @@ export const LoggedIn: ProfileStory = () => {
     // resourceCardPropsList: getResourceCardsStoryProps(5, {access: {canLike: true}}),
     // collectionCardPropsList: getCollectionCardsStoryProps(5, {access: {canFollow: true}}),
     mainColumnItems: [],
-    sideColumnItems: [],
+    rightColumnItems: [],
   })
 
   return <Profile {...props} />
@@ -89,7 +89,7 @@ export const Owner: ProfileStory = () => {
       },
     }),
     mainColumnItems: [],
-    sideColumnItems: [],
+    rightColumnItems: [],
     jiraApprovalButton: {
       isElegibleForApproval: true,
       isWaitingApproval: false,
@@ -125,7 +125,7 @@ export const Admin: ProfileStory = () => {
       },
     }),
     mainColumnItems: [],
-    sideColumnItems: [],
+    rightColumnItems: [],
   })
   return <Profile {...props} />
 }

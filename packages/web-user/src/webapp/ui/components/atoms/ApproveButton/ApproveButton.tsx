@@ -15,8 +15,6 @@ export const ApprovalButton: FC<ApprovalButtonProps> = ({ access, state, actions
   const { isPublisher } = state
   const { approveUser, unapproveUser } = actions
 
-  const snackbars = [<></>]
-
   const approveButton = (
     <PrimaryButton className="approve-button" onClick={approveUser} color="green">
       Approve
@@ -29,12 +27,7 @@ export const ApprovalButton: FC<ApprovalButtonProps> = ({ access, state, actions
     </SecondaryButton>
   )
 
-  return (
-    <>
-      {canApprove ? (isPublisher ? unapproveButton : approveButton) : null}
-      {snackbars}
-    </>
-  )
+  return canApprove ? (isPublisher ? unapproveButton : approveButton) : null
 }
 
 export type ApprovalInfoProps = {

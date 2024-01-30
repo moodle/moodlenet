@@ -10,4 +10,5 @@ export const {
   backgroundImageValidation,
   profileValidationSchema,
   displayNameSchema,
+  messageFormValidationSchema,
 } = getValidationSchemas(validationsConfig)

@@ -34,9 +34,18 @@ export const profileStoriesValidationSchema: SchemaOf<ProfileFormValues> = objec
     )
     .optional(),
   displayName: string().max(160).min(3).required(/* t */ `Please provide a display name`),
-  location: string().optional(),
-  organizationName: string().max(30).min(3).optional(),
-  siteUrl: string().url().optional(),
+  location: string()
+    .transform(value => value || null)
+    .nullable(),
+  organizationName: string()
+    .max(30)
+    .min(3)
+    .transform(value => value || null)
+    .nullable(),
+  siteUrl: string()
+    .url()
+    .transform(value => value || null)
+    .nullable(),
   aboutMe: string().max(4096).min(3).required(/* t */ `Please provide a description`),
 })
 

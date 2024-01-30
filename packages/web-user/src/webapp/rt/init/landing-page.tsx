@@ -14,9 +14,15 @@ import {
   SIGNUP_PAGE_ROUTE_BASE_PATH,
 } from '../../../common/webapp-routes.mjs'
 import type { InterestInfoProps, PublishContentProps } from '../../ui/exports/ui.mjs'
-import { InterestInfo, LandingProfileList, PublishContent } from '../../ui/exports/ui.mjs'
+import {
+  InterestInfo,
+  LandingProfileList,
+  Leaderboard,
+  PublishContent,
+} from '../../ui/exports/ui.mjs'
 import { AuthCtx, useMyProfileContext } from '../exports.mjs'
 import { useMyLandingPageCollectionListDataProps } from '../page/my-landing-page/MyLandingPageCollectionListHook.mjs'
+import { useMyLandingPageLeaderBoardHook } from '../page/my-landing-page/MyLandingPageLeaderBoardHook.mjs'
 import { useMyLandingPageProfileListDataProps } from '../page/my-landing-page/MyLandingPageProfileListHook.mjs'
 import { useMyLandingPageResourceListDataProps } from '../page/my-landing-page/MyLandingPageResourceListHook.mjs'
 
@@ -60,6 +66,13 @@ const landingPageMainColumnItems: AddOnMap<AddonItemNoKey> = {
       return <LandingProfileList {...props} />
     },
     position: 4,
+  },
+  leaderBoard: {
+    Item: () => {
+      const props = useMyLandingPageLeaderBoardHook()
+      return <Leaderboard {...props} />
+    },
+    position: 5,
   },
 }
 

@@ -19,17 +19,17 @@ export function getEdResourceMachineDeps() {
       destroy_all_data() {
         console.log('destroy_all_data')
       },
-      notify_creator() {
-        console.log('notify_creator')
-      },
+      // notify_creator() {
+      //   console.log('notify_creator')
+      // },
       request_generate_meta_suggestions() {
         console.log('request_generate_meta_suggestions')
       },
     },
     services: {
-      async ModeratePublishingResource() {
-        return { notPassed: false }
-      },
+      // async ModeratePublishingResource() {
+      //   return { notPassed: false }
+      // },
       async ScheduleDestroy() {
         return {}
       },
