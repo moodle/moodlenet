@@ -142,9 +142,13 @@ export const useProfileProps = ({
   useEffect(() => {
     setProfileGetRpc(undefined)
     shell.rpc
-      .me('webapp/profile/:_key/get', { rpcId: `profile/get#${profileKey}` })(void 0, {
-        _key: profileKey,
-      })
+      .me('webapp/profile/:_key/get', { rpcId: `profile/get#${profileKey}` })(
+        void 0,
+        {
+          _key: profileKey,
+        },
+        { ownContributionListLimit: '300' },
+      )
       .then(res => {
         setProfileGetRpc(res)
       })

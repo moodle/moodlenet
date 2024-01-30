@@ -3,14 +3,12 @@ import type { FC } from 'react'
 
 import { Link } from '@moodlenet/react-app/ui'
 import { getUserLevelDetails } from '../../../../../common/gamification/user-levels.mjs'
-import type { ProfileData } from '../../../../../common/types.mjs'
+import type { LeaderBoardContributor } from '../../../../../common/types.mjs'
 import { ReactComponent as LeafIcon } from '../../../assets/icons/leaf.svg'
 import './Leaderboard.scss'
 
 export type LeaderboardProps = {
-  contributors: (Pick<ProfileData, 'displayName' | 'avatarUrl' | 'profileHref' | 'points'> & {
-    subject: string
-  })[]
+  contributors: LeaderBoardContributor[]
 }
 
 export const Leaderboard: FC<LeaderboardProps> = ({ contributors }) => {
@@ -49,7 +47,7 @@ export const Leaderboard: FC<LeaderboardProps> = ({ contributors }) => {
                 {contributor.points.toLocaleString()}
                 <LeafIcon />
               </div>
-              <div className="subject">{contributor.subject}</div>
+              {/*  <div className="subject">{contributor.subject}</div> */}
             </div>
           )
         })}

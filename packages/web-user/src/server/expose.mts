@@ -8,13 +8,14 @@ import {
   getWebappUrl,
   setAppearance,
 } from '@moodlenet/react-app/server'
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { SchemaOf } from 'yup'
 import { array, object, string } from 'yup'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type {
   ClientSessionDataRpc,
+  LeaderBoardContributor,
   Profile,
   ProfileGetRpc,
   UserInterests,
@@ -37,6 +38,7 @@ import {
   getEntityFeatureProfiles,
   getLandingPageList,
   getProfileOwnKnownEntities,
+  getProfilePointLeaders,
   getProfileRecord,
   getValidations,
   searchProfiles,
@@ -118,6 +120,32 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
+    'webapp/profile/leader-board-data': {
+      async guard(_) {
+        return true
+      },
+      async fn() {
+        const profilePointLeaders: EntityFullDocument<ProfileDataType>[] =
+          await getProfilePointLeaders()
+        const contributors = profilePointLeaders.map<LeaderBoardContributor>(profileRecord => {
+          const profileHomePagePath = getProfileHomePageRoutePath({
+            _key: profileRecord._key,
+            displayName: profileRecord.displayName,
+          })
+
+          const profileData = profileDoc2Profile(profileRecord)
+          const leaderBoardContributor: LeaderBoardContributor = {
+            avatarUrl: profileData.avatarUrl ?? undefined,
+            displayName: profileData.displayName,
+            points: profileRecord.points ?? 0,
+            profileHref: href(profileHomePagePath),
+            //subject: profileData.subject,
+          }
+          return leaderBoardContributor
+        })
+        return { contributors }
+      },
+    },
     'webapp/profile/:_key/edit': {
       async guard(_) {
         const validatedData = await profileValidationSchema.validate(_?.editData, {
@@ -134,7 +162,11 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     },
     'webapp/profile/:_key/get': {
       guard: () => void 0,
-      async fn(_, { _key }) {
+      async fn(_, { _key }, q) {
+        const ownContribLimit =
+          q?.ownContributionListLimit === undefined
+            ? undefined
+            : parseInt(q.ownContributionListLimit) || 0
         const profileRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
         if (!profileRecord) {
           return null
@@ -146,11 +178,13 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
             getProfileOwnKnownEntities({
               knownEntity: 'collection',
               profileKey: _key,
+              limit: ownContribLimit,
             }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
 
             getProfileOwnKnownEntities({
               knownEntity: 'resource',
               profileKey: _key,
+              limit: ownContribLimit,
             }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
             getCurrentProfileIds(),
             verifyCurrentTokenCtx(),

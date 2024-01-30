@@ -254,6 +254,14 @@ export async function entityFeatureAction({
   return updateResult
 }
 
+export async function getProfilePointLeaders(): Promise<EntityFullDocument<ProfileDataType>[]> {
+  const profiles = await searchProfiles({ limit: 12, sortType: 'Popular' })
+  return profiles.list.map<EntityFullDocument<ProfileDataType>>(({ entity, meta }) => {
+    const fullDoc: EntityFullDocument<ProfileDataType> = { ...entity, _meta: meta }
+    return fullDoc
+  })
+}
+
 export async function changeProfilePublisherPerm({
   profileKey,
   setIsPublisher,
@@ -575,7 +583,17 @@ export async function sendMessageToProfile({
 
 export async function getProfileOwnKnownEntities<
   KT extends Exclude<KnownEntityType, 'profile' | 'subject'>,
->({ profileKey, knownEntity }: { profileKey: string; knownEntity: KT }) {
+>({
+  profileKey,
+  knownEntity,
+  limit,
+  sort,
+}: {
+  profileKey: string
+  knownEntity: KT
+  limit?: number
+  sort?: string
+}) {
   const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
     _key: profileKey,
     type: 'Profile',
@@ -597,6 +615,8 @@ export async function getProfileOwnKnownEntities<
   assert(entityClass, `getProfileOwnKnownEntities: unknown knownEntity ${knownEntity}`)
   const list = await (
     await shell.call(queryEntities)(entityClass, {
+      limit,
+      sort: sort || `${currentEntityVar}._meta.created DESC`,
       preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
     })
   ).all()

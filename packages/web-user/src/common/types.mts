@@ -18,6 +18,12 @@ export type KnownFeaturedEntities = {
     [entType in KnownEntityType]: { _key: string }[]
   }
 }
+export type LeaderBoardContributor = Pick<
+  ProfileData,
+  'displayName' | 'avatarUrl' | 'profileHref' | 'points'
+> /*  & {
+  subject: string
+} */
 
 export type ProfileGetRpc = {
   data: Profile
