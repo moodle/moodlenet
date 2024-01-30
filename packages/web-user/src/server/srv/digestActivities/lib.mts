@@ -1,4 +1,5 @@
 import assert from 'assert'
+import { pointSystem as P } from '../../../common/gamification/point-system.mjs'
 import type { KnownEntityType } from '../../../common/types.mjs'
 import type { KnownFeaturedEntityItem } from '../../exports.mjs'
 import { WebUserEntitiesTools } from '../../exports.mjs'
@@ -7,7 +8,6 @@ import {
   getEntityIdByKnownEntity,
   getEntityToolByKnownEntity,
 } from '../known-entity-types.mjs'
-import { pointSystem as P } from '../point-system.mjs'
 export const DELTA_POINTS_ARRAY_AQL_VAR = 'deltaPointsElems'
 export type UpsertDeltaPointsCfg = { aqlHead: string }
 
@@ -26,32 +26,13 @@ export function getEntityProfileCreatorEntityIdentifiers(entity: {
     type: 'Profile',
   })
 }
-// export function getProfileKey(_id:string ) {
-//   return WebUserEntitiesTools.getIdentifiersById({
-//     _id,
-//     type: 'Profile',
-//   })
-// }
-export type FeaturedEntityData =
-  /* { targetEntityProfileCreatorKey: string | undefined } &  */ Pick<
-    KnownFeaturedEntityItem,
-    '_key' | 'entityType' | 'feature' | '_id'
-  >
-/*  | {
-      _key: string
-      feature: 'in-collection'
-      entityType: 'resource'
-    } */
+
+export type FeaturedEntityData = Pick<
+  KnownFeaturedEntityItem,
+  '_key' | 'entityType' | 'feature' | '_id'
+>
+
 export function getFeaturedDeltaPoints(feat: FeaturedEntityData) {
-  /* feat.feature === 'in-collection'
-    ? {
-        targetEntityCreator_XOR_targetProfile_DeltaPoints:
-          P.contribution.collection.listCuration.toResourceCreator.points,
-        targetEntity_DeltaPopularity: P.contribution.collection.listCuration.toResource.popularity,
-        actor_DeltaPoints:
-          P.contribution.collection.listCuration.toCollectionCreator.points,
-      }
-    : */
   return feat.feature === 'follow'
     ? {
         actor_DeltaPoints: P.engagement.follow.followerProfile.points,

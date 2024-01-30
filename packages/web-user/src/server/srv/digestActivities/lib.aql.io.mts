@@ -1,13 +1,8 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import * as collectionSrv from '@moodlenet/collection/server'
-import { EdMetaEntitiesTools } from '@moodlenet/ed-meta/server'
-import { EdResourceEntitiesTools } from '@moodlenet/ed-resource/server'
 import type { EntityFullDocument } from '@moodlenet/system-entities/server'
 import { sysEntitiesDB } from '@moodlenet/system-entities/server'
-import assert from 'assert'
-import type { KnownEntityType } from '../../../common/types.mjs'
-import type { ProfileDataType } from '../../exports.mjs'
-import { Profile, WebUserEntitiesTools } from '../../exports.mjs'
+import { Profile } from '../../exports.mjs'
 import { EntityPoints } from '../../init/sys-entities.mjs'
 import type { UpsertDeltaPointsCfg } from './lib.mjs'
 import { DELTA_POINTS_ARRAY_AQL_VAR } from './lib.mjs'
@@ -42,43 +37,22 @@ FOR collection IN \`${collectionSrv.Collection.collection.name}\`
   )
 }
 
-export async function getEntityIdByKnownEntity({
-  entityType,
-  _key,
-}: {
-  _key: string
-  entityType: KnownEntityType
-}) {
-  const _id =
-    entityType === 'collection'
-      ? collectionSrv.CollectionEntitiesTools.getIdentifiersByKey({ _key, type: 'Collection' })._id
-      : entityType === 'resource'
-      ? EdResourceEntitiesTools.getIdentifiersByKey({ _key, type: 'Resource' })._id
-      : entityType === 'profile'
-      ? WebUserEntitiesTools.getIdentifiersByKey({ _key, type: 'Profile' })._id
-      : entityType === 'subject'
-      ? EdMetaEntitiesTools.getIdentifiersByKey({ _key, type: 'IscedField' })._id
-      : null
-
-  assert(_id)
-  return _id
-}
-export async function getEntityCreatorProfile({ entityId }: { entityId: string }) {
-  if (!WebUserEntitiesTools.isIdOfType({ id: entityId, type: 'Profile' })) {
-    return
-  }
-  const docCursor = await sysEntitiesDB.query<EntityFullDocument<ProfileDataType>>(
-    `
-  RETURN DOCUMENT(@entityId)
-  `,
-    { entityId },
-  )
-  const doc = await docCursor.next()
-  if (!doc) {
-    return
-  }
-  return doc
-}
+// export async function getEntityCreatorProfile({ entityId }: { entityId: string }) {
+//   if (!WebUserEntitiesTools.isIdOfType({ id: entityId, type: 'Profile' })) {
+//     return
+//   }
+//   const docCursor = await sysEntitiesDB.query<EntityFullDocument<ProfileDataType>>(
+//     `
+//   RETURN DOCUMENT(@entityId)
+//   `,
+//     { entityId },
+//   )
+//   const doc = await docCursor.next()
+//   if (!doc) {
+//     return
+//   }
+//   return doc
+// }
 
 export async function upsertDeltaPoints(cfgs: UpsertDeltaPointsCfg[]) {
   // console.log('upsertDeltaPoints', cfgs)

@@ -4,8 +4,7 @@ import {
   removeFeaturedFromAllUsers,
   removeResourceFromAllCollections,
   upsertDeltaPoints,
-} from './lib-io.mjs'
-import type { UpsertDeltaPointsCfg } from './lib.mjs'
+} from './lib.aql.io.mjs'
 import * as PCFG from './points-configs.mjs'
 
 export async function digestActivityEvent(activity: EventPayload<WebUserActivityEvents>) {
@@ -47,10 +46,10 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
       break
     }
     case 'created-web-user-account': {
+      await upsertDeltaPoints(PCFG.createdProfileDeltaPoints(activity.data))
       break
     }
     case 'deleted-web-user-account': {
-      //! REVOKE PUBLISH PERM IN SRV
       break
     }
     case 'edit-profile-interests': {
@@ -58,6 +57,7 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
       break
     }
     case 'edit-profile-meta': {
+      await upsertDeltaPoints(PCFG.editProfileMeta(activity.data))
       break
     }
     case 'request-send-message-to-web-user': {
@@ -82,32 +82,7 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     }
 
     case 'user-publishing-permission-change': {
-      const { profile, type: permission } = activity.data
-      const pubPermRevoked = permission === 'revoked'
-      const deltaPointsCfgs: UpsertDeltaPointsCfg[] = []
-
-      //! give/remove publisher points
-      deltaPointsCfgs.push(
-        ...PCFG.userPublishingPermissionChange({
-          profileKey: profile._key,
-          permission,
-        }),
-      )
-
-      //! give/remove all featured pointd
-      deltaPointsCfgs.push(
-        ...profile.knownFeaturedEntities
-          .map(item =>
-            PCFG.featuredEntityDeltaPointsConfigs({
-              action: pubPermRevoked ? 'remove' : 'add',
-              feat: item,
-              originProfileKey: profile._key,
-            }),
-          )
-          .flat(),
-      )
-
-      await upsertDeltaPoints(deltaPointsCfgs)
+      await upsertDeltaPoints(PCFG.switchUserPublishingPermission(activity.data))
       break
     }
     case 'resource-updated-meta': {

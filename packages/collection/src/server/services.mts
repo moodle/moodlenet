@@ -298,19 +298,18 @@ export async function delCollection(_key: string) {
   if (!found) {
     return
   }
-  if (!found.entity.published) {
-    shell.events.emit('unpublished', {
-      collection: { ...found.entity, _meta: found.meta },
-      userId,
-      // resourceListInfo: await getExistingResourcesInCollectionInfo(
-      //   found.meta.creatorEntityId,
-      //   found.entity.resourceList,
-      // ),
-    })
+  if (found.entity.published) {
+    await setPublished(_key, false)
   }
-  await shell.call(delEntity)(Collection.entityClass, _key)
+  const deleted = await shell.call(delEntity)(Collection.entityClass, _key)
+  if (!deleted) {
+    return
+  }
+  const imageLogicalFilename = getImageLogicalFilename(_key)
+  await publicFiles.del(imageLogicalFilename)
+
   shell.events.emit('deleted', {
-    collection: { ...found.entity, _meta: found.meta },
+    collection: { ...deleted.entity, _meta: deleted.meta },
     userId,
   })
   return found

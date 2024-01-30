@@ -16,12 +16,10 @@ import type { CollectionExposeType } from '../common/expose-def.mjs'
 import type { CollectionContributorRpc, CollectionRpc } from '../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { publicFiles } from './init/fs.mjs'
 import {
   createCollection,
   delCollection,
   getCollection,
-  getImageLogicalFilename,
   getMyCollections,
   getValidations,
   patchCollection,
@@ -167,9 +165,6 @@ export const expose = await shell.expose<CollectionExposeType>({
         if (!delResult) {
           return
         }
-        const imageLogicalFilename = getImageLogicalFilename(_key)
-        await publicFiles.del(imageLogicalFilename)
-
         return
       },
     },

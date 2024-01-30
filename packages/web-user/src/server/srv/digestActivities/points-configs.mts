@@ -2,8 +2,8 @@ import { Collection } from '@moodlenet/collection/server'
 import { Resource } from '@moodlenet/ed-resource/server'
 import '@moodlenet/system-entities/server'
 import { toaql } from '@moodlenet/system-entities/server'
+import { pointSystem as P } from '../../../common/gamification/point-system.mjs'
 import type { WebUserActivityEvents } from '../../types.mjs'
-import { pointSystem as P } from '../point-system.mjs'
 import type { FeaturedEntityData, UpsertDeltaPointsCfg } from './lib.mjs'
 import {
   DELTA_POINTS_ARRAY_AQL_VAR,
@@ -44,7 +44,7 @@ export function featuredEntityDeltaPointsConfigs({
     actor_DeltaPoints,
   } = getFeaturedDeltaPoints(feat)
 
-  const sign = action === 'add' ? '+' : '-'
+  const sign = action === 'add' ? 1 : -1
   const upsertDeltaConfigsAQLElems: string[] = []
   // give popularity to entity
   upsertDeltaConfigsAQLElems.push(
@@ -52,9 +52,9 @@ export function featuredEntityDeltaPointsConfigs({
       entityType: ${toaql(feat.entityType)},
       entityKey:  ${toaql(feat._key)},
       popularity:{
-        overall: ${sign} ${targetEntity_DeltaPopularity} ,
+        overall: ${sign * targetEntity_DeltaPopularity} ,
         items:{
-          "${feat.feature}": ${sign} 1
+          "${feat.feature}": ${sign * 1}
         }
       }
     }`,
@@ -66,7 +66,7 @@ export function featuredEntityDeltaPointsConfigs({
     {
       entityType: "profile",
       entityKey:  ${toaql(originProfileKey)},
-      points: ${sign} ${actor_DeltaPoints}
+      points: ${sign * actor_DeltaPoints}
     }`,
   )
 
@@ -84,7 +84,7 @@ export function featuredEntityDeltaPointsConfigs({
       !creatorXORtargetProfileKey ? null :{
         entityType: "profile",
         entityKey: creatorXORtargetProfileKey,
-        points: ${sign} ${targetEntityCreator_XOR_targetProfile_DeltaPoints}
+        points: ${sign * targetEntityCreator_XOR_targetProfile_DeltaPoints}
       }
     ][* FILTER CURRENT != null]`,
   }
@@ -110,7 +110,7 @@ export function collectionResourceListCuration(
     return []
   }
 
-  const sign = action === 'add' ? '+' : '-'
+  const sign = action === 'add' ? 1 : -1
   const deltaPointsCfgs: UpsertDeltaPointsCfg[] = []
 
   //!   give/remove list-curation points to/from collection creator
@@ -120,7 +120,7 @@ export function collectionResourceListCuration(
 LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
   entityType: 'profile',
   entityKey: ${toaql(collectionCreatorKey)},
-  points: ${sign} ${P.contribution.collection.listCuration.toCollectionCreator.points}
+  points: ${sign * P.contribution.collection.listCuration.toCollectionCreator.points}
 }]
 `,
     })
@@ -136,9 +136,9 @@ LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
   entityType: 'resource',
   entityKey: ${toaql(resourceKey)},
   popularity:{
-    overall: ${sign} ${P.contribution.collection.listCuration.toResource.popularity} ,
+    overall: ${sign * P.contribution.collection.listCuration.toResource.popularity} ,
     items:{
-      "in-collection": ${sign} 1
+      "in-collection": ${sign * 1}
     }
   }}]
 `,
@@ -146,13 +146,12 @@ LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
 
     //!  give/remove list-curation points to/from resource creator
     deltaPointsCfgs.push({
-      // resourceCreatorDeltaPoints
       aqlHead: `
 LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [
   {
     entityType: 'profile',
     entityKey: ${toaql(resourceCreatorKey)},
-    points: ${sign} ${P.contribution.collection.listCuration.toResourceCreator.points}
+    points: ${sign * P.contribution.collection.listCuration.toResourceCreator.points}
   }
 ]
 `,
@@ -165,10 +164,8 @@ export function switchCollectionPublishing(
   published: boolean,
 ): UpsertDeltaPointsCfg[] {
   const { collection } = data
-  //! for each resource in collection
-  //       vv collectionResourceListCuration() vv
 
-  const sign = published ? '+' : '-'
+  const sign = published ? 1 : -1
 
   const deltaPointsCfgs: UpsertDeltaPointsCfg[] = []
 
@@ -180,7 +177,7 @@ export function switchCollectionPublishing(
 LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
   entityType: 'profile',
   entityKey: ${toaql(collectionCreatorKey)}, 
-  points: ${sign} ${P.contribution.collection.published.toCreator.points} 
+  points: ${sign * P.contribution.collection.published.toCreator.points} 
 }]`,
     })
   }
@@ -211,22 +208,22 @@ FOR resourceListItem IN ${toaql(collection.resourceList)}
     !collectionCreatorKey ? null :{
       entityType: 'profile',
       entityKey: collectionCreatorKey,
-      points: ${sign} ${P.contribution.collection.listCuration.toCollectionCreator.points}
+      points: ${sign * P.contribution.collection.listCuration.toCollectionCreator.points}
     },
     //! if not same creator give/remove list-curation points to/from resource creator
     (sameCreator || !resourceCreatorKey) ? null : {
       entityType: 'profile',
       entityKey: resourceCreatorKey,
-      points: ${sign} ${P.contribution.collection.listCuration.toResourceCreator.points}
+      points: ${sign * P.contribution.collection.listCuration.toResourceCreator.points}
     },
     //! if not same creator give/remove list-curation popularity to/from resource
     sameCreator ? null : {
       entityType: 'resource',
       entityKey: resource._key,
       popularity: {
-        overall: ${sign} ${P.contribution.collection.listCuration.toResource.popularity},
+        overall: ${sign * P.contribution.collection.listCuration.toResource.popularity},
         items: {
-          "in-collection": ${sign} 1
+          "in-collection": ${sign * 1}
         }
       }
     },
@@ -234,6 +231,40 @@ FOR resourceListItem IN ${toaql(collection.resourceList)}
   
 `,
   })
+  return deltaPointsCfgs
+}
+export function switchUserPublishingPermission(
+  data: WebUserActivityEvents['user-publishing-permission-change'],
+) {
+  const { profile, type: permission } = data
+  const pubPermRevoked = permission === 'revoked'
+  const deltaPointsCfgs: UpsertDeltaPointsCfg[] = []
+
+  //! give/remove all featured points
+  deltaPointsCfgs.push(
+    ...profile.knownFeaturedEntities
+      .map(item =>
+        featuredEntityDeltaPointsConfigs({
+          action: pubPermRevoked ? 'remove' : 'add',
+          feat: item,
+          originProfileKey: profile._key,
+        }),
+      )
+      .flat(),
+  )
+
+  const sign = !pubPermRevoked ? 1 : -1
+
+  //! give/remove publisher points
+  deltaPointsCfgs.push({
+    aqlHead: `
+LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
+  entityType: 'profile',
+  entityKey: ${toaql(profile._key)}, 
+  points: ${sign * P.engagement.profile.publisher.points} 
+}]`,
+  })
+
   return deltaPointsCfgs
 }
 
@@ -244,7 +275,7 @@ export function switchResourcePublishing(
   const { resource } = data
   const deltaPointsCfgs: UpsertDeltaPointsCfg[] = []
 
-  const sign = published ? '+' : '-'
+  const sign = published ? 1 : -1
 
   const resourceCreatorIds = getEntityProfileCreatorEntityIdentifiers(resource)
 
@@ -256,7 +287,7 @@ export function switchResourcePublishing(
 LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
   entityType: 'profile',
   entityKey: ${toaql(resourceCreatorKey)}, 
-  points: ${sign} ${P.contribution.resource.published.toCreator.points} 
+  points: ${sign * P.contribution.resource.published.toCreator.points} 
 }]`,
     })
   }
@@ -284,57 +315,18 @@ FILTER    //! if collection published
     !collectionCreatorKey ? null : {
       entityType: 'profile',
       entityKey: collectionCreatorKey, 
-      points: ${sign} ${P.contribution.collection.listCuration.toCollectionCreator.points} 
+      points: ${sign * P.contribution.collection.listCuration.toCollectionCreator.points} 
     },
     //! give/remove list-curation points to/from resource creator
     !resourceCreatorKey ? null :{
       entityType: 'profile',
       entityKey: resourceCreatorKey, 
-      points: ${sign} ${P.contribution.collection.listCuration.toResourceCreator.points} 
+      points: ${sign * P.contribution.collection.listCuration.toResourceCreator.points} 
     },
   ][* FILTER CURRENT != null]
 `,
   })
   // console.log({ creatorPointsDeltaConfig, collectionsAndCreatorsPointsDeltaConfig })
-  return deltaPointsCfgs
-}
-
-export function userPublishingPermissionChange({
-  profileKey,
-  permission,
-}: {
-  permission: 'given' | 'revoked'
-  profileKey: string
-}) {
-  const deltaPointsCfgs: UpsertDeltaPointsCfg[] = []
-
-  const sign = permission === 'given' ? '+' : '-'
-
-  deltaPointsCfgs.push({
-    aqlHead: `
-LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
-  entityType: 'profile',
-  entityKey: ${toaql(profileKey)}, 
-  points: ${sign} ${P.engagement.profile.publisher.points} 
-}]`,
-  })
-
-  // unpublish all in srv
-  // unfeature all in srv
-  // const featuredAction = permission === 'given' ? 'add' : 'remove'
-  // const featuredEntitiesDeltaPoints = knownFeaturedEntities
-  //   .map(async item => {
-  //     const targetEntityCreator = await getEntityCreatorProfile({ entityId: item._id })
-  //     const targetEntityProfileCreatorKey =
-  //       targetEntityCreator && getEntityProfileCreatorKey(targetEntityCreator)
-
-  //     return featuredEntityDeltaPointsConfigs({
-  //       action: featuredAction,
-  //       feat: { ...item, targetEntityProfileCreatorKey },
-  //       originProfileKey: profileKey,
-  //     })
-  //   })
-  //   .flat()
   return deltaPointsCfgs
 }
 
@@ -355,6 +347,25 @@ LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
   entityType: 'profile',
   entityKey: ${toaql(profileKey)}, 
   points: ${P.engagement.profile.interestsSet.points} 
+}]`,
+    },
+  )
+  return deltaPointsCfgs
+}
+
+export function createdProfileDeltaPoints(data: WebUserActivityEvents['created-web-user-account']) {
+  const deltaPointsCfgs: UpsertDeltaPointsCfg[] = []
+
+  const { profileKey } = data
+
+  deltaPointsCfgs.push(
+    //! give welcome points to usr
+    {
+      aqlHead: `
+LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
+  entityType: 'profile',
+  entityKey: ${toaql(profileKey)}, 
+  points: ${P.engagement.profile.welcome.points} 
 }]`,
     },
   )
@@ -384,74 +395,3 @@ LET ${DELTA_POINTS_ARRAY_AQL_VAR} = [{
   })
   return deltaPointsCfgs
 }
-
-// export function deletedWebUserAccount() {
-//! ** do all the followings in the srvevt handler ?
-//! delete all unpublished contributions
-//! if publisher
-//!   revoke publishing permission
-//!-- NO! await unpublishAllProfileContributions(profile._key)
-// }
-
-// export function resourceDownloaded() {
-//! give popularity to resource
-//! NOPE give points to resource owner
-//! NOPE give points to downloader
-// }
-
-// export function collectionUpdatedMeta({
-//   profileKey,
-//   newCollectionMeta,
-//   oldCollectionMeta,
-// }: {
-//   newCollectionMeta: CollectionMeta
-//   oldCollectionMeta: CollectionMeta
-//   profileKey: string
-// }) {
-//   const deltaAmountOfSetfields =
-//     Object.values(newCollectionMeta)
-//       .map(val => ('string' === typeof val ? val.trim() : val))
-//       .filter(val => !!val).length -
-//     Object.values(oldCollectionMeta)
-//       .map(val => ('string' === typeof val ? val.trim() : val))
-//       .filter(val => !!val).length
-
-//   const profilePointsDeltaConfig: UpsertDeltaPointsCfg = {
-//     aqlHead: `
-// LET ${DELTA_POINTS_ELEMS} = [{
-//   entityType: 'profile',
-//   entityKey: ${toaql(profileKey)},
-//   points: ${deltaAmountOfSetfields * P.contribution.collection.perMetaDataField.points}
-// }]`,
-//   }
-//   return [profilePointsDeltaConfig]
-//   //! give/remove points to/from collection owner based on meta changes
-// }
-// export function resourceUpdatedMeta({
-//   profileKey,
-//   newCollectionMeta,
-//   oldCollectionMeta,
-// }: {
-//   newCollectionMeta: ResourceMeta
-//   oldCollectionMeta: CollectionMeta
-//   profileKey: string
-// }) {
-//   const deltaAmountOfSetfields =
-//     Object.values(newCollectionMeta)
-//       .map(val => ('string' === typeof val ? val.trim() : val))
-//       .filter(val => !!val).length -
-//     Object.values(oldCollectionMeta)
-//       .map(val => ('string' === typeof val ? val.trim() : val))
-//       .filter(val => !!val).length
-
-//   const profilePointsDeltaConfig: UpsertDeltaPointsCfg = {
-//     aqlHead: `
-// LET ${DELTA_POINTS_ELEMS} = [{
-//   entityType: 'profile',
-//   entityKey: ${toaql(profileKey)},
-//   points: ${deltaAmountOfSetfields * P.contribution.collection.perMetaDataField.points}
-// }]`,
-//   }
-//   return [profilePointsDeltaConfig]
-//   //! give/remove points to/from resource owner based on meta changes
-// }

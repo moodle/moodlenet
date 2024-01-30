@@ -8,6 +8,7 @@ import level6Avatar from '../../webapp/ui/assets/img/userLevelAvatar/level-6.png
 import level7Avatar from '../../webapp/ui/assets/img/userLevelAvatar/level-7.png'
 import level8Avatar from '../../webapp/ui/assets/img/userLevelAvatar/level-8.png'
 import level9Avatar from '../../webapp/ui/assets/img/userLevelAvatar/level-9.png'
+import { pointSystem as P } from './point-system.mjs'
 
 export type UserLevelDetails = {
   minPoints: number
@@ -37,23 +38,48 @@ export const userLevels: UserLevelDetails[] = [
 ]
 
 export const actionsAndPointsObtained: { action: string; points: number; abbr?: string }[] = [
-  { action: 'Create account', points: 5, abbr: 'Congrats! You already did it!' },
+  {
+    action: 'Create account',
+    points: P.engagement.profile.welcome.points,
+    abbr: 'Congrats! You already did it!',
+  },
   {
     action: 'Complete profile',
-    points: 5,
+    points: 5 * P.engagement.profile.perMetaDataField.points,
     abbr: 'Get a point for each detail filled, profile and background images, location, website, description',
   },
   {
     action: 'Set up interests',
-    points: 5,
-    abbr: 'Get a point when setting each the interests type in your settings page',
+    points: P.engagement.profile.interestsSet.points,
+    abbr: 'Get a point when setting the interests type in your settings page',
   },
-  { action: 'Create collection', points: 5 },
-  { action: 'Create resource', points: 5 },
-  { action: 'New follower', points: 10 },
-  { action: 'New collection follower', points: 10 },
-  { action: 'New like in resource', points: 10 },
-  { action: 'Account approved', points: 25 },
+  { action: 'Publish collection', points: P.contribution.collection.published.toCreator.points },
+  {
+    action: "Add someone else's resource in your published collection",
+    points: P.contribution.collection.listCuration.toCollectionCreator.points,
+  },
+  {
+    action: 'Your resource added in a collection',
+    points: P.contribution.collection.listCuration.toResourceCreator.points,
+  },
+  { action: 'Publish resource', points: P.contribution.resource.published.toCreator.points },
+  {
+    action: 'Follow a user a collection or a subject',
+    points: P.engagement.follow.followerProfile.points,
+  },
+  { action: 'New follower', points: P.engagement.follow.followedProfile.points },
+  {
+    action: 'New follower on your collection',
+    points: P.engagement.follow.entityCreatorProfile.points,
+  },
+  { action: 'New like on your resource', points: P.curation.like.toTargetEntityCreator.points },
+  { action: 'Like a resource', points: P.curation.like.toActor.points },
+  {
+    action: 'New bookmark on your profile or contribution',
+    points: P.curation.bookmark.toTargetEntityCreator.points,
+  },
+  { action: 'Bookmark a contribution or auser', points: P.curation.bookmark.toActor.points },
+  { action: 'Become a publisher', points: P.engagement.profile.publisher.points },
 ]
 
 export const getUserLevelDetails = (points: number): UserLevelDetails => {

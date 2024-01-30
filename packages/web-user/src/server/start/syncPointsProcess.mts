@@ -47,16 +47,16 @@ export const entityPointsSyncLoopHandles = (function startAllEntityPointsSyncLoo
         if (!syncingEntityPointsAmount) {
           return true
         }
-        console.log(
-          `syncing ${syncingEntityPointsAmount} ${entityType} points:\n`,
-          entityPointsToSync
-            .map(
-              ({ entityType, entityKey, points, popularity }) =>
-                `${entityType}#${entityKey}:[p:${points ?? ''}/o:${popularity?.overall ?? ''}]`,
-            )
-            .join('\n'),
-          '\n',
-        )
+        // console.log(
+        //   `syncing ${syncingEntityPointsAmount} ${entityType} points:\n`,
+        //   entityPointsToSync
+        //     .map(
+        //       ({ entityType, entityKey, points, popularity }) =>
+        //         `${entityType}#${entityKey}:[p:${points ?? ''}/o:${popularity?.overall ?? ''}]`,
+        //     )
+        //     .join('\n'),
+        //   '\n',
+        // )
         const syncingEntityIds = entityPointsToSync.map(entityPointsData =>
           getEntityIdByKnownEntity({
             _key: entityPointsData.entityKey,

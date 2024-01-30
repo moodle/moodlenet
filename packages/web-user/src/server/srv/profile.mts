@@ -254,12 +254,12 @@ export async function entityFeatureAction({
   return updateResult
 }
 
-export async function setProfilePublisherFlag({
+export async function changeProfilePublisherPerm({
   profileKey,
-  isPublisher: setIsPublisher,
+  setIsPublisher,
 }: {
   profileKey: string
-  isPublisher: boolean
+  setIsPublisher: boolean
 }) {
   const moderator = await getCurrentSystemUser()
   assert(moderator.type === 'pkg' || moderator.type === 'entity')

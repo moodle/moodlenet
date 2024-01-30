@@ -13,12 +13,12 @@ export const pointSystem = {
   },
   contribution: {
     resource: {
-      perMetaDataField: { points: 1 },
+      // perMetaDataField: { points__: 1 },
       published: { toCreator: { points: 20 } },
     },
     collection: {
       published: { toCreator: { points: 5 } },
-      perMetaDataField: { points: 1 },
+      // perMetaDataField: { points__: 1 },
       listCuration: {
         toCollectionCreator: { points: 5 },
         toResourceCreator: { points: 5 },
@@ -28,13 +28,13 @@ export const pointSystem = {
   },
   engagement: {
     // resource: {
-    //   updateMeta: { toUpdater: { points_: 5 } },
+    //   updateMeta: { toCreator: { points__: 5 } },
     // },
     // collection: {
-    //   updateMeta: { toUpdater: { points_: 5 } },
+    //   updateMeta: { toCreator: { points__: 5 } },
     // },
     profile: {
-      creation: { points: 5 },
+      welcome: { points: 5 },
       publisher: { points: 10 },
       interestsSet: { points: 5 },
       perMetaDataField: { points: 1 },
